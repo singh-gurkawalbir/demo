@@ -1,4 +1,5 @@
-import { useReducer, useState } from 'react';
+import { useReducer, useEffect, useState, useCallback } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import produce from 'immer';
 import {
@@ -12,10 +13,13 @@ import {
   Typography,
 } from '@material-ui/core';
 import deepClone from 'lodash/cloneDeep';
+import * as selectors from '../../../reducers';
+import actions from '../../../actions';
 import DynaAutoSuggest from '../../DynaForm/fields/DynaAutoSuggest';
 import MappingSettings from '../ImportMappingSettings/MappingSettingsField';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import MappingUtil from '../../../utils/mapping';
+import * as ResourceUtil from '../../../utils/resource';
 import CloseIcon from '../../icons/CloseIcon';
 
 const useStyles = makeStyles(theme => ({
@@ -131,12 +135,13 @@ export default function ImportMapping(props) {
     lookups = [],
     application,
     isStandaloneMapping,
+    // TODO: Check if generate field can be eliminated from props
     generateFields = [],
     extractFields = [],
     onCancel,
     // recordType,
     onSave,
-    options,
+    options = {},
   } = props;
   const [changeIdentifier, setChangeIdentifier] = useState(0);
   const [lookupState, setLookup] = useState(lookups);
@@ -144,6 +149,69 @@ export default function ImportMapping(props) {
   const [enquesnackbar] = useEnqueueSnackbar();
   const [state, dispatchLocalAction] = useReducer(reducer, mappings || {});
   const mappingsTmp = deepClone(state);
+  const dispatch = useDispatch();
+  // initializing generateList with generateFields coming as props. To be eliminated later when it could be fetched using sameple data
+  let generateList = generateFields;
+  const { data } = useSelector(state => {
+    if (application === 'salesforce') {
+      return selectors.metadataOptionsAndResources(
+        state,
+        options.connectionId,
+        'salesforce',
+        'sObjectTypes',
+        '',
+        options.sObjectType,
+        null
+      );
+    }
+
+    return {};
+  });
+  const handleFetchResource = useCallback(() => {
+    if (!data) {
+      if (application === ResourceUtil.adaptorTypeMap.SalesforceImport) {
+        dispatch(
+          actions.metadata.request({
+            connectionId: options.connectionId,
+            metadataType: 'sObjectTypes',
+            mode: 'salesforce',
+            filterKey: null,
+            recordType: options.sObjectType,
+            selectField: null,
+          })
+        );
+      }
+
+      // TODO: for netsuite
+      // if (
+      //   application === ResourceUtil.adaptorTypeMap.NetSuiteDistributedImport
+      // ) {
+      // }
+    }
+  }, [application, data, dispatch, options.connectionId, options.sObjectType]);
+
+  useEffect(() => {
+    if (application === ResourceUtil.adaptorTypeMap.SalesforceImport) {
+      if (!data) {
+        handleFetchResource();
+      }
+    }
+  }, [application, data, handleFetchResource]);
+
+  if (application === ResourceUtil.adaptorTypeMap.SalesforceImport) {
+    generateList = data.map(d => ({
+      id: d.value,
+      name: d.label,
+      type: d.type,
+      options: d.picklistValues,
+    }));
+  } else if (
+    application === ResourceUtil.adaptorTypeMap.NetSuiteDistributedImport
+  ) {
+    // Hardcoding data for netsuite
+    generateList = MappingUtil.getSampleGenerateFields();
+  }
+
   const validateMapping = mappings => {
     const duplicateMappings = mappings
       .map(e => e.generate)
@@ -350,7 +418,7 @@ export default function ImportMapping(props) {
                         value={mapping.generate}
                         labelName="name"
                         valueName="id"
-                        options={generateFields}
+                        options={generateList}
                         onBlur={(id, evt) => {
                           handleFieldUpdate(
                             mapping.index,
@@ -376,8 +444,8 @@ export default function ImportMapping(props) {
                           mapping.lookupName &&
                           getLookup(mapping.lookupName)
                         }
-                        extractFields={extractFields}
-                        generateFields={generateFields}
+                        extractList={extractFields}
+                        generateList={generateList}
                       />
                     </Grid>
                     <Grid item key="edit_button">

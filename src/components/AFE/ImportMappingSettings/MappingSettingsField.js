@@ -9,8 +9,8 @@ export default function MappingSettingsField(props) {
     id,
     onSave,
     // connectionId,
-    extractFields,
-    generateFields,
+    extractList,
+    generateList,
     lookup,
     application,
     updateLookup,
@@ -46,8 +46,8 @@ export default function MappingSettingsField(props) {
           onClose={handleClose}
           // recordType={recordType}
           options={options}
-          extractFields={extractFields}
-          generateFields={generateFields}
+          extractList={extractList}
+          generateList={generateList}
         />
       )}
       <IconButton

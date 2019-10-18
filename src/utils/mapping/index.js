@@ -113,12 +113,13 @@ export default {
         return 'AS2 Field';
       case adaptorTypeMap.S3Import:
         return 'Import Field (Amazon S3)';
+      case adaptorTypeMap.SalesforceImport:
+        return 'Salesforce Field';
       case adaptorTypeMap.XMLImport:
       case adaptorTypeMap.HTTPImport:
       case adaptorTypeMap.MongodbImport:
       case adaptorTypeMap.WrapperImport:
       case adaptorTypeMap.RDBMSImport:
-      case adaptorTypeMap.SalesforceImport:
       default:
     }
   },
@@ -138,6 +139,7 @@ export default {
       case adaptorTypeMap.RESTImport:
       case adaptorTypeMap.AS2Import:
       case adaptorTypeMap.FTPImport:
+      case adaptorTypeMap.SalesforceImport:
       case adaptorTypeMap.S3Import:
         mappings = resourceObj.mapping;
         break;
@@ -146,7 +148,6 @@ export default {
       case adaptorTypeMap.MongodbImport:
       case adaptorTypeMap.WrapperImport:
       case adaptorTypeMap.RDBMSImport:
-      case adaptorTypeMap.SalesforceImport:
       default:
     }
 

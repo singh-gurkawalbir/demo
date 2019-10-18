@@ -3,7 +3,7 @@ import MappingUtil from '../../../../../utils/mapping';
 
 export default {
   getMetaData: (params = {}) => {
-    const { value, lookup = {}, extractFields } = params;
+    const { value, lookup = {}, extractList } = params;
     const fieldMeta = {
       fieldMap: {
         dataType: {
@@ -164,8 +164,8 @@ export default {
           options: [
             {
               items:
-                (extractFields &&
-                  extractFields.map(field => ({
+                (extractList &&
+                  extractList.map(field => ({
                     label: field,
                     value: field,
                   }))) ||

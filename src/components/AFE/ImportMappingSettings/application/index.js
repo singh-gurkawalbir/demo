@@ -42,7 +42,7 @@ const getFormattedLookup = (lookup, formVal) => {
         lookupTmp.default = null;
         break;
       case 'default':
-        lookupTmp.default = formVal.lookupDefault;
+        lookupTmp.default = formVal.lookupDefault || formVal.lookupSFSelect;
         break;
       default:
     }
@@ -57,11 +57,11 @@ export default {
       application,
       value,
       lookup = {},
-      extractFields,
+      extractList,
       // connectionId,
       // recordType,
       generate,
-      generateFields,
+      generateList,
       options,
     } = params;
     let fieldMeta = {};
@@ -71,16 +71,16 @@ export default {
         fieldMeta = RestMappingSettings.getMetaData({
           value,
           lookup,
-          extractFields,
+          extractList,
         });
         break;
       case adaptorTypeMap.NetSuiteDistributedImport:
         fieldMeta = NetsuiteMappingSettings.getMetaData({
           value,
           lookup,
-          extractFields,
+          extractList,
           generate,
-          generateFields,
+          generateList,
           options,
         });
         break;
@@ -88,10 +88,9 @@ export default {
         fieldMeta = SalesforceMappingSettings.getMetaData({
           value,
           lookup,
-          extractFields,
-
+          extractList,
           generate,
-          generateFields,
+          generateList,
           options,
         });
         break;
@@ -101,7 +100,7 @@ export default {
         fieldMeta = FTPMappingSettings.getMetaData({
           value,
           lookup,
-          extractFields,
+          extractList,
         });
         break;
       default:
@@ -123,6 +122,14 @@ export default {
       settings.importDateTimeZone = formVal.importDateTimeZone;
     } else if (formVal.dataType) {
       settings.dataType = formVal.dataType;
+    }
+
+    if (formVal.extractDateFormat) {
+      settings.extractDateFormat = formVal.extractDateFormat;
+    }
+
+    if (formVal.extractDateTimezone) {
+      settings.extractDateTimezone = formVal.extractDateTimezone;
     }
 
     if (formVal.discardIfEmpty) {
@@ -147,7 +154,8 @@ export default {
             settings.hardCodedValue = null;
             break;
           case 'default':
-            settings.hardCodedValue = formVal.hardcodedDefault;
+            settings.hardCodedValue =
+              formVal.hardcodedDefault || formVal.hardcodedSFSelect;
             break;
           default:
         }
@@ -170,7 +178,7 @@ export default {
           settings.default = null;
           break;
         case 'default':
-          settings.default = formVal.default;
+          settings.default = formVal.default || formVal.defaultSFSelect;
           break;
         default:
       }

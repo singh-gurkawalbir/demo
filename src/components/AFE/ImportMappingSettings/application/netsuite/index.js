@@ -5,9 +5,9 @@ export default {
     const {
       value,
       lookup = {},
-      extractFields,
+      extractList,
       generate,
-      generateFields,
+      generateList,
       options,
     } = params;
     const { connectionId, recordType } = options;
@@ -15,7 +15,7 @@ export default {
       generate && generate.indexOf('[*].') !== -1
         ? generate.split('[*].')[1]
         : generate;
-    const fieldMetadata = generateFields.find(gen => gen.id === generate);
+    const fieldMetadata = generateList.find(gen => gen.id === generate);
     let generateFieldType;
 
     if (
@@ -188,8 +188,8 @@ export default {
           options: [
             {
               items:
-                (extractFields &&
-                  extractFields.map(field => ({
+                (extractList &&
+                  extractList.map(field => ({
                     label: field,
                     value: field,
                   }))) ||

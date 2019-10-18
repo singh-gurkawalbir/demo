@@ -23,8 +23,8 @@ export default function ImportMappingSettings(props) {
     value,
     // connectionId,
     onClose,
-    extractFields,
-    generateFields,
+    extractList,
+    generateList,
     lookup,
     updateLookup,
     application,
@@ -37,9 +37,9 @@ export default function ImportMappingSettings(props) {
     application,
     value,
     lookup,
-    extractFields,
+    extractList,
     generate,
-    generateFields,
+    generateList,
     options,
   });
   const handleSubmit = formVal => {

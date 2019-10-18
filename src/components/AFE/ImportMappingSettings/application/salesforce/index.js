@@ -1,21 +1,22 @@
 import MappingUtil from '../../../../../utils/mapping';
 import dateTimezones from '../../../../../utils/dateTimezones';
+import dateFormats from '../../../../../utils/dateFormats';
 
 export default {
   getMetaData: (params = {}) => {
     const {
       value,
       lookup = {},
-      extractFields,
+      extractList,
       generate,
-      generateFields,
+      generateList,
       options,
     } = params;
     const {
       connectionId,
       // sObjectType
     } = options;
-    const selectedGenerateObj = generateFields.find(
+    const selectedGenerateObj = generateList.find(
       field => field.id === generate
     );
     const fieldMeta = {
@@ -74,10 +75,10 @@ export default {
         'lookup.recordType': {
           id: 'lookup.recordType',
           name: 'recordType',
-          mode: 'suitescript',
+          mode: 'salesforce',
           defaultValue: '',
           type: 'refreshableselect',
-          resourceType: 'recordTypes',
+          resourceType: 'sObjectTypes',
           label: 'Search Record Type',
           connectionId,
           visibleWhenAll: [
@@ -88,9 +89,11 @@ export default {
         'lookup.resultField': {
           id: 'lookup.resultField',
           name: 'resultField',
-          mode: 'suitescript',
+          type: 'refreshableselect',
+          mode: 'salesforce',
+          // resourceType: 'sObjectTypes',
           defaultValue: '',
-          filterKey: 'searchColumns',
+          // filterKey: 'sObjectTypes',
           connectionId,
           refreshOptionsOnChangesTo: ['lookup.recordType'],
           visibleWhenAll: [
@@ -132,8 +135,8 @@ export default {
           options: [
             {
               items:
-                (extractFields &&
-                  extractFields.map(field => ({
+                (extractList &&
+                  extractList.map(field => ({
                     label: field,
                     value: field,
                   }))) ||
@@ -185,9 +188,9 @@ export default {
           ],
           defaultValue: value.default,
         },
-        defaultSelect: {
-          id: 'defaultSelect',
-          name: 'defaultSelect',
+        defaultSFSelect: {
+          id: 'defaultSFSelect',
+          name: 'defaultSFSelect',
           type: 'select',
           label: 'Default Value',
           visibleWhenAll: [
@@ -198,7 +201,7 @@ export default {
           defaultValue: value.default,
           options: [
             {
-              items: [],
+              items: selectedGenerateObj.options,
             },
           ],
         },
@@ -270,9 +273,9 @@ export default {
           ],
           defaultValue: value.hardCodedValue,
         },
-        hardcodedSelect: {
-          id: 'hardcodedSelect',
-          name: 'hardcodedSelect',
+        hardcodedSFSelect: {
+          id: 'hardcodedSFSelect',
+          name: 'hardcodedSFSelect',
           type: 'select',
           label: 'Value',
           placeholder: '',
@@ -282,7 +285,7 @@ export default {
           ],
           options: [
             {
-              items: [],
+              items: selectedGenerateObj.options,
             },
           ],
           defaultValue: value.hardCodedValue,
@@ -299,9 +302,9 @@ export default {
           ],
           defaultValue: lookup.default,
         },
-        lookupSelect: {
-          id: 'lookupSelect',
-          name: 'lookupSelect',
+        lookupSFSelect: {
+          id: 'lookupSFSelect',
+          name: 'lookupSFSelect',
           type: 'select',
           label: 'Default Lookup Value',
           visibleWhenAll: [
@@ -310,20 +313,32 @@ export default {
           ],
           options: [
             {
-              items: [],
+              items: selectedGenerateObj.options,
             },
           ],
           defaultValue: lookup.default,
         },
-        dateFormat: {
-          id: 'dateFormat',
-          name: 'dateFormat',
-          type: 'text',
+        extractDateFormat: {
+          id: 'extractDateFormat',
+          name: 'extractDateFormat',
+          type: 'select',
+          label: 'Date format',
+          options: [
+            {
+              items:
+                (dateFormats &&
+                  dateFormats.map(date => ({
+                    label: date.value,
+                    value: date.name,
+                  }))) ||
+                [],
+            },
+          ],
           visibleWhen: [{ field: 'fieldMappingType', is: ['standard'] }],
         },
-        timeZone: {
-          id: 'timeZone',
-          name: 'timeZone',
+        extractDateTimezone: {
+          id: 'extractDateTimezone',
+          name: 'extractDateTimezone',
           type: 'select',
           label: 'Time Zone',
           options: [
@@ -354,15 +369,15 @@ export default {
           'expression',
           'standardAction',
           'default',
-          'defaultSelect',
+          'defaultSFSelect',
           'hardcodedAction',
           'lookupAction',
           'hardcodedDefault',
-          'hardcodedSelect',
+          'hardcodedSFSelect',
           'lookupDefault',
-          'lookupSelect',
-          'dateFormat',
-          'dateFormat',
+          'lookupSFSelect',
+          'extractDateFormat',
+          'extractDateTimezone',
         ],
       },
       optionsHandler: (fieldId, fields) => {
@@ -383,7 +398,7 @@ export default {
           return expressionValue;
         } else if (fieldId === 'lookup.recordType') {
           return {
-            resourceToFetch: 'recordTypes',
+            resourceToFetch: 'sObjectTypes',
           };
         } else if (fieldId === 'lookup.resultField') {
           const recordTypeField = fields.find(
@@ -391,11 +406,9 @@ export default {
           );
 
           return {
+            recordType: recordTypeField && recordTypeField.value,
             disableOptionsLoad: !(recordTypeField && recordTypeField.value),
-            resourceToFetch:
-              recordTypeField &&
-              recordTypeField.value &&
-              `recordTypes/${recordTypeField.value}/searchColumns`,
+            resourceToFetch: `sObjectTypes`,
             resetValue: [],
           };
         }
@@ -405,29 +418,30 @@ export default {
     };
     let { fields } = fieldMeta.layout;
 
-    if (selectedGenerateObj && selectedGenerateObj.type !== 'date') {
-      delete fieldMeta.fieldMap.dateFormat;
-      delete fieldMeta.fieldMap.timeZone;
+    if (
+      selectedGenerateObj &&
+      selectedGenerateObj.type !== 'date' &&
+      selectedGenerateObj.type !== 'datetime'
+    ) {
+      delete fieldMeta.fieldMap.extractDateFormat;
+      delete fieldMeta.fieldMap.extractDateTimezone;
 
-      fields = fields.filter(el => el !== 'dateFormat' && el !== 'timeZone');
-    }
-
-    if (selectedGenerateObj && selectedGenerateObj.type === 'textarea') {
-      fieldMeta.fieldMap.hardcodedDefault.type = 'textarea';
-      fieldMeta.fieldMap.lookupDefault.type = 'textarea';
-      fieldMeta.fieldMap.default.type = 'textarea';
-      delete fieldMeta.fieldMap.hardcodedSelect;
-      delete fieldMeta.fieldMap.lookupSelect;
-      delete fieldMeta.fieldMap.defaultSelect;
       fields = fields.filter(
-        el =>
-          el !== 'hardcodedSelect' &&
-          el !== 'lookupSelect' &&
-          el !== 'defaultSelect'
+        el => el !== 'extractDateFormat' && el !== 'extractDateTimezone'
       );
     }
 
-    if (selectedGenerateObj && selectedGenerateObj.type === 'picklist') {
+    if (selectedGenerateObj && selectedGenerateObj.type !== 'picklist') {
+      delete fieldMeta.fieldMap.hardcodedSFSelect;
+      delete fieldMeta.fieldMap.lookupSFSelect;
+      delete fieldMeta.fieldMap.defaultSFSelect;
+      fields = fields.filter(
+        el =>
+          el !== 'hardcodedSFSelect' &&
+          el !== 'lookupSFSelect' &&
+          el !== 'defaultSFSelect'
+      );
+    } else {
       delete fieldMeta.fieldMap.hardcodedDefault;
       delete fieldMeta.fieldMap.lookupDefault;
       delete fieldMeta.fieldMap.default;
@@ -437,6 +451,12 @@ export default {
           el !== 'lookupDefault' &&
           el !== 'default'
       );
+    }
+
+    if (selectedGenerateObj && selectedGenerateObj.type === 'textarea') {
+      fieldMeta.fieldMap.hardcodedDefault.type = 'textarea';
+      fieldMeta.fieldMap.lookupDefault.type = 'textarea';
+      fieldMeta.fieldMap.default.type = 'textarea';
     }
 
     fieldMeta.layout.fields = fields;
