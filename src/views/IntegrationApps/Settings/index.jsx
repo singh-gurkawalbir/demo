@@ -54,6 +54,9 @@ const useStyles = makeStyles(theme => ({
     textAlign: 'center',
     padding: theme.spacing(1),
   },
+  dashboard: {
+    float: 'right',
+  },
 
   activeLink: {
     fontWeight: 'bold',
@@ -199,6 +202,11 @@ export default function IntegrationAppSettings(props) {
             onChange={handleTagChangeHandler}
           />
         </div>
+        <a
+          href={getRoutePath(`connectors/${integrationId}/dashboard`)}
+          className={classes.dashboard}>
+          Dashboard
+        </a>
         <Divider />
         {supportsMultiStore && (
           <div className={classes.storeContainer}>
