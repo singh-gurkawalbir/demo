@@ -29,8 +29,13 @@ export default function menuItems(userProfile, userPermissions) {
       label: 'Tools',
       Icon: ToolsIcon,
       children: [
-        { label: 'Flow builder', path: '/flowBuilder', Icon: FlowBuilderIcon },
-        { label: 'Data loader', path: '/dataLoader', Icon: DataLoaderIcon },
+        {
+          label: 'Flow builder',
+          path: '/integrations/none/flowBuilder/new',
+          Icon: FlowBuilderIcon,
+        },
+        // hiding the data loader menu item until we build it.
+        // { label: 'Data loader', path: '/dataLoader', Icon: DataLoaderIcon },
         { label: 'Recycle bin', path: '/recycleBin', Icon: TrashIcon },
       ],
     },

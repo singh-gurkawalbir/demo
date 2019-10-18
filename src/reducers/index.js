@@ -1150,7 +1150,10 @@ export function suiteScriptTiles(state, connection) {
 
     if (t._connectorId) {
       connector = published.find(i => i._id === t._connectorId);
-      tile.connector = { owner: connector.user.company || connector.user.name };
+      tile.connector = {
+        owner: connector.user.company || connector.user.name,
+        applications: connector.applications || [],
+      };
     }
 
     return tile;
@@ -1267,7 +1270,10 @@ export function tiles(state) {
           mode: integration.mode,
           permissions: integration.permissions,
         },
-        connector: { owner: connector.user.company || connector.user.name },
+        connector: {
+          owner: connector.user.company || connector.user.name,
+          applications: connector.applications || [],
+        },
       };
     }
 

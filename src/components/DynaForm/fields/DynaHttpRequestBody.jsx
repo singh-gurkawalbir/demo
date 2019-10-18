@@ -4,10 +4,10 @@ import HttpRequestBodyEditorDialog from '../../../components/AFE/HttpRequestBody
 import DynaLookupEditor from './DynaLookupEditor';
 
 export default function DynaHttpRequestBody(props) {
-  const { id, onFieldChange, options, value, label } = props;
+  const { id, onFieldChange, options, value, label, resourceId } = props;
   const [showEditor, setShowEditor] = useState(false);
   const parsedData =
-    options && typeof options.saveIndex === 'number' && value && value.length
+    options && typeof options.saveIndex === 'number' && Array.isArray(value)
       ? value[options.saveIndex]
       : value;
   const lookupFieldId = options && options.lookups && options.lookups.fieldId;
@@ -23,8 +23,7 @@ export default function DynaHttpRequestBody(props) {
       if (
         options &&
         typeof options.saveIndex === 'number' &&
-        value &&
-        value.length
+        Array.isArray(value)
       ) {
         // save to array at position saveIndex
         const valueTmp = value;
@@ -58,7 +57,7 @@ export default function DynaHttpRequestBody(props) {
       {showEditor && (
         <HttpRequestBodyEditorDialog
           title="Build HTTP Request Body"
-          id={id}
+          id={`${resourceId}-${id}`}
           rule={parsedData}
           onFieldChange={onFieldChange}
           onClose={handleClose}

@@ -1,6 +1,6 @@
 /* global describe, expect */
 import each from 'jest-each';
-import sortTiles from './util';
+import { sortTiles } from './util';
 
 describe('sortTiles util method', () => {
   const testCases = [];

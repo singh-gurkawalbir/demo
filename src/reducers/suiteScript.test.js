@@ -366,6 +366,7 @@ describe('suiteScriptTiles selector', () => {
           },
           connector: {
             owner: SUITESCRIPT_CONNECTORS[0].user.company,
+            applications: SUITESCRIPT_CONNECTORS[0].applications,
           },
           tag: 'NSAccount1',
         },
@@ -409,6 +410,7 @@ describe('suiteScriptTiles selector', () => {
           },
           connector: {
             owner: SUITESCRIPT_CONNECTORS[1].user.company,
+            applications: SUITESCRIPT_CONNECTORS[1].applications,
           },
           tag: 'NSAccount2',
         },
