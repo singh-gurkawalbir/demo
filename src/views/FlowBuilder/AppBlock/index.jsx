@@ -97,6 +97,7 @@ function AppBlock({
   assistant,
   name,
   actions,
+  resourceIndex,
   opacity = 1,
   flowId,
   resourceType,
@@ -213,6 +214,7 @@ function AppBlock({
                     open={activeAction === a.name}
                     flowId={flowId}
                     resource={resource}
+                    resourceIndex={resourceIndex}
                     resourceType={resourceType}
                     onClose={() => setActiveAction(null)}
                   />
