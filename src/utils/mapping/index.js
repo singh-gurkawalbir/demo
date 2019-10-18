@@ -1,6 +1,5 @@
 import { adaptorTypeMap } from '../resource';
 import generateList from './sampleGenerateData';
-import salesforceGenerateList from './sampleSFGenerateData';
 import MappingUtil from '.';
 import NetsuiteMapping from './application/netsuite';
 
@@ -260,7 +259,6 @@ export default {
     return formattedMapping;
   },
   getSampleGenerateFields: () => generateList,
-  getSFSampleGenerateFields: () => salesforceGenerateList,
   getResponseMappingDefaultExtracts: resourceType => {
     const extractList =
       resourceType === 'imports'
