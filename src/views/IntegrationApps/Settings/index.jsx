@@ -203,7 +203,7 @@ export default function IntegrationAppSettings(props) {
           />
         </div>
         <a
-          href={getRoutePath(`connectors/${integrationId}/dashboard`)}
+          href={getRoutePath(`integrations/${integrationId}/dashboard`)}
           className={classes.dashboard}>
           Dashboard
         </a>

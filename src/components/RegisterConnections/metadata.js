@@ -17,9 +17,9 @@ export default {
     {
       heading: 'API',
       value: r => {
-        if (r.type === 'rest') return r.rest.baseURI;
+        if (r.type === 'rest') return r && r.rest && r.rest.baseURI;
 
-        if (r.type === 'http') return r.http.baseURI;
+        if (r.type === 'http') return r && r.rest && r.http.baseURI;
 
         return null;
       },
