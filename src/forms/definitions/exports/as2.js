@@ -1,13 +1,4 @@
 export default {
-  preSave: formValues => {
-    const newValues = formValues;
-
-    if (newValues['/ftp/entryParser'] === '') {
-      delete newValues['/ftp/entryParser'];
-    }
-
-    return newValues;
-  },
   optionsHandler: (fieldId, fields) => {
     if (fieldId === 'file.filedefinition.rules') {
       // Fetch format specific Field Definition field to fetch id
