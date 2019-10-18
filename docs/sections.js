@@ -52,6 +52,7 @@ module.exports.sections = [
           'src/components/MaskToken/index.jsx',
           'src/components/Status/index.jsx',
           'src/components/StatusCircle/index.jsx',
+          'src/components/StatusTag/index.jsx',
         ],
       },
     ],

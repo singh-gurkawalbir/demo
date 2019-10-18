@@ -174,14 +174,17 @@ export default function(state = {}, action) {
 
       case actionTypes.FLOW_DATA.RESET_FLOW_SEQUENCE: {
         const currentFlow = draft[flowId];
+
+        if (!currentFlow) break;
+
         const { pageGenerators, pageProcessors } = currentFlow;
         const {
           pageGenerators: updatedPageGenerators,
           pageProcessors: updatedPageProcessors,
         } = updatedFlow;
-        // get first change in sequece of pgs
+        // get first change in sequence of pgs
         const updatedPgIndex = compare(pageGenerators, updatedPageGenerators);
-        // get first change in sequece of pgs
+        // get first change in sequence of pgs
         const updatedPpIndex = compare(pageProcessors, updatedPageProcessors);
 
         // update sequence

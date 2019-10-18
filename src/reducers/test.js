@@ -354,6 +354,7 @@ describe('tiles', () => {
       _id: 'connector1',
       name: 'Connector 1',
       user: { name: 'User 1', company: 'Company 1' },
+      applications: ['app1', 'app2'],
     },
     {
       _id: 'connector2',
@@ -566,6 +567,7 @@ describe('tiles', () => {
         numFlows: 6,
         connector: {
           owner: 'Company 1',
+          applications: ['app1', 'app2'],
         },
         integration: {
           mode: 'settings',
@@ -582,6 +584,7 @@ describe('tiles', () => {
         numFlows: 7,
         connector: {
           owner: 'Company 1',
+          applications: ['app1', 'app2'],
         },
         integration: {
           mode: 'settings',
@@ -599,6 +602,7 @@ describe('tiles', () => {
         offlineConnections: ['conn1'],
         connector: {
           owner: 'Company 1',
+          applications: ['app1', 'app2'],
         },
         integration: {
           mode: 'settings',
@@ -613,6 +617,7 @@ describe('tiles', () => {
         numFlows: 9,
         connector: {
           owner: 'User 2',
+          applications: [],
         },
         integration: {
           mode: 'install',
@@ -629,6 +634,7 @@ describe('tiles', () => {
         offlineConnections: ['conn1', 'conn2'],
         connector: {
           owner: 'User 2',
+          applications: [],
         },
         integration: {
           mode: 'install',
@@ -774,6 +780,7 @@ describe('tiles', () => {
         numFlows: 6,
         connector: {
           owner: 'Company 1',
+          applications: ['app1', 'app2'],
         },
         integration: {
           mode: 'settings',
@@ -790,6 +797,7 @@ describe('tiles', () => {
         numFlows: 7,
         connector: {
           owner: 'Company 1',
+          applications: ['app1', 'app2'],
         },
         integration: {
           mode: 'settings',
@@ -807,6 +815,7 @@ describe('tiles', () => {
         offlineConnections: ['conn1'],
         connector: {
           owner: 'Company 1',
+          applications: ['app1', 'app2'],
         },
         integration: {
           mode: 'settings',
@@ -821,6 +830,7 @@ describe('tiles', () => {
         numFlows: 9,
         connector: {
           owner: 'User 2',
+          applications: [],
         },
         integration: {
           mode: 'install',
@@ -837,6 +847,7 @@ describe('tiles', () => {
         offlineConnections: ['conn1', 'conn2'],
         connector: {
           owner: 'User 2',
+          applications: [],
         },
         integration: {
           mode: 'install',

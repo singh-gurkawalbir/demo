@@ -1121,12 +1121,14 @@ export default {
   'ftp.hostURI': {
     type: 'text',
     label: 'Host',
+    required: true,
     description:
       'If the FTP server is behind a firewall please whitelist the following IP addresses: 52.2.63.213, 52.7.99.234, and 52.71.48.248.',
   },
   'ftp.type': {
     type: 'radiogroup',
     label: 'Protocol',
+    required: true,
     defaultValue: r => (r && r.ftp && r.ftp.type) || 'ftp',
     options: [
       {
@@ -1141,10 +1143,12 @@ export default {
   'ftp.username': {
     type: 'text',
     label: 'Username',
+    required: true,
   },
   'ftp.password': {
     type: 'text',
     label: 'Password',
+    required: true,
     inputType: 'password',
     defaultValue: '',
     description:
@@ -1275,18 +1279,6 @@ export default {
     type: 'text',
     label: 'AS2 Identifier',
     required: true,
-  },
-  configureTokenRefresh: {
-    label: 'Configure Token Refresh',
-    type: 'checkbox',
-    defaultValue: r =>
-      !!((((r && r.http) || {}).auth || {}).token || {}).refreshToken,
-    visibleWhen: [
-      {
-        field: 'as2.partnerStationInfo.auth.type',
-        is: ['token'],
-      },
-    ],
   },
   'as2.partnerId': {
     type: 'text',
