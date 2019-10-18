@@ -3,6 +3,14 @@ import generateList from './sampleGenerateData';
 import MappingUtil from '.';
 import NetsuiteMapping from './application/netsuite';
 
+const LookupResponseMappingExtracts = [
+  'data',
+  'errors',
+  'ignored',
+  'statusCode',
+];
+const ImportResponseMappingExtracts = ['id', 'errors', 'ignored', 'statusCode'];
+
 export default {
   getDefaultDataType: value => {
     if (
@@ -268,4 +276,15 @@ export default {
     return formattedMapping;
   },
   getSampleGenerateFields: () => generateList,
+  getResponseMappingDefaultExtracts: resourceType => {
+    const extractList =
+      resourceType === 'imports'
+        ? ImportResponseMappingExtracts
+        : LookupResponseMappingExtracts;
+
+    return extractList.map(m => ({
+      id: m,
+      name: m,
+    }));
+  },
 };

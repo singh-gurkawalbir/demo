@@ -1,60 +1,6 @@
-import { Dialog, Typography, DialogTitle } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
-import { useEffect, Fragment } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import * as selectors from '../../../../reducers';
-import actions from '../../../../actions';
+import { Fragment } from 'react';
 import Icon from '../../../../components/icons/MapDataIcon';
-
-const useStyles = makeStyles(theme => ({
-  paper: {
-    padding: theme.spacing(3),
-  },
-}));
-
-function ResponseMappingDialog({
-  flowId,
-  resource,
-  resourceType,
-  open,
-  onClose,
-}) {
-  const classes = useStyles();
-  const dispatch = useDispatch();
-  const resourceId = resource._id;
-  const sampleData = useSelector(state =>
-    selectors.getSampleData(state, flowId, resourceId, 'outputFilter')
-  );
-
-  useEffect(() => {
-    if (!sampleData) {
-      dispatch(
-        actions.flowData.fetchSampleData(
-          flowId,
-          resourceId,
-          resourceType,
-          'outputFilter'
-        )
-      );
-    }
-  }, [dispatch, flowId, resourceId, resourceType, sampleData]);
-
-  return (
-    <Dialog
-      open={open}
-      onClose={onClose}
-      PaperProps={{ className: classes.paper }}>
-      <DialogTitle disableTypography>
-        <Typography variant="h6">Response Mapping</Typography>
-      </DialogTitle>
-      <Typography>flowId: {flowId}</Typography>
-      <Typography>resourceId: {resourceId}</Typography>
-      {sampleData && (
-        <Typography> SampleData: {JSON.stringify(sampleData)}</Typography>
-      )}
-    </Dialog>
-  );
-}
+import ResponseMappingDialog from '../../../../components/AFE/ResponseMapping/Dialog';
 
 function ResponseMapping(props) {
   const { open } = props;
