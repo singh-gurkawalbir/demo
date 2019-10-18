@@ -242,6 +242,7 @@ export default function ResponseMappingDialog(props) {
                     <Grid item xs>
                       <DynaAutoSuggest
                         value={r[valueName]}
+                        hideOptions
                         onBlur={(id, evt) => {
                           handleFieldUpdate(
                             r.index,
