@@ -7,9 +7,10 @@ export default {
   },
   sampleData: { type: 'text', label: 'Sample Data' },
   distributed: {
-    type: 'checkbox',
+    type: 'text',
     label: 'Distributed',
-    defaultValue: false,
+    defaultValue: true,
+    visible: false,
   },
   maxAttempts: {
     type: 'text',
