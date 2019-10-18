@@ -24,7 +24,10 @@ export default function ConnectionPanel({ flow }) {
           data={flowConnections}
           filterKey="connections"
           {...metadata}
-          actionProps={{ resourceType: 'connections' }}
+          actionProps={{
+            resourceType: 'connections',
+            type: 'flowBuilder',
+          }}
         />
       </LoadResources>
     </div>
