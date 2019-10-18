@@ -68,7 +68,7 @@ export default function Flows(props) {
             component={Link}
             variant="contained"
             color="secondary"
-            to={getRoutePath(`/integrations/${integrationId}/flows/create`)}>
+            to={getRoutePath(`/integrations/${integrationId}/flowBuilder/new`)}>
             Create Flow
           </Button>
           <Button

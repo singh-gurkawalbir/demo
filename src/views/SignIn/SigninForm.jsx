@@ -36,6 +36,9 @@ const mapDispatchToProps = dispatch => ({
     margin: [[-8, -24]],
     background: theme.palette.background.paper2,
     padding: [[8, 24]],
+    [theme.breakpoints.down('sm')]: {
+      maxWidth: '100%',
+    },
   },
   relatedContent: {
     textDecoration: 'none',
@@ -93,16 +96,19 @@ const mapDispatchToProps = dispatch => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
+    width: '90%',
+    margin: '0 auto',
+    marginBottom: theme.spacing(2),
     '&:before': {
       content: '""',
-      width: '30%',
-      borderTop: '1px solid',
+      width: '40%',
+      borderTop: '2px solid',
       borderColor: theme.palette.secondary.lightest,
     },
     '&:after': {
       content: '""',
-      width: '30%',
-      borderTop: '1px solid',
+      width: '40%',
+      borderTop: '2px solid',
       borderColor: theme.palette.secondary.lightest,
     },
   },
@@ -196,7 +202,9 @@ class SignIn extends Component {
             </Link>
           </div>
           <div>
-            <div className={classes.or}>or</div>
+            <div className={classes.or}>
+              <Typography variant="body1">or</Typography>
+            </div>
             <Button
               variant="contained"
               color="secondary"

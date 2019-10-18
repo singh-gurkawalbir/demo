@@ -1,12 +1,5 @@
 import applications from '../../../constants/applications';
 
-const visibleWhen = [
-  {
-    id: 'hasApp',
-    field: 'application',
-    isNot: [''],
-  },
-];
 const appTypeToAdaptorType = {
   salesforce: 'Salesforce',
   mongodb: 'Mongodb',
@@ -22,6 +15,8 @@ const appTypeToAdaptorType = {
   as2: 'AS2',
   webhook: 'Webhook',
 };
+const visibleWhenHasApp = { field: 'application', isNot: [''] };
+const visibleWhenIsNew = { field: 'isNew', is: ['true'] };
 
 export default {
   init: meta => meta,
@@ -46,7 +41,7 @@ export default {
     resourceType: {
       id: 'resourceType',
       name: 'resourceType',
-      type: 'radiogroup',
+      type: 'select',
       label: 'What would you like to do?',
       defaultValue: r => (r && r.resourceType) || 'imports',
       options: [
@@ -61,6 +56,40 @@ export default {
         },
       ],
     },
+    isNew: {
+      id: 'isNew',
+      name: 'isNew',
+      type: 'radiogroup',
+      showOptionsHorizontally: true,
+      // label: 'Build new or use existing?',
+      defaultValue: 'true',
+      options: [
+        {
+          items: [
+            { label: 'Create new', value: 'true' },
+            {
+              label: 'Choose existing',
+              value: 'false',
+            },
+          ],
+        },
+      ],
+    },
+
+    existingResource: {
+      id: 'existingId',
+      name: 'existingId',
+      type: 'selectresource',
+      resourceType: 'imports',
+      label: 'Existing Import',
+      defaultValue: '',
+      required: true,
+      allowEdit: true,
+
+      // refreshOptionsOnChangesTo: ['application'],
+      visibleWhen: [{ field: 'isNew', is: ['false'] }],
+    },
+
     application: {
       id: 'application',
       name: 'application',
@@ -68,6 +97,7 @@ export default {
       placeholder: 'Select application',
       defaultValue: r => (r && r.application) || '',
       required: true,
+      visibleWhen: [visibleWhenIsNew],
     },
 
     connection: {
@@ -78,8 +108,10 @@ export default {
       label: 'Connection',
       defaultValue: r => (r && r._connectionId) || '',
       required: true,
+      allowNew: true,
+      allowEdit: true,
       refreshOptionsOnChangesTo: ['application'],
-      visibleWhen,
+      visibleWhenAll: [visibleWhenHasApp, visibleWhenIsNew],
     },
     name: {
       id: 'name',
@@ -89,7 +121,7 @@ export default {
       defaultValue: '',
       required: true,
       refreshOptionsOnChangesTo: ['application'],
-      visibleWhen,
+      visibleWhenAll: [visibleWhenHasApp, visibleWhenIsNew],
     },
     description: {
       id: 'description',
@@ -99,12 +131,14 @@ export default {
       maxRows: 5,
       label: 'Description',
       defaultValue: '',
-      visibleWhen,
+      visibleWhenAll: [visibleWhenHasApp, visibleWhenIsNew],
     },
   },
   layout: {
     fields: [
       'resourceType',
+      'isNew',
+      'existingResource',
       'application',
       'connection',
       'name',

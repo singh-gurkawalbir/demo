@@ -54,7 +54,7 @@ export default {
     ],
   },
   'http.body': {
-    type: 'text',
+    type: 'httprequestbody',
     label: 'Build HTTP Request Body',
   },
   'http.headers': {
