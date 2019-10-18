@@ -14,9 +14,6 @@ const blockWidth = 275;
 const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
-  },
-  innerContainer: {
-    display: 'flex',
     flexDirection: 'column',
     alignItems: 'flex-start',
     width: blockWidth,
@@ -24,8 +21,8 @@ const useStyles = makeStyles(theme => ({
   box: {
     width: blockWidth,
     height: blockHeight,
-    cursor: 'move',
   },
+  draggable: { cursor: 'move' },
   name: {
     margin: theme.spacing(1, 0, 1, 0),
     height: 50,
@@ -61,6 +58,8 @@ const useStyles = makeStyles(theme => ({
   appLogoContainer: {
     marginTop: theme.spacing(1),
     textAlign: 'center',
+    // width: 101,
+    height: 49,
   },
   appLogo: {
     position: 'relative',
@@ -89,6 +88,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function AppBlock({
+  className,
   children,
   forwardedRef,
   onBlockClick,
@@ -107,10 +107,11 @@ function AppBlock({
   const [expanded, setExpanded] = useState(false);
   const [isOver, setIsOver] = useState(false);
   const [activeAction, setActiveAction] = useState(null);
+  const isNew = blockType.startsWith('new');
 
   useEffect(() => {
     if (expanded && !isOver) {
-      const timer = setTimeout(setExpanded, 2000);
+      const timer = setTimeout(setExpanded, 500);
 
       return () => clearTimeout(timer);
     }
@@ -120,7 +121,9 @@ function AppBlock({
     setExpanded(true);
   }
 
-  const middleCount = actions.filter(a => a.position === 'middle').length;
+  const middleCount = isNew
+    ? 0
+    : actions.filter(a => a.position === 'middle').length;
   const offset = ((3 - middleCount) * 42) / 2;
   let rightIndex = 0;
   const top = -13;
@@ -143,7 +146,7 @@ function AppBlock({
   }
 
   return (
-    <div className={classes.innerContainer}>
+    <div className={clsx(classes.root, className)}>
       <div className={classes.name}>
         <Typography variant="h5">{name}</Typography>
       </div>
@@ -154,7 +157,7 @@ function AppBlock({
         onBlur={() => setIsOver(false)}
         {...rest}
         ref={forwardedRef}
-        className={classes.box}
+        className={clsx(classes.box, { [classes.draggable]: !isNew })}
         style={{ opacity }}>
         <div className={classes.bubbleContainer}>
           <svg
@@ -176,43 +179,46 @@ function AppBlock({
           </svg>
         </div>
         <div className={classes.appLogoContainer}>
-          <ApplicationImg
-            className={classes.appLogo}
-            size="large"
-            type={connectorType}
-            assistant={assistant}
-          />
+          {connectorType && (
+            <ApplicationImg
+              className={classes.appLogo}
+              size="large"
+              type={connectorType}
+              assistant={assistant}
+            />
+          )}
         </div>
         <div className={classes.buttonContainer}>
           <ResourceButton onClick={onBlockClick} variant={blockType} />
           <div className={classes.actionContainer}>
-            {actions.map(a => (
-              <Fragment key={a.name}>
-                <ActionIconButton
-                  variant={
-                    a.position !== 'middle' && expanded
-                      ? 'contained'
-                      : undefined
-                  }
-                  helpText={a.helpText}
-                  className={clsx({
-                    [classes.isNotOverActions]: !expanded,
-                  })}
-                  style={expanded ? getActionStyle(a) : undefined}
-                  onClick={() => setActiveAction(a.name)}
-                  data-test={a.name}>
-                  <a.Icon />
-                </ActionIconButton>
-                <a.Component
-                  open={activeAction === a.name}
-                  flowId={flowId}
-                  resource={resource}
-                  resourceType={resourceType}
-                  onClose={() => setActiveAction(null)}
-                />
-              </Fragment>
-            ))}
-            {!expanded && actions.length > 0 && (
+            {actions &&
+              actions.map(a => (
+                <Fragment key={a.name}>
+                  <ActionIconButton
+                    variant={
+                      a.position !== 'middle' && expanded
+                        ? 'contained'
+                        : undefined
+                    }
+                    helpText={a.helpText}
+                    className={clsx({
+                      [classes.isNotOverActions]: !expanded,
+                    })}
+                    style={expanded ? getActionStyle(a) : undefined}
+                    onClick={() => setActiveAction(a.name)}
+                    data-test={a.name}>
+                    <a.Icon />
+                  </ActionIconButton>
+                  <a.Component
+                    open={activeAction === a.name}
+                    flowId={flowId}
+                    resource={resource}
+                    resourceType={resourceType}
+                    onClose={() => setActiveAction(null)}
+                  />
+                </Fragment>
+              ))}
+            {!expanded && actions && actions.length > 0 && (
               <ActionIconButton
                 className={classes.addButton}
                 onClick={handleExpandClick}
@@ -222,9 +228,11 @@ function AppBlock({
             )}
           </div>
         </div>
-        <Status className={classes.status} count="5324" label="new errors">
-          <StatusCircle variant="error" size="small" />
-        </Status>
+        {connectorType && (
+          <Status className={classes.status} count="5324" label="new errors">
+            <StatusCircle variant="error" size="small" />
+          </Status>
+        )}
       </div>
     </div>
   );

@@ -221,6 +221,7 @@ const PageProcessor = ({
           opacity={opacity} /* used for drag n drop */
           blockType={pp.type === 'export' ? 'lookup' : 'import'}
           flowId={flowId}
+          index={index}
           resource={resource}
           resourceType={resourceType}
           actions={processorActions}
