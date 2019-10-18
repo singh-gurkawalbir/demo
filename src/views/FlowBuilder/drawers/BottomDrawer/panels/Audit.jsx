@@ -1,5 +1,5 @@
 import { makeStyles } from '@material-ui/styles';
-import AuditLog from '../../../../components/AuditLog';
+import AuditLog from '../../../../../components/AuditLog';
 
 const useStyles = makeStyles(theme => ({
   root: {
