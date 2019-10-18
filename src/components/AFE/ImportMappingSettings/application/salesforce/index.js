@@ -1,4 +1,5 @@
 import MappingUtil from '../../../../../utils/mapping';
+import dateTimezones from '../../../../../utils/dateTimezones';
 
 export default {
   getMetaData: (params = {}) => {
@@ -10,66 +11,15 @@ export default {
       generateFields,
       options,
     } = params;
-    const { connectionId, recordType } = options;
-    const fieldId =
-      generate && generate.indexOf('[*].') !== -1
-        ? generate.split('[*].')[1]
-        : generate;
-    const fieldMetadata = generateFields.find(gen => gen.id === generate);
-    let generateFieldType;
-
-    if (
-      fieldMetadata &&
-      fieldMetadata.id === 'item[*].item.internalid' &&
-      fieldMetadata.type === 'select'
-    ) {
-      fieldMetadata.type = 'integer';
-      generateFieldType = 'integer';
-    }
-
-    if (
-      fieldMetadata &&
-      (fieldMetadata.type === 'select' ||
-        fieldMetadata.type === 'multiselect') &&
-      !generateFieldType
-    ) {
-      generateFieldType = fieldMetadata.type;
-    } else if (
-      fieldMetadata &&
-      (fieldMetadata.type === 'checkbox' || fieldMetadata.type === 'radio') &&
-      !generateFieldType
-    ) {
-      generateFieldType = 'checkbox';
-    }
-
+    const {
+      connectionId,
+      // sObjectType
+    } = options;
+    const selectedGenerateObj = generateFields.find(
+      field => field.id === generate
+    );
     const fieldMeta = {
       fieldMap: {
-        dataType: {
-          id: 'dataType',
-          name: 'dataType',
-          type: 'select',
-          label: 'Data Type',
-          defaultValue: value.dataType,
-          options: [
-            {
-              items: [
-                { label: 'String', value: 'string' },
-                { label: 'Number', value: 'number' },
-                { label: 'Boolean', value: 'boolean' },
-                { label: 'Date', value: 'date' },
-                { label: 'Number Array', value: 'numberarray' },
-                { label: 'String Array', value: 'stringarray' },
-              ],
-            },
-          ],
-        },
-        discardIfEmpty: {
-          id: 'discardIfEmpty',
-          name: 'discardIfEmpty',
-          type: 'checkbox',
-          defaultValue: value.discardIfEmpty || false,
-          label: 'Discard If Empty',
-        },
         immutable: {
           id: 'immutable',
           name: 'immutable',
@@ -77,12 +27,12 @@ export default {
           defaultValue: value.immutable || false,
           label: 'Immutable (Advanced)',
         },
-        useAsAnInitializeValue: {
-          id: 'useAsAnInitializeValue',
-          name: 'useAsAnInitializeValue',
+        discardIfEmpty: {
+          id: 'discardIfEmpty',
+          name: 'discardIfEmpty',
           type: 'checkbox',
-          defaultValue: value.useAsAnInitializeValue || false,
-          label: 'Use This Field During Record Initialization',
+          defaultValue: value.discardIfEmpty || false,
+          label: 'Discard If Empty',
         },
         fieldMappingType: {
           id: 'fieldMappingType',
@@ -115,7 +65,7 @@ export default {
           options: [
             {
               items: [
-                { label: 'Dynamic: NetSuite Search', value: 'dynamic' },
+                { label: 'Dynamic: Salesforce Search', value: 'dynamic' },
                 { label: 'Static: Value to Value', value: 'static' },
               ],
             },
@@ -138,8 +88,6 @@ export default {
         'lookup.resultField': {
           id: 'lookup.resultField',
           name: 'resultField',
-          type: 'refreshableselect',
-          label: 'Value Field',
           mode: 'suitescript',
           defaultValue: '',
           filterKey: 'searchColumns',
@@ -154,17 +102,13 @@ export default {
           id: 'lookup.mapList',
           name: '_mapList',
           type: 'staticMap',
-          connectionId: fieldId.indexOf('.internalid') && connectionId,
-          selectField: fieldId
-            ? fieldId.substr(0, fieldId.indexOf('.internalid'))
-            : undefined,
           label: '',
           keyName: 'export',
           keyLabel: 'Export Field',
           valueName: 'import',
-          valueLabel: 'Import Field (HTTP)',
+          valueLabel: 'Import Field (Salesforce)',
           map: lookup.map,
-          recordType,
+          // recordType,
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
             { field: 'lookup.mode', is: ['static'] },
@@ -205,6 +149,58 @@ export default {
           label: 'Expression',
           defaultValue: MappingUtil.getDefaultExpression(value),
           visibleWhen: [{ field: 'fieldMappingType', is: ['multifield'] }],
+        },
+        standardAction: {
+          id: 'standardAction',
+          name: 'standardAction',
+          type: 'radiogroup',
+          defaultValue: MappingUtil.getDefaultActionValue(value),
+          label: 'Action to take if value not found',
+          options: [
+            {
+              items: [
+                {
+                  label: 'Use Empty String as Default Value',
+                  value: 'useEmptyString',
+                },
+                { label: 'Use Null as Default Value', value: 'useNull' },
+                { label: 'Use Custom Default Value', value: 'default' },
+              ],
+            },
+          ],
+          visibleWhen: [
+            { field: 'fieldMappingType', is: ['standard'] },
+            { field: 'fieldMappingType', is: ['multifield'] },
+          ],
+        },
+        default: {
+          id: 'default',
+          name: 'default',
+          type: 'text',
+          label: 'Default Value',
+          visibleWhenAll: [
+            { field: 'standardAction', is: ['default'] },
+            { field: 'fieldMappingType', isNot: ['hardCoded'] },
+            { field: 'fieldMappingType', isNot: ['lookup'] },
+          ],
+          defaultValue: value.default,
+        },
+        defaultSelect: {
+          id: 'defaultSelect',
+          name: 'defaultSelect',
+          type: 'select',
+          label: 'Default Value',
+          visibleWhenAll: [
+            { field: 'standardAction', is: ['default'] },
+            { field: 'fieldMappingType', isNot: ['hardCoded'] },
+            { field: 'fieldMappingType', isNot: ['lookup'] },
+          ],
+          defaultValue: value.default,
+          options: [
+            {
+              items: [],
+            },
+          ],
         },
         hardcodedAction: {
           id: 'hardcodedAction',
@@ -266,11 +262,28 @@ export default {
           id: 'hardcodedDefault',
           name: 'hardcodedDefault',
           type: 'text',
-          label: 'Enter Default Value',
-          placeholder: 'Enter Default Value',
+          label: 'Value',
+          placeholder: '',
           visibleWhenAll: [
             { field: 'hardcodedAction', is: ['default'] },
             { field: 'fieldMappingType', is: ['hardCoded'] },
+          ],
+          defaultValue: value.hardCodedValue,
+        },
+        hardcodedSelect: {
+          id: 'hardcodedSelect',
+          name: 'hardcodedSelect',
+          type: 'select',
+          label: 'Value',
+          placeholder: '',
+          visibleWhenAll: [
+            { field: 'hardcodedAction', is: ['default'] },
+            { field: 'fieldMappingType', is: ['hardCoded'] },
+          ],
+          options: [
+            {
+              items: [],
+            },
           ],
           defaultValue: value.hardCodedValue,
         },
@@ -278,60 +291,59 @@ export default {
           id: 'lookupDefault',
           name: 'lookupDefault',
           type: 'text',
-          label: 'Enter Default Value',
-          placeholder: 'Enter Default Value',
+          label: 'Default Lookup Value',
+          // placeholder: 'Enter Default Value',
           visibleWhenAll: [
             { field: 'lookupAction', is: ['default'] },
             { field: 'fieldMappingType', is: ['lookup'] },
           ],
           defaultValue: lookup.default,
         },
-        hardcodedSelect: {
-          id: 'hardcodedSelect',
-          name: 'hardcodedSelect',
-          type: 'refreshableselect',
-          label: 'Value',
-          mode: 'suitescript',
-          multiselect: generateFieldType === 'multiselect',
-          // filterKey: 'searchColumns',
-          defaultValue:
-            generateFieldType === 'multiselect' && value.hardCodedValue
-              ? value.hardCodedValue.split(',')
-              : value.hardCodedValue,
-          recordType,
-          resourceType: 'recordTypes',
-          selectField: fieldId
-            ? fieldId.substr(0, fieldId.indexOf('.internalid'))
-            : undefined,
-          connectionId,
-          // refreshOptionsOnChangesTo: ['lookup.recordType'],
-          visibleWhenAll: [{ field: 'fieldMappingType', is: ['hardCoded'] }],
-        },
-        hardcodedCheckbox: {
-          id: 'hardcodedCheckbox',
-          name: 'hardcodedCheckbox',
-          type: 'radiogroup',
-          label: 'Value',
-          defaultValue: value.hardCodedValue,
-          showOptionsHorizontally: true,
-          fullWidth: true,
+        lookupSelect: {
+          id: 'lookupSelect',
+          name: 'lookupSelect',
+          type: 'select',
+          label: 'Default Lookup Value',
+          visibleWhenAll: [
+            { field: 'lookupAction', is: ['default'] },
+            { field: 'fieldMappingType', is: ['lookup'] },
+          ],
           options: [
             {
-              items: [
-                { label: 'True', value: 'true' },
-                { label: 'False', value: 'false' },
-              ],
+              items: [],
             },
           ],
-          visibleWhenAll: [{ field: 'fieldMappingType', is: ['hardCoded'] }],
+          defaultValue: lookup.default,
+        },
+        dateFormat: {
+          id: 'dateFormat',
+          name: 'dateFormat',
+          type: 'text',
+          visibleWhen: [{ field: 'fieldMappingType', is: ['standard'] }],
+        },
+        timeZone: {
+          id: 'timeZone',
+          name: 'timeZone',
+          type: 'select',
+          label: 'Time Zone',
+          options: [
+            {
+              items:
+                (dateTimezones &&
+                  dateTimezones.map(date => ({
+                    label: date.value,
+                    value: date.name,
+                  }))) ||
+                [],
+            },
+          ],
+          visibleWhen: [{ field: 'fieldMappingType', is: ['standard'] }],
         },
       },
       layout: {
         fields: [
-          'dataType',
-          'discardIfEmpty',
           'immutable',
-          'useAsAnInitializeValue',
+          'discardIfEmpty',
           'fieldMappingType',
           'lookup.mode',
           'lookup.recordType',
@@ -340,12 +352,17 @@ export default {
           'functions',
           'extract',
           'expression',
+          'standardAction',
+          'default',
+          'defaultSelect',
           'hardcodedAction',
           'lookupAction',
           'hardcodedDefault',
-          'lookupDefault',
           'hardcodedSelect',
-          'hardcodedCheckbox',
+          'lookupDefault',
+          'lookupSelect',
+          'dateFormat',
+          'dateFormat',
         ],
       },
       optionsHandler: (fieldId, fields) => {
@@ -388,37 +405,37 @@ export default {
     };
     let { fields } = fieldMeta.layout;
 
-    if (
-      recordType &&
-      fieldId.indexOf('.internalid') !== -1 &&
-      (generateFieldType === 'select' || generateFieldType === 'multiselect')
-    ) {
-      delete fieldMeta.fieldMap.hardcodedAction;
-      delete fieldMeta.fieldMap.hardcodedDefault;
-      delete fieldMeta.fieldMap.hardcodedCheckbox;
+    if (selectedGenerateObj && selectedGenerateObj.type !== 'date') {
+      delete fieldMeta.fieldMap.dateFormat;
+      delete fieldMeta.fieldMap.timeZone;
 
+      fields = fields.filter(el => el !== 'dateFormat' && el !== 'timeZone');
+    }
+
+    if (selectedGenerateObj && selectedGenerateObj.type === 'textarea') {
+      fieldMeta.fieldMap.hardcodedDefault.type = 'textarea';
+      fieldMeta.fieldMap.lookupDefault.type = 'textarea';
+      fieldMeta.fieldMap.default.type = 'textarea';
+      delete fieldMeta.fieldMap.hardcodedSelect;
+      delete fieldMeta.fieldMap.lookupSelect;
+      delete fieldMeta.fieldMap.defaultSelect;
       fields = fields.filter(
         el =>
-          el !== 'hardcodedAction' &&
-          el !== 'hardcodedDefault' &&
-          el !== 'hardcodedCheckbox'
+          el !== 'hardcodedSelect' &&
+          el !== 'lookupSelect' &&
+          el !== 'defaultSelect'
       );
-    } else if (generateFieldType === 'checkbox') {
-      delete fieldMeta.fieldMap.hardcodedAction;
-      delete fieldMeta.fieldMap.hardcodedDefault;
-      delete fieldMeta.fieldMap.hardcodedSelect;
+    }
 
+    if (selectedGenerateObj && selectedGenerateObj.type === 'picklist') {
+      delete fieldMeta.fieldMap.hardcodedDefault;
+      delete fieldMeta.fieldMap.lookupDefault;
+      delete fieldMeta.fieldMap.default;
       fields = fields.filter(
         el =>
-          el !== 'hardcodedAction' &&
           el !== 'hardcodedDefault' &&
-          el !== 'hardcodedSelect'
-      );
-    } else {
-      delete fieldMeta.fieldMap.hardcodedSelect;
-      delete fieldMeta.fieldMap.hardcodedCheckbox;
-      fields = fields.filter(
-        el => el !== 'hardcodedSelect' && el !== 'hardcodedCheckbox'
+          el !== 'lookupDefault' &&
+          el !== 'default'
       );
     }
 

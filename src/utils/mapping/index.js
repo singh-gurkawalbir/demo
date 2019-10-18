@@ -1,7 +1,16 @@
 import { adaptorTypeMap } from '../resource';
 import generateList from './sampleGenerateData';
+import salesforceGenerateList from './sampleSFGenerateData';
 import MappingUtil from '.';
 import NetsuiteMapping from './application/netsuite';
+
+const LookupResponseMappingExtracts = [
+  'data',
+  'errors',
+  'ignored',
+  'statusCode',
+];
+const ImportResponseMappingExtracts = ['id', 'errors', 'ignored', 'statusCode'];
 
 export default {
   getDefaultDataType: value => {
@@ -113,24 +122,6 @@ export default {
       default:
     }
   },
-  getRecordTypeFromResource: (resourceObj, appType) => {
-    if (!resourceObj) {
-      return;
-    }
-
-    let recordType;
-
-    switch (appType) {
-      case adaptorTypeMap.NetSuiteDistributedImport:
-        recordType =
-          resourceObj.netsuite_da && resourceObj.netsuite_da.recordType;
-        break;
-      case adaptorTypeMap.SalesforceImport:
-      default:
-    }
-
-    return recordType;
-  },
   getMappingFromResource: (resourceObj, appType) => {
     if (!resourceObj) {
       return;
@@ -177,8 +168,8 @@ export default {
       case adaptorTypeMap.MongodbImport:
       case adaptorTypeMap.WrapperImport:
       case adaptorTypeMap.RDBMSImport:
-        return MappingUtil.getFieldsAndListMappings({ mappings });
       case adaptorTypeMap.SalesforceImport:
+        return MappingUtil.getFieldsAndListMappings({ mappings });
       default:
     }
   },
@@ -268,4 +259,16 @@ export default {
     return formattedMapping;
   },
   getSampleGenerateFields: () => generateList,
+  getSFSampleGenerateFields: () => salesforceGenerateList,
+  getResponseMappingDefaultExtracts: resourceType => {
+    const extractList =
+      resourceType === 'imports'
+        ? ImportResponseMappingExtracts
+        : LookupResponseMappingExtracts;
+
+    return extractList.map(m => ({
+      id: m,
+      name: m,
+    }));
+  },
 };

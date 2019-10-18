@@ -125,7 +125,7 @@ export default function ImportMapping(props) {
   // generateFields and extractFields are passed as an array of field names
   const {
     title,
-    connectionId,
+    // connectionId,
     showDialogClose,
     mappings = {},
     lookups = [],
@@ -134,8 +134,9 @@ export default function ImportMapping(props) {
     generateFields = [],
     extractFields = [],
     onCancel,
-    recordType,
+    // recordType,
     onSave,
+    options,
   } = props;
   const [changeIdentifier, setChangeIdentifier] = useState(0);
   const [lookupState, setLookup] = useState(lookups);
@@ -364,10 +365,11 @@ export default function ImportMapping(props) {
                         id={mapping.index}
                         onSave={handleSettingsClose}
                         value={mapping}
-                        recordType={recordType}
+                        options={options}
+                        // recordType={recordType}
                         generate={mapping.generate}
                         application={application}
-                        connectionId={connectionId}
+                        // connectionId={connectionId}
                         updateLookup={updateLookupHandler}
                         lookup={
                           mapping &&

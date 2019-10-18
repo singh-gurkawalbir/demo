@@ -1,6 +1,7 @@
 import shortid from 'shortid';
 import RestMappingSettings from './rest';
 import NetsuiteMappingSettings from './netsuite';
+import SalesforceMappingSettings from './salesforce';
 import FTPMappingSettings from './ftp';
 import { adaptorTypeMap } from '../../../../utils/resource';
 
@@ -51,17 +52,18 @@ const getFormattedLookup = (lookup, formVal) => {
 };
 
 export default {
-  getMetaData: options => {
+  getMetaData: params => {
     const {
       application,
       value,
       lookup = {},
       extractFields,
-      connectionId,
-      recordType,
+      // connectionId,
+      // recordType,
       generate,
       generateFields,
-    } = options;
+      options,
+    } = params;
     let fieldMeta = {};
 
     switch (application) {
@@ -77,10 +79,20 @@ export default {
           value,
           lookup,
           extractFields,
-          connectionId,
-          recordType,
           generate,
           generateFields,
+          options,
+        });
+        break;
+      case adaptorTypeMap.SalesforceImport:
+        fieldMeta = SalesforceMappingSettings.getMetaData({
+          value,
+          lookup,
+          extractFields,
+
+          generate,
+          generateFields,
+          options,
         });
         break;
       case adaptorTypeMap.AS2Import:

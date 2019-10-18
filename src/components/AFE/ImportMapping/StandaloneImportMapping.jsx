@@ -24,20 +24,35 @@ export default function StandaloneImportMapping(props) {
      extrct fields to be extracted later when flow builder is ready
      replace getSampleGenerateFields by fetching sample data
   */
-  const generateFields = MappingUtil.getSampleGenerateFields();
+  const generateFields = MappingUtil.getSFSampleGenerateFields();
+  // MappingUtil.getSampleGenerateFields();
   const extractFields = [];
   const resourceData = useSelector(state =>
     selectors.resource(state, 'imports', resourceId)
   );
+  const options = {};
   const resourceType = ResourceUtil.getResourceSubType(resourceData);
+
+  if (resourceType.type === ResourceUtil.adaptorTypeMap.SalesforceImport) {
+    options.api = resourceData.salesforce.api;
+    options.connectionId = connectionId;
+    options.sObjectType = resourceData.salesforce.sObjectType;
+  }
+
+  if (resourceType.type === ResourceUtil.adaptorTypeMap.NetSuiteImport) {
+    options.recordType =
+      resourceData.netsuite_da && resourceData.netsuite_da.recordType;
+    options.connectionId = connectionId;
+  }
+
   const mappings = MappingUtil.getMappingFromResource(
     resourceData,
     resourceType.type
   );
-  const recordType = MappingUtil.getRecordTypeFromResource(
-    resourceData,
-    resourceType.type
-  );
+  // const recordType = MappingUtil.getRecordTypeFromResource(
+  //   resourceData,
+  //   resourceType.type
+  // );
   // check for case when there is no lookups and we saving without lookups
   const lookups = LookupUtil.getLookupFromResource(
     resourceData,
@@ -83,8 +98,8 @@ export default function StandaloneImportMapping(props) {
       <ImportMapping
         title="Define Import Mapping"
         id={id}
-        recordType={recordType}
-        connectionId={connectionId}
+        // recordType={recordType}
+        // connectionId={connectionId}
         application={resourceType.type}
         lookups={lookups}
         isStandaloneMapping
@@ -95,6 +110,7 @@ export default function StandaloneImportMapping(props) {
         extractFields={extractFields}
         onCancel={handleCancel}
         onSave={handleSave}
+        options={options}
       />
     </LoadResources>
   );
