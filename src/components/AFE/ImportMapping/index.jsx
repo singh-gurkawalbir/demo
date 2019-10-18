@@ -199,17 +199,14 @@ export default function ImportMapping(props) {
   }, [application, data, handleFetchResource]);
 
   if (application === ResourceUtil.adaptorTypeMap.SalesforceImport) {
-    generateList = data.map(d => ({
-      id: d.value,
-      name: d.label,
-      type: d.type,
-      options: d.picklistValues,
-    }));
-  } else if (
-    application === ResourceUtil.adaptorTypeMap.NetSuiteDistributedImport
-  ) {
-    // Hardcoding data for netsuite
-    generateList = MappingUtil.getSampleGenerateFields();
+    generateList =
+      data &&
+      data.map(d => ({
+        id: d.value,
+        name: d.label,
+        type: d.type,
+        options: d.picklistValues,
+      }));
   }
 
   const validateMapping = mappings => {
