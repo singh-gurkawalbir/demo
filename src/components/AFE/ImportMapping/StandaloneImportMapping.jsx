@@ -24,8 +24,7 @@ export default function StandaloneImportMapping(props) {
      extrct fields to be extracted later when flow builder is ready
      replace getSampleGenerateFields by fetching sample data
   */
-  const generateFields = MappingUtil.getSFSampleGenerateFields();
-  // MappingUtil.getSampleGenerateFields();
+  const generateFields = MappingUtil.getSampleGenerateFields();
   const extractFields = [];
   const resourceData = useSelector(state =>
     selectors.resource(state, 'imports', resourceId)
