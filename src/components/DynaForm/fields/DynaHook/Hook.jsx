@@ -7,9 +7,10 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-import * as selectors from '../../../reducers';
-import JavaScriptEditorDialog from '../../../components/AFE/JavaScriptEditor/Dialog';
-import EditIcon from '../../icons/EditIcon';
+import { isFunction } from 'lodash';
+import * as selectors from '../../../../reducers';
+import JavaScriptEditorDialog from '../../../../components/AFE/JavaScriptEditor/Dialog';
+import EditIcon from '../../../icons/EditIcon';
 
 const useStyles = makeStyles(theme => ({
   select: {
@@ -93,10 +94,15 @@ export default function DynaHook(props) {
     required,
     value = {},
     label,
-    hookType,
+    hookType = 'script',
     preHookData = {},
+    requestForPreHookData,
   } = props;
   const handleEditorClick = () => {
+    if (requestForPreHookData && isFunction(requestForPreHookData)) {
+      requestForPreHookData();
+    }
+
     setShowEditor(!showEditor);
   };
 
@@ -120,6 +126,7 @@ export default function DynaHook(props) {
         <JavaScriptEditorDialog
           title="Script Editor"
           id={id}
+          key={id}
           data={JSON.stringify(preHookData, null, 2)}
           scriptId={value._scriptId}
           entryFunction={value.function}

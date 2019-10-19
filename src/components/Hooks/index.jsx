@@ -1,100 +1,83 @@
+import { useSelector } from 'react-redux';
 import { Button } from '@material-ui/core';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
-import DynaForm from '../../components/DynaForm';
-import DynaSubmit from '../../components/DynaForm/DynaSubmit';
-import LoadResources from '../../components/LoadResources';
-import Spinner from '../Spinner';
+import DynaForm from '../DynaForm';
+import DynaSubmit from '../DynaForm/DynaSubmit';
+import LoadResources from '../LoadResources';
+import getHooksMetadata from './hooksMetadata';
+import { resourceData } from '../../reducers';
+import { isValidHook, importHooksList } from '../../utils/hooks';
 
 export default function Hooks(props) {
   const {
     onSave,
     onCancel,
-    preHookData,
-    preHookDataStatus,
     defaultValue = {},
+    resourceType = 'exports',
+    resourceId,
+    flowId,
   } = props;
   const [enquesnackbar] = useEnqueueSnackbar();
-
-  // Shows loading icon till it gets sample data
-  if (!preHookDataStatus || preHookDataStatus === 'requested') {
-    return <Spinner />;
-  }
-
   const defaultHookType =
     defaultValue && defaultValue._stackId ? 'stack' : 'script';
-  const fieldMeta = {
-    fieldMap: {
-      hookType: {
-        id: 'hookType',
-        name: 'hookType',
-        type: 'radiogroup',
-        label: 'Hook Type',
-        defaultValue: defaultHookType,
-        showOptionsHorizontally: true,
-        fullWidth: true,
-        options: [
-          {
-            items: [
-              { label: 'Script', value: 'script' },
-              { label: 'Stack', value: 'stack' },
-            ],
-          },
-        ],
-      },
-      script: {
-        id: 'script',
-        name: 'script',
-        type: 'hook',
-        hookType: 'script',
-        preHookData,
-        defaultValue: defaultHookType === 'script' ? defaultValue : {},
-        visibleWhen: [{ field: 'hookType', is: ['script'] }],
-      },
-      stack: {
-        id: 'stack',
-        name: 'stack',
-        type: 'hook',
-        hookType: 'stack',
-        defaultValue: defaultHookType === 'stack' ? defaultValue : {},
-        visibleWhen: [{ field: 'hookType', is: ['stack'] }],
-      },
-    },
-    layout: {
-      fields: ['hookType', 'script', 'stack'],
-    },
-  };
+  const { merged: resource } = useSelector(state =>
+    resourceData(state, resourceType, resourceId, 'value')
+  );
+  const fieldMeta = getHooksMetadata(resourceType, resource, {
+    defaultHookType,
+    defaultValue,
+    resourceId,
+    flowId,
+  });
   const handleSubmit = values => {
+    const { hookType } = values;
     const selectedHook = {};
+    let isInvalidHook = false;
 
-    if (values.hookType === 'script') {
-      selectedHook.function = values.script && values.script.function;
-      selectedHook._scriptId = values.script && values.script._scriptId;
+    if (resourceType === 'exports') {
+      const value = values[`${hookType}-preSavePage`];
+
+      if (!isValidHook(value)) {
+        isInvalidHook = true;
+      } else {
+        selectedHook.preSavePage = value;
+      }
     } else {
-      selectedHook.function = values.stack && values.stack.function;
-      selectedHook._stackId = values.stack && values.stack._stackId;
+      importHooksList.forEach(hook => {
+        const value = values[`${hookType}-${hook}`];
+
+        if (value) {
+          if (!isValidHook(value, true)) {
+            isInvalidHook = true;
+
+            return;
+          }
+
+          selectedHook[hook] = value;
+        }
+      });
     }
 
-    if (
-      selectedHook.function &&
-      (selectedHook._scriptId || selectedHook._stackId)
-    ) {
-      onSave(selectedHook);
-    } else {
-      enquesnackbar({
+    if (isInvalidHook) {
+      return enquesnackbar({
         message: 'Please fill the mandatory fields',
         variant: 'error',
       });
     }
+
+    onSave(selectedHook);
   };
 
   return (
     <LoadResources resources="scripts, stacks">
       <div>
         <DynaForm fieldMeta={fieldMeta}>
-          <Button data-test="cancelLookupForm" onClick={onCancel}>
+          <Button data-test={`cancelHook-${resourceId}`} onClick={onCancel}>
             Cancel
           </Button>
-          <DynaSubmit data-test="saveLookupForm" onClick={handleSubmit}>
+          <DynaSubmit
+            data-test={`saveHook-${resourceId}`}
+            onClick={handleSubmit}>
             Save
           </DynaSubmit>
         </DynaForm>

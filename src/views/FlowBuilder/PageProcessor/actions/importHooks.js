@@ -4,9 +4,8 @@ import {
   DialogContent,
   Typography,
 } from '@material-ui/core';
-import { useEffect, Fragment } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import * as selectors from '../../../../reducers';
+import { Fragment } from 'react';
+import { useDispatch } from 'react-redux';
 import Icon from '../../../../components/icons/HookIcon';
 import actions from '../../../../actions';
 import Hooks from '../../../../components/Hooks';
@@ -15,43 +14,13 @@ function HooksDialog({ flowId, resource, resourceType, open, onClose }) {
   const dispatch = useDispatch();
   const resourceId = resource._id;
   const defaultValue = (resource.hooks && resource.hooks.preSavePage) || {};
-  const preHookData = useSelector(state => {
-    const sampleData = selectors.getSampleData(
-      state,
-      flowId,
-      resourceId,
-      'hooks'
-    );
-
-    if (sampleData) {
-      // @TODO Raghu Finalize on the structure
-      return { errors: [], data: [sampleData] };
-    }
-  });
-  const preHookDataStatus = useSelector(state =>
-    selectors.getSampleDataStatus(state, flowId, resourceId, 'hooks')
-  );
   const onSave = selectedHook => {
-    const hooks = { preSavePage: selectedHook };
-    const patchSet = [{ op: 'replace', path: '/hooks', value: hooks }];
+    const patchSet = [{ op: 'replace', path: '/hooks', value: selectedHook }];
 
     dispatch(actions.resource.patchStaged(resourceId, patchSet, 'value'));
     dispatch(actions.resource.commitStaged('exports', resourceId, 'value'));
     onClose();
   };
-
-  useEffect(() => {
-    if (!preHookData) {
-      dispatch(
-        actions.flowData.fetchSampleData(
-          flowId,
-          resourceId,
-          resourceType,
-          'hooks'
-        )
-      );
-    }
-  }, [dispatch, flowId, preHookData, resourceId, resourceType]);
 
   return (
     <Dialog open={open}>
@@ -62,9 +31,10 @@ function HooksDialog({ flowId, resource, resourceType, open, onClose }) {
         <Hooks
           onSave={onSave}
           onCancel={onClose}
-          preHookData={preHookData}
-          preHookDataStatus={preHookDataStatus}
           defaultValue={defaultValue}
+          flowId={flowId}
+          resourceId={resourceId}
+          resourceType={resourceType}
         />
       </DialogContent>
     </Dialog>
