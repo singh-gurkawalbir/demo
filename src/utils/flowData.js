@@ -48,9 +48,9 @@ export const reset = (flow, index, isPageGenerator) => {
   }
 };
 
-export const compare = (currentList, updatedList) => {
+export const compare = (currentList = [], updatedList = []) => {
   const changedIndex = updatedList.findIndex((item, index) => {
-    const currentItem = currentList[index];
+    const currentItem = currentList[index] || {};
 
     return (
       (item._exportId || item._importId) !==
