@@ -2,22 +2,7 @@ import applications, {
   getWebhookConnectors,
   getWebhookOnlyConnectors,
 } from '../../../../constants/applications';
-
-const appTypeToAdaptorType = {
-  salesforce: 'Salesforce',
-  mongodb: 'Mongodb',
-  postgresql: 'RDBMS',
-  mysql: 'RDBMS',
-  mssql: 'RDBMS',
-  netsuite: 'NetSuite',
-  ftp: 'FTP',
-  http: 'HTTP',
-  rest: 'REST',
-  s3: 'S3',
-  wrapper: 'Wrapper',
-  as2: 'AS2',
-  webhook: 'Webhook',
-};
+import { appTypeToAdaptorType } from '../../../../utils/resource';
 
 export default {
   preSave: ({ type, application, executionType, apiType, ...rest }) => {

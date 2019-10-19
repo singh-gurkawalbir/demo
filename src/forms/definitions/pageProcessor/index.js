@@ -1,20 +1,6 @@
 import applications from '../../../constants/applications';
+import { appTypeToAdaptorType } from '../../../utils/resource';
 
-const appTypeToAdaptorType = {
-  salesforce: 'Salesforce',
-  mongodb: 'Mongodb',
-  postgresql: 'RDBMS',
-  mysql: 'RDBMS',
-  mssql: 'RDBMS',
-  netsuite: 'NetSuite',
-  ftp: 'FTP',
-  http: 'HTTP',
-  rest: 'REST',
-  s3: 'S3',
-  wrapper: 'Wrapper',
-  as2: 'AS2',
-  webhook: 'Webhook',
-};
 const visibleWhenHasApp = { field: 'application', isNot: [''] };
 const visibleWhenIsNew = { field: 'isNew', is: ['true'] };
 
@@ -56,6 +42,14 @@ export default {
         },
       ],
     },
+    application: {
+      id: 'application',
+      name: 'application',
+      type: 'selectapplication',
+      placeholder: 'Select application',
+      defaultValue: r => (r && r.application) || '',
+      required: true,
+    },
     isNew: {
       id: 'isNew',
       name: 'isNew',
@@ -74,30 +68,39 @@ export default {
           ],
         },
       ],
+      visibleWhenAll: [{ field: 'application', isNot: [''] }],
     },
 
-    existingResource: {
-      id: 'existingId',
-      name: 'existingId',
+    existingImport: {
+      id: 'importId',
+      name: 'importId',
       type: 'selectresource',
       resourceType: 'imports',
       label: 'Existing Import',
       defaultValue: '',
       required: true,
       allowEdit: true,
-
-      // refreshOptionsOnChangesTo: ['application'],
-      visibleWhen: [{ field: 'isNew', is: ['false'] }],
+      refreshOptionsOnChangesTo: ['application'],
+      visibleWhenAll: [
+        { field: 'isNew', is: ['false'] },
+        { field: 'resourceType', is: ['imports'] },
+      ],
     },
 
-    application: {
-      id: 'application',
-      name: 'application',
-      type: 'selectapplication',
-      placeholder: 'Select application',
-      defaultValue: r => (r && r.application) || '',
+    existingExport: {
+      id: 'exportId',
+      name: 'exportId',
+      type: 'selectresource',
+      resourceType: 'exports',
+      label: 'Existing Lookup',
+      defaultValue: '',
       required: true,
-      visibleWhen: [visibleWhenIsNew],
+      allowEdit: true,
+      refreshOptionsOnChangesTo: ['application'],
+      visibleWhenAll: [
+        { field: 'isNew', is: ['false'] },
+        { field: 'resourceType', is: ['exports'] },
+      ],
     },
 
     connection: {
@@ -137,9 +140,10 @@ export default {
   layout: {
     fields: [
       'resourceType',
-      'isNew',
-      'existingResource',
       'application',
+      'isNew',
+      'existingImport',
+      'existingExport',
       'connection',
       'name',
       'description',
@@ -147,12 +151,13 @@ export default {
   },
   optionsHandler: (fieldId, fields) => {
     const appField = fields.find(field => field.id === 'application');
+    const adaptorTypeSuffix = fieldId === 'importId' ? 'Import' : 'Export';
     const app = appField
       ? applications.find(a => a.id === appField.value) || {}
       : {};
 
     if (fieldId === 'name') {
-      return `New ${app.name} Import`;
+      return `New ${app.name} ${adaptorTypeSuffix}`;
     }
 
     if (fieldId === 'connection') {
@@ -161,6 +166,26 @@ export default {
       if (app.assistant) {
         filter.assistant = app.assistant;
       }
+
+      return { filter };
+    }
+
+    // console.log('fieldId', fieldId);
+
+    if (['importId', 'exportId'].includes(fieldId)) {
+      const adaptorTypePrefix = appTypeToAdaptorType[app.type];
+
+      if (!adaptorTypePrefix) return;
+
+      const filter = {
+        adaptorType: `${adaptorTypePrefix}${adaptorTypeSuffix}`,
+      };
+
+      if (app.assistant) {
+        filter.assistant = app.assistant;
+      }
+
+      console.log(`filter:`, filter);
 
       return { filter };
     }
