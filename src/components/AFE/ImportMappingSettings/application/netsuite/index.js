@@ -163,6 +163,12 @@ export default {
           keyLabel: 'Export Field',
           valueName: 'import',
           valueLabel: 'Import Field (HTTP)',
+          defaultValue:
+            lookup.map &&
+            Object.keys(lookup.map).map(key => ({
+              export: key,
+              import: lookup.map[key],
+            })),
           map: lookup.map,
           recordType,
           visibleWhenAll: [

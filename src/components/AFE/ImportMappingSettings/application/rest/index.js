@@ -142,6 +142,12 @@ export default {
           keyLabel: 'Export Field',
           valueName: 'import',
           valueLabel: 'Import Field (REST)',
+          defaultValue:
+            lookup.map &&
+            Object.keys(lookup.map).map(key => ({
+              export: key,
+              import: lookup.map[key],
+            })),
           map: lookup.map,
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
