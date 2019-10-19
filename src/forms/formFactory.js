@@ -1,5 +1,4 @@
-import { deepClone } from 'fast-json-patch';
-import { get } from 'lodash';
+import { get, cloneDeep } from 'lodash';
 import masterFieldHash from '../forms/fieldDefinitions';
 import formMeta from './definitions';
 import { getResourceSubType } from '../utils/resource';
@@ -18,9 +17,7 @@ const getAllOptionsHandlerSubForms = (
           resourceType
         ].subForms[formId];
 
-        // Is it necessary to make a deepClone
-        if (foundOptionsHandler)
-          optionsHandler.push(deepClone(foundOptionsHandler));
+        if (foundOptionsHandler) optionsHandler.push(foundOptionsHandler);
 
         return getAllOptionsHandlerSubForms(
           fieldMap,
@@ -224,7 +221,7 @@ const applyVisibilityRulesToSubForm = (f, resourceType) => {
         throw new Error(
           'Incorrect rule, master fieldFields cannot have both a visibleWhen and visibleWhenAll rule'
         );
-      const fieldCopy = deepClone(field);
+      const fieldCopy = cloneDeep(field);
 
       if (f.visibleWhen) {
         fieldCopy.visibleWhen = fieldCopy.visibleWhen || [];
