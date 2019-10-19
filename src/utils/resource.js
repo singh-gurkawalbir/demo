@@ -68,6 +68,22 @@ export default function getExistingResourcePagePath(resourceDetails = {}) {
   return getRoutePath(path);
 }
 
+export const appTypeToAdaptorType = {
+  salesforce: 'Salesforce',
+  mongodb: 'Mongodb',
+  postgresql: 'RDBMS',
+  mysql: 'RDBMS',
+  mssql: 'RDBMS',
+  netsuite: 'NetSuite',
+  ftp: 'FTP',
+  http: 'HTTP',
+  rest: 'REST',
+  s3: 'S3',
+  wrapper: 'Wrapper',
+  as2: 'AS2',
+  webhook: 'Webhook',
+};
+
 export const adaptorTypeMap = {
   NetSuiteExport: 'netsuite',
   NetSuiteImport: 'netsuite',

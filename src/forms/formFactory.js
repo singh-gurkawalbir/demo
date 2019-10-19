@@ -171,6 +171,7 @@ const getResourceFormAssets = ({
     case 'templates':
     case 'connectors':
     case 'pageProcessor':
+    case 'pageGenerator':
       meta = formMeta[resourceType];
       ({ fieldMap, layout, init, preSave, actions } = meta);
       break;
