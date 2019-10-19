@@ -111,7 +111,7 @@ export default {
           showOptionsHorizontally: true,
           fullWidth: true,
           visibleWhen: [{ field: 'fieldMappingType', is: ['lookup'] }],
-          defaultValue: lookup.map ? 'static' : 'dynamic',
+          defaultValue: lookup.name && (lookup.map ? 'static' : 'dynamic'),
           options: [
             {
               items: [
@@ -268,7 +268,10 @@ export default {
               ],
             },
           ],
-          visibleWhen: [{ field: 'fieldMappingType', is: ['lookup'] }],
+          visibleWhenAll: [
+            { field: 'lookup.mode', is: ['dynamic', 'static'] },
+            { field: 'fieldMappingType', is: ['lookup'] },
+          ],
         },
         hardcodedDefault: {
           id: 'hardcodedDefault',
