@@ -215,7 +215,7 @@ export default {
           id: 'hardcodedAction',
           name: 'hardcodedAction',
           type: 'radiogroup',
-          defaultValue: MappingUtil.getHardCodedActionValue(value),
+          defaultValue: MappingUtil.getHardCodedActionValue(value) || 'default',
           label: 'Options',
           options: [
             {
