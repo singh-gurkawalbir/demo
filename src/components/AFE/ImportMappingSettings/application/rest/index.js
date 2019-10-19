@@ -93,7 +93,6 @@ export default {
           name: '_method',
           type: 'select',
           label: 'HTTP Method',
-          placeholder: 'Required',
           defaultValue: lookup.method,
           options: [
             {
@@ -242,7 +241,9 @@ export default {
           id: 'lookupAction',
           name: 'lookupAction',
           type: 'radiogroup',
-          defaultValue: MappingUtil.getDefaultLookupActionValue(value, lookup),
+          defaultValue:
+            MappingUtil.getDefaultLookupActionValue(value, lookup) ||
+            'disallowFailure',
           label: 'Action to take if unique match not found',
           options: [
             {
