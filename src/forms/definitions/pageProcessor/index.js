@@ -170,8 +170,6 @@ export default {
       return { filter };
     }
 
-    // console.log('fieldId', fieldId);
-
     if (['importId', 'exportId'].includes(fieldId)) {
       const adaptorTypePrefix = appTypeToAdaptorType[app.type];
 
@@ -184,8 +182,6 @@ export default {
       if (app.assistant) {
         filter.assistant = app.assistant;
       }
-
-      console.log(`filter:`, filter);
 
       return { filter };
     }
