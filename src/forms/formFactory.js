@@ -1,5 +1,5 @@
 import { deepClone } from 'fast-json-patch';
-import { get } from 'lodash';
+import { cloneDeep, get } from 'lodash';
 import masterFieldHash from '../forms/fieldDefinitions';
 import formMeta from './definitions';
 import { getResourceSubType } from '../utils/resource';
@@ -224,7 +224,7 @@ const applyVisibilityRulesToSubForm = (f, resourceType) => {
         throw new Error(
           'Incorrect rule, master fieldFields cannot have both a visibleWhen and visibleWhenAll rule'
         );
-      const fieldCopy = deepClone(field);
+      const fieldCopy = cloneDeep(field);
 
       if (f.visibleWhen) {
         fieldCopy.visibleWhen = fieldCopy.visibleWhen || [];
