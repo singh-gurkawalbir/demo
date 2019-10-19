@@ -762,7 +762,10 @@ export function integrationAppFlowSettings(state, id, section, storeId) {
 
     return !!flow.description;
   });
-  showFlowSettings = some(selectedSection.flows, f => !!f.settings);
+  showFlowSettings = some(
+    selectedSection.flows,
+    f => !!f.settings || !!f.sections
+  );
   const { fields, sections: subSections } = selectedSection;
   const preferences = userPreferences(state);
   let flows = resourceList(state, {
@@ -778,6 +781,7 @@ export function integrationAppFlowSettings(state, id, section, storeId) {
   return {
     flows,
     fields,
+    flowSettings: selectedSection.flows,
     sections: subSections,
     hasNSInternalIdLookup,
     hasDescription,

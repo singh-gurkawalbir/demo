@@ -14,6 +14,7 @@ export default {
       hasNSInternalIdLookup,
       showFlowSettings,
       hasDescription,
+      flowSettings,
       showMatchRuleEngine,
     } = actionProps && actionProps.rest;
     const columnData = [];
@@ -55,7 +56,9 @@ export default {
       columnData.push({
         heading: 'Settings',
         value: function ScheduleAction(r) {
-          return <FlowSettings.component resource={r} />;
+          const settings = flowSettings.find(f => f._id === r._id) || {};
+
+          return <FlowSettings resource={r} settings={settings} />;
         },
       });
     }

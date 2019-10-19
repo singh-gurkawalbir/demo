@@ -1,7 +1,6 @@
 import { Fragment, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import { NavLink } from 'react-router-dom';
 import {
   Link,
   Card,
@@ -104,6 +103,7 @@ export default function ConnectorTemplateList(props) {
       });
     } else {
       dispatch(actions.marketplace.installConnector(connector._id, sandbox));
+      props.history.push('/');
     }
   };
 
@@ -154,8 +154,9 @@ export default function ConnectorTemplateList(props) {
               type="template"
             />
             <CardActions className={classes.cardAction}>
-              <NavLink
+              <Link
                 data-test="installTemplate"
+                underline="none"
                 key={template._id}
                 to={getRoutePath(
                   `/marketplace/templates/${template._id}/preview`
@@ -163,7 +164,7 @@ export default function ConnectorTemplateList(props) {
                 <Button variant="text" color="primary">
                   Install <ArrowRightIcon />
                 </Button>
-              </NavLink>
+              </Link>
             </CardActions>
           </Card>
         ))}

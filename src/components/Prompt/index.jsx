@@ -8,7 +8,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import { render, unmountComponentAtNode } from 'react-dom';
 import { Typography, TextField } from '@material-ui/core';
 
-const rootElementId = 'react-confirm-dialog';
+const rootElementId = 'react-prompt-dialog';
 
 export default function Prompt(props) {
   const { title, message, buttons, label } = props;

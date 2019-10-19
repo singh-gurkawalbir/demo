@@ -154,7 +154,7 @@ export default function IntegrationAppSettings(props) {
   ]);
 
   useEffect(() => {
-    if ((!redirected && section === 'flows') || storeChanged) {
+    if ((!redirected && (section === 'flows' || !section)) || storeChanged) {
       if (supportsMultiStore) {
         props.history.push(
           `${`${urlPrefix}/${currentStore}/${connectorFlowSections[0].titleId}`}`

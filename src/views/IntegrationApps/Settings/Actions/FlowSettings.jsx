@@ -1,15 +1,44 @@
 import { IconButton } from '@material-ui/core';
+import { useState, Fragment } from 'react';
 import SettingsIcon from '../../../../components/icons/SettingsIcon';
+import IntegrationAppFlowSettingsDialog from '../../../../components/IntegrationAppFlowSettings';
 
-export default {
-  label: 'Description',
-  component: function FlowSettings() {
-    const handleClick = () => {};
+export default function FlowSettings({ resource, settings }) {
+  const [showDialog, setShowDialog] = useState(false);
+  const flowSettings = {};
+  let disable = false;
 
-    return (
-      <IconButton size="small" onClick={handleClick}>
+  if (settings.settings) {
+    flowSettings.fields = settings.settings;
+  } else if (settings.sections) {
+    flowSettings.sections = settings.sections;
+  } else {
+    disable = true;
+  }
+
+  const handleClose = () => {
+    setShowDialog(false);
+  };
+
+  return (
+    <Fragment>
+      {showDialog && (
+        <IntegrationAppFlowSettingsDialog
+          resource={resource}
+          settings={flowSettings}
+          integrationId={resource._integrationId}
+          onClose={handleClose}
+        />
+      )}
+      <IconButton
+        data-test="flowSettings"
+        disabled={disable}
+        size="small"
+        onClick={() => {
+          setShowDialog(!showDialog);
+        }}>
         <SettingsIcon />
       </IconButton>
-    );
-  },
-};
+    </Fragment>
+  );
+}
