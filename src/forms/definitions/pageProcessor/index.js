@@ -6,7 +6,23 @@ const visibleWhenIsNew = { field: 'isNew', is: ['true'] };
 
 export default {
   init: meta => meta,
-  preSave: ({ application, resourceType, ...rest }) => {
+  preSave: ({
+    isNew,
+    importId,
+    exportId,
+    application,
+    resourceType,
+    ...rest
+  }) => {
+    // slight hack here... page generator forms can
+    // select an existing resource. The /resourceId field is
+    // used by the resource form code within the panel
+    // component of the <ResourceDrawer> to properly
+    // handle this special case.
+    if (isNew === 'false') {
+      return { '/resourceId': importId || exportId };
+    }
+
     const app = applications.find(a => a.id === application) || {};
     const newValues = {
       ...rest,
@@ -60,9 +76,9 @@ export default {
       options: [
         {
           items: [
-            { label: 'Create new', value: 'true' },
+            { label: 'New', value: 'true' },
             {
-              label: 'Choose existing',
+              label: 'Existing',
               value: 'false',
             },
           ],

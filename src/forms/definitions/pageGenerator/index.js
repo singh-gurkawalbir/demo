@@ -7,7 +7,24 @@ import { appTypeToAdaptorType } from '../../../utils/resource';
 const visibleWhenIsNew = { field: 'isNew', is: ['true'] };
 
 export default {
-  preSave: ({ type, application, executionType, apiType, ...rest }) => {
+  preSave: ({
+    isNew,
+    exportId,
+    type,
+    application,
+    executionType,
+    apiType,
+    ...rest
+  }) => {
+    // slight hack here... page generator forms can
+    // select an existing resource. The /resourceId field is
+    // used by the resource form code within the panel
+    // component of the <ResourceDrawer> to properly
+    // handle this special case.
+    if (isNew === 'false' && exportId) {
+      return { '/resourceId': exportId };
+    }
+
     const app = applications.find(a => a.id === application) || {};
     const newValues = {
       ...rest,
@@ -77,9 +94,9 @@ export default {
       options: [
         {
           items: [
-            { label: 'Create new', value: 'true' },
+            { label: 'New', value: 'true' },
             {
-              label: 'Choose existing',
+              label: 'Existing',
               value: 'false',
             },
           ],
@@ -196,6 +213,7 @@ export default {
       'netsuiteApiType',
     ],
   },
+
   optionsHandler: (fieldId, fields) => {
     const appField = fields.find(field => field.id === 'application');
     const app = applications.find(a => a.id === appField.value) || {};

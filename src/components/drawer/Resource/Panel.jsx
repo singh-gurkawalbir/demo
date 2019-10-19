@@ -1,5 +1,5 @@
 import { Fragment } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { Route } from 'react-router-dom';
 import { makeStyles, Typography } from '@material-ui/core';
 import LoadResources from '../../../components/LoadResources';
@@ -7,6 +7,7 @@ import ResourceForm from '../../../components/ResourceFormFactory';
 import { MODEL_PLURAL_TO_LABEL } from '../../../utils/resource';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import * as selectors from '../../../reducers';
+import actions from '../../../actions';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -37,6 +38,7 @@ export default function Panel(props) {
   const { id, resourceType, operation } = match.params;
   const isNew = operation === 'add';
   const classes = useStyles(props);
+  const dispatch = useDispatch();
   const [enqueueSnackbar] = useEnqueueSnackbar();
   const newResourceId = useSelector(state =>
     selectors.createdResourceId(state, id)
@@ -108,7 +110,30 @@ export default function Panel(props) {
 
   function handleSubmitComplete() {
     if (isNew) {
-      props.history.replace(getEditUrl(id));
+      // The following block of logic is used specifically for pageProcessor
+      // and pageGenerator forms. These forms allow a user to choose an
+      // existing resource. In this case we dont have any more work to do,
+      // we just need to match the temp 'new-xxx' id with the one the user
+      // selected.
+      const resourceIdPatch = stagedProcessor.patch.find(
+        p => p.op === 'replace' && p.path === '/resourceId'
+      );
+      const resourceId = resourceIdPatch ? resourceIdPatch.value : null;
+
+      // this is NOT a case where a user selected an existing resource,
+      // so move to step 2 of the form...
+      if (!resourceId) {
+        props.history.replace(getEditUrl(id));
+      }
+
+      // Take care of existing resource selection.
+      enqueueSnackbar({
+        message: `${resourceLabel} added`,
+        variant: 'success',
+      });
+
+      dispatch(actions.resource.created(resourceId, id));
+      onClose();
     } else {
       if (newResourceId)
         enqueueSnackbar({
