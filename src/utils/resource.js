@@ -16,6 +16,7 @@ export const MODEL_PLURAL_TO_LABEL = Object.freeze({
   scripts: 'Script',
   stacks: 'Stack',
   templates: 'Template',
+  connectorLicenses: 'License',
 });
 
 /**
