@@ -21,7 +21,8 @@ export default function DynaStaticMap(props) {
   ];
   let computedValue;
 
-  if (map && !value) {
+  // giving preference to map if present in props
+  if (map) {
     computedValue = Object.keys(map).map(key => ({
       [keyName]: key,
       [valueName]: map[key],
