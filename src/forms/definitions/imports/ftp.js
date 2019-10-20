@@ -41,6 +41,40 @@ export default {
       }
     }
 
+    if (fieldId === 'ftp.fileName') {
+      const fileTypeField = fields.find(field => field.fieldId === 'file.type');
+      const fileNameField = fields.find(
+        field => field.fieldId === 'ftp.fileName'
+      );
+
+      if (
+        fileNameField &&
+        fileNameField.value &&
+        fileTypeField &&
+        fileTypeField.value
+      ) {
+        let extension;
+
+        switch (fileTypeField.value) {
+          case 'filedefinition':
+          case 'fixed':
+          case 'delimited/edifact':
+            extension = 'edi';
+            break;
+          default:
+            extension = fileTypeField.value;
+        }
+
+        const lastDotIndex = fileNameField.value.lastIndexOf('.');
+        const fileNameWithoutExt =
+          lastDotIndex !== -1
+            ? fileNameField.value.substring(0, lastDotIndex)
+            : fileNameField.value;
+
+        fileNameField.value = `${fileNameWithoutExt}.${extension}`;
+      }
+    }
+
     const fileType = fields.find(field => field.id === 'file.type');
 
     if (fieldId === 'uploadFile') {

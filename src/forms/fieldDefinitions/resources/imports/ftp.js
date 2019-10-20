@@ -9,6 +9,8 @@ export default {
     type: 'text',
     label: 'File Name',
     required: true,
+    defaultValue: 'file-{{timestamp}}',
+    refreshOptionsOnChangesTo: ['file.type'],
   },
   'ftp.useTempFile': {
     type: 'checkbox',
