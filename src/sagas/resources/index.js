@@ -125,7 +125,12 @@ export function* downloadFile({ resourceType, id }) {
   }
 }
 
-export function* updateIntegrationSettings({ storeId, integrationId, values }) {
+export function* updateIntegrationSettings({
+  storeId,
+  integrationId,
+  values,
+  flowId,
+}) {
   const path = `/integrations/${integrationId}/settings/persistSettings`;
   let payload = jsonPatch.applyPatch({}, defaultPatchSetConverter(values))
     .newDocument;
@@ -137,7 +142,7 @@ export function* updateIntegrationSettings({ storeId, integrationId, values }) {
   payload = {
     pending: payload,
   };
-  yield call(apiCallWithRetry, {
+  const response = yield call(apiCallWithRetry, {
     path,
     opts: {
       method: 'put',
@@ -145,6 +150,17 @@ export function* updateIntegrationSettings({ storeId, integrationId, values }) {
     },
     message: 'Saving integration settings',
   });
+
+  if (response) {
+    yield put(
+      actions.integrationApp.settings.submitComplete({
+        storeId,
+        integrationId,
+        response,
+        flowId,
+      })
+    );
+  }
 }
 
 export function* patchResource({ resourceType, id, patchSet, options = {} }) {

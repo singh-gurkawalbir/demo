@@ -437,6 +437,19 @@ const integrationApp = {
         storeId,
         values,
       }),
+    init: integrationId =>
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.FORM.INIT, {
+        integrationId,
+      }),
+    clear: integrationId =>
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.FORM.CLEAR, {
+        integrationId,
+      }),
+    submitComplete: params =>
+      action(
+        actionTypes.INTEGRATION_APPS.SETTINGS.FORM.SUBMIT_COMPLETE,
+        params
+      ),
   },
   installer: {
     installStep: (integrationId, installerFunction) =>
@@ -487,16 +500,6 @@ const integrationApp = {
       }),
     uninstallIntegration: integrationId =>
       action(actionTypes.INTEGRATION_APPS.UNINSTALLER.DELETE_INTEGRATION, {
-        integrationId,
-      }),
-  },
-  settings: {
-    init: integrationId =>
-      action(actionTypes.INTEGRATION_APPS.SETTINGS.FORM.INIT, {
-        integrationId,
-      }),
-    clear: integrationId =>
-      action(actionTypes.INTEGRATION_APPS.SETTINGS.FORM.CLEAR, {
         integrationId,
       }),
   },
