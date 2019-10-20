@@ -494,13 +494,10 @@ export function resourceList(state, options) {
   return fromData.resourceList(state && state.data, options);
 }
 
-export function resources(state, resourceType, resourceIds) {
-  return (
-    resourceIds &&
-    resourceIds.map(
-      rId => fromData.resource(state && state.data, resourceType, rId) || {}
-    )
-  );
+export function resourcesByIds(state, resourceType, resourceIds) {
+  const { resources } = resourceList(state, { type: resourceType });
+
+  return resources.filter(r => resourceIds.indexOf(r._id) >= 0);
 }
 
 export function resourceListWithPermissions(state, options) {
@@ -1949,8 +1946,8 @@ export function flowConnectionList(state, flow) {
       connectionIds.push(pp._connectionId);
     }
   });
-  const exportList = resources(state, 'exports', exportIds);
-  const importList = resources(state, 'imports', importIds);
+  const exportList = resourcesByIds(state, 'exports', exportIds);
+  const importList = resourcesByIds(state, 'imports', importIds);
 
   exportList.forEach(e => {
     if (e._connectionId) {
@@ -1963,7 +1960,7 @@ export function flowConnectionList(state, flow) {
     }
   });
   const uniqueConnectionIds = [...new Set(connectionIds)];
-  const flowConnectionList = resources(
+  const flowConnectionList = resourcesByIds(
     state,
     'connections',
     uniqueConnectionIds
