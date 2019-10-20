@@ -107,10 +107,14 @@ export default function DynaHook(props) {
   };
 
   const handleClose = (shouldCommit, editorValues) => {
-    const { template } = editorValues;
+    const { scriptId, entryFunction } = editorValues;
 
     if (shouldCommit) {
-      onFieldChange(id, template);
+      onFieldChange(id, {
+        ...value,
+        _scriptId: scriptId,
+        function: entryFunction,
+      });
     }
 
     handleEditorClick();

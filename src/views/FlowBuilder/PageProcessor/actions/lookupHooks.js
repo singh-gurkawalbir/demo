@@ -16,13 +16,12 @@ function HooksDialog({ flowId, resource, resourceType, open, onClose }) {
   const dispatch = useDispatch();
   const classes = useStyles();
   const resourceId = resource._id;
-  const defaultValue = (resource.hooks && resource.hooks.preSavePage) || {};
+  const defaultValue = resource.hooks || {};
   const onSave = selectedHook => {
-    const hooks = { preSavePage: selectedHook };
-    const patchSet = [{ op: 'replace', path: '/hooks', value: hooks }];
+    const patchSet = [{ op: 'replace', path: '/hooks', value: selectedHook }];
 
     dispatch(actions.resource.patchStaged(resourceId, patchSet, 'value'));
-    dispatch(actions.resource.commitStaged('exports', resourceId, 'value'));
+    dispatch(actions.resource.commitStaged(resourceType, resourceId, 'value'));
     onClose();
   };
 
