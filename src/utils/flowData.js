@@ -13,13 +13,12 @@ const sampleDataStage = {
   },
   imports: {
     inputFilter: 'raw',
-    transform: 'responseTransform',
     importMappingExtract: 'raw',
-    importMappingGenerate: 'sampleData',
     preMap: 'raw',
-    postMap: 'raw',
-    postSubmit: 'raw',
-    postAggregate: 'raw',
+    postMap: 'preMap',
+    postSubmit: 'responseTransform',
+    responseTransform: 'sampleResponse',
+    // postAggregate: 'default',
   },
 };
 

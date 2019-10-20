@@ -4,7 +4,6 @@ import {
   resourceData,
   getSampleData,
   getFlowReferencesForResource,
-  getFlowDataState,
 } from '../../../reducers';
 import { SCOPES } from '../../resourceForm';
 import actionTypes from '../../../actions/types';
@@ -12,52 +11,10 @@ import actions from '../../../actions';
 import { apiCallWithRetry } from '../..';
 import { evaluateExternalProcessor } from '../../../sagas/editor';
 import { getResource } from '../../resources';
+import { fetchFlowResources, refreshResourceData } from './utils';
 import { getSampleDataStage, getParseStageData } from '../../../utils/flowData';
 
 let fetchSampleData;
-
-function* fetchFlowResources({ flow, type, eliminateDataProcessors }) {
-  const resourceMap = {};
-  const resourceList = flow[type];
-
-  if (flow && resourceList && resourceList.length) {
-    for (let index = 0; index < resourceList.length; index += 1) {
-      const resourceInfo = resourceList[index];
-      const resourceType =
-        resourceInfo && resourceInfo.type === 'import' ? 'imports' : 'exports';
-      const resourceId =
-        resourceInfo[resourceType === 'exports' ? '_exportId' : '_importId'];
-      const { merged: resource } = yield select(
-        resourceData,
-        resourceType,
-        resourceId,
-        SCOPES.VALUE
-      );
-
-      if (resource) {
-        const { transform, filter, hooks, ...rest } = resource;
-
-        if (eliminateDataProcessors) {
-          resourceMap[resourceId] = { doc: rest };
-        } else {
-          resourceMap[resourceId] = { doc: resource };
-        }
-
-        resourceMap[resourceId].options = {};
-
-        if (resourceType === 'exports' && resource.type === 'delta') {
-          resourceMap[resourceId].options.postData = {
-            lastExportDateTime: moment()
-              .add(-1, 'y')
-              .toISOString(),
-          };
-        }
-      }
-    }
-  }
-
-  return resourceMap;
-}
 
 function* fetchPageProcessorPreview({ flowId, _pageProcessorId, previewType }) {
   if (!flowId || !_pageProcessorId) return;
@@ -160,7 +117,13 @@ function* fetchPageGeneratorPreview({ flowId, _pageGeneratorId }) {
   );
 }
 
-function* processData({ flowId, resourceId, processorData, isPageGenerator }) {
+function* processData({
+  flowId,
+  resourceId,
+  processorData,
+  isPageGenerator,
+  stage,
+}) {
   try {
     const processedData = yield call(evaluateExternalProcessor, {
       processorData,
@@ -171,7 +134,7 @@ function* processData({ flowId, resourceId, processorData, isPageGenerator }) {
       actions.flowData.receivedProcessorData(
         flowId,
         resourceId,
-        processor,
+        stage || processor,
         processedData,
         isPageGenerator
       )
@@ -198,7 +161,8 @@ function* requestProcessorData({
     getSampleData,
     flowId,
     resourceId,
-    processor
+    processor,
+    { isPageGenerator, isImport: resourceType === 'imports' }
   );
   let processorData;
 
@@ -215,17 +179,15 @@ function* requestProcessorData({
       flowId,
       resourceId,
       processor,
-      { isPageGenerator }
+      { isPageGenerator, isImport: resourceType === 'imports' }
     );
   }
 
-  if (processor === 'transform') {
-    const transformLookup =
-      resourceType === 'imports' ? 'responseTransform' : 'transform';
-    const transform = { ...merged[transformLookup] };
+  if (processor === 'transform' || processor === 'responseTransform') {
+    const transform = { ...merged[processor] };
     const [rule] = transform.rules || [];
 
-    processorData = { data: preProcessedData, rule, processor };
+    processorData = { data: preProcessedData, rule, processor: 'transform' };
   } else if (processor === 'hooks') {
     const { hooks = {} } = { ...merged };
 
@@ -253,49 +215,57 @@ function* requestProcessorData({
       resourceId,
       processorData,
       isPageGenerator,
+      stage: processor,
     });
   }
 }
 
-function* fetchSampleResponseData({ flowId, resourceId, stage }) {
-  const resourceDataState = yield select(getFlowDataState, flowId, resourceId);
-  let responseTransformData = resourceDataState[stage];
-
-  if (!responseTransformData) {
-    const resource = yield select(
-      resourceData,
-      'imports',
-      resourceId,
-      SCOPES.VALUE
-    );
-
-    responseTransformData = resource.responseTransform;
-  }
-
-  yield put(
-    actions.flowData.receivedPreviewData(
-      flowId,
-      resourceId,
-      responseTransformData,
-      stage
-    )
-  );
-}
-
 function* fetchSampleDataForImports({ flowId, resourceId, sampleDataStage }) {
   switch (sampleDataStage) {
-    case 'raw':
+    case 'raw': {
       yield call(fetchPageProcessorPreview, {
         flowId,
         _pageProcessorId: resourceId,
         previewType: sampleDataStage,
       });
       break;
+    }
+
+    case 'sampleResponse': {
+      const { merged: resource } = yield select(
+        resourceData,
+        'imports',
+        resourceId,
+        SCOPES.VALUE
+      );
+
+      yield put(
+        actions.flowData.receivedPreviewData(
+          flowId,
+          resourceId,
+          resource && resource.sampleResponseData,
+          'sampleResponse'
+        )
+      );
+      break;
+    }
+
     case 'responseTransform': {
-      yield call(fetchSampleResponseData, {
+      yield call(requestProcessorData, {
         flowId,
         resourceId,
-        sampleDataStage: 'stage',
+        resourceType: 'imports',
+        processor: 'responseTransform',
+      });
+      break;
+    }
+
+    case 'preMap': {
+      yield call(requestProcessorData, {
+        flowId,
+        resourceId,
+        resourceType: 'imports',
+        processor: 'javascript',
       });
       break;
     }
@@ -349,30 +319,6 @@ function* fetchInputData({
 }
 
 fetchSampleData = fetchInputData;
-
-export function* refreshResourceData({ flowId, resourceId, resourceType }) {
-  const lastStage = 'transform';
-  let isPageGenerator = false;
-
-  if (resourceType !== 'imports') {
-    // find resource in pageGenerators list for the flow. If exists , then make isPageGenerator as true
-    const { merged: flow } = yield select(resourceData, 'flows', flowId);
-    const { pageGenerators = [] } = flow;
-    const resource = pageGenerators.find(pg => pg._exportId === resourceId);
-
-    if (resource) isPageGenerator = true;
-  }
-
-  yield put(
-    actions.flowData.requestProcessorData(
-      flowId,
-      resourceId,
-      resourceType,
-      lastStage,
-      isPageGenerator
-    )
-  );
-}
 
 function* updateFlowsDataForResource({ resourceId, resourceType }) {
   // get flow ids using this resourceId

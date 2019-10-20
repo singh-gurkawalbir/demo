@@ -244,5 +244,5 @@ export function getFlowDataState(state, flowId, resourceId, isPageGenerator) {
     ? flow.pageGeneratorsMap
     : flow.pageProcessorsMap;
 
-  return resourceMap[resourceId];
+  return (resourceMap[resourceId] && resourceMap[resourceId].data) || {};
 }

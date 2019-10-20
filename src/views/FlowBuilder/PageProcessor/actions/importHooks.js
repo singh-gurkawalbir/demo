@@ -18,7 +18,7 @@ function HooksDialog({ flowId, resource, resourceType, open, onClose }) {
     const patchSet = [{ op: 'replace', path: '/hooks', value: selectedHook }];
 
     dispatch(actions.resource.patchStaged(resourceId, patchSet, 'value'));
-    dispatch(actions.resource.commitStaged('exports', resourceId, 'value'));
+    dispatch(actions.resource.commitStaged('imports', resourceId, 'value'));
     onClose();
   };
 
