@@ -160,6 +160,7 @@ const getResourceFormAssets = ({
     case 'agents':
     case 'scripts':
     case 'accesstokens':
+    case 'connectorLicenses':
       meta = formMeta[resourceType];
       ({ fieldMap, preSave, init, layout } = meta);
       break;
@@ -167,6 +168,7 @@ const getResourceFormAssets = ({
     case 'templates':
     case 'connectors':
     case 'pageProcessor':
+    case 'pageGenerator':
       meta = formMeta[resourceType];
       ({ fieldMap, layout, init, preSave, actions } = meta);
       break;
