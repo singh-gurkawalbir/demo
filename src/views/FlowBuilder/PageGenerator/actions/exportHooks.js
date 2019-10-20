@@ -14,7 +14,7 @@ function HooksDialog({ flowId, resource, open, onClose }) {
   const dispatch = useDispatch();
   const resourceId = resource._id;
   const resourceType = 'exports';
-  const defaultValue = (resource.hooks && resource.hooks.preSavePage) || {};
+  const defaultValue = resource.hooks || {};
   const onSave = selectedHook => {
     const patchSet = [{ op: 'replace', path: '/hooks', value: selectedHook }];
 

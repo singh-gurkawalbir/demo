@@ -2,7 +2,7 @@ import { getSupportedHooksForResource } from '../../utils/hooks';
 
 const exportHooksMetadata = ({
   defaultHookType,
-  defaultValue,
+  defaultValue = {},
   flowId,
   resourceId,
   resourceType,
@@ -35,7 +35,8 @@ const exportHooksMetadata = ({
       resourceId,
       resourceType,
       isPageGenerator,
-      defaultValue: defaultHookType === 'script' ? defaultValue : {},
+      defaultValue:
+        defaultHookType === 'script' ? defaultValue.preSavePage : {},
       visibleWhen: [{ field: 'hookType', is: ['script'] }],
     },
     'preSavePage.stack': {
@@ -43,7 +44,7 @@ const exportHooksMetadata = ({
       name: 'stack-preSavePage',
       type: 'hook',
       hookType: 'stack',
-      defaultValue: defaultHookType === 'stack' ? defaultValue : {},
+      defaultValue: defaultHookType === 'stack' ? defaultValue.preSavePage : {},
       visibleWhen: [{ field: 'hookType', is: ['stack'] }],
     },
   },
@@ -56,6 +57,7 @@ const importHooksMetadata = ({
   flowId,
   resourceId,
   resourceType,
+  defaultValue,
   resource,
 }) => {
   const hooks = getSupportedHooksForResource(resource);
@@ -93,7 +95,7 @@ const importHooksMetadata = ({
       flowId,
       resourceId,
       resourceType,
-      defaultValue: {},
+      defaultValue: defaultValue[hook],
       visibleWhen: [{ field: 'hookType', is: ['script'] }],
     };
     fieldMap[stackId] = {
@@ -101,7 +103,7 @@ const importHooksMetadata = ({
       name: `stack-${hook}`,
       type: 'hook',
       hookType: 'stack',
-      defaultValue: {},
+      defaultValue: defaultValue[hook],
       visibleWhen: [{ field: 'hookType', is: ['stack'] }],
     };
     layout.fields.push(scriptId, stackId);

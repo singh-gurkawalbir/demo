@@ -13,7 +13,7 @@ import Hooks from '../../../../components/Hooks';
 function HooksDialog({ flowId, resource, resourceType, open, onClose }) {
   const dispatch = useDispatch();
   const resourceId = resource._id;
-  const defaultValue = (resource.hooks && resource.hooks.preSavePage) || {};
+  const defaultValue = resource.hooks || {};
   const onSave = selectedHook => {
     const patchSet = [{ op: 'replace', path: '/hooks', value: selectedHook }];
 
