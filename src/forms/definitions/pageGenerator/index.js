@@ -1,11 +1,30 @@
 import applications, {
   getWebhookConnectors,
   getWebhookOnlyConnectors,
-} from '../../../../constants/applications';
-import { appTypeToAdaptorType } from '../../../../utils/resource';
+} from '../../../constants/applications';
+import { appTypeToAdaptorType } from '../../../utils/resource';
+
+const visibleWhenIsNew = { field: 'isNew', is: ['true'] };
 
 export default {
-  preSave: ({ type, application, executionType, apiType, ...rest }) => {
+  preSave: ({
+    isNew,
+    exportId,
+    type,
+    application,
+    executionType,
+    apiType,
+    ...rest
+  }) => {
+    // slight hack here... page generator forms can
+    // select an existing resource. The /resourceId field is
+    // used by the resource form code within the panel
+    // component of the <ResourceDrawer> to properly
+    // handle this special case.
+    if (isNew === 'false' && exportId) {
+      return { '/resourceId': exportId };
+    }
+
     const app = applications.find(a => a.id === application) || {};
     const newValues = {
       ...rest,
@@ -65,6 +84,40 @@ export default {
         },
       ],
     },
+    isNew: {
+      id: 'isNew',
+      name: 'isNew',
+      type: 'radiogroup',
+      showOptionsHorizontally: true,
+      // label: 'Build new or use existing?',
+      defaultValue: 'true',
+      options: [
+        {
+          items: [
+            { label: 'New', value: 'true' },
+            {
+              label: 'Existing',
+              value: 'false',
+            },
+          ],
+        },
+      ],
+      visibleWhenAll: [{ field: 'application', isNot: [''] }],
+    },
+
+    existingExport: {
+      id: 'exportId',
+      name: 'exportId',
+      type: 'selectresource',
+      resourceType: 'exports',
+      label: 'Existing Export',
+      defaultValue: '',
+      required: true,
+      allowEdit: true,
+      refreshOptionsOnChangesTo: ['application'],
+      visibleWhen: [{ field: 'isNew', is: ['false'] }],
+    },
+
     connection: {
       id: 'connection',
       name: '/_connectionId',
@@ -75,6 +128,7 @@ export default {
       required: true,
       refreshOptionsOnChangesTo: ['application'],
       visibleWhenAll: [
+        visibleWhenIsNew,
         {
           field: 'application',
           isNot: [
@@ -95,7 +149,7 @@ export default {
       defaultValue: '',
       required: true,
       refreshOptionsOnChangesTo: ['application'],
-      visibleWhen: [{ field: 'application', isNot: [''] }],
+      visibleWhenAll: [visibleWhenIsNew, { field: 'application', isNot: [''] }],
     },
     description: {
       id: 'description',
@@ -105,9 +159,9 @@ export default {
       maxRows: 5,
       label: 'Description',
       defaultValue: '',
-      visibleWhen: [{ field: 'application', isNot: [''] }],
+      visibleWhenAll: [visibleWhenIsNew, { field: 'application', isNot: [''] }],
     },
-    'netsuite.execution.type': {
+    netsuiteExecutionType: {
       id: 'netsuite.execution.type',
       name: 'executionType',
       type: 'radiogroup',
@@ -121,9 +175,12 @@ export default {
           ],
         },
       ],
-      visibleWhen: [{ field: 'application', is: ['netsuite'] }],
+      visibleWhenAll: [
+        visibleWhenIsNew,
+        { field: 'application', is: ['netsuite'] },
+      ],
     },
-    'netsuite.api.type': {
+    netsuiteApiType: {
       id: 'netsuite.api.type',
       name: 'apiType',
       type: 'radiogroup',
@@ -137,20 +194,26 @@ export default {
           ],
         },
       ],
-      visibleWhen: [{ field: 'netsuite.execution.type', is: ['scheduled'] }],
+      visibleWhenAll: [
+        visibleWhenIsNew,
+        { field: 'netsuite.execution.type', is: ['scheduled'] },
+      ],
     },
   },
   layout: {
     fields: [
       'application',
       'type',
+      'isNew',
+      'existingExport',
       'connection',
       'name',
       'description',
-      'netsuite.execution.type',
-      'netsuite.api.type',
+      'netsuiteExecutionType',
+      'netsuiteApiType',
     ],
   },
+
   optionsHandler: (fieldId, fields) => {
     const appField = fields.find(field => field.id === 'application');
     const app = applications.find(a => a.id === appField.value) || {};
@@ -171,6 +234,22 @@ export default {
       }
 
       return { filter, appType: app.type };
+    }
+
+    if (fieldId === 'exportId') {
+      const adaptorTypePrefix = appTypeToAdaptorType[app.type];
+
+      if (!adaptorTypePrefix) return;
+
+      const filter = {
+        adaptorType: `${adaptorTypePrefix}Export`,
+      };
+
+      if (app.assistant) {
+        filter.assistant = app.assistant;
+      }
+
+      return { filter };
     }
 
     return null;
