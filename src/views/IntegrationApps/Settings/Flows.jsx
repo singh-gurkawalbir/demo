@@ -35,7 +35,12 @@ export default function Flows(props) {
         />
       </LoadResources>
       {hasAdvancedSettings && (
-        <DynaFromWithDynamicActions key={count} fieldMeta={translatedMeta} />
+        <DynaFromWithDynamicActions
+          key={count}
+          integrationId={integrationId}
+          storeId={storeId}
+          fieldMeta={translatedMeta}
+        />
       )}
     </Fragment>
   );

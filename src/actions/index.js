@@ -430,6 +430,14 @@ const fileDefinitions = {
   },
 };
 const integrationApp = {
+  settings: {
+    update: (integrationId, storeId, values) =>
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.UPDATE, {
+        integrationId,
+        storeId,
+        values,
+      }),
+  },
   installer: {
     installStep: (integrationId, installerFunction) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.REQUEST, {
