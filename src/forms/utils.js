@@ -182,14 +182,16 @@ export const getMissingPatchSet = (paths, resource) => {
   return missing.sort().map(p => ({ path: p, op: 'add', value: {} }));
 };
 
-export const sanitizePatchSet = ({ patchSet, resource }) => {
+export const sanitizePatchSet = ({ patchSet, fieldMeta = {}, resource }) => {
   if (!patchSet) return patchSet;
   const sanitizedSet = patchSet.reduce(
     (s, patch) => {
       const { removePatches, valuePatches } = s;
 
       if (patch.op === 'replace') {
-        // default values of all fields are '' so when undefined value is being sent we
+        const field = getFieldByName({ name: patch.path, fieldMeta });
+
+        // default values of all fields are '' so when undefined value is being sent it indicates that we would like delete those properties
         if (patch.value === undefined) {
           const modifiedPath = patch.path
             .substring(1, patch.path.length)
@@ -198,7 +200,11 @@ export const sanitizePatchSet = ({ patchSet, resource }) => {
           // consider it as a remove patch
           if (get(resource, modifiedPath))
             removePatches.push({ path: patch.path, op: 'remove' });
-        } else {
+        } else if (
+          !field ||
+          field.defaultValue !== patch.value ||
+          (field.defaultValue === patch.value && field.defaultValue !== '')
+        ) {
           valuePatches.push(patch);
         }
       }

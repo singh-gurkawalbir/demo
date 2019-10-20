@@ -162,6 +162,7 @@ export function* createFormValuesPatchSet({
 
   const patchSet = sanitizePatchSet({
     patchSet: defaultPatchSetConverter(finalValues),
+    fieldMeta: formState.fieldMeta,
     resource,
   });
 
@@ -182,7 +183,7 @@ export function* saveRawData({ values }) {
   return { ...values, '/rawData': rawDataKey };
 }
 
-export function* submitFormValues({ resourceType, resourceId, values }) {
+export function* submitFormValues({ resourceType, resourceId, values, match }) {
   let formValues = values;
 
   if (resourceType === 'exports') {
@@ -213,15 +214,32 @@ export function* submitFormValues({ resourceType, resourceId, values }) {
       resourceId,
       SCOPES.VALUE
     );
-
     // In most cases there would be no other pending staged changes, since most
     // times a patch is followed by an immediate commit.  If however some
     // component has staged some changes, even if the patchSet above is empty,
     // we need to check the store for these un-committed ones and still call
     // the commit saga.
+    let type = resourceType;
+
+    if (resourceType === 'connectorLicenses') {
+      // construct url for licenses
+      const connectorUrlStr = '/connectors/';
+      const startIndex =
+        match.url.indexOf(connectorUrlStr) + connectorUrlStr.length;
+
+      if (startIndex !== -1) {
+        const connectorId = match.url.substring(
+          startIndex,
+          match.url.indexOf('/', startIndex)
+        );
+
+        type = `connectors/${connectorId}/licenses`;
+      }
+    }
+
     if (patch && patch.length) {
       yield call(commitStagedChanges, {
-        resourceType,
+        resourceType: type,
         id: resourceId,
         scope: SCOPES.VALUE,
       });

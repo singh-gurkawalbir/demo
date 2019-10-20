@@ -62,6 +62,12 @@ export default {
           keyLabel: 'Export Field',
           valueName: 'import',
           valueLabel: 'Import Field',
+          defaultValue:
+            lookup.map &&
+            Object.keys(lookup.map).map(key => ({
+              export: key,
+              import: lookup.map[key],
+            })),
           map: lookup.map,
           visibleWhenAll: [{ field: 'fieldMappingType', is: ['lookup'] }],
         },
@@ -127,7 +133,7 @@ export default {
           id: 'hardcodedAction',
           name: 'hardcodedAction',
           type: 'radiogroup',
-          defaultValue: MappingUtil.getHardCodedActionValue(value),
+          defaultValue: MappingUtil.getHardCodedActionValue(value) || 'default',
           label: 'Options',
           options: [
             {
@@ -153,7 +159,9 @@ export default {
           id: 'lookupAction',
           name: 'lookupAction',
           type: 'radiogroup',
-          defaultValue: MappingUtil.getDefaultLookupActionValue(value, lookup),
+          defaultValue:
+            MappingUtil.getDefaultLookupActionValue(value, lookup) ||
+            'disallowFailure',
           label: 'Action to take if unique match not found',
           options: [
             {

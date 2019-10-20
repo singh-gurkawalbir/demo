@@ -42,6 +42,11 @@ export default function EditableText({ onChange, className, children }) {
     }
   }
 
+  // TODO: This component was written with the intention to work with
+  // any size text.
+  // I did not complete the process of making it generic enough to
+  // be placed under /components, but we should promote this
+  // component once we want to re-use this elsewhere.
   return (
     <Fragment>
       {isEdit ? (
