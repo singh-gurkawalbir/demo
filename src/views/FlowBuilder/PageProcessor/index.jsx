@@ -12,8 +12,7 @@ import actions from '../../../actions';
 import { getResourceSubType } from '../../../utils/resource';
 import importMappingAction from './actions/importMapping';
 import inputFilterAction from './actions/inputFilter';
-import importHooksAction from './actions/importHooks';
-import lookupHooksAction from './actions/lookupHooks';
+import pageProcessorHooksAction from './actions/pageProcessorHooks';
 import outputFilterAction from './actions/outputFilter';
 import transformationAction from './actions/transformation';
 import responseMapping from './actions/responseMapping';
@@ -201,7 +200,7 @@ const PageProcessor = ({
         inputFilterAction,
         outputFilterAction,
         transformationAction,
-        lookupHooksAction,
+        pageProcessorHooksAction,
         resultsMapping
       );
     } else {
@@ -209,7 +208,7 @@ const PageProcessor = ({
         inputFilterAction,
         importMappingAction,
         responseTransformationAction,
-        importHooksAction,
+        pageProcessorHooksAction,
         responseMapping
       );
     }

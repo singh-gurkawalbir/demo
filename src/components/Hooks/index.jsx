@@ -19,13 +19,10 @@ export default function Hooks(props) {
     flowId,
   } = props;
   const [enquesnackbar] = useEnqueueSnackbar();
-  const defaultHookType =
-    defaultValue && defaultValue._stackId ? 'stack' : 'script';
   const { merged: resource } = useSelector(state =>
     resourceData(state, resourceType, resourceId, 'value')
   );
   const fieldMeta = getHooksMetadata(resourceType, resource, isPageGenerator, {
-    defaultHookType,
     defaultValue,
     resourceId,
     flowId,

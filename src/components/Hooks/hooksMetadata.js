@@ -1,61 +1,69 @@
-import { getSupportedHooksForResource, hooksLabelMap } from '../../utils/hooks';
+import {
+  getSupportedHooksForResource,
+  hooksLabelMap,
+  getHookType,
+} from '../../utils/hooks';
 
 const exportHooksMetadata = ({
-  defaultHookType,
   defaultValue = {},
   flowId,
   resourceId,
   resourceType,
   isPageGenerator,
-}) => ({
-  fieldMap: {
-    hookType: {
-      id: 'hookType',
-      name: 'hookType',
-      type: 'radiogroup',
-      label: 'Hook Type',
-      defaultValue: defaultHookType,
-      showOptionsHorizontally: true,
-      fullWidth: true,
-      options: [
-        {
-          items: [
-            { label: 'Script', value: 'script' },
-            { label: 'Stack', value: 'stack' },
-          ],
-        },
-      ],
+}) => {
+  const defaultHookType = getHookType(defaultValue);
+
+  return {
+    fieldMap: {
+      hookType: {
+        id: 'hookType',
+        name: 'hookType',
+        type: 'radiogroup',
+        label: 'Hook Type',
+        defaultValue: defaultHookType,
+        showOptionsHorizontally: true,
+        fullWidth: true,
+        options: [
+          {
+            items: [
+              { label: 'Script', value: 'script' },
+              { label: 'Stack', value: 'stack' },
+            ],
+          },
+        ],
+      },
+      'preSavePage.script': {
+        id: 'preSavePage.script',
+        name: 'script-preSavePage',
+        type: 'hook',
+        label: 'Pre Save Page',
+        hookType: 'script',
+        flowId,
+        resourceId,
+        resourceType,
+        isPageGenerator,
+        defaultValue:
+          defaultHookType === 'script' ? defaultValue.preSavePage : {},
+        visibleWhen: [{ field: 'hookType', is: ['script'] }],
+      },
+      'preSavePage.stack': {
+        id: 'preSavePage.stack',
+        name: 'stack-preSavePage',
+        label: 'Pre Save Page',
+        type: 'hook',
+        hookType: 'stack',
+        defaultValue:
+          defaultHookType === 'stack' ? defaultValue.preSavePage : {},
+        visibleWhen: [{ field: 'hookType', is: ['stack'] }],
+      },
     },
-    'preSavePage.script': {
-      id: 'preSavePage.script',
-      name: 'script-preSavePage',
-      type: 'hook',
-      label: 'Pre Save Page',
-      hookType: 'script',
-      flowId,
-      resourceId,
-      resourceType,
-      isPageGenerator,
-      defaultValue:
-        defaultHookType === 'script' ? defaultValue.preSavePage : {},
-      visibleWhen: [{ field: 'hookType', is: ['script'] }],
+    layout: {
+      fields: ['hookType', 'preSavePage.script', 'preSavePage.stack'],
     },
-    'preSavePage.stack': {
-      id: 'preSavePage.stack',
-      name: 'stack-preSavePage',
-      label: 'Pre Save Page',
-      type: 'hook',
-      hookType: 'stack',
-      defaultValue: defaultHookType === 'stack' ? defaultValue.preSavePage : {},
-      visibleWhen: [{ field: 'hookType', is: ['stack'] }],
-    },
-  },
-  layout: {
-    fields: ['hookType', 'preSavePage.script', 'preSavePage.stack'],
-  },
-});
+  };
+};
+
 const importHooksMetadata = ({
-  defaultHookType,
   flowId,
   resourceId,
   resourceType,
@@ -63,6 +71,7 @@ const importHooksMetadata = ({
   resource,
 }) => {
   const hooks = getSupportedHooksForResource(resource);
+  const defaultHookType = getHookType(defaultValue);
   const fieldMap = {
     hookType: {
       id: 'hookType',
@@ -98,7 +107,7 @@ const importHooksMetadata = ({
       flowId,
       resourceId,
       resourceType,
-      defaultValue: defaultValue[hook],
+      defaultValue: defaultHookType === 'script' ? defaultValue[hook] : {},
       visibleWhen: [{ field: 'hookType', is: ['script'] }],
     };
     fieldMap[stackId] = {
@@ -107,7 +116,7 @@ const importHooksMetadata = ({
       label: hooksLabelMap[hook],
       type: 'hook',
       hookType: 'stack',
-      defaultValue: defaultValue[hook],
+      defaultValue: defaultHookType === 'stack' ? defaultValue[hook] : {},
       visibleWhen: [{ field: 'hookType', is: ['stack'] }],
     };
     layout.fields.push(scriptId, stackId);

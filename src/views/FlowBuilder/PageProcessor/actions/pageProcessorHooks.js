@@ -42,7 +42,7 @@ function HooksDialog({ flowId, resource, resourceType, open, onClose }) {
   );
 }
 
-function LookupHooks(props) {
+function PageProcessorHooks(props) {
   const { open } = props;
 
   return <Fragment>{open && <HooksDialog {...props} />}</Fragment>;
@@ -50,10 +50,10 @@ function LookupHooks(props) {
 
 export default {
   // used to create data-test attribute and component key. Should be unique across FB actions.
-  name: 'lookupHooks',
+  name: 'pageProcessorHooks',
   position: 'middle',
   Icon,
   helpText:
     'This is the text currently in the hover state of actions in the current FB',
-  Component: LookupHooks,
+  Component: PageProcessorHooks,
 };

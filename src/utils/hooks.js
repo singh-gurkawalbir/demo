@@ -1,4 +1,4 @@
-import { difference } from 'lodash';
+import { difference, values } from 'lodash';
 import { getResourceSubType } from './resource';
 
 export const importHooksList = [
@@ -52,4 +52,16 @@ export const isValidHook = (value = {}) => {
 
   // accepts a hook if it is empty
   return isEmptyHook || (func && (_scriptId || _stackId));
+};
+
+export const getHookType = (defaultValues = {}) => {
+  const hooks = values(defaultValues);
+  let defaultHookType = 'script';
+
+  // consider one of the hooks to check for hook type based on script/stack ID
+  if (hooks.length && hooks[0] && hooks[0]._stackId) {
+    defaultHookType = 'stack';
+  }
+
+  return defaultHookType;
 };
