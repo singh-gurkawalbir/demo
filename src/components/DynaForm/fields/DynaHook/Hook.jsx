@@ -135,9 +135,7 @@ export default function DynaHook(props) {
       )}
 
       <div className={classes.inputContainer}>
-        <InputLabel className={classes.label} htmlFor="scriptId">
-          {label}
-        </InputLabel>
+        <InputLabel className={classes.label}>{label}</InputLabel>
         <div className={classes.wrapper}>
           <TextField
             key={id}

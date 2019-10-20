@@ -1,4 +1,4 @@
-import { getSupportedHooksForResource } from '../../utils/hooks';
+import { getSupportedHooksForResource, hooksLabelMap } from '../../utils/hooks';
 
 const exportHooksMetadata = ({
   defaultHookType,
@@ -30,6 +30,7 @@ const exportHooksMetadata = ({
       id: 'preSavePage.script',
       name: 'script-preSavePage',
       type: 'hook',
+      label: 'Pre Save Page',
       hookType: 'script',
       flowId,
       resourceId,
@@ -42,6 +43,7 @@ const exportHooksMetadata = ({
     'preSavePage.stack': {
       id: 'preSavePage.stack',
       name: 'stack-preSavePage',
+      label: 'Pre Save Page',
       type: 'hook',
       hookType: 'stack',
       defaultValue: defaultHookType === 'stack' ? defaultValue.preSavePage : {},
@@ -89,6 +91,7 @@ const importHooksMetadata = ({
     fieldMap[scriptId] = {
       id: scriptId,
       name: `script-${hook}`,
+      label: hooksLabelMap[hook],
       type: 'hook',
       hookType: 'script',
       hookStage: hook,
@@ -101,6 +104,7 @@ const importHooksMetadata = ({
     fieldMap[stackId] = {
       id: stackId,
       name: `stack-${hook}`,
+      label: hooksLabelMap[hook],
       type: 'hook',
       hookType: 'stack',
       defaultValue: defaultValue[hook],

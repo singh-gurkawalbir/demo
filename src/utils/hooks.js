@@ -7,6 +7,13 @@ export const importHooksList = [
   'postSubmit',
   'postAggregate',
 ];
+
+export const hooksLabelMap = {
+  preMap: 'Pre Map',
+  postMap: 'Post Map',
+  postSubmit: 'Post Submit',
+  postAggregate: 'Post Aggregate',
+};
 export function getSupportedHooksForResource(resource) {
   let unSupportedHooks = [];
   const { type: applicationId } = getResourceSubType(resource);
