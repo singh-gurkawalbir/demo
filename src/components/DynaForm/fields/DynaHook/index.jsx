@@ -45,6 +45,15 @@ export default function DynaHook(props) {
   );
   // Selector to get sample data for different hook types
   const getSampleDataSelector = ({ state, flowId, resourceId, stage }) => {
+    if (hookStage === 'postAggregate') {
+      return {
+        postAggregateData: {
+          success: true,
+          _json: {},
+        },
+      };
+    }
+
     const sampleData = selectors.getSampleData(
       state,
       flowId,
