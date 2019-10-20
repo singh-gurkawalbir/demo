@@ -321,7 +321,7 @@ function FlowBuilder(props) {
   };
 
   function handleAddGenerator() {
-    pushOrReplaceHistory(`${match.url}/add/exports/${newGeneratorId}`);
+    pushOrReplaceHistory(`${match.url}/add/pageGenerator/${newGeneratorId}`);
   }
 
   function handleAddProcessor() {

@@ -1,18 +1,12 @@
 export default {
   'netsuite_da.recordType': {
-    type: 'select',
     label: 'Record Type',
     required: true,
-    options: [
-      {
-        // To do replace statistically instead of dynamic
-        items: [
-          { label: 'Accounts', value: 'accounts' },
-          { label: 'Customers', value: 'customers' },
-          { label: 'Items', value: 'items' },
-        ],
-      },
-    ],
+    mode: 'suitescript',
+    type: 'refreshableselect',
+    resourceType: 'recordTypes',
+    placeholder: 'Please select a record type',
+    connectionId: r => r && r._connectionId,
   },
   'netsuite_da.operation': {
     type: 'radiogroup',
