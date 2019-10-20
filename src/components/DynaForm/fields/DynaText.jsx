@@ -33,6 +33,7 @@ export default function DynaText(props) {
     readOnly,
     inputType,
     options,
+    disableText = false,
   } = props;
   const [valueChanged, setValueChanged] = useState(false);
 
@@ -80,7 +81,7 @@ export default function DynaText(props) {
         type={inputType}
         placeholder={placeholder}
         helperText={isValid ? description : errorMessages}
-        disabled={disabled}
+        disabled={disabled || disableText}
         multiline={multiline}
         rowsMax={rowsMax}
         required={required}

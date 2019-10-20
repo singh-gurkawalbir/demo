@@ -111,7 +111,7 @@ export default {
           showOptionsHorizontally: true,
           fullWidth: true,
           visibleWhen: [{ field: 'fieldMappingType', is: ['lookup'] }],
-          defaultValue: lookup.map ? 'static' : 'dynamic',
+          defaultValue: lookup.name && (lookup.map ? 'static' : 'dynamic'),
           options: [
             {
               items: [
@@ -163,6 +163,12 @@ export default {
           keyLabel: 'Export Field',
           valueName: 'import',
           valueLabel: 'Import Field (HTTP)',
+          defaultValue:
+            lookup.map &&
+            Object.keys(lookup.map).map(key => ({
+              export: key,
+              import: lookup.map[key],
+            })),
           map: lookup.map,
           recordType,
           visibleWhenAll: [
@@ -210,7 +216,7 @@ export default {
           id: 'hardcodedAction',
           name: 'hardcodedAction',
           type: 'radiogroup',
-          defaultValue: MappingUtil.getHardCodedActionValue(value),
+          defaultValue: MappingUtil.getHardCodedActionValue(value) || 'default',
           label: 'Options',
           options: [
             {
@@ -236,7 +242,9 @@ export default {
           id: 'lookupAction',
           name: 'lookupAction',
           type: 'radiogroup',
-          defaultValue: MappingUtil.getDefaultLookupActionValue(value, lookup),
+          defaultValue:
+            MappingUtil.getDefaultLookupActionValue(value, lookup) ||
+            'disallowFailure',
           label: 'Action to take if unique match not found',
           options: [
             {
@@ -260,7 +268,10 @@ export default {
               ],
             },
           ],
-          visibleWhen: [{ field: 'fieldMappingType', is: ['lookup'] }],
+          visibleWhenAll: [
+            { field: 'lookup.mode', is: ['dynamic', 'static'] },
+            { field: 'fieldMappingType', is: ['lookup'] },
+          ],
         },
         hardcodedDefault: {
           id: 'hardcodedDefault',
