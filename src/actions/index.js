@@ -482,6 +482,16 @@ const integrationApp = {
         integrationId,
       }),
   },
+  settings: {
+    init: integrationId =>
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.FORM.INIT, {
+        integrationId,
+      }),
+    clear: integrationId =>
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.FORM.CLEAR, {
+        integrationId,
+      }),
+  },
   store: {
     addNew: integrationId =>
       action(actionTypes.INTEGRATION_APPS.STORE.ADD, { id: integrationId }),

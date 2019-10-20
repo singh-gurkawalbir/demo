@@ -8,7 +8,7 @@ import {
 } from '@material-ui/core';
 import LoadResources from '../../components/LoadResources';
 import CloseIcon from '../icons/CloseIcon';
-import { ActionsFactory as DynaFromWithDynamicActions } from '../../components/ResourceFormFactory';
+import { ResourceFormFactory as DynaFromWithDynamicActions } from '../../components/ResourceFormFactory';
 import { integrationSettingsToDynaFormMetadata } from '../../forms/utils';
 
 const useStyles = makeStyles(theme => ({
@@ -46,15 +46,13 @@ export default function IntegrationAppFlowSettings(props) {
     _integrationId,
     true
   );
-  const handleSave = (_mappings, _lookups, closeModal) => {
+  const handleSubmitComplete = () => {
     // perform save operation only when mapping object is passed as parameter to the function.
-
-    if (closeModal) onClose();
+    onClose();
   };
 
   const handleCancel = () => {
     onClose();
-    handleSave();
   };
 
   return (
@@ -72,7 +70,12 @@ export default function IntegrationAppFlowSettings(props) {
         </DialogTitle>
         <DialogContent className={classes.modalContent}>
           <div className={classes.container}>
-            <DynaFromWithDynamicActions fieldMeta={translatedMeta} />
+            <DynaFromWithDynamicActions
+              editMode={false}
+              resourceType="test-integrationId"
+              onSubmitComplete={handleSubmitComplete}
+              fieldMeta={translatedMeta}
+            />
           </div>
         </DialogContent>
       </Dialog>

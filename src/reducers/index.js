@@ -582,6 +582,14 @@ export function marketplaceTemplates(state, application) {
 
 // #begin integrationApps Region
 
+export function integrationAppSettingsFormState(state, integrationId, flowId) {
+  return fromSession.integrationAppSettingsFormState(
+    state.session,
+    integrationId,
+    flowId
+  );
+}
+
 export function integrationConnectionList(state, integrationId) {
   const integration = resource(state, 'integrations', integrationId);
   const connList = fromData.resourceList(state.data, { type: 'connections' });
