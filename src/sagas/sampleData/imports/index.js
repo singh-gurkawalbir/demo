@@ -8,7 +8,7 @@ function* fetchAssistantSampleData() {
   // Fetch assistant's sample data logic
 }
 
-function* fetchSampleData({ resourceId }) {
+function* requestSampleData({ resourceId }) {
   const { merged: resource } = yield select(
     resourceData,
     'imports',
@@ -45,5 +45,5 @@ function* fetchSampleData({ resourceId }) {
 }
 
 export default [
-  takeLatest(actionTypes.IMPORT_SAMPLEDATA.FETCH, fetchSampleData),
+  takeLatest(actionTypes.IMPORT_SAMPLEDATA.FETCH, requestSampleData),
 ];

@@ -21,10 +21,10 @@ export default function DynaHook(props) {
   };
 
   // Fetches different input data for different hook types goes here
-  const fetchSampleData = useCallback(
+  const requestSampleData = useCallback(
     ({ flowId, resourceId, resourceType, stage }) => {
       if (resourceType === 'exports') {
-        return actions.flowData.fetchSampleData(
+        return actions.flowData.requestSampleData(
           flowId,
           resourceId,
           resourceType,
@@ -34,7 +34,7 @@ export default function DynaHook(props) {
       }
 
       // For Imports
-      return actions.flowData.fetchSampleData(
+      return actions.flowData.requestSampleData(
         flowId,
         resourceId,
         resourceType,
@@ -74,12 +74,12 @@ export default function DynaHook(props) {
   useEffect(() => {
     if (!preHookData && isPreHookDataRequested) {
       dispatch(
-        fetchSampleData({ flowId, resourceId, resourceType, stage: 'hooks' })
+        requestSampleData({ flowId, resourceId, resourceType, stage: 'hooks' })
       );
     }
   }, [
     dispatch,
-    fetchSampleData,
+    requestSampleData,
     flowId,
     isPreHookDataRequested,
     preHookData,

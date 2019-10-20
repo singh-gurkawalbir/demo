@@ -25,7 +25,7 @@ function OutputFilterDialog({ flowId, resource, resourceType, open, onClose }) {
   useEffect(() => {
     if (!sampleData) {
       dispatch(
-        actions.flowData.fetchSampleData(
+        actions.flowData.requestSampleData(
           flowId,
           resourceId,
           resourceType,

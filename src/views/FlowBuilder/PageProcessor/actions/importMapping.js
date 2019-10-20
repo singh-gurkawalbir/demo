@@ -27,7 +27,7 @@ function ImportMappingDialog({ flowId, resource, onClose }) {
   useEffect(() => {
     if (!extractFields) {
       dispatch(
-        actions.flowData.fetchSampleData(
+        actions.flowData.requestSampleData(
           flowId,
           resourceId,
           'imports',

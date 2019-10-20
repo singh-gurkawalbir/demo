@@ -14,7 +14,7 @@ import { getResource } from '../../resources';
 import { fetchFlowResources, refreshResourceData } from './utils';
 import { getSampleDataStage, getParseStageData } from '../../../utils/flowData';
 
-let fetchSampleData;
+let requestSampleData;
 
 function* fetchPageProcessorPreview({ flowId, _pageProcessorId, previewType }) {
   if (!flowId || !_pageProcessorId) return;
@@ -167,7 +167,7 @@ function* requestProcessorData({
   let processorData;
 
   if (!preProcessedData) {
-    yield call(fetchSampleData, {
+    yield call(requestSampleData, {
       flowId,
       resourceId,
       resourceType,
@@ -220,7 +220,7 @@ function* requestProcessorData({
   }
 }
 
-function* fetchSampleDataForImports({ flowId, resourceId, sampleDataStage }) {
+function* requestSampleDataForImports({ flowId, resourceId, sampleDataStage }) {
   switch (sampleDataStage) {
     case 'raw': {
       yield call(fetchPageProcessorPreview, {
@@ -285,7 +285,7 @@ function* fetchInputData({
   const sampleDataStage = getSampleDataStage(stage, resourceType);
 
   if (resourceType === 'imports') {
-    yield call(fetchSampleDataForImports, {
+    yield call(requestSampleDataForImports, {
       flowId,
       resourceId,
       sampleDataStage,
@@ -318,7 +318,7 @@ function* fetchInputData({
   }
 }
 
-fetchSampleData = fetchInputData;
+requestSampleData = fetchInputData;
 
 function* updateFlowsDataForResource({ resourceId, resourceType }) {
   // get flow ids using this resourceId
@@ -356,7 +356,7 @@ export default [
     fetchPageProcessorPreview
   ),
   takeEvery(actionTypes.FLOW_DATA.PROCESSOR_DATA_REQUEST, requestProcessorData),
-  takeEvery(actionTypes.FLOW_DATA.SAMPLE_DATA_FETCH, fetchSampleData),
+  takeEvery(actionTypes.FLOW_DATA.SAMPLE_DATA_REQUEST, requestSampleData),
   takeEvery(
     actionTypes.FLOW_DATA.FLOWS_FOR_RESOURCE_UPDATE,
     updateFlowsDataForResource

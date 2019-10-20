@@ -692,8 +692,14 @@ const flowData = {
       processedData,
       isPageGenerator,
     }),
-  fetchSampleData: (flowId, resourceId, resourceType, stage, isPageGenerator) =>
-    action(actionTypes.FLOW_DATA.SAMPLE_DATA_FETCH, {
+  requestSampleData: (
+    flowId,
+    resourceId,
+    resourceType,
+    stage,
+    isPageGenerator
+  ) =>
+    action(actionTypes.FLOW_DATA.SAMPLE_DATA_REQUEST, {
       flowId,
       resourceId,
       resourceType,
