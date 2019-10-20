@@ -36,6 +36,7 @@ function HooksDialog({ flowId, resource, open, onClose }) {
           flowId={flowId}
           resourceId={resourceId}
           resourceType={resourceType}
+          isPageGenerator
         />
       </DialogContent>
     </Dialog>

@@ -14,6 +14,7 @@ export default function Hooks(props) {
     onCancel,
     defaultValue = {},
     resourceType = 'exports',
+    isPageGenerator = false,
     resourceId,
     flowId,
   } = props;
@@ -23,7 +24,7 @@ export default function Hooks(props) {
   const { merged: resource } = useSelector(state =>
     resourceData(state, resourceType, resourceId, 'value')
   );
-  const fieldMeta = getHooksMetadata(resourceType, resource, {
+  const fieldMeta = getHooksMetadata(resourceType, resource, isPageGenerator, {
     defaultHookType,
     defaultValue,
     resourceId,

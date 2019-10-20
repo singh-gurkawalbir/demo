@@ -16,9 +16,19 @@ const sampleDataStage = {
     transform: 'responseTransform',
     importMappingExtract: 'raw',
     importMappingGenerate: 'sampleData',
-    hooks: 'raw',
+    preMap: 'raw',
+    postMap: 'raw',
+    postSubmit: 'raw',
+    postAggregate: 'raw',
   },
 };
+
+export function getParseStageData(previewData) {
+  const stages = (previewData && previewData.stages) || [];
+  const parseStage = stages.find(stage => stage.name === 'parse');
+
+  return parseStage && parseStage.data && parseStage.data[0];
+}
 
 export const getSampleDataStage = (stage, resourceType = 'exports') =>
   sampleDataStage[resourceType][stage];

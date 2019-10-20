@@ -5,7 +5,13 @@ import actions from '../../../../actions';
 import Hook from './Hook';
 
 export default function DynaHook(props) {
-  const { flowId, resourceType, resourceId } = props;
+  const {
+    flowId,
+    resourceType,
+    resourceId,
+    hookStage,
+    isPageGenerator,
+  } = props;
   const dispatch = useDispatch();
   const [isPreHookDataRequested, setIsPreHookDataRequested] = useState(false);
   const requestForPreHookData = () => {
@@ -22,25 +28,33 @@ export default function DynaHook(props) {
           flowId,
           resourceId,
           resourceType,
-          stage
+          stage,
+          isPageGenerator
         );
       }
+
+      // For Imports
+      return actions.flowData.fetchSampleData(
+        flowId,
+        resourceId,
+        resourceType,
+        hookStage
+      );
     },
-    []
+    [hookStage, isPageGenerator]
   );
   // Selector to get sample data for different hook types
   const getSampleDataSelector = ({ state, flowId, resourceId, stage }) => {
-    if (resourceType === 'exports') {
-      const sampleData = selectors.getSampleData(
-        state,
-        flowId,
-        resourceId,
-        stage
-      );
+    const sampleData = selectors.getSampleData(
+      state,
+      flowId,
+      resourceId,
+      resourceType === 'exports' ? stage : hookStage,
+      { isPageGenerator, isImport: resourceType === 'imports' }
+    );
 
-      if (sampleData) {
-        return { errors: [], data: [sampleData] };
-      }
+    if (sampleData) {
+      return { errors: [], data: [sampleData] };
     }
   };
 

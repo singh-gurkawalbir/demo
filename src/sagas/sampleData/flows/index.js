@@ -12,16 +12,9 @@ import actions from '../../../actions';
 import { apiCallWithRetry } from '../..';
 import { evaluateExternalProcessor } from '../../../sagas/editor';
 import { getResource } from '../../resources';
-import { getSampleDataStage } from '../../../utils/flowData';
+import { getSampleDataStage, getParseStageData } from '../../../utils/flowData';
 
 let fetchSampleData;
-
-function getParseStageData(previewData) {
-  const stages = (previewData && previewData.stages) || [];
-  const parseStage = stages.find(stage => stage.name === 'parse');
-
-  return parseStage && parseStage.data && parseStage.data[0];
-}
 
 function* fetchFlowResources({ flow, type, eliminateDataProcessors }) {
   const resourceMap = {};
@@ -222,7 +215,7 @@ function* requestProcessorData({
       flowId,
       resourceId,
       processor,
-      isPageGenerator
+      { isPageGenerator }
     );
   }
 

@@ -6,6 +6,7 @@ const exportHooksMetadata = ({
   flowId,
   resourceId,
   resourceType,
+  isPageGenerator,
 }) => ({
   fieldMap: {
     hookType: {
@@ -33,6 +34,7 @@ const exportHooksMetadata = ({
       flowId,
       resourceId,
       resourceType,
+      isPageGenerator,
       defaultValue: defaultHookType === 'script' ? defaultValue : {},
       visibleWhen: [{ field: 'hookType', is: ['script'] }],
     },
@@ -87,6 +89,7 @@ const importHooksMetadata = ({
       name: `script-${hook}`,
       type: 'hook',
       hookType: 'script',
+      hookStage: hook,
       flowId,
       resourceId,
       resourceType,
@@ -110,9 +113,10 @@ const importHooksMetadata = ({
 export default function getHooksMetadata(
   resourceType,
   resource,
+  isPageGenerator,
   defaultValues
 ) {
   return resourceType === 'exports'
-    ? exportHooksMetadata({ ...defaultValues, resourceType })
+    ? exportHooksMetadata({ ...defaultValues, resourceType, isPageGenerator })
     : importHooksMetadata({ ...defaultValues, resourceType, resource });
 }
