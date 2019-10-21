@@ -239,6 +239,7 @@ export const sanitizePatchSet = ({ patchSet, fieldMeta = {}, resource }) => {
   return newSet;
 };
 
+// #BEGIN_REGION Integration App form utils
 const convertFieldsToFieldReferneceObj = (acc, curr) => {
   if (!curr.fieldId && !curr.id && !curr.formId) {
     throw new Error('No fieldId , id or formId', curr);
@@ -358,6 +359,8 @@ export const integrationSettingsToDynaFormMetadata = (
 
   return finalData;
 };
+
+// #END_REGION Integration App from utils
 
 export default {
   getFieldById,
