@@ -335,11 +335,6 @@ export default {
     type: 'httprequestbody',
     label: 'Build HTTP Request Body',
   },
-  'once.booleanField': {
-    type: 'text',
-    label: 'Boolean Field',
-    helpkey: 'once.booleanField',
-  },
   'http.once.method': {
     type: 'select',
     label: 'HTTP Method',
