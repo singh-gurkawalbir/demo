@@ -1,9 +1,9 @@
 import { Fragment, useState } from 'react';
 import { IconButton, Typography } from '@material-ui/core';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
-import ArrowPopper from '../../../../../components/ArrowPopper';
-import TooltipContent from '../../../../../components/TooltipContent';
-import InfoIcon from '../../../../../components/icons/InfoIcon';
+import ArrowPopper from '../../../../components/ArrowPopper';
+import TooltipContent from '../../../../components/TooltipContent';
+import InfoIcon from '../../../../components/icons/InfoIcon';
 
 const useStyles = makeStyles(theme => ({
   pageHeader: {

@@ -78,11 +78,15 @@ export default function IntegrationAppAddNewStore(props) {
       // redirect to integration Settings
       dispatch(actions.integrationApp.store.clearSteps(integrationId));
       dispatch(actions.resource.request('integrations', integrationId));
+      dispatch(actions.resource.request('flows', integrationId));
+      dispatch(actions.resource.request('exports', integrationId));
+      dispatch(actions.resource.request('imports', integrationId));
+      dispatch(actions.resource.request('connections', integrationId));
       props.history.push(`/pg/connectors/${integrationId}/settings/flows`);
     }
   }, [dispatch, integrationId, isSetupComplete, props.history]);
 
-  if (!addNewStoreSteps) {
+  if (!addNewStoreSteps || !addNewStoreSteps.length) {
     return <Typography>Loading new store installation steps</Typography>;
   }
 

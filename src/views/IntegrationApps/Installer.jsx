@@ -69,9 +69,18 @@ export default function ConnectorInstallation(props) {
     if (isSetupComplete) {
       // redirect to integration Settings
       dispatch(actions.resource.request('integrations', integrationId));
-      props.history.push(`/pg/connectors/${integrationId}/settings/flows`);
+
+      if (integration.mode === 'settings') {
+        props.history.push(`/pg/connectors/${integrationId}/settings/flows`);
+      }
     }
-  }, [dispatch, integrationId, isSetupComplete, props.history]);
+  }, [
+    dispatch,
+    integration.mode,
+    integrationId,
+    isSetupComplete,
+    props.history,
+  ]);
 
   if (!installSteps || !integration || !integration._connectorId) {
     return <Typography>No Integration Found</Typography>;

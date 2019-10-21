@@ -7,6 +7,7 @@ import {
   List,
   Typography,
 } from '@material-ui/core';
+import { isEmpty } from 'lodash';
 import { makeStyles } from '@material-ui/core/styles';
 import { Switch, Route, NavLink } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
@@ -134,7 +135,29 @@ export default function IntegrationAppSettings(props) {
   const showAPITokens = permissions.accesstokens.view;
 
   useEffect(() => {
-    if ((!redirected && section === 'flows') || storeChanged) {
+    if (!isEmpty(integration)) {
+      if (!integration.mode || integration.mode === 'install') {
+        props.history.push(getRoutePath(`/connectors/${integrationId}/setup`));
+      } else if (integration.mode === 'uninstall') {
+        props.history.push(
+          getRoutePath(
+            `/connectors/${integrationId}/uninstall${
+              currentStore ? `/${currentStore}` : ''
+            }`
+          )
+        );
+      }
+    }
+  }, [
+    currentStore,
+    integration,
+    integration.mode,
+    integrationId,
+    props.history,
+  ]);
+
+  useEffect(() => {
+    if ((!redirected && (section === 'flows' || !section)) || storeChanged) {
       if (supportsMultiStore) {
         props.history.push(
           `${`${urlPrefix}/${currentStore}/${connectorFlowSections[0].titleId}`}`
