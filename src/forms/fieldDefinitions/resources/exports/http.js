@@ -35,7 +35,7 @@ export default {
     ],
   },
   'http.relativeURI': {
-    type: 'text',
+    type: 'relativeuri',
     label: 'Relative URI',
   },
   'http.method': {

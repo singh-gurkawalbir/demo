@@ -122,6 +122,7 @@ export default {
       ],
       label: 'Generate Token',
       defaultValue: '',
+      required: true,
       helpText: 'The access token of your Tableau account.',
     },
     httpAdvanced: { formId: 'httpAdvanced' },

@@ -49,6 +49,7 @@ export default {
       fieldId: 'http.auth.token.token',
       defaultValue: '',
       label: 'HAPI Key',
+      required: true,
       helpText: 'Please enter API Key of your Hubspot Account.',
       visibleWhen: [{ field: 'authType', is: ['token'] }],
     },

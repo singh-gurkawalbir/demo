@@ -105,7 +105,20 @@ export default {
     'as2.partnerStationInfo.auth.token.paramName': {
       fieldId: 'as2.partnerStationInfo.auth.token.paramName',
     },
-    configureTokenRefresh: { fieldId: 'configureTokenRefresh' },
+    configureTokenRefresh: {
+      id: 'configureTokenRefresh',
+      type: 'checkbox',
+      label: 'Configure Token Refresh',
+      defaultValue: r =>
+        !!(
+          r &&
+          r.as2 &&
+          r.as2.partnerStationInfo &&
+          r.as2.partnerStationInfo.auth &&
+          r.as2.partnerStationInfo.auth.token &&
+          r.as2.partnerStationInfo.auth.token.refreshRelativeURI
+        ),
+    },
     refreshTokenHeader: {
       id: 'refreshTokenHeader',
       label: 'How to Refresh Token?',
@@ -145,7 +158,7 @@ export default {
     'as2.partnerStationInfo.rateLimit.failValues': {
       fieldId: 'as2.partnerStationInfo.rateLimit.failValues',
     },
-    'http.concurrencyLevel': { fieldId: 'http.concurrencyLevel' },
+    'as2.concurrencyLevel': { fieldId: 'as2.concurrencyLevel' },
   },
   layout: {
     fields: ['name'],
@@ -223,7 +236,7 @@ export default {
       {
         collapsed: true,
         label: 'Advanced Settings',
-        fields: ['http.concurrencyLevel'],
+        fields: ['as2.concurrencyLevel'],
       },
     ],
   },
