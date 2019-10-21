@@ -1,6 +1,5 @@
 import { Fragment, useState } from 'react';
 import { useSelector } from 'react-redux';
-import deepClone from 'lodash/cloneDeep';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
 import * as selectors from '../../reducers';
@@ -35,13 +34,6 @@ export default function Connections(props) {
     selectors.resource(state, 'integrations', integrationId)
   );
   const permissions = useSelector(state => selectors.userPermissions(state));
-
-  list.resources = list.resources.map(r => {
-    // eslint-disable-next-line no-param-reassign
-    r.permissions = deepClone(permissions);
-
-    return r;
-  });
   const accountAccessLevel = permissions.accessLevel;
   const integrationAccessLevel =
     permissions.integrations &&

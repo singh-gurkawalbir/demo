@@ -686,7 +686,9 @@ export function getAllConnectionIdsUsedInTheFlow(state, flow) {
 
 export function integrationConnectionList(state, integrationId) {
   const integration = resource(state, 'integrations', integrationId);
-  const connList = fromData.resourceList(state.data, { type: 'connections' });
+  const connList = resourceListWithPermissions(state, {
+    type: 'connections',
+  });
 
   if (
     integrationId &&
