@@ -431,19 +431,17 @@ const fileDefinitions = {
 };
 const integrationApp = {
   settings: {
-    update: (integrationId, storeId, values) =>
+    update: (integrationId, flowId, storeId, values) =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.UPDATE, {
         integrationId,
+        flowId,
         storeId,
         values,
       }),
-    init: integrationId =>
-      action(actionTypes.INTEGRATION_APPS.SETTINGS.FORM.INIT, {
-        integrationId,
-      }),
-    clear: integrationId =>
+    clear: (integrationId, flowId) =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.FORM.CLEAR, {
         integrationId,
+        flowId,
       }),
     submitComplete: params =>
       action(

@@ -8,7 +8,7 @@ import {
 } from '@material-ui/core';
 import LoadResources from '../../components/LoadResources';
 import CloseIcon from '../icons/CloseIcon';
-import { ResourceFormFactory as DynaFromWithDynamicActions } from '../../components/ResourceFormFactory';
+import DynaFromWithDynamicActions from '../../views/IntegrationApps/Settings/FlowSettingsForm';
 import { integrationSettingsToDynaFormMetadata } from '../../forms/utils';
 
 const useStyles = makeStyles(theme => ({
@@ -19,17 +19,6 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(1),
     overflowY: 'off',
   },
-  header: {
-    height: '100%',
-    maxHeight: '28px',
-  },
-  root: {
-    flexGrow: 1,
-  },
-  rowContainer: {
-    display: 'flex',
-    padding: '0px',
-  },
   closeButton: {
     position: 'absolute',
     right: theme.spacing(1),
@@ -39,19 +28,14 @@ const useStyles = makeStyles(theme => ({
 
 export default function IntegrationAppFlowSettings(props) {
   const classes = useStyles();
-  const { onClose, settings, resource } = props;
+  const { onClose, settings, resource, storeId } = props;
   const { _integrationId } = resource;
   const translatedMeta = integrationSettingsToDynaFormMetadata(
     settings,
     _integrationId,
     true
   );
-  const handleSubmitComplete = () => {
-    // perform save operation only when mapping object is passed as parameter to the function.
-    onClose();
-  };
-
-  const handleCancel = () => {
+  const handleCloseDialog = () => {
     onClose();
   };
 
@@ -62,18 +46,20 @@ export default function IntegrationAppFlowSettings(props) {
           aria-label="Close"
           data-test="closeImportMapping"
           className={classes.closeButton}
-          onClick={handleCancel}>
+          onClick={handleCloseDialog}>
           <CloseIcon />
         </IconButton>
         <DialogTitle disableTypography>
-          <Typography variant="h6">Integration App Flow Settings</Typography>
+          <Typography variant="h6">{`Flow Settings - ${resource.name}`}</Typography>
         </DialogTitle>
         <DialogContent className={classes.modalContent}>
           <div className={classes.container}>
             <DynaFromWithDynamicActions
               editMode={false}
-              resourceType="test-integrationId"
-              onSubmitComplete={handleSubmitComplete}
+              integrationId={_integrationId}
+              flowId={resource._id}
+              storeId={storeId}
+              onSubmitComplete={handleCloseDialog}
               fieldMeta={translatedMeta}
             />
           </div>

@@ -31,7 +31,7 @@ export default function Flows(props) {
           resourceType="flows"
           data={flows}
           {...metadata}
-          actionProps={{ rest }}
+          actionProps={{ rest, storeId }}
         />
       </LoadResources>
       {hasAdvancedSettings && (

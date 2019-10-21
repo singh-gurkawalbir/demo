@@ -14,12 +14,18 @@ const IntegrationSettingsSaveButton = props => {
     submitButtonLabel = 'Submit',
     integrationId,
     storeId,
+    flowId,
     classes,
   } = props;
   const dispatch = useDispatch();
   const handleSubmitForm = values => {
     dispatch(
-      actions.integrationApp.settings.update(integrationId, storeId, values)
+      actions.integrationApp.settings.update(
+        integrationId,
+        flowId,
+        storeId,
+        values
+      )
     );
   };
 

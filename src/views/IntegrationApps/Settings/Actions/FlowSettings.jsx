@@ -3,7 +3,7 @@ import { useState, Fragment } from 'react';
 import SettingsIcon from '../../../../components/icons/SettingsIcon';
 import IntegrationAppFlowSettingsDialog from '../../../../components/IntegrationAppFlowSettings';
 
-export default function FlowSettings({ resource, settings }) {
+export default function FlowSettings({ resource, settings, storeId }) {
   const [showDialog, setShowDialog] = useState(false);
   const flowSettings = {};
   let disable = false;
@@ -26,6 +26,7 @@ export default function FlowSettings({ resource, settings }) {
         <IntegrationAppFlowSettingsDialog
           resource={resource}
           settings={flowSettings}
+          storeId={storeId}
           integrationId={resource._integrationId}
           onClose={handleClose}
         />

@@ -17,6 +17,7 @@ export default {
       flowSettings,
       showMatchRuleEngine,
     } = actionProps && actionProps.rest;
+    const { storeId } = actionProps;
     const columnData = [];
 
     columnData.push({
@@ -58,7 +59,9 @@ export default {
         value: function ScheduleAction(r) {
           const settings = flowSettings.find(f => f._id === r._id) || {};
 
-          return <FlowSettings resource={r} settings={settings} />;
+          return (
+            <FlowSettings resource={r} settings={settings} storeId={storeId} />
+          );
         },
       });
     }
