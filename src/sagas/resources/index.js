@@ -160,6 +160,7 @@ export function* updateIntegrationSettings({
         flowId,
       })
     );
+    yield put(actions.resource.request('integrations', integrationId));
   }
 }
 

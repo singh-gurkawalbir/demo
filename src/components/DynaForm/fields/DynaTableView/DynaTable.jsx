@@ -104,7 +104,8 @@ export default function DynaTable(props) {
   let requiredFieldsMissing = false;
 
   if (!requiredFields.length) {
-    // If none of the options are marked as required, consider the first option as required
+    // If none of the options are marked as required, consider the first option as required.
+    // when there are no required fields mentioned, an empty last row will be added recursively in infinite loop.
     requiredFields.push(optionsMap[0]);
   }
 

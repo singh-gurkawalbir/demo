@@ -1,22 +1,18 @@
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import { useDispatch } from 'react-redux';
 import actions from '../../../actions';
 import DynaAction from '../../DynaForm/DynaAction';
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   actionButton: {
     marginTop: theme.spacing.double,
     marginLeft: theme.spacing.double,
   },
-});
-const IntegrationSettingsSaveButton = props => {
-  const {
-    submitButtonLabel = 'Submit',
-    integrationId,
-    storeId,
-    flowId,
-    classes,
-  } = props;
+}));
+
+export default function IntegrationSettingsSaveButton(props) {
+  const classes = useStyles();
+  const { submitButtonLabel = 'Save', integrationId, storeId, flowId } = props;
   const dispatch = useDispatch();
   const handleSubmitForm = values => {
     dispatch(
@@ -37,6 +33,4 @@ const IntegrationSettingsSaveButton = props => {
       {submitButtonLabel}
     </DynaAction>
   );
-};
-
-export default withStyles(styles)(IntegrationSettingsSaveButton);
+}

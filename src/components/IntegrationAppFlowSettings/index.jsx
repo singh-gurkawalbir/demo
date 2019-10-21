@@ -8,7 +8,7 @@ import {
 } from '@material-ui/core';
 import LoadResources from '../../components/LoadResources';
 import CloseIcon from '../icons/CloseIcon';
-import DynaFromWithDynamicActions from '../../views/IntegrationApps/Settings/FlowSettingsForm';
+import DynaFormWithDynamicActions from '../../views/IntegrationApps/Settings/FlowSettingsForm';
 import { integrationSettingsToDynaFormMetadata } from '../../forms/utils';
 
 const useStyles = makeStyles(theme => ({
@@ -54,7 +54,7 @@ export default function IntegrationAppFlowSettings(props) {
         </DialogTitle>
         <DialogContent className={classes.modalContent}>
           <div className={classes.container}>
-            <DynaFromWithDynamicActions
+            <DynaFormWithDynamicActions
               editMode={false}
               integrationId={_integrationId}
               flowId={resource._id}
