@@ -85,8 +85,12 @@ const marketplace = {
     action(actionTypes.MARKETPLACE.CONNECTORS_RECEIVED, { connectors }),
   receivedTemplates: ({ templates }) =>
     action(actionTypes.MARKETPLACE.TEMPLATES_RECEIVED, { templates }),
-  installConnector: (connectorId, sandbox) =>
-    action(actionTypes.MARKETPLACE.CONNECTOR_INSTALL, { connectorId, sandbox }),
+  installConnector: (connectorId, sandbox, tag) =>
+    action(actionTypes.MARKETPLACE.CONNECTOR_INSTALL, {
+      connectorId,
+      sandbox,
+      tag,
+    }),
   contactSales: (connectorName, _connectorId) =>
     action(actionTypes.MARKETPLACE.SALES_CONTACT, {
       connectorName,
@@ -426,6 +430,25 @@ const fileDefinitions = {
   },
 };
 const integrationApp = {
+  settings: {
+    update: (integrationId, flowId, storeId, values) =>
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.UPDATE, {
+        integrationId,
+        flowId,
+        storeId,
+        values,
+      }),
+    clear: (integrationId, flowId) =>
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.FORM.CLEAR, {
+        integrationId,
+        flowId,
+      }),
+    submitComplete: params =>
+      action(
+        actionTypes.INTEGRATION_APPS.SETTINGS.FORM.SUBMIT_COMPLETE,
+        params
+      ),
+  },
   installer: {
     installStep: (integrationId, installerFunction) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.REQUEST, {

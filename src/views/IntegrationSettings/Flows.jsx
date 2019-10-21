@@ -27,7 +27,7 @@ export default function Flows(props) {
   const { integrationId } = match.params;
   const [showDialog, setShowDialog] = useState(false);
   let flows = useSelector(
-    state => selectors.resourceList(state, { type: 'flows' }).resources
+    state => selectors.flowListWithMetadata(state, { type: 'flows' }).resources
   );
   const preferences = useSelector(state =>
     selectors.userProfilePreferencesProps(state)
