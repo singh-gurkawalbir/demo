@@ -1,5 +1,4 @@
-import { deepClone } from 'fast-json-patch';
-import { cloneDeep, get } from 'lodash';
+import { get, cloneDeep } from 'lodash';
 import masterFieldHash from '../forms/fieldDefinitions';
 import formMeta from './definitions';
 import { getResourceSubType } from '../utils/resource';
@@ -18,9 +17,7 @@ const getAllOptionsHandlerSubForms = (
           resourceType
         ].subForms[formId];
 
-        // Is it necessary to make a deepClone
-        if (foundOptionsHandler)
-          optionsHandler.push(deepClone(foundOptionsHandler));
+        if (foundOptionsHandler) optionsHandler.push(foundOptionsHandler);
 
         return getAllOptionsHandlerSubForms(
           fieldMap,
