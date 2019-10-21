@@ -153,6 +153,12 @@ export default {
   'file.fileDefinition.resourcePath': {
     type: 'text',
     label: 'Resource Path',
+    visibleWhen: [
+      {
+        field: 'file.type',
+        is: ['filedefinition', 'fixed', 'delimited/edifact'],
+      },
+    ],
   },
   'file.fileDefinition._fileDefinitionId': {
     type: 'text',

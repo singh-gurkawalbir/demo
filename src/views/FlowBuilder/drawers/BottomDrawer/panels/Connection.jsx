@@ -1,5 +1,9 @@
-import { Typography } from '@material-ui/core';
+import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/styles';
+import LoadResources from '../../../../../components/LoadResources';
+import CeligoTable from '../../../../../components/CeligoTable';
+import metadata from '../../../../../components/ResourceTable/metadata/connections';
+import * as selectors from '../../../../../reducers';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -7,12 +11,24 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function ConnectionPanel() {
+export default function ConnectionPanel({ flow }) {
   const classes = useStyles();
+  const flowConnections = useSelector(state =>
+    selectors.flowConnectionList(state, flow)
+  );
 
   return (
     <div className={classes.root}>
-      <Typography variant="h3">Connection panel coming soon!</Typography>
+      <LoadResources required resources="connections">
+        <CeligoTable
+          data={flowConnections}
+          filterKey="connections"
+          {...metadata}
+          actionProps={{
+            resourceType: 'connections',
+          }}
+        />
+      </LoadResources>
     </div>
   );
 }

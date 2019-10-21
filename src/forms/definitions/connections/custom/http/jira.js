@@ -42,7 +42,8 @@ export default {
     'http.auth.basic.password': {
       fieldId: 'http.auth.basic.password',
       label: 'API Token',
-      helpText: 'The password of your JIRA account.',
+      helpText:
+        'To create an API token for Atlassian account:Login to your Atlassian account– >Go to User management– >Go to Your profile --> Security – > API token',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },

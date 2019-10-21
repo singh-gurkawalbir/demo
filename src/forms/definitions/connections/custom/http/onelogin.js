@@ -72,6 +72,7 @@ export default {
         { field: 'http.oneloginRegion', is: [''] },
       ],
       label: 'Generate Token',
+      required: true,
       helpText: 'The access token of your OneLogin account.',
     },
     'http.auth.token.refreshToken': {

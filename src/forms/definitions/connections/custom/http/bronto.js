@@ -48,6 +48,7 @@ export default {
       ],
       label: 'Generate Token',
       defaultValue: '',
+      required: true,
       helpText: 'The access token of your Bronto account.',
     },
     'http.auth.token.refreshToken': {
