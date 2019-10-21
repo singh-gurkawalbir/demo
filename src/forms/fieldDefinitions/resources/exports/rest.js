@@ -150,7 +150,7 @@ export default {
     ],
   },
   'rest.relativeURI': {
-    type: 'text',
+    type: 'relativeuri',
     required: true,
     label: 'Relative URI',
   },
@@ -198,7 +198,7 @@ export default {
   // #endregion transform
 
   'rest.once.relativeURI': {
-    type: 'text',
+    type: 'relativeURI',
     label: 'Relative URI',
   },
   'rest.once.method': {

@@ -1,5 +1,5 @@
-import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
+import JobDashboard from '../../../../../components/JobDashboard';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -7,12 +7,15 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function RunDashboardPanel() {
+export default function RunDashboardPanel({ flow }) {
   const classes = useStyles();
 
   return (
     <div className={classes.root}>
-      <Typography variant="h3">Run Dashboard panel coming soon!</Typography>
+      <JobDashboard
+        integrationId={flow._integrationId || 'none'}
+        flowId={flow._id}
+      />
     </div>
   );
 }
