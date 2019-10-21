@@ -35,7 +35,8 @@ export default {
     }
 
     if (newValues['/http/auth/type'] !== 'basic') {
-      newValues['/http/auth/basic'] = undefined;
+      newValues['/http/auth/basic/username'] = undefined;
+      newValues['/http/auth/basic/password'] = undefined;
     }
 
     if (
@@ -59,7 +60,11 @@ export default {
     }
 
     if (newValues['/http/auth/type'] !== 'token') {
-      newValues['/http/auth/token'] = {};
+      newValues['/http/auth/token/token'] = undefined;
+      newValues['/http/auth/token/scheme'] = undefined;
+      newValues['/http/auth/token/headerName'] = undefined;
+      newValues['/http/auth/token/location'] = undefined;
+      newValues['/http/auth/token/paramName'] = undefined;
     }
 
     return newValues;

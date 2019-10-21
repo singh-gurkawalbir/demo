@@ -6,9 +6,7 @@ export default {
     '/http/auth/type': 'token',
     '/http/mediaType': 'json',
     '/http/ping/relativeURI': '/accounts',
-    '/http/baseURI': `https://${
-      formValues['/http/coupaSubdomain']
-    }.coupacloud.com/api`,
+    '/http/baseURI': `https://${formValues['/http/coupaSubdomain']}.com/api`,
     '/http/ping/method': 'GET',
     '/http/auth/token/location': 'header',
     '/http/auth/token/headerName': 'X-COUPA-API-KEY',
@@ -28,7 +26,7 @@ export default {
       startAdornment: 'https://',
       helpText:
         'Please enter the subdomain of your account here which can be obtained from the login url.',
-      endAdornment: '.coupacloud.com',
+      endAdornment: '.com',
       label: 'Subdomain',
       validWhen: {
         matchesRegEx: {
@@ -42,7 +40,7 @@ export default {
           baseUri &&
           baseUri.substring(
             baseUri.indexOf('https://') + 8,
-            baseUri.indexOf('.coupacloud.com')
+            baseUri.indexOf('.com')
           );
 
         return subdomain;
@@ -51,6 +49,7 @@ export default {
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
       label: 'API Key',
+      required: true,
       helpText: 'Please enter API Key of your Coupa account',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
