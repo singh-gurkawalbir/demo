@@ -160,12 +160,12 @@ const PageGenerator = ({ history, match, index, isLast, flowId, ...pg }) => {
 
   if (!pending) {
     if (blockType === 'export' && !pending) {
-      generatorActions = [scheduleAction];
+      generatorActions = [{ ...scheduleAction, isUsed: index === 0 }];
     }
 
     generatorActions = [
       ...generatorActions,
-      transformationAction,
+      { ...transformationAction, isUsed: index === 0 },
       exportHooksAction,
       exportFilterAction,
     ];

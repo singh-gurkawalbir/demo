@@ -123,7 +123,7 @@ export default function Panel(props) {
       // this is NOT a case where a user selected an existing resource,
       // so move to step 2 of the form...
       if (!resourceId) {
-        props.history.replace(getEditUrl(id));
+        return props.history.replace(getEditUrl(id));
       }
 
       // Take care of existing resource selection.

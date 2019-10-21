@@ -88,6 +88,8 @@ const PageProcessor = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [createdProcessorId, dispatch]);
   // #endregion
+
+  // #region Drag and Drop handlers
   const [, drop] = useDrop({
     accept: itemTypes.PAGE_PROCESSOR,
 
@@ -145,6 +147,9 @@ const PageProcessor = ({
   });
   const opacity = isDragging ? 0.2 : 1;
 
+  drag(drop(ref));
+  // #endregion
+
   function handleBlockClick() {
     const newId = `new-${shortid.generate()}`;
 
@@ -187,21 +192,21 @@ const PageProcessor = ({
     }
   }
 
-  drag(drop(ref));
-
+  // #region Configure available processor actions
   const processorActions = pending
     ? []
     : [
         inputFilterAction,
-        importMappingAction,
-        importHooksAction,
+        { ...importMappingAction, isUsed: index === 0 },
+        { ...importHooksAction, isUsed: index === 0 },
         transformationAction,
       ];
 
   if (!isLast && !pending) {
-    processorActions.push(responseMapping);
+    processorActions.push({ ...responseMapping, isUsed: index === 0 });
     processorActions.push(proceedOnFailureAction);
   }
+  // #endregion
 
   return (
     <Fragment>

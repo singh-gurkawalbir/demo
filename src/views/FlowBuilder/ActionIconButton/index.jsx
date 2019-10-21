@@ -6,7 +6,7 @@ const useStyles = makeStyles(theme => ({
   button: {
     transition: theme.transitions.create(['left', 'top'], {
       easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
+      duration: theme.transitions.duration.enteringScreen * 4,
     }),
   },
   iconButtonRoot: {

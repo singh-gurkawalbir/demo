@@ -127,7 +127,7 @@ function AppBlock({
     : actions.filter(a => a.position === 'middle').length;
   const offset = ((3 - middleCount) * 42) / 2;
   let rightIndex = 0;
-  const top = -13;
+  const top = middleCount > 0 ? -10 : -25;
 
   function getActionStyle(action) {
     switch (action.position) {
@@ -203,9 +203,9 @@ function AppBlock({
                     }
                     helpText={a.helpText}
                     className={clsx({
-                      [classes.isNotOverActions]: !expanded,
+                      [classes.isNotOverActions]: !expanded && !a.isUsed,
                     })}
-                    style={expanded ? getActionStyle(a) : undefined}
+                    style={expanded || a.isUsed ? getActionStyle(a) : undefined}
                     onClick={() => setActiveAction(a.name)}
                     data-test={a.name}>
                     <a.Icon />
