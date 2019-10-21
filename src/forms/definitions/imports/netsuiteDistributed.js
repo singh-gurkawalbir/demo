@@ -6,6 +6,7 @@ export default {
       type: 'labeltitle',
       label: 'How would you like the data imported?',
     },
+    distributed: { fieldId: 'distributed' },
     'netsuite_da.recordType': { fieldId: 'netsuite_da.recordType' },
     'netsuite_da.operation': { fieldId: 'netsuite_da.operation' },
     ignoreExisting: {
@@ -56,6 +57,7 @@ export default {
     fields: [
       'common',
       'importData',
+      'distributed',
       'netsuite_da.recordType',
       'netsuite_da.operation',
       'ignoreExisting',

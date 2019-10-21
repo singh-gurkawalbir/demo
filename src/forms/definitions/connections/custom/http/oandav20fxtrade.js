@@ -42,6 +42,7 @@ export default {
     },
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
+      required: true,
       helpText: 'Please enter your API token here.',
     },
     httpAdvanced: { formId: 'httpAdvanced' },

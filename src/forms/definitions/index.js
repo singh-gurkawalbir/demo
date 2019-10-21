@@ -10,6 +10,7 @@ import templates from './templates';
 import pageProcessor from './pageProcessor';
 import pageGenerator from './pageGenerator';
 import accesstokens from './accesstokens';
+import connectorLicenses from './connectorLicenses';
 
 export default {
   default: defaultMeta,
@@ -24,4 +25,5 @@ export default {
   pageProcessor,
   pageGenerator,
   accesstokens,
+  connectorLicenses,
 };

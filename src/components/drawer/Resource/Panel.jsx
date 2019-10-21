@@ -81,7 +81,7 @@ export default function Panel(props) {
 
     if (!adaptorType || !adaptorType.value) {
       // eslint-disable-next-line
-        console.warn(
+      console.warn(
         'No replace operation against /adaptorType found in the patch-set.'
       );
     }
@@ -174,6 +174,7 @@ export default function Panel(props) {
             submitButtonLabel={submitButtonLabel}
             onSubmitComplete={handleSubmitComplete}
             onCancel={onClose}
+            {...props}
           />
         </LoadResources>
       </div>
