@@ -57,7 +57,7 @@ function TabPanel(props) {
   );
 }
 
-export default function BottomDrawer({ size, setSize }) {
+export default function BottomDrawer({ size, setSize, flow }) {
   const classes = useStyles();
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
   const [tabValue, setTabValue] = useState(0);
@@ -125,13 +125,13 @@ export default function BottomDrawer({ size, setSize }) {
       </div>
 
       <TabPanel value={tabValue} index={0}>
-        <ConnectionPanel />
+        <ConnectionPanel flow={flow} />
       </TabPanel>
       <TabPanel value={tabValue} index={1}>
-        <RunDashboardPanel />
+        <RunDashboardPanel flow={flow} />
       </TabPanel>
       <TabPanel value={tabValue} index={2}>
-        <AuditPanel />
+        <AuditPanel flow={flow} />
       </TabPanel>
     </Drawer>
   );
