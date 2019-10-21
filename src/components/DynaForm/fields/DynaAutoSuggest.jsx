@@ -18,6 +18,8 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(1),
     left: 0,
     right: 0,
+    maxHeight: '300px',
+    overflow: 'scroll',
   },
   dynaFieldWrapper: {
     width: '100%',

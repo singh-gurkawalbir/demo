@@ -1,4 +1,5 @@
 import { adaptorTypeMap } from '../../../utils/resource';
+import timeStamps from '../../../utils/timeStamps';
 
 export default {
   init: fieldMeta => {
@@ -39,6 +40,42 @@ export default {
           lookups: lookupField && lookupField.value,
         };
       }
+    }
+
+    if (fieldId === 's3.fileKey') {
+      const fileTypeField = fields.find(field => field.fieldId === 'file.type');
+      const fileNameField = fields.find(
+        field => field.fieldId === 's3.fileKey'
+      );
+      let suggestionList = [];
+
+      if (
+        fileNameField &&
+        fileNameField.value &&
+        fileTypeField &&
+        fileTypeField.value
+      ) {
+        const extension = fileTypeField.value;
+        const lastDotIndex = fileNameField.value.lastIndexOf('.');
+        const fileNameWithoutExt =
+          lastDotIndex !== -1
+            ? fileNameField.value.substring(0, lastDotIndex)
+            : fileNameField.value;
+        const bracesStartIndex = fileNameWithoutExt.indexOf('{');
+        const textBeforeBraces =
+          bracesStartIndex !== -1
+            ? fileNameWithoutExt.substring(0, bracesStartIndex)
+            : fileNameWithoutExt;
+
+        suggestionList = timeStamps.map(
+          timestamp =>
+            `${textBeforeBraces}{{timestamp(${timestamp._id})}}.${extension}`
+        );
+
+        fileNameField.value = suggestionList.length && suggestionList[0];
+      }
+
+      return { suggestions: suggestionList };
     }
 
     const fileType = fields.find(field => field.id === 'file.type');

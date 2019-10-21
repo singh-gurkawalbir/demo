@@ -32,8 +32,11 @@ export default {
     required: true,
   },
   's3.fileKey': {
-    type: 'text',
+    type: 'autosuggest',
     label: 'File Key',
     required: true,
+    showAllSuggestions: true,
+    defaultValue: 'file-{{timestamp}}',
+    refreshOptionsOnChangesTo: ['file.type'],
   },
 };
