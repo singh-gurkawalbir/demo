@@ -40,9 +40,16 @@ export default {
       type: 'labeltitle',
       label: 'How would you like the data imported?',
     },
+    distributed: { fieldId: 'distributed', defaultValue: false },
+    'file.type': {
+      fieldId: 'file.type',
+      defaultValue: 'filedefinition',
+      visible: false,
+    },
     'edix12.format': {
       fieldId: 'edix12.format',
       label: 'EDI Format',
+      required: true,
     },
     'file.filedefinition.rules': {
       fieldId: 'file.filedefinition.rules',
@@ -70,6 +77,8 @@ export default {
     fields: [
       'common',
       'importData',
+      'distributed',
+      'file.type',
       'edix12.format',
       'as2.fileNameTemplate',
       'as2.messageIdTemplate',
