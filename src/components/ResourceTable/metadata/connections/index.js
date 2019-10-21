@@ -19,8 +19,7 @@ export default {
     {
       heading: 'Name',
       value: (r, actionProps) =>
-        isConnectionEditable(r, actionProps.integrationId) ||
-        actionProps.type === 'flowBuilder'
+        isConnectionEditable(r, actionProps.integrationId)
           ? getResourceLink('connections', r)
           : r.name,
       orderBy: 'name',
@@ -56,14 +55,7 @@ export default {
   rowActions: (r, actionProps) => {
     let actionsToReturn = [];
 
-    if (actionProps.type === 'flowBuilder') {
-      actionsToReturn = [
-        RefreshMetadata,
-        AuditLogs,
-        ConfigureDebugger,
-        References,
-      ];
-    } else if (isConnectionEditable(r, actionProps.integrationId)) {
+    if (isConnectionEditable(r, actionProps.integrationId)) {
       actionsToReturn = [ConfigureDebugger, AuditLogs, References];
 
       if (showDownloadLogs(r)) {

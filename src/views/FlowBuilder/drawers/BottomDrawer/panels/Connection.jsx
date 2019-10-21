@@ -26,7 +26,6 @@ export default function ConnectionPanel({ flow }) {
           {...metadata}
           actionProps={{
             resourceType: 'connections',
-            type: 'flowBuilder',
           }}
         />
       </LoadResources>
