@@ -28,7 +28,7 @@ import {
 } from '../sagas/api/apiPaths';
 import { getFieldById } from '../forms/utils';
 import commKeyGen from '../utils/commKeyGenerator';
-import { getAllFlows } from './data/Flows';
+import { isRealtimeFlow, isSimpleImportFlow, isRunnable } from './flowsUtil';
 
 const combinedReducers = combineReducers({
   app,
@@ -492,6 +492,35 @@ export function resource(state, resourceType, id) {
 }
 
 export function resourceList(state, options) {
+  if (options && options.type === 'flows') {
+    const flows = fromData.resourceList(state && state.data, options).resources;
+
+    flows.forEach((f, i) => {
+      const _exportId =
+        f.pageGenerators && f.pageGenerators.length
+          ? f.pageGenerators[0]._exportId
+          : f._exportId;
+      const exp = resource(state, 'exports', _exportId);
+      const exports = fromData.resourceList(state && state.data, {
+        resourceType: 'exports',
+      }).resources;
+
+      if (isRealtimeFlow(exp)) {
+        flows[i].isRealtime = true;
+      }
+
+      if (isSimpleImportFlow(exp)) {
+        flows[i].isSimpleImport = true;
+      }
+
+      if (isRunnable(exports, exp, f)) {
+        flows[i].isRunnable = true;
+      }
+    });
+
+    return { resources: flows };
+  }
+
   return fromData.resourceList(state && state.data, options);
 }
 
@@ -765,13 +794,13 @@ export function integrationAppFlowSettings(state, id, section, storeId) {
   }
 
   const preferences = userPreferences(state);
-  let flows = getAllFlows(state, {
+  let flows = resourceList(state, {
     type: 'flows',
     sandbox: preferences.environment === 'sandbox',
     filter: {
       _integrationId: id,
     },
-  });
+  }).resources;
 
   flows = flows.filter(f => requiredFlows.includes(f._id));
 

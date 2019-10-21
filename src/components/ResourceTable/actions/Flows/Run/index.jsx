@@ -18,7 +18,7 @@ export default {
 
     return (
       <IconButton
-        // disabled={!resource.isRunnable}
+        disabled={!resource.isRunnable}
         data-test="runFlow"
         size="small"
         onClick={handleRunFlowClick}>

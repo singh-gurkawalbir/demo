@@ -19,7 +19,7 @@ export default {
       value: r => {
         if (r.type === 'rest') return r && r.rest && r.rest.baseURI;
 
-        if (r.type === 'http') return r && r.rest && r.http.baseURI;
+        if (r.type === 'http') return r && r.http && r.http.baseURI;
 
         return null;
       },
