@@ -17,9 +17,7 @@ export function hasBatchExport(exports, simpleExp, flow) {
   if (flow.pageGenerators.length) {
     flow.pageGenerators.forEach(pg => {
       const exportId = pg._exportId;
-      const exp =
-        exports.filter(exp => exp._id === exportId) &&
-        exports.filter(exp => exp._id === exportId)[0];
+      const exp = exports.find(exp => exp._id === exportId);
       const isRealtime =
         (exp &&
           ((exp.type && ['distributed', 'webhook'].indexOf(exp.type) > -1) ||
