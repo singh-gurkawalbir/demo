@@ -1863,4 +1863,150 @@ describe('integrationApps reducer test cases', () => {
       });
     });
   });
+
+  describe('intetgrationApps settings reducer', () => {
+    describe(`integrationApps settings update action`, () => {
+      test('should not affect the existing state when  update function  is called', () => {
+        const state = reducer(
+          { settings: { '1-2': { submitComplete: true } } },
+          actions.integrationApp.settings.update(
+            'integrationId',
+            'flowId',
+            'storeId',
+            'INCORRECT_FUNCTION_NAME'
+          )
+        );
+        const expectedValue = {
+          addStore: {},
+          installer: {},
+          settings: {
+            '1-2': { submitComplete: true },
+            'integrationId-flowId': { submitComplete: false },
+          },
+          uninstaller: {},
+        };
+
+        expect(state).toEqual(expectedValue);
+      });
+      test('should find the key by integrationId and flowId passed and set submitComplete flag to false', () => {
+        const state = reducer(
+          { settings: { 'integrationId-flowId': { submitComplete: true } } },
+          actions.integrationApp.settings.update(
+            'integrationId',
+            'flowId',
+            'storeId',
+            'INCORRECT_FUNCTION_NAME'
+          )
+        );
+        const expectedValue = {
+          addStore: {},
+          installer: {},
+          settings: {
+            'integrationId-flowId': { submitComplete: false },
+          },
+          uninstaller: {},
+        };
+
+        expect(state).toEqual(expectedValue);
+      });
+    });
+
+    describe(`integrationApps settings submitComplete action`, () => {
+      test('should not affect the existing state when  update function  is called', () => {
+        const state = reducer(
+          { settings: { '1-2': { submitComplete: false } } },
+          actions.integrationApp.settings.submitComplete({
+            integrationId: 'integrationId',
+            flowId: 'flowId',
+          })
+        );
+        const expectedValue = {
+          addStore: {},
+          installer: {},
+          settings: {
+            '1-2': { submitComplete: false },
+            'integrationId-flowId': { submitComplete: true },
+          },
+          uninstaller: {},
+        };
+
+        expect(state).toEqual(expectedValue);
+      });
+      test('should find the key by integrationId and flowId passed and set submitComplete flag to true', () => {
+        const state = reducer(
+          { settings: { 'integrationId-flowId': { submitComplete: false } } },
+          actions.integrationApp.settings.submitComplete({
+            integrationId: 'integrationId',
+            flowId: 'flowId',
+          })
+        );
+        const expectedValue = {
+          addStore: {},
+          installer: {},
+          settings: {
+            'integrationId-flowId': { submitComplete: true },
+          },
+          uninstaller: {},
+        };
+
+        expect(state).toEqual(expectedValue);
+      });
+    });
+
+    describe(`integrationApps settings clear action`, () => {
+      test('should not affect the existing state when  update function  is called', () => {
+        const state = reducer(
+          {
+            settings: {
+              '1-2': { submitComplete: true },
+              'integrationId-flowId': { submitComplete: true },
+            },
+          },
+          actions.integrationApp.settings.clear('integrationId', 'flowId')
+        );
+        const expectedValue = {
+          addStore: {},
+          installer: {},
+          settings: {
+            '1-2': { submitComplete: true },
+          },
+          uninstaller: {},
+        };
+
+        expect(state).toEqual(expectedValue);
+      });
+      test('should find the key by integrationId and flowId passed and remove that key from store', () => {
+        const state = reducer(
+          { settings: { 'integrationId-flowId': { submitComplete: true } } },
+          actions.integrationApp.settings.clear('integrationId', 'flowId')
+        );
+        const expectedValue = {
+          addStore: {},
+          installer: {},
+          settings: {},
+          uninstaller: {},
+        };
+
+        expect(state).toEqual(expectedValue);
+      });
+
+      test('should not throw error if the key is not found', () => {
+        const state = reducer(
+          { settings: { 'integrationId-flowId': { submitComplete: true } } },
+          actions.integrationApp.settings.clear(
+            'incorrect_integrationId',
+            'flowId'
+          )
+        );
+        const expectedValue = {
+          addStore: {},
+          installer: {},
+          settings: { 'integrationId-flowId': { submitComplete: true } },
+          uninstaller: {},
+        };
+
+        expect(state).toEqual(expectedValue);
+      });
+    });
+  });
 });
