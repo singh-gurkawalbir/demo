@@ -44,7 +44,7 @@ export default function IntegrationAppFlowSettings(props) {
       <Dialog fullScreen={false} open scroll="paper" maxWidth={false}>
         <IconButton
           aria-label="Close"
-          data-test="closeImportMapping"
+          data-test="closeIAFlowSettings"
           className={classes.closeButton}
           onClick={handleCloseDialog}>
           <CloseIcon />
