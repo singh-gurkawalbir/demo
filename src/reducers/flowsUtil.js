@@ -1,4 +1,4 @@
-export function isRealtimeFlow(exp) {
+export function isRealtimeExport(exp) {
   return (
     (exp &&
       ((exp.type && ['distributed', 'webhook'].indexOf(exp.type) > -1) ||
@@ -11,7 +11,7 @@ export function hasBatchExport(exports, simpleExp, flow) {
   let toReturn = false;
 
   if (flow._exportId) {
-    return !isRealtimeFlow(simpleExp);
+    return !isRealtimeExport(simpleExp);
   }
 
   if (flow.pageGenerators.length) {
