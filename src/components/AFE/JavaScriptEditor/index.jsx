@@ -19,7 +19,7 @@ const useStyles = makeStyles({
 });
 
 export default function JavaScriptEditor(props) {
-  const { editorId, entryFunction, scriptId } = props;
+  const { editorId, entryFunction, scriptId, initChangeIdentifier } = props;
   const classes = useStyles(props);
   const { data, result, error, violations } = useSelector(state =>
     selectors.editor(state, editorId)
@@ -51,7 +51,10 @@ export default function JavaScriptEditor(props) {
   return (
     <PanelGrid className={classes.template}>
       <PanelGridItem gridArea="rule">
-        <JavaScriptPanel editorId={editorId} />
+        <JavaScriptPanel
+          key={`${editorId}-${initChangeIdentifier}`}
+          editorId={editorId}
+        />
       </PanelGridItem>
       <PanelGridItem gridArea="data">
         <PanelTitle title="Function Input" />
