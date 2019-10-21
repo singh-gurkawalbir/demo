@@ -12,7 +12,7 @@ import {
   Typography,
 } from '@material-ui/core';
 import deepClone from 'lodash/cloneDeep';
-import DynaAutoSuggest from '../../DynaForm/fields/DynaAutoSuggest';
+import DynaTypeableSelect from '../../DynaForm/fields/DynaTypeableSelect';
 import MappingSettings from '../ImportMappingSettings/MappingSettingsField';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import MappingUtil from '../../../utils/mapping';
@@ -328,7 +328,7 @@ export default function ImportMapping(props) {
                 <Grid item className={classes.rowContainer} key={mapping.index}>
                   <Grid container direction="row">
                     <Grid item xs>
-                      <DynaAutoSuggest
+                      <DynaTypeableSelect
                         id={`extract-${mapping.index}`}
                         labelName="name"
                         valueName="id"
@@ -344,7 +344,7 @@ export default function ImportMapping(props) {
                       />
                     </Grid>
                     <Grid item xs>
-                      <DynaAutoSuggest
+                      <DynaTypeableSelect
                         id={`generate-${mapping.index}`}
                         value={mapping.generate}
                         labelName="name"

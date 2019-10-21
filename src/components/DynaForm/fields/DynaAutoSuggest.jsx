@@ -1,84 +1,176 @@
 import { useState } from 'react';
-import Select from 'react-select';
+import Autosuggest from 'react-autosuggest';
+import match from 'autosuggest-highlight/match';
+import parse from 'autosuggest-highlight/parse';
+import { Paper, MenuItem, TextField, FormControl } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { FormControl } from '@material-ui/core';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
   root: {
-    display: 'flex !important',
-    flexWrap: 'nowrap',
+    width: '100%',
+  },
+  container: {
+    position: 'relative',
+  },
+  suggestionsContainerOpen: {
+    position: 'absolute',
+    zIndex: 1,
+    marginTop: theme.spacing(1),
+    left: 0,
+    right: 0,
+  },
+  dynaFieldWrapper: {
+    width: '100%',
+  },
+  formField: {
+    width: '100%',
+  },
+  suggestion: {
+    display: 'block',
+  },
+  suggestionsList: {
+    margin: 0,
+    padding: 0,
+    listStyleType: 'none',
+  },
+  divider: {
+    height: theme.spacing(2),
   },
 }));
+
+function renderInputComponent(inputProps) {
+  const { classes, inputRef = () => {}, ref, ...other } = inputProps;
+
+  return (
+    <TextField
+      fullWidth
+      className={classes.formField}
+      InputProps={{
+        inputRef: node => {
+          ref(node);
+          inputRef(node);
+        },
+      }}
+      {...other}
+    />
+  );
+}
+
+function renderSuggestion(suggestion, { query, isHighlighted }) {
+  const matches = match(suggestion.label, query);
+  const parts = parse(suggestion.label, matches);
+
+  return (
+    <MenuItem selected={isHighlighted} component="div">
+      <div>
+        {parts.map(part => (
+          <span
+            key={part.text}
+            style={{ fontWeight: part.highlight ? 500 : 400 }}>
+            {part.text}
+          </span>
+        ))}
+      </div>
+    </MenuItem>
+  );
+}
+
+function getSuggestions({ val, suggestions, showAllSuggestions }) {
+  if (showAllSuggestions) {
+    return suggestions;
+  }
+
+  const inputValue = val.trim().toLowerCase();
+  const inputLength = inputValue.length;
+  let count = 0;
+
+  return inputLength === 0
+    ? []
+    : suggestions.filter(suggestion => {
+        const keep =
+          count < 5 &&
+          suggestion.label.slice(0, inputLength).toLowerCase() === inputValue;
+
+        if (keep) {
+          count += 1;
+        }
+
+        return keep;
+      });
+}
+
+function getSuggestionValue(suggestion) {
+  return suggestion.value;
+}
 
 export default function DynaAutoSuggest(props) {
   const {
     id,
     disabled,
-    value,
+    value = '',
     placeholder,
     onFieldChange,
-    onBlur,
     labelName,
-    hideOptions,
+    showAllSuggestions,
+    label,
     valueName,
-    options = [],
+    options = {},
   } = props;
-  const suggestions = options.map(option => ({
-    label: option[labelName],
-    value: option[valueName],
-  }));
-  const [inputState, setInputState] = useState({
-    inputValue: value || '',
-    isFocus: false,
-  });
-  const { inputValue, isFocus } = inputState;
   const classes = useStyles();
-  const handleChange = newObj => {
-    const newVal = newObj.value;
-
-    setInputState({ ...inputState, inputValue: newVal });
-
-    if (onFieldChange) onFieldChange(id, newVal);
-
-    if (onBlur) onBlur(id, newVal);
+  const suggestions = (options.suggestions || []).map(option => ({
+    label: labelName ? option[labelName] : option,
+    value: valueName ? option[valueName] : option,
+  }));
+  const [stateSuggestions, setSuggestions] = useState(suggestions || []);
+  const handleSuggestionsFetchRequested = ({ val }) => {
+    setSuggestions(getSuggestions({ val, suggestions, showAllSuggestions }));
   };
 
-  const handleBlur = () => {
-    if (onBlur) onBlur(id, inputValue);
-    setInputState({ ...inputState, isFocus: false });
+  const handleSuggestionsClearRequested = () => {
+    setSuggestions([]);
   };
 
-  const handleInputChange = newVal => {
-    setInputState({ isFocus: true, inputValue: newVal });
-
-    if (onFieldChange) onFieldChange(id, newVal);
+  const handleChange = (event, { newValue }) => {
+    if (onFieldChange) {
+      onFieldChange(id, newValue);
+    }
   };
 
-  const selectedValue =
-    !isFocus && suggestions.find(o => o.value === inputValue);
-  const inputVal =
-    (!isFocus && selectedValue && selectedValue.label) || inputValue;
+  const autosuggestProps = {
+    renderInputComponent,
+    suggestions: stateSuggestions,
+    onSuggestionsFetchRequested: handleSuggestionsFetchRequested,
+    onSuggestionsClearRequested: handleSuggestionsClearRequested,
+    getSuggestionValue,
+    renderSuggestion,
+  };
 
   return (
     <FormControl disabled={disabled} className={classes.root}>
-      <Select
-        key={id}
-        data-test={id}
-        inputValue={inputVal}
-        value={selectedValue}
-        noOptionsMessage={() => null}
-        placeholder={placeholder || ''}
-        onInputChange={handleInputChange}
-        onChange={handleChange}
-        onBlur={handleBlur}
-        components={
-          hideOptions && {
-            DropdownIndicator: () => null,
-            IndicatorSeparator: () => null,
-          }
-        }
-        options={suggestions}
-      />
+      <div className={classes.root}>
+        <Autosuggest
+          {...autosuggestProps}
+          inputProps={{
+            classes,
+            id,
+            label,
+            placeholder,
+            value,
+            onChange: handleChange,
+          }}
+          theme={{
+            container: classes.container,
+            suggestionsContainerOpen: classes.suggestionsContainerOpen,
+            suggestionsList: classes.suggestionsList,
+            suggestion: classes.suggestion,
+          }}
+          renderSuggestionsContainer={options => (
+            <Paper {...options.containerProps} square>
+              {options.children}
+            </Paper>
+          )}
+        />
+      </div>
     </FormControl>
   );
 }

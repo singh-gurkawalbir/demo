@@ -1,4 +1,5 @@
 import { adaptorTypeMap } from '../../../utils/resource';
+import timeStamps from '../../../utils/timeStamps';
 
 export default {
   init: fieldMeta => {
@@ -46,6 +47,7 @@ export default {
       const fileNameField = fields.find(
         field => field.fieldId === 'ftp.fileName'
       );
+      let suggestionList = [];
 
       if (
         fileNameField &&
@@ -53,26 +55,27 @@ export default {
         fileTypeField &&
         fileTypeField.value
       ) {
-        let extension;
-
-        switch (fileTypeField.value) {
-          case 'filedefinition':
-          case 'fixed':
-          case 'delimited/edifact':
-            extension = 'edi';
-            break;
-          default:
-            extension = fileTypeField.value;
-        }
-
+        const extension = fileTypeField.value;
         const lastDotIndex = fileNameField.value.lastIndexOf('.');
         const fileNameWithoutExt =
           lastDotIndex !== -1
             ? fileNameField.value.substring(0, lastDotIndex)
             : fileNameField.value;
+        const bracesStartIndex = fileNameWithoutExt.indexOf('{');
+        const textBeforeBraces =
+          bracesStartIndex !== -1
+            ? fileNameWithoutExt.substring(0, bracesStartIndex)
+            : fileNameWithoutExt;
 
-        fileNameField.value = `${fileNameWithoutExt}.${extension}`;
+        suggestionList = timeStamps.map(
+          timestamp =>
+            `${textBeforeBraces}{{timestamp(${timestamp._id})}}.${extension}`
+        );
+
+        fileNameField.value = suggestionList.length && suggestionList[0];
       }
+
+      return { suggestions: suggestionList };
     }
 
     const fileType = fields.find(field => field.id === 'file.type');
