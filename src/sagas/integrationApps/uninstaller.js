@@ -35,7 +35,7 @@ export function* uninstallStep({ storeId, id, uninstallerFunction }) {
       path,
       opts: { body: { storeId }, method: 'PUT' },
       message: `Uninstalling`,
-    });
+    }) || {};
   } catch (error) {
     yield put(
       actions.integrationApp.uninstaller.updateStep(

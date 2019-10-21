@@ -566,13 +566,22 @@ export function filteredResourceList(state, resource, resourceType) {
 
 export function marketplaceConnectors(state, application, sandbox) {
   const licenses = fromUser.licenses(state && state.user);
-
-  return fromData.marketplaceConnectors(
+  const connectors = fromData.marketplaceConnectors(
     state && state.data,
     application,
     sandbox,
     licenses
   );
+
+  return connectors.map(c => {
+    const installedIntegrationApps = resourceList(state, {
+      type: 'integrations',
+      sandbox,
+      filter: { _connectorId: c._id },
+    });
+
+    return { ...c, installed: !!installedIntegrationApps.resources.length };
+  });
 }
 
 export function marketplaceTemplates(state, application) {
@@ -652,6 +661,14 @@ export function getAllConnectionIdsUsedInTheFlow(state, flow) {
   return uniq(connectionIds.concat(borrowConnectionIds));
 }
 // #begin integrationApps Region
+
+export function integrationAppSettingsFormState(state, integrationId, flowId) {
+  return fromSession.integrationAppSettingsFormState(
+    state.session,
+    integrationId,
+    flowId
+  );
+}
 
 export function integrationConnectionList(state, integrationId) {
   const integration = resource(state, 'integrations', integrationId);
@@ -784,44 +801,39 @@ export function integrationAppGeneralSettings(state, id, storeId) {
 
 export function integrationAppFlowSettings(state, id, section, storeId) {
   if (!state) return null;
-  let fields;
-  let subSections;
   const integrationResource = fromData.integrationAppSettings(state.data, id);
-  const {
-    supportsMultiStore,
-    showFlowSettings,
-    showMatchRuleEngine,
-    sections,
-  } = integrationResource.settings || {};
+  const { supportsMultiStore, showMatchRuleEngine, sections = [] } =
+    integrationResource.settings || {};
   let requiredFlows = [];
   let hasNSInternalIdLookup = false;
+  let showFlowSettings = false;
+  let hasDescription = false;
+  let allSections = sections;
 
   if (supportsMultiStore) {
-    const store = (sections || []).find(s => s.id === storeId) || {};
-    const sectionStore =
-      (store.sections || []).find(
-        sec => sec.title.replace(/\s/g, '') === section
-      ) || {};
+    const store = sections.find(s => s.id === storeId) || {};
 
-    requiredFlows = map(sectionStore.flows, '_id');
-    hasNSInternalIdLookup = some(
-      sectionStore.flows,
-      f => f.showNSInternalIdLookup
-    );
-    ({ fields, sections: subSections } = sectionStore);
-  } else if (sections) {
-    const selectedSection =
-      (sections || []).find(sec => sec.title.replace(/\s/g, '') === section) ||
-      {};
-
-    requiredFlows = map(selectedSection.flows, '_id');
-    hasNSInternalIdLookup = some(
-      selectedSection.flows,
-      f => f.showNSInternalIdLookup
-    );
-    ({ fields, sections: subSections } = selectedSection);
+    allSections = store.sections || [];
   }
 
+  const selectedSection =
+    allSections.find(sec => sec.title.replace(/\s/g, '') === section) || {};
+
+  requiredFlows = map(selectedSection.flows, '_id');
+  hasNSInternalIdLookup = some(
+    selectedSection.flows,
+    f => f.showNSInternalIdLookup
+  );
+  hasDescription = some(selectedSection.flows, f => {
+    const flow = resource(state, 'flows', f._id) || {};
+
+    return !!flow.description;
+  });
+  showFlowSettings = some(
+    selectedSection.flows,
+    f => !!f.settings || !!f.sections
+  );
+  const { fields, sections: subSections } = selectedSection;
   const preferences = userPreferences(state);
   let flows = resourceList(state, {
     type: 'flows',
@@ -836,8 +848,10 @@ export function integrationAppFlowSettings(state, id, section, storeId) {
   return {
     flows,
     fields,
+    flowSettings: selectedSection.flows,
     sections: subSections,
     hasNSInternalIdLookup,
+    hasDescription,
     showFlowSettings,
     showMatchRuleEngine,
   };

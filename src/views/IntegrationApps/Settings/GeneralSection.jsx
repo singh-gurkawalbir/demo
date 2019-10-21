@@ -1,6 +1,6 @@
 import { useSelector } from 'react-redux';
 import * as selectors from '../../../reducers';
-import { ActionsFactory as DynaFromWithDynamicActions } from '../../../components/ResourceFormFactory';
+import { ActionsFactory as DynaFormWithDynamicActions } from '../../../components/ResourceFormFactory';
 import { integrationSettingsToDynaFormMetadata } from '../../../forms/utils';
 
 export default function GeneralSection(props) {
@@ -15,5 +15,11 @@ export default function GeneralSection(props) {
     true
   );
 
-  return <DynaFromWithDynamicActions fieldMeta={translatedMeta} />;
+  return (
+    <DynaFormWithDynamicActions
+      fieldMeta={translatedMeta}
+      integrationId={integrationId}
+      storeId={storeId}
+    />
+  );
 }
