@@ -52,6 +52,7 @@ export default {
     'delta.dateField': {
       id: 'delta.dateField',
       label: 'Date Field',
+      required: true,
       type: 'text',
       visibleWhen: [
         {
@@ -74,6 +75,7 @@ export default {
     'once.booleanField': {
       id: 'once.booleanField',
       label: 'Boolean Field',
+      required: true,
       type: 'text',
       visibleWhen: [
         {
