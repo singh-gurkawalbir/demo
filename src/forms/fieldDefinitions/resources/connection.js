@@ -1866,7 +1866,7 @@ export default {
     mode: 'text',
     label: "Partner's Certificate:",
   },
-  'as2..concurrencyLevel': {
+  'as2.concurrencyLevel': {
     label: 'Concurrency Level',
     type: 'select',
     options: [

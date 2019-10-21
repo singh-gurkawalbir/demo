@@ -53,7 +53,6 @@ export default {
       required: true,
       type: 'text',
       defaultValue: '',
-
       label: 'API Token',
       helpText:
         'The API Token of your LiquidPlanner account when using the Token authentication.',
