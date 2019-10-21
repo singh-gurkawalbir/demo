@@ -540,6 +540,14 @@ export function resourceListWithPermissions(state, options) {
   return resourceList;
 }
 
+export function resourcesByIds(state, resourceType, resourceIds) {
+  const { resources } = resourceListWithPermissions(state, {
+    type: resourceType,
+  });
+
+  return resources.filter(r => resourceIds.indexOf(r._id) >= 0);
+}
+
 export function matchingConnectionList(state, connection = {}) {
   const preferences = userPreferences(state);
   const { resources = [] } = resourceList(state, {
@@ -602,6 +610,78 @@ export function marketplaceTemplates(state, application) {
   return fromData.marketplaceTemplates(state.data, application);
 }
 
+export function getAllConnectionIdsUsedInTheFlow(state, flow) {
+  const exportIds = [];
+  const importIds = [];
+  const connectionIds = [];
+  const borrowConnectionIds = [];
+  const connections = resourceList(state, { type: 'connections' }).resources;
+  const exports = resourceList(state, { type: 'exports' }).resources;
+  const imports = resourceList(state, { type: 'imports' }).resources;
+
+  if (!flow) {
+    return connectionIds;
+  }
+
+  if (flow._exportId) {
+    exportIds.push(flow._exportId);
+  }
+
+  if (flow._importId) {
+    importIds.push(flow._importId);
+  }
+
+  if (flow.pageProcessors && flow.pageProcessors.length > 0) {
+    flow.pageProcessors.forEach(pp => {
+      if (pp._exportId) {
+        exportIds.push(pp._exportId);
+      }
+
+      if (pp._importId) {
+        importIds.push(pp._importId);
+      }
+    });
+  }
+
+  if (flow.pageGenerators && flow.pageGenerators.length > 0) {
+    flow.pageGenerators.forEach(pg => {
+      if (pg._exportId) {
+        exportIds.push(pg._exportId);
+      }
+
+      if (pg._importId) {
+        importIds.push(pg._importId);
+      }
+    });
+  }
+
+  const attachedExports =
+    exports && exports.filter(e => exportIds.indexOf(e._id) > -1);
+  const attachedImports =
+    imports && imports.filter(i => importIds.indexOf(i._id) > -1);
+
+  attachedExports.forEach(exp => {
+    if (exp && exp._connectionId) {
+      connectionIds.push(exp._connectionId);
+    }
+  });
+  attachedImports.forEach(imp => {
+    if (imp && imp._connectionId) {
+      connectionIds.push(imp._connectionId);
+    }
+  });
+  const attachedConnections =
+    connections &&
+    connections.filter(conn => connectionIds.indexOf(conn._id) > -1);
+
+  attachedConnections.forEach(conn => {
+    if (conn && conn._borrowConcurrencyFromConnectionId) {
+      borrowConnectionIds.push(conn._borrowConcurrencyFromConnectionId);
+    }
+  });
+
+  return uniq(connectionIds.concat(borrowConnectionIds));
+}
 // #begin integrationApps Region
 
 export function integrationConnectionList(state, integrationId) {
@@ -652,40 +732,19 @@ export function integrationAppConnectionList(state, integrationId, store) {
   }
 
   const flows = [];
-  const connections = [];
+  let connections = [];
   const selectedStore = (sections || []).find(s => s.id === store) || {};
 
   (selectedStore.sections || []).forEach(sec => {
     flows.push(...map(sec.flows, '_id'));
   });
   flows.forEach(f => {
-    let exp;
-    let imp;
     const flow = resource(state, 'flows', f) || {};
 
-    if (flow._exportId) {
-      exp = resource(state, 'exports', flow._exportId) || {};
-      connections.push(exp._connectionId);
-    }
-
-    if (flow._importId) {
-      imp = resource(state, 'imports', flow._importId) || {};
-      connections.push(imp._connectionId);
-    }
-
-    (flow.pageGenerators || []).forEach(pg => {
-      exp = resource(state, 'exports', pg._exportId) || {};
-      connections.push(exp._connectionId);
-    });
-    (flow.pageProcessors || []).forEach(pp => {
-      imp =
-        resource(
-          state,
-          pp.type === 'import' ? 'imports' : 'exports',
-          pp.type === 'import' ? pp._importId : pp._exportId
-        ) || {};
-      connections.push(imp._connectionId);
-    });
+    connections = [
+      ...connections,
+      ...getAllConnectionIdsUsedInTheFlow(state, flow),
+    ];
   });
   integrationConnections.resources = integrationConnections.resources.filter(
     c => connections.includes(c._id)
@@ -1838,79 +1897,6 @@ export function assistantData(state, { adaptorType, assistant }) {
   });
 }
 
-export function getAllConnectionIdsUsedInTheFlow(state, flow) {
-  const exportIds = [];
-  const importIds = [];
-  const connectionIds = [];
-  const borrowConnectionIds = [];
-  const connections = resourceList(state, { type: 'connections' }).resources;
-  const exports = resourceList(state, { type: 'exports' }).resources;
-  const imports = resourceList(state, { type: 'imports' }).resources;
-
-  if (!flow) {
-    return connectionIds;
-  }
-
-  if (flow._exportId) {
-    exportIds.push(flow._exportId);
-  }
-
-  if (flow._importId) {
-    importIds.push(flow._importId);
-  }
-
-  if (flow.pageProcessors && flow.pageProcessors.length > 0) {
-    flow.pageProcessors.forEach(pp => {
-      if (pp._exportId) {
-        exportIds.push(pp._exportId);
-      }
-
-      if (pp._importId) {
-        importIds.push(pp._importId);
-      }
-    });
-  }
-
-  if (flow.pageGenerators && flow.pageGenerators.length > 0) {
-    flow.pageGenerators.forEach(pg => {
-      if (pg._exportId) {
-        exportIds.push(pg._exportId);
-      }
-
-      if (pg._importId) {
-        importIds.push(pg._importId);
-      }
-    });
-  }
-
-  const attachedExports =
-    exports && exports.filter(e => exportIds.indexOf(e._id) > -1);
-  const attachedImports =
-    imports && imports.filter(i => importIds.indexOf(i._id) > -1);
-
-  attachedExports.forEach(exp => {
-    if (exp && exp._connectionId) {
-      connectionIds.push(exp._connectionId);
-    }
-  });
-  attachedImports.forEach(imp => {
-    if (imp && imp._connectionId) {
-      connectionIds.push(imp._connectionId);
-    }
-  });
-  const attachedConnections =
-    connections &&
-    connections.filter(conn => connectionIds.indexOf(conn._id) > -1);
-
-  attachedConnections.forEach(conn => {
-    if (conn && conn._borrowConcurrencyFromConnectionId) {
-      borrowConnectionIds.push(conn._borrowConcurrencyFromConnectionId);
-    }
-  });
-
-  return uniq(connectionIds.concat(borrowConnectionIds));
-}
-
 export function getAllConnectionIdsUsedInSelectedFlows(state, selectedFlows) {
   let connectionIdsToRegister = [];
 
@@ -1945,4 +1931,11 @@ export function getAllPageProcessorImports(state, pageProcessors) {
     imports && imports.filter(i => pageProcessorIds.indexOf(i._id) > -1);
 
   return ppImports;
+}
+
+export function flowConnectionList(state, flow) {
+  const connectionIds = getAllConnectionIdsUsedInTheFlow(state, flow);
+  const connectionList = resourcesByIds(state, 'connections', connectionIds);
+
+  return connectionList;
 }
