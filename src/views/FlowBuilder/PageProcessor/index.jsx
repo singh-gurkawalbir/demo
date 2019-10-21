@@ -16,7 +16,6 @@ import pageProcessorHooksAction from './actions/pageProcessorHooks';
 import outputFilterAction from './actions/outputFilter';
 import transformationAction from './actions/transformation';
 import responseMapping from './actions/responseMapping';
-import resultsMapping from './actions/resultsMapping';
 import responseTransformationAction from './actions/responseTransformation';
 import proceedOnFailureAction from './actions/proceedOnFailure';
 
@@ -201,7 +200,7 @@ const PageProcessor = ({
         outputFilterAction,
         transformationAction,
         pageProcessorHooksAction,
-        resultsMapping
+        responseMapping
       );
     } else {
       processorActions.push(
