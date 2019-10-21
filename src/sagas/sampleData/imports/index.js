@@ -45,5 +45,5 @@ function* requestSampleData({ resourceId }) {
 }
 
 export default [
-  takeLatest(actionTypes.IMPORT_SAMPLEDATA.FETCH, requestSampleData),
+  takeLatest(actionTypes.IMPORT_SAMPLEDATA.REQUEST, requestSampleData),
 ];

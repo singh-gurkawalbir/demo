@@ -638,8 +638,8 @@ const sampleData = {
     action(actionTypes.SAMPLEDATA.RECEIVED_ERROR, { resourceId, error, stage }),
 };
 const importSampleData = {
-  fetch: resourceId =>
-    action(actionTypes.IMPORT_SAMPLEDATA.FETCH, { resourceId }),
+  request: resourceId =>
+    action(actionTypes.IMPORT_SAMPLEDATA.REQUEST, { resourceId }),
 };
 const flowData = {
   init: flow => action(actionTypes.FLOW_DATA.INIT, { flow }),
