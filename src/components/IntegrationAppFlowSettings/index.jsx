@@ -40,7 +40,7 @@ export default function IntegrationAppFlowSettings(props) {
   };
 
   return (
-    <LoadResources resources="imports">
+    <LoadResources resources="imports,exports">
       <Dialog fullScreen={false} open scroll="paper" maxWidth={false}>
         <IconButton
           aria-label="Close"
