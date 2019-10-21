@@ -1,4 +1,3 @@
-import moment from 'moment';
 import { put, select, call, takeEvery } from 'redux-saga/effects';
 import {
   resourceData,
@@ -11,12 +10,49 @@ import actions from '../../../actions';
 import { apiCallWithRetry } from '../..';
 import { evaluateExternalProcessor } from '../../../sagas/editor';
 import { getResource } from '../../resources';
-import { fetchFlowResources, refreshResourceData } from './utils';
-import { getSampleDataStage, getParseStageData } from '../../../utils/flowData';
+import {
+  fetchFlowResources,
+  refreshResourceData,
+  requestSampleDataForExports,
+  requestSampleDataForImports,
+} from './utils';
+import {
+  getSampleDataStage,
+  getParseStageData,
+  getLastExportDateTime,
+} from '../../../utils/flowData';
 
-let requestSampleData;
+function* requestSampleData({
+  flowId,
+  resourceId,
+  resourceType,
+  stage,
+  isPageGenerator,
+}) {
+  // Updates preProcessedData for the procesors
+  const sampleDataStage = getSampleDataStage(stage, resourceType);
 
-function* fetchPageProcessorPreview({ flowId, _pageProcessorId, previewType }) {
+  if (resourceType === 'imports') {
+    yield call(requestSampleDataForImports, {
+      flowId,
+      resourceId,
+      sampleDataStage,
+    });
+  } else {
+    yield call(requestSampleDataForExports, {
+      flowId,
+      resourceId,
+      sampleDataStage,
+      isPageGenerator,
+    });
+  }
+}
+
+export function* fetchPageProcessorPreview({
+  flowId,
+  _pageProcessorId,
+  previewType,
+}) {
   if (!flowId || !_pageProcessorId) return;
   const { merged } = yield select(resourceData, 'flows', flowId, SCOPES.VALUE);
   const flow = { ...merged };
@@ -71,7 +107,7 @@ function* fetchPageProcessorPreview({ flowId, _pageProcessorId, previewType }) {
   }
 }
 
-function* fetchPageGeneratorPreview({ flowId, _pageGeneratorId }) {
+export function* fetchPageGeneratorPreview({ flowId, _pageGeneratorId }) {
   const { merged: resource } = yield select(
     resourceData,
     'exports',
@@ -81,9 +117,7 @@ function* fetchPageGeneratorPreview({ flowId, _pageGeneratorId }) {
 
   if (body.type === 'delta') {
     body.postData = {
-      lastExportDateTime: moment()
-        .add(-1, 'y')
-        .toISOString(),
+      lastExportDateTime: getLastExportDateTime(),
     };
   }
 
@@ -144,7 +178,7 @@ function* processData({
   }
 }
 
-function* requestProcessorData({
+export function* requestProcessorData({
   flowId,
   resourceId,
   resourceType,
@@ -220,106 +254,6 @@ function* requestProcessorData({
   }
 }
 
-function* requestSampleDataForImports({ flowId, resourceId, sampleDataStage }) {
-  switch (sampleDataStage) {
-    case 'raw': {
-      yield call(fetchPageProcessorPreview, {
-        flowId,
-        _pageProcessorId: resourceId,
-        previewType: sampleDataStage,
-      });
-      break;
-    }
-
-    case 'sampleResponse': {
-      const { merged: resource } = yield select(
-        resourceData,
-        'imports',
-        resourceId,
-        SCOPES.VALUE
-      );
-
-      yield put(
-        actions.flowData.receivedPreviewData(
-          flowId,
-          resourceId,
-          resource && resource.sampleResponseData,
-          'sampleResponse'
-        )
-      );
-      break;
-    }
-
-    case 'responseTransform': {
-      yield call(requestProcessorData, {
-        flowId,
-        resourceId,
-        resourceType: 'imports',
-        processor: 'responseTransform',
-      });
-      break;
-    }
-
-    case 'preMap': {
-      yield call(requestProcessorData, {
-        flowId,
-        resourceId,
-        resourceType: 'imports',
-        processor: 'javascript',
-      });
-      break;
-    }
-
-    default:
-  }
-}
-
-function* fetchInputData({
-  flowId,
-  resourceId,
-  resourceType,
-  stage,
-  isPageGenerator,
-}) {
-  // Updates preProcessedData for the procesors
-  const sampleDataStage = getSampleDataStage(stage, resourceType);
-
-  if (resourceType === 'imports') {
-    yield call(requestSampleDataForImports, {
-      flowId,
-      resourceId,
-      sampleDataStage,
-    });
-
-    return;
-  }
-
-  if (['flowInput', 'raw'].includes(sampleDataStage)) {
-    if (isPageGenerator) {
-      yield call(fetchPageGeneratorPreview, {
-        flowId,
-        _pageGeneratorId: resourceId,
-      });
-    } else {
-      yield call(fetchPageProcessorPreview, {
-        flowId,
-        _pageProcessorId: resourceId,
-        previewType: sampleDataStage,
-      });
-    }
-  } else {
-    yield call(requestProcessorData, {
-      flowId,
-      resourceId,
-      resourceType,
-      processor: sampleDataStage === 'hooks' ? 'javascript' : sampleDataStage,
-      isPageGenerator,
-    });
-  }
-}
-
-requestSampleData = fetchInputData;
-
 function* updateFlowsDataForResource({ resourceId, resourceType }) {
   // get flow ids using this resourceId
   const flowRefs = yield select(getFlowReferencesForResource, resourceId);
@@ -340,6 +274,7 @@ function* updateFlowsDataForResource({ resourceId, resourceType }) {
 }
 
 function* updateFlowData({ flowId }) {
+  // Updates flow structure incase of Drag and change flow order
   const { merged: updatedFlow } = yield select(
     resourceData,
     'flows',

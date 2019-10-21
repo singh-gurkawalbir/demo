@@ -2,6 +2,7 @@
  * Utility functions related to sample data for flows
  */
 import { keys } from 'lodash';
+import moment from 'moment';
 
 const sampleDataStage = {
   exports: {
@@ -18,7 +19,6 @@ const sampleDataStage = {
     postMap: 'preMap',
     postSubmit: 'responseTransform',
     responseTransform: 'sampleResponse',
-    // postAggregate: 'default',
   },
 };
 
@@ -69,3 +69,8 @@ export const compare = (currentList = [], updatedList = []) => {
 
   return changedIndex;
 };
+
+export const getLastExportDateTime = () =>
+  moment()
+    .add(-1, 'y')
+    .toISOString();
