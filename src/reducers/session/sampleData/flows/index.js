@@ -191,31 +191,6 @@ export function getSampleData(
   );
 }
 
-export function getSampleDataStatus(
-  state,
-  flowId,
-  resourceId,
-  stage,
-  { isPageGenerator, isImport }
-) {
-  // returns input data for that stage to populate
-  const flow = state[flowId];
-  const resourceType = isImport ? 'imports' : 'exports';
-  const sampleDataStage = getSampleDataStage(stage, resourceType);
-
-  if (!flow || !sampleDataStage) return;
-  const resourceMap = isPageGenerator
-    ? flow.pageGeneratorsMap
-    : flow.pageProcessorsMap;
-
-  return (
-    resourceMap &&
-    resourceMap[resourceId] &&
-    resourceMap[resourceId][sampleDataStage] &&
-    resourceMap[resourceId][sampleDataStage].status
-  );
-}
-
 export function getFlowReferencesForResource(state, resourceId) {
   // resourceId may be export or an import
   const existingFlows = keys(state);

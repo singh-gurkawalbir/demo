@@ -213,22 +213,6 @@ export function getSampleData(state, flowId, resourceId, stage, options = {}) {
   );
 }
 
-export function getSampleDataStatus(
-  state,
-  flowId,
-  resourceId,
-  stage,
-  options = {}
-) {
-  return fromSession.getSampleDataStatus(
-    state && state.session,
-    flowId,
-    resourceId,
-    stage,
-    options
-  );
-}
-
 export function getFlowReferencesForResource(state, resourceId) {
   return fromSession.getFlowReferencesForResource(
     state && state.session,

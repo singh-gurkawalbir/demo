@@ -199,16 +199,6 @@ export function getSampleData(state, flowId, resourceId, stage, options) {
   );
 }
 
-export function getSampleDataStatus(state, flowId, resourceId, stage, options) {
-  return fromFlowData.getSampleDataStatus(
-    state && state.flowData,
-    flowId,
-    resourceId,
-    stage,
-    options
-  );
-}
-
 export function getFlowReferencesForResource(state, resourceId) {
   return fromFlowData.getFlowReferencesForResource(
     state && state.flowData,
