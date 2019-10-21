@@ -17,6 +17,7 @@ const SaveButton = props => {
     resourceType,
     resourceId,
     classes,
+    match,
     disabled = false,
   } = props;
   const dispatch = useDispatch();
@@ -25,7 +26,9 @@ const SaveButton = props => {
   );
   const [disableSave, setDisableSave] = useState(false);
   const handleSubmitForm = values => {
-    dispatch(actions.resourceForm.submit(resourceType, resourceId, values));
+    dispatch(
+      actions.resourceForm.submit(resourceType, resourceId, values, match)
+    );
     setDisableSave(true);
   };
 

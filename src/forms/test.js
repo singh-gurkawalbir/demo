@@ -1,5 +1,4 @@
 /* global describe, test, expect, jest, fail */
-
 import jsonPatch from 'fast-json-patch';
 import {
   getMissingPatchSet,
@@ -32,6 +31,19 @@ jest.mock('./definitions/index', () => ({
           },
           layout: {
             fields: ['someField', 'custom.Field'],
+          },
+        },
+        subFormFieldsWithFuncs: {
+          fieldMap: {
+            someField: {
+              fieldId: 'someField',
+              someProp: 'foo',
+              someFunc: val => val,
+              visibleWhenAll: [{ field: 'fieldA', is: ['someValue'] }],
+            },
+          },
+          layout: {
+            fields: ['someField'],
           },
         },
         common: {
@@ -1185,6 +1197,78 @@ describe('form factory new layout', () => {
         });
       });
 
+      test('should pick up function references for a formId fields and correctly club them with other fields', () => {
+        const resourceType = 'someResourceType';
+        const resource = { someValue: 'something' };
+        // metadata with a form visibility rule
+        const testMeta = {
+          fieldMap: {
+            subFormFieldsWithFuncs: {
+              formId: 'subFormFieldsWithFuncs',
+              visibleWhenAll: [{ field: 'someOtherField', is: ['foo'] }],
+            },
+            exportData: { fieldId: 'exportData' },
+          },
+          layout: {
+            type: 'collapse',
+            containers: [
+              {
+                fields: ['subFormFieldsWithFuncs', 'exportData'],
+              },
+            ],
+          },
+        };
+        const val = formFactory.getFieldsWithDefaults(
+          testMeta,
+          resourceType,
+          resource
+        );
+
+        // someFunc is a a function defined in the metadata of the subform
+        // it simply returns what value passed in its argument
+        // since getFieldsWithDefaults execute all functions properties against the resource object
+        // we are asserting someFunc to be the resource object
+        expect(val).toEqual({
+          actions: undefined,
+          fieldMap: {
+            someField: {
+              defaultValue: '',
+              fieldId: 'someField',
+              helpKey: 'someResourceType.someField',
+              id: 'someField',
+              name: '/someField',
+              resourceId: undefined,
+              resourceType: 'someResourceType',
+              someFunc: resource,
+              someProp: 'foo',
+              visibleWhenAll: [
+                { field: 'fieldA', is: ['someValue'] },
+                {
+                  field: 'someOtherField',
+                  is: ['foo'],
+                },
+              ],
+            },
+            exportData: {
+              defaultValue: '',
+              fieldId: 'exportData',
+              helpKey: 'someResourceType.exportData',
+              id: 'exportData',
+              name: '/exportData',
+              resourceId: undefined,
+              resourceType: 'someResourceType',
+            },
+          },
+          layout: {
+            type: 'collapse',
+            containers: [
+              {
+                fields: ['someField', 'exportData'],
+              },
+            ],
+          },
+        });
+      });
       test('should throw an error when fieldMap do not exist for the subform', () => {
         const resourceType = 'someResourceType';
         const resource = {};

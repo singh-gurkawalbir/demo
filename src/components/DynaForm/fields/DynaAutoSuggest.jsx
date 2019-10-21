@@ -19,6 +19,7 @@ export default function DynaAutoSuggest(props) {
     onFieldChange,
     onBlur,
     labelName,
+    hideOptions,
     valueName,
     options = [],
   } = props;
@@ -70,6 +71,12 @@ export default function DynaAutoSuggest(props) {
         onInputChange={handleInputChange}
         onChange={handleChange}
         onBlur={handleBlur}
+        components={
+          hideOptions && {
+            DropdownIndicator: () => null,
+            IndicatorSeparator: () => null,
+          }
+        }
         options={suggestions}
       />
     </FormControl>

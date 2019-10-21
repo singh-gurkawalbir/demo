@@ -78,7 +78,7 @@ export default class AppRouting extends Component {
           component={FlowBuilder}
         />
         <Route
-          path="/pg/connectors/:connectorId/licenses"
+          path="/pg/connectors/:connectorId/connectorLicenses"
           component={ConnectorLicenses}
         />
         <Route

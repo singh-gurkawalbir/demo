@@ -1,12 +1,15 @@
 import { Typography } from '@material-ui/core';
 import Delete from '../../../components/ResourceTable/actions/Delete';
-import { formatLastModified } from '../../../components/CeligoTable/util';
+import {
+  getResourceLink,
+  formatLastModified,
+} from '../../../components/CeligoTable/util';
 
 export default {
   columns: [
     {
       heading: 'Email',
-      value: r => r.user && r.user.email,
+      value: r => getResourceLink('connectorLicenses', r),
     },
     {
       heading: 'Status',
