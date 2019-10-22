@@ -184,16 +184,16 @@ export function* saveRawData({ values }) {
 }
 
 export function* submitFormValues({ resourceType, resourceId, values, match }) {
-  let formValues = values;
+  // const formValues = values;
 
-  if (resourceType === 'exports') {
-    formValues = yield call(saveRawData, { values });
-  }
+  // if (resourceType === 'exports') {
+  //   formValues = yield call(saveRawData, { values });
+  // }
 
   const { patchSet, finalValues } = yield call(createFormValuesPatchSet, {
     resourceType,
     resourceId,
-    values: formValues,
+    values,
     scope: SCOPES.VALUE,
   });
 

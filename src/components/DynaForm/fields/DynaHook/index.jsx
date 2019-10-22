@@ -45,6 +45,12 @@ export default function DynaHook(props) {
   );
   // Selector to get sample data for different hook types
   const getSampleDataSelector = ({ state, flowId, resourceId, stage }) => {
+    // Show empty JSON incase of out of flow context
+    if (!flowId) {
+      return {};
+    }
+
+    // Post Aggregate Hook is shown default data
     if (hookStage === 'postAggregate') {
       return {
         postAggregateData: {
@@ -54,6 +60,7 @@ export default function DynaHook(props) {
       };
     }
 
+    // Fetch corresponding data for specific hookStage ('preSavePage',  'preMap', 'postMap', 'postSubmit')
     const sampleData = selectors.getSampleData(
       state,
       flowId,
@@ -72,7 +79,8 @@ export default function DynaHook(props) {
   );
 
   useEffect(() => {
-    if (!preHookData && isPreHookDataRequested) {
+    // Samle data is shown incase of flow context
+    if (!preHookData && flowId && isPreHookDataRequested) {
       dispatch(
         requestSampleData({ flowId, resourceId, resourceType, stage: 'hooks' })
       );
