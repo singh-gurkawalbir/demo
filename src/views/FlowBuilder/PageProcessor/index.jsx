@@ -197,7 +197,7 @@ const PageProcessor = ({
   // #region Configure available processor actions
   // TODO: Raghu, please set the isUsed prop to true any time
   // the flow or PP contains rules for the respective action.
-  // Also, I think 'responseMapping is not valid for the LAST PP.
+  // Also, I think 'responseMapping` action is not valid for the LAST PP.
   // The data doesnt go anywhere, so its a pointless action when PP is last.
   const processorActions = [];
 

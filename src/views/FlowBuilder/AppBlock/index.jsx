@@ -8,6 +8,7 @@ import ApplicationImg from '../../../components/icons/ApplicationImg';
 import ResourceButton from '../ResourceButton';
 import StatusCircle from '../../../components/StatusCircle';
 import Status from '../../../components/Status/';
+import BubbleSvg from '../BubbleSvg';
 
 const blockHeight = 170;
 const blockWidth = 275;
@@ -150,9 +151,16 @@ function AppBlock({
     setExpanded(true);
   }
 
-  const leftActions = actions.filter(a => a.position === 'left');
-  const middleActions = actions.filter(a => a.position === 'middle');
-  const rightActions = actions.filter(a => a.position === 'right');
+  const hasActions = actions && Array.isArray(actions) && actions.length;
+  let leftActions = [];
+  let middleActions = [];
+  let rightActions = [];
+
+  if (hasActions) {
+    leftActions = actions.filter(a => a.position === 'left');
+    middleActions = actions.filter(a => a.position === 'middle');
+    rightActions = actions.filter(a => a.position === 'right');
+  }
 
   function renderActions(actions) {
     if (!actions || !actions.length) return null;
@@ -197,23 +205,11 @@ function AppBlock({
         className={clsx(classes.box, { [classes.draggable]: !isNew })}
         style={{ opacity }}>
         <div className={classes.bubbleContainer}>
-          <svg
+          <BubbleSvg
             height={blockHeight}
             width={blockWidth}
-            className={classes.bubble}>
-            <path
-              d="M255.21,24.73c-13.16-15.48-30.62-24.1-49.02-24.1H58.45c-0.12,0-0.12,0-0.35,0h-0.23
-    c-11.41,0-22,6.17-27.59,16.18L10.59,52.32C3.61,64.31,0,77.93,0,91.67c0,19.44,7.22,39.24,19.91,54.02
-    c13.27,15.48,30.62,24.1,48.9,24.1h147.75c0.12,0,0.12,0,0.35,0h0.23c11.41,0,22-6.17,27.59-16.18l19.68-35.51
-    C271.39,106.11,275,92.49,275,78.75C275,59.19,267.78,39.51,255.21,24.73z"
-            />
-            <path
-              className={classes.bubbleBG}
-              d="M263.53,117.61l-19.67,35.51c-5.4,9.67-15.63,15.67-26.72,15.67H68.81c-17.92,0-35.01-8.43-48.14-23.75
-    C8.17,130.48,1,111.03,1,91.67C1,78,4.62,64.57,11.47,52.8l19.67-35.5c5.4-9.67,15.63-15.67,26.72-15.67h148.33
-    c18.11,0,35.24,8.43,48.25,23.75C266.87,39.99,274,59.44,274,78.75C274,92.42,270.38,105.85,263.53,117.61z"
-            />
-          </svg>
+            classes={{ bubble: classes.bubble, bubbleBG: classes.bubbleBG }}
+          />
         </div>
         <div className={classes.sideActionContainer}>
           <div className={classes.leftActions}>
@@ -239,7 +235,7 @@ function AppBlock({
           <ResourceButton onClick={onBlockClick} variant={blockType} />
           <div className={classes.middleActionContainer}>
             {renderActions(middleActions)}
-            {!expanded && (
+            {!expanded && hasActions && (
               <ActionIconButton
                 className={classes.addButton}
                 onClick={handleExpandClick}
