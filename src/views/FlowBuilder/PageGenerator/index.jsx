@@ -156,20 +156,24 @@ const PageGenerator = ({ history, match, index, isLast, flowId, ...pg }) => {
 
   drag(ref);
 
+  // #region Configure available generator actions
+  // TODO: Raghu, please set the isUsed prop to true any time
+  // the flow or PG contains rules for the respective action.
   let generatorActions = [];
 
   if (!pending) {
     if (blockType === 'export' && !pending) {
-      generatorActions = [scheduleAction];
+      generatorActions = [{ ...scheduleAction, isUsed: false }];
     }
 
     generatorActions = [
       ...generatorActions,
-      transformationAction,
+      { ...transformationAction, isUsed: false },
       exportHooksAction,
       exportFilterAction,
     ];
   }
+  // #endregion
 
   return (
     <div className={classes.pgContainer}>

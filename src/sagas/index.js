@@ -26,6 +26,7 @@ import { uploadFileSagas } from './uploadFile';
 import { stackSagas } from './stack';
 import sampleDataSagas from './sampleData';
 import flowDataSagas from './sampleData/flows';
+import importsSampleDataSagas from './sampleData/imports';
 import fileDefinitionSagas from './fileDefinitions';
 import { marketplaceSagas } from './marketPlace';
 import { accessTokenSagas } from './accessToken';
@@ -104,6 +105,7 @@ export default function* rootSaga() {
     ...stackSagas,
     ...sampleDataSagas,
     ...flowDataSagas,
+    ...importsSampleDataSagas,
     ...fileDefinitionSagas,
     ...marketplaceSagas,
     ...accessTokenSagas,
