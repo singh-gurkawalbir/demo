@@ -1,4 +1,3 @@
-import Typography from '@material-ui/core/Typography';
 import Drawer from '@material-ui/core/Drawer';
 import { useSelector } from 'react-redux';
 import { Divider, ListItem } from '@material-ui/core';
@@ -15,24 +14,14 @@ import AuditLog from './AuditLog';
 import AccessTokens from './AccessTokens';
 import Connections from './Connections';
 import General from './General';
+import CeligoPageBar from '../../components/CeligoPageBar';
 
 const useStyles = makeStyles(theme => ({
   link: {
     color: theme.palette.text.secondary,
-    // color: theme.palette.action.active,
-  },
-  dashboard: {
-    float: 'right',
-  },
-  appFrame: {
-    padding: theme.spacing(1),
-  },
-  about: {
-    padding: theme.spacing(1),
   },
   root: {
     display: 'flex',
-    padding: theme.spacing(1),
     alignItems: 'flex-start',
   },
   leftElement: {
@@ -75,15 +64,8 @@ export default function IntegrationSettings(props) {
 
   return (
     <LoadResources required resources="integrations">
-      <div className={classes.appFrame}>
-        <div className={classes.about}>
-          <a
-            href={getRoutePath(`integrations/${integrationId}/dashboard`)}
-            className={classes.dashboard}>
-            Dashboard
-          </a>
-          <Typography variant="h5">{integration.name}</Typography>
-        </div>
+      <div>
+        <CeligoPageBar title={integration.name} />
         <Divider />
         <div className={classes.root}>
           <div className={classes.flex}>

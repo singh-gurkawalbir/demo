@@ -5,10 +5,10 @@ import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '../../../../components/icons/CloseIcon';
 import Spinner from '../../../Spinner';
 import RefreshIcon from '../../../icons/RefreshIcon';
 import DynaSelect from '../DynaSelect';
+import DeleteIcon from '../../../icons/TrashIcon';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -242,7 +242,7 @@ export default function DynaTable(props) {
                   {r.supportsRefresh && !isLoading && (
                     <RefreshIcon onClick={onFetchResource(r.id)} />
                   )}
-                  {r.supportsRefresh && isLoading && <Spinner />}
+                  {r.supportsRefresh && isLoading && <Spinner size={24} />}
                 </Grid>
               ))}
               <Grid key="delete_button_header" item />
@@ -296,7 +296,7 @@ export default function DynaTable(props) {
                     aria-label="delete"
                     onClick={handleRemoveRow(arr.row)}
                     className={classes.margin}>
-                    <CloseIcon fontSize="small" />
+                    <DeleteIcon fontSize="small" />
                   </IconButton>
                 </Grid>
               </Grid>
