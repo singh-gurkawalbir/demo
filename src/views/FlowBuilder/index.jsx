@@ -230,9 +230,9 @@ function FlowBuilder(props) {
     selectors.createdResourceId(state, newProcessorId)
   );
   const createdProcessorResourceType = useSelector(state => {
-    if (!newProcessorId) return;
+    if (!createdProcessorId) return;
 
-    const imp = selectors.resource(state, 'imports', newProcessorId);
+    const imp = selectors.resource(state, 'imports', createdProcessorId);
 
     return imp ? 'import' : 'export';
   });
