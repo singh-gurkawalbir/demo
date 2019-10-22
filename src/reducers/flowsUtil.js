@@ -10,11 +10,11 @@ export function isRealtimeExport(exp) {
 export function hasBatchExport(exports, simpleExp, flow) {
   let toReturn = false;
 
-  if (flow._exportId) {
+  if (flow && flow._exportId) {
     return !isRealtimeExport(simpleExp);
   }
 
-  if (flow.pageGenerators.length) {
+  if (flow && flow.pageGenerators && flow.pageGenerators.length) {
     flow.pageGenerators.forEach(pg => {
       const exportId = pg._exportId;
       const exp = exports.find(exp => exp._id === exportId);
