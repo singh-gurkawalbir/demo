@@ -1130,3 +1130,183 @@ describe('userAccessLevelOnConnection selector', () => {
     );
   });
 });
+
+describe('templates selectors', () => {
+  describe('template Install Steps', () => {
+    test('should return empty array when state is empty', () => {
+      const state = {};
+
+      expect(selectors.templateInstallSteps(state, 't1')).toEqual([]);
+      expect(selectors.templateInstallSteps(undefined, 't1')).toEqual([]);
+    });
+    test('should return install steps with current step value set', () => {
+      const installSteps = [
+        {
+          stepName: 'stepName',
+          stepId: 'stepId',
+        },
+      ];
+      const state = reducer(
+        {
+          session: {
+            templates: {
+              t1: { installSteps },
+            },
+          },
+        },
+        'some_action'
+      );
+
+      expect(selectors.templateInstallSteps(state, 't1')).toEqual([
+        { stepName: 'stepName', stepId: 'stepId', isCurrentStep: true },
+      ]);
+    });
+    test('should return install steps with current step value set on correct step', () => {
+      const installSteps = [
+        {
+          stepName: 'stepName',
+          stepId: 'stepId',
+          completed: true,
+        },
+        {
+          stepName: 'stepName2',
+          stepId: 'stepId2',
+        },
+      ];
+      const state = reducer(
+        {
+          session: {
+            templates: {
+              t1: { installSteps },
+            },
+          },
+        },
+        'some_action'
+      );
+
+      expect(selectors.templateInstallSteps(state, 't1')).toEqual([
+        { stepName: 'stepName', stepId: 'stepId', completed: true },
+        { stepName: 'stepName2', stepId: 'stepId2', isCurrentStep: true },
+      ]);
+    });
+  });
+});
+
+describe('matchingConnectionList selector', () => {
+  const netsuiteConnection = {
+    _id: 'netsuiteId',
+    type: 'netsuite',
+    netsuite: {
+      account: 'netsuite_account',
+    },
+  };
+  const netsuiteConnectionConnector = {
+    _id: 'netsuiteId',
+    _connectorId: 'connector',
+    type: 'netsuite',
+    netsuite: {
+      account: 'netsuite_account',
+    },
+  };
+  const validNetsuiteConnection = {
+    _id: 'netsuiteId',
+    type: 'netsuite',
+    netsuite: {
+      account: 'netsuite_account',
+      environment: 'production',
+    },
+  };
+  const salesforceConnection = {
+    _id: 'salesforce',
+    type: 'salesforce',
+  };
+  const salesforceConnectionSandbox = {
+    _id: 'salesforce',
+    sandbox: true,
+    type: 'salesforce',
+  };
+  const restConnection = {
+    _id: 'restConnection',
+    type: 'rest',
+    rest: {
+      baseURI: 'https://baseuri.com',
+    },
+  };
+  const assistantConnection = {
+    _id: 'assistant',
+    type: 'rest',
+    assistant: 'zendesk',
+    rest: {
+      baseURI: 'https://baseuri.com',
+    },
+  };
+  const connections = [
+    netsuiteConnection,
+    netsuiteConnectionConnector,
+    validNetsuiteConnection,
+    salesforceConnection,
+    salesforceConnectionSandbox,
+    restConnection,
+    assistantConnection,
+  ];
+
+  test('should return empty array when state is empty', () => {
+    const state = {};
+
+    expect(selectors.matchingConnectionList(state, {})).toEqual([]);
+    expect(selectors.matchingConnectionList(state, undefined)).toEqual([]);
+    expect(selectors.matchingConnectionList(undefined, {})).toEqual([]);
+    expect(selectors.matchingConnectionList(undefined, undefined)).toEqual([]);
+  });
+  test('should return install steps with current step value set', () => {
+    const state = reducer(
+      {
+        data: {
+          resources: {
+            connections,
+          },
+        },
+      },
+      'some_action'
+    );
+
+    expect(
+      selectors.matchingConnectionList(state, { type: 'netsuite' })
+    ).toEqual([validNetsuiteConnection]);
+    expect(
+      selectors.matchingConnectionList(state, { type: 'salesforce' })
+    ).toEqual([salesforceConnection]);
+    expect(selectors.matchingConnectionList(state, { type: 'rest' })).toEqual([
+      restConnection,
+      assistantConnection,
+    ]);
+  });
+  test('should return install steps with current step value set on correct step', () => {
+    const installSteps = [
+      {
+        stepName: 'stepName',
+        stepId: 'stepId',
+        completed: true,
+      },
+      {
+        stepName: 'stepName2',
+        stepId: 'stepId2',
+      },
+    ];
+    const state = reducer(
+      {
+        session: {
+          templates: {
+            t1: { installSteps },
+          },
+        },
+      },
+      'some_action'
+    );
+
+    expect(selectors.templateInstallSteps(state, 't1')).toEqual([
+      { stepName: 'stepName', stepId: 'stepId', completed: true },
+      { stepName: 'stepName2', stepId: 'stepId2', isCurrentStep: true },
+    ]);
+  });
+});

@@ -115,10 +115,6 @@ export function previewTemplate(state, templateId) {
   return fromSession.previewTemplate(state && state.session, templateId);
 }
 
-export function marketplaceTemplate(state, templateId) {
-  return fromData.template(state && state.data, templateId);
-}
-
 export function templateSetup(state, templateId) {
   return fromSession.template(state && state.session, templateId);
 }
@@ -486,6 +482,10 @@ export function hasProfile(state) {
 // #endregion
 
 // #region PUBLIC DATA SELECTORS
+export function marketplaceTemplate(state, templateId) {
+  return fromData.template(state && state.data, templateId);
+}
+
 export function resource(state, resourceType, id) {
   return fromData.resource(state && state.data, resourceType, id);
 }
