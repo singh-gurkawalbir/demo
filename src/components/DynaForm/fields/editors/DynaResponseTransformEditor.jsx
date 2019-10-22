@@ -14,7 +14,7 @@ export default function DynaResponseTransformEditor(props) {
    */
   const constructTransformData = rule => ({
     version: 1,
-    rules: [rule],
+    rules: rule ? [rule] : [[]],
     rulesCollection: { mappings: [rule] },
   });
   const handleClose = (shouldCommit, editorValues) => {
