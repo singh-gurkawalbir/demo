@@ -4,9 +4,10 @@ import { IconButton, Tooltip } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
   button: {
-    transition: theme.transitions.create(['left', 'top'], {
+    opacity: 1,
+    transition: theme.transitions.create(['all'], {
       easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen * 4,
+      duration: theme.transitions.duration.enteringScreen,
     }),
   },
   iconButtonRoot: {

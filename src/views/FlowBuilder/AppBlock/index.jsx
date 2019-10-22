@@ -39,9 +39,42 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     justifyContent: 'center',
   },
-  actionContainer: {
+  middleActionContainer: {
     position: 'relative',
     alignSelf: 'center',
+  },
+  sideActionContainer: {
+    position: 'relative',
+  },
+  leftActions: {
+    position: 'absolute',
+    display: 'flex',
+    // border: 'solid 1px blue',
+    left: -16,
+    top: 68,
+  },
+  rightActions: {
+    position: 'absolute',
+    display: 'flex',
+    // border: 'solid 1px blue',
+    left: 280,
+    top: 68,
+  },
+  isNotOverActions: {
+    // display: 'none',
+    width: 0,
+    height: 0,
+    margin: 0,
+    padding: 0,
+    opacity: 0,
+    '& svg': {
+      width: 0,
+      height: 0,
+    },
+  },
+  actionIsNew: {
+    border: 'solid 1px',
+    borderColor: theme.palette.primary.main,
   },
   bubbleContainer: {
     position: 'relative',
@@ -67,15 +100,10 @@ const useStyles = makeStyles(theme => ({
     maxWidth: 101,
     maxHeight: 49,
   },
-  isNotOverActions: {
-    left: 0,
-    top: 0,
-    position: 'absolute',
-  },
   addButton: {
-    padding: theme.spacing(2),
-    marginTop: -theme.spacing(1),
-    marginLeft: -theme.spacing(1),
+    // padding: theme.spacing(2),
+    // marginTop: -theme.spacing(1),
+    // marginLeft: -theme.spacing(1),
   },
   status: {
     justifyContent: 'center',
@@ -122,28 +150,36 @@ function AppBlock({
     setExpanded(true);
   }
 
-  const middleCount = isNew
-    ? 0
-    : actions.filter(a => a.position === 'middle').length;
-  const offset = ((3 - middleCount) * 42) / 2;
-  let rightIndex = 0;
-  const top = middleCount > 0 ? -10 : -25;
+  const leftActions = actions.filter(a => a.position === 'left');
+  const middleActions = actions.filter(a => a.position === 'middle');
+  const rightActions = actions.filter(a => a.position === 'right');
 
-  function getActionStyle(action) {
-    switch (action.position) {
-      case 'left':
-        return { position: 'absolute', left: -134 - offset, top };
-      case 'right':
-        rightIndex += 1;
+  function renderActions(actions) {
+    if (!actions || !actions.length) return null;
 
-        return {
-          position: 'absolute',
-          left: 162 - offset + (rightIndex - 1) * 42,
-          top,
-        };
-      default:
-        return undefined;
-    }
+    return actions.map(a => (
+      <Fragment key={a.name}>
+        <ActionIconButton
+          variant={a.position !== 'middle' ? 'contained' : undefined}
+          helpText={a.helpText}
+          className={clsx({
+            [classes.isNotOverActions]: !expanded && !a.isUsed,
+            [classes.actionIsNew]: expanded && !a.isUsed,
+          })}
+          onClick={() => setActiveAction(a.name)}
+          data-test={a.name}>
+          <a.Icon />
+        </ActionIconButton>
+        <a.Component
+          open={activeAction === a.name}
+          flowId={flowId}
+          resource={resource}
+          resourceIndex={resourceIndex}
+          resourceType={resourceType}
+          onClose={() => setActiveAction(null)}
+        />
+      </Fragment>
+    ));
   }
 
   return (
@@ -179,6 +215,16 @@ function AppBlock({
             />
           </svg>
         </div>
+        <div className={classes.sideActionContainer}>
+          <div className={classes.leftActions}>
+            {renderActions(leftActions)}
+          </div>
+        </div>
+        <div className={classes.sideActionContainer}>
+          <div className={classes.rightActions}>
+            {renderActions(rightActions)}
+          </div>
+        </div>
         <div className={classes.appLogoContainer}>
           {connectorType && (
             <ApplicationImg
@@ -191,36 +237,9 @@ function AppBlock({
         </div>
         <div className={classes.buttonContainer}>
           <ResourceButton onClick={onBlockClick} variant={blockType} />
-          <div className={classes.actionContainer}>
-            {actions &&
-              actions.map(a => (
-                <Fragment key={a.name}>
-                  <ActionIconButton
-                    variant={
-                      a.position !== 'middle' && expanded
-                        ? 'contained'
-                        : undefined
-                    }
-                    helpText={a.helpText}
-                    className={clsx({
-                      [classes.isNotOverActions]: !expanded && !a.isUsed,
-                    })}
-                    style={expanded || a.isUsed ? getActionStyle(a) : undefined}
-                    onClick={() => setActiveAction(a.name)}
-                    data-test={a.name}>
-                    <a.Icon />
-                  </ActionIconButton>
-                  <a.Component
-                    open={activeAction === a.name}
-                    flowId={flowId}
-                    resource={resource}
-                    resourceIndex={resourceIndex}
-                    resourceType={resourceType}
-                    onClose={() => setActiveAction(null)}
-                  />
-                </Fragment>
-              ))}
-            {!expanded && actions && actions.length > 0 && (
+          <div className={classes.middleActionContainer}>
+            {renderActions(middleActions)}
+            {!expanded && (
               <ActionIconButton
                 className={classes.addButton}
                 onClick={handleExpandClick}

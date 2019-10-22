@@ -193,17 +193,19 @@ const PageProcessor = ({
   }
 
   // #region Configure available processor actions
+  // TODO: Raghu, please set the isUsed prop to true any time
+  // the flow or PP contains rules for the respective action.
   const processorActions = pending
     ? []
     : [
         inputFilterAction,
-        { ...importMappingAction, isUsed: index === 0 },
-        { ...importHooksAction, isUsed: index === 0 },
+        { ...importMappingAction, isUsed: false },
+        { ...importHooksAction, isUsed: false },
         transformationAction,
       ];
 
   if (!isLast && !pending) {
-    processorActions.push({ ...responseMapping, isUsed: index === 0 });
+    processorActions.push({ ...responseMapping, isUsed: false });
     processorActions.push(proceedOnFailureAction);
   }
   // #endregion
