@@ -1,5 +1,5 @@
 import { adaptorTypeMap } from '../resource';
-import generateList from './sampleGenerateData';
+import generateFields from './sampleGenerateData';
 import MappingUtil from '.';
 import NetsuiteMapping from './application/netsuite';
 
@@ -173,12 +173,17 @@ export default {
       default:
     }
   },
-  generateMappingsForApp: ({ mappings, generateList, recordType, appType }) => {
+  generateMappingsForApp: ({
+    mappings,
+    generateFields,
+    recordType,
+    appType,
+  }) => {
     switch (appType) {
       case adaptorTypeMap.NetSuiteDistributedImport:
         return NetsuiteMapping.generateMappingFieldsAndList({
           mappings,
-          generateList,
+          generateFields,
           recordType,
         });
       case adaptorTypeMap.RESTImport:
@@ -258,14 +263,14 @@ export default {
 
     return formattedMapping;
   },
-  getSampleGenerateFields: () => generateList,
+  getSampleGenerateFields: () => generateFields,
   getResponseMappingDefaultExtracts: resourceType => {
-    const extractList =
+    const extractFields =
       resourceType === 'imports'
         ? ImportResponseMappingExtracts
         : LookupResponseMappingExtracts;
 
-    return extractList.map(m => ({
+    return extractFields.map(m => ({
       id: m,
       name: m,
     }));

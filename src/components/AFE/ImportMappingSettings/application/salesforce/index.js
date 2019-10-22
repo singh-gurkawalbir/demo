@@ -7,16 +7,16 @@ export default {
     const {
       value,
       lookup = {},
-      extractList,
+      extractFields,
       generate,
-      generateList,
+      generateFields,
       options,
     } = params;
     const {
       connectionId,
       // sObjectType
     } = options;
-    const selectedGenerateObj = generateList.find(
+    const selectedGenerateObj = generateFields.find(
       field => field.id === generate
     );
     const fieldMeta = {
@@ -141,8 +141,8 @@ export default {
           options: [
             {
               items:
-                (extractList &&
-                  extractList.map(field => ({
+                (extractFields &&
+                  extractFields.map(field => ({
                     label: field,
                     value: field,
                   }))) ||

@@ -38,11 +38,8 @@ export default function DynaImportMapping(props) {
   const opts = {};
 
   if (application === ResourceUtil.adaptorTypeMap.SalesforceImport) {
-    // opts.api = '';
     opts.connectionId = connectionId;
-    // TODO: Hardcoding it. Change it to sObjectType
     opts.sObjectType = sObjectType;
-    // 'account'
   } else if (
     application === ResourceUtil.adaptorTypeMap.NetSuiteDistributedImport
   ) {

@@ -143,6 +143,7 @@ export default function ImportMapping(props) {
     onSave,
     options = {},
   } = props;
+  let formattedGenerateFields = generateFields;
   const [changeIdentifier, setChangeIdentifier] = useState(0);
   const [lookupState, setLookup] = useState(lookups);
   const classes = useStyles();
@@ -150,8 +151,6 @@ export default function ImportMapping(props) {
   const [state, dispatchLocalAction] = useReducer(reducer, mappings || {});
   const mappingsTmp = deepClone(state);
   const dispatch = useDispatch();
-  // initializing generateList with generateFields coming as props. To be eliminated later when it could be fetched using sameple data
-  let generateList = generateFields;
   const { data } = useSelector(state => {
     if (application === 'salesforce') {
       return selectors.metadataOptionsAndResources(
@@ -199,7 +198,7 @@ export default function ImportMapping(props) {
   }, [application, data, handleFetchResource]);
 
   if (application === ResourceUtil.adaptorTypeMap.SalesforceImport) {
-    generateList =
+    formattedGenerateFields =
       data &&
       data.map(d => ({
         id: d.value,
@@ -277,7 +276,7 @@ export default function ImportMapping(props) {
       // check for all mapping with useAsAnInitializeValue set to true
       mappings = MappingUtil.generateMappingsForApp({
         mappings,
-        generateList: generateFields,
+        generateFields,
         appType: application,
       });
 
@@ -415,7 +414,7 @@ export default function ImportMapping(props) {
                         value={mapping.generate}
                         labelName="name"
                         valueName="id"
-                        options={generateList}
+                        options={formattedGenerateFields}
                         onBlur={(id, evt) => {
                           handleFieldUpdate(
                             mapping.index,
@@ -441,8 +440,8 @@ export default function ImportMapping(props) {
                           mapping.lookupName &&
                           getLookup(mapping.lookupName)
                         }
-                        extractList={extractFields}
-                        generateList={generateList}
+                        extractFields={extractFields}
+                        generateFields={formattedGenerateFields}
                       />
                     </Grid>
                     <Grid item key="edit_button">

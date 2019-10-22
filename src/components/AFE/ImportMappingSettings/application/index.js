@@ -57,11 +57,11 @@ export default {
       application,
       value,
       lookup = {},
-      extractList,
+      extractFields,
       // connectionId,
       // recordType,
       generate,
-      generateList,
+      generateFields,
       options,
     } = params;
     let fieldMeta = {};
@@ -71,16 +71,16 @@ export default {
         fieldMeta = RestMappingSettings.getMetaData({
           value,
           lookup,
-          extractList,
+          extractFields,
         });
         break;
       case adaptorTypeMap.NetSuiteDistributedImport:
         fieldMeta = NetsuiteMappingSettings.getMetaData({
           value,
           lookup,
-          extractList,
+          extractFields,
           generate,
-          generateList,
+          generateFields,
           options,
         });
         break;
@@ -88,9 +88,9 @@ export default {
         fieldMeta = SalesforceMappingSettings.getMetaData({
           value,
           lookup,
-          extractList,
+          extractFields,
           generate,
-          generateList,
+          generateFields,
           options,
         });
         break;
@@ -100,7 +100,7 @@ export default {
         fieldMeta = FTPMappingSettings.getMetaData({
           value,
           lookup,
-          extractList,
+          extractFields,
         });
         break;
       default:

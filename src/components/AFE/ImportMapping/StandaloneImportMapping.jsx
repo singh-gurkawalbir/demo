@@ -33,7 +33,6 @@ export default function StandaloneImportMapping(props) {
   const resourceType = ResourceUtil.getResourceSubType(resourceData);
 
   if (resourceType.type === ResourceUtil.adaptorTypeMap.SalesforceImport) {
-    options.api = resourceData.salesforce.api;
     options.connectionId = connectionId;
     options.sObjectType = resourceData.salesforce.sObjectType;
   }
@@ -48,11 +47,6 @@ export default function StandaloneImportMapping(props) {
     resourceData,
     resourceType.type
   );
-  // const recordType = MappingUtil.getRecordTypeFromResource(
-  //   resourceData,
-  //   resourceType.type
-  // );
-  // check for case when there is no lookups and we saving without lookups
   const lookups = LookupUtil.getLookupFromResource(
     resourceData,
     resourceType.type
