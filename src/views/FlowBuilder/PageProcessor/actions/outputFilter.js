@@ -12,12 +12,12 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function InputFilterDialog({ flowId, resource, resourceType, open, onClose }) {
+function OutputFilterDialog({ flowId, resource, resourceType, open, onClose }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const resourceId = resource._id;
   const sampleData = useSelector(state =>
-    selectors.getSampleData(state, flowId, resourceId, 'inputFilter', {
+    selectors.getSampleData(state, flowId, resourceId, 'outputFilter', {
       isImport: resourceType === 'imports',
     })
   );
@@ -29,7 +29,7 @@ function InputFilterDialog({ flowId, resource, resourceType, open, onClose }) {
           flowId,
           resourceId,
           resourceType,
-          'inputFilter'
+          'outputFilter'
         )
       );
     }
@@ -40,9 +40,7 @@ function InputFilterDialog({ flowId, resource, resourceType, open, onClose }) {
       open={open}
       onClose={onClose}
       PaperProps={{ className: classes.paper }}>
-      <DialogTitle disableTypography>
-        <Typography variant="h6">Input Filter</Typography>
-      </DialogTitle>
+      <DialogTitle>Input Filter</DialogTitle>
       <Typography>flowId: {flowId}</Typography>
       <Typography>resourceId: {resourceId}</Typography>
       {sampleData && (
@@ -52,18 +50,18 @@ function InputFilterDialog({ flowId, resource, resourceType, open, onClose }) {
   );
 }
 
-function InputFilter(props) {
+function OutputFilter(props) {
   const { open } = props;
 
-  return <Fragment>{open && <InputFilterDialog {...props} />}</Fragment>;
+  return <Fragment>{open && <OutputFilterDialog {...props} />}</Fragment>;
 }
 
 export default {
   // used to create data-test attribute and component key. Should be unique across FB actions.
-  name: 'inputFilter',
-  position: 'left',
+  name: 'outputFilter',
+  position: 'middle',
   Icon,
   helpText:
     'This is the text currently in the hover state of actions in the current FB',
-  Component: InputFilter,
+  Component: OutputFilter,
 };

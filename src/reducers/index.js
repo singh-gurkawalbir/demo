@@ -28,6 +28,7 @@ import {
 } from '../sagas/api/apiPaths';
 import { getFieldById } from '../forms/utils';
 import commKeyGen from '../utils/commKeyGenerator';
+import { isRealtimeExport, isSimpleImportFlow, isRunnable } from './flowsUtil';
 
 const combinedReducers = combineReducers({
   app,
@@ -199,19 +200,13 @@ export function processorRequestOptions(state, id) {
   return fromSession.processorRequestOptions(state.session, id);
 }
 
-export function getSampleData(
-  state,
-  flowId,
-  resourceId,
-  stage,
-  isPageGenerator
-) {
+export function getSampleData(state, flowId, resourceId, stage, options = {}) {
   return fromSession.getSampleData(
     state && state.session,
     flowId,
     resourceId,
     stage,
-    isPageGenerator
+    options
   );
 }
 
@@ -222,8 +217,13 @@ export function getFlowReferencesForResource(state, resourceId) {
   );
 }
 
-export function getFlowDataState(state, flowId) {
-  return fromSession.getFlowDataState(state && state.session, flowId);
+export function getFlowDataState(state, flowId, resourceId, isPageGenerator) {
+  return fromSession.getFlowDataState(
+    state && state.session,
+    flowId,
+    resourceId,
+    isPageGenerator
+  );
 }
 
 export function avatarUrl(state) {
@@ -494,6 +494,36 @@ export function resourceList(state, options) {
   return fromData.resourceList(state && state.data, options);
 }
 
+export function flowListWithMetadata(state, options) {
+  const flows =
+    fromData.resourceList(state && state.data, options).resources || [];
+
+  flows.forEach((f, i) => {
+    const _exportId =
+      f.pageGenerators && f.pageGenerators.length
+        ? f.pageGenerators[0]._exportId
+        : f._exportId;
+    const exp = resource(state, 'exports', _exportId);
+    const exports = fromData.resourceList(state && state.data, {
+      resourceType: 'exports',
+    }).resources;
+
+    if (isRealtimeExport(exp)) {
+      flows[i].isRealtime = true;
+    }
+
+    if (isSimpleImportFlow(exp)) {
+      flows[i].isSimpleImport = true;
+    }
+
+    if (isRunnable(exports, exp, f)) {
+      flows[i].isRunnable = true;
+    }
+  });
+
+  return { resources: flows };
+}
+
 export function resourceListWithPermissions(state, options) {
   const resourceList = fromData.resourceList(state && state.data, options);
   // eslint-disable-next-line no-use-before-define
@@ -672,7 +702,9 @@ export function integrationAppSettingsFormState(state, integrationId, flowId) {
 
 export function integrationConnectionList(state, integrationId) {
   const integration = resource(state, 'integrations', integrationId);
-  const connList = fromData.resourceList(state.data, { type: 'connections' });
+  const connList = resourceListWithPermissions(state, {
+    type: 'connections',
+  });
 
   if (
     integrationId &&
@@ -835,7 +867,7 @@ export function integrationAppFlowSettings(state, id, section, storeId) {
   );
   const { fields, sections: subSections } = selectedSection;
   const preferences = userPreferences(state);
-  let flows = resourceList(state, {
+  let flows = flowListWithMetadata(state, {
     type: 'flows',
     sandbox: preferences.environment === 'sandbox',
     filter: {
@@ -1587,6 +1619,8 @@ export function commMetadataPathGen(
 
       if (selectField && recordType) {
         commMetadataPath += `/${recordType}/selectFieldValues/${selectField}`;
+      } else if (recordType) {
+        commMetadataPath += `/${recordType}`;
       }
     }
   } else if (applicationType === 'salesforce') {
@@ -1914,6 +1948,31 @@ export function getAllPageProcessorImports(state, pageProcessors) {
     imports && imports.filter(i => pageProcessorIds.indexOf(i._id) > -1);
 
   return ppImports;
+}
+
+export function getImportSampleData(state, resourceId) {
+  const { merged: resource } = resourceData(state, 'imports', resourceId);
+  const { assistant, adaptorType, sampleData } = resource;
+
+  if (sampleData) return sampleData;
+  else if (assistant) {
+    // get assistants sample data
+  } else if (adaptorType === 'NetSuiteDistributedImport') {
+    // eslint-disable-next-line camelcase
+    const { _connectionId: connectionId, netsuite_da } = resource;
+    const { data: sampleData } = metadataOptionsAndResources(
+      state,
+      connectionId,
+      'suitescript',
+      'recordTypes',
+      `record-${netsuite_da.recordType}`,
+      netsuite_da.recordType
+    );
+
+    return sampleData;
+  } else if (adaptorType === 'SalesforceImport') {
+    // similar logic as netsuite
+  }
 }
 
 export function flowConnectionList(state, flow) {

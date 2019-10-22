@@ -89,6 +89,12 @@ export default {
     columnData.push({
       heading: 'Schedule',
       value: function ScheduleAction(r) {
+        if (r && r.isRealtime) {
+          return 'Realtime';
+        } else if (r && r.isSimpleImport) {
+          return 'Data Loader';
+        }
+
         return <Schedule.component resource={r} />;
       },
     });
