@@ -115,10 +115,6 @@ export default {
   configureAsyncHelper: {
     type: 'checkbox',
     label: 'Configure Async Helper',
-    required: true,
-    validWhen: {
-      isNot: { values: [false], message: 'Please select an application' },
-    },
   },
   'http.paging.token': {
     type: 'text',
