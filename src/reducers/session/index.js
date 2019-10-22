@@ -189,19 +189,13 @@ export function getResourceSampleDataWithStatus(state, resourceId, stage) {
   );
 }
 
-export function getSampleData(
-  state,
-  flowId,
-  resourceId,
-  stage,
-  isPageGenerator
-) {
+export function getSampleData(state, flowId, resourceId, stage, options) {
   return fromFlowData.getSampleData(
     state && state.flowData,
     flowId,
     resourceId,
     stage,
-    isPageGenerator
+    options
   );
 }
 
@@ -212,8 +206,13 @@ export function getFlowReferencesForResource(state, resourceId) {
   );
 }
 
-export function getFlowDataState(state, flowId) {
-  return fromFlowData.getFlowDataState(state && state.flowData, flowId);
+export function getFlowDataState(state, flowId, resourceId, isPageGenerator) {
+  return fromFlowData.getFlowDataState(
+    state && state.flowData,
+    flowId,
+    resourceId,
+    isPageGenerator
+  );
 }
 
 export function apiAccessToken(state, resourceId) {
