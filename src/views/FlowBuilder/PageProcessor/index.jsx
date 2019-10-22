@@ -12,9 +12,11 @@ import actions from '../../../actions';
 import { getResourceSubType } from '../../../utils/resource';
 import importMappingAction from './actions/importMapping';
 import inputFilterAction from './actions/inputFilter';
-import importHooksAction from './actions/importHooks';
+import pageProcessorHooksAction from './actions/pageProcessorHooks';
+import outputFilterAction from './actions/outputFilter';
 import transformationAction from './actions/transformation';
 import responseMapping from './actions/responseMapping';
+import responseTransformationAction from './actions/responseTransformation';
 import proceedOnFailureAction from './actions/proceedOnFailure';
 
 const useStyles = makeStyles(theme => ({
@@ -195,18 +197,32 @@ const PageProcessor = ({
   // #region Configure available processor actions
   // TODO: Raghu, please set the isUsed prop to true any time
   // the flow or PP contains rules for the respective action.
-  const processorActions = pending
-    ? []
-    : [
-        inputFilterAction,
-        { ...importMappingAction, isUsed: false },
-        { ...importHooksAction, isUsed: false },
-        transformationAction,
-      ];
+  // Also, I think 'responseMapping is not valid for the LAST PP.
+  // The data doesnt go anywhere, so its a pointless action when PP is last.
+  const processorActions = [];
 
-  if (!isLast && !pending) {
-    processorActions.push({ ...responseMapping, isUsed: false });
-    processorActions.push(proceedOnFailureAction);
+  if (!pending) {
+    if (pp.type === 'export') {
+      processorActions.push(
+        inputFilterAction,
+        outputFilterAction,
+        transformationAction,
+        pageProcessorHooksAction,
+        responseMapping
+      );
+    } else {
+      processorActions.push(
+        inputFilterAction,
+        { ...importMappingAction, isUsed: false }, // example new prop
+        responseTransformationAction,
+        pageProcessorHooksAction,
+        responseMapping
+      );
+    }
+
+    if (!isLast) {
+      processorActions.push(proceedOnFailureAction);
+    }
   }
   // #endregion
 
