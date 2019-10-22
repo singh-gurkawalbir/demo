@@ -8,34 +8,53 @@ export default {
       retValues['/test/limit'] = 1;
     }
 
-    if (retValues['/rest/pagingMethod'] !== 'pageargument') {
-      retValues['/rest/pageArgument'] = undefined;
-    }
-
-    if (retValues['/rest/pagingMethod'] !== 'nextpageurl') {
+    if (retValues['/rest/pagingMethod'] === 'pageargument') {
       retValues['/rest/nextPageRelativeURI'] = undefined;
       retValues['/rest/nextPagePath'] = undefined;
-    }
-
-    if (retValues['/rest/pagingMethod'] !== 'relativeuri') {
-      retValues['/rest/nextPageRelativeURI'] = undefined;
-    }
-
-    if (retValues['/rest/pagingMethod'] !== 'linkheader') {
       retValues['/rest/linkHeaderRelation'] = undefined;
-    }
-
-    if (retValues['/rest/pagingMethod'] !== 'skipargument') {
-      retValues['/rest/skipArgument'] = undefined;
-    }
-
-    if (retValues['/rest/pagingMethod'] !== 'token') {
-      retValues['/rest/nextPagePath'] = undefined;
-      retValues['/rest/pageArgument'] = undefined;
-    }
-
-    if (retValues['/rest/pagingMethod'] !== 'postbody') {
+      retValues['/rest/nextPageRelativeURI'] = undefined;
       retValues['/rest/pagingPostBody'] = undefined;
+      retValues['/rest/skipArgument'] = undefined;
+    } else if (retValues['/rest/pagingMethod'] === 'nextpageurl') {
+      retValues['/rest/linkHeaderRelation'] = undefined;
+      retValues['/rest/nextPageRelativeURI'] = undefined;
+      retValues['/rest/pagingPostBody'] = undefined;
+      retValues['/rest/pageArgument'] = undefined;
+      retValues['/rest/skipArgument'] = undefined;
+    } else if (retValues['/rest/pagingMethod'] === 'relativeuri') {
+      retValues['/rest/nextPagePath'] = undefined;
+      retValues['/rest/linkHeaderRelation'] = undefined;
+      retValues['/rest/nextPageRelativeURI'] = undefined;
+      retValues['/rest/pagingPostBody'] = undefined;
+      retValues['/rest/pageArgument'] = undefined;
+      retValues['/rest/skipArgument'] = undefined;
+    } else if (retValues['/rest/pagingMethod'] === 'linkheader') {
+      retValues['/rest/nextPageRelativeURI'] = undefined;
+      retValues['/rest/nextPagePath'] = undefined;
+      retValues['/rest/nextPageRelativeURI'] = undefined;
+      retValues['/rest/pagingPostBody'] = undefined;
+      retValues['/rest/pageArgument'] = undefined;
+      retValues['/rest/skipArgument'] = undefined;
+    } else if (retValues['/rest/pagingMethod'] === 'skipargument') {
+      retValues['/rest/nextPageRelativeURI'] = undefined;
+      retValues['/rest/nextPagePath'] = undefined;
+      retValues['/rest/linkHeaderRelation'] = undefined;
+      retValues['/rest/nextPageRelativeURI'] = undefined;
+      retValues['/rest/pagingPostBody'] = undefined;
+      retValues['/rest/pageArgument'] = undefined;
+    } else if (retValues['/rest/pagingMethod'] === 'token') {
+      retValues['/rest/nextPageRelativeURI'] = undefined;
+      retValues['/rest/linkHeaderRelation'] = undefined;
+      retValues['/rest/nextPageRelativeURI'] = undefined;
+      retValues['/rest/pagingPostBody'] = undefined;
+      retValues['/rest/skipArgument'] = undefined;
+    } else if (retValues['/rest/pagingMethod'] === 'postbody') {
+      retValues['/rest/nextPageRelativeURI'] = undefined;
+      retValues['/rest/nextPagePath'] = undefined;
+      retValues['/rest/linkHeaderRelation'] = undefined;
+      retValues['/rest/nextPageRelativeURI'] = undefined;
+      retValues['/rest/pageArgument'] = undefined;
+      retValues['/rest/skipArgument'] = undefined;
     }
 
     return {
