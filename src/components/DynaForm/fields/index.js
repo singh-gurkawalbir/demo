@@ -15,6 +15,7 @@ import DynaEditor from './DynaEditor';
 import DynaCsvParse from './editors/DynaCsvParse';
 import DynaRefreshableSelect from './DynaRefreshableSelect';
 import DynaTransformEditor from './editors/DynaTransformEditor';
+import DynaResponseTransformEditor from './editors/DynaResponseTransformEditor';
 import DynaTextFtpPort from './DynaTextFtpPort';
 import DynaUploadFile from './DynaUploadFile';
 import DynaHook from './DynaHook';
@@ -65,6 +66,7 @@ export default {
   xmlparse: DynaXmlParse,
   refreshableselect: DynaRefreshableSelect,
   transformeditor: DynaTransformEditor,
+  responsetransformeditor: DynaResponseTransformEditor,
   ftpport: DynaTextFtpPort,
   uploadfile: DynaUploadFile,
   labeltitle: DynaLabel,

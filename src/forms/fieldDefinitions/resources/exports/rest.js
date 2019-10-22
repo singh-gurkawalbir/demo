@@ -18,7 +18,7 @@ export default {
     ],
   },
   'rest.postBody': {
-    type: 'text',
+    type: 'httprequestbody',
     label: 'Build HTTP Request Body',
     required: true,
     visibleWhen: [
@@ -39,10 +39,9 @@ export default {
     valueType: 'keyvalue',
     label: 'Configure HTTP headers',
   },
-  'rest.once.booleanField': {
+  'once.booleanField': {
     type: 'text',
     label: 'Boolean Field',
-    id: 'once.booleanField',
     helpkey: 'once.booleanField',
   },
   // #region paging
@@ -108,7 +107,7 @@ export default {
     ],
   },
   'rest.pagingPostBody': {
-    type: 'text',
+    type: 'httprequestbody',
     label: 'Build Paging Post Body',
     required: true,
     visibleWhen: [
@@ -150,7 +149,7 @@ export default {
     ],
   },
   'rest.relativeURI': {
-    type: 'text',
+    type: 'relativeuri',
     required: true,
     label: 'Relative URI',
   },
@@ -198,7 +197,7 @@ export default {
   // #endregion transform
 
   'rest.once.relativeURI': {
-    type: 'text',
+    type: 'relativeuri',
     label: 'Relative URI',
   },
   'rest.once.method': {
@@ -228,7 +227,7 @@ export default {
     label: 'Data URI Template',
   },
   'rest.once.postBody': {
-    type: 'text',
+    type: 'httprequestbody',
     label: 'Build HTTP Request Body',
   },
 };

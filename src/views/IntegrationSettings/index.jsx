@@ -21,6 +21,9 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.text.secondary,
     // color: theme.palette.action.active,
   },
+  dashboard: {
+    float: 'right',
+  },
   appFrame: {
     padding: theme.spacing(1),
   },
@@ -74,6 +77,11 @@ export default function IntegrationSettings(props) {
     <LoadResources required resources="integrations">
       <div className={classes.appFrame}>
         <div className={classes.about}>
+          <a
+            href={getRoutePath(`integrations/${integrationId}/dashboard`)}
+            className={classes.dashboard}>
+            Dashboard
+          </a>
           <Typography variant="h5">{integration.name}</Typography>
         </div>
         <Divider />

@@ -92,7 +92,11 @@ export default {
     }
 
     if (fieldId === 'connection') {
-      const filter = { type: app.type };
+      let filter;
+
+      if (['mysql', 'postgresql', 'mssql'].includes(app.type)) {
+        filter = { rdbms: { type: app.type } };
+      } else filter = { type: app.type };
 
       if (app.assistant) {
         filter.assistant = app.assistant;

@@ -74,6 +74,7 @@ export default {
       fieldId: 'http.auth.token.token',
       defaultValue: '',
       label: 'Access Token',
+      required: true,
       helpText: 'This Access Token works in tandem with the Client ID.',
       visibleWhen: [{ field: 'authType', is: ['token'] }],
     },

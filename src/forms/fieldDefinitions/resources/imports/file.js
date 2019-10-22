@@ -63,6 +63,13 @@ export default {
         field: 'file.type',
         is: ['filedefinition', 'fixed', 'delimited/edifact'],
       },
+      { field: 'file.output', is: ['records'] },
+    ],
+    refreshOptionsOnChangesTo: [
+      'edix12.format',
+      'fixed.format',
+      'edifact.format',
+      'file.fileDefinition.resourcePath',
     ],
     userDefinitionId: r =>
       r &&
@@ -152,6 +159,12 @@ export default {
   'file.fileDefinition.resourcePath': {
     type: 'text',
     label: 'Resource Path',
+    visibleWhen: [
+      {
+        field: 'file.type',
+        is: ['filedefinition', 'fixed', 'delimited/edifact'],
+      },
+    ],
   },
   'file.fileDefinition._fileDefinitionId': {
     type: 'text',

@@ -35,7 +35,7 @@ export function* requestTemplates() {
   yield put(actions.marketplace.receivedTemplates({ templates: response }));
 }
 
-export function* installConnector({ connectorId, sandbox }) {
+export function* installConnector({ connectorId, sandbox, tag }) {
   const path = `/integrations/${connectorId}/install`;
 
   try {
@@ -43,7 +43,7 @@ export function* installConnector({ connectorId, sandbox }) {
       path,
       opts: {
         method: 'POST',
-        body: { sandbox },
+        body: { sandbox, tag },
       },
     });
   } catch (e) {

@@ -11,7 +11,7 @@ import getRequestOptions from '../../../utils/requestOptions';
 import commKeyGenerator from '../../../utils/commKeyGenerator';
 import { COMM_STATES } from '../../../reducers/comms';
 
-function* getNetsuiteOrSalesforceMeta({
+export function* getNetsuiteOrSalesforceMeta({
   connectionId,
   metadataType,
   mode = '',
