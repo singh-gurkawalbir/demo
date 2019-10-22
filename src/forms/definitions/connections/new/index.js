@@ -23,6 +23,9 @@ export default {
       placeholder: 'Select application',
       defaultValue: '',
       required: true,
+      validWhen: {
+        isNot: { values: [''], message: 'Please select an application' },
+      },
     },
     name: {
       id: 'name',

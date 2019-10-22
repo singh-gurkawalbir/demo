@@ -3,10 +3,10 @@ import { makeStyles } from '@material-ui/core/styles';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
-import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import ArrowDownIcon from '../../icons/ArrowDownIcon';
+import ErroredMessageComponent from './ErroredMessageComponent';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -47,18 +47,16 @@ const useStyles = makeStyles(theme => ({
  */
 export default function DynaSelect(props) {
   const {
-    description,
     disabled,
     id,
     value,
     isValid,
-    errorMessages,
     removeHelperText = false,
     name,
     options = [],
     defaultValue = '',
     placeholder,
-    // required,
+    required,
     label,
     onFieldChange,
     resetAfterSelection,
@@ -106,7 +104,12 @@ export default function DynaSelect(props) {
 
   return (
     <div>
-      <FormControl key={id} disabled={disabled} className={classes.root}>
+      <FormControl
+        key={id}
+        error={!isValid}
+        required={required}
+        disabled={disabled}
+        className={classes.root}>
         <InputLabel shrink htmlFor={id}>
           {label}
         </InputLabel>
@@ -125,11 +128,8 @@ export default function DynaSelect(props) {
           {items}
         </Select>
       </FormControl>
-      {!removeHelperText && (description || errorMessages) && (
-        <FormHelperText error={!isValid}>
-          {isValid ? description : errorMessages}
-        </FormHelperText>
-      )}
+
+      {!removeHelperText && <ErroredMessageComponent {...props} />}
     </div>
   );
 }
