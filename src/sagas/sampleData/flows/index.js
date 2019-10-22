@@ -133,22 +133,27 @@ export function* fetchPageGeneratorPreview({ flowId, _pageGeneratorId }) {
   }
 
   const path = `/exports/preview`;
-  const previewData = yield call(apiCallWithRetry, {
-    path,
-    opts: { method: 'POST', body },
-    message: `Fetching Exports Preview`,
-  });
-  const parseData = getParseStageData(previewData);
 
-  yield put(
-    actions.flowData.receivedPreviewData(
-      flowId,
-      _pageGeneratorId,
-      parseData,
-      'raw',
-      true
-    )
-  );
+  try {
+    const previewData = yield call(apiCallWithRetry, {
+      path,
+      opts: { method: 'POST', body },
+      message: `Fetching Exports Preview`,
+    });
+    const parseData = getParseStageData(previewData);
+
+    yield put(
+      actions.flowData.receivedPreviewData(
+        flowId,
+        _pageGeneratorId,
+        parseData,
+        'raw',
+        true
+      )
+    );
+  } catch (e) {
+    // Error handler
+  }
 }
 
 function* processData({

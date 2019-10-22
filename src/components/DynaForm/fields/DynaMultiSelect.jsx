@@ -1,5 +1,4 @@
 import { makeStyles } from '@material-ui/core/styles';
-import { FormHelperText } from '@material-ui/core';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -7,6 +6,7 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import Chip from '@material-ui/core/Chip';
 import ArrowDownIcon from '../../icons/ArrowDownIcon';
+import ErroredMessageComponent from './ErroredMessageComponent';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -57,9 +57,8 @@ export default function DynaMultiSelect(props) {
     label,
     onFieldChange,
     valueDelimiter,
-    description,
-    errorMessages,
     isValid,
+    required,
   } = props;
   const classes = useStyles();
   const items = options.reduce(
@@ -107,7 +106,12 @@ export default function DynaMultiSelect(props) {
 
   return (
     <div>
-      <FormControl key={id} disabled={disabled} className={classes.root}>
+      <FormControl
+        key={id}
+        disabled={disabled}
+        error={!isValid}
+        required={required}
+        className={classes.root}>
         <InputLabel htmlFor={id}>{label}</InputLabel>
         <Select
           multiple
@@ -129,11 +133,7 @@ export default function DynaMultiSelect(props) {
         </Select>
       </FormControl>
 
-      {(description || errorMessages) && (
-        <FormHelperText error={!isValid}>
-          {isValid ? description : errorMessages}
-        </FormHelperText>
-      )}
+      <ErroredMessageComponent {...props} />
     </div>
   );
 }

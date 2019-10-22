@@ -1,7 +1,6 @@
 import { hot } from 'react-hot-loader';
 import { Component, Fragment } from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
 import Drawer from '@material-ui/core/Drawer';
 import { Divider, ListItem } from '@material-ui/core';
 import List from '@material-ui/core/List';
@@ -11,6 +10,7 @@ import loadable from '../../utils/loadable';
 import * as selectors from '../../reducers';
 import { USER_ACCESS_LEVELS } from '../../utils/constants';
 import getRoutePath from '../../utils/routePaths';
+import CeligoPageBar from '../../components/CeligoPageBar';
 
 const mapStateToProps = state => {
   const permissions = selectors.userPermissions(state);
@@ -76,14 +76,14 @@ class MyAccount extends Component {
 
     return (
       <Fragment>
-        <div className={classes.appFrame}>
-          <div className={classes.about}>
-            <Typography variant="h5">
-              {permissions.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER
+        <div>
+          <CeligoPageBar
+            title={
+              permissions.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER
                 ? 'My Account'
-                : 'My Profile'}
-            </Typography>
-          </div>
+                : 'My Profile'
+            }
+          />
           <Divider />
           <div className={classes.root}>
             <div className={classes.flex}>

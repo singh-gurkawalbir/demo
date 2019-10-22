@@ -88,7 +88,7 @@ const theme = {
         },
       },
       containedSecondary: {
-        backgroundColor: 'transparent',
+        backgroundColor: colors.celigoWhite,
         borderColor: colors.celigoNeutral3,
         color: colors.celigoNeutral6,
         '&:hover': {
@@ -296,6 +296,7 @@ const theme = {
       body: {
         fontFamily: 'source sans pro',
         position: 'relative',
+        fontSize: 15,
       },
     },
     MuiSelect: {

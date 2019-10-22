@@ -1,18 +1,50 @@
 import { useState, Fragment } from 'react';
 import { useSelector } from 'react-redux';
 import FormControl from '@material-ui/core/FormControl';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Select from '@material-ui/core/Select';
-import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Checkbox from '@material-ui/core/Checkbox';
-import { withStyles } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import * as selectors from '../../reducers';
+import ArrowDownIcon from '../icons/ArrowDownIcon';
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
     flexWrap: 'wrap',
+  },
+  select: {
+    background: theme.palette.background.paper,
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+    transitionProperty: 'border',
+    transitionDuration: theme.transitions.duration.short,
+    transitionTimingFunction: theme.transitions.easing.easeInOut,
+    overflow: 'hidden',
+    height: 42,
+    textAlign: 'left',
+    borderRadius: 2,
+    '& > div': {
+      maxWidth: '85%',
+    },
+    '& > Label': {
+      paddingTop: 10,
+    },
+    '&:hover': {
+      borderColor: theme.palette.primary.main,
+    },
+    '& > *': {
+      padding: [[0, 0, 0, 12]],
+    },
+    '& > div > div ': {
+      paddingBottom: 5,
+    },
+    '& svg': {
+      right: 8,
+      paddingLeft: 0,
+    },
   },
   formControl: {
     margin: theme.spacing(1),
@@ -21,10 +53,18 @@ const styles = theme => ({
   selectEmpty: {
     marginTop: theme.spacing.double,
   },
-});
+  btnGroup: {
+    '& button': {
+      marginRight: 10,
+      height: 42,
+      '&:first-child': {
+        marginLeft: 10,
+      },
+    },
+  },
+}));
 
 function Filters({
-  classes,
   integrationId,
   flowId,
   onFiltersChange,
@@ -32,6 +72,7 @@ function Filters({
   numJobsSelected = 0,
   disableButtons = true,
 }) {
+  const classes = useStyles();
   const [_flowId, setFlowId] = useState('all');
   const [status, setStatus] = useState('all');
   const [hideEmpty, setHideEmpty] = useState(false);
@@ -101,39 +142,40 @@ function Filters({
 
   return (
     <Fragment>
-      <Button
-        data-test="retryAllJobs"
-        variant="contained"
-        color="primary"
-        onClick={handleRetryAllJobsClick}
-        disabled={disableButtons}>
-        Retry All Jobs
-      </Button>
-      <Button
-        data-test="retrySelectedJobs"
-        variant="contained"
-        color="primary"
-        onClick={handleRetrySelectedJobsClick}
-        disabled={disableButtons}>
-        Retry Selected {numJobsSelected} Jobs
-      </Button>
-      <Button
-        data-test="resolveAllJobs"
-        variant="contained"
-        color="primary"
-        onClick={handleResolveAllJobsClick}
-        disabled={disableButtons}>
-        Resolve All Jobs
-      </Button>
-      <Button
-        data-test="resolveSelectedJobs"
-        variant="contained"
-        color="primary"
-        onClick={handleResolveSelectedJobsClick}
-        disabled={disableButtons}>
-        Resolve Selected {numJobsSelected} Jobs
-      </Button>
-
+      <div className={classes.btnGroup}>
+        <Button
+          data-test="retryAllJobs"
+          variant="outlined"
+          color="secondary"
+          onClick={handleRetryAllJobsClick}
+          disabled={disableButtons}>
+          Retry All Jobs
+        </Button>
+        <Button
+          data-test="retrySelectedJobs"
+          variant="outlined"
+          color="secondary"
+          onClick={handleRetrySelectedJobsClick}
+          disabled={disableButtons}>
+          Retry Selected {numJobsSelected} Jobs
+        </Button>
+        <Button
+          data-test="resolveAllJobs"
+          variant="outlined"
+          color="secondary"
+          onClick={handleResolveAllJobsClick}
+          disabled={disableButtons}>
+          Resolve All Jobs
+        </Button>
+        <Button
+          data-test="resolveSelectedJobs"
+          variant="outlined"
+          color="secondary"
+          onClick={handleResolveSelectedJobsClick}
+          disabled={disableButtons}>
+          Resolve Selected {numJobsSelected} Jobs
+        </Button>
+      </div>
       <form className={classes.root} autoComplete="off">
         {!flowId && (
           <FormControl className={classes.formControl}>
@@ -142,7 +184,9 @@ function Filters({
                 name: '_flowId',
                 id: '_flowId',
               }}
+              className={classes.select}
               onChange={handleChange}
+              IconComponent={ArrowDownIcon}
               value={_flowId}>
               <MenuItem key="all" value="all">
                 Select a Flow
@@ -161,6 +205,8 @@ function Filters({
               name: 'status',
               id: 'status',
             }}
+            className={classes.select}
+            IconComponent={ArrowDownIcon}
             onChange={handleChange}
             value={status}>
             {[
@@ -180,22 +226,24 @@ function Filters({
             ))}
           </Select>
         </FormControl>
-        <FormControl className={classes.formControl}>
-          <InputLabel htmlFor="hideEmpty">Hide Empty Jobs</InputLabel>
-          <Checkbox
-            inputProps={{
-              name: 'hideEmpty',
-              id: 'hideEmpty',
-            }}
-            // indeterminate={numSelected > 0 && numSelected < rowCount}
-            checked={hideEmpty}
-            onChange={handleChange}
-            color="primary"
-          />
-        </FormControl>
+        <FormControlLabel
+          control={
+            <Checkbox
+              inputProps={{
+                name: 'hideEmpty',
+                id: 'hideEmpty',
+              }}
+              // indeterminate={numSelected > 0 && numSelected < rowCount}
+              checked={hideEmpty}
+              onChange={handleChange}
+              color="primary"
+            />
+          }
+          label="Hide Empty Jobs"
+        />
       </form>
     </Fragment>
   );
 }
 
-export default withStyles(styles)(Filters);
+export default Filters;
