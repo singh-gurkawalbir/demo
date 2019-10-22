@@ -63,7 +63,7 @@ export default {
     return toReturn;
   },
 
-  generateMappingFieldsAndList: ({ mappings, generateList, recordType }) => {
+  generateMappingFieldsAndList: ({ mappings, generateFields, recordType }) => {
     const initializeValues = [];
     let generateParts;
     const lists = [];
@@ -124,7 +124,7 @@ export default {
         mapping.internalId = false;
       }
 
-      const fieldMetadata = generateList.find(
+      const fieldMetadata = generateFields.find(
         generate => generate.id === mappingTmp.generate
       );
 
