@@ -331,40 +331,38 @@ export default {
   // #endregion test
   // #region delta
   'delta.dateField': {
-    label: 'Date field',
-    type: 'refreshableselect',
-    mode: 'suitescript',
-    filterKey: 'dateField',
+    type: 'text',
+    label: 'Date Field',
     required: true,
-    placeholder: 'Please select a date field',
-    connectionId: r => r && r._connectionId,
+    visibleWhen: [{ field: 'type', is: ['delta'] }],
   },
   'delta.dateFormat': {
     type: 'text',
     label: 'Delta date Format',
+    visibleWhen: [{ field: 'type', is: ['delta'] }],
   },
   'delta.startDate': {
     type: 'text',
     label: 'Delta start Date',
+    visibleWhen: [{ field: 'type', is: ['delta'] }],
   },
   'delta.lagOffset': {
     type: 'text',
     label: 'Offset',
+    visibleWhen: [{ field: 'type', is: ['delta'] }],
   },
   'delta.endDateField': {
     type: 'text',
     label: 'Delta end Date Field',
+    visibleWhen: [{ field: 'type', is: ['delta'] }],
   },
   // #endregion delta
   // #region once
   'once.booleanField': {
+    type: 'text',
     label: 'Boolean Field',
-    type: 'refreshableselect',
-    placeholder: 'Please select a Boolean field',
-    mode: 'suitescript',
-    filterKey: 'booleanField',
     required: true,
-    connectionId: r => r && r._connectionId,
+    visibleWhen: [{ field: 'type', is: ['once'] }],
   },
   // #endregion once
   // #region valueDelta

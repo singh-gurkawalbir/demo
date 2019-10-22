@@ -8,14 +8,4 @@ export default {
     type: 'text',
     label: 'Configuration',
   },
-  'delta.dateField': {
-    type: 'text',
-    label: 'Date Field',
-    required: true,
-  },
-  'once.booleanField': {
-    type: 'text',
-    label: 'Boolean Field',
-    required: true,
-  },
 };

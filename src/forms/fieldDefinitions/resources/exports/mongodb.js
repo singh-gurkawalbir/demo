@@ -14,9 +14,4 @@ export default {
     mode: 'json',
     label: 'Projection',
   },
-  'delta.dateField': {
-    type: 'text',
-    label: 'Date Field',
-    required: true,
-  },
 };
