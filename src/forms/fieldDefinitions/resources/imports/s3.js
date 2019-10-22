@@ -37,6 +37,6 @@ export default {
     required: true,
     showAllSuggestions: true,
     defaultValue: 'file-{{timestamp}}',
-    refreshOptionsOnChangesTo: ['file.type'],
+    refreshOptionsOnChangesTo: ['file.type', 's3.fileKey'],
   },
 };

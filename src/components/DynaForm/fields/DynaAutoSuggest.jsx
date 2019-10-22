@@ -5,6 +5,7 @@ import parse from 'autosuggest-highlight/parse';
 import { Paper, MenuItem, TextField, FormControl } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
+// TODO (Azhar) : to work on styling
 const useStyles = makeStyles(theme => ({
   root: {
     width: '100%',
@@ -18,7 +19,7 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(1),
     left: 0,
     right: 0,
-    maxHeight: '300px',
+    maxHeight: 300,
     overflow: 'scroll',
   },
   dynaFieldWrapper: {
@@ -46,6 +47,7 @@ function renderInputComponent(inputProps) {
   return (
     <TextField
       fullWidth
+      variant="filled"
       className={classes.formField}
       InputProps={{
         inputRef: node => {

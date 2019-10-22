@@ -11,7 +11,7 @@ export default {
     required: true,
     showAllSuggestions: true,
     defaultValue: 'file-{{timestamp}}',
-    refreshOptionsOnChangesTo: ['file.type'],
+    refreshOptionsOnChangesTo: ['file.type', 'ftp.fileName'],
   },
   'ftp.useTempFile': {
     type: 'checkbox',
