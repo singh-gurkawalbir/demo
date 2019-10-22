@@ -71,6 +71,11 @@ function JobDetail({
         )
         .map(cJob => cJob._id)
     : [];
+  const isJobInProgress = [
+    JOB_STATUS.QUEUED,
+    JOB_STATUS.RUNNING,
+    JOB_STATUS.RETRYING,
+  ].includes(job.uiStatus);
 
   function handleExpandCollapseClick() {
     setExpanded(!expanded);
@@ -191,7 +196,7 @@ function JobDetail({
           onMouseLeave={() => {
             setShowViewErrorsLink(false);
           }}>
-          {showViewErrorsLink && job.numError > 0 ? (
+          {showViewErrorsLink && !isJobInProgress && job.numError > 0 ? (
             <Button
               data-test="viewJobErrors"
               variant="text"
@@ -212,7 +217,7 @@ function JobDetail({
           onMouseLeave={() => {
             setShowViewErrorsLink(false);
           }}>
-          {showViewErrorsLink && job.numResolved > 0 ? (
+          {showViewErrorsLink && !isJobInProgress && job.numResolved > 0 ? (
             <Button
               variant="text"
               data-test="viewResolvedErroredJobs"

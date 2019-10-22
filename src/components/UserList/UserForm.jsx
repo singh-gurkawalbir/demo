@@ -57,101 +57,111 @@ class UserForm extends Component {
         .map(ial => ial._integrationId);
     }
 
-    const fields = [
-      {
-        id: 'email',
-        name: 'email',
-        type: 'text',
-        label: 'Email',
-        defaultValue: isEditMode ? data.sharedWithUser.email : '',
-        required: true,
-        disabled: isEditMode,
-        helpText:
-          'Enter the email of the user you would like to invite to manage and/or monitor selected integrations.',
+    const fieldMeta = {
+      fieldMap: {
+        email: {
+          id: 'email',
+          name: 'email',
+          type: 'text',
+          label: 'Email',
+          defaultValue: isEditMode ? data.sharedWithUser.email : '',
+          required: true,
+          disabled: isEditMode,
+          helpText:
+            'Enter the email of the user you would like to invite to manage and/or monitor selected integrations.',
+        },
+        accessLevel: {
+          id: 'accessLevel',
+          name: 'accessLevel',
+          type: 'select',
+          label: 'Access Level',
+          defaultValue: isEditMode ? data.accessLevel || 'tile' : '',
+          required: true,
+          options: [
+            {
+              items: [
+                {
+                  label: 'Manage All (including future) Integrations',
+                  value: USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
+                },
+                {
+                  label: 'Monitor All (including future) Integrations',
+                  value: USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
+                },
+                {
+                  label: 'Manage/Monitor Selected Integrations',
+                  value: USER_ACCESS_LEVELS.TILE,
+                },
+              ],
+            },
+          ],
+          helpText: 'Access Level help text',
+        },
+        integrationsToManage: {
+          id: 'integrationsToManage',
+          name: 'integrationsToManage',
+          type: 'multiselect',
+          label: 'Integrations to Manage',
+          defaultValue: integrationsToManage,
+          visibleWhen: [
+            {
+              field: 'accessLevel',
+              is: [USER_ACCESS_LEVELS.TILE],
+            },
+          ],
+          requiredWhen: [
+            {
+              field: 'integrationsToMonitor',
+              is: [[]],
+            },
+          ],
+          options: [
+            {
+              items: integrations.map(i => ({ label: i.name, value: i._id })),
+            },
+          ],
+          helpText:
+            'The invited user will have permissions to manage the integrations selected here.',
+        },
+        integrationsToMonitor: {
+          id: 'integrationsToMonitor',
+          name: 'integrationsToMonitor',
+          type: 'multiselect',
+          label: 'Integrations to Monitor',
+          defaultValue: integrationsToMonitor,
+          visibleWhen: [
+            {
+              field: 'accessLevel',
+              is: [USER_ACCESS_LEVELS.TILE],
+            },
+          ],
+          requiredWhen: [
+            {
+              field: 'integrationsToManage',
+              is: [[]],
+            },
+          ],
+          options: [
+            {
+              items: integrations.map(i => ({ label: i.name, value: i._id })),
+            },
+          ],
+          helpText:
+            'The invited user will have permissions to monitor the integrations selected here.',
+        },
       },
-      {
-        id: 'accessLevel',
-        name: 'accessLevel',
-        type: 'select',
-        label: 'Access Level',
-        defaultValue: isEditMode ? data.accessLevel || 'tile' : '',
-        required: true,
-        options: [
-          {
-            items: [
-              {
-                label: 'Manage All (including future) Integrations',
-                value: USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
-              },
-              {
-                label: 'Monitor All (including future) Integrations',
-                value: USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
-              },
-              {
-                label: 'Manage/Monitor Selected Integrations',
-                value: USER_ACCESS_LEVELS.TILE,
-              },
-            ],
-          },
+      layout: {
+        fields: [
+          'email',
+          'accessLevel',
+          'integrationsToManage',
+          'integrationsToMonitor',
         ],
-        helpText: 'Access Level help text',
       },
-      {
-        id: 'integrationsToManage',
-        name: 'integrationsToManage',
-        type: 'multiselect',
-        label: 'Integrations to Manage',
-        defaultValue: integrationsToManage,
-        visibleWhen: [
-          {
-            field: 'accessLevel',
-            is: [USER_ACCESS_LEVELS.TILE],
-          },
-        ],
-        requiredWhen: [
-          {
-            field: 'integrationsToMonitor',
-            is: [[]],
-          },
-        ],
-        options: [
-          {
-            items: integrations.map(i => ({ label: i.name, value: i._id })),
-          },
-        ],
-        helpText:
-          'The invited user will have permissions to manage the integrations selected here.',
-      },
-      {
-        id: 'integrationsToMonitor',
-        name: 'integrationsToMonitor',
-        type: 'multiselect',
-        label: 'Integrations to Monitor',
-        defaultValue: integrationsToMonitor,
-        visibleWhen: [
-          {
-            field: 'accessLevel',
-            is: [USER_ACCESS_LEVELS.TILE],
-          },
-        ],
-        requiredWhen: [
-          {
-            field: 'integrationsToManage',
-            is: [[]],
-          },
-        ],
-        options: [
-          {
-            items: integrations.map(i => ({ label: i.name, value: i._id })),
-          },
-        ],
-        helpText:
-          'The invited user will have permissions to monitor the integrations selected here.',
-      },
-    ];
+    };
 
     return (
-      <DynaForm fieldMeta={{ fields }}>
+      <DynaForm fieldMeta={fieldMeta}>
         <div className={classes.actions}>
           <Button
             data-test="cancelUserForm"
