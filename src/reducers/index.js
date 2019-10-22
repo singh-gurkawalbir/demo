@@ -764,7 +764,7 @@ export function integrationAppConnectionList(state, integrationId, store) {
 }
 
 export function integrationAppSettings(state, id, storeId) {
-  if (!state) return null;
+  if (!state) return {};
   const integrationResource = fromData.integrationAppSettings(state.data, id);
   const uninstallSteps = fromSession.uninstallSteps(
     state.resource,

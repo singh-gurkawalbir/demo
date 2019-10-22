@@ -1762,3 +1762,124 @@ describe('integrationAppConnectionList reducer', () => {
     ]);
   });
 });
+
+describe('integrationAppSettings reducer', () => {
+  const integrations = [
+    {
+      _id: 'integrationId',
+      name: 'integration Name',
+      settings: {
+        sections: [
+          {
+            id: 'store1',
+            sections: [
+              {
+                id: 'sectionTitle',
+                flows: [
+                  {
+                    _id: 'flowId',
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+        supportsMultiStore: true,
+      },
+    },
+    {
+      _id: 'integrationId2',
+      name: 'integration2 Name',
+      settings: {
+        sections: [
+          {
+            id: 'sectionTitle',
+            flows: [
+              {
+                _id: 'flowId',
+              },
+            ],
+          },
+        ],
+      },
+    },
+  ];
+
+  test('should not throw error for bad params', () => {
+    expect(selectors.integrationAppSettings({}, 'integrationId')).toEqual({});
+    expect(selectors.integrationAppSettings(undefined, undefined)).toEqual({});
+    expect(
+      selectors.integrationAppSettings(undefined, undefined, undefined)
+    ).toEqual({});
+    expect(selectors.integrationAppSettings()).toEqual({});
+  });
+
+  test('should return correct integration App settings for multistore integrationApp', () => {
+    const state = reducer(
+      {
+        data: {
+          resources: {
+            integrations,
+          },
+        },
+      },
+      'some_action'
+    );
+
+    expect(
+      selectors.integrationAppSettings(state, 'integrationId', 'store1')
+    ).toEqual({
+      _id: 'integrationId',
+      name: 'integration Name',
+      settings: {
+        sections: [
+          {
+            id: 'store1',
+            sections: [{ flows: [{ _id: 'flowId' }], id: 'sectionTitle' }],
+          },
+        ],
+        supportsMultiStore: true,
+      },
+      stores: [
+        { hidden: false, label: undefined, mode: undefined, value: 'store1' },
+      ],
+    });
+
+    expect(selectors.integrationAppSettings(state, 'integrationId')).toEqual({
+      _id: 'integrationId',
+      name: 'integration Name',
+      settings: {
+        sections: [
+          {
+            id: 'store1',
+            sections: [{ flows: [{ _id: 'flowId' }], id: 'sectionTitle' }],
+          },
+        ],
+        supportsMultiStore: true,
+      },
+      stores: [
+        { hidden: false, label: undefined, mode: undefined, value: 'store1' },
+      ],
+    });
+  });
+  test('should return correct integration App settings for single store integrationApp', () => {
+    const state = reducer(
+      {
+        data: {
+          resources: {
+            integrations,
+          },
+        },
+      },
+      'some_action'
+    );
+
+    expect(selectors.integrationAppSettings(state, 'integrationId2')).toEqual({
+      _id: 'integrationId2',
+      name: 'integration2 Name',
+      settings: {
+        sections: [{ flows: [{ _id: 'flowId' }], id: 'sectionTitle' }],
+      },
+    });
+  });
+});
