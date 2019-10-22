@@ -106,10 +106,10 @@ export default function DynaSelect(props) {
     <div>
       <FormControl
         key={id}
-        error={!isValid}
-        required={required}
         disabled={disabled}
-        className={classes.root}>
+        className={classes.root}
+        error={!isValid}
+        required={required}>
         <InputLabel shrink htmlFor={id}>
           {label}
         </InputLabel>

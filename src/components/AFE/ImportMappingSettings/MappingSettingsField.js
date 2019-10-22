@@ -8,13 +8,12 @@ export default function MappingSettingsField(props) {
   const {
     id,
     onSave,
-    connectionId,
     extractFields,
     generateFields,
     lookup,
     application,
     updateLookup,
-    recordType,
+    options,
     value,
   } = props;
   const [showSettings, setShowSettings] = useState(false);
@@ -38,12 +37,11 @@ export default function MappingSettingsField(props) {
           id={id}
           application={application}
           updateLookup={updateLookup}
-          connectionId={connectionId}
           title="Settings"
           lookup={lookup}
           value={value}
           onClose={handleClose}
-          recordType={recordType}
+          options={options}
           extractFields={extractFields}
           generateFields={generateFields}
         />
