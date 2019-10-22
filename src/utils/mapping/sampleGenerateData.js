@@ -1,3 +1,6 @@
+// This is a sample file and is used for development purpose
+// TODO (Aditya): Delete the file after use
+
 export default [
   {
     group: 'Body Field',

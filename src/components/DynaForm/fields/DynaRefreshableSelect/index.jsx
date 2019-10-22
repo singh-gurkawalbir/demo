@@ -16,6 +16,7 @@ export default function DynaSelectOptionsGenerator(props) {
     options = {},
     filterKey,
     recordType,
+    disableOptionsLoad,
     selectField,
   } = props;
   const dispatch = useDispatch();
@@ -25,22 +26,22 @@ export default function DynaSelectOptionsGenerator(props) {
       connectionId,
       mode,
       options.resourceToFetch || resourceType,
-      filterKey,
-      recordType,
+      options.filterKey || filterKey,
+      options.recordType || recordType,
       selectField
     )
   );
   const handleFetchResource = useCallback(() => {
     const resource = options.resourceToFetch || resourceType;
 
-    if (resource && !data) {
+    if (resource && !data && !disableOptionsLoad) {
       dispatch(
         actions.metadata.request({
           connectionId,
           metadataType: resource,
           mode,
-          filterKey,
-          recordType,
+          filterKey: options.filterKey || filterKey,
+          recordType: options.recordType || recordType,
           selectField,
         })
       );
@@ -48,9 +49,12 @@ export default function DynaSelectOptionsGenerator(props) {
   }, [
     connectionId,
     data,
+    disableOptionsLoad,
     dispatch,
     filterKey,
     mode,
+    options.filterKey,
+    options.recordType,
     options.resourceToFetch,
     recordType,
     resourceType,
@@ -65,8 +69,8 @@ export default function DynaSelectOptionsGenerator(props) {
           connectionId,
           resource,
           mode,
-          filterKey,
-          recordType,
+          options.filterKey || filterKey,
+          options.recordType || recordType,
           selectField
         )
       );

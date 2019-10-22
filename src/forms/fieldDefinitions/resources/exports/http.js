@@ -10,7 +10,6 @@ export default {
   'http.successMediaType': {
     type: 'select',
     label: 'Success Media Type',
-    defaultValue: r => (r && r.http && r.http.successMediaType) || 'json',
     options: [
       {
         items: [
@@ -24,7 +23,6 @@ export default {
   'http.errorMediaType': {
     type: 'select',
     label: 'Error Media Type',
-    defaultValue: r => (r && r.http && r.http.errorMediaType) || 'json',
     options: [
       {
         items: [
@@ -328,5 +326,28 @@ export default {
     placeholder: 'Please select a stack',
     resourceType: 'stacks',
     label: 'Pre Save Page _stack Id',
+  },
+  'http.once.relativeURI': {
+    type: 'relativeuri',
+    label: 'Relative URI',
+  },
+  'http.once.body': {
+    type: 'httprequestbody',
+    label: 'Build HTTP Request Body',
+  },
+  'http.once.method': {
+    type: 'select',
+    label: 'HTTP Method',
+    options: [
+      {
+        items: [
+          { label: 'GET', value: 'GET' },
+          { label: 'POST', value: 'POST' },
+          { label: 'PUT', value: 'PUT' },
+          { label: 'PATCH', value: 'PATCH' },
+          { label: 'DELETE', value: 'DELETE' },
+        ],
+      },
+    ],
   },
 };

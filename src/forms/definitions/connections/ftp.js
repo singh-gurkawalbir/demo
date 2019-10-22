@@ -91,6 +91,21 @@ export default {
       omitWhenHidden: true,
       visibleWhen: [{ field: 'ftp.usePgp', is: [true] }],
     },
+    'ftp.pgpKeyAlgorithm': {
+      fieldId: 'ftp.pgpKeyAlgorithm',
+      required: true,
+      omitWhenHidden: true,
+      visibleWhen: [
+        { field: 'ftp.useCustomPGPEncryptionAlgorithm', is: [true] },
+      ],
+    },
+    'ftp.useCustomPGPEncryptionAlgorithm': {
+      id: 'ftp.useCustomPGPEncryptionAlgorithm',
+      label: 'Use custom PGP Encryption Algorithm',
+      type: 'checkbox',
+      defaultValue: r => !!(r && r.ftp && r.ftp.pgpKeyAlgorithm),
+      visibleWhen: [{ field: 'ftp.usePgp', is: [true] }],
+    },
   },
   layout: {
     fields: [
@@ -117,6 +132,8 @@ export default {
           'ftp.pgpEncryptKey',
           'ftp.pgpDecryptKey',
           'ftp.pgpPassphrase',
+          'ftp.useCustomPGPEncryptionAlgorithm',
+          'ftp.pgpKeyAlgorithm',
         ],
       },
     ],
