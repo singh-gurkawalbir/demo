@@ -90,6 +90,8 @@ const PageProcessor = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [createdProcessorId, dispatch]);
   // #endregion
+
+  // #region Drag and Drop handlers
   const [, drop] = useDrop({
     accept: itemTypes.PAGE_PROCESSOR,
 
@@ -147,6 +149,9 @@ const PageProcessor = ({
   });
   const opacity = isDragging ? 0.2 : 1;
 
+  drag(drop(ref));
+  // #endregion
+
   function handleBlockClick() {
     const newId = `new-${shortid.generate()}`;
 
@@ -189,8 +194,11 @@ const PageProcessor = ({
     }
   }
 
-  drag(drop(ref));
-
+  // #region Configure available processor actions
+  // TODO: Raghu, please set the isUsed prop to true any time
+  // the flow or PP contains rules for the respective action.
+  // Also, I think 'responseMapping` action is not valid for the LAST PP.
+  // The data doesnt go anywhere, so its a pointless action when PP is last.
   const processorActions = [];
 
   if (!pending) {
@@ -205,7 +213,7 @@ const PageProcessor = ({
     } else {
       processorActions.push(
         inputFilterAction,
-        importMappingAction,
+        { ...importMappingAction, isUsed: false }, // example new prop
         responseTransformationAction,
         pageProcessorHooksAction,
         responseMapping
@@ -216,6 +224,7 @@ const PageProcessor = ({
       processorActions.push(proceedOnFailureAction);
     }
   }
+  // #endregion
 
   return (
     <Fragment>
