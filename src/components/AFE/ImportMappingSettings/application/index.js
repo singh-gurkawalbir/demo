@@ -58,8 +58,6 @@ export default {
       value,
       lookup = {},
       extractFields,
-      // connectionId,
-      // recordType,
       generate,
       generateFields,
       options,

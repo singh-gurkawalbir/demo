@@ -17,8 +17,6 @@ export default function DynaImportMapping(props) {
     label,
     value,
     connectionId,
-    // TODO: recordType support in import definition
-    // recordType
   } = props;
   const {
     lookupId,
@@ -28,7 +26,6 @@ export default function DynaImportMapping(props) {
     recordType,
   } = options;
   const [isModalVisible, setModalVisibility] = useState(false);
-  // TODO: Change to real data
   const generateFields = [];
   const extractFields = [];
   const toggleModalVisibility = () => {
@@ -76,7 +73,6 @@ export default function DynaImportMapping(props) {
         <ImportMapping
           title="Define Import Mapping"
           id={id}
-          // recordType={recordType}
           connectionId={connectionId}
           application={application}
           lookups={lookups}

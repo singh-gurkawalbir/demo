@@ -167,19 +167,17 @@ export default function ImportMapping(props) {
     return {};
   });
   const handleFetchResource = useCallback(() => {
-    if (!data) {
-      if (application === ResourceUtil.adaptorTypeMap.SalesforceImport) {
-        dispatch(
-          actions.metadata.request({
-            connectionId: options.connectionId,
-            metadataType: 'sObjectTypes',
-            mode: 'salesforce',
-            filterKey: null,
-            recordType: options.sObjectType,
-            selectField: null,
-          })
-        );
-      }
+    if (application === ResourceUtil.adaptorTypeMap.SalesforceImport) {
+      dispatch(
+        actions.metadata.request({
+          connectionId: options.connectionId,
+          metadataType: 'sObjectTypes',
+          mode: 'salesforce',
+          filterKey: null,
+          recordType: options.sObjectType,
+          selectField: null,
+        })
+      );
 
       // TODO: for netsuite
       // if (
@@ -187,7 +185,7 @@ export default function ImportMapping(props) {
       // ) {
       // }
     }
-  }, [application, data, dispatch, options.connectionId, options.sObjectType]);
+  }, [application, dispatch, options.connectionId, options.sObjectType]);
 
   useEffect(() => {
     if (application === ResourceUtil.adaptorTypeMap.SalesforceImport) {
@@ -273,7 +271,6 @@ export default function ImportMapping(props) {
     );
 
     if (validateMapping(mappings)) {
-      // check for all mapping with useAsAnInitializeValue set to true
       mappings = MappingUtil.generateMappingsForApp({
         mappings,
         generateFields,
@@ -430,10 +427,8 @@ export default function ImportMapping(props) {
                         onSave={handleSettingsClose}
                         value={mapping}
                         options={options}
-                        // recordType={recordType}
                         generate={mapping.generate}
                         application={application}
-                        // connectionId={connectionId}
                         updateLookup={updateLookupHandler}
                         lookup={
                           mapping &&

@@ -91,8 +91,6 @@ export default function StandaloneImportMapping(props) {
       <ImportMapping
         title="Define Import Mapping"
         id={id}
-        // recordType={recordType}
-        // connectionId={connectionId}
         application={resourceType.type}
         lookups={lookups}
         isStandaloneMapping

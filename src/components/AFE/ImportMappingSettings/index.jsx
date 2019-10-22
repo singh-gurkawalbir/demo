@@ -21,14 +21,12 @@ export default function ImportMappingSettings(props) {
   const {
     title,
     value,
-    // connectionId,
     onClose,
     extractFields,
     generateFields,
     lookup,
     updateLookup,
     application,
-    // recordType,
     options,
   } = props;
   const { generate, extract } = value;
