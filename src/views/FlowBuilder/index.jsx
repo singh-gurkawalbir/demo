@@ -26,7 +26,6 @@ import SettingsIcon from '../../components/icons/SettingsIcon';
 import CalendarIcon from '../../components/icons/CalendarIcon';
 import EditableText from './EditableText';
 import OnOff from '../../components/ResourceTable/actions/Flows/OnOff';
-// import FlowSchedule from '../../components/FlowSchedule';
 
 // #region FLOW SCHEMA: FOR REFERENCE DELETE ONCE FB IS COMPLETE
 /* 
