@@ -5,9 +5,8 @@ const useStyles = makeStyles(theme => ({
     height: 48,
     display: 'flex',
     color: theme.palette.background.default,
-    justifyContent: 'space-between',
     alignItems: 'center',
-    maxWidth: 185,
+    maxWidth: '100%',
     overflow: 'hidden',
     marginBottom: theme.spacing(2),
     '& img': {
@@ -18,6 +17,7 @@ const useStyles = makeStyles(theme => ({
       color: theme.palette.secondary.contrastText,
       width: 24,
       height: 24,
+      margin: theme.spacing(0, 1),
     },
   },
 }));

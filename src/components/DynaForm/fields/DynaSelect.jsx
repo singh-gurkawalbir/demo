@@ -33,6 +33,7 @@ const useStyles = makeStyles(theme => ({
     },
     '& > div > div ': {
       paddingBottom: 5,
+      textAlign: 'left',
     },
     '& svg': {
       right: 8,

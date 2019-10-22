@@ -1,7 +1,5 @@
 import { useState, useEffect, Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Typography } from '@material-ui/core';
-import SettingsIcon from '@material-ui/icons/Settings';
 import { isEqual } from 'lodash';
 import { Link } from 'react-router-dom';
 import IconTextButton from '../../components/IconTextButton';
@@ -17,6 +15,8 @@ import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import { UNDO_TIME } from './util';
 import getRoutePath from '../../utils/routePaths';
 import RefreshIcon from '../icons/RefreshIcon';
+import CeligoPageBar from '../../components/CeligoPageBar';
+import SettingsIcon from '../../components/icons/SettingsIcon';
 
 export default function JobDashboard({
   integrationId,
@@ -379,7 +379,8 @@ export default function JobDashboard({
       />
       {!flowId && integration && (
         <Fragment>
-          <Typography>{integration.name}</Typography>
+          <CeligoPageBar title={integration.name} />
+
           <div>
             <IconTextButton
               data-test="refreshJobs"
