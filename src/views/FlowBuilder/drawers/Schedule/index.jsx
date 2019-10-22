@@ -1,17 +1,29 @@
-// import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import RightDrawerRouter from '../RightDrawer';
-import TitleBar from '../TitleBar';
+import FlowSchedule from '../../../../components/FlowSchedule';
 
-// const useStyles = makeStyles(() => ({}));
+const useStyle = makeStyles({
+  fbContentDrawer: {
+    width: '80vw',
+  },
+});
 
-export default function ScheduleDrawer({ flowId, history, ...props }) {
+export default function ScheduleDrawer({ flow, history, ...props }) {
   const handleSubmit = () => history.goBack();
-  // const classes = useStyles();
+  const classes = useStyle();
 
   return (
-    <RightDrawerRouter {...props} path="schedule">
-      <TitleBar history={history} title="Schedule" onSubmit={handleSubmit} />
-      For flow: {flowId}
+    <RightDrawerRouter
+      {...props}
+      path="schedule"
+      width="80vw"
+      className={classes.fbContentDrawer}>
+      <FlowSchedule
+        onClose={handleSubmit}
+        flow={flow}
+        title="Flow Schedule"
+        isFlowBuilder
+      />
     </RightDrawerRouter>
   );
 }

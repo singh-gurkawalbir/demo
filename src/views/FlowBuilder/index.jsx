@@ -24,8 +24,9 @@ import itemTypes from './itemTypes';
 import RunIcon from '../../components/icons/RunIcon';
 import SettingsIcon from '../../components/icons/SettingsIcon';
 import CalendarIcon from '../../components/icons/CalendarIcon';
-import SwitchOnOff from '../../components/SwitchToggle';
 import EditableText from './EditableText';
+import OnOff from '../../components/ResourceTable/actions/Flows/OnOff';
+// import FlowSchedule from '../../components/FlowSchedule';
 
 // #region FLOW SCHEMA: FOR REFERENCE DELETE ONCE FB IS COMPLETE
 /* 
@@ -404,7 +405,7 @@ function FlowBuilder(props) {
     <Fragment>
       <ResourceDrawer {...props} />
       <RunDrawer {...props} flowId={flowId} />
-      <ScheduleDrawer {...props} flowId={flowId} />
+      <ScheduleDrawer {...props} flow={flow} />
       <SettingsDrawer {...props} flowId={flowId} />
       {/* <WizardDrawer {...props} flowId={flowId} /> */}
 
@@ -415,13 +416,12 @@ function FlowBuilder(props) {
         subtitle={`Last saved: ${isNewFlow ? 'Never' : flow.lastModified}`}
         infoText={flow.description}>
         <div className={classes.actions}>
-          <SwitchOnOff
-            disabled={isNewFlow}
-            on={!isNewFlow && flow.disabled === 'false'}
-          />
+          <OnOff.component resource={flow} isNewFlow={isNewFlow} />
           <IconButton
             disabled={isNewFlow}
-            onClick={() => handleDrawerOpen('run')}>
+            onClick={() => {
+              dispatch(actions.flow.run({ flowId }));
+            }}>
             <RunIcon />
           </IconButton>
           <IconButton

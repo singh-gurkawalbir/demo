@@ -1,4 +1,5 @@
 import { useSelector, useDispatch } from 'react-redux';
+import { Fragment } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -26,9 +27,48 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+function Schedule(props) {
+  const {
+    classes,
+    onClose,
+    title,
+    flow,
+    integration,
+    preferences,
+    handleSubmit,
+  } = props;
+
+  return (
+    <Fragment>
+      <IconButton
+        data-test="closeFlowSchedule"
+        aria-label="Close"
+        className={classes.closeButton}
+        onClick={onClose}>
+        <Close />
+      </IconButton>
+      <DialogTitle disableTypography>
+        <Typography variant="h6">{title}</Typography>
+      </DialogTitle>
+      <DialogContent>
+        <DynaForm
+          fieldMeta={getMetadata({
+            flow,
+            integration,
+            preferences,
+          })}>
+          <DynaSubmit onClick={handleSubmit} color="primary">
+            Save
+          </DynaSubmit>
+        </DynaForm>
+      </DialogContent>
+    </Fragment>
+  );
+}
+
 export default function FlowSchedule(props) {
   const dispatch = useDispatch();
-  const { title, onClose } = props;
+  const { title, onClose, isFlowBuilder } = props;
   let { flow } = props;
   const preferences = useSelector(state =>
     selectors.userProfilePreferencesProps(state)
@@ -97,29 +137,33 @@ export default function FlowSchedule(props) {
   }
 
   return (
-    <Dialog open maxWidth={false}>
-      <IconButton
-        data-test="closeFlowSchedule"
-        aria-label="Close"
-        className={classes.closeButton}
-        onClick={onClose}>
-        <Close />
-      </IconButton>
-      <DialogTitle disableTypography>
-        <Typography variant="h6">{title}</Typography>
-      </DialogTitle>
-      <DialogContent className={classes.modalContent}>
-        <DynaForm
-          fieldMeta={getMetadata({
-            flow,
-            integration,
-            preferences,
-          })}>
-          <DynaSubmit onClick={handleSubmit} color="primary">
-            Save
-          </DynaSubmit>
-        </DynaForm>
-      </DialogContent>
-    </Dialog>
+    <Fragment>
+      {isFlowBuilder && (
+        <Fragment>
+          <Schedule
+            classes={classes}
+            onClose={onClose}
+            title={title}
+            flow={flow}
+            integration={integration}
+            preferences={preferences}
+            handleSubmit={handleSubmit}
+          />
+        </Fragment>
+      )}
+      {!isFlowBuilder && (
+        <Dialog open maxWidth={false}>
+          <Schedule
+            classes={classes}
+            onClose={onClose}
+            title={title}
+            flow={flow}
+            integration={integration}
+            preferences={preferences}
+            handleSubmit={handleSubmit}
+          />
+        </Dialog>
+      )}
+    </Fragment>
   );
 }
