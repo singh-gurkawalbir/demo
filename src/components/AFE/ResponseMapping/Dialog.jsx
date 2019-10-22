@@ -152,7 +152,7 @@ export default function ResponseMappingDialog(props) {
 
     mappings = mappingUtil.generateMappingsForApp({
       mappings,
-      generateList: [],
+      generateFields: [],
       appType: application,
     });
     const patchSet = [];

@@ -42,7 +42,7 @@ function TransformationDialog({ flowId, resource, resourceType, onClose }) {
   useEffect(() => {
     if (!sampleData) {
       dispatch(
-        actions.flowData.fetchSampleData(
+        actions.flowData.requestSampleData(
           flowId,
           resourceId,
           resourceType,

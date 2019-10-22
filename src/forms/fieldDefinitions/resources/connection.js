@@ -1215,7 +1215,7 @@ export default {
   'ftp.usePgp': {
     type: 'checkbox',
     defaultValue: r =>
-      r && r.ftp && (r.ftp.pgpEncryptKey || r.ftp.pgpDecryptKey),
+      !!(r && r.ftp && (r.ftp.pgpEncryptKey || r.ftp.pgpDecryptKey)),
     label: 'Use PGP Encryption',
   },
   'ftp.pgpEncryptKey': {

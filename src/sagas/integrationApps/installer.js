@@ -12,7 +12,7 @@ export function* installStep({ id, installerFunction }) {
       path,
       opts: { body: {}, method: 'PUT' },
       message: `Installing`,
-    });
+    }) || {};
   } catch (error) {
     yield put(
       actions.integrationApp.installer.updateStep(
@@ -45,7 +45,7 @@ export function* installStoreStep({ id, installerFunction }) {
       path,
       opts: { body: {}, method: 'PUT' },
       message: `Installing`,
-    });
+    }) || {};
   } catch (error) {
     yield put(
       actions.integrationApp.store.updateStep(id, installerFunction, 'failed')

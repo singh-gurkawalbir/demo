@@ -239,6 +239,7 @@ export const sanitizePatchSet = ({ patchSet, fieldMeta = {}, resource }) => {
   return newSet;
 };
 
+// #BEGIN_REGION Integration App form utils
 const convertFieldsToFieldReferneceObj = (acc, curr) => {
   if (!curr.fieldId && !curr.id && !curr.formId) {
     throw new Error('No fieldId , id or formId', curr);
@@ -275,11 +276,12 @@ const addIdToFieldsAndRenameNameAttribute = (fields, _integrationId) => {
 
   return fields.map(field => {
     // TODO: generate correct name path
-    const { name, options, tooltip } = field;
+    const { name, options, default: defaultValue, tooltip } = field;
     // name is the unique identifier....verify with Ashok
 
     return {
       ...getFieldConfig(field),
+      defaultValue,
       name: `/${name}`,
       _integrationId,
       id: name,
@@ -353,10 +355,12 @@ export const integrationSettingsToDynaFormMetadata = (
     };
   }
 
-  finalData.actions = [{ id: 'save' }];
+  finalData.actions = [{ id: 'saveintegrationsettings' }];
 
   return finalData;
 };
+
+// #END_REGION Integration App from utils
 
 export default {
   getFieldById,

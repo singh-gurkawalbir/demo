@@ -2,8 +2,8 @@ import dateTimezones from '../../../../../utils/dateTimezones';
 import MappingUtil from '../../../../../utils/mapping';
 
 export default {
-  getMetaData: (options = {}) => {
-    const { value, lookup = {}, extractFields } = options;
+  getMetaData: (params = {}) => {
+    const { value, lookup = {}, extractFields } = params;
     const fieldMeta = {
       fieldMap: {
         dataType: {

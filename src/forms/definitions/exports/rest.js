@@ -95,8 +95,8 @@ export default {
       fieldId: 'delta.lagOffset',
       visibleWhen: [{ field: 'type', is: ['delta'] }],
     },
-    'rest.once.booleanField': {
-      fieldId: 'rest.once.booleanField',
+    'once.booleanField': {
+      fieldId: 'once.booleanField',
       visibleWhen: [{ field: 'type', is: ['once'] }],
     },
     'rest.once.relativeURI': {
@@ -142,7 +142,7 @@ export default {
       'type',
       'delta.dateFormat',
       'delta.lagOffset',
-      'rest.once.booleanField',
+      'once.booleanField',
       'rest.once.relativeURI',
       'rest.once.method',
       'rest.once.postBody',

@@ -64,6 +64,13 @@ export default {
         field: 'file.type',
         is: ['filedefinition', 'fixed', 'delimited/edifact'],
       },
+      { field: 'file.output', is: ['records'] },
+    ],
+    refreshOptionsOnChangesTo: [
+      'edix12.format',
+      'fixed.format',
+      'edifact.format',
+      'file.fileDefinition.resourcePath',
     ],
     userDefinitionId: r =>
       r &&
