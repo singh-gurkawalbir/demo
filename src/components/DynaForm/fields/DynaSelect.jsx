@@ -3,10 +3,10 @@ import { makeStyles } from '@material-ui/core/styles';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
-import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import ArrowDownIcon from '../../icons/ArrowDownIcon';
+import ErroredMessageComponent from './ErroredMessageComponent';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -47,22 +47,19 @@ const useStyles = makeStyles(theme => ({
  */
 export default function DynaSelect(props) {
   const {
-    description,
     disabled,
     id,
     value,
     isValid,
-    errorMessages,
     removeHelperText = false,
     name,
     options = [],
     defaultValue = '',
     placeholder,
-    // required,
+    required,
     label,
     onFieldChange,
     resetAfterSelection,
-    required,
   } = props;
   const classes = useStyles();
   let items = options.reduce(
@@ -131,11 +128,8 @@ export default function DynaSelect(props) {
           {items}
         </Select>
       </FormControl>
-      {!removeHelperText && (description || errorMessages) && (
-        <FormHelperText error={!isValid}>
-          {isValid ? description : errorMessages}
-        </FormHelperText>
-      )}
+
+      {!removeHelperText && <ErroredMessageComponent {...props} />}
     </div>
   );
 }

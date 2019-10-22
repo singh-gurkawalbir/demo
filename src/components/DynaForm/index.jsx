@@ -51,7 +51,7 @@ export default class DynaForm extends Component {
     }
 
     return (
-      <Form {...rest} renderer={renderer}>
+      <Form {...rest} showValidationBeforeTouched renderer={renderer}>
         <div className={clsx(classes.fieldContainer, className)}>
           <DynaFormGenerator layout={layout} fieldMap={fieldMap} />
         </div>

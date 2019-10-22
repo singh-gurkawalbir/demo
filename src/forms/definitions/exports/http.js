@@ -194,7 +194,7 @@ export default {
         fields: ['hooks'],
       },
       {
-        collapsed: 'true',
+        collapsed: true,
         label: 'Advanced',
         fields: [
           'advancedSettings',

@@ -1,12 +1,13 @@
 import React, { useMemo } from 'react';
 import { makeStyles, useTheme, fade } from '@material-ui/core/styles';
-import { FormHelperText, FormControl, InputLabel } from '@material-ui/core';
+import { FormControl, InputLabel } from '@material-ui/core';
 import Select, { components } from 'react-select';
 import applications, {
   groupApplications,
 } from '../../../../constants/applications';
 import ApplicationImg from '../../../icons/ApplicationImg';
 import AppPill from './AppPill';
+import ErroredMessageComponent from '../ErroredMessageComponent';
 
 const useStyles = makeStyles(theme => ({
   optionRoot: {
@@ -44,18 +45,18 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function SelectApplication({
-  description,
-  disabled,
-  id,
-  isMulti,
-  name,
-  label,
-  resourceType,
-  value = isMulti ? [] : '',
-  placeholder,
-  onFieldChange,
-}) {
+export default function SelectApplication(props) {
+  const {
+    disabled,
+    id,
+    isMulti,
+    name,
+    label,
+    resourceType,
+    value = isMulti ? [] : '',
+    placeholder,
+    onFieldChange,
+  } = props;
   // Custom styles for Select Control
   const groupedApps = useMemo(() => groupApplications(resourceType), [
     resourceType,
@@ -234,7 +235,8 @@ export default function SelectApplication({
         styles={customStyles}
         filterOption={filterOptions}
       />
-      {description && <FormHelperText>{description}</FormHelperText>}
+
+      <ErroredMessageComponent {...props} />
 
       {isMulti && value.length > 0 && (
         <div className={classes.selectedContainer}>
