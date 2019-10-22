@@ -15,6 +15,22 @@ export default {
       }
     }
 
+    if (fieldId === 'file.filedefinition.rules') {
+      // Fetch format specific Field Definition field to fetch id
+      // if (fileType.value === 'filedefinition')
+      const definitionFieldId = 'edix12.format';
+      const definition = fields.find(field => field.id === definitionFieldId);
+      const resourcePath = fields.find(
+        field => field.id === 'file.fileDefinition.resourcePath'
+      );
+
+      return {
+        format: definition && definition.format,
+        definitionId: definition && definition.value,
+        resourcePath: resourcePath && resourcePath.value,
+      };
+    }
+
     return null;
   },
   fieldMap: {
@@ -24,7 +40,20 @@ export default {
       type: 'labeltitle',
       label: 'How would you like the data imported?',
     },
-    ediX12Format: { fieldId: 'ediX12Format', label: 'EDI Format' },
+    distributed: { fieldId: 'distributed', defaultValue: false },
+    'file.type': {
+      fieldId: 'file.type',
+      defaultValue: 'filedefinition',
+      visible: false,
+    },
+    'edix12.format': {
+      fieldId: 'edix12.format',
+      label: 'EDI Format',
+      required: true,
+    },
+    'file.filedefinition.rules': {
+      fieldId: 'file.filedefinition.rules',
+    },
     'as2.fileNameTemplate': { fieldId: 'as2.fileNameTemplate' },
     'as2.messageIdTemplate': { fieldId: 'as2.messageIdTemplate' },
     'as2.headers': { fieldId: 'as2.headers' },
@@ -48,9 +77,12 @@ export default {
     fields: [
       'common',
       'importData',
-      'ediX12Format',
+      'distributed',
+      'file.type',
+      'edix12.format',
       'as2.fileNameTemplate',
       'as2.messageIdTemplate',
+      'file.filedefinition.rules',
       'as2.headers',
       'dataMappings',
       'file.lookups',
