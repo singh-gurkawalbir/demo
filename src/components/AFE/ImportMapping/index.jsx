@@ -12,9 +12,9 @@ import {
   Typography,
 } from '@material-ui/core';
 import deepClone from 'lodash/cloneDeep';
-import DynaTypeableSelect from '../../DynaForm/fields/DynaTypeableSelect';
 import MappingSettings from '../ImportMappingSettings/MappingSettingsField';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
+import DynaTypeableSelect from '../../DynaForm/fields/DynaTypeableSelect';
 import MappingUtil from '../../../utils/mapping';
 import CloseIcon from '../../icons/CloseIcon';
 
