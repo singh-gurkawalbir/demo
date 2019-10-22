@@ -631,6 +631,12 @@ export function getAllConnectionIdsUsedInTheFlow(state, flow) {
     return connectionIds;
   }
 
+  if (typeof flow === 'string') {
+    // if flow id is passed
+    // eslint-disable-next-line no-param-reassign
+    flow = resource(state, 'flows', flow);
+  }
+
   if (flow._exportId) {
     exportIds.push(flow._exportId);
   }
@@ -701,36 +707,24 @@ export function integrationAppSettingsFormState(state, integrationId, flowId) {
 }
 
 export function integrationConnectionList(state, integrationId) {
-  const integration = resource(state, 'integrations', integrationId);
-  const connList = resourceListWithPermissions(state, {
+  const integration = resource(state, 'integrations', integrationId) || {};
+  let { resources = [] } = resourceListWithPermissions(state, {
     type: 'connections',
   });
 
-  if (
-    integrationId &&
-    integrationId !== 'none' &&
-    integration &&
-    !integration._connectorId
-  ) {
-    const registeredConnections =
-      integration && integration._registeredConnectionIds;
+  if (integrationId && integrationId !== 'none' && !integration._connectorId) {
+    const registeredConnections = integration._registeredConnectionIds;
 
     if (registeredConnections) {
-      connList.resources =
-        connList &&
-        connList.resources &&
-        connList.resources.filter(
-          conn => registeredConnections.indexOf(conn._id) >= 0
-        );
+      resources = resources.filter(
+        conn => registeredConnections.indexOf(conn._id) >= 0
+      );
     }
-  } else if (integration && integration._connectorId) {
-    connList.resources =
-      connList &&
-      connList.resources &&
-      connList.resources.filter(conn => conn._integrationId === integrationId);
+  } else if (integration._connectorId) {
+    resources = resources.filter(conn => conn._integrationId === integrationId);
   }
 
-  return connList;
+  return resources;
 }
 
 export function integrationAppConnectionList(state, integrationId, store) {
@@ -740,35 +734,33 @@ export function integrationAppConnectionList(state, integrationId, store) {
     integrationId
   );
   const { supportsMultiStore, sections } = integrationResource.settings || {};
-  const integrationConnections = fromData.resourceList(state.data, {
-    type: 'connections',
-    filter: { _integrationId: integrationId },
-  });
+  const { resources: integrationConnections } = fromData.resourceList(
+    state.data,
+    {
+      type: 'connections',
+      filter: { _integrationId: integrationId },
+    }
+  );
 
   if (!supportsMultiStore || !store) {
     return integrationConnections;
   }
 
   const flows = [];
-  let connections = [];
+  const connections = [];
   const selectedStore = (sections || []).find(s => s.id === store) || {};
 
   (selectedStore.sections || []).forEach(sec => {
     flows.push(...map(sec.flows, '_id'));
   });
-  flows.forEach(f => {
-    const flow = resource(state, 'flows', f) || {};
 
-    connections = [
-      ...connections,
-      ...getAllConnectionIdsUsedInTheFlow(state, flow),
-    ];
-  });
-  integrationConnections.resources = integrationConnections.resources.filter(
-    c => connections.includes(c._id)
-  );
+  flows.reduce((acc, f) => {
+    acc.push(...getAllConnectionIdsUsedInTheFlow(state, f));
 
-  return integrationConnections;
+    return acc;
+  }, connections);
+
+  return integrationConnections.filter(c => connections.includes(c._id));
 }
 
 export function integrationAppSettings(state, id, storeId) {

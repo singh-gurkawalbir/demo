@@ -1,6 +1,7 @@
 /* global describe, test, expect */
 import { advanceBy, advanceTo, clear } from 'jest-date-mock';
 import each from 'jest-each';
+import moment from 'moment';
 import reducer, * as selectors from './';
 import actions from '../actions';
 import {
@@ -1240,6 +1241,15 @@ describe('matchingConnectionList selector', () => {
       baseURI: 'https://baseuri.com',
     },
   };
+  const assistantConnectionSandbox = {
+    _id: 'assistant',
+    type: 'rest',
+    sandbox: true,
+    assistant: 'zendesk',
+    rest: {
+      baseURI: 'https://baseuri.com',
+    },
+  };
   const connections = [
     netsuiteConnection,
     netsuiteConnectionConnector,
@@ -1248,9 +1258,10 @@ describe('matchingConnectionList selector', () => {
     salesforceConnectionSandbox,
     restConnection,
     assistantConnection,
+    assistantConnectionSandbox,
   ];
 
-  test('should return empty array when state is empty', () => {
+  test('should not throw any error when params are bad', () => {
     const state = {};
 
     expect(selectors.matchingConnectionList(state, {})).toEqual([]);
@@ -1258,7 +1269,7 @@ describe('matchingConnectionList selector', () => {
     expect(selectors.matchingConnectionList(undefined, {})).toEqual([]);
     expect(selectors.matchingConnectionList(undefined, undefined)).toEqual([]);
   });
-  test('should return install steps with current step value set', () => {
+  test('should return correct values in production environment', () => {
     const state = reducer(
       {
         data: {
@@ -1281,32 +1292,473 @@ describe('matchingConnectionList selector', () => {
       assistantConnection,
     ]);
   });
-  test('should return install steps with current step value set on correct step', () => {
-    const installSteps = [
-      {
-        stepName: 'stepName',
-        stepId: 'stepId',
-        completed: true,
-      },
-      {
-        stepName: 'stepName2',
-        stepId: 'stepId2',
-      },
-    ];
+  test('should return correct values in sandbox environment', () => {
     const state = reducer(
       {
-        session: {
-          templates: {
-            t1: { installSteps },
+        data: {
+          resources: {
+            connections,
+          },
+        },
+        user: {
+          preferences: {
+            environment: 'sandbox',
           },
         },
       },
       'some_action'
     );
 
-    expect(selectors.templateInstallSteps(state, 't1')).toEqual([
-      { stepName: 'stepName', stepId: 'stepId', completed: true },
-      { stepName: 'stepName2', stepId: 'stepId2', isCurrentStep: true },
+    expect(
+      selectors.matchingConnectionList(state, { type: 'netsuite' })
+    ).toEqual([]);
+    expect(
+      selectors.matchingConnectionList(state, { type: 'salesforce' })
+    ).toEqual([salesforceConnectionSandbox]);
+    expect(selectors.matchingConnectionList(state, { type: 'rest' })).toEqual([
+      assistantConnectionSandbox,
+    ]);
+  });
+});
+
+describe('matchingStackList selector', () => {
+  const stack1 = {
+    _id: '57bfd7d06260d08f1ea6b831',
+    name: 'Hightech connectors',
+    type: 'server',
+    lastModified: '2017-07-27T07:34:04.291Z',
+    createdAt: '2017-03-20T12:25:53.129Z',
+    server: {
+      systemToken: '******',
+      hostURI: 'http://localhost.io:7000',
+      ipRanges: [],
+    },
+  };
+  const stack2 = {
+    _id: '57bfd7d06260d08f1ea6b831',
+    name: 'Hightech connectors',
+    _connectorId: 'connector',
+    type: 'lambda',
+    lastModified: '2017-07-27T07:34:04.291Z',
+    createdAt: '2017-03-20T12:25:53.129Z',
+    lambda: {
+      systemToken: '******',
+      hostURI: 'http://localhost.io:7000',
+      ipRanges: [],
+    },
+  };
+  const stacks = [stack1, stack2];
+
+  test('should not throw any error when params are bad', () => {
+    const state = {};
+
+    expect(selectors.matchingStackList(state, {})).toEqual([]);
+    expect(selectors.matchingStackList(state, undefined)).toEqual([]);
+    expect(selectors.matchingStackList(undefined, {})).toEqual([]);
+    expect(selectors.matchingStackList(undefined, undefined)).toEqual([]);
+  });
+  test('should return correct values in production environment', () => {
+    const state = reducer(
+      {
+        data: {
+          resources: {
+            stacks,
+          },
+        },
+      },
+      'some_action'
+    );
+
+    expect(selectors.matchingStackList(state)).toEqual([stack1]);
+  });
+  test('should return correct values in sandbox environment', () => {
+    const state = reducer(
+      {
+        data: {
+          resources: {
+            stacks,
+          },
+        },
+        user: {
+          preferences: {
+            environment: 'sandbox',
+          },
+        },
+      },
+      'some_action'
+    );
+
+    expect(selectors.matchingStackList(state)).toEqual([stack1]);
+  });
+});
+
+describe('marketplaceConnectorList selector', () => {
+  const connector1 = {
+    _id: 'connector1',
+    name: 'Sample Connector',
+    contactEmail: 'sravan@sravan.com',
+    published: false,
+    _stackId: '57be8a07be81b76e185bbb8d',
+    applications: ['amazonmws', 'netsuite'],
+  };
+  const connector2 = {
+    _id: 'connector2',
+    name: 'Sample Connector2',
+    contactEmail: 'sravan@sravan.com',
+    published: true,
+    _stackId: '57be8a07be81b76e185bbb8d',
+    applications: ['amazonmws', 'netsuite'],
+  };
+  const connectors = [connector1, connector2];
+
+  test('should not throw any error when params are bad', () => {
+    const state = {};
+
+    expect(selectors.marketplaceConnectors(state, '')).toEqual([]);
+    expect(selectors.marketplaceConnectors(state, undefined)).toEqual([]);
+    expect(selectors.marketplaceConnectors(undefined, '')).toEqual([]);
+    expect(selectors.marketplaceConnectors(undefined, undefined)).toEqual([]);
+  });
+  test('should return correct values with respect to environment', () => {
+    const state = reducer(
+      {
+        data: {
+          marketplace: {
+            connectors,
+            templates: [],
+          },
+        },
+      },
+      'some_action'
+    );
+
+    expect(selectors.marketplaceConnectors(state, 'netsuite')).toEqual([
+      {
+        _id: 'connector1',
+        _stackId: '57be8a07be81b76e185bbb8d',
+        applications: ['amazonmws', 'netsuite'],
+        canInstall: false,
+        contactEmail: 'sravan@sravan.com',
+        installed: false,
+        name: 'Sample Connector',
+        published: false,
+      },
+      {
+        _id: 'connector2',
+        _stackId: '57be8a07be81b76e185bbb8d',
+        applications: ['amazonmws', 'netsuite'],
+        canInstall: false,
+        contactEmail: 'sravan@sravan.com',
+        installed: false,
+        name: 'Sample Connector2',
+        published: true,
+      },
+    ]);
+    expect(selectors.marketplaceConnectors(state, 'amazonmws', false)).toEqual([
+      {
+        _id: 'connector1',
+        _stackId: '57be8a07be81b76e185bbb8d',
+        applications: ['amazonmws', 'netsuite'],
+        canInstall: false,
+        contactEmail: 'sravan@sravan.com',
+        installed: false,
+        name: 'Sample Connector',
+        published: false,
+      },
+      {
+        _id: 'connector2',
+        _stackId: '57be8a07be81b76e185bbb8d',
+        applications: ['amazonmws', 'netsuite'],
+        canInstall: false,
+        contactEmail: 'sravan@sravan.com',
+        installed: false,
+        name: 'Sample Connector2',
+        published: true,
+      },
+    ]);
+  });
+  test('should return correct values with license values', () => {
+    const state = reducer(
+      {
+        data: {
+          marketplace: {
+            connectors,
+            templates: [],
+          },
+        },
+        user: {
+          org: {
+            accounts: [
+              {
+                _id: 'accountId',
+                accessLevel: 'owner',
+                ownerUser: {
+                  licenses: [
+                    {
+                      _id: 'licenseId',
+                      createdAt: 'date',
+                      _connectorId: 'connector1',
+                      expires: moment()
+                        .add(1, 'y')
+                        .toISOString(),
+                    },
+                  ],
+                },
+              },
+            ],
+          },
+        },
+      },
+      'some_action'
+    );
+
+    expect(selectors.marketplaceConnectors(state, 'netsuite')).toEqual([
+      {
+        _id: 'connector1',
+        _stackId: '57be8a07be81b76e185bbb8d',
+        applications: ['amazonmws', 'netsuite'],
+        canInstall: false,
+        contactEmail: 'sravan@sravan.com',
+        installed: false,
+        name: 'Sample Connector',
+        published: false,
+      },
+      {
+        _id: 'connector2',
+        _stackId: '57be8a07be81b76e185bbb8d',
+        applications: ['amazonmws', 'netsuite'],
+        canInstall: false,
+        contactEmail: 'sravan@sravan.com',
+        installed: false,
+        name: 'Sample Connector2',
+        published: true,
+      },
+    ]);
+    expect(selectors.marketplaceConnectors(state, 'amazonmws', false)).toEqual([
+      {
+        _id: 'connector1',
+        _stackId: '57be8a07be81b76e185bbb8d',
+        applications: ['amazonmws', 'netsuite'],
+        canInstall: false,
+        contactEmail: 'sravan@sravan.com',
+        installed: false,
+        name: 'Sample Connector',
+        published: false,
+      },
+      {
+        _id: 'connector2',
+        _stackId: '57be8a07be81b76e185bbb8d',
+        applications: ['amazonmws', 'netsuite'],
+        canInstall: false,
+        contactEmail: 'sravan@sravan.com',
+        installed: false,
+        name: 'Sample Connector2',
+        published: true,
+      },
+    ]);
+    expect(selectors.marketplaceConnectors(state, 'amazonmws', true)).toEqual([
+      {
+        _id: 'connector1',
+        _stackId: '57be8a07be81b76e185bbb8d',
+        applications: ['amazonmws', 'netsuite'],
+        canInstall: false,
+        contactEmail: 'sravan@sravan.com',
+        installed: false,
+        name: 'Sample Connector',
+        published: false,
+      },
+      {
+        _id: 'connector2',
+        _stackId: '57be8a07be81b76e185bbb8d',
+        applications: ['amazonmws', 'netsuite'],
+        canInstall: false,
+        contactEmail: 'sravan@sravan.com',
+        installed: false,
+        name: 'Sample Connector2',
+        published: true,
+      },
+    ]);
+  });
+});
+
+describe('integrationAppConnectionList reducer', () => {
+  const integrations = [
+    {
+      _id: 'integrationId',
+      name: 'Integration Name',
+    },
+    {
+      _id: 'integrationId2',
+      name: 'Integration Name',
+      settings: {
+        supportsMultiStore: true,
+        sections: [
+          {
+            title: 'store1',
+            id: 'store1',
+            sections: [
+              {
+                title: 'Section Title',
+                flows: [
+                  {
+                    _id: 'flow1',
+                  },
+                  {
+                    _id: 'flow2',
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    },
+  ];
+  const exports = [
+    {
+      _id: 'export1',
+      name: 'export1',
+      _connectionId: 'connection3',
+    },
+    {
+      _id: 'export2',
+      name: 'export2',
+      _connectionId: 'connection4',
+    },
+  ];
+  const imports = [
+    {
+      _id: 'import1',
+      name: 'import1',
+      _connectionId: 'connection3',
+    },
+    {
+      _id: 'import1',
+      name: 'import1',
+      _connectionId: 'connection4',
+    },
+  ];
+  const flows = [
+    {
+      _id: 'flow1',
+      name: 'flow1',
+      pageGenerators: [{ _exportId: 'export1' }],
+      pageProcessors: [
+        { _importId: 'import1', type: 'import' },
+        { _importId: 'import2', type: 'import' },
+      ],
+    },
+    {
+      _id: 'flow2',
+      name: 'flow2',
+      pageGenerators: [{ _exportId: 'export2' }],
+      pageProcessors: [{ _importId: 'import1', type: 'import' }],
+    },
+  ];
+  const connections = [
+    {
+      _id: 'connection1',
+      type: 'rest',
+      _integrationId: 'integrationId',
+      rest: {},
+    },
+    {
+      _id: 'connection3',
+      _integrationId: 'integrationId2',
+      type: 'rest',
+      rest: {},
+    },
+    {
+      _id: 'connection4',
+      _integrationId: 'integrationId2',
+      type: 'rest',
+      rest: {},
+    },
+    {
+      _id: 'connection2',
+      _integrationId: 'integrationId',
+      type: 'netsuite',
+      netsuite: {},
+    },
+  ];
+
+  test('should not throw error for bad params', () => {
+    const state = reducer({}, 'some_action');
+
+    expect(
+      selectors.integrationAppConnectionList(state, 'integrationId')
+    ).toEqual([]);
+    expect(
+      selectors.integrationAppConnectionList(undefined, 'integrationId')
+    ).toEqual([]);
+    expect(selectors.integrationAppConnectionList(state, undefined)).toEqual(
+      []
+    );
+  });
+  test('should return correct connectionIds', () => {
+    const state = reducer(
+      {
+        data: {
+          resources: {
+            integrations,
+            connections,
+            exports,
+            imports,
+            flows,
+          },
+        },
+      },
+      'some_action'
+    );
+
+    expect(
+      selectors.integrationAppConnectionList(state, 'integrationId')
+    ).toEqual([
+      {
+        _id: 'connection1',
+        _integrationId: 'integrationId',
+        rest: {},
+        type: 'rest',
+      },
+      {
+        _id: 'connection2',
+        _integrationId: 'integrationId',
+        netsuite: {},
+        type: 'netsuite',
+      },
+    ]);
+  });
+  test('should return correct connectionIds', () => {
+    const state = reducer(
+      {
+        data: {
+          resources: {
+            integrations,
+            connections,
+            exports,
+            imports,
+            flows,
+          },
+        },
+      },
+      'some_action'
+    );
+
+    expect(
+      selectors.integrationAppConnectionList(state, 'integrationId2', 'store1')
+    ).toEqual([
+      {
+        _id: 'connection3',
+        _integrationId: 'integrationId2',
+        type: 'rest',
+        rest: {},
+      },
+      {
+        _id: 'connection4',
+        _integrationId: 'integrationId2',
+        type: 'rest',
+        rest: {},
+      },
     ]);
   });
 });
