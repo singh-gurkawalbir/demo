@@ -387,7 +387,17 @@ export default {
   hookType: {
     type: 'radiogroup',
     label: 'Hook Type',
-    defaultValue: 'script',
+    defaultValue: r => {
+      let isStackType = false;
+
+      isStackType = !!(((r || {}).hooks || {}).preSavePage || {})._stackId;
+
+      if (isStackType) {
+        return 'stack';
+      }
+
+      return 'script';
+    },
     options: [
       {
         items: [
@@ -399,23 +409,30 @@ export default {
   },
   'hooks.preSavePage.function': {
     type: 'text',
-    label: 'Hooks pre Save Page function',
+    label: 'Pre Save Page',
   },
   'hooks.preSavePage._scriptId': {
     type: 'selectresource',
     resourceType: 'scripts',
-    placeholder: 'Please select a script',
-    label: 'Hooks pre Save Page _script Id',
-  },
-  'hooks.preSavePage.configuration': {
-    type: 'text',
-    label: 'Hooks pre Save Page configuration',
+    label: 'Pre Save Page Script',
+    visibleWhen: [
+      {
+        field: 'hookType',
+        is: ['script'],
+      },
+    ],
   },
   'hooks.preSavePage._stackId': {
     type: 'selectresource',
     placeholder: 'Please select a stack',
     resourceType: 'stacks',
-    label: 'Hooks pre Save Page _stack Id',
+    label: 'Pre Save Page Stack',
+    visibleWhen: [
+      {
+        field: 'hookType',
+        is: ['stack'],
+      },
+    ],
   },
 
   // #endregion hooks

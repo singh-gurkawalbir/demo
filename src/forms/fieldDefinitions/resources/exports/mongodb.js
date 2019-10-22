@@ -14,15 +14,6 @@ export default {
     mode: 'json',
     label: 'Projection',
   },
-  pageSize: {
-    type: 'text',
-    label: 'Page Size',
-    validWhen: [
-      {
-        matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
-      },
-    ],
-  },
   'delta.dateField': {
     type: 'text',
     label: 'Date Field',
