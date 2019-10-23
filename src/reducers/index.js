@@ -775,8 +775,8 @@ export function integrationAppSettings(state, id, storeId) {
   return { ...integrationResource, ...uninstallSteps };
 }
 
-export function connectorFlowSections(state, id, store) {
-  if (!state) return null;
+export function integrationAppFlowSections(state, id, store) {
+  if (!state) return [];
   let flowSections = [];
   const integrationResource = fromData.integrationAppSettings(state.data, id);
   const { sections = [], supportsMultiStore } =
