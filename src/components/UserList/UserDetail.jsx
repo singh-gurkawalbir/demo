@@ -275,17 +275,15 @@ class UserDetail extends Component {
                       </MenuItem>
                       <Divider />
                       {user.accepted && (
-                        <Fragment>
-                          <MenuItem
-                            data-test="makeAccountOwner"
-                            onClick={() => {
-                              this.handleActionClick('makeOwner');
-                            }}>
-                            Make account owner
-                          </MenuItem>
-                          <Divider />
-                        </Fragment>
+                        <MenuItem
+                          data-test="makeAccountOwner"
+                          onClick={() => {
+                            this.handleActionClick('makeOwner');
+                          }}>
+                          Make account owner
+                        </MenuItem>
                       )}
+                      {user.accepted && <Divider />}
                       <MenuItem
                         data-test="deleteFromAccount"
                         onClick={() => {

@@ -59,10 +59,13 @@ export default function JobActionsMenu({
     }
 
     if (job.numError > 0) {
-      menuOptions.push({
-        label: isFlowJob ? 'Retry All' : 'Retry',
-        action: 'retryJob',
-      });
+      if (job.type === JOB_TYPES.FLOW || job.retriable) {
+        menuOptions.push({
+          label: isFlowJob ? 'Retry All' : 'Retry',
+          action: 'retryJob',
+        });
+      }
+
       menuOptions.push({ label: 'Mark resolved', action: 'resolveJob' });
     }
   }

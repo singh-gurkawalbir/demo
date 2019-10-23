@@ -90,8 +90,20 @@ function JobTable({
     onSelectChange(jobIds);
   }
 
-  function handleViewErrorsClick({ jobId, parentJobId, showResolved = false }) {
-    setShowErrorDialogFor({ jobId, parentJobId, showResolved });
+  function handleViewErrorsClick({
+    jobId,
+    parentJobId,
+    showResolved = false,
+    numError,
+    numResolved,
+  }) {
+    setShowErrorDialogFor({
+      jobId,
+      parentJobId,
+      showResolved,
+      numError,
+      numResolved,
+    });
   }
 
   function handleJobErrorDialogCloseClick() {
@@ -160,6 +172,8 @@ function JobTable({
           jobId={showErrorDialogFor.jobId}
           parentJobId={showErrorDialogFor.parentJobId}
           showResolved={showErrorDialogFor.showResolved}
+          numError={showErrorDialogFor.numError}
+          numResolved={showErrorDialogFor.numResolved}
           onCloseClick={handleJobErrorDialogCloseClick}
           integrationName={integrationName}
         />
