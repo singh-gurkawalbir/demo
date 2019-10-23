@@ -5,6 +5,7 @@ export default {
     type: 'select',
     label: 'File Type',
     required: true,
+    defaultValue: 'csv',
     options: [
       {
         items: [
