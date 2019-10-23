@@ -1,5 +1,4 @@
 import { useSelector, useDispatch } from 'react-redux';
-import { Fragment } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -8,13 +7,17 @@ import {
   IconButton,
   Typography,
 } from '@material-ui/core';
-import moment from 'moment';
 import Close from '../icons/CloseIcon';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
 import DynaForm from '../DynaForm';
 import DynaSubmit from '../DynaForm/DynaSubmit';
-import { getCronExpression, getMetadata, setValues } from './util';
+import {
+  getMetadata,
+  setValues,
+  getScheduleStartMinute,
+  getPatchSet,
+} from './util';
 
 const useStyles = makeStyles(theme => ({
   modalContent: {
@@ -27,48 +30,9 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function Schedule(props) {
-  const {
-    classes,
-    onClose,
-    title,
-    flow,
-    integration,
-    preferences,
-    handleSubmit,
-  } = props;
-
-  return (
-    <Fragment>
-      <IconButton
-        data-test="closeFlowSchedule"
-        aria-label="Close"
-        className={classes.closeButton}
-        onClick={onClose}>
-        <Close />
-      </IconButton>
-      <DialogTitle disableTypography>
-        <Typography variant="h6">{title}</Typography>
-      </DialogTitle>
-      <DialogContent>
-        <DynaForm
-          fieldMeta={getMetadata({
-            flow,
-            integration,
-            preferences,
-          })}>
-          <DynaSubmit onClick={handleSubmit} color="primary">
-            Save
-          </DynaSubmit>
-        </DynaForm>
-      </DialogContent>
-    </Fragment>
-  );
-}
-
 export default function FlowSchedule(props) {
   const dispatch = useDispatch();
-  const { title, onClose, isFlowBuilder } = props;
+  const { title, onClose } = props;
   let { flow } = props;
   const preferences = useSelector(state =>
     selectors.userProfilePreferencesProps(state)
@@ -76,51 +40,9 @@ export default function FlowSchedule(props) {
   const integration = useSelector(state =>
     selectors.resource(state, 'integrations', flow._integrationId)
   );
-  let scheduleStartMinute = 0;
-
-  if (preferences && preferences.scheduleShiftForFlowsCreatedAfter) {
-    const changeStartMinuteForFlowsCreatedAfter = moment(
-      preferences.scheduleShiftForFlowsCreatedAfter
-    );
-
-    if (
-      !flow.createdAt ||
-      changeStartMinuteForFlowsCreatedAfter.diff(moment(flow.createdAt)) < 0
-    ) {
-      scheduleStartMinute = 10;
-    }
-  }
-
-  const ADVANCED_TAB = '1';
+  const scheduleStartMinute = getScheduleStartMinute(flow, preferences);
   const handleSubmit = formVal => {
-    let scheduleValue;
-
-    if (formVal.activeTab === ADVANCED_TAB) {
-      // Need to handle Cron Editor Changes
-      scheduleValue = formVal.schedule;
-    } else {
-      if (
-        formVal.startTime &&
-        formVal.endTime &&
-        !moment(formVal.startTime, 'LT').isBefore(moment(formVal.endTime, 'LT'))
-      ) {
-        // alert('End Time is invalid');
-        return false;
-      }
-
-      scheduleValue =
-        getCronExpression(formVal, scheduleStartMinute) === '? * * * * *'
-          ? ''
-          : getCronExpression(formVal, scheduleStartMinute);
-    }
-
-    const patchSet = [
-      {
-        op: 'replace',
-        path: '/schedule',
-        value: scheduleValue,
-      },
-    ];
+    const patchSet = getPatchSet(formVal, scheduleStartMinute);
 
     dispatch(actions.resource.patchStaged(flow._id, patchSet, 'value'));
     dispatch(actions.resource.commitStaged('flows', flow._id, 'value'));
@@ -137,33 +59,29 @@ export default function FlowSchedule(props) {
   }
 
   return (
-    <Fragment>
-      {isFlowBuilder && (
-        <Fragment>
-          <Schedule
-            classes={classes}
-            onClose={onClose}
-            title={title}
-            flow={flow}
-            integration={integration}
-            preferences={preferences}
-            handleSubmit={handleSubmit}
-          />
-        </Fragment>
-      )}
-      {!isFlowBuilder && (
-        <Dialog open maxWidth={false}>
-          <Schedule
-            classes={classes}
-            onClose={onClose}
-            title={title}
-            flow={flow}
-            integration={integration}
-            preferences={preferences}
-            handleSubmit={handleSubmit}
-          />
-        </Dialog>
-      )}
-    </Fragment>
+    <Dialog open maxWidth={false}>
+      <IconButton
+        data-test="closeFlowSchedule"
+        aria-label="Close"
+        className={classes.closeButton}
+        onClick={onClose}>
+        <Close />
+      </IconButton>
+      <DialogTitle disableTypography>
+        <Typography variant="h6">{title}</Typography>
+      </DialogTitle>
+      <DialogContent className={classes.modalContent}>
+        <DynaForm
+          fieldMeta={getMetadata({
+            flow,
+            integration,
+            preferences,
+          })}>
+          <DynaSubmit onClick={handleSubmit} color="primary">
+            Save
+          </DynaSubmit>
+        </DynaForm>
+      </DialogContent>
+    </Dialog>
   );
 }
