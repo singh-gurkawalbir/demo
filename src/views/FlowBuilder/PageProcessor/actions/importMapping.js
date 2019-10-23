@@ -14,15 +14,6 @@ function ImportMappingDialog({ flowId, resource, onClose }) {
       isImport: true,
     })
   );
-  const sampleData = useSelector(state =>
-    selectors.getImportSampleData(state, resourceId)
-  );
-
-  useEffect(() => {
-    if (!sampleData) {
-      dispatch(actions.importSampleData.fetch(resourceId));
-    }
-  }, [dispatch, resourceId, sampleData]);
 
   useEffect(() => {
     if (!extractFields) {
