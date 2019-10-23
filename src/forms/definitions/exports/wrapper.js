@@ -39,21 +39,9 @@ export default {
     },
     'delta.dateField': {
       fieldId: 'delta.dateField',
-      visibleWhen: [
-        {
-          field: 'type',
-          is: ['delta'],
-        },
-      ],
     },
     'once.booleanField': {
       fieldId: 'once.booleanField',
-      visibleWhen: [
-        {
-          field: 'type',
-          is: ['once'],
-        },
-      ],
     },
     'transform.expression.rules': { fieldId: 'transform.expression.rules' },
     hooks: { formId: 'hooks' },

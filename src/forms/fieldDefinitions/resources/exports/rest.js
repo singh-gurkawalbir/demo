@@ -213,19 +213,6 @@ export default {
     ],
   },
   // #endregion once
-  pageSize: {
-    type: 'text',
-    label: 'Page Size',
-    validWhen: [
-      {
-        matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
-      },
-    ],
-  },
-  dataURITemplate: {
-    type: 'relativeuri',
-    label: 'Data URI Template',
-  },
   'rest.once.postBody': {
     type: 'httprequestbody',
     label: 'Build HTTP Request Body',
