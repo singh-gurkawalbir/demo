@@ -5,7 +5,6 @@ import {
   Grid,
   Drawer,
   List,
-  Typography,
 } from '@material-ui/core';
 import { isEmpty } from 'lodash';
 import { makeStyles } from '@material-ui/core/styles';
@@ -24,6 +23,7 @@ import AuditLog from '../../IntegrationSettings/AuditLog';
 import Uninstall from './Uninstall';
 import Connections from '../../IntegrationSettings/Connections';
 import getRoutePath from '../../../utils/routePaths';
+import CeligoPageBar from '../../../components/CeligoPageBar';
 
 const useStyles = makeStyles(theme => ({
   link: {
@@ -31,17 +31,12 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'column',
     alignItems: 'flex-start',
   },
-  appFrame: {
-    padding: theme.spacing(1),
-  },
-  about: {
-    padding: theme.spacing(1),
-    display: 'inline-flex',
-  },
   root: {
     display: 'flex',
     padding: theme.spacing(1),
     alignItems: 'flex-start',
+    overflowX: 'auto',
+    minHeight: '81vh',
   },
   leftElement: {
     position: 'relative',
@@ -74,9 +69,7 @@ const useStyles = makeStyles(theme => ({
   },
   storeContainer: {
     display: 'flex',
-    background: theme.palette.background.default,
-    borderBottom: `solid 1px ${theme.palette.background.paper}`,
-    borderTop: `solid 1px ${theme.palette.background.paper}`,
+    margin: theme.spacing(1, 3),
   },
   addStore: {
     float: 'right',
@@ -215,22 +208,16 @@ export default function IntegrationAppSettings(props) {
     <LoadResources
       required
       resources="integrations, exports, imports, flows, connections">
-      <div className={classes.appFrame}>
-        <div className={classes.about}>
-          <Typography variant="h5">{integration.name}</Typography>
+      <div>
+        <CeligoPageBar title={integration.name}>
           <ChipInput
             value={integration.tag || 'tag'}
             className={classes.tag}
             variant="outlined"
             onChange={handleTagChangeHandler}
           />
-        </div>
-        <a
-          href={getRoutePath(`integrations/${integrationId}/dashboard`)}
-          className={classes.dashboard}>
-          Dashboard
-        </a>
-        <Divider />
+        </CeligoPageBar>
+
         {supportsMultiStore && (
           <div className={classes.storeContainer}>
             <Grid container>

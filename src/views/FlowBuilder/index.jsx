@@ -184,6 +184,7 @@ const useStyles = makeStyles(theme => ({
     marginBottom: theme.spacing(3),
   },
   destinationTitle: {
+    width: 320,
     marginLeft: 100,
     marginBottom: theme.spacing(3),
   },
@@ -316,7 +317,9 @@ function FlowBuilder(props) {
   // #endregion
 
   useEffect(() => {
-    if (!isNewFlow && !flowData) dispatch(actions.flowData.init(flow));
+    if (!isNewFlow && !flowData && flow && flow._id) {
+      dispatch(actions.flowData.init(flow));
+    }
   }, [dispatch, flow, flowData, isNewFlow]);
 
   const pushOrReplaceHistory = to => {

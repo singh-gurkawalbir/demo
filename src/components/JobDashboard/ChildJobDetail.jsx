@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import TableCell from '@material-ui/core/TableCell';
+import { makeStyles } from '@material-ui/core/styles';
 import TableRow from '@material-ui/core/TableRow';
 import Checkbox from '@material-ui/core/Checkbox';
 import Button from '@material-ui/core/Button';
@@ -7,6 +8,13 @@ import { getPages, getSuccess } from './util';
 import JobStatus from './JobStatus';
 import JobActionsMenu from './JobActionsMenu';
 import { JOB_STATUS } from '../../utils/constants';
+
+const useStyles = makeStyles({
+  checkAction: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+  },
+});
 
 export default function ChildJobDetail({
   job,
@@ -22,6 +30,7 @@ export default function ChildJobDetail({
     JOB_STATUS.RUNNING,
     JOB_STATUS.RETRYING,
   ].includes(job.uiStatus);
+  const classes = useStyles();
   const isSelectable = !!(job.retriable || job.numError);
   const parentSelectionInfo = selectedJobs[parentJob._id] || {
     selected: false,
@@ -61,8 +70,7 @@ export default function ChildJobDetail({
 
   return (
     <TableRow>
-      <TableCell />
-      <TableCell padding="checkbox">
+      <TableCell className={classes.checkAction}>
         <Checkbox
           color="primary"
           disabled={!isSelectable}

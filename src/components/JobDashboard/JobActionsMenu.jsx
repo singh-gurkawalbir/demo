@@ -1,9 +1,9 @@
 import { Fragment, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import Menu from '@material-ui/core/Menu';
+import { makeStyles } from '@material-ui/core';
 import MenuItem from '@material-ui/core/MenuItem';
 import IconButton from '@material-ui/core/IconButton';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { JOB_STATUS, JOB_TYPES } from '../../utils/constants';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
@@ -14,6 +14,13 @@ import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import { UNDO_TIME } from './util';
 import JobRetriesDialog from './JobRetriesDialog';
 import JobFilesDownloadDialog from './JobFilesDownloadDialog';
+import MoreVertIcon from '../icons/EllipsisVerticalIcon';
+
+const useStyle = makeStyles({
+  iconBtn: {
+    padding: 0,
+  },
+});
 
 export default function JobActionsMenu({
   job,
@@ -21,6 +28,7 @@ export default function JobActionsMenu({
   userPermissionsOnIntegration = {},
   integrationName,
 }) {
+  const classes = useStyle();
   const dispatch = useDispatch();
   const [enqueueSnackbar, closeSnackbar] = useEnqueueSnackbar();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -337,6 +345,7 @@ export default function JobActionsMenu({
       </Menu>
       <IconButton
         data-test="moreJobActionsMenu"
+        className={classes.iconBtn}
         onClick={handleMenuClick}
         disabled={menuOptions.length === 0}>
         <MoreVertIcon />

@@ -7,7 +7,7 @@ import * as selectors from '../../../../../reducers';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    padding: theme.spacing(3),
+    padding: theme.spacing(0),
   },
 }));
 

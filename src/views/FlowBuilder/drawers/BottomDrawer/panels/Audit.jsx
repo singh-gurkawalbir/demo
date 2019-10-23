@@ -3,7 +3,7 @@ import AuditLog from '../../../../../components/AuditLog';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    padding: theme.spacing(3),
+    padding: theme.spacing(0),
   },
 }));
 
