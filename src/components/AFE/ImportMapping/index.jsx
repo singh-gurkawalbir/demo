@@ -98,7 +98,7 @@ export const reducer = (state, action) => {
           }
 
           draft[index] = objCopy;
-        } else {
+        } else if (value) {
           draft.push(Object.assign({}, lastRowData, { [field]: value }));
         }
 
