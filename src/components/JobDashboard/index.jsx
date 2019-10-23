@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { isEqual } from 'lodash';
 import LoadResources from '../../components/LoadResources';
@@ -11,12 +11,14 @@ import { COMM_STATES } from '../../reducers/comms';
 import CommStatus from '../CommStatus';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import { UNDO_TIME } from './util';
+import { hashCode } from '../../utils/string';
 
 export default function JobDashboard({
   integrationId,
   flowId,
   rowsPerPage = 10,
 }) {
+  const filterKey = 'jobs';
   const dispatch = useDispatch();
   const [enqueueSnackbar, closeSnackbar] = useEnqueueSnackbar();
   const userPermissionsOnIntegration = useSelector(state =>
@@ -28,23 +30,32 @@ export default function JobDashboard({
   const isBulkRetryInProgress = useSelector(state =>
     selectors.isBulkRetryInProgress(state)
   );
-  const [filters, setFilters] = useState({});
+  const { filters = {}, currentPage = 0 } = useSelector(state =>
+    selectors.filter(state, filterKey)
+  );
   const [selectedJobs, setSelectedJobs] = useState({});
   const [numJobsSelected, setNumJobsSelected] = useState(0);
   const [disableButtons, setDisableButtons] = useState(true);
   const [actionsToMonitor, setActionsToMonitor] = useState({});
-  const [currentPage, setCurrentPage] = useState(0);
   const jobs = useSelector(state => selectors.flowJobs(state));
+  const patchFilter = useCallback(
+    (key, value) => {
+      dispatch(actions.patchFilter(filterKey, { [key]: value }));
+    },
+    [dispatch]
+  );
+  const filterHash = hashCode(filters);
 
   useEffect(
     () => () => {
       dispatch(actions.job.clear());
-      setCurrentPage(0);
+      patchFilter('currentPage', 0);
     },
-    [dispatch, filters]
+    [dispatch, currentPage, filterHash, patchFilter]
   );
 
-  /** Whenever page changes, we need to update the same in state and request for inprogress jobs (in current page) status */
+  /** Whenever page changes, we need to update the same in state and
+   * request for in-progress jobs (in current page) status */
   useEffect(() => {
     dispatch(actions.job.paging.setCurrentPage(currentPage));
     dispatch(actions.job.requestInProgressJobStatus());
@@ -60,7 +71,8 @@ export default function JobDashboard({
         actions.job.requestCollection({ integrationId, flowId, filters })
       );
     }
-  }, [dispatch, integrationId, flowId, filters, jobs.length]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, integrationId, flowId, filterHash, jobs.length]);
 
   useEffect(() => {
     setDisableButtons(isBulkRetryInProgress || jobs.length === 0);
@@ -90,13 +102,13 @@ export default function JobDashboard({
   }
 
   function handleChangePage(newPage) {
-    setCurrentPage(newPage);
+    patchFilter('currentPage', newPage);
   }
 
   function handleFiltersChange(newFilters) {
     if (!isEqual(filters, newFilters)) {
-      setFilters(newFilters);
-      setCurrentPage(0);
+      patchFilter('filters', newFilters);
+      patchFilter('currentPage', 0);
     }
   }
 
