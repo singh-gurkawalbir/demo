@@ -21,9 +21,15 @@ const useStyles = makeStyles(theme => ({
   root: {
     flexDirection: 'row !important',
     display: 'flex',
+    alignItems: 'flex-start',
     '& > div:first-child': {
       width: '100%',
     },
+  },
+  actions: {
+    flexDirection: 'row !important',
+    display: 'flex',
+    alignItems: 'flex-start',
   },
   iconButton: {
     alignSelf: 'flex-end',
@@ -164,28 +170,29 @@ function DynaSelectResource(props) {
           />
         )}
       </LoadResources>
+      <div className={classes.actions}>
+        {allowNew && (
+          <IconButton
+            data-test="addNewResource"
+            className={classes.iconButton}
+            onClick={addNewResource}
+            size="small">
+            <AddIcon />
+          </IconButton>
+        )}
 
-      {allowNew && (
-        <IconButton
-          data-test="addNewResource"
-          className={classes.iconButton}
-          onClick={addNewResource}
-          size="small">
-          <AddIcon />
-        </IconButton>
-      )}
-
-      {allowEdit && (
-        <IconButton
-          disabled={!value}
-          data-test="editNewResource"
-          className={classes.iconButton}
-          component={Link}
-          to={`${location.pathname}/edit/${resourceType}/${value}`}
-          size="small">
-          <EditIcon />
-        </IconButton>
-      )}
+        {allowEdit && (
+          <IconButton
+            disabled={!value}
+            data-test="editNewResource"
+            className={classes.iconButton}
+            component={Link}
+            to={`${location.pathname}/edit/${resourceType}/${value}`}
+            size="small">
+            <EditIcon />
+          </IconButton>
+        )}
+      </div>
     </div>
   );
 }

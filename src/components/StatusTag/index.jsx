@@ -8,52 +8,40 @@ const useStyles = makeStyles(theme => ({
     fontSize: 12,
     borderRadius: 4,
     display: 'inline-block',
-    border: '1px solid',
   },
   default: {
     background: theme.palette.secondary.lightest,
-    borderColor: theme.palette.secondary.lightest,
     color: theme.palette.getContrastText(theme.palette.secondary.lightest),
   },
-  // TODO: Azhar, surely we can find these values in the theme?
-  // or are all these new colors? lets talk about this. We should
-  // not use, hex values anywhere in out JSX code... only in the theme.
-  // There are possibly some edge cases we need to, but this component
-  // is not one of those cases.
+  realtime: {
+    backgroundColor: theme.palette.secondary.light,
+    color: theme.palette.getContrastText(theme.palette.secondary.light),
+  },
   success: {
-    backgroundColor: '#4CBB02',
-    borderColor: '#4CBB02',
-    color: theme.palette.getContrastText('#4CBB02'),
+    backgroundColor: theme.palette.success.main,
+    color: theme.palette.getContrastText(theme.palette.success.main),
   },
   error: {
-    backgroundColor: '#FF3C3C',
-    borderColor: '#FF3C3C',
-    color: theme.palette.getContrastText('#FF3C3C'),
-  },
-  warn: {
-    backgroundColor: '#FFB30C',
-    borderColor: '#FFB30C',
-    color: theme.palette.getContrastText('#FFB30C'),
+    backgroundColor: theme.palette.error.main,
+    color: theme.palette.getContrastText(theme.palette.error.main),
   },
   info: {
-    backgroundColor: '#00A1E1',
-    borderColor: '#00A1E1',
-    color: theme.palette.getContrastText('#00A1E1'),
+    backgroundColor: theme.palette.info.main,
+    color: theme.palette.getContrastText(theme.palette.info.main),
   },
-  realtime: {
-    backgroundColor: '#95ABBC',
-    borderColor: '#95ABBC',
-    color: theme.palette.getContrastText('#95ABBC'),
+  warning: {
+    backgroundColor: theme.palette.warning.main,
+    color: theme.palette.getContrastText(theme.palette.warning.main),
   },
 }));
 
 function StatusTag(props) {
-  const { variant = 'default', className, children, ...other } = props;
+  const { variant = 'default', className, label, ...other } = props;
   const classes = useStyles(props);
 
   return (
     <div className={clsx(classes.root, classes[variant], className)} {...other}>
-      {children}
+      {label}
     </div>
   );
 }
@@ -62,7 +50,7 @@ StatusTag.propTypes = {
   variant: PropTypes.oneOf([
     'default',
     'info',
-    'warn',
+    'warning',
     'error',
     'success',
     'realtime',

@@ -1,16 +1,16 @@
 import MappingUtil from '../../../../../utils/mapping';
 
 export default {
-  getMetaData: (options = {}) => {
+  getMetaData: (params = {}) => {
     const {
       value,
       lookup = {},
       extractFields,
-      connectionId,
-      recordType,
       generate,
       generateFields,
-    } = options;
+      options,
+    } = params;
+    const { connectionId, recordType } = options;
     const fieldId =
       generate && generate.indexOf('[*].') !== -1
         ? generate.split('[*].')[1]

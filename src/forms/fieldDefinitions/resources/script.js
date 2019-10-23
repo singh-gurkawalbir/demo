@@ -12,8 +12,7 @@ export default {
   },
   content: {
     defaultValue: r => ({ _scriptId: r._id, function: 'main' }),
-    type: 'hook',
-    hookType: 'script',
-    label: 'Edit Script',
+    type: 'scriptcontent',
+    label: 'Edit Content',
   },
 };

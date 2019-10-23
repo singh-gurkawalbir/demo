@@ -7,9 +7,10 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-import * as selectors from '../../../reducers';
-import JavaScriptEditorDialog from '../../../components/AFE/JavaScriptEditor/Dialog';
-import EditIcon from '../../icons/EditIcon';
+import { isFunction } from 'lodash';
+import * as selectors from '../../../../reducers';
+import JavaScriptEditorDialog from '../../../../components/AFE/JavaScriptEditor/Dialog';
+import EditIcon from '../../../icons/EditIcon';
 
 const useStyles = makeStyles(theme => ({
   select: {
@@ -91,20 +92,29 @@ export default function DynaHook(props) {
     onFieldChange,
     placeholder,
     required,
-    value,
+    value = {},
     label,
-    hookType,
+    hookType = 'script',
     preHookData = {},
+    requestForPreHookData,
   } = props;
   const handleEditorClick = () => {
+    if (requestForPreHookData && isFunction(requestForPreHookData)) {
+      requestForPreHookData();
+    }
+
     setShowEditor(!showEditor);
   };
 
   const handleClose = (shouldCommit, editorValues) => {
-    const { template } = editorValues;
+    const { scriptId, entryFunction } = editorValues;
 
     if (shouldCommit) {
-      onFieldChange(id, template);
+      onFieldChange(id, {
+        ...value,
+        _scriptId: scriptId,
+        function: entryFunction,
+      });
     }
 
     handleEditorClick();
@@ -120,7 +130,8 @@ export default function DynaHook(props) {
         <JavaScriptEditorDialog
           title="Script Editor"
           id={id}
-          data={JSON.stringify(preHookData)}
+          key={id}
+          data={JSON.stringify(preHookData, null, 2)}
           scriptId={value._scriptId}
           entryFunction={value.function}
           onClose={handleClose}
@@ -128,14 +139,15 @@ export default function DynaHook(props) {
       )}
 
       <div className={classes.inputContainer}>
-        <InputLabel className={classes.label} htmlFor="scriptId">
-          {label}
-        </InputLabel>
+        <InputLabel className={classes.label}>{label}</InputLabel>
         <div className={classes.wrapper}>
           <TextField
             key={id}
             name={name}
             label="Function"
+            InputLabelProps={{
+              shrink: true,
+            }}
             className={classes.textField}
             placeholder={placeholder}
             disabled={disabled}

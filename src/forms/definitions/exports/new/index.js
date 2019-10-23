@@ -40,7 +40,9 @@ export default {
       type: 'selectapplication',
       placeholder: 'Select application',
       defaultValue: r => (r && r.application) || '',
-      required: true,
+      validWhen: {
+        isNot: { values: [''], message: 'Please select an application' },
+      },
     },
     type: {
       id: 'type',
@@ -73,6 +75,9 @@ export default {
       label: 'Connection',
       defaultValue: r => (r && r._connectionId) || '',
       required: true,
+      validWhen: {
+        isNot: { values: [''], message: 'Please select a connection' },
+      },
       refreshOptionsOnChangesTo: ['application'],
       visibleWhenAll: [
         {

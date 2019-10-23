@@ -5,10 +5,10 @@ import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
-import DeleteIcon from '@material-ui/icons/DeleteForever';
 import Spinner from '../../../Spinner';
 import RefreshIcon from '../../../icons/RefreshIcon';
 import DynaSelect from '../DynaSelect';
+import DeleteIcon from '../../../icons/TrashIcon';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -102,6 +102,12 @@ export default function DynaTable(props) {
       return allRequiredFieldsPresent;
     });
   let requiredFieldsMissing = false;
+
+  if (!requiredFields.length) {
+    // If none of the options are marked as required, consider the first option as required.
+    // when there are no required fields mentioned, an empty last row will be added recursively in infinite loop.
+    requiredFields.push(optionsMap[0]);
+  }
 
   useEffect(() => {
     setShouldResetOptions(true);
@@ -236,7 +242,7 @@ export default function DynaTable(props) {
                   {r.supportsRefresh && !isLoading && (
                     <RefreshIcon onClick={onFetchResource(r.id)} />
                   )}
-                  {r.supportsRefresh && isLoading && <Spinner />}
+                  {r.supportsRefresh && isLoading && <Spinner size={24} />}
                 </Grid>
               ))}
               <Grid key="delete_button_header" item />

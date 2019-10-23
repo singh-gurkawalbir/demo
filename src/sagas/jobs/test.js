@@ -333,7 +333,11 @@ describe('job sagas', () => {
       const response = { signedURL: 'some url' };
 
       expect(saga.next(response).value).toEqual(
-        all([response.signedURL].map(url => call(openExternalUrl, { url })))
+        all(
+          [response.signedURL].map((url, index) =>
+            call(openExternalUrl, { url, index })
+          )
+        )
       );
       expect(saga.next().done).toEqual(true);
     });
@@ -355,7 +359,11 @@ describe('job sagas', () => {
       const response = { signedURL: 'some url' };
 
       expect(saga.next(response).value).toEqual(
-        all([response.signedURL].map(url => call(openExternalUrl, { url })))
+        all(
+          [response.signedURL].map((url, index) =>
+            call(openExternalUrl, { url, index })
+          )
+        )
       );
       expect(saga.next().done).toEqual(true);
     });
@@ -379,7 +387,11 @@ describe('job sagas', () => {
       };
 
       expect(saga.next(response).value).toEqual(
-        all(response.signedURLs.map(url => call(openExternalUrl, { url })))
+        all(
+          response.signedURLs.map((url, index) =>
+            call(openExternalUrl, { url, index })
+          )
+        )
       );
       expect(saga.next().done).toEqual(true);
     });
@@ -401,7 +413,11 @@ describe('job sagas', () => {
       const response = { signedURLs: ['some url', 'some other url'] };
 
       expect(saga.next(response).value).toEqual(
-        all(response.signedURLs.map(url => call(openExternalUrl, { url })))
+        all(
+          response.signedURLs.map((url, index) =>
+            call(openExternalUrl, { url, index })
+          )
+        )
       );
       expect(saga.next().done).toEqual(true);
     });

@@ -19,6 +19,7 @@ export default function CollapsedComponents(props) {
         // eslint-disable-next-line react/no-array-index-key
         <FormContext.Consumer key={index}>
           {form => (
+            // eslint-disable-next-line react/no-array-index-key
             <ExpansionPannelExpandOnInValidState
               collapsed={collapsed}
               index={index}
@@ -48,22 +49,23 @@ const ExpansionPannelExpandOnInValidState = props => {
   const [shouldExpand, setShouldExpand] = useState(!collapsed);
 
   return (
-    <ExpansionPanel
-      // eslint-disable-next-line react/no-array-index-key
-      expanded={
-        isExpansionPanelErrored({ layout, fieldMap }, form.fields) ||
-        shouldExpand
-      }
-      className={classes.child}>
-      <ExpansionPanelSummary
-        data-test={header}
-        onClick={() => setShouldExpand(expand => !expand)}
-        expandIcon={<ExpandMoreIcon />}>
-        <Typography>{header}</Typography>
-      </ExpansionPanelSummary>
-      <ExpansionPanelDetails>
-        <FormGenerator layout={layout} fieldMap={fieldMap} />
-      </ExpansionPanelDetails>
-    </ExpansionPanel>
+    <div className={classes.child}>
+      <ExpansionPanel
+        // eslint-disable-next-line react/no-array-index-key
+        expanded={
+          isExpansionPanelErrored({ layout, fieldMap }, form.fields) ||
+          shouldExpand
+        }>
+        <ExpansionPanelSummary
+          data-test={header}
+          onClick={() => setShouldExpand(expand => !expand)}
+          expandIcon={<ExpandMoreIcon />}>
+          <Typography>{header}</Typography>
+        </ExpansionPanelSummary>
+        <ExpansionPanelDetails>
+          <FormGenerator layout={layout} fieldMap={fieldMap} />
+        </ExpansionPanelDetails>
+      </ExpansionPanel>
+    </div>
   );
 };

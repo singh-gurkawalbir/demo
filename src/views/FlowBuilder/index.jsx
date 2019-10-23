@@ -184,6 +184,7 @@ const useStyles = makeStyles(theme => ({
     marginBottom: theme.spacing(3),
   },
   destinationTitle: {
+    width: 320,
     marginLeft: 100,
     marginBottom: theme.spacing(3),
   },
@@ -229,6 +230,13 @@ function FlowBuilder(props) {
   const createdProcessorId = useSelector(state =>
     selectors.createdResourceId(state, newProcessorId)
   );
+  const createdProcessorResourceType = useSelector(state => {
+    if (!createdProcessorId) return;
+
+    const imp = selectors.resource(state, 'imports', createdProcessorId);
+
+    return imp ? 'import' : 'export';
+  });
   const flowData = useSelector(state =>
     selectors.getFlowDataState(state, flowId)
   );
@@ -294,22 +302,24 @@ function FlowBuilder(props) {
   // #region Add Processor on creation effect
   useEffect(() => {
     if (createdProcessorId) {
-      patchFlow('/pageProcessors', [
-        ...pageProcessors,
-        // do we need to include dummy responseMapping?
-        // lets see if the API call succeeds...
-        { type: 'import', _importId: createdProcessorId },
-      ]);
+      const newProcessor =
+        createdProcessorResourceType === 'import'
+          ? { type: 'import', _importId: createdProcessorId }
+          : { type: 'export', _exportId: createdProcessorId };
+
+      patchFlow('/pageProcessors', [...pageProcessors, newProcessor]);
 
       setNewProcessorId(getNewId());
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [createdProcessorId, patchFlow]);
+  }, [createdProcessorResourceType, createdProcessorId, patchFlow]);
   // #endregion
 
   useEffect(() => {
-    if (!isNewFlow && !flowData) dispatch(actions.flowData.init(flow));
+    if (!isNewFlow && !flowData && flow && flow._id) {
+      dispatch(actions.flowData.init(flow));
+    }
   }, [dispatch, flow, flowData, isNewFlow]);
 
   const pushOrReplaceHistory = to => {
@@ -333,7 +343,6 @@ function FlowBuilder(props) {
   }
 
   function handleTitleChange(title) {
-    // console.log(title);
     patchFlow('/name', title);
   }
 
@@ -466,7 +475,7 @@ function FlowBuilder(props) {
                       `${pg.application}${pg.webhookOnly}`
                     }
                     index={i}
-                    isLast={pageProcessors.length === i + 1}
+                    isLast={pageGenerators.length === i + 1}
                   />
                 ))}
                 {!pageGenerators.length && (

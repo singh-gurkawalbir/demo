@@ -5,8 +5,8 @@ import {
   Grid,
   Drawer,
   List,
-  Typography,
 } from '@material-ui/core';
+import { isEmpty } from 'lodash';
 import { makeStyles } from '@material-ui/core/styles';
 import { Switch, Route, NavLink } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
@@ -23,6 +23,7 @@ import AuditLog from '../../IntegrationSettings/AuditLog';
 import Uninstall from './Uninstall';
 import Connections from '../../IntegrationSettings/Connections';
 import getRoutePath from '../../../utils/routePaths';
+import CeligoPageBar from '../../../components/CeligoPageBar';
 
 const useStyles = makeStyles(theme => ({
   link: {
@@ -30,17 +31,12 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'column',
     alignItems: 'flex-start',
   },
-  appFrame: {
-    padding: theme.spacing(1),
-  },
-  about: {
-    padding: theme.spacing(1),
-    display: 'inline-flex',
-  },
   root: {
     display: 'flex',
     padding: theme.spacing(1),
     alignItems: 'flex-start',
+    overflowX: 'auto',
+    minHeight: '81vh',
   },
   leftElement: {
     position: 'relative',
@@ -53,6 +49,9 @@ const useStyles = makeStyles(theme => ({
     flex: 4,
     textAlign: 'center',
     padding: theme.spacing(1),
+  },
+  dashboard: {
+    float: 'right',
   },
 
   activeLink: {
@@ -70,9 +69,7 @@ const useStyles = makeStyles(theme => ({
   },
   storeContainer: {
     display: 'flex',
-    background: theme.palette.background.default,
-    borderBottom: `solid 1px ${theme.palette.background.paper}`,
-    borderTop: `solid 1px ${theme.palette.background.paper}`,
+    margin: theme.spacing(1, 3),
   },
   addStore: {
     float: 'right',
@@ -131,7 +128,29 @@ export default function IntegrationAppSettings(props) {
   const showAPITokens = permissions.accesstokens.view;
 
   useEffect(() => {
-    if ((!redirected && section === 'flows') || storeChanged) {
+    if (!isEmpty(integration)) {
+      if (!integration.mode || integration.mode === 'install') {
+        props.history.push(getRoutePath(`/connectors/${integrationId}/setup`));
+      } else if (integration.mode === 'uninstall') {
+        props.history.push(
+          getRoutePath(
+            `/connectors/${integrationId}/uninstall${
+              currentStore ? `/${currentStore}` : ''
+            }`
+          )
+        );
+      }
+    }
+  }, [
+    currentStore,
+    integration,
+    integration.mode,
+    integrationId,
+    props.history,
+  ]);
+
+  useEffect(() => {
+    if ((!redirected && (section === 'flows' || !section)) || storeChanged) {
       if (supportsMultiStore) {
         props.history.push(
           `${`${urlPrefix}/${currentStore}/${connectorFlowSections[0].titleId}`}`
@@ -189,17 +208,16 @@ export default function IntegrationAppSettings(props) {
     <LoadResources
       required
       resources="integrations, exports, imports, flows, connections">
-      <div className={classes.appFrame}>
-        <div className={classes.about}>
-          <Typography variant="h5">{integration.name}</Typography>
+      <div>
+        <CeligoPageBar title={integration.name}>
           <ChipInput
             value={integration.tag || 'tag'}
             className={classes.tag}
             variant="outlined"
             onChange={handleTagChangeHandler}
           />
-        </div>
-        <Divider />
+        </CeligoPageBar>
+
         {supportsMultiStore && (
           <div className={classes.storeContainer}>
             <Grid container>

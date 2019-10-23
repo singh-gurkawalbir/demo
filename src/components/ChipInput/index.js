@@ -1,12 +1,15 @@
 import { Chip, TextField } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { Fragment, useState } from 'react';
-import EditIcon from '@material-ui/icons/Edit';
+import EditIcon from '../icons/EditIcon';
 
 const useStyles = makeStyles(theme => ({
   textField: {
     marginLeft: theme.spacing(1),
     marginRight: theme.spacing(1),
+    padding: '0px 8px',
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
   },
 }));
 

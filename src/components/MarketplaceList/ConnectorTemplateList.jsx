@@ -1,7 +1,6 @@
 import { Fragment, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import { NavLink, Link as RouterLink } from 'react-router-dom';
 import {
   Link,
   Card,
@@ -15,9 +14,13 @@ import CeligoPageBar from '../../components/CeligoPageBar';
 import ConnectorTemplateContent from './ConnectorTemplateContent';
 import getRoutePath from '../../utils/routePaths';
 import actions from '../../actions';
-import { CONTACT_SALES_MESSAGE } from '../../utils/messageStore';
+import {
+  CONTACT_SALES_MESSAGE,
+  MULTIPLE_INSTALLS,
+} from '../../utils/messageStore';
 import * as selectors from '../../reducers';
 import ArrowRightIcon from '../icons/ArrowRightIcon';
+import { prompt } from '../Prompt';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -74,7 +77,34 @@ export default function ConnectorTemplateList(props) {
   const connector = applications.find(c => c.id === application);
   const applicationName = connector && connector.name;
   const handleConnectorInstallClick = connector => {
-    dispatch(actions.marketplace.installConnector(connector._id, sandbox));
+    if (connector.installed) {
+      prompt({
+        title: 'Multiple Installs',
+        label: 'Tag',
+        message: MULTIPLE_INSTALLS,
+        buttons: [
+          {
+            label: 'Cancel',
+          },
+          {
+            label: 'Install',
+            onClick: tag => {
+              dispatch(
+                actions.marketplace.installConnector(
+                  connector._id,
+                  sandbox,
+                  tag
+                )
+              );
+              props.history.push('/');
+            },
+          },
+        ],
+      });
+    } else {
+      dispatch(actions.marketplace.installConnector(connector._id, sandbox));
+      props.history.push('/');
+    }
   };
 
   const handleContactSalesClick = connector => {
@@ -98,8 +128,6 @@ export default function ConnectorTemplateList(props) {
               {connector.canInstall ? (
                 <Button
                   data-test="installConnector"
-                  to={getRoutePath('/')}
-                  component={RouterLink}
                   onClick={() => handleConnectorInstallClick(connector)}
                   variant="text"
                   color="primary">
@@ -126,8 +154,9 @@ export default function ConnectorTemplateList(props) {
               type="template"
             />
             <CardActions className={classes.cardAction}>
-              <NavLink
+              <Link
                 data-test="installTemplate"
+                underline="none"
                 key={template._id}
                 to={getRoutePath(
                   `/marketplace/templates/${template._id}/preview`
@@ -135,7 +164,7 @@ export default function ConnectorTemplateList(props) {
                 <Button variant="text" color="primary">
                   Install <ArrowRightIcon />
                 </Button>
-              </NavLink>
+              </Link>
             </CardActions>
           </Card>
         ))}
