@@ -34,6 +34,7 @@ export default function IntegrationDashboard({ match }) {
 
   function handleRefresh() {
     dispatch(actions.job.clear());
+    dispatch(actions.patchFilter('jobs', { currentPage: 0 }));
   }
 
   return (
