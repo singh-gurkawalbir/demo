@@ -82,6 +82,12 @@ export default {
         },
       ],
     },
+    'test.limit': {
+      fieldId: 'test.limit',
+      defaultValue: 1,
+      visible: false,
+      validWhen: [{ field: 'type', is: ['test'] }],
+    },
     'delta.lagOffset': {
       fieldId: 'delta.lagOffset',
       visibleWhen: [{ field: 'type', is: ['delta'] }],
@@ -115,6 +121,7 @@ export default {
       'netsuite.webservices.recordType',
       'netsuite.webservices.searchId',
       'type',
+      'test.limit',
       'delta.lagOffset',
       'delta.dateField',
       'once.booleanField',
