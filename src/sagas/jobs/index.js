@@ -165,7 +165,9 @@ export function* downloadFiles({ jobId, fileType, fileIds = [] }) {
   }
 
   if (signedURLs.length > 0) {
-    yield all(signedURLs.map(url => call(openExternalUrl, { url })));
+    yield all(
+      signedURLs.map((url, index) => call(openExternalUrl, { url, index }))
+    );
   }
 }
 
