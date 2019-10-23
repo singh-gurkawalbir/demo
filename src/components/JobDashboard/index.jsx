@@ -1,8 +1,6 @@
-import { useState, useEffect, Fragment } from 'react';
+import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { isEqual } from 'lodash';
-import { Link } from 'react-router-dom';
-import IconTextButton from '../../components/IconTextButton';
 import LoadResources from '../../components/LoadResources';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
@@ -13,10 +11,6 @@ import { COMM_STATES } from '../../reducers/comms';
 import CommStatus from '../CommStatus';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import { UNDO_TIME } from './util';
-import getRoutePath from '../../utils/routePaths';
-import RefreshIcon from '../icons/RefreshIcon';
-import CeligoPageBar from '../../components/CeligoPageBar';
-import SettingsIcon from '../../components/icons/SettingsIcon';
 
 export default function JobDashboard({
   integrationId,
@@ -31,15 +25,9 @@ export default function JobDashboard({
   const integration = useSelector(state =>
     selectors.resource(state, 'integrations', integrationId)
   );
-  const integrationSettingsURL = getRoutePath(
-    `/${
-      integration && integration._connectorId ? 'connectors' : 'integrations'
-    }/${integrationId}/settings/flows`
-  );
   const isBulkRetryInProgress = useSelector(state =>
     selectors.isBulkRetryInProgress(state)
   );
-  const [refreshJobs, setRefreshJobs] = useState(false);
   const [filters, setFilters] = useState({});
   const [selectedJobs, setSelectedJobs] = useState({});
   const [numJobsSelected, setNumJobsSelected] = useState(0);
@@ -53,7 +41,7 @@ export default function JobDashboard({
       dispatch(actions.job.clear());
       setCurrentPage(0);
     },
-    [dispatch, filters, refreshJobs]
+    [dispatch, filters]
   );
 
   /** Whenever page changes, we need to update the same in state and request for inprogress jobs (in current page) status */
@@ -72,7 +60,7 @@ export default function JobDashboard({
         actions.job.requestCollection({ integrationId, flowId, filters })
       );
     }
-  }, [dispatch, integrationId, flowId, filters, jobs.length, refreshJobs]);
+  }, [dispatch, integrationId, flowId, filters, jobs.length]);
 
   useEffect(() => {
     setDisableButtons(isBulkRetryInProgress || jobs.length === 0);
@@ -366,10 +354,6 @@ export default function JobDashboard({
     );
   }
 
-  function handleRefershJobsClick() {
-    setRefreshJobs(!refreshJobs);
-  }
-
   return (
     <LoadResources required resources="integrations,flows,exports,imports">
       <CommStatus
@@ -377,29 +361,6 @@ export default function JobDashboard({
         autoClearOnComplete
         commStatusHandler={commStatusHandler}
       />
-      {!flowId && integration && (
-        <Fragment>
-          <CeligoPageBar title={integration.name} />
-
-          <div>
-            <IconTextButton
-              data-test="refreshJobs"
-              variant="text"
-              color="primary"
-              onClick={handleRefershJobsClick}>
-              <RefreshIcon /> Refresh
-            </IconTextButton>
-            <IconTextButton
-              component={Link}
-              data-test="settings"
-              to={integrationSettingsURL}
-              variant="text"
-              color="primary">
-              <SettingsIcon /> Settings
-            </IconTextButton>
-          </div>
-        </Fragment>
-      )}
       <Filters
         integrationId={integrationId}
         flowId={flowId}
