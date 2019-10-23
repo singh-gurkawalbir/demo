@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Drawer, IconButton, Tabs, Tab, Box } from '@material-ui/core';
+import { Drawer, IconButton, Tabs, Tab } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import ArrowUpIcon from '../../../../components/icons/ArrowUpIcon';
@@ -37,22 +37,24 @@ const useStyles = makeStyles(theme => ({
   tabRoot: {
     flexGrow: 1,
   },
+  tabPanel: {
+    overflow: 'auto',
+  },
   noScroll: {
     overflowY: 'hidden',
   },
 }));
 
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-
+function TabPanel({ children, value, index, classes, ...props }) {
   return (
     <div
       role="tabpanel"
+      className={classes.tabPanel}
       hidden={value !== index}
       id={`tabpanel-${index}`}
       aria-labelledby={`tab-${index}`}
-      {...other}>
-      <Box p={3}>{children}</Box>
+      {...props}>
+      <div>{children}</div>
     </div>
   );
 }
@@ -124,13 +126,13 @@ export default function BottomDrawer({ size, setSize, flow }) {
         </IconButton>
       </div>
 
-      <TabPanel value={tabValue} index={0}>
+      <TabPanel value={tabValue} index={0} size={size} classes={classes}>
         <ConnectionPanel flow={flow} />
       </TabPanel>
-      <TabPanel value={tabValue} index={1}>
+      <TabPanel value={tabValue} index={1} size={size} classes={classes}>
         <RunDashboardPanel flow={flow} />
       </TabPanel>
-      <TabPanel value={tabValue} index={2}>
+      <TabPanel value={tabValue} index={2} size={size} classes={classes}>
         <AuditPanel flow={flow} />
       </TabPanel>
     </Drawer>
