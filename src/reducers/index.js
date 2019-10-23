@@ -803,7 +803,7 @@ export function integrationAppFlowSections(state, id, store) {
 }
 
 export function integrationAppGeneralSettings(state, id, storeId) {
-  if (!state) return null;
+  if (!state) return {};
   let fields;
   let subSections;
   const integrationResource = fromData.integrationAppSettings(state.data, id);
@@ -814,7 +814,7 @@ export function integrationAppGeneralSettings(state, id, storeId) {
 
     ({ fields, sections: subSections } = storeSection);
   } else {
-    ({ fields, sections: subSections } = general);
+    ({ fields, sections: subSections } = general || {});
   }
 
   return {
@@ -824,7 +824,7 @@ export function integrationAppGeneralSettings(state, id, storeId) {
 }
 
 export function integrationAppFlowSettings(state, id, section, storeId) {
-  if (!state) return null;
+  if (!state) return {};
   const integrationResource = fromData.integrationAppSettings(state.data, id);
   const { supportsMultiStore, showMatchRuleEngine, sections = [] } =
     integrationResource.settings || {};
