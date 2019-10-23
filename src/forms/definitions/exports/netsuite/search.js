@@ -93,7 +93,13 @@ export default {
       visibleWhen: [{ field: 'type', is: ['delta'] }],
     },
     'delta.dateField': {
-      fieldId: 'delta.dateField',
+      id: 'delta.dateField',
+      label: 'Date field',
+      type: 'refreshableselect',
+      filterKey: 'dateField',
+      required: true,
+      placeholder: 'Please select a date field',
+      connectionId: r => r && r._connectionId,
       mode: 'webservices',
       refreshOptionsOnChangesTo: ['netsuite.webservices.recordType'],
       visibleWhenAll: [
@@ -102,7 +108,13 @@ export default {
       ],
     },
     'once.booleanField': {
-      fieldId: 'once.booleanField',
+      id: 'once.booleanField',
+      label: 'Boolean Field',
+      type: 'refreshableselect',
+      placeholder: 'Please select a Boolean field',
+      filterKey: 'booleanField',
+      required: true,
+      connectionId: r => r && r._connectionId,
       mode: 'webservices',
       refreshOptionsOnChangesTo: ['netsuite.webservices.recordType'],
       visibleWhenAll: [

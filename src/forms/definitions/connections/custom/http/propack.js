@@ -59,7 +59,7 @@ export default {
         const baseUri = r && r.http && r.http.baseURI;
 
         if (baseUri) {
-          if (baseUri.indexOf('test') === -1) {
+          if (baseUri.indexOf('test') !== -1) {
             return 'test';
           }
         }
