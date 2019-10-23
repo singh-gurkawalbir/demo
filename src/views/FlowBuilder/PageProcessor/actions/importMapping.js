@@ -20,7 +20,7 @@ function ImportMappingDialog({ flowId, resource, onClose }) {
 
   useEffect(() => {
     if (!sampleData) {
-      dispatch(actions.importSampleData.fetch(resourceId));
+      dispatch(actions.importSampleData.request(resourceId));
     }
   }, [dispatch, resourceId, sampleData]);
 
