@@ -6,9 +6,9 @@ import {
   FormLabel,
   RadioGroup,
   Radio,
-  FormHelperText,
 } from '@material-ui/core';
 import clsx from 'clsx';
+import ErroredMessageComponent from './ErroredMessageComponent';
 
 const useStyles = makeStyles({
   rowFlexWrapper: {
@@ -30,14 +30,13 @@ export default function DynaRadio(props) {
     defaultValue,
     required,
     value,
+    disabled,
     // showOptionsHorizontally is used to control options to render horizontally
     showOptionsHorizontally,
     // set fullWidth to true for component to occupy fill width
     fullWidth,
     label,
-    description,
     isValid,
-    errorMessages,
     onFieldChange,
   } = props;
   const classes = useStyles();
@@ -77,8 +76,10 @@ export default function DynaRadio(props) {
 
   return (
     <FormControl
+      error={!isValid}
       component="fieldset"
       required={required}
+      disabled={disabled}
       className={fullWidth ? classes.fullWidth : ''}>
       <FormLabel component="legend">{label}</FormLabel>
       <RadioGroup
@@ -96,12 +97,7 @@ export default function DynaRadio(props) {
         }}>
         {items}
       </RadioGroup>
-
-      {(description || errorMessages) && (
-        <FormHelperText error={!isValid}>
-          {isValid ? description : errorMessages}
-        </FormHelperText>
-      )}
+      <ErroredMessageComponent {...props} />
     </FormControl>
   );
 }

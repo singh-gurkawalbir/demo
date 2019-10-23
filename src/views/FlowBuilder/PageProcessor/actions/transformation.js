@@ -24,7 +24,7 @@ function TransformationDialog({ flowId, resource, resourceType, onClose }) {
       const { rule } = editorValues;
       const path = `/${transformLookup}`;
       const value = {
-        rules: [rule],
+        rules: rule ? [rule] : [[]],
         version: '1',
       };
       const patchSet = [{ op: 'replace', path, value }];

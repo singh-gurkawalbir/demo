@@ -5,6 +5,8 @@ const useStyles = makeStyles(theme => ({
   content: {
     flexGrow: 1,
     backgroundColor: theme.palette.background.default,
+    overflowX: 'auto',
+    height: '100vh',
   },
   toolbar: {
     height: theme.appBarHeight,

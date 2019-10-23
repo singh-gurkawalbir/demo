@@ -1,11 +1,20 @@
 import { useState } from 'react';
 import TableCell from '@material-ui/core/TableCell';
+import { makeStyles } from '@material-ui/core/styles';
 import TableRow from '@material-ui/core/TableRow';
 import Checkbox from '@material-ui/core/Checkbox';
 import Button from '@material-ui/core/Button';
 import { getPages, getSuccess } from './util';
 import JobStatus from './JobStatus';
 import JobActionsMenu from './JobActionsMenu';
+import { JOB_STATUS } from '../../utils/constants';
+
+const useStyles = makeStyles({
+  checkAction: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+  },
+});
 
 export default function ChildJobDetail({
   job,
@@ -16,6 +25,12 @@ export default function ChildJobDetail({
   onViewErrorsClick,
   integrationName,
 }) {
+  const isJobInProgress = [
+    JOB_STATUS.QUEUED,
+    JOB_STATUS.RUNNING,
+    JOB_STATUS.RETRYING,
+  ].includes(job.uiStatus);
+  const classes = useStyles();
   const isSelectable = !!(job.retriable || job.numError);
   const parentSelectionInfo = selectedJobs[parentJob._id] || {
     selected: false,
@@ -41,16 +56,21 @@ export default function ChildJobDetail({
     onSelectChange(event.target.checked, job._id);
   }
 
-  function handleViewErrorsClick() {
-    onViewErrorsClick({ jobId: job._id, parentJobId: parentJob._id });
+  function handleViewErrorsClick(showResolved = false) {
+    onViewErrorsClick({
+      jobId: job._id,
+      parentJobId: parentJob._id,
+      showResolved,
+      numError: job.numError,
+      numResolved: job.numResolved,
+    });
   }
 
   const jobType = job.type === 'export' ? 'Export' : 'Import';
 
   return (
     <TableRow>
-      <TableCell />
-      <TableCell padding="checkbox">
+      <TableCell className={classes.checkAction}>
         <Checkbox
           color="primary"
           disabled={!isSelectable}
@@ -71,12 +91,14 @@ export default function ChildJobDetail({
         onMouseLeave={() => {
           setShowViewErrorsLink(false);
         }}>
-        {showViewErrorsLink && job.numError > 0 ? (
+        {showViewErrorsLink && !isJobInProgress && job.numError > 0 ? (
           <Button
             data-test="jobNumErrorView"
             variant="text"
             color="primary"
-            onClick={handleViewErrorsClick}>
+            onClick={() => {
+              handleViewErrorsClick(false);
+            }}>
             {job.numError} View
           </Button>
         ) : (
@@ -90,12 +112,14 @@ export default function ChildJobDetail({
         onMouseLeave={() => {
           setShowViewErrorsLink(false);
         }}>
-        {showViewErrorsLink && job.numResolved > 0 ? (
+        {showViewErrorsLink && !isJobInProgress && job.numResolved > 0 ? (
           <Button
             data-test="jobsNumResolvedView"
             variant="text"
             color="primary"
-            onClick={handleViewErrorsClick}>
+            onClick={() => {
+              handleViewErrorsClick(true);
+            }}>
             {job.numResolved} View
           </Button>
         ) : (
