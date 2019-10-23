@@ -6,9 +6,12 @@ export default {
     required: true,
   },
   'ftp.fileName': {
-    type: 'text',
+    type: 'autosuggest',
     label: 'File Name',
     required: true,
+    showAllSuggestions: true,
+    defaultValue: 'file-{{timestamp}}',
+    refreshOptionsOnChangesTo: ['file.type', 'ftp.fileName'],
   },
   'ftp.useTempFile': {
     type: 'checkbox',

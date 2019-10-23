@@ -28,19 +28,6 @@ export default {
     type: 'text',
     label: 'File Name Ends With',
   },
-  pageSize: {
-    type: 'text',
-    label: 'Page Size',
-    validWhen: [
-      {
-        matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
-      },
-    ],
-  },
-  dataURITemplate: {
-    type: 'relativeuri',
-    label: 'Data URI Template',
-  },
   // #region transform
   'transform.expression.rules': {
     type: 'transformeditor',

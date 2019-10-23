@@ -15,9 +15,9 @@ import {
 import deepClone from 'lodash/cloneDeep';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
-import DynaAutoSuggest from '../../DynaForm/fields/DynaAutoSuggest';
 import MappingSettings from '../ImportMappingSettings/MappingSettingsField';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
+import DynaTypeableSelect from '../../DynaForm/fields/DynaTypeableSelect';
 import MappingUtil from '../../../utils/mapping';
 import * as ResourceUtil from '../../../utils/resource';
 import CloseIcon from '../../icons/CloseIcon';
@@ -388,7 +388,7 @@ export default function ImportMapping(props) {
                 <Grid item className={classes.rowContainer} key={mapping.index}>
                   <Grid container direction="row">
                     <Grid item xs>
-                      <DynaAutoSuggest
+                      <DynaTypeableSelect
                         id={`extract-${mapping.index}`}
                         labelName="name"
                         valueName="id"
@@ -404,7 +404,7 @@ export default function ImportMapping(props) {
                       />
                     </Grid>
                     <Grid item xs>
-                      <DynaAutoSuggest
+                      <DynaTypeableSelect
                         id={`generate-${mapping.index}`}
                         value={mapping.generate}
                         labelName="name"

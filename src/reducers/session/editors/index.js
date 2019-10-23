@@ -24,15 +24,20 @@ export default function reducer(state = {}, action) {
       };
 
       return newState;
-    case actionTypes.EDITOR_INIT:
+    case actionTypes.EDITOR_INIT: {
+      const initChangeIdentifier =
+        (newState[id] && newState[id].initChangeIdentifier) || 0;
+
       newState[id] = {
         processor,
         defaultOptions: deepClone(options),
         ...deepClone(options),
         lastChange: Date.now(),
+        initChangeIdentifier: initChangeIdentifier + 1,
       };
 
       return newState;
+    }
 
     case actionTypes.EDITOR_RESET:
       newState[id] = {
