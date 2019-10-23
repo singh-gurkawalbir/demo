@@ -10,11 +10,7 @@ export default {
         'edix12.format',
         'fixed.format',
         'edifact.format',
-        'file.fileDefinition.resourcePath',
       ],
-    },
-    'file.fileDefinition.resourcePath': {
-      fieldId: 'file.fileDefinition.resourcePath',
     },
   },
   layout: {
@@ -24,7 +20,6 @@ export default {
       'fixed.format',
       'edix12.format',
       'file.filedefinition.rules',
-      'file.fileDefinition.resourcePath',
     ],
   },
 };

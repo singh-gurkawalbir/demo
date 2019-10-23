@@ -42,14 +42,9 @@ export default {
     },
     'delta.dateField': {
       fieldId: 'delta.dateField',
-      visibleWhen: [{ field: 'type', is: ['delta'] }],
     },
     'once.booleanField': {
       fieldId: 'once.booleanField',
-      type: 'text',
-      label: 'Once Boolean Field',
-      required: true,
-      visibleWhen: [{ field: 'type', is: ['once'] }],
     },
     rawData: { fieldId: 'rawData' },
     transform: { fieldId: 'transform' },

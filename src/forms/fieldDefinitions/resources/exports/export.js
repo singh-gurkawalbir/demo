@@ -331,40 +331,38 @@ export default {
   // #endregion test
   // #region delta
   'delta.dateField': {
-    label: 'Date field',
-    type: 'refreshableselect',
-    mode: 'suitescript',
-    filterKey: 'dateField',
+    type: 'text',
+    label: 'Date Field',
     required: true,
-    placeholder: 'Please select a date field',
-    connectionId: r => r && r._connectionId,
+    visibleWhen: [{ field: 'type', is: ['delta'] }],
   },
   'delta.dateFormat': {
     type: 'text',
     label: 'Delta date Format',
+    visibleWhen: [{ field: 'type', is: ['delta'] }],
   },
   'delta.startDate': {
     type: 'text',
     label: 'Delta start Date',
+    visibleWhen: [{ field: 'type', is: ['delta'] }],
   },
   'delta.lagOffset': {
     type: 'text',
     label: 'Offset',
+    visibleWhen: [{ field: 'type', is: ['delta'] }],
   },
   'delta.endDateField': {
     type: 'text',
     label: 'Delta end Date Field',
+    visibleWhen: [{ field: 'type', is: ['delta'] }],
   },
   // #endregion delta
   // #region once
   'once.booleanField': {
+    type: 'text',
     label: 'Boolean Field',
-    type: 'refreshableselect',
-    placeholder: 'Please select a Boolean field',
-    mode: 'suitescript',
-    filterKey: 'booleanField',
     required: true,
-    connectionId: r => r && r._connectionId,
+    visibleWhen: [{ field: 'type', is: ['once'] }],
   },
   // #endregion once
   // #region valueDelta
@@ -387,7 +385,17 @@ export default {
   hookType: {
     type: 'radiogroup',
     label: 'Hook Type',
-    defaultValue: 'script',
+    defaultValue: r => {
+      let isStackType = false;
+
+      isStackType = !!(((r || {}).hooks || {}).preSavePage || {})._stackId;
+
+      if (isStackType) {
+        return 'stack';
+      }
+
+      return 'script';
+    },
     options: [
       {
         items: [
@@ -399,23 +407,30 @@ export default {
   },
   'hooks.preSavePage.function': {
     type: 'text',
-    label: 'Hooks pre Save Page function',
+    label: 'Pre Save Page',
   },
   'hooks.preSavePage._scriptId': {
     type: 'selectresource',
     resourceType: 'scripts',
-    placeholder: 'Please select a script',
-    label: 'Hooks pre Save Page _script Id',
-  },
-  'hooks.preSavePage.configuration': {
-    type: 'text',
-    label: 'Hooks pre Save Page configuration',
+    label: 'Pre Save Page Script',
+    visibleWhen: [
+      {
+        field: 'hookType',
+        is: ['script'],
+      },
+    ],
   },
   'hooks.preSavePage._stackId': {
     type: 'selectresource',
     placeholder: 'Please select a stack',
     resourceType: 'stacks',
-    label: 'Hooks pre Save Page _stack Id',
+    label: 'Pre Save Page Stack',
+    visibleWhen: [
+      {
+        field: 'hookType',
+        is: ['stack'],
+      },
+    ],
   },
 
   // #endregion hooks

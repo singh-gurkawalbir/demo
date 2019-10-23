@@ -1,4 +1,5 @@
 import { adaptorTypeMap } from '../../../utils/resource';
+import timeStamps from '../../../utils/timeStamps';
 
 export default {
   init: fieldMeta => {
@@ -41,6 +42,42 @@ export default {
       }
     }
 
+    if (fieldId === 'ftp.fileName') {
+      const fileTypeField = fields.find(field => field.fieldId === 'file.type');
+      const fileNameField = fields.find(
+        field => field.fieldId === 'ftp.fileName'
+      );
+      let suggestionList = [];
+
+      if (
+        fileNameField &&
+        fileNameField.value &&
+        fileTypeField &&
+        fileTypeField.value
+      ) {
+        const extension = fileTypeField.value;
+        const lastDotIndex = fileNameField.value.lastIndexOf('.');
+        const fileNameWithoutExt =
+          lastDotIndex !== -1
+            ? fileNameField.value.substring(0, lastDotIndex)
+            : fileNameField.value;
+        const bracesStartIndex = fileNameWithoutExt.indexOf('{');
+        const textBeforeBraces =
+          bracesStartIndex !== -1
+            ? fileNameWithoutExt.substring(0, bracesStartIndex)
+            : fileNameWithoutExt;
+
+        suggestionList = timeStamps.map(
+          timestamp =>
+            `${textBeforeBraces}{{timestamp(${timestamp._id})}}.${extension}`
+        );
+
+        fileNameField.value = suggestionList.length && suggestionList[0];
+      }
+
+      return { suggestions: suggestionList };
+    }
+
     const fileType = fields.find(field => field.id === 'file.type');
 
     if (fieldId === 'uploadFile') {
@@ -56,14 +93,10 @@ export default {
       else if (fileType.value === 'fixed') definitionFieldId = 'fixed.format';
       else definitionFieldId = 'edifact.format';
       const definition = fields.find(field => field.id === definitionFieldId);
-      const resourcePath = fields.find(
-        field => field.id === 'file.fileDefinition.resourcePath'
-      );
 
       return {
         format: definition && definition.format,
         definitionId: definition && definition.value,
-        resourcePath: resourcePath && resourcePath.value,
       };
     }
 
