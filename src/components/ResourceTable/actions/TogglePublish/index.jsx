@@ -5,7 +5,7 @@ import PublishIcon from '../../../../components/icons/PublishIcon';
 import actions from '../../../../actions';
 
 export default {
-  label: 'Toggle Publish',
+  label: r => (r.published ? 'Unpublish' : 'publish'),
   component: function TogglePublish({ resourceType, resource }) {
     const dispatch = useDispatch();
     const handleTogglePublishClick = () => {
