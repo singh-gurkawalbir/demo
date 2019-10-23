@@ -39,6 +39,7 @@ const useStyles = makeStyles(theme => ({
   },
   tabPanel: {
     overflow: 'auto',
+    height: '100%',
   },
   noScroll: {
     overflowY: 'hidden',
