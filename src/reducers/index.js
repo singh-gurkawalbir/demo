@@ -234,6 +234,12 @@ export function userProfile(state) {
   return state && state.user && state.user.profile;
 }
 
+export function developerMode(state) {
+  return (
+    state && state.user && state.user.profile && state.user.profile.developer
+  );
+}
+
 export function userPreferences(state) {
   return fromUser.userPreferences((state && state.user) || null);
 }

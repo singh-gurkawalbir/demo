@@ -972,6 +972,60 @@ describe('form factory new layout', () => {
         },
       });
     });
+
+    test('should remove fields when developer mode is enabled', () => {
+      const resourceType = 'someResourceType';
+      const resource = {};
+      const testMeta = {
+        fieldMap: {
+          exportData: {
+            fieldId: 'exportData',
+            someProp: 'blah',
+            removeOnDeveloperMode: true,
+          },
+          'file.decompressFiles': { fieldId: 'file.decompressFiles' },
+        },
+        layout: {
+          type: 'collapse',
+          containers: [
+            {
+              label: 'optional some label or tab name',
+              fields: ['exportData', 'file.decompressFiles'],
+            },
+          ],
+        },
+      };
+      const val = formFactory.getFieldsWithDefaults(
+        testMeta,
+        resourceType,
+        resource,
+        false,
+        true
+      );
+
+      expect(val).toEqual({
+        layout: {
+          type: 'collapse',
+          containers: [
+            {
+              label: 'optional some label or tab name',
+              fields: ['file.decompressFiles'],
+            },
+          ],
+        },
+        fieldMap: {
+          'file.decompressFiles': {
+            defaultValue: '',
+            fieldId: 'file.decompressFiles',
+            helpKey: 'someResourceType.file.decompressFiles',
+            id: 'file.decompressFiles',
+            name: '/file/decompressFiles',
+            resourceId: undefined,
+            resourceType: 'someResourceType',
+          },
+        },
+      });
+    });
     test('should set defaults for multiple fields references located in different containers correctly ', () => {
       const resourceType = 'someResourceType';
       const resource = {};

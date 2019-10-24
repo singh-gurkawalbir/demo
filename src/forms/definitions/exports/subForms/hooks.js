@@ -1,6 +1,10 @@
 export default {
   fieldMap: {
-    hookType: { fieldId: 'hookType' },
+    hookType: {
+      fieldId: 'hookType',
+      // Example mark fields that need to be removed during development mode
+      // removeOnDeveloperMode: true
+    },
     'hooks.preSavePage.function': { fieldId: 'hooks.preSavePage.function' },
     'hooks.preSavePage._scriptId': {
       fieldId: 'hooks.preSavePage._scriptId',
