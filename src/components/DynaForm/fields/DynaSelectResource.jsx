@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import shortid from 'shortid';
+import sift from 'sift';
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector, useDispatch } from 'react-redux';
 import { withRouter, Link } from 'react-router-dom';
@@ -79,7 +80,10 @@ function DynaSelectResource(props) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [createdId]);
-  const filteredResources = () => {
+  console.log(sift(options.filter));
+  console.log(JSON.stringify(sift(options.filter)));
+  const filteredResources = resources.filter(sift(options.filter));
+  /* const filteredResources = () => {
     const { resourceType, filter, excludeFilter, options } = props;
 
     if (!resourceType) return [];
@@ -116,15 +120,14 @@ function DynaSelectResource(props) {
 
       return true;
     });
-  };
-
+  }; */
   // When adding a new resource and subsequently editing it disable selecting a new connection
   const isAddingANewResource =
     allowNew &&
     (location.pathname.endsWith(`/add/${resourceType}/${newResourceId}`) ||
       location.pathname.endsWith(`/edit/${resourceType}/${newResourceId}`));
   const disableSelect = disabled || isAddingANewResource;
-  const resourceItems = filteredResources().map(conn => ({
+  const resourceItems = filteredResources.map(conn => ({
     label: conn.name,
     value: conn._id,
   }));

@@ -177,27 +177,40 @@ export default {
     }
 
     if (fieldId === 'connection') {
-      const filter = { type: app.type };
+      const expression = [];
 
-      if (app.assistant) {
-        filter.assistant = app.assistant;
+      if (['mysql', 'postgresql', 'mssql'].includes(app.type)) {
+        expression.push({ rdbms: { type: app.type } });
+      } else {
+        expression.push({ type: app.type });
       }
 
-      return { filter };
+      if (app.assistant) {
+        expression.push({ assistant: app.assistant });
+      }
+
+      expression.push({ _connectorId: { $exists: false } });
+      const filter = { $and: expression };
+
+      return { filter, appType: app.type };
     }
 
     if (['importId', 'exportId'].includes(fieldId)) {
       const adaptorTypePrefix = appTypeToAdaptorType[app.type];
 
       if (!adaptorTypePrefix) return;
+      const expression = [];
 
-      const filter = {
+      expression.push({
         adaptorType: `${adaptorTypePrefix}${adaptorTypeSuffix}`,
-      };
+      });
 
       if (app.assistant) {
-        filter.assistant = app.assistant;
+        expression.push({ assistant: app.assistant });
       }
+
+      expression.push({ _connectorId: { $exists: false } });
+      const filter = { $and: expression };
 
       return { filter };
     }

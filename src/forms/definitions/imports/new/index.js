@@ -98,15 +98,20 @@ export default {
     }
 
     if (fieldId === 'connection') {
-      let filter;
+      const expression = [];
 
       if (['mysql', 'postgresql', 'mssql'].includes(app.type)) {
-        filter = { rdbms: { type: app.type } };
-      } else filter = { type: app.type };
+        expression.push({ rdbms: { type: app.type } });
+      } else {
+        expression.push({ type: app.type });
+      }
 
       if (app.assistant) {
-        filter.assistant = app.assistant;
+        expression.push({ assistant: app.assistant });
       }
+
+      expression.push({ _connectorId: { $exists: false } });
+      const filter = { $and: expression };
 
       return { filter, appType: app.type };
     }
