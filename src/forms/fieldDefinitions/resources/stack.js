@@ -25,6 +25,13 @@ export default {
         is: ['server'],
       },
     ],
+    validWhen: {
+      matchesRegEx: {
+        // eslint-disable-next-line no-useless-escape
+        pattern: /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/,
+        message: 'Please enter a valid URI.',
+      },
+    },
   },
   'lambda.accessKeyId': {
     type: 'text',
