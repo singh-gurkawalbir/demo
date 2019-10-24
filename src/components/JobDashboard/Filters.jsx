@@ -245,7 +245,6 @@ function Filters({
             // indeterminate={numSelected > 0 && numSelected < rowCount}
             checked={hideEmpty}
             onChange={e => patchFilter('hideEmpty', e.target.checked)}
-            // color="primary"
           />
         }
       />

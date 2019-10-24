@@ -29,21 +29,20 @@ export default function JobDashboard({
   const isBulkRetryInProgress = useSelector(state =>
     selectors.isBulkRetryInProgress(state)
   );
-  const { filters = {}, currentPage = 0 } = useSelector(state =>
-    selectors.filter(state, filterKey)
-  );
+  const filter = useSelector(state => selectors.filter(state, filterKey));
+  const jobs = useSelector(state => selectors.flowJobs(state));
   const [selectedJobs, setSelectedJobs] = useState({});
   const [numJobsSelected, setNumJobsSelected] = useState(0);
-  const [disableActions, setActionsButtons] = useState(true);
+  const [disableActions, setDisableActions] = useState(true);
   const [actionsToMonitor, setActionsToMonitor] = useState({});
-  const jobs = useSelector(state => selectors.flowJobs(state));
   const patchFilter = useCallback(
     (key, value) => {
       dispatch(actions.patchFilter(filterKey, { [key]: value }));
     },
     [dispatch]
   );
-  const filterHash = hashCode(filters);
+  const { currentPage = 0, ...nonPagingFilters } = filter;
+  const filterHash = hashCode(nonPagingFilters);
 
   useEffect(
     () => () => {
@@ -67,14 +66,14 @@ export default function JobDashboard({
   useEffect(() => {
     if (jobs.length === 0) {
       dispatch(
-        actions.job.requestCollection({ integrationId, flowId, filters })
+        actions.job.requestCollection({ integrationId, flowId, filter })
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, integrationId, flowId, filterHash, jobs.length]);
 
   useEffect(() => {
-    setActionsButtons(isBulkRetryInProgress || jobs.length === 0);
+    setDisableActions(isBulkRetryInProgress || jobs.length === 0);
   }, [isBulkRetryInProgress, jobs.length]);
 
   useEffect(() => {
@@ -105,7 +104,7 @@ export default function JobDashboard({
   }
 
   function resolveAllJobs() {
-    const selectedFlowId = flowId || filters.flowId;
+    const selectedFlowId = flowId || filter.flowId;
     const numberOfJobsToResolve = jobs
       .filter(job => {
         if (!selectedFlowId) {
@@ -218,7 +217,7 @@ export default function JobDashboard({
   }
 
   function retryAllJobs() {
-    const selectedFlowId = flowId || filters.flowId;
+    const selectedFlowId = flowId || filter.flowId;
     const numberOfJobsToRetry = jobs
       .filter(job => {
         if (!selectedFlowId) {
