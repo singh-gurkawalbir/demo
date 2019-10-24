@@ -72,7 +72,7 @@ export default {
             `${textBeforeBraces}{{timestamp(${timestamp._id})}}.${extension}`
         );
 
-        fileNameField.value = suggestionList.length && suggestionList[0];
+        fileNameField.value = `${fileNameWithoutExt}.${extension}`;
       }
 
       return { suggestions: suggestionList };
@@ -93,14 +93,10 @@ export default {
       else if (fileType.value === 'fixed') definitionFieldId = 'fixed.format';
       else definitionFieldId = 'edifact.format';
       const definition = fields.find(field => field.id === definitionFieldId);
-      const resourcePath = fields.find(
-        field => field.id === 'file.fileDefinition.resourcePath'
-      );
 
       return {
         format: definition && definition.format,
         definitionId: definition && definition.value,
-        resourcePath: resourcePath && resourcePath.value,
       };
     }
 
@@ -128,12 +124,6 @@ export default {
     'ftp.useTempFile': { fieldId: 'ftp.useTempFile' },
     'ftp.inProgressFileName': { fieldId: 'ftp.inProgressFileName' },
     fileAdvancedSettings: { formId: 'fileAdvancedSettings' },
-    hooks: { formId: 'hooks' },
-    'hooks.postAggregate.function': { fieldId: 'hooks.postAggregate.function' },
-    'hooks.postAggregate._scriptId': {
-      fieldId: 'hooks.postAggregate._scriptId',
-    },
-    'hooks.postAggregate._stackId': { fieldId: 'hooks.postAggregate._stackId' },
   },
   layout: {
     fields: [
@@ -157,16 +147,6 @@ export default {
           'ftp.useTempFile',
           'ftp.inProgressFileName',
           'fileAdvancedSettings',
-        ],
-      },
-      {
-        collapsed: false,
-        label: 'Hooks (Optional, Developers Only)',
-        fields: [
-          'hooks',
-          'hooks.postAggregate.function',
-          'hooks.postAggregate._scriptId',
-          'hooks.postAggregate._stackId',
         ],
       },
     ],

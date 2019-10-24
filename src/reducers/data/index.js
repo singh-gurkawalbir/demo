@@ -170,7 +170,7 @@ export function suiteScriptIntegrations(state, connectionId) {
 
 export function marketplaceConnectors(state, application, sandbox, licenses) {
   return fromMarketplace.connectors(
-    state.marketplace,
+    state && state.marketplace,
     application,
     sandbox,
     licenses
@@ -178,7 +178,7 @@ export function marketplaceConnectors(state, application, sandbox, licenses) {
 }
 
 export function marketplaceTemplates(state, application) {
-  return fromMarketplace.templates(state.marketplace, application);
+  return fromMarketplace.templates(state && state.marketplace, application);
 }
 
 export function template(state, templateId) {

@@ -12,6 +12,7 @@ const useStyles = makeStyles({
     width: '100%',
     '& > div + div': {
       width: '100%',
+      textAlign: 'left',
     },
   },
   container: {
@@ -21,6 +22,7 @@ const useStyles = makeStyles({
   child: {
     flexBasis: '100%',
     paddingRight: 10,
+    marginBottom: 10,
   },
 });
 const getCorrespondingFieldMap = (fields, fieldMap) =>

@@ -145,6 +145,9 @@ export default function DynaHook(props) {
             key={id}
             name={name}
             label="Function"
+            InputLabelProps={{
+              shrink: true,
+            }}
             className={classes.textField}
             placeholder={placeholder}
             disabled={disabled}

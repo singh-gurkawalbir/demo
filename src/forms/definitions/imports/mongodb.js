@@ -22,12 +22,6 @@ export default {
     },
     'mongodb.ignoreExtract': { fieldId: 'mongodb.ignoreExtract' },
     dataMappings: { formId: 'dataMappings' },
-    hooks: { formId: 'hooks' },
-    'hooks.postAggregate.function': { fieldId: 'hooks.postAggregate.function' },
-    'hooks.postAggregate._scriptId': {
-      fieldId: 'hooks.postAggregate._scriptId',
-    },
-    'hooks.postAggregate._stackId': { fieldId: 'hooks.postAggregate._stackId' },
   },
   layout: {
     fields: [
@@ -45,17 +39,6 @@ export default {
       'dataMappings',
     ],
     type: 'collapse',
-    containers: [
-      {
-        collapsed: false,
-        label: 'Hooks (Optional, Developers Only)',
-        fields: [
-          'hooks',
-          'hooks.postAggregate.function',
-          'hooks.postAggregate._scriptId',
-          'hooks.postAggregate._stackId',
-        ],
-      },
-    ],
+    containers: [],
   },
 };

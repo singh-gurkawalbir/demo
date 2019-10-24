@@ -23,7 +23,7 @@ function TransformationDialog({ flowId, resource, onClose }) {
       const { rule } = editorValues;
       const path = '/transform';
       const value = {
-        rules: [rule],
+        rules: rule ? [rule] : [[]],
         version: '1',
       };
       const patchSet = [{ op: 'replace', path, value }];

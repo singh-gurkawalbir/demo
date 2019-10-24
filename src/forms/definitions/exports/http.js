@@ -8,36 +8,58 @@ export default {
       retValues['/test/limit'] = 1;
     }
 
-    if (retValues['/http/paging/method'] !== 'page') {
+    if (retValues['/http/paging/method'] === 'page') {
+      retValues['/http/paging/path'] = undefined;
+      retValues['/http/paging/relativeURI'] = undefined;
+      retValues['/http/paging/linkHeaderRelation'] = undefined;
+      retValues['/http/paging/skip'] = undefined;
+      retValues['/http/paging/pathAfterFirstRequest'] = undefined;
+      retValues['/http/paging/resourcePath'] = undefined;
+      retValues['/http/paging/token'] = undefined;
+    } else if (retValues['/http/paging/method'] === 'url') {
+      retValues['/http/paging/relativeURI'] = undefined;
+      retValues['/http/paging/linkHeaderRelation'] = undefined;
+      retValues['/http/paging/skip'] = undefined;
+      retValues['/http/paging/pathAfterFirstRequest'] = undefined;
+      retValues['/http/paging/resourcePath'] = undefined;
+      retValues['/http/paging/token'] = undefined;
       retValues['/http/paging/page'] = undefined;
       retValues['/http/paging/maxPagePath'] = undefined;
       retValues['/http/paging/maxCountPath'] = undefined;
-    }
-
-    if (retValues['/http/paging/method'] !== 'url') {
+    } else if (retValues['/http/paging/method'] === 'relativeuri') {
       retValues['/http/paging/path'] = undefined;
-    }
-
-    if (retValues['/http/paging/method'] !== 'relativeuri') {
-      retValues['/http/paging/relativeURI'] = undefined;
-    }
-
-    if (retValues['/http/paging/method'] !== 'linkheader') {
       retValues['/http/paging/linkHeaderRelation'] = undefined;
-    }
-
-    if (retValues['/http/paging/method'] !== 'skip') {
       retValues['/http/paging/skip'] = undefined;
-      retValues['/http/paging/maxPagePath'] = undefined;
-      retValues['/http/paging/maxCountPath'] = undefined;
-    }
-
-    if (retValues['/http/paging/method'] !== 'token') {
-      retValues['/http/paging/path'] = undefined;
-      retValues['/http/paging/token'] = undefined;
-      retValues['/http/paging/relativeURI'] = undefined;
       retValues['/http/paging/pathAfterFirstRequest'] = undefined;
       retValues['/http/paging/resourcePath'] = undefined;
+      retValues['/http/paging/token'] = undefined;
+      retValues['/http/paging/page'] = undefined;
+      retValues['/http/paging/maxPagePath'] = undefined;
+      retValues['/http/paging/maxCountPath'] = undefined;
+    } else if (retValues['/http/paging/method'] === 'linkheader') {
+      retValues['/http/paging/path'] = undefined;
+      retValues['/http/paging/relativeURI'] = undefined;
+      retValues['/http/paging/skip'] = undefined;
+      retValues['/http/paging/pathAfterFirstRequest'] = undefined;
+      retValues['/http/paging/resourcePath'] = undefined;
+      retValues['/http/paging/token'] = undefined;
+      retValues['/http/paging/page'] = undefined;
+      retValues['/http/paging/maxPagePath'] = undefined;
+      retValues['/http/paging/maxCountPath'] = undefined;
+    } else if (retValues['/http/paging/method'] === 'skip') {
+      retValues['/http/paging/path'] = undefined;
+      retValues['/http/paging/relativeURI'] = undefined;
+      retValues['/http/paging/linkHeaderRelation'] = undefined;
+      retValues['/http/paging/pathAfterFirstRequest'] = undefined;
+      retValues['/http/paging/resourcePath'] = undefined;
+      retValues['/http/paging/token'] = undefined;
+      retValues['/http/paging/page'] = undefined;
+    } else if (retValues['/http/paging/method'] === 'token') {
+      retValues['/http/paging/linkHeaderRelation'] = undefined;
+      retValues['/http/paging/skip'] = undefined;
+      retValues['/http/paging/page'] = undefined;
+      retValues['/http/paging/maxPagePath'] = undefined;
+      retValues['/http/paging/maxCountPath'] = undefined;
     }
 
     return {
@@ -128,9 +150,6 @@ export default {
     },
     'http.paging.lastPagePath': { fieldId: 'http.paging.lastPagePath' },
     'http.paging.lastPageValues': { fieldId: 'http.paging.lastPageValues' },
-    rawData: { fieldId: 'rawData' },
-    transform: { fieldId: 'transform' },
-    hooks: { formId: 'hooks' },
     advancedSettings: { formId: 'advancedSettings' },
     configureAsyncHelper: { fieldId: 'configureAsyncHelper' },
     'http._asyncHelperId': {
@@ -159,7 +178,6 @@ export default {
       'http.once.relativeURI',
       'http.once.method',
       'http.once.body',
-      'rawData',
     ],
     type: 'collapse',
     containers: [
@@ -185,16 +203,6 @@ export default {
       },
       {
         collapsed: true,
-        label: 'Would you like to transform the records?',
-        fields: ['transform'],
-      },
-      {
-        collapsed: true,
-        label: 'Hooks (Optional, Developers Only)',
-        fields: ['hooks'],
-      },
-      {
-        collapsed: 'true',
         label: 'Advanced',
         fields: [
           'advancedSettings',

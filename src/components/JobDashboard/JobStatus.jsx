@@ -1,8 +1,8 @@
 import { Fragment } from 'react';
 import IconButton from '@material-ui/core/IconButton';
-import Assessment from '@material-ui/icons/Assessment';
 import { JOB_STATUS, JOB_TYPES } from '../../utils/constants';
 import { JOB_UI_STATUS } from './util';
+import Spinner from '../Spinner';
 
 export default function JobStatus({ job }) {
   if (job.type === JOB_TYPES.FLOW) {
@@ -12,10 +12,10 @@ export default function JobStatus({ job }) {
     ) {
       return (
         <Fragment>
-          {JOB_UI_STATUS[job.uiStatus]}
           <IconButton>
-            <Assessment />
+            <Spinner size={24} />
           </IconButton>
+          {JOB_UI_STATUS[job.uiStatus]}
         </Fragment>
       );
     }

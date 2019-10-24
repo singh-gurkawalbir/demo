@@ -1,5 +1,5 @@
-export default function openExternalUrl({ url, options }) {
-  const winPopup = window.open(url, 'target=_blank', options, false);
+export default function openExternalUrl({ url, index = 0, options }) {
+  const winPopup = window.open(url, `target=_blank${index}`, options, false);
 
   try {
     if (winPopup) {

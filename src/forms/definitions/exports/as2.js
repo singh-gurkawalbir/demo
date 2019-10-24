@@ -32,9 +32,6 @@ export default {
     'file.filedefinition.rules': {
       fieldId: 'file.filedefinition.rules',
     },
-    rawData: { fieldId: 'rawData' },
-    transform: { fieldId: 'transform' },
-    hooks: { formId: 'hooks' },
     advancedSettings: { formId: 'advancedSettings' },
   },
   layout: {
@@ -44,20 +41,9 @@ export default {
       'edix12.format',
       'file.fileDefinition.resourcePath',
       'file.filedefinition.rules',
-      'rawData',
     ],
     type: 'collapse',
     containers: [
-      {
-        collapsed: true,
-        label: 'Would you like to transform the records?',
-        fields: ['transform'],
-      },
-      {
-        collapsed: true,
-        label: 'Hooks (Optional, Developers Only)',
-        fields: ['hooks'],
-      },
       { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },
     ],
   },

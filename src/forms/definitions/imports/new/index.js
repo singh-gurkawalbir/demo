@@ -45,6 +45,9 @@ export default {
       placeholder: 'Select application',
       defaultValue: '',
       required: true,
+      validWhen: {
+        isNot: { values: [''], message: 'Please select an application' },
+      },
     },
     connection: {
       id: 'connection',
@@ -58,6 +61,9 @@ export default {
       visibleWhen,
       allowNew: true,
       allowEdit: true,
+      validWhen: {
+        isNot: { values: [''], message: 'Please select a connection' },
+      },
     },
     name: {
       id: 'name',

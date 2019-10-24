@@ -253,9 +253,6 @@ export function fieldMeta({ resource, assistantData }) {
     common: {
       formId: 'common',
     },
-    hooks: {
-      formId: 'hooks',
-    },
   };
   const fieldIds = [];
 
@@ -274,11 +271,6 @@ export function fieldMeta({ resource, assistantData }) {
           label: 'What would you like to export?',
           collapsed: false,
           fields: fieldIds,
-        },
-        {
-          label: 'Hooks (Optional, Developers Only)',
-          collapsed: true,
-          fields: ['hooks'],
         },
       ],
     },

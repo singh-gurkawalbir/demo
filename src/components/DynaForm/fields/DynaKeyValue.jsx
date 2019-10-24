@@ -1,9 +1,9 @@
 import { useState, useEffect, Fragment } from 'react';
 import Input from '@material-ui/core/Input';
 import { makeStyles } from '@material-ui/core/styles';
-import FormHelperText from '@material-ui/core/FormHelperText';
 import FormLabel from '@material-ui/core/FormLabel';
 import FormControl from '@material-ui/core/FormControl';
+import ErroredMessageComponent from './ErroredMessageComponent';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -33,9 +33,6 @@ export default function DynaKeyValue(props) {
     label,
     keyName = 'key',
     valueName = 'value',
-    description,
-    errorMessages,
-    isValid,
   } = props;
   const classes = useStyles();
   const [values, setValues] = useState([]);
@@ -117,9 +114,8 @@ export default function DynaKeyValue(props) {
           onChange={handleValueUpdate()}
         />
       </div>
-      <FormHelperText className={classes.helpText}>
-        {isValid ? description : errorMessages}
-      </FormHelperText>
+
+      <ErroredMessageComponent {...props} />
     </div>
   );
 }
