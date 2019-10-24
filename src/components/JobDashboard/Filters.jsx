@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import clsx from 'clsx';
 import {
@@ -87,78 +87,70 @@ function Filters({
   integrationId,
   flowId,
   filterKey,
-  onFiltersChange,
   onActionClick,
   numJobsSelected = 0,
   disableButtons = true,
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const [_flowId, setFlowId] = useState('all');
-  const [status, setStatus] = useState('all');
-  const [hideEmpty, setHideEmpty] = useState(false);
   const { paging = {}, totalJobs = 0 } = useSelector(state =>
     selectors.flowJobsPagingDetails(state)
   );
   const flows = useSelector(
     state => selectors.resourceList(state, { type: 'flows' }).resources
   );
+  const {
+    _flowId = '',
+    _status = 'all',
+    hideEmpty = false,
+    currentPage = 0,
+  } = useSelector(state => selectors.filter(state, filterKey));
   const patchFilter = useCallback(
     (key, value) => {
-      dispatch(actions.patchFilter(filterKey, { [key]: value }));
+      const filter = { [key]: value };
+
+      // any time a filter changes (that is not setting the page)
+      // we need to reset the results to show the first page.
+      if (key !== 'currentPage') {
+        filter.currentPage = 0;
+      }
+
+      // only set the flowId filter if the context is across all
+      // flows. When this is in use in the FB, there is no flow filter
+      // option, a the flowId is hardcoded to match the FB.
+      if (!flowId && key === '_flowId') {
+        filter.flowId = value;
+      }
+
+      // TODO: Shiva, this bock below seems like it belongs in the data-layer.
+      // Now that the filter criteria is in app-state, you will have access
+      // to it simply by selecting the 'jobs' filter in your sagas/reducers.
+      // possibly if you need it in your reducers, you will need to implement the reducer
+      // in the state-tree at a shared node that has visibility into the filter
+      // state && jobs state.
+      if (key === '_status') {
+        filter.numError_gte = value === 'error' ? 1 : 0;
+        filter.numResolved_gte = value === 'resolved' ? 1 : 0;
+
+        filter.status = ['all', 'error', 'resolved'].includes(value)
+          ? ''
+          : value;
+      }
+
+      dispatch(actions.patchFilter(filterKey, filter));
     },
-    [dispatch, filterKey]
+    [dispatch, filterKey, flowId]
   );
   const filteredFlows = flows.filter(flow =>
     !integrationId
       ? !flow._integrationId // standalone integration flows
       : flow._integrationId === integrationId
   );
-  const { currentPage, rowsPerPage } = paging;
+  const { rowsPerPage } = paging;
   const maxPage = Math.ceil(totalJobs / rowsPerPage) - 1;
   const firstRowIndex = rowsPerPage * currentPage;
 
-  function handleChange(event) {
-    const { name, value, checked } = event.target;
-    const changedFilters = { [name]: name === 'hideEmpty' ? checked : value };
-
-    if (name === '_flowId') {
-      setFlowId(changedFilters[name]);
-    }
-
-    if (name === 'hideEmpty') {
-      setHideEmpty(changedFilters[name]);
-    }
-
-    if (name === 'status') {
-      setStatus(changedFilters[name]);
-    }
-
-    const newFilters = {
-      _flowId,
-      hideEmpty,
-      status,
-      ...changedFilters,
-    };
-
-    if (!flowId) {
-      newFilters.flowId =
-        newFilters._flowId === 'all' ? '' : newFilters._flowId;
-    }
-
-    delete newFilters._flowId;
-
-    newFilters.numError_gte = newFilters.status === 'error' ? 1 : 0;
-    newFilters.numResolved_gte = newFilters.status === 'resolved' ? 1 : 0;
-    newFilters.status = ['all', 'error', 'resolved'].includes(newFilters.status)
-      ? ''
-      : newFilters.status;
-
-    onFiltersChange(newFilters);
-  }
-
   function handleAction(action) {
-    console.log(action);
     onActionClick(action);
   }
 
@@ -224,17 +216,11 @@ function Filters({
 
       {!flowId && (
         <Select
-          inputProps={{
-            name: '_flowId',
-            id: '_flowId',
-          }}
           className={classes.select}
-          onChange={handleChange}
+          onChange={e => patchFilter('_flowId', e.target.value)}
           IconComponent={ArrowDownIcon}
           value={_flowId}>
-          <MenuItem key="all" value="all">
-            Select a Flow
-          </MenuItem>
+          <MenuItem value="">Select a Flow</MenuItem>
           {filteredFlows.map(opt => (
             <MenuItem key={opt._id} value={opt._id}>
               {opt.name || opt._id}
@@ -244,14 +230,10 @@ function Filters({
       )}
 
       <Select
-        inputProps={{
-          name: 'status',
-          id: 'status',
-        }}
         className={clsx(classes.select, classes.status)}
         IconComponent={ArrowDownIcon}
-        onChange={handleChange}
-        value={status}>
+        onChange={e => patchFilter('_status', e.target.value)}
+        value={_status}>
         {[
           ['all', 'Select Status'],
           ['error', 'Contains Error'],
@@ -270,19 +252,15 @@ function Filters({
       </Select>
 
       <FormControlLabel
+        label="Hide empty jobs"
         control={
           <Checkbox
-            inputProps={{
-              name: 'hideEmpty',
-              id: 'hideEmpty',
-            }}
             // indeterminate={numSelected > 0 && numSelected < rowCount}
             checked={hideEmpty}
-            onChange={handleChange}
-            color="primary"
+            onChange={e => patchFilter('hideEmpty', e.target.checked)}
+            // color="primary"
           />
         }
-        label="Hide empty jobs"
       />
       <div className={classes.pagingContainer}>
         <IconButton
@@ -292,9 +270,11 @@ function Filters({
           <ArrowLeftIcon />
         </IconButton>
         <div className={classes.pagingText}>
-          {firstRowIndex + 1} -{' '}
-          {currentPage === maxPage ? totalJobs : firstRowIndex + rowsPerPage} of{' '}
-          {totalJobs}
+          {firstRowIndex + 1}
+          {' - '}
+          {currentPage === maxPage
+            ? totalJobs
+            : firstRowIndex + rowsPerPage} of {totalJobs}
         </div>
         <IconButton
           disabled={maxPage === currentPage}

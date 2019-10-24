@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { isEqual } from 'lodash';
 import LoadResources from '../../components/LoadResources';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
@@ -99,13 +98,6 @@ export default function JobDashboard({
 
   function closeAllOpenSnackbars() {
     closeSnackbar();
-  }
-
-  function handleFiltersChange(newFilters) {
-    if (!isEqual(filters, newFilters)) {
-      patchFilter('filters', newFilters);
-      patchFilter('currentPage', 0);
-    }
   }
 
   function handleSelectChange(selJobs) {
@@ -373,7 +365,6 @@ export default function JobDashboard({
         filterKey={filterKey}
         integrationId={integrationId}
         flowId={flowId}
-        onFiltersChange={handleFiltersChange}
         numJobsSelected={numJobsSelected}
         onActionClick={handleActionClick}
         disableButtons={disableButtons}
