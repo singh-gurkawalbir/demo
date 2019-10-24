@@ -44,7 +44,6 @@ export default {
       refreshOptionsOnChangesTo: ['salesforce.sObjectType'],
     },
     advancedSettings: { formId: 'advancedSettings' },
-    hooks: { formId: 'hooks' },
   },
   layout: {
     fields: [
@@ -67,11 +66,6 @@ export default {
     type: 'collapse',
     containers: [
       { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },
-      {
-        collapsed: false,
-        label: 'Hooks (Optional, Developers Only)',
-        fields: ['hooks'],
-      },
     ],
   },
   optionsHandler: (fieldId, fields) => {

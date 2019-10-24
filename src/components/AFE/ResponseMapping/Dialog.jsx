@@ -13,7 +13,7 @@ import {
   Typography,
 } from '@material-ui/core';
 import deepClone from 'lodash/cloneDeep';
-import DynaAutoSuggest from '../../DynaForm/fields/DynaAutoSuggest';
+import DynaTypeableSelect from '../../DynaForm/fields/DynaTypeableSelect';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import CloseIcon from '../../icons/CloseIcon';
@@ -72,8 +72,8 @@ export const reducer = (state, action) => {
           objCopy[field] = value;
 
           draft[index] = objCopy;
-        } else {
-          draft.push(...lastRowData, { [field]: value });
+        } else if (value) {
+          draft.push({ ...lastRowData, [field]: value });
         }
 
         setChangeIdentifier(changeIdentifier => changeIdentifier + 1);
@@ -225,7 +225,7 @@ export default function ResponseMappingDialog(props) {
                 <Grid item className={classes.rowContainer} key={r.index}>
                   <Grid container direction="row">
                     <Grid item xs>
-                      <DynaAutoSuggest
+                      <DynaTypeableSelect
                         labelName="name"
                         valueName="id"
                         value={r[keyName]}
@@ -240,7 +240,7 @@ export default function ResponseMappingDialog(props) {
                       />
                     </Grid>
                     <Grid item xs>
-                      <DynaAutoSuggest
+                      <DynaTypeableSelect
                         value={r[valueName]}
                         hideOptions
                         onBlur={(id, evt) => {

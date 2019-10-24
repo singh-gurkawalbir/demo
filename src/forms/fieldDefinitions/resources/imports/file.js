@@ -5,6 +5,7 @@ export default {
     type: 'select',
     label: 'File Type',
     required: true,
+    defaultValue: 'csv',
     options: [
       {
         items: [
@@ -153,16 +154,6 @@ export default {
       {
         field: 'file.type',
         is: ['csv', 'json', 'xlsx', 'xml'],
-      },
-    ],
-  },
-  'file.fileDefinition.resourcePath': {
-    type: 'text',
-    label: 'Resource Path',
-    visibleWhen: [
-      {
-        field: 'file.type',
-        is: ['filedefinition', 'fixed', 'delimited/edifact'],
       },
     ],
   },
