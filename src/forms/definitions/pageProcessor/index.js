@@ -139,7 +139,7 @@ export default {
       label: 'Name',
       defaultValue: '',
       required: true,
-      refreshOptionsOnChangesTo: ['application'],
+      refreshOptionsOnChangesTo: ['application', 'resourceType'],
       visibleWhenAll: [visibleWhenHasApp, visibleWhenIsNew],
     },
     description: {
@@ -167,12 +167,18 @@ export default {
   },
   optionsHandler: (fieldId, fields) => {
     const appField = fields.find(field => field.id === 'application');
-    const adaptorTypeSuffix = fieldId === 'importId' ? 'Import' : 'Export';
+    const resourceTypeField = fields.find(field => field.id === 'resourceType');
+    let adaptorTypeSuffix = fieldId === 'importId' ? 'Import' : 'Export';
     const app = appField
       ? applications.find(a => a.id === appField.value) || {}
       : {};
 
     if (fieldId === 'name') {
+      adaptorTypeSuffix =
+        resourceTypeField && resourceTypeField.value === 'imports'
+          ? 'Import'
+          : 'Export';
+
       return `New ${app.name} ${adaptorTypeSuffix}`;
     }
 
