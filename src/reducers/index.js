@@ -631,12 +631,6 @@ export function getAllConnectionIdsUsedInTheFlow(state, flow) {
     return connectionIds;
   }
 
-  if (typeof flow === 'string') {
-    // if flow id is passed
-    // eslint-disable-next-line no-param-reassign
-    flow = resource(state, 'flows', flow);
-  }
-
   if (flow._exportId) {
     exportIds.push(flow._exportId);
   }
@@ -754,11 +748,11 @@ export function integrationAppConnectionList(state, integrationId, store) {
     flows.push(...map(sec.flows, '_id'));
   });
 
-  flows.reduce((acc, f) => {
-    acc.push(...getAllConnectionIdsUsedInTheFlow(state, f));
+  flows.forEach(f => {
+    const flow = resource(state, 'flows', f) || {};
 
-    return acc;
-  }, connections);
+    connections.push(...getAllConnectionIdsUsedInTheFlow(state, flow));
+  });
 
   return integrationConnections.filter(c => connections.includes(c._id));
 }
