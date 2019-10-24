@@ -238,7 +238,7 @@ export default function CeligoTable({
                     ? rowActions(r, actionProps)
                     : rowActions
                   ).map(({ label, component: Action }) => ({
-                    label,
+                    label: typeof label === 'function' ? label(r) : label,
                     component: <Action {...actionProps} resource={r} />,
                   }))}
                 />
