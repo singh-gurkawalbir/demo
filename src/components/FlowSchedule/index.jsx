@@ -6,6 +6,7 @@ import {
   IconButton,
   Typography,
 } from '@material-ui/core';
+import clsx from 'clsx';
 import { Fragment } from 'react';
 import Close from '../icons/CloseIcon';
 import actions from '../../actions';
@@ -32,7 +33,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function FlowSchedule(props) {
   const dispatch = useDispatch();
-  const { title, onClose } = props;
+  const { title, onClose, className } = props;
   let { flow } = props;
   const preferences = useSelector(state =>
     selectors.userProfilePreferencesProps(state)
@@ -70,7 +71,7 @@ export default function FlowSchedule(props) {
       <DialogTitle disableTypography>
         <Typography variant="h6">{title}</Typography>
       </DialogTitle>
-      <DialogContent className={classes.modalContent}>
+      <DialogContent className={clsx(classes.modalContent, className)}>
         <DynaForm
           fieldMeta={getMetadata({
             flow,

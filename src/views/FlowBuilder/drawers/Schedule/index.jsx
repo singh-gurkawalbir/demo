@@ -1,12 +1,28 @@
+import { makeStyles } from '@material-ui/core/styles';
 import RightDrawerRouter from '../RightDrawer';
 import FlowSchedule from '../../../../components/FlowSchedule';
 
+const useStyle = makeStyles({
+  fbContDrawer: {
+    width: '100%',
+    overflowX: 'hidden',
+    marginTop: -1,
+    padding: 0,
+  },
+});
+
 export default function ScheduleDrawer({ flow, history, ...props }) {
   const onClose = () => history.goBack();
+  const classes = useStyle();
 
   return (
     <RightDrawerRouter {...props} path="schedule">
-      <FlowSchedule flow={flow} title="Flow Schedule" onClose={onClose} />
+      <FlowSchedule
+        flow={flow}
+        title="Flow Schedule"
+        onClose={onClose}
+        className={classes.fbContDrawer}
+      />
     </RightDrawerRouter>
   );
 }
