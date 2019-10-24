@@ -130,7 +130,6 @@ export default {
       fieldId: 'rest.once.postBody',
       visibleWhen: [{ field: 'type', is: ['once'] }],
     },
-    rawData: { fieldId: 'rawData' },
     'rest.pagingMethod': { fieldId: 'rest.pagingMethod' },
     'rest.nextPagePath': { fieldId: 'rest.nextPagePath' },
     'rest.linkHeaderRelation': { fieldId: 'rest.linkHeaderRelation' },
@@ -143,8 +142,6 @@ export default {
     'rest.lastPageStatusCode': { fieldId: 'rest.lastPageStatusCode' },
     'rest.lastPagePath': { fieldId: 'rest.lastPagePath' },
     'rest.lastPageValue': { fieldId: 'rest.lastPageValue' },
-    transform: { fieldId: 'transform' },
-    hooks: { formId: 'hooks' },
     advancedSettings: { formId: 'advancedSettings' },
   },
   layout: {
@@ -165,7 +162,6 @@ export default {
       'rest.once.relativeURI',
       'rest.once.method',
       'rest.once.postBody',
-      'rawData',
     ],
     type: 'collapse',
     containers: [
@@ -186,16 +182,6 @@ export default {
           'rest.lastPagePath',
           'rest.lastPageValue',
         ],
-      },
-      {
-        collapsed: true,
-        label: 'Would you like to transform the records?',
-        fields: ['transform'],
-      },
-      {
-        collapsed: true,
-        label: 'Hooks (Optional, Developers Only)',
-        fields: ['hooks'],
       },
       { collapsed: 'true', label: 'Advanced', fields: ['advancedSettings'] },
     ],

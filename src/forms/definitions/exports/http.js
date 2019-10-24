@@ -150,9 +150,6 @@ export default {
     },
     'http.paging.lastPagePath': { fieldId: 'http.paging.lastPagePath' },
     'http.paging.lastPageValues': { fieldId: 'http.paging.lastPageValues' },
-    rawData: { fieldId: 'rawData' },
-    transform: { fieldId: 'transform' },
-    hooks: { formId: 'hooks' },
     advancedSettings: { formId: 'advancedSettings' },
     configureAsyncHelper: { fieldId: 'configureAsyncHelper' },
     'http._asyncHelperId': {
@@ -181,7 +178,6 @@ export default {
       'http.once.relativeURI',
       'http.once.method',
       'http.once.body',
-      'rawData',
     ],
     type: 'collapse',
     containers: [
@@ -204,16 +200,6 @@ export default {
           'http.paging.lastPagePath',
           'http.paging.lastPageValues',
         ],
-      },
-      {
-        collapsed: true,
-        label: 'Would you like to transform the records?',
-        fields: ['transform'],
-      },
-      {
-        collapsed: true,
-        label: 'Hooks (Optional, Developers Only)',
-        fields: ['hooks'],
       },
       {
         collapsed: true,
