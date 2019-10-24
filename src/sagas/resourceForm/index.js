@@ -184,16 +184,18 @@ export function* saveRawData({ values }) {
 }
 
 export function* submitFormValues({ resourceType, resourceId, values, match }) {
-  // const formValues = values;
+  const formValues = values;
 
-  // if (resourceType === 'exports') {
-  //   formValues = yield call(saveRawData, { values });
-  // }
+  if (resourceType === 'exports') {
+    // @TODO Raghu:  Commented as it is a QA blocker. Decide how to save raw data
+    // formValues = yield call(saveRawData, { values });
+    delete formValues['/rawData'];
+  }
 
   const { patchSet, finalValues } = yield call(createFormValuesPatchSet, {
     resourceType,
     resourceId,
-    values,
+    values: formValues,
     scope: SCOPES.VALUE,
   });
 
