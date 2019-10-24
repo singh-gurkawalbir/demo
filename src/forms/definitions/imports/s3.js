@@ -127,12 +127,6 @@ export default {
     },
     'file.csv.rowDelimiter': { fieldId: 'file.csv.rowDelimiter' },
     fileAdvancedSettings: { formId: 'fileAdvancedSettings' },
-    hooks: { formId: 'hooks' },
-    'hooks.postAggregate.function': { fieldId: 'hooks.postAggregate.function' },
-    'hooks.postAggregate._scriptId': {
-      fieldId: 'hooks.postAggregate._scriptId',
-    },
-    'hooks.postAggregate._stackId': { fieldId: 'hooks.postAggregate._stackId' },
   },
   layout: {
     fields: [
@@ -153,16 +147,6 @@ export default {
         collapsed: true,
         label: 'Advanced',
         fields: ['file.csv.rowDelimiter', 'fileAdvancedSettings'],
-      },
-      {
-        collapsed: false,
-        label: 'Hooks (Optional, Developers Only)',
-        fields: [
-          'hooks',
-          'hooks.postAggregate.function',
-          'hooks.postAggregate._scriptId',
-          'hooks.postAggregate._stackId',
-        ],
       },
     ],
   },

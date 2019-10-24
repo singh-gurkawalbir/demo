@@ -123,8 +123,6 @@ export default {
       ],
     },
     'netsuite.skipGrouping': { fieldId: 'netsuite.skipGrouping' },
-    rawData: { fieldId: 'rawData' },
-    transform: { fieldId: 'transform' },
   },
   layout: {
     fields: [
@@ -138,16 +136,9 @@ export default {
       'delta.dateField',
       'once.booleanField',
       'netsuite.skipGrouping',
-      'rawData',
     ],
 
     type: 'collapse',
-    containers: [
-      {
-        collapsed: true,
-        label: 'Would you like to transform the records?',
-        fields: ['transform'],
-      },
-    ],
+    containers: [],
   },
 };

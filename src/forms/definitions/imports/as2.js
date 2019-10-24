@@ -60,12 +60,6 @@ export default {
     dataMappings: { formId: 'dataMappings' },
     compressFiles: { formId: 'compressFiles' },
     'as2.maxRetries': { fieldId: 'as2.maxRetries' },
-    hooks: { formId: 'hooks' },
-    'hooks.postAggregate.function': { fieldId: 'hooks.postAggregate.function' },
-    'hooks.postAggregate._scriptId': {
-      fieldId: 'hooks.postAggregate._scriptId',
-    },
-    'hooks.postAggregate._stackId': { fieldId: 'hooks.postAggregate._stackId' },
     'file.lookups': { fieldId: 'file.lookups', visible: false },
     mapping: {
       fieldId: 'mapping',
@@ -94,16 +88,6 @@ export default {
         collapsed: true,
         label: 'Advanced',
         fields: ['compressFiles', 'as2.maxRetries'],
-      },
-      {
-        collapsed: false,
-        label: 'Hooks (Optional, Developers Only)',
-        fields: [
-          'hooks',
-          'hooks.postAggregate.function',
-          'hooks.postAggregate._scriptId',
-          'hooks.postAggregate._stackId',
-        ],
       },
     ],
   },
