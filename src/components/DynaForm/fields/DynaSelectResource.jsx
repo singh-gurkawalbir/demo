@@ -62,6 +62,7 @@ function DynaSelectResource(props) {
     allowEdit,
     location,
     options,
+    filter,
   } = props;
   const classes = useStyles();
   const [newResourceId, setNewResourceId] = useState(newId());
@@ -80,45 +81,9 @@ function DynaSelectResource(props) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [createdId]);
-  const filteredResources = resources.filter(sift(options.filter));
-  /* const filteredResources = () => {
-    const { resourceType, filter, excludeFilter, options } = props;
-
-    if (!resourceType) return [];
-    const finalFilter = options && options.filter ? options.filter : filter;
-
-    return resources.filter(r => {
-      if (finalFilter) {
-        const keys = Object.keys(finalFilter);
-
-        for (let i = 0; i < keys.length; i += 1) {
-          const key = keys[i];
-
-          if (typeof finalFilter[key] === 'object') {
-            const result = Object.keys(finalFilter[key]).reduce(
-              (acc, curr) =>
-                acc && finalFilter[key][curr] === (r[key] && r[key][curr]),
-              true
-            );
-
-            if (!result) return false;
-          } else if (r[key] !== finalFilter[key]) return false;
-        }
-      }
-
-      if (excludeFilter) {
-        const keys = Object.keys(excludeFilter);
-
-        for (let i = 0; i < keys.length; i += 1) {
-          const key = keys[i];
-
-          if (r[key] === excludeFilter[key]) return false;
-        }
-      }
-
-      return true;
-    });
-  }; */
+  const filteredResources = resources.filter(
+    sift(options && options.filter ? options.filter : filter)
+  );
   // When adding a new resource and subsequently editing it disable selecting a new connection
   const isAddingANewResource =
     allowNew &&

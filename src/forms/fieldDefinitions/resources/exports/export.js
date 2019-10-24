@@ -11,8 +11,6 @@ export default {
   //   label: 'Connection',
   //   resourceType: 'connections',
   //   resourceProp: 'type',
-  //   filter: r => ({ _id: r._connectionId }),
-  //   // excludeFilter: r => ({ _id: r._id }),
   // },
   description: {
     type: 'text',
