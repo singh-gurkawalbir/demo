@@ -166,6 +166,7 @@ export default function CeligoTable({
                 align={col.align || 'left'}
                 sortDirection={orderBy === col.orderBy ? order : false}>
                 <TableSortLabel
+                  active={orderBy === col.orderBy}
                   direction={order}
                   onClick={() =>
                     handleSort(order === 'asc' ? 'desc' : 'asc', col.orderBy)
