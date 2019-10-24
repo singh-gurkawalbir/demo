@@ -46,9 +46,6 @@ export default {
     'once.booleanField': {
       fieldId: 'once.booleanField',
     },
-    rawData: { fieldId: 'rawData' },
-    transform: { fieldId: 'transform' },
-    hooks: { formId: 'hooks' },
     advancedSettings: { formId: 'advancedSettings' },
   },
   layout: {
@@ -61,20 +58,9 @@ export default {
       'type',
       'delta.dateField',
       'once.booleanField',
-      'rawData',
     ],
     type: 'collapse',
     containers: [
-      {
-        collapsed: true,
-        label: 'Would you like to transform the records?',
-        fields: ['transform'],
-      },
-      {
-        collapsed: true,
-        label: 'Hooks (Optional, Developers Only)',
-        fields: ['hooks'],
-      },
       { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },
     ],
   },

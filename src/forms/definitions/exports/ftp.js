@@ -40,9 +40,6 @@ export default {
     'ftp.fileNameStartsWith': { fieldId: 'ftp.fileNameStartsWith' },
     'ftp.fileNameEndsWith': { fieldId: 'ftp.fileNameEndsWith' },
     file: { formId: 'file' },
-    rawData: { fieldId: 'rawData' },
-    transform: { fieldId: 'transform' },
-    hooks: { formId: 'hooks' },
     fileAdvancedSettings: { formId: 'fileAdvancedSettings' },
   },
   layout: {
@@ -54,20 +51,9 @@ export default {
       'ftp.fileNameStartsWith',
       'ftp.fileNameEndsWith',
       'file',
-      'rawData',
     ],
     type: 'collapse',
     containers: [
-      {
-        collapsed: true,
-        label: 'Would you like to transform the records?',
-        fields: ['transform'],
-      },
-      {
-        collapsed: true,
-        label: 'Hooks (Optional, Developers Only)',
-        fields: ['hooks'],
-      },
       { collapsed: true, label: 'Advanced', fields: ['fileAdvancedSettings'] },
     ],
   },

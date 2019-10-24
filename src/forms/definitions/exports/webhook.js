@@ -13,8 +13,6 @@ export default {
     'webhook.path': { fieldId: 'webhook.path' },
     'webhook.username': { fieldId: 'webhook.username' },
     'webhook.password': { fieldId: 'webhook.password' },
-    'transform.expression.rules': { fieldId: 'transform.expression.rules' },
-    hooks: { formId: 'hooks' },
     advancedSettings: { formId: 'advancedSettings' },
   },
   layout: {
@@ -34,16 +32,6 @@ export default {
     ],
     type: 'collapse',
     containers: [
-      {
-        collapsed: true,
-        label: 'Would you like to transform the records?',
-        fields: ['transform.expression.rules'],
-      },
-      {
-        collapsed: true,
-        label: 'Hooks (Optional, Developers Only)',
-        fields: ['hooks'],
-      },
       { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },
     ],
   },
