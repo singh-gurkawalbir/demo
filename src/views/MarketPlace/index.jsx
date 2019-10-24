@@ -1,17 +1,19 @@
-import { Fragment, useMemo } from 'react';
+import { Fragment } from 'react';
+import { useSelector } from 'react-redux';
 import MarketplaceList from '../../components/MarketplaceList';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import KeywordSearch from '../../components/KeywordSearch';
+import * as selectors from '../../reducers';
 
 export default function Marketplace() {
-  const defaultFilter = useMemo(() => ({ take: 5 }), []);
+  const filter = useSelector(state => selectors.filter(state, 'marketplace'));
 
   return (
     <Fragment>
       <CeligoPageBar title="App store">
-        <KeywordSearch defaultFilter={defaultFilter} />
+        <KeywordSearch filterKey="marketplace" />
       </CeligoPageBar>
-      <MarketplaceList />
+      <MarketplaceList filter={filter} />
     </Fragment>
   );
 }

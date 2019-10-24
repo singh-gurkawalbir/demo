@@ -148,8 +148,8 @@ export default {
           r.as2.partnerStationInfo.auth.limit
         ),
     },
-    ApiRateLimits: {
-      id: 'ApiRateLimits',
+    apiRateLimits: {
+      id: 'apiRateLimits',
       label: 'API Rate Limits',
       type: 'labeltitle',
       visibleWhen: [{ field: 'configureApiRateLimits', is: [true] }],
@@ -251,7 +251,7 @@ export default {
           'as2.partnerStationInfo.auth.token.refreshBody',
           'as2.partnerStationInfo.auth.token.refreshTokenPath',
           'as2.partnerStationInfo.auth.token.refreshHeaders',
-          'ApiRateLimits',
+          'apiRateLimits',
           'as2.partnerStationInfo.rateLimit.limit',
           'as2.partnerStationInfo.rateLimit.failStatusCode',
           'as2.partnerStationInfo.rateLimit.failPath',
