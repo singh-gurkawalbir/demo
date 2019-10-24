@@ -80,8 +80,6 @@ function DynaSelectResource(props) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [createdId]);
-  console.log(sift(options.filter));
-  console.log(JSON.stringify(sift(options.filter)));
   const filteredResources = resources.filter(sift(options.filter));
   /* const filteredResources = () => {
     const { resourceType, filter, excludeFilter, options } = props;
