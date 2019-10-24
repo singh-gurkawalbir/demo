@@ -41,7 +41,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function MarketplaceList() {
+export default function MarketplaceList({ filter }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const userPreferences = useSelector(state =>
@@ -57,7 +57,7 @@ export default function MarketplaceList() {
   connectors.forEach(c => (applications = applications.concat(c.applications)));
   templates.forEach(t => (applications = applications.concat(t.applications)));
   applications = uniq(applications.filter(Boolean));
-
+  applications = applications.filter(a => a.includes(filter.keyword));
   useEffect(() => {
     dispatch(actions.marketplace.requestConnectors());
     dispatch(actions.marketplace.requestTemplates());
