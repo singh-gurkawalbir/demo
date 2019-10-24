@@ -42,18 +42,10 @@ export default {
     },
     'delta.dateField': {
       fieldId: 'delta.dateField',
-      visibleWhen: [{ field: 'type', is: ['delta'] }],
     },
     'once.booleanField': {
       fieldId: 'once.booleanField',
-      type: 'text',
-      label: 'Once Boolean Field',
-      required: true,
-      visibleWhen: [{ field: 'type', is: ['once'] }],
     },
-    rawData: { fieldId: 'rawData' },
-    transform: { fieldId: 'transform' },
-    hooks: { formId: 'hooks' },
     advancedSettings: { formId: 'advancedSettings' },
   },
   layout: {
@@ -66,20 +58,9 @@ export default {
       'type',
       'delta.dateField',
       'once.booleanField',
-      'rawData',
     ],
     type: 'collapse',
     containers: [
-      {
-        collapsed: true,
-        label: 'Would you like to transform the records?',
-        fields: ['transform'],
-      },
-      {
-        collapsed: true,
-        label: 'Hooks (Optional, Developers Only)',
-        fields: ['hooks'],
-      },
       { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },
     ],
   },

@@ -55,7 +55,14 @@ export default {
       ],
     },
     'delta.dateField': {
-      fieldId: 'delta.dateField',
+      id: 'delta.dateField',
+      label: 'Date field',
+      type: 'refreshableselect',
+      mode: 'suitescript',
+      filterKey: 'dateField',
+      required: true,
+      placeholder: 'Please select a date field',
+      connectionId: r => r && r._connectionId,
       refreshOptionsOnChangesTo: ['netsuite.restlet.recordType'],
       visibleWhenAll: [
         { field: 'netsuite.restlet.recordType', isNot: [''] },
@@ -67,7 +74,14 @@ export default {
       visibleWhen: [{ field: 'type', is: ['delta'] }],
     },
     'once.booleanField': {
-      fieldId: 'once.booleanField',
+      id: 'once.booleanField',
+      label: 'Boolean Field',
+      type: 'refreshableselect',
+      placeholder: 'Please select a Boolean field',
+      mode: 'suitescript',
+      filterKey: 'booleanField',
+      required: true,
+      connectionId: r => r && r._connectionId,
       refreshOptionsOnChangesTo: ['netsuite.restlet.recordType'],
       visibleWhenAll: [
         { field: 'netsuite.restlet.recordType', isNot: [''] },
@@ -75,8 +89,6 @@ export default {
       ],
     },
     'netsuite.skipGrouping': { fieldId: 'netsuite.skipGrouping' },
-    rawData: { fieldId: 'rawData' },
-    transform: { fieldId: 'transform' },
   },
   layout: {
     fields: [
@@ -89,15 +101,8 @@ export default {
       'delta.lagOffset',
       'once.booleanField',
       'netsuite.skipGrouping',
-      'rawData',
     ],
     type: 'collapse',
-    containers: [
-      {
-        collapsed: true,
-        label: 'Would you like to transform the records?',
-        fields: ['transform'],
-      },
-    ],
+    containers: [],
   },
 };

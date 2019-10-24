@@ -19,6 +19,7 @@ function DynaUploadFile(props) {
     required,
     label,
     formContext,
+    onFieldChange,
   } = props;
   const dispatch = useDispatch();
   const [enqueueSnackbar] = useEnqueueSnackbar();
@@ -70,6 +71,7 @@ function DynaUploadFile(props) {
     const file = event.target.files[0];
 
     if (!file) return;
+    onFieldChange(id, file.name);
     const fileReaderOptions = getFileReaderOptions(options);
     const fileReader = new FileReader();
 

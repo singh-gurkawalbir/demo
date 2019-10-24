@@ -82,12 +82,24 @@ export default {
         },
       ],
     },
+    'test.limit': {
+      fieldId: 'test.limit',
+      defaultValue: 1,
+      visible: false,
+      validWhen: [{ field: 'type', is: ['test'] }],
+    },
     'delta.lagOffset': {
       fieldId: 'delta.lagOffset',
       visibleWhen: [{ field: 'type', is: ['delta'] }],
     },
     'delta.dateField': {
-      fieldId: 'delta.dateField',
+      id: 'delta.dateField',
+      label: 'Date field',
+      type: 'refreshableselect',
+      filterKey: 'dateField',
+      required: true,
+      placeholder: 'Please select a date field',
+      connectionId: r => r && r._connectionId,
       mode: 'webservices',
       refreshOptionsOnChangesTo: ['netsuite.webservices.recordType'],
       visibleWhenAll: [
@@ -96,7 +108,13 @@ export default {
       ],
     },
     'once.booleanField': {
-      fieldId: 'once.booleanField',
+      id: 'once.booleanField',
+      label: 'Boolean Field',
+      type: 'refreshableselect',
+      placeholder: 'Please select a Boolean field',
+      filterKey: 'booleanField',
+      required: true,
+      connectionId: r => r && r._connectionId,
       mode: 'webservices',
       refreshOptionsOnChangesTo: ['netsuite.webservices.recordType'],
       visibleWhenAll: [
@@ -105,8 +123,6 @@ export default {
       ],
     },
     'netsuite.skipGrouping': { fieldId: 'netsuite.skipGrouping' },
-    rawData: { fieldId: 'rawData' },
-    transform: { fieldId: 'transform' },
   },
   layout: {
     fields: [
@@ -115,20 +131,14 @@ export default {
       'netsuite.webservices.recordType',
       'netsuite.webservices.searchId',
       'type',
+      'test.limit',
       'delta.lagOffset',
       'delta.dateField',
       'once.booleanField',
       'netsuite.skipGrouping',
-      'rawData',
     ],
 
     type: 'collapse',
-    containers: [
-      {
-        collapsed: true,
-        label: 'Would you like to transform the records?',
-        fields: ['transform'],
-      },
-    ],
+    containers: [],
   },
 };
