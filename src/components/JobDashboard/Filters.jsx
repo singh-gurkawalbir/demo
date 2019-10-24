@@ -1,4 +1,3 @@
-import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import clsx from 'clsx';
 import {
@@ -100,6 +99,7 @@ function Filters({
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
+  // #region data-layer selectors
   const { paging = {}, totalJobs = 0 } = useSelector(state =>
     selectors.flowJobsPagingDetails(state)
   );
@@ -112,62 +112,55 @@ function Filters({
     hideEmpty = false,
     currentPage = 0,
   } = useSelector(state => selectors.filter(state, filterKey));
-  const patchFilter = useCallback(
-    (key, value) => {
-      const filter = { [key]: value };
-
-      // any time a filter changes (that is not setting the page)
-      // we need to reset the results to show the first page.
-      if (key !== 'currentPage') {
-        filter.currentPage = 0;
-      }
-
-      // only set the flowId filter if the context is across all
-      // flows. When this is in use in the FB, there is no flow filter
-      // option, a the flowId is hardcoded to match the FB.
-      if (!flowId && key === '_flowId') {
-        filter.flowId = value;
-      }
-
-      // TODO: Shiva, this block below seems like it belongs in the data-layer.
-      // Now that the filter criteria is in app-state now and you will have access
-      // to it simply by selecting the 'jobs' filter in your sagas/reducers.
-      // Possibly if you need it in your reducers, you will need to implement the reducer
-      // in the state-tree at a shared node that has visibility into the filter
-      // state && jobs state.
-      // To make the existing data-layer code work, i'm duplicating the status such
-      // that the data-layer gets the mutated value it expects and this component can use
-      // the value matching the select options. Ideally we only store the select options
-      // value and the data-layer translates the value into whatever it needs to
-      // apply the filter properly (errors and resolved act like all)
-      if (key === '_status') {
-        filter.numError_gte = value === 'error' ? 1 : 0;
-        filter.numResolved_gte = value === 'resolved' ? 1 : 0;
-
-        filter.status = ['all', 'error', 'resolved'].includes(value)
-          ? ''
-          : value;
-      }
-
-      dispatch(actions.patchFilter(filterKey, filter));
-    },
-    [dispatch, filterKey, flowId]
-  );
   const filteredFlows = flows.filter(flow =>
     !integrationId
       ? !flow._integrationId // standalone integration flows
       : flow._integrationId === integrationId
   );
+  // #endregion
   const { rowsPerPage } = paging;
   const maxPage = Math.ceil(totalJobs / rowsPerPage) - 1;
   const firstRowIndex = rowsPerPage * currentPage;
 
-  function handleAction(action) {
-    onActionClick(action);
+  function patchFilter(key, value) {
+    const filter = { [key]: value };
+
+    // any time a filter changes (that is not setting the page)
+    // we need to reset the results to show the first page.
+    if (key !== 'currentPage') {
+      filter.currentPage = 0;
+    }
+
+    // only set the flowId filter if the context is across all
+    // flows. When this is in use in the FB, there is no flow filter
+    // option, a the flowId is hardcoded to match the FB.
+    if (!flowId && key === '_flowId') {
+      filter.flowId = value;
+    }
+
+    // TODO: Shiva, this block below seems like it belongs in the data-layer.
+    // Now that the filter criteria is in app-state now and you will have access
+    // to it simply by selecting the 'jobs' filter in your sagas/reducers.
+    // Possibly if you need it in your reducers, you will need to implement the reducer
+    // in the state-tree at a shared node that has visibility into the filter
+    // state && jobs state.
+    // To make the existing data-layer code work, i'm duplicating the status such
+    // that the data-layer gets the mutated value it expects and this component can use
+    // the value matching the select options. Ideally we only store the select options
+    // value and the data-layer translates the value into whatever it needs to
+    // apply the filter properly (errors and resolved act like all)
+    if (key === '_status') {
+      filter.numError_gte = value === 'error' ? 1 : 0;
+      filter.numResolved_gte = value === 'resolved' ? 1 : 0;
+
+      filter.status = ['all', 'error', 'resolved'].includes(value) ? '' : value;
+    }
+
+    dispatch(actions.patchFilter(filterKey, filter));
   }
 
   function handlePageChange(offset) {
-    patchFilter('currentPage', paging.currentPage + offset);
+    patchFilter('currentPage', currentPage + offset);
   }
 
   return (
@@ -176,7 +169,7 @@ function Filters({
         disabled={disableActions}
         data-test="retryJobs"
         className={clsx(classes.select, classes.retry)}
-        onChange={e => handleAction(e.target.value)}
+        onChange={e => onActionClick(e.target.value)}
         displayEmpty
         value=""
         IconComponent={ArrowDownIcon}>
@@ -193,7 +186,7 @@ function Filters({
         disabled={disableActions}
         data-test="resolveJobs"
         className={clsx(classes.select, classes.resolve)}
-        onChange={e => handleAction(e.target.value)}
+        onChange={e => onActionClick(e.target.value)}
         displayEmpty
         value=""
         IconComponent={ArrowDownIcon}>

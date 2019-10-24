@@ -16,7 +16,8 @@ const useStyles = makeStyles(theme => ({
   },
   drawerPaper: {
     marginLeft: theme.drawerWidthMinimized,
-    padding: theme.spacing(1),
+    backgroundColor: theme.palette.background.default,
+    padding: theme.spacing(0),
     transition: theme.transitions.create(['height', 'margin'], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
