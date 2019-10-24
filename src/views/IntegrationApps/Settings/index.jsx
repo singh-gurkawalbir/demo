@@ -119,8 +119,8 @@ export default function IntegrationAppSettings(props) {
   );
   const [currentStore, setCurrentStore] = useState(defaultStoreId);
   const [storeChanged, setStoreChanged] = useState(false);
-  const connectorFlowSections = useSelector(state =>
-    selectors.connectorFlowSections(state, integrationId, currentStore)
+  const integrationAppFlowSections = useSelector(state =>
+    selectors.integrationAppFlowSections(state, integrationId, currentStore)
   );
   const showAPITokens = permissions.accesstokens.view;
 
@@ -150,17 +150,19 @@ export default function IntegrationAppSettings(props) {
     if ((!redirected && (section === 'flows' || !section)) || storeChanged) {
       if (supportsMultiStore) {
         props.history.push(
-          `${`${urlPrefix}/${currentStore}/${connectorFlowSections[0].titleId}`}`
+          `${`${urlPrefix}/${currentStore}/${integrationAppFlowSections[0].titleId}`}`
         );
       } else {
-        props.history.push(`${urlPrefix}/${connectorFlowSections[0].titleId}`);
+        props.history.push(
+          `${urlPrefix}/${integrationAppFlowSections[0].titleId}`
+        );
       }
 
       setStoreChanged(false);
       setRedirected(true);
     }
   }, [
-    connectorFlowSections,
+    integrationAppFlowSections,
     currentStore,
     integrationId,
     props.history,
@@ -261,8 +263,8 @@ export default function IntegrationAppSettings(props) {
                 <ListItem className={classes.listItem}>
                   Integration Flows
                   <ul>
-                    {connectorFlowSections &&
-                      connectorFlowSections.map(f => (
+                    {integrationAppFlowSections &&
+                      integrationAppFlowSections.map(f => (
                         <ListItem key={`${f.titleId}`}>
                           <NavLink
                             activeClassName={classes.subSection}
