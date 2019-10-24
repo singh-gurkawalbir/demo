@@ -177,11 +177,20 @@ export default {
     }
 
     if (fieldId === 'connection') {
-      const filter = { type: app.type };
+      const expression = [];
+
+      if (['mysql', 'postgresql', 'mssql'].includes(app.type)) {
+        expression.push({ 'rdbms.type': app.type });
+      } else {
+        expression.push({ type: app.type });
+      }
 
       if (app.assistant) {
-        filter.assistant = app.assistant;
+        expression.push({ assistant: app.assistant });
       }
+
+      expression.push({ _connectorId: { $exists: false } });
+      const filter = { $and: expression };
 
       return { filter };
     }
@@ -190,14 +199,18 @@ export default {
       const adaptorTypePrefix = appTypeToAdaptorType[app.type];
 
       if (!adaptorTypePrefix) return;
+      const expression = [];
 
-      const filter = {
+      expression.push({
         adaptorType: `${adaptorTypePrefix}${adaptorTypeSuffix}`,
-      };
+      });
 
       if (app.assistant) {
-        filter.assistant = app.assistant;
+        expression.push({ assistant: app.assistant });
       }
+
+      expression.push({ _connectorId: { $exists: false } });
+      const filter = { $and: expression };
 
       return { filter };
     }

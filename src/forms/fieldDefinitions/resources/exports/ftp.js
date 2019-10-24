@@ -11,9 +11,6 @@ export default {
         is: ['csv', 'xml', 'json', 'xlsx'],
       },
     ],
-    // filter: r => ({ type: r.type }),
-    // excludeFilter: r => ({ _
-    //
   },
   'ftp.directoryPath': {
     type: 'text',
