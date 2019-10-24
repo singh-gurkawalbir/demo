@@ -72,7 +72,7 @@ export default {
             `${textBeforeBraces}{{timestamp(${timestamp._id})}}.${extension}`
         );
 
-        fileNameField.value = suggestionList.length && suggestionList[0];
+        fileNameField.value = `${fileNameWithoutExt}.${extension}`;
       }
 
       return { suggestions: suggestionList };
