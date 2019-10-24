@@ -2,22 +2,7 @@ import applications, {
   getWebhookConnectors,
   getWebhookOnlyConnectors,
 } from '../../../../constants/applications';
-
-const appTypeToAdaptorType = {
-  salesforce: 'Salesforce',
-  mongodb: 'Mongodb',
-  postgresql: 'RDBMS',
-  mysql: 'RDBMS',
-  mssql: 'RDBMS',
-  netsuite: 'NetSuite',
-  ftp: 'FTP',
-  http: 'HTTP',
-  rest: 'REST',
-  s3: 'S3',
-  wrapper: 'Wrapper',
-  as2: 'AS2',
-  webhook: 'Webhook',
-};
+import { appTypeToAdaptorType } from '../../../../utils/resource';
 
 export default {
   preSave: ({ type, application, executionType, apiType, ...rest }) => {
@@ -30,6 +15,7 @@ export default {
       newValues['/type'] = 'webhook';
       newValues['/adaptorType'] = 'WebhookExport';
       newValues['/webhook/provider'] = application;
+      delete newValues['/_connectionId'];
     } else {
       newValues['/adaptorType'] = `${appTypeToAdaptorType[app.type]}Export`;
 
@@ -54,7 +40,9 @@ export default {
       type: 'selectapplication',
       placeholder: 'Select application',
       defaultValue: r => (r && r.application) || '',
-      required: true,
+      validWhen: {
+        isNot: { values: [''], message: 'Please select an application' },
+      },
     },
     type: {
       id: 'type',
@@ -87,6 +75,9 @@ export default {
       label: 'Connection',
       defaultValue: r => (r && r._connectionId) || '',
       required: true,
+      validWhen: {
+        isNot: { values: [''], message: 'Please select a connection' },
+      },
       refreshOptionsOnChangesTo: ['application'],
       visibleWhenAll: [
         {

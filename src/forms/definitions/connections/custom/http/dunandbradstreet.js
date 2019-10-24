@@ -59,6 +59,7 @@ export default {
       ],
       label: 'Generate Token',
       defaultValue: '',
+      required: true,
       helpText: 'The access token of your Dun & Bradstreet account.',
     },
     httpAdvanced: { formId: 'httpAdvanced' },

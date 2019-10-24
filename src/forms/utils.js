@@ -182,14 +182,16 @@ export const getMissingPatchSet = (paths, resource) => {
   return missing.sort().map(p => ({ path: p, op: 'add', value: {} }));
 };
 
-export const sanitizePatchSet = ({ patchSet, resource }) => {
+export const sanitizePatchSet = ({ patchSet, fieldMeta = {}, resource }) => {
   if (!patchSet) return patchSet;
   const sanitizedSet = patchSet.reduce(
     (s, patch) => {
       const { removePatches, valuePatches } = s;
 
       if (patch.op === 'replace') {
-        // default values of all fields are '' so when undefined value is being sent we
+        const field = getFieldByName({ name: patch.path, fieldMeta });
+
+        // default values of all fields are '' so when undefined value is being sent it indicates that we would like delete those properties
         if (patch.value === undefined) {
           const modifiedPath = patch.path
             .substring(1, patch.path.length)
@@ -198,7 +200,11 @@ export const sanitizePatchSet = ({ patchSet, resource }) => {
           // consider it as a remove patch
           if (get(resource, modifiedPath))
             removePatches.push({ path: patch.path, op: 'remove' });
-        } else {
+        } else if (
+          !field ||
+          field.defaultValue !== patch.value ||
+          (field.defaultValue === patch.value && field.defaultValue !== '')
+        ) {
           valuePatches.push(patch);
         }
       }
@@ -233,6 +239,7 @@ export const sanitizePatchSet = ({ patchSet, resource }) => {
   return newSet;
 };
 
+// #BEGIN_REGION Integration App form utils
 const convertFieldsToFieldReferneceObj = (acc, curr) => {
   if (!curr.fieldId && !curr.id && !curr.formId) {
     throw new Error('No fieldId , id or formId', curr);
@@ -269,11 +276,12 @@ const addIdToFieldsAndRenameNameAttribute = (fields, _integrationId) => {
 
   return fields.map(field => {
     // TODO: generate correct name path
-    const { name, options, tooltip } = field;
+    const { name, options, default: defaultValue, tooltip } = field;
     // name is the unique identifier....verify with Ashok
 
     return {
       ...getFieldConfig(field),
+      defaultValue,
       name: `/${name}`,
       _integrationId,
       id: name,
@@ -347,10 +355,12 @@ export const integrationSettingsToDynaFormMetadata = (
     };
   }
 
-  finalData.actions = [{ id: 'save' }];
+  finalData.actions = [{ id: 'saveintegrationsettings' }];
 
   return finalData;
 };
+
+// #END_REGION Integration App from utils
 
 export default {
   getFieldById,

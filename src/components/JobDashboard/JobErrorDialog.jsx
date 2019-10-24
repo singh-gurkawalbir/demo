@@ -47,15 +47,15 @@ function JobErrorDialog({
   jobId,
   parentJobId,
   showResolved,
-  numError,
-  numResolved,
+  numError = 0,
+  numResolved = 0,
   onCloseClick,
   integrationName,
 }) {
   const dispatch = useDispatch();
   const [childJobId, setChildJobId] = useState(parentJobId ? jobId : undefined);
   const [errorCount, setErrorCount] = useState(
-    parentJobId ? undefined : numError + numResolved
+    childJobId ? numError + numResolved : undefined
   );
   const flowJob = useSelector(state =>
     selectors.flowJob(state, { jobId: parentJobId || jobId })
@@ -78,12 +78,14 @@ function JobErrorDialog({
   }, [flowJob]);
 
   useEffect(() => {
-    if (childJobId && errorCount < 1000) {
-      dispatch(
-        actions.job.requestErrors({
-          jobId: childJobId,
-        })
-      );
+    if (childJobId) {
+      if (errorCount < 1000) {
+        dispatch(
+          actions.job.requestErrors({
+            jobId: childJobId,
+          })
+        );
+      }
     } else if (flowJobChildrenLoaded) {
       const jobWithErrors = flowJob.children.find(j =>
         showResolved ? j.numResolved > 0 : j.numError > 0

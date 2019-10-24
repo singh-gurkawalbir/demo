@@ -4,13 +4,24 @@ import actionTypes from '../../../actions/types';
 function generateSalesforceOptions(data = {}, sObjectType, selectField) {
   let options = [];
 
-  if (sObjectType && selectField) {
-    const field = (data.fields || []).find(f => f.name === selectField);
+  if (sObjectType) {
+    if (selectField) {
+      const field = (data.fields || []).find(f => f.name === selectField);
 
-    if (field) {
-      options = field.picklistValues.map(plv => ({
-        label: plv.label,
-        value: plv.value,
+      if (field) {
+        options = field.picklistValues.map(plv => ({
+          label: plv.label,
+          value: plv.value,
+        }));
+      }
+    } else {
+      options = data.fields.map(d => ({
+        label: d.label,
+        value: d.name,
+        custom: d.custom,
+        triggerable: d.triggerable,
+        picklistValues: d.picklistValues,
+        type: d.type,
       }));
     }
   } else {
@@ -430,7 +441,7 @@ export const optionsFromMetadata = (
           null;
   }
 
-  return recordType && selectField
+  return recordType
     ? (applicationResource &&
         applicationResource[connectionId] &&
         applicationResource[connectionId][recordType]) ||

@@ -1,3 +1,5 @@
+import { adaptorTypeMap } from '../../../utils/resource';
+
 export default {
   fieldMap: {
     common: { formId: 'common' },
@@ -36,8 +38,12 @@ export default {
       fieldId: 'salesforce.upsert.externalIdField',
     },
     dataMappings: { formId: 'dataMappings' },
+    mapping: {
+      fieldId: 'mapping',
+      application: adaptorTypeMap.SalesforceImport,
+      refreshOptionsOnChangesTo: ['salesforce.sObjectType'],
+    },
     advancedSettings: { formId: 'advancedSettings' },
-    hooks: { formId: 'hooks' },
   },
   layout: {
     fields: [
@@ -55,15 +61,22 @@ export default {
       'salesforce.upsertpicklistvalues.fullName',
       'salesforce.upsert.externalIdField',
       'dataMappings',
+      'mapping',
     ],
     type: 'collapse',
     containers: [
       { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },
-      {
-        collapsed: false,
-        label: 'Hooks (Optional, Developers Only)',
-        fields: ['hooks'],
-      },
     ],
+  },
+  optionsHandler: (fieldId, fields) => {
+    if (fieldId === 'mapping') {
+      const sObjectTypeField = fields.find(
+        field => field.id === 'salesforce.sObjectType'
+      );
+
+      return {
+        sObjectType: sObjectTypeField && sObjectTypeField.value,
+      };
+    }
   },
 };

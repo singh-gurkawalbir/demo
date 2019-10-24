@@ -1,7 +1,11 @@
 import { Fragment, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { Link } from 'react-router-dom';
+import shortid from 'shortid';
 import { makeStyles } from '@material-ui/core/styles';
 import CeligoPageBar from '../../../components/CeligoPageBar';
+import IconTextButton from '../../../components/IconTextButton';
+import AddIcon from '../../../components/icons/AddIcon';
 import * as selectors from '../../../reducers';
 import CeligoTable from '../../../components/CeligoTable';
 import ResourceDrawer from '../../../components/drawer/Resource';
@@ -22,7 +26,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function Licenses(props) {
   const defaultFilter = useMemo(() => ({ take: 5 }), []);
-  const { match, history } = props;
+  const { match, location, history } = props;
   const { connectorId } = match.params;
   const classes = useStyles();
   const filter =
@@ -60,6 +64,15 @@ export default function Licenses(props) {
             filterKey="connectorLicenses"
             defaultFilter={defaultFilter}
           />
+          <IconTextButton
+            component={Link}
+            to={`${
+              location.pathname
+            }/add/connectorLicenses/new-${shortid.generate()}`}
+            variant="text"
+            color="primary">
+            <AddIcon /> New License
+          </IconTextButton>
         </div>
       </CeligoPageBar>
       <div className={classes.resultContainer}>

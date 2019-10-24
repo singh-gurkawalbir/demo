@@ -1,31 +1,28 @@
 import applications from '../../../constants/applications';
+import { appTypeToAdaptorType } from '../../../utils/resource';
 
-const visibleWhen = [
-  {
-    id: 'hasApp',
-    field: 'application',
-    isNot: [''],
-  },
-];
-const appTypeToAdaptorType = {
-  salesforce: 'Salesforce',
-  mongodb: 'Mongodb',
-  postgresql: 'RDBMS',
-  mysql: 'RDBMS',
-  mssql: 'RDBMS',
-  netsuite: 'NetSuite',
-  ftp: 'FTP',
-  http: 'HTTP',
-  rest: 'REST',
-  s3: 'S3',
-  wrapper: 'Wrapper',
-  as2: 'AS2',
-  webhook: 'Webhook',
-};
+const visibleWhenHasApp = { field: 'application', isNot: [''] };
+const visibleWhenIsNew = { field: 'isNew', is: ['true'] };
 
 export default {
   init: meta => meta,
-  preSave: ({ application, resourceType, ...rest }) => {
+  preSave: ({
+    isNew,
+    importId,
+    exportId,
+    application,
+    resourceType,
+    ...rest
+  }) => {
+    // slight hack here... page generator forms can
+    // select an existing resource. The /resourceId field is
+    // used by the resource form code within the panel
+    // component of the <ResourceDrawer> to properly
+    // handle this special case.
+    if (isNew === 'false') {
+      return { '/resourceId': importId || exportId };
+    }
+
     const app = applications.find(a => a.id === application) || {};
     const newValues = {
       ...rest,
@@ -46,7 +43,7 @@ export default {
     resourceType: {
       id: 'resourceType',
       name: 'resourceType',
-      type: 'radiogroup',
+      type: 'select',
       label: 'What would you like to do?',
       defaultValue: r => (r && r.resourceType) || 'imports',
       options: [
@@ -69,6 +66,58 @@ export default {
       defaultValue: r => (r && r.application) || '',
       required: true,
     },
+    isNew: {
+      id: 'isNew',
+      name: 'isNew',
+      type: 'radiogroup',
+      showOptionsHorizontally: true,
+      // label: 'Build new or use existing?',
+      defaultValue: 'true',
+      options: [
+        {
+          items: [
+            { label: 'New', value: 'true' },
+            {
+              label: 'Existing',
+              value: 'false',
+            },
+          ],
+        },
+      ],
+      visibleWhenAll: [{ field: 'application', isNot: [''] }],
+    },
+
+    existingImport: {
+      id: 'importId',
+      name: 'importId',
+      type: 'selectresource',
+      resourceType: 'imports',
+      label: 'Existing Import',
+      defaultValue: '',
+      required: true,
+      allowEdit: true,
+      refreshOptionsOnChangesTo: ['application'],
+      visibleWhenAll: [
+        { field: 'isNew', is: ['false'] },
+        { field: 'resourceType', is: ['imports'] },
+      ],
+    },
+
+    existingExport: {
+      id: 'exportId',
+      name: 'exportId',
+      type: 'selectresource',
+      resourceType: 'exports',
+      label: 'Existing Lookup',
+      defaultValue: '',
+      required: true,
+      allowEdit: true,
+      refreshOptionsOnChangesTo: ['application'],
+      visibleWhenAll: [
+        { field: 'isNew', is: ['false'] },
+        { field: 'resourceType', is: ['exports'] },
+      ],
+    },
 
     connection: {
       id: 'connection',
@@ -78,8 +127,10 @@ export default {
       label: 'Connection',
       defaultValue: r => (r && r._connectionId) || '',
       required: true,
+      allowNew: true,
+      allowEdit: true,
       refreshOptionsOnChangesTo: ['application'],
-      visibleWhen,
+      visibleWhenAll: [visibleWhenHasApp, visibleWhenIsNew],
     },
     name: {
       id: 'name',
@@ -89,7 +140,7 @@ export default {
       defaultValue: '',
       required: true,
       refreshOptionsOnChangesTo: ['application'],
-      visibleWhen,
+      visibleWhenAll: [visibleWhenHasApp, visibleWhenIsNew],
     },
     description: {
       id: 'description',
@@ -99,13 +150,16 @@ export default {
       maxRows: 5,
       label: 'Description',
       defaultValue: '',
-      visibleWhen,
+      visibleWhenAll: [visibleWhenHasApp, visibleWhenIsNew],
     },
   },
   layout: {
     fields: [
       'resourceType',
       'application',
+      'isNew',
+      'existingImport',
+      'existingExport',
       'connection',
       'name',
       'description',
@@ -113,16 +167,33 @@ export default {
   },
   optionsHandler: (fieldId, fields) => {
     const appField = fields.find(field => field.id === 'application');
+    const adaptorTypeSuffix = fieldId === 'importId' ? 'Import' : 'Export';
     const app = appField
       ? applications.find(a => a.id === appField.value) || {}
       : {};
 
     if (fieldId === 'name') {
-      return `New ${app.name} Import`;
+      return `New ${app.name} ${adaptorTypeSuffix}`;
     }
 
     if (fieldId === 'connection') {
       const filter = { type: app.type };
+
+      if (app.assistant) {
+        filter.assistant = app.assistant;
+      }
+
+      return { filter };
+    }
+
+    if (['importId', 'exportId'].includes(fieldId)) {
+      const adaptorTypePrefix = appTypeToAdaptorType[app.type];
+
+      if (!adaptorTypePrefix) return;
+
+      const filter = {
+        adaptorType: `${adaptorTypePrefix}${adaptorTypeSuffix}`,
+      };
 
       if (app.assistant) {
         filter.assistant = app.assistant;

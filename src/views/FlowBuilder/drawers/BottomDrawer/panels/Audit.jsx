@@ -1,18 +1,18 @@
-import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
+import AuditLog from '../../../../../components/AuditLog';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    padding: theme.spacing(3),
+    padding: theme.spacing(0),
   },
 }));
 
-export default function RunDashboardPanel() {
+export default function AuditPanel({ flow }) {
   const classes = useStyles();
 
   return (
     <div className={classes.root}>
-      <Typography variant="h3">Run Dashboard panel coming soon!</Typography>
+      <AuditLog resourceType="flows" resourceId={flow._id} />
     </div>
   );
 }

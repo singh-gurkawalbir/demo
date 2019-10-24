@@ -1,12 +1,13 @@
 import React, { useMemo } from 'react';
 import { makeStyles, useTheme, fade } from '@material-ui/core/styles';
-import FormHelperText from '@material-ui/core/FormHelperText';
-import FormControl from '@material-ui/core/FormControl';
+import { FormControl, InputLabel } from '@material-ui/core';
 import Select, { components } from 'react-select';
 import applications, {
   groupApplications,
 } from '../../../../constants/applications';
 import ApplicationImg from '../../../icons/ApplicationImg';
+import AppPill from './AppPill';
+import ErroredMessageComponent from '../ErroredMessageComponent';
 
 const useStyles = makeStyles(theme => ({
   optionRoot: {
@@ -32,16 +33,27 @@ const useStyles = makeStyles(theme => ({
     paddingLeft: '10px',
     height: '100%',
   },
+  inputLabel: {
+    transform: 'unset',
+    position: 'static',
+    marginBottom: theme.spacing(1),
+  },
+  selectedContainer: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    marginBottom: theme.spacing(2),
+  },
 }));
 
 export default function SelectApplication(props) {
   const {
-    description,
     disabled,
     id,
+    isMulti,
     name,
+    label,
     resourceType,
-    value = '',
+    value = isMulti ? [] : '',
     placeholder,
     onFieldChange,
   } = props;
@@ -179,16 +191,29 @@ export default function SelectApplication(props) {
     return true;
   };
 
-  const handleChange = e => {
-    onFieldChange && onFieldChange(id, e.value);
-  };
+  const defaultValue =
+    !value || isMulti
+      ? ''
+      : {
+          value,
+          label: applications.find(a => a.id === value).name,
+        };
 
-  const defaultValue = value
-    ? {
-        value,
-        label: applications.find(a => a.id === value).name,
-      }
-    : '';
+  function handleChange(e) {
+    if (onFieldChange) {
+      const newValue = isMulti ? [...value, e.value] : e.value;
+
+      // console.log('newValue', newValue);
+      onFieldChange(id, newValue);
+    }
+  }
+
+  function handleRemove(index) {
+    const newApps = [...value];
+
+    newApps.splice(index, 1);
+    onFieldChange(id, newApps);
+  }
 
   return (
     <FormControl
@@ -196,6 +221,9 @@ export default function SelectApplication(props) {
       key={id}
       disabled={disabled}
       className={classes.formControl}>
+      <InputLabel shrink className={classes.inputLabel} htmlFor={id}>
+        {label}
+      </InputLabel>
       <Select
         name={name}
         placeholder={placeholder}
@@ -207,7 +235,24 @@ export default function SelectApplication(props) {
         styles={customStyles}
         filterOption={filterOptions}
       />
-      {description && <FormHelperText>{description}</FormHelperText>}
+
+      <ErroredMessageComponent {...props} />
+
+      {isMulti && value.length > 0 && (
+        <div className={classes.selectedContainer}>
+          {value.map((appId, i) => (
+            <AppPill
+              // i think we are ok to add index when a user selects multiple
+              // same applications. Even if a user deletes a matching app, the
+              // keys would still work out. Not sure how else to assign keys here.
+              // eslint-disable-next-line react/no-array-index-key
+              key={`${appId}-${i}`}
+              appId={appId}
+              onRemove={() => handleRemove(i)}
+            />
+          ))}
+        </div>
+      )}
     </FormControl>
   );
 }

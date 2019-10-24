@@ -1,4 +1,3 @@
-import moment from 'moment';
 import { put, select, call, takeEvery } from 'redux-saga/effects';
 import {
   resourceData,
@@ -11,72 +10,49 @@ import actions from '../../../actions';
 import { apiCallWithRetry } from '../..';
 import { evaluateExternalProcessor } from '../../../sagas/editor';
 import { getResource } from '../../resources';
+import {
+  fetchFlowResources,
+  refreshResourceData,
+  requestSampleDataForExports,
+  requestSampleDataForImports,
+} from './utils';
+import {
+  getSampleDataStage,
+  getParseStageData,
+  getLastExportDateTime,
+} from '../../../utils/flowData';
 
-const dependencies = {
-  inputFilter: 'flowInput',
-  outputFilter: 'flowInput',
-  transform: 'raw',
-  hooks: 'transform',
-  importMapping: 'flowInput',
-};
-let fetchSampleData;
+function* requestSampleData({
+  flowId,
+  resourceId,
+  resourceType,
+  stage,
+  isPageGenerator,
+}) {
+  // Updates preProcessedData for the procesors
+  const sampleDataStage = getSampleDataStage(stage, resourceType);
 
-function getParseStageData(previewData) {
-  const stages = (previewData && previewData.stages) || [];
-  const parseStage = stages.find(stage => stage.name === 'parse');
-
-  return parseStage && parseStage.data && parseStage.data[0];
-}
-
-function* fetchFlowResources({ flow, type, eliminateDataProcessors }) {
-  const resourceMap = {};
-  const resourceList = flow[type];
-
-  if (flow && resourceList && resourceList.length) {
-    for (let index = 0; index < resourceList.length; index += 1) {
-      const resourceInfo = resourceList[index];
-      const resourceType =
-        resourceInfo && resourceInfo.type === 'import' ? 'imports' : 'exports';
-      const resourceId =
-        resourceInfo[resourceType === 'exports' ? '_exportId' : '_importId'];
-      const { merged: resource } = yield select(
-        resourceData,
-        resourceType,
-        resourceId,
-        SCOPES.VALUE
-      );
-
-      if (resource) {
-        const { transform, filter, hooks, ...rest } = resource;
-
-        if (eliminateDataProcessors) {
-          resourceMap[resourceId] = { doc: rest };
-        } else {
-          resourceMap[resourceId] = { doc: resource };
-        }
-
-        resourceMap[resourceId].options = {};
-
-        if (resourceType === 'exports' && resource.type === 'delta') {
-          resourceMap[resourceId].options.postData = {
-            // @TODO: Raghu add valid dateTime
-            lastExportDateTime: moment()
-              .add(-1, 'y')
-              .toISOString(),
-          };
-        }
-
-        if (resource && resource.sampleData) {
-          resourceMap[resourceId].options.uiData = resource.sampleData;
-        }
-      }
-    }
+  if (resourceType === 'imports') {
+    yield call(requestSampleDataForImports, {
+      flowId,
+      resourceId,
+      sampleDataStage,
+    });
+  } else {
+    yield call(requestSampleDataForExports, {
+      flowId,
+      resourceId,
+      sampleDataStage,
+      isPageGenerator,
+    });
   }
-
-  return resourceMap;
 }
 
-function* fetchPageProcessorPreview({ flowId, _pageProcessorId, previewType }) {
+export function* fetchPageProcessorPreview({
+  flowId,
+  _pageProcessorId,
+  previewType,
+}) {
   if (!flowId || !_pageProcessorId) return;
   const { merged } = yield select(resourceData, 'flows', flowId, SCOPES.VALUE);
   const flow = { ...merged };
@@ -131,7 +107,7 @@ function* fetchPageProcessorPreview({ flowId, _pageProcessorId, previewType }) {
   }
 }
 
-function* fetchPageGeneratorPreview({ flowId, _pageGeneratorId }) {
+export function* fetchPageGeneratorPreview({ flowId, _pageGeneratorId }) {
   const { merged: resource } = yield select(
     resourceData,
     'exports',
@@ -141,9 +117,7 @@ function* fetchPageGeneratorPreview({ flowId, _pageGeneratorId }) {
 
   if (body.type === 'delta') {
     body.postData = {
-      lastExportDateTime: moment()
-        .add(-1, 'y')
-        .toISOString(),
+      lastExportDateTime: getLastExportDateTime(),
     };
   }
 
@@ -159,25 +133,36 @@ function* fetchPageGeneratorPreview({ flowId, _pageGeneratorId }) {
   }
 
   const path = `/exports/preview`;
-  const previewData = yield call(apiCallWithRetry, {
-    path,
-    opts: { method: 'POST', body },
-    message: `Fetching Exports Preview`,
-  });
-  const parseData = getParseStageData(previewData);
 
-  yield put(
-    actions.flowData.receivedPreviewData(
-      flowId,
-      _pageGeneratorId,
-      parseData,
-      'raw',
-      true
-    )
-  );
+  try {
+    const previewData = yield call(apiCallWithRetry, {
+      path,
+      opts: { method: 'POST', body },
+      message: `Fetching Exports Preview`,
+    });
+    const parseData = getParseStageData(previewData);
+
+    yield put(
+      actions.flowData.receivedPreviewData(
+        flowId,
+        _pageGeneratorId,
+        parseData,
+        'raw',
+        true
+      )
+    );
+  } catch (e) {
+    // Error handler
+  }
 }
 
-function* processData({ flowId, resourceId, processorData, isPageGenerator }) {
+function* processData({
+  flowId,
+  resourceId,
+  processorData,
+  isPageGenerator,
+  stage,
+}) {
   try {
     const processedData = yield call(evaluateExternalProcessor, {
       processorData,
@@ -188,7 +173,7 @@ function* processData({ flowId, resourceId, processorData, isPageGenerator }) {
       actions.flowData.receivedProcessorData(
         flowId,
         resourceId,
-        processor,
+        stage || processor,
         processedData,
         isPageGenerator
       )
@@ -198,7 +183,7 @@ function* processData({ flowId, resourceId, processorData, isPageGenerator }) {
   }
 }
 
-function* requestProcessorData({
+export function* requestProcessorData({
   flowId,
   resourceId,
   resourceType,
@@ -215,12 +200,13 @@ function* requestProcessorData({
     getSampleData,
     flowId,
     resourceId,
-    processor
+    processor,
+    { isPageGenerator, isImport: resourceType === 'imports' }
   );
   let processorData;
 
   if (!preProcessedData) {
-    yield call(fetchSampleData, {
+    yield call(requestSampleData, {
       flowId,
       resourceId,
       resourceType,
@@ -232,17 +218,15 @@ function* requestProcessorData({
       flowId,
       resourceId,
       processor,
-      isPageGenerator
+      { isPageGenerator, isImport: resourceType === 'imports' }
     );
   }
 
-  if (processor === 'transform') {
-    const transformLookup =
-      resourceType === 'imports' ? 'responseTransform' : 'transform';
-    const transform = { ...merged[transformLookup] };
+  if (processor === 'transform' || processor === 'responseTransform') {
+    const transform = { ...merged[processor] };
     const [rule] = transform.rules || [];
 
-    processorData = { data: preProcessedData, rule, processor };
+    processorData = { data: preProcessedData, rule, processor: 'transform' };
   } else if (processor === 'hooks') {
     const { hooks = {} } = { ...merged };
 
@@ -270,72 +254,9 @@ function* requestProcessorData({
       resourceId,
       processorData,
       isPageGenerator,
+      stage: processor,
     });
   }
-}
-
-/*
- * We have 4 stages for a processor - input , raw, transform, hooks.
- * Selectors should handle - input filter, output filter, input, transform, hooks.
- */
-function* fetchInputData({
-  flowId,
-  resourceId,
-  resourceType,
-  stage,
-  isPageGenerator,
-}) {
-  // Updates preProcessedData for the procesors
-  const sampleDataStage = dependencies[stage];
-
-  if (['flowInput', 'raw'].includes(sampleDataStage)) {
-    if (isPageGenerator) {
-      yield call(fetchPageGeneratorPreview, {
-        flowId,
-        _pageGeneratorId: resourceId,
-      });
-    } else {
-      yield call(fetchPageProcessorPreview, {
-        flowId,
-        _pageProcessorId: resourceId,
-        previewType: sampleDataStage,
-      });
-    }
-  } else {
-    yield call(requestProcessorData, {
-      flowId,
-      resourceId,
-      resourceType,
-      processor: sampleDataStage === 'hooks' ? 'javascript' : sampleDataStage,
-      isPageGenerator,
-    });
-  }
-}
-
-fetchSampleData = fetchInputData;
-
-export function* refreshResourceData({ flowId, resourceId, resourceType }) {
-  const lastStage = 'hooks';
-  let isPageGenerator = false;
-
-  if (resourceType !== 'imports') {
-    // find resource in pageGenerators list for the flow. If exists , then make isPageGenerator as true
-    const { merged: flow } = yield select(resourceData, 'flows', flowId);
-    const { pageGenerators = [] } = flow;
-    const resource = pageGenerators.find(pg => pg._exportId === resourceId);
-
-    if (resource) isPageGenerator = true;
-  }
-
-  yield put(
-    actions.flowData.requestProcessorData(
-      flowId,
-      resourceId,
-      resourceType,
-      lastStage,
-      isPageGenerator
-    )
-  );
 }
 
 function* updateFlowsDataForResource({ resourceId, resourceType }) {
@@ -358,6 +279,7 @@ function* updateFlowsDataForResource({ resourceId, resourceType }) {
 }
 
 function* updateFlowData({ flowId }) {
+  // Updates flow structure incase of Drag and change flow order
   const { merged: updatedFlow } = yield select(
     resourceData,
     'flows',
@@ -370,14 +292,14 @@ function* updateFlowData({ flowId }) {
 
 export default [
   takeEvery(
-    actionTypes.FLOW_DATA.REQUEST_PREVIEW_DATA,
+    actionTypes.FLOW_DATA.PREVIEW_DATA_REQUEST,
     fetchPageProcessorPreview
   ),
-  takeEvery(actionTypes.FLOW_DATA.REQUEST_PROCESSOR_DATA, requestProcessorData),
-  takeEvery(actionTypes.FLOW_DATA.FETCH_SAMPLE_DATA, fetchSampleData),
+  takeEvery(actionTypes.FLOW_DATA.PROCESSOR_DATA_REQUEST, requestProcessorData),
+  takeEvery(actionTypes.FLOW_DATA.SAMPLE_DATA_REQUEST, requestSampleData),
   takeEvery(
-    actionTypes.FLOW_DATA.UPDATE_FLOWS_FOR_RESOURCE,
+    actionTypes.FLOW_DATA.FLOWS_FOR_RESOURCE_UPDATE,
     updateFlowsDataForResource
   ),
-  takeEvery(actionTypes.FLOW_DATA.UPDATE_FLOW, updateFlowData),
+  takeEvery(actionTypes.FLOW_DATA.FLOW_UPDATE, updateFlowData),
 ];

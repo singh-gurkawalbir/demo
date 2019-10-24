@@ -1,6 +1,6 @@
 import { useState, Fragment } from 'react';
 import { useSelector } from 'react-redux';
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -14,7 +14,7 @@ import { JOB_STATUS } from '../../utils/constants';
 import JobErrorDialog from './JobErrorDialog';
 import * as selectors from '../../reducers';
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   root: {
     width: '98%',
     marginTop: theme.spacing(3),
@@ -29,10 +29,9 @@ const styles = theme => ({
     minWidth: 700,
   },
   tablePaginationRoot: { float: 'left' },
-});
+}));
 
 function JobTable({
-  classes,
   onSelectChange,
   jobsInCurrentPage,
   selectedJobs,
@@ -40,6 +39,7 @@ function JobTable({
   integrationName,
   onChangePage,
 }) {
+  const classes = useStyles();
   const { paging, totalJobs } = useSelector(state =>
     selectors.flowJobsPagingDetails(state)
   );
@@ -90,8 +90,20 @@ function JobTable({
     onSelectChange(jobIds);
   }
 
-  function handleViewErrorsClick({ jobId, parentJobId, showResolved = false }) {
-    setShowErrorDialogFor({ jobId, parentJobId, showResolved });
+  function handleViewErrorsClick({
+    jobId,
+    parentJobId,
+    showResolved = false,
+    numError,
+    numResolved,
+  }) {
+    setShowErrorDialogFor({
+      jobId,
+      parentJobId,
+      showResolved,
+      numError,
+      numResolved,
+    });
   }
 
   function handleJobErrorDialogCloseClick() {
@@ -129,7 +141,6 @@ function JobTable({
                 inputProps={{ 'aria-label': 'Select all jobs' }}
               />
             </TableCell>
-            <TableCell />
             <TableCell>Flow</TableCell>
             <TableCell>Status</TableCell>
             <TableCell>Success</TableCell>
@@ -161,6 +172,8 @@ function JobTable({
           jobId={showErrorDialogFor.jobId}
           parentJobId={showErrorDialogFor.parentJobId}
           showResolved={showErrorDialogFor.showResolved}
+          numError={showErrorDialogFor.numError}
+          numResolved={showErrorDialogFor.numResolved}
           onCloseClick={handleJobErrorDialogCloseClick}
           integrationName={integrationName}
         />
@@ -169,4 +182,4 @@ function JobTable({
   );
 }
 
-export default withStyles(styles)(JobTable);
+export default JobTable;

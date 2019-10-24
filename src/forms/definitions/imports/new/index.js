@@ -13,7 +13,7 @@ const appTypeToAdaptorType = {
   postgresql: 'RDBMS',
   mysql: 'RDBMS',
   mssql: 'RDBMS',
-  netsuite: 'NetSuite',
+  netsuite: 'NetSuiteDistributed',
   ftp: 'FTP',
   http: 'HTTP',
   rest: 'REST',
@@ -45,6 +45,9 @@ export default {
       placeholder: 'Select application',
       defaultValue: '',
       required: true,
+      validWhen: {
+        isNot: { values: [''], message: 'Please select an application' },
+      },
     },
     connection: {
       id: 'connection',
@@ -58,6 +61,9 @@ export default {
       visibleWhen,
       allowNew: true,
       allowEdit: true,
+      validWhen: {
+        isNot: { values: [''], message: 'Please select a connection' },
+      },
     },
     name: {
       id: 'name',
@@ -92,7 +98,11 @@ export default {
     }
 
     if (fieldId === 'connection') {
-      const filter = { type: app.type };
+      let filter;
+
+      if (['mysql', 'postgresql', 'mssql'].includes(app.type)) {
+        filter = { rdbms: { type: app.type } };
+      } else filter = { type: app.type };
 
       if (app.assistant) {
         filter.assistant = app.assistant;

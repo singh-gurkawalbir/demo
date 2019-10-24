@@ -1,6 +1,33 @@
 import { adaptorTypeMap } from '../../../utils/resource';
+import timeStamps from '../../../utils/timeStamps';
 
 export default {
+  init: fieldMeta => {
+    const fileDefinitionRulesField =
+      fieldMeta.fieldMap['file.filedefinition.rules'];
+
+    if (!fileDefinitionRulesField.userDefinitionId) {
+      // In Import creation mode, delete generic visibleWhenAll rules
+      // Add custom visible when rules
+      delete fileDefinitionRulesField.visibleWhenAll;
+      fileDefinitionRulesField.visibleWhen = [
+        {
+          field: 'edix12.format',
+          isNot: [''],
+        },
+        {
+          field: 'fixed.format',
+          isNot: [''],
+        },
+        {
+          field: 'edifact.format',
+          isNot: [''],
+        },
+      ];
+    }
+
+    return fieldMeta;
+  },
   optionsHandler: (fieldId, fields) => {
     if (fieldId === 'mapping') {
       const lookupField = fields.find(
@@ -13,6 +40,64 @@ export default {
           lookups: lookupField && lookupField.value,
         };
       }
+    }
+
+    if (fieldId === 's3.fileKey') {
+      const fileTypeField = fields.find(field => field.fieldId === 'file.type');
+      const fileNameField = fields.find(
+        field => field.fieldId === 's3.fileKey'
+      );
+      let suggestionList = [];
+
+      if (
+        fileNameField &&
+        fileNameField.value &&
+        fileTypeField &&
+        fileTypeField.value
+      ) {
+        const extension = fileTypeField.value;
+        const lastDotIndex = fileNameField.value.lastIndexOf('.');
+        const fileNameWithoutExt =
+          lastDotIndex !== -1
+            ? fileNameField.value.substring(0, lastDotIndex)
+            : fileNameField.value;
+        const bracesStartIndex = fileNameWithoutExt.indexOf('{');
+        const textBeforeBraces =
+          bracesStartIndex !== -1
+            ? fileNameWithoutExt.substring(0, bracesStartIndex)
+            : fileNameWithoutExt;
+
+        suggestionList = timeStamps.map(
+          timestamp =>
+            `${textBeforeBraces}{{timestamp(${timestamp._id})}}.${extension}`
+        );
+
+        fileNameField.value = suggestionList.length && suggestionList[0];
+      }
+
+      return { suggestions: suggestionList };
+    }
+
+    const fileType = fields.find(field => field.id === 'file.type');
+
+    if (fieldId === 'uploadFile') {
+      return fileType.value;
+    }
+
+    if (fieldId === 'file.filedefinition.rules') {
+      let definitionFieldId;
+
+      // Fetch format specific Field Definition field to fetch id
+      if (fileType.value === 'filedefinition')
+        definitionFieldId = 'edix12.format';
+      else if (fileType.value === 'fixed') definitionFieldId = 'fixed.format';
+      else definitionFieldId = 'edifact.format';
+      const definition = fields.find(field => field.id === definitionFieldId);
+
+      return {
+        format: definition && definition.format,
+        definitionId: definition && definition.value,
+      };
     }
 
     return null;
@@ -38,12 +123,6 @@ export default {
     },
     'file.csv.rowDelimiter': { fieldId: 'file.csv.rowDelimiter' },
     fileAdvancedSettings: { formId: 'fileAdvancedSettings' },
-    hooks: { formId: 'hooks' },
-    'hooks.postAggregate.function': { fieldId: 'hooks.postAggregate.function' },
-    'hooks.postAggregate._scriptId': {
-      fieldId: 'hooks.postAggregate._scriptId',
-    },
-    'hooks.postAggregate._stackId': { fieldId: 'hooks.postAggregate._stackId' },
   },
   layout: {
     fields: [
@@ -64,16 +143,6 @@ export default {
         collapsed: true,
         label: 'Advanced',
         fields: ['file.csv.rowDelimiter', 'fileAdvancedSettings'],
-      },
-      {
-        collapsed: false,
-        label: 'Hooks (Optional, Developers Only)',
-        fields: [
-          'hooks',
-          'hooks.postAggregate.function',
-          'hooks.postAggregate._scriptId',
-          'hooks.postAggregate._stackId',
-        ],
       },
     ],
   },

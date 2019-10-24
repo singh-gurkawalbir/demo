@@ -9,7 +9,9 @@ function TransformationDialog({ flowId, resource, onClose }) {
   const dispatch = useDispatch();
   const resourceId = resource._id;
   const sampleData = useSelector(state =>
-    selectors.getSampleData(state, flowId, resourceId, 'transform', true)
+    selectors.getSampleData(state, flowId, resourceId, 'transform', {
+      isPageGenerator: true,
+    })
   );
   const rules = useMemo(
     () => resource && resource.transform && resource.transform.rules,
@@ -21,7 +23,7 @@ function TransformationDialog({ flowId, resource, onClose }) {
       const { rule } = editorValues;
       const path = '/transform';
       const value = {
-        rules: [rule],
+        rules: rule ? [rule] : [[]],
         version: '1',
       };
       const patchSet = [{ op: 'replace', path, value }];
@@ -37,7 +39,7 @@ function TransformationDialog({ flowId, resource, onClose }) {
   useEffect(() => {
     if (!sampleData) {
       dispatch(
-        actions.flowData.fetchSampleData(
+        actions.flowData.requestSampleData(
           flowId,
           resourceId,
           'exports',

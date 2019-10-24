@@ -105,12 +105,54 @@ export default {
     'as2.partnerStationInfo.auth.token.paramName': {
       fieldId: 'as2.partnerStationInfo.auth.token.paramName',
     },
-    configureTokenRefresh: { fieldId: 'configureTokenRefresh' },
+    configureTokenRefresh: {
+      id: 'configureTokenRefresh',
+      type: 'checkbox',
+      label: 'Configure Token Refresh',
+      visibleWhenAll: [
+        {
+          field: 'as2.partnerStationInfo.auth.type',
+          is: ['token'],
+        },
+        {
+          field: 'as2.partnerStationInfo.auth.token.location',
+          isNot: [''],
+        },
+      ],
+      defaultValue: r =>
+        !!(
+          r &&
+          r.as2 &&
+          r.as2.partnerStationInfo &&
+          r.as2.partnerStationInfo.auth &&
+          r.as2.partnerStationInfo.auth.token &&
+          r.as2.partnerStationInfo.auth.token.refreshRelativeURI
+        ),
+    },
     refreshTokenHeader: {
       id: 'refreshTokenHeader',
       label: 'How to Refresh Token?',
       type: 'labeltitle',
       visibleWhen: [{ field: 'configureTokenRefresh', is: [true] }],
+    },
+    configureApiRateLimits: {
+      id: 'configureApiRateLimits',
+      type: 'checkbox',
+      label: 'Configure API Rate Limits',
+      defaultValue: r =>
+        !!(
+          r &&
+          r.as2 &&
+          r.as2.partnerStationInfo &&
+          r.as2.partnerStationInfo.rateLimit &&
+          r.as2.partnerStationInfo.auth.limit
+        ),
+    },
+    apiRateLimits: {
+      id: 'apiRateLimits',
+      label: 'API Rate Limits',
+      type: 'labeltitle',
+      visibleWhen: [{ field: 'configureApiRateLimits', is: [true] }],
     },
     'as2.partnerStationInfo.auth.token.refreshToken': {
       fieldId: 'as2.partnerStationInfo.auth.token.refreshToken',
@@ -145,7 +187,7 @@ export default {
     'as2.partnerStationInfo.rateLimit.failValues': {
       fieldId: 'as2.partnerStationInfo.rateLimit.failValues',
     },
-    'http.concurrencyLevel': { fieldId: 'http.concurrencyLevel' },
+    'as2.concurrencyLevel': { fieldId: 'as2.concurrencyLevel' },
   },
   layout: {
     fields: ['name'],
@@ -200,6 +242,7 @@ export default {
           'as2.partnerStationInfo.auth.token.scheme',
           'as2.partnerStationInfo.auth.token.paramName',
           'configureTokenRefresh',
+          'configureApiRateLimits',
           'refreshTokenHeader',
           'as2.partnerStationInfo.auth.token.refreshToken',
           'as2.partnerStationInfo.auth.token.refreshRelativeURI',
@@ -208,12 +251,7 @@ export default {
           'as2.partnerStationInfo.auth.token.refreshBody',
           'as2.partnerStationInfo.auth.token.refreshTokenPath',
           'as2.partnerStationInfo.auth.token.refreshHeaders',
-        ],
-      },
-      {
-        collapsed: true,
-        label: 'API Rate Limits',
-        fields: [
+          'apiRateLimits',
           'as2.partnerStationInfo.rateLimit.limit',
           'as2.partnerStationInfo.rateLimit.failStatusCode',
           'as2.partnerStationInfo.rateLimit.failPath',
@@ -223,7 +261,7 @@ export default {
       {
         collapsed: true,
         label: 'Advanced Settings',
-        fields: ['http.concurrencyLevel'],
+        fields: ['as2.concurrencyLevel'],
       },
     ],
   },

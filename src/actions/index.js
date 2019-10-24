@@ -85,8 +85,12 @@ const marketplace = {
     action(actionTypes.MARKETPLACE.CONNECTORS_RECEIVED, { connectors }),
   receivedTemplates: ({ templates }) =>
     action(actionTypes.MARKETPLACE.TEMPLATES_RECEIVED, { templates }),
-  installConnector: (connectorId, sandbox) =>
-    action(actionTypes.MARKETPLACE.CONNECTOR_INSTALL, { connectorId, sandbox }),
+  installConnector: (connectorId, sandbox, tag) =>
+    action(actionTypes.MARKETPLACE.CONNECTOR_INSTALL, {
+      connectorId,
+      sandbox,
+      tag,
+    }),
   contactSales: (connectorName, _connectorId) =>
     action(actionTypes.MARKETPLACE.SALES_CONTACT, {
       connectorName,
@@ -426,6 +430,25 @@ const fileDefinitions = {
   },
 };
 const integrationApp = {
+  settings: {
+    update: (integrationId, flowId, storeId, values) =>
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.UPDATE, {
+        integrationId,
+        flowId,
+        storeId,
+        values,
+      }),
+    clear: (integrationId, flowId) =>
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.FORM.CLEAR, {
+        integrationId,
+        flowId,
+      }),
+    submitComplete: params =>
+      action(
+        actionTypes.INTEGRATION_APPS.SETTINGS.FORM.SUBMIT_COMPLETE,
+        params
+      ),
+  },
   installer: {
     installStep: (integrationId, installerFunction) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.REQUEST, {
@@ -637,10 +660,14 @@ const sampleData = {
   receivedError: (resourceId, error, stage) =>
     action(actionTypes.SAMPLEDATA.RECEIVED_ERROR, { resourceId, error, stage }),
 };
+const importSampleData = {
+  request: resourceId =>
+    action(actionTypes.IMPORT_SAMPLEDATA.REQUEST, { resourceId }),
+};
 const flowData = {
   init: flow => action(actionTypes.FLOW_DATA.INIT, { flow }),
   requestPreviewData: (flowId, resourceId, previewType, isPageGenerator) =>
-    action(actionTypes.FLOW_DATA.REQUEST_PREVIEW_DATA, {
+    action(actionTypes.FLOW_DATA.PREVIEW_DATA_REQUEST, {
       flowId,
       resourceId,
       previewType,
@@ -653,7 +680,7 @@ const flowData = {
     previewType,
     isPageGenerator
   ) =>
-    action(actionTypes.FLOW_DATA.RECEIVED_PREVIEW_DATA, {
+    action(actionTypes.FLOW_DATA.PREVIEW_DATA_RECEIVED, {
       flowId,
       resourceId,
       previewData,
@@ -667,7 +694,7 @@ const flowData = {
     processor,
     isPageGenerator
   ) =>
-    action(actionTypes.FLOW_DATA.REQUEST_PROCESSOR_DATA, {
+    action(actionTypes.FLOW_DATA.PROCESSOR_DATA_REQUEST, {
       flowId,
       resourceId,
       resourceType,
@@ -681,15 +708,21 @@ const flowData = {
     processedData,
     isPageGenerator
   ) =>
-    action(actionTypes.FLOW_DATA.RECEIVED_PROCESSOR_DATA, {
+    action(actionTypes.FLOW_DATA.PROCESSOR_DATA_RECEIVED, {
       flowId,
       resourceId,
       processor,
       processedData,
       isPageGenerator,
     }),
-  fetchSampleData: (flowId, resourceId, resourceType, stage, isPageGenerator) =>
-    action(actionTypes.FLOW_DATA.FETCH_SAMPLE_DATA, {
+  requestSampleData: (
+    flowId,
+    resourceId,
+    resourceType,
+    stage,
+    isPageGenerator
+  ) =>
+    action(actionTypes.FLOW_DATA.SAMPLE_DATA_REQUEST, {
       flowId,
       resourceId,
       resourceType,
@@ -699,13 +732,13 @@ const flowData = {
   reset: (flowId, resourceId) =>
     action(actionTypes.FLOW_DATA.RESET, { flowId, resourceId }),
   resetFlowSequence: (flowId, updatedFlow) =>
-    action(actionTypes.FLOW_DATA.RESET_FLOW_SEQUENCE, { flowId, updatedFlow }),
+    action(actionTypes.FLOW_DATA.FLOW_SEQUENCE_RESET, { flowId, updatedFlow }),
   updateFlowsForResource: (resourceId, resourceType) =>
-    action(actionTypes.FLOW_DATA.UPDATE_FLOWS_FOR_RESOURCE, {
+    action(actionTypes.FLOW_DATA.FLOWS_FOR_RESOURCE_UPDATE, {
       resourceId,
       resourceType,
     }),
-  updateFlow: flowId => action(actionTypes.FLOW_DATA.UPDATE_FLOW, { flowId }),
+  updateFlow: flowId => action(actionTypes.FLOW_DATA.FLOW_UPDATE, { flowId }),
 };
 const app = {
   reload: () => action(actionTypes.APP_RELOAD),
@@ -757,11 +790,12 @@ const resourceForm = {
       isNew,
       skipCommit,
     }),
-  submit: (resourceType, resourceId, values) =>
+  submit: (resourceType, resourceId, values, match) =>
     action(actionTypes.RESOURCE_FORM.SUBMIT, {
       resourceType,
       resourceId,
       values,
+      match,
     }),
   submitComplete: (resourceType, resourceId, formValues) =>
     action(actionTypes.RESOURCE_FORM.SUBMIT_COMPLETE, {
@@ -927,6 +961,7 @@ export default {
   assistantMetadata,
   stack,
   sampleData,
+  importSampleData,
   flowData,
   connection,
   marketplace,

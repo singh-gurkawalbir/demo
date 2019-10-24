@@ -59,6 +59,7 @@ export default {
       ],
       label: 'Generate Token',
       defaultValue: '',
+      required: true,
       helpText: 'The access token of your Magento account.',
     },
     httpAdvanced: { formId: 'httpAdvanced' },

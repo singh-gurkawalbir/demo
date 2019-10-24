@@ -5,27 +5,44 @@ import Schedule from '../../../components/ResourceTable/actions/Flows/Schedule';
 import Run from '../../../components/ResourceTable/actions/Flows/Run';
 import OnOff from '../../../components/ResourceTable/actions/Flows/OnOff';
 import MappingDialog from '../../../components/MappingDialog/Mapping';
+import FlowSettings from './Actions/FlowSettings';
 import Description from './Actions/Description';
 
 export default {
   columns: (sectionContext, actionProps) => {
-    const { hasNSInternalIdLookup, showFlowSettings, showMatchRuleEngine } =
-      actionProps && actionProps.rest;
+    const {
+      hasNSInternalIdLookup,
+      showFlowSettings,
+      hasDescription,
+      flowSettings,
+      showMatchRuleEngine,
+    } = actionProps && actionProps.rest;
+    const { storeId } = actionProps;
     const columnData = [];
 
     columnData.push({
       heading: 'Flow Name',
       value: function FlowBuilderLink(r) {
-        return <Link to={`/pg/flowBuilder/${r._id}`}>{r.name || r._id}</Link>;
+        return (
+          <Link
+            to={`/pg/integrations/${r._integrationId || 'none'}/flowBuilder/${
+              r._id
+            }`}>
+            {r.name || r._id}
+          </Link>
+        );
       },
       orderBy: 'name',
     });
-    columnData.push({
-      heading: 'Description',
-      value: function ScheduleAction(r) {
-        return <Description.component resource={r} />;
-      },
-    });
+
+    if (hasDescription) {
+      columnData.push({
+        heading: 'Description',
+        value: function ScheduleAction(r) {
+          return <Description.component resource={r} />;
+        },
+      });
+    }
 
     if (hasNSInternalIdLookup) {
       columnData.push({
@@ -40,7 +57,11 @@ export default {
       columnData.push({
         heading: 'Settings',
         value: function ScheduleAction(r) {
-          return <Schedule.component resource={r} />;
+          const settings = flowSettings.find(f => f._id === r._id) || {};
+
+          return (
+            <FlowSettings resource={r} settings={settings} storeId={storeId} />
+          );
         },
       });
     }
@@ -68,6 +89,12 @@ export default {
     columnData.push({
       heading: 'Schedule',
       value: function ScheduleAction(r) {
+        if (r && r.isRealtime) {
+          return 'Realtime';
+        } else if (r && r.isSimpleImport) {
+          return 'Data Loader';
+        }
+
         return <Schedule.component resource={r} />;
       },
     });

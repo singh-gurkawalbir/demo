@@ -14,6 +14,7 @@ export default {
   'as2.maxRetries': {
     type: 'select',
     label: 'Max Retries',
+    defaultValue: r => (r && r.as2 && r.as2.maxRetries) || 0,
     options: [
       {
         items: [

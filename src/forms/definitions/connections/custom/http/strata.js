@@ -19,7 +19,7 @@ export default {
 
       {
         name: 'Ocp-Apim-Subscription-Key',
-        value: '{{{connection.http.encrypted.apiSecret}}}',
+        value: '{{{connection.http.encrypted.subscriptionKey}}}',
       },
       {
         name: 'Token',
@@ -46,7 +46,7 @@ export default {
 
       {
         name: 'ocp-apim-subscription-key',
-        value: '{{{connection.http.encrypted.apiSecret}}}',
+        value: '{{{connection.http.encrypted.subscriptionKey}}}',
       },
     ],
   }),
@@ -59,8 +59,8 @@ export default {
       label: 'Application Key',
       helpText: 'Please enter application key of your Strata account',
     },
-    'http.encrypted.apiSecret': {
-      id: 'http.encrypted.apiSecret',
+    'http.encrypted.subscriptionKey': {
+      id: 'http.encrypted.subscriptionKey',
       required: true,
       type: 'text',
       inputType: 'password',
@@ -79,6 +79,7 @@ export default {
         { field: 'http.encrypted.apiSecret', is: [''] },
       ],
       label: 'Generate Token',
+      required: true,
       defaultValue: '',
       helpText: 'The Access Token of your Strata account',
     },
@@ -87,8 +88,8 @@ export default {
   layout: {
     fields: [
       'name',
+      'http.encrypted.subscriptionKey',
       'http.unencrypted.applicationKey',
-      'http.encrypted.apiSecret',
       'http.auth.token.token',
     ],
     type: 'collapse',

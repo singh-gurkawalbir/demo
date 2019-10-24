@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Drawer, IconButton, Tabs, Tab, Box } from '@material-ui/core';
+import { Drawer, IconButton, Tabs, Tab } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
-import ArrowUpIcon from '../../../components/icons/ArrowUpIcon';
-import ArrowDownIcon from '../../../components/icons/ArrowDownIcon';
-import * as selectors from '../../../reducers';
+import ArrowUpIcon from '../../../../components/icons/ArrowUpIcon';
+import ArrowDownIcon from '../../../../components/icons/ArrowDownIcon';
+import * as selectors from '../../../../reducers';
 import ConnectionPanel from './panels/Connection';
 import RunDashboardPanel from './panels/RunDashboard';
 import AuditPanel from './panels/Audit';
@@ -37,27 +37,29 @@ const useStyles = makeStyles(theme => ({
   tabRoot: {
     flexGrow: 1,
   },
+  tabPanel: {
+    overflow: 'auto',
+  },
   noScroll: {
     overflowY: 'hidden',
   },
 }));
 
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-
+function TabPanel({ children, value, index, classes, ...props }) {
   return (
     <div
       role="tabpanel"
+      className={classes.tabPanel}
       hidden={value !== index}
       id={`tabpanel-${index}`}
       aria-labelledby={`tab-${index}`}
-      {...other}>
-      <Box p={3}>{children}</Box>
+      {...props}>
+      <div>{children}</div>
     </div>
   );
 }
 
-export default function BottomDrawer({ size, setSize }) {
+export default function BottomDrawer({ size, setSize, flow }) {
   const classes = useStyles();
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
   const [tabValue, setTabValue] = useState(0);
@@ -124,14 +126,14 @@ export default function BottomDrawer({ size, setSize }) {
         </IconButton>
       </div>
 
-      <TabPanel value={tabValue} index={0}>
-        <ConnectionPanel />
+      <TabPanel value={tabValue} index={0} size={size} classes={classes}>
+        <ConnectionPanel flow={flow} />
       </TabPanel>
-      <TabPanel value={tabValue} index={1}>
-        <RunDashboardPanel />
+      <TabPanel value={tabValue} index={1} size={size} classes={classes}>
+        <RunDashboardPanel flow={flow} />
       </TabPanel>
-      <TabPanel value={tabValue} index={2}>
-        <AuditPanel />
+      <TabPanel value={tabValue} index={2} size={size} classes={classes}>
+        <AuditPanel flow={flow} />
       </TabPanel>
     </Drawer>
   );

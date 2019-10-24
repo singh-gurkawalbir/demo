@@ -1,22 +1,58 @@
-import { Fragment } from 'react';
+import { useEffect, Fragment } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import Icon from '../../../../components/icons/MapDataIcon';
 import StandaloneImportMapping from '../../../../components/AFE/ImportMapping/StandaloneImportMapping';
+import * as selectors from '../../../../reducers';
+import actions from '../../../../actions';
 
-function ImportMappingDialog({ resource, open, onClose }) {
+function ImportMappingDialog({ flowId, resource, onClose }) {
   const resourceId = resource._id;
   const connectionId = resource._connectionId;
+  const dispatch = useDispatch();
+  const extractFields = useSelector(state =>
+    selectors.getSampleData(state, flowId, resourceId, 'importMappingExtract', {
+      isImport: true,
+    })
+  );
+  const sampleData = useSelector(state =>
+    selectors.getImportSampleData(state, resourceId)
+  );
+
+  useEffect(() => {
+    if (!sampleData) {
+      dispatch(actions.importSampleData.request(resourceId));
+    }
+  }, [dispatch, resourceId, sampleData]);
+
+  useEffect(() => {
+    if (!extractFields) {
+      dispatch(
+        actions.flowData.requestSampleData(
+          flowId,
+          resourceId,
+          'imports',
+          'importMappingExtract'
+        )
+      );
+    }
+  }, [dispatch, extractFields, flowId, resourceId]);
 
   return (
     <Fragment>
-      {open && (
-        <StandaloneImportMapping
-          resourceId={resourceId}
-          connectionId={connectionId}
-          onClose={onClose}
-        />
-      )}
+      <StandaloneImportMapping
+        resourceId={resourceId}
+        extractFields={extractFields}
+        connectionId={connectionId}
+        onClose={onClose}
+      />
     </Fragment>
   );
+}
+
+function ImportMapping(props) {
+  const { open } = props;
+
+  return <Fragment>{open && <ImportMappingDialog {...props} />}</Fragment>;
 }
 
 export default {
@@ -26,5 +62,5 @@ export default {
   Icon,
   helpText:
     'This is the text currently in the hover state of actions in the current FB',
-  Component: ImportMappingDialog,
+  Component: ImportMapping,
 };

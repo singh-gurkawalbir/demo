@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function Status({ children, label, className }) {
+function Status({ children, label, className, onClick }) {
   const classes = useStyles();
 
   return (
@@ -26,7 +26,8 @@ function Status({ children, label, className }) {
       <Button
         data-test="headerStatus"
         variant="text"
-        className={classes.wrapper}>
+        className={classes.wrapper}
+        onClick={onClick}>
         {children}
         <Typography variant="body2" component="span" className={classes.label}>
           {label}

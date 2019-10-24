@@ -1,7 +1,15 @@
 import { adaptorTypeMap } from '../resource';
-import generateList from './sampleGenerateData';
+import generateFields from './sampleGenerateData';
 import MappingUtil from '.';
 import NetsuiteMapping from './application/netsuite';
+
+const LookupResponseMappingExtracts = [
+  'data',
+  'errors',
+  'ignored',
+  'statusCode',
+];
+const ImportResponseMappingExtracts = ['id', 'errors', 'ignored', 'statusCode'];
 
 export default {
   getDefaultDataType: value => {
@@ -104,32 +112,15 @@ export default {
         return 'AS2 Field';
       case adaptorTypeMap.S3Import:
         return 'Import Field (Amazon S3)';
+      case adaptorTypeMap.SalesforceImport:
+        return 'Salesforce Field';
       case adaptorTypeMap.XMLImport:
       case adaptorTypeMap.HTTPImport:
       case adaptorTypeMap.MongodbImport:
       case adaptorTypeMap.WrapperImport:
       case adaptorTypeMap.RDBMSImport:
-      case adaptorTypeMap.SalesforceImport:
       default:
     }
-  },
-  getRecordTypeFromResource: (resourceObj, appType) => {
-    if (!resourceObj) {
-      return;
-    }
-
-    let recordType;
-
-    switch (appType) {
-      case adaptorTypeMap.NetSuiteDistributedImport:
-        recordType =
-          resourceObj.netsuite_da && resourceObj.netsuite_da.recordType;
-        break;
-      case adaptorTypeMap.SalesforceImport:
-      default:
-    }
-
-    return recordType;
   },
   getMappingFromResource: (resourceObj, appType) => {
     if (!resourceObj) {
@@ -147,6 +138,7 @@ export default {
       case adaptorTypeMap.RESTImport:
       case adaptorTypeMap.AS2Import:
       case adaptorTypeMap.FTPImport:
+      case adaptorTypeMap.SalesforceImport:
       case adaptorTypeMap.S3Import:
         mappings = resourceObj.mapping;
         break;
@@ -155,7 +147,6 @@ export default {
       case adaptorTypeMap.MongodbImport:
       case adaptorTypeMap.WrapperImport:
       case adaptorTypeMap.RDBMSImport:
-      case adaptorTypeMap.SalesforceImport:
       default:
     }
 
@@ -177,17 +168,22 @@ export default {
       case adaptorTypeMap.MongodbImport:
       case adaptorTypeMap.WrapperImport:
       case adaptorTypeMap.RDBMSImport:
-        return MappingUtil.getFieldsAndListMappings({ mappings });
       case adaptorTypeMap.SalesforceImport:
+        return MappingUtil.getFieldsAndListMappings({ mappings });
       default:
     }
   },
-  generateMappingsForApp: ({ mappings, generateList, recordType, appType }) => {
+  generateMappingsForApp: ({
+    mappings,
+    generateFields,
+    recordType,
+    appType,
+  }) => {
     switch (appType) {
       case adaptorTypeMap.NetSuiteDistributedImport:
         return NetsuiteMapping.generateMappingFieldsAndList({
           mappings,
-          generateList,
+          generateFields,
           recordType,
         });
       case adaptorTypeMap.RESTImport:
@@ -267,5 +263,16 @@ export default {
 
     return formattedMapping;
   },
-  getSampleGenerateFields: () => generateList,
+  getSampleGenerateFields: () => generateFields,
+  getResponseMappingDefaultExtracts: resourceType => {
+    const extractFields =
+      resourceType === 'imports'
+        ? ImportResponseMappingExtracts
+        : LookupResponseMappingExtracts;
+
+    return extractFields.map(m => ({
+      id: m,
+      name: m,
+    }));
+  },
 };

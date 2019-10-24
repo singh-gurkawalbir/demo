@@ -1,4 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { IconButton, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
@@ -31,27 +32,27 @@ export default function AgentToken({ agentId }) {
     dispatch(actions.agent.changeToken(agentId));
   };
 
-  // TODO: This action needs to be completed...
-  // this is a placeholder for now.
-  const copyToClipboard = accessToken => () => {
-    enqueueSnackbar({
-      message: `Token (${accessToken}) copied to your clipboard!`,
-    });
-  };
-
   return (
     <div className={classes.root}>
       <Typography variant="caption">
         {accessToken || <AccessToken count="24" />}
       </Typography>
       {accessToken && (
-        <IconButton
-          data-test="copyToClipboard"
-          title="Copy to clipboard"
-          onClick={copyToClipboard(accessToken)}
-          size="small">
-          <CopyIcon />
-        </IconButton>
+        <CopyToClipboard
+          text={accessToken}
+          onCopy={() =>
+            enqueueSnackbar({
+              message: 'Token copied to clipboard.',
+              variant: 'success',
+            })
+          }>
+          <IconButton
+            data-test="copyToClipboard"
+            title="Copy to clipboard"
+            size="small">
+            <CopyIcon />
+          </IconButton>
+        </CopyToClipboard>
       )}
       {!accessToken && (
         <IconButton

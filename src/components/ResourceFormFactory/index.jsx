@@ -7,7 +7,7 @@ import resourceConstants from '../../forms/constants/connection';
 import formFactory from '../../forms/formFactory';
 import DynaForm from '../DynaForm';
 import consolidatedActions from './Actions';
-import stringUtil from '../../utils/string';
+import { hashCode } from '../../utils/string';
 import { getResourceSubType } from '../../utils/resource';
 
 const mapStateToProps = (state, { resourceType, resourceId }) => {
@@ -35,7 +35,7 @@ const mapStateToProps = (state, { resourceType, resourceId }) => {
     formState,
     resource,
     lastPatchtimestamp,
-    resourceHash: stringUtil.hashCode(resource.assistantMetadata),
+    resourceHash: hashCode(resource.assistantMetadata),
     /* If we return the assistantMetadata as object, it is causing infinite loop when used as a dependency in useEffect */
   };
 };
@@ -44,9 +44,13 @@ const mapDispatchToProps = dispatch => ({
   handleInitForm: (resourceType, resourceId, isNew) => {
     const skipCommit =
       isNew &&
-      ['imports', 'exports', 'connections', 'pageProcessor'].includes(
-        resourceType
-      );
+      [
+        'imports',
+        'exports',
+        'connections',
+        'pageGenerator',
+        'pageProcessor',
+      ].includes(resourceType);
 
     dispatch(
       actions.resourceForm.init(resourceType, resourceId, isNew, skipCommit)

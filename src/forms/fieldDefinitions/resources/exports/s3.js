@@ -2,8 +2,6 @@ export default {
   's3.region': {
     type: 'select',
     label: 'Region',
-
-    defaultValue: r => r && r.s3 && r.s3.region,
     required: true,
     options: [
       {
@@ -54,18 +52,5 @@ export default {
   's3.keyEndsWith': {
     type: 'text',
     label: 'Key Ends With',
-  },
-  pageSize: {
-    type: 'text',
-    label: 'Page Size',
-    validWhen: [
-      {
-        matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
-      },
-    ],
-  },
-  dataURITemplate: {
-    type: 'relativeuri',
-    label: 'Data URI Template',
   },
 };

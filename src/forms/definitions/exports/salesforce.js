@@ -52,6 +52,7 @@ export default {
     'delta.dateField': {
       id: 'delta.dateField',
       label: 'Date Field',
+      required: true,
       type: 'text',
       visibleWhen: [
         {
@@ -74,6 +75,7 @@ export default {
     'once.booleanField': {
       id: 'once.booleanField',
       label: 'Boolean Field',
+      required: true,
       type: 'text',
       visibleWhen: [
         {
@@ -95,9 +97,6 @@ export default {
     'salesforce.distributed.qualifier': {
       fieldId: 'salesforce.distributed.qualifier',
     },
-    rawData: { fieldId: 'rawData' },
-    transform: { fieldId: 'transform' },
-    hooks: { formId: 'hooks' },
     advancedSettings: { formId: 'advancedSettings' },
   },
   layout: {
@@ -118,16 +117,6 @@ export default {
     ],
     type: 'collapse',
     containers: [
-      {
-        collapsed: true,
-        label: 'Would you like to transform the records?',
-        fields: ['transform'],
-      },
-      {
-        collapsed: true,
-        label: 'Hooks (Optional, Developers Only)',
-        fields: ['hooks'],
-      },
       { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },
     ],
   },
