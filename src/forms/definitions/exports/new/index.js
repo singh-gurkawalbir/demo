@@ -168,7 +168,7 @@ export default {
       const expression = [];
 
       if (['mysql', 'postgresql', 'mssql'].includes(app.type)) {
-        expression.push({ rdbms: { type: app.type } });
+        expression.push({ 'rdbms.type': app.type });
       } else {
         expression.push({ type: app.type });
       }
