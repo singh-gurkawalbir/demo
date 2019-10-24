@@ -82,6 +82,12 @@ export default {
         },
       ],
     },
+    'test.limit': {
+      fieldId: 'test.limit',
+      defaultValue: 1,
+      visible: false,
+      validWhen: [{ field: 'type', is: ['test'] }],
+    },
     'delta.lagOffset': {
       fieldId: 'delta.lagOffset',
       visibleWhen: [{ field: 'type', is: ['delta'] }],
@@ -117,8 +123,6 @@ export default {
       ],
     },
     'netsuite.skipGrouping': { fieldId: 'netsuite.skipGrouping' },
-    rawData: { fieldId: 'rawData' },
-    transform: { fieldId: 'transform' },
   },
   layout: {
     fields: [
@@ -127,20 +131,14 @@ export default {
       'netsuite.webservices.recordType',
       'netsuite.webservices.searchId',
       'type',
+      'test.limit',
       'delta.lagOffset',
       'delta.dateField',
       'once.booleanField',
       'netsuite.skipGrouping',
-      'rawData',
     ],
 
     type: 'collapse',
-    containers: [
-      {
-        collapsed: true,
-        label: 'Would you like to transform the records?',
-        fields: ['transform'],
-      },
-    ],
+    containers: [],
   },
 };
