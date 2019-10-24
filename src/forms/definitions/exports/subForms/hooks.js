@@ -1,6 +1,6 @@
 export default {
   fieldMap: {
-    hookType: { fieldId: 'hookType', defaultValue: 'script' },
+    hookType: { fieldId: 'hookType' },
     'hooks.preSavePage.function': { fieldId: 'hooks.preSavePage.function' },
     'hooks.preSavePage._scriptId': {
       fieldId: 'hooks.preSavePage._scriptId',
