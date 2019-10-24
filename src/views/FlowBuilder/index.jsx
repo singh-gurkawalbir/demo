@@ -418,7 +418,7 @@ function FlowBuilder(props) {
         subtitle={`Last saved: ${isNewFlow ? 'Never' : flow.lastModified}`}
         infoText={flow.description}>
         <div className={classes.actions}>
-          <OnOff.component resource={flow} isNewFlow={isNewFlow} />
+          <OnOff.component resource={flow} disabled={isNewFlow} />
           <IconButton
             disabled={isNewFlow}
             onClick={() => {

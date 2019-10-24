@@ -5,7 +5,7 @@ import { confirmDialog } from '../../../../ConfirmDialog';
 
 export default {
   label: 'Off/On',
-  component: function EnableOrDisableFlow({ resource, isNewFlow }) {
+  component: function EnableOrDisableFlow({ resource, disabled }) {
     const dispatch = useDispatch();
     const enableOrDisableFlow = () => {
       const enable = resource.disabled;
@@ -48,8 +48,8 @@ export default {
 
     return (
       <SwitchOnOff
-        disabled={isNewFlow}
-        on={!isNewFlow && !resource.disabled}
+        disabled={disabled}
+        on={!disabled && !resource.disabled}
         onClick={enableOrDisableFlow}
       />
     );

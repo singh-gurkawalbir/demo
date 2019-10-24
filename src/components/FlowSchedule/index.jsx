@@ -5,6 +5,7 @@ import {
   makeStyles,
   IconButton,
   Typography,
+  Button,
 } from '@material-ui/core';
 import clsx from 'clsx';
 import { Fragment } from 'react';
@@ -81,6 +82,9 @@ export default function FlowSchedule(props) {
           <DynaSubmit onClick={handleSubmit} color="primary">
             Save
           </DynaSubmit>
+          <Button onClick={onClose} variant="contained" color="secondary">
+            Cancel
+          </Button>
         </DynaForm>
       </DialogContent>
     </Fragment>
