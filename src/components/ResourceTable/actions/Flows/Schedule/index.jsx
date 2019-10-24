@@ -1,5 +1,5 @@
 import { useState, Fragment } from 'react';
-import { IconButton } from '@material-ui/core';
+import { IconButton, Dialog } from '@material-ui/core';
 import Icon from '../../../../icons/CalendarIcon';
 import FlowSchedule from '../../../../FlowSchedule';
 
@@ -18,11 +18,13 @@ export default {
     return (
       <Fragment>
         {showSchedule && (
-          <FlowSchedule
-            flow={resource}
-            title="Flow Schedule"
-            onClose={handleClose}
-          />
+          <Dialog open maxWidth={false}>
+            <FlowSchedule
+              flow={resource}
+              title="Flow Schedule"
+              onClose={handleClose}
+            />
+          </Dialog>
         )}
         <IconButton
           data-test="showFlowSchedule"

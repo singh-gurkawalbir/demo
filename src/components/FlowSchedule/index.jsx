@@ -1,12 +1,12 @@
 import { useSelector, useDispatch } from 'react-redux';
 import {
-  Dialog,
   DialogContent,
   DialogTitle,
   makeStyles,
   IconButton,
   Typography,
 } from '@material-ui/core';
+import { Fragment } from 'react';
 import Close from '../icons/CloseIcon';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
@@ -59,7 +59,7 @@ export default function FlowSchedule(props) {
   }
 
   return (
-    <Dialog open maxWidth={false}>
+    <Fragment>
       <IconButton
         data-test="closeFlowSchedule"
         aria-label="Close"
@@ -82,6 +82,6 @@ export default function FlowSchedule(props) {
           </DynaSubmit>
         </DynaForm>
       </DialogContent>
-    </Dialog>
+    </Fragment>
   );
 }
