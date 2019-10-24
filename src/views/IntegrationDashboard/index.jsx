@@ -39,7 +39,7 @@ export default function IntegrationDashboard({ match }) {
 
   return (
     <LoadResources required resources="integrations">
-      <CeligoPageBar title={integration.name}>
+      <CeligoPageBar title={integration && integration.name}>
         <IconTextButton
           data-test="refreshJobs"
           variant="text"

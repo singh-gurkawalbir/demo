@@ -1,19 +1,33 @@
-import { useState, Fragment } from 'react';
-import { useSelector } from 'react-redux';
-import FormControl from '@material-ui/core/FormControl';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
-import Checkbox from '@material-ui/core/Checkbox';
-import { makeStyles } from '@material-ui/core';
-import Button from '@material-ui/core/Button';
+import { useState, useCallback } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import clsx from 'clsx';
+import {
+  makeStyles,
+  MenuItem,
+  Checkbox,
+  Select,
+  FormControlLabel,
+  Button,
+  IconButton,
+} from '@material-ui/core';
 import * as selectors from '../../reducers';
+import actions from '../../actions';
 import ArrowDownIcon from '../icons/ArrowDownIcon';
+import ArrowLeftIcon from '../icons/ArrowLeftIcon';
+import ArrowRightIcon from '../icons/ArrowRightIcon';
 
 const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
     flexWrap: 'wrap',
+    alignItems: 'center',
+    '& > *': {
+      marginRight: 10,
+      // height: 42,
+      '&:first-child': {
+        marginLeft: 10,
+      },
+    },
   },
   select: {
     background: theme.palette.background.paper,
@@ -46,44 +60,63 @@ const useStyles = makeStyles(theme => ({
       paddingLeft: 0,
     },
   },
-  formControl: {
-    margin: theme.spacing(1),
-    minWidth: 200,
+  retry: {
+    width: 140,
+  },
+  resolve: {
+    width: 150,
+  },
+  status: {
+    width: 134,
   },
   selectEmpty: {
     marginTop: theme.spacing.double,
   },
-  btnGroup: {
-    '& button': {
-      marginRight: 10,
-      height: 42,
-      '&:first-child': {
-        marginLeft: 10,
-      },
-    },
+  pagingContainer: {
+    flexGrow: 1,
+    display: 'flex',
+    justifyContent: 'flex-end',
+    alignContent: 'center',
+  },
+  pagingText: {
+    alignSelf: 'center',
   },
 }));
 
 function Filters({
   integrationId,
   flowId,
+  filterKey,
   onFiltersChange,
   onActionClick,
   numJobsSelected = 0,
   disableButtons = true,
 }) {
   const classes = useStyles();
+  const dispatch = useDispatch();
   const [_flowId, setFlowId] = useState('all');
   const [status, setStatus] = useState('all');
   const [hideEmpty, setHideEmpty] = useState(false);
+  const { paging = {}, totalJobs = 0 } = useSelector(state =>
+    selectors.flowJobsPagingDetails(state)
+  );
   const flows = useSelector(
     state => selectors.resourceList(state, { type: 'flows' }).resources
   );
+  const patchFilter = useCallback(
+    (key, value) => {
+      dispatch(actions.patchFilter(filterKey, { [key]: value }));
+    },
+    [dispatch, filterKey]
+  );
   const filteredFlows = flows.filter(flow =>
     !integrationId
-      ? !flow._integrationId
+      ? !flow._integrationId // standalone integration flows
       : flow._integrationId === integrationId
   );
+  const { currentPage, rowsPerPage } = paging;
+  const maxPage = Math.ceil(totalJobs / rowsPerPage) - 1;
+  const firstRowIndex = rowsPerPage * currentPage;
 
   function handleChange(event) {
     const { name, value, checked } = event.target;
@@ -124,125 +157,153 @@ function Filters({
     onFiltersChange(newFilters);
   }
 
-  function handleResolveSelectedJobsClick() {
-    onActionClick('resolveSelected');
+  function handleAction(action) {
+    console.log(action);
+    onActionClick(action);
   }
 
-  function handleResolveAllJobsClick() {
-    onActionClick('resolveAll');
-  }
-
-  function handleRetrySelectedJobsClick() {
-    onActionClick('retrySelected');
-  }
-
-  function handleRetryAllJobsClick() {
-    onActionClick('retryAll');
+  function handlePageChange(offset) {
+    patchFilter('currentPage', paging.currentPage + offset);
   }
 
   return (
-    <Fragment>
-      <div className={classes.btnGroup}>
+    <div className={classes.root}>
+      {numJobsSelected === 0 ? (
+        <Select
+          data-test="retryJobs"
+          className={clsx(classes.select, classes.retry)}
+          onChange={e => handleAction(e.target.value)}
+          displayEmpty
+          value=""
+          IconComponent={ArrowDownIcon}>
+          <MenuItem value="" disabled>
+            Retry
+          </MenuItem>
+          <MenuItem value="retryAll">All jobs</MenuItem>
+          <MenuItem value="retrySelected">
+            {numJobsSelected} selected jobs
+          </MenuItem>
+        </Select>
+      ) : (
         <Button
           data-test="retryAllJobs"
           variant="outlined"
-          color="secondary"
-          onClick={handleRetryAllJobsClick}
+          className={classes.retry}
+          onClick={() => handleAction('retryAll')}
           disabled={disableButtons}>
-          Retry All Jobs
+          Retry all jobs
         </Button>
-        <Button
-          data-test="retrySelectedJobs"
-          variant="outlined"
-          color="secondary"
-          onClick={handleRetrySelectedJobsClick}
-          disabled={disableButtons}>
-          Retry Selected {numJobsSelected} Jobs
-        </Button>
+      )}
+
+      {numJobsSelected ? (
+        <Select
+          data-test="resolveJobs"
+          className={clsx(classes.select, classes.resolve)}
+          onChange={e => handleAction(e.target.value)}
+          displayEmpty
+          value=""
+          IconComponent={ArrowDownIcon}>
+          <MenuItem value="" disabled>
+            Resolve
+          </MenuItem>
+          <MenuItem value="resolveAll">All jobs</MenuItem>
+          <MenuItem value="resolveSelected">
+            {numJobsSelected} selected jobs
+          </MenuItem>
+        </Select>
+      ) : (
         <Button
           data-test="resolveAllJobs"
           variant="outlined"
-          color="secondary"
-          onClick={handleResolveAllJobsClick}
+          className={classes.resolve}
+          onClick={() => handleAction('resolveAll')}
           disabled={disableButtons}>
-          Resolve All Jobs
+          Resolve all jobs
         </Button>
-        <Button
-          data-test="resolveSelectedJobs"
-          variant="outlined"
-          color="secondary"
-          onClick={handleResolveSelectedJobsClick}
-          disabled={disableButtons}>
-          Resolve Selected {numJobsSelected} Jobs
-        </Button>
-      </div>
-      <form className={classes.root} autoComplete="off">
-        {!flowId && (
-          <FormControl className={classes.formControl}>
-            <Select
-              inputProps={{
-                name: '_flowId',
-                id: '_flowId',
-              }}
-              className={classes.select}
-              onChange={handleChange}
-              IconComponent={ArrowDownIcon}
-              value={_flowId}>
-              <MenuItem key="all" value="all">
-                Select a Flow
-              </MenuItem>
-              {filteredFlows.map(opt => (
-                <MenuItem key={opt._id} value={opt._id}>
-                  {opt.name || opt._id}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        )}
-        <FormControl className={classes.formControl}>
-          <Select
+      )}
+
+      {!flowId && (
+        <Select
+          inputProps={{
+            name: '_flowId',
+            id: '_flowId',
+          }}
+          className={classes.select}
+          onChange={handleChange}
+          IconComponent={ArrowDownIcon}
+          value={_flowId}>
+          <MenuItem key="all" value="all">
+            Select a Flow
+          </MenuItem>
+          {filteredFlows.map(opt => (
+            <MenuItem key={opt._id} value={opt._id}>
+              {opt.name || opt._id}
+            </MenuItem>
+          ))}
+        </Select>
+      )}
+
+      <Select
+        inputProps={{
+          name: 'status',
+          id: 'status',
+        }}
+        className={clsx(classes.select, classes.status)}
+        IconComponent={ArrowDownIcon}
+        onChange={handleChange}
+        value={status}>
+        {[
+          ['all', 'Select Status'],
+          ['error', 'Contains Error'],
+          ['resolved', 'Contains Resolved'],
+          ['running', 'In Progress'],
+          ['retrying', 'Retrying'],
+          ['queued', 'Queued'],
+          ['canceled', 'Canceled'],
+          ['completed', 'Completed'],
+          ['failed', 'Failed'],
+        ].map(opt => (
+          <MenuItem key={opt[0]} value={opt[0]}>
+            {opt[1]}
+          </MenuItem>
+        ))}
+      </Select>
+
+      <FormControlLabel
+        control={
+          <Checkbox
             inputProps={{
-              name: 'status',
-              id: 'status',
+              name: 'hideEmpty',
+              id: 'hideEmpty',
             }}
-            className={classes.select}
-            IconComponent={ArrowDownIcon}
+            // indeterminate={numSelected > 0 && numSelected < rowCount}
+            checked={hideEmpty}
             onChange={handleChange}
-            value={status}>
-            {[
-              ['all', 'Select a Status'],
-              ['error', 'Contains Error'],
-              ['resolved', 'Contains Resolved'],
-              ['running', 'In Progress'],
-              ['retrying', 'Retrying'],
-              ['queued', 'Queued'],
-              ['canceled', 'Canceled'],
-              ['completed', 'Completed'],
-              ['failed', 'Failed'],
-            ].map(opt => (
-              <MenuItem key={opt[0]} value={opt[0]}>
-                {opt[1]}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <FormControlLabel
-          control={
-            <Checkbox
-              inputProps={{
-                name: 'hideEmpty',
-                id: 'hideEmpty',
-              }}
-              // indeterminate={numSelected > 0 && numSelected < rowCount}
-              checked={hideEmpty}
-              onChange={handleChange}
-              color="primary"
-            />
-          }
-          label="Hide Empty Jobs"
-        />
-      </form>
-    </Fragment>
+            color="primary"
+          />
+        }
+        label="Hide empty jobs"
+      />
+      <div className={classes.pagingContainer}>
+        <IconButton
+          disabled={currentPage === 0}
+          size="small"
+          onClick={() => handlePageChange(-1)}>
+          <ArrowLeftIcon />
+        </IconButton>
+        <div className={classes.pagingText}>
+          {firstRowIndex + 1} -{' '}
+          {currentPage === maxPage ? totalJobs : firstRowIndex + rowsPerPage} of{' '}
+          {totalJobs}
+        </div>
+        <IconButton
+          disabled={maxPage === currentPage}
+          size="small"
+          onClick={() => handlePageChange(1)}>
+          <ArrowRightIcon />
+        </IconButton>
+      </div>
+    </div>
   );
 }
 

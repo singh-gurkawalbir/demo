@@ -101,10 +101,6 @@ export default function JobDashboard({
     closeSnackbar();
   }
 
-  function handleChangePage(newPage) {
-    patchFilter('currentPage', newPage);
-  }
-
   function handleFiltersChange(newFilters) {
     if (!isEqual(filters, newFilters)) {
       patchFilter('filters', newFilters);
@@ -374,6 +370,7 @@ export default function JobDashboard({
         commStatusHandler={commStatusHandler}
       />
       <Filters
+        filterKey={filterKey}
         integrationId={integrationId}
         flowId={flowId}
         onFiltersChange={handleFiltersChange}
@@ -387,7 +384,6 @@ export default function JobDashboard({
         selectedJobs={selectedJobs}
         userPermissionsOnIntegration={userPermissionsOnIntegration}
         integrationName={integration && integration.name}
-        onChangePage={handleChangePage}
       />
     </LoadResources>
   );
