@@ -41,7 +41,7 @@ function generateNetsuiteOptions(
   metadataType,
   mode,
   filterKey,
-  isFieldMetadata = false,
+  isFieldMetadata,
   recordType,
   selectField
 ) {
@@ -251,7 +251,7 @@ export default (
         metadataType,
         mode,
         filterKey,
-        !!(selectField && recordType),
+        !!(selectField || recordType),
         recordType,
         selectField
       );
