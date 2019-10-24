@@ -7,7 +7,6 @@ import {
   Checkbox,
   Select,
   FormControlLabel,
-  Button,
   IconButton,
 } from '@material-ui/core';
 import * as selectors from '../../reducers';
@@ -18,12 +17,12 @@ import ArrowRightIcon from '../icons/ArrowRightIcon';
 
 const useStyles = makeStyles(theme => ({
   root: {
+    padding: theme.spacing(2),
     display: 'flex',
     flexWrap: 'wrap',
     alignItems: 'center',
     '& > *': {
       marginRight: 10,
-      // height: 42,
       '&:first-child': {
         marginLeft: 10,
       },
@@ -32,6 +31,7 @@ const useStyles = makeStyles(theme => ({
   select: {
     background: theme.palette.background.paper,
     border: '1px solid',
+    paddingRight: theme.spacing(3),
     borderColor: theme.palette.secondary.lightest,
     transitionProperty: 'border',
     transitionDuration: theme.transitions.duration.short,
@@ -61,16 +61,23 @@ const useStyles = makeStyles(theme => ({
     },
   },
   retry: {
-    width: 140,
+    minWidth: 90,
   },
   resolve: {
-    width: 150,
+    minWidth: 100,
   },
   status: {
-    width: 134,
+    minWidth: 134,
+  },
+  flow: {
+    minWidth: 130,
+    maxWidth: 200,
   },
   selectEmpty: {
     marginTop: theme.spacing.double,
+  },
+  hideEmptyLabel: {
+    marginTop: theme.spacing(0.5),
   },
   pagingContainer: {
     flexGrow: 1,
@@ -89,7 +96,7 @@ function Filters({
   filterKey,
   onActionClick,
   numJobsSelected = 0,
-  disableButtons = true,
+  disableActions = true,
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -122,12 +129,17 @@ function Filters({
         filter.flowId = value;
       }
 
-      // TODO: Shiva, this bock below seems like it belongs in the data-layer.
-      // Now that the filter criteria is in app-state, you will have access
+      // TODO: Shiva, this block below seems like it belongs in the data-layer.
+      // Now that the filter criteria is in app-state now and you will have access
       // to it simply by selecting the 'jobs' filter in your sagas/reducers.
-      // possibly if you need it in your reducers, you will need to implement the reducer
+      // Possibly if you need it in your reducers, you will need to implement the reducer
       // in the state-tree at a shared node that has visibility into the filter
       // state && jobs state.
+      // To make the existing data-layer code work, i'm duplicating the status such
+      // that the data-layer gets the mutated value it expects and this component can use
+      // the value matching the select options. Ideally we only store the select options
+      // value and the data-layer translates the value into whatever it needs to
+      // apply the filter properly (errors and resolved act like all)
       if (key === '_status') {
         filter.numError_gte = value === 'error' ? 1 : 0;
         filter.numResolved_gte = value === 'resolved' ? 1 : 0;
@@ -160,67 +172,48 @@ function Filters({
 
   return (
     <div className={classes.root}>
-      {numJobsSelected === 0 ? (
-        <Select
-          data-test="retryJobs"
-          className={clsx(classes.select, classes.retry)}
-          onChange={e => handleAction(e.target.value)}
-          displayEmpty
-          value=""
-          IconComponent={ArrowDownIcon}>
-          <MenuItem value="" disabled>
-            Retry
-          </MenuItem>
-          <MenuItem value="retryAll">All jobs</MenuItem>
-          <MenuItem value="retrySelected">
-            {numJobsSelected} selected jobs
-          </MenuItem>
-        </Select>
-      ) : (
-        <Button
-          data-test="retryAllJobs"
-          variant="outlined"
-          className={classes.retry}
-          onClick={() => handleAction('retryAll')}
-          disabled={disableButtons}>
-          Retry all jobs
-        </Button>
-      )}
+      <Select
+        disabled={disableActions}
+        data-test="retryJobs"
+        className={clsx(classes.select, classes.retry)}
+        onChange={e => handleAction(e.target.value)}
+        displayEmpty
+        value=""
+        IconComponent={ArrowDownIcon}>
+        <MenuItem value="" disabled>
+          Retry
+        </MenuItem>
+        <MenuItem value="retryAll">All jobs</MenuItem>
+        <MenuItem disabled={numJobsSelected === 0} value="retrySelected">
+          {numJobsSelected} selected jobs
+        </MenuItem>
+      </Select>
 
-      {numJobsSelected ? (
-        <Select
-          data-test="resolveJobs"
-          className={clsx(classes.select, classes.resolve)}
-          onChange={e => handleAction(e.target.value)}
-          displayEmpty
-          value=""
-          IconComponent={ArrowDownIcon}>
-          <MenuItem value="" disabled>
-            Resolve
-          </MenuItem>
-          <MenuItem value="resolveAll">All jobs</MenuItem>
-          <MenuItem value="resolveSelected">
-            {numJobsSelected} selected jobs
-          </MenuItem>
-        </Select>
-      ) : (
-        <Button
-          data-test="resolveAllJobs"
-          variant="outlined"
-          className={classes.resolve}
-          onClick={() => handleAction('resolveAll')}
-          disabled={disableButtons}>
-          Resolve all jobs
-        </Button>
-      )}
+      <Select
+        disabled={disableActions}
+        data-test="resolveJobs"
+        className={clsx(classes.select, classes.resolve)}
+        onChange={e => handleAction(e.target.value)}
+        displayEmpty
+        value=""
+        IconComponent={ArrowDownIcon}>
+        <MenuItem value="" disabled>
+          Resolve
+        </MenuItem>
+        <MenuItem value="resolveAll">All jobs</MenuItem>
+        <MenuItem value="resolveSelected" disabled={numJobsSelected === 0}>
+          {numJobsSelected} selected jobs
+        </MenuItem>
+      </Select>
 
       {!flowId && (
         <Select
-          className={classes.select}
+          className={clsx(classes.select, classes.flow)}
           onChange={e => patchFilter('_flowId', e.target.value)}
           IconComponent={ArrowDownIcon}
-          value={_flowId}>
-          <MenuItem value="">Select a Flow</MenuItem>
+          displayEmpty
+          value={_flowId || ''}>
+          <MenuItem value="">Select flow</MenuItem>
           {filteredFlows.map(opt => (
             <MenuItem key={opt._id} value={opt._id}>
               {opt.name || opt._id}
@@ -253,6 +246,7 @@ function Filters({
 
       <FormControlLabel
         label="Hide empty jobs"
+        classes={{ label: classes.hideEmptyLabel }}
         control={
           <Checkbox
             // indeterminate={numSelected > 0 && numSelected < rowCount}

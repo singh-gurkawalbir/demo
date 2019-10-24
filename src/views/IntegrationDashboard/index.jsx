@@ -13,7 +13,7 @@ import SettingsIcon from '../../components/icons/SettingsIcon';
 
 const useStyles = makeStyles(theme => ({
   dashboardContainer: {
-    padding: theme.spacing(3),
+    padding: theme.spacing(0),
   },
 }));
 

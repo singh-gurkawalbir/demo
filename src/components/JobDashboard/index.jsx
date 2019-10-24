@@ -34,7 +34,7 @@ export default function JobDashboard({
   );
   const [selectedJobs, setSelectedJobs] = useState({});
   const [numJobsSelected, setNumJobsSelected] = useState(0);
-  const [disableButtons, setDisableButtons] = useState(true);
+  const [disableActions, setActionsButtons] = useState(true);
   const [actionsToMonitor, setActionsToMonitor] = useState({});
   const jobs = useSelector(state => selectors.flowJobs(state));
   const patchFilter = useCallback(
@@ -74,7 +74,7 @@ export default function JobDashboard({
   }, [dispatch, integrationId, flowId, filterHash, jobs.length]);
 
   useEffect(() => {
-    setDisableButtons(isBulkRetryInProgress || jobs.length === 0);
+    setActionsButtons(isBulkRetryInProgress || jobs.length === 0);
   }, [isBulkRetryInProgress, jobs.length]);
 
   useEffect(() => {
@@ -367,7 +367,7 @@ export default function JobDashboard({
         flowId={flowId}
         numJobsSelected={numJobsSelected}
         onActionClick={handleActionClick}
-        disableButtons={disableButtons}
+        disableButtons={disableActions}
       />
       <JobTable
         onSelectChange={handleSelectChange}
