@@ -17,7 +17,7 @@ import LoadResources from '../../../components/LoadResources';
  */
 
 export default function StandaloneImportMapping(props) {
-  const { id, resourceId, onClose, connectionId, extractFields } = props;
+  const { id, resourceId, onClose, connectionId } = props;
   const dispatch = useDispatch();
   const resourceData = useSelector(state =>
     selectors.resource(state, 'imports', resourceId)
@@ -36,6 +36,7 @@ export default function StandaloneImportMapping(props) {
     options.connectionId = connectionId;
   }
 
+  const extractFields = [];
   const mappings = MappingUtil.getMappingFromResource(
     resourceData,
     resourceType.type
