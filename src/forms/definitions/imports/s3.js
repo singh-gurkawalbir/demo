@@ -72,7 +72,7 @@ export default {
             `${textBeforeBraces}{{timestamp(${timestamp._id})}}.${extension}`
         );
 
-        fileNameField.value = suggestionList.length && suggestionList[0];
+        fileNameField.value = `${fileNameWithoutExt}.${extension}`;
       }
 
       return { suggestions: suggestionList };
@@ -93,14 +93,10 @@ export default {
       else if (fileType.value === 'fixed') definitionFieldId = 'fixed.format';
       else definitionFieldId = 'edifact.format';
       const definition = fields.find(field => field.id === definitionFieldId);
-      const resourcePath = fields.find(
-        field => field.id === 'file.fileDefinition.resourcePath'
-      );
 
       return {
         format: definition && definition.format,
         definitionId: definition && definition.value,
-        resourcePath: resourcePath && resourcePath.value,
       };
     }
 
