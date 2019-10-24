@@ -1,3 +1,5 @@
+import { URI_VALIDATION_PATTERN } from '../../../utils/constants';
+
 export default {
   name: {
     type: 'text',
@@ -27,8 +29,7 @@ export default {
     ],
     validWhen: {
       matchesRegEx: {
-        // eslint-disable-next-line no-useless-escape
-        pattern: /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/,
+        pattern: URI_VALIDATION_PATTERN,
         message: 'Please enter a valid URI.',
       },
     },
