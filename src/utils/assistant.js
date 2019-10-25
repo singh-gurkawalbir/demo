@@ -1216,7 +1216,7 @@ export function convertFromImport({ importDoc, assistantData, adaptorType }) {
         importURLs.push(url2Info.urlMatch);
       }
 
-      if (!operation) {
+      if (!operation && importURLs[0]) {
         operation = [
           importDoc[adaptorType].method.join(':'),
           importURLs.join(':'),
