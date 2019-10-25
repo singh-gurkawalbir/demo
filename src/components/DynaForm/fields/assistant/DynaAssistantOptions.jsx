@@ -6,7 +6,14 @@ import { SCOPES } from '../../../../sagas/resourceForm';
 import { selectOptions } from './util';
 
 export default function DynaAssistantOptions(props) {
-  const { label, resourceContext, options, assistantFieldType } = props;
+  const {
+    label,
+    resourceContext,
+    options,
+    resourceType,
+    resourceId,
+    assistantFieldType,
+  } = props;
   const assistantData = useSelector(state =>
     selectors.assistantData(state, {
       adaptorType: options.adaptorType,
@@ -73,6 +80,10 @@ export default function DynaAssistantOptions(props) {
           patch,
           SCOPES.VALUE
         )
+      );
+
+      dispatch(
+        actions.resourceForm.init(resourceType, resourceId, false, false)
       );
     }
   }

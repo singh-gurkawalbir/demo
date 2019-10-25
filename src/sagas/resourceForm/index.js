@@ -269,6 +269,7 @@ export function* initFormValues({
   isNew,
   skipCommit,
 }) {
+  const developerMode = yield select(selectors.developerMode);
   const { merged: resource } = yield select(
     selectors.resourceData,
     resourceType,
@@ -322,7 +323,13 @@ export function* initFormValues({
       ? customForm.form
       : defaultFormAssets.fieldMeta;
   //
-  const fieldMeta = factory.getFieldsWithDefaults(form, resourceType, resource);
+  const fieldMeta = factory.getFieldsWithDefaults(
+    form,
+    resourceType,
+    resource,
+    false,
+    developerMode
+  );
   let finalFieldMeta = fieldMeta;
 
   if (customForm && customForm.init) {
