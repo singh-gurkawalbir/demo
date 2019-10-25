@@ -16,6 +16,8 @@ export default {
   },
   'http.headers': {
     type: 'keyvalue',
+    keyName: 'name',
+    valueName: 'value',
     label: 'Configure HTTP Headers',
   },
   'http.requestMediaType': {
