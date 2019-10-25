@@ -1,8 +1,10 @@
 import { useSelector, useDispatch } from 'react-redux';
 import Input from '@material-ui/core/Input';
 import { makeStyles } from '@material-ui/core/styles';
+import { IconButton } from '@material-ui/core';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
+import CloseIcon from '../../icons/CloseIcon';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -27,6 +29,15 @@ export default function TransformPanel(props) {
   const dispatch = useDispatch();
   const patchEditor = value => {
     dispatch(actions.editor.patch(editorId, { rule: value }));
+  };
+
+  const handleDelete = row => () => {
+    const { rule } = editor;
+
+    if (rule[row]) {
+      rule.splice(row, 1);
+      patchEditor(rule);
+    }
   };
 
   const handleUpdate = (row, event, field) => {
@@ -73,6 +84,13 @@ export default function TransformPanel(props) {
             className={classes.input}
             onChange={handleGenerateUpdate(r.row)}
           />
+          <IconButton
+            data-test="deleteTransformation"
+            aria-label="delete"
+            onClick={handleDelete(r.row)}
+            className={classes.margin}>
+            <CloseIcon />
+          </IconButton>
         </div>
       ))}
       <div key="new" className={classes.rowContainer}>
@@ -88,6 +106,13 @@ export default function TransformPanel(props) {
           className={classes.input}
           onChange={handleGenerateUpdate()}
         />
+        <IconButton
+          data-test="deleteTransformation"
+          aria-label="delete"
+          disabled
+          className={classes.margin}>
+          <CloseIcon />
+        </IconButton>
       </div>
     </div>
   );
