@@ -65,7 +65,13 @@ export default function IntegrationSettings(props) {
   return (
     <LoadResources required resources="integrations">
       <div>
-        <CeligoPageBar title={integration.name} />
+        <CeligoPageBar title={integration.name}>
+          <a
+            href={getRoutePath(`integrations/${integrationId}/dashboard`)}
+            className={classes.dashboard}>
+            Dashboard
+          </a>
+        </CeligoPageBar>
         <Divider />
         <div className={classes.root}>
           <div className={classes.flex}>
