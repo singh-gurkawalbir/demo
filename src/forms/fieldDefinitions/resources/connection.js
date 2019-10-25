@@ -4,8 +4,13 @@ export default {
   // agent list handleBars evaluated its a dynamicList
   _borrowConcurrencyFromConnectionId: {
     resourceType: 'connections',
-    filter: r => ({ type: r.type }),
-    excludeFilter: r => ({ _id: r._id }),
+    filter: r => ({
+      $and: [
+        { type: r.type },
+        { _id: { $ne: r._id } },
+        { _connectorId: { $exists: false } },
+      ],
+    }),
     type: 'selectresource',
     label: 'Borrow Concurrency From',
   },
