@@ -25,16 +25,16 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function DynaKeyValue(props) {
+export function KeyValueComponent(props) {
   const {
-    id,
     value,
-    onFieldChange,
+    onUpdate,
     label,
+    dataTest,
     keyName = 'key',
     valueName = 'value',
+    classes,
   } = props;
-  const classes = useStyles();
   const [values, setValues] = useState([]);
   const [rowInd, setRowInd] = useState(0);
   const [isKey, setIsKey] = useState(true);
@@ -66,7 +66,7 @@ export default function DynaKeyValue(props) {
         : removedEmptyValues.length - 1
     );
     setIsKey(field === keyName);
-    onFieldChange(id, removedEmptyValues);
+    onUpdate(removedEmptyValues);
   };
 
   const tableData = values ? values.map((r, n) => ({ ...r, row: n })) : [];
@@ -74,7 +74,7 @@ export default function DynaKeyValue(props) {
   const handleValueUpdate = row => event => handleUpdate(row, event, valueName);
 
   return (
-    <div data-test={id} className={classes.container}>
+    <div data-test={dataTest} className={classes.container}>
       <FormLabel className={classes.label}>{label}</FormLabel>
       <Fragment key={`${rowInd}-${isKey}`}>
         {tableData.map(r => (
@@ -114,8 +114,27 @@ export default function DynaKeyValue(props) {
           onChange={handleValueUpdate()}
         />
       </div>
-
-      <ErroredMessageComponent {...props} />
     </div>
+  );
+}
+
+export default function DynaKeyValue(props) {
+  const { id, onFieldChange } = props;
+  const onUpdate = values => {
+    onFieldChange(id, values);
+  };
+
+  const classes = useStyles();
+
+  return (
+    <Fragment>
+      <KeyValueComponent
+        {...props}
+        dataTest={id}
+        onUpdate={onUpdate}
+        classes={classes}
+      />
+      <ErroredMessageComponent {...props} />
+    </Fragment>
   );
 }
