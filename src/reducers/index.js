@@ -27,6 +27,7 @@ import {
   pingConnectionParams,
 } from '../sagas/api/apiPaths';
 import { getFieldById } from '../forms/utils';
+import { upgradeButtonText, expiresInfo } from '../utils/license';
 import commKeyGen from '../utils/commKeyGenerator';
 import { isRealtimeExport, isSimpleImportFlow, isRunnable } from './flowsUtil';
 
@@ -594,6 +595,10 @@ export function filteredResourceList(state, resource, resourceType) {
     : matchingStackList(state);
 }
 
+export function integrationAppList(state) {
+  return fromData.integrationAppList(state && state.data);
+}
+
 export function marketplaceConnectors(state, application, sandbox) {
   const licenses = fromUser.licenses(state && state.user);
   const connectors = fromData.marketplaceConnectors(
@@ -700,6 +705,10 @@ export function integrationAppSettingsFormState(state, integrationId, flowId) {
   );
 }
 
+export function checkUpgradeRequested(state, licenseId) {
+  return fromSession.checkUpgradeRequested(state && state.session, licenseId);
+}
+
 export function integrationConnectionList(state, integrationId) {
   const integration = resource(state, 'integrations', integrationId) || {};
   let { resources = [] } = resourceListWithPermissions(state, {
@@ -769,6 +778,41 @@ export function integrationAppSettings(state, id, storeId) {
   return { ...integrationResource, ...uninstallSteps };
 }
 
+export function integrationAppLicense(state, id) {
+  if (!state) return {};
+  const integrationResource = fromData.integrationAppSettings(state.data, id);
+  const { connectorEdition: edition } = integrationResource.settings || {};
+  const userLicenses = fromUser.licenses(state && state.user) || [];
+  const license = userLicenses.find(l => l._integrationId === id) || {};
+  const upgradeRequested = checkUpgradeRequested(state, license._id);
+  const { expires, created } = license;
+  const hasExpired = moment(expires) - moment() < 0;
+  const createdFormatted = `Started on ${moment(created).format(
+    'MMM Do, YYYY'
+  )}`;
+  const isExpiringSoon =
+    moment.duration(moment(expires) - moment()).as('days') <= 15;
+  const expiresText = expiresInfo(license);
+  const upgradeText = upgradeButtonText(
+    license,
+    integrationResource,
+    upgradeRequested
+  );
+  const plan = `${
+    edition ? edition.charAt(0).toUpperCase() + edition.slice(1) : 'Standard'
+  } Plan`;
+
+  return {
+    ...license,
+    plan,
+    expiresText,
+    upgradeText,
+    upgradeRequested: !!upgradeRequested,
+    createdText: createdFormatted,
+    showLicenseExpiringWarning: hasExpired || isExpiringSoon,
+  };
+}
+
 export function integrationAppFlowSections(state, id, store) {
   if (!state) return [];
   let flowSections = [];
@@ -792,7 +836,7 @@ export function integrationAppFlowSections(state, id, store) {
 
   return flowSections.map(sec => ({
     ...sec,
-    titleId: sec.title.replace(/\s/g, ''),
+    titleId: sec.title ? sec.title.replace(/\s/g, '') : '',
   }));
 }
 

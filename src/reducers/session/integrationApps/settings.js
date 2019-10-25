@@ -2,7 +2,7 @@ import produce from 'immer';
 import actionTypes from '../../../actions/types';
 
 export default (state = {}, action) => {
-  const { type, integrationId, flowId } = action;
+  const { type, integrationId, flowId, licenseId } = action;
   const key = `${integrationId}-${flowId}`;
 
   return produce(state, draft => {
@@ -17,6 +17,9 @@ export default (state = {}, action) => {
       case actionTypes.INTEGRATION_APPS.SETTINGS.FORM.CLEAR:
         delete draft[key];
         break;
+      case actionTypes.INTEGRATION_APPS.SETTINGS.UPGRADE_REQUESTED:
+        draft[licenseId] = true;
+        break;
     }
   });
 };
@@ -30,5 +33,13 @@ export function integrationAppSettingsFormState(state, integrationId, flowId) {
   const key = `${integrationId}-${flowId}`;
 
   return state[key] || {};
+}
+
+export function checkUpgradeRequested(state, licenseId) {
+  if (!state) {
+    return false;
+  }
+
+  return !!state[licenseId];
 }
 // #endregion

@@ -19,6 +19,7 @@ import ChipInput from '../../../components/ChipInput';
 import Flows from './Flows';
 import Users from '../../IntegrationSettings/Users';
 import GeneralSection from './GeneralSection';
+import Subscription from './Subscription';
 import AuditLog from '../../IntegrationSettings/AuditLog';
 import Uninstall from './Uninstall';
 import Connections from '../../IntegrationSettings/Connections';
@@ -284,6 +285,10 @@ export default function IntegrationAppSettings(props) {
                 <LHSItem to={`${urlPrefix}/connections`} label="Connections" />
                 <LHSItem to={`${urlPrefix}/users`} label="Users" />
                 <LHSItem to={`${urlPrefix}/audit`} label="Audit Log" />
+                <LHSItem
+                  to={`${urlPrefix}/subscription`}
+                  label="Subscription"
+                />
                 <LHSItem to={`${urlPrefix}/uninstall`} label="Uninstall" />
               </List>
             </Drawer>
@@ -305,6 +310,12 @@ export default function IntegrationAppSettings(props) {
                 render={props => (
                   <Connections {...props} storeId={currentStore} />
                 )}
+              />
+              <Route
+                path={getRoutePath(
+                  `/connectors/:integrationId/settings/subscription`
+                )}
+                component={Subscription}
               />
               <Route
                 path={getRoutePath(
