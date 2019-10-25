@@ -1,12 +1,15 @@
 import { FormContext } from 'react-forms-processor/dist';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Typography from '@material-ui/core/Typography';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import FormGenerator from '../';
-import { isExpansionPanelErrored } from '../../../../forms/utils';
+import {
+  isExpansionPanelErrored,
+  isAnyExpansionPanelFieldVisible,
+} from '../../../../forms/utils';
 
 export default function CollapsedComponents(props) {
   const { containers, fieldMap, classes } = props;
@@ -47,6 +50,23 @@ const ExpansionPannelExpandOnInValidState = props => {
     fieldMap,
   } = props;
   const [shouldExpand, setShouldExpand] = useState(!collapsed);
+  const [visible, setVisible] = useState(true);
+  const [componentLoaded, setComponentLoaded] = useState(false);
+
+  useEffect(() => {
+    setComponentLoaded(true);
+  }, []);
+
+  // we need to let the component mount and the field state settle before determing if they need to be removed
+  useEffect(() => {
+    if (componentLoaded) {
+      if (isAnyExpansionPanelFieldVisible({ layout, fieldMap }, form.fields))
+        setVisible(true);
+      else setVisible(false);
+    }
+  }, [componentLoaded, fieldMap, form.fields, layout]);
+
+  if (!visible) return null;
 
   return (
     <div className={classes.child}>
