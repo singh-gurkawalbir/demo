@@ -1,4 +1,4 @@
-import { useReducer, useEffect, useState, useCallback } from 'react';
+import { useReducer, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import produce from 'immer';
@@ -19,7 +19,6 @@ import MappingSettings from '../ImportMappingSettings/MappingSettingsField';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import DynaTypeableSelect from '../../DynaForm/fields/DynaTypeableSelect';
 import MappingUtil from '../../../utils/mapping';
-import * as ResourceUtil from '../../../utils/resource';
 import CloseIcon from '../../icons/CloseIcon';
 
 const useStyles = makeStyles(theme => ({
@@ -133,15 +132,13 @@ export default function ImportMapping(props) {
     mappings = {},
     lookups = [],
     application,
+    resourceId,
     isStandaloneMapping,
-    // TODO: Check if generate field can be eliminated from props
-    generateFields = [],
     extractFields = [],
     onCancel,
     onSave,
     options = {},
   } = props;
-  let formattedGenerateFields = generateFields;
   const [changeIdentifier, setChangeIdentifier] = useState(0);
   const [lookupState, setLookup] = useState(lookups);
   const classes = useStyles();
@@ -149,61 +146,20 @@ export default function ImportMapping(props) {
   const [state, dispatchLocalAction] = useReducer(reducer, mappings || {});
   const mappingsTmp = deepClone(state);
   const dispatch = useDispatch();
-  const { data } = useSelector(state => {
-    if (application === 'salesforce') {
-      return selectors.metadataOptionsAndResources(
-        state,
-        options.connectionId,
-        'salesforce',
-        'sObjectTypes',
-        '',
-        options.sObjectType,
-        null
-      );
-    }
-
-    return {};
-  });
-  const handleFetchResource = useCallback(() => {
-    if (application === ResourceUtil.adaptorTypeMap.SalesforceImport) {
-      dispatch(
-        actions.metadata.request({
-          connectionId: options.connectionId,
-          metadataType: 'sObjectTypes',
-          mode: 'salesforce',
-          filterKey: null,
-          recordType: options.sObjectType,
-          selectField: null,
-        })
-      );
-
-      // TODO: for netsuite
-      // if (
-      //   application === ResourceUtil.adaptorTypeMap.NetSuiteDistributedImport
-      // ) {
-      // }
-    }
-  }, [application, dispatch, options.connectionId, options.sObjectType]);
+  const sampleData = useSelector(state =>
+    selectors.getImportSampleData(state, resourceId)
+  );
 
   useEffect(() => {
-    if (application === ResourceUtil.adaptorTypeMap.SalesforceImport) {
-      if (!data) {
-        handleFetchResource();
-      }
+    if (!sampleData) {
+      dispatch(actions.importSampleData.request(resourceId));
     }
-  }, [application, data, handleFetchResource]);
+  }, [sampleData, dispatch, resourceId]);
 
-  if (application === ResourceUtil.adaptorTypeMap.SalesforceImport) {
-    formattedGenerateFields =
-      data &&
-      data.map(d => ({
-        id: d.value,
-        name: d.label,
-        type: d.type,
-        options: d.picklistValues,
-      }));
-  }
-
+  const formattedGenerateFields = MappingUtil.getFormattedGenerateData(
+    sampleData,
+    application
+  );
   const validateMapping = mappings => {
     const duplicateMappings = mappings
       .map(e => e.generate)
@@ -271,7 +227,7 @@ export default function ImportMapping(props) {
     if (validateMapping(mappings)) {
       mappings = MappingUtil.generateMappingsForApp({
         mappings,
-        generateFields,
+        formattedGenerateFields,
         appType: application,
       });
 

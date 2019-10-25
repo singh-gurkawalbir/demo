@@ -72,7 +72,7 @@ export default {
             `${textBeforeBraces}{{timestamp(${timestamp._id})}}.${extension}`
         );
 
-        fileNameField.value = suggestionList.length && suggestionList[0];
+        fileNameField.value = `${fileNameWithoutExt}.${extension}`;
       }
 
       return { suggestions: suggestionList };
@@ -124,12 +124,6 @@ export default {
     'ftp.useTempFile': { fieldId: 'ftp.useTempFile' },
     'ftp.inProgressFileName': { fieldId: 'ftp.inProgressFileName' },
     fileAdvancedSettings: { formId: 'fileAdvancedSettings' },
-    hooks: { formId: 'hooks' },
-    'hooks.postAggregate.function': { fieldId: 'hooks.postAggregate.function' },
-    'hooks.postAggregate._scriptId': {
-      fieldId: 'hooks.postAggregate._scriptId',
-    },
-    'hooks.postAggregate._stackId': { fieldId: 'hooks.postAggregate._stackId' },
   },
   layout: {
     fields: [
@@ -153,16 +147,6 @@ export default {
           'ftp.useTempFile',
           'ftp.inProgressFileName',
           'fileAdvancedSettings',
-        ],
-      },
-      {
-        collapsed: false,
-        label: 'Hooks (Optional, Developers Only)',
-        fields: [
-          'hooks',
-          'hooks.postAggregate.function',
-          'hooks.postAggregate._scriptId',
-          'hooks.postAggregate._stackId',
         ],
       },
     ],

@@ -125,7 +125,6 @@ export default {
     advancedSettings: { formId: 'advancedSettings' },
     'http.configureAsyncHelper': { fieldId: 'http.configureAsyncHelper' },
     'http._asyncHelperId': { fieldId: 'http._asyncHelperId' },
-    hooks: { formId: 'hooks' },
   },
   layout: {
     fields: [
@@ -181,11 +180,6 @@ export default {
           'http.configureAsyncHelper',
           'http._asyncHelperId',
         ],
-      },
-      {
-        collapsed: false,
-        label: 'Hooks (Optional, Developers Only)',
-        fields: ['hooks'],
       },
     ],
   },

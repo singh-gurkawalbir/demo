@@ -1,3 +1,5 @@
+import { URI_VALIDATION_PATTERN } from '../../../utils/constants';
+
 export default {
   name: {
     type: 'text',
@@ -25,6 +27,12 @@ export default {
         is: ['server'],
       },
     ],
+    validWhen: {
+      matchesRegEx: {
+        pattern: URI_VALIDATION_PATTERN,
+        message: 'Please enter a valid URI.',
+      },
+    },
   },
   'lambda.accessKeyId': {
     type: 'text',

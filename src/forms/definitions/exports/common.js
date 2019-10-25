@@ -6,10 +6,6 @@ export default {
       formId: 'ftp',
       visibleWhenAll: [{ field: 'assistant', is: ['ftp'] }],
     },
-    'transform.expression.rules': {
-      fieldId: 'transform.expression.rules',
-      visibleWhen: [{ field: 'assistant', is: ['ftp'] }],
-    },
     asynchronous: { fieldId: 'asynchronous' },
     apiIdentifier: { fieldId: 'apiIdentifier' },
     type: { fieldId: 'type' },
@@ -29,7 +25,6 @@ export default {
       'name',
       'description',
       'ftp',
-      'transform.expression.rules',
       'asynchronous',
       'apiIdentifier',
       'type',
