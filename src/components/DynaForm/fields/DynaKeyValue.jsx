@@ -1,9 +1,9 @@
 import { useState, useEffect, Fragment } from 'react';
 import Input from '@material-ui/core/Input';
 import { makeStyles } from '@material-ui/core/styles';
-import FormLabel from '@material-ui/core/FormLabel';
-import FormControl from '@material-ui/core/FormControl';
+import { IconButton, FormControl, FormLabel } from '@material-ui/core';
 import ErroredMessageComponent from './ErroredMessageComponent';
+import CloseIcon from '../../icons/CloseIcon';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -34,6 +34,7 @@ export function KeyValueComponent(props) {
     keyName = 'key',
     valueName = 'value',
     classes,
+    showDelete,
   } = props;
   const [values, setValues] = useState([]);
   const [rowInd, setRowInd] = useState(0);
@@ -44,6 +45,16 @@ export function KeyValueComponent(props) {
       setValues(value);
     }
   }, [value]);
+
+  const handleDelete = row => () => {
+    const valueTmp = [...values];
+
+    if (valueTmp[row]) {
+      valueTmp.splice(row, 1);
+      setValues(valueTmp);
+      onUpdate(valueTmp);
+    }
+  };
 
   const handleUpdate = (row, event, field) => {
     const { value } = event.target;
@@ -97,6 +108,14 @@ export function KeyValueComponent(props) {
                 onChange={handleValueUpdate(r.row)}
               />
             </FormControl>
+            {showDelete && (
+              <IconButton
+                data-test="deleteKeyValue"
+                aria-label="delete"
+                onClick={handleDelete(r.row)}>
+                <CloseIcon />
+              </IconButton>
+            )}
           </div>
         ))}
       </Fragment>
@@ -113,6 +132,11 @@ export function KeyValueComponent(props) {
           className={classes.input}
           onChange={handleValueUpdate()}
         />
+        {showDelete && (
+          <IconButton data-test="deleteKeyValue" aria-label="delete" disabled>
+            <CloseIcon />
+          </IconButton>
+        )}
       </div>
     </div>
   );

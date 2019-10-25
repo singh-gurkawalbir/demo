@@ -163,7 +163,7 @@ class EditorDialog extends Component {
           <Button
             variant="contained"
             data-test="saveEditor"
-            disabled={disableSave}
+            disabled={!!disableSave}
             color="primary"
             onClick={() => this.handleClose(true)}>
             Save

@@ -34,6 +34,7 @@ export default function TransformPanel(props) {
       {...props}
       dataTest={editorId}
       onUpdate={patchEditor}
+      showDelete
       classes={classes}
       value={editor.rule}
       keyName="extract"
