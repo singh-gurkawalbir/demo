@@ -1,4 +1,4 @@
-import { Typography, Button } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles(theme => ({
@@ -14,13 +14,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function TitleBar({
-  title,
-  submitLabel = 'Save',
-  onSubmit,
-  history,
-}) {
-  const handleClose = () => history.goBack();
+export default function TitleBar({ title }) {
   const classes = useStyles();
 
   return (
@@ -28,12 +22,6 @@ export default function TitleBar({
       <Typography variant="h5" className={classes.title}>
         {title}
       </Typography>
-      <Button onClick={handleClose} variant="text" color="secondary">
-        Cancel
-      </Button>
-      <Button onClick={onSubmit} variant="contained" color="primary">
-        {submitLabel}
-      </Button>
     </div>
   );
 }

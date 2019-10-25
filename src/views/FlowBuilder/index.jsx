@@ -24,8 +24,8 @@ import itemTypes from './itemTypes';
 import RunIcon from '../../components/icons/RunIcon';
 import SettingsIcon from '../../components/icons/SettingsIcon';
 import CalendarIcon from '../../components/icons/CalendarIcon';
-import SwitchOnOff from '../../components/SwitchToggle';
 import EditableText from './EditableText';
+import SwitchOnOff from '../../components/OnOff';
 
 // #region FLOW SCHEMA: FOR REFERENCE DELETE ONCE FB IS COMPLETE
 /* 
@@ -408,8 +408,8 @@ function FlowBuilder(props) {
     <Fragment>
       <ResourceDrawer {...props} />
       <RunDrawer {...props} flowId={flowId} />
-      <ScheduleDrawer {...props} flowId={flowId} />
-      <SettingsDrawer {...props} flowId={flowId} />
+      <ScheduleDrawer {...props} flow={flow} />
+      <SettingsDrawer {...props} flow={flow} />
       {/* <WizardDrawer {...props} flowId={flowId} /> */}
 
       <CeligoPageBar
@@ -419,13 +419,12 @@ function FlowBuilder(props) {
         subtitle={`Last saved: ${isNewFlow ? 'Never' : flow.lastModified}`}
         infoText={flow.description}>
         <div className={classes.actions}>
-          <SwitchOnOff
-            disabled={isNewFlow}
-            on={!isNewFlow && flow.disabled === 'false'}
-          />
+          <SwitchOnOff.component resource={flow} disabled={isNewFlow} />
           <IconButton
             disabled={isNewFlow}
-            onClick={() => handleDrawerOpen('run')}>
+            onClick={() => {
+              dispatch(actions.flow.run({ flowId }));
+            }}>
             <RunIcon />
           </IconButton>
           <IconButton
