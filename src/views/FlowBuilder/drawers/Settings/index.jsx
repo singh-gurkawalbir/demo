@@ -81,7 +81,7 @@ export default function SettingsDrawer({ flow, history, ...props }) {
               [],
           },
         ],
-        disableSelect: flow && flow._integrationId,
+        disabled: flow && flow._integrationId,
       },
       _runNextFlowIds: {
         id: '_runNextFlowIds',
