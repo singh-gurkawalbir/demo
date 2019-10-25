@@ -85,6 +85,9 @@ export default function CeligoTable({
   const [isAllSelected, setIsAllSelected] = useState(false);
 
   useEffect(() => {
+    dispatch(actions.patchFilter(filterKey, { sort: { order, orderBy } }));
+  }, [dispatch, filterKey, order, orderBy]);
+  useEffect(() => {
     const hasSelectableResources =
       !isSelectableRow ||
       data.reduce(

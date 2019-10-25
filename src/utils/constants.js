@@ -178,3 +178,5 @@ export const PATHS_DONT_NEED_INTEGRATOR_ASHAREID_HEADER = [
   'published',
   'shared/ashares',
 ];
+// eslint-disable-next-line no-useless-escape
+export const URI_VALIDATION_PATTERN = /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/;

@@ -82,9 +82,6 @@ export default {
     type: 'uploadfile',
     label: 'Sample File (that would be imported)',
     mode: r => r && r.file && r.file.type,
-    // filter: r => ({ type: r.type }),y
-    // excludeFilter: r => ({ _
-    //
     visibleWhen: [
       {
         field: 'file.type',

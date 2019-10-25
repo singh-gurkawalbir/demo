@@ -5,9 +5,6 @@ export default {
     type: 'uploadfile',
     label: 'Sample File (that would be exported)',
     mode: r => r && r.file && r.file.type,
-    // filter: r => ({ type: r.type }),
-    // excludeFilter: r => ({ _
-    //
   },
   'file.encoding': {
     type: 'select',

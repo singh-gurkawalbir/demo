@@ -137,6 +137,7 @@ import OnOff from '../../components/ResourceTable/actions/Flows/OnOff';
 */
 // #endregion
 
+const bottomDrawerMin = 41;
 const useStyles = makeStyles(theme => ({
   actions: {
     display: 'flex',
@@ -446,7 +447,7 @@ function FlowBuilder(props) {
           style={{
             height: `calc(${(4 - size) * 25}vh - ${theme.appBarHeight +
               theme.pageBarHeight +
-              (size ? 0 : 64)}px)`,
+              (size ? 0 : bottomDrawerMin)}px)`,
           }}>
           <div className={classes.canvas}>
             {/* CANVAS START */}
@@ -525,7 +526,7 @@ function FlowBuilder(props) {
               style={{
                 bottom: size
                   ? `calc(${size * 25}vh + ${theme.spacing(3)}px)`
-                  : 64 + theme.spacing(3),
+                  : bottomDrawerMin + theme.spacing(3),
               }}>
               <TrashCan onDrop={handleDelete} />
             </div>
