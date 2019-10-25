@@ -15,6 +15,11 @@ export default {
       retValues['/type'] = 'distributed';
     }
 
+    if (retValues['/outputMode'] === 'BLOB') {
+      retValues['/salesforce/sObjectType'] =
+        retValues['/salesforce/objecttype'];
+    }
+
     return {
       ...retValues,
     };
@@ -74,6 +79,8 @@ export default {
       fieldId: 'once.booleanField',
     },
     'salesforce.sObjectType': { fieldId: 'salesforce.sObjectType' },
+    'salesforce.objecttype': { fieldId: 'salesforce.objecttype' },
+    'salesforce.id': { fieldId: 'salesforce.id' },
     'salesforce.distributed.requiredTrigger': {
       fieldId: 'salesforce.distributed.requiredTrigger',
     },
@@ -86,7 +93,10 @@ export default {
     'salesforce.distributed.qualifier': {
       fieldId: 'salesforce.distributed.qualifier',
     },
-    advancedSettings: { formId: 'advancedSettings' },
+    advancedSettings: {
+      formId: 'advancedSettings',
+      visibleWhenAll: [{ field: 'outputMode', is: ['RECORDS'] }],
+    },
   },
   layout: {
     fields: [
@@ -104,6 +114,8 @@ export default {
       'delta.dateField',
       'delta.lagOffset',
       'once.booleanField',
+      'salesforce.objecttype',
+      'salesforce.id',
     ],
     type: 'collapse',
     containers: [

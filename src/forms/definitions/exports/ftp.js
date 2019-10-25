@@ -1,4 +1,16 @@
 export default {
+  preSave: formValues => {
+    const newValues = { ...formValues };
+
+    if (newValues['/outputMode'] === 'BLOB') {
+      newValues['/file/skipDelete'] = newValues['/ftp/leaveFile'];
+      newValues['/file/output'] = 'blobKeys';
+    }
+
+    return {
+      ...newValues,
+    };
+  },
   init: fieldMeta => {
     const fileDefinitionRulesField =
       fieldMeta.fieldMap['file.filedefinition.rules'];
@@ -32,6 +44,26 @@ export default {
       type: 'labeltitle',
       label: 'What would you like to Export?',
     },
+    outputMode: {
+      id: 'outputMode',
+      type: 'radiogroup',
+      label: 'Output Mode',
+      options: [
+        {
+          items: [
+            { label: 'Records', value: 'RECORDS' },
+            { label: 'Blob Keys', value: 'BLOB' },
+          ],
+        },
+      ],
+      defaultValue: r => {
+        const output = r && r.file && r.file.output;
+
+        if (!output) return 'RECORDS';
+
+        return output;
+      },
+    },
     'ftp.directoryPath': { fieldId: 'ftp.directoryPath' },
     'file.output': {
       fieldId: 'file.output',
@@ -39,18 +71,29 @@ export default {
     },
     'ftp.fileNameStartsWith': { fieldId: 'ftp.fileNameStartsWith' },
     'ftp.fileNameEndsWith': { fieldId: 'ftp.fileNameEndsWith' },
-    file: { formId: 'file' },
+    'ftp.leaveFile': { fieldId: 'ftp.leaveFile' },
+    file: {
+      formId: 'file',
+      visibleWhenAll: [
+        {
+          field: 'outputMode',
+          is: ['RECORDS'],
+        },
+      ],
+    },
     fileAdvancedSettings: { formId: 'fileAdvancedSettings' },
   },
   layout: {
     fields: [
       'common',
+      'outputMode',
       'exportData',
       'ftp.directoryPath',
       'file.output',
       'ftp.fileNameStartsWith',
       'ftp.fileNameEndsWith',
       'file',
+      'ftp.leaveFile',
     ],
     type: 'collapse',
     containers: [

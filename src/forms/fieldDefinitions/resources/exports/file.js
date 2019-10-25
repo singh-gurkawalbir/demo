@@ -74,6 +74,22 @@ export default {
   'file.skipDelete': {
     type: 'checkbox',
     label: 'Leave File On Server',
+    visibleWhen: [
+      {
+        field: 'outputMode',
+        is: ['RECORDS'],
+      },
+    ],
+  },
+  'ftp.leaveFile': {
+    type: 'checkbox',
+    label: 'Leave File On Server',
+    visibleWhen: [
+      {
+        field: 'outputMode',
+        is: ['BLOB'],
+      },
+    ],
   },
   'file.compressionFormat': {
     type: 'select',

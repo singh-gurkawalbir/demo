@@ -4,10 +4,14 @@ export default {
     label: 'SObject Type',
     required: true,
     omitWhenHidden: true,
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'salesforce.executionType',
         is: ['realtime'],
+      },
+      {
+        field: 'outputMode',
+        is: ['RECORDS'],
       },
     ],
   },
@@ -26,16 +30,26 @@ export default {
         ],
       },
     ],
+    visibleWhen: [
+      {
+        field: 'outputMode',
+        is: ['RECORDS'],
+      },
+    ],
   },
   'salesforce.soql.query': {
     type: 'editor',
     mode: 'sql',
     label: 'SOQL Query',
     omitWhenHidden: true,
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'salesforce.executionType',
         is: ['scheduled'],
+      },
+      {
+        field: 'outputMode',
+        is: ['RECORDS'],
       },
     ],
   },
@@ -47,10 +61,14 @@ export default {
     valueType: 'array',
     label: 'Referenced Fields',
     omitWhenHidden: true,
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'salesforce.executionType',
         is: ['realtime'],
+      },
+      {
+        field: 'outputMode',
+        is: ['RECORDS'],
       },
     ],
   },
@@ -59,10 +77,14 @@ export default {
     label: 'Required Trigger',
     multiline: true,
     omitWhenHidden: true,
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'salesforce.executionType',
         is: ['realtime'],
+      },
+      {
+        field: 'outputMode',
+        is: ['RECORDS'],
       },
     ],
   },
@@ -71,10 +93,14 @@ export default {
     label: 'Field Specific Qualification Criteria',
     multiline: true,
     omitWhenHidden: true,
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'salesforce.executionType',
         is: ['realtime'],
+      },
+      {
+        field: 'outputMode',
+        is: ['RECORDS'],
       },
     ],
   },
@@ -83,16 +109,41 @@ export default {
     delimiter: ',',
     label: 'Related Lists',
     multiline: true,
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'salesforce.executionType',
         is: ['realtime'],
+      },
+      {
+        field: 'outputMode',
+        is: ['RECORDS'],
       },
     ],
   },
   'salesforce.id': {
     type: 'text',
     label: 'Id',
+    required: true,
+    visibleWhen: [
+      {
+        field: 'outputMode',
+        is: ['BLOB'],
+      },
+    ],
+  },
+  'salesforce.objecttype': {
+    type: 'select',
+    required: true,
+    label: 'SObject Type',
+    options: [
+      {
+        items: [
+          { label: 'Attachment', value: 'attachment' },
+          { label: 'Content Version', value: 'contentVersion' },
+          { label: 'Document', value: 'document' },
+        ],
+      },
+    ],
     visibleWhen: [
       {
         field: 'outputMode',
