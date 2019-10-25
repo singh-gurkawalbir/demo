@@ -1,4 +1,8 @@
 export default {
+  plugins: {
+    // 'bt-tooltip-errors': { delay: 100 },
+    'not-group': null,
+  },
   allow_empty: true,
   sort_filters: true,
   operators: [

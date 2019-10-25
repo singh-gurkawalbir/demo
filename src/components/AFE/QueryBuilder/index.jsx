@@ -18,9 +18,23 @@ const useStyles = makeStyles(() => ({
 
 export default function QueryBuilder() {
   const qbuilder = useRef(null);
+
+  console.log(`qbuilder.current ${qbuilder.current}`);
   const classes = useStyles();
   // const [query, setQuery] = useState('');
   const [rulesData, setRulesData] = useState({});
+
+  function addMissingFieldButton() {
+    const buttonHtml =
+      '<div class="btn-group"><button type="button" class="btn btn-xs btn-success" data-add="add-missing-field"><i class="glyphicon"></i>Add Missing Field</button></div>';
+
+    jQuery(buttonHtml).prependTo(
+      jQuery(jQuery('.rules-group-header:first .group-actions')[0])
+    );
+    jQuery(jQuery('[data-add=add-missing-field]')[0]).on('click', () => {
+      alert('Add missing field');
+    });
+  }
 
   useEffect(() => {
     const x = jQuery(qbuilder.current);
@@ -62,8 +76,17 @@ export default function QueryBuilder() {
             return `<input class="form-control" name="${name}">${'<img class="settings-icon" src="https://d142hkd03ds8ug.cloudfront.net/images/icons/icon/gear.png">'}`;
           },
         },
+        {
+          id: 'something',
+          label: 'Something',
+          type: 'string',
+        },
       ],
     });
+
+    // setTimeout(() => {
+    addMissingFieldButton();
+    // });
   }, [qbuilder, rulesData]);
 
   return (

@@ -45,3 +45,7 @@ query-builder .rules-group-container {
   background-image: none;
   border: 1px solid #ddd;
 }
+
+.pull-right {
+  float: right;
+}
