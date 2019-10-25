@@ -25,7 +25,7 @@ import RunIcon from '../../components/icons/RunIcon';
 import SettingsIcon from '../../components/icons/SettingsIcon';
 import CalendarIcon from '../../components/icons/CalendarIcon';
 import EditableText from './EditableText';
-import OnOff from '../../components/ResourceTable/actions/Flows/OnOff';
+import SwitchOnOff from '../../components/OnOff';
 
 // #region FLOW SCHEMA: FOR REFERENCE DELETE ONCE FB IS COMPLETE
 /* 
@@ -419,7 +419,7 @@ function FlowBuilder(props) {
         subtitle={`Last saved: ${isNewFlow ? 'Never' : flow.lastModified}`}
         infoText={flow.description}>
         <div className={classes.actions}>
-          <OnOff.component resource={flow} disabled={isNewFlow} />
+          <SwitchOnOff.component resource={flow} disabled={isNewFlow} />
           <IconButton
             disabled={isNewFlow}
             onClick={() => {

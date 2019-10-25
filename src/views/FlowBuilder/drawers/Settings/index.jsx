@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function RunDrawer({ flow, history, ...props }) {
+export default function SettingsDrawer({ flow, history, ...props }) {
   const dispatch = useDispatch();
   let { resources: integrations } = useSelector(state =>
     selectors.resourceList(state, { type: 'integrations' })
