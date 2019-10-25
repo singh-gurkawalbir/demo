@@ -107,8 +107,8 @@ function Filters({
     state => selectors.resourceList(state, { type: 'flows' }).resources
   );
   const {
-    _flowId = '',
-    _status = 'all',
+    flowId: _flowId,
+    status = 'all',
     hideEmpty = false,
     currentPage = 0,
   } = useSelector(state => selectors.filter(state, filterKey));
@@ -129,31 +129,6 @@ function Filters({
     // we need to reset the results to show the first page.
     if (key !== 'currentPage') {
       filter.currentPage = 0;
-    }
-
-    // only set the flowId filter if the context is across all
-    // flows. When this is in use in the FB, there is no flow filter
-    // option, a the flowId is hardcoded to match the FB.
-    if (!flowId && key === '_flowId') {
-      filter.flowId = value;
-    }
-
-    // TODO: Shiva, this block below seems like it belongs in the data-layer.
-    // Now that the filter criteria is in app-state now and you will have access
-    // to it simply by selecting the 'jobs' filter in your sagas/reducers.
-    // Possibly if you need it in your reducers, you will need to implement the reducer
-    // in the state-tree at a shared node that has visibility into the filter
-    // state && jobs state.
-    // To make the existing data-layer code work, i'm duplicating the status such
-    // that the data-layer gets the mutated value it expects and this component can use
-    // the value matching the select options. Ideally we only store the select options
-    // value and the data-layer translates the value into whatever it needs to
-    // apply the filter properly (errors and resolved act like all)
-    if (key === '_status') {
-      filter.numError_gte = value === 'error' ? 1 : 0;
-      filter.numResolved_gte = value === 'resolved' ? 1 : 0;
-
-      filter.status = ['all', 'error', 'resolved'].includes(value) ? '' : value;
     }
 
     dispatch(actions.patchFilter(filterKey, filter));
@@ -202,7 +177,7 @@ function Filters({
       {!flowId && (
         <Select
           className={clsx(classes.select, classes.flow)}
-          onChange={e => patchFilter('_flowId', e.target.value)}
+          onChange={e => patchFilter('flowId', e.target.value)}
           IconComponent={ArrowDownIcon}
           displayEmpty
           value={_flowId || ''}>
@@ -218,8 +193,8 @@ function Filters({
       <Select
         className={clsx(classes.select, classes.status)}
         IconComponent={ArrowDownIcon}
-        onChange={e => patchFilter('_status', e.target.value)}
-        value={_status}>
+        onChange={e => patchFilter('status', e.target.value)}
+        value={status}>
         {[
           ['all', 'Select Status'],
           ['error', 'Contains Error'],
