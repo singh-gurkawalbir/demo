@@ -39,6 +39,7 @@ const useStyles = makeStyles(theme => ({
   },
   muiTabRoot: {
     minHeight: 36,
+    minWidth: 180,
   },
   muiTabWrapper: {
     flexDirection: 'row',
@@ -55,6 +56,7 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.background.paper,
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
+    borderTop: 0,
     display: 'flex',
     alignItems: 'center',
     width: '100%',
@@ -126,7 +128,7 @@ export default function BottomDrawer({ size, setSize, flow }) {
           [classes.noScroll]: size === 0,
         }),
       }}
-      PaperProps={{ style: { height: size ? `${size * 25}%` : '64px' } }}
+      PaperProps={{ style: { height: size ? `${size * 25}%` : '41px' } }}
       variant="persistent"
       anchor="bottom">
       <div className={classes.tabBar}>
