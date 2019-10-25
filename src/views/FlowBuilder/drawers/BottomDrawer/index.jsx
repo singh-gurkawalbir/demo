@@ -5,6 +5,9 @@ import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import ArrowUpIcon from '../../../../components/icons/ArrowUpIcon';
 import ArrowDownIcon from '../../../../components/icons/ArrowDownIcon';
+import ConnectionsIcon from '../../../../components/icons/ConnectionsIcon';
+import AuditLogIcon from '../../../../components/icons/AuditLogIcon';
+import RunIcon from '../../../../components/icons/RunIcon';
 import * as selectors from '../../../../reducers';
 import ConnectionPanel from './panels/Connection';
 import RunDashboardPanel from './panels/RunDashboard';
@@ -16,7 +19,8 @@ const useStyles = makeStyles(theme => ({
   },
   drawerPaper: {
     marginLeft: theme.drawerWidthMinimized,
-    padding: theme.spacing(1),
+    backgroundColor: theme.palette.background.default,
+    padding: theme.spacing(0),
     transition: theme.transitions.create(['height', 'margin'], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
@@ -29,9 +33,32 @@ const useStyles = makeStyles(theme => ({
       duration: theme.transitions.duration.enteringScreen,
     }),
   },
-  tabBar: {
-    display: 'flex',
+  muiTabsRoot: {
+    minHeight: 36,
+    paddingLeft: theme.spacing(2),
+  },
+  muiTabRoot: {
+    minHeight: 36,
+    minWidth: 180,
+  },
+  muiTabWrapper: {
     flexDirection: 'row',
+    '& > *:first-child': {
+      marginBottom: '0 !important',
+      marginRight: theme.spacing(1),
+    },
+  },
+  actionsContainer: {
+    paddingRight: theme.spacing(3),
+    justifyContent: 'center',
+  },
+  tabBar: {
+    backgroundColor: theme.palette.background.paper,
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+    borderTop: 0,
+    display: 'flex',
+    alignItems: 'center',
     width: '100%',
   },
   tabRoot: {
@@ -39,6 +66,7 @@ const useStyles = makeStyles(theme => ({
   },
   tabPanel: {
     overflow: 'auto',
+    height: '100%',
   },
   noScroll: {
     overflowY: 'hidden',
@@ -63,28 +91,31 @@ export default function BottomDrawer({ size, setSize, flow }) {
   const classes = useStyles();
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
   const [tabValue, setTabValue] = useState(0);
+  const maxStep = 3; // set maxStep to 4 to allow 100% drawer coverage.
 
-  function a11yProps(index) {
-    return {
-      id: `tab-${index}`,
-      'aria-controls': `tabpanel-${index}`,
-    };
-  }
-
-  // set maxStep to 4 to allow 100% drawer coverage.
-  const maxStep = 3;
-  const handleSizeChange = direction => () => {
+  function handleSizeChange(direction) {
     if (size === maxStep && direction === 1) return setSize(0);
 
     if (size === 0 && direction === -1) return setSize(maxStep);
 
     setSize(size + direction);
-  };
+  }
 
   function handleTabChange(event, newValue) {
     setTabValue(newValue);
 
     if (size === 0) setSize(1);
+  }
+
+  function tabProps(index) {
+    return {
+      classes: {
+        root: classes.muiTabRoot,
+        wrapper: classes.muiTabWrapper,
+      },
+      id: `tab-${index}`,
+      'aria-controls': `tabpanel-${index}`,
+    };
   }
 
   return (
@@ -97,12 +128,13 @@ export default function BottomDrawer({ size, setSize, flow }) {
           [classes.noScroll]: size === 0,
         }),
       }}
-      PaperProps={{ style: { height: size ? `${size * 25}%` : '64px' } }}
+      PaperProps={{ style: { height: size ? `${size * 25}%` : '41px' } }}
       variant="persistent"
       anchor="bottom">
       <div className={classes.tabBar}>
         <Tabs
           value={tabValue}
+          classes={{ root: classes.muiTabsRoot }}
           className={classes.tabRoot}
           onChange={handleTabChange}
           indicatorColor="primary"
@@ -110,20 +142,28 @@ export default function BottomDrawer({ size, setSize, flow }) {
           variant="scrollable"
           scrollButtons="auto"
           aria-label="scrollable auto tabs example">
-          <Tab label="Connections" {...a11yProps(0)} />
-          <Tab label="Run Dashboard" {...a11yProps(1)} />
-          <Tab label="Audit Log" {...a11yProps(2)} />
+          <Tab
+            {...tabProps(0)}
+            icon={<ConnectionsIcon />}
+            label="Connections"
+          />
+          <Tab {...tabProps(1)} icon={<RunIcon />} label="Run Dashboard" />
+          <Tab {...tabProps(2)} icon={<AuditLogIcon />} label="Audit Log" />
         </Tabs>
-        <IconButton
-          data-test="increaseFlowBuilderBottomDrawer"
-          onClick={handleSizeChange(1)}>
-          <ArrowUpIcon />
-        </IconButton>
-        <IconButton
-          data-test="decreaseFlowBuilderBottomDrawer"
-          onClick={handleSizeChange(-1)}>
-          <ArrowDownIcon />
-        </IconButton>
+        <div className={classes.actionsContainer}>
+          <IconButton
+            data-test="increaseFlowBuilderBottomDrawer"
+            size="small"
+            onClick={() => handleSizeChange(1)}>
+            <ArrowUpIcon />
+          </IconButton>
+          <IconButton
+            data-test="decreaseFlowBuilderBottomDrawer"
+            size="small"
+            onClick={() => handleSizeChange(-1)}>
+            <ArrowDownIcon />
+          </IconButton>
+        </div>
       </div>
 
       <TabPanel value={tabValue} index={0} size={size} classes={classes}>

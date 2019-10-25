@@ -1,18 +1,15 @@
 import { useState, Fragment } from 'react';
-import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import TablePagination from '@material-ui/core/TablePagination';
 import Checkbox from '@material-ui/core/Checkbox';
 import { difference } from 'lodash';
 import JobDetail from './JobDetail';
 import { JOB_STATUS } from '../../utils/constants';
 import JobErrorDialog from './JobErrorDialog';
-import * as selectors from '../../reducers';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -37,12 +34,8 @@ function JobTable({
   selectedJobs,
   userPermissionsOnIntegration,
   integrationName,
-  onChangePage,
 }) {
   const classes = useStyles();
-  const { paging, totalJobs } = useSelector(state =>
-    selectors.flowJobsPagingDetails(state)
-  );
   const [showErrorDialogFor, setShowErrorDialogFor] = useState({});
   const selectableJobsInCurrentPage = jobsInCurrentPage.filter(
     j =>
@@ -60,11 +53,6 @@ function JobTable({
   const isSelectAllChecked =
     selectableJobIdsInCurrentPage.length > 0 &&
     difference(selectableJobIdsInCurrentPage, selectedJobIds).length === 0;
-
-  function handleChangePage(event, newPage) {
-    // setCurrentPage(newPage);
-    onChangePage(newPage);
-  }
 
   function handleSelectChange(job, jobId) {
     const jobIds = { ...selectedJobs, [jobId]: job };
@@ -112,23 +100,6 @@ function JobTable({
 
   return (
     <Fragment>
-      <TablePagination
-        classes={{ root: classes.tablePaginationRoot }}
-        rowsPerPageOptions={[paging.rowsPerPage]}
-        component="div"
-        count={totalJobs || 0}
-        rowsPerPage={paging.rowsPerPage}
-        page={paging.currentPage}
-        backIconButtonProps={{
-          'aria-label': 'Previous Page',
-        }}
-        nextIconButtonProps={{
-          'aria-label': 'Next Page',
-        }}
-        onChangePage={handleChangePage}
-        // onChangeRowsPerPage={this.handleChangeRowsPerPage}
-      />
-
       <Table className={classes.table}>
         <TableHead>
           <TableRow>
