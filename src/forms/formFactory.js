@@ -339,15 +339,20 @@ const flattenedFieldMap = (
         ...masterFields,
         ...f,
       };
+      const value = applyingMissedOutFieldMetaProperties(
+        merged,
+        resource,
+        resourceType,
+        ignoreFunctionTransformations
+      );
 
-      if (!(merged.removeOnDeveloperMode && developerMode)) {
-        const value = applyingMissedOutFieldMetaProperties(
-          merged,
-          resource,
-          resourceType,
-          ignoreFunctionTransformations
-        );
-
+      if (!developerMode) {
+        if (!merged.showOnDeveloperMode) {
+          resFields.push(fieldReferenceName);
+          // eslint-disable-next-line no-param-reassign
+          resObjectRefs[fieldReferenceName] = value;
+        }
+      } else {
         resFields.push(fieldReferenceName);
         // eslint-disable-next-line no-param-reassign
         resObjectRefs[fieldReferenceName] = value;
