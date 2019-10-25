@@ -13,7 +13,7 @@ import SettingsIcon from '../../components/icons/SettingsIcon';
 
 const useStyles = makeStyles(theme => ({
   dashboardContainer: {
-    padding: theme.spacing(3),
+    padding: theme.spacing(0),
   },
 }));
 
@@ -39,7 +39,7 @@ export default function IntegrationDashboard({ match }) {
 
   return (
     <LoadResources required resources="integrations">
-      <CeligoPageBar title={integration.name}>
+      <CeligoPageBar title={integration && integration.name}>
         <IconTextButton
           data-test="refreshJobs"
           variant="text"

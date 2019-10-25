@@ -85,6 +85,9 @@ export default function CeligoTable({
   const [isAllSelected, setIsAllSelected] = useState(false);
 
   useEffect(() => {
+    dispatch(actions.patchFilter(filterKey, { sort: { order, orderBy } }));
+  }, [dispatch, filterKey, order, orderBy]);
+  useEffect(() => {
     const hasSelectableResources =
       !isSelectableRow ||
       data.reduce(
@@ -238,7 +241,7 @@ export default function CeligoTable({
                     ? rowActions(r, actionProps)
                     : rowActions
                   ).map(({ label, component: Action }) => ({
-                    label,
+                    label: typeof label === 'function' ? label(r) : label,
                     component: <Action {...actionProps} resource={r} />,
                   }))}
                 />
