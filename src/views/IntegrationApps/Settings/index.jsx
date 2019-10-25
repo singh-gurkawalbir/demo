@@ -50,9 +50,6 @@ const useStyles = makeStyles(theme => ({
     textAlign: 'center',
     padding: theme.spacing(1),
   },
-  dashboard: {
-    float: 'right',
-  },
 
   activeLink: {
     fontWeight: 'bold',
@@ -218,6 +215,11 @@ export default function IntegrationAppSettings(props) {
             variant="outlined"
             onChange={handleTagChangeHandler}
           />
+          <a
+            href={getRoutePath(`integrations/${integrationId}/dashboard`)}
+            className={classes.dashboard}>
+            Dashboard
+          </a>
         </CeligoPageBar>
 
         {supportsMultiStore && (
