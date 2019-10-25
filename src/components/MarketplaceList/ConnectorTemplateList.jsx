@@ -96,14 +96,14 @@ export default function ConnectorTemplateList(props) {
                   tag
                 )
               );
-              props.history.push('/');
+              props.history.push(getRoutePath('/dashboard'));
             },
           },
         ],
       });
     } else {
       dispatch(actions.marketplace.installConnector(connector._id, sandbox));
-      props.history.push('/');
+      props.history.push(getRoutePath('/dashboard'));
     }
   };
 

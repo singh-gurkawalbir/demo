@@ -48,7 +48,7 @@ export function* uninstallStep({ storeId, id, uninstallerFunction }) {
     return undefined;
   }
 
-  if (stepCompleteResponse.success) {
+  if (stepCompleteResponse && stepCompleteResponse.success) {
     yield put(
       actions.integrationApp.uninstaller.updateStep(
         id,
