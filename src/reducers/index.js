@@ -116,10 +116,6 @@ export function previewTemplate(state, templateId) {
   return fromSession.previewTemplate(state && state.session, templateId);
 }
 
-export function marketplaceTemplate(state, templateId) {
-  return fromData.template(state && state.data, templateId);
-}
-
 export function templateSetup(state, templateId) {
   return fromSession.template(state && state.session, templateId);
 }
@@ -236,6 +232,12 @@ export function avatarUrl(state) {
 
 export function userProfile(state) {
   return state && state.user && state.user.profile;
+}
+
+export function developerMode(state) {
+  return (
+    state && state.user && state.user.profile && state.user.profile.developer
+  );
 }
 
 export function userPreferences(state) {
@@ -486,6 +488,10 @@ export function hasProfile(state) {
 // #endregion
 
 // #region PUBLIC DATA SELECTORS
+export function marketplaceTemplate(state, templateId) {
+  return fromData.template(state && state.data, templateId);
+}
+
 export function resource(state, resourceType, id) {
   return fromData.resource(state && state.data, resourceType, id);
 }
@@ -701,36 +707,24 @@ export function integrationAppSettingsFormState(state, integrationId, flowId) {
 }
 
 export function integrationConnectionList(state, integrationId) {
-  const integration = resource(state, 'integrations', integrationId);
-  const connList = resourceListWithPermissions(state, {
+  const integration = resource(state, 'integrations', integrationId) || {};
+  let { resources = [] } = resourceListWithPermissions(state, {
     type: 'connections',
   });
 
-  if (
-    integrationId &&
-    integrationId !== 'none' &&
-    integration &&
-    !integration._connectorId
-  ) {
-    const registeredConnections =
-      integration && integration._registeredConnectionIds;
+  if (integrationId && integrationId !== 'none' && !integration._connectorId) {
+    const registeredConnections = integration._registeredConnectionIds;
 
     if (registeredConnections) {
-      connList.resources =
-        connList &&
-        connList.resources &&
-        connList.resources.filter(
-          conn => registeredConnections.indexOf(conn._id) >= 0
-        );
+      resources = resources.filter(
+        conn => registeredConnections.indexOf(conn._id) >= 0
+      );
     }
-  } else if (integration && integration._connectorId) {
-    connList.resources =
-      connList &&
-      connList.resources &&
-      connList.resources.filter(conn => conn._integrationId === integrationId);
+  } else if (integration._connectorId) {
+    resources = resources.filter(conn => conn._integrationId === integrationId);
   }
 
-  return connList;
+  return resources;
 }
 
 export function integrationAppConnectionList(state, integrationId, store) {
@@ -740,39 +734,37 @@ export function integrationAppConnectionList(state, integrationId, store) {
     integrationId
   );
   const { supportsMultiStore, sections } = integrationResource.settings || {};
-  const integrationConnections = fromData.resourceList(state.data, {
-    type: 'connections',
-    filter: { _integrationId: integrationId },
-  });
+  const { resources: integrationConnections } = fromData.resourceList(
+    state.data,
+    {
+      type: 'connections',
+      filter: { _integrationId: integrationId },
+    }
+  );
 
   if (!supportsMultiStore || !store) {
     return integrationConnections;
   }
 
   const flows = [];
-  let connections = [];
+  const connections = [];
   const selectedStore = (sections || []).find(s => s.id === store) || {};
 
   (selectedStore.sections || []).forEach(sec => {
     flows.push(...map(sec.flows, '_id'));
   });
+
   flows.forEach(f => {
     const flow = resource(state, 'flows', f) || {};
 
-    connections = [
-      ...connections,
-      ...getAllConnectionIdsUsedInTheFlow(state, flow),
-    ];
+    connections.push(...getAllConnectionIdsUsedInTheFlow(state, flow));
   });
-  integrationConnections.resources = integrationConnections.resources.filter(
-    c => connections.includes(c._id)
-  );
 
-  return integrationConnections;
+  return integrationConnections.filter(c => connections.includes(c._id));
 }
 
 export function integrationAppSettings(state, id, storeId) {
-  if (!state) return null;
+  if (!state) return {};
   const integrationResource = fromData.integrationAppSettings(state.data, id);
   const uninstallSteps = fromSession.uninstallSteps(
     state.resource,
@@ -783,8 +775,8 @@ export function integrationAppSettings(state, id, storeId) {
   return { ...integrationResource, ...uninstallSteps };
 }
 
-export function connectorFlowSections(state, id, store) {
-  if (!state) return null;
+export function integrationAppFlowSections(state, id, store) {
+  if (!state) return [];
   let flowSections = [];
   const integrationResource = fromData.integrationAppSettings(state.data, id);
   const { sections = [], supportsMultiStore } =
@@ -811,7 +803,7 @@ export function connectorFlowSections(state, id, store) {
 }
 
 export function integrationAppGeneralSettings(state, id, storeId) {
-  if (!state) return null;
+  if (!state) return {};
   let fields;
   let subSections;
   const integrationResource = fromData.integrationAppSettings(state.data, id);
@@ -822,7 +814,7 @@ export function integrationAppGeneralSettings(state, id, storeId) {
 
     ({ fields, sections: subSections } = storeSection);
   } else {
-    ({ fields, sections: subSections } = general);
+    ({ fields, sections: subSections } = general || {});
   }
 
   return {
@@ -832,7 +824,7 @@ export function integrationAppGeneralSettings(state, id, storeId) {
 }
 
 export function integrationAppFlowSettings(state, id, section, storeId) {
-  if (!state) return null;
+  if (!state) return {};
   const integrationResource = fromData.integrationAppSettings(state.data, id);
   const { supportsMultiStore, showMatchRuleEngine, sections = [] } =
     integrationResource.settings || {};

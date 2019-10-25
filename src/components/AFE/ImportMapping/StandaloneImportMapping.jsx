@@ -17,15 +17,8 @@ import LoadResources from '../../../components/LoadResources';
  */
 
 export default function StandaloneImportMapping(props) {
-  const { id, resourceId, onClose, connectionId } = props;
+  const { id, resourceId, onClose, connectionId, extractFields } = props;
   const dispatch = useDispatch();
-  /*
-     Using dummy data for functionality demonstration. generate fields and
-     extrct fields to be extracted later when flow builder is ready
-     replace getSampleGenerateFields by fetching sample data
-  */
-  const generateFields = MappingUtil.getSampleGenerateFields();
-  const extractFields = [];
   const resourceData = useSelector(state =>
     selectors.resource(state, 'imports', resourceId)
   );
@@ -86,6 +79,11 @@ export default function StandaloneImportMapping(props) {
     onClose();
   };
 
+  const formattedExtractFields =
+    (extractFields &&
+      Object.keys(extractFields).map(name => ({ name, id: name }))) ||
+    [];
+
   return (
     <LoadResources resources="imports">
       <ImportMapping
@@ -97,8 +95,7 @@ export default function StandaloneImportMapping(props) {
         resourceId={resourceId}
         mappings={mappings}
         showDialogClose
-        generateFields={generateFields}
-        extractFields={extractFields}
+        extractFields={formattedExtractFields}
         onCancel={handleCancel}
         onSave={handleSave}
         options={options}
