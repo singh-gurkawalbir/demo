@@ -19,7 +19,7 @@ export default function Connections(props) {
   const { integrationId } = match.params;
   const classes = useStyles();
   const [showRegisterConnDialog, setShowRegisterConnDialog] = useState(false);
-  const list = useSelector(state => {
+  const connections = useSelector(state => {
     if (storeId) {
       return selectors.integrationAppConnectionList(
         state,
@@ -65,7 +65,7 @@ export default function Connections(props) {
           )}
         <CeligoTable
           resourceType="connections"
-          data={list && list.resources}
+          data={connections}
           {...metadata}
           actionProps={{ integrationId }}
         />

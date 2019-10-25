@@ -17,6 +17,7 @@ export default function DynaImportMapping(props) {
     label,
     value,
     connectionId,
+    resourceId,
   } = props;
   const {
     lookupId,
@@ -26,8 +27,6 @@ export default function DynaImportMapping(props) {
     recordType,
   } = options;
   const [isModalVisible, setModalVisibility] = useState(false);
-  const generateFields = [];
-  const extractFields = [];
   const toggleModalVisibility = () => {
     setModalVisibility(!isModalVisible);
   };
@@ -75,11 +74,11 @@ export default function DynaImportMapping(props) {
           id={id}
           connectionId={connectionId}
           application={application}
+          resourceId={resourceId}
           lookups={lookups}
           isStandaloneMapping={isStandaloneMapping}
           mappings={mappings}
-          generateFields={generateFields || []}
-          extractFields={extractFields || []}
+          extractFields={[]}
           onCancel={handleClose}
           onSave={handleSave}
           options={opts}

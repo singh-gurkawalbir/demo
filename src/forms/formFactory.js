@@ -303,6 +303,7 @@ const flattenedFieldMap = (
   resourceType,
   resource,
   ignoreFunctionTransformations,
+  developerMode,
   resObjectRefs = {},
   resFields = []
 ) => {
@@ -324,6 +325,7 @@ const flattenedFieldMap = (
           resourceType,
           resource,
           ignoreFunctionTransformations,
+          developerMode,
           resObjectRefs
         );
       }
@@ -344,9 +346,17 @@ const flattenedFieldMap = (
         ignoreFunctionTransformations
       );
 
-      resFields.push(fieldReferenceName);
-      // eslint-disable-next-line no-param-reassign
-      resObjectRefs[fieldReferenceName] = value;
+      if (!developerMode) {
+        if (!merged.showOnDeveloperMode) {
+          resFields.push(fieldReferenceName);
+          // eslint-disable-next-line no-param-reassign
+          resObjectRefs[fieldReferenceName] = value;
+        }
+      } else {
+        resFields.push(fieldReferenceName);
+        // eslint-disable-next-line no-param-reassign
+        resObjectRefs[fieldReferenceName] = value;
+      }
     });
 
   return {
@@ -360,7 +370,8 @@ const setDefaultsToLayout = (
   fieldMap,
   resourceType,
   resource,
-  ignoreFunctionTransformations
+  ignoreFunctionTransformations,
+  developerMode
 ) => {
   const { fields, containers, ...rest } = layout;
 
@@ -374,7 +385,8 @@ const setDefaultsToLayout = (
     fieldMap,
     resourceType,
     resource,
-    ignoreFunctionTransformations
+    ignoreFunctionTransformations,
+    developerMode
   );
   let transformedFieldRefs = transformedFieldRef;
   const transformedContainers =
@@ -388,7 +400,8 @@ const setDefaultsToLayout = (
         fieldMap,
         resourceType,
         resource,
-        ignoreFunctionTransformations
+        ignoreFunctionTransformations,
+        developerMode
       );
       const { fields, containers } = transformedLayoutRes;
 
@@ -418,7 +431,8 @@ const getFieldsWithDefaults = (
   fieldMeta,
   resourceType,
   resource,
-  ignoreFunctionTransformations = false
+  ignoreFunctionTransformations = false,
+  developerMode = false
 ) => {
   const { layout, fieldMap, actions } = fieldMeta;
 
@@ -435,7 +449,8 @@ const getFieldsWithDefaults = (
     fieldMap,
     resourceType,
     resource,
-    ignoreFunctionTransformations
+    ignoreFunctionTransformations,
+    developerMode
   );
 
   return {

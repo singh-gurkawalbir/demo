@@ -139,7 +139,7 @@ export default {
       label: 'Name',
       defaultValue: '',
       required: true,
-      refreshOptionsOnChangesTo: ['application'],
+      refreshOptionsOnChangesTo: ['application', 'resourceType'],
       visibleWhenAll: [visibleWhenHasApp, visibleWhenIsNew],
     },
     description: {
@@ -167,21 +167,36 @@ export default {
   },
   optionsHandler: (fieldId, fields) => {
     const appField = fields.find(field => field.id === 'application');
-    const adaptorTypeSuffix = fieldId === 'importId' ? 'Import' : 'Export';
+    const resourceTypeField = fields.find(field => field.id === 'resourceType');
+    let adaptorTypeSuffix = fieldId === 'importId' ? 'Import' : 'Export';
     const app = appField
       ? applications.find(a => a.id === appField.value) || {}
       : {};
 
     if (fieldId === 'name') {
+      adaptorTypeSuffix =
+        resourceTypeField && resourceTypeField.value === 'imports'
+          ? 'Import'
+          : 'Export';
+
       return `New ${app.name} ${adaptorTypeSuffix}`;
     }
 
     if (fieldId === 'connection') {
-      const filter = { type: app.type };
+      const expression = [];
+
+      if (['mysql', 'postgresql', 'mssql'].includes(app.type)) {
+        expression.push({ 'rdbms.type': app.type });
+      } else {
+        expression.push({ type: app.type });
+      }
 
       if (app.assistant) {
-        filter.assistant = app.assistant;
+        expression.push({ assistant: app.assistant });
       }
+
+      expression.push({ _connectorId: { $exists: false } });
+      const filter = { $and: expression };
 
       return { filter };
     }
@@ -190,14 +205,18 @@ export default {
       const adaptorTypePrefix = appTypeToAdaptorType[app.type];
 
       if (!adaptorTypePrefix) return;
+      const expression = [];
 
-      const filter = {
+      expression.push({
         adaptorType: `${adaptorTypePrefix}${adaptorTypeSuffix}`,
-      };
+      });
 
       if (app.assistant) {
-        filter.assistant = app.assistant;
+        expression.push({ assistant: app.assistant });
       }
+
+      expression.push({ _connectorId: { $exists: false } });
+      const filter = { $and: expression };
 
       return { filter };
     }

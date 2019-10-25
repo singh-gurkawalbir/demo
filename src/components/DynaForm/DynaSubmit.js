@@ -12,13 +12,14 @@ class FormButton extends Component {
       id,
       className,
       value = {},
+      color,
     } = this.props;
 
     return (
       <Button
         data-test={id}
         variant="contained"
-        color="secondary"
+        color={color || 'secondary'}
         className={className}
         disabled={disabled || !isValid}
         onClick={() => onClick(value)}>

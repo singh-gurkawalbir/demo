@@ -3,7 +3,7 @@ import JobDashboard from '../../../../../components/JobDashboard';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    padding: theme.spacing(1, 0, 0),
+    padding: theme.spacing(0),
   },
 }));
 

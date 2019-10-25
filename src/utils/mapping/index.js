@@ -275,4 +275,27 @@ export default {
       name: m,
     }));
   },
+  getFormattedGenerateData: (sampleData, application) => {
+    let formattedGenerateFields = [];
+
+    if (application === adaptorTypeMap.SalesforceImport) {
+      formattedGenerateFields =
+        sampleData &&
+        sampleData.map(d => ({
+          id: d.value,
+          name: d.label,
+          type: d.type,
+          options: d.picklistValues,
+        }));
+    } else if (application === adaptorTypeMap.NetSuiteDistributedImport) {
+      formattedGenerateFields =
+        sampleData &&
+        sampleData.map(d => ({
+          id: d.value,
+          name: d.label,
+        }));
+    }
+
+    return formattedGenerateFields;
+  },
 };

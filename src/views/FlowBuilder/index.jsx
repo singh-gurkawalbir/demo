@@ -24,8 +24,8 @@ import itemTypes from './itemTypes';
 import RunIcon from '../../components/icons/RunIcon';
 import SettingsIcon from '../../components/icons/SettingsIcon';
 import CalendarIcon from '../../components/icons/CalendarIcon';
-import SwitchOnOff from '../../components/SwitchToggle';
 import EditableText from './EditableText';
+import SwitchOnOff from '../../components/OnOff';
 
 // #region FLOW SCHEMA: FOR REFERENCE DELETE ONCE FB IS COMPLETE
 /* 
@@ -137,6 +137,7 @@ import EditableText from './EditableText';
 */
 // #endregion
 
+const bottomDrawerMin = 41;
 const useStyles = makeStyles(theme => ({
   actions: {
     display: 'flex',
@@ -407,8 +408,8 @@ function FlowBuilder(props) {
     <Fragment>
       <ResourceDrawer {...props} />
       <RunDrawer {...props} flowId={flowId} />
-      <ScheduleDrawer {...props} flowId={flowId} />
-      <SettingsDrawer {...props} flowId={flowId} />
+      <ScheduleDrawer {...props} flow={flow} />
+      <SettingsDrawer {...props} flow={flow} />
       {/* <WizardDrawer {...props} flowId={flowId} /> */}
 
       <CeligoPageBar
@@ -418,13 +419,12 @@ function FlowBuilder(props) {
         subtitle={`Last saved: ${isNewFlow ? 'Never' : flow.lastModified}`}
         infoText={flow.description}>
         <div className={classes.actions}>
-          <SwitchOnOff
-            disabled={isNewFlow}
-            on={!isNewFlow && flow.disabled === 'false'}
-          />
+          <SwitchOnOff.component resource={flow} disabled={isNewFlow} />
           <IconButton
             disabled={isNewFlow}
-            onClick={() => handleDrawerOpen('run')}>
+            onClick={() => {
+              dispatch(actions.flow.run({ flowId }));
+            }}>
             <RunIcon />
           </IconButton>
           <IconButton
@@ -447,7 +447,7 @@ function FlowBuilder(props) {
           style={{
             height: `calc(${(4 - size) * 25}vh - ${theme.appBarHeight +
               theme.pageBarHeight +
-              (size ? 0 : 64)}px)`,
+              (size ? 0 : bottomDrawerMin)}px)`,
           }}>
           <div className={classes.canvas}>
             {/* CANVAS START */}
@@ -526,7 +526,7 @@ function FlowBuilder(props) {
               style={{
                 bottom: size
                   ? `calc(${size * 25}vh + ${theme.spacing(3)}px)`
-                  : 64 + theme.spacing(3),
+                  : bottomDrawerMin + theme.spacing(3),
               }}>
               <TrashCan onDrop={handleDelete} />
             </div>

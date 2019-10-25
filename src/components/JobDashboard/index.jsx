@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { isEqual } from 'lodash';
 import LoadResources from '../../components/LoadResources';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
@@ -30,28 +29,36 @@ export default function JobDashboard({
   const isBulkRetryInProgress = useSelector(state =>
     selectors.isBulkRetryInProgress(state)
   );
-  const { filters = {}, currentPage = 0 } = useSelector(state =>
-    selectors.filter(state, filterKey)
-  );
+  const filters = useSelector(state => selectors.filter(state, filterKey));
+  const jobs = useSelector(state => selectors.flowJobs(state));
   const [selectedJobs, setSelectedJobs] = useState({});
   const [numJobsSelected, setNumJobsSelected] = useState(0);
-  const [disableButtons, setDisableButtons] = useState(true);
+  const [disableActions, setDisableActions] = useState(true);
   const [actionsToMonitor, setActionsToMonitor] = useState({});
-  const jobs = useSelector(state => selectors.flowJobs(state));
   const patchFilter = useCallback(
     (key, value) => {
       dispatch(actions.patchFilter(filterKey, { [key]: value }));
     },
     [dispatch]
   );
-  const filterHash = hashCode(filters);
+  const clearFilter = useCallback(() => {
+    dispatch(actions.clearFilter(filterKey));
+  }, [dispatch]);
+  const { currentPage = 0, ...nonPagingFilters } = filters;
+  const filterHash = hashCode(nonPagingFilters);
 
   useEffect(
     () => () => {
       dispatch(actions.job.clear());
-      patchFilter('currentPage', 0);
     },
-    [dispatch, currentPage, filterHash, patchFilter]
+    [dispatch, filterHash, patchFilter]
+  );
+
+  useEffect(
+    () => () => {
+      clearFilter();
+    },
+    [clearFilter]
   );
 
   /** Whenever page changes, we need to update the same in state and
@@ -68,14 +75,18 @@ export default function JobDashboard({
   useEffect(() => {
     if (jobs.length === 0) {
       dispatch(
-        actions.job.requestCollection({ integrationId, flowId, filters })
+        actions.job.requestCollection({
+          integrationId,
+          flowId,
+          filters,
+        })
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, integrationId, flowId, filterHash, jobs.length]);
 
   useEffect(() => {
-    setDisableButtons(isBulkRetryInProgress || jobs.length === 0);
+    setDisableActions(isBulkRetryInProgress || jobs.length === 0);
   }, [isBulkRetryInProgress, jobs.length]);
 
   useEffect(() => {
@@ -99,17 +110,6 @@ export default function JobDashboard({
 
   function closeAllOpenSnackbars() {
     closeSnackbar();
-  }
-
-  function handleChangePage(newPage) {
-    patchFilter('currentPage', newPage);
-  }
-
-  function handleFiltersChange(newFilters) {
-    if (!isEqual(filters, newFilters)) {
-      patchFilter('filters', newFilters);
-      patchFilter('currentPage', 0);
-    }
   }
 
   function handleSelectChange(selJobs) {
@@ -374,12 +374,12 @@ export default function JobDashboard({
         commStatusHandler={commStatusHandler}
       />
       <Filters
+        filterKey={filterKey}
         integrationId={integrationId}
         flowId={flowId}
-        onFiltersChange={handleFiltersChange}
         numJobsSelected={numJobsSelected}
         onActionClick={handleActionClick}
-        disableButtons={disableButtons}
+        disableButtons={disableActions}
       />
       <JobTable
         onSelectChange={handleSelectChange}
@@ -387,7 +387,6 @@ export default function JobDashboard({
         selectedJobs={selectedJobs}
         userPermissionsOnIntegration={userPermissionsOnIntegration}
         integrationName={integration && integration.name}
-        onChangePage={handleChangePage}
       />
     </LoadResources>
   );
