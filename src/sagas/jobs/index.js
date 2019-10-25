@@ -92,6 +92,21 @@ export function* requestJobCollection({ integrationId, flowId, filters = {} }) {
     jobFilters.flowId = flowId;
   }
 
+  switch (jobFilters.status) {
+    case 'all':
+      delete jobFilters.status;
+      break;
+    case 'error':
+      jobFilters.numError_gte = 1;
+      delete jobFilters.status;
+      break;
+    case 'resolved':
+      jobFilters.numResolved_gte = 1;
+      delete jobFilters.status;
+      break;
+    default:
+  }
+
   const requestOptions = getRequestOptions(actionTypes.JOB.REQUEST_COLLECTION, {
     filters: jobFilters,
   });
