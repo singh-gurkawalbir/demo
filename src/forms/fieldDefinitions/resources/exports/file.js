@@ -3,15 +3,27 @@ export default {
   // something meaningful
   uploadFile: {
     type: 'uploadfile',
-    label: 'Sample File (that would be exported)',
+    label: 'Sample File (that would be imported)',
     mode: r => r && r.file && r.file.type,
-    // filter: r => ({ type: r.type }),
+    // filter: r => ({ type: r.type }),y
     // excludeFilter: r => ({ _
     //
+    visibleWhen: [
+      {
+        field: 'file.type',
+        is: ['csv', 'json', 'xlsx'],
+      },
+    ],
   },
   'file.encoding': {
     type: 'select',
     label: 'File encoding',
+    visibleWhen: [
+      {
+        field: 'outputMode',
+        is: ['RECORDS'],
+      },
+    ],
     options: [
       {
         items: [
@@ -52,6 +64,12 @@ export default {
         ],
       },
     ],
+    visibleWhen: [
+      {
+        field: 'outputMode',
+        is: ['RECORDS'],
+      },
+    ],
   },
   'file.skipDelete': {
     type: 'checkbox',
@@ -60,6 +78,12 @@ export default {
   'file.compressionFormat': {
     type: 'select',
     label: 'Compression Format',
+    visibleWhen: [
+      {
+        field: 'outputMode',
+        is: ['RECORDS'],
+      },
+    ],
     options: [{ items: [{ label: 'gzip', value: 'gzip' }] }],
   },
   'file.purgeInternalBackup': {

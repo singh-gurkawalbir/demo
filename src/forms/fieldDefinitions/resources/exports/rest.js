@@ -1,8 +1,4 @@
 export default {
-  'delta.dateFormat': {
-    type: 'text',
-    label: 'Date Format',
-  },
   'rest.method': {
     type: 'select',
     label: 'HTTP Method',
@@ -21,7 +17,7 @@ export default {
     type: 'httprequestbody',
     label: 'Build HTTP Request Body',
     required: true,
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'rest.method',
         is: ['POST', 'PUT'],
@@ -38,11 +34,6 @@ export default {
     valueName: 'value',
     valueType: 'keyvalue',
     label: 'Configure HTTP headers',
-  },
-  'once.booleanField': {
-    type: 'text',
-    label: 'Boolean Field',
-    helpkey: 'once.booleanField',
   },
   // #region paging
   'rest.pagingMethod': {
@@ -61,15 +52,25 @@ export default {
         ],
       },
     ],
+    visibleWhen: [
+      {
+        field: 'outputMode',
+        is: ['RECORDS'],
+      },
+    ],
   },
   'rest.nextPagePath': {
     type: 'text',
     label: 'Next Page Path',
     required: true,
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'rest.pagingMethod',
         is: ['nextpageurl', 'token'],
+      },
+      {
+        field: 'outputMode',
+        is: ['RECORDS'],
       },
     ],
   },
@@ -77,10 +78,14 @@ export default {
     type: 'text',
     required: true,
     label: 'Link Header Relation',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'rest.pagingMethod',
         is: ['linkheader'],
+      },
+      {
+        field: 'outputMode',
+        is: ['RECORDS'],
       },
     ],
   },
@@ -88,10 +93,14 @@ export default {
     type: 'text',
     label: 'Next Page Relative URI',
     required: true,
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'rest.pagingMethod',
         is: ['relativeuri'],
+      },
+      {
+        field: 'outputMode',
+        is: ['RECORDS'],
       },
     ],
   },
@@ -99,7 +108,7 @@ export default {
     type: 'text',
     label: 'Page Argument',
     required: true,
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'rest.pagingMethod',
         is: ['pageargument', 'token'],
@@ -110,30 +119,42 @@ export default {
     type: 'httprequestbody',
     label: 'Build Paging Post Body',
     required: true,
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'rest.pagingMethod',
         is: ['postbody'],
+      },
+      {
+        field: 'outputMode',
+        is: ['RECORDS'],
       },
     ],
   },
   'rest.maxPagePath': {
     type: 'text',
     label: 'Max Page Path',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'rest.pagingMethod',
         is: ['pageargument'],
+      },
+      {
+        field: 'outputMode',
+        is: ['RECORDS'],
       },
     ],
   },
   'rest.maxCountPath': {
     type: 'text',
     label: 'Max Count Path',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'rest.pagingMethod',
         is: ['pageargument'],
+      },
+      {
+        field: 'outputMode',
+        is: ['RECORDS'],
       },
     ],
   },
@@ -141,10 +162,14 @@ export default {
     type: 'text',
     label: 'Skip Argument',
     required: true,
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'rest.pagingMethod',
         is: ['skipargument'],
+      },
+      {
+        field: 'outputMode',
+        is: ['RECORDS'],
       },
     ],
   },
@@ -152,18 +177,42 @@ export default {
     type: 'relativeuri',
     required: true,
     label: 'Relative URI',
+    requiredWhen: [
+      {
+        field: 'outputMode',
+        is: ['BLOB'],
+      },
+    ],
   },
   'rest.successPath': {
     type: 'text',
     label: 'Success Path',
+    visibleWhen: [
+      {
+        field: 'outputMode',
+        is: ['RECORDS'],
+      },
+    ],
   },
   'rest.successValues': {
     type: 'text',
     label: 'Success Values',
+    visibleWhen: [
+      {
+        field: 'outputMode',
+        is: ['RECORDS'],
+      },
+    ],
   },
   'rest.lastPageStatusCode': {
     type: 'text',
     label: 'Last Page Status Code',
+    visibleWhen: [
+      {
+        field: 'outputMode',
+        is: ['RECORDS'],
+      },
+    ],
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
@@ -173,10 +222,22 @@ export default {
   'rest.lastPagePath': {
     type: 'text',
     label: 'Last Page Path',
+    visibleWhen: [
+      {
+        field: 'outputMode',
+        is: ['RECORDS'],
+      },
+    ],
   },
   'rest.lastPageValue': {
     type: 'text',
     label: 'Last Page Value',
+    visibleWhen: [
+      {
+        field: 'outputMode',
+        is: ['RECORDS'],
+      },
+    ],
   },
   // #endregion paging
   // #region transform
@@ -199,10 +260,22 @@ export default {
   'rest.once.relativeURI': {
     type: 'relativeuri',
     label: 'Relative URI',
+    visibleWhen: [
+      {
+        field: 'outputMode',
+        is: ['RECORDS'],
+      },
+    ],
   },
   'rest.once.method': {
     type: 'select',
     label: 'HTTP Method',
+    visibleWhen: [
+      {
+        field: 'outputMode',
+        is: ['RECORDS'],
+      },
+    ],
     options: [
       {
         items: [
@@ -212,9 +285,37 @@ export default {
       },
     ],
   },
+  'rest.blobFormat': {
+    type: 'select',
+    label: 'Blob Format',
+    options: [
+      {
+        items: [
+          { label: 'ASCII', value: 'ascii' },
+          { label: 'Base64', value: 'base64' },
+          { label: 'Binary', value: 'binary' },
+          { label: 'Hex', value: 'hex' },
+          { label: 'UCS-2/UTF-16', value: 'ucs2/utf16-le' },
+          { label: 'UTF-8', value: 'utf8' },
+        ],
+      },
+    ],
+    visibleWhen: [
+      {
+        field: 'outputMode',
+        is: ['BLOB'],
+      },
+    ],
+  },
   // #endregion once
   'rest.once.postBody': {
     type: 'httprequestbody',
+    visibleWhen: [
+      {
+        field: 'outputMode',
+        is: ['RECORDS'],
+      },
+    ],
     label: 'Build HTTP Request Body',
   },
 };

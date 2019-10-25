@@ -4,6 +4,12 @@ export default {
       id: 'file.decompressFiles',
       type: 'checkbox',
       label: 'Decompress Files',
+      visibleWhen: [
+        {
+          field: 'outputMode',
+          is: ['RECORDS'],
+        },
+      ],
       defaultValue: r => !!(r && r.file && r.file.compressionFormat),
     },
     'file.compressionFormat': {
@@ -12,8 +18,24 @@ export default {
     },
     'file.skipDelete': { fieldId: 'file.skipDelete' },
     'file.encoding': { fieldId: 'file.encoding' },
-    pageSize: { fieldId: 'pageSize' },
-    dataURITemplate: { fieldId: 'dataURITemplate' },
+    pageSize: {
+      fieldId: 'pageSize',
+      visibleWhen: [
+        {
+          field: 'outputMode',
+          is: ['RECORDS'],
+        },
+      ],
+    },
+    dataURITemplate: {
+      fieldId: 'dataURITemplate',
+      visibleWhen: [
+        {
+          field: 'outputMode',
+          is: ['RECORDS'],
+        },
+      ],
+    },
   },
   layout: {
     fields: [

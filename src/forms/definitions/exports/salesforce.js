@@ -26,9 +26,21 @@ export default {
       id: 'exportData',
       type: 'labeltitle',
       label: 'What would you like to export from Salesforce?',
-      visibleWhen: [
-        { field: 'salesforce.executionType', is: ['scheduled', 'realtime'] },
+    },
+    outputMode: {
+      id: 'outputMode',
+      type: 'radiogroup',
+      label: 'Output Mode',
+      options: [
+        {
+          items: [
+            { label: 'Records', value: 'RECORDS' },
+            { label: 'Blob Keys', value: 'BLOB' },
+          ],
+        },
       ],
+      defaultValue: r =>
+        r && r.salesforce && r.salesforce.id ? 'BLOB' : 'RECORDS',
     },
     'salesforce.soql.query': { fieldId: 'salesforce.soql.query' },
     type: {
@@ -47,42 +59,19 @@ export default {
           ],
         },
       ],
-      visibleWhen: [{ field: 'salesforce.executionType', is: ['scheduled'] }],
+      visibleWhenAll: [
+        { field: 'salesforce.executionType', is: ['scheduled'] },
+        { field: 'outputMode', is: ['RECORDS'] },
+      ],
     },
     'delta.dateField': {
-      id: 'delta.dateField',
-      label: 'Date Field',
-      required: true,
-      type: 'text',
-      visibleWhen: [
-        {
-          field: 'type',
-          is: ['delta'],
-        },
-      ],
+      fieldId: 'delta.dateField',
     },
     'delta.lagOffset': {
-      id: 'delta.lagOffset',
-      label: 'Offset',
-      type: 'text',
-      visibleWhen: [
-        {
-          field: 'type',
-          is: ['delta'],
-        },
-      ],
+      fieldId: 'delta.lagOffset',
     },
     'once.booleanField': {
-      id: 'once.booleanField',
-      label: 'Boolean Field',
-      required: true,
-      type: 'text',
-      visibleWhen: [
-        {
-          field: 'type',
-          is: ['once'],
-        },
-      ],
+      fieldId: 'once.booleanField',
     },
     'salesforce.sObjectType': { fieldId: 'salesforce.sObjectType' },
     'salesforce.distributed.requiredTrigger': {
@@ -102,18 +91,19 @@ export default {
   layout: {
     fields: [
       'common',
+      'outputMode',
       'salesforce.executionType',
       'exportData',
-      'salesforce.soql.query',
-      'type',
-      'delta.dateField',
-      'delta.lagOffset',
-      'once.booleanField',
       'salesforce.sObjectType',
       'salesforce.distributed.requiredTrigger',
       'salesforce.distributed.referencedFields',
       'salesforce.distributed.relatedLists.referencedFields',
       'salesforce.distributed.qualifier',
+      'salesforce.soql.query',
+      'type',
+      'delta.dateField',
+      'delta.lagOffset',
+      'once.booleanField',
     ],
     type: 'collapse',
     containers: [

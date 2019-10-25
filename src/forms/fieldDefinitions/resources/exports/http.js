@@ -1,12 +1,4 @@
 export default {
-  'delta.dateFormat': {
-    type: 'text',
-    label: 'Date Format',
-  },
-  'delta.lagOffset': {
-    type: 'text',
-    label: 'Offset',
-  },
   'http.successMediaType': {
     type: 'select',
     label: 'Success Media Type',
@@ -17,6 +9,12 @@ export default {
           { label: 'CSV', value: 'csv' },
           { label: 'JSON', value: 'json' },
         ],
+      },
+    ],
+    visibleWhen: [
+      {
+        field: 'outputMode',
+        is: ['RECORDS'],
       },
     ],
   },
@@ -31,10 +29,22 @@ export default {
         ],
       },
     ],
+    visibleWhen: [
+      {
+        field: 'outputMode',
+        is: ['RECORDS'],
+      },
+    ],
   },
   'http.relativeURI': {
     type: 'relativeuri',
     label: 'Relative URI',
+    requiredWhen: [
+      {
+        field: 'outputMode',
+        is: ['BLOB'],
+      },
+    ],
   },
   'http.method': {
     type: 'select',
@@ -62,10 +72,6 @@ export default {
   'http.paging.method': {
     type: 'select',
     label: 'Paging Method',
-    defaultValue: r =>
-      r && r.http && r.http.paging && r.http.paging.method
-        ? r.http.paging.method
-        : '',
     options: [
       {
         items: [
@@ -78,37 +84,43 @@ export default {
         ],
       },
     ],
+    visibleWhen: [
+      {
+        field: 'outputMode',
+        is: ['RECORDS'],
+      },
+    ],
   },
   'http.paging.skip': {
     type: 'text',
     label: 'Skip',
-    defaultValue: r =>
-      r && r.http && r.http.paging && r.http.paging.skip
-        ? r.http.paging.skip
-        : '',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'http.paging.method',
         is: ['skip'],
+      },
+      {
+        field: 'outputMode',
+        is: ['RECORDS'],
       },
     ],
   },
   'http.paging.page': {
     type: 'text',
     label: 'Page',
-    defaultValue: r =>
-      r && r.http && r.http.paging && r.http.paging.page
-        ? r.http.paging.page
-        : '',
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
       },
     ],
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'http.paging.method',
         is: ['page'],
+      },
+      {
+        field: 'outputMode',
+        is: ['RECORDS'],
       },
     ],
   },
@@ -119,98 +131,110 @@ export default {
   'http.paging.token': {
     type: 'text',
     label: 'Token',
-    defaultValue: r =>
-      r && r.http && r.http.paging && r.http.paging.token
-        ? r.http.paging.token
-        : '',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'http.paging.method',
         is: ['token'],
+      },
+      {
+        field: 'outputMode',
+        is: ['RECORDS'],
       },
     ],
   },
   'http.paging.path': {
     type: 'text',
     label: 'Path',
-    defaultValue: r =>
-      r && r.http && r.http.paging && r.http.paging.path
-        ? r.http.paging.path
-        : '',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'http.paging.method',
         is: ['token', 'url'],
+      },
+      {
+        field: 'outputMode',
+        is: ['RECORDS'],
       },
     ],
   },
   'http.paging.relativeURI': {
     type: 'text',
     label: 'Relative URI',
-    defaultValue: r =>
-      r && r.http && r.http.paging && r.http.paging.relativeURI
-        ? r.http.paging.relativeURI
-        : '',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'http.paging.method',
         is: ['token', 'relativeuri'],
+      },
+      {
+        field: 'outputMode',
+        is: ['RECORDS'],
       },
     ],
   },
   'http.paging.pathAfterFirstRequest': {
     type: 'text',
     label: 'Token Path After First Request',
-
-    defaultValue: r =>
-      r && r.http && r.http.paging && r.http.paging.pathAfterFirstRequest
-        ? r.http.paging.pathAfterFirstRequest
-        : '',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'http.paging.method',
         is: ['token'],
+      },
+      {
+        field: 'outputMode',
+        is: ['RECORDS'],
       },
     ],
   },
   'http.paging.resourcePath': {
     type: 'text',
     label: 'Resource Path',
-
-    defaultValue: r =>
-      r && r.http && r.http.paging && r.http.paging.resourcePath
-        ? r.http.paging.resourcePath
-        : '',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'http.paging.method',
         is: ['token'],
+      },
+      {
+        field: 'outputMode',
+        is: ['RECORDS'],
       },
     ],
   },
   'http.paging.maxPagePath': {
     type: 'text',
     label: 'Max Page Path',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'http.paging.method',
         is: ['skip', 'page'],
+      },
+      {
+        field: 'outputMode',
+        is: ['RECORDS'],
       },
     ],
   },
   'http.paging.maxCountPath': {
     type: 'text',
     label: 'Max Count Path',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'http.paging.method',
         is: ['skip', 'page'],
+      },
+      {
+        field: 'outputMode',
+        is: ['RECORDS'],
       },
     ],
   },
   'http.paging.lastPageStatusCode': {
     type: 'text',
     label: 'Last Page Status Code',
+    visibleWhen: [
+      {
+        field: 'outputMode',
+        is: ['RECORDS'],
+      },
+    ],
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
@@ -220,29 +244,48 @@ export default {
   'http.paging.lastPagePath': {
     type: 'text',
     label: 'Last Page Path',
+    visibleWhen: [
+      {
+        field: 'outputMode',
+        is: ['RECORDS'],
+      },
+    ],
   },
   'http.paging.lastPageValues': {
     type: 'text',
     label: 'Last Page Values',
+    visibleWhen: [
+      {
+        field: 'outputMode',
+        is: ['RECORDS'],
+      },
+    ],
     delimiter: ',',
   },
   'http.paging.linkHeaderRelation': {
     type: 'text',
     label: 'Link Header Relation',
-    defaultValue: r =>
-      r && r.http && r.http.paging && r.http.paging.linkHeaderRelation
-        ? r.http.paging.linkHeaderRelation
-        : '',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'http.paging.method',
         is: ['linkheader'],
+      },
+      {
+        field: 'outputMode',
+        is: ['RECORDS'],
       },
     ],
   },
   'http._asyncHelperId': {
     type: 'text',
     label: 'Http _async Helper Id',
+    visibleWhenAll: [
+      {
+        field: 'outputMode',
+        is: ['RECORDS'],
+      },
+      { field: 'configureAsyncHelper', is: [true] },
+    ],
   },
   'http.response.resourcePath': {
     type: 'text',
@@ -255,21 +298,33 @@ export default {
   'http.response.successPath': {
     type: 'text',
     label: 'Success Path',
+    visibleWhen: [
+      {
+        field: 'outputMode',
+        is: ['RECORDS'],
+      },
+    ],
   },
   'http.response.successValues': {
     type: 'text',
     delimiter: ',',
     label: 'Success Values',
-    omitWhenValueIs: [''],
+    visibleWhen: [
+      {
+        field: 'outputMode',
+        is: ['RECORDS'],
+      },
+    ],
   },
   'http.response.errorPath': {
     type: 'text',
     label: 'Error Path',
-  },
-
-  'http.response.blobFormat': {
-    type: 'text',
-    label: 'Http response blob Format',
+    visibleWhen: [
+      {
+        field: 'outputMode',
+        is: ['RECORDS'],
+      },
+    ],
   },
   // #region transform
   'transform.expression.rules': {
@@ -290,14 +345,35 @@ export default {
   'http.once.relativeURI': {
     type: 'relativeuri',
     label: 'Relative URI',
+    visibleWhenAll: [
+      {
+        field: 'outputMode',
+        is: ['RECORDS'],
+      },
+      { field: 'type', is: ['once'] },
+    ],
   },
   'http.once.body': {
     type: 'httprequestbody',
     label: 'Build HTTP Request Body',
+    visibleWhenAll: [
+      {
+        field: 'outputMode',
+        is: ['RECORDS'],
+      },
+      { field: 'type', is: ['once'] },
+    ],
   },
   'http.once.method': {
     type: 'select',
     label: 'HTTP Method',
+    visibleWhenAll: [
+      {
+        field: 'outputMode',
+        is: ['RECORDS'],
+      },
+      { field: 'type', is: ['once'] },
+    ],
     options: [
       {
         items: [
@@ -307,6 +383,28 @@ export default {
           { label: 'PATCH', value: 'PATCH' },
           { label: 'DELETE', value: 'DELETE' },
         ],
+      },
+    ],
+  },
+  'http.response.blobFormat': {
+    type: 'select',
+    label: 'Blob Format',
+    options: [
+      {
+        items: [
+          { label: 'ASCII', value: 'ascii' },
+          { label: 'Base64', value: 'base64' },
+          { label: 'Binary', value: 'binary' },
+          { label: 'Hex', value: 'hex' },
+          { label: 'UCS-2/UTF-16', value: 'ucs2/utf16-le' },
+          { label: 'UTF-8', value: 'utf8' },
+        ],
+      },
+    ],
+    visibleWhen: [
+      {
+        field: 'outputMode',
+        is: ['BLOB'],
       },
     ],
   },

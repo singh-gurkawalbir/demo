@@ -1,20 +1,4 @@
 export default {
-  uploadFile: {
-    type: 'uploadfile',
-    required: true,
-    label: 'Sample File (that would be exported)',
-    resourceType: 'connections',
-    mode: r => r && r.file && r.file.type,
-    visibleWhen: [
-      {
-        field: 'file.type',
-        is: ['csv', 'xml', 'json', 'xlsx'],
-      },
-    ],
-    // filter: r => ({ type: r.type }),
-    // excludeFilter: r => ({ _
-    //
-  },
   'ftp.directoryPath': {
     type: 'text',
     label: 'Directory Path',

@@ -68,17 +68,23 @@ export default {
       type: 'labeltitle',
       label: 'What would you like to Export?',
     },
-    'rest.method': {
-      fieldId: 'rest.method',
+    outputMode: {
+      id: 'outputMode',
+      type: 'radiogroup',
+      label: 'Output Mode',
       options: [
         {
           items: [
-            { label: 'GET', value: 'GET' },
-            { label: 'PUT', value: 'PUT' },
-            { label: 'POST', value: 'POST' },
+            { label: 'Records', value: 'RECORDS' },
+            { label: 'Blob Keys', value: 'BLOB' },
           ],
         },
       ],
+      defaultValue: r =>
+        r && r.rest && r.rest.blobFormat ? 'BLOB' : 'RECORDS',
+    },
+    'rest.method': {
+      fieldId: 'rest.method',
     },
     'rest.headers': { fieldId: 'rest.headers' },
     'rest.relativeURI': { fieldId: 'rest.relativeURI' },
@@ -89,10 +95,17 @@ export default {
     'rest.resourcePath': { fieldId: 'rest.resourcePath' },
     'rest.successPath': { fieldId: 'rest.successPath' },
     'rest.successValues': { fieldId: 'rest.successValues' },
+    'rest.blobFormat': { fieldId: 'rest.blobFormat' },
     type: {
       id: 'type',
       type: 'select',
       label: 'Export Type',
+      visibleWhen: [
+        {
+          field: 'outputMode',
+          is: ['RECORDS'],
+        },
+      ],
       defaultValue: r => (r && r.type ? r.type : 'all'),
       required: true,
       options: [
@@ -108,15 +121,12 @@ export default {
     },
     'delta.dateFormat': {
       fieldId: 'delta.dateFormat',
-      visibleWhen: [{ field: 'type', is: ['delta'] }],
     },
     'delta.lagOffset': {
       fieldId: 'delta.lagOffset',
-      visibleWhen: [{ field: 'type', is: ['delta'] }],
     },
     'once.booleanField': {
       fieldId: 'once.booleanField',
-      visibleWhen: [{ field: 'type', is: ['once'] }],
     },
     'rest.once.relativeURI': {
       fieldId: 'rest.once.relativeURI',
@@ -142,11 +152,20 @@ export default {
     'rest.lastPageStatusCode': { fieldId: 'rest.lastPageStatusCode' },
     'rest.lastPagePath': { fieldId: 'rest.lastPagePath' },
     'rest.lastPageValue': { fieldId: 'rest.lastPageValue' },
-    advancedSettings: { formId: 'advancedSettings' },
+    advancedSettings: {
+      formId: 'advancedSettings',
+      visibleWhenAll: [
+        {
+          field: 'outputMode',
+          is: ['RECORDS'],
+        },
+      ],
+    },
   },
   layout: {
     fields: [
       'common',
+      'outputMode',
       'exportData',
       'rest.method',
       'rest.headers',
@@ -162,6 +181,7 @@ export default {
       'rest.once.relativeURI',
       'rest.once.method',
       'rest.once.postBody',
+      'rest.blobFormat',
     ],
     type: 'collapse',
     containers: [

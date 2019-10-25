@@ -90,4 +90,14 @@ export default {
       },
     ],
   },
+  'salesforce.id': {
+    type: 'text',
+    label: 'Id',
+    visibleWhen: [
+      {
+        field: 'outputMode',
+        is: ['BLOB'],
+      },
+    ],
+  },
 };
