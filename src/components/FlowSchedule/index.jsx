@@ -1,12 +1,5 @@
 import { useSelector, useDispatch } from 'react-redux';
-import {
-  DialogContent,
-  DialogTitle,
-  makeStyles,
-  IconButton,
-  Typography,
-  Button,
-} from '@material-ui/core';
+import { makeStyles, IconButton, Button } from '@material-ui/core';
 import clsx from 'clsx';
 import { Fragment } from 'react';
 import Close from '../icons/CloseIcon';
@@ -34,7 +27,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function FlowSchedule(props) {
   const dispatch = useDispatch();
-  const { title, onClose, className } = props;
+  const { onClose, className } = props;
   let { flow } = props;
   const preferences = useSelector(state =>
     selectors.userProfilePreferencesProps(state)
@@ -69,10 +62,7 @@ export default function FlowSchedule(props) {
         onClick={onClose}>
         <Close />
       </IconButton>
-      <DialogTitle disableTypography>
-        <Typography variant="h6">{title}</Typography>
-      </DialogTitle>
-      <DialogContent className={clsx(classes.modalContent, className)}>
+      <div className={clsx(classes.modalContent, className)}>
         <DynaForm
           fieldMeta={getMetadata({
             flow,
@@ -86,7 +76,7 @@ export default function FlowSchedule(props) {
             Cancel
           </Button>
         </DynaForm>
-      </DialogContent>
+      </div>
     </Fragment>
   );
 }

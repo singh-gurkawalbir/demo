@@ -1,6 +1,7 @@
 import { makeStyles } from '@material-ui/core/styles';
 import RightDrawerRouter from '../RightDrawer';
 import FlowSchedule from '../../../../components/FlowSchedule';
+import TitleBar from '../TitleBar';
 
 const useStyle = makeStyles({
   fbContDrawer: {
@@ -17,9 +18,9 @@ export default function ScheduleDrawer({ flow, history, ...props }) {
 
   return (
     <RightDrawerRouter {...props} path="schedule">
+      <TitleBar title="Flow Schedule" />
       <FlowSchedule
         flow={flow}
-        title="Flow Schedule"
         onClose={onClose}
         className={classes.fbContDrawer}
       />

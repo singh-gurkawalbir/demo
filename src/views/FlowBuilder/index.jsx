@@ -408,7 +408,7 @@ function FlowBuilder(props) {
       <ResourceDrawer {...props} />
       <RunDrawer {...props} flowId={flowId} />
       <ScheduleDrawer {...props} flow={flow} />
-      <SettingsDrawer {...props} flowId={flowId} />
+      <SettingsDrawer {...props} flow={flow} />
       {/* <WizardDrawer {...props} flowId={flowId} /> */}
 
       <CeligoPageBar

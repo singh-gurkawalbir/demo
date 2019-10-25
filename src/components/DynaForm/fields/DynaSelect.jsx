@@ -61,6 +61,7 @@ export default function DynaSelect(props) {
     label,
     onFieldChange,
     resetAfterSelection,
+    disableSelect,
   } = props;
   const classes = useStyles();
   let items = options.reduce(
@@ -107,7 +108,7 @@ export default function DynaSelect(props) {
     <div>
       <FormControl
         key={id}
-        disabled={disabled}
+        disabled={disabled || disableSelect}
         className={classes.root}
         error={!isValid}
         required={required}>
