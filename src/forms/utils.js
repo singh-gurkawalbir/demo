@@ -124,7 +124,7 @@ export const isExpansionPanelErrored = (meta, fieldStates) => {
   });
 };
 
-export const isAllExpansionPanelFieldsVisible = (meta, fieldStates) => {
+export const isAnyExpansionPanelFieldVisible = (meta, fieldStates) => {
   const visibleFields = fieldStates.filter(field => field.visible);
   const { layout, fieldMap } = meta;
 

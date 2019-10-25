@@ -8,7 +8,7 @@ import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import FormGenerator from '../';
 import {
   isExpansionPanelErrored,
-  isAllExpansionPanelFieldsVisible,
+  isAnyExpansionPanelFieldVisible,
 } from '../../../../forms/utils';
 
 export default function CollapsedComponents(props) {
@@ -60,7 +60,7 @@ const ExpansionPannelExpandOnInValidState = props => {
   // we need to let the component mount and the field state settle before determing if they need to be removed
   useEffect(() => {
     if (componentLoaded) {
-      if (isAllExpansionPanelFieldsVisible({ layout, fieldMap }, form.fields))
+      if (isAnyExpansionPanelFieldVisible({ layout, fieldMap }, form.fields))
         setVisible(true);
       else setVisible(false);
     }
