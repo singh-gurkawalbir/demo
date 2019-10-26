@@ -61,10 +61,13 @@ function* getDefinition({ definitionId, format }) {
 }
 
 function* saveUserFileDefinition({ definitionRules, formValues }) {
-  const { fileDefinition } = definitionRules;
+  const fileDefinition =
+    formValues.resourceType === 'imports'
+      ? definitionRules
+      : definitionRules.fileDefinition;
   let definitionId =
     (fileDefinition && fileDefinition._id) || `new-${shortid.generate()}`;
-  const patchSet = jsonPatch.compare({}, definitionRules.fileDefinition);
+  const patchSet = jsonPatch.compare({}, fileDefinition);
 
   yield put(actions.resource.patchStaged(definitionId, patchSet, SCOPES.VALUE));
   yield call(commitStagedChanges, {
