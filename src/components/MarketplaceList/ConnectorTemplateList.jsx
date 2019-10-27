@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react';
+import { Fragment, useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import {
@@ -61,6 +61,7 @@ const useStyles = makeStyles(theme => ({
 export default function ConnectorTemplateList(props) {
   const { match } = props;
   const { application } = match.params;
+  const [fetchedCollection, setFetchedCollection] = useState(false);
   const classes = useStyles();
   const dispatch = useDispatch();
   const [showMessage, setShowMessage] = useState(false);
@@ -76,6 +77,15 @@ export default function ConnectorTemplateList(props) {
   );
   const connector = applications.find(c => c.id === application);
   const applicationName = connector && connector.name;
+
+  useEffect(() => {
+    if (!connectors.length && !templates.length && !fetchedCollection) {
+      dispatch(actions.marketplace.requestConnectors());
+      dispatch(actions.marketplace.requestTemplates());
+      setFetchedCollection(true);
+    }
+  }, [connectors.length, dispatch, fetchedCollection, templates.length]);
+
   const handleConnectorInstallClick = connector => {
     if (connector.installed) {
       prompt({
