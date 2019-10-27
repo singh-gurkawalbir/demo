@@ -227,7 +227,7 @@ export default function ImportMapping(props) {
     if (validateMapping(mappings)) {
       mappings = MappingUtil.generateMappingsForApp({
         mappings,
-        formattedGenerateFields,
+        generateFields: formattedGenerateFields,
         appType: application,
       });
 
