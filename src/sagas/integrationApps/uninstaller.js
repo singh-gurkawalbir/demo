@@ -72,7 +72,8 @@ export function* uninstallIntegration({ integrationId }) {
     return undefined;
   }
 
-  yield put(actions.resource.deleted('integrations', integrationId));
+  yield put(actions.resource.requestCollection('integrations'));
+  yield put(actions.resource.requestCollection('tiles'));
 }
 
 export default [
