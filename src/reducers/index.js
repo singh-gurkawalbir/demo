@@ -911,7 +911,11 @@ export function integrationAppFlowSettings(state, id, section, storeId) {
     },
   }).resources;
 
-  flows = flows.filter(f => requiredFlows.includes(f._id));
+  flows = flows
+    .filter(f => requiredFlows.includes(f._id))
+    .sort(
+      (a, b) => requiredFlows.indexOf(a._id) - requiredFlows.indexOf(b._id)
+    );
 
   return {
     flows,
