@@ -97,6 +97,7 @@ class EditorDialog extends Component {
     const size = fullScreen ? { height } : { height, width };
     const showPreviewAction =
       editor && !editor.violations && !editor.autoEvaluate;
+    const disableSave = !editor || editor.violations;
 
     return (
       <Dialog
@@ -162,6 +163,7 @@ class EditorDialog extends Component {
           <Button
             variant="contained"
             data-test="saveEditor"
+            disabled={!!disableSave}
             color="primary"
             onClick={() => this.handleClose(true)}>
             Save

@@ -29,7 +29,7 @@ export default function JobDashboard({
   const isBulkRetryInProgress = useSelector(state =>
     selectors.isBulkRetryInProgress(state)
   );
-  const filter = useSelector(state => selectors.filter(state, filterKey));
+  const filters = useSelector(state => selectors.filter(state, filterKey));
   const jobs = useSelector(state => selectors.flowJobs(state));
   const [selectedJobs, setSelectedJobs] = useState({});
   const [numJobsSelected, setNumJobsSelected] = useState(0);
@@ -41,15 +41,24 @@ export default function JobDashboard({
     },
     [dispatch]
   );
-  const { currentPage = 0, ...nonPagingFilters } = filter;
+  const clearFilter = useCallback(() => {
+    dispatch(actions.clearFilter(filterKey));
+  }, [dispatch]);
+  const { currentPage = 0, ...nonPagingFilters } = filters;
   const filterHash = hashCode(nonPagingFilters);
 
   useEffect(
     () => () => {
       dispatch(actions.job.clear());
-      patchFilter('currentPage', 0);
     },
-    [dispatch, currentPage, filterHash, patchFilter]
+    [dispatch, filterHash, patchFilter]
+  );
+
+  useEffect(
+    () => () => {
+      clearFilter();
+    },
+    [clearFilter]
   );
 
   /** Whenever page changes, we need to update the same in state and
@@ -66,7 +75,11 @@ export default function JobDashboard({
   useEffect(() => {
     if (jobs.length === 0) {
       dispatch(
-        actions.job.requestCollection({ integrationId, flowId, filter })
+        actions.job.requestCollection({
+          integrationId,
+          flowId,
+          filters,
+        })
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -104,7 +117,7 @@ export default function JobDashboard({
   }
 
   function resolveAllJobs() {
-    const selectedFlowId = flowId || filter.flowId;
+    const selectedFlowId = flowId || filters.flowId;
     const numberOfJobsToResolve = jobs
       .filter(job => {
         if (!selectedFlowId) {
@@ -217,7 +230,7 @@ export default function JobDashboard({
   }
 
   function retryAllJobs() {
-    const selectedFlowId = flowId || filter.flowId;
+    const selectedFlowId = flowId || filters.flowId;
     const numberOfJobsToRetry = jobs
       .filter(job => {
         if (!selectedFlowId) {

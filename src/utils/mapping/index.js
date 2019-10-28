@@ -122,7 +122,7 @@ export default {
       default:
     }
   },
-  getMappingFromResource: (resourceObj, appType) => {
+  getMappingFromResource: (resourceObj, appType, getRawMappings) => {
     if (!resourceObj) {
       return;
     }
@@ -149,6 +149,8 @@ export default {
       case adaptorTypeMap.RDBMSImport:
       default:
     }
+
+    if (getRawMappings) return mappings;
 
     return MappingUtil.getMappingsForApp({
       mappings,

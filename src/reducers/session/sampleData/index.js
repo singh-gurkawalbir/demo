@@ -63,6 +63,9 @@ export default function(state = {}, action) {
         // Resets the Erred Stage
         delete draft[resourceId][stage];
         break;
+      case actionTypes.SAMPLEDATA.RESET:
+        draft[resourceId] = {};
+        break;
       default:
     }
   });

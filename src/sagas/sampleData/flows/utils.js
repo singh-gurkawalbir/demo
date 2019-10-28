@@ -121,6 +121,17 @@ export function* requestSampleDataForImports({
       break;
     }
 
+    case 'importMappingExtract': {
+      yield call(requestProcessorData, {
+        flowId,
+        resourceId,
+        resourceType: 'imports',
+        processor: 'mapperProcessor',
+        processorStage: 'importMappingExtract',
+      });
+      break;
+    }
+
     case 'preMap': {
       yield call(requestProcessorData, {
         flowId,

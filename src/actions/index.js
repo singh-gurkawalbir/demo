@@ -677,6 +677,7 @@ const sampleData = {
     action(actionTypes.SAMPLEDATA.UPDATE, { resourceId, processedData, stage }),
   receivedError: (resourceId, error, stage) =>
     action(actionTypes.SAMPLEDATA.RECEIVED_ERROR, { resourceId, error, stage }),
+  reset: resourceId => action(actionTypes.SAMPLEDATA.RESET, { resourceId }),
 };
 const importSampleData = {
   request: resourceId =>

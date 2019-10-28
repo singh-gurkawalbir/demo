@@ -3,7 +3,7 @@ import ViewAuditLog from '../../../components/ResourceTable/actions/AuditLogs';
 import FieldMappings from '../../../components/ResourceTable/actions/Flows/FieldMappings';
 import Schedule from '../../../components/ResourceTable/actions/Flows/Schedule';
 import Run from '../../../components/ResourceTable/actions/Flows/Run';
-import OnOff from '../../../components/ResourceTable/actions/Flows/OnOff';
+import OnOff from '../../../components/OnOff';
 import MappingDialog from '../../../components/MappingDialog/Mapping';
 import FlowSettings from './Actions/FlowSettings';
 import Description from './Actions/Description';
@@ -107,7 +107,7 @@ export default {
     columnData.push({
       heading: 'Off/On',
       value: function OffOnAction(r) {
-        return <OnOff.component resource={r} />;
+        return <OnOff.component resource={r} storeId={storeId} />;
       },
     });
     columnData.push({
