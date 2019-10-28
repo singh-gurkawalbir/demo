@@ -13,11 +13,12 @@ import GlobalSearch from '../GlobalSearch';
 import TextToggle from '../../components/TextToggle';
 import ElevateOnScroll from '../../components/ElevateOnScroll';
 import SlideOnScroll from '../../components/SlideOnScroll';
-import ProfileMenuButton from '../ProfileMenuButton';
+import ProfileMenuButton from './ProfileMenuButton';
 import * as selectors from '../../reducers';
 import ArrowRightIcon from '../../components/icons/ArrowRightIcon';
 import Notifications from './Notifications';
 import LicenseAction from './LicenseAction';
+import AccountList from './AccountList';
 
 const useStyles = makeStyles(theme => ({
   celigoLogo: {
@@ -124,6 +125,9 @@ export default function CeligoAppBar() {
             <ul className={classes.topBarActions}>
               <li>
                 <GlobalSearch />
+              </li>
+              <li>
+                <AccountList />
               </li>
               <li>
                 <TextToggle

@@ -6,31 +6,26 @@ import HTML5Backend from 'react-dnd-html5-backend-cjs';
 import { MuiThemeProvider, makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import FontStager from '../components/FontStager';
-import themeProvider from './themeProvider';
-// import themeProviderOld from '../theme/themeProvider';
+import themeProvider from '../theme/themeProvider';
 import CeligoAppBar from './CeligoAppBar';
 import CeligoDrawer from './CeligoDrawer';
 import PageContent from './PageContent';
 import AuthDialog from '../components/AuthDialog';
-import AppErroredModal from '../App/AppErroredModal';
+import AppErroredModal from './AppErroredModal';
 import NetworkSnackbar from '../components/NetworkSnackbar';
 import * as selectors from '../reducers';
 import WithAuth from './AppRoutingWithAuth';
 import Signin from '../views/SignIn';
 
-// any css returned by this makeStyles function can not use the theme
-// we can only use the theme in components that are children of
-// <MuiThemeProvider>
+// The makeStyles function below does not have access to the theme.
+// We can only use the theme in components that are children of
+// <MuiThemeProvider>. That component is what injects the theme into
+// the child component context.
 const useStyles = makeStyles({
   root: {
     display: 'flex',
   },
 });
-const theme = themeProvider();
-
-// eslint-disable-next-line
-console.log('*** THEME ***', theme);
-
 // const oldTheme = themeProviderOld('light');
 // console.log('old theme', oldTheme);
 const NonSigninHeaderComponents = props => (
@@ -42,21 +37,17 @@ const NonSigninHeaderComponents = props => (
   </Fragment>
 );
 
-export const PageContentComponents = props => (
-  <Switch>
-    <Route path="/pg/signin" component={Signin} {...props} />
-    <Route path="/pg*" component={PageContent} {...props} />
-  </Switch>
-);
-
 export default function AppNew() {
   const classes = useStyles();
   const reloadCount = useSelector(state => selectors.reloadCount(state));
+  const themeName = useSelector(state => selectors.themeName(state));
   const isAllLoadingCommsAboveThreshold = useSelector(state =>
     selectors.isAllLoadingCommsAboveThreshold(state)
   );
+  const theme = themeProvider({ name: themeName, isSandbox: false });
 
-  // useEffect(() => {}, [isAllLoadingCommsAboveThreshold]);
+  // eslint-disable-next-line
+  console.log(reloadCount, '*** THEME ***', theme);
 
   return (
     <MuiThemeProvider key={reloadCount} theme={theme}>
@@ -73,7 +64,10 @@ export default function AppNew() {
             </Switch>
             {/* page content */}
             <WithAuth>
-              <PageContentComponents />
+              <Switch>
+                <Route path="/pg/signin" component={Signin} />
+                <Route path="/pg*" component={PageContent} />
+              </Switch>
             </WithAuth>
           </div>
         </BrowserRouter>
