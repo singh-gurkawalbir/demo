@@ -3,9 +3,10 @@ import { useSelector, useDispatch } from 'react-redux';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
 import Editor from '../GenericEditor';
+import { FILE_GENERATOR } from './constants';
 
 export default function FileDefinitionEditor(props) {
-  const { editorId, layout = 'column' } = props;
+  const { editorId, layout = 'column', processor } = props;
   const { rule, data, result, error, violations } = useSelector(state =>
     selectors.editor(state, editorId)
   );
@@ -18,14 +19,28 @@ export default function FileDefinitionEditor(props) {
     dispatch(actions.editor.patch(editorId, { data }));
   };
 
+  let resultTitle;
+  let dataMode;
+  let resultMode;
+
+  if (processor === FILE_GENERATOR) {
+    resultTitle = 'Generated import';
+    dataMode = 'json';
+    resultMode = 'text';
+  } else {
+    resultTitle = 'Generated export';
+    dataMode = 'text';
+    resultMode = 'json';
+  }
+
   const handleInit = useCallback(() => {
     dispatch(
-      actions.editor.init(editorId, 'structuredFileParser', {
+      actions.editor.init(editorId, processor, {
         rule: props.rule,
         data: props.data,
       })
     );
-  }, [dispatch, props.data, editorId, props.rule]);
+  }, [dispatch, editorId, processor, props.data, props.rule]);
 
   return (
     <Editor
@@ -37,14 +52,14 @@ export default function FileDefinitionEditor(props) {
       result={result ? result.data : ''}
       violations={violations}
       error={error}
-      processor="structuredFileParser"
+      processor={processor}
       layout={layout}
       ruleMode="json"
-      dataMode="text"
-      resultMode="json"
+      dataMode={dataMode}
+      resultMode={resultMode}
       ruleTitle="File definition rules"
       dataTitle="Available resources"
-      resultTitle="Generated export"
+      resultTitle={resultTitle}
     />
   );
 }
