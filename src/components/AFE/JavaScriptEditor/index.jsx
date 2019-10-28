@@ -19,10 +19,10 @@ const useStyles = makeStyles({
 });
 
 export default function JavaScriptEditor(props) {
-  const { editorId, entryFunction, scriptId, initChangeIdentifier } = props;
+  const { editorId, entryFunction, scriptId } = props;
   const classes = useStyles(props);
-  const { data, result, error, violations } = useSelector(state =>
-    selectors.editor(state, editorId)
+  const { data, result, error, violations, initChangeIdentifier } = useSelector(
+    state => selectors.editor(state, editorId)
   );
   const dispatch = useDispatch();
   const handleDataChange = data => {

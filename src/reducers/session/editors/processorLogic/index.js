@@ -5,6 +5,7 @@ import transform from './transform';
 import handlebars from './handlebars';
 import javascript from './javascript';
 import structuredFileParser from './structuredFileParser';
+import structuredFileGenerator from './structuredFileGenerator';
 import sql from './sql';
 
 const logicMap = {
@@ -15,6 +16,7 @@ const logicMap = {
   handlebars,
   javascript,
   structuredFileParser,
+  structuredFileGenerator,
   sql,
 };
 

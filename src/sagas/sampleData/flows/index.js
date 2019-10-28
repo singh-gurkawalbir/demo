@@ -21,6 +21,8 @@ import {
   getParseStageData,
   getLastExportDateTime,
 } from '../../../utils/flowData';
+import MappingUtil from '../../../utils/mapping';
+import { adaptorTypeMap } from '../../../utils/resource';
 
 function* requestSampleData({
   flowId,
@@ -183,14 +185,67 @@ function* processData({
   }
 }
 
+// Handles processing mappings against preProcessorData supplied
+// @TODO Raghu:  merge this in processData
+function* processMappingData({
+  flowId,
+  resourceId,
+  mappings,
+  processor,
+  preProcessedData,
+}) {
+  const body = {
+    rules: {
+      rules: [mappings],
+    },
+    data: [preProcessedData],
+  };
+  // call processor data specific to mapper as it is not part of editors saga
+  const path = `/processors/${processor}`;
+  const opts = {
+    method: 'POST',
+    body,
+  };
+
+  try {
+    const processedMappingData = yield call(apiCallWithRetry, {
+      path,
+      opts,
+      hidden: true,
+    });
+    const mappedObject =
+      processedMappingData &&
+      processedMappingData.data &&
+      processedMappingData.data[0] &&
+      processedMappingData.data[0].mappedObject;
+    const processedData = {
+      data: [mappedObject],
+    };
+
+    yield put(
+      actions.flowData.receivedProcessorData(
+        flowId,
+        resourceId,
+        'importMappingExtract',
+        processedData
+      )
+    );
+  } catch (e) {
+    // Handle Errors
+  }
+}
+
 export function* requestProcessorData({
   flowId,
   resourceId,
   resourceType,
   processor,
   isPageGenerator,
+  processorStage,
 }) {
-  const { merged } = yield select(
+  // If provided processorStage is 'stage' else by default processor name becomes its stage
+  const stage = processorStage || processor;
+  const { merged: resource } = yield select(
     resourceData,
     resourceType,
     resourceId,
@@ -200,7 +255,7 @@ export function* requestProcessorData({
     getSampleData,
     flowId,
     resourceId,
-    processor,
+    stage,
     { isPageGenerator, isImport: resourceType === 'imports' }
   );
   let processorData;
@@ -210,25 +265,22 @@ export function* requestProcessorData({
       flowId,
       resourceId,
       resourceType,
-      stage: processor,
+      stage,
       isPageGenerator,
     });
-    preProcessedData = yield select(
-      getSampleData,
-      flowId,
-      resourceId,
-      processor,
-      { isPageGenerator, isImport: resourceType === 'imports' }
-    );
+    preProcessedData = yield select(getSampleData, flowId, resourceId, stage, {
+      isPageGenerator,
+      isImport: resourceType === 'imports',
+    });
   }
 
-  if (processor === 'transform' || processor === 'responseTransform') {
-    const transform = { ...merged[processor] };
+  if (stage === 'transform' || stage === 'responseTransform') {
+    const transform = { ...resource[processor] };
     const [rule] = transform.rules || [];
 
     processorData = { data: preProcessedData, rule, processor: 'transform' };
-  } else if (processor === 'hooks') {
-    const { hooks = {} } = { ...merged };
+  } else if (stage === 'hooks') {
+    const { hooks = {} } = { ...resource };
 
     if (hooks.preSavePage && hooks.preSavePage._scriptId) {
       const scriptId = hooks.preSavePage._scriptId;
@@ -246,6 +298,26 @@ export function* requestProcessorData({
         processor: 'javascript',
       };
     }
+  } else if (stage === 'importMappingExtract') {
+    // mapping fields are processed here against raw data
+    const appType =
+      resource.adaptorType && adaptorTypeMap[resource.adaptorType];
+    const mappings = MappingUtil.getMappingFromResource(
+      resource,
+      appType,
+      true
+    );
+
+    if (preProcessedData && mappings)
+      yield call(processMappingData, {
+        flowId,
+        resourceId,
+        mappings,
+        processor,
+        preProcessedData,
+      });
+
+    return;
   }
 
   if (processorData) {
@@ -254,7 +326,7 @@ export function* requestProcessorData({
       resourceId,
       processorData,
       isPageGenerator,
-      stage: processor,
+      stage,
     });
   }
 }

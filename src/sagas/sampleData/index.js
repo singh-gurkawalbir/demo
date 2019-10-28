@@ -17,6 +17,8 @@ const PARSERS = {
   xlsx: 'csvParser',
   xml: 'xmlParser',
   fileDefinition: 'structuredFileParser',
+  fileDefinitionParser: 'structuredFileParser',
+  fileDefinitionGenerator: 'structuredFileGenerator',
 };
 
 function getRulesFromResourceFormValues(formValues = {}) {
