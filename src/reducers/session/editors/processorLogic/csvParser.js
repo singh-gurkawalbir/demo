@@ -16,7 +16,7 @@ const requestBody = editor => {
     rules: {
       columnDelimiter: columnDelimiterMap[editor.columnDelimiter],
       rowDelimiter: rowDelimiterMap[editor.rowDelimiter],
-      keyColumns: editor.keyColumns,
+      keyColumns: editor.multipleRowsPerRecord && editor.keyColumns,
       hasHeaderRow: editor.hasHeaderRow,
       trimSpaces: editor.trimSpaces,
     },
