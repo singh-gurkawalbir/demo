@@ -4,6 +4,7 @@ import Menu from '@material-ui/core/Menu';
 import { makeStyles } from '@material-ui/core';
 import MenuItem from '@material-ui/core/MenuItem';
 import IconButton from '@material-ui/core/IconButton';
+import { withRouter } from 'react-router-dom';
 import { JOB_STATUS, JOB_TYPES } from '../../utils/constants';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
@@ -15,6 +16,7 @@ import { UNDO_TIME } from './util';
 import JobRetriesDialog from './JobRetriesDialog';
 import JobFilesDownloadDialog from './JobFilesDownloadDialog';
 import MoreVertIcon from '../icons/EllipsisVerticalIcon';
+import getRoutePath from '../../utils/routePaths';
 
 const useStyle = makeStyles({
   iconBtn: {
@@ -22,11 +24,12 @@ const useStyle = makeStyles({
   },
 });
 
-export default function JobActionsMenu({
+function JobActionsMenu({
   job,
   onActionClick,
   userPermissionsOnIntegration = {},
   integrationName,
+  history,
 }) {
   const classes = useStyle();
   const dispatch = useDispatch();
@@ -264,6 +267,14 @@ export default function JobActionsMenu({
       });
     } else if (action === 'viewRetries') {
       setShowRetriesDialog(true);
+    } else if (action === 'editFlow') {
+      history.push(
+        getRoutePath(
+          `/integrations/${job._integrationId || 'none'}/flowBuilder/${
+            job._flowId
+          }/dashboard`
+        )
+      );
     } else {
       onActionClick(action);
     }
@@ -348,3 +359,5 @@ export default function JobActionsMenu({
     </Fragment>
   );
 }
+
+export default withRouter(JobActionsMenu);
