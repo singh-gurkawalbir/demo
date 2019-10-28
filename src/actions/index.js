@@ -230,6 +230,10 @@ const resource = {
         action(actionTypes.NETSUITE_USER_ROLES.CLEAR, { connectionId }),
     },
   },
+  notifications: {
+    update: notifications =>
+      action(actionTypes.RESOURCE.UPDATE_NOTIFICATIONS, { notifications }),
+  },
 };
 // #endregion
 const auditLogs = {

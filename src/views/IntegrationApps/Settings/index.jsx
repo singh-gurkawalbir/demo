@@ -23,6 +23,7 @@ import Subscription from './Subscription';
 import AuditLog from '../../IntegrationSettings/AuditLog';
 import Uninstall from './Uninstall';
 import Connections from '../../IntegrationSettings/Connections';
+import Notifications from '../../IntegrationSettings/Notifications';
 import getRoutePath from '../../../utils/routePaths';
 import CeligoPageBar from '../../../components/CeligoPageBar';
 
@@ -54,7 +55,9 @@ const useStyles = makeStyles(theme => ({
   dashboard: {
     float: 'right',
   },
-
+  notificationsLink: {
+    margin: '25px 0 25px 0',
+  },
   activeLink: {
     fontWeight: 'bold',
   },
@@ -290,6 +293,11 @@ export default function IntegrationAppSettings(props) {
                   label="Subscription"
                 />
                 <LHSItem to={`${urlPrefix}/uninstall`} label="Uninstall" />
+                <Divider className={classes.notificationsLink} />
+                <LHSItem
+                  to={`${urlPrefix}/notifications`}
+                  label="My Notifications"
+                />
               </List>
             </Drawer>
           </div>
@@ -323,6 +331,18 @@ export default function IntegrationAppSettings(props) {
                 )}
                 render={props => (
                   <Uninstall
+                    {...props}
+                    storeId={currentStore}
+                    integrationId={integrationId}
+                  />
+                )}
+              />
+              <Route
+                path={getRoutePath(
+                  `/connectors/:integrationId/settings/notifications`
+                )}
+                render={props => (
+                  <Notifications
                     {...props}
                     storeId={currentStore}
                     integrationId={integrationId}
