@@ -5,6 +5,11 @@ export default {
     label: 'Invoke this Import [POST]',
     type: 'apiidentifier',
   },
+  mapping: {
+    type: 'mapping',
+    connectionId: r => r && r._connectionId,
+    label: 'Manage Import Mapping',
+  },
   sampleData: { type: 'text', label: 'Sample Data' },
   distributed: {
     type: 'text',
