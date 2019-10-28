@@ -3,7 +3,7 @@ import EditorDialog from '../EditorDialog';
 import FileDefinitionEditor from './index';
 
 function FileDefinitionEditorDialog(props) {
-  const { id, rule, data, ...rest } = props;
+  const { id, rule, data, processor = 'structuredFileParser', ...rest } = props;
   const defaults = {
     width: '80vw',
     layout: 'column',
@@ -13,7 +13,12 @@ function FileDefinitionEditorDialog(props) {
 
   return (
     <EditorDialog id={id} {...defaults} {...rest}>
-      <FileDefinitionEditor editorId={id} rule={rule} data={data} />
+      <FileDefinitionEditor
+        editorId={id}
+        rule={rule}
+        data={data}
+        processor={processor}
+      />
     </EditorDialog>
   );
 }
