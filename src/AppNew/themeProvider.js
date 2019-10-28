@@ -60,7 +60,6 @@ const theme = {
         borderRadius: '17px',
         fontSize: '13px',
         lineHeight: '15px',
-        minWidth: '100px',
         border: '1px solid',
         textTransform: 'none',
         boxShadow: 'none',
@@ -107,9 +106,21 @@ const theme = {
         textTransform: 'none',
         fontSize: '13px',
         lineHeight: '15px',
-        minWidth: '100px',
         padding: '6px 20px',
         border: '1px solid',
+        '&:disabled': {
+          color: colors.celigoNeutral4,
+          background: colors.celigoNeutral2,
+          borderColor: colors.celigoNeutral3,
+        },
+      },
+      outlinedPrimary: {
+        backgroundColor: colors.celigoAccent2,
+        borderColor: colors.celigoAccent2,
+        color: colors.celigoWhite,
+        '&:hover': {
+          backgroundColor: colors.celigoAccent3,
+        },
       },
       outlinedSecondary: {
         backgroundColor: colors.celigoWhite,
@@ -120,11 +131,8 @@ const theme = {
           backgroundColor: colors.celigoWhite,
           borderColor: colors.celigoAccent3,
         },
-        '&:disabled': {
-          color: colors.celigoNeutral4,
-          background: colors.celigoWhite,
-        },
       },
+
       text: {
         textTransform: 'uppercase',
         fontSize: '13px',
@@ -408,12 +416,19 @@ const theme = {
     },
     MuiDialogTitle: {
       root: {
+        padding: '14px 24px',
         borderBottom: `1px solid ${colors.celigoNeutral3}`,
       },
     },
     MuiDialogContent: {
       root: {
+        padding: '24px',
         background: colors.celigoNeutral1,
+      },
+    },
+    MuiDialogActions: {
+      root: {
+        padding: '14px 24px',
       },
     },
     MuiExpansionPanelSummary: {
@@ -425,6 +440,11 @@ const theme = {
       root: {
         backgroundColor: colors.celigoNeutral3,
         color: colors.celigoNeutral8,
+      },
+    },
+    MuiBackdrop: {
+      root: {
+        backgroundColor: 'rgba(106, 124, 138, 0.7)',
       },
     },
   },
