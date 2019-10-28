@@ -212,7 +212,8 @@ function FlowBuilder(props) {
   const classes = useStyles();
   const theme = useTheme();
   const dispatch = useDispatch();
-  const [size, setSize] = useState(0);
+  // Bottom drawer is shown for existing flows and docked for new flow
+  const [size, setSize] = useState(isNewFlow ? 0 : 1);
   const [newGeneratorId, setNewGeneratorId] = useState(getNewId());
   const [newProcessorId, setNewProcessorId] = useState(getNewId());
   //
