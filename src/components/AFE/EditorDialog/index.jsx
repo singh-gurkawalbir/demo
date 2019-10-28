@@ -1,30 +1,25 @@
-import { Component, cloneElement } from 'react';
-import { connect } from 'react-redux';
-import { withStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
-import Typography from '@material-ui/core/Typography';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
+import { useState, cloneElement } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { makeStyles } from '@material-ui/core/styles';
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  Typography,
+} from '@material-ui/core';
 import ViewColumnIcon from '@material-ui/icons/ViewColumn';
 import ViewCompactIcon from '@material-ui/icons/ViewCompact';
 import ViewRowIcon from '@material-ui/icons/HorizontalSplit';
 import ZoomOutIcon from '@material-ui/icons/ZoomOutMap';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
+import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import actions from '../../../actions';
+import { preSaveValidate } from './util';
 import * as selectors from '../../../reducers';
 
-const mapStateToProps = (state, { id }) => ({
-  editor: selectors.editor(state, id),
-});
-const mapDispatchToProps = (dispatch, { id }) => ({
-  handlePreview: () => {
-    dispatch(actions.editor.evaluateRequest(id));
-  },
-});
-
-@withStyles(theme => ({
+const useStyles = makeStyles(theme => ({
   dialogContent: {
     paddingBottom: 0,
   },
@@ -55,124 +50,120 @@ const mapDispatchToProps = (dispatch, { id }) => ({
     marginTop: 0,
     marginBottom: theme.spacing(2),
   },
-}))
-class EditorDialog extends Component {
-  state = {
-    layout: 'compact',
-    fullScreen: false,
-  };
+}));
 
-  handleClose = shouldCommit => {
-    const { editor, onClose } = this.props;
+export default function EditorDialog(props) {
+  const {
+    children,
+    id,
+    open = true,
+    action,
+    title,
+    showLayoutOptions = true,
+    showFullScreen = true,
+    width = '70vw',
+    height = '50vh',
+    onClose,
+  } = props;
+  const classes = useStyles();
+  const dispatch = useDispatch();
+  const [enquesnackbar] = useEnqueueSnackbar();
+  const [state, setState] = useState({
+    layout: props.layout || 'compact',
+    fullScreen: props.fullScreen || false,
+  });
+  const { layout, fullScreen } = state;
+  const editor = useSelector(state => selectors.editor(state, id));
+  const handlePreview = () => dispatch(actions.editor.evaluateRequest(id));
+  const handleClose = shouldCommit => {
+    if (shouldCommit && !preSaveValidate({ editor, enquesnackbar })) {
+      return;
+    }
 
     if (onClose) {
       onClose(shouldCommit, editor);
     }
   };
-  handleLayoutChange = (event, layout) => layout && this.setState({ layout });
-  handleFullScreenClick = () =>
-    this.setState({ fullScreen: !this.state.fullScreen });
 
-  componentDidMount() {
-    const { layout = 'compact', fullScreen = false } = this.props;
+  const handleLayoutChange = (event, _layout) =>
+    _layout && setState({ ...state, layout: _layout });
+  const handleFullScreenClick = () =>
+    setState({ ...state, fullScreen: !fullScreen });
+  const size = fullScreen ? { height } : { height, width };
+  const showPreviewAction =
+    editor && !editor.violations && !editor.autoEvaluate;
+  const disableSave = !editor || editor.violations;
 
-    this.setState({ layout, fullScreen });
-  }
-
-  render() {
-    const {
-      children,
-      open = true,
-      action,
-      title,
-      handlePreview,
-      showLayoutOptions = true,
-      showFullScreen = true,
-      classes,
-      width = '70vw',
-      height = '50vh',
-      editor,
-    } = this.props;
-    const { layout, fullScreen } = this.state;
-    const size = fullScreen ? { height } : { height, width };
-    const showPreviewAction =
-      editor && !editor.violations && !editor.autoEvaluate;
-    const disableSave = !editor || editor.violations;
-
-    return (
-      <Dialog
-        fullScreen={fullScreen}
-        open={open}
-        onClose={() => this.handleClose()}
-        scroll="paper"
-        maxWidth={false}>
-        <div className={classes.toolbarContainer}>
-          <div className={classes.toolbarItem}>
-            <Typography variant="h5">{title}</Typography>
-          </div>
-          <div className={classes.actionContainer}>
-            {/* it expects field to be a component to render */}
-            {action}
-          </div>
-          <div className={classes.toggleContainer}>
-            {showLayoutOptions && (
-              <ToggleButtonGroup
-                value={layout}
-                exclusive
-                onChange={this.handleLayoutChange}>
-                <ToggleButton data-test="editorColumnLayout" value="column">
-                  <ViewColumnIcon />
-                </ToggleButton>
-                <ToggleButton data-test="editorCompactLayout" value="compact">
-                  <ViewCompactIcon />
-                </ToggleButton>
-                <ToggleButton data-test="editorRowLayout" value="row">
-                  <ViewRowIcon />
-                </ToggleButton>
-              </ToggleButtonGroup>
-            )}
-            {showFullScreen && (
-              <ToggleButton
-                data-test="toggleEditorSize"
-                className={classes.fullScreen}
-                value="max"
-                onClick={this.handleFullScreenClick}
-                selected={fullScreen}>
-                <ZoomOutIcon />
-              </ToggleButton>
-            )}
-          </div>
+  return (
+    <Dialog
+      fullScreen={fullScreen}
+      open={open}
+      onClose={() => handleClose()}
+      scroll="paper"
+      maxWidth={false}>
+      <div className={classes.toolbarContainer}>
+        <div className={classes.toolbarItem}>
+          <Typography variant="h5">{title}</Typography>
         </div>
-        <DialogContent style={size} className={classes.dialogContent}>
-          {// Is there a better way to do this?
-          children && cloneElement(children, { layout })}
-        </DialogContent>
-        <DialogActions className={classes.actions}>
-          {showPreviewAction && (
-            <Button data-test="previewEditorResult" onClick={handlePreview}>
-              Preview
-            </Button>
+        <div className={classes.actionContainer}>
+          {/* it expects field to be a component to render */}
+          {action}
+        </div>
+        <div className={classes.toggleContainer}>
+          {showLayoutOptions && (
+            <ToggleButtonGroup
+              value={layout}
+              exclusive
+              onChange={handleLayoutChange}>
+              <ToggleButton data-test="editorColumnLayout" value="column">
+                <ViewColumnIcon />
+              </ToggleButton>
+              <ToggleButton data-test="editorCompactLayout" value="compact">
+                <ViewCompactIcon />
+              </ToggleButton>
+              <ToggleButton data-test="editorRowLayout" value="row">
+                <ViewRowIcon />
+              </ToggleButton>
+            </ToggleButtonGroup>
           )}
-          <Button
-            variant="contained"
-            color="secondary"
-            data-test="closeEditor"
-            onClick={() => this.handleClose()}>
-            Cancel
+          {showFullScreen && (
+            <ToggleButton
+              data-test="toggleEditorSize"
+              className={classes.fullScreen}
+              value="max"
+              onClick={handleFullScreenClick}
+              selected={fullScreen}>
+              <ZoomOutIcon />
+            </ToggleButton>
+          )}
+        </div>
+      </div>
+      <DialogContent style={size} className={classes.dialogContent}>
+        {// Is there a better way to do this?
+        children && cloneElement(children, { layout })}
+      </DialogContent>
+      <DialogActions className={classes.actions}>
+        {showPreviewAction && (
+          <Button data-test="previewEditorResult" onClick={handlePreview}>
+            Preview
           </Button>
-          <Button
-            variant="contained"
-            data-test="saveEditor"
-            disabled={!!disableSave}
-            color="primary"
-            onClick={() => this.handleClose(true)}>
-            Save
-          </Button>
-        </DialogActions>
-      </Dialog>
-    );
-  }
+        )}
+        <Button
+          variant="contained"
+          color="secondary"
+          data-test="closeEditor"
+          onClick={() => handleClose()}>
+          Cancel
+        </Button>
+        <Button
+          variant="contained"
+          data-test="saveEditor"
+          disabled={!!disableSave}
+          color="primary"
+          onClick={() => handleClose(true)}>
+          Save
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
 }
-
-// prettier-ignore
-export default connect(mapStateToProps, mapDispatchToProps)(EditorDialog);
