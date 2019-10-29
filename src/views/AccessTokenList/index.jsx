@@ -1,3 +1,4 @@
+import { Typography } from '@material-ui/core';
 import { Fragment } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector, useDispatch } from 'react-redux';
@@ -27,8 +28,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function AccessTokenList(props) {
-  const { match, location } = props;
-  const { integrationId } = match.params;
+  const { integrationId, location } = props;
   const filter = useSelector(state =>
     selectors.filter(state, 'accesstokens')
   ) || { take: 3 };
@@ -71,10 +71,14 @@ export default function AccessTokenList(props) {
         </CeligoPageBar>
         <div className={classes.resultContainer}>
           <LoadResources required resources="accesstokens">
-            <ResourceTable
-              resourceType="accesstokens"
-              resources={list.resources}
-            />
+            {list.resources && list.resources.length > 0 ? (
+              <ResourceTable
+                resourceType="accesstokens"
+                resources={list.resources}
+              />
+            ) : (
+              <Typography>No API Tokens for this integration yet.</Typography>
+            )}
           </LoadResources>
         </div>
         <ShowMoreDrawer
