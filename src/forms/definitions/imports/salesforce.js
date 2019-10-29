@@ -1,5 +1,3 @@
-import { adaptorTypeMap } from '../../../utils/resource';
-
 export default {
   preSave: formValues => {
     const newValues = { ...formValues };
@@ -138,15 +136,15 @@ export default {
         },
       ],
     },
+    'salesforce.lookups': {
+      fieldId: 'salesforce.lookups',
+      visible: false,
+    },
     mapping: {
       fieldId: 'mapping',
-      application: adaptorTypeMap.SalesforceImport,
-      refreshOptionsOnChangesTo: ['salesforce.sObjectType'],
-      visibleWhen: [
-        {
-          field: 'inputMode',
-          is: ['RECORDS'],
-        },
+      refreshOptionsOnChangesTo: [
+        'salesforce.sObjectType',
+        'salesforce.lookups',
       ],
     },
     advancedSettings: {
@@ -167,6 +165,7 @@ export default {
       'salesforce.api',
       'importData',
       'blobKeyPath',
+      'salesforce.lookups',
       'salesforce.sObjectType',
       'salesforce.operation',
       'salesforce.blobsObjectType',
@@ -213,9 +212,14 @@ export default {
       const sObjectTypeField = fields.find(
         field => field.id === 'salesforce.sObjectType'
       );
+      const lookupField = fields.find(
+        field => field.fieldId === 'salesforce.lookups'
+      );
 
       return {
         sObjectType: sObjectTypeField && sObjectTypeField.value,
+        lookupId: 'salesforce.lookups',
+        lookups: lookupField && lookupField.value,
       };
     }
   },

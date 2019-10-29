@@ -12,11 +12,11 @@ export default {
   },
   optionsHandler: (fieldId, fields) => {
     if (fieldId === 'http.body') {
-      const recordTypeField = fields.find(
+      const lookupField = fields.find(
         field => field.fieldId === 'http.lookups'
       );
 
-      if (recordTypeField) {
+      if (lookupField) {
         return {
           // we are saving http body in an array. Put correspond to 0th Index,
           // Post correspond to 1st index.
@@ -26,9 +26,22 @@ export default {
           lookups: {
             // passing lookupId fieldId and data since we will be modifying lookups
             //  from 'Manage lookups' option inside 'Build Http request Body Editor'
-            fieldId: recordTypeField.fieldId,
-            data: recordTypeField && recordTypeField.value,
+            fieldId: lookupField.fieldId,
+            data: lookupField && lookupField.value,
           },
+        };
+      }
+    }
+
+    if (fieldId === 'mapping') {
+      const lookupField = fields.find(
+        field => field.fieldId === 'http.lookups'
+      );
+
+      if (lookupField) {
+        return {
+          lookupId: 'http.lookups',
+          lookups: lookupField && lookupField.value,
         };
       }
     }
@@ -163,6 +176,11 @@ export default {
           is: ['RECORDS'],
         },
       ],
+    },
+    'file.csv.customHeaderRows': { fieldId: 'file.csv.customHeaderRows' },
+    mapping: {
+      fieldId: 'mapping',
+      refreshOptionsOnChangesTo: ['http.lookups'],
     },
     'http.body': { fieldId: 'http.body' },
     'file.csv.rowDelimiter': {

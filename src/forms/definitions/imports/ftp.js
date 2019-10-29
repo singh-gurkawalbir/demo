@@ -1,4 +1,3 @@
-import { adaptorTypeMap } from '../../../utils/resource';
 import timeStamps from '../../../utils/timeStamps';
 
 export default {
@@ -156,7 +155,6 @@ export default {
     },
     mapping: {
       fieldId: 'mapping',
-      application: adaptorTypeMap.FTPImport,
       refreshOptionsOnChangesTo: ['file.lookups'],
       visibleWhen: [
         {

@@ -1,4 +1,3 @@
-import { adaptorTypeMap } from '../../../utils/resource';
 import timeStamps from '../../../utils/timeStamps';
 
 export default {
@@ -158,7 +157,6 @@ export default {
     },
     mapping: {
       fieldId: 'mapping',
-      application: adaptorTypeMap.S3Import,
       refreshOptionsOnChangesTo: ['file.lookups'],
       visibleWhen: [
         {

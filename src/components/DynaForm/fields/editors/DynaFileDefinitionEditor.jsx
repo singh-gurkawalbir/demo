@@ -6,6 +6,11 @@ import FileDefinitionEditorDialog from '../../../AFE/FileDefinitionEditor/Dialog
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import LoadResources from '../../../LoadResources';
+import {
+  FILE_GENERATOR,
+  FILE_PARSER,
+} from '../../../AFE/FileDefinitionEditor/constants';
+
 /*
  * This editor is shown in case of :
  *  1. In Export creation , when specific format is selected to fetch parser rules
@@ -32,6 +37,11 @@ function DynaFileDefinitionEditor(props) {
     setShowEditor(!showEditor);
   };
 
+  const parserType =
+    resourceType === 'imports'
+      ? 'fileDefinitionGenerator'
+      : 'fileDefinitionParser';
+  const processor = resourceType === 'imports' ? FILE_GENERATOR : FILE_PARSER;
   const handleClose = (shouldCommit, editorValues) => {
     if (shouldCommit) {
       const { data, rule } = editorValues;
@@ -43,7 +53,7 @@ function DynaFileDefinitionEditor(props) {
           resourceId,
           resourceType,
           {
-            type: 'fileDefinition',
+            type: parserType,
             file: data,
             editorValues,
             formValues: formContext.value,
@@ -83,16 +93,29 @@ function DynaFileDefinitionEditor(props) {
     if (!template) return {};
     const { sampleData, ...fileDefinitionRules } = template;
     // Stringify rules as the editor expects a string
-    const rule = JSON.stringify(
-      {
-        resourcePath: resourcePath || '',
-        fileDefinition: fileDefinitionRules,
-      },
-      null,
-      2
-    );
+    let rule;
+    let formattedSampleData;
 
-    return { sampleData, rule };
+    if (resourceType === 'imports') {
+      rule = JSON.stringify(fileDefinitionRules, null, 2);
+      formattedSampleData = JSON.stringify(
+        Array.isArray(sampleData) && sampleData.length ? sampleData[0] : {},
+        null,
+        2
+      );
+    } else {
+      rule = JSON.stringify(
+        {
+          resourcePath: resourcePath || '',
+          fileDefinition: fileDefinitionRules,
+        },
+        null,
+        2
+      );
+      formattedSampleData = sampleData;
+    }
+
+    return { sampleData: formattedSampleData, rule };
   });
 
   useEffect(() => {
@@ -104,7 +127,7 @@ function DynaFileDefinitionEditor(props) {
           resourceId,
           resourceType,
           {
-            type: 'fileDefinition',
+            type: parserType,
             file: sampleData,
             editorValues: { rule, data: sampleData },
             formValues: formContext.value,
@@ -120,6 +143,7 @@ function DynaFileDefinitionEditor(props) {
     id,
     isRuleChanged,
     onFieldChange,
+    parserType,
     resourceId,
     resourceType,
     rule,
@@ -138,6 +162,7 @@ function DynaFileDefinitionEditor(props) {
           <FileDefinitionEditorDialog
             title="File Definition Editor"
             id={id + resourceId}
+            processor={processor}
             data={sampleData}
             rule={value}
             onClose={handleClose}
