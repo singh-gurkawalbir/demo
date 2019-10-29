@@ -1,6 +1,6 @@
 import React, { Fragment, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { makeStyles, useTheme } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
@@ -45,7 +45,6 @@ const useStyles = makeStyles(theme => ({
 export default function ProfileMenuButton() {
   const [anchorEl, setAnchorEl] = useState(null);
   const classes = useStyles();
-  const theme = useTheme();
   const hasProfile = useSelector(state => selectors.hasProfile(state));
   const hasPreferences = useSelector(state => selectors.hasPreferences(state));
   const profile = useSelector(state => selectors.userProfile(state)) || {};
@@ -72,6 +71,7 @@ export default function ProfileMenuButton() {
   return (
     <Fragment>
       <IconButton
+        data-test="profileMenu"
         size="small"
         className={classes.avatarButton}
         aria-owns={open ? 'profileOptions' : null}
@@ -81,7 +81,6 @@ export default function ProfileMenuButton() {
         <Avatar alt={name} src={avatarUrl} className={classes.avatar} />
       </IconButton>
       <ArrowPopper
-        zIndex={theme.zIndex.drawer + 1}
         id="profileOptions"
         className={classes.popperContent}
         anchorEl={anchorEl}
@@ -105,6 +104,7 @@ export default function ProfileMenuButton() {
         </Grid>
         <div className={classes.actions}>
           <Button
+            data-test="myAccountOrMyProfile"
             onClick={handleClose}
             variant="contained"
             color="secondary"
@@ -118,7 +118,11 @@ export default function ProfileMenuButton() {
               ? 'My Account'
               : 'My Profile'}
           </Button>
-          <Button onClick={handleUserLogout} variant="text" color="primary">
+          <Button
+            data-test="signOut"
+            onClick={handleUserLogout}
+            variant="text"
+            color="primary">
             Sign Out
           </Button>
         </div>

@@ -1,12 +1,21 @@
 export default {
   name: { type: 'text', label: 'Name' },
   description: { type: 'text', label: 'Description' },
-  apiIdentifier: { type: 'text', label: 'Api Identifier' },
+  apiIdentifier: {
+    label: 'Invoke this Import [POST]',
+    type: 'apiidentifier',
+  },
+  mapping: {
+    type: 'mapping',
+    connectionId: r => r && r._connectionId,
+    label: 'Manage Import Mapping',
+  },
   sampleData: { type: 'text', label: 'Sample Data' },
   distributed: {
-    type: 'checkbox',
+    type: 'text',
     label: 'Distributed',
-    defaultValue: false,
+    defaultValue: true,
+    visible: false,
   },
   maxAttempts: {
     type: 'text',

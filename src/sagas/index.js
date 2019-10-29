@@ -25,9 +25,12 @@ import { templateSagas } from './template';
 import { uploadFileSagas } from './uploadFile';
 import { stackSagas } from './stack';
 import sampleDataSagas from './sampleData';
+import flowDataSagas from './sampleData/flows';
+import importsSampleDataSagas from './sampleData/imports';
 import fileDefinitionSagas from './fileDefinitions';
 import { marketplaceSagas } from './marketPlace';
 import { accessTokenSagas } from './accessToken';
+import { recycleBinSagas } from './recycleBin';
 
 export function* unauthenticateAndDeleteProfile() {
   yield put(actions.auth.failure('Authentication Failure'));
@@ -89,6 +92,7 @@ export default function* rootSaga() {
   yield all([
     ...resourceSagas,
     ...connectorSagas,
+    ...templateSagas,
     ...editorSagas,
     ...userSagas,
     ...authenticationSagas,
@@ -97,12 +101,14 @@ export default function* rootSaga() {
     ...jobSagas,
     ...flowSagas,
     ...agentSagas,
-    ...templateSagas,
     ...uploadFileSagas,
     ...stackSagas,
     ...sampleDataSagas,
+    ...flowDataSagas,
+    ...importsSampleDataSagas,
     ...fileDefinitionSagas,
     ...marketplaceSagas,
     ...accessTokenSagas,
+    ...recycleBinSagas,
   ]);
 }

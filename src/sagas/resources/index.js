@@ -9,6 +9,7 @@ import util from '../../utils/array';
 import { isNewId } from '../../utils/resource';
 import metadataSagas from './meta';
 import getRequestOptions from '../../utils/requestOptions';
+import { defaultPatchSetConverter } from '../../forms/utils';
 
 export function* commitStagedChanges({ resourceType, id, scope }) {
   const { patch, merged, master } = yield select(
@@ -84,6 +85,13 @@ export function* commitStagedChanges({ resourceType, id, scope }) {
         });
         updated.assistantMetadata = assistantMetadata;
       }
+
+      // Trigger flow data state update
+      yield put(
+        actions.flowData.updateFlowsForResource(updated._id, resourceType)
+      );
+    } else if (resourceType === 'flows') {
+      yield put(actions.flowData.updateFlow(updated._id));
     }
 
     yield put(actions.resource.received(resourceType, updated));
@@ -114,6 +122,45 @@ export function* downloadFile({ resourceType, id }) {
     window.open(response.signedURL, 'target=_blank', response.options, false);
   } catch (e) {
     return true;
+  }
+}
+
+export function* updateIntegrationSettings({
+  storeId,
+  integrationId,
+  values,
+  flowId,
+}) {
+  const path = `/integrations/${integrationId}/settings/persistSettings`;
+  let payload = jsonPatch.applyPatch({}, defaultPatchSetConverter(values))
+    .newDocument;
+
+  if (storeId) {
+    payload = { [storeId]: payload };
+  }
+
+  payload = {
+    pending: payload,
+  };
+  const response = yield call(apiCallWithRetry, {
+    path,
+    opts: {
+      method: 'put',
+      body: payload,
+    },
+    message: 'Saving integration settings',
+  });
+
+  if (response) {
+    yield put(
+      actions.integrationApp.settings.submitComplete({
+        storeId,
+        integrationId,
+        response,
+        flowId,
+      })
+    );
+    yield put(actions.resource.request('integrations', integrationId));
   }
 }
 
@@ -180,13 +227,15 @@ export function* deleteResource({ resourceType, id }) {
   const path = `/${resourceType}/${id}`;
 
   try {
-    const resourceReferences = yield call(requestReferences, {
-      resourceType,
-      id,
-    });
+    if (resourceType.indexOf('/licenses') === -1) {
+      const resourceReferences = yield call(requestReferences, {
+        resourceType,
+        id,
+      });
 
-    if (resourceReferences && Object.keys(resourceReferences).length > 0) {
-      return;
+      if (resourceReferences && Object.keys(resourceReferences).length > 0) {
+        return;
+      }
     }
 
     yield call(apiCallWithRetry, {
@@ -271,6 +320,10 @@ export function* requestDeregister({ connectionId, integrationId }) {
 
 export const resourceSagas = [
   takeEvery(actionTypes.RESOURCE.REQUEST, getResource),
+  takeEvery(
+    actionTypes.INTEGRATION_APPS.SETTINGS.UPDATE,
+    updateIntegrationSettings
+  ),
   takeEvery(actionTypes.RESOURCE.PATCH, patchResource),
   takeEvery(actionTypes.RESOURCE.REQUEST_COLLECTION, getResourceCollection),
   takeEvery(actionTypes.RESOURCE.STAGE_COMMIT, commitStagedChanges),

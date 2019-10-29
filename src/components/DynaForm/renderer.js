@@ -32,6 +32,7 @@ const wrapper = {
 };
 const fieldStyle = {
   flexGrow: '1',
+  textAlign: 'left',
 };
 const fieldsToSkipHelpPopper = ['labeltitle'];
 const FieldActions = props => {
@@ -52,6 +53,7 @@ const FieldActions = props => {
       {editMode && (
         <EditFieldButton
           key={`edit-${field.id}`}
+          data-test={`edit-${field.id}`}
           formFieldsMeta={formFieldsMeta}
           field={field}
           className={classes.iconButton}
@@ -61,6 +63,7 @@ const FieldActions = props => {
       {(helpKey || helpText) && !fieldsToSkipHelpPopper.includes(fieldType) && (
         <Help
           key={`help-${field.id}`}
+          data-test={`help-${field.id}`}
           title={field.label || 'Field Help'}
           className={classes.iconButton}
           caption={developer && helpKey}

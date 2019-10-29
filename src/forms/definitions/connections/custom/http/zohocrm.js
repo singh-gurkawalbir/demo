@@ -2,7 +2,7 @@ export default {
   preSave: formValues => ({
     ...formValues,
     '/type': 'http',
-    '/assistant': 'zohobooks',
+    '/assistant': 'zohocrm',
     '/http/auth/type': 'oauth',
     '/http/mediaType': 'json',
     '/http/baseURI': 'https://www.zohoapis.com/crm',

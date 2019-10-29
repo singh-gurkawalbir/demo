@@ -1,6 +1,6 @@
 import { useSelector } from 'react-redux';
 import * as selectors from '../../reducers';
-import StatusCircle from '../HomePageCard/Header/Status/StatusCircle';
+import StatusCircle from '../../components/StatusCircle';
 
 export default function AgentStatus({ agentId }) {
   const agentOnline = useSelector(state =>

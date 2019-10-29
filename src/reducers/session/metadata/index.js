@@ -1,16 +1,28 @@
 import produce from 'immer';
 import actionTypes from '../../../actions/types';
+import { getWSRecordId } from '../../../utils/metadata';
 
 function generateSalesforceOptions(data = {}, sObjectType, selectField) {
   let options = [];
 
-  if (sObjectType && selectField) {
-    const field = (data.fields || []).find(f => f.name === selectField);
+  if (sObjectType) {
+    if (selectField) {
+      const field = (data.fields || []).find(f => f.name === selectField);
 
-    if (field) {
-      options = field.picklistValues.map(plv => ({
-        label: plv.label,
-        value: plv.value,
+      if (field) {
+        options = field.picklistValues.map(plv => ({
+          label: plv.label,
+          value: plv.value,
+        }));
+      }
+    } else {
+      options = data.fields.map(d => ({
+        label: d.label,
+        value: d.name,
+        custom: d.custom,
+        triggerable: d.triggerable,
+        picklistValues: d.picklistValues,
+        type: d.type,
       }));
     }
   } else {
@@ -30,7 +42,9 @@ function generateNetsuiteOptions(
   metadataType,
   mode,
   filterKey,
-  isFieldMetadata = false
+  isFieldMetadata,
+  recordType,
+  selectField
 ) {
   let options = null;
 
@@ -39,7 +53,7 @@ function generateNetsuiteOptions(
       // {"internalId":"Account","label":"Account"}
       options = data.map(item => ({
         label: item.label,
-        value: item.internalId && item.internalId.toLowerCase(),
+        value: getWSRecordId(item),
       }));
     } else if (filterKey === 'savedSearches') {
       // {internalId: "794", name: "New Account Search",
@@ -110,6 +124,10 @@ function generateNetsuiteOptions(
             item.id.indexOf('.') === -1
         )
         .map(item => ({ label: item.name, value: item.id }));
+    } else if (recordType && selectField) {
+      options = data.map(item => ({ label: item.name, value: item.id }));
+    } else if (filterKey === 'searchColumns') {
+      options = data.map(item => ({ label: item.name, value: item.id }));
     }
   }
 
@@ -234,7 +252,9 @@ export default (
         metadataType,
         mode,
         filterKey,
-        !!(selectField && recordType)
+        !!(selectField || recordType),
+        recordType,
+        selectField
       );
 
       if (recordType && selectField) {
@@ -422,7 +442,7 @@ export const optionsFromMetadata = (
           null;
   }
 
-  return recordType && selectField
+  return recordType
     ? (applicationResource &&
         applicationResource[connectionId] &&
         applicationResource[connectionId][recordType]) ||

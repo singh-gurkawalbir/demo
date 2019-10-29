@@ -1,6 +1,7 @@
 import shortid from 'shortid';
 import RestMappingSettings from './rest';
 import NetsuiteMappingSettings from './netsuite';
+import SalesforceMappingSettings from './salesforce';
 import FTPMappingSettings from './ftp';
 import { adaptorTypeMap } from '../../../../utils/resource';
 
@@ -41,7 +42,7 @@ const getFormattedLookup = (lookup, formVal) => {
         lookupTmp.default = null;
         break;
       case 'default':
-        lookupTmp.default = formVal.lookupDefault;
+        lookupTmp.default = formVal.lookupDefault || formVal.lookupSFSelect;
         break;
       default:
     }
@@ -51,11 +52,20 @@ const getFormattedLookup = (lookup, formVal) => {
 };
 
 export default {
-  getMetaData: options => {
-    const { application, value, lookup = {}, extractFields } = options;
+  getMetaData: params => {
+    const {
+      application,
+      value,
+      lookup = {},
+      extractFields = [],
+      generate,
+      generateFields = [],
+      options,
+    } = params;
     let fieldMeta = {};
 
     switch (application) {
+      case adaptorTypeMap.HTTPImport:
       case adaptorTypeMap.RESTImport:
         fieldMeta = RestMappingSettings.getMetaData({
           value,
@@ -68,9 +78,23 @@ export default {
           value,
           lookup,
           extractFields,
+          generate,
+          generateFields,
+          options,
+        });
+        break;
+      case adaptorTypeMap.SalesforceImport:
+        fieldMeta = SalesforceMappingSettings.getMetaData({
+          value,
+          lookup,
+          extractFields,
+          generate,
+          generateFields,
+          options,
         });
         break;
       case adaptorTypeMap.AS2Import:
+      case adaptorTypeMap.S3Import:
       case adaptorTypeMap.FTPImport:
         fieldMeta = FTPMappingSettings.getMetaData({
           value,
@@ -99,6 +123,14 @@ export default {
       settings.dataType = formVal.dataType;
     }
 
+    if (formVal.extractDateFormat) {
+      settings.extractDateFormat = formVal.extractDateFormat;
+    }
+
+    if (formVal.extractDateTimezone) {
+      settings.extractDateTimezone = formVal.extractDateTimezone;
+    }
+
     if (formVal.discardIfEmpty) {
       settings.discardIfEmpty = formVal.discardIfEmpty;
     }
@@ -112,18 +144,26 @@ export default {
     }
 
     if (formVal.fieldMappingType === 'hardCoded') {
-      // in case of hardcoded value, we dont save extract property
-      switch (formVal.hardcodedAction) {
-        case 'useEmptyString':
-          settings.hardCodedValue = '';
-          break;
-        case 'useNull':
-          settings.hardCodedValue = null;
-          break;
-        case 'default':
-          settings.hardCodedValue = formVal.hardcodedDefault;
-          break;
-        default:
+      if (formVal.hardcodedAction) {
+        switch (formVal.hardcodedAction) {
+          case 'useEmptyString':
+            settings.hardCodedValue = '';
+            break;
+          case 'useNull':
+            settings.hardCodedValue = null;
+            break;
+          case 'default':
+            settings.hardCodedValue =
+              formVal.hardcodedDefault || formVal.hardcodedSFSelect;
+            break;
+          default:
+        }
+      } else if (formVal.hardcodedSelect) {
+        settings.hardCodedValue = Array.isArray(formVal.hardcodedSelect)
+          ? formVal.hardcodedSelect.join(',')
+          : formVal.hardcodedSelect;
+      } else if (formVal.hardcodedCheckbox) {
+        settings.hardCodedValue = formVal.hardcodedCheckbox;
       }
     } else if (
       formVal.fieldMappingType === 'standard' ||
@@ -137,7 +177,7 @@ export default {
           settings.default = null;
           break;
         case 'default':
-          settings.default = formVal.default;
+          settings.default = formVal.default || formVal.defaultSFSelect;
           break;
         default:
       }

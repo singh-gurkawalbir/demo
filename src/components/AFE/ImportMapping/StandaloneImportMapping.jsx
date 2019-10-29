@@ -1,5 +1,4 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { makeStyles, IconButton } from '@material-ui/core';
 import MappingUtil from '../../../utils/mapping';
 import * as ResourceUtil from '../../../utils/resource';
 import LookupUtil from '../../../utils/lookup';
@@ -7,8 +6,6 @@ import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import ImportMapping from './';
 import LoadResources from '../../../components/LoadResources';
-
-const CloseIcon = require('../../../components/icons/CloseIcon').default;
 
 /**
  *
@@ -19,39 +16,35 @@ const CloseIcon = require('../../../components/icons/CloseIcon').default;
  * @param {function} onClose (callback for closing the mapping dialog)
  */
 
-const useStyles = makeStyles(theme => ({
-  closeButton: {
-    position: 'absolute',
-    right: theme.spacing(1),
-    top: theme.spacing(1),
-  },
-}));
-
 export default function StandaloneImportMapping(props) {
-  const { id, resourceId, onClose } = props;
+  const { id, resourceId, onClose, connectionId, extractFields } = props;
   const dispatch = useDispatch();
-  const classes = useStyles();
-  /*
-     Using dummy data for functionality demonstration. generate fields and
-     extrct fields to be extracted later when flow builder is ready
-     The best way to fetch extract and generate field is to be figured out later
-     */
-  const generateFields = ['myName', 'myId'];
-  const extractFields = ['name', 'id'];
   const resourceData = useSelector(state =>
     selectors.resource(state, 'imports', resourceId)
   );
+  const options = {};
   const resourceType = ResourceUtil.getResourceSubType(resourceData);
+
+  if (resourceType.type === ResourceUtil.adaptorTypeMap.SalesforceImport) {
+    options.connectionId = connectionId;
+    options.sObjectType = resourceData.salesforce.sObjectType;
+  }
+
+  if (resourceType.type === ResourceUtil.adaptorTypeMap.NetSuiteImport) {
+    options.recordType =
+      resourceData.netsuite_da && resourceData.netsuite_da.recordType;
+    options.connectionId = connectionId;
+  }
+
   const mappings = MappingUtil.getMappingFromResource(
     resourceData,
     resourceType.type
   );
-  // check for case when there is no lookups and we saving without lookups
   const lookups = LookupUtil.getLookupFromResource(
     resourceData,
     resourceType.type
   );
-  const handleClose = (closeModal, _mappings, _lookups) => {
+  const handleSave = (_mappings, _lookups, closeModal) => {
     // perform save operation only when mapping object is passed as parameter to the function.
     if (_mappings) {
       const patchSet = [];
@@ -61,7 +54,7 @@ export default function StandaloneImportMapping(props) {
       patchSet.push({
         op: mappings ? 'replace' : 'add',
         path: mappingPath,
-        value: { fields: _mappings },
+        value: _mappings,
       });
 
       // update _lookup only if its being passed as param to function
@@ -82,6 +75,15 @@ export default function StandaloneImportMapping(props) {
     if (closeModal) onClose();
   };
 
+  const handleCancel = () => {
+    onClose();
+  };
+
+  const formattedExtractFields =
+    (extractFields &&
+      Object.keys(extractFields).map(name => ({ name, id: name }))) ||
+    [];
+
   return (
     <LoadResources resources="imports">
       <ImportMapping
@@ -92,16 +94,12 @@ export default function StandaloneImportMapping(props) {
         isStandaloneMapping
         resourceId={resourceId}
         mappings={mappings}
-        generateFields={generateFields}
-        extractFields={extractFields}
-        onClose={handleClose}>
-        <IconButton
-          aria-label="Close"
-          className={classes.closeButton}
-          onClick={() => onClose()}>
-          <CloseIcon />
-        </IconButton>
-      </ImportMapping>
+        showDialogClose
+        extractFields={formattedExtractFields}
+        onCancel={handleCancel}
+        onSave={handleSave}
+        options={options}
+      />
     </LoadResources>
   );
 }

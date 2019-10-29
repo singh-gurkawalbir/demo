@@ -1,9 +1,11 @@
+import { INSTALL_STEP_TYPES } from '../constants';
+
 export default {
-  getStepText: (step, mode) => {
+  getStepText: (step = {}, mode) => {
     let stepText = '';
     const isUninstall = mode === 'uninstall';
 
-    if (step._connectionId) {
+    if (step._connectionId || step.type === INSTALL_STEP_TYPES.STACK) {
       if (step.completed) {
         stepText = 'Configured';
       } else if (step.isTriggered) {

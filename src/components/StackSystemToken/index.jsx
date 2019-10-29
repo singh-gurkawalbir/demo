@@ -45,6 +45,7 @@ export default function StackSystemToken({ stackId }) {
       </Typography>
       {systemToken && (
         <IconButton
+          data-test="copyStackSystemToken"
           title="Copy to clipboard"
           onClick={copyToClipboard(systemToken)}
           size="small">
@@ -53,6 +54,7 @@ export default function StackSystemToken({ stackId }) {
       )}
       {!systemToken && (
         <IconButton
+          data-test="viewStackSystemToken"
           title="View Token"
           onClick={displaySystemToken}
           size="small">
@@ -60,6 +62,7 @@ export default function StackSystemToken({ stackId }) {
         </IconButton>
       )}
       <IconButton
+        data-test="regenerateStackSystemToken"
         title="Regenerate Token"
         onClick={generateSystemToken}
         size="small">

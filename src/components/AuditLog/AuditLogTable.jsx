@@ -42,9 +42,7 @@ const mapStateToProps = (state, { resourceType, resourceId, filters }) => {
 @withStyles(theme => ({
   root: {
     width: '98%',
-    marginTop: theme.spacing(3),
     marginLeft: theme.spacing(1),
-    overflowX: 'auto',
   },
   table: {
     minWidth: 700,
@@ -206,6 +204,9 @@ class AuditLogTable extends Component {
                             colSpan="2"
                             className={classes.textAlignCenter}>
                             <Button
+                              data-test="auditLogChanges"
+                              color="primary"
+                              variant="text"
                               onClick={() => {
                                 this.setState({
                                   showDiffDialog: true,

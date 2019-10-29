@@ -1,4 +1,4 @@
-import { Fragment, useEffect } from 'react';
+import { Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Route } from 'react-router-dom';
 import { makeStyles, Typography } from '@material-ui/core';
@@ -7,6 +7,7 @@ import ResourceForm from '../../../components/ResourceFormFactory';
 import { MODEL_PLURAL_TO_LABEL } from '../../../utils/resource';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import * as selectors from '../../../reducers';
+import actions from '../../../actions';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -38,12 +39,57 @@ export default function Panel(props) {
   const isNew = operation === 'add';
   const classes = useStyles(props);
   const dispatch = useDispatch();
+  const [enqueueSnackbar] = useEnqueueSnackbar();
   const newResourceId = useSelector(state =>
     selectors.createdResourceId(state, id)
   );
-  const [enqueueSnackbar] = useEnqueueSnackbar();
-  const resourceLabel = MODEL_PLURAL_TO_LABEL[resourceType];
-  const getEditUrl = id => {
+  // if this form is for a page processor, we don't know if
+  // the new resource is an export or import. We determine this by
+  // peeking into the patch set from the first step in PP/PG creation.
+  // The patch set should have a value for /adaptorType which
+  // contains [*Import|*Export].
+  const stagedProcessor = useSelector(state =>
+    selectors.stagedResource(state, id)
+  );
+  let resourceLabel;
+
+  if (resourceType === 'pageProcessor') {
+    resourceLabel = 'Page Processor';
+  } else if (resourceType === 'pageGenerator') {
+    resourceLabel = 'Page Generator';
+  } else {
+    resourceLabel = MODEL_PLURAL_TO_LABEL[resourceType];
+  }
+
+  function lookupProcessorResourceType() {
+    if (!stagedProcessor || !stagedProcessor.patch) {
+      // TODO: we need a better pattern for logging warnings. We need a common util method
+      // which logs these warning only if the build is dev... if build is prod, these
+      // console.warn/logs should not even be bundled by webpack...
+      // eslint-disable-next-line
+      return console.warn(
+        'No patch-set available to determine new Page Processor resourceType.'
+      );
+    }
+
+    // [{}, ..., {}, {op: "replace", path: "/adaptorType", value: "HTTPExport"}, ...]
+    const adaptorType = stagedProcessor.patch.find(
+      p => p.op === 'replace' && p.path === '/adaptorType'
+    );
+
+    // console.log(`adaptorType-${id}`, adaptorType);
+
+    if (!adaptorType || !adaptorType.value) {
+      // eslint-disable-next-line
+      console.warn(
+        'No replace operation against /adaptorType found in the patch-set.'
+      );
+    }
+
+    return adaptorType.value.includes('Export') ? 'exports' : 'imports';
+  }
+
+  function getEditUrl(id) {
     // console.log(location);
     const segments = location.pathname.split('/');
     const { length } = segments;
@@ -51,34 +97,63 @@ export default function Panel(props) {
     segments[length - 1] = id;
     segments[length - 3] = 'edit';
 
+    if (resourceType === 'pageGenerator') {
+      segments[length - 2] = 'exports';
+    } else if (resourceType === 'pageProcessor') {
+      segments[length - 2] = lookupProcessorResourceType();
+    }
+
     const url = segments.join('/');
 
     return url;
-  };
-
-  useEffect(() => {
-    // once a new resource (id.startsWith('new-')), has been committed,
-    // we need to redirect to the resource using the correct id from
-    // the persistence layer...
-    if (newResourceId) {
-      enqueueSnackbar({
-        message: `${resourceLabel} created`,
-        variant: 'success',
-      });
-
-      onClose();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, newResourceId]);
+  }
 
   function handleSubmitComplete() {
     if (isNew) {
-      props.history.replace(getEditUrl(id));
+      // The following block of logic is used specifically for pageProcessor
+      // and pageGenerator forms. These forms allow a user to choose an
+      // existing resource. In this case we dont have any more work to do,
+      // we just need to match the temp 'new-xxx' id with the one the user
+      // selected.
+      const resourceIdPatch = stagedProcessor.patch.find(
+        p => p.op === 'replace' && p.path === '/resourceId'
+      );
+      const resourceId = resourceIdPatch ? resourceIdPatch.value : null;
+
+      // this is NOT a case where a user selected an existing resource,
+      // so move to step 2 of the form...
+      if (!resourceId) {
+        return props.history.replace(getEditUrl(id));
+      }
+
+      // Take care of existing resource selection.
+      enqueueSnackbar({
+        message: `${resourceLabel} added`,
+        variant: 'success',
+      });
+
+      dispatch(actions.resource.created(resourceId, id));
+      onClose();
+    } else {
+      if (newResourceId)
+        enqueueSnackbar({
+          message: `${resourceLabel} created`,
+          variant: 'success',
+        });
+
+      onClose();
     }
   }
 
   const submitButtonLabel =
-    isNew && ['imports', 'exports', 'connections'].includes(resourceType)
+    isNew &&
+    [
+      'imports',
+      'exports',
+      'connections',
+      'pageGenerator',
+      'pageProcessor',
+    ].includes(resourceType)
       ? 'Next'
       : 'Save';
 
@@ -88,11 +163,10 @@ export default function Panel(props) {
         <Typography variant="h5" className={classes.title}>
           {isNew ? `Create` : 'Edit'} {resourceLabel}
         </Typography>
-        <LoadResources required resources={resourceType}>
+        <LoadResources required resources="exports,imports">
           <ResourceForm
             className={classes.form}
             variant={match.isExact ? 'edit' : 'view'}
-            key={`${isNew}-${id}`}
             isNew={isNew}
             resourceType={resourceType}
             resourceId={id}
@@ -100,6 +174,7 @@ export default function Panel(props) {
             submitButtonLabel={submitButtonLabel}
             onSubmitComplete={handleSubmitComplete}
             onCancel={onClose}
+            {...props}
           />
         </LoadResources>
       </div>

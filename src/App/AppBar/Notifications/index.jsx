@@ -83,7 +83,10 @@ class Notifications extends Component {
 
     return (
       <Fragment>
-        <span onClick={this.handleClick} className={classes.currentContainer}>
+        <span
+          data-test="notificationsIconToggle"
+          onClick={this.handleClick}
+          className={classes.currentContainer}>
           <RootRef rootRef={this.accountArrowRef}>
             <IconButton color="inherit">
               <Badge badgeContent={notifications.length} color="secondary">
@@ -133,6 +136,8 @@ class Notifications extends Component {
                 <ListItemSecondaryAction>
                   <IconButton
                     className={classes.button}
+                    data-test={`accept ${a.ownerUser.name ||
+                      a.ownerUser.company}`}
                     aria-label="Accept"
                     onClick={() => {
                       onClick('accept', a.id);
@@ -141,6 +146,8 @@ class Notifications extends Component {
                   </IconButton>
                   <IconButton
                     className={classes.button}
+                    data-test={`dismiss ${a.ownerUser.name ||
+                      a.ownerUser.company}`}
                     aria-label="Dismiss"
                     onClick={() => {
                       onClick('reject', a.id);

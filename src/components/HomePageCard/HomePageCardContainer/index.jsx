@@ -6,9 +6,8 @@ const useStyles = makeStyles(theme => ({
   wrapper: {
     borderRadius: 4,
     padding: 22,
-    minWidth: 318,
     minHeight: 318,
-    maxWidth: 319,
+    width: '100%',
     boxSizing: 'border-box',
     border: '1px solid',
     cursor: 'pointer',
@@ -23,9 +22,6 @@ const useStyles = makeStyles(theme => ({
       transform: `translateY(-5px)`,
       boxShadow: `0 0 7px rgba(0,0,0,0.1)`,
       borderColor: theme.palette.primary.light,
-    },
-    [theme.breakpoints.down('xs')]: {
-      maxWidth: '100%',
     },
     [theme.breakpoints.between('sm', 'md')]: {
       minWidth: '100%',
@@ -42,7 +38,10 @@ function HomePageCardContainer(props) {
   const { children } = props;
 
   return (
-    <Paper className={classNames(classes.wrapper)} elevation={0}>
+    <Paper
+      className={classNames(classes.wrapper)}
+      elevation={0}
+      onClick={props.onClick}>
       <div>{children}</div>
     </Paper>
   );

@@ -1,4 +1,5 @@
 import produce from 'immer';
+import { sortBy } from 'lodash';
 import actionTypes from '../../../actions/types';
 
 function generateFileDefinitionOptions({ definitions }) {
@@ -32,7 +33,21 @@ function generateFileDefinitionOptions({ definitions }) {
       ];
     }
   });
-  // TODO : Sort based on Vendor for all formats
+  // Sort based on Vendor and label for all formats
+  const sortByKeys = ['vendor', 'label'];
+
+  categorizedDefinitionMap.edi = sortBy(
+    categorizedDefinitionMap.edi,
+    sortByKeys
+  );
+  categorizedDefinitionMap.ediFact = sortBy(
+    categorizedDefinitionMap.ediFact,
+    sortByKeys
+  );
+  categorizedDefinitionMap.fixed = sortBy(
+    categorizedDefinitionMap.fixed,
+    sortByKeys
+  );
 
   return categorizedDefinitionMap;
 }

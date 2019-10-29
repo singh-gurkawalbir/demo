@@ -113,6 +113,7 @@ class UserList extends Component {
       },
       action: key => (
         <IconButton
+          data-test="closeUserListSnackbar"
           key="close"
           aria-label="Close"
           color="inherit"
@@ -169,6 +170,7 @@ class UserList extends Component {
             </Typography>
             {isAccountOwner && (
               <Button
+                data-test="inviteUser"
                 className={classes.inviteUserButton}
                 variant="contained"
                 color="secondary"

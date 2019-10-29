@@ -14,22 +14,28 @@ const useStyles = makeStyles(theme => ({
   },
   cardHeader: {
     marginBottom: theme.spacing(2),
-    display: 'flex',
-    justifyContent: 'space-between',
-    padding: theme.spacing(2, 1, 1, 1),
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr',
+    padding: '12px',
     background: props =>
       props.type === 'connector'
         ? theme.palette.primary.dark
         : theme.palette.secondary.light,
-    height: '50px',
   },
   user: {
-    display: 'inline',
-    float: 'right',
     color: theme.palette.background.paper,
+    textAlign: 'right',
+    overflow: 'hidden',
+    whiteSpace: 'nowrap',
+    maxWidth: '88%',
+    textOverflow: 'ellipsis',
   },
   title: {
     color: theme.palette.background.paper,
+    overflow: 'hidden',
+    whiteSpace: 'nowrap',
+    maxWidth: '88%',
+    textOverflow: 'ellipsis',
   },
   content: {
     padding: theme.spacing(0, 2),
@@ -43,8 +49,14 @@ export default function ConnectorTemplateContent(props) {
   return (
     <Fragment>
       <div className={classes.cardHeader}>
-        <Typography className={classes.title}>{title}</Typography>
-        <Typography className={classes.user}>
+        <Typography className={classes.title} title={title}>
+          {title}
+        </Typography>
+        <Typography
+          className={classes.user}
+          title={
+            resource.user.company || resource.user.name || resource.user.email
+          }>
           {resource.user &&
             (resource.user.company ||
               resource.user.name ||

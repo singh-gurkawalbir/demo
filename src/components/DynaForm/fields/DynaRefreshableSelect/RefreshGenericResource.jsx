@@ -4,15 +4,44 @@ import InputLabel from '@material-ui/core/InputLabel';
 import Input from '@material-ui/core/Input';
 import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
-import RefreshIcon from '@material-ui/icons/RefreshOutlined';
 import Select from '@material-ui/core/Select';
 import Chip from '@material-ui/core/Chip';
 import { makeStyles } from '@material-ui/core/styles';
 import Spinner from '../../../Spinner';
+import RefreshIcon from '../../../icons/RefreshIcon';
 
 const useStyles = makeStyles(theme => ({
   inlineElements: {
     display: 'inline',
+  },
+  root: {
+    display: 'flex !important',
+    flexWrap: 'nowrap',
+    background: theme.palette.background.paper,
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+    transitionProperty: 'border',
+    transitionDuration: theme.transitions.duration.short,
+    transitionTimingFunction: theme.transitions.easing.easeInOut,
+    overflow: 'hidden',
+    height: 50,
+    justifyContent: 'flex-end',
+    borderRadius: 2,
+    '& > Label': {
+      paddingTop: 10,
+    },
+    '&:hover': {
+      borderColor: theme.palette.primary.main,
+    },
+    '& > *': {
+      padding: [[0, 12]],
+    },
+    '& > div > div ': {
+      paddingBottom: 5,
+    },
+    '& svg': {
+      right: 8,
+    },
   },
   selectElement: {
     width: '80%',
@@ -26,10 +55,16 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+/**
+ *
+ * disabled property is part of props being send from Form factory
+ * setting disableOptionsLoad = false will restrict fetch of resources
+ */
 function RefreshGenericResource(props) {
   const {
     description,
     disabled,
+    disableOptionsLoad,
     id,
     name,
     value,
@@ -49,7 +84,10 @@ function RefreshGenericResource(props) {
   const defaultValue = props.defaultValue || (multiselect ? [] : '');
   // component is in loading state in both request and refresh cases
   const isLoading =
-    !fieldStatus || fieldStatus === 'requested' || fieldStatus === 'refreshed';
+    !disableOptionsLoad &&
+    (!fieldStatus ||
+      fieldStatus === 'requested' ||
+      fieldStatus === 'refreshed');
   // Boolean state to minimize calls on useEffect
   const [isDefaultValueChanged, setIsDefaultValueChanged] = useState(false);
 
@@ -74,10 +112,10 @@ function RefreshGenericResource(props) {
     setIsDefaultValueChanged,
   ]);
   useEffect(() => {
-    if (!fieldData) {
+    if (!fieldData && !disableOptionsLoad) {
       handleFetchResource();
     }
-  }, [fieldData, handleFetchResource]);
+  }, [disableOptionsLoad, fieldData, handleFetchResource]);
 
   useEffect(() => {
     // Reset selected values on change of resourceToFetch
@@ -86,9 +124,9 @@ function RefreshGenericResource(props) {
     }
   }, [resourceToFetch, setIsDefaultValueChanged]);
 
-  if (!fieldData) return <Spinner />;
+  if (!fieldData && !disableOptionsLoad) return <Spinner />;
 
-  let optionMenuItems = fieldData.map(options => {
+  let optionMenuItems = (fieldData || []).map(options => {
     const { label, value } = options;
 
     return (
@@ -136,7 +174,7 @@ function RefreshGenericResource(props) {
               onFieldChange(id, evt.target.value);
             }}
             input={<Input name={name} id={id} />}
-            className={classes.selectElement}
+            className={classes.root}
             renderValue={selected => (
               <div className={classes.chips}>
                 {selected &&

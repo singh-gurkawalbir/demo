@@ -1,20 +1,17 @@
 import { useState, Fragment } from 'react';
-import { useSelector } from 'react-redux';
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import TablePagination from '@material-ui/core/TablePagination';
 import Checkbox from '@material-ui/core/Checkbox';
 import { difference } from 'lodash';
 import JobDetail from './JobDetail';
 import { JOB_STATUS } from '../../utils/constants';
 import JobErrorDialog from './JobErrorDialog';
-import * as selectors from '../../reducers';
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   root: {
     width: '98%',
     marginTop: theme.spacing(3),
@@ -29,20 +26,16 @@ const styles = theme => ({
     minWidth: 700,
   },
   tablePaginationRoot: { float: 'left' },
-});
+}));
 
 function JobTable({
-  classes,
   onSelectChange,
   jobsInCurrentPage,
   selectedJobs,
   userPermissionsOnIntegration,
   integrationName,
-  onChangePage,
 }) {
-  const { paging, totalJobs } = useSelector(state =>
-    selectors.flowJobsPagingDetails(state)
-  );
+  const classes = useStyles();
   const [showErrorDialogFor, setShowErrorDialogFor] = useState({});
   const selectableJobsInCurrentPage = jobsInCurrentPage.filter(
     j =>
@@ -60,11 +53,6 @@ function JobTable({
   const isSelectAllChecked =
     selectableJobIdsInCurrentPage.length > 0 &&
     difference(selectableJobIdsInCurrentPage, selectedJobIds).length === 0;
-
-  function handleChangePage(event, newPage) {
-    // setCurrentPage(newPage);
-    onChangePage(newPage);
-  }
 
   function handleSelectChange(job, jobId) {
     const jobIds = { ...selectedJobs, [jobId]: job };
@@ -90,8 +78,20 @@ function JobTable({
     onSelectChange(jobIds);
   }
 
-  function handleViewErrorsClick({ jobId, parentJobId, showResolved = false }) {
-    setShowErrorDialogFor({ jobId, parentJobId, showResolved });
+  function handleViewErrorsClick({
+    jobId,
+    parentJobId,
+    showResolved = false,
+    numError,
+    numResolved,
+  }) {
+    setShowErrorDialogFor({
+      jobId,
+      parentJobId,
+      showResolved,
+      numError,
+      numResolved,
+    });
   }
 
   function handleJobErrorDialogCloseClick() {
@@ -100,23 +100,6 @@ function JobTable({
 
   return (
     <Fragment>
-      <TablePagination
-        classes={{ root: classes.tablePaginationRoot }}
-        rowsPerPageOptions={[paging.rowsPerPage]}
-        component="div"
-        count={totalJobs || 0}
-        rowsPerPage={paging.rowsPerPage}
-        page={paging.currentPage}
-        backIconButtonProps={{
-          'aria-label': 'Previous Page',
-        }}
-        nextIconButtonProps={{
-          'aria-label': 'Next Page',
-        }}
-        onChangePage={handleChangePage}
-        // onChangeRowsPerPage={this.handleChangeRowsPerPage}
-      />
-
       <Table className={classes.table}>
         <TableHead>
           <TableRow>
@@ -125,10 +108,10 @@ function JobTable({
                 disabled={jobsInCurrentPage.length === 0}
                 checked={isSelectAllChecked}
                 onChange={handleSelectAllChange}
+                color="primary"
                 inputProps={{ 'aria-label': 'Select all jobs' }}
               />
             </TableCell>
-            <TableCell />
             <TableCell>Flow</TableCell>
             <TableCell>Status</TableCell>
             <TableCell>Success</TableCell>
@@ -160,6 +143,8 @@ function JobTable({
           jobId={showErrorDialogFor.jobId}
           parentJobId={showErrorDialogFor.parentJobId}
           showResolved={showErrorDialogFor.showResolved}
+          numError={showErrorDialogFor.numError}
+          numResolved={showErrorDialogFor.numResolved}
           onCloseClick={handleJobErrorDialogCloseClick}
           integrationName={integrationName}
         />
@@ -168,4 +153,4 @@ function JobTable({
   );
 }
 
-export default withStyles(styles)(JobTable);
+export default JobTable;

@@ -2,9 +2,7 @@ import { Fragment } from 'react';
 import TimeAgo from 'react-timeago';
 import { Link } from 'react-router-dom';
 import { Typography } from '@material-ui/core';
-// TODO: @Azhar, this status circle seems to be used more than just in
-// the homepage card. Can you move it under /components, pls?
-import StatusCircle from '../HomePageCard/Header/Status/StatusCircle';
+import StatusCircle from '../StatusCircle';
 import getRoutePath from '../../utils/routePaths';
 import { getApp } from '../../constants/applications';
 import { getResourceSubType } from '../../utils/resource';
@@ -13,9 +11,13 @@ export const getResourceLink = (resourceType, resource) => (
   <Fragment>
     <Link
       to={getRoutePath(
-        `/${resourceType}/edit/${resourceType}/${resource._id}`
+        resourceType === 'connectorLicenses'
+          ? `/connectors/${resource._connectorId}/connectorLicenses/edit/connectorLicenses/${resource._id}`
+          : `/${resourceType}/edit/${resourceType}/${resource._id}`
       )}>
-      {resource.name || resource._id}
+      {resourceType === 'connectorLicenses'
+        ? resource.user && resource.user.email
+        : resource.name || resource._id}
     </Link>
     <Typography>{resource.shared ? 'Shared' : ''}</Typography>
   </Fragment>
@@ -38,11 +40,9 @@ export const getConnectorName = resource => {
   return app.name;
 };
 
-export const formatLastModified = lastModified => {
-  const formatter = (value, unit, suffix) => `${value} ${unit} ${suffix}`;
-
-  return <TimeAgo formatter={formatter} date={lastModified} />;
-};
+export const formatLastModified = lastModified => (
+  <TimeAgo date={lastModified} />
+);
 
 export const onlineStatus = r => (
   <div style={{ display: 'flex', alignItems: 'center' }}>

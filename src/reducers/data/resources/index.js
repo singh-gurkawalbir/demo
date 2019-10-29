@@ -1,4 +1,6 @@
 import produce from 'immer';
+import moment from 'moment';
+import sift from 'sift';
 import actionTypes from '../../../actions/types';
 
 export const initializationResources = ['profile', 'preferences'];
@@ -9,8 +11,18 @@ const resourceTypesToIgnore = [
   'audit',
 ];
 
-function replaceOrInsertResource(state, type, resource) {
+function replaceOrInsertResource(state, resourceType, resourceValue) {
   // handle case of no collection
+  let type = resourceType;
+  const resource = resourceValue;
+
+  if (type.indexOf('/licenses') >= 0) {
+    const id = type.substring('connectors/'.length, type.indexOf('/licenses'));
+
+    resource._connectorId = id;
+    type = 'connectorLicenses';
+  }
+
   if (!state[type]) {
     return { ...state, [type]: [resource] };
   }
@@ -95,12 +107,55 @@ export default (state = {}, action) => {
 
   switch (type) {
     case actionTypes.RESOURCE.RECEIVED_COLLECTION: {
+      if (resourceType.indexOf('/installBase') >= 0) {
+        const id = resourceType.substring(
+          'connectors/'.length,
+          resourceType.indexOf('/installBase')
+        );
+        const newCollection =
+          collection && collection.map(c => ({ ...c, _connectorId: id }));
+
+        return produce(state, draft => {
+          draft.connectorInstallBase = newCollection || [];
+        });
+      }
+
+      if (resourceType.indexOf('/licenses') >= 0) {
+        const id = resourceType.substring(
+          'connectors/'.length,
+          resourceType.indexOf('/licenses')
+        );
+        const newCollection =
+          collection &&
+          collection.map(c => ({
+            ...c,
+            _connectorId: id,
+          }));
+
+        return produce(state, draft => {
+          draft.connectorLicenses = newCollection || [];
+        });
+      }
+
       return { ...state, [resourceType]: collection || [] };
     }
 
     case actionTypes.RESOURCE.RECEIVED:
       return replaceOrInsertResource(state, resourceType, resource);
     case actionTypes.RESOURCE.DELETED:
+      if (resourceType.indexOf('/licenses') >= 0) {
+        const connectorId = resourceType.substring(
+          'connectors/'.length,
+          resourceType.indexOf('/licenses')
+        );
+
+        return produce(state, draft => {
+          draft.connectorLicenses = draft.connectorLicenses.filter(
+            l => l._id !== id || l._connectorId !== connectorId
+          );
+        });
+      }
+
       return {
         ...state,
         [resourceType]: state[resourceType].filter(r => r._id !== id),
@@ -150,6 +205,10 @@ export default (state = {}, action) => {
       }
 
       return state;
+    case actionTypes.RESOURCE.CLEAR_COLLECTION:
+      return produce(state, draft => {
+        draft[resourceType] = [];
+      });
     default:
       return state;
   }
@@ -202,8 +261,12 @@ export function integrationAppSettings(state, id) {
   }
 
   return produce(integration, draft => {
+    if (!draft.settings) {
+      draft.settings = {};
+    }
+
     if (draft.settings.general) {
-      draft.hasGeneralSettings = true;
+      draft.settings.hasGeneralSettings = true;
     }
 
     if (draft.settings.supportsMultiStore) {
@@ -217,17 +280,24 @@ export function integrationAppSettings(state, id) {
   });
 }
 
-export function defaultStoreId(state, id) {
+export function defaultStoreId(state, id, store) {
   const settings = integrationAppSettings(state, id);
 
   if (settings.stores && settings.stores.length) {
+    if (settings.stores.find(s => s.value === store)) {
+      return store;
+    }
+
     return settings.stores[0].value;
   }
 
   return undefined;
 }
 
-export function resourceList(state, { type, take, keyword, sort, sandbox }) {
+export function resourceList(
+  state,
+  { type, take, keyword, sort, sandbox, filter }
+) {
   const result = {
     resources: [],
     type,
@@ -278,7 +348,7 @@ export function resourceList(state, { type, take, keyword, sort, sandbox }) {
       : (a, b) => -desc(a, b, orderBy);
   // console.log('sort:', sort, resources.sort(comparer, sort));
   const sorted = sort ? resources.sort(comparer(sort)) : resources;
-  const filtered = sorted.filter(matchTest);
+  const filtered = sorted.filter(filter ? sift(filter) : matchTest);
 
   result.filtered = filtered.length;
   result.resources = filtered;
@@ -354,6 +424,7 @@ export function resourceDetailsMap(state) {
   return allResources;
 }
 
+// TODO Vamshi unit tests for selector
 export function isAgentOnline(state, agentId) {
   if (!state) return false;
   const matchingAgent =
@@ -362,7 +433,7 @@ export function isAgentOnline(state, agentId) {
   return !!(
     matchingAgent &&
     matchingAgent.lastHeartbeatAt &&
-    new Date().getTime() - matchingAgent.lastHeartbeatAt.getTime() <=
+    new Date().getTime() - moment(matchingAgent.lastHeartbeatAt) <=
       process.env.AGENT_STATUS_INTERVAL
   );
 }

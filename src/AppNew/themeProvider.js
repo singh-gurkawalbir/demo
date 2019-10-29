@@ -39,7 +39,7 @@ const theme = {
     keys: ['xs', 'sm', 'md', 'lg', 'xl', 'xxl'],
     values: {
       xs: 0,
-      sm: 600,
+      sm: 640,
       md: 960,
       lg: 1280,
       xl: 1700,
@@ -52,6 +52,9 @@ const theme = {
       root: {
         textTransform: 'unset',
         fontFamily: 'Roboto500',
+        '&: disabled': {
+          cursor: 'not-allowed',
+        },
       },
       contained: {
         borderRadius: '17px',
@@ -85,7 +88,7 @@ const theme = {
         },
       },
       containedSecondary: {
-        backgroundColor: 'transparent',
+        backgroundColor: colors.celigoWhite,
         borderColor: colors.celigoNeutral3,
         color: colors.celigoNeutral6,
         '&:hover': {
@@ -270,19 +273,6 @@ const theme = {
         '&:hover': {
           '&:hover': {
             background: colors.celigoNeutral2,
-            '& td:first-child': {
-              '&:before': {
-                background: colors.celigoAccent2,
-              },
-            },
-            '&:before': {
-              background: colors.celigoAccent2,
-            },
-          },
-          '& > td:first-child': {
-            '&:before': {
-              backgroundColor: colors.celigoAccent2,
-            },
           },
         },
       },
@@ -295,7 +285,8 @@ const theme = {
     MuiTableCell: {
       root: {
         position: 'relative',
-        padding: [[15, 40, 15, 16]],
+        padding: [[11, 16]],
+        borderBottomColor: colors.celigoNeutral3,
       },
       head: {
         fontFamily: 'Roboto500',
@@ -305,17 +296,7 @@ const theme = {
       body: {
         fontFamily: 'source sans pro',
         position: 'relative',
-        '&:first-child': {
-          '&:before': {
-            content: '""',
-            width: '6px',
-            height: '100%',
-            position: 'absolute',
-            background: 'transparent',
-            left: '0px',
-            top: '0px',
-          },
-        },
+        fontSize: 15,
       },
     },
     MuiSelect: {
@@ -417,9 +398,33 @@ const theme = {
         },
       },
     },
-    MuiSvgIcon: {
+    MuiIconButton: {
       root: {
         color: colors.celigoNeutral6,
+        '&: disabled': {
+          cursor: 'not-allowed',
+        },
+      },
+    },
+    MuiDialogTitle: {
+      root: {
+        borderBottom: `1px solid ${colors.celigoNeutral3}`,
+      },
+    },
+    MuiDialogContent: {
+      root: {
+        background: colors.celigoNeutral1,
+      },
+    },
+    MuiExpansionPanelSummary: {
+      root: {
+        padding: '0px 12px',
+      },
+    },
+    MuiChip: {
+      root: {
+        backgroundColor: colors.celigoNeutral3,
+        color: colors.celigoNeutral8,
       },
     },
   },
@@ -430,12 +435,14 @@ export default () => {
 
   muiTheme.palette.success = muiTheme.palette.augmentColor({
     main: colors.celigoSuccess,
+    contrastText: colors.celigoWhite,
   });
   muiTheme.palette.warning = muiTheme.palette.augmentColor({
     main: colors.celigoWarning,
   });
   muiTheme.palette.info = muiTheme.palette.augmentColor({
     main: colors.celigoAccent2,
+    contrastText: colors.celigoWhite,
   });
 
   return muiTheme;

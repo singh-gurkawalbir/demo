@@ -14,7 +14,7 @@ import * as selectors from '../../reducers';
 import actions from '../../actions';
 import LoadResources from '../../components/LoadResources';
 import openExternalUrl from '../../utils/window';
-import ConnectionSetupDialog from '../../components/ConnectionSetupDialog';
+import ConnectionSetupDialog from '../../components/ResourceSetupDialog';
 import InstallationStep from '../../components/InstallStep';
 
 const useStyles = makeStyles(theme => ({
@@ -78,11 +78,15 @@ export default function IntegrationAppAddNewStore(props) {
       // redirect to integration Settings
       dispatch(actions.integrationApp.store.clearSteps(integrationId));
       dispatch(actions.resource.request('integrations', integrationId));
+      dispatch(actions.resource.request('flows', integrationId));
+      dispatch(actions.resource.request('exports', integrationId));
+      dispatch(actions.resource.request('imports', integrationId));
+      dispatch(actions.resource.request('connections', integrationId));
       props.history.push(`/pg/connectors/${integrationId}/settings/flows`);
     }
   }, [dispatch, integrationId, isSetupComplete, props.history]);
 
-  if (!addNewStoreSteps) {
+  if (!addNewStoreSteps || !addNewStoreSteps.length) {
     return <Typography>Loading new store installation steps</Typography>;
   }
 
@@ -179,7 +183,8 @@ export default function IntegrationAppAddNewStore(props) {
     <LoadResources required resources="connections,integrations">
       {selectedConnectionId && (
         <ConnectionSetupDialog
-          _connectionId={selectedConnectionId}
+          resourceId={selectedConnectionId}
+          resourceType="connections"
           onClose={handleClose}
           onSubmitComplete={handleSubmitComplete}
         />
@@ -188,7 +193,10 @@ export default function IntegrationAppAddNewStore(props) {
         <div className={classes.innerContent}>
           <Grid container className={classes.formHead}>
             <Grid item xs={1}>
-              <IconButton onClick={handleBackClick} size="medium">
+              <IconButton
+                data-test="back"
+                onClick={handleBackClick}
+                size="medium">
                 <ArrowBackIcon fontSize="inherit" />
               </IconButton>
             </Grid>

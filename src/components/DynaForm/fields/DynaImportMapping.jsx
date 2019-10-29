@@ -1,6 +1,10 @@
+import { useSelector } from 'react-redux';
 import { useState, Fragment } from 'react';
 import Button from '@material-ui/core/Button';
 import ImportMapping from '../../../components/AFE/ImportMapping';
+import MappingUtil from '../../../utils/mapping';
+import * as ResourceUtil from '../../../utils/resource';
+import * as selectors from '../../../reducers';
 
 /*
 lookups and lookupId is passed in options
@@ -9,37 +13,63 @@ Passing isStandaloneMapping with options will render Mapping as standalone compo
 export default function DynaImportMapping(props) {
   const {
     id,
-    application,
     onFieldChange,
     options,
     label,
     value,
+    connectionId,
     resourceId,
   } = props;
-  const { lookupId, lookups, isStandaloneMapping } = options;
+  const {
+    lookupId,
+    lookups,
+    isStandaloneMapping,
+    sObjectType,
+    recordType,
+  } = options;
   const [isModalVisible, setModalVisibility] = useState(false);
-  /*
-     Using dummy data for functionality demonstration. generate fields and
-     extrct fields to be extracted later when flow builder is ready
-     The best way to fetch extract and generate field is to be figured out later
-     */
-  const generateFields = ['myName', 'myId'];
-  const extractFields = ['name', 'id'];
   const toggleModalVisibility = () => {
     setModalVisibility(!isModalVisible);
   };
 
-  const handleClose = (shouldCommit, mappings, lookups) => {
-    if (shouldCommit) {
-      onFieldChange(id, { fields: mappings });
+  const opts = {};
+  const resourceData = useSelector(state =>
+    selectors.resource(state, 'imports', resourceId)
+  );
+  const { type: application } = ResourceUtil.getResourceSubType(resourceData);
 
-      if (lookups) {
-        onFieldChange(lookupId, lookups);
-      }
-    }
+  if (application === ResourceUtil.adaptorTypeMap.SalesforceImport) {
+    opts.connectionId = connectionId;
+    opts.sObjectType = sObjectType;
+  } else if (
+    application === ResourceUtil.adaptorTypeMap.NetSuiteDistributedImport
+  ) {
+    opts.connectionId = connectionId;
+    opts.recordType = recordType;
+  }
 
+  const handleClose = () => {
     toggleModalVisibility();
   };
+
+  const handleSave = (mappings, lookups) => {
+    onFieldChange(id, mappings);
+
+    if (lookups) {
+      onFieldChange(lookupId, lookups);
+    }
+
+    handleClose();
+  };
+
+  let mappings = {};
+
+  if (isModalVisible) {
+    mappings = MappingUtil.getMappingsForApp({
+      mappings: value === '' ? {} : value,
+      appType: application,
+    });
+  }
 
   return (
     <Fragment>
@@ -47,14 +77,16 @@ export default function DynaImportMapping(props) {
         <ImportMapping
           title="Define Import Mapping"
           id={id}
+          connectionId={connectionId}
           application={application}
+          resourceId={resourceId}
           lookups={lookups}
           isStandaloneMapping={isStandaloneMapping}
-          resourceId={resourceId}
-          mappings={value}
-          generateFields={generateFields || []}
-          extractFields={extractFields || []}
-          onClose={handleClose}
+          mappings={mappings}
+          extractFields={[]}
+          onCancel={handleClose}
+          onSave={handleSave}
+          options={opts}
         />
       )}
       <Button

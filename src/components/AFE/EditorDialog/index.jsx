@@ -97,6 +97,7 @@ class EditorDialog extends Component {
     const size = fullScreen ? { height } : { height, width };
     const showPreviewAction =
       editor && !editor.violations && !editor.autoEvaluate;
+    const disableSave = !editor || editor.violations;
 
     return (
       <Dialog
@@ -119,19 +120,20 @@ class EditorDialog extends Component {
                 value={layout}
                 exclusive
                 onChange={this.handleLayoutChange}>
-                <ToggleButton value="column">
+                <ToggleButton data-test="editorColumnLayout" value="column">
                   <ViewColumnIcon />
                 </ToggleButton>
-                <ToggleButton value="compact">
+                <ToggleButton data-test="editorCompactLayout" value="compact">
                   <ViewCompactIcon />
                 </ToggleButton>
-                <ToggleButton value="row">
+                <ToggleButton data-test="editorRowLayout" value="row">
                   <ViewRowIcon />
                 </ToggleButton>
               </ToggleButtonGroup>
             )}
             {showFullScreen && (
               <ToggleButton
+                data-test="toggleEditorSize"
                 className={classes.fullScreen}
                 value="max"
                 onClick={this.handleFullScreenClick}
@@ -147,16 +149,21 @@ class EditorDialog extends Component {
         </DialogContent>
         <DialogActions className={classes.actions}>
           {showPreviewAction && (
-            <Button onClick={handlePreview}>Preview</Button>
+            <Button data-test="previewEditorResult" onClick={handlePreview}>
+              Preview
+            </Button>
           )}
           <Button
             variant="contained"
             color="secondary"
+            data-test="closeEditor"
             onClick={() => this.handleClose()}>
             Cancel
           </Button>
           <Button
             variant="contained"
+            data-test="saveEditor"
+            disabled={!!disableSave}
             color="primary"
             onClick={() => this.handleClose(true)}>
             Save

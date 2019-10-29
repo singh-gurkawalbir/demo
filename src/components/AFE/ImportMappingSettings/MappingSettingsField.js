@@ -9,9 +9,11 @@ export default function MappingSettingsField(props) {
     id,
     onSave,
     extractFields,
+    generateFields,
     lookup,
     application,
     updateLookup,
+    options,
     value,
   } = props;
   const [showSettings, setShowSettings] = useState(false);
@@ -39,10 +41,13 @@ export default function MappingSettingsField(props) {
           lookup={lookup}
           value={value}
           onClose={handleClose}
+          options={options}
           extractFields={extractFields}
+          generateFields={generateFields}
         />
       )}
       <IconButton
+        data-test="toggleImportMappingSettings"
         disabled={isDisabled}
         aria-label="delete"
         onClick={handleBtnClick}

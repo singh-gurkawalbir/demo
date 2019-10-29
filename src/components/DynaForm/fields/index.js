@@ -15,6 +15,7 @@ import DynaEditor from './DynaEditor';
 import DynaCsvParse from './editors/DynaCsvParse';
 import DynaRefreshableSelect from './DynaRefreshableSelect';
 import DynaTransformEditor from './editors/DynaTransformEditor';
+import DynaResponseTransformEditor from './editors/DynaResponseTransformEditor';
 import DynaTextFtpPort from './DynaTextFtpPort';
 import DynaUploadFile from './DynaUploadFile';
 import DynaHook from './DynaHook';
@@ -38,6 +39,7 @@ import DynaSampleData from './DynaSampleData';
 import DynaXmlParse from './editors/DynaXmlParse';
 import DynaImportMapping from './DynaImportMapping';
 import DynaFieldExpressionSelect from './DynaFieldExpressionSelect';
+import DynaAutoSuggest from './DynaAutoSuggest';
 
 export default {
   mapping: DynaImportMapping,
@@ -60,10 +62,12 @@ export default {
   importLookup: DynaLookupEditor,
   keyvalue: DynaKeyValue,
   staticMap: DynaStaticMap,
+  staticMapWidget: DynaStaticMap,
   csvparse: DynaCsvParse,
   xmlparse: DynaXmlParse,
   refreshableselect: DynaRefreshableSelect,
   transformeditor: DynaTransformEditor,
+  responsetransformeditor: DynaResponseTransformEditor,
   ftpport: DynaTextFtpPort,
   uploadfile: DynaUploadFile,
   labeltitle: DynaLabel,
@@ -82,4 +86,5 @@ export default {
   assistantsearchparams: DynaAssistantSearchParams,
   keywithaction: DynaKeyWithAction,
   fieldexpressionselect: DynaFieldExpressionSelect,
+  autosuggest: DynaAutoSuggest,
 };

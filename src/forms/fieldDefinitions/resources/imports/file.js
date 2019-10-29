@@ -5,6 +5,7 @@ export default {
     type: 'select',
     label: 'File Type',
     required: true,
+    defaultValue: 'csv',
     options: [
       {
         items: [
@@ -19,88 +20,68 @@ export default {
       },
     ],
   },
-  ediFactFormat: {
-    type: 'select',
-    label: 'EDIFACT Format',
-    // To Do replace statistcally instead dynamic values
-    options: [
-      {
-        items: [
-          { label: 'AMAZON VC INVOIC', value: 'amazonvcinvoice' },
-          { label: 'AMAZON VC ORDERS', value: 'amazonvcorders' },
-        ],
-      },
-    ],
-    visibleWhen: [
-      {
-        field: 'file.type',
-        is: ['delimited/edifact'],
-      },
-    ],
-    requiredWhen: [
-      {
-        field: 'file.type',
-        is: ['delimited/edifact'],
-      },
-    ],
-  },
-  ediFormat: {
-    type: 'select',
-    label: 'Format',
-    // To Do replace statistcally instead dynamic values
-    options: [
-      {
-        items: [
-          { label: 'AgoNow Inbound 810', value: 'agonow810' },
-          { label: 'AgoNow Inbound 855', value: 'agonow855' },
-        ],
-      },
-    ],
-    visibleWhen: [
-      {
-        field: 'file.type',
-        is: ['fixed'],
-      },
-    ],
-    requiredWhen: [
-      {
-        field: 'file.type',
-        is: ['fixed'],
-      },
-    ],
-  },
-  ediX12Format: {
-    type: 'select',
+  'edix12.format': {
+    type: 'filedefinitionselect',
     label: 'EDI X12 Format',
-    // To Do replace statistcally instead dynamic values
-    options: [
-      {
-        items: [
-          { label: 'Generic 180', value: 'generic180' },
-          { label: 'Generic 850', value: 'generic850' },
-        ],
-      },
-    ],
+    format: 'edi',
+    required: r => !r,
     visibleWhen: [
       {
         field: 'file.type',
         is: ['filedefinition'],
       },
     ],
-    requiredWhen: [
+  },
+  'fixed.format': {
+    type: 'filedefinitionselect',
+    label: 'Format',
+    format: 'fixed',
+    required: r => !r,
+    visibleWhen: [
       {
         field: 'file.type',
-        is: ['filedefinition'],
+        is: ['fixed'],
       },
     ],
+  },
+  'edifact.format': {
+    type: 'filedefinitionselect',
+    label: 'EDIFACT Format',
+    format: 'ediFact',
+    required: r => !r,
+    visibleWhen: [
+      {
+        field: 'file.type',
+        is: ['delimited/edifact'],
+      },
+    ],
+  },
+  'file.filedefinition.rules': {
+    type: 'filedefinitioneditor',
+    label: 'File Definition Rules ',
+    visibleWhen: [
+      {
+        field: 'file.type',
+        is: ['filedefinition', 'fixed', 'delimited/edifact'],
+      },
+      { field: 'file.output', is: ['records'] },
+    ],
+    refreshOptionsOnChangesTo: [
+      'edix12.format',
+      'fixed.format',
+      'edifact.format',
+      'file.fileDefinition.resourcePath',
+    ],
+    userDefinitionId: r =>
+      r &&
+      r.file &&
+      r.file.fileDefinition &&
+      r.file.fileDefinition._fileDefinitionId,
   },
   uploadFile: {
     type: 'uploadfile',
     label: 'Sample File (that would be imported)',
     mode: r => r && r.file && r.file.type,
-    // filter: r => ({ type: r.type }),y
-    // excludeFilter: r => ({ _
-    //
     visibleWhen: [
       {
         field: 'file.type',
@@ -108,31 +89,9 @@ export default {
       },
     ],
   },
-  'file.csv.columnDelimiter': {
-    type: 'select',
-    label: 'Column Delimiter',
-    options: [
-      {
-        items: [
-          { label: 'Comma', value: ',' },
-          { label: 'Pipe', value: '|' },
-          { label: 'Semicolon', value: ';' },
-          { label: 'Space', value: ' ' },
-          { label: 'Tab', value: '\t' },
-        ],
-      },
-    ],
-    visibleWhenAll: [
-      {
-        field: 'file.type',
-        is: ['csv'],
-      },
-      { field: 'file.output', is: ['records'] },
-    ],
-  },
-  'file.csv.includeHeader': {
-    type: 'checkbox',
-    label: 'Include Header',
+  'file.csv': {
+    type: 'csvparse',
+    label: 'Configure CSV parse options',
     visibleWhen: [
       {
         field: 'file.type',
@@ -147,16 +106,6 @@ export default {
       {
         field: 'file.type',
         is: ['xlsx'],
-      },
-    ],
-  },
-  'file.csv.customHeaderRows': {
-    type: 'textarea',
-    label: 'Custom Header Rows',
-    visibleWhen: [
-      {
-        field: 'http.requestMediaType',
-        is: ['csv'],
       },
     ],
   },
@@ -204,6 +153,10 @@ export default {
         is: ['csv', 'json', 'xlsx', 'xml'],
       },
     ],
+  },
+  'file.fileDefinition._fileDefinitionId': {
+    type: 'text',
+    label: 'File file Definition _file Definition Id',
   },
   'file.csv.rowDelimiter': {
     type: 'select',

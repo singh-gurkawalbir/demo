@@ -1,5 +1,4 @@
-import { deepClone } from 'fast-json-patch';
-import { get } from 'lodash';
+import { get, cloneDeep } from 'lodash';
 import masterFieldHash from '../forms/fieldDefinitions';
 import formMeta from './definitions';
 import { getResourceSubType } from '../utils/resource';
@@ -18,9 +17,7 @@ const getAllOptionsHandlerSubForms = (
           resourceType
         ].subForms[formId];
 
-        // Is it necessary to make a deepClone
-        if (foundOptionsHandler)
-          optionsHandler.push(deepClone(foundOptionsHandler));
+        if (foundOptionsHandler) optionsHandler.push(foundOptionsHandler);
 
         return getAllOptionsHandlerSubForms(
           fieldMap,
@@ -104,6 +101,33 @@ const getResourceFormAssets = ({
       break;
 
     case 'imports':
+      meta = formMeta[resourceType];
+
+      if (meta) {
+        if (isNew) {
+          meta = meta.new;
+        }
+        // get edit form meta branch
+        else if (type === 'netsuite') {
+          meta = meta.netsuiteDistributed;
+        } else if (['mysql', 'postgresql', 'mssql'].indexOf(type) !== -1) {
+          meta = meta.rdbms;
+        } else if (resource && resource.assistant) {
+          meta = meta.custom.http.assistantDefinition(
+            resource._id,
+            resource,
+            assistantData
+          );
+        } else {
+          meta = meta[type];
+        }
+
+        if (meta) {
+          ({ fieldMap, layout, init, preSave, actions } = meta);
+        }
+      }
+
+      break;
     case 'exports':
       meta = formMeta[resourceType];
 
@@ -112,7 +136,7 @@ const getResourceFormAssets = ({
           meta = meta.new;
         }
         // get edit form meta branch
-        else if (type === 'netsuite' && resourceType === 'exports') {
+        else if (type === 'netsuite') {
           meta = meta.netsuite[resource.netsuite.type];
         } else if (['mysql', 'postgresql', 'mssql'].indexOf(type) !== -1) {
           meta = meta.rdbms;
@@ -136,15 +160,17 @@ const getResourceFormAssets = ({
     case 'agents':
     case 'scripts':
     case 'accesstokens':
+    case 'connectorLicenses':
       meta = formMeta[resourceType];
       ({ fieldMap, preSave, init, layout } = meta);
       break;
     case 'stacks':
     case 'templates':
     case 'connectors':
+    case 'pageProcessor':
+    case 'pageGenerator':
       meta = formMeta[resourceType];
-      ({ fieldMap, layout } = meta);
-
+      ({ fieldMap, layout, init, preSave, actions } = meta);
       break;
 
     default:
@@ -197,7 +223,7 @@ const applyVisibilityRulesToSubForm = (f, resourceType) => {
         throw new Error(
           'Incorrect rule, master fieldFields cannot have both a visibleWhen and visibleWhenAll rule'
         );
-      const fieldCopy = deepClone(field);
+      const fieldCopy = cloneDeep(field);
 
       if (f.visibleWhen) {
         fieldCopy.visibleWhen = fieldCopy.visibleWhen || [];
@@ -277,6 +303,7 @@ const flattenedFieldMap = (
   resourceType,
   resource,
   ignoreFunctionTransformations,
+  developerMode,
   resObjectRefs = {},
   resFields = []
 ) => {
@@ -298,6 +325,7 @@ const flattenedFieldMap = (
           resourceType,
           resource,
           ignoreFunctionTransformations,
+          developerMode,
           resObjectRefs
         );
       }
@@ -318,9 +346,17 @@ const flattenedFieldMap = (
         ignoreFunctionTransformations
       );
 
-      resFields.push(fieldReferenceName);
-      // eslint-disable-next-line no-param-reassign
-      resObjectRefs[fieldReferenceName] = value;
+      if (!developerMode) {
+        if (!merged.showOnDeveloperMode) {
+          resFields.push(fieldReferenceName);
+          // eslint-disable-next-line no-param-reassign
+          resObjectRefs[fieldReferenceName] = value;
+        }
+      } else {
+        resFields.push(fieldReferenceName);
+        // eslint-disable-next-line no-param-reassign
+        resObjectRefs[fieldReferenceName] = value;
+      }
     });
 
   return {
@@ -334,7 +370,8 @@ const setDefaultsToLayout = (
   fieldMap,
   resourceType,
   resource,
-  ignoreFunctionTransformations
+  ignoreFunctionTransformations,
+  developerMode
 ) => {
   const { fields, containers, ...rest } = layout;
 
@@ -348,7 +385,8 @@ const setDefaultsToLayout = (
     fieldMap,
     resourceType,
     resource,
-    ignoreFunctionTransformations
+    ignoreFunctionTransformations,
+    developerMode
   );
   let transformedFieldRefs = transformedFieldRef;
   const transformedContainers =
@@ -362,7 +400,8 @@ const setDefaultsToLayout = (
         fieldMap,
         resourceType,
         resource,
-        ignoreFunctionTransformations
+        ignoreFunctionTransformations,
+        developerMode
       );
       const { fields, containers } = transformedLayoutRes;
 
@@ -392,7 +431,8 @@ const getFieldsWithDefaults = (
   fieldMeta,
   resourceType,
   resource,
-  ignoreFunctionTransformations = false
+  ignoreFunctionTransformations = false,
+  developerMode = false
 ) => {
   const { layout, fieldMap, actions } = fieldMeta;
 
@@ -409,7 +449,8 @@ const getFieldsWithDefaults = (
     fieldMap,
     resourceType,
     resource,
-    ignoreFunctionTransformations
+    ignoreFunctionTransformations,
+    developerMode
   );
 
   return {

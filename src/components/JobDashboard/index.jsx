@@ -1,11 +1,5 @@
-import { useState, useEffect, Fragment } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Typography } from '@material-ui/core';
-import RefreshIcon from '@material-ui/icons/RefreshOutlined';
-import SettingsIcon from '@material-ui/icons/Settings';
-import { isEqual } from 'lodash';
-import { Link } from 'react-router-dom';
-import IconTextButton from '../../components/IconTextButton';
 import LoadResources from '../../components/LoadResources';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
@@ -16,13 +10,14 @@ import { COMM_STATES } from '../../reducers/comms';
 import CommStatus from '../CommStatus';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import { UNDO_TIME } from './util';
-import getRoutePath from '../../utils/routePaths';
+import { hashCode } from '../../utils/string';
 
 export default function JobDashboard({
   integrationId,
   flowId,
   rowsPerPage = 10,
 }) {
+  const filterKey = 'jobs';
   const dispatch = useDispatch();
   const [enqueueSnackbar, closeSnackbar] = useEnqueueSnackbar();
   const userPermissionsOnIntegration = useSelector(state =>
@@ -31,32 +26,43 @@ export default function JobDashboard({
   const integration = useSelector(state =>
     selectors.resource(state, 'integrations', integrationId)
   );
-  const integrationSettingsURL = getRoutePath(
-    `/${
-      integration && integration._connectorId ? 'connectors' : 'integrations'
-    }/${integrationId}/settings/flows`
-  );
   const isBulkRetryInProgress = useSelector(state =>
     selectors.isBulkRetryInProgress(state)
   );
-  const [refreshJobs, setRefreshJobs] = useState(false);
-  const [filters, setFilters] = useState({});
+  const filters = useSelector(state => selectors.filter(state, filterKey));
+  const jobs = useSelector(state => selectors.flowJobs(state));
   const [selectedJobs, setSelectedJobs] = useState({});
   const [numJobsSelected, setNumJobsSelected] = useState(0);
-  const [disableButtons, setDisableButtons] = useState(true);
+  const [disableActions, setDisableActions] = useState(true);
   const [actionsToMonitor, setActionsToMonitor] = useState({});
-  const [currentPage, setCurrentPage] = useState(0);
-  const jobs = useSelector(state => selectors.flowJobs(state));
+  const patchFilter = useCallback(
+    (key, value) => {
+      dispatch(actions.patchFilter(filterKey, { [key]: value }));
+    },
+    [dispatch]
+  );
+  const clearFilter = useCallback(() => {
+    dispatch(actions.clearFilter(filterKey));
+  }, [dispatch]);
+  const { currentPage = 0, ...nonPagingFilters } = filters;
+  const filterHash = hashCode(nonPagingFilters);
 
   useEffect(
     () => () => {
       dispatch(actions.job.clear());
-      setCurrentPage(0);
     },
-    [dispatch, filters, refreshJobs]
+    [dispatch, filterHash, patchFilter]
   );
 
-  /** Whenever page changes, we need to update the same in state and request for inprogress jobs (in current page) status */
+  useEffect(
+    () => () => {
+      clearFilter();
+    },
+    [clearFilter]
+  );
+
+  /** Whenever page changes, we need to update the same in state and
+   * request for in-progress jobs (in current page) status */
   useEffect(() => {
     dispatch(actions.job.paging.setCurrentPage(currentPage));
     dispatch(actions.job.requestInProgressJobStatus());
@@ -69,13 +75,18 @@ export default function JobDashboard({
   useEffect(() => {
     if (jobs.length === 0) {
       dispatch(
-        actions.job.requestCollection({ integrationId, flowId, filters })
+        actions.job.requestCollection({
+          integrationId,
+          flowId,
+          filters,
+        })
       );
     }
-  }, [dispatch, integrationId, flowId, filters, jobs.length, refreshJobs]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, integrationId, flowId, filterHash, jobs.length]);
 
   useEffect(() => {
-    setDisableButtons(isBulkRetryInProgress || jobs.length === 0);
+    setDisableActions(isBulkRetryInProgress || jobs.length === 0);
   }, [isBulkRetryInProgress, jobs.length]);
 
   useEffect(() => {
@@ -99,17 +110,6 @@ export default function JobDashboard({
 
   function closeAllOpenSnackbars() {
     closeSnackbar();
-  }
-
-  function handleChangePage(newPage) {
-    setCurrentPage(newPage);
-  }
-
-  function handleFiltersChange(newFilters) {
-    if (!isEqual(filters, newFilters)) {
-      setFilters(newFilters);
-      setCurrentPage(0);
-    }
   }
 
   function handleSelectChange(selJobs) {
@@ -366,10 +366,6 @@ export default function JobDashboard({
     );
   }
 
-  function handleRefershJobsClick() {
-    setRefreshJobs(!refreshJobs);
-  }
-
   return (
     <LoadResources required resources="integrations,flows,exports,imports">
       <CommStatus
@@ -377,33 +373,13 @@ export default function JobDashboard({
         autoClearOnComplete
         commStatusHandler={commStatusHandler}
       />
-      {!flowId && integration && (
-        <Fragment>
-          <Typography>{integration.name}</Typography>
-          <div>
-            <IconTextButton
-              variant="text"
-              color="primary"
-              onClick={handleRefershJobsClick}>
-              <RefreshIcon /> Refresh
-            </IconTextButton>
-            <IconTextButton
-              component={Link}
-              to={integrationSettingsURL}
-              variant="text"
-              color="primary">
-              <SettingsIcon /> Settings
-            </IconTextButton>
-          </div>
-        </Fragment>
-      )}
       <Filters
+        filterKey={filterKey}
         integrationId={integrationId}
         flowId={flowId}
-        onFiltersChange={handleFiltersChange}
         numJobsSelected={numJobsSelected}
         onActionClick={handleActionClick}
-        disableButtons={disableButtons}
+        disableButtons={disableActions}
       />
       <JobTable
         onSelectChange={handleSelectChange}
@@ -411,7 +387,6 @@ export default function JobDashboard({
         selectedJobs={selectedJobs}
         userPermissionsOnIntegration={userPermissionsOnIntegration}
         integrationName={integration && integration.name}
-        onChangePage={handleChangePage}
       />
     </LoadResources>
   );

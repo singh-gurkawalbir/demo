@@ -10,6 +10,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import Button from '@material-ui/core/Button';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import { Typography } from '@material-ui/core';
 import CodeEditor from '../../../components/CodeEditor';
 
 const useStyles = makeStyles(theme => ({
@@ -94,7 +95,9 @@ export default function DynaEditor(props) {
       open
       onClose={handleEditorClick}
       aria-labelledby="form-dialog-title">
-      <DialogTitle id="form-dialog-title">{label}</DialogTitle>
+      <DialogTitle id="form-dialog-title" disableTypography>
+        <Typography variant="h6">{label}</Typography>
+      </DialogTitle>
       <DialogContent>
         <div className={classes.editorContainer}>
           <CodeEditor
@@ -107,6 +110,7 @@ export default function DynaEditor(props) {
       </DialogContent>
       <DialogActions>
         <Button
+          data-test="showEditor"
           onClick={handleEditorClick}
           variant="contained"
           size="small"

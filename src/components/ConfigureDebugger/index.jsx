@@ -27,8 +27,11 @@ const useStyles = makeStyles(theme => ({
   },
   closeButton: {
     position: 'absolute',
-    right: '10px',
-    top: '10px',
+    right: theme.spacing(1),
+    top: 2,
+  },
+  content: {
+    width: '30vw',
   },
 }));
 
@@ -69,16 +72,17 @@ export default function ConfigureDebugger(props) {
 
   return (
     <Dialog open maxWidth={false}>
-      <IconButton
-        aria-label="Close"
-        className={classes.closeButton}
-        onClick={onClose}>
-        <CloseIcon />
-      </IconButton>
-      <DialogTitle>
-        <Typography>{name}</Typography>
+      <DialogTitle disableTypography>
+        <Typography variant="h6">{name}</Typography>
+        <IconButton
+          aria-label="Close"
+          data-test="closeConfigureDebugger"
+          className={classes.closeButton}
+          onClick={onClose}>
+          <CloseIcon />
+        </IconButton>
       </DialogTitle>
-      <DialogContent style={{ width: '70vw' }}>
+      <DialogContent className={classes.content}>
         <form onSubmit={handleOnSubmit}>
           <FormControl component="fieldset">
             <FormLabel component="legend">Debug Duration:</FormLabel>
@@ -109,6 +113,7 @@ export default function ConfigureDebugger(props) {
           )}
           <div>
             <Button
+              data-test="saveDebuggerConfiguration"
               variant="contained"
               color="primary"
               type="submit"

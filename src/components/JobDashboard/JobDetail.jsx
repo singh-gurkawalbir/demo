@@ -1,10 +1,8 @@
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
 import Checkbox from '@material-ui/core/Checkbox';
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
-import ChevronRight from '@material-ui/icons/ChevronRight';
-import ExpandMore from '@material-ui/icons/ExpandMore';
 import { Button } from '@material-ui/core';
 import { useState, Fragment } from 'react';
 import { useDispatch } from 'react-redux';
@@ -16,8 +14,10 @@ import JobStatus from './JobStatus';
 import { getPages, getSuccess } from './util';
 import JobActionsMenu from './JobActionsMenu';
 import Spinner from '../Spinner';
+import ArrowDownIcon from '../icons/ArrowDownIcon';
+import ArrowUpIcon from '../icons/ArrowUpIcon';
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   icon: {
     margin: theme.spacing.double,
   },
@@ -32,19 +32,25 @@ const styles = theme => ({
     justifyContent: 'center',
     alignItems: 'center',
     height: 'inherit',
-    '& div': {
-      width: '20px !important',
-      height: '20px !important',
-    },
+    padding: 16,
     '& span': {
       marginLeft: '10px',
       color: '#fff',
     },
   },
-});
+  checkAction: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  moreIcon: {
+    padding: 0,
+  },
+  checkIcon: {
+    padding: 0,
+  },
+}));
 
 function JobDetail({
-  classes,
   job,
   selectedJobs,
   onSelectChange,
@@ -52,6 +58,7 @@ function JobDetail({
   onViewErrorsClick,
   integrationName,
 }) {
+  const classes = useStyles();
   const dispatch = useDispatch();
   const [expanded, setExpanded] = useState(false);
   const [showViewErrorsLink, setShowViewErrorsLink] = useState(false);
@@ -71,6 +78,11 @@ function JobDetail({
         )
         .map(cJob => cJob._id)
     : [];
+  const isJobInProgress = [
+    JOB_STATUS.QUEUED,
+    JOB_STATUS.RUNNING,
+    JOB_STATUS.RETRYING,
+  ].includes(job.uiStatus);
 
   function handleExpandCollapseClick() {
     setExpanded(!expanded);
@@ -161,19 +173,22 @@ function JobDetail({
   return (
     <Fragment>
       <TableRow>
-        <TableCell padding="checkbox">
+        <TableCell className={classes.checkAction}>
+          {job.uiStatus !== JOB_STATUS.QUEUED && (
+            <IconButton
+              data-test="toggleJobDetail"
+              className={classes.moreIcon}
+              onClick={handleExpandCollapseClick}>
+              {expanded ? <ArrowUpIcon /> : <ArrowDownIcon />}
+            </IconButton>
+          )}
           <Checkbox
             disabled={!(job.retriable || job.numError)}
             checked={isSelected}
+            className={classes.checkIcon}
+            color="primary"
             onChange={event => handleSelectChange(event)}
           />
-        </TableCell>
-        <TableCell>
-          {job.uiStatus !== JOB_STATUS.QUEUED && (
-            <IconButton onClick={handleExpandCollapseClick}>
-              {expanded ? <ExpandMore /> : <ChevronRight />}
-            </IconButton>
-          )}
         </TableCell>
         <TableCell>{job.name}</TableCell>
         <TableCell>
@@ -182,14 +197,16 @@ function JobDetail({
         <TableCell>{getSuccess(job)}</TableCell>
         <TableCell>{job.numIgnore}</TableCell>
         <TableCell
+          align="right"
           onMouseEnter={() => {
             setShowViewErrorsLink(true);
           }}
           onMouseLeave={() => {
             setShowViewErrorsLink(false);
           }}>
-          {showViewErrorsLink && job.numError > 0 ? (
+          {showViewErrorsLink && !isJobInProgress && job.numError > 0 ? (
             <Button
+              data-test="viewJobErrors"
               variant="text"
               color="primary"
               onClick={() => {
@@ -208,9 +225,10 @@ function JobDetail({
           onMouseLeave={() => {
             setShowViewErrorsLink(false);
           }}>
-          {showViewErrorsLink && job.numResolved > 0 ? (
+          {showViewErrorsLink && !isJobInProgress && job.numResolved > 0 ? (
             <Button
               variant="text"
+              data-test="viewResolvedErroredJobs"
               color="primary"
               onClick={() => {
                 handleViewErrorsClick(true);
@@ -231,10 +249,11 @@ function JobDetail({
             integrationName={integrationName}
           />
         </TableCell>
+
         {expanded && !job.children && (
-          <div className={classes.spinner}>
-            <Spinner /> <span>Loading child jobs...</span>
-          </div>
+          <TableCell className={classes.spinner}>
+            <Spinner size={20} /> <span>Loading child jobs...</span>
+          </TableCell>
         )}
       </TableRow>
       {expanded &&
@@ -255,4 +274,4 @@ function JobDetail({
   );
 }
 
-export default withStyles(styles)(JobDetail);
+export default JobDetail;

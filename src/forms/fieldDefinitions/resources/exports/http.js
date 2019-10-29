@@ -10,7 +10,6 @@ export default {
   'http.successMediaType': {
     type: 'select',
     label: 'Success Media Type',
-    defaultValue: r => (r && r.http && r.http.successMediaType) || '',
     options: [
       {
         items: [
@@ -34,13 +33,13 @@ export default {
     ],
   },
   'http.relativeURI': {
-    type: 'text',
+    type: 'relativeuri',
     label: 'Relative URI',
   },
   'http.method': {
     type: 'select',
     label: 'HTTP Method',
-    defaultValue: r => (r && r.http && r.http.method) || '',
+    defaultValue: r => r && r.http && r.http.method,
     required: true,
     options: [
       {
@@ -53,11 +52,13 @@ export default {
     ],
   },
   'http.body': {
-    type: 'text',
+    type: 'httprequestbody',
     label: 'Build HTTP Request Body',
   },
   'http.headers': {
     type: 'keyvalue',
+    keyName: 'name',
+    valueName: 'value',
     label: 'Configure HTTP Headers',
   },
   'http.paging.method': {
@@ -225,7 +226,7 @@ export default {
   'http.paging.lastPageValues': {
     type: 'text',
     label: 'Last Page Values',
-    valueDelimiter: ',',
+    delimiter: ',',
   },
   'http.paging.linkHeaderRelation': {
     type: 'text',
@@ -259,26 +260,15 @@ export default {
   },
   'http.response.successValues': {
     type: 'text',
-    valueDelimiter: ',',
+    delimiter: ',',
     label: 'Success Values',
+    omitWhenValueIs: [''],
   },
   'http.response.errorPath': {
     type: 'text',
     label: 'Error Path',
   },
-  pageSize: {
-    type: 'text',
-    label: 'Page Size',
-    validWhen: [
-      {
-        matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
-      },
-    ],
-  },
-  dataURITemplate: {
-    type: 'relativeuri',
-    label: 'Data URI Template',
-  },
+
   'http.response.blobFormat': {
     type: 'text',
     label: 'Http response blob Format',
@@ -299,32 +289,27 @@ export default {
     label: 'Transform script function',
   },
   // #endregion transform
-  hookType: {
-    type: 'radiogroup',
-    label: 'Hook Type',
-    defaultValue: 'script',
+  'http.once.relativeURI': {
+    type: 'relativeuri',
+    label: 'Relative URI',
+  },
+  'http.once.body': {
+    type: 'httprequestbody',
+    label: 'Build HTTP Request Body',
+  },
+  'http.once.method': {
+    type: 'select',
+    label: 'HTTP Method',
     options: [
       {
         items: [
-          { label: 'Script', value: 'script' },
-          { label: 'Stack', value: 'stack' },
+          { label: 'GET', value: 'GET' },
+          { label: 'POST', value: 'POST' },
+          { label: 'PUT', value: 'PUT' },
+          { label: 'PATCH', value: 'PATCH' },
+          { label: 'DELETE', value: 'DELETE' },
         ],
       },
     ],
-  },
-  'hooks.preSavePage.function': {
-    type: 'text',
-    label: 'Pre Save Page',
-  },
-  'hooks.preSavePage._scriptId': {
-    type: 'selectresource',
-    resourceType: 'scripts',
-    label: 'Pre Save Page _script Id',
-  },
-  'hooks.preSavePage._stackId': {
-    type: 'selectresource',
-    placeholder: 'Please select a stack',
-    resourceType: 'stacks',
-    label: 'Pre Save Page _stack Id',
   },
 };

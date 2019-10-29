@@ -14,6 +14,10 @@ export default {
   'salesforce.executionType': {
     type: 'radiogroup',
     label: 'Execution Type',
+    defaultValue: r =>
+      r && r.salesforce && r.salesforce.soql && r.salesforce.soql.query
+        ? 'scheduled'
+        : 'realtime',
     options: [
       {
         items: [
@@ -76,9 +80,7 @@ export default {
   },
   'salesforce.distributed.relatedLists.referencedFields': {
     type: 'text',
-    keyName: 'name',
-    valueName: 'value',
-    valueType: 'array',
+    delimiter: ',',
     label: 'Related Lists',
     multiline: true,
     visibleWhen: [

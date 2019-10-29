@@ -2,8 +2,8 @@ import dateTimezones from '../../../../../utils/dateTimezones';
 import MappingUtil from '../../../../../utils/mapping';
 
 export default {
-  getMetaData: (options = {}) => {
-    const { value, lookup = {}, extractFields } = options;
+  getMetaData: (params = {}) => {
+    const { value, lookup = {}, extractFields } = params;
     const fieldMeta = {
       fieldMap: {
         dataType: {
@@ -65,7 +65,7 @@ export default {
           label: '',
           showOptionsHorizontally: true,
           fullWidth: true,
-          defaultValue: lookup.map ? 'static' : 'dynamic',
+          defaultValue: lookup.name && (lookup.map ? 'static' : 'dynamic'),
           visibleWhen: [{ field: 'fieldMappingType', is: ['lookup'] }],
           options: [
             {
@@ -93,7 +93,6 @@ export default {
           name: '_method',
           type: 'select',
           label: 'HTTP Method',
-          placeholder: 'Required',
           defaultValue: lookup.method,
           options: [
             {
@@ -142,6 +141,12 @@ export default {
           keyLabel: 'Export Field',
           valueName: 'import',
           valueLabel: 'Import Field (REST)',
+          defaultValue:
+            lookup.map &&
+            Object.keys(lookup.map).map(key => ({
+              export: key,
+              import: lookup.map[key],
+            })),
           map: lookup.map,
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
@@ -210,7 +215,7 @@ export default {
           id: 'hardcodedAction',
           name: 'hardcodedAction',
           type: 'radiogroup',
-          defaultValue: MappingUtil.getHardCodedActionValue(value),
+          defaultValue: MappingUtil.getHardCodedActionValue(value) || 'default',
           label: 'Options',
           options: [
             {
@@ -236,7 +241,9 @@ export default {
           id: 'lookupAction',
           name: 'lookupAction',
           type: 'radiogroup',
-          defaultValue: MappingUtil.getDefaultLookupActionValue(value, lookup),
+          defaultValue:
+            MappingUtil.getDefaultLookupActionValue(value, lookup) ||
+            'disallowFailure',
           label: 'Action to take if unique match not found',
           options: [
             {
@@ -254,7 +261,10 @@ export default {
               ],
             },
           ],
-          visibleWhen: [{ field: 'fieldMappingType', is: ['lookup'] }],
+          visibleWhenAll: [
+            { field: 'lookup.mode', is: ['dynamic', 'static'] },
+            { field: 'fieldMappingType', is: ['lookup'] },
+          ],
         },
         default: {
           id: 'default',

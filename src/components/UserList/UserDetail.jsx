@@ -242,6 +242,7 @@ class UserDetail extends Component {
               {integrationId && user._id !== ACCOUNT_IDS.OWN && (
                 <TableCell>
                   <IconButton
+                    data-test="editUser"
                     onClick={() => {
                       this.handleActionClick('edit');
                     }}>
@@ -253,6 +254,7 @@ class UserDetail extends Component {
                 <Fragment>
                   <TableCell>
                     <Switch
+                      data-test="disableUser"
                       checked={!user.disabled}
                       onClick={() => {
                         this.handleActionClick('disable');
@@ -265,6 +267,7 @@ class UserDetail extends Component {
                       open={Boolean(anchorEl)}
                       onClose={this.handleClose}>
                       <MenuItem
+                        data-test="changeUserPermissions"
                         onClick={() => {
                           this.handleActionClick('edit');
                         }}>
@@ -272,17 +275,17 @@ class UserDetail extends Component {
                       </MenuItem>
                       <Divider />
                       {user.accepted && (
-                        <Fragment>
-                          <MenuItem
-                            onClick={() => {
-                              this.handleActionClick('makeOwner');
-                            }}>
-                            Make account owner
-                          </MenuItem>
-                          <Divider />
-                        </Fragment>
+                        <MenuItem
+                          data-test="makeAccountOwner"
+                          onClick={() => {
+                            this.handleActionClick('makeOwner');
+                          }}>
+                          Make account owner
+                        </MenuItem>
                       )}
+                      {user.accepted && <Divider />}
                       <MenuItem
+                        data-test="deleteFromAccount"
                         onClick={() => {
                           this.handleActionClick('delete');
                         }}>

@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import { Fragment, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { withRouter, Link } from 'react-router-dom';
 import shortid from 'shortid';
@@ -14,6 +14,8 @@ import ResourceTable from '../../components/ResourceTable';
 import ResourceDrawer from '../../components/drawer/Resource';
 import ShowMoreDrawer from '../../components/drawer/ShowMore';
 import KeywordSearch from '../../components/KeywordSearch';
+import CheckPermissions from '../../components/CheckPermissions';
+import { PERMISSIONS } from '../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -27,13 +29,13 @@ const useStyles = makeStyles(theme => ({
 function ResourceList(props) {
   const { match, location } = props;
   const { resourceType } = match.params;
-  const defaultFilter = { take: 5 };
+  const defaultFilter = useMemo(() => ({ take: 5 }), []);
   const classes = useStyles();
   const filter =
     useSelector(state => selectors.filter(state, resourceType)) ||
     defaultFilter;
   const list = useSelector(state =>
-    selectors.resourceList(state, {
+    selectors.resourceListWithPermissions(state, {
       type: resourceType,
       ...{ ...defaultFilter, ...filter },
     })
@@ -42,39 +44,47 @@ function ResourceList(props) {
 
   return (
     <Fragment>
-      <ResourceDrawer {...props} />
-      <CeligoPageBar
-        title={`${resourceName}s`}
-        infoText={infoText[resourceType]}>
-        <div className={classes.actions}>
-          <KeywordSearch
-            filterKey={resourceType}
-            defaultFilter={defaultFilter}
-          />
-          <IconTextButton
-            component={Link}
-            to={`${
-              location.pathname
-            }/add/${resourceType}/new-${shortid.generate()}`}
-            variant="text"
-            color="primary">
-            <AddIcon /> New {resourceName}
-          </IconTextButton>
+      <CheckPermissions
+        permission={
+          PERMISSIONS &&
+          PERMISSIONS[resourceType] &&
+          PERMISSIONS[resourceType].view
+        }>
+        <ResourceDrawer {...props} />
+        <CeligoPageBar
+          title={`${resourceName}s`}
+          infoText={infoText[resourceType]}>
+          <div className={classes.actions}>
+            <KeywordSearch
+              filterKey={resourceType}
+              defaultFilter={defaultFilter}
+            />
+            <IconTextButton
+              data-test="addNewResource"
+              component={Link}
+              to={`${
+                location.pathname
+              }/add/${resourceType}/new-${shortid.generate()}`}
+              variant="text"
+              color="primary">
+              <AddIcon /> New {resourceName}
+            </IconTextButton>
+          </div>
+        </CeligoPageBar>
+        <div className={classes.resultContainer}>
+          <LoadResources required resources={resourceType}>
+            <ResourceTable
+              resourceType={resourceType}
+              resources={list.resources}
+            />
+          </LoadResources>
         </div>
-      </CeligoPageBar>
-      <div className={classes.resultContainer}>
-        <LoadResources required resources={resourceType}>
-          <ResourceTable
-            resourceType={resourceType}
-            resources={list.resources}
-          />
-        </LoadResources>
-      </div>
-      <ShowMoreDrawer
-        filterKey={resourceType}
-        count={list.count}
-        maxCount={list.filtered}
-      />
+        <ShowMoreDrawer
+          filterKey={resourceType}
+          count={list.count}
+          maxCount={list.filtered}
+        />
+      </CheckPermissions>
     </Fragment>
   );
 }

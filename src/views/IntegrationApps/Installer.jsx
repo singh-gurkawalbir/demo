@@ -15,7 +15,7 @@ import actions from '../../actions';
 import LoadResources from '../../components/LoadResources';
 import openExternalUrl from '../../utils/window';
 import ArrowRightIcon from '../../components/icons/ArrowRightIcon';
-import ConnectionSetupDialog from '../../components/ConnectionSetupDialog';
+import ConnectionSetupDialog from '../../components/ResourceSetupDialog';
 import InstallationStep from '../../components/InstallStep';
 import { confirmDialog } from '../../components/ConfirmDialog';
 
@@ -27,13 +27,14 @@ const useStyles = makeStyles(theme => ({
     padding: '10px 25px',
   },
   formHead: {
-    borderBottom: 'solid 1px #e5e5e5',
-    marginBottom: '29px',
+    borderBottom: 'solid 1px',
+    borderColor: theme.palette.secondary.lightest,
+    marginBottom: 29,
   },
   innerContent: {
     width: '80vw',
   },
-  stepTable: { position: 'relative', marginTop: '-20px' },
+  stepTable: { position: 'relative', marginTop: -20 },
   floatRight: {
     float: 'right',
   },
@@ -68,9 +69,18 @@ export default function ConnectorInstallation(props) {
     if (isSetupComplete) {
       // redirect to integration Settings
       dispatch(actions.resource.request('integrations', integrationId));
-      props.history.push(`/pg/connectors/${integrationId}/settings/flows`);
+
+      if (integration.mode === 'settings') {
+        props.history.push(`/pg/connectors/${integrationId}/settings/flows`);
+      }
     }
-  }, [dispatch, integrationId, isSetupComplete, props.history]);
+  }, [
+    dispatch,
+    integration.mode,
+    integrationId,
+    isSetupComplete,
+    props.history,
+  ]);
 
   if (!installSteps || !integration || !integration._connectorId) {
     return <Typography>No Integration Found</Typography>;
@@ -195,7 +205,7 @@ export default function ConnectorInstallation(props) {
     <LoadResources required resources="connections,integrations">
       {selectedConnectionId && (
         <ConnectionSetupDialog
-          _connectionId={selectedConnectionId}
+          resourceId={selectedConnectionId}
           onClose={handleClose}
           onSubmitComplete={handleSubmitComplete}
         />
@@ -204,7 +214,10 @@ export default function ConnectorInstallation(props) {
         <div className={classes.innerContent}>
           <Grid container className={classes.formHead}>
             <Grid item xs={1}>
-              <IconButton onClick={handleBackClick} size="medium">
+              <IconButton
+                data-test="back"
+                onClick={handleBackClick}
+                size="medium">
                 <ArrowBackIcon fontSize="inherit" />
               </IconButton>
             </Grid>

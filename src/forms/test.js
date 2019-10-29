@@ -1,5 +1,4 @@
 /* global describe, test, expect, jest, fail */
-
 import jsonPatch from 'fast-json-patch';
 import {
   getMissingPatchSet,
@@ -32,6 +31,19 @@ jest.mock('./definitions/index', () => ({
           },
           layout: {
             fields: ['someField', 'custom.Field'],
+          },
+        },
+        subFormFieldsWithFuncs: {
+          fieldMap: {
+            someField: {
+              fieldId: 'someField',
+              someProp: 'foo',
+              someFunc: val => val,
+              visibleWhenAll: [{ field: 'fieldA', is: ['someValue'] }],
+            },
+          },
+          layout: {
+            fields: ['someField'],
           },
         },
         common: {
@@ -230,13 +242,70 @@ describe('Form Utils', () => {
         },
       ];
       const sanitized = sanitizePatchSet({ patchSet, resource });
-      // console.log(sanitized);
       const merged = jsonPatch.applyPatch(resource, sanitized, false, true)
         .newDocument;
 
-      // console.log(merged);
       expect(merged).toEqual({
         html: { name: 'abc', rateLimit: { failValues: ['bad', 'fail'] } },
+      });
+    });
+
+    test('should explicitly delete resource properties when we receive undefined replace patches', () => {
+      const resource = {
+        html: {
+          name: 'abc',
+          a: 'abcd',
+          b: 'efg',
+        },
+      };
+      const patchSet = [
+        {
+          op: 'replace',
+          path: '/html/rateLimit/failValues',
+          value: ['bad', 'fail'],
+        },
+        {
+          op: 'replace',
+          path: '/html/a',
+          value: undefined,
+        },
+      ];
+      const sanitized = sanitizePatchSet({ patchSet, resource });
+      const merged = jsonPatch.applyPatch(resource, sanitized, false, true)
+        .newDocument;
+
+      expect(merged).toEqual({
+        html: {
+          name: 'abc',
+          b: 'efg',
+          rateLimit: { failValues: ['bad', 'fail'] },
+        },
+      });
+    });
+    test('should not generate a remove patch when we receive an undefined replace value patch and the corresponding resource property is not there', () => {
+      const resource = {
+        html: {
+          name: 'abc',
+          b: 'efg',
+        },
+      };
+      const patchSet = [
+        {
+          op: 'replace',
+          path: '/html/rateLimit/failValues',
+          value: ['bad', 'fail'],
+        },
+        {
+          op: 'replace',
+          path: '/html/a',
+          value: undefined,
+        },
+      ];
+      const sanitized = sanitizePatchSet({ patchSet, resource });
+
+      expect(sanitized).not.toContainEqual({
+        op: 'remove',
+        path: '/html/a',
       });
     });
   });
@@ -903,6 +972,125 @@ describe('form factory new layout', () => {
         },
       });
     });
+
+    test('should show fields when developer mode is enabled', () => {
+      const resourceType = 'someResourceType';
+      const resource = {};
+      const testMeta = {
+        fieldMap: {
+          exportData: {
+            fieldId: 'exportData',
+            someProp: 'blah',
+            showOnDeveloperMode: true,
+          },
+          'file.decompressFiles': { fieldId: 'file.decompressFiles' },
+        },
+        layout: {
+          type: 'collapse',
+          containers: [
+            {
+              label: 'optional some label or tab name',
+              fields: ['exportData', 'file.decompressFiles'],
+            },
+          ],
+        },
+      };
+      const val = formFactory.getFieldsWithDefaults(
+        testMeta,
+        resourceType,
+        resource,
+        false,
+        true
+      );
+
+      expect(val).toEqual({
+        layout: {
+          type: 'collapse',
+          containers: [
+            {
+              label: 'optional some label or tab name',
+              fields: ['exportData', 'file.decompressFiles'],
+            },
+          ],
+        },
+        fieldMap: {
+          exportData: {
+            defaultValue: '',
+            fieldId: 'exportData',
+            helpKey: 'someResourceType.exportData',
+            id: 'exportData',
+            name: '/exportData',
+            resourceId: undefined,
+            resourceType: 'someResourceType',
+            someProp: 'blah',
+            showOnDeveloperMode: true,
+          },
+          'file.decompressFiles': {
+            defaultValue: '',
+            fieldId: 'file.decompressFiles',
+            helpKey: 'someResourceType.file.decompressFiles',
+            id: 'file.decompressFiles',
+            name: '/file/decompressFiles',
+            resourceId: undefined,
+            resourceType: 'someResourceType',
+          },
+        },
+      });
+    });
+
+    test('should hide fields when developer mode is disabled', () => {
+      const resourceType = 'someResourceType';
+      const resource = {};
+      const testMeta = {
+        fieldMap: {
+          exportData: {
+            fieldId: 'exportData',
+            someProp: 'blah',
+            showOnDeveloperMode: true,
+          },
+          'file.decompressFiles': { fieldId: 'file.decompressFiles' },
+        },
+        layout: {
+          type: 'collapse',
+          containers: [
+            {
+              label: 'optional some label or tab name',
+              fields: ['exportData', 'file.decompressFiles'],
+            },
+          ],
+        },
+      };
+      const val = formFactory.getFieldsWithDefaults(
+        testMeta,
+        resourceType,
+        resource,
+        false,
+        false
+      );
+
+      expect(val).toEqual({
+        layout: {
+          type: 'collapse',
+          containers: [
+            {
+              label: 'optional some label or tab name',
+              fields: ['file.decompressFiles'],
+            },
+          ],
+        },
+        fieldMap: {
+          'file.decompressFiles': {
+            defaultValue: '',
+            fieldId: 'file.decompressFiles',
+            helpKey: 'someResourceType.file.decompressFiles',
+            id: 'file.decompressFiles',
+            name: '/file/decompressFiles',
+            resourceId: undefined,
+            resourceType: 'someResourceType',
+          },
+        },
+      });
+    });
     test('should set defaults for multiple fields references located in different containers correctly ', () => {
       const resourceType = 'someResourceType';
       const resource = {};
@@ -1128,6 +1316,78 @@ describe('form factory new layout', () => {
         });
       });
 
+      test('should pick up function references for a formId fields and correctly club them with other fields', () => {
+        const resourceType = 'someResourceType';
+        const resource = { someValue: 'something' };
+        // metadata with a form visibility rule
+        const testMeta = {
+          fieldMap: {
+            subFormFieldsWithFuncs: {
+              formId: 'subFormFieldsWithFuncs',
+              visibleWhenAll: [{ field: 'someOtherField', is: ['foo'] }],
+            },
+            exportData: { fieldId: 'exportData' },
+          },
+          layout: {
+            type: 'collapse',
+            containers: [
+              {
+                fields: ['subFormFieldsWithFuncs', 'exportData'],
+              },
+            ],
+          },
+        };
+        const val = formFactory.getFieldsWithDefaults(
+          testMeta,
+          resourceType,
+          resource
+        );
+
+        // someFunc is a a function defined in the metadata of the subform
+        // it simply returns what value passed in its argument
+        // since getFieldsWithDefaults execute all functions properties against the resource object
+        // we are asserting someFunc to be the resource object
+        expect(val).toEqual({
+          actions: undefined,
+          fieldMap: {
+            someField: {
+              defaultValue: '',
+              fieldId: 'someField',
+              helpKey: 'someResourceType.someField',
+              id: 'someField',
+              name: '/someField',
+              resourceId: undefined,
+              resourceType: 'someResourceType',
+              someFunc: resource,
+              someProp: 'foo',
+              visibleWhenAll: [
+                { field: 'fieldA', is: ['someValue'] },
+                {
+                  field: 'someOtherField',
+                  is: ['foo'],
+                },
+              ],
+            },
+            exportData: {
+              defaultValue: '',
+              fieldId: 'exportData',
+              helpKey: 'someResourceType.exportData',
+              id: 'exportData',
+              name: '/exportData',
+              resourceId: undefined,
+              resourceType: 'someResourceType',
+            },
+          },
+          layout: {
+            type: 'collapse',
+            containers: [
+              {
+                fields: ['someField', 'exportData'],
+              },
+            ],
+          },
+        });
+      });
       test('should throw an error when fieldMap do not exist for the subform', () => {
         const resourceType = 'someResourceType';
         const resource = {};

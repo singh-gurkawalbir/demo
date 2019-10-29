@@ -27,7 +27,7 @@ export default function Flows(props) {
   const { integrationId } = match.params;
   const [showDialog, setShowDialog] = useState(false);
   let flows = useSelector(
-    state => selectors.resourceList(state, { type: 'flows' }).resources
+    state => selectors.flowListWithMetadata(state, { type: 'flows' }).resources
   );
   const preferences = useSelector(state =>
     selectors.userProfilePreferencesProps(state)
@@ -63,14 +63,16 @@ export default function Flows(props) {
       <LoadResources required resources="flows, connections, exports, imports">
         <div className={classes.actions}>
           <Button
+            data-test="createFlow"
             className={classes.registerButton}
             component={Link}
             variant="contained"
             color="secondary"
-            to={getRoutePath(`/integrations/${integrationId}/flows/create`)}>
+            to={getRoutePath(`/integrations/${integrationId}/flowBuilder/new`)}>
             Create Flow
           </Button>
           <Button
+            data-test="loadData"
             className={classes.registerButton}
             variant="contained"
             color="secondary"
@@ -80,6 +82,7 @@ export default function Flows(props) {
           </Button>
           {integrationId && integrationId !== 'none' && (
             <Button
+              data-test="attachFlows"
               className={classes.registerButton}
               variant="contained"
               color="secondary"

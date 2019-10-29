@@ -1,16 +1,17 @@
-import { Fragment } from 'react';
-// import { useSelector, useDispatch } from 'react-redux';
+import { Fragment, useMemo } from 'react';
+import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import { IconButton } from '@material-ui/core';
 import CeligoPageBar from '../../components/CeligoPageBar';
-// import * as selectors from '../../reducers';
-// import actions from '../../actions';
-// import LoadResources from '../../components/LoadResources';
+import infoText from '../ResourceList/infoText';
+import * as selectors from '../../reducers';
+import LoadResources from '../../components/LoadResources';
 import CeligoTable from '../../components/CeligoTable';
 import ResourceDrawer from '../../components/drawer/Resource';
 import ShowMoreDrawer from '../../components/drawer/ShowMore';
-import AddIcon from '../../components/icons/AddIcon';
+import KeywordSearch from '../../components/KeywordSearch';
 import metadata from './metadata';
+import CheckPermissions from '../../components/CheckPermissions';
+import { PERMISSIONS } from '../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -22,41 +23,49 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function RecycleBin(props) {
+  const defaultFilter = useMemo(() => ({ take: 5 }), []);
   const classes = useStyles();
-  // const dispatch = useDispatch();
-  // const [selected, setSelected] = useState({});
-  const list = [
-    { _id: 123, name: 'ABC' },
-    { _id: 456, name: 'DEF' },
-    { _id: 789, name: 'GHI' },
-  ];
-  const handleSelectChange = () => {
-    // setSelected(connections);
-  };
+  const filter =
+    useSelector(state => selectors.filter(state, 'recycleBinTTL')) ||
+    defaultFilter;
+  const list = useSelector(state =>
+    selectors.resourceListWithPermissions(state, {
+      type: 'recycleBinTTL',
+      ...{ ...defaultFilter, ...filter },
+    })
+  );
 
   return (
     <Fragment>
-      <ResourceDrawer {...props} />
-
-      <CeligoPageBar title="Recycle Bin" infoText="Info text for recycle bin">
-        <div className={classes.actions}>
-          <IconButton>
-            <AddIcon />
-          </IconButton>
-          <IconButton>
-            <AddIcon />
-          </IconButton>
+      <CheckPermissions
+        permission={
+          PERMISSIONS && PERMISSIONS.recyclebin && PERMISSIONS.recyclebin.view
+        }>
+        <ResourceDrawer {...props} />
+        <CeligoPageBar title="Recycle Bin" infoText={infoText.recycleBin}>
+          <div className={classes.actions}>
+            <KeywordSearch
+              filterKey="recycleBinTTL"
+              defaultFilter={defaultFilter}
+            />
+          </div>
+        </CeligoPageBar>
+        <div className={classes.resultContainer}>
+          <LoadResources required resources="recycleBinTTL">
+            <CeligoTable
+              data={list.resources}
+              filterKey="recycleBinTTL"
+              {...metadata}
+              actionProps={{ resourceType: 'recycleBinTTL' }}
+            />
+          </LoadResources>
         </div>
-      </CeligoPageBar>
-      <div className={classes.resultContainer}>
-        <CeligoTable
-          data={list}
-          onSelectChange={handleSelectChange}
-          {...metadata}
-          selectableRows
+        <ShowMoreDrawer
+          filterKey="recycleBinTTL"
+          count={list.count}
+          maxCount={list.filtered}
         />
-      </div>
-      <ShowMoreDrawer filterKey="recycleBin" count={10} maxCount={15} />
+      </CheckPermissions>
     </Fragment>
   );
 }

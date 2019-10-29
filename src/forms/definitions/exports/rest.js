@@ -8,34 +8,53 @@ export default {
       retValues['/test/limit'] = 1;
     }
 
-    if (retValues['/rest/pagingMethod'] !== 'pageargument') {
-      retValues['/rest/pageArgument'] = undefined;
-    }
-
-    if (retValues['/rest/pagingMethod'] !== 'nextpageurl') {
+    if (retValues['/rest/pagingMethod'] === 'pageargument') {
       retValues['/rest/nextPageRelativeURI'] = undefined;
       retValues['/rest/nextPagePath'] = undefined;
-    }
-
-    if (retValues['/rest/pagingMethod'] !== 'relativeuri') {
-      retValues['/rest/nextPageRelativeURI'] = undefined;
-    }
-
-    if (retValues['/rest/pagingMethod'] !== 'linkheader') {
       retValues['/rest/linkHeaderRelation'] = undefined;
-    }
-
-    if (retValues['/rest/pagingMethod'] !== 'skipargument') {
-      retValues['/rest/skipArgument'] = undefined;
-    }
-
-    if (retValues['/rest/pagingMethod'] !== 'token') {
-      retValues['/rest/nextPagePath'] = undefined;
-      retValues['/rest/pageArgument'] = undefined;
-    }
-
-    if (retValues['/rest/pagingMethod'] !== 'postbody') {
+      retValues['/rest/nextPageRelativeURI'] = undefined;
       retValues['/rest/pagingPostBody'] = undefined;
+      retValues['/rest/skipArgument'] = undefined;
+    } else if (retValues['/rest/pagingMethod'] === 'nextpageurl') {
+      retValues['/rest/linkHeaderRelation'] = undefined;
+      retValues['/rest/nextPageRelativeURI'] = undefined;
+      retValues['/rest/pagingPostBody'] = undefined;
+      retValues['/rest/pageArgument'] = undefined;
+      retValues['/rest/skipArgument'] = undefined;
+    } else if (retValues['/rest/pagingMethod'] === 'relativeuri') {
+      retValues['/rest/nextPagePath'] = undefined;
+      retValues['/rest/linkHeaderRelation'] = undefined;
+      retValues['/rest/nextPageRelativeURI'] = undefined;
+      retValues['/rest/pagingPostBody'] = undefined;
+      retValues['/rest/pageArgument'] = undefined;
+      retValues['/rest/skipArgument'] = undefined;
+    } else if (retValues['/rest/pagingMethod'] === 'linkheader') {
+      retValues['/rest/nextPageRelativeURI'] = undefined;
+      retValues['/rest/nextPagePath'] = undefined;
+      retValues['/rest/nextPageRelativeURI'] = undefined;
+      retValues['/rest/pagingPostBody'] = undefined;
+      retValues['/rest/pageArgument'] = undefined;
+      retValues['/rest/skipArgument'] = undefined;
+    } else if (retValues['/rest/pagingMethod'] === 'skipargument') {
+      retValues['/rest/nextPageRelativeURI'] = undefined;
+      retValues['/rest/nextPagePath'] = undefined;
+      retValues['/rest/linkHeaderRelation'] = undefined;
+      retValues['/rest/nextPageRelativeURI'] = undefined;
+      retValues['/rest/pagingPostBody'] = undefined;
+      retValues['/rest/pageArgument'] = undefined;
+    } else if (retValues['/rest/pagingMethod'] === 'token') {
+      retValues['/rest/nextPageRelativeURI'] = undefined;
+      retValues['/rest/linkHeaderRelation'] = undefined;
+      retValues['/rest/nextPageRelativeURI'] = undefined;
+      retValues['/rest/pagingPostBody'] = undefined;
+      retValues['/rest/skipArgument'] = undefined;
+    } else if (retValues['/rest/pagingMethod'] === 'postbody') {
+      retValues['/rest/nextPageRelativeURI'] = undefined;
+      retValues['/rest/nextPagePath'] = undefined;
+      retValues['/rest/linkHeaderRelation'] = undefined;
+      retValues['/rest/nextPageRelativeURI'] = undefined;
+      retValues['/rest/pageArgument'] = undefined;
+      retValues['/rest/skipArgument'] = undefined;
     }
 
     return {
@@ -95,8 +114,8 @@ export default {
       fieldId: 'delta.lagOffset',
       visibleWhen: [{ field: 'type', is: ['delta'] }],
     },
-    'rest.once.booleanField': {
-      fieldId: 'rest.once.booleanField',
+    'once.booleanField': {
+      fieldId: 'once.booleanField',
       visibleWhen: [{ field: 'type', is: ['once'] }],
     },
     'rest.once.relativeURI': {
@@ -111,7 +130,6 @@ export default {
       fieldId: 'rest.once.postBody',
       visibleWhen: [{ field: 'type', is: ['once'] }],
     },
-    rawData: { fieldId: 'rawData' },
     'rest.pagingMethod': { fieldId: 'rest.pagingMethod' },
     'rest.nextPagePath': { fieldId: 'rest.nextPagePath' },
     'rest.linkHeaderRelation': { fieldId: 'rest.linkHeaderRelation' },
@@ -124,8 +142,6 @@ export default {
     'rest.lastPageStatusCode': { fieldId: 'rest.lastPageStatusCode' },
     'rest.lastPagePath': { fieldId: 'rest.lastPagePath' },
     'rest.lastPageValue': { fieldId: 'rest.lastPageValue' },
-    transform: { fieldId: 'transform' },
-    hooks: { formId: 'hooks' },
     advancedSettings: { formId: 'advancedSettings' },
   },
   layout: {
@@ -142,11 +158,10 @@ export default {
       'type',
       'delta.dateFormat',
       'delta.lagOffset',
-      'rest.once.booleanField',
+      'once.booleanField',
       'rest.once.relativeURI',
       'rest.once.method',
       'rest.once.postBody',
-      'rawData',
     ],
     type: 'collapse',
     containers: [
@@ -167,16 +182,6 @@ export default {
           'rest.lastPagePath',
           'rest.lastPageValue',
         ],
-      },
-      {
-        collapsed: true,
-        label: 'Would you like to transform the records?',
-        fields: ['transform'],
-      },
-      {
-        collapsed: true,
-        label: 'Hooks (Optional, Developers Only)',
-        fields: ['hooks'],
       },
       { collapsed: 'true', label: 'Advanced', fields: ['advancedSettings'] },
     ],

@@ -9,32 +9,43 @@ import {
   Dialog,
   DialogContent,
 } from '@material-ui/core';
-import { Link as RouterLink } from 'react-router-dom';
-import { getApplicationConnectors } from '../../constants/applications';
+import applications from '../../constants/applications';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import ConnectorTemplateContent from './ConnectorTemplateContent';
 import getRoutePath from '../../utils/routePaths';
 import actions from '../../actions';
-import { CONTACT_SALES_MESSAGE } from '../../utils/messageStore';
+import {
+  CONTACT_SALES_MESSAGE,
+  MULTIPLE_INSTALLS,
+} from '../../utils/messageStore';
 import * as selectors from '../../reducers';
 import ArrowRightIcon from '../icons/ArrowRightIcon';
+import { prompt } from '../Prompt';
 
 const useStyles = makeStyles(theme => ({
   root: {
+    margin: theme.spacing(2),
     display: 'grid',
-    gridTemplateColumns: `repeat(auto-fill, minmax(318px, 1fr));`,
-    gridRowGap: theme.spacing(3),
-    gridColumnGap: theme.spacing(2),
-    padding: theme.spacing(3),
+    gridTemplateColumns: `repeat(auto-fill, minmax(300px, 1fr));`,
+    gridGap: theme.spacing(2),
+    '& > div': {
+      maxWidth: '100%',
+      minWidth: '100%',
+    },
+    [theme.breakpoints.down('xs')]: {
+      gridTemplateColumns: `repeat(1, minmax(100%, 1fr));`,
+    },
+    [theme.breakpoints.up('xs')]: {
+      gridTemplateColumns: `repeat(auto-fill, minmax(290px, 1fr));`,
+    },
   },
   card: {
     height: '318px',
-    width: '318px',
-    borderRadius: 0,
     border: '1px solid',
     position: 'relative',
     borderColor: theme.palette.secondary.lightest,
     margin: '0 auto',
+    borderRadius: '4px',
   },
   description: {
     width: '200px',
@@ -63,11 +74,37 @@ export default function ConnectorTemplateList(props) {
   const templates = useSelector(state =>
     selectors.marketplaceTemplates(state, application)
   );
-  const applicationConnectors = getApplicationConnectors();
-  const connector = applicationConnectors.find(c => c.id === application);
+  const connector = applications.find(c => c.id === application);
   const applicationName = connector && connector.name;
   const handleConnectorInstallClick = connector => {
-    dispatch(actions.marketplace.installConnector(connector._id, sandbox));
+    if (connector.installed) {
+      prompt({
+        title: 'Multiple Installs',
+        label: 'Tag',
+        message: MULTIPLE_INSTALLS,
+        buttons: [
+          {
+            label: 'Cancel',
+          },
+          {
+            label: 'Install',
+            onClick: tag => {
+              dispatch(
+                actions.marketplace.installConnector(
+                  connector._id,
+                  sandbox,
+                  tag
+                )
+              );
+              props.history.push('/');
+            },
+          },
+        ],
+      });
+    } else {
+      dispatch(actions.marketplace.installConnector(connector._id, sandbox));
+      props.history.push('/');
+    }
   };
 
   const handleContactSalesClick = connector => {
@@ -90,8 +127,7 @@ export default function ConnectorTemplateList(props) {
             <CardActions className={classes.cardAction}>
               {connector.canInstall ? (
                 <Button
-                  to={getRoutePath('/integrations')}
-                  component={RouterLink}
+                  data-test="installConnector"
                   onClick={() => handleConnectorInstallClick(connector)}
                   variant="text"
                   color="primary">
@@ -99,6 +135,7 @@ export default function ConnectorTemplateList(props) {
                 </Button>
               ) : (
                 <Button
+                  data-test="contactSales"
                   onClick={() => handleContactSalesClick(connector)}
                   variant="text"
                   color="primary">
@@ -117,9 +154,17 @@ export default function ConnectorTemplateList(props) {
               type="template"
             />
             <CardActions className={classes.cardAction}>
-              <Button variant="text" color="primary">
-                Install <ArrowRightIcon />
-              </Button>
+              <Link
+                data-test="installTemplate"
+                underline="none"
+                key={template._id}
+                to={getRoutePath(
+                  `/marketplace/templates/${template._id}/preview`
+                )}>
+                <Button variant="text" color="primary">
+                  Install <ArrowRightIcon />
+                </Button>
+              </Link>
             </CardActions>
           </Card>
         ))}

@@ -35,6 +35,7 @@ export default {
       id: 'type',
       type: 'select',
       label: 'Export Type',
+      defaultValue: r => (r && r.type ? r.type : 'all'),
       required: true,
       options: [
         {
@@ -49,7 +50,10 @@ export default {
       visibleWhen: [{ field: 'salesforce.executionType', is: ['scheduled'] }],
     },
     'delta.dateField': {
-      fieldId: 'delta.dateField',
+      id: 'delta.dateField',
+      label: 'Date Field',
+      required: true,
+      type: 'text',
       visibleWhen: [
         {
           field: 'type',
@@ -58,7 +62,9 @@ export default {
       ],
     },
     'delta.lagOffset': {
-      fieldId: 'delta.lagOffset',
+      id: 'delta.lagOffset',
+      label: 'Offset',
+      type: 'text',
       visibleWhen: [
         {
           field: 'type',
@@ -67,7 +73,10 @@ export default {
       ],
     },
     'once.booleanField': {
-      fieldId: 'once.booleanField',
+      id: 'once.booleanField',
+      label: 'Boolean Field',
+      required: true,
+      type: 'text',
       visibleWhen: [
         {
           field: 'type',
@@ -88,9 +97,6 @@ export default {
     'salesforce.distributed.qualifier': {
       fieldId: 'salesforce.distributed.qualifier',
     },
-    rawData: { fieldId: 'rawData' },
-    transform: { fieldId: 'transform' },
-    hooks: { formId: 'hooks' },
     advancedSettings: { formId: 'advancedSettings' },
   },
   layout: {
@@ -111,16 +117,6 @@ export default {
     ],
     type: 'collapse',
     containers: [
-      {
-        collapsed: true,
-        label: 'Would you like to transform the records?',
-        fields: ['transform'],
-      },
-      {
-        collapsed: true,
-        label: 'Hooks (Optional, Developers Only)',
-        fields: ['hooks'],
-      },
       { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },
     ],
   },

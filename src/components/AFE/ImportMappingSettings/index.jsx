@@ -5,6 +5,7 @@ import {
   DialogTitle,
   Button,
   makeStyles,
+  Typography,
 } from '@material-ui/core';
 import DynaForm from '../../DynaForm';
 import DynaSubmit from '../../DynaForm/DynaSubmit';
@@ -22,9 +23,11 @@ export default function ImportMappingSettings(props) {
     value,
     onClose,
     extractFields,
+    generateFields,
     lookup,
     updateLookup,
     application,
+    options,
   } = props;
   const { generate, extract } = value;
   const classes = useStyles();
@@ -33,6 +36,9 @@ export default function ImportMappingSettings(props) {
     value,
     lookup,
     extractFields,
+    generate,
+    generateFields,
+    options,
   });
   const handleSubmit = formVal => {
     const mappingObj = ApplicationMappingSettings.getFormattedValue(
@@ -57,18 +63,23 @@ export default function ImportMappingSettings(props) {
 
   return (
     <Dialog open maxWidth={false}>
-      <DialogTitle>{title}</DialogTitle>
+      <DialogTitle disableTypography>
+        <Typography variant="h6">{title}</Typography>
+      </DialogTitle>
       <DialogContent className={classes.modalContent}>
         <DynaForm
           fieldMeta={fieldMeta}
           optionsHandler={fieldMeta.optionsHandler}>
           <Button
+            data-test="cancelMappingSettings"
             onClick={() => {
               onClose(false);
             }}>
             Cancel
           </Button>
-          <DynaSubmit onClick={handleSubmit}>Save</DynaSubmit>
+          <DynaSubmit data-test="saveMappingSettings" onClick={handleSubmit}>
+            Save
+          </DynaSubmit>
         </DynaForm>
       </DialogContent>
     </Dialog>

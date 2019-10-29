@@ -12,6 +12,7 @@ export default function DynaFieldExpressionSelect(props) {
     id,
     name,
     placeholder,
+    resetAfterSelection,
     defaultValue,
     isValid,
   } = props;
@@ -41,6 +42,7 @@ export default function DynaFieldExpressionSelect(props) {
   return (
     <Select
       data-test={id}
+      resetAfterSelection={resetAfterSelection}
       id={id}
       label={label}
       placeholder={placeholder}

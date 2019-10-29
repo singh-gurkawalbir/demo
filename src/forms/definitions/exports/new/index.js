@@ -1,41 +1,35 @@
-import applications from '../../../../constants/applications';
-
-const appTypeToAdaptorType = {
-  salesforce: 'Salesforce',
-  mongodb: 'Mongodb',
-  postgresql: 'RDBMS',
-  mysql: 'RDBMS',
-  mssql: 'RDBMS',
-  netsuite: 'NetSuite',
-  ftp: 'FTP',
-  http: 'HTTP',
-  rest: 'REST',
-  s3: 'S3',
-  wrapper: 'Wrapper',
-  as2: 'AS2',
-  webhook: 'Webhook',
-};
+import applications, {
+  getWebhookConnectors,
+  getWebhookOnlyConnectors,
+} from '../../../../constants/applications';
+import { appTypeToAdaptorType } from '../../../../utils/resource';
 
 export default {
-  preSave: ({ application, executionType, apiType, ...rest }) => {
+  preSave: ({ type, application, executionType, apiType, ...rest }) => {
     const app = applications.find(a => a.id === application) || {};
-    // TODO: Raghu, the below logic should move to a proper fn that uses a map.
-    // This will only work for a select few adaptorTypes as others probably
-    // dont follow the uppercase rule. we have a /utils/resource file that
-    // should hold the map fn.
     const newValues = {
       ...rest,
-      '/adaptorType': `${appTypeToAdaptorType[app.type]}Export`,
     };
 
-    if (app.assistant) {
-      newValues['/assistant'] = app.assistant;
+    if (type === 'webhook') {
+      newValues['/type'] = 'webhook';
+      newValues['/adaptorType'] = 'WebhookExport';
+      newValues['/webhook/provider'] = application;
+      delete newValues['/_connectionId'];
+    } else {
+      newValues['/adaptorType'] = `${appTypeToAdaptorType[app.type]}Export`;
+
+      if (app.assistant) {
+        newValues['/assistant'] = app.assistant;
+      }
     }
 
     if (app.type === 'netsuite') {
       newValues['/netsuite/type'] =
         executionType === 'scheduled' ? apiType : executionType;
     }
+
+    // console.log(app, newValues);
 
     return newValues;
   },
@@ -45,8 +39,33 @@ export default {
       name: 'application',
       type: 'selectapplication',
       placeholder: 'Select application',
-      defaultValue: '',
+      defaultValue: r => (r && r.application) || '',
+      validWhen: {
+        isNot: { values: [''], message: 'Please select an application' },
+      },
+    },
+    type: {
+      id: 'type',
+      name: 'type',
+      type: 'radiogroup',
+      label: 'This application supports two options for exporting data',
+      defaultValue: r => (r && r.type) || 'api',
       required: true,
+      showOptionsHorizontally: true,
+      options: [
+        {
+          items: [
+            { label: 'API', value: 'api' },
+            { label: 'Webhook', value: 'webhook' },
+          ],
+        },
+      ],
+      visibleWhen: [
+        {
+          field: 'application',
+          is: getWebhookConnectors().map(connector => connector.id),
+        },
+      ],
     },
     connection: {
       id: 'connection',
@@ -54,11 +73,24 @@ export default {
       type: 'selectresource',
       resourceType: 'connections',
       label: 'Connection',
-      defaultValue: '',
+      defaultValue: r => (r && r._connectionId) || '',
       required: true,
+      validWhen: {
+        isNot: { values: [''], message: 'Please select a connection' },
+      },
       refreshOptionsOnChangesTo: ['application'],
-      visibleWhen: [{ id: 'hasApp', field: 'application', isNot: [''] }],
+      visibleWhenAll: [
+        {
+          field: 'application',
+          isNot: [
+            '',
+            ...getWebhookOnlyConnectors().map(connector => connector.id),
+          ],
+        },
+        { field: 'type', is: ['api'] },
+      ],
       allowNew: true,
+      allowEdit: true,
     },
     name: {
       id: 'name',
@@ -68,7 +100,7 @@ export default {
       defaultValue: '',
       required: true,
       refreshOptionsOnChangesTo: ['application'],
-      visibleWhen: [{ id: 'hasApp', field: 'application', isNot: [''] }],
+      visibleWhen: [{ field: 'application', isNot: [''] }],
     },
     description: {
       id: 'description',
@@ -78,7 +110,7 @@ export default {
       maxRows: 5,
       label: 'Description',
       defaultValue: '',
-      visibleWhen: [{ id: 'hasApp', field: 'application', isNot: [''] }],
+      visibleWhen: [{ field: 'application', isNot: [''] }],
     },
     'netsuite.execution.type': {
       id: 'netsuite.execution.type',
@@ -116,6 +148,7 @@ export default {
   layout: {
     fields: [
       'application',
+      'type',
       'connection',
       'name',
       'description',
@@ -132,17 +165,22 @@ export default {
     }
 
     if (fieldId === 'connection') {
-      let filter;
+      const expression = [];
 
       if (['mysql', 'postgresql', 'mssql'].includes(app.type)) {
-        filter = { rdbms: { type: app.type } };
-      } else filter = { type: app.type };
-
-      if (app.assistant) {
-        filter.assistant = app.assistant;
+        expression.push({ 'rdbms.type': app.type });
+      } else {
+        expression.push({ type: app.type });
       }
 
-      return { filter };
+      if (app.assistant) {
+        expression.push({ assistant: app.assistant });
+      }
+
+      expression.push({ _connectorId: { $exists: false } });
+      const filter = { $and: expression };
+
+      return { filter, appType: app.type };
     }
 
     return null;

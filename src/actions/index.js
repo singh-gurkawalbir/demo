@@ -85,13 +85,23 @@ const marketplace = {
     action(actionTypes.MARKETPLACE.CONNECTORS_RECEIVED, { connectors }),
   receivedTemplates: ({ templates }) =>
     action(actionTypes.MARKETPLACE.TEMPLATES_RECEIVED, { templates }),
-  installConnector: (connectorId, sandbox) =>
-    action(actionTypes.MARKETPLACE.CONNECTOR_INSTALL, { connectorId, sandbox }),
+  installConnector: (connectorId, sandbox, tag) =>
+    action(actionTypes.MARKETPLACE.CONNECTOR_INSTALL, {
+      connectorId,
+      sandbox,
+      tag,
+    }),
   contactSales: (connectorName, _connectorId) =>
     action(actionTypes.MARKETPLACE.SALES_CONTACT, {
       connectorName,
       _connectorId,
     }),
+};
+const recycleBin = {
+  restore: (resourceType, resourceId) =>
+    action(actionTypes.RECYCLEBIN.RESTORE, { resourceType, resourceId }),
+  purge: (resourceType, resourceId) =>
+    action(actionTypes.RECYCLEBIN.PURGE, { resourceType, resourceId }),
 };
 const resource = {
   downloadFile: (id, resourceType) =>
@@ -112,6 +122,8 @@ const resource = {
       resourceType,
       collection,
     }),
+  clearCollection: resourceType =>
+    action(actionTypes.RESOURCE.CLEAR_COLLECTION, { resourceType }),
   patch: (resourceType, id, patchSet) =>
     action(actionTypes.RESOURCE.PATCH, { resourceType, id, patchSet }),
   delete: (resourceType, id) =>
@@ -177,6 +189,8 @@ const resource = {
         resourceId,
         values,
       }),
+    authorized: connectionId =>
+      action(actionTypes.CONNECTION.AUTHORIZED, { connectionId }),
     commitAndAuthorize: resourceId =>
       action(actionTypes.RESOURCE_FORM.COMMIT_AND_AUTHORIZE, {
         resourceId,
@@ -258,6 +272,13 @@ const connectors = {
       fieldName,
       _integrationId,
     }),
+  installBase: {
+    update: ({ _integrationIds, connectorId }) =>
+      action(actionTypes.CONNECTORS.INSTALLBASE.UPDATE, {
+        _integrationIds,
+        connectorId,
+      }),
+  },
 };
 const metadata = {
   request: ({
@@ -409,6 +430,25 @@ const fileDefinitions = {
   },
 };
 const integrationApp = {
+  settings: {
+    update: (integrationId, flowId, storeId, values) =>
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.UPDATE, {
+        integrationId,
+        flowId,
+        storeId,
+        values,
+      }),
+    clear: (integrationId, flowId) =>
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.FORM.CLEAR, {
+        integrationId,
+        flowId,
+      }),
+    submitComplete: params =>
+      action(
+        actionTypes.INTEGRATION_APPS.SETTINGS.FORM.SUBMIT_COMPLETE,
+        params
+      ),
+  },
   installer: {
     installStep: (integrationId, installerFunction) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.REQUEST, {
@@ -490,9 +530,41 @@ const integrationApp = {
       }),
   },
 };
-const ashares = {
+const ashare = {
   receivedCollection: ashares =>
     resource.receivedCollection('ashares', ashares),
+};
+const template = {
+  generateZip: integrationId =>
+    action(actionTypes.TEMPLATE.ZIP_GENERATE, { integrationId }),
+  requestPreview: templateId =>
+    action(actionTypes.TEMPLATE.PREVIEW_REQUEST, { templateId }),
+  installStepsReceived: (installSteps, connectionMap, templateId) =>
+    action(actionTypes.TEMPLATE.STEPS_RECEIVED, {
+      installSteps,
+      connectionMap,
+      templateId,
+    }),
+  failedPreview: templateId =>
+    action(actionTypes.TEMPLATE.FAILURE, { templateId }),
+  failedInstall: templateId =>
+    action(actionTypes.TEMPLATE.INSTALL_FAILURE, { templateId }),
+  createdComponents: (components, templateId) =>
+    action(actionTypes.TEMPLATE.CREATED_COMPONENTS, { components, templateId }),
+  receivedPreview: (components, templateId) =>
+    action(actionTypes.TEMPLATE.RECEIVED_PREVIEW, { components, templateId }),
+  updateStep: (step, templateId) =>
+    action(actionTypes.TEMPLATE.UPDATE_STEP, { step, templateId }),
+  createComponents: templateId =>
+    action(actionTypes.TEMPLATE.CREATE_COMPONENTS, { templateId }),
+  clearTemplate: templateId =>
+    action(actionTypes.TEMPLATE.CLEAR_TEMPLATE, { templateId }),
+  verifyBundleOrPackageInstall: (step, connection, templateId) =>
+    action(actionTypes.TEMPLATE.VERIFY_BUNDLE_INSTALL, {
+      step,
+      connection,
+      templateId,
+    }),
 };
 const agent = {
   displayToken: id => action(actionTypes.AGENT.TOKEN_DISPLAY, { id }),
@@ -502,10 +574,6 @@ const agent = {
   maskToken: agentToken => action(actionTypes.AGENT.TOKEN_MASK, { agentToken }),
   downloadInstaller: (osType, id) =>
     action(actionTypes.AGENT.DOWNLOAD_INSTALLER, { osType, id }),
-};
-const template = {
-  generateZip: integrationId =>
-    action(actionTypes.TEMPLATE.ZIP_GENERATE, { integrationId }),
 };
 const file = {
   upload: (resourceType, resourceId, fileType, file) =>
@@ -591,6 +659,87 @@ const sampleData = {
     action(actionTypes.SAMPLEDATA.UPDATE, { resourceId, processedData, stage }),
   receivedError: (resourceId, error, stage) =>
     action(actionTypes.SAMPLEDATA.RECEIVED_ERROR, { resourceId, error, stage }),
+  reset: resourceId => action(actionTypes.SAMPLEDATA.RESET, { resourceId }),
+};
+const importSampleData = {
+  request: resourceId =>
+    action(actionTypes.IMPORT_SAMPLEDATA.REQUEST, { resourceId }),
+};
+const flowData = {
+  init: flow => action(actionTypes.FLOW_DATA.INIT, { flow }),
+  requestPreviewData: (flowId, resourceId, previewType, isPageGenerator) =>
+    action(actionTypes.FLOW_DATA.PREVIEW_DATA_REQUEST, {
+      flowId,
+      resourceId,
+      previewType,
+      isPageGenerator,
+    }),
+  receivedPreviewData: (
+    flowId,
+    resourceId,
+    previewData,
+    previewType,
+    isPageGenerator
+  ) =>
+    action(actionTypes.FLOW_DATA.PREVIEW_DATA_RECEIVED, {
+      flowId,
+      resourceId,
+      previewData,
+      previewType,
+      isPageGenerator,
+    }),
+  requestProcessorData: (
+    flowId,
+    resourceId,
+    resourceType,
+    processor,
+    isPageGenerator
+  ) =>
+    action(actionTypes.FLOW_DATA.PROCESSOR_DATA_REQUEST, {
+      flowId,
+      resourceId,
+      resourceType,
+      processor,
+      isPageGenerator,
+    }),
+  receivedProcessorData: (
+    flowId,
+    resourceId,
+    processor,
+    processedData,
+    isPageGenerator
+  ) =>
+    action(actionTypes.FLOW_DATA.PROCESSOR_DATA_RECEIVED, {
+      flowId,
+      resourceId,
+      processor,
+      processedData,
+      isPageGenerator,
+    }),
+  requestSampleData: (
+    flowId,
+    resourceId,
+    resourceType,
+    stage,
+    isPageGenerator
+  ) =>
+    action(actionTypes.FLOW_DATA.SAMPLE_DATA_REQUEST, {
+      flowId,
+      resourceId,
+      resourceType,
+      stage,
+      isPageGenerator,
+    }),
+  reset: (flowId, resourceId) =>
+    action(actionTypes.FLOW_DATA.RESET, { flowId, resourceId }),
+  resetFlowSequence: (flowId, updatedFlow) =>
+    action(actionTypes.FLOW_DATA.FLOW_SEQUENCE_RESET, { flowId, updatedFlow }),
+  updateFlowsForResource: (resourceId, resourceType) =>
+    action(actionTypes.FLOW_DATA.FLOWS_FOR_RESOURCE_UPDATE, {
+      resourceId,
+      resourceType,
+    }),
+  updateFlow: flowId => action(actionTypes.FLOW_DATA.FLOW_UPDATE, { flowId }),
 };
 const app = {
   reload: () => action(actionTypes.APP_RELOAD),
@@ -642,11 +791,12 @@ const resourceForm = {
       isNew,
       skipCommit,
     }),
-  submit: (resourceType, resourceId, values) =>
+  submit: (resourceType, resourceId, values, match) =>
     action(actionTypes.RESOURCE_FORM.SUBMIT, {
       resourceType,
       resourceId,
       values,
+      match,
     }),
   submitComplete: (resourceType, resourceId, formValues) =>
     action(actionTypes.RESOURCE_FORM.SUBMIT_COMPLETE, {
@@ -800,7 +950,7 @@ export default {
   resource,
   user,
   api,
-  ashares,
+  ashare,
   auth,
   auditLogs,
   accessToken,
@@ -812,6 +962,9 @@ export default {
   assistantMetadata,
   stack,
   sampleData,
+  importSampleData,
+  flowData,
   connection,
   marketplace,
+  recycleBin,
 };

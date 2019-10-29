@@ -24,7 +24,10 @@ export default {
     }
 
     return (
-      <IconButton size="small" onClick={() => handleReactivateClick()}>
+      <IconButton
+        data-test="reactivateAccessToken"
+        size="small"
+        onClick={() => handleReactivateClick()}>
         <Icon />
       </IconButton>
     );

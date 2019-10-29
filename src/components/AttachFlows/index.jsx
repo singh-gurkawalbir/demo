@@ -18,14 +18,10 @@ import CeligoTable from '../CeligoTable';
 import metadata from './metadata';
 
 const useStyles = makeStyles(theme => ({
-  title: {
-    marginLeft: theme.spacing(4),
-    padding: theme.spacing(2),
-  },
   closeButton: {
     position: 'absolute',
     right: theme.spacing(1),
-    top: theme.spacing(1),
+    top: 2,
   },
 }));
 
@@ -76,14 +72,15 @@ export default function AttachFlows({
 
   return (
     <Dialog open maxWidth={false}>
-      <IconButton
-        aria-label="Close"
-        className={classes.closeButton}
-        onClick={onClose}>
-        <CloseIcon />
-      </IconButton>
-      <DialogTitle className={classes.title}>
-        <Typography>Attach Flows</Typography>
+      <DialogTitle disableTypography>
+        <Typography variant="h6">Attach Flows</Typography>
+        <IconButton
+          aria-label="Close"
+          data-test="closeAttachFlows"
+          className={classes.closeButton}
+          onClick={onClose}>
+          <CloseIcon />
+        </IconButton>
       </DialogTitle>
       <DialogContent>
         <LoadResources
@@ -98,7 +95,13 @@ export default function AttachFlows({
         </LoadResources>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleAttachFlowsClick}>Attach</Button>
+        <Button
+          data-test="attachFlows"
+          onClick={handleAttachFlowsClick}
+          variant="contained"
+          color="primary">
+          Attach
+        </Button>
       </DialogActions>
     </Dialog>
   );

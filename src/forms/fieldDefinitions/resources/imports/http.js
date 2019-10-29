@@ -16,6 +16,8 @@ export default {
   },
   'http.headers': {
     type: 'keyvalue',
+    keyName: 'name',
+    valueName: 'value',
     label: 'Configure HTTP Headers',
   },
   'http.requestMediaType': {
@@ -73,6 +75,7 @@ export default {
   },
   'http.body': {
     type: 'httprequestbody',
+    defaultValue: [],
     label: 'Build HTTP Request Body',
     refreshOptionsOnChangesTo: ['http.lookups'],
   },
@@ -90,7 +93,7 @@ export default {
   'http.response.successValues': {
     type: 'text',
     label: 'Success Values',
-    valueDelimiter: ',',
+    delimiter: ',',
     placeholder: 'Optional',
     visibleWhen: [
       {

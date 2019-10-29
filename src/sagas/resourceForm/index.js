@@ -183,11 +183,13 @@ export function* saveRawData({ values }) {
   return { ...values, '/rawData': rawDataKey };
 }
 
-export function* submitFormValues({ resourceType, resourceId, values }) {
-  let formValues = values;
+export function* submitFormValues({ resourceType, resourceId, values, match }) {
+  const formValues = values;
 
   if (resourceType === 'exports') {
-    formValues = yield call(saveRawData, { values });
+    // @TODO Raghu:  Commented as it is a QA blocker. Decide how to save raw data
+    // formValues = yield call(saveRawData, { values });
+    delete formValues['/rawData'];
   }
 
   const { patchSet, finalValues } = yield call(createFormValuesPatchSet, {
@@ -214,15 +216,32 @@ export function* submitFormValues({ resourceType, resourceId, values }) {
       resourceId,
       SCOPES.VALUE
     );
-
     // In most cases there would be no other pending staged changes, since most
     // times a patch is followed by an immediate commit.  If however some
     // component has staged some changes, even if the patchSet above is empty,
     // we need to check the store for these un-committed ones and still call
     // the commit saga.
+    let type = resourceType;
+
+    if (resourceType === 'connectorLicenses') {
+      // construct url for licenses
+      const connectorUrlStr = '/connectors/';
+      const startIndex =
+        match.url.indexOf(connectorUrlStr) + connectorUrlStr.length;
+
+      if (startIndex !== -1) {
+        const connectorId = match.url.substring(
+          startIndex,
+          match.url.indexOf('/', startIndex)
+        );
+
+        type = `connectors/${connectorId}/licenses`;
+      }
+    }
+
     if (patch && patch.length) {
       yield call(commitStagedChanges, {
-        resourceType,
+        resourceType: type,
         id: resourceId,
         scope: SCOPES.VALUE,
       });
@@ -250,21 +269,15 @@ export function* initFormValues({
   isNew,
   skipCommit,
 }) {
-  let resource;
+  const developerMode = yield select(selectors.developerMode);
+  const { merged: resource } = yield select(
+    selectors.resourceData,
+    resourceType,
+    resourceId
+  );
 
-  if (isNew) {
-    resource = { _id: resourceId };
-  } else {
-    ({ merged: resource } = yield select(
-      selectors.resourceData,
-      resourceType,
-      resourceId
-    ));
-
-    // i could have patched that change but i wanted the tmp id to show up
-    if (isNewId(resourceId)) {
-      resource._id = resourceId;
-    }
+  if (isNewId(resourceId)) {
+    resource._id = resourceId;
   }
 
   if (!resource) return; // nothing to do.
@@ -310,7 +323,13 @@ export function* initFormValues({
       ? customForm.form
       : defaultFormAssets.fieldMeta;
   //
-  const fieldMeta = factory.getFieldsWithDefaults(form, resourceType, resource);
+  const fieldMeta = factory.getFieldsWithDefaults(
+    form,
+    resourceType,
+    resource,
+    false,
+    developerMode
+  );
   let finalFieldMeta = fieldMeta;
 
   if (customForm && customForm.init) {
@@ -329,6 +348,7 @@ export function* initFormValues({
     finalFieldMeta = defaultFormAssets.init(fieldMeta);
   }
 
+  // console.log('finalFieldMeta', finalFieldMeta);
   yield put(
     actions.resourceForm.initComplete(
       resourceType,

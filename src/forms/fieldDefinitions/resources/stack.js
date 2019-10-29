@@ -1,12 +1,12 @@
+import { URI_VALIDATION_PATTERN } from '../../../utils/constants';
+
 export default {
   name: {
-    defaultValue: r => r.name,
     type: 'text',
     label: 'Name',
     required: true,
   },
   type: {
-    defaultValue: r => r.type,
     type: 'select',
     options: [
       {
@@ -19,7 +19,6 @@ export default {
     label: 'Type',
   },
   'server.hostURI': {
-    defaultValue: r => r.server && r.server.hostURI,
     type: 'text',
     label: 'Host',
     visibleWhen: [
@@ -28,9 +27,14 @@ export default {
         is: ['server'],
       },
     ],
+    validWhen: {
+      matchesRegEx: {
+        pattern: URI_VALIDATION_PATTERN,
+        message: 'Please enter a valid URI.',
+      },
+    },
   },
   'lambda.accessKeyId': {
-    defaultValue: r => r.lambda && r.lambda.accessKeyId,
     type: 'text',
     label: 'Access Key Id',
     visibleWhen: [
@@ -41,7 +45,6 @@ export default {
     ],
   },
   'lambda.secretAccessKey': {
-    defaultValue: r => r.lambda && r.lambda.secretAccessKey,
     type: 'text',
     label: 'Secret Acess Key',
     visibleWhen: [
@@ -52,7 +55,6 @@ export default {
     ],
   },
   'lambda.awsRegion': {
-    defaultValue: r => r.lambda && r.lambda.awsRegion,
     type: 'select',
     label: 'AWS Region',
     options: [
@@ -85,7 +87,6 @@ export default {
     ],
   },
   'lambda.functionName': {
-    defaultValue: r => r.lambda && r.lambda.functionName,
     type: 'text',
     label: 'Function Name',
     visibleWhen: [

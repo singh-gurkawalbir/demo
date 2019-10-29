@@ -7,7 +7,10 @@ import agents from './agents';
 import connectors from './connectors';
 import stacks from './stacks';
 import templates from './templates';
+import pageProcessor from './pageProcessor';
+import pageGenerator from './pageGenerator';
 import accesstokens from './accesstokens';
+import connectorLicenses from './connectorLicenses';
 
 export default {
   default: defaultMeta,
@@ -19,5 +22,8 @@ export default {
   connectors,
   templates,
   stacks,
+  pageProcessor,
+  pageGenerator,
   accesstokens,
+  connectorLicenses,
 };

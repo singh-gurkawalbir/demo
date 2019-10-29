@@ -34,7 +34,7 @@ const getColumns = result => {
 
 const useStyles = makeStyles(theme => ({
   container: {
-    padding: '10px',
+    padding: 10,
     backgroundColor: theme.palette.background.default,
     height: '100%',
   },
@@ -51,6 +51,7 @@ export default function CsvParsePanel(props) {
     rowDelimiter = '',
     keyColumns = [],
     hasHeaderRow = true,
+    multipleRowsPerRecord = false,
     trimSpaces = true,
     result,
   } = useSelector(state => selectors.editor(state, editorId));
@@ -99,7 +100,8 @@ export default function CsvParsePanel(props) {
         <FormControlLabel
           control={
             <Checkbox
-              // color="primary"
+              // Why it is commented ?
+              color="primary"
               checked={hasHeaderRow}
               onChange={() => patchEditor('hasHeaderRow', !hasHeaderRow)}
             />
@@ -109,14 +111,27 @@ export default function CsvParsePanel(props) {
         <FormControlLabel
           control={
             <Checkbox
-              // color="primary"
+              color="primary"
               checked={trimSpaces}
               onChange={() => patchEditor('trimSpaces', !trimSpaces)}
             />
           }
           label="Trim Spaces"
         />
-        {allColumns && (
+        <FormControlLabel
+          control={
+            <Checkbox
+              color="primary"
+              checked={multipleRowsPerRecord}
+              onChange={() => {
+                patchEditor('multipleRowsPerRecord', !multipleRowsPerRecord);
+                patchEditor('keyColumns', []);
+              }}
+            />
+          }
+          label="Multiple Rows Per Record"
+        />
+        {multipleRowsPerRecord && allColumns && (
           <FormControl className={classes.formControl}>
             <InputLabel htmlFor="select-multiple-chip">Key Columns</InputLabel>
             <Select

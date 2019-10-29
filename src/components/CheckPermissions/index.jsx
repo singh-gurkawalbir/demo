@@ -14,15 +14,17 @@ const mapStateToProps = state => {
 
 @withStyles(theme => ({
   permissionErrors: {
-    color: theme.palette.error.contrastText,
+    color: theme.palette.error.main,
   },
 }))
 class CheckPermissions extends Component {
   render() {
     const { classes, permissions, permission, children } = this.props;
-    const hasPermission = !!permission
-      .split('.')
-      .reduce((prev, curr) => (prev ? prev[curr] : null), permissions);
+    const hasPermission = permission
+      ? !!permission
+          .split('.')
+          .reduce((prev, curr) => (prev ? prev[curr] : null), permissions)
+      : false;
 
     return hasPermission ? (
       children

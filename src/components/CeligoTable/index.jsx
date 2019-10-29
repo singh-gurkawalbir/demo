@@ -14,6 +14,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
 import ActionMenu from './ActionMenu';
+import EllipsisHorizontalIcon from '../icons/EllipsisHorizontalIcon';
 
 const useStyles = makeStyles(theme => ({
   visuallyHidden: {
@@ -29,21 +30,23 @@ const useStyles = makeStyles(theme => ({
   },
 
   row: {
+    '& > td:last-child': {
+      minWidth: '125px',
+    },
     '& > td:last-child > div': {
       display: 'none',
     },
     '&:hover > td:last-child > div': {
       display: 'flex',
+      justifyContent: 'center',
     },
-    '&:hover > th:before': {
-      backgroundColor: theme.palette.primary.main,
-    },
-    '&:hover > td:before': {
-      backgroundColor: theme.palette.primary.main,
+    '&:hover > td:last-child > svg': {
+      display: 'none',
     },
   },
   actionCell: {
     padding: `0 !important`,
+    textAlign: 'center',
   },
   actionContainer: {
     position: 'sticky',
@@ -53,7 +56,8 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(0, 0),
   },
   actionColHead: {
-    width: 100,
+    width: 125,
+    textAlign: 'center',
   },
 }));
 
@@ -80,6 +84,9 @@ export default function CeligoTable({
   const [selectedResources, setSelectedResources] = useState({});
   const [isAllSelected, setIsAllSelected] = useState(false);
 
+  useEffect(() => {
+    dispatch(actions.patchFilter(filterKey, { sort: { order, orderBy } }));
+  }, [dispatch, filterKey, order, orderBy]);
   useEffect(() => {
     const hasSelectableResources =
       !isSelectableRow ||
@@ -147,10 +154,14 @@ export default function CeligoTable({
               <Checkbox
                 onChange={event => handleSelectAllChange(event)}
                 checked={isAllSelected}
+                color="primary"
               />
             </TableCell>
           )}
-          {columns.map(col =>
+          {(typeof columns === 'function'
+            ? columns('', actionProps)
+            : columns
+          ).map(col =>
             col.orderBy ? (
               <TableCell
                 style={col.width ? { width: col.width } : undefined}
@@ -182,7 +193,9 @@ export default function CeligoTable({
               </TableCell>
             )
           )}
-          {rowActions && <TableCell className={classes.actionColHead} />}
+          {rowActions && (
+            <TableCell className={classes.actionColHead}>Actions</TableCell>
+          )}
         </TableRow>
       </TableHead>
       <TableBody>
@@ -194,27 +207,32 @@ export default function CeligoTable({
                   <Checkbox
                     onChange={event => handleSelectChange(event, r._id)}
                     checked={!!selectedResources[r._id]}
+                    color="primary"
                   />
                 )}
               </TableCell>
             )}
-            {columns.map((col, index) =>
+            {(typeof columns === 'function'
+              ? columns(r, actionProps)
+              : columns
+            ).map((col, index) =>
               index === 0 ? (
                 <TableCell
                   component="th"
                   scope="row"
                   key={col.heading}
                   align={col.align || 'left'}>
-                  {col.value(r)}
+                  {col.value(r, actionProps)}
                 </TableCell>
               ) : (
                 <TableCell key={col.heading} align={col.align || 'left'}>
-                  {col.value(r)}
+                  {col.value(r, actionProps)}
                 </TableCell>
               )
             )}
             {rowActions && (
               <TableCell className={classes.actionCell}>
+                <EllipsisHorizontalIcon />
                 <ActionMenu
                   // rowActions may or may not be a fn. Sometimes
                   // the actions are static, other times they are
@@ -223,7 +241,7 @@ export default function CeligoTable({
                     ? rowActions(r, actionProps)
                     : rowActions
                   ).map(({ label, component: Action }) => ({
-                    label,
+                    label: typeof label === 'function' ? label(r) : label,
                     component: <Action {...actionProps} resource={r} />,
                   }))}
                 />

@@ -2,6 +2,8 @@ export default {
   preSave: formValues => {
     const newValues = Object.assign({}, formValues);
 
+    delete newValues['/mode'];
+
     if (!newValues['/http/ping/successPath']) {
       newValues['/http/ping/successValues'] = undefined;
     }
@@ -33,7 +35,8 @@ export default {
     }
 
     if (newValues['/http/auth/type'] !== 'basic') {
-      newValues['/http/auth/basic'] = undefined;
+      newValues['/http/auth/basic/username'] = undefined;
+      newValues['/http/auth/basic/password'] = undefined;
     }
 
     if (
@@ -57,7 +60,11 @@ export default {
     }
 
     if (newValues['/http/auth/type'] !== 'token') {
-      newValues['/http/auth/token'] = {};
+      newValues['/http/auth/token/token'] = undefined;
+      newValues['/http/auth/token/scheme'] = undefined;
+      newValues['/http/auth/token/headerName'] = undefined;
+      newValues['/http/auth/token/location'] = undefined;
+      newValues['/http/auth/token/paramName'] = undefined;
     }
 
     return newValues;
@@ -69,7 +76,6 @@ export default {
       type: 'radiogroup',
       label: 'Mode',
       defaultValue: r => (r && r._agentId ? 'onpremise' : 'cloud'),
-      omitWhenValueIs: [undefined, '', 'cloud', 'onpremise'],
       options: [
         {
           items: [
@@ -135,6 +141,11 @@ export default {
     'http.ping.successValues': { fieldId: 'http.ping.successValues' },
     'http.ping.errorPath': { fieldId: 'http.ping.errorPath' },
     httpAdvanced: { formId: 'httpAdvanced' },
+    'clientCertificates.cert': { fieldId: 'clientCertificates.cert' },
+    'clientCertificates.key': { fieldId: 'clientCertificates.key' },
+    'http.clientCertificates.passphrase': {
+      fieldId: 'http.clientCertificates.passphrase',
+    },
   },
   layout: {
     fields: [
@@ -178,7 +189,16 @@ export default {
           'http.ping.errorPath',
         ],
       },
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      {
+        collapsed: true,
+        label: 'Advanced Settings',
+        fields: [
+          'httpAdvanced',
+          'clientCertificates.key',
+          'clientCertificates.cert',
+          'http.clientCertificates.passphrase',
+        ],
+      },
     ],
   },
 };

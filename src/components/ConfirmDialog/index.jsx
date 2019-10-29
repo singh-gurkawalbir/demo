@@ -6,6 +6,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { render, unmountComponentAtNode } from 'react-dom';
+import { Typography } from '@material-ui/core';
 
 const rootElementId = 'react-confirm-dialog';
 
@@ -39,13 +40,16 @@ export default class ConfirmDialog extends React.Component {
 
     return (
       <Dialog open>
-        <DialogTitle>{title}</DialogTitle>
+        <DialogTitle disableTypography>
+          <Typography variant="h6">{title}</Typography>
+        </DialogTitle>
         <DialogContent>
           <DialogContentText>{message}</DialogContentText>
         </DialogContent>
         <DialogActions>
           {buttons.map(button => (
             <Button
+              data-test={button.label}
               key={button.label}
               color={button.color || 'primary'}
               onClick={() => this.handleButtonClick(button)}>

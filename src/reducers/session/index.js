@@ -11,7 +11,10 @@ import apiAccessTokens, * as fromApiAccessTokens from './apiAccessTokens';
 import connectionToken, * as fromConnectionToken from './connectionToken';
 import netsuiteUserRole, * as fromNetsuiteUserRoles from './netsuiteUserRoles';
 import sampleData, * as fromSampleData from './sampleData';
+import flowData, * as fromFlowData from './sampleData/flows';
 import integrationApps, * as fromIntegrationApps from './integrationApps';
+import templates, * as fromTemplates from './templates';
+import oAuthAuthorize, * as fromOAuthAuthorize from './oAuthAuthorize';
 import resource, * as fromResource from './resource';
 
 export default combineReducers({
@@ -28,7 +31,10 @@ export default combineReducers({
   resource,
   netsuiteUserRole,
   sampleData,
+  flowData,
   integrationApps,
+  templates,
+  oAuthAuthorize,
 });
 
 // #region PUBLIC SELECTORS
@@ -126,6 +132,32 @@ export function resourceFormState(state, resourceType, resourceId) {
   );
 }
 
+export function previewTemplate(state, templateId) {
+  return fromTemplates.previewTemplate(state && state.templates, templateId);
+}
+
+export function template(state, templateId) {
+  return fromTemplates.template(state && state.templates, templateId);
+}
+
+export function templateInstallSteps(state, templateId) {
+  return fromTemplates.templateInstallSteps(
+    state && state.templates,
+    templateId
+  );
+}
+
+export function connectionMap(state, templateId) {
+  return fromTemplates.connectionMap(state && state.templates, templateId);
+}
+
+export function isAuthorized(state, connectionId) {
+  return fromOAuthAuthorize.isAuthorized(
+    state && state.oAuthAuthorize,
+    connectionId
+  );
+}
+
 export function connectorMetadata(state, fieldName, id, _integrationId) {
   return fromConnectors.connectorMetadata(
     state && state.connectors,
@@ -157,10 +189,44 @@ export function getResourceSampleDataWithStatus(state, resourceId, stage) {
   );
 }
 
+export function getSampleData(state, flowId, resourceId, stage, options) {
+  return fromFlowData.getSampleData(
+    state && state.flowData,
+    flowId,
+    resourceId,
+    stage,
+    options
+  );
+}
+
+export function getFlowReferencesForResource(state, resourceId) {
+  return fromFlowData.getFlowReferencesForResource(
+    state && state.flowData,
+    resourceId
+  );
+}
+
+export function getFlowDataState(state, flowId, resourceId, isPageGenerator) {
+  return fromFlowData.getFlowDataState(
+    state && state.flowData,
+    flowId,
+    resourceId,
+    isPageGenerator
+  );
+}
+
 export function apiAccessToken(state, resourceId) {
   return fromApiAccessTokens.apiAccessToken(
     state && state.apiAccessTokens,
     resourceId
+  );
+}
+
+export function integrationAppSettingsFormState(state, integrationId, flowId) {
+  return fromIntegrationApps.integrationAppSettingsFormState(
+    state && state.integrationApps,
+    integrationId,
+    flowId
   );
 }
 

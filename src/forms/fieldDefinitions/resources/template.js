@@ -1,39 +1,32 @@
 export default {
   name: {
-    defaultValue: r => r.name,
     type: 'text',
     label: 'Name',
     required: true,
   },
   description: {
-    defaultValue: r => r.description,
     type: 'text',
     multiline: true,
     maxRows: 5,
     label: 'Description',
   },
   imageURL: {
-    defaultValue: r => r.imageURL,
     type: 'text',
     label: 'Image URL',
   },
   websiteURL: {
-    defaultValue: r => r.websiteURL,
     type: 'text',
     label: 'Website URL',
   },
   contactEmail: {
-    defaultValue: r => r.contactEmail,
     type: 'text',
     label: 'Contact Emails',
   },
   installerFunction: {
-    defaultValue: r => r.installerFunction,
     type: 'text',
     label: 'Installer Function',
   },
   applications: {
-    defaultValue: r => r.applications,
     type: 'multiselect',
     label: 'Applications',
     valueDelimiter: ',',

@@ -114,6 +114,114 @@ describe('resources reducer', () => {
   });
 });
 
+describe('resources reducer for special cases', () => {
+  describe('received collection action', () => {
+    test('connector licenses should be stored successfully', () => {
+      const resourceType = 'connectors/123/licenses';
+      const collection = [{ _id: '456' }, { _id: '678' }];
+      const state = reducer(
+        undefined,
+        actions.resource.receivedCollection(resourceType, collection)
+      );
+      const resultantCollection = [
+        { _id: '456', _connectorId: '123' },
+        { _id: '678', _connectorId: '123' },
+      ];
+
+      expect(state.connectorLicenses).toEqual(resultantCollection);
+    });
+    test('connector licenses should be updated successfully', () => {
+      const resourceType = 'connectors/123/licenses';
+      const state = {};
+
+      state.connectorLicenses = [
+        { _id: '456', _connectorId: '123' },
+        { _id: '555', _connectorId: '654' },
+      ];
+      const updatedCollection = [{ _id: '666' }, { _id: '777' }];
+      const newState = reducer(
+        state,
+        actions.resource.receivedCollection(resourceType, updatedCollection)
+      );
+      const resultantCollection = [
+        { _id: '666', _connectorId: '123' },
+        { _id: '777', _connectorId: '123' },
+      ];
+
+      expect(newState.connectorLicenses).toEqual(resultantCollection);
+    });
+    test('connector installBase should be stored successfully', () => {
+      const resourceType = 'connectors/123/installBase';
+      const collection = [{ _id: '456' }, { _id: '678' }];
+      const state = reducer(
+        undefined,
+        actions.resource.receivedCollection(resourceType, collection)
+      );
+      const resultantCollection = [
+        { _id: '456', _connectorId: '123' },
+        { _id: '678', _connectorId: '123' },
+      ];
+
+      expect(state.connectorInstallBase).toEqual(resultantCollection);
+    });
+    test('connector installBase should be updated successfully', () => {
+      const resourceType = 'connectors/123/installBase';
+      const state = {};
+
+      state.connectorInstallBase = [
+        { _id: '456', _connectorId: '123' },
+        { _id: '555', _connectorId: '654' },
+      ];
+      const updatedCollection = [{ _id: '666' }, { _id: '777' }];
+      const newState = reducer(
+        state,
+        actions.resource.receivedCollection(resourceType, updatedCollection)
+      );
+      const resultantCollection = [
+        { _id: '666', _connectorId: '123' },
+        { _id: '777', _connectorId: '123' },
+      ];
+
+      expect(newState.connectorInstallBase).toEqual(resultantCollection);
+    });
+  });
+  describe('deleted collection action for licenses', () => {
+    test('should delete successfully for valid id', () => {
+      const resourceType = 'connectors/123/licenses';
+      const state = {};
+
+      state.connectorLicenses = [
+        { _id: '456', _connectorId: '123' },
+        { _id: '678', _connectorId: '44' },
+      ];
+
+      const newState = reducer(
+        state,
+        actions.resource.deleted(resourceType, '456')
+      );
+      const resultantCollection = [{ _id: '678', _connectorId: '44' }];
+
+      expect(newState.connectorLicenses).toEqual(resultantCollection);
+    });
+    test('should not update state for invalid id', () => {
+      const resourceType = 'connectors/123/licenses';
+      const state = {};
+
+      state.connectorLicenses = [
+        { _id: '456', _connectorId: '123' },
+        { _id: '678', _connectorId: '44' },
+      ];
+
+      const newState = reducer(
+        state,
+        actions.resource.deleted(resourceType, '888')
+      );
+
+      expect(newState.connectorLicenses).toEqual(state.connectorLicenses);
+    });
+  });
+});
+
 describe('intetgrationApps installer reducer', () => {
   describe(`integrationApps received installer install_inProgress action`, () => {
     test('should find the integration with id and find the installation step with passed installerFunction and set isTriggered flag to true', () => {

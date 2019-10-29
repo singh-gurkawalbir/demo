@@ -7,7 +7,6 @@ export default {
     type: 'select',
     label: 'HTTP Method',
     required: true,
-    defaultValue: r => (r && r.rest && r.rest.method) || '',
     options: [
       {
         items: [
@@ -19,7 +18,7 @@ export default {
     ],
   },
   'rest.postBody': {
-    type: 'text',
+    type: 'httprequestbody',
     label: 'Build HTTP Request Body',
     required: true,
     visibleWhen: [
@@ -40,18 +39,15 @@ export default {
     valueType: 'keyvalue',
     label: 'Configure HTTP headers',
   },
-  'rest.once.booleanField': {
+  'once.booleanField': {
     type: 'text',
     label: 'Boolean Field',
-    id: 'once.booleanField',
     helpkey: 'once.booleanField',
   },
   // #region paging
   'rest.pagingMethod': {
     type: 'select',
     label: 'Paging Method',
-    defaultValue: r =>
-      r && r.rest && r.rest.pagingMethod ? r.rest.pagingMethod : '',
     options: [
       {
         items: [
@@ -70,7 +66,6 @@ export default {
     type: 'text',
     label: 'Next Page Path',
     required: true,
-    defaultValue: r => r && r.rest && r.rest.nextPagePath,
     visibleWhen: [
       {
         field: 'rest.pagingMethod',
@@ -93,7 +88,6 @@ export default {
     type: 'text',
     label: 'Next Page Relative URI',
     required: true,
-    defaultValue: r => r && r.rest && r.rest.pageArgument,
     visibleWhen: [
       {
         field: 'rest.pagingMethod',
@@ -105,7 +99,6 @@ export default {
     type: 'text',
     label: 'Page Argument',
     required: true,
-    defaultValue: r => r && r.rest && r.rest.pageArgument,
     visibleWhen: [
       {
         field: 'rest.pagingMethod',
@@ -114,7 +107,7 @@ export default {
     ],
   },
   'rest.pagingPostBody': {
-    type: 'text',
+    type: 'httprequestbody',
     label: 'Build Paging Post Body',
     required: true,
     visibleWhen: [
@@ -156,7 +149,7 @@ export default {
     ],
   },
   'rest.relativeURI': {
-    type: 'text',
+    type: 'relativeuri',
     required: true,
     label: 'Relative URI',
   },
@@ -204,7 +197,7 @@ export default {
   // #endregion transform
 
   'rest.once.relativeURI': {
-    type: 'text',
+    type: 'relativeuri',
     label: 'Relative URI',
   },
   'rest.once.method': {
@@ -220,21 +213,8 @@ export default {
     ],
   },
   // #endregion once
-  pageSize: {
-    type: 'text',
-    label: 'Page Size',
-    validWhen: [
-      {
-        matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
-      },
-    ],
-  },
-  dataURITemplate: {
-    type: 'relativeuri',
-    label: 'Data URI Template',
-  },
   'rest.once.postBody': {
-    type: 'text',
+    type: 'httprequestbody',
     label: 'Build HTTP Request Body',
   },
 };

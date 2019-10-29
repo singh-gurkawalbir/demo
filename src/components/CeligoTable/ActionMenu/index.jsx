@@ -8,13 +8,15 @@ const useStyles = makeStyles(theme => ({
     position: 'sticky',
     display: 'flex',
     overflow: 'hidden',
+    zIndex: 1,
   },
   action: {
     padding: theme.spacing(0, 0),
   },
   actionColHead: {
     // any smaller and table "giggles" when transitioning to/from hover state
-    width: 115,
+    width: 125,
+    textAlign: 'center',
   },
   ellipsisContainer: {
     padding: theme.spacing(2),
@@ -61,7 +63,11 @@ export default function ActionMenu({ actions }) {
       {actions.slice(0, count).map(a => renderAction(a))}
 
       <Tooltip title="More actions">
-        <IconButton size="small" aria-describedby={id} onClick={handleClick}>
+        <IconButton
+          data-test="openActionsMenu"
+          size="small"
+          aria-describedby={id}
+          onClick={handleClick}>
           <EllipsisIcon />
         </IconButton>
       </Tooltip>

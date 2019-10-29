@@ -2,6 +2,8 @@ export default {
   preSave: formValues => {
     const newValues = Object.assign({}, formValues);
 
+    delete newValues['/mode'];
+
     if (!newValues['/rest/pingSuccessPath']) {
       newValues['/rest/pingSuccessValues'] = undefined;
     }
@@ -60,6 +62,24 @@ export default {
   },
   fieldMap: {
     name: { fieldId: 'name' },
+    mode: {
+      id: 'mode',
+      type: 'radiogroup',
+      label: 'Mode',
+      defaultValue: r => (r && r._agentId ? 'onpremise' : 'cloud'),
+      options: [
+        {
+          items: [
+            { label: 'Cloud', value: 'cloud' },
+            { label: 'On-Premise', value: 'onpremise' },
+          ],
+        },
+      ],
+    },
+    _agentId: {
+      fieldId: '_agentId',
+      visibleWhen: [{ field: 'mode', is: ['onpremise'] }],
+    },
     'rest.authType': { fieldId: 'rest.authType', required: true },
     'rest.headers': {
       fieldId: 'rest.headers',
@@ -117,6 +137,8 @@ export default {
   layout: {
     fields: [
       'name',
+      'mode',
+      '_agentId',
       'rest.authType',
       'rest.headers',
       'rest.baseURI',

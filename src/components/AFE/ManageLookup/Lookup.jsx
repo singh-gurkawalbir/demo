@@ -105,7 +105,6 @@ export default function Lookup(props) {
         name: 'method',
         type: 'select',
         label: 'HTTP Method',
-        placeholder: 'Required',
         defaultValue: lookup.method,
         options: [
           {
@@ -191,7 +190,7 @@ export default function Lookup(props) {
         name: 'failRecord',
         type: 'radiogroup',
         label: 'Action to take if unique match not found',
-        defaultValue: getFailedRecordDefault(),
+        defaultValue: getFailedRecordDefault() || 'disallowFailure',
         options: [
           {
             items: [
@@ -258,8 +257,12 @@ export default function Lookup(props) {
             </Typography>
           </div>
         )}
-        <Button onClick={onCancel}>Cancel</Button>
-        <DynaSubmit onClick={handleSubmit}>Save</DynaSubmit>
+        <Button data-test="cancelLookupForm" onClick={onCancel}>
+          Cancel
+        </Button>
+        <DynaSubmit data-test="saveLookupForm" onClick={handleSubmit}>
+          Save
+        </DynaSubmit>
       </DynaForm>
     </div>
   );

@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { makeStyles, fade } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
-import { Divider, List, Collapse, ButtonBase } from '@material-ui/core';
+import { List, Collapse, ButtonBase } from '@material-ui/core';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -103,15 +103,15 @@ const useStyles = makeStyles(theme => ({
     },
     '&:before': {
       content: '""',
-      width: '6px',
+      width: 6,
       height: '100%',
       position: 'absolute',
       background: 'transparent',
-      left: '0px',
+      left: 0,
     },
   },
   itemIconRoot: {
-    minWidth: '45px',
+    minWidth: 45,
   },
   menuList: {
     overflowY: 'auto',
@@ -143,7 +143,7 @@ const useStyles = makeStyles(theme => ({
     height: theme.spacing(3),
     '& svg': {
       position: 'relative',
-      top: '-12px',
+      top: -12,
     },
   },
 }));
@@ -151,6 +151,10 @@ const useStyles = makeStyles(theme => ({
 export default function CeligoDrawer() {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const userProfile = useSelector(state => selectors.userProfile(state));
+  const userPermissions = useSelector(state =>
+    selectors.userPermissions(state)
+  );
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
   const [expand, setExpand] = React.useState(null);
   const handleDrawerToggle = () => {
@@ -197,59 +201,66 @@ export default function CeligoDrawer() {
         </div>
         <div className={classes.menuList}>
           <List className={classes.list}>
-            {menuItems.map(({ label, Icon, path, children }) => (
-              <Fragment key={label}>
-                <ListItem
-                  button
-                  className={classes.listItem}
-                  component={children ? undefined : Link}
-                  to={getRoutePath(path)}
-                  onClick={children ? handleExpandClick(label) : null}>
-                  <ListItemIcon classes={{ root: classes.itemIconRoot }}>
-                    {<Icon />}
-                  </ListItemIcon>
-                  <ListItemText
-                    primaryTypographyProps={{
-                      className: classes.itemText,
-                    }}
-                    primary={label}
-                  />
-                  {children &&
-                    (expand === label ? <ArrowUpIcon /> : <ArrowDownIcon />)}
-                </ListItem>
-                {children && (
-                  <Collapse in={expand === label} unmountOnExit timeout="auto">
-                    <List className={classes.list} disablePadding>
-                      {children.map(({ label, Icon, path }) => (
-                        <ListItem
-                          className={classes.listItem}
-                          key={label}
-                          component={Link}
-                          to={getRoutePath(path)}
-                          button>
-                          <ListItemIcon
-                            classes={{ root: classes.itemIconRoot }}>
-                            {<Icon />}
-                          </ListItemIcon>
-                          <ListItemText
-                            primary={label}
-                            primaryTypographyProps={{
-                              className: classes.itemText,
-                            }}
-                          />
-                        </ListItem>
-                      ))}
-                    </List>
-                  </Collapse>
-                )}
-              </Fragment>
-            ))}
+            {menuItems(userProfile, userPermissions).map(
+              ({ label, Icon, path, children }) => (
+                <Fragment key={label}>
+                  <ListItem
+                    button
+                    className={classes.listItem}
+                    component={children ? undefined : Link}
+                    to={getRoutePath(path)}
+                    data-test={label}
+                    onClick={children ? handleExpandClick(label) : null}>
+                    <ListItemIcon classes={{ root: classes.itemIconRoot }}>
+                      {<Icon />}
+                    </ListItemIcon>
+                    <ListItemText
+                      primaryTypographyProps={{
+                        className: classes.itemText,
+                      }}
+                      primary={label}
+                    />
+                    {children &&
+                      (expand === label ? <ArrowUpIcon /> : <ArrowDownIcon />)}
+                  </ListItem>
+                  {children && (
+                    <Collapse
+                      in={expand === label}
+                      unmountOnExit
+                      timeout="auto">
+                      <List className={classes.list} disablePadding>
+                        {children.map(({ label, Icon, path }) => (
+                          <ListItem
+                            className={classes.listItem}
+                            data-test={label}
+                            key={label}
+                            component={Link}
+                            to={getRoutePath(path)}
+                            button>
+                            <ListItemIcon
+                              classes={{ root: classes.itemIconRoot }}>
+                              {<Icon />}
+                            </ListItemIcon>
+                            <ListItemText
+                              primary={label}
+                              primaryTypographyProps={{
+                                className: classes.itemText,
+                              }}
+                            />
+                          </ListItem>
+                        ))}
+                      </List>
+                    </Collapse>
+                  )}
+                </Fragment>
+              )
+            )}
           </List>
         </div>
         <div>
-          <Divider />
           <div className={clsx(classes.toolbar, classes.menuItem)}>
             <IconButton
+              data-test="celigoDrawerToggle"
               color="inherit"
               onClick={handleDrawerToggle}
               className={classes.drawerToggle}>

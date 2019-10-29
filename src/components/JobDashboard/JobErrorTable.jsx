@@ -16,6 +16,7 @@ import * as selectors from '../../reducers';
 import Spinner from '../Spinner';
 import CeligoTable from '../../components/CeligoTable';
 import JobErrorMessage from './JobErrorMessage';
+import { JOB_STATUS } from '../../utils/constants';
 
 const styles = () => ({
   tablePaginationRoot: { float: 'left' },
@@ -55,13 +56,36 @@ function JobErrorTable({
   const dispatch = useDispatch();
   const [enqueueSnackbar] = useEnqueueSnackbar();
   const [currentPage, setCurrentPage] = useState(0);
+  const isJobInProgress = job.status === JOB_STATUS.RETRYING;
+  const hasRetriableErrors =
+    jobErrors.filter(
+      je =>
+        !je.resolved &&
+        je._retryId &&
+        je.retryObject &&
+        je.retryObject.isRetriable
+    ).length > 0;
+  const hasUnresolvedErrors = jobErrors.filter(je => !je.resolved).length > 0;
   const jobErrorsInCurrentPage = jobErrors.slice(
     currentPage * rowsPerPage,
     (currentPage + 1) * rowsPerPage
   );
+  const hasUnresolvedErrorsInCurrentPage =
+    jobErrorsInCurrentPage.filter(je => !je.resolved).length > 0;
   const [selectedErrors, setSelectedErrors] = useState({});
-  const numSelectedErrors = Object.keys(selectedErrors).filter(
+  const selectedErrorIds = Object.keys(selectedErrors).filter(
     jobErrorId => !!selectedErrors[jobErrorId]
+  );
+  const numSelectedResolvableErrors = jobErrors.filter(
+    je => selectedErrorIds.includes(je._id) && !je.resolved
+  ).length;
+  const numSelectedRetriableErrors = jobErrors.filter(
+    je =>
+      selectedErrorIds.includes(je._id) &&
+      !je.resolved &&
+      je._retryId &&
+      je.retryObject &&
+      je.retryObject.isRetriable
   ).length;
   const [editDataOfRetryId, setEditDataOfRetryId] = useState();
   const [expanded, setExpanded] = useState({});
@@ -89,7 +113,7 @@ function JobErrorTable({
   }
 
   function handleRetryClick() {
-    if (numSelectedErrors === 0) {
+    if (selectedErrorIds.length === 0) {
       const jobsToRetry = [{ _flowJobId: job._flowJobId, _id: job._id }];
 
       dispatch(
@@ -124,9 +148,6 @@ function JobErrorTable({
       });
       onCloseClick();
     } else {
-      const selectedErrorIds = Object.keys(selectedErrors).filter(
-        jobErrorId => selectedErrors[jobErrorId]
-      );
       const selectedRetryIds = [];
 
       jobErrors.forEach(je => {
@@ -149,7 +170,7 @@ function JobErrorTable({
   }
 
   function handleResolveClick() {
-    if (numSelectedErrors === 0) {
+    if (selectedErrorIds.length === 0) {
       const jobsToResolve = [{ _flowJobId: job._flowJobId, _id: job._id }];
 
       dispatch(
@@ -184,10 +205,6 @@ function JobErrorTable({
       });
       onCloseClick();
     } else {
-      const selectedErrorIds = Object.keys(selectedErrors).filter(
-        jobErrorId => selectedErrors[jobErrorId]
-      );
-
       dispatch(
         actions.job.resolveSelectedErrors({
           jobId: job._id,
@@ -267,30 +284,38 @@ function JobErrorTable({
       ) : (
         <Fragment>
           <Button
+            data-test="retryErroredJobs"
             variant="contained"
             color="primary"
             onClick={handleRetryClick}
-            disabled={job.numError === 0}>
-            {numSelectedErrors > 0
-              ? `Retry ${numSelectedErrors} Errors`
-              : 'Retry All'}
+            disabled={isJobInProgress || !hasRetriableErrors}>
+            {numSelectedRetriableErrors > 0
+              ? `Retry ${numSelectedRetriableErrors} Errors`
+              : `${isJobInProgress ? 'Retrying' : 'Retry All'}`}
           </Button>
           <Button
+            data-test="markResolvedJobs"
             variant="contained"
             color="primary"
             onClick={handleResolveClick}
-            disabled={job.numError === 0}>
-            {numSelectedErrors > 0
-              ? `Mark Resolved ${numSelectedErrors} Errors`
+            disabled={isJobInProgress || !hasUnresolvedErrors}>
+            {numSelectedResolvableErrors > 0
+              ? `Mark Resolved ${numSelectedResolvableErrors} Errors`
               : 'Mark Resolved'}
           </Button>
           <Button
+            data-test="downloadAllErrors"
             variant="contained"
             color="primary"
-            onClick={handleDownloadAllErrorsClick}>
+            onClick={handleDownloadAllErrorsClick}
+            disabled={isJobInProgress}>
             Download All Errors
           </Button>
-          <Button variant="contained" color="primary">
+          <Button
+            data-test="uploadProcessedErrors"
+            variant="contained"
+            color="primary"
+            disabled={isJobInProgress}>
             Upload Processed Errors
           </Button>
 
@@ -322,7 +347,9 @@ function JobErrorTable({
 
               <CeligoTable
                 data={jobErrorsData}
-                selectableRows
+                selectableRows={
+                  !isJobInProgress && hasUnresolvedErrorsInCurrentPage
+                }
                 isSelectableRow={r =>
                   r.metadata && r.metadata.isParent && !r.resolved
                 }
@@ -334,6 +361,7 @@ function JobErrorTable({
                       r.similarErrors &&
                       r.similarErrors.length > 0 && (
                         <IconButton
+                          data-test="expandJobsErrors"
                           onClick={() => {
                             handleExpandCollapseClick(r._id);
                           }}>
@@ -384,6 +412,7 @@ function JobErrorTable({
                             r.retryObject &&
                             r.retryObject.isDataEditable && (
                               <IconButton
+                                data-test="editRetryData"
                                 size="small"
                                 onClick={() => {
                                   handleEditRetryDataClick(r._retryId);

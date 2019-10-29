@@ -4,11 +4,11 @@ import produce from 'immer';
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import RefreshIcon from '@material-ui/icons/RefreshOutlined';
 import IconButton from '@material-ui/core/IconButton';
-import DeleteIcon from '@material-ui/icons/DeleteForever';
 import Spinner from '../../../Spinner';
+import RefreshIcon from '../../../icons/RefreshIcon';
 import DynaSelect from '../DynaSelect';
+import DeleteIcon from '../../../icons/TrashIcon';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -103,6 +103,12 @@ export default function DynaTable(props) {
     });
   let requiredFieldsMissing = false;
 
+  if (!requiredFields.length) {
+    // If none of the options are marked as required, consider the first option as required.
+    // when there are no required fields mentioned, an empty last row will be added recursively in infinite loop.
+    requiredFields.push(optionsMap[0]);
+  }
+
   useEffect(() => {
     setShouldResetOptions(true);
   }, [shouldReset]);
@@ -155,7 +161,8 @@ export default function DynaTable(props) {
         modifiedOptions = {
           options: [
             {
-              items: op.options.map(opt => ({
+              // Filter out non-truthy values from options. IA sends [null] as initial options for select and multisselect fields
+              items: op.options.filter(Boolean).map(opt => ({
                 label: opt.text || opt.label,
                 value: opt.id || opt.value,
               })),
@@ -211,7 +218,11 @@ export default function DynaTable(props) {
     const { id, onFieldChange } = props;
 
     dispatchLocalAction({ type: 'remove', index, setChangeIdentifier });
-    onFieldChange(id, preSubmit(state));
+    const stateCopy = [...state];
+
+    stateCopy.splice(index, 1);
+
+    onFieldChange(id, preSubmit(stateCopy));
   }
 
   const handleAllUpdate = (row, id) => event => handleUpdate(row, event, id);
@@ -231,7 +242,7 @@ export default function DynaTable(props) {
                   {r.supportsRefresh && !isLoading && (
                     <RefreshIcon onClick={onFetchResource(r.id)} />
                   )}
-                  {r.supportsRefresh && isLoading && <Spinner />}
+                  {r.supportsRefresh && isLoading && <Spinner size={24} />}
                 </Grid>
               ))}
               <Grid key="delete_button_header" item />
@@ -281,6 +292,7 @@ export default function DynaTable(props) {
                 ))}
                 <Grid item key="delete_button">
                   <IconButton
+                    data-test="deleteTableRow"
                     aria-label="delete"
                     onClick={handleRemoveRow(arr.row)}
                     className={classes.margin}>

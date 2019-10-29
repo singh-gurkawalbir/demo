@@ -11,6 +11,7 @@ function DynaAction(props) {
     className,
     value,
     id,
+    dataTest,
     registerField,
     fields,
     visibleWhen,
@@ -42,7 +43,7 @@ function DynaAction(props) {
 
   return (
     <Button
-      data-test={id}
+      data-test={id || dataTest}
       variant="contained"
       color="primary"
       className={className}

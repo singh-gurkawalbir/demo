@@ -21,11 +21,28 @@ export default {
     },
     'wrapper.function': { fieldId: 'wrapper.function' },
     'wrapper.configuration': { fieldId: 'wrapper.configuration' },
-    type: { fieldId: 'type' },
-    'delta.dateField': { fieldId: 'delta.dateField' },
-    'once.booleanField': { fieldId: 'once.booleanField' },
-    'transform.expression.rules': { fieldId: 'transform.expression.rules' },
-    hooks: { formId: 'hooks' },
+    type: {
+      id: 'type',
+      type: 'select',
+      label: 'Export Type',
+      required: true,
+      options: [
+        {
+          items: [
+            { label: 'All', value: 'all' },
+            { label: 'Test', value: 'test' },
+            { label: 'Delta', value: 'delta' },
+            { label: 'Once', value: 'once' },
+          ],
+        },
+      ],
+    },
+    'delta.dateField': {
+      fieldId: 'delta.dateField',
+    },
+    'once.booleanField': {
+      fieldId: 'once.booleanField',
+    },
     advancedSettings: { formId: 'advancedSettings' },
   },
   layout: {
@@ -40,16 +57,6 @@ export default {
     ],
     type: 'collapse',
     containers: [
-      {
-        collapsed: true,
-        label: 'Would you like to transform the records?',
-        fields: ['transform.expression.rules'],
-      },
-      {
-        collapsed: true,
-        label: 'Hooks (Optional, Developers Only)',
-        fields: ['hooks'],
-      },
       { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },
     ],
   },

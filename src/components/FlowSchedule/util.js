@@ -705,4 +705,54 @@ export const setValues = data => {
   return flow;
 };
 
+export const getScheduleStartMinute = (flow, preferences) => {
+  let scheduleStartMinute = 0;
+
+  if (preferences && preferences.scheduleShiftForFlowsCreatedAfter) {
+    const changeStartMinuteForFlowsCreatedAfter = moment(
+      preferences.scheduleShiftForFlowsCreatedAfter
+    );
+
+    if (
+      !flow.createdAt ||
+      changeStartMinuteForFlowsCreatedAfter.diff(moment(flow.createdAt)) < 0
+    ) {
+      scheduleStartMinute = 10;
+    }
+  }
+
+  return scheduleStartMinute;
+};
+
+export const getPatchSet = (formVal, scheduleStartMinute) => {
+  let scheduleValue;
+
+  if (formVal.activeTab === ADVANCED_TAB) {
+    // Need to handle Cron Editor Changes
+    scheduleValue = formVal.schedule;
+  } else {
+    if (
+      formVal.startTime &&
+      formVal.endTime &&
+      !moment(formVal.startTime, 'LT').isBefore(moment(formVal.endTime, 'LT'))
+    ) {
+      // alert('End Time is invalid');
+      return false;
+    }
+
+    scheduleValue =
+      getCronExpression(formVal, scheduleStartMinute) === '? * * * * *'
+        ? ''
+        : getCronExpression(formVal, scheduleStartMinute);
+  }
+
+  return [
+    {
+      op: 'replace',
+      path: '/schedule',
+      value: scheduleValue,
+    },
+  ];
+};
+
 export default { getCronExpression, getMetadata, setValues };

@@ -1,19 +1,23 @@
-import { useRef, Fragment } from 'react';
+import { useRef, Fragment, useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { useDrag, useDrop } from 'react-dnd-cjs';
-import { makeStyles } from '@material-ui/core/styles';
-import { IconButton } from '@material-ui/core';
+import shortid from 'shortid';
 import clsx from 'clsx';
-// import actions from '../../../actions';
+import { makeStyles } from '@material-ui/core/styles';
 import itemTypes from '../itemTypes';
-import HookIcon from '../../../components/icons/HookIcon';
-import FilterIcon from '../../../components/icons/FilterIcon';
-import MapDataIcon from '../../../components/icons/MapDataIcon';
-import TransformIcon from '../../../components/icons/TransformIcon';
 import AppBlock from '../AppBlock';
-import LeftActions from '../AppBlock/LeftActions';
-import RightActions from '../AppBlock/RightActions';
-import BottomActions from '../AppBlock/BottomActions';
+import * as selectors from '../../../reducers';
+import actions from '../../../actions';
+import { getResourceSubType } from '../../../utils/resource';
+import importMappingAction from './actions/importMapping';
+import inputFilterAction from './actions/inputFilter';
+import pageProcessorHooksAction from './actions/pageProcessorHooks';
+import outputFilterAction from './actions/outputFilter';
+import transformationAction from './actions/transformation';
+import responseMapping from './actions/responseMapping';
+import responseTransformationAction from './actions/responseTransformation';
+import proceedOnFailureAction from './actions/proceedOnFailure';
 
 const useStyles = makeStyles(theme => ({
   ppContainer: {
@@ -21,33 +25,76 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center',
   },
   lineRight: {
-    minWidth: 50,
+    minWidth: 130,
   },
   lineLeft: {
     minWidth: 50,
   },
   dottedLine: {
     alignSelf: 'start',
-    marginTop: 80,
-    position: 'relative',
+    marginTop: 150,
     borderBottom: `3px dotted ${theme.palette.divider}`,
+  },
+  pending: {
+    minWidth: 50,
   },
 }));
 const PageProcessor = ({
   match,
   location,
   history,
+  flowId,
   index,
   onMove,
   isLast,
   ...pp
 }) => {
+  const pending = !!pp._connectionId;
+  const resourceId = pp._connectionId || pp._exportId || pp._importId;
   const resourceType = pp.type === 'export' ? 'exports' : 'imports';
-  const resourceId = pp.type === 'export' ? pp._exportId : pp._importId;
   const ref = useRef(null);
   const classes = useStyles();
+  const dispatch = useDispatch();
+  const [newProcessorId, setNewProcessorId] = useState(null);
+  const { merged: resource = {} } = useSelector(state =>
+    selectors.resourceData(
+      state,
+      pending ? 'connections' : resourceType,
+      resourceId
+    )
+  );
+  const createdProcessorId = useSelector(state =>
+    selectors.createdResourceId(state, newProcessorId)
+  );
+
+  // #region Add Processor on creation effect
+  useEffect(() => {
+    if (createdProcessorId) {
+      const patchSet = [
+        {
+          op: 'replace',
+          path: `/pageProcessors/${index}`,
+          value: {
+            type: pp.type,
+            [pp.type === 'export'
+              ? '_exportId'
+              : '_importId']: createdProcessorId,
+          },
+        },
+      ];
+
+      // console.log(pp, patchSet);
+      dispatch(actions.resource.patchStaged(flowId, patchSet, 'value'));
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [createdProcessorId, dispatch]);
+  // #endregion
+
+  // #region Drag and Drop handlers
   const [, drop] = useDrop({
     accept: itemTypes.PAGE_PROCESSOR,
+
     hover(item, monitor) {
       if (!ref.current) {
         return;
@@ -103,6 +150,81 @@ const PageProcessor = ({
   const opacity = isDragging ? 0.2 : 1;
 
   drag(drop(ref));
+  // #endregion
+
+  function handleBlockClick() {
+    const newId = `new-${shortid.generate()}`;
+
+    if (pending) {
+      // generate newId
+      setNewProcessorId(newId);
+      const { type, assistant } = getResourceSubType(resource);
+      const application = assistant || type;
+      const patchSet = [
+        {
+          op: 'add',
+          path: '/application',
+          value: application,
+        },
+        {
+          op: 'add',
+          path: '/resourceType',
+          value: resourceType,
+        },
+        {
+          op: 'add',
+          path: '/_connectionId',
+          value: pp._connectionId,
+        },
+      ];
+
+      // console.log('patchSet: ', patchSet);
+
+      dispatch(actions.resource.patchStaged(newId, patchSet, 'value'));
+    }
+
+    const to = pending
+      ? `${match.url}/add/pageProcessor/${newId}`
+      : `${match.url}/edit/${resourceType}/${resourceId}`;
+
+    if (match.isExact) {
+      history.push(to);
+    } else {
+      history.replace(to);
+    }
+  }
+
+  // #region Configure available processor actions
+  // TODO: Raghu, please set the isUsed prop to true any time
+  // the flow or PP contains rules for the respective action.
+  // Also, I think 'responseMapping` action is not valid for the LAST PP.
+  // The data doesnt go anywhere, so its a pointless action when PP is last.
+  const processorActions = [];
+
+  if (!pending) {
+    if (pp.type === 'export') {
+      processorActions.push(
+        inputFilterAction,
+        outputFilterAction,
+        transformationAction,
+        pageProcessorHooksAction,
+        responseMapping
+      );
+    } else {
+      processorActions.push(
+        inputFilterAction,
+        { ...importMappingAction, isUsed: false }, // example new prop
+        responseTransformationAction,
+        pageProcessorHooksAction,
+        responseMapping
+      );
+    }
+
+    if (!isLast) {
+      processorActions.push(proceedOnFailureAction);
+    }
+  }
+  // #endregion
 
   return (
     <Fragment>
@@ -112,49 +234,32 @@ const PageProcessor = ({
           <div className={clsx(classes.dottedLine, classes.lineLeft)} />
         )}
         <AppBlock
-          match={match}
-          history={history}
+          name={
+            pending ? 'Pending configuration' : resource.name || resource.id
+          }
+          onBlockClick={handleBlockClick}
+          connectorType={resource.adaptorType || resource.type}
+          assistant={resource.assistant}
           ref={ref}
-          opacity={opacity}
+          opacity={opacity} /* used for drag n drop */
+          blockType={pp.type === 'export' ? 'lookup' : 'import'}
+          flowId={flowId}
+          index={index}
+          resource={resource}
+          resourceIndex={index}
           resourceType={resourceType}
-          resourceId={resourceId}>
-          <RightActions>
-            {!isLast && (
-              <Fragment>
-                <IconButton>
-                  <MapDataIcon />
-                </IconButton>
-                <IconButton>
-                  <FilterIcon />
-                </IconButton>
-              </Fragment>
-            )}
-          </RightActions>
-
-          <BottomActions>
-            <IconButton>
-              <MapDataIcon />
-            </IconButton>
-
-            <IconButton>
-              <TransformIcon />
-            </IconButton>
-
-            <IconButton>
-              <HookIcon />
-            </IconButton>
-          </BottomActions>
-
-          <LeftActions>
-            <IconButton>
-              <FilterIcon />
-            </IconButton>
-          </LeftActions>
-        </AppBlock>
+          actions={processorActions}
+        />
         {!isLast && (
           /* Right connecting line between Page Processors is not needed
              for the last App (nothing to connect) */
-          <div className={clsx(classes.dottedLine, classes.lineRight)} />
+          <div
+            className={clsx({
+              [classes.dottedLine]: !pending,
+              [classes.lineRight]: !pending,
+              [classes.pending]: pending,
+            })}
+          />
         )}
       </div>
     </Fragment>

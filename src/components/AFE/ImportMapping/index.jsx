@@ -1,4 +1,5 @@
-import { useReducer, useState } from 'react';
+import { useReducer, useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import produce from 'immer';
 import {
@@ -9,14 +10,16 @@ import {
   DialogTitle,
   Grid,
   DialogActions,
+  Typography,
 } from '@material-ui/core';
 import deepClone from 'lodash/cloneDeep';
-import DynaAutoSuggest from '../../DynaForm/fields/DynaAutoSuggest';
+import * as selectors from '../../../reducers';
+import actions from '../../../actions';
 import MappingSettings from '../ImportMappingSettings/MappingSettingsField';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
+import DynaTypeableSelect from '../../DynaForm/fields/DynaTypeableSelect';
 import MappingUtil from '../../../utils/mapping';
-
-const CloseIcon = require('../../../components/icons/CloseIcon').default;
+import CloseIcon from '../../icons/CloseIcon';
 
 const useStyles = makeStyles(theme => ({
   modalContent: {
@@ -37,6 +40,11 @@ const useStyles = makeStyles(theme => ({
   rowContainer: {
     display: 'flex',
     padding: '0px',
+  },
+  closeButton: {
+    position: 'absolute',
+    right: theme.spacing(1),
+    top: theme.spacing(1),
   },
 }));
 
@@ -59,8 +67,6 @@ export const reducer = (state, action) => {
         draft.splice(index, 1);
         break;
       case 'UPDATE_FIELD':
-        setChangeIdentifier(changeIdentifier => changeIdentifier + 1);
-
         if (state[index]) {
           const objCopy = { ...state[index] };
           let inputValue = value;
@@ -91,11 +97,12 @@ export const reducer = (state, action) => {
           }
 
           draft[index] = objCopy;
-
-          return;
+        } else if (value) {
+          draft.push({ ...lastRowData, [field]: value });
         }
 
-        draft.push(Object.assign({}, lastRowData, { [field]: value }));
+        setChangeIdentifier(changeIdentifier => changeIdentifier + 1);
+
         break;
       case 'UPDATE_SETTING':
         setChangeIdentifier(changeIdentifier => changeIdentifier + 1);
@@ -121,24 +128,38 @@ export default function ImportMapping(props) {
   // generateFields and extractFields are passed as an array of field names
   const {
     title,
-    onClose,
+    showDialogClose,
     mappings = {},
     lookups = [],
     application,
+    resourceId,
     isStandaloneMapping,
-    generateFields = [],
     extractFields = [],
-    children,
+    onCancel,
+    onSave,
+    options = {},
   } = props;
   const [changeIdentifier, setChangeIdentifier] = useState(0);
   const [lookupState, setLookup] = useState(lookups);
   const classes = useStyles();
   const [enquesnackbar] = useEnqueueSnackbar();
-  const [state, dispatchLocalAction] = useReducer(
-    reducer,
-    mappings.fields || []
-  );
+  const [state, dispatchLocalAction] = useReducer(reducer, mappings || {});
   const mappingsTmp = deepClone(state);
+  const dispatch = useDispatch();
+  const sampleData = useSelector(state =>
+    selectors.getImportSampleData(state, resourceId)
+  );
+
+  useEffect(() => {
+    if (!sampleData) {
+      dispatch(actions.importSampleData.request(resourceId));
+    }
+  }, [sampleData, dispatch, resourceId]);
+
+  const formattedGenerateFields = MappingUtil.getFormattedGenerateData(
+    sampleData,
+    application
+  );
   const validateMapping = mappings => {
     const duplicateMappings = mappings
       .map(e => e.generate)
@@ -194,43 +215,26 @@ export default function ImportMapping(props) {
     return true;
   };
 
+  const handleCancel = () => {
+    onCancel();
+  };
+
   const handleSubmit = closeModal => {
-    const mappings = state.map(
+    let mappings = state.map(
       ({ index, hardCodedValueTmp, ...others }) => others
     );
-    // check for all mapping with useAsAnInitializeValue set to true
-    const initialValues = [];
-
-    mappings.forEach(mapping => {
-      if (mapping.useAsAnInitializeValue) {
-        initialValues.push(mapping.generate);
-      }
-    });
-    // check for initial value mapping
-    const initialMappingIndex = mappings.findIndex(
-      mapping => mapping.generate === 'celigo_initializeValues'
-    );
-
-    if (initialValues.length) {
-      if (initialMappingIndex !== -1) {
-        mappings[initialMappingIndex].hardCodedValue = initialValues.join(',');
-      } else {
-        mappings.push({
-          generate: 'celigo_initializeValues',
-          hardCodedValue: initialValues.join(','),
-        });
-      }
-    } else if (initialMappingIndex !== -1) {
-      mappings.splice(initialMappingIndex, 1);
-    }
 
     if (validateMapping(mappings)) {
-      // case where its standalone mapping. Save directly to server.
+      mappings = MappingUtil.generateMappingsForApp({
+        mappings,
+        generateFields: formattedGenerateFields,
+        appType: application,
+      });
+
       if (isStandaloneMapping) {
-        onClose(closeModal, mappings, lookupState);
+        onSave(mappings, lookupState, closeModal);
       } else {
-        // case where mapping is used in context with Form. Saving mappings and lookup to form
-        onClose(true, mappings, lookupState);
+        onSave(mappings, lookupState);
       }
     }
   };
@@ -308,8 +312,18 @@ export default function ImportMapping(props) {
 
   return (
     <Dialog fullScreen={false} open scroll="paper" maxWidth={false}>
-      {children}
-      <DialogTitle>{title}</DialogTitle>
+      {showDialogClose && (
+        <IconButton
+          aria-label="Close"
+          data-test="closeImportMapping"
+          className={classes.closeButton}
+          onClick={handleCancel}>
+          <CloseIcon />
+        </IconButton>
+      )}
+      <DialogTitle disableTypography>
+        <Typography variant="h6">{title}</Typography>
+      </DialogTitle>
       <DialogContent className={classes.modalContent}>
         <div className={classes.container}>
           <Grid container className={classes.root}>
@@ -330,8 +344,10 @@ export default function ImportMapping(props) {
                 <Grid item className={classes.rowContainer} key={mapping.index}>
                   <Grid container direction="row">
                     <Grid item xs>
-                      <DynaAutoSuggest
-                        // hardCodedValueTmp is a formatted duplicate value of hardCodedValue
+                      <DynaTypeableSelect
+                        id={`extract-${mapping.index}`}
+                        labelName="name"
+                        valueName="id"
                         value={mapping.extract || mapping.hardCodedValueTmp}
                         options={extractFields}
                         onBlur={(id, evt) => {
@@ -344,9 +360,12 @@ export default function ImportMapping(props) {
                       />
                     </Grid>
                     <Grid item xs>
-                      <DynaAutoSuggest
+                      <DynaTypeableSelect
+                        id={`generate-${mapping.index}`}
                         value={mapping.generate}
-                        options={generateFields}
+                        labelName="name"
+                        valueName="id"
+                        options={formattedGenerateFields}
                         onBlur={(id, evt) => {
                           handleFieldUpdate(
                             mapping.index,
@@ -361,6 +380,8 @@ export default function ImportMapping(props) {
                         id={mapping.index}
                         onSave={handleSettingsClose}
                         value={mapping}
+                        options={options}
+                        generate={mapping.generate}
                         application={application}
                         updateLookup={updateLookupHandler}
                         lookup={
@@ -369,10 +390,12 @@ export default function ImportMapping(props) {
                           getLookup(mapping.lookupName)
                         }
                         extractFields={extractFields}
+                        generateFields={formattedGenerateFields}
                       />
                     </Grid>
                     <Grid item key="edit_button">
                       <IconButton
+                        data-test="editMapping"
                         aria-label="delete"
                         onClick={() => {
                           handleDelete(mapping.index);
@@ -391,9 +414,8 @@ export default function ImportMapping(props) {
       <DialogActions>
         {!isStandaloneMapping && (
           <Button
-            onClick={() => {
-              onClose(false);
-            }}
+            data-test="cancelMapping"
+            onClick={handleCancel}
             variant="contained"
             size="small"
             color="secondary">
@@ -402,6 +424,7 @@ export default function ImportMapping(props) {
         )}
         {isStandaloneMapping && (
           <Button
+            data-test="saveMapping"
             onClick={() => handleSubmit(false)}
             variant="contained"
             size="small"
@@ -410,6 +433,7 @@ export default function ImportMapping(props) {
           </Button>
         )}
         <Button
+          data-test="saveAndCloseMapping"
           onClick={() => handleSubmit(true)}
           variant="contained"
           size="small"

@@ -4,12 +4,16 @@ import CollapsedComponents from './CollapsedComponents';
 import ColumnComponents from './ColumnComponents';
 import TabComponent from './TabComponent';
 
-// TODO: Azhar please review this styling
+// TODO: Checked with little change
 const useStyles = makeStyles({
   fieldsContainer: {
     display: 'flex',
     flexDirection: 'column',
     width: '100%',
+    '& > div + div': {
+      width: '100%',
+      textAlign: 'left',
+    },
   },
   container: {
     display: 'flex',
@@ -18,9 +22,7 @@ const useStyles = makeStyles({
   child: {
     flexBasis: '100%',
     paddingRight: 10,
-    '&:last-child': {
-      paddingRight: 0,
-    },
+    marginBottom: 10,
   },
 });
 const getCorrespondingFieldMap = (fields, fieldMap) =>

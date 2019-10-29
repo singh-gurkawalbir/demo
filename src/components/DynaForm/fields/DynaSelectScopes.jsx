@@ -32,11 +32,13 @@ const TransferListModal = props => {
       <TransferList {...transferListProps} />
       <Fragment>
         <Button
+          data-test="saveSelectedScopes"
           variant="contained"
           onClick={() => onFieldChange(id, selectedScopes)}>
           Save
         </Button>
         <Button
+          data-test="saveAndCloseSelectedScopes"
           variant="contained"
           color="primary"
           onClick={() => {

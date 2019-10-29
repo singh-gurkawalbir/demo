@@ -63,6 +63,9 @@ code{
 html, body {
   font-family: Roboto400, sans-serif;
   -webkit-font-smoothing: antialiased;
+  /*  Adding this for mobile responsive but still
+      but how it behaves if table wrapper doesn't have scroll*/
+  overflow-x: hidden;
 }
 
 /*
@@ -95,6 +98,7 @@ html, body {
 a{
   text-decoration: none;
   color: #00A1E1;
+  cursor: pointer;
 }
 .layout > div{
   margin-bottom: 0px !Important;

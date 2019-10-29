@@ -6,6 +6,7 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import Chip from '@material-ui/core/Chip';
 import ArrowDownIcon from '../../icons/ArrowDownIcon';
+import ErroredMessageComponent from './ErroredMessageComponent';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -56,6 +57,8 @@ export default function DynaMultiSelect(props) {
     label,
     onFieldChange,
     valueDelimiter,
+    isValid,
+    required,
   } = props;
   const classes = useStyles();
   const items = options.reduce(
@@ -102,26 +105,35 @@ export default function DynaMultiSelect(props) {
   };
 
   return (
-    <FormControl key={id} disabled={disabled} className={classes.root}>
-      <InputLabel htmlFor={id}>{label}</InputLabel>
-      <Select
-        multiple
-        data-test={id}
-        value={processedValue}
-        IconComponent={ArrowDownIcon}
-        onChange={evt => {
-          onFieldChange(id, evt.target.value);
-        }}
-        input={<Input name={name} id={id} />}
-        renderValue={selected => (
-          <div className={classes.chips}>
-            {selected &&
-              typeof selected.map === 'function' &&
-              selected.map(createChip)}
-          </div>
-        )}>
-        {items}
-      </Select>
-    </FormControl>
+    <div>
+      <FormControl
+        key={id}
+        disabled={disabled}
+        error={!isValid}
+        required={required}
+        className={classes.root}>
+        <InputLabel htmlFor={id}>{label}</InputLabel>
+        <Select
+          multiple
+          data-test={id}
+          value={processedValue}
+          IconComponent={ArrowDownIcon}
+          onChange={evt => {
+            onFieldChange(id, evt.target.value);
+          }}
+          input={<Input name={name} id={id} />}
+          renderValue={selected => (
+            <div className={classes.chips}>
+              {selected &&
+                typeof selected.map === 'function' &&
+                selected.map(createChip)}
+            </div>
+          )}>
+          {items}
+        </Select>
+      </FormControl>
+
+      <ErroredMessageComponent {...props} />
+    </div>
   );
 }

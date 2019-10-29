@@ -25,6 +25,9 @@ export default function DynaNSSavedSearch(props) {
     defaultValue,
     onFieldChange,
     id,
+    isValid,
+    required,
+    disabled,
   } = props;
   const searchIdOptions = {
     placeholder: 'Please select a saved search',
@@ -63,7 +66,11 @@ export default function DynaNSSavedSearch(props) {
 
   return (
     <div>
-      <FormControl component="fieldset">
+      <FormControl
+        error={!isValid}
+        required={required}
+        disabled={disabled}
+        component="fieldset">
         <FormLabel component="legend">Saved search type</FormLabel>
         <RadioGroup
           name="searchType"
@@ -71,10 +78,14 @@ export default function DynaNSSavedSearch(props) {
           value={searchType}
           data-test={id}
           onChange={handleChange}>
-          <FormControlLabel value="public" control={<Radio />} label="Public" />
+          <FormControlLabel
+            value="public"
+            control={<Radio color="primary" />}
+            label="Public"
+          />
           <FormControlLabel
             value="private"
-            control={<Radio />}
+            control={<Radio color="primary" />}
             label="Private"
           />
         </RadioGroup>

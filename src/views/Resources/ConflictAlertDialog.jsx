@@ -31,8 +31,8 @@ export default class ConflictAlertDialog extends Component {
         disableEscapeKeyDown
         maxWidth="sm"
         aria-labelledby="confirmation-dialog-title">
-        <DialogTitle id="confirmation-dialog-title">
-          Change Notification
+        <DialogTitle id="confirmation-dialog-title" disableTypography>
+          <Typography variant="h6">Change Notification</Typography>
         </DialogTitle>
         <DialogContent>
           <Typography variant="body1">
@@ -67,10 +67,17 @@ export default class ConflictAlertDialog extends Component {
           </Table>
         </DialogContent>
         <DialogActions>
-          <Button variant="contained" onClick={handleCancel}>
+          <Button
+            data-test="cancelAndReview"
+            variant="contained"
+            onClick={handleCancel}>
             Cancel and Review
           </Button>
-          <Button variant="contained" onClick={handleCommit} color="secondary">
+          <Button
+            data-test="completeCommit"
+            variant="contained"
+            onClick={handleCommit}
+            color="secondary">
             Complete Commit
           </Button>
         </DialogActions>

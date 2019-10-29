@@ -15,12 +15,23 @@ const useStyles = makeStyles(() => ({
 }));
 
 export default function Connections(props) {
-  const { match } = props;
+  const { match, storeId } = props;
   const { integrationId } = match.params;
   const classes = useStyles();
   const [showRegisterConnDialog, setShowRegisterConnDialog] = useState(false);
-  const list = useSelector(state =>
-    selectors.integrationConnectionList(state, integrationId)
+  const connections = useSelector(state => {
+    if (storeId) {
+      return selectors.integrationAppConnectionList(
+        state,
+        integrationId,
+        storeId
+      );
+    }
+
+    return selectors.integrationConnectionList(state, integrationId);
+  });
+  const integration = useSelector(state =>
+    selectors.resource(state, 'integrations', integrationId)
   );
   const permissions = useSelector(state => selectors.userPermissions(state));
   const accountAccessLevel = permissions.accessLevel;
@@ -42,17 +53,19 @@ export default function Connections(props) {
         />
       )}
       <LoadResources required resources="connections">
-        {integrationId && integrationId !== 'none' && showRegisterButton && (
-          <Button
-            className={classes.registerButton}
-            onClick={() => setShowRegisterConnDialog(true)}>
-            Register Connections
-          </Button>
-        )}
-
+        {integrationId &&
+          integrationId !== 'none' &&
+          !(integration && integration._connectorId) &&
+          showRegisterButton && (
+            <Button
+              className={classes.registerButton}
+              onClick={() => setShowRegisterConnDialog(true)}>
+              Register Connections
+            </Button>
+          )}
         <CeligoTable
           resourceType="connections"
-          data={list && list.resources}
+          data={connections}
           {...metadata}
           actionProps={{ integrationId }}
         />

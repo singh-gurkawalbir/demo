@@ -21,8 +21,8 @@ const useStyles = makeStyles({
 export default function JavaScriptEditor(props) {
   const { editorId, entryFunction, scriptId } = props;
   const classes = useStyles(props);
-  const { data, result, error, violations } = useSelector(state =>
-    selectors.editor(state, editorId)
+  const { data, result, error, violations, initChangeIdentifier } = useSelector(
+    state => selectors.editor(state, editorId)
   );
   const dispatch = useDispatch();
   const handleDataChange = data => {
@@ -31,6 +31,7 @@ export default function JavaScriptEditor(props) {
 
   // TODO : props.data is causing a recursive call ..its because of a selector merging patches and creating
   // new instances ?
+  // TODO: @Aditya Scripts is not loading when props.data gets refreshed
   const handleInit = useCallback(() => {
     dispatch(
       actions.editor.init(editorId, 'javascript', {
@@ -40,8 +41,7 @@ export default function JavaScriptEditor(props) {
         autoEvaluate: true,
       })
     );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, editorId, scriptId, entryFunction]);
+  }, [dispatch, editorId, scriptId, entryFunction, props.data]);
 
   useEffect(() => {
     handleInit();
@@ -51,7 +51,10 @@ export default function JavaScriptEditor(props) {
   return (
     <PanelGrid className={classes.template}>
       <PanelGridItem gridArea="rule">
-        <JavaScriptPanel editorId={editorId} />
+        <JavaScriptPanel
+          key={`${editorId}-${initChangeIdentifier}`}
+          editorId={editorId}
+        />
       </PanelGridItem>
       <PanelGridItem gridArea="data">
         <PanelTitle title="Function Input" />

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import TextField from '@material-ui/core/TextField';
 import { useDispatch } from 'react-redux';
 import { FormContext } from 'react-forms-processor/dist';
@@ -8,7 +8,7 @@ import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 
 function DynaUploadFile(props) {
   const {
-    options,
+    options = '',
     disabled,
     id,
     isValid,
@@ -19,6 +19,7 @@ function DynaUploadFile(props) {
     required,
     label,
     formContext,
+    onFieldChange,
   } = props;
   const dispatch = useDispatch();
   const [enqueueSnackbar] = useEnqueueSnackbar();
@@ -63,6 +64,15 @@ function DynaUploadFile(props) {
     );
   };
 
+  useEffect(() => {
+    // resets sample data on change of file type
+    if (options) {
+      dispatch(actions.sampleData.reset(resourceId));
+      onFieldChange(id, '');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, id, options, resourceId]);
+
   /*
    * Gets the uploaded file and reads it based on the options provided
    */
@@ -70,6 +80,7 @@ function DynaUploadFile(props) {
     const file = event.target.files[0];
 
     if (!file) return;
+    onFieldChange(id, file.name);
     const fileReaderOptions = getFileReaderOptions(options);
     const fileReader = new FileReader();
 
@@ -93,7 +104,7 @@ function DynaUploadFile(props) {
     <TextField
       inputProps={{ accept: acceptFileType }}
       InputLabelProps={{ shrink: true }}
-      key={id}
+      key={id + options}
       name={name}
       data-test={id}
       label={label}

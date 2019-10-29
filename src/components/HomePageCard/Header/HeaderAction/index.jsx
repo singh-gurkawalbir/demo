@@ -77,6 +77,7 @@ function HeaderAction(props) {
         <NotificationsIcon />
       </div>
       <IconButton
+        data-test="openHeaderActionMenu"
         aria-label="more"
         aria-controls="long-menu"
         aria-haspopup="true"

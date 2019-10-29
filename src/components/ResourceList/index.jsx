@@ -150,6 +150,7 @@ class ResourceList extends Component {
 
           {list.filtered > list.count && (
             <Button
+              data-test="showMoreResults"
               onClick={handleMore(list.count + 2)}
               variant="raised"
               size="medium"

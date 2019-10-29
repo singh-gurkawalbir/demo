@@ -5,6 +5,7 @@ import TestAndSaveButton from './TestAndSaveButton';
 import OAuthButton from './OAuthButton';
 import NetsuiteValidateButton from './NetsuiteValidateButton';
 import SaveFileDefinitionButton from './SaveFileDefinitionButton';
+import IntegrationSettingsSaveButton from './IntegrationSettingsSaveButton';
 
 export default {
   cancel: CancelButton,
@@ -14,4 +15,5 @@ export default {
   oauth: OAuthButton,
   validate: NetsuiteValidateButton,
   savedefinition: SaveFileDefinitionButton,
+  saveintegrationsettings: IntegrationSettingsSaveButton,
 };

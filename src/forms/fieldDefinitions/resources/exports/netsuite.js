@@ -3,12 +3,6 @@ export default {
   'netsuite.distributed.recordType': {
     label: 'Record type',
     mode: 'suitescript',
-    defaultValue: r =>
-      (r &&
-        r.netsuite &&
-        r.netsuite.distributed &&
-        r.netsuite.distributed.recordType) ||
-      '',
     required: true,
     type: 'refreshableselect',
     resourceType: 'recordTypes',
@@ -19,12 +13,6 @@ export default {
   'netsuite.restlet.recordType': {
     label: 'Record type',
     mode: 'suitescript',
-    defaultValue: r =>
-      (r &&
-        r.netsuite &&
-        r.netsuite.restlet &&
-        r.netsuite.restlet.recordType) ||
-      '',
     required: true,
     type: 'refreshableselect',
     resourceType: 'recordTypes',
@@ -34,13 +22,6 @@ export default {
   'netsuite.webservices.recordType': {
     label: 'Record type',
     mode: 'webservices',
-    defaultValue: r =>
-      (r &&
-        r.netsuite &&
-        r.netsuite.searches &&
-        r.netsuite.searches[0] &&
-        r.netsuite.searches[0].recordType) ||
-      '',
     required: true,
     type: 'refreshableselect',
     resourceType: 'recordTypes',
@@ -72,10 +53,12 @@ export default {
       },
     ],
     defaultValue: r =>
-      r &&
-      r.netsuite &&
-      r.netsuite.distributed &&
-      r.netsuite.distributed.executionContext,
+      (r &&
+        r.netsuite &&
+        r.netsuite.distributed &&
+        r.netsuite.distributed.executionContext) ||
+      'userinterface,webstore',
+    valueDelimiter: ',',
     required: true,
     helpText:
       'The invited user will have permissions to manage the integrations selected here.',
@@ -104,10 +87,12 @@ export default {
       },
     ],
     defaultValue: r =>
-      r &&
-      r.netsuite &&
-      r.netsuite.distributed &&
-      r.netsuite.distributed.executionType,
+      (r &&
+        r.netsuite &&
+        r.netsuite.distributed &&
+        r.netsuite.distributed.executionType) ||
+      'create,edit,xedit',
+    valueDelimiter: ',',
     required: true,
     helpText:
       'The invited user will have permissions to manage the integrations selected here.',
@@ -120,19 +105,12 @@ export default {
     multiselect: true,
     placeholder: 'Please select Sublists',
     helpKey: 'export.netsuite.sublists',
-    defaultValue: r =>
-      r &&
-      r.netsuite &&
-      r.netsuite.distributed &&
-      r.netsuite.distributed.sublists,
     connectionId: r => r && r._connectionId,
   },
   // search id
   'netsuite.restlet.searchId': {
     type: 'nssavedsearch',
     mode: 'suitescript',
-    defaultValue: r =>
-      r && r.netsuite && r.netsuite.restlet && r.netsuite.restlet.searchId,
     resourceType: 'savedSearches',
     required: true,
     connectionId: r => r && r._connectionId,
@@ -175,9 +153,13 @@ export default {
     type: 'checkbox',
     inverse: true,
     label: 'Group rows',
-    defaultValue: r => r && r.netsuite && r.netsuite && r.netsuite.skipGrouping,
-  },
+    defaultValue: r => {
+      const skipGrouping =
+        r && r.netsuite && r.netsuite && r.netsuite.skipGrouping;
 
+      return skipGrouping === undefined ? true : skipGrouping;
+    },
+  },
   'netsuite.netsuiteExportlabel': {
     label: 'What would you like to export from NetSuite?',
     type: 'labeltitle',

@@ -1,5 +1,3 @@
-import { adaptorTypeMap } from '../../../utils/resource';
-
 export default {
   optionsHandler: (fieldId, fields) => {
     if (fieldId === 'mapping') {
@@ -30,7 +28,6 @@ export default {
     'rest.lookups': { fieldId: 'rest.lookups', visible: false },
     mapping: {
       fieldId: 'mapping',
-      application: adaptorTypeMap.RESTImport,
       refreshOptionsOnChangesTo: ['rest.lookups'],
     },
     'rest.relativeURI': { fieldId: 'rest.relativeURI' },
@@ -89,7 +86,6 @@ export default {
     'rest.sampleData': { fieldId: 'rest.sampleData' },
     dataMappings: { formId: 'dataMappings' },
     advancedSettings: { formId: 'advancedSettings' },
-    hooks: { formId: 'hooks' },
   },
   layout: {
     fields: [
@@ -125,11 +121,6 @@ export default {
     type: 'collapse',
     containers: [
       { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },
-      {
-        collapsed: false,
-        label: 'Hooks (Optional, Developers Only)',
-        fields: ['hooks'],
-      },
     ],
   },
 };

@@ -8,36 +8,58 @@ export default {
       retValues['/test/limit'] = 1;
     }
 
-    if (retValues['/http/paging/method'] !== 'page') {
+    if (retValues['/http/paging/method'] === 'page') {
+      retValues['/http/paging/path'] = undefined;
+      retValues['/http/paging/relativeURI'] = undefined;
+      retValues['/http/paging/linkHeaderRelation'] = undefined;
+      retValues['/http/paging/skip'] = undefined;
+      retValues['/http/paging/pathAfterFirstRequest'] = undefined;
+      retValues['/http/paging/resourcePath'] = undefined;
+      retValues['/http/paging/token'] = undefined;
+    } else if (retValues['/http/paging/method'] === 'url') {
+      retValues['/http/paging/relativeURI'] = undefined;
+      retValues['/http/paging/linkHeaderRelation'] = undefined;
+      retValues['/http/paging/skip'] = undefined;
+      retValues['/http/paging/pathAfterFirstRequest'] = undefined;
+      retValues['/http/paging/resourcePath'] = undefined;
+      retValues['/http/paging/token'] = undefined;
       retValues['/http/paging/page'] = undefined;
       retValues['/http/paging/maxPagePath'] = undefined;
       retValues['/http/paging/maxCountPath'] = undefined;
-    }
-
-    if (retValues['/http/paging/method'] !== 'url') {
+    } else if (retValues['/http/paging/method'] === 'relativeuri') {
       retValues['/http/paging/path'] = undefined;
-    }
-
-    if (retValues['/http/paging/method'] !== 'relativeuri') {
-      retValues['/http/paging/relativeURI'] = undefined;
-    }
-
-    if (retValues['/http/paging/method'] !== 'linkheader') {
       retValues['/http/paging/linkHeaderRelation'] = undefined;
-    }
-
-    if (retValues['/http/paging/method'] !== 'skip') {
       retValues['/http/paging/skip'] = undefined;
-      retValues['/http/paging/maxPagePath'] = undefined;
-      retValues['/http/paging/maxCountPath'] = undefined;
-    }
-
-    if (retValues['/http/paging/method'] !== 'token') {
-      retValues['/http/paging/path'] = undefined;
-      retValues['/http/paging/token'] = undefined;
-      retValues['/http/paging/relativeURI'] = undefined;
       retValues['/http/paging/pathAfterFirstRequest'] = undefined;
       retValues['/http/paging/resourcePath'] = undefined;
+      retValues['/http/paging/token'] = undefined;
+      retValues['/http/paging/page'] = undefined;
+      retValues['/http/paging/maxPagePath'] = undefined;
+      retValues['/http/paging/maxCountPath'] = undefined;
+    } else if (retValues['/http/paging/method'] === 'linkheader') {
+      retValues['/http/paging/path'] = undefined;
+      retValues['/http/paging/relativeURI'] = undefined;
+      retValues['/http/paging/skip'] = undefined;
+      retValues['/http/paging/pathAfterFirstRequest'] = undefined;
+      retValues['/http/paging/resourcePath'] = undefined;
+      retValues['/http/paging/token'] = undefined;
+      retValues['/http/paging/page'] = undefined;
+      retValues['/http/paging/maxPagePath'] = undefined;
+      retValues['/http/paging/maxCountPath'] = undefined;
+    } else if (retValues['/http/paging/method'] === 'skip') {
+      retValues['/http/paging/path'] = undefined;
+      retValues['/http/paging/relativeURI'] = undefined;
+      retValues['/http/paging/linkHeaderRelation'] = undefined;
+      retValues['/http/paging/pathAfterFirstRequest'] = undefined;
+      retValues['/http/paging/resourcePath'] = undefined;
+      retValues['/http/paging/token'] = undefined;
+      retValues['/http/paging/page'] = undefined;
+    } else if (retValues['/http/paging/method'] === 'token') {
+      retValues['/http/paging/linkHeaderRelation'] = undefined;
+      retValues['/http/paging/skip'] = undefined;
+      retValues['/http/paging/page'] = undefined;
+      retValues['/http/paging/maxPagePath'] = undefined;
+      retValues['/http/paging/maxCountPath'] = undefined;
     }
 
     return {
@@ -59,7 +81,10 @@ export default {
     'http.errorMediaType': { fieldId: 'http.errorMediaType' },
     'http.response.resourcePath': { fieldId: 'http.response.resourcePath' },
     'http.response.successPath': { fieldId: 'http.response.successPath' },
-    'http.response.successValues': { fieldId: 'http.response.successValues' },
+    'http.response.successValues': {
+      fieldId: 'http.response.successValues',
+      omitWhenValueIs: [''],
+    },
     'http.response.errorPath': { fieldId: 'http.response.errorPath' },
     type: {
       id: 'type',
@@ -73,6 +98,7 @@ export default {
             { label: 'All', value: 'all' },
             { label: 'Test', value: 'test' },
             { label: 'Delta', value: 'delta' },
+            { label: 'Once', value: 'once' },
           ],
         },
       ],
@@ -84,6 +110,25 @@ export default {
     'delta.lagOffset': {
       fieldId: 'delta.lagOffset',
       visibleWhen: [{ field: 'type', is: ['delta'] }],
+    },
+    'http.once.relativeURI': {
+      fieldId: 'http.once.relativeURI',
+      visibleWhen: [{ field: 'type', is: ['once'] }],
+    },
+    'http.once.body': {
+      fieldId: 'http.once.body',
+      visibleWhen: [{ field: 'type', is: ['once'] }],
+    },
+    'http.once.method': {
+      fieldId: 'http.once.method',
+      visibleWhen: [{ field: 'type', is: ['once'] }],
+    },
+    'once.booleanField': {
+      id: 'once.booleanField',
+      type: 'text',
+      label: 'Boolean Field',
+      helpkey: 'once.booleanField',
+      visibleWhen: [{ field: 'type', is: ['once'] }],
     },
     'http.paging.method': { fieldId: 'http.paging.method' },
     'http.paging.skip': { fieldId: 'http.paging.skip' },
@@ -105,9 +150,6 @@ export default {
     },
     'http.paging.lastPagePath': { fieldId: 'http.paging.lastPagePath' },
     'http.paging.lastPageValues': { fieldId: 'http.paging.lastPageValues' },
-    rawData: { fieldId: 'rawData' },
-    transform: { fieldId: 'transform' },
-    hooks: { formId: 'hooks' },
     advancedSettings: { formId: 'advancedSettings' },
     configureAsyncHelper: { fieldId: 'configureAsyncHelper' },
     'http._asyncHelperId': {
@@ -132,7 +174,10 @@ export default {
       'type',
       'delta.dateFormat',
       'delta.lagOffset',
-      'rawData',
+      'once.booleanField',
+      'http.once.relativeURI',
+      'http.once.method',
+      'http.once.body',
     ],
     type: 'collapse',
     containers: [
@@ -158,16 +203,6 @@ export default {
       },
       {
         collapsed: true,
-        label: 'Would you like to transform the records?',
-        fields: ['transform'],
-      },
-      {
-        collapsed: true,
-        label: 'Hooks (Optional, Developers Only)',
-        fields: ['hooks'],
-      },
-      {
-        collapsed: 'true',
         label: 'Advanced',
         fields: [
           'advancedSettings',

@@ -1,9 +1,9 @@
 import { useState, useEffect, Fragment } from 'react';
 import Input from '@material-ui/core/Input';
 import { makeStyles } from '@material-ui/core/styles';
-import FormHelperText from '@material-ui/core/FormHelperText';
-import FormLabel from '@material-ui/core/FormLabel';
-import FormControl from '@material-ui/core/FormControl';
+import { IconButton, FormControl, FormLabel } from '@material-ui/core';
+import ErroredMessageComponent from './ErroredMessageComponent';
+import CloseIcon from '../../icons/CloseIcon';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -25,19 +25,17 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function DynaKeyValue(props) {
+export function KeyValueComponent(props) {
   const {
-    id,
     value,
-    onFieldChange,
+    onUpdate,
     label,
+    dataTest,
     keyName = 'key',
     valueName = 'value',
-    description,
-    errorMessages,
-    isValid,
+    classes,
+    showDelete,
   } = props;
-  const classes = useStyles();
   const [values, setValues] = useState([]);
   const [rowInd, setRowInd] = useState(0);
   const [isKey, setIsKey] = useState(true);
@@ -48,6 +46,16 @@ export default function DynaKeyValue(props) {
     }
   }, [value]);
 
+  const handleDelete = row => () => {
+    const valueTmp = [...values];
+
+    if (valueTmp[row]) {
+      valueTmp.splice(row, 1);
+      setValues(valueTmp);
+      onUpdate(valueTmp);
+    }
+  };
+
   const handleUpdate = (row, event, field) => {
     const { value } = event.target;
 
@@ -57,7 +65,9 @@ export default function DynaKeyValue(props) {
       values.push({ [field]: value });
     }
 
-    const removedEmptyValues = values.filter(value => value.key || value.value);
+    const removedEmptyValues = values.filter(
+      value => value[keyName] || value[valueName]
+    );
 
     setValues(removedEmptyValues);
 
@@ -67,7 +77,7 @@ export default function DynaKeyValue(props) {
         : removedEmptyValues.length - 1
     );
     setIsKey(field === keyName);
-    onFieldChange(id, removedEmptyValues);
+    onUpdate(removedEmptyValues);
   };
 
   const tableData = values ? values.map((r, n) => ({ ...r, row: n })) : [];
@@ -75,7 +85,7 @@ export default function DynaKeyValue(props) {
   const handleValueUpdate = row => event => handleUpdate(row, event, valueName);
 
   return (
-    <div data-test={id} className={classes.container}>
+    <div data-test={dataTest} className={classes.container}>
       <FormLabel className={classes.label}>{label}</FormLabel>
       <Fragment key={`${rowInd}-${isKey}`}>
         {tableData.map(r => (
@@ -98,6 +108,14 @@ export default function DynaKeyValue(props) {
                 onChange={handleValueUpdate(r.row)}
               />
             </FormControl>
+            {showDelete && (
+              <IconButton
+                data-test="deleteKeyValue"
+                aria-label="delete"
+                onClick={handleDelete(r.row)}>
+                <CloseIcon />
+              </IconButton>
+            )}
           </div>
         ))}
       </Fragment>
@@ -114,10 +132,33 @@ export default function DynaKeyValue(props) {
           className={classes.input}
           onChange={handleValueUpdate()}
         />
+        {showDelete && (
+          <IconButton data-test="deleteKeyValue" aria-label="delete" disabled>
+            <CloseIcon />
+          </IconButton>
+        )}
       </div>
-      <FormHelperText className={classes.helpText}>
-        {isValid ? description : errorMessages}
-      </FormHelperText>
     </div>
+  );
+}
+
+export default function DynaKeyValue(props) {
+  const { id, onFieldChange } = props;
+  const onUpdate = values => {
+    onFieldChange(id, values);
+  };
+
+  const classes = useStyles();
+
+  return (
+    <Fragment>
+      <KeyValueComponent
+        {...props}
+        dataTest={id}
+        onUpdate={onUpdate}
+        classes={classes}
+      />
+      <ErroredMessageComponent {...props} />
+    </Fragment>
   );
 }

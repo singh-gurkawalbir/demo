@@ -4,8 +4,13 @@ export default {
   // agent list handleBars evaluated its a dynamicList
   _borrowConcurrencyFromConnectionId: {
     resourceType: 'connections',
-    filter: r => ({ type: r.type }),
-    excludeFilter: r => ({ _id: r._id }),
+    filter: r => ({
+      $and: [
+        { type: r.type },
+        { _id: { $ne: r._id } },
+        { _connectorId: { $exists: false } },
+      ],
+    }),
     type: 'selectresource',
     label: 'Borrow Concurrency From',
   },
@@ -22,28 +27,6 @@ export default {
   scope: {
     type: 'selectscopes',
     label: 'Configure Scopes',
-  },
-  type: {
-    type: 'select',
-    label: 'Type',
-    options: [
-      {
-        items: [
-          { label: 'NetSuite', value: 'netsuite' },
-          { label: 'Salesforce', value: 'salesforce' },
-          { label: 'Ftp', value: 'ftp' },
-          { label: 'S3', value: 's3' },
-          { label: 'Rest', value: 'rest' },
-          { label: 'Wrapper', value: 'wrapper' },
-          { label: 'Http', value: 'http' },
-          { label: 'PostgreSQL', value: 'postgresql' },
-          { label: 'Mongodb', value: 'mongodb' },
-          { label: 'MySQL', value: 'mysql' },
-          { label: 'Microsoft SQL', value: 'mssql' },
-          { label: 'As2', value: 'as2' },
-        ],
-      },
-    ],
   },
   name: {
     type: 'text',
@@ -336,15 +319,19 @@ export default {
       },
     ],
   },
-
+  'rdbms.options': {
+    type: 'keyvalue',
+    keyName: 'name',
+    valueName: 'value',
+    valueType: 'keyvalue',
+    label: 'Configure Properties',
+  },
   'rdbms.concurrencyLevel': {
     label: 'Concurrency Level',
     type: 'select',
-    defaultValue: r => r && r.rdbms && r.rdbms.concurrencyLevel,
     options: [
       {
         items: [
-          { label: '0', value: 0 },
           { label: '1', value: 1 },
           { label: '2', value: 2 },
           { label: '3', value: 3 },
@@ -373,6 +360,12 @@ export default {
         ],
       },
     ],
+    visibleWhen: [
+      {
+        field: '_borrowConcurrencyFromConnectionId',
+        is: [''],
+      },
+    ],
   },
   // #endregion rdbms
   // #region rest
@@ -382,13 +375,14 @@ export default {
     options: [
       {
         items: [
-          { label: 'Json', value: 'json' },
-          { label: 'Urlencoded', value: 'urlencoded' },
-          { label: 'Xml', value: 'xml' },
-          { label: 'Csv', value: 'csv' },
+          { label: 'JSON', value: 'json' },
+          { label: 'URL Encoded', value: 'urlencoded' },
+          { label: 'CSV', value: 'csv' },
         ],
       },
     ],
+    defaultValue: r =>
+      r && r.rest && r.rest.mediaType ? r.rest.mediaType : 'json',
   },
   'rest.baseURI': {
     type: 'text',
@@ -436,7 +430,7 @@ export default {
   },
   'rest.disableStrictSSL': {
     type: 'checkbox',
-    label: 'Rest disable Strict SSL',
+    label: 'Disable Strict SSL',
   },
   'rest.authType': {
     type: 'select',
@@ -458,7 +452,8 @@ export default {
   },
   'rest.authHeader': {
     type: 'text',
-    label: 'Rest auth Header',
+    label: 'Header Name',
+    defaultValue: r => (r && r.rest && r.rest.authHeader) || 'Authorization',
   },
   'rest.retryHeader': {
     type: 'text',
@@ -467,6 +462,8 @@ export default {
   'rest.authScheme': {
     type: 'select',
     label: 'Scheme',
+    defaultValue: r =>
+      r && r.rest && r.rest.authScheme ? r.rest.authScheme : 'Bearer',
     options: [
       {
         items: [
@@ -594,6 +591,7 @@ export default {
   'rest.refreshTokenMediaType': {
     type: 'select',
     label: 'Refresh Token Media Type',
+    defaultValue: r => (r && r.rest && r.rest.refreshTokenMediaType) || 'json',
     options: [
       {
         items: [
@@ -624,7 +622,7 @@ export default {
   },
   'rest.pingSuccessValues': {
     type: 'text',
-    valueDelimiter: ',',
+    delimiter: ',',
     label: 'Ping Success Values',
   },
   'rest.pingFailurePath': {
@@ -640,12 +638,10 @@ export default {
   },
   'rest.concurrencyLevel': {
     type: 'select',
-    label: 'Rest concurrency Level',
-    defaultValue: r => r && r.rest && r.rest.concurrencyLevel,
+    label: 'Concurrency Level',
     options: [
       {
         items: [
-          { label: '0', value: 0 },
           { label: '1', value: 1 },
           { label: '2', value: 2 },
           { label: '3', value: 3 },
@@ -717,6 +713,7 @@ export default {
     type: 'select',
     label: 'Media Type',
     required: true,
+    defaultValue: r => (r && r.http && r.http.mediaType) || 'json',
     options: [
       {
         items: [
@@ -755,11 +752,9 @@ export default {
   'http.concurrencyLevel': {
     label: 'Concurrency Level',
     type: 'select',
-    defaultValue: r => r && r.http && r.http.concurrencyLevel,
     options: [
       {
         items: [
-          { label: '0', value: 0 },
           { label: '1', value: 1 },
           { label: '2', value: 2 },
           { label: '3', value: 3 },
@@ -802,7 +797,6 @@ export default {
   'http.ping.relativeURI': {
     type: 'text',
     label: 'Ping Relative URI',
-    required: true,
   },
   'http.ping.method': {
     type: 'select',
@@ -828,7 +822,7 @@ export default {
   'http.ping.successValues': {
     type: 'text',
     label: 'Ping Success Values',
-    valueDelimiter: ',',
+    delimiter: ',',
   },
   'http.ping.errorPath': {
     type: 'text',
@@ -861,9 +855,7 @@ export default {
   },
   'http.auth.failValues': {
     type: 'text',
-    keyName: 'name',
-    valueName: 'value',
-    valueType: 'array',
+    delimiter: ',',
     label: 'Authentication Fail Values',
     visibleWhen: [
       {
@@ -944,6 +936,12 @@ export default {
   'http.auth.token.location': {
     type: 'select',
     label: 'Location',
+    defaultValue: r =>
+      r &&
+      r.http &&
+      r.http.auth &&
+      r.http.auth.token &&
+      r.http.auth.token.location,
     options: [
       {
         items: [
@@ -957,11 +955,24 @@ export default {
   'http.auth.token.headerName': {
     type: 'text',
     label: 'Header Name',
-    defaultValue: 'Authorization',
+    defaultValue: r =>
+      (r &&
+        r.http &&
+        r.http.auth &&
+        r.http.auth.token &&
+        r.http.auth.token.headerName) ||
+      'Authorization',
   },
   'http.auth.token.scheme': {
     type: 'select',
     label: 'Scheme',
+    defaultValue: r =>
+      (r &&
+        r.http &&
+        r.http.auth &&
+        r.http.auth.token &&
+        r.http.auth.token.scheme) ||
+      'Bearer',
     options: [
       {
         items: [
@@ -980,6 +991,12 @@ export default {
   'http.auth.token.refreshMethod': {
     type: 'select',
     label: 'Refresh Method',
+    defaultValue: r =>
+      r &&
+      r.http &&
+      r.http.auth &&
+      r.http.auth.token &&
+      r.http.auth.token.refreshMethod,
     options: [
       {
         items: [
@@ -1051,7 +1068,7 @@ export default {
   'http.rateLimit.failValues': {
     type: 'text',
     label: 'Fail Values',
-    valueDelimiter: ',',
+    delimiter: ',',
   },
   'http.rateLimit.limit': {
     type: 'text',
@@ -1101,12 +1118,15 @@ export default {
   'ftp.hostURI': {
     type: 'text',
     label: 'Host',
+    required: true,
     description:
       'If the FTP server is behind a firewall please whitelist the following IP addresses: 52.2.63.213, 52.7.99.234, and 52.71.48.248.',
   },
   'ftp.type': {
     type: 'radiogroup',
     label: 'Protocol',
+    required: true,
+    defaultValue: r => (r && r.ftp && r.ftp.type) || 'ftp',
     options: [
       {
         items: [
@@ -1120,10 +1140,12 @@ export default {
   'ftp.username': {
     type: 'text',
     label: 'Username',
+    required: true,
   },
   'ftp.password': {
     type: 'text',
     label: 'Password',
+    required: true,
     inputType: 'password',
     defaultValue: '',
     description:
@@ -1137,7 +1159,7 @@ export default {
   },
   'ftp.port': {
     type: 'ftpport',
-    label: 'Ftp port',
+    label: 'Port',
     validWhen: {
       fallsWithinNumericalRange: {
         min: 0,
@@ -1150,6 +1172,7 @@ export default {
   'ftp.usePassiveMode': {
     type: 'checkbox',
     label: 'Use Passive Mode',
+    defaultValue: r => (r && r.ftp && r.ftp.usePassiveMode) || 'true',
   },
   'ftp.entryParser': {
     type: 'select',
@@ -1174,20 +1197,22 @@ export default {
   },
   'ftp.userDirectoryIsRoot': {
     type: 'checkbox',
-    label: 'User Directory is Root',
+    label: 'User Directory Is Root',
   },
   'ftp.useImplicitFtps': {
     type: 'checkbox',
-    label: 'Ftp use Implicit Ftps',
+    label: 'Use Implicit FTPS',
   },
   'ftp.requireSocketReUse': {
     type: 'checkbox',
-    label: 'Ftp require Socket Re Use',
+    label: 'Require Socket Reuse',
     description:
       'Note: for security reasons this field must always be re-entered.',
   },
   'ftp.usePgp': {
     type: 'checkbox',
+    defaultValue: r =>
+      !!(r && r.ftp && (r.ftp.pgpEncryptKey || r.ftp.pgpDecryptKey)),
     label: 'Use PGP Encryption',
   },
   'ftp.pgpEncryptKey': {
@@ -1199,6 +1224,7 @@ export default {
   'ftp.pgpKeyAlgorithm': {
     type: 'select',
     label: 'PGP Encryption Algorithm',
+    defaultValue: r => (r && r.ftp && r.ftp.pgpKeyAlgorithm) || 'CAST5',
     description:
       'Note: for security reasons this field must always be re-entered.',
     options: [
@@ -1213,7 +1239,6 @@ export default {
         ],
       },
     ],
-    defaultValue: 'CAST5',
   },
   'ftp.pgpDecryptKey': {
     type: 'text',
@@ -1231,11 +1256,11 @@ export default {
   // #region s3
   's3.accessKeyId': {
     type: 'text',
-    label: 'S3 access Key Id',
+    label: 'Access Key Id',
   },
   's3.secretAccessKey': {
     type: 'text',
-    label: 'S3 secret Access Key',
+    label: 'Secret Access Key',
     inputType: 'password',
     defaultValue: '',
     description:
@@ -1243,7 +1268,7 @@ export default {
   },
   's3.pingBucket': {
     type: 'text',
-    label: 'S3 ping Bucket',
+    label: 'Ping Bucket',
   },
   // #endregion s3
   // #region as2
@@ -1251,18 +1276,6 @@ export default {
     type: 'text',
     label: 'AS2 Identifier',
     required: true,
-  },
-  configureTokenRefresh: {
-    label: 'Configure Token Refresh',
-    type: 'checkbox',
-    defaultValue: r =>
-      !!((((r && r.http) || {}).auth || {}).token || {}).refreshToken,
-    visibleWhen: [
-      {
-        field: 'as2.partnerStationInfo.auth.type',
-        is: ['token'],
-      },
-    ],
   },
   'as2.partnerId': {
     type: 'text',
@@ -1347,9 +1360,7 @@ export default {
   },
   'as2.partnerStationInfo.auth.failValues': {
     type: 'text',
-    keyName: 'name',
-    valueName: 'value',
-    valueType: 'array',
+    delimiter: ',',
     label: 'Authentication Fail Values',
     visibleWhen: [
       {
@@ -1415,7 +1426,14 @@ export default {
   'as2.partnerStationInfo.auth.token.headerName': {
     type: 'text',
     label: 'Header Name',
-    defaultValue: 'Authorization',
+    defaultValue: r =>
+      (r &&
+        r.as2 &&
+        r.as2.partnerStationInfo &&
+        r.as2.partnerStationInfo.auth &&
+        r.as2.partnerStationInfo.auth.token &&
+        r.as2.partnerStationInfo.auth.token.headerName) ||
+      'Authorization',
     visibleWhen: [
       {
         field: 'as2.partnerStationInfo.auth.token.location',
@@ -1548,6 +1566,12 @@ export default {
   'as2.partnerStationInfo.rateLimit.failStatusCode': {
     type: 'text',
     label: 'Fail Status Code',
+    visibleWhen: [
+      {
+        field: 'configureApiRateLimits',
+        is: [true],
+      },
+    ],
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]$', message: 'Only numbers allowed' },
@@ -1557,17 +1581,33 @@ export default {
   'as2.partnerStationInfo.rateLimit.failPath': {
     type: 'text',
     label: 'Fail Path',
+    visibleWhen: [
+      {
+        field: 'configureApiRateLimits',
+        is: [true],
+      },
+    ],
   },
   'as2.partnerStationInfo.rateLimit.failValues': {
     type: 'text',
-    keyName: 'name',
-    valueName: 'value',
-    valueType: 'array',
+    delimiter: ',',
+    visibleWhen: [
+      {
+        field: 'configureApiRateLimits',
+        is: [true],
+      },
+    ],
     label: 'Fail Values',
   },
   'as2.partnerStationInfo.rateLimit.limit': {
     type: 'text',
     label: 'Limit',
+    visibleWhen: [
+      {
+        field: 'configureApiRateLimits',
+        is: [true],
+      },
+    ],
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]$', message: 'Only numbers allowed' },
@@ -1580,7 +1620,6 @@ export default {
       },
     ],
   },
-
   'as2.partnerStationInfo.encryptionType': {
     type: 'select',
     label: 'Encryption Type',
@@ -1665,7 +1704,7 @@ export default {
     type: 'text',
     label: 'As2 user Station Info mdn mdn URL',
   },
-  'as2.userStationInfo.encrypted.userPrivateKey': {
+  'as2.encrypted.userPrivateKey': {
     type: 'editor',
     mode: 'text',
     label: 'X.509 Private Key',
@@ -1763,12 +1802,46 @@ export default {
     mode: 'text',
     label: "Partner's Certificate:",
   },
+  'as2.concurrencyLevel': {
+    label: 'Concurrency Level',
+    type: 'select',
+    options: [
+      {
+        items: [
+          { label: '1', value: 1 },
+          { label: '2', value: 2 },
+          { label: '3', value: 3 },
+          { label: '4', value: 4 },
+          { label: '5', value: 5 },
+          { label: '6', value: 6 },
+          { label: '7', value: 7 },
+          { label: '8', value: 8 },
+          { label: '9', value: 9 },
+          { label: '10', value: 10 },
+          { label: '11', value: 11 },
+          { label: '12', value: 12 },
+          { label: '13', value: 13 },
+          { label: '14', value: 14 },
+          { label: '15', value: 15 },
+          { label: '16', value: 16 },
+          { label: '17', value: 17 },
+          { label: '18', value: 18 },
+          { label: '19', value: 19 },
+          { label: '20', value: 20 },
+          { label: '21', value: 21 },
+          { label: '22', value: 22 },
+          { label: '23', value: 23 },
+          { label: '24', value: 24 },
+          { label: '25', value: 25 },
+        ],
+      },
+    ],
+  },
   // #endregion as2
   // #region netsuite
   'netsuite.authType': {
     type: 'select',
     label: 'Authentication Type',
-    defaultValue: r => r && r.netsuite && r.netsuite.authType,
     options: [
       {
         items: [
@@ -1885,11 +1958,19 @@ export default {
   'netsuite.concurrencyLevel': {
     label: 'Concurrency Level',
     type: 'select',
-    defaultValue: r => r && r.netsuite && r.netsuite.concurrencyLevel,
+    defaultValue: r =>
+      r && r.netsuite && r.netsuite.concurrencyLevel
+        ? r.netsuite.concurrencyLevel
+        : 1,
+    visibleWhen: [
+      {
+        field: '_borrowConcurrencyFromConnectionId',
+        is: [''],
+      },
+    ],
     options: [
       {
         items: [
-          { label: '0', value: 0 },
           { label: '1', value: 1 },
           { label: '2', value: 2 },
           { label: '3', value: 3 },
@@ -2033,12 +2114,44 @@ export default {
     label: 'Salesforce info',
   },
   'salesforce.concurrencyLevel': {
-    type: 'text',
+    type: 'select',
     label: 'Concurrency Level',
-    defaultValue: r => r && r.salesforce && r.salesforce.concurrencyLevel,
+    defaultValue: r =>
+      (r && r.salesforce && r.salesforce.concurrencyLevel) || 5,
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
+      },
+    ],
+    options: [
+      {
+        items: [
+          { label: '1', value: 1 },
+          { label: '2', value: 2 },
+          { label: '3', value: 3 },
+          { label: '4', value: 4 },
+          { label: '5', value: 5 },
+          { label: '6', value: 6 },
+          { label: '7', value: 7 },
+          { label: '8', value: 8 },
+          { label: '9', value: 9 },
+          { label: '10', value: 10 },
+          { label: '11', value: 11 },
+          { label: '12', value: 12 },
+          { label: '13', value: 13 },
+          { label: '14', value: 14 },
+          { label: '15', value: 15 },
+          { label: '16', value: 16 },
+          { label: '17', value: 17 },
+          { label: '18', value: 18 },
+          { label: '19', value: 19 },
+          { label: '20', value: 20 },
+          { label: '21', value: 21 },
+          { label: '22', value: 22 },
+          { label: '23', value: 23 },
+          { label: '24', value: 24 },
+          { label: '25', value: 25 },
+        ],
       },
     ],
     visibleWhen: [
@@ -2053,55 +2166,97 @@ export default {
   'wrapper.unencrypted': {
     type: 'editor',
     mode: 'json',
-    label: 'Wrapper unencrypted',
+    label: 'Unencrypted',
   },
   'wrapper.encrypted': {
     type: 'editor',
     mode: 'json',
-    label: 'Wrapper encrypted',
+    label: 'Encrypted',
   },
   'wrapper.pingFunction': {
     type: 'text',
-    label: 'Wrapper ping Function',
+    label: 'Ping Function',
   },
   'wrapper._stackId': {
-    type: 'text',
-    label: 'Wrapper _stack Id',
+    label: 'Stack',
+    type: 'selectresource',
+    placeholder: 'Please select a stack',
+    resourceType: 'stacks',
   },
   'wrapper.concurrencyLevel': {
-    type: 'text',
-    label: 'Wrapper concurrency Level',
+    type: 'select',
+    label: 'Concurrency Level',
+    options: [
+      {
+        items: [
+          { label: '1', value: 1 },
+          { label: '2', value: 2 },
+          { label: '3', value: 3 },
+          { label: '4', value: 4 },
+          { label: '5', value: 5 },
+          { label: '6', value: 6 },
+          { label: '7', value: 7 },
+          { label: '8', value: 8 },
+          { label: '9', value: 9 },
+          { label: '10', value: 10 },
+          { label: '11', value: 11 },
+          { label: '12', value: 12 },
+          { label: '13', value: 13 },
+          { label: '14', value: 14 },
+          { label: '15', value: 15 },
+          { label: '16', value: 16 },
+          { label: '17', value: 17 },
+          { label: '18', value: 18 },
+          { label: '19', value: 19 },
+          { label: '20', value: 20 },
+          { label: '21', value: 21 },
+          { label: '22', value: 22 },
+          { label: '23', value: 23 },
+          { label: '24', value: 24 },
+          { label: '25', value: 25 },
+        ],
+      },
+    ],
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
       },
     ],
-    defaultValue: r => r && r.wrapper && r.wrapper.concurrencyLevel,
+    visibleWhen: [
+      {
+        field: '_borrowConcurrencyFromConnectionId',
+        is: [''],
+      },
+    ],
+    defaultValue: r => (r && r.wrapper && r.wrapper.concurrencyLevel) || 1,
   },
   // #endregion wrapper
   // #region mongodb
-  'mongodb.hosts': {
+  'mongodb.host': {
     type: 'text',
-    keyName: 'name',
-    valueName: 'value',
-    valueType: 'array',
-    label: 'Mongodb host',
+    required: true,
+    delimiter: ',',
+    omitWhenValueIs: [''],
+    label: 'Host(s)',
   },
   'mongodb.database': {
     type: 'text',
-    label: 'Mongodb database',
+    required: true,
+    label: 'Database Name',
   },
   'mongodb.username': {
     type: 'text',
-    label: 'Mongodb username',
+    required: true,
+    label: 'Username',
   },
   'mongodb.password': {
     type: 'text',
+    required: true,
     inputType: 'password',
     defaultValue: '',
     description:
       'Note: for security reasons this field must always be re-entered.',
-    label: 'Mongodb password',
+    label: 'Password',
   },
   'mongodb.replicaSet': {
     type: 'text',

@@ -1,12 +1,11 @@
 import { useDispatch } from 'react-redux';
 import { IconButton } from '@material-ui/core';
-// TODO Azhar
-import UnpublishIcon from '../../../../components/icons/ExportsIcon';
-import PublishIcon from '../../../../components/icons/ImportsIcon';
+import UnpublishIcon from '../../../../components/icons/UnpublishedIcon';
+import PublishIcon from '../../../../components/icons/PublishIcon';
 import actions from '../../../../actions';
 
 export default {
-  label: 'Toggle Publish',
+  label: r => (r.published ? 'Unpublish' : 'Publish'),
   component: function TogglePublish({ resourceType, resource }) {
     const dispatch = useDispatch();
     const handleTogglePublishClick = () => {
@@ -23,7 +22,10 @@ export default {
     };
 
     return (
-      <IconButton size="small" onClick={handleTogglePublishClick}>
+      <IconButton
+        data-test="togglePublish"
+        size="small"
+        onClick={handleTogglePublishClick}>
         {resource.published ? <UnpublishIcon /> : <PublishIcon />}
       </IconButton>
     );

@@ -37,13 +37,14 @@ export default function MappingDialog({ onClose, resource }) {
   return (
     <Dialog open maxWidth={false}>
       <IconButton
+        data-test="closeMappingDialog"
         aria-label="Close"
         className={classes.closeButton}
         onClick={onClose}>
         <CloseIcon />
       </IconButton>
-      <DialogTitle className={classes.title}>
-        <Typography>
+      <DialogTitle className={classes.title} disableTypography>
+        <Typography variant="h6">
           Please select which mapping you would like to edit.
         </Typography>
       </DialogTitle>

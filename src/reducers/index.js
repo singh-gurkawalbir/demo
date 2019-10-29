@@ -1,8 +1,9 @@
+import deepClone from 'lodash/cloneDeep';
 import { combineReducers } from 'redux';
 import jsonPatch from 'fast-json-patch';
 import moment from 'moment';
 import produce from 'immer';
-import { uniq } from 'lodash';
+import { uniq, some, map } from 'lodash';
 import app, * as fromApp from './app';
 import data, * as fromData from './data';
 import session, * as fromSession from './session';
@@ -27,6 +28,7 @@ import {
 } from '../sagas/api/apiPaths';
 import { getFieldById } from '../forms/utils';
 import commKeyGen from '../utils/commKeyGenerator';
+import { isRealtimeExport, isSimpleImportFlow, isRunnable } from './flowsUtil';
 
 const combinedReducers = combineReducers({
   app,
@@ -110,6 +112,37 @@ export function resourceFormState(state, resourceType, resourceId) {
   );
 }
 
+export function previewTemplate(state, templateId) {
+  return fromSession.previewTemplate(state && state.session, templateId);
+}
+
+export function templateSetup(state, templateId) {
+  return fromSession.template(state && state.session, templateId);
+}
+
+export function isAuthorized(state, connectionId) {
+  return fromSession.isAuthorized(state && state.session, connectionId);
+}
+
+export function templateInstallSteps(state, templateId) {
+  const templateInstallSteps = fromSession.templateInstallSteps(
+    state && state.session,
+    templateId
+  );
+
+  return produce(templateInstallSteps, draft => {
+    const unCompletedStep = draft.find(s => !s.completed);
+
+    if (unCompletedStep) {
+      unCompletedStep.isCurrentStep = true;
+    }
+  });
+}
+
+export function templateConnectionMap(state, templateId) {
+  return fromSession.connectionMap(state && state.session, templateId);
+}
+
 export function connectorMetadata(state, fieldName, id, _integrationId) {
   return fromSession.connectorMetadata(
     state && state.session,
@@ -167,12 +200,44 @@ export function processorRequestOptions(state, id) {
   return fromSession.processorRequestOptions(state.session, id);
 }
 
+export function getSampleData(state, flowId, resourceId, stage, options = {}) {
+  return fromSession.getSampleData(
+    state && state.session,
+    flowId,
+    resourceId,
+    stage,
+    options
+  );
+}
+
+export function getFlowReferencesForResource(state, resourceId) {
+  return fromSession.getFlowReferencesForResource(
+    state && state.session,
+    resourceId
+  );
+}
+
+export function getFlowDataState(state, flowId, resourceId, isPageGenerator) {
+  return fromSession.getFlowDataState(
+    state && state.session,
+    flowId,
+    resourceId,
+    isPageGenerator
+  );
+}
+
 export function avatarUrl(state) {
   return fromUser.avatarUrl(state.user);
 }
 
 export function userProfile(state) {
   return state && state.user && state.user.profile;
+}
+
+export function developerMode(state) {
+  return (
+    state && state.user && state.user.profile && state.user.profile.developer
+  );
 }
 
 export function userPreferences(state) {
@@ -423,70 +488,283 @@ export function hasProfile(state) {
 // #endregion
 
 // #region PUBLIC DATA SELECTORS
-export function resource(state, resourceType, id) {
-  if (!state) return null;
+export function marketplaceTemplate(state, templateId) {
+  return fromData.template(state && state.data, templateId);
+}
 
-  return fromData.resource(state.data, resourceType, id);
+export function resource(state, resourceType, id) {
+  return fromData.resource(state && state.data, resourceType, id);
 }
 
 export function resourceList(state, options) {
-  return fromData.resourceList(state.data, options);
+  return fromData.resourceList(state && state.data, options);
+}
+
+export function flowListWithMetadata(state, options) {
+  const flows =
+    fromData.resourceList(state && state.data, options).resources || [];
+
+  flows.forEach((f, i) => {
+    const _exportId =
+      f.pageGenerators && f.pageGenerators.length
+        ? f.pageGenerators[0]._exportId
+        : f._exportId;
+    const exp = resource(state, 'exports', _exportId);
+    const exports = fromData.resourceList(state && state.data, {
+      resourceType: 'exports',
+    }).resources;
+
+    if (isRealtimeExport(exp)) {
+      flows[i].isRealtime = true;
+    }
+
+    if (isSimpleImportFlow(exp)) {
+      flows[i].isSimpleImport = true;
+    }
+
+    if (isRunnable(exports, exp, f)) {
+      flows[i].isRunnable = true;
+    }
+  });
+
+  return { resources: flows };
+}
+
+export function resourceListWithPermissions(state, options) {
+  const resourceList = fromData.resourceList(state && state.data, options);
+  // eslint-disable-next-line no-use-before-define
+  const permissions = userPermissions(state);
+
+  resourceList.resources = resourceList.resources.map(r => {
+    // eslint-disable-next-line no-param-reassign
+    r.permissions = deepClone(permissions);
+
+    return r;
+  });
+
+  return resourceList;
+}
+
+export function resourcesByIds(state, resourceType, resourceIds) {
+  const { resources } = resourceListWithPermissions(state, {
+    type: resourceType,
+  });
+
+  return resources.filter(r => resourceIds.indexOf(r._id) >= 0);
+}
+
+export function matchingConnectionList(state, connection = {}) {
+  const preferences = userPreferences(state);
+  const { resources = [] } = resourceList(state, {
+    type: 'connections',
+    filter: {
+      $where() {
+        if (!!this.sandbox !== (preferences.environment === 'sandbox')) {
+          return false;
+        }
+
+        if (connection.assistant) {
+          return this.assistant === connection.assistant && !this._connectorId;
+        }
+
+        if (['netsuite'].indexOf(connection.type) > -1) {
+          return (
+            this.type === 'netsuite' &&
+            !this._connectorId &&
+            (this.netsuite.account && this.netsuite.environment)
+          );
+        }
+
+        return this.type === connection.type && !this._connectorId;
+      },
+    },
+  });
+
+  return resources;
+}
+
+export function matchingStackList(state) {
+  const { resources = [] } = resourceList(state, {
+    type: 'stacks',
+    filter: {
+      _connectorId: { $exists: false },
+    },
+  });
+
+  return resources;
+}
+
+export function filteredResourceList(state, resource, resourceType) {
+  return resourceType === 'connections'
+    ? matchingConnectionList(state, resource)
+    : matchingStackList(state);
 }
 
 export function marketplaceConnectors(state, application, sandbox) {
   const licenses = fromUser.licenses(state && state.user);
-
-  return fromData.marketplaceConnectors(
-    state.data,
+  const connectors = fromData.marketplaceConnectors(
+    state && state.data,
     application,
     sandbox,
     licenses
   );
+
+  return connectors.map(c => {
+    const installedIntegrationApps = resourceList(state, {
+      type: 'integrations',
+      sandbox,
+      filter: { _connectorId: c._id },
+    });
+
+    return { ...c, installed: !!installedIntegrationApps.resources.length };
+  });
 }
 
 export function marketplaceTemplates(state, application) {
   return fromData.marketplaceTemplates(state.data, application);
 }
 
-export function integrationConnectionList(state, integrationId) {
-  const integration = resource(state, 'integrations', integrationId);
-  const connList = fromData.resourceList(state.data, { type: 'connections' });
+export function getAllConnectionIdsUsedInTheFlow(state, flow) {
+  const exportIds = [];
+  const importIds = [];
+  const connectionIds = [];
+  const borrowConnectionIds = [];
+  const connections = resourceList(state, { type: 'connections' }).resources;
+  const exports = resourceList(state, { type: 'exports' }).resources;
+  const imports = resourceList(state, { type: 'imports' }).resources;
 
-  if (integrationId && integrationId !== 'none' && integration) {
-    const registeredConnections =
-      integration && integration._registeredConnectionIds;
-
-    if (registeredConnections) {
-      connList.resources =
-        connList &&
-        connList.resources &&
-        connList.resources.filter(
-          conn => registeredConnections.indexOf(conn._id) >= 0
-        );
-    }
+  if (!flow) {
+    return connectionIds;
   }
 
-  return connList;
+  if (flow._exportId) {
+    exportIds.push(flow._exportId);
+  }
+
+  if (flow._importId) {
+    importIds.push(flow._importId);
+  }
+
+  if (flow.pageProcessors && flow.pageProcessors.length > 0) {
+    flow.pageProcessors.forEach(pp => {
+      if (pp._exportId) {
+        exportIds.push(pp._exportId);
+      }
+
+      if (pp._importId) {
+        importIds.push(pp._importId);
+      }
+    });
+  }
+
+  if (flow.pageGenerators && flow.pageGenerators.length > 0) {
+    flow.pageGenerators.forEach(pg => {
+      if (pg._exportId) {
+        exportIds.push(pg._exportId);
+      }
+
+      if (pg._importId) {
+        importIds.push(pg._importId);
+      }
+    });
+  }
+
+  const attachedExports =
+    exports && exports.filter(e => exportIds.indexOf(e._id) > -1);
+  const attachedImports =
+    imports && imports.filter(i => importIds.indexOf(i._id) > -1);
+
+  attachedExports.forEach(exp => {
+    if (exp && exp._connectionId) {
+      connectionIds.push(exp._connectionId);
+    }
+  });
+  attachedImports.forEach(imp => {
+    if (imp && imp._connectionId) {
+      connectionIds.push(imp._connectionId);
+    }
+  });
+  const attachedConnections =
+    connections &&
+    connections.filter(conn => connectionIds.indexOf(conn._id) > -1);
+
+  attachedConnections.forEach(conn => {
+    if (conn && conn._borrowConcurrencyFromConnectionId) {
+      borrowConnectionIds.push(conn._borrowConcurrencyFromConnectionId);
+    }
+  });
+
+  return uniq(connectionIds.concat(borrowConnectionIds));
+}
+// #begin integrationApps Region
+
+export function integrationAppSettingsFormState(state, integrationId, flowId) {
+  return fromSession.integrationAppSettingsFormState(
+    state.session,
+    integrationId,
+    flowId
+  );
 }
 
-export function resourceReferences(state) {
-  return fromSession.resourceReferences(state && state.session);
+export function integrationConnectionList(state, integrationId) {
+  const integration = resource(state, 'integrations', integrationId) || {};
+  let { resources = [] } = resourceListWithPermissions(state, {
+    type: 'connections',
+  });
+
+  if (integrationId && integrationId !== 'none' && !integration._connectorId) {
+    const registeredConnections = integration._registeredConnectionIds;
+
+    if (registeredConnections) {
+      resources = resources.filter(
+        conn => registeredConnections.indexOf(conn._id) >= 0
+      );
+    }
+  } else if (integration._connectorId) {
+    resources = resources.filter(conn => conn._integrationId === integrationId);
+  }
+
+  return resources;
 }
 
-export function resourceDetailsMap(state) {
-  return fromData.resourceDetailsMap(state.data);
-}
+export function integrationAppConnectionList(state, integrationId, store) {
+  if (!state) return [];
+  const integrationResource = fromData.integrationAppSettings(
+    state.data,
+    integrationId
+  );
+  const { supportsMultiStore, sections } = integrationResource.settings || {};
+  const { resources: integrationConnections } = fromData.resourceList(
+    state.data,
+    {
+      type: 'connections',
+      filter: { _integrationId: integrationId },
+    }
+  );
 
-export function processors(state) {
-  return fromData.processors(state.data);
-}
+  if (!supportsMultiStore || !store) {
+    return integrationConnections;
+  }
 
-export function isAgentOnline(state, agentId) {
-  return fromData.isAgentOnline(state.data, agentId);
+  const flows = [];
+  const connections = [];
+  const selectedStore = (sections || []).find(s => s.id === store) || {};
+
+  (selectedStore.sections || []).forEach(sec => {
+    flows.push(...map(sec.flows, '_id'));
+  });
+
+  flows.forEach(f => {
+    const flow = resource(state, 'flows', f) || {};
+
+    connections.push(...getAllConnectionIdsUsedInTheFlow(state, flow));
+  });
+
+  return integrationConnections.filter(c => connections.includes(c._id));
 }
 
 export function integrationAppSettings(state, id, storeId) {
-  if (!state) return null;
+  if (!state) return {};
   const integrationResource = fromData.integrationAppSettings(state.data, id);
   const uninstallSteps = fromSession.uninstallSteps(
     state.resource,
@@ -497,8 +775,114 @@ export function integrationAppSettings(state, id, storeId) {
   return { ...integrationResource, ...uninstallSteps };
 }
 
-export function defaultStoreId(state, id) {
-  return fromData.defaultStoreId(state && state.data, id);
+export function integrationAppFlowSections(state, id, store) {
+  if (!state) return [];
+  let flowSections = [];
+  const integrationResource = fromData.integrationAppSettings(state.data, id);
+  const { sections = [], supportsMultiStore } =
+    integrationResource.settings || {};
+
+  if (supportsMultiStore) {
+    if (Array.isArray(sections) && sections.length) {
+      if (store) {
+        flowSections =
+          (sections.find(sec => sec.id === store) || {}).sections || [];
+      } else {
+        flowSections =
+          (sections.find(sec => sec.mode !== 'uninstall') || {}).sections || [];
+      }
+    }
+  } else {
+    flowSections = sections;
+  }
+
+  return flowSections.map(sec => ({
+    ...sec,
+    titleId: sec.title.replace(/\s/g, ''),
+  }));
+}
+
+export function integrationAppGeneralSettings(state, id, storeId) {
+  if (!state) return {};
+  let fields;
+  let subSections;
+  const integrationResource = fromData.integrationAppSettings(state.data, id);
+  const { supportsMultiStore, general } = integrationResource.settings || {};
+
+  if (supportsMultiStore) {
+    const storeSection = (general || []).find(s => s.id === storeId) || {};
+
+    ({ fields, sections: subSections } = storeSection);
+  } else {
+    ({ fields, sections: subSections } = general || {});
+  }
+
+  return {
+    fields,
+    sections: subSections,
+  };
+}
+
+export function integrationAppFlowSettings(state, id, section, storeId) {
+  if (!state) return {};
+  const integrationResource = fromData.integrationAppSettings(state.data, id);
+  const { supportsMultiStore, showMatchRuleEngine, sections = [] } =
+    integrationResource.settings || {};
+  let requiredFlows = [];
+  let hasNSInternalIdLookup = false;
+  let showFlowSettings = false;
+  let hasDescription = false;
+  let allSections = sections;
+
+  if (supportsMultiStore) {
+    const store = sections.find(s => s.id === storeId) || {};
+
+    allSections = store.sections || [];
+  }
+
+  const selectedSection =
+    allSections.find(sec => sec.title.replace(/\s/g, '') === section) || {};
+
+  requiredFlows = map(selectedSection.flows, '_id');
+  hasNSInternalIdLookup = some(
+    selectedSection.flows,
+    f => f.showNSInternalIdLookup
+  );
+  hasDescription = some(selectedSection.flows, f => {
+    const flow = resource(state, 'flows', f._id) || {};
+
+    return !!flow.description;
+  });
+  showFlowSettings = some(
+    selectedSection.flows,
+    f => !!f.settings || !!f.sections
+  );
+  const { fields, sections: subSections } = selectedSection;
+  const preferences = userPreferences(state);
+  let flows = flowListWithMetadata(state, {
+    type: 'flows',
+    sandbox: preferences.environment === 'sandbox',
+    filter: {
+      _integrationId: id,
+    },
+  }).resources;
+
+  flows = flows.filter(f => requiredFlows.includes(f._id));
+
+  return {
+    flows,
+    fields,
+    flowSettings: selectedSection.flows,
+    sections: subSections,
+    hasNSInternalIdLookup,
+    hasDescription,
+    showFlowSettings,
+    showMatchRuleEngine,
+  };
+}
+
+export function defaultStoreId(state, id, store) {
+  return fromData.defaultStoreId(state && state.data, id, store);
 }
 
 export function integrationInstallSteps(state, integrationId) {
@@ -557,6 +941,24 @@ export function addNewStoreSteps(state, integrationId) {
       unCompletedStep.isCurrentStep = true;
     }
   });
+}
+
+// #end integrationApps Region
+
+export function resourceReferences(state) {
+  return fromSession.resourceReferences(state && state.session);
+}
+
+export function resourceDetailsMap(state) {
+  return fromData.resourceDetailsMap(state.data);
+}
+
+export function processors(state) {
+  return fromData.processors(state.data);
+}
+
+export function isAgentOnline(state, agentId) {
+  return fromData.isAgentOnline(state.data, agentId);
 }
 
 // #endregion
@@ -836,7 +1238,10 @@ export function suiteScriptTiles(state, connection) {
 
     if (t._connectorId) {
       connector = published.find(i => i._id === t._connectorId);
-      tile.connector = { owner: connector.user.company || connector.user.name };
+      tile.connector = {
+        owner: connector.user.company || connector.user.name,
+        applications: connector.applications || [],
+      };
     }
 
     return tile;
@@ -953,7 +1358,10 @@ export function tiles(state) {
           mode: integration.mode,
           permissions: integration.permissions,
         },
-        connector: { owner: connector.user.company || connector.user.name },
+        connector: {
+          owner: connector.user.company || connector.user.name,
+          applications: connector.applications || [],
+        },
       };
     }
 
@@ -1023,8 +1431,13 @@ export function resourceStatus(
 
 export function resourceData(state, resourceType, id, scope) {
   if (!state || !resourceType || !id) return {};
+  let type = resourceType;
 
-  const master = resource(state, resourceType, id);
+  if (resourceType.indexOf('/licenses') >= 0) {
+    type = 'connectorLicenses';
+  }
+
+  const master = resource(state, type, id);
   const { patch, conflict } = fromSession.stagedResource(
     state.session,
     id,
@@ -1198,6 +1611,8 @@ export function commMetadataPathGen(
 
       if (selectField && recordType) {
         commMetadataPath += `/${recordType}/selectFieldValues/${selectField}`;
+      } else if (recordType) {
+        commMetadataPath += `/${recordType}`;
       }
     }
   } else if (applicationType === 'salesforce') {
@@ -1363,10 +1778,6 @@ export function accessTokenList(
   return tokensList;
 }
 
-export function accessToken(state, id) {
-  return fromData.accessToken(state.data, id);
-}
-
 export function flowJobsPagingDetails(state) {
   return fromData.flowJobsPagingDetails(state.data);
 }
@@ -1495,79 +1906,6 @@ export function assistantData(state, { adaptorType, assistant }) {
   });
 }
 
-export function getAllConnectionIdsUsedInTheFlow(state, flow) {
-  const exportIds = [];
-  const importIds = [];
-  const connectionIds = [];
-  const borrowConnectionIds = [];
-  const connections = resourceList(state, { type: 'connections' }).resources;
-  const exports = resourceList(state, { type: 'exports' }).resources;
-  const imports = resourceList(state, { type: 'imports' }).resources;
-
-  if (!flow) {
-    return connectionIds;
-  }
-
-  if (flow._exportId) {
-    exportIds.push(flow._exportId);
-  }
-
-  if (flow._importId) {
-    importIds.push(flow._importId);
-  }
-
-  if (flow.pageProcessors && flow.pageProcessors.length > 0) {
-    flow.pageProcessors.forEach(pp => {
-      if (pp._exportId) {
-        exportIds.push(pp._exportId);
-      }
-
-      if (pp._importId) {
-        importIds.push(pp._importId);
-      }
-    });
-  }
-
-  if (flow.pageGenerators && flow.pageGenerators.length > 0) {
-    flow.pageGenerators.forEach(pg => {
-      if (pg._exportId) {
-        exportIds.push(pg._exportId);
-      }
-
-      if (pg._importId) {
-        importIds.push(pg._importId);
-      }
-    });
-  }
-
-  const attachedExports =
-    exports && exports.filter(e => exportIds.indexOf(e._id) > -1);
-  const attachedImports =
-    imports && imports.filter(i => importIds.indexOf(i._id) > -1);
-
-  attachedExports.forEach(exp => {
-    if (exp && exp._connectionId) {
-      connectionIds.push(exp._connectionId);
-    }
-  });
-  attachedImports.forEach(imp => {
-    if (imp && imp._connectionId) {
-      connectionIds.push(imp._connectionId);
-    }
-  });
-  const attachedConnections =
-    connections &&
-    connections.filter(conn => connectionIds.indexOf(conn._id) > -1);
-
-  attachedConnections.forEach(conn => {
-    if (conn && conn._borrowConcurrencyFromConnectionId) {
-      borrowConnectionIds.push(conn._borrowConcurrencyFromConnectionId);
-    }
-  });
-
-  return uniq(connectionIds.concat(borrowConnectionIds));
-}
-
 export function getAllConnectionIdsUsedInSelectedFlows(state, selectedFlows) {
   let connectionIdsToRegister = [];
 
@@ -1602,4 +1940,36 @@ export function getAllPageProcessorImports(state, pageProcessors) {
     imports && imports.filter(i => pageProcessorIds.indexOf(i._id) > -1);
 
   return ppImports;
+}
+
+export function getImportSampleData(state, resourceId) {
+  const { merged: resource } = resourceData(state, 'imports', resourceId);
+  const { assistant, adaptorType, sampleData } = resource;
+
+  if (sampleData) return sampleData;
+  else if (assistant) {
+    // get assistants sample data
+  } else if (adaptorType === 'NetSuiteDistributedImport') {
+    // eslint-disable-next-line camelcase
+    const { _connectionId: connectionId, netsuite_da } = resource;
+    const { data: sampleData } = metadataOptionsAndResources(
+      state,
+      connectionId,
+      'suitescript',
+      'recordTypes',
+      `record-${netsuite_da.recordType}`,
+      netsuite_da.recordType
+    );
+
+    return sampleData;
+  } else if (adaptorType === 'SalesforceImport') {
+    // similar logic as netsuite
+  }
+}
+
+export function flowConnectionList(state, flow) {
+  const connectionIds = getAllConnectionIdsUsedInTheFlow(state, flow);
+  const connectionList = resourcesByIds(state, 'connections', connectionIds);
+
+  return connectionList;
 }

@@ -3,10 +3,10 @@ import { makeStyles } from '@material-ui/core/styles';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
-import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import ArrowDownIcon from '../../icons/ArrowDownIcon';
+import ErroredMessageComponent from './ErroredMessageComponent';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -33,6 +33,7 @@ const useStyles = makeStyles(theme => ({
     },
     '& > div > div ': {
       paddingBottom: 5,
+      textAlign: 'left',
     },
     '& svg': {
       right: 8,
@@ -40,21 +41,26 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+/**
+ *
+ * @param resetAfterSelection (boolean) : Use this if select needs to reset everytime after selection
+ *
+ */
 export default function DynaSelect(props) {
   const {
-    description,
     disabled,
     id,
     value,
     isValid,
-    errorMessages,
+    removeHelperText = false,
     name,
     options = [],
     defaultValue = '',
     placeholder,
-    // required,
+    required,
     label,
     onFieldChange,
+    resetAfterSelection,
   } = props;
   const classes = useStyles();
   let items = options.reduce(
@@ -83,7 +89,7 @@ export default function DynaSelect(props) {
   );
   let finalTextValue;
 
-  if (value === undefined || value === null) {
+  if (resetAfterSelection || value === undefined || value === null) {
     finalTextValue = defaultValue;
   } else {
     finalTextValue = value;
@@ -99,7 +105,12 @@ export default function DynaSelect(props) {
 
   return (
     <div>
-      <FormControl key={id} disabled={disabled} className={classes.root}>
+      <FormControl
+        key={id}
+        disabled={disabled}
+        className={classes.root}
+        error={!isValid}
+        required={required}>
         <InputLabel shrink htmlFor={id}>
           {label}
         </InputLabel>
@@ -118,11 +129,8 @@ export default function DynaSelect(props) {
           {items}
         </Select>
       </FormControl>
-      {(description || errorMessages) && (
-        <FormHelperText error={!isValid}>
-          {isValid ? description : errorMessages}
-        </FormHelperText>
-      )}
+
+      {!removeHelperText && <ErroredMessageComponent {...props} />}
     </div>
   );
 }

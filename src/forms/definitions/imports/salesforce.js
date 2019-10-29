@@ -36,8 +36,18 @@ export default {
       fieldId: 'salesforce.upsert.externalIdField',
     },
     dataMappings: { formId: 'dataMappings' },
+    'salesforce.lookups': {
+      fieldId: 'salesforce.lookups',
+      visible: false,
+    },
+    mapping: {
+      fieldId: 'mapping',
+      refreshOptionsOnChangesTo: [
+        'salesforce.sObjectType',
+        'salesforce.lookups',
+      ],
+    },
     advancedSettings: { formId: 'advancedSettings' },
-    hooks: { formId: 'hooks' },
   },
   layout: {
     fields: [
@@ -45,6 +55,7 @@ export default {
       'apiType',
       'salesforce.api',
       'importData',
+      'salesforce.lookups',
       'salesforce.sObjectType',
       'salesforce.operation',
       'salesforce.compositeOperation',
@@ -55,15 +66,27 @@ export default {
       'salesforce.upsertpicklistvalues.fullName',
       'salesforce.upsert.externalIdField',
       'dataMappings',
+      'mapping',
     ],
     type: 'collapse',
     containers: [
       { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },
-      {
-        collapsed: false,
-        label: 'Hooks (Optional, Developers Only)',
-        fields: ['hooks'],
-      },
     ],
+  },
+  optionsHandler: (fieldId, fields) => {
+    if (fieldId === 'mapping') {
+      const sObjectTypeField = fields.find(
+        field => field.id === 'salesforce.sObjectType'
+      );
+      const lookupField = fields.find(
+        field => field.fieldId === 'salesforce.lookups'
+      );
+
+      return {
+        sObjectType: sObjectTypeField && sObjectTypeField.value,
+        lookupId: 'salesforce.lookups',
+        lookups: lookupField && lookupField.value,
+      };
+    }
   },
 };

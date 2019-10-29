@@ -7,7 +7,6 @@ import resourceConstants from '../../forms/constants/connection';
 import formFactory from '../../forms/formFactory';
 import DynaForm from '../DynaForm';
 import consolidatedActions from './Actions';
-import stringUtil from '../../utils/string';
 import { getResourceSubType } from '../../utils/resource';
 
 const mapStateToProps = (state, { resourceType, resourceId }) => {
@@ -35,7 +34,6 @@ const mapStateToProps = (state, { resourceType, resourceId }) => {
     formState,
     resource,
     lastPatchtimestamp,
-    resourceHash: stringUtil.hashCode(resource.assistantMetadata),
     /* If we return the assistantMetadata as object, it is causing infinite loop when used as a dependency in useEffect */
   };
 };
@@ -43,7 +41,14 @@ const mapStateToProps = (state, { resourceType, resourceId }) => {
 const mapDispatchToProps = dispatch => ({
   handleInitForm: (resourceType, resourceId, isNew) => {
     const skipCommit =
-      isNew && ['imports', 'exports', 'connections'].includes(resourceType);
+      isNew &&
+      [
+        'imports',
+        'exports',
+        'connections',
+        'pageGenerator',
+        'pageProcessor',
+      ].includes(resourceType);
 
     dispatch(
       actions.resourceForm.init(resourceType, resourceId, isNew, skipCommit)
@@ -62,7 +67,7 @@ const getConnectionType = resource => {
   return type;
 };
 
-function ActionsFactory(props) {
+export function ActionsFactory(props) {
   const { resource, resourceType, isNew, variant = 'edit' } = props;
   const { actions } = props.fieldMeta;
   const connectionType = getConnectionType(resource);
@@ -100,7 +105,7 @@ function ActionsFactory(props) {
       {actionButtons.map(key => {
         const Action = consolidatedActions[key];
 
-        return <Action key={key} {...props} />;
+        return <Action key={key} dataTest={key} {...props} />;
       })}
     </DynaForm>
   );
@@ -117,7 +122,6 @@ export const ResourceFormFactory = props => {
     resourceId,
     isNew,
     lastPatchtimestamp,
-    resourceHash,
   } = props;
   const [count, setCount] = useState(0);
 
@@ -132,7 +136,6 @@ export const ResourceFormFactory = props => {
     lastPatchtimestamp,
     resourceId,
     resourceType,
-    resourceHash,
   ]);
 
   // once the form successfully completes submission (could be async)

@@ -1,6 +1,16 @@
 import { useEffect, useState } from 'react';
 import TextField from '@material-ui/core/TextField';
 import { InputAdornment } from '@material-ui/core';
+import { makeStyles } from '@material-ui/styles';
+
+const useStyles = makeStyles({
+  dynaFieldWrapper: {
+    width: '100%',
+  },
+  formField: {
+    width: '100%',
+  },
+});
 
 export default function DynaText(props) {
   const {
@@ -16,13 +26,14 @@ export default function DynaText(props) {
     value = '',
     label,
     multiline,
-    valueDelimiter,
+    delimiter,
     rowsMax,
     startAdornment,
     endAdornment,
     readOnly,
     inputType,
     options,
+    disableText = false,
   } = props;
   const [valueChanged, setValueChanged] = useState(false);
 
@@ -39,17 +50,19 @@ export default function DynaText(props) {
   const handleFieldChange = event => {
     const { value } = event.target;
 
-    if (!valueDelimiter) {
+    if (!delimiter) {
       onFieldChange(id, value);
 
       return;
     }
 
-    onFieldChange(id, value.split(valueDelimiter));
+    onFieldChange(id, value ? value.split(delimiter) : value);
   };
 
+  const classes = useStyles();
+
   return (
-    <div>
+    <div className={classes.dynaFieldWrapper}>
       <TextField
         autoComplete="off"
         key={id}
@@ -68,7 +81,7 @@ export default function DynaText(props) {
         type={inputType}
         placeholder={placeholder}
         helperText={isValid ? description : errorMessages}
-        disabled={disabled}
+        disabled={disabled || disableText}
         multiline={multiline}
         rowsMax={rowsMax}
         required={required}
@@ -76,6 +89,7 @@ export default function DynaText(props) {
         value={value}
         variant="filled"
         onChange={handleFieldChange}
+        className={classes.formField}
       />
     </div>
   );

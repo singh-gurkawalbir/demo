@@ -11,8 +11,6 @@ export default {
   //   label: 'Connection',
   //   resourceType: 'connections',
   //   resourceProp: 'type',
-  //   filter: r => ({ _id: r._connectionId }),
-  //   // excludeFilter: r => ({ _id: r._id }),
   // },
   description: {
     type: 'text',
@@ -25,6 +23,7 @@ export default {
   apiIdentifier: {
     label: 'Invoke this Export [POST]',
     type: 'apiidentifier',
+    visibleWhen: [{ field: 'apiIdentifier', isNot: [''] }],
   },
   configureAsyncHelper: {
     type: 'checkbox',
@@ -330,43 +329,38 @@ export default {
   // #endregion test
   // #region delta
   'delta.dateField': {
-    label: 'Date field',
-    type: 'refreshableselect',
-    mode: 'suitescript',
-    filterKey: 'dateField',
-    defaultValue: r => r && r.delta && r.delta.dateField,
+    type: 'text',
+    label: 'Date Field',
     required: true,
-    placeholder: 'Please select a date field',
-    connectionId: r => r && r._connectionId,
+    visibleWhen: [{ field: 'type', is: ['delta'] }],
   },
   'delta.dateFormat': {
     type: 'text',
     label: 'Delta date Format',
+    visibleWhen: [{ field: 'type', is: ['delta'] }],
   },
   'delta.startDate': {
     type: 'text',
     label: 'Delta start Date',
+    visibleWhen: [{ field: 'type', is: ['delta'] }],
   },
   'delta.lagOffset': {
     type: 'text',
     label: 'Offset',
-    defaultValue: r => r && r.delta && r.delta.lagOffset,
+    visibleWhen: [{ field: 'type', is: ['delta'] }],
   },
   'delta.endDateField': {
     type: 'text',
     label: 'Delta end Date Field',
+    visibleWhen: [{ field: 'type', is: ['delta'] }],
   },
   // #endregion delta
   // #region once
   'once.booleanField': {
+    type: 'text',
     label: 'Boolean Field',
-    type: 'refreshableselect',
-    placeholder: 'Please select a Boolean field',
-    defaultValue: r => r && r.once && r.once.booleanField,
-    mode: 'suitescript',
-    filterKey: 'booleanField',
     required: true,
-    connectionId: r => r && r._connectionId,
+    visibleWhen: [{ field: 'type', is: ['once'] }],
   },
   // #endregion once
   // #region valueDelta
@@ -379,106 +373,6 @@ export default {
     label: 'Value Delta pending Field',
   },
   // #endregion valueDelta
-  // #region webhook
-  'webhook.provider': {
-    type: 'select',
-    label: 'Webhook provider',
-    options: [
-      {
-        items: [
-          { label: 'Github', value: 'github' },
-          { label: 'Shopify', value: 'shopify' },
-          { label: 'Travis', value: 'travis' },
-          { label: 'Travis-org', value: 'travis-org' },
-          { label: 'Slack', value: 'slack' },
-          { label: 'Dropbox', value: 'dropbox' },
-          { label: 'Helpscout', value: 'helpscout' },
-          { label: 'Errorception', value: 'errorception' },
-          { label: 'Box', value: 'box' },
-          { label: 'Stripe', value: 'stripe' },
-          { label: 'Aha', value: 'aha' },
-          { label: 'Jira', value: 'jira' },
-          { label: 'Pagerduty', value: 'pagerduty' },
-          { label: 'Postmark', value: 'postmark' },
-          { label: 'Mailchimp', value: 'mailchimp' },
-          { label: 'Intercom', value: 'intercom' },
-          { label: 'Activecampaign', value: 'activecampaign' },
-          { label: 'Segment', value: 'segment' },
-          { label: 'Recurly', value: 'recurly' },
-          { label: 'Shipwire', value: 'shipwire' },
-          { label: 'Surveymonkey', value: 'surveymonkey' },
-          { label: 'Parseur', value: 'parseur' },
-          { label: 'Mailparser-io', value: 'mailparser-io' },
-          { label: 'Integrator-extension', value: 'integrator-extension' },
-          { label: 'Custom', value: 'custom' },
-        ],
-      },
-    ],
-  },
-  'webhook.verify': {
-    type: 'select',
-    label: 'Webhook verify',
-    options: [
-      {
-        items: [
-          { label: 'Token', value: 'token' },
-          { label: 'Hmac', value: 'hmac' },
-          { label: 'Basic', value: 'basic' },
-          { label: 'Publickey', value: 'publickey' },
-          { label: 'Secret_url', value: 'secret_url' },
-        ],
-      },
-    ],
-  },
-  'webhook.token': {
-    type: 'text',
-    label: 'Webhook token',
-  },
-  'webhook.path': {
-    type: 'text',
-    label: 'Webhook path',
-  },
-  'webhook.algorithm': {
-    type: 'radiogroup',
-    label: 'Webhook algorithm',
-    options: [
-      {
-        items: [
-          { label: 'Sha1', value: 'sha1' },
-          { label: 'Sha256', value: 'sha256' },
-        ],
-      },
-    ],
-  },
-  'webhook.encoding': {
-    type: 'radiogroup',
-    label: 'Webhook encoding',
-    options: [
-      {
-        items: [
-          { label: 'Hex', value: 'hex' },
-          { label: 'Base64', value: 'base64' },
-        ],
-      },
-    ],
-  },
-  'webhook.key': {
-    type: 'text',
-    label: 'Webhook key',
-  },
-  'webhook.header': {
-    type: 'text',
-    label: 'Webhook header',
-  },
-  'webhook.username': {
-    type: 'text',
-    label: 'Webhook username',
-  },
-  'webhook.password': {
-    type: 'text',
-    label: 'Webhook password',
-  },
-  // #endregion webhook
   // #region distributed
   'distributed.bearerToken': {
     type: 'text',
@@ -489,7 +383,17 @@ export default {
   hookType: {
     type: 'radiogroup',
     label: 'Hook Type',
-    defaultValue: 'script',
+    defaultValue: r => {
+      let isStackType = false;
+
+      isStackType = !!(((r || {}).hooks || {}).preSavePage || {})._stackId;
+
+      if (isStackType) {
+        return 'stack';
+      }
+
+      return 'script';
+    },
     options: [
       {
         items: [
@@ -501,23 +405,30 @@ export default {
   },
   'hooks.preSavePage.function': {
     type: 'text',
-    label: 'Hooks pre Save Page function',
+    label: 'Pre Save Page',
   },
   'hooks.preSavePage._scriptId': {
     type: 'selectresource',
     resourceType: 'scripts',
-    placeholder: 'Please select a script',
-    label: 'Hooks pre Save Page _script Id',
-  },
-  'hooks.preSavePage.configuration': {
-    type: 'text',
-    label: 'Hooks pre Save Page configuration',
+    label: 'Pre Save Page Script',
+    visibleWhen: [
+      {
+        field: 'hookType',
+        is: ['script'],
+      },
+    ],
   },
   'hooks.preSavePage._stackId': {
     type: 'selectresource',
     placeholder: 'Please select a stack',
     resourceType: 'stacks',
-    label: 'Hooks pre Save Page _stack Id',
+    label: 'Pre Save Page Stack',
+    visibleWhen: [
+      {
+        field: 'hookType',
+        is: ['stack'],
+      },
+    ],
   },
 
   // #endregion hooks

@@ -79,7 +79,7 @@ export default function DynaXmlParse(props) {
           onClose={handleClose}
         />
       )}
-      <Button variant="contained" onClick={handleEditorClick}>
+      <Button data-test={id} variant="contained" onClick={handleEditorClick}>
         {label}
       </Button>
     </Fragment>
