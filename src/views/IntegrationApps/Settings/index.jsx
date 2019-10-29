@@ -281,11 +281,11 @@ export default function IntegrationAppSettings(props) {
                       ))}
                   </ul>
                 </ListItem>
+                <LHSItem to={`${urlPrefix}/connections`} label="Connections" />
+                <LHSItem to={`${urlPrefix}/users`} label="Users" />
                 {showAPITokens && (
                   <LHSItem to={`${urlPrefix}/tokens`} label="API Tokens" />
                 )}
-                <LHSItem to={`${urlPrefix}/connections`} label="Connections" />
-                <LHSItem to={`${urlPrefix}/users`} label="Users" />
                 <LHSItem to={`${urlPrefix}/audit`} label="Audit Log" />
                 <LHSItem to={`${urlPrefix}/uninstall`} label="Uninstall" />
               </List>
