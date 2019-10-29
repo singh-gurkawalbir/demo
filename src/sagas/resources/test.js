@@ -101,11 +101,15 @@ describe('commitStagedChanges saga', () => {
         })
       );
 
-      const updated = { id: 1 };
+      const updated = { _id: 1 };
       const putEffect = saga.next(updated).value;
 
       expect(putEffect).toEqual(
         put(actions.resource.received(resourceType, updated))
+      );
+
+      expect(saga.next().value).toEqual(
+        put(actions.resource.updated(resourceType, updated._id, true))
       );
 
       expect(saga.next().value).toEqual(put(actions.resource.clearStaged(id)));
