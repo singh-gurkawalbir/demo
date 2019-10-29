@@ -1,5 +1,3 @@
-import { adaptorTypeMap } from '../../../utils/resource';
-
 export default {
   fieldMap: {
     common: { formId: 'common' },
@@ -38,10 +36,16 @@ export default {
       fieldId: 'salesforce.upsert.externalIdField',
     },
     dataMappings: { formId: 'dataMappings' },
+    'salesforce.lookups': {
+      fieldId: 'salesforce.lookups',
+      visible: false,
+    },
     mapping: {
       fieldId: 'mapping',
-      application: adaptorTypeMap.SalesforceImport,
-      refreshOptionsOnChangesTo: ['salesforce.sObjectType'],
+      refreshOptionsOnChangesTo: [
+        'salesforce.sObjectType',
+        'salesforce.lookups',
+      ],
     },
     advancedSettings: { formId: 'advancedSettings' },
   },
@@ -51,6 +55,7 @@ export default {
       'apiType',
       'salesforce.api',
       'importData',
+      'salesforce.lookups',
       'salesforce.sObjectType',
       'salesforce.operation',
       'salesforce.compositeOperation',
@@ -73,9 +78,14 @@ export default {
       const sObjectTypeField = fields.find(
         field => field.id === 'salesforce.sObjectType'
       );
+      const lookupField = fields.find(
+        field => field.fieldId === 'salesforce.lookups'
+      );
 
       return {
         sObjectType: sObjectTypeField && sObjectTypeField.value,
+        lookupId: 'salesforce.lookups',
+        lookups: lookupField && lookupField.value,
       };
     }
   },
