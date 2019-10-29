@@ -1,36 +1,29 @@
 import { useEffect, useState } from 'react';
-import { connect } from 'react-redux';
-import { withRouter, Redirect } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { Redirect, useHistory, useLocation } from 'react-router-dom';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
 import getRoutePath from '../../utils/routePaths';
 
-const mapStateToProps = state => ({
-  shouldShowAppRouting: selectors.shouldShowAppRouting(state),
-  isAuthInitialized: selectors.isAuthInitialized(state),
-  isSessionExpired: selectors.isSessionExpired(state),
-  isAuthenticated: selectors.isAuthenticated(state),
-});
-const mapDispatchToProps = dispatch => ({
-  initSession: () => {
-    dispatch(actions.auth.initSession());
-  },
-  clearAppError: () => {
-    dispatch(actions.app.clearError());
-  },
-});
-
-export function AppRoutingWithAuth(props) {
-  const {
-    initSession,
-    isAuthInitialized,
-    location,
-    history,
-    children,
-    clearAppError,
-  } = props;
+export default function AppRoutingWithAuth({ children }) {
+  const history = useHistory();
+  const location = useLocation();
   const { pathname: currentRoute } = location;
+  const isSignInRoute = location.pathname === getRoutePath('signin');
+  const dispatch = useDispatch();
   const [hasPageReloaded, setHasPageReloaded] = useState(false);
+  const shouldShowAppRouting = useSelector(state =>
+    selectors.shouldShowAppRouting(state)
+  );
+  const isAuthInitialized = useSelector(state =>
+    selectors.isAuthInitialized(state)
+  );
+  const isSessionExpired = useSelector(state =>
+    selectors.isSessionExpired(state)
+  );
+  const isAuthenticated = useSelector(state =>
+    selectors.isAuthenticated(state)
+  );
 
   useEffect(() => {
     if (!isAuthInitialized && !hasPageReloaded) {
@@ -38,22 +31,16 @@ export function AppRoutingWithAuth(props) {
         history.push({
           state: { attemptedRoute: currentRoute },
         });
-      initSession();
+
+      dispatch(actions.auth.initSession());
     }
 
-    if (!hasPageReloaded) clearAppError();
-    setHasPageReloaded(true);
-  }, [
-    hasPageReloaded,
-    currentRoute,
-    history,
-    initSession,
-    isAuthInitialized,
-    clearAppError,
-  ]);
+    if (!hasPageReloaded) {
+      dispatch(actions.app.clearError());
+    }
 
-  const { shouldShowAppRouting, isAuthenticated, isSessionExpired } = props;
-  const isSignInRoute = location.pathname === getRoutePath('signin');
+    setHasPageReloaded(true);
+  }, [hasPageReloaded, currentRoute, history, isAuthInitialized, dispatch]);
 
   // this selector is used by the UI to hold off rendering any routes
   // till it determines the auth state
@@ -83,13 +70,3 @@ export function AppRoutingWithAuth(props) {
 
   return children;
 }
-
-// we need to create a HOC with withRouter otherwise the router context will
-// go missing when using connect and this can result in the Path component not
-// being able to make matches to the url provided
-export default withRouter(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )(AppRoutingWithAuth)
-);

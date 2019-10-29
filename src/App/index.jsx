@@ -14,7 +14,7 @@ import AuthDialog from '../components/AuthDialog';
 import AppErroredModal from './AppErroredModal';
 import NetworkSnackbar from '../components/NetworkSnackbar';
 import * as selectors from '../reducers';
-import WithAuth from './AppRoutingWithAuth';
+import AppRoutingWithAuth from './AppRoutingWithAuth';
 import Signin from '../views/SignIn';
 // import useWhyDidYouUpdate from '../hooks/useWhyDidYouUpdate';
 
@@ -72,12 +72,12 @@ export default function App() {
               <Route path="/pg*" component={NonSigninHeaderComponents} />
             </Switch>
             {/* page content */}
-            <WithAuth>
+            <AppRoutingWithAuth>
               <Switch>
                 <Route path="/pg/signin" component={Signin} />
                 <Route path="/pg*" component={PageContent} />
               </Switch>
-            </WithAuth>
+            </AppRoutingWithAuth>
           </div>
         </BrowserRouter>
       </DndProvider>
