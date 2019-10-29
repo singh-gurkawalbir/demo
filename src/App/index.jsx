@@ -37,17 +37,23 @@ const NonSigninHeaderComponents = props => (
   </Fragment>
 );
 
-export default function AppNew() {
+export default function App() {
   const classes = useStyles();
   const reloadCount = useSelector(state => selectors.reloadCount(state));
   const themeName = useSelector(state => selectors.themeName(state));
+  const { environment = 'production' } = useSelector(state =>
+    selectors.userPreferences(state)
+  );
   const isAllLoadingCommsAboveThreshold = useSelector(state =>
     selectors.isAllLoadingCommsAboveThreshold(state)
   );
-  const theme = themeProvider({ name: themeName, isSandbox: false });
+  const theme = themeProvider({
+    name: themeName,
+    isSandbox: environment === 'sandbox',
+  });
 
   // eslint-disable-next-line
-  console.log(reloadCount, '*** THEME ***', theme);
+  console.log(reloadCount, environment, '*** THEME ***', theme);
 
   return (
     <MuiThemeProvider key={reloadCount} theme={theme}>
