@@ -26,16 +26,17 @@ const useStyles = makeStyles({
     display: 'flex',
   },
 });
-// const oldTheme = themeProviderOld('light');
-// console.log('old theme', oldTheme);
-const NonSigninHeaderComponents = props => (
-  <Fragment>
-    <CeligoAppBar {...props} />
-    <AppErroredModal {...props} />
-    <AuthDialog {...props} />
-    <CeligoDrawer {...props} />
-  </Fragment>
-);
+
+function NonSigninHeaderComponents(props) {
+  return (
+    <Fragment>
+      <CeligoAppBar {...props} />
+      <AppErroredModal {...props} />
+      <AuthDialog {...props} />
+      <CeligoDrawer {...props} />
+    </Fragment>
+  );
+}
 
 export default function App() {
   const classes = useStyles();
@@ -53,7 +54,7 @@ export default function App() {
   });
 
   // eslint-disable-next-line
-  console.log(reloadCount, environment, '*** THEME ***', theme);
+  console.log(reloadCount, environment); //, '*** THEME ***', theme);
 
   return (
     <MuiThemeProvider key={reloadCount} theme={theme}>

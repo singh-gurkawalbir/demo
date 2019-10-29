@@ -58,15 +58,21 @@ export default function TextToggle({
   defaultValue,
   minWidth,
   variant,
+  onChange,
   ...rest
 }) {
   const classes = useStyles({ minWidth });
   const [value, setValue] = useState(defaultValue);
-  const handleChange = (event, newValue) => {
+
+  function handleChange(event, newValue) {
     if (newValue) {
       setValue(newValue);
+
+      if (typeof onChange === 'function') {
+        onChange(newValue);
+      }
     }
-  };
+  }
 
   return (
     <ToggleButtonGroup
