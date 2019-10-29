@@ -90,9 +90,9 @@ export default {
       case adaptorTypeMap.AS2Import:
       case adaptorTypeMap.S3Import:
       case adaptorTypeMap.FTPImport:
+      case adaptorTypeMap.HTTPImport:
         return '/mapping';
       case adaptorTypeMap.XMLImport:
-      case adaptorTypeMap.HTTPImport:
       case adaptorTypeMap.MongodbImport:
       case adaptorTypeMap.WrapperImport:
       case adaptorTypeMap.RDBMSImport:
@@ -114,8 +114,9 @@ export default {
         return 'Import Field (Amazon S3)';
       case adaptorTypeMap.SalesforceImport:
         return 'Salesforce Field';
-      case adaptorTypeMap.XMLImport:
       case adaptorTypeMap.HTTPImport:
+        return 'Http Field';
+      case adaptorTypeMap.XMLImport:
       case adaptorTypeMap.MongodbImport:
       case adaptorTypeMap.WrapperImport:
       case adaptorTypeMap.RDBMSImport:
@@ -139,11 +140,11 @@ export default {
       case adaptorTypeMap.AS2Import:
       case adaptorTypeMap.FTPImport:
       case adaptorTypeMap.SalesforceImport:
+      case adaptorTypeMap.HTTPImport:
       case adaptorTypeMap.S3Import:
         mappings = resourceObj.mapping;
         break;
       case adaptorTypeMap.XMLImport:
-      case adaptorTypeMap.HTTPImport:
       case adaptorTypeMap.MongodbImport:
       case adaptorTypeMap.WrapperImport:
       case adaptorTypeMap.RDBMSImport:
@@ -196,9 +197,10 @@ export default {
       case adaptorTypeMap.HTTPImport:
       case adaptorTypeMap.MongodbImport:
       case adaptorTypeMap.WrapperImport:
+      case adaptorTypeMap.SalesforceImport:
       case adaptorTypeMap.RDBMSImport:
         return MappingUtil.generateMappingFieldsAndList({ mappings });
-      case adaptorTypeMap.SalesforceImport:
+
       default:
     }
   },
