@@ -790,12 +790,13 @@ const resourceForm = {
       isNew,
       skipCommit,
     }),
-  submit: (resourceType, resourceId, values, match) =>
+  submit: (resourceType, resourceId, values, match, skipClose) =>
     action(actionTypes.RESOURCE_FORM.SUBMIT, {
       resourceType,
       resourceId,
       values,
       match,
+      skipClose,
     }),
   submitComplete: (resourceType, resourceId, formValues) =>
     action(actionTypes.RESOURCE_FORM.SUBMIT_COMPLETE, {

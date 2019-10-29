@@ -151,3 +151,36 @@ export function getResourceSubTypeFromAdaptorType(adaptorType) {
 // fn to consolidate this simple expression in case we ever
 // change how we identify new resources..
 export const isNewId = id => id && id.startsWith('new');
+
+export const getWebhookUrl = (formValues, resourceId) => {
+  let whURL = 'https://api.staging.integrator.io/v1/exports/';
+
+  whURL = whURL.concat(resourceId);
+  const provider = formValues['/webhook/provider'];
+
+  if (
+    [
+      'activecampaign',
+      'aha',
+      'box',
+      'intercom',
+      'jira',
+      'mailchimp',
+      'pagerduty',
+      'postmark',
+      'recurly',
+      'segment',
+      'stripe',
+      'mailparser-io',
+      'parseur',
+      'custom',
+      'sapariba',
+    ].indexOf(provider) > -1
+  ) {
+    whURL += `/${formValues['/webhook/token']}`;
+  }
+
+  whURL += '/data';
+
+  return whURL;
+};

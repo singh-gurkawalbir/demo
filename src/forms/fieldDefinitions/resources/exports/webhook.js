@@ -137,6 +137,17 @@ export default {
       },
     ],
   },
+  'webhook.url': {
+    type: 'generateurl',
+    label: 'Public URL',
+    buttonLabel: 'Generate URL',
+    visibleWhenAll: [
+      {
+        field: 'webhook.provider',
+        isNot: [''],
+      },
+    ],
+  },
   'webhook.username': {
     type: 'text',
     label: 'Username',
