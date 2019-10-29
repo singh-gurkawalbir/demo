@@ -1605,7 +1605,7 @@ export function integrationResources(state, _integrationId, storeId) {
     n => n._integrationId === _integrationId
   );
 
-  if (_integrationId && ![['none', 'none-sb']].includes(_integrationId)) {
+  if (_integrationId && !['none', 'none-sb'].includes(_integrationId)) {
     flows = [{ _id: _integrationId, name: '---All Flows---' }, ...flows];
 
     if (allFlowsSelected) flowValues = [_integrationId, ...flows];

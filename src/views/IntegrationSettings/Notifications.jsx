@@ -31,7 +31,7 @@ export default function Notifications(props) {
         name: 'connections',
         type: 'multiselect',
         valueDelimiter: ',',
-        label: 'Connections',
+        label: 'Notify me when connection goes offline',
         defaultValue: connectionValues,
         options: [{ items: connectionOps }],
       },
@@ -40,7 +40,7 @@ export default function Notifications(props) {
         name: 'flows',
         type: 'multiselect',
         valueDelimiter: ',',
-        label: 'Job Errors:',
+        label: 'Notify me on job error',
         defaultValue: flowValues,
         options: [{ items: flowOps }],
       },
@@ -58,28 +58,22 @@ export default function Notifications(props) {
     const { connections: connList, flows: flowList } = formVal;
     const notifications = [];
 
-    if (flowList.includes(integrationId)) {
-      notifications.push({ _integrationId: integrationId, subscribed: true });
-    } else {
-      notifications.push({ _integrationId: integrationId, subscribed: false });
-    }
+    notifications.push({
+      _integrationId: integrationId,
+      subscribed: flowList.includes(integrationId),
+    });
 
     flows.forEach(flow => {
-      if (flowList.includes(flow._id)) {
-        notifications.push({ _flowId: flow._id, subscribed: true });
-      } else {
-        notifications.push({ _flowId: flow._id, subscribed: false });
-      }
+      notifications.push({
+        _flowId: flow._id,
+        subscribed: flowList.includes(flow._id),
+      });
     });
     connections.forEach(connection => {
-      if (connList.includes(connection._id)) {
-        notifications.push({ _connectionId: connection._id, subscribed: true });
-      } else {
-        notifications.push({
-          _connectionId: connection._id,
-          subscribed: false,
-        });
-      }
+      notifications.push({
+        _connectionId: connection._id,
+        subscribed: connList.includes(connection._id),
+      });
     });
 
     dispatch(actions.resource.notifications.update(notifications));
