@@ -100,7 +100,6 @@ export default {
     'http.response.successPath': { fieldId: 'http.response.successPath' },
     'http.response.successValues': {
       fieldId: 'http.response.successValues',
-      omitWhenValueIs: [''],
     },
     'http.response.errorPath': { fieldId: 'http.response.errorPath' },
     type: {

@@ -217,7 +217,12 @@ const applyVisibilityRulesToSubForm = (f, resourceType) => {
 
   const transformedFieldMap = Object.keys(fieldMapFromSubForm)
     .map(key => {
-      const field = fieldMapFromSubForm[key];
+      let field = fieldMapFromSubForm[key];
+      const masterFields = masterFieldHash[resourceType]
+        ? masterFieldHash[resourceType][field.fieldId]
+        : {};
+
+      field = { ...masterFields, ...field };
 
       if (field.visibleWhen && field.visibleWhenAll)
         throw new Error(

@@ -2,6 +2,19 @@ import { adaptorTypeMap } from '../../../utils/resource';
 import timeStamps from '../../../utils/timeStamps';
 
 export default {
+  preSave: formValues => {
+    const newValues = { ...formValues };
+
+    if (newValues['/inputMode'] === 'BLOB') {
+      newValues['/ftp/useTempFile'] = newValues['/ftp/blobUseTempFile'];
+      newValues['/ftp/inProgressFileName'] =
+        newValues['/ftp/blobInProgressFileName'];
+    }
+
+    return {
+      ...newValues,
+    };
+  },
   init: fieldMeta => {
     const fileDefinitionRulesField =
       fieldMeta.fieldMap['file.filedefinition.rules'];
@@ -110,29 +123,109 @@ export default {
       label: 'How would you like the data imported?',
     },
     'ftp.directoryPath': { fieldId: 'ftp.directoryPath' },
-    fileType: { formId: 'fileType' },
+    fileType: {
+      formId: 'fileType',
+      visibleWhenAll: [
+        {
+          field: 'inputMode',
+          is: ['RECORDS'],
+        },
+      ],
+    },
+    blobKeyPath: { fieldId: 'blobKeyPath' },
     'ftp.fileName': { fieldId: 'ftp.fileName' },
-    file: { formId: 'file' },
+    file: {
+      formId: 'file',
+      visibleWhenAll: [
+        {
+          field: 'inputMode',
+          is: ['RECORDS'],
+        },
+      ],
+    },
     dataMappings: { formId: 'dataMappings' },
-    'file.lookups': { fieldId: 'file.lookups', visible: false },
+    'file.lookups': {
+      fieldId: 'file.lookups',
+      visibleWhen: [
+        {
+          field: 'inputMode',
+          is: ['RECORDS'],
+        },
+      ],
+      visible: false,
+    },
     mapping: {
       fieldId: 'mapping',
       application: adaptorTypeMap.FTPImport,
       refreshOptionsOnChangesTo: ['file.lookups'],
+      visibleWhen: [
+        {
+          field: 'inputMode',
+          is: ['RECORDS'],
+        },
+      ],
     },
-    'file.csv.rowDelimiter': { fieldId: 'file.csv.rowDelimiter' },
+    inputMode: {
+      id: 'inputMode',
+      type: 'radiogroup',
+      label: 'Input Mode',
+      options: [
+        {
+          items: [
+            { label: 'Records', value: 'RECORDS' },
+            { label: 'Blob Keys', value: 'BLOB' },
+          ],
+        },
+      ],
+      defaultValue: r => (r && r.blobKeyPath ? 'BLOB' : 'RECORDS'),
+    },
+    'file.csv.rowDelimiter': {
+      id: 'file.csv.rowDelimiter',
+      type: 'checkbox',
+      label: 'Row Delimiter',
+      visibleWhenAll: [
+        { field: 'http.requestMediaType', is: ['csv'] },
+        {
+          field: 'inputMode',
+          is: ['RECORDS'],
+        },
+      ],
+    },
     'ftp.useTempFile': { fieldId: 'ftp.useTempFile' },
     'ftp.inProgressFileName': { fieldId: 'ftp.inProgressFileName' },
-    fileAdvancedSettings: { formId: 'fileAdvancedSettings' },
+    'ftp.blobUseTempFile': { fieldId: 'ftp.blobUseTempFile' },
+    'ftp.blobInProgressFileName': { fieldId: 'ftp.blobInProgressFileName' },
+    deleteAfterImport: {
+      fieldId: 'deleteAfterImport',
+      visibleWhen: [
+        {
+          field: 'inputMode',
+          is: ['BLOB'],
+        },
+      ],
+    },
+    fileAdvancedSettings: {
+      formId: 'fileAdvancedSettings',
+      visibleWhenAll: [
+        {
+          field: 'inputMode',
+          is: ['RECORDS'],
+        },
+      ],
+    },
   },
   layout: {
     fields: [
       'common',
+      'inputMode',
       'importData',
+      'blobKeyPath',
       'ftp.directoryPath',
       'fileType',
       'ftp.fileName',
       'file',
+      'ftp.blobUseTempFile',
+      'ftp.blobInProgressFileName',
       'dataMappings',
       'file.lookups',
       'mapping',
@@ -147,6 +240,7 @@ export default {
           'ftp.useTempFile',
           'ftp.inProgressFileName',
           'fileAdvancedSettings',
+          'deleteAfterImport',
         ],
       },
     ],

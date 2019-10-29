@@ -1,4 +1,15 @@
 export default {
+  preSave: formValues => {
+    const newValues = { ...formValues };
+
+    if (newValues['/inputMode'] === 'BLOB') {
+      newValues['/http/method'] = newValues['/http/blobMethod'];
+    }
+
+    return {
+      ...newValues,
+    };
+  },
   optionsHandler: (fieldId, fields) => {
     if (fieldId === 'http.body') {
       const recordTypeField = fields.find(
@@ -32,9 +43,23 @@ export default {
       type: 'labeltitle',
       label: 'How would you like the data imported?',
     },
-    oneToMany: { fieldId: 'oneToMany' },
-    pathToMany: { fieldId: 'pathToMany' },
+    dataMappings: { formId: 'dataMappings' },
+    inputMode: {
+      id: 'inputMode',
+      type: 'radiogroup',
+      label: 'Input Mode',
+      options: [
+        {
+          items: [
+            { label: 'Records', value: 'RECORDS' },
+            { label: 'Blob Keys', value: 'BLOB' },
+          ],
+        },
+      ],
+      defaultValue: r => (r && r.blobKeyPath ? 'BLOB' : 'RECORDS'),
+    },
     'http.method': { fieldId: 'http.method' },
+    'http.blobMethod': { fieldId: 'http.blobMethod' },
     'http.headers': { fieldId: 'http.headers' },
     'http.requestMediaType': { fieldId: 'http.requestMediaType' },
     'http.compositeType': { fieldId: 'http.compositeType' },
@@ -50,10 +75,14 @@ export default {
       id: 'createNewData',
       type: 'labeltitle',
       label: 'Create New Data',
-      visibleWhen: [
+      visibleWhenAll: [
         {
           field: 'http.compositeType',
           is: ['createandupdate', 'createandignore'],
+        },
+        {
+          field: 'inputMode',
+          is: ['RECORDS'],
         },
       ],
     },
@@ -65,10 +94,14 @@ export default {
       id: 'upateExistingData',
       type: 'labeltitle',
       label: 'Upate Existing Data',
-      visibleWhen: [
+      visibleWhenAll: [
         {
           field: 'http.compositeType',
           is: ['createandupdate', 'updateandignore'],
+        },
+        {
+          field: 'inputMode',
+          is: ['RECORDS'],
         },
       ],
     },
@@ -80,10 +113,14 @@ export default {
       id: 'ignoreExistingData',
       type: 'labeltitle',
       label: 'Ignore Existing Data',
-      visibleWhen: [
+      visibleWhenAll: [
         {
           field: 'http.compositeType',
           is: ['createandignore', 'updateandignore'],
+        },
+        {
+          field: 'inputMode',
+          is: ['RECORDS'],
         },
       ],
     },
@@ -92,52 +129,127 @@ export default {
       id: 'mediatypeInformation',
       type: 'labeltitle',
       label: 'Media type information',
+      visibleWhen: [
+        {
+          field: 'inputMode',
+          is: ['RECORDS'],
+        },
+      ],
     },
     'http.successMediaType': { fieldId: 'http.successMediaType' },
+    blobKeyPath: { fieldId: 'blobKeyPath' },
     'http.errorMediaType': { fieldId: 'http.errorMediaType' },
     uploadFile: {
-      fieldId: 'uploadFile',
-      visibleWhen: [{ field: 'http.requestMediaType', is: ['csv'] }],
+      id: 'uploadFile',
+      type: 'uploadfile',
+      label: 'Sample File (that would be imported)',
+      mode: r => r && r.file && r.file.type,
+      visibleWhenAll: [
+        { field: 'http.requestMediaType', is: ['csv'] },
+        {
+          field: 'inputMode',
+          is: ['RECORDS'],
+        },
+      ],
     },
-    'file.csv.columnDelimiter': {
-      fieldId: 'file.csv.columnDelimiter',
-      visibleWhen: [{ field: 'http.requestMediaType', is: ['csv'] }],
+    'file.csv': {
+      id: 'file.csv',
+      type: 'csvparse',
+      label: 'Configure CSV parse options',
+      visibleWhenAll: [
+        { field: 'http.requestMediaType', is: ['csv'] },
+        {
+          field: 'inputMode',
+          is: ['RECORDS'],
+        },
+      ],
     },
-    'file.csv.includeHeader': {
-      fieldId: 'file.csv.includeHeader',
-      visibleWhen: [{ field: 'http.requestMediaType', is: ['csv'] }],
-    },
-    'file.csv.customHeaderRows': { fieldId: 'file.csv.customHeaderRows' },
     'http.body': { fieldId: 'http.body' },
     'file.csv.rowDelimiter': {
-      fieldId: 'file.csv.rowDelimiter',
-      visibleWhen: [{ field: 'http.requestMediaType', is: ['csv'] }],
+      id: 'file.csv.rowDelimiter',
+      type: 'checkbox',
+      label: 'Row Delimiter',
+      visibleWhenAll: [
+        { field: 'http.requestMediaType', is: ['csv'] },
+        {
+          field: 'inputMode',
+          is: ['RECORDS'],
+        },
+      ],
+    },
+    'file.csv.wrapWithQuotes': {
+      id: 'file.csv.wrapWithQuotes',
+      type: 'checkbox',
+      label: 'Wrap with quotes',
+      visibleWhenAll: [
+        { field: 'http.requestMediaType', is: ['csv'] },
+        {
+          field: 'inputMode',
+          is: ['RECORDS'],
+        },
+      ],
     },
     'file.csv.replaceTabWithSpace': {
-      fieldId: 'file.csv.replaceTabWithSpace',
-      visibleWhen: [{ field: 'http.requestMediaType', is: ['csv'] }],
+      id: 'file.csv.replaceTabWithSpace',
+      type: 'checkbox',
+      label: 'Replace tab with space',
+      visibleWhenAll: [
+        { field: 'http.requestMediaType', is: ['csv'] },
+        {
+          field: 'inputMode',
+          is: ['RECORDS'],
+        },
+      ],
     },
     'file.csv.replaceNewLineWithSpace': {
-      fieldId: 'file.csv.replaceNewLineWithSpace',
-      visibleWhen: [{ field: 'http.requestMediaType', is: ['csv'] }],
+      id: 'file.csv.replaceNewLineWithSpace',
+      type: 'checkbox',
+      label: 'Replace new line with space',
+      visibleWhenAll: [
+        { field: 'http.requestMediaType', is: ['csv'] },
+        {
+          field: 'inputMode',
+          is: ['RECORDS'],
+        },
+      ],
     },
     'http.ignoreEmptyNodes': { fieldId: 'http.ignoreEmptyNodes' },
-    advancedSettings: { formId: 'advancedSettings' },
+    advancedSettings: {
+      formId: 'advancedSettings',
+      visibleWhenAll: [
+        {
+          field: 'inputMode',
+          is: ['RECORDS'],
+        },
+      ],
+    },
     'http.configureAsyncHelper': { fieldId: 'http.configureAsyncHelper' },
     'http._asyncHelperId': { fieldId: 'http._asyncHelperId' },
+    deleteAfterImport: {
+      fieldId: 'deleteAfterImport',
+      visibleWhen: [
+        {
+          field: 'inputMode',
+          is: ['BLOB'],
+        },
+      ],
+    },
   },
   layout: {
     fields: [
       'common',
+      'inputMode',
       'importData',
-      'oneToMany',
-      'pathToMany',
+      'dataMappings',
+      'blobKeyPath',
       'http.method',
+      'http.blobMethod',
       'http.headers',
       'http.requestMediaType',
       'http.compositeType',
       'http.relativeURI',
       'http.lookups',
+      'http.body',
       'http.response.successPath',
       'http.response.successValues',
       'http.response.resourceIdPath',
@@ -161,10 +273,7 @@ export default {
       'http.successMediaType',
       'http.errorMediaType',
       'uploadFile',
-      'file.csv.columnDelimiter',
-      'file.csv.includeHeader',
-      'file.csv.customHeaderRows',
-      'http.body',
+      'file.csv',
     ],
     type: 'collapse',
     containers: [
@@ -173,12 +282,14 @@ export default {
         label: 'Advanced',
         fields: [
           'file.csv.rowDelimiter',
+          'file.csv.wrapWithQuotes',
           'file.csv.replaceTabWithSpace',
           'file.csv.replaceNewLineWithSpace',
           'http.ignoreEmptyNodes',
           'advancedSettings',
           'http.configureAsyncHelper',
           'http._asyncHelperId',
+          'deleteAfterImport',
         ],
       },
     ],

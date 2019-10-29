@@ -109,25 +109,98 @@ export default {
       type: 'labeltitle',
       label: 'How would you like the data imported?',
     },
+    inputMode: {
+      id: 'inputMode',
+      type: 'radiogroup',
+      label: 'Input Mode',
+      options: [
+        {
+          items: [
+            { label: 'Records', value: 'RECORDS' },
+            { label: 'Blob Keys', value: 'BLOB' },
+          ],
+        },
+      ],
+      defaultValue: r => (r && r.blobKeyPath ? 'BLOB' : 'RECORDS'),
+    },
     's3.region': { fieldId: 's3.region' },
     's3.bucket': { fieldId: 's3.bucket' },
-    fileType: { formId: 'fileType' },
+    fileType: {
+      formId: 'fileType',
+      visibleWhenAll: [
+        {
+          field: 'inputMode',
+          is: ['RECORDS'],
+        },
+      ],
+    },
     's3.fileKey': { fieldId: 's3.fileKey' },
-    file: { formId: 'file' },
+    blobKeyPath: { fieldId: 'blobKeyPath' },
+    file: {
+      formId: 'file',
+      visibleWhenAll: [
+        {
+          field: 'inputMode',
+          is: ['RECORDS'],
+        },
+      ],
+    },
     dataMappings: { formId: 'dataMappings' },
-    'file.lookups': { fieldId: 'file.lookups', visible: false },
+    'file.lookups': {
+      fieldId: 'file.lookups',
+      visibleWhen: [
+        {
+          field: 'inputMode',
+          is: ['RECORDS'],
+        },
+      ],
+      visible: false,
+    },
     mapping: {
       fieldId: 'mapping',
       application: adaptorTypeMap.S3Import,
       refreshOptionsOnChangesTo: ['file.lookups'],
+      visibleWhen: [
+        {
+          field: 'inputMode',
+          is: ['RECORDS'],
+        },
+      ],
     },
-    'file.csv.rowDelimiter': { fieldId: 'file.csv.rowDelimiter' },
-    fileAdvancedSettings: { formId: 'fileAdvancedSettings' },
+    deleteAfterImport: {
+      fieldId: 'deleteAfterImport',
+      visibleWhen: [
+        {
+          field: 'inputMode',
+          is: ['BLOB'],
+        },
+      ],
+    },
+    'file.csv.rowDelimiter': {
+      fieldId: 'file.csv.rowDelimiter',
+      visibleWhen: [
+        {
+          field: 'inputMode',
+          is: ['RECORDS'],
+        },
+      ],
+    },
+    fileAdvancedSettings: {
+      formId: 'fileAdvancedSettings',
+      visibleWhenAll: [
+        {
+          field: 'inputMode',
+          is: ['RECORDS'],
+        },
+      ],
+    },
   },
   layout: {
     fields: [
       'common',
+      'inputMode',
       'importData',
+      'blobKeyPath',
       's3.region',
       's3.bucket',
       'fileType',
@@ -142,7 +215,11 @@ export default {
       {
         collapsed: true,
         label: 'Advanced',
-        fields: ['file.csv.rowDelimiter', 'fileAdvancedSettings'],
+        fields: [
+          'file.csv.rowDelimiter',
+          'fileAdvancedSettings',
+          'deleteAfterImport',
+        ],
       },
     ],
   },

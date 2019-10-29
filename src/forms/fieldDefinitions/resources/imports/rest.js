@@ -3,6 +3,12 @@ export default {
     type: 'radiogroup',
     label: 'Method',
     required: true,
+    visibleWhen: [
+      {
+        field: 'inputMode',
+        is: ['RECORDS'],
+      },
+    ],
     options: [
       {
         items: [
@@ -12,6 +18,26 @@ export default {
           { label: 'PATCH', value: 'PATCH' },
           { label: 'Composite', value: 'COMPOSITE' },
         ],
+      },
+    ],
+  },
+  'rest.blobMethod': {
+    type: 'radiogroup',
+    label: 'Method',
+    required: true,
+    options: [
+      {
+        items: [
+          { label: 'POST', value: 'POST' },
+          { label: 'PUT', value: 'PUT' },
+          { label: 'DELETE', value: 'DELETE' },
+        ],
+      },
+    ],
+    visibleWhen: [
+      {
+        field: 'inputMode',
+        is: ['BLOB'],
       },
     ],
   },
@@ -40,10 +66,14 @@ export default {
         ],
       },
     ],
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'rest.method',
         is: ['COMPOSITE'],
+      },
+      {
+        field: 'inputMode',
+        is: ['RECORDS'],
       },
     ],
   },
@@ -57,33 +87,57 @@ export default {
         field: 'rest.method',
         is: ['POST', 'PUT', 'DELETE', 'PATCH'],
       },
+      {
+        field: 'rest.blobMethod',
+        is: ['POST', 'PUT', 'DELETE'],
+      },
     ],
   },
   mapping: {
     type: 'mapping',
     connectionId: r => r && r._connectionId,
     label: 'Manage Import Mapping',
+    visibleWhen: [
+      {
+        field: 'inputMode',
+        is: ['RECORDS'],
+      },
+    ],
   },
   'rest.successPath': {
     type: 'text',
     label: 'Success Path',
     placeholder: 'Optional',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'rest.method',
         is: ['POST', 'PUT', 'DELETE', 'PATCH'],
       },
+      {
+        field: 'inputMode',
+        is: ['RECORDS'],
+      },
     ],
+  },
+  'rest.body': {
+    type: 'httprequestbody',
+    defaultValue: [],
+    label: 'Build HTTP Request Body',
+    refreshOptionsOnChangesTo: ['rest.lookups'],
   },
   'rest.successValues': {
     type: 'text',
     label: 'Success Values',
     delimiter: ',',
     placeholder: 'Optional',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'rest.method',
         is: ['POST', 'PUT', 'DELETE', 'PATCH'],
+      },
+      {
+        field: 'inputMode',
+        is: ['RECORDS'],
       },
     ],
   },
@@ -95,6 +149,10 @@ export default {
       {
         field: 'rest.method',
         is: ['POST', 'PUT', 'DELETE', 'PATCH'],
+      },
+      {
+        field: 'rest.blobMethod',
+        is: ['POST', 'PUT', 'DELETE'],
       },
     ],
   },
@@ -110,10 +168,14 @@ export default {
         ],
       },
     ],
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'rest.compositeType',
         is: ['createandupdate', 'createandignore'],
+      },
+      {
+        field: 'inputMode',
+        is: ['RECORDS'],
       },
     ],
   },
@@ -122,10 +184,14 @@ export default {
     label: 'Relative URI',
     required: true,
     placeholder: 'Optional',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'rest.compositeType',
         is: ['createandupdate', 'createandignore'],
+      },
+      {
+        field: 'inputMode',
+        is: ['RECORDS'],
       },
     ],
   },
@@ -133,10 +199,14 @@ export default {
     type: 'text',
     label: 'Success Path',
     placeholder: 'Optional',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'rest.compositeType',
         is: ['createandupdate', 'createandignore'],
+      },
+      {
+        field: 'inputMode',
+        is: ['RECORDS'],
       },
     ],
   },
@@ -144,10 +214,14 @@ export default {
     type: 'text',
     label: 'Success Values',
     placeholder: 'Optional',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'rest.compositeType',
         is: ['createandupdate', 'createandignore'],
+      },
+      {
+        field: 'inputMode',
+        is: ['RECORDS'],
       },
     ],
   },
@@ -155,10 +229,14 @@ export default {
     type: 'text',
     label: 'Response Id Path',
     placeholder: 'Optional',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'rest.compositeType',
         is: ['createandupdate', 'createandignore'],
+      },
+      {
+        field: 'inputMode',
+        is: ['RECORDS'],
       },
     ],
   },
@@ -174,10 +252,14 @@ export default {
         ],
       },
     ],
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'rest.compositeType',
         is: ['createandupdate', 'updateandignore'],
+      },
+      {
+        field: 'inputMode',
+        is: ['RECORDS'],
       },
     ],
   },
@@ -186,10 +268,14 @@ export default {
     label: 'Relative URI',
     required: true,
     placeholder: 'Optional',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'rest.compositeType',
         is: ['createandupdate', 'updateandignore'],
+      },
+      {
+        field: 'inputMode',
+        is: ['RECORDS'],
       },
     ],
   },
@@ -197,10 +283,14 @@ export default {
     type: 'text',
     label: 'Success Path',
     placeholder: 'Optional',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'rest.compositeType',
         is: ['createandupdate', 'updateandignore'],
+      },
+      {
+        field: 'inputMode',
+        is: ['RECORDS'],
       },
     ],
   },
@@ -208,10 +298,14 @@ export default {
     type: 'text',
     label: 'Success Values',
     placeholder: 'Optional',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'rest.compositeType',
         is: ['createandupdate', 'updateandignore'],
+      },
+      {
+        field: 'inputMode',
+        is: ['RECORDS'],
       },
     ],
   },
@@ -219,10 +313,14 @@ export default {
     type: 'text',
     label: 'Response Id Path',
     placeholder: 'Optional',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'rest.compositeType',
         is: ['createandupdate', 'updateandignore'],
+      },
+      {
+        field: 'inputMode',
+        is: ['RECORDS'],
       },
     ],
   },
@@ -230,15 +328,25 @@ export default {
     type: 'text',
     label: 'Existing Data Id',
     required: true,
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'rest.compositeType',
         is: ['createandignore', 'updateandignore'],
+      },
+      {
+        field: 'inputMode',
+        is: ['RECORDS'],
       },
     ],
   },
   'rest.sampleData': {
     type: 'textarea',
     label: 'If so,please paste it here',
+    visibleWhen: [
+      {
+        field: 'inputMode',
+        is: ['RECORDS'],
+      },
+    ],
   },
 };
