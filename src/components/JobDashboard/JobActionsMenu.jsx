@@ -30,6 +30,7 @@ function JobActionsMenu({
   userPermissionsOnIntegration = {},
   integrationName,
   history,
+  isFlowBuilderView,
 }) {
   const classes = useStyle();
   const dispatch = useDispatch();
@@ -92,13 +93,15 @@ function JobActionsMenu({
       });
     }
 
-    if (
-      userPermissionsOnIntegration.flows &&
-      userPermissionsOnIntegration.flows.edit
-    ) {
-      menuOptions.push({ label: 'Edit flow', action: 'editFlow' });
-    } else {
-      menuOptions.push({ label: 'View flow', action: 'viewFlow' });
+    if (!isFlowBuilderView) {
+      if (
+        userPermissionsOnIntegration.flows &&
+        userPermissionsOnIntegration.flows.edit
+      ) {
+        menuOptions.push({ label: 'Edit flow', action: 'editFlow' });
+      } else {
+        menuOptions.push({ label: 'View flow', action: 'viewFlow' });
+      }
     }
   }
 

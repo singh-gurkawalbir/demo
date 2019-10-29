@@ -15,6 +15,7 @@ export default function RunDashboardPanel({ flow }) {
       <JobDashboard
         integrationId={flow._integrationId || 'none'}
         flowId={flow._id}
+        isFlowBuilderView
       />
     </div>
   );

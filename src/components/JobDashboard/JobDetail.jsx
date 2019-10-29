@@ -57,6 +57,7 @@ function JobDetail({
   userPermissionsOnIntegration,
   onViewErrorsClick,
   integrationName,
+  isFlowBuilderView,
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -247,6 +248,7 @@ function JobDetail({
             job={job}
             userPermissionsOnIntegration={userPermissionsOnIntegration}
             integrationName={integrationName}
+            isFlowBuilderView={isFlowBuilderView}
           />
         </TableCell>
 
