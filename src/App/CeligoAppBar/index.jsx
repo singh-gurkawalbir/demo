@@ -125,9 +125,12 @@ export default function CeligoAppBar() {
               <li>
                 <GlobalSearch />
               </li>
-              <li>
-                <AccountList />
-              </li>
+              {/* 
+                Including the AccountList causes the app to reload 3 times 
+                (and re-run all init) I think this is causes by removing the 
+                session caching layer we had in place 
+              */}
+              <li>{false && <AccountList />}</li>
               <li>
                 <EnvironmentToggle />
               </li>

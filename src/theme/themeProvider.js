@@ -43,7 +43,8 @@ export default ({ name = DEFAULT_THEME, isSandbox }) => {
     contrastText: colors.celigoWhite,
   });
 
-  // console.log(theme);
+  // eslint-disable-next-line
+  console.log('*** THEME ***', theme);
 
   return {
     ...muiTheme,
