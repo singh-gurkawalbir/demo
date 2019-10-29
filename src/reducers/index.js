@@ -1963,7 +1963,17 @@ export function getImportSampleData(state, resourceId) {
 
     return sampleData;
   } else if (adaptorType === 'SalesforceImport') {
-    // similar logic as netsuite
+    const { _connectionId: connectionId, salesforce } = resource;
+    const { data: sampleData } = metadataOptionsAndResources(
+      state,
+      connectionId,
+      'salesforce',
+      'sObjectTypes',
+      null,
+      salesforce.sObjectType
+    );
+
+    return sampleData;
   }
 }
 
