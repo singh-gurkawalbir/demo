@@ -21,8 +21,8 @@ const useStyles = makeStyles({
 export default function TransformEditor(props) {
   const { editorId } = props;
   const classes = useStyles(props);
-  const { data, result, error, violations } = useSelector(state =>
-    selectors.editor(state, editorId)
+  const { data, result, error, violations, initChangeIdentifier } = useSelector(
+    state => selectors.editor(state, editorId)
   );
   const dispatch = useDispatch();
   const handleInit = useCallback(() => {
@@ -48,7 +48,10 @@ export default function TransformEditor(props) {
     <PanelGrid className={classes.template}>
       <PanelGridItem gridArea="rule">
         <PanelTitle title="Transform Rules" />
-        <TransformPanel editorId={editorId} />
+        <TransformPanel
+          key={`${editorId}-${initChangeIdentifier}`}
+          editorId={editorId}
+        />
       </PanelGridItem>
 
       <PanelGridItem gridArea="data">

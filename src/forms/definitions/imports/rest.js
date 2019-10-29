@@ -1,5 +1,3 @@
-import { adaptorTypeMap } from '../../../utils/resource';
-
 export default {
   optionsHandler: (fieldId, fields) => {
     if (fieldId === 'mapping') {
@@ -30,7 +28,6 @@ export default {
     'rest.lookups': { fieldId: 'rest.lookups', visible: false },
     mapping: {
       fieldId: 'mapping',
-      application: adaptorTypeMap.RESTImport,
       refreshOptionsOnChangesTo: ['rest.lookups'],
     },
     'rest.relativeURI': { fieldId: 'rest.relativeURI' },

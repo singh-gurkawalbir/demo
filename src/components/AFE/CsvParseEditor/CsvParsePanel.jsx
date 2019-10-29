@@ -51,6 +51,7 @@ export default function CsvParsePanel(props) {
     rowDelimiter = '',
     keyColumns = [],
     hasHeaderRow = true,
+    multipleRowsPerRecord = false,
     trimSpaces = true,
     result,
   } = useSelector(state => selectors.editor(state, editorId));
@@ -117,7 +118,20 @@ export default function CsvParsePanel(props) {
           }
           label="Trim Spaces"
         />
-        {allColumns && (
+        <FormControlLabel
+          control={
+            <Checkbox
+              color="primary"
+              checked={multipleRowsPerRecord}
+              onChange={() => {
+                patchEditor('multipleRowsPerRecord', !multipleRowsPerRecord);
+                patchEditor('keyColumns', []);
+              }}
+            />
+          }
+          label="Multiple Rows Per Record"
+        />
+        {multipleRowsPerRecord && allColumns && (
           <FormControl className={classes.formControl}>
             <InputLabel htmlFor="select-multiple-chip">Key Columns</InputLabel>
             <Select

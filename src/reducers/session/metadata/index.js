@@ -1,5 +1,6 @@
 import produce from 'immer';
 import actionTypes from '../../../actions/types';
+import { getWSRecordId } from '../../../utils/metadata';
 
 function generateSalesforceOptions(data = {}, sObjectType, selectField) {
   let options = [];
@@ -52,7 +53,7 @@ function generateNetsuiteOptions(
       // {"internalId":"Account","label":"Account"}
       options = data.map(item => ({
         label: item.label,
-        value: item.internalId && item.internalId.toLowerCase(),
+        value: getWSRecordId(item),
       }));
     } else if (filterKey === 'savedSearches') {
       // {internalId: "794", name: "New Account Search",

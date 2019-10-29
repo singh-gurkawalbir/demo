@@ -22,6 +22,7 @@ import GeneralSection from './GeneralSection';
 import AuditLog from '../../IntegrationSettings/AuditLog';
 import Uninstall from './Uninstall';
 import Connections from '../../IntegrationSettings/Connections';
+import AccessTokens from './AccessTokens';
 import getRoutePath from '../../../utils/routePaths';
 import CeligoPageBar from '../../../components/CeligoPageBar';
 
@@ -49,9 +50,6 @@ const useStyles = makeStyles(theme => ({
     flex: 4,
     textAlign: 'center',
     padding: theme.spacing(1),
-  },
-  dashboard: {
-    float: 'right',
   },
 
   activeLink: {
@@ -218,6 +216,11 @@ export default function IntegrationAppSettings(props) {
             variant="outlined"
             onChange={handleTagChangeHandler}
           />
+          <a
+            href={getRoutePath(`integrations/${integrationId}/dashboard`)}
+            className={classes.dashboard}>
+            Dashboard
+          </a>
         </CeligoPageBar>
 
         {supportsMultiStore && (
@@ -278,11 +281,11 @@ export default function IntegrationAppSettings(props) {
                       ))}
                   </ul>
                 </ListItem>
+                <LHSItem to={`${urlPrefix}/connections`} label="Connections" />
+                <LHSItem to={`${urlPrefix}/users`} label="Users" />
                 {showAPITokens && (
                   <LHSItem to={`${urlPrefix}/tokens`} label="API Tokens" />
                 )}
-                <LHSItem to={`${urlPrefix}/connections`} label="Connections" />
-                <LHSItem to={`${urlPrefix}/users`} label="Users" />
                 <LHSItem to={`${urlPrefix}/audit`} label="Audit Log" />
                 <LHSItem to={`${urlPrefix}/uninstall`} label="Uninstall" />
               </List>
@@ -296,6 +299,18 @@ export default function IntegrationAppSettings(props) {
                 )}
                 render={props => (
                   <GeneralSection {...props} storeId={currentStore} />
+                )}
+              />
+              <Route
+                path={getRoutePath(
+                  `/connectors/:integrationId/settings/tokens`
+                )}
+                render={props => (
+                  <AccessTokens
+                    {...props}
+                    storeId={currentStore}
+                    integrationId={integrationId}
+                  />
                 )}
               />
               <Route
