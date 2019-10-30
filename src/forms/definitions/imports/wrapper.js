@@ -4,7 +4,7 @@ export default {
     importData: {
       id: 'importData',
       type: 'labeltitle',
-      label: 'How would you like the data imported77?',
+      label: 'How would you like the data imported?',
     },
     'wrapper.function': { fieldId: 'wrapper.function' },
     'wrapper.configuration': { fieldId: 'wrapper.configuration' },
