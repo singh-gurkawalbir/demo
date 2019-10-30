@@ -185,7 +185,7 @@ export default {
 
     if (formVal.fieldMappingType === 'multifield') {
       settings.extract = formVal.expression;
-    } else {
+    } else if (formVal.fieldMappingType !== 'hardCoded') {
       settings.extract = extract;
     }
 
