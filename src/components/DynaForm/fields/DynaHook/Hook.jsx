@@ -1,5 +1,5 @@
-import { useState, Fragment } from 'react';
-import { useSelector } from 'react-redux';
+import { useState, Fragment, useEffect, useCallback } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import IconButton from '@material-ui/core/IconButton';
@@ -8,9 +8,13 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import { isFunction } from 'lodash';
+import shortid from 'shortid';
 import * as selectors from '../../../../reducers';
 import JavaScriptEditorDialog from '../../../../components/AFE/JavaScriptEditor/Dialog';
 import EditIcon from '../../../icons/EditIcon';
+import AddIcon from '../../../icons/AddIcon';
+import CreateScriptDialog from './CreateScriptDialog';
+import { saveScript } from './utils';
 
 const useStyles = makeStyles(theme => ({
   select: {
@@ -77,7 +81,15 @@ const useStyles = makeStyles(theme => ({
 
 export default function DynaHook(props) {
   const [showEditor, setShowEditor] = useState(false);
+  const [showCreateScriptDialog, setShowCreateScriptDialog] = useState(false);
+  const getNewId = () => `new-${shortid.generate()}`;
+  const [tempScriptId, setTempScriptId] = useState(getNewId());
+  const [isNewScriptIdAssigned, setIsNewScriptIdAssigned] = useState(false);
   const classes = useStyles();
+  const dispatch = useDispatch();
+  const createdScriptId = useSelector(state =>
+    selectors.createdResourceId(state, tempScriptId)
+  );
   const { resources: allScripts } = useSelector(state =>
     selectors.resourceList(state, { type: 'scripts' })
   );
@@ -98,18 +110,20 @@ export default function DynaHook(props) {
     preHookData = {},
     requestForPreHookData,
   } = props;
-  const handleEditorClick = () => {
+  const handleEditorClick = useCallback(() => {
     if (requestForPreHookData && isFunction(requestForPreHookData)) {
       requestForPreHookData();
     }
 
     setShowEditor(!showEditor);
-  };
-
+  }, [requestForPreHookData, showEditor]);
   const handleClose = (shouldCommit, editorValues) => {
-    const { scriptId, entryFunction } = editorValues;
+    const { scriptId, entryFunction, code: content } = editorValues;
 
     if (shouldCommit) {
+      const values = { content, scriptId };
+
+      saveScript(values, { dispatch });
       onFieldChange(id, {
         ...value,
         _scriptId: scriptId,
@@ -124,6 +138,36 @@ export default function DynaHook(props) {
     onFieldChange(id, { ...value, [field]: event.target.value });
   };
 
+  const handleCreateScriptClick = () => {
+    setTempScriptId(getNewId());
+    setIsNewScriptIdAssigned(false);
+    setShowCreateScriptDialog(true);
+  };
+
+  const handleCreateScriptDialogClose = values => {
+    if (values) {
+      const options = { dispatch, isNew: true };
+
+      saveScript({ ...values, scriptId: tempScriptId }, options);
+    }
+
+    setShowCreateScriptDialog(false);
+  };
+
+  useEffect(() => {
+    if (createdScriptId && !isNewScriptIdAssigned) {
+      onFieldChange(id, { ...value, _scriptId: createdScriptId });
+      setIsNewScriptIdAssigned(true);
+    }
+  }, [
+    createdScriptId,
+    handleEditorClick,
+    id,
+    isNewScriptIdAssigned,
+    onFieldChange,
+    value,
+  ]);
+
   return (
     <Fragment>
       {showEditor && (
@@ -135,6 +179,12 @@ export default function DynaHook(props) {
           scriptId={value._scriptId}
           entryFunction={value.function}
           onClose={handleClose}
+        />
+      )}
+      {showCreateScriptDialog && (
+        <CreateScriptDialog
+          onClose={handleCreateScriptDialogClose}
+          scriptId={tempScriptId}
         />
       )}
 
@@ -175,21 +225,29 @@ export default function DynaHook(props) {
             </FormControl>
           )}
           {hookType === 'script' && (
-            <FormControl className={classes.select}>
-              <InputLabel htmlFor="scriptId">Script</InputLabel>
-              <Select
-                id="scriptId"
-                margin="dense"
-                variant="filled"
-                value={value._scriptId}
-                onChange={handleFieldChange('_scriptId')}>
-                {allScripts.map(s => (
-                  <MenuItem key={s._id} value={s._id}>
-                    {s.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+            <Fragment>
+              <FormControl className={classes.select}>
+                <InputLabel htmlFor="scriptId">Script</InputLabel>
+                <Select
+                  id="scriptId"
+                  margin="dense"
+                  variant="filled"
+                  value={value._scriptId}
+                  onChange={handleFieldChange('_scriptId')}>
+                  {allScripts.map(s => (
+                    <MenuItem key={s._id} value={s._id}>
+                      {s.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <IconButton
+                onClick={handleCreateScriptClick}
+                className={classes.editorButton}
+                data-test={id}>
+                <AddIcon />
+              </IconButton>
+            </Fragment>
           )}
           {hookType === 'script' && value._scriptId && (
             <IconButton

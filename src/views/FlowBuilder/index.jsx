@@ -24,8 +24,8 @@ import itemTypes from './itemTypes';
 import RunIcon from '../../components/icons/RunIcon';
 import SettingsIcon from '../../components/icons/SettingsIcon';
 import CalendarIcon from '../../components/icons/CalendarIcon';
-import SwitchOnOff from '../../components/SwitchToggle';
 import EditableText from './EditableText';
+import SwitchOnOff from '../../components/OnOff';
 
 // #region FLOW SCHEMA: FOR REFERENCE DELETE ONCE FB IS COMPLETE
 /* 
@@ -212,7 +212,8 @@ function FlowBuilder(props) {
   const classes = useStyles();
   const theme = useTheme();
   const dispatch = useDispatch();
-  const [size, setSize] = useState(0);
+  // Bottom drawer is shown for existing flows and docked for new flow
+  const [size, setSize] = useState(isNewFlow ? 0 : 1);
   const [newGeneratorId, setNewGeneratorId] = useState(getNewId());
   const [newProcessorId, setNewProcessorId] = useState(getNewId());
   //
@@ -332,10 +333,12 @@ function FlowBuilder(props) {
   };
 
   function handleAddGenerator() {
+    setNewGeneratorId(getNewId());
     pushOrReplaceHistory(`${match.url}/add/pageGenerator/${newGeneratorId}`);
   }
 
   function handleAddProcessor() {
+    setNewProcessorId(getNewId());
     pushOrReplaceHistory(`${match.url}/add/pageProcessor/${newProcessorId}`);
   }
 
@@ -408,8 +411,8 @@ function FlowBuilder(props) {
     <Fragment>
       <ResourceDrawer {...props} />
       <RunDrawer {...props} flowId={flowId} />
-      <ScheduleDrawer {...props} flowId={flowId} />
-      <SettingsDrawer {...props} flowId={flowId} />
+      <ScheduleDrawer {...props} flow={flow} />
+      <SettingsDrawer {...props} flow={flow} />
       {/* <WizardDrawer {...props} flowId={flowId} /> */}
 
       <CeligoPageBar
@@ -419,13 +422,12 @@ function FlowBuilder(props) {
         subtitle={`Last saved: ${isNewFlow ? 'Never' : flow.lastModified}`}
         infoText={flow.description}>
         <div className={classes.actions}>
-          <SwitchOnOff
-            disabled={isNewFlow}
-            on={!isNewFlow && flow.disabled === 'false'}
-          />
+          <SwitchOnOff.component resource={flow} disabled={isNewFlow} />
           <IconButton
             disabled={isNewFlow}
-            onClick={() => handleDrawerOpen('run')}>
+            onClick={() => {
+              dispatch(actions.flow.run({ flowId }));
+            }}>
             <RunIcon />
           </IconButton>
           <IconButton

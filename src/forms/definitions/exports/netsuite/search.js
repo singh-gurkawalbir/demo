@@ -1,3 +1,5 @@
+import { isTransactionWSRecordType } from '../../../../utils/metadata';
+
 export default {
   preSave: formValues => ({
     ...formValues,
@@ -19,6 +21,10 @@ export default {
 
       if (record && record.toLowerCase().indexOf('customrecord') === 0) {
         record = 'customRecord';
+      }
+
+      if (isTransactionWSRecordType(record)) {
+        record = 'transaction';
       }
 
       // returns corresponding relative uri path based on recordType selected

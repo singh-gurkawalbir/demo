@@ -116,7 +116,8 @@ const resource = {
 
   received: (resourceType, resource) =>
     action(actionTypes.RESOURCE.RECEIVED, { resourceType, resource }),
-
+  updated: (resourceType, resourceId, patch) =>
+    action(actionTypes.RESOURCE.UPDATED, { resourceType, resourceId, patch }),
   receivedCollection: (resourceType, collection) =>
     action(actionTypes.RESOURCE.RECEIVED_COLLECTION, {
       resourceType,
@@ -659,6 +660,7 @@ const sampleData = {
     action(actionTypes.SAMPLEDATA.UPDATE, { resourceId, processedData, stage }),
   receivedError: (resourceId, error, stage) =>
     action(actionTypes.SAMPLEDATA.RECEIVED_ERROR, { resourceId, error, stage }),
+  reset: resourceId => action(actionTypes.SAMPLEDATA.RESET, { resourceId }),
 };
 const importSampleData = {
   request: resourceId =>
@@ -739,6 +741,12 @@ const flowData = {
       resourceType,
     }),
   updateFlow: flowId => action(actionTypes.FLOW_DATA.FLOW_UPDATE, { flowId }),
+  updateResponseMapping: (flowId, resourceIndex, responseMapping) =>
+    action(actionTypes.FLOW_DATA.FLOW_RESPONSE_MAPPING_UPDATE, {
+      flowId,
+      resourceIndex,
+      responseMapping,
+    }),
 };
 const app = {
   reload: () => action(actionTypes.APP_RELOAD),

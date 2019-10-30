@@ -207,7 +207,7 @@ export default {
           defaultValue: value.default,
           options: [
             {
-              items: selectedGenerateObj.options,
+              items: selectedGenerateObj && selectedGenerateObj.options,
             },
           ],
         },
@@ -296,7 +296,7 @@ export default {
           ],
           options: [
             {
-              items: selectedGenerateObj.options,
+              items: selectedGenerateObj && selectedGenerateObj.options,
             },
           ],
           defaultValue: value.hardCodedValue,
@@ -324,7 +324,7 @@ export default {
           ],
           options: [
             {
-              items: selectedGenerateObj.options,
+              items: selectedGenerateObj && selectedGenerateObj.options,
             },
           ],
           defaultValue: lookup.default,

@@ -1,5 +1,3 @@
-import { adaptorTypeMap } from '../../../utils/resource';
-
 export default {
   optionsHandler: (fieldId, fields) => {
     if (fieldId === 'mapping') {
@@ -63,7 +61,6 @@ export default {
     'file.lookups': { fieldId: 'file.lookups', visible: false },
     mapping: {
       fieldId: 'mapping',
-      application: adaptorTypeMap.AS2Import,
       refreshOptionsOnChangesTo: ['file.lookups'],
     },
   },

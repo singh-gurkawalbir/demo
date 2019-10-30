@@ -143,7 +143,7 @@ export default function ImportMapping(props) {
   const [lookupState, setLookup] = useState(lookups);
   const classes = useStyles();
   const [enquesnackbar] = useEnqueueSnackbar();
-  const [state, dispatchLocalAction] = useReducer(reducer, mappings || {});
+  const [state, dispatchLocalAction] = useReducer(reducer, mappings || []);
   const mappingsTmp = deepClone(state);
   const dispatch = useDispatch();
   const sampleData = useSelector(state =>
@@ -227,7 +227,7 @@ export default function ImportMapping(props) {
     if (validateMapping(mappings)) {
       mappings = MappingUtil.generateMappingsForApp({
         mappings,
-        formattedGenerateFields,
+        generateFields: formattedGenerateFields,
         appType: application,
       });
 
