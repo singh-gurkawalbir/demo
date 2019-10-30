@@ -36,6 +36,7 @@ export default {
       refreshOptionsOnChangesTo: ['netsuite.distributed.recordType'],
       visibleWhen: [{ field: 'netsuite.distributed.recordType', isNot: [''] }],
     },
+    distributed: { fieldId: 'distributed' },
   },
   layout: {
     fields: [
@@ -45,6 +46,7 @@ export default {
       'netsuite.distributed.executionContext',
       'netsuite.distributed.executionType',
       'netsuite.distributed.sublists',
+      'distributed',
     ],
   },
 };

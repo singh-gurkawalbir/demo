@@ -378,6 +378,12 @@ export default {
     type: 'text',
     label: 'Distributed bearer Token',
   },
+  distributed: {
+    type: 'text',
+    label: 'Distributed',
+    defaultValue: true,
+    visible: false,
+  },
   // #endregion distributed
   // #region hooks
   hookType: {
