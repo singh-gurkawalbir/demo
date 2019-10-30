@@ -22,6 +22,7 @@ import GeneralSection from './GeneralSection';
 import AuditLog from '../../IntegrationSettings/AuditLog';
 import Uninstall from './Uninstall';
 import Connections from '../../IntegrationSettings/Connections';
+import AccessTokens from './AccessTokens';
 import getRoutePath from '../../../utils/routePaths';
 import CeligoPageBar from '../../../components/CeligoPageBar';
 
@@ -283,11 +284,11 @@ export default function IntegrationAppSettings(props) {
                       ))}
                   </ul>
                 </ListItem>
+                <LHSItem to={`${urlPrefix}/connections`} label="Connections" />
+                <LHSItem to={`${urlPrefix}/users`} label="Users" />
                 {showAPITokens && (
                   <LHSItem to={`${urlPrefix}/tokens`} label="API Tokens" />
                 )}
-                <LHSItem to={`${urlPrefix}/connections`} label="Connections" />
-                <LHSItem to={`${urlPrefix}/users`} label="Users" />
                 <LHSItem to={`${urlPrefix}/audit`} label="Audit Log" />
                 <LHSItem to={`${urlPrefix}/uninstall`} label="Uninstall" />
               </List>
@@ -301,6 +302,18 @@ export default function IntegrationAppSettings(props) {
                 )}
                 render={props => (
                   <GeneralSection {...props} storeId={currentStore} />
+                )}
+              />
+              <Route
+                path={getRoutePath(
+                  `/connectors/:integrationId/settings/tokens`
+                )}
+                render={props => (
+                  <AccessTokens
+                    {...props}
+                    storeId={currentStore}
+                    integrationId={integrationId}
+                  />
                 )}
               />
               <Route

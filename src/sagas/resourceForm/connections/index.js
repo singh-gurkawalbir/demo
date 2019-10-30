@@ -171,7 +171,13 @@ export function* requestToken({ resourceId, values }) {
   }
 
   try {
-    if (resp && resp.token && typeof resp.token !== 'object') {
+    if (
+      resp &&
+      resp.token &&
+      typeof resp.token === 'string' &&
+      assistant !== 'magento'
+      // for magento assistant we are getting regular string ,so we are not doing parse check here.
+    ) {
       try {
         resp.token = JSON.parse(resp.token);
       } catch (e) {

@@ -333,10 +333,12 @@ function FlowBuilder(props) {
   };
 
   function handleAddGenerator() {
+    setNewGeneratorId(getNewId());
     pushOrReplaceHistory(`${match.url}/add/pageGenerator/${newGeneratorId}`);
   }
 
   function handleAddProcessor() {
+    setNewProcessorId(getNewId());
     pushOrReplaceHistory(`${match.url}/add/pageProcessor/${newProcessorId}`);
   }
 

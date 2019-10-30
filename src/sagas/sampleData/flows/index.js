@@ -20,6 +20,7 @@ import {
   getSampleDataStage,
   getParseStageData,
   getLastExportDateTime,
+  getFlowUpdatesFromPatch,
 } from '../../../utils/flowData';
 import MappingUtil from '../../../utils/mapping';
 import { adaptorTypeMap } from '../../../utils/resource';
@@ -59,7 +60,11 @@ export function* fetchPageProcessorPreview({
   const { merged } = yield select(resourceData, 'flows', flowId, SCOPES.VALUE);
   const flow = { ...merged };
 
-  if (!flow.pageProcessors || !flow.pageGenerators) return;
+  if (
+    !(flow.pageProcessors && flow.pageProcessors.length) ||
+    !(flow.pageGenerators && flow.pageGenerators.length)
+  )
+    return;
   const pageGeneratorMap = yield call(fetchFlowResources, {
     flow,
     type: 'pageGenerators',
@@ -362,6 +367,60 @@ function* updateFlowData({ flowId }) {
   yield put(actions.flowData.resetFlowSequence(flowId, updatedFlow));
 }
 
+function* updateResponseMapping({ flowId, resourceIndex }) {
+  const { merged: flow } = yield select(
+    resourceData,
+    'flows',
+    flowId,
+    SCOPES.VALUE
+  );
+  const { pageProcessors = [] } = flow;
+  const updatedResource = pageProcessors[resourceIndex];
+
+  yield put(
+    actions.flowData.updateResponseMapping(
+      flowId,
+      resourceIndex,
+      updatedResource.responseMapping
+    )
+  );
+  const resourceToReset = pageProcessors[resourceIndex + 1];
+
+  if (resourceToReset) {
+    yield put(
+      actions.flowData.reset(
+        flowId,
+        resourceToReset._exportId || resourceToReset._importId
+      )
+    );
+  }
+}
+
+function* updateFlowOnResourceUpdate({ resourceType, resourceId, patch }) {
+  if (resourceType === 'flows') {
+    const flowUpdates = getFlowUpdatesFromPatch(patch);
+
+    // Handles Delete PP/PG, Swap order
+    if (flowUpdates.sequence) {
+      yield put(actions.flowData.updateFlow(resourceId));
+    }
+
+    // Handles Response Mappings update
+    if (flowUpdates.responseMapping) {
+      const { resourceIndex } = flowUpdates.responseMapping;
+
+      yield call(updateResponseMapping, { flowId: resourceId, resourceIndex });
+    }
+  }
+
+  if (resourceType === 'exports' || resourceType === 'imports') {
+    // Handles on update of Export or Import on edit, Transformations, Hooks and import mappings
+    yield put(
+      actions.flowData.updateFlowsForResource(resourceId, resourceType)
+    );
+  }
+}
+
 export default [
   takeEvery(
     actionTypes.FLOW_DATA.PREVIEW_DATA_REQUEST,
@@ -374,4 +433,5 @@ export default [
     updateFlowsDataForResource
   ),
   takeEvery(actionTypes.FLOW_DATA.FLOW_UPDATE, updateFlowData),
+  takeEvery(actionTypes.RESOURCE.UPDATED, updateFlowOnResourceUpdate),
 ];
