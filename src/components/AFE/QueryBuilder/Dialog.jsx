@@ -2,24 +2,18 @@ import React from 'react';
 import EditorDialog from '../EditorDialog';
 import QueryBuilder from './index';
 
-function QueryBuilderDialog(props) {
+export default function QueryBuilderDialog(props) {
+  const { id, rule, data, ...rest } = props;
   const defaults = {
-    width: '80vw',
-    height: '50vh',
+    width: '85vw',
+    height: '60vh',
+    layout: 'column',
     open: true,
   };
-  const { id, rule, sampleData, defaultData, ...rest } = props;
 
   return (
-    <EditorDialog
-      id={id}
-      {...defaults}
-      {...rest}
-      showLayoutOptions={false}
-      showFullScreen>
-      <QueryBuilder />
+    <EditorDialog id={id} {...defaults} {...rest} showLayoutOptions={false}>
+      <QueryBuilder editorId={id} data={data} rule={rule} />
     </EditorDialog>
   );
 }
-
-export default QueryBuilderDialog;

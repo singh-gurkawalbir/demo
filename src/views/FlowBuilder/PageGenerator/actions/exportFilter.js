@@ -1,29 +1,72 @@
-import { Dialog, Typography, DialogTitle } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { useEffect, Fragment, useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import * as selectors from '../../../../reducers';
+import actions from '../../../../actions';
 import Icon from '../../../../components/icons/OutputFilterIcon';
+import ExportFilterEditorDialog from '../../../../components/AFE/QueryBuilder/Dialog';
 
-const useStyles = makeStyles(theme => ({
-  paper: {
-    padding: theme.spacing(3),
-  },
-}));
-
-function ExportFilterDialog({ flowId, resource, open, onClose }) {
-  const classes = useStyles();
+function ExportFilterDialog({ flowId, resource, onClose }) {
+  const dispatch = useDispatch();
   const resourceId = resource._id;
+  const sampleData = useSelector(state =>
+    selectors.getSampleData(state, flowId, resourceId, 'outputFilter', {
+      isPageGenerator: true,
+    })
+  );
+
+  console.log(`sampleData in Filters ${JSON.stringify(sampleData)}`);
+  const rules = useMemo(
+    () => resource && resource.filter && resource.filter.rules,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
+  const handleClose = (shouldCommit, editorValues) => {
+    if (shouldCommit) {
+      const { rule } = editorValues;
+      const path = '/filter';
+      const value = {
+        rules: rule ? [rule] : [[]],
+        version: '1',
+      };
+      const patchSet = [{ op: 'replace', path, value }];
+
+      // Save the resource
+      dispatch(actions.resource.patchStaged(resourceId, patchSet, 'value'));
+      dispatch(actions.resource.commitStaged('exports', resourceId, 'value'));
+    }
+
+    onClose();
+  };
+
+  useEffect(() => {
+    if (!sampleData) {
+      dispatch(
+        actions.flowData.requestSampleData(
+          flowId,
+          resourceId,
+          'exports',
+          'outputFilter',
+          true
+        )
+      );
+    }
+  }, [dispatch, flowId, resourceId, sampleData]);
 
   return (
-    <Dialog
-      open={open}
-      onClose={onClose}
-      PaperProps={{ className: classes.paper }}>
-      <DialogTitle disableTypography>
-        <Typography variant="h6">Export Filter</Typography>
-      </DialogTitle>
-      <Typography>flowId: {flowId}</Typography>
-      <Typography>exportId: {resourceId}</Typography>
-    </Dialog>
+    <ExportFilterEditorDialog
+      title="Define Output Filter"
+      id={resourceId}
+      data={sampleData}
+      rule={rules}
+      onClose={handleClose}
+    />
   );
+}
+
+function FilterDialog(props) {
+  const { open } = props;
+
+  return <Fragment>{open && <ExportFilterDialog {...props} />}</Fragment>;
 }
 
 export default {
@@ -33,5 +76,5 @@ export default {
   Icon,
   helpText:
     'This is the text currently in the hover state of actions in the current FB',
-  Component: ExportFilterDialog,
+  Component: FilterDialog,
 };

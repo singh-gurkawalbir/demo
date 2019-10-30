@@ -4,152 +4,103 @@ export default {
     'not-group': null,
   },
   allow_empty: true,
-  sort_filters: true,
   operators: [
-    { type: 'equal', optgroup: 'basic' },
-    { type: 'not_equal', optgroup: 'basic' },
-    { type: 'in', optgroup: 'basic' },
-    { type: 'not_in', optgroup: 'basic' },
-    { type: 'less', optgroup: 'numbers' },
-    { type: 'less_or_equal', optgroup: 'numbers' },
-    { type: 'greater', optgroup: 'numbers' },
-    { type: 'greater_or_equal', optgroup: 'numbers' },
-    { type: 'between', optgroup: 'numbers' },
-    { type: 'not_between', optgroup: 'numbers' },
-    { type: 'begins_with', optgroup: 'strings' },
-    { type: 'not_begins_with', optgroup: 'strings' },
-    { type: 'contains', optgroup: 'strings' },
-    { type: 'not_contains', optgroup: 'strings' },
-    { type: 'ends_with', optgroup: 'strings' },
-    { type: 'not_ends_with', optgroup: 'strings' },
-    { type: 'is_empty' },
-    { type: 'is_not_empty' },
-    { type: 'is_null' },
-    { type: 'is_not_null' },
-  ],
-
-  filters: [
     {
-      id: 'name',
-      field: 'username',
-      label: {
-        en: 'Name',
-        fr: 'Nom',
-      },
-      icon: 'glyphicon glyphicon-user',
-      value_separator: ',',
-      type: 'string',
-      optgroup: '',
-      default_value: 'Mistic',
-      size: 30,
-      validation: {
-        allow_empty_value: true,
-      },
-      unique: true,
+      type: 'equal',
+      nb_inputs: 1,
+      multiple: false,
+      apply_to: ['boolean', 'number', 'string'],
     },
     {
-      id: 'label1',
-      label: 'Label With Text',
-      icon: 'glyphicon glyphicon-calendar',
-      type: 'integer',
-      input: 'text',
-      value_separator: '|',
-      optgroup: '',
-      description(rule) {
-        if (
-          rule.operator &&
-          ['in', 'not_in'].indexOf(rule.operator.type) !== -1
-        ) {
-          return 'Use a pipe (|) to separate multiple values with "in" and "not in" operators';
-        }
-      },
+      type: 'not_equal',
+      nb_inputs: 1,
+      multiple: false,
+      apply_to: ['boolean', 'number', 'string'],
     },
     {
-      id: 'label2',
-      label: 'Label With Text Area',
-      icon: 'glyphicon glyphicon-qrcode',
-      type: 'string',
-      input: 'textarea',
-      operators: ['equal'],
-      size: 30,
-      rows: 3,
-    },
-
-    {
-      id: 'labelWithCategory',
-      label: 'Label With Category',
-      icon: 'glyphicon glyphicon-th-list',
-      type: 'integer',
-      input: 'checkbox',
-      optgroup: '',
-      values: {
-        1: 'Yes',
-        2: 'No',
-        3: 'Not Decided',
-      },
-      colors: {
-        1: 'foo',
-        2: 'warning',
-        5: 'success',
-      },
-      operators: [
-        'equal',
-        'not_equal',
-        'in',
-        'not_in',
-        'is_null',
-        'is_not_null',
-      ],
-      default_operator: 'in',
+      type: 'greater',
+      nb_inputs: 1,
+      multiple: false,
+      apply_to: ['boolean', 'number', 'string'],
     },
     {
-      id: 'label3',
-      label: 'Label With Drop Down',
-      icon: 'glyphicon glyphicon-globe',
-      type: 'string',
-      input: 'select',
-      optgroup: '',
-      placeholder: 'Select',
-      values: [
-        {
-          label: 'Cash Flow',
-          value: 'cash_flow',
-        },
-        {
-          label: 'Option 2',
-          value: 'option2',
-        },
-        {
-          label: 'Option 3',
-          value: 'option3',
-        },
-
-        {
-          label: 'Option 3',
-          value: 'option3',
-        },
-
-        {
-          label: 'Option 4',
-          value: 'option4',
-        },
-      ],
-      operators: ['equal', 'not_equal', 'is_null', 'is_not_null'],
+      type: 'greater_or_equal',
+      nb_inputs: 1,
+      multiple: false,
+      apply_to: ['boolean', 'number', 'string'],
     },
-
     {
-      id: 'label5',
-      label: 'Field With Increment decimal',
-      icon: 'glyphicon glyphicon-usd',
-      type: 'double',
-      size: 5,
-      validation: {
-        min: 0,
-        step: 1,
-      },
-      data: {
-        class: 'com.example.PriceTag',
-      },
+      type: 'less',
+      nb_inputs: 1,
+      multiple: false,
+      apply_to: ['boolean', 'number', 'string'],
+    },
+    {
+      type: 'less_or_equal',
+      nb_inputs: 1,
+      multiple: false,
+      apply_to: ['boolean', 'number', 'string'],
+    },
+    {
+      type: 'begins_with',
+      nb_inputs: 1,
+      multiple: false,
+      apply_to: ['boolean', 'number', 'string'],
+    },
+    {
+      type: 'ends_with',
+      nb_inputs: 1,
+      multiple: false,
+      apply_to: ['boolean', 'number', 'string'],
+    },
+    {
+      type: 'contains',
+      nb_inputs: 1,
+      multiple: false,
+      apply_to: ['boolean', 'number', 'string'],
+    },
+    {
+      type: 'not_contains',
+      nb_inputs: 1,
+      multiple: false,
+      apply_to: ['boolean', 'number', 'string'],
+    },
+    {
+      type: 'is_empty',
+    },
+    {
+      type: 'is_not_empty',
+    },
+    {
+      type: 'matches',
+      nb_inputs: 1,
+      multiple: false,
+      apply_to: ['boolean', 'number', 'string'],
     },
   ],
+  lang: {
+    operators: {
+      is_empty: 'is empty',
+      is_not_empty: 'is not empty',
+      equal: 'equals',
+      not_equal: 'not equals',
+
+      greater: 'is greater-than',
+      greater_or_equal: 'is greater-than or equals',
+      less: 'is less-than',
+      less_or_equal: 'is less-than or equals',
+
+      begins_with: 'starts with',
+      ends_with: 'ends with',
+      contains: 'contains',
+      not_contains: 'does not contains',
+
+      matches: 'matches',
+    },
+    add_rule: 'Add Rule',
+    add_group: 'Add Group',
+    delete_rule: ' ',
+    delete_group: ' ',
+  },
+  display_empty_filter: false, // self.readOnly,
 };
