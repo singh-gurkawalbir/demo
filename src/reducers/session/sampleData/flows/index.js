@@ -8,8 +8,10 @@ export default function(state = {}, action) {
     type,
     flowId,
     resourceId,
+    resourceIndex,
     flow = {},
     updatedFlow = {},
+    responseMapping,
     previewData,
     previewType,
     processor,
@@ -101,6 +103,17 @@ export default function(state = {}, action) {
         resourceMap[resourceId][processor].status = 'received';
         resourceMap[resourceId][processor].data =
           processedData && processedData.data && processedData.data[0];
+        break;
+      }
+
+      case actionTypes.FLOW_DATA.FLOW_RESPONSE_MAPPING_UPDATE: {
+        const flow = draft[flowId];
+        const resource = flow.pageProcessors[resourceIndex];
+
+        if (resource) {
+          resource.responseMapping = responseMapping;
+        }
+
         break;
       }
 
