@@ -16,7 +16,6 @@ import NetworkSnackbar from '../components/NetworkSnackbar';
 import * as selectors from '../reducers';
 import WithAuth from './AppRoutingWithAuth';
 import Signin from '../views/SignIn';
-import useWhyDidYouUpdate from '../hooks/useWhyDidYouUpdate';
 
 // The makeStyles function below does not have access to the theme.
 // We can only use the theme in components that are children of
