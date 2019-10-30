@@ -63,9 +63,7 @@ function GenerateUrl(props) {
         />
       </div>
       <div>
-        <Button data-test={id} isValid onClick={handleGenerateUrl}>
-          {buttonLabel}
-        </Button>
+        <Button onClick={handleGenerateUrl}>{buttonLabel}</Button>
       </div>
     </div>
   );
