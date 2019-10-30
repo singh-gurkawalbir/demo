@@ -57,14 +57,15 @@ export default {
       application,
       value,
       lookup = {},
-      extractFields,
+      extractFields = [],
       generate,
-      generateFields,
+      generateFields = [],
       options,
     } = params;
     let fieldMeta = {};
 
     switch (application) {
+      case adaptorTypeMap.HTTPImport:
       case adaptorTypeMap.RESTImport:
         fieldMeta = RestMappingSettings.getMetaData({
           value,
@@ -184,7 +185,7 @@ export default {
 
     if (formVal.fieldMappingType === 'multifield') {
       settings.extract = formVal.expression;
-    } else {
+    } else if (formVal.fieldMappingType !== 'hardCoded') {
       settings.extract = extract;
     }
 
