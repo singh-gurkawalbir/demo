@@ -84,6 +84,11 @@ export function* commitStagedChanges({ resourceType, id, scope }) {
           },
         });
         updated.assistantMetadata = assistantMetadata;
+        // Fix for updating lastModified after above patch request
+        // @TODO: Raghu Remove this once patch request gives back the resource in response
+        const origin = yield call(apiCallWithRetry, { path });
+
+        updated.lastModified = origin.lastModified;
       }
     }
 
