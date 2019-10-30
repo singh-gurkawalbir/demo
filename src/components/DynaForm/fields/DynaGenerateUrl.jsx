@@ -2,9 +2,9 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { FormContext } from 'react-forms-processor/dist';
 import { makeStyles } from '@material-ui/styles';
+import Button from '@material-ui/core/Button';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
-import DynaSubmit from '../DynaSubmit';
 import DynaText from './DynaText';
 import { isNewId, getWebhookUrl } from '../../../utils/resource';
 
@@ -29,12 +29,12 @@ function GenerateUrl(props) {
   const finalResourceId =
     useSelector(state => selectors.createdResourceId(state, resourceId)) ||
     resourceId;
-  const handleGenerateUrl = values => {
+  const handleGenerateUrl = () => {
     dispatch(
       actions.resourceForm.submit(
         'exports',
         finalResourceId,
-        values,
+        formValues,
         null,
         true
       )
@@ -63,9 +63,9 @@ function GenerateUrl(props) {
         />
       </div>
       <div>
-        <DynaSubmit data-test={id} isValid onClick={handleGenerateUrl}>
+        <Button data-test={id} isValid onClick={handleGenerateUrl}>
           {buttonLabel}
-        </DynaSubmit>
+        </Button>
       </div>
     </div>
   );

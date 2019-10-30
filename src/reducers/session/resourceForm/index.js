@@ -9,7 +9,7 @@ export default function reducer(state = {}, action) {
     skipCommit,
     fieldMeta,
     formValues,
-    skipClose,
+    skipClose = false,
   } = action;
   const key = `${resourceType}-${resourceId}`;
 
@@ -42,7 +42,7 @@ export default function reducer(state = {}, action) {
           ...state[key],
           submitComplete: false,
           formValues: undefined,
-          skipClose: skipClose || false,
+          skipClose,
         },
       };
 
