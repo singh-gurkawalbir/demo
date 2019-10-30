@@ -1,3 +1,5 @@
+import { isNewId } from '../../../utils/resource';
+
 export default {
   preSave: formValues => {
     const newValues = { ...formValues };
@@ -5,6 +7,7 @@ export default {
     if (newValues['/outputMode'] === 'BLOB') {
       newValues['/file/skipDelete'] = newValues['/ftp/leaveFile'];
       newValues['/file/output'] = 'blobKeys';
+      newValues['/file/type'] = undefined;
     }
 
     return {
@@ -57,11 +60,14 @@ export default {
         },
       ],
       defaultValue: r => {
-        const output = r && r.file && r.file.output;
+        const isNew = isNewId(r._id);
 
-        if (!output) return 'RECORDS';
+        // if its create
+        if (isNew) return 'RECORDS';
 
-        return output;
+        const output = r && r.file && r.file.type;
+
+        return output ? 'RECORDS' : 'BLOB';
       },
     },
     'ftp.directoryPath': { fieldId: 'ftp.directoryPath' },
