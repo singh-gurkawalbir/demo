@@ -37,8 +37,18 @@ function* requestSampleData({ resourceId }) {
         break;
       }
 
-      case 'SalesforceImport':
+      case 'SalesforceImport': {
+        const { _connectionId, salesforce } = resource;
+
+        yield call(getNetsuiteOrSalesforceMeta, {
+          connectionId: _connectionId,
+          metadataType: 'sObjectTypes',
+          mode: 'salesforce',
+          recordType: salesforce.sObjectType,
+        });
         break;
+      }
+
       default:
     }
   }
