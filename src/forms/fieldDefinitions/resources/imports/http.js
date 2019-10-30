@@ -13,6 +13,23 @@ export default {
         ],
       },
     ],
+    defaultValue: r => {
+      let toReturn = '';
+
+      if (!r || !r.http) {
+        return toReturn;
+      }
+
+      if (r.http.method) {
+        if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
+          toReturn = 'COMPOSITE';
+        } else if (r.http.method && r.http.method.length === 1) {
+          [toReturn] = r.http.method;
+        }
+      }
+
+      return toReturn;
+    },
   },
   'http.headers': {
     type: 'keyvalue',
@@ -33,6 +50,7 @@ export default {
         ],
       },
     ],
+    defaultValue: r => (r && r.http ? r && r.http.requestMediaType : 'xml'),
   },
   'http.compositeType': {
     type: 'select',
@@ -42,15 +60,15 @@ export default {
         items: [
           {
             label: 'Create New Data & Update Existing Data',
-            value: 'createandupdate',
+            value: 'CREATE_AND_UPDATE',
           },
           {
             label: 'Create New Data & Ignore Existing Data',
-            value: 'createandignore',
+            value: 'CREATE_AND_IGNORE_EXISTING',
           },
           {
             label: 'Update Existing Data & Ignore NEW Data',
-            value: 'updateandignore',
+            value: 'UPDATE_AND_IGNORE_NEW',
           },
         ],
       },
@@ -61,6 +79,27 @@ export default {
         is: ['COMPOSITE'],
       },
     ],
+    defaultValue: r => {
+      let type = '';
+
+      if (!r || !r.http) {
+        return type;
+      }
+
+      if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
+        if (r.http.method.length > 1) {
+          type = 'CREATE_AND_UPDATE';
+        } else if (r.http.method.length === 1) {
+          if (r.ignoreExisting) {
+            type = 'CREATE_AND_IGNORE_EXISTING';
+          } else if (r.ignoreMissing) {
+            type = 'UPDATE_AND_IGNORE_NEW';
+          }
+        }
+      }
+
+      return type;
+    },
   },
   'http.relativeURI': {
     type: 'text',
@@ -72,10 +111,13 @@ export default {
         is: ['POST', 'PUT', 'DELETE', 'PATCH'],
       },
     ],
+    defaultValue: r =>
+      r && r.http && r.http.relativeURI && r.http.relativeURI[0],
   },
   'http.body': {
     type: 'httprequestbody',
-    defaultValue: [],
+    defaultValue: r =>
+      Array.isArray(((r || {}).http || {}).body) ? r.http.body[0] : undefined,
     label: 'Build HTTP Request Body',
     refreshOptionsOnChangesTo: ['http.lookups'],
   },
@@ -157,10 +199,29 @@ export default {
         ],
       },
     ],
-    visibleWhen: [
+    defaultValue: r => {
+      if (!r || !r.http || !r.http.method) {
+        return '';
+      }
+
+      if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
+        if (r.http.method.length > 1) {
+          return r.http.method[1];
+        }
+
+        return r.http.method[0];
+      }
+
+      return '';
+    },
+    visibleWhenAll: [
       {
         field: 'http.compositeType',
-        is: ['createandupdate', 'createandignore'],
+        is: ['CREATE_AND_UPDATE', 'CREATE_AND_IGNORE_EXISTING'],
+      },
+      {
+        field: 'http.method',
+        is: ['COMPOSITE'],
       },
     ],
   },
@@ -168,44 +229,128 @@ export default {
     type: 'text',
     label: 'Relative URI',
     placeholder: 'Optional',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'http.compositeType',
-        is: ['createandupdate', 'createandignore'],
+        is: ['CREATE_AND_UPDATE', 'CREATE_AND_IGNORE_EXISTING'],
+      },
+      {
+        field: 'http.method',
+        is: ['COMPOSITE'],
       },
     ],
+    defaultValue: r => {
+      if (!r || !r.http || !r.http.method) {
+        return '';
+      }
+
+      if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
+        if (r.http.method.length > 1) {
+          return r.http.relativeURI[1];
+        }
+
+        return r.http.relativeURI[0];
+      }
+
+      return '';
+    },
   },
   'http.bodyCreate': {
     type: 'httprequestbody',
     label: 'Build HTTP Request Body For Create',
     refreshOptionsOnChangesTo: ['http.lookups'],
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'http.compositeType',
-        is: ['createandupdate', 'createandignore'],
+        is: ['CREATE_AND_UPDATE', 'CREATE_AND_IGNORE_EXISTING'],
+      },
+      {
+        field: 'http.method',
+        is: ['COMPOSITE'],
       },
     ],
+    defaultValue: r => {
+      if (!r || !r.http || !r.http.method) {
+        return '';
+      }
+
+      if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
+        if (r.http.method.length > 1) {
+          return r.http.body[1];
+        }
+
+        return r.http.body[0];
+      }
+
+      return '';
+    },
   },
   'http.resourceIdPathCreate': {
     type: 'text',
     label: 'Response Id Path',
     placeholder: 'Optional',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'http.compositeType',
-        is: ['createandupdate', 'createandignore'],
+        is: ['CREATE_AND_UPDATE', 'CREATE_AND_IGNORE_EXISTING'],
+      },
+      {
+        field: 'http.method',
+        is: ['COMPOSITE'],
       },
     ],
+    defaultValue: r => {
+      if (!r || !r.http || !r.http.method) {
+        return '';
+      }
+
+      if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
+        if (r.http.method.length > 1) {
+          return (
+            r.http.response &&
+            r.http.response.resourceIdPath &&
+            r.http.response.resourceIdPath[1]
+          );
+        }
+
+        return (
+          r.http.response &&
+          r.http.response.resourceIdPath &&
+          r.http.response.resourceIdPath[0]
+        );
+      }
+
+      return '';
+    },
   },
   'http.resourcePathCreate': {
     type: 'text',
     label: 'Response Path',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'http.compositeType',
-        is: ['createandupdate', 'createandignore'],
+        is: ['CREATE_AND_UPDATE', 'CREATE_AND_IGNORE_EXISTING'],
+      },
+      {
+        field: 'http.method',
+        is: ['COMPOSITE'],
       },
     ],
+    defaultValue: r => {
+      if (!r || !r.http || !r.http.method) {
+        return '';
+      }
+
+      if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
+        if (r.http.method.length > 1) {
+          return r.http.resourcePath && r.http.resourcePath[1];
+        }
+
+        return r.http.resourcePath && r.http.resourcePath[0];
+      }
+
+      return '';
+    },
   },
   'http.compositeMethodUpdate': {
     type: 'select',
@@ -219,44 +364,112 @@ export default {
         ],
       },
     ],
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'http.compositeType',
-        is: ['createandupdate', 'updateandignore'],
+        is: ['CREATE_AND_UPDATE', 'UPDATE_AND_IGNORE_NEW'],
+      },
+      {
+        field: 'http.method',
+        is: ['COMPOSITE'],
       },
     ],
+    defaultValue: r => {
+      if (!r || !r.http || !r.http.method) {
+        return '';
+      }
+
+      if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
+        return r.http.method && r.http.method[0];
+      }
+
+      return '';
+    },
   },
   'http.relativeURIUpdate': {
     type: 'text',
     label: 'Relative URI',
     placeholder: 'Optional',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'http.compositeType',
-        is: ['createandupdate', 'updateandignore'],
+        is: ['CREATE_AND_UPDATE', 'UPDATE_AND_IGNORE_NEW'],
+      },
+      {
+        field: 'http.method',
+        is: ['COMPOSITE'],
       },
     ],
+    defaultValue: r => {
+      if (!r || !r.http || !r.http.method) {
+        return '';
+      }
+
+      if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
+        return r.http.relativeURI && r.http.relativeURI[0];
+      }
+
+      return '';
+    },
   },
   'http.resourceIdPathUpdate': {
     type: 'text',
     label: 'Response Id Path',
     placeholder: 'Optional',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'http.compositeType',
-        is: ['createandupdate', 'updateandignore'],
+        is: ['CREATE_AND_UPDATE', 'UPDATE_AND_IGNORE_NEW'],
+      },
+      {
+        field: 'http.method',
+        is: ['COMPOSITE'],
       },
     ],
+    defaultValue: r => {
+      if (!r || !r.http || !r.http.method) {
+        return '';
+      }
+
+      if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
+        return (
+          r.http.response &&
+          r.http.response.resourceIdPath &&
+          r.http.response.resourceIdPath[0]
+        );
+      }
+
+      return '';
+    },
   },
   'http.resourcePathUpdate': {
     type: 'text',
     label: 'Response Path',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'http.compositeType',
-        is: ['createandupdate', 'updateandignore'],
+        is: ['CREATE_AND_UPDATE', 'UPDATE_AND_IGNORE_NEW'],
+      },
+      {
+        field: 'http.method',
+        is: ['COMPOSITE'],
       },
     ],
+    defaultValue: r => {
+      if (!r || !r.http || !r.http.method) {
+        return '';
+      }
+
+      if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
+        return (
+          r.http.response &&
+          r.http.response.resourcePath &&
+          r.http.response.resourcePath[0]
+        );
+      }
+
+      return '';
+    },
   },
   'http.existingDataId': {
     type: 'text',
@@ -264,15 +477,28 @@ export default {
     visibleWhen: [
       {
         field: 'http.compositeType',
-        is: ['createandignore', 'updateandignore'],
+        is: ['CREATE_AND_IGNORE_EXISTING', 'UPDATE_AND_IGNORE_NEW'],
       },
     ],
     requiredWhen: [
       {
         field: 'http.compositeType',
-        is: ['createandignore', 'updateandignore'],
+        is: ['CREATE_AND_IGNORE_EXISTING', 'UPDATE_AND_IGNORE_NEW'],
       },
     ],
+    defaultValue: r => {
+      if (!r || !r.http) {
+        return '';
+      }
+
+      if (r.http.ignoreLookupName) {
+        return r.http.ignoreLookupName;
+      } else if (r.http.ignoreExtract) {
+        return r.http.ignoreExtract;
+      }
+
+      return '';
+    },
   },
   'http.successMediaType': {
     type: 'select',

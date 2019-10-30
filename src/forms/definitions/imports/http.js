@@ -1,4 +1,124 @@
 export default {
+  preSave: (formValues, resource) => {
+    const retValues = { ...formValues };
+    const lookup =
+      resource.http &&
+      resource.http.lookups &&
+      resource.http.lookups.get(retValues['/http/existingDataId']);
+
+    if (retValues['/http/method'] === 'COMPOSITE') {
+      if (retValues['/http/compositeType'] === 'CREATE_AND_UPDATE') {
+        retValues['/http/relativeURI'] = [
+          retValues['/http/relativeURIUpdate'],
+          retValues['/http/relativeURICreate'],
+        ];
+        retValues['/http/method'] = [
+          retValues['/http/compositeMethodUpdate'],
+          retValues['/http/compositeMethodCreate'],
+        ];
+
+        retValues['/http/resourceId'] = undefined;
+        retValues['/http/ignoreLookupName'] = undefined;
+        retValues['/http/ignoreExtract'] = undefined;
+
+        if (
+          retValues['/http/resourceIdPathCreate'] ||
+          retValues['/http/resourceIdPathUpdate']
+        ) {
+          retValues['/http/response/resourceIdPath'] = [
+            retValues['/http/resourceIdPathUpdate'],
+            retValues['/http/resourceIdPathCreate'],
+          ];
+        }
+
+        if (
+          retValues['/http/resourcePathCreate'] ||
+          retValues['/http/resourcePathUpdate']
+        ) {
+          retValues['/http/response/resourcePath'] = [
+            retValues['/http/resourcePathUpdate'],
+            retValues['/http/resourcePathCreate'],
+          ];
+        }
+
+        retValues['/http/body'] = ['', retValues['/http/bodyCreate']];
+
+        retValues['/ignoreExisting'] = false;
+        retValues['/ignoreMissing'] = false;
+      } else if (
+        retValues['/http/compositeType'] === 'CREATE_AND_IGNORE_EXISTING'
+      ) {
+        retValues['/http/relativeURI'] = [retValues['/http/relativeURICreate']];
+        retValues['/http/method'] = [retValues['/http/compositeMethodCreate']];
+
+        retValues['/http/resourceId'] = undefined;
+        retValues['/http/ignoreLookupName'] = undefined;
+        retValues['/http/ignoreExtract'] = undefined;
+
+        if (retValues['/http/resourceIdPathCreate']) {
+          retValues['/http/response/resourceIdPath'] = [
+            retValues['/http/resourceIdPathCreate'],
+          ];
+        }
+
+        if (retValues['/http/resourcePathCreate']) {
+          retValues['/http/response/resourcePath'] = [
+            retValues['/http/resourcePathCreate'],
+          ];
+        }
+
+        retValues['/http/body'] = ['', retValues['/http/bodyCreate']];
+
+        retValues['/ignoreExisting'] = true;
+        retValues['/ignoreMissing'] = false;
+
+        if (lookup) {
+          retValues['/http/ignoreLookupName'] =
+            retValues['/http/existingDataId'];
+        } else {
+          retValues['/http/ignoreExtract'] = retValues['/http/existingDataId'];
+        }
+      } else if (retValues['/http/compositeType'] === 'UPDATE_AND_IGNORE_NEW') {
+        retValues['/http/relativeURI'] = [retValues['/http/relativeURIUpdate']];
+        retValues['/http/method'] = [retValues['/http/compositeMethodUpdate']];
+
+        retValues['/http/resourceId'] = undefined;
+        retValues['/http/ignoreLookupName'] = undefined;
+        retValues['/http/ignoreExtract'] = undefined;
+
+        if (retValues['/http/resourceIdPathUpdate']) {
+          retValues['/http/response/resourceIdPath'] = [
+            retValues['/http/resourceIdPathUpdate'],
+          ];
+        }
+
+        if (retValues['/http/resourcePathUpdate']) {
+          retValues['/http/response/resourcePath'] = [
+            retValues['/http/resourcePathUpdate'],
+          ];
+        }
+
+        retValues['/http/body'] = [retValues['/http/bodyCreate']];
+
+        retValues['/ignoreExisting'] = false;
+        retValues['/ignoreMissing'] = true;
+
+        if (lookup) {
+          retValues['/http/ignoreLookupName'] =
+            retValues['/http/existingDataId'];
+        } else {
+          retValues['/http/ignoreExtract'] = retValues['/http/existingDataId'];
+        }
+      }
+    } else {
+      retValues['/ignoreExisting'] = false;
+      retValues['/ignoreMissing'] = false;
+    }
+
+    return {
+      ...retValues,
+    };
+  },
   optionsHandler: (fieldId, fields) => {
     if (fieldId === 'http.body') {
       const lookupField = fields.find(
@@ -71,6 +191,7 @@ export default {
       ],
     },
     'http.compositeMethodCreate': { fieldId: 'http.compositeMethodCreate' },
+    'http.relativeURICreate': { fieldId: 'http.relativeURICreate' },
     'http.bodyCreate': { fieldId: 'http.bodyCreate' },
     'http.resourceIdPathCreate': { fieldId: 'http.resourceIdPathCreate' },
     'http.resourcePathCreate': { fieldId: 'http.resourcePathCreate' },
@@ -112,15 +233,10 @@ export default {
       fieldId: 'uploadFile',
       visibleWhen: [{ field: 'http.requestMediaType', is: ['csv'] }],
     },
-    'file.csv.columnDelimiter': {
-      fieldId: 'file.csv.columnDelimiter',
+    'file.csv': {
+      fieldId: 'file.csv',
       visibleWhen: [{ field: 'http.requestMediaType', is: ['csv'] }],
     },
-    'file.csv.includeHeader': {
-      fieldId: 'file.csv.includeHeader',
-      visibleWhen: [{ field: 'http.requestMediaType', is: ['csv'] }],
-    },
-    'file.csv.customHeaderRows': { fieldId: 'file.csv.customHeaderRows' },
     mapping: {
       fieldId: 'mapping',
       refreshOptionsOnChangesTo: ['http.lookups'],
@@ -163,13 +279,14 @@ export default {
       'http.batchSize',
       'createNewData',
       'http.compositeMethodCreate',
+      'http.relativeURICreate',
       'http.bodyCreate',
-      'http.resourceIdPathCreate',
       'http.resourceIdPathCreate',
       'http.resourcePathCreate',
       'upateExistingData',
       'http.compositeMethodUpdate',
       'http.relativeURIUpdate',
+      // 'http.bodyUpdate',
       'http.resourceIdPathUpdate',
       'http.resourcePathUpdate',
       'ignoreExistingData',
@@ -178,9 +295,7 @@ export default {
       'http.successMediaType',
       'http.errorMediaType',
       'uploadFile',
-      'file.csv.columnDelimiter',
-      'file.csv.includeHeader',
-      'file.csv.customHeaderRows',
+      'file.csv',
       'mapping',
       'http.body',
     ],
