@@ -4,10 +4,11 @@ export default {
     importData: {
       id: 'importData',
       type: 'labeltitle',
-      label: 'How would you like the data imported?',
+      label: 'How would you like the data imported77?',
     },
     'wrapper.function': { fieldId: 'wrapper.function' },
     'wrapper.configuration': { fieldId: 'wrapper.configuration' },
+    'wrapper.lookups': { fieldId: 'wrapper.lookups', visible: false },
     sampleData: {
       id: 'sampleData',
       type: 'labeltitle',
@@ -24,6 +25,7 @@ export default {
       'wrapper.function',
       'wrapper.configuration',
       'sampleData',
+      'wrapper.lookups',
       'wrapper.sampleData',
       'dataMappings',
     ],

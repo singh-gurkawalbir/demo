@@ -95,6 +95,7 @@ export default {
         break;
       case adaptorTypeMap.AS2Import:
       case adaptorTypeMap.S3Import:
+      case adaptorTypeMap.WrapperImport:
       case adaptorTypeMap.FTPImport:
         fieldMeta = FTPMappingSettings.getMetaData({
           value,
