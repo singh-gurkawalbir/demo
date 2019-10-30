@@ -275,7 +275,7 @@ function JobActionsMenu({
         getRoutePath(
           `/integrations/${job._integrationId || 'none'}/flowBuilder/${
             job._flowId
-          }/dashboard`
+          }`
         )
       );
     } else {
