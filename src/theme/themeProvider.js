@@ -6,7 +6,6 @@ import styleguideTheme from '../styleguide/style';
 import colors from '../theme/colors';
 import light from './light';
 import dark from './dark';
-import sandboxTheme from './sandbox';
 
 const DEFAULT_THEME = 'light';
 const themes = {
@@ -14,17 +13,12 @@ const themes = {
   dark,
 };
 
-export default (opts = {}) => {
-  const { name = DEFAULT_THEME, isSandbox = false } = opts;
+export default (name = DEFAULT_THEME) => {
   const defaultTheme = themes[DEFAULT_THEME];
   // eslint-disable-next-line no-unused-vars
   const theme = produce(defaultTheme, draft => {
     if (name !== DEFAULT_THEME) {
       draft = merge(draft, themes[name]);
-    }
-
-    if (isSandbox) {
-      draft = merge(draft, sandboxTheme);
     }
   });
   const muiTheme = createMuiTheme(theme);

@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import ToggleButton from '@material-ui/lab/ToggleButton';
@@ -21,7 +20,7 @@ const useStyles = makeStyles(theme => ({
     },
     '& button.Mui-selected': {
       borderRadius: 24,
-      backgroundColor: theme.palette.primary.main,
+      backgroundColor: theme.palette.secondary.dark,
       '& p': {
         color: theme.palette.common.white,
       },
@@ -32,7 +31,7 @@ const useStyles = makeStyles(theme => ({
       borderRadius: 24,
     },
     '& button.Mui-selected:hover': {
-      backgroundColor: theme.palette.primary.main,
+      backgroundColor: theme.palette.secondary.main,
     },
     '& button:first-child': {
       borderTopLeftRadius: 24,
@@ -55,19 +54,16 @@ const useStyles = makeStyles(theme => ({
 
 export default function TextToggle({
   options = [],
-  defaultValue,
+  value,
   minWidth,
   variant,
   onChange,
   ...rest
 }) {
   const classes = useStyles({ minWidth });
-  const [value, setValue] = useState(defaultValue);
 
   function handleChange(event, newValue) {
     if (newValue) {
-      setValue(newValue);
-
       if (typeof onChange === 'function') {
         onChange(newValue);
       }

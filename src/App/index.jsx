@@ -49,17 +49,7 @@ export default function App() {
   const classes = useStyles();
   const reloadCount = useSelector(state => selectors.reloadCount(state));
   const themeName = useSelector(state => selectors.themeName(state));
-  const environment = useSelector(
-    state => selectors.userPreferences(state).environment
-  );
-  const theme = useMemo(
-    () =>
-      themeProvider({
-        name: themeName,
-        isSandbox: environment === 'sandbox',
-      }),
-    [environment, themeName]
-  );
+  const theme = useMemo(() => themeProvider(themeName), [themeName]);
 
   // eslint-disable-next-line
   //console.log(reloadCount, environment);

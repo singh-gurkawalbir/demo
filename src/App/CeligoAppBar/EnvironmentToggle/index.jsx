@@ -21,7 +21,7 @@ export default function EnvironmentToggle() {
   // or their chosen account doesn't support sandbox.
   return (
     <TextToggle
-      defaultValue={environment}
+      value={environment}
       onChange={handleChange}
       exclusive
       options={[
