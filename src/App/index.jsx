@@ -14,9 +14,9 @@ import AuthDialog from '../components/AuthDialog';
 import AppErroredModal from './AppErroredModal';
 import NetworkSnackbar from '../components/NetworkSnackbar';
 import * as selectors from '../reducers';
-import AppRoutingWithAuth from './AppRoutingWithAuth';
+import WithAuth from './AppRoutingWithAuth';
 import Signin from '../views/SignIn';
-// import useWhyDidYouUpdate from '../hooks/useWhyDidYouUpdate';
+import useWhyDidYouUpdate from '../hooks/useWhyDidYouUpdate';
 
 // The makeStyles function below does not have access to the theme.
 // We can only use the theme in components that are children of
@@ -39,6 +39,13 @@ function NonSigninHeaderComponents(props) {
   );
 }
 
+export const PageContentComponents = props => (
+  <Switch>
+    <Route path="/pg/signin" component={Signin} {...props} />
+    <Route path="/pg*" component={PageContent} {...props} />
+  </Switch>
+);
+
 export default function App() {
   const classes = useStyles();
   const reloadCount = useSelector(state => selectors.reloadCount(state));
@@ -56,7 +63,7 @@ export default function App() {
   );
 
   // eslint-disable-next-line
-  // console.log(reloadCount, environment);
+  //console.log(reloadCount, environment);
 
   return (
     <MuiThemeProvider key={reloadCount} theme={theme}>
@@ -72,12 +79,9 @@ export default function App() {
               <Route path="/pg*" component={NonSigninHeaderComponents} />
             </Switch>
             {/* page content */}
-            <AppRoutingWithAuth>
-              <Switch>
-                <Route path="/pg/signin" component={Signin} />
-                <Route path="/pg*" component={PageContent} />
-              </Switch>
-            </AppRoutingWithAuth>
+            <WithAuth>
+              <PageContentComponents />
+            </WithAuth>
           </div>
         </BrowserRouter>
       </DndProvider>

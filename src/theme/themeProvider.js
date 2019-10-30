@@ -14,7 +14,8 @@ const themes = {
   dark,
 };
 
-export default ({ name = DEFAULT_THEME, isSandbox }) => {
+export default (opts = {}) => {
+  const { name = DEFAULT_THEME, isSandbox = false } = opts;
   const defaultTheme = themes[DEFAULT_THEME];
   // eslint-disable-next-line no-unused-vars
   const theme = produce(defaultTheme, draft => {
