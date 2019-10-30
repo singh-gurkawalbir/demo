@@ -21,7 +21,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function TransformPanel(props) {
-  const { editorId } = props;
+  const { editorId, keyName = 'extract', valueName = 'generate' } = props;
   const classes = useStyles(props);
   const editor = useSelector(state => selectors.editor(state, editorId));
   const dispatch = useDispatch();
@@ -37,8 +37,8 @@ export default function TransformPanel(props) {
       showDelete
       classes={classes}
       value={editor.rule}
-      keyName="extract"
-      valueName="generate"
+      keyName={keyName}
+      valueName={valueName}
     />
   );
 }
