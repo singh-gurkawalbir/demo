@@ -15,6 +15,7 @@ import {
   refreshResourceData,
   requestSampleDataForExports,
   requestSampleDataForImports,
+  updateStateForProcessorData,
 } from './utils';
 import {
   getSampleDataStage,
@@ -174,17 +175,14 @@ function* processData({
     const processedData = yield call(evaluateExternalProcessor, {
       processorData,
     });
-    const { processor } = processorData;
 
-    yield put(
-      actions.flowData.receivedProcessorData(
-        flowId,
-        resourceId,
-        stage || processor,
-        processedData,
-        isPageGenerator
-      )
-    );
+    yield call(updateStateForProcessorData, {
+      flowId,
+      resourceId,
+      stage,
+      processedData,
+      isPageGenerator,
+    });
   } catch (e) {
     // Handle errors
   }
@@ -250,6 +248,7 @@ export function* requestProcessorData({
 }) {
   // If provided processorStage is 'stage' else by default processor name becomes its stage
   const stage = processorStage || processor;
+  let hasNoRulesToProcess = false;
   const { merged: resource } = yield select(
     resourceData,
     resourceType,
@@ -283,10 +282,15 @@ export function* requestProcessorData({
     const transform = { ...resource[processor] };
     const [rule] = transform.rules || [];
 
+    if (!(rule && rule.length)) {
+      hasNoRulesToProcess = true;
+    }
+
     processorData = { data: preProcessedData, rule, processor: 'transform' };
   } else if (stage === 'hooks') {
     const { hooks = {} } = { ...resource };
 
+    // @TODO: Raghu handle for other import hooks map
     if (hooks.preSavePage && hooks.preSavePage._scriptId) {
       const scriptId = hooks.preSavePage._scriptId;
       const data = { data: [preProcessedData], errors: [] };
@@ -302,6 +306,8 @@ export function* requestProcessorData({
         entryFunction: hooks.preSavePage.function,
         processor: 'javascript',
       };
+    } else {
+      hasNoRulesToProcess = true;
     }
   } else if (stage === 'importMappingExtract') {
     // mapping fields are processed here against raw data
@@ -314,26 +320,34 @@ export function* requestProcessorData({
     );
 
     if (preProcessedData && mappings)
-      yield call(processMappingData, {
+      return yield call(processMappingData, {
         flowId,
         resourceId,
         mappings,
         processor,
         preProcessedData,
       });
-
-    return;
+    hasNoRulesToProcess = true;
   }
 
-  if (processorData) {
-    yield call(processData, {
+  if (hasNoRulesToProcess) {
+    // update processorStage with preprocessed data if there are no rules to process
+    return yield call(updateStateForProcessorData, {
       flowId,
       resourceId,
-      processorData,
+      processedData: { data: [preProcessedData] },
       isPageGenerator,
       stage,
     });
   }
+
+  yield call(processData, {
+    flowId,
+    resourceId,
+    processorData,
+    isPageGenerator,
+    stage,
+  });
 }
 
 function* updateFlowsDataForResource({ resourceId, resourceType }) {

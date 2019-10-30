@@ -207,21 +207,19 @@ const PageProcessor = ({
         inputFilterAction,
         outputFilterAction,
         transformationAction,
-        pageProcessorHooksAction,
-        responseMapping
+        pageProcessorHooksAction
       );
     } else {
       processorActions.push(
         inputFilterAction,
         { ...importMappingAction, isUsed: false }, // example new prop
         responseTransformationAction,
-        pageProcessorHooksAction,
-        responseMapping
+        pageProcessorHooksAction
       );
     }
 
     if (!isLast) {
-      processorActions.push(proceedOnFailureAction);
+      processorActions.push(responseMapping, proceedOnFailureAction);
     }
   }
   // #endregion
