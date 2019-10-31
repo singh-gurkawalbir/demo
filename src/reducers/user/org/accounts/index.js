@@ -224,7 +224,7 @@ export function accountSummary(state) {
   const accounts = [];
 
   if (!shared || shared.length === 0) {
-    const ownLicense = this.integratorLicense(state, ACCOUNT_IDS.OWN);
+    const ownLicense = integratorLicense(state, ACCOUNT_IDS.OWN);
 
     if (ownLicense) {
       accounts.push({
