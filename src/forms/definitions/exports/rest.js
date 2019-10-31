@@ -106,7 +106,6 @@ export default {
           is: ['records'],
         },
       ],
-      defaultValue: r => (r && r.type ? r.type : 'all'),
       required: true,
       options: [
         {
