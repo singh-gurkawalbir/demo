@@ -1,17 +1,27 @@
 /* eslint-disable no-param-reassign */
-import React, { useRef, useState, useEffect } from 'react';
+import React, {
+  useRef,
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+} from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import 'jQuery-QueryBuilder';
 import 'jQuery-QueryBuilder/dist/css/query-builder.default.css';
 import jQuery from 'jquery';
+import { isEmpty, isArray } from 'lodash';
 import config from './config';
 import './queryBuilder.css';
 import {
   convertIOFilterExpression,
   getFiltersMetadata,
   generateRulesState,
+  generateIOFilterExpression,
 } from './util';
 import OperandSettingsDialog from './OperandSettingsDialog';
+import actions from '../../../actions';
 
 const useStyles = makeStyles(() => ({
   container: {
@@ -22,16 +32,32 @@ const useStyles = makeStyles(() => ({
     padding: '16px',
   },
 }));
+const defaultData = {};
 
 export default function QueryBuilder({
+  editorId,
   readOnly,
-  filters = [],
-  data,
+  data = defaultData,
   rule,
   isDeltaExport = false,
 }) {
-  console.log(`data in QB ${JSON.stringify(data)}`);
-  console.log(`rule in QB ${JSON.stringify(rule)}`);
+  //console.log(`QB data ${JSON.stringify(data)}`);
+
+  const dispatch = useDispatch();
+  // const handleDataChange = data => {
+  //   dispatch(actions.editor.patch(editorId, { data }));
+  // };
+  const patchEditor = value => {
+    dispatch(actions.editor.patch(editorId, { rule: value || [] }));
+  };
+
+  const filters = useMemo(() => {
+    console.log(`in setFilters useMemo`);
+
+    return Object.keys(isArray(data) ? data[0] : data).map(key => ({
+      id: key,
+    }));
+  }, [data]);
   const qbuilder = useRef(null);
   const classes = useStyles();
   const [showOperandSettingsFor, setShowOperandSettingsFor] = useState();
@@ -41,7 +67,7 @@ export default function QueryBuilder({
 
   window.ABC = { rules, rulesState, filtersMetadata };
 
-  function getRuleId(rule) {
+  function getFilterRuleId(rule) {
     return rule.id.split('_rule_')[1];
   }
 
@@ -52,13 +78,10 @@ export default function QueryBuilder({
     jQuery(buttonHtml).prependTo(
       jQuery(jQuery('.rules-group-header:first .group-actions')[0])
     );
-    jQuery(jQuery('[data-add=add-missing-field]')[0]).on('click', () => {
-      alert('Add missing field');
-    });
+    jQuery(jQuery('[data-add=add-missing-field]')[0]).on('click', () => {});
   }
 
   function showOperandSettings({ rule, rhs }) {
-    console.log(`setShowOperandSettings`);
     setShowOperandSettingsFor({ rule, rhs });
   }
 
@@ -71,7 +94,7 @@ export default function QueryBuilder({
           .find('[name$=_filter]')
           .after('<input name="value" class="io-filter-type form-control">');
 
-        const ruleId = getRuleId(rule);
+        const ruleId = getFilterRuleId(rule);
 
         if (rulesState[ruleId].data && rulesState[ruleId].data.lhs) {
           rule.$el
@@ -92,7 +115,7 @@ export default function QueryBuilder({
           .after(
             '<textarea name="expression" class="io-filter-type form-control"></textarea>'
           );
-        const ruleId = getRuleId(rule);
+        const ruleId = getFilterRuleId(rule);
 
         if (rulesState[ruleId].data && rulesState[ruleId].data.lhs) {
           rule.$el
@@ -137,7 +160,7 @@ export default function QueryBuilder({
     rule.$el.find('.rule-filter-container .io-filter-type').remove();
 
     if (rule.filter) {
-      const ruleId = getRuleId(rule);
+      const ruleId = getFilterRuleId(rule);
       const filterType = rulesState[ruleId].data.lhs.type;
 
       if (filterType === 'value') {
@@ -167,7 +190,7 @@ export default function QueryBuilder({
         selectHtml.push('</select>');
         rule.$el.find('.rule-value-container').prepend(selectHtml.join(''));
 
-        const ruleId = getRuleId(rule);
+        const ruleId = getFilterRuleId(rule);
 
         if (rulesState[ruleId].data && rulesState[ruleId].data.rhs) {
           rule.$el
@@ -193,7 +216,7 @@ export default function QueryBuilder({
             '<textarea name="expression" class="io-filter-type form-control"></textarea>'
           );
 
-        const ruleId = getRuleId(rule);
+        const ruleId = getFilterRuleId(rule);
 
         if (rulesState[ruleId].data && rulesState[ruleId].data.rhs) {
           rule.$el
@@ -204,14 +227,10 @@ export default function QueryBuilder({
       }
     }
 
-    const ruleId = getRuleId(rule);
-
-    console.log(`updateUIForRHSRule ruleId ${ruleId}`);
+    const ruleId = getFilterRuleId(rule);
 
     rule.$el.find('.rule-value-container .io-filter-type').remove();
     const ruleState = rulesState[ruleId].data;
-
-    console.log(`updateUIForRHSRule ruleState ${JSON.stringify(ruleState)}`);
 
     if (ruleState.rhs.type) {
       const filterType = rulesState[ruleId].data.rhs.type;
@@ -371,7 +390,7 @@ export default function QueryBuilder({
         label: v.name, // || self.data.metadata[v.id] || v.id,
         type: 'string',
         input(rule, name) {
-          const ruleId = getRuleId(rule);
+          const ruleId = getFilterRuleId(rule);
 
           if (!rulesState[ruleId]) {
             rulesState[ruleId] = {};
@@ -440,19 +459,19 @@ export default function QueryBuilder({
             });
           }
 
-          return `<input class="form-control" name="${name}" value="${
-            rulesState[ruleId].data.rhs.value
-          }">${
+          return `<input class="form-control" name="${name}" value="${rulesState[
+            ruleId
+          ].data.rhs.value || ''}">${
             readOnly
               ? ''
               : '<img style="display:none;" class="settings-icon" src="https://d142hkd03ds8ug.cloudfront.net/images/icons/icon/gear.png">'
           }`;
         },
         valueGetter(rule) {
-          const ruleId = getRuleId(rule);
+          const ruleId = getFilterRuleId(rule);
           const r = rulesState[ruleId].data;
           let lhsValue = rule.$el
-            .find(`.rule-filter-container [name=${ruleId}_filter]`)
+            .find(`.rule-filter-container [name=${rule.id}_filter]`)
             .val();
 
           if (r.lhs.type !== 'field') {
@@ -484,7 +503,7 @@ export default function QueryBuilder({
           }
 
           let rhsValue = rule.$el
-            .find(`.rule-value-container [name=${ruleId}_value_0]`)
+            .find(`.rule-value-container [name=${rule.id}_value_0]`)
             .val();
 
           if (r.rhs.type !== 'value') {
@@ -519,10 +538,10 @@ export default function QueryBuilder({
         },
         validation: {
           callback(value, rule) {
-            const ruleId = getRuleId(rule);
+            const ruleId = getFilterRuleId(rule);
             const r = rulesState[ruleId].data;
             let lhsValue = rule.$el
-              .find(`.rule-filter-container [name=${ruleId}_filter]`)
+              .find(`.rule-filter-container [name=${rule.id}_filter]`)
               .val();
 
             if (r.lhs.type !== 'field') {
@@ -546,7 +565,7 @@ export default function QueryBuilder({
             }
 
             let rhsValue = rule.$el
-              .find(`.rule-value-container [name=${ruleId}_value_0]`)
+              .find(`.rule-value-container [name=${rule.id}_value_0]`)
               .val();
 
             if (r.rhs.type !== 'value') {
@@ -587,46 +606,105 @@ export default function QueryBuilder({
     return filters;
   }
 
+  function validate() {
+    return jQuery(qbuilder.current).queryBuilder('validate');
+  }
+
+  function getRules(options = {}) {
+    const result = jQuery(qbuilder.current).queryBuilder('getRules', options);
+
+    if (isEmpty(result) || (result && !result.valid)) {
+      return undefined;
+    }
+
+    return generateIOFilterExpression(result);
+  }
+
   useEffect(() => {
-    console.log(`in useEffect setRules`);
+    console.log(`in setRules useEffect`);
+    dispatch(
+      actions.editor.init(editorId, 'filter', {
+        data,
+        autoEvaluate: true,
+        rule,
+      })
+    );
     const { rules } = convertIOFilterExpression(rule);
 
     setRules(rules);
     setRulesState(generateRulesState(rules));
-    setFiltersMetadata(getFiltersMetadata(filters, rules));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    if (filtersMetadata) {
-      console.log(`in useEffect QB`);
-      const filtersConfig = generateFiltersConfig(filtersMetadata);
-      const x = jQuery(qbuilder.current);
+    if (rules) {
+      console.log(`filters or rules changed`);
+      setFiltersMetadata(getFiltersMetadata(filters, rules));
+    }
+  }, [filters, rules]);
 
-      x.queryBuilder({
-        ...config,
-        filters: filtersConfig,
-        rules,
-      });
-      addMissingFieldButton();
+  useEffect(() => {
+    console.log(`filtersMetadata changed ${JSON.stringify(filtersMetadata)}`);
+
+    if (filtersMetadata) {
+      if (!qbuilder.current) {
+        console.log(`!qb.current`);
+
+        const filtersConfig = generateFiltersConfig(filtersMetadata);
+        const x = jQuery(qbuilder.current);
+
+        x.on('afterUpdateRuleOperator.queryBuilder', (e, rule) => {
+          if (
+            rule.operator &&
+            (rule.operator.type === 'is_empty' ||
+              rule.operator.type === 'is_not_empty')
+          ) {
+            rule.filter.valueGetter(rule);
+          }
+        });
+
+        x.queryBuilder({
+          ...config,
+          filters: filtersConfig,
+          rules,
+        });
+        addMissingFieldButton();
+        x.on('rulesChanged.queryBuilder', () => {
+          const rule = getRules();
+
+          console.log(`expr ${JSON.stringify(rule)}`);
+          patchEditor(rule);
+        });
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filtersMetadata]);
+
+  useEffect(() => {
+    console.log(`filtersMetadata changed2 ${JSON.stringify(filtersMetadata)}`);
+
+    if (filtersMetadata) {
+      if (qbuilder.current) {
+        console.log(`qb.current`);
+
+        const filtersConfig = generateFiltersConfig(filtersMetadata);
+
+        jQuery(qbuilder.current).queryBuilder('setFilters',true, filtersConfig);
+      }
+    }
+  })
 
   function handleCloseOperandSettings() {
     setShowOperandSettingsFor();
   }
 
   function handleSubmitOperandSettings(operandSettings) {
-    console.log(
-      `handleSubmitOperandSettings ${JSON.stringify(operandSettings)}`
-    );
     const ruleData =
-      rulesState[getRuleId(showOperandSettingsFor.rule)].data[
+      rulesState[getRgetFilterRuleIduleId(showOperandSettingsFor.rule)].data[
         showOperandSettingsFor.rhs ? 'rhs' : 'lhs'
       ];
 
-    rulesState[getRuleId(showOperandSettingsFor.rule)].data[
+    rulesState[getFilterRuleId(showOperandSettingsFor.rule)].data[
       showOperandSettingsFor.rhs ? 'rhs' : 'lhs'
     ] = { ...ruleData, ...operandSettings };
 
@@ -642,6 +720,10 @@ export default function QueryBuilder({
       });
     }
 
+    const rule = getRules();
+
+    console.log(`expr 1 ${JSON.stringify(rule)}`);
+    patchEditor(rule);
     handleCloseOperandSettings();
   }
 
@@ -652,7 +734,7 @@ export default function QueryBuilder({
         {showOperandSettingsFor && (
           <OperandSettingsDialog
             ruleData={
-              rulesState[getRuleId(showOperandSettingsFor.rule)].data[
+              rulesState[getFilterRuleId(showOperandSettingsFor.rule)].data[
                 showOperandSettingsFor.rhs ? 'rhs' : 'lhs'
               ]
             }
@@ -660,7 +742,6 @@ export default function QueryBuilder({
             onSubmit={handleSubmitOperandSettings}
           />
         )}
-        {/* <div className={classes.queryBlock}>{query}</div> */}
       </div>
     </div>
   );

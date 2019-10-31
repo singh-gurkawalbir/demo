@@ -13,8 +13,7 @@ function ExportFilterDialog({ flowId, resource, onClose }) {
       isPageGenerator: true,
     })
   );
-
-  console.log(`sampleData in Filters ${JSON.stringify(sampleData)}`);
+  // console.log(`exportFilter sampleData ${JSON.stringify(sampleData)}`);
   const rules = useMemo(
     () => resource && resource.filter && resource.filter.rules,
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -25,7 +24,7 @@ function ExportFilterDialog({ flowId, resource, onClose }) {
       const { rule } = editorValues;
       const path = '/filter';
       const value = {
-        rules: rule ? [rule] : [[]],
+        rules: rule || [],
         version: '1',
       };
       const patchSet = [{ op: 'replace', path, value }];

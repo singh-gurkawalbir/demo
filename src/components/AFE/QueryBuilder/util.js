@@ -32,7 +32,7 @@ const operatorsMap = {
 
 operatorsMap.ioFiltersToJQuery = invert(operatorsMap.jQueryToIOFilters);
 
-export function convertIOFilterExpression(filterExpression) {
+export function convertIOFilterExpression(filterExpression = []) {
   const dataTypes = ['boolean', 'epochtime', 'number', 'string'];
   const transformations = ['ceiling', 'floor', 'lowercase', 'uppercase'];
 
@@ -156,8 +156,18 @@ export function getFiltersMetadata(filters, rules) {
     r.rules.forEach(rr => {
       if (rr.condition) {
         iterate(rr);
-      } else if (!filter(filters, { id: rr.id }).length) {
-        filters.push({ id: rr.id });
+      } else {
+        if (!rr.id) {
+          if (filters.length === 0) {
+            filters.push({ id: 'sampleField', name: 'sampleField' });
+          }
+
+          rr.id = filters[0].id;
+        }
+
+        if (!filter(filters, { id: rr.id }).length) {
+          filters.push({ id: rr.id });
+        }
       }
     });
   }
@@ -190,4 +200,127 @@ export function generateRulesState(rules) {
   iterate(rules);
 
   return rulesState;
+}
+
+export function generateIOFilterExpression(rules) {
+  function iterate(r) {
+    let exp = [];
+    let lhs;
+    let rhs;
+
+    if (r.condition) {
+      exp.push(r.condition.toLowerCase());
+    }
+
+    r.rules.forEach(rr => {
+      if (rr.condition) {
+        exp.push(iterate(rr));
+      } else {
+        lhs = undefined;
+        rhs = undefined;
+
+        if (rr.data.lhs.type === 'field') {
+          lhs = [rr.data.lhs.dataType, ['extract', rr.data.lhs.field]];
+
+          if (rr.data.lhs.field.indexOf('_CONTEXT.') === 0) {
+            lhs[1] = ['context', rr.data.lhs.field.replace('_CONTEXT.', '')];
+          }
+
+          if (rr.data.lhs.transformations) {
+            JSON.parse(JSON.stringify(rr.data.lhs.transformations)).forEach(
+              t => {
+                lhs = [t, lhs];
+              }
+            );
+          }
+        } else if (rr.data.lhs.type === 'value') {
+          lhs = rr.data.lhs.value;
+
+          switch (rr.data.lhs.dataType) {
+            case 'number':
+              lhs = parseInt(rr.data.lhs.value, 10);
+              break;
+            case 'boolean':
+              lhs =
+                lhs &&
+                lhs.toString() &&
+                lhs.toString().toLowerCase() === 'true';
+              break;
+            default:
+          }
+        } else if (rr.data.lhs.type === 'expression') {
+          try {
+            lhs = JSON.parse(rr.data.lhs.expression);
+          } catch (ex) {
+            console.log(`error parsing expression : ${rr.data.lhs.expression}`);
+          }
+        }
+
+        if (rr.value === null) {
+          exp.push([operatorsMap.jQueryToIOFilters[rr.operator], lhs]);
+        } else {
+          if (rr.data.rhs.type === 'field') {
+            rhs = [rr.data.rhs.dataType, ['extract', rr.data.rhs.field]];
+
+            if (rr.data.rhs.field.indexOf('_CONTEXT.') === 0) {
+              rhs[1] = ['context', rr.data.rhs.field.replace('_CONTEXT.', '')];
+            }
+
+            if (rr.data.rhs.transformations) {
+              JSON.parse(JSON.stringify(rr.data.rhs.transformations)).forEach(
+                t => {
+                  rhs = [t, rhs];
+                }
+              );
+            }
+          } else if (rr.data.rhs.type === 'value') {
+            rhs = rr.data.rhs.value;
+
+            switch (rr.data.rhs.dataType) {
+              case 'number':
+                rhs = parseInt(rr.data.rhs.value, 10);
+                break;
+              case 'boolean':
+                rhs =
+                  rhs &&
+                  rhs.toString() &&
+                  rhs.toString().toLowerCase() === 'true';
+                break;
+              default:
+            }
+          } else if (rr.data.rhs.type === 'expression') {
+            try {
+              rhs = JSON.parse(rr.data.rhs.expression);
+            } catch (ex) {
+              console.log(
+                `error parsing expression : ${rr.data.rhs.expression}`
+              );
+            }
+          }
+
+          if (
+            rr.data.lhs.dataType === 'epochtime' ||
+            rr.data.rhs.dataType === 'epochtime'
+          ) {
+            rr.data.lhs.dataType = 'epochtime';
+            rr.data.rhs.dataType = 'epochtime';
+          }
+
+          exp.push([operatorsMap.jQueryToIOFilters[rr.operator], lhs, rhs]);
+        }
+      }
+    });
+
+    if (r.condition && r.rules && r.rules.length <= 1) {
+      [, exp] = exp;
+    }
+
+    if (r.not && exp) {
+      exp = ['not', exp];
+    }
+
+    return exp;
+  }
+
+  return iterate(rules);
 }
