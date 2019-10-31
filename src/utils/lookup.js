@@ -17,14 +17,14 @@ export default {
       case adaptorTypeMap.S3Import:
       case adaptorTypeMap.AS2Import:
         return resourceObj.file && resourceObj.file.lookups;
-      case adaptorTypeMap.MongodbImport:
+      case adaptorTypeMap.WrapperImport:
         return resourceObj.wrapper && resourceObj.wrapper.lookups;
       case adaptorTypeMap.HTTPImport:
         return resourceObj.http && resourceObj.http.lookups;
       case adaptorTypeMap.SalesforceImport:
         return resourceObj.salesforce && resourceObj.salesforce.lookups;
       case adaptorTypeMap.XMLImport:
-      case adaptorTypeMap.WrapperImport:
+      case adaptorTypeMap.MongodbImport:
       case adaptorTypeMap.RDBMSImport:
       default:
     }

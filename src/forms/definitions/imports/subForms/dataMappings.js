@@ -146,8 +146,9 @@ export default {
       'dataMapping',
       'oneToMany',
       'pathToMany',
-      'mapping',
-      'netsuite_da.mapping',
+      /* Uncomment below changes to show mapping option on import forms */
+      // 'mapping',
+      // 'netsuite_da.mapping',
     ],
   },
 };
