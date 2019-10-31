@@ -62,21 +62,21 @@ const isActionUsed = (resource, flowNode, action) => {
       return !!(transform.rules && transform.rules.length);
 
     case actionsMap.responseTransformation:
-      return responseTransform.rules && responseTransform.rules.length;
+      return !!(responseTransform.rules && responseTransform.rules.length);
 
     case actionsMap.hooks:
       return false;
     case actionsMap.responseMapping: {
       const { fields = [], lists = [] } = responseMapping;
 
-      return fields.length || lists.length;
+      return !!(fields.length || lists.length);
     }
 
     case actionsMap.outputFilter:
-      return filter.rules && filter.rules.length;
+      return !!(filter.rules && filter.rules.length);
 
     case actionsMap.proceedOnFailure:
-      return proceedOnFailure;
+      return !!proceedOnFailure;
 
     default:
   }

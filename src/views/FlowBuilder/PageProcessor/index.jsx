@@ -69,6 +69,7 @@ const PageProcessor = ({
 
   useEffect(() => {
     if (resource) {
+      // @TODO Raghu : getting here infinitely on update of any action on resource
       setUsedActions(getUsedActionsMapForResource(resource, resourceType, pp));
     }
   }, [pp, resource, resourceType]);
