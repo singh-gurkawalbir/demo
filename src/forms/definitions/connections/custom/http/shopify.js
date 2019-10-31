@@ -66,6 +66,17 @@ export default {
           message: 'Subdomain should not contain spaces.',
         },
       },
+      defaultValue: r => {
+        const baseUri = r && r.http && r.http.baseURI;
+        const subdomain =
+          baseUri &&
+          baseUri.substring(
+            baseUri.indexOf('https://') + 8,
+            baseUri.indexOf('.myshopify.com')
+          );
+
+        return subdomain;
+      },
     },
     'http.auth.basic.username': {
       fieldId: 'http.auth.basic.username',
@@ -128,38 +139,6 @@ export default {
       visibleWhen: [{ field: 'http.authType', is: ['oauth'] }],
     },
     httpAdvanced: { formId: 'httpAdvanced' },
-    actions: [
-      {
-        id: 'oauth',
-        label: 'Save & Authorize',
-        visibleWhen: [
-          {
-            field: 'http.authType',
-            is: ['oauth'],
-          },
-        ],
-      },
-      {
-        id: 'test',
-        label: 'Test',
-        visibleWhen: [
-          {
-            field: 'http.authType',
-            is: ['basic'],
-          },
-        ],
-      },
-      {
-        id: 'save',
-        label: 'Test and Save',
-        visibleWhen: [
-          {
-            field: 'http.authType',
-            is: ['basic'],
-          },
-        ],
-      },
-    ],
   },
   layout: {
     fields: [
@@ -175,4 +154,37 @@ export default {
       { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
     ],
   },
+
+  actions: [
+    {
+      id: 'oauth',
+      label: 'Save & Authorize',
+      visibleWhen: [
+        {
+          field: 'http.authType',
+          is: ['oauth'],
+        },
+      ],
+    },
+    {
+      id: 'test',
+      label: 'Test',
+      visibleWhen: [
+        {
+          field: 'http.authType',
+          is: ['basic'],
+        },
+      ],
+    },
+    {
+      id: 'save',
+      label: 'Test and Save',
+      visibleWhen: [
+        {
+          field: 'http.authType',
+          is: ['basic'],
+        },
+      ],
+    },
+  ],
 };
