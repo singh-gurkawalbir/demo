@@ -70,7 +70,7 @@ const mapDispatchToProps = dispatch => ({
 @withStyles(theme => ({
   currentAccount: {
     padding: theme.spacing(1),
-    color: theme.appBar.contrast,
+    color: theme.palette.common.white,
   },
   currentContainer: {
     display: 'inline-flex',
@@ -105,7 +105,7 @@ const mapDispatchToProps = dispatch => ({
     // display: 'none',
   },
   arrow: {
-    fill: theme.appBar.contrast,
+    fill: theme.palette.common.white,
   },
 }))
 class AccountList extends Component {
