@@ -25,7 +25,7 @@ const opts2 = [
     <TextToggle 
         variant="appbar" 
         minWidth={120}
-        defaultValue={1} options={opts} 
+        value={1} options={opts} 
         exclusive 
         size="small" />
     </div>
@@ -34,7 +34,7 @@ const opts2 = [
     <TextToggle 
         variant="appbar" 
         minWidth={80}
-        defaultValue={0} options={opts2}  
+        value={0} options={opts2}  
         size="small" />
     </div>
 </div>
@@ -52,7 +52,7 @@ const opts = [
 ];
 <TextToggle 
     options={opts} 
-    defaultValue={3}
+    value={3}
     minWidth={40}
     exclusive />
 ```
