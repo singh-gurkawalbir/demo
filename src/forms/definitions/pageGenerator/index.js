@@ -44,8 +44,12 @@ export default {
     }
 
     if (app.type === 'netsuite') {
-      newValues['/netsuite/type'] =
-        executionType === 'scheduled' ? apiType : executionType;
+      if (newValues['/outputMode'] === 'records') {
+        newValues['/netsuite/type'] =
+          executionType === 'scheduled' ? apiType : executionType;
+      } else {
+        newValues['/netsuite/type'] = 'blob';
+      }
     }
 
     // console.log(app, newValues);
@@ -185,17 +189,6 @@ export default {
         return output;
       },
     },
-    'netsuite.id': {
-      id: 'netsuite.id',
-      type: 'text',
-      label: 'id',
-      required: true,
-      visibleWhenAll: [
-        visibleWhenIsNew,
-        { field: 'application', is: ['netsuite'] },
-        { field: 'outputMode', is: ['blob'] },
-      ],
-    },
     netsuiteExecutionType: {
       id: 'netsuite.execution.type',
       name: 'executionType',
@@ -247,7 +240,6 @@ export default {
       'name',
       'description',
       'outputMode',
-      'netsuite.id',
       'netsuiteExecutionType',
       'netsuiteApiType',
     ],
