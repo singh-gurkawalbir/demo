@@ -151,3 +151,54 @@ export function getResourceSubTypeFromAdaptorType(adaptorType) {
 // fn to consolidate this simple expression in case we ever
 // change how we identify new resources..
 export const isNewId = id => id && id.startsWith('new');
+
+export const getDomain = () =>
+  window.document.location.hostname.replace('www.', '');
+
+export const getDomainUrl = () => {
+  const domain = getDomain();
+
+  if (domain === 'localhost.io') {
+    return `http://${window.document.location.host}`;
+  }
+
+  return `https://${domain}`;
+};
+
+export const getApiUrl = () => getDomainUrl().replace('://', '://api.');
+
+export const getWebhookUrl = (formValues, resourceId) => {
+  let whURL = '';
+
+  if (resourceId) {
+    whURL = `${getApiUrl()}/v1/exports/`;
+    whURL = whURL.concat(resourceId);
+    const provider = formValues['/webhook/provider'];
+
+    if (
+      [
+        'activecampaign',
+        'aha',
+        'box',
+        'intercom',
+        'jira',
+        'mailchimp',
+        'pagerduty',
+        'postmark',
+        'recurly',
+        'segment',
+        'stripe',
+        'mailparser-io',
+        'parseur',
+        'custom',
+        'sapariba',
+      ].indexOf(provider) > -1
+    ) {
+      whURL += `/${formValues['/webhook/token']}`;
+    }
+
+    whURL += '/data';
+  }
+
+  return whURL;
+};

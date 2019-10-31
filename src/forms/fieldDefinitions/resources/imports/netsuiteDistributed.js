@@ -8,6 +8,11 @@ export default {
     placeholder: 'Please select a record type',
     connectionId: r => r && r._connectionId,
   },
+  'netsuite_da.mapping': {
+    type: 'mapping',
+    connectionId: r => r && r._connectionId,
+    label: 'Manage Import Mapping',
+  },
   'netsuite_da.operation': {
     type: 'radiogroup',
     label: 'Operation',

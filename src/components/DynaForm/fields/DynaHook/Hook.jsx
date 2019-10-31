@@ -144,8 +144,8 @@ export default function DynaHook(props) {
     setShowCreateScriptDialog(true);
   };
 
-  const handleCreateScriptDialogClose = values => {
-    if (values) {
+  const handleCreateScriptDialogClose = (shouldCommit, values) => {
+    if (shouldCommit) {
       const options = { dispatch, isNew: true };
 
       saveScript({ ...values, scriptId: tempScriptId }, options);
