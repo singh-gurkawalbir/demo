@@ -2,7 +2,7 @@ export default {
   preSave: formValues => {
     const newValues = { ...formValues };
 
-    if (newValues['/inputMode'] === 'BLOB') {
+    if (newValues['/inputMode'] === 'blob') {
       newValues['/salesforce/sObjectType'] =
         newValues['/salesforce/blobsObjectType'];
       newValues['/salesforce/operation'] =
@@ -22,7 +22,7 @@ export default {
       visibleWhen: [
         {
           field: 'inputMode',
-          is: ['RECORDS'],
+          is: ['records'],
         },
       ],
     },
@@ -33,12 +33,12 @@ export default {
       options: [
         {
           items: [
-            { label: 'Records', value: 'RECORDS' },
-            { label: 'Blob Keys', value: 'BLOB' },
+            { label: 'Records', value: 'records' },
+            { label: 'Blob Keys', value: 'blob' },
           ],
         },
       ],
-      defaultValue: r => (r && r.blobKeyPath ? 'BLOB' : 'RECORDS'),
+      defaultValue: r => (r && r.blobKeyPath ? 'blob' : 'records'),
     },
     'salesforce.api': { fieldId: 'salesforce.api' },
     'salesforce.document.id': { fieldId: 'salesforce.document.id' },
@@ -116,7 +116,7 @@ export default {
         { field: 'salesforce.operation', is: ['update'] },
         {
           field: 'inputMode',
-          is: ['RECORDS'],
+          is: ['records'],
         },
       ],
     },
@@ -132,7 +132,7 @@ export default {
       visibleWhen: [
         {
           field: 'inputMode',
-          is: ['BLOB'],
+          is: ['blob'],
         },
       ],
     },
@@ -152,7 +152,7 @@ export default {
       visibleWhenAll: [
         {
           field: 'inputMode',
-          is: ['RECORDS'],
+          is: ['records'],
         },
       ],
     },

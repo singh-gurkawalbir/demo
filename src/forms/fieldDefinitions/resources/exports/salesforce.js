@@ -11,7 +11,7 @@ export default {
       },
       {
         field: 'outputMode',
-        is: ['RECORDS'],
+        is: ['records'],
       },
     ],
   },
@@ -33,7 +33,7 @@ export default {
     visibleWhen: [
       {
         field: 'outputMode',
-        is: ['RECORDS'],
+        is: ['records'],
       },
     ],
   },
@@ -49,7 +49,7 @@ export default {
       },
       {
         field: 'outputMode',
-        is: ['RECORDS'],
+        is: ['records'],
       },
     ],
   },
@@ -68,7 +68,7 @@ export default {
       },
       {
         field: 'outputMode',
-        is: ['RECORDS'],
+        is: ['records'],
       },
     ],
   },
@@ -84,7 +84,7 @@ export default {
       },
       {
         field: 'outputMode',
-        is: ['RECORDS'],
+        is: ['records'],
       },
     ],
   },
@@ -100,7 +100,7 @@ export default {
       },
       {
         field: 'outputMode',
-        is: ['RECORDS'],
+        is: ['records'],
       },
     ],
   },
@@ -116,7 +116,7 @@ export default {
       },
       {
         field: 'outputMode',
-        is: ['RECORDS'],
+        is: ['records'],
       },
     ],
   },
@@ -127,11 +127,11 @@ export default {
     visibleWhen: [
       {
         field: 'outputMode',
-        is: ['BLOB'],
+        is: ['blob'],
       },
     ],
   },
-  'salesforce.objecttype': {
+  'salesforce.objectType': {
     type: 'select',
     required: true,
     label: 'SObject Type',
@@ -147,7 +147,7 @@ export default {
     visibleWhen: [
       {
         field: 'outputMode',
-        is: ['BLOB'],
+        is: ['blob'],
       },
     ],
   },

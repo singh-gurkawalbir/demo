@@ -7,7 +7,7 @@ export default {
       visibleWhen: [
         {
           field: 'outputMode',
-          is: ['RECORDS'],
+          is: ['records'],
         },
       ],
       defaultValue: r => !!(r && r.file && r.file.compressionFormat),
@@ -23,7 +23,7 @@ export default {
       visibleWhen: [
         {
           field: 'outputMode',
-          is: ['RECORDS'],
+          is: ['records'],
         },
       ],
     },
@@ -32,7 +32,7 @@ export default {
       visibleWhen: [
         {
           field: 'outputMode',
-          is: ['RECORDS'],
+          is: ['records'],
         },
       ],
     },

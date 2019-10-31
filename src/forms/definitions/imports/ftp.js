@@ -4,7 +4,7 @@ export default {
   preSave: formValues => {
     const newValues = { ...formValues };
 
-    if (newValues['/inputMode'] === 'BLOB') {
+    if (newValues['/inputMode'] === 'blob') {
       newValues['/ftp/useTempFile'] = newValues['/ftp/blobUseTempFile'];
       newValues['/ftp/inProgressFileName'] =
         newValues['/ftp/blobInProgressFileName'];
@@ -127,7 +127,7 @@ export default {
       visibleWhenAll: [
         {
           field: 'inputMode',
-          is: ['RECORDS'],
+          is: ['records'],
         },
       ],
     },
@@ -138,19 +138,13 @@ export default {
       visibleWhenAll: [
         {
           field: 'inputMode',
-          is: ['RECORDS'],
+          is: ['records'],
         },
       ],
     },
     dataMappings: { formId: 'dataMappings' },
     'file.lookups': {
       fieldId: 'file.lookups',
-      visibleWhen: [
-        {
-          field: 'inputMode',
-          is: ['RECORDS'],
-        },
-      ],
       visible: false,
     },
     mapping: {
@@ -159,7 +153,7 @@ export default {
       visibleWhen: [
         {
           field: 'inputMode',
-          is: ['RECORDS'],
+          is: ['records'],
         },
       ],
     },
@@ -170,12 +164,12 @@ export default {
       options: [
         {
           items: [
-            { label: 'Records', value: 'RECORDS' },
-            { label: 'Blob Keys', value: 'BLOB' },
+            { label: 'Records', value: 'records' },
+            { label: 'Blob Keys', value: 'blob' },
           ],
         },
       ],
-      defaultValue: r => (r && r.blobKeyPath ? 'BLOB' : 'RECORDS'),
+      defaultValue: r => (r && r.blobKeyPath ? 'blob' : 'records'),
     },
     'file.csv.rowDelimiter': {
       id: 'file.csv.rowDelimiter',
@@ -185,7 +179,7 @@ export default {
         { field: 'http.requestMediaType', is: ['csv'] },
         {
           field: 'inputMode',
-          is: ['RECORDS'],
+          is: ['records'],
         },
       ],
     },
@@ -198,7 +192,7 @@ export default {
       visibleWhen: [
         {
           field: 'inputMode',
-          is: ['BLOB'],
+          is: ['blob'],
         },
       ],
     },
@@ -207,7 +201,7 @@ export default {
       visibleWhenAll: [
         {
           field: 'inputMode',
-          is: ['RECORDS'],
+          is: ['records'],
         },
       ],
     },

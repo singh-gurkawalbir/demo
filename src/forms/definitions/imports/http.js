@@ -2,7 +2,7 @@ export default {
   preSave: formValues => {
     const newValues = { ...formValues };
 
-    if (newValues['/inputMode'] === 'BLOB') {
+    if (newValues['/inputMode'] === 'blob') {
       newValues['/http/method'] = newValues['/http/blobMethod'];
     }
 
@@ -64,12 +64,12 @@ export default {
       options: [
         {
           items: [
-            { label: 'Records', value: 'RECORDS' },
-            { label: 'Blob Keys', value: 'BLOB' },
+            { label: 'Records', value: 'records' },
+            { label: 'Blob Keys', value: 'blob' },
           ],
         },
       ],
-      defaultValue: r => (r && r.blobKeyPath ? 'BLOB' : 'RECORDS'),
+      defaultValue: r => (r && r.blobKeyPath ? 'blob' : 'records'),
     },
     'http.method': { fieldId: 'http.method' },
     'http.blobMethod': { fieldId: 'http.blobMethod' },
@@ -95,7 +95,7 @@ export default {
         },
         {
           field: 'inputMode',
-          is: ['RECORDS'],
+          is: ['records'],
         },
       ],
     },
@@ -114,7 +114,7 @@ export default {
         },
         {
           field: 'inputMode',
-          is: ['RECORDS'],
+          is: ['records'],
         },
       ],
     },
@@ -133,7 +133,7 @@ export default {
         },
         {
           field: 'inputMode',
-          is: ['RECORDS'],
+          is: ['records'],
         },
       ],
     },
@@ -145,7 +145,7 @@ export default {
       visibleWhen: [
         {
           field: 'inputMode',
-          is: ['RECORDS'],
+          is: ['records'],
         },
       ],
     },
@@ -161,7 +161,7 @@ export default {
         { field: 'http.requestMediaType', is: ['csv'] },
         {
           field: 'inputMode',
-          is: ['RECORDS'],
+          is: ['records'],
         },
       ],
     },
@@ -173,7 +173,7 @@ export default {
         { field: 'http.requestMediaType', is: ['csv'] },
         {
           field: 'inputMode',
-          is: ['RECORDS'],
+          is: ['records'],
         },
       ],
     },
@@ -191,7 +191,7 @@ export default {
         { field: 'http.requestMediaType', is: ['csv'] },
         {
           field: 'inputMode',
-          is: ['RECORDS'],
+          is: ['records'],
         },
       ],
     },
@@ -203,7 +203,7 @@ export default {
         { field: 'http.requestMediaType', is: ['csv'] },
         {
           field: 'inputMode',
-          is: ['RECORDS'],
+          is: ['records'],
         },
       ],
     },
@@ -215,7 +215,7 @@ export default {
         { field: 'http.requestMediaType', is: ['csv'] },
         {
           field: 'inputMode',
-          is: ['RECORDS'],
+          is: ['records'],
         },
       ],
     },
@@ -227,7 +227,7 @@ export default {
         { field: 'http.requestMediaType', is: ['csv'] },
         {
           field: 'inputMode',
-          is: ['RECORDS'],
+          is: ['records'],
         },
       ],
     },
@@ -237,7 +237,7 @@ export default {
       visibleWhenAll: [
         {
           field: 'inputMode',
-          is: ['RECORDS'],
+          is: ['records'],
         },
       ],
     },
@@ -248,7 +248,7 @@ export default {
       visibleWhen: [
         {
           field: 'inputMode',
-          is: ['BLOB'],
+          is: ['blob'],
         },
       ],
     },

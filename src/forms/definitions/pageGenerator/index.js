@@ -161,6 +161,41 @@ export default {
       defaultValue: '',
       visibleWhenAll: [visibleWhenIsNew, { field: 'application', isNot: [''] }],
     },
+    outputMode: {
+      id: 'outputMode',
+      type: 'radiogroup',
+      visibleWhenAll: [
+        visibleWhenIsNew,
+        { field: 'application', is: ['netsuite'] },
+      ],
+      label: 'Output Mode',
+      options: [
+        {
+          items: [
+            { label: 'Records', value: 'records' },
+            { label: 'Blob Keys', value: 'blob' },
+          ],
+        },
+      ],
+      defaultValue: r => {
+        const output = r && r.file && r.file.output;
+
+        if (!output) return 'records';
+
+        return output;
+      },
+    },
+    'netsuite.id': {
+      id: 'netsuite.id',
+      type: 'text',
+      label: 'id',
+      required: true,
+      visibleWhenAll: [
+        visibleWhenIsNew,
+        { field: 'application', is: ['netsuite'] },
+        { field: 'outputMode', is: ['blob'] },
+      ],
+    },
     netsuiteExecutionType: {
       id: 'netsuite.execution.type',
       name: 'executionType',
@@ -178,6 +213,7 @@ export default {
       visibleWhenAll: [
         visibleWhenIsNew,
         { field: 'application', is: ['netsuite'] },
+        { field: 'outputMode', is: ['records'] },
       ],
     },
     netsuiteApiType: {
@@ -197,6 +233,7 @@ export default {
       visibleWhenAll: [
         visibleWhenIsNew,
         { field: 'netsuite.execution.type', is: ['scheduled'] },
+        { field: 'outputMode', is: ['records'] },
       ],
     },
   },
@@ -209,6 +246,8 @@ export default {
       'connection',
       'name',
       'description',
+      'outputMode',
+      'netsuite.id',
       'netsuiteExecutionType',
       'netsuiteApiType',
     ],

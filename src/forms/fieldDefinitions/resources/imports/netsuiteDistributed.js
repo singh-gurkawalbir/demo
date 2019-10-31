@@ -10,7 +10,7 @@ export default {
     visibleWhen: [
       {
         field: 'inputMode',
-        is: ['RECORDS'],
+        is: ['records'],
       },
     ],
   },
@@ -21,7 +21,7 @@ export default {
     visibleWhen: [
       {
         field: 'inputMode',
-        is: ['RECORDS'],
+        is: ['records'],
       },
     ],
     options: [
@@ -41,7 +41,7 @@ export default {
     visibleWhen: [
       {
         field: 'inputMode',
-        is: ['BLOB'],
+        is: ['blob'],
       },
     ],
     options: [
@@ -69,7 +69,7 @@ export default {
       },
       {
         field: 'inputMode',
-        is: ['RECORDS'],
+        is: ['records'],
       },
     ],
   },
@@ -80,7 +80,7 @@ export default {
     visibleWhen: [
       {
         field: 'inputMode',
-        is: ['RECORDS'],
+        is: ['records'],
       },
     ],
   },
@@ -91,7 +91,7 @@ export default {
     visibleWhen: [
       {
         field: 'inputMode',
-        is: ['RECORDS'],
+        is: ['records'],
       },
     ],
   },
@@ -102,7 +102,7 @@ export default {
     visibleWhen: [
       {
         field: 'inputMode',
-        is: ['RECORDS'],
+        is: ['records'],
       },
     ],
   },
@@ -113,7 +113,7 @@ export default {
     visibleWhen: [
       {
         field: 'inputMode',
-        is: ['RECORDS'],
+        is: ['records'],
       },
     ],
   },
@@ -124,7 +124,7 @@ export default {
     visibleWhen: [
       {
         field: 'inputMode',
-        is: ['RECORDS'],
+        is: ['records'],
       },
     ],
   },
@@ -138,7 +138,7 @@ export default {
       },
       {
         field: 'inputMode',
-        is: ['BLOB'],
+        is: ['blob'],
       },
     ],
   },
@@ -152,7 +152,7 @@ export default {
       },
       {
         field: 'inputMode',
-        is: ['BLOB'],
+        is: ['blob'],
       },
     ],
   },
@@ -166,7 +166,7 @@ export default {
       },
       {
         field: 'inputMode',
-        is: ['BLOB'],
+        is: ['blob'],
       },
     ],
   },
@@ -180,7 +180,7 @@ export default {
       },
       {
         field: 'inputMode',
-        is: ['BLOB'],
+        is: ['blob'],
       },
     ],
   },
@@ -191,7 +191,7 @@ export default {
     visibleWhen: [
       {
         field: 'inputMode',
-        is: ['RECORDS'],
+        is: ['records'],
       },
     ],
   },

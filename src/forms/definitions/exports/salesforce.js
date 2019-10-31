@@ -15,9 +15,9 @@ export default {
       retValues['/type'] = 'distributed';
     }
 
-    if (retValues['/outputMode'] === 'BLOB') {
+    if (retValues['/outputMode'] === 'blob') {
       retValues['/salesforce/sObjectType'] =
-        retValues['/salesforce/objecttype'];
+        retValues['/salesforce/objectType'];
     }
 
     return {
@@ -39,13 +39,13 @@ export default {
       options: [
         {
           items: [
-            { label: 'Records', value: 'RECORDS' },
-            { label: 'Blob Keys', value: 'BLOB' },
+            { label: 'Records', value: 'records' },
+            { label: 'Blob Keys', value: 'blob' },
           ],
         },
       ],
       defaultValue: r =>
-        r && r.salesforce && r.salesforce.id ? 'BLOB' : 'RECORDS',
+        r && r.salesforce && r.salesforce.id ? 'blob' : 'records',
     },
     'salesforce.soql.query': { fieldId: 'salesforce.soql.query' },
     type: {
@@ -66,7 +66,7 @@ export default {
       ],
       visibleWhenAll: [
         { field: 'salesforce.executionType', is: ['scheduled'] },
-        { field: 'outputMode', is: ['RECORDS'] },
+        { field: 'outputMode', is: ['records'] },
       ],
     },
     'delta.dateField': {
@@ -79,7 +79,7 @@ export default {
       fieldId: 'once.booleanField',
     },
     'salesforce.sObjectType': { fieldId: 'salesforce.sObjectType' },
-    'salesforce.objecttype': { fieldId: 'salesforce.objecttype' },
+    'salesforce.objectType': { fieldId: 'salesforce.objectType' },
     'salesforce.id': { fieldId: 'salesforce.id' },
     'salesforce.distributed.requiredTrigger': {
       fieldId: 'salesforce.distributed.requiredTrigger',
@@ -95,7 +95,7 @@ export default {
     },
     advancedSettings: {
       formId: 'advancedSettings',
-      visibleWhenAll: [{ field: 'outputMode', is: ['RECORDS'] }],
+      visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
     },
   },
   layout: {
@@ -114,7 +114,7 @@ export default {
       'delta.dateField',
       'delta.lagOffset',
       'once.booleanField',
-      'salesforce.objecttype',
+      'salesforce.objectType',
       'salesforce.id',
     ],
     type: 'collapse',

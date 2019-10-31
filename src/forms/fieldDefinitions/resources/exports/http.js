@@ -14,7 +14,7 @@ export default {
     visibleWhen: [
       {
         field: 'outputMode',
-        is: ['RECORDS'],
+        is: ['records'],
       },
     ],
   },
@@ -32,7 +32,7 @@ export default {
     visibleWhen: [
       {
         field: 'outputMode',
-        is: ['RECORDS'],
+        is: ['records'],
       },
     ],
   },
@@ -42,7 +42,7 @@ export default {
     requiredWhen: [
       {
         field: 'outputMode',
-        is: ['BLOB'],
+        is: ['blob'],
       },
     ],
   },
@@ -89,7 +89,7 @@ export default {
     visibleWhen: [
       {
         field: 'outputMode',
-        is: ['RECORDS'],
+        is: ['records'],
       },
     ],
   },
@@ -103,7 +103,7 @@ export default {
       },
       {
         field: 'outputMode',
-        is: ['RECORDS'],
+        is: ['records'],
       },
     ],
   },
@@ -122,7 +122,7 @@ export default {
       },
       {
         field: 'outputMode',
-        is: ['RECORDS'],
+        is: ['records'],
       },
     ],
   },
@@ -140,7 +140,7 @@ export default {
       },
       {
         field: 'outputMode',
-        is: ['RECORDS'],
+        is: ['records'],
       },
     ],
   },
@@ -154,7 +154,7 @@ export default {
       },
       {
         field: 'outputMode',
-        is: ['RECORDS'],
+        is: ['records'],
       },
     ],
   },
@@ -168,7 +168,7 @@ export default {
       },
       {
         field: 'outputMode',
-        is: ['RECORDS'],
+        is: ['records'],
       },
     ],
   },
@@ -182,7 +182,7 @@ export default {
       },
       {
         field: 'outputMode',
-        is: ['RECORDS'],
+        is: ['records'],
       },
     ],
   },
@@ -196,7 +196,7 @@ export default {
       },
       {
         field: 'outputMode',
-        is: ['RECORDS'],
+        is: ['records'],
       },
     ],
   },
@@ -210,7 +210,7 @@ export default {
       },
       {
         field: 'outputMode',
-        is: ['RECORDS'],
+        is: ['records'],
       },
     ],
   },
@@ -224,7 +224,7 @@ export default {
       },
       {
         field: 'outputMode',
-        is: ['RECORDS'],
+        is: ['records'],
       },
     ],
   },
@@ -234,7 +234,7 @@ export default {
     visibleWhen: [
       {
         field: 'outputMode',
-        is: ['RECORDS'],
+        is: ['records'],
       },
     ],
     validWhen: [
@@ -249,7 +249,7 @@ export default {
     visibleWhen: [
       {
         field: 'outputMode',
-        is: ['RECORDS'],
+        is: ['records'],
       },
     ],
   },
@@ -259,7 +259,7 @@ export default {
     visibleWhen: [
       {
         field: 'outputMode',
-        is: ['RECORDS'],
+        is: ['records'],
       },
     ],
     delimiter: ',',
@@ -274,7 +274,7 @@ export default {
       },
       {
         field: 'outputMode',
-        is: ['RECORDS'],
+        is: ['records'],
       },
     ],
   },
@@ -284,7 +284,7 @@ export default {
     visibleWhenAll: [
       {
         field: 'outputMode',
-        is: ['RECORDS'],
+        is: ['records'],
       },
       { field: 'configureAsyncHelper', is: [true] },
     ],
@@ -303,7 +303,7 @@ export default {
     visibleWhen: [
       {
         field: 'outputMode',
-        is: ['RECORDS'],
+        is: ['records'],
       },
     ],
   },
@@ -314,7 +314,7 @@ export default {
     visibleWhen: [
       {
         field: 'outputMode',
-        is: ['RECORDS'],
+        is: ['records'],
       },
     ],
   },
@@ -324,7 +324,7 @@ export default {
     visibleWhen: [
       {
         field: 'outputMode',
-        is: ['RECORDS'],
+        is: ['records'],
       },
     ],
   },
@@ -350,7 +350,7 @@ export default {
     visibleWhenAll: [
       {
         field: 'outputMode',
-        is: ['RECORDS'],
+        is: ['records'],
       },
       { field: 'type', is: ['once'] },
     ],
@@ -361,7 +361,7 @@ export default {
     visibleWhenAll: [
       {
         field: 'outputMode',
-        is: ['RECORDS'],
+        is: ['records'],
       },
       { field: 'type', is: ['once'] },
     ],
@@ -372,7 +372,7 @@ export default {
     visibleWhenAll: [
       {
         field: 'outputMode',
-        is: ['RECORDS'],
+        is: ['records'],
       },
       { field: 'type', is: ['once'] },
     ],
@@ -406,7 +406,7 @@ export default {
     visibleWhen: [
       {
         field: 'outputMode',
-        is: ['BLOB'],
+        is: ['blob'],
       },
     ],
   },

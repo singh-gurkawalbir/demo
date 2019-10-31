@@ -3,7 +3,7 @@ export default {
   // something meaningful
   uploadFile: {
     type: 'uploadfile',
-    label: 'Sample File (that would be imported)',
+    label: 'Sample File (that would be exported)',
     mode: r => r && r.file && r.file.type,
     // filter: r => ({ type: r.type }),y
     // excludeFilter: r => ({ _
@@ -21,7 +21,7 @@ export default {
     visibleWhen: [
       {
         field: 'outputMode',
-        is: ['RECORDS'],
+        is: ['records'],
       },
     ],
     options: [
@@ -67,7 +67,7 @@ export default {
     visibleWhen: [
       {
         field: 'outputMode',
-        is: ['RECORDS'],
+        is: ['records'],
       },
     ],
   },
@@ -77,7 +77,7 @@ export default {
     visibleWhen: [
       {
         field: 'outputMode',
-        is: ['RECORDS'],
+        is: ['records'],
       },
     ],
   },
@@ -87,7 +87,7 @@ export default {
     visibleWhen: [
       {
         field: 'outputMode',
-        is: ['BLOB'],
+        is: ['blob'],
       },
     ],
   },
@@ -97,7 +97,7 @@ export default {
     visibleWhen: [
       {
         field: 'outputMode',
-        is: ['RECORDS'],
+        is: ['records'],
       },
     ],
     options: [{ items: [{ label: 'gzip', value: 'gzip' }] }],

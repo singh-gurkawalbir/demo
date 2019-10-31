@@ -85,7 +85,7 @@ export default {
     visibleWhen: [
       {
         field: 'inputMode',
-        is: ['BLOB'],
+        is: ['blob'],
       },
     ],
     required: true,

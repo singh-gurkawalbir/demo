@@ -80,15 +80,15 @@ export default {
       options: [
         {
           items: [
-            { label: 'Records', value: 'RECORDS' },
-            { label: 'Blob Keys', value: 'BLOB' },
+            { label: 'Records', value: 'records' },
+            { label: 'Blob Keys', value: 'blob' },
           ],
         },
       ],
       defaultValue: r =>
         r && r.http && r.http.response && r.http.response.blobFormat
-          ? 'BLOB'
-          : 'RECORDS',
+          ? 'blob'
+          : 'records',
     },
     'http.method': { fieldId: 'http.method' },
     'http.headers': { fieldId: 'http.headers' },
@@ -111,7 +111,7 @@ export default {
       visibleWhen: [
         {
           field: 'outputMode',
-          is: ['RECORDS'],
+          is: ['records'],
         },
       ],
       options: [
@@ -164,14 +164,12 @@ export default {
     'http.paging.lastPagePath': { fieldId: 'http.paging.lastPagePath' },
     'http.paging.lastPageValues': { fieldId: 'http.paging.lastPageValues' },
     'http.response.blobFormat': { fieldId: 'http.response.blobFormat' },
-    rawData: { fieldId: 'rawData' },
-    transform: { fieldId: 'transform' },
     advancedSettings: {
       formId: 'advancedSettings',
       visibleWhenAll: [
         {
           field: 'outputMode',
-          is: ['RECORDS'],
+          is: ['records'],
         },
       ],
     },
@@ -180,7 +178,7 @@ export default {
       visibleWhen: [
         {
           field: 'outputMode',
-          is: ['RECORDS'],
+          is: ['records'],
         },
       ],
     },
@@ -211,7 +209,6 @@ export default {
       'http.once.method',
       'http.once.body',
       'http.response.blobFormat',
-      'rawData',
     ],
     type: 'collapse',
     containers: [

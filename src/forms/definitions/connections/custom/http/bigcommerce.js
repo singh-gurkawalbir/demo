@@ -2,11 +2,12 @@ export default {
   preSave: formValues => {
     const retValues = { ...formValues };
 
-    if (retValues['/authType'] === 'token') {
+    if (retValues['/http/auth/type'] === 'token') {
       retValues['/http/auth/token/location'] = 'header';
       retValues['/http/auth/token/headerName'] = 'X-Auth-Token';
       retValues['/http/auth/token/scheme'] = ' ';
-      retValues['/http/auth/basic'] = undefined;
+      retValues['/http/auth/basic/username'] = undefined;
+      retValues['/http/auth/basic/password'] = undefined;
       retValues['/http/headers'] = [
         {
           name: 'X-Auth-Client',
@@ -14,7 +15,7 @@ export default {
         },
       ];
     } else {
-      retValues['/http/auth/token'] = undefined;
+      retValues['/http/auth/token/token'] = undefined;
       retValues['/http/headers'] = [
         {
           name: 'X-Auth-Token',
@@ -31,7 +32,6 @@ export default {
       ...retValues,
       '/type': 'http',
       '/assistant': 'bigcommerce',
-      '/http/auth/type': `${formValues['/authType']}`,
       '/http/baseURI': `https://api.bigcommerce.com/stores/${
         formValues['/storeHash']
       }`,
@@ -44,8 +44,8 @@ export default {
 
   fieldMap: {
     name: { fieldId: 'name' },
-    authType: {
-      id: 'authType',
+    'http.auth.type': {
+      id: 'http.auth.type',
       required: true,
       type: 'select',
       defaultValue: r => r && r.http && r.http.auth && r.http.auth.type,
@@ -63,12 +63,12 @@ export default {
     'http.auth.basic.username': {
       fieldId: 'http.auth.basic.username',
       helpText: 'Client ID will be the Username.',
-      visibleWhen: [{ field: 'authType', is: ['basic'] }],
+      visibleWhen: [{ field: 'http.auth.type', is: ['basic'] }],
     },
     'http.auth.basic.password': {
       fieldId: 'http.auth.basic.password',
       helpText: 'Access Token will be the Password.',
-      visibleWhen: [{ field: 'authType', is: ['basic'] }],
+      visibleWhen: [{ field: 'http.auth.type', is: ['basic'] }],
     },
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
@@ -76,7 +76,7 @@ export default {
       label: 'Access Token',
       required: true,
       helpText: 'This Access Token works in tandem with the Client ID.',
-      visibleWhen: [{ field: 'authType', is: ['token'] }],
+      visibleWhen: [{ field: 'http.auth.type', is: ['token'] }],
     },
     'http.unencrypted.clientId': {
       id: 'http.unencrypted.clientId',
@@ -85,14 +85,14 @@ export default {
       label: 'Client ID',
       helpText:
         'This Client ID works together with the Access Token to grant authorization.',
-      visibleWhen: [{ field: 'authType', is: ['token'] }],
+      visibleWhen: [{ field: 'http.auth.type', is: ['token'] }],
     },
     storeHash: {
       id: 'storeHash',
       required: true,
       type: 'text',
       label: 'Store HASH',
-      visibleWhen: [{ field: 'authType', is: ['token', 'basic'] }],
+      visibleWhen: [{ field: 'http.auth.type', is: ['token', 'basic'] }],
       defaultValue: r => {
         let value = '';
 
@@ -118,7 +118,7 @@ export default {
   layout: {
     fields: [
       'name',
-      'authType',
+      'http.auth.type',
       'http.auth.basic.username',
       'http.auth.basic.password',
       'http.auth.token.token',

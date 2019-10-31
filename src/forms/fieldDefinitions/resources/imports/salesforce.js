@@ -6,7 +6,7 @@ export default {
     visibleWhen: [
       {
         field: 'inputMode',
-        is: ['RECORDS'],
+        is: ['records'],
       },
     ],
     options: [
@@ -26,7 +26,7 @@ export default {
     visibleWhenAll: [
       {
         field: 'inputMode',
-        is: ['BLOB'],
+        is: ['blob'],
       },
       {
         field: 'salesforce.blobsObjectType',
@@ -45,7 +45,7 @@ export default {
     visibleWhenAll: [
       {
         field: 'inputMode',
-        is: ['BLOB'],
+        is: ['blob'],
       },
       {
         field: 'salesforce.blobsObjectType',
@@ -64,7 +64,7 @@ export default {
     visibleWhenAll: [
       {
         field: 'inputMode',
-        is: ['BLOB'],
+        is: ['blob'],
       },
       {
         field: 'salesforce.blobsObjectType',
@@ -83,7 +83,7 @@ export default {
     visibleWhenAll: [
       {
         field: 'inputMode',
-        is: ['BLOB'],
+        is: ['blob'],
       },
       {
         field: 'salesforce.blobsObjectType',
@@ -101,7 +101,7 @@ export default {
     visibleWhenAll: [
       {
         field: 'inputMode',
-        is: ['BLOB'],
+        is: ['blob'],
       },
       {
         field: 'salesforce.blobsObjectType',
@@ -120,7 +120,7 @@ export default {
     visibleWhenAll: [
       {
         field: 'inputMode',
-        is: ['BLOB'],
+        is: ['blob'],
       },
       {
         field: 'salesforce.blobsObjectType',
@@ -138,7 +138,7 @@ export default {
     visibleWhenAll: [
       {
         field: 'inputMode',
-        is: ['BLOB'],
+        is: ['blob'],
       },
       {
         field: 'salesforce.blobsObjectType',
@@ -156,7 +156,7 @@ export default {
     visibleWhenAll: [
       {
         field: 'inputMode',
-        is: ['BLOB'],
+        is: ['blob'],
       },
       {
         field: 'salesforce.blobsObjectType',
@@ -174,7 +174,7 @@ export default {
     visibleWhenAll: [
       {
         field: 'inputMode',
-        is: ['BLOB'],
+        is: ['blob'],
       },
       {
         field: 'salesforce.blobsObjectType',
@@ -200,7 +200,7 @@ export default {
     visibleWhenAll: [
       {
         field: 'inputMode',
-        is: ['BLOB'],
+        is: ['blob'],
       },
       {
         field: 'salesforce.blobsObjectType',
@@ -218,7 +218,7 @@ export default {
     visibleWhenAll: [
       {
         field: 'inputMode',
-        is: ['BLOB'],
+        is: ['blob'],
       },
       {
         field: 'salesforce.blobsObjectType',
@@ -237,7 +237,7 @@ export default {
     visibleWhenAll: [
       {
         field: 'inputMode',
-        is: ['BLOB'],
+        is: ['blob'],
       },
       {
         field: 'salesforce.blobsObjectType',
@@ -255,7 +255,7 @@ export default {
     visibleWhenAll: [
       {
         field: 'inputMode',
-        is: ['BLOB'],
+        is: ['blob'],
       },
       {
         field: 'salesforce.blobsObjectType',
@@ -273,7 +273,7 @@ export default {
     visibleWhenAll: [
       {
         field: 'inputMode',
-        is: ['BLOB'],
+        is: ['blob'],
       },
       {
         field: 'salesforce.blobsObjectType',
@@ -291,7 +291,7 @@ export default {
     visibleWhenAll: [
       {
         field: 'inputMode',
-        is: ['BLOB'],
+        is: ['blob'],
       },
       {
         field: 'salesforce.blobsObjectType',
@@ -310,7 +310,7 @@ export default {
     visibleWhenAll: [
       {
         field: 'inputMode',
-        is: ['BLOB'],
+        is: ['blob'],
       },
       {
         field: 'salesforce.blobsObjectType',
@@ -329,7 +329,7 @@ export default {
     visibleWhenAll: [
       {
         field: 'inputMode',
-        is: ['BLOB'],
+        is: ['blob'],
       },
       {
         field: 'salesforce.blobsObjectType',
@@ -348,7 +348,7 @@ export default {
     visibleWhenAll: [
       {
         field: 'inputMode',
-        is: ['BLOB'],
+        is: ['blob'],
       },
       {
         field: 'salesforce.blobsObjectType',
@@ -366,7 +366,7 @@ export default {
     visibleWhen: [
       {
         field: 'inputMode',
-        is: ['BLOB'],
+        is: ['blob'],
       },
     ],
     required: true,
@@ -387,7 +387,7 @@ export default {
     visibleWhen: [
       {
         field: 'inputMode',
-        is: ['RECORDS'],
+        is: ['records'],
       },
     ],
     options: [
@@ -415,7 +415,7 @@ export default {
     visibleWhen: [
       {
         field: 'inputMode',
-        is: ['BLOB'],
+        is: ['blob'],
       },
     ],
   },
@@ -440,7 +440,7 @@ export default {
       },
       {
         field: 'inputMode',
-        is: ['RECORDS'],
+        is: ['records'],
       },
     ],
   },
@@ -464,7 +464,7 @@ export default {
       },
       {
         field: 'inputMode',
-        is: ['RECORDS'],
+        is: ['records'],
       },
     ],
   },
@@ -482,7 +482,7 @@ export default {
       },
       {
         field: 'inputMode',
-        is: ['RECORDS'],
+        is: ['records'],
       },
     ],
   },
@@ -500,7 +500,7 @@ export default {
       },
       {
         field: 'inputMode',
-        is: ['RECORDS'],
+        is: ['records'],
       },
     ],
   },
@@ -523,7 +523,7 @@ export default {
       },
       {
         field: 'inputMode',
-        is: ['RECORDS'],
+        is: ['records'],
       },
     ],
   },
@@ -537,7 +537,7 @@ export default {
       },
       {
         field: 'inputMode',
-        is: ['RECORDS'],
+        is: ['records'],
       },
     ],
   },

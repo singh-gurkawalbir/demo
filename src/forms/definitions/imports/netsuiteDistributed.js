@@ -2,7 +2,7 @@ export default {
   preSave: formValues => {
     const newValues = { ...formValues };
 
-    if (newValues['/inputMode'] === 'BLOB') {
+    if (newValues['/inputMode'] === 'blob') {
       newValues['/netsuite_da/operation'] =
         newValues['/netsuite_da/blob/operation'];
     }
@@ -25,12 +25,12 @@ export default {
       options: [
         {
           items: [
-            { label: 'Records', value: 'RECORDS' },
-            { label: 'Blob Keys', value: 'BLOB' },
+            { label: 'Records', value: 'records' },
+            { label: 'Blob Keys', value: 'blob' },
           ],
         },
       ],
-      defaultValue: r => (r && r.blobKeyPath ? 'BLOB' : 'RECORDS'),
+      defaultValue: r => (r && r.blobKeyPath ? 'blob' : 'records'),
     },
     blobKeyPath: { fieldId: 'blobKeyPath' },
     distributed: { fieldId: 'distributed' },
@@ -47,7 +47,7 @@ export default {
         { field: 'netsuite_da.operation', is: ['add'] },
         {
           field: 'inputMode',
-          is: ['RECORDS'],
+          is: ['records'],
         },
       ],
     },
@@ -57,7 +57,7 @@ export default {
         { field: 'netsuite_da.operation', is: ['update'] },
         {
           field: 'inputMode',
-          is: ['RECORDS'],
+          is: ['records'],
         },
       ],
     },
@@ -69,7 +69,7 @@ export default {
       visibleWhen: [
         {
           field: 'inputMode',
-          is: ['BLOB'],
+          is: ['blob'],
         },
       ],
     },
@@ -79,7 +79,7 @@ export default {
       visibleWhenAll: [
         {
           field: 'inputMode',
-          is: ['RECORDS'],
+          is: ['records'],
         },
       ],
     },

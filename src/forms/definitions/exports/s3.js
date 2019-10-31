@@ -4,7 +4,7 @@ export default {
   preSave: formValues => {
     const newValues = { ...formValues };
 
-    if (newValues['/outputMode'] === 'BLOB') {
+    if (newValues['/outputMode'] === 'blob') {
       newValues['/file/skipDelete'] = newValues['/ftp/leaveFile'];
       newValues['/file/output'] = 'blobKeys';
       newValues['/file/type'] = undefined;
@@ -28,8 +28,8 @@ export default {
       options: [
         {
           items: [
-            { label: 'Records', value: 'RECORDS' },
-            { label: 'Blob Keys', value: 'BLOB' },
+            { label: 'Records', value: 'records' },
+            { label: 'Blob Keys', value: 'blob' },
           ],
         },
       ],
@@ -37,11 +37,11 @@ export default {
         const isNew = isNewId(r._id);
 
         // if its create
-        if (isNew) return 'RECORDS';
+        if (isNew) return 'records';
 
         const output = r && r.file && r.file.type;
 
-        return output ? 'RECORDS' : 'BLOB';
+        return output ? 'records' : 'blob';
       },
     },
     's3.region': { fieldId: 's3.region' },
@@ -55,7 +55,7 @@ export default {
       visibleWhenAll: [
         {
           field: 'outputMode',
-          is: ['RECORDS'],
+          is: ['records'],
         },
       ],
     },

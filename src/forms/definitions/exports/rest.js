@@ -75,13 +75,13 @@ export default {
       options: [
         {
           items: [
-            { label: 'Records', value: 'RECORDS' },
-            { label: 'Blob Keys', value: 'BLOB' },
+            { label: 'Records', value: 'records' },
+            { label: 'Blob Keys', value: 'blob' },
           ],
         },
       ],
       defaultValue: r =>
-        r && r.rest && r.rest.blobFormat ? 'BLOB' : 'RECORDS',
+        r && r.rest && r.rest.blobFormat ? 'blob' : 'records',
     },
     'rest.method': {
       fieldId: 'rest.method',
@@ -103,7 +103,7 @@ export default {
       visibleWhen: [
         {
           field: 'outputMode',
-          is: ['RECORDS'],
+          is: ['records'],
         },
       ],
       defaultValue: r => (r && r.type ? r.type : 'all'),
@@ -157,7 +157,7 @@ export default {
       visibleWhenAll: [
         {
           field: 'outputMode',
-          is: ['RECORDS'],
+          is: ['records'],
         },
       ],
     },
