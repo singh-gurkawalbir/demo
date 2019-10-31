@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { makeStyles, fade } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import { List, Collapse, ButtonBase } from '@material-ui/core';
 import ListItem from '@material-ui/core/ListItem';
@@ -68,6 +68,10 @@ const useStyles = makeStyles(theme => ({
       margin: theme.spacing(0, 0, 2, 0.5),
     },
   },
+  menuContainerSandbox: {
+    backgroundColor: theme.palette.sandbox.dark,
+    color: theme.palette.sandbox.contrastText,
+  },
   menuItem: {
     marginTop: theme.spacing(1),
     textAlign: 'center',
@@ -76,12 +80,20 @@ const useStyles = makeStyles(theme => ({
     },
   },
   list: {
-    backgroundColor: fade(theme.palette.secondary.light, 0.25),
+    backgroundColor: 'rgb(255,255,255,0.1)',
     paddingTop: 0,
     paddingBottom: 0,
     '& ul': {
       '&:last-child': {
         borderBottom: `solid 1px ${theme.palette.secondary.dark}`,
+      },
+    },
+  },
+  sandboxList: {
+    backgroundColor: 'rgb(255,255,255,0.3)',
+    '& ul': {
+      '&:last-child': {
+        borderColor: theme.palette.sandbox.dark,
       },
     },
   },
@@ -110,6 +122,12 @@ const useStyles = makeStyles(theme => ({
       left: 0,
     },
   },
+  listItemSandbox: {
+    '&:not(:last-child)': {
+      borderColor: theme.palette.sandbox.dark,
+    },
+  },
+
   itemIconRoot: {
     minWidth: 45,
   },
@@ -156,7 +174,11 @@ export default function CeligoDrawer() {
     selectors.userPermissions(state)
   );
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
+  const environment = useSelector(
+    state => selectors.userPreferences(state).environment
+  );
   const [expand, setExpand] = React.useState(null);
+  const isSandbox = environment === 'sandbox';
   const handleDrawerToggle = () => {
     dispatch(actions.toggleDrawer());
   };
@@ -182,7 +204,11 @@ export default function CeligoDrawer() {
         }),
       }}
       open={drawerOpened}>
-      <div className={classes.menuContainer} onDoubleClick={handleDrawerToggle}>
+      <div
+        className={clsx(classes.menuContainer, {
+          [classes.menuContainerSandbox]: isSandbox,
+        })}
+        onDoubleClick={handleDrawerToggle}>
         <div>
           <div className={classes.logoContainer}>
             {drawerOpened ? (
@@ -200,13 +226,18 @@ export default function CeligoDrawer() {
           </div>
         </div>
         <div className={classes.menuList}>
-          <List className={classes.list}>
+          <List
+            className={clsx(classes.list, {
+              [classes.sandboxList]: isSandbox,
+            })}>
             {menuItems(userProfile, userPermissions).map(
               ({ label, Icon, path, children }) => (
                 <Fragment key={label}>
                   <ListItem
                     button
-                    className={classes.listItem}
+                    className={clsx(classes.listItem, {
+                      [classes.listItemSandbox]: isSandbox,
+                    })}
                     component={children ? undefined : Link}
                     to={getRoutePath(path)}
                     data-test={label}
@@ -228,10 +259,16 @@ export default function CeligoDrawer() {
                       in={expand === label}
                       unmountOnExit
                       timeout="auto">
-                      <List className={classes.list} disablePadding>
+                      <List
+                        className={clsx(classes.list, {
+                          [classes.sandboxList]: isSandbox,
+                        })}
+                        disablePadding>
                         {children.map(({ label, Icon, path }) => (
                           <ListItem
-                            className={classes.listItem}
+                            className={clsx(classes.listItem, {
+                              [classes.listItemSandbox]: isSandbox,
+                            })}
                             data-test={label}
                             key={label}
                             component={Link}
