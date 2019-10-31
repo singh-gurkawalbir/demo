@@ -19,6 +19,7 @@ import transformationAction from './actions/transformation';
 import responseMapping from './actions/responseMapping';
 import responseTransformationAction from './actions/responseTransformation';
 import proceedOnFailureAction from './actions/proceedOnFailure';
+import { actionsMap, getUsedActionsMapForResource } from '../../../utils/flows';
 
 const useStyles = makeStyles(theme => ({
   ppContainer: {
@@ -57,6 +58,7 @@ const PageProcessor = ({
   const classes = useStyles();
   const dispatch = useDispatch();
   const [newProcessorId, setNewProcessorId] = useState(null);
+  const [usedActions, setUsedActions] = useState({});
   const { merged: resource = {} } = useSelector(state =>
     selectors.resourceData(
       state,
@@ -64,6 +66,13 @@ const PageProcessor = ({
       resourceId
     )
   );
+
+  useEffect(() => {
+    if (resource) {
+      setUsedActions(getUsedActionsMapForResource(resource, resourceType, pp));
+    }
+  }, [pp, resource, resourceType]);
+
   const createdProcessorId = useSelector(state =>
     selectors.createdResourceId(state, newProcessorId)
   );
@@ -196,11 +205,9 @@ const PageProcessor = ({
   }
 
   // #region Configure available processor actions
-  // TODO: Raghu, please set the isUsed prop to true any time
-  // the flow or PP contains rules for the respective action.
-  // Also, I think 'responseMapping` action is not valid for the LAST PP.
-  // The data doesnt go anywhere, so its a pointless action when PP is last.
-  const processorActions = [];
+  const processorActions = [
+    { ...inputFilterAction, isUsed: usedActions[actionsMap.inputFilter] },
+  ];
   // Template mapping action is shown only for http import resource
   const isHTTPImport =
     resource.adaptorType && adaptorTypeMap[resource.adaptorType] === 'http';
@@ -208,25 +215,48 @@ const PageProcessor = ({
   if (!pending) {
     if (pp.type === 'export') {
       processorActions.push(
-        inputFilterAction,
-        outputFilterAction,
-        transformationAction,
-        pageProcessorHooksAction
+        {
+          ...outputFilterAction,
+          isUsed: usedActions[actionsMap.outputFilter],
+        },
+        {
+          ...transformationAction,
+          isUsed: usedActions[actionsMap.transformation],
+        }
       );
     } else {
       processorActions.push(
-        inputFilterAction,
-        importMappingAction,
-        ...(isHTTPImport ? [templateMappingAction] : []),
-        responseTransformationAction,
-        pageProcessorHooksAction
+        {
+          ...importMappingAction,
+          isUsed: usedActions[actionsMap.importMapping],
+        },
+        ...(isHTTPImport
+          ? [
+              {
+                ...templateMappingAction,
+                isUsed: usedActions[actionsMap.templateMapping],
+              },
+            ]
+          : []),
+        {
+          ...responseTransformationAction,
+          isUsed: usedActions[actionsMap.responseTransformation],
+        }
       );
     }
 
     if (!isLast) {
-      processorActions.push(responseMapping, proceedOnFailureAction);
+      processorActions.push(
+        { ...pageProcessorHooksAction, isUsed: usedActions[actionsMap.hooks] },
+        { ...responseMapping, isUsed: usedActions[actionsMap.responseMapping] },
+        {
+          ...proceedOnFailureAction,
+          isUsed: usedActions[actionsMap.proceedOnFailure],
+        }
+      );
     }
   }
+
   // #endregion
 
   return (
