@@ -1,19 +1,25 @@
-import { Component } from 'react';
-import { connect } from 'react-redux';
-import { withStyles } from '@material-ui/core/styles';
-import { LinearProgress, Button } from '@material-ui/core';
-import Snackbar from '@material-ui/core/Snackbar';
+import { useSelector, useDispatch } from 'react-redux';
+import {
+  makeStyles,
+  LinearProgress,
+  Button,
+  Snackbar,
+} from '@material-ui/core';
 import actions from '../../actions';
-import { allLoadingOrErrored, isLoadingAnyResource } from '../../reducers';
+import * as selectors from '../../reducers';
 import { COMM_STATES } from '../../reducers/comms';
 
-const mapStateToProps = state => ({
-  allLoadingOrErrored: allLoadingOrErrored(state),
-  isLoadingAnyResource: isLoadingAnyResource(state),
-});
-const mapDispatchToProps = dispatch => ({
-  handleClearComms: () => dispatch(actions.clearComms()),
-});
+const useStyles = makeStyles(theme => ({
+  snackbar: {
+    marginTop: theme.spacing(1),
+  },
+  snackbarContent: {
+    w: theme.spacing(4),
+    flexGrow: 0,
+    justifyContent: 'center',
+    textAlign: 'center',
+  },
+}));
 const LinearInDertiminate = props => props.show && <LinearProgress />;
 const Dismiss = props =>
   props.show && (
@@ -26,75 +32,68 @@ const Dismiss = props =>
     </Button>
   );
 
-@withStyles(theme => ({
-  snackbar: {
-    marginTop: theme.spacing(1),
-  },
-  snackbarContent: {
-    w: theme.spacing(4),
-    flexGrow: 0,
-    justifyContent: 'center',
-    textAlign: 'center',
-  },
-}))
-class NetworkSnackbar extends Component {
-  render() {
-    const {
-      isLoadingAnyResource,
-      allLoadingOrErrored,
-      handleClearComms,
-      classes,
-    } = this.props;
+export default function NetworkSnackbar() {
+  const classes = useStyles();
+  const dispatch = useDispatch();
+  const isAllLoadingCommsAboveThreshold = useSelector(state =>
+    selectors.isAllLoadingCommsAboveThreshold(state)
+  );
+  const allLoadingOrErrored = useSelector(state =>
+    selectors.allLoadingOrErrored(state)
+  );
+  const isLoadingAnyResource = useSelector(state =>
+    selectors.isLoadingAnyResource(state)
+  );
 
-    if (!allLoadingOrErrored) {
-      return null;
+  if (!isAllLoadingCommsAboveThreshold || !allLoadingOrErrored) {
+    return null;
+  }
+
+  function handleClearComms() {
+    dispatch(actions.clearComms());
+  }
+
+  const notification = r => {
+    if (r.status === COMM_STATES.ERROR)
+      return <li key={r.name}>{`Error ${r.message}.`}</li>;
+
+    let msg = ` ${r.message}...`;
+
+    if (r.retryCount > 0) {
+      msg += ` Retry ${r.retryCount}`;
     }
 
-    const notification = r => {
-      if (r.status === COMM_STATES.ERROR)
-        return <li key={r.name}>{`Error ${r.message}.`}</li>;
+    return <li key={r.name}>{msg}</li>;
+  };
 
-      let msg = ` ${r.message}...`;
+  const msg = (
+    <div>
+      <ul>{allLoadingOrErrored.map(r => notification(r))}</ul>
+      <LinearInDertiminate show={isLoadingAnyResource} />
+      <Dismiss show={!isLoadingAnyResource} onClick={handleClearComms} />
+    </div>
+  );
 
-      if (r.retryCount > 0) {
-        msg += ` Retry ${r.retryCount}`;
-      }
-
-      return <li key={r.name}>{msg}</li>;
-    };
-
-    const msg = (
-      <div>
-        <ul>{allLoadingOrErrored.map(r => notification(r))}</ul>
-        <LinearInDertiminate show={isLoadingAnyResource} />
-        <Dismiss show={!isLoadingAnyResource} onClick={handleClearComms} />
-      </div>
-    );
-
-    return (
-      <Snackbar
-        className={classes.snackbar}
-        ContentProps={{
-          // TODO: Are we overriding the default "paper" component style
-          // globaly? The material-ui demo page has the snackbar width
-          // and corner radius set differently than our default... we need
-          // to use the overrides below to compensate. why? where in our
-          // component heirarchy are these css overides?
-          square: false,
-          className: classes.snackbarContent,
-        }}
-        anchorOrigin={{
-          vertical: 'top',
-          horizontal: 'center',
-        }}
-        open
-        // autoHideDuration={6000}
-        // onClose={this.handleClose}
-        message={msg}
-      />
-    );
-  }
+  return (
+    <Snackbar
+      className={classes.snackbar}
+      ContentProps={{
+        // TODO: Are we overriding the default "paper" component style
+        // globaly? The material-ui demo page has the snackbar width
+        // and corner radius set differently than our default... we need
+        // to use the overrides below to compensate. why? where in our
+        // component heirarchy are these css overides?
+        square: false,
+        className: classes.snackbarContent,
+      }}
+      anchorOrigin={{
+        vertical: 'top',
+        horizontal: 'center',
+      }}
+      open
+      // autoHideDuration={6000}
+      // onClose={this.handleClose}
+      message={msg}
+    />
+  );
 }
-
-// prettier-ignore
-export default connect(mapStateToProps, mapDispatchToProps)(NetworkSnackbar);

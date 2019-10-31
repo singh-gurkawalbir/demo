@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { withRouter, Redirect } from 'react-router-dom';
-import AppRouting from '../AppRouting';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
 import getRoutePath from '../../utils/routePaths';
@@ -27,8 +26,8 @@ export function AppRoutingWithAuth(props) {
     isAuthInitialized,
     location,
     history,
+    children,
     clearAppError,
-    ...rest
   } = props;
   const { pathname: currentRoute } = location;
   const [hasPageReloaded, setHasPageReloaded] = useState(false);
@@ -68,7 +67,7 @@ export function AppRoutingWithAuth(props) {
       return <Redirect to={redirectedTo} />;
     }
 
-    return <AppRouting {...rest} />;
+    return children;
   }
 
   if (!isSessionExpired && !isSignInRoute) {
@@ -82,7 +81,7 @@ export function AppRoutingWithAuth(props) {
     );
   }
 
-  return <AppRouting {...rest} />;
+  return children;
 }
 
 // we need to create a HOC with withRouter otherwise the router context will

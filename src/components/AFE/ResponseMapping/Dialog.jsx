@@ -181,7 +181,6 @@ export default function ResponseMappingDialog(props) {
     path = `/pageProcessors/${resourceIndex}/responseMapping`;
     patchSet.push({ op: 'replace', path, value: mappings });
     dispatch(actions.resource.patchStaged(flowId, patchSet, 'value'));
-    dispatch(actions.flowData.updateFlow(flowId));
     dispatch(actions.resource.commitStaged('flows', flowId, 'value'));
 
     if (closeModal) {

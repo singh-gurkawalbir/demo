@@ -177,3 +177,21 @@ export function* requestSampleDataForExports({
     });
   }
 }
+
+export function* updateStateForProcessorData({
+  flowId,
+  resourceId,
+  stage,
+  processedData,
+  isPageGenerator,
+}) {
+  yield put(
+    actions.flowData.receivedProcessorData(
+      flowId,
+      resourceId,
+      stage,
+      processedData,
+      isPageGenerator
+    )
+  );
+}

@@ -84,17 +84,20 @@ export function* commitStagedChanges({ resourceType, id, scope }) {
           },
         });
         updated.assistantMetadata = assistantMetadata;
-      }
+        // Fix for updating lastModified after above patch request
+        // @TODO: Raghu Remove this once patch request gives back the resource in response
+        const origin = yield call(apiCallWithRetry, { path });
 
-      // Trigger flow data state update
-      yield put(
-        actions.flowData.updateFlowsForResource(updated._id, resourceType)
-      );
-    } else if (resourceType === 'flows') {
-      yield put(actions.flowData.updateFlow(updated._id));
+        updated.lastModified = origin.lastModified;
+      }
     }
 
     yield put(actions.resource.received(resourceType, updated));
+
+    if (!isNew) {
+      yield put(actions.resource.updated(resourceType, updated._id, patch));
+    }
+
     yield put(actions.resource.clearStaged(id, scope));
 
     if (isNew) {

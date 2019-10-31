@@ -29,7 +29,7 @@ export default function DynaResponseTransformEditor(props) {
 
   // when we launch the editor we are only going to entertain the first
   // rule set
-  const firstRuleSet = value && value.rules ? value.rules[0] : null;
+  const firstRuleSet = value && value.rules && value.rules[0];
 
   // We are deliberately concat the id and resourceId, in order to create
   // a more unique key for the transform editor launch per resource. This will

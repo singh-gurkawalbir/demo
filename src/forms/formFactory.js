@@ -80,6 +80,13 @@ const getResourceFormAssets = ({
       } else if (resource && resource.assistant) {
         meta = formMeta.connections.custom[type];
 
+        /* TODO This is a temp fix for expediting QA testing of IAs as they are blocked on REST deprecation.
+        Once all IAs are moved to HTTP layer we can remove this below check and correspoding metadata files
+        in forms folder */
+        if (resource._connectorId) {
+          meta = formMeta.connections.custom.restIntegrationApps;
+        }
+
         if (meta) {
           meta = meta[resource.assistant];
         }

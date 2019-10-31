@@ -40,6 +40,9 @@ export default function Panel(props) {
   const classes = useStyles(props);
   const dispatch = useDispatch();
   const [enqueueSnackbar] = useEnqueueSnackbar();
+  const formState = useSelector(state =>
+    selectors.resourceFormState(state, resourceType, id)
+  );
   const newResourceId = useSelector(state =>
     selectors.createdResourceId(state, id)
   );
@@ -135,12 +138,19 @@ export default function Panel(props) {
       dispatch(actions.resource.created(resourceId, id));
       onClose();
     } else {
+      if (formState.skipClose) {
+        props.history.replace(
+          `/pg/${resourceType}/edit/${resourceType}/${newResourceId}`
+        );
+
+        return;
+      }
+
       if (newResourceId)
         enqueueSnackbar({
           message: `${resourceLabel} created`,
           variant: 'success',
         });
-
       onClose();
     }
   }

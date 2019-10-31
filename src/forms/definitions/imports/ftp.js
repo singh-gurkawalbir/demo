@@ -41,19 +41,6 @@ export default {
     return fieldMeta;
   },
   optionsHandler: (fieldId, fields) => {
-    if (fieldId === 'mapping') {
-      const lookupField = fields.find(
-        field => field.fieldId === 'file.lookups'
-      );
-
-      if (lookupField) {
-        return {
-          lookupId: 'file.lookups',
-          lookups: lookupField && lookupField.value,
-        };
-      }
-    }
-
     if (fieldId === 'ftp.fileName') {
       const fileTypeField = fields.find(field => field.fieldId === 'file.type');
       const fileNameField = fields.find(
@@ -220,7 +207,6 @@ export default {
       'ftp.blobInProgressFileName',
       'dataMappings',
       'file.lookups',
-      'mapping',
     ],
     type: 'collapse',
     containers: [

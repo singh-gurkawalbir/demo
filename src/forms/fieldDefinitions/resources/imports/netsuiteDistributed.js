@@ -14,6 +14,11 @@ export default {
       },
     ],
   },
+  'netsuite_da.mapping': {
+    type: 'mapping',
+    connectionId: r => r && r._connectionId,
+    label: 'Manage Import Mapping',
+  },
   'netsuite_da.operation': {
     type: 'radiogroup',
     label: 'Operation',

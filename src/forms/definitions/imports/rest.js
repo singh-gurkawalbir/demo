@@ -52,10 +52,6 @@ export default {
     'rest.headers': { fieldId: 'rest.headers' },
     'rest.compositeType': { fieldId: 'rest.compositeType' },
     'rest.lookups': { fieldId: 'rest.lookups', visible: false },
-    mapping: {
-      fieldId: 'mapping',
-      refreshOptionsOnChangesTo: ['rest.lookups'],
-    },
     'rest.relativeURI': { fieldId: 'rest.relativeURI' },
     'rest.successPath': { fieldId: 'rest.successPath' },
     blobKeyPath: { fieldId: 'blobKeyPath' },

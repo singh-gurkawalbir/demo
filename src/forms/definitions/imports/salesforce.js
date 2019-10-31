@@ -196,7 +196,6 @@ export default {
       'salesforce.upsertpicklistvalues.fullName',
       'salesforce.upsert.externalIdField',
       'dataMappings',
-      'mapping',
     ],
     type: 'collapse',
     containers: [
@@ -206,21 +205,5 @@ export default {
         fields: ['advancedSettings', 'deleteAfterImport'],
       },
     ],
-  },
-  optionsHandler: (fieldId, fields) => {
-    if (fieldId === 'mapping') {
-      const sObjectTypeField = fields.find(
-        field => field.id === 'salesforce.sObjectType'
-      );
-      const lookupField = fields.find(
-        field => field.fieldId === 'salesforce.lookups'
-      );
-
-      return {
-        sObjectType: sObjectTypeField && sObjectTypeField.value,
-        lookupId: 'salesforce.lookups',
-        lookups: lookupField && lookupField.value,
-      };
-    }
   },
 };

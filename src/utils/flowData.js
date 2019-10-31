@@ -21,6 +21,13 @@ const sampleDataStage = {
     responseTransform: 'sampleResponse',
   },
 };
+// Regex for parsing patchSet paths to listen field specific changes of a resource
+// sample Sequence path:  '/pageProcessors' or '/pageGenerators'
+// sample responseMapping path: '/pageProcessors/${resourceIndex}/responseMapping
+const pathRegex = {
+  sequence: /^(\/pageProcessors|\/pageGenerators)$/,
+  responseMapping: /\/pageProcessors\/[0-9]+\/responseMapping/,
+};
 
 export function getParseStageData(previewData) {
   const stages = (previewData && previewData.stages) || [];
@@ -74,3 +81,31 @@ export const getLastExportDateTime = () =>
   moment()
     .add(-1, 'y')
     .toISOString();
+
+// Goes through patchset changes to decide what is updated
+export const getFlowUpdatesFromPatch = (patchSet = []) => {
+  if (!patchSet.length) return {};
+  const updatedPathsFromPatchSet = patchSet.map(patch => patch.path);
+  const updates = {
+    sequence: false,
+    responseMapping: false,
+  };
+
+  updatedPathsFromPatchSet.forEach(path => {
+    if (pathRegex.sequence.test(path) && !updates.sequence)
+      updates.sequence = true;
+
+    if (pathRegex.responseMapping.test(path) && !updates.responseMapping) {
+      // Extract resourceIndex from the path
+      const [resourceIndex] = path.match(/[0-9]+/);
+
+      if (resourceIndex) {
+        updates.responseMapping = {
+          resourceIndex: parseInt(resourceIndex, 10),
+        };
+      }
+    }
+  });
+
+  return updates;
+};

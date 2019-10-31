@@ -28,19 +28,6 @@ export default {
     return fieldMeta;
   },
   optionsHandler: (fieldId, fields) => {
-    if (fieldId === 'mapping') {
-      const lookupField = fields.find(
-        field => field.fieldId === 'file.lookups'
-      );
-
-      if (lookupField) {
-        return {
-          lookupId: 'file.lookups',
-          lookups: lookupField && lookupField.value,
-        };
-      }
-    }
-
     if (fieldId === 's3.fileKey') {
       const fileTypeField = fields.find(field => field.fieldId === 'file.type');
       const fileNameField = fields.find(
@@ -200,7 +187,6 @@ export default {
       'file',
       'dataMappings',
       'file.lookups',
-      'mapping',
     ],
     type: 'collapse',
     containers: [

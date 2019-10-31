@@ -15,7 +15,7 @@ require('babel-register')({
 });
 
 const themeProvider = require('./src/theme/themeProvider').default;
-const theme = themeProvider('light');
+const theme = themeProvider();
 const getProxyOpts = () => {
   console.log(`API endpoint: [${process.env.API_ENDPOINT}]`);
 
