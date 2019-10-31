@@ -333,13 +333,21 @@ function FlowBuilder(props) {
   };
 
   function handleAddGenerator() {
-    setNewGeneratorId(getNewId());
-    pushOrReplaceHistory(`${match.url}/add/pageGenerator/${newGeneratorId}`);
+    const newTempGeneratorId = getNewId();
+
+    setNewGeneratorId(newTempGeneratorId);
+    pushOrReplaceHistory(
+      `${match.url}/add/pageGenerator/${newTempGeneratorId}`
+    );
   }
 
   function handleAddProcessor() {
-    setNewProcessorId(getNewId());
-    pushOrReplaceHistory(`${match.url}/add/pageProcessor/${newProcessorId}`);
+    const newTempProcessorId = getNewId();
+
+    setNewProcessorId(newTempProcessorId);
+    pushOrReplaceHistory(
+      `${match.url}/add/pageProcessor/${newTempProcessorId}`
+    );
   }
 
   function handleDrawerOpen(path) {

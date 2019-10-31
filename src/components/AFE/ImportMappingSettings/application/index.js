@@ -95,6 +95,7 @@ export default {
         break;
       case adaptorTypeMap.AS2Import:
       case adaptorTypeMap.S3Import:
+      case adaptorTypeMap.WrapperImport:
       case adaptorTypeMap.FTPImport:
         fieldMeta = FTPMappingSettings.getMetaData({
           value,
@@ -185,7 +186,7 @@ export default {
 
     if (formVal.fieldMappingType === 'multifield') {
       settings.extract = formVal.expression;
-    } else {
+    } else if (formVal.fieldMappingType !== 'hardCoded') {
       settings.extract = extract;
     }
 

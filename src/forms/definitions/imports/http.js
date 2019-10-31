@@ -22,19 +22,6 @@ export default {
       }
     }
 
-    if (fieldId === 'mapping') {
-      const lookupField = fields.find(
-        field => field.fieldId === 'http.lookups'
-      );
-
-      if (lookupField) {
-        return {
-          lookupId: 'http.lookups',
-          lookups: lookupField && lookupField.value,
-        };
-      }
-    }
-
     return null;
   },
 
@@ -121,10 +108,6 @@ export default {
       visibleWhen: [{ field: 'http.requestMediaType', is: ['csv'] }],
     },
     'file.csv.customHeaderRows': { fieldId: 'file.csv.customHeaderRows' },
-    mapping: {
-      fieldId: 'mapping',
-      refreshOptionsOnChangesTo: ['http.lookups'],
-    },
     'http.body': { fieldId: 'http.body' },
     'file.csv.rowDelimiter': {
       fieldId: 'file.csv.rowDelimiter',
@@ -181,7 +164,6 @@ export default {
       'file.csv.columnDelimiter',
       'file.csv.includeHeader',
       'file.csv.customHeaderRows',
-      'mapping',
       'http.body',
     ],
     type: 'collapse',
