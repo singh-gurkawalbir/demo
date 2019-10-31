@@ -28,19 +28,6 @@ export default {
     return fieldMeta;
   },
   optionsHandler: (fieldId, fields) => {
-    if (fieldId === 'mapping') {
-      const lookupField = fields.find(
-        field => field.fieldId === 'file.lookups'
-      );
-
-      if (lookupField) {
-        return {
-          lookupId: 'file.lookups',
-          lookups: lookupField && lookupField.value,
-        };
-      }
-    }
-
     if (fieldId === 'ftp.fileName') {
       const fileTypeField = fields.find(field => field.fieldId === 'file.type');
       const fileNameField = fields.find(
@@ -114,10 +101,6 @@ export default {
     file: { formId: 'file' },
     dataMappings: { formId: 'dataMappings' },
     'file.lookups': { fieldId: 'file.lookups', visible: false },
-    mapping: {
-      fieldId: 'mapping',
-      refreshOptionsOnChangesTo: ['file.lookups'],
-    },
     'file.csv.rowDelimiter': { fieldId: 'file.csv.rowDelimiter' },
     'ftp.useTempFile': { fieldId: 'ftp.useTempFile' },
     'ftp.inProgressFileName': { fieldId: 'ftp.inProgressFileName' },
@@ -133,7 +116,6 @@ export default {
       'file',
       'dataMappings',
       'file.lookups',
-      'mapping',
     ],
     type: 'collapse',
     containers: [
