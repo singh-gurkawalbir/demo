@@ -10,14 +10,15 @@ import {
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import GlobalSearch from '../GlobalSearch';
-import TextToggle from '../../components/TextToggle';
 import ElevateOnScroll from '../../components/ElevateOnScroll';
 import SlideOnScroll from '../../components/SlideOnScroll';
-import ProfileMenuButton from '../ProfileMenuButton';
+import ProfileMenuButton from './ProfileMenuButton';
 import * as selectors from '../../reducers';
 import ArrowRightIcon from '../../components/icons/ArrowRightIcon';
 import Notifications from './Notifications';
 import LicenseAction from './LicenseAction';
+import AccountList from './AccountList';
+import EnvironmentToggle from './EnvironmentToggle';
 
 const useStyles = makeStyles(theme => ({
   celigoLogo: {
@@ -26,7 +27,6 @@ const useStyles = makeStyles(theme => ({
     background: `url(${process.env.CDN_BASE_URI}images/flow-builder/celigo-product-logo.svg) no-repeat center left`,
   },
   unauthenticatedAppBar: {
-    // TODO Surya please remove the appbar for !authenticated
     display: 'none',
     background: theme.palette.background.paper2,
     height: 36,
@@ -125,15 +125,14 @@ export default function CeligoAppBar() {
               <li>
                 <GlobalSearch />
               </li>
+              {/* 
+                Including the AccountList causes the app to reload 3 times 
+                (and re-run all init) I think this is causes by removing the 
+                session caching layer we had in place 
+              */}
+              <li>{false && <AccountList />}</li>
               <li>
-                <TextToggle
-                  defaultValue={1}
-                  exclusive
-                  options={[
-                    { value: 1, label: 'Production' },
-                    { value: 2, label: 'Sandbox' },
-                  ]}
-                />
+                <EnvironmentToggle />
               </li>
               <li>
                 <Notifications />
