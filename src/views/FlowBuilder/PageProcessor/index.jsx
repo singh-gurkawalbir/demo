@@ -9,8 +9,9 @@ import itemTypes from '../itemTypes';
 import AppBlock from '../AppBlock';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
-import { getResourceSubType } from '../../../utils/resource';
+import { getResourceSubType, adaptorTypeMap } from '../../../utils/resource';
 import importMappingAction from './actions/importMapping';
+import templateMappingAction from './actions/templateMapping';
 import inputFilterAction from './actions/inputFilter';
 import pageProcessorHooksAction from './actions/pageProcessorHooks';
 import outputFilterAction from './actions/outputFilter';
@@ -200,6 +201,9 @@ const PageProcessor = ({
   // Also, I think 'responseMapping` action is not valid for the LAST PP.
   // The data doesnt go anywhere, so its a pointless action when PP is last.
   const processorActions = [];
+  // Template mapping action is shown only for http import resource
+  const isHTTPImport =
+    resource.adaptorType && adaptorTypeMap[resource.adaptorType] === 'http';
 
   if (!pending) {
     if (pp.type === 'export') {
@@ -207,21 +211,20 @@ const PageProcessor = ({
         inputFilterAction,
         outputFilterAction,
         transformationAction,
-        pageProcessorHooksAction,
-        responseMapping
+        pageProcessorHooksAction
       );
     } else {
       processorActions.push(
         inputFilterAction,
-        { ...importMappingAction, isUsed: false }, // example new prop
+        importMappingAction,
+        ...(isHTTPImport ? [templateMappingAction] : []),
         responseTransformationAction,
-        pageProcessorHooksAction,
-        responseMapping
+        pageProcessorHooksAction
       );
     }
 
     if (!isLast) {
-      processorActions.push(proceedOnFailureAction);
+      processorActions.push(responseMapping, proceedOnFailureAction);
     }
   }
   // #endregion
