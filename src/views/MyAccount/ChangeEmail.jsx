@@ -1,7 +1,7 @@
 import { Component, Fragment } from 'react';
 import TextField from '@material-ui/core/TextField';
 import { connect } from 'react-redux';
-import { Button } from '@material-ui/core';
+import { Button, Typography } from '@material-ui/core';
 import actions from '../../actions';
 import ModalDialog from '../../components/ModalDialog';
 import {
@@ -37,13 +37,19 @@ class ChangeEmail extends Component {
 
     return (
       <ModalDialog show={show} handleClose={onhandleClose}>
-        <span>Change Email</span>
+        Change Email
         {success ? (
-          <span>{message}</span>
+          <Typography variant="body2">{message}</Typography>
         ) : (
-          <span>
+          <div>
             <form id="changeEmailForm" onSubmit={this.handleOnSubmit}>
-              <TextField id="newEmail" label="New Email" margin="normal" />
+              <TextField
+                id="newEmail"
+                label="New Email"
+                margin="normal"
+                fullWidth
+                variant="filled"
+              />
               <br />
 
               <TextField
@@ -51,25 +57,34 @@ class ChangeEmail extends Component {
                 label="Password"
                 margin="normal"
                 type="password"
+                variant="filled"
+                fullWidth
               />
             </form>
-            {`Note: we require your current password again to help safeguard your integrator.io account.`}
-          </span>
+            <Typography variant="body2">
+              Note: we require your current password again to help safeguard
+              your integrator.io account.
+            </Typography>
+          </div>
         )}
         {success ? (
           <span />
         ) : (
           <Fragment>
-            {error && <span>{message}</span>}
+            {error && (
+              <Typography variant="body2" component="span" color="error">
+                {message}
+              </Typography>
+            )}
 
             <Button
               data-test="changeEmail"
-              variant="contained"
+              variant="outlined"
               color="primary"
               type="submit"
               form="changeEmailForm"
               value="Submit">
-              change email
+              Change email
             </Button>
           </Fragment>
         )}

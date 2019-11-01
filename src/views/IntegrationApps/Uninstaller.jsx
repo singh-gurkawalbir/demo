@@ -77,16 +77,15 @@ export default function IntegratorAppUninstalleer(props) {
       uninstallSteps.length &&
       !uninstallSteps.reduce((result, step) => result || !step.completed, false)
     ) {
+      dispatch(actions.resource.request('integrations', integrationId));
       setIsSetupComplete(true);
     }
-  }, [uninstallSteps]);
+  }, [dispatch, integrationId, uninstallSteps]);
 
   useEffect(() => {
     if (isSetupComplete) {
       // redirect to integration Settings
       if (integration.mode !== 'uninstall') {
-        dispatch(actions.integrationApp.uninstaller.clearSteps(integrationId));
-        dispatch(actions.resource.request('integrations', integrationId));
         props.history.push(`/pg/connectors/${integrationId}/settings/flows`);
       } else {
         dispatch(
@@ -97,6 +96,7 @@ export default function IntegratorAppUninstalleer(props) {
     }
   }, [
     dispatch,
+    integration,
     integration.mode,
     integrationId,
     isSetupComplete,

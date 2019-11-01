@@ -24,9 +24,10 @@ const useStyles = makeStyles(theme => ({
   spinner: {
     left: '0px',
     right: '0px',
-    background: 'rgba(0,0,0,0.7)',
+    background: 'rgba(106, 123, 137, 0.7)',
     width: '100%',
     position: 'absolute',
+    color: theme.palette.background.paper,
     textAlign: 'center',
     display: 'flex',
     justifyContent: 'center',
@@ -39,8 +40,12 @@ const useStyles = makeStyles(theme => ({
     },
   },
   checkAction: {
-    display: 'flex',
-    alignItems: 'center',
+    listStyle: 'none',
+    padding: 0,
+    minWidth: '60px',
+    '& li': {
+      float: 'left',
+    },
   },
   moreIcon: {
     padding: 0,
@@ -174,22 +179,28 @@ function JobDetail({
   return (
     <Fragment>
       <TableRow>
-        <TableCell className={classes.checkAction}>
-          {job.uiStatus !== JOB_STATUS.QUEUED && (
-            <IconButton
-              data-test="toggleJobDetail"
-              className={classes.moreIcon}
-              onClick={handleExpandCollapseClick}>
-              {expanded ? <ArrowUpIcon /> : <ArrowDownIcon />}
-            </IconButton>
-          )}
-          <Checkbox
-            disabled={!(job.retriable || job.numError)}
-            checked={isSelected}
-            className={classes.checkIcon}
-            color="primary"
-            onChange={event => handleSelectChange(event)}
-          />
+        <TableCell>
+          <ul className={classes.checkAction}>
+            <li>
+              {job.uiStatus !== JOB_STATUS.QUEUED && (
+                <IconButton
+                  data-test="toggleJobDetail"
+                  className={classes.moreIcon}
+                  onClick={handleExpandCollapseClick}>
+                  {expanded ? <ArrowUpIcon /> : <ArrowDownIcon />}
+                </IconButton>
+              )}
+            </li>
+            <li>
+              <Checkbox
+                disabled={!(job.retriable || job.numError)}
+                checked={isSelected}
+                className={classes.checkIcon}
+                color="primary"
+                onChange={event => handleSelectChange(event)}
+              />
+            </li>
+          </ul>
         </TableCell>
         <TableCell>{job.name}</TableCell>
         <TableCell>

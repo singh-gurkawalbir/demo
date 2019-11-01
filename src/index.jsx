@@ -4,7 +4,7 @@ import { Provider } from 'react-redux';
 import createSagaMiddleware from 'redux-saga';
 import { createLogger } from 'redux-logger';
 import { SnackbarProvider } from 'notistack';
-import AppNew from './AppNew';
+import App from './App';
 import rootReducer from './reducers';
 import rootSaga from './sagas';
 import actions from './actions';
@@ -14,7 +14,7 @@ let store;
 const sagaMiddleware = createSagaMiddleware({
   onError: error => {
     // eslint-disable-next-line no-console
-    console.warn('saga middlware crashed on error ', error);
+    console.warn('saga middleware crashed on error ', error);
     store.dispatch(actions.app.errored());
   },
 });
@@ -46,7 +46,7 @@ sagaMiddleware.run(rootSaga);
 render(
   <Provider store={store}>
     <SnackbarProvider maxSnack={3}>
-      <AppNew />
+      <App />
     </SnackbarProvider>
   </Provider>,
   document.getElementById('root')
