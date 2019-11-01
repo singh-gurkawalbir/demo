@@ -1,12 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import {
-  AppBar,
-  Breadcrumbs,
-  Link,
-  Toolbar,
-  Typography,
-} from '@material-ui/core';
+import { AppBar, Toolbar } from '@material-ui/core';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import GlobalSearch from '../GlobalSearch';
@@ -14,11 +8,11 @@ import ElevateOnScroll from '../../components/ElevateOnScroll';
 import SlideOnScroll from '../../components/SlideOnScroll';
 import ProfileMenuButton from './ProfileMenuButton';
 import * as selectors from '../../reducers';
-import ArrowRightIcon from '../../components/icons/ArrowRightIcon';
 import Notifications from './Notifications';
 import LicenseAction from './LicenseAction';
 import AccountList from './AccountList';
 import EnvironmentToggle from './EnvironmentToggle';
+import CeligoBreadcrumb from './CeligoBreadcrumb';
 
 const useStyles = makeStyles(theme => ({
   celigoLogo: {
@@ -103,24 +97,7 @@ export default function CeligoAppBar() {
             [classes.appBarShift]: drawerOpened,
           })}>
           <Toolbar className="topBar" variant="dense">
-            <Breadcrumbs
-              maxItems={3}
-              separator={<ArrowRightIcon fontSize="small" />}
-              aria-label="breadcrumb"
-              className={classes.breadCrumb}>
-              <Link color="inherit" href="/pg">
-                Home
-              </Link>
-              <Link color="inherit" href="/pg">
-                Profile
-              </Link>
-              <Link color="inherit" href="/pg">
-                Subscription
-              </Link>
-              <Typography variant="body2" className={classes.addons}>
-                Add-ons
-              </Typography>
-            </Breadcrumbs>
+            <CeligoBreadcrumb />
             <ul className={classes.topBarActions}>
               <li>
                 <GlobalSearch />
