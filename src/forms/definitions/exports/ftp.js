@@ -1,4 +1,19 @@
+import { isNewId } from '../../../utils/resource';
+
 export default {
+  preSave: formValues => {
+    const newValues = { ...formValues };
+
+    if (newValues['/outputMode'] === 'blob') {
+      newValues['/file/skipDelete'] = newValues['/ftp/leaveFile'];
+      newValues['/file/output'] = 'blobKeys';
+      newValues['/file/type'] = undefined;
+    }
+
+    return {
+      ...newValues,
+    };
+  },
   init: fieldMeta => {
     const fileDefinitionRulesField =
       fieldMeta.fieldMap['file.filedefinition.rules'];
@@ -32,6 +47,29 @@ export default {
       type: 'labeltitle',
       label: 'What would you like to Export?',
     },
+    outputMode: {
+      id: 'outputMode',
+      type: 'radiogroup',
+      label: 'Output Mode',
+      options: [
+        {
+          items: [
+            { label: 'Records', value: 'records' },
+            { label: 'Blob Keys', value: 'blob' },
+          ],
+        },
+      ],
+      defaultValue: r => {
+        const isNew = isNewId(r._id);
+
+        // if its create
+        if (isNew) return 'records';
+
+        const output = r && r.file && r.file.type;
+
+        return output ? 'records' : 'blob';
+      },
+    },
     'ftp.directoryPath': { fieldId: 'ftp.directoryPath' },
     'file.output': {
       fieldId: 'file.output',
@@ -39,18 +77,29 @@ export default {
     },
     'ftp.fileNameStartsWith': { fieldId: 'ftp.fileNameStartsWith' },
     'ftp.fileNameEndsWith': { fieldId: 'ftp.fileNameEndsWith' },
-    file: { formId: 'file' },
+    'ftp.leaveFile': { fieldId: 'ftp.leaveFile' },
+    file: {
+      formId: 'file',
+      visibleWhenAll: [
+        {
+          field: 'outputMode',
+          is: ['records'],
+        },
+      ],
+    },
     fileAdvancedSettings: { formId: 'fileAdvancedSettings' },
   },
   layout: {
     fields: [
       'common',
+      'outputMode',
       'exportData',
       'ftp.directoryPath',
       'file.output',
       'ftp.fileNameStartsWith',
       'ftp.fileNameEndsWith',
       'file',
+      'ftp.leaveFile',
     ],
     type: 'collapse',
     containers: [
