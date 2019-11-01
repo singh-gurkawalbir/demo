@@ -53,7 +53,5 @@ export default {
   name: 'pageProcessorHooks',
   position: 'middle',
   Icon,
-  helpText:
-    'This is the text currently in the hover state of actions in the current FB',
   Component: PageProcessorHooks,
 };

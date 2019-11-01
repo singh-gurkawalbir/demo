@@ -1275,6 +1275,40 @@ export default {
     'Use this field to filter out any reference list by entering the "where" clause of SOQL query. This expression will be added as a part of the SOQL query in the where clause while fetching the childSObjectType. If no filter is added, IO will send all the child SObjects in the export data. Ex: If you would like to only export Contacts whose LastName has "Bond" in it, set the expression as "LastName=`Bond` ".',
   'distributed.orderBy':
     'Use this field to specify how you would like to order the related list records. Ex: Use `CreatedDate` to order the records by date created. The default order is `Ascending order`. To change it to use descending order using the order by field as `CreatedDate DESC`.',
-
+  'fb.pg.exports.transform':
+    'Define a ‘transformation’ here to rename fields, remove fields, and/or structurally optimize records returned by the export before the records are passed along to downstream applications.',
+  'fb.pg.exports.filter':
+    'Define an ‘output filter’ here to specify which records returned by the export should get passed along to downstream applications. i.e. Records that evaluate to true are passed along. Records that evaluate to false are discarded.',
+  'fb.pg.exports.hooks':
+    'Define a ‘hook’ here to use custom code to process records returned by the export before the records are passed along to downstream applications.',
+  'fb.pg.exports.schedule':
+    'Define schedule to run export which overrides the flow schedule',
+  'fb.pp.exports.transform':
+    'Define a ‘transformation’ here to rename fields, remove fields, and/or structurally optimize records returned by the lookup before the records are merged back into the source record.',
+  'fb.pp.exports.filter':
+    'Define an ‘output filter’ here to specify which records returned by the lookup should get merged back into the source record. i.e. Records that evaluate to true are merged. Records that evaluate to false are discarded.',
+  'fb.pp.exports.hooks':
+    'Define a ‘hook’ here to use custom code to process records returned by the lookup before the records are merged back into the source record.',
+  'fb.pp.exports.responseMapping':
+    'Define a ‘results mapping’ here to specify where the data returned by the lookup should be merged back into the source record.',
+  'fb.pp.exports.proceedOnFailure':
+    'If the lookup fails for a specific record then what should happen to that record?  Should the failed record pause here until someone can analyze and fix the error (i.e. the default behavior), or should the failed record proceed to the next application in the flow regardless?',
+  'fb.pp.exports.inputFilter':
+    'Define an ‘input filter‘ here to specify which source records should get processed by the lookup. i.e. Records that evaluate to true are processed. Records that evaluate to false are ignored (but still passed along to downstream applications in the flow).',
+  'fb.pp.imports.importMapping':
+    'Define an ‘import mapping’ here to specify how fields in the source record should map to fields in the destination application.  i.e. first_name in the source record should map to firstName in the destination application.',
+  'fb.pp.imports.transform':
+    'Define a ‘transformation’ here to rename fields, remove fields, and/or structurally optimize the response data returned by the import before the response data is merged back into the source record.',
+  'fb.pp.imports.filter':
+    'Define an ‘output filter’ here to specify which source records should be processed by the import.  i.e. Records that evaluate to true are processed.  Records that evaluate to false are ignored (but still sent along to downstream applications in the flow).',
+  'fb.pp.imports.hooks':
+    'Define a ‘hook’ here to use custom code to process source records before they are submitted to the destination application (pre and post mapping hooks are available), or to process response data returned by the import (i.e. to handle errors, enhance error messages, etc...).',
+  'fb.pp.imports.responseMapping':
+    'Define a ‘response mapping’ here to specify where the response data returned by the import should be merged back into the source record.',
+  'fb.pp.imports.proceedOnFailure':
+    'If the import fails for a specific record then what should happen to that record?  Should the failed record pause here until someone can analyze and fix the error (i.e. the default behavior), or should the failed record proceed to the next application in the flow regardless?',
+  'fb.pp.imports.inputFilter':
+    'Define an ‘input filter’ here to specify which source records should get processed by the import. i.e. Records that evaluate to true are processed. Records that evaluate to false are ignored (but still passed along to downstream applications in the flow).',
+  'fb.pp.imports.templateMapping': ' Define a Template Mapping for import ',
   // #region UI help text
 };
