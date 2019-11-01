@@ -17,12 +17,15 @@ export default {
       case adaptorTypeMap.S3Import:
       case adaptorTypeMap.AS2Import:
         return resourceObj.file && resourceObj.file.lookups;
-      case adaptorTypeMap.XMLImport:
-      case adaptorTypeMap.HTTPImport:
-      case adaptorTypeMap.MongodbImport:
       case adaptorTypeMap.WrapperImport:
-      case adaptorTypeMap.RDBMSImport:
+        return resourceObj.wrapper && resourceObj.wrapper.lookups;
+      case adaptorTypeMap.HTTPImport:
+        return resourceObj.http && resourceObj.http.lookups;
       case adaptorTypeMap.SalesforceImport:
+        return resourceObj.salesforce && resourceObj.salesforce.lookups;
+      case adaptorTypeMap.XMLImport:
+      case adaptorTypeMap.MongodbImport:
+      case adaptorTypeMap.RDBMSImport:
       default:
     }
   },
@@ -36,12 +39,15 @@ export default {
       case adaptorTypeMap.S3Import:
       case adaptorTypeMap.FTPImport:
         return '/file/lookups';
-      case adaptorTypeMap.XMLImport:
-      case adaptorTypeMap.HTTPImport:
-      case adaptorTypeMap.MongodbImport:
       case adaptorTypeMap.WrapperImport:
-      case adaptorTypeMap.RDBMSImport:
+        return '/wrapper/lookups';
+      case adaptorTypeMap.HTTPImport:
+        return '/http/lookups';
       case adaptorTypeMap.SalesforceImport:
+        return '/salesforce/lookups';
+      case adaptorTypeMap.XMLImport:
+      case adaptorTypeMap.MongodbImport:
+      case adaptorTypeMap.RDBMSImport:
       default:
     }
   },

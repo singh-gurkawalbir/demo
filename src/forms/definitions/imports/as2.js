@@ -1,20 +1,5 @@
-import { adaptorTypeMap } from '../../../utils/resource';
-
 export default {
   optionsHandler: (fieldId, fields) => {
-    if (fieldId === 'mapping') {
-      const lookupField = fields.find(
-        field => field.fieldId === 'file.lookups'
-      );
-
-      if (lookupField) {
-        return {
-          lookupId: 'file.lookups',
-          lookups: lookupField && lookupField.value,
-        };
-      }
-    }
-
     if (fieldId === 'file.filedefinition.rules') {
       // Fetch format specific Field Definition field to fetch id
       // if (fileType.value === 'filedefinition')
@@ -61,11 +46,6 @@ export default {
     compressFiles: { formId: 'compressFiles' },
     'as2.maxRetries': { fieldId: 'as2.maxRetries' },
     'file.lookups': { fieldId: 'file.lookups', visible: false },
-    mapping: {
-      fieldId: 'mapping',
-      application: adaptorTypeMap.AS2Import,
-      refreshOptionsOnChangesTo: ['file.lookups'],
-    },
   },
   layout: {
     fields: [
@@ -80,7 +60,6 @@ export default {
       'as2.headers',
       'dataMappings',
       'file.lookups',
-      'mapping',
     ],
     type: 'collapse',
     containers: [

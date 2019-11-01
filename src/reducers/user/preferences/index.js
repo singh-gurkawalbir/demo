@@ -14,7 +14,6 @@ export const GLOBAL_PREFERENCES = [
   'lastLoginAt',
 ];
 
-export const DEFAULT_THEME = 'dark';
 export const DEFAULT_EDITOR_THEME = 'tomorrow';
 
 export default (state = { environment: 'production' }, action) => {
@@ -66,11 +65,7 @@ export function userPreferences(state) {
 export function appTheme(state) {
   const { themeName } = userPreferences(state);
 
-  if (themeName) {
-    return themeName;
-  }
-
-  return DEFAULT_THEME;
+  return themeName;
 }
 
 export function editorTheme(state) {

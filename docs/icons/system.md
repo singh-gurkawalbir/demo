@@ -37,6 +37,7 @@ const FlowBuilderAppIcon = require('../../src/components/icons/FlowBuilderAppIco
 const FullScreenOpenIcon = require('../../src/components/icons/FullScreenOpenIcon').default;
 const FullScreenCloseIcon = require('../../src/components/icons/FullScreenCloseIcon').default;
 const GettingStartedIcon = require('../../src/components/icons/GettingStartedIcon').default;
+const GroupOfUsersIcon = require('../../src/components/icons/GroupOfUsersIcon').default;
 const HelpIcon = require('../../src/components/icons/HelpIcon').default;
 const HideContentIcon = require('../../src/components/icons/HideContentIcon').default;
 const HomeIcon = require('../../src/components/icons/HomeIcon').default;
@@ -53,6 +54,7 @@ const ListenerIcon = require('../../src/components/icons/ListenerIcon').default;
 const LookUpIcon = require('../../src/components/icons/LookUpIcon').default;
 const LockIcon = require('../../src/components/icons/LockIcon').default;
 const MapDataIcon = require('../../src/components/icons/MapDataIcon').default;
+const MappingConnectorIcon = require('../../src/components/icons/MappingConnectorIcon').default;
 const MarketplaceIcon = require('../../src/components/icons/MarketplaceIcon').default;
 const NotificationsIcon = require('../../src/components/icons/NotificationsIcon').default;
 const OutputFilterIcon = require('../../src/components/icons/OutputFilterIcon').default;
@@ -74,6 +76,7 @@ const ShareStackIcon = require('../../src/components/icons/ShareStackIcon').defa
 const SettingsIcon = require('../../src/components/icons/SettingsIcon').default;
 const SubtractIcon = require('../../src/components/icons/SubtractIcon').default;
 const SupportIcon = require('../../src/components/icons/SupportIcon').default;
+const SingleUserIcon = require('../../src/components/icons/SingleUserIcon').default;
 const TransferOrderIcon = require('../../src/components/icons/TransferOrderIcon').default;
 const ToolsIcon = require('../../src/components/icons/ToolsIcon').default;
 const TokensApiIcon = require('../../src/components/icons/TokensApiIcon').default;
@@ -249,6 +252,10 @@ const icon = {
       <GettingStartedIcon style={icon} />
       <p>GettingStarted</p>
     </div>
+    <div style={wrapper}>
+      <GroupOfUsersIcon style={icon} />
+      <p>GroupOfUsers</p>
+    </div>
      <div style={wrapper}>
       <HelpIcon style={icon} />
       <p>Help</p>
@@ -313,6 +320,10 @@ const icon = {
     <div style={wrapper}>
       <MapDataIcon style={icon} />
       <p>MapData</p>
+    </div>
+    <div style={wrapper}>
+      <MappingConnectorIcon style={icon} />
+      <p>MappingConnector</p>
     </div>
     <div style={wrapper}>
       <MarketplaceIcon style={icon} />
@@ -398,6 +409,10 @@ const icon = {
     <div style={wrapper}>
       <SupportIcon style={icon} />
       <p>Support</p>
+    </div>
+    <div style={wrapper}>
+      <SingleUserIcon style={icon} />
+      <p>SingleUser</p>
     </div>
     <div style={wrapper}>
       <TransferOrderIcon style={icon} />
