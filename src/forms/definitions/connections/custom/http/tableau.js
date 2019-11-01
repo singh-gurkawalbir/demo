@@ -38,6 +38,17 @@ export default {
       label: 'My Server',
       helpText:
         'Please enter your server name here which you configured while signing up for a new Tableau account.',
+      defaultValue: r => {
+        const baseUri = r && r.http && r.http.baseURI;
+        const subdomain =
+          baseUri &&
+          baseUri.substring(
+            baseUri.indexOf('https://') + 8,
+            baseUri.indexOf('.online.tableau.com/api')
+          );
+
+        return subdomain;
+      },
     },
     'http.auth.basic.username': {
       fieldId: 'http.auth.basic.username',
