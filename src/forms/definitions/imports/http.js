@@ -7,7 +7,7 @@ export default {
       resource.http.lookups.get(retValues['/http/existingDataId']);
 
     if (retValues['/http/method'] === 'COMPOSITE') {
-      if (retValues['/http/compositeType'] === 'CREATE_AND_UPDATE') {
+      if (retValues['/http/compositeType'] === 'createandupdate') {
         retValues['/http/relativeURI'] = [
           retValues['/http/relativeURIUpdate'],
           retValues['/http/relativeURICreate'],
@@ -45,9 +45,7 @@ export default {
 
         retValues['/ignoreExisting'] = false;
         retValues['/ignoreMissing'] = false;
-      } else if (
-        retValues['/http/compositeType'] === 'CREATE_AND_IGNORE_EXISTING'
-      ) {
+      } else if (retValues['/http/compositeType'] === 'createandignore') {
         retValues['/http/relativeURI'] = [retValues['/http/relativeURICreate']];
         retValues['/http/method'] = [retValues['/http/compositeMethodCreate']];
 
@@ -78,7 +76,7 @@ export default {
         } else {
           retValues['/http/ignoreExtract'] = retValues['/http/existingDataId'];
         }
-      } else if (retValues['/http/compositeType'] === 'UPDATE_AND_IGNORE_NEW') {
+      } else if (retValues['/http/compositeType'] === 'updateandignore') {
         retValues['/http/relativeURI'] = [retValues['/http/relativeURIUpdate']];
         retValues['/http/method'] = [retValues['/http/compositeMethodUpdate']];
 
@@ -177,11 +175,176 @@ export default {
         },
       ],
     },
-    'http.compositeMethodCreate': { fieldId: 'http.compositeMethodCreate' },
-    'http.relativeURICreate': { fieldId: 'http.relativeURICreate' },
-    'http.bodyCreate': { fieldId: 'http.bodyCreate' },
-    'http.resourceIdPathCreate': { fieldId: 'http.resourceIdPathCreate' },
-    'http.resourcePathCreate': { fieldId: 'http.resourcePathCreate' },
+    'http.compositeMethodCreate': {
+      id: 'http.compositeMethodCreate',
+      type: 'select',
+      label: 'HTTP Method',
+      options: [
+        {
+          items: [
+            { label: 'POST', value: 'POST' },
+            { label: 'PUT', value: 'PUT' },
+            { label: 'PATCH', value: 'PATCH' },
+          ],
+        },
+      ],
+      defaultValue: r => {
+        if (!r || !r.http || !r.http.method) {
+          return '';
+        }
+
+        if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
+          if (r.http.method.length > 1) {
+            return r.http.method[1];
+          }
+
+          return r.http.method[0];
+        }
+
+        return '';
+      },
+      visibleWhenAll: [
+        {
+          field: 'http.compositeType',
+          is: ['createandupdate', 'createandignore'],
+        },
+        {
+          field: 'http.method',
+          is: ['COMPOSITE'],
+        },
+      ],
+    },
+    'http.relativeURICreate': {
+      id: 'http.relativeURICreate',
+      type: 'text',
+      label: 'Relative URI',
+      placeholder: 'Optional',
+      visibleWhenAll: [
+        {
+          field: 'http.compositeType',
+          is: ['createandupdate', 'createandignore'],
+        },
+        {
+          field: 'http.method',
+          is: ['COMPOSITE'],
+        },
+      ],
+      defaultValue: r => {
+        if (!r || !r.http || !r.http.method) {
+          return '';
+        }
+
+        if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
+          if (r.http.method.length > 1) {
+            return r.http.relativeURI[1];
+          }
+
+          return r.http.relativeURI[0];
+        }
+
+        return '';
+      },
+    },
+    'http.bodyCreate': {
+      id: 'http.bodyCreate',
+      type: 'httprequestbody',
+      label: 'Build HTTP Request Body For Create',
+      refreshOptionsOnChangesTo: ['http.lookups'],
+      visibleWhenAll: [
+        {
+          field: 'http.compositeType',
+          is: ['createandupdate', 'createandignore'],
+        },
+        {
+          field: 'http.method',
+          is: ['COMPOSITE'],
+        },
+      ],
+      defaultValue: r => {
+        if (!r || !r.http || !r.http.method) {
+          return '';
+        }
+
+        if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
+          if (r.http.method.length > 1) {
+            return r.http.body[1];
+          }
+
+          return r.http.body[0];
+        }
+
+        return '';
+      },
+    },
+    'http.resourceIdPathCreate': {
+      id: 'http.resourceIdPathCreate',
+      type: 'text',
+      label: 'Response Id Path',
+      placeholder: 'Optional',
+      visibleWhenAll: [
+        {
+          field: 'http.compositeType',
+          is: ['createandupdate', 'createandignore'],
+        },
+        {
+          field: 'http.method',
+          is: ['COMPOSITE'],
+        },
+      ],
+      defaultValue: r => {
+        if (!r || !r.http || !r.http.method) {
+          return '';
+        }
+
+        if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
+          if (r.http.method.length > 1) {
+            return (
+              r.http.response &&
+              r.http.response.resourceIdPath &&
+              r.http.response.resourceIdPath[1]
+            );
+          }
+
+          return (
+            r.http.response &&
+            r.http.response.resourceIdPath &&
+            r.http.response.resourceIdPath[0]
+          );
+        }
+
+        return '';
+      },
+    },
+    'http.resourcePathCreate': {
+      id: 'http.resourcePathCreate',
+      type: 'text',
+      label: 'Response Path',
+      visibleWhenAll: [
+        {
+          field: 'http.compositeType',
+          is: ['createandupdate', 'createandignore'],
+        },
+        {
+          field: 'http.method',
+          is: ['COMPOSITE'],
+        },
+      ],
+      defaultValue: r => {
+        if (!r || !r.http || !r.http.method) {
+          return '';
+        }
+
+        if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
+          if (r.http.method.length > 1) {
+            return r.http.resourcePath && r.http.resourcePath[1];
+          }
+
+          return r.http.resourcePath && r.http.resourcePath[0];
+        }
+
+        return '';
+      },
+    },
     upateExistingData: {
       id: 'upateExistingData',
       type: 'labeltitle',
@@ -193,10 +356,129 @@ export default {
         },
       ],
     },
-    'http.compositeMethodUpdate': { fieldId: 'http.compositeMethodUpdate' },
-    'http.relativeURIUpdate': { fieldId: 'http.relativeURIUpdate' },
-    'http.resourceIdPathUpdate': { fieldId: 'http.resourceIdPathUpdate' },
-    'http.resourcePathUpdate': { fieldId: 'http.resourcePathUpdate' },
+    'http.compositeMethodUpdate': {
+      id: 'http.compositeMethodUpdate',
+      type: 'select',
+      label: 'HTTP Method',
+      options: [
+        {
+          items: [
+            { label: 'POST', value: 'POST' },
+            { label: 'PUT', value: 'PUT' },
+            { label: 'PATCH', value: 'PATCH' },
+          ],
+        },
+      ],
+      visibleWhenAll: [
+        {
+          field: 'http.compositeType',
+          is: ['createandupdate', 'updateandignore'],
+        },
+        {
+          field: 'http.method',
+          is: ['COMPOSITE'],
+        },
+      ],
+      defaultValue: r => {
+        if (!r || !r.http || !r.http.method) {
+          return '';
+        }
+
+        if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
+          return r.http.method && r.http.method[0];
+        }
+
+        return '';
+      },
+    },
+    'http.relativeURIUpdate': {
+      id: 'http.relativeURIUpdate',
+      type: 'text',
+      label: 'Relative URI',
+      placeholder: 'Optional',
+      visibleWhenAll: [
+        {
+          field: 'http.compositeType',
+          is: ['createandupdate', 'updateandignore'],
+        },
+        {
+          field: 'http.method',
+          is: ['COMPOSITE'],
+        },
+      ],
+      defaultValue: r => {
+        if (!r || !r.http || !r.http.method) {
+          return '';
+        }
+
+        if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
+          return r.http.relativeURI && r.http.relativeURI[0];
+        }
+
+        return '';
+      },
+    },
+    'http.resourceIdPathUpdate': {
+      id: 'http.resourceIdPathUpdate',
+      type: 'text',
+      label: 'Response Id Path',
+      placeholder: 'Optional',
+      visibleWhenAll: [
+        {
+          field: 'http.compositeType',
+          is: ['createandupdate', 'updateandignore'],
+        },
+        {
+          field: 'http.method',
+          is: ['COMPOSITE'],
+        },
+      ],
+      defaultValue: r => {
+        if (!r || !r.http || !r.http.method) {
+          return '';
+        }
+
+        if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
+          return (
+            r.http.response &&
+            r.http.response.resourceIdPath &&
+            r.http.response.resourceIdPath[0]
+          );
+        }
+
+        return '';
+      },
+    },
+    'http.resourcePathUpdate': {
+      id: 'http.resourcePathUpdate',
+      type: 'text',
+      label: 'Response Path',
+      visibleWhenAll: [
+        {
+          field: 'http.compositeType',
+          is: ['createandupdate', 'updateandignore'],
+        },
+        {
+          field: 'http.method',
+          is: ['COMPOSITE'],
+        },
+      ],
+      defaultValue: r => {
+        if (!r || !r.http || !r.http.method) {
+          return '';
+        }
+
+        if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
+          return (
+            r.http.response &&
+            r.http.response.resourcePath &&
+            r.http.response.resourcePath[0]
+          );
+        }
+
+        return '';
+      },
+    },
     ignoreExistingData: {
       id: 'ignoreExistingData',
       type: 'labeltitle',
@@ -208,7 +490,36 @@ export default {
         },
       ],
     },
-    'http.existingDataId': { fieldId: 'http.existingDataId' },
+    'http.existingDataId': {
+      id: 'http.existingDataId',
+      type: 'text',
+      label: 'Existing Data Id',
+      visibleWhen: [
+        {
+          field: 'http.compositeType',
+          is: ['createandignore', 'updateandignore'],
+        },
+      ],
+      requiredWhen: [
+        {
+          field: 'http.compositeType',
+          is: ['createandignore', 'updateandignore'],
+        },
+      ],
+      defaultValue: r => {
+        if (!r || !r.http) {
+          return '';
+        }
+
+        if (r.http.ignoreLookupName) {
+          return r.http.ignoreLookupName;
+        } else if (r.http.ignoreExtract) {
+          return r.http.ignoreExtract;
+        }
+
+        return '';
+      },
+    },
     mediatypeInformation: {
       id: 'mediatypeInformation',
       type: 'labeltitle',
@@ -224,24 +535,8 @@ export default {
       fieldId: 'file.csv',
       visibleWhen: [{ field: 'http.requestMediaType', is: ['csv'] }],
     },
-    'file.csv.includeHeader': {
-      fieldId: 'file.csv.includeHeader',
-      visibleWhen: [{ field: 'http.requestMediaType', is: ['csv'] }],
-    },
-    'file.csv.customHeaderRows': { fieldId: 'file.csv.customHeaderRows' },
     'http.body': { fieldId: 'http.body' },
-    'file.csv.rowDelimiter': {
-      fieldId: 'file.csv.rowDelimiter',
-      visibleWhen: [{ field: 'http.requestMediaType', is: ['csv'] }],
-    },
-    'file.csv.replaceTabWithSpace': {
-      fieldId: 'file.csv.replaceTabWithSpace',
-      visibleWhen: [{ field: 'http.requestMediaType', is: ['csv'] }],
-    },
-    'file.csv.replaceNewLineWithSpace': {
-      fieldId: 'file.csv.replaceNewLineWithSpace',
-      visibleWhen: [{ field: 'http.requestMediaType', is: ['csv'] }],
-    },
+
     'http.ignoreEmptyNodes': { fieldId: 'http.ignoreEmptyNodes' },
     advancedSettings: { formId: 'advancedSettings' },
     'http.configureAsyncHelper': { fieldId: 'http.configureAsyncHelper' },
@@ -283,9 +578,6 @@ export default {
       'http.successMediaType',
       'http.errorMediaType',
       'uploadFile',
-      'file.csv.columnDelimiter',
-      'file.csv.includeHeader',
-      'file.csv.customHeaderRows',
       'http.body',
     ],
     type: 'collapse',
@@ -294,9 +586,6 @@ export default {
         collapsed: true,
         label: 'Advanced',
         fields: [
-          'file.csv.rowDelimiter',
-          'file.csv.replaceTabWithSpace',
-          'file.csv.replaceNewLineWithSpace',
           'http.ignoreEmptyNodes',
           'advancedSettings',
           'http.configureAsyncHelper',
