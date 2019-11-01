@@ -198,7 +198,7 @@ export default {
       expression.push({ _connectorId: { $exists: false } });
       const filter = { $and: expression };
 
-      return { filter };
+      return { filter, appType: app.assistant };
     }
 
     if (['importId', 'exportId'].includes(fieldId)) {
