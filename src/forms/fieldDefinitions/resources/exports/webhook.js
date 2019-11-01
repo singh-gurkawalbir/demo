@@ -70,6 +70,9 @@ export default {
     type: 'select',
     label: 'Verification Type',
     required: true,
+    setFieldsOnChange: true,
+    setFieldValue: '',
+    setFieldIds: ['webhook.url'],
     options: [
       {
         items: [
@@ -90,6 +93,9 @@ export default {
   'webhook.algorithm': {
     type: 'select',
     label: 'Algorithm',
+    setFieldsOnChange: true,
+    setFieldValue: '',
+    setFieldIds: ['webhook.url'],
     options: [
       {
         items: [
@@ -109,6 +115,9 @@ export default {
     type: 'select',
     label: 'Header (Containing HMAC)',
     required: true,
+    setFieldsOnChange: true,
+    setFieldValue: '',
+    setFieldIds: ['webhook.url'],
     options: [
       {
         items: [
@@ -128,6 +137,9 @@ export default {
     type: 'select',
     label: 'Encoding',
     required: true,
+    setFieldsOnChange: true,
+    setFieldValue: '',
+    setFieldIds: ['webhook.url'],
     options: [
       {
         items: [
@@ -188,6 +200,9 @@ export default {
     type: 'text',
     label: 'Path',
     required: true,
+    setFieldsOnChange: true,
+    setFieldValue: '',
+    setFieldIds: ['webhook.url'],
     visibleWhenAll: [
       {
         field: 'webhook.provider',
@@ -200,8 +215,9 @@ export default {
     ],
   },
   'webhook.token': {
-    type: 'text',
+    type: 'generatetoken',
     label: 'Custom URL Token',
+    buttonLabel: 'Generate new token',
     setFieldsOnChange: true,
     setFieldValue: '',
     setFieldIds: ['webhook.url'],
