@@ -152,7 +152,7 @@ export default {
       type: 'labeltitle',
       label: 'How would you like the data imported?',
     },
-    dataMappings: { formId: 'dataMappings' },
+    // dataMappings: { formId: 'dataMappings' },
     inputMode: {
       id: 'inputMode',
       type: 'radiogroup',
@@ -662,7 +662,7 @@ export default {
       'common',
       'inputMode',
       'importData',
-      'dataMappings',
+      // 'dataMappings',
       'blobKeyPath',
       'http.method',
       'http.blobMethod',

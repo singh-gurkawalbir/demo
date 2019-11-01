@@ -141,7 +141,7 @@ export default {
     type: 'text',
     label: 'Relative URI',
     placeholder: 'Optional',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'http.method',
         isNot: ['POST', 'PUT', 'DELETE', 'PATCH'],
@@ -196,7 +196,7 @@ export default {
     type: 'text',
     label: 'Resource Id Path',
     placeholder: 'Optional',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'http.method',
         is: ['POST', 'PUT', 'DELETE', 'PATCH'],
@@ -254,7 +254,7 @@ export default {
   'http.successMediaType': {
     type: 'select',
     label: 'Success Media Type',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'inputMode',
         is: ['records'],

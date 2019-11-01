@@ -194,7 +194,7 @@ export default {
       id: 'createNewData',
       type: 'labeltitle',
       label: 'Create New Data',
-      visibleWhen: [
+      visibleWhenAll: [
         {
           field: 'rest.compositeType',
           is: ['createandupdate', 'createandignore'],
@@ -432,7 +432,7 @@ export default {
       id: 'upateExistingData',
       type: 'labeltitle',
       label: 'Upate Existing Data',
-      visibleWhen: [
+      visibleWhenAll: [
         {
           field: 'rest.compositeType',
           is: ['createandupdate', 'updateandignore'],
@@ -648,7 +648,7 @@ export default {
       id: 'ignoreExistingData',
       type: 'labeltitle',
       label: 'Ignore Existing Data',
-      visibleWhen: [
+      visibleWhenAll: [
         {
           field: 'rest.compositeType',
           is: ['createandignore', 'updateandignore'],
@@ -704,9 +704,9 @@ export default {
       ],
     },
     'rest.sampleData': { fieldId: 'rest.sampleData' },
-    dataMappings: {
-      formId: 'dataMappings',
-    },
+    // dataMappings: {
+    //   formId: 'dataMappings',
+    // },
     advancedSettings: {
       formId: 'advancedSettings',
       visibleWhenAll: [
@@ -761,7 +761,7 @@ export default {
       'rest.existingDataId',
       'sampleData',
       'rest.sampleData',
-      'dataMappings',
+      // 'dataMappings',
     ],
     type: 'collapse',
     containers: [
