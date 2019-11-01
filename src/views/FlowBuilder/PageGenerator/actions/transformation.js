@@ -4,6 +4,7 @@ import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import Icon from '../../../../components/icons/TransformIcon';
 import TransformEditorDialog from '../../../../components/AFE/TransformEditor/Dialog';
+import helpTextMap from '../../../../components/Help/helpTextMap';
 
 function TransformationDialog({ flowId, resource, onClose }) {
   const dispatch = useDispatch();
@@ -72,7 +73,6 @@ export default {
   name: 'exportTransformation',
   position: 'right',
   Icon,
-  helpText:
-    'This is the text currently in the hover state of actions in the current FB',
+  helpText: helpTextMap['fb.pg.exports.transform'],
   Component: Transformation,
 };
