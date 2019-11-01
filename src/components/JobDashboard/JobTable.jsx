@@ -34,6 +34,7 @@ function JobTable({
   selectedJobs,
   userPermissionsOnIntegration,
   integrationName,
+  isFlowBuilderView,
 }) {
   const classes = useStyles();
   const [showErrorDialogFor, setShowErrorDialogFor] = useState({});
@@ -134,6 +135,7 @@ function JobTable({
               userPermissionsOnIntegration={userPermissionsOnIntegration}
               onViewErrorsClick={handleViewErrorsClick}
               integrationName={integrationName}
+              isFlowBuilderView={isFlowBuilderView}
             />
           ))}
         </TableBody>

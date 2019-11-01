@@ -216,13 +216,16 @@ export default function IntegrationAppSettings(props) {
       required
       resources="integrations, exports, imports, flows, connections">
       <div>
-        <CeligoPageBar title={integration.name}>
-          <ChipInput
-            value={integration.tag || 'tag'}
-            className={classes.tag}
-            variant="outlined"
-            onChange={handleTagChangeHandler}
-          />
+        <CeligoPageBar
+          title={integration.name}
+          titleTag={
+            <ChipInput
+              value={integration.tag || 'tag'}
+              className={classes.tag}
+              variant="outlined"
+              onChange={handleTagChangeHandler}
+            />
+          }>
           <a
             href={getRoutePath(`integrations/${integrationId}/dashboard`)}
             className={classes.dashboard}>
