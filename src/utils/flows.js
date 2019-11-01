@@ -11,6 +11,7 @@ export const actionsMap = {
   responseMapping: 'responseMapping',
   outputFilter: 'outputFilter',
   proceedOnFailure: 'proceedOnFailure',
+  schedule: 'schedule',
 };
 const exportActions = [
   actionsMap.inputFilter,
@@ -19,6 +20,7 @@ const exportActions = [
   actionsMap.outputFilter,
   actionsMap.responseMapping,
   actionsMap.proceedOnFailure,
+  actionsMap.schedule,
 ];
 const importActions = [
   actionsMap.inputFilter,
@@ -37,9 +39,16 @@ const isActionUsed = (resource, flowNode, action) => {
     transform = {},
     responseTransform = {},
   } = resource;
-  const { responseMapping = {}, proceedOnFailure } = flowNode;
+  const {
+    responseMapping = {},
+    proceedOnFailure,
+    schedule,
+    _keepDeltaBehindFlowId,
+  } = flowNode;
 
   switch (action) {
+    case actionsMap.schedule:
+      return !!(schedule || _keepDeltaBehindFlowId);
     case actionsMap.inputFilter:
       return !!(inputFilter.rules && inputFilter.rules.length);
 
