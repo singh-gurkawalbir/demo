@@ -7,6 +7,7 @@ import DynaForm from '../../../../components/DynaForm';
 import DynaSubmit from '../../../../components/DynaForm/DynaSubmit';
 import actions from '../../../../actions';
 import Icon from '../../../../components/icons/TransformIcon';
+import helpTextMap from '../../../../components/Help/helpTextMap';
 
 const useStyles = makeStyles(theme => ({
   paper: {
@@ -107,7 +108,6 @@ export default {
   name: 'responseTransformation',
   position: 'middle',
   Icon,
-  helpText:
-    'This is the text currently in the hover state of actions in the current FB',
+  helpText: helpTextMap['fb.pp.imports.transform'],
   Component: ResponseTransformation,
 };

@@ -20,6 +20,7 @@ import responseMapping from './actions/responseMapping';
 import responseTransformationAction from './actions/responseTransformation';
 import proceedOnFailureAction from './actions/proceedOnFailure';
 import { actionsMap } from '../../../utils/flows';
+import helpTextMap from '../../../components/Help/helpTextMap';
 
 const useStyles = makeStyles(theme => ({
   ppContainer: {
@@ -201,12 +202,18 @@ const PageProcessor = ({
   }
 
   // #region Configure available processor actions
-  const processorActions = [
-    { ...inputFilterAction, isUsed: usedActions[actionsMap.inputFilter] },
-  ];
+
   // Template mapping action is shown only for http import resource
   const isHTTPImport =
     resource.adaptorType && adaptorTypeMap[resource.adaptorType] === 'http';
+  // Add Help texts for actions common to lookups and imports manually
+  const processorActions = [
+    {
+      ...inputFilterAction,
+      isUsed: usedActions[actionsMap.inputFilter],
+      helpText: helpTextMap[`fb.pp.${resourceType}.inputFilter`],
+    },
+  ];
 
   if (!pending) {
     if (pp.type === 'export') {
@@ -243,11 +250,20 @@ const PageProcessor = ({
 
     if (!isLast) {
       processorActions.push(
-        { ...pageProcessorHooksAction, isUsed: usedActions[actionsMap.hooks] },
-        { ...responseMapping, isUsed: usedActions[actionsMap.responseMapping] },
+        {
+          ...pageProcessorHooksAction,
+          isUsed: usedActions[actionsMap.hooks],
+          helpText: helpTextMap[`fb.pp.${resourceType}.hooks`],
+        },
+        {
+          ...responseMapping,
+          isUsed: usedActions[actionsMap.responseMapping],
+          helpText: helpTextMap[`fb.pp.${resourceType}.responseMapping`],
+        },
         {
           ...proceedOnFailureAction,
           isUsed: usedActions[actionsMap.proceedOnFailure],
+          helpText: helpTextMap[`fb.pp.${resourceType}.proceedOnFailure`],
         }
       );
     }

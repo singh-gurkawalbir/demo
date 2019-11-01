@@ -101,7 +101,5 @@ export default {
   name: 'proceedOnFailure',
   position: 'right',
   Icon,
-  helpText:
-    'This is the text currently in the hover state of actions in the current FB',
   Component: ProceedOnFailure,
 };
