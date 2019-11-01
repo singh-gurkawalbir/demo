@@ -1,10 +1,12 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { FormContext } from 'react-forms-processor/dist';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { makeStyles } from '@material-ui/styles';
 import Button from '@material-ui/core/Button';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
+import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import DynaText from './DynaText';
 import { isNewId, getWebhookUrl } from '../../../utils/resource';
 
@@ -25,6 +27,8 @@ function GenerateUrl(props) {
   } = props;
   const { value: formValues } = formContext;
   const classes = useStyles();
+  const [enqueueSnackbar] = useEnqueueSnackbar();
+  const [url, setUrl] = useState(true);
   const dispatch = useDispatch();
   const finalResourceId =
     useSelector(state => selectors.createdResourceId(state, resourceId)) ||
@@ -39,16 +43,17 @@ function GenerateUrl(props) {
         true
       )
     );
+    setUrl(true);
   };
 
   useEffect(() => {
-    if (!isNewId(finalResourceId)) {
+    if (!isNewId(finalResourceId) && url) {
       const whURL = getWebhookUrl(formValues, finalResourceId);
 
       onFieldChange(id, whURL);
+      setUrl(false);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [finalResourceId, formValues, id]);
+  }, [finalResourceId, formValues, id, onFieldChange, url]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'row' }}>
@@ -63,7 +68,24 @@ function GenerateUrl(props) {
         />
       </div>
       <div>
-        <Button onClick={handleGenerateUrl}>{buttonLabel}</Button>
+        {value && (
+          <CopyToClipboard
+            text={value}
+            onCopy={() =>
+              enqueueSnackbar({
+                message: 'URL copied to clipboard.',
+                variant: 'success',
+              })
+            }>
+            <Button
+              data-test="copyToClipboard"
+              title="Copy to clipboard"
+              size="small">
+              copy to clipboard
+            </Button>
+          </CopyToClipboard>
+        )}
+        {!value && <Button onClick={handleGenerateUrl}>{buttonLabel}</Button>}
       </div>
     </div>
   );

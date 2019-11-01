@@ -61,6 +61,9 @@ export default function DynaSelect(props) {
     label,
     onFieldChange,
     resetAfterSelection,
+    setFieldsOnChange,
+    setFieldValue = '',
+    setFieldIds = [],
   } = props;
   const classes = useStyles();
   let items = options.reduce(
@@ -102,6 +105,21 @@ export default function DynaSelect(props) {
   );
 
   items = [defaultItem, ...items];
+  const setFormFields = () => {
+    setFieldIds.forEach(fieldId => {
+      onFieldChange(fieldId, setFieldValue);
+    });
+  };
+
+  const handleSelectChange = evt => {
+    const { value: evtValue } = evt.target;
+
+    onFieldChange(id, evtValue);
+
+    if (setFieldsOnChange) {
+      setFormFields();
+    }
+  };
 
   return (
     <div>
@@ -120,11 +138,7 @@ export default function DynaSelect(props) {
           IconComponent={ArrowDownIcon}
           disableUnderline
           displayEmpty
-          onChange={evt => {
-            const { value: evtValue } = evt.target;
-
-            onFieldChange(id, evtValue);
-          }}
+          onChange={handleSelectChange}
           input={<Input name={name} id={id} />}>
           {items}
         </Select>

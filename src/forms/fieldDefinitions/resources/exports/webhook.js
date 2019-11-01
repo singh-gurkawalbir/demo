@@ -3,6 +3,9 @@ export default {
     type: 'select',
     label: 'Provider',
     required: true,
+    setFieldsOnChange: true,
+    setFieldValue: '',
+    setFieldIds: ['webhook.url'],
     options: [
       {
         items: [
@@ -40,6 +43,9 @@ export default {
     type: 'text',
     label: 'Key (Secret)',
     inputType: 'password',
+    setFieldsOnChange: true,
+    setFieldValue: '',
+    setFieldIds: ['webhook.url'],
     visibleWhen: [
       {
         field: 'webhook.provider',
@@ -196,6 +202,9 @@ export default {
   'webhook.token': {
     type: 'text',
     label: 'Custom URL Token',
+    setFieldsOnChange: true,
+    setFieldValue: '',
+    setFieldIds: ['webhook.url'],
     visibleWhen: [
       {
         field: 'webhook.provider',
