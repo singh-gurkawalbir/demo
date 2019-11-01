@@ -10,22 +10,6 @@ export default {
       ...newValues,
     };
   },
-  optionsHandler: (fieldId, fields) => {
-    if (fieldId === 'mapping') {
-      const lookupField = fields.find(
-        field => field.fieldId === 'rest.lookups'
-      );
-
-      if (lookupField) {
-        return {
-          lookupId: 'rest.lookups',
-          lookups: lookupField && lookupField.value,
-        };
-      }
-    }
-
-    return null;
-  },
   fieldMap: {
     common: { formId: 'common' },
     importData: {

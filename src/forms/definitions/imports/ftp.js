@@ -134,16 +134,6 @@ export default {
       fieldId: 'file.lookups',
       visible: false,
     },
-    mapping: {
-      fieldId: 'mapping',
-      refreshOptionsOnChangesTo: ['file.lookups'],
-      visibleWhen: [
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
-      ],
-    },
     inputMode: {
       id: 'inputMode',
       type: 'radiogroup',

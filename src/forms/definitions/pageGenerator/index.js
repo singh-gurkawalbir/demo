@@ -181,13 +181,8 @@ export default {
           ],
         },
       ],
-      defaultValue: r => {
-        const output = r && r.file && r.file.output;
-
-        if (!output) return 'records';
-
-        return output;
-      },
+      defaultValue: r =>
+        r && r.netsuite && r.netsuite.internalId ? 'blob' : 'records',
     },
     netsuiteExecutionType: {
       id: 'netsuite.execution.type',

@@ -13,7 +13,5 @@ export default {
   },
   layout: {
     fields: ['common', 'netsuite.internalId'],
-    type: 'collapse',
-    containers: [],
   },
 };

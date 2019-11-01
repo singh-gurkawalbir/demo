@@ -5,13 +5,10 @@ export default {
     type: 'uploadfile',
     label: 'Sample File (that would be exported)',
     mode: r => r && r.file && r.file.type,
-    // filter: r => ({ type: r.type }),y
-    // excludeFilter: r => ({ _
-    //
     visibleWhen: [
       {
         field: 'file.type',
-        is: ['csv', 'json', 'xlsx'],
+        is: ['csv', 'json', 'xlsx', 'xml'],
       },
     ],
   },
