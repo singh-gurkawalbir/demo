@@ -24,7 +24,6 @@ export default {
       id: 'type',
       type: 'select',
       label: 'Export Type',
-      defaultValue: r => (r && r.type ? r.type : 'all'),
       required: true,
       options: [
         {

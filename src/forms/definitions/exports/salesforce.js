@@ -15,6 +15,11 @@ export default {
       retValues['/type'] = 'distributed';
     }
 
+    if (retValues['/outputMode'] === 'blob') {
+      retValues['/salesforce/sObjectType'] =
+        retValues['/salesforce/objectType'];
+    }
+
     return {
       ...retValues,
     };
@@ -26,16 +31,27 @@ export default {
       id: 'exportData',
       type: 'labeltitle',
       label: 'What would you like to export from Salesforce?',
-      visibleWhen: [
-        { field: 'salesforce.executionType', is: ['scheduled', 'realtime'] },
+    },
+    outputMode: {
+      id: 'outputMode',
+      type: 'radiogroup',
+      label: 'Output Mode',
+      options: [
+        {
+          items: [
+            { label: 'Records', value: 'records' },
+            { label: 'Blob Keys', value: 'blob' },
+          ],
+        },
       ],
+      defaultValue: r =>
+        r && r.salesforce && r.salesforce.id ? 'blob' : 'records',
     },
     'salesforce.soql.query': { fieldId: 'salesforce.soql.query' },
     type: {
       id: 'type',
       type: 'select',
       label: 'Export Type',
-      defaultValue: r => (r && r.type ? r.type : 'all'),
       required: true,
       options: [
         {
@@ -47,44 +63,23 @@ export default {
           ],
         },
       ],
-      visibleWhen: [{ field: 'salesforce.executionType', is: ['scheduled'] }],
+      visibleWhenAll: [
+        { field: 'salesforce.executionType', is: ['scheduled'] },
+        { field: 'outputMode', is: ['records'] },
+      ],
     },
     'delta.dateField': {
-      id: 'delta.dateField',
-      label: 'Date Field',
-      required: true,
-      type: 'text',
-      visibleWhen: [
-        {
-          field: 'type',
-          is: ['delta'],
-        },
-      ],
+      fieldId: 'delta.dateField',
     },
     'delta.lagOffset': {
-      id: 'delta.lagOffset',
-      label: 'Offset',
-      type: 'text',
-      visibleWhen: [
-        {
-          field: 'type',
-          is: ['delta'],
-        },
-      ],
+      fieldId: 'delta.lagOffset',
     },
     'once.booleanField': {
-      id: 'once.booleanField',
-      label: 'Boolean Field',
-      required: true,
-      type: 'text',
-      visibleWhen: [
-        {
-          field: 'type',
-          is: ['once'],
-        },
-      ],
+      fieldId: 'once.booleanField',
     },
     'salesforce.sObjectType': { fieldId: 'salesforce.sObjectType' },
+    'salesforce.objectType': { fieldId: 'salesforce.objectType' },
+    'salesforce.id': { fieldId: 'salesforce.id' },
     'salesforce.distributed.requiredTrigger': {
       fieldId: 'salesforce.distributed.requiredTrigger',
     },
@@ -97,23 +92,29 @@ export default {
     'salesforce.distributed.qualifier': {
       fieldId: 'salesforce.distributed.qualifier',
     },
-    advancedSettings: { formId: 'advancedSettings' },
+    advancedSettings: {
+      formId: 'advancedSettings',
+      visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
+    },
   },
   layout: {
     fields: [
       'common',
+      'outputMode',
       'salesforce.executionType',
       'exportData',
-      'salesforce.soql.query',
-      'type',
-      'delta.dateField',
-      'delta.lagOffset',
-      'once.booleanField',
       'salesforce.sObjectType',
       'salesforce.distributed.requiredTrigger',
       'salesforce.distributed.referencedFields',
       'salesforce.distributed.relatedLists.referencedFields',
       'salesforce.distributed.qualifier',
+      'salesforce.soql.query',
+      'type',
+      'delta.dateField',
+      'delta.lagOffset',
+      'once.booleanField',
+      'salesforce.objectType',
+      'salesforce.id',
     ],
     type: 'collapse',
     containers: [

@@ -25,7 +25,7 @@ export default {
     label: 'EDI X12 Format',
     format: 'edi',
     required: r => !r,
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'file.type',
         is: ['filedefinition'],
@@ -37,7 +37,7 @@ export default {
     label: 'Format',
     format: 'fixed',
     required: r => !r,
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'file.type',
         is: ['fixed'],
@@ -49,7 +49,7 @@ export default {
     label: 'EDIFACT Format',
     format: 'ediFact',
     required: r => !r,
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'file.type',
         is: ['delimited/edifact'],
@@ -59,7 +59,7 @@ export default {
   'file.filedefinition.rules': {
     type: 'filedefinitioneditor',
     label: 'File Definition Rules ',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'file.type',
         is: ['filedefinition', 'fixed', 'delimited/edifact'],
@@ -82,7 +82,7 @@ export default {
     type: 'uploadfile',
     label: 'Sample File (that would be imported)',
     mode: r => r && r.file && r.file.type,
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'file.type',
         is: ['csv', 'json', 'xlsx'],
@@ -92,7 +92,7 @@ export default {
   'file.csv': {
     type: 'csvparse',
     label: 'Configure CSV parse options',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'file.type',
         is: ['csv'],
@@ -102,7 +102,7 @@ export default {
   'file.xlsx.includeHeader': {
     type: 'checkbox',
     label: 'Include Header',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'file.type',
         is: ['xlsx'],
@@ -117,7 +117,7 @@ export default {
   'file.csv.wrapWithQuotes': {
     type: 'checkbox',
     label: 'Wrap with quotes',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'file.type',
         is: ['csv'],
@@ -127,7 +127,7 @@ export default {
   'file.csv.replaceTabWithSpace': {
     type: 'checkbox',
     label: 'Replace tab with space',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'file.type',
         is: ['csv'],
@@ -137,7 +137,7 @@ export default {
   'file.csv.replaceNewLineWithSpace': {
     type: 'checkbox',
     label: 'Replace new line with space',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'file.type',
         is: ['csv'],
@@ -147,7 +147,7 @@ export default {
   'file.skipAggregation': {
     type: 'checkbox',
     label: 'Skip Aggregation',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'file.type',
         is: ['csv', 'json', 'xlsx', 'xml'],

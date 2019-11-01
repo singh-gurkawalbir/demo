@@ -5,10 +5,22 @@ export default {
     type: 'uploadfile',
     label: 'Sample File (that would be exported)',
     mode: r => r && r.file && r.file.type,
+    visibleWhen: [
+      {
+        field: 'file.type',
+        is: ['csv', 'json', 'xlsx', 'xml'],
+      },
+    ],
   },
   'file.encoding': {
     type: 'select',
     label: 'File encoding',
+    visibleWhen: [
+      {
+        field: 'outputMode',
+        is: ['records'],
+      },
+    ],
     options: [
       {
         items: [
@@ -49,14 +61,42 @@ export default {
         ],
       },
     ],
+    visibleWhen: [
+      {
+        field: 'outputMode',
+        is: ['records'],
+      },
+    ],
   },
   'file.skipDelete': {
     type: 'checkbox',
     label: 'Leave File On Server',
+    visibleWhen: [
+      {
+        field: 'outputMode',
+        is: ['records'],
+      },
+    ],
+  },
+  'ftp.leaveFile': {
+    type: 'checkbox',
+    label: 'Leave File On Server',
+    visibleWhen: [
+      {
+        field: 'outputMode',
+        is: ['blob'],
+      },
+    ],
   },
   'file.compressionFormat': {
     type: 'select',
     label: 'Compression Format',
+    visibleWhen: [
+      {
+        field: 'outputMode',
+        is: ['records'],
+      },
+    ],
     options: [{ items: [{ label: 'gzip', value: 'gzip' }] }],
   },
   'file.purgeInternalBackup': {

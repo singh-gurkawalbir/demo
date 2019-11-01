@@ -61,6 +61,12 @@ export function connectors(state, application, sandbox, licenses) {
   return connectors;
 }
 
+export function integrationAppList(state) {
+  if (!state) return [];
+
+  return state.connectors || [];
+}
+
 export function templates(state, application) {
   if (!state) {
     return [];
