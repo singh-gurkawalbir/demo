@@ -48,6 +48,7 @@ export default function CeligoPageBar({
   title,
   infoText,
   subtitle,
+  titleTag,
 }) {
   const classes = useStyles();
   const theme = useTheme();
@@ -81,6 +82,7 @@ export default function CeligoPageBar({
                     </IconButton>
                   )}
                   {title}
+                  {titleTag && <span>{titleTag}</span>}
                   {infoText && (
                     <Fragment>
                       <IconButton

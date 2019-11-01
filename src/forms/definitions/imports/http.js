@@ -6,7 +6,9 @@ export default {
       resource.http.lookups &&
       resource.http.lookups.get(retValues['/http/existingDataId']);
 
-    if (retValues['/http/method'] === 'COMPOSITE') {
+    if (retValues['/inputMode'] === 'blob') {
+      retValues['/http/method'] = retValues['/http/blobMethod'];
+    } else if (retValues['/http/method'] === 'COMPOSITE') {
       if (retValues['/http/compositeType'] === 'createandupdate') {
         retValues['/http/relativeURI'] = [
           retValues['/http/relativeURIUpdate'],
@@ -150,9 +152,23 @@ export default {
       type: 'labeltitle',
       label: 'How would you like the data imported?',
     },
-    oneToMany: { fieldId: 'oneToMany' },
-    pathToMany: { fieldId: 'pathToMany' },
+    dataMappings: { formId: 'dataMappings' },
+    inputMode: {
+      id: 'inputMode',
+      type: 'radiogroup',
+      label: 'Input Mode',
+      options: [
+        {
+          items: [
+            { label: 'Records', value: 'records' },
+            { label: 'Blob Keys', value: 'blob' },
+          ],
+        },
+      ],
+      defaultValue: r => (r && r.blobKeyPath ? 'blob' : 'records'),
+    },
     'http.method': { fieldId: 'http.method' },
+    'http.blobMethod': { fieldId: 'http.blobMethod' },
     'http.headers': { fieldId: 'http.headers' },
     'http.requestMediaType': { fieldId: 'http.requestMediaType' },
     'http.compositeType': { fieldId: 'http.compositeType' },
@@ -168,10 +184,14 @@ export default {
       id: 'createNewData',
       type: 'labeltitle',
       label: 'Create New Data',
-      visibleWhen: [
+      visibleWhenAll: [
         {
           field: 'http.compositeType',
           is: ['createandupdate', 'createandignore'],
+        },
+        {
+          field: 'inputMode',
+          is: ['records'],
         },
       ],
     },
@@ -212,6 +232,10 @@ export default {
           field: 'http.method',
           is: ['COMPOSITE'],
         },
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
       ],
     },
     'http.relativeURICreate': {
@@ -227,6 +251,10 @@ export default {
         {
           field: 'http.method',
           is: ['COMPOSITE'],
+        },
+        {
+          field: 'inputMode',
+          is: ['records'],
         },
       ],
       defaultValue: r => {
@@ -259,6 +287,10 @@ export default {
           field: 'http.method',
           is: ['COMPOSITE'],
         },
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
       ],
       defaultValue: r => {
         if (!r || !r.http || !r.http.method) {
@@ -289,6 +321,10 @@ export default {
         {
           field: 'http.method',
           is: ['COMPOSITE'],
+        },
+        {
+          field: 'inputMode',
+          is: ['records'],
         },
       ],
       defaultValue: r => {
@@ -328,6 +364,10 @@ export default {
           field: 'http.method',
           is: ['COMPOSITE'],
         },
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
       ],
       defaultValue: r => {
         if (!r || !r.http || !r.http.method) {
@@ -349,10 +389,14 @@ export default {
       id: 'upateExistingData',
       type: 'labeltitle',
       label: 'Upate Existing Data',
-      visibleWhen: [
+      visibleWhenAll: [
         {
           field: 'http.compositeType',
           is: ['createandupdate', 'updateandignore'],
+        },
+        {
+          field: 'inputMode',
+          is: ['records'],
         },
       ],
     },
@@ -377,6 +421,10 @@ export default {
         {
           field: 'http.method',
           is: ['COMPOSITE'],
+        },
+        {
+          field: 'inputMode',
+          is: ['records'],
         },
       ],
       defaultValue: r => {
@@ -405,6 +453,10 @@ export default {
           field: 'http.method',
           is: ['COMPOSITE'],
         },
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
       ],
       defaultValue: r => {
         if (!r || !r.http || !r.http.method) {
@@ -431,6 +483,10 @@ export default {
         {
           field: 'http.method',
           is: ['COMPOSITE'],
+        },
+        {
+          field: 'inputMode',
+          is: ['records'],
         },
       ],
       defaultValue: r => {
@@ -462,6 +518,10 @@ export default {
           field: 'http.method',
           is: ['COMPOSITE'],
         },
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
       ],
       defaultValue: r => {
         if (!r || !r.http || !r.http.method) {
@@ -483,10 +543,18 @@ export default {
       id: 'ignoreExistingData',
       type: 'labeltitle',
       label: 'Ignore Existing Data',
-      visibleWhen: [
+      visibleWhenAll: [
         {
           field: 'http.compositeType',
           is: ['createandignore', 'updateandignore'],
+        },
+        {
+          field: 'http.method',
+          is: ['COMPOSITE'],
+        },
+        {
+          field: 'inputMode',
+          is: ['records'],
         },
       ],
     },
@@ -494,10 +562,18 @@ export default {
       id: 'http.existingDataId',
       type: 'text',
       label: 'Existing Data Id',
-      visibleWhen: [
+      visibleWhenAll: [
         {
           field: 'http.compositeType',
           is: ['createandignore', 'updateandignore'],
+        },
+        {
+          field: 'http.method',
+          is: ['COMPOSITE'],
+        },
+        {
+          field: 'inputMode',
+          is: ['records'],
         },
       ],
       requiredWhen: [
@@ -524,36 +600,78 @@ export default {
       id: 'mediatypeInformation',
       type: 'labeltitle',
       label: 'Media type information',
+      visibleWhen: [
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
+      ],
     },
     'http.successMediaType': { fieldId: 'http.successMediaType' },
+    blobKeyPath: { fieldId: 'blobKeyPath' },
     'http.errorMediaType': { fieldId: 'http.errorMediaType' },
     uploadFile: {
-      fieldId: 'uploadFile',
-      visibleWhen: [{ field: 'http.requestMediaType', is: ['csv'] }],
+      id: 'uploadFile',
+      type: 'uploadfile',
+      label: 'Sample File (that would be imported)',
+      mode: r => r && r.file && r.file.type,
+      visibleWhenAll: [
+        { field: 'http.requestMediaType', is: ['csv'] },
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
+      ],
     },
     'file.csv': {
       fieldId: 'file.csv',
-      visibleWhen: [{ field: 'http.requestMediaType', is: ['csv'] }],
+      visibleWhenAll: [
+        { field: 'http.requestMediaType', is: ['csv'] },
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
+      ],
     },
     'http.body': { fieldId: 'http.body' },
 
     'http.ignoreEmptyNodes': { fieldId: 'http.ignoreEmptyNodes' },
-    advancedSettings: { formId: 'advancedSettings' },
+    advancedSettings: {
+      formId: 'advancedSettings',
+      visibleWhenAll: [
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
+      ],
+    },
     'http.configureAsyncHelper': { fieldId: 'http.configureAsyncHelper' },
     'http._asyncHelperId': { fieldId: 'http._asyncHelperId' },
+    deleteAfterImport: {
+      fieldId: 'deleteAfterImport',
+      visibleWhen: [
+        {
+          field: 'inputMode',
+          is: ['blob'],
+        },
+      ],
+    },
   },
   layout: {
     fields: [
       'common',
+      'inputMode',
       'importData',
-      'oneToMany',
-      'pathToMany',
+      'dataMappings',
+      'blobKeyPath',
       'http.method',
+      'http.blobMethod',
       'http.headers',
       'http.requestMediaType',
       'http.compositeType',
       'http.relativeURI',
       'http.lookups',
+      'http.body',
       'http.response.successPath',
       'http.response.successValues',
       'http.response.resourceIdPath',
@@ -569,7 +687,6 @@ export default {
       'upateExistingData',
       'http.compositeMethodUpdate',
       'http.relativeURIUpdate',
-      // 'http.bodyUpdate',
       'http.resourceIdPathUpdate',
       'http.resourcePathUpdate',
       'ignoreExistingData',
@@ -578,7 +695,7 @@ export default {
       'http.successMediaType',
       'http.errorMediaType',
       'uploadFile',
-      'http.body',
+      'file.csv',
     ],
     type: 'collapse',
     containers: [
@@ -590,6 +707,7 @@ export default {
           'advancedSettings',
           'http.configureAsyncHelper',
           'http._asyncHelperId',
+          'deleteAfterImport',
         ],
       },
     ],

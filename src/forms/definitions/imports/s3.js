@@ -95,20 +95,81 @@ export default {
       type: 'labeltitle',
       label: 'How would you like the data imported?',
     },
+    inputMode: {
+      id: 'inputMode',
+      type: 'radiogroup',
+      label: 'Input Mode',
+      options: [
+        {
+          items: [
+            { label: 'Records', value: 'records' },
+            { label: 'Blob Keys', value: 'blob' },
+          ],
+        },
+      ],
+      defaultValue: r => (r && r.blobKeyPath ? 'blob' : 'records'),
+    },
     's3.region': { fieldId: 's3.region' },
     's3.bucket': { fieldId: 's3.bucket' },
-    fileType: { formId: 'fileType' },
+    fileType: {
+      formId: 'fileType',
+      visibleWhenAll: [
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
+      ],
+    },
     's3.fileKey': { fieldId: 's3.fileKey' },
-    file: { formId: 'file' },
+    blobKeyPath: { fieldId: 'blobKeyPath' },
+    file: {
+      formId: 'file',
+      visibleWhenAll: [
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
+      ],
+    },
     dataMappings: { formId: 'dataMappings' },
-    'file.lookups': { fieldId: 'file.lookups', visible: false },
-    'file.csv.rowDelimiter': { fieldId: 'file.csv.rowDelimiter' },
-    fileAdvancedSettings: { formId: 'fileAdvancedSettings' },
+    'file.lookups': {
+      fieldId: 'file.lookups',
+      visible: false,
+    },
+    deleteAfterImport: {
+      fieldId: 'deleteAfterImport',
+      visibleWhen: [
+        {
+          field: 'inputMode',
+          is: ['blob'],
+        },
+      ],
+    },
+    'file.csv.rowDelimiter': {
+      fieldId: 'file.csv.rowDelimiter',
+      visibleWhen: [
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
+      ],
+    },
+    fileAdvancedSettings: {
+      formId: 'fileAdvancedSettings',
+      visibleWhenAll: [
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
+      ],
+    },
   },
   layout: {
     fields: [
       'common',
+      'inputMode',
       'importData',
+      'blobKeyPath',
       's3.region',
       's3.bucket',
       'fileType',
@@ -122,7 +183,11 @@ export default {
       {
         collapsed: true,
         label: 'Advanced',
-        fields: ['file.csv.rowDelimiter', 'fileAdvancedSettings'],
+        fields: [
+          'file.csv.rowDelimiter',
+          'fileAdvancedSettings',
+          'deleteAfterImport',
+        ],
       },
     ],
   },

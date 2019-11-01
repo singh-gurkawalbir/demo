@@ -12,6 +12,7 @@ import Flows from './Flows';
 import Users from './Users';
 import AuditLog from './AuditLog';
 import Connections from './Connections';
+import Notifications from './Notifications';
 import General from './General';
 import CeligoPageBar from '../../components/CeligoPageBar';
 
@@ -37,6 +38,9 @@ const useStyles = makeStyles(theme => ({
   },
   activeLink: {
     fontWeight: 'bold',
+  },
+  notificationLink: {
+    margin: '25px 0 25px 0',
   },
   flex: {
     flex: 1,
@@ -133,6 +137,15 @@ export default function IntegrationSettings(props) {
                     </NavLink>
                   )}
                 </ListItem>
+                <Divider className={classes.notificationLink} />
+                <ListItem>
+                  <NavLink
+                    activeClassName={classes.activeLink}
+                    className={classes.link}
+                    to="notifications">
+                    My Notifications
+                  </NavLink>
+                </ListItem>
               </List>
             </Drawer>
           </div>
@@ -167,6 +180,12 @@ export default function IntegrationSettings(props) {
                   `/integrations/:integrationId/settings/general`
                 )}
                 component={General}
+              />
+              <Route
+                path={getRoutePath(
+                  `/integrations/:integrationId/settings/notifications`
+                )}
+                component={Notifications}
               />
             </Switch>
           </div>

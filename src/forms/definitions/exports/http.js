@@ -69,9 +69,26 @@ export default {
   fieldMap: {
     common: { formId: 'common' },
     exportData: {
-      fieldId: 'exportData',
+      id: 'exportData',
       type: 'labeltitle',
       label: 'What would you like to Export?',
+    },
+    outputMode: {
+      id: 'outputMode',
+      type: 'radiogroup',
+      label: 'Output Mode',
+      options: [
+        {
+          items: [
+            { label: 'Records', value: 'records' },
+            { label: 'Blob Keys', value: 'blob' },
+          ],
+        },
+      ],
+      defaultValue: r =>
+        r && r.http && r.http.response && r.http.response.blobFormat
+          ? 'blob'
+          : 'records',
     },
     'http.method': { fieldId: 'http.method' },
     'http.headers': { fieldId: 'http.headers' },
@@ -83,7 +100,6 @@ export default {
     'http.response.successPath': { fieldId: 'http.response.successPath' },
     'http.response.successValues': {
       fieldId: 'http.response.successValues',
-      omitWhenValueIs: [''],
     },
     'http.response.errorPath': { fieldId: 'http.response.errorPath' },
     type: {
@@ -91,7 +107,12 @@ export default {
       type: 'select',
       label: 'Export Type',
       required: true,
-      defaultValue: r => (r && r.type ? r.type : 'all'),
+      visibleWhen: [
+        {
+          field: 'outputMode',
+          is: ['records'],
+        },
+      ],
       options: [
         {
           items: [
@@ -105,30 +126,21 @@ export default {
     },
     'delta.dateFormat': {
       fieldId: 'delta.dateFormat',
-      visibleWhen: [{ field: 'type', is: ['delta'] }],
     },
     'delta.lagOffset': {
       fieldId: 'delta.lagOffset',
-      visibleWhen: [{ field: 'type', is: ['delta'] }],
     },
     'http.once.relativeURI': {
       fieldId: 'http.once.relativeURI',
-      visibleWhen: [{ field: 'type', is: ['once'] }],
     },
     'http.once.body': {
       fieldId: 'http.once.body',
-      visibleWhen: [{ field: 'type', is: ['once'] }],
     },
     'http.once.method': {
       fieldId: 'http.once.method',
-      visibleWhen: [{ field: 'type', is: ['once'] }],
     },
     'once.booleanField': {
-      id: 'once.booleanField',
-      type: 'text',
-      label: 'Boolean Field',
-      helpkey: 'once.booleanField',
-      visibleWhen: [{ field: 'type', is: ['once'] }],
+      fieldId: 'once.booleanField',
     },
     'http.paging.method': { fieldId: 'http.paging.method' },
     'http.paging.skip': { fieldId: 'http.paging.skip' },
@@ -150,16 +162,33 @@ export default {
     },
     'http.paging.lastPagePath': { fieldId: 'http.paging.lastPagePath' },
     'http.paging.lastPageValues': { fieldId: 'http.paging.lastPageValues' },
-    advancedSettings: { formId: 'advancedSettings' },
-    configureAsyncHelper: { fieldId: 'configureAsyncHelper' },
+    'http.response.blobFormat': { fieldId: 'http.response.blobFormat' },
+    advancedSettings: {
+      formId: 'advancedSettings',
+      visibleWhenAll: [
+        {
+          field: 'outputMode',
+          is: ['records'],
+        },
+      ],
+    },
+    configureAsyncHelper: {
+      fieldId: 'configureAsyncHelper',
+      visibleWhen: [
+        {
+          field: 'outputMode',
+          is: ['records'],
+        },
+      ],
+    },
     'http._asyncHelperId': {
       fieldId: 'http._asyncHelperId',
-      visibleWhen: [{ field: 'configureAsyncHelper', is: [true] }],
     },
   },
   layout: {
     fields: [
       'common',
+      'outputMode',
       'exportData',
       'http.method',
       'http.headers',
@@ -178,6 +207,7 @@ export default {
       'http.once.relativeURI',
       'http.once.method',
       'http.once.body',
+      'http.response.blobFormat',
     ],
     type: 'collapse',
     containers: [

@@ -48,7 +48,7 @@ export function* uninstallStep({ storeId, id, uninstallerFunction }) {
     return undefined;
   }
 
-  if (stepCompleteResponse.success) {
+  if (stepCompleteResponse && stepCompleteResponse.success) {
     yield put(
       actions.integrationApp.uninstaller.updateStep(
         id,
@@ -72,7 +72,8 @@ export function* uninstallIntegration({ integrationId }) {
     return undefined;
   }
 
-  yield put(actions.resource.deleted('integrations', integrationId));
+  yield put(actions.resource.requestCollection('integrations'));
+  yield put(actions.resource.requestCollection('tiles'));
 }
 
 export default [

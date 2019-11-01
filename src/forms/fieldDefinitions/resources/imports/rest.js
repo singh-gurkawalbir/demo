@@ -3,6 +3,12 @@ export default {
     type: 'radiogroup',
     label: 'Method',
     required: true,
+    visibleWhen: [
+      {
+        field: 'inputMode',
+        is: ['records'],
+      },
+    ],
     options: [
       {
         items: [
@@ -32,6 +38,26 @@ export default {
       return toReturn;
     },
   },
+  'rest.blobMethod': {
+    type: 'radiogroup',
+    label: 'Method',
+    required: true,
+    options: [
+      {
+        items: [
+          { label: 'POST', value: 'POST' },
+          { label: 'PUT', value: 'PUT' },
+          { label: 'DELETE', value: 'DELETE' },
+        ],
+      },
+    ],
+    visibleWhen: [
+      {
+        field: 'inputMode',
+        is: ['blob'],
+      },
+    ],
+  },
   'rest.headers': {
     type: 'keyvalue',
     keyName: 'name',
@@ -59,10 +85,14 @@ export default {
         ],
       },
     ],
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'rest.method',
         is: ['COMPOSITE'],
+      },
+      {
+        field: 'inputMode',
+        is: ['records'],
       },
     ],
     defaultValue: r => {
@@ -97,6 +127,21 @@ export default {
         field: 'rest.method',
         is: ['POST', 'PUT', 'DELETE', 'PATCH'],
       },
+      {
+        field: 'rest.blobMethod',
+        is: ['POST', 'PUT', 'DELETE'],
+      },
+    ],
+  },
+  mapping: {
+    type: 'mapping',
+    connectionId: r => r && r._connectionId,
+    label: 'Manage Import Mapping',
+    visibleWhen: [
+      {
+        field: 'inputMode',
+        is: ['records'],
+      },
     ],
     defaultValue: r =>
       r && r.rest && r.rest.relativeURI && r.rest.relativeURI[0],
@@ -112,16 +157,24 @@ export default {
         field: 'rest.method',
         is: ['POST', 'PUT', 'DELETE', 'PATCH'],
       },
+      {
+        field: 'inputMode',
+        is: ['records'],
+      },
     ],
   },
   'rest.successPath': {
     type: 'text',
     label: 'Success Path',
     placeholder: 'Optional',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'rest.method',
         is: ['POST', 'PUT', 'DELETE', 'PATCH'],
+      },
+      {
+        field: 'inputMode',
+        is: ['records'],
       },
     ],
     defaultValue: r =>
@@ -136,6 +189,10 @@ export default {
         field: 'rest.method',
         is: ['POST', 'PUT', 'DELETE', 'PATCH'],
       },
+      {
+        field: 'rest.blobMethod',
+        is: ['POST', 'PUT', 'DELETE'],
+      },
     ],
     defaultValue: r =>
       r && r.rest && r.rest.successValues && r.rest.successValues[0],
@@ -144,10 +201,14 @@ export default {
     type: 'text',
     label: 'Response Id Path',
     placeholder: 'Optional',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'rest.method',
         is: ['POST', 'PUT', 'DELETE', 'PATCH'],
+      },
+      {
+        field: 'inputMode',
+        is: ['records'],
       },
     ],
     defaultValue: r =>
@@ -169,6 +230,12 @@ export default {
   'rest.sampleData': {
     type: 'textarea',
     label: 'If so,please paste it here',
+    visibleWhen: [
+      {
+        field: 'inputMode',
+        is: ['records'],
+      },
+    ],
   },
   visibleWhen: [
     {

@@ -27,9 +27,10 @@ export default function Uninstall(props) {
   const classes = useStyles();
   const { storeId, integrationId } = props;
   const dispatch = useDispatch();
-  const integration = useSelector(state =>
-    selectors.integrationAppSettings(state, integrationId)
-  );
+  const integration =
+    useSelector(state =>
+      selectors.integrationAppSettings(state, integrationId)
+    ) || {};
   const uninstallSteps = useSelector(state =>
     selectors.integrationUninstallSteps(state, integrationId)
   );
@@ -37,11 +38,24 @@ export default function Uninstall(props) {
   useEffect(() => {
     if (uninstallSteps && uninstallSteps.length) {
       dispatch(actions.resource.request('integrations', integrationId));
-      props.history.push(
-        `/pg/connectors/${integrationId}/uninstall/${storeId}`
-      );
+
+      if (integration.settings && integration.settings.supportsMultiStore) {
+        props.history.push(
+          `/pg/connectors/${integrationId}/uninstall/${storeId}`
+        );
+      } else {
+        props.history.push(`/pg/connectors/${integrationId}/uninstall`);
+      }
     }
-  }, [dispatch, integrationId, props.history, storeId, uninstallSteps]);
+  }, [
+    dispatch,
+    integration.settings,
+    integration.settings.supportsMultiStore,
+    integrationId,
+    props.history,
+    storeId,
+    uninstallSteps,
+  ]);
 
   if (!integration) {
     return null;
