@@ -11,6 +11,7 @@ import comms, * as fromComms from './comms';
 import auth, * as fromAuth from './authentication';
 import user, * as fromUser from './user';
 import actionTypes from '../actions/types';
+import { getUsedActionsMapForResource } from '../utils/flows';
 import {
   PASSWORD_MASK,
   USER_ACCESS_LEVELS,
@@ -1982,4 +1983,15 @@ export function flowConnectionList(state, flow) {
   const connectionList = resourcesByIds(state, 'connections', connectionIds);
 
   return connectionList;
+}
+
+export function getUsedActionsForResource(
+  state,
+  resourceId,
+  resourceType,
+  flowNode
+) {
+  const { merged: resource } = resourceData(state, resourceType, resourceId);
+
+  return getUsedActionsMapForResource(resource, resourceType, flowNode);
 }

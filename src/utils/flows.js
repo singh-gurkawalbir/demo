@@ -59,10 +59,20 @@ const isActionUsed = (resource, flowNode, action) => {
     case actionsMap.templateMapping:
       return false;
     case actionsMap.transformation:
-      return !!(transform.rules && transform.rules.length);
+      // Infers based on the first ruleset { rules: [rule]}
+      // @TODO: Raghu Change it if we support multiple transformation rules
+      return !!(
+        transform.rules &&
+        transform.rules[0] &&
+        transform.rules[0].length
+      );
 
     case actionsMap.responseTransformation:
-      return !!(responseTransform.rules && responseTransform.rules.length);
+      return !!(
+        responseTransform.rules &&
+        responseTransform.rules[0] &&
+        responseTransform.rules[0].length
+      );
 
     case actionsMap.hooks:
       return false;

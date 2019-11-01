@@ -19,7 +19,7 @@ import transformationAction from './actions/transformation';
 import responseMapping from './actions/responseMapping';
 import responseTransformationAction from './actions/responseTransformation';
 import proceedOnFailureAction from './actions/proceedOnFailure';
-import { actionsMap, getUsedActionsMapForResource } from '../../../utils/flows';
+import { actionsMap } from '../../../utils/flows';
 
 const useStyles = makeStyles(theme => ({
   ppContainer: {
@@ -58,7 +58,6 @@ const PageProcessor = ({
   const classes = useStyles();
   const dispatch = useDispatch();
   const [newProcessorId, setNewProcessorId] = useState(null);
-  const [usedActions, setUsedActions] = useState({});
   const { merged: resource = {} } = useSelector(state =>
     selectors.resourceData(
       state,
@@ -66,14 +65,10 @@ const PageProcessor = ({
       resourceId
     )
   );
-
-  useEffect(() => {
-    if (resource) {
-      // @TODO Raghu : getting here infinitely on update of any action on resource
-      setUsedActions(getUsedActionsMapForResource(resource, resourceType, pp));
-    }
-  }, [pp, resource, resourceType]);
-
+  // Returns map of all possible actions with true/false whether actions performed on the resource
+  const usedActions = useSelector(state =>
+    selectors.getUsedActionsForResource(state, resourceId, resourceType, pp)
+  );
   const createdProcessorId = useSelector(state =>
     selectors.createdResourceId(state, newProcessorId)
   );
