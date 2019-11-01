@@ -44,7 +44,7 @@ export default {
           baseUri &&
           baseUri.substring(
             baseUri.indexOf('https://') + 8,
-            baseUri.indexOf('.myshopify.com')
+            baseUri.indexOf('.online.tableau.com/api')
           );
 
         return subdomain;

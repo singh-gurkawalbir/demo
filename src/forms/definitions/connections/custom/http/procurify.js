@@ -36,7 +36,7 @@ export default {
           baseUri &&
           baseUri.substring(
             baseUri.indexOf('https://') + 8,
-            baseUri.indexOf('.myshopify.com')
+            baseUri.indexOf('.procurify.com')
           );
 
         return subdomain;
@@ -48,7 +48,8 @@ export default {
     },
     'http.auth.basic.password': {
       fieldId: 'http.auth.basic.password',
-      helpText: 'Please enter password of your Procurify Account.',
+      helpText:
+        'Please enter password of your Procurify Account.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your user secret safe.',
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
@@ -79,7 +80,8 @@ export default {
       defaultValue: '',
       label: 'Client Secret',
       inputType: 'password',
-      helpText: 'The client secret of your Procurify account',
+      helpText:
+        'The client secret of your Procurify account.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your client secret safe.',
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
