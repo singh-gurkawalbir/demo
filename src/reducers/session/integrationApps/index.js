@@ -23,6 +23,10 @@ export function integrationAppSettingsFormState(state, integrationId, flowId) {
   );
 }
 
+export function checkUpgradeRequested(state, licenseId) {
+  return fromSettings.checkUpgradeRequested(state && state.settings, licenseId);
+}
+
 export function uninstallSteps(state, id, storeId) {
   return fromUninstaller.uninstallSteps(
     state && state.uninstaller,

@@ -231,6 +231,10 @@ const resource = {
         action(actionTypes.NETSUITE_USER_ROLES.CLEAR, { connectionId }),
     },
   },
+  notifications: {
+    update: notifications =>
+      action(actionTypes.RESOURCE.UPDATE_NOTIFICATIONS, { notifications }),
+  },
 };
 // #endregion
 const auditLogs = {
@@ -432,6 +436,20 @@ const fileDefinitions = {
 };
 const integrationApp = {
   settings: {
+    requestUpgrade: (integration, options) =>
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.REQUEST_UPGRADE, {
+        integration,
+        options,
+      }),
+    requestedUpgrade: licenseId =>
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.UPGRADE_REQUESTED, {
+        licenseId,
+      }),
+    upgrade: (integration, license) =>
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.UPGRADE, {
+        integration,
+        license,
+      }),
     update: (integrationId, flowId, storeId, values) =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.UPDATE, {
         integrationId,

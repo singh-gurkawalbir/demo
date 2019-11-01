@@ -192,7 +192,8 @@ export default {
   },
   'netsuite.internalId': {
     type: 'text',
-    label: 'NetSuite internal Id',
+    required: true,
+    label: 'Internal Id',
   },
   'netsuite.restlet.criteria.field': {
     type: 'text',
