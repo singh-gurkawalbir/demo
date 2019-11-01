@@ -37,7 +37,9 @@ const isActionUsed = (resource, flowNode, action) => {
     inputFilter = {},
     filter = {},
     transform = {},
+    hooks,
     responseTransform = {},
+    http = {},
   } = resource;
   const {
     responseMapping = {},
@@ -66,7 +68,12 @@ const isActionUsed = (resource, flowNode, action) => {
     }
 
     case actionsMap.templateMapping:
-      return false;
+      return !!(
+        http &&
+        http.body &&
+        (typeof http.body === 'string' ||
+          (Array.isArray(http.body) && http.body.length))
+      );
     case actionsMap.transformation:
       // Infers based on the first ruleset { rules: [rule]}
       // @TODO: Raghu Change it if we support multiple transformation rules
@@ -84,7 +91,7 @@ const isActionUsed = (resource, flowNode, action) => {
       );
 
     case actionsMap.hooks:
-      return false;
+      return !!hooks;
     case actionsMap.responseMapping: {
       const { fields = [], lists = [] } = responseMapping;
 
