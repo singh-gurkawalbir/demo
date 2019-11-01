@@ -230,6 +230,13 @@ export function integrationAppSettingsFormState(state, integrationId, flowId) {
   );
 }
 
+export function checkUpgradeRequested(state, licenseId) {
+  return fromIntegrationApps.checkUpgradeRequested(
+    state && state.integrationApps,
+    licenseId
+  );
+}
+
 export function integrationAppsInstaller(state, id) {
   return fromIntegrationApps.integrationAppsInstaller(
     state && state.integrationApps,

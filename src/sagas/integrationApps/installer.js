@@ -25,7 +25,7 @@ export function* installStep({ id, installerFunction }) {
     return undefined;
   }
 
-  if (stepCompleteResponse.success) {
+  if (stepCompleteResponse && stepCompleteResponse.success) {
     yield put(
       actions.integrationApp.installer.completedStepInstall(
         stepCompleteResponse,
@@ -54,7 +54,7 @@ export function* installStoreStep({ id, installerFunction }) {
     return undefined;
   }
 
-  if (stepCompleteResponse.success) {
+  if (stepCompleteResponse && stepCompleteResponse.success) {
     yield put(
       actions.integrationApp.store.completedStepInstall(
         id,
