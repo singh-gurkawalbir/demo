@@ -2,6 +2,12 @@ export default {
   'http.method': {
     type: 'radiogroup',
     label: 'Method',
+    visibleWhen: [
+      {
+        field: 'inputMode',
+        is: ['records'],
+      },
+    ],
     options: [
       {
         items: [
@@ -10,6 +16,26 @@ export default {
           { label: 'DELETE', value: 'DELETE' },
           { label: 'PATCH', value: 'PATCH' },
           { label: 'Composite', value: 'COMPOSITE' },
+        ],
+      },
+    ],
+  },
+  'http.blobMethod': {
+    type: 'select',
+    label: 'Method',
+    required: true,
+    visibleWhen: [
+      {
+        field: 'inputMode',
+        is: ['blob'],
+      },
+    ],
+    options: [
+      {
+        items: [
+          { label: 'POST', value: 'POST' },
+          { label: 'PUT', value: 'PUT' },
+          { label: 'DELETE', value: 'DELETE' },
         ],
       },
     ],
@@ -23,6 +49,12 @@ export default {
   'http.requestMediaType': {
     type: 'select',
     label: 'Request Media Type',
+    visibleWhen: [
+      {
+        field: 'inputMode',
+        is: ['records'],
+      },
+    ],
     options: [
       {
         items: [
@@ -55,10 +87,14 @@ export default {
         ],
       },
     ],
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'http.method',
         is: ['COMPOSITE'],
+      },
+      {
+        field: 'inputMode',
+        is: ['records'],
       },
     ],
   },
@@ -70,6 +106,10 @@ export default {
       {
         field: 'http.method',
         is: ['POST', 'PUT', 'DELETE', 'PATCH'],
+      },
+      {
+        field: 'http.blobMethod',
+        is: ['POST', 'PUT', 'DELETE'],
       },
     ],
   },
@@ -83,10 +123,14 @@ export default {
     type: 'text',
     label: 'Success Path',
     placeholder: 'Optional',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'http.method',
         is: ['POST', 'PUT', 'DELETE', 'PATCH'],
+      },
+      {
+        field: 'inputMode',
+        is: ['records'],
       },
     ],
   },
@@ -95,31 +139,43 @@ export default {
     label: 'Success Values',
     delimiter: ',',
     placeholder: 'Optional',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'http.method',
         is: ['POST', 'PUT', 'DELETE', 'PATCH'],
+      },
+      {
+        field: 'inputMode',
+        is: ['records'],
       },
     ],
   },
   'http.response.resourceIdPath': {
     type: 'text',
-    label: 'Response Id Path',
+    label: 'Resource Id Path',
     placeholder: 'Optional',
     visibleWhen: [
       {
         field: 'http.method',
         is: ['POST', 'PUT', 'DELETE', 'PATCH'],
       },
+      {
+        field: 'http.blobMethod',
+        is: ['POST', 'PUT', 'DELETE'],
+      },
     ],
   },
   'http.response.resourcePath': {
     type: 'text',
     label: 'Response Path',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'http.method',
         is: ['POST', 'PUT', 'DELETE', 'PATCH'],
+      },
+      {
+        field: 'inputMode',
+        is: ['records'],
       },
     ],
   },
@@ -127,10 +183,14 @@ export default {
     type: 'text',
     label: 'Error Path',
     placeholder: 'Optional',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'http.method',
         is: ['POST', 'PUT', 'DELETE', 'PATCH'],
+      },
+      {
+        field: 'inputMode',
+        is: ['records'],
       },
     ],
   },
@@ -138,10 +198,14 @@ export default {
     type: 'text',
     label: 'Batch Size Limit',
     defaultValue: 1,
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'http.method',
         is: ['POST', 'PUT', 'DELETE', 'PATCH'],
+      },
+      {
+        field: 'inputMode',
+        is: ['records'],
       },
     ],
   },
@@ -157,10 +221,14 @@ export default {
         ],
       },
     ],
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'http.compositeType',
         is: ['createandupdate', 'createandignore'],
+      },
+      {
+        field: 'inputMode',
+        is: ['records'],
       },
     ],
   },
@@ -168,10 +236,14 @@ export default {
     type: 'text',
     label: 'Relative URI',
     placeholder: 'Optional',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'http.compositeType',
         is: ['createandupdate', 'createandignore'],
+      },
+      {
+        field: 'inputMode',
+        is: ['records'],
       },
     ],
   },
@@ -179,10 +251,14 @@ export default {
     type: 'httprequestbody',
     label: 'Build HTTP Request Body For Create',
     refreshOptionsOnChangesTo: ['http.lookups'],
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'http.compositeType',
         is: ['createandupdate', 'createandignore'],
+      },
+      {
+        field: 'inputMode',
+        is: ['records'],
       },
     ],
   },
@@ -190,20 +266,28 @@ export default {
     type: 'text',
     label: 'Response Id Path',
     placeholder: 'Optional',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'http.compositeType',
         is: ['createandupdate', 'createandignore'],
+      },
+      {
+        field: 'inputMode',
+        is: ['records'],
       },
     ],
   },
   'http.resourcePathCreate': {
     type: 'text',
     label: 'Response Path',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'http.compositeType',
         is: ['createandupdate', 'createandignore'],
+      },
+      {
+        field: 'inputMode',
+        is: ['records'],
       },
     ],
   },
@@ -219,10 +303,14 @@ export default {
         ],
       },
     ],
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'http.compositeType',
         is: ['createandupdate', 'updateandignore'],
+      },
+      {
+        field: 'inputMode',
+        is: ['records'],
       },
     ],
   },
@@ -230,10 +318,14 @@ export default {
     type: 'text',
     label: 'Relative URI',
     placeholder: 'Optional',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'http.compositeType',
         is: ['createandupdate', 'updateandignore'],
+      },
+      {
+        field: 'inputMode',
+        is: ['records'],
       },
     ],
   },
@@ -241,30 +333,42 @@ export default {
     type: 'text',
     label: 'Response Id Path',
     placeholder: 'Optional',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'http.compositeType',
         is: ['createandupdate', 'updateandignore'],
+      },
+      {
+        field: 'inputMode',
+        is: ['records'],
       },
     ],
   },
   'http.resourcePathUpdate': {
     type: 'text',
     label: 'Response Path',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'http.compositeType',
         is: ['createandupdate', 'updateandignore'],
+      },
+      {
+        field: 'inputMode',
+        is: ['records'],
       },
     ],
   },
   'http.existingDataId': {
     type: 'text',
     label: 'Existing Data Id',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'http.compositeType',
         is: ['createandignore', 'updateandignore'],
+      },
+      {
+        field: 'inputMode',
+        is: ['records'],
       },
     ],
     requiredWhen: [
@@ -277,6 +381,12 @@ export default {
   'http.successMediaType': {
     type: 'select',
     label: 'Success Media Type',
+    visibleWhen: [
+      {
+        field: 'inputMode',
+        is: ['records'],
+      },
+    ],
     options: [
       {
         items: [
@@ -289,6 +399,12 @@ export default {
   'http.errorMediaType': {
     type: 'select',
     label: 'Error Media Type',
+    visibleWhen: [
+      {
+        field: 'inputMode',
+        is: ['records'],
+      },
+    ],
     options: [
       {
         items: [
@@ -301,10 +417,22 @@ export default {
   'http.ignoreEmptyNodes': {
     type: 'checkbox',
     label: 'Ignore Empty Nodes',
+    visibleWhen: [
+      {
+        field: 'inputMode',
+        is: ['records'],
+      },
+    ],
   },
   'http.configureAsyncHelper': {
     type: 'checkbox',
     label: 'Configure Async Helper',
+    visibleWhen: [
+      {
+        field: 'inputMode',
+        is: ['records'],
+      },
+    ],
   },
   'http._asyncHelperId': {
     type: 'select',
@@ -315,10 +443,14 @@ export default {
         items: [{ label: 'NewAsynchHelper', value: 'newasynchhelper' }],
       },
     ],
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'http.configureAsyncHelper',
         is: [true],
+      },
+      {
+        field: 'inputMode',
+        is: ['records'],
       },
     ],
   },

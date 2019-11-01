@@ -84,6 +84,11 @@ export function* commitStagedChanges({ resourceType, id, scope }) {
           },
         });
         updated.assistantMetadata = assistantMetadata;
+        // Fix for updating lastModified after above patch request
+        // @TODO: Raghu Remove this once patch request gives back the resource in response
+        const origin = yield call(apiCallWithRetry, { path });
+
+        updated.lastModified = origin.lastModified;
       }
     }
 
@@ -275,6 +280,28 @@ export function* getResourceCollection({ resourceType }) {
   }
 }
 
+export function* updateNotifications({ notifications }) {
+  let response;
+  const path = '/notifications';
+
+  try {
+    response = yield call(apiCallWithRetry, {
+      path,
+      opts: {
+        body: notifications,
+        method: 'PUT',
+      },
+      message: 'Updating Notifications.',
+    });
+  } catch (e) {
+    return undefined;
+  }
+
+  if (response) {
+    yield put(actions.resource.requestCollection('notifications'));
+  }
+}
+
 export function* requestRegister({ connectionIds, integrationId }) {
   const path = `/integrations/${integrationId}/connections/register`;
 
@@ -329,6 +356,7 @@ export const resourceSagas = [
   takeEvery(actionTypes.RESOURCE.REFERENCES_REQUEST, requestReferences),
   takeEvery(actionTypes.RESOURCE.DOWNLOAD_FILE, downloadFile),
   takeEvery(actionTypes.CONNECTION.REGISTER_REQUEST, requestRegister),
+  takeEvery(actionTypes.RESOURCE.UPDATE_NOTIFICATIONS, updateNotifications),
   takeEvery(actionTypes.CONNECTION.DEREGISTER_REQUEST, requestDeregister),
   ...metadataSagas,
 ];

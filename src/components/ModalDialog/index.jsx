@@ -1,40 +1,26 @@
 import { React, Component, Fragment } from 'react';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
-import { Button } from '@material-ui/core';
+import { Button, Typography } from '@material-ui/core';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import IconButton from '@material-ui/core/IconButton';
-import Divider from '@material-ui/core/Divider';
 import { withStyles } from '@material-ui/core/styles';
 import CloseIcon from '../icons/CloseIcon';
 
 @withStyles(theme => ({
-  modalDialog: {
-    padding: theme.spacing(4),
-    minWidth: 500,
-  },
-  modalContent: {
-    margin: theme.spacing(0, 1),
-    padding: theme.spacing(1, 2),
-    minWidth: 450,
-  },
   actionButton: {
     float: 'right',
     textTransform: 'inherit',
   },
   iconButton: {
     position: 'absolute',
-    top: theme.spacing(1),
-    right: theme.spacing(1) + 2,
+    top: theme.spacing(1) + 4,
+    right: theme.spacing(2) + 2,
     padding: theme.spacing(1) - 3,
   },
   actions: {
-    '&:last-child': {
-      marginRight: theme.spacing(1),
-    },
-    // '& *': { marginRight: theme.spacing(1) },
-    // margin: theme.spacing(1, 1, 2, 0),
+    justifyContent: 'flex-start',
   },
 }))
 export default class ModalDialog extends Component {
@@ -45,14 +31,15 @@ export default class ModalDialog extends Component {
       handleClose,
       actionLabel,
       actionHandler,
+      width,
     } = this.props;
 
     return (
       <div>
-        <Dialog open={show} className={classes.modalDialog} maxWidth="lg">
+        <Dialog open={show} maxWidth={width}>
           {this.props.children[0] && (
-            <DialogTitle className={classes.modalTitle}>
-              {this.props.children[0]}
+            <DialogTitle className={classes.modalTitle} disableTypography>
+              <Typography variant="h3">{this.props.children[0]}</Typography>
               {handleClose && (
                 <IconButton
                   onClick={handleClose}
@@ -72,7 +59,6 @@ export default class ModalDialog extends Component {
           )}
           {this.props.children[1] && (
             <Fragment>
-              <Divider />
               <DialogContent className={classes.modalContent}>
                 {this.props.children[1]}
               </DialogContent>
@@ -80,7 +66,6 @@ export default class ModalDialog extends Component {
           )}
           {this.props.children[2] && (
             <Fragment>
-              <Divider />
               <DialogActions className={classes.actions}>
                 {this.props.children[2]}
               </DialogActions>

@@ -14,9 +14,13 @@ const useStyles = makeStyles({
  */
 function Spinner(props) {
   const classes = useStyles();
-  const { loading, className, ...rest } = props;
+  const { loading, color, className, ...rest } = props;
   const progress = (
-    <CircularProgress color="primary" className={className} {...rest} />
+    <CircularProgress
+      color={color || 'inherit'}
+      className={className}
+      {...rest}
+    />
   );
 
   return loading ? (

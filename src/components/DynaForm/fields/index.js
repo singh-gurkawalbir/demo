@@ -40,6 +40,7 @@ import DynaXmlParse from './editors/DynaXmlParse';
 import DynaImportMapping from './DynaImportMapping';
 import DynaFieldExpressionSelect from './DynaFieldExpressionSelect';
 import DynaAutoSuggest from './DynaAutoSuggest';
+import DynaGenerateUrl from './DynaGenerateUrl';
 
 export default {
   mapping: DynaImportMapping,
@@ -87,4 +88,5 @@ export default {
   keywithaction: DynaKeyWithAction,
   fieldexpressionselect: DynaFieldExpressionSelect,
   autosuggest: DynaAutoSuggest,
+  generateurl: DynaGenerateUrl,
 };
