@@ -19,6 +19,8 @@ import transformationAction from './actions/transformation';
 import responseMapping from './actions/responseMapping';
 import responseTransformationAction from './actions/responseTransformation';
 import proceedOnFailureAction from './actions/proceedOnFailure';
+import { actionsMap } from '../../../utils/flows';
+import helpTextMap from '../../../components/Help/helpTextMap';
 
 const useStyles = makeStyles(theme => ({
   ppContainer: {
@@ -63,6 +65,10 @@ const PageProcessor = ({
       pending ? 'connections' : resourceType,
       resourceId
     )
+  );
+  // Returns map of all possible actions with true/false whether actions performed on the resource
+  const usedActions = useSelector(state =>
+    selectors.getUsedActionsForResource(state, resourceId, resourceType, pp)
   );
   const createdProcessorId = useSelector(state =>
     selectors.createdResourceId(state, newProcessorId)
@@ -196,37 +202,73 @@ const PageProcessor = ({
   }
 
   // #region Configure available processor actions
-  // TODO: Raghu, please set the isUsed prop to true any time
-  // the flow or PP contains rules for the respective action.
-  // Also, I think 'responseMapping` action is not valid for the LAST PP.
-  // The data doesnt go anywhere, so its a pointless action when PP is last.
-  const processorActions = [];
+
   // Template mapping action is shown only for http import resource
   const isHTTPImport =
     resource.adaptorType && adaptorTypeMap[resource.adaptorType] === 'http';
+  // Add Help texts for actions common to lookups and imports manually
+  const processorActions = [
+    {
+      ...inputFilterAction,
+      isUsed: usedActions[actionsMap.inputFilter],
+      helpText: helpTextMap[`fb.pp.${resourceType}.inputFilter`],
+    },
+  ];
 
   if (!pending) {
     if (pp.type === 'export') {
       processorActions.push(
-        inputFilterAction,
-        outputFilterAction,
-        transformationAction,
-        pageProcessorHooksAction
+        {
+          ...outputFilterAction,
+          isUsed: usedActions[actionsMap.outputFilter],
+        },
+        {
+          ...transformationAction,
+          isUsed: usedActions[actionsMap.transformation],
+        }
       );
     } else {
       processorActions.push(
-        inputFilterAction,
-        importMappingAction,
-        ...(isHTTPImport ? [templateMappingAction] : []),
-        responseTransformationAction,
-        pageProcessorHooksAction
+        {
+          ...importMappingAction,
+          isUsed: usedActions[actionsMap.importMapping],
+        },
+        ...(isHTTPImport
+          ? [
+              {
+                ...templateMappingAction,
+                isUsed: usedActions[actionsMap.templateMapping],
+              },
+            ]
+          : []),
+        {
+          ...responseTransformationAction,
+          isUsed: usedActions[actionsMap.responseTransformation],
+        }
       );
     }
 
     if (!isLast) {
-      processorActions.push(responseMapping, proceedOnFailureAction);
+      processorActions.push(
+        {
+          ...pageProcessorHooksAction,
+          isUsed: usedActions[actionsMap.hooks],
+          helpText: helpTextMap[`fb.pp.${resourceType}.hooks`],
+        },
+        {
+          ...responseMapping,
+          isUsed: usedActions[actionsMap.responseMapping],
+          helpText: helpTextMap[`fb.pp.${resourceType}.responseMapping`],
+        },
+        {
+          ...proceedOnFailureAction,
+          isUsed: usedActions[actionsMap.proceedOnFailure],
+          helpText: helpTextMap[`fb.pp.${resourceType}.proceedOnFailure`],
+        }
+      );
     }
   }
+
   // #endregion
 
   return (

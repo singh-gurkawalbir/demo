@@ -9,6 +9,7 @@ import { useDispatch } from 'react-redux';
 import Icon from '../../../../components/icons/HookIcon';
 import actions from '../../../../actions';
 import Hooks from '../../../../components/Hooks';
+import helpTextMap from '../../../../components/Help/helpTextMap';
 
 function HooksDialog({ flowId, resource, open, onClose }) {
   const dispatch = useDispatch();
@@ -54,7 +55,6 @@ export default {
   name: 'exportHooks',
   position: 'right',
   Icon,
-  helpText:
-    'This is the text currently in the hover state of actions in the current FB',
+  helpText: helpTextMap['fb.pg.exports.hooks'],
   Component: ExportHooks,
 };

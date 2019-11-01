@@ -2,7 +2,7 @@ export default {
   preSave: formValues => {
     const retValues = { ...formValues };
 
-    if (retValues['/http/authType'] === 'oauth') {
+    if (retValues['/http/auth/type'] === 'oauth') {
       retValues['/http/auth/token/location'] = 'header';
       retValues['/http/auth/oauth/authURI'] = `https://${
         formValues['/http/storeURL']
@@ -27,7 +27,6 @@ export default {
       ...retValues,
       '/type': 'http',
       '/assistant': 'shopify',
-      '/http/auth/type': `${formValues['/http/authType']}`,
       '/http/mediaType': 'json',
       '/http/baseURI': `https://${formValues['/http/storeURL']}.myshopify.com`,
       '/http/ping/relativeURI': '/admin/articles/authors.json',
@@ -36,8 +35,8 @@ export default {
   },
   fieldMap: {
     name: { fieldId: 'name' },
-    'http.authType': {
-      id: 'http.authType',
+    'http.auth.type': {
+      id: 'http.auth.type',
       type: 'select',
       label: 'Authentication Type',
       defaultValue: 'oauth',
@@ -66,19 +65,30 @@ export default {
           message: 'Subdomain should not contain spaces.',
         },
       },
+      defaultValue: r => {
+        const baseUri = r && r.http && r.http.baseURI;
+        const subdomain =
+          baseUri &&
+          baseUri.substring(
+            baseUri.indexOf('https://') + 8,
+            baseUri.indexOf('.myshopify.com')
+          );
+
+        return subdomain;
+      },
     },
     'http.auth.basic.username': {
       fieldId: 'http.auth.basic.username',
       label: 'API Key',
       helpText:
         'Login to your Shopify store and navigate to "Apps" section. Click on the respective private app and the API key can be found next to the "Authentication" section.',
-      visibleWhen: [{ field: 'http.authType', is: ['basic'] }],
+      visibleWhen: [{ field: 'http.auth.type', is: ['basic'] }],
     },
     'http.auth.basic.password': {
       fieldId: 'http.auth.basic.password',
       helpText:
         'Login to your Shopify store and navigate to "Apps" section. Click on the respective private app and the password can be found next to the "Authentication" section.',
-      visibleWhen: [{ field: 'http.authType', is: ['basic'] }],
+      visibleWhen: [{ field: 'http.auth.type', is: ['basic'] }],
     },
     'http.auth.oauth.scope': {
       fieldId: 'http.auth.oauth.scope',
@@ -125,46 +135,14 @@ export default {
         'unauthenticated_write_customers',
         'unauthenticated_read_content',
       ],
-      visibleWhen: [{ field: 'http.authType', is: ['oauth'] }],
+      visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
     },
     httpAdvanced: { formId: 'httpAdvanced' },
-    actions: [
-      {
-        id: 'oauth',
-        label: 'Save & Authorize',
-        visibleWhen: [
-          {
-            field: 'http.authType',
-            is: ['oauth'],
-          },
-        ],
-      },
-      {
-        id: 'test',
-        label: 'Test',
-        visibleWhen: [
-          {
-            field: 'http.authType',
-            is: ['basic'],
-          },
-        ],
-      },
-      {
-        id: 'save',
-        label: 'Test and Save',
-        visibleWhen: [
-          {
-            field: 'http.authType',
-            is: ['basic'],
-          },
-        ],
-      },
-    ],
   },
   layout: {
     fields: [
       'name',
-      'http.authType',
+      'http.auth.type',
       'http.storeURL',
       'http.auth.basic.username',
       'http.auth.basic.password',
@@ -175,4 +153,36 @@ export default {
       { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
     ],
   },
+  actions: [
+    {
+      id: 'oauth',
+      label: 'Save & Authorize',
+      visibleWhen: [
+        {
+          field: 'http.auth.type',
+          is: ['oauth'],
+        },
+      ],
+    },
+    {
+      id: 'test',
+      label: 'Test',
+      visibleWhen: [
+        {
+          field: 'http.auth.type',
+          is: ['basic'],
+        },
+      ],
+    },
+    {
+      id: 'save',
+      label: 'Test and Save',
+      visibleWhen: [
+        {
+          field: 'http.auth.type',
+          is: ['basic'],
+        },
+      ],
+    },
+  ],
 };

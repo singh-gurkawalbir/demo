@@ -10,6 +10,7 @@ const useStyles = makeStyles(theme => ({
     padding: '0px 8px',
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
+    marginTop: '-1px',
   },
 }));
 

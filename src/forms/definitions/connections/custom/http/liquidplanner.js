@@ -2,17 +2,17 @@ export default {
   preSave: formValues => {
     const retValues = { ...formValues };
 
-    if (retValues['/authType'] === 'basic') {
-      retValues['/http/auth/token'] = undefined;
+    if (retValues['/http/auth/type'] === 'basic') {
+      retValues['/http/auth/token/token'] = undefined;
     } else {
-      retValues['/http/auth/basic'] = undefined;
+      retValues['/http/auth/basic/username'] = undefined;
+      retValues['/http/auth/basic/password'] = undefined;
     }
 
     return {
       ...retValues,
       '/type': 'http',
       '/assistant': 'liquidplanner',
-      '/http/auth/type': `${formValues['/authType']}`,
       '/http/mediaType': 'json',
       '/http/baseURI': 'https://app.liquidplanner.com/',
       '/http/ping/relativeURI': '/api/workspaces',
@@ -21,8 +21,8 @@ export default {
   },
   fieldMap: {
     name: { fieldId: 'name' },
-    authType: {
-      id: 'authType',
+    'http.auth.type': {
+      id: 'http.auth.type',
       required: true,
       type: 'select',
       label: 'Authentication Type',
@@ -40,13 +40,13 @@ export default {
     'http.auth.basic.username': {
       fieldId: 'http.auth.basic.username',
       helpText: 'Enter Username of your registered LiquidPlanner account.',
-      visibleWhen: [{ field: 'authType', is: ['basic'] }],
+      visibleWhen: [{ field: 'http.auth.type', is: ['basic'] }],
     },
     'http.auth.basic.password': {
       fieldId: 'http.auth.basic.password',
       helpText:
         'Enter Password of your registered LiquidPlanner account. The Passeord is created when the account is created.',
-      visibleWhen: [{ field: 'authType', is: ['basic'] }],
+      visibleWhen: [{ field: 'http.auth.type', is: ['basic'] }],
     },
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
@@ -56,14 +56,14 @@ export default {
       label: 'API Token',
       helpText:
         'The API Token of your LiquidPlanner account when using the Token authentication.',
-      visibleWhen: [{ field: 'authType', is: ['token'] }],
+      visibleWhen: [{ field: 'http.auth.type', is: ['token'] }],
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
     fields: [
       'name',
-      'authType',
+      'http.auth.type',
       'http.auth.basic.username',
       'http.auth.basic.password',
       'http.auth.token.token',

@@ -4,6 +4,7 @@ import Icon from '../../../../components/icons/MapDataIcon';
 import StandaloneImportMapping from '../../../../components/AFE/ImportMapping/StandaloneImportMapping';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
+import helpTextMap from '../../../../components/Help/helpTextMap';
 
 function ImportMappingDialog({ flowId, resource, onClose }) {
   const resourceId = resource._id;
@@ -51,7 +52,6 @@ export default {
   name: 'importMapping',
   position: 'middle',
   Icon,
-  helpText:
-    'This is the text currently in the hover state of actions in the current FB',
+  helpText: helpTextMap['fb.pp.imports.importMapping'],
   Component: ImportMapping,
 };

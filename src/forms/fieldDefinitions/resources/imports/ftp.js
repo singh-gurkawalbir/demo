@@ -16,14 +16,48 @@ export default {
   'ftp.useTempFile': {
     type: 'checkbox',
     label: 'Use temp file while upload in progress',
+    visibleWhen: [
+      {
+        field: 'inputMode',
+        is: ['records'],
+      },
+    ],
   },
   'ftp.inProgressFileName': {
     type: 'text',
     label: 'In Progress File Name',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'ftp.useTempFile',
         is: [true],
+      },
+      {
+        field: 'inputMode',
+        is: ['records'],
+      },
+    ],
+  },
+  'ftp.blobUseTempFile': {
+    type: 'checkbox',
+    label: 'Use temp file while upload in progress',
+    visibleWhen: [
+      {
+        field: 'inputMode',
+        is: ['blob'],
+      },
+    ],
+  },
+  'ftp.blobInProgressFileName': {
+    type: 'text',
+    label: 'In Progress File Name',
+    visibleWhenAll: [
+      {
+        field: 'ftp.blobUseTempFile',
+        is: [true],
+      },
+      {
+        field: 'inputMode',
+        is: ['blob'],
       },
     ],
   },
