@@ -4,7 +4,7 @@ import Menu from '@material-ui/core/Menu';
 import { makeStyles } from '@material-ui/core';
 import MenuItem from '@material-ui/core/MenuItem';
 import IconButton from '@material-ui/core/IconButton';
-import { withRouter } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { JOB_STATUS, JOB_TYPES } from '../../utils/constants';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
@@ -24,16 +24,16 @@ const useStyle = makeStyles({
   },
 });
 
-function JobActionsMenu({
+export default function JobActionsMenu({
   job,
   onActionClick,
   userPermissionsOnIntegration = {},
   integrationName,
-  history,
   isFlowBuilderView,
 }) {
   const classes = useStyle();
   const dispatch = useDispatch();
+  const history = useHistory();
   const [enqueueSnackbar, closeSnackbar] = useEnqueueSnackbar();
   const [anchorEl, setAnchorEl] = useState(null);
   const [actionsToMonitor, setActionsToMonitor] = useState({});
@@ -362,5 +362,3 @@ function JobActionsMenu({
     </Fragment>
   );
 }
-
-export default withRouter(JobActionsMenu);

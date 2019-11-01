@@ -176,7 +176,7 @@ export default function IntegrationSettings(props) {
                 component={AuditLog}
               />
               <Route
-                path={getRoutePath(   
+                path={getRoutePath(
                   `/integrations/:integrationId/settings/general`
                 )}
                 component={General}
