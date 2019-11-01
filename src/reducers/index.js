@@ -27,6 +27,7 @@ import {
   pingConnectionParams,
 } from '../sagas/api/apiPaths';
 import { getFieldById } from '../forms/utils';
+import { upgradeButtonText, expiresInfo } from '../utils/license';
 import commKeyGen from '../utils/commKeyGenerator';
 import { isRealtimeExport, isSimpleImportFlow, isRunnable } from './flowsUtil';
 
@@ -600,6 +601,10 @@ export function filteredResourceList(state, resource, resourceType) {
     : matchingStackList(state);
 }
 
+export function integrationAppList(state) {
+  return fromData.integrationAppList(state && state.data);
+}
+
 export function marketplaceConnectors(state, application, sandbox) {
   const licenses = fromUser.licenses(state && state.user);
   const connectors = fromData.marketplaceConnectors(
@@ -706,6 +711,10 @@ export function integrationAppSettingsFormState(state, integrationId, flowId) {
   );
 }
 
+export function checkUpgradeRequested(state, licenseId) {
+  return fromSession.checkUpgradeRequested(state && state.session, licenseId);
+}
+
 export function integrationConnectionList(state, integrationId) {
   const integration = resource(state, 'integrations', integrationId) || {};
   let { resources = [] } = resourceListWithPermissions(state, {
@@ -727,8 +736,8 @@ export function integrationConnectionList(state, integrationId) {
   return resources;
 }
 
-export function integrationAppConnectionList(state, integrationId, store) {
-  if (!state) return [];
+export function integrationAppResourceList(state, integrationId, storeId) {
+  if (!state) return { connections: [], flows: [] };
   const integrationResource = fromData.integrationAppSettings(
     state.data,
     integrationId
@@ -742,13 +751,19 @@ export function integrationAppConnectionList(state, integrationId, store) {
     }
   );
 
-  if (!supportsMultiStore || !store) {
-    return integrationConnections;
+  if (!supportsMultiStore || !storeId) {
+    return {
+      connections: integrationConnections,
+      flows: resourceList(state, {
+        type: 'flows',
+        filter: { _integrationId: integrationId },
+      }).resources,
+    };
   }
 
   const flows = [];
   const connections = [];
-  const selectedStore = (sections || []).find(s => s.id === store) || {};
+  const selectedStore = (sections || []).find(s => s.id === storeId) || {};
 
   (selectedStore.sections || []).forEach(sec => {
     flows.push(...map(sec.flows, '_id'));
@@ -760,7 +775,16 @@ export function integrationAppConnectionList(state, integrationId, store) {
     connections.push(...getAllConnectionIdsUsedInTheFlow(state, flow));
   });
 
-  return integrationConnections.filter(c => connections.includes(c._id));
+  return {
+    connections: integrationConnections.filter(c =>
+      connections.includes(c._id)
+    ),
+    flows,
+  };
+}
+
+export function integrationAppConnectionList(state, integrationId, storeId) {
+  return integrationAppResourceList(state, integrationId, storeId).connections;
 }
 
 export function integrationAppSettings(state, id, storeId) {
@@ -773,6 +797,41 @@ export function integrationAppSettings(state, id, storeId) {
   );
 
   return { ...integrationResource, ...uninstallSteps };
+}
+
+export function integrationAppLicense(state, id) {
+  if (!state) return {};
+  const integrationResource = fromData.integrationAppSettings(state.data, id);
+  const { connectorEdition: edition } = integrationResource.settings || {};
+  const userLicenses = fromUser.licenses(state && state.user) || [];
+  const license = userLicenses.find(l => l._integrationId === id) || {};
+  const upgradeRequested = checkUpgradeRequested(state, license._id);
+  const { expires, created } = license;
+  const hasExpired = moment(expires) - moment() < 0;
+  const createdFormatted = `Started on ${moment(created).format(
+    'MMM Do, YYYY'
+  )}`;
+  const isExpiringSoon =
+    moment.duration(moment(expires) - moment()).as('days') <= 15;
+  const expiresText = expiresInfo(license);
+  const upgradeText = upgradeButtonText(
+    license,
+    integrationResource,
+    upgradeRequested
+  );
+  const plan = `${
+    edition ? edition.charAt(0).toUpperCase() + edition.slice(1) : 'Standard'
+  } Plan`;
+
+  return {
+    ...license,
+    plan,
+    expiresText,
+    upgradeText,
+    upgradeRequested: !!upgradeRequested,
+    createdText: createdFormatted,
+    showLicenseExpiringWarning: hasExpired || isExpiringSoon,
+  };
 }
 
 export function integrationAppFlowSections(state, id, store) {
@@ -798,7 +857,7 @@ export function integrationAppFlowSections(state, id, store) {
 
   return flowSections.map(sec => ({
     ...sec,
-    titleId: sec.title.replace(/\s/g, ''),
+    titleId: sec.title ? sec.title.replace(/\s/g, '') : '',
   }));
 }
 
@@ -867,7 +926,11 @@ export function integrationAppFlowSettings(state, id, section, storeId) {
     },
   }).resources;
 
-  flows = flows.filter(f => requiredFlows.includes(f._id));
+  flows = flows
+    .filter(f => requiredFlows.includes(f._id))
+    .sort(
+      (a, b) => requiredFlows.indexOf(a._id) - requiredFlows.indexOf(b._id)
+    );
 
   return {
     flows,
@@ -1499,6 +1562,61 @@ export function orgUsers(state) {
 
 export function integrationUsersForOwner(state, integrationId) {
   return fromUser.integrationUsers(state.user, integrationId);
+}
+
+export function integrationResources(state, _integrationId, storeId) {
+  const diyFlows = resourceList(state, {
+    type: 'flows',
+    filter: {
+      $where() {
+        if (!_integrationId || ['none', 'none-sb'].includes(_integrationId)) {
+          return !this._integrationId;
+        }
+
+        return this._integrationId === _integrationId;
+      },
+    },
+  }).resources;
+  const { _registeredConnectionIds = [], _connectorId } =
+    resource(state, 'integrations', _integrationId) || {};
+  const diyConnections = resourceList(state, {
+    type: 'connections',
+    filter: {
+      _id: id =>
+        _registeredConnectionIds.includes(id) ||
+        ['none', 'none-sb'].includes(_integrationId),
+    },
+  }).resources;
+  const notifications = resourceList(state, { type: 'notifications' })
+    .resources;
+  const connections = _connectorId
+    ? integrationAppConnectionList(state, _integrationId, storeId)
+    : diyConnections;
+  let flows = _connectorId
+    ? integrationAppResourceList(state, _integrationId, storeId).flows
+    : diyFlows;
+  const connectionValues = connections
+    .filter(c => !!notifications.find(n => n._connectionId === c._id))
+    .map(c => c._id);
+  let flowValues = flows
+    .filter(f => !!notifications.find(n => n._flowId === f._id))
+    .map(f => f._id);
+  const allFlowsSelected = !!notifications.find(
+    n => n._integrationId === _integrationId
+  );
+
+  if (_integrationId && !['none', 'none-sb'].includes(_integrationId)) {
+    flows = [{ _id: _integrationId, name: '---All Flows---' }, ...flows];
+
+    if (allFlowsSelected) flowValues = [_integrationId, ...flows];
+  }
+
+  return {
+    connections,
+    flows,
+    connectionValues,
+    flowValues,
+  };
 }
 
 export function integrationUsers(state, integrationId) {

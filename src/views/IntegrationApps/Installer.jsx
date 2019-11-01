@@ -59,11 +59,13 @@ export default function ConnectorInstallation(props) {
 
   useEffect(() => {
     if (
+      installSteps.length &&
       !installSteps.reduce((result, step) => result || !step.completed, false)
     ) {
+      dispatch(actions.resource.request('integrations', integrationId));
       setIsSetupComplete(true);
     }
-  }, [installSteps]);
+  }, [dispatch, installSteps, integrationId]);
 
   useEffect(() => {
     if (isSetupComplete) {
