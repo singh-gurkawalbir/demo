@@ -84,6 +84,9 @@ export default {
   },
   actions: [
     {
+      id: 'cancel',
+    },
+    {
       id: 'oauth',
       label: 'Save & Authorize',
       visibleWhen: [
