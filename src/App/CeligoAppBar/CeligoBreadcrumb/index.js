@@ -1,9 +1,9 @@
-import { matchPath } from 'react-router-dom';
+import { matchPath, Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
-import { Breadcrumbs, Link, Typography } from '@material-ui/core';
+import { Breadcrumbs, Typography } from '@material-ui/core';
 import { MODEL_PLURAL_TO_LABEL } from '../../../utils/resource';
 import ArrowRightIcon from '../../../components/icons/ArrowRightIcon';
-import IntegrationSegment from './segments/IntegrationSegment';
+import IntegrationCrumb from './crumbs/Integration';
 
 const useStyles = makeStyles(theme => ({
   breadCrumb: {
@@ -19,7 +19,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
 
-  addons: {
+  activeCrumb: {
     textTransform: 'unset',
     fontSize: 13,
   },
@@ -27,63 +27,64 @@ const useStyles = makeStyles(theme => ({
 const routes = [
   {
     path: '/pg/integrations/:integrationId/',
-    render: IntegrationSegment,
+    breadcrumb: IntegrationCrumb,
     childRoutes: [
       {
         path: '/pg/integrations/:integrationId/dashboard',
-        render: () => 'Dashboard',
+        breadcrumb: () => 'Dashboard',
       },
       {
         path: '/pg/integrations/:integrationId/settings/flows',
-        render: () => 'Flows',
+        breadcrumb: () => 'Flows',
       },
       {
         path: '/pg/integrations/:integrationId/settings/general',
-        render: () => 'General',
+        breadcrumb: () => 'General',
       },
       {
         path: '/pg/integrations/:integrationId/settings/users',
-        render: () => 'Users',
+        breadcrumb: () => 'Users',
       },
       {
         path: '/pg/integrations/:integrationId/settings/audit',
-        render: () => 'Audit',
+        breadcrumb: () => 'Audit log',
       },
       {
         path: '/pg/integrations/:integrationId/settings/connections',
-        render: () => 'Connections',
+        breadcrumb: () => 'Connections',
       },
       {
         path: '/pg/integrations/:integrationId/settings/notifications',
-        render: () => 'Notifications',
+        breadcrumb: () => 'Notifications',
       },
       {
         path: '/pg/integrations/:integrationId/flowBuilder/:flowId',
-        render: () => 'Flow builder',
+        breadcrumb: () => 'Flow builder',
       },
     ],
   },
   {
     path: '/pg/connectors/:connectorId/connectorLicenses',
-    render: () => 'licenses',
+    breadcrumb: () => 'licenses',
   },
   {
     path: '/pg/connectors/:connectorId/installBase',
-    render: () => 'installBase',
+    breadcrumb: () => 'installBase',
   },
-  { path: '/pg/dashboard' }, // exclusion of render prop will skip this segment.
-  { path: '/pg/connectors', render: () => 'Connectors' },
-  { path: '/pg/marketplace', render: () => 'Marketplace' },
-  { path: '/pg/recycleBin', render: () => 'Recycle-bin' },
-  { path: '/pg/resources', render: () => 'Resources' },
-  { path: '/pg/editors', render: () => 'Editors Playground' },
-  { path: '/pg/permissions', render: () => 'permissions' },
-  { path: '/pg/myAccount', render: () => 'My account' },
-  { path: '/pg/templates', render: () => 'Templates' },
-  { path: '/pg/accesstokens', render: () => 'Access Tokens' },
+  { path: '/pg/dashboard' }, // exclusion of breadcrumb prop will skip this segment.
+  { path: '/pg/connectors', breadcrumb: () => 'Connectors' },
+  { path: '/pg/marketplace', breadcrumb: () => 'Marketplace' },
+  { path: '/pg/recycleBin', breadcrumb: () => 'Recycle-bin' },
+  { path: '/pg/myAccount', breadcrumb: () => 'My account' },
+  { path: '/pg/templates', breadcrumb: () => 'Templates' },
+  { path: '/pg/accesstokens', breadcrumb: () => 'Access Tokens' },
+  // Dev tools
+  { path: '/pg/resources', breadcrumb: () => 'Resources' },
+  { path: '/pg/editors', breadcrumb: () => 'Editor playground' },
+  { path: '/pg/permissions', breadcrumb: () => 'Permission Explorer' },
   {
     path: '/pg/:resourceType',
-    render: ({ resourceType }) => `${MODEL_PLURAL_TO_LABEL[resourceType]}s`,
+    breadcrumb: ({ resourceType }) => `${MODEL_PLURAL_TO_LABEL[resourceType]}s`,
   },
 ];
 
@@ -96,9 +97,9 @@ function parseUrl(pathname, routes) {
 
     if (match) {
       // Some routes may not be desired in the breadcrumb...
-      // we handle this by not including a render prop in the route metadata
-      if (r.render) {
-        segments.push({ ...match, render: r.render });
+      // we handle this by not including a breadcrumb prop in the route metadata
+      if (r.breadcrumb) {
+        segments.push({ ...match, breadcrumb: r.breadcrumb });
       }
 
       // is there more of the url to parse? possibly child routes? time to recuse.
@@ -118,7 +119,7 @@ function parseUrl(pathname, routes) {
 export default function CeligoBreadcrumb({ location }) {
   const classes = useStyles();
   const breadcrumbs = [
-    { url: '/pg', render: () => 'Home' },
+    { url: '/pg', breadcrumb: () => 'Home' },
     ...parseUrl(location, routes),
   ];
 
@@ -128,14 +129,14 @@ export default function CeligoBreadcrumb({ location }) {
       separator={<ArrowRightIcon fontSize="small" />}
       aria-label="breadcrumb"
       className={classes.breadCrumb}>
-      {breadcrumbs.map(b =>
-        b.isExact ? (
-          <Typography key={b.url} variant="body2" className={classes.addons}>
-            {b.render(b.params)}
+      {breadcrumbs.map(({ breadcrumb: Breadcrumb, url, isExact, params }) =>
+        isExact ? (
+          <Typography key={url} variant="body2" className={classes.activeCrumb}>
+            <Breadcrumb {...params} />
           </Typography>
         ) : (
-          <Link key={b.url} color="inherit" href={b.url}>
-            {b.render(b.params)}
+          <Link key={url} color="inherit" to={url}>
+            <Breadcrumb {...params} />
           </Link>
         )
       )}

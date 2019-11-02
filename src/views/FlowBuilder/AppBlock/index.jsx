@@ -74,8 +74,8 @@ const useStyles = makeStyles(theme => ({
     },
   },
   actionIsNew: {
-    border: 'solid 1px',
-    borderColor: theme.palette.primary.main,
+    // border: 'solid 1px',
+    color: theme.palette.primary.main,
   },
   bubbleContainer: {
     position: 'relative',
