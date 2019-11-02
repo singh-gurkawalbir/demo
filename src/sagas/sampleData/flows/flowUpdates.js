@@ -1,8 +1,11 @@
 import { put, select, call } from 'redux-saga/effects';
-import { resourceData, getFlowReferencesForResource } from '../../../reducers';
+import {
+  resourceData,
+  getFlowReferencesForResource,
+  getFlowReferencesForScript,
+} from '../../../reducers';
 import { SCOPES } from '../../resourceForm';
 import actions from '../../../actions';
-import { refreshResourceData } from './utils';
 import { getFlowUpdatesFromPatch } from '../../../utils/flowData';
 
 function* updateResponseMapping({ flowId, resourceIndex }) {
@@ -55,18 +58,46 @@ export function* updateFlowOnResourceUpdate({
     }
   }
 
-  if (resourceType === 'exports' || resourceType === 'imports') {
-    // Handles on update of Export or Import on edit, Transformations, Hooks and import mappings
+  if (['exports', 'imports', 'scripts'].includes(resourceType)) {
+    /* Handles on update of :
+     * 1. Export or Import on edit, Transformations, Hooks and import mappings
+     * 2. Scripts, there by updates state of corresponding flow states which uses
+     * this script as hooks as part of their PP/PG's
+     * 3. @TODO: Raghu File Definitions for ftp PP/PG's
+     */
     yield put(
       actions.flowData.updateFlowsForResource(resourceId, resourceType)
     );
   }
 }
 
+// On Script resource update , handles related flows to reset their Sample data states
+function* updateFlowsForScripts({ scriptId }) {
+  const flowRefsWithResource = yield select(
+    getFlowReferencesForScript,
+    scriptId
+  );
+  let refIndex = 0;
+
+  while (refIndex < flowRefsWithResource.length) {
+    const { flowId, resourceId } = flowRefsWithResource[refIndex];
+
+    if (flowId && resourceId) {
+      // reset the state for that resourceId and subsequent state reset
+      yield put(actions.flowData.reset(flowId, resourceId));
+    }
+
+    refIndex += 1;
+  }
+}
+
 export function* updateFlowsDataForResource({ resourceId, resourceType }) {
+  if (resourceType === 'scripts') {
+    return yield call(updateFlowsForScripts, { scriptId: resourceId });
+  }
+
   // get flow ids using this resourceId
   const flowRefs = yield select(getFlowReferencesForResource, resourceId);
-  // make a preview call for hooks so that the entire state of that processor updates if present
   let flowIndex = 0;
 
   while (flowIndex < flowRefs.length) {
@@ -76,8 +107,7 @@ export function* updateFlowsDataForResource({ resourceId, resourceType }) {
     // reset the state for that resourceId and subsequent state reset
     yield put(actions.flowData.reset(flowId, resourceId));
     // Fetch preview data for this resource in all used flows
-    yield call(refreshResourceData, { flowId, resourceId, resourceType });
-
+    // @TODO : fetch only for the current flow
     flowIndex += 1;
   }
 }

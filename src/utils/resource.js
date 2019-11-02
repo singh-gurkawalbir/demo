@@ -1,3 +1,4 @@
+import { values } from 'lodash';
 import getRoutePath from './routePaths';
 import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../constants/resource';
 
@@ -201,4 +202,16 @@ export const getWebhookUrl = (formValues, resourceId) => {
   }
 
   return whURL;
+};
+
+/*
+ * Returns Boolean
+ * checks whether passed scriptId is present in hooks of passed Resource (Export/Import))
+ */
+export const isScriptIdUsedInHook = (resource = {}, scriptId) => {
+  if (!scriptId) return false;
+  const { hooks = {} } = resource;
+  const selectedHooks = values(hooks);
+
+  return !!selectedHooks.find(hook => hook._scriptId === scriptId);
 };

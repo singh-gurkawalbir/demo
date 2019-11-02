@@ -3,7 +3,7 @@ import { combineReducers } from 'redux';
 import jsonPatch from 'fast-json-patch';
 import moment from 'moment';
 import produce from 'immer';
-import { uniq, some, map } from 'lodash';
+import { uniq, some, map, keys } from 'lodash';
 import app, * as fromApp from './app';
 import data, * as fromData from './data';
 import session, * as fromSession from './session';
@@ -11,7 +11,6 @@ import comms, * as fromComms from './comms';
 import auth, * as fromAuth from './authentication';
 import user, * as fromUser from './user';
 import actionTypes from '../actions/types';
-import { getUsedActionsMapForResource } from '../utils/flows';
 import {
   PASSWORD_MASK,
   USER_ACCESS_LEVELS,
@@ -31,6 +30,8 @@ import { getFieldById } from '../forms/utils';
 import { upgradeButtonText, expiresInfo } from '../utils/license';
 import commKeyGen from '../utils/commKeyGenerator';
 import { isRealtimeExport, isSimpleImportFlow, isRunnable } from './flowsUtil';
+import { getUsedActionsMapForResource } from '../utils/flows';
+import { isScriptIdUsedInHook } from '../utils/resource';
 
 const combinedReducers = combineReducers({
   app,
@@ -2101,6 +2102,49 @@ export function flowConnectionList(state, flow) {
   const connectionList = resourcesByIds(state, 'connections', connectionIds);
 
   return connectionList;
+}
+
+/*
+ * Returns [{flowId, resourceId}, ..] for all the flows ( PP / PG ) using passed scriptId in hooks
+ */
+export function getFlowReferencesForScript(state, scriptId) {
+  const flowsState = state && state.session && state.session.flowData;
+  const existingFlows = keys(flowsState);
+  const flowRefs = [];
+
+  existingFlows.forEach(flowId => {
+    const { pageGenerators = [], pageProcessors = [] } = flowsState[flowId];
+
+    return (
+      pageGenerators.find(pg => {
+        const resourceId = pg._exportId;
+        const pgResource = resource(state, 'exports', resourceId);
+
+        if (isScriptIdUsedInHook(pgResource, scriptId)) {
+          flowRefs.push({ flowId, resourceId });
+
+          return true;
+        }
+
+        return false;
+      }) ||
+      pageProcessors.find(pp => {
+        const resourceType = pp._exportId ? 'exports' : 'imports';
+        const resourceId = pp._exportId || pp._importId;
+        const ppResource = resource(state, resourceType, resourceId);
+
+        if (isScriptIdUsedInHook(ppResource, scriptId)) {
+          flowRefs.push({ flowId, resourceId });
+
+          return true;
+        }
+
+        return false;
+      })
+    );
+  });
+
+  return flowRefs;
 }
 
 export function getUsedActionsForResource(
