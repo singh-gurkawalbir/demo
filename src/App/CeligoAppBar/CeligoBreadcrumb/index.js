@@ -29,38 +29,14 @@ const routes = [
     path: '/pg/integrations/:integrationId/',
     breadcrumb: IntegrationCrumb,
     childRoutes: [
-      {
-        path: '/pg/integrations/:integrationId/dashboard',
-        breadcrumb: () => 'Dashboard',
-      },
-      {
-        path: '/pg/integrations/:integrationId/settings/flows',
-        breadcrumb: () => 'Flows',
-      },
-      {
-        path: '/pg/integrations/:integrationId/settings/general',
-        breadcrumb: () => 'General',
-      },
-      {
-        path: '/pg/integrations/:integrationId/settings/users',
-        breadcrumb: () => 'Users',
-      },
-      {
-        path: '/pg/integrations/:integrationId/settings/audit',
-        breadcrumb: () => 'Audit log',
-      },
-      {
-        path: '/pg/integrations/:integrationId/settings/connections',
-        breadcrumb: () => 'Connections',
-      },
-      {
-        path: '/pg/integrations/:integrationId/settings/notifications',
-        breadcrumb: () => 'Notifications',
-      },
-      {
-        path: '/pg/integrations/:integrationId/flowBuilder/:flowId',
-        breadcrumb: () => 'Flow builder',
-      },
+      { path: '/dashboard', breadcrumb: () => 'Dashboard' },
+      { path: '/settings/flows', breadcrumb: () => 'Flows' },
+      { path: '/settings/general', breadcrumb: () => 'General' },
+      { path: '/settings/users', breadcrumb: () => 'Users' },
+      { path: '/settings/audit', breadcrumb: () => 'Audit log' },
+      { path: '/settings/connections', breadcrumb: () => 'Connections' },
+      { path: '/settings/notifications', breadcrumb: () => 'Notifications' },
+      { path: '/flowBuilder/:flowId', breadcrumb: () => 'Flow builder' },
     ],
   },
   {
@@ -88,8 +64,8 @@ const routes = [
   },
 ];
 
-function parseUrl(pathname, routes) {
-  const segments = [];
+function parseUrl(pathname, routes, params = {}) {
+  const crumbs = [];
 
   // stop iterating once we find a match. (return true)
   routes.some(r => {
@@ -99,12 +75,31 @@ function parseUrl(pathname, routes) {
       // Some routes may not be desired in the breadcrumb...
       // we handle this by not including a breadcrumb prop in the route metadata
       if (r.breadcrumb) {
-        segments.push({ ...match, breadcrumb: r.breadcrumb });
+        crumbs.push({
+          ...match,
+          // carry forward any params from parent routes in case a child crumb
+          // needs parent route params to render (lookup data in app state for example)
+          params: { ...params, ...match.params },
+          breadcrumb: r.breadcrumb,
+        });
       }
 
-      // is there more of the url to parse? possibly child routes? time to recuse.
-      if (!match.isExact && r.childRoutes) {
-        parseUrl(pathname, r.childRoutes).forEach(s => segments.push(s));
+      // is there more of the url to parse?
+      if (!match.isExact) {
+        // drop what was already matched by the parent so we can use
+        // relative child paths in the route metadata.
+        const childPath = pathname.replace(match.url, '');
+
+        // possibly child routes? time to recuse.
+        if (r.childRoutes) {
+          const childCrumbs = parseUrl(childPath, r.childRoutes, match.params);
+
+          childCrumbs.forEach(s => crumbs.push(s));
+        } else {
+          // TODO: If the match is not exact and the matched route has no
+          // child routes, then the remainder of the pathname could match
+          // the recursive add/edit resource drawer routes.
+        }
       }
 
       return true;
@@ -113,7 +108,7 @@ function parseUrl(pathname, routes) {
     return false;
   });
 
-  return segments;
+  return crumbs;
 }
 
 export default function CeligoBreadcrumb({ location }) {
@@ -129,14 +124,14 @@ export default function CeligoBreadcrumb({ location }) {
       separator={<ArrowRightIcon fontSize="small" />}
       aria-label="breadcrumb"
       className={classes.breadCrumb}>
-      {breadcrumbs.map(({ breadcrumb: Breadcrumb, url, isExact, params }) =>
+      {breadcrumbs.map(({ breadcrumb: Crumb, url, isExact, params }) =>
         isExact ? (
           <Typography key={url} variant="body2" className={classes.activeCrumb}>
-            <Breadcrumb {...params} />
+            <Crumb {...params} />
           </Typography>
         ) : (
           <Link key={url} color="inherit" to={url}>
-            <Breadcrumb {...params} />
+            <Crumb {...params} />
           </Link>
         )
       )}
