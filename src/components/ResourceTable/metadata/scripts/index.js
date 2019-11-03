@@ -7,7 +7,8 @@ export default {
   columns: [
     {
       heading: 'Name',
-      value: r => getResourceLink('scripts', r),
+      value: (r, actionProps, location) =>
+        getResourceLink('scripts', r, location),
       orderBy: 'name',
     },
     {

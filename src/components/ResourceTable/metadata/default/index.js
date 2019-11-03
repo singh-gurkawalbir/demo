@@ -6,7 +6,8 @@ export default resourceType => ({
   columns: [
     {
       heading: 'Name',
-      value: r => getResourceLink(resourceType, r),
+      value: (r, actionProps, location) =>
+        getResourceLink(resourceType, r, location),
       orderBy: 'name',
     },
     {
