@@ -225,6 +225,11 @@ const PageProcessor = ({
         {
           ...transformationAction,
           isUsed: usedActions[actionsMap.transformation],
+        },
+        {
+          ...pageProcessorHooksAction,
+          isUsed: usedActions[actionsMap.hooks],
+          helpText: helpTextMap[`fb.pp.exports.hooks`],
         }
       );
     } else {
@@ -244,17 +249,17 @@ const PageProcessor = ({
         {
           ...responseTransformationAction,
           isUsed: usedActions[actionsMap.responseTransformation],
+        },
+        {
+          ...pageProcessorHooksAction,
+          isUsed: usedActions[actionsMap.hooks],
+          helpText: helpTextMap[`fb.pp.imports.hooks`],
         }
       );
     }
 
     if (!isLast) {
       processorActions.push(
-        {
-          ...pageProcessorHooksAction,
-          isUsed: usedActions[actionsMap.hooks],
-          helpText: helpTextMap[`fb.pp.${resourceType}.hooks`],
-        },
         {
           ...responseMapping,
           isUsed: usedActions[actionsMap.responseMapping],

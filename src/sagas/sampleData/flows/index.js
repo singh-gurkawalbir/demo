@@ -286,12 +286,21 @@ export function* requestProcessorData({
     }
 
     processorData = { data: preProcessedData, rule, processor: 'transform' };
-  } else if (stage === 'hooks') {
+  }
+  // Below list are all Possible hook types
+  else if (
+    ['hooks', 'preMap', 'postMap', 'postSubmit', 'postAggregate'].includes(
+      stage
+    )
+  ) {
     const { hooks = {} } = { ...resource };
+    // Default hooks stage is preSavePage for Exports
+    // Other stages are hook stages for Imports
+    const hookType = stage === 'hooks' ? 'preSavePage' : stage;
+    const hook = hooks[hookType] || {};
 
-    // @TODO: Raghu handle for other import hooks map
-    if (hooks.preSavePage && hooks.preSavePage._scriptId) {
-      const scriptId = hooks.preSavePage._scriptId;
+    if (hook._scriptId) {
+      const scriptId = hook._scriptId;
       const data = { data: [preProcessedData], errors: [] };
       const script = yield call(getResource, {
         resourceType: 'scripts',
@@ -302,7 +311,7 @@ export function* requestProcessorData({
       processorData = {
         data,
         code,
-        entryFunction: hooks.preSavePage.function,
+        entryFunction: hook.function,
         processor: 'javascript',
       };
     } else {
