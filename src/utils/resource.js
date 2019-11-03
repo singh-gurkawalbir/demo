@@ -1,3 +1,4 @@
+import { values } from 'lodash';
 import getRoutePath from './routePaths';
 import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../constants/resource';
 
@@ -202,3 +203,57 @@ export const getWebhookUrl = (formValues, resourceId) => {
 
   return whURL;
 };
+
+/*
+ * Returns Boolean
+ * checks whether passed scriptId is present in hooks of passed Resource (Export/Import))
+ */
+export const isScriptIdUsedInResource = (resource, scriptId) => {
+  if (!scriptId) return false;
+  const { hooks = {} } = resource || {};
+  const selectedHooks = values(hooks);
+
+  return !!selectedHooks.find(hook => hook._scriptId === scriptId);
+};
+
+/*
+ * Returns Boolean
+ * checks whether passed FileDefinitionID is present in passed Resource (Export/Import))
+ */
+export const isFileDefinitionIdUsedInResource = (
+  resource,
+  fileDefinitionId
+) => {
+  if (!fileDefinitionId) return false;
+  const { file = {} } = resource || {};
+
+  return !!(
+    file.fileDefinition &&
+    file.fileDefinition._fileDefinitionId === fileDefinitionId
+  );
+};
+
+/*
+ * Checks for resourceReferenceId inside resource
+ * resource can be Export/ Import
+ * resourceReferenceType be Scripts/ FileDefs
+ * resourceReferenceType: Page Processors / Page Generators used incase of flow context
+ * resourceReferenceId: ID of the resourceReferenceType ( ScriptId/FileDefID/exportId/importId)
+ */
+export function isValidResourceReference(
+  resource,
+  resourceId,
+  resourceReferenceType,
+  resourceReferenceId
+) {
+  switch (resourceReferenceType) {
+    case 'scripts':
+      return isScriptIdUsedInResource(resource, resourceReferenceId);
+    case 'filedefinitions':
+      return isFileDefinitionIdUsedInResource(resource, resourceReferenceId);
+    case 'exports':
+    case 'imports':
+      return resourceId === resourceReferenceId;
+    default:
+  }
+}
