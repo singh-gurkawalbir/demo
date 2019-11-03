@@ -65,6 +65,17 @@ export default {
           message: 'Subdomain should not contain spaces.',
         },
       },
+      defaultValue: r => {
+        const baseUri = r && r.http && r.http.baseURI;
+        const subdomain =
+          baseUri &&
+          baseUri.substring(
+            baseUri.indexOf('https://') + 8,
+            baseUri.indexOf('.myshopify.com')
+          );
+
+        return subdomain;
+      },
     },
     'http.auth.basic.username': {
       fieldId: 'http.auth.basic.username',
@@ -143,6 +154,9 @@ export default {
     ],
   },
   actions: [
+    {
+      id: 'cancel',
+    },
     {
       id: 'oauth',
       label: 'Save & Authorize',

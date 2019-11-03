@@ -1,16 +1,55 @@
 export default {
-  preSave: formValues => ({
-    ...formValues,
-    '/type': 'http',
-    '/assistant': 'zendesk',
-    '/http/auth/type': 'basic',
-    '/http/mediaType': 'json',
-    '/http/ping/method': 'GET',
-    '/http/ping/relativeURI': '/api/v2/users.json',
-    '/http/baseURI': `https://${formValues['/zendesk/subdomain']}.zendesk.com`,
-  }),
+  preSave: formValues => {
+    const retValues = { ...formValues };
+
+    if (retValues['/http/auth/type'] === 'token') {
+      retValues['/http/auth/basic/password'] = retValues['/http/apiToken'];
+      retValues['/http/auth/basic/username'] = `${
+        retValues['/http/auth/basic/username']
+      }/token`;
+      retValues['/http/auth/type'] = 'basic';
+    } else {
+      retValues['/http/apiToken'] = undefined;
+    }
+
+    return {
+      ...retValues,
+      '/type': 'http',
+      '/assistant': 'zendesk',
+      '/http/mediaType': 'json',
+      '/http/ping/method': 'GET',
+      '/http/ping/relativeURI': '/api/v2/users.json',
+      '/http/baseURI': `https://${
+        formValues['/zendesk/subdomain']
+      }.zendesk.com`,
+    };
+  },
   fieldMap: {
     name: { fieldId: 'name' },
+    'http.auth.type': {
+      id: 'http.auth.type',
+      required: true,
+      type: 'select',
+      label: 'Authentication Type',
+      helpText: 'Please select Authentication Type',
+      defaultValue: r =>
+        r &&
+        r.http &&
+        r.http.auth &&
+        r.http.auth.basic &&
+        r.http.auth.basic.username &&
+        r.http.auth.basic.username.indexOf('/token') !== -1
+          ? 'token'
+          : 'basic',
+      options: [
+        {
+          items: [
+            { label: 'Basic', value: 'basic' },
+            { label: 'Token', value: 'token' },
+          ],
+        },
+      ],
+    },
     'zendesk.subdomain': {
       id: 'zendesk.subdomain',
       type: 'text',
@@ -37,16 +76,48 @@ export default {
         return subdomain;
       },
     },
-    'http.auth.basic.username': { fieldId: 'http.auth.basic.username' },
-    'http.auth.basic.password': { fieldId: 'http.auth.basic.password' },
+    'http.auth.basic.username': {
+      fieldId: 'http.auth.basic.username',
+      defaultValue: r => {
+        if (
+          r &&
+          r.http &&
+          r.http.auth &&
+          r.http.auth.basic &&
+          r.http.auth.basic.username
+        ) {
+          if (r.http.auth.basic.username.indexOf('/token') !== -1)
+            return r.http.auth.basic.username.replace('/token', '');
+
+          return r.http.auth.basic.username;
+        }
+
+        return '';
+      },
+    },
+    'http.auth.basic.password': {
+      fieldId: 'http.auth.basic.password',
+      visibleWhen: [{ field: 'http.auth.type', is: ['basic'] }],
+    },
+    'http.apiToken': {
+      id: 'http.apiToken',
+      required: true,
+      type: 'text',
+      label: 'API Token',
+      helpText:
+        'API tokens are managed in the Support admin interface at Admin > Channels > API',
+      visibleWhen: [{ field: 'http.auth.type', is: ['token'] }],
+    },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
     fields: [
       'name',
+      'http.auth.type',
       'zendesk.subdomain',
       'http.auth.basic.username',
       'http.auth.basic.password',
+      'http.apiToken',
     ],
     type: 'collapse',
     containers: [

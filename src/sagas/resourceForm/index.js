@@ -156,7 +156,7 @@ export function* createFormValuesPatchSet({
     if (typeof preSave === 'function') {
       // stock preSave handler present...
 
-      finalValues = preSave(values);
+      finalValues = preSave(values, resource);
     }
   }
 

@@ -1,6 +1,7 @@
 import { Dialog, Typography, DialogTitle } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import Icon from '../../../../components/icons/CalendarIcon';
+import helpTextMap from '../../../../components/Help/helpTextMap';
 
 const useStyles = makeStyles(theme => ({
   paper: {
@@ -31,7 +32,6 @@ export default {
   name: 'exportSchedule',
   position: 'middle',
   Icon,
-  helpText:
-    'This is the text currently in the hover state of actions in the current FB',
+  helpText: helpTextMap['fb.pg.exports.schedule'],
   Component: ScheduleDialog,
 };

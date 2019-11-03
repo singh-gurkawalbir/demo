@@ -180,7 +180,7 @@ export default {
       expression.push({ _connectorId: { $exists: false } });
       const filter = { $and: expression };
 
-      return { filter, appType: app.type };
+      return { filter, appType: app.assistant };
     }
 
     return null;
