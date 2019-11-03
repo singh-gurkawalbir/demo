@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import produce from 'immer';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
+import { useHistory } from 'react-router-dom';
 import {
   Table,
   TableBody,
@@ -71,6 +72,7 @@ export default function CeligoTable({
   filterKey,
   actionProps = {},
 }) {
+  const history = useHistory();
   const classes = useStyles();
   const dispatch = useDispatch();
   const { sort = {} } = useSelector(state =>
@@ -222,11 +224,11 @@ export default function CeligoTable({
                   scope="row"
                   key={col.heading}
                   align={col.align || 'left'}>
-                  {col.value(r, actionProps)}
+                  {col.value(r, actionProps, history.location)}
                 </TableCell>
               ) : (
                 <TableCell key={col.heading} align={col.align || 'left'}>
-                  {col.value(r, actionProps)}
+                  {col.value(r, actionProps, history.location)}
                 </TableCell>
               )
             )}

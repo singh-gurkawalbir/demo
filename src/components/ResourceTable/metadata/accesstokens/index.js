@@ -13,7 +13,8 @@ export default {
   columns: [
     {
       heading: 'Name',
-      value: r => getResourceLink('accesstokens', r),
+      value: (r, actionProps, location) =>
+        getResourceLink('accesstokens', r, location),
       orderBy: 'name',
     },
     {

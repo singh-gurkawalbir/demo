@@ -3,18 +3,17 @@ import TimeAgo from 'react-timeago';
 import { Link } from 'react-router-dom';
 import { Typography } from '@material-ui/core';
 import StatusCircle from '../StatusCircle';
-import getRoutePath from '../../utils/routePaths';
 import { getApp } from '../../constants/applications';
 import { getResourceSubType } from '../../utils/resource';
 
-export const getResourceLink = (resourceType, resource) => (
+export const getResourceLink = (resourceType, resource, location = {}) => (
   <Fragment>
     <Link
-      to={getRoutePath(
+      to={
         resourceType === 'connectorLicenses'
-          ? `/connectors/${resource._connectorId}/connectorLicenses/edit/connectorLicenses/${resource._id}`
-          : `/${resourceType}/edit/${resourceType}/${resource._id}`
-      )}>
+          ? `${location.pathname}/edit/connectorLicenses/${resource._id}`
+          : `${location.pathname}/edit/${resourceType}/${resource._id}`
+      }>
       {resourceType === 'connectorLicenses'
         ? resource.user && resource.user.email
         : resource.name || resource._id}
