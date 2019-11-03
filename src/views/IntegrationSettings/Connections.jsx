@@ -7,6 +7,7 @@ import LoadResources from '../../components/LoadResources';
 import CeligoTable from '../../components/CeligoTable';
 import RegisterConnections from '../../components/RegisterConnections';
 import metadata from '../../components/ResourceTable/metadata/connections';
+import ResourceDrawer from '../../components/drawer/Resource';
 
 const useStyles = makeStyles(() => ({
   registerButton: {
@@ -46,6 +47,7 @@ export default function Connections(props) {
 
   return (
     <Fragment>
+      <ResourceDrawer {...props} />
       {showRegisterConnDialog && (
         <RegisterConnections
           integrationId={integrationId}

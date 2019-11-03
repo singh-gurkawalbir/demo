@@ -138,7 +138,7 @@ export default {
   },
   layout: {
     fields: [
-      'dataMapping',
+      // 'dataMapping',
       'oneToMany',
       'pathToMany',
       /* Uncomment below changes to show mapping option on import forms */

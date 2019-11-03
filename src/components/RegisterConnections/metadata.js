@@ -9,7 +9,8 @@ export default {
   columns: [
     {
       heading: 'Name',
-      value: r => getResourceLink('connections', r),
+      value: (r, actionProps, location) =>
+        getResourceLink('connections', r, location),
       orderBy: 'name',
     },
     { heading: 'Status', value: r => onlineStatus(r) },
