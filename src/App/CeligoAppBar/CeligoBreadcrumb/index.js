@@ -84,7 +84,7 @@ const commonChildRoutes = [
 ];
 
 function parseUrl(pathname, routes, url = '', params = {}) {
-  const crumbs = [];
+  let crumbs = [];
 
   // stop iterating once we find a match. (return true)
   routes.some(r => {
@@ -120,7 +120,7 @@ function parseUrl(pathname, routes, url = '', params = {}) {
             match.params
           );
 
-          childCrumbs.forEach(s => crumbs.push(s));
+          crumbs = [...crumbs, ...childCrumbs];
         }
 
         // If the match is not exact and the matched route has no
@@ -134,7 +134,7 @@ function parseUrl(pathname, routes, url = '', params = {}) {
             match.params
           );
 
-          childCrumbs.forEach(s => crumbs.push(s));
+          crumbs = [...crumbs, ...childCrumbs];
         }
       }
 
