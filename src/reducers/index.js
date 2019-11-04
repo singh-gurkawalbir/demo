@@ -738,8 +738,8 @@ export function integrationAppResourceList(state, integrationId, storeId) {
     integrationId
   );
   const { supportsMultiStore, sections } = integrationResource.settings || {};
-  const { resources: integrationConnections } = fromData.resourceList(
-    state.data,
+  const { resources: integrationConnections } = resourceListWithPermissions(
+    state,
     {
       type: 'connections',
       filter: { _integrationId: integrationId },
@@ -749,7 +749,7 @@ export function integrationAppResourceList(state, integrationId, storeId) {
   if (!supportsMultiStore || !storeId) {
     return {
       connections: integrationConnections,
-      flows: resourceList(state, {
+      flows: resourceListWithPermissions(state, {
         type: 'flows',
         filter: { _integrationId: integrationId },
       }).resources,
