@@ -867,6 +867,9 @@ export function integrationAppGeneralSettings(state, id, storeId) {
     const storeSection = (general || []).find(s => s.id === storeId) || {};
 
     ({ fields, sections: subSections } = storeSection);
+  } else if (Array.isArray(general)) {
+    ({ fields, sections: subSections } =
+      general.find(s => s.title === 'General') || {});
   } else {
     ({ fields, sections: subSections } = general || {});
   }
