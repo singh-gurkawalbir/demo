@@ -129,21 +129,32 @@ export default {
         field => field.fieldId === 'http.lookups'
       );
 
-      if (lookupField) {
-        return {
-          // we are saving http body in an array. Put correspond to 0th Index,
-          // Post correspond to 1st index.
-          // We will have 'Build HTTP Request Body for Create' and
-          // 'Build HTTP Request Body for Update' in case user selects Composite Type as 'Create new Data and Update existing data'
-          saveIndex: 0,
-          lookups: {
-            // passing lookupId fieldId and data since we will be modifying lookups
-            //  from 'Manage lookups' option inside 'Build Http request Body Editor'
-            fieldId: lookupField.fieldId,
-            data: lookupField && lookupField.value,
-          },
-        };
-      }
+      return {
+        // we are saving http body in an array. Put correspond to 0th Index,
+        // Post correspond to 1st index.
+        // We will have 'Build HTTP Request Body for Create' and
+        // 'Build HTTP Request Body for Update' in case user selects Composite Type as 'Create new Data and Update existing data'
+        saveIndex: 0,
+        lookups: {
+          // passing lookupId fieldId and data since we will be modifying lookups
+          //  from 'Manage lookups' option inside 'Build Http request Body Editor'
+          fieldId: 'http.lookups',
+          data: (lookupField && lookupField.value) || [],
+        },
+      };
+    }
+
+    if (fieldId === 'http.relativeURI') {
+      const lookupField = fields.find(
+        field => field.fieldId === 'http.lookups'
+      );
+
+      return {
+        lookups: {
+          fieldId: 'http.lookups',
+          data: lookupField && lookupField.value,
+        },
+      };
     }
 
     return null;
@@ -176,8 +187,8 @@ export default {
     'http.headers': { fieldId: 'http.headers' },
     'http.requestMediaType': { fieldId: 'http.requestMediaType' },
     'http.compositeType': { fieldId: 'http.compositeType' },
-    'http.relativeURI': { fieldId: 'http.relativeURI' },
     'http.lookups': { fieldId: 'http.lookups', visible: false },
+    'http.relativeURI': { fieldId: 'http.relativeURI' },
     'http.response.successPath': { fieldId: 'http.response.successPath' },
     'http.response.successValues': { fieldId: 'http.response.successValues' },
     'http.response.resourceIdPath': { fieldId: 'http.response.resourceIdPath' },
@@ -720,8 +731,8 @@ export default {
       'http.headers',
       'http.requestMediaType',
       'http.compositeType',
-      'http.relativeURI',
       'http.lookups',
+      'http.relativeURI',
       'http.body',
       'http.response.successPath',
       'http.response.successValues',
