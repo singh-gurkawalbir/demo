@@ -6,8 +6,8 @@ import AddIcon from '../../../components/icons/AddIcon';
 import ActionIconButton from '../ActionIconButton';
 import ApplicationImg from '../../../components/icons/ApplicationImg';
 import ResourceButton from '../ResourceButton';
-import StatusCircle from '../../../components/StatusCircle';
-import Status from '../../../components/Status/';
+// import StatusCircle from '../../../components/StatusCircle';
+// import Status from '../../../components/Status/';
 import BubbleSvg from '../BubbleSvg';
 
 const blockHeight = 170;
@@ -74,8 +74,8 @@ const useStyles = makeStyles(theme => ({
     },
   },
   actionIsNew: {
-    border: 'solid 1px',
-    borderColor: theme.palette.primary.main,
+    // border: 'solid 1px',
+    color: theme.palette.primary.main,
   },
   bubbleContainer: {
     position: 'relative',
@@ -245,11 +245,11 @@ function AppBlock({
             )}
           </div>
         </div>
-        {connectorType && (
-          <Status className={classes.status} count="5324" label="new errors">
+        {/* connectorType && (
+          <Status className={classes.status} label="5324 new errors">
             <StatusCircle variant="error" size="small" />
           </Status>
-        )}
+        ) */}
       </div>
     </div>
   );
