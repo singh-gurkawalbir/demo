@@ -1754,6 +1754,10 @@ export function commMetadataPathGen(
         addInfo.refreshCache === true ? '&' : '?'
       }recordTypeOnly=true`;
     }
+
+    if (addInfo.query) {
+      commMetadataPath += `?q=${addInfo.query}`;
+    }
   }
 
   return commMetadataPath;

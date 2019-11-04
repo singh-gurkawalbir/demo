@@ -41,6 +41,8 @@ import DynaImportMapping from './DynaImportMapping';
 import DynaFieldExpressionSelect from './DynaFieldExpressionSelect';
 import DynaAutoSuggest from './DynaAutoSuggest';
 import DynaGenerateUrl from './DynaGenerateUrl';
+import DynaSoqlQuery from './DynaSoqlQuery';
+import DynaSalesforceRefreshableSelect from './DynaSalesforceRefreshableSelect';
 
 export default {
   mapping: DynaImportMapping,
@@ -89,4 +91,6 @@ export default {
   fieldexpressionselect: DynaFieldExpressionSelect,
   autosuggest: DynaAutoSuggest,
   generateurl: DynaGenerateUrl,
+  soqlquery: DynaSoqlQuery,
+  salesforcerefreshableselect: DynaSalesforceRefreshableSelect,
 };

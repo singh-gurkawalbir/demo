@@ -24,6 +24,19 @@ export default {
       ...retValues,
     };
   },
+  // optionsHandler: (fieldId, fields) => {
+  //   if (fieldId === 'delta.dateField' || fieldId === 'once.booleanField') {
+  //     const soqlQueryField = fields.find(
+  //       field => field.id === 'salesforce.soql'
+  //     );
+
+  //     return {
+  //       recordType: (soqlQueryField.value || {}).entityName,
+  //     };
+  //   }
+
+  //   return null;
+  // },
   fieldMap: {
     common: { formId: 'common' },
     'salesforce.executionType': { fieldId: 'salesforce.executionType' },
@@ -47,7 +60,21 @@ export default {
       defaultValue: r =>
         r && r.salesforce && r.salesforce.id ? 'blob' : 'records',
     },
-    'salesforce.soql.query': { fieldId: 'salesforce.soql.query' },
+    'salesforce.soql': {
+      id: 'salesforce.soql',
+      type: 'soqlquery',
+      omitWhenHidden: true,
+      metadataType: 'query',
+      recordType: 'columns',
+      multiline: true,
+      connectionId: r => r && r._connectionId,
+      defaultValue: r => r && r.salesforce && r.salesforce.soql,
+      refreshOptionsOnChangesTo: ['delta.dateField', 'once.booleanField'],
+      visibleWhenAll: [
+        { field: 'salesforce.executionType', is: ['scheduled'] },
+        { field: 'outputMode', is: ['records'] },
+      ],
+    },
     type: {
       id: 'type',
       type: 'select',
@@ -69,13 +96,29 @@ export default {
       ],
     },
     'delta.dateField': {
-      fieldId: 'delta.dateField',
+      id: 'delta.dateField',
+      type: 'salesforcerefreshableselect',
+      label: 'Date Field',
+      connectionId: r => r && r._connectionId,
+      required: true,
+      metadataType: 'sObjectTypes',
+      recordType: 'columns',
+      resourceType: 'query',
+      visibleWhen: [{ field: 'type', is: ['delta'] }],
     },
     'delta.lagOffset': {
       fieldId: 'delta.lagOffset',
     },
     'once.booleanField': {
-      fieldId: 'once.booleanField',
+      id: 'once.booleanField',
+      type: 'salesforcerefreshableselect',
+      label: 'Boolean Field',
+      connectionId: r => r && r._connectionId,
+      required: true,
+      metadataType: 'sObjectTypes',
+      recordType: 'columns',
+      resourceType: 'query',
+      visibleWhen: [{ field: 'type', is: ['once'] }],
     },
     'salesforce.sObjectType': { fieldId: 'salesforce.sObjectType' },
     'salesforce.objectType': { fieldId: 'salesforce.objectType' },
@@ -108,7 +151,7 @@ export default {
       'salesforce.distributed.referencedFields',
       'salesforce.distributed.relatedLists.referencedFields',
       'salesforce.distributed.qualifier',
-      'salesforce.soql.query',
+      'salesforce.soql',
       'type',
       'delta.dateField',
       'delta.lagOffset',

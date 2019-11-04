@@ -278,11 +278,9 @@ export default (
 
     case actionTypes.METADATA.RECEIVED_SALESFORCE: {
       newState = { ...state.salesforce };
-      const options = generateSalesforceOptions(
-        metadata,
-        recordType,
-        selectField
-      );
+      const options = metadata.fields
+        ? generateSalesforceOptions(metadata, recordType, selectField)
+        : metadata;
 
       if (recordType) {
         newState[connectionId] = {

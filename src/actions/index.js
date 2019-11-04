@@ -312,6 +312,7 @@ const metadata = {
       metadataType,
       recordType,
       selectField,
+      addInfo,
     });
   },
   refresh: (
