@@ -36,7 +36,14 @@ const routes = [
       { path: '/settings/audit', breadcrumb: () => 'Audit log' },
       { path: '/settings/connections', breadcrumb: () => 'Connections' },
       { path: '/settings/notifications', breadcrumb: () => 'Notifications' },
-      { path: '/flowBuilder/:flowId', breadcrumb: () => 'Flow builder' },
+      {
+        path: '/flowBuilder/:flowId',
+        breadcrumb: () => 'Flow builder',
+        childRoutes: [
+          { path: '/schedule', breadcrumb: () => 'Schedule' },
+          { path: '/settings', breadcrumb: () => 'Settings' },
+        ],
+      },
     ],
   },
   {
@@ -63,8 +70,20 @@ const routes = [
     breadcrumb: ({ resourceType }) => `${MODEL_PLURAL_TO_LABEL[resourceType]}s`,
   },
 ];
+const commonChildRoutes = [
+  {
+    path: '/:operation/:resourceType/:id',
+    breadcrumb: ({ operation, resourceType }) =>
+      `${operation === 'add' ? 'Add' : 'Edit'} ${
+        MODEL_PLURAL_TO_LABEL[resourceType]
+      }`,
+  },
+  // TODO: clone resource, once complete is accessible from various pages and
+  // acts like the resource drawer, in that it preserves the url and simple
+  // appends to any existing route url.
+];
 
-function parseUrl(pathname, routes, params = {}) {
+function parseUrl(pathname, routes, url = '', params = {}) {
   const crumbs = [];
 
   // stop iterating once we find a match. (return true)
@@ -80,6 +99,7 @@ function parseUrl(pathname, routes, params = {}) {
           // carry forward any params from parent routes in case a child crumb
           // needs parent route params to render (lookup data in app state for example)
           params: { ...params, ...match.params },
+          url: `${url}${match.url}`,
           breadcrumb: r.breadcrumb,
         });
       }
@@ -89,16 +109,32 @@ function parseUrl(pathname, routes, params = {}) {
         // drop what was already matched by the parent so we can use
         // relative child paths in the route metadata.
         const childPath = pathname.replace(match.url, '');
+        let childCrumbs;
 
         // possibly child routes? time to recuse.
         if (r.childRoutes) {
-          const childCrumbs = parseUrl(childPath, r.childRoutes, match.params);
+          childCrumbs = parseUrl(
+            childPath,
+            r.childRoutes,
+            match.url,
+            match.params
+          );
 
           childCrumbs.forEach(s => crumbs.push(s));
-        } else {
-          // TODO: If the match is not exact and the matched route has no
-          // child routes, then the remainder of the pathname could match
-          // the recursive add/edit resource drawer routes.
+        }
+
+        // If the match is not exact and the matched route has no
+        // child routes, then the remainder of the pathname could match
+        // the common child add/edit/clone resource drawer routes.
+        if (!childCrumbs || childCrumbs.length === 0) {
+          childCrumbs = parseUrl(
+            childPath,
+            commonChildRoutes,
+            match.url,
+            match.params
+          );
+
+          childCrumbs.forEach(s => crumbs.push(s));
         }
       }
 
@@ -120,7 +156,7 @@ export default function CeligoBreadcrumb({ location }) {
 
   return (
     <Breadcrumbs
-      maxItems={3}
+      maxItems={4}
       separator={<ArrowRightIcon fontSize="small" />}
       aria-label="breadcrumb"
       className={classes.breadCrumb}>
