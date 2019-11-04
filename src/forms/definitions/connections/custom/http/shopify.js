@@ -2,7 +2,7 @@ export default {
   preSave: formValues => {
     const retValues = { ...formValues };
 
-    retValues['/http/ping/relativeURI'] = '/admin/articles/authors.json';
+    retValues['/http/ping/relativeURI'] = '/admin/orders.json';
 
     if (retValues['/http/auth/type'] === 'oauth') {
       retValues['/http/auth/token/location'] = 'header';
