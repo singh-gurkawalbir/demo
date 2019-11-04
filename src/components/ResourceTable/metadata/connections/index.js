@@ -68,7 +68,7 @@ export default {
 
       if (actionProps.integrationId && !r._connectorId) {
         actionsToReturn = [Deregister, ...actionsToReturn];
-      } else {
+      } else if (!r._connectorId) {
         actionsToReturn = [...actionsToReturn, Delete];
       }
     } else {
