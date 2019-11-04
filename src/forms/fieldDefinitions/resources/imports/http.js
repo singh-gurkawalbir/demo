@@ -19,6 +19,23 @@ export default {
         ],
       },
     ],
+    defaultValue: r => {
+      let toReturn = '';
+
+      if (!r || !r.http) {
+        return toReturn;
+      }
+
+      if (r.http.method) {
+        if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
+          toReturn = 'COMPOSITE';
+        } else if (r.http.method && r.http.method.length === 1) {
+          [toReturn] = r.http.method;
+        }
+      }
+
+      return toReturn;
+    },
   },
   'http.blobMethod': {
     type: 'select',
@@ -39,6 +56,7 @@ export default {
         ],
       },
     ],
+    defaultValue: r => r && r.http && r.http.method && r.http.method[0],
   },
   'http.headers': {
     type: 'keyvalue',
@@ -65,6 +83,7 @@ export default {
         ],
       },
     ],
+    defaultValue: r => (r && r.http ? r && r.http.requestMediaType : 'xml'),
   },
   'http.compositeType': {
     type: 'select',
@@ -87,6 +106,12 @@ export default {
         ],
       },
     ],
+    requiredWhen: [
+      {
+        field: 'http.method',
+        is: ['COMPOSITE'],
+      },
+    ],
     visibleWhenAll: [
       {
         field: 'http.method',
@@ -97,6 +122,27 @@ export default {
         is: ['records'],
       },
     ],
+    defaultValue: r => {
+      let type = '';
+
+      if (!r || !r.http) {
+        return type;
+      }
+
+      if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
+        if (r.http.method.length > 1) {
+          type = 'createandupdate';
+        } else if (r.http.method.length === 1) {
+          if (r.ignoreExisting) {
+            type = 'createandignore';
+          } else if (r.ignoreMissing) {
+            type = 'updateandignore';
+          }
+        }
+      }
+
+      return type;
+    },
   },
   'http.relativeURI': {
     type: 'text',
@@ -105,19 +151,32 @@ export default {
     visibleWhen: [
       {
         field: 'http.method',
-        is: ['POST', 'PUT', 'DELETE', 'PATCH'],
+        isNot: ['COMPOSITE'],
       },
       {
-        field: 'http.blobMethod',
-        is: ['POST', 'PUT', 'DELETE'],
+        field: 'inputMode',
+        is: ['blob'],
       },
     ],
+    defaultValue: r =>
+      r && r.http && r.http.relativeURI && r.http.relativeURI[0],
   },
   'http.body': {
     type: 'httprequestbody',
-    defaultValue: [],
+    defaultValue: r =>
+      Array.isArray(((r || {}).http || {}).body) ? r.http.body[0] : undefined,
     label: 'Build HTTP Request Body',
     refreshOptionsOnChangesTo: ['http.lookups'],
+    visibleWhen: [
+      {
+        field: 'http.method',
+        isNot: ['COMPOSITE'],
+      },
+      {
+        field: 'inputMode',
+        is: ['blob'],
+      },
+    ],
   },
   'http.response.successPath': {
     type: 'text',
@@ -157,11 +216,11 @@ export default {
     visibleWhen: [
       {
         field: 'http.method',
-        is: ['POST', 'PUT', 'DELETE', 'PATCH'],
+        isNot: ['COMPOSITE'],
       },
       {
-        field: 'http.blobMethod',
-        is: ['POST', 'PUT', 'DELETE'],
+        field: 'inputMode',
+        is: ['blob'],
       },
     ],
   },
@@ -209,179 +268,10 @@ export default {
       },
     ],
   },
-  'http.compositeMethodCreate': {
-    type: 'select',
-    label: 'HTTP Method',
-    options: [
-      {
-        items: [
-          { label: 'POST', value: 'POST' },
-          { label: 'PUT', value: 'PUT' },
-          { label: 'PATCH', value: 'PATCH' },
-        ],
-      },
-    ],
-    visibleWhenAll: [
-      {
-        field: 'http.compositeType',
-        is: ['createandupdate', 'createandignore'],
-      },
-      {
-        field: 'inputMode',
-        is: ['records'],
-      },
-    ],
-  },
-  'http.relativeURICreate': {
-    type: 'text',
-    label: 'Relative URI',
-    placeholder: 'Optional',
-    visibleWhenAll: [
-      {
-        field: 'http.compositeType',
-        is: ['createandupdate', 'createandignore'],
-      },
-      {
-        field: 'inputMode',
-        is: ['records'],
-      },
-    ],
-  },
-  'http.bodyCreate': {
-    type: 'httprequestbody',
-    label: 'Build HTTP Request Body For Create',
-    refreshOptionsOnChangesTo: ['http.lookups'],
-    visibleWhenAll: [
-      {
-        field: 'http.compositeType',
-        is: ['createandupdate', 'createandignore'],
-      },
-      {
-        field: 'inputMode',
-        is: ['records'],
-      },
-    ],
-  },
-  'http.resourceIdPathCreate': {
-    type: 'text',
-    label: 'Response Id Path',
-    placeholder: 'Optional',
-    visibleWhenAll: [
-      {
-        field: 'http.compositeType',
-        is: ['createandupdate', 'createandignore'],
-      },
-      {
-        field: 'inputMode',
-        is: ['records'],
-      },
-    ],
-  },
-  'http.resourcePathCreate': {
-    type: 'text',
-    label: 'Response Path',
-    visibleWhenAll: [
-      {
-        field: 'http.compositeType',
-        is: ['createandupdate', 'createandignore'],
-      },
-      {
-        field: 'inputMode',
-        is: ['records'],
-      },
-    ],
-  },
-  'http.compositeMethodUpdate': {
-    type: 'select',
-    label: 'HTTP Method',
-    options: [
-      {
-        items: [
-          { label: 'POST', value: 'POST' },
-          { label: 'PUT', value: 'PUT' },
-          { label: 'PATCH', value: 'PATCH' },
-        ],
-      },
-    ],
-    visibleWhenAll: [
-      {
-        field: 'http.compositeType',
-        is: ['createandupdate', 'updateandignore'],
-      },
-      {
-        field: 'inputMode',
-        is: ['records'],
-      },
-    ],
-  },
-  'http.relativeURIUpdate': {
-    type: 'text',
-    label: 'Relative URI',
-    placeholder: 'Optional',
-    visibleWhenAll: [
-      {
-        field: 'http.compositeType',
-        is: ['createandupdate', 'updateandignore'],
-      },
-      {
-        field: 'inputMode',
-        is: ['records'],
-      },
-    ],
-  },
-  'http.resourceIdPathUpdate': {
-    type: 'text',
-    label: 'Response Id Path',
-    placeholder: 'Optional',
-    visibleWhenAll: [
-      {
-        field: 'http.compositeType',
-        is: ['createandupdate', 'updateandignore'],
-      },
-      {
-        field: 'inputMode',
-        is: ['records'],
-      },
-    ],
-  },
-  'http.resourcePathUpdate': {
-    type: 'text',
-    label: 'Response Path',
-    visibleWhenAll: [
-      {
-        field: 'http.compositeType',
-        is: ['createandupdate', 'updateandignore'],
-      },
-      {
-        field: 'inputMode',
-        is: ['records'],
-      },
-    ],
-  },
-  'http.existingDataId': {
-    type: 'text',
-    label: 'Existing Data Id',
-    visibleWhenAll: [
-      {
-        field: 'http.compositeType',
-        is: ['createandignore', 'updateandignore'],
-      },
-      {
-        field: 'inputMode',
-        is: ['records'],
-      },
-    ],
-    requiredWhen: [
-      {
-        field: 'http.compositeType',
-        is: ['createandignore', 'updateandignore'],
-      },
-    ],
-  },
   'http.successMediaType': {
     type: 'select',
     label: 'Success Media Type',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'inputMode',
         is: ['records'],
