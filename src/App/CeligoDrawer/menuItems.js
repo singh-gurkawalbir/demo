@@ -99,11 +99,12 @@ export default function menuItems(userProfile, userPermissions) {
       userPermissions.accessLevel === 'tile')
   ) {
     items = items.filter(i => i.label !== 'Resources');
-    const toolsItems = items.find(i => i.label === 'Tools');
-
-    toolsItems.children = toolsItems.children.filter(
-      i => !(i.label === 'Recycle bin')
-    );
+    // Recycle-Bin moved under resources, so i think it is covered by above filter...
+    // const toolsItems = items.find(i => i.label === 'Tools');
+    //
+    // toolsItems.children = toolsItems.children.filter(
+    //   i => !(i.label === 'Recycle bin')
+    // );
   } else {
     const resourceItems = items.find(i => i.label === 'Resources');
 
