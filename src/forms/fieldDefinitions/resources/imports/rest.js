@@ -3,6 +3,12 @@ export default {
     type: 'radiogroup',
     label: 'Method',
     required: true,
+    visibleWhen: [
+      {
+        field: 'inputMode',
+        is: ['records'],
+      },
+    ],
     options: [
       {
         items: [
@@ -14,9 +20,48 @@ export default {
         ],
       },
     ],
+    defaultValue: r => {
+      let toReturn = '';
+
+      if (!r || !r.rest) {
+        return toReturn;
+      }
+
+      if (r.rest.method) {
+        if (r.rest.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
+          toReturn = 'COMPOSITE';
+        } else if (r.rest.method && r.rest.method.length === 1) {
+          [toReturn] = r.rest.method;
+        }
+      }
+
+      return toReturn;
+    },
+  },
+  'rest.blobMethod': {
+    type: 'radiogroup',
+    label: 'Method',
+    required: true,
+    options: [
+      {
+        items: [
+          { label: 'POST', value: 'POST' },
+          { label: 'PUT', value: 'PUT' },
+          { label: 'DELETE', value: 'DELETE' },
+        ],
+      },
+    ],
+    visibleWhen: [
+      {
+        field: 'inputMode',
+        is: ['blob'],
+      },
+    ],
   },
   'rest.headers': {
     type: 'keyvalue',
+    keyName: 'name',
+    valueName: 'value',
     label: 'Configure HTTP Headers',
   },
   'rest.compositeType': {
@@ -40,12 +85,37 @@ export default {
         ],
       },
     ],
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'rest.method',
         is: ['COMPOSITE'],
       },
+      {
+        field: 'inputMode',
+        is: ['records'],
+      },
     ],
+    defaultValue: r => {
+      let type = '';
+
+      if (!r || !r.rest) {
+        return type;
+      }
+
+      if (r.rest.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
+        if (r.rest.method.length > 1) {
+          type = 'createandupdate';
+        } else if (r.rest.method.length === 1) {
+          if (r.ignoreExisting) {
+            type = 'createandignore';
+          } else if (r.ignoreMissing) {
+            type = 'updateandignore';
+          }
+        }
+      }
+
+      return type;
+    },
   },
   'rest.relativeURI': {
     type: 'text',
@@ -57,183 +127,120 @@ export default {
         field: 'rest.method',
         is: ['POST', 'PUT', 'DELETE', 'PATCH'],
       },
+      {
+        field: 'rest.blobMethod',
+        is: ['POST', 'PUT', 'DELETE'],
+      },
+    ],
+  },
+  mapping: {
+    type: 'mapping',
+    connectionId: r => r && r._connectionId,
+    label: 'Manage Import Mapping',
+    visibleWhen: [
+      {
+        field: 'inputMode',
+        is: ['records'],
+      },
+    ],
+    defaultValue: r =>
+      r && r.rest && r.rest.relativeURI && r.rest.relativeURI[0],
+  },
+  'rest.body': {
+    type: 'httprequestbody',
+    defaultValue: r =>
+      Array.isArray(((r || {}).rest || {}).body) ? r.rest.body[0] : undefined,
+    label: 'Build HTTP Request Body',
+    refreshOptionsOnChangesTo: ['http.lookups'],
+    visibleWhen: [
+      {
+        field: 'rest.method',
+        is: ['POST', 'PUT', 'DELETE', 'PATCH'],
+      },
+      {
+        field: 'inputMode',
+        is: ['records'],
+      },
     ],
   },
   'rest.successPath': {
     type: 'text',
     label: 'Success Path',
     placeholder: 'Optional',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'rest.method',
         is: ['POST', 'PUT', 'DELETE', 'PATCH'],
       },
+      {
+        field: 'inputMode',
+        is: ['records'],
+      },
     ],
+    defaultValue: r =>
+      r && r.rest && r.rest.successPath && r.rest.successPath[0],
   },
   'rest.successValues': {
     type: 'text',
     label: 'Success Values',
-    delimiter: ',',
     placeholder: 'Optional',
     visibleWhen: [
       {
         field: 'rest.method',
         is: ['POST', 'PUT', 'DELETE', 'PATCH'],
       },
+      {
+        field: 'rest.blobMethod',
+        is: ['POST', 'PUT', 'DELETE'],
+      },
     ],
+    defaultValue: r =>
+      r && r.rest && r.rest.successValues && r.rest.successValues[0],
   },
   'rest.responseIdPath': {
     type: 'text',
     label: 'Response Id Path',
     placeholder: 'Optional',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'rest.method',
         is: ['POST', 'PUT', 'DELETE', 'PATCH'],
       },
+      {
+        field: 'inputMode',
+        is: ['records'],
+      },
     ],
+    defaultValue: r =>
+      r && r.rest && r.rest.responseIdPath && r.rest.responseIdPath[0],
   },
-  'rest.compositeMethodCreate': {
-    type: 'select',
-    label: 'HTTP Method',
-    options: [
-      {
-        items: [
-          { label: 'POST', value: 'POST' },
-          { label: 'PUT', value: 'PUT' },
-          { label: 'PATCH', value: 'PATCH' },
-        ],
-      },
-    ],
-    visibleWhen: [
-      {
-        field: 'rest.compositeType',
-        is: ['createandupdate', 'createandignore'],
-      },
-    ],
-  },
-  'rest.relativeURICreate': {
-    type: 'text',
-    label: 'Relative URI',
-    required: true,
-    placeholder: 'Optional',
-    visibleWhen: [
-      {
-        field: 'rest.compositeType',
-        is: ['createandupdate', 'createandignore'],
-      },
-    ],
-  },
-  'rest.successPathCreate': {
-    type: 'text',
-    label: 'Success Path',
-    placeholder: 'Optional',
-    visibleWhen: [
-      {
-        field: 'rest.compositeType',
-        is: ['createandupdate', 'createandignore'],
-      },
-    ],
-  },
-  'rest.successValuesCreate': {
-    type: 'text',
-    label: 'Success Values',
-    placeholder: 'Optional',
-    visibleWhen: [
-      {
-        field: 'rest.compositeType',
-        is: ['createandupdate', 'createandignore'],
-      },
-    ],
-  },
-  'rest.responseIdPathCreate': {
-    type: 'text',
-    label: 'Response Id Path',
-    placeholder: 'Optional',
-    visibleWhen: [
-      {
-        field: 'rest.compositeType',
-        is: ['createandupdate', 'createandignore'],
-      },
-    ],
-  },
-  'rest.compositeMethodUpdate': {
-    type: 'select',
-    label: 'HTTP Method',
-    options: [
-      {
-        items: [
-          { label: 'POST', value: 'POST' },
-          { label: 'PUT', value: 'PUT' },
-          { label: 'PATCH', value: 'PATCH' },
-        ],
-      },
-    ],
-    visibleWhen: [
-      {
-        field: 'rest.compositeType',
-        is: ['createandupdate', 'updateandignore'],
-      },
-    ],
-  },
-  'rest.relativeURIUpdate': {
-    type: 'text',
-    label: 'Relative URI',
-    required: true,
-    placeholder: 'Optional',
-    visibleWhen: [
-      {
-        field: 'rest.compositeType',
-        is: ['createandupdate', 'updateandignore'],
-      },
-    ],
-  },
-  'rest.successPathUpdate': {
-    type: 'text',
-    label: 'Success Path',
-    placeholder: 'Optional',
-    visibleWhen: [
-      {
-        field: 'rest.compositeType',
-        is: ['createandupdate', 'updateandignore'],
-      },
-    ],
-  },
-  'rest.successValuesUpdate': {
-    type: 'text',
-    label: 'Success Values',
-    placeholder: 'Optional',
-    visibleWhen: [
-      {
-        field: 'rest.compositeType',
-        is: ['createandupdate', 'updateandignore'],
-      },
-    ],
-  },
-  'rest.responseIdPathUpdate': {
-    type: 'text',
-    label: 'Response Id Path',
-    placeholder: 'Optional',
-    visibleWhen: [
-      {
-        field: 'rest.compositeType',
-        is: ['createandupdate', 'updateandignore'],
-      },
-    ],
-  },
-  'rest.existingDataId': {
-    type: 'text',
-    label: 'Existing Data Id',
-    required: true,
-    visibleWhen: [
-      {
-        field: 'rest.compositeType',
-        is: ['createandignore', 'updateandignore'],
-      },
-    ],
-  },
+  'rest.compositeMethodCreate': {},
+  'rest.relativeURICreate': {},
+  'rest.bodyCreate': {},
+  'rest.successPathCreate': {},
+  'rest.successValuesCreate': {},
+  'rest.responseIdPathCreate': {},
+  'rest.compositeMethodUpdate': {},
+  'rest.relativeURIUpdate': {},
+  'rest.bodyUpdate': {},
+  'rest.successPathUpdate': {},
+  'rest.successValuesUpdate': {},
+  'rest.responseIdPathUpdate': {},
+  'rest.existingDataId': {},
   'rest.sampleData': {
     type: 'textarea',
     label: 'If so,please paste it here',
+    visibleWhen: [
+      {
+        field: 'inputMode',
+        is: ['records'],
+      },
+    ],
   },
+  visibleWhen: [
+    {
+      field: 'rest.method',
+      isNot: ['DELETE'],
+    },
+  ],
 };

@@ -7,6 +7,7 @@ import DynaForm from '../../../../components/DynaForm';
 import DynaSubmit from '../../../../components/DynaForm/DynaSubmit';
 import actions from '../../../../actions';
 import Icon from '../../../../components/icons/TransformIcon';
+import helpTextMap from '../../../../components/Help/helpTextMap';
 
 const useStyles = makeStyles(theme => ({
   paper: {
@@ -78,17 +79,14 @@ function ResponseTransformationDialog(props) {
   };
 
   return (
-    <Dialog
-      open={open}
-      onClose={onClose}
-      PaperProps={{ className: classes.paper }}>
+    <Dialog open={open} PaperProps={{ className: classes.paper }}>
       <DialogTitle>Response Transform</DialogTitle>
       <DialogContent>
         <DynaForm fieldMeta={fieldMeta} optionsHandler={optionsHandler}>
-          <Button data-test="cancelLookupForm" onClick={onClose}>
+          <Button data-test="cancelResponseTransform" onClick={onClose}>
             Cancel
           </Button>
-          <DynaSubmit data-test="saveLookupForm" onClick={handleSubmit}>
+          <DynaSubmit data-test="saveResponseTransform" onClick={handleSubmit}>
             Save
           </DynaSubmit>
         </DynaForm>
@@ -110,7 +108,6 @@ export default {
   name: 'responseTransformation',
   position: 'middle',
   Icon,
-  helpText:
-    'This is the text currently in the hover state of actions in the current FB',
+  helpText: helpTextMap['fb.pp.imports.transform'],
   Component: ResponseTransformation,
 };

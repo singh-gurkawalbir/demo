@@ -12,7 +12,8 @@ export default {
   columns: [
     {
       heading: 'Name',
-      value: r => getResourceLink('imports', r),
+      value: (r, actionProps, location) =>
+        getResourceLink('imports', r, location),
       orderBy: 'name',
     },
     { heading: 'Connector', value: r => getConnectorName(r) },

@@ -3,7 +3,7 @@ import { combineReducers } from 'redux';
 import jsonPatch from 'fast-json-patch';
 import moment from 'moment';
 import produce from 'immer';
-import { uniq, some, map } from 'lodash';
+import { uniq, some, map, keys } from 'lodash';
 import app, * as fromApp from './app';
 import data, * as fromData from './data';
 import session, * as fromSession from './session';
@@ -30,6 +30,8 @@ import { getFieldById } from '../forms/utils';
 import { upgradeButtonText, expiresInfo } from '../utils/license';
 import commKeyGen from '../utils/commKeyGenerator';
 import { isRealtimeExport, isSimpleImportFlow, isRunnable } from './flowsUtil';
+import { getUsedActionsMapForResource } from '../utils/flows';
+import { isValidResourceReference } from '../utils/resource';
 
 const combinedReducers = combineReducers({
   app,
@@ -208,13 +210,6 @@ export function getSampleData(state, flowId, resourceId, stage, options = {}) {
     resourceId,
     stage,
     options
-  );
-}
-
-export function getFlowReferencesForResource(state, resourceId) {
-  return fromSession.getFlowReferencesForResource(
-    state && state.session,
-    resourceId
   );
 }
 
@@ -2100,4 +2095,65 @@ export function flowConnectionList(state, flow) {
   const connectionList = resourcesByIds(state, 'connections', connectionIds);
 
   return connectionList;
+}
+
+export function getFlowReferencesForResource(state, resourceId, resourceType) {
+  const flowsState = state && state.session && state.session.flowData;
+  const existingFlows = keys(flowsState);
+  const flowRefs = [];
+
+  existingFlows.forEach(flowId => {
+    const { pageGenerators = [], pageProcessors = [] } = flowsState[flowId];
+    let [pgIndex, ppIndex] = [0, 0];
+
+    while (pgIndex < pageGenerators.length) {
+      const pg = pageGenerators[pgIndex];
+      const pgResource = resource(state, 'exports', pg._exportId);
+
+      if (
+        isValidResourceReference(
+          pgResource,
+          pg._exportId,
+          resourceType,
+          resourceId
+        )
+      ) {
+        flowRefs.push({ flowId, resourceId: pg._exportId });
+
+        return;
+      }
+
+      pgIndex += 1;
+    }
+
+    while (ppIndex < pageProcessors.length) {
+      const pp = pageProcessors[ppIndex];
+      const ppId = pp._exportId || pp._importId;
+      const ppResourceType = pp._exportId ? 'exports' : 'imports';
+      const ppResource = resource(state, ppResourceType, ppId);
+
+      if (
+        isValidResourceReference(ppResource, ppId, resourceType, resourceId)
+      ) {
+        flowRefs.push({ flowId, resourceId: ppId });
+
+        return;
+      }
+
+      ppIndex += 1;
+    }
+  });
+
+  return flowRefs;
+}
+
+export function getUsedActionsForResource(
+  state,
+  resourceId,
+  resourceType,
+  flowNode
+) {
+  const { merged: resource } = resourceData(state, resourceType, resourceId);
+
+  return getUsedActionsMapForResource(resource, resourceType, flowNode);
 }

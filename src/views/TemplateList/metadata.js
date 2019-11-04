@@ -12,7 +12,8 @@ export default {
   columns: [
     {
       heading: 'Name',
-      value: r => getResourceLink('templates', r),
+      value: (r, actionProps, location) =>
+        getResourceLink('templates', r, location),
       orderBy: 'name',
     },
     {

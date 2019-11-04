@@ -15,6 +15,7 @@ import exportHooksAction from './actions/exportHooks';
 import transformationAction from './actions/transformation';
 import scheduleAction from './actions/schedule';
 import exportFilterAction from './actions/exportFilter';
+import { actionsMap } from '../../../utils/flows';
 
 /* the 'block' consts in this file and <AppBlock> should eventually go in the theme. 
    We the block consts across several components and thus is a maintenance issue to 
@@ -51,6 +52,10 @@ const PageGenerator = ({ history, match, index, isLast, flowId, ...pg }) => {
   const [newGeneratorId, setNewGeneratorId] = useState(null);
   const { merged: resource = {} } = useSelector(state =>
     !resourceId ? {} : selectors.resourceData(state, resourceType, resourceId)
+  );
+  // Returns map of all possible actions with true/false whether actions performed on the resource
+  const usedActions = useSelector(state =>
+    selectors.getUsedActionsForResource(state, resourceId, resourceType, pg)
   );
   const createdGeneratorId = useSelector(state =>
     selectors.createdResourceId(state, newGeneratorId)
@@ -157,20 +162,23 @@ const PageGenerator = ({ history, match, index, isLast, flowId, ...pg }) => {
   drag(ref);
 
   // #region Configure available generator actions
-  // TODO: Raghu, please set the isUsed prop to true any time
-  // the flow or PG contains rules for the respective action.
   let generatorActions = [];
 
   if (!pending) {
     if (blockType === 'export' && !pending) {
-      generatorActions = [{ ...scheduleAction, isUsed: false }];
+      generatorActions = [
+        { ...scheduleAction, isUsed: usedActions[actionsMap.schedule] },
+      ];
     }
 
     generatorActions = [
       ...generatorActions,
-      { ...transformationAction, isUsed: false },
-      exportHooksAction,
-      exportFilterAction,
+      {
+        ...transformationAction,
+        isUsed: usedActions[actionsMap.transformation],
+      },
+      { ...exportHooksAction, isUsed: usedActions[actionsMap.hooks] },
+      { ...exportFilterAction, isUsed: usedActions[actionsMap.outputFilter] },
     ];
   }
   // #endregion

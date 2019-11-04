@@ -15,6 +15,20 @@ export default {
       },
     ],
   },
+  'netsuite.blobOperation': {
+    type: 'select',
+    label: 'NetSuite operation',
+    options: [
+      {
+        items: [
+          { label: 'Add', value: 'add' },
+          { label: 'Update', value: 'update' },
+          { label: 'Addupdate', value: 'addupdate' },
+          { label: 'Delete', value: 'delete' },
+        ],
+      },
+    ],
+  },
   'netsuite.customFieldMetadata': {
     type: 'text',
     label: 'NetSuite custom Field Metadata',
@@ -103,21 +117,5 @@ export default {
     type: 'checkbox',
     label: 'NetSuite preferences skip Custom Metadata Requests',
     defaultValue: false,
-  },
-  'netsuite.file.name': {
-    type: 'text',
-    label: 'NetSuite file name',
-  },
-  'netsuite.file.fileType': {
-    type: 'text',
-    label: 'NetSuite file file Type',
-  },
-  'netsuite.file.folder': {
-    type: 'text',
-    label: 'NetSuite file folder',
-  },
-  'netsuite.file.internalId': {
-    type: 'text',
-    label: 'NetSuite file internal Id',
   },
 };

@@ -44,8 +44,12 @@ export default {
     }
 
     if (app.type === 'netsuite') {
-      newValues['/netsuite/type'] =
-        executionType === 'scheduled' ? apiType : executionType;
+      if (newValues['/outputMode'] === 'records') {
+        newValues['/netsuite/type'] =
+          executionType === 'scheduled' ? apiType : executionType;
+      } else {
+        newValues['/netsuite/type'] = 'blob';
+      }
     }
 
     // console.log(app, newValues);
@@ -161,6 +165,25 @@ export default {
       defaultValue: '',
       visibleWhenAll: [visibleWhenIsNew, { field: 'application', isNot: [''] }],
     },
+    outputMode: {
+      id: 'outputMode',
+      type: 'radiogroup',
+      visibleWhenAll: [
+        visibleWhenIsNew,
+        { field: 'application', is: ['netsuite'] },
+      ],
+      label: 'Output Mode',
+      options: [
+        {
+          items: [
+            { label: 'Records', value: 'records' },
+            { label: 'Blob Keys', value: 'blob' },
+          ],
+        },
+      ],
+      defaultValue: r =>
+        r && r.netsuite && r.netsuite.internalId ? 'blob' : 'records',
+    },
     netsuiteExecutionType: {
       id: 'netsuite.execution.type',
       name: 'executionType',
@@ -178,6 +201,7 @@ export default {
       visibleWhenAll: [
         visibleWhenIsNew,
         { field: 'application', is: ['netsuite'] },
+        { field: 'outputMode', is: ['records'] },
       ],
     },
     netsuiteApiType: {
@@ -197,6 +221,7 @@ export default {
       visibleWhenAll: [
         visibleWhenIsNew,
         { field: 'netsuite.execution.type', is: ['scheduled'] },
+        { field: 'outputMode', is: ['records'] },
       ],
     },
   },
@@ -209,6 +234,7 @@ export default {
       'connection',
       'name',
       'description',
+      'outputMode',
       'netsuiteExecutionType',
       'netsuiteApiType',
     ],
@@ -238,7 +264,7 @@ export default {
       expression.push({ _connectorId: { $exists: false } });
       const filter = { $and: expression };
 
-      return { filter, appType: app.type };
+      return { filter, appType: app.assistant };
     }
 
     if (fieldId === 'exportId') {

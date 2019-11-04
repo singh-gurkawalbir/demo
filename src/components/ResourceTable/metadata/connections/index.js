@@ -18,9 +18,9 @@ export default {
   columns: [
     {
       heading: 'Name',
-      value: (r, actionProps) =>
+      value: (r, actionProps, location) =>
         isConnectionEditable(r, actionProps.integrationId)
-          ? getResourceLink('connections', r)
+          ? getResourceLink('connections', r, location)
           : r.name,
       orderBy: 'name',
     },

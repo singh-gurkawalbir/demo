@@ -84,11 +84,6 @@ export default {
     }
   },
   fieldMap: {
-    dataMapping: {
-      id: 'dataMapping',
-      type: 'labeltitle',
-      label: 'How should the data be mapped?',
-    },
     oneToMany: { fieldId: 'oneToMany' },
     pathToMany: { fieldId: 'pathToMany' },
     'netsuite_da.mapping': {
@@ -143,7 +138,7 @@ export default {
   },
   layout: {
     fields: [
-      'dataMapping',
+      // 'dataMapping',
       'oneToMany',
       'pathToMany',
       /* Uncomment below changes to show mapping option on import forms */
