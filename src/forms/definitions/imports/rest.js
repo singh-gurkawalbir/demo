@@ -1,22 +1,4 @@
-import { adaptorTypeMap } from '../../../utils/resource';
-
 export default {
-  optionsHandler: (fieldId, fields) => {
-    if (fieldId === 'mapping') {
-      const lookupField = fields.find(
-        field => field.fieldId === 'rest.lookups'
-      );
-
-      if (lookupField) {
-        return {
-          lookupId: 'rest.lookups',
-          lookups: lookupField && lookupField.value,
-        };
-      }
-    }
-
-    return null;
-  },
   fieldMap: {
     common: { formId: 'common' },
     importData: {
@@ -28,11 +10,6 @@ export default {
     'rest.headers': { fieldId: 'rest.headers' },
     'rest.compositeType': { fieldId: 'rest.compositeType' },
     'rest.lookups': { fieldId: 'rest.lookups', visible: false },
-    mapping: {
-      fieldId: 'mapping',
-      application: adaptorTypeMap.RESTImport,
-      refreshOptionsOnChangesTo: ['rest.lookups'],
-    },
     'rest.relativeURI': { fieldId: 'rest.relativeURI' },
     'rest.successPath': { fieldId: 'rest.successPath' },
     'rest.successValues': { fieldId: 'rest.successValues' },

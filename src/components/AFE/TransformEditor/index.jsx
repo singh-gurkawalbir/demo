@@ -25,12 +25,15 @@ export default function TransformEditor(props) {
     state => selectors.editor(state, editorId)
   );
   const dispatch = useDispatch();
+  const keyName = 'extract';
+  const valueName = 'generate';
   const handleInit = useCallback(() => {
     dispatch(
       actions.editor.init(editorId, 'transform', {
         data: props.data,
         autoEvaluate: true,
         rule: props.rule,
+        duplicateKeyToValidate: [valueName],
       })
     );
   }, [dispatch, editorId, props.data, props.rule]);
@@ -50,6 +53,8 @@ export default function TransformEditor(props) {
         <PanelTitle title="Transform Rules" />
         <TransformPanel
           key={`${editorId}-${initChangeIdentifier}`}
+          keyName={keyName}
+          valueName={valueName}
           editorId={editorId}
         />
       </PanelGridItem>

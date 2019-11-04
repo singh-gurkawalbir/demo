@@ -1,8 +1,10 @@
+import { useSelector } from 'react-redux';
 import { useState, Fragment } from 'react';
 import Button from '@material-ui/core/Button';
 import ImportMapping from '../../../components/AFE/ImportMapping';
 import MappingUtil from '../../../utils/mapping';
 import * as ResourceUtil from '../../../utils/resource';
+import * as selectors from '../../../reducers';
 
 /*
 lookups and lookupId is passed in options
@@ -11,7 +13,6 @@ Passing isStandaloneMapping with options will render Mapping as standalone compo
 export default function DynaImportMapping(props) {
   const {
     id,
-    application,
     onFieldChange,
     options,
     label,
@@ -32,6 +33,10 @@ export default function DynaImportMapping(props) {
   };
 
   const opts = {};
+  const resourceData = useSelector(state =>
+    selectors.resource(state, 'imports', resourceId)
+  );
+  const { type: application } = ResourceUtil.getResourceSubType(resourceData);
 
   if (application === ResourceUtil.adaptorTypeMap.SalesforceImport) {
     opts.connectionId = connectionId;

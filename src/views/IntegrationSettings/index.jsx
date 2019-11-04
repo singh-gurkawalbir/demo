@@ -11,7 +11,6 @@ import { STANDALONE_INTEGRATION } from '../../utils/constants';
 import Flows from './Flows';
 import Users from './Users';
 import AuditLog from './AuditLog';
-import AccessTokens from './AccessTokens';
 import Connections from './Connections';
 import Notifications from './Notifications';
 import General from './General';
@@ -177,22 +176,16 @@ export default function IntegrationSettings(props) {
                 component={AuditLog}
               />
               <Route
-                path={getRoutePath(
-                  `/integrations/:integrationId/settings/tokens`
+                path={getRoutePath(   
+                  `/integrations/:integrationId/settings/general`
                 )}
-                component={AccessTokens}
+                component={General}
               />
               <Route
                 path={getRoutePath(
                   `/integrations/:integrationId/settings/notifications`
                 )}
                 component={Notifications}
-              />
-              <Route
-                path={getRoutePath(
-                  `/integrations/:integrationId/settings/general`
-                )}
-                component={General}
               />
             </Switch>
           </div>

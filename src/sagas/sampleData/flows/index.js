@@ -15,11 +15,13 @@ import {
   refreshResourceData,
   requestSampleDataForExports,
   requestSampleDataForImports,
+  updateStateForProcessorData,
 } from './utils';
 import {
   getSampleDataStage,
   getParseStageData,
   getLastExportDateTime,
+  getFlowUpdatesFromPatch,
 } from '../../../utils/flowData';
 import MappingUtil from '../../../utils/mapping';
 import { adaptorTypeMap } from '../../../utils/resource';
@@ -59,7 +61,11 @@ export function* fetchPageProcessorPreview({
   const { merged } = yield select(resourceData, 'flows', flowId, SCOPES.VALUE);
   const flow = { ...merged };
 
-  if (!flow.pageProcessors || !flow.pageGenerators) return;
+  if (
+    !(flow.pageProcessors && flow.pageProcessors.length) ||
+    !(flow.pageGenerators && flow.pageGenerators.length)
+  )
+    return;
   const pageGeneratorMap = yield call(fetchFlowResources, {
     flow,
     type: 'pageGenerators',
@@ -169,17 +175,14 @@ function* processData({
     const processedData = yield call(evaluateExternalProcessor, {
       processorData,
     });
-    const { processor } = processorData;
 
-    yield put(
-      actions.flowData.receivedProcessorData(
-        flowId,
-        resourceId,
-        stage || processor,
-        processedData,
-        isPageGenerator
-      )
-    );
+    yield call(updateStateForProcessorData, {
+      flowId,
+      resourceId,
+      stage,
+      processedData,
+      isPageGenerator,
+    });
   } catch (e) {
     // Handle errors
   }
@@ -245,6 +248,7 @@ export function* requestProcessorData({
 }) {
   // If provided processorStage is 'stage' else by default processor name becomes its stage
   const stage = processorStage || processor;
+  let hasNoRulesToProcess = false;
   const { merged: resource } = yield select(
     resourceData,
     resourceType,
@@ -278,10 +282,15 @@ export function* requestProcessorData({
     const transform = { ...resource[processor] };
     const [rule] = transform.rules || [];
 
+    if (!(rule && rule.length)) {
+      hasNoRulesToProcess = true;
+    }
+
     processorData = { data: preProcessedData, rule, processor: 'transform' };
   } else if (stage === 'hooks') {
     const { hooks = {} } = { ...resource };
 
+    // @TODO: Raghu handle for other import hooks map
     if (hooks.preSavePage && hooks.preSavePage._scriptId) {
       const scriptId = hooks.preSavePage._scriptId;
       const data = { data: [preProcessedData], errors: [] };
@@ -297,6 +306,8 @@ export function* requestProcessorData({
         entryFunction: hooks.preSavePage.function,
         processor: 'javascript',
       };
+    } else {
+      hasNoRulesToProcess = true;
     }
   } else if (stage === 'importMappingExtract') {
     // mapping fields are processed here against raw data
@@ -309,26 +320,34 @@ export function* requestProcessorData({
     );
 
     if (preProcessedData && mappings)
-      yield call(processMappingData, {
+      return yield call(processMappingData, {
         flowId,
         resourceId,
         mappings,
         processor,
         preProcessedData,
       });
-
-    return;
+    hasNoRulesToProcess = true;
   }
 
-  if (processorData) {
-    yield call(processData, {
+  if (hasNoRulesToProcess) {
+    // update processorStage with preprocessed data if there are no rules to process
+    return yield call(updateStateForProcessorData, {
       flowId,
       resourceId,
-      processorData,
+      processedData: { data: [preProcessedData] },
       isPageGenerator,
       stage,
     });
   }
+
+  yield call(processData, {
+    flowId,
+    resourceId,
+    processorData,
+    isPageGenerator,
+    stage,
+  });
 }
 
 function* updateFlowsDataForResource({ resourceId, resourceType }) {
@@ -362,6 +381,60 @@ function* updateFlowData({ flowId }) {
   yield put(actions.flowData.resetFlowSequence(flowId, updatedFlow));
 }
 
+function* updateResponseMapping({ flowId, resourceIndex }) {
+  const { merged: flow } = yield select(
+    resourceData,
+    'flows',
+    flowId,
+    SCOPES.VALUE
+  );
+  const { pageProcessors = [] } = flow;
+  const updatedResource = pageProcessors[resourceIndex];
+
+  yield put(
+    actions.flowData.updateResponseMapping(
+      flowId,
+      resourceIndex,
+      updatedResource.responseMapping
+    )
+  );
+  const resourceToReset = pageProcessors[resourceIndex + 1];
+
+  if (resourceToReset) {
+    yield put(
+      actions.flowData.reset(
+        flowId,
+        resourceToReset._exportId || resourceToReset._importId
+      )
+    );
+  }
+}
+
+function* updateFlowOnResourceUpdate({ resourceType, resourceId, patch }) {
+  if (resourceType === 'flows') {
+    const flowUpdates = getFlowUpdatesFromPatch(patch);
+
+    // Handles Delete PP/PG, Swap order
+    if (flowUpdates.sequence) {
+      yield put(actions.flowData.updateFlow(resourceId));
+    }
+
+    // Handles Response Mappings update
+    if (flowUpdates.responseMapping) {
+      const { resourceIndex } = flowUpdates.responseMapping;
+
+      yield call(updateResponseMapping, { flowId: resourceId, resourceIndex });
+    }
+  }
+
+  if (resourceType === 'exports' || resourceType === 'imports') {
+    // Handles on update of Export or Import on edit, Transformations, Hooks and import mappings
+    yield put(
+      actions.flowData.updateFlowsForResource(resourceId, resourceType)
+    );
+  }
+}
+
 export default [
   takeEvery(
     actionTypes.FLOW_DATA.PREVIEW_DATA_REQUEST,
@@ -374,4 +447,5 @@ export default [
     updateFlowsDataForResource
   ),
   takeEvery(actionTypes.FLOW_DATA.FLOW_UPDATE, updateFlowData),
+  takeEvery(actionTypes.RESOURCE.UPDATED, updateFlowOnResourceUpdate),
 ];
