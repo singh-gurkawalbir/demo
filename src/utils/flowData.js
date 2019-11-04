@@ -7,15 +7,14 @@ import moment from 'moment';
 const sampleDataStage = {
   exports: {
     inputFilter: 'flowInput',
-    outputFilter: 'flowInput',
     transform: 'raw',
     hooks: 'transform',
-    importMapping: 'flowInput',
+    outputFilter: 'hooks',
   },
   imports: {
     inputFilter: 'raw',
-    importMappingExtract: 'raw',
-    preMap: 'importMappingExtract',
+    preMap: 'raw',
+    importMappingExtract: 'preMap',
     postMap: 'preMap',
     postSubmit: 'responseTransform',
     responseTransform: 'sampleResponse',
@@ -39,6 +38,7 @@ export function getParseStageData(previewData) {
 export const getSampleDataStage = (stage, resourceType = 'exports') =>
   sampleDataStage[resourceType][stage];
 
+// @TODO: Raghu Change this to return instead of inplace updates to flow
 export const reset = (flow, index, isPageGenerator) => {
   if (isPageGenerator) {
     const pgsToReset = flow.pageGenerators.slice(index).map(pg => pg._exportId);

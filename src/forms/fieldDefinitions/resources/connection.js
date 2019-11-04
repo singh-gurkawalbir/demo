@@ -1125,7 +1125,7 @@ export default {
     type: 'radiogroup',
     label: 'Protocol',
     required: true,
-    defaultValue: r => (r && r.ftp && r.ftp.type) || 'ftp',
+    defaultValue: r => (r && r.ftp && r.ftp.type) || 'sftp',
     options: [
       {
         items: [

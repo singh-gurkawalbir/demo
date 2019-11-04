@@ -14,7 +14,8 @@ export default {
   columns: [
     {
       heading: 'Name',
-      value: r => getResourceLink('agents', r),
+      value: (r, actionProps, location) =>
+        getResourceLink('agents', r, location),
       orderBy: 'name',
     },
     {

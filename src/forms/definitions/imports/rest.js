@@ -135,7 +135,7 @@ export default {
     } else {
       retValues['/ignoreExisting'] = false;
       retValues['/ignoreMissing'] = false;
-      retValues['/rest/body'] = [retValues['/rest/bodyUpdate']];
+      retValues['/rest/body'] = [retValues['/rest/body']];
     }
 
     return {
@@ -692,8 +692,8 @@ export default {
         return '';
       },
     },
-    sampleData: {
-      id: 'sampleData',
+    sampleDataTitle: {
+      id: 'sampleDataTitle',
       type: 'labeltitle',
       label: 'Do you have sample data?',
       visibleWhen: [
@@ -701,9 +701,13 @@ export default {
           field: 'inputMode',
           is: ['records'],
         },
+        {
+          field: 'rest.method',
+          isNot: ['DELETE'],
+        },
       ],
     },
-    'rest.sampleData': { fieldId: 'rest.sampleData' },
+    sampleData: { fieldId: 'sampleData' },
     // dataMappings: {
     //   formId: 'dataMappings',
     // },
@@ -759,8 +763,8 @@ export default {
       'rest.responseIdPathUpdate',
       'ignoreExistingData',
       'rest.existingDataId',
+      'sampleDataTitle',
       'sampleData',
-      'rest.sampleData',
       // 'dataMappings',
     ],
     type: 'collapse',
