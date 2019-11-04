@@ -298,7 +298,6 @@ export default {
   deleteAfterImport: {
     type: 'checkbox',
     label: 'Purge Blob data immediately?',
-    defaultValue: false,
   },
   assistantMetadata: {
     type: 'text',
