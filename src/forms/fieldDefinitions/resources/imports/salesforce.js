@@ -381,22 +381,17 @@ export default {
     ],
   },
   'salesforce.sObjectType': {
-    type: 'select',
     label: 'SObject Type',
+    name: 'recordType',
+    mode: 'salesforce',
+    type: 'refreshableselect',
+    resourceType: 'sObjectTypes',
+    connectionId: r => r && r._connectionId,
     required: true,
     visibleWhen: [
       {
         field: 'inputMode',
         is: ['records'],
-      },
-    ],
-    options: [
-      {
-        // To do replace values statistically instead of dynamic
-        items: [
-          { label: 'Account', value: 'account' },
-          { label: 'Customer', value: 'customer' },
-        ],
       },
     ],
   },
