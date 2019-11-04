@@ -230,6 +230,7 @@ const AGENT = {
 };
 const FILE = {
   UPLOAD: 'UPLOAD',
+  PREVIEW_ZIP: 'PREVIEW_ZIP',
 };
 const STACK = {
   TOKEN_DISPLAY: 'TOKEN_DISPLAY',

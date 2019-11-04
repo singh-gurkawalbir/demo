@@ -594,6 +594,7 @@ const agent = {
     action(actionTypes.AGENT.DOWNLOAD_INSTALLER, { osType, id }),
 };
 const file = {
+  previewZip: file => action(actionTypes.FILE.PREVIEW_ZIP, { file }),
   upload: (resourceType, resourceId, fileType, file) =>
     action(actionTypes.FILE.UPLOAD, {
       resourceType,

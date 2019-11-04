@@ -13,6 +13,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import CloseIcon from '../icons/CloseIcon';
 import { MODEL_PLURAL_TO_LABEL } from '../../utils/resource';
 import actions from '../../actions';
+import getRoutePath from '../../utils/routePaths';
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -32,14 +33,28 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function UploadFileDialog(props) {
-  const { resourceType, fileType, onClose, type, resourceId } = props;
+  const {
+    resourceType,
+    fileType,
+    onClose,
+    type,
+    resourceId,
+    isTemplate,
+  } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
   const handleUploadFileChange = e => {
     const file = e.target.files[0];
 
-    dispatch(actions.file.upload(resourceType, resourceId, fileType, file));
-    onClose();
+    if (isTemplate) {
+      props.history.push({
+        pathname: getRoutePath('/marketplace/templates/preview'),
+        state: file,
+      });
+    } else {
+      dispatch(actions.file.upload(resourceType, resourceId, fileType, file));
+      onClose();
+    }
   };
 
   return (

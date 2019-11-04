@@ -12,6 +12,10 @@ export default function MarketplaceRouter({ match }) {
         component={TemplatePreview}
       />
       <Route
+        path="/pg/marketplace/templates/preview"
+        component={TemplatePreview}
+      />
+      <Route
         path="/pg/marketplace/templates/:templateId/setup"
         component={TemplateInstall}
       />
