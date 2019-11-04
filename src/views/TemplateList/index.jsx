@@ -13,7 +13,7 @@ import KeywordSearch from '../../components/KeywordSearch';
 import IconTextButton from '../../components/IconTextButton';
 import AddIcon from '../../components/icons/AddIcon';
 import GenerateZipDialog from './GenerateZipDialog';
-import UploadFileDialog from '../../components/UploadFileDialog';
+import UploadFileDialog from '../../components/InstallIntegration';
 import infoText from '../ResourceList/infoText';
 import metadata from './metadata';
 import CheckPermissions from '../../components/CheckPermissions';
@@ -60,7 +60,6 @@ export default function TemplateList(props) {
           <UploadFileDialog
             data-test="closeGenerateTemplateZipDialog"
             fileType="application/zip"
-            isTemplate
             history={history}
             onClose={() => setShowUploadZipDialog(false)}
           />

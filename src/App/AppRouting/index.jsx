@@ -5,6 +5,8 @@ import loadable from '../../utils/loadable';
 import IntegrationSettings from '../../views/IntegrationSettings';
 import IntegrationAppsRouter from '../../views/IntegrationApps/Router';
 import MarketplaceRouter from '../../views/MarketPlace/Router';
+import TemplatePreview from '../../views/Templates/InstallIntegrationPreview';
+import TemplateInstall from '../../views/Templates/Install';
 
 const RecycleBin = loadable(() =>
   import(/* webpackChunkName: 'RecycleBin' */ '../../views/RecycleBin')
@@ -68,6 +70,14 @@ export default class AppRouting extends Component {
         <Route
           path="/pg/integrations/:integrationId/dashboard"
           component={IntegrationDashboard}
+        />
+        <Route
+          path="/pg/templates/:templateId/preview"
+          component={TemplatePreview}
+        />
+        <Route
+          path="/pg/templates/:templateId/setup"
+          component={TemplateInstall}
         />
         <Route
           path="/pg/integrations/:integrationId/settings"

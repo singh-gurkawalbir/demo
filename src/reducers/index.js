@@ -119,6 +119,10 @@ export function previewTemplate(state, templateId) {
   return fromSession.previewTemplate(state && state.session, templateId);
 }
 
+export function isFileUploaded(state) {
+  return fromSession.isFileUploaded(state && state.session);
+}
+
 export function templateSetup(state, templateId) {
   return fromSession.template(state && state.session, templateId);
 }

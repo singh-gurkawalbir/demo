@@ -54,32 +54,18 @@ export function* uploadRawData({
   }
 }
 
-export function* preview({ runKey, message }) {
-  const previewPath = `/integrations/template/preview?runKey=${runKey}`;
-
-  try {
-    const components = yield call(apiCallWithRetry, {
-      path: previewPath,
-      message,
-    });
-
-    return components;
-  } catch (e) {
-    // @TODO handle error
-  }
-}
-
 export function* previewZip({ file, fileType = 'application/zip' }) {
   const uploadPath = `/s3SignedURL?file_name=${file.name}&file_type=${fileType}`;
 
   try {
     const runKey = yield call(uploadFile, { file, fileType, uploadPath });
-    const components = yield call(preview, {
-      runKey,
+    const previewPath = `/integrations/template/preview?runKey=${runKey}`;
+    const components = yield call(apiCallWithRetry, {
+      path: previewPath,
       message: 'Loading Components from zip file',
     });
 
-    yield put(actions.template.receivedPreview(components, runKey));
+    yield put(actions.template.receivedPreview(components, runKey, true));
   } catch (e) {
     // @TODO handle error
   }
