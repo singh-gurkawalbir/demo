@@ -1782,6 +1782,7 @@ export default {
   'as2.userStationInfo.encoding': {
     type: 'select',
     label: 'MDN Encoding',
+    required: true,
     options: [
       {
         items: [

@@ -382,19 +382,20 @@ export default {
   },
   'salesforce.sObjectType': {
     label: 'SObject Type',
+    name: 'recordType',
+    mode: 'salesforce',
+    type: 'refreshableselect',
+    resourceType: 'sObjectTypes',
+    connectionId: r => r && r._connectionId,
     required: true,
+    placeholder: 'Please select a sObject type',
+    helpKey: 'export.salesforce.sObjectType',
     visibleWhen: [
       {
         field: 'inputMode',
         is: ['records'],
       },
     ],
-    mode: 'salesforce',
-    type: 'refreshableselect',
-    resourceType: 'sObjectTypes',
-    placeholder: 'Please select a sObject type',
-    helpKey: 'export.salesforce.sObjectType',
-    connectionId: r => r && r._connectionId,
   },
   'salesforce.blobOperation': {
     type: 'radiogroup',

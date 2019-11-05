@@ -44,6 +44,7 @@ import DynaGenerateUrl from './DynaGenerateUrl';
 import DynaGenerateToken from './DynaGenerateToken';
 import DynaSelectForSetFields from './select/DynaSelectForSetFields';
 import DynaTextForSetFields from './text/DynaTextForSetFields';
+import DynaSQLQueryBuilder from './DynaSQLQueryBuilder';
 
 export default {
   mapping: DynaImportMapping,
@@ -95,4 +96,5 @@ export default {
   generatetoken: DynaGenerateToken,
   selectforsetfields: DynaSelectForSetFields,
   textforsetfields: DynaTextForSetFields,
+  sqlquerybuilder: DynaSQLQueryBuilder,
 };
