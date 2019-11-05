@@ -115,18 +115,18 @@ export default function InputWithLookupHandlebars(props) {
     );
 
     if (indexOldLookup !== -1) lookupsTmp[indexOldLookup] = modifiedLookup;
-    onLookupUpdate(lookupsTmp);
     handleLookupSelect(modifiedLookup);
+    onLookupUpdate(lookupsTmp);
   };
 
   const handleLookupAdd = lookup => {
     if (lookup) {
       const _lookups = [...lookups];
-      const modifiedLookups = _lookups ? _lookups.push(lookup) : [lookup];
 
-      onLookupUpdate(modifiedLookups);
+      _lookups.push(lookup);
 
       handleLookupSelect(lookup);
+      onLookupUpdate(_lookups);
     }
   };
 

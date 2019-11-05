@@ -139,7 +139,11 @@ export default {
           // passing lookupId fieldId and data since we will be modifying lookups
           //  from 'Manage lookups' option inside 'Build Http request Body Editor'
           fieldId: 'http.lookups',
-          data: (lookupField && lookupField.value) || [],
+          data:
+            (lookupField &&
+              Array.isArray(lookupField.value) &&
+              lookupField.value) ||
+            [],
         },
       };
     }
@@ -152,7 +156,11 @@ export default {
       return {
         lookups: {
           fieldId: 'http.lookups',
-          data: lookupField && lookupField.value,
+          data:
+            (lookupField &&
+              Array.isArray(lookupField.value) &&
+              lookupField.value) ||
+            [],
         },
       };
     }
