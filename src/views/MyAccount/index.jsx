@@ -23,8 +23,8 @@ const mapStateToProps = state => {
 const Users = loadable(() =>
   import(/* webpackChunkName: 'MyAccount.Users' */ './Users')
 );
-const Profiles = loadable(() =>
-  import(/* webpackChunkName: 'MyAccount.Profiles' */ './Profiles')
+const Profile = loadable(() =>
+  import(/* webpackChunkName: 'MyAccount.Profile' */ './Profile')
 );
 const Subscription = loadable(() =>
   import(/* webpackChunkName: 'MyAccount.Users' */ './Subscription')
@@ -107,8 +107,8 @@ class MyAccount extends Component {
                       <NavLink
                         activeClassName={classes.activeLink}
                         className={classes.link}
-                        to="profiles">
-                        Profiles
+                        to="profile">
+                        Profile
                       </NavLink>
                     </ListItem>
                     <ListItem>
@@ -134,8 +134,8 @@ class MyAccount extends Component {
             <div className={classes.rightElement}>
               <Switch>
                 <Route
-                  path={getRoutePath('/myAccount/profiles')}
-                  component={Profiles}
+                  path={getRoutePath('/myAccount/profile')}
+                  component={Profile}
                 />
                 <Route
                   path={getRoutePath('/myAccount/users')}
