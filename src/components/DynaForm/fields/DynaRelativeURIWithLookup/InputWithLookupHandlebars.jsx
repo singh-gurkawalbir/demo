@@ -101,7 +101,7 @@ export default function InputWithLookupHandlebars(props) {
       const newValue = `${userInput.substring(
         0,
         lastIndexOfBracesBeforeCursor + 1
-      )}{${lookup.name} "as" this}}}`;
+      )}{lookup "${lookup.name}" this}}}`;
 
       setState({ ...state, userInput: newValue });
       onFieldChange(id, newValue);
