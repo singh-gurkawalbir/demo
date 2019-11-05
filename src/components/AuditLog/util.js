@@ -1,3 +1,9 @@
+import { Fragment } from 'react';
+import { Link } from 'react-router-dom';
+import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../../constants/resource';
+import getExistingResourcePagePath from '../../utils/resource';
+import OldValue from './OldValue';
+
 export const AUDIT_LOG_SOURCE_LABELS = {
   ui: 'UI',
   api: 'API',
@@ -43,4 +49,54 @@ export function showViewDiffLink(oldValue, newValue) {
   }
 
   return false;
+}
+
+export function getResource(resourceType, resourceId, actionProps) {
+  const { resourceDetails } = actionProps;
+  const resourceTypePlural = RESOURCE_TYPE_SINGULAR_TO_PLURAL[resourceType];
+  const resource =
+    resourceType &&
+    resourceDetails[resourceTypePlural] &&
+    resourceDetails[resourceTypePlural][resourceId];
+
+  return resource;
+}
+
+export function getResourceLink(al, actionProps) {
+  return (
+    <Fragment>
+      {al.event === 'delete' && al.deletedInfo && al.deletedInfo.name}
+      {al.event !== 'delete' && (
+        <Link
+          to={getExistingResourcePagePath({
+            type: al.resourceType,
+            id: al._resourceId,
+            _integrationId: (
+              getResource(al.resourceType, al._resourceId, actionProps) || {}
+            )._integrationId,
+          })}>
+          {(getResource(al.resourceType, al._resourceId, actionProps) || {})
+            .name || `${al._resourceId}`}
+        </Link>
+      )}
+    </Fragment>
+  );
+}
+
+export function getOldValue(al) {
+  return <OldValue auditLog={al} />;
+}
+
+export function getNewValue(al) {
+  return (
+    <Fragment>
+      {!showViewDiffLink(al.fieldChange.oldValue, al.fieldChange.newValue) && (
+        <Fragment>
+          {al.fieldChange && typeof al.fieldChange.newValue === 'string'
+            ? al.fieldChange.newValue
+            : JSON.stringify(al.fieldChange.newValue)}
+        </Fragment>
+      )}
+    </Fragment>
+  );
 }
