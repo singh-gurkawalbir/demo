@@ -26,19 +26,21 @@ export default function menuItems(userProfile, userPermissions) {
       Icon: HomeIcon,
     },
     {
-      label: 'Tools',
-      Icon: ToolsIcon,
-      children: [
-        {
-          label: 'Flow builder',
-          path: '/integrations/none/flowBuilder/new',
-          Icon: FlowBuilderIcon,
-        },
-        // hiding the data loader menu item until we build it.
-        // { label: 'Data loader', path: '/dataLoader', Icon: DataLoaderIcon },
-        { label: 'Recycle bin', path: '/recycleBin', Icon: TrashIcon },
-      ],
+      label: 'Flow builder',
+      path: '/integrations/none/flowBuilder/new',
+      Icon: FlowBuilderIcon,
     },
+    // Hiding Tools menu since only flow builder was present.
+    // once we have multiple items under tools, we can restore
+    // this parent menu node.
+    // {
+    //   label: 'Tools',
+    //   Icon: ToolsIcon,
+    //   children: [
+    //     // hiding the data loader menu item until we build it.
+    //     // { label: 'Data loader', path: '/dataLoader', Icon: DataLoaderIcon },
+    //   ],
+    // },
     {
       label: 'Resources',
       Icon: ResourcesIcon,
@@ -52,6 +54,7 @@ export default function menuItems(userProfile, userPermissions) {
         { label: 'Templates', path: '/templates', Icon: DataLoaderIcon },
         { label: 'Connectors', path: '/connectors', Icon: ConnectionsIcon },
         { label: 'API Tokens', path: '/accesstokens', Icon: AgentsIcon },
+        { label: 'Recycle bin', path: '/recycleBin', Icon: TrashIcon },
       ],
     },
     {
@@ -96,11 +99,12 @@ export default function menuItems(userProfile, userPermissions) {
       userPermissions.accessLevel === 'tile')
   ) {
     items = items.filter(i => i.label !== 'Resources');
-    const toolsItems = items.find(i => i.label === 'Tools');
-
-    toolsItems.children = toolsItems.children.filter(
-      i => !(i.label === 'Recycle bin')
-    );
+    // Recycle-Bin moved under resources, so i think it is covered by above filter...
+    // const toolsItems = items.find(i => i.label === 'Tools');
+    //
+    // toolsItems.children = toolsItems.children.filter(
+    //   i => !(i.label === 'Recycle bin')
+    // );
   } else {
     const resourceItems = items.find(i => i.label === 'Resources');
 
