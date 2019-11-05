@@ -8,12 +8,12 @@ export default {
       return {
         // we are saving http body in an array. Put correspond to 0th Index,
         // Post correspond to 1st index.
-        // We will have 'Build HTTP Request Body for Create' and
-        // 'Build HTTP Request Body for Update' in case user selects Composite Type as 'Create new Data and Update existing data'
+        // We will have 'Launch Query Builder for Insert' and
+        // 'Launch Query Buildery for Update' in case user selects Insert or Update Type as 'Insert new Data and Update existing data'
         saveIndex: 0,
         lookups: {
           // passing lookupId fieldId and data since we will be modifying lookups
-          //  from 'Manage lookups' option inside 'Build Http request Body Editor'
+          //  from 'Manage lookups' option inside 'SQL Query Builder'
           fieldId: lookupField.fieldId,
           data: lookupField && lookupField.value,
         },
@@ -33,7 +33,6 @@ export default {
     'rdbms.lookups': { fieldId: 'rdbms.lookups', visible: false },
     'rdbms.query': {
       fieldId: 'rdbms.query',
-      // refreshOptionsOnChangesTo: ['rdbms.lookups'],
     },
     'rdbms.queryType': { fieldId: 'rdbms.queryType' },
     ignoreExisting: {
