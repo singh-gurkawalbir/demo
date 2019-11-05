@@ -381,7 +381,6 @@ export default {
     ],
   },
   'salesforce.sObjectType': {
-    type: 'select',
     label: 'SObject Type',
     required: true,
     visibleWhen: [
@@ -390,15 +389,12 @@ export default {
         is: ['records'],
       },
     ],
-    options: [
-      {
-        // To do replace values statistically instead of dynamic
-        items: [
-          { label: 'Account', value: 'account' },
-          { label: 'Customer', value: 'customer' },
-        ],
-      },
-    ],
+    mode: 'salesforce',
+    type: 'refreshableselect',
+    resourceType: 'sObjectTypes',
+    placeholder: 'Please select a sObject type',
+    helpKey: 'export.salesforce.sObjectType',
+    connectionId: r => r && r._connectionId,
   },
   'salesforce.blobOperation': {
     type: 'radiogroup',
@@ -433,7 +429,7 @@ export default {
         ],
       },
     ],
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'salesforce.api',
         is: ['soap', 'rest'],
@@ -444,7 +440,6 @@ export default {
       },
     ],
   },
-  // To do replace values statistically instead of dynamic
   'salesforce.compositeOperation': {
     type: 'radiogroup',
     label: 'Operation',
@@ -467,6 +462,7 @@ export default {
         is: ['records'],
       },
     ],
+    defaultValue: r => r && r.salesforce && r.salesforce.operation,
   },
   'salesforce.idLookup.extract': {
     type: 'text',

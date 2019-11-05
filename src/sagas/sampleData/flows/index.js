@@ -1,9 +1,5 @@
 import { put, select, call, takeEvery } from 'redux-saga/effects';
-import {
-  resourceData,
-  getSampleData,
-  getFlowReferencesForResource,
-} from '../../../reducers';
+import { resourceData, getSampleData } from '../../../reducers';
 import { SCOPES } from '../../resourceForm';
 import actionTypes from '../../../actions/types';
 import actions from '../../../actions';
@@ -12,16 +8,19 @@ import { evaluateExternalProcessor } from '../../../sagas/editor';
 import { getResource } from '../../resources';
 import {
   fetchFlowResources,
-  refreshResourceData,
   requestSampleDataForExports,
   requestSampleDataForImports,
   updateStateForProcessorData,
 } from './utils';
 import {
+  updateFlowsDataForResource,
+  updateFlowData,
+  updateFlowOnResourceUpdate,
+} from './flowUpdates';
+import {
   getSampleDataStage,
   getParseStageData,
   getLastExportDateTime,
-  getFlowUpdatesFromPatch,
 } from '../../../utils/flowData';
 import MappingUtil from '../../../utils/mapping';
 import { adaptorTypeMap } from '../../../utils/resource';
@@ -287,12 +286,21 @@ export function* requestProcessorData({
     }
 
     processorData = { data: preProcessedData, rule, processor: 'transform' };
-  } else if (stage === 'hooks') {
+  }
+  // Below list are all Possible hook types
+  else if (
+    ['hooks', 'preMap', 'postMap', 'postSubmit', 'postAggregate'].includes(
+      stage
+    )
+  ) {
     const { hooks = {} } = { ...resource };
+    // Default hooks stage is preSavePage for Exports
+    // Other stages are hook stages for Imports
+    const hookType = stage === 'hooks' ? 'preSavePage' : stage;
+    const hook = hooks[hookType] || {};
 
-    // @TODO: Raghu handle for other import hooks map
-    if (hooks.preSavePage && hooks.preSavePage._scriptId) {
-      const scriptId = hooks.preSavePage._scriptId;
+    if (hook._scriptId) {
+      const scriptId = hook._scriptId;
       const data = { data: [preProcessedData], errors: [] };
       const script = yield call(getResource, {
         resourceType: 'scripts',
@@ -303,7 +311,7 @@ export function* requestProcessorData({
       processorData = {
         data,
         code,
-        entryFunction: hooks.preSavePage.function,
+        entryFunction: hook.function,
         processor: 'javascript',
       };
     } else {
@@ -348,91 +356,6 @@ export function* requestProcessorData({
     isPageGenerator,
     stage,
   });
-}
-
-function* updateFlowsDataForResource({ resourceId, resourceType }) {
-  // get flow ids using this resourceId
-  const flowRefs = yield select(getFlowReferencesForResource, resourceId);
-  // make a preview call for hooks so that the entire state of that processor updates if present
-  let flowIndex = 0;
-
-  while (flowIndex < flowRefs.length) {
-    // fetch flow
-    const flowId = flowRefs[flowIndex];
-
-    // reset the state for that resourceId and subsequent state reset
-    yield put(actions.flowData.reset(flowId, resourceId));
-    // Fetch preview data for this resource in all used flows
-    yield call(refreshResourceData, { flowId, resourceId, resourceType });
-
-    flowIndex += 1;
-  }
-}
-
-function* updateFlowData({ flowId }) {
-  // Updates flow structure incase of Drag and change flow order
-  const { merged: updatedFlow } = yield select(
-    resourceData,
-    'flows',
-    flowId,
-    SCOPES.VALUE
-  );
-
-  yield put(actions.flowData.resetFlowSequence(flowId, updatedFlow));
-}
-
-function* updateResponseMapping({ flowId, resourceIndex }) {
-  const { merged: flow } = yield select(
-    resourceData,
-    'flows',
-    flowId,
-    SCOPES.VALUE
-  );
-  const { pageProcessors = [] } = flow;
-  const updatedResource = pageProcessors[resourceIndex];
-
-  yield put(
-    actions.flowData.updateResponseMapping(
-      flowId,
-      resourceIndex,
-      updatedResource.responseMapping
-    )
-  );
-  const resourceToReset = pageProcessors[resourceIndex + 1];
-
-  if (resourceToReset) {
-    yield put(
-      actions.flowData.reset(
-        flowId,
-        resourceToReset._exportId || resourceToReset._importId
-      )
-    );
-  }
-}
-
-function* updateFlowOnResourceUpdate({ resourceType, resourceId, patch }) {
-  if (resourceType === 'flows') {
-    const flowUpdates = getFlowUpdatesFromPatch(patch);
-
-    // Handles Delete PP/PG, Swap order
-    if (flowUpdates.sequence) {
-      yield put(actions.flowData.updateFlow(resourceId));
-    }
-
-    // Handles Response Mappings update
-    if (flowUpdates.responseMapping) {
-      const { resourceIndex } = flowUpdates.responseMapping;
-
-      yield call(updateResponseMapping, { flowId: resourceId, resourceIndex });
-    }
-  }
-
-  if (resourceType === 'exports' || resourceType === 'imports') {
-    // Handles on update of Export or Import on edit, Transformations, Hooks and import mappings
-    yield put(
-      actions.flowData.updateFlowsForResource(resourceId, resourceType)
-    );
-  }
 }
 
 export default [

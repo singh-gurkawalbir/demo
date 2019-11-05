@@ -6,12 +6,14 @@ export default {
     '/rest/authType': 'basic',
     '/rest/mediaType': 'json',
     '/rest/pingRelativeURI': '/api/v2/users.json',
-    '/rest/baseURI': `https://${formValues['/zendesk/subdomain']}.zendesk.com`,
+    '/rest/baseURI': `https://${
+      formValues['/rest/zendeskSubdomain']
+    }.zendesk.com`,
   }),
   fieldMap: {
     name: { fieldId: 'name' },
-    'zendesk.subdomain': {
-      id: 'zendesk.subdomain',
+    'rest.zendeskSubdomain': {
+      id: 'rest.zendeskSubdomain',
       type: 'text',
       startAdornment: 'https://',
       endAdornment: '.zendesk.com',
@@ -45,7 +47,7 @@ export default {
   layout: {
     fields: [
       'name',
-      'zendesk.subdomain',
+      'rest.zendeskSubdomain',
       'rest.basicAuth.username',
       'rest.basicAuth.password',
     ],

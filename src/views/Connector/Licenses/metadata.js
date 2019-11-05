@@ -9,7 +9,8 @@ export default {
   columns: [
     {
       heading: 'Email',
-      value: r => getResourceLink('connectorLicenses', r),
+      value: (r, actionProps, location) =>
+        getResourceLink('connectorLicenses', r, location),
     },
     {
       heading: 'Status',

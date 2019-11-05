@@ -1,5 +1,4 @@
 import produce from 'immer';
-import { keys } from 'lodash';
 import actionTypes from '../../../../actions/types';
 import { getSampleDataStage, reset, compare } from '../../../../utils/flowData';
 
@@ -89,6 +88,7 @@ export default function(state = {}, action) {
       }
 
       case actionTypes.FLOW_DATA.PROCESSOR_DATA_RECEIVED: {
+        const { data: receivedData } = processedData || {};
         const resourceMap =
           draft[flowId][
             isPageGenerator ? 'pageGeneratorsMap' : 'pageProcessorsMap'
@@ -101,8 +101,14 @@ export default function(state = {}, action) {
           ...resourceMap[resourceId][processor],
         };
         resourceMap[resourceId][processor].status = 'received';
-        resourceMap[resourceId][processor].data =
-          processedData && processedData.data && processedData.data[0];
+
+        // Incase of hooks data is nested inside 'data'
+        if (receivedData) {
+          resourceMap[resourceId][processor].data = Array.isArray(receivedData)
+            ? receivedData[0]
+            : receivedData.data && receivedData.data[0];
+        }
+
         break;
       }
 
@@ -202,23 +208,6 @@ export function getSampleData(
     resourceMap[resourceId][sampleDataStage] &&
     resourceMap[resourceId][sampleDataStage].data
   );
-}
-
-export function getFlowReferencesForResource(state, resourceId) {
-  // resourceId may be export or an import
-  const existingFlows = keys(state);
-  const dependentFlows = existingFlows.filter(flowId => {
-    const { pageGenerators = [], pageProcessors = [] } = state[flowId];
-
-    return (
-      pageGenerators.find(pg => pg._exportId === resourceId) ||
-      pageProcessors.find(
-        pp => pp._exportId === resourceId || pp._importId === resourceId
-      )
-    );
-  });
-
-  return dependentFlows;
 }
 
 export function getFlowDataState(state, flowId, resourceId, isPageGenerator) {
