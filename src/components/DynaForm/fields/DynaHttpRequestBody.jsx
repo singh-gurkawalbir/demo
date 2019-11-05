@@ -53,9 +53,8 @@ export default function DynaHttpRequestBody(props) {
   };
 
   if (!parsedData) {
-    if (contentType === 'xml') parsedData = getXMLSampleTemplate(sampleData);
-    else if (contentType === 'json')
-      parsedData = getJSONSampleTemplate(sampleData);
+    if (contentType === 'json') parsedData = getJSONSampleTemplate(sampleData);
+    else parsedData = getXMLSampleTemplate(sampleData);
   }
 
   let lookupField;
@@ -75,7 +74,7 @@ export default function DynaHttpRequestBody(props) {
     <Fragment>
       {showEditor && (
         <HttpRequestBodyEditorDialog
-          contentType={contentType}
+          contentType={contentType === 'json' ? 'json' : 'xml'}
           title="Build HTTP Request Body"
           id={`${resourceId}-${id}`}
           rule={parsedData}
