@@ -108,6 +108,7 @@ export default {
 
       if (app.assistant) {
         expression.push({ assistant: app.assistant });
+        expression.push({ _connectorId: { $exists: false } });
         const andingExpressions = { $and: expression };
 
         return { filter: andingExpressions, appType: app.assistant };
