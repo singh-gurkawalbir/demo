@@ -316,6 +316,7 @@ const flattenedFieldMap = (
   resource,
   ignoreFunctionTransformations,
   developerMode,
+  flowId,
   resObjectRefs = {},
   resFields = []
 ) => {
@@ -338,6 +339,7 @@ const flattenedFieldMap = (
           resource,
           ignoreFunctionTransformations,
           developerMode,
+          flowId,
           resObjectRefs
         );
       }
@@ -348,6 +350,7 @@ const flattenedFieldMap = (
       const merged = {
         resourceId: resource._id,
         resourceType,
+        flowId,
         ...masterFields,
         ...f,
       };
@@ -383,7 +386,8 @@ const setDefaultsToLayout = (
   resourceType,
   resource,
   ignoreFunctionTransformations,
-  developerMode
+  developerMode,
+  flowId
 ) => {
   const { fields, containers, ...rest } = layout;
 
@@ -398,7 +402,8 @@ const setDefaultsToLayout = (
     resourceType,
     resource,
     ignoreFunctionTransformations,
-    developerMode
+    developerMode,
+    flowId
   );
   let transformedFieldRefs = transformedFieldRef;
   const transformedContainers =
@@ -413,7 +418,8 @@ const setDefaultsToLayout = (
         resourceType,
         resource,
         ignoreFunctionTransformations,
-        developerMode
+        developerMode,
+        flowId
       );
       const { fields, containers } = transformedLayoutRes;
 
@@ -444,7 +450,8 @@ const getFieldsWithDefaults = (
   resourceType,
   resource,
   ignoreFunctionTransformations = false,
-  developerMode = false
+  developerMode = false,
+  flowId
 ) => {
   const { layout, fieldMap, actions } = fieldMeta;
 
@@ -462,7 +469,8 @@ const getFieldsWithDefaults = (
     resourceType,
     resource,
     ignoreFunctionTransformations,
-    developerMode
+    developerMode,
+    flowId
   );
 
   return {

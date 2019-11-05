@@ -1,10 +1,22 @@
-import { useState, Fragment } from 'react';
+import { useState, useEffect, Fragment } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import Button from '@material-ui/core/Button';
+import * as selectors from '../../../reducers';
 import HttpRequestBodyEditorDialog from '../../../components/AFE/HttpRequestBodyEditor/Dialog';
 import DynaLookupEditor from './DynaLookupEditor';
+import actions from '../../../actions';
 
 export default function DynaHttpRequestBody(props) {
-  const { id, onFieldChange, options, value, label, resourceId } = props;
+  const {
+    id,
+    onFieldChange,
+    options,
+    value,
+    label,
+    resourceId,
+    resourceType,
+    flowId,
+  } = props;
   const [showEditor, setShowEditor] = useState(false);
   const parsedData =
     options && typeof options.saveIndex === 'number' && Array.isArray(value)
@@ -15,6 +27,28 @@ export default function DynaHttpRequestBody(props) {
   const handleEditorClick = () => {
     setShowEditor(!showEditor);
   };
+
+  const dispatch = useDispatch();
+  const sampleData = useSelector(state =>
+    selectors.getSampleData(state, flowId, resourceId, 'flowInput', {
+      isImport: resourceType === 'imports',
+    })
+  );
+
+  useEffect(() => {
+    // Request for sample data only incase of flow context
+    // TODO : @Raghu Do we show default data in stand alone context?
+    if (flowId && !sampleData) {
+      dispatch(
+        actions.flowData.requestSampleData(
+          flowId,
+          resourceId,
+          resourceType,
+          'flowInput'
+        )
+      );
+    }
+  }, [dispatch, flowId, resourceId, resourceType, sampleData]);
 
   const handleClose = (shouldCommit, editorValues) => {
     if (shouldCommit) {
@@ -60,6 +94,7 @@ export default function DynaHttpRequestBody(props) {
           id={`${resourceId}-${id}`}
           rule={parsedData}
           onFieldChange={onFieldChange}
+          data={JSON.stringify(sampleData, null, 2)}
           onClose={handleClose}
           action={lookupField}
         />

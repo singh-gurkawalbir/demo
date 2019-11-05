@@ -801,12 +801,13 @@ const editor = {
 //
 // #region DynaForm Actions
 const resourceForm = {
-  init: (resourceType, resourceId, isNew, skipCommit) =>
+  init: (resourceType, resourceId, isNew, skipCommit, flowId) =>
     action(actionTypes.RESOURCE_FORM.INIT, {
       resourceType,
       resourceId,
       isNew,
       skipCommit,
+      flowId,
     }),
   initComplete: (resourceType, resourceId, fieldMeta, isNew, skipCommit) =>
     action(actionTypes.RESOURCE_FORM.INIT_COMPLETE, {

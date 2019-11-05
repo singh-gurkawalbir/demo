@@ -268,6 +268,7 @@ export function* initFormValues({
   resourceId,
   isNew,
   skipCommit,
+  flowId,
 }) {
   const developerMode = yield select(selectors.developerMode);
   const { merged: resource } = yield select(
@@ -328,7 +329,8 @@ export function* initFormValues({
     resourceType,
     resource,
     false,
-    developerMode
+    developerMode,
+    flowId
   );
   let finalFieldMeta = fieldMeta;
 

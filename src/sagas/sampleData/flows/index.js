@@ -1,4 +1,5 @@
 import { put, select, call, takeEvery } from 'redux-saga/effects';
+import deepClone from 'lodash/cloneDeep';
 import { resourceData, getSampleData } from '../../../reducers';
 import { SCOPES } from '../../resourceForm';
 import actionTypes from '../../../actions/types';
@@ -23,7 +24,7 @@ import {
   getLastExportDateTime,
 } from '../../../utils/flowData';
 import MappingUtil from '../../../utils/mapping';
-import { adaptorTypeMap } from '../../../utils/resource';
+import { adaptorTypeMap, isNewId } from '../../../utils/resource';
 
 function* requestSampleData({
   flowId,
@@ -39,6 +40,7 @@ function* requestSampleData({
     yield call(requestSampleDataForImports, {
       flowId,
       resourceId,
+      resourceType,
       sampleDataStage,
     });
   } else {
@@ -55,10 +57,11 @@ export function* fetchPageProcessorPreview({
   flowId,
   _pageProcessorId,
   previewType,
+  resourceType = 'exports',
 }) {
   if (!flowId || !_pageProcessorId) return;
   const { merged } = yield select(resourceData, 'flows', flowId, SCOPES.VALUE);
-  const flow = { ...merged };
+  const flow = deepClone(merged);
 
   if (
     !(flow.pageProcessors && flow.pageProcessors.length) ||
@@ -75,8 +78,20 @@ export function* fetchPageProcessorPreview({
     eliminateDataProcessors: true,
   });
 
+  // Incase of a new Lookup / Import add that doc to flow explicitly as it is not yet saved
+  if (isNewId(_pageProcessorId)) {
+    const newResourceDoc =
+      resourceType === 'imports'
+        ? { type: 'import', _importId: _pageProcessorId }
+        : { type: 'export', _exportId: _pageProcessorId };
+
+    flow.pageProcessors.push(newResourceDoc);
+    pageProcessorMap[_pageProcessorId] = { doc: {} };
+  }
+
   if (previewType === 'flowInput') {
     // make the _pageProcessor as import so that BE calculates flow data till that processor
+    // TODO: @Raghu What if same page processor used multiple times in a flow? Do we need index then ?
     flow.pageProcessors = flow.pageProcessors.map(pageProcessor => {
       if (pageProcessor._exportId === _pageProcessorId) {
         pageProcessorMap[_pageProcessorId].options = {};
