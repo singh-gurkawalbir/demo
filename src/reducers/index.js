@@ -29,7 +29,12 @@ import {
 import { getFieldById } from '../forms/utils';
 import { upgradeButtonText, expiresInfo } from '../utils/license';
 import commKeyGen from '../utils/commKeyGenerator';
-import { isRealtimeExport, isSimpleImportFlow, isRunnable } from './flowsUtil';
+import {
+  isRealtimeExport,
+  isSimpleImportFlow,
+  isRunnable,
+  showScheduleIcon,
+} from './flowsUtil';
 import { getUsedActionsMapForResource } from '../utils/flows';
 import { isValidResourceReference } from '../utils/resource';
 
@@ -520,6 +525,10 @@ export function flowListWithMetadata(state, options) {
 
     if (isRunnable(exports, exp, f)) {
       flows[i].isRunnable = true;
+    }
+
+    if (showScheduleIcon(exports, exp, f)) {
+      flows[i].showScheduleIcon = true;
     }
   });
 
@@ -1485,6 +1494,70 @@ export function resourceStatus(
     method,
     isReady,
   };
+}
+
+export function flowMetadata(state, id, scope) {
+  if (!state || !id) return {};
+
+  const master = resource(state, 'flows', id);
+  const _exportId =
+    master &&
+    (master.pageGenerators && master.pageGenerators.length
+      ? master.pageGenerators[0]._exportId
+      : master._exportId);
+  const exp = resource(state, 'exports', _exportId);
+  const exports = fromData.resourceList(state && state.data, {
+    resourceType: 'exports',
+  }).resources;
+
+  if (isRealtimeExport(exp)) {
+    master.isRealtime = true;
+  }
+
+  if (isSimpleImportFlow(exp)) {
+    master.isSimpleImport = true;
+  }
+
+  if (showScheduleIcon(exports, exp, master)) {
+    master.showScheduleIcon = true;
+  }
+
+  if (isRunnable(exports, exp, master)) {
+    master.isRunnable = true;
+  }
+
+  const { patch, conflict } = fromSession.stagedResource(
+    state.session,
+    id,
+    scope
+  );
+
+  if (!master && !patch) return { merged: {} };
+
+  let merged;
+  let lastChange;
+
+  if (patch) {
+    const patchResult = jsonPatch.applyPatch(
+      master ? jsonPatch.deepClone(master) : {},
+      jsonPatch.deepClone(patch)
+    );
+
+    merged = patchResult.newDocument;
+
+    if (patch.length) lastChange = patch[patch.length - 1].timestamp;
+  }
+
+  const data = {
+    master,
+    patch,
+    lastChange,
+    merged: merged || master,
+  };
+
+  if (conflict) data.conflict = conflict;
+
+  return data;
 }
 
 export function resourceData(state, resourceType, id, scope) {
