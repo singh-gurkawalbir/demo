@@ -24,19 +24,7 @@ export default {
       ...retValues,
     };
   },
-  // optionsHandler: (fieldId, fields) => {
-  //   if (fieldId === 'delta.dateField' || fieldId === 'once.booleanField') {
-  //     const soqlQueryField = fields.find(
-  //       field => field.id === 'salesforce.soql'
-  //     );
 
-  //     return {
-  //       recordType: (soqlQueryField.value || {}).entityName,
-  //     };
-  //   }
-
-  //   return null;
-  // },
   fieldMap: {
     common: { formId: 'common' },
     'salesforce.executionType': { fieldId: 'salesforce.executionType' },
@@ -63,9 +51,11 @@ export default {
     'salesforce.soql': {
       id: 'salesforce.soql',
       type: 'soqlquery',
+      label: 'SOQL Query',
       omitWhenHidden: true,
       metadataType: 'query',
       recordType: 'columns',
+      required: true,
       multiline: true,
       connectionId: r => r && r._connectionId,
       defaultValue: r => r && r.salesforce && r.salesforce.soql,
@@ -102,8 +92,6 @@ export default {
       connectionId: r => r && r._connectionId,
       required: true,
       metadataType: 'sObjectTypes',
-      recordType: 'columns',
-      resourceType: 'query',
       visibleWhen: [{ field: 'type', is: ['delta'] }],
     },
     'delta.lagOffset': {
@@ -116,8 +104,6 @@ export default {
       connectionId: r => r && r._connectionId,
       required: true,
       metadataType: 'sObjectTypes',
-      recordType: 'columns',
-      resourceType: 'query',
       visibleWhen: [{ field: 'type', is: ['once'] }],
     },
     'salesforce.sObjectType': { fieldId: 'salesforce.sObjectType' },

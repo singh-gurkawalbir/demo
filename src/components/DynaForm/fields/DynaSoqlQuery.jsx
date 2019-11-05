@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/styles';
+import { FormContext } from 'react-forms-processor/dist';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 
@@ -14,7 +15,7 @@ const useStyles = makeStyles({
   },
 });
 
-export default function DynaSoqlQuery(props) {
+function DynaSoqlQuery(props) {
   const {
     id,
     name,
@@ -30,10 +31,15 @@ export default function DynaSoqlQuery(props) {
     mode,
     filterKey,
     selectField,
+    formContext,
   } = props;
+  const { value: formValues } = formContext;
+  const soqlField = formValues['/salesforce/soql'];
+  let query = soqlField && soqlField.query;
   const classes = useStyles();
   const dispatch = useDispatch();
   const [soqlQuery, setSoqlQuery] = useState(false);
+  const [sObject, setsObject] = useState(true);
   const { data = {} } = useSelector(state =>
     selectors.metadataOptionsAndResources(
       state,
@@ -46,23 +52,28 @@ export default function DynaSoqlQuery(props) {
     )
   );
   const handleFieldOnBlur = e => {
-    const query = e.target.value;
-
-    dispatch(
-      actions.metadata.request({
-        connectionId,
-        metadataType,
-        recordType,
-        addInfo: { query },
-      })
-    );
-    setSoqlQuery(true);
+    query = e.target.value;
+    setsObject(true);
   };
 
   const handleFieldChange = e => {
     onFieldChange(id, { ...value, query: e.target.value });
   };
 
+  useEffect(() => {
+    if (query && sObject) {
+      dispatch(
+        actions.metadata.request({
+          connectionId,
+          metadataType,
+          recordType,
+          addInfo: { query },
+        })
+      );
+      setSoqlQuery(true);
+      setsObject(false);
+    }
+  }, [connectionId, dispatch, metadataType, query, recordType, sObject]);
   useEffect(() => {
     if (soqlQuery && data.entityName) {
       onFieldChange(id, { ...value, entityName: data.entityName });
@@ -96,7 +107,6 @@ export default function DynaSoqlQuery(props) {
         name={name}
         label={label}
         placeholder={placeholder}
-        // helperText={isValid ? description : errorMessages}
         multiline={multiline}
         required={required}
         value={value.query}
@@ -108,3 +118,11 @@ export default function DynaSoqlQuery(props) {
     </div>
   );
 }
+
+const DynaSoqlQueryFormContext = props => (
+  <FormContext.Consumer {...props}>
+    {form => <DynaSoqlQuery {...props} formContext={form} />}
+  </FormContext.Consumer>
+);
+
+export default DynaSoqlQueryFormContext;

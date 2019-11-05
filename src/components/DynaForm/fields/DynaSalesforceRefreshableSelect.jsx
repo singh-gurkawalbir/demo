@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { FormContext } from 'react-forms-processor/dist';
 import * as selectors from '../../../reducers';
@@ -13,16 +12,12 @@ function DynaSalesforceSelectOptionsGenerator(props) {
     filterKey,
     selectField,
     formContext,
-    resourceType,
-    recordType,
   } = props;
   const { value: formValues } = formContext;
-  const { entityName, query } = formValues['/salesforce/soql'];
-  const [refresh, setRefresh] = useState(false);
-
-  console.log('entityName ', entityName);
+  const soqlQueryField = formValues['/salesforce/soql'];
+  const entityName = (soqlQueryField && soqlQueryField.entityName) || '';
   const dispatch = useDispatch();
-  const { data = [], status = true, errorMessage } = useSelector(state =>
+  const { data = [], status, errorMessage } = useSelector(state =>
     selectors.metadataOptionsAndResources(
       state,
       connectionId,
@@ -33,29 +28,12 @@ function DynaSalesforceSelectOptionsGenerator(props) {
       selectField
     )
   );
-
-  console.log('data  ', data);
   let options = data.filter(f => ['datetime', 'date'].indexOf(f.type) > -1);
 
   options = options.map(op => ({ label: op.label, value: op.value }));
-  console.log('options  ', options);
 
   const handleRefreshResource = () => {
     if (metadataType) {
-      //   dispatch(
-      //     actions.metadata.request({
-      //       connectionId,
-      //       metadataType: resourceType,
-      //       recordType,
-      //       addInfo: { query },
-      //     })
-      //   );
-      setRefresh(true);
-    }
-  };
-
-  useEffect(() => {
-    if (refresh && entityName) {
       dispatch(
         actions.metadata.refresh(
           connectionId,
@@ -66,18 +44,8 @@ function DynaSalesforceSelectOptionsGenerator(props) {
           selectField
         )
       );
-      setRefresh(false);
     }
-  }, [
-    connectionId,
-    dispatch,
-    entityName,
-    filterKey,
-    metadataType,
-    mode,
-    refresh,
-    selectField,
-  ]);
+  };
 
   return (
     <RefreshGenericResource
