@@ -227,10 +227,14 @@ export default {
   'file.xlsx.keyColumns': {
     type: 'text',
     label: 'Key Columns',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'file.xlsx.rowsPerRecord',
         is: [true],
+      },
+      {
+        field: 'file.type',
+        is: ['xlsx'],
       },
     ],
   },
