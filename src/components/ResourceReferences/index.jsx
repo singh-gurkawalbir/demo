@@ -1,18 +1,14 @@
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
 import { withStyles } from '@material-ui/core/styles';
-import ListItemText from '@material-ui/core/ListItemText';
-import Divider from '@material-ui/core/Divider';
 import { Typography } from '@material-ui/core';
-import { Link } from 'react-router-dom';
 import { Fragment, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import getRoutePath from '../../utils/routePaths';
+import CeligoTable from '../../components/CeligoTable';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
 import Spinner from '../Spinner';
 import { MODEL_PLURAL_TO_LABEL } from '../../utils/resource';
 import ModalDialog from '../ModalDialog';
+import metadata from './metadata';
 import { RESOURCE_TYPE_PLURAL_TO_SINGULAR } from '../../constants/resource';
 
 const styles = theme => ({
@@ -61,29 +57,7 @@ function ResourceReferences(props) {
                 {title &&
                   `This ${MODEL_PLURAL_TO_LABEL[type]} is referenced by the resources below. Only resources that have no references can be deleted.`}
               </Typography>
-              <List>
-                {resourceReferences.map(refObject => (
-                  <ListItem key={refObject.resourceType}>
-                    <ListItemText primary={`${refObject.resourceType}:`} />
-                    <List>
-                      {refObject.references.map(reference => (
-                        <ListItem key={reference.id}>
-                          <Link
-                            to={getRoutePath(
-                              `${refObject.resourceType}/edit/${refObject.resourceType}/${reference.id}`
-                            )}
-                            onClick={onClose}
-                            className={classes.referenceLink}>
-                            <ListItemText primary={reference.name} />
-                          </Link>
-                          <Divider />
-                        </ListItem>
-                      ))}
-                    </List>
-                    <Divider />
-                  </ListItem>
-                ))}
-              </List>
+              <CeligoTable data={resourceReferences} {...metadata} />
             </Fragment>
           ) : (
             <Typography>

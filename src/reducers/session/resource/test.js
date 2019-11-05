@@ -103,12 +103,19 @@ describe('session.resource reducers', () => {
           actions.resource.receivedReferences(testReferences)
         );
         const { references } = state;
-        const refResult = Object.keys(references).map(type => ({
-          resourceType: type,
-          references: references[type],
-        }));
+        const referencesArray = [];
 
-        expect(selectors.resourceReferences(state)).toEqual(refResult);
+        Object.keys(references).forEach(type =>
+          references[type].forEach(refObj => {
+            referencesArray.push({
+              resourceType: type,
+              id: refObj.id,
+              name: refObj.name,
+            });
+          })
+        );
+
+        expect(selectors.resourceReferences(state)).toEqual(referencesArray);
       });
     });
   });
