@@ -280,6 +280,8 @@ const addIdToFieldsAndRenameNameAttribute = (fields, _integrationId) => {
       newField.type = 'text';
     } else if (newField.type === 'radio') {
       newField.type = 'radiogroup';
+    } else if (newField.type === 'file') {
+      newField.type = 'uploadfile';
     }
 
     return newField;
