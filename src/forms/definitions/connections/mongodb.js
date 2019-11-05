@@ -47,15 +47,18 @@ export default {
       'mongodb.database',
       'mongodb.username',
       'mongodb.password',
-      'mongodb.ssl',
-      'mongodb.authSource',
     ],
     type: 'collapse',
     containers: [
       {
         collapsed: true,
         label: 'Advanced Settings',
-        fields: ['mongodb.replicaSet', '_borrowConcurrencyFromConnectionId'],
+        fields: [
+          'mongodb.replicaSet',
+          'mongodb.ssl',
+          'mongodb.authSource',
+          '_borrowConcurrencyFromConnectionId',
+        ],
       },
     ],
   },

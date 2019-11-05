@@ -2263,12 +2263,12 @@ export default {
   },
   'mongodb.ssl': {
     type: 'checkbox',
-    label: 'Use TLS Encryption',
-    defaultValue: r => (r && r.mongpoodb && r.mongodb.ssl) || undefined,
+    label: 'TLS/SSL',
+    defaultValue: r => (r && r.mongpoodb && r.mongodb.ssl) || false,
   },
   'mongodb.authSource': {
     type: 'text',
-    label: 'Auth Source Database Name',
+    label: 'Auth Source',
   },
   // #endregion mongodb
 

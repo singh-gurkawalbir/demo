@@ -207,11 +207,10 @@ export default {
   'connection.mongodb.password':
     'If your MongoDB instance requires login credentials please enter password here.',
   'connection.mongodb.replicaSet':
-    "Enter the name of the Replica Set used by your MongoDB deployment. When connecting to a Replica Set be sure to supply the list of the Replica Set members in the 'Host(s)' field above.",
-  'connection.mongodb.ssl':
-    'Check this checkbox if your MongoDB instance requires an encrypted connection. When enabled integrator.io will connect to your MongoDB instance using TLS 1.0 or greater.',
+    "The name of the replica set.  When connecting to a replica set be sure to supply the list of the replica set members in the 'Host(s)' field above.",
+  'connection.mongodb.ssl': 'Enables or disables TLS/SSL for the connection.',
   'connection.mongodb.authSource':
-    "The name of the database associated with the user’s credentials. If a database name is not provided here the value in the 'Database' field above will be used by default.",
+    "The name of the database associated with the user’s credentials. If a database name is not provided here, then the 'Database' field above will be used as the default",
   'connection.ftp.hostURI':
     "The URI of the FTP/SFTP/FTPS server host.  Typically this value will look something like 'ftp.mycompany.com', or sometimes just a raw IP address '100.200.300.1'.  It is also very common for FTP/SFTP/FTPS servers to be behind a firewall, and to support accessing resources behind a firewall you will need to make sure all of the FTP/SFTP/FTPS specific integrator.io IP addresses (listed right below the HOST field) have been white-listed on your FTP/SFTP/FTPS server infrastructure.",
   'connection.ftp.username':
