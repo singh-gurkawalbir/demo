@@ -256,6 +256,19 @@ export default function Lookup(props) {
     fieldMeta.layout.fields = fieldMeta.layout.fields.filter(
       el => el !== 'mode' && el !== 'mapList'
     );
+    const { relativeURI, method, body, extract } = fieldMeta.fieldMap;
+
+    delete relativeURI.visibleWhen;
+    delete method.visibleWhen;
+    delete body.visibleWhenAll;
+    delete extract.visibleWhen;
+
+    fieldMeta.fieldMap.body.visibleWhen = [
+      {
+        field: 'method',
+        is: ['POST'],
+      },
+    ];
   }
 
   return (
