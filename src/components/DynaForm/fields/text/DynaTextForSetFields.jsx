@@ -1,6 +1,6 @@
 import DynaText from '../DynaText';
 
-export default function DynaSelectSetFieldValues(props) {
+export default function DynaTextSetFieldValues(props) {
   const { onFieldChange, setFieldValue = '', setFieldIds = [] } = props;
   const setFormFields = () => {
     setFieldIds.forEach(fieldId => {
