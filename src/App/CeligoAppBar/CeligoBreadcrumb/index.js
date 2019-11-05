@@ -4,6 +4,8 @@ import { Breadcrumbs, Typography } from '@material-ui/core';
 import { MODEL_PLURAL_TO_LABEL } from '../../../utils/resource';
 import ArrowRightIcon from '../../../components/icons/ArrowRightIcon';
 import IntegrationCrumb from './crumbs/Integration';
+import MarketplaceCrumb from './crumbs/Marketplace';
+import TemplateCrumb from './crumbs/Template';
 
 const useStyles = makeStyles(theme => ({
   breadCrumb: {
@@ -56,7 +58,21 @@ const routes = [
   },
   { path: '/pg/dashboard' }, // exclusion of breadcrumb prop will skip this segment.
   { path: '/pg/connectors', breadcrumb: () => 'Connectors' },
-  { path: '/pg/marketplace', breadcrumb: () => 'Marketplace' },
+  {
+    path: '/pg/marketplace',
+    breadcrumb: () => 'Marketplace',
+    childRoutes: [
+      { path: '/:app', breadcrumb: MarketplaceCrumb },
+      {
+        path: '/templates/:templateId',
+        breadcrumb: TemplateCrumb,
+        childRoutes: [
+          { path: 'preview', breadcrumb: () => 'Preview' },
+          { path: 'install', breadcrumb: () => 'Install' },
+        ],
+      },
+    ],
+  },
   { path: '/pg/recycleBin', breadcrumb: () => 'Recycle-bin' },
   { path: '/pg/myAccount', breadcrumb: () => 'My account' },
   { path: '/pg/templates', breadcrumb: () => 'Templates' },
