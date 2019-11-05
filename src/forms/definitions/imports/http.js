@@ -128,22 +128,24 @@ export default {
       const lookupField = fields.find(
         field => field.fieldId === 'http.lookups'
       );
+      const requestMediaTypeField = fields.find(
+        field => field.fieldId === 'http.requestMediaType'
+      );
 
-      if (lookupField) {
-        return {
-          // we are saving http body in an array. Put correspond to 0th Index,
-          // Post correspond to 1st index.
-          // We will have 'Build HTTP Request Body for Create' and
-          // 'Build HTTP Request Body for Update' in case user selects Composite Type as 'Create new Data and Update existing data'
-          saveIndex: 0,
-          lookups: {
-            // passing lookupId fieldId and data since we will be modifying lookups
-            //  from 'Manage lookups' option inside 'Build Http request Body Editor'
-            fieldId: lookupField.fieldId,
-            data: lookupField && lookupField.value,
-          },
-        };
-      }
+      return {
+        // we are saving http body in an array. Put correspond to 0th Index,
+        // Post correspond to 1st index.
+        // We will have 'Build HTTP Request Body for Create' and
+        // 'Build HTTP Request Body for Update' in case user selects Composite Type as 'Create new Data and Update existing data'
+        saveIndex: 0,
+        contentType: requestMediaTypeField.value,
+        lookups: {
+          // passing lookupId fieldId and data since we will be modifying lookups
+          //  from 'Manage lookups' option inside 'Build Http request Body Editor'
+          fieldId: lookupField.fieldId,
+          data: lookupField && lookupField.value,
+        },
+      };
     }
 
     return null;
@@ -684,7 +686,10 @@ export default {
         },
       ],
     },
-    'http.body': { fieldId: 'http.body' },
+    'http.body': {
+      fieldId: 'http.body',
+      refreshOptionsOnChangesTo: ['http.requestMediaType'],
+    },
 
     'http.ignoreEmptyNodes': { fieldId: 'http.ignoreEmptyNodes' },
     advancedSettings: {
