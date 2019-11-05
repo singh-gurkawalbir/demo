@@ -2,6 +2,8 @@ export default {
   preSave: formValues => {
     const retValues = { ...formValues };
 
+    retValues['/rest/pingRelativeURI'] === '/admin/orders.json';
+
     if (retValues['/rest/authType'] === 'oauth') {
       retValues['/rest/tokenLocation'] = 'header';
       retValues['/rest/authURI'] = `https://${
@@ -14,6 +16,31 @@ export default {
       retValues['/rest/authScheme'] = ' ';
       retValues['/rest/bearerToken'] = undefined;
       retValues['/rest/scopeDelimiter'] = ',';
+
+      if (retValues['/rest/scope'] && !!retValues['/rest/scope'].length) {
+        const scope = retValues['/rest/scope'].find(
+          str => str !== 'read_analytics'
+        );
+
+        if (scope) {
+          const scopeId = /^(read_|write_)(\w*)/.test(scope)
+            ? /^(read_|write_)(\w*)/.exec(scope)[2]
+            : '';
+          const pingURIs = {
+            content: '/admin/articles/authors.json',
+            themes: '/admin/themes.json',
+            products: '/admin/products/count.json',
+            customers: '/admin/customers/count.json',
+            orders: '/admin/orders/count.json',
+            script_tags: '/admin/script_tags/count.json',
+            fulfillments: '/admin/fulfillment_services.json?scope=all',
+            shipping: '/admin/carrier_services.json',
+            users: '/admin/users.json',
+          };
+
+          retValues['/rest/pingRelativeURI'] = pingURIs[scopeId];
+        }
+      }
     } else {
       retValues['/rest/authURI'] = undefined;
       retValues['/rest/basicAuth/username'] = `${
@@ -30,7 +57,6 @@ export default {
       '/assistant': 'shopify',
       '/rest/mediaType': 'json',
       '/rest/baseURI': `https://${formValues['/rest/storeURL']}.myshopify.com`,
-      '/rest/pingRelativeURI': '/admin/articles/authors.json',
       '/rest/pingMethod': 'GET',
     };
   },
@@ -154,38 +180,21 @@ export default {
     ],
   },
   actions: [
-    {
-      id: 'cancel',
-    },
+    { id: 'cancel' },
     {
       id: 'oauth',
       label: 'Save & Authorize',
-      visibleWhen: [
-        {
-          field: 'rest.authType',
-          is: ['oauth'],
-        },
-      ],
+      visibleWhen: [{ field: 'rest.authType', is: ['oauth'] }],
     },
     {
       id: 'test',
       label: 'Test',
-      visibleWhen: [
-        {
-          field: 'rest.authType',
-          is: ['basic'],
-        },
-      ],
+      visibleWhen: [{ field: 'rest.authType', is: ['basic'] }],
     },
     {
       id: 'save',
       label: 'Test and Save',
-      visibleWhen: [
-        {
-          field: 'rest.authType',
-          is: ['basic'],
-        },
-      ],
+      visibleWhen: [{ field: 'rest.authType', is: ['basic'] }],
     },
   ],
 };

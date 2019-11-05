@@ -20,7 +20,7 @@ export default {
       '/http/ping/method': 'GET',
       '/http/ping/relativeURI': '/api/v2/users.json',
       '/http/baseURI': `https://${
-        formValues['/zendesk/subdomain']
+        formValues['/http/zendeskSubdomain']
       }.zendesk.com`,
     };
   },
@@ -50,8 +50,8 @@ export default {
         },
       ],
     },
-    'zendesk.subdomain': {
-      id: 'zendesk.subdomain',
+    'http.zendeskSubdomain': {
+      id: 'http.zendeskSubdomain',
       type: 'text',
       startAdornment: 'https://',
       endAdornment: '.zendesk.com',
@@ -114,7 +114,7 @@ export default {
     fields: [
       'name',
       'http.auth.type',
-      'zendesk.subdomain',
+      'http.zendeskSubdomain',
       'http.auth.basic.username',
       'http.auth.basic.password',
       'http.apiToken',
