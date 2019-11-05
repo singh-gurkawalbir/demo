@@ -72,7 +72,13 @@ function ResourceList(props) {
           </div>
         </CeligoPageBar>
         <div className={classes.resultContainer}>
-          <LoadResources required resources={resourceType}>
+          <LoadResources
+            required
+            resources={
+              resourceType === 'exports'
+                ? [resourceType, 'connections']
+                : resourceType
+            }>
             <ResourceTable
               resourceType={resourceType}
               resources={list.resources}

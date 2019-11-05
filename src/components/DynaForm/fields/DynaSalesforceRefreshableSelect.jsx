@@ -3,6 +3,7 @@ import { FormContext } from 'react-forms-processor/dist';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import RefreshGenericResource from './DynaRefreshableSelect/RefreshGenericResource';
+import { salesforceExportSelectOptions } from '../../../utils/resource';
 
 function DynaSalesforceSelectOptionsGenerator(props) {
   const {
@@ -12,6 +13,7 @@ function DynaSalesforceSelectOptionsGenerator(props) {
     filterKey,
     selectField,
     formContext,
+    fieldName,
   } = props;
   const { value: formValues } = formContext;
   const soqlQueryField = formValues['/salesforce/soql'];
@@ -28,10 +30,7 @@ function DynaSalesforceSelectOptionsGenerator(props) {
       selectField
     )
   );
-  let options = data.filter(f => ['datetime', 'date'].indexOf(f.type) > -1);
-
-  options = options.map(op => ({ label: op.label, value: op.value }));
-
+  const options = salesforceExportSelectOptions(data, fieldName);
   const handleRefreshResource = () => {
     if (metadataType) {
       dispatch(
