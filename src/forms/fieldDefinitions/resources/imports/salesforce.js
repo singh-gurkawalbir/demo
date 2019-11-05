@@ -388,6 +388,8 @@ export default {
     resourceType: 'sObjectTypes',
     connectionId: r => r && r._connectionId,
     required: true,
+    placeholder: 'Please select a sObject type',
+    helpKey: 'export.salesforce.sObjectType',
     visibleWhen: [
       {
         field: 'inputMode',
@@ -428,7 +430,7 @@ export default {
         ],
       },
     ],
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'salesforce.api',
         is: ['soap', 'rest'],
@@ -439,7 +441,6 @@ export default {
       },
     ],
   },
-  // To do replace values statistically instead of dynamic
   'salesforce.compositeOperation': {
     type: 'radiogroup',
     label: 'Operation',
@@ -462,6 +463,7 @@ export default {
         is: ['records'],
       },
     ],
+    defaultValue: r => r && r.salesforce && r.salesforce.operation,
   },
   'salesforce.idLookup.extract': {
     type: 'text',
