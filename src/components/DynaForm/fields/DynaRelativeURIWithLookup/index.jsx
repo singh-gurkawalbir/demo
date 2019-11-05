@@ -69,7 +69,7 @@ export default function DynaRelativeURIWithLookup(props) {
     handleEditorClick();
   };
 
-  const handleFieldChange = val => {
+  const handleFieldChange = (_id, val) => {
     onFieldChange(id, val);
   };
 
