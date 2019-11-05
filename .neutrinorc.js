@@ -187,8 +187,8 @@ module.exports = {
       //needed for our test cases....
       neutrino.config.when (process.env.NODE_ENV === 'test',config=>{
         config.module.rule('compile').use('babel').tap(
-          origOptions=>{ 
-            const options =deepClone(origOptions);
+          origOptions => { 
+            const options = deepClone(origOptions);
             //if the dependency isn't there then that could be a problem
             options.plugins.push('babel-plugin-dynamic-import-node');
         
@@ -200,6 +200,7 @@ module.exports = {
           }
         )
       });
+
       neutrino.config.devServer.proxy({
         '/signin': proxyOpts,
         '/signout': proxyOpts,
@@ -208,6 +209,7 @@ module.exports = {
         '/netSuiteWS': proxyOpts,
         '/connection': proxyOpts,
       });
+      
       neutrino.config.output.publicPath('/pg/');
     },
   ],
