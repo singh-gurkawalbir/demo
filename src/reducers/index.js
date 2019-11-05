@@ -155,6 +155,33 @@ export function connectorMetadata(state, fieldName, id, _integrationId) {
   );
 }
 
+export function connectorFieldOptions(
+  state,
+  fieldName,
+  id,
+  _integrationId,
+  defaultFieldOptions
+) {
+  const { data, isLoading } = connectorMetadata(
+    state,
+    fieldName,
+    id,
+    _integrationId
+  );
+
+  // should select options from either defaultOptions or the refreshed metadata options
+  return {
+    isLoading,
+    options:
+      (data &&
+        data.options.map(option => ({
+          value: option[0],
+          label: option[1],
+        }))) ||
+      (defaultFieldOptions && defaultFieldOptions[0].items),
+  };
+}
+
 export function filter(state, name) {
   return fromSession.filter(state.session, name);
 }

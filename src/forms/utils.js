@@ -276,7 +276,9 @@ const addIdToFieldsAndRenameNameAttribute = (fields, _integrationId) => {
   const getFieldConfig = (field = {}) => {
     const newField = { ...field };
 
-    if (!newField.type || newField.type === 'input') {
+    if (newField.supportsRefresh)
+      newField.type = 'integrationrefreshableselect';
+    else if (!newField.type || newField.type === 'input') {
       newField.type = 'text';
     }
 
