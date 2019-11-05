@@ -42,6 +42,8 @@ import DynaFieldExpressionSelect from './DynaFieldExpressionSelect';
 import DynaAutoSuggest from './DynaAutoSuggest';
 import DynaGenerateUrl from './DynaGenerateUrl';
 import DynaGenerateToken from './DynaGenerateToken';
+import DynaSelectForSetFields from './select/DynaSelectForSetFields';
+import DynaTextForSetFields from './text/DynaTextForSetFields';
 
 export default {
   mapping: DynaImportMapping,
@@ -91,4 +93,6 @@ export default {
   autosuggest: DynaAutoSuggest,
   generateurl: DynaGenerateUrl,
   generatetoken: DynaGenerateToken,
+  selectforsetfields: DynaSelectForSetFields,
+  textforsetfields: DynaTextForSetFields,
 };

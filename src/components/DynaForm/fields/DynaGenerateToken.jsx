@@ -4,7 +4,7 @@ import uuid from 'uuid';
 import { makeStyles } from '@material-ui/styles';
 import Button from '@material-ui/core/Button';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
-import DynaText from './DynaText';
+import DynaTextForSetFields from './text/DynaTextForSetFields';
 
 const useStyles = makeStyles(() => ({
   children: {
@@ -18,7 +18,6 @@ export default function GenerateToken(props) {
     id,
     value,
     buttonLabel,
-    setFieldsOnChange,
     setFieldValue = '',
     setFieldIds = [],
   } = props;
@@ -38,13 +37,12 @@ export default function GenerateToken(props) {
   return (
     <div style={{ display: 'flex', flexDirection: 'row' }}>
       <div style={{ flexBasis: '70%', '& div': { width: '100%' } }}>
-        <DynaText
+        <DynaTextForSetFields
           {...props}
           required
           className={classes.children}
           style={{ width: '100%' }}
           value={value}
-          setFieldsOnChange={setFieldsOnChange}
           setFieldValue={setFieldValue}
           setFieldIds={setFieldIds}
         />

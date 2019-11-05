@@ -1,9 +1,8 @@
 export default {
   'webhook.provider': {
-    type: 'select',
+    type: 'selectforsetfields',
     label: 'Provider',
     required: true,
-    setFieldsOnChange: true,
     setFieldValue: '',
     setFieldIds: ['webhook.url'],
     options: [
@@ -40,10 +39,9 @@ export default {
     ],
   },
   'webhook.key': {
-    type: 'text',
+    type: 'textforsetfields',
     label: 'Key (Secret)',
     inputType: 'password',
-    setFieldsOnChange: true,
     setFieldValue: '',
     setFieldIds: ['webhook.url'],
     visibleWhen: [
@@ -67,10 +65,9 @@ export default {
     ],
   },
   'webhook.verify': {
-    type: 'select',
+    type: 'selectforsetfields',
     label: 'Verification Type',
     required: true,
-    setFieldsOnChange: true,
     setFieldValue: '',
     setFieldIds: ['webhook.url'],
     options: [
@@ -91,9 +88,8 @@ export default {
     ],
   },
   'webhook.algorithm': {
-    type: 'select',
+    type: 'selectforsetfields',
     label: 'Algorithm',
-    setFieldsOnChange: true,
     setFieldValue: '',
     setFieldIds: ['webhook.url'],
     options: [
@@ -112,10 +108,9 @@ export default {
     ],
   },
   'webhook.header': {
-    type: 'select',
+    type: 'selectforsetfields',
     label: 'Header (Containing HMAC)',
     required: true,
-    setFieldsOnChange: true,
     setFieldValue: '',
     setFieldIds: ['webhook.url'],
     options: [
@@ -134,10 +129,9 @@ export default {
     ],
   },
   'webhook.encoding': {
-    type: 'select',
+    type: 'selectforsetfields',
     label: 'Encoding',
     required: true,
-    setFieldsOnChange: true,
     setFieldValue: '',
     setFieldIds: ['webhook.url'],
     options: [
@@ -197,10 +191,9 @@ export default {
     ],
   },
   'webhook.path': {
-    type: 'text',
+    type: 'textforsetfields',
     label: 'Path',
     required: true,
-    setFieldsOnChange: true,
     setFieldValue: '',
     setFieldIds: ['webhook.url'],
     visibleWhenAll: [
@@ -218,7 +211,6 @@ export default {
     type: 'generatetoken',
     label: 'Custom URL Token',
     buttonLabel: 'Generate new token',
-    setFieldsOnChange: true,
     setFieldValue: '',
     setFieldIds: ['webhook.url'],
     visibleWhen: [

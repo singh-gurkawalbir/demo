@@ -34,9 +34,6 @@ export default function DynaText(props) {
     inputType,
     options,
     disableText = false,
-    setFieldsOnChange,
-    setFieldValue = '',
-    setFieldIds = [],
   } = props;
   const [valueChanged, setValueChanged] = useState(false);
 
@@ -50,18 +47,8 @@ export default function DynaText(props) {
     }
   }, [id, onFieldChange, options, valueChanged]);
 
-  const setFormFields = () => {
-    setFieldIds.forEach(fieldId => {
-      onFieldChange(fieldId, setFieldValue);
-    });
-  };
-
   const handleFieldChange = event => {
     const { value } = event.target;
-
-    if (setFieldsOnChange) {
-      setFormFields();
-    }
 
     if (!delimiter) {
       onFieldChange(id, value);
