@@ -16,7 +16,7 @@ import EditorListItem from './EditorListItem';
 import SqlQueryBuilderEditorDialog from '../../components/AFE/SqlQueryBuilderEditor/Dialog';
 import JsonEditorDialog from '../../components/JsonEditorDialog';
 import CeligoPageBar from '../../components/CeligoPageBar';
-import QueryBuilderDialog from '../../components/AFE/QueryBuilder/Dialog';
+import FilterEditorDialog from '../../components/AFE/FilterEditor/Dialog';
 
 @hot(module)
 @withStyles(theme => ({
@@ -177,15 +177,12 @@ export default class Editors extends Component {
             }}
           />
         );
-      case 'QueryBuilder':
+      case 'FilterEditor':
         return (
-          <QueryBuilderDialog
-            title="Query Builder"
+          <FilterEditorDialog
+            title="Filter Editor"
             id={editorName}
-            sampleData={rawData}
-            rule="Select * from {{orderId}}"
             data={rawData}
-            defaultData={JSON.stringify({}, null, 2)}
             onClose={this.handleClose}
           />
         );
@@ -260,9 +257,9 @@ export default class Editors extends Component {
         description: 'This processor allows user to edit JSON Object',
       },
       {
-        name: 'QueryBuilder',
-        label: 'Query Builder',
-        description: 'Query Builder',
+        name: 'FilterEditor',
+        label: 'Filter Editor',
+        description: 'Filter Editor',
       },
     ];
 

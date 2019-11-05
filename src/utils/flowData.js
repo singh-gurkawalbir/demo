@@ -7,7 +7,7 @@ import moment from 'moment';
 const sampleDataStage = {
   exports: {
     inputFilter: 'flowInput',
-    outputFilter: 'flowInput',
+    outputFilter: 'transform',
     transform: 'raw',
     hooks: 'transform',
     importMapping: 'flowInput',

@@ -32,6 +32,10 @@ const operatorsMap = {
 
 operatorsMap.ioFiltersToJQuery = invert(operatorsMap.jQueryToIOFilters);
 
+export function getFilterRuleId(rule) {
+  return rule.id.split('_rule_')[1];
+}
+
 export function convertIOFilterExpression(filterExpression = []) {
   const dataTypes = ['boolean', 'epochtime', 'number', 'string'];
   const transformations = ['ceiling', 'floor', 'lowercase', 'uppercase'];
@@ -148,25 +152,31 @@ export function convertIOFilterExpression(filterExpression = []) {
     tr.rules = [tr.rules];
   }
 
-  return { rules: tr };
+  return tr;
 }
 
-export function getFiltersMetadata(filters, rules) {
+export function getFilterList(jsonPaths, rules) {
   function iterate(r) {
     r.rules.forEach(rr => {
       if (rr.condition) {
         iterate(rr);
       } else {
         if (!rr.id) {
-          if (filters.length === 0) {
-            filters.push({ id: 'sampleField', name: 'sampleField' });
+          if (jsonPaths.length === 0) {
+            jsonPaths.push({ id: 'sampleField', name: 'sampleField' });
           }
 
-          rr.id = filters[0].id;
+          rr.id = jsonPaths[0].id;
         }
 
-        if (!filter(filters, { id: rr.id }).length) {
-          filters.push({ id: rr.id });
+        if (!filter(jsonPaths, { id: rr.id }).length) {
+          jsonPaths.push({ id: rr.id });
+        }
+
+        if (rr.rhs && rr.rhs.type === 'field' && rr.rhs.field) {
+          if (!filter(jsonPaths, { id: rr.rhs.field }).length) {
+            jsonPaths.push({ id: rr.rhs.field });
+          }
         }
       }
     });
@@ -174,7 +184,7 @@ export function getFiltersMetadata(filters, rules) {
 
   iterate(rules);
 
-  return filters;
+  return jsonPaths;
 }
 
 export function generateRulesState(rules) {
@@ -323,4 +333,121 @@ export function generateIOFilterExpression(rules) {
   }
 
   return iterate(rules);
+}
+
+export function validateFilterRule(rule) {
+  const arithmeticOperators = [
+    'add',
+    'subtract',
+    'divide',
+    'multiply',
+    'modulo',
+    'ceiling',
+    'floor',
+    'number',
+  ];
+  const r = rule.data;
+  const toReturn = {
+    isValid: true,
+    error: '',
+  };
+  let op;
+
+  if (r.lhs.type === 'expression') {
+    try {
+      JSON.parse(r.lhs.expression);
+
+      if (JSON.parse(r.lhs.expression).length < 2) {
+        toReturn.isValid = false;
+        toReturn.error = 'Please enter a valid expression.';
+      }
+    } catch (ex) {
+      toReturn.isValid = false;
+      toReturn.error = 'Expression should be a valid JSON.';
+    }
+
+    if (toReturn.isValid) {
+      [op] = JSON.parse(r.lhs.expression);
+
+      if (arithmeticOperators.includes(op)) {
+        r.lhs.dataType = 'number';
+      } else if (op === 'epochtime') {
+        r.lhs.dataType = 'epochtime';
+      } else if (op === 'boolean') {
+        r.lhs.dataType = 'boolean';
+      } else {
+        r.lhs.dataType = 'string';
+      }
+    }
+  }
+
+  if (!toReturn.isValid) {
+    return toReturn;
+  }
+
+  if (r.rhs.type === 'expression') {
+    try {
+      JSON.parse(r.rhs.expression);
+
+      if (JSON.parse(r.rhs.expression).length < 2) {
+        toReturn.isValid = false;
+        toReturn.error = 'Please enter a valid expression.';
+      }
+    } catch (ex) {
+      toReturn.isValid = false;
+      toReturn.error = 'Expression should be a valid JSON.';
+    }
+
+    if (toReturn.isValid) {
+      [op] = JSON.parse(r.rhs.expression);
+
+      if (arithmeticOperators.includes(op)) {
+        r.rhs.dataType = 'number';
+      } else if (op === 'epochtime') {
+        r.rhs.dataType = 'epochtime';
+      } else if (op === 'boolean') {
+        r.rhs.dataType = 'boolean';
+      } else {
+        r.rhs.dataType = 'string';
+      }
+    }
+  }
+
+  if (!toReturn.isValid) {
+    return toReturn;
+  }
+
+  /*
+  if (r.lhs.dataType === 'epochtime' || r.rhs.dataType === 'epochtime') {
+    r.lhs.dataType = r.rhs.dataType = 'epochtime'
+  }
+  */
+  if (r.lhs.dataType && r.rhs.dataType && r.lhs.dataType !== r.rhs.dataType) {
+    toReturn.isValid = false;
+    toReturn.error = 'Data types of both the operands should match.';
+  }
+
+  if (!toReturn.isValid) {
+    return toReturn;
+  }
+
+  if (r.lhs.type && !r.lhs[r.lhs.type]) {
+    toReturn.isValid = false;
+    toReturn.error = 'Please select left operand.';
+  }
+
+  if (!toReturn.isValid) {
+    return toReturn;
+  }
+
+  if (r.rhs.type && !r.rhs[r.rhs.type]) {
+    toReturn.isValid = false;
+    toReturn.error = 'Please select right operand.';
+  }
+
+  if (!toReturn.isValid) {
+    return toReturn;
+  }
+
+  return toReturn;
 }

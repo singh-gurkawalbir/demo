@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import Icon from '../../../../components/icons/OutputFilterIcon';
-import ExportFilterEditorDialog from '../../../../components/AFE/QueryBuilder/Dialog';
+import ExportFilterEditorDialog from '../../../../components/AFE/FilterEditor/Dialog';
 
 function ExportFilterDialog({ flowId, resource, onClose }) {
   const dispatch = useDispatch();

@@ -3,82 +3,114 @@ import React, {
   useRef,
   useState,
   useEffect,
-  useCallback,
   useMemo,
+  useCallback,
 } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import 'jQuery-QueryBuilder';
 import 'jQuery-QueryBuilder/dist/css/query-builder.default.css';
 import jQuery from 'jquery';
-import { isEmpty, isArray } from 'lodash';
+import { isEmpty, isArray, isString } from 'lodash';
 import config from './config';
 import './queryBuilder.css';
 import {
   convertIOFilterExpression,
-  getFiltersMetadata,
+  getFilterList,
   generateRulesState,
   generateIOFilterExpression,
+  getFilterRuleId,
 } from './util';
 import OperandSettingsDialog from './OperandSettingsDialog';
 import actions from '../../../actions';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
   container: {
-    padding: 5,
+    paddingLeft: theme.spacing(1),
+    backgroundColor: theme.palette.background.default,
+    height: '100%',
+    overflowY: 'auto',
   },
   queryBlock: {
     background: 'whitesmoke',
     padding: '16px',
   },
 }));
-const defaultData = {};
 
-export default function QueryBuilder({
-  editorId,
-  readOnly,
-  data = defaultData,
-  rule,
-  isDeltaExport = false,
-}) {
-  //console.log(`QB data ${JSON.stringify(data)}`);
-
-  const dispatch = useDispatch();
-  // const handleDataChange = data => {
-  //   dispatch(actions.editor.patch(editorId, { data }));
-  // };
-  const patchEditor = value => {
-    dispatch(actions.editor.patch(editorId, { rule: value || [] }));
-  };
-
-  const filters = useMemo(() => {
-    console.log(`in setFilters useMemo`);
-
-    return Object.keys(isArray(data) ? data[0] : data).map(key => ({
-      id: key,
-    }));
-  }, [data]);
+export default function QueryBuilder({ editorId, readOnly, data = {}, rule }) {
   const qbuilder = useRef(null);
   const classes = useStyles();
   const [showOperandSettingsFor, setShowOperandSettingsFor] = useState();
   const [rules, setRules] = useState();
   const [filtersMetadata, setFiltersMetadata] = useState();
   const [rulesState, setRulesState] = useState({});
+  const dispatch = useDispatch();
+  const patchEditor = useCallback(
+    value => {
+      dispatch(actions.editor.patch(editorId, { rule: value || [] }));
+    },
+    [dispatch, editorId]
+  );
+  const jsonPathsFromData = useMemo(() => {
+    let d;
 
-  window.ABC = { rules, rulesState, filtersMetadata };
+    if (isString(data)) {
+      try {
+        d = JSON.parse(data);
+      } catch (ex) {
+        d = {};
+      }
+    } else {
+      d = data;
+    }
 
-  function getFilterRuleId(rule) {
-    return rule.id.split('_rule_')[1];
+    return Object.keys(isArray(d) ? d[0] : d).map(key => ({ id: key }));
+  }, [data]);
+
+  useEffect(() => {
+    // dispatch(
+    //   actions.editor.init(editorId, 'filter', {
+    //     data,
+    //     autoEvaluate: true,
+    //     rule,
+    //   })
+    // );
+    const rules = convertIOFilterExpression(rule);
+
+    console.log(`rules ${JSON.stringify(rules)}`);
+
+    setRules(rules);
+    setRulesState(generateRulesState(rules));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (rules) {
+      setFiltersMetadata(getFilterList(jsonPathsFromData, rules));
+    }
+  }, [jsonPathsFromData, rules]);
+
+  function isValid() {
+    return jQuery(qbuilder.current).queryBuilder('validate');
   }
 
-  function addMissingFieldButton() {
-    const buttonHtml =
-      '<div class="btn-group"><button type="button" class="btn btn-xs btn-success" data-add="add-missing-field"><i class="glyphicon"></i>Add Missing Field</button></div>';
+  function getRules(options = {}) {
+    const result = jQuery(qbuilder.current).queryBuilder('getRules', options);
 
-    jQuery(buttonHtml).prependTo(
-      jQuery(jQuery('.rules-group-header:first .group-actions')[0])
-    );
-    jQuery(jQuery('[data-add=add-missing-field]')[0]).on('click', () => {});
+    if (isEmpty(result) || (result && !result.valid)) {
+      return undefined;
+    }
+
+    return generateIOFilterExpression(result);
+  }
+
+  function handleFilterRulesChange() {
+    if (isValid()) {
+      const rule = getRules();
+
+      console.log(`handleFilterRulesChange expr ${JSON.stringify(rule)}`);
+      patchEditor(rule);
+    }
   }
 
   function showOperandSettings({ rule, rhs }) {
@@ -95,13 +127,15 @@ export default function QueryBuilder({
           .after('<input name="value" class="io-filter-type form-control">');
 
         const ruleId = getFilterRuleId(rule);
+        const valueField = rule.$el.find(
+          '.rule-filter-container input[name=value]'
+        );
 
         if (rulesState[ruleId].data && rulesState[ruleId].data.lhs) {
-          rule.$el
-            .find('.rule-filter-container input[name=value]')
-            .val(rulesState[ruleId].data.lhs.value)
-            .trigger('change');
+          valueField.val(rulesState[ruleId].data.lhs.value).trigger('change');
         }
+
+        valueField.on('change', () => handleFilterRulesChange());
       }
     }
 
@@ -116,13 +150,17 @@ export default function QueryBuilder({
             '<textarea name="expression" class="io-filter-type form-control"></textarea>'
           );
         const ruleId = getFilterRuleId(rule);
+        const expressionField = rule.$el.find(
+          '.rule-filter-container textarea[name=expression]'
+        );
 
         if (rulesState[ruleId].data && rulesState[ruleId].data.lhs) {
-          rule.$el
-            .find('.rule-filter-container textarea[name=expression]')
+          expressionField
             .val(JSON.stringify(rulesState[ruleId].data.lhs.expression))
             .trigger('change');
         }
+
+        expressionField.on('change', () => handleFilterRulesChange());
       }
     }
 
@@ -191,17 +229,20 @@ export default function QueryBuilder({
         rule.$el.find('.rule-value-container').prepend(selectHtml.join(''));
 
         const ruleId = getFilterRuleId(rule);
+        const field = rule.$el.find(
+          '.rule-value-container  select[name=field]'
+        );
 
         if (rulesState[ruleId].data && rulesState[ruleId].data.rhs) {
-          rule.$el
-            .find('.rule-value-container  select[name=field]')
-            .val(rulesState[ruleId].data.rhs.field);
+          field.val(rulesState[ruleId].data.rhs.field);
           setTimeout(() => {
             rule.$el
               .find('.rule-value-container  select[name=field]')
               .trigger('change');
           });
         }
+
+        field.on('change', () => handleFilterRulesChange());
       }
     }
 
@@ -217,13 +258,17 @@ export default function QueryBuilder({
           );
 
         const ruleId = getFilterRuleId(rule);
+        const expressionField = rule.$el.find(
+          '.rule-value-container  textarea[name=expression]'
+        );
 
         if (rulesState[ruleId].data && rulesState[ruleId].data.rhs) {
-          rule.$el
-            .find('.rule-value-container  textarea[name=expression]')
+          expressionField
             .val(JSON.stringify(rulesState[ruleId].data.rhs.expression))
             .trigger('change');
         }
+
+        expressionField.on('change', () => handleFilterRulesChange());
       }
     }
 
@@ -606,93 +651,36 @@ export default function QueryBuilder({
     return filters;
   }
 
-  function validate() {
-    return jQuery(qbuilder.current).queryBuilder('validate');
-  }
-
-  function getRules(options = {}) {
-    const result = jQuery(qbuilder.current).queryBuilder('getRules', options);
-
-    if (isEmpty(result) || (result && !result.valid)) {
-      return undefined;
-    }
-
-    return generateIOFilterExpression(result);
-  }
-
   useEffect(() => {
-    console.log(`in setRules useEffect`);
-    dispatch(
-      actions.editor.init(editorId, 'filter', {
-        data,
-        autoEvaluate: true,
-        rule,
-      })
-    );
-    const { rules } = convertIOFilterExpression(rule);
-
-    setRules(rules);
-    setRulesState(generateRulesState(rules));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    if (rules) {
-      console.log(`filters or rules changed`);
-      setFiltersMetadata(getFiltersMetadata(filters, rules));
-    }
-  }, [filters, rules]);
-
-  useEffect(() => {
-    console.log(`filtersMetadata changed ${JSON.stringify(filtersMetadata)}`);
-
     if (filtersMetadata) {
-      if (!qbuilder.current) {
-        console.log(`!qb.current`);
+      console.log(`filtersMetadata changed`);
+      const filtersConfig = generateFiltersConfig(filtersMetadata);
 
-        const filtersConfig = generateFiltersConfig(filtersMetadata);
-        const x = jQuery(qbuilder.current);
+      console.log(`filtersConfig len ${filtersConfig.length}`);
+      const x = jQuery(qbuilder.current);
 
-        x.on('afterUpdateRuleOperator.queryBuilder', (e, rule) => {
-          if (
-            rule.operator &&
-            (rule.operator.type === 'is_empty' ||
-              rule.operator.type === 'is_not_empty')
-          ) {
-            rule.filter.valueGetter(rule);
-          }
-        });
+      x.on('afterUpdateRuleOperator.queryBuilder', (e, rule) => {
+        if (
+          rule.operator &&
+          (rule.operator.type === 'is_empty' ||
+            rule.operator.type === 'is_not_empty')
+        ) {
+          rule.filter.valueGetter(rule);
+        }
+      });
 
-        x.queryBuilder({
-          ...config,
-          filters: filtersConfig,
-          rules,
-        });
-        addMissingFieldButton();
-        x.on('rulesChanged.queryBuilder', () => {
-          const rule = getRules();
-
-          console.log(`expr ${JSON.stringify(rule)}`);
-          patchEditor(rule);
-        });
-      }
+      x.queryBuilder({
+        ...config,
+        filters: filtersConfig,
+        rules,
+      });
+      x.on('rulesChanged.queryBuilder', () => {
+        handleFilterRulesChange();
+      });
+      jQuery(qbuilder.current).queryBuilder('setFilters', true, filtersConfig);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filtersMetadata]);
-
-  useEffect(() => {
-    console.log(`filtersMetadata changed2 ${JSON.stringify(filtersMetadata)}`);
-
-    if (filtersMetadata) {
-      if (qbuilder.current) {
-        console.log(`qb.current`);
-
-        const filtersConfig = generateFiltersConfig(filtersMetadata);
-
-        jQuery(qbuilder.current).queryBuilder('setFilters',true, filtersConfig);
-      }
-    }
-  })
 
   function handleCloseOperandSettings() {
     setShowOperandSettingsFor();
@@ -700,7 +688,7 @@ export default function QueryBuilder({
 
   function handleSubmitOperandSettings(operandSettings) {
     const ruleData =
-      rulesState[getRgetFilterRuleIduleId(showOperandSettingsFor.rule)].data[
+      rulesState[getFilterRuleId(showOperandSettingsFor.rule)].data[
         showOperandSettingsFor.rhs ? 'rhs' : 'lhs'
       ];
 
@@ -720,29 +708,24 @@ export default function QueryBuilder({
       });
     }
 
-    const rule = getRules();
-
-    console.log(`expr 1 ${JSON.stringify(rule)}`);
-    patchEditor(rule);
+    handleFilterRulesChange();
     handleCloseOperandSettings();
   }
 
   return (
-    <div>
-      <div className={classes.container}>
-        <div ref={qbuilder} />
-        {showOperandSettingsFor && (
-          <OperandSettingsDialog
-            ruleData={
-              rulesState[getFilterRuleId(showOperandSettingsFor.rule)].data[
-                showOperandSettingsFor.rhs ? 'rhs' : 'lhs'
-              ]
-            }
-            onClose={handleCloseOperandSettings}
-            onSubmit={handleSubmitOperandSettings}
-          />
-        )}
-      </div>
+    <div className={classes.container}>
+      <div ref={qbuilder} />
+      {showOperandSettingsFor && (
+        <OperandSettingsDialog
+          ruleData={
+            rulesState[getFilterRuleId(showOperandSettingsFor.rule)].data[
+              showOperandSettingsFor.rhs ? 'rhs' : 'lhs'
+            ]
+          }
+          onClose={handleCloseOperandSettings}
+          onSubmit={handleSubmitOperandSettings}
+        />
+      )}
     </div>
   );
 }
