@@ -68,16 +68,7 @@ export default function QueryBuilder({ editorId, readOnly, data = {}, rule }) {
   }, [data]);
 
   useEffect(() => {
-    // dispatch(
-    //   actions.editor.init(editorId, 'filter', {
-    //     data,
-    //     autoEvaluate: true,
-    //     rule,
-    //   })
-    // );
     const rules = convertIOFilterExpression(rule);
-
-    console.log(`rules ${JSON.stringify(rules)}`);
 
     setRules(rules);
     setRulesState(generateRulesState(rules));
@@ -108,7 +99,6 @@ export default function QueryBuilder({ editorId, readOnly, data = {}, rule }) {
     if (isValid()) {
       const rule = getRules();
 
-      console.log(`handleFilterRulesChange expr ${JSON.stringify(rule)}`);
       patchEditor(rule);
     }
   }
@@ -653,10 +643,7 @@ export default function QueryBuilder({ editorId, readOnly, data = {}, rule }) {
 
   useEffect(() => {
     if (filtersMetadata) {
-      console.log(`filtersMetadata changed`);
       const filtersConfig = generateFiltersConfig(filtersMetadata);
-
-      console.log(`filtersConfig len ${filtersConfig.length}`);
       const x = jQuery(qbuilder.current);
 
       x.on('afterUpdateRuleOperator.queryBuilder', (e, rule) => {

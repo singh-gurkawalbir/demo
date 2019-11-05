@@ -1710,10 +1710,16 @@ describe('integrationAppConnectionList reducer', () => {
       },
       'some_action'
     );
+    const data = selectors.integrationAppConnectionList(state, 'integrationId');
 
-    expect(
-      selectors.integrationAppConnectionList(state, 'integrationId')
-    ).toEqual([
+    // We dont need permissions to be tested here as we would have explicit tests for those.
+    data.forEach(c => {
+      // eslint-disable-next-line no-param-reassign
+      delete c.permissions;
+
+      return c;
+    });
+    expect(data).toEqual([
       {
         _id: 'connection1',
         _integrationId: 'integrationId',
@@ -1743,10 +1749,20 @@ describe('integrationAppConnectionList reducer', () => {
       },
       'some_action'
     );
+    const data = selectors.integrationAppConnectionList(
+      state,
+      'integrationId2',
+      'store1'
+    );
 
-    expect(
-      selectors.integrationAppConnectionList(state, 'integrationId2', 'store1')
-    ).toEqual([
+    // We dont need permissions to be tested here as we would have explicit tests for those.
+    data.forEach(c => {
+      // eslint-disable-next-line no-param-reassign
+      delete c.permissions;
+
+      return c;
+    });
+    expect(data).toEqual([
       {
         _id: 'connection3',
         _integrationId: 'integrationId2',

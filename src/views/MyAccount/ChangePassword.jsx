@@ -1,7 +1,7 @@
 import { Component, Fragment } from 'react';
 import TextField from '@material-ui/core/TextField';
 import { connect } from 'react-redux';
-import { Button } from '@material-ui/core';
+import { Button, Typography } from '@material-ui/core';
 import actions from '../../actions';
 import ModalDialog from '../../components/ModalDialog';
 import {
@@ -35,20 +35,24 @@ class ChangePassword extends Component {
     const { show, onhandleClose, error, success, message } = this.props;
 
     return (
-      <ModalDialog show={show} handleClose={onhandleClose}>
+      <ModalDialog show={show} handleClose={onhandleClose} maxWidth="lg">
         <span>Change Password</span>
         {success ? (
           <span>{message}</span>
         ) : (
-          <span>
-            {`Please note that clicking 'Change Password' will sign you out of the
+          <div>
+            <Typography variant="body2">
+              {`Please note that clicking 'Change Password' will sign you out of the
           application, and you will need to sign back in with your new password.`}
+            </Typography>
             <form id="changePasswordForm" onSubmit={this.handleOnSubmit}>
               <TextField
                 id="currentPassword"
                 label="Current Password"
                 margin="normal"
                 type="password"
+                variant="filled"
+                fullWidth
               />
               <br />
               <TextField
@@ -56,24 +60,30 @@ class ChangePassword extends Component {
                 label="New Password"
                 margin="normal"
                 type="password"
+                variant="filled"
+                fullWidth
               />
             </form>
-          </span>
+          </div>
         )}
 
         {success ? (
           <span />
         ) : (
           <Fragment>
-            {error && <span>{message}</span>}
+            {error && (
+              <Typography variant="body2" component="span" color="error">
+                {message}
+              </Typography>
+            )}
             <Button
               data-test="changePassword"
-              variant="contained"
+              variant="outlined"
               color="primary"
               type="submit"
               form="changePasswordForm"
               value="Submit">
-              change password
+              Change password
             </Button>
           </Fragment>
         )}

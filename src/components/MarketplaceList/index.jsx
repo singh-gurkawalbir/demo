@@ -56,7 +56,7 @@ export default function MarketplaceList({ filter }) {
 
   connectors.forEach(c => (applications = applications.concat(c.applications)));
   templates.forEach(t => (applications = applications.concat(t.applications)));
-  applications = uniq(applications.filter(Boolean));
+  applications = uniq(applications.filter(Boolean).sort());
   applications = applications.filter(a => a.includes(filter.keyword));
   useEffect(() => {
     dispatch(actions.marketplace.requestConnectors());

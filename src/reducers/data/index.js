@@ -177,6 +177,10 @@ export function marketplaceConnectors(state, application, sandbox, licenses) {
   );
 }
 
+export function integrationAppList(state) {
+  return fromMarketplace.integrationAppList(state && state.marketplace);
+}
+
 export function marketplaceTemplates(state, application) {
   return fromMarketplace.templates(state && state.marketplace, application);
 }

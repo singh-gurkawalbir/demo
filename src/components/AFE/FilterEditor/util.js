@@ -262,7 +262,7 @@ export function generateIOFilterExpression(rules) {
           try {
             lhs = JSON.parse(rr.data.lhs.expression);
           } catch (ex) {
-            console.log(`error parsing expression : ${rr.data.lhs.expression}`);
+            // error in parsing expression
           }
         }
 
@@ -302,9 +302,7 @@ export function generateIOFilterExpression(rules) {
             try {
               rhs = JSON.parse(rr.data.rhs.expression);
             } catch (ex) {
-              console.log(
-                `error parsing expression : ${rr.data.rhs.expression}`
-              );
+              // error in parsing expression
             }
           }
 

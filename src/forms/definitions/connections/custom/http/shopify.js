@@ -2,7 +2,9 @@ export default {
   preSave: formValues => {
     const retValues = { ...formValues };
 
-    if (retValues['/http/authType'] === 'oauth') {
+    retValues['/http/ping/relativeURI'] = '/admin/orders.json';
+
+    if (retValues['/http/auth/type'] === 'oauth') {
       retValues['/http/auth/token/location'] = 'header';
       retValues['/http/auth/oauth/authURI'] = `https://${
         formValues['/http/storeURL']
@@ -14,6 +16,34 @@ export default {
       retValues['/http/auth/token/scheme'] = ' ';
       retValues['/http/auth/token/token'] = undefined;
       retValues['/http/auth/oauth/scopeDelimiter'] = ',';
+
+      if (
+        retValues['/http/auth/oauth/scope'] &&
+        !!retValues['/http/auth/oauth/scope'].length
+      ) {
+        const scope = retValues['/http/auth/oauth/scope'].find(
+          str => str !== 'read_analytics'
+        );
+
+        if (scope) {
+          const scopeId = /^(read_|write_)(\w*)/.test(scope)
+            ? /^(read_|write_)(\w*)/.exec(scope)[2]
+            : '';
+          const pingURIs = {
+            content: '/admin/articles/authors.json',
+            themes: '/admin/themes.json',
+            products: '/admin/products/count.json',
+            customers: '/admin/customers/count.json',
+            orders: '/admin/orders/count.json',
+            script_tags: '/admin/script_tags/count.json',
+            fulfillments: '/admin/fulfillment_services.json?scope=all',
+            shipping: '/admin/carrier_services.json',
+            users: '/admin/users.json',
+          };
+
+          retValues['/http/ping/relativeURI'] = pingURIs[scopeId];
+        }
+      }
     } else {
       retValues['/http/auth/basic/username'] = `${
         formValues['/http/auth/basic/username']
@@ -27,17 +57,15 @@ export default {
       ...retValues,
       '/type': 'http',
       '/assistant': 'shopify',
-      '/http/auth/type': `${formValues['/http/authType']}`,
       '/http/mediaType': 'json',
       '/http/baseURI': `https://${formValues['/http/storeURL']}.myshopify.com`,
-      '/http/ping/relativeURI': '/admin/articles/authors.json',
       '/http/ping/method': 'GET',
     };
   },
   fieldMap: {
     name: { fieldId: 'name' },
-    'http.authType': {
-      id: 'http.authType',
+    'http.auth.type': {
+      id: 'http.auth.type',
       type: 'select',
       label: 'Authentication Type',
       defaultValue: 'oauth',
@@ -66,19 +94,30 @@ export default {
           message: 'Subdomain should not contain spaces.',
         },
       },
+      defaultValue: r => {
+        const baseUri = r && r.http && r.http.baseURI;
+        const subdomain =
+          baseUri &&
+          baseUri.substring(
+            baseUri.indexOf('https://') + 8,
+            baseUri.indexOf('.myshopify.com')
+          );
+
+        return subdomain;
+      },
     },
     'http.auth.basic.username': {
       fieldId: 'http.auth.basic.username',
       label: 'API Key',
       helpText:
         'Login to your Shopify store and navigate to "Apps" section. Click on the respective private app and the API key can be found next to the "Authentication" section.',
-      visibleWhen: [{ field: 'http.authType', is: ['basic'] }],
+      visibleWhen: [{ field: 'http.auth.type', is: ['basic'] }],
     },
     'http.auth.basic.password': {
       fieldId: 'http.auth.basic.password',
       helpText:
         'Login to your Shopify store and navigate to "Apps" section. Click on the respective private app and the password can be found next to the "Authentication" section.',
-      visibleWhen: [{ field: 'http.authType', is: ['basic'] }],
+      visibleWhen: [{ field: 'http.auth.type', is: ['basic'] }],
     },
     'http.auth.oauth.scope': {
       fieldId: 'http.auth.oauth.scope',
@@ -125,46 +164,14 @@ export default {
         'unauthenticated_write_customers',
         'unauthenticated_read_content',
       ],
-      visibleWhen: [{ field: 'http.authType', is: ['oauth'] }],
+      visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
     },
     httpAdvanced: { formId: 'httpAdvanced' },
-    actions: [
-      {
-        id: 'oauth',
-        label: 'Save & Authorize',
-        visibleWhen: [
-          {
-            field: 'http.authType',
-            is: ['oauth'],
-          },
-        ],
-      },
-      {
-        id: 'test',
-        label: 'Test',
-        visibleWhen: [
-          {
-            field: 'http.authType',
-            is: ['basic'],
-          },
-        ],
-      },
-      {
-        id: 'save',
-        label: 'Test and Save',
-        visibleWhen: [
-          {
-            field: 'http.authType',
-            is: ['basic'],
-          },
-        ],
-      },
-    ],
   },
   layout: {
     fields: [
       'name',
-      'http.authType',
+      'http.auth.type',
       'http.storeURL',
       'http.auth.basic.username',
       'http.auth.basic.password',
@@ -175,4 +182,39 @@ export default {
       { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
     ],
   },
+  actions: [
+    {
+      id: 'cancel',
+    },
+    {
+      id: 'oauth',
+      label: 'Save & Authorize',
+      visibleWhen: [
+        {
+          field: 'http.auth.type',
+          is: ['oauth'],
+        },
+      ],
+    },
+    {
+      id: 'test',
+      label: 'Test',
+      visibleWhen: [
+        {
+          field: 'http.auth.type',
+          is: ['basic'],
+        },
+      ],
+    },
+    {
+      id: 'save',
+      label: 'Test and Save',
+      visibleWhen: [
+        {
+          field: 'http.auth.type',
+          is: ['basic'],
+        },
+      ],
+    },
+  ],
 };

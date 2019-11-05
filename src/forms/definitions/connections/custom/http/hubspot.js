@@ -2,24 +2,24 @@ export default {
   preSave: formValues => {
     const retValues = { ...formValues };
 
-    if (retValues['/authType'] === 'token') {
+    if (retValues['/http/auth/type'] === 'token') {
       retValues['/http/auth/token/location'] = 'url';
       retValues['/http/auth/token/paramName'] = 'hapikey';
-      retValues['/http/auth/oauth'] = undefined;
+      retValues['/http/auth/oauth/authURI'] = undefined;
+      retValues['/http/auth/oauth/tokenURI'] = undefined;
     } else {
       retValues['/http/auth/oauth/authURI'] =
         'https://app.hubspot.com/oauth/authorize';
       retValues['/http/auth/oauth/tokenURI'] =
         'https://api.hubapi.com/oauth/v1/token';
       retValues['/http/auth/oauth/scopeDelimiter'] = ' ';
-      retValues['/http/auth/token'] = undefined;
+      retValues['/http/auth/token/token'] = undefined;
     }
 
     return {
       ...retValues,
       '/type': 'http',
       '/assistant': 'hubspot',
-      '/http/auth/type': `${formValues['/authType']}`,
       '/http/mediaType': 'json',
       '/http/baseURI': 'https://api.hubapi.com/',
       '/http/ping/relativeURI': '/contacts/v1/lists/all/contacts/all',
@@ -29,8 +29,8 @@ export default {
   },
   fieldMap: {
     name: { fieldId: 'name' },
-    authType: {
-      id: 'authType',
+    'http.auth.type': {
+      id: 'http.auth.type',
       required: true,
       type: 'select',
       label: 'Authentication Type',
@@ -51,7 +51,7 @@ export default {
       label: 'HAPI Key',
       required: true,
       helpText: 'Please enter API Key of your Hubspot Account.',
-      visibleWhen: [{ field: 'authType', is: ['token'] }],
+      visibleWhen: [{ field: 'http.auth.type', is: ['token'] }],
     },
     'http.auth.oauth.scope': {
       fieldId: 'http.auth.oauth.scope',
@@ -66,14 +66,14 @@ export default {
         'tickets',
         'hubdb',
       ],
-      visibleWhen: [{ field: 'authType', is: ['oauth'] }],
+      visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
     fields: [
       'name',
-      'authType',
+      'http.auth.type',
       'http.auth.token.token',
       'http.auth.oauth.scope',
     ],
@@ -84,11 +84,14 @@ export default {
   },
   actions: [
     {
+      id: 'cancel',
+    },
+    {
       id: 'oauth',
       label: 'Save & Authorize',
       visibleWhen: [
         {
-          field: 'authType',
+          field: 'http.auth.type',
           is: ['oauth'],
         },
       ],
@@ -97,7 +100,7 @@ export default {
       id: 'test',
       visibleWhen: [
         {
-          field: 'authType',
+          field: 'http.auth.type',
           is: ['token'],
         },
       ],
@@ -107,7 +110,7 @@ export default {
       label: 'Save',
       visibleWhen: [
         {
-          field: 'authType',
+          field: 'http.auth.type',
           is: ['token'],
         },
       ],

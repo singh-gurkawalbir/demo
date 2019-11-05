@@ -309,7 +309,6 @@ export default {
     options: [
       {
         items: [
-          { label: 'SQL Server 2008 R2', value: 'SQL Server 2008 R2' },
           { label: 'SQL Server 2012', value: 'SQL Server 2012' },
           { label: 'SQL Server 2014', value: 'SQL Server 2014' },
           { label: 'SQL Server 2016', value: 'SQL Server 2016' },
@@ -1126,7 +1125,7 @@ export default {
     type: 'radiogroup',
     label: 'Protocol',
     required: true,
-    defaultValue: r => (r && r.ftp && r.ftp.type) || 'ftp',
+    defaultValue: r => (r && r.ftp && r.ftp.type) || 'sftp',
     options: [
       {
         items: [
@@ -2260,7 +2259,15 @@ export default {
   },
   'mongodb.replicaSet': {
     type: 'text',
-    label: 'Mongodb replica Set',
+    label: 'Replica Set',
+  },
+  'mongodb.ssl': {
+    type: 'checkbox',
+    label: 'SSL',
+  },
+  'mongodb.authSource': {
+    type: 'text',
+    label: 'Auth Source',
   },
   // #endregion mongodb
 

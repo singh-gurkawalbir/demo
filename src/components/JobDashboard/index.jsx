@@ -16,6 +16,7 @@ export default function JobDashboard({
   integrationId,
   flowId,
   rowsPerPage = 10,
+  isFlowBuilderView,
 }) {
   const filterKey = 'jobs';
   const dispatch = useDispatch();
@@ -387,6 +388,7 @@ export default function JobDashboard({
         selectedJobs={selectedJobs}
         userPermissionsOnIntegration={userPermissionsOnIntegration}
         integrationName={integration && integration.name}
+        isFlowBuilderView={isFlowBuilderView}
       />
     </LoadResources>
   );

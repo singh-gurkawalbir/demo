@@ -77,7 +77,19 @@ export default {
       },
     ],
   },
-  blobKeyPath: { type: 'text', label: 'blobkey path' },
+
+  blobKeyPath: {
+    type: 'text',
+    label: 'Blob Key Path',
+    placeholder: 'Blob Key Path',
+    visibleWhen: [
+      {
+        field: 'inputMode',
+        is: ['blob'],
+      },
+    ],
+    required: true,
+  },
   assistant: {
     type: 'select',
     label: 'Assistant',
@@ -285,8 +297,7 @@ export default {
   },
   deleteAfterImport: {
     type: 'checkbox',
-    label: 'Delete After Import',
-    defaultValue: false,
+    label: 'Purge Blob data immediately?',
   },
   assistantMetadata: {
     type: 'text',

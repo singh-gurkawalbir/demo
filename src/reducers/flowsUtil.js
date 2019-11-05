@@ -36,5 +36,21 @@ export function isSimpleImportFlow(exp) {
 }
 
 export function isRunnable(exports, exp, flow) {
-  return !(flow && flow.disabled) && hasBatchExport(exports, exp, flow);
+  let toReturn = true;
+
+  if (flow && flow.pageGenerators && flow.pageGenerators.length) {
+    flow.pageGenerators.forEach(pg => {
+      toReturn = toReturn && !!pg._exportId;
+    });
+  }
+
+  if (flow && flow.pageProcessors && flow.pageProcessors.length) {
+    flow.pageProcessors.forEach(pp => {
+      toReturn = toReturn && (!!pp._exportId || !!pp._importId);
+    });
+  }
+
+  return (
+    toReturn && !(flow && flow.disabled) && hasBatchExport(exports, exp, flow)
+  );
 }

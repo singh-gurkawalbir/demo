@@ -4,6 +4,7 @@ import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import Icon from '../../../../components/icons/OutputFilterIcon';
 import ExportFilterEditorDialog from '../../../../components/AFE/FilterEditor/Dialog';
+import helpTextMap from '../../../../components/Help/helpTextMap';
 
 function ExportFilterDialog({ flowId, resource, onClose }) {
   const dispatch = useDispatch();
@@ -73,7 +74,6 @@ export default {
   name: 'exportFilter',
   position: 'right',
   Icon,
-  helpText:
-    'This is the text currently in the hover state of actions in the current FB',
+  helpText: helpTextMap['fb.pg.exports.filter'],
   Component: FilterDialog,
 };

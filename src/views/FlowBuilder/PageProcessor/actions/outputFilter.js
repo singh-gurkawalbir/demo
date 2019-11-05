@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import Icon from '../../../../components/icons/InputFilterIcon';
+import helpTextMap from '../../../../components/Help/helpTextMap';
 
 const useStyles = makeStyles(theme => ({
   paper: {
@@ -61,7 +62,6 @@ export default {
   name: 'outputFilter',
   position: 'middle',
   Icon,
-  helpText:
-    'This is the text currently in the hover state of actions in the current FB',
+  helpText: helpTextMap['fb.pp.exports.filter'],
   Component: OutputFilter,
 };

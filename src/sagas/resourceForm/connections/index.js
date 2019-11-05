@@ -272,7 +272,7 @@ export function* pingConnection({ resourceId, values }) {
     }
   } catch (e) {
     // The ping test gives back a 200 response if the ping connection has failed
-    if (e.status === 200) {
+    if (e.status === 200 || e.status === 422) {
       // these errors are json errors
       const errorsJSON = JSON.parse(e.message);
       const { errors } = errorsJSON;

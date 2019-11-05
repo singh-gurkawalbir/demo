@@ -18,9 +18,9 @@ export default {
   columns: [
     {
       heading: 'Name',
-      value: (r, actionProps) =>
+      value: (r, actionProps, location) =>
         isConnectionEditable(r, actionProps.integrationId)
-          ? getResourceLink('connections', r)
+          ? getResourceLink('connections', r, location)
           : r.name,
       orderBy: 'name',
     },
@@ -56,23 +56,27 @@ export default {
     let actionsToReturn = [];
 
     if (isConnectionEditable(r, actionProps.integrationId)) {
-      actionsToReturn = [ConfigureDebugger, AuditLogs, References];
+      actionsToReturn = [ConfigureDebugger, AuditLogs];
+
+      if (!actionProps.integrationId) {
+        actionsToReturn = [...actionsToReturn, References];
+      }
 
       if (showDownloadLogs(r)) {
         actionsToReturn = [DownloadDebugLogs, ...actionsToReturn];
       }
 
-      if (r.type === 'netsuite' || r.type === 'salesforce') {
-        actionsToReturn = [RefreshMetadata, ...actionsToReturn];
-      }
-
-      if (actionProps.integrationId) {
+      if (actionProps.integrationId && !r._connectorId) {
         actionsToReturn = [Deregister, ...actionsToReturn];
-      } else {
+      } else if (!r._connectorId) {
         actionsToReturn = [...actionsToReturn, Delete];
       }
     } else {
       actionsToReturn = [DownloadDebugLogs, AuditLogs];
+    }
+
+    if (r.type === 'netsuite' || r.type === 'salesforce') {
+      actionsToReturn = [RefreshMetadata, ...actionsToReturn];
     }
 
     return actionsToReturn;

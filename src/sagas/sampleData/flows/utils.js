@@ -138,6 +138,7 @@ export function* requestSampleDataForImports({
         resourceId,
         resourceType: 'imports',
         processor: 'javascript',
+        processorStage: 'preMap',
       });
       break;
     }
@@ -172,7 +173,7 @@ export function* requestSampleDataForExports({
       flowId,
       resourceId,
       resourceType,
-      processor: sampleDataStage === 'hooks' ? 'javascript' : sampleDataStage,
+      processor: sampleDataStage,
       isPageGenerator,
     });
   }

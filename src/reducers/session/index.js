@@ -199,13 +199,6 @@ export function getSampleData(state, flowId, resourceId, stage, options) {
   );
 }
 
-export function getFlowReferencesForResource(state, resourceId) {
-  return fromFlowData.getFlowReferencesForResource(
-    state && state.flowData,
-    resourceId
-  );
-}
-
 export function getFlowDataState(state, flowId, resourceId, isPageGenerator) {
   return fromFlowData.getFlowDataState(
     state && state.flowData,
@@ -227,6 +220,13 @@ export function integrationAppSettingsFormState(state, integrationId, flowId) {
     state && state.integrationApps,
     integrationId,
     flowId
+  );
+}
+
+export function checkUpgradeRequested(state, licenseId) {
+  return fromIntegrationApps.checkUpgradeRequested(
+    state && state.integrationApps,
+    licenseId
   );
 }
 
