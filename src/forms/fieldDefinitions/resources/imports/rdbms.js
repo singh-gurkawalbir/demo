@@ -12,6 +12,14 @@ export default {
         ],
       },
     ],
+    defaultValue: r =>
+      r && r.rdbms && r.rdbms.queryType && r.rdbms.queryType[0],
+  },
+  'rdbms.query': {
+    id: 'rdbms.query',
+    type: 'sqlquerybuilder',
+    label: 'Launch Query Builder',
+    refreshOptionsOnChangesTo: ['rdbms.lookups'],
   },
   'rdbms.existingDataId': {
     type: 'text',

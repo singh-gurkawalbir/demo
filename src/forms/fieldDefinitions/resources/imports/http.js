@@ -151,7 +151,7 @@ export default {
     visibleWhen: [
       {
         field: 'http.method',
-        isNot: ['COMPOSITE'],
+        is: ['POST', 'PUT', 'DELETE', 'PATCH'],
       },
       {
         field: 'inputMode',

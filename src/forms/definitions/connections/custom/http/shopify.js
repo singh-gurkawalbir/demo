@@ -41,7 +41,7 @@ export default {
             users: '/admin/users.json',
           };
 
-          retValues['/http/ping/relativeURI'] = pingURIs(scopeId);
+          retValues['/http/ping/relativeURI'] = pingURIs[scopeId];
         }
       }
     } else {

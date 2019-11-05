@@ -193,12 +193,17 @@ export default {
 
       if (app.assistant) {
         expression.push({ assistant: app.assistant });
+        expression.push({ _connectorId: { $exists: false } });
+        const andingExpressions = { $and: expression };
+
+        return { filter: andingExpressions, appType: app.assistant };
       }
 
+      // if its adaptor
       expression.push({ _connectorId: { $exists: false } });
-      const filter = { $and: expression };
+      const andingExpressions = { $and: expression };
 
-      return { filter, appType: app.assistant };
+      return { filter: andingExpressions, appType: app.type };
     }
 
     if (['importId', 'exportId'].includes(fieldId)) {
