@@ -263,7 +263,7 @@ export default function Lookup(props) {
     delete body.visibleWhenAll;
     delete extract.visibleWhen;
 
-    fieldMeta.fieldMap.body.visibleWhen = [
+    body.visibleWhen = [
       {
         field: 'method',
         is: ['POST'],

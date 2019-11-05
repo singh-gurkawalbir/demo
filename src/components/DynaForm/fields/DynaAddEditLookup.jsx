@@ -6,7 +6,7 @@ import LookupDialog from '../../AFE/ManageLookup/Lookup/Dialog';
 
 const useStyles = makeStyles({
   container: {
-    minWidth: props => props.minWidth || '500px',
+    minWidth: props => props.minWidth || 500,
   },
   helpText: {
     whiteSpace: 'pre-line',
