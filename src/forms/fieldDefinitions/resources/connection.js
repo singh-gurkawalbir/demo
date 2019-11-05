@@ -2240,8 +2240,7 @@ export default {
   },
   'mongodb.database': {
     type: 'text',
-    required: true,
-    label: 'Database Name',
+    label: 'Database',
   },
   'mongodb.username': {
     type: 'text',
