@@ -1,30 +1,18 @@
 export default {
-  preSave: formValues => {
-    const pingBody = {
-      authenticateTestRequest: {
-        merchantAuthentication: {
-          name: `${formValues['/http/encrypted/apiLoginID']}`,
-          transactionKey: `${formValues['/http/encrypted/transactionKey']}`,
-        },
-      },
-    };
-
-    return {
-      ...formValues,
-      '/type': 'http',
-      '/assistant': 'ebay-xml',
-      '/http/auth/type': 'custom',
-      '/http/mediaType': 'xml',
-      '/http/baseURI': `https://api${
-        formValues['/environment'] === 'sandbox' ? '.sandbox' : ''
-      }.ebay.com/ws/api.dll`,
-      '/http/ping/relativeURI': '/xml/v1/request.api',
-      '/http/ping/successPath': 'messages.resultCode',
-      '/http/ping/successValues': ['Ok'],
-      '/http/ping/body': JSON.stringify(pingBody),
-      '/http/ping/method': 'POST',
-    };
-  },
+  preSave: (formValues, resp) => ({
+    ...formValues,
+    '/type': 'http',
+    '/assistant': 'ebay-xml',
+    '/http/auth/type': 'custom',
+    '/http/mediaType': 'xml',
+    '/http/baseURI': `https://api${
+      formValues['/environment'] === 'sandbox' ? '.sandbox' : ''
+    }.ebay.com/ws/api.dll`,
+    '/http/unencrypted/apiCompLevel': parseInt(
+      (((resp || {}).http || {}).unencrypted || {}).apiCompLevel || '1005',
+      10
+    ),
+  }),
   fieldMap: {
     name: { fieldId: 'name' },
     environment: {

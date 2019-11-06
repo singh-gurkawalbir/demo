@@ -14,8 +14,6 @@ import ChangeEmail from './ChangeEmail';
 import actions from '../../actions';
 import { userProfilePreferencesProps } from '../../reducers';
 
-export const ProfilesItem = () => <Typography variant="h6">Profile</Typography>;
-
 const mapStateToProps = state => ({
   userProfilePreferencesProps: userProfilePreferencesProps(state),
 });
@@ -72,7 +70,7 @@ const mapDispatchToProps = dispatch => ({
     marginLeft: theme.spacing(1),
   },
 }))
-class ProfilesComponent extends Component {
+class ProfileComponent extends Component {
   state = {
     openPasswordModal: false,
     openEmailModal: false,
@@ -259,4 +257,4 @@ class ProfilesComponent extends Component {
 }
 
 // prettier-ignore
-export default connect(mapStateToProps,mapDispatchToProps)(ProfilesComponent);
+export default connect(mapStateToProps,mapDispatchToProps)(ProfileComponent);
