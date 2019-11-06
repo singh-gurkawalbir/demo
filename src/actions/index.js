@@ -660,8 +660,7 @@ const user = {
       acceptedInvite: id => action(actionTypes.ACCOUNT_INVITE_ACCEPTED, { id }),
       rejectInvite: id => action(actionTypes.ACCOUNT_INVITE_REJECT, { id }),
       leave: id => action(actionTypes.ACCOUNT_LEAVE_REQUEST, { id }),
-      switchTo: ({ id, environment }) =>
-        action(actionTypes.ACCOUNT_SWITCH, { id, environment }),
+      switchTo: ({ id }) => action(actionTypes.ACCOUNT_SWITCH, { id }),
     },
   },
   preferences: {
