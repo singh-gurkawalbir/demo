@@ -31,13 +31,9 @@ const useStyles = makeStyles(theme => ({
     height: '100%',
     overflowY: 'auto',
   },
-  queryBlock: {
-    background: 'whitesmoke',
-    padding: '16px',
-  },
 }));
 
-export default function QueryBuilder({ editorId, readOnly, data = {}, rule }) {
+export default function FilterPanel({ editorId, readOnly, data = {}, rule }) {
   const qbuilder = useRef(null);
   const classes = useStyles();
   const [showOperandSettingsFor, setShowOperandSettingsFor] = useState();
@@ -81,11 +77,8 @@ export default function QueryBuilder({ editorId, readOnly, data = {}, rule }) {
     }
   }, [jsonPathsFromData, rules]);
 
-  function isValid() {
-    return jQuery(qbuilder.current).queryBuilder('validate');
-  }
-
-  function getRules(options = {}) {
+  const isValid = () => jQuery(qbuilder.current).queryBuilder('validate');
+  const getRules = (options = {}) => {
     const result = jQuery(qbuilder.current).queryBuilder('getRules', options);
 
     if (isEmpty(result) || (result && !result.valid)) {
@@ -93,21 +86,21 @@ export default function QueryBuilder({ editorId, readOnly, data = {}, rule }) {
     }
 
     return generateIOFilterExpression(result);
-  }
+  };
 
-  function handleFilterRulesChange() {
+  const handleFilterRulesChange = () => {
     if (isValid()) {
       const rule = getRules();
 
       patchEditor(rule);
     }
-  }
+  };
 
-  function showOperandSettings({ rule, rhs }) {
+  const showOperandSettings = ({ rule, rhs }) => {
     setShowOperandSettingsFor({ rule, rhs });
-  }
+  };
 
-  function updateUIForLHSRule({ rule = {} }) {
+  const updateUIForLHSRule = ({ rule = {} }) => {
     function updateUIForValue(rule) {
       if (
         rule.$el.find('.rule-filter-container input[name=value]').length === 0
@@ -201,9 +194,9 @@ export default function QueryBuilder({ editorId, readOnly, data = {}, rule }) {
         updateUIForExpression(rule);
       }
     }
-  }
+  };
 
-  function updateUIForRHSRule({ name, rule = {} }) {
+  const updateUIForRHSRule = ({ name, rule = {} }) => {
     function updateUIForField(rule) {
       if (
         rule.$el.find('.rule-value-container select[name=field]').length === 0
@@ -285,9 +278,9 @@ export default function QueryBuilder({ editorId, readOnly, data = {}, rule }) {
         updateUIForExpression(rule);
       }
     }
-  }
+  };
 
-  function validateRule(rule) {
+  const validateRule = rule => {
     const r = rule.data;
     const toReturn = {
       isValid: true,
@@ -414,15 +407,15 @@ export default function QueryBuilder({ editorId, readOnly, data = {}, rule }) {
     }
 
     return toReturn;
-  }
+  };
 
-  function generateFiltersConfig(jsonPaths = []) {
+  const generateFiltersConfig = (jsonPaths = []) => {
     const filters = [];
 
     jsonPaths.forEach(v => {
       filters.push({
         id: v.id,
-        label: v.name, // || self.data.metadata[v.id] || v.id,
+        label: v.name,
         type: 'string',
         input(rule, name) {
           const ruleId = getFilterRuleId(rule);
@@ -639,14 +632,14 @@ export default function QueryBuilder({ editorId, readOnly, data = {}, rule }) {
     });
 
     return filters;
-  }
+  };
 
   useEffect(() => {
     if (filtersMetadata) {
       const filtersConfig = generateFiltersConfig(filtersMetadata);
-      const x = jQuery(qbuilder.current);
+      const qbContainer = jQuery(qbuilder.current);
 
-      x.on('afterUpdateRuleOperator.queryBuilder', (e, rule) => {
+      qbContainer.on('afterUpdateRuleOperator.queryBuilder', (e, rule) => {
         if (
           rule.operator &&
           (rule.operator.type === 'is_empty' ||
@@ -656,24 +649,24 @@ export default function QueryBuilder({ editorId, readOnly, data = {}, rule }) {
         }
       });
 
-      x.queryBuilder({
+      qbContainer.queryBuilder({
         ...config,
         filters: filtersConfig,
         rules,
       });
-      x.on('rulesChanged.queryBuilder', () => {
+      qbContainer.on('rulesChanged.queryBuilder', () => {
         handleFilterRulesChange();
       });
-      jQuery(qbuilder.current).queryBuilder('setFilters', true, filtersConfig);
+      qbContainer.queryBuilder('setFilters', true, filtersConfig);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filtersMetadata]);
 
-  function handleCloseOperandSettings() {
+  const handleCloseOperandSettings = () => {
     setShowOperandSettingsFor();
-  }
+  };
 
-  function handleSubmitOperandSettings(operandSettings) {
+  const handleSubmitOperandSettings = operandSettings => {
     const ruleData =
       rulesState[getFilterRuleId(showOperandSettingsFor.rule)].data[
         showOperandSettingsFor.rhs ? 'rhs' : 'lhs'
@@ -697,7 +690,7 @@ export default function QueryBuilder({ editorId, readOnly, data = {}, rule }) {
 
     handleFilterRulesChange();
     handleCloseOperandSettings();
-  }
+  };
 
   return (
     <div className={classes.container}>

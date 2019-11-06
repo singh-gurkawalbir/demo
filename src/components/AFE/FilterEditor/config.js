@@ -4,6 +4,80 @@ export default {
     'not-group': null,
   },
   allow_empty: true,
+  operators: [
+    {
+      type: 'equal',
+      nb_inputs: 1,
+      multiple: false,
+      apply_to: ['boolean', 'number', 'string'],
+    },
+    {
+      type: 'not_equal',
+      nb_inputs: 1,
+      multiple: false,
+      apply_to: ['boolean', 'number', 'string'],
+    },
+    {
+      type: 'greater',
+      nb_inputs: 1,
+      multiple: false,
+      apply_to: ['boolean', 'number', 'string'],
+    },
+    {
+      type: 'greater_or_equal',
+      nb_inputs: 1,
+      multiple: false,
+      apply_to: ['boolean', 'number', 'string'],
+    },
+    {
+      type: 'less',
+      nb_inputs: 1,
+      multiple: false,
+      apply_to: ['boolean', 'number', 'string'],
+    },
+    {
+      type: 'less_or_equal',
+      nb_inputs: 1,
+      multiple: false,
+      apply_to: ['boolean', 'number', 'string'],
+    },
+    {
+      type: 'begins_with',
+      nb_inputs: 1,
+      multiple: false,
+      apply_to: ['boolean', 'number', 'string'],
+    },
+    {
+      type: 'ends_with',
+      nb_inputs: 1,
+      multiple: false,
+      apply_to: ['boolean', 'number', 'string'],
+    },
+    {
+      type: 'contains',
+      nb_inputs: 1,
+      multiple: false,
+      apply_to: ['boolean', 'number', 'string'],
+    },
+    {
+      type: 'not_contains',
+      nb_inputs: 1,
+      multiple: false,
+      apply_to: ['boolean', 'number', 'string'],
+    },
+    {
+      type: 'is_empty',
+    },
+    {
+      type: 'is_not_empty',
+    },
+    {
+      type: 'matches',
+      nb_inputs: 1,
+      multiple: false,
+      apply_to: ['boolean', 'number', 'string'],
+    },
+  ],
   lang: {
     operators: {
       is_empty: 'is empty',

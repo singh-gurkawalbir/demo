@@ -1,7 +1,6 @@
 import React, { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import { isString } from 'lodash';
 import CodePanel from '../GenericEditor/CodePanel';
 import FilterPanel from './FilterPanel';
 import PanelGrid from '../PanelGrid';
@@ -19,7 +18,7 @@ const useStyles = makeStyles({
   },
 });
 
-export default function TransformEditor(props) {
+export default function FilterEditor(props) {
   const { editorId } = props;
   const classes = useStyles(props);
   const { data, result, error, violations, initChangeIdentifier } = useSelector(
@@ -30,21 +29,13 @@ export default function TransformEditor(props) {
     dispatch(
       actions.editor.init(editorId, 'filter', {
         data: props.data,
-        autoEvaluate: false,
+        autoEvaluate: true,
         rule: props.rule,
       })
     );
   }, [dispatch, editorId, props.data, props.rule]);
   const handleDataChange = data => {
-    if (isString(data)) {
-      try {
-        dispatch(actions.editor.patch(editorId, { data }));
-      } catch (ex) {
-        // do nothing
-      }
-    } else {
-      dispatch(actions.editor.patch(editorId, { data }));
-    }
+    dispatch(actions.editor.patch(editorId, { data }));
   };
 
   useEffect(() => {

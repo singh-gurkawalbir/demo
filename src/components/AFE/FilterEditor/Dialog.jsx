@@ -1,8 +1,8 @@
 import React from 'react';
 import EditorDialog from '../EditorDialog';
-import QueryBuilder from './index';
+import FilterEditor from './index';
 
-export default function QueryBuilderDialog(props) {
+export default function FilterEditorDialog(props) {
   const { id, rule, data, ...rest } = props;
   const defaults = {
     width: '85vw',
@@ -13,7 +13,7 @@ export default function QueryBuilderDialog(props) {
 
   return (
     <EditorDialog id={id} {...defaults} {...rest} showLayoutOptions={false}>
-      <QueryBuilder editorId={id} data={data} rule={rule} />
+      <FilterEditor editorId={id} data={data} rule={rule} />
     </EditorDialog>
   );
 }
