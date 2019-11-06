@@ -29,7 +29,12 @@ import {
 import { getFieldById } from '../forms/utils';
 import { upgradeButtonText, expiresInfo } from '../utils/license';
 import commKeyGen from '../utils/commKeyGenerator';
-import { isRealtimeExport, isSimpleImportFlow, isRunnable } from './flowsUtil';
+import {
+  isRealtimeExport,
+  isSimpleImportFlow,
+  isRunnable,
+  showScheduleIcon,
+} from './flowsUtil';
 import { getUsedActionsMapForResource } from '../utils/flows';
 import { isValidResourceReference } from '../utils/resource';
 
@@ -117,6 +122,10 @@ export function resourceFormState(state, resourceType, resourceId) {
 
 export function previewTemplate(state, templateId) {
   return fromSession.previewTemplate(state && state.session, templateId);
+}
+
+export function isFileUploaded(state) {
+  return fromSession.isFileUploaded(state && state.session);
 }
 
 export function templateSetup(state, templateId) {
@@ -548,6 +557,10 @@ export function flowListWithMetadata(state, options) {
     if (isRunnable(exports, exp, f)) {
       flows[i].isRunnable = true;
     }
+
+    if (showScheduleIcon(exports, exp, f)) {
+      flows[i].showScheduleIcon = true;
+    }
   });
 
   return { resources: flows };
@@ -765,8 +778,8 @@ export function integrationAppResourceList(state, integrationId, storeId) {
     integrationId
   );
   const { supportsMultiStore, sections } = integrationResource.settings || {};
-  const { resources: integrationConnections } = fromData.resourceList(
-    state.data,
+  const { resources: integrationConnections } = resourceListWithPermissions(
+    state,
     {
       type: 'connections',
       filter: { _integrationId: integrationId },
@@ -776,7 +789,7 @@ export function integrationAppResourceList(state, integrationId, storeId) {
   if (!supportsMultiStore || !storeId) {
     return {
       connections: integrationConnections,
-      flows: resourceList(state, {
+      flows: resourceListWithPermissions(state, {
         type: 'flows',
         filter: { _integrationId: integrationId },
       }).resources,
@@ -870,7 +883,7 @@ export function integrationAppFlowSections(state, id, store) {
           (sections.find(sec => sec.id === store) || {}).sections || [];
       } else {
         flowSections =
-          (sections.find(sec => sec.mode !== 'uninstall') || {}).sections || [];
+          (sections.find(sec => sec.mode !== 'install') || {}).sections || [];
       }
     }
   } else {
@@ -894,6 +907,9 @@ export function integrationAppGeneralSettings(state, id, storeId) {
     const storeSection = (general || []).find(s => s.id === storeId) || {};
 
     ({ fields, sections: subSections } = storeSection);
+  } else if (Array.isArray(general)) {
+    ({ fields, sections: subSections } =
+      general.find(s => s.title === 'General') || {});
   } else {
     ({ fields, sections: subSections } = general || {});
   }
@@ -924,7 +940,14 @@ export function integrationAppFlowSettings(state, id, section, storeId) {
   const selectedSection =
     allSections.find(sec => sec.title.replace(/\s/g, '') === section) || {};
 
-  requiredFlows = map(selectedSection.flows, '_id');
+  if (!section) {
+    allSections.forEach(sec => {
+      requiredFlows.push(...map(sec.flows, '_id'));
+    });
+  } else {
+    requiredFlows = map(selectedSection.flows, '_id');
+  }
+
   hasNSInternalIdLookup = some(
     selectedSection.flows,
     f => f.showNSInternalIdLookup
@@ -1512,6 +1535,52 @@ export function resourceStatus(
     method,
     isReady,
   };
+}
+
+export function flowMetadata(state, id, scope) {
+  if (!state || !id) return {};
+
+  const preferences = userPreferences(state);
+  const flows = flowListWithMetadata(state, {
+    type: 'flows',
+    sandbox: preferences.environment === 'sandbox',
+    filter: {
+      _id: id,
+    },
+  }).resources;
+  const master = flows && flows[0];
+  const { patch, conflict } = fromSession.stagedResource(
+    state.session,
+    id,
+    scope
+  );
+
+  if (!master && !patch) return { merged: {} };
+
+  let merged;
+  let lastChange;
+
+  if (patch) {
+    const patchResult = jsonPatch.applyPatch(
+      master ? jsonPatch.deepClone(master) : {},
+      jsonPatch.deepClone(patch)
+    );
+
+    merged = patchResult.newDocument;
+
+    if (patch.length) lastChange = patch[patch.length - 1].timestamp;
+  }
+
+  const data = {
+    master,
+    patch,
+    lastChange,
+    merged: merged || master,
+  };
+
+  if (conflict) data.conflict = conflict;
+
+  return data;
 }
 
 export function resourceData(state, resourceType, id, scope) {

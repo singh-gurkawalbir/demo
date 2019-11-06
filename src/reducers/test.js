@@ -1710,10 +1710,16 @@ describe('integrationAppConnectionList reducer', () => {
       },
       'some_action'
     );
+    const data = selectors.integrationAppConnectionList(state, 'integrationId');
 
-    expect(
-      selectors.integrationAppConnectionList(state, 'integrationId')
-    ).toEqual([
+    // We dont need permissions to be tested here as we would have explicit tests for those.
+    data.forEach(c => {
+      // eslint-disable-next-line no-param-reassign
+      delete c.permissions;
+
+      return c;
+    });
+    expect(data).toEqual([
       {
         _id: 'connection1',
         _integrationId: 'integrationId',
@@ -1743,10 +1749,20 @@ describe('integrationAppConnectionList reducer', () => {
       },
       'some_action'
     );
+    const data = selectors.integrationAppConnectionList(
+      state,
+      'integrationId2',
+      'store1'
+    );
 
-    expect(
-      selectors.integrationAppConnectionList(state, 'integrationId2', 'store1')
-    ).toEqual([
+    // We dont need permissions to be tested here as we would have explicit tests for those.
+    data.forEach(c => {
+      // eslint-disable-next-line no-param-reassign
+      delete c.permissions;
+
+      return c;
+    });
+    expect(data).toEqual([
       {
         _id: 'connection3',
         _integrationId: 'integrationId2',
@@ -1768,6 +1784,7 @@ describe('integrationAppSettings reducer', () => {
     {
       _id: 'integrationId',
       name: 'integration Name',
+      _connectorId: 'connectorId',
       settings: {
         sections: [
           {
@@ -1790,6 +1807,7 @@ describe('integrationAppSettings reducer', () => {
     {
       _id: 'integrationId2',
       name: 'integration2 Name',
+      _connectorId: 'connectorId1',
       settings: {
         sections: [
           {
@@ -1830,6 +1848,7 @@ describe('integrationAppSettings reducer', () => {
       selectors.integrationAppSettings(state, 'integrationId', 'store1')
     ).toEqual({
       _id: 'integrationId',
+      _connectorId: 'connectorId',
       name: 'integration Name',
       settings: {
         sections: [
@@ -1846,6 +1865,7 @@ describe('integrationAppSettings reducer', () => {
     });
 
     expect(selectors.integrationAppSettings(state, 'integrationId')).toEqual({
+      _connectorId: 'connectorId',
       _id: 'integrationId',
       name: 'integration Name',
       settings: {
@@ -1876,6 +1896,7 @@ describe('integrationAppSettings reducer', () => {
 
     expect(selectors.integrationAppSettings(state, 'integrationId2')).toEqual({
       _id: 'integrationId2',
+      _connectorId: 'connectorId1',
       name: 'integration2 Name',
       settings: {
         sections: [{ flows: [{ _id: 'flowId' }], id: 'sectionTitle' }],

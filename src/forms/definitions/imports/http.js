@@ -43,7 +43,10 @@ export default {
           ];
         }
 
-        retValues['/http/body'] = ['', retValues['/http/bodyCreate']];
+        retValues['/http/body'] = [
+          retValues['/http/bodyUpdate'],
+          retValues['/http/bodyCreate'],
+        ];
 
         retValues['/ignoreExisting'] = false;
         retValues['/ignoreMissing'] = false;
@@ -67,7 +70,7 @@ export default {
           ];
         }
 
-        retValues['/http/body'] = ['', retValues['/http/bodyCreate']];
+        retValues['/http/body'] = [retValues['/http/bodyCreate']];
 
         retValues['/ignoreExisting'] = true;
         retValues['/ignoreMissing'] = false;
@@ -98,7 +101,7 @@ export default {
           ];
         }
 
-        retValues['/http/body'] = [retValues['/http/bodyCreate']];
+        retValues['/http/body'] = [retValues['/http/bodyUpdate']];
 
         retValues['/ignoreExisting'] = false;
         retValues['/ignoreMissing'] = true;
@@ -113,6 +116,7 @@ export default {
     } else {
       retValues['/ignoreExisting'] = false;
       retValues['/ignoreMissing'] = false;
+      retValues['/http/body'] = [retValues['/http/body']];
     }
 
     return {
@@ -124,22 +128,24 @@ export default {
       const lookupField = fields.find(
         field => field.fieldId === 'http.lookups'
       );
+      const requestMediaTypeField = fields.find(
+        field => field.fieldId === 'http.requestMediaType'
+      );
 
-      if (lookupField) {
-        return {
-          // we are saving http body in an array. Put correspond to 0th Index,
-          // Post correspond to 1st index.
-          // We will have 'Build HTTP Request Body for Create' and
-          // 'Build HTTP Request Body for Update' in case user selects Composite Type as 'Create new Data and Update existing data'
-          saveIndex: 0,
-          lookups: {
-            // passing lookupId fieldId and data since we will be modifying lookups
-            //  from 'Manage lookups' option inside 'Build Http request Body Editor'
-            fieldId: lookupField.fieldId,
-            data: lookupField && lookupField.value,
-          },
-        };
-      }
+      return {
+        // we are saving http body in an array. Put correspond to 0th Index,
+        // Post correspond to 1st index.
+        // We will have 'Build HTTP Request Body for Create' and
+        // 'Build HTTP Request Body for Update' in case user selects Composite Type as 'Create new Data and Update existing data'
+        saveIndex: 0,
+        contentType: requestMediaTypeField.value,
+        lookups: {
+          // passing lookupId fieldId and data since we will be modifying lookups
+          //  from 'Manage lookups' option inside 'Build Http request Body Editor'
+          fieldId: lookupField.fieldId,
+          data: lookupField && lookupField.value,
+        },
+      };
     }
 
     return null;
@@ -188,6 +194,10 @@ export default {
         {
           field: 'http.compositeType',
           is: ['createandupdate', 'createandignore'],
+        },
+        {
+          field: 'http.method',
+          is: ['COMPOSITE'],
         },
         {
           field: 'inputMode',
@@ -376,10 +386,18 @@ export default {
 
         if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
           if (r.http.method.length > 1) {
-            return r.http.resourcePath && r.http.resourcePath[1];
+            return (
+              r.http.response &&
+              r.http.response.resourcePath &&
+              r.http.response.resourcePath[1]
+            );
           }
 
-          return r.http.resourcePath && r.http.resourcePath[0];
+          return (
+            r.http.response &&
+            r.http.response.resourcePath &&
+            r.http.response.resourcePath[0]
+          );
         }
 
         return '';
@@ -388,11 +406,15 @@ export default {
     upateExistingData: {
       id: 'upateExistingData',
       type: 'labeltitle',
-      label: 'Upate Existing Data',
+      label: 'Update Existing Data',
       visibleWhenAll: [
         {
           field: 'http.compositeType',
           is: ['createandupdate', 'updateandignore'],
+        },
+        {
+          field: 'http.method',
+          is: ['COMPOSITE'],
         },
         {
           field: 'inputMode',
@@ -465,6 +487,37 @@ export default {
 
         if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
           return r.http.relativeURI && r.http.relativeURI[0];
+        }
+
+        return '';
+      },
+    },
+    'http.bodyUpdate': {
+      id: 'http.bodyUpdate',
+      type: 'httprequestbody',
+      label: 'Build HTTP Request Body For Update',
+      refreshOptionsOnChangesTo: ['http.lookups'],
+      visibleWhenAll: [
+        {
+          field: 'http.compositeType',
+          is: ['createandupdate', 'updateandignore'],
+        },
+        {
+          field: 'http.method',
+          is: ['COMPOSITE'],
+        },
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
+      ],
+      defaultValue: r => {
+        if (!r || !r.http || !r.http.method) {
+          return '';
+        }
+
+        if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
+          return r.http.body[0];
         }
 
         return '';
@@ -633,7 +686,10 @@ export default {
         },
       ],
     },
-    'http.body': { fieldId: 'http.body' },
+    'http.body': {
+      fieldId: 'http.body',
+      refreshOptionsOnChangesTo: ['http.requestMediaType'],
+    },
 
     'http.ignoreEmptyNodes': { fieldId: 'http.ignoreEmptyNodes' },
     advancedSettings: {
@@ -687,6 +743,7 @@ export default {
       'upateExistingData',
       'http.compositeMethodUpdate',
       'http.relativeURIUpdate',
+      'http.bodyUpdate',
       'http.resourceIdPathUpdate',
       'http.resourcePathUpdate',
       'ignoreExistingData',

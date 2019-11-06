@@ -57,6 +57,7 @@ export default {
         is: ['blob'],
       },
     ],
+    defaultValue: r => r && r.rest && r.rest.method && r.rest.method[0],
   },
   'rest.headers': {
     type: 'keyvalue',
@@ -83,6 +84,12 @@ export default {
             value: 'updateandignore',
           },
         ],
+      },
+    ],
+    requiredWhen: [
+      {
+        field: 'rest.method',
+        is: ['COMPOSITE'],
       },
     ],
     visibleWhenAll: [
@@ -159,7 +166,7 @@ export default {
       },
       {
         field: 'inputMode',
-        is: ['records'],
+        is: ['blob'],
       },
     ],
   },
@@ -184,23 +191,6 @@ export default {
     type: 'text',
     label: 'Success Values',
     placeholder: 'Optional',
-    visibleWhen: [
-      {
-        field: 'rest.method',
-        is: ['POST', 'PUT', 'DELETE', 'PATCH'],
-      },
-      {
-        field: 'rest.blobMethod',
-        is: ['POST', 'PUT', 'DELETE'],
-      },
-    ],
-    defaultValue: r =>
-      r && r.rest && r.rest.successValues && r.rest.successValues[0],
-  },
-  'rest.responseIdPath': {
-    type: 'text',
-    label: 'Response Id Path',
-    placeholder: 'Optional',
     visibleWhenAll: [
       {
         field: 'rest.method',
@@ -212,35 +202,37 @@ export default {
       },
     ],
     defaultValue: r =>
+      r && r.rest && r.rest.successValues && r.rest.successValues[0],
+  },
+  'rest.responseIdPath': {
+    type: 'text',
+    label: 'Response Id Path',
+    placeholder: 'Optional',
+    visibleWhen: [
+      {
+        field: 'rest.method',
+        is: ['POST', 'PUT', 'DELETE', 'PATCH'],
+      },
+      {
+        field: 'inputMode',
+        is: ['blob'],
+      },
+    ],
+    defaultValue: r =>
       r && r.rest && r.rest.responseIdPath && r.rest.responseIdPath[0],
   },
-  'rest.compositeMethodCreate': {},
-  'rest.relativeURICreate': {},
-  'rest.bodyCreate': {},
-  'rest.successPathCreate': {},
-  'rest.successValuesCreate': {},
-  'rest.responseIdPathCreate': {},
-  'rest.compositeMethodUpdate': {},
-  'rest.relativeURIUpdate': {},
-  'rest.bodyUpdate': {},
-  'rest.successPathUpdate': {},
-  'rest.successValuesUpdate': {},
-  'rest.responseIdPathUpdate': {},
-  'rest.existingDataId': {},
-  'rest.sampleData': {
+  sampleData: {
     type: 'textarea',
     label: 'If so,please paste it here',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'inputMode',
         is: ['records'],
       },
+      {
+        field: 'rest.method',
+        isNot: ['DELETE'],
+      },
     ],
   },
-  visibleWhen: [
-    {
-      field: 'rest.method',
-      isNot: ['DELETE'],
-    },
-  ],
 };

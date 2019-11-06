@@ -56,6 +56,7 @@ export default {
         ],
       },
     ],
+    defaultValue: r => r && r.http && r.http.method && r.http.method[0],
   },
   'http.headers': {
     type: 'keyvalue',
@@ -105,6 +106,12 @@ export default {
         ],
       },
     ],
+    requiredWhen: [
+      {
+        field: 'http.method',
+        is: ['COMPOSITE'],
+      },
+    ],
     visibleWhenAll: [
       {
         field: 'http.method',
@@ -141,14 +148,14 @@ export default {
     type: 'text',
     label: 'Relative URI',
     placeholder: 'Optional',
-    visibleWhenAll: [
+    visibleWhen: [
       {
         field: 'http.method',
-        isNot: ['POST', 'PUT', 'DELETE', 'PATCH'],
+        is: ['POST', 'PUT', 'DELETE', 'PATCH'],
       },
       {
-        field: 'http.blobMethod',
-        is: ['POST', 'PUT', 'DELETE'],
+        field: 'inputMode',
+        is: ['blob'],
       },
     ],
     defaultValue: r =>
@@ -160,6 +167,16 @@ export default {
       Array.isArray(((r || {}).http || {}).body) ? r.http.body[0] : undefined,
     label: 'Build HTTP Request Body',
     refreshOptionsOnChangesTo: ['http.lookups'],
+    visibleWhen: [
+      {
+        field: 'http.method',
+        isNot: ['COMPOSITE'],
+      },
+      {
+        field: 'inputMode',
+        is: ['blob'],
+      },
+    ],
   },
   'http.response.successPath': {
     type: 'text',
@@ -196,14 +213,14 @@ export default {
     type: 'text',
     label: 'Resource Id Path',
     placeholder: 'Optional',
-    visibleWhenAll: [
+    visibleWhen: [
       {
         field: 'http.method',
-        is: ['POST', 'PUT', 'DELETE', 'PATCH'],
+        isNot: ['COMPOSITE'],
       },
       {
-        field: 'http.blobMethod',
-        is: ['POST', 'PUT', 'DELETE'],
+        field: 'inputMode',
+        is: ['blob'],
       },
     ],
   },

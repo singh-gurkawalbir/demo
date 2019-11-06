@@ -1,12 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import {
-  AppBar,
-  Breadcrumbs,
-  Link,
-  Toolbar,
-  Typography,
-} from '@material-ui/core';
+import { useLocation } from 'react-router-dom';
+import { AppBar, Toolbar } from '@material-ui/core';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import GlobalSearch from '../GlobalSearch';
@@ -14,11 +9,11 @@ import ElevateOnScroll from '../../components/ElevateOnScroll';
 import SlideOnScroll from '../../components/SlideOnScroll';
 import ProfileMenuButton from './ProfileMenuButton';
 import * as selectors from '../../reducers';
-import ArrowRightIcon from '../../components/icons/ArrowRightIcon';
 import Notifications from './Notifications';
 import LicenseAction from './LicenseAction';
 import AccountList from './AccountList';
 import EnvironmentToggle from './EnvironmentToggle';
+import CeligoBreadcrumb from './CeligoBreadcrumb';
 
 const useStyles = makeStyles(theme => ({
   celigoLogo: {
@@ -91,6 +86,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function CeligoAppBar() {
   const classes = useStyles();
+  const { pathname } = useLocation();
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
 
   return (
@@ -103,24 +99,7 @@ export default function CeligoAppBar() {
             [classes.appBarShift]: drawerOpened,
           })}>
           <Toolbar className="topBar" variant="dense">
-            <Breadcrumbs
-              maxItems={3}
-              separator={<ArrowRightIcon fontSize="small" />}
-              aria-label="breadcrumb"
-              className={classes.breadCrumb}>
-              <Link color="inherit" href="/pg">
-                Home
-              </Link>
-              <Link color="inherit" href="/pg">
-                Profile
-              </Link>
-              <Link color="inherit" href="/pg">
-                Subscription
-              </Link>
-              <Typography variant="body2" className={classes.addons}>
-                Add-ons
-              </Typography>
-            </Breadcrumbs>
+            <CeligoBreadcrumb location={pathname} />
             <ul className={classes.topBarActions}>
               <li>
                 <GlobalSearch />
@@ -130,7 +109,9 @@ export default function CeligoAppBar() {
                 (and re-run all init) I think this is causes by removing the 
                 session caching layer we had in place 
               */}
-              <li>{false && <AccountList />}</li>
+              <li>
+                <AccountList />
+              </li>
               <li>
                 <EnvironmentToggle />
               </li>

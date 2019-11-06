@@ -43,6 +43,7 @@ import DynaAutoSuggest from './DynaAutoSuggest';
 import DynaGenerateUrl from './DynaGenerateUrl';
 import DynaRefreshableIntegrationSetting from './DynaRefreshableSelect/DynaRefreshableIntegrationSetting';
 import DynaDate from './dateTime/DynaDate';
+import DynaSQLQueryBuilder from './DynaSQLQueryBuilder';
 
 export default {
   mapping: DynaImportMapping,
@@ -93,4 +94,5 @@ export default {
   generateurl: DynaGenerateUrl,
   integrationrefreshableselect: DynaRefreshableIntegrationSetting,
   date: DynaDate,
+  sqlquerybuilder: DynaSQLQueryBuilder,
 };

@@ -5,6 +5,7 @@ import { Typography } from '@material-ui/core';
 import StatusCircle from '../StatusCircle';
 import { getApp } from '../../constants/applications';
 import { getResourceSubType } from '../../utils/resource';
+import getRoutePath from '../../utils/routePaths';
 
 export const getResourceLink = (resourceType, resource, location = {}) => (
   <Fragment>
@@ -20,6 +21,12 @@ export const getResourceLink = (resourceType, resource, location = {}) => (
     </Link>
     <Typography>{resource.shared ? 'Shared' : ''}</Typography>
   </Fragment>
+);
+export const getResourceReferenceLink = ref => (
+  <Link
+    to={getRoutePath(`${ref.resourceType}/edit/${ref.resourceType}/${ref.id}`)}>
+    {ref.name || ref.id}
+  </Link>
 );
 
 export const getConnectorName = resource => {

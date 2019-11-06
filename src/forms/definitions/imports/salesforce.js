@@ -7,6 +7,9 @@ export default {
         newValues['/salesforce/blobsObjectType'];
       newValues['/salesforce/operation'] =
         newValues['/salesforce/blobOperation'];
+    } else if (newValues['/salesforce/api'] === 'compositerecord') {
+      newValues['/salesforce/operation'] =
+        newValues['/salesforce/compositeOperation'];
     }
 
     return {

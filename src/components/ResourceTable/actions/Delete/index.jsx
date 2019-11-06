@@ -17,7 +17,7 @@ export default {
       selectors.resourceReferences(state)
     );
     const type =
-      resourceType.indexOf('/licenses') >= 0
+      resourceType && resourceType.indexOf('/licenses') >= 0
         ? 'license'
         : MODEL_PLURAL_TO_LABEL[resourceType];
     const handleClick = () => {
