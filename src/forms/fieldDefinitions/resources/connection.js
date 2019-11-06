@@ -2263,7 +2263,7 @@ export default {
   'mongodb.ssl': {
     type: 'checkbox',
     label: 'TLS/SSL',
-    defaultValue: r => (r && r.mongpoodb && r.mongodb.ssl) || false,
+    defaultValue: r => (r && r.mongodb && r.mongodb.ssl) || false,
   },
   'mongodb.authSource': {
     type: 'text',

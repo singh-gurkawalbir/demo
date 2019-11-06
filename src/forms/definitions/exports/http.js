@@ -113,7 +113,7 @@ export default {
         const isNew = isNewId(r._id);
 
         // if its create
-        if (isNew) return ' ';
+        if (isNew) return '';
 
         const output = r && r.type;
 
