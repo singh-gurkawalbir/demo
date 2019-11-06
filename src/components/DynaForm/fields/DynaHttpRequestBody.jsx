@@ -7,7 +7,7 @@ import {
   getJSONSampleTemplate,
 } from '../../AFE/HttpRequestBodyEditor/templateMapping';
 
-// TODO: This is sample data to for purpose of test. To be replaced with actual sample data
+// TODO: This is sample data for testing. To be replaced with actual sample data
 const sampleData = {
   // id: '48327',
   // recordType: 'customer',
