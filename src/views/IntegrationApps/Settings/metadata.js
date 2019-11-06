@@ -69,6 +69,12 @@ export default {
     columnData.push({
       heading: 'Field Mappings',
       value: function MappingAction(r) {
+        const settings = flowSettings.find(f => f._id === r._id) || {};
+
+        if (settings.showMapping === false) {
+          return null;
+        }
+
         if (r && r.pageProcessors) {
           return <FieldMappings.component resource={r} />;
         } else if (r && r._importId) {
@@ -89,6 +95,12 @@ export default {
     columnData.push({
       heading: 'Schedule',
       value: function ScheduleAction(r) {
+        const settings = flowSettings.find(f => f._id === r._id) || {};
+
+        if (settings.showSchedule === false) {
+          return null;
+        }
+
         if (r && r.isRealtime) {
           return 'Realtime';
         } else if (r && r.isSimpleImport) {
@@ -107,6 +119,12 @@ export default {
     columnData.push({
       heading: 'Off/On',
       value: function OffOnAction(r) {
+        const settings = flowSettings.find(f => f._id === r._id) || {};
+
+        if (settings.disableSlider) {
+          return null;
+        }
+
         return <OnOff.component resource={r} storeId={storeId} />;
       },
     });
