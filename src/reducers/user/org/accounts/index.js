@@ -226,42 +226,20 @@ export function accountSummary(state) {
     if (ownLicense) {
       accounts.push({
         id: ACCOUNT_IDS.OWN,
-        environment: 'production',
+        hasSandbox: !!ownLicense.hasSandbox,
       });
-
-      if (ownLicense.hasSandbox) {
-        accounts.push({
-          id: ACCOUNT_IDS.OWN,
-          environment: 'sandbox',
-        });
-      }
     }
 
     return accounts;
   }
 
   shared.forEach(a => {
-    if (a.hasSandbox) {
-      accounts.push({
-        id: a.id,
-        environment: 'production',
-        company: a.company,
-        canLeave: shared.length > 1,
-      });
-      accounts.push({
-        id: a.id,
-        environment: 'sandbox',
-        company: a.company,
-        canLeave: false,
-      });
-    } else {
-      accounts.push({
-        id: a.id,
-        environment: 'production',
-        company: a.company,
-        canLeave: shared.length > 1,
-      });
-    }
+    accounts.push({
+      id: a.id,
+      company: a.company,
+      canLeave: shared.length > 1,
+      hasSandbox: !!a.hasSandbox,
+    });
   });
 
   return accounts;
