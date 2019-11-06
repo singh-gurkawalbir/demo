@@ -112,7 +112,7 @@ export default {
         'eBay - NetSuite Connector': 'eBay',
         'Salesforce - Subscription Billing Connector': 'salesforceSubscription',
         'Vendor Payment Manager': 'vendorPaymentManager',
-        'Salesforce - NetSuite Connector (IO)': 'sfnsio',
+        'Salesforce - NetSuite Connector': 'sfnsio',
       },
     };
     let integrationApp;

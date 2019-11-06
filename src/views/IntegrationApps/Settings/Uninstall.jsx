@@ -1,5 +1,5 @@
 import Typography from '@material-ui/core/Typography';
-import { Button } from '@material-ui/core';
+import { Button, Divider } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { Fragment, useEffect } from 'react';
@@ -20,6 +20,10 @@ const useStyles = makeStyles(theme => ({
   },
   rightIcon: {
     marginLeft: theme.spacing(1),
+  },
+  margin: {
+    marginTop: '30px',
+    marginBottom: '30px',
   },
 }));
 
@@ -87,6 +91,16 @@ export default function Uninstall(props) {
 
   return (
     <Fragment>
+      <Typography variant="h3">Uninstall</Typography>
+      <Typography variant="h5">
+        Use this page to uninstall this instance (i.e. this tile) of the
+        Integration App. Uninstalling an Integration App will remove all
+        components, including the integration tile, from your integrator.io
+        account. After uninstalling you can re-install from the marketplace as
+        long as you have a valid subscription. Please be very certain that you
+        want to uninstall as this action cannot be undone.
+      </Typography>
+      <Divider className={classes.margin} />
       <Typography variant="h4">
         Once you uninstall this connector there is no going back. Please be
         certain.

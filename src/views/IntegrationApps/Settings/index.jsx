@@ -8,7 +8,7 @@ import {
 } from '@material-ui/core';
 import { isEmpty } from 'lodash';
 import { makeStyles } from '@material-ui/core/styles';
-import { Switch, Route, NavLink } from 'react-router-dom';
+import { Switch, Route, NavLink, Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { useState, useEffect } from 'react';
 import actions from '../../../actions';
@@ -156,18 +156,23 @@ export default function IntegrationAppSettings(props) {
 
   useEffect(() => {
     if ((!redirected && (section === 'flows' || !section)) || storeChanged) {
-      if (supportsMultiStore) {
-        props.history.push(
-          `${`${urlPrefix}/${currentStore}/${integrationAppFlowSections[0].titleId}`}`
-        );
-      } else {
-        props.history.push(
-          `${urlPrefix}/${integrationAppFlowSections[0].titleId}`
-        );
-      }
+      if (
+        Array.isArray(integrationAppFlowSections) &&
+        integrationAppFlowSections.length
+      ) {
+        if (supportsMultiStore) {
+          props.history.push(
+            `${`${urlPrefix}/${currentStore}/${integrationAppFlowSections[0].titleId}`}`
+          );
+        } else {
+          props.history.push(
+            `${urlPrefix}/${integrationAppFlowSections[0].titleId}`
+          );
+        }
 
-      setStoreChanged(false);
-      setRedirected(true);
+        setStoreChanged(false);
+        setRedirected(true);
+      }
     }
   }, [
     integrationAppFlowSections,
@@ -226,11 +231,11 @@ export default function IntegrationAppSettings(props) {
               onChange={handleTagChangeHandler}
             />
           }>
-          <a
-            href={getRoutePath(`integrations/${integrationId}/dashboard`)}
+          <Link
+            to={getRoutePath(`integrations/${integrationId}/dashboard`)}
             className={classes.dashboard}>
             Dashboard
-          </a>
+          </Link>
         </CeligoPageBar>
 
         {supportsMultiStore && (
