@@ -71,7 +71,7 @@ export default {
       value: function MappingAction(r) {
         const settings = flowSettings.find(f => f._id === r._id) || {};
 
-        if (settings.showMapping === false) {
+        if (settings && settings.showMapping === false) {
           return null;
         }
 
@@ -97,7 +97,7 @@ export default {
       value: function ScheduleAction(r) {
         const settings = flowSettings.find(f => f._id === r._id) || {};
 
-        if (settings.showSchedule === false) {
+        if (settings && settings.showSchedule === false) {
           return null;
         }
 
@@ -121,7 +121,7 @@ export default {
       value: function OffOnAction(r) {
         const settings = flowSettings.find(f => f._id === r._id) || {};
 
-        if (settings.disableSlider) {
+        if (settings && settings.disableSlider) {
           return null;
         }
 
