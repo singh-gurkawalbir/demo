@@ -39,10 +39,18 @@ export function resourceReferences(state) {
   }
 
   const { references } = state;
+  const referencesArray = [];
 
-  return Object.keys(references).map(type => ({
-    resourceType: type,
-    references: references[type],
-  }));
+  Object.keys(references).forEach(type =>
+    references[type].forEach(refObj => {
+      referencesArray.push({
+        resourceType: type,
+        id: refObj.id,
+        name: refObj.name,
+      });
+    })
+  );
+
+  return referencesArray;
 }
 // #endregion

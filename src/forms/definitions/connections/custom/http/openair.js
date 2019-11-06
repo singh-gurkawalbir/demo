@@ -1,33 +1,41 @@
 export default {
-  preSave: formValues => ({
-    ...formValues,
-    '/type': 'http',
-    '/assistant': 'openair',
-    '/http/auth/type': 'custom',
-    '/http/mediaType': 'xml',
-    '/http/baseURI': `${
-      formValues['/environment'] === 'sandbox'
-        ? 'https://sandbox.openair.com/api.pl'
-        : 'https://www.openair.com/api.pl'
-    }`,
-    '/http/ping/successPath': '/response/Auth/@status',
-    '/http/ping/successValues': ['0'],
-    '/http/ping/errorPath': '/ErrorResponse/Error/Message/text()',
-    '/http/ping/body':
-      '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n' +
-      '<request API_version="1.0" client="test app" client_ver="1.1" namespace="{{{connection.http.unencrypted.namespace}}}" key="{{{connection.http.unencrypted.apiKey}}}">\n' +
-      '  <Auth>\n' +
-      '    <Login>\n' +
-      '      <company>{{{connection.http.unencrypted.companyId}}}</company>\n' +
-      '      <user>{{{connection.http.unencrypted.userId}}}</user>\n' +
-      '      <password>{{{connection.http.encrypted.password}}}</password>\n' +
-      '    </Login>\n' +
-      '  </Auth>\n' +
-      '</request>',
-    '/http/ping/method': 'POST',
-    '/http/rateLimit/failPath': '/response/Auth/@status',
-    '/http/rateLimit/failValues': ['556'],
-  }),
+  preSave: formValues => {
+    let baseURI = '';
+
+    if (formValues['/environment'] === 'sandbox') {
+      baseURI = 'https://sandbox.openair.com/api.pl';
+    } else if (formValues['/environment'] === 'production') {
+      baseURI = 'https://www.openair.com/api.pl';
+    } else if (formValues['/environment'] === 'demo') {
+      baseURI = 'https://demo.openair.com/api.pl';
+    }
+
+    return {
+      ...formValues,
+      '/type': 'http',
+      '/assistant': 'openair',
+      '/http/auth/type': 'custom',
+      '/http/mediaType': 'xml',
+      '/http/baseURI': baseURI,
+      '/http/ping/successPath': '/response/Auth/@status',
+      '/http/ping/successValues': ['0'],
+      '/http/ping/errorPath': '/ErrorResponse/Error/Message/text()',
+      '/http/ping/body':
+        '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n' +
+        '<request API_version="1.0" client="test app" client_ver="1.1" namespace="{{{connection.http.unencrypted.namespace}}}" key="{{{connection.http.unencrypted.apiKey}}}">\n' +
+        '  <Auth>\n' +
+        '    <Login>\n' +
+        '      <company>{{{connection.http.unencrypted.companyId}}}</company>\n' +
+        '      <user>{{{connection.http.unencrypted.userId}}}</user>\n' +
+        '      <password>{{{connection.http.encrypted.password}}}</password>\n' +
+        '    </Login>\n' +
+        '  </Auth>\n' +
+        '</request>',
+      '/http/ping/method': 'POST',
+      '/http/rateLimit/failPath': '/response/Auth/@status',
+      '/http/rateLimit/failValues': ['556'],
+    };
+  },
   fieldMap: {
     name: { fieldId: 'name' },
     environment: {
@@ -40,6 +48,7 @@ export default {
           items: [
             { label: 'Production', value: 'production' },
             { label: 'Sandbox', value: 'sandbox' },
+            { label: 'Demo', value: 'demo' },
           ],
         },
       ],
@@ -47,8 +56,15 @@ export default {
         const baseUri = r && r.http && r.http.baseURI;
 
         if (baseUri) {
-          if (baseUri.indexOf('sandbox') !== -1) {
-            return 'sandbox';
+          switch (baseUri) {
+            case 'https://sandbox.openair.com/api.pl':
+              return 'sandbox';
+            case 'https://www.openair.com/api.pl':
+              return 'production';
+            case 'https://demo.openair.com/api.pl':
+              return 'demo';
+            default:
+              return 'production';
           }
         }
 
