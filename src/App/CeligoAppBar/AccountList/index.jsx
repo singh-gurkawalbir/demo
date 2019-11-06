@@ -17,40 +17,8 @@ import { confirmDialog } from '../../../components/ConfirmDialog';
 import getRoutePath from '../../../utils/routePaths';
 
 const mapStateToProps = state => {
-  let accounts = selectors.accountSummary(state);
+  const accounts = selectors.accountSummary(state);
   const userPreferences = selectors.userPreferences(state);
-  const productionAccounts = accounts.filter(
-    a => a.environment === 'production'
-  );
-
-  accounts = accounts.map(a => {
-    if (productionAccounts.length === 1) {
-      return {
-        ...a,
-        label: a.environment === 'sandbox' ? 'Sandbox' : 'Production',
-      };
-    } else if (productionAccounts.length > 1) {
-      if (a.environment === 'sandbox') {
-        return {
-          ...a,
-          label: `${a.company} - Sandbox`,
-        };
-      }
-
-      const selectedAccountsSandbox = accounts.find(
-        sa => sa.id === a.id && sa.environment === 'sandbox'
-      );
-
-      return {
-        ...a,
-        label: selectedAccountsSandbox
-          ? `${a.company} - Production`
-          : a.company,
-      };
-    }
-
-    return a;
-  });
 
   return {
     accounts,
@@ -59,8 +27,8 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = dispatch => ({
-  onAccountChange: (id, environment) => {
-    dispatch(actions.user.org.accounts.switchTo({ id, environment }));
+  onAccountChange: id => {
+    dispatch(actions.user.org.accounts.switchTo({ id }));
   },
   onAccountLeave: id => {
     dispatch(actions.user.org.accounts.leave(id));
@@ -125,11 +93,11 @@ class AccountList extends Component {
     this.setState({ anchorEl: null });
   };
 
-  handleAccountChange = (id, environment) => {
+  handleAccountChange = id => {
     const { history, onAccountChange } = this.props;
 
     history.push(getRoutePath('/'));
-    onAccountChange(id, environment);
+    onAccountChange(id);
   };
   handleAccountLeaveClick = account => {
     confirmDialog({
@@ -176,7 +144,7 @@ class AccountList extends Component {
             className={classes.currentAccount}
             aria-owns={open ? 'accountList' : null}
             aria-haspopup="true">
-            {selectedAccount && selectedAccount.label}
+            {selectedAccount && selectedAccount.company}
           </Typography>
           <RootRef rootRef={this.accountArrowRef}>
             <ArrowDownIcon className={classes.arrow} />
@@ -195,16 +163,16 @@ class AccountList extends Component {
               <ListItem
                 button
                 onClick={() => {
-                  !a.selected && this.handleAccountChange(a.id, a.environment);
+                  !a.selected && this.handleAccountChange(a.id);
                 }}
                 classes={{
                   root: classes.itemRoot,
                   container: classes.itemContainer,
                 }}
-                key={`${a.id}-${a.environment}`}>
+                key={a.id}>
                 <ListItemText
                   classes={{ root: a.selected && classes.selected }}
-                  primary={a.label || a.company}
+                  primary={a.company}
                 />
                 {a.canLeave && (
                   <ListItemSecondaryAction>
