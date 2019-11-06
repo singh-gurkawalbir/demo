@@ -847,7 +847,7 @@ export function integrationAppFlowSections(state, id, store) {
           (sections.find(sec => sec.id === store) || {}).sections || [];
       } else {
         flowSections =
-          (sections.find(sec => sec.mode !== 'uninstall') || {}).sections || [];
+          (sections.find(sec => sec.mode !== 'install') || {}).sections || [];
       }
     }
   } else {
