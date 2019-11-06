@@ -199,23 +199,6 @@ export function getFlowDataState(state, flowId, resourceId, isPageGenerator) {
   return (resourceMap[resourceId] && resourceMap[resourceId].data) || {};
 }
 
-export function getLastFlowNode(state, flowId, isPageGenerator = false) {
-  const flow = getFlowDataState(state, flowId);
-  const { pageGenerators = [], pageProcessors = [] } = flow;
-
-  if (isPageGenerator && pageGenerators.length) {
-    const lastPG = pageGenerators[pageGenerators.length - 1];
-
-    return lastPG._exportId;
-  }
-
-  if (!isPageGenerator && pageProcessors.length) {
-    const lastPP = pageProcessors[pageProcessors.length - 1];
-
-    return lastPP._exportId || lastPP._importId;
-  }
-}
-
 export function getSampleData(
   state,
   flowId,

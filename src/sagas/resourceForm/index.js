@@ -328,7 +328,7 @@ export function* initFormValues({
     form,
     resourceType,
     resource,
-    { developerMode, flowId, ignoreFunctionTransformations: false }
+    { developerMode, flowId }
   );
   let finalFieldMeta = fieldMeta;
 

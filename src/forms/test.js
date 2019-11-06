@@ -1062,8 +1062,7 @@ describe('form factory new layout', () => {
       const val = formFactory.getFieldsWithDefaults(
         testMeta,
         resourceType,
-        resource,
-        { developerMode: false }
+        resource
       );
 
       expect(val).toEqual({
