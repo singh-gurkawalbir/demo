@@ -182,13 +182,19 @@ export function licenses(state) {
     return [];
   }
 
-  const account = state.find(a => a.accessLevel === 'owner');
+  const licenses = [];
 
-  if (!account || !account.ownerUser || !account.ownerUser.licenses) {
-    return [];
-  }
+  state.forEach(account => {
+    if (
+      (account.accessLevel === 'owner' ||
+        (account.accepted && account.accessLevel === 'manage')) &&
+      account.ownerUser
+    ) {
+      licenses.push(...account.ownerUser.licenses);
+    }
+  });
 
-  return account.ownerUser.licenses;
+  return licenses;
 }
 
 export function sharedAccounts(state) {
