@@ -113,7 +113,6 @@ function LHSItem(props) {
 export default function IntegrationAppSettings(props) {
   const { integrationId, storeId, section } = props.match.params;
   const classes = useStyles();
-  const [redirected, setRedirected] = useState(false);
   const dispatch = useDispatch();
   const urlPrefix = getRoutePath(`connectors/${integrationId}/settings`);
   const permissions = useSelector(state => selectors.userPermissions(state));
@@ -155,7 +154,32 @@ export default function IntegrationAppSettings(props) {
   ]);
 
   useEffect(() => {
-    if ((!redirected && (section === 'flows' || !section)) || storeChanged) {
+    if (supportsMultiStore && !storeId && section) {
+      if (
+        Array.isArray(integrationAppFlowSections) &&
+        integrationAppFlowSections.length
+      ) {
+        if (supportsMultiStore) {
+          props.history.push(
+            `${`${urlPrefix}/${currentStore}/${integrationAppFlowSections[0].titleId}`}`
+          );
+        }
+      }
+    }
+  }, [
+    integrationAppFlowSections,
+    currentStore,
+    integrationId,
+    props.history,
+    section,
+    storeChanged,
+    supportsMultiStore,
+    urlPrefix,
+    storeId,
+  ]);
+
+  useEffect(() => {
+    if (section === 'flows' || !section || storeChanged) {
       if (
         Array.isArray(integrationAppFlowSections) &&
         integrationAppFlowSections.length
@@ -171,7 +195,6 @@ export default function IntegrationAppSettings(props) {
         }
 
         setStoreChanged(false);
-        setRedirected(true);
       }
     }
   }, [
@@ -179,7 +202,6 @@ export default function IntegrationAppSettings(props) {
     currentStore,
     integrationId,
     props.history,
-    redirected,
     section,
     storeChanged,
     supportsMultiStore,

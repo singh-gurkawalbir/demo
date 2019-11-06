@@ -913,7 +913,14 @@ export function integrationAppFlowSettings(state, id, section, storeId) {
   const selectedSection =
     allSections.find(sec => sec.title.replace(/\s/g, '') === section) || {};
 
-  requiredFlows = map(selectedSection.flows, '_id');
+  if (!section) {
+    allSections.forEach(sec => {
+      requiredFlows.push(...map(sec.flows, '_id'));
+    });
+  } else {
+    requiredFlows = map(selectedSection.flows, '_id');
+  }
+
   hasNSInternalIdLookup = some(
     selectedSection.flows,
     f => f.showNSInternalIdLookup
