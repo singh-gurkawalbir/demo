@@ -156,18 +156,23 @@ export default function IntegrationAppSettings(props) {
 
   useEffect(() => {
     if ((!redirected && (section === 'flows' || !section)) || storeChanged) {
-      if (supportsMultiStore) {
-        props.history.push(
-          `${`${urlPrefix}/${currentStore}/${integrationAppFlowSections[0].titleId}`}`
-        );
-      } else {
-        props.history.push(
-          `${urlPrefix}/${integrationAppFlowSections[0].titleId}`
-        );
-      }
+      if (
+        Array.isArray(integrationAppFlowSections) &&
+        integrationAppFlowSections.length
+      ) {
+        if (supportsMultiStore) {
+          props.history.push(
+            `${`${urlPrefix}/${currentStore}/${integrationAppFlowSections[0].titleId}`}`
+          );
+        } else {
+          props.history.push(
+            `${urlPrefix}/${integrationAppFlowSections[0].titleId}`
+          );
+        }
 
-      setStoreChanged(false);
-      setRedirected(true);
+        setStoreChanged(false);
+        setRedirected(true);
+      }
     }
   }, [
     integrationAppFlowSections,

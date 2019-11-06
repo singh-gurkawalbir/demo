@@ -124,6 +124,10 @@ export function previewTemplate(state, templateId) {
   return fromSession.previewTemplate(state && state.session, templateId);
 }
 
+export function isFileUploaded(state) {
+  return fromSession.isFileUploaded(state && state.session);
+}
+
 export function templateSetup(state, templateId) {
   return fromSession.template(state && state.session, templateId);
 }
@@ -852,7 +856,7 @@ export function integrationAppFlowSections(state, id, store) {
           (sections.find(sec => sec.id === store) || {}).sections || [];
       } else {
         flowSections =
-          (sections.find(sec => sec.mode !== 'uninstall') || {}).sections || [];
+          (sections.find(sec => sec.mode !== 'install') || {}).sections || [];
       }
     }
   } else {
@@ -876,6 +880,9 @@ export function integrationAppGeneralSettings(state, id, storeId) {
     const storeSection = (general || []).find(s => s.id === storeId) || {};
 
     ({ fields, sections: subSections } = storeSection);
+  } else if (Array.isArray(general)) {
+    ({ fields, sections: subSections } =
+      general.find(s => s.title === 'General') || {});
   } else {
     ({ fields, sections: subSections } = general || {});
   }

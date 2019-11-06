@@ -136,6 +136,10 @@ export function previewTemplate(state, templateId) {
   return fromTemplates.previewTemplate(state && state.templates, templateId);
 }
 
+export function isFileUploaded(state) {
+  return fromTemplates.isFileUploaded(state && state.templates);
+}
+
 export function template(state, templateId) {
   return fromTemplates.template(state && state.templates, templateId);
 }
