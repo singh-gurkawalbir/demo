@@ -27,7 +27,7 @@
   content: '\e067';
 }
 .query-builder .glyphicon-unchecked:before {
-  content: '\e157';
+  content: '';
 }
 .query-builder .glyphicon-remove:before {
   content: '\2715';
