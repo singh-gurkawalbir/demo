@@ -999,8 +999,7 @@ describe('form factory new layout', () => {
         testMeta,
         resourceType,
         resource,
-        false,
-        true
+        { developerMode: true }
       );
 
       expect(val).toEqual({
@@ -1064,8 +1063,7 @@ describe('form factory new layout', () => {
         testMeta,
         resourceType,
         resource,
-        false,
-        false
+        { developerMode: false }
       );
 
       expect(val).toEqual({
