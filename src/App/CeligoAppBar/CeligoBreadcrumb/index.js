@@ -4,6 +4,9 @@ import { Breadcrumbs, Typography } from '@material-ui/core';
 import { MODEL_PLURAL_TO_LABEL } from '../../../utils/resource';
 import ArrowRightIcon from '../../../components/icons/ArrowRightIcon';
 import IntegrationCrumb from './crumbs/Integration';
+import MarketplaceCrumb from './crumbs/Marketplace';
+import TemplateCrumb from './crumbs/Template';
+import IntegrationAppCrumb from './crumbs/IntegrationApp';
 
 const useStyles = makeStyles(theme => ({
   breadCrumb: {
@@ -55,10 +58,46 @@ const routes = [
     breadcrumb: () => 'installBase',
   },
   { path: '/pg/dashboard' }, // exclusion of breadcrumb prop will skip this segment.
-  { path: '/pg/connectors', breadcrumb: () => 'Connectors' },
-  { path: '/pg/marketplace', breadcrumb: () => 'Marketplace' },
+  {
+    path: '/pg/connectors/:integrationId/settings',
+    breadcrumb: IntegrationAppCrumb,
+    childRoutes: [
+      { path: '/users', breadcrumb: () => 'Users' },
+      { path: '/uninstall', breadcrumb: () => 'Uninstall' },
+      { path: '/connections', breadcrumb: () => 'Connections' },
+      { path: '/tokens', breadcrumb: () => 'API Tokens' },
+      { path: '/audit', breadcrumb: () => 'Audit Log' },
+      { path: '/subscription', breadcrumb: () => 'Subscription' },
+      { path: '/notifications', breadcrumb: () => 'Notifications' },
+    ],
+  },
+  {
+    path: '/pg/marketplace',
+    breadcrumb: () => 'Marketplace',
+    childRoutes: [
+      { path: '/:app', breadcrumb: MarketplaceCrumb },
+      {
+        path: '/templates/:templateId',
+        breadcrumb: TemplateCrumb,
+        childRoutes: [
+          { path: 'preview', breadcrumb: () => 'Preview' },
+          { path: 'install', breadcrumb: () => 'Install' },
+        ],
+      },
+    ],
+  },
   { path: '/pg/recycleBin', breadcrumb: () => 'Recycle-bin' },
-  { path: '/pg/myAccount', breadcrumb: () => 'My account' },
+  {
+    path: '/pg/myAccount',
+    breadcrumb: () => 'My account',
+    childRoutes: [
+      { path: '/users', breadcrumb: () => 'Users' },
+      { path: '/profile', breadcrumb: () => 'Profile' },
+      { path: '/subscription', breadcrumb: () => 'Subscription' },
+      { path: '/audit', breadcrumb: () => 'Audit Log' },
+      { path: '/transfers', breadcrumb: () => 'Transfers' },
+    ],
+  },
   { path: '/pg/templates', breadcrumb: () => 'Templates' },
   { path: '/pg/accesstokens', breadcrumb: () => 'Access Tokens' },
   // Dev tools

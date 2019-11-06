@@ -29,7 +29,11 @@ export default {
     'mongodb.host': { fieldId: 'mongodb.host' },
     'mongodb.database': { fieldId: 'mongodb.database' },
     'mongodb.username': { fieldId: 'mongodb.username' },
+
     'mongodb.password': { fieldId: 'mongodb.password' },
+    'mongodb.replicaSet': { fieldId: 'mongodb.replicaSet' },
+    'mongodb.ssl': { fieldId: 'mongodb.ssl' },
+    'mongodb.authSource': { fieldId: 'mongodb.authSource' },
     _borrowConcurrencyFromConnectionId: {
       fieldId: '_borrowConcurrencyFromConnectionId',
     },
@@ -49,7 +53,12 @@ export default {
       {
         collapsed: true,
         label: 'Advanced Settings',
-        fields: ['_borrowConcurrencyFromConnectionId'],
+        fields: [
+          'mongodb.replicaSet',
+          'mongodb.ssl',
+          'mongodb.authSource',
+          '_borrowConcurrencyFromConnectionId',
+        ],
       },
     ],
   },

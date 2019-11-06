@@ -6,6 +6,7 @@ export default function reducer(state = {}, action) {
   const {
     type,
     templateId,
+    isInstallIntegration,
     components,
     installSteps,
     connectionMap,
@@ -32,9 +33,17 @@ export default function reducer(state = {}, action) {
         }
 
         draft[templateId].preview = components;
+        draft[templateId].isInstallIntegration = isInstallIntegration;
         break;
       case actionTypes.TEMPLATE.CLEAR_TEMPLATE:
         delete draft[templateId];
+        break;
+      case actionTypes.TEMPLATE.CLEAR_UPLOADED:
+        if (!draft[templateId]) {
+          draft[templateId] = {};
+        }
+
+        delete draft[templateId].isInstallIntegration;
         break;
       case actionTypes.TEMPLATE.CREATED_COMPONENTS:
         if (!draft[templateId]) {
@@ -109,6 +118,24 @@ export function template(state, templateId) {
 
 export function previewTemplate(state, templateId) {
   return ((state || {})[templateId] || {}).preview || {};
+}
+
+export function isFileUploaded(state) {
+  if (!state) {
+    return {};
+  }
+
+  let uploadedZipFound;
+  let id;
+
+  Object.keys(state).forEach(key => {
+    if (state[key].isInstallIntegration) {
+      uploadedZipFound = true;
+      id = key;
+    }
+  });
+
+  return { templateId: id, isFileUploaded: uploadedZipFound };
 }
 
 export function templateInstallSteps(state, templateId) {

@@ -112,7 +112,7 @@ export default function ProfileMenuButton() {
             to={getRoutePath(
               permissions.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER
                 ? '/myAccount/subscription'
-                : '/myAccount/profiles'
+                : '/myAccount/profile'
             )}>
             {permissions.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER
               ? 'My Account'
