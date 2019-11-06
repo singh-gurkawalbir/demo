@@ -74,7 +74,17 @@ const routes = [
     ],
   },
   { path: '/pg/recycleBin', breadcrumb: () => 'Recycle-bin' },
-  { path: '/pg/myAccount', breadcrumb: () => 'My account' },
+  {
+    path: '/pg/myAccount',
+    breadcrumb: () => 'My account',
+    childRoutes: [
+      { path: '/users', breadcrumb: () => 'Users' },
+      { path: '/profile', breadcrumb: () => 'Profile' },
+      { path: '/subscription', breadcrumb: () => 'Subscription' },
+      { path: '/audit', breadcrumb: () => 'Audit Log' },
+      { path: '/transfers', breadcrumb: () => 'Transfers' },
+    ],
+  },
   { path: '/pg/templates', breadcrumb: () => 'Templates' },
   { path: '/pg/accesstokens', breadcrumb: () => 'Access Tokens' },
   // Dev tools

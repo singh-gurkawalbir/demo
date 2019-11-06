@@ -1782,6 +1782,7 @@ export default {
   'as2.userStationInfo.encoding': {
     type: 'select',
     label: 'MDN Encoding',
+    required: true,
     options: [
       {
         items: [
@@ -2240,8 +2241,7 @@ export default {
   },
   'mongodb.database': {
     type: 'text',
-    required: true,
-    label: 'Database Name',
+    label: 'Database',
   },
   'mongodb.username': {
     type: 'text',
@@ -2263,7 +2263,8 @@ export default {
   },
   'mongodb.ssl': {
     type: 'checkbox',
-    label: 'SSL',
+    label: 'TLS/SSL',
+    defaultValue: r => (r && r.mongodb && r.mongodb.ssl) || false,
   },
   'mongodb.authSource': {
     type: 'text',
