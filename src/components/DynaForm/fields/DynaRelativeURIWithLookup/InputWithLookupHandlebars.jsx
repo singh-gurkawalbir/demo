@@ -121,9 +121,7 @@ export default function InputWithLookupHandlebars(props) {
 
   const handleLookupAdd = lookup => {
     if (lookup) {
-      const _lookups = [...lookups];
-
-      _lookups.push(lookup);
+      const _lookups = [...lookups, lookup];
 
       handleLookupSelect(lookup);
       onLookupUpdate(_lookups);
@@ -193,9 +191,7 @@ export default function InputWithLookupHandlebars(props) {
     suggestionsListComponent = (
       <ul className={classes.suggestions}>
         {filteredSuggestions.map(suggestion => (
-          <React.Fragment key={suggestion.label}>
-            <li key={suggestion.label}>{suggestion.component}</li>
-          </React.Fragment>
+          <li key={suggestion.label}>{suggestion.component}</li>
         ))}
       </ul>
     );
