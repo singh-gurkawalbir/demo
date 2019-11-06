@@ -1,4 +1,4 @@
-import jsonPatch from 'fast-json-patch';
+import jsonPatch, { deepClone } from 'fast-json-patch';
 import { get } from 'lodash';
 
 export const searchMetaForFieldByFindFunc = (meta, findFieldFunction) => {
@@ -272,20 +272,100 @@ const refGeneration = field => {
   throw new Error('cant generate reference');
 };
 
-const addIdToFieldsAndRenameNameAttribute = (fields, _integrationId) => {
-  const getFieldConfig = (field = {}) => {
-    const newField = { ...field };
+const getFieldConfig = (field = {}) => {
+  const newField = { ...field };
 
-    if (newField.supportsRefresh)
-      newField.type = 'integrationrefreshableselect';
-    else if (!newField.type || newField.type === 'input') {
-      newField.type = 'text';
+  if (newField.supportsRefresh) newField.type = 'integrationrefreshableselect';
+  else if (!newField.type || newField.type === 'input') {
+    newField.type = 'text';
+  }
+
+  return newField;
+};
+
+function extractRules(fields, currFieldName, value) {
+  return fields.map(field => {
+    const { name, hidden, required } = field;
+    let rule = { ref: name };
+
+    if (hidden) {
+      rule = {
+        ...rule,
+        visibleRule: { field: currFieldName, is: [value] },
+      };
     }
 
-    return newField;
-  };
+    if (required) {
+      rule = {
+        ...rule,
+        requiredRule: { field: currFieldName, is: [value] },
+      };
+    }
 
-  return fields.map(field => {
+    return rule;
+  });
+}
+
+const pushRuleToMeta = (meta, rule) => {
+  // eslint-disable-next-line no-param-reassign
+  if (!meta) meta = [];
+  const matchingFieldRuleIndex = meta.findIndex(
+    ruleIter => ruleIter.field === rule.field
+  );
+
+  // if you find an existing field value push the value
+  if (matchingFieldRuleIndex > -1) {
+    meta[matchingFieldRuleIndex].is.push(...rule.is);
+  } else {
+    meta.push({ ...rule });
+  }
+
+  return meta;
+};
+
+export const translateDependencyProps = fieldMap => {
+  const fieldMapCopy = deepClone(fieldMap);
+
+  Object.keys(fieldMap).forEach(key => {
+    const { dependencies, type } = fieldMap[key];
+    const rules = [];
+
+    if (dependencies) {
+      Object.keys(dependencies).forEach(value => {
+        const dependencyFields = dependencies[value].fields;
+
+        if (type === 'checkbox')
+          rules.push(
+            ...(extractRules(dependencyFields, key, value === 'enabled') || [])
+          );
+        else rules.push(...(extractRules(dependencyFields, key, value) || []));
+      });
+
+      delete fieldMapCopy[key].dependencies;
+    }
+
+    rules.forEach(rule => {
+      const { ref, visibleRule, requiredRule } = rule;
+
+      if (visibleRule) {
+        fieldMapCopy[ref].visibleWhenAll = pushRuleToMeta(
+          fieldMapCopy[ref].visibleWhenAll,
+          visibleRule
+        );
+      } else if (requiredRule) {
+        fieldMapCopy[ref].validWhenAll = pushRuleToMeta(
+          fieldMapCopy[ref].validWhenAll,
+          requiredRule
+        );
+      }
+    });
+  });
+
+  return fieldMapCopy;
+};
+
+const translateFieldProps = (fields, _integrationId) =>
+  fields.map(field => {
     // TODO: generate correct name path
     const { name, options, default: defaultValue, tooltip } = field;
     // name is the unique identifier....verify with Ashok
@@ -310,7 +390,6 @@ const addIdToFieldsAndRenameNameAttribute = (fields, _integrationId) => {
       ],
     };
   });
-};
 
 export const integrationSettingsToDynaFormMetadata = (
   meta,
@@ -321,10 +400,7 @@ export const integrationSettingsToDynaFormMetadata = (
   const { fields, sections } = meta;
 
   if (fields) {
-    const addedFieldIdFields = addIdToFieldsAndRenameNameAttribute(
-      fields,
-      integrationId
-    );
+    const addedFieldIdFields = translateFieldProps(fields, integrationId);
 
     finalData.fieldMap = addedFieldIdFields.reduce(
       convertFieldsToFieldReferneceObj,
@@ -336,7 +412,7 @@ export const integrationSettingsToDynaFormMetadata = (
 
   if (sections) {
     sections.forEach(section => {
-      finalData.fieldMap = addIdToFieldsAndRenameNameAttribute(
+      finalData.fieldMap = translateFieldProps(
         section.fields,
         integrationId
       ).reduce(convertFieldsToFieldReferneceObj, finalData.fieldMap || {});
@@ -351,12 +427,13 @@ export const integrationSettingsToDynaFormMetadata = (
     finalData.layout.containers = sections.map(section => ({
       collapsed: section.collapsed || true,
       label: section.title,
-      fields: addIdToFieldsAndRenameNameAttribute(
-        section.fields,
-        integrationId
-      ).map(refGeneration),
+      fields: translateFieldProps(section.fields, integrationId).map(
+        refGeneration
+      ),
     }));
   }
+
+  finalData.fieldMap = translateDependencyProps(finalData.fieldMap);
 
   // Wrap everything in a adavancedSettings container
   if (!isGeneral) {
