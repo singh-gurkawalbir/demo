@@ -77,6 +77,15 @@ export default class AppRouting extends Component {
           }
         />
         <Route
+          path="/pg/marketplace/templates/:templateId"
+          exact
+          render={({ history, match }) =>
+            history.replace(
+              `/pg/marketplace/templates/${match.params.templateId}/preview`
+            )
+          }
+        />
+        <Route
           path="/pg/integrations/:integrationId/dashboard"
           component={IntegrationDashboard}
         />
