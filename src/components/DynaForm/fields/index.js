@@ -42,6 +42,7 @@ import DynaFieldExpressionSelect from './DynaFieldExpressionSelect';
 import DynaAutoSuggest from './DynaAutoSuggest';
 import DynaGenerateUrl from './DynaGenerateUrl';
 import DynaRefreshableIntegrationSetting from './DynaRefreshableSelect/DynaRefreshableIntegrationSetting';
+import DynaDate from './dateTime/DynaDate';
 
 export default {
   mapping: DynaImportMapping,
@@ -91,4 +92,5 @@ export default {
   autosuggest: DynaAutoSuggest,
   generateurl: DynaGenerateUrl,
   integrationrefreshableselect: DynaRefreshableIntegrationSetting,
+  date: DynaDate,
 };
