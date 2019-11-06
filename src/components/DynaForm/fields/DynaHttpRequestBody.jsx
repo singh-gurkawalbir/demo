@@ -7,16 +7,17 @@ import {
   getJSONSampleTemplate,
 } from '../../AFE/HttpRequestBodyEditor/templateMapping';
 
+// TODO: This is sample data to for purpose of test. To be replaced with actual sample data
 const sampleData = {
-  id: '48327',
-  recordType: 'customer',
-  Name: '1ScrewedUp',
-  Email: '',
-  Phone: '',
-  'Office Phone': '',
-  Fax: '',
-  'Primary Contact': '',
-  'Alt. Email': '',
+  // id: '48327',
+  // recordType: 'customer',
+  // Name: '1ScrewedUp',
+  // Email: '',
+  // Phone: '',
+  // 'Office Phone': '',
+  // Fax: '',
+  // 'Primary Contact': '',
+  // 'Alt. Email': '',
 };
 
 export default function DynaHttpRequestBody(props) {
