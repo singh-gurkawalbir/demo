@@ -4,7 +4,6 @@ import TablePagination from '@material-ui/core/TablePagination';
 import { withStyles } from '@material-ui/core/styles';
 import { withSnackbar } from 'notistack';
 import * as selectors from '../../reducers';
-import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../../constants/resource';
 import CeligoTable from '../../components/CeligoTable';
 import metadata from './metadata';
 
@@ -54,17 +53,6 @@ class AuditLogTable extends Component {
   };
   handleChangeRowsPerPage = event => {
     this.setState({ rowsPerPage: parseInt(event.target.value, 10) });
-  };
-
-  getResource = (resourceType, resourceId) => {
-    const { resourceDetails } = this.props;
-    const resourceTypePlural = RESOURCE_TYPE_SINGULAR_TO_PLURAL[resourceType];
-    const resource =
-      resourceType &&
-      resourceDetails[resourceTypePlural] &&
-      resourceDetails[resourceTypePlural][resourceId];
-
-    return resource;
   };
 
   render() {
