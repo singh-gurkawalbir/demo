@@ -1,23 +1,10 @@
-import React from 'react';
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  Button,
-  makeStyles,
-  Typography,
-} from '@material-ui/core';
+import { Fragment } from 'react';
+import { Button } from '@material-ui/core';
+import ModalDialog from '../../ModalDialog';
 import DynaForm from '../../DynaForm';
 import DynaSubmit from '../../DynaForm/DynaSubmit';
 
-const useStyles = makeStyles(() => ({
-  modalContent: {
-    width: '70vw',
-  },
-}));
-
 export default function OperandSettingsDialog({ ruleData, onClose, onSubmit }) {
-  const classes = useStyles();
   const transformations = {
     number: [
       { value: 'ceiling', label: 'Ceiling' },
@@ -127,11 +114,9 @@ export default function OperandSettingsDialog({ ruleData, onClose, onSubmit }) {
   };
 
   return (
-    <Dialog open maxWidth={false}>
-      <DialogTitle disableTypography>
-        <Typography variant="h6">Operand Settings</Typography>
-      </DialogTitle>
-      <DialogContent className={classes.modalContent}>
+    <ModalDialog show>
+      <span>Operand Settings</span>
+      <Fragment>
         <DynaForm
           fieldMeta={fieldMeta}
           optionsHandler={fieldMeta.optionsHandler}>
@@ -146,7 +131,7 @@ export default function OperandSettingsDialog({ ruleData, onClose, onSubmit }) {
             Save
           </DynaSubmit>
         </DynaForm>
-      </DialogContent>
-    </Dialog>
+      </Fragment>
+    </ModalDialog>
   );
 }
