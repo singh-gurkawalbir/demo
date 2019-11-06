@@ -6,7 +6,7 @@ import ArrowRightIcon from '../../../components/icons/ArrowRightIcon';
 import IntegrationCrumb from './crumbs/Integration';
 import MarketplaceCrumb from './crumbs/Marketplace';
 import TemplateCrumb from './crumbs/Template';
-import IntegrationAppCrumb from './crumbs/IntegrationApp';
+import { IntegrationAppCrumb, StoreCrumb } from './crumbs/IntegrationApp';
 
 const useStyles = makeStyles(theme => ({
   breadCrumb: {
@@ -69,6 +69,12 @@ const routes = [
       { path: '/audit', breadcrumb: () => 'Audit Log' },
       { path: '/subscription', breadcrumb: () => 'Subscription' },
       { path: '/notifications', breadcrumb: () => 'Notifications' },
+      {
+        path: '/:storeId',
+        breadcrumb: StoreCrumb,
+        childRoutes: [{ path: '/:section', breadcrumb: a => a.section }],
+      },
+      { path: '/:section', breadcrumb: a => a.section },
     ],
   },
   {
