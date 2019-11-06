@@ -103,8 +103,8 @@ export default function Subscription(props) {
           <Divider />
           <Typography variant="h4" className={classes.message}>
             Your subscription gives you access to install and run one instance
-            (tile) of this Integraion App. Contact your Account Manager for more
-            info.
+            (tile) of this Integration App. Contact your Account Manager for
+            more info.
           </Typography>
         </div>
       </div>
