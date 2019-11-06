@@ -1499,33 +1499,15 @@ export function resourceStatus(
 export function flowMetadata(state, id, scope) {
   if (!state || !id) return {};
 
-  const master = resource(state, 'flows', id);
-  const _exportId =
-    master &&
-    (master.pageGenerators && master.pageGenerators.length
-      ? master.pageGenerators[0]._exportId
-      : master._exportId);
-  const exp = resource(state, 'exports', _exportId);
-  const exports = fromData.resourceList(state && state.data, {
-    resourceType: 'exports',
+  const preferences = userPreferences(state);
+  const flows = flowListWithMetadata(state, {
+    type: 'flows',
+    sandbox: preferences.environment === 'sandbox',
+    filter: {
+      _id: id,
+    },
   }).resources;
-
-  if (isRealtimeExport(exp)) {
-    master.isRealtime = true;
-  }
-
-  if (isSimpleImportFlow(exp)) {
-    master.isSimpleImport = true;
-  }
-
-  if (showScheduleIcon(exports, exp, master)) {
-    master.showScheduleIcon = true;
-  }
-
-  if (isRunnable(exports, exp, master)) {
-    master.isRunnable = true;
-  }
-
+  const master = flows && flows[0];
   const { patch, conflict } = fromSession.stagedResource(
     state.session,
     id,
