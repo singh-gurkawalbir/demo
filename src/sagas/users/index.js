@@ -221,14 +221,14 @@ export function* rejectAccountInvite({ id }) {
   yield put(actions.resource.requestCollection('shared/ashares'));
 }
 
-export function* switchAccount({ id, environment }) {
+export function* switchAccount({ id }) {
   const userPreferences = yield select(selectors.userPreferences);
 
   try {
     yield put(
       actions.user.preferences.update({
         defaultAShareId: id,
-        environment,
+        environment: 'production',
       })
     );
   } catch (ex) {

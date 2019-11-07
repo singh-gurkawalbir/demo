@@ -109,7 +109,9 @@ export default function CeligoAppBar() {
                 (and re-run all init) I think this is causes by removing the 
                 session caching layer we had in place 
               */}
-              <li>{false && <AccountList />}</li>
+              <li>
+                <AccountList />
+              </li>
               <li>
                 <EnvironmentToggle />
               </li>
