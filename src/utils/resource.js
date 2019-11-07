@@ -60,7 +60,7 @@ export default function getExistingResourcePagePath(resourceDetails = {}) {
         break;
 
       case 'integrations':
-        path = `/${type}/${id}/settings/flows`;
+        path = `/${type}/${id}/flows`;
         break;
 
       default:

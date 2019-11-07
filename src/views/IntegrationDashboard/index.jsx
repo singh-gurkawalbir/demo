@@ -27,9 +27,9 @@ export default function IntegrationDashboard({ match }) {
       : selectors.resource(state, 'integrations', integrationId)
   );
   const integrationSettingsURL = getRoutePath(
-    `/${
-      integration && integration._connectorId ? 'connectors' : 'integrations'
-    }/${integrationId}/settings/flows`
+    integration && integration._connectorId
+      ? `/connectors/${integrationId}/settings/flows`
+      : `/integrations/${integrationId}/flows`
   );
 
   function handleRefresh() {

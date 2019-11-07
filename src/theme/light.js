@@ -435,5 +435,30 @@ export default {
         color: colors.celigoNeutral8,
       },
     },
+    MuiTabs: {
+      root: {
+        minHeight: 36,
+      },
+    },
+    MuiTab: {
+      root: {
+        minHeight: 36,
+        minWidth: 140,
+        textTransform: 'none',
+      },
+      labelIcon: {
+        minHeight: 'unset',
+      },
+      wrapper: {
+        '& > svg': {
+          fontSize: '1.1rem',
+        },
+        flexDirection: 'row',
+        '& > *:first-child': {
+          marginBottom: '0 !important',
+          marginRight: 8,
+        },
+      },
+    },
   },
 };

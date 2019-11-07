@@ -32,13 +32,18 @@ const routes = [
     path: '/pg/integrations/:integrationId/',
     breadcrumb: IntegrationCrumb,
     childRoutes: [
+      { path: '/flows', breadcrumb: () => 'Flows' },
       { path: '/dashboard', breadcrumb: () => 'Dashboard' },
-      { path: '/settings/flows', breadcrumb: () => 'Flows' },
-      { path: '/settings/general', breadcrumb: () => 'General' },
-      { path: '/settings/users', breadcrumb: () => 'Users' },
-      { path: '/settings/audit', breadcrumb: () => 'Audit log' },
-      { path: '/settings/connections', breadcrumb: () => 'Connections' },
-      { path: '/settings/notifications', breadcrumb: () => 'Notifications' },
+      { path: '/connections', breadcrumb: () => 'Connections' },
+      {
+        path: '/admin',
+        breadcrumb: () => 'Admin',
+        childRoutes: [
+          { path: '/users', breadcrumb: () => 'Users' },
+          { path: '/audit', breadcrumb: () => 'Audit log' },
+          { path: '/notifications', breadcrumb: () => 'Notifications' },
+        ],
+      },
       {
         path: '/flowBuilder/:flowId',
         breadcrumb: () => 'Flow builder',

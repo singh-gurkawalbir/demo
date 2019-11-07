@@ -33,21 +33,6 @@ const useStyles = makeStyles(theme => ({
       duration: theme.transitions.duration.enteringScreen,
     }),
   },
-  muiTabsRoot: {
-    minHeight: 36,
-    paddingLeft: theme.spacing(2),
-  },
-  muiTabRoot: {
-    minHeight: 36,
-    minWidth: 180,
-  },
-  muiTabWrapper: {
-    flexDirection: 'row',
-    '& > *:first-child': {
-      marginBottom: '0 !important',
-      marginRight: theme.spacing(1),
-    },
-  },
   actionsContainer: {
     paddingRight: theme.spacing(3),
     justifyContent: 'center',
@@ -73,15 +58,14 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function TabPanel({ children, value, index, classes, ...props }) {
+function TabPanel({ children, value, index, classes }) {
   return (
     <div
       role="tabpanel"
       className={classes.tabPanel}
       hidden={value !== index}
       id={`tabpanel-${index}`}
-      aria-labelledby={`tab-${index}`}
-      {...props}>
+      aria-labelledby={`tab-${index}`}>
       <div>{children}</div>
     </div>
   );
@@ -166,13 +150,13 @@ export default function BottomDrawer({ size, setSize, flow }) {
         </div>
       </div>
 
-      <TabPanel value={tabValue} index={0} size={size} classes={classes}>
+      <TabPanel value={tabValue} index={0} classes={classes}>
         <ConnectionPanel flow={flow} />
       </TabPanel>
-      <TabPanel value={tabValue} index={1} size={size} classes={classes}>
+      <TabPanel value={tabValue} index={1} classes={classes}>
         <RunDashboardPanel flow={flow} />
       </TabPanel>
-      <TabPanel value={tabValue} index={2} size={size} classes={classes}>
+      <TabPanel value={tabValue} index={2} classes={classes}>
         <AuditPanel flow={flow} />
       </TabPanel>
     </Drawer>

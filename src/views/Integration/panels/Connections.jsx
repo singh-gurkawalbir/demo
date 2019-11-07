@@ -1,0 +1,31 @@
+import { useSelector } from 'react-redux';
+import { makeStyles } from '@material-ui/styles';
+import LoadResources from '../../../components/LoadResources';
+import CeligoTable from '../../../components/CeligoTable';
+import metadata from '../../../components/ResourceTable/metadata/connections';
+import * as selectors from '../../../reducers';
+
+const useStyles = makeStyles(theme => ({
+  root: {
+    padding: theme.spacing(0),
+  },
+}));
+
+export default function ConnectionsPanel({ integrationId }) {
+  const classes = useStyles();
+  const connections = useSelector(state =>
+    selectors.integrationConnectionList(state, integrationId)
+  );
+
+  return (
+    <div className={classes.root}>
+      <LoadResources required resources="connections">
+        <CeligoTable
+          data={connections}
+          {...metadata}
+          actionProps={{ integrationId }}
+        />
+      </LoadResources>
+    </div>
+  );
+}
