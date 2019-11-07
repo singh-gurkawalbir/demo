@@ -4,7 +4,7 @@ import RefreshGenericResource from './RefreshGenericResource';
 import actions from '../../../../actions';
 import * as selectors from '../../../../reducers';
 
-export default function DynaRefreshableIntegrationSetting(props) {
+export default function RefreshableIntegrationAppSetting(props) {
   const {
     id: fieldName,
     _integrationId,

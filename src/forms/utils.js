@@ -275,14 +275,14 @@ const refGeneration = field => {
 const getFieldConfig = (field = {}) => {
   const newField = { ...field };
 
-  if (newField.supportsRefresh) newField.type = 'integrationrefreshableselect';
-  else if (!newField.type || newField.type === 'input') {
+  if (!newField.type || newField.type === 'input') {
     newField.type = 'text';
   } else if (newField.type === 'radio') {
     newField.type = 'radiogroup';
   } else if (newField.type === 'file') {
     newField.type = 'uploadfile';
-  }
+  } else if (newField.type === 'select' && newField.supportsRefresh)
+    newField.type = 'integrationapprefreshableselect';
 
   return newField;
 };

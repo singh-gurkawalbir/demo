@@ -5,6 +5,7 @@ import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker,
 } from '@material-ui/pickers';
+import ErroredMessageComponent from '../ErroredMessageComponent';
 
 export default function DatePicker(props) {
   const { id, label, onFieldChange, value } = props;
@@ -25,6 +26,7 @@ export default function DatePicker(props) {
         InputLabelProps={{ shrink: true }}
         onChange={value => setDateValue(value)}
       />
+      <ErroredMessageComponent {...props} />
     </MuiPickersUtilsProvider>
   );
 }
