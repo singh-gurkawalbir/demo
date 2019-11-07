@@ -21,6 +21,7 @@ export default function DynaConnectorNColumnMap(props) {
   return (
     <DynaTableView
       {...props}
+      collapsable
       isLoading={isLoading}
       shouldReset={shouldReset}
       metadata={metadata}

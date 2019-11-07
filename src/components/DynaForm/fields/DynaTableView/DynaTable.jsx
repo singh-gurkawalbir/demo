@@ -1,10 +1,16 @@
 import Input from '@material-ui/core/Input';
 import { useReducer, useEffect, useState } from 'react';
 import produce from 'immer';
-import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
-import IconButton from '@material-ui/core/IconButton';
+import {
+  ExpansionPanelSummary,
+  Typography,
+  Grid,
+  IconButton,
+  ExpansionPanelDetails,
+  ExpansionPanel,
+} from '@material-ui/core';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Spinner from '../../../Spinner';
 import RefreshIcon from '../../../icons/RefreshIcon';
 import DynaSelect from '../DynaSelect';
@@ -70,7 +76,7 @@ function reducer(state, action) {
   });
 }
 
-export default function DynaTable(props) {
+export const DynaTable = props => {
   const classes = useStyles();
   const {
     label,
@@ -305,5 +311,28 @@ export default function DynaTable(props) {
         </Grid>
       </Grid>
     </div>
+  );
+};
+
+export default function CollapsableTable(props) {
+  const { title, collapsable = false } = props;
+  const [shouldExpand, setShouldExpand] = useState(false);
+
+  return collapsable ? (
+    <ExpansionPanel
+      // eslint-disable-next-line react/no-array-index-key
+      expanded={shouldExpand}>
+      <ExpansionPanelSummary
+        data-test={title}
+        onClick={() => setShouldExpand(expand => !expand)}
+        expandIcon={<ExpandMoreIcon />}>
+        <Typography>{title}</Typography>
+      </ExpansionPanelSummary>
+      <ExpansionPanelDetails>
+        <DynaTable {...props} />
+      </ExpansionPanelDetails>
+    </ExpansionPanel>
+  ) : (
+    <DynaTable {...props} />
   );
 }
