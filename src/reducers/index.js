@@ -823,7 +823,7 @@ export function integrationAppConnectionList(state, integrationId, storeId) {
 }
 
 export function integrationAppSettings(state, id, storeId) {
-  if (!state) return {};
+  if (!state) return { settings: {} };
   const integrationResource = fromData.integrationAppSettings(state.data, id);
   const uninstallSteps = fromSession.uninstallSteps(
     state.resource,
