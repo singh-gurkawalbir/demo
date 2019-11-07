@@ -41,7 +41,15 @@ export default {
     {
       heading: 'Schedule',
       value: function ScheduleAction(r) {
-        return <Schedule.component resource={r} />;
+        if (r && r.isRealtime) {
+          return 'Realtime';
+        } else if (r && r.isSimpleImport) {
+          return 'Data Loader';
+        } else if (r && r.showScheduleIcon) {
+          return <Schedule.component resource={r} />;
+        }
+
+        return '';
       },
     },
     {

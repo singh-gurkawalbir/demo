@@ -5,7 +5,7 @@ export default {
     type: 'select',
     label: 'File Type',
     required: true,
-    defaultValue: 'csv',
+    defaultValue: r => (r && r.file && r.file.type) || 'csv',
     options: [
       {
         items: [

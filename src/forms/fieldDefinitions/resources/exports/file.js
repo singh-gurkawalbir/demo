@@ -35,6 +35,7 @@ export default {
     type: 'select',
     label: 'File type',
     required: true,
+    defaultValue: r => (r && r.file && r.file.type) || 'csv',
     options: [
       {
         items: [
@@ -227,10 +228,14 @@ export default {
   'file.xlsx.keyColumns': {
     type: 'text',
     label: 'Key Columns',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'file.xlsx.rowsPerRecord',
         is: [true],
+      },
+      {
+        field: 'file.type',
+        is: ['xlsx'],
       },
     ],
   },

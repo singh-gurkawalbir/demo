@@ -145,13 +145,14 @@ export default {
     },
   },
   'http.relativeURI': {
-    type: 'text',
+    type: 'relativeuriwithlookup',
     label: 'Relative URI',
     placeholder: 'Optional',
+    refreshOptionsOnChangesTo: ['http.lookups'],
     visibleWhen: [
       {
         field: 'http.method',
-        isNot: ['COMPOSITE'],
+        is: ['POST', 'PUT', 'DELETE', 'PATCH'],
       },
       {
         field: 'inputMode',

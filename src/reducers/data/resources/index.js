@@ -256,8 +256,8 @@ export function integrationInstallSteps(state, id) {
 export function integrationAppSettings(state, id) {
   const integration = resource(state, 'integrations', id);
 
-  if (!integration) {
-    return {};
+  if (!integration || !integration._connectorId) {
+    return { settings: {} };
   }
 
   return produce(integration, draft => {

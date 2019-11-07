@@ -133,21 +133,10 @@ export function accountSummary(state) {
 
   const prefs = fromPreferences.userPreferences(state && state.preferences);
   const id = prefs.defaultAShareId || summary[0].id;
-  let environment = prefs.environment || summary[0].environment;
-  const filteredAccount = summary.find(
-    a => a.id === id && a.environment === environment
-  );
+  const filteredAccount = summary.find(a => a.id === id);
 
   if (filteredAccount) {
     filteredAccount.selected = true;
-  } else {
-    [{ environment }] = summary;
-
-    if (summary.find(a => a.id === id && a.environment === environment)) {
-      summary.find(
-        a => a.id === id && a.environment === environment
-      ).selected = true;
-    }
   }
 
   return summary;
@@ -199,7 +188,12 @@ export function accountOwner(state) {
 }
 
 export function licenses(state) {
-  return fromAccounts.licenses(state && state.org && state.org.accounts);
+  const { defaultAShareId } = userPreferences(state);
+
+  return fromAccounts.licenses(
+    state && state.org && state.org.accounts,
+    defaultAShareId
+  );
 }
 
 // #endregion PUBLIC USER SELECTORS
