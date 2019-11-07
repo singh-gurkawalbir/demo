@@ -42,6 +42,7 @@ import DynaFieldExpressionSelect from './DynaFieldExpressionSelect';
 import DynaAutoSuggest from './DynaAutoSuggest';
 import DynaGenerateUrl from './DynaGenerateUrl';
 import DynaSQLQueryBuilder from './DynaSQLQueryBuilder';
+import DynaRelativeURIWithLookup from './DynaRelativeURIWithLookup';
 
 export default {
   mapping: DynaImportMapping,
@@ -91,4 +92,5 @@ export default {
   autosuggest: DynaAutoSuggest,
   generateurl: DynaGenerateUrl,
   sqlquerybuilder: DynaSQLQueryBuilder,
+  relativeuriwithlookup: DynaRelativeURIWithLookup,
 };
