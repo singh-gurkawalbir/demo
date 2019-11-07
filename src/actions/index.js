@@ -445,6 +445,16 @@ const integrationApp = {
       action(actionTypes.INTEGRATION_APPS.SETTINGS.UPGRADE_REQUESTED, {
         licenseId,
       }),
+    licenseMetadata: integration =>
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.LICENSES_METADATA, {
+        integration,
+      }),
+    updateLicenseMetadata: (integration, response) =>
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.UPDATE_LICENSES_METADATA, {
+        integrationId: integration._id,
+        response,
+      }),
+
     upgrade: (integration, license) =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.UPGRADE, {
         integration,

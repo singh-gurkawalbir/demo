@@ -27,6 +27,7 @@ import Notifications from '../../IntegrationSettings/Notifications';
 import AccessTokens from './AccessTokens';
 import getRoutePath from '../../../utils/routePaths';
 import CeligoPageBar from '../../../components/CeligoPageBar';
+import Addons from './Addons';
 
 const useStyles = makeStyles(theme => ({
   link: {
@@ -131,10 +132,26 @@ export default function IntegrationAppSettings(props) {
   );
   const [currentStore, setCurrentStore] = useState(defaultStoreId);
   const [storeChanged, setStoreChanged] = useState(false);
+  const [requestLicense, setRequestLicense] = useState(false);
   const integrationAppFlowSections = useSelector(state =>
     selectors.integrationAppFlowSections(state, integrationId, currentStore)
   );
+  const formState = useSelector(state =>
+    selectors.integrationAppAddOnState(state, integrationId)
+  );
+
+  useEffect(() => {
+    if (formState && !formState.addOns && !requestLicense) {
+      dispatch(actions.integrationApp.settings.licenseMetadata(integration));
+      setRequestLicense(true);
+    }
+  }, [dispatch, formState, integration, requestLicense]);
   const showAPITokens = permissions.accesstokens.view;
+  const hasAddOns =
+    formState &&
+    formState.addOns &&
+    formState.addOns.addOnMetaData &&
+    formState.addOns.addOnMetaData.length > 0;
 
   useEffect(() => {
     if (!isEmpty(integration)) {
@@ -211,6 +228,8 @@ export default function IntegrationAppSettings(props) {
     storeChanged,
     supportsMultiStore,
     urlPrefix,
+    dispatch,
+    integration,
   ]);
 
   useEffect(() => {
@@ -329,6 +348,9 @@ export default function IntegrationAppSettings(props) {
                   to={`${urlPrefix}/subscription`}
                   label="Subscription"
                 />
+                {hasAddOns && (
+                  <LHSItem to={`${urlPrefix}/addons`} label="Add-ons" />
+                )}
                 <LHSItem to={`${urlPrefix}/uninstall`} label="Uninstall" />
                 <Divider className={classes.notificationsLink} />
                 <LHSItem
@@ -356,8 +378,15 @@ export default function IntegrationAppSettings(props) {
               />
               <Route
                 path={`${urlRegexPrefix}/subscription`}
-                component={Subscription}
+                render={props => (
+                  <Subscription
+                    {...props}
+                    storeId={currentStore}
+                    supportsMultiStore={supportsMultiStore}
+                  />
+                )}
               />
+              <Route path={`${urlRegexPrefix}/addons`} component={Addons} />
               <Route
                 path={`${urlRegexPrefix}/uninstall`}
                 component={Uninstall}

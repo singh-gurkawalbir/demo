@@ -34,6 +34,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function Subscription(props) {
   const { integrationId } = props.match.params;
+  const { storeId, supportsMultiStore } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
   const integration = useSelector(state =>
@@ -42,6 +43,26 @@ export default function Subscription(props) {
   const license = useSelector(state =>
     selectors.integrationAppLicense(state, integrationId)
   );
+  const formState = useSelector(state =>
+    selectors.integrationAppAddOnState(state, integrationId)
+  );
+  const subscribedAddOns =
+    formState &&
+    formState.addOns &&
+    formState.addOns.addOnLicenses &&
+    formState.addOns.addOnLicenses.filter(model => {
+      if (supportsMultiStore) {
+        return model.storeId === storeId;
+      }
+
+      return true;
+    });
+  const hasSubscribedAddOns = subscribedAddOns && subscribedAddOns.length > 0;
+  const hasAddOns =
+    formState &&
+    formState.addOns &&
+    formState.addOns.addOnMetaData &&
+    formState.addOns.addOnMetaData.length > 0;
   const {
     plan,
     createdText,
@@ -106,6 +127,21 @@ export default function Subscription(props) {
             (tile) of this Integration App. Contact your Account Manager for
             more info.
           </Typography>
+          {hasAddOns && !hasSubscribedAddOns && (
+            <Typography>
+              <div className={classes.header}>
+                <Typography variant="h4">Add-ons</Typography>
+              </div>
+              <Button variant="contained">Get Add-ons</Button>
+              <Typography variant="h4" className={classes.message}>
+                You do not have any add-ons yet. Add-ons let you customize your
+                subscription to meet your specific business requirements.
+              </Typography>
+            </Typography>
+          )}
+          {hasAddOns && hasSubscribedAddOns && (
+            <Typography>Need to add</Typography>
+          )}
         </div>
       </div>
     </Fragment>

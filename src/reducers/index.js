@@ -719,6 +719,10 @@ export function integrationAppSettingsFormState(state, integrationId, flowId) {
   );
 }
 
+export function integrationAppAddOnState(state, integrationId) {
+  return fromSession.integrationAppAddOnState(state.session, integrationId);
+}
+
 export function checkUpgradeRequested(state, licenseId) {
   return fromSession.checkUpgradeRequested(state && state.session, licenseId);
 }
