@@ -134,7 +134,7 @@ export default {
         },
       },
       text: {
-        textTransform: 'uppercase',
+        // textTransform: 'uppercase',
         fontSize: '13px',
         lineHeight: '15px',
         '&::after': {

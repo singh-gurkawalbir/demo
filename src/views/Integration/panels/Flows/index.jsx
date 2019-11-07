@@ -1,9 +1,9 @@
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/styles';
-import * as selectors from '../../../reducers';
-import { STANDALONE_INTEGRATION } from '../../../utils/constants';
-import LoadResources from '../../../components/LoadResources';
-import ResourceTable from '../../../components/ResourceTable';
+import * as selectors from '../../../../reducers';
+import { STANDALONE_INTEGRATION } from '../../../../utils/constants';
+import LoadResources from '../../../../components/LoadResources';
+import ResourceTable from '../../../../components/ResourceTable';
 
 const useStyles = makeStyles(theme => ({
   root: {

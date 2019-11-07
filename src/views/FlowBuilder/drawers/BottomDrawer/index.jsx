@@ -46,9 +46,6 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center',
     width: '100%',
   },
-  tabRoot: {
-    flexGrow: 1,
-  },
   tabPanel: {
     overflow: 'auto',
     height: '100%',
@@ -93,10 +90,6 @@ export default function BottomDrawer({ size, setSize, flow }) {
 
   function tabProps(index) {
     return {
-      classes: {
-        root: classes.muiTabRoot,
-        wrapper: classes.muiTabWrapper,
-      },
       id: `tab-${index}`,
       'aria-controls': `tabpanel-${index}`,
     };
@@ -118,8 +111,6 @@ export default function BottomDrawer({ size, setSize, flow }) {
       <div className={classes.tabBar}>
         <Tabs
           value={tabValue}
-          classes={{ root: classes.muiTabsRoot }}
-          className={classes.tabRoot}
           onChange={handleTabChange}
           indicatorColor="primary"
           textColor="primary"

@@ -22,13 +22,18 @@ const useStyles = makeStyles(theme => ({
   tabContainer: {
     padding: theme.spacing(0, 3),
   },
+  tabPanel: {
+    border: 'solid 1px',
+    borderColor: theme.palette.secondary.lightest,
+  },
 }));
 
-function TabPanel({ children, currentTab, index }) {
+function TabPanel({ children, currentTab, index, classes }) {
   return (
     <div
       role="tabpanel"
       hidden={currentTab !== index}
+      className={classes.tabPanel}
       id={`tabpanel-${index}`}
       aria-labelledby={`tab-${index}`}>
       <div>{children}</div>
@@ -101,16 +106,16 @@ export default function Integration({ match }) {
           <Tab {...tabProps(4)} icon={<AdminIcon />} label="Admin" />
         </Tabs>
 
-        <TabPanel currentTab={currentTabIndex} index={0}>
+        <TabPanel currentTab={currentTabIndex} index={0} classes={classes}>
           <FlowsPanel integrationId={integrationId} />
         </TabPanel>
-        <TabPanel currentTab={currentTabIndex} index={1}>
+        <TabPanel currentTab={currentTabIndex} index={1} classes={classes}>
           <DashboardPanel integrationId={integrationId} />
         </TabPanel>
-        <TabPanel currentTab={currentTabIndex} index={2}>
+        <TabPanel currentTab={currentTabIndex} index={2} classes={classes}>
           <ConnectionsPanel integrationId={integrationId} />
         </TabPanel>
-        <TabPanel currentTab={currentTabIndex} index={3}>
+        <TabPanel currentTab={currentTabIndex} index={3} classes={classes}>
           <AdminPanel integrationId={integrationId} />
         </TabPanel>
       </div>
