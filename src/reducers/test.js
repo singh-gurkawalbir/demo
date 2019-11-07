@@ -1824,12 +1824,16 @@ describe('integrationAppSettings reducer', () => {
   ];
 
   test('should not throw error for bad params', () => {
-    expect(selectors.integrationAppSettings({}, 'integrationId')).toEqual({});
-    expect(selectors.integrationAppSettings(undefined, undefined)).toEqual({});
+    expect(selectors.integrationAppSettings({}, 'integrationId')).toEqual({
+      settings: {},
+    });
+    expect(selectors.integrationAppSettings(undefined, undefined)).toEqual({
+      settings: {},
+    });
     expect(
       selectors.integrationAppSettings(undefined, undefined, undefined)
-    ).toEqual({});
-    expect(selectors.integrationAppSettings()).toEqual({});
+    ).toEqual({ settings: {} });
+    expect(selectors.integrationAppSettings()).toEqual({ settings: {} });
   });
 
   test('should return correct integration App settings for multistore integrationApp', () => {
