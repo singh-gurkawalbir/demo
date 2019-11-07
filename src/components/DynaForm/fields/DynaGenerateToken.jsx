@@ -1,10 +1,16 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
+import { deepClone } from 'fast-json-patch';
+import { FormContext } from 'react-forms-processor/dist';
 import uuid from 'uuid';
 import { makeStyles } from '@material-ui/styles';
 import Button from '@material-ui/core/Button';
+import * as selectors from '../../../reducers';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
+import actions from '../../../actions';
 import DynaTextForSetFields from './text/DynaTextForSetFields';
+import { getWebhookUrl } from '../../../utils/resource';
 
 const useStyles = makeStyles(() => ({
   children: {
@@ -12,18 +18,27 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export default function GenerateToken(props) {
+function GenerateToken(props) {
   const {
     onFieldChange,
+    resourceId,
     id,
     value,
     buttonLabel,
     setFieldValue = '',
     setFieldIds = [],
+    formContext,
+    name,
   } = props;
+  const { value: formValues } = formContext;
   const classes = useStyles();
   const [enqueueSnackbar] = useEnqueueSnackbar();
   const [token, setToken] = useState(null);
+  const [url, setUrl] = useState(false);
+  const dispatch = useDispatch();
+  const finalResourceId = useSelector(state =>
+    selectors.createdResourceId(state, resourceId)
+  );
   const handleGenerateClick = () => {
     const tokenValue = uuid.v4().replace(/-/g, '');
 
@@ -32,7 +47,48 @@ export default function GenerateToken(props) {
     setFieldIds.forEach(fieldId => {
       onFieldChange(fieldId, setFieldValue);
     });
+    const formValuesCopy = deepClone(formValues);
+
+    formValuesCopy[name] = tokenValue;
+    dispatch(
+      actions.resourceForm.submit(
+        'exports',
+        resourceId,
+        formValuesCopy,
+        null,
+        true
+      )
+    );
+    setUrl(true);
   };
+
+  useEffect(() => {
+    if (finalResourceId) {
+      const patchSet = [
+        {
+          op: 'replace',
+          path: '/webhook/token',
+          value: token,
+        },
+      ];
+
+      dispatch(
+        actions.resource.patchStaged(finalResourceId, patchSet, 'value')
+      );
+
+      actions.resourceForm.init('exports', finalResourceId, false, true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [finalResourceId]);
+
+  useEffect(() => {
+    if (url) {
+      const whURL = getWebhookUrl(formValues, resourceId);
+
+      onFieldChange('webhook.url', whURL);
+      setUrl(false);
+    }
+  }, [finalResourceId, formValues, id, onFieldChange, resourceId, url]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'row' }}>
@@ -48,7 +104,7 @@ export default function GenerateToken(props) {
         />
       </div>
       <div>
-        {token && (
+        {value.match(/^[A-Za-z0-9]/) ? (
           <CopyToClipboard
             text={value}
             onCopy={() =>
@@ -64,9 +120,18 @@ export default function GenerateToken(props) {
               copy token
             </Button>
           </CopyToClipboard>
+        ) : (
+          <Button onClick={handleGenerateClick}>{buttonLabel}</Button>
         )}
-        {!token && <Button onClick={handleGenerateClick}>{buttonLabel}</Button>}
       </div>
     </div>
   );
 }
+
+const DynaGenerateTokenFormContext = props => (
+  <FormContext.Consumer {...props}>
+    {form => <GenerateToken {...props} formContext={form} />}
+  </FormContext.Consumer>
+);
+
+export default DynaGenerateTokenFormContext;
