@@ -14,7 +14,6 @@ function ExportFilterDialog({ flowId, resource, onClose }) {
       isPageGenerator: true,
     })
   );
-  // console.log(`exportFilter sampleData ${JSON.stringify(sampleData)}`);
   const rules = useMemo(
     () => resource && resource.filter && resource.filter.rules,
     // eslint-disable-next-line react-hooks/exhaustive-deps
