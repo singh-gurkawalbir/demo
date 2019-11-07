@@ -6,6 +6,7 @@ import ArrowRightIcon from '../../../components/icons/ArrowRightIcon';
 import IntegrationCrumb from './crumbs/Integration';
 import MarketplaceCrumb from './crumbs/Marketplace';
 import TemplateCrumb from './crumbs/Template';
+import { IntegrationAppCrumb, StoreCrumb } from './crumbs/IntegrationApp';
 
 const useStyles = makeStyles(theme => ({
   breadCrumb: {
@@ -57,7 +58,36 @@ const routes = [
     breadcrumb: () => 'installBase',
   },
   { path: '/pg/dashboard' }, // exclusion of breadcrumb prop will skip this segment.
-  { path: '/pg/connectors', breadcrumb: () => 'Connectors' },
+  {
+    path: '/pg/connectors/:integrationId/settings',
+    breadcrumb: IntegrationAppCrumb,
+    childRoutes: [
+      { path: '/users', breadcrumb: () => 'Users' },
+      { path: '/uninstall', breadcrumb: () => 'Uninstall' },
+      { path: '/connections', breadcrumb: () => 'Connections' },
+      { path: '/tokens', breadcrumb: () => 'API Tokens' },
+      { path: '/general', breadcrumb: () => 'General' },
+      { path: '/audit', breadcrumb: () => 'Audit Log' },
+      { path: '/subscription', breadcrumb: () => 'Subscription' },
+      { path: '/notifications', breadcrumb: () => 'Notifications' },
+      {
+        path: '/:storeId',
+        breadcrumb: StoreCrumb,
+        childRoutes: [
+          { path: '/users', breadcrumb: () => 'Users' },
+          { path: '/uninstall', breadcrumb: () => 'Uninstall' },
+          { path: '/connections', breadcrumb: () => 'Connections' },
+          { path: '/tokens', breadcrumb: () => 'API Tokens' },
+          { path: '/general', breadcrumb: () => 'General' },
+          { path: '/audit', breadcrumb: () => 'Audit Log' },
+          { path: '/subscription', breadcrumb: () => 'Subscription' },
+          { path: '/notifications', breadcrumb: () => 'Notifications' },
+          { path: '/:section', breadcrumb: a => a.section },
+        ],
+      },
+      { path: '/:section', breadcrumb: a => a.section },
+    ],
+  },
   {
     path: '/pg/marketplace',
     breadcrumb: () => 'Marketplace',
