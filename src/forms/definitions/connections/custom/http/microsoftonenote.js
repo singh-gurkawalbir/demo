@@ -7,9 +7,9 @@ export default {
     '/http/mediaType': 'json',
     '/http/baseURI': `https://graph.microsoft.com/v1.0`,
     '/http/auth/oauth/authURI':
-      'https://login.microsoftonline.com/common/oauth2/authorize',
+      'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
     '/http/auth/oauth/tokenURI':
-      'https://login.microsoftonline.com/common/oauth2/token',
+      'https://login.microsoftonline.com/common/oauth2/v2.0/token',
     '/http/auth/oauth/scope': [
       ...['openid', 'offline_access'],
       ...formValues['/http/auth/oauth/scope'],
@@ -23,10 +23,11 @@ export default {
       scopes: [
         'openid',
         'offline_access',
-        'Calendars.ReadWrite',
-        'Calendars.Read',
-        'MailboxSettings.Read',
-        'MailboxSettings.ReadWrite',
+        'Notes.Create',
+        'Notes.Read',
+        'Notes.ReadWrite',
+        'Notes.Read.All',
+        'Notes.ReadWrite.All',
       ],
     },
     httpAdvanced: { formId: 'httpAdvanced' },

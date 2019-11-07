@@ -10,7 +10,10 @@ export function* fetchMetadata({ fieldType, fieldName, _integrationId }) {
   try {
     metadata = yield call(apiCallWithRetry, {
       path,
-      opts: { body: { type: fieldType, fieldName }, method: 'PUT' },
+      opts: {
+        body: { ...(fieldType ? { type: fieldType } : {}), fieldName },
+        method: 'PUT',
+      },
       message: `Fetching metadata`,
     });
   } catch (error) {
