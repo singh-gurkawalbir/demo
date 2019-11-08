@@ -7,6 +7,7 @@ import javascript from './javascript';
 import structuredFileParser from './structuredFileParser';
 import structuredFileGenerator from './structuredFileGenerator';
 import sql from './sql';
+import filter from './filter';
 
 const logicMap = {
   xmlParser,
@@ -18,6 +19,7 @@ const logicMap = {
   structuredFileParser,
   structuredFileGenerator,
   sql,
+  filter,
 };
 
 function getLogic(editor) {
