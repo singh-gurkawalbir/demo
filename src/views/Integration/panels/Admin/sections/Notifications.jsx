@@ -1,11 +1,12 @@
 import { Fragment, useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Typography } from '@material-ui/core';
+// import { Typography } from '@material-ui/core';
 import * as selectors from '../../../../../reducers';
 import actions from '../../../../../actions';
 import DynaForm from '../../../../../components/DynaForm';
 import DynaSubmit from '../../../../../components/DynaForm/DynaSubmit';
 import LoadResources from '../../../../../components/LoadResources';
+import PanelHeader from '../../PanelHeader';
 
 export default function NotificationsSection({ integrationId }) {
   const dispatch = useDispatch();
@@ -81,7 +82,7 @@ export default function NotificationsSection({ integrationId }) {
 
   return (
     <Fragment>
-      <Typography>Notifications</Typography>
+      <PanelHeader title="Notifications" />
 
       <LoadResources required resources="notifications,flows,connections">
         <DynaForm fieldMeta={fieldMeta} key={count} render>

@@ -58,7 +58,7 @@ export default function Integration({ match }) {
 
     const newUrl = parts.join('/');
 
-    console.log('new tab:', newUrl);
+    // console.log('new tab:', newUrl);
 
     history.push(newUrl);
   }
@@ -77,7 +77,8 @@ export default function Integration({ match }) {
   return (
     <LoadResources required resources="integrations">
       <CeligoPageBar
-        title={integration ? integration.name : 'Standalone integrations'}>
+        title={integration ? integration.name : 'Standalone integrations'}
+        infoText={integration ? integration.description : undefined}>
         <IconTextButton component={Link} to="clone" variant="text">
           <CopyIcon /> Clone integration
         </IconTextButton>

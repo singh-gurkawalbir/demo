@@ -39,6 +39,7 @@ const routes = [
         path: '/admin',
         breadcrumb: () => 'Admin',
         childRoutes: [
+          { path: '/general', breadcrumb: () => 'General' },
           { path: '/users', breadcrumb: () => 'Users' },
           { path: '/audit', breadcrumb: () => 'Audit log' },
           { path: '/notifications', breadcrumb: () => 'Notifications' },
@@ -132,6 +133,9 @@ const routes = [
   },
 ];
 const commonChildRoutes = [
+  // TODO: The clone resource feature will be accessible from various pages and
+  // acts like the resource drawer. They share the property of preserving the url and
+  // append a /clone route to the end of an existing route url.
   {
     path: '/:operation/:resourceType/:id',
     breadcrumb: ({ operation, resourceType }) =>
@@ -139,9 +143,6 @@ const commonChildRoutes = [
         MODEL_PLURAL_TO_LABEL[resourceType]
       }`,
   },
-  // TODO: clone resource, once complete is accessible from various pages and
-  // acts like the resource drawer, in that it preserves the url and simple
-  // appends to any existing route url.
 ];
 
 function parseUrl(pathname, routes, url = '', params = {}) {

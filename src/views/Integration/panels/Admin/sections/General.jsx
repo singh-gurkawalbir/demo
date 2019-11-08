@@ -1,10 +1,10 @@
 import { Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Typography } from '@material-ui/core';
 import * as selectors from '../../../../../reducers';
 import actions from '../../../../../actions';
 import DynaForm from '../../../../../components/DynaForm';
 import DynaSubmit from '../../../../../components/DynaForm/DynaSubmit';
+import PanelHeader from '../../PanelHeader';
 
 export default function GeneralSection({ integrationId }) {
   const dispatch = useDispatch();
@@ -68,7 +68,7 @@ export default function GeneralSection({ integrationId }) {
 
   return (
     <Fragment>
-      <Typography>General</Typography>
+      <PanelHeader title="General" />
 
       <DynaForm fieldMeta={fieldMeta} render>
         <DynaSubmit onClick={handleSubmit}>Save</DynaSubmit>

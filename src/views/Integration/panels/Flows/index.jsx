@@ -4,10 +4,14 @@ import * as selectors from '../../../../reducers';
 import { STANDALONE_INTEGRATION } from '../../../../utils/constants';
 import LoadResources from '../../../../components/LoadResources';
 import ResourceTable from '../../../../components/ResourceTable';
+import IconTextButton from '../../../../components/IconTextButton';
+import AddIcon from '../../../../components/icons/AddIcon';
+import AttachIcon from '../../../../components/icons/ConnectionsIcon';
+import PanelHeader from '../PanelHeader';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    padding: theme.spacing(0),
+    backgroundColor: theme.palette.common.white,
   },
 }));
 
@@ -33,6 +37,15 @@ export default function FlowsPanel({ integrationId }) {
 
   return (
     <div className={classes.root}>
+      <PanelHeader title="Integration flows">
+        <IconTextButton>
+          <AddIcon /> Create flow
+        </IconTextButton>
+        <IconTextButton>
+          <AttachIcon /> Attach flow
+        </IconTextButton>
+      </PanelHeader>
+
       <LoadResources required resources="flows, connections, exports, imports">
         <ResourceTable resourceType="flows" resources={flows} />
       </LoadResources>
