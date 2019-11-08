@@ -1,39 +1,43 @@
 import { Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Button } from '@material-ui/core';
+import { Button, Card, CardActions, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
 
 const useStyles = makeStyles(theme => ({
   root: {
+    margin: theme.spacing(2),
     display: 'grid',
-    gridTemplateColumns: `repeat(auto-fill, minmax(204px, 1fr));`,
-    gridRowGap: theme.spacing(3),
-    padding: '24px 10px',
-    [theme.breakpoints.up('xl')]: {
-      gridTemplateColumns: `repeat(7, 1fr);`,
+    gridTemplateColumns: `repeat(auto-fill, minmax(300px, 1fr));`,
+    gridGap: theme.spacing(2),
+    '& > div': {
+      maxWidth: '100%',
+      minWidth: '100%',
+    },
+    [theme.breakpoints.down('xs')]: {
+      gridTemplateColumns: `repeat(1, minmax(100%, 1fr));`,
+    },
+    [theme.breakpoints.up('xs')]: {
+      gridTemplateColumns: `repeat(auto-fill, minmax(290px, 1fr));`,
     },
   },
   card: {
-    width: '204px',
-    height: '204px',
-    cursor: 'pointer',
+    height: '318px',
     border: '1px solid',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
+    position: 'relative',
     borderColor: theme.palette.secondary.lightest,
+    margin: '0 auto',
+    borderRadius: '4px',
   },
-  tile: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: 'column',
+  description: {
+    width: '200px',
+    maxHeight: '100px',
+    overflowY: 'auto',
   },
-  label: {
-    textTransform: 'capitalize',
-    paddingTop: theme.spacing(1),
+  cardAction: {
+    position: 'absolute',
+    bottom: 10,
   },
 }));
 
@@ -64,17 +68,21 @@ export default function MarketplaceList({ integrationId }) {
     <Fragment>
       <div className={classes.root}>
         {addOnMetadata.map(data => (
-          <div key={data.id}>
-            <Fragment>{data.name}</Fragment>
-            <Fragment>{data.description}</Fragment>
-            <Button
-              variant="contained"
-              color="primary"
-              className={classes.button}
-              onClick={() => handleUpgrade(data.name)}>
-              CONTACT SALES
-            </Button>
-          </div>
+          <Card key={data.id} className={classes.card} elevation={0}>
+            <div className={classes.header}>
+              <Typography variant="h4">{data.name}</Typography>
+            </div>
+            <Typography>{data.description}</Typography>
+            <CardActions className={classes.cardAction}>
+              <Button
+                data-test="contactSales"
+                onClick={() => handleUpgrade(data.name)}
+                variant="text"
+                color="primary">
+                Contact Sales
+              </Button>
+            </CardActions>
+          </Card>
         ))}
       </div>
     </Fragment>

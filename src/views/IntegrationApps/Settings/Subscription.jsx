@@ -4,6 +4,8 @@ import { Fragment } from 'react';
 import { Typography, Grid, Button, Divider } from '@material-ui/core';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
+import CeligoTable from '../../../components/CeligoTable';
+import metadata from './AddonsMetadata';
 
 const useStyles = makeStyles(theme => ({
   header: {
@@ -34,6 +36,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function Subscription(props) {
   const { integrationId } = props.match.params;
+  const { history, match } = props;
   const { storeId, supportsMultiStore } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -57,6 +60,19 @@ export default function Subscription(props) {
 
       return true;
     });
+
+  subscribedAddOns.forEach((f, i) => {
+    const addon =
+      formState &&
+      formState.addOns &&
+      formState.addOns.addOnMetaData &&
+      formState.addOns.addOnMetaData.find(addOn => addOn.id === f.id);
+
+    subscribedAddOns[i].key = i;
+    subscribedAddOns[i].name = addon ? addon.name : f.id;
+    subscribedAddOns[i].description = addon ? addon.description : '';
+  });
+
   const hasSubscribedAddOns = subscribedAddOns && subscribedAddOns.length > 0;
   const hasAddOns =
     formState &&
@@ -122,27 +138,55 @@ export default function Subscription(props) {
             </Grid>
           </div>
           <Divider />
-          <Typography variant="h4" className={classes.message}>
-            Your subscription gives you access to install and run one instance
-            (tile) of this Integration App. Contact your Account Manager for
-            more info.
-          </Typography>
-          {hasAddOns && !hasSubscribedAddOns && (
-            <Typography>
-              <div className={classes.header}>
-                <Typography variant="h4">Add-ons</Typography>
+        </div>
+        <Typography className={classes.message}>
+          Your subscription gives you access to install and run one instance
+          (tile) of this Integration App. Contact your Account Manager for more
+          info.
+        </Typography>
+        {hasAddOns && !hasSubscribedAddOns && (
+          <Typography>
+            <Typography className={classes.header}>
+              <Typography>Add-Ons</Typography>
+            </Typography>
+            <div className={classes.content}>
+              <div className={classes.planContent}>
+                <Grid container className={classes.container}>
+                  <Grid item xs={3}>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      className={classes.button}
+                      onClick={() =>
+                        history.push(
+                          match.url.replace('subscription', 'addons')
+                        )
+                      }>
+                      GET ADD-ONS
+                    </Button>
+                  </Grid>
+                </Grid>
               </div>
-              <Button variant="contained">Get Add-ons</Button>
-              <Typography variant="h4" className={classes.message}>
+              <Typography className={classes.message}>
                 You do not have any add-ons yet. Add-ons let you customize your
                 subscription to meet your specific business requirements.
               </Typography>
+            </div>
+          </Typography>
+        )}
+        {hasAddOns && hasSubscribedAddOns && (
+          <Fragment>
+            <div className={classes.header}>
+              <Typography>Add-Ons</Typography>
+            </div>
+            <Typography className={classes.message}>
+              Add-ons let you customize your subscription to meet your specific
+              business requirements. They will expire when your Integration App
+              subscription expires.
             </Typography>
-          )}
-          {hasAddOns && hasSubscribedAddOns && (
-            <Typography>Need to add</Typography>
-          )}
-        </div>
+            <CeligoTable data={subscribedAddOns} {...metadata} />
+          </Fragment>
+        )}
       </div>
     </Fragment>
   );
