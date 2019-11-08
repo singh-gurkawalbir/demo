@@ -467,6 +467,8 @@ const integrationApp = {
         actionTypes.INTEGRATION_APPS.SETTINGS.FORM.SUBMIT_COMPLETE,
         params
       ),
+    submitFailed: params =>
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.FORM.SUBMIT_FAILED, params),
   },
   installer: {
     installStep: (integrationId, installerFunction) =>
@@ -570,12 +572,18 @@ const template = {
     action(actionTypes.TEMPLATE.INSTALL_FAILURE, { templateId }),
   createdComponents: (components, templateId) =>
     action(actionTypes.TEMPLATE.CREATED_COMPONENTS, { components, templateId }),
-  receivedPreview: (components, templateId) =>
-    action(actionTypes.TEMPLATE.RECEIVED_PREVIEW, { components, templateId }),
+  receivedPreview: (components, templateId, isInstallIntegration) =>
+    action(actionTypes.TEMPLATE.RECEIVED_PREVIEW, {
+      components,
+      templateId,
+      isInstallIntegration,
+    }),
   updateStep: (step, templateId) =>
     action(actionTypes.TEMPLATE.UPDATE_STEP, { step, templateId }),
   createComponents: templateId =>
     action(actionTypes.TEMPLATE.CREATE_COMPONENTS, { templateId }),
+  clearUploaded: templateId =>
+    action(actionTypes.TEMPLATE.CLEAR_UPLOADED, { templateId }),
   clearTemplate: templateId =>
     action(actionTypes.TEMPLATE.CLEAR_TEMPLATE, { templateId }),
   verifyBundleOrPackageInstall: (step, connection, templateId) =>
@@ -595,6 +603,7 @@ const agent = {
     action(actionTypes.AGENT.DOWNLOAD_INSTALLER, { osType, id }),
 };
 const file = {
+  previewZip: file => action(actionTypes.FILE.PREVIEW_ZIP, { file }),
   upload: (resourceType, resourceId, fileType, file) =>
     action(actionTypes.FILE.UPLOAD, {
       resourceType,

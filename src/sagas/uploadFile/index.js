@@ -1,5 +1,6 @@
-import { call, takeEvery, select } from 'redux-saga/effects';
+import { call, takeEvery, select, put } from 'redux-saga/effects';
 import actionTypes from '../../actions/types';
+import actions from '../../actions';
 import { apiCallWithRetry } from '../index';
 import { userProfile } from '../../reducers';
 
@@ -53,4 +54,24 @@ export function* uploadRawData({
   }
 }
 
-export const uploadFileSagas = [takeEvery(actionTypes.FILE.UPLOAD, uploadFile)];
+export function* previewZip({ file, fileType = 'application/zip' }) {
+  const uploadPath = `/s3SignedURL?file_name=${file.name}&file_type=${fileType}`;
+
+  try {
+    const runKey = yield call(uploadFile, { file, fileType, uploadPath });
+    const previewPath = `/integrations/template/preview?runKey=${runKey}`;
+    const components = yield call(apiCallWithRetry, {
+      path: previewPath,
+      message: 'Loading Components from zip file',
+    });
+
+    yield put(actions.template.receivedPreview(components, runKey, true));
+  } catch (e) {
+    // @TODO handle error
+  }
+}
+
+export const uploadFileSagas = [
+  takeEvery(actionTypes.FILE.UPLOAD, uploadFile),
+  takeEvery(actionTypes.FILE.PREVIEW_ZIP, previewZip),
+];
