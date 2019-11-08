@@ -9,10 +9,13 @@ import {
   USER_ACCESS_LEVELS,
   INTEGRATION_ACCESS_LEVELS,
 } from '../../utils/constants';
+import LoadResources from '../LoadResources';
 
 const mapStateToProps = state => ({
-  integrations: selectors.resourceList(state, { type: 'integrations' })
-    .resources,
+  integrations: selectors.resourceList(state, {
+    type: 'integrations',
+    ignoreEnvironmentFilter: true,
+  }).resources,
   users: selectors.orgUsers(state),
 });
 
@@ -117,7 +120,10 @@ class UserForm extends Component {
           ],
           options: [
             {
-              items: integrations.map(i => ({ label: i.name, value: i._id })),
+              items: integrations.map(i => ({
+                label: `${i.name}${i.sandbox ? ' (SB)' : ''}`,
+                value: i._id,
+              })),
             },
           ],
           helpText:
@@ -143,7 +149,10 @@ class UserForm extends Component {
           ],
           options: [
             {
-              items: integrations.map(i => ({ label: i.name, value: i._id })),
+              items: integrations.map(i => ({
+                label: `${i.name}${i.sandbox ? ' (SB)' : ''}`,
+                value: i._id,
+              })),
             },
           ],
           helpText:
@@ -161,25 +170,27 @@ class UserForm extends Component {
     };
 
     return (
-      <DynaForm fieldMeta={fieldMeta}>
-        <div className={classes.actions}>
-          <Button
-            data-test="cancelUserForm"
-            onClick={onCancelClick}
-            className={classes.actionButton}
-            size="small"
-            variant="contained"
-            color="secondary">
-            Cancel
-          </Button>
-          <DynaSubmit
-            data-test="submitUserForm"
-            className={classes.actionButton}
-            onClick={onSaveClick}>
-            Save
-          </DynaSubmit>
-        </div>
-      </DynaForm>
+      <LoadResources required resources="integrations">
+        <DynaForm fieldMeta={fieldMeta}>
+          <div className={classes.actions}>
+            <Button
+              data-test="cancelUserForm"
+              onClick={onCancelClick}
+              className={classes.actionButton}
+              size="small"
+              variant="contained"
+              color="secondary">
+              Cancel
+            </Button>
+            <DynaSubmit
+              data-test="submitUserForm"
+              className={classes.actionButton}
+              onClick={onSaveClick}>
+              Save
+            </DynaSubmit>
+          </div>
+        </DynaForm>
+      </LoadResources>
     );
   }
 }
