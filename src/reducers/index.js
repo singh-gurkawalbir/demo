@@ -601,15 +601,10 @@ export function resourcesByIds(state, resourceType, resourceIds) {
 }
 
 export function matchingConnectionList(state, connection = {}) {
-  const preferences = userPreferences(state);
   const { resources = [] } = resourceList(state, {
     type: 'connections',
     filter: {
       $where() {
-        if (!!this.sandbox !== (preferences.environment === 'sandbox')) {
-          return false;
-        }
-
         if (connection.assistant) {
           return this.assistant === connection.assistant && !this._connectorId;
         }
