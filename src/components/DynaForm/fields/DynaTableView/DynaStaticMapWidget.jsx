@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import {
   ExpansionPanelSummary,
   Typography,
@@ -32,6 +32,7 @@ export default function DynaStaticMapWidget(props) {
     title,
     extracts = [],
     map = {},
+    defaultValue,
     onFieldChange,
     generates = [],
     extractFieldHeader,
@@ -41,9 +42,36 @@ export default function DynaStaticMapWidget(props) {
   } = props;
   const classes = useStyles();
   const [allowFailures, setAllowFailures] = useState(props.allowFailures);
-  const [defaultValue, setDefault] = useState(props.default);
+  const [defaultVal, setDefaultVal] = useState(defaultValue);
+  const [initComplete, setInitComplete] = useState(false);
   const [shouldExpand, setShouldExpand] = useState(false);
   const [showDefault, setShowDefault] = useState(false);
+  const getRadioValue = ({ allowFailures, defaultValue }) => {
+    if (allowFailures) {
+      if (defaultValue) {
+        return 'defaultLookup';
+      } else if (defaultValue === null) {
+        return 'useNull';
+      } else if (defaultValue === '') {
+        return 'useEmptyString';
+      }
+    }
+
+    return 'allowFailures';
+  };
+
+  const [radioState, setRadioState] = useState(
+    getRadioValue({ allowFailures, defaultValue: defaultVal })
+  );
+
+  useEffect(() => {
+    if (!initComplete) {
+      onFieldChange(id, { map, default: defaultVal, allowFailures });
+      setInitComplete(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allowFailures, defaultVal, id, initComplete, map]);
+
   const computedValue = Object.keys(map || {}).map(key => ({
     extracts: key,
     generates: map[key],
@@ -93,39 +121,50 @@ export default function DynaStaticMapWidget(props) {
     },
     [_integrationId, dispatch, id]
   );
+  const handleMapChange = useCallback(
+    (tableid, value = []) => {
+      const mapValue = {};
+
+      value.filter(Boolean).forEach(val => {
+        mapValue[val.extracts] = val.generates;
+      });
+      onFieldChange(id, {
+        map: mapValue,
+        default: defaultVal,
+        allowFailures,
+      });
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [allowFailures, defaultVal]
+  );
   const handleCleanup = useCallback(() => {
     dispatch(actions.connectors.clearMetadata(id, _integrationId));
   }, [_integrationId, dispatch, id]);
-  const getDefaultValue = () => {
-    if (allowFailures) {
-      if (defaultValue) {
-        if (!showDefault) setShowDefault(true);
-
-        return 'defaultLookup';
-      } else if (defaultValue === null) {
-        return 'useNull';
-      } else if (defaultValue === '') {
-        return 'useEmptyString';
-      }
-    }
-
-    return 'allowFailures';
-  };
-
-  const handleAllowFailuresClick = (id, value) => {
+  const handleAllowFailuresClick = (radioId, value) => {
+    setRadioState(value);
     setAllowFailures(value !== 'allowFailures');
+    let defValue = defaultVal;
 
-    if (value === 'defaultLookup') {
-      setShowDefault(true);
-    } else {
-      setShowDefault(false);
+    if (value === 'useEmptyString') {
+      defValue = '';
+    } else if (value === 'useNull') {
+      defValue = null;
+    } else if (value === 'allowFailures') {
+      defValue = undefined;
     }
 
-    // onFieldChange(id, { map, default: defaultValue, allowFailures });
+    onFieldChange(id, {
+      map,
+      default: defValue,
+      allowFailures: value !== 'allowFailures',
+    });
   };
 
-  const handleDefaultValueChange = (id, val) => {
-    setDefault(val);
+  if (showDefault !== (radioState === 'defaultLookup'))
+    setShowDefault(radioState === 'defaultLookup');
+
+  const handleDefaultValueChange = (defaultId, val) => {
+    setDefaultVal(val);
     onFieldChange(id, { map, default: val, allowFailures });
   };
 
@@ -148,15 +187,16 @@ export default function DynaStaticMapWidget(props) {
           shouldReset={shouldReset}
           metadata={metadata}
           value={computedValue}
+          onFieldChange={handleMapChange}
           handleRefreshClickHandler={handleRefreshClick}
           handleCleanupHandler={handleCleanup}
         />
         <Divider className={classes.margin} />
         <RadioGroup
           {...props}
+          value={radioState}
           id="allowFailures"
           label="Action to take if unique match not found"
-          defaultValue={getDefaultValue()}
           onFieldChange={handleAllowFailuresClick}
           options={[
             {
@@ -180,7 +220,7 @@ export default function DynaStaticMapWidget(props) {
             label="Default Lookup Value"
             name="defaultValue"
             onFieldChange={handleDefaultValueChange}
-            defaultValue={defaultValue}
+            value={defaultVal}
             options={[{ items: defaultOptions }]}
           />
         )}
