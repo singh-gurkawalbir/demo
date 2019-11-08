@@ -75,11 +75,8 @@ function GenerateToken(props) {
       dispatch(
         actions.resource.patchStaged(finalResourceId, patchSet, 'value')
       );
-
-      actions.resourceForm.init('exports', finalResourceId, false, true);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [finalResourceId]);
+  }, [dispatch, finalResourceId, token]);
 
   useEffect(() => {
     if (url) {
