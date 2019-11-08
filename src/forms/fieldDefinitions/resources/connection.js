@@ -4,13 +4,20 @@ export default {
   // agent list handleBars evaluated its a dynamicList
   _borrowConcurrencyFromConnectionId: {
     resourceType: 'connections',
-    filter: r => ({
-      $and: [
-        { type: r.type },
+    filter: r => {
+      const expression = [
         { _id: { $ne: r._id } },
         { _connectorId: { $exists: false } },
-      ],
-    }),
+      ];
+
+      if (['mysql', 'postgresql', 'mssql'].includes(r.type)) {
+        expression.push({ 'rdbms.type': r.type });
+      } else expression.push({ type: r.type });
+
+      return {
+        $and: expression,
+      };
+    },
     type: 'selectresource',
     label: 'Borrow Concurrency From',
   },

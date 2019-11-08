@@ -43,6 +43,8 @@ import DynaAutoSuggest from './DynaAutoSuggest';
 import DynaGenerateUrl from './DynaGenerateUrl';
 import DynaSoqlQuery from './DynaSoqlQuery';
 import DynaSalesforceRefreshableSelect from './DynaSalesforceRefreshableSelect';
+import DynaRefreshableIntegrationAppSetting from './DynaRefreshableSelect/RefreshableIntegrationAppSetting';
+import DynaDate from './dateTime/DynaDate';
 import DynaSQLQueryBuilder from './DynaSQLQueryBuilder';
 import DynaRelativeURIWithLookup from './DynaRelativeURIWithLookup';
 
@@ -95,6 +97,8 @@ export default {
   generateurl: DynaGenerateUrl,
   soqlquery: DynaSoqlQuery,
   salesforcerefreshableselect: DynaSalesforceRefreshableSelect,
+  integrationapprefreshableselect: DynaRefreshableIntegrationAppSetting,
+  date: DynaDate,
   sqlquerybuilder: DynaSQLQueryBuilder,
   relativeuriwithlookup: DynaRelativeURIWithLookup,
 };

@@ -468,6 +468,8 @@ const integrationApp = {
         actionTypes.INTEGRATION_APPS.SETTINGS.FORM.SUBMIT_COMPLETE,
         params
       ),
+    submitFailed: params =>
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.FORM.SUBMIT_FAILED, params),
   },
   installer: {
     installStep: (integrationId, installerFunction) =>
