@@ -28,11 +28,16 @@ const pathRegex = {
   responseMapping: /\/pageProcessors\/[0-9]+\/responseMapping/,
 };
 
-export function getParseStageData(previewData) {
+export function getPreviewStageData(previewData, previewStage = 'parse') {
   const stages = (previewData && previewData.stages) || [];
-  const parseStage = stages.find(stage => stage.name === 'parse');
+  const parseStage = stages.find(stage => stage.name === previewStage);
 
-  return parseStage && parseStage.data && parseStage.data[0];
+  return (
+    parseStage &&
+    (previewStage === 'raw'
+      ? parseStage.data
+      : parseStage.data && parseStage.data[0])
+  );
 }
 
 export const getSampleDataStage = (stage, resourceType = 'exports') =>
@@ -82,6 +87,21 @@ export const getLastExportDateTime = () =>
     .add(-1, 'y')
     .toISOString();
 
+export const getAddedLookupInFlow = (oldFlow = {}, patchSet = []) => {
+  const { pageProcessors = [] } = oldFlow;
+  const pageProcessorsPatch = patchSet.find(
+    patch => patch.path === '/pageProcessors'
+  );
+  const updatedPageProcessors =
+    (pageProcessorsPatch && pageProcessorsPatch.value) || [];
+
+  if (updatedPageProcessors.length - pageProcessors.length === 1) {
+    const addedPP = updatedPageProcessors[updatedPageProcessors.length - 1];
+
+    return addedPP.type === 'export' ? addedPP._exportId : undefined;
+  }
+};
+
 // Goes through patchset changes to decide what is updated
 export const getFlowUpdatesFromPatch = (patchSet = []) => {
   if (!patchSet.length) return {};
@@ -109,3 +129,8 @@ export const getFlowUpdatesFromPatch = (patchSet = []) => {
 
   return updates;
 };
+
+// Checks specifically for the raw data patch call on resource
+// So patchSet would be [{path:'/rawData', value:{}}]
+export const isRawDataPatchSet = (patchSet = []) =>
+  patchSet[0] && patchSet[0].path === '/rawData';

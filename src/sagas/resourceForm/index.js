@@ -355,7 +355,8 @@ export function* initFormValues({
       resourceId,
       finalFieldMeta,
       isNew,
-      skipCommit
+      skipCommit,
+      flowId
     )
   );
 }

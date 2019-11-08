@@ -38,6 +38,7 @@ export default function DynaHttpRequestBody(props) {
   useEffect(() => {
     // Request for sample data only incase of flow context
     // TODO : @Raghu Do we show default data in stand alone context?
+    // What type of sample data is expected in case of Page generators
     if (flowId && !sampleData) {
       dispatch(
         actions.flowData.requestSampleData(

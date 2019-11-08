@@ -20,7 +20,7 @@ import {
 } from './flowUpdates';
 import {
   getSampleDataStage,
-  getParseStageData,
+  getPreviewStageData,
   getLastExportDateTime,
 } from '../../../utils/flowData';
 import MappingUtil from '../../../utils/mapping';
@@ -91,7 +91,6 @@ export function* fetchPageProcessorPreview({
 
   if (previewType === 'flowInput') {
     // make the _pageProcessor as import so that BE calculates flow data till that processor
-    // TODO: @Raghu What if same page processor used multiple times in a flow? Do we need index then ?
     flow.pageProcessors = flow.pageProcessors.map(pageProcessor => {
       if (pageProcessor._exportId === _pageProcessorId) {
         pageProcessorMap[_pageProcessorId].options = {};
@@ -162,7 +161,7 @@ export function* fetchPageGeneratorPreview({ flowId, _pageGeneratorId }) {
       opts: { method: 'POST', body },
       message: `Fetching Exports Preview`,
     });
-    const parseData = getParseStageData(previewData);
+    const parseData = getPreviewStageData(previewData, 'parse');
 
     yield put(
       actions.flowData.receivedPreviewData(
