@@ -1,4 +1,5 @@
 import moment from 'moment';
+import Install from '../Settings/Actions/Install';
 
 export default {
   columns: [
@@ -17,16 +18,9 @@ export default {
     },
     {
       heading: 'Action',
-      value: r => {
-        if (r.status === 'installed') {
-          return 'Uninstall';
-        } else if (r.status === 'paritallyUninstalled') {
-          return 'Resume Uninstall';
-        } else if (r.status === 'available') {
-          return 'Install';
-        } else if (r.status === 'partiallyInstalled') {
-          return 'Resume Install';
-        }
+
+      value: function Installer(r) {
+        return <Install.component resource={r} />;
       },
     },
   ],

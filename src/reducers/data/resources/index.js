@@ -55,18 +55,19 @@ function getIntegrationAppsNextState(state, action) {
       return;
     }
 
-    stepsToUpdate.forEach(step => {
-      const stepIndex = integration.install.findIndex(
-        s => s.installerFunction === step.installerFunction
-      );
+    stepsToUpdate &&
+      stepsToUpdate.forEach(step => {
+        const stepIndex = integration.install.findIndex(
+          s => s.installerFunction === step.installerFunction
+        );
 
-      if (stepIndex !== -1) {
-        integration.install[stepIndex] = {
-          ...integration.install[stepIndex],
-          ...step,
-        };
-      }
-    });
+        if (stepIndex !== -1) {
+          integration.install[stepIndex] = {
+            ...integration.install[stepIndex],
+            ...step,
+          };
+        }
+      });
   });
 }
 

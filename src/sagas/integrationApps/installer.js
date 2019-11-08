@@ -3,14 +3,14 @@ import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
 
-export function* installStep({ id, installerFunction }) {
+export function* installStep({ id, installerFunction, storeId, addOnId }) {
   const path = `/integrations/${id}/installer/${installerFunction}`;
   let stepCompleteResponse;
 
   try {
     stepCompleteResponse = yield call(apiCallWithRetry, {
       path,
-      opts: { body: {}, method: 'PUT' },
+      opts: { body: { storeId, addOnId }, method: 'PUT' },
       message: `Installing`,
     }) || {};
   } catch (error) {

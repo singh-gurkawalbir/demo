@@ -69,8 +69,15 @@ export default function Subscription(props) {
       formState.addOns.addOnMetaData.find(addOn => addOn.id === f.id);
 
     subscribedAddOns[i].key = i;
+    subscribedAddOns[i].integrationId = integrationId;
     subscribedAddOns[i].name = addon ? addon.name : f.id;
     subscribedAddOns[i].description = addon ? addon.description : '';
+    subscribedAddOns[i].uninstallerFunction = addon
+      ? addon.uninstallerFunction
+      : '';
+    subscribedAddOns[i].installerFunction = addon
+      ? addon.installerFunction
+      : '';
   });
 
   const hasSubscribedAddOns = subscribedAddOns && subscribedAddOns.length > 0;
