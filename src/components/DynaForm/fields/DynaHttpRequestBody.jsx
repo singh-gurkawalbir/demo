@@ -4,6 +4,10 @@ import Button from '@material-ui/core/Button';
 import * as selectors from '../../../reducers';
 import HttpRequestBodyEditorDialog from '../../../components/AFE/HttpRequestBodyEditor/Dialog';
 import DynaLookupEditor from './DynaLookupEditor';
+import {
+  getXMLSampleTemplate,
+  getJSONSampleTemplate,
+} from '../../AFE/HttpRequestBodyEditor/templateMapping';
 import actions from '../../../actions';
 
 export default function DynaHttpRequestBody(props) {
@@ -17,13 +21,14 @@ export default function DynaHttpRequestBody(props) {
     resourceType,
     flowId,
   } = props;
+  const { lookups: lookupsObj, saveIndex, contentType } = options;
   const [showEditor, setShowEditor] = useState(false);
-  const parsedData =
-    options && typeof options.saveIndex === 'number' && Array.isArray(value)
-      ? value[options.saveIndex]
+  let parsedData =
+    options && typeof saveIndex === 'number' && Array.isArray(value)
+      ? value[saveIndex]
       : value;
-  const lookupFieldId = options && options.lookups && options.lookups.fieldId;
-  const lookups = options && options.lookups && options.lookups.data;
+  const lookupFieldId = lookupsObj && lookupsObj.fieldId;
+  const lookups = lookupsObj && lookupsObj.data;
   const handleEditorClick = () => {
     setShowEditor(!showEditor);
   };
@@ -55,15 +60,11 @@ export default function DynaHttpRequestBody(props) {
     if (shouldCommit) {
       const { template } = editorValues;
 
-      if (
-        options &&
-        typeof options.saveIndex === 'number' &&
-        Array.isArray(value)
-      ) {
+      if (typeof saveIndex === 'number' && Array.isArray(value)) {
         // save to array at position saveIndex
         const valueTmp = value;
 
-        valueTmp[options.saveIndex] = template;
+        valueTmp[saveIndex] = template;
         onFieldChange(id, valueTmp);
       } else {
         // save to field
@@ -73,6 +74,11 @@ export default function DynaHttpRequestBody(props) {
 
     handleEditorClick();
   };
+
+  if (!parsedData) {
+    if (contentType === 'json') parsedData = getJSONSampleTemplate(sampleData);
+    else parsedData = getXMLSampleTemplate(sampleData);
+  }
 
   let lookupField;
 
@@ -91,6 +97,7 @@ export default function DynaHttpRequestBody(props) {
     <Fragment>
       {showEditor && (
         <HttpRequestBodyEditorDialog
+          contentType={contentType === 'json' ? 'json' : 'xml'}
           title="Build HTTP Request Body"
           id={`${resourceId}-${id}`}
           rule={parsedData}

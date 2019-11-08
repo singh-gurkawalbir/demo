@@ -147,14 +147,29 @@ export function* updateIntegrationSettings({
   payload = {
     pending: payload,
   };
-  const response = yield call(apiCallWithRetry, {
-    path,
-    opts: {
-      method: 'put',
-      body: payload,
-    },
-    message: 'Saving integration settings',
-  });
+
+  let response;
+
+  try {
+    response = yield call(apiCallWithRetry, {
+      path,
+      opts: {
+        method: 'put',
+        body: payload,
+      },
+      message: 'Saving integration settings',
+    });
+    // eslint-disable-next-line no-empty
+  } catch (e) {
+    yield put(
+      actions.integrationApp.settings.submitFailed({
+        storeId,
+        integrationId,
+        response,
+        flowId,
+      })
+    );
+  }
 
   if (response) {
     yield put(

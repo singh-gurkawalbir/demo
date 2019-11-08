@@ -386,7 +386,6 @@ describe('all modal sagas', () => {
         test('should switch to production environment successfuly', () => {
           const aShare = {
             id: defaultAShareId,
-            environment: 'production',
           };
           const saga = switchAccount(aShare);
 
@@ -395,7 +394,7 @@ describe('all modal sagas', () => {
             put(
               actions.user.preferences.update({
                 defaultAShareId: aShare.id,
-                environment: aShare.environment,
+                environment: 'production',
               })
             )
           );
@@ -404,7 +403,6 @@ describe('all modal sagas', () => {
         test('should switch to sandbox environment successfuly', () => {
           const aShare = {
             id: defaultAShareId,
-            environment: 'sandbox',
           };
           const saga = switchAccount(aShare);
 
@@ -413,7 +411,7 @@ describe('all modal sagas', () => {
             put(
               actions.user.preferences.update({
                 defaultAShareId: aShare.id,
-                environment: aShare.environment,
+                environment: 'production',
               })
             )
           );
@@ -424,7 +422,6 @@ describe('all modal sagas', () => {
         test('should switch to production environment successfuly', () => {
           const aShare = {
             id: 'somethingelse',
-            environment: 'production',
           };
           const saga = switchAccount(aShare);
 
@@ -433,7 +430,7 @@ describe('all modal sagas', () => {
             put(
               actions.user.preferences.update({
                 defaultAShareId: aShare.id,
-                environment: aShare.environment,
+                environment: 'production',
               })
             )
           );
@@ -445,7 +442,6 @@ describe('all modal sagas', () => {
         test('should switch to sandbox environment successfuly', () => {
           const aShare = {
             id: 'somethingelse',
-            environment: 'sandbox',
           };
           const saga = switchAccount(aShare);
 
@@ -454,7 +450,7 @@ describe('all modal sagas', () => {
             put(
               actions.user.preferences.update({
                 defaultAShareId: aShare.id,
-                environment: aShare.environment,
+                environment: 'production',
               })
             )
           );
@@ -468,7 +464,6 @@ describe('all modal sagas', () => {
         test('should generate appropriate error message in case of api failure', () => {
           const aShare = {
             id: 'somethingelse',
-            environment: 'sandbox',
           };
           const saga = switchAccount(aShare);
 
@@ -477,7 +472,7 @@ describe('all modal sagas', () => {
             put(
               actions.user.preferences.update({
                 defaultAShareId: aShare.id,
-                environment: aShare.environment,
+                environment: 'production',
               })
             )
           );
