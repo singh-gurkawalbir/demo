@@ -1,4 +1,4 @@
-import DateFnsUtils from '@date-io/moment';
+import MomentDateFnsUtils from '@date-io/moment';
 import { useState, useEffect } from 'react';
 import {
   MuiPickersUtilsProvider,
@@ -16,7 +16,7 @@ export default function DatePicker(props) {
   }, [dateValue]);
 
   return (
-    <MuiPickersUtilsProvider utils={DateFnsUtils}>
+    <MuiPickersUtilsProvider utils={MomentDateFnsUtils}>
       <KeyboardDatePicker
         label={label}
         format="MM/DD/YYYY"
