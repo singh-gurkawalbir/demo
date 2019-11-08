@@ -1,3 +1,4 @@
+import { Fragment } from 'react';
 import { useSelector } from 'react-redux';
 import { Link, useHistory } from 'react-router-dom';
 import { makeStyles, Tabs, Tab } from '@material-ui/core';
@@ -12,6 +13,7 @@ import DashboardIcon from '../../components/icons/AdjustInventoryIcon';
 import ConnectionsIcon from '../../components/icons/ConnectionsIcon';
 import IconTextButton from '../../components/IconTextButton';
 import CeligoPageBar from '../../components/CeligoPageBar';
+import ResourceDrawer from '../../components/drawer/Resource';
 import AdminPanel from './panels/Admin';
 import FlowsPanel from './panels/Flows';
 import ConnectionsPanel from './panels/Connections';
@@ -29,14 +31,16 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function TabPanel({ children, currentTab, index, classes }) {
+  const hidden = currentTab !== index;
+
   return (
     <div
       role="tabpanel"
-      hidden={currentTab !== index}
+      hidden={hidden}
       className={classes.tabPanel}
       id={`tabpanel-${index}`}
       aria-labelledby={`tab-${index}`}>
-      <div>{children}</div>
+      <div>{!hidden && children}</div>
     </div>
   );
 }
@@ -65,61 +69,61 @@ export default function Integration({ match }) {
 
   function tabProps(index) {
     return {
-      classes: {
-        root: classes.muiTabRoot,
-        wrapper: classes.muiTabWrapper,
-      },
       id: `tab-${index}`,
       'aria-controls': `tabpanel-${index}`,
     };
   }
 
   return (
-    <LoadResources required resources="integrations">
-      <CeligoPageBar
-        title={integration ? integration.name : 'Standalone integrations'}
-        infoText={integration ? integration.description : undefined}>
-        <IconTextButton component={Link} to="clone" variant="text">
-          <CopyIcon /> Clone integration
-        </IconTextButton>
+    <Fragment>
+      <ResourceDrawer match={match} />
 
-        <IconTextButton variant="text">
-          <TrashIcon /> Delete integration
-        </IconTextButton>
-      </CeligoPageBar>
+      <LoadResources required resources="integrations">
+        <CeligoPageBar
+          title={integration ? integration.name : 'Standalone integrations'}
+          infoText={integration ? integration.description : undefined}>
+          <IconTextButton component={Link} to="clone" variant="text">
+            <CopyIcon /> Clone integration
+          </IconTextButton>
 
-      <div className={classes.tabContainer}>
-        <Tabs
-          value={currentTabIndex}
-          onChange={handleTabChange}
-          indicatorColor="primary"
-          textColor="primary"
-          variant="scrollable"
-          scrollButtons="auto"
-          aria-label="scrollable auto tabs example">
-          <Tab {...tabProps(1)} icon={<FlowIcon />} label="Flows" />
-          <Tab {...tabProps(2)} icon={<DashboardIcon />} label="Dashboard" />
-          <Tab
-            {...tabProps(3)}
-            icon={<ConnectionsIcon />}
-            label="Connections"
-          />
-          <Tab {...tabProps(4)} icon={<AdminIcon />} label="Admin" />
-        </Tabs>
+          <IconTextButton variant="text">
+            <TrashIcon /> Delete integration
+          </IconTextButton>
+        </CeligoPageBar>
 
-        <TabPanel currentTab={currentTabIndex} index={0} classes={classes}>
-          <FlowsPanel integrationId={integrationId} />
-        </TabPanel>
-        <TabPanel currentTab={currentTabIndex} index={1} classes={classes}>
-          <DashboardPanel integrationId={integrationId} />
-        </TabPanel>
-        <TabPanel currentTab={currentTabIndex} index={2} classes={classes}>
-          <ConnectionsPanel integrationId={integrationId} />
-        </TabPanel>
-        <TabPanel currentTab={currentTabIndex} index={3} classes={classes}>
-          <AdminPanel integrationId={integrationId} />
-        </TabPanel>
-      </div>
-    </LoadResources>
+        <div className={classes.tabContainer}>
+          <Tabs
+            value={currentTabIndex}
+            onChange={handleTabChange}
+            indicatorColor="primary"
+            textColor="primary"
+            variant="scrollable"
+            scrollButtons="auto"
+            aria-label="scrollable auto tabs example">
+            <Tab {...tabProps(1)} icon={<FlowIcon />} label="Flows" />
+            <Tab {...tabProps(2)} icon={<DashboardIcon />} label="Dashboard" />
+            <Tab
+              {...tabProps(3)}
+              icon={<ConnectionsIcon />}
+              label="Connections"
+            />
+            <Tab {...tabProps(4)} icon={<AdminIcon />} label="Admin" />
+          </Tabs>
+
+          <TabPanel currentTab={currentTabIndex} index={0} classes={classes}>
+            <FlowsPanel integrationId={integrationId} />
+          </TabPanel>
+          <TabPanel currentTab={currentTabIndex} index={1} classes={classes}>
+            <DashboardPanel integrationId={integrationId} />
+          </TabPanel>
+          <TabPanel currentTab={currentTabIndex} index={2} classes={classes}>
+            <ConnectionsPanel integrationId={integrationId} />
+          </TabPanel>
+          <TabPanel currentTab={currentTabIndex} index={3} classes={classes}>
+            <AdminPanel integrationId={integrationId} />
+          </TabPanel>
+        </div>
+      </LoadResources>
+    </Fragment>
   );
 }

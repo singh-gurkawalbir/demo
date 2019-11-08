@@ -1,4 +1,10 @@
-import { Route, Switch, NavLink, useRouteMatch } from 'react-router-dom';
+import {
+  Route,
+  Switch,
+  NavLink,
+  useRouteMatch,
+  Redirect,
+} from 'react-router-dom';
 import { makeStyles } from '@material-ui/styles';
 import { List, ListItem } from '@material-ui/core';
 import { STANDALONE_INTEGRATION } from '../../../../utils/constants';
@@ -23,13 +29,17 @@ const useStyles = makeStyles(theme => ({
   content: {
     width: '100%',
     height: '100%',
-    padding: theme.spacing(3),
+    padding: theme.spacing(0, 3, 3, 0),
   },
 }));
 
 export default function AdminPanel({ integrationId }) {
   const classes = useStyles();
   const match = useRouteMatch();
+
+  if (match.isExact) {
+    return <Redirect push={false} to={`${match.url}/notifications`} />;
+  }
 
   return (
     <div className={classes.root}>

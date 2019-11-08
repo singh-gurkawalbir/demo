@@ -14,7 +14,7 @@ export default function PanelHeader({ title, children }) {
 
   return (
     <div className={classes.root}>
-      <Typography variant="h3">{title}</Typography>
+      <Typography variant="h4">{title}</Typography>
       <div className={classes.action}>{children}</div>
     </div>
   );
