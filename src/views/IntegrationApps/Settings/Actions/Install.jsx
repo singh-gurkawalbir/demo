@@ -7,12 +7,8 @@ import actions from '../../../../actions';
 export default {
   label: 'Schedule',
   component: function Installer({ resource }) {
-    console.log('resource1', resource);
-
     const dispatch = useDispatch();
     const onClick = resource => {
-      console.log('resource', resource);
-
       if (resource.status === 'installed') {
         confirmDialog({
           title: `Delete all flows and configurations for add-on ${resource.name} ?`,
