@@ -42,34 +42,42 @@ export function* commitStagedChanges({ resourceType, id, scope }) {
     }
   }
 
+  let updated;
+
   try {
-    const updated = yield call(apiCallWithRetry, {
+    updated = yield call(apiCallWithRetry, {
       path,
       opts: {
         method: isNew ? 'post' : 'put',
         body: merged,
       },
     });
+  } catch (error) {
+    // TODO: What should we do for 4xx errors? where the resource to put/post
+    // violates some API business rules?
+    return { error };
+  }
 
-    // HACK! when updating scripts, since content is stored in s3, it
-    // seems the PUT API response does not contain the content. We need to
-    // insert it to prevent unwanted GET requests.
+  // HACK! when updating scripts, since content is stored in s3, it
+  // seems the PUT API response does not contain the content. We need to
+  // insert it to prevent unwanted GET requests.
+  if (
+    resourceType === 'scripts' &&
+    merged.content &&
+    updated.content === undefined
+  ) {
+    updated.content = merged.content;
+  }
+
+  if (['exports', 'imports'].includes(resourceType)) {
     if (
-      resourceType === 'scripts' &&
-      merged.content &&
-      updated.content === undefined
+      merged.assistant &&
+      merged.assistantMetadata &&
+      !isEqual(merged.assistantMetadata, updated.assistantMetadata)
     ) {
-      updated.content = merged.content;
-    }
+      const assistantMetadata = merged.assistantMetadata || {};
 
-    if (['exports', 'imports'].includes(resourceType)) {
-      if (
-        merged.assistant &&
-        merged.assistantMetadata &&
-        !isEqual(merged.assistantMetadata, updated.assistantMetadata)
-      ) {
-        const assistantMetadata = merged.assistantMetadata || {};
-
+      try {
         yield call(apiCallWithRetry, {
           path: `/${resourceType}/${updated._id}`,
           opts: {
@@ -83,29 +91,29 @@ export function* commitStagedChanges({ resourceType, id, scope }) {
             ],
           },
         });
-        updated.assistantMetadata = assistantMetadata;
-        // Fix for updating lastModified after above patch request
-        // @TODO: Raghu Remove this once patch request gives back the resource in response
-        const origin = yield call(apiCallWithRetry, { path });
-
-        updated.lastModified = origin.lastModified;
+      } catch (error) {
+        return { error };
       }
+
+      updated.assistantMetadata = assistantMetadata;
+      // Fix for updating lastModified after above patch request
+      // @TODO: Raghu Remove this once patch request gives back the resource in response
+      const origin = yield call(apiCallWithRetry, { path });
+
+      updated.lastModified = origin.lastModified;
     }
+  }
 
-    yield put(actions.resource.received(resourceType, updated));
+  yield put(actions.resource.received(resourceType, updated));
 
-    if (!isNew) {
-      yield put(actions.resource.updated(resourceType, updated._id, patch));
-    }
+  if (!isNew) {
+    yield put(actions.resource.updated(resourceType, updated._id, patch));
+  }
 
-    yield put(actions.resource.clearStaged(id, scope));
+  yield put(actions.resource.clearStaged(id, scope));
 
-    if (isNew) {
-      yield put(actions.resource.created(updated._id, id));
-    }
-  } catch (error) {
-    // TODO: What should we do for 4xx errors? where the resource to put/post
-    // violates some API business rules?
+  if (isNew) {
+    yield put(actions.resource.created(updated._id, id));
   }
 }
 
