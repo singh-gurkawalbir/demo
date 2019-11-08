@@ -725,6 +725,7 @@ export default {
         items: [
           { label: 'XML', value: 'xml' },
           { label: 'JSON', value: 'json' },
+          { label: 'URL Encoded', value: 'urlencoded' },
         ],
       },
     ],
