@@ -64,7 +64,7 @@ export function AppRoutingWithAuth(props) {
       const { state: routeState } = location;
       const redirectedTo = (routeState && routeState.attemptedRoute) || '/pg';
 
-      return <Redirect to={redirectedTo} />;
+      return <Redirect to={{ pathname: redirectedTo }} />;
     }
 
     return children;

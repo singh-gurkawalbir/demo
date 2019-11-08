@@ -25,6 +25,9 @@ export default (state = {}, action) => {
       case actionTypes.INTEGRATION_APPS.SETTINGS.FORM.SUBMIT_COMPLETE:
         draft[key] = { submitComplete: true };
         break;
+      case actionTypes.INTEGRATION_APPS.SETTINGS.FORM.SUBMIT_FAILED:
+        draft[key] = { submitFailed: true };
+        break;
       case actionTypes.INTEGRATION_APPS.SETTINGS.FORM.CLEAR:
         delete draft[key];
         break;
