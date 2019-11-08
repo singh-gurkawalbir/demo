@@ -708,9 +708,9 @@ export default {
       ],
     },
     sampleData: { fieldId: 'sampleData' },
-    // dataMappings: {
-    //   formId: 'dataMappings',
-    // },
+    dataMappings: {
+      formId: 'dataMappings',
+    },
     advancedSettings: {
       formId: 'advancedSettings',
       visibleWhenAll: [
@@ -765,7 +765,7 @@ export default {
       'rest.existingDataId',
       'sampleDataTitle',
       'sampleData',
-      // 'dataMappings',
+      'dataMappings',
     ],
     type: 'collapse',
     containers: [
