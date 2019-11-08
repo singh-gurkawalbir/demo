@@ -335,8 +335,40 @@ export default {
     visibleWhen: [{ field: 'type', is: ['delta'] }],
   },
   'delta.dateFormat': {
-    type: 'text',
+    type: 'select',
     label: 'Delta date Format',
+    options: [
+      {
+        items: [
+          { label: 'YYYY-MM-DDTHH:mm:ss z', value: 'YYYY-MM-DDTHH:mm:ss z' },
+          { label: 'YYYY-MM-DDTHH:mm:ss', value: 'YYYY-MM-DDTHH:mm:ss' },
+          { label: 'YYYY-MM-DDTHH:mm:ssZ', value: 'YYYY-MM-DDTHH:mm:ssZ' },
+          { label: 'YYYY-MM-DDTHH:mm:ss[Z]', value: 'YYYY-MM-DDTHH:mm:ss[Z]' },
+          {
+            label: 'YYYY-MM-DDTHH:mm:ss.SSSZZ',
+            value: 'YYYY-MM-DDTHH:mm:ss.SSSZZ',
+          },
+          {
+            label: 'YYYY-MM-DDTHH:mm:ss.SSSSZZ',
+            value: 'YYYY-MM-DDTHH:mm:ss.SSSSZZ',
+          },
+          { label: 'YYYY-MM-DD hh:mm:ss', value: 'YYYY-MM-DD hh:mm:ss' },
+          { label: 'X (Unix timestamp)', value: 'X' },
+          { label: 'x (Unix ms timestamp)', value: 'x' },
+          { label: 'M/D/YYYY', value: 'M/D/YYYY' },
+          { label: 'YYMMDD', value: 'YYMMDD' },
+          { label: 'MMDDYY', value: 'MMDDYY' },
+          { label: 'DDMMYY', value: 'DDMMYY' },
+          { label: 'M/D/YY', value: 'M/D/YY' },
+          { label: 'D/M/YYYY', value: 'D/M/YYYY' },
+          { label: 'D/M/YY', value: 'D/M/YY' },
+          { label: 'MM/DD/YYYY', value: 'M/D/YYYY' },
+          { label: 'YYYY-MM-DD', value: 'YYYY-MM-DD' },
+          { label: 'MM/DD/YYYY HH:mm', value: 'MM/DD/YYYY HH:mm' },
+          { label: 'MM/DD/YYYY HH:mm:ss', value: 'MM/DD/YYYY HH:mm:ss' },
+        ],
+      },
+    ],
     visibleWhen: [{ field: 'type', is: ['delta'] }],
   },
   'delta.startDate': {
