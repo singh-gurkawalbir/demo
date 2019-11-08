@@ -74,12 +74,8 @@ describe('user selectors', () => {
         expect(selectors.accountSummary(state)).toEqual([
           {
             id: ACCOUNT_IDS.OWN,
-            environment: 'production',
+            hasSandbox: true,
             selected: true,
-          },
-          {
-            id: ACCOUNT_IDS.OWN,
-            environment: 'sandbox',
           },
         ]);
       });
@@ -109,11 +105,7 @@ describe('user selectors', () => {
         expect(selectors.accountSummary(state)).toEqual([
           {
             id: ACCOUNT_IDS.OWN,
-            environment: 'production',
-          },
-          {
-            id: ACCOUNT_IDS.OWN,
-            environment: 'sandbox',
+            hasSandbox: true,
             selected: true,
           },
         ]);
@@ -139,7 +131,7 @@ describe('user selectors', () => {
         expect(selectors.accountSummary(state)).toEqual([
           {
             id: ACCOUNT_IDS.OWN,
-            environment: 'production',
+            hasSandbox: false,
             selected: true,
           },
         ]);
@@ -179,20 +171,14 @@ describe('user selectors', () => {
         expect(selectors.accountSummary(state)).toEqual([
           {
             id: 'ashare1',
-            environment: 'production',
+            hasSandbox: true,
             company: 'Company One',
             canLeave: true,
             selected: true,
           },
           {
-            id: 'ashare1',
-            environment: 'sandbox',
-            company: 'Company One',
-            canLeave: false,
-          },
-          {
             id: 'ashare2',
-            environment: 'production',
+            hasSandbox: false,
             canLeave: true,
           },
         ]);
@@ -230,19 +216,13 @@ describe('user selectors', () => {
         expect(selectors.accountSummary(state)).toEqual([
           {
             id: 'ashare1',
-            environment: 'production',
+            hasSandbox: true,
             company: 'Company One',
             canLeave: true,
           },
           {
-            id: 'ashare1',
-            environment: 'sandbox',
-            company: 'Company One',
-            canLeave: false,
-          },
-          {
             id: 'ashare2',
-            environment: 'production',
+            hasSandbox: false,
             selected: true,
             canLeave: true,
           },

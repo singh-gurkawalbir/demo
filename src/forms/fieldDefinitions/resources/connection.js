@@ -1125,7 +1125,7 @@ export default {
     type: 'radiogroup',
     label: 'Protocol',
     required: true,
-    defaultValue: r => (r && r.ftp && r.ftp.type) || 'ftp',
+    defaultValue: r => (r && r.ftp && r.ftp.type) || 'sftp',
     options: [
       {
         items: [
@@ -1782,6 +1782,7 @@ export default {
   'as2.userStationInfo.encoding': {
     type: 'select',
     label: 'MDN Encoding',
+    required: true,
     options: [
       {
         items: [

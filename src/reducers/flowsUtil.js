@@ -35,6 +35,10 @@ export function isSimpleImportFlow(exp) {
   return exp && exp.type === 'simple';
 }
 
+export function showScheduleIcon(exports, exp, flow) {
+  return hasBatchExport(exports, exp, flow);
+}
+
 export function isRunnable(exports, exp, flow) {
   let toReturn = true;
 

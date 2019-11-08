@@ -122,6 +122,12 @@ export default function ConnectorTemplateList(props) {
     setShowMessage(true);
   };
 
+  const handleTemplateInstallClick = template => {
+    props.history.push(
+      getRoutePath(`/marketplace/templates/${template._id}/preview`)
+    );
+  };
+
   return (
     <Fragment>
       <CeligoPageBar title={`${applicationName} Integrations`} />
@@ -164,17 +170,14 @@ export default function ConnectorTemplateList(props) {
               type="template"
             />
             <CardActions className={classes.cardAction}>
-              <Link
+              <Button
                 data-test="installTemplate"
-                underline="none"
                 key={template._id}
-                to={getRoutePath(
-                  `/marketplace/templates/${template._id}/preview`
-                )}>
-                <Button variant="text" color="primary">
-                  Install <ArrowRightIcon />
-                </Button>
-              </Link>
+                variant="text"
+                color="primary"
+                onClick={() => handleTemplateInstallClick(template)}>
+                Install <ArrowRightIcon />
+              </Button>
             </CardActions>
           </Card>
         ))}

@@ -1,3 +1,5 @@
+import { isNewId } from '../../../../utils/resource';
+
 export default {
   // Todo why helpKey is it named csv file id like to change it to
   // something meaningful
@@ -5,6 +7,7 @@ export default {
     type: 'uploadfile',
     label: 'Sample File (that would be exported)',
     mode: r => r && r.file && r.file.type,
+    required: r => isNewId(r && r._id),
     visibleWhen: [
       {
         field: 'file.type',
@@ -35,6 +38,7 @@ export default {
     type: 'select',
     label: 'File type',
     required: true,
+    defaultValue: r => (r && r.file && r.file.type) || 'csv',
     options: [
       {
         items: [
@@ -227,10 +231,14 @@ export default {
   'file.xlsx.keyColumns': {
     type: 'text',
     label: 'Key Columns',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'file.xlsx.rowsPerRecord',
         is: [true],
+      },
+      {
+        field: 'file.type',
+        is: ['xlsx'],
       },
     ],
   },

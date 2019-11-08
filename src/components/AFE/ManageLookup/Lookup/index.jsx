@@ -2,8 +2,8 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import { Button } from '@material-ui/core';
-import DynaForm from '../../DynaForm';
-import DynaSubmit from '../../DynaForm/DynaSubmit';
+import DynaForm from '../../../DynaForm';
+import DynaSubmit from '../../../DynaForm/DynaSubmit';
 
 const useStyles = makeStyles(() => ({
   container: {
@@ -12,7 +12,13 @@ const useStyles = makeStyles(() => ({
 }));
 
 export default function Lookup(props) {
-  const { onSave, lookup, onCancel, error } = props;
+  const {
+    onSave,
+    lookup = {},
+    onCancel,
+    error,
+    showDynamicLookupOnly = false,
+  } = props;
   const classes = useStyles();
   const isEdit = !!(lookup && lookup.name);
   const handleSubmit = formVal => {
@@ -243,6 +249,27 @@ export default function Lookup(props) {
       ],
     },
   };
+
+  if (showDynamicLookupOnly) {
+    delete fieldMeta.fieldMap.mode;
+    delete fieldMeta.fieldMap.mapList;
+    fieldMeta.layout.fields = fieldMeta.layout.fields.filter(
+      el => el !== 'mode' && el !== 'mapList'
+    );
+    const { relativeURI, method, body, extract } = fieldMeta.fieldMap;
+
+    delete relativeURI.visibleWhen;
+    delete method.visibleWhen;
+    delete body.visibleWhenAll;
+    delete extract.visibleWhen;
+
+    body.visibleWhen = [
+      {
+        field: 'method',
+        is: ['POST'],
+      },
+    ];
+  }
 
   return (
     <div className={classes.container}>
