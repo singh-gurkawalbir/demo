@@ -20,9 +20,11 @@
     "styleguide-build": "neutrino styleguide:build --require dotenv/config"
   },
   "dependencies": {
+    "@date-io/moment": "1.3.11",
     "@material-ui/core": "4.3.2",
     "@material-ui/icons": "4.2.1",
     "@material-ui/lab": "4.0.0-alpha.23",
+    "@material-ui/pickers": "^3.2.7",
     "abortcontroller-polyfill": "1.3.0",
     "autosuggest-highlight": "^3.1.1",
     "classnames": "2.2.6",
@@ -34,6 +36,7 @@
     "fast-json-patch": "2.0.7",
     "hookrouter": "1.2.3",
     "immer": "^3.2.0",
+    "jQuery-QueryBuilder": "2.5.2",
     "lodash": "4.17.15",
     "material-ui-popup-state": "1.3.2",
     "mdi-react": "5.2.0",

@@ -153,7 +153,10 @@ export default {
       type: 'checkbox',
       label: 'Row Delimiter',
       visibleWhenAll: [
-        { field: 'http.requestMediaType', is: ['csv'] },
+        {
+          field: 'file.type',
+          is: ['csv'],
+        },
         {
           field: 'inputMode',
           is: ['records'],

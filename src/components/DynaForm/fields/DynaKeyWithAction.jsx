@@ -6,9 +6,9 @@ import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
 import IconButton from '@material-ui/core/IconButton';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles({
   container: {
-    minWidth: '500px',
+    minWidth: props => props.minWidth || '500px',
   },
   helpText: {
     whiteSpace: 'pre-line',
@@ -22,20 +22,21 @@ const useStyles = makeStyles(() => ({
   rowContainer: {
     display: 'flex',
   },
-}));
+});
 
 export default function DynaKeyWithAction(props) {
   const {
     value,
     onEditClick,
     onDeleteClick,
+    onClick,
     keyName = 'key',
     description,
     errorMessages,
     isValid,
     id,
   } = props;
-  const classes = useStyles();
+  const classes = useStyles(props);
   const [values, setValues] = useState([]);
 
   useEffect(() => {
@@ -50,7 +51,9 @@ export default function DynaKeyWithAction(props) {
     <div data-test={id} className={classes.container}>
       {tableData.map(r => (
         <div className={classes.rowContainer} key={r.row}>
-          <Typography className={classes.label}>{r[keyName]}</Typography>
+          <Typography onClick={onClick} className={classes.label}>
+            {r[keyName]}
+          </Typography>
           <div>
             {onEditClick && (
               <IconButton
