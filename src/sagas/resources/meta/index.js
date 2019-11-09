@@ -2,35 +2,32 @@ import { call, put, takeEvery, takeLatest, select } from 'redux-saga/effects';
 import actions from '../../../actions';
 import actionTypes from '../../../actions/types';
 import { apiCallWithRetry } from '../../index';
-import {
-  resource,
-  commMetadataPathGen,
-  commStatusByKey,
-} from '../../../reducers/index';
+import { resource, commStatusByKey } from '../../../reducers/index';
 import getRequestOptions from '../../../utils/requestOptions';
 import commKeyGenerator from '../../../utils/commKeyGenerator';
+import commMetadataPathGen from '../../../utils/commMetadataPathGen';
 import { COMM_STATES } from '../../../reducers/comms';
+// import commMetadataPathGen2 from '../../../../src/utils/netsuiteSalesforceMetadataPathGen';
 
 export function* getNetsuiteOrSalesforceMeta({
   connectionId,
   metadataType,
   mode = '',
-  filterKey = '',
   recordType = '',
   selectField = '',
   addInfo = {},
 }) {
   const connection = yield select(resource, 'connections', connectionId);
   const applicationType = (connection || {}).type || 'netsuite';
-  const commMetadataPath = commMetadataPathGen(
+  const commMetadataPath = commMetadataPathGen({
     applicationType,
     connectionId,
     metadataType,
     mode,
     recordType,
     selectField,
-    addInfo
-  );
+    addInfo,
+  });
   const path = `/${commMetadataPath}`;
 
   try {
@@ -46,22 +43,16 @@ export function* getNetsuiteOrSalesforceMeta({
         yield put(
           actions.metadata.netsuite.receivedError(
             metadata.errors[0] && metadata.errors[0].message,
-            metadataType,
             connectionId,
-            mode,
-            filterKey,
-            recordType,
-            selectField
+            commMetadataPath
           )
         );
       } else {
         yield put(
           actions.metadata.salesforce.receivedError(
             metadata.errors[0] && metadata.errors[0].message,
-            metadataType,
             connectionId,
-            recordType,
-            selectField
+            commMetadataPath
           )
         );
       }
@@ -69,22 +60,16 @@ export function* getNetsuiteOrSalesforceMeta({
       yield put(
         actions.metadata.netsuite.receivedCollection(
           metadata,
-          metadataType,
           connectionId,
-          mode,
-          filterKey,
-          recordType,
-          selectField
+          commMetadataPath
         )
       );
     } else if (applicationType === 'salesforce') {
       yield put(
         actions.metadata.salesforce.receivedCollection(
           metadata,
-          metadataType,
           connectionId,
-          recordType,
-          selectField
+          commMetadataPath
         )
       );
     }
@@ -99,22 +84,16 @@ export function* getNetsuiteOrSalesforceMeta({
         yield put(
           actions.metadata.netsuite.receivedError(
             parsedError && parsedError[0] && parsedError[0].message,
-            metadataType,
             connectionId,
-            mode,
-            filterKey,
-            recordType,
-            selectField
+            commMetadataPath
           )
         );
       } else {
         yield put(
           actions.metadata.salesforce.receivedError(
             parsedError && parsedError[0] && parsedError[0].message,
-            metadataType,
             connectionId,
-            recordType,
-            selectField
+            commMetadataPath
           )
         );
       }

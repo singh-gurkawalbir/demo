@@ -86,24 +86,26 @@ export function stagedResource(state, id, scope) {
   return fromStage.stagedResource(state.stage, id, scope);
 }
 
-export function optionsFromMetadata(
+export function optionsFromMetadata({
   state,
   connectionId,
   applicationType,
   metadataType,
   mode,
   recordType,
-  selectField
-) {
-  return fromMetadata.optionsFromMetadata(
-    state && state.metadata,
+  selectField,
+  filterKey,
+}) {
+  return fromMetadata.optionsFromMetadata({
+    state: state && state.metadata,
     connectionId,
     applicationType,
     metadataType,
     mode,
     recordType,
-    selectField
-  );
+    selectField,
+    filterKey,
+  });
 }
 
 export function optionsMapFromMetadata(

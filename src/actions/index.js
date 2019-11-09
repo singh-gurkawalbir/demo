@@ -290,7 +290,6 @@ const metadata = {
     connectionId,
     metadataType,
     mode,
-    filterKey,
     recordType,
     selectField,
     addInfo,
@@ -300,7 +299,6 @@ const metadata = {
         connectionId,
         metadataType,
         mode,
-        filterKey,
         recordType,
         selectField,
         addInfo,
@@ -331,71 +329,31 @@ const metadata = {
       selectField,
     }),
   netsuite: {
-    receivedCollection: (
-      metadata,
-      metadataType,
-      connectionId,
-      mode,
-      filterKey,
-      recordType,
-      selectField
-    ) =>
+    receivedCollection: (metadata, connectionId, commMetadataPath) =>
       action(actionTypes.METADATA.RECEIVED_NETSUITE, {
         metadata,
-        metadataType,
         connectionId,
-        mode,
-        filterKey,
-        recordType,
-        selectField,
+        commMetadataPath,
       }),
-    receivedError: (
-      metadataError,
-      metadataType,
-      connectionId,
-      mode,
-      filterKey,
-      recordType,
-      selectField
-    ) =>
+    receivedError: (metadataError, connectionId, commMetadataPath) =>
       action(actionTypes.METADATA.RECEIVED_NETSUITE_ERROR, {
         metadataError,
-        metadataType,
         connectionId,
-        mode,
-        filterKey,
-        recordType,
-        selectField,
+        commMetadataPath,
       }),
   },
   salesforce: {
-    receivedCollection: (
-      metadata,
-      metadataType,
-      connectionId,
-      recordType,
-      selectField
-    ) =>
+    receivedCollection: (metadata, connectionId, commMetadataPath) =>
       action(actionTypes.METADATA.RECEIVED_SALESFORCE, {
         metadata,
-        metadataType,
         connectionId,
-        recordType,
-        selectField,
+        commMetadataPath,
       }),
-    receivedError: (
-      metadataError,
-      metadataType,
-      connectionId,
-      recordType,
-      selectField
-    ) =>
+    receivedError: (metadataError, connectionId, commMetadataPath) =>
       action(actionTypes.METADATA.RECEIVED_SALESFORCE_ERROR, {
         metadataError,
-        metadataType,
         connectionId,
-        recordType,
-        selectField,
+        commMetadataPath,
       }),
   },
 };
