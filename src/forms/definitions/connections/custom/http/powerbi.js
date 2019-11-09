@@ -11,6 +11,7 @@ export default {
     '/http/auth/oauth/tokenURI':
       'https://login.microsoftonline.com/common/oauth2/token',
     '/http/auth/oauth/scopeDelimiter': ' ',
+    '/http/auth/failStatusCode': 403,
   }),
   fieldMap: {
     name: { fieldId: 'name' },

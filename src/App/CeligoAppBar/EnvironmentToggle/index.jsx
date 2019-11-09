@@ -1,14 +1,13 @@
 import { useSelector, useDispatch } from 'react-redux';
-// import { makeStyles } from '@material-ui/core/styles';
+import { useHistory } from 'react-router-dom';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import TextToggle from '../../../components/TextToggle';
-
-// const useStyles = makeStyles(() => ({}));
+import getRoutePath from '../../../utils/routePaths';
 
 export default function EnvironmentToggle() {
-  // const classes = useStyles();
   const dispatch = useDispatch();
+  const history = useHistory();
   const { environment = 'production' } = useSelector(state =>
     selectors.userPreferences(state)
   );
@@ -25,6 +24,7 @@ export default function EnvironmentToggle() {
 
   function handleChange(environment) {
     dispatch(actions.user.preferences.update({ environment }));
+    history.push(getRoutePath('/'));
   }
 
   if (!selectedAccountHasSandbox) return null;
