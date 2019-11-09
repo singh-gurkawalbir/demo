@@ -134,7 +134,7 @@ export default {
         },
       },
       text: {
-        textTransform: 'uppercase',
+        // textTransform: 'uppercase',
         fontSize: '13px',
         lineHeight: '15px',
         '&::after': {
@@ -433,6 +433,31 @@ export default {
       root: {
         backgroundColor: colors.celigoNeutral3,
         color: colors.celigoNeutral8,
+      },
+    },
+    MuiTabs: {
+      root: {
+        minHeight: 36,
+      },
+    },
+    MuiTab: {
+      root: {
+        minHeight: 36,
+        minWidth: 140,
+        textTransform: 'none',
+      },
+      labelIcon: {
+        minHeight: 'unset',
+      },
+      wrapper: {
+        '& > svg': {
+          fontSize: '1.1rem',
+        },
+        flexDirection: 'row',
+        '& > *:first-child': {
+          marginBottom: '0 !important',
+          marginRight: 8,
+        },
       },
     },
   },

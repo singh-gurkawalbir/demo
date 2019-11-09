@@ -24,7 +24,7 @@ import itemTypes from './itemTypes';
 import RunIcon from '../../components/icons/RunIcon';
 import SettingsIcon from '../../components/icons/SettingsIcon';
 import CalendarIcon from '../../components/icons/CalendarIcon';
-import EditableText from './EditableText';
+import EditableText from '../../components/EditableText';
 import SwitchOnOff from '../../components/OnOff';
 
 // #region FLOW SCHEMA: FOR REFERENCE DELETE ONCE FB IS COMPLETE

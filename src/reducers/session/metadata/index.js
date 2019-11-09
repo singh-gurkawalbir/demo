@@ -106,6 +106,11 @@ export default (
       return { ...state, ...{ netsuite: newState } };
     }
 
+    // This is quiet a deep object...ensuring i am creating
+    // new instances all the way to the children of the object.
+    // This is to ensure that a react component listening
+    // to just the root of the object realizes they are updates to
+    // the children and subsequently re-renders.
     case actionTypes.METADATA.RECEIVED_NETSUITE: {
       newState = { ...state.netsuite };
       newState[connectionId] = {
