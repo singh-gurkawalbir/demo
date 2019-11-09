@@ -5,9 +5,9 @@ import getRoutePath from '../../../../utils/routePaths';
 
 export default {
   label: 'Clone',
-  component: function Clone({ resourceType }) {
+  component: function Clone({ resourceType, resource }) {
     return (
-      <Link to={getRoutePath(`/${resourceType}/clone`)}>
+      <Link to={getRoutePath(`clone/${resourceType}/${resource._id}/preview`)}>
         <IconButton data-test="cloneResource" size="small">
           <Icon />
         </IconButton>

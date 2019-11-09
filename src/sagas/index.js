@@ -22,6 +22,7 @@ import { authenticationSagas } from './authentication';
 import { logoutParams } from './api/apiPaths';
 import { agentSagas } from './agent';
 import { templateSagas } from './template';
+import { cloneSagas } from './clone';
 import { uploadFileSagas } from './uploadFile';
 import { stackSagas } from './stack';
 import sampleDataSagas from './sampleData';
@@ -93,6 +94,7 @@ export default function* rootSaga() {
     ...resourceSagas,
     ...connectorSagas,
     ...templateSagas,
+    ...cloneSagas,
     ...editorSagas,
     ...userSagas,
     ...authenticationSagas,

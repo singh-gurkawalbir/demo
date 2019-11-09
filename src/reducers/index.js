@@ -120,6 +120,14 @@ export function resourceFormState(state, resourceType, resourceId) {
   );
 }
 
+export function clonePreview(state, resourceType, resourceId) {
+  return fromSession.clonePreview(
+    state && state.session,
+    resourceType,
+    resourceId
+  );
+}
+
 export function previewTemplate(state, templateId) {
   return fromSession.previewTemplate(state && state.session, templateId);
 }

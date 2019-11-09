@@ -14,6 +14,7 @@ import sampleData, * as fromSampleData from './sampleData';
 import flowData, * as fromFlowData from './sampleData/flows';
 import integrationApps, * as fromIntegrationApps from './integrationApps';
 import templates, * as fromTemplates from './templates';
+import clone, * as fromClone from './clone';
 import oAuthAuthorize, * as fromOAuthAuthorize from './oAuthAuthorize';
 import resource, * as fromResource from './resource';
 
@@ -34,6 +35,7 @@ export default combineReducers({
   flowData,
   integrationApps,
   templates,
+  clone,
   oAuthAuthorize,
 });
 
@@ -130,6 +132,10 @@ export function resourceFormState(state, resourceType, resourceId) {
     resourceType,
     resourceId
   );
+}
+
+export function clonePreview(state, resourceType, resourceId) {
+  return fromClone.clonePreview(state && state.clone, resourceType, resourceId);
 }
 
 export function previewTemplate(state, templateId) {

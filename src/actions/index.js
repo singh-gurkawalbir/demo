@@ -555,6 +555,38 @@ const ashare = {
   receivedCollection: ashares =>
     resource.receivedCollection('ashares', ashares),
 };
+const clone = {
+  requestPreview: (resourceType, resourceId) =>
+    action(actionTypes.CLONE.PREVIEW_REQUEST, { resourceType, resourceId }),
+  failedPreview: (resourceType, resourceId) =>
+    action(actionTypes.CLONE.FAILURE, { resourceType, resourceId }),
+  createComponents: (resourceType, resourceId) =>
+    action(actionTypes.CLONE.CREATE_COMPONENTS, { resourceType, resourceId }),
+  createdComponents: (components, resourceType, resourceId) =>
+    action(actionTypes.CLONE.CREATED_COMPONENTS, {
+      components,
+      resourceType,
+      resourceId,
+    }),
+  installStepsReceived: (
+    installSteps,
+    connectionMap,
+    resourceType,
+    resourceId
+  ) =>
+    action(actionTypes.CLONE.STEPS_RECEIVED, {
+      installSteps,
+      connectionMap,
+      resourceType,
+      resourceId,
+    }),
+  receivedPreview: (components, resourceType, resourceId) =>
+    action(actionTypes.CLONE.RECEIVED_PREVIEW, {
+      components,
+      resourceType,
+      resourceId,
+    }),
+};
 const template = {
   generateZip: integrationId =>
     action(actionTypes.TEMPLATE.ZIP_GENERATE, { integrationId }),
@@ -992,6 +1024,7 @@ export default {
   flow,
   agent,
   template,
+  clone,
   file,
   assistantMetadata,
   stack,
