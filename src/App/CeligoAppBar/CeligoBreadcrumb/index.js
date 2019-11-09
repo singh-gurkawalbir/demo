@@ -135,7 +135,9 @@ const routes = [
 const commonChildRoutes = [
   // TODO: The clone resource feature will be accessible from various pages and
   // acts like the resource drawer. They share the property of preserving the url and
-  // append a /clone route to the end of an existing route url.
+  // append a /clone route to the end of an existing route url. Possibly more
+  // metadata needs to be carried in the url.. keeping it simple for now.
+  { path: '/clone', breadcrumb: () => 'Clone' },
   {
     path: '/:operation/:resourceType/:id',
     breadcrumb: ({ operation, resourceType }) =>
