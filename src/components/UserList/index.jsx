@@ -1,6 +1,5 @@
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import Typography from '@material-ui/core/Typography';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -165,9 +164,6 @@ class UserList extends Component {
         )}
         <div className={classes.root}>
           <div>
-            <Typography className={classes.title} variant="h4">
-              {integrationId ? 'Users' : 'Manage Users'}
-            </Typography>
             {isAccountOwner && (
               <Button
                 data-test="inviteUser"

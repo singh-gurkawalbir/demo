@@ -2,7 +2,6 @@ import { Component } from 'react';
 import { hot } from 'react-hot-loader';
 import { Switch, Route } from 'react-router-dom';
 import loadable from '../../utils/loadable';
-import IntegrationSettings from '../../views/IntegrationSettings';
 import IntegrationAppsRouter from '../../views/IntegrationApps/Router';
 import MarketplaceRouter from '../../views/MarketPlace/Router';
 import TemplatePreview from '../../views/Templates/InstallIntegrationPreview';
@@ -40,10 +39,8 @@ const TemplateList = loadable(() =>
 const MyAccount = loadable(() =>
   import(/* webpackChunkName: 'MyAccount' */ '../../views/MyAccount')
 );
-const IntegrationDashboard = loadable(() =>
-  import(
-    /* webpackChunkName: 'IntegrationDashboard' */ '../../views/IntegrationDashboard'
-  )
+const Integration = loadable(() =>
+  import(/* webpackChunkName: 'Integration' */ '../../views/Integration')
 );
 const AccessTokenList = loadable(() =>
   import(
@@ -82,7 +79,7 @@ export default class AppRouting extends Component {
           exact
           render={({ history, match }) =>
             history.replace(
-              `/pg/integrations/${match.params.integrationId}/settings/flows`
+              `/pg/integrations/${match.params.integrationId}/flows`
             )
           }
         />
@@ -96,10 +93,6 @@ export default class AppRouting extends Component {
           }
         />
         <Route
-          path="/pg/integrations/:integrationId/dashboard"
-          component={IntegrationDashboard}
-        />
-        <Route
           path="/pg/templates/:templateId/preview"
           component={TemplatePreview}
         />
@@ -108,12 +101,12 @@ export default class AppRouting extends Component {
           component={TemplateInstall}
         />
         <Route
-          path="/pg/integrations/:integrationId/settings"
-          component={IntegrationSettings}
-        />
-        <Route
           path={['/pg/integrations/:integrationId/flowBuilder/:flowId']}
           component={FlowBuilder}
+        />
+        <Route
+          path="/pg/integrations/:integrationId/:tab"
+          component={Integration}
         />
         <Route
           path="/pg/connectors/:connectorId/connectorLicenses"
