@@ -6,28 +6,13 @@ import DynaForm from '../../../../../components/DynaForm';
 import DynaSubmit from '../../../../../components/DynaForm/DynaSubmit';
 import PanelHeader from '../../PanelHeader';
 
-export default function GeneralSection({ integrationId }) {
+export default function ReadmeSection({ integrationId }) {
   const dispatch = useDispatch();
   const integration = useSelector(state =>
     selectors.resource(state, 'integrations', integrationId)
   );
   const fieldMeta = {
     fieldMap: {
-      name: {
-        id: 'name',
-        name: 'name',
-        type: 'text',
-        label: 'Name',
-        defaultValue: integration && integration.name,
-      },
-      description: {
-        id: 'description',
-        name: 'description',
-        type: 'text',
-        label: 'Description',
-        multiline: true,
-        defaultValue: integration && integration.description,
-      },
       readme: {
         id: 'readme',
         name: 'readme',
@@ -38,21 +23,11 @@ export default function GeneralSection({ integrationId }) {
       },
     },
     layout: {
-      fields: ['name', 'description', 'readme'],
+      fields: ['readme'],
     },
   };
   const handleSubmit = formVal => {
     const patchSet = [
-      {
-        op: 'replace',
-        path: '/name',
-        value: formVal.name,
-      },
-      {
-        op: 'replace',
-        path: '/description',
-        value: formVal.description,
-      },
       {
         op: 'replace',
         path: '/readme',
@@ -68,7 +43,7 @@ export default function GeneralSection({ integrationId }) {
 
   return (
     <Fragment>
-      <PanelHeader title="General" />
+      <PanelHeader title="Readme" />
 
       <DynaForm fieldMeta={fieldMeta} render>
         <DynaSubmit onClick={handleSubmit}>Save</DynaSubmit>

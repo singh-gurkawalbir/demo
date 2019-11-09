@@ -39,7 +39,7 @@ const routes = [
         path: '/admin',
         breadcrumb: () => 'Admin',
         childRoutes: [
-          { path: '/general', breadcrumb: () => 'General' },
+          { path: '/readme', breadcrumb: () => 'Readme' },
           { path: '/users', breadcrumb: () => 'Users' },
           { path: '/audit', breadcrumb: () => 'Audit log' },
           { path: '/notifications', breadcrumb: () => 'Notifications' },

@@ -1,8 +1,9 @@
-import { Fragment } from 'react';
-import { useSelector } from 'react-redux';
-import { Link, useHistory } from 'react-router-dom';
+import { Fragment, useCallback } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { Link, useHistory, useLocation } from 'react-router-dom';
 import { makeStyles, Tabs, Tab } from '@material-ui/core';
 import * as selectors from '../../reducers';
+import actions from '../../actions';
 import LoadResources from '../../components/LoadResources';
 import TrashIcon from '../../components/icons/TrashIcon';
 import CopyIcon from '../../components/icons/CopyIcon';
@@ -14,6 +15,7 @@ import ConnectionsIcon from '../../components/icons/ConnectionsIcon';
 import IconTextButton from '../../components/IconTextButton';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import ResourceDrawer from '../../components/drawer/Resource';
+import EditableText from '../../components/EditableText';
 import AdminPanel from './panels/Admin';
 import FlowsPanel from './panels/Flows';
 import ConnectionsPanel from './panels/Connections';
@@ -48,11 +50,13 @@ const useStyles = makeStyles(theme => ({
 export default function Integration({ match }) {
   const classes = useStyles();
   const history = useHistory();
+  const location = useLocation();
+  const dispatch = useDispatch();
   const { integrationId, tab } = match.params;
   const integration = useSelector(state =>
     selectors.resource(state, 'integrations', integrationId)
   );
-  const currentTabIndex = tabs.findIndex(t => t.path === tab);
+  const currentTabIndex = tabs.findIndex(t => t.path === tab) || 0;
 
   function handleTabChange(event, newTabIndex) {
     const newTab = tabs[newTabIndex].path;
@@ -65,15 +69,57 @@ export default function Integration({ match }) {
     history.push(newUrl);
   }
 
+  const patchIntegration = useCallback(
+    (path, value) => {
+      const patchSet = [{ op: 'replace', path, value }];
+
+      dispatch(actions.resource.patchStaged(integrationId, patchSet, 'value'));
+      dispatch(
+        actions.resource.commitStaged('integrations', integrationId, 'value')
+      );
+    },
+    [dispatch, integrationId]
+  );
+
+  function handleTitleChange(title) {
+    patchIntegration('/name', title);
+  }
+
+  function handleDescriptionChange(description) {
+    patchIntegration('/description', description);
+  }
+
+  // TODO: <ResourceDrawer> Can be further optimized to take advantage
+  // of the 'useRouteMatch' hook now available in react-router-dom to break
+  // the need for parent components passing any props at all.
   return (
     <Fragment>
       <ResourceDrawer match={match} />
 
       <LoadResources required resources="integrations">
         <CeligoPageBar
-          title={integration ? integration.name : 'Standalone integrations'}
-          infoText={integration ? integration.description : undefined}>
-          <IconTextButton component={Link} to="clone" variant="text">
+          title={
+            integration ? (
+              <EditableText onChange={handleTitleChange}>
+                {integration.name}
+              </EditableText>
+            ) : (
+              'Standalone integrations'
+            )
+          }
+          infoText={
+            integration ? (
+              <EditableText onChange={handleDescriptionChange}>
+                {integration.description}
+              </EditableText>
+            ) : (
+              undefined
+            )
+          }>
+          <IconTextButton
+            component={Link}
+            to={`${location.pathname}/clone`}
+            variant="text">
             <CopyIcon /> Clone integration
           </IconTextButton>
 
