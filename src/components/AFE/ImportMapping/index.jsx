@@ -393,10 +393,11 @@ export default function ImportMapping(props) {
                         generateFields={formattedGenerateFields}
                       />
                     </Grid>
-                    <Grid item key="edit_button">
+                    <Grid item key="delete_button">
                       <IconButton
                         data-test="editMapping"
                         aria-label="delete"
+                        disabled={mapping.isMandatory}
                         onClick={() => {
                           handleDelete(mapping.index);
                         }}
