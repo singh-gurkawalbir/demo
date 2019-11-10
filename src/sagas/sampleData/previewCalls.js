@@ -95,7 +95,7 @@ export function* exportPreview({
     };
   }
 
-  if (runOffline) {
+  if (runOffline && body.rawData) {
     body = {
       ...body,
       verbose: true,

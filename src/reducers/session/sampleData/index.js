@@ -79,6 +79,10 @@ function getRawData(resourceData) {
   return DEFAULT_VALUE;
 }
 
+function getParsedData(resourceData) {
+  return resourceData.parse || resourceData.raw || DEFAULT_VALUE;
+}
+
 function getSampleData(resourceData) {
   return resourceData.transform || resourceData.parse || DEFAULT_VALUE;
 }
@@ -101,6 +105,8 @@ export function getResourceSampleData(state, resourceId, stage) {
   switch (stage) {
     case 'raw':
       return getRawData(resourceData);
+    case 'parse':
+      return getParsedData(resourceData);
     case 'sample':
       return getSampleData(resourceData);
     case 'transform':

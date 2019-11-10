@@ -259,3 +259,15 @@ export function isValidResourceReference(
     default:
   }
 }
+
+/*
+ * Given a resource, returns true if it is File Export
+ * FTP / S3 / DataLoader
+ */
+export function isFileExport(resource) {
+  if (!resource) return false;
+
+  return resource.adaptorType
+    ? ['ftp', 's3'].includes(adaptorTypeMap[resource.adaptorType])
+    : resource.type === 'simple';
+}
