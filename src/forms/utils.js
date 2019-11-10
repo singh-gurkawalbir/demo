@@ -401,6 +401,8 @@ export const integrationSettingsToDynaFormMetadata = (
   isGeneral
 ) => {
   const finalData = {};
+
+  if (!meta || (!meta.fields && !meta.sections)) return null;
   const { fields, sections } = meta;
 
   if (fields) {

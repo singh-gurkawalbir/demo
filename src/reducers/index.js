@@ -1171,6 +1171,24 @@ export function resourcePermissions(state, resourceType, resourceId) {
   return {};
 }
 
+export function isFormAMonitorLevelAccess(state, resourceType, resourceId) {
+  const { accessLevel } = userPermissions(state);
+
+  // if all forms is monitor level
+  if (accessLevel === 'monitor') return true;
+
+  // check integration level is monitor level
+  const { accessLevel: accessLevelIntegration } = resourcePermissions(
+    state,
+    resourceType,
+    resourceId
+  );
+
+  if (accessLevelIntegration === 'monitor') return true;
+
+  return false;
+}
+
 export function publishedConnectors(state) {
   const ioConnectors = resourceList(state, {
     type: 'published',
