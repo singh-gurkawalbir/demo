@@ -32,13 +32,19 @@ const routes = [
     path: '/pg/integrations/:integrationId/',
     breadcrumb: IntegrationCrumb,
     childRoutes: [
+      { path: '/flows', breadcrumb: () => 'Flows' },
       { path: '/dashboard', breadcrumb: () => 'Dashboard' },
-      { path: '/settings/flows', breadcrumb: () => 'Flows' },
-      { path: '/settings/general', breadcrumb: () => 'General' },
-      { path: '/settings/users', breadcrumb: () => 'Users' },
-      { path: '/settings/audit', breadcrumb: () => 'Audit log' },
-      { path: '/settings/connections', breadcrumb: () => 'Connections' },
-      { path: '/settings/notifications', breadcrumb: () => 'Notifications' },
+      { path: '/connections', breadcrumb: () => 'Connections' },
+      {
+        path: '/admin',
+        breadcrumb: () => 'Admin',
+        childRoutes: [
+          { path: '/readme', breadcrumb: () => 'Readme' },
+          { path: '/users', breadcrumb: () => 'Users' },
+          { path: '/audit', breadcrumb: () => 'Audit log' },
+          { path: '/notifications', breadcrumb: () => 'Notifications' },
+        ],
+      },
       {
         path: '/flowBuilder/:flowId',
         breadcrumb: () => 'Flow builder',
@@ -127,6 +133,11 @@ const routes = [
   },
 ];
 const commonChildRoutes = [
+  // TODO: The clone resource feature will be accessible from various pages and
+  // acts like the resource drawer. They share the property of preserving the url and
+  // append a /clone route to the end of an existing route url. Possibly more
+  // metadata needs to be carried in the url.. keeping it simple for now.
+  { path: '/clone', breadcrumb: () => 'Clone' },
   {
     path: '/:operation/:resourceType/:id',
     breadcrumb: ({ operation, resourceType }) =>
@@ -134,9 +145,6 @@ const commonChildRoutes = [
         MODEL_PLURAL_TO_LABEL[resourceType]
       }`,
   },
-  // TODO: clone resource, once complete is accessible from various pages and
-  // acts like the resource drawer, in that it preserves the url and simple
-  // appends to any existing route url.
 ];
 
 function parseUrl(pathname, routes, url = '', params = {}) {

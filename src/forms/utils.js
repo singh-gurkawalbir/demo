@@ -439,7 +439,8 @@ export const integrationSettingsToDynaFormMetadata = (
     }));
   }
 
-  finalData.fieldMap = translateDependencyProps(finalData.fieldMap);
+  if (finalData.fieldMap)
+    finalData.fieldMap = translateDependencyProps(finalData.fieldMap);
 
   // Wrap everything in a adavancedSettings container
   if (!isGeneral) {
