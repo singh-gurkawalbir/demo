@@ -7,7 +7,7 @@ import {
   isRawDataPatchSet,
   getPreviewStageData,
 } from '../../utils/flowData';
-import { fetchExportPreview, fetchPageProcessorPreview } from './previewCalls';
+import { exportPreview, pageProcessorPreview } from './previewCalls';
 import { uploadRawData } from '../uploadFile';
 
 function* saveRawDataOnResource({
@@ -35,7 +35,7 @@ function* saveRawDataOnResource({
 
 function* fetchRawDataForResource({ type, resourceId, flowId }) {
   if (type === 'exports') {
-    const exportPreviewData = yield call(fetchExportPreview, {
+    const exportPreviewData = yield call(exportPreview, {
       resourceId,
       hidden: true,
     });
@@ -46,7 +46,7 @@ function* fetchRawDataForResource({ type, resourceId, flowId }) {
       yield call(saveRawDataOnResource, { resourceId, rawData: parseData });
     }
   } else {
-    const pageProcessorPreviewData = yield call(fetchPageProcessorPreview, {
+    const pageProcessorPreviewData = yield call(pageProcessorPreview, {
       flowId,
       _pageProcessorId: resourceId,
       previewType: 'raw',

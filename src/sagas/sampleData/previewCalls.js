@@ -7,7 +7,7 @@ import { fetchFlowResources } from './flows/utils';
 import { getLastExportDateTime } from '../../utils/flowData';
 import { isNewId } from '../../utils/resource';
 
-export function* fetchPageProcessorPreview({
+export function* pageProcessorPreview({
   flowId,
   _pageProcessorId,
   previewType,
@@ -77,7 +77,7 @@ export function* fetchPageProcessorPreview({
   }
 }
 
-export function* fetchExportPreview({
+export function* exportPreview({
   resourceId,
   hidden = false,
   runOffline = false,
