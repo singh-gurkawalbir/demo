@@ -6,11 +6,11 @@ import * as selectors from '../../../../reducers';
 import { STANDALONE_INTEGRATION } from '../../../../utils/constants';
 import AttachFlowsDialog from '../../../../components/AttachFlows';
 import LoadResources from '../../../../components/LoadResources';
-import ResourceTable from '../../../../components/ResourceTable';
 import IconTextButton from '../../../../components/IconTextButton';
 import AddIcon from '../../../../components/icons/AddIcon';
 import AttachIcon from '../../../../components/icons/ConnectionsIcon';
 import PanelHeader from '../PanelHeader';
+import FlowCard from './Card';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -28,8 +28,8 @@ export default function FlowsPanel({ integrationId }) {
     selectors.userProfilePreferencesProps(state)
   );
   // TODO: This next code should be moved into the <AttachFlowsDialog>
-  // component. Its adding unnecessary complexity to this component.
-  // This filtering used as a prop value to another component.
+  // component. Its adding unnecessary complexity here.
+  // This filtering is only used as a prop value to another component.
   const standaloneFlows =
     flows &&
     flows.filter(
@@ -67,7 +67,25 @@ export default function FlowsPanel({ integrationId }) {
       </PanelHeader>
 
       <LoadResources required resources="flows, connections, exports, imports">
-        <ResourceTable resourceType="flows" resources={flows} />
+        {flows.map(
+          ({ _id, name, description, disabled, lastModified, schedule }, i) => (
+            <FlowCard
+              key={_id}
+              flowId={_id}
+              // TODO: We need to add the logic to determine which status a flow is
+              // in. for now, just cycle through the 3 options.
+              status={
+                // eslint-disable-next-line no-nested-ternary
+                i % 3 === 1 ? 'warning' : i % 3 === 2 ? 'error' : 'success'
+              }
+              name={name}
+              description={description}
+              lastModified={lastModified}
+              schedule={schedule}
+              disabled={disabled}
+            />
+          )
+        )}
       </LoadResources>
     </div>
   );
