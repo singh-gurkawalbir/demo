@@ -10,6 +10,11 @@ export default {
       'https://login.microsoftonline.com/common/oauth2/authorize',
     '/http/auth/oauth/tokenURI':
       'https://login.microsoftonline.com/common/oauth2/token',
+    '/http/auth/failStatusCode': 500,
+    '/http/auth/failPath': 'error.message',
+    '/http/auth/failValues': [
+      'The SAML2 token is not valid because its validity period has ended.',
+    ],
   }),
   fieldMap: {
     name: { fieldId: 'name' },

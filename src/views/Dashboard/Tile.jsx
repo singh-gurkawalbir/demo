@@ -40,9 +40,7 @@ function Tile({ tile, history }) {
         getRoutePath(`/connectors/${tile._integrationId}/settings/flows`)
       );
     } else {
-      history.push(
-        getRoutePath(`/integrations/${tile._integrationId}/settings/flows`)
-      );
+      history.push(getRoutePath(`/integrations/${tile._integrationId}/flows`));
     }
   }
 
