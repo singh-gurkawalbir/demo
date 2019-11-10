@@ -72,6 +72,8 @@ export default function ImportMappingSettings(props) {
           optionsHandler={fieldMeta.optionsHandler}>
           <Button
             data-test="cancelMappingSettings"
+            variant="text"
+            color="primary"
             onClick={() => {
               onClose(false);
             }}>

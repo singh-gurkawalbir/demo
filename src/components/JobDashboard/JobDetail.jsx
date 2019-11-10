@@ -3,7 +3,7 @@ import TableRow from '@material-ui/core/TableRow';
 import Checkbox from '@material-ui/core/Checkbox';
 import { makeStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
-import { Button } from '@material-ui/core';
+import { Button, Typography } from '@material-ui/core';
 import { useState, Fragment } from 'react';
 import { useDispatch } from 'react-redux';
 import { difference } from 'lodash';
@@ -16,6 +16,7 @@ import JobActionsMenu from './JobActionsMenu';
 import Spinner from '../Spinner';
 import ArrowDownIcon from '../icons/ArrowDownIcon';
 import ArrowUpIcon from '../icons/ArrowUpIcon';
+import Loader from '../Loader';
 
 const useStyles = makeStyles(theme => ({
   icon: {
@@ -42,10 +43,9 @@ const useStyles = makeStyles(theme => ({
   checkAction: {
     listStyle: 'none',
     padding: 0,
+    margin: 0,
+    display: 'flex',
     minWidth: '60px',
-    '& li': {
-      float: 'left',
-    },
   },
   moreIcon: {
     padding: 0,
@@ -264,9 +264,13 @@ function JobDetail({
         </TableCell>
 
         {expanded && !job.children && (
-          <TableCell className={classes.spinner}>
-            <Spinner size={20} /> <span>Loading child jobs...</span>
-          </TableCell>
+          // <TableCell className={classes.spinner}>
+          //   <Spinner size={20} /> <span>Loading child jobs...</span>
+          // </TableCell>
+          <Loader open>
+            <Typography>Loading child jobs</Typography>
+            <Spinner size={20} color="primary" />
+          </Loader>
         )}
       </TableRow>
       {expanded &&

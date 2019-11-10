@@ -13,6 +13,7 @@ import * as selectors from '../../../../reducers';
 import JavaScriptEditorDialog from '../../../../components/AFE/JavaScriptEditor/Dialog';
 import EditIcon from '../../../icons/EditIcon';
 import AddIcon from '../../../icons/AddIcon';
+import ArrowDownIcon from '../../../icons/ArrowDownIcon';
 import CreateScriptDialog from './CreateScriptDialog';
 import { saveScript } from './utils';
 
@@ -32,19 +33,24 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'flex-end',
     borderRadius: 2,
     '& > Label': {
-      paddingTop: 10,
+      marginTop: theme.spacing(-1),
+      '&.MuiInputLabel-shrink': {
+        paddingTop: theme.spacing(2),
+      },
     },
     '&:hover': {
       borderColor: theme.palette.primary.main,
     },
     '& > *': {
       padding: [[0, 12]],
+      background: 'none',
     },
     '& > div > div ': {
       paddingBottom: 5,
     },
     '& svg': {
-      right: 8,
+      right: theme.spacing(1),
+      top: theme.spacing(-1),
     },
   },
   wrapper: {
@@ -233,6 +239,7 @@ export default function DynaHook(props) {
                   margin="dense"
                   variant="filled"
                   value={value._scriptId}
+                  IconComponent={ArrowDownIcon}
                   onChange={handleFieldChange('_scriptId')}>
                   {allScripts.map(s => (
                     <MenuItem key={s._id} value={s._id}>

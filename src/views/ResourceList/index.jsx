@@ -67,7 +67,7 @@ function ResourceList(props) {
               }/add/${resourceType}/new-${shortid.generate()}`}
               variant="text"
               color="primary">
-              <AddIcon /> New {resourceName}
+              <AddIcon /> Create {resourceName}
             </IconTextButton>
           </div>
         </CeligoPageBar>

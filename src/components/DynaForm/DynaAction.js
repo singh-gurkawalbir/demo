@@ -44,7 +44,7 @@ function DynaAction(props) {
   return (
     <Button
       data-test={id || dataTest}
-      variant="contained"
+      variant="outlined"
       color="primary"
       className={className}
       disabled={disabled || !isValid}

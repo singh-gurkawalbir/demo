@@ -70,11 +70,16 @@ const useStyles = makeStyles(theme => ({
   topBarActions: {
     listStyle: 'none',
     margin: [[5, 0, 0, 0]],
+    display: 'flex',
+    alignItems: 'center',
     '& li': {
       float: 'left',
       marginRight: theme.spacing(3),
       '&:last-child': {
         marginRight: 0,
+      },
+      '&:empty': {
+        display: 'none',
       },
     },
   },
