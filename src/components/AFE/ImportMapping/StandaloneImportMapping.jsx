@@ -8,6 +8,7 @@ import actions from '../../../actions';
 import ImportMapping from './';
 import LoadResources from '../../../components/LoadResources';
 import { getJSONPaths } from '../../../utils/json';
+import { getImportOperationDetails } from '../../../utils/assistant';
 
 /**
  *
@@ -70,23 +71,28 @@ export default function StandaloneImportMapping(props) {
   );
 
   if (assistantData) {
-    const mandatoryMappings = MappingUtil.getAssistantMandataryMapping(
-      resourceData,
-      assistantData
-    );
+    const { assistantMetadata } = resourceData;
+    const { operation, resource, version } = assistantMetadata;
+    const assistantOperationDetail = getImportOperationDetails({
+      operation,
+      resource,
+      version,
+      assistantData,
+    });
+    const { requiredMappings } = assistantOperationDetail;
 
-    if (mandatoryMappings && Array.isArray(mandatoryMappings)) {
-      mandatoryMappings.forEach(_mandatoryMapping => {
+    if (requiredMappings && Array.isArray(requiredMappings)) {
+      requiredMappings.forEach(_mandatoryMapping => {
         const _mappingObj = mappings.find(
           _mapping => _mapping.generate === _mandatoryMapping
         );
 
         if (_mappingObj) {
-          _mappingObj.isMandatory = true;
+          _mappingObj.isRequired = true;
         } else {
           mappings.push({
             generate: _mandatoryMapping,
-            isMandatory: true,
+            isRequired: true,
           });
         }
       });

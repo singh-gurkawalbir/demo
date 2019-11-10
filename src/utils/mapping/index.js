@@ -303,31 +303,4 @@ export default {
 
     return formattedGenerateFields;
   },
-
-  getAssistantMandataryMapping: (resourceData, assistantData) => {
-    const { assistantMetadata } = resourceData;
-    const { operation, resource, version } = assistantMetadata;
-    const assistantVersionObj = assistantData.import.versions.find(
-      data => data.version === version
-    );
-    let assistantResourceObj;
-
-    if (assistantVersionObj) {
-      assistantResourceObj =
-        assistantVersionObj.resources &&
-        assistantVersionObj.resources.find(data => data.id === resource);
-    }
-
-    let assistantOperationObj;
-
-    if (assistantResourceObj) {
-      assistantOperationObj =
-        assistantResourceObj.operations &&
-        assistantResourceObj.operations.find(data => data.id === operation);
-    }
-
-    return (
-      (assistantOperationObj && assistantOperationObj.requiredMappings) || []
-    );
-  },
 };

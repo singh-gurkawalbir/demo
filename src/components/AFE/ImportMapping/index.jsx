@@ -397,7 +397,7 @@ export default function ImportMapping(props) {
                       <IconButton
                         data-test="editMapping"
                         aria-label="delete"
-                        disabled={mapping.isMandatory}
+                        disabled={mapping.isRequired}
                         onClick={() => {
                           handleDelete(mapping.index);
                         }}
