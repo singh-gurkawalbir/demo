@@ -23,6 +23,7 @@ const useStyles = makeStyles(theme => ({
     height: '25vh',
     padding: theme.spacing(1),
     marginBottom: theme.spacing(2),
+    overflow: 'auto',
   },
 }));
 
