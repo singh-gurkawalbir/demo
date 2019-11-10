@@ -6,6 +6,7 @@ import 'brace/mode/javascript';
 import 'brace/mode/handlebars';
 import 'brace/mode/json';
 import 'brace/mode/xml';
+import 'brace/mode/html';
 import 'brace/theme/monokai';
 import 'brace/theme/tomorrow';
 import 'brace/mode/sql';
@@ -30,12 +31,12 @@ const mapStateToProps = state => ({
 })
 class CodeEditor extends Component {
   componentDidMount() {
-    // anytime the container DOM element changes size (both height and width)
+    // TODO: anytime the container DOM element changes size (both height and width)
     // the resize method of the editor needs to be fired so it can internally
     // adjust it's internal variables that control the controlled scrollbars
     // and basic functionality.
     // TODO: We are cheating here and calling the resize on EVERY change...
-    // The better approach would be to onyl call resize whenever the parent
+    // The better approach would be to only call resize whenever the parent
     // component changed its size...
     this.resize();
   }
