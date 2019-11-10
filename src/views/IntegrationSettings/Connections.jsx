@@ -20,8 +20,8 @@ const useStyles = makeStyles(() => ({
 }));
 
 export default function Connections(props) {
-  const { match, storeId } = props;
-  const { integrationId } = match.params;
+  const { match } = props;
+  const { integrationId, storeId } = match.params;
   const classes = useStyles();
   const [showRegisterConnDialog, setShowRegisterConnDialog] = useState(false);
   const connections = useSelector(state => {

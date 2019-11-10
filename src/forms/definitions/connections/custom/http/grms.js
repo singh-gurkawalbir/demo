@@ -18,6 +18,8 @@ export default {
     '/http/auth/token/refreshMethod': 'POST',
     '/http/auth/token/refreshTokenPath': 'token.TransactionID',
     '/http/auth/token/refreshMediaType': 'json',
+    '/http/auth/failPath': 'ResponseCode',
+    '/http/auth/failValues': [210],
     '/http/auth/token/refreshHeaders': [
       {
         name: 'Content-Type',

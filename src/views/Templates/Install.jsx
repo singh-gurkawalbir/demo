@@ -61,9 +61,9 @@ export default function ConnectorInstallation(props) {
   const [stackId, setShowStackDialog] = useState(null);
   const [isSetupComplete, setIsSetupComplete] = useState(false);
   const dispatch = useDispatch();
-  const template = useSelector(state =>
-    selectors.marketplaceTemplate(state, templateId)
-  );
+  const template =
+    useSelector(state => selectors.marketplaceTemplate(state, templateId)) ||
+    {};
   const installSteps = useSelector(state =>
     selectors.templateInstallSteps(state, templateId)
   );
@@ -101,9 +101,7 @@ export default function ConnectorInstallation(props) {
       dispatch(actions.resource.requestCollection('stacks'));
 
       if (integration) {
-        props.history.push(
-          `/pg/integrations/${integration._id}/settings/flows`
-        );
+        props.history.push(`/pg/integrations/${integration._id}/flows`);
       } else {
         props.history.push('/');
       }
@@ -265,7 +263,9 @@ export default function ConnectorInstallation(props) {
               <Paper elevation={0} className={classes.paper}>
                 <Breadcrumbs separator={<ArrowRightIcon />}>
                   <Typography color="textPrimary">Setup</Typography>
-                  <Typography color="textPrimary">{template.name}</Typography>
+                  <Typography color="textPrimary">
+                    {template.name || 'Integration'}
+                  </Typography>
                 </Breadcrumbs>
               </Paper>
             </Grid>

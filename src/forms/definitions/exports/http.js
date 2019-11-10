@@ -1,3 +1,5 @@
+import { isNewId } from '../../../utils/resource';
+
 export default {
   preSave: formValues => {
     const retValues = { ...formValues };
@@ -77,6 +79,7 @@ export default {
       id: 'outputMode',
       type: 'radiogroup',
       label: 'Output Mode',
+      required: true,
       options: [
         {
           items: [
@@ -107,6 +110,16 @@ export default {
       type: 'select',
       label: 'Export Type',
       required: true,
+      defaultValue: r => {
+        const isNew = isNewId(r._id);
+
+        // if its create
+        if (isNew) return '';
+
+        const output = r && r.type;
+
+        return output ? 'output' : 'all';
+      },
       visibleWhen: [
         {
           field: 'outputMode',

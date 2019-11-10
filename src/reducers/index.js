@@ -29,7 +29,12 @@ import {
 import { getFieldById } from '../forms/utils';
 import { upgradeButtonText, expiresInfo } from '../utils/license';
 import commKeyGen from '../utils/commKeyGenerator';
-import { isRealtimeExport, isSimpleImportFlow, isRunnable } from './flowsUtil';
+import {
+  isRealtimeExport,
+  isSimpleImportFlow,
+  isRunnable,
+  showScheduleIcon,
+} from './flowsUtil';
 import { getUsedActionsMapForResource } from '../utils/flows';
 import { isValidResourceReference } from '../utils/resource';
 
@@ -119,6 +124,10 @@ export function previewTemplate(state, templateId) {
   return fromSession.previewTemplate(state && state.session, templateId);
 }
 
+export function isFileUploaded(state) {
+  return fromSession.isFileUploaded(state && state.session);
+}
+
 export function templateSetup(state, templateId) {
   return fromSession.template(state && state.session, templateId);
 }
@@ -153,6 +162,33 @@ export function connectorMetadata(state, fieldName, id, _integrationId) {
     id,
     _integrationId
   );
+}
+
+export function connectorFieldOptions(
+  state,
+  fieldName,
+  id,
+  _integrationId,
+  defaultFieldOptions
+) {
+  const { data, isLoading } = connectorMetadata(
+    state,
+    fieldName,
+    id,
+    _integrationId
+  );
+
+  // should select options from either defaultOptions or the refreshed metadata options
+  return {
+    isLoading,
+    options:
+      (data &&
+        data.options.map(option => ({
+          value: option[0],
+          label: option[1],
+        }))) ||
+      (defaultFieldOptions && defaultFieldOptions[0].items),
+  };
 }
 
 export function filter(state, name) {
@@ -492,13 +528,24 @@ export function resource(state, resourceType, id) {
   return fromData.resource(state && state.data, resourceType, id);
 }
 
-export function resourceList(state, options) {
+export function resourceList(state, options = {}) {
+  if (
+    !options.ignoreEnvironmentFilter &&
+    !['accesstokens', 'agents', 'iclients', 'scripts', 'stacks'].includes(
+      options.type
+    )
+  ) {
+    const preferences = userPreferences(state);
+
+    // eslint-disable-next-line no-param-reassign
+    options.sandbox = preferences.environment === 'sandbox';
+  }
+
   return fromData.resourceList(state && state.data, options);
 }
 
 export function flowListWithMetadata(state, options) {
-  const flows =
-    fromData.resourceList(state && state.data, options).resources || [];
+  const flows = resourceList(state, options).resources || [];
 
   flows.forEach((f, i) => {
     const _exportId =
@@ -506,7 +553,7 @@ export function flowListWithMetadata(state, options) {
         ? f.pageGenerators[0]._exportId
         : f._exportId;
     const exp = resource(state, 'exports', _exportId);
-    const exports = fromData.resourceList(state && state.data, {
+    const exports = resourceList(state, {
       resourceType: 'exports',
     }).resources;
 
@@ -521,24 +568,28 @@ export function flowListWithMetadata(state, options) {
     if (isRunnable(exports, exp, f)) {
       flows[i].isRunnable = true;
     }
+
+    if (showScheduleIcon(exports, exp, f)) {
+      flows[i].showScheduleIcon = true;
+    }
   });
 
   return { resources: flows };
 }
 
 export function resourceListWithPermissions(state, options) {
-  const resourceList = fromData.resourceList(state && state.data, options);
+  const list = resourceList(state, options);
   // eslint-disable-next-line no-use-before-define
   const permissions = userPermissions(state);
 
-  resourceList.resources = resourceList.resources.map(r => {
+  list.resources = list.resources.map(r => {
     // eslint-disable-next-line no-param-reassign
     r.permissions = deepClone(permissions);
 
     return r;
   });
 
-  return resourceList;
+  return list;
 }
 
 export function resourcesByIds(state, resourceType, resourceIds) {
@@ -550,15 +601,10 @@ export function resourcesByIds(state, resourceType, resourceIds) {
 }
 
 export function matchingConnectionList(state, connection = {}) {
-  const preferences = userPreferences(state);
   const { resources = [] } = resourceList(state, {
     type: 'connections',
     filter: {
       $where() {
-        if (!!this.sandbox !== (preferences.environment === 'sandbox')) {
-          return false;
-        }
-
         if (connection.assistant) {
           return this.assistant === connection.assistant && !this._connectorId;
         }
@@ -783,7 +829,7 @@ export function integrationAppConnectionList(state, integrationId, storeId) {
 }
 
 export function integrationAppSettings(state, id, storeId) {
-  if (!state) return {};
+  if (!state) return { settings: {} };
   const integrationResource = fromData.integrationAppSettings(state.data, id);
   const uninstallSteps = fromSession.uninstallSteps(
     state.resource,
@@ -843,7 +889,7 @@ export function integrationAppFlowSections(state, id, store) {
           (sections.find(sec => sec.id === store) || {}).sections || [];
       } else {
         flowSections =
-          (sections.find(sec => sec.mode !== 'uninstall') || {}).sections || [];
+          (sections.find(sec => sec.mode !== 'install') || {}).sections || [];
       }
     }
   } else {
@@ -867,6 +913,9 @@ export function integrationAppGeneralSettings(state, id, storeId) {
     const storeSection = (general || []).find(s => s.id === storeId) || {};
 
     ({ fields, sections: subSections } = storeSection);
+  } else if (Array.isArray(general)) {
+    ({ fields, sections: subSections } =
+      general.find(s => s.title === 'General') || {});
   } else {
     ({ fields, sections: subSections } = general || {});
   }
@@ -897,7 +946,14 @@ export function integrationAppFlowSettings(state, id, section, storeId) {
   const selectedSection =
     allSections.find(sec => sec.title.replace(/\s/g, '') === section) || {};
 
-  requiredFlows = map(selectedSection.flows, '_id');
+  if (!section) {
+    allSections.forEach(sec => {
+      requiredFlows.push(...map(sec.flows, '_id'));
+    });
+  } else {
+    requiredFlows = map(selectedSection.flows, '_id');
+  }
+
   hasNSInternalIdLookup = some(
     selectedSection.flows,
     f => f.showNSInternalIdLookup
@@ -912,10 +968,8 @@ export function integrationAppFlowSettings(state, id, section, storeId) {
     f => !!f.settings || !!f.sections
   );
   const { fields, sections: subSections } = selectedSection;
-  const preferences = userPreferences(state);
   let flows = flowListWithMetadata(state, {
     type: 'flows',
-    sandbox: preferences.environment === 'sandbox',
     filter: {
       _integrationId: id,
     },
@@ -1194,7 +1248,6 @@ export function suiteScriptLinkedConnections(state) {
   const preferences = userPreferences(state);
   const connections = resourceList(state, {
     type: 'connections',
-    sandbox: preferences.environment === 'sandbox',
   }).resources;
   const linkedConnections = [];
   let connection;
@@ -1320,10 +1373,8 @@ export function suiteScriptLinkedTiles(state) {
 }
 
 export function tiles(state) {
-  const preferences = userPreferences(state);
   const tiles = resourceList(state, {
     type: 'tiles',
-    sandbox: preferences.environment === 'sandbox',
   }).resources;
   let integrations = [];
 
@@ -1485,6 +1536,50 @@ export function resourceStatus(
     method,
     isReady,
   };
+}
+
+export function flowMetadata(state, id, scope) {
+  if (!state || !id) return {};
+
+  const flows = flowListWithMetadata(state, {
+    type: 'flows',
+    filter: {
+      _id: id,
+    },
+  }).resources;
+  const master = flows && flows[0];
+  const { patch, conflict } = fromSession.stagedResource(
+    state.session,
+    id,
+    scope
+  );
+
+  if (!master && !patch) return { merged: {} };
+
+  let merged;
+  let lastChange;
+
+  if (patch) {
+    const patchResult = jsonPatch.applyPatch(
+      master ? jsonPatch.deepClone(master) : {},
+      jsonPatch.deepClone(patch)
+    );
+
+    merged = patchResult.newDocument;
+
+    if (patch.length) lastChange = patch[patch.length - 1].timestamp;
+  }
+
+  const data = {
+    master,
+    patch,
+    lastChange,
+    merged: merged || master,
+  };
+
+  if (conflict) data.conflict = conflict;
+
+  return data;
 }
 
 export function resourceData(state, resourceType, id, scope) {
@@ -1810,7 +1905,7 @@ export function accessTokenList(
   state,
   { integrationId, take, keyword, sort, sandbox }
 ) {
-  const tokensList = fromData.resourceList(state.data, {
+  const tokensList = resourceList(state, {
     type: 'accesstokens',
     keyword,
     sort,

@@ -112,7 +112,7 @@ function RefreshGenericResource(props) {
     setIsDefaultValueChanged,
   ]);
   useEffect(() => {
-    if (!fieldData && !disableOptionsLoad) {
+    if (!fieldData && !disableOptionsLoad && handleFetchResource) {
       handleFetchResource();
     }
   }, [disableOptionsLoad, fieldData, handleFetchResource]);
@@ -171,6 +171,7 @@ function RefreshGenericResource(props) {
             multiple
             value={value || defaultValue}
             onChange={evt => {
+              evt.stopPropagation();
               onFieldChange(id, evt.target.value);
             }}
             input={<Input name={name} id={id} />}

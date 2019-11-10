@@ -2,7 +2,7 @@ import Drawer from '@material-ui/core/Drawer';
 import { useSelector } from 'react-redux';
 import { Divider, ListItem } from '@material-ui/core';
 import List from '@material-ui/core/List';
-import { Switch, Route, NavLink } from 'react-router-dom';
+import { Switch, Route, NavLink, Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/styles';
 import * as selectors from '../../reducers';
 import LoadResources from '../../components/LoadResources';
@@ -69,11 +69,11 @@ export default function IntegrationSettings(props) {
     <LoadResources required resources="integrations">
       <div>
         <CeligoPageBar title={integration.name}>
-          <a
-            href={getRoutePath(`integrations/${integrationId}/dashboard`)}
+          <Link
+            to={getRoutePath(`integrations/${integrationId}/dashboard`)}
             className={classes.dashboard}>
             Dashboard
-          </a>
+          </Link>
         </CeligoPageBar>
         <Divider />
         <div className={classes.root}>

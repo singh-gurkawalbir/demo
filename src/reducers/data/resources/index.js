@@ -256,8 +256,8 @@ export function integrationInstallSteps(state, id) {
 export function integrationAppSettings(state, id) {
   const integration = resource(state, 'integrations', id);
 
-  if (!integration) {
-    return {};
+  if (!integration || !integration._connectorId) {
+    return { settings: {} };
   }
 
   return produce(integration, draft => {
@@ -319,10 +319,6 @@ export function resourceList(
   result.count = resources.length;
   const filterByEnvironment = typeof sandbox === 'boolean';
   const matchTest = r => {
-    if (filterByEnvironment && !!r.sandbox !== sandbox) {
-      return false;
-    }
-
     if (!keyword) return true;
 
     const searchableText = `${r._id}|${r.name}|${r.description}`;
@@ -348,7 +344,17 @@ export function resourceList(
       : (a, b) => -desc(a, b, orderBy);
   // console.log('sort:', sort, resources.sort(comparer, sort));
   const sorted = sort ? resources.sort(comparer(sort)) : resources;
-  const filtered = sorted.filter(filter ? sift(filter) : matchTest);
+  let filteredByEnvironment;
+
+  if (filterByEnvironment) {
+    filteredByEnvironment = sorted.filter(r => !!r.sandbox === sandbox);
+  } else {
+    filteredByEnvironment = sorted;
+  }
+
+  const filtered = filteredByEnvironment.filter(
+    filter ? sift(filter) : matchTest
+  );
 
   result.filtered = filtered.length;
   result.resources = filtered;

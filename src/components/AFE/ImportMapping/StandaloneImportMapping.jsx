@@ -7,6 +7,7 @@ import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import ImportMapping from './';
 import LoadResources from '../../../components/LoadResources';
+import { getJSONPaths } from '../../../utils/json';
 
 /**
  *
@@ -138,10 +139,16 @@ export default function StandaloneImportMapping(props) {
     onClose();
   };
 
-  const formattedExtractFields =
-    (extractFields &&
-      Object.keys(extractFields).map(name => ({ name, id: name }))) ||
-    [];
+  let formattedExtractFields = [];
+
+  if (extractFields) {
+    const extractPaths = getJSONPaths(extractFields);
+
+    formattedExtractFields =
+      (extractPaths &&
+        extractPaths.map(obj => ({ name: obj.id, id: obj.id }))) ||
+      [];
+  }
 
   return (
     <LoadResources resources="imports">

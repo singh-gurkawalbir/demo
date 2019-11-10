@@ -242,7 +242,7 @@ export default (
     // new instances all the way to the children of the object.
     // This is to ensure that a react component listening
     // to just the root of the object realizes they are updates to
-    // the children and subsequently rerenders.
+    // the children and subsequently re-renders.
     case actionTypes.METADATA.RECEIVED_NETSUITE: {
       newState = { ...state.netsuite };
       newState[mode] = { ...state.netsuite[mode] };

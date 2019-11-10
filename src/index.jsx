@@ -1,3 +1,5 @@
+import React from 'react';
+import { whyDidYouUpdate } from 'why-did-you-update';
 import { render } from 'react-dom';
 import { createStore, applyMiddleware, compose } from 'redux';
 import { Provider } from 'react-redux';
@@ -28,9 +30,13 @@ const logOptions = {
   collapsed: (getState, action, logEntry) => !logEntry.error,
 };
 
-// console.log(`NODE_ENV: ${process.env.NODE_ENV}`);
+if (
+  process.env.NODE_ENV === 'development' &&
+  process.env.WHY_RERENDER === 'true'
+)
+  whyDidYouUpdate(React);
 
-if (process.env.NODE_ENV === `development`) {
+if (process.env.NODE_ENV === 'development') {
   middleware.push(createLogger(logOptions));
 }
 

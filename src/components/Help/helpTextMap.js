@@ -201,11 +201,16 @@ export default {
   'connection.mongodb.host':
     'Enter the hostname or IP address for your MongoDB instance. For example: mongodb-instance1.com or 172.16.254.1.  By default, integrator.io will connect to port 27017.  If you need to connect to a different port then please append :port to your hostname.  For example:  mongodb-instance1.com:12345 or 172.16.254.1:98765.   If you are connecting to a mongodb cluster then please enter all your hostname:port combinations separated by commas.  For example: mongodb-instance1.com:12345,mongodb-instance2.com:12345,mongodb-instance3.com:12345.',
   'connection.mongodb.database':
-    'Enter the name of the database you would like to connect to. Please note that integrator.io requires a value for this field to help safeguard against accidentally connecting to the wrong database.',
+    "The name of the database to authenticate. If a database name is not provided here, then the 'admin' database will be used to authenticate.",
   'connection.mongodb.username':
     'If your MongoDB instance requires login credentials please enter username here.',
   'connection.mongodb.password':
     'If your MongoDB instance requires login credentials please enter password here.',
+  'connection.mongodb.replicaSet':
+    "The name of the replica set.  When connecting to a replica set be sure to supply the list of the replica set members in the 'Host(s)' field above.",
+  'connection.mongodb.ssl': 'Enables or disables TLS/SSL for the connection.',
+  'connection.mongodb.authSource':
+    "The name of the database associated with the user’s credentials. If a database name is not provided here, then the 'Database' field above will be used as the default",
   'connection.ftp.hostURI':
     "The URI of the FTP/SFTP/FTPS server host.  Typically this value will look something like 'ftp.mycompany.com', or sometimes just a raw IP address '100.200.300.1'.  It is also very common for FTP/SFTP/FTPS servers to be behind a firewall, and to support accessing resources behind a firewall you will need to make sure all of the FTP/SFTP/FTPS specific integrator.io IP addresses (listed right below the HOST field) have been white-listed on your FTP/SFTP/FTPS server infrastructure.",
   'connection.ftp.username':

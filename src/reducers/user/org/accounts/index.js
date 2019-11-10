@@ -177,18 +177,15 @@ export function integratorLicense(state, accountId) {
 }
 // #endregion INTEGRATOR LICENSE
 
-export function licenses(state) {
+export function licenses(state, accountId = ACCOUNT_IDS.OWN) {
   if (!state) {
     return [];
   }
 
-  const account = state.find(a => a.accessLevel === 'owner');
+  const licenses = [];
+  const account = state.find(acc => acc._id === accountId);
 
-  if (!account || !account.ownerUser || !account.ownerUser.licenses) {
-    return [];
-  }
-
-  return account.ownerUser.licenses;
+  return account ? account.ownerUser.licenses : licenses;
 }
 
 export function sharedAccounts(state) {
@@ -229,42 +226,20 @@ export function accountSummary(state) {
     if (ownLicense) {
       accounts.push({
         id: ACCOUNT_IDS.OWN,
-        environment: 'production',
+        hasSandbox: !!ownLicense.hasSandbox,
       });
-
-      if (ownLicense.hasSandbox) {
-        accounts.push({
-          id: ACCOUNT_IDS.OWN,
-          environment: 'sandbox',
-        });
-      }
     }
 
     return accounts;
   }
 
   shared.forEach(a => {
-    if (a.hasSandbox) {
-      accounts.push({
-        id: a.id,
-        environment: 'production',
-        company: a.company,
-        canLeave: shared.length > 1,
-      });
-      accounts.push({
-        id: a.id,
-        environment: 'sandbox',
-        company: a.company,
-        canLeave: false,
-      });
-    } else {
-      accounts.push({
-        id: a.id,
-        environment: 'production',
-        company: a.company,
-        canLeave: shared.length > 1,
-      });
-    }
+    accounts.push({
+      id: a.id,
+      company: a.company,
+      canLeave: shared.length > 1,
+      hasSandbox: !!a.hasSandbox,
+    });
   });
 
   return accounts;

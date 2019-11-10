@@ -3,10 +3,10 @@ import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import * as selectors from '../../../reducers';
 import LoadResources from '../../../components/LoadResources';
-import CeligoTable from '../../../components/ResourceTable';
 import metadata from './metadata';
 import { ActionsFactory as DynaFormWithDynamicActions } from '../../../components/ResourceFormFactory';
 import { integrationSettingsToDynaFormMetadata } from '../../../forms/utils';
+import CeligoTable from '../../../components/CeligoTable';
 
 const useStyles = makeStyles({
   expansionPanel: {

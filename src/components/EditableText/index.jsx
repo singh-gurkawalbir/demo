@@ -1,15 +1,22 @@
 import { useState, Fragment } from 'react';
 import clsx from 'clsx';
-import { makeStyles } from '@material-ui/core/styles';
-import { Input, Tooltip } from '@material-ui/core';
+import { fade } from '@material-ui/core/styles';
+import { makeStyles, Input } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
-  text: {}, // not used...
+  text: {
+    borderColor: 'transparent',
+    transition: theme.transitions.create(['border', 'background-color']),
+    '&:hover': {
+      backgroundColor: 'rgb(0,0,0,0.03)',
+      borderBottom: `solid 1px ${fade(theme.palette.primary.light, 0.5)}`,
+    },
+  }, // not used...
   input: {
     font: 'inherit',
     borderBottom: 'solid 1px',
     borderColor: theme.palette.secondary.lightest,
-    width: 400,
+    maxWidth: 'unset',
     marginBottom: -1, // make up for the 1px border.
   },
   muiInputBase: {
@@ -42,11 +49,6 @@ export default function EditableText({ onChange, className, children }) {
     }
   }
 
-  // TODO: This component was written with the intention to work with
-  // any size text.
-  // I did not complete the process of making it generic enough to
-  // be placed under /components, but we should promote this
-  // component once we want to re-use this elsewhere.
   return (
     <Fragment>
       {isEdit ? (
@@ -60,13 +62,11 @@ export default function EditableText({ onChange, className, children }) {
           classes={{ input: classes.muiInputBase }}
         />
       ) : (
-        <Tooltip title="Click to edit flow name" placement="bottom">
-          <span
-            onClick={() => setIsEdit(true)}
-            className={clsx(classes.text, className)}>
-            {children}
-          </span>
-        </Tooltip>
+        <span
+          onClick={() => setIsEdit(true)}
+          className={clsx(classes.text, className)}>
+          {children}
+        </span>
       )}
     </Fragment>
   );

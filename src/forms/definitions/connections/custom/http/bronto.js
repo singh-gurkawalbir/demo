@@ -17,6 +17,7 @@ export default {
       '{"grant_type":"client_credentials","client_id":"{{{connection.http.unencrypted.clientId}}}","client_secret":"{{{connection.http.encrypted.clientSecret}}}"}',
     '/http/auth/token/refreshMethod': 'POST',
     '/http/auth/token/refreshMediaType': 'urlencoded',
+    '/http/auth/failStatusCode': 403,
   }),
   fieldMap: {
     name: { fieldId: 'name' },
