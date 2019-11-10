@@ -1,19 +1,21 @@
 import { Fragment, useState } from 'react';
-// import { makeStyles } from '@material-ui/styles';
+import { makeStyles } from '@material-ui/styles';
 import { IconButton } from '@material-ui/core';
 import ArrowPopper from '../../../../../components/ArrowPopper';
 import TooltipContent from '../../../../../components/TooltipContent';
 import InfoIcon from '../../../../../components/icons/InfoIcon';
 
-// const useStyles = makeStyles(theme => ({
-//   root: {
-//     display: 'flex',
-//     margin: theme.spacing(1),
-//   },
-// }));
+const useStyles = makeStyles(theme => ({
+  icon: {
+    padding: theme.spacing(1),
+    '& svg': {
+      fontSize: '1rem',
+    },
+  },
+}));
 
 export default function InfoIconButton({ info }) {
-  // const classes = useStyles();
+  const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
 
   function handleInfoOpen(event) {
@@ -33,6 +35,7 @@ export default function InfoIconButton({ info }) {
       <IconButton
         data-test="openPageInfo"
         size="small"
+        className={classes.icon}
         onClick={handleInfoOpen}
         aria-owns={!anchorEl ? null : 'pageInfo'}
         aria-haspopup="true">
