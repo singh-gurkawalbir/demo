@@ -13,6 +13,7 @@ const useStyles = makeStyles({
     maxWidth: '45vw',
     '& > div:first-child': {
       minHeight: '15px',
+      paddingLeft: 1,
     },
   },
 });
