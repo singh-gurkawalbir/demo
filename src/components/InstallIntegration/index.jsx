@@ -1,19 +1,15 @@
-import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React from 'react';
 import {
   Dialog,
   DialogContent,
   IconButton,
-  Button,
   DialogTitle,
   Divider,
   Typography,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import CloseIcon from '../icons/CloseIcon';
-import actions from '../../actions';
-import * as selectors from '../../reducers';
-import getRoutePath from '../../utils/routePaths';
+import UploadFile from './UploadFile';
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -24,33 +20,11 @@ const useStyles = makeStyles(theme => ({
     position: 'absolute',
     right: theme.spacing(1),
   },
-  uploadButton: {
-    margin: theme.spacing(1),
-  },
-  fileInput: {
-    display: 'none',
-  },
 }));
 
 export default function InstallIntegrationDialog(props) {
-  const { fileType, onClose } = props;
-  const { isFileUploaded, templateId } = useSelector(state =>
-    selectors.isFileUploaded(state)
-  );
+  const { fileType, history, onClose } = props;
   const classes = useStyles();
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    if (isFileUploaded) {
-      props.history.push(getRoutePath(`/templates/${templateId}/preview`));
-      dispatch(actions.template.clearUploaded(templateId));
-    }
-  }, [dispatch, isFileUploaded, props.history, templateId]);
-  const handleUploadFileChange = e => {
-    const file = e.target.files[0];
-
-    dispatch(actions.file.previewZip(file));
-  };
 
   return (
     <Dialog open onClose={onClose} aria-labelledby="integration-install-dialog">
@@ -69,23 +43,7 @@ export default function InstallIntegrationDialog(props) {
       </DialogTitle>
       <Divider variant="middle" />
       <DialogContent>
-        <label htmlFor="fileUpload">
-          <Button
-            data-test="selectFile"
-            variant="contained"
-            component="span"
-            className={classes.uploadButton}>
-            Select Zip File
-          </Button>
-          <input
-            data-test="uploadFile"
-            id="fileUpload"
-            type="file"
-            accept={fileType}
-            className={classes.fileInput}
-            onChange={handleUploadFileChange}
-          />
-        </label>
+        <UploadFile fileType={fileType} history={history} />
       </DialogContent>
     </Dialog>
   );
