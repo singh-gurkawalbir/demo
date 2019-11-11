@@ -93,3 +93,19 @@ export function checkToThrowSessionValidationException(response) {
 export async function introduceNetworkLatency() {
   await delay(process.env.ADD_NETWORK_LATENCY || 0);
 }
+
+export function isCsrfExpired(error) {
+  return (
+    error.status === 403 &&
+    error.data &&
+    error.data.message === 'Bad_Request_CSRF'
+  );
+}
+
+// we are skipping 401 checks for /change-email and /change-password
+export function isUnauthorized({ error, path }) {
+  return (
+    error.status === 401 &&
+    !['/change-email', '/change-password'].includes(path)
+  );
+}
