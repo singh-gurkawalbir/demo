@@ -28,7 +28,6 @@ import * as selectors from '../../reducers';
     overflow: 'hidden',
   },
   actions: {
-    textAlign: 'right',
     padding: theme.spacing(2, 3, 0),
   },
 }))

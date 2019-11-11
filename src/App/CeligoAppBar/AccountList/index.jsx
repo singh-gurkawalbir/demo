@@ -1,7 +1,6 @@
 import { Fragment, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -14,31 +13,21 @@ import * as selectors from '../../../reducers';
 import ArrowDownIcon from '../../../components/icons/ArrowDownIcon';
 import { confirmDialog } from '../../../components/ConfirmDialog';
 import getRoutePath from '../../../utils/routePaths';
+import StatusCircle from '../../../components/StatusCircle';
+import IconTextButton from '../../../components/IconTextButton';
 
 const useStyles = makeStyles(theme => ({
   currentAccount: {
     padding: theme.spacing(1),
-    color: theme.palette.common.white,
+    color: theme.palette.secondary.light,
   },
   currentContainer: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    '&:hover': {
-      cursor: 'pointer',
-    },
+    marginBottom: 5,
+    fontSize: 15,
+    color: theme.palette.primary.main,
   },
-  selected: {
-    '&::before': {
-      content: '""',
-      position: 'absolute',
-      width: 6,
-      height: 6,
-      borderRadius: '50%',
-      background: '#00ea00',
-      left: 8,
-      top: '50%',
-      marginTop: -3,
-    },
+  popper: {
+    maxWidth: '250px',
   },
   itemContainer: {
     '& button': { display: 'none' },
@@ -47,13 +36,12 @@ const useStyles = makeStyles(theme => ({
     },
   },
   itemRoot: {
-    paddingRight: 68,
-  },
-  leave: {
-    // display: 'none',
-  },
-  arrow: {
-    fill: theme.palette.common.white,
+    marginRight: 100,
+    padding: '5px 10px',
+    '&:hover': {
+      border: [[1, 0]],
+      borderColor: theme.palette.secondary.light,
+    },
   },
 }));
 
@@ -115,15 +103,15 @@ export default function AccountList() {
 
   return (
     <Fragment>
-      <span onClick={handleMenu} className={classes.currentContainer}>
-        <Typography
-          className={classes.currentAccount}
-          aria-owns={open ? 'accountList' : null}
-          aria-haspopup="true">
-          {selectedAccount && selectedAccount.company}
-        </Typography>
-        <ArrowDownIcon className={classes.arrow} />
-      </span>
+      <IconTextButton
+        onClick={handleMenu}
+        className={classes.currentContainer}
+        aria-owns={open ? 'accountList' : null}
+        aria-haspopup="true">
+        {selectedAccount && selectedAccount.company}
+        <ArrowDownIcon />
+      </IconTextButton>
+
       <ArrowPopper
         id="accountList"
         className={classes.popper}
@@ -143,16 +131,18 @@ export default function AccountList() {
                 container: classes.itemContainer,
               }}
               key={a.id}>
-              <ListItemText
-                classes={{ root: a.selected && classes.selected }}
-                primary={a.company}
-              />
+              <ListItemText>
+                {a.selected && <StatusCircle size="small" variant="success" />}
+
+                {a.company}
+              </ListItemText>
               {a.canLeave && (
                 <ListItemSecondaryAction>
                   <Button
                     data-test="leaveAccount"
                     className={classes.leave}
                     variant="text"
+                    color="primary"
                     onClick={() => {
                       handleAccountLeaveClick(a);
                     }}>

@@ -72,7 +72,7 @@ export default function FlowSchedule(props) {
           <DynaSubmit onClick={handleSubmit} color="primary">
             Save
           </DynaSubmit>
-          <Button onClick={onClose} variant="contained" color="secondary">
+          <Button onClick={onClose} variant="text" color="primary">
             Cancel
           </Button>
         </DynaForm>

@@ -74,6 +74,9 @@ const mapStateToProps = state => {
   paper: {
     padding: theme.spacing(2),
   },
+  search: {
+    marginTop: theme.spacing(1),
+  },
 }))
 class Resources extends Component {
   render() {
@@ -100,7 +103,9 @@ class Resources extends Component {
               paper: classes.drawerPaper,
             }}>
             <Typography variant="h5">Available Resources</Typography>
-            <SearchOptions />
+            <div className={classes.search}>
+              <SearchOptions />
+            </div>
             {allResources.map(r => (
               <Route
                 key={`${r.type}-section`}
