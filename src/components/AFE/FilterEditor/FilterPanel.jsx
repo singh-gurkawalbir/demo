@@ -449,7 +449,9 @@ export default function FilterPanel({ editorId, readOnly, data = {}, rule }) {
             rulesState[ruleId].data.rhs.type = 'value';
           }
 
-          updateUIForLHSRule({ rule, name });
+          setTimeout(() => {
+            updateUIForLHSRule({ rule, name });
+          });
 
           if (!readOnly) {
             rule.$el
@@ -509,6 +511,10 @@ export default function FilterPanel({ editorId, readOnly, data = {}, rule }) {
             lhsValue = rule.$el
               .find(`.rule-filter-container [name=${r.lhs.type}]`)
               .val();
+
+            if (!lhsValue) {
+              lhsValue = r.lhs[r.lhs.type];
+            }
 
             if (r.lhs.type === 'expression') {
               try {
