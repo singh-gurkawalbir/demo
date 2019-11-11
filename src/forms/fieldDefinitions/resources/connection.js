@@ -1345,6 +1345,7 @@ export default {
   'as2.partnerStationInfo.auth.type': {
     type: 'select',
     label: 'Authentication Type',
+    required: true,
     options: [
       {
         items: [
