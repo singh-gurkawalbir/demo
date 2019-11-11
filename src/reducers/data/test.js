@@ -153,8 +153,13 @@ function getExpectedLogs(allLogs, filters = {}) {
 
   expectedLogs.forEach(l => {
     if (l.fieldChanges && l.fieldChanges.length > 0) {
-      l.fieldChanges.forEach(fc => {
-        expandedLogs.push({ ...l, fieldChanges: undefined, fieldChange: fc });
+      l.fieldChanges.forEach((fc, index) => {
+        expandedLogs.push({
+          ...l,
+          _id: `${l._id}-${index}`,
+          fieldChanges: undefined,
+          fieldChange: fc,
+        });
       });
     } else {
       expandedLogs.push({ ...l, fieldChange: {} });
