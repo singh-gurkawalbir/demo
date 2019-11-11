@@ -44,6 +44,7 @@ export default function DynaTextFtpPort(props) {
     label,
     options,
     valueType,
+    disabled,
   } = props;
   const classes = useStyle();
   let result;
@@ -72,6 +73,7 @@ export default function DynaTextFtpPort(props) {
       label={label}
       placeholder={placeholder}
       helperText={isValid ? description : errorMessages}
+      disabled={disabled}
       error={!isValid}
       value={result}
       onChange={handleFieldChange}

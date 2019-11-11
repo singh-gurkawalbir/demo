@@ -2,9 +2,11 @@ import { Component } from 'react';
 import { Form } from 'react-forms-processor/dist';
 import { withStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
+import { useSelector } from 'react-redux';
 import getRenderer from './renderer';
 import DynaFormGenerator from './DynaFormGenerator';
 import ButtonGroup from '../ButtonGroup';
+import * as selectors from '../../reducers';
 
 @withStyles(theme => ({
   fieldContainer: {
@@ -30,7 +32,7 @@ import ButtonGroup from '../ButtonGroup';
     padding: theme.spacing(2, 3, 0),
   },
 }))
-export default class DynaForm extends Component {
+class DynaForm extends Component {
   render() {
     const {
       classes,
@@ -63,4 +65,20 @@ export default class DynaForm extends Component {
       </Form>
     );
   }
+}
+
+export default function DisabledDynaFormPerUserPermissions(props) {
+  const { integrationId, fieldMeta } = props;
+  // pass in the integration Id to find access level of its associated forms
+  const isFormAMonitorLevelAccess = useSelector(state =>
+    selectors.isFormAMonitorLevelAccess(state, integrationId)
+  );
+
+  return (
+    <DynaForm
+      {...props}
+      disabled={isFormAMonitorLevelAccess}
+      fieldMeta={fieldMeta}
+    />
+  );
 }
