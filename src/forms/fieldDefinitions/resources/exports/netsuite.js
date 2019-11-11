@@ -28,6 +28,11 @@ export default {
     placeholder: 'Please select a record type',
     helpKey: 'export.netsuite.searches.recordType',
     connectionId: r => r && r._connectionId,
+    defaultValue: r =>
+      r &&
+      r.netsuite &&
+      r.netsuite.webservices &&
+      r.netsuite.webservices.recordType,
   },
   // execution context
   'netsuite.distributed.executionContext': {
