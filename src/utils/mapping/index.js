@@ -91,12 +91,12 @@ export default {
       case adaptorTypeMap.S3Import:
       case adaptorTypeMap.FTPImport:
       case adaptorTypeMap.WrapperImport:
+      case adaptorTypeMap.SalesforceImport:
       case adaptorTypeMap.HTTPImport:
         return '/mapping';
       case adaptorTypeMap.XMLImport:
       case adaptorTypeMap.MongodbImport:
       case adaptorTypeMap.RDBMSImport:
-      case adaptorTypeMap.SalesforceImport:
       default:
     }
   },
