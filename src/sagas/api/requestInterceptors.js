@@ -6,6 +6,8 @@ import {
   introduceNetworkLatency,
   checkToThrowSessionValidationException,
   throwExceptionUsingTheResponse,
+  isUnauthorized,
+  isCsrfExpired,
 } from './index';
 import { unauthenticateAndDeleteProfile } from '..';
 import { resourceStatus, accountShareHeader } from '../../reducers/index';
@@ -106,10 +108,7 @@ export function* onErrorSaga(error, action) {
     // All api calls should have this behavior
     // & CSRF expiration failure should dispatch these actions
     // TODO:whitelist the generate token for now until the backend team fixes it
-    if (
-      !path.endsWith('generate-token') &&
-      (error.status === 401 || error.status === 403)
-    ) {
+    if (isUnauthorized({ error, path }) || isCsrfExpired(error)) {
       yield call(unauthenticateAndDeleteProfile);
       const hidden = true;
 
