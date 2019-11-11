@@ -5,7 +5,7 @@ import { confirmDialog } from '../../../../components/ConfirmDialog';
 import actions from '../../../../actions';
 
 export default {
-  label: 'Schedule',
+  label: 'Install',
   component: function Installer({ resource }) {
     const dispatch = useDispatch();
     const onClick = resource => {

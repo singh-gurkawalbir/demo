@@ -56,6 +56,10 @@ export function* uninstallStep({ storeId, id, uninstallerFunction, addOnId }) {
         'completed'
       )
     );
+
+    if (addOnId) {
+      yield put(actions.integrationApp.settings.licenseMetadata(id));
+    }
   }
 }
 

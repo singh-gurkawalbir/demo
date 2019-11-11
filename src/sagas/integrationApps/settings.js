@@ -30,8 +30,8 @@ export function* requestUpgrade({ integration, options }) {
   yield put(actions.integrationApp.settings.requestedUpgrade(licenseId));
 }
 
-export function* getLicenseMetadata({ integration }) {
-  const path = `/integrations/${integration._id}/settings/getLicenseMetadata`;
+export function* getLicenseMetadata({ integrationId }) {
+  const path = `/integrations/${integrationId}/settings/getLicenseMetadata`;
   let response;
 
   try {
@@ -49,7 +49,7 @@ export function* getLicenseMetadata({ integration }) {
   if (response) {
     yield put(
       actions.integrationApp.settings.updateLicenseMetadata(
-        integration,
+        integrationId,
         response
       )
     );
