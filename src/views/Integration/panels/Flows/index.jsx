@@ -24,12 +24,12 @@ export default function FlowsPanel({ integrationId }) {
   let flows = useSelector(
     state => selectors.flowListWithMetadata(state, { type: 'flows' }).resources
   );
-  const preferences = useSelector(state =>
-    selectors.userProfilePreferencesProps(state)
-  );
   // TODO: This next code should be moved into the <AttachFlowsDialog>
   // component. Its adding unnecessary complexity here.
   // This filtering is only used as a prop value to another component.
+  const preferences = useSelector(state =>
+    selectors.userProfilePreferencesProps(state)
+  );
   const standaloneFlows =
     flows &&
     flows.filter(

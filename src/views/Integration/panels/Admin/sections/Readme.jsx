@@ -22,7 +22,7 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.background.default,
     height: '25vh',
     padding: theme.spacing(1),
-    marginBottom: theme.spacing(2),
+    margin: theme.spacing(2, 0),
     overflow: 'auto',
   },
 }));
