@@ -101,9 +101,7 @@ export default function ConnectorInstallation(props) {
       dispatch(actions.resource.requestCollection('stacks'));
 
       if (integration) {
-        props.history.push(
-          `/pg/integrations/${integration._id}/settings/flows`
-        );
+        props.history.push(`/pg/integrations/${integration._id}/flows`);
       } else {
         props.history.push('/');
       }

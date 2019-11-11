@@ -97,12 +97,12 @@ const useStyles = makeStyles(theme => ({
 
 function LHSItem(props) {
   const classes = useStyles();
-  const { to, label } = props;
+  const { to, label, pathname } = props;
 
   return (
     <ListItem className={classes.listItem}>
       <NavLink
-        activeClassName={classes.activeLink}
+        activeClassName={pathname === to ? classes.activeLink : ''}
         className={classes.link}
         to={to}>
         {label}
@@ -113,6 +113,7 @@ function LHSItem(props) {
 
 export default function IntegrationAppSettings(props) {
   const { integrationId, storeId, section } = props.match.params;
+  const { pathname } = props.location;
   const classes = useStyles();
   const dispatch = useDispatch();
   const urlPrefix = getRoutePath(
@@ -320,7 +321,11 @@ export default function IntegrationAppSettings(props) {
               }}>
               <List>
                 {hasGeneralSettings && (
-                  <LHSItem to={`${urlPrefix}/general`} label="General" />
+                  <LHSItem
+                    to={`${urlPrefix}/general`}
+                    pathname={pathname}
+                    label="General"
+                  />
                 )}
                 <ListItem className={classes.listItem}>
                   Integration Flows
@@ -329,7 +334,11 @@ export default function IntegrationAppSettings(props) {
                       integrationAppFlowSections.map(f => (
                         <ListItem key={`${f.titleId}`}>
                           <NavLink
-                            activeClassName={classes.subSection}
+                            activeClassName={
+                              pathname === `${urlPrefix}/${f.titleId}`
+                                ? classes.subSection
+                                : ''
+                            }
                             className={classes.link}
                             to={`${urlPrefix}/${f.titleId}`}>
                             {f.title}
@@ -363,6 +372,7 @@ export default function IntegrationAppSettings(props) {
           <div className={classes.rightElement}>
             <Switch>
               <Route
+                sensitive
                 path={`${urlRegexPrefix}/general`}
                 render={props => (
                   <GeneralSection {...props} storeId={currentStore} />

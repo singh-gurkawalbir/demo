@@ -179,7 +179,8 @@ module.exports = {
         "AGENT_STATUS_INTERVAL",
         "MASK_SENSITIVE_INFO_DELAY",
         "SESSION_WARNING_INTERVAL_PRIOR_TO_EXPIRATION",
-        "SESSION_EXPIRATION_INTERVAL"
+        "SESSION_EXPIRATION_INTERVAL",
+        "WHY_RERENDER"
       ]
     ],
     neutrino => {
