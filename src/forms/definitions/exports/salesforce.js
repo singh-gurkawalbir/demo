@@ -47,8 +47,23 @@ export default {
           ],
         },
       ],
-      defaultValue: r =>
-        r && r.salesforce && r.salesforce.id ? 'blob' : 'records',
+      defaultDisabled: r => {
+        const isNew = isNewId(r._id);
+
+        if (!isNew) return true;
+
+        return false;
+      },
+      defaultValue: r => {
+        const isNew = isNewId(r._id);
+
+        // if its create
+        if (isNew) return 'records';
+
+        const output = r && r.type;
+
+        return output ? 'records' : 'blob';
+      },
     },
     'salesforce.soql.query': { fieldId: 'salesforce.soql.query' },
     type: {

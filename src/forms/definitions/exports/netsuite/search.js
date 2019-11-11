@@ -2,16 +2,24 @@ import { isTransactionWSRecordType } from '../../../../utils/metadata';
 import { isNewId } from '../../../../utils/resource';
 
 export default {
-  preSave: formValues => ({
-    ...formValues,
-    '/netsuite/searches': [
-      {
-        savedSearchId: formValues['/netsuite/webservices/searchId'],
-        recordType: formValues['/netsuite/webservices/recordType'],
-        criteria: [],
-      },
-    ],
-  }),
+  preSave: formValues => {
+    const retValues = {
+      ...formValues,
+      '/netsuite/searches': [
+        {
+          savedSearchId: formValues['/netsuite/webservices/searchId'],
+          recordType: formValues['/netsuite/webservices/recordType'],
+          criteria: [],
+        },
+      ],
+    };
+
+    if (retValues['/type'] === 'all') {
+      retValues['/type'] = undefined;
+    }
+
+    return retValues;
+  },
 
   optionsHandler: (fieldId, fields) => {
     if (fieldId === 'netsuite.webservices.searchId') {

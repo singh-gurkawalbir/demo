@@ -83,8 +83,23 @@ export default {
           ],
         },
       ],
-      defaultValue: r =>
-        r && r.rest && r.rest.blobFormat ? 'blob' : 'records',
+      defaultDisabled: r => {
+        const isNew = isNewId(r._id);
+
+        if (!isNew) return true;
+
+        return false;
+      },
+      defaultValue: r => {
+        const isNew = isNewId(r._id);
+
+        // if its create
+        if (isNew) return 'records';
+
+        const output = r && r.type;
+
+        return output ? 'records' : 'blob';
+      },
     },
     'rest.method': {
       fieldId: 'rest.method',

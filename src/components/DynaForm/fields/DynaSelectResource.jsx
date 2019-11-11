@@ -100,15 +100,23 @@ function DynaSelectResource(props) {
       [
         'exports',
         'imports',
+        'connections',
         'pageProcessor',
         'pageGenerator',
-        'statusExport',
       ].includes(resourceType)
     ) {
-      const values = resourceMeta[resourceType].new.preSave({
-        application: options.appType,
-        '/name': `New ${options.appType} resource`,
-      });
+      let values;
+
+      if (['pageProcessor', 'pageGenerator'].includes(resourceType))
+        values = resourceMeta[resourceType].preSave({
+          application: options.appType,
+          '/name': `New ${options.appType} resource`,
+        });
+      else
+        values = resourceMeta[resourceType].new.preSave({
+          application: options.appType,
+          '/name': `New ${options.appType} resource`,
+        });
       const patchValues = defaultPatchSetConverter(values);
       const missingPatches = getMissingPatchSet(
         patchValues.map(patch => patch.path)

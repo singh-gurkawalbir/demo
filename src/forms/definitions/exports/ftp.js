@@ -60,6 +60,13 @@ export default {
           ],
         },
       ],
+      defaultDisabled: r => {
+        const isNew = isNewId(r._id);
+
+        if (!isNew) return true;
+
+        return false;
+      },
       defaultValue: r => {
         const isNew = isNewId(r._id);
 
