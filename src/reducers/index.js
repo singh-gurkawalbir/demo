@@ -564,6 +564,7 @@ export function resourceList(state, options = {}) {
   if (
     !options.ignoreEnvironmentFilter &&
     !['accesstokens', 'agents', 'iclients', 'scripts', 'stacks'].includes(
+      /* These resources are common for both production & sandbox environments. */
       options.type
     )
   ) {
