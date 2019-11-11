@@ -120,7 +120,7 @@ export function auditLogs(state, resourceType, resourceId, filters) {
       a.fieldChanges.forEach((fc, index) => {
         expandedLogs.push({
           ...a,
-          _id: `${a._id}-${index}`,
+          _id: `${a._id}-${index}` /* CeligoTable is using _id as key for TableRow hence making it unique. This is a safe change for now as we are not supporting any of create, edit or delete operations on audit logs. */,
           fieldChanges: undefined,
           fieldChange: fc,
         });
