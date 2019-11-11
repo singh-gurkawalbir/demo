@@ -57,7 +57,13 @@ function DynaAction(props) {
 // field props are getting merged first
 const DynaActionWrapped = props => (
   <FormContext.Consumer {...props}>
-    {form => <DynaAction {...form} {...props} />}
+    {form => (
+      <DynaAction
+        {...form}
+        {...props}
+        disabled={!!(form.disabled || props.disabled)}
+      />
+    )}
   </FormContext.Consumer>
 );
 
