@@ -24,15 +24,13 @@ export function* requestPreview({ resourceType, resourceId }) {
   );
 }
 
-export function* createComponents({ templateId }) {
-  const { cMap: connectionMap, stackId: _stackId } = yield select(
-    selectors.templateSetup,
-    templateId
+export function* createComponents({ resourceType, resourceId }) {
+  const { cMap: connectionMap, stackId: _stackId, data = {} } = yield select(
+    selectors.cloneData,
+    resourceType,
+    resourceId
   );
-  const template = yield select(selectors.marketplaceTemplate, { templateId });
-  const userPreferences = yield select(selectors.userPreferences);
-  const sandbox = userPreferences.environment === 'sandbox';
-  const path = `/integrations/template/${templateId}`;
+  const path = `/${resourceType}/${resourceId}/clone`;
   let components;
 
   try {
@@ -43,19 +41,22 @@ export function* createComponents({ templateId }) {
         body: {
           connectionMap,
           _stackId,
-          sandbox,
-          name: `Copy ${(template || {}).name}`,
+          sandbox: data.sandbox,
+          name: data.name,
+          _integrationId: data._integrationId,
         },
       },
-      message: `Installing Template...`,
+      message: `Cloning...`,
     });
   } catch (error) {
-    yield put(actions.template.failedInstall(templateId));
+    yield put(actions.clone.failedInstall(resourceType, resourceId));
 
     return undefined;
   }
 
-  yield put(actions.template.createdComponents(components, templateId));
+  yield put(
+    actions.clone.createdComponents(components, resourceType, resourceId)
+  );
 }
 
 export function* verifyBundleOrPackageInstall({

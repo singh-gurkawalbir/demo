@@ -8,6 +8,10 @@ import actions from '../../actions';
 import CeligoTable from '../../components/CeligoTable';
 import { MODEL_PLURAL_TO_LABEL } from '../../utils/resource';
 import templateUtil from '../../utils/template';
+import LoadResources from '../../components/LoadResources';
+import RadioGroup from '../../components/DynaForm/fields/DynaRadioGroup';
+import DynaSelect from '../../components/DynaForm/fields/DynaSelect';
+import DynaText from '../../components/DynaForm/fields/DynaText';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -44,12 +48,14 @@ const useStyles = makeStyles(theme => ({
   description: {
     paddingBottom: '20px',
   },
+  nameField: {
+    marginBottom: '10px',
+  },
   componentPadding: {
-    padding: '0 25px 0 25px',
+    padding: '25px 25px 0 25px',
   },
   componentsTable: {
     paddingTop: '20px',
-    // borderTop: `solid 1px ${theme.palette.secondary.lightest}`,
   },
 }));
 
@@ -58,8 +64,23 @@ export default function TemplatePreview(props) {
   const { resourceType, resourceId } = props.match.params;
   const [requested, setRequested] = useState(false);
   const dispatch = useDispatch();
+  const preferences = useSelector(state => selectors.userPreferences(state));
+  const [environmentState, setEnvironmentState] = useState(
+    preferences.environment
+  );
+  const showIntegrationField = resourceType === 'flows';
+  const [integrationState, setIntegrationState] = useState(null);
+  const [nameState, setNameState] = useState(null);
   const resource = useSelector(state =>
     selectors.resource(state, resourceType, resourceId)
+  );
+  const integrations = useSelector(state =>
+    selectors
+      .resourceList(state, {
+        type: 'integrations',
+        ignoreEnvironmentFilter: true,
+      })
+      .resources.filter(i => !!i.sandbox === (environmentState === 'sandbox'))
   );
   const components = useSelector(state =>
     selectors.clonePreview(state, resourceType, resourceId)
@@ -90,86 +111,171 @@ export default function TemplatePreview(props) {
     return <Typography>Loading Clone Preview...</Typography>;
   }
 
+  const handleNameChange = (id, val) => {
+    setNameState(val);
+  };
+
+  const handleEnvironmentChange = (id, val) => {
+    setEnvironmentState(val);
+  };
+
+  const handleIntegrationChange = (id, val) => {
+    setIntegrationState(val);
+  };
+
   const { description } = resource;
   const { objects = [] } = components;
   const clone = () => {
     const { installSteps, connectionMap } =
       templateUtil.getInstallSteps(components) || {};
 
+    if (!integrationState) {
+      return false;
+    }
+
     if (installSteps && installSteps.length) {
       dispatch(
         actions.clone.installStepsReceived(
           installSteps,
           connectionMap,
+          {
+            name: nameState,
+            sandbox: environmentState === 'sandbox',
+            _integrationId: integrationState,
+          },
           resourceType,
           resourceId
         )
       );
       props.history.push(`/pg/clone/${resourceType}/${resourceId}/setup`);
     } else {
+      dispatch(
+        actions.clone.installStepsReceived(
+          [],
+          {},
+          {
+            name: nameState,
+            sandbox: environmentState === 'sandbox',
+            _integrationId: integrationState,
+          },
+          resourceType,
+          resourceId
+        )
+      );
       dispatch(actions.clone.createComponents(resourceType, resourceId));
     }
   };
 
   return (
-    <div className={classes.marketplaceBox}>
-      <div className={classes.mpExplore}>
-        <Fragment>
-          <div className={classes.templateBody}>
-            <div>
-              <Typography variant="h2">Cloning</Typography>
-            </div>
-            <div className={classes.container}>
-              <Grid container>
-                <Grid item xs={3}>
-                  <div className={classes.appDetails}>
-                    <div className="app-details">
-                      <Typography>
-                        Cloning can be used to create a copy of a flow, export,
-                        import, orchestration, or an entire integration. Cloning
-                        is useful for testing changes without affecting your
-                        production integrations (i.e. when you clone something
-                        you can choose a different set of connection records).
-                        Cloning supports both sandbox and production
-                        environments.{' '}
-                      </Typography>
+    <LoadResources resources="integrations" required>
+      <div className={classes.marketplaceBox}>
+        <div className={classes.mpExplore}>
+          <Fragment>
+            <div className={classes.templateBody}>
+              <div>
+                <Typography variant="h3">Cloning</Typography>
+              </div>
+              <div className={classes.container}>
+                <Grid container>
+                  <Grid item xs={3}>
+                    <div className={classes.appDetails}>
+                      <div className="app-details">
+                        <Typography>
+                          Cloning can be used to create a copy of a flow,
+                          export, import, orchestration, or an entire
+                          integration. Cloning is useful for testing changes
+                          without affecting your production integrations (i.e.
+                          when you clone something you can choose a different
+                          set of connection records). Cloning supports both
+                          sandbox and production environments.{' '}
+                        </Typography>
+                      </div>
                     </div>
-                  </div>
-                </Grid>
-                <Grid className={classes.componentPadding} item xs={9}>
-                  <Typography variant="body1" className={classes.description}>
-                    {description}
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    className={classes.componentsTable}>
-                    {`The following components will get cloned with this ${MODEL_PLURAL_TO_LABEL[resourceType]}.`}
-                  </Typography>
-                  {!!objects.length && (
-                    <CeligoTable
-                      data={objects.map((obj, index) => ({
-                        ...obj,
-                        _id: index,
-                      }))}
-                      columns={columns}
+                  </Grid>
+                  <Grid className={classes.componentPadding} item xs={9}>
+                    <div className={classes.nameField}>
+                      <DynaText
+                        id="name"
+                        label="Name"
+                        required={false}
+                        onFieldChange={handleNameChange}
+                        defaultValue={`Clone - ${resource.name}`}
+                        value={nameState}
+                      />
+                    </div>
+                    <RadioGroup
+                      value={environmentState}
+                      id="environment"
+                      label="Environment"
+                      required={false}
+                      onFieldChange={handleEnvironmentChange}
+                      options={[
+                        {
+                          items: [
+                            { label: `Production`, value: 'production' },
+                            { label: `Sandbox`, value: 'sandbox' },
+                          ],
+                        },
+                      ]}
                     />
-                  )}
-                  {!objects.length && (
-                    <Typography variant="h4">
-                      Loading Preview Components
+                    {showIntegrationField && (
+                      <DynaSelect
+                        label="Integration"
+                        name="integration"
+                        required={false}
+                        onFieldChange={handleIntegrationChange}
+                        value={integrationState}
+                        options={[
+                          {
+                            items: integrations.map(i => ({
+                              label: i.name,
+                              value: i._id,
+                            })),
+                          },
+                        ]}
+                      />
+                    )}
+                    {description && (
+                      <Typography
+                        variant="body1"
+                        className={classes.description}>
+                        {description}
+                      </Typography>
+                    )}
+                    <Typography
+                      variant="body2"
+                      className={classes.componentsTable}>
+                      {`The following components will get cloned with this ${MODEL_PLURAL_TO_LABEL[resourceType]}.`}
                     </Typography>
-                  )}
-                  <div align="right" className={classes.installButton}>
-                    <Button variant="contained" color="primary" onClick={clone}>
-                      {`Clone ${MODEL_PLURAL_TO_LABEL[resourceType]}`}
-                    </Button>
-                  </div>
+                    {!!objects.length && (
+                      <CeligoTable
+                        data={objects.map((obj, index) => ({
+                          ...obj,
+                          _id: index,
+                        }))}
+                        columns={columns}
+                      />
+                    )}
+                    {!objects.length && (
+                      <Typography variant="h4">
+                        Loading Preview Components
+                      </Typography>
+                    )}
+                    <div align="right" className={classes.installButton}>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={clone}>
+                        {`Clone ${MODEL_PLURAL_TO_LABEL[resourceType]}`}
+                      </Button>
+                    </div>
+                  </Grid>
                 </Grid>
-              </Grid>
+              </div>
             </div>
-          </div>
-        </Fragment>
+          </Fragment>
+        </div>
       </div>
-    </div>
+    </LoadResources>
   );
 }

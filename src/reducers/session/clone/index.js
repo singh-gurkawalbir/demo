@@ -8,6 +8,7 @@ export default function reducer(state = {}, action) {
     resourceId,
     resourceType,
     components,
+    data,
     installSteps,
     connectionMap,
     step = {},
@@ -52,6 +53,7 @@ export default function reducer(state = {}, action) {
 
         draft[key].installSteps = installSteps;
         draft[key].connectionMap = connectionMap;
+        draft[key].data = data;
         break;
       case actionTypes.CLONE.UPDATE_STEP:
         if (!draft[key]) {
@@ -116,7 +118,17 @@ export function clonePreview(state, resourceType, resourceId) {
   return state[key].preview;
 }
 
-export function templateInstallSteps(state, resourceType, resourceId) {
+export function cloneData(state, resourceType, resourceId) {
+  const key = `${resourceType}-${resourceId}`;
+
+  if (!state) {
+    return null;
+  }
+
+  return state[key];
+}
+
+export function cloneInstallSteps(state, resourceType, resourceId) {
   const key = `${resourceType}-${resourceId}`;
 
   if (!state || !state[key]) {

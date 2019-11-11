@@ -54,21 +54,21 @@ const getConnectionType = resource => {
   return type;
 };
 
-export default function ConnectorInstallation(props) {
+export default function Clone(props) {
   const classes = useStyles();
-  const { templateId } = props.match.params;
+  const { resourceType, resourceId } = props.match.params;
   const [connection, setSelectedConnectionId] = useState(null);
   const [stackId, setShowStackDialog] = useState(null);
   const [isSetupComplete, setIsSetupComplete] = useState(false);
   const dispatch = useDispatch();
-  const template =
-    useSelector(state => selectors.marketplaceTemplate(state, templateId)) ||
+  const resource =
+    useSelector(state => selectors.resource(state, resourceType, resourceId)) ||
     {};
   const installSteps = useSelector(state =>
-    selectors.templateInstallSteps(state, templateId)
+    selectors.cloneInstallSteps(state, resourceType, resourceId)
   );
   const { connectionMap, createdComponents } = useSelector(state =>
-    selectors.templateSetup(state, templateId)
+    selectors.cloneData(state, resourceType, resourceId)
   );
 
   useEffect(() => {
@@ -82,9 +82,9 @@ export default function ConnectorInstallation(props) {
   useEffect(() => {
     if (isSetupComplete) {
       // Send the gathered information to BE to create all components
-      dispatch(actions.template.createComponents(templateId));
+      dispatch(actions.clone.createComponents(resourceType, resourceId));
     }
-  }, [dispatch, isSetupComplete, props.history, templateId]);
+  }, [dispatch, isSetupComplete, props.history, resourceId, resourceType]);
   useEffect(() => {
     if (createdComponents) {
       // redirect to integration Settings
@@ -92,7 +92,7 @@ export default function ConnectorInstallation(props) {
         c => c.model === 'Integration'
       );
 
-      dispatch(actions.template.clearTemplate(templateId));
+      dispatch(actions.clone.clearTemplate(resourceType, resourceId));
       dispatch(actions.resource.requestCollection('integrations'));
       dispatch(actions.resource.requestCollection('flows'));
       dispatch(actions.resource.requestCollection('connections'));
@@ -108,10 +108,10 @@ export default function ConnectorInstallation(props) {
         props.history.push('/');
       }
     }
-  }, [createdComponents, dispatch, props.history, templateId]);
+  }, [createdComponents, dispatch, props.history, resourceId, resourceType]);
 
   if (!installSteps) {
-    return <Typography>Invalid Template</Typography>;
+    return <Typography>Invalid Resource</Typography>;
   }
 
   const handleStepClick = (step, conn) => {
@@ -143,7 +143,8 @@ export default function ConnectorInstallation(props) {
         dispatch(
           actions.template.updateStep(
             { ...step, status: 'triggered' },
-            templateId
+            resourceType,
+            resourceId
           )
         );
 
@@ -164,14 +165,16 @@ export default function ConnectorInstallation(props) {
         dispatch(
           actions.template.updateStep(
             { ...step, status: 'verifying' },
-            templateId
+            resourceType,
+            resourceId
           )
         );
         dispatch(
           actions.template.verifyBundleOrPackageInstall(
             step,
             { _id: step.options._connectionId },
-            templateId
+            resourceType,
+            resourceId
           )
         );
       }
@@ -196,7 +199,7 @@ export default function ConnectorInstallation(props) {
     }
 
     dispatch(
-      actions.template.updateStep(
+      actions.clone.updateStep(
         {
           _connectionId: connection.doc._id,
           newConnectionId: connectionId,
@@ -207,7 +210,8 @@ export default function ConnectorInstallation(props) {
             ? connection.doc.type
             : false,
         },
-        templateId
+        resourceType,
+        resourceId
       )
     );
     setSelectedConnectionId(false);
@@ -215,9 +219,10 @@ export default function ConnectorInstallation(props) {
 
   const handleStackSetupDone = stackId => {
     dispatch(
-      actions.template.updateStep(
+      actions.clone.updateStep(
         { status: 'completed', stackId, type: INSTALL_STEP_TYPES.STACK },
-        templateId
+        resourceType,
+        resourceId
       )
     );
     setShowStackDialog(false);
@@ -266,7 +271,7 @@ export default function ConnectorInstallation(props) {
                 <Breadcrumbs separator={<ArrowRightIcon />}>
                   <Typography color="textPrimary">Setup</Typography>
                   <Typography color="textPrimary">
-                    {template.name || 'Integration'}
+                    {resource.name || 'Integration'}
                   </Typography>
                 </Breadcrumbs>
               </Paper>
@@ -276,7 +281,7 @@ export default function ConnectorInstallation(props) {
             {installSteps.map((step, index) => (
               <InstallationStep
                 key={step.name}
-                templateId={templateId}
+                templateId={`${resourceType}-${resourceId}`}
                 connectionMap={connectionMap}
                 handleStepClick={handleStepClick}
                 index={index + 1}

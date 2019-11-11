@@ -138,6 +138,18 @@ export function clonePreview(state, resourceType, resourceId) {
   return fromClone.clonePreview(state && state.clone, resourceType, resourceId);
 }
 
+export function cloneData(state, resourceType, resourceId) {
+  return fromClone.cloneData(state && state.clone, resourceType, resourceId);
+}
+
+export function cloneInstallSteps(state, resourceType, resourceId) {
+  return fromClone.cloneInstallSteps(
+    state && state.clone,
+    resourceType,
+    resourceId
+  );
+}
+
 export function previewTemplate(state, templateId) {
   return fromTemplates.previewTemplate(state && state.templates, templateId);
 }

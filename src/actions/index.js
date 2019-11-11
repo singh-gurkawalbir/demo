@@ -560,6 +560,8 @@ const clone = {
     action(actionTypes.CLONE.PREVIEW_REQUEST, { resourceType, resourceId }),
   failedPreview: (resourceType, resourceId) =>
     action(actionTypes.CLONE.FAILURE, { resourceType, resourceId }),
+  failedInstall: (resourceType, resourceId) =>
+    action(actionTypes.CLONE.INSTALL_FAILURE, { resourceType, resourceId }),
   createComponents: (resourceType, resourceId) =>
     action(actionTypes.CLONE.CREATE_COMPONENTS, { resourceType, resourceId }),
   createdComponents: (components, resourceType, resourceId) =>
@@ -571,12 +573,14 @@ const clone = {
   installStepsReceived: (
     installSteps,
     connectionMap,
+    data,
     resourceType,
     resourceId
   ) =>
     action(actionTypes.CLONE.STEPS_RECEIVED, {
       installSteps,
       connectionMap,
+      data,
       resourceType,
       resourceId,
     }),

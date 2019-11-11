@@ -128,6 +128,22 @@ export function clonePreview(state, resourceType, resourceId) {
   );
 }
 
+export function cloneData(state, resourceType, resourceId) {
+  return fromSession.cloneData(
+    state && state.session,
+    resourceType,
+    resourceId
+  );
+}
+
+export function cloneInstallSteps(state, resourceType, resourceId) {
+  return fromSession.cloneInstallSteps(
+    state && state.session,
+    resourceType,
+    resourceId
+  );
+}
+
 export function previewTemplate(state, templateId) {
   return fromSession.previewTemplate(state && state.session, templateId);
 }
