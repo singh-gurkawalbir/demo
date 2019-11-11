@@ -11,7 +11,7 @@ export default (state = {}, action) => {
       case actionTypes.INTEGRATION_APPS.SETTINGS.UPDATE:
         draft[key] = { submitComplete: false };
         break;
-      case actionTypes.INTEGRATION_APPS.SETTINGS.UPDATE_LICENSES_METADATA:
+      case actionTypes.INTEGRATION_APPS.SETTINGS.ADDON_UPDATE_LICENSES_METADATA:
         if (response && response.addOns) {
           draft[integrationId] = {
             addOns: {

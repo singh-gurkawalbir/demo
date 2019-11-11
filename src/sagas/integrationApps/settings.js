@@ -30,7 +30,7 @@ export function* requestUpgrade({ integration, options }) {
   yield put(actions.integrationApp.settings.requestedUpgrade(licenseId));
 }
 
-export function* getLicenseMetadata({ integrationId }) {
+export function* addonGetLicenseMetadata({ integrationId }) {
   const path = `/integrations/${integrationId}/settings/getLicenseMetadata`;
   let response;
 
@@ -89,7 +89,7 @@ export default [
   ),
   takeLatest(actionTypes.INTEGRATION_APPS.SETTINGS.UPGRADE, upgrade),
   takeLatest(
-    actionTypes.INTEGRATION_APPS.SETTINGS.LICENSES_METADATA,
-    getLicenseMetadata
+    actionTypes.INTEGRATION_APPS.SETTINGS.ADDON_LICENSES_METADATA,
+    addonGetLicenseMetadata
   ),
 ];

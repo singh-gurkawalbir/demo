@@ -446,14 +446,17 @@ const integrationApp = {
         licenseId,
       }),
     addOnLicenseMetadata: integrationId =>
-      action(actionTypes.INTEGRATION_APPS.SETTINGS.LICENSES_METADATA, {
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.ADDON_LICENSES_METADATA, {
         integrationId,
       }),
     updateLicenseMetadata: (integrationId, response) =>
-      action(actionTypes.INTEGRATION_APPS.SETTINGS.UPDATE_LICENSES_METADATA, {
-        integrationId,
-        response,
-      }),
+      action(
+        actionTypes.INTEGRATION_APPS.SETTINGS.ADDON_UPDATE_LICENSES_METADATA,
+        {
+          integrationId,
+          response,
+        }
+      ),
 
     upgrade: (integration, license) =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.UPGRADE, {
