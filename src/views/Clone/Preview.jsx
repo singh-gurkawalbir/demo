@@ -13,6 +13,7 @@ import RadioGroup from '../../components/DynaForm/fields/DynaRadioGroup';
 import DynaSelect from '../../components/DynaForm/fields/DynaSelect';
 import DynaText from '../../components/DynaForm/fields/DynaText';
 import getRoutePath from '../../utils/routePaths';
+import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -65,6 +66,7 @@ export default function ClonePreview(props) {
   const { resourceType, resourceId } = props.match.params;
   const [requested, setRequested] = useState(false);
   const dispatch = useDispatch();
+  const [enquesnackbar] = useEnqueueSnackbar();
   const preferences = useSelector(state => selectors.userPreferences(state));
   const [environmentState, setEnvironmentState] = useState(
     preferences.environment
@@ -165,6 +167,8 @@ export default function ClonePreview(props) {
       templateUtil.getInstallSteps(components) || {};
 
     if (showIntegrationField && !integrationState) {
+      enquesnackbar({ message: 'Please select Integration.', variant: 'info' });
+
       return false;
     }
 
