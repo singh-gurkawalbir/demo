@@ -31,8 +31,9 @@ export default {
     defaultValue: r =>
       r &&
       r.netsuite &&
-      r.netsuite.webservices &&
-      r.netsuite.webservices.recordType,
+      r.netsuite.searches &&
+      r.netsuite.searches[0] &&
+      r.netsuite.searches[0].recordType,
   },
   // execution context
   'netsuite.distributed.executionContext': {
