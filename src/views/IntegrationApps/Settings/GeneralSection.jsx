@@ -20,8 +20,6 @@ export default function GeneralSection(props) {
       fieldMeta={translatedMeta}
       integrationId={integrationId}
       storeId={storeId}
-      resourceType="integrations"
-      resourceId={integrationId}
     />
   );
 }

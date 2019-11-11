@@ -68,9 +68,10 @@ class DynaForm extends Component {
 }
 
 export default function DisabledDynaFormPerUserPermissions(props) {
-  const { resourceType, resourceId, fieldMeta } = props;
+  const { integrationId, fieldMeta } = props;
+  // pass in the integration Id to find access level of its associated forms
   const isFormAMonitorLevelAccess = useSelector(state =>
-    selectors.isFormAMonitorLevelAccess(state, resourceType, resourceId)
+    selectors.isFormAMonitorLevelAccess(state, integrationId)
   );
 
   return (

@@ -1171,7 +1171,7 @@ export function resourcePermissions(state, resourceType, resourceId) {
   return {};
 }
 
-export function isFormAMonitorLevelAccess(state, resourceType, resourceId) {
+export function isFormAMonitorLevelAccess(state, integrationId) {
   const { accessLevel } = userPermissions(state);
 
   // if all forms is monitor level
@@ -1180,8 +1180,8 @@ export function isFormAMonitorLevelAccess(state, resourceType, resourceId) {
   // check integration level is monitor level
   const { accessLevel: accessLevelIntegration } = resourcePermissions(
     state,
-    resourceType,
-    resourceId
+    'integrations',
+    integrationId
   );
 
   if (accessLevelIntegration === 'monitor') return true;

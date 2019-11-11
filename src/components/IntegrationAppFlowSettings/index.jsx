@@ -61,8 +61,6 @@ export default function IntegrationAppFlowSettings(props) {
               storeId={storeId}
               onSubmitComplete={handleCloseDialog}
               fieldMeta={translatedMeta}
-              resourceType="integrations"
-              resourceId={_integrationId}
             />
           </div>
         </DialogContent>

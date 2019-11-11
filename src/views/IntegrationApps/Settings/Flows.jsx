@@ -51,8 +51,6 @@ export default function Flows(props) {
             integrationId={integrationId}
             storeId={storeId}
             fieldMeta={translatedMeta}
-            resourceType="integrations"
-            resourceId={integrationId}
           />
         </div>
       )}
