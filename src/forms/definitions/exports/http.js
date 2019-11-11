@@ -115,10 +115,9 @@ export default {
 
         // if its create
         if (isNew) return '';
-
         const output = r && r.type;
 
-        return output ? 'output' : 'all';
+        return output || 'all';
       },
       visibleWhen: [
         {

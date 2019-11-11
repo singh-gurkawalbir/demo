@@ -335,7 +335,9 @@ export default {
     visibleWhen: [{ field: 'type', is: ['delta'] }],
   },
   'delta.dateFormat': {
-    type: 'select',
+    type: 'toggleSelectToText',
+    selectHrefLabel: 'Use custom format',
+    textHrefLabel: 'Use presets',
     label: 'Delta date Format',
     options: [
       {

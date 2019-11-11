@@ -1,4 +1,5 @@
 import { isTransactionWSRecordType } from '../../../../utils/metadata';
+import { isNewId } from '../../../../utils/resource';
 
 export default {
   preSave: formValues => ({
@@ -76,6 +77,15 @@ export default {
       type: 'select',
       label: 'Export Type',
       required: true,
+      defaultValue: r => {
+        const isNew = isNewId(r._id);
+
+        // if its create
+        if (isNew) return '';
+        const output = r && r.type;
+
+        return output || 'all';
+      },
       options: [
         {
           items: [

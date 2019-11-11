@@ -1,3 +1,5 @@
+import { isNewId } from '../../../utils/resource';
+
 export default {
   preSave: formValues => {
     const retValues = { ...formValues };
@@ -53,6 +55,15 @@ export default {
       id: 'type',
       type: 'select',
       label: 'Export Type',
+      defaultValue: r => {
+        const isNew = isNewId(r._id);
+
+        // if its create
+        if (isNew) return '';
+        const output = r && r.type;
+
+        return output || 'all';
+      },
       required: true,
       options: [
         {
