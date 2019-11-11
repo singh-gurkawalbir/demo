@@ -72,7 +72,7 @@ export default function SelectApplication(props) {
         : theme.palette.secondary.light,
       backgroundColor:
         state.isSelected || state.isFocused
-          ? theme.palette.background.default
+          ? theme.palette.background.paper2
           : theme.palette.background.paper,
       border: 'none',
       minHeight: '48px',
@@ -133,8 +133,8 @@ export default function SelectApplication(props) {
       padding: '5px',
       borderBottom: '1px solid',
       borderColor: theme.palette.divider,
-      background: theme.palette.background.paper2,
-      color: theme.palette.secondary.light,
+      background: theme.palette.secondary.lightest,
+      color: theme.palette.text.secondary,
     }),
     dropdownIndicator: () => ({
       color: theme.palette.secondary.light,

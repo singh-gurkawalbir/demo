@@ -1,18 +1,16 @@
 import { useSelector, useDispatch } from 'react-redux';
-import clsx from 'clsx';
 import {
   makeStyles,
   MenuItem,
   Checkbox,
-  Select,
   FormControlLabel,
   IconButton,
 } from '@material-ui/core';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
-import ArrowDownIcon from '../icons/ArrowDownIcon';
 import ArrowLeftIcon from '../icons/ArrowLeftIcon';
 import ArrowRightIcon from '../icons/ArrowRightIcon';
+import CeligoSelect from '../CeligoSelect';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -55,7 +53,7 @@ const useStyles = makeStyles(theme => ({
       paddingBottom: 5,
     },
     '& svg': {
-      right: 8,
+      right: theme.spacing(1),
       paddingLeft: 0,
     },
   },
@@ -86,6 +84,9 @@ const useStyles = makeStyles(theme => ({
   },
   pagingText: {
     alignSelf: 'center',
+  },
+  hideLabel: {
+    marginLeft: '10px',
   },
 }));
 
@@ -140,14 +141,13 @@ function Filters({
 
   return (
     <div className={classes.root}>
-      <Select
-        disabled={disableActions}
+      <CeligoSelect
+        className={classes.retry}
         data-test="retryJobs"
-        className={clsx(classes.select, classes.retry)}
         onChange={e => onActionClick(e.target.value)}
         displayEmpty
-        value=""
-        IconComponent={ArrowDownIcon}>
+        disabled={disableActions}
+        value="">
         <MenuItem value="" disabled>
           Retry
         </MenuItem>
@@ -155,16 +155,15 @@ function Filters({
         <MenuItem disabled={numJobsSelected === 0} value="retrySelected">
           {numJobsSelected} selected jobs
         </MenuItem>
-      </Select>
+      </CeligoSelect>
 
-      <Select
+      <CeligoSelect
         disabled={disableActions}
         data-test="resolveJobs"
-        className={clsx(classes.select, classes.resolve)}
+        className={classes.resolve}
         onChange={e => onActionClick(e.target.value)}
         displayEmpty
-        value=""
-        IconComponent={ArrowDownIcon}>
+        value="">
         <MenuItem value="" disabled>
           Resolve
         </MenuItem>
@@ -172,13 +171,12 @@ function Filters({
         <MenuItem value="resolveSelected" disabled={numJobsSelected === 0}>
           {numJobsSelected} selected jobs
         </MenuItem>
-      </Select>
+      </CeligoSelect>
 
       {!flowId && (
-        <Select
-          className={clsx(classes.select, classes.flow)}
+        <CeligoSelect
+          className={classes.flow}
           onChange={e => patchFilter('flowId', e.target.value)}
-          IconComponent={ArrowDownIcon}
           displayEmpty
           value={_flowId || ''}>
           <MenuItem value="">Select flow</MenuItem>
@@ -187,12 +185,11 @@ function Filters({
               {opt.name || opt._id}
             </MenuItem>
           ))}
-        </Select>
+        </CeligoSelect>
       )}
 
-      <Select
-        className={clsx(classes.select, classes.status)}
-        IconComponent={ArrowDownIcon}
+      <CeligoSelect
+        className={classes.status}
         onChange={e => patchFilter('status', e.target.value)}
         value={status}>
         {[
@@ -210,19 +207,22 @@ function Filters({
             {opt[1]}
           </MenuItem>
         ))}
-      </Select>
+      </CeligoSelect>
+      <div className={classes.hideLabel}>
+        <FormControlLabel
+          label="Hide empty jobs"
+          classes={{ label: classes.hideEmptyLabel }}
+          control={
+            <Checkbox
+              // indeterminate={numSelected > 0 && numSelected < rowCount}
+              checked={hideEmpty}
+              color="primary"
+              onChange={e => patchFilter('hideEmpty', e.target.checked)}
+            />
+          }
+        />
+      </div>
 
-      <FormControlLabel
-        label="Hide empty jobs"
-        classes={{ label: classes.hideEmptyLabel }}
-        control={
-          <Checkbox
-            // indeterminate={numSelected > 0 && numSelected < rowCount}
-            checked={hideEmpty}
-            onChange={e => patchFilter('hideEmpty', e.target.checked)}
-          />
-        }
-      />
       <div className={classes.pagingContainer}>
         <IconButton
           disabled={currentPage === 0}

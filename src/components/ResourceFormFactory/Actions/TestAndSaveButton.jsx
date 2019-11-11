@@ -160,8 +160,8 @@ const TestAndSaveButton = props => {
         }}
         className={classes.actionButton}
         size="small"
-        variant="contained"
-        color="secondary">
+        variant="outlined"
+        color="primary">
         {label || 'Test and Save'}
       </DynaAction>
     </Fragment>

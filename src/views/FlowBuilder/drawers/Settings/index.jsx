@@ -131,13 +131,10 @@ export default function SettingsDrawer({ flow, history, ...props }) {
       </IconButton>
       <TitleBar title="Settings" />
       <DynaForm fieldMeta={fieldMeta} render>
-        <DynaSubmit onClick={handleSubmit} color="primary">
+        <DynaSubmit onClick={handleSubmit} color="primary" variant="outlined">
           Save
         </DynaSubmit>
-        <Button
-          onClick={() => history.goBack()}
-          variant="contained"
-          color="secondary">
+        <Button onClick={() => history.goBack()} variant="text" color="primary">
           Cancel
         </Button>
       </DynaForm>

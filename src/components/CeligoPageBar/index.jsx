@@ -1,7 +1,7 @@
 import { Fragment, useState } from 'react';
 import { useSelector } from 'react-redux';
 import clsx from 'clsx';
-import { makeStyles, useTheme } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Paper, Grid, IconButton } from '@material-ui/core';
 import ArrowPopper from '../ArrowPopper';
 import TooltipContent from '../TooltipContent';
@@ -18,6 +18,7 @@ const useStyles = makeStyles(theme => ({
     height: theme.pageBarHeight,
     width: `calc(100% - ${theme.spacing(2 * 3) + 1}px)`,
     position: 'fixed',
+    borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
   },
   pageHeaderShift: {
     width: `calc(100% - ${theme.drawerWidth - theme.spacing(2)}px)`,
@@ -51,7 +52,6 @@ export default function CeligoPageBar({
   titleTag,
 }) {
   const classes = useStyles();
-  const theme = useTheme();
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -96,7 +96,6 @@ export default function CeligoPageBar({
                       <ArrowPopper
                         id="pageInfo"
                         className={classes.infoPopper}
-                        zIndex={theme.zIndex.appBar + 1}
                         open={!!anchorEl}
                         anchorEl={anchorEl}
                         placement="right-start"

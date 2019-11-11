@@ -3,8 +3,9 @@ import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles(theme => ({
   titleBar: {
+    background: theme.palette.background.paper,
     display: 'flex',
-    marginBottom: theme.spacing(3),
+    padding: '14px 24px',
     '& > :not(:last-child)': {
       marginRight: theme.spacing(2),
     },
@@ -19,7 +20,7 @@ export default function TitleBar({ title }) {
 
   return (
     <div className={classes.titleBar}>
-      <Typography variant="h5" className={classes.title}>
+      <Typography variant="h3" className={classes.title}>
         {title}
       </Typography>
     </div>

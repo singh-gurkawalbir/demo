@@ -67,14 +67,12 @@ const mapDispatchToProps = dispatch => ({
 
 @withStyles(theme => ({
   root: {
-    width: '98%',
     marginTop: theme.spacing(3),
-    marginLeft: theme.spacing(1),
     overflowX: 'auto',
   },
   title: {
-    marginBottom: theme.spacing(2),
     float: 'left',
+    margin: theme.spacing(0, 0, 1, 1),
   },
   inviteUserButton: {
     margin: theme.spacing(1),
