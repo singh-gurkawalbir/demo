@@ -61,7 +61,7 @@ describe('request interceptors...testing the various stages of an api request on
   const some403Response = {
     status: 403,
     headers: new Map([['content-type', 'application/json; charset=utf-8']]),
-    data: {  message: 'Bad_Request_CSRF'  },
+    data: { message: 'Bad_Request_CSRF' },
   };
   const actionWithMetaProxiedFromRequestAction = {
     request: {
