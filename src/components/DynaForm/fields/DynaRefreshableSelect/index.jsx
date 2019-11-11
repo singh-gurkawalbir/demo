@@ -12,51 +12,37 @@ export default function DynaSelectOptionsGenerator(props) {
   const {
     connectionId,
     resourceType,
-    mode,
     options = {},
     filterKey,
-    recordType,
-    disableOptionsLoad,
-    selectField,
+    commMetaPath,
+    disableFetch,
   } = props;
+  const disableOptionsLoad = options.disableFetch || disableFetch;
   const dispatch = useDispatch();
-  const resource = options.resourceToFetch || resourceType;
   const { status, data, errorMessage } = useSelector(state =>
     selectors.metadataOptionsAndResources({
       state,
       connectionId,
-      mode,
-      metadataType: resource,
+      commMetaPath: options.commMetaPath || commMetaPath,
       filterKey: options.filterKey || filterKey,
-      recordType: options.recordType || recordType,
-      selectField,
     })
   );
   const handleFetchResource = useCallback(() => {
-    if (resource && !data && !disableOptionsLoad) {
+    if (!data && !disableOptionsLoad) {
       dispatch(
-        actions.metadata.request({
+        actions.metadata.request(
           connectionId,
-          metadataType: resource,
-          mode,
-          filterKey: options.filterKey || filterKey,
-          recordType: options.recordType || recordType,
-          selectField,
-        })
+          options.commMetaPath || commMetaPath
+        )
       );
     }
   }, [
+    commMetaPath,
     connectionId,
     data,
     disableOptionsLoad,
     dispatch,
-    filterKey,
-    mode,
-    options.filterKey,
-    options.recordType,
-    recordType,
-    resource,
-    selectField,
+    options.commMetaPath,
   ]);
   const handleRefreshResource = () => {
     const resource = options.resourceToFetch || resourceType;
@@ -65,11 +51,7 @@ export default function DynaSelectOptionsGenerator(props) {
       dispatch(
         actions.metadata.refresh(
           connectionId,
-          resource,
-          mode,
-          options.filterKey || filterKey,
-          options.recordType || recordType,
-          selectField
+          options.commMetaPath || commMetaPath
         )
       );
     }
@@ -84,6 +66,7 @@ export default function DynaSelectOptionsGenerator(props) {
       fieldStatus={status}
       fieldData={data}
       fieldError={errorMessage}
+      disableOptionsLoad={disableOptionsLoad}
       {...props}
     />
   );

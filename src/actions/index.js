@@ -286,76 +286,28 @@ const connectors = {
   },
 };
 const metadata = {
-  request: ({
-    connectionId,
-    metadataType,
-    mode,
-    recordType,
-    selectField,
-    addInfo,
-  }) => {
-    if (mode) {
-      return action(actionTypes.METADATA.NETSUITE_REQUEST, {
-        connectionId,
-        metadataType,
-        mode,
-        recordType,
-        selectField,
-        addInfo,
-      });
-    }
-
-    return action(actionTypes.METADATA.SALESFORCE_REQUEST, {
+  request: (connectionId, commMetaPath) =>
+    action(actionTypes.METADATA.REQUEST, {
       connectionId,
-      metadataType,
-      recordType,
-      selectField,
-    });
-  },
-  refresh: (
-    connectionId,
-    metadataType,
-    mode,
-    filterKey,
-    recordType,
-    selectField
-  ) =>
+      commMetaPath,
+    }),
+  refresh: (connectionId, commMetaPath) =>
     action(actionTypes.METADATA.REFRESH, {
       connectionId,
-      metadataType,
-      mode,
-      filterKey,
-      recordType,
-      selectField,
+      commMetaPath,
     }),
-  netsuite: {
-    receivedCollection: (metadata, connectionId, commMetadataPath) =>
-      action(actionTypes.METADATA.RECEIVED_NETSUITE, {
-        metadata,
-        connectionId,
-        commMetadataPath,
-      }),
-    receivedError: (metadataError, connectionId, commMetadataPath) =>
-      action(actionTypes.METADATA.RECEIVED_NETSUITE_ERROR, {
-        metadataError,
-        connectionId,
-        commMetadataPath,
-      }),
-  },
-  salesforce: {
-    receivedCollection: (metadata, connectionId, commMetadataPath) =>
-      action(actionTypes.METADATA.RECEIVED_SALESFORCE, {
-        metadata,
-        connectionId,
-        commMetadataPath,
-      }),
-    receivedError: (metadataError, connectionId, commMetadataPath) =>
-      action(actionTypes.METADATA.RECEIVED_SALESFORCE_ERROR, {
-        metadataError,
-        connectionId,
-        commMetadataPath,
-      }),
-  },
+  receivedCollection: (metadata, connectionId, commMetaPath) =>
+    action(actionTypes.METADATA.RECEIVED, {
+      metadata,
+      connectionId,
+      commMetaPath,
+    }),
+  receivedError: (metadataError, connectionId, commMetaPath) =>
+    action(actionTypes.METADATA.RECEIVED_ERROR, {
+      metadataError,
+      connectionId,
+      commMetaPath,
+    }),
 };
 const fileDefinitions = {
   preBuilt: {

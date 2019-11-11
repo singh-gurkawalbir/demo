@@ -1759,22 +1759,14 @@ export function stagedResource(state, id, scope) {
 export function optionsFromMetadata({
   state,
   connectionId,
-  mode,
-  metadataType,
+  commMetaPath,
   filterKey,
-  applicationType,
-  recordType,
-  selectField,
 }) {
   return fromSession.optionsFromMetadata({
     state: state && state.session,
     connectionId,
-    mode,
-    metadataType,
+    commMetaPath,
     filterKey,
-    applicationType,
-    recordType,
-    selectField,
   });
 }
 
@@ -1805,26 +1797,15 @@ export const getFileDefinition = (state, definitionId, options) =>
 export function metadataOptionsAndResources({
   state,
   connectionId,
-  mode,
-  metadataType,
+  commMetaPath,
   filterKey,
-  recordType,
-  selectField,
 }) {
-  const connection = resource(state, 'connections', connectionId);
-  // determining application type from the connection
-  const applicationType = connection.type;
-
   return (
     optionsFromMetadata({
       state,
       connectionId,
-      mode,
-      metadataType,
+      commMetaPath,
       filterKey,
-      applicationType,
-      recordType,
-      selectField,
     }) || {}
   );
 }
@@ -2114,26 +2095,23 @@ export function getImportSampleData(state, resourceId) {
   } else if (adaptorType === 'NetSuiteDistributedImport') {
     // eslint-disable-next-line camelcase
     const { _connectionId: connectionId, netsuite_da } = resource;
-    const { data: sampleData } = metadataOptionsAndResources(
+    const commMetaPath = `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${netsuite_da.recordType}`;
+    const { data: sampleData } = metadataOptionsAndResources({
       state,
       connectionId,
-      'suitescript',
-      'recordTypes',
-      `record-${netsuite_da.recordType}`,
-      netsuite_da.recordType
-    );
+      commMetaPath,
+    });
 
     return sampleData;
   } else if (adaptorType === 'SalesforceImport') {
     const { _connectionId: connectionId, salesforce } = resource;
-    const { data: sampleData } = metadataOptionsAndResources(
+    const commMetaPath = `salesforce/metadata/connections/${connectionId}/sObjectTypes/${salesforce.sObjectType}`;
+    const { data: sampleData } = metadataOptionsAndResources({
       state,
       connectionId,
-      'salesforce',
-      'sObjectTypes',
-      null,
-      salesforce.sObjectType
-    );
+      commMetaPath,
+      filterKey: 'salesforce-recordType',
+    });
 
     return sampleData;
   }

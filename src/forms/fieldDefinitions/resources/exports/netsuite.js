@@ -2,29 +2,36 @@ export default {
   // record types
   'netsuite.distributed.recordType': {
     label: 'Record type',
-    mode: 'suitescript',
     required: true,
     type: 'refreshableselect',
-    resourceType: 'recordTypes',
+    filterKey: 'suitescript-recordTypes',
+    commMetaPath: r =>
+      r &&
+      `netsuite/metadata/suitescript/connections/${r._connectionId}/recordTypes`,
     placeholder: 'Please select a record type',
     helpKey: 'export.netsuite.recordType',
     connectionId: r => r && r._connectionId,
   },
   'netsuite.restlet.recordType': {
     label: 'Record type',
-    mode: 'suitescript',
     required: true,
     type: 'refreshableselect',
+    filterKey: 'suitescript-recordTypes',
+    commMetaPath: r =>
+      r &&
+      `netsuite/metadata/suitescript/connections/${r._connectionId}/recordTypes`,
     resourceType: 'recordTypes',
     placeholder: 'Please select a record type',
     connectionId: r => r && r._connectionId,
   },
   'netsuite.webservices.recordType': {
     label: 'Record type',
-    mode: 'webservices',
     required: true,
     type: 'refreshableselect',
-    resourceType: 'recordTypes',
+    commMetaPath: r =>
+      r &&
+      `/netsuite/metadata/webservices/connections/${r._connectionId}/recordTypes`,
+    filterKey: 'webservices-recordTypes',
     placeholder: 'Please select a record type',
     helpKey: 'export.netsuite.searches.recordType',
     connectionId: r => r && r._connectionId,
@@ -101,7 +108,9 @@ export default {
   'netsuite.distributed.sublists': {
     label: 'Sublists to include',
     type: 'refreshableselect',
-    mode: 'suitescript',
+    commMetaPath: r =>
+      r &&
+      `netsuite/metadata/suitescript/connections/${r._connectionId}/savedSearches`,
     multiselect: true,
     placeholder: 'Please select Sublists',
     helpKey: 'export.netsuite.sublists',
@@ -110,19 +119,18 @@ export default {
   // search id
   'netsuite.restlet.searchId': {
     type: 'nssavedsearch',
-    mode: 'suitescript',
-    resourceType: 'savedSearches',
     required: true,
+    commMetaPath: r =>
+      r &&
+      `netsuite/metadata/suitescript/connections/${r._connectionId}/savedSearches`,
     connectionId: r => r && r._connectionId,
   },
   'netsuite.webservices.searchId': {
     label: 'Saved searches',
     type: 'refreshableselect',
-    resourceType: 'savedSearches',
     required: true,
     placeholder: 'Please select a saved search',
-    mode: 'webservices',
-    filterKey: 'savedSearches',
+    filterKey: 'webservices-savedSearches',
     helpKey: 'export.netsuite.searches.searchId',
     defaultValue: r =>
       r &&
