@@ -4,7 +4,7 @@ import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import { MODEL_PLURAL_TO_LABEL } from '../../../../utils/resource';
 
-export default function TemplateCrumb({ resourceId, resourceType }) {
+export default function CloneCrumb({ resourceId, resourceType }) {
   const dispatch = useDispatch();
   const resource = useSelector(state =>
     selectors.resource(state, resourceType, resourceId)
@@ -16,5 +16,5 @@ export default function TemplateCrumb({ resourceId, resourceType }) {
     }
   }, [dispatch, resource, resourceId, resourceType]);
 
-  return resource ? resource.name : `${MODEL_PLURAL_TO_LABEL[resourceType]}`;
+  return resource ? resource.name : MODEL_PLURAL_TO_LABEL[resourceType];
 }

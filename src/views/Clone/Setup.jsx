@@ -18,7 +18,10 @@ import ArrowRightIcon from '../../components/icons/ArrowRightIcon';
 import ResourceSetupDialog from '../../components/ResourceSetupDialog';
 import InstallationStep from '../../components/InstallStep';
 import resourceConstants from '../../forms/constants/connection';
-import { getResourceSubType } from '../../utils/resource';
+import {
+  getResourceSubType,
+  MODEL_PLURAL_TO_LABEL,
+} from '../../utils/resource';
 import jsonUtil from '../../utils/json';
 import { INSTALL_STEP_TYPES } from '../../utils/constants';
 import { SCOPES } from '../../sagas/resourceForm';
@@ -282,7 +285,7 @@ export default function Clone(props) {
                 <Breadcrumbs separator={<ArrowRightIcon />}>
                   <Typography color="textPrimary">Setup</Typography>
                   <Typography color="textPrimary">
-                    {resource.name || 'Integration'}
+                    {resource.name || MODEL_PLURAL_TO_LABEL[resourceType]}
                   </Typography>
                 </Breadcrumbs>
               </Paper>
