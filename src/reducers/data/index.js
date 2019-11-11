@@ -117,8 +117,13 @@ export function auditLogs(state, resourceType, resourceId, filters) {
 
   filteredLogs.forEach(a => {
     if (a.fieldChanges && a.fieldChanges.length > 0) {
-      a.fieldChanges.forEach(fc => {
-        expandedLogs.push({ ...a, fieldChanges: undefined, fieldChange: fc });
+      a.fieldChanges.forEach((fc, index) => {
+        expandedLogs.push({
+          ...a,
+          _id: `${a._id}-${index}`,
+          fieldChanges: undefined,
+          fieldChange: fc,
+        });
       });
     } else {
       expandedLogs.push({ ...a, fieldChange: {} });
