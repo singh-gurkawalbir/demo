@@ -23,6 +23,7 @@ import {
 } from './util';
 import OperandSettingsDialog from './OperandSettingsDialog';
 import actions from '../../../actions';
+import getJSONPaths from '../../../utils/jsonPaths';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -60,7 +61,9 @@ export default function FilterPanel({ editorId, readOnly, data = {}, rule }) {
       d = data;
     }
 
-    return Object.keys(isArray(d) ? d[0] : d).map(key => ({ id: key }));
+    return getJSONPaths(isArray(d) ? d[0] : d, null, {
+      wrapSpecialChars: true,
+    });
   }, [data]);
 
   useEffect(() => {
