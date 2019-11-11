@@ -22,6 +22,7 @@ import { getResourceSubType } from '../../utils/resource';
 import jsonUtil from '../../utils/json';
 import { INSTALL_STEP_TYPES } from '../../utils/constants';
 import { SCOPES } from '../../sagas/resourceForm';
+import getRoutePath from '../../utils/routePaths';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -67,17 +68,23 @@ export default function Clone(props) {
   const installSteps = useSelector(state =>
     selectors.cloneInstallSteps(state, resourceType, resourceId)
   );
-  const { connectionMap, createdComponents } = useSelector(state =>
-    selectors.cloneData(state, resourceType, resourceId)
-  );
+  const { connectionMap, createdComponents } =
+    useSelector(state =>
+      selectors.cloneData(state, resourceType, resourceId)
+    ) || {};
 
   useEffect(() => {
     if (
+      installSteps.length &&
       !installSteps.reduce((result, step) => result || !step.completed, false)
     ) {
       setIsSetupComplete(true);
+    } else if (!installSteps.length) {
+      props.history.push(
+        getRoutePath(`/clone/${resourceType}/${resourceId}/preview`)
+      );
     }
-  }, [installSteps]);
+  }, [installSteps, props.history, resourceId, resourceType]);
 
   useEffect(() => {
     if (isSetupComplete) {
@@ -92,7 +99,7 @@ export default function Clone(props) {
         c => c.model === 'Integration'
       );
 
-      dispatch(actions.clone.clearTemplate(resourceType, resourceId));
+      dispatch(actions.clone.clearData(resourceType, resourceId));
       dispatch(actions.resource.requestCollection('integrations'));
       dispatch(actions.resource.requestCollection('flows'));
       dispatch(actions.resource.requestCollection('connections'));
@@ -141,7 +148,7 @@ export default function Clone(props) {
     } else if (type === INSTALL_STEP_TYPES.INSTALL_PACKAGE) {
       if (!step.isTriggered) {
         dispatch(
-          actions.template.updateStep(
+          actions.clone.updateStep(
             { ...step, status: 'triggered' },
             resourceType,
             resourceId
@@ -163,14 +170,14 @@ export default function Clone(props) {
         }
 
         dispatch(
-          actions.template.updateStep(
+          actions.clone.updateStep(
             { ...step, status: 'verifying' },
             resourceType,
             resourceId
           )
         );
         dispatch(
-          actions.template.verifyBundleOrPackageInstall(
+          actions.clone.verifyBundleOrPackageInstall(
             step,
             { _id: step.options._connectionId },
             resourceType,

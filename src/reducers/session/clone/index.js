@@ -36,7 +36,7 @@ export default function reducer(state = {}, action) {
 
         draft[key].preview = components;
         break;
-      case actionTypes.CLONE.CLEAR_TEMPLATE:
+      case actionTypes.CLONE.CLEAR_DATA:
         delete draft[key];
         break;
       case actionTypes.CLONE.CREATED_COMPONENTS:
@@ -130,12 +130,13 @@ export function cloneData(state, resourceType, resourceId) {
 
 export function cloneInstallSteps(state, resourceType, resourceId) {
   const key = `${resourceType}-${resourceId}`;
+  const defaultSteps = [];
 
   if (!state || !state[key]) {
-    return null;
+    return defaultSteps;
   }
 
-  return state[key].installSteps;
+  return state[key].installSteps || defaultSteps;
 }
 
 export function connectionMap(state, resourceType, resourceId) {

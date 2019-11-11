@@ -62,7 +62,8 @@ export function* createComponents({ resourceType, resourceId }) {
 export function* verifyBundleOrPackageInstall({
   step,
   connection,
-  templateId,
+  resourceType,
+  resourceId,
 }) {
   const path = `/connections/${connection._id}/distributed`;
   let response;
@@ -74,9 +75,10 @@ export function* verifyBundleOrPackageInstall({
     });
   } catch (error) {
     yield put(
-      actions.template.updateStep(
+      actions.clone.updateStep(
         { status: 'failed', installURL: step.installURL },
-        templateId
+        resourceType,
+        resourceId
       )
     );
 
@@ -85,16 +87,18 @@ export function* verifyBundleOrPackageInstall({
 
   if ((response || {}).success) {
     yield put(
-      actions.template.updateStep(
+      actions.clone.updateStep(
         { status: 'completed', installURL: step.installURL },
-        templateId
+        resourceType,
+        resourceId
       )
     );
   } else {
     yield put(
-      actions.template.updateStep(
+      actions.clone.updateStep(
         { status: 'failed', installURL: step.installURL },
-        templateId
+        resourceType,
+        resourceId
       )
     );
   }

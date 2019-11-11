@@ -59,7 +59,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function TemplatePreview(props) {
+export default function ClonePreview(props) {
   const classes = useStyles(props);
   const { resourceType, resourceId } = props.match.params;
   const [requested, setRequested] = useState(false);
@@ -70,9 +70,15 @@ export default function TemplatePreview(props) {
   );
   const showIntegrationField = resourceType === 'flows';
   const [integrationState, setIntegrationState] = useState(null);
-  const [nameState, setNameState] = useState(null);
   const resource = useSelector(state =>
     selectors.resource(state, resourceType, resourceId)
+  );
+  const { createdComponents } =
+    useSelector(state =>
+      selectors.cloneData(state, resourceType, resourceId)
+    ) || {};
+  const [nameState, setNameState] = useState(
+    resource ? `Clone - ${resource.name}` : ''
   );
   const integrations = useSelector(state =>
     selectors
@@ -106,6 +112,11 @@ export default function TemplatePreview(props) {
       setRequested(true);
     }
   }, [components, dispatch, requested, resourceId, resourceType]);
+  useEffect(() => {
+    if (createdComponents) {
+      props.history.push('/dashboard');
+    }
+  }, [createdComponents, props.history]);
 
   if (!components || isEmpty(components)) {
     return <Typography>Loading Clone Preview...</Typography>;
@@ -129,7 +140,7 @@ export default function TemplatePreview(props) {
     const { installSteps, connectionMap } =
       templateUtil.getInstallSteps(components) || {};
 
-    if (!integrationState) {
+    if (showIntegrationField && !integrationState) {
       return false;
     }
 
@@ -199,7 +210,6 @@ export default function TemplatePreview(props) {
                         label="Name"
                         required={false}
                         onFieldChange={handleNameChange}
-                        defaultValue={`Clone - ${resource.name}`}
                         value={nameState}
                       />
                     </div>

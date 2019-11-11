@@ -137,11 +137,19 @@ export function cloneData(state, resourceType, resourceId) {
 }
 
 export function cloneInstallSteps(state, resourceType, resourceId) {
-  return fromSession.cloneInstallSteps(
+  const cloneInstallSteps = fromSession.cloneInstallSteps(
     state && state.session,
     resourceType,
     resourceId
   );
+
+  return produce(cloneInstallSteps, draft => {
+    const unCompletedStep = draft.find(s => !s.completed);
+
+    if (unCompletedStep) {
+      unCompletedStep.isCurrentStep = true;
+    }
+  });
 }
 
 export function previewTemplate(state, templateId) {

@@ -564,6 +564,17 @@ const clone = {
     action(actionTypes.CLONE.INSTALL_FAILURE, { resourceType, resourceId }),
   createComponents: (resourceType, resourceId) =>
     action(actionTypes.CLONE.CREATE_COMPONENTS, { resourceType, resourceId }),
+  clearData: (resourceType, resourceId) =>
+    action(actionTypes.CLONE.CLEAR_DATA, { resourceType, resourceId }),
+  updateStep: (step, resourceType, resourceId) =>
+    action(actionTypes.CLONE.UPDATE_STEP, { step, resourceType, resourceId }),
+  verifyBundleOrPackageInstall: (step, connection, resourceType, resourceId) =>
+    action(actionTypes.CLONE.VERIFY_BUNDLE_INSTALL, {
+      step,
+      connection,
+      resourceType,
+      resourceId,
+    }),
   createdComponents: (components, resourceType, resourceId) =>
     action(actionTypes.CLONE.CREATED_COMPONENTS, {
       components,
