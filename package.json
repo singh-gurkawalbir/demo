@@ -71,6 +71,7 @@
     "shortid": "2.2.14",
     "sift": "^8.5.0",
     "typeface-roboto": "0.0.75",
+    "why-did-you-update": "0.1.1",
     "xlsx": "0.15.1"
   },
   "devDependencies": {

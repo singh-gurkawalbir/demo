@@ -29,15 +29,10 @@ export default function Flows(props) {
   let flows = useSelector(
     state => selectors.flowListWithMetadata(state, { type: 'flows' }).resources
   );
-  const preferences = useSelector(state =>
-    selectors.userProfilePreferencesProps(state)
-  );
   const standaloneFlows =
     flows &&
     flows.filter(
-      f =>
-        (f._integrationId === STANDALONE_INTEGRATION.id || !f._integrationId) &&
-        !!f.sandbox === (preferences.environment === 'sandbox')
+      f => f._integrationId === STANDALONE_INTEGRATION.id || !f._integrationId
     );
 
   flows =
@@ -45,10 +40,9 @@ export default function Flows(props) {
     flows.filter(
       f =>
         f._integrationId ===
-          (integrationId === STANDALONE_INTEGRATION.id
-            ? undefined
-            : integrationId) &&
-        !!f.sandbox === (preferences.environment === 'sandbox')
+        (integrationId === STANDALONE_INTEGRATION.id
+          ? undefined
+          : integrationId)
     );
 
   return (

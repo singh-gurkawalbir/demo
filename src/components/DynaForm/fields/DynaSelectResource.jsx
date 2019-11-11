@@ -63,11 +63,15 @@ function DynaSelectResource(props) {
     location,
     options,
     filter,
+    ignoreEnvironmentFilter,
   } = props;
   const classes = useStyles();
   const [newResourceId, setNewResourceId] = useState(newId());
   const { resources = [] } = useSelector(state =>
-    selectors.resourceList(state, { type: resourceType })
+    selectors.resourceList(state, {
+      type: resourceType,
+      ignoreEnvironmentFilter,
+    })
   );
   const createdId = useSelector(state =>
     selectors.createdResourceId(state, newResourceId)
@@ -81,9 +85,14 @@ function DynaSelectResource(props) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [createdId]);
-  const filteredResources = resources.filter(
-    sift(options && options.filter ? options.filter : filter)
-  );
+  let filteredResources = resources;
+
+  if ((options && options.filter) || filter) {
+    filteredResources = filteredResources.filter(
+      sift(options && options.filter ? options.filter : filter)
+    );
+  }
+
   // When adding a new resource and subsequently editing it disable selecting a new connection
   const isAddingANewResource =
     allowNew &&
