@@ -144,7 +144,7 @@ export default function IntegrationAppSettings(props) {
   useEffect(() => {
     if (formState && !formState.addOns && !requestLicense) {
       dispatch(
-        actions.integrationApp.settings.licenseMetadata(integration._id)
+        actions.integrationApp.settings.addOnLicenseMetadata(integration._id)
       );
       setRequestLicense(true);
     }

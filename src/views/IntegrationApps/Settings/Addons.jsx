@@ -1,5 +1,5 @@
 import { Fragment } from 'react';
-import AddOnsList from '../../../components/AddOnsList';
+import AddOnsList from './AddonList';
 import CeligoPageBar from '../../../components/CeligoPageBar';
 
 export default function Marketplace(props) {

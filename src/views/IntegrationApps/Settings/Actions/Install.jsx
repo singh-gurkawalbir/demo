@@ -5,14 +5,14 @@ import { confirmDialog } from '../../../../components/ConfirmDialog';
 import actions from '../../../../actions';
 
 export default {
-  label: 'Install',
-  component: function Installer({ resource }) {
+  label: 'AddOnInstall',
+  component: function AddOnActions({ resource }) {
     const dispatch = useDispatch();
     const onClick = resource => {
       if (resource.status === 'installed') {
         confirmDialog({
           title: `Delete all flows and configurations for add-on ${resource.name} ?`,
-          message: `Uninstalling add-on ${resource.name}  willdelete all of its flows and configurations permanently. This cannot be undone.If you need this add-on again, you will need to reinstall from the marketplace.`,
+          message: `Uninstalling add-on ${resource.name}  will delete all of its flows and configurations permanently. This cannot be undone.If you need this add-on again, you will need to reinstall from the marketplace.`,
           buttons: [
             {
               label: 'Cancel',
@@ -71,7 +71,7 @@ export default {
     return (
       <Fragment>
         <Button
-          data-test="showFlowSchedule"
+          data-test="addOnInstall"
           size="small"
           onClick={() => onClick(resource)}>
           {getLabel()}

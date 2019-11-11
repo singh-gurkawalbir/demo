@@ -445,7 +445,7 @@ const integrationApp = {
       action(actionTypes.INTEGRATION_APPS.SETTINGS.UPGRADE_REQUESTED, {
         licenseId,
       }),
-    licenseMetadata: integrationId =>
+    addOnLicenseMetadata: integrationId =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.LICENSES_METADATA, {
         integrationId,
       }),

@@ -85,7 +85,7 @@ export default function Subscription(props) {
         formState.addOns.addOnMetaData &&
         formState.addOns.addOnMetaData.find(addOn => addOn.id === f.id);
 
-      subscribedAddOns[i].key = i;
+      subscribedAddOns[i]._id = i;
       subscribedAddOns[i].integrationId = integrationId;
       subscribedAddOns[i].name = addon ? addon.name : f.id;
       subscribedAddOns[i].description = addon ? addon.description : '';
@@ -176,7 +176,7 @@ export default function Subscription(props) {
                 Add-Ons
               </Typography>
               <Typography className={classes.message}>
-                You do not have any add-ons yet. Add-ons let you customize your
+                You don`t have any add-ons yet. Add-ons let you customize
                 subscription to meet your specific business requirements.
               </Typography>
             </div>

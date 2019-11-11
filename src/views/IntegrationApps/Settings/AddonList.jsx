@@ -2,8 +2,8 @@ import { Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Button, Card, CardActions, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import * as selectors from '../../reducers';
-import actions from '../../actions';
+import * as selectors from '../../../reducers';
+import actions from '../../../actions';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -41,7 +41,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function MarketplaceList({ integrationId }) {
+export default function AddonsList({ integrationId }) {
   const formState = useSelector(state =>
     selectors.integrationAppAddOnState(state, integrationId)
   );
@@ -55,7 +55,7 @@ export default function MarketplaceList({ integrationId }) {
     selectors.integrationAppLicense(state, integrationId)
   );
   const classes = useStyles();
-  const handleUpgrade = name => {
+  const handleContactSales = name => {
     dispatch(
       actions.integrationApp.settings.requestUpgrade(integration, {
         addOnName: name,
@@ -76,7 +76,7 @@ export default function MarketplaceList({ integrationId }) {
             <CardActions className={classes.cardAction}>
               <Button
                 data-test="contactSales"
-                onClick={() => handleUpgrade(data.name)}
+                onClick={() => handleContactSales(data.name)}
                 variant="text"
                 color="primary">
                 Contact Sales

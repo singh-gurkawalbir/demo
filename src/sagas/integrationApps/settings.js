@@ -41,6 +41,7 @@ export function* getLicenseMetadata({ integrationId }) {
         method: 'PUT',
         body: {},
       },
+      hidden: true,
     });
   } catch (error) {
     return undefined;

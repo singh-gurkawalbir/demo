@@ -35,7 +35,7 @@ export function* installStep({ id, installerFunction, storeId, addOnId }) {
     );
 
     if (addOnId) {
-      yield put(actions.integrationApp.settings.licenseMetadata(id));
+      yield put(actions.integrationApp.settings.addOnLicenseMetadata(id));
     }
   }
 }
