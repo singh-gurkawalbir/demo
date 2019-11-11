@@ -12,6 +12,7 @@ import LoadResources from '../../components/LoadResources';
 import RadioGroup from '../../components/DynaForm/fields/DynaRadioGroup';
 import DynaSelect from '../../components/DynaForm/fields/DynaSelect';
 import DynaText from '../../components/DynaForm/fields/DynaText';
+import getRoutePath from '../../utils/routePaths';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -114,9 +115,32 @@ export default function ClonePreview(props) {
   }, [components, dispatch, requested, resourceId, resourceType]);
   useEffect(() => {
     if (createdComponents) {
-      props.history.push('/dashboard');
+      dispatch(actions.clone.clearData(resourceType, resourceId));
+      dispatch(actions.resource.requestCollection('integrations'));
+      dispatch(actions.resource.requestCollection('flows'));
+      dispatch(actions.resource.requestCollection('connections'));
+      dispatch(actions.resource.requestCollection('exports'));
+      dispatch(actions.resource.requestCollection('imports'));
+      dispatch(actions.resource.requestCollection('stacks'));
+
+      if (['integrations', 'flows'].includes(resourceType)) {
+        // redirect to integration Settings
+        const integration = createdComponents.find(
+          c => c.model === 'Integration'
+        );
+
+        if (integration) {
+          props.history.push(
+            getRoutePath(`/integrations/${integration._id}/settings/flows`)
+          );
+        } else {
+          props.history.push('/');
+        }
+      } else {
+        props.history.push(getRoutePath(`/${resourceType}`));
+      }
     }
-  }, [createdComponents, props.history]);
+  }, [createdComponents, dispatch, props.history, resourceId, resourceType]);
 
   if (!components || isEmpty(components)) {
     return <Typography>Loading Clone Preview...</Typography>;

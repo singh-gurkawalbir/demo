@@ -94,11 +94,6 @@ export default function Clone(props) {
   }, [dispatch, isSetupComplete, props.history, resourceId, resourceType]);
   useEffect(() => {
     if (createdComponents) {
-      // redirect to integration Settings
-      const integration = createdComponents.find(
-        c => c.model === 'Integration'
-      );
-
       dispatch(actions.clone.clearData(resourceType, resourceId));
       dispatch(actions.resource.requestCollection('integrations'));
       dispatch(actions.resource.requestCollection('flows'));
@@ -107,12 +102,21 @@ export default function Clone(props) {
       dispatch(actions.resource.requestCollection('imports'));
       dispatch(actions.resource.requestCollection('stacks'));
 
-      if (integration) {
-        props.history.push(
-          `/pg/integrations/${integration._id}/settings/flows`
+      if (['integrations', 'flows'].includes(resourceType)) {
+        // redirect to integration Settings
+        const integration = createdComponents.find(
+          c => c.model === 'Integration'
         );
+
+        if (integration) {
+          props.history.push(
+            getRoutePath(`/integrations/${integration._id}/settings/flows`)
+          );
+        } else {
+          props.history.push('/');
+        }
       } else {
-        props.history.push('/');
+        props.history.push(getRoutePath(`/${resourceType}`));
       }
     }
   }, [createdComponents, dispatch, props.history, resourceId, resourceType]);
