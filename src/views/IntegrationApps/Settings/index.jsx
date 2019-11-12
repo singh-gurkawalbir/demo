@@ -137,24 +137,24 @@ export default function IntegrationAppSettings(props) {
   const integrationAppFlowSections = useSelector(state =>
     selectors.integrationAppFlowSections(state, integrationId, currentStore)
   );
-  const formState = useSelector(state =>
+  const addOnState = useSelector(state =>
     selectors.integrationAppAddOnState(state, integrationId)
   );
 
   useEffect(() => {
-    if (formState && !formState.addOns && !requestLicense) {
+    if (addOnState && !addOnState.addOns && !requestLicense) {
       dispatch(
         actions.integrationApp.settings.addOnLicenseMetadata(integration._id)
       );
       setRequestLicense(true);
     }
-  }, [dispatch, formState, integration, requestLicense]);
+  }, [addOnState, dispatch, integration, requestLicense]);
   const showAPITokens = permissions.accesstokens.view;
   const hasAddOns =
-    formState &&
-    formState.addOns &&
-    formState.addOns.addOnMetaData &&
-    formState.addOns.addOnMetaData.length > 0;
+    addOnState &&
+    addOnState.addOns &&
+    addOnState.addOns.addOnMetaData &&
+    addOnState.addOns.addOnMetaData.length > 0;
 
   useEffect(() => {
     if (!isEmpty(integration)) {

@@ -12,7 +12,7 @@ export default {
       if (resource.status === 'installed') {
         confirmDialog({
           title: `Delete all flows and configurations for add-on ${resource.name} ?`,
-          message: `Uninstalling add-on ${resource.name}  will delete all of its flows and configurations permanently. This cannot be undone.If you need this add-on again, you will need to reinstall from the marketplace.`,
+          message: `Uninstalling add-on ${resource.name} will delete all of its flows and configurations permanently. This cannot be undone.If you need this add-on again, you will need to reinstall from the marketplace.`,
           buttons: [
             {
               label: 'Cancel',

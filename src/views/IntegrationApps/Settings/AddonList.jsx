@@ -42,11 +42,11 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function AddonsList({ integrationId }) {
-  const formState = useSelector(state =>
+  const addOnState = useSelector(state =>
     selectors.integrationAppAddOnState(state, integrationId)
   );
   const addOnMetadata =
-    formState && formState.addOns && formState.addOns.addOnMetaData;
+    addOnState && addOnState.addOns && addOnState.addOns.addOnMetaData;
   const dispatch = useDispatch();
   const integration = useSelector(state =>
     selectors.resource(state, 'integrations', integrationId)

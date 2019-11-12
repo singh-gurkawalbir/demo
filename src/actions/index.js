@@ -449,9 +449,9 @@ const integrationApp = {
       action(actionTypes.INTEGRATION_APPS.SETTINGS.ADDON_LICENSES_METADATA, {
         integrationId,
       }),
-    updateLicenseMetadata: (integrationId, response) =>
+    addOnLicenseMetadataUpdate: (integrationId, response) =>
       action(
-        actionTypes.INTEGRATION_APPS.SETTINGS.ADDON_UPDATE_LICENSES_METADATA,
+        actionTypes.INTEGRATION_APPS.SETTINGS.ADDON_LICENSES_METADATA_UPDATE,
         {
           integrationId,
           response,
