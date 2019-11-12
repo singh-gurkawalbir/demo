@@ -41,10 +41,21 @@ const useStyles = makeStyles(theme => ({
     top: 5,
   },
 }));
-const determineRequiredResouces = resourceType => {
+const determineRequiredResources = type => {
+  const resourceType = [];
+
+  // Handling virtual resources types Page processor and Page generators
+  if (type === 'pageProcessor') {
+    resourceType.push('exports', 'imports');
+  } else if (type === 'pageGenerator') {
+    resourceType.push('exports');
+  } else {
+    resourceType.push(type);
+  }
+
   // if its exports or imports then we need associated connections to be loaded
-  if (resourceType === 'exports' || resourceType === 'imports')
-    return [resourceType, 'connections'].join(',');
+  if (resourceType.includes('exports') || resourceType.includes('imports'))
+    return [...resourceType, 'connections'];
 
   return resourceType;
 };
@@ -182,7 +193,7 @@ export default function Panel(props) {
     ].includes(resourceType)
       ? 'Next'
       : 'Save';
-  const requiredResources = determineRequiredResouces(resourceType);
+  const requiredResources = determineRequiredResources(resourceType);
 
   return (
     <Fragment>
