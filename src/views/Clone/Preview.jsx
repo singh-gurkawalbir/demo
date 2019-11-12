@@ -2,16 +2,18 @@ import { makeStyles } from '@material-ui/core/styles';
 import { useSelector, useDispatch } from 'react-redux';
 import { Fragment, useEffect, useState } from 'react';
 import { isEmpty } from 'lodash';
-import { Grid, Typography, Button } from '@material-ui/core';
+import { Grid, Typography } from '@material-ui/core';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
-import CeligoTable from '../../components/CeligoTable';
+import DynaForm from '../../components/DynaForm';
+import DynaSubmit from '../../components/DynaForm/DynaSubmit';
+// import CeligoTable from '../../components/CeligoTable';
 import { MODEL_PLURAL_TO_LABEL } from '../../utils/resource';
 import templateUtil from '../../utils/template';
 import LoadResources from '../../components/LoadResources';
-import RadioGroup from '../../components/DynaForm/fields/DynaRadioGroup';
-import DynaSelect from '../../components/DynaForm/fields/DynaSelect';
-import DynaText from '../../components/DynaForm/fields/DynaText';
+// import RadioGroup from '../../components/DynaForm/fields/DynaRadioGroup';
+// import DynaSelect from '../../components/DynaForm/fields/DynaSelect';
+// import DynaText from '../../components/DynaForm/fields/DynaText';
 import getRoutePath from '../../utils/routePaths';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 
@@ -68,11 +70,11 @@ export default function ClonePreview(props) {
   const dispatch = useDispatch();
   const [enquesnackbar] = useEnqueueSnackbar();
   const preferences = useSelector(state => selectors.userPreferences(state));
-  const [environmentState, setEnvironmentState] = useState(
-    preferences.environment
-  );
+  // const [environmentState, setEnvironmentState] = useState(
+  //   preferences.environment
+  // );
   const showIntegrationField = resourceType === 'flows';
-  const [integrationState, setIntegrationState] = useState(null);
+  // const [integrationState, setIntegrationState] = useState(null);
   const resource = useSelector(state =>
     selectors.resource(state, resourceType, resourceId)
   );
@@ -80,16 +82,15 @@ export default function ClonePreview(props) {
     useSelector(state =>
       selectors.cloneData(state, resourceType, resourceId)
     ) || {};
-  const [nameState, setNameState] = useState(
-    resource ? `Clone - ${resource.name}` : ''
-  );
-  const integrations = useSelector(state =>
-    selectors
-      .resourceList(state, {
+  // const [nameState, setNameState] = useState(
+  //   resource ? `Clone - ${resource.name}` : ''
+  // );
+  const integrations = useSelector(
+    state =>
+      selectors.resourceList(state, {
         type: 'integrations',
         ignoreEnvironmentFilter: true,
-      })
-      .resources.filter(i => !!i.sandbox === (environmentState === 'sandbox'))
+      }).resources
   );
   const components = useSelector(state =>
     selectors.clonePreview(state, resourceType, resourceId)
@@ -148,25 +149,122 @@ export default function ClonePreview(props) {
     return <Typography>Loading Clone Preview...</Typography>;
   }
 
-  const handleNameChange = (id, val) => {
-    setNameState(val);
-  };
+  // const handleNameChange = (id, val) => {
+  //   setNameState(val);
+  // };
 
-  const handleEnvironmentChange = (id, val) => {
-    setEnvironmentState(val);
-  };
+  // const handleEnvironmentChange = (id, val) => {
+  //   setEnvironmentState(val);
+  // };
 
-  const handleIntegrationChange = (id, val) => {
-    setIntegrationState(val);
-  };
+  // const handleIntegrationChange = (id, val) => {
+  //   setIntegrationState(val);
+  // };
 
-  const { description } = resource;
+  // const { description } = resource;
   const { objects = [] } = components;
-  const clone = () => {
+  const fieldMeta = {
+    fieldMap: {
+      name: {
+        id: 'name',
+        name: 'name',
+        type: 'text',
+        label: 'Name',
+        defaultValue: `Clone - ${resource.name}`,
+      },
+      environment: {
+        id: 'environment',
+        name: 'environment',
+        type: 'radiogroup',
+        label: 'Environment',
+        fullWidth: true,
+        options: [
+          {
+            items: [
+              { label: 'Production', value: 'production' },
+              { label: 'Sandbox', value: 'sandbox' },
+            ],
+          },
+        ],
+        defaultValue: preferences.environment,
+      },
+      integration: {
+        id: 'integration',
+        name: 'integration',
+        type: 'select',
+        label: 'Integration',
+        refreshOptionsOnChangesTo: ['environment'],
+        options: [
+          {
+            items: integrations
+              .filter(
+                i => !!i.sandbox === (preferences.environment === 'sandbox')
+              )
+              .map(i => ({ label: i.name, value: i._id })),
+          },
+        ],
+      },
+      description: {
+        id: 'description',
+        name: 'description',
+        type: 'labeltitle',
+        disablePopover: true,
+        label: resource.description,
+      },
+      message: {
+        id: 'message',
+        name: 'message',
+        disablePopover: true,
+        type: 'labeltitle',
+        label: `The following components will get cloned with this ${MODEL_PLURAL_TO_LABEL[resourceType]}.`,
+      },
+      components: {
+        id: 'components',
+        name: 'components',
+        type: 'celigotable',
+        data: objects.map((obj, index) => ({
+          ...obj,
+          _id: index,
+        })),
+        columns,
+      },
+    },
+    layout: {
+      fields:
+        resourceType === 'flows'
+          ? [
+              'name',
+              'environment',
+              'integration',
+              'description',
+              'message',
+              'components',
+            ]
+          : ['name', 'environment', 'description', 'message', 'components'],
+    },
+    optionsHandler: (fieldId, fields) => {
+      if (fieldId === 'integration') {
+        const { value: environment } = fields.find(
+          field => field.id === 'environment'
+        );
+
+        return [
+          {
+            items: integrations
+              .filter(i => !!i.sandbox === (environment === 'sandbox'))
+              .map(i => ({ label: i.name, value: i._id })),
+          },
+        ];
+      }
+
+      return null;
+    },
+  };
+  const clone = ({ name, environment, integration }) => {
     const { installSteps, connectionMap } =
       templateUtil.getInstallSteps(components) || {};
 
-    if (showIntegrationField && !integrationState) {
+    if (showIntegrationField) {
       enquesnackbar({ message: 'Please select Integration.', variant: 'info' });
 
       return false;
@@ -178,9 +276,9 @@ export default function ClonePreview(props) {
           installSteps,
           connectionMap,
           {
-            name: nameState,
-            sandbox: environmentState === 'sandbox',
-            _integrationId: integrationState,
+            name,
+            sandbox: environment === 'sandbox',
+            _integrationId: integration,
           },
           resourceType,
           resourceId
@@ -193,9 +291,9 @@ export default function ClonePreview(props) {
           [],
           {},
           {
-            name: nameState,
-            sandbox: environmentState === 'sandbox',
-            _integrationId: integrationState,
+            name,
+            sandbox: environment === 'sandbox',
+            _integrationId: integration,
           },
           resourceType,
           resourceId
@@ -232,48 +330,15 @@ export default function ClonePreview(props) {
                     </div>
                   </Grid>
                   <Grid className={classes.componentPadding} item xs={9}>
-                    <div className={classes.nameField}>
-                      <DynaText
-                        id="name"
-                        label="Name"
-                        required={false}
-                        onFieldChange={handleNameChange}
-                        value={nameState}
-                      />
-                    </div>
-                    <RadioGroup
-                      value={environmentState}
-                      id="environment"
-                      label="Environment"
-                      required={false}
-                      onFieldChange={handleEnvironmentChange}
-                      options={[
-                        {
-                          items: [
-                            { label: `Production`, value: 'production' },
-                            { label: `Sandbox`, value: 'sandbox' },
-                          ],
-                        },
-                      ]}
-                    />
-                    {showIntegrationField && (
-                      <DynaSelect
-                        label="Integration"
-                        name="integration"
-                        required={false}
-                        onFieldChange={handleIntegrationChange}
-                        value={integrationState}
-                        options={[
-                          {
-                            items: integrations.map(i => ({
-                              label: i.name,
-                              value: i._id,
-                            })),
-                          },
-                        ]}
-                      />
-                    )}
-                    {description && (
+                    <DynaForm
+                      fieldMeta={fieldMeta}
+                      optionsHandler={fieldMeta.optionsHandler}>
+                      <DynaSubmit data-test="clone" onClick={clone}>
+                        {`Clone ${MODEL_PLURAL_TO_LABEL[resourceType]}`}
+                      </DynaSubmit>
+                    </DynaForm>
+
+                    {/* {description && (
                       <Typography
                         variant="body1"
                         className={classes.description}>
@@ -284,8 +349,8 @@ export default function ClonePreview(props) {
                       variant="body2"
                       className={classes.componentsTable}>
                       {`The following components will get cloned with this ${MODEL_PLURAL_TO_LABEL[resourceType]}.`}
-                    </Typography>
-                    {!!objects.length && (
+                    </Typography> */}
+                    {/* {!!objects.length && (
                       <CeligoTable
                         data={objects.map((obj, index) => ({
                           ...obj,
@@ -298,15 +363,15 @@ export default function ClonePreview(props) {
                       <Typography variant="h4">
                         Loading Preview Components
                       </Typography>
-                    )}
-                    <div align="right" className={classes.installButton}>
+                    )} */}
+                    {/* <div align="right" className={classes.installButton}>
                       <Button
                         variant="contained"
                         color="primary"
                         onClick={clone}>
                         {`Clone ${MODEL_PLURAL_TO_LABEL[resourceType]}`}
                       </Button>
-                    </div>
+                    </div> */}
                   </Grid>
                 </Grid>
               </div>
