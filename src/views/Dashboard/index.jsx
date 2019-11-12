@@ -1,5 +1,7 @@
 import { useEffect, useState, Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { Link } from 'react-router-dom';
+import shortid from 'shortid';
 import { makeStyles } from '@material-ui/core/styles';
 import { difference } from 'lodash';
 import * as selectors from '../../reducers';
@@ -10,6 +12,8 @@ import actions from '../../actions';
 import { sortTiles } from './util';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import ResourceDrawer from '../../components/drawer/Resource';
+import AddIcon from '../../components/icons/AddIcon';
+import IconTextButton from '../../components/IconTextButton';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -30,6 +34,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function Dashboard(props) {
+  const { location } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
   const preferences = useSelector(state => selectors.userPreferences(state));
@@ -80,7 +85,17 @@ function Dashboard(props) {
   return (
     <Fragment>
       <ResourceDrawer {...props} />
-      <CeligoPageBar title="My integrations" />
+      <CeligoPageBar title="My integrations">
+        <IconTextButton
+          data-test="newIntegration"
+          component={Link}
+          to={`${location.pathname}/add/integrations/new-${shortid.generate()}`}
+          variant="text"
+          color="primary">
+          <AddIcon />
+          Create integration
+        </IconTextButton>
+      </CeligoPageBar>
       <LoadResources required resources="published,integrations,connections">
         <div className={classes.container}>
           {sortedTiles.map(t => (

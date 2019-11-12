@@ -127,6 +127,13 @@ export default function Panel(props) {
       // existing resource. In this case we dont have any more work to do,
       // we just need to match the temp 'new-xxx' id with the one the user
       // selected.
+
+      if (resourceType === 'integrations') {
+        props.history.replace(`/pg/${resourceType}/${newResourceId}/flows`);
+
+        return;
+      }
+
       const resourceIdPatch = stagedProcessor.patch.find(
         p => p.op === 'replace' && p.path === '/resourceId'
       );
