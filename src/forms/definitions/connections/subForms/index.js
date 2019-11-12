@@ -8,11 +8,13 @@ import restCookie from './restCookie';
 import rdbmsFields from './rdbmsFields';
 import rdbmsAdvanced from './rdbmsAdvanced';
 import wrapperAdvanced from './wrapperAdvanced';
+import httpCookie from './httpCookie';
 
 export default {
   httpBasic,
   httpToken,
   restBasic,
+  httpCookie,
   restToken,
   restAdvanced,
   httpAdvanced,

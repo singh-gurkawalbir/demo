@@ -704,6 +704,7 @@ export default {
           { label: 'Basic', value: 'basic' },
           { label: 'Token', value: 'token' },
           { label: 'Custom', value: 'custom' },
+          { label: 'Cookie', value: 'cookie' },
         ],
       },
     ],
@@ -737,6 +738,12 @@ export default {
   'http.baseURI': {
     type: 'text',
     label: 'Base URI',
+    requiredWhen: [
+      {
+        field: 'http.auth.type',
+        is: ['cookie'],
+      },
+    ],
     visibleWhen: [
       {
         field: 'http.auth.type',
@@ -1046,6 +1053,35 @@ export default {
     description:
       'Note: for security reasons this field must always be re-entered.',
     label: 'Refresh Token',
+  },
+  'http.auth.cookie.uri': {
+    type: 'text',
+    label: 'Cookie URI',
+  },
+  'http.auth.cookie.body': {
+    type: 'text',
+    label: 'Cookie Body',
+  },
+  'http.auth.cookie.method': {
+    type: 'select',
+    label: 'Cookie Method',
+    options: [
+      {
+        items: [
+          { label: 'GET', value: 'GET' },
+          { label: 'POST', value: 'POST' },
+        ],
+      },
+    ],
+  },
+  'http.auth.cookie.successStatusCode': {
+    type: 'text',
+    label: 'Cookie Success Status Code',
+    validWhen: [
+      {
+        matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
+      },
+    ],
   },
   'http.rateLimits': {
     type: 'labeltitle',
