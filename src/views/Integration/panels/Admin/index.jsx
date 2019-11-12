@@ -44,10 +44,16 @@ const allSections = [
     path: 'notifications',
     label: 'Notifications',
     Section: NotificationsSection,
+    id: 'notifications',
   },
-  { path: 'audit', label: 'Audit log', Section: AuditLogSection },
-  { path: 'users', label: 'Users', Section: UsersSection },
-  { path: 'readme', label: 'Readme', Section: ReadmeSection },
+  {
+    path: 'audit',
+    label: 'Audit log',
+    Section: AuditLogSection,
+    id: 'auditLog',
+  },
+  { path: 'users', label: 'Users', Section: UsersSection, id: 'users' },
+  { path: 'readme', label: 'Readme', Section: ReadmeSection, id: 'readMe' },
 ];
 
 export default function AdminPanel({ integrationId }) {
@@ -74,12 +80,13 @@ export default function AdminPanel({ integrationId }) {
       <div className={classes.container}>
         <div className={classes.subNav}>
           <List>
-            {availableSections.map(({ path, label }) => (
+            {availableSections.map(({ path, label, id }) => (
               <ListItem key={path}>
                 <NavLink
                   className={classes.listItem}
                   activeClassName={classes.activeListItem}
-                  to={path}>
+                  to={path}
+                  data-test={id}>
                   {label}
                 </NavLink>
               </ListItem>
