@@ -7,13 +7,9 @@ import * as selectors from '../../reducers';
 import actions from '../../actions';
 import DynaForm from '../../components/DynaForm';
 import DynaSubmit from '../../components/DynaForm/DynaSubmit';
-// import CeligoTable from '../../components/CeligoTable';
 import { MODEL_PLURAL_TO_LABEL } from '../../utils/resource';
 import templateUtil from '../../utils/template';
 import LoadResources from '../../components/LoadResources';
-// import RadioGroup from '../../components/DynaForm/fields/DynaRadioGroup';
-// import DynaSelect from '../../components/DynaForm/fields/DynaSelect';
-// import DynaText from '../../components/DynaForm/fields/DynaText';
 import getRoutePath from '../../utils/routePaths';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 
@@ -70,11 +66,7 @@ export default function ClonePreview(props) {
   const dispatch = useDispatch();
   const [enquesnackbar] = useEnqueueSnackbar();
   const preferences = useSelector(state => selectors.userPreferences(state));
-  // const [environmentState, setEnvironmentState] = useState(
-  //   preferences.environment
-  // );
   const showIntegrationField = resourceType === 'flows';
-  // const [integrationState, setIntegrationState] = useState(null);
   const resource = useSelector(state =>
     selectors.resource(state, resourceType, resourceId)
   );
@@ -82,14 +74,14 @@ export default function ClonePreview(props) {
     useSelector(state =>
       selectors.cloneData(state, resourceType, resourceId)
     ) || {};
-  // const [nameState, setNameState] = useState(
-  //   resource ? `Clone - ${resource.name}` : ''
-  // );
   const integrations = useSelector(
     state =>
       selectors.resourceList(state, {
         type: 'integrations',
         ignoreEnvironmentFilter: true,
+        filter: {
+          _connectorId: { $exists: false },
+        },
       }).resources
   );
   const components = useSelector(state =>
@@ -106,11 +98,6 @@ export default function ClonePreview(props) {
   ];
 
   useEffect(() => {
-    if (!resource) {
-      dispatch(actions.resource.request(resourceType, resourceId));
-    }
-  }, [dispatch, resource, resourceId, resourceType]);
-  useEffect(() => {
     if (!components || (isEmpty(components) && !requested)) {
       dispatch(actions.clone.requestPreview(resourceType, resourceId));
       setRequested(true);
@@ -118,7 +105,7 @@ export default function ClonePreview(props) {
   }, [components, dispatch, requested, resourceId, resourceType]);
   useEffect(() => {
     if (createdComponents) {
-      dispatch(actions.clone.clearData(resourceType, resourceId));
+      dispatch(actions.template.clearTemplate(`${resourceType}-${resourceId}`));
       dispatch(actions.resource.requestCollection('integrations'));
       dispatch(actions.resource.requestCollection('flows'));
       dispatch(actions.resource.requestCollection('connections'));
@@ -149,19 +136,6 @@ export default function ClonePreview(props) {
     return <Typography>Loading Clone Preview...</Typography>;
   }
 
-  // const handleNameChange = (id, val) => {
-  //   setNameState(val);
-  // };
-
-  // const handleEnvironmentChange = (id, val) => {
-  //   setEnvironmentState(val);
-  // };
-
-  // const handleIntegrationChange = (id, val) => {
-  //   setIntegrationState(val);
-  // };
-
-  // const { description } = resource;
   const { objects = [] } = components;
   const fieldMeta = {
     fieldMap: {
@@ -264,7 +238,7 @@ export default function ClonePreview(props) {
     const { installSteps, connectionMap } =
       templateUtil.getInstallSteps(components) || {};
 
-    if (showIntegrationField) {
+    if (showIntegrationField && !integration) {
       enquesnackbar({ message: 'Please select Integration.', variant: 'info' });
 
       return false;
@@ -272,31 +246,29 @@ export default function ClonePreview(props) {
 
     if (installSteps && installSteps.length) {
       dispatch(
-        actions.clone.installStepsReceived(
+        actions.template.installStepsReceived(
           installSteps,
           connectionMap,
+          `${resourceType}-${resourceId}`,
           {
             name,
             sandbox: environment === 'sandbox',
             _integrationId: integration,
-          },
-          resourceType,
-          resourceId
+          }
         )
       );
       props.history.push(`/pg/clone/${resourceType}/${resourceId}/setup`);
     } else {
       dispatch(
-        actions.clone.installStepsReceived(
+        actions.template.installStepsReceived(
           [],
           {},
+          `${resourceType}-${resourceId}`,
           {
             name,
             sandbox: environment === 'sandbox',
             _integrationId: integration,
-          },
-          resourceType,
-          resourceId
+          }
         )
       );
       dispatch(actions.clone.createComponents(resourceType, resourceId));
@@ -304,7 +276,7 @@ export default function ClonePreview(props) {
   };
 
   return (
-    <LoadResources resources="integrations" required>
+    <LoadResources resources={[resourceType, 'integrations']} required>
       <div className={classes.marketplaceBox}>
         <div className={classes.mpExplore}>
           <Fragment>
@@ -337,41 +309,6 @@ export default function ClonePreview(props) {
                         {`Clone ${MODEL_PLURAL_TO_LABEL[resourceType]}`}
                       </DynaSubmit>
                     </DynaForm>
-
-                    {/* {description && (
-                      <Typography
-                        variant="body1"
-                        className={classes.description}>
-                        {description}
-                      </Typography>
-                    )}
-                    <Typography
-                      variant="body2"
-                      className={classes.componentsTable}>
-                      {`The following components will get cloned with this ${MODEL_PLURAL_TO_LABEL[resourceType]}.`}
-                    </Typography> */}
-                    {/* {!!objects.length && (
-                      <CeligoTable
-                        data={objects.map((obj, index) => ({
-                          ...obj,
-                          _id: index,
-                        }))}
-                        columns={columns}
-                      />
-                    )}
-                    {!objects.length && (
-                      <Typography variant="h4">
-                        Loading Preview Components
-                      </Typography>
-                    )} */}
-                    {/* <div align="right" className={classes.installButton}>
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={clone}>
-                        {`Clone ${MODEL_PLURAL_TO_LABEL[resourceType]}`}
-                      </Button>
-                    </div> */}
                   </Grid>
                 </Grid>
               </div>

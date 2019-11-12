@@ -629,11 +629,12 @@ const template = {
     action(actionTypes.TEMPLATE.ZIP_GENERATE, { integrationId }),
   requestPreview: templateId =>
     action(actionTypes.TEMPLATE.PREVIEW_REQUEST, { templateId }),
-  installStepsReceived: (installSteps, connectionMap, templateId) =>
+  installStepsReceived: (installSteps, connectionMap, templateId, data) =>
     action(actionTypes.TEMPLATE.STEPS_RECEIVED, {
       installSteps,
       connectionMap,
       templateId,
+      data,
     }),
   failedPreview: templateId =>
     action(actionTypes.TEMPLATE.FAILURE, { templateId }),

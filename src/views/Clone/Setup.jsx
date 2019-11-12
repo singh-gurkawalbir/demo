@@ -97,7 +97,7 @@ export default function Clone(props) {
   }, [dispatch, isSetupComplete, props.history, resourceId, resourceType]);
   useEffect(() => {
     if (createdComponents) {
-      dispatch(actions.clone.clearData(resourceType, resourceId));
+      dispatch(actions.template.clearTemplate(`${resourceType}-${resourceId}`));
       dispatch(actions.resource.requestCollection('integrations'));
       dispatch(actions.resource.requestCollection('flows'));
       dispatch(actions.resource.requestCollection('connections'));
@@ -155,10 +155,9 @@ export default function Clone(props) {
     } else if (type === INSTALL_STEP_TYPES.INSTALL_PACKAGE) {
       if (!step.isTriggered) {
         dispatch(
-          actions.clone.updateStep(
+          actions.template.updateStep(
             { ...step, status: 'triggered' },
-            resourceType,
-            resourceId
+            `${resourceType}-${resourceId}`
           )
         );
 
@@ -177,18 +176,16 @@ export default function Clone(props) {
         }
 
         dispatch(
-          actions.clone.updateStep(
+          actions.template.updateStep(
             { ...step, status: 'verifying' },
-            resourceType,
-            resourceId
+            `${resourceType}-${resourceId}`
           )
         );
         dispatch(
-          actions.clone.verifyBundleOrPackageInstall(
+          actions.template.verifyBundleOrPackageInstall(
             step,
             { _id: step.options._connectionId },
-            resourceType,
-            resourceId
+            `${resourceType}-${resourceId}`
           )
         );
       }
@@ -213,7 +210,7 @@ export default function Clone(props) {
     }
 
     dispatch(
-      actions.clone.updateStep(
+      actions.template.updateStep(
         {
           _connectionId: connection.doc._id,
           newConnectionId: connectionId,
@@ -224,8 +221,7 @@ export default function Clone(props) {
             ? connection.doc.type
             : false,
         },
-        resourceType,
-        resourceId
+        `${resourceType}-${resourceId}`
       )
     );
     setSelectedConnectionId(false);
@@ -233,10 +229,9 @@ export default function Clone(props) {
 
   const handleStackSetupDone = stackId => {
     dispatch(
-      actions.clone.updateStep(
+      actions.template.updateStep(
         { status: 'completed', stackId, type: INSTALL_STEP_TYPES.STACK },
-        resourceType,
-        resourceId
+        `${resourceType}-${resourceId}`
       )
     );
     setShowStackDialog(false);
