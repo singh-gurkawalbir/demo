@@ -62,14 +62,14 @@ export default function Subscription(props) {
   const license = useSelector(state =>
     selectors.integrationAppLicense(state, integrationId)
   );
-  const formState = useSelector(state =>
+  const addOnState = useSelector(state =>
     selectors.integrationAppAddOnState(state, integrationId)
   );
   const subscribedAddOns =
-    formState &&
-    formState.addOns &&
-    formState.addOns.addOnLicenses &&
-    formState.addOns.addOnLicenses.filter(model => {
+    addOnState &&
+    addOnState.addOns &&
+    addOnState.addOns.addOnLicenses &&
+    addOnState.addOns.addOnLicenses.filter(model => {
       if (supportsMultiStore) {
         return model.storeId === storeId;
       }
@@ -80,10 +80,10 @@ export default function Subscription(props) {
   if (subscribedAddOns) {
     subscribedAddOns.forEach((f, i) => {
       const addon =
-        formState &&
-        formState.addOns &&
-        formState.addOns.addOnMetaData &&
-        formState.addOns.addOnMetaData.find(addOn => addOn.id === f.id);
+        addOnState &&
+        addOnState.addOns &&
+        addOnState.addOns.addOnMetaData &&
+        addOnState.addOns.addOnMetaData.find(addOn => addOn.id === f.id);
 
       subscribedAddOns[i]._id = i;
       subscribedAddOns[i].integrationId = integrationId;
@@ -100,10 +100,10 @@ export default function Subscription(props) {
 
   const hasSubscribedAddOns = subscribedAddOns && subscribedAddOns.length > 0;
   const hasAddOns =
-    formState &&
-    formState.addOns &&
-    formState.addOns.addOnMetaData &&
-    formState.addOns.addOnMetaData.length > 0;
+    addOnState &&
+    addOnState.addOns &&
+    addOnState.addOns.addOnMetaData &&
+    addOnState.addOns.addOnMetaData.length > 0;
   const {
     plan,
     createdText,

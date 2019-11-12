@@ -5,8 +5,8 @@ import { confirmDialog } from '../../../../components/ConfirmDialog';
 import actions from '../../../../actions';
 
 export default {
-  label: 'AddOnInstall',
-  component: function AddOnActions({ resource }) {
+  label: 'AddOns',
+  component: function AddOns({ resource }) {
     const dispatch = useDispatch();
     const onClick = resource => {
       if (resource.status === 'installed') {

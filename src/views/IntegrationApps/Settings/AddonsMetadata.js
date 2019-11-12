@@ -1,5 +1,5 @@
 import moment from 'moment';
-import Install from '../Settings/Actions/Install';
+import Install from './Actions/AddOns';
 
 export default {
   columns: [
