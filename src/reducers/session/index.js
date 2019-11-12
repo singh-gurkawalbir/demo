@@ -245,6 +245,13 @@ export function integrationAppSettingsFormState(state, integrationId, flowId) {
   );
 }
 
+export function integrationAppAddOnState(state, integrationId) {
+  return fromIntegrationApps.integrationAppAddOnState(
+    state && state.integrationApps,
+    integrationId
+  );
+}
+
 export function checkUpgradeRequested(state, licenseId) {
   return fromIntegrationApps.checkUpgradeRequested(
     state && state.integrationApps,

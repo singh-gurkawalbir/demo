@@ -53,7 +53,7 @@ module.exports.sections = [
           'src/components/Status/index.jsx',
           'src/components/StatusCircle/index.jsx',
           'src/components/StatusTag/index.jsx',
-          'src/components/ModalDialog/index.jsx',
+          'src/components/Loader/index.jsx',
         ],
       },
     ],

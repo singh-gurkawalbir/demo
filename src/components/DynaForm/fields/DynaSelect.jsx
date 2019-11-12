@@ -23,7 +23,10 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'flex-end',
     borderRadius: 2,
     '& > Label': {
-      paddingTop: 10,
+      marginTop: theme.spacing(-1),
+      '&.MuiInputLabel-shrink': {
+        paddingTop: theme.spacing(2),
+      },
     },
     '&:hover': {
       borderColor: theme.palette.primary.main,
@@ -36,7 +39,8 @@ const useStyles = makeStyles(theme => ({
       textAlign: 'left',
     },
     '& svg': {
-      right: 8,
+      right: theme.spacing(1),
+      top: theme.spacing(-1),
     },
   },
 }));

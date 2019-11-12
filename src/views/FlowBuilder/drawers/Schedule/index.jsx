@@ -3,14 +3,14 @@ import RightDrawerRouter from '../RightDrawer';
 import FlowSchedule from '../../../../components/FlowSchedule';
 import TitleBar from '../TitleBar';
 
-const useStyle = makeStyles({
+const useStyle = makeStyles(theme => ({
   fbContDrawer: {
     width: '100%',
     overflowX: 'hidden',
     marginTop: -1,
-    padding: 0,
+    padding: theme.spacing(3),
   },
-});
+}));
 
 export default function ScheduleDrawer({ flow, history, ...props }) {
   const onClose = () => history.goBack();

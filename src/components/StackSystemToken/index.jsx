@@ -1,19 +1,18 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { IconButton, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
-import ViewIcon from '../icons/InfoIcon';
+import ShowContentIcon from '../icons/ShowContentIcon';
 import CopyIcon from '../icons/CopyIcon';
-import GenerateIcon from '../icons/TransferIcon';
+import RegenerateToken from '../icons/RegenerateTokenIcon';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
+import AccessToken from '../MaskToken';
 
 const useStyles = makeStyles({
   root: {
     display: 'flex',
-  },
-  token: {
-    fontFamily: 'Courier',
+    alignItems: 'center',
   },
 });
 
@@ -40,8 +39,8 @@ export default function StackSystemToken({ stackId }) {
 
   return (
     <div className={classes.root}>
-      <Typography variant="caption" className={classes.token}>
-        {systemToken || '********************************'}
+      <Typography variant="caption">
+        {systemToken || <AccessToken count="23" />}
       </Typography>
       {systemToken && (
         <IconButton
@@ -58,7 +57,7 @@ export default function StackSystemToken({ stackId }) {
           title="View Token"
           onClick={displaySystemToken}
           size="small">
-          <ViewIcon />
+          <ShowContentIcon />
         </IconButton>
       )}
       <IconButton
@@ -66,7 +65,7 @@ export default function StackSystemToken({ stackId }) {
         title="Regenerate Token"
         onClick={generateSystemToken}
         size="small">
-        <GenerateIcon />
+        <RegenerateToken />
       </IconButton>
     </div>
   );

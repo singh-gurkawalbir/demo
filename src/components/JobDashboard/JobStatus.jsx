@@ -13,7 +13,7 @@ export default function JobStatus({ job }) {
       return (
         <Fragment>
           <IconButton>
-            <Spinner size={24} />
+            <Spinner size={24} color="primary" />
           </IconButton>
           {JOB_UI_STATUS[job.uiStatus]}
         </Fragment>

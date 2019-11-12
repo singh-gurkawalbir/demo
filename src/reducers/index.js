@@ -785,6 +785,10 @@ export function integrationAppSettingsFormState(state, integrationId, flowId) {
   );
 }
 
+export function integrationAppAddOnState(state, integrationId) {
+  return fromSession.integrationAppAddOnState(state.session, integrationId);
+}
+
 export function checkUpgradeRequested(state, licenseId) {
   return fromSession.checkUpgradeRequested(state && state.session, licenseId);
 }
@@ -1202,6 +1206,24 @@ export function resourcePermissions(state, resourceType, resourceId) {
   }
 
   return {};
+}
+
+export function isFormAMonitorLevelAccess(state, integrationId) {
+  const { accessLevel } = userPermissions(state);
+
+  // if all forms is monitor level
+  if (accessLevel === 'monitor') return true;
+
+  // check integration level is monitor level
+  const { accessLevel: accessLevelIntegration } = resourcePermissions(
+    state,
+    'integrations',
+    integrationId
+  );
+
+  if (accessLevelIntegration === 'monitor') return true;
+
+  return false;
 }
 
 export function publishedConnectors(state) {

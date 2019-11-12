@@ -50,6 +50,7 @@ class SearchOptions extends Component {
           type="search"
           className={classes.textField}
           margin="normal"
+          variant="filled"
         />
       </div>
     );

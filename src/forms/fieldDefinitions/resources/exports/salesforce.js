@@ -1,3 +1,5 @@
+import { isNewId } from '../../../../utils/resource';
+
 export default {
   'salesforce.sObjectType': {
     type: 'text',
@@ -18,10 +20,18 @@ export default {
   'salesforce.executionType': {
     type: 'radiogroup',
     label: 'Execution Type',
-    defaultValue: r =>
-      r && r.salesforce && r.salesforce.soql && r.salesforce.soql.query
-        ? 'scheduled'
-        : 'realtime',
+    defaultValue: r => {
+      const isNew = isNewId(r._id);
+
+      // if its create
+      if (isNew) return '';
+
+      const output =
+        r && r.salesforce && r.salesforce.soql && r.salesforce.soql.query;
+
+      return output ? 'scheduled' : 'realtime';
+    },
+
     options: [
       {
         items: [

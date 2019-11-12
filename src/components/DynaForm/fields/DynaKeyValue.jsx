@@ -1,9 +1,9 @@
 import { useState, useEffect, Fragment } from 'react';
-import Input from '@material-ui/core/Input';
+import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
-import { IconButton, FormControl, FormLabel } from '@material-ui/core';
+import { IconButton, FormLabel } from '@material-ui/core';
 import ErroredMessageComponent from './ErroredMessageComponent';
-import CloseIcon from '../../icons/CloseIcon';
+import TrashIcon from '../../icons/TrashIcon';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -13,15 +13,13 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(1),
     overflowY: 'off',
   },
-  input: {
-    flex: '1 1 auto',
-    marginRight: theme.spacing(2),
-  },
+
   rowContainer: {
     display: 'flex',
+    marginBottom: 6,
   },
   label: {
-    fontSize: '12px',
+    marginBottom: 6,
   },
 }));
 
@@ -90,51 +88,55 @@ export function KeyValueComponent(props) {
       <Fragment key={`${rowInd}-${isKey}`}>
         {tableData.map(r => (
           <div className={classes.rowContainer} key={r.row}>
-            <FormControl>
-              <Input
-                autoFocus={r.row === rowInd && isKey}
-                defaultValue={r[keyName]}
-                placeholder={keyName}
-                className={classes.input}
-                onChange={handleKeyUpdate(r.row)}
-              />
-            </FormControl>
-            <FormControl>
-              <Input
-                autoFocus={r.row === rowInd && !isKey}
-                defaultValue={r[valueName]}
-                placeholder={valueName}
-                className={classes.input}
-                onChange={handleValueUpdate(r.row)}
-              />
-            </FormControl>
+            <TextField
+              autoFocus={r.row === rowInd && isKey}
+              defaultValue={r[keyName]}
+              placeholder={keyName}
+              variant="filled"
+              onChange={handleKeyUpdate(r.row)}
+              fullWidth
+            />
+
+            <TextField
+              autoFocus={r.row === rowInd && !isKey}
+              defaultValue={r[valueName]}
+              placeholder={valueName}
+              variant="filled"
+              onChange={handleValueUpdate(r.row)}
+              fullWidth
+            />
+
             {showDelete && (
               <IconButton
                 data-test="deleteKeyValue"
                 aria-label="delete"
                 onClick={handleDelete(r.row)}>
-                <CloseIcon />
+                <TrashIcon />
               </IconButton>
             )}
           </div>
         ))}
       </Fragment>
       <div key="new" className={classes.rowContainer}>
-        <Input
+        <TextField
           value=""
-          placeholder={keyName}
-          className={classes.input}
+          label={keyName}
+          variant="filled"
           onChange={handleKeyUpdate()}
+          fullWidth
         />
-        <Input
+
+        <TextField
           value=""
-          placeholder={valueName}
-          className={classes.input}
+          label={valueName}
+          variant="filled"
           onChange={handleValueUpdate()}
+          fullWidth
         />
+
         {showDelete && (
           <IconButton data-test="deleteKeyValue" aria-label="delete" disabled>
-            <CloseIcon />
+            <TrashIcon />
           </IconButton>
         )}
       </div>
