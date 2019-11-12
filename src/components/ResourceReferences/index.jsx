@@ -18,9 +18,6 @@ const styles = theme => ({
     marginTop: theme.spacing(3),
     float: 'right',
   },
-  spinner: {
-    margin: 'auto',
-  },
   message: {
     paddingLeft: theme.spacing(3),
   },
@@ -44,14 +41,14 @@ function ResourceReferences(props) {
       {!resourceReferences && (
         <Loader open>
           <Typography variant="h4">
-            {`Retrieving ${MODEL_PLURAL_TO_LABEL[type]} References:`}
+            {`Retrieving ${MODEL_PLURAL_TO_LABEL[type]} References`}
           </Typography>
-          <Spinner className={classes.spinner} />
+          <Spinner color="primary" />
         </Loader>
       )}
       {resourceReferences && resourceReferences.length === 0 && (
         <Loader open>
-          <Typography>
+          <Typography variant="h4">
             This {MODEL_PLURAL_TO_LABEL[type]} is not being used anywhere
           </Typography>
           <Button onClick={onClose} variant="outlined" color="primary">
