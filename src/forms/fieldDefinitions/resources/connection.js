@@ -1811,6 +1811,10 @@ export default {
     mode: 'text',
     label: "Partner's Certificate:",
   },
+  'as2.preventCanonicalization': {
+    label: 'Prevent Canonicalization',
+    type: 'checkbox',
+  },
   'as2.concurrencyLevel': {
     label: 'Concurrency Level',
     type: 'select',
