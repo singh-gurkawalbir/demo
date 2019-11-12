@@ -98,12 +98,12 @@ export function ActionsFactory(props) {
   // When action button metadata isn't provided we infer the action buttons.
   if (resourceType === 'connections' && !isNew) {
     if (resourceConstants.OAUTH_APPLICATIONS.includes(connectionType)) {
-      actionButtons = ['cancel', 'oauth'];
+      actionButtons = ['oauth', 'cancel'];
     } else {
       actionButtons = ['test', 'cancel', 'testandsave'];
     }
   } else {
-    actionButtons = ['cancel', 'save'];
+    actionButtons = ['save', 'cancel'];
   }
 
   return (

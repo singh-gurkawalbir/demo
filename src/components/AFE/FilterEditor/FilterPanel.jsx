@@ -23,6 +23,7 @@ import {
 } from './util';
 import OperandSettingsDialog from './OperandSettingsDialog';
 import actions from '../../../actions';
+import getJSONPaths from '../../../utils/jsonPaths';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -60,7 +61,9 @@ export default function FilterPanel({ editorId, readOnly, data = {}, rule }) {
       d = data;
     }
 
-    return Object.keys(isArray(d) ? d[0] : d).map(key => ({ id: key }));
+    return getJSONPaths(isArray(d) ? d[0] : d, null, {
+      wrapSpecialChars: true,
+    });
   }, [data]);
 
   useEffect(() => {
@@ -446,7 +449,9 @@ export default function FilterPanel({ editorId, readOnly, data = {}, rule }) {
             rulesState[ruleId].data.rhs.type = 'value';
           }
 
-          updateUIForLHSRule({ rule, name });
+          setTimeout(() => {
+            updateUIForLHSRule({ rule, name });
+          });
 
           if (!readOnly) {
             rule.$el
@@ -506,6 +511,10 @@ export default function FilterPanel({ editorId, readOnly, data = {}, rule }) {
             lhsValue = rule.$el
               .find(`.rule-filter-container [name=${r.lhs.type}]`)
               .val();
+
+            if (!lhsValue) {
+              lhsValue = r.lhs[r.lhs.type];
+            }
 
             if (r.lhs.type === 'expression') {
               try {

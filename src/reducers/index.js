@@ -532,6 +532,7 @@ export function resourceList(state, options = {}) {
   if (
     !options.ignoreEnvironmentFilter &&
     !['accesstokens', 'agents', 'iclients', 'scripts', 'stacks'].includes(
+      /* These resources are common for both production & sandbox environments. */
       options.type
     )
   ) {
@@ -1169,6 +1170,24 @@ export function resourcePermissions(state, resourceType, resourceId) {
   }
 
   return {};
+}
+
+export function isFormAMonitorLevelAccess(state, integrationId) {
+  const { accessLevel } = userPermissions(state);
+
+  // if all forms is monitor level
+  if (accessLevel === 'monitor') return true;
+
+  // check integration level is monitor level
+  const { accessLevel: accessLevelIntegration } = resourcePermissions(
+    state,
+    'integrations',
+    integrationId
+  );
+
+  if (accessLevelIntegration === 'monitor') return true;
+
+  return false;
 }
 
 export function publishedConnectors(state) {

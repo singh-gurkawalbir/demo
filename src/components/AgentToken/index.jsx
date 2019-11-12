@@ -5,7 +5,7 @@ import { makeStyles } from '@material-ui/styles';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import CopyIcon from '../icons/CopyIcon';
 import ShowContentIcon from '../icons/ShowContentIcon';
-import RefreshIcon from '../icons/RefreshIcon';
+import RegenerateToken from '../icons/RegenerateTokenIcon';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
 import AccessToken from '../MaskToken';
@@ -35,7 +35,7 @@ export default function AgentToken({ agentId }) {
   return (
     <div className={classes.root}>
       <Typography variant="caption">
-        {accessToken || <AccessToken count="24" />}
+        {accessToken || <AccessToken count="22" />}
       </Typography>
       {accessToken && (
         <CopyToClipboard
@@ -68,7 +68,7 @@ export default function AgentToken({ agentId }) {
         title="Re-generate Token"
         onClick={changeAgentToken}
         size="small">
-        <RefreshIcon />
+        <RegenerateToken />
       </IconButton>
     </div>
   );
