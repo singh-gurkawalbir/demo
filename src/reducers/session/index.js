@@ -14,6 +14,7 @@ import sampleData, * as fromSampleData from './sampleData';
 import flowData, * as fromFlowData from './sampleData/flows';
 import integrationApps, * as fromIntegrationApps from './integrationApps';
 import templates, * as fromTemplates from './templates';
+import clone, * as fromClone from './clone';
 import oAuthAuthorize, * as fromOAuthAuthorize from './oAuthAuthorize';
 import resource, * as fromResource from './resource';
 
@@ -34,6 +35,7 @@ export default combineReducers({
   flowData,
   integrationApps,
   templates,
+  clone,
   oAuthAuthorize,
 });
 
@@ -127,6 +129,22 @@ export function optionsMapFromMetadata(
 export function resourceFormState(state, resourceType, resourceId) {
   return fromResourceForm.resourceFormState(
     state && state.resourceForm,
+    resourceType,
+    resourceId
+  );
+}
+
+export function clonePreview(state, resourceType, resourceId) {
+  return fromClone.clonePreview(state && state.clone, resourceType, resourceId);
+}
+
+export function cloneData(state, resourceType, resourceId) {
+  return fromClone.cloneData(state && state.clone, resourceType, resourceId);
+}
+
+export function cloneInstallSteps(state, resourceType, resourceId) {
+  return fromClone.cloneInstallSteps(
+    state && state.clone,
     resourceType,
     resourceId
   );

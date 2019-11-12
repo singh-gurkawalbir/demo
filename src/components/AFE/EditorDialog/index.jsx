@@ -149,14 +149,14 @@ export default function EditorDialog(props) {
           </Button>
         )}
         <Button
-          variant="contained"
-          color="secondary"
+          variant="text"
+          color="primary"
           data-test="closeEditor"
           onClick={() => handleClose()}>
           Cancel
         </Button>
         <Button
-          variant="contained"
+          variant="outlined"
           data-test="saveEditor"
           disabled={!!disableSave}
           color="primary"

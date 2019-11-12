@@ -1,6 +1,6 @@
 import { Fragment, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Link, useHistory, useLocation } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { makeStyles, Tabs, Tab } from '@material-ui/core';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
@@ -20,6 +20,7 @@ import AdminPanel from './panels/Admin';
 import FlowsPanel from './panels/Flows';
 import ConnectionsPanel from './panels/Connections';
 import DashboardPanel from './panels/Dashboard';
+import getRoutePath from '../../utils/routePaths';
 
 const tabs = [
   { path: 'flows', label: 'Flows', Icon: FlowsIcon, Panel: FlowsPanel },
@@ -50,7 +51,6 @@ const useStyles = makeStyles(theme => ({
 export default function Integration({ match }) {
   const classes = useStyles();
   const history = useHistory();
-  const location = useLocation();
   const dispatch = useDispatch();
   const { integrationId, tab } = match.params;
   const integration = useSelector(state =>
@@ -116,12 +116,16 @@ export default function Integration({ match }) {
               undefined
             )
           }>
-          <IconTextButton
-            component={Link}
-            to={`${location.pathname}/clone`}
-            variant="text">
-            <CopyIcon /> Clone integration
-          </IconTextButton>
+          {integration && (
+            <IconTextButton
+              component={Link}
+              to={getRoutePath(
+                `/clone/integrations/${integration._id}/preview`
+              )}
+              variant="text">
+              <CopyIcon /> Clone integration
+            </IconTextButton>
+          )}
 
           <IconTextButton variant="text">
             <TrashIcon /> Delete integration

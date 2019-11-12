@@ -7,6 +7,8 @@ import MarketplaceRouter from '../../views/MarketPlace/Router';
 import TemplatePreview from '../../views/Templates/InstallIntegrationPreview';
 import TemplateInstall from '../../views/Templates/Install';
 import GenerateOrInstall from '../../views/Dashboard/GenerateOrInstall';
+import ClonePreview from '../../views/Clone/Preview';
+import CloneSetup from '../../views/Clone/Setup';
 
 const RecycleBin = loadable(() =>
   import(/* webpackChunkName: 'RecycleBin' */ '../../views/RecycleBin')
@@ -64,6 +66,14 @@ export default class AppRouting extends Component {
           path="/pg"
           exact
           render={({ history }) => history.replace('/pg/dashboard')}
+        />
+        <Route
+          path="/pg/clone/:resourceType/:resourceId/preview"
+          component={ClonePreview}
+        />
+        <Route
+          path="/pg/clone/:resourceType/:resourceId/setup"
+          component={CloneSetup}
         />
         <Route
           path="/pg/integrations/:integrationId"

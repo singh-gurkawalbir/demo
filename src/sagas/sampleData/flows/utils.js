@@ -80,13 +80,16 @@ export function* refreshResourceData({ flowId, resourceId, resourceType }) {
 export function* requestSampleDataForImports({
   flowId,
   resourceId,
+  resourceType,
   sampleDataStage,
 }) {
   switch (sampleDataStage) {
-    case 'raw': {
+    case 'raw':
+    case 'flowInput': {
       yield call(fetchPageProcessorPreview, {
         flowId,
         _pageProcessorId: resourceId,
+        resourceType,
         previewType: sampleDataStage,
       });
       break;

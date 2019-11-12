@@ -120,6 +120,38 @@ export function resourceFormState(state, resourceType, resourceId) {
   );
 }
 
+export function clonePreview(state, resourceType, resourceId) {
+  return fromSession.clonePreview(
+    state && state.session,
+    resourceType,
+    resourceId
+  );
+}
+
+export function cloneData(state, resourceType, resourceId) {
+  return fromSession.cloneData(
+    state && state.session,
+    resourceType,
+    resourceId
+  );
+}
+
+export function cloneInstallSteps(state, resourceType, resourceId) {
+  const cloneInstallSteps = fromSession.cloneInstallSteps(
+    state && state.session,
+    resourceType,
+    resourceId
+  );
+
+  return produce(cloneInstallSteps, draft => {
+    const unCompletedStep = draft.find(s => !s.completed);
+
+    if (unCompletedStep) {
+      unCompletedStep.isCurrentStep = true;
+    }
+  });
+}
+
 export function previewTemplate(state, templateId) {
   return fromSession.previewTemplate(state && state.session, templateId);
 }
@@ -1170,6 +1202,24 @@ export function resourcePermissions(state, resourceType, resourceId) {
   }
 
   return {};
+}
+
+export function isFormAMonitorLevelAccess(state, integrationId) {
+  const { accessLevel } = userPermissions(state);
+
+  // if all forms is monitor level
+  if (accessLevel === 'monitor') return true;
+
+  // check integration level is monitor level
+  const { accessLevel: accessLevelIntegration } = resourcePermissions(
+    state,
+    'integrations',
+    integrationId
+  );
+
+  if (accessLevelIntegration === 'monitor') return true;
+
+  return false;
 }
 
 export function publishedConnectors(state) {

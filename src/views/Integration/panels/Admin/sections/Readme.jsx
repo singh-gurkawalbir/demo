@@ -33,6 +33,9 @@ export default function ReadmeSection({ integrationId }) {
   const integration = useSelector(state =>
     selectors.resource(state, 'integrations', integrationId)
   );
+  const monitorLevelAccess = useSelector(state =>
+    selectors.isFormAMonitorLevelAccess(state, integrationId)
+  );
   const [value, setValue] = useState(integration && integration.readme);
 
   function handleChange(value) {
@@ -63,6 +66,7 @@ export default function ReadmeSection({ integrationId }) {
             name="readme"
             value={value}
             mode="html"
+            readOnly={monitorLevelAccess}
             onChange={handleChange}
           />
         </div>
@@ -75,7 +79,11 @@ export default function ReadmeSection({ integrationId }) {
           // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{ __html: value }}
         />
-        <Button variant="contained" color="primary" onClick={handleSave}>
+        <Button
+          disabled={monitorLevelAccess}
+          variant="contained"
+          color="primary"
+          onClick={handleSave}>
           Save
         </Button>
       </div>
