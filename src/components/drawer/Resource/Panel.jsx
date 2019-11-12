@@ -4,7 +4,10 @@ import { Route } from 'react-router-dom';
 import { makeStyles, Typography, IconButton } from '@material-ui/core';
 import LoadResources from '../../../components/LoadResources';
 import ResourceForm from '../../../components/ResourceFormFactory';
-import { MODEL_PLURAL_TO_LABEL } from '../../../utils/resource';
+import {
+  MODEL_PLURAL_TO_LABEL,
+  availableResources,
+} from '../../../utils/resource';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
@@ -41,10 +44,21 @@ const useStyles = makeStyles(theme => ({
     top: 5,
   },
 }));
-const determineRequiredResouces = resourceType => {
+const determineRequiredResouces = type => {
+  const resourceType = [];
+
+  // Handling virtual resources types Page processor and Page generators
+  if (type === 'pageProcessor') {
+    resourceType.push('exports', 'imports');
+  } else if (type === 'pageGenerator') {
+    resourceType.push('exports');
+  } else {
+    resourceType.push(type);
+  }
+
   // if its exports or imports then we need associated connections to be loaded
-  if (resourceType === 'exports' || resourceType === 'imports')
-    return [resourceType, 'connections'].join(',');
+  if (resourceType.includes('exports') || resourceType.includes('imports'))
+    return [...resourceType, 'connections'];
 
   return resourceType;
 };
