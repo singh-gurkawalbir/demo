@@ -6,6 +6,7 @@ import * as selectors from '../../../../../reducers';
 import actions from '../../../../../actions';
 import PanelHeader from '../../PanelHeader';
 import CodeEditor from '../../../../../components/CodeEditor';
+import RawHtml from '../../../../../components/RawHtml';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -70,16 +71,12 @@ export default function ReadmeSection({ integrationId }) {
             onChange={handleChange}
           />
         </div>
+
         <Typography variant="h4">Preview</Typography>
-        <div
-          className={classes.previewContainer}
-          // TODO: We need to run the html through some type of sanitize
-          // process. I do not know if we already have something in the
-          // old UI to use here?
-          // eslint-disable-next-line react/no-danger
-          dangerouslySetInnerHTML={{ __html: value }}
-        />
+        <RawHtml className={classes.previewContainer} html={value} />
+
         <Button
+          data-test="saveReadme"
           disabled={monitorLevelAccess}
           variant="contained"
           color="primary"

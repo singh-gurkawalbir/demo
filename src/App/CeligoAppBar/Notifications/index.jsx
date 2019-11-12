@@ -1,13 +1,12 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
-import RootRef from '@material-ui/core/RootRef';
-import Typography from '@material-ui/core/Typography';
+import { RootRef, Typography, Tooltip, IconButton } from '@material-ui/core';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import IconButton from '@material-ui/core/IconButton';
+// TODO: Azhar, can you fix these icons?
 import AcceptIcon from '@material-ui/icons/Check';
 import DismissIcon from '@material-ui/icons/Clear';
 import Badge from '@material-ui/core/Badge';
@@ -78,7 +77,13 @@ class Notifications extends Component {
     const open = !!anchorEl;
 
     if (!notifications || notifications.length === 0) {
-      return null;
+      return (
+        <Tooltip title="No notifications" placement="bottom">
+          <IconButton size="small" color="inherit">
+            <NotificationsIcon />
+          </IconButton>
+        </Tooltip>
+      );
     }
 
     return (
@@ -120,17 +125,10 @@ class Notifications extends Component {
                     </Fragment>
                   }
                   secondary={
-                    <Fragment>
-                      <Typography component="span">
-                        {a.ownerUser.email}
-                      </Typography>
-                      <Typography component="span">
-                        {'is inviting you to join their account.'}
-                      </Typography>
-                      <Typography component="span">
-                        {'Please accept or decline this invitation.'}
-                      </Typography>
-                    </Fragment>
+                    <Typography>
+                      {a.ownerUser.email} is inviting you to join their account.
+                      Please accept or decline this invitation.
+                    </Typography>
                   }
                 />
                 <ListItemSecondaryAction>
