@@ -1,4 +1,5 @@
 import timeStamps from '../../../utils/timeStamps';
+import { isNewId } from '../../../utils/resource';
 
 export default {
   preSave: formValues => {
@@ -146,6 +147,13 @@ export default {
           ],
         },
       ],
+      defaultDisabled: r => {
+        const isNew = isNewId(r._id);
+
+        if (!isNew) return true;
+
+        return false;
+      },
       defaultValue: r => (r && r.blobKeyPath ? 'blob' : 'records'),
     },
     'file.csv.rowDelimiter': {

@@ -30,6 +30,33 @@ export function* requestUpgrade({ integration, options }) {
   yield put(actions.integrationApp.settings.requestedUpgrade(licenseId));
 }
 
+export function* getAddOnLicenseMetadata({ integrationId }) {
+  const path = `/integrations/${integrationId}/settings/getLicenseMetadata`;
+  let response;
+
+  try {
+    response = yield call(apiCallWithRetry, {
+      path,
+      opts: {
+        method: 'PUT',
+        body: {},
+      },
+      hidden: true,
+    });
+  } catch (error) {
+    return undefined;
+  }
+
+  if (response) {
+    yield put(
+      actions.integrationApp.settings.addOnLicenseMetadataUpdate(
+        integrationId,
+        response
+      )
+    );
+  }
+}
+
 export function* upgrade({ integration, license }) {
   const path = `/integrations/${integration._id}/settings/changeEdition`;
   let upgradeResponse;
@@ -61,4 +88,8 @@ export default [
     requestUpgrade
   ),
   takeLatest(actionTypes.INTEGRATION_APPS.SETTINGS.UPGRADE, upgrade),
+  takeLatest(
+    actionTypes.INTEGRATION_APPS.SETTINGS.ADDON_LICENSES_METADATA,
+    getAddOnLicenseMetadata
+  ),
 ];

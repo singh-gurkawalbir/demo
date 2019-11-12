@@ -95,13 +95,15 @@ export function* commitStagedChanges({ resourceType, id, scope }) {
     yield put(actions.resource.received(resourceType, updated));
 
     if (!isNew) {
-      yield put(actions.resource.updated(resourceType, updated._id, patch));
+      yield put(
+        actions.resource.updated(resourceType, updated._id, master, patch)
+      );
     }
 
     yield put(actions.resource.clearStaged(id, scope));
 
     if (isNew) {
-      yield put(actions.resource.created(updated._id, id));
+      yield put(actions.resource.created(updated._id, id, resourceType));
     }
   } catch (error) {
     // TODO: What should we do for 4xx errors? where the resource to put/post

@@ -120,6 +120,38 @@ export function resourceFormState(state, resourceType, resourceId) {
   );
 }
 
+export function clonePreview(state, resourceType, resourceId) {
+  return fromSession.clonePreview(
+    state && state.session,
+    resourceType,
+    resourceId
+  );
+}
+
+export function cloneData(state, resourceType, resourceId) {
+  return fromSession.cloneData(
+    state && state.session,
+    resourceType,
+    resourceId
+  );
+}
+
+export function cloneInstallSteps(state, resourceType, resourceId) {
+  const cloneInstallSteps = fromSession.cloneInstallSteps(
+    state && state.session,
+    resourceType,
+    resourceId
+  );
+
+  return produce(cloneInstallSteps, draft => {
+    const unCompletedStep = draft.find(s => !s.completed);
+
+    if (unCompletedStep) {
+      unCompletedStep.isCurrentStep = true;
+    }
+  });
+}
+
 export function previewTemplate(state, templateId) {
   return fromSession.previewTemplate(state && state.session, templateId);
 }
@@ -751,6 +783,10 @@ export function integrationAppSettingsFormState(state, integrationId, flowId) {
     integrationId,
     flowId
   );
+}
+
+export function integrationAppAddOnState(state, integrationId) {
+  return fromSession.integrationAppAddOnState(state.session, integrationId);
 }
 
 export function checkUpgradeRequested(state, licenseId) {

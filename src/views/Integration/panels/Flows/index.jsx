@@ -58,10 +58,15 @@ export default function FlowsPanel({ integrationId }) {
       )}
 
       <PanelHeader title="Integration flows">
-        <IconTextButton component={Link} to="flowBuilder/new">
+        <IconTextButton
+          component={Link}
+          to="flowBuilder/new"
+          data-test="createFlow">
           <AddIcon /> Create flow
         </IconTextButton>
-        <IconTextButton onClick={() => setShowDialog(true)}>
+        <IconTextButton
+          onClick={() => setShowDialog(true)}
+          data-test="attachFlow">
           <AttachIcon /> Attach flow
         </IconTextButton>
       </PanelHeader>
