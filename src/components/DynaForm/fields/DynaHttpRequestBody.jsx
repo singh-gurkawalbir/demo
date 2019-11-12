@@ -1,27 +1,26 @@
-import { useState, Fragment } from 'react';
+import { useState, useEffect, Fragment } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import Button from '@material-ui/core/Button';
+import * as selectors from '../../../reducers';
 import HttpRequestBodyEditorDialog from '../../../components/AFE/HttpRequestBodyEditor/Dialog';
 import DynaLookupEditor from './DynaLookupEditor';
 import {
   getXMLSampleTemplate,
   getJSONSampleTemplate,
 } from '../../AFE/HttpRequestBodyEditor/templateMapping';
-
-// TODO: This is sample data for testing. To be replaced with actual sample data
-const sampleData = {
-  // id: '48327',
-  // recordType: 'customer',
-  // Name: '1ScrewedUp',
-  // Email: '',
-  // Phone: '',
-  // 'Office Phone': '',
-  // Fax: '',
-  // 'Primary Contact': '',
-  // 'Alt. Email': '',
-};
+import actions from '../../../actions';
 
 export default function DynaHttpRequestBody(props) {
-  const { id, onFieldChange, options, value, label, resourceId } = props;
+  const {
+    id,
+    onFieldChange,
+    options,
+    value,
+    label,
+    resourceId,
+    resourceType,
+    flowId,
+  } = props;
   const { lookups: lookupsObj, saveIndex, contentType } = options;
   const [showEditor, setShowEditor] = useState(false);
   let parsedData =
@@ -33,6 +32,29 @@ export default function DynaHttpRequestBody(props) {
   const handleEditorClick = () => {
     setShowEditor(!showEditor);
   };
+
+  const dispatch = useDispatch();
+  const sampleData = useSelector(state =>
+    selectors.getSampleData(state, flowId, resourceId, 'flowInput', {
+      isImport: resourceType === 'imports',
+    })
+  );
+
+  useEffect(() => {
+    // Request for sample data only incase of flow context
+    // TODO : @Raghu Do we show default data in stand alone context?
+    // What type of sample data is expected in case of Page generators
+    if (flowId && !sampleData) {
+      dispatch(
+        actions.flowData.requestSampleData(
+          flowId,
+          resourceId,
+          resourceType,
+          'flowInput'
+        )
+      );
+    }
+  }, [dispatch, flowId, resourceId, resourceType, sampleData]);
 
   const handleClose = (shouldCommit, editorValues) => {
     if (shouldCommit) {
@@ -80,6 +102,7 @@ export default function DynaHttpRequestBody(props) {
           id={`${resourceId}-${id}`}
           rule={parsedData}
           onFieldChange={onFieldChange}
+          data={JSON.stringify(sampleData, null, 2)}
           onClose={handleClose}
           action={lookupField}
         />

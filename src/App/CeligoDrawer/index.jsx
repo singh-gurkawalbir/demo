@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import { List, Collapse, ButtonBase } from '@material-ui/core';
+import { darken, lighten } from '@material-ui/core/styles/colorManipulator';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -39,9 +40,9 @@ const useStyles = makeStyles(theme => ({
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
     }),
-    itemIconRoot: {
-      width: 300,
-    },
+    // itemIconRoot: {
+    //   width: 300,
+    // },
   },
   drawerClose: {
     transition: theme.transitions.create('width', {
@@ -79,6 +80,12 @@ const useStyles = makeStyles(theme => ({
       color: theme.palette.text.hint,
     },
   },
+  sandboxMenuItem: {
+    borderColor: theme.palette.secondary.light,
+    '& svg': {
+      color: theme.palette.secondary.light,
+    },
+  },
   list: {
     backgroundColor: 'rgb(255,255,255,0.1)',
     paddingTop: 0,
@@ -98,10 +105,12 @@ const useStyles = makeStyles(theme => ({
     },
   },
   listItem: {
+    backgroundColor: theme.palette.secondary.main,
     '& svg > *': {
       color: theme.palette.text.hint,
     },
     '&:hover': {
+      backgroundColor: theme.palette.text.secondary,
       color: theme.palette.background.paper,
       '&:before': {
         background: theme.palette.primary.main,
@@ -123,6 +132,16 @@ const useStyles = makeStyles(theme => ({
     },
   },
   listItemSandbox: {
+    backgroundColor: theme.palette.sandbox.light,
+    '& svg > *': {
+      color: theme.palette.secondary.light,
+    },
+    '&:hover': {
+      backgroundColor: darken(theme.palette.sandbox.dark, 0.1),
+      '&:before': {
+        background: darken(theme.palette.sandbox.dark, 0.4),
+      },
+    },
     '&:not(:last-child)': {
       borderColor: theme.palette.sandbox.dark,
     },
@@ -141,7 +160,11 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.primary.dark,
     '& svg': {
       fill: theme.palette.primary.dark,
-      color: theme.palette.primary.dark,
+    },
+  },
+  sandboxLogoContainer: {
+    '& svg': {
+      fill: theme.palette.secondary.light,
     },
   },
   logo: {
@@ -162,6 +185,21 @@ const useStyles = makeStyles(theme => ({
     '& svg': {
       position: 'relative',
       top: -12,
+    },
+  },
+  sandboxDrawerToggle: {
+    borderColor: theme.palette.secondary.light,
+  },
+  innerListItems: {
+    background: theme.palette.text.secondary,
+    '&:hover': {
+      backgroundColor: lighten(theme.palette.text.secondary, 0.1),
+    },
+  },
+  sandboxInnerListItems: {
+    background: lighten(theme.palette.sandbox.light, 0.2),
+    '&:hover': {
+      backgroundColor: darken(theme.palette.sandbox.dark, 0.1),
     },
   },
 }));
@@ -210,7 +248,10 @@ export default function CeligoDrawer() {
         })}
         onDoubleClick={handleDrawerToggle}>
         <div>
-          <div className={classes.logoContainer}>
+          <div
+            className={clsx(classes.logoContainer, {
+              [classes.sandboxLogoContainer]: isSandbox,
+            })}>
             {drawerOpened ? (
               <ButtonBase className={classes.logo} onClick={handleDrawerToggle}>
                 <CeligoLogo aria-label="open drawer" />
@@ -266,9 +307,14 @@ export default function CeligoDrawer() {
                         disablePadding>
                         {children.map(({ label, Icon, path }) => (
                           <ListItem
-                            className={clsx(classes.listItem, {
-                              [classes.listItemSandbox]: isSandbox,
-                            })}
+                            className={clsx(
+                              classes.listItem,
+                              classes.innerListItems,
+                              {
+                                [classes.listItemSandbox]: isSandbox,
+                                [classes.sandboxInnerListItems]: isSandbox,
+                              }
+                            )}
                             data-test={label}
                             key={label}
                             component={Link}
@@ -295,12 +341,17 @@ export default function CeligoDrawer() {
           </List>
         </div>
         <div>
-          <div className={clsx(classes.toolbar, classes.menuItem)}>
+          <div
+            className={clsx(classes.toolbar, classes.menuItem, {
+              [classes.sandboxMenuItem]: isSandbox,
+            })}>
             <IconButton
               data-test="celigoDrawerToggle"
               color="inherit"
               onClick={handleDrawerToggle}
-              className={classes.drawerToggle}>
+              className={clsx(classes.drawerToggle, {
+                [classes.sandboxDrawerToggle]: isSandbox,
+              })}>
               {drawerOpened ? <ArrowLeftIcon /> : <ArrowRightIcon />}
             </IconButton>
           </div>

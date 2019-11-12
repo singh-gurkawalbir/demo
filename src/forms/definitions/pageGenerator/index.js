@@ -2,7 +2,7 @@ import applications, {
   getWebhookConnectors,
   getWebhookOnlyConnectors,
 } from '../../../constants/applications';
-import { appTypeToAdaptorType } from '../../../utils/resource';
+import { appTypeToAdaptorType, isNewId } from '../../../utils/resource';
 
 const visibleWhenIsNew = { field: 'isNew', is: ['true'] };
 
@@ -181,6 +181,13 @@ export default {
           ],
         },
       ],
+      defaultDisabled: r => {
+        const isNew = isNewId(r._id);
+
+        if (!isNew) return true;
+
+        return false;
+      },
       defaultValue: r =>
         r && r.netsuite && r.netsuite.internalId ? 'blob' : 'records',
     },
@@ -276,7 +283,8 @@ export default {
       const adaptorTypePrefix = appTypeToAdaptorType[app.type];
 
       if (!adaptorTypePrefix) return;
-      const expression = [];
+      // Lookups are not shown in PG suggestions
+      const expression = [{ isLookup: { $exists: false } }];
 
       expression.push({
         adaptorType: `${adaptorTypePrefix}Export`,

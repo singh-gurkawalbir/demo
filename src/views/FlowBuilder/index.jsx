@@ -417,7 +417,7 @@ function FlowBuilder(props) {
 
   return (
     <LoadResources required resources="flows, imports, exports">
-      <ResourceDrawer {...props} />
+      <ResourceDrawer {...props} flowId={flowId} />
       <RunDrawer {...props} flowId={flowId} />
       <ScheduleDrawer {...props} flow={flow} />
       <SettingsDrawer {...props} flow={flow} />

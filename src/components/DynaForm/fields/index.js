@@ -8,6 +8,7 @@ import DynaText from './DynaText';
 import DynaCheckbox from './DynaCheckbox';
 import DynaRelativeUri from './DynaRelativeUri';
 import DynaKeyValue from './DynaKeyValue';
+import DynaToggleSelectToText from './select/DynaToggleSelectToText';
 import DynaLookupEditor from './DynaLookupEditor';
 import DynaKeyWithAction from './DynaKeyWithAction';
 import DynaHttpRequestBody from './DynaHttpRequestBody';
@@ -48,6 +49,7 @@ import DynaRelativeURIWithLookup from './DynaRelativeURIWithLookup';
 
 export default {
   mapping: DynaImportMapping,
+  toggleSelectToText: DynaToggleSelectToText,
   selectscopes: DynaSelectScopes,
   text: DynaText,
   editor: DynaEditor,

@@ -1,7 +1,6 @@
 import { Fragment, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import { Button } from '@material-ui/core';
 import { useHistory, Link } from 'react-router-dom';
 import shortid from 'shortid';
 import * as selectors from '../../reducers';
@@ -13,9 +12,17 @@ import ResourceDrawer from '../../components/drawer/Resource';
 import IconTextButton from '../../components/IconTextButton';
 import AddIcon from '../../components/icons/AddIcon';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
   registerButton: {
     float: 'right',
+  },
+  actions: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+    padding: theme.spacing(2, 0),
+    '&:empty': {
+      display: 'none',
+    },
   },
 }));
 
@@ -79,11 +86,11 @@ export default function Connections(props) {
           integrationId !== 'none' &&
           !(integration && integration._connectorId) &&
           writePermissions && (
-            <Button
+            <IconTextButton
               className={classes.registerButton}
               onClick={() => setShowRegisterConnDialog(true)}>
-              Register Connections
-            </Button>
+              <AddIcon /> Register Connections
+            </IconTextButton>
           )}
         <CeligoTable
           resourceType="connections"

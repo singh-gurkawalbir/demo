@@ -138,6 +138,46 @@ export default (state = {}, action) => {
         });
       }
 
+      if (resourceType === 'flows') {
+        const newCollection =
+          collection &&
+          collection.map &&
+          collection.map(flow => {
+            const {
+              pageGenerators,
+              pageProcessors,
+              _exportId,
+              _importId,
+            } = flow;
+            const updatedFlow = { ...flow, pageGenerators, pageProcessors };
+
+            // Supports Old Flows with _exportId and _importId converted to __pageGenerators and _pageProcessors
+            if (!pageGenerators && _exportId) {
+              updatedFlow.pageGenerators = [
+                {
+                  type: 'export',
+                  _exportId,
+                },
+              ];
+            }
+
+            if (!pageProcessors && _importId) {
+              updatedFlow.pageProcessors = [
+                {
+                  type: 'import',
+                  _importId,
+                },
+              ];
+            }
+
+            return updatedFlow;
+          });
+
+        return produce(state, draft => {
+          draft.flows = newCollection || [];
+        });
+      }
+
       return { ...state, [resourceType]: collection || [] };
     }
 
