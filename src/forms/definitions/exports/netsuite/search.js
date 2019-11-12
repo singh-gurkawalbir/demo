@@ -27,7 +27,6 @@ export default {
         record = 'transaction';
       }
 
-      // returns corresponding relative uri path based on recordType selected
       return {
         commMetaPath: `netSuiteWS/searchMetadata/${recordTypeField.connectionId}?recordType=${record}`,
       };
@@ -43,7 +42,6 @@ export default {
         record = 'customRecord';
       }
 
-      // returns corresponding relative uri path based on recordType selected
       return {
         commMetaPath: `netSuiteWS/recordMetadata/${recordTypeField.connectionId}?type=export&recordType=${record}`,
         resetValue:

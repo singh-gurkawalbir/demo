@@ -18,7 +18,6 @@ export default {
         field => field.fieldId === 'netsuite.restlet.recordType'
       );
 
-      // returns corresponding relative uri path based on recordType selected
       return {
         commMetaPath: `netsuite/metadata/suitescript/connections/${recordTypeField.connectionId}/recordTypes/${recordTypeField.value}/searchFilters?includeJoinFilters=true`,
         resetValue:
