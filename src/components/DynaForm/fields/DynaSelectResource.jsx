@@ -12,7 +12,7 @@ import LoadResources from '../../../components/LoadResources';
 import DynaSelect from './DynaSelect';
 import DynaMultiSelect from './DynaMultiSelect';
 import actions from '../../../actions';
-import newConnection from '../../../forms/definitions/connections/new';
+import resourceMeta from '../../../forms/definitions';
 import {
   defaultPatchSetConverter,
   getMissingPatchSet,
@@ -105,22 +105,41 @@ function DynaSelectResource(props) {
   }));
   const dispatch = useDispatch();
   const addNewResource = () => {
-    const values = newConnection.preSave({
-      application: options.appType,
-      '/name': `New ${options.appType} resource`,
-    });
-    const patchValues = defaultPatchSetConverter(values);
-    const missingPatches = getMissingPatchSet(
-      patchValues.map(patch => patch.path)
-    );
+    if (
+      [
+        'exports',
+        'imports',
+        'connections',
+        'pageProcessor',
+        'pageGenerator',
+      ].includes(resourceType)
+    ) {
+      let values;
 
-    dispatch(
-      actions.resource.patchStaged(
-        newResourceId,
-        [...missingPatches, ...patchValues],
-        'value'
-      )
-    );
+      if (['pageProcessor', 'pageGenerator'].includes(resourceType))
+        values = resourceMeta[resourceType].preSave({
+          application: options.appType,
+          '/name': `New ${options.appType} resource`,
+        });
+      else
+        values = resourceMeta[resourceType].new.preSave({
+          application: options.appType,
+          '/name': `New ${options.appType} resource`,
+        });
+      const patchValues = defaultPatchSetConverter(values);
+      const missingPatches = getMissingPatchSet(
+        patchValues.map(patch => patch.path)
+      );
+
+      dispatch(
+        actions.resource.patchStaged(
+          newResourceId,
+          [...missingPatches, ...patchValues],
+          'value'
+        )
+      );
+    }
+
     props.history.push(
       `${location.pathname}/edit/${resourceType}/${newResourceId}`
     );
