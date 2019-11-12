@@ -451,6 +451,19 @@ const integrationApp = {
       action(actionTypes.INTEGRATION_APPS.SETTINGS.UPGRADE_REQUESTED, {
         licenseId,
       }),
+    requestAddOnLicenseMetadata: integrationId =>
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.ADDON_LICENSES_METADATA, {
+        integrationId,
+      }),
+    addOnLicenseMetadataUpdate: (integrationId, response) =>
+      action(
+        actionTypes.INTEGRATION_APPS.SETTINGS.ADDON_LICENSES_METADATA_UPDATE,
+        {
+          integrationId,
+          response,
+        }
+      ),
+
     upgrade: (integration, license) =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.UPGRADE, {
         integration,
@@ -477,10 +490,12 @@ const integrationApp = {
       action(actionTypes.INTEGRATION_APPS.SETTINGS.FORM.SUBMIT_FAILED, params),
   },
   installer: {
-    installStep: (integrationId, installerFunction) =>
+    installStep: (integrationId, installerFunction, storeId, addOnId) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.REQUEST, {
         id: integrationId,
         installerFunction,
+        storeId,
+        addOnId,
       }),
     updateStep: (integrationId, installerFunction, update) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.UPDATE, {
@@ -511,11 +526,12 @@ const integrationApp = {
         uninstallerFunction,
         update,
       }),
-    stepUninstall: (storeId, integrationId, uninstallerFunction) =>
+    stepUninstall: (storeId, integrationId, uninstallerFunction, addOnId) =>
       action(actionTypes.INTEGRATION_APPS.UNINSTALLER.STEP.REQUEST, {
         storeId,
         id: integrationId,
         uninstallerFunction,
+        addOnId,
       }),
     receivedUninstallSteps: (uninstallSteps, storeId, id) =>
       action(actionTypes.INTEGRATION_APPS.UNINSTALLER.RECEIVED_STEPS, {

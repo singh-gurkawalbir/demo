@@ -77,6 +77,7 @@ const routes = [
       { path: '/audit', breadcrumb: () => 'Audit Log' },
       { path: '/subscription', breadcrumb: () => 'Subscription' },
       { path: '/notifications', breadcrumb: () => 'Notifications' },
+      { path: '/addons', breadcrumb: () => 'Add-ons' },
       {
         path: '/:storeId',
         breadcrumb: StoreCrumb,
@@ -88,6 +89,7 @@ const routes = [
           { path: '/general', breadcrumb: () => 'General' },
           { path: '/audit', breadcrumb: () => 'Audit Log' },
           { path: '/subscription', breadcrumb: () => 'Subscription' },
+          { path: '/addons', breadcrumb: () => 'Add-ons' },
           { path: '/notifications', breadcrumb: () => 'Notifications' },
           { path: '/:section', breadcrumb: a => a.section },
         ],
