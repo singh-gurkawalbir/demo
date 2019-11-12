@@ -30,9 +30,9 @@ function DynaUploadFile(props) {
     const { result } = event.target;
     let fileContent = result;
 
-    // For xlsx file , content gets converted to 'csv' before parsing
+    // For xlsx file , content gets converted to 'csv' before parsing to verify valid xlsx file
     if (options === 'xlsx') {
-      const { success, result, error } = getCsvFromXlsx(fileContent);
+      const { success, error } = getCsvFromXlsx(fileContent);
 
       if (!success) {
         return enqueueSnackbar({
@@ -40,8 +40,6 @@ function DynaUploadFile(props) {
           variant: 'error',
         });
       }
-
-      fileContent = result;
     }
 
     // For JSON file, content should be parsed from String to JSON

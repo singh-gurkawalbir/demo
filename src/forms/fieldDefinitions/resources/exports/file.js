@@ -126,6 +126,7 @@ export default {
         is: ['xml'],
       },
     ],
+    required: true,
   },
   'file.fileDefinition.resourcePath': {
     label: 'Resource Path',
