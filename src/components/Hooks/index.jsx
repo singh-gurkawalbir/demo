@@ -70,14 +70,14 @@ export default function Hooks(props) {
     <LoadResources resources="scripts, stacks">
       <div>
         <DynaForm fieldMeta={fieldMeta}>
-          <Button data-test={`cancelHook-${resourceId}`} onClick={onCancel}>
-            Cancel
-          </Button>
           <DynaSubmit
             data-test={`saveHook-${resourceId}`}
             onClick={handleSubmit}>
             Save
           </DynaSubmit>
+          <Button data-test={`cancelHook-${resourceId}`} onClick={onCancel}>
+            Cancel
+          </Button>
         </DynaForm>
       </div>
     </LoadResources>

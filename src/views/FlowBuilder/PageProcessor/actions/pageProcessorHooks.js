@@ -6,12 +6,9 @@ import actions from '../../../../actions';
 import Hooks from '../../../../components/Hooks';
 import ModalDialog from '../../../../components/ModalDialog';
 
-const useStyles = makeStyles(theme => ({
-  paper: {
-    padding: theme.spacing(3),
-  },
+const useStyles = makeStyles(() => ({
   wrapper: {
-    minWidth: 450,
+    minWidth: 580,
   },
 }));
 
@@ -29,8 +26,8 @@ function HooksDialog({ flowId, resource, resourceType, open, onClose }) {
   };
 
   return (
-    <ModalDialog show={open} className={classes.wrapper} handleClose={onClose}>
-      <div>Hooks</div>
+    <ModalDialog show={open} handleClose={onClose}>
+      <div className={classes.wrapper}>Hooks</div>
       <Hooks
         onSave={onSave}
         onCancel={onClose}
