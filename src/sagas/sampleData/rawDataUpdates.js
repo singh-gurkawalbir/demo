@@ -1,11 +1,7 @@
 import { takeLatest, put, select, call } from 'redux-saga/effects';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
-import {
-  resource,
-  resourceFormState,
-  getResourceSampleDataWithStatus,
-} from '../../reducers';
+import { resource, resourceFormState } from '../../reducers';
 import {
   getAddedLookupInFlow,
   isRawDataPatchSet,
@@ -23,7 +19,7 @@ function* saveRawDataOnResource({
   // patch req on resource
   if (!resourceId || !rawData) return;
   const rawDataKey = yield call(uploadRawData, {
-    file: JSON.stringify(rawData),
+    file: typeof rawData !== 'string' ? JSON.stringify(rawData) : rawData,
   });
   const patchSet = [
     {
@@ -38,7 +34,8 @@ function* saveRawDataOnResource({
   yield put(actions.resource.commitStaged(resourceType, resourceId, 'value'));
 }
 
-function* fetchRawDataForFTP({ resourceId, tempResourceId }) {
+// WIP Implementation
+function* fetchRawDataForFTP({ resourceId }) {
   const resourceObj = yield select(resource, 'exports', resourceId);
   const isFileTypeExport = isFileExport(resourceObj);
 
@@ -46,16 +43,16 @@ function* fetchRawDataForFTP({ resourceId, tempResourceId }) {
   // Incase of FTP, raw data to be saved in the data in Parse Stage ( JSON )
   // tempResourceId if passed used incase of newly created export
   // to fetch Sample data saved against temp id in state
-  const { data: rawData } = yield select(
-    getResourceSampleDataWithStatus,
-    tempResourceId || resourceId,
-    'parse'
-  );
+  // const { data: rawData } = yield select(
+  //   getResourceSampleDataWithStatus,
+  //   tempResourceId || resourceId,
+  //   'raw'
+  // );
 
-  return rawData;
+  return false;
 }
 
-function* fetchRawDataForResource({
+function* fetchAndSaveRawDataForResource({
   type,
   resourceId,
   flowId,
@@ -67,10 +64,10 @@ function* fetchRawDataForResource({
       tempResourceId,
     });
 
-    if (ftpRawData) {
+    if (ftpRawData && ftpRawData.body) {
       return yield call(saveRawDataOnResource, {
         resourceId,
-        rawData: ftpRawData,
+        rawData: ftpRawData.body,
       });
     }
 
@@ -113,14 +110,13 @@ function* fetchRawDataForResource({
 function* onResourceCreate({ id, resourceType, tempId }) {
   /*
    * Question: How to differentiate -- a lookup creation and an existing lookup add on flow
-   * Question: How to handle Lookup edit outside flow context
    */
   if (resourceType === 'exports') {
     const resourceObj = yield select(resource, resourceType, id);
 
     if (!resourceObj.isLookup) {
       // If export, get raw data calling preview and call save raw data with a patch on this id
-      yield call(fetchRawDataForResource, {
+      yield call(fetchAndSaveRawDataForResource, {
         type: 'exports',
         resourceId: id,
         tempResourceId: tempId,
@@ -154,13 +150,16 @@ function* onResourceUpdate({
     }
 
     if (isLookup) {
-      yield call(fetchRawDataForResource, {
+      yield call(fetchAndSaveRawDataForResource, {
         type: 'pageprocessors',
         flowId,
         resourceId,
       });
     } else {
-      yield call(fetchRawDataForResource, { type: 'exports', resourceId });
+      yield call(fetchAndSaveRawDataForResource, {
+        type: 'exports',
+        resourceId,
+      });
     }
   }
 
@@ -168,7 +167,7 @@ function* onResourceUpdate({
     const addedPageProcessorId = getAddedLookupInFlow(master, patch);
 
     if (addedPageProcessorId) {
-      yield call(fetchRawDataForResource, {
+      yield call(fetchAndSaveRawDataForResource, {
         type: 'pageprocessors',
         flowId: resourceId,
         resourceId: addedPageProcessorId,

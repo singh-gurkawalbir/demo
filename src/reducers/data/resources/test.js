@@ -56,7 +56,7 @@ describe('resources reducer', () => {
 
     describe(`${resourceType} received resource collection action`, () => {
       test('should store the new collection', () => {
-        const data = 'test data';
+        const data = [{ id: 1, name: 'test data' }];
         const state = reducer(
           undefined,
           actions.resource.receivedCollection(resourceType, data)
@@ -66,8 +66,8 @@ describe('resources reducer', () => {
       });
 
       test('should replace existing collection with the new colletion', () => {
-        const data1 = 'test data';
-        const data2 = 'new test data';
+        const data1 = [{ id: 1, name: 'test data' }];
+        const data2 = [{ id: 1, name: 'test data1' }];
         let state;
 
         state = reducer(

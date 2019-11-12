@@ -19,7 +19,6 @@ const useStyles = makeStyles(theme => ({
   wrapper: {
     display: 'flex',
     alignItems: 'flex-start',
-    marginBottom: 6,
   },
   label: {
     minWidth: 100,
@@ -169,22 +168,24 @@ export default function DynaHook(props) {
       <div className={classes.inputContainer}>
         <InputLabel className={classes.label}>{label}</InputLabel>
         <div className={classes.wrapper}>
-          <DynaText
-            key={id}
-            name={name}
-            label="Function"
-            InputLabelProps={{
-              shrink: true,
-            }}
-            className={classes.textField}
-            placeholder={placeholder}
-            disabled={disabled}
-            required={required}
-            error={!isValid}
-            value={value.function}
-            onFieldChange={handleFieldChange('function')}
-          />
+          <div className={classes.textField}>
+            <DynaText
+              key={id}
+              name={name}
+              label="Function"
+              InputLabelProps={{
+                shrink: true,
+              }}
+              placeholder={placeholder}
+              disabled={disabled}
+              required={required}
+              error={!isValid}
+              value={value.function}
+              onFieldChange={handleFieldChange('function')}
+            />
+          </div>
           {hookType === 'stack' && (
+            // Todo Azhar select field is small
             <FormControl className={classes.select}>
               <InputLabel htmlFor="stackId">Stack</InputLabel>
               <DynaSelect
