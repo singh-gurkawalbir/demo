@@ -41,6 +41,13 @@ const useStyles = makeStyles(theme => ({
     top: 5,
   },
 }));
+const determineRequiredResouces = resourceType => {
+  // if its exports or imports then we need associated connections to be loaded
+  if (resourceType === 'exports' || resourceType === 'imports')
+    return [resourceType, 'connections'].join(',');
+
+  return resourceType;
+};
 
 export default function Panel(props) {
   const { match, location, onClose, zIndex } = props;
@@ -182,6 +189,7 @@ export default function Panel(props) {
     ].includes(resourceType)
       ? 'Next'
       : 'Save';
+  const requiredResources = determineRequiredResouces(resourceType);
 
   return (
     <Fragment>
@@ -198,7 +206,7 @@ export default function Panel(props) {
             <Close />
           </IconButton>
         </div>
-        <LoadResources required resources="exports,imports">
+        <LoadResources required resources={requiredResources}>
           <ResourceForm
             className={classes.form}
             variant={match.isExact ? 'edit' : 'view'}

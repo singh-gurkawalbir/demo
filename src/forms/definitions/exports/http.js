@@ -88,10 +88,23 @@ export default {
           ],
         },
       ],
-      defaultValue: r =>
-        r && r.http && r.http.response && r.http.response.blobFormat
-          ? 'blob'
-          : 'records',
+      defaultDisabled: r => {
+        const isNew = isNewId(r._id);
+
+        if (!isNew) return true;
+
+        return false;
+      },
+      defaultValue: r => {
+        const isNew = isNewId(r._id);
+
+        // if its create
+        if (isNew) return 'records';
+
+        const output = r && r.type;
+
+        return output ? 'records' : 'blob';
+      },
     },
     'http.method': { fieldId: 'http.method' },
     'http.headers': { fieldId: 'http.headers' },
@@ -115,10 +128,9 @@ export default {
 
         // if its create
         if (isNew) return '';
-
         const output = r && r.type;
 
-        return output ? 'output' : 'all';
+        return output || 'all';
       },
       visibleWhen: [
         {

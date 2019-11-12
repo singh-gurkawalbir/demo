@@ -1338,7 +1338,7 @@ export default {
     visibleWhen: [
       {
         field: 'as2.partnerStationInfo.auth.type',
-        isNot: ['none'],
+        is: ['basic', 'token'],
       },
     ],
   },
@@ -1362,7 +1362,7 @@ export default {
     visibleWhen: [
       {
         field: 'as2.partnerStationInfo.auth.type',
-        isNot: ['none'],
+        is: ['basic', 'token'],
       },
     ],
   },
@@ -1373,7 +1373,7 @@ export default {
     visibleWhen: [
       {
         field: 'as2.partnerStationInfo.auth.type',
-        isNot: ['none'],
+        is: ['basic', 'token'],
       },
     ],
   },
