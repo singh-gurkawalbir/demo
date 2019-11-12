@@ -10,6 +10,7 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.background.default,
     height: '100%',
     overflowY: 'auto',
+    marginTop: theme.spacing(1),
   },
   input: {
     flex: '1 1 auto',
@@ -17,6 +18,7 @@ const useStyles = makeStyles(theme => ({
   },
   rowContainer: {
     display: 'flex',
+    marginBottom: 6,
   },
 }));
 

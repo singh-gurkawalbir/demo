@@ -25,6 +25,9 @@ const useStyles = makeStyles(theme => ({
   table: {
     minWidth: 700,
   },
+  checkFlow: {
+    paddingLeft: '30px',
+  },
   tablePaginationRoot: { float: 'left' },
 }));
 
@@ -104,7 +107,7 @@ function JobTable({
       <Table className={classes.table}>
         <TableHead>
           <TableRow>
-            <TableCell padding="checkbox">
+            <TableCell padding="checkbox" className={classes.checkFlow}>
               <Checkbox
                 disabled={jobsInCurrentPage.length === 0}
                 checked={isSelectAllChecked}

@@ -39,7 +39,7 @@ const mapStateToProps = (state, { resourceType, resourceId }) => {
 };
 
 const mapDispatchToProps = dispatch => ({
-  handleInitForm: (resourceType, resourceId, isNew) => {
+  handleInitForm: (resourceType, resourceId, isNew, flowId) => {
     const skipCommit =
       isNew &&
       [
@@ -51,7 +51,13 @@ const mapDispatchToProps = dispatch => ({
       ].includes(resourceType);
 
     dispatch(
-      actions.resourceForm.init(resourceType, resourceId, isNew, skipCommit)
+      actions.resourceForm.init(
+        resourceType,
+        resourceId,
+        isNew,
+        skipCommit,
+        flowId
+      )
     );
   },
 
@@ -92,12 +98,12 @@ export function ActionsFactory(props) {
   // When action button metadata isn't provided we infer the action buttons.
   if (resourceType === 'connections' && !isNew) {
     if (resourceConstants.OAUTH_APPLICATIONS.includes(connectionType)) {
-      actionButtons = ['cancel', 'oauth'];
+      actionButtons = ['oauth', 'cancel'];
     } else {
       actionButtons = ['test', 'cancel', 'testandsave'];
     }
   } else {
-    actionButtons = ['cancel', 'save'];
+    actionButtons = ['save', 'cancel'];
   }
 
   return (
@@ -122,14 +128,16 @@ export const ResourceFormFactory = props => {
     resourceId,
     isNew,
     lastPatchtimestamp,
+    flowId,
   } = props;
   const [count, setCount] = useState(0);
 
   useEffect(() => {
-    handleInitForm(resourceType, resourceId, isNew);
+    handleInitForm(resourceType, resourceId, isNew, flowId);
 
     return () => handleClearResourceForm(resourceType, resourceId);
   }, [
+    flowId,
     handleClearResourceForm,
     handleInitForm,
     isNew,

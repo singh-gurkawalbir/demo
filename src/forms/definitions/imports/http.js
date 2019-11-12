@@ -1,3 +1,5 @@
+import { isNewId } from '../../../utils/resource';
+
 export default {
   preSave: (formValues, resource) => {
     const retValues = { ...formValues };
@@ -192,6 +194,13 @@ export default {
           ],
         },
       ],
+      defaultDisabled: r => {
+        const isNew = isNewId(r._id);
+
+        if (!isNew) return true;
+
+        return false;
+      },
       defaultValue: r => (r && r.blobKeyPath ? 'blob' : 'records'),
     },
     'http.method': { fieldId: 'http.method' },

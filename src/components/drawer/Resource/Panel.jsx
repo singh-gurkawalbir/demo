@@ -1,13 +1,14 @@
 import { Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Route } from 'react-router-dom';
-import { makeStyles, Typography } from '@material-ui/core';
+import { makeStyles, Typography, IconButton } from '@material-ui/core';
 import LoadResources from '../../../components/LoadResources';
 import ResourceForm from '../../../components/ResourceFormFactory';
 import { MODEL_PLURAL_TO_LABEL } from '../../../utils/resource';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
+import Close from '../../../components/icons/CloseIcon';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -16,20 +17,28 @@ const useStyles = makeStyles(theme => ({
     borderColor: 'rgb(0,0,0,0.2)',
     borderLeft: 0,
     height: '100vh',
-    width: props => (props.match.isExact ? 450 : 150),
+    width: props => (props.match.isExact ? 660 : 150),
     overflowX: 'hidden',
     overflowY: props => (props.match.isExact ? 'auto' : 'hidden'),
-    padding: theme.spacing(2, 0, 0, 0),
     boxShadow: `-5px 0 8px rgba(0,0,0,0.2)`,
+    backgroundColor: theme.palette.background.default,
   },
   form: {
     height: `calc(100vh - 136px)`,
-    width: props => (props.match.isExact ? undefined : 400),
+    width: props => (props.match.isExact ? undefined : 660),
     maxHeight: 'unset',
-    marginTop: theme.spacing(1),
+    padding: '14px 24px',
   },
   title: {
-    padding: theme.spacing(0, 0, 0, 3),
+    display: 'flex',
+    justifyContent: 'space-between',
+    padding: '14px 24px',
+    background: theme.palette.background.paper,
+  },
+  closeButton: {
+    position: 'absolute',
+    right: theme.spacing(1),
+    top: 5,
   },
 }));
 const determineRequiredResouces = resourceType => {
@@ -178,9 +187,18 @@ export default function Panel(props) {
   return (
     <Fragment>
       <div className={classes.root}>
-        <Typography variant="h5" className={classes.title}>
-          {isNew ? `Create` : 'Edit'} {resourceLabel}
-        </Typography>
+        <div className={classes.title}>
+          <Typography variant="h3">
+            {isNew ? `Create` : 'Edit'} {resourceLabel}
+          </Typography>
+          <IconButton
+            data-test="closeFlowSchedule"
+            aria-label="Close"
+            className={classes.closeButton}
+            onClick={onClose}>
+            <Close />
+          </IconButton>
+        </div>
         <LoadResources required resources={requiredResources}>
           <ResourceForm
             className={classes.form}

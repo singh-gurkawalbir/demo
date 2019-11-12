@@ -106,7 +106,8 @@ const recycleBin = {
 const resource = {
   downloadFile: (id, resourceType) =>
     action(actionTypes.RESOURCE.DOWNLOAD_FILE, { resourceType, id }),
-  created: (id, tempId) => action(actionTypes.RESOURCE.CREATED, { id, tempId }),
+  created: (id, tempId, resourceType) =>
+    action(actionTypes.RESOURCE.CREATED, { id, tempId, resourceType }),
 
   request: (resourceType, id, message) =>
     action(actionTypes.RESOURCE.REQUEST, { resourceType, id, message }),
@@ -116,8 +117,13 @@ const resource = {
 
   received: (resourceType, resource) =>
     action(actionTypes.RESOURCE.RECEIVED, { resourceType, resource }),
-  updated: (resourceType, resourceId, patch) =>
-    action(actionTypes.RESOURCE.UPDATED, { resourceType, resourceId, patch }),
+  updated: (resourceType, resourceId, master, patch) =>
+    action(actionTypes.RESOURCE.UPDATED, {
+      resourceType,
+      resourceId,
+      master,
+      patch,
+    }),
   receivedCollection: (resourceType, collection) =>
     action(actionTypes.RESOURCE.RECEIVED_COLLECTION, {
       resourceType,
@@ -555,6 +561,53 @@ const ashare = {
   receivedCollection: ashares =>
     resource.receivedCollection('ashares', ashares),
 };
+const clone = {
+  requestPreview: (resourceType, resourceId) =>
+    action(actionTypes.CLONE.PREVIEW_REQUEST, { resourceType, resourceId }),
+  failedPreview: (resourceType, resourceId) =>
+    action(actionTypes.CLONE.FAILURE, { resourceType, resourceId }),
+  failedInstall: (resourceType, resourceId) =>
+    action(actionTypes.CLONE.INSTALL_FAILURE, { resourceType, resourceId }),
+  createComponents: (resourceType, resourceId) =>
+    action(actionTypes.CLONE.CREATE_COMPONENTS, { resourceType, resourceId }),
+  clearData: (resourceType, resourceId) =>
+    action(actionTypes.CLONE.CLEAR_DATA, { resourceType, resourceId }),
+  updateStep: (step, resourceType, resourceId) =>
+    action(actionTypes.CLONE.UPDATE_STEP, { step, resourceType, resourceId }),
+  verifyBundleOrPackageInstall: (step, connection, resourceType, resourceId) =>
+    action(actionTypes.CLONE.VERIFY_BUNDLE_INSTALL, {
+      step,
+      connection,
+      resourceType,
+      resourceId,
+    }),
+  createdComponents: (components, resourceType, resourceId) =>
+    action(actionTypes.CLONE.CREATED_COMPONENTS, {
+      components,
+      resourceType,
+      resourceId,
+    }),
+  installStepsReceived: (
+    installSteps,
+    connectionMap,
+    data,
+    resourceType,
+    resourceId
+  ) =>
+    action(actionTypes.CLONE.STEPS_RECEIVED, {
+      installSteps,
+      connectionMap,
+      data,
+      resourceType,
+      resourceId,
+    }),
+  receivedPreview: (components, resourceType, resourceId) =>
+    action(actionTypes.CLONE.RECEIVED_PREVIEW, {
+      components,
+      resourceType,
+      resourceId,
+    }),
+};
 const template = {
   generateZip: integrationId =>
     action(actionTypes.TEMPLATE.ZIP_GENERATE, { integrationId }),
@@ -809,20 +862,29 @@ const editor = {
 //
 // #region DynaForm Actions
 const resourceForm = {
-  init: (resourceType, resourceId, isNew, skipCommit) =>
+  init: (resourceType, resourceId, isNew, skipCommit, flowId) =>
     action(actionTypes.RESOURCE_FORM.INIT, {
       resourceType,
       resourceId,
       isNew,
       skipCommit,
+      flowId,
     }),
-  initComplete: (resourceType, resourceId, fieldMeta, isNew, skipCommit) =>
+  initComplete: (
+    resourceType,
+    resourceId,
+    fieldMeta,
+    isNew,
+    skipCommit,
+    flowId
+  ) =>
     action(actionTypes.RESOURCE_FORM.INIT_COMPLETE, {
       resourceId,
       resourceType,
       fieldMeta,
       isNew,
       skipCommit,
+      flowId,
     }),
   submit: (resourceType, resourceId, values, match, skipClose) =>
     action(actionTypes.RESOURCE_FORM.SUBMIT, {
@@ -992,6 +1054,7 @@ export default {
   flow,
   agent,
   template,
+  clone,
   file,
   assistantMetadata,
   stack,

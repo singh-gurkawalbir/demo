@@ -82,7 +82,11 @@ export default function Notifications(props) {
 
   return (
     <LoadResources required resources="notifications,flows,connections">
-      <DynaForm fieldMeta={fieldMeta} key={count} render>
+      <DynaForm
+        integrationId={integrationId}
+        fieldMeta={fieldMeta}
+        key={count}
+        render>
         <DynaSubmit onClick={handleSubmit}>Save</DynaSubmit>
       </DynaForm>
     </LoadResources>
