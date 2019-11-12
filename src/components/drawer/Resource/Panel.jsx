@@ -4,10 +4,7 @@ import { Route } from 'react-router-dom';
 import { makeStyles, Typography, IconButton } from '@material-ui/core';
 import LoadResources from '../../../components/LoadResources';
 import ResourceForm from '../../../components/ResourceFormFactory';
-import {
-  MODEL_PLURAL_TO_LABEL,
-  availableResources,
-} from '../../../utils/resource';
+import { MODEL_PLURAL_TO_LABEL } from '../../../utils/resource';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
@@ -44,7 +41,7 @@ const useStyles = makeStyles(theme => ({
     top: 5,
   },
 }));
-const determineRequiredResouces = type => {
+const determineRequiredResources = type => {
   const resourceType = [];
 
   // Handling virtual resources types Page processor and Page generators
@@ -196,7 +193,7 @@ export default function Panel(props) {
     ].includes(resourceType)
       ? 'Next'
       : 'Save';
-  const requiredResources = determineRequiredResouces(resourceType);
+  const requiredResources = determineRequiredResources(resourceType);
 
   return (
     <Fragment>
