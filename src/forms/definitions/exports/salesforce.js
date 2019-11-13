@@ -22,6 +22,8 @@ export default {
         retValues['/salesforce/objectType'];
     }
 
+    delete retValues['/outputMode'];
+
     return {
       ...retValues,
     };
@@ -60,9 +62,9 @@ export default {
         // if its create
         if (isNew) return 'records';
 
-        const output = r && r.type;
+        const output = r && r.salesforce && r.salesforce.id;
 
-        return output ? 'records' : 'blob';
+        return output ? 'blob' : 'records';
       },
     },
     'salesforce.soql.query': { fieldId: 'salesforce.soql.query' },
