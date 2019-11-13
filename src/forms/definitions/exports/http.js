@@ -18,6 +18,7 @@ export default {
       retValues['/http/paging/pathAfterFirstRequest'] = undefined;
       retValues['/http/paging/resourcePath'] = undefined;
       retValues['/http/paging/token'] = undefined;
+      retValues['/http/paging/body'] = undefined;
     } else if (retValues['/http/paging/method'] === 'url') {
       retValues['/http/paging/relativeURI'] = undefined;
       retValues['/http/paging/linkHeaderRelation'] = undefined;
@@ -28,6 +29,7 @@ export default {
       retValues['/http/paging/page'] = undefined;
       retValues['/http/paging/maxPagePath'] = undefined;
       retValues['/http/paging/maxCountPath'] = undefined;
+      retValues['/http/paging/body'] = undefined;
     } else if (retValues['/http/paging/method'] === 'relativeuri') {
       retValues['/http/paging/path'] = undefined;
       retValues['/http/paging/linkHeaderRelation'] = undefined;
@@ -38,6 +40,7 @@ export default {
       retValues['/http/paging/page'] = undefined;
       retValues['/http/paging/maxPagePath'] = undefined;
       retValues['/http/paging/maxCountPath'] = undefined;
+      retValues['/http/paging/body'] = undefined;
     } else if (retValues['/http/paging/method'] === 'linkheader') {
       retValues['/http/paging/path'] = undefined;
       retValues['/http/paging/relativeURI'] = undefined;
@@ -48,6 +51,7 @@ export default {
       retValues['/http/paging/page'] = undefined;
       retValues['/http/paging/maxPagePath'] = undefined;
       retValues['/http/paging/maxCountPath'] = undefined;
+      retValues['/http/paging/body'] = undefined;
     } else if (retValues['/http/paging/method'] === 'skip') {
       retValues['/http/paging/path'] = undefined;
       retValues['/http/paging/relativeURI'] = undefined;
@@ -56,9 +60,22 @@ export default {
       retValues['/http/paging/resourcePath'] = undefined;
       retValues['/http/paging/token'] = undefined;
       retValues['/http/paging/page'] = undefined;
+      retValues['/http/paging/body'] = undefined;
     } else if (retValues['/http/paging/method'] === 'token') {
       retValues['/http/paging/linkHeaderRelation'] = undefined;
       retValues['/http/paging/skip'] = undefined;
+      retValues['/http/paging/page'] = undefined;
+      retValues['/http/paging/maxPagePath'] = undefined;
+      retValues['/http/paging/maxCountPath'] = undefined;
+      retValues['/http/paging/body'] = undefined;
+    } else if (retValues['/http/paging/method'] === 'body') {
+      retValues['/http/paging/path'] = undefined;
+      retValues['/http/paging/relativeURI'] = undefined;
+      retValues['/http/paging/resourcePath'] = undefined;
+      retValues['/http/paging/token'] = undefined;
+      retValues['/http/paging/linkHeaderRelation'] = undefined;
+      retValues['/http/paging/skip'] = undefined;
+      retValues['/http/paging/pathAfterFirstRequest'] = undefined;
       retValues['/http/paging/page'] = undefined;
       retValues['/http/paging/maxPagePath'] = undefined;
       retValues['/http/paging/maxCountPath'] = undefined;
@@ -172,6 +189,7 @@ export default {
     'http.paging.page': { fieldId: 'http.paging.page' },
     'http.paging.token': { fieldId: 'http.paging.token' },
     'http.paging.path': { fieldId: 'http.paging.path' },
+    'http.paging.body': { fieldId: 'http.paging.body' },
     'http.paging.relativeURI': { fieldId: 'http.paging.relativeURI' },
     'http.paging.linkHeaderRelation': {
       fieldId: 'http.paging.linkHeaderRelation',
@@ -248,6 +266,7 @@ export default {
           'http.paging.relativeURI',
           'http.paging.linkHeaderRelation',
           'http.paging.pathAfterFirstRequest',
+          'http.paging.body',
           'http.paging.resourcePath',
           'http.paging.maxPagePath',
           'http.paging.maxCountPath',
