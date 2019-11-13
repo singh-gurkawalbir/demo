@@ -128,7 +128,6 @@ export default {
     type: 'text',
     label: 'Relative URI',
     required: true,
-    placeholder: 'Optional',
     visibleWhen: [
       {
         field: 'rest.method',
