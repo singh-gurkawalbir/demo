@@ -19,6 +19,7 @@ export default {
       startAdornment: 'https://',
       endAdornment: '.service-now.com',
       label: 'Enter subdomain into the base uri',
+      required: true,
       validWhen: {
         matchesRegEx: {
           pattern: '^[\\S]+$',

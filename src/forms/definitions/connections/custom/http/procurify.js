@@ -22,6 +22,7 @@ export default {
       endAdornment: '.procurify.com',
       type: 'text',
       label: 'Subdomain',
+      required: true,
       helpText:
         'Enter your Procurify subdomain. For example, in https://celigo.procurify.com/api "celigo" is the subdomain.',
       validWhen: {
