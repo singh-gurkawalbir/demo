@@ -42,12 +42,20 @@ export default {
         return subdomain;
       },
     },
-    'http.auth.basic.username': {
-      fieldId: 'http.auth.basic.username',
+    'http.unencrypted.username': {
+      id: 'http.unencrypted.username',
+      required: true,
+      type: 'text',
+      label: 'Username',
       helpText: 'Please enter the Username of your Procurify Account.',
     },
-    'http.auth.basic.password': {
-      fieldId: 'http.auth.basic.password',
+    'http.encrypted.password': {
+      id: 'http.encrypted.password',
+      required: true,
+      type: 'text',
+      defaultValue: '',
+      label: 'Password',
+      inputType: 'password',
       helpText:
         'Please enter password of your Procurify Account.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your user secret safe.',
       description:
@@ -57,10 +65,7 @@ export default {
       id: 'http.generateClientIdandSecret',
       type: 'tokengen',
       inputType: 'password',
-      disabledWhen: [
-        { field: 'http.auth.basic.username', is: [''] },
-        { field: 'http.auth.basic.password', is: [''] },
-      ],
+
       label: 'Generate Client Id &Secret',
       defaultValue: '',
       helpText:
@@ -76,14 +81,16 @@ export default {
     'http.encrypted.clientSecret': {
       id: 'http.encrypted.clientSecret',
       required: true,
-      type: 'text',
+      type: 'tokengen',
       defaultValue: '',
-      label: 'Client Secret',
       inputType: 'password',
+      label: 'Generate Client Id &Secret',
+      disabledWhen: [
+        { field: 'http.unencrypted.username', is: [''] },
+        { field: 'http.encrypted.password', is: [''] },
+      ],
       helpText:
-        'The client secret of your Procurify account.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your client secret safe.',
-      description:
-        'Note: for security reasons this field must always be re-entered.',
+        'Please click Generate "Client Id & Secret" button to get Client ID and Client Secret of your Procurify Account.',
     },
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
@@ -103,11 +110,10 @@ export default {
     fields: [
       'name',
       'http.procurifySubdomain',
-      'http.auth.basic.username',
-      'http.auth.basic.password',
-      'http.generateClientIdandSecret',
-      'http.unencrypted.clientId',
+      'http.unencrypted.username',
+      'http.encrypted.password',
       'http.encrypted.clientSecret',
+      'http.unencrypted.clientId',
       'http.auth.token.token',
     ],
     type: 'collapse',
