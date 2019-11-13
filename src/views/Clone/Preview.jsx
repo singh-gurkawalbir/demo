@@ -12,6 +12,7 @@ import templateUtil from '../../utils/template';
 import LoadResources from '../../components/LoadResources';
 import getRoutePath from '../../utils/routePaths';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
+import Spinner from '../../components/Spinner';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -133,7 +134,11 @@ export default function ClonePreview(props) {
   }, [createdComponents, dispatch, props.history, resourceId, resourceType]);
 
   if (!components || isEmpty(components)) {
-    return <Typography>Loading Clone Preview...</Typography>;
+    return (
+      <Typography>
+        Loading Clone Preview <Spinner />
+      </Typography>
+    );
   }
 
   const { objects = [] } = components;
