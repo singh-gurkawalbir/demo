@@ -145,17 +145,23 @@ export default {
     };
   },
   optionsHandler: (fieldId, fields) => {
-    if (fieldId === 'rest.body') {
+    if (fieldId === 'rest.body' || fieldId === 'rest.relativeURI') {
       const lookupField = fields.find(
         field => field.fieldId === 'rest.lookups'
       );
+      const nameField = fields.find(field => field.fieldId === 'name');
 
-      if (lookupField) {
-        return {
-          lookupId: 'rest.lookups',
-          lookups: lookupField && lookupField.value,
-        };
-      }
+      return {
+        resourceName: nameField && nameField.value,
+        lookups: {
+          fieldId: 'rest.lookups',
+          data:
+            (lookupField &&
+              Array.isArray(lookupField.value) &&
+              lookupField.value) ||
+            [],
+        },
+      };
     }
 
     return null;
