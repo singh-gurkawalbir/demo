@@ -1,9 +1,9 @@
 import { Fragment, useState } from 'react';
-import infoText from '../../views/ResourceList/infoText';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import GenerateZip from '../../components/GenerateZip';
-import UploadFile from '../../components/InstallIntegration/UploadFile';
+import UploadFile from '../../views/InstallIntegration/UploadFile';
 import RadioGroup from '../../components/DynaForm/fields/DynaRadioGroup';
+import { TEMPLATE_GENERATE_OR_INSTALL_HELPINFO } from '../../utils/constants';
 
 export default function GenerateOrInstall(props) {
   const { history } = props;
@@ -27,7 +27,7 @@ export default function GenerateOrInstall(props) {
     <Fragment>
       <CeligoPageBar
         title="Templates"
-        infoText={infoText.templateGenerateOrInstall}
+        infoText={TEMPLATE_GENERATE_OR_INSTALL_HELPINFO}
       />
       <RadioGroup
         {...props}
