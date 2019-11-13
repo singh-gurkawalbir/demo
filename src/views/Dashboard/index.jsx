@@ -1,6 +1,7 @@
 import { useEffect, useState, Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
+import shortid from 'shortid';
 import { makeStyles } from '@material-ui/core/styles';
 import { difference } from 'lodash';
 import * as selectors from '../../reducers';
@@ -12,6 +13,7 @@ import { sortTiles } from './util';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import IconTextButton from '../../components/IconTextButton';
 import ResourceDrawer from '../../components/drawer/Resource';
+import AddIcon from '../../components/icons/AddIcon';
 // TODO Azhar
 import DataLoaderIcon from '../../components/icons/DataLoaderIcon';
 import getRoutePath from '../../utils/routePaths';
@@ -35,6 +37,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function Dashboard(props) {
+  const { location } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
   const preferences = useSelector(state => selectors.userPreferences(state));
@@ -86,6 +89,15 @@ function Dashboard(props) {
     <Fragment>
       <ResourceDrawer {...props} />
       <CeligoPageBar title="My integrations">
+        <IconTextButton
+          data-test="newIntegration"
+          component={Link}
+          to={`${location.pathname}/add/integrations/new-${shortid.generate()}`}
+          variant="text"
+          color="primary">
+          <AddIcon />
+          Create integration
+        </IconTextButton>
         <IconTextButton
           data-test="installZip"
           component={Link}

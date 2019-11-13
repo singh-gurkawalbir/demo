@@ -11,6 +11,7 @@ import pageProcessor from './pageProcessor';
 import pageGenerator from './pageGenerator';
 import accesstokens from './accesstokens';
 import connectorLicenses from './connectorLicenses';
+import integrations from './integrations';
 
 export default {
   default: defaultMeta,
@@ -26,4 +27,5 @@ export default {
   pageGenerator,
   accesstokens,
   connectorLicenses,
+  integrations,
 };
