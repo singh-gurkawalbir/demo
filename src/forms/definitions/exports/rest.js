@@ -67,7 +67,10 @@ export default {
     if (
       fieldId === 'rest.once.relativeURI' ||
       fieldId === 'dataURITemplate' ||
-      fieldId === 'rest.relativeURI'
+      fieldId === 'rest.relativeURI' ||
+      fieldId === 'rest.once.postBody' ||
+      fieldId === 'rest.postBody' ||
+      fieldId === 'rest.pagingPostBody'
     ) {
       const nameField = fields.find(field => field.fieldId === 'name');
 
