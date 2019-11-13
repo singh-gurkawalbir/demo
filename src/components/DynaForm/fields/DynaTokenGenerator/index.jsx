@@ -11,9 +11,9 @@ const mapStateToProps = (state, { resourceId }) => ({
   connectionToken: selectors.connectionTokens(state, resourceId),
 });
 const mapDispatchToProps = dispatch => ({
-  handleRequestToken: (resourceId, filedId) => values => {
+  handleRequestToken: (resourceId, fieldId) => values => {
     dispatch(
-      actions.resource.connections.requestToken(resourceId, filedId, values)
+      actions.resource.connections.requestToken(resourceId, fieldId, values)
     );
   },
   handleClearToken: resourceId =>
