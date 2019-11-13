@@ -35,6 +35,11 @@ export default {
       newValues['/assistant'] = app.assistant;
     }
 
+    // On creation of a new page processor lookup,  isLookup is set true
+    if (isNew && resourceType === 'exports') {
+      newValues['/isLookup'] = true;
+    }
+
     // console.log('presave values', newValues);
 
     return newValues;
@@ -215,6 +220,10 @@ export default {
       expression.push({
         adaptorType: `${adaptorTypePrefix}${adaptorTypeSuffix}`,
       });
+
+      if (fieldId === 'exportId') {
+        expression.push({ isLookup: true });
+      }
 
       if (app.assistant) {
         expression.push({ assistant: app.assistant });

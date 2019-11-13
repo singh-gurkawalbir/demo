@@ -24,7 +24,7 @@ import itemTypes from './itemTypes';
 import RunIcon from '../../components/icons/RunIcon';
 import SettingsIcon from '../../components/icons/SettingsIcon';
 import CalendarIcon from '../../components/icons/CalendarIcon';
-import EditableText from './EditableText';
+import EditableText from '../../components/EditableText';
 import SwitchOnOff from '../../components/OnOff';
 
 // #region FLOW SCHEMA: FOR REFERENCE DELETE ONCE FB IS COMPLETE
@@ -417,7 +417,7 @@ function FlowBuilder(props) {
 
   return (
     <LoadResources required resources="flows, imports, exports">
-      <ResourceDrawer {...props} />
+      <ResourceDrawer {...props} flowId={flowId} />
       <RunDrawer {...props} flowId={flowId} />
       <ScheduleDrawer {...props} flow={flow} />
       <SettingsDrawer {...props} flow={flow} />
@@ -430,9 +430,14 @@ function FlowBuilder(props) {
         subtitle={`Last saved: ${isNewFlow ? 'Never' : flow.lastModified}`}
         infoText={flow.description}>
         <div className={classes.actions}>
-          <SwitchOnOff.component resource={flow} disabled={isNewFlow} />
+          <SwitchOnOff.component
+            resource={flow}
+            disabled={isNewFlow}
+            data-test="switchFlowOnOff"
+          />
           <IconButton
             disabled={isNewFlow || !(flow && flow.isRunnable)}
+            data-test="runFlow"
             onClick={() => {
               dispatch(actions.flow.run({ flowId }));
             }}>
@@ -440,12 +445,14 @@ function FlowBuilder(props) {
           </IconButton>
           <IconButton
             disabled={isNewFlow && !(flow && flow.showScheduleIcon)}
+            data-test="scheduleFlow"
             onClick={() => handleDrawerOpen('schedule')}>
             <CalendarIcon />
           </IconButton>
           <IconButton
             disabled={isNewFlow}
-            onClick={() => handleDrawerOpen('settings')}>
+            onClick={() => handleDrawerOpen('settings')}
+            data-test="flowSettings">
             <SettingsIcon />
           </IconButton>
         </div>

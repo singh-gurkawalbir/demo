@@ -2,7 +2,7 @@ export default {
   preSave: formValues => ({
     ...formValues,
     '/type': 'http',
-    '/assistant': 'google',
+    '/assistant': 'googleanalytics',
     '/http/auth/type': 'oauth',
     '/http/mediaType': 'json',
     '/http/baseURI': 'https://www.googleapis.com/analytics/',

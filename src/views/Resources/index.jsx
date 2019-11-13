@@ -27,14 +27,12 @@ export const availableResources = [
 const mapStateToProps = state => {
   const filterName = 'allResources';
   const filter = selectors.filter(state, filterName);
-  const userPreferences = selectors.userPreferences(state);
   const allResources = availableResources.map(resourceType => {
     const resourceFilter = selectors.filter(state, resourceType);
     const resources = selectors.resourceList(state, {
       type: resourceType,
       take: resourceFilter.take || 3,
       keyword: filter.keyword,
-      sandbox: userPreferences.environment === 'sandbox',
     });
 
     return resources;
@@ -76,6 +74,9 @@ const mapStateToProps = state => {
   paper: {
     padding: theme.spacing(2),
   },
+  search: {
+    marginTop: theme.spacing(1),
+  },
 }))
 class Resources extends Component {
   render() {
@@ -102,7 +103,9 @@ class Resources extends Component {
               paper: classes.drawerPaper,
             }}>
             <Typography variant="h5">Available Resources</Typography>
-            <SearchOptions />
+            <div className={classes.search}>
+              <SearchOptions />
+            </div>
             {allResources.map(r => (
               <Route
                 key={`${r.type}-section`}

@@ -132,6 +132,38 @@ export function resourceFormSaveProcessTerminated(
   );
 }
 
+export function clonePreview(state, resourceType, resourceId) {
+  return fromSession.clonePreview(
+    state && state.session,
+    resourceType,
+    resourceId
+  );
+}
+
+export function cloneData(state, resourceType, resourceId) {
+  return fromSession.cloneData(
+    state && state.session,
+    resourceType,
+    resourceId
+  );
+}
+
+export function cloneInstallSteps(state, resourceType, resourceId) {
+  const cloneInstallSteps = fromSession.cloneInstallSteps(
+    state && state.session,
+    resourceType,
+    resourceId
+  );
+
+  return produce(cloneInstallSteps, draft => {
+    const unCompletedStep = draft.find(s => !s.completed);
+
+    if (unCompletedStep) {
+      unCompletedStep.isCurrentStep = true;
+    }
+  });
+}
+
 export function previewTemplate(state, templateId) {
   return fromSession.previewTemplate(state && state.session, templateId);
 }
@@ -540,13 +572,25 @@ export function resource(state, resourceType, id) {
   return fromData.resource(state && state.data, resourceType, id);
 }
 
-export function resourceList(state, options) {
+export function resourceList(state, options = {}) {
+  if (
+    !options.ignoreEnvironmentFilter &&
+    !['accesstokens', 'agents', 'iclients', 'scripts', 'stacks'].includes(
+      /* These resources are common for both production & sandbox environments. */
+      options.type
+    )
+  ) {
+    const preferences = userPreferences(state);
+
+    // eslint-disable-next-line no-param-reassign
+    options.sandbox = preferences.environment === 'sandbox';
+  }
+
   return fromData.resourceList(state && state.data, options);
 }
 
 export function flowListWithMetadata(state, options) {
-  const flows =
-    fromData.resourceList(state && state.data, options).resources || [];
+  const flows = resourceList(state, options).resources || [];
 
   flows.forEach((f, i) => {
     const _exportId =
@@ -554,7 +598,7 @@ export function flowListWithMetadata(state, options) {
         ? f.pageGenerators[0]._exportId
         : f._exportId;
     const exp = resource(state, 'exports', _exportId);
-    const exports = fromData.resourceList(state && state.data, {
+    const exports = resourceList(state, {
       resourceType: 'exports',
     }).resources;
 
@@ -579,18 +623,18 @@ export function flowListWithMetadata(state, options) {
 }
 
 export function resourceListWithPermissions(state, options) {
-  const resourceList = fromData.resourceList(state && state.data, options);
+  const list = resourceList(state, options);
   // eslint-disable-next-line no-use-before-define
   const permissions = userPermissions(state);
 
-  resourceList.resources = resourceList.resources.map(r => {
+  list.resources = list.resources.map(r => {
     // eslint-disable-next-line no-param-reassign
     r.permissions = deepClone(permissions);
 
     return r;
   });
 
-  return resourceList;
+  return list;
 }
 
 export function resourcesByIds(state, resourceType, resourceIds) {
@@ -602,15 +646,10 @@ export function resourcesByIds(state, resourceType, resourceIds) {
 }
 
 export function matchingConnectionList(state, connection = {}) {
-  const preferences = userPreferences(state);
   const { resources = [] } = resourceList(state, {
     type: 'connections',
     filter: {
       $where() {
-        if (!!this.sandbox !== (preferences.environment === 'sandbox')) {
-          return false;
-        }
-
         if (connection.assistant) {
           return this.assistant === connection.assistant && !this._connectorId;
         }
@@ -756,6 +795,10 @@ export function integrationAppSettingsFormState(state, integrationId, flowId) {
     integrationId,
     flowId
   );
+}
+
+export function integrationAppAddOnState(state, integrationId) {
+  return fromSession.integrationAppAddOnState(state.session, integrationId);
 }
 
 export function checkUpgradeRequested(state, licenseId) {
@@ -974,10 +1017,8 @@ export function integrationAppFlowSettings(state, id, section, storeId) {
     f => !!f.settings || !!f.sections
   );
   const { fields, sections: subSections } = selectedSection;
-  const preferences = userPreferences(state);
   let flows = flowListWithMetadata(state, {
     type: 'flows',
-    sandbox: preferences.environment === 'sandbox',
     filter: {
       _integrationId: id,
     },
@@ -1179,6 +1220,24 @@ export function resourcePermissions(state, resourceType, resourceId) {
   return {};
 }
 
+export function isFormAMonitorLevelAccess(state, integrationId) {
+  const { accessLevel } = userPermissions(state);
+
+  // if all forms is monitor level
+  if (accessLevel === 'monitor') return true;
+
+  // check integration level is monitor level
+  const { accessLevel: accessLevelIntegration } = resourcePermissions(
+    state,
+    'integrations',
+    integrationId
+  );
+
+  if (accessLevelIntegration === 'monitor') return true;
+
+  return false;
+}
+
 export function publishedConnectors(state) {
   const ioConnectors = resourceList(state, {
     type: 'published',
@@ -1256,7 +1315,6 @@ export function suiteScriptLinkedConnections(state) {
   const preferences = userPreferences(state);
   const connections = resourceList(state, {
     type: 'connections',
-    sandbox: preferences.environment === 'sandbox',
   }).resources;
   const linkedConnections = [];
   let connection;
@@ -1382,10 +1440,8 @@ export function suiteScriptLinkedTiles(state) {
 }
 
 export function tiles(state) {
-  const preferences = userPreferences(state);
   const tiles = resourceList(state, {
     type: 'tiles',
-    sandbox: preferences.environment === 'sandbox',
   }).resources;
   let integrations = [];
 
@@ -1552,10 +1608,8 @@ export function resourceStatus(
 export function flowMetadata(state, id, scope) {
   if (!state || !id) return {};
 
-  const preferences = userPreferences(state);
   const flows = flowListWithMetadata(state, {
     type: 'flows',
-    sandbox: preferences.environment === 'sandbox',
     filter: {
       _id: id,
     },
@@ -1918,7 +1972,7 @@ export function accessTokenList(
   state,
   { integrationId, take, keyword, sort, sandbox }
 ) {
-  const tokensList = fromData.resourceList(state.data, {
+  const tokensList = resourceList(state, {
     type: 'accesstokens',
     keyword,
     sort,

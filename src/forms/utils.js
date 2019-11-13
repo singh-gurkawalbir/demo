@@ -401,6 +401,8 @@ export const integrationSettingsToDynaFormMetadata = (
   isGeneral
 ) => {
   const finalData = {};
+
+  if (!meta || (!meta.fields && !meta.sections)) return null;
   const { fields, sections } = meta;
 
   if (fields) {
@@ -437,7 +439,8 @@ export const integrationSettingsToDynaFormMetadata = (
     }));
   }
 
-  finalData.fieldMap = translateDependencyProps(finalData.fieldMap);
+  if (finalData.fieldMap)
+    finalData.fieldMap = translateDependencyProps(finalData.fieldMap);
 
   // Wrap everything in a adavancedSettings container
   if (!isGeneral) {

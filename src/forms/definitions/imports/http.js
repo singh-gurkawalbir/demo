@@ -1,3 +1,5 @@
+import { isNewId } from '../../../utils/resource';
+
 export default {
   preSave: (formValues, resource) => {
     const retValues = { ...formValues };
@@ -143,7 +145,28 @@ export default {
           // passing lookupId fieldId and data since we will be modifying lookups
           //  from 'Manage lookups' option inside 'Build Http request Body Editor'
           fieldId: lookupField.fieldId,
-          data: lookupField && lookupField.value,
+          data:
+            (lookupField &&
+              Array.isArray(lookupField.value) &&
+              lookupField.value) ||
+            [],
+        },
+      };
+    }
+
+    if (fieldId === 'http.relativeURI') {
+      const lookupField = fields.find(
+        field => field.fieldId === 'http.lookups'
+      );
+
+      return {
+        lookups: {
+          fieldId: 'http.lookups',
+          data:
+            (lookupField &&
+              Array.isArray(lookupField.value) &&
+              lookupField.value) ||
+            [],
         },
       };
     }
@@ -158,7 +181,7 @@ export default {
       type: 'labeltitle',
       label: 'How would you like the data imported?',
     },
-    // dataMappings: { formId: 'dataMappings' },
+    dataMappings: { formId: 'dataMappings' },
     inputMode: {
       id: 'inputMode',
       type: 'radiogroup',
@@ -171,6 +194,13 @@ export default {
           ],
         },
       ],
+      defaultDisabled: r => {
+        const isNew = isNewId(r._id);
+
+        if (!isNew) return true;
+
+        return false;
+      },
       defaultValue: r => (r && r.blobKeyPath ? 'blob' : 'records'),
     },
     'http.method': { fieldId: 'http.method' },
@@ -718,7 +748,7 @@ export default {
       'common',
       'inputMode',
       'importData',
-      // 'dataMappings',
+      'dataMappings',
       'blobKeyPath',
       'http.method',
       'http.blobMethod',

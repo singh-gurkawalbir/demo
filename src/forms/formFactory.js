@@ -144,7 +144,8 @@ const getResourceFormAssets = ({
         }
         // get edit form meta branch
         else if (type === 'netsuite') {
-          meta = meta.netsuite[resource.netsuite.type];
+          if (resource.type === 'blob') meta = meta.netsuite.blob;
+          else meta = meta.netsuite[resource.netsuite.type];
         } else if (['mysql', 'postgresql', 'mssql'].indexOf(type) !== -1) {
           meta = meta.rdbms;
         } else if (resource && resource.assistant) {
@@ -174,6 +175,8 @@ const getResourceFormAssets = ({
     case 'stacks':
     case 'templates':
     case 'connectors':
+    case 'iClients':
+    case 'asyncHelpers':
     case 'pageProcessor':
     case 'pageGenerator':
       meta = formMeta[resourceType];
@@ -314,11 +317,16 @@ const flattenedFieldMap = (
   fieldMap,
   resourceType,
   resource,
-  ignoreFunctionTransformations,
-  developerMode,
-  resObjectRefs = {},
-  resFields = []
+  opts = {}
 ) => {
+  const {
+    ignoreFunctionTransformations,
+    developerMode,
+    flowId,
+    resObjectRefs = {},
+    resFields = [],
+  } = opts;
+
   fields &&
     fields.forEach(fieldReferenceName => {
       const f = fieldMap[fieldReferenceName];
@@ -336,9 +344,12 @@ const flattenedFieldMap = (
           subformFieldMap,
           resourceType,
           resource,
-          ignoreFunctionTransformations,
-          developerMode,
-          resObjectRefs
+          {
+            ignoreFunctionTransformations,
+            developerMode,
+            flowId,
+            resObjectRefs,
+          }
         );
       }
 
@@ -348,6 +359,7 @@ const flattenedFieldMap = (
       const merged = {
         resourceId: resource._id,
         resourceType,
+        flowId,
         ...masterFields,
         ...f,
       };
@@ -382,8 +394,7 @@ const setDefaultsToLayout = (
   fieldMap,
   resourceType,
   resource,
-  ignoreFunctionTransformations,
-  developerMode
+  opts = {}
 ) => {
   const { fields, containers, ...rest } = layout;
 
@@ -392,14 +403,7 @@ const setDefaultsToLayout = (
   const {
     fields: transformedFields,
     fieldMap: transformedFieldRef,
-  } = flattenedFieldMap(
-    fields,
-    fieldMap,
-    resourceType,
-    resource,
-    ignoreFunctionTransformations,
-    developerMode
-  );
+  } = flattenedFieldMap(fields, fieldMap, resourceType, resource, opts);
   let transformedFieldRefs = transformedFieldRef;
   const transformedContainers =
     containers &&
@@ -412,8 +416,7 @@ const setDefaultsToLayout = (
         fieldMap,
         resourceType,
         resource,
-        ignoreFunctionTransformations,
-        developerMode
+        opts
       );
       const { fields, containers } = transformedLayoutRes;
 
@@ -443,8 +446,7 @@ const getFieldsWithDefaults = (
   fieldMeta,
   resourceType,
   resource,
-  ignoreFunctionTransformations = false,
-  developerMode = false
+  opts = {}
 ) => {
   const { layout, fieldMap, actions } = fieldMeta;
 
@@ -461,8 +463,7 @@ const getFieldsWithDefaults = (
     fieldMap,
     resourceType,
     resource,
-    ignoreFunctionTransformations,
-    developerMode
+    opts
   );
 
   return {
@@ -473,12 +474,9 @@ const getFieldsWithDefaults = (
 };
 
 const getFieldsWithoutFuncs = (meta, resource, resourceType) => {
-  const transformedMeta = getFieldsWithDefaults(
-    meta,
-    resourceType,
-    resource,
-    true
-  );
+  const transformedMeta = getFieldsWithDefaults(meta, resourceType, resource, {
+    ignoreFunctionTransformations: true,
+  });
   const { fieldMap: transformedFieldMap } = transformedMeta;
   const extractedInitFunctions = Object.keys(transformedFieldMap)
     .map(key => {

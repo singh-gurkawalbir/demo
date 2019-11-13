@@ -1,3 +1,5 @@
+import { isNewId } from '../../../utils/resource';
+
 export default {
   preSave: (formValues, resource) => {
     const retValues = { ...formValues };
@@ -177,6 +179,13 @@ export default {
           ],
         },
       ],
+      defaultDisabled: r => {
+        const isNew = isNewId(r._id);
+
+        if (!isNew) return true;
+
+        return false;
+      },
       defaultValue: r => (r && r.blobKeyPath ? 'blob' : 'records'),
     },
     'rest.method': { fieldId: 'rest.method' },
@@ -708,9 +717,9 @@ export default {
       ],
     },
     sampleData: { fieldId: 'sampleData' },
-    // dataMappings: {
-    //   formId: 'dataMappings',
-    // },
+    dataMappings: {
+      formId: 'dataMappings',
+    },
     advancedSettings: {
       formId: 'advancedSettings',
       visibleWhenAll: [
@@ -765,7 +774,7 @@ export default {
       'rest.existingDataId',
       'sampleDataTitle',
       'sampleData',
-      // 'dataMappings',
+      'dataMappings',
     ],
     type: 'collapse',
     containers: [

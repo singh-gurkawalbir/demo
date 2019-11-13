@@ -1,4 +1,5 @@
 import timeStamps from '../../../utils/timeStamps';
+import { isNewId } from '../../../utils/resource';
 
 export default {
   init: fieldMeta => {
@@ -107,6 +108,13 @@ export default {
           ],
         },
       ],
+      defaultDisabled: r => {
+        const isNew = isNewId(r._id);
+
+        if (!isNew) return true;
+
+        return false;
+      },
       defaultValue: r => (r && r.blobKeyPath ? 'blob' : 'records'),
     },
     's3.region': { fieldId: 's3.region' },
