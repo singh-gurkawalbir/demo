@@ -26,13 +26,13 @@ function OAuthButton(props) {
     dispatch(actions.resource.connections.authorized(_connectionId));
   };
 
-  const formState = useSelector(state =>
-    selectors.resourceFormState(state, resourceType, resourceId)
+  const saveTerminated = useSelector(state =>
+    selectors.resourceFormSaveProcessTerminated(state, resourceType, resourceId)
   );
 
   useEffect(() => {
-    if (formState.submitComplete) setDisableSave(false);
-  }, [formState.submitComplete]);
+    if (saveTerminated) setDisableSave(false);
+  }, [saveTerminated]);
 
   return (
     <DynaAction

@@ -11,9 +11,12 @@ import LoadResources from '../../components/LoadResources';
 import actions from '../../actions';
 import { sortTiles } from './util';
 import CeligoPageBar from '../../components/CeligoPageBar';
+import IconTextButton from '../../components/IconTextButton';
 import ResourceDrawer from '../../components/drawer/Resource';
 import AddIcon from '../../components/icons/AddIcon';
-import IconTextButton from '../../components/IconTextButton';
+// TODO Azhar
+import DataLoaderIcon from '../../components/icons/DataLoaderIcon';
+import getRoutePath from '../../utils/routePaths';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -94,6 +97,14 @@ function Dashboard(props) {
           color="primary">
           <AddIcon />
           Create integration
+        </IconTextButton>
+        <IconTextButton
+          data-test="installZip"
+          component={Link}
+          to={getRoutePath('/templates/generate-or-install')}
+          variant="text">
+          <DataLoaderIcon />
+          Install Zip
         </IconTextButton>
       </CeligoPageBar>
       <LoadResources required resources="published,integrations,connections">

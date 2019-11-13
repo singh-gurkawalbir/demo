@@ -29,6 +29,7 @@ export default {
       startAdornment: 'https://',
       endAdornment: '/rest',
       label: 'Subdomain',
+      required: true,
       helpText:
         "Please enter your Marketo subdomain. For example, in https://591-vse-736.mktohttp.com/http/v1/activities/types.json '591-vse-736.mktohttp.com' is the subdomain.",
       validWhen: {
