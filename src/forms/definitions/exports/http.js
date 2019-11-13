@@ -10,6 +10,12 @@ export default {
       retValues['/test/limit'] = 1;
     }
 
+    if (retValues['/outputMode'] === 'blob') {
+      retValues['/type'] = 'blob';
+    }
+
+    delete retValues['/outputMode'];
+
     if (retValues['/http/paging/method'] === 'page') {
       retValues['/http/paging/path'] = undefined;
       retValues['/http/paging/relativeURI'] = undefined;
@@ -117,10 +123,11 @@ export default {
 
         // if its create
         if (isNew) return 'records';
-
         const output = r && r.type;
 
-        return output ? 'records' : 'blob';
+        if (output === 'blob') return 'blob';
+
+        return 'records';
       },
     },
     'http.method': { fieldId: 'http.method' },

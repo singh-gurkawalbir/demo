@@ -10,6 +10,12 @@ export default {
       retValues['/test/limit'] = 1;
     }
 
+    if (retValues['/outputMode'] === 'blob') {
+      retValues['/type'] = 'blob';
+    }
+
+    delete retValues['/outputMode'];
+
     if (retValues['/rest/pagingMethod'] === 'pageargument') {
       retValues['/rest/nextPageRelativeURI'] = undefined;
       retValues['/rest/nextPagePath'] = undefined;
@@ -98,7 +104,9 @@ export default {
 
         const output = r && r.type;
 
-        return output ? 'records' : 'blob';
+        if (output === 'blob') return 'blob';
+
+        return 'records';
       },
     },
     'rest.method': {
