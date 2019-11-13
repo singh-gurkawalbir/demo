@@ -239,6 +239,7 @@ function AppBlock({
               <ActionIconButton
                 className={classes.addButton}
                 onClick={handleExpandClick}
+                data-test="addDataProcessor"
                 helpText="Add data processor">
                 <AddIcon />
               </ActionIconButton>

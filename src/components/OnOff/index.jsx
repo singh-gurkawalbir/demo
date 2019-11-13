@@ -66,6 +66,7 @@ export default {
         disabled={disabled}
         on={!disabled && !flow.disabled}
         onClick={enableOrDisableFlow}
+        data-test="switchFlowOnOff"
       />
     );
   },

@@ -72,7 +72,7 @@ function Transformation(props) {
 
 export default {
   // used to create data-test attribute and component key. Should be unique across FB actions.
-  name: 'importTransformation',
+  name: 'lookupTransformation',
   position: 'middle',
   Icon,
   helpText: helpTextMap['fb.pp.exports.transform'],
