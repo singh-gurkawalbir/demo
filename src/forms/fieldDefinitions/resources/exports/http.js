@@ -39,6 +39,7 @@ export default {
   'http.relativeURI': {
     type: 'relativeuri',
     label: 'Relative URI',
+    connectionId: r => r && r._connectionId,
     requiredWhen: [
       {
         field: 'outputMode',
@@ -63,7 +64,7 @@ export default {
   },
   'http.body': {
     type: 'httprequestbody',
-    useSampleDataAsArray: true,
+    connectionId: r => r && r._connectionId,
     label: 'Build HTTP Request Body',
   },
   'http.headers': {
@@ -348,6 +349,7 @@ export default {
   'http.once.relativeURI': {
     type: 'relativeuri',
     label: 'Relative URI',
+    connectionId: r => r && r._connectionId,
     visibleWhenAll: [
       {
         field: 'outputMode',
@@ -359,6 +361,7 @@ export default {
   'http.once.body': {
     type: 'httprequestbody',
     useSampleDataAsArray: true,
+    connectionId: r => r && r._connectionId,
     label: 'Build HTTP Request Body',
     visibleWhenAll: [
       {

@@ -6,6 +6,7 @@ import OpenInNewIcon from 'mdi-react/OpenInNewIcon';
 import * as selectors from '../../../../reducers';
 import UrlEditorDialog from '../../../../components/AFE/UrlEditor/Dialog';
 import InputWithLookupHandlebars from './InputWithLookupHandlebars';
+import getFormattedSampleData from '../../../../utils/sampleData';
 
 const useStyles = makeStyles(theme => ({
   textField: {
@@ -46,10 +47,31 @@ export default function DynaRelativeURIWithLookup(props) {
     value,
     label,
     options,
+    resourceId,
+    useSampleDataAsArray,
+    resourceType,
+    flowId,
   } = props;
-  const { fieldId: lookupFieldId, data: lookupData } = options.lookups;
+  const { resourceName, lookups } = options;
+  const { fieldId: lookupFieldId, data: lookupData } = lookups;
   const connection = useSelector(state =>
     selectors.resource(state, 'connections', connectionId)
+  );
+  const sampleData = useSelector(state =>
+    selectors.getSampleData(state, flowId, resourceId, 'flowInput', {
+      isImport: resourceType === 'imports',
+    })
+  );
+  const formattedSampleData = JSON.stringify(
+    getFormattedSampleData({
+      connection,
+      sampleData,
+      useSampleDataAsArray,
+      resourceType,
+      resourceName,
+    }),
+    null,
+    2
   );
   const handleEditorClick = () => {
     setShowEditor(!showEditor);
@@ -73,21 +95,6 @@ export default function DynaRelativeURIWithLookup(props) {
     onFieldChange(id, val);
   };
 
-  const getSampleData = () => {
-    if (!connection) return '{}';
-
-    return JSON.stringify(
-      {
-        connection: {
-          _id: connection._id,
-          name: connection.name,
-        },
-      },
-      null,
-      2
-    );
-  };
-
   let description = '';
   const { type } = connection || {};
 
@@ -95,13 +102,15 @@ export default function DynaRelativeURIWithLookup(props) {
     description = `Relative to: ${connection[type].baseURI}`;
   }
 
+  // console.log('id, resourceName', id, resourceName);
+
   return (
     <Fragment>
       {showEditor && (
         <UrlEditorDialog
           title="Relative URI Editor"
           id={id}
-          data={getSampleData()}
+          data={formattedSampleData}
           rule={value}
           onClose={handleClose}
         />

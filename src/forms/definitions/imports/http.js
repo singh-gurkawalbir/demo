@@ -128,7 +128,11 @@ export default {
     };
   },
   optionsHandler: (fieldId, fields) => {
-    if (fieldId === 'http.body') {
+    if (
+      fieldId === 'http.body' ||
+      fieldId === 'http.bodyCreate' ||
+      fieldId === 'http.bodyUpdate'
+    ) {
       const lookupField = fields.find(
         field => field.fieldId === 'http.lookups'
       );
@@ -138,17 +142,12 @@ export default {
       const nameField = fields.find(field => field.fieldId === 'name');
 
       return {
-        // we are saving http body in an array. Put correspond to 0th Index,
-        // Post correspond to 1st index.
-        // We will have 'Build HTTP Request Body for Create' and
-        // 'Build HTTP Request Body for Update' in case user selects Composite Type as 'Create new Data and Update existing data'
-        saveIndex: 0,
         resourceName: nameField && nameField.value,
         contentType: requestMediaTypeField.value,
         lookups: {
           // passing lookupId fieldId and data since we will be modifying lookups
           //  from 'Manage lookups' option inside 'Build Http request Body Editor'
-          fieldId: lookupField.fieldId,
+          fieldId: 'http.lookups',
           data:
             (lookupField &&
               Array.isArray(lookupField.value) &&
@@ -158,12 +157,18 @@ export default {
       };
     }
 
-    if (fieldId === 'http.relativeURI') {
+    if (
+      fieldId === 'http.relativeURI' ||
+      fieldId === 'http.relativeURIUpdate' ||
+      fieldId === 'http.relativeURICreate'
+    ) {
       const lookupField = fields.find(
         field => field.fieldId === 'http.lookups'
       );
+      const nameField = fields.find(field => field.fieldId === 'name');
 
       return {
+        resourceName: nameField && nameField.value,
         lookups: {
           fieldId: 'http.lookups',
           data:
@@ -284,7 +289,9 @@ export default {
     },
     'http.relativeURICreate': {
       id: 'http.relativeURICreate',
-      type: 'text',
+      type: 'relativeuriwithlookup',
+      connectionId: r => r && r._connectionId,
+      refreshOptionsOnChangesTo: ['http.lookups'],
       label: 'Relative URI',
       placeholder: 'Optional',
       visibleWhenAll: [
@@ -320,8 +327,11 @@ export default {
     'http.bodyCreate': {
       id: 'http.bodyCreate',
       type: 'httprequestbody',
+      connectionId: r => r && r._connectionId,
       useSampleDataAsArray: true,
+
       label: 'Build HTTP Request Body For Create',
+      arrayIndex: 1,
       refreshOptionsOnChangesTo: ['http.lookups'],
       visibleWhenAll: [
         {
@@ -498,7 +508,9 @@ export default {
     },
     'http.relativeURIUpdate': {
       id: 'http.relativeURIUpdate',
-      type: 'text',
+      type: 'relativeuriwithlookup',
+      connectionId: r => r && r._connectionId,
+      refreshOptionsOnChangesTo: ['http.lookups'],
       label: 'Relative URI',
       placeholder: 'Optional',
       visibleWhenAll: [
@@ -530,8 +542,10 @@ export default {
     'http.bodyUpdate': {
       id: 'http.bodyUpdate',
       type: 'httprequestbody',
+      connectionId: r => r && r._connectionId,
       useSampleDataAsArray: true,
       label: 'Build HTTP Request Body For Update',
+      arrayIndex: 0,
       refreshOptionsOnChangesTo: ['http.lookups'],
       visibleWhenAll: [
         {
