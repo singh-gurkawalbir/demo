@@ -53,7 +53,7 @@ export default {
 
   maskValues: dataIn => {
     if (!dataIn || typeof dataIn !== 'object') return dataIn;
-    function maskRecursive(o, c) {
+    function recursiveMask(o, c) {
       const tmp = c;
 
       Object.keys(o).forEach(propName => {
@@ -61,7 +61,7 @@ export default {
 
         if (value && typeof value === 'object') {
           tmp[propName] = {};
-          maskRecursive(value, tmp[propName]);
+          recursiveMask(value, tmp[propName]);
         } else {
           // this is a terminal node in the encrypted record.
           // lets set the value of the copy to ***
@@ -72,7 +72,7 @@ export default {
 
     const copy = {};
 
-    maskRecursive(dataIn, copy);
+    recursiveMask(dataIn, copy);
 
     return copy;
   },
