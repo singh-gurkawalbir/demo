@@ -961,9 +961,18 @@ export function integrationAppFlowSettings(state, id, section, storeId) {
   let allSections = sections;
 
   if (supportsMultiStore) {
-    const store = sections.find(s => s.id === storeId) || {};
+    if (storeId) {
+      // If storeId passed, return sections from that store
+      const store = sections.find(s => s.id === storeId) || {};
 
-    allSections = store.sections || [];
+      allSections = store.sections || [];
+    } else {
+      // If no storeId is passed, return all sections from all stores
+      allSections = [];
+      sections.forEach(sec => {
+        allSections.push(...sec.sections);
+      });
+    }
   }
 
   const selectedSection =
