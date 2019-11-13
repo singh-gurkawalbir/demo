@@ -358,13 +358,13 @@ export function* saveAndAuthorizeConnection({ resourceId, values }) {
 }
 
 function* commitAndAuthorizeConnection({ resourceId }) {
-  try {
-    yield call(commitStagedChanges, {
-      resourceType: 'connections',
-      id: resourceId,
-      scope: SCOPES.VALUE,
-    });
-  } catch (e) {
+  const error = yield call(commitStagedChanges, {
+    resourceType: 'connections',
+    id: resourceId,
+    scope: SCOPES.VALUE,
+  });
+
+  if (error) {
     // could not save the resource...lets just return
     return;
   }

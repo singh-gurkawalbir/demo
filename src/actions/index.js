@@ -917,6 +917,11 @@ const resourceForm = {
       resourceId,
       formValues,
     }),
+  submitFailed: (resourceType, resourceId) =>
+    action(actionTypes.RESOURCE_FORM.SUBMIT_FAILED, {
+      resourceType,
+      resourceId,
+    }),
   clear: (resourceType, resourceId) =>
     action(actionTypes.RESOURCE_FORM.CLEAR, { resourceType, resourceId }),
 };
