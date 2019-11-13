@@ -1,6 +1,7 @@
+import React from 'react';
 import {
-  DialogContent,
   Dialog,
+  DialogContent,
   IconButton,
   DialogTitle,
   Divider,
@@ -8,34 +9,41 @@ import {
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import CloseIcon from '../../components/icons/CloseIcon';
-import GenerateZip from '../../components/GenerateZip';
+import UploadFile from './UploadFile';
 
 const useStyles = makeStyles(theme => ({
+  title: {
+    marginLeft: theme.spacing(4),
+    padding: theme.spacing(2),
+  },
   closeButton: {
     position: 'absolute',
     right: theme.spacing(1),
   },
 }));
 
-export default function GenerateZipModal(props) {
-  const { onClose } = props;
+export default function InstallIntegrationDialog(props) {
+  const { fileType, history, onClose } = props;
   const classes = useStyles();
 
   return (
-    <Dialog open onClose={onClose} aria-labelledby="generate-template-zip">
-      <DialogTitle id="generate-template-zip" disableTypography>
-        <Typography variant="h6">Generate Template Zip</Typography>
+    <Dialog open onClose={onClose} aria-labelledby="integration-install-dialog">
+      <DialogTitle
+        id="integration-install-dialog"
+        className={classes.title}
+        disableTypography>
+        <Typography variant="h6">Upload Integration Zip File</Typography>
         <IconButton
           aria-label="Close"
           onClick={onClose}
-          data-test="closeGenerateZipDialog"
+          data-test="showUploadFileDialogModal"
           className={classes.closeButton}>
           <CloseIcon />
         </IconButton>
       </DialogTitle>
       <Divider variant="middle" />
       <DialogContent>
-        <GenerateZip onClose={onClose} />
+        <UploadFile fileType={fileType} history={history} />
       </DialogContent>
     </Dialog>
   );
