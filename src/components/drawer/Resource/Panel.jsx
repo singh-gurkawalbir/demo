@@ -51,6 +51,10 @@ const determineRequiredResources = type => {
     resourceType.push('exports');
   } else {
     resourceType.push(type);
+
+    if (type === 'connections') {
+      resourceType.push('iClients');
+    }
   }
 
   // if its exports or imports then we need associated connections to be loaded

@@ -29,12 +29,6 @@ const useStyles = makeStyles(theme => ({
 function ResourceList(props) {
   const { match, location } = props;
   const { resourceType } = match.params;
-  const requiredResources = [resourceType];
-
-  if (resourceType === 'connections') {
-    requiredResources.push('iClients');
-  }
-
   const defaultFilter = useMemo(() => ({ take: 5 }), []);
   const classes = useStyles();
   const filter =
@@ -78,7 +72,7 @@ function ResourceList(props) {
           </div>
         </CeligoPageBar>
         <div className={classes.resultContainer}>
-          <LoadResources required resources={requiredResources}>
+          <LoadResources required resources={resourceType}>
             <ResourceTable
               resourceType={resourceType}
               resources={list.resources}
