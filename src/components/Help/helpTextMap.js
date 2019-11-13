@@ -945,6 +945,7 @@ export default {
   'stack.lambda.awsRegion':
     'AWS Region in which your Lambda function will be executed.',
   'stack.lambda.functionName': 'Name of your AWS Lambda function.',
+  'stack.lambda.language': 'Language of the AWS Lambda Function.',
 
   // Ui help text generation
   // #region UI help text

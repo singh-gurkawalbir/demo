@@ -11,6 +11,8 @@ export default {
         newValues['/ftp/blobInProgressFileName'];
     }
 
+    delete newValues['/inputMode'];
+
     return {
       ...newValues,
     };
