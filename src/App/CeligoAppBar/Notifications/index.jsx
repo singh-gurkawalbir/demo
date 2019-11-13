@@ -106,11 +106,9 @@ export default function Notifications() {
               key={`${a.id}`}>
               <ListItemText
                 primary={
-                  <Fragment>
-                    <Typography component="span">
-                      {a.ownerUser.name || a.ownerUser.company}
-                    </Typography>
-                  </Fragment>
+                  <Typography component="span">
+                    {a.ownerUser.name || a.ownerUser.company}
+                  </Typography>
                 }
                 secondary={
                   <Typography>
