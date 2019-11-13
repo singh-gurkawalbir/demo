@@ -18,6 +18,7 @@ export default {
       startAdornment: 'https://',
       endAdornment: '.zendesk.com',
       label: 'Subdomain:',
+      required: true,
       helpText:
         'Please enter your team name here which you configured while signing up for a new Zendesk account.',
       validWhen: {

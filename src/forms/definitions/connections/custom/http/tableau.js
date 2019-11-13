@@ -36,6 +36,7 @@ export default {
       endAdornment: '.online.tableau.com/api',
       type: 'text',
       label: 'My Server',
+      required: true,
       helpText:
         'Please enter your server name here which you configured while signing up for a new Tableau account.',
       defaultValue: r => {

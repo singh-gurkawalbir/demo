@@ -54,9 +54,7 @@ export function integrationAppAddOnState(state, integrationId) {
     return {};
   }
 
-  const key = `${integrationId}`;
-
-  return state[key] || {};
+  return state[integrationId] || {};
 }
 
 export function checkUpgradeRequested(state, licenseId) {

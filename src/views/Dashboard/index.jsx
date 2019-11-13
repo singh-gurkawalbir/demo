@@ -1,5 +1,6 @@
 import { useEffect, useState, Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { difference } from 'lodash';
 import * as selectors from '../../reducers';
@@ -9,7 +10,11 @@ import LoadResources from '../../components/LoadResources';
 import actions from '../../actions';
 import { sortTiles } from './util';
 import CeligoPageBar from '../../components/CeligoPageBar';
+import IconTextButton from '../../components/IconTextButton';
 import ResourceDrawer from '../../components/drawer/Resource';
+// TODO Azhar
+import DataLoaderIcon from '../../components/icons/DataLoaderIcon';
+import getRoutePath from '../../utils/routePaths';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -80,7 +85,16 @@ function Dashboard(props) {
   return (
     <Fragment>
       <ResourceDrawer {...props} />
-      <CeligoPageBar title="My integrations" />
+      <CeligoPageBar title="My integrations">
+        <IconTextButton
+          data-test="installZip"
+          component={Link}
+          to={getRoutePath('/templates/generate-or-install')}
+          variant="text">
+          <DataLoaderIcon />
+          Install Zip
+        </IconTextButton>
+      </CeligoPageBar>
       <LoadResources required resources="published,integrations,connections">
         <div className={classes.container}>
           {sortedTiles.map(t => (

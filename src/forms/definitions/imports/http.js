@@ -6,7 +6,9 @@ export default {
     const lookup =
       resource.http &&
       resource.http.lookups &&
-      resource.http.lookups.get(retValues['/http/existingDataId']);
+      resource.http.lookups.find(
+        l => l.name === retValues['/http/existingDataId']
+      );
 
     if (retValues['/inputMode'] === 'blob') {
       retValues['/http/method'] = retValues['/http/blobMethod'];
@@ -135,6 +137,7 @@ export default {
       const requestMediaTypeField = fields.find(
         field => field.fieldId === 'http.requestMediaType'
       );
+      const nameField = fields.find(field => field.fieldId === 'name');
 
       return {
         // we are saving http body in an array. Put correspond to 0th Index,
@@ -142,6 +145,7 @@ export default {
         // We will have 'Build HTTP Request Body for Create' and
         // 'Build HTTP Request Body for Update' in case user selects Composite Type as 'Create new Data and Update existing data'
         saveIndex: 0,
+        resourceName: nameField && nameField.value,
         contentType: requestMediaTypeField.value,
         lookups: {
           // passing lookupId fieldId and data since we will be modifying lookups
@@ -318,6 +322,7 @@ export default {
     'http.bodyCreate': {
       id: 'http.bodyCreate',
       type: 'httprequestbody',
+      useSampleDataAsArray: true,
       label: 'Build HTTP Request Body For Create',
       refreshOptionsOnChangesTo: ['http.lookups'],
       visibleWhenAll: [
@@ -527,6 +532,7 @@ export default {
     'http.bodyUpdate': {
       id: 'http.bodyUpdate',
       type: 'httprequestbody',
+      useSampleDataAsArray: true,
       label: 'Build HTTP Request Body For Update',
       refreshOptionsOnChangesTo: ['http.lookups'],
       visibleWhenAll: [
