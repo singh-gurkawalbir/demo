@@ -23,9 +23,11 @@ export default function GenerateZip(props) {
   const { onClose, invalid = 'invalid' } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
-  const { resources: integrations } = useSelector(state =>
+  let { resources: integrations } = useSelector(state =>
     selectors.resourceList(state, { type: 'integrations' })
   );
+
+  integrations = integrations.filter(i => !i._connectorId && !i.isShared);
   const [selectedIntegrationId, setSelectedIntegrationId] = useState(invalid);
   const handleGenerateZipClick = () => {
     if (selectedIntegrationId === invalid) {
