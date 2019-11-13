@@ -107,16 +107,20 @@ export function* netsuiteUserRoles({ connectionId, values }) {
   }
 }
 
-export function* requestToken({ resourceId, values }) {
+export function* requestToken({ resourceId, fieldId, values }) {
   const resourceType = 'connections';
   const { merged: connectionResource } = yield select(
     selectors.resourceData,
     resourceType,
     resourceId
   );
-  const { assistant } = connectionResource;
+  let { assistant } = connectionResource;
 
   if (!assistant) throw new Error('Could not determine the assistant type');
+
+  if (assistant === 'procurify' && fieldId === 'http.encrypted.clientSecret') {
+    assistant = 'procurifyauthenticate';
+  }
 
   const path = `/${assistant}/generate-token`;
   const { payloadTransformer, responseParser } = functionsTransformerMap[

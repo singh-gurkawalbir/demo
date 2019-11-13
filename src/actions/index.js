@@ -203,9 +203,10 @@ const resource = {
         resourceId,
       }),
 
-    requestToken: (resourceId, values) =>
+    requestToken: (resourceId, fieldId, values) =>
       action(actionTypes.TOKEN.REQUEST, {
         resourceId,
+        fieldId,
         values,
       }),
     saveToken: (resourceId, fieldsToBeSetWithValues) =>
