@@ -1,32 +1,16 @@
 import { Fragment, useState } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import {
-  Radio,
-  RadioGroup,
-  FormControlLabel,
-  FormControl,
-  FormLabel,
-} from '@material-ui/core';
 import infoText from '../../views/ResourceList/infoText';
 import CeligoPageBar from '../../components/CeligoPageBar';
-import GenerateZip from '../../views/TemplateList/GenerateZip';
+import GenerateZip from '../../components/GenerateZip';
 import UploadFile from '../../components/InstallIntegration/UploadFile';
-
-const useStyles = makeStyles(() => ({
-  radio: {
-    display: 'inline',
-  },
-}));
+import RadioGroup from '../../components/DynaForm/fields/DynaRadioGroup';
 
 export default function GenerateOrInstall(props) {
   const { history } = props;
-  const classes = useStyles();
   const [showGenerateZip, setShowGenerateZip] = useState(false);
   const [showUploadZip, setShowUploadZip] = useState(true);
-  const handleChange = evt => {
-    const showView = evt.target.value;
-
-    switch (showView) {
+  const handleChange = (id, value) => {
+    switch (value) {
       case 'GenerateZip':
         setShowGenerateZip(true);
         setShowUploadZip(false);
@@ -45,24 +29,21 @@ export default function GenerateOrInstall(props) {
         title="Templates"
         infoText={infoText.templateGenerateOrInstall}
       />
-      <FormControl component="fieldset">
-        <FormLabel component="legend">What would you like to do?</FormLabel>
-        <RadioGroup
-          defaultValue="UploadFile"
-          onChange={handleChange}
-          className={classes.radio}>
-          <FormControlLabel
-            value="UploadFile"
-            control={<Radio />}
-            label="Install Integration"
-          />
-          <FormControlLabel
-            value="GenerateZip"
-            control={<Radio />}
-            label="Generate Template Zip"
-          />
-        </RadioGroup>
-      </FormControl>
+      <RadioGroup
+        {...props}
+        defaultValue="UploadFile"
+        id="generateOrInstall"
+        label="What would you like to do?"
+        onFieldChange={handleChange}
+        options={[
+          {
+            items: [
+              { label: 'Install Integration', value: 'UploadFile' },
+              { label: 'Generate Template Zip', value: 'GenerateZip' },
+            ],
+          },
+        ]}
+      />
       <div>
         {showGenerateZip && <GenerateZip />}
         {showUploadZip && (

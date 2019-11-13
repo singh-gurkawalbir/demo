@@ -8,7 +8,7 @@ import {
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import CloseIcon from '../../components/icons/CloseIcon';
-import GenerateZip from './GenerateZip';
+import GenerateZip from '../../components/GenerateZip';
 
 const useStyles = makeStyles(theme => ({
   closeButton: {

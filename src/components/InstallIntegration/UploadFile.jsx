@@ -15,7 +15,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function InstallIntegrationDialog(props) {
+export default function UploadFile(props) {
   const { fileType } = props;
   const { isFileUploaded, templateId } = useSelector(state =>
     selectors.isFileUploaded(state)

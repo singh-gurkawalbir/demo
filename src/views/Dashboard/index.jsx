@@ -12,6 +12,7 @@ import { sortTiles } from './util';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import IconTextButton from '../../components/IconTextButton';
 import ResourceDrawer from '../../components/drawer/Resource';
+// TODO Azhar
 import DataLoaderIcon from '../../components/icons/DataLoaderIcon';
 import getRoutePath from '../../utils/routePaths';
 
