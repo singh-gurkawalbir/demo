@@ -26,7 +26,6 @@ export default {
       type: 'text',
       required: true,
       label: 'Subdomain',
-      required: true,
       helpText:
         'Please enter your company name here which you configured while signing up for a new BambooHR account.',
       validWhen: {
