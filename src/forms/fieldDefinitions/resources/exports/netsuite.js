@@ -201,6 +201,10 @@ export default {
     required: true,
     label: 'Internal Id',
   },
+  'netsuite.blob.purgeFileAfterExport': {
+    type: 'checkbox',
+    label: 'Purge File After Export',
+  },
   'netsuite.restlet.criteria.field': {
     type: 'text',
     label: 'NetSuite restlet criteria field',

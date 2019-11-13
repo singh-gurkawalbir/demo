@@ -122,12 +122,13 @@ export default function Integration({ match }) {
               to={getRoutePath(
                 `/clone/integrations/${integration._id}/preview`
               )}
-              variant="text">
+              variant="text"
+              data-test="cloneIntegration">
               <CopyIcon /> Clone integration
             </IconTextButton>
           )}
 
-          <IconTextButton variant="text">
+          <IconTextButton variant="text" data-test="deleteIntegration">
             <TrashIcon /> Delete integration
           </IconTextButton>
         </CeligoPageBar>
