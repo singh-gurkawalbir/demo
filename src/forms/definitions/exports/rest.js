@@ -66,8 +66,8 @@ export default {
   optionsHandler: (fieldId, fields) => {
     if (
       fieldId === 'rest.once.relativeURI' ||
-      fieldId === 'relativeuri' ||
-      fieldId === 'dataURITemplate'
+      fieldId === 'dataURITemplate' ||
+      fieldId === 'rest.relativeURI'
     ) {
       const nameField = fields.find(field => field.fieldId === 'name');
 
