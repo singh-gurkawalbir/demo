@@ -140,6 +140,8 @@ export default {
       retValues['/rest/body'] = [retValues['/rest/body']];
     }
 
+    delete retValues['/inputMode'];
+
     return {
       ...retValues,
     };

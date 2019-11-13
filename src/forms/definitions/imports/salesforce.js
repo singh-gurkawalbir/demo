@@ -14,6 +14,8 @@ export default {
         newValues['/salesforce/compositeOperation'];
     }
 
+    delete newValues['/inputMode'];
+
     return {
       ...newValues,
     };

@@ -128,7 +128,6 @@ export default {
     type: 'relativeuriwithlookup',
     label: 'Relative URI',
     required: true,
-    placeholder: 'Optional',
     connectionId: r => r && r._connectionId,
     refreshOptionsOnChangesTo: ['rest.lookups'],
     visibleWhen: [

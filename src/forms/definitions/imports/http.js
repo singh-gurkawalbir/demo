@@ -123,6 +123,8 @@ export default {
       retValues['/http/body'] = [retValues['/http/body']];
     }
 
+    delete retValues['/inputMode'];
+
     return {
       ...retValues,
     };

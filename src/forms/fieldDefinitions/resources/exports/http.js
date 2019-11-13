@@ -85,6 +85,7 @@ export default {
           { label: 'Next Page URL', value: 'url' },
           { label: 'Link Header', value: 'linkheader' },
           { label: 'Relative URI', value: 'relativeuri' },
+          { label: 'Post Body', value: 'body' },
         ],
       },
     ],
@@ -102,6 +103,21 @@ export default {
       {
         field: 'http.paging.method',
         is: ['skip'],
+      },
+      {
+        field: 'outputMode',
+        is: ['records'],
+      },
+    ],
+  },
+  'http.paging.body': {
+    type: 'httprequestbody',
+    label: 'Build Paging Post Body',
+    required: true,
+    visibleWhenAll: [
+      {
+        field: 'http.paging.method',
+        is: ['body'],
       },
       {
         field: 'outputMode',
