@@ -8,7 +8,6 @@ import {
   Paper,
   Breadcrumbs,
 } from '@material-ui/core';
-import shortid from 'shortid';
 import ArrowBackIcon from '../../components/icons/ArrowLeftIcon';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
@@ -18,7 +17,7 @@ import ArrowRightIcon from '../../components/icons/ArrowRightIcon';
 import ResourceSetupDialog from '../../components/ResourceSetupDialog';
 import InstallationStep from '../../components/InstallStep';
 import resourceConstants from '../../forms/constants/connection';
-import { getResourceSubType } from '../../utils/resource';
+import { getResourceSubType, generateNewId } from '../../utils/resource';
 import jsonUtil from '../../utils/json';
 import { INSTALL_STEP_TYPES } from '../../utils/constants';
 import { SCOPES } from '../../sagas/resourceForm';
@@ -122,7 +121,7 @@ export default function ConnectorInstallation(props) {
         return false;
       }
 
-      const newId = `new-${shortid.generate()}`;
+      const newId = `${generateNewId()}`;
       const connObj = { ...connectionMap[_connectionId] };
 
       delete connObj._id;
@@ -175,7 +174,7 @@ export default function ConnectorInstallation(props) {
       }
       // handle Action step click
     } else if (type === INSTALL_STEP_TYPES.STACK) {
-      if (!stackId) setShowStackDialog(`new-${shortid.generate()}`);
+      if (!stackId) setShowStackDialog(`${generateNewId()}`);
     }
   };
 

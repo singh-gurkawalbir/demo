@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import shortid from 'shortid';
 import sift from 'sift';
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector, useDispatch } from 'react-redux';
@@ -13,6 +12,7 @@ import DynaSelect from './DynaSelect';
 import DynaMultiSelect from './DynaMultiSelect';
 import actions from '../../../actions';
 import resourceMeta from '../../../forms/definitions';
+import { generateNewId } from '../../../utils/resource';
 import {
   defaultPatchSetConverter,
   getMissingPatchSet,
@@ -48,7 +48,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
 }));
-const newId = () => `new-${shortid.generate()}`;
+const newId = () => `${generateNewId()}`;
 
 function DynaSelectResource(props) {
   const {

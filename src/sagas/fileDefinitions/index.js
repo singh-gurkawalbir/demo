@@ -1,11 +1,10 @@
 import { put, takeLatest, call, select } from 'redux-saga/effects';
-import shortid from 'shortid';
 import jsonPatch from 'fast-json-patch';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
 import { SCOPES, saveResourceWithDefinitionID } from '../resourceForm';
-import { isNewId } from '../../utils/resource';
+import { isNewId, generateNewId } from '../../utils/resource';
 import { commitStagedChanges } from '../resources';
 import * as selectors from '../../reducers';
 
@@ -66,7 +65,7 @@ function* saveUserFileDefinition({ definitionRules, formValues }) {
       ? definitionRules
       : definitionRules.fileDefinition;
   let definitionId =
-    (fileDefinition && fileDefinition._id) || `new-${shortid.generate()}`;
+    (fileDefinition && fileDefinition._id) || `${generateNewId()}`;
   const patchSet = jsonPatch.compare({}, fileDefinition);
 
   yield put(actions.resource.patchStaged(definitionId, patchSet, SCOPES.VALUE));

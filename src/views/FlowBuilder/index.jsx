@@ -2,7 +2,6 @@ import { useState, useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import clsx from 'clsx';
-import shortid from 'shortid';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { Typography, IconButton } from '@material-ui/core';
 import * as selectors from '../../reducers';
@@ -26,6 +25,7 @@ import SettingsIcon from '../../components/icons/SettingsIcon';
 import CalendarIcon from '../../components/icons/CalendarIcon';
 import EditableText from '../../components/EditableText';
 import SwitchOnOff from '../../components/OnOff';
+import { generateNewId } from '../../utils/resource';
 
 // #region FLOW SCHEMA: FOR REFERENCE DELETE ONCE FB IS COMPLETE
 /* 
@@ -205,7 +205,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function FlowBuilder(props) {
-  const getNewId = () => `new-${shortid.generate()}`;
+  const getNewId = () => `${generateNewId()}`;
   const { match, history } = props;
   const { flowId, integrationId } = match.params;
   const isNewFlow = !flowId || flowId.startsWith('new');

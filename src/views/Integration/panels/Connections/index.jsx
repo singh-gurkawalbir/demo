@@ -1,7 +1,6 @@
 import { useState, Fragment } from 'react';
 import { useSelector } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom';
-import shortid from 'shortid';
 import { makeStyles } from '@material-ui/styles';
 import RegisterConnections from '../../../../components/RegisterConnections';
 import LoadResources from '../../../../components/LoadResources';
@@ -12,6 +11,7 @@ import IconTextButton from '../../../../components/IconTextButton';
 import AddIcon from '../../../../components/icons/AddIcon';
 import ConnectionsIcon from '../../../../components/icons/ConnectionsIcon';
 import PanelHeader from '../PanelHeader';
+import { generateNewId } from '../../../../utils/resource';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -66,9 +66,7 @@ export default function ConnectionsPanel({ integrationId }) {
           <Fragment>
             <IconTextButton
               component={Link}
-              to={`${
-                location.pathname
-              }/add/connections/new-${shortid.generate()}`}>
+              to={`${location.pathname}/add/connections/${generateNewId()}`}>
               <AddIcon /> Create connection
             </IconTextButton>
             <IconTextButton onClick={() => setShowRegister(true)}>

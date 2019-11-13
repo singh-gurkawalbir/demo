@@ -2,7 +2,6 @@ import { useRef, useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { useDrag } from 'react-dnd-cjs';
-import shortid from 'shortid';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import itemTypes from '../itemTypes';
@@ -10,7 +9,7 @@ import AppBlock from '../AppBlock';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import applications from '../../../constants/applications';
-import { getResourceSubType } from '../../../utils/resource';
+import { getResourceSubType, generateNewId } from '../../../utils/resource';
 import exportHooksAction from './actions/exportHooks';
 import transformationAction from './actions/transformation';
 import scheduleAction from './actions/schedule';
@@ -88,7 +87,7 @@ const PageGenerator = ({ history, match, index, isLast, flowId, ...pg }) => {
   const opacity = isDragging ? 0.5 : 1;
 
   function handleBlockClick() {
-    const newId = `new-${shortid.generate()}`;
+    const newId = `${generateNewId()}`;
 
     if (pending) {
       // generate newId

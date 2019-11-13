@@ -8,7 +8,6 @@ import {
   Paper,
   Breadcrumbs,
 } from '@material-ui/core';
-import shortid from 'shortid';
 import ArrowBackIcon from '../../components/icons/ArrowLeftIcon';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
@@ -21,6 +20,7 @@ import resourceConstants from '../../forms/constants/connection';
 import {
   getResourceSubType,
   MODEL_PLURAL_TO_LABEL,
+  generateNewId,
 } from '../../utils/resource';
 import jsonUtil from '../../utils/json';
 import { INSTALL_STEP_TYPES } from '../../utils/constants';
@@ -138,7 +138,7 @@ export default function Clone(props) {
         return false;
       }
 
-      const newId = `new-${shortid.generate()}`;
+      const newId = `${generateNewId()}`;
       const connObj = { ...connectionMap[_connectionId] };
 
       delete connObj._id;
@@ -194,7 +194,7 @@ export default function Clone(props) {
       }
       // handle Action step click
     } else if (type === INSTALL_STEP_TYPES.STACK) {
-      if (!stackId) setShowStackDialog(`new-${shortid.generate()}`);
+      if (!stackId) setShowStackDialog(`${generateNewId()}`);
     }
   };
 

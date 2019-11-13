@@ -5,7 +5,7 @@ import IconButton from '@material-ui/core/IconButton';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import { isFunction } from 'lodash';
-import shortid from 'shortid';
+import { generateNewId } from '../../../../utils/resource';
 import DynaSelect from '../DynaSelect';
 import DynaText from '../DynaText';
 import * as selectors from '../../../../reducers';
@@ -50,7 +50,7 @@ const useStyles = makeStyles(theme => ({
 export default function DynaHook(props) {
   const [showEditor, setShowEditor] = useState(false);
   const [showCreateScriptDialog, setShowCreateScriptDialog] = useState(false);
-  const getNewId = () => `new-${shortid.generate()}`;
+  const getNewId = () => `${generateNewId()}`;
   const [tempScriptId, setTempScriptId] = useState(getNewId());
   const [isNewScriptIdAssigned, setIsNewScriptIdAssigned] = useState(false);
   const classes = useStyles();
