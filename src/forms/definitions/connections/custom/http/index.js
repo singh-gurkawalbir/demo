@@ -120,7 +120,7 @@ import exacterp from './exacterp';
 // import nimble from './nimble';
 import bronto from './bronto';
 import powerbi from './powerbi';
-// import procurify from './procurify';
+import procurify from './procurify';
 import zimbra from './zimbra';
 import strata from './strata';
 import postmark from './postmark';
@@ -289,7 +289,7 @@ export default {
   greenhouse,
   powerbi,
   mailgun,
-  // procurify,
+  procurify,
   strata,
   aptrinsic,
   // cardknox,

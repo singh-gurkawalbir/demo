@@ -11,8 +11,11 @@ const mapStateToProps = (state, { resourceId }) => ({
   connectionToken: selectors.connectionTokens(state, resourceId),
 });
 const mapDispatchToProps = dispatch => ({
-  handleRequestToken: resourceId => values =>
-    dispatch(actions.resource.connections.requestToken(resourceId, values)),
+  handleRequestToken: (resourceId, filedId) => values => {
+    dispatch(
+      actions.resource.connections.requestToken(resourceId, filedId, values)
+    );
+  },
   handleClearToken: resourceId =>
     dispatch(actions.resource.connections.clearToken(resourceId)),
 });
@@ -30,7 +33,7 @@ function GenerateTokenButton(props) {
       data-test={id}
       disabled={disabled}
       isValid
-      onClick={handleRequestToken(resourceId)}>
+      onClick={handleRequestToken(resourceId, id)}>
       {label}
     </DynaSubmit>
   );

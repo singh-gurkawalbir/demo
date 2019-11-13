@@ -23,6 +23,7 @@ export default {
       startAdornment: 'https://',
       endAdornment: '.freshdesk.com',
       label: 'Subdomain',
+      required: true,
       validWhen: {
         matchesRegEx: {
           pattern: '^[\\S]+$',

@@ -51,9 +51,9 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function Subscription(props) {
-  const { integrationId } = props.match.params;
+  const { integrationId, storeId } = props.match.params;
   const { history, match } = props;
-  const { storeId, supportsMultiStore } = props;
+  const { supportsMultiStore } = !!storeId;
   const classes = useStyles();
   const dispatch = useDispatch();
   const integration = useSelector(state =>
