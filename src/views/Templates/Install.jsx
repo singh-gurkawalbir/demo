@@ -4,6 +4,7 @@ import * as selectors from '../../reducers';
 import actions from '../../actions';
 import LoadResources from '../../components/LoadResources';
 import InstallWizard from '../../components/InstallationWizard';
+import templateUtil from '../../utils/template';
 
 export default function TemplateInstall(props) {
   const { templateId } = props.match.params;
@@ -22,12 +23,12 @@ export default function TemplateInstall(props) {
       );
 
       dispatch(actions.template.clearTemplate(templateId));
-      dispatch(actions.resource.requestCollection('integrations'));
-      dispatch(actions.resource.requestCollection('flows'));
-      dispatch(actions.resource.requestCollection('connections'));
-      dispatch(actions.resource.requestCollection('exports'));
-      dispatch(actions.resource.requestCollection('imports'));
-      dispatch(actions.resource.requestCollection('stacks'));
+      const dependentResources =
+        templateUtil.getDependentResources(createdComponents) || [];
+
+      dependentResources.forEach(res => {
+        dispatch(actions.resource.requestCollection(res));
+      });
 
       if (integration) {
         props.history.push(`/pg/integrations/${integration._id}/flows`);

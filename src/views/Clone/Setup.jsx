@@ -5,6 +5,7 @@ import actions from '../../actions';
 import LoadResources from '../../components/LoadResources';
 import getRoutePath from '../../utils/routePaths';
 import InstallWizard from '../../components/InstallationWizard';
+import templateUtil from '../../utils/template';
 
 export default function Clone(props) {
   const { resourceType, resourceId } = props.match.params;
@@ -18,12 +19,12 @@ export default function Clone(props) {
   const handleSetupComplete = useCallback(
     createdComponents => {
       dispatch(actions.template.clearTemplate(`${resourceType}-${resourceId}`));
-      dispatch(actions.resource.requestCollection('integrations'));
-      dispatch(actions.resource.requestCollection('flows'));
-      dispatch(actions.resource.requestCollection('connections'));
-      dispatch(actions.resource.requestCollection('exports'));
-      dispatch(actions.resource.requestCollection('imports'));
-      dispatch(actions.resource.requestCollection('stacks'));
+      const dependentResources =
+        templateUtil.getDependentResources(createdComponents) || [];
+
+      dependentResources.forEach(res => {
+        dispatch(actions.resource.requestCollection(res));
+      });
 
       if (['integrations', 'flows'].includes(resourceType)) {
         // redirect to integration Settings
@@ -33,7 +34,7 @@ export default function Clone(props) {
 
         if (integration) {
           props.history.push(
-            getRoutePath(`/integrations/${integration._id}/settings/flows`)
+            getRoutePath(`/integrations/${integration._id}/flows`)
           );
         } else {
           props.history.push('/');

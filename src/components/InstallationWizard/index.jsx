@@ -291,7 +291,7 @@ export default function InstallationWizard(props) {
             {installSteps.map((step, index) => (
               <InstallationStep
                 key={step.name}
-                templateId={`${resourceType}-${resourceId}`}
+                templateId={templateId}
                 connectionMap={connectionMap}
                 handleStepClick={handleStepClick}
                 index={index + 1}

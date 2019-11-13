@@ -121,7 +121,7 @@ export default function ClonePreview(props) {
 
         if (integration) {
           props.history.push(
-            getRoutePath(`/integrations/${integration._id}/settings/flows`)
+            getRoutePath(`/integrations/${integration._id}/flows`)
           );
         } else {
           props.history.push('/');
