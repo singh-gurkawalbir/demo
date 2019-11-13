@@ -4,13 +4,20 @@ export default {
   // agent list handleBars evaluated its a dynamicList
   _borrowConcurrencyFromConnectionId: {
     resourceType: 'connections',
-    filter: r => ({
-      $and: [
-        { type: r.type },
+    filter: r => {
+      const expression = [
         { _id: { $ne: r._id } },
         { _connectorId: { $exists: false } },
-      ],
-    }),
+      ];
+
+      if (['mysql', 'postgresql', 'mssql'].includes(r.type)) {
+        expression.push({ 'rdbms.type': r.type });
+      } else expression.push({ type: r.type });
+
+      return {
+        $and: expression,
+      };
+    },
     type: 'selectresource',
     label: 'Borrow Concurrency From',
   },
@@ -719,6 +726,7 @@ export default {
         items: [
           { label: 'XML', value: 'xml' },
           { label: 'JSON', value: 'json' },
+          { label: 'URL Encoded', value: 'urlencoded' },
         ],
       },
     ],
@@ -1366,13 +1374,14 @@ export default {
     visibleWhen: [
       {
         field: 'as2.partnerStationInfo.auth.type',
-        isNot: ['none'],
+        is: ['basic', 'token'],
       },
     ],
   },
   'as2.partnerStationInfo.auth.type': {
     type: 'select',
     label: 'Authentication Type',
+    required: true,
     options: [
       {
         items: [
@@ -1389,7 +1398,7 @@ export default {
     visibleWhen: [
       {
         field: 'as2.partnerStationInfo.auth.type',
-        isNot: ['none'],
+        is: ['basic', 'token'],
       },
     ],
   },
@@ -1400,7 +1409,7 @@ export default {
     visibleWhen: [
       {
         field: 'as2.partnerStationInfo.auth.type',
-        isNot: ['none'],
+        is: ['basic', 'token'],
       },
     ],
   },
@@ -1837,6 +1846,10 @@ export default {
     type: 'editor',
     mode: 'text',
     label: "Partner's Certificate:",
+  },
+  'as2.preventCanonicalization': {
+    label: 'Prevent Canonicalization',
+    type: 'checkbox',
   },
   'as2.concurrencyLevel': {
     label: 'Concurrency Level',

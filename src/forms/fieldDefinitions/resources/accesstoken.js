@@ -78,6 +78,7 @@ export default {
         is: ['false'],
       },
     ],
+    ignoreEnvironmentFilter: true,
   },
   _exportIds: {
     type: 'selectresource',
@@ -89,6 +90,7 @@ export default {
         is: ['false'],
       },
     ],
+    ignoreEnvironmentFilter: true,
   },
   _importIds: {
     type: 'selectresource',
@@ -100,5 +102,6 @@ export default {
         is: ['false'],
       },
     ],
+    ignoreEnvironmentFilter: true,
   },
 };

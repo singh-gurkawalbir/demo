@@ -55,18 +55,19 @@ function getIntegrationAppsNextState(state, action) {
       return;
     }
 
-    stepsToUpdate.forEach(step => {
-      const stepIndex = integration.install.findIndex(
-        s => s.installerFunction === step.installerFunction
-      );
+    stepsToUpdate &&
+      stepsToUpdate.forEach(step => {
+        const stepIndex = integration.install.findIndex(
+          s => s.installerFunction === step.installerFunction
+        );
 
-      if (stepIndex !== -1) {
-        integration.install[stepIndex] = {
-          ...integration.install[stepIndex],
-          ...step,
-        };
-      }
-    });
+        if (stepIndex !== -1) {
+          integration.install[stepIndex] = {
+            ...integration.install[stepIndex],
+            ...step,
+          };
+        }
+      });
   });
 }
 
@@ -134,6 +135,46 @@ export default (state = {}, action) => {
 
         return produce(state, draft => {
           draft.connectorLicenses = newCollection || [];
+        });
+      }
+
+      if (resourceType === 'flows') {
+        const newCollection =
+          collection &&
+          collection.map &&
+          collection.map(flow => {
+            const {
+              pageGenerators,
+              pageProcessors,
+              _exportId,
+              _importId,
+            } = flow;
+            const updatedFlow = { ...flow, pageGenerators, pageProcessors };
+
+            // Supports Old Flows with _exportId and _importId converted to __pageGenerators and _pageProcessors
+            if (!pageGenerators && _exportId) {
+              updatedFlow.pageGenerators = [
+                {
+                  type: 'export',
+                  _exportId,
+                },
+              ];
+            }
+
+            if (!pageProcessors && _importId) {
+              updatedFlow.pageProcessors = [
+                {
+                  type: 'import',
+                  _importId,
+                },
+              ];
+            }
+
+            return updatedFlow;
+          });
+
+        return produce(state, draft => {
+          draft.flows = newCollection || [];
         });
       }
 
@@ -319,10 +360,6 @@ export function resourceList(
   result.count = resources.length;
   const filterByEnvironment = typeof sandbox === 'boolean';
   const matchTest = r => {
-    if (filterByEnvironment && !!r.sandbox !== sandbox) {
-      return false;
-    }
-
     if (!keyword) return true;
 
     const searchableText = `${r._id}|${r.name}|${r.description}`;
@@ -348,7 +385,17 @@ export function resourceList(
       : (a, b) => -desc(a, b, orderBy);
   // console.log('sort:', sort, resources.sort(comparer, sort));
   const sorted = sort ? resources.sort(comparer(sort)) : resources;
-  const filtered = sorted.filter(filter ? sift(filter) : matchTest);
+  let filteredByEnvironment;
+
+  if (filterByEnvironment) {
+    filteredByEnvironment = sorted.filter(r => !!r.sandbox === sandbox);
+  } else {
+    filteredByEnvironment = sorted;
+  }
+
+  const filtered = filteredByEnvironment.filter(
+    filter ? sift(filter) : matchTest
+  );
 
   result.filtered = filtered.length;
   result.resources = filtered;

@@ -5,6 +5,7 @@ export default function reducer(state = {}, action) {
     type,
     resourceType,
     resourceId,
+    flowId,
     isNew,
     skipCommit,
     fieldMeta,
@@ -32,6 +33,7 @@ export default function reducer(state = {}, action) {
           skipCommit,
           initComplete: true,
           fieldMeta,
+          flowId,
         },
       };
 

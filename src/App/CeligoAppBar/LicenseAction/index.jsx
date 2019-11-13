@@ -30,7 +30,7 @@ const mapDispatchToProps = dispatch => ({
 
 @withStyles(theme => ({
   inTrial: {
-    backgroundColor: theme.palette.secondary.light,
+    marginBottom: theme.spacing(0.5),
   },
   expiresSoon: {
     backgroundColor: theme.palette.primary.main,

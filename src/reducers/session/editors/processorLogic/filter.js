@@ -17,7 +17,6 @@ export default {
 
     return {
       rules: { version: '1', rules: editor.rule || [] },
-      // transform editor expects an array of records
       data: typeof data === 'object' ? [data] : [{}],
     };
   },

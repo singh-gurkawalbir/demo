@@ -283,7 +283,8 @@ export default {
       const adaptorTypePrefix = appTypeToAdaptorType[app.type];
 
       if (!adaptorTypePrefix) return;
-      const expression = [];
+      // Lookups are not shown in PG suggestions
+      const expression = [{ isLookup: { $exists: false } }];
 
       expression.push({
         adaptorType: `${adaptorTypePrefix}Export`,

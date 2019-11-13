@@ -16,11 +16,12 @@ const useStyles = makeStyles(theme => ({
   suggestionsContainerOpen: {
     position: 'absolute',
     zIndex: 1,
-    marginTop: theme.spacing(1),
     left: 0,
     right: 0,
     maxHeight: 300,
     overflow: 'scroll',
+    borderRadius: '0px 0px 4px 4px',
+    marginTop: theme.spacing(0.5),
   },
   dynaFieldWrapper: {
     width: '100%',
@@ -35,6 +36,9 @@ const useStyles = makeStyles(theme => ({
     margin: 0,
     padding: 0,
     listStyleType: 'none',
+    '& li': {
+      borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
+    },
   },
   divider: {
     height: theme.spacing(2),
@@ -169,7 +173,7 @@ export default function DynaAutoSuggest(props) {
             suggestion: classes.suggestion,
           }}
           renderSuggestionsContainer={options => (
-            <Paper {...options.containerProps} square>
+            <Paper {...options.containerProps} square elevation={2}>
               {options.children}
             </Paper>
           )}

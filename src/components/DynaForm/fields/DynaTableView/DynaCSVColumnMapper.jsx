@@ -54,5 +54,7 @@ export default function DynaCSVColumnMapper(props) {
     },
   ];
 
-  return <DynaTableView {...props} optionsMap={optionsMap} />;
+  return (
+    <DynaTableView {...props} collapsable hideLabel optionsMap={optionsMap} />
+  );
 }

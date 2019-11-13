@@ -20,21 +20,12 @@ const useStyles = makeStyles(theme => ({
 
 export default function SettingsDrawer({ flow, history, ...props }) {
   const dispatch = useDispatch();
-  let { resources: integrations } = useSelector(state =>
+  const { resources: integrations } = useSelector(state =>
     selectors.resourceList(state, { type: 'integrations' })
   );
   let flows = useSelector(
     state => selectors.flowListWithMetadata(state, { type: 'flows' }).resources
   );
-  const preferences = useSelector(state =>
-    selectors.userProfilePreferencesProps(state)
-  );
-
-  integrations =
-    integrations &&
-    integrations.filter(
-      i => !!i.sandbox === (preferences.environment === 'sandbox')
-    );
 
   flows =
     flows &&
@@ -43,9 +34,7 @@ export default function SettingsDrawer({ flow, history, ...props }) {
         f._integrationId ===
           (flow._integrationId === STANDALONE_INTEGRATION.id
             ? undefined
-            : flow._integrationId) &&
-        f._id !== flow._id &&
-        !!f.sandbox === (preferences.environment === 'sandbox')
+            : flow._integrationId) && f._id !== flow._id
     );
   const fieldMeta = {
     fieldMap: {
@@ -142,13 +131,10 @@ export default function SettingsDrawer({ flow, history, ...props }) {
       </IconButton>
       <TitleBar title="Settings" />
       <DynaForm fieldMeta={fieldMeta} render>
-        <DynaSubmit onClick={handleSubmit} color="primary">
+        <DynaSubmit onClick={handleSubmit} color="primary" variant="outlined">
           Save
         </DynaSubmit>
-        <Button
-          onClick={() => history.goBack()}
-          variant="contained"
-          color="secondary">
+        <Button onClick={() => history.goBack()} variant="text" color="primary">
           Cancel
         </Button>
       </DynaForm>

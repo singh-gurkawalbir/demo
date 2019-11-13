@@ -9,12 +9,11 @@ import JobStatus from './JobStatus';
 import JobActionsMenu from './JobActionsMenu';
 import { JOB_STATUS } from '../../utils/constants';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   checkAction: {
-    display: 'flex',
-    justifyContent: 'flex-end',
+    paddingLeft: theme.spacing(5),
   },
-});
+}));
 
 export default function ChildJobDetail({
   job,
