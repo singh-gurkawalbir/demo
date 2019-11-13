@@ -63,6 +63,7 @@ export default {
   },
   'http.body': {
     type: 'httprequestbody',
+    useSampleDataAsArray: true,
     label: 'Build HTTP Request Body',
   },
   'http.headers': {
@@ -357,6 +358,7 @@ export default {
   },
   'http.once.body': {
     type: 'httprequestbody',
+    useSampleDataAsArray: true,
     label: 'Build HTTP Request Body',
     visibleWhenAll: [
       {
