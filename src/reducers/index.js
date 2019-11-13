@@ -120,6 +120,18 @@ export function resourceFormState(state, resourceType, resourceId) {
   );
 }
 
+export function resourceFormSaveProcessTerminated(
+  state,
+  resourceType,
+  resourceId
+) {
+  return fromSession.resourceFormSaveProcessTerminated(
+    state && state.session,
+    resourceType,
+    resourceId
+  );
+}
+
 export function clonePreview(state, resourceType, resourceId) {
   return fromSession.clonePreview(
     state && state.session,
