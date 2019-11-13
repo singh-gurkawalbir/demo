@@ -164,6 +164,8 @@ export default {
   },
   'http.body': {
     type: 'httprequestbody',
+    useSampleDataAsArray: true,
+    connectionId: r => r && r._connectionId,
     defaultValue: r =>
       Array.isArray(((r || {}).http || {}).body) ? r.http.body[0] : undefined,
     label: 'Build HTTP Request Body',
