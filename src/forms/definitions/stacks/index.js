@@ -7,6 +7,7 @@ export default {
     'lambda.secretAccessKey': { fieldId: 'lambda.secretAccessKey' },
     'lambda.awsRegion': { fieldId: 'lambda.awsRegion' },
     'lambda.functionName': { fieldId: 'lambda.functionName' },
+    'lambda.language': { fieldId: 'lambda.language' },
   },
   layout: {
     fields: [
@@ -17,6 +18,7 @@ export default {
       'lambda.secretAccessKey',
       'lambda.awsRegion',
       'lambda.functionName',
+      'lambda.language',
     ],
   },
 };

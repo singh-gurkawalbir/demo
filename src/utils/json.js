@@ -39,6 +39,43 @@ export default {
       return e.message;
     }
   },
+  /**
+   * Traverses through dataIn object and masks all values
+   *
+   * @param {object} dataIn - sample data object.
+   * @returns {object with values masked}
+   *
+   * @example
+   *
+   * maskValues({a:1, b: {c:2, d:4}})
+   * {a:'***', b: {c:'***', d:'***'}}
+   */
+
+  maskValues: dataIn => {
+    if (!dataIn || typeof dataIn !== 'object') return dataIn;
+    function recursiveMask(o, c) {
+      const tmp = c;
+
+      Object.keys(o).forEach(propName => {
+        const value = o[propName];
+
+        if (value && typeof value === 'object') {
+          tmp[propName] = {};
+          recursiveMask(value, tmp[propName]);
+        } else {
+          // this is a terminal node in the encrypted record.
+          // lets set the value of the copy to ***
+          tmp[propName] = '***';
+        }
+      });
+    }
+
+    const copy = {};
+
+    recursiveMask(dataIn, copy);
+
+    return copy;
+  },
   objectToPatchSet: values =>
     Object.keys(values).map(key => ({
       op: 'replace',

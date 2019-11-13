@@ -21,8 +21,8 @@ const SaveButton = props => {
     disabled = false,
   } = props;
   const dispatch = useDispatch();
-  const formState = useSelector(state =>
-    selectors.resourceFormState(state, resourceType, resourceId)
+  const saveTerminated = useSelector(state =>
+    selectors.resourceFormSaveProcessTerminated(state, resourceType, resourceId)
   );
   const [disableSave, setDisableSave] = useState(false);
   const handleSubmitForm = values => {
@@ -33,8 +33,8 @@ const SaveButton = props => {
   };
 
   useEffect(() => {
-    if (formState.submitComplete) setDisableSave(false);
-  }, [formState.submitComplete]);
+    if (saveTerminated) setDisableSave(false);
+  }, [saveTerminated]);
 
   return (
     <DynaAction

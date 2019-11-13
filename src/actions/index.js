@@ -203,9 +203,10 @@ const resource = {
         resourceId,
       }),
 
-    requestToken: (resourceId, values) =>
+    requestToken: (resourceId, fieldId, values) =>
       action(actionTypes.TOKEN.REQUEST, {
         resourceId,
+        fieldId,
         values,
       }),
     saveToken: (resourceId, fieldsToBeSetWithValues) =>
@@ -915,6 +916,11 @@ const resourceForm = {
       resourceType,
       resourceId,
       formValues,
+    }),
+  submitFailed: (resourceType, resourceId) =>
+    action(actionTypes.RESOURCE_FORM.SUBMIT_FAILED, {
+      resourceType,
+      resourceId,
     }),
   clear: (resourceType, resourceId) =>
     action(actionTypes.RESOURCE_FORM.CLEAR, { resourceType, resourceId }),

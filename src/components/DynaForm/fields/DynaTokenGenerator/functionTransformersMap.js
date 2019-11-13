@@ -131,4 +131,31 @@ export default {
       applicationKey: form[`/http/unencrypted/applicationKey`],
     }),
   },
+  procurifyauthenticate: {
+    responseParser: resp => ({
+      'http.unencrypted.clientId': resp && resp.data.client_id,
+      'http.encrypted.clientSecret': resp && resp.data.client_secret,
+    }),
+    payloadTransformer: form => ({
+      baseURI: `https://${form[`/http/procurifySubdomain`]}.procurify.com/api`,
+      base64EncodedToken: window.btoa(
+        `${form[`/http/unencrypted/username`]}:${
+          form[`/http/encrypted/password`]
+        }`
+      ),
+    }),
+  },
+
+  procurify: {
+    responseParser: resp => ({
+      'http.auth.token.token': resp && resp.access_token,
+    }),
+    payloadTransformer: form => ({
+      clientId: form[`/http/unencrypted/clientId`],
+      clientSecret: form[`/http/encrypted/clientSecret`],
+      username: form[`/http/unencrypted/username`],
+      password: form[`/http/encrypted/password`],
+      baseURI: `https://${form[`/http/procurifySubdomain`]}.procurify.com/api`,
+    }),
+  },
 };

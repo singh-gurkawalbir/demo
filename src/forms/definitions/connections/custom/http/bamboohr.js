@@ -24,8 +24,9 @@ export default {
     'http.bamboohrSubdomain': {
       id: 'http.bamboohrSubdomain',
       type: 'text',
-      startAdornment: 'https://api.bamboohr.com/api/gateway.php/',
+      required: true,
       label: 'Subdomain',
+      required: true,
       helpText:
         'Please enter your company name here which you configured while signing up for a new BambooHR account.',
       validWhen: {
@@ -35,12 +36,23 @@ export default {
         },
       },
       defaultValue: r => {
-        const baseUri = r && r.http && r.http.baseURI;
-        const subdomain =
-          baseUri &&
-          baseUri.substring('https://api.bamboohr.com/api/gateway.php/'.length);
+        let value = '';
 
-        return subdomain;
+        if (
+          r &&
+          r.http &&
+          r.http.baseURI &&
+          r.http.baseURI.indexOf(
+            'https://api.bamboohr.com/api/gateway.php/'
+          ) !== -1
+        ) {
+          value = r.http.baseURI.replace(
+            'https://api.bamboohr.com/api/gateway.php/',
+            ''
+          );
+        }
+
+        return value;
       },
     },
     'http.encrypted.apiKey': {
