@@ -430,9 +430,14 @@ function FlowBuilder(props) {
         subtitle={`Last saved: ${isNewFlow ? 'Never' : flow.lastModified}`}
         infoText={flow.description}>
         <div className={classes.actions}>
-          <SwitchOnOff.component resource={flow} disabled={isNewFlow} />
+          <SwitchOnOff.component
+            resource={flow}
+            disabled={isNewFlow}
+            data-test="switchFlowOnOff"
+          />
           <IconButton
             disabled={isNewFlow || !(flow && flow.isRunnable)}
+            data-test="runFlow"
             onClick={() => {
               dispatch(actions.flow.run({ flowId }));
             }}>
@@ -440,12 +445,14 @@ function FlowBuilder(props) {
           </IconButton>
           <IconButton
             disabled={isNewFlow && !(flow && flow.showScheduleIcon)}
+            data-test="scheduleFlow"
             onClick={() => handleDrawerOpen('schedule')}>
             <CalendarIcon />
           </IconButton>
           <IconButton
             disabled={isNewFlow}
-            onClick={() => handleDrawerOpen('settings')}>
+            onClick={() => handleDrawerOpen('settings')}
+            data-test="flowSettings">
             <SettingsIcon />
           </IconButton>
         </div>
