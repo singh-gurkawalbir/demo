@@ -4593,5 +4593,43 @@ describe('integrationApp Settings reducers', () => {
         showMatchRuleEngine: undefined,
       });
     });
+
+    test('should return all flows of the store when storeId is passed to a multi store integration App', () => {
+      const state = reducer(
+        {
+          data: {
+            resources: {
+              integrations,
+              flows,
+            },
+          },
+        },
+        'some_action'
+      );
+
+      expect(
+        selectors.integrationAppFlowSettings(
+          state,
+          'integrationId',
+          null,
+          'fb5fb65e'
+        )
+      ).toEqual({
+        fields: undefined,
+        flowSettings: undefined,
+        flows: [
+          {
+            _id: '5d9f70b98a71fc911a4068bd',
+            _integrationId: 'integrationId',
+            name: '5d9f70b98a71fc911a4068bd',
+          },
+        ],
+        hasDescription: false,
+        hasNSInternalIdLookup: false,
+        sections: undefined,
+        showFlowSettings: false,
+        showMatchRuleEngine: undefined,
+      });
+    });
   });
 });
