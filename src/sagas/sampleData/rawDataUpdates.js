@@ -20,7 +20,6 @@ function* saveRawDataOnResource({
   rawData,
   resourceType = 'exports',
 }) {
-  // patch req on resource
   if (!resourceId || !rawData) return;
   const rawDataKey = yield call(uploadRawData, {
     file: rawData,
@@ -38,7 +37,6 @@ function* saveRawDataOnResource({
   yield put(actions.resource.commitStaged(resourceType, resourceId, 'value'));
 }
 
-// WIP Implementation
 function* fetchRawDataForFTP({ resourceId, tempResourceId }) {
   const resourceObj = yield select(resource, 'exports', resourceId);
   const isFileTypeExport = isFileExport(resourceObj);
