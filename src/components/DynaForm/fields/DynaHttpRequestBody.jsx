@@ -112,13 +112,6 @@ export default function DynaHttpRequestBody(props) {
     );
   }
 
-  // console.log(
-  //   'id, resourceName, formattedSampleData',
-  //   id,
-  //   resourceName,
-  //   formattedSampleData
-  // );
-
   return (
     <Fragment>
       {showEditor && (

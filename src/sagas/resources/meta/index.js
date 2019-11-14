@@ -7,8 +7,18 @@ import getRequestOptions from '../../../utils/requestOptions';
 import commKeyGenerator from '../../../utils/commKeyGenerator';
 import { COMM_STATES } from '../../../reducers/comms';
 
-export function* getNetsuiteOrSalesforceMeta({ connectionId, commMetaPath }) {
-  const path = `/${commMetaPath}`;
+export function* getNetsuiteOrSalesforceMeta({
+  connectionId,
+  commMetaPath,
+  addInfo,
+}) {
+  let path = `/${commMetaPath}`;
+
+  if (addInfo) {
+    if (addInfo.refreshCache === true) {
+      path += `${path.indexOf('?') > -1 ? '&' : '?'}refreshCache=true`;
+    }
+  }
 
   try {
     const metadata = yield call(apiCallWithRetry, {
