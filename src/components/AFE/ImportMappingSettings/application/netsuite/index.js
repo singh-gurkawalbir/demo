@@ -124,10 +124,10 @@ export default {
         'lookup.recordType': {
           id: 'lookup.recordType',
           name: 'recordType',
-          mode: 'suitescript',
+          filterKey: 'suitescript-recordTypes',
+          commMetaPath: `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes`,
           defaultValue: '',
           type: 'refreshableselect',
-          resourceType: 'recordTypes',
           label: 'Search Record Type',
           connectionId,
           visibleWhenAll: [
@@ -140,9 +140,7 @@ export default {
           name: 'resultField',
           type: 'refreshableselect',
           label: 'Value Field',
-          mode: 'suitescript',
           defaultValue: '',
-          filterKey: 'searchColumns',
           connectionId,
           refreshOptionsOnChangesTo: ['lookup.recordType'],
           visibleWhenAll: [
@@ -302,9 +300,7 @@ export default {
           name: 'hardcodedSelect',
           type: 'refreshableselect',
           label: 'Value',
-          mode: 'suitescript',
           multiselect: generateFieldType === 'multiselect',
-          // filterKey: 'searchColumns',
           defaultValue:
             generateFieldType === 'multiselect' && value.hardCodedValue
               ? value.hardCodedValue.split(',')
@@ -385,11 +381,8 @@ export default {
           );
 
           return {
-            disableOptionsLoad: !(recordTypeField && recordTypeField.value),
-            resourceToFetch:
-              recordTypeField &&
-              recordTypeField.value &&
-              `recordTypes/${recordTypeField.value}/searchColumns`,
+            disableFetch: !(recordTypeField && recordTypeField.value),
+            commMetaPath: `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${recordTypeField.value}/searchColumns`,
             resetValue: [],
           };
         }

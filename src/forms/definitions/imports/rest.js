@@ -140,22 +140,35 @@ export default {
       retValues['/rest/body'] = [retValues['/rest/body']];
     }
 
+    delete retValues['/inputMode'];
+
     return {
       ...retValues,
     };
   },
   optionsHandler: (fieldId, fields) => {
-    if (fieldId === 'rest.body') {
+    if (
+      fieldId === 'rest.body' ||
+      fieldId === 'rest.relativeURI' ||
+      fieldId === 'rest.relativeURICreate' ||
+      fieldId === 'rest.relativeURIUpdate'
+    ) {
       const lookupField = fields.find(
         field => field.fieldId === 'rest.lookups'
       );
+      const nameField = fields.find(field => field.fieldId === 'name');
 
-      if (lookupField) {
-        return {
-          lookupId: 'rest.lookups',
-          lookups: lookupField && lookupField.value,
-        };
-      }
+      return {
+        resourceName: nameField && nameField.value,
+        lookups: {
+          fieldId: 'rest.lookups',
+          data:
+            (lookupField &&
+              Array.isArray(lookupField.value) &&
+              lookupField.value) ||
+            [],
+        },
+      };
     }
 
     return null;
@@ -259,7 +272,9 @@ export default {
     },
     'rest.relativeURICreate': {
       id: 'rest.relativeURICreate',
-      type: 'text',
+      type: 'relativeuriwithlookup',
+      connectionId: r => r && r._connectionId,
+      refreshOptionsOnChangesTo: ['rest.lookups'],
       label: 'Relative URI',
       required: true,
       placeholder: 'Optional',
@@ -296,8 +311,10 @@ export default {
     'rest.bodyCreate': {
       id: 'rest.bodyCreate',
       type: 'httprequestbody',
+      arrayIndex: 1,
+      connectionId: r => r && r._connectionId,
       label: 'Build HTTP Request Body',
-      refreshOptionsOnChangesTo: ['http.lookups'],
+      refreshOptionsOnChangesTo: ['rest.lookups'],
       visibleWhenAll: [
         {
           field: 'rest.compositeType',
@@ -497,7 +514,9 @@ export default {
     },
     'rest.relativeURIUpdate': {
       id: 'rest.relativeURIUpdate',
-      type: 'text',
+      type: 'relativeuriwithlookup',
+      connectionId: r => r && r._connectionId,
+      refreshOptionsOnChangesTo: ['rest.lookups'],
       label: 'Relative URI',
       required: true,
       placeholder: 'Optional',
@@ -530,8 +549,10 @@ export default {
     'rest.bodyUpdate': {
       id: 'rest.bodyUpdate',
       type: 'httprequestbody',
+      connectionId: r => r && r._connectionId,
       label: 'Build HTTP Request Body',
-      refreshOptionsOnChangesTo: ['http.lookups'],
+      arrayIndex: 0,
+      refreshOptionsOnChangesTo: ['rest.lookups'],
       visibleWhenAll: [
         {
           field: 'rest.compositeType',

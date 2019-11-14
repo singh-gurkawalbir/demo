@@ -10,6 +10,7 @@ export default function reducer(state = {}, action) {
     components,
     installSteps,
     connectionMap,
+    data,
     step = {},
   } = action;
   const {
@@ -59,6 +60,7 @@ export default function reducer(state = {}, action) {
 
         draft[templateId].installSteps = installSteps;
         draft[templateId].connectionMap = connectionMap;
+        draft[templateId].data = data;
         break;
       case actionTypes.TEMPLATE.UPDATE_STEP:
         if (!draft[templateId]) {

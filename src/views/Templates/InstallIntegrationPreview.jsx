@@ -7,6 +7,7 @@ import actions from '../../actions';
 import CeligoTable from '../../components/CeligoTable';
 import { confirmDialog } from '../../components/ConfirmDialog';
 import templateUtil from '../../utils/template';
+import Spinner from '../../components/Spinner';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -123,7 +124,7 @@ export default function TemplatePreview(props) {
                   )}
                   {!objects.length && (
                     <Typography variant="h4">
-                      Loading Preview Components
+                      Loading Preview Components <Spinner />
                     </Typography>
                   )}
                   <div align="right" className={classes.installButton}>

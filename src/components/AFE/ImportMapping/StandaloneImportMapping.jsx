@@ -7,7 +7,7 @@ import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import ImportMapping from './';
 import LoadResources from '../../../components/LoadResources';
-import { getJSONPaths } from '../../../utils/json';
+import getJSONPaths from '../../../utils/jsonPaths';
 import { getImportOperationDetails } from '../../../utils/assistant';
 
 /**

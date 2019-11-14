@@ -10,6 +10,8 @@ export default {
       newValues['/file/type'] = undefined;
     }
 
+    delete newValues['/outputMode'];
+
     return {
       ...newValues,
     };

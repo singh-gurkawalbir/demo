@@ -292,7 +292,7 @@ function extractRules(fields, currFieldName, value) {
     const { name, hidden, required } = field;
     let rule = { ref: name };
 
-    if (hidden) {
+    if (!hidden) {
       rule = {
         ...rule,
         visibleRule: { field: currFieldName, is: [value] },
@@ -368,7 +368,7 @@ export const translateDependencyProps = fieldMap => {
   return fieldMapCopy;
 };
 
-const translateFieldProps = (fields, _integrationId) =>
+const translateFieldProps = (fields = [], _integrationId) =>
   fields.map(field => {
     // TODO: generate correct name path
     const { name, options, default: defaultValue, tooltip } = field;

@@ -7,10 +7,7 @@ export default {
 
       // returns corresponding relative uri path
       return {
-        resourceToFetch:
-          recordTypeField &&
-          recordTypeField.value &&
-          `recordTypes/${recordTypeField.value}/sublists`,
+        commMetaPath: `netsuite/metadata/suitescript/connections/${recordTypeField.connectionId}/recordTypes/${recordTypeField.value}/sublists`,
         resetValue:
           recordTypeField &&
           recordTypeField.value !== recordTypeField.defaultValue,
