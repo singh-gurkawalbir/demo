@@ -12,6 +12,8 @@ export default {
     '/http/auth/oauth/tokenURI':
       'https://login.salesforce.com/services/oauth2/token',
     '/http/auth/oauth/scopeDelimiter': ' ',
+    '/http/auth/token/refreshMethod': 'POST',
+    '/http/auth/token/refreshMediaType': 'urlencoded',
   }),
   fieldMap: {
     name: { fieldId: 'name' },

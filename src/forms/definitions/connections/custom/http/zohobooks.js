@@ -14,6 +14,8 @@ export default {
     '/http/auth/failStatusCode': 400,
     '/http/auth/failPath': 'message',
     '/http/auth/failValues': ['The request passed is not valid.'],
+    '/http/auth/token/refreshMethod': 'POST',
+    '/http/auth/token/refreshMediaType': 'urlencoded',
   }),
   fieldMap: {
     name: { fieldId: 'name' },

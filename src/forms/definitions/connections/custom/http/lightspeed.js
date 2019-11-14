@@ -12,6 +12,8 @@ export default {
     '/http/auth/oauth/tokenURI':
       'https://cloud.merchantos.com/oauth/access_token.php',
     '/http/auth/oauth/scopeDelimiter': ' ',
+    '/http/auth/token/refreshMethod': 'POST',
+    '/http/auth/token/refreshMediaType': 'urlencoded',
   }),
   fieldMap: {
     name: { fieldId: 'name' },
