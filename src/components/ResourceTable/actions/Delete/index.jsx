@@ -58,7 +58,7 @@ export default {
             // suffixed with "Dialog". Why not this one?
             title
             resourceType={resourceType}
-            id={resource._id}
+            resourceId={resource._id}
             onClose={() => setShowRef(false)}
           />
         )}
