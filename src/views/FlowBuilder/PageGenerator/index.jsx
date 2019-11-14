@@ -87,7 +87,7 @@ const PageGenerator = ({ history, match, index, isLast, flowId, ...pg }) => {
   const opacity = isDragging ? 0.5 : 1;
 
   function handleBlockClick() {
-    const newId = `${generateNewId()}`;
+    const newId = generateNewId();
 
     if (pending) {
       // generate newId

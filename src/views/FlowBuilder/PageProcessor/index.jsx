@@ -158,7 +158,7 @@ const PageProcessor = ({
   // #endregion
 
   function handleBlockClick() {
-    const newId = `${generateNewId()}`;
+    const newId = generateNewId();
 
     if (pending) {
       // generate newId

@@ -48,7 +48,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
 }));
-const newId = () => `${generateNewId()}`;
+const newId = () => generateNewId();
 
 function DynaSelectResource(props) {
   const {

@@ -205,7 +205,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function FlowBuilder(props) {
-  const getNewId = () => `${generateNewId()}`;
+  const getNewId = () => generateNewId();
   const { match, history } = props;
   const { flowId, integrationId } = match.params;
   const isNewFlow = !flowId || flowId.startsWith('new');

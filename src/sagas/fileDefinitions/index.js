@@ -64,8 +64,7 @@ function* saveUserFileDefinition({ definitionRules, formValues }) {
     formValues.resourceType === 'imports'
       ? definitionRules
       : definitionRules.fileDefinition;
-  let definitionId =
-    (fileDefinition && fileDefinition._id) || `${generateNewId()}`;
+  let definitionId = (fileDefinition && fileDefinition._id) || generateNewId();
   const patchSet = jsonPatch.compare({}, fileDefinition);
 
   yield put(actions.resource.patchStaged(definitionId, patchSet, SCOPES.VALUE));

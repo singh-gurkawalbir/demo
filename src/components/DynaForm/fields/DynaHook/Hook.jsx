@@ -50,7 +50,7 @@ const useStyles = makeStyles(theme => ({
 export default function DynaHook(props) {
   const [showEditor, setShowEditor] = useState(false);
   const [showCreateScriptDialog, setShowCreateScriptDialog] = useState(false);
-  const getNewId = () => `${generateNewId()}`;
+  const getNewId = () => generateNewId();
   const [tempScriptId, setTempScriptId] = useState(getNewId());
   const [isNewScriptIdAssigned, setIsNewScriptIdAssigned] = useState(false);
   const classes = useStyles();
