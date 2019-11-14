@@ -43,3 +43,17 @@ export default function getFormattedSampleData({
 
   return data;
 }
+
+export function getDefaultData(obj) {
+  const _obj = obj;
+
+  Object.keys(_obj).forEach(key => {
+    if (typeof _obj[key] === 'object' && _obj[key] !== null) {
+      getDefaultData(_obj[key]);
+    } else {
+      _obj[key] = { default: '' };
+    }
+  });
+
+  return _obj;
+}
