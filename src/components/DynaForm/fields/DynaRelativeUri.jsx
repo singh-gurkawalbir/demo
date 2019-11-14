@@ -100,6 +100,7 @@ export default function DynaRelativeUri(props) {
           data={getSampleData()}
           rule={value}
           onClose={handleClose}
+          disabled={disabled}
         />
       )}
       <IconButton

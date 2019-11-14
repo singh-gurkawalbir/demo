@@ -8,11 +8,12 @@ function SqlQueryBuilderEditorDialog(props) {
     height: '50vh',
     open: true,
   };
-  const { id, rule, sampleData, defaultData, ...rest } = props;
+  const { id, rule, sampleData, defaultData, disabled, ...rest } = props;
 
   return (
-    <EditorDialog id={id} {...defaults} {...rest}>
+    <EditorDialog id={id} {...defaults} {...rest} disabled={disabled}>
       <SQLQueryBuilderEditor
+        disabled={disabled}
         sampleData={sampleData}
         defaultData={defaultData}
         rule={rule}

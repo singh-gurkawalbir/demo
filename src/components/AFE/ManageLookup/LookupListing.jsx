@@ -3,7 +3,7 @@ import Button from '@material-ui/core/Button';
 import DynaForm from '../../DynaForm';
 
 export default function LookupListing(props) {
-  const { lookups, onUpdate, onDelete, onCancel } = props;
+  const { lookups, onUpdate, disabled, onDelete, onCancel } = props;
   const [key, setKey] = useState(1);
   const handleDelete = obj => {
     setKey(key + 1);
@@ -33,7 +33,7 @@ export default function LookupListing(props) {
   };
 
   return (
-    <DynaForm key={key} fieldMeta={lookuplistingFieldMeta}>
+    <DynaForm key={key} disabled={disabled} fieldMeta={lookuplistingFieldMeta}>
       <Button data-test="closeLookupListing" onClick={onCancel}>
         Close
       </Button>

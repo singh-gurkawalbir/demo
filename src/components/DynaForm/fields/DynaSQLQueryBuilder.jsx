@@ -4,7 +4,15 @@ import SqlQueryBuilderEditorDialog from '../../../components/AFE/SqlQueryBuilder
 import DynaLookupEditor from './DynaLookupEditor';
 
 export default function DynaSQLQueryBuilder(props) {
-  const { id, onFieldChange, options, value, label, resourceId } = props;
+  const {
+    id,
+    onFieldChange,
+    options,
+    disabled,
+    value,
+    label,
+    resourceId,
+  } = props;
   const [showEditor, setShowEditor] = useState(false);
   const handleEditorClick = () => {
     setShowEditor(!showEditor);
@@ -64,6 +72,7 @@ export default function DynaSQLQueryBuilder(props) {
           onFieldChange={onFieldChange}
           onClose={handleClose}
           action={lookupField}
+          disabled={disabled}
         />
       )}
       <Button

@@ -19,7 +19,7 @@ const useStyles = makeStyles({
 });
 
 export default function TransformEditor(props) {
-  const { editorId } = props;
+  const { editorId, disabled } = props;
   const classes = useStyles(props);
   const { data, result, error, violations, initChangeIdentifier } = useSelector(
     state => selectors.editor(state, editorId)
@@ -56,6 +56,7 @@ export default function TransformEditor(props) {
           keyName={keyName}
           valueName={valueName}
           editorId={editorId}
+          disabled={disabled}
         />
       </PanelGridItem>
 
@@ -67,6 +68,7 @@ export default function TransformEditor(props) {
           mode="json"
           overrides={{ showGutter: false }}
           onChange={handleDataChange}
+          readOnly={disabled}
         />
       </PanelGridItem>
 

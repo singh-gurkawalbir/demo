@@ -41,7 +41,12 @@ function ResourceDrawer(props) {
   );
 }
 
-export default function ResourceDrawerRoute({ match, flowId }) {
+export default function ResourceDrawerRoute({
+  match,
+  flowId,
+  integrationId,
+  disabled,
+}) {
   return (
     <Route
       path={`${match.url}/:operation/:resourceType/:id`}
@@ -49,7 +54,14 @@ export default function ResourceDrawerRoute({ match, flowId }) {
       // uses "children" as a prop and this is the intended
       // use (per their docs)
       // eslint-disable-next-line react/no-children-prop
-      children={props => <ResourceDrawer {...props} flowId={flowId} />}
+      children={props => (
+        <ResourceDrawer
+          {...props}
+          flowId={flowId}
+          integrationId={integrationId}
+          disabled={disabled}
+        />
+      )}
     />
   );
 }

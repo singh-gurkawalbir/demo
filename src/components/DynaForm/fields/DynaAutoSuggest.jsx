@@ -164,6 +164,7 @@ export default function DynaAutoSuggest(props) {
             label,
             placeholder,
             value,
+            disabled,
             onChange: handleChange,
           }}
           theme={{
