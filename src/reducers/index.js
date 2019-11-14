@@ -589,6 +589,30 @@ export function resourceList(state, options = {}) {
   return fromData.resourceList(state && state.data, options);
 }
 
+const emptyObject = {};
+
+export function flowDetails(state, id) {
+  const flow = resource(state, 'flows', id);
+
+  if (!flow) return emptyObject;
+
+  return produce(flow, draft => {
+    const exportId =
+      draft.pageGenerators && draft.pageGenerators.length
+        ? draft.pageGenerators[0]._exportId
+        : draft._exportId;
+    const pg = resource(state, 'exports', exportId);
+    const allExports = resourceList(state, {
+      resourceType: 'exports',
+    }).resources;
+
+    draft.isRealtime = isRealtimeExport(pg);
+    draft.isSimpleImport = isSimpleImportFlow(pg);
+    draft.isRunnable = isRunnable(allExports, pg, draft);
+    draft.showScheduleIcon = showScheduleIcon(allExports, pg, draft);
+  });
+}
+
 export function flowListWithMetadata(state, options) {
   const flows = resourceList(state, options).resources || [];
 

@@ -22,7 +22,7 @@ import DownloadIcon from '../../../../../components/icons/DownloadIcon';
 import TrashIcon from '../../../../../components/icons/TrashIcon';
 import CloneIcon from '../../../../../components/icons/CopyIcon';
 import AuditIcon from '../../../../../components/icons/AuditLogIcon';
-import ReferencesIcon from '../../../../../components/icons/ViewReferencesIcon';
+import RefIcon from '../../../../../components/icons/ViewReferencesIcon';
 import DetachIcon from '../../../../../components/icons/ConnectionsIcon';
 import OnOffSwitch from '../../../../../components/SwitchToggle';
 import InfoIconButton from '../InfoIconButton';
@@ -59,14 +59,14 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.warning.main,
   },
 }));
-const ellipseActions = [
-  { action: 'detach', label: 'Detach flow', Icon: DetachIcon },
-  { action: 'clone', label: 'Clone flow', Icon: CloneIcon },
-  { action: 'audit', label: 'View audit log', Icon: AuditIcon },
-  { action: 'references', label: 'View references', Icon: ReferencesIcon },
-  { action: 'download', label: 'Download flow', Icon: DownloadIcon },
-  { action: 'delete', label: 'Delete', Icon: TrashIcon },
-];
+const allActions = {
+  detach: { action: 'detach', label: 'Detach flow', Icon: DetachIcon },
+  clone: { action: 'clone', label: 'Clone flow', Icon: CloneIcon },
+  audit: { action: 'audit', label: 'View audit log', Icon: AuditIcon },
+  references: { action: 'references', label: 'View references', Icon: RefIcon },
+  download: { action: 'download', label: 'Download flow', Icon: DownloadIcon },
+  delete: { action: 'delete', label: 'Delete', Icon: TrashIcon },
+};
 
 function defaultConfirmDialog(message, callback) {
   confirmDialog({
@@ -80,8 +80,7 @@ export default function FlowCard({ flowId }) {
   const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
-  const flow =
-    useSelector(state => selectors.resource(state, 'flows', flowId)) || {};
+  const flow = useSelector(state => selectors.flowDetails(state, flowId)) || {};
   const patchFlow = useCallback(
     (path, value) => {
       const patchSet = [{ op: 'replace', path, value }];
@@ -140,12 +139,20 @@ export default function FlowCard({ flowId }) {
           break;
 
         case 'download':
-          // TODO: Every action method that has a resourceType and Id
-          // specifies the resource type first, then ID. We need to be consistent
-          // with our action creator arguments to prevent syntax errors from people
-          // expecting type to be the first argument. Also, this action method
+          // TODO: Every action method that has a resourceType and id arg should
+          // specify the resource type first, then ID. We need to be consistent
+          // with our action creator arguments patterns to prevent syntax errors from
+          // devs expecting these common patterns. Also, this action method
           // would be better called "downloadResource".
           dispatch(actions.resource.downloadFile(flowId, 'flows'));
+          break;
+
+        case 'run':
+          dispatch(actions.flow.run({ flowId }));
+          history.push(
+            `/pg/integrations/${flow._integrationId || 'none'}/dashboard`
+          );
+
           break;
 
         default:
@@ -153,7 +160,15 @@ export default function FlowCard({ flowId }) {
 
       setAnchorEl(null);
     },
-    [dispatch, flow.disabled, flowId, flowName, history, patchFlow]
+    [
+      dispatch,
+      flow._integrationId,
+      flow.disabled,
+      flowId,
+      flowName,
+      history,
+      patchFlow,
+    ]
   );
   const { name, description, lastModified, schedule, disabled } = flow;
   // TODO: set status based on flow criteria...
@@ -163,16 +178,26 @@ export default function FlowCard({ flowId }) {
 
   // TODO: This function needs to be enhanced to handle all
   // the various cases.. realtime, scheduled, cron, not scheduled, etc...
-  function getRunLabel(schedule) {
-    if (schedule) {
-      return `Runs every: ${schedule}`;
-    }
+  function getRunLabel() {
+    if (flow.isReatime) return `Realtime`;
+
+    if (flow.isSimpleExport) return 'Never runs';
 
     return 'Never Runs';
   }
 
   const open = Boolean(anchorEl);
   const actionsPopoverId = open ? 'more-row-actions' : undefined;
+  const availableActions = [];
+
+  // TODO: we need to add logic to properly determine which of the
+  // below actions should be made available for this flow.
+  if (flow._integrationId) availableActions.push(allActions.detach);
+  availableActions.push(allActions.clone);
+  availableActions.push(allActions.audit);
+  availableActions.push(allActions.references);
+  availableActions.push(allActions.download);
+  availableActions.push(allActions.delete);
 
   return (
     <div className={classes.root}>
@@ -198,9 +223,11 @@ export default function FlowCard({ flowId }) {
             on={!disableCard && !disabled}
             onClick={handleActionClick('disable')}
           />
-          <IconButton size="small" onClick={handleActionClick('run')}>
-            <RunIcon />
-          </IconButton>
+          {flow.isRunnable && (
+            <IconButton size="small" onClick={handleActionClick('run')}>
+              <RunIcon />
+            </IconButton>
+          )}
 
           <IconButton
             data-test="openActionsMenu"
@@ -219,7 +246,7 @@ export default function FlowCard({ flowId }) {
             anchorEl={anchorEl}
             open={open}
             onClose={handleMenuClose}>
-            {ellipseActions.map(({ action, label, Icon }) => (
+            {availableActions.map(({ action, label, Icon }) => (
               <MenuItem
                 key={label}
                 data-test={`${action}Flow`}
