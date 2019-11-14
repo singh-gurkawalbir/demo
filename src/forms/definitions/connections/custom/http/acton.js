@@ -12,6 +12,8 @@ export default {
     '/http/headers': [{ name: 'Accept', value: 'application/json' }],
     '/http/auth/oauth/scopeDelimiter': ' ',
     '/http/auth/oauth/scope': ['PRODUCTION'],
+    '/http/auth/token/refreshMethod': 'POST',
+    '/http/auth/token/refreshMediaType': 'urlencoded',
   }),
   fieldMap: {
     name: { fieldId: 'name' },

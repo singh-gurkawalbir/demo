@@ -14,7 +14,6 @@ import sampleData, * as fromSampleData from './sampleData';
 import flowData, * as fromFlowData from './sampleData/flows';
 import integrationApps, * as fromIntegrationApps from './integrationApps';
 import templates, * as fromTemplates from './templates';
-import clone, * as fromClone from './clone';
 import oAuthAuthorize, * as fromOAuthAuthorize from './oAuthAuthorize';
 import resource, * as fromResource from './resource';
 
@@ -35,7 +34,6 @@ export default combineReducers({
   flowData,
   integrationApps,
   templates,
-  clone,
   oAuthAuthorize,
 });
 
@@ -88,24 +86,18 @@ export function stagedResource(state, id, scope) {
   return fromStage.stagedResource(state.stage, id, scope);
 }
 
-export function optionsFromMetadata(
+export function optionsFromMetadata({
   state,
   connectionId,
-  applicationType,
-  metadataType,
-  mode,
-  recordType,
-  selectField
-) {
-  return fromMetadata.optionsFromMetadata(
-    state && state.metadata,
+  commMetaPath,
+  filterKey,
+}) {
+  return fromMetadata.optionsFromMetadata({
+    state: state && state.metadata,
     connectionId,
-    applicationType,
-    metadataType,
-    mode,
-    recordType,
-    selectField
-  );
+    commMetaPath,
+    filterKey,
+  });
 }
 
 export function optionsMapFromMetadata(
@@ -141,22 +133,6 @@ export function resourceFormSaveProcessTerminated(
 ) {
   return fromResourceForm.resourceFormSaveProcessTerminated(
     state && state.resourceForm,
-    resourceType,
-    resourceId
-  );
-}
-
-export function clonePreview(state, resourceType, resourceId) {
-  return fromClone.clonePreview(state && state.clone, resourceType, resourceId);
-}
-
-export function cloneData(state, resourceType, resourceId) {
-  return fromClone.cloneData(state && state.clone, resourceType, resourceId);
-}
-
-export function cloneInstallSteps(state, resourceType, resourceId) {
-  return fromClone.cloneInstallSteps(
-    state && state.clone,
     resourceType,
     resourceId
   );

@@ -15,6 +15,8 @@ export default {
       ...formValues['/http/auth/oauth/scope'],
     ],
     '/http/auth/oauth/scopeDelimiter': ' ',
+    '/http/auth/token/refreshMethod': 'POST',
+    '/http/auth/token/refreshMediaType': 'urlencoded',
   }),
   fieldMap: {
     name: { fieldId: 'name' },

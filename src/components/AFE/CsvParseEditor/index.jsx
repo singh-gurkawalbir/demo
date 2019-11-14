@@ -20,7 +20,7 @@ const useStyles = makeStyles({
 });
 
 export default function CsvParseEditor(props) {
-  const { editorId } = props;
+  const { editorId, disabled } = props;
   const classes = useStyles(props);
   const { data, result, error, violations } = useSelector(state =>
     selectors.editor(state, editorId)
@@ -56,6 +56,7 @@ export default function CsvParseEditor(props) {
           value={data}
           mode="text"
           onChange={handleDataChange}
+          readOnly={disabled}
         />
       </PanelGridItem>
       <PanelGridItem gridArea="result">

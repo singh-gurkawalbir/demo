@@ -2,9 +2,11 @@ export default {
   'netsuite_da.recordType': {
     label: 'Record Type',
     required: true,
-    mode: 'suitescript',
     type: 'refreshableselect',
-    resourceType: 'recordTypes',
+    filterKey: 'suitescript-recordTypes',
+    commMetaPath: r =>
+      r &&
+      `netsuite/metadata/suitescript/connections/${r._connectionId}/recordTypes`,
     placeholder: 'Please select a record type',
     connectionId: r => r && r._connectionId,
     visibleWhen: [

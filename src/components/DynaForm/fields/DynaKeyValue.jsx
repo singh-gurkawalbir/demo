@@ -1,7 +1,7 @@
 import { useState, useEffect, Fragment } from 'react';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
-import { IconButton, FormLabel } from '@material-ui/core';
+import { IconButton, FormLabel, FormControl } from '@material-ui/core';
 import ErroredMessageComponent from './ErroredMessageComponent';
 import TrashIcon from '../../icons/TrashIcon';
 
@@ -33,6 +33,7 @@ export function KeyValueComponent(props) {
     valueName = 'value',
     classes,
     showDelete,
+    disabled,
   } = props;
   const [values, setValues] = useState([]);
   const [rowInd, setRowInd] = useState(0);
@@ -83,12 +84,16 @@ export function KeyValueComponent(props) {
   const handleValueUpdate = row => event => handleUpdate(row, event, valueName);
 
   return (
-    <div data-test={dataTest} className={classes.container}>
+    <FormControl
+      disabled={disabled}
+      data-test={dataTest}
+      className={classes.container}>
       <FormLabel className={classes.label}>{label}</FormLabel>
       <Fragment key={`${rowInd}-${isKey}`}>
         {tableData.map(r => (
           <div className={classes.rowContainer} key={r.row}>
             <TextField
+              disabled={disabled}
               autoFocus={r.row === rowInd && isKey}
               defaultValue={r[keyName]}
               placeholder={keyName}
@@ -98,6 +103,7 @@ export function KeyValueComponent(props) {
             />
 
             <TextField
+              disabled={disabled}
               autoFocus={r.row === rowInd && !isKey}
               defaultValue={r[valueName]}
               placeholder={valueName}
@@ -108,6 +114,7 @@ export function KeyValueComponent(props) {
 
             {showDelete && (
               <IconButton
+                disabled={disabled}
                 data-test="deleteKeyValue"
                 aria-label="delete"
                 onClick={handleDelete(r.row)}>
@@ -119,6 +126,7 @@ export function KeyValueComponent(props) {
       </Fragment>
       <div key="new" className={classes.rowContainer}>
         <TextField
+          disabled={disabled}
           value=""
           label={keyName}
           variant="filled"
@@ -127,6 +135,7 @@ export function KeyValueComponent(props) {
         />
 
         <TextField
+          disabled={disabled}
           value=""
           label={valueName}
           variant="filled"
@@ -140,7 +149,7 @@ export function KeyValueComponent(props) {
           </IconButton>
         )}
       </div>
-    </div>
+    </FormControl>
   );
 }
 

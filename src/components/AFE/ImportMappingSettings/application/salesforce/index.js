@@ -75,10 +75,10 @@ export default {
         'lookup.recordType': {
           id: 'lookup.recordType',
           name: 'recordType',
-          mode: 'salesforce',
           defaultValue: '',
           type: 'refreshableselect',
-          resourceType: 'sObjectTypes',
+          filterKey: 'salesforce-sObjects',
+          commMetaPath: `salesforce/metadata/connections/${connectionId}/sObjectTypes`,
           label: 'Search Record Type',
           connectionId,
           visibleWhenAll: [
@@ -90,10 +90,8 @@ export default {
           id: 'lookup.resultField',
           name: 'resultField',
           type: 'refreshableselect',
-          mode: 'salesforce',
-          // resourceType: 'sObjectTypes',
+          commMetaPath: `salesforce/metadata/connections/${connectionId}/sObjectTypes`,
           defaultValue: '',
-          // filterKey: 'sObjectTypes',
           connectionId,
           refreshOptionsOnChangesTo: ['lookup.recordType'],
           visibleWhenAll: [
@@ -418,7 +416,7 @@ export default {
 
           return {
             recordType: recordTypeField && recordTypeField.value,
-            disableOptionsLoad: !(recordTypeField && recordTypeField.value),
+            disableFetch: !(recordTypeField && recordTypeField.value),
             resourceToFetch: `sObjectTypes`,
             resetValue: [],
           };

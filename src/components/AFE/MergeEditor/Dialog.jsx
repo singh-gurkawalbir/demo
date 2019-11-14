@@ -2,7 +2,7 @@ import EditorDialog from '../EditorDialog';
 import MergeEditor from './';
 
 export default function MergeEditorDialog(props) {
-  const { id, rule, data, ...rest } = props;
+  const { id, rule, data, disabled, ...rest } = props;
   const defaults = {
     layout: 'column',
     width: '80vw',
@@ -11,8 +11,13 @@ export default function MergeEditorDialog(props) {
   };
 
   return (
-    <EditorDialog id={id} {...defaults} {...rest} showFullScreen>
-      <MergeEditor editorId={id} rule={rule} data={data} />
+    <EditorDialog
+      id={id}
+      {...defaults}
+      {...rest}
+      disabled={disabled}
+      showFullScreen>
+      <MergeEditor editorId={id} rule={rule} data={data} disabled={disabled} />
     </EditorDialog>
   );
 }

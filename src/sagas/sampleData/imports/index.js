@@ -25,26 +25,21 @@ function* requestSampleData({ resourceId }) {
     switch (adaptorType) {
       case 'NetSuiteDistributedImport': {
         // eslint-disable-next-line camelcase
-        const { _connectionId, netsuite_da } = resource;
+        const { _connectionId: connectionId, netsuite_da } = resource;
 
         yield call(getNetsuiteOrSalesforceMeta, {
-          connectionId: _connectionId,
-          metadataType: 'recordTypes',
-          mode: 'suitescript',
-          recordType: netsuite_da.recordType,
-          filterKey: `record-${netsuite_da.recordType}`,
+          connectionId,
+          commMetaPath: `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${netsuite_da.recordType}`,
         });
         break;
       }
 
       case 'SalesforceImport': {
-        const { _connectionId, salesforce } = resource;
+        const { _connectionId: connectionId, salesforce } = resource;
 
         yield call(getNetsuiteOrSalesforceMeta, {
-          connectionId: _connectionId,
-          metadataType: 'sObjectTypes',
-          mode: 'salesforce',
-          recordType: salesforce.sObjectType,
+          connectionId,
+          commMetaPath: `salesforce/metadata/connections/${connectionId}/sObjectTypes/${salesforce.sObjectType}`,
         });
         break;
       }

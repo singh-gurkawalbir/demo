@@ -19,7 +19,7 @@ const useStyles = makeStyles({
 });
 
 export default function JavaScriptEditor(props) {
-  const { editorId, entryFunction, scriptId } = props;
+  const { editorId, entryFunction, scriptId, disabled } = props;
   const classes = useStyles(props);
   const { data, result, error, violations, initChangeIdentifier } = useSelector(
     state => selectors.editor(state, editorId)
@@ -52,6 +52,7 @@ export default function JavaScriptEditor(props) {
     <PanelGrid className={classes.template}>
       <PanelGridItem gridArea="rule">
         <JavaScriptPanel
+          disabled={disabled}
           key={`${editorId}-${initChangeIdentifier}`}
           editorId={editorId}
         />
@@ -62,6 +63,7 @@ export default function JavaScriptEditor(props) {
           name="data"
           value={data}
           mode="json"
+          readOnly={disabled}
           onChange={handleDataChange}
         />
       </PanelGridItem>

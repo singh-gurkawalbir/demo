@@ -9,6 +9,8 @@ export default {
     '/http/auth/oauth/authURI': 'http://github.com/login/oauth/authorize',
     '/http/auth/oauth/tokenURI': 'https://github.com/login/oauth/access_token',
     '/http/auth/oauth/scopeDelimiter': ' ',
+    '/http/auth/token/refreshMethod': 'POST',
+    '/http/auth/token/refreshMediaType': 'urlencoded',
     '/http/headers': [{ name: 'User-Agent', value: 'Awesome-Octocat-App' }],
   }),
   fieldMap: {

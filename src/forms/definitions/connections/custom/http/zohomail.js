@@ -12,6 +12,8 @@ export default {
     '/http/auth/oauth/scopeDelimiter': ',',
     '/http/auth/failStatusCode': 404,
     '/http/auth/failPath': 'data.errorCode',
+    '/http/auth/token/refreshMethod': 'POST',
+    '/http/auth/token/refreshMediaType': 'urlencoded',
     '/http/auth/failValues': ['INVALID_OAUTHTOKEN'],
   }),
   fieldMap: {

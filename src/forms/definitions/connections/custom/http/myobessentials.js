@@ -11,6 +11,8 @@ export default {
     '/http/auth/oauth/tokenURI': 'https://secure.myob.com/oauth2/v1/authorize',
     '/http/auth/oauth/scope': ['la.global'],
     '/http/auth/oauth/scopeDelimiter': ',',
+    '/http/auth/token/refreshMethod': 'POST',
+    '/http/auth/token/refreshMediaType': 'urlencoded',
     '/http/headers': [{ name: 'x-myobapi-version', value: 'v0' }],
   }),
   fieldMap: {
