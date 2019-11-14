@@ -521,8 +521,8 @@ const template = {
     }),
   updateStep: (step, templateId) =>
     action(actionTypes.TEMPLATE.UPDATE_STEP, { step, templateId }),
-  createComponents: templateId =>
-    action(actionTypes.TEMPLATE.CREATE_COMPONENTS, { templateId }),
+  createComponents: (templateId, runKey) =>
+    action(actionTypes.TEMPLATE.CREATE_COMPONENTS, { templateId, runKey }),
   clearUploaded: templateId =>
     action(actionTypes.TEMPLATE.CLEAR_UPLOADED, { templateId }),
   clearTemplate: templateId =>

@@ -12,6 +12,8 @@ export default function TemplateInstall(props) {
   const template =
     useSelector(state => selectors.marketplaceTemplate(state, templateId)) ||
     {};
+  const { runKey } =
+    useSelector(state => selectors.templateSetup(state, templateId)) || {};
   const installSteps = useSelector(state =>
     selectors.templateInstallSteps(state, templateId)
   );
@@ -45,6 +47,7 @@ export default function TemplateInstall(props) {
         {...props}
         templateId={templateId}
         type="template"
+        runKey={runKey}
         installSteps={installSteps}
         resource={template}
         handleSetupComplete={handleSetupComplete}
