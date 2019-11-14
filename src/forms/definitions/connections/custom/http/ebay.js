@@ -5,6 +5,8 @@ export default {
     '/assistant': 'ebay',
     '/http/auth/type': 'oauth',
     '/http/mediaType': 'json',
+    '/http/auth/token/refreshMethod': 'POST',
+    '/http/auth/token/refreshMediaType': 'urlencoded',
     '/http/baseURI': `https://api${
       formValues['/accountType'] === 'sandbox' ? '.sandbox' : ''
     }.ebay.com/`,

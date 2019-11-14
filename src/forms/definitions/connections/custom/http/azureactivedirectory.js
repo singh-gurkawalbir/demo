@@ -11,6 +11,8 @@ export default {
     '/http/auth/oauth/tokenURI':
       'https://login.microsoftonline.com/common/oauth2/v2.0/token',
     '/http/auth/oauth/scopeDelimiter': ' ',
+    '/http/auth/token/refreshMethod': 'POST',
+    '/http/auth/token/refreshMediaType': 'urlencoded',
   }),
   fieldMap: {
     name: { fieldId: 'name' },
