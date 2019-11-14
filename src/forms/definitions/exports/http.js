@@ -91,6 +91,15 @@ export default {
       ...retValues,
     };
   },
+  optionsHandler: (fieldId, fields) => {
+    if (fieldId === 'http.relativeURI' || fieldId === 'http.body') {
+      const nameField = fields.find(field => field.fieldId === 'name');
+
+      return {
+        resourceName: nameField && nameField.value,
+      };
+    }
+  },
   fieldMap: {
     common: { formId: 'common' },
     exportData: {

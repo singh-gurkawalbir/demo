@@ -69,6 +69,22 @@ export default {
       ...retValues,
     };
   },
+  optionsHandler: (fieldId, fields) => {
+    if (
+      fieldId === 'rest.once.relativeURI' ||
+      fieldId === 'dataURITemplate' ||
+      fieldId === 'rest.relativeURI' ||
+      fieldId === 'rest.once.postBody' ||
+      fieldId === 'rest.postBody' ||
+      fieldId === 'rest.pagingPostBody'
+    ) {
+      const nameField = fields.find(field => field.fieldId === 'name');
+
+      return {
+        resourceName: nameField && nameField.value,
+      };
+    }
+  },
   fieldMap: {
     common: { formId: 'common' },
     exportData: {
