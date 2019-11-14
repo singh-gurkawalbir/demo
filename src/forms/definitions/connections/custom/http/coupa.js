@@ -28,6 +28,7 @@ export default {
         'Please enter the subdomain of your account here which can be obtained from the login url.',
       endAdornment: '.com',
       label: 'Subdomain',
+      required: true,
       validWhen: {
         matchesRegEx: {
           pattern: '^[\\S]+$',

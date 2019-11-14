@@ -28,6 +28,7 @@ export default {
         'The subdomain of your chargify account. For example, https://mysubdomain.chargify.com.',
       endAdornment: '.chargify.com',
       label: 'Enter subdomain into the base uri',
+      required: true,
       validWhen: {
         matchesRegEx: {
           pattern: '^[\\S]+$',
