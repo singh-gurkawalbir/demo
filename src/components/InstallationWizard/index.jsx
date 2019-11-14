@@ -63,8 +63,9 @@ export default function InstallationWizard(props) {
   const {
     resourceType,
     resourceId,
-    installSteps,
+    installSteps = [],
     type,
+    runKey,
     templateId,
     resource,
     handleSetupComplete,
@@ -105,7 +106,7 @@ export default function InstallationWizard(props) {
       if (type === 'clone') {
         dispatch(actions.clone.createComponents(resourceType, resourceId));
       } else if (type === 'template') {
-        dispatch(actions.template.createComponents(templateId));
+        dispatch(actions.template.createComponents(templateId, runKey));
       }
     }
   }, [
@@ -116,6 +117,7 @@ export default function InstallationWizard(props) {
     templateId,
     resourceType,
     type,
+    runKey,
   ]);
   useEffect(() => {
     if (createdComponents) {
@@ -281,7 +283,9 @@ export default function InstallationWizard(props) {
                 <Breadcrumbs separator={<ArrowRightIcon />}>
                   <Typography color="textPrimary">Setup</Typography>
                   <Typography color="textPrimary">
-                    {resource.name || MODEL_PLURAL_TO_LABEL[resourceType]}
+                    {resource.name ||
+                      MODEL_PLURAL_TO_LABEL[resourceType] ||
+                      'Template'}
                   </Typography>
                 </Breadcrumbs>
               </Paper>
