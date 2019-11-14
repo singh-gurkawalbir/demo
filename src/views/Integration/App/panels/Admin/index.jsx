@@ -8,7 +8,7 @@ import {
 } from 'react-router-dom';
 import { makeStyles } from '@material-ui/styles';
 import { List, ListItem } from '@material-ui/core';
-import { STANDALONE_INTEGRATION } from '../../../../utils/constants';
+import { STANDALONE_INTEGRATION } from '../../../../../utils/constants';
 import AuditLogSection from './sections/AuditLog';
 import ReadmeSection from './sections/Readme';
 import NotificationsSection from './sections/Notifications';

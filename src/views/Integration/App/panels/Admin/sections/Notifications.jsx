@@ -1,12 +1,12 @@
 import { Fragment, useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 // import { Typography } from '@material-ui/core';
-import * as selectors from '../../../../../reducers';
-import actions from '../../../../../actions';
-import DynaForm from '../../../../../components/DynaForm';
-import DynaSubmit from '../../../../../components/DynaForm/DynaSubmit';
-import LoadResources from '../../../../../components/LoadResources';
-import PanelHeader from '../../PanelHeader';
+import * as selectors from '../../../../../../reducers';
+import actions from '../../../../../../actions';
+import DynaForm from '../../../../../../components/DynaForm';
+import DynaSubmit from '../../../../../../components/DynaForm/DynaSubmit';
+import LoadResources from '../../../../../../components/LoadResources';
+import PanelHeader from '../../../../common/PanelHeader';
 
 export default function NotificationsSection({ integrationId }) {
   const dispatch = useDispatch();

@@ -5,13 +5,13 @@ import { Link, useHistory } from 'react-router-dom';
 import TimeAgo from 'react-timeago';
 import { makeStyles } from '@material-ui/styles';
 import { Typography, Grid, IconButton } from '@material-ui/core';
-import actions from '../../../../../actions';
-import * as selectors from '../../../../../reducers';
-import { defaultConfirmDialog } from '../../../../../components/ConfirmDialog';
-import FlowEllipsisMenu from '../../../../../components/FlowEllipsisMenu';
-import RunIcon from '../../../../../components/icons/RunIcon';
-import OnOffSwitch from '../../../../../components/SwitchToggle';
-import InfoIconButton from '../InfoIconButton';
+import actions from '../../../../../../actions';
+import * as selectors from '../../../../../../reducers';
+import { defaultConfirmDialog } from '../../../../../../components/ConfirmDialog';
+import FlowEllipsisMenu from '../../../../../../components/FlowEllipsisMenu';
+import RunIcon from '../../../../../../components/icons/RunIcon';
+import OnOffSwitch from '../../../../../../components/SwitchToggle';
+import InfoIconButton from '../../../../common/InfoIconButton';
 
 const useStyles = makeStyles(theme => ({
   root: {

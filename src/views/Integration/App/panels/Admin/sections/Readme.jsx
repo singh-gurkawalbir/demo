@@ -2,11 +2,11 @@ import { Fragment, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/styles';
 import { Button, Typography } from '@material-ui/core';
-import * as selectors from '../../../../../reducers';
-import actions from '../../../../../actions';
-import PanelHeader from '../../PanelHeader';
-import CodeEditor from '../../../../../components/CodeEditor';
-import RawHtml from '../../../../../components/RawHtml';
+import * as selectors from '../../../../../../reducers';
+import actions from '../../../../../../actions';
+import PanelHeader from '../../../../common/PanelHeader';
+import CodeEditor from '../../../../../../components/CodeEditor';
+import RawHtml from '../../../../../../components/RawHtml';
 
 const useStyles = makeStyles(theme => ({
   root: {

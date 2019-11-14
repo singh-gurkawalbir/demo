@@ -3,15 +3,15 @@ import { useSelector } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom';
 import shortid from 'shortid';
 import { makeStyles } from '@material-ui/styles';
-import RegisterConnections from '../../../../components/RegisterConnections';
-import LoadResources from '../../../../components/LoadResources';
-import CeligoTable from '../../../../components/CeligoTable';
-import metadata from '../../../../components/ResourceTable/metadata/connections';
-import * as selectors from '../../../../reducers';
-import IconTextButton from '../../../../components/IconTextButton';
-import AddIcon from '../../../../components/icons/AddIcon';
-import ConnectionsIcon from '../../../../components/icons/ConnectionsIcon';
-import PanelHeader from '../PanelHeader';
+import RegisterConnections from '../../../../../components/RegisterConnections';
+import LoadResources from '../../../../../components/LoadResources';
+import CeligoTable from '../../../../../components/CeligoTable';
+import metadata from '../../../../../components/ResourceTable/metadata/connections';
+import * as selectors from '../../../../../reducers';
+import IconTextButton from '../../../../../components/IconTextButton';
+import AddIcon from '../../../../../components/icons/AddIcon';
+import ConnectionsIcon from '../../../../../components/icons/ConnectionsIcon';
+import PanelHeader from '../../../common/PanelHeader';
 
 const useStyles = makeStyles(theme => ({
   root: {

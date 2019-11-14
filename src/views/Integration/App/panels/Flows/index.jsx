@@ -2,14 +2,14 @@ import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/styles';
-import * as selectors from '../../../../reducers';
-import { STANDALONE_INTEGRATION } from '../../../../utils/constants';
-import AttachFlowsDialog from '../../../../components/AttachFlows';
-import LoadResources from '../../../../components/LoadResources';
-import IconTextButton from '../../../../components/IconTextButton';
-import AddIcon from '../../../../components/icons/AddIcon';
-import AttachIcon from '../../../../components/icons/ConnectionsIcon';
-import PanelHeader from '../PanelHeader';
+import * as selectors from '../../../../../reducers';
+import { STANDALONE_INTEGRATION } from '../../../../../utils/constants';
+import AttachFlowsDialog from '../../../../../components/AttachFlows';
+import LoadResources from '../../../../../components/LoadResources';
+import IconTextButton from '../../../../../components/IconTextButton';
+import AddIcon from '../../../../../components/icons/AddIcon';
+import AttachIcon from '../../../../../components/icons/ConnectionsIcon';
+import PanelHeader from '../../../common/PanelHeader';
 import FlowCard from './Card';
 
 const useStyles = makeStyles(theme => ({
