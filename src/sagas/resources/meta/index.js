@@ -20,8 +20,6 @@ export function* getNetsuiteOrSalesforceMeta({
     }
   }
 
-  console.log('path', path);
-
   try {
     const metadata = yield call(apiCallWithRetry, {
       path,
