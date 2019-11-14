@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import { useCallback, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link, useHistory } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
 import TimeAgo from 'react-timeago';
 import { makeStyles } from '@material-ui/styles';
 import {
@@ -11,8 +11,9 @@ import {
   Menu,
   MenuItem,
 } from '@material-ui/core';
-import { confirmDialog } from '../../../../../components/ConfirmDialog';
 import actions from '../../../../../actions';
+import * as selectors from '../../../../../reducers';
+import { confirmDialog } from '../../../../../components/ConfirmDialog';
 import AuditLogDialog from '../../../../../components/AuditLog/AuditLogDialog';
 import ReferencesDialog from '../../../../../components/ResourceReferences';
 import RunIcon from '../../../../../components/icons/RunIcon';
@@ -75,19 +76,12 @@ function defaultConfirmDialog(message, callback) {
   });
 }
 
-export default function FlowCard({
-  name,
-  status = 'success',
-  description,
-  lastModified,
-  schedule,
-  flowId,
-  disabled,
-  disableCard = false,
-}) {
+export default function FlowCard({ flowId }) {
   const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
+  const flow =
+    useSelector(state => selectors.resource(state, 'flows', flowId)) || {};
   const patchFlow = useCallback(
     (path, value) => {
       const patchSet = [{ op: 'replace', path, value }];
@@ -104,15 +98,15 @@ export default function FlowCard({
     setAnchorEl(event.currentTarget);
   }, []);
   const handleMenuClose = useCallback(() => setAnchorEl(null), []);
-  const flowName = name || flowId;
+  const flowName = flow.name || flow._Id;
   const handleActionClick = useCallback(
     action => () => {
       switch (action) {
         case 'disable':
           defaultConfirmDialog(
-            `${disabled ? 'enable' : 'disable'} ${flowName}?`,
+            `${flow.disabled ? 'enable' : 'disable'} ${flowName}?`,
             () => {
-              patchFlow('/disabled', !disabled);
+              patchFlow('/disabled', !flow.disabled);
             }
           );
           break;
@@ -159,8 +153,13 @@ export default function FlowCard({
 
       setAnchorEl(null);
     },
-    [disabled, dispatch, flowId, flowName, history, patchFlow]
+    [dispatch, flow.disabled, flowId, flowName, history, patchFlow]
   );
+  const { name, description, lastModified, schedule, disabled } = flow;
+  // TODO: set status based on flow criteria...
+  const status = 'success';
+  // TODO: this property was copied from the old flow list page... i dont know what its for...
+  const disableCard = false;
 
   // TODO: This function needs to be enhanced to handle all
   // the various cases.. realtime, scheduled, cron, not scheduled, etc...

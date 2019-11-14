@@ -42,6 +42,7 @@ export default function Notifications() {
   // added or removed (if rejected/accepted).
   const notifications = useSelector(
     state => selectors.notifications(state),
+    // if the following expression is 'true', no re-render is performed
     (left, right) => left.length === right.length
   );
   const handleClick = useCallback(
@@ -67,8 +68,6 @@ export default function Notifications() {
     [dispatch]
   );
   const open = !!anchorEl;
-
-  console.log(notifications);
 
   if (!notifications || notifications.length === 0) {
     return (

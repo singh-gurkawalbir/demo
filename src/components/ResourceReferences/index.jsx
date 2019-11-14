@@ -67,7 +67,9 @@ function ResourceReferences(props) {
           <div>
             <Typography className={classes.message}>
               {title &&
-                `This ${MODEL_PLURAL_TO_LABEL[resourceType]} is referenced by the resources below. Only resources that have no references can be deleted.`}
+                `This ${MODEL_PLURAL_TO_LABEL[resourceType]} 
+                is referenced by the resources below. Only resources 
+                that have no references can be deleted.`}
             </Typography>
             <CeligoTable data={resourceReferences} {...metadata} />
           </div>
