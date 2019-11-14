@@ -158,9 +158,10 @@ export default function InputWithLookupHandlebars(props) {
   const suggestions = getSuggestionsFromLookup(lookups, handleUpdate);
   const handleSuggestions = e => {
     const pointerIndex = e.target.selectionStart;
-    const _showSuggestion = !!e.target.value
-      .substring(0, pointerIndex)
-      .match(prefixRegexp);
+    const _showSuggestion = !!(
+      e.target.value &&
+      e.target.value.substring(0, pointerIndex).match(prefixRegexp)
+    );
     let _filteredSuggestions = [];
 
     if (_showSuggestion) {

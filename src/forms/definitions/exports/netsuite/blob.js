@@ -10,8 +10,15 @@ export default {
   fieldMap: {
     common: { formId: 'common' },
     'netsuite.internalId': { fieldId: 'netsuite.internalId' },
+    'netsuite.blob.purgeFileAfterExport': {
+      fieldId: 'netsuite.blob.purgeFileAfterExport',
+    },
   },
   layout: {
-    fields: ['common', 'netsuite.internalId'],
+    fields: [
+      'common',
+      'netsuite.internalId',
+      'netsuite.blob.purgeFileAfterExport',
+    ],
   },
 };

@@ -1,3 +1,5 @@
+import { isNewId } from '../../../utils/resource';
+
 export default {
   preSave: formValues => {
     const newValues = { ...formValues };
@@ -11,6 +13,8 @@ export default {
       newValues['/salesforce/operation'] =
         newValues['/salesforce/compositeOperation'];
     }
+
+    delete newValues['/inputMode'];
 
     return {
       ...newValues,
@@ -41,6 +45,13 @@ export default {
           ],
         },
       ],
+      defaultDisabled: r => {
+        const isNew = isNewId(r._id);
+
+        if (!isNew) return true;
+
+        return false;
+      },
       defaultValue: r => (r && r.blobKeyPath ? 'blob' : 'records'),
     },
     'salesforce.api': { fieldId: 'salesforce.api' },

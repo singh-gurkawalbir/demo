@@ -6,6 +6,7 @@ import ArrowRightIcon from '../../../components/icons/ArrowRightIcon';
 import IntegrationCrumb from './crumbs/Integration';
 import MarketplaceCrumb from './crumbs/Marketplace';
 import TemplateCrumb from './crumbs/Template';
+import CloneCrumb from './crumbs/Clone';
 import { IntegrationAppCrumb, StoreCrumb } from './crumbs/IntegrationApp';
 
 const useStyles = makeStyles(theme => ({
@@ -76,6 +77,7 @@ const routes = [
       { path: '/audit', breadcrumb: () => 'Audit Log' },
       { path: '/subscription', breadcrumb: () => 'Subscription' },
       { path: '/notifications', breadcrumb: () => 'Notifications' },
+      { path: '/addons', breadcrumb: () => 'Add-ons' },
       {
         path: '/:storeId',
         breadcrumb: StoreCrumb,
@@ -87,6 +89,7 @@ const routes = [
           { path: '/general', breadcrumb: () => 'General' },
           { path: '/audit', breadcrumb: () => 'Audit Log' },
           { path: '/subscription', breadcrumb: () => 'Subscription' },
+          { path: '/addons', breadcrumb: () => 'Add-ons' },
           { path: '/notifications', breadcrumb: () => 'Notifications' },
           { path: '/:section', breadcrumb: a => a.section },
         ],
@@ -105,6 +108,20 @@ const routes = [
         childRoutes: [
           { path: 'preview', breadcrumb: () => 'Preview' },
           { path: 'install', breadcrumb: () => 'Install' },
+        ],
+      },
+    ],
+  },
+  {
+    path: '/pg/clone',
+    breadcrumb: () => 'Clone',
+    childRoutes: [
+      {
+        path: '/:resourceType/:resourceId',
+        breadcrumb: CloneCrumb,
+        childRoutes: [
+          { path: '/preview', breadcrumb: () => 'Preview' },
+          { path: '/setup', breadcrumb: () => 'Install' },
         ],
       },
     ],

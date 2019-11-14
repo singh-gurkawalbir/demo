@@ -120,6 +120,32 @@ export function resourceFormState(state, resourceType, resourceId) {
   );
 }
 
+export function resourceFormSaveProcessTerminated(
+  state,
+  resourceType,
+  resourceId
+) {
+  return fromSession.resourceFormSaveProcessTerminated(
+    state && state.session,
+    resourceType,
+    resourceId
+  );
+}
+
+export function clonePreview(state, resourceType, resourceId) {
+  return fromSession.previewTemplate(
+    state && state.session,
+    `${resourceType}-${resourceId}`
+  );
+}
+
+export function cloneData(state, resourceType, resourceId) {
+  return fromSession.template(
+    state && state.session,
+    `${resourceType}-${resourceId}`
+  );
+}
+
 export function previewTemplate(state, templateId) {
   return fromSession.previewTemplate(state && state.session, templateId);
 }
@@ -149,6 +175,10 @@ export function templateInstallSteps(state, templateId) {
       unCompletedStep.isCurrentStep = true;
     }
   });
+}
+
+export function cloneInstallSteps(state, resourceType, resourceId) {
+  return templateInstallSteps(state, `${resourceType}-${resourceId}`);
 }
 
 export function templateConnectionMap(state, templateId) {
@@ -532,6 +562,7 @@ export function resourceList(state, options = {}) {
   if (
     !options.ignoreEnvironmentFilter &&
     !['accesstokens', 'agents', 'iclients', 'scripts', 'stacks'].includes(
+      /* These resources are common for both production & sandbox environments. */
       options.type
     )
   ) {
@@ -752,6 +783,10 @@ export function integrationAppSettingsFormState(state, integrationId, flowId) {
   );
 }
 
+export function integrationAppAddOnState(state, integrationId) {
+  return fromSession.integrationAppAddOnState(state.session, integrationId);
+}
+
 export function checkUpgradeRequested(state, licenseId) {
   return fromSession.checkUpgradeRequested(state && state.session, licenseId);
 }
@@ -938,9 +973,18 @@ export function integrationAppFlowSettings(state, id, section, storeId) {
   let allSections = sections;
 
   if (supportsMultiStore) {
-    const store = sections.find(s => s.id === storeId) || {};
+    if (storeId) {
+      // If storeId passed, return sections from that store
+      const store = sections.find(s => s.id === storeId) || {};
 
-    allSections = store.sections || [];
+      allSections = store.sections || [];
+    } else {
+      // If no storeId is passed, return all sections from all stores
+      allSections = [];
+      sections.forEach(sec => {
+        allSections.push(...sec.sections);
+      });
+    }
   }
 
   const selectedSection =
@@ -1169,6 +1213,24 @@ export function resourcePermissions(state, resourceType, resourceId) {
   }
 
   return {};
+}
+
+export function isFormAMonitorLevelAccess(state, integrationId) {
+  const { accessLevel } = userPermissions(state);
+
+  // if all forms is monitor level
+  if (accessLevel === 'monitor') return true;
+
+  // check integration level is monitor level
+  const { accessLevel: accessLevelIntegration } = resourcePermissions(
+    state,
+    'integrations',
+    integrationId
+  );
+
+  if (accessLevelIntegration === 'monitor') return true;
+
+  return false;
 }
 
 export function publishedConnectors(state) {

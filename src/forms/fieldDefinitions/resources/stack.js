@@ -18,6 +18,25 @@ export default {
     ],
     label: 'Type',
   },
+  'lambda.language': {
+    type: 'select',
+    options: [
+      {
+        items: [
+          { label: 'Node.js', value: 'Node.js' },
+          { label: 'C#', value: 'C#' },
+        ],
+      },
+    ],
+    visibleWhen: [
+      {
+        field: 'type',
+        is: ['lambda'],
+      },
+    ],
+    defaultValue: r => (r && r.lambda && r.lambda.language) || 'Node.js',
+    label: 'Language',
+  },
   'server.hostURI': {
     type: 'text',
     label: 'Host',

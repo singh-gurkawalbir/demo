@@ -19,6 +19,7 @@ export default {
       startAdornment: 'https://',
       endAdornment: '.desk.com',
       label: 'Subdomain',
+      required: true,
       validWhen: {
         matchesRegEx: {
           pattern: '^[\\S]+$',

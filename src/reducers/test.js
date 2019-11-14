@@ -3079,6 +3079,68 @@ describe('integrationApp Settings reducers', () => {
       },
     },
   ];
+  const flows = [
+    {
+      _id: '5d9b20328a71fc911a4018a4',
+      name: '5d9b20328a71fc911a4018a4',
+      _integrationId: 'integrationId2',
+    },
+    {
+      _id: '5d9b20328a71fc911a4018ad',
+      name: '5d9b20328a71fc911a4018ad',
+      _integrationId: 'integrationId2',
+    },
+    {
+      _id: '5d9b20328a71fc911a4018a7',
+      name: '5d9b20328a71fc911a4018a7',
+      _integrationId: 'integrationId2',
+    },
+    {
+      _id: '5d9b20328a71fc911a4018ac',
+      name: '5d9b20328a71fc911a4018ac',
+      _integrationId: 'integrationId2',
+    },
+    {
+      _id: '5d9b20328a71fc911a4018a9',
+      name: '5d9b20328a71fc911a4018a9',
+      _integrationId: 'integrationId2',
+    },
+    {
+      _id: '5d9b20328a71fc911a4018a8',
+      name: '5d9b20328a71fc911a4018a8',
+      _integrationId: 'integrationId2',
+    },
+    {
+      _id: '5d9b20328a71fc911a4018b2',
+      name: '5d9b20328a71fc911a4018b2',
+      _integrationId: 'integrationId2',
+    },
+    {
+      _id: '5d9b20328a71fc911a4018b3',
+      name: '5d9b20328a71fc911a4018b3',
+      _integrationId: 'integrationId2',
+    },
+    {
+      _id: '5d9b20328a71fc911a4018b0',
+      name: '5d9b20328a71fc911a4018b0',
+      _integrationId: 'integrationId2',
+    },
+    {
+      _id: '5d9b20328a71fc911a4018ba',
+      name: '5d9b20328a71fc911a4018ba',
+      _integrationId: 'integrationId2',
+    },
+    {
+      _id: '5d9f70b98a71fc911a4068bd',
+      name: '5d9f70b98a71fc911a4068bd',
+      _integrationId: 'integrationId',
+    },
+    {
+      _id: '5d9f71628a71fc911a4068d9',
+      name: '5d9f71628a71fc911a4068d9',
+      _integrationId: 'integrationId',
+    },
+  ];
 
   describe('integrationAppFlowSections reducer', () => {
     test('should not throw error for bad params', () => {
@@ -4412,6 +4474,160 @@ describe('integrationApp Settings reducers', () => {
         hasNSInternalIdLookup: false,
         sections: undefined,
         showFlowSettings: true,
+        showMatchRuleEngine: undefined,
+      });
+    });
+
+    test('should return all flows when section is not passed to a single store integration App', () => {
+      const state = reducer(
+        {
+          data: {
+            resources: {
+              integrations,
+              flows,
+            },
+          },
+        },
+        'some_action'
+      );
+
+      expect(
+        selectors.integrationAppFlowSettings(state, 'integrationId2')
+      ).toEqual({
+        fields: undefined,
+        flowSettings: undefined,
+        flows: [
+          {
+            _id: '5d9b20328a71fc911a4018a4',
+            _integrationId: 'integrationId2',
+            name: '5d9b20328a71fc911a4018a4',
+          },
+          {
+            _id: '5d9b20328a71fc911a4018ad',
+            _integrationId: 'integrationId2',
+            name: '5d9b20328a71fc911a4018ad',
+          },
+          {
+            _id: '5d9b20328a71fc911a4018a7',
+            _integrationId: 'integrationId2',
+            name: '5d9b20328a71fc911a4018a7',
+          },
+          {
+            _id: '5d9b20328a71fc911a4018ac',
+            _integrationId: 'integrationId2',
+            name: '5d9b20328a71fc911a4018ac',
+          },
+          {
+            _id: '5d9b20328a71fc911a4018a9',
+            _integrationId: 'integrationId2',
+            name: '5d9b20328a71fc911a4018a9',
+          },
+          {
+            _id: '5d9b20328a71fc911a4018a8',
+            _integrationId: 'integrationId2',
+            name: '5d9b20328a71fc911a4018a8',
+          },
+          {
+            _id: '5d9b20328a71fc911a4018b2',
+            _integrationId: 'integrationId2',
+            name: '5d9b20328a71fc911a4018b2',
+          },
+          {
+            _id: '5d9b20328a71fc911a4018b3',
+            _integrationId: 'integrationId2',
+            name: '5d9b20328a71fc911a4018b3',
+          },
+          {
+            _id: '5d9b20328a71fc911a4018b0',
+            _integrationId: 'integrationId2',
+            name: '5d9b20328a71fc911a4018b0',
+          },
+          {
+            _id: '5d9b20328a71fc911a4018ba',
+            _integrationId: 'integrationId2',
+            name: '5d9b20328a71fc911a4018ba',
+          },
+        ],
+        hasDescription: false,
+        hasNSInternalIdLookup: false,
+        sections: undefined,
+        showFlowSettings: false,
+        showMatchRuleEngine: undefined,
+      });
+    });
+
+    test('should return all flows when section and storeId is not passed to a multi store integration App', () => {
+      const state = reducer(
+        {
+          data: {
+            resources: {
+              integrations,
+              flows,
+            },
+          },
+        },
+        'some_action'
+      );
+
+      expect(
+        selectors.integrationAppFlowSettings(state, 'integrationId')
+      ).toEqual({
+        fields: undefined,
+        flowSettings: undefined,
+        flows: [
+          {
+            _id: '5d9f70b98a71fc911a4068bd',
+            _integrationId: 'integrationId',
+            name: '5d9f70b98a71fc911a4068bd',
+          },
+          {
+            _id: '5d9f71628a71fc911a4068d9',
+            _integrationId: 'integrationId',
+            name: '5d9f71628a71fc911a4068d9',
+          },
+        ],
+        hasDescription: false,
+        hasNSInternalIdLookup: false,
+        sections: undefined,
+        showFlowSettings: false,
+        showMatchRuleEngine: undefined,
+      });
+    });
+
+    test('should return all flows of the store when storeId is passed to a multi store integration App', () => {
+      const state = reducer(
+        {
+          data: {
+            resources: {
+              integrations,
+              flows,
+            },
+          },
+        },
+        'some_action'
+      );
+
+      expect(
+        selectors.integrationAppFlowSettings(
+          state,
+          'integrationId',
+          null,
+          'fb5fb65e'
+        )
+      ).toEqual({
+        fields: undefined,
+        flowSettings: undefined,
+        flows: [
+          {
+            _id: '5d9f70b98a71fc911a4068bd',
+            _integrationId: 'integrationId',
+            name: '5d9f70b98a71fc911a4068bd',
+          },
+        ],
+        hasDescription: false,
+        hasNSInternalIdLookup: false,
+        sections: undefined,
+        showFlowSettings: false,
         showMatchRuleEngine: undefined,
       });
     });

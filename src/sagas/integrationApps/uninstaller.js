@@ -26,14 +26,14 @@ export function* preUninstall({ storeId, id }) {
   );
 }
 
-export function* uninstallStep({ storeId, id, uninstallerFunction }) {
+export function* uninstallStep({ storeId, id, uninstallerFunction, addOnId }) {
   const path = `/integrations/${id}/uninstaller/${uninstallerFunction}`;
   let stepCompleteResponse;
 
   try {
     stepCompleteResponse = yield call(apiCallWithRetry, {
       path,
-      opts: { body: { storeId }, method: 'PUT' },
+      opts: { body: { storeId, addOnId }, method: 'PUT' },
       message: `Uninstalling`,
     }) || {};
   } catch (error) {
@@ -56,6 +56,12 @@ export function* uninstallStep({ storeId, id, uninstallerFunction }) {
         'completed'
       )
     );
+
+    if (addOnId) {
+      yield put(
+        actions.integrationApp.settings.requestAddOnLicenseMetadata(id)
+      );
+    }
   }
 }
 

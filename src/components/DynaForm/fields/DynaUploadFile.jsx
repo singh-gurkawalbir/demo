@@ -49,6 +49,8 @@ function DynaUploadFile(props) {
       fileContent = JSON.parse(fileContent);
     }
 
+    onFieldChange(id, fileContent);
+
     // Dispatches an action to process uploaded file data
     dispatch(
       actions.sampleData.request(
@@ -80,7 +82,6 @@ function DynaUploadFile(props) {
     const file = event.target.files[0];
 
     if (!file) return;
-    onFieldChange(id, file.name);
     const fileReaderOptions = getFileReaderOptions(options);
     const fileReader = new FileReader();
 
@@ -94,9 +95,9 @@ function DynaUploadFile(props) {
     }
   };
 
-  let acceptFileType = '.txt';
+  let acceptFileType = '*';
 
-  if (options) {
+  if (typeof options === 'string') {
     acceptFileType = `.${options}`;
   }
 

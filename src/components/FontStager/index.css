@@ -107,3 +107,6 @@ a{
 .ace_invisible_eol{
   display:none;
 }
+.ace_invisible_space{
+  color: transparent !important;
+}

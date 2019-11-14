@@ -81,8 +81,9 @@ describe('commitStagedChanges saga', () => {
       const origin = { id, lastModified: 100 };
       const merged = { id, lastModified: 100 };
       const path = `/${resourceType}/${id}`;
+      const master = { lastModified: 100 };
       const getCallEffect = saga.next({
-        master: { lastModified: 100 },
+        master,
         merged,
         patch: true,
       }).value;
@@ -109,7 +110,14 @@ describe('commitStagedChanges saga', () => {
       );
 
       expect(saga.next().value).toEqual(
-        put(actions.resource.updated(resourceType, updated._id, true))
+        put(
+          actions.resource.updated(
+            resourceType,
+            updated._id,
+            { lastModified: 100 },
+            true
+          )
+        )
       );
 
       expect(saga.next().value).toEqual(put(actions.resource.clearStaged(id)));
@@ -161,7 +169,7 @@ describe('commitStagedChanges saga', () => {
       );
 
       expect(saga.next().value).toEqual(
-        put(actions.resource.created(updated._id, tempId))
+        put(actions.resource.created(updated._id, tempId, resourceType))
       );
 
       const finalEffect = saga.next();

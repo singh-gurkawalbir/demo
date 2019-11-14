@@ -240,11 +240,16 @@ export function* submitFormValues({ resourceType, resourceId, values, match }) {
     }
 
     if (patch && patch.length) {
-      yield call(commitStagedChanges, {
+      const error = yield call(commitStagedChanges, {
         resourceType: type,
         id: resourceId,
         scope: SCOPES.VALUE,
       });
+
+      if (error)
+        return yield put(
+          actions.resourceForm.submitFailed(resourceType, resourceId)
+        );
     }
   }
 
@@ -268,6 +273,7 @@ export function* initFormValues({
   resourceId,
   isNew,
   skipCommit,
+  flowId,
 }) {
   const developerMode = yield select(selectors.developerMode);
   const { merged: resource } = yield select(
@@ -327,8 +333,7 @@ export function* initFormValues({
     form,
     resourceType,
     resource,
-    false,
-    developerMode
+    { developerMode, flowId }
   );
   let finalFieldMeta = fieldMeta;
 
@@ -355,7 +360,8 @@ export function* initFormValues({
       resourceId,
       finalFieldMeta,
       isNew,
-      skipCommit
+      skipCommit,
+      flowId
     )
   );
 }

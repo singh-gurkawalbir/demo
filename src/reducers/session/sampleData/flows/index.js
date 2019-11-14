@@ -185,31 +185,6 @@ export default function(state = {}, action) {
   });
 }
 
-export function getSampleData(
-  state,
-  flowId,
-  resourceId,
-  stage,
-  { isPageGenerator, isImport }
-) {
-  // returns input data for that stage to populate
-  const flow = state[flowId];
-  const resourceType = isImport ? 'imports' : 'exports';
-  const sampleDataStage = getSampleDataStage(stage, resourceType);
-
-  if (!flow || !sampleDataStage) return;
-  const resourceMap = isPageGenerator
-    ? flow.pageGeneratorsMap
-    : flow.pageProcessorsMap;
-
-  return (
-    resourceMap &&
-    resourceMap[resourceId] &&
-    resourceMap[resourceId][sampleDataStage] &&
-    resourceMap[resourceId][sampleDataStage].data
-  );
-}
-
 export function getFlowDataState(state, flowId, resourceId, isPageGenerator) {
   if (!state || !flowId) return;
   const flow = state[flowId];
@@ -222,4 +197,29 @@ export function getFlowDataState(state, flowId, resourceId, isPageGenerator) {
     : flow.pageProcessorsMap;
 
   return (resourceMap[resourceId] && resourceMap[resourceId].data) || {};
+}
+
+export function getSampleData(
+  state,
+  flowId,
+  resourceId,
+  stage,
+  { isPageGenerator, isImport }
+) {
+  // returns input data for that stage to populate
+  const flow = state[flowId];
+  const resourceType = isImport ? 'imports' : 'exports';
+  const sampleDataStage = getSampleDataStage(stage, resourceType);
+
+  if (!flow || !sampleDataStage || !resourceId) return;
+  const resourceMap = isPageGenerator
+    ? flow.pageGeneratorsMap
+    : flow.pageProcessorsMap;
+
+  return (
+    resourceMap &&
+    resourceMap[resourceId] &&
+    resourceMap[resourceId][sampleDataStage] &&
+    resourceMap[resourceId][sampleDataStage].data
+  );
 }

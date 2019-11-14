@@ -35,6 +35,12 @@ export default {
     placeholder: 'Please select a record type',
     helpKey: 'export.netsuite.searches.recordType',
     connectionId: r => r && r._connectionId,
+    defaultValue: r =>
+      r &&
+      r.netsuite &&
+      r.netsuite.searches &&
+      r.netsuite.searches[0] &&
+      r.netsuite.searches[0].recordType,
   },
   // execution context
   'netsuite.distributed.executionContext': {
@@ -202,6 +208,10 @@ export default {
     type: 'text',
     required: true,
     label: 'Internal Id',
+  },
+  'netsuite.blob.purgeFileAfterExport': {
+    type: 'checkbox',
+    label: 'Purge File After Export',
   },
   'netsuite.restlet.criteria.field': {
     type: 'text',

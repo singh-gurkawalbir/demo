@@ -28,6 +28,7 @@ export default {
       endAdornment: '.onelogin.com/api',
       label: 'Region',
       helpText: 'Please enter Region for URI.',
+      required: true,
       validWhen: {
         matchesRegEx: {
           pattern: '^[\\S]+$',
