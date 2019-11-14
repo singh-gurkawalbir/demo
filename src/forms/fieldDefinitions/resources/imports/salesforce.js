@@ -383,9 +383,10 @@ export default {
   'salesforce.sObjectType': {
     label: 'SObject Type',
     name: 'recordType',
-    mode: 'salesforce',
     type: 'refreshableselect',
-    resourceType: 'sObjectTypes',
+    filterKey: 'salesforce-sObjects',
+    commMetaPath: r =>
+      r && `salesforce/metadata/connections/${r._connectionId}/sObjectTypes`,
     connectionId: r => r && r._connectionId,
     required: true,
     placeholder: 'Please select a sObject type',
