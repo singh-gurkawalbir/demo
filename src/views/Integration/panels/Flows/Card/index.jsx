@@ -1,12 +1,28 @@
 import clsx from 'clsx';
-import { Link } from 'react-router-dom';
+import { useCallback, useState } from 'react';
+import { Link, useHistory } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import TimeAgo from 'react-timeago';
 import { makeStyles } from '@material-ui/styles';
-import { Typography, Grid, Button } from '@material-ui/core';
+import {
+  Typography,
+  Grid,
+  IconButton,
+  Menu,
+  MenuItem,
+} from '@material-ui/core';
 import { confirmDialog } from '../../../../../components/ConfirmDialog';
 import actions from '../../../../../actions';
+import AuditLogDialog from '../../../../../components/AuditLog/AuditLogDialog';
+import ReferencesDialog from '../../../../../components/ResourceReferences';
 import RunIcon from '../../../../../components/icons/RunIcon';
+import EllipsisIcon from '../../../../../components/icons/EllipsisHorizontalIcon';
+import DownloadIcon from '../../../../../components/icons/DownloadIcon';
+import TrashIcon from '../../../../../components/icons/TrashIcon';
+import CloneIcon from '../../../../../components/icons/CopyIcon';
+import AuditIcon from '../../../../../components/icons/AuditLogIcon';
+import ReferencesIcon from '../../../../../components/icons/ViewReferencesIcon';
+import DetachIcon from '../../../../../components/icons/ConnectionsIcon';
 import OnOffSwitch from '../../../../../components/SwitchToggle';
 import InfoIconButton from '../InfoIconButton';
 
@@ -42,6 +58,22 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.warning.main,
   },
 }));
+const ellipseActions = [
+  { action: 'detach', label: 'Detach flow', Icon: DetachIcon },
+  { action: 'clone', label: 'Clone flow', Icon: CloneIcon },
+  { action: 'audit', label: 'View audit log', Icon: AuditIcon },
+  { action: 'references', label: 'View references', Icon: ReferencesIcon },
+  { action: 'download', label: 'Download flow', Icon: DownloadIcon },
+  { action: 'delete', label: 'Delete', Icon: TrashIcon },
+];
+
+function defaultConfirmDialog(message, callback) {
+  confirmDialog({
+    title: 'Confirm',
+    message: `Are you sure you want to ${message}`,
+    buttons: [{ label: 'Cancel' }, { label: 'Yes', onClick: callback }],
+  });
+}
 
 export default function FlowCard({
   name,
@@ -54,38 +86,81 @@ export default function FlowCard({
   disableCard = false,
 }) {
   const classes = useStyles();
+  const history = useHistory();
   const dispatch = useDispatch();
+  const patchFlow = useCallback(
+    (path, value) => {
+      const patchSet = [{ op: 'replace', path, value }];
 
-  function handleDisableClick() {
-    const message = `Are you sure you want to ${
-      disabled ? 'enable' : 'disable'
-    } ${name || flowId}?`;
+      dispatch(actions.resource.patchStaged(flowId, patchSet, 'value'));
+      dispatch(actions.resource.commitStaged('flows', flowId, 'value'));
+    },
+    [dispatch, flowId]
+  );
+  const [showAudit, setShowAudit] = useState(false);
+  const [showReferences, setShowReferences] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const handleMenuClick = useCallback(event => {
+    setAnchorEl(event.currentTarget);
+  }, []);
+  const handleMenuClose = useCallback(() => setAnchorEl(null), []);
+  const flowName = name || flowId;
+  const handleActionClick = useCallback(
+    action => () => {
+      switch (action) {
+        case 'disable':
+          defaultConfirmDialog(
+            `${disabled ? 'enable' : 'disable'} ${flowName}?`,
+            () => {
+              patchFlow('/disabled', !disabled);
+            }
+          );
+          break;
 
-    confirmDialog({
-      title: 'Confirm',
-      message,
-      buttons: [
-        {
-          label: 'Cancel',
-        },
-        {
-          label: 'Yes',
-          onClick: () => {
-            const patchSet = [
-              {
-                op: 'replace',
-                path: '/disabled',
-                value: !disabled,
-              },
-            ];
+        case 'detach':
+          defaultConfirmDialog(
+            `detach ${flowName} from this integration?`,
+            () => {
+              patchFlow('/_integrationId', undefined);
+            }
+          );
+          break;
 
-            dispatch(actions.resource.patchStaged(flowId, patchSet, 'value'));
-            dispatch(actions.resource.commitStaged('flows', flowId, 'value'));
-          },
-        },
-      ],
-    });
-  }
+        case 'clone':
+          history.push(`/pg/clone/flow/${flowId}`);
+          break;
+
+        case 'delete':
+          defaultConfirmDialog(
+            'Are you sure you want to delete this flow?',
+            () => dispatch(actions.resource.delete('flows', flowId))
+          );
+          break;
+
+        case 'audit':
+          setShowAudit(true);
+          break;
+
+        case 'references':
+          setShowReferences(true);
+          break;
+
+        case 'download':
+          // TODO: Every action method that has a resourceType and Id
+          // specifies the resource type first, then ID. We need to be consistent
+          // with our action creator arguments to prevent syntax errors from people
+          // expecting type to be the first argument. Also, this action method
+          // would be better called "downloadResource".
+          dispatch(actions.resource.downloadFile(flowId, 'flows'));
+          break;
+
+        default:
+      }
+
+      setAnchorEl(null);
+    },
+    [disabled, dispatch, flowId, flowName, history, patchFlow]
+  );
 
   // TODO: This function needs to be enhanced to handle all
   // the various cases.. realtime, scheduled, cron, not scheduled, etc...
@@ -96,6 +171,9 @@ export default function FlowCard({
 
     return 'Never Runs';
   }
+
+  const open = Boolean(anchorEl);
+  const actionsPopoverId = open ? 'more-row-actions' : undefined;
 
   return (
     <div className={classes.root}>
@@ -119,13 +197,55 @@ export default function FlowCard({
           <OnOffSwitch
             disabled={disableCard}
             on={!disableCard && !disabled}
-            onClick={handleDisableClick}
+            onClick={handleActionClick('disable')}
           />
-          <Button>
+          <IconButton size="small" onClick={handleActionClick('run')}>
             <RunIcon />
-          </Button>
+          </IconButton>
+
+          <IconButton
+            data-test="openActionsMenu"
+            aria-label="more"
+            aria-controls={actionsPopoverId}
+            aria-haspopup="true"
+            size="small"
+            onClick={handleMenuClick}>
+            <EllipsisIcon />
+          </IconButton>
+
+          <Menu
+            elevation={2}
+            variant="menu"
+            id={actionsPopoverId}
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleMenuClose}>
+            {ellipseActions.map(({ action, label, Icon }) => (
+              <MenuItem
+                key={label}
+                data-test={`${action}Flow`}
+                onClick={handleActionClick(action)}>
+                <Icon /> {label}
+              </MenuItem>
+            ))}
+          </Menu>
         </Grid>
       </div>
+
+      {showAudit && (
+        <AuditLogDialog
+          resourceType="flows"
+          resourceId={flowId}
+          onClose={() => setShowAudit(false)}
+        />
+      )}
+      {showReferences && (
+        <ReferencesDialog
+          resourceType="flows"
+          resourceId={flowId}
+          onClose={() => setShowReferences(false)}
+        />
+      )}
     </div>
   );
 }

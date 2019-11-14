@@ -24,24 +24,24 @@ const styles = theme => ({
 });
 
 function ResourceReferences(props) {
-  const { classes, onClose, type, id, title } = props;
+  const { classes, onClose, resourceType, resourceId, title } = props;
   const dispatch = useDispatch();
   const resourceReferences = useSelector(state =>
     selectors.resourceReferences(state)
   );
 
   useEffect(() => {
-    dispatch(actions.resource.requestReferences(type, id));
+    dispatch(actions.resource.requestReferences(resourceType, resourceId));
 
     return () => dispatch(actions.resource.clearReferences());
-  }, [dispatch, type, id]);
+  }, [dispatch, resourceType, resourceId]);
 
   return (
     <Fragment>
       {!resourceReferences && (
         <Loader open>
           <Typography variant="h4">
-            {`Retrieving ${MODEL_PLURAL_TO_LABEL[type]} References`}
+            {`Retrieving ${MODEL_PLURAL_TO_LABEL[resourceType]} References`}
           </Typography>
           <Spinner color="primary" />
         </Loader>
@@ -49,7 +49,8 @@ function ResourceReferences(props) {
       {resourceReferences && resourceReferences.length === 0 && (
         <Loader open>
           <Typography variant="h4">
-            This {MODEL_PLURAL_TO_LABEL[type]} is not being used anywhere
+            This {MODEL_PLURAL_TO_LABEL[resourceType]} is not being used
+            anywhere
           </Typography>
           <Button onClick={onClose} variant="outlined" color="primary">
             Close
@@ -60,13 +61,13 @@ function ResourceReferences(props) {
         <ModalDialog handleClose={onClose} show>
           <div>
             {title
-              ? `Unable to delete ${RESOURCE_TYPE_PLURAL_TO_SINGULAR[type]} as`
-              : `${MODEL_PLURAL_TO_LABEL[type]} References:`}
+              ? `Unable to delete ${RESOURCE_TYPE_PLURAL_TO_SINGULAR[resourceType]} as`
+              : `${MODEL_PLURAL_TO_LABEL[resourceType]} References:`}
           </div>
           <div>
             <Typography className={classes.message}>
               {title &&
-                `This ${MODEL_PLURAL_TO_LABEL[type]} is referenced by the resources below. Only resources that have no references can be deleted.`}
+                `This ${MODEL_PLURAL_TO_LABEL[resourceType]} is referenced by the resources below. Only resources that have no references can be deleted.`}
             </Typography>
             <CeligoTable data={resourceReferences} {...metadata} />
           </div>

@@ -12,7 +12,7 @@ export default {
       <Fragment>
         {show && (
           <ResourceReferences
-            type={resourceType}
+            resourceType={resourceType}
             id={resource._id}
             onClose={() => setShow(false)}
           />

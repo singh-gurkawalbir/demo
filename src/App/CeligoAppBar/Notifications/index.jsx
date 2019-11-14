@@ -20,12 +20,6 @@ import actions from '../../../actions';
 import * as selectors from '../../../reducers';
 
 const useStyles = makeStyles(() => ({
-  currentContainer: {
-    alignItems: 'center',
-    '&:hover': {
-      cursor: 'pointer',
-    },
-  },
   itemContainer: {
     '& button': { display: 'none' },
     '&:hover button': {
@@ -41,7 +35,15 @@ export default function Notifications() {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
   const dispatch = useDispatch();
-  const notifications = useSelector(state => selectors.notifications(state));
+  // note the use of custom comparator. This checks the content of notifications,
+  // not the reference. This prevents re-renders when the notifications
+  // lengths match. It is hard to imagine a situation were the number of notifications
+  // remains the same and the notifications themselves change. usually new ones get
+  // added or removed (if rejected/accepted).
+  const notifications = useSelector(
+    state => selectors.notifications(state),
+    (left, right) => left.length === right.length
+  );
   const handleClick = useCallback(
     event => {
       setAnchorEl(!anchorEl ? event.currentTarget : null);
@@ -52,7 +54,7 @@ export default function Notifications() {
     setAnchorEl(null);
   }, []);
   const handleAction = useCallback(
-    (action, id) => {
+    (action, id) => () => {
       switch (action) {
         case 'accept':
           return dispatch(actions.user.org.accounts.acceptInvite(id));
@@ -66,6 +68,8 @@ export default function Notifications() {
   );
   const open = !!anchorEl;
 
+  console.log(notifications);
+
   if (!notifications || notifications.length === 0) {
     return (
       <Tooltip title="No notifications" placement="bottom">
@@ -78,16 +82,11 @@ export default function Notifications() {
 
   return (
     <Fragment>
-      <span
-        data-test="notificationsIconToggle"
-        onClick={this.handleClick}
-        className={classes.currentContainer}>
-        <IconButton size="small" color="inherit" onClick={handleClick}>
-          <Badge badgeContent={notifications.length} color="primary">
-            <NotificationsIcon />
-          </Badge>
-        </IconButton>
-      </span>
+      <IconButton size="small" color="inherit" onClick={handleClick}>
+        <Badge badgeContent={notifications.length} color="primary">
+          <NotificationsIcon />
+        </Badge>
+      </IconButton>
 
       <ArrowPopper
         id="notifications"
