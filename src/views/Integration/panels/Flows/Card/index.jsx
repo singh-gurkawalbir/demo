@@ -170,7 +170,7 @@ export default function FlowCard({ flowId }) {
       patchFlow,
     ]
   );
-  const { name, description, lastModified, schedule, disabled } = flow;
+  const { name, description, lastModified, disabled } = flow;
   // TODO: set status based on flow criteria...
   const status = 'success';
   // TODO: this property was copied from the old flow list page... i dont know what its for...
@@ -213,8 +213,7 @@ export default function FlowCard({ flowId }) {
             <InfoIconButton info={description} />
           </Grid>
           <Typography variant="caption" component="span">
-            {getRunLabel(schedule)} | Last Modified{' '}
-            <TimeAgo date={lastModified} />
+            {getRunLabel()} | Last Modified <TimeAgo date={lastModified} />
           </Typography>
         </Grid>
         <Grid container item xs={3} justify="flex-end" alignItems="center">

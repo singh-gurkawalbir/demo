@@ -13,7 +13,7 @@ export default {
         {show && (
           <ResourceReferences
             resourceType={resourceType}
-            id={resource._id}
+            resourceId={resource._id}
             onClose={() => setShow(false)}
           />
         )}
