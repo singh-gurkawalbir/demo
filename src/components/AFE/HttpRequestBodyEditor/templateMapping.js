@@ -1,5 +1,5 @@
 import { times } from 'lodash';
-import { getJSONPaths } from '../../../utils/json';
+import getJSONPaths from '../../../utils/jsonPaths';
 
 export function getJSONSampleTemplate(data) {
   let toReturn = '';

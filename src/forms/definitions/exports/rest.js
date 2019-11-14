@@ -10,6 +10,12 @@ export default {
       retValues['/test/limit'] = 1;
     }
 
+    if (retValues['/outputMode'] === 'blob') {
+      retValues['/type'] = 'blob';
+    }
+
+    delete retValues['/outputMode'];
+
     if (retValues['/rest/pagingMethod'] === 'pageargument') {
       retValues['/rest/nextPageRelativeURI'] = undefined;
       retValues['/rest/nextPagePath'] = undefined;
@@ -63,6 +69,22 @@ export default {
       ...retValues,
     };
   },
+  optionsHandler: (fieldId, fields) => {
+    if (
+      fieldId === 'rest.once.relativeURI' ||
+      fieldId === 'dataURITemplate' ||
+      fieldId === 'rest.relativeURI' ||
+      fieldId === 'rest.once.postBody' ||
+      fieldId === 'rest.postBody' ||
+      fieldId === 'rest.pagingPostBody'
+    ) {
+      const nameField = fields.find(field => field.fieldId === 'name');
+
+      return {
+        resourceName: nameField && nameField.value,
+      };
+    }
+  },
   fieldMap: {
     common: { formId: 'common' },
     exportData: {
@@ -98,7 +120,9 @@ export default {
 
         const output = r && r.type;
 
-        return output ? 'records' : 'blob';
+        if (output === 'blob') return 'blob';
+
+        return 'records';
       },
     },
     'rest.method': {
