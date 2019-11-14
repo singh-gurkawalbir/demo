@@ -5,6 +5,8 @@ export default {
     '/assistant': 'microsoftdynamics365',
     '/http/auth/type': 'oauth',
     '/http/mediaType': 'json',
+    '/http/auth/token/refreshMethod': 'POST',
+    '/http/auth/token/refreshMediaType': 'urlencoded',
     '/http/baseURI': `https://${
       formValues['/http/microsoftDynamics365Subdomain']
     }.dynamics.com`,

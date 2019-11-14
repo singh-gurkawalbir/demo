@@ -11,6 +11,8 @@ export default {
     '/http/auth/oauth/authURI': 'https://account.box.com/api/oauth2/authorize',
     '/http/auth/oauth/tokenURI': 'https://api.box.com/oauth2/token',
     '/http/auth/oauth/scopeDelimiter': ' ',
+    '/http/auth/token/refreshMethod': 'POST',
+    '/http/auth/token/refreshMediaType': 'urlencoded',
   }),
   fieldMap: {
     name: { fieldId: 'name' },

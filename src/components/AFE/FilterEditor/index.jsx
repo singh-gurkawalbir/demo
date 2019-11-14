@@ -19,7 +19,7 @@ const useStyles = makeStyles({
 });
 
 export default function FilterEditor(props) {
-  const { editorId } = props;
+  const { editorId, disabled } = props;
   const classes = useStyles(props);
   const { data, result, error, violations, initChangeIdentifier } = useSelector(
     state => selectors.editor(state, editorId)
@@ -53,6 +53,7 @@ export default function FilterEditor(props) {
           editorId={editorId}
           data={data}
           rule={props.rule}
+          disabled={disabled}
         />
       </PanelGridItem>
 
@@ -60,6 +61,7 @@ export default function FilterEditor(props) {
         <PanelTitle title="Incoming Data" />
         <CodePanel
           name="data"
+          readOnly={disabled}
           value={data}
           mode="json"
           overrides={{ showGutter: false }}

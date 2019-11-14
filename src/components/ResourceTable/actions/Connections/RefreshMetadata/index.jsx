@@ -10,47 +10,42 @@ export default {
     const handleClick = () => {
       if (resource.type === 'netsuite') {
         dispatch(
-          actions.metadata.request({
-            connectionId: resource._id,
-            metadataType: 'recordTypes',
-            mode: 'suitescript',
-            addInfo: {
+          actions.metadata.request(
+            resource._id,
+            `netsuite/metadata/suitescript/connections/${resource._id}/recordTypes`,
+            {
               refreshCache: true,
-            },
-          })
+            }
+          )
         );
         dispatch(
-          actions.metadata.request({
-            connectionId: resource._id,
-            metadataType: 'savedSearches',
-            mode: 'suitescript',
-            addInfo: {
+          actions.metadata.request(
+            resource._id,
+            `netsuite/metadata/suitescript/connections/${resource._id}/savedSearches`,
+            {
               refreshCache: true,
-            },
-          })
+            }
+          )
         );
 
         dispatch(
-          actions.metadata.request({
-            connectionId: resource._id,
-            metadataType: 'recordTypes',
-            mode: 'webservices',
-            addInfo: {
+          actions.metadata.request(
+            resource._id,
+            `netsuite/metadata/webservices/connections/${resource._id}/recordTypes?recordTypeOnly=true`,
+            {
               refreshCache: true,
-              recordTypeOnly: true,
-            },
-          })
+            }
+          )
         );
       } else if (resource.type === 'salesforce') {
         dispatch(
-          actions.metadata.request({
-            connectionId: resource._id,
-            metadataType: 'sObjectTypes',
-            mode: 'webservices',
-            addInfo: {
+          actions.metadata.request(
+            resource._id,
+            `salesforce/metadata/connections/${resource._id}/sObjectTypes`,
+            {
               refreshCache: true,
-            },
-          })
+            }
+          )
         );
       }
     };

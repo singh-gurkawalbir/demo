@@ -8,6 +8,7 @@ export default function DynaSQLQueryBuilder(props) {
     id,
     onFieldChange,
     options,
+    disabled,
     value,
     label,
     arrayIndex,
@@ -68,6 +69,7 @@ export default function DynaSQLQueryBuilder(props) {
           onFieldChange={onFieldChange}
           onClose={handleClose}
           action={lookupField}
+          disabled={disabled}
         />
       )}
       <Button

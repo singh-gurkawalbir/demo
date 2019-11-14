@@ -42,6 +42,8 @@ export default {
       '/http/auth/type': 'oauth',
       '/http/mediaType': 'json',
       '/http/baseURI': baseURI,
+      '/http/auth/token/refreshMethod': 'POST',
+      '/http/auth/token/refreshMediaType': 'urlencoded',
       '/http/auth/oauth/authURI': 'https://appcenter.intuit.com/connect/oauth2',
       '/http/auth/oauth/tokenURI':
         'https://oauth.platform.intuit.com/oauth2/v1/tokens/bearer',

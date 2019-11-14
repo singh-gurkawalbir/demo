@@ -49,6 +49,7 @@ const PageProcessor = ({
   index,
   onMove,
   isLast,
+  integrationId,
   ...pp
 }) => {
   const pending = !!pp._connectionId;
@@ -278,6 +279,7 @@ const PageProcessor = ({
           connectorType={resource.adaptorType || resource.type}
           assistant={resource.assistant}
           ref={ref}
+          integrationId={integrationId}
           opacity={opacity} /* used for drag n drop */
           blockType={pp.type === 'export' ? 'lookup' : 'import'}
           flowId={flowId}

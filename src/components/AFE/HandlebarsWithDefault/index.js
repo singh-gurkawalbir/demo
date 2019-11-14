@@ -15,6 +15,7 @@ export default function HandlebarsWithDefaults(props) {
     showDefaultData,
     templateClassName,
     resultTitle,
+    disabled,
   } = props;
   const {
     template,
@@ -68,6 +69,7 @@ export default function HandlebarsWithDefaults(props) {
       editorId={editorId}
       handleInit={handleInit}
       handleChange={handleChange}
+      disabled={disabled}
       processor="sql"
       ruleMode="handlebars"
       dataMode="json"

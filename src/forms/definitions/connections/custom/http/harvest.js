@@ -10,6 +10,8 @@ export default {
     '/http/auth/oauth/tokenURI':
       'https://id.getharvest.com/api/v1/oauth2/token',
     '/http/auth/oauth/scopeDelimiter': ' ',
+    '/http/auth/token/refreshMethod': 'POST',
+    '/http/auth/token/refreshMediaType': 'urlencoded',
     '/http/headers': [
       {
         name: 'Harvest-Account-Id',

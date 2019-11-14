@@ -22,6 +22,7 @@ const SqlDataTabPanel = props => {
     classes,
     handleChange,
     showDefaultData,
+    disabled,
   } = props;
   const [tabValue, setTabValue] = useState('sample');
 
@@ -59,6 +60,7 @@ const SqlDataTabPanel = props => {
               name="sampleData"
               value={sampleData}
               mode={dataMode}
+              readOnly={disabled}
               onChange={data => {
                 handleChange('sampleData', data);
               }}
@@ -76,6 +78,7 @@ const SqlDataTabPanel = props => {
               name="defaultData"
               value={defaultData}
               mode={dataMode}
+              readOnly={disabled}
               onChange={data => {
                 handleChange('defaultData', data);
               }}

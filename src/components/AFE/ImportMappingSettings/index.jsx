@@ -28,6 +28,7 @@ export default function ImportMappingSettings(props) {
     updateLookup,
     application,
     options,
+    disabled,
   } = props;
   const { generate, extract } = value;
   const classes = useStyles();
@@ -68,6 +69,7 @@ export default function ImportMappingSettings(props) {
       </DialogTitle>
       <DialogContent className={classes.modalContent}>
         <DynaForm
+          disabled={disabled}
           fieldMeta={fieldMeta}
           optionsHandler={fieldMeta.optionsHandler}>
           <Button
@@ -79,7 +81,10 @@ export default function ImportMappingSettings(props) {
             }}>
             Cancel
           </Button>
-          <DynaSubmit data-test="saveMappingSettings" onClick={handleSubmit}>
+          <DynaSubmit
+            disabled={disabled}
+            data-test="saveMappingSettings"
+            onClick={handleSubmit}>
             Save
           </DynaSubmit>
         </DynaForm>

@@ -17,6 +17,7 @@ export default function Lookup(props) {
     lookup = {},
     onCancel,
     error,
+    disabled,
     showDynamicLookupOnly = false,
   } = props;
   const classes = useStyles();
@@ -274,7 +275,7 @@ export default function Lookup(props) {
 
   return (
     <div className={classes.container}>
-      <DynaForm fieldMeta={fieldMeta}>
+      <DynaForm disabled={disabled} fieldMeta={fieldMeta}>
         {error && (
           <div>
             <Typography
@@ -288,7 +289,10 @@ export default function Lookup(props) {
         <Button data-test="cancelLookupForm" onClick={onCancel}>
           Cancel
         </Button>
-        <DynaSubmit data-test="saveLookupForm" onClick={handleSubmit}>
+        <DynaSubmit
+          disabled={disabled}
+          data-test="saveLookupForm"
+          onClick={handleSubmit}>
           Save
         </DynaSubmit>
       </DynaForm>
