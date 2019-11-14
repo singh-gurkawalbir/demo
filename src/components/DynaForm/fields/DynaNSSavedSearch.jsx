@@ -19,8 +19,6 @@ export default function DynaNSSavedSearch(props) {
   const {
     value,
     connectionId,
-    mode,
-    resourceType,
     resourceId,
     defaultValue,
     onFieldChange,
@@ -28,6 +26,7 @@ export default function DynaNSSavedSearch(props) {
     isValid,
     required,
     disabled,
+    commMetaPath,
   } = props;
   const searchIdOptions = {
     placeholder: 'Please select a saved search',
@@ -44,12 +43,7 @@ export default function DynaNSSavedSearch(props) {
   };
 
   const { data } = useSelector(state =>
-    selectors.metadataOptionsAndResources(
-      state,
-      connectionId,
-      mode,
-      resourceType
-    )
+    selectors.metadataOptionsAndResources({ state, connectionId, commMetaPath })
   );
 
   useEffect(() => {

@@ -1,11 +1,11 @@
 import { useState, Fragment } from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import TextField from '@material-ui/core/TextField';
-import IconButton from '@material-ui/core/IconButton';
+import { TextField, IconButton } from '@material-ui/core';
 import OpenInNewIcon from 'mdi-react/OpenInNewIcon';
 import * as selectors from '../../../reducers';
 import UrlEditorDialog from '../../../components/AFE/UrlEditor/Dialog';
+import getFormattedSampleData from '../../../utils/sampleData';
 
 const useStyles = makeStyles(theme => ({
   textField: {
@@ -43,8 +43,14 @@ export default function DynaRelativeUri(props) {
     placeholder,
     required,
     value,
+    resourceId,
+    useSampleDataAsArray,
+    resourceType,
+    flowId,
     label,
+    options,
   } = props;
+  const { resourceName } = options;
   const connection = useSelector(state =>
     selectors.resource(state, 'connections', connectionId)
   );
@@ -57,27 +63,27 @@ export default function DynaRelativeUri(props) {
 
     if (shouldCommit) {
       onFieldChange(id, template);
-      // console.log(id, editorValues);
     }
 
     handleEditorClick();
   };
 
-  const getSampleData = () => {
-    if (!connection) return '{}';
-
-    return JSON.stringify(
-      {
-        connection: {
-          _id: connection._id,
-          name: connection.name,
-        },
-      },
-      null,
-      2
-    );
-  };
-
+  const sampleData = useSelector(state =>
+    selectors.getSampleData(state, flowId, resourceId, 'flowInput', {
+      isImport: resourceType === 'imports',
+    })
+  );
+  const formattedSampleData = JSON.stringify(
+    getFormattedSampleData({
+      connection,
+      sampleData,
+      useSampleDataAsArray,
+      resourceType,
+      resourceName,
+    }),
+    null,
+    2
+  );
   const handleFieldChange = event => {
     const { value } = event.target;
 
@@ -91,13 +97,20 @@ export default function DynaRelativeUri(props) {
     description = `Relative to: ${connection[type].baseURI}`;
   }
 
+  // console.log(
+  //   'id, resourceName, formattedSampleData',
+  //   id,
+  //   resourceName,
+  //   formattedSampleData
+  // );
+
   return (
     <Fragment>
       {showEditor && (
         <UrlEditorDialog
           title="Relative URI Editor"
           id={id}
-          data={getSampleData()}
+          data={formattedSampleData}
           rule={value}
           onClose={handleClose}
           disabled={disabled}

@@ -6,11 +6,6 @@ export default {
       );
 
       return {
-        // we are saving http body in an array. Put correspond to 0th Index,
-        // Post correspond to 1st index.
-        // We will have 'Launch Query Builder for Insert' and
-        // 'Launch Query Buildery for Update' in case user selects Insert or Update Type as 'Insert new Data and Update existing data'
-        saveIndex: 0,
         lookups: {
           // passing lookupId fieldId and data since we will be modifying lookups
           //  from 'Manage lookups' option inside 'SQL Query Builder'

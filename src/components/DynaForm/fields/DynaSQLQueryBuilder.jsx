@@ -11,6 +11,7 @@ export default function DynaSQLQueryBuilder(props) {
     disabled,
     value,
     label,
+    arrayIndex,
     resourceId,
   } = props;
   const [showEditor, setShowEditor] = useState(false);
@@ -19,8 +20,8 @@ export default function DynaSQLQueryBuilder(props) {
   };
 
   const parsedData =
-    options && typeof options.saveIndex === 'number' && Array.isArray(value)
-      ? value[options.saveIndex]
+    typeof arrayIndex === 'number' && Array.isArray(value)
+      ? value[arrayIndex]
       : value;
   const lookupFieldId = options && options.lookups && options.lookups.fieldId;
   const lookups = options && options.lookups && options.lookups.data;
@@ -28,15 +29,11 @@ export default function DynaSQLQueryBuilder(props) {
     if (shouldCommit) {
       const { template } = editorValues;
 
-      if (
-        options &&
-        typeof options.saveIndex === 'number' &&
-        Array.isArray(value)
-      ) {
-        // save to array at position saveIndex
+      if (typeof arrayIndex === 'number' && Array.isArray(value)) {
+        // save to array at position arrayIndex
         const valueTmp = value;
 
-        valueTmp[options.saveIndex] = template;
+        valueTmp[arrayIndex] = template;
         onFieldChange(id, valueTmp);
       } else {
         // save to field

@@ -112,6 +112,7 @@ export default {
           id: 'lookup.body',
           name: '_body',
           type: 'httprequestbody',
+          connectionId: r => r && r._connectionId,
           label: 'Build HTTP Request Body',
           defaultValue: lookup.body || '',
           visibleWhenAll: [
