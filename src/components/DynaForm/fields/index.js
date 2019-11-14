@@ -2,12 +2,14 @@ import DynaMultiSelect from './DynaMultiSelect';
 import DynaRadioGroup from './DynaRadioGroup';
 import DynaSelect from './DynaSelect';
 import DynaLabel from './DynaLabel';
+import DynaCeligoTable from './DynaCeligoTable';
 import DynaSelectResource from './DynaSelectResource';
 import DynaSelectApplication from './DynaSelectApplication';
 import DynaText from './DynaText';
 import DynaCheckbox from './DynaCheckbox';
 import DynaRelativeUri from './DynaRelativeUri';
 import DynaKeyValue from './DynaKeyValue';
+import DynaToggleSelectToText from './select/DynaToggleSelectToText';
 import DynaLookupEditor from './DynaLookupEditor';
 import DynaKeyWithAction from './DynaKeyWithAction';
 import DynaHttpRequestBody from './DynaHttpRequestBody';
@@ -44,10 +46,14 @@ import DynaGenerateUrl from './DynaGenerateUrl';
 import DynaGenerateToken from './DynaGenerateToken';
 import DynaSelectForSetFields from './select/DynaSelectForSetFields';
 import DynaTextForSetFields from './text/DynaTextForSetFields';
+import DynaRefreshableIntegrationAppSetting from './DynaRefreshableSelect/RefreshableIntegrationAppSetting';
+import DynaDate from './dateTime/DynaDate';
 import DynaSQLQueryBuilder from './DynaSQLQueryBuilder';
+import DynaRelativeURIWithLookup from './DynaRelativeURIWithLookup';
 
 export default {
   mapping: DynaImportMapping,
+  toggleSelectToText: DynaToggleSelectToText,
   selectscopes: DynaSelectScopes,
   text: DynaText,
   editor: DynaEditor,
@@ -76,6 +82,7 @@ export default {
   ftpport: DynaTextFtpPort,
   uploadfile: DynaUploadFile,
   labeltitle: DynaLabel,
+  celigotable: DynaCeligoTable,
   hook: DynaHook,
   scriptcontent: DynaScriptContent,
   filedefinitionselect: DynaFileDefinitionSelect,
@@ -96,5 +103,8 @@ export default {
   generatetoken: DynaGenerateToken,
   selectforsetfields: DynaSelectForSetFields,
   textforsetfields: DynaTextForSetFields,
+  integrationapprefreshableselect: DynaRefreshableIntegrationAppSetting,
+  date: DynaDate,
   sqlquerybuilder: DynaSQLQueryBuilder,
+  relativeuriwithlookup: DynaRelativeURIWithLookup,
 };

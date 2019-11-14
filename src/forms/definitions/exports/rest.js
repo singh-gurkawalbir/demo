@@ -1,3 +1,5 @@
+import { isNewId } from '../../../utils/resource';
+
 export default {
   preSave: formValues => {
     const retValues = { ...formValues };
@@ -7,6 +9,12 @@ export default {
     } else if (retValues['/type'] === 'test') {
       retValues['/test/limit'] = 1;
     }
+
+    if (retValues['/outputMode'] === 'blob') {
+      retValues['/type'] = 'blob';
+    }
+
+    delete retValues['/outputMode'];
 
     if (retValues['/rest/pagingMethod'] === 'pageargument') {
       retValues['/rest/nextPageRelativeURI'] = undefined;
@@ -61,6 +69,22 @@ export default {
       ...retValues,
     };
   },
+  optionsHandler: (fieldId, fields) => {
+    if (
+      fieldId === 'rest.once.relativeURI' ||
+      fieldId === 'dataURITemplate' ||
+      fieldId === 'rest.relativeURI' ||
+      fieldId === 'rest.once.postBody' ||
+      fieldId === 'rest.postBody' ||
+      fieldId === 'rest.pagingPostBody'
+    ) {
+      const nameField = fields.find(field => field.fieldId === 'name');
+
+      return {
+        resourceName: nameField && nameField.value,
+      };
+    }
+  },
   fieldMap: {
     common: { formId: 'common' },
     exportData: {
@@ -72,6 +96,7 @@ export default {
       id: 'outputMode',
       type: 'radiogroup',
       label: 'Output Mode',
+      required: true,
       options: [
         {
           items: [
@@ -80,8 +105,25 @@ export default {
           ],
         },
       ],
-      defaultValue: r =>
-        r && r.rest && r.rest.blobFormat ? 'blob' : 'records',
+      defaultDisabled: r => {
+        const isNew = isNewId(r._id);
+
+        if (!isNew) return true;
+
+        return false;
+      },
+      defaultValue: r => {
+        const isNew = isNewId(r._id);
+
+        // if its create
+        if (isNew) return 'records';
+
+        const output = r && r.type;
+
+        if (output === 'blob') return 'blob';
+
+        return 'records';
+      },
     },
     'rest.method': {
       fieldId: 'rest.method',
@@ -100,6 +142,15 @@ export default {
       id: 'type',
       type: 'select',
       label: 'Export Type',
+      defaultValue: r => {
+        const isNew = isNewId(r._id);
+
+        // if its create
+        if (isNew) return '';
+        const output = r && r.type;
+
+        return output || 'all';
+      },
       visibleWhen: [
         {
           field: 'outputMode',

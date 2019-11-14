@@ -54,6 +54,7 @@ export default function CsvParsePanel(props) {
     multipleRowsPerRecord = false,
     trimSpaces = true,
     result,
+    disabled,
   } = useSelector(state => selectors.editor(state, editorId));
   const dispatch = useDispatch();
   const patchEditor = (option, value) => {
@@ -65,7 +66,7 @@ export default function CsvParsePanel(props) {
   return (
     <div className={classes.container}>
       <FormGroup column="true">
-        <FormControl className={classes.formControl}>
+        <FormControl disabled={disabled} className={classes.formControl}>
           <InputLabel shrink htmlFor="columnDelimiter">
             Column Delimiter
           </InputLabel>
@@ -76,12 +77,18 @@ export default function CsvParsePanel(props) {
               patchEditor('columnDelimiter', event.target.value)
             }
             inputProps={{ id: 'columnDelimiter' }}>
-            <option value="">Auto Detect</option>
-            <option value=",">Comma (,)</option>
-            <option value="|">Pipe (|)</option>
+            <option value="" data-test="autoDetect">
+              Auto Detect
+            </option>
+            <option value="," data-test="comma">
+              Comma (,)
+            </option>
+            <option value="|" data-test="pipe">
+              Pipe (|)
+            </option>
           </Select>
         </FormControl>
-        <FormControl className={classes.formControl}>
+        <FormControl disabled={disabled} className={classes.formControl}>
           <InputLabel shrink htmlFor="rowDelimiter">
             Row Delimiter
           </InputLabel>
@@ -90,39 +97,53 @@ export default function CsvParsePanel(props) {
             value={rowDelimiter}
             onChange={event => patchEditor('rowDelimiter', event.target.value)}
             inputProps={{ id: 'rowDelimiter' }}>
-            <option value="">Auto Detect</option>
-            <option value="cr">CR (\r)</option>
-            <option value="lf">LF (\n)</option>
-            <option value="crlf">CRLF (\r\n)</option>
+            <option value="" data-test="autoDetect">
+              Auto Detect
+            </option>
+            <option value="cr" data-test="cr">
+              CR (\r)
+            </option>
+            <option value="lf" data-test="lf">
+              LF (\n)
+            </option>
+            <option value="crlf" data-test="crlf">
+              CRLF (\r\n)
+            </option>
           </Select>
         </FormControl>
 
         <FormControlLabel
+          disabled={disabled}
           control={
             <Checkbox
               // Why it is commented ?
               color="primary"
               checked={hasHeaderRow}
+              data-test="hasHeaderRow"
               onChange={() => patchEditor('hasHeaderRow', !hasHeaderRow)}
             />
           }
           label="Has Header Row"
         />
         <FormControlLabel
+          disabled={disabled}
           control={
             <Checkbox
               color="primary"
               checked={trimSpaces}
+              data-test="trimSpaces"
               onChange={() => patchEditor('trimSpaces', !trimSpaces)}
             />
           }
           label="Trim Spaces"
         />
         <FormControlLabel
+          disabled={disabled}
           control={
             <Checkbox
               color="primary"
               checked={multipleRowsPerRecord}
+              data-test="multipleRowsPerRecord"
               onChange={() => {
                 patchEditor('multipleRowsPerRecord', !multipleRowsPerRecord);
                 patchEditor('keyColumns', []);
@@ -132,11 +153,12 @@ export default function CsvParsePanel(props) {
           label="Multiple Rows Per Record"
         />
         {multipleRowsPerRecord && allColumns && (
-          <FormControl className={classes.formControl}>
+          <FormControl disabled={disabled} className={classes.formControl}>
             <InputLabel htmlFor="select-multiple-chip">Key Columns</InputLabel>
             <Select
               multiple
               value={keyColumns}
+              data-test="keyColumns"
               onChange={e => patchEditor('keyColumns', e.target.value)}
               input={<Input id="select-multiple-chip" />}
               renderValue={keyColumns => (
@@ -148,7 +170,7 @@ export default function CsvParsePanel(props) {
               )}
               MenuProps={MenuProps}>
               {allColumns.map(name => (
-                <MenuItem key={name} value={name}>
+                <MenuItem key={name} value={name} data-test={name}>
                   {name}
                 </MenuItem>
               ))}

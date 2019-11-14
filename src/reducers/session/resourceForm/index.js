@@ -5,6 +5,7 @@ export default function reducer(state = {}, action) {
     type,
     resourceType,
     resourceId,
+    flowId,
     isNew,
     skipCommit,
     fieldMeta,
@@ -32,6 +33,7 @@ export default function reducer(state = {}, action) {
           skipCommit,
           initComplete: true,
           fieldMeta,
+          flowId,
         },
       };
 
@@ -41,6 +43,7 @@ export default function reducer(state = {}, action) {
         [key]: {
           ...state[key],
           submitComplete: false,
+          submitFailed: false,
           formValues: undefined,
           skipClose,
         },
@@ -50,6 +53,11 @@ export default function reducer(state = {}, action) {
       return {
         ...state,
         [key]: { ...state[key], submitComplete: true, formValues },
+      };
+    case actionTypes.RESOURCE_FORM.SUBMIT_FAILED:
+      return {
+        ...state,
+        [key]: { ...state[key], submitFailed: true, formValues },
       };
     case actionTypes.RESOURCE_FORM.CLEAR:
       return { ...state, [key]: {} };
@@ -67,5 +75,19 @@ export function resourceFormState(state, resourceType, resourceId) {
   const key = `${resourceType}-${resourceId}`;
 
   return state[key] || {};
+}
+
+export function resourceFormSaveProcessTerminated(
+  state,
+  resourceType,
+  resourceId
+) {
+  if (!state) return false;
+  const key = `${resourceType}-${resourceId}`;
+
+  if (!state[key]) return false;
+  const { submitFailed, submitCompleted } = state[key];
+
+  return !!(submitFailed || submitCompleted);
 }
 // #endregion

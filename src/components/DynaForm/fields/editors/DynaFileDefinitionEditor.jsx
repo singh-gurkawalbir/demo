@@ -29,6 +29,7 @@ function DynaFileDefinitionEditor(props) {
     userDefinitionId,
     options = {},
     value,
+    disabled,
   } = props;
   const [showEditor, setShowEditor] = useState(false);
   const [isRuleChanged, setIsRuleChanged] = useState(false);
@@ -166,6 +167,7 @@ function DynaFileDefinitionEditor(props) {
             data={sampleData}
             rule={value}
             onClose={handleClose}
+            disabled={disabled}
           />
         )}
         <Button variant="contained" onClick={handleEditorClick}>

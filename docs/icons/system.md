@@ -322,7 +322,7 @@ const icon = {
       <p>MapData</p>
     </div>
     <div style={wrapper}>
-      <MappingConnectorIcon style={icon} />
+      <MappingConnectorIcon style={icon} viewBox=" 0 0 32 32" />
       <p>MappingConnector</p>
     </div>
     <div style={wrapper}>

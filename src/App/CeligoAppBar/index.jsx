@@ -70,11 +70,16 @@ const useStyles = makeStyles(theme => ({
   topBarActions: {
     listStyle: 'none',
     margin: [[5, 0, 0, 0]],
+    display: 'flex',
+    alignItems: 'center',
     '& li': {
       float: 'left',
       marginRight: theme.spacing(3),
       '&:last-child': {
         marginRight: 0,
+      },
+      '&:empty': {
+        display: 'none',
       },
     },
   },
@@ -109,7 +114,9 @@ export default function CeligoAppBar() {
                 (and re-run all init) I think this is causes by removing the 
                 session caching layer we had in place 
               */}
-              <li>{false && <AccountList />}</li>
+              <li>
+                <AccountList />
+              </li>
               <li>
                 <EnvironmentToggle />
               </li>

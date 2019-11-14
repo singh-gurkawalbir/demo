@@ -2,7 +2,7 @@ import produce from 'immer';
 import actionTypes from '../../../actions/types';
 
 export default (state = {}, action) => {
-  const { type, integrationId, flowId, licenseId } = action;
+  const { type, integrationId, flowId, licenseId, response } = action;
   const key = `${integrationId}-${flowId}`;
 
   return produce(state, draft => {
@@ -11,8 +11,22 @@ export default (state = {}, action) => {
       case actionTypes.INTEGRATION_APPS.SETTINGS.UPDATE:
         draft[key] = { submitComplete: false };
         break;
+      case actionTypes.INTEGRATION_APPS.SETTINGS.ADDON_LICENSES_METADATA_UPDATE:
+        if (response && response.addOns) {
+          draft[integrationId] = {
+            addOns: {
+              addOnMetaData: response.addOns && response.addOns.addOnMetaData,
+              addOnLicenses: response.addOns && response.addOns.addOnLicenses,
+            },
+          };
+        }
+
+        break;
       case actionTypes.INTEGRATION_APPS.SETTINGS.FORM.SUBMIT_COMPLETE:
         draft[key] = { submitComplete: true };
+        break;
+      case actionTypes.INTEGRATION_APPS.SETTINGS.FORM.SUBMIT_FAILED:
+        draft[key] = { submitFailed: true };
         break;
       case actionTypes.INTEGRATION_APPS.SETTINGS.FORM.CLEAR:
         delete draft[key];
@@ -33,6 +47,14 @@ export function integrationAppSettingsFormState(state, integrationId, flowId) {
   const key = `${integrationId}-${flowId}`;
 
   return state[key] || {};
+}
+
+export function integrationAppAddOnState(state, integrationId) {
+  if (!state) {
+    return {};
+  }
+
+  return state[integrationId] || {};
 }
 
 export function checkUpgradeRequested(state, licenseId) {

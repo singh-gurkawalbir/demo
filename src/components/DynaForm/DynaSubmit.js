@@ -18,8 +18,8 @@ class FormButton extends Component {
     return (
       <Button
         data-test={id}
-        variant="contained"
-        color={color || 'secondary'}
+        variant="outlined"
+        color={color || 'primary'}
         className={className}
         disabled={disabled || !isValid}
         onClick={() => onClick(value)}>

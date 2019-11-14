@@ -1,3 +1,4 @@
+import { useEffect, useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import MappingUtil from '../../../utils/mapping';
 import * as ResourceUtil from '../../../utils/resource';
@@ -6,6 +7,8 @@ import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import ImportMapping from './';
 import LoadResources from '../../../components/LoadResources';
+import getJSONPaths from '../../../utils/jsonPaths';
+import { getImportOperationDetails } from '../../../utils/assistant';
 
 /**
  *
@@ -17,13 +20,46 @@ import LoadResources from '../../../components/LoadResources';
  */
 
 export default function StandaloneImportMapping(props) {
-  const { id, resourceId, onClose, connectionId, extractFields } = props;
+  const {
+    id,
+    resourceId,
+    onClose,
+    connectionId,
+    extractFields,
+    integrationId,
+  } = props;
   const dispatch = useDispatch();
   const resourceData = useSelector(state =>
     selectors.resource(state, 'imports', resourceId)
   );
+  const [assistantState, setAssistantState] = useState({
+    assistantLoaded: false,
+    changeIdentifier: 0,
+  });
+  const { assistantLoaded, changeIdentifier } = assistantState;
   const options = {};
   const resourceType = ResourceUtil.getResourceSubType(resourceData);
+  const assistantData = useSelector(state =>
+    selectors.assistantData(state, {
+      adaptorType: resourceType.type,
+      assistant: resourceType.assistant,
+    })
+  );
+  const fetchAssistantResource = useCallback(() => {
+    dispatch(
+      actions.assistantMetadata.request({
+        adaptorType: resourceType.type,
+        assistant: resourceType.assistant,
+      })
+    );
+  }, [dispatch, resourceType.assistant, resourceType.type]);
+
+  useEffect(() => {
+    // fetching assistant data in case resource type is assistant
+    if (resourceType.assistant && !assistantData) {
+      fetchAssistantResource();
+    }
+  }, [assistantData, fetchAssistantResource, resourceType.assistant]);
 
   if (resourceType.type === ResourceUtil.adaptorTypeMap.SalesforceImport) {
     options.connectionId = connectionId;
@@ -40,6 +76,43 @@ export default function StandaloneImportMapping(props) {
     resourceData,
     resourceType.type
   );
+
+  if (assistantData) {
+    const { assistantMetadata } = resourceData;
+    const { operation, resource, version } = assistantMetadata;
+    const assistantOperationDetail = getImportOperationDetails({
+      operation,
+      resource,
+      version,
+      assistantData,
+    });
+    const { requiredMappings } = assistantOperationDetail;
+
+    if (requiredMappings && Array.isArray(requiredMappings)) {
+      requiredMappings.forEach(_mandatoryMapping => {
+        const _mappingObj = mappings.find(
+          _mapping => _mapping.generate === _mandatoryMapping
+        );
+
+        if (_mappingObj) {
+          _mappingObj.isRequired = true;
+        } else {
+          mappings.push({
+            generate: _mandatoryMapping,
+            isRequired: true,
+          });
+        }
+      });
+    }
+
+    if (!assistantLoaded) {
+      setAssistantState({
+        assistantLoaded: !assistantLoaded,
+        changeIdentifier: changeIdentifier + 1,
+      });
+    }
+  }
+
   const lookups = LookupUtil.getLookupFromResource(
     resourceData,
     resourceType.type
@@ -79,15 +152,23 @@ export default function StandaloneImportMapping(props) {
     onClose();
   };
 
-  const formattedExtractFields =
-    (extractFields &&
-      Object.keys(extractFields).map(name => ({ name, id: name }))) ||
-    [];
+  let formattedExtractFields = [];
+
+  if (extractFields) {
+    const extractPaths = getJSONPaths(extractFields);
+
+    formattedExtractFields =
+      (extractPaths &&
+        extractPaths.map(obj => ({ name: obj.id, id: obj.id }))) ||
+      [];
+  }
 
   return (
     <LoadResources resources="imports">
       <ImportMapping
+        integrationId={integrationId}
         title="Define Import Mapping"
+        key={changeIdentifier}
         id={id}
         application={resourceType.type}
         lookups={lookups}

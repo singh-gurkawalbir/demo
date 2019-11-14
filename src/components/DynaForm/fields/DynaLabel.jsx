@@ -22,7 +22,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function DynaLabel(props) {
-  const { label, helpKey, helpText, id } = props;
+  const { label, helpKey, helpText, id, disablePopover = false } = props;
   const [anchorEl, setAnchorEl] = useState(null);
   const classes = useStyles();
   const handlePopoverOpen = event => {
@@ -35,16 +35,18 @@ function DynaLabel(props) {
 
   return (
     <Fragment>
-      <ArrowPopper
-        placement="left"
-        className={classes.helpPopper}
-        id="helpBubble"
-        open={!!anchorEl}
-        anchorEl={anchorEl}>
-        <Typography variant="caption">
-          {helpText || helpTextMap[helpKey]}
-        </Typography>
-      </ArrowPopper>
+      {!disablePopover && (
+        <ArrowPopper
+          placement="left"
+          className={classes.helpPopper}
+          id="helpBubble"
+          open={!!anchorEl}
+          anchorEl={anchorEl}>
+          <Typography variant="caption">
+            {helpText || helpTextMap[helpKey]}
+          </Typography>
+        </ArrowPopper>
+      )}
       <Typography
         data-test={id}
         onMouseEnter={handlePopoverOpen}

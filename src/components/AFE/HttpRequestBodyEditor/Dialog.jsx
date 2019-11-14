@@ -2,7 +2,7 @@ import EditorDialog from '../EditorDialog';
 import HttpRequestBodyEditor from './';
 
 export default function HttpRequestBodyDialog(props) {
-  const { id, rule, data, ...rest } = props;
+  const { id, rule, data, contentType, disabled, ...rest } = props;
   const defaults = {
     layout: 'compact',
     width: '80vw',
@@ -11,8 +11,14 @@ export default function HttpRequestBodyDialog(props) {
   };
 
   return (
-    <EditorDialog id={id} {...defaults} {...rest}>
-      <HttpRequestBodyEditor editorId={id} rule={rule} data={data} />
+    <EditorDialog id={id} {...defaults} {...rest} disabled={disabled}>
+      <HttpRequestBodyEditor
+        contentType={contentType}
+        editorId={id}
+        rule={rule}
+        data={data}
+        disabled={disabled}
+      />
     </EditorDialog>
   );
 }

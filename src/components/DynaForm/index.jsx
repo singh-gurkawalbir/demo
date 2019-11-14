@@ -2,9 +2,11 @@ import { Component } from 'react';
 import { Form } from 'react-forms-processor/dist';
 import { withStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
+import { useSelector } from 'react-redux';
 import getRenderer from './renderer';
 import DynaFormGenerator from './DynaFormGenerator';
 import ButtonGroup from '../ButtonGroup';
+import * as selectors from '../../reducers';
 
 @withStyles(theme => ({
   fieldContainer: {
@@ -26,11 +28,10 @@ import ButtonGroup from '../ButtonGroup';
     overflow: 'hidden',
   },
   actions: {
-    textAlign: 'right',
     padding: theme.spacing(2, 3, 0),
   },
 }))
-export default class DynaForm extends Component {
+class DynaForm extends Component {
   render() {
     const {
       classes,
@@ -41,6 +42,7 @@ export default class DynaForm extends Component {
       resourceId,
       resourceType,
       full,
+      showValidationBeforeTouched = true,
       ...rest
     } = this.props;
     const { layout, fieldMap } = fieldMeta;
@@ -51,7 +53,10 @@ export default class DynaForm extends Component {
     }
 
     return (
-      <Form {...rest} showValidationBeforeTouched renderer={renderer}>
+      <Form
+        {...rest}
+        showValidationBeforeTouched={showValidationBeforeTouched}
+        renderer={renderer}>
         <div className={clsx(classes.fieldContainer, className)}>
           <DynaFormGenerator layout={layout} fieldMap={fieldMap} />
         </div>
@@ -63,4 +68,25 @@ export default class DynaForm extends Component {
       </Form>
     );
   }
+}
+
+export default function DisabledDynaFormPerUserPermissions(props) {
+  // Disabled is a prop to deliberately disable the Form this is added to support a DynaForm within a DynaForm
+  const { integrationId, fieldMeta, disabled } = props;
+  // pass in the integration Id to find access level of its associated forms
+  const isFormAMonitorLevelAccess = useSelector(state =>
+    selectors.isFormAMonitorLevelAccess(state, integrationId)
+  );
+  const viewMode = isFormAMonitorLevelAccess || disabled;
+
+  return (
+    <DynaForm
+      {...props}
+      disabled={viewMode}
+      // when its in view mode we disable validation before touch this ensures that there is no
+      // required fields errored messages
+      showValidationBeforeTouched={!viewMode}
+      fieldMeta={fieldMeta}
+    />
+  );
 }

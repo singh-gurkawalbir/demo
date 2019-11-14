@@ -103,3 +103,10 @@ a{
 .layout > div{
   margin-bottom: 0px !Important;
 }
+ /* Todo Azhar (Check in AFE Editor the perfect solution instead of global) */
+.ace_invisible_eol{
+  display:none;
+}
+.ace_invisible_space{
+  color: transparent !important;
+}

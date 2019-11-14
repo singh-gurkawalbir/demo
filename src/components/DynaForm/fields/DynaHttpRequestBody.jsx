@@ -1,34 +1,89 @@
-import { useState, Fragment } from 'react';
+import { useState, useEffect, Fragment } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import Button from '@material-ui/core/Button';
+import * as selectors from '../../../reducers';
 import HttpRequestBodyEditorDialog from '../../../components/AFE/HttpRequestBodyEditor/Dialog';
 import DynaLookupEditor from './DynaLookupEditor';
+import {
+  getXMLSampleTemplate,
+  getJSONSampleTemplate,
+} from '../../AFE/HttpRequestBodyEditor/templateMapping';
+import actions from '../../../actions';
+import getFormattedSampleData from '../../../utils/sampleData';
 
 export default function DynaHttpRequestBody(props) {
-  const { id, onFieldChange, options, value, label, resourceId } = props;
+  const {
+    id,
+    onFieldChange,
+    options,
+    value,
+    label,
+    resourceId,
+    connectionId,
+    resourceType,
+    flowId,
+    arrayIndex,
+    useSampleDataAsArray,
+  } = props;
+  const { lookups: lookupsObj, contentType, resourceName } = options;
   const [showEditor, setShowEditor] = useState(false);
-  const parsedData =
-    options && typeof options.saveIndex === 'number' && Array.isArray(value)
-      ? value[options.saveIndex]
+  let parsedRule =
+    options && typeof arrayIndex === 'number' && Array.isArray(value)
+      ? value[arrayIndex]
       : value;
-  const lookupFieldId = options && options.lookups && options.lookups.fieldId;
-  const lookups = options && options.lookups && options.lookups.data;
+  const lookupFieldId = lookupsObj && lookupsObj.fieldId;
+  const lookups = lookupsObj && lookupsObj.data;
   const handleEditorClick = () => {
     setShowEditor(!showEditor);
   };
+
+  const dispatch = useDispatch();
+  const connection = useSelector(state =>
+    selectors.resource(state, 'connections', connectionId)
+  );
+  const sampleData = useSelector(state =>
+    selectors.getSampleData(state, flowId, resourceId, 'flowInput', {
+      isImport: resourceType === 'imports',
+    })
+  );
+  // constructing data
+  const formattedSampleData = JSON.stringify(
+    getFormattedSampleData({
+      connection,
+      sampleData,
+      useSampleDataAsArray,
+      resourceType,
+      resourceName,
+    }),
+    null,
+    2
+  );
+
+  useEffect(() => {
+    // Request for sample data only incase of flow context
+    // TODO : @Raghu Do we show default data in stand alone context?
+    // What type of sample data is expected in case of Page generators
+    if (flowId && !sampleData) {
+      dispatch(
+        actions.flowData.requestSampleData(
+          flowId,
+          resourceId,
+          resourceType,
+          'flowInput'
+        )
+      );
+    }
+  }, [dispatch, flowId, resourceId, resourceType, sampleData]);
 
   const handleClose = (shouldCommit, editorValues) => {
     if (shouldCommit) {
       const { template } = editorValues;
 
-      if (
-        options &&
-        typeof options.saveIndex === 'number' &&
-        Array.isArray(value)
-      ) {
-        // save to array at position saveIndex
+      if (typeof arrayIndex === 'number' && Array.isArray(value)) {
+        // save to array at position arrayIndex
         const valueTmp = value;
 
-        valueTmp[options.saveIndex] = template;
+        valueTmp[arrayIndex] = template;
         onFieldChange(id, valueTmp);
       } else {
         // save to field
@@ -38,6 +93,11 @@ export default function DynaHttpRequestBody(props) {
 
     handleEditorClick();
   };
+
+  if (!parsedRule && sampleData) {
+    if (contentType === 'json') parsedRule = getJSONSampleTemplate(sampleData);
+    else parsedRule = getXMLSampleTemplate(sampleData);
+  }
 
   let lookupField;
 
@@ -56,10 +116,12 @@ export default function DynaHttpRequestBody(props) {
     <Fragment>
       {showEditor && (
         <HttpRequestBodyEditorDialog
+          contentType={contentType === 'json' ? 'json' : 'xml'}
           title="Build HTTP Request Body"
           id={`${resourceId}-${id}`}
-          rule={parsedData}
+          rule={parsedRule}
           onFieldChange={onFieldChange}
+          data={formattedSampleData}
           onClose={handleClose}
           action={lookupField}
         />

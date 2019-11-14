@@ -2,9 +2,13 @@ import { Component } from 'react';
 import { hot } from 'react-hot-loader';
 import { Switch, Route } from 'react-router-dom';
 import loadable from '../../utils/loadable';
-import IntegrationSettings from '../../views/IntegrationSettings';
 import IntegrationAppsRouter from '../../views/IntegrationApps/Router';
 import MarketplaceRouter from '../../views/MarketPlace/Router';
+import TemplatePreview from '../../views/Templates/InstallIntegrationPreview';
+import TemplateInstall from '../../views/Templates/Install';
+import GenerateOrInstall from '../../views/Templates/GenerateOrInstall';
+import ClonePreview from '../../views/Clone/Preview';
+import CloneSetup from '../../views/Clone/Setup';
 
 const RecycleBin = loadable(() =>
   import(/* webpackChunkName: 'RecycleBin' */ '../../views/RecycleBin')
@@ -36,10 +40,8 @@ const TemplateList = loadable(() =>
 const MyAccount = loadable(() =>
   import(/* webpackChunkName: 'MyAccount' */ '../../views/MyAccount')
 );
-const IntegrationDashboard = loadable(() =>
-  import(
-    /* webpackChunkName: 'IntegrationDashboard' */ '../../views/IntegrationDashboard'
-  )
+const Integration = loadable(() =>
+  import(/* webpackChunkName: 'Integration' */ '../../views/Integration')
 );
 const AccessTokenList = loadable(() =>
   import(
@@ -66,11 +68,19 @@ export default class AppRouting extends Component {
           render={({ history }) => history.replace('/pg/dashboard')}
         />
         <Route
+          path="/pg/clone/:resourceType/:resourceId/preview"
+          component={ClonePreview}
+        />
+        <Route
+          path="/pg/clone/:resourceType/:resourceId/setup"
+          component={CloneSetup}
+        />
+        <Route
           path="/pg/integrations/:integrationId"
           exact
           render={({ history, match }) =>
             history.replace(
-              `/pg/integrations/${match.params.integrationId}/settings/flows`
+              `/pg/integrations/${match.params.integrationId}/flows`
             )
           }
         />
@@ -84,16 +94,20 @@ export default class AppRouting extends Component {
           }
         />
         <Route
-          path="/pg/integrations/:integrationId/dashboard"
-          component={IntegrationDashboard}
+          path="/pg/templates/:templateId/preview"
+          component={TemplatePreview}
         />
         <Route
-          path="/pg/integrations/:integrationId/settings"
-          component={IntegrationSettings}
+          path="/pg/templates/:templateId/setup"
+          component={TemplateInstall}
         />
         <Route
           path={['/pg/integrations/:integrationId/flowBuilder/:flowId']}
           component={FlowBuilder}
+        />
+        <Route
+          path="/pg/integrations/:integrationId/:tab"
+          component={Integration}
         />
         <Route
           path="/pg/connectors/:connectorId/connectorLicenses"
@@ -102,6 +116,10 @@ export default class AppRouting extends Component {
         <Route
           path="/pg/connectors/:connectorId/installBase"
           component={ConnectorInstallBase}
+        />
+        <Route
+          path="/pg/templates/generate-or-install"
+          component={GenerateOrInstall}
         />
         <Route path="/pg/connectors" component={IntegrationAppsRouter} />
         <Route path="/pg/marketplace" component={MarketplaceRouter} />

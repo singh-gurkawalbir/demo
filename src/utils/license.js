@@ -22,11 +22,15 @@ export function upgradeStatus(license, integration = {}) {
   );
   const editionArray = ['standard', 'premium', 'enterprise', 'custom fba'];
   const connectorEdition = editionArray.indexOf(
-    license.opts.connectorEdition.toLowerCase()
+    license.opts &&
+      license.opts.connectorEdition &&
+      license.opts.connectorEdition.toLowerCase()
   );
   const highestEdition = editionArray.indexOf(highestEditionForConnector);
   const presentEdition = editionArray.indexOf(
-    integration.settings.connectorEdition.toLowerCase()
+    integration.settings &&
+      integration.settings.connectorEdition &&
+      integration.settings.connectorEdition.toLowerCase()
   );
 
   if (presentEdition === highestEdition) {

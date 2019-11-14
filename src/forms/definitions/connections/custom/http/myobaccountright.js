@@ -12,6 +12,8 @@ export default {
     '/http/auth/oauth/scopeDelimiter': '',
     '/http/auth/oauth/scope': ['CompanyFile'],
     '/http/auth/oauth/accessTokenPath': 'access_token',
+    '/http/auth/token/refreshMethod': 'POST',
+    '/http/auth/token/refreshMediaType': 'urlencoded',
     '/http/headers': [
       { name: 'x-myobapi-version', value: 'v2' },
       {

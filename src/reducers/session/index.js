@@ -86,24 +86,18 @@ export function stagedResource(state, id, scope) {
   return fromStage.stagedResource(state.stage, id, scope);
 }
 
-export function optionsFromMetadata(
+export function optionsFromMetadata({
   state,
   connectionId,
-  applicationType,
-  metadataType,
-  mode,
-  recordType,
-  selectField
-) {
-  return fromMetadata.optionsFromMetadata(
-    state && state.metadata,
+  commMetaPath,
+  filterKey,
+}) {
+  return fromMetadata.optionsFromMetadata({
+    state: state && state.metadata,
     connectionId,
-    applicationType,
-    metadataType,
-    mode,
-    recordType,
-    selectField
-  );
+    commMetaPath,
+    filterKey,
+  });
 }
 
 export function optionsMapFromMetadata(
@@ -132,8 +126,24 @@ export function resourceFormState(state, resourceType, resourceId) {
   );
 }
 
+export function resourceFormSaveProcessTerminated(
+  state,
+  resourceType,
+  resourceId
+) {
+  return fromResourceForm.resourceFormSaveProcessTerminated(
+    state && state.resourceForm,
+    resourceType,
+    resourceId
+  );
+}
+
 export function previewTemplate(state, templateId) {
   return fromTemplates.previewTemplate(state && state.templates, templateId);
+}
+
+export function isFileUploaded(state) {
+  return fromTemplates.isFileUploaded(state && state.templates);
 }
 
 export function template(state, templateId) {
@@ -220,6 +230,13 @@ export function integrationAppSettingsFormState(state, integrationId, flowId) {
     state && state.integrationApps,
     integrationId,
     flowId
+  );
+}
+
+export function integrationAppAddOnState(state, integrationId) {
+  return fromIntegrationApps.integrationAppAddOnState(
+    state && state.integrationApps,
+    integrationId
   );
 }
 

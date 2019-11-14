@@ -188,6 +188,7 @@ export default {
       fieldId: 'as2.partnerStationInfo.rateLimit.failValues',
     },
     'as2.concurrencyLevel': { fieldId: 'as2.concurrencyLevel' },
+    'as2.preventCanonicalization': { fieldId: 'as2.preventCanonicalization' },
   },
   layout: {
     fields: ['name'],
@@ -261,7 +262,7 @@ export default {
       {
         collapsed: true,
         label: 'Advanced Settings',
-        fields: ['as2.concurrencyLevel'],
+        fields: ['as2.preventCanonicalization', 'as2.concurrencyLevel'],
       },
     ],
   },

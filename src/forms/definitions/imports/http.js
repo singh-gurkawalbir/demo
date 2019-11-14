@@ -1,10 +1,14 @@
+import { isNewId } from '../../../utils/resource';
+
 export default {
   preSave: (formValues, resource) => {
     const retValues = { ...formValues };
     const lookup =
       resource.http &&
       resource.http.lookups &&
-      resource.http.lookups.get(retValues['/http/existingDataId']);
+      resource.http.lookups.find(
+        l => l.name === retValues['/http/existingDataId']
+      );
 
     if (retValues['/inputMode'] === 'blob') {
       retValues['/http/method'] = retValues['/http/blobMethod'];
@@ -119,31 +123,63 @@ export default {
       retValues['/http/body'] = [retValues['/http/body']];
     }
 
+    delete retValues['/inputMode'];
+
     return {
       ...retValues,
     };
   },
   optionsHandler: (fieldId, fields) => {
-    if (fieldId === 'http.body') {
+    if (
+      fieldId === 'http.body' ||
+      fieldId === 'http.bodyCreate' ||
+      fieldId === 'http.bodyUpdate'
+    ) {
       const lookupField = fields.find(
         field => field.fieldId === 'http.lookups'
       );
+      const requestMediaTypeField = fields.find(
+        field => field.fieldId === 'http.requestMediaType'
+      );
+      const nameField = fields.find(field => field.fieldId === 'name');
 
-      if (lookupField) {
-        return {
-          // we are saving http body in an array. Put correspond to 0th Index,
-          // Post correspond to 1st index.
-          // We will have 'Build HTTP Request Body for Create' and
-          // 'Build HTTP Request Body for Update' in case user selects Composite Type as 'Create new Data and Update existing data'
-          saveIndex: 0,
-          lookups: {
-            // passing lookupId fieldId and data since we will be modifying lookups
-            //  from 'Manage lookups' option inside 'Build Http request Body Editor'
-            fieldId: lookupField.fieldId,
-            data: lookupField && lookupField.value,
-          },
-        };
-      }
+      return {
+        resourceName: nameField && nameField.value,
+        contentType: requestMediaTypeField.value,
+        lookups: {
+          // passing lookupId fieldId and data since we will be modifying lookups
+          //  from 'Manage lookups' option inside 'Build Http request Body Editor'
+          fieldId: 'http.lookups',
+          data:
+            (lookupField &&
+              Array.isArray(lookupField.value) &&
+              lookupField.value) ||
+            [],
+        },
+      };
+    }
+
+    if (
+      fieldId === 'http.relativeURI' ||
+      fieldId === 'http.relativeURIUpdate' ||
+      fieldId === 'http.relativeURICreate'
+    ) {
+      const lookupField = fields.find(
+        field => field.fieldId === 'http.lookups'
+      );
+      const nameField = fields.find(field => field.fieldId === 'name');
+
+      return {
+        resourceName: nameField && nameField.value,
+        lookups: {
+          fieldId: 'http.lookups',
+          data:
+            (lookupField &&
+              Array.isArray(lookupField.value) &&
+              lookupField.value) ||
+            [],
+        },
+      };
     }
 
     return null;
@@ -156,7 +192,7 @@ export default {
       type: 'labeltitle',
       label: 'How would you like the data imported?',
     },
-    // dataMappings: { formId: 'dataMappings' },
+    dataMappings: { formId: 'dataMappings' },
     inputMode: {
       id: 'inputMode',
       type: 'radiogroup',
@@ -169,6 +205,13 @@ export default {
           ],
         },
       ],
+      defaultDisabled: r => {
+        const isNew = isNewId(r._id);
+
+        if (!isNew) return true;
+
+        return false;
+      },
       defaultValue: r => (r && r.blobKeyPath ? 'blob' : 'records'),
     },
     'http.method': { fieldId: 'http.method' },
@@ -176,8 +219,8 @@ export default {
     'http.headers': { fieldId: 'http.headers' },
     'http.requestMediaType': { fieldId: 'http.requestMediaType' },
     'http.compositeType': { fieldId: 'http.compositeType' },
-    'http.relativeURI': { fieldId: 'http.relativeURI' },
     'http.lookups': { fieldId: 'http.lookups', visible: false },
+    'http.relativeURI': { fieldId: 'http.relativeURI' },
     'http.response.successPath': { fieldId: 'http.response.successPath' },
     'http.response.successValues': { fieldId: 'http.response.successValues' },
     'http.response.resourceIdPath': { fieldId: 'http.response.resourceIdPath' },
@@ -248,7 +291,9 @@ export default {
     },
     'http.relativeURICreate': {
       id: 'http.relativeURICreate',
-      type: 'text',
+      type: 'relativeuriwithlookup',
+      connectionId: r => r && r._connectionId,
+      refreshOptionsOnChangesTo: ['http.lookups'],
       label: 'Relative URI',
       placeholder: 'Optional',
       visibleWhenAll: [
@@ -284,7 +329,11 @@ export default {
     'http.bodyCreate': {
       id: 'http.bodyCreate',
       type: 'httprequestbody',
+      connectionId: r => r && r._connectionId,
+      useSampleDataAsArray: true,
+
       label: 'Build HTTP Request Body For Create',
+      arrayIndex: 1,
       refreshOptionsOnChangesTo: ['http.lookups'],
       visibleWhenAll: [
         {
@@ -461,7 +510,9 @@ export default {
     },
     'http.relativeURIUpdate': {
       id: 'http.relativeURIUpdate',
-      type: 'text',
+      type: 'relativeuriwithlookup',
+      connectionId: r => r && r._connectionId,
+      refreshOptionsOnChangesTo: ['http.lookups'],
       label: 'Relative URI',
       placeholder: 'Optional',
       visibleWhenAll: [
@@ -493,7 +544,10 @@ export default {
     'http.bodyUpdate': {
       id: 'http.bodyUpdate',
       type: 'httprequestbody',
+      connectionId: r => r && r._connectionId,
+      useSampleDataAsArray: true,
       label: 'Build HTTP Request Body For Update',
+      arrayIndex: 0,
       refreshOptionsOnChangesTo: ['http.lookups'],
       visibleWhenAll: [
         {
@@ -684,7 +738,10 @@ export default {
         },
       ],
     },
-    'http.body': { fieldId: 'http.body' },
+    'http.body': {
+      fieldId: 'http.body',
+      refreshOptionsOnChangesTo: ['http.requestMediaType'],
+    },
 
     'http.ignoreEmptyNodes': { fieldId: 'http.ignoreEmptyNodes' },
     advancedSettings: {
@@ -713,15 +770,15 @@ export default {
       'common',
       'inputMode',
       'importData',
-      // 'dataMappings',
+      'dataMappings',
       'blobKeyPath',
       'http.method',
       'http.blobMethod',
       'http.headers',
       'http.requestMediaType',
       'http.compositeType',
-      'http.relativeURI',
       'http.lookups',
+      'http.relativeURI',
       'http.body',
       'http.response.successPath',
       'http.response.successValues',

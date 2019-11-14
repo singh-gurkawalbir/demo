@@ -31,7 +31,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function JavaScriptPanel(props) {
-  const { editorId } = props;
+  const { editorId, disabled } = props;
   const classes = useStyles(props);
   const { code = '', entryFunction = '', scriptId = '' } = useSelector(state =>
     selectors.editor(state, editorId)
@@ -77,6 +77,7 @@ export default function JavaScriptPanel(props) {
             id="scriptId"
             margin="dense"
             value={scriptId}
+            disabled={disabled}
             onChange={event => patchEditor('scriptId', event.target.value)}>
             {allScripts.map(s => (
               <MenuItem key={s._id} value={s._id}>
@@ -87,6 +88,7 @@ export default function JavaScriptPanel(props) {
         </FormControl>
         <TextField
           id="entryFunction"
+          disabled={disabled}
           InputLabelProps={{ className: classes.label }}
           className={classes.textField}
           value={entryFunction}
@@ -102,6 +104,7 @@ export default function JavaScriptPanel(props) {
         ) : (
           <CodePanel
             name="code"
+            readOnly={disabled}
             value={code}
             mode="javascript"
             onChange={code => patchEditor('code', code)}

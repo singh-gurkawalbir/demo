@@ -10,6 +10,11 @@ export default {
     '/http/auth/oauth/authURI': 'https://accounts.zoho.com/oauth/v2/auth',
     '/http/auth/oauth/tokenURI': 'https://accounts.zoho.com/oauth/v2/token',
     '/http/auth/oauth/scopeDelimiter': ',',
+    '/http/auth/failStatusCode': 404,
+    '/http/auth/failPath': 'data.errorCode',
+    '/http/auth/token/refreshMethod': 'POST',
+    '/http/auth/token/refreshMediaType': 'urlencoded',
+    '/http/auth/failValues': ['INVALID_OAUTHTOKEN'],
   }),
   fieldMap: {
     name: { fieldId: 'name' },

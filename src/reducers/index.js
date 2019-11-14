@@ -29,7 +29,12 @@ import {
 import { getFieldById } from '../forms/utils';
 import { upgradeButtonText, expiresInfo } from '../utils/license';
 import commKeyGen from '../utils/commKeyGenerator';
-import { isRealtimeExport, isSimpleImportFlow, isRunnable } from './flowsUtil';
+import {
+  isRealtimeExport,
+  isSimpleImportFlow,
+  isRunnable,
+  showScheduleIcon,
+} from './flowsUtil';
 import { getUsedActionsMapForResource } from '../utils/flows';
 import { isValidResourceReference } from '../utils/resource';
 
@@ -115,8 +120,38 @@ export function resourceFormState(state, resourceType, resourceId) {
   );
 }
 
+export function resourceFormSaveProcessTerminated(
+  state,
+  resourceType,
+  resourceId
+) {
+  return fromSession.resourceFormSaveProcessTerminated(
+    state && state.session,
+    resourceType,
+    resourceId
+  );
+}
+
+export function clonePreview(state, resourceType, resourceId) {
+  return fromSession.previewTemplate(
+    state && state.session,
+    `${resourceType}-${resourceId}`
+  );
+}
+
+export function cloneData(state, resourceType, resourceId) {
+  return fromSession.template(
+    state && state.session,
+    `${resourceType}-${resourceId}`
+  );
+}
+
 export function previewTemplate(state, templateId) {
   return fromSession.previewTemplate(state && state.session, templateId);
+}
+
+export function isFileUploaded(state) {
+  return fromSession.isFileUploaded(state && state.session);
 }
 
 export function templateSetup(state, templateId) {
@@ -142,6 +177,10 @@ export function templateInstallSteps(state, templateId) {
   });
 }
 
+export function cloneInstallSteps(state, resourceType, resourceId) {
+  return templateInstallSteps(state, `${resourceType}-${resourceId}`);
+}
+
 export function templateConnectionMap(state, templateId) {
   return fromSession.connectionMap(state && state.session, templateId);
 }
@@ -153,6 +192,33 @@ export function connectorMetadata(state, fieldName, id, _integrationId) {
     id,
     _integrationId
   );
+}
+
+export function connectorFieldOptions(
+  state,
+  fieldName,
+  id,
+  _integrationId,
+  defaultFieldOptions
+) {
+  const { data, isLoading } = connectorMetadata(
+    state,
+    fieldName,
+    id,
+    _integrationId
+  );
+
+  // should select options from either defaultOptions or the refreshed metadata options
+  return {
+    isLoading,
+    options:
+      (data &&
+        data.options.map(option => ({
+          value: option[0],
+          label: option[1],
+        }))) ||
+      (defaultFieldOptions && defaultFieldOptions[0].items),
+  };
 }
 
 export function filter(state, name) {
@@ -492,13 +558,25 @@ export function resource(state, resourceType, id) {
   return fromData.resource(state && state.data, resourceType, id);
 }
 
-export function resourceList(state, options) {
+export function resourceList(state, options = {}) {
+  if (
+    !options.ignoreEnvironmentFilter &&
+    !['accesstokens', 'agents', 'iclients', 'scripts', 'stacks'].includes(
+      /* These resources are common for both production & sandbox environments. */
+      options.type
+    )
+  ) {
+    const preferences = userPreferences(state);
+
+    // eslint-disable-next-line no-param-reassign
+    options.sandbox = preferences.environment === 'sandbox';
+  }
+
   return fromData.resourceList(state && state.data, options);
 }
 
 export function flowListWithMetadata(state, options) {
-  const flows =
-    fromData.resourceList(state && state.data, options).resources || [];
+  const flows = resourceList(state, options).resources || [];
 
   flows.forEach((f, i) => {
     const _exportId =
@@ -506,7 +584,7 @@ export function flowListWithMetadata(state, options) {
         ? f.pageGenerators[0]._exportId
         : f._exportId;
     const exp = resource(state, 'exports', _exportId);
-    const exports = fromData.resourceList(state && state.data, {
+    const exports = resourceList(state, {
       resourceType: 'exports',
     }).resources;
 
@@ -521,24 +599,28 @@ export function flowListWithMetadata(state, options) {
     if (isRunnable(exports, exp, f)) {
       flows[i].isRunnable = true;
     }
+
+    if (showScheduleIcon(exports, exp, f)) {
+      flows[i].showScheduleIcon = true;
+    }
   });
 
   return { resources: flows };
 }
 
 export function resourceListWithPermissions(state, options) {
-  const resourceList = fromData.resourceList(state && state.data, options);
+  const list = resourceList(state, options);
   // eslint-disable-next-line no-use-before-define
   const permissions = userPermissions(state);
 
-  resourceList.resources = resourceList.resources.map(r => {
+  list.resources = list.resources.map(r => {
     // eslint-disable-next-line no-param-reassign
     r.permissions = deepClone(permissions);
 
     return r;
   });
 
-  return resourceList;
+  return list;
 }
 
 export function resourcesByIds(state, resourceType, resourceIds) {
@@ -550,15 +632,10 @@ export function resourcesByIds(state, resourceType, resourceIds) {
 }
 
 export function matchingConnectionList(state, connection = {}) {
-  const preferences = userPreferences(state);
   const { resources = [] } = resourceList(state, {
     type: 'connections',
     filter: {
       $where() {
-        if (!!this.sandbox !== (preferences.environment === 'sandbox')) {
-          return false;
-        }
-
         if (connection.assistant) {
           return this.assistant === connection.assistant && !this._connectorId;
         }
@@ -706,6 +783,10 @@ export function integrationAppSettingsFormState(state, integrationId, flowId) {
   );
 }
 
+export function integrationAppAddOnState(state, integrationId) {
+  return fromSession.integrationAppAddOnState(state.session, integrationId);
+}
+
 export function checkUpgradeRequested(state, licenseId) {
   return fromSession.checkUpgradeRequested(state && state.session, licenseId);
 }
@@ -783,7 +864,7 @@ export function integrationAppConnectionList(state, integrationId, storeId) {
 }
 
 export function integrationAppSettings(state, id, storeId) {
-  if (!state) return {};
+  if (!state) return { settings: {} };
   const integrationResource = fromData.integrationAppSettings(state.data, id);
   const uninstallSteps = fromSession.uninstallSteps(
     state.resource,
@@ -843,7 +924,7 @@ export function integrationAppFlowSections(state, id, store) {
           (sections.find(sec => sec.id === store) || {}).sections || [];
       } else {
         flowSections =
-          (sections.find(sec => sec.mode !== 'uninstall') || {}).sections || [];
+          (sections.find(sec => sec.mode !== 'install') || {}).sections || [];
       }
     }
   } else {
@@ -867,6 +948,9 @@ export function integrationAppGeneralSettings(state, id, storeId) {
     const storeSection = (general || []).find(s => s.id === storeId) || {};
 
     ({ fields, sections: subSections } = storeSection);
+  } else if (Array.isArray(general)) {
+    ({ fields, sections: subSections } =
+      general.find(s => s.title === 'General') || {});
   } else {
     ({ fields, sections: subSections } = general || {});
   }
@@ -889,15 +973,31 @@ export function integrationAppFlowSettings(state, id, section, storeId) {
   let allSections = sections;
 
   if (supportsMultiStore) {
-    const store = sections.find(s => s.id === storeId) || {};
+    if (storeId) {
+      // If storeId passed, return sections from that store
+      const store = sections.find(s => s.id === storeId) || {};
 
-    allSections = store.sections || [];
+      allSections = store.sections || [];
+    } else {
+      // If no storeId is passed, return all sections from all stores
+      allSections = [];
+      sections.forEach(sec => {
+        allSections.push(...sec.sections);
+      });
+    }
   }
 
   const selectedSection =
     allSections.find(sec => sec.title.replace(/\s/g, '') === section) || {};
 
-  requiredFlows = map(selectedSection.flows, '_id');
+  if (!section) {
+    allSections.forEach(sec => {
+      requiredFlows.push(...map(sec.flows, '_id'));
+    });
+  } else {
+    requiredFlows = map(selectedSection.flows, '_id');
+  }
+
   hasNSInternalIdLookup = some(
     selectedSection.flows,
     f => f.showNSInternalIdLookup
@@ -912,10 +1012,8 @@ export function integrationAppFlowSettings(state, id, section, storeId) {
     f => !!f.settings || !!f.sections
   );
   const { fields, sections: subSections } = selectedSection;
-  const preferences = userPreferences(state);
   let flows = flowListWithMetadata(state, {
     type: 'flows',
-    sandbox: preferences.environment === 'sandbox',
     filter: {
       _integrationId: id,
     },
@@ -1117,6 +1215,24 @@ export function resourcePermissions(state, resourceType, resourceId) {
   return {};
 }
 
+export function isFormAMonitorLevelAccess(state, integrationId) {
+  const { accessLevel } = userPermissions(state);
+
+  // if all forms is monitor level
+  if (accessLevel === 'monitor') return true;
+
+  // check integration level is monitor level
+  const { accessLevel: accessLevelIntegration } = resourcePermissions(
+    state,
+    'integrations',
+    integrationId
+  );
+
+  if (accessLevelIntegration === 'monitor') return true;
+
+  return false;
+}
+
 export function publishedConnectors(state) {
   const ioConnectors = resourceList(state, {
     type: 'published',
@@ -1194,7 +1310,6 @@ export function suiteScriptLinkedConnections(state) {
   const preferences = userPreferences(state);
   const connections = resourceList(state, {
     type: 'connections',
-    sandbox: preferences.environment === 'sandbox',
   }).resources;
   const linkedConnections = [];
   let connection;
@@ -1320,10 +1435,8 @@ export function suiteScriptLinkedTiles(state) {
 }
 
 export function tiles(state) {
-  const preferences = userPreferences(state);
   const tiles = resourceList(state, {
     type: 'tiles',
-    sandbox: preferences.environment === 'sandbox',
   }).resources;
   let integrations = [];
 
@@ -1485,6 +1598,50 @@ export function resourceStatus(
     method,
     isReady,
   };
+}
+
+export function flowMetadata(state, id, scope) {
+  if (!state || !id) return {};
+
+  const flows = flowListWithMetadata(state, {
+    type: 'flows',
+    filter: {
+      _id: id,
+    },
+  }).resources;
+  const master = flows && flows[0];
+  const { patch, conflict } = fromSession.stagedResource(
+    state.session,
+    id,
+    scope
+  );
+
+  if (!master && !patch) return { merged: {} };
+
+  let merged;
+  let lastChange;
+
+  if (patch) {
+    const patchResult = jsonPatch.applyPatch(
+      master ? jsonPatch.deepClone(master) : {},
+      jsonPatch.deepClone(patch)
+    );
+
+    merged = patchResult.newDocument;
+
+    if (patch.length) lastChange = patch[patch.length - 1].timestamp;
+  }
+
+  const data = {
+    master,
+    patch,
+    lastChange,
+    merged: merged || master,
+  };
+
+  if (conflict) data.conflict = conflict;
+
+  return data;
 }
 
 export function resourceData(state, resourceType, id, scope) {
@@ -1661,24 +1818,18 @@ export function stagedResource(state, id, scope) {
   return fromSession.stagedResource(state && state.session, id, scope);
 }
 
-export function optionsFromMetadata(
+export function optionsFromMetadata({
   state,
   connectionId,
-  applicationType,
-  metadataType,
-  mode,
-  recordType,
-  selectField
-) {
-  return fromSession.optionsFromMetadata(
-    state && state.session,
+  commMetaPath,
+  filterKey,
+}) {
+  return fromSession.optionsFromMetadata({
+    state: state && state.session,
     connectionId,
-    applicationType,
-    metadataType,
-    mode,
-    recordType,
-    selectField
-  );
+    commMetaPath,
+    filterKey,
+  });
 }
 
 export function optionsMapFromMetadata(
@@ -1705,78 +1856,19 @@ export const getPreBuiltFileDefinitions = (state, format) =>
 export const getFileDefinition = (state, definitionId, options) =>
   fromData.getFileDefinition(state && state.data, definitionId, options);
 
-export function commMetadataPathGen(
-  applicationType,
-  connectionId,
-  metadataType,
-  mode,
-  recordType,
-  selectField,
-  addInfo
-) {
-  let commMetadataPath;
-
-  if (applicationType === 'netsuite') {
-    if (mode === 'webservices' && metadataType !== 'recordTypes') {
-      commMetadataPath = `netSuiteWS/${metadataType}`;
-    } else {
-      commMetadataPath = `${applicationType}/metadata/${mode}/connections/${connectionId}/${metadataType}`;
-
-      if (selectField && recordType) {
-        commMetadataPath += `/${recordType}/selectFieldValues/${selectField}`;
-      } else if (recordType) {
-        commMetadataPath += `/${recordType}`;
-      }
-    }
-  } else if (applicationType === 'salesforce') {
-    commMetadataPath = `${applicationType}/metadata/connections/${connectionId}/${metadataType}`;
-
-    if (recordType) {
-      commMetadataPath += `/${recordType}`;
-    }
-  } else {
-    throw Error('Invalid application type...cannot support it');
-  }
-
-  if (addInfo) {
-    if (addInfo.refreshCache === true) {
-      commMetadataPath += '?refreshCache=true';
-    }
-
-    if (addInfo.recordTypeOnly === true) {
-      commMetadataPath += `${
-        addInfo.refreshCache === true ? '&' : '?'
-      }recordTypeOnly=true`;
-    }
-  }
-
-  return commMetadataPath;
-}
-
-export function metadataOptionsAndResources(
+export function metadataOptionsAndResources({
   state,
   connectionId,
-  mode,
-  metadataType,
+  commMetaPath,
   filterKey,
-  recordType,
-  selectField
-) {
-  const connection = resource(state, 'connections', connectionId);
-  // determining application type from the connection
-  const applicationType = connection.type;
-  const key = filterKey ? `${metadataType}-${filterKey}` : metadataType;
-
+}) {
   return (
-    optionsFromMetadata(
+    optionsFromMetadata({
       state,
       connectionId,
-      applicationType,
-      key,
-      mode,
-      recordType,
-      selectField
-    ) || {}
+      commMetaPath,
+      filterKey,
+    }) || {}
   );
 }
 
@@ -1810,7 +1902,7 @@ export function accessTokenList(
   state,
   { integrationId, take, keyword, sort, sandbox }
 ) {
-  const tokensList = fromData.resourceList(state.data, {
+  const tokensList = resourceList(state, {
     type: 'accesstokens',
     keyword,
     sort,
@@ -2065,26 +2157,23 @@ export function getImportSampleData(state, resourceId) {
   } else if (adaptorType === 'NetSuiteDistributedImport') {
     // eslint-disable-next-line camelcase
     const { _connectionId: connectionId, netsuite_da } = resource;
-    const { data: sampleData } = metadataOptionsAndResources(
+    const commMetaPath = `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${netsuite_da.recordType}`;
+    const { data: sampleData } = metadataOptionsAndResources({
       state,
       connectionId,
-      'suitescript',
-      'recordTypes',
-      `record-${netsuite_da.recordType}`,
-      netsuite_da.recordType
-    );
+      commMetaPath,
+    });
 
     return sampleData;
   } else if (adaptorType === 'SalesforceImport') {
     const { _connectionId: connectionId, salesforce } = resource;
-    const { data: sampleData } = metadataOptionsAndResources(
+    const commMetaPath = `salesforce/metadata/connections/${connectionId}/sObjectTypes/${salesforce.sObjectType}`;
+    const { data: sampleData } = metadataOptionsAndResources({
       state,
       connectionId,
-      'salesforce',
-      'sObjectTypes',
-      null,
-      salesforce.sObjectType
-    );
+      commMetaPath,
+      filterKey: 'salesforce-recordType',
+    });
 
     return sampleData;
   }

@@ -10,6 +10,8 @@ export default {
       newValues['/file/type'] = undefined;
     }
 
+    delete newValues['/outputMode'];
+
     return {
       ...newValues,
     };
@@ -51,6 +53,7 @@ export default {
       id: 'outputMode',
       type: 'radiogroup',
       label: 'Output Mode',
+      required: true,
       options: [
         {
           items: [
@@ -59,6 +62,13 @@ export default {
           ],
         },
       ],
+      defaultDisabled: r => {
+        const isNew = isNewId(r._id);
+
+        if (!isNew) return true;
+
+        return false;
+      },
       defaultValue: r => {
         const isNew = isNewId(r._id);
 
@@ -73,6 +83,7 @@ export default {
     'ftp.directoryPath': { fieldId: 'ftp.directoryPath' },
     'file.output': {
       fieldId: 'file.output',
+
       defaultValue: r => (r && r.file && r.file.output) || 'records',
     },
     'ftp.fileNameStartsWith': { fieldId: 'ftp.fileNameStartsWith' },

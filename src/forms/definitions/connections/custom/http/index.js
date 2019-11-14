@@ -4,7 +4,7 @@ import recurly from './recurly';
 import cartrover from './cartrover';
 import practicepanther from './practicepanther';
 import outreach from './outreach';
-// import amazonmws from './amazonmws';
+import amazonmws from './amazonmws';
 import autopilot from './autopilot';
 import ebayXml from './ebayXml';
 import openair from './openair';
@@ -120,7 +120,7 @@ import exacterp from './exacterp';
 // import nimble from './nimble';
 import bronto from './bronto';
 import powerbi from './powerbi';
-// import procurify from './procurify';
+import procurify from './procurify';
 import zimbra from './zimbra';
 import strata from './strata';
 import postmark from './postmark';
@@ -149,7 +149,7 @@ import dunandbradstreet from './dunandbradstreet';
 import threedcart from './threedcart';
 import drift from './drift';
 // import signnow from './signnow';
-// import adp from './adp';
+import adp from './adp';
 // import clio from './clio';
 // import constantcontact from './constantcontact';
 import faire from './faire';
@@ -200,7 +200,7 @@ export default {
   cartrover,
   practicepanther,
   outreach,
-  // amazonmws,
+  amazonmws,
   autopilot,
   'ebay-xml': ebayXml,
   '3dcart': threedcart,
@@ -289,7 +289,7 @@ export default {
   greenhouse,
   powerbi,
   mailgun,
-  // procurify,
+  procurify,
   strata,
   aptrinsic,
   // cardknox,
@@ -309,7 +309,7 @@ export default {
   skubana,
   merchantesolutions,
   dunandbradstreet,
-  // adp,
+  adp,
   // clio,
   // constantcontact
   faire,

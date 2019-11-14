@@ -67,7 +67,7 @@ function General(props) {
   };
 
   return (
-    <DynaForm fieldMeta={fieldMeta} render>
+    <DynaForm integrationId={integrationId} fieldMeta={fieldMeta} render>
       <DynaSubmit onClick={handleSubmit}>Save</DynaSubmit>
     </DynaForm>
   );

@@ -123,14 +123,13 @@ const TestAndSaveButton = props => {
     message,
     handleSubmitForm,
   ]);
-  const resourceFormState = useSelector(state =>
-    selectors.resourceFormState(state, resourceType, resourceId)
+  const saveTerminated = useSelector(state =>
+    selectors.resourceFormSaveProcessTerminated(state, resourceType, resourceId)
   );
 
   useEffect(() => {
-    if (resourceFormState.submitComplete)
-      dispatchLocalAction({ type: 'saveCompleted' });
-  }, [resourceFormState.submitComplete]);
+    if (saveTerminated) dispatchLocalAction({ type: 'saveCompleted' });
+  }, [saveTerminated]);
 
   return (
     <Fragment>
@@ -160,8 +159,8 @@ const TestAndSaveButton = props => {
         }}
         className={classes.actionButton}
         size="small"
-        variant="contained"
-        color="secondary">
+        variant="outlined"
+        color="primary">
         {label || 'Test and Save'}
       </DynaAction>
     </Fragment>

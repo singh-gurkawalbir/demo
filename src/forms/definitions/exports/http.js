@@ -1,3 +1,5 @@
+import { isNewId } from '../../../utils/resource';
+
 export default {
   preSave: formValues => {
     const retValues = { ...formValues };
@@ -8,6 +10,12 @@ export default {
       retValues['/test/limit'] = 1;
     }
 
+    if (retValues['/outputMode'] === 'blob') {
+      retValues['/type'] = 'blob';
+    }
+
+    delete retValues['/outputMode'];
+
     if (retValues['/http/paging/method'] === 'page') {
       retValues['/http/paging/path'] = undefined;
       retValues['/http/paging/relativeURI'] = undefined;
@@ -16,6 +24,7 @@ export default {
       retValues['/http/paging/pathAfterFirstRequest'] = undefined;
       retValues['/http/paging/resourcePath'] = undefined;
       retValues['/http/paging/token'] = undefined;
+      retValues['/http/paging/body'] = undefined;
     } else if (retValues['/http/paging/method'] === 'url') {
       retValues['/http/paging/relativeURI'] = undefined;
       retValues['/http/paging/linkHeaderRelation'] = undefined;
@@ -26,6 +35,7 @@ export default {
       retValues['/http/paging/page'] = undefined;
       retValues['/http/paging/maxPagePath'] = undefined;
       retValues['/http/paging/maxCountPath'] = undefined;
+      retValues['/http/paging/body'] = undefined;
     } else if (retValues['/http/paging/method'] === 'relativeuri') {
       retValues['/http/paging/path'] = undefined;
       retValues['/http/paging/linkHeaderRelation'] = undefined;
@@ -36,6 +46,7 @@ export default {
       retValues['/http/paging/page'] = undefined;
       retValues['/http/paging/maxPagePath'] = undefined;
       retValues['/http/paging/maxCountPath'] = undefined;
+      retValues['/http/paging/body'] = undefined;
     } else if (retValues['/http/paging/method'] === 'linkheader') {
       retValues['/http/paging/path'] = undefined;
       retValues['/http/paging/relativeURI'] = undefined;
@@ -46,6 +57,7 @@ export default {
       retValues['/http/paging/page'] = undefined;
       retValues['/http/paging/maxPagePath'] = undefined;
       retValues['/http/paging/maxCountPath'] = undefined;
+      retValues['/http/paging/body'] = undefined;
     } else if (retValues['/http/paging/method'] === 'skip') {
       retValues['/http/paging/path'] = undefined;
       retValues['/http/paging/relativeURI'] = undefined;
@@ -54,9 +66,22 @@ export default {
       retValues['/http/paging/resourcePath'] = undefined;
       retValues['/http/paging/token'] = undefined;
       retValues['/http/paging/page'] = undefined;
+      retValues['/http/paging/body'] = undefined;
     } else if (retValues['/http/paging/method'] === 'token') {
       retValues['/http/paging/linkHeaderRelation'] = undefined;
       retValues['/http/paging/skip'] = undefined;
+      retValues['/http/paging/page'] = undefined;
+      retValues['/http/paging/maxPagePath'] = undefined;
+      retValues['/http/paging/maxCountPath'] = undefined;
+      retValues['/http/paging/body'] = undefined;
+    } else if (retValues['/http/paging/method'] === 'body') {
+      retValues['/http/paging/path'] = undefined;
+      retValues['/http/paging/relativeURI'] = undefined;
+      retValues['/http/paging/resourcePath'] = undefined;
+      retValues['/http/paging/token'] = undefined;
+      retValues['/http/paging/linkHeaderRelation'] = undefined;
+      retValues['/http/paging/skip'] = undefined;
+      retValues['/http/paging/pathAfterFirstRequest'] = undefined;
       retValues['/http/paging/page'] = undefined;
       retValues['/http/paging/maxPagePath'] = undefined;
       retValues['/http/paging/maxCountPath'] = undefined;
@@ -65,6 +90,15 @@ export default {
     return {
       ...retValues,
     };
+  },
+  optionsHandler: (fieldId, fields) => {
+    if (fieldId === 'http.relativeURI' || fieldId === 'http.body') {
+      const nameField = fields.find(field => field.fieldId === 'name');
+
+      return {
+        resourceName: nameField && nameField.value,
+      };
+    }
   },
   fieldMap: {
     common: { formId: 'common' },
@@ -77,6 +111,7 @@ export default {
       id: 'outputMode',
       type: 'radiogroup',
       label: 'Output Mode',
+      required: true,
       options: [
         {
           items: [
@@ -85,10 +120,24 @@ export default {
           ],
         },
       ],
-      defaultValue: r =>
-        r && r.http && r.http.response && r.http.response.blobFormat
-          ? 'blob'
-          : 'records',
+      defaultDisabled: r => {
+        const isNew = isNewId(r._id);
+
+        if (!isNew) return true;
+
+        return false;
+      },
+      defaultValue: r => {
+        const isNew = isNewId(r._id);
+
+        // if its create
+        if (isNew) return 'records';
+        const output = r && r.type;
+
+        if (output === 'blob') return 'blob';
+
+        return 'records';
+      },
     },
     'http.method': { fieldId: 'http.method' },
     'http.headers': { fieldId: 'http.headers' },
@@ -107,6 +156,15 @@ export default {
       type: 'select',
       label: 'Export Type',
       required: true,
+      defaultValue: r => {
+        const isNew = isNewId(r._id);
+
+        // if its create
+        if (isNew) return '';
+        const output = r && r.type;
+
+        return output || 'all';
+      },
       visibleWhen: [
         {
           field: 'outputMode',
@@ -147,6 +205,7 @@ export default {
     'http.paging.page': { fieldId: 'http.paging.page' },
     'http.paging.token': { fieldId: 'http.paging.token' },
     'http.paging.path': { fieldId: 'http.paging.path' },
+    'http.paging.body': { fieldId: 'http.paging.body' },
     'http.paging.relativeURI': { fieldId: 'http.paging.relativeURI' },
     'http.paging.linkHeaderRelation': {
       fieldId: 'http.paging.linkHeaderRelation',
@@ -223,6 +282,7 @@ export default {
           'http.paging.relativeURI',
           'http.paging.linkHeaderRelation',
           'http.paging.pathAfterFirstRequest',
+          'http.paging.body',
           'http.paging.resourcePath',
           'http.paging.maxPagePath',
           'http.paging.maxCountPath',

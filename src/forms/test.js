@@ -8,6 +8,7 @@ import {
   getFieldByName,
   getFieldByIdFromLayout,
   isExpansionPanelErrored,
+  translateDependencyProps,
 } from './utils';
 import formFactory, { getAmalgamatedOptionsHandler } from './formFactory';
 
@@ -999,8 +1000,7 @@ describe('form factory new layout', () => {
         testMeta,
         resourceType,
         resource,
-        false,
-        true
+        { developerMode: true }
       );
 
       expect(val).toEqual({
@@ -1063,9 +1063,7 @@ describe('form factory new layout', () => {
       const val = formFactory.getFieldsWithDefaults(
         testMeta,
         resourceType,
-        resource,
-        false,
-        false
+        resource
       );
 
       expect(val).toEqual({
@@ -1559,5 +1557,341 @@ describe('form factory options handler amalgamation getAmalgamatedOptionsHandler
         { id: 'someField', value: 'hi' },
       ])
     ).toEqual('hi');
+  });
+});
+describe('integrationSettingsToDynaFormMetadata', () => {
+  describe('translateDependencyProps', () => {
+    describe('should translateDependencyProps for elements of type checkbox', () => {
+      test('should append visible props correctly for fields having no visibleWhen definitions', () => {
+        const inputFieldMap = {
+          fieldA: {
+            id: 'fieldA',
+            name: '/fieldA',
+            type: 'checkbox',
+            dependencies: {
+              enabled: {
+                fields: [
+                  {
+                    name: 'fieldB',
+                    hidden: false,
+                  },
+                  {
+                    name: 'fieldC',
+                    hidden: false,
+                  },
+                ],
+              },
+            },
+          },
+          fieldB: {
+            id: 'fieldB',
+            name: '/fieldB',
+            type: 'checkbox',
+          },
+          fieldC: {
+            id: 'fieldC',
+            name: '/fieldC',
+            type: 'checkbox',
+          },
+        };
+        const resultFieldMap = translateDependencyProps(inputFieldMap);
+
+        expect(resultFieldMap).toEqual({
+          fieldA: {
+            id: 'fieldA',
+            name: '/fieldA',
+            type: 'checkbox',
+          },
+          fieldB: {
+            id: 'fieldB',
+            name: '/fieldB',
+            type: 'checkbox',
+            visibleWhenAll: [
+              {
+                field: 'fieldA',
+                is: [true],
+              },
+            ],
+          },
+          fieldC: {
+            id: 'fieldC',
+            name: '/fieldC',
+            type: 'checkbox',
+            visibleWhenAll: [
+              {
+                field: 'fieldA',
+                is: [true],
+              },
+            ],
+          },
+        });
+      });
+
+      test('should correctly push visible props correctly for fields having existing visibleWhen definitions', () => {
+        const inputFieldMap = {
+          fieldA: {
+            id: 'fieldA',
+            name: '/fieldA',
+            type: 'checkbox',
+            dependencies: {
+              enabled: {
+                fields: [
+                  {
+                    name: 'fieldB',
+                    hidden: false,
+                  },
+                ],
+              },
+            },
+          },
+          fieldB: {
+            id: 'fieldB',
+            name: '/fieldB',
+            type: 'checkbox',
+            visibleWhenAll: [
+              {
+                field: 'fieldC',
+                is: [true],
+              },
+            ],
+          },
+          fieldC: {
+            id: 'fieldC',
+            name: '/fieldC',
+            type: 'checkbox',
+          },
+        };
+        const resultFieldMap = translateDependencyProps(inputFieldMap);
+
+        expect(resultFieldMap).toEqual({
+          fieldA: {
+            id: 'fieldA',
+            name: '/fieldA',
+            type: 'checkbox',
+          },
+          fieldB: {
+            id: 'fieldB',
+            name: '/fieldB',
+            type: 'checkbox',
+            visibleWhenAll: [
+              {
+                field: 'fieldC',
+                is: [true],
+              },
+              {
+                field: 'fieldA',
+                is: [true],
+              },
+            ],
+          },
+          fieldC: {
+            id: 'fieldC',
+            name: '/fieldC',
+            type: 'checkbox',
+          },
+        });
+      });
+    });
+    describe('should translateDependencyProps for elements of non checkbox types (could be select)', () => {
+      test('should append visible props correctly for fields having no visibleWhen definitions', () => {
+        const inputFieldMap = {
+          fieldA: {
+            id: 'fieldA',
+            name: '/fieldA',
+            type: 'select',
+            dependencies: {
+              someValue: {
+                fields: [
+                  {
+                    name: 'fieldB',
+                    hidden: false,
+                  },
+                  {
+                    name: 'fieldC',
+                    hidden: false,
+                  },
+                ],
+              },
+            },
+          },
+          fieldB: {
+            id: 'fieldB',
+            name: '/fieldB',
+            type: 'checkbox',
+          },
+          fieldC: {
+            id: 'fieldC',
+            name: '/fieldC',
+            type: 'checkbox',
+          },
+        };
+        const resultFieldMap = translateDependencyProps(inputFieldMap);
+
+        expect(resultFieldMap).toEqual({
+          fieldA: {
+            id: 'fieldA',
+            name: '/fieldA',
+            type: 'select',
+          },
+          fieldB: {
+            id: 'fieldB',
+            name: '/fieldB',
+            type: 'checkbox',
+            visibleWhenAll: [
+              {
+                field: 'fieldA',
+                is: ['someValue'],
+              },
+            ],
+          },
+          fieldC: {
+            id: 'fieldC',
+            name: '/fieldC',
+            type: 'checkbox',
+            visibleWhenAll: [
+              {
+                field: 'fieldA',
+                is: ['someValue'],
+              },
+            ],
+          },
+        });
+      });
+
+      test('should correctly push visible props correctly for fields having existing visibleWhen definitions', () => {
+        const inputFieldMap = {
+          fieldA: {
+            id: 'fieldA',
+            name: '/fieldA',
+            type: 'select',
+            dependencies: {
+              someValue: {
+                fields: [
+                  {
+                    name: 'fieldB',
+                    hidden: false,
+                  },
+                ],
+              },
+            },
+          },
+          fieldB: {
+            id: 'fieldB',
+            name: '/fieldB',
+            type: 'checkbox',
+            visibleWhenAll: [
+              {
+                field: 'fieldC',
+                is: [true],
+              },
+            ],
+          },
+          fieldC: {
+            id: 'fieldC',
+            name: '/fieldC',
+            type: 'checkbox',
+          },
+        };
+        const resultFieldMap = translateDependencyProps(inputFieldMap);
+
+        expect(resultFieldMap).toEqual({
+          fieldA: {
+            id: 'fieldA',
+            name: '/fieldA',
+            type: 'select',
+          },
+          fieldB: {
+            id: 'fieldB',
+            name: '/fieldB',
+            type: 'checkbox',
+            visibleWhenAll: [
+              {
+                field: 'fieldC',
+                is: [true],
+              },
+              {
+                field: 'fieldA',
+                is: ['someValue'],
+              },
+            ],
+          },
+          fieldC: {
+            id: 'fieldC',
+            name: '/fieldC',
+            type: 'checkbox',
+          },
+        });
+      });
+      test('should append visible props correctly for fields having an existing matching field prop ', () => {
+        const inputFieldMap = {
+          fieldA: {
+            id: 'fieldA',
+            name: '/fieldA',
+            type: 'select',
+            dependencies: {
+              someValue: {
+                fields: [
+                  {
+                    name: 'fieldB',
+                    hidden: false,
+                  },
+                  {
+                    name: 'fieldC',
+                    hidden: false,
+                  },
+                ],
+              },
+            },
+          },
+          fieldB: {
+            id: 'fieldB',
+            name: '/fieldB',
+            type: 'checkbox',
+            visibleWhenAll: [
+              {
+                field: 'fieldA',
+                is: ['someOtherValue'],
+              },
+            ],
+          },
+          fieldC: {
+            id: 'fieldC',
+            name: '/fieldC',
+            type: 'checkbox',
+          },
+        };
+        const resultFieldMap = translateDependencyProps(inputFieldMap);
+
+        expect(resultFieldMap).toEqual({
+          fieldA: {
+            id: 'fieldA',
+            name: '/fieldA',
+            type: 'select',
+          },
+          fieldB: {
+            id: 'fieldB',
+            name: '/fieldB',
+            type: 'checkbox',
+            visibleWhenAll: [
+              {
+                field: 'fieldA',
+                is: ['someOtherValue', 'someValue'],
+              },
+            ],
+          },
+          fieldC: {
+            id: 'fieldC',
+            name: '/fieldC',
+            type: 'checkbox',
+            visibleWhenAll: [
+              {
+                field: 'fieldA',
+                is: ['someValue'],
+              },
+            ],
+          },
+        });
+      });
+    });
   });
 });

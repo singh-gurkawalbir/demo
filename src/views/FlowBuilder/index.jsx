@@ -1,4 +1,4 @@
-import { Fragment, useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import clsx from 'clsx';
@@ -24,7 +24,7 @@ import itemTypes from './itemTypes';
 import RunIcon from '../../components/icons/RunIcon';
 import SettingsIcon from '../../components/icons/SettingsIcon';
 import CalendarIcon from '../../components/icons/CalendarIcon';
-import EditableText from './EditableText';
+import EditableText from '../../components/EditableText';
 import SwitchOnOff from '../../components/OnOff';
 
 // #region FLOW SCHEMA: FOR REFERENCE DELETE ONCE FB IS COMPLETE
@@ -223,7 +223,7 @@ function FlowBuilder(props) {
   );
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
   const { merged: flow = {} } = useSelector(state =>
-    selectors.resourceData(state, 'flows', flowId)
+    selectors.flowMetadata(state, flowId)
   );
   const { pageProcessors = [], pageGenerators = [] } = flow;
   const createdGeneratorId = useSelector(state =>
@@ -416,8 +416,12 @@ function FlowBuilder(props) {
   // console.log(flow);
 
   return (
-    <Fragment>
-      <ResourceDrawer {...props} />
+    <LoadResources required resources="flows, imports, exports">
+      <ResourceDrawer
+        {...props}
+        flowId={flowId}
+        integrationId={integrationId}
+      />
       <RunDrawer {...props} flowId={flowId} />
       <ScheduleDrawer {...props} flow={flow} />
       <SettingsDrawer {...props} flow={flow} />
@@ -430,124 +434,129 @@ function FlowBuilder(props) {
         subtitle={`Last saved: ${isNewFlow ? 'Never' : flow.lastModified}`}
         infoText={flow.description}>
         <div className={classes.actions}>
-          <SwitchOnOff.component resource={flow} disabled={isNewFlow} />
-          <IconButton
+          <SwitchOnOff.component
+            resource={flow}
             disabled={isNewFlow}
+            data-test="switchFlowOnOff"
+          />
+          <IconButton
+            disabled={isNewFlow || !(flow && flow.isRunnable)}
+            data-test="runFlow"
             onClick={() => {
               dispatch(actions.flow.run({ flowId }));
             }}>
             <RunIcon />
           </IconButton>
           <IconButton
-            disabled={isNewFlow}
+            disabled={isNewFlow && !(flow && flow.showScheduleIcon)}
+            data-test="scheduleFlow"
             onClick={() => handleDrawerOpen('schedule')}>
             <CalendarIcon />
           </IconButton>
           <IconButton
             disabled={isNewFlow}
-            onClick={() => handleDrawerOpen('settings')}>
+            onClick={() => handleDrawerOpen('settings')}
+            data-test="flowSettings">
             <SettingsIcon />
           </IconButton>
         </div>
       </CeligoPageBar>
-      <LoadResources required resources="flows, imports, exports">
-        <div
-          className={clsx(classes.canvasContainer, {
-            [classes.canvasShift]: drawerOpened,
-          })}
-          style={{
-            height: `calc(${(4 - size) * 25}vh - ${theme.appBarHeight +
-              theme.pageBarHeight +
-              (size ? 0 : bottomDrawerMin)}px)`,
-          }}>
-          <div className={classes.canvas}>
-            {/* CANVAS START */}
-            <div className={classes.generatorRoot}>
-              <Typography
-                component="div"
-                className={classes.sourceTitle}
-                variant="overline">
-                SOURCE APPLICATIONS
-                <IconButton
-                  data-test="addGenerator"
-                  onClick={handleAddGenerator}>
-                  <AddIcon />
-                </IconButton>
-              </Typography>
+      <div
+        className={clsx(classes.canvasContainer, {
+          [classes.canvasShift]: drawerOpened,
+        })}
+        style={{
+          height: `calc(${(4 - size) * 25}vh - ${theme.appBarHeight +
+            theme.pageBarHeight +
+            (size ? 0 : bottomDrawerMin)}px)`,
+        }}>
+        <div className={classes.canvas}>
+          {/* CANVAS START */}
+          <div className={classes.generatorRoot}>
+            <Typography
+              component="div"
+              className={classes.sourceTitle}
+              variant="overline">
+              SOURCE APPLICATIONS
+              <IconButton data-test="addGenerator" onClick={handleAddGenerator}>
+                <AddIcon />
+              </IconButton>
+            </Typography>
 
-              <div className={classes.generatorContainer}>
-                {pageGenerators.map((pg, i) => (
-                  <PageGenerator
-                    {...pg}
-                    flowId={flowId}
-                    key={
-                      pg._exportId ||
-                      pg._connectionId ||
-                      `${pg.application}${pg.webhookOnly}`
-                    }
-                    index={i}
-                    isLast={pageGenerators.length === i + 1}
-                  />
-                ))}
-                {!pageGenerators.length && (
-                  <AppBlock
-                    className={classes.newPG}
-                    onBlockClick={handleAddGenerator}
-                    blockType="newPG"
-                  />
-                )}
-              </div>
-            </div>
-            <div className={classes.processorRoot}>
-              <Typography
-                component="div"
-                className={classes.destinationTitle}
-                variant="overline">
-                DESTINATION &amp; LOOKUP APPLICATIONS
-                <IconButton
-                  data-test="addProcessor"
-                  onClick={handleAddProcessor}>
-                  <AddIcon />
-                </IconButton>
-              </Typography>
-              <div className={classes.processorContainer}>
-                {pageProcessors.map((pp, i) => (
-                  <PageProcessor
-                    {...pp}
-                    flowId={flowId}
-                    key={pp._importId || pp._exportId || pp._connectionId}
-                    index={i}
-                    isLast={pageProcessors.length === i + 1}
-                    onMove={handleMove}
-                  />
-                ))}
-                {!pageProcessors.length && (
-                  <AppBlock
-                    className={classes.newPP}
-                    onBlockClick={handleAddProcessor}
-                    blockType="newPP"
-                  />
-                )}
-              </div>
+            <div className={classes.generatorContainer}>
+              {pageGenerators.map((pg, i) => (
+                <PageGenerator
+                  {...pg}
+                  flowId={flowId}
+                  integrationId={integrationId}
+                  key={
+                    pg._exportId ||
+                    pg._connectionId ||
+                    `${pg.application}${pg.webhookOnly}`
+                  }
+                  index={i}
+                  isLast={pageGenerators.length === i + 1}
+                />
+              ))}
+              {!pageGenerators.length && (
+                <AppBlock
+                  integrationId={integrationId}
+                  className={classes.newPG}
+                  onBlockClick={handleAddGenerator}
+                  blockType="newPG"
+                />
+              )}
             </div>
           </div>
-          {size < 3 && (
-            <div
-              className={classes.fabContainer}
-              style={{
-                bottom: size
-                  ? `calc(${size * 25}vh + ${theme.spacing(3)}px)`
-                  : bottomDrawerMin + theme.spacing(3),
-              }}>
-              <TrashCan onDrop={handleDelete} />
+          <div className={classes.processorRoot}>
+            <Typography
+              component="div"
+              className={classes.destinationTitle}
+              variant="overline">
+              DESTINATION &amp; LOOKUP APPLICATIONS
+              <IconButton data-test="addProcessor" onClick={handleAddProcessor}>
+                <AddIcon />
+              </IconButton>
+            </Typography>
+            <div className={classes.processorContainer}>
+              {pageProcessors.map((pp, i) => (
+                <PageProcessor
+                  {...pp}
+                  flowId={flowId}
+                  integrationId={integrationId}
+                  key={pp._importId || pp._exportId || pp._connectionId}
+                  index={i}
+                  isLast={pageProcessors.length === i + 1}
+                  onMove={handleMove}
+                />
+              ))}
+              {!pageProcessors.length && (
+                <AppBlock
+                  className={classes.newPP}
+                  integrationId={integrationId}
+                  onBlockClick={handleAddProcessor}
+                  blockType="newPP"
+                />
+              )}
             </div>
-          )}
-
-          {/* CANVAS END */}
+          </div>
         </div>
-      </LoadResources>
+        {size < 3 && (
+          <div
+            className={classes.fabContainer}
+            style={{
+              bottom: size
+                ? `calc(${size * 25}vh + ${theme.spacing(3)}px)`
+                : bottomDrawerMin + theme.spacing(3),
+            }}>
+            <TrashCan onDrop={handleDelete} />
+          </div>
+        )}
+
+        {/* CANVAS END */}
+      </div>
       <BottomDrawer flow={flow} size={size} setSize={setSize} />
-    </Fragment>
+    </LoadResources>
   );
 }
 

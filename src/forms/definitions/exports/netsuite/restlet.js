@@ -1,3 +1,5 @@
+import { isNewId } from '../../../../utils/resource';
+
 export default {
   preSave: formValues => {
     const retValues = { ...formValues };
@@ -18,12 +20,8 @@ export default {
         field => field.fieldId === 'netsuite.restlet.recordType'
       );
 
-      // returns corresponding relative uri path based on recordType selected
       return {
-        resourceToFetch:
-          recordTypeField &&
-          recordTypeField.value &&
-          `recordTypes/${recordTypeField.value}/searchFilters?includeJoinFilters=true`,
+        commMetaPath: `netsuite/metadata/suitescript/connections/${recordTypeField.connectionId}/recordTypes/${recordTypeField.value}/searchFilters?includeJoinFilters=true`,
         resetValue:
           recordTypeField &&
           recordTypeField.value !== recordTypeField.defaultValue,
@@ -42,6 +40,15 @@ export default {
       type: 'select',
       label: 'Export Type',
       required: true,
+      defaultValue: r => {
+        const isNew = isNewId(r._id);
+
+        // if its create
+        if (isNew) return '';
+        const output = r && r.type;
+
+        return output || 'all';
+      },
       options: [
         {
           items: [
@@ -57,8 +64,7 @@ export default {
       id: 'delta.dateField',
       label: 'Date field',
       type: 'refreshableselect',
-      mode: 'suitescript',
-      filterKey: 'dateField',
+      filterKey: 'suitescript-dateField',
       required: true,
       placeholder: 'Please select a date field',
       connectionId: r => r && r._connectionId,
@@ -77,8 +83,7 @@ export default {
       label: 'Boolean Field',
       type: 'refreshableselect',
       placeholder: 'Please select a Boolean field',
-      mode: 'suitescript',
-      filterKey: 'booleanField',
+      filterKey: 'suitescript-booleanField',
       required: true,
       connectionId: r => r && r._connectionId,
       refreshOptionsOnChangesTo: ['netsuite.restlet.recordType'],

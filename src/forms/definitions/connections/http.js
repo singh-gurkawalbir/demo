@@ -124,6 +124,10 @@ export default {
       formId: 'httpToken',
       visibleWhenAll: [{ field: 'http.auth.type', is: ['token'] }],
     },
+    httpCookie: {
+      formId: 'httpCookie',
+      visibleWhenAll: [{ field: 'http.auth.type', is: ['cookie'] }],
+    },
     'http.rateLimit.limit': { fieldId: 'http.rateLimit.limit' },
     'http.rateLimit.failStatusCode': {
       fieldId: 'http.rateLimit.failStatusCode',
@@ -163,6 +167,7 @@ export default {
       'http.unencrypted',
       'httpBasic',
       'httpToken',
+      'httpCookie',
     ],
     type: 'collapse',
     containers: [

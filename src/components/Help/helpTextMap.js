@@ -201,11 +201,16 @@ export default {
   'connection.mongodb.host':
     'Enter the hostname or IP address for your MongoDB instance. For example: mongodb-instance1.com or 172.16.254.1.  By default, integrator.io will connect to port 27017.  If you need to connect to a different port then please append :port to your hostname.  For example:  mongodb-instance1.com:12345 or 172.16.254.1:98765.   If you are connecting to a mongodb cluster then please enter all your hostname:port combinations separated by commas.  For example: mongodb-instance1.com:12345,mongodb-instance2.com:12345,mongodb-instance3.com:12345.',
   'connection.mongodb.database':
-    'Enter the name of the database you would like to connect to. Please note that integrator.io requires a value for this field to help safeguard against accidentally connecting to the wrong database.',
+    "The name of the database to authenticate. If a database name is not provided here, then the 'admin' database will be used to authenticate.",
   'connection.mongodb.username':
     'If your MongoDB instance requires login credentials please enter username here.',
   'connection.mongodb.password':
     'If your MongoDB instance requires login credentials please enter password here.',
+  'connection.mongodb.replicaSet':
+    "The name of the replica set.  When connecting to a replica set be sure to supply the list of the replica set members in the 'Host(s)' field above.",
+  'connection.mongodb.ssl': 'Enables or disables TLS/SSL for the connection.',
+  'connection.mongodb.authSource':
+    "The name of the database associated with the user’s credentials. If a database name is not provided here, then the 'Database' field above will be used as the default",
   'connection.ftp.hostURI':
     "The URI of the FTP/SFTP/FTPS server host.  Typically this value will look something like 'ftp.mycompany.com', or sometimes just a raw IP address '100.200.300.1'.  It is also very common for FTP/SFTP/FTPS servers to be behind a firewall, and to support accessing resources behind a firewall you will need to make sure all of the FTP/SFTP/FTPS specific integrator.io IP addresses (listed right below the HOST field) have been white-listed on your FTP/SFTP/FTPS server infrastructure.",
   'connection.ftp.username':
@@ -419,6 +424,8 @@ export default {
     'When this field is set only high level stats provided by the export application about the search results will be returned.  For example, if you are invoking a NetSuite saved search then only the totalRecords value will be returned, and not any of the actual records.  Note also that this field is currently limited to just NetSuite web services, but other APIs can be exposed as needed upon request.',
   'export.netsuite.internalId':
     'To export raw files out of NetSuite, integrator.io needs to know the internal id of the NetSuite File record you want to export. You can hard code a specific file by specifying its internal id directly. For example: 1234. Or, if the files being exported are dynamic based on the data you are integrating then you can instead specify the JSON path to the field in your data containing the File Internal id values. For example: myFileField.internalId.',
+  'export.netsuite.blob.purgeFileAfterExport':
+    'Set this field to true if you would like to delete the file from Netsuite File Cabinet after successful NS Blob export.',
   'export.netsuite.hooks.preSend.function':
     'This very special hook gets invoked before records leave NetSuite. This hooks is great because it runs inside NetSuite, and the entire SuiteScript API is at your disposal, and there are lots of performance benefits if you need to run dynamic NetSuite searches on your data.',
   'export.netsuite.hooks.preSend.fileInternalId':
@@ -938,6 +945,7 @@ export default {
   'stack.lambda.awsRegion':
     'AWS Region in which your Lambda function will be executed.',
   'stack.lambda.functionName': 'Name of your AWS Lambda function.',
+  'stack.lambda.language': 'Language of the AWS Lambda Function.',
 
   // Ui help text generation
   // #region UI help text
@@ -1309,6 +1317,5 @@ export default {
     'If the import fails for a specific record then what should happen to that record?  Should the failed record pause here until someone can analyze and fix the error (i.e. the default behavior), or should the failed record proceed to the next application in the flow regardless?',
   'fb.pp.imports.inputFilter':
     'Define an ‘input filter’ here to specify which source records should get processed by the import. i.e. Records that evaluate to true are processed. Records that evaluate to false are ignored (but still passed along to downstream applications in the flow).',
-  'fb.pp.imports.templateMapping': ' Define a Template Mapping for import ',
   // #region UI help text
 };

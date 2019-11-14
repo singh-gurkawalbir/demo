@@ -13,6 +13,7 @@ import KeywordSearch from '../../components/KeywordSearch';
 import IconTextButton from '../../components/IconTextButton';
 import AddIcon from '../../components/icons/AddIcon';
 import GenerateZipDialog from './GenerateZipDialog';
+import UploadFileDialog from '../../views/InstallIntegration';
 import infoText from '../ResourceList/infoText';
 import metadata from './metadata';
 import CheckPermissions from '../../components/CheckPermissions';
@@ -28,7 +29,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function TemplateList(props) {
-  const { location } = props;
+  const { location, history } = props;
   const defaultFilter = useMemo(() => ({ take: 3 }), []);
   const classes = useStyles();
   const filter =
@@ -40,6 +41,7 @@ export default function TemplateList(props) {
     })
   );
   const [showGenerateZipDialog, setShowGenerateZipDialog] = useState(false);
+  const [showUploadZipDialog, setShowUploadZipDialog] = useState(false);
 
   return (
     <Fragment>
@@ -54,8 +56,22 @@ export default function TemplateList(props) {
             onClose={() => setShowGenerateZipDialog(false)}
           />
         )}
+        {showUploadZipDialog && (
+          <UploadFileDialog
+            data-test="closeGenerateTemplateZipDialog"
+            fileType="application/zip"
+            history={history}
+            onClose={() => setShowUploadZipDialog(false)}
+          />
+        )}
         <CeligoPageBar title="Templates" infoText={infoText.templates}>
           <div className={classes.actions}>
+            <IconTextButton
+              data-test="uploadTemplateZip"
+              onClick={() => setShowUploadZipDialog(true)}
+              variant="text">
+              Install Integration
+            </IconTextButton>
             <IconTextButton
               data-test="generateTemplateZip"
               onClick={() => setShowGenerateZipDialog(true)}

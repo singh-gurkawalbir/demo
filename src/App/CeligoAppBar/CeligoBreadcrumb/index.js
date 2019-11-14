@@ -6,6 +6,8 @@ import ArrowRightIcon from '../../../components/icons/ArrowRightIcon';
 import IntegrationCrumb from './crumbs/Integration';
 import MarketplaceCrumb from './crumbs/Marketplace';
 import TemplateCrumb from './crumbs/Template';
+import CloneCrumb from './crumbs/Clone';
+import { IntegrationAppCrumb, StoreCrumb } from './crumbs/IntegrationApp';
 
 const useStyles = makeStyles(theme => ({
   breadCrumb: {
@@ -31,13 +33,19 @@ const routes = [
     path: '/pg/integrations/:integrationId/',
     breadcrumb: IntegrationCrumb,
     childRoutes: [
+      { path: '/flows', breadcrumb: () => 'Flows' },
       { path: '/dashboard', breadcrumb: () => 'Dashboard' },
-      { path: '/settings/flows', breadcrumb: () => 'Flows' },
-      { path: '/settings/general', breadcrumb: () => 'General' },
-      { path: '/settings/users', breadcrumb: () => 'Users' },
-      { path: '/settings/audit', breadcrumb: () => 'Audit log' },
-      { path: '/settings/connections', breadcrumb: () => 'Connections' },
-      { path: '/settings/notifications', breadcrumb: () => 'Notifications' },
+      { path: '/connections', breadcrumb: () => 'Connections' },
+      {
+        path: '/admin',
+        breadcrumb: () => 'Admin',
+        childRoutes: [
+          { path: '/readme', breadcrumb: () => 'Readme' },
+          { path: '/users', breadcrumb: () => 'Users' },
+          { path: '/audit', breadcrumb: () => 'Audit log' },
+          { path: '/notifications', breadcrumb: () => 'Notifications' },
+        ],
+      },
       {
         path: '/flowBuilder/:flowId',
         breadcrumb: () => 'Flow builder',
@@ -57,7 +65,38 @@ const routes = [
     breadcrumb: () => 'installBase',
   },
   { path: '/pg/dashboard' }, // exclusion of breadcrumb prop will skip this segment.
-  { path: '/pg/connectors', breadcrumb: () => 'Connectors' },
+  {
+    path: '/pg/connectors/:integrationId/settings',
+    breadcrumb: IntegrationAppCrumb,
+    childRoutes: [
+      { path: '/users', breadcrumb: () => 'Users' },
+      { path: '/uninstall', breadcrumb: () => 'Uninstall' },
+      { path: '/connections', breadcrumb: () => 'Connections' },
+      { path: '/tokens', breadcrumb: () => 'API Tokens' },
+      { path: '/general', breadcrumb: () => 'General' },
+      { path: '/audit', breadcrumb: () => 'Audit Log' },
+      { path: '/subscription', breadcrumb: () => 'Subscription' },
+      { path: '/notifications', breadcrumb: () => 'Notifications' },
+      { path: '/addons', breadcrumb: () => 'Add-ons' },
+      {
+        path: '/:storeId',
+        breadcrumb: StoreCrumb,
+        childRoutes: [
+          { path: '/users', breadcrumb: () => 'Users' },
+          { path: '/uninstall', breadcrumb: () => 'Uninstall' },
+          { path: '/connections', breadcrumb: () => 'Connections' },
+          { path: '/tokens', breadcrumb: () => 'API Tokens' },
+          { path: '/general', breadcrumb: () => 'General' },
+          { path: '/audit', breadcrumb: () => 'Audit Log' },
+          { path: '/subscription', breadcrumb: () => 'Subscription' },
+          { path: '/addons', breadcrumb: () => 'Add-ons' },
+          { path: '/notifications', breadcrumb: () => 'Notifications' },
+          { path: '/:section', breadcrumb: a => a.section },
+        ],
+      },
+      { path: '/:section', breadcrumb: a => a.section },
+    ],
+  },
   {
     path: '/pg/marketplace',
     breadcrumb: () => 'Marketplace',
@@ -73,8 +112,32 @@ const routes = [
       },
     ],
   },
+  {
+    path: '/pg/clone',
+    breadcrumb: () => 'Clone',
+    childRoutes: [
+      {
+        path: '/:resourceType/:resourceId',
+        breadcrumb: CloneCrumb,
+        childRoutes: [
+          { path: '/preview', breadcrumb: () => 'Preview' },
+          { path: '/setup', breadcrumb: () => 'Install' },
+        ],
+      },
+    ],
+  },
   { path: '/pg/recycleBin', breadcrumb: () => 'Recycle-bin' },
-  { path: '/pg/myAccount', breadcrumb: () => 'My account' },
+  {
+    path: '/pg/myAccount',
+    breadcrumb: () => 'My account',
+    childRoutes: [
+      { path: '/users', breadcrumb: () => 'Users' },
+      { path: '/profile', breadcrumb: () => 'Profile' },
+      { path: '/subscription', breadcrumb: () => 'Subscription' },
+      { path: '/audit', breadcrumb: () => 'Audit Log' },
+      { path: '/transfers', breadcrumb: () => 'Transfers' },
+    ],
+  },
   { path: '/pg/templates', breadcrumb: () => 'Templates' },
   { path: '/pg/accesstokens', breadcrumb: () => 'Access Tokens' },
   // Dev tools
@@ -87,6 +150,11 @@ const routes = [
   },
 ];
 const commonChildRoutes = [
+  // TODO: The clone resource feature will be accessible from various pages and
+  // acts like the resource drawer. They share the property of preserving the url and
+  // append a /clone route to the end of an existing route url. Possibly more
+  // metadata needs to be carried in the url.. keeping it simple for now.
+  { path: '/clone', breadcrumb: () => 'Clone' },
   {
     path: '/:operation/:resourceType/:id',
     breadcrumb: ({ operation, resourceType }) =>
@@ -94,9 +162,6 @@ const commonChildRoutes = [
         MODEL_PLURAL_TO_LABEL[resourceType]
       }`,
   },
-  // TODO: clone resource, once complete is accessible from various pages and
-  // acts like the resource drawer, in that it preserves the url and simple
-  // appends to any existing route url.
 ];
 
 function parseUrl(pathname, routes, url = '', params = {}) {

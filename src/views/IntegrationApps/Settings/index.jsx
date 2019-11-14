@@ -8,7 +8,7 @@ import {
 } from '@material-ui/core';
 import { isEmpty } from 'lodash';
 import { makeStyles } from '@material-ui/core/styles';
-import { Switch, Route, NavLink } from 'react-router-dom';
+import { Switch, Route, NavLink, Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { useState, useEffect } from 'react';
 import actions from '../../../actions';
@@ -27,6 +27,7 @@ import Notifications from '../../IntegrationSettings/Notifications';
 import AccessTokens from './AccessTokens';
 import getRoutePath from '../../../utils/routePaths';
 import CeligoPageBar from '../../../components/CeligoPageBar';
+import Addons from './Addons';
 
 const useStyles = makeStyles(theme => ({
   link: {
@@ -96,12 +97,12 @@ const useStyles = makeStyles(theme => ({
 
 function LHSItem(props) {
   const classes = useStyles();
-  const { to, label } = props;
+  const { to, label, pathname } = props;
 
   return (
     <ListItem className={classes.listItem}>
       <NavLink
-        activeClassName={classes.activeLink}
+        activeClassName={pathname === to ? classes.activeLink : ''}
         className={classes.link}
         to={to}>
         {label}
@@ -112,10 +113,15 @@ function LHSItem(props) {
 
 export default function IntegrationAppSettings(props) {
   const { integrationId, storeId, section } = props.match.params;
+  const { pathname } = props.location;
   const classes = useStyles();
-  const [redirected, setRedirected] = useState(false);
   const dispatch = useDispatch();
-  const urlPrefix = getRoutePath(`connectors/${integrationId}/settings`);
+  const urlPrefix = getRoutePath(
+    `connectors/${integrationId}/settings${storeId ? `/${storeId}` : ''}`
+  );
+  const urlRegexPrefix = getRoutePath(
+    `connectors/:integrationId/settings${storeId ? `/:storeId` : ''}`
+  );
   const permissions = useSelector(state => selectors.userPermissions(state));
   const integration = useSelector(state =>
     selectors.integrationAppSettings(state, integrationId)
@@ -127,10 +133,30 @@ export default function IntegrationAppSettings(props) {
   );
   const [currentStore, setCurrentStore] = useState(defaultStoreId);
   const [storeChanged, setStoreChanged] = useState(false);
+  const [requestLicense, setRequestLicense] = useState(false);
   const integrationAppFlowSections = useSelector(state =>
     selectors.integrationAppFlowSections(state, integrationId, currentStore)
   );
+  const addOnState = useSelector(state =>
+    selectors.integrationAppAddOnState(state, integrationId)
+  );
+
+  useEffect(() => {
+    if (addOnState && !addOnState.addOns && !requestLicense) {
+      dispatch(
+        actions.integrationApp.settings.requestAddOnLicenseMetadata(
+          integration._id
+        )
+      );
+      setRequestLicense(true);
+    }
+  }, [addOnState, dispatch, integration, requestLicense]);
   const showAPITokens = permissions.accesstokens.view;
+  const hasAddOns =
+    addOnState &&
+    addOnState.addOns &&
+    addOnState.addOns.addOnMetaData &&
+    addOnState.addOns.addOnMetaData.length > 0;
 
   useEffect(() => {
     if (!isEmpty(integration)) {
@@ -155,30 +181,60 @@ export default function IntegrationAppSettings(props) {
   ]);
 
   useEffect(() => {
-    if ((!redirected && (section === 'flows' || !section)) || storeChanged) {
-      if (supportsMultiStore) {
-        props.history.push(
-          `${`${urlPrefix}/${currentStore}/${integrationAppFlowSections[0].titleId}`}`
-        );
-      } else {
-        props.history.push(
-          `${urlPrefix}/${integrationAppFlowSections[0].titleId}`
-        );
+    if (supportsMultiStore && !storeId && section) {
+      if (
+        Array.isArray(integrationAppFlowSections) &&
+        integrationAppFlowSections.length
+      ) {
+        if (supportsMultiStore) {
+          props.history.push(
+            `${`${urlPrefix}/${currentStore}/${integrationAppFlowSections[0].titleId}`}`
+          );
+        }
       }
-
-      setStoreChanged(false);
-      setRedirected(true);
     }
   }, [
     integrationAppFlowSections,
     currentStore,
     integrationId,
     props.history,
-    redirected,
     section,
     storeChanged,
     supportsMultiStore,
     urlPrefix,
+    storeId,
+  ]);
+
+  useEffect(() => {
+    if (section === 'flows' || !section || storeChanged) {
+      if (
+        Array.isArray(integrationAppFlowSections) &&
+        integrationAppFlowSections.length
+      ) {
+        if (supportsMultiStore) {
+          props.history.push(
+            `${`${urlPrefix}/${currentStore}/${integrationAppFlowSections[0].titleId}`}`
+          );
+        } else {
+          props.history.push(
+            `${urlPrefix}/${integrationAppFlowSections[0].titleId}`
+          );
+        }
+
+        setStoreChanged(false);
+      }
+    }
+  }, [
+    integrationAppFlowSections,
+    currentStore,
+    integrationId,
+    props.history,
+    section,
+    storeChanged,
+    supportsMultiStore,
+    urlPrefix,
+    dispatch,
+    integration,
   ]);
 
   useEffect(() => {
@@ -226,11 +282,11 @@ export default function IntegrationAppSettings(props) {
               onChange={handleTagChangeHandler}
             />
           }>
-          <a
-            href={getRoutePath(`integrations/${integrationId}/dashboard`)}
+          <Link
+            to={getRoutePath(`integrations/${integrationId}/dashboard`)}
             className={classes.dashboard}>
             Dashboard
-          </a>
+          </Link>
         </CeligoPageBar>
 
         {supportsMultiStore && (
@@ -269,7 +325,11 @@ export default function IntegrationAppSettings(props) {
               }}>
               <List>
                 {hasGeneralSettings && (
-                  <LHSItem to={`${urlPrefix}/general`} label="General" />
+                  <LHSItem
+                    to={`${urlPrefix}/general`}
+                    pathname={pathname}
+                    label="General"
+                  />
                 )}
                 <ListItem className={classes.listItem}>
                   Integration Flows
@@ -278,13 +338,13 @@ export default function IntegrationAppSettings(props) {
                       integrationAppFlowSections.map(f => (
                         <ListItem key={`${f.titleId}`}>
                           <NavLink
-                            activeClassName={classes.subSection}
+                            activeClassName={
+                              pathname === `${urlPrefix}/${f.titleId}`
+                                ? classes.subSection
+                                : ''
+                            }
                             className={classes.link}
-                            to={
-                              supportsMultiStore
-                                ? `${urlPrefix}/${currentStore}/${f.titleId}`
-                                : `${urlPrefix}/${f.titleId}`
-                            }>
+                            to={`${urlPrefix}/${f.titleId}`}>
                             {f.title}
                           </NavLink>
                         </ListItem>
@@ -301,6 +361,9 @@ export default function IntegrationAppSettings(props) {
                   to={`${urlPrefix}/subscription`}
                   label="Subscription"
                 />
+                {hasAddOns && (
+                  <LHSItem to={`${urlPrefix}/addons`} label="Add-ons" />
+                )}
                 <LHSItem to={`${urlPrefix}/uninstall`} label="Uninstall" />
                 <Divider className={classes.notificationsLink} />
                 <LHSItem
@@ -313,83 +376,36 @@ export default function IntegrationAppSettings(props) {
           <div className={classes.rightElement}>
             <Switch>
               <Route
-                path={getRoutePath(
-                  `/connectors/:integrationId/settings/general`
-                )}
+                sensitive
+                path={`${urlRegexPrefix}/general`}
                 render={props => (
                   <GeneralSection {...props} storeId={currentStore} />
                 )}
               />
               <Route
-                path={getRoutePath(
-                  `/connectors/:integrationId/settings/tokens`
-                )}
-                render={props => (
-                  <AccessTokens
-                    {...props}
-                    storeId={currentStore}
-                    integrationId={integrationId}
-                  />
-                )}
+                path={`${urlRegexPrefix}/tokens`}
+                component={AccessTokens}
               />
               <Route
-                path={getRoutePath(
-                  `/connectors/:integrationId/settings/connections`
-                )}
-                render={props => (
-                  <Connections {...props} storeId={currentStore} />
-                )}
+                path={`${urlRegexPrefix}/connections`}
+                component={Connections}
               />
               <Route
-                path={getRoutePath(
-                  `/connectors/:integrationId/settings/subscription`
-                )}
+                path={`${urlRegexPrefix}/subscription`}
                 component={Subscription}
               />
+              <Route path={`${urlRegexPrefix}/addons`} component={Addons} />
               <Route
-                path={getRoutePath(
-                  `/connectors/:integrationId/settings/uninstall`
-                )}
-                render={props => (
-                  <Uninstall
-                    {...props}
-                    storeId={currentStore}
-                    integrationId={integrationId}
-                  />
-                )}
+                path={`${urlRegexPrefix}/uninstall`}
+                component={Uninstall}
               />
               <Route
-                path={getRoutePath(
-                  `/connectors/:integrationId/settings/notifications`
-                )}
-                render={props => (
-                  <Notifications
-                    {...props}
-                    storeId={currentStore}
-                    integrationId={integrationId}
-                  />
-                )}
+                path={`${urlRegexPrefix}/notifications`}
+                component={Notifications}
               />
-              <Route
-                path={getRoutePath(`connectors/:integrationId/settings/users`)}
-                component={Users}
-              />
-              <Route
-                path={getRoutePath('connectors/:integrationId/settings/audit')}
-                component={AuditLog}
-              />
-              <Route
-                path={
-                  supportsMultiStore
-                    ? getRoutePath(
-                        `/connectors/:integrationId/settings/:storeId/:section`
-                      )
-                    : getRoutePath(
-                        `/connectors/:integrationId/settings/:section`
-                      )
-                }
-                component={Flows}
-              />
+              <Route path={`${urlRegexPrefix}/users`} component={Users} />
+              <Route path={`${urlRegexPrefix}/audit`} component={AuditLog} />
+              <Route path={`${urlRegexPrefix}/:section`} component={Flows} />
             </Switch>
           </div>
         </div>

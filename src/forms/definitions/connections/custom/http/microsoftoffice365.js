@@ -7,14 +7,16 @@ export default {
     '/http/mediaType': 'json',
     '/http/baseURI': `https://graph.microsoft.com/v1.0`,
     '/http/auth/oauth/authURI':
-      'https://login.microsoftonline.com/common/oauth2/authorize',
+      'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
     '/http/auth/oauth/tokenURI':
-      'https://login.microsoftonline.com/common/oauth2/token',
+      'https://login.microsoftonline.com/common/oauth2/v2.0/token',
     '/http/auth/oauth/scope': [
       ...['openid', 'offline_access'],
       ...formValues['/http/auth/oauth/scope'],
     ],
     '/http/auth/oauth/scopeDelimiter': ' ',
+    '/http/auth/token/refreshMethod': 'POST',
+    '/http/auth/token/refreshMediaType': 'urlencoded',
   }),
   fieldMap: {
     name: { fieldId: 'name' },

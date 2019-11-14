@@ -11,6 +11,8 @@ export default {
     '/http/auth/oauth/tokenURI':
       'https://login.microsoftonline.com/common/oauth2/token',
     '/http/auth/oauth/scopeDelimiter': ' ',
+    '/http/auth/token/refreshMethod': 'POST',
+    '/http/auth/token/refreshMediaType': 'urlencoded',
   }),
   fieldMap: {
     name: { fieldId: 'name' },
@@ -20,6 +22,7 @@ export default {
       startAdornment: 'https://',
       endAdornment: '.sharepoint.com',
       label: 'Subdomain',
+      required: true,
       helpText:
         "Please enter your SharePoint subdomain. For example, in https://temp-portal.sharepoint.com 'temp-portal' is the subdomain.",
       validWhen: {
