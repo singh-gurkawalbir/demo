@@ -50,8 +50,7 @@ const useStyles = makeStyles(theme => ({
 export default function DynaHook(props) {
   const [showEditor, setShowEditor] = useState(false);
   const [showCreateScriptDialog, setShowCreateScriptDialog] = useState(false);
-  const getNewId = () => generateNewId();
-  const [tempScriptId, setTempScriptId] = useState(getNewId());
+  const [tempScriptId, setTempScriptId] = useState(generateNewId());
   const [isNewScriptIdAssigned, setIsNewScriptIdAssigned] = useState(false);
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -107,7 +106,7 @@ export default function DynaHook(props) {
   };
 
   const handleCreateScriptClick = () => {
-    setTempScriptId(getNewId());
+    setTempScriptId(generateNewId());
     setIsNewScriptIdAssigned(false);
     setShowCreateScriptDialog(true);
   };
