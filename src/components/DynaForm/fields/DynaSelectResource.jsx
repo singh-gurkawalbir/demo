@@ -48,7 +48,6 @@ const useStyles = makeStyles(theme => ({
     },
   },
 }));
-const newId = () => generateNewId();
 
 function DynaSelectResource(props) {
   const {
@@ -66,7 +65,7 @@ function DynaSelectResource(props) {
     ignoreEnvironmentFilter,
   } = props;
   const classes = useStyles();
-  const [newResourceId, setNewResourceId] = useState(newId());
+  const [newResourceId, setNewResourceId] = useState(generateNewId());
   const { resources = [] } = useSelector(state =>
     selectors.resourceList(state, {
       type: resourceType,
@@ -81,7 +80,7 @@ function DynaSelectResource(props) {
     if (createdId) {
       onFieldChange(id, createdId);
       // in case someone clicks + again to add another resource...
-      setNewResourceId(newId());
+      setNewResourceId(generateNewId());
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [createdId]);

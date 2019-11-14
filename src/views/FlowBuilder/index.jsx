@@ -205,7 +205,6 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function FlowBuilder(props) {
-  const getNewId = () => generateNewId();
   const { match, history } = props;
   const { flowId, integrationId } = match.params;
   const isNewFlow = !flowId || flowId.startsWith('new');
@@ -214,8 +213,8 @@ function FlowBuilder(props) {
   const dispatch = useDispatch();
   // Bottom drawer is shown for existing flows and docked for new flow
   const [size, setSize] = useState(isNewFlow ? 0 : 1);
-  const [newGeneratorId, setNewGeneratorId] = useState(getNewId());
-  const [newProcessorId, setNewProcessorId] = useState(getNewId());
+  const [newGeneratorId, setNewGeneratorId] = useState(generateNewId());
+  const [newProcessorId, setNewProcessorId] = useState(generateNewId());
   //
   // #region Selectors
   const newFlowId = useSelector(state =>
@@ -294,7 +293,7 @@ function FlowBuilder(props) {
         { _exportId: createdGeneratorId },
       ]);
       // in case someone clicks + again to add another resource...
-      setNewGeneratorId(getNewId());
+      setNewGeneratorId(generateNewId());
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -311,7 +310,7 @@ function FlowBuilder(props) {
 
       patchFlow('/pageProcessors', [...pageProcessors, newProcessor]);
 
-      setNewProcessorId(getNewId());
+      setNewProcessorId(generateNewId());
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -333,7 +332,7 @@ function FlowBuilder(props) {
   };
 
   function handleAddGenerator() {
-    const newTempGeneratorId = getNewId();
+    const newTempGeneratorId = generateNewId();
 
     setNewGeneratorId(newTempGeneratorId);
     pushOrReplaceHistory(
@@ -342,7 +341,7 @@ function FlowBuilder(props) {
   }
 
   function handleAddProcessor() {
-    const newTempProcessorId = getNewId();
+    const newTempProcessorId = generateNewId();
 
     setNewProcessorId(newTempProcessorId);
     pushOrReplaceHistory(
@@ -370,7 +369,7 @@ function FlowBuilder(props) {
   // This block initializes a new flow (patch, no commit)
   // and replaces the url to reflect the new temp id.
   if (flowId === 'new') {
-    const newId = getNewId();
+    const newId = generateNewId();
     const newUrl = rewriteUrl(newId);
     const patchSet = [
       { op: 'add', path: '/name', value: 'New flow' },
