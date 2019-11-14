@@ -286,10 +286,11 @@ const connectors = {
   },
 };
 const metadata = {
-  request: (connectionId, commMetaPath) =>
+  request: (connectionId, commMetaPath, addInfo) =>
     action(actionTypes.METADATA.REQUEST, {
       connectionId,
       commMetaPath,
+      addInfo,
     }),
   refresh: (connectionId, commMetaPath) =>
     action(actionTypes.METADATA.REFRESH, {
