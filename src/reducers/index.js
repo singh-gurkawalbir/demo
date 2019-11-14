@@ -133,35 +133,17 @@ export function resourceFormSaveProcessTerminated(
 }
 
 export function clonePreview(state, resourceType, resourceId) {
-  return fromSession.clonePreview(
+  return fromSession.previewTemplate(
     state && state.session,
-    resourceType,
-    resourceId
+    `${resourceType}-${resourceId}`
   );
 }
 
 export function cloneData(state, resourceType, resourceId) {
-  return fromSession.cloneData(
+  return fromSession.template(
     state && state.session,
-    resourceType,
-    resourceId
+    `${resourceType}-${resourceId}`
   );
-}
-
-export function cloneInstallSteps(state, resourceType, resourceId) {
-  const cloneInstallSteps = fromSession.cloneInstallSteps(
-    state && state.session,
-    resourceType,
-    resourceId
-  );
-
-  return produce(cloneInstallSteps, draft => {
-    const unCompletedStep = draft.find(s => !s.completed);
-
-    if (unCompletedStep) {
-      unCompletedStep.isCurrentStep = true;
-    }
-  });
 }
 
 export function previewTemplate(state, templateId) {
@@ -193,6 +175,10 @@ export function templateInstallSteps(state, templateId) {
       unCompletedStep.isCurrentStep = true;
     }
   });
+}
+
+export function cloneInstallSteps(state, resourceType, resourceId) {
+  return templateInstallSteps(state, `${resourceType}-${resourceId}`);
 }
 
 export function templateConnectionMap(state, templateId) {
@@ -987,9 +973,18 @@ export function integrationAppFlowSettings(state, id, section, storeId) {
   let allSections = sections;
 
   if (supportsMultiStore) {
-    const store = sections.find(s => s.id === storeId) || {};
+    if (storeId) {
+      // If storeId passed, return sections from that store
+      const store = sections.find(s => s.id === storeId) || {};
 
-    allSections = store.sections || [];
+      allSections = store.sections || [];
+    } else {
+      // If no storeId is passed, return all sections from all stores
+      allSections = [];
+      sections.forEach(sec => {
+        allSections.push(...sec.sections);
+      });
+    }
   }
 
   const selectedSection =
