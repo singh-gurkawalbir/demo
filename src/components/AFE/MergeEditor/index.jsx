@@ -5,7 +5,7 @@ import * as selectors from '../../../reducers';
 import Editor from '../GenericEditor';
 
 export default function MergeEditor(props) {
-  const { editorId, layout = 'column' } = props;
+  const { editorId, layout = 'column', disabled } = props;
   const { data, result, rule, error, violations } = useSelector(state =>
     selectors.editor(state, editorId)
   );
@@ -36,6 +36,7 @@ export default function MergeEditor(props) {
       error={error}
       violations={violations}
       result={parsedResult}
+      disabled={disabled}
       processor="merge"
       ruleMode="json"
       layout={layout}

@@ -3,7 +3,15 @@ import Button from '@material-ui/core/Button';
 import TransformEditorDialog from '../../../AFE/TransformEditor/Dialog';
 
 export default function DynaResponseTransformEditor(props) {
-  const { id, label, resourceId, onFieldChange, value, options = {} } = props;
+  const {
+    id,
+    label,
+    resourceId,
+    onFieldChange,
+    value,
+    disabled,
+    options = {},
+  } = props;
   const [showEditor, setShowEditor] = useState(false);
   const handleEditorClick = () => {
     setShowEditor(!showEditor);
@@ -47,6 +55,7 @@ export default function DynaResponseTransformEditor(props) {
           }
           rule={firstRuleSet}
           onClose={handleClose}
+          disabled={disabled}
         />
       )}
       <Button

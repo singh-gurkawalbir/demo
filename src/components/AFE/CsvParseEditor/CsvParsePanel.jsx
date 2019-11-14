@@ -54,6 +54,7 @@ export default function CsvParsePanel(props) {
     multipleRowsPerRecord = false,
     trimSpaces = true,
     result,
+    disabled,
   } = useSelector(state => selectors.editor(state, editorId));
   const dispatch = useDispatch();
   const patchEditor = (option, value) => {
@@ -65,7 +66,7 @@ export default function CsvParsePanel(props) {
   return (
     <div className={classes.container}>
       <FormGroup column="true">
-        <FormControl className={classes.formControl}>
+        <FormControl disabled={disabled} className={classes.formControl}>
           <InputLabel shrink htmlFor="columnDelimiter">
             Column Delimiter
           </InputLabel>
@@ -87,7 +88,7 @@ export default function CsvParsePanel(props) {
             </option>
           </Select>
         </FormControl>
-        <FormControl className={classes.formControl}>
+        <FormControl disabled={disabled} className={classes.formControl}>
           <InputLabel shrink htmlFor="rowDelimiter">
             Row Delimiter
           </InputLabel>
@@ -112,6 +113,7 @@ export default function CsvParsePanel(props) {
         </FormControl>
 
         <FormControlLabel
+          disabled={disabled}
           control={
             <Checkbox
               // Why it is commented ?
@@ -124,6 +126,7 @@ export default function CsvParsePanel(props) {
           label="Has Header Row"
         />
         <FormControlLabel
+          disabled={disabled}
           control={
             <Checkbox
               color="primary"
@@ -135,6 +138,7 @@ export default function CsvParsePanel(props) {
           label="Trim Spaces"
         />
         <FormControlLabel
+          disabled={disabled}
           control={
             <Checkbox
               color="primary"
@@ -149,7 +153,7 @@ export default function CsvParsePanel(props) {
           label="Multiple Rows Per Record"
         />
         {multipleRowsPerRecord && allColumns && (
-          <FormControl className={classes.formControl}>
+          <FormControl disabled={disabled} className={classes.formControl}>
             <InputLabel htmlFor="select-multiple-chip">Key Columns</InputLabel>
             <Select
               multiple

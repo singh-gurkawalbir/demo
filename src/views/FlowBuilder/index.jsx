@@ -417,7 +417,11 @@ function FlowBuilder(props) {
 
   return (
     <LoadResources required resources="flows, imports, exports">
-      <ResourceDrawer {...props} flowId={flowId} />
+      <ResourceDrawer
+        {...props}
+        flowId={flowId}
+        integrationId={integrationId}
+      />
       <RunDrawer {...props} flowId={flowId} />
       <ScheduleDrawer {...props} flow={flow} />
       <SettingsDrawer {...props} flow={flow} />
@@ -484,6 +488,7 @@ function FlowBuilder(props) {
                 <PageGenerator
                   {...pg}
                   flowId={flowId}
+                  integrationId={integrationId}
                   key={
                     pg._exportId ||
                     pg._connectionId ||
@@ -495,6 +500,7 @@ function FlowBuilder(props) {
               ))}
               {!pageGenerators.length && (
                 <AppBlock
+                  integrationId={integrationId}
                   className={classes.newPG}
                   onBlockClick={handleAddGenerator}
                   blockType="newPG"
@@ -517,6 +523,7 @@ function FlowBuilder(props) {
                 <PageProcessor
                   {...pp}
                   flowId={flowId}
+                  integrationId={integrationId}
                   key={pp._importId || pp._exportId || pp._connectionId}
                   index={i}
                   isLast={pageProcessors.length === i + 1}
@@ -526,6 +533,7 @@ function FlowBuilder(props) {
               {!pageProcessors.length && (
                 <AppBlock
                   className={classes.newPP}
+                  integrationId={integrationId}
                   onBlockClick={handleAddProcessor}
                   blockType="newPP"
                 />

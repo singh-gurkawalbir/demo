@@ -1,10 +1,18 @@
 import HandlebarsWithDefaultEditor from '../HandlebarsWithDefault';
 
 export default function SqlQueryBuilderEditor(props) {
-  const { rule, editorId, layout = 'compact', sampleData, defaultData } = props;
+  const {
+    rule,
+    editorId,
+    disabled,
+    layout = 'compact',
+    sampleData,
+    defaultData,
+  } = props;
 
   return (
     <HandlebarsWithDefaultEditor
+      disabled={disabled}
       editorId={editorId}
       rule={rule}
       defaultData={defaultData}

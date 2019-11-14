@@ -19,7 +19,7 @@ export default function CodePanel(props) {
     name,
     value,
     mode,
-    readOnly,
+    readOnly = false,
     height,
     width,
     onChange,
