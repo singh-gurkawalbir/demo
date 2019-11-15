@@ -11,6 +11,8 @@ export default {
     '/http/auth/oauth/tokenURI': 'https://api.sageone.com/oauth2/token',
     '/http/auth/oauth/scopeDelimiter': ' ',
     '/http/auth/oauth/scope': ['full_access'],
+    '/http/auth/token/refreshMethod': 'POST',
+    '/http/auth/token/refreshMediaType': 'urlencoded',
     '/http/headers': [
       {
         name: 'X-Site',

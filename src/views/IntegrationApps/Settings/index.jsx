@@ -392,13 +392,7 @@ export default function IntegrationAppSettings(props) {
               />
               <Route
                 path={`${urlRegexPrefix}/subscription`}
-                render={props => (
-                  <Subscription
-                    {...props}
-                    storeId={currentStore}
-                    supportsMultiStore={supportsMultiStore}
-                  />
-                )}
+                component={Subscription}
               />
               <Route path={`${urlRegexPrefix}/addons`} component={Addons} />
               <Route

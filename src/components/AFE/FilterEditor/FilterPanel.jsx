@@ -34,7 +34,13 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function FilterPanel({ editorId, readOnly, data = {}, rule }) {
+export default function FilterPanel({
+  editorId,
+  readOnly,
+  data = {},
+  rule,
+  disabled,
+}) {
   const qbuilder = useRef(null);
   const classes = useStyles();
   const [showOperandSettingsFor, setShowOperandSettingsFor] = useState();
@@ -711,6 +717,7 @@ export default function FilterPanel({ editorId, readOnly, data = {}, rule }) {
               showOperandSettingsFor.rhs ? 'rhs' : 'lhs'
             ]
           }
+          disabled={disabled}
           onClose={handleCloseOperandSettings}
           onSubmit={handleSubmitOperandSettings}
         />

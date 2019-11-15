@@ -16,6 +16,7 @@ export default {
   'rest.postBody': {
     type: 'httprequestbody',
     label: 'Build HTTP Request Body',
+    connectionId: r => r && r._connectionId,
     required: true,
     visibleWhenAll: [
       {
@@ -118,6 +119,7 @@ export default {
   'rest.pagingPostBody': {
     type: 'httprequestbody',
     label: 'Build Paging Post Body',
+    connectionId: r => r && r._connectionId,
     required: true,
     visibleWhenAll: [
       {
@@ -177,6 +179,7 @@ export default {
     type: 'relativeuri',
     required: true,
     label: 'Relative URI',
+    connectionId: r => r && r._connectionId,
     requiredWhen: [
       {
         field: 'outputMode',
@@ -260,6 +263,7 @@ export default {
   'rest.once.relativeURI': {
     type: 'relativeuri',
     label: 'Relative URI',
+    connectionId: r => r && r._connectionId,
     visibleWhen: [
       {
         field: 'outputMode',
@@ -310,6 +314,7 @@ export default {
   // #endregion once
   'rest.once.postBody': {
     type: 'httprequestbody',
+    connectionId: r => r && r._connectionId,
     visibleWhen: [
       {
         field: 'outputMode',

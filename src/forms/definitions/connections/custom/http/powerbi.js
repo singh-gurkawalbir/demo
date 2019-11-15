@@ -12,6 +12,8 @@ export default {
       'https://login.microsoftonline.com/common/oauth2/token',
     '/http/auth/oauth/scopeDelimiter': ' ',
     '/http/auth/failStatusCode': 403,
+    '/http/auth/token/refreshMethod': 'POST',
+    '/http/auth/token/refreshMediaType': 'urlencoded',
   }),
   fieldMap: {
     name: { fieldId: 'name' },

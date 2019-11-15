@@ -10,7 +10,7 @@ import {
   Typography,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import CloseIcon from '../icons/CloseIcon';
+import CloseIcon from '../../components/icons/CloseIcon';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
 import getRoutePath from '../../utils/routePaths';

@@ -33,6 +33,7 @@ export default {
       type: 'text',
       startAdornment: 'https://',
       label: 'API Endpoint',
+      required: true,
       helpText:
         'Please enter the API Endpoint. Under Domain Settings > Site Configuration> Base URL for Graphics we will get the Domain Name. Every store has its own unique API endpoint associated with the domain name. The format will be as follows: https://www.domain.com/mm5/',
       validWhen: {

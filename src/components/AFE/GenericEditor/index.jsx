@@ -29,6 +29,7 @@ const Editor = props => {
     handleDataChange,
     handleInit,
     enableAutocomplete,
+    disabled,
   } = props;
 
   useEffect(() => {
@@ -47,6 +48,7 @@ const Editor = props => {
           mode={ruleMode}
           onChange={handleRuleChange}
           enableAutocomplete={enableAutocomplete}
+          readOnly={disabled}
         />
       </PanelGridItem>
       <PanelGridItem gridArea="data">
@@ -56,6 +58,7 @@ const Editor = props => {
           value={data}
           mode={dataMode}
           onChange={handleDataChange}
+          readOnly={disabled}
         />
       </PanelGridItem>
       <PanelGridItem gridArea="result">

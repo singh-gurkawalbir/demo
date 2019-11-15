@@ -12,7 +12,10 @@ export default {
     '/http/auth/oauth/scopeDelimiter': ' ',
     '/http/ping/relativeURI': '/2.0/users',
     '/http/ping/method': 'GET',
+    '/http/auth/token/refreshMethod': 'POST',
+    '/http/auth/token/refreshMediaType': 'urlencoded',
   }),
+
   fieldMap: {
     name: { fieldId: 'name' },
     'http.auth.oauth.scope': {

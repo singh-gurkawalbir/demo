@@ -9,6 +9,8 @@ export default {
     '/http/auth/oauth/authURI': 'https://api.outreach.io/oauth/authorize',
     '/http/auth/oauth/tokenURI': 'https://api.outreach.io/oauth/token',
     '/http/auth/oauth/scopeDelimiter': '+',
+    '/http/auth/token/refreshMethod': 'POST',
+    '/http/auth/token/refreshMediaType': 'urlencoded',
     '/http/auth/oauth/accessTokenPath': 'access_token',
     '/http/auth/oauth/refreshTokenPath': 'refresh_token',
   }),

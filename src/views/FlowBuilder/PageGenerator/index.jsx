@@ -43,7 +43,15 @@ const useStyles = makeStyles(theme => ({
     borderRight: `3px dotted ${theme.palette.divider}`,
   },
 }));
-const PageGenerator = ({ history, match, index, isLast, flowId, ...pg }) => {
+const PageGenerator = ({
+  history,
+  match,
+  index,
+  isLast,
+  flowId,
+  integrationId,
+  ...pg
+}) => {
   const pending = !pg._exportId;
   const resourceId = pg._connectionId || pg._exportId;
   const resourceType = pg._connectionId ? 'connections' : 'exports';
@@ -186,6 +194,7 @@ const PageGenerator = ({ history, match, index, isLast, flowId, ...pg }) => {
   return (
     <div className={classes.pgContainer}>
       <AppBlock
+        integrationId={integrationId}
         name={blockName}
         onBlockClick={handleBlockClick}
         connectorType={connectorType}

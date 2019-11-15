@@ -1573,11 +1573,11 @@ describe('integrationSettingsToDynaFormMetadata', () => {
                 fields: [
                   {
                     name: 'fieldB',
-                    hidden: true,
+                    hidden: false,
                   },
                   {
                     name: 'fieldC',
-                    hidden: true,
+                    hidden: false,
                   },
                 ],
               },
@@ -1638,7 +1638,7 @@ describe('integrationSettingsToDynaFormMetadata', () => {
                 fields: [
                   {
                     name: 'fieldB',
-                    hidden: true,
+                    hidden: false,
                   },
                 ],
               },
@@ -1704,11 +1704,11 @@ describe('integrationSettingsToDynaFormMetadata', () => {
                 fields: [
                   {
                     name: 'fieldB',
-                    hidden: true,
+                    hidden: false,
                   },
                   {
                     name: 'fieldC',
-                    hidden: true,
+                    hidden: false,
                   },
                 ],
               },
@@ -1769,7 +1769,7 @@ describe('integrationSettingsToDynaFormMetadata', () => {
                 fields: [
                   {
                     name: 'fieldB',
-                    hidden: true,
+                    hidden: false,
                   },
                 ],
               },
@@ -1833,11 +1833,11 @@ describe('integrationSettingsToDynaFormMetadata', () => {
                 fields: [
                   {
                     name: 'fieldB',
-                    hidden: true,
+                    hidden: false,
                   },
                   {
                     name: 'fieldC',
-                    hidden: true,
+                    hidden: false,
                   },
                 ],
               },

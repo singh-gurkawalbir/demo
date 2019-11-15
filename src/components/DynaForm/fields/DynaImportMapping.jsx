@@ -19,6 +19,7 @@ export default function DynaImportMapping(props) {
     value,
     connectionId,
     resourceId,
+    disabled,
   } = props;
   const {
     lookupId,
@@ -87,6 +88,7 @@ export default function DynaImportMapping(props) {
           onCancel={handleClose}
           onSave={handleSave}
           options={opts}
+          disabled={disabled}
         />
       )}
       <Button
