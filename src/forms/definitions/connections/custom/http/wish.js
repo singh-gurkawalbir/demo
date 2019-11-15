@@ -27,6 +27,8 @@ export default {
       }`,
       '/http/auth/oauth/accessTokenPath': 'data.access_token',
       '/http/auth/token/refreshTokenPath': 'data.refresh_token',
+      '/http/auth/token/refreshMethod': 'POST',
+      '/http/auth/token/refreshMediaType': 'urlencoded',
     };
   },
   fieldMap: {

@@ -7,7 +7,7 @@ import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import ImportMapping from './';
 import LoadResources from '../../../components/LoadResources';
-import { getJSONPaths } from '../../../utils/json';
+import getJSONPaths from '../../../utils/jsonPaths';
 import { getImportOperationDetails } from '../../../utils/assistant';
 
 /**
@@ -20,7 +20,14 @@ import { getImportOperationDetails } from '../../../utils/assistant';
  */
 
 export default function StandaloneImportMapping(props) {
-  const { id, resourceId, onClose, connectionId, extractFields } = props;
+  const {
+    id,
+    resourceId,
+    onClose,
+    connectionId,
+    extractFields,
+    integrationId,
+  } = props;
   const dispatch = useDispatch();
   const resourceData = useSelector(state =>
     selectors.resource(state, 'imports', resourceId)
@@ -159,6 +166,7 @@ export default function StandaloneImportMapping(props) {
   return (
     <LoadResources resources="imports">
       <ImportMapping
+        integrationId={integrationId}
         title="Define Import Mapping"
         key={changeIdentifier}
         id={id}

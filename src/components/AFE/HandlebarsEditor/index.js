@@ -16,6 +16,7 @@ export default function HandlebarsEditor(props) {
     resultMode,
     dataMode,
     ruleMode,
+    disabled,
     enableAutocomplete,
   } = props;
   const { template, data, result, error, violations } = useSelector(state =>
@@ -58,6 +59,7 @@ export default function HandlebarsEditor(props) {
 
   return (
     <Editor
+      disabled={disabled}
       editorId={editorId}
       handleInit={handleInit}
       handleRuleChange={handleRuleChange}

@@ -7,6 +7,8 @@ export default {
     '/http/mediaType': 'json',
     '/http/ping/relativeURI': '/v3/users/me/',
     '/http/ping/method': 'GET',
+    '/http/auth/token/refreshMethod': 'POST',
+    '/http/auth/token/refreshMediaType': 'urlencoded',
     '/http/baseURI': 'https://www.eventbriteapi.com',
     '/http/auth/oauth/authURI': 'https://www.eventbrite.com/oauth/authorize',
     '/http/auth/oauth/tokenURI': 'https://www.eventbrite.com/oauth/token',

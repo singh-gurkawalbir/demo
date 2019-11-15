@@ -2,7 +2,7 @@ import EditorDialog from '../EditorDialog';
 import TransformEditor from './';
 
 export default function TransformEditorDialog(props) {
-  const { id, rule, data, ...rest } = props;
+  const { id, rule, data, disabled, ...rest } = props;
   const defaults = {
     width: '85vw',
     height: '60vh',
@@ -11,8 +11,18 @@ export default function TransformEditorDialog(props) {
   };
 
   return (
-    <EditorDialog id={id} {...defaults} {...rest} showLayoutOptions={false}>
-      <TransformEditor editorId={id} rule={rule} data={data} />
+    <EditorDialog
+      id={id}
+      {...defaults}
+      {...rest}
+      disabled={disabled}
+      showLayoutOptions={false}>
+      <TransformEditor
+        editorId={id}
+        rule={rule}
+        data={data}
+        disabled={disabled}
+      />
     </EditorDialog>
   );
 }

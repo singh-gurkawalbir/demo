@@ -1,5 +1,18 @@
 import * as _ from 'lodash';
 
+/**
+ * Works very similar to getJSONPaths, with difference that it checks for the length of any array it encounters.
+ * and represents each array object with its index 0, instead of '*' like we do in getJSONPaths, only when array length is 1.
+ *
+ * @param {array} arr - Usually Array of Objects.
+ *
+ * @returns {object}
+ *
+ * @example
+ *
+ * getUnionObject([{a:'fasd',b:'cas',e:"e"},{f:'g'},{a:'aaa', b:'a'}])
+ * {a: 'aaa', b: 'a', e: 'e', f: 'g'}
+ */
 function getUnionObject(arr) {
   let toReturn = {};
 
@@ -23,6 +36,24 @@ function getUnionObject(arr) {
   return toReturn;
 }
 
+/**
+    * Traverses through dataIn object and pushes all valid paths to leaf nodes in to array
+    *
+    * @param {object} dataIn - sample data object.
+    * @param {string} prefix
+    * @param {boolean} skipSort - boolean value which decides whether to sort the result array
+    *
+    * @returns {array of objects}
+    *
+    * @example
+    *
+    * getJSONPaths({a:'fasd',b:[{c:'d'}], e:[{f:'g'},{f:'g'}]})
+    * [
+        {id: "a", type:"string"},
+        {id: "b[*].c", type:"string"},
+        {id:"e[*].f", type: "string"}
+      ]
+    */
 export default function getJSONPaths(dataIn, prefix, options = {}) {
   let paths = [];
   let type;

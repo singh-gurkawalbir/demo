@@ -1,7 +1,6 @@
 import { useState, useEffect, Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Button from '@material-ui/core/Button';
-import { isEmpty } from 'lodash';
 import * as selectors from '../../../reducers';
 import HttpRequestBodyEditorDialog from '../../../components/AFE/HttpRequestBodyEditor/Dialog';
 import DynaLookupEditor from './DynaLookupEditor';
@@ -10,7 +9,7 @@ import {
   getJSONSampleTemplate,
 } from '../../AFE/HttpRequestBodyEditor/templateMapping';
 import actions from '../../../actions';
-import jsonUtil from '../../../utils/json';
+import getFormattedSampleData from '../../../utils/sampleData';
 
 export default function DynaHttpRequestBody(props) {
   const {
@@ -23,13 +22,14 @@ export default function DynaHttpRequestBody(props) {
     connectionId,
     resourceType,
     flowId,
+    arrayIndex,
     useSampleDataAsArray,
   } = props;
-  const { lookups: lookupsObj, saveIndex, contentType, resourceName } = options;
+  const { lookups: lookupsObj, contentType, resourceName } = options;
   const [showEditor, setShowEditor] = useState(false);
   let parsedRule =
-    options && typeof saveIndex === 'number' && Array.isArray(value)
-      ? value[saveIndex]
+    options && typeof arrayIndex === 'number' && Array.isArray(value)
+      ? value[arrayIndex]
       : value;
   const lookupFieldId = lookupsObj && lookupsObj.fieldId;
   const lookups = lookupsObj && lookupsObj.data;
@@ -38,7 +38,7 @@ export default function DynaHttpRequestBody(props) {
   };
 
   const dispatch = useDispatch();
-  const connectionData = useSelector(state =>
+  const connection = useSelector(state =>
     selectors.resource(state, 'connections', connectionId)
   );
   const sampleData = useSelector(state =>
@@ -47,40 +47,17 @@ export default function DynaHttpRequestBody(props) {
     })
   );
   // constructing data
-  const data = {
-    connection: {},
-    data: {
-      myField: 'sample',
-    },
-  };
-
-  if (connectionData) {
-    data.connection.name = connectionData.name;
-    const connSubDoc = connectionData[connectionData.type];
-    const hbSubDoc = {};
-
-    if (connSubDoc) {
-      if (connSubDoc.unencrypted && !isEmpty(connSubDoc.unencrypted)) {
-        hbSubDoc.unencrypted = connSubDoc.unencrypted;
-      }
-
-      if (connSubDoc.encrypted && !isEmpty(connSubDoc.encrypted)) {
-        hbSubDoc.encrypted = jsonUtil.maskValues(connSubDoc.encrypted);
-      }
-    }
-
-    data.connection[connectionData.type] = hbSubDoc;
-  }
-
-  if (sampleData) {
-    data.data = useSampleDataAsArray ? [sampleData] : sampleData;
-  }
-
-  data[resourceType === 'imports' ? 'import' : 'export'] = {
-    name: resourceName,
-  };
-
-  const stringifiedData = JSON.stringify(data, null, 2);
+  const formattedSampleData = JSON.stringify(
+    getFormattedSampleData({
+      connection,
+      sampleData,
+      useSampleDataAsArray,
+      resourceType,
+      resourceName,
+    }),
+    null,
+    2
+  );
 
   useEffect(() => {
     // Request for sample data only incase of flow context
@@ -102,11 +79,11 @@ export default function DynaHttpRequestBody(props) {
     if (shouldCommit) {
       const { template } = editorValues;
 
-      if (typeof saveIndex === 'number' && Array.isArray(value)) {
-        // save to array at position saveIndex
+      if (typeof arrayIndex === 'number' && Array.isArray(value)) {
+        // save to array at position arrayIndex
         const valueTmp = value;
 
-        valueTmp[saveIndex] = template;
+        valueTmp[arrayIndex] = template;
         onFieldChange(id, valueTmp);
       } else {
         // save to field
@@ -144,7 +121,7 @@ export default function DynaHttpRequestBody(props) {
           id={`${resourceId}-${id}`}
           rule={parsedRule}
           onFieldChange={onFieldChange}
-          data={stringifiedData}
+          data={formattedSampleData}
           onClose={handleClose}
           action={lookupField}
         />

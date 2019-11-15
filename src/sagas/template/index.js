@@ -38,7 +38,7 @@ export function* requestPreview({ templateId }) {
   yield put(actions.template.receivedPreview(components, templateId));
 }
 
-export function* createComponents({ templateId }) {
+export function* createComponents({ templateId, runKey }) {
   const { cMap: connectionMap, stackId: _stackId } = yield select(
     selectors.templateSetup,
     templateId
@@ -46,7 +46,7 @@ export function* createComponents({ templateId }) {
   const template = yield select(selectors.marketplaceTemplate, { templateId });
   const userPreferences = yield select(selectors.userPreferences);
   const sandbox = userPreferences.environment === 'sandbox';
-  const path = `/integrations/template/${templateId}`;
+  const path = `/integrations/template${runKey ? '' : `/${templateId}`}`;
   let components;
 
   try {
@@ -58,6 +58,7 @@ export function* createComponents({ templateId }) {
           connectionMap,
           _stackId,
           sandbox,
+          runKey,
           name: `Copy ${(template || {}).name}`,
         },
       },

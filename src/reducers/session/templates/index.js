@@ -10,6 +10,7 @@ export default function reducer(state = {}, action) {
     components,
     installSteps,
     connectionMap,
+    data,
     step = {},
   } = action;
   const {
@@ -33,6 +34,11 @@ export default function reducer(state = {}, action) {
         }
 
         draft[templateId].preview = components;
+
+        if (isInstallIntegration) {
+          draft[templateId].runKey = templateId;
+        }
+
         draft[templateId].isInstallIntegration = isInstallIntegration;
         break;
       case actionTypes.TEMPLATE.CLEAR_TEMPLATE:
@@ -59,6 +65,7 @@ export default function reducer(state = {}, action) {
 
         draft[templateId].installSteps = installSteps;
         draft[templateId].connectionMap = connectionMap;
+        draft[templateId].data = data;
         break;
       case actionTypes.TEMPLATE.UPDATE_STEP:
         if (!draft[templateId]) {

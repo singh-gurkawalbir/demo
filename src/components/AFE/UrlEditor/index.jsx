@@ -1,7 +1,7 @@
 import HandlebarsEditor from '../HandlebarsEditor';
 
 export default function UrlEditor(props) {
-  const { editorId, layout = 'column', rule, data } = props;
+  const { editorId, layout = 'column', rule, data, disabled } = props;
 
   return (
     <HandlebarsEditor
@@ -9,6 +9,7 @@ export default function UrlEditor(props) {
       processor="handlebars"
       rule={rule}
       data={data}
+      disabled={disabled}
       layout={layout}
       ruleMode="handlebars"
       dataMode="json"
