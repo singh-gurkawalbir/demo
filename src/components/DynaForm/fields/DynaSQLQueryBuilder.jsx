@@ -7,7 +7,35 @@ import actions from '../../../actions';
 import SqlQueryBuilderEditorDialog from '../../../components/AFE/SqlQueryBuilderEditor/Dialog';
 import DynaLookupEditor from './DynaLookupEditor';
 import { getDefaultData } from '../../../utils/sampleData';
-import { getUnionObject } from '../../../utils/jsonPaths';
+import getJSONPaths, { getUnionObject } from '../../../utils/jsonPaths';
+
+const getSampleSQLTemplate = (sampleData, eFields, isInsert) => {
+  let toReturn = '';
+
+  if (eFields && eFields.length > 0 && Array.isArray(sampleData)) {
+    if (isInsert) {
+      toReturn = `${'Insert into Employee(id) Values({{data.0.'}${
+        eFields[0].id
+      }}})`;
+    } else {
+      toReturn = `${'Update Employee SET name={{data.0.'}${
+        eFields[0].id
+      }}} where id ={{data.0.${eFields[0].id}}}`;
+    }
+  } else if (eFields && eFields.length > 0) {
+    if (isInsert) {
+      toReturn = `${'Insert into Employee(id) Values({{data.'}${
+        eFields[0].id
+      }}})`;
+    } else {
+      toReturn = `${'Update Employee SET name={{data.'}${
+        eFields[0].id
+      }}} where id ={{data.${eFields[0].id}}}`;
+    }
+  }
+
+  return toReturn;
+};
 
 export default function DynaSQLQueryBuilder(props) {
   const {
@@ -22,11 +50,25 @@ export default function DynaSQLQueryBuilder(props) {
     flowId,
     resourceType,
   } = props;
+  const { lookups: lookupObj, queryType } = options;
+  const lookupFieldId = lookupObj && lookupObj.fieldId;
+  const lookups = lookupObj && lookupObj.data;
   const [showEditor, setShowEditor] = useState(false);
   const dispatch = useDispatch();
+  const [dataState, setDataState] = useState({
+    sampleDataLoaded: false,
+    extractFieldsLoaded: false,
+    changeIdentifier: 0,
+  });
+  const { sampleDataLoaded, extractFieldsLoaded, changeIdentifier } = dataState;
   const sampleData = useSelector(state =>
     selectors.getSampleData(state, flowId, resourceId, 'flowInput', {
       isImport: resourceType === 'imports',
+    })
+  );
+  const extractFields = useSelector(state =>
+    selectors.getSampleData(state, flowId, resourceId, 'importMappingExtract', {
+      isImport: true,
     })
   );
 
@@ -45,6 +87,49 @@ export default function DynaSQLQueryBuilder(props) {
       );
     }
   }, [dispatch, flowId, resourceId, resourceType, sampleData]);
+
+  useEffect(() => {
+    if (!extractFields) {
+      dispatch(
+        actions.flowData.requestSampleData(
+          flowId,
+          resourceId,
+          'imports',
+          'importMappingExtract'
+        )
+      );
+    }
+  }, [dispatch, extractFields, flowId, resourceId]);
+
+  if (sampleData && !sampleDataLoaded) {
+    setDataState({
+      ...dataState,
+      sampleDataLoaded: true,
+      changeIdentifier: changeIdentifier + 1,
+    });
+  } else if (extractFields && !extractFieldsLoaded) {
+    setDataState({
+      ...dataState,
+      extractFieldsLoaded: true,
+      changeIdentifier: changeIdentifier + 1,
+    });
+  }
+
+  let parsedRule =
+    typeof arrayIndex === 'number' && Array.isArray(value)
+      ? value[arrayIndex]
+      : value;
+
+  if (sampleData && extractFields && !parsedRule) {
+    const extractPaths = getJSONPaths(extractFields);
+
+    parsedRule = getSampleSQLTemplate(
+      sampleData,
+      extractPaths,
+      queryType === 'INSERT'
+    );
+  }
+
   let defaultData = {};
 
   if (sampleData) {
@@ -67,12 +152,6 @@ export default function DynaSQLQueryBuilder(props) {
     setShowEditor(!showEditor);
   };
 
-  const parsedRule =
-    typeof arrayIndex === 'number' && Array.isArray(value)
-      ? value[arrayIndex]
-      : value;
-  const lookupFieldId = options && options.lookups && options.lookups.fieldId;
-  const lookups = options && options.lookups && options.lookups.data;
   const handleClose = (shouldCommit, editorValues) => {
     if (shouldCommit) {
       const { template } = editorValues;
@@ -109,6 +188,7 @@ export default function DynaSQLQueryBuilder(props) {
     <Fragment>
       {showEditor && (
         <SqlQueryBuilderEditorDialog
+          key={changeIdentifier}
           title="SQL Query Builder"
           id={`${resourceId}-${id}`}
           rule={parsedRule}
