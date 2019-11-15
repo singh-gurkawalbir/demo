@@ -12,7 +12,12 @@ const useStyle = makeStyles(theme => ({
   },
 }));
 
-export default function ScheduleDrawer({ flow, history, ...props }) {
+export default function ScheduleDrawer({
+  flow,
+  history,
+  isViewMode,
+  ...props
+}) {
   const onClose = () => history.goBack();
   const classes = useStyle();
 
@@ -20,6 +25,7 @@ export default function ScheduleDrawer({ flow, history, ...props }) {
     <RightDrawerRouter {...props} path="schedule">
       <TitleBar title="Flow Schedule" />
       <FlowSchedule
+        disabled={isViewMode}
         flow={flow}
         onClose={onClose}
         className={classes.fbContDrawer}

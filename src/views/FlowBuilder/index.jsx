@@ -426,8 +426,8 @@ function FlowBuilder(props) {
         integrationId={integrationId}
       />
       <RunDrawer {...props} flowId={flowId} />
-      <ScheduleDrawer {...props} flow={flow} />
-      <SettingsDrawer {...props} flow={flow} />
+      <ScheduleDrawer isViewMode={isViewMode} {...props} flow={flow} />
+      <SettingsDrawer isViewMode={isViewMode} {...props} flow={flow} />
       {/* <WizardDrawer {...props} flowId={flowId} /> */}
 
       <CeligoPageBar
@@ -439,11 +439,11 @@ function FlowBuilder(props) {
         <div className={classes.actions}>
           <SwitchOnOff.component
             resource={flow}
-            disabled={isNewFlow}
+            disabled={isNewFlow || isViewMode}
             data-test="switchFlowOnOff"
           />
           <IconButton
-            disabled={isNewFlow || !(flow && flow.isRunnable)}
+            disabled={isNewFlow || !(flow && flow.isRunnable) || isViewMode}
             data-test="runFlow"
             onClick={() => {
               dispatch(actions.flow.run({ flowId }));
