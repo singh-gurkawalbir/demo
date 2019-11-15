@@ -47,6 +47,7 @@ import DynaRefreshableIntegrationAppSetting from './DynaRefreshableSelect/Refres
 import DynaDate from './dateTime/DynaDate';
 import DynaSQLQueryBuilder from './DynaSQLQueryBuilder';
 import DynaRelativeURIWithLookup from './DynaRelativeURIWithLookup';
+import Salesforce from './DynaSalesforceExportComponents';
 
 export default {
   mapping: DynaImportMapping,
@@ -101,4 +102,7 @@ export default {
   date: DynaDate,
   sqlquerybuilder: DynaSQLQueryBuilder,
   relativeuriwithlookup: DynaRelativeURIWithLookup,
+  salesforcesobjecttype: Salesforce.DynaRequiredTrigger,
+  salesforcerequiredtrigger: Salesforce.DynaReferenedFields,
+  salesforcereferencedfields: Salesforce.DynaSObjectType,
 };

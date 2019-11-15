@@ -1,6 +1,18 @@
 import { isNewId } from '../../../utils/resource';
 
 export default {
+  optionsHandler: (fieldId, fields) => {
+    if (
+      fieldId === 'salesforce.distributed.triggerMessage' ||
+      fieldId === 'salesforce.distributed.referencedFields'
+    ) {
+      const { value } = fields.find(
+        field => field.id === 'salesforce.sObjectType'
+      );
+
+      return value;
+    }
+  },
   preSave: formValues => {
     const retValues = { ...formValues };
 
@@ -106,7 +118,13 @@ export default {
     'once.booleanField': {
       fieldId: 'once.booleanField',
     },
-    'salesforce.sObjectType': { fieldId: 'salesforce.sObjectType' },
+    'salesforce.sObjectType': {
+      fieldId: 'salesforce.sObjectType',
+      type: 'refreshableselect',
+      filterKey: 'salesforce-sObjects-triggerable',
+      commMetaPath: r =>
+        `salesforce/metadata/connections/${r._connectionId}/sObjectTypes`,
+    },
     'salesforce.objectType': { fieldId: 'salesforce.objectType' },
     'salesforce.id': { fieldId: 'salesforce.id' },
     'salesforce.distributed.requiredTrigger': {

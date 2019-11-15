@@ -67,6 +67,15 @@ export default {
       custom: d.custom,
       triggerable: d.triggerable,
     })),
+  'salesforce-sObjects-triggerable': data =>
+    data
+      .filter(r => r.triggerable)
+      .map(d => ({
+        label: d.label,
+        value: d.name,
+        custom: d.custom,
+        triggerable: d.triggerable,
+      })),
   'salesforce-recordType': data =>
     data.fields.map(d => ({
       label: d.label,
