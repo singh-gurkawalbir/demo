@@ -6,13 +6,16 @@ import Icon from '../../../../components/icons/TransformIcon';
 import TransformEditorDialog from '../../../../components/AFE/TransformEditor/Dialog';
 import helpTextMap from '../../../../components/Help/helpTextMap';
 
-function TransformationDialog({ flowId, resource, onClose }) {
+function TransformationDialog({ flowId, resource, onClose, integrationId }) {
   const dispatch = useDispatch();
   const resourceId = resource._id;
   const sampleData = useSelector(state =>
     selectors.getSampleData(state, flowId, resourceId, 'transform', {
       isPageGenerator: true,
     })
+  );
+  const isViewMode = useSelector(state =>
+    selectors.isFormAMonitorLevelAccess(state, integrationId)
   );
   const rules = useMemo(
     () => resource && resource.transform && resource.transform.rules,
@@ -55,6 +58,7 @@ function TransformationDialog({ flowId, resource, onClose }) {
     <TransformEditorDialog
       title="Transform Mapping"
       id={resourceId}
+      disabled={isViewMode}
       data={sampleData}
       rule={rules && rules[0]}
       onClose={handleClose}
