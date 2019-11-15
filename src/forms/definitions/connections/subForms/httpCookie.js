@@ -7,6 +7,7 @@ export default {
     'http.auth.cookie.body': {
       fieldId: 'http.auth.cookie.body',
       visibleWhenAll: [{ field: 'http.auth.cookie.method', is: ['POST'] }],
+      required: true,
     },
     'http.auth.cookie.uri': { fieldId: 'http.auth.cookie.uri', required: true },
     'http.auth.cookie.successStatusCode': {
