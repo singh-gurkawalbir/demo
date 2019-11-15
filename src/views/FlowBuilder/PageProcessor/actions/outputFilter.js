@@ -9,7 +9,7 @@ import OutputFilterEditorDialog from '../../../../components/AFE/FilterEditor/Di
 function OutputFilterDialog({
   flowId,
   resource,
-  integrationId,
+  isViewMode,
   resourceType,
   onClose,
 }) {
@@ -17,9 +17,6 @@ function OutputFilterDialog({
   const resourceId = resource._id;
   const sampleData = useSelector(state =>
     selectors.getSampleData(state, flowId, resourceId, 'outputFilter')
-  );
-  const isViewMode = useSelector(state =>
-    selectors.isFormAMonitorLevelAccess(state, integrationId)
   );
   const rules = useMemo(
     () => resource && resource.filter && resource.filter.rules,

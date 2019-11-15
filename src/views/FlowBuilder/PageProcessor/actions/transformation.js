@@ -9,7 +9,7 @@ import helpTextMap from '../../../../components/Help/helpTextMap';
 function TransformationDialog({
   flowId,
   resource,
-  integrationId,
+  isViewMode,
   resourceType,
   onClose,
 }) {
@@ -58,10 +58,6 @@ function TransformationDialog({
       );
     }
   }, [dispatch, flowId, resourceId, resourceType, sampleData]);
-
-  const isViewMode = useSelector(state =>
-    selectors.isFormAMonitorLevelAccess(state, integrationId)
-  );
 
   return (
     <TransformEditorDialog

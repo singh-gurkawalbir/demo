@@ -1,7 +1,6 @@
 import { makeStyles } from '@material-ui/core/styles';
 import { Fragment } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import * as selectors from '../../../../reducers';
+import { useDispatch } from 'react-redux';
 import Icon from '../../../../components/icons/HookIcon';
 import actions from '../../../../actions';
 import Hooks from '../../../../components/Hooks';
@@ -20,7 +19,7 @@ function HooksDialog({
   flowId,
   resource,
   resourceType,
-  integrationId,
+  isViewMode,
   open,
   onClose,
 }) {
@@ -35,10 +34,6 @@ function HooksDialog({
     dispatch(actions.resource.commitStaged(resourceType, resourceId, 'value'));
     onClose();
   };
-
-  const isViewMode = useSelector(state =>
-    selectors.isFormAMonitorLevelAccess(state, integrationId)
-  );
 
   return (
     <ModalDialog

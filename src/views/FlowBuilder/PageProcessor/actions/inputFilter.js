@@ -9,7 +9,7 @@ function InputFilterDialog({
   flowId,
   resource,
   resourceType,
-  integrationId,
+  isViewMode,
   onClose,
 }) {
   const dispatch = useDispatch();
@@ -18,9 +18,6 @@ function InputFilterDialog({
     selectors.getSampleData(state, flowId, resourceId, 'inputFilter', {
       isImport: resourceType === 'imports',
     })
-  );
-  const isViewMode = useSelector(state =>
-    selectors.isFormAMonitorLevelAccess(state, integrationId)
   );
   const rules = useMemo(
     () => resource && resource.filter && resource.filter.rules,

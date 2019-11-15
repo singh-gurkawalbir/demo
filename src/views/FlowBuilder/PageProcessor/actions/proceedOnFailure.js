@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => ({
 function ProceedOnFailureDialog(props) {
   const dispatch = useDispatch();
   const classes = useStyles();
-  const { open, onClose, flowId, resourceIndex, integrationId } = props;
+  const { open, onClose, flowId, resourceIndex, isViewMode } = props;
   const { merged: flow = {} } = useSelector(state =>
     selectors.resourceData(state, 'flows', flowId)
   );
@@ -26,9 +26,6 @@ function ProceedOnFailureDialog(props) {
   const defaultValue = !!(
     pageProcessors[resourceIndex] &&
     pageProcessors[resourceIndex].proceedOnFailure
-  );
-  const isViewMode = useSelector(state =>
-    selectors.isFormAMonitorLevelAccess(state, integrationId)
   );
   const fieldMeta = {
     fieldMap: {

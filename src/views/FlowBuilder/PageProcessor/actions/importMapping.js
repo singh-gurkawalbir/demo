@@ -6,7 +6,7 @@ import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import helpTextMap from '../../../../components/Help/helpTextMap';
 
-function ImportMappingDialog({ flowId, integrationId, resource, onClose }) {
+function ImportMappingDialog({ flowId, isViewMode, resource, onClose }) {
   const resourceId = resource._id;
   const connectionId = resource._connectionId;
   const dispatch = useDispatch();
@@ -28,9 +28,6 @@ function ImportMappingDialog({ flowId, integrationId, resource, onClose }) {
       );
     }
   }, [dispatch, extractFields, flowId, resourceId]);
-  const isViewMode = useSelector(state =>
-    selectors.isFormAMonitorLevelAccess(state, integrationId)
-  );
 
   return (
     <Fragment>

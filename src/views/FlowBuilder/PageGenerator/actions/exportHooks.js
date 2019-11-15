@@ -5,14 +5,13 @@ import {
   Typography,
 } from '@material-ui/core';
 import { Fragment } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import * as selectors from '../../../../reducers';
+import { useDispatch } from 'react-redux';
 import Icon from '../../../../components/icons/HookIcon';
 import actions from '../../../../actions';
 import Hooks from '../../../../components/Hooks';
 import helpTextMap from '../../../../components/Help/helpTextMap';
 
-function HooksDialog({ flowId, resource, open, onClose, integrationId }) {
+function HooksDialog({ flowId, isViewMode, resource, open, onClose }) {
   const dispatch = useDispatch();
   const resourceId = resource._id;
   const resourceType = 'exports';
@@ -24,10 +23,6 @@ function HooksDialog({ flowId, resource, open, onClose, integrationId }) {
     dispatch(actions.resource.commitStaged(resourceType, resourceId, 'value'));
     onClose();
   };
-
-  const isViewMode = useSelector(state =>
-    selectors.isFormAMonitorLevelAccess(state, integrationId)
-  );
 
   return (
     <Dialog open={open} disabled={isViewMode}>

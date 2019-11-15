@@ -239,6 +239,9 @@ function FlowBuilder(props) {
 
     return imp ? 'import' : 'export';
   });
+  const isViewMode = useSelector(state =>
+    selectors.isFormAMonitorLevelAccess(state, integrationId)
+  );
   const flowData = useSelector(state =>
     selectors.getFlowDataState(state, flowId)
   );
@@ -478,7 +481,10 @@ function FlowBuilder(props) {
               className={classes.sourceTitle}
               variant="overline">
               SOURCE APPLICATIONS
-              <IconButton data-test="addGenerator" onClick={handleAddGenerator}>
+              <IconButton
+                data-test="addGenerator"
+                disabled={isViewMode}
+                onClick={handleAddGenerator}>
                 <AddIcon />
               </IconButton>
             </Typography>
@@ -495,6 +501,7 @@ function FlowBuilder(props) {
                     `${pg.application}${pg.webhookOnly}`
                   }
                   index={i}
+                  isViewMode={isViewMode}
                   isLast={pageGenerators.length === i + 1}
                 />
               ))}
@@ -502,6 +509,7 @@ function FlowBuilder(props) {
                 <AppBlock
                   integrationId={integrationId}
                   className={classes.newPG}
+                  isViewMode={isViewMode}
                   onBlockClick={handleAddGenerator}
                   blockType="newPG"
                 />
@@ -514,7 +522,10 @@ function FlowBuilder(props) {
               className={classes.destinationTitle}
               variant="overline">
               DESTINATION &amp; LOOKUP APPLICATIONS
-              <IconButton data-test="addProcessor" onClick={handleAddProcessor}>
+              <IconButton
+                disabled={isViewMode}
+                data-test="addProcessor"
+                onClick={handleAddProcessor}>
                 <AddIcon />
               </IconButton>
             </Typography>
@@ -526,6 +537,7 @@ function FlowBuilder(props) {
                   integrationId={integrationId}
                   key={pp._importId || pp._exportId || pp._connectionId}
                   index={i}
+                  isViewMode={isViewMode}
                   isLast={pageProcessors.length === i + 1}
                   onMove={handleMove}
                 />
@@ -534,6 +546,7 @@ function FlowBuilder(props) {
                 <AppBlock
                   className={classes.newPP}
                   integrationId={integrationId}
+                  isViewMode={isViewMode}
                   onBlockClick={handleAddProcessor}
                   blockType="newPP"
                 />
@@ -549,7 +562,7 @@ function FlowBuilder(props) {
                 ? `calc(${size * 25}vh + ${theme.spacing(3)}px)`
                 : bottomDrawerMin + theme.spacing(3),
             }}>
-            <TrashCan onDrop={handleDelete} />
+            <TrashCan disabled={isViewMode} onDrop={handleDelete} />
           </div>
         )}
 
