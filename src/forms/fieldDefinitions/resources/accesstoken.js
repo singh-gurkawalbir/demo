@@ -13,6 +13,7 @@ export default {
   autoPurgeAt: {
     type: 'select',
     label: 'Auto Purge Token',
+    required: true,
     // TODO dynamic options for connector tokens
     options: [
       {

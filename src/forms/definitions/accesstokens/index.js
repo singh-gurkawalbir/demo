@@ -24,24 +24,14 @@ export default {
     const accessTokenData = { ...formValues };
 
     if (accessTokenData['/autoPurgeAt'] === 'never') {
-      delete accessTokenData['/autoPurgeAt'];
-    } else if (accessTokenData['/autoPurgeAt']) {
+      accessTokenData['/autoPurgeAt'] = '';
+    } else {
       const currDate = new Date();
       const timeInMilliSeconds = currDate.getTime();
 
       accessTokenData['/autoPurgeAt'] = new Date(
         timeInMilliSeconds + parseInt(accessTokenData['/autoPurgeAt'], 10)
       ).toISOString();
-    } /* else if (accessTokenData.id) {
-      const existingData = accessTokens.find(at => at._id === id);
-
-      if (existingData.autoPurgeAt) {
-        accessTokenData.autoPurgeAt = existingData.autoPurgeAt;
-      }
-    } */
-
-    if (!accessTokenData['/autoPurgeAt']) {
-      delete accessTokenData['/autoPurgeAt'];
     }
 
     return accessTokenData;
