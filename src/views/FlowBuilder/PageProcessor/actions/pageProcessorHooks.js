@@ -1,6 +1,7 @@
 import { makeStyles } from '@material-ui/core/styles';
 import { Fragment } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import * as selectors from '../../../../reducers';
 import Icon from '../../../../components/icons/HookIcon';
 import actions from '../../../../actions';
 import Hooks from '../../../../components/Hooks';
@@ -15,7 +16,14 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function HooksDialog({ flowId, resource, resourceType, open, onClose }) {
+function HooksDialog({
+  flowId,
+  resource,
+  resourceType,
+  integrationId,
+  open,
+  onClose,
+}) {
   const dispatch = useDispatch();
   const classes = useStyles();
   const resourceId = resource._id;
@@ -28,11 +36,20 @@ function HooksDialog({ flowId, resource, resourceType, open, onClose }) {
     onClose();
   };
 
+  const isViewMode = useSelector(state =>
+    selectors.isFormAMonitorLevelAccess(state, integrationId)
+  );
+
   return (
-    <ModalDialog show={open} className={classes.wrapper} handleClose={onClose}>
+    <ModalDialog
+      show={open}
+      disabled={isViewMode}
+      className={classes.wrapper}
+      handleClose={onClose}>
       <div>Hooks</div>
       <Hooks
         onSave={onSave}
+        disabled={isViewMode}
         onCancel={onClose}
         defaultValue={defaultValue}
         resourceType={resourceType}
