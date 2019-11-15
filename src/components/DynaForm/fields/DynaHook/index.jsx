@@ -10,6 +10,7 @@ export default function DynaHook(props) {
     resourceType,
     resourceId,
     hookStage,
+    disabled,
     isPageGenerator,
   } = props;
   const dispatch = useDispatch();
@@ -97,6 +98,7 @@ export default function DynaHook(props) {
 
   return (
     <Hook
+      disabled={disabled}
       preHookData={preHookData}
       requestForPreHookData={requestForPreHookData}
       {...props}

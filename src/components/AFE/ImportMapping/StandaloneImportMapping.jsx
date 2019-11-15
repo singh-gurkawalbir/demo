@@ -26,7 +26,7 @@ export default function StandaloneImportMapping(props) {
     onClose,
     connectionId,
     extractFields,
-    integrationId,
+    disabled,
   } = props;
   const dispatch = useDispatch();
   const resourceData = useSelector(state =>
@@ -166,7 +166,7 @@ export default function StandaloneImportMapping(props) {
   return (
     <LoadResources resources="imports">
       <ImportMapping
-        integrationId={integrationId}
+        disabled={disabled}
         title="Define Import Mapping"
         key={changeIdentifier}
         id={id}

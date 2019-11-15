@@ -5,13 +5,22 @@ import actions from '../../../../actions';
 import Icon from '../../../../components/icons/InputFilterIcon';
 import InputFilterEditorDialog from '../../../../components/AFE/FilterEditor/Dialog';
 
-function InputFilterDialog({ flowId, resource, resourceType, onClose }) {
+function InputFilterDialog({
+  flowId,
+  resource,
+  resourceType,
+  integrationId,
+  onClose,
+}) {
   const dispatch = useDispatch();
   const resourceId = resource._id;
   const sampleData = useSelector(state =>
     selectors.getSampleData(state, flowId, resourceId, 'inputFilter', {
       isImport: resourceType === 'imports',
     })
+  );
+  const isViewMode = useSelector(state =>
+    selectors.isFormAMonitorLevelAccess(state, integrationId)
   );
   const rules = useMemo(
     () => resource && resource.filter && resource.filter.rules,
@@ -55,6 +64,7 @@ function InputFilterDialog({ flowId, resource, resourceType, onClose }) {
     <InputFilterEditorDialog
       title="Define Input Filter"
       id={resourceId + flowId}
+      disabled={isViewMode}
       data={sampleData}
       rule={rules}
       onClose={handleClose}

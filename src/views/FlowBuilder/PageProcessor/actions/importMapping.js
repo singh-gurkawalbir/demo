@@ -28,11 +28,14 @@ function ImportMappingDialog({ flowId, integrationId, resource, onClose }) {
       );
     }
   }, [dispatch, extractFields, flowId, resourceId]);
+  const isViewMode = useSelector(state =>
+    selectors.isFormAMonitorLevelAccess(state, integrationId)
+  );
 
   return (
     <Fragment>
       <StandaloneImportMapping
-        integrationId={integrationId}
+        disabled={isViewMode}
         resourceId={resourceId}
         extractFields={extractFields}
         connectionId={connectionId}

@@ -5,7 +5,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import DynaForm from '../../../../components/DynaForm';
 import DynaSubmit from '../../../../components/DynaForm/DynaSubmit';
-import { resourceData } from '../../../../reducers';
+import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import Icon from '../../../../components/icons/FilterIcon';
 
@@ -18,14 +18,17 @@ const useStyles = makeStyles(theme => ({
 function ProceedOnFailureDialog(props) {
   const dispatch = useDispatch();
   const classes = useStyles();
-  const { open, onClose, flowId, resourceIndex } = props;
+  const { open, onClose, flowId, resourceIndex, integrationId } = props;
   const { merged: flow = {} } = useSelector(state =>
-    resourceData(state, 'flows', flowId)
+    selectors.resourceData(state, 'flows', flowId)
   );
   const { pageProcessors = [] } = flow;
   const defaultValue = !!(
     pageProcessors[resourceIndex] &&
     pageProcessors[resourceIndex].proceedOnFailure
+  );
+  const isViewMode = useSelector(state =>
+    selectors.isFormAMonitorLevelAccess(state, integrationId)
   );
   const fieldMeta = {
     fieldMap: {
@@ -77,11 +80,14 @@ function ProceedOnFailureDialog(props) {
         What should happen to a record if the lookup fails?
       </DialogTitle>
       <DialogContent>
-        <DynaForm fieldMeta={fieldMeta}>
+        <DynaForm disabled={isViewMode} fieldMeta={fieldMeta}>
           <Button data-test="cancelProceedOnFailure" onClick={onClose}>
             Cancel
           </Button>
-          <DynaSubmit data-test="saveProceedOnFailure" onClick={handleSubmit}>
+          <DynaSubmit
+            disabled={isViewMode}
+            data-test="saveProceedOnFailure"
+            onClick={handleSubmit}>
             Save
           </DynaSubmit>
         </DynaForm>

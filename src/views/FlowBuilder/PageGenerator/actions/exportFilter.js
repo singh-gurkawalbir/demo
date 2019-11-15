@@ -6,13 +6,16 @@ import Icon from '../../../../components/icons/OutputFilterIcon';
 import ExportFilterEditorDialog from '../../../../components/AFE/FilterEditor/Dialog';
 import helpTextMap from '../../../../components/Help/helpTextMap';
 
-function ExportFilterDialog({ flowId, resource, onClose }) {
+function ExportFilterDialog({ flowId, resource, integrationId, onClose }) {
   const dispatch = useDispatch();
   const resourceId = resource._id;
   const sampleData = useSelector(state =>
     selectors.getSampleData(state, flowId, resourceId, 'outputFilter', {
       isPageGenerator: true,
     })
+  );
+  const isViewMode = useSelector(state =>
+    selectors.isFormAMonitorLevelAccess(state, integrationId)
   );
   const rules = useMemo(
     () => resource && resource.filter && resource.filter.rules,
@@ -54,6 +57,7 @@ function ExportFilterDialog({ flowId, resource, onClose }) {
   return (
     <ExportFilterEditorDialog
       title="Define Output Filter"
+      disabled={isViewMode}
       id={resourceId}
       data={sampleData}
       rule={rules}
