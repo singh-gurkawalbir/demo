@@ -105,9 +105,6 @@ function Filters({
   const { paging = {}, totalJobs = 0 } = useSelector(state =>
     selectors.flowJobsPagingDetails(state)
   );
-  // const flows = useSelector(
-  //   state => selectors.resourceList(state, { type: 'flows' }).resources
-  // );
   const {
     storeId,
     flowId: _flowId,
@@ -139,11 +136,6 @@ function Filters({
       return flow._integrationId === integrationId;
     });
   });
-  // const filteredFlows = flows.filter(flow =>
-  //   !integrationId
-  //     ? !flow._integrationId // standalone integration flows
-  //     : flow._integrationId === integrationId
-  // );
   // #endregion
   const { rowsPerPage } = paging;
   const maxPage = Math.ceil(totalJobs / rowsPerPage) - 1;
