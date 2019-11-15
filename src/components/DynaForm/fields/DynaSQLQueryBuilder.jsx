@@ -88,19 +88,6 @@ export default function DynaSQLQueryBuilder(props) {
     }
   }, [dispatch, flowId, resourceId, resourceType, sampleData]);
 
-  useEffect(() => {
-    if (!extractFields) {
-      dispatch(
-        actions.flowData.requestSampleData(
-          flowId,
-          resourceId,
-          'imports',
-          'importMappingExtract'
-        )
-      );
-    }
-  }, [dispatch, extractFields, flowId, resourceId]);
-
   if (sampleData && !sampleDataLoaded) {
     setDataState({
       ...dataState,
@@ -114,6 +101,19 @@ export default function DynaSQLQueryBuilder(props) {
       changeIdentifier: changeIdentifier + 1,
     });
   }
+
+  useEffect(() => {
+    if (!extractFields) {
+      dispatch(
+        actions.flowData.requestSampleData(
+          flowId,
+          resourceId,
+          'imports',
+          'importMappingExtract'
+        )
+      );
+    }
+  }, [dispatch, extractFields, flowId, resourceId]);
 
   let parsedRule =
     typeof arrayIndex === 'number' && Array.isArray(value)
@@ -143,11 +143,11 @@ export default function DynaSQLQueryBuilder(props) {
   }
 
   const formattedDefaultData = JSON.stringify(
-    getDefaultData(defaultData),
+    { data: getDefaultData(defaultData) },
     null,
     2
   );
-  const formattedSampleData = JSON.stringify(sampleData, null, 2);
+  const formattedSampleData = JSON.stringify({ data: sampleData }, null, 2);
   const handleEditorClick = () => {
     setShowEditor(!showEditor);
   };
