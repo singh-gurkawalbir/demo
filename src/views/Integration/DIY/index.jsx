@@ -109,7 +109,7 @@ export default function Integration({ match }) {
           </IconTextButton>
         </CeligoPageBar>
 
-        <IntegrationTabs tabs={tabs} />
+        <IntegrationTabs tabs={tabs} match={match} />
       </LoadResources>
     </Fragment>
   );

@@ -1,11 +1,11 @@
 import { Fragment, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
+import { makeStyles } from '@material-ui/core/styles';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import LoadResources from '../../../components/LoadResources';
-import TrashIcon from '../../../components/icons/TrashIcon';
-import CopyIcon from '../../../components/icons/CopyIcon';
+import AddIcon from '../../../components/icons/AddIcon';
 // TODO: Azhar, please update these next 3 icons, once provided by the product team.
 import FlowsIcon from '../../../components/icons/FlowBuilderIcon';
 import AdminIcon from '../../../components/icons/SettingsIcon';
@@ -14,12 +14,12 @@ import ConnectionsIcon from '../../../components/icons/ConnectionsIcon';
 import IconTextButton from '../../../components/IconTextButton';
 import CeligoPageBar from '../../../components/CeligoPageBar';
 import ResourceDrawer from '../../../components/drawer/Resource';
-import EditableText from '../../../components/EditableText';
+import DynaSelect from '../../../components/DynaForm/fields/DynaSelect';
+import ChipInput from '../../../components/ChipInput';
 import AdminPanel from './panels/Admin';
 import FlowsPanel from './panels/Flows';
 import ConnectionsPanel from './panels/Connections';
 import DashboardPanel from './panels/Dashboard';
-import getRoutePath from '../../../utils/routePaths';
 import IntegrationTabs from '../common/Tabs';
 
 const tabs = [
@@ -38,31 +38,75 @@ const tabs = [
   },
   { path: 'admin', label: 'Admin', Icon: AdminIcon, Panel: AdminPanel },
 ];
+const useStyles = makeStyles(theme => ({
+  tag: {
+    marginLeft: theme.spacing(1),
+  },
+  actions: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+}));
 
-export default function IntegrationApp({ match }) {
+export default function IntegrationApp({ match, history }) {
+  const classes = useStyles();
   const dispatch = useDispatch();
-  const { integrationId } = match.params;
+  const { integrationId, storeId, tab } = match.params;
   const integration = useSelector(state =>
     selectors.resource(state, 'integrations', integrationId)
   );
-  const patchIntegration = useCallback(
-    (path, value) => {
-      const patchSet = [{ op: 'replace', path, value }];
+  const defaultStoreId = useSelector(state =>
+    selectors.defaultStoreId(state, integrationId, storeId)
+  );
+  const handleTagChangeHandler = useCallback(
+    tag => {
+      const patchSet = [{ op: 'replace', path: '/tag', value: tag }];
 
-      dispatch(actions.resource.patchStaged(integrationId, patchSet, 'value'));
       dispatch(
-        actions.resource.commitStaged('integrations', integrationId, 'value')
+        actions.resource.patch('integrations', integrationId, patchSet, {
+          doNotRefetch: true, // could this prop be renamed to 'skipFetch'?
+        })
       );
     },
     [dispatch, integrationId]
   );
+  const handleStoreChange = useCallback(
+    (fieldId, storeId) => {
+      history.push(`${match.url}/${storeId}`);
+    },
+    [history, match.url]
+  );
+  const handleAddNewStoreClick = useCallback(() => {
+    history.push(`/pg/connectors/${integrationId}/install/addNewStore`);
+  }, [history, integrationId]);
 
-  function handleTitleChange(title) {
-    patchIntegration('/name', title);
+  // console.log(integrationId, storeId, tab);
+
+  // There is no need for further processing if no integration
+  // is returned. Most likely case is that there is a pending IO
+  // call for integrations.
+  if (!integration) {
+    return <LoadResources required resources="integrations" />;
   }
 
-  function handleDescriptionChange(description) {
-    patchIntegration('/description', description);
+  const { supportsMultiStore, storeLabel } = integration.settings || {};
+
+  // To support breadcrumbs, and also to have a more robust url interface,
+  // we want to "self-heal" partial urls hitting this page.  If an integration app
+  // is routed to this component without a storeId (if it supports multi-store),
+  // or if no tab is selected, we rewrite the current url in the history to carry
+  // this state information forward.
+  if (supportsMultiStore) {
+    if (!storeId) {
+      return (
+        <Redirect
+          push={false}
+          to={`/pg/integrationApp/${integrationId}/${defaultStoreId}/flows`}
+        />
+      );
+    }
+  } else if (!tab) {
+    return <Redirect push={false} to={`${match.url}/flows`} />;
   }
 
   // TODO: <ResourceDrawer> Can be further optimized to take advantage
@@ -71,46 +115,35 @@ export default function IntegrationApp({ match }) {
   return (
     <Fragment>
       <ResourceDrawer match={match} />
-
-      <LoadResources required resources="integrations">
-        <CeligoPageBar
-          title={
-            integration ? (
-              <EditableText onChange={handleTitleChange}>
-                {integration.name}
-              </EditableText>
-            ) : (
-              'Standalone integrations'
-            )
-          }
-          infoText={
-            integration ? (
-              <EditableText onChange={handleDescriptionChange}>
-                {integration.description}
-              </EditableText>
-            ) : (
-              undefined
-            )
-          }>
-          {integration && (
+      <CeligoPageBar
+        title={integration.name}
+        titleTag={
+          <ChipInput
+            value={integration.tag || 'tag'}
+            className={classes.tag}
+            variant="outlined"
+            onChange={handleTagChangeHandler}
+          />
+        }
+        infoText={integration.description}>
+        {supportsMultiStore && (
+          <div className={classes.actions}>
             <IconTextButton
-              component={Link}
-              to={getRoutePath(
-                `/clone/integrations/${integration._id}/preview`
-              )}
               variant="text"
-              data-test="cloneIntegration">
-              <CopyIcon /> Clone integration
+              data-test={`add${storeLabel}`}
+              onClick={handleAddNewStoreClick}>
+              <AddIcon /> Add {storeLabel}
             </IconTextButton>
-          )}
+            <DynaSelect
+              onFieldChange={handleStoreChange}
+              defaultValue={storeId}
+              options={[{ items: integration.stores || [] }]}
+            />
+          </div>
+        )}
+      </CeligoPageBar>
 
-          <IconTextButton variant="text" data-test="deleteIntegration">
-            <TrashIcon /> Delete integration
-          </IconTextButton>
-        </CeligoPageBar>
-
-        <IntegrationTabs tabs={tabs} />
-      </LoadResources>
+      <IntegrationTabs tabs={tabs} />
     </Fragment>
   );
 }

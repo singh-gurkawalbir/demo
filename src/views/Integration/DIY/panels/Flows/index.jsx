@@ -10,7 +10,7 @@ import IconTextButton from '../../../../../components/IconTextButton';
 import AddIcon from '../../../../../components/icons/AddIcon';
 import AttachIcon from '../../../../../components/icons/ConnectionsIcon';
 import PanelHeader from '../../../common/PanelHeader';
-import FlowCard from './Card';
+import FlowCard from '../../../common/FlowCard';
 
 const useStyles = makeStyles(theme => ({
   root: {

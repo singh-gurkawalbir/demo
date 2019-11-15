@@ -5,18 +5,25 @@ import { Link, useHistory } from 'react-router-dom';
 import TimeAgo from 'react-timeago';
 import { makeStyles } from '@material-ui/styles';
 import { Typography, Grid, IconButton } from '@material-ui/core';
-import actions from '../../../../../../actions';
-import * as selectors from '../../../../../../reducers';
-import { defaultConfirmDialog } from '../../../../../../components/ConfirmDialog';
-import FlowEllipsisMenu from '../../../../../../components/FlowEllipsisMenu';
-import RunIcon from '../../../../../../components/icons/RunIcon';
-import OnOffSwitch from '../../../../../../components/SwitchToggle';
-import InfoIconButton from '../../../../common/InfoIconButton';
+import actions from '../../../../actions';
+import * as selectors from '../../../../reducers';
+import { defaultConfirmDialog } from '../../../../components/ConfirmDialog';
+import FlowEllipsisMenu from '../../../../components/FlowEllipsisMenu';
+import RunIcon from '../../../../components/icons/RunIcon';
+import OnOffSwitch from '../../../../components/SwitchToggle';
+import InfoIconButton from '../InfoIconButton';
 
 const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
     margin: theme.spacing(1, 2),
+  },
+  flowLink: {
+    display: 'inline',
+    transition: theme.transitions.create('color'),
+    '&:hover': {
+      color: theme.palette.primary.dark,
+    },
   },
   cardContent: {
     display: 'flex',
@@ -115,14 +122,17 @@ export default function FlowCard({ flowId }) {
       <div className={clsx(classes.statusBar, classes[status])} />
       <div className={classes.cardContent}>
         <Grid item xs={9}>
-          <Grid container alignItems="center">
+          <div>
             <Link to={`flowBuilder/${flowId}`}>
-              <Typography color="primary" variant="h4">
+              <Typography
+                color="primary"
+                variant="h4"
+                className={classes.flowLink}>
                 {name}
               </Typography>
             </Link>
             <InfoIconButton info={description} />
-          </Grid>
+          </div>
           <Typography variant="caption" component="span">
             {getRunLabel()} | Last Modified <TimeAgo date={lastModified} />
           </Typography>
