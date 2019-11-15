@@ -7,6 +7,7 @@ import OnOff from '../../../components/OnOff';
 import MappingDialog from '../../../components/MappingDialog/Mapping';
 import FlowSettings from './Actions/FlowSettings';
 import Description from './Actions/Description';
+import MatchRuleEngine from './Actions/MatchRuleEngine';
 
 export default {
   columns: (sectionContext, actionProps) => {
@@ -87,7 +88,15 @@ export default {
       columnData.push({
         heading: 'Matching Rule Engine',
         value: function ScheduleAction(r) {
-          return <Schedule.component resource={r} />;
+          const settings = flowSettings.find(f => f._id === r._id) || {};
+
+          return (
+            <MatchRuleEngine
+              resource={r}
+              disable={!settings.matchingRules}
+              settings={settings}
+            />
+          );
         },
       });
     }
