@@ -11,6 +11,7 @@ import actions from '../../actions';
 import ArrowLeftIcon from '../icons/ArrowLeftIcon';
 import ArrowRightIcon from '../icons/ArrowRightIcon';
 import CeligoSelect from '../CeligoSelect';
+import { STANDALONE_INTEGRATION } from '../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -104,20 +105,45 @@ function Filters({
   const { paging = {}, totalJobs = 0 } = useSelector(state =>
     selectors.flowJobsPagingDetails(state)
   );
-  const flows = useSelector(
-    state => selectors.resourceList(state, { type: 'flows' }).resources
-  );
+  // const flows = useSelector(
+  //   state => selectors.resourceList(state, { type: 'flows' }).resources
+  // );
   const {
+    storeId,
     flowId: _flowId,
     status = 'all',
     hideEmpty = false,
     currentPage = 0,
   } = useSelector(state => selectors.filter(state, filterKey));
-  const filteredFlows = flows.filter(flow =>
-    !integrationId
-      ? !flow._integrationId // standalone integration flows
-      : flow._integrationId === integrationId
+  const integration = useSelector(state =>
+    selectors.integrationAppSettings(state, integrationId)
   );
+  const { supportsMultiStore, storeLabel } = integration.settings || {};
+  const filteredFlows = useSelector(state => {
+    if (integration && integration._connectorId) {
+      return selectors.integrationAppFlowSettings(
+        state,
+        integrationId,
+        null,
+        storeId
+      ).flows;
+    }
+
+    const flows = selectors.resourceList(state, { type: 'flows' }).resources;
+
+    return flows.filter(flow => {
+      if (!integrationId || integrationId === STANDALONE_INTEGRATION.id) {
+        return !flow._integrationId; // standalone integration flows
+      }
+
+      return flow._integrationId === integrationId;
+    });
+  });
+  // const filteredFlows = flows.filter(flow =>
+  //   !integrationId
+  //     ? !flow._integrationId // standalone integration flows
+  //     : flow._integrationId === integrationId
+  // );
   // #endregion
   const { rowsPerPage } = paging;
   const maxPage = Math.ceil(totalJobs / rowsPerPage) - 1;
@@ -130,6 +156,10 @@ function Filters({
     // we need to reset the results to show the first page.
     if (key !== 'currentPage') {
       filter.currentPage = 0;
+    }
+
+    if (key === 'storeId') {
+      filter.flowId = '';
     }
 
     dispatch(actions.patchFilter(filterKey, filter));
@@ -172,6 +202,21 @@ function Filters({
           {numJobsSelected} selected jobs
         </MenuItem>
       </CeligoSelect>
+
+      {supportsMultiStore && (
+        <CeligoSelect
+          className={classes.flow}
+          onChange={e => patchFilter('storeId', e.target.value)}
+          displayEmpty
+          value={storeId || ''}>
+          <MenuItem value="">Select a {storeLabel}</MenuItem>
+          {integration.stores.map(opt => (
+            <MenuItem key={opt.value} value={opt.value}>
+              {opt.label || opt.value}
+            </MenuItem>
+          ))}
+        </CeligoSelect>
+      )}
 
       {!flowId && (
         <CeligoSelect
