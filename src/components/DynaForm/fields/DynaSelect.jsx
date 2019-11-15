@@ -124,10 +124,8 @@ export default function DynaSelect(props) {
           IconComponent={ArrowDownIcon}
           disableUnderline
           displayEmpty
-          onChange={evt => {
-            const { value: evtValue } = evt.target;
-
-            onFieldChange(id, evtValue);
+          onChange={e => {
+            onFieldChange(id, e.target.value);
           }}
           input={<Input name={name} id={id} />}>
           {items}

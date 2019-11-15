@@ -23,8 +23,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
   },
   subNav: {
-    width: 200,
-    // height: '100%',
+    minWidth: 200,
     borderRight: `solid 1px ${theme.palette.secondary.lightest}`,
   },
   content: {

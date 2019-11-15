@@ -2,6 +2,7 @@ import { Fragment, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
+import { Select, MenuItem } from '@material-ui/core';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import LoadResources from '../../../components/LoadResources';
@@ -14,7 +15,6 @@ import ConnectionsIcon from '../../../components/icons/ConnectionsIcon';
 import IconTextButton from '../../../components/IconTextButton';
 import CeligoPageBar from '../../../components/CeligoPageBar';
 import ResourceDrawer from '../../../components/drawer/Resource';
-import DynaSelect from '../../../components/DynaForm/fields/DynaSelect';
 import ChipInput from '../../../components/ChipInput';
 import AdminPanel from './panels/Admin';
 import FlowsPanel from './panels/Flows';
@@ -46,14 +46,28 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     alignItems: 'center',
   },
+  storeSelect: {
+    transition: theme.transitions.create('border'),
+    paddingLeft: theme.spacing(1),
+    border: `solid 1px ${theme.palette.secondary.lightest}`,
+    height: 'unset',
+    '&:hover': {
+      borderColor: theme.palette.primary.main,
+    },
+    '& > div': {
+      paddingTop: theme.spacing(1) + 1,
+    },
+  },
 }));
 
 export default function IntegrationApp({ match, history }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const { integrationId, storeId, tab } = match.params;
+  // Note this selector should return undefined/null if no
+  // integration exists. not a stubbed out complex object.
   const integration = useSelector(state =>
-    selectors.resource(state, 'integrations', integrationId)
+    selectors.integrationAppSettings(state, integrationId)
   );
   const defaultStoreId = useSelector(state =>
     selectors.defaultStoreId(state, integrationId, storeId)
@@ -71,10 +85,12 @@ export default function IntegrationApp({ match, history }) {
     [dispatch, integrationId]
   );
   const handleStoreChange = useCallback(
-    (fieldId, storeId) => {
-      history.push(`${match.url}/${storeId}`);
+    e => {
+      history.push(
+        `/pg/integrationApp/${integrationId}/${e.target.value}/flows`
+      );
     },
-    [history, match.url]
+    [history, integrationId]
   );
   const handleAddNewStoreClick = useCallback(() => {
     history.push(`/pg/connectors/${integrationId}/install/addNewStore`);
@@ -85,7 +101,7 @@ export default function IntegrationApp({ match, history }) {
   // There is no need for further processing if no integration
   // is returned. Most likely case is that there is a pending IO
   // call for integrations.
-  if (!integration) {
+  if (!integration || !integration._id) {
     return <LoadResources required resources="integrations" />;
   }
 
@@ -134,11 +150,16 @@ export default function IntegrationApp({ match, history }) {
               onClick={handleAddNewStoreClick}>
               <AddIcon /> Add {storeLabel}
             </IconTextButton>
-            <DynaSelect
-              onFieldChange={handleStoreChange}
-              defaultValue={storeId}
-              options={[{ items: integration.stores || [] }]}
-            />
+            <Select
+              className={classes.storeSelect}
+              onChange={handleStoreChange}
+              value={storeId}>
+              {integration.stores.map(s => (
+                <MenuItem key={s.value} value={s.value}>
+                  {s.label}
+                </MenuItem>
+              ))}
+            </Select>
           </div>
         )}
       </CeligoPageBar>

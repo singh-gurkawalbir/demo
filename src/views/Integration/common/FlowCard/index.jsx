@@ -53,7 +53,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function FlowCard({ flowId }) {
+export default function FlowCard({ flowId, excludeActions }) {
   const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
@@ -149,7 +149,7 @@ export default function FlowCard({ flowId }) {
             </IconButton>
           )}
 
-          <FlowEllipsisMenu flowId={flowId} />
+          <FlowEllipsisMenu flowId={flowId} exclude={excludeActions} />
         </Grid>
       </div>
     </div>

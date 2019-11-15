@@ -21,7 +21,6 @@ const useStyles = makeStyles(theme => ({
   },
   subNav: {
     minWidth: 200,
-    // height: '100%',
     borderRight: `solid 1px ${theme.palette.secondary.lightest}`,
   },
   content: {
@@ -64,7 +63,11 @@ function FlowList({ integrationId, storeId }) {
         )}
       </PanelHeader>
       {flows.map(f => (
-        <FlowCard key={f._id} flowId={f._id} />
+        <FlowCard
+          key={f._id}
+          flowId={f._id}
+          excludeActions={['detach', 'clone', 'delete']}
+        />
       ))}
     </LoadResources>
   );
@@ -80,7 +83,9 @@ export default function FlowsPanel({ storeId, integrationId }) {
   // If someone arrives at this view without requesting a section, then we
   // handle this by redirecting them to the first available section. We can
   // not hard-code this because different sections exist across IAs.
-  if (match.isExact) {
+  if (match.isExact && flowSections && flowSections.length) {
+    console.log(match);
+
     return (
       <Redirect push={false} to={`${match.url}/${flowSections[0].titleId}`} />
     );
