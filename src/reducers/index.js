@@ -961,38 +961,6 @@ export function integrationAppGeneralSettings(state, id, storeId) {
   };
 }
 
-export function integrationAppFlowsByStore(state, id) {
-  if (!state) return {};
-  const integrationResource = fromData.integrationAppSettings(state.data, id);
-  const { supportsMultiStore, sections = [] } =
-    integrationResource.settings || {};
-  const flowsByStore = {};
-
-  if (supportsMultiStore) {
-    const flows = resource(state, {
-      type: 'flows',
-      filter: {
-        _integrationId: id,
-      },
-    }).resources;
-
-    sections.forEach(store => {
-      if (store.sections) {
-        store.sections.forEach(sec => {
-          const storeFlowIds = map(sec.flows, '_id');
-          const storeFlows = flows
-            .filter(f => storeFlowIds.includes(f._id))
-            .map(f => ({ name: f.name, _id: f._id }));
-
-          flowsByStore[store.id] = storeFlows;
-        });
-      }
-    });
-  }
-
-  return flowsByStore;
-}
-
 export function integrationAppFlowSettings(state, id, section, storeId) {
   if (!state) return {};
   const integrationResource = fromData.integrationAppSettings(state.data, id);
