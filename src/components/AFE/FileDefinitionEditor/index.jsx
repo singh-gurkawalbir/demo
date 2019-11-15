@@ -6,7 +6,7 @@ import Editor from '../GenericEditor';
 import { FILE_GENERATOR } from './constants';
 
 export default function FileDefinitionEditor(props) {
-  const { editorId, layout = 'column', processor } = props;
+  const { editorId, layout = 'column', processor, disabled } = props;
   const { rule, data, result, error, violations } = useSelector(state =>
     selectors.editor(state, editorId)
   );
@@ -60,6 +60,7 @@ export default function FileDefinitionEditor(props) {
       ruleTitle="File definition rules"
       dataTitle="Available resources"
       resultTitle={resultTitle}
+      disabled={disabled}
     />
   );
 }

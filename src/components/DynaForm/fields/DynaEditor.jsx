@@ -51,6 +51,7 @@ export default function DynaEditor(props) {
     errorMessages,
     isValid,
     editorClassName,
+    disabled,
   } = props;
   const handleEditorClick = () => {
     setShowEditor(!showEditor);
@@ -104,6 +105,7 @@ export default function DynaEditor(props) {
             name={id}
             value={value}
             mode={resultantMode}
+            readOnly={disabled}
             onChange={value => handleUpdate(value)}
           />
         </div>
@@ -140,6 +142,7 @@ export default function DynaEditor(props) {
             editorClassName
           )}>
           <CodeEditor
+            readOnly={disabled}
             name={`${id}-inline`}
             value={value}
             mode={mode}

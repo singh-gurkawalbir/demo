@@ -100,7 +100,7 @@ export default {
           r &&
           r.http &&
           r.http.baseURI &&
-          r.http.baseURI.indexOf('https://api.bigcommerce.com/stores/') > -1
+          r.http.baseURI.indexOf('https://api.bigcommerce.com/stores/') !== -1
         ) {
           value = r.http.baseURI.replace(
             'https://api.bigcommerce.com/stores/',

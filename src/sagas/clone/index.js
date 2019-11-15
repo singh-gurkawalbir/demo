@@ -14,13 +14,16 @@ export function* requestPreview({ resourceType, resourceId }) {
       message: `Fetching Preview`,
     });
   } catch (error) {
-    yield put(actions.clone.failedPreview(resourceType, resourceId));
+    yield put(actions.template.failedPreview(`${resourceType}-${resourceId}`));
 
     return undefined;
   }
 
   yield put(
-    actions.clone.receivedPreview(components, resourceType, resourceId)
+    actions.template.receivedPreview(
+      components,
+      `${resourceType}-${resourceId}`
+    )
   );
 }
 
@@ -49,66 +52,20 @@ export function* createComponents({ resourceType, resourceId }) {
       message: `Cloning...`,
     });
   } catch (error) {
-    yield put(actions.clone.failedInstall(resourceType, resourceId));
+    yield put(actions.template.failedInstall(`${resourceType}-${resourceId}`));
 
     return undefined;
   }
 
   yield put(
-    actions.clone.createdComponents(components, resourceType, resourceId)
+    actions.template.createdComponents(
+      components,
+      `${resourceType}-${resourceId}`
+    )
   );
-}
-
-export function* verifyBundleOrPackageInstall({
-  step,
-  connection,
-  resourceType,
-  resourceId,
-}) {
-  const path = `/connections/${connection._id}/distributed`;
-  let response;
-
-  try {
-    response = yield call(apiCallWithRetry, {
-      path,
-      message: `Verifying Bundle/Package Installation...`,
-    });
-  } catch (error) {
-    yield put(
-      actions.clone.updateStep(
-        { status: 'failed', installURL: step.installURL },
-        resourceType,
-        resourceId
-      )
-    );
-
-    return undefined;
-  }
-
-  if ((response || {}).success) {
-    yield put(
-      actions.clone.updateStep(
-        { status: 'completed', installURL: step.installURL },
-        resourceType,
-        resourceId
-      )
-    );
-  } else {
-    yield put(
-      actions.clone.updateStep(
-        { status: 'failed', installURL: step.installURL },
-        resourceType,
-        resourceId
-      )
-    );
-  }
 }
 
 export const cloneSagas = [
   takeEvery(actionTypes.CLONE.PREVIEW_REQUEST, requestPreview),
-  takeEvery(
-    actionTypes.CLONE.VERIFY_BUNDLE_INSTALL,
-    verifyBundleOrPackageInstall
-  ),
   takeEvery(actionTypes.CLONE.CREATE_COMPONENTS, createComponents),
 ];

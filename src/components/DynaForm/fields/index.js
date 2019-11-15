@@ -2,6 +2,7 @@ import DynaMultiSelect from './DynaMultiSelect';
 import DynaRadioGroup from './DynaRadioGroup';
 import DynaSelect from './DynaSelect';
 import DynaLabel from './DynaLabel';
+import DynaCeligoTable from './DynaCeligoTable';
 import DynaSelectResource from './DynaSelectResource';
 import DynaSelectApplication from './DynaSelectApplication';
 import DynaText from './DynaText';
@@ -78,6 +79,7 @@ export default {
   ftpport: DynaTextFtpPort,
   uploadfile: DynaUploadFile,
   labeltitle: DynaLabel,
+  celigotable: DynaCeligoTable,
   hook: DynaHook,
   scriptcontent: DynaScriptContent,
   filedefinitionselect: DynaFileDefinitionSelect,

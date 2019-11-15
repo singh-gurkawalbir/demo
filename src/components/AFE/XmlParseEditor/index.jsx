@@ -19,7 +19,7 @@ const useStyles = makeStyles({
 });
 
 export default function XmlParseEditor(props) {
-  const { editorId } = props;
+  const { editorId, disabled } = props;
   const classes = useStyles(props);
   const { data, result, error, violations } = useSelector(state =>
     selectors.editor(state, editorId)
@@ -49,7 +49,7 @@ export default function XmlParseEditor(props) {
     <PanelGrid className={classes.template}>
       <PanelGridItem gridArea="rule">
         <PanelTitle title="XML Parse Options" />
-        <XmlParsePanel editorId={editorId} />
+        <XmlParsePanel disabled={disabled} editorId={editorId} />
       </PanelGridItem>
       <PanelGridItem gridArea="data">
         <PanelTitle title="XML to Parse" />
@@ -58,6 +58,7 @@ export default function XmlParseEditor(props) {
           value={data}
           mode="xml"
           onChange={handleDataChange}
+          readOnly={disabled}
         />
       </PanelGridItem>
       <PanelGridItem gridArea="result">

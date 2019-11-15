@@ -144,10 +144,12 @@ export default {
       return type;
     },
   },
+
   'http.relativeURI': {
     type: 'relativeuriwithlookup',
     label: 'Relative URI',
     placeholder: 'Optional',
+    connectionId: r => r && r._connectionId,
     refreshOptionsOnChangesTo: ['http.lookups'],
     visibleWhen: [
       {
@@ -164,6 +166,9 @@ export default {
   },
   'http.body': {
     type: 'httprequestbody',
+    useSampleDataAsArray: true,
+    connectionId: r => r && r._connectionId,
+    arrayIndex: 0,
     defaultValue: r =>
       Array.isArray(((r || {}).http || {}).body) ? r.http.body[0] : undefined,
     label: 'Build HTTP Request Body',

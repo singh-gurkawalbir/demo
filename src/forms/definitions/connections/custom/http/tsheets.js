@@ -11,6 +11,8 @@ export default {
     '/http/auth/oauth/authURI': 'https://rest.tsheets.com/api/v1/authorize',
     '/http/auth/oauth/tokenURI': 'https://rest.tsheets.com/api/v1/grant',
     '/http/auth/oauth/scopeDelimiter': ' ',
+    '/http/auth/token/refreshMethod': 'POST',
+    '/http/auth/token/refreshMediaType': 'urlencoded',
   }),
   fieldMap: {
     name: { fieldId: 'name' },
@@ -20,6 +22,7 @@ export default {
       startAdornment: 'https://',
       endAdornment: '.tsheets.com/api',
       label: 'Subdomain',
+      required: true,
       helpText:
         'Please enter your subdomain here which can be obtained from the base url of your Tsheets account.',
       validWhen: {

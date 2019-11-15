@@ -59,6 +59,7 @@ export default {
   dataURITemplate: {
     type: 'relativeuri',
     label: 'Data URITemplate',
+    connectionId: r => r && r._connectionId,
   },
   oneToMany: {
     type: 'checkbox',

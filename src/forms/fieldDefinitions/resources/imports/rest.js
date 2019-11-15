@@ -125,10 +125,11 @@ export default {
     },
   },
   'rest.relativeURI': {
-    type: 'text',
+    type: 'relativeuriwithlookup',
     label: 'Relative URI',
     required: true,
-    placeholder: 'Optional',
+    connectionId: r => r && r._connectionId,
+    refreshOptionsOnChangesTo: ['rest.lookups'],
     visibleWhen: [
       {
         field: 'rest.method',
@@ -158,7 +159,8 @@ export default {
     defaultValue: r =>
       Array.isArray(((r || {}).rest || {}).body) ? r.rest.body[0] : undefined,
     label: 'Build HTTP Request Body',
-    refreshOptionsOnChangesTo: ['http.lookups'],
+    connectionId: r => r && r._connectionId,
+    refreshOptionsOnChangesTo: ['rest.lookups'],
     visibleWhen: [
       {
         field: 'rest.method',

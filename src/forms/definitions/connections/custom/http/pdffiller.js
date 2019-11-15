@@ -6,6 +6,8 @@ export default {
     '/type': 'http',
     '/assistant': 'pdffiller',
     '/http/baseURI': 'https://api.pdffiller.com/v2',
+    '/http/auth/token/refreshMethod': 'POST',
+    '/http/auth/token/refreshMediaType': 'urlencoded',
     '/http/auth/oauth/authURI': 'https://developers.pdffiller.com/api_access',
     '/http/auth/oauth/tokenURI': 'https://api.pdffiller.com/v2/oauth/token',
   }),

@@ -5,7 +5,7 @@ import Lookup from './Lookup';
 import LookupListing from './LookupListing';
 
 export default function ManageLookup(props) {
-  const { lookups, onUpdate, onCancel } = props;
+  const { lookups, onUpdate, onCancel, disabled } = props;
   const [isListView, showListView] = useState(true);
   const [lookup, setLookup] = useState({});
   const [error, setError] = useState();
@@ -70,6 +70,7 @@ export default function ManageLookup(props) {
           onUpdate={handleEdit}
           onDelete={handleDelete}
           onCancel={onCancel}
+          disabled={disabled}
         />
       ) : (
         <Lookup
@@ -77,6 +78,7 @@ export default function ManageLookup(props) {
           error={error}
           onCancel={toggleLookupMode}
           onSave={handleSubmit}
+          disabled={disabled}
         />
       )}
     </ModalDialog>

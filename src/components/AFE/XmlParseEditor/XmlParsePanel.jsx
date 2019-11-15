@@ -31,7 +31,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function XmlParsePanel(props) {
-  const { editorId } = props;
+  const { editorId, disabled } = props;
   const classes = useStyles(props);
   const {
     advanced = false,
@@ -57,6 +57,7 @@ export default function XmlParsePanel(props) {
           placeholder="none"
           multiline
           rowsMax={4}
+          disabled={disabled}
           className={classes.textField}
           defaultValue={resourcePath || ''}
           InputLabelProps={{
@@ -71,6 +72,7 @@ export default function XmlParsePanel(props) {
           }}>
           {['Advanced', 'Simple'].map(label => (
             <FormControlLabel
+              disabled={disabled}
               key={label}
               control={
                 <Radio
@@ -93,6 +95,7 @@ export default function XmlParsePanel(props) {
             <FormControlLabel
               control={
                 <Checkbox
+                  disabled={disabled}
                   checked={trimSpaces}
                   onChange={() => patchEditor('trimSpaces', !trimSpaces)}
                   color="primary"
@@ -104,6 +107,7 @@ export default function XmlParsePanel(props) {
             <FormControlLabel
               control={
                 <Checkbox
+                  disabled={disabled}
                   checked={stripNewLineChars}
                   color="primary"
                   onChange={() =>
@@ -117,6 +121,7 @@ export default function XmlParsePanel(props) {
             <TextField
               label="Text Node Name"
               placeholder="&txt"
+              disabled={disabled}
               className={classes.textField}
               defaultValue={textNodeName}
               InputLabelProps={{
@@ -128,6 +133,7 @@ export default function XmlParsePanel(props) {
             <TextField
               label="Attribute Prefix"
               placeholder="none"
+              disabled={disabled}
               className={classes.textField}
               defaultValue={attributePrefix}
               InputLabelProps={{
@@ -141,6 +147,7 @@ export default function XmlParsePanel(props) {
               placeholder="none"
               multiline
               rowsMax={4}
+              disabled={disabled}
               className={classes.textField}
               defaultValue={listNodes}
               InputLabelProps={{
@@ -154,6 +161,7 @@ export default function XmlParsePanel(props) {
               placeholder="all"
               multiline
               rowsMax={4}
+              disabled={disabled}
               className={classes.textField}
               defaultValue={includeNodes}
               InputLabelProps={{
@@ -167,6 +175,7 @@ export default function XmlParsePanel(props) {
               placeholder="none"
               multiline
               rowsMax={4}
+              disabled={disabled}
               className={classes.textField}
               defaultValue={excludeNodes}
               InputLabelProps={{
