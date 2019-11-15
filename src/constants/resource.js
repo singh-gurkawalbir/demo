@@ -43,4 +43,6 @@ export const recycleBinDependencies = {
   connections: ['connections'],
   flows: ['flows', 'integrations'],
   integrations: ['integrations'],
+  stacks: ['stacks'],
+  scripts: ['scripts'],
 };
