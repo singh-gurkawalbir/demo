@@ -1,7 +1,9 @@
+import { useSelector } from 'react-redux';
 import { matchPath, Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Breadcrumbs, Typography } from '@material-ui/core';
 import { MODEL_PLURAL_TO_LABEL } from '../../../utils/resource';
+import * as selectors from '../../../reducers';
 import ArrowRightIcon from '../../../components/icons/ArrowRightIcon';
 import IntegrationCrumb from './crumbs/Integration';
 import MarketplaceCrumb from './crumbs/Marketplace';
@@ -261,9 +263,12 @@ function parseUrl(pathname, routes, url = '', params = {}) {
 
 export default function CeligoBreadcrumb({ location }) {
   const classes = useStyles();
+  const shouldShowAppRouting = useSelector(state =>
+    selectors.shouldShowAppRouting(state)
+  );
   const breadcrumbs = [
     { url: '/pg', breadcrumb: () => 'Home' },
-    ...parseUrl(location, routes),
+    ...parseUrl(location, shouldShowAppRouting ? routes : []),
   ];
 
   return (

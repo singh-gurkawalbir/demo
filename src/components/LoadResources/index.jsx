@@ -25,8 +25,6 @@ export default function LoadResources({ children, resources, required }) {
     return acc;
   }, true);
 
-  console.log(resources, resourceStatus);
-
   useEffect(() => {
     if (!isAllDataReady) {
       resourceStatus.forEach(resource => {
