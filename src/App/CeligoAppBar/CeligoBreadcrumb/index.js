@@ -28,6 +28,25 @@ const useStyles = makeStyles(theme => ({
     fontSize: 13,
   },
 }));
+// These routes are shared for IAs with and without /store/ url segment.
+// to keep the code DRY, lets extract the common sub-set of routes.
+const integrationAppRoutes = [
+  {
+    path: '/flows',
+    breadcrumb: () => 'Flows',
+    childRoutes: [
+      { path: '/dashboard', breadcrumb: () => 'Dashboard' },
+      { path: '/connections', breadcrumb: () => 'Connections' },
+      { path: '/admin', breadcrumb: () => 'Admin' },
+      {
+        path: '/:section',
+        breadcrumb: a => a.section,
+        childRoutes: [{ path: '/:section', breadcrumb: a => a.section }],
+      },
+    ],
+  },
+];
+// Main route table.
 const routes = [
   {
     path: '/pg/integrations/:integrationId/',
@@ -65,6 +84,18 @@ const routes = [
     breadcrumb: () => 'installBase',
   },
   { path: '/pg/dashboard' }, // exclusion of breadcrumb prop will skip this segment.
+  {
+    path: '/pg/integrationApp/:integrationId',
+    breadcrumb: IntegrationAppCrumb,
+    childRoutes: [
+      ...integrationAppRoutes,
+      {
+        path: '/:storeId',
+        breadcrumb: StoreCrumb,
+        childRoutes: integrationAppRoutes,
+      },
+    ],
+  },
   {
     path: '/pg/connectors/:integrationId/settings',
     breadcrumb: IntegrationAppCrumb,
