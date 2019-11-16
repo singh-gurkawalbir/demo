@@ -11,9 +11,10 @@ import { List, ListItem } from '@material-ui/core';
 import { STANDALONE_INTEGRATION } from '../../../../../utils/constants';
 import GeneralSection from './sections/General';
 import AuditLogSection from './sections/AuditLog';
-import ReadmeSection from './sections/Readme';
+import SubscriptionSection from './sections/Subscription';
 import NotificationsSection from './sections/Notifications';
 import UsersSection from './sections/Users';
+import UninstallSection from './sections/Uninstall';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -55,7 +56,18 @@ const allSections = [
     id: 'auditLog',
   },
   { path: 'users', label: 'Users', Section: UsersSection, id: 'users' },
-  { path: 'readme', label: 'Readme', Section: ReadmeSection, id: 'readMe' },
+  {
+    path: 'subscription',
+    label: 'Subscription',
+    Section: SubscriptionSection,
+    id: 'subscription',
+  },
+  {
+    path: 'uninstall',
+    label: 'Uninstall',
+    Section: UninstallSection,
+    id: 'uninstall',
+  },
 ];
 
 export default function AdminPanel({ integrationId, ...sectionProps }) {
