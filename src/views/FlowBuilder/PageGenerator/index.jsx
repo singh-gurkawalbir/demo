@@ -92,6 +92,7 @@ const PageGenerator = ({
     item: { type: itemTypes.PAGE_GENERATOR, index },
     collect: monitor => ({
       isDragging: monitor.isDragging(),
+      canDrag: !isViewMode,
     }),
   });
   const opacity = isDragging ? 0.5 : 1;
