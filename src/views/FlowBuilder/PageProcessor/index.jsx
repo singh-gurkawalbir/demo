@@ -153,8 +153,8 @@ const PageProcessor = ({
     item: { type: itemTypes.PAGE_PROCESSOR, index },
     collect: monitor => ({
       isDragging: monitor.isDragging(),
-      canDrag: !isViewMode,
     }),
+    canDrag: !isViewMode,
   });
   const opacity = isDragging ? 0.2 : 1;
 
