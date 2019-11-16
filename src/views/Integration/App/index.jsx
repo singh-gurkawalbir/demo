@@ -47,12 +47,14 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center',
   },
   storeSelect: {
+    fontFamily: 'Roboto500',
+    fontSize: 13,
     transition: theme.transitions.create('border'),
     paddingLeft: theme.spacing(1),
-    border: `solid 1px ${theme.palette.secondary.lightest}`,
+    border: `solid 1px transparent`,
     height: 'unset',
     '&:hover': {
-      borderColor: theme.palette.primary.main,
+      borderColor: theme.palette.primary.light,
     },
     '& > div': {
       paddingTop: theme.spacing(1) + 1,
@@ -151,9 +153,14 @@ export default function IntegrationApp({ match, history }) {
               <AddIcon /> Add {storeLabel}
             </IconTextButton>
             <Select
+              displayEmpty
               className={classes.storeSelect}
               onChange={handleStoreChange}
-              value={storeId}>
+              value="">
+              <MenuItem disabled value="">
+                Select {storeLabel}
+              </MenuItem>
+
               {integration.stores.map(s => (
                 <MenuItem key={s.value} value={s.value}>
                   {s.label}

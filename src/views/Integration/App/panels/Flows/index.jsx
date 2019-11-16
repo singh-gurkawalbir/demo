@@ -10,10 +10,11 @@ import { makeStyles } from '@material-ui/styles';
 import { Grid, List, ListItem } from '@material-ui/core';
 import * as selectors from '../../../../../reducers';
 import LoadResources from '../../../../../components/LoadResources';
-import PanelHeader from '../../../common/PanelHeader';
-import FlowCard from '../../../common/FlowCard';
 import IconTextButton from '../../../../../components/IconTextButton';
 import SettingsIcon from '../../../../../components/icons/SettingsIcon';
+import PanelHeader from '../../../common/PanelHeader';
+import FlowCard from '../../../common/FlowCard';
+import ConfigureDrawer from './ConfigureDrawer';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -22,6 +23,7 @@ const useStyles = makeStyles(theme => ({
   subNav: {
     minWidth: 200,
     borderRight: `solid 1px ${theme.palette.secondary.lightest}`,
+    paddingTop: theme.spacing(2),
   },
   content: {
     width: '100%',
@@ -55,6 +57,12 @@ function FlowList({ integrationId, storeId }) {
 
   return (
     <LoadResources required resources="flows">
+      <ConfigureDrawer
+        integrationId={integrationId}
+        storeId={storeId}
+        sectionId={sectionId}
+      />
+
       <PanelHeader title={`${section.title} flows`}>
         {hasAdvancedSettings && (
           <IconTextButton component={Link} to={`${sectionId}/configure`}>
@@ -84,8 +92,6 @@ export default function FlowsPanel({ storeId, integrationId }) {
   // handle this by redirecting them to the first available section. We can
   // not hard-code this because different sections exist across IAs.
   if (match.isExact && flowSections && flowSections.length) {
-    console.log(match);
-
     return (
       <Redirect push={false} to={`${match.url}/${flowSections[0].titleId}`} />
     );
