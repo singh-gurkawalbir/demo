@@ -49,9 +49,16 @@ export default {
         </IconButton>
         {showRef && resourceReferences && resourceReferences.length > 0 && (
           <ResourceReferences
+            // TODO: this is a horrible pattern.
+            // How would anyone know that `title` prop controls if a delete message
+            // is displayed in the references component? A quick change to make this
+            // a little better would be to rename the 'title' prop to 'variant' and set the
+            // value to 'delete'. Best still is to refactor to have a delete failure dialog.
+            // Also, this component is a Dialog... all our dialog components are
+            // suffixed with "Dialog". Why not this one?
             title
-            type={resourceType}
-            id={resource._id}
+            resourceType={resourceType}
+            resourceId={resource._id}
             onClose={() => setShowRef(false)}
           />
         )}

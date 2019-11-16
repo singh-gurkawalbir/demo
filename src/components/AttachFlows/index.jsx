@@ -25,13 +25,13 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function AttachFlows({
-  onClose,
-  integrationId,
-  standaloneFlows,
-}) {
+export default function AttachFlows({ onClose, integrationId }) {
   const classes = useStyles();
-  const flowsToAttch = standaloneFlows;
+  const flows = useSelector(state =>
+    selectors
+      .resourceList(state, { type: 'flows' })
+      .resources.filter(f => !f._integrationId)
+  );
   const [selected, setSelected] = useState({});
   const handleSelectChange = flows => {
     setSelected(flows);
@@ -44,8 +44,7 @@ export default function AttachFlows({
   const handleAttachFlowsClick = () => {
     const flowIds = Object.keys(selected).filter(key => selected[key] === true);
     const selectedFlows =
-      standaloneFlows &&
-      standaloneFlows.filter(f => flowIds.indexOf(f._id) > -1);
+      flows && flows.filter(f => flowIds.indexOf(f._id) > -1);
 
     if (!selectedFlows) return;
     selectedFlows.forEach(flow => {
@@ -87,7 +86,7 @@ export default function AttachFlows({
           required
           resources="flows, connections, exports, imports">
           <CeligoTable
-            data={flowsToAttch}
+            data={flows}
             onSelectChange={handleSelectChange}
             {...metadata}
             selectableRows

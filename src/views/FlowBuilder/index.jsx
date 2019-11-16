@@ -26,6 +26,7 @@ import SettingsIcon from '../../components/icons/SettingsIcon';
 import CalendarIcon from '../../components/icons/CalendarIcon';
 import EditableText from '../../components/EditableText';
 import SwitchOnOff from '../../components/OnOff';
+import FlowEllipsisMenu from '../../components/FlowEllipsisMenu';
 
 // #region FLOW SCHEMA: FOR REFERENCE DELETE ONCE FB IS COMPLETE
 /* 
@@ -447,18 +448,22 @@ function FlowBuilder(props) {
             }}>
             <RunIcon />
           </IconButton>
+
           <IconButton
             disabled={isNewFlow && !(flow && flow.showScheduleIcon)}
             data-test="scheduleFlow"
             onClick={() => handleDrawerOpen('schedule')}>
             <CalendarIcon />
           </IconButton>
+
           <IconButton
             disabled={isNewFlow}
             onClick={() => handleDrawerOpen('settings')}
             data-test="flowSettings">
             <SettingsIcon />
           </IconButton>
+
+          <FlowEllipsisMenu flowId={flowId} exclude={['detach', 'audit']} />
         </div>
       </CeligoPageBar>
       <div

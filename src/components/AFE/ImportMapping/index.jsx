@@ -147,18 +147,18 @@ export default function ImportMapping(props) {
   const [state, dispatchLocalAction] = useReducer(reducer, mappings || []);
   const mappingsTmp = deepClone(state);
   const dispatch = useDispatch();
-  const sampleData = useSelector(state =>
+  const importSampleData = useSelector(state =>
     selectors.getImportSampleData(state, resourceId)
   );
 
   useEffect(() => {
-    if (!sampleData) {
+    if (!importSampleData) {
       dispatch(actions.importSampleData.request(resourceId));
     }
-  }, [sampleData, dispatch, resourceId]);
+  }, [importSampleData, dispatch, resourceId]);
 
   const formattedGenerateFields = MappingUtil.getFormattedGenerateData(
-    sampleData,
+    importSampleData,
     application
   );
   const validateMapping = mappings => {

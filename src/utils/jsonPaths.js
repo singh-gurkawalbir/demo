@@ -13,7 +13,7 @@ import * as _ from 'lodash';
  * getUnionObject([{a:'fasd',b:'cas',e:"e"},{f:'g'},{a:'aaa', b:'a'}])
  * {a: 'aaa', b: 'a', e: 'e', f: 'g'}
  */
-function getUnionObject(arr) {
+export function getUnionObject(arr) {
   let toReturn = {};
 
   if (!arr || !Array.isArray(arr)) {

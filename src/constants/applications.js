@@ -644,6 +644,7 @@ const connectors = [
   // },
   { id: 'svb', name: 'Svb', type: 'http', assistant: 'svb' },
   { id: 'tableau', name: 'Tableau', type: 'http', assistant: 'tableau' },
+  { id: 'target', name: 'Target', type: 'http', assistant: 'target' },
   { id: 'taxjar', name: 'TaxJar', type: 'http', assistant: 'taxjar' },
   { id: 'tesco', name: 'Tesco', type: 'http', assistant: 'tesco' },
   { id: 'tophatter', name: 'Tophatter', type: 'http', assistant: 'tophatter' },

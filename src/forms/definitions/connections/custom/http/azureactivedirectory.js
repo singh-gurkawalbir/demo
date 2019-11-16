@@ -12,6 +12,10 @@ export default {
       'https://login.microsoftonline.com/common/oauth2/v2.0/token',
     '/http/auth/oauth/scopeDelimiter': ' ',
     '/http/auth/token/refreshMethod': 'POST',
+    '/http/auth/oauth/scope': [
+      ...['offline_access'],
+      ...formValues['/http/auth/oauth/scope'],
+    ],
     '/http/auth/token/refreshMediaType': 'urlencoded',
   }),
   fieldMap: {

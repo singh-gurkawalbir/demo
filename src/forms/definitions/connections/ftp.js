@@ -75,25 +75,21 @@ export default {
     'ftp.usePgp': { fieldId: 'ftp.usePgp' },
     'ftp.pgpEncryptKey': {
       fieldId: 'ftp.pgpEncryptKey',
-      required: true,
       omitWhenHidden: true,
       visibleWhen: [{ field: 'ftp.usePgp', is: [true] }],
     },
     'ftp.pgpDecryptKey': {
       fieldId: 'ftp.pgpDecryptKey',
-      required: true,
       omitWhenHidden: true,
       visibleWhen: [{ field: 'ftp.usePgp', is: [true] }],
     },
     'ftp.pgpPassphrase': {
       fieldId: 'ftp.pgpPassphrase',
-      required: true,
       omitWhenHidden: true,
       visibleWhen: [{ field: 'ftp.usePgp', is: [true] }],
     },
     'ftp.pgpKeyAlgorithm': {
       fieldId: 'ftp.pgpKeyAlgorithm',
-      required: true,
       omitWhenHidden: true,
       visibleWhen: [
         { field: 'ftp.useCustomPGPEncryptionAlgorithm', is: [true] },
