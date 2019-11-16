@@ -176,9 +176,17 @@ export default {
         minHeight: appBarHeight,
       },
     },
+    MuiList: {
+      padding: {
+        paddingTop: 0,
+        paddingBottom: 0,
+      },
+    },
     MuiMenuItem: {
       root: {
-        // BorderBottom should be like this, because color is taking precendence here
+        minHeight: 42,
+        fontSize: 'unset',
+
         borderBottom: `1px solid ${colors.celigoNeutral3}`,
         '&$selected': {
           backgroundColor: colors.celigoNeutral2,
@@ -205,6 +213,10 @@ export default {
           position: 'absolute',
           background: 'transparent',
           left: '0px',
+        },
+        '& > svg': {
+          paddingRight: 8,
+          fontSize: '1.8rem',
         },
       },
     },

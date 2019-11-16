@@ -11,7 +11,7 @@ import actions from '../../../../actions';
 import Hooks from '../../../../components/Hooks';
 import helpTextMap from '../../../../components/Help/helpTextMap';
 
-function HooksDialog({ flowId, resource, open, onClose }) {
+function HooksDialog({ flowId, isViewMode, resource, open, onClose }) {
   const dispatch = useDispatch();
   const resourceId = resource._id;
   const resourceType = 'exports';
@@ -25,13 +25,14 @@ function HooksDialog({ flowId, resource, open, onClose }) {
   };
 
   return (
-    <Dialog open={open}>
+    <Dialog open={open} disabled={isViewMode}>
       <DialogTitle>
         <Typography variant="h6">Hooks</Typography>
       </DialogTitle>
       <DialogContent>
         <Hooks
           onSave={onSave}
+          disabled={isViewMode}
           onCancel={onClose}
           defaultValue={defaultValue}
           flowId={flowId}

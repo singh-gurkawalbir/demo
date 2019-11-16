@@ -124,6 +124,7 @@ export default function DynaSelect(props) {
           IconComponent={ArrowDownIcon}
           disableUnderline
           displayEmpty
+          disabled={disabled}
           onChange={evt => {
             const { value: evtValue } = evt.target;
 
