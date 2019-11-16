@@ -50,6 +50,7 @@ const PageProcessor = ({
   onMove,
   isLast,
   integrationId,
+  isViewMode,
   ...pp
 }) => {
   const pending = !!pp._connectionId;
@@ -275,6 +276,7 @@ const PageProcessor = ({
           name={
             pending ? 'Pending configuration' : resource.name || resource.id
           }
+          isViewMode={isViewMode}
           onBlockClick={handleBlockClick}
           connectorType={resource.adaptorType || resource.type}
           assistant={resource.assistant}

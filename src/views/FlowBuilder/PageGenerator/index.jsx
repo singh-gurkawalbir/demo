@@ -50,6 +50,7 @@ const PageGenerator = ({
   isLast,
   flowId,
   integrationId,
+  isViewMode,
   ...pg
 }) => {
   const pending = !pg._exportId;
@@ -196,6 +197,7 @@ const PageGenerator = ({
       <AppBlock
         integrationId={integrationId}
         name={blockName}
+        isViewMode={isViewMode}
         onBlockClick={handleBlockClick}
         connectorType={connectorType}
         assistant={assistant}
