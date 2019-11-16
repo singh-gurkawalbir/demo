@@ -66,11 +66,17 @@ export default function IntegrationApp({ match, history }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const { integrationId, storeId, tab } = match.params;
+
+  console.log(match.params);
+
   // Note this selector should return undefined/null if no
   // integration exists. not a stubbed out complex object.
   const integration = useSelector(state =>
     selectors.integrationAppSettings(state, integrationId)
   );
+
+  console.log('integration', integration);
+
   const defaultStoreId = useSelector(state =>
     selectors.defaultStoreId(state, integrationId, storeId)
   );
@@ -89,7 +95,7 @@ export default function IntegrationApp({ match, history }) {
   const handleStoreChange = useCallback(
     e => {
       history.push(
-        `/pg/integrationApp/${integrationId}/${e.target.value}/flows`
+        `/pg/integrationApp/${integrationId}/store/${e.target.value}/flows`
       );
     },
     [history, integrationId]
@@ -119,7 +125,7 @@ export default function IntegrationApp({ match, history }) {
       return (
         <Redirect
           push={false}
-          to={`/pg/integrationApp/${integrationId}/${defaultStoreId}/flows`}
+          to={`/pg/integrationApp/${integrationId}/store/${defaultStoreId}/flows`}
         />
       );
     }

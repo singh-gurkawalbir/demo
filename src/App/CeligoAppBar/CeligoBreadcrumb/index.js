@@ -90,7 +90,7 @@ const routes = [
     childRoutes: [
       ...integrationAppRoutes,
       {
-        path: '/:storeId',
+        path: '/store/:storeId',
         breadcrumb: StoreCrumb,
         childRoutes: integrationAppRoutes,
       },

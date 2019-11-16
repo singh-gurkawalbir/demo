@@ -117,7 +117,7 @@ export default class AppRouting extends Component {
         />
         <Route
           path={[
-            '/pg/integrationApp/:integrationId/:storeId/:tab',
+            '/pg/integrationApp/:integrationId/store/:storeId/:tab',
             '/pg/integrationApp/:integrationId/:tab',
             '/pg/integrationApp/:integrationId',
           ]}
