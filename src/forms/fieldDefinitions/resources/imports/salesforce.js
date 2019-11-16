@@ -382,7 +382,6 @@ export default {
   },
   'salesforce.sObjectType': {
     label: 'SObject Type',
-    name: 'recordType',
     type: 'refreshableselect',
     filterKey: 'salesforce-sObjects',
     commMetaPath: r =>
