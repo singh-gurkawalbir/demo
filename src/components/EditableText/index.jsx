@@ -25,7 +25,12 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function EditableText({ onChange, className, children }) {
+export default function EditableText({
+  onChange,
+  disabled,
+  className,
+  children,
+}) {
   const classes = useStyles();
   const [isEdit, setIsEdit] = useState(false);
   const [value, setValue] = useState(children);
@@ -49,6 +54,10 @@ export default function EditableText({ onChange, className, children }) {
     }
   }
 
+  const handleEditClick = () => {
+    if (!disabled) setIsEdit(true);
+  };
+
   return (
     <Fragment>
       {isEdit ? (
@@ -63,7 +72,7 @@ export default function EditableText({ onChange, className, children }) {
         />
       ) : (
         <span
-          onClick={() => setIsEdit(true)}
+          onClick={handleEditClick}
           className={clsx(classes.text, className)}>
           {children}
         </span>

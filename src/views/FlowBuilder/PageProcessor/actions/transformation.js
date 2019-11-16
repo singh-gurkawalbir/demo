@@ -6,7 +6,13 @@ import Icon from '../../../../components/icons/TransformIcon';
 import TransformEditorDialog from '../../../../components/AFE/TransformEditor/Dialog';
 import helpTextMap from '../../../../components/Help/helpTextMap';
 
-function TransformationDialog({ flowId, resource, resourceType, onClose }) {
+function TransformationDialog({
+  flowId,
+  resource,
+  isViewMode,
+  resourceType,
+  onClose,
+}) {
   const dispatch = useDispatch();
   const resourceId = resource._id;
   const sampleData = useSelector(state =>
@@ -56,6 +62,7 @@ function TransformationDialog({ flowId, resource, resourceType, onClose }) {
   return (
     <TransformEditorDialog
       title="Transform Mapping"
+      disabled={isViewMode}
       id={resourceId + flowId}
       data={sampleData}
       rule={rules && rules[0]}

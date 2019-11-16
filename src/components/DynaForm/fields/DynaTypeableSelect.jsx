@@ -60,6 +60,7 @@ export default function DynaTypeableSelect(props) {
         key={id}
         data-test={id}
         inputValue={inputVal}
+        isDisabled={disabled}
         value={selectedValue}
         noOptionsMessage={() => null}
         placeholder={placeholder || ''}

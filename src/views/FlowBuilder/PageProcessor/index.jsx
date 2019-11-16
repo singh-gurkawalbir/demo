@@ -50,6 +50,7 @@ const PageProcessor = ({
   onMove,
   isLast,
   integrationId,
+  isViewMode,
   ...pp
 }) => {
   const pending = !!pp._connectionId;
@@ -152,6 +153,7 @@ const PageProcessor = ({
     item: { type: itemTypes.PAGE_PROCESSOR, index },
     collect: monitor => ({
       isDragging: monitor.isDragging(),
+      canDrag: !isViewMode,
     }),
   });
   const opacity = isDragging ? 0.2 : 1;
@@ -275,6 +277,7 @@ const PageProcessor = ({
           name={
             pending ? 'Pending configuration' : resource.name || resource.id
           }
+          isViewMode={isViewMode}
           onBlockClick={handleBlockClick}
           connectorType={resource.adaptorType || resource.type}
           assistant={resource.assistant}

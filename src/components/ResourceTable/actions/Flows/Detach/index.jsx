@@ -9,11 +9,8 @@ export default {
   component: function DetachFlow({ resource }) {
     const dispatch = useDispatch();
     const handleDetachFlow = () => {
-      const message = [
-        'Are you sure you want to detach',
-        resource.name || resource._id,
-        'flow from this integration?',
-      ].join(' ');
+      const message = `Are you sure you want to detach 
+      ${resource.name || resource._id} flow from this integration?`;
 
       confirmDialog({
         title: 'Confirm',

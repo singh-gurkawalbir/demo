@@ -1,11 +1,14 @@
 import clsx from 'clsx';
-import { Link } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link, useHistory } from 'react-router-dom';
 import TimeAgo from 'react-timeago';
 import { makeStyles } from '@material-ui/styles';
-import { Typography, Grid, Button } from '@material-ui/core';
-import { confirmDialog } from '../../../../../components/ConfirmDialog';
+import { Typography, Grid, IconButton } from '@material-ui/core';
 import actions from '../../../../../actions';
+import * as selectors from '../../../../../reducers';
+import { defaultConfirmDialog } from '../../../../../components/ConfirmDialog';
+import FlowEllipsisMenu from '../../../../../components/FlowEllipsisMenu';
 import RunIcon from '../../../../../components/icons/RunIcon';
 import OnOffSwitch from '../../../../../components/SwitchToggle';
 import InfoIconButton from '../InfoIconButton';
@@ -43,56 +46,66 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function FlowCard({
-  name,
-  status = 'success',
-  description,
-  lastModified,
-  schedule,
-  flowId,
-  disabled,
-  disableCard = false,
-}) {
+export default function FlowCard({ flowId }) {
   const classes = useStyles();
+  const history = useHistory();
   const dispatch = useDispatch();
+  const flow = useSelector(state => selectors.flowDetails(state, flowId)) || {};
+  const patchFlow = useCallback(
+    (path, value) => {
+      const patchSet = [{ op: 'replace', path, value }];
 
-  function handleDisableClick() {
-    const message = `Are you sure you want to ${
-      disabled ? 'enable' : 'disable'
-    } ${name || flowId}?`;
+      dispatch(actions.resource.patchStaged(flowId, patchSet, 'value'));
+      dispatch(actions.resource.commitStaged('flows', flowId, 'value'));
+    },
+    [dispatch, flowId]
+  );
+  const flowName = flow.name || flow._Id;
+  const handleActionClick = useCallback(
+    action => () => {
+      switch (action) {
+        case 'disable':
+          defaultConfirmDialog(
+            `${flow.disabled ? 'enable' : 'disable'} ${flowName}?`,
+            () => {
+              patchFlow('/disabled', !flow.disabled);
+            }
+          );
+          break;
 
-    confirmDialog({
-      title: 'Confirm',
-      message,
-      buttons: [
-        {
-          label: 'Cancel',
-        },
-        {
-          label: 'Yes',
-          onClick: () => {
-            const patchSet = [
-              {
-                op: 'replace',
-                path: '/disabled',
-                value: !disabled,
-              },
-            ];
+        case 'run':
+          dispatch(actions.flow.run({ flowId }));
+          history.push(
+            `/pg/integrations/${flow._integrationId || 'none'}/dashboard`
+          );
 
-            dispatch(actions.resource.patchStaged(flowId, patchSet, 'value'));
-            dispatch(actions.resource.commitStaged('flows', flowId, 'value'));
-          },
-        },
-      ],
-    });
-  }
+          break;
+
+        default:
+      }
+    },
+    [
+      dispatch,
+      flow._integrationId,
+      flow.disabled,
+      flowId,
+      flowName,
+      history,
+      patchFlow,
+    ]
+  );
+  const { name, description, lastModified, disabled } = flow;
+  // TODO: set status based on flow criteria...
+  const status = 'success';
+  // TODO: this property was copied from the old flow list page... i dont know what its for...
+  const disableCard = false;
 
   // TODO: This function needs to be enhanced to handle all
   // the various cases.. realtime, scheduled, cron, not scheduled, etc...
-  function getRunLabel(schedule) {
-    if (schedule) {
-      return `Runs every: ${schedule}`;
-    }
+  function getRunLabel() {
+    if (flow.isReatime) return `Realtime`;
+
+    if (flow.isSimpleExport) return 'Never runs';
 
     return 'Never Runs';
   }
@@ -111,19 +124,22 @@ export default function FlowCard({
             <InfoIconButton info={description} />
           </Grid>
           <Typography variant="caption" component="span">
-            {getRunLabel(schedule)} | Last Modified{' '}
-            <TimeAgo date={lastModified} />
+            {getRunLabel()} | Last Modified <TimeAgo date={lastModified} />
           </Typography>
         </Grid>
         <Grid container item xs={3} justify="flex-end" alignItems="center">
           <OnOffSwitch
             disabled={disableCard}
             on={!disableCard && !disabled}
-            onClick={handleDisableClick}
+            onClick={handleActionClick('disable')}
           />
-          <Button>
-            <RunIcon />
-          </Button>
+          {flow.isRunnable && (
+            <IconButton size="small" onClick={handleActionClick('run')}>
+              <RunIcon />
+            </IconButton>
+          )}
+
+          <FlowEllipsisMenu flowId={flowId} />
         </Grid>
       </div>
     </div>
