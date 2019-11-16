@@ -9,6 +9,7 @@ import {
 import { makeStyles } from '@material-ui/styles';
 import { List, ListItem } from '@material-ui/core';
 import { STANDALONE_INTEGRATION } from '../../../../../utils/constants';
+import GeneralSection from './sections/General';
 import AuditLogSection from './sections/AuditLog';
 import ReadmeSection from './sections/Readme';
 import NotificationsSection from './sections/Notifications';
@@ -25,6 +26,7 @@ const useStyles = makeStyles(theme => ({
   subNav: {
     minWidth: 200,
     borderRight: `solid 1px ${theme.palette.secondary.lightest}`,
+    paddingTop: theme.spacing(2),
   },
   content: {
     width: '100%',
@@ -39,6 +41,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 const allSections = [
+  { path: 'general', label: 'General', Section: GeneralSection, id: 'general' },
   {
     path: 'notifications',
     label: 'Notifications',
@@ -55,7 +58,7 @@ const allSections = [
   { path: 'readme', label: 'Readme', Section: ReadmeSection, id: 'readMe' },
 ];
 
-export default function AdminPanel({ integrationId }) {
+export default function AdminPanel({ integrationId, ...sectionProps }) {
   const classes = useStyles();
   const match = useRouteMatch();
   const availableSections =
@@ -96,7 +99,7 @@ export default function AdminPanel({ integrationId }) {
           <Switch>
             {availableSections.map(({ path, Section }) => (
               <Route key={path} path={`${match.url}/${path}`}>
-                <Section integrationId={integrationId} />
+                <Section integrationId={integrationId} {...sectionProps} />
               </Route>
             ))}
           </Switch>
