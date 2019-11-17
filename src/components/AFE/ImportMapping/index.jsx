@@ -137,7 +137,7 @@ export default function ImportMapping(props) {
     extractFields = [],
     onCancel,
     onSave,
-    integrationId,
+    disabled,
     options = {},
   } = props;
   const [changeIdentifier, setChangeIdentifier] = useState(0);
@@ -310,9 +310,6 @@ export default function ImportMapping(props) {
   };
 
   const getLookup = name => lookupState.find(lookup => lookup.name === name);
-  const isViewMode = useSelector(state =>
-    selectors.isFormAMonitorLevelAccess(state, integrationId)
-  );
 
   return (
     <Dialog fullScreen={false} open scroll="paper" maxWidth={false}>
@@ -354,7 +351,7 @@ export default function ImportMapping(props) {
                         valueName="id"
                         value={mapping.extract || mapping.hardCodedValueTmp}
                         options={extractFields}
-                        disabled={isViewMode}
+                        disabled={disabled}
                         onBlur={(id, evt) => {
                           handleFieldUpdate(
                             mapping.index,
@@ -371,7 +368,7 @@ export default function ImportMapping(props) {
                         labelName="name"
                         valueName="id"
                         options={formattedGenerateFields}
-                        disabled={isViewMode}
+                        disabled={disabled}
                         onBlur={(id, evt) => {
                           handleFieldUpdate(
                             mapping.index,
@@ -390,7 +387,7 @@ export default function ImportMapping(props) {
                         generate={mapping.generate}
                         application={application}
                         updateLookup={updateLookupHandler}
-                        disabled={isViewMode}
+                        disabled={disabled}
                         lookup={
                           mapping &&
                           mapping.lookupName &&
@@ -404,7 +401,7 @@ export default function ImportMapping(props) {
                       <IconButton
                         data-test="editMapping"
                         aria-label="delete"
-                        disabled={mapping.isRequired || isViewMode}
+                        disabled={mapping.isRequired || disabled}
                         onClick={() => {
                           handleDelete(mapping.index);
                         }}
@@ -432,7 +429,7 @@ export default function ImportMapping(props) {
         )}
         {isStandaloneMapping && (
           <Button
-            disabled={isViewMode}
+            disabled={disabled}
             data-test="saveMapping"
             onClick={() => handleSubmit(false)}
             variant="contained"
@@ -442,7 +439,7 @@ export default function ImportMapping(props) {
           </Button>
         )}
         <Button
-          disabled={isViewMode}
+          disabled={disabled}
           data-test="saveAndCloseMapping"
           onClick={() => handleSubmit(true)}
           variant="contained"

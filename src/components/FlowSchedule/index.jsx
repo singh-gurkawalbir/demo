@@ -27,7 +27,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function FlowSchedule(props) {
   const dispatch = useDispatch();
-  const { onClose, className } = props;
+  const { onClose, className, disabled } = props;
   let { flow } = props;
   const preferences = useSelector(state =>
     selectors.userProfilePreferencesProps(state)
@@ -64,6 +64,7 @@ export default function FlowSchedule(props) {
       </IconButton>
       <div className={clsx(classes.modalContent, className)}>
         <DynaForm
+          disabled={disabled}
           fieldMeta={getMetadata({
             flow,
             integration,

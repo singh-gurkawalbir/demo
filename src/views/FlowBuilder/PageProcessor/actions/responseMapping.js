@@ -3,9 +3,13 @@ import Icon from '../../../../components/icons/MapDataIcon';
 import ResponseMappingDialog from '../../../../components/AFE/ResponseMapping/Dialog';
 
 function ResponseMapping(props) {
-  const { open } = props;
+  const { open, isViewMode } = props;
 
-  return <Fragment>{open && <ResponseMappingDialog {...props} />}</Fragment>;
+  return (
+    <Fragment>
+      {open && <ResponseMappingDialog disabled={isViewMode} {...props} />}
+    </Fragment>
+  );
 }
 
 export default {
