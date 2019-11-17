@@ -43,7 +43,7 @@ export function KeyValueComponent(props) {
     dataTest,
     keyName = 'key',
     valueName = 'value',
-    suggestionConfig,
+    suggestionConfig = {},
     classes,
     showDelete,
     disabled,
