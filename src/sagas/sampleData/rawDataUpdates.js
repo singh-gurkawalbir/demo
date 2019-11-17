@@ -51,7 +51,7 @@ function* fetchRawDataForFTP({ resourceId, tempResourceId }) {
     'raw'
   );
 
-  return rawData;
+  return rawData || {};
 }
 
 function* fetchAndSaveRawDataForResource({
@@ -60,19 +60,20 @@ function* fetchAndSaveRawDataForResource({
   flowId,
   tempResourceId,
 }) {
-  if (type === 'exports') {
-    const ftpRawData = yield call(fetchRawDataForFTP, {
+  // For File exports sample data is extracted from the state
+  const ftpRawData = yield call(fetchRawDataForFTP, {
+    resourceId,
+    tempResourceId,
+  });
+
+  if (ftpRawData) {
+    return yield call(saveRawDataOnResource, {
       resourceId,
-      tempResourceId,
+      rawData: ftpRawData && ftpRawData.body,
     });
+  }
 
-    if (ftpRawData && ftpRawData.body) {
-      return yield call(saveRawDataOnResource, {
-        resourceId,
-        rawData: ftpRawData.body,
-      });
-    }
-
+  if (type === 'exports') {
     const exportPreviewData = yield call(exportPreview, {
       resourceId,
       hidden: true,
@@ -84,15 +85,6 @@ function* fetchAndSaveRawDataForResource({
       yield call(saveRawDataOnResource, { resourceId, rawData: parseData });
     }
   } else {
-    const ftpRawData = yield call(fetchRawDataForFTP, { resourceId });
-
-    if (ftpRawData) {
-      return yield call(saveRawDataOnResource, {
-        resourceId,
-        rawData: ftpRawData,
-      });
-    }
-
     const pageProcessorPreviewData = yield call(pageProcessorPreview, {
       flowId,
       _pageProcessorId: resourceId,
