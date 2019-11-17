@@ -5,6 +5,8 @@ export default {
     '/assistant': 'docusign',
     '/http/auth/type': 'oauth',
     '/http/mediaType': 'json',
+    '/http/auth/token/refreshMethod': 'POST',
+    '/http/auth/token/refreshMediaType': 'urlencoded',
     '/http/baseURI': 'https://demo.docusign.net/restapi', // we need to set this due to a backend validation. And backend updates this after oauth completes.
     '/http/auth/oauth/authURI': `https://account${
       formValues['/environment'] === 'demo' ? '-d' : ''

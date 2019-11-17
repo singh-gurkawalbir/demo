@@ -424,6 +424,8 @@ export default {
     'When this field is set only high level stats provided by the export application about the search results will be returned.  For example, if you are invoking a NetSuite saved search then only the totalRecords value will be returned, and not any of the actual records.  Note also that this field is currently limited to just NetSuite web services, but other APIs can be exposed as needed upon request.',
   'export.netsuite.internalId':
     'To export raw files out of NetSuite, integrator.io needs to know the internal id of the NetSuite File record you want to export. You can hard code a specific file by specifying its internal id directly. For example: 1234. Or, if the files being exported are dynamic based on the data you are integrating then you can instead specify the JSON path to the field in your data containing the File Internal id values. For example: myFileField.internalId.',
+  'export.netsuite.blob.purgeFileAfterExport':
+    'Set this field to true if you would like to delete the file from Netsuite File Cabinet after successful NS Blob export.',
   'export.netsuite.hooks.preSend.function':
     'This very special hook gets invoked before records leave NetSuite. This hooks is great because it runs inside NetSuite, and the entire SuiteScript API is at your disposal, and there are lots of performance benefits if you need to run dynamic NetSuite searches on your data.',
   'export.netsuite.hooks.preSend.fileInternalId':
@@ -943,6 +945,7 @@ export default {
   'stack.lambda.awsRegion':
     'AWS Region in which your Lambda function will be executed.',
   'stack.lambda.functionName': 'Name of your AWS Lambda function.',
+  'stack.lambda.language': 'Language of the AWS Lambda Function.',
 
   // Ui help text generation
   // #region UI help text

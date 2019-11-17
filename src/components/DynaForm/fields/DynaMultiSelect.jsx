@@ -122,6 +122,7 @@ export default function DynaMultiSelect(props) {
         <Select
           multiple
           data-test={id}
+          disabled={disabled}
           value={processedValue}
           IconComponent={ArrowDownIcon}
           onChange={evt => {

@@ -9,6 +9,7 @@ import {
   getJSONSampleTemplate,
 } from '../../AFE/HttpRequestBodyEditor/templateMapping';
 import actions from '../../../actions';
+import getFormattedSampleData from '../../../utils/sampleData';
 
 export default function DynaHttpRequestBody(props) {
   const {
@@ -18,14 +19,17 @@ export default function DynaHttpRequestBody(props) {
     value,
     label,
     resourceId,
+    connectionId,
     resourceType,
     flowId,
+    arrayIndex,
+    useSampleDataAsArray,
   } = props;
-  const { lookups: lookupsObj, saveIndex, contentType } = options;
+  const { lookups: lookupsObj, contentType, resourceName } = options;
   const [showEditor, setShowEditor] = useState(false);
-  let parsedData =
-    options && typeof saveIndex === 'number' && Array.isArray(value)
-      ? value[saveIndex]
+  let parsedRule =
+    options && typeof arrayIndex === 'number' && Array.isArray(value)
+      ? value[arrayIndex]
       : value;
   const lookupFieldId = lookupsObj && lookupsObj.fieldId;
   const lookups = lookupsObj && lookupsObj.data;
@@ -34,10 +38,25 @@ export default function DynaHttpRequestBody(props) {
   };
 
   const dispatch = useDispatch();
+  const connection = useSelector(state =>
+    selectors.resource(state, 'connections', connectionId)
+  );
   const sampleData = useSelector(state =>
     selectors.getSampleData(state, flowId, resourceId, 'flowInput', {
       isImport: resourceType === 'imports',
     })
+  );
+  // constructing data
+  const formattedSampleData = JSON.stringify(
+    getFormattedSampleData({
+      connection,
+      sampleData,
+      useSampleDataAsArray,
+      resourceType,
+      resourceName,
+    }),
+    null,
+    2
   );
 
   useEffect(() => {
@@ -60,11 +79,11 @@ export default function DynaHttpRequestBody(props) {
     if (shouldCommit) {
       const { template } = editorValues;
 
-      if (typeof saveIndex === 'number' && Array.isArray(value)) {
-        // save to array at position saveIndex
+      if (typeof arrayIndex === 'number' && Array.isArray(value)) {
+        // save to array at position arrayIndex
         const valueTmp = value;
 
-        valueTmp[saveIndex] = template;
+        valueTmp[arrayIndex] = template;
         onFieldChange(id, valueTmp);
       } else {
         // save to field
@@ -75,9 +94,12 @@ export default function DynaHttpRequestBody(props) {
     handleEditorClick();
   };
 
-  if (!parsedData) {
-    if (contentType === 'json') parsedData = getJSONSampleTemplate(sampleData);
-    else parsedData = getXMLSampleTemplate(sampleData);
+  if (!parsedRule) {
+    const sampleDataTmp = sampleData || { myField: 'sample' };
+
+    if (contentType === 'json')
+      parsedRule = getJSONSampleTemplate(sampleDataTmp);
+    else parsedRule = getXMLSampleTemplate(sampleDataTmp);
   }
 
   let lookupField;
@@ -100,9 +122,9 @@ export default function DynaHttpRequestBody(props) {
           contentType={contentType === 'json' ? 'json' : 'xml'}
           title="Build HTTP Request Body"
           id={`${resourceId}-${id}`}
-          rule={parsedData}
+          rule={parsedRule}
           onFieldChange={onFieldChange}
-          data={JSON.stringify(sampleData, null, 2)}
+          data={formattedSampleData}
           onClose={handleClose}
           action={lookupField}
         />

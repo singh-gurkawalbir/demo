@@ -22,6 +22,7 @@ export default {
         "Enter your Chargebee subdomain. For example, in https://mycompany.chargebee.com/api 'mycompany' is the subdomain.",
       endAdornment: '.chargebee.com/api',
       label: 'Subdomain',
+      required: true,
       validWhen: {
         matchesRegEx: {
           pattern: '^[\\S]+$',

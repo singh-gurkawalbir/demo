@@ -203,9 +203,10 @@ const resource = {
         resourceId,
       }),
 
-    requestToken: (resourceId, values) =>
+    requestToken: (resourceId, fieldId, values) =>
       action(actionTypes.TOKEN.REQUEST, {
         resourceId,
+        fieldId,
         values,
       }),
     saveToken: (resourceId, fieldsToBeSetWithValues) =>
@@ -292,118 +293,29 @@ const connectors = {
   },
 };
 const metadata = {
-  request: ({
-    connectionId,
-    metadataType,
-    mode,
-    filterKey,
-    recordType,
-    selectField,
-    addInfo,
-  }) => {
-    if (mode) {
-      return action(actionTypes.METADATA.NETSUITE_REQUEST, {
-        connectionId,
-        metadataType,
-        mode,
-        filterKey,
-        recordType,
-        selectField,
-        addInfo,
-      });
-    }
-
-    return action(actionTypes.METADATA.SALESFORCE_REQUEST, {
+  request: (connectionId, commMetaPath, addInfo) =>
+    action(actionTypes.METADATA.REQUEST, {
       connectionId,
-      metadataType,
-      recordType,
-      selectField,
-    });
-  },
-  refresh: (
-    connectionId,
-    metadataType,
-    mode,
-    filterKey,
-    recordType,
-    selectField
-  ) =>
+      commMetaPath,
+      addInfo,
+    }),
+  refresh: (connectionId, commMetaPath) =>
     action(actionTypes.METADATA.REFRESH, {
       connectionId,
-      metadataType,
-      mode,
-      filterKey,
-      recordType,
-      selectField,
+      commMetaPath,
     }),
-  netsuite: {
-    receivedCollection: (
+  receivedCollection: (metadata, connectionId, commMetaPath) =>
+    action(actionTypes.METADATA.RECEIVED, {
       metadata,
-      metadataType,
       connectionId,
-      mode,
-      filterKey,
-      recordType,
-      selectField
-    ) =>
-      action(actionTypes.METADATA.RECEIVED_NETSUITE, {
-        metadata,
-        metadataType,
-        connectionId,
-        mode,
-        filterKey,
-        recordType,
-        selectField,
-      }),
-    receivedError: (
+      commMetaPath,
+    }),
+  receivedError: (metadataError, connectionId, commMetaPath) =>
+    action(actionTypes.METADATA.RECEIVED_ERROR, {
       metadataError,
-      metadataType,
       connectionId,
-      mode,
-      filterKey,
-      recordType,
-      selectField
-    ) =>
-      action(actionTypes.METADATA.RECEIVED_NETSUITE_ERROR, {
-        metadataError,
-        metadataType,
-        connectionId,
-        mode,
-        filterKey,
-        recordType,
-        selectField,
-      }),
-  },
-  salesforce: {
-    receivedCollection: (
-      metadata,
-      metadataType,
-      connectionId,
-      recordType,
-      selectField
-    ) =>
-      action(actionTypes.METADATA.RECEIVED_SALESFORCE, {
-        metadata,
-        metadataType,
-        connectionId,
-        recordType,
-        selectField,
-      }),
-    receivedError: (
-      metadataError,
-      metadataType,
-      connectionId,
-      recordType,
-      selectField
-    ) =>
-      action(actionTypes.METADATA.RECEIVED_SALESFORCE_ERROR, {
-        metadataError,
-        metadataType,
-        connectionId,
-        recordType,
-        selectField,
-      }),
-  },
+      commMetaPath,
+    }),
 };
 const fileDefinitions = {
   preBuilt: {
@@ -580,60 +492,20 @@ const ashare = {
 const clone = {
   requestPreview: (resourceType, resourceId) =>
     action(actionTypes.CLONE.PREVIEW_REQUEST, { resourceType, resourceId }),
-  failedPreview: (resourceType, resourceId) =>
-    action(actionTypes.CLONE.FAILURE, { resourceType, resourceId }),
-  failedInstall: (resourceType, resourceId) =>
-    action(actionTypes.CLONE.INSTALL_FAILURE, { resourceType, resourceId }),
   createComponents: (resourceType, resourceId) =>
     action(actionTypes.CLONE.CREATE_COMPONENTS, { resourceType, resourceId }),
-  clearData: (resourceType, resourceId) =>
-    action(actionTypes.CLONE.CLEAR_DATA, { resourceType, resourceId }),
-  updateStep: (step, resourceType, resourceId) =>
-    action(actionTypes.CLONE.UPDATE_STEP, { step, resourceType, resourceId }),
-  verifyBundleOrPackageInstall: (step, connection, resourceType, resourceId) =>
-    action(actionTypes.CLONE.VERIFY_BUNDLE_INSTALL, {
-      step,
-      connection,
-      resourceType,
-      resourceId,
-    }),
-  createdComponents: (components, resourceType, resourceId) =>
-    action(actionTypes.CLONE.CREATED_COMPONENTS, {
-      components,
-      resourceType,
-      resourceId,
-    }),
-  installStepsReceived: (
-    installSteps,
-    connectionMap,
-    data,
-    resourceType,
-    resourceId
-  ) =>
-    action(actionTypes.CLONE.STEPS_RECEIVED, {
-      installSteps,
-      connectionMap,
-      data,
-      resourceType,
-      resourceId,
-    }),
-  receivedPreview: (components, resourceType, resourceId) =>
-    action(actionTypes.CLONE.RECEIVED_PREVIEW, {
-      components,
-      resourceType,
-      resourceId,
-    }),
 };
 const template = {
   generateZip: integrationId =>
     action(actionTypes.TEMPLATE.ZIP_GENERATE, { integrationId }),
   requestPreview: templateId =>
     action(actionTypes.TEMPLATE.PREVIEW_REQUEST, { templateId }),
-  installStepsReceived: (installSteps, connectionMap, templateId) =>
+  installStepsReceived: (installSteps, connectionMap, templateId, data) =>
     action(actionTypes.TEMPLATE.STEPS_RECEIVED, {
       installSteps,
       connectionMap,
       templateId,
+      data,
     }),
   failedPreview: templateId =>
     action(actionTypes.TEMPLATE.FAILURE, { templateId }),
@@ -649,8 +521,8 @@ const template = {
     }),
   updateStep: (step, templateId) =>
     action(actionTypes.TEMPLATE.UPDATE_STEP, { step, templateId }),
-  createComponents: templateId =>
-    action(actionTypes.TEMPLATE.CREATE_COMPONENTS, { templateId }),
+  createComponents: (templateId, runKey) =>
+    action(actionTypes.TEMPLATE.CREATE_COMPONENTS, { templateId, runKey }),
   clearUploaded: templateId =>
     action(actionTypes.TEMPLATE.CLEAR_UPLOADED, { templateId }),
   clearTemplate: templateId =>
@@ -915,6 +787,11 @@ const resourceForm = {
       resourceType,
       resourceId,
       formValues,
+    }),
+  submitFailed: (resourceType, resourceId) =>
+    action(actionTypes.RESOURCE_FORM.SUBMIT_FAILED, {
+      resourceType,
+      resourceId,
     }),
   clear: (resourceType, resourceId) =>
     action(actionTypes.RESOURCE_FORM.CLEAR, { resourceType, resourceId }),

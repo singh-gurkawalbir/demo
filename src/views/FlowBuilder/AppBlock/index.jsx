@@ -131,6 +131,8 @@ function AppBlock({
   flowId,
   resourceType,
   resource,
+  integrationId,
+  isViewMode,
   ...rest
 }) {
   const classes = useStyles();
@@ -181,6 +183,7 @@ function AppBlock({
         <a.Component
           open={activeAction === a.name}
           flowId={flowId}
+          isViewMode={isViewMode}
           resource={resource}
           resourceIndex={resourceIndex}
           resourceType={resourceType}
@@ -239,6 +242,7 @@ function AppBlock({
               <ActionIconButton
                 className={classes.addButton}
                 onClick={handleExpandClick}
+                data-test="addDataProcessor"
                 helpText="Add data processor">
                 <AddIcon />
               </ActionIconButton>

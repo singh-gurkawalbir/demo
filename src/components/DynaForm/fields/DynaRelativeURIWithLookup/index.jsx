@@ -1,11 +1,13 @@
-import React, { useState, Fragment } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useState, useEffect, Fragment } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { IconButton } from '@material-ui/core';
 import OpenInNewIcon from 'mdi-react/OpenInNewIcon';
 import * as selectors from '../../../../reducers';
 import UrlEditorDialog from '../../../../components/AFE/UrlEditor/Dialog';
 import InputWithLookupHandlebars from './InputWithLookupHandlebars';
+import getFormattedSampleData from '../../../../utils/sampleData';
+import actions from '../../../../actions';
 
 const useStyles = makeStyles(theme => ({
   textField: {
@@ -46,11 +48,50 @@ export default function DynaRelativeURIWithLookup(props) {
     value,
     label,
     options,
+    resourceId,
+    useSampleDataAsArray,
+    resourceType,
+    flowId,
   } = props;
-  const { fieldId: lookupFieldId, data: lookupData } = options.lookups;
+  const { resourceName, lookups } = options;
+  const { fieldId: lookupFieldId, data: lookupData } = lookups;
   const connection = useSelector(state =>
     selectors.resource(state, 'connections', connectionId)
   );
+  const dispatch = useDispatch();
+  const sampleData = useSelector(state =>
+    selectors.getSampleData(state, flowId, resourceId, 'flowInput', {
+      isImport: resourceType === 'imports',
+    })
+  );
+  const formattedSampleData = JSON.stringify(
+    getFormattedSampleData({
+      connection,
+      sampleData,
+      useSampleDataAsArray,
+      resourceType,
+      resourceName,
+    }),
+    null,
+    2
+  );
+
+  useEffect(() => {
+    // Request for sample data only incase of flow context
+    // TODO : @Raghu Do we show default data in stand alone context?
+    // What type of sample data is expected in case of Page generators
+    if (flowId && !sampleData) {
+      dispatch(
+        actions.flowData.requestSampleData(
+          flowId,
+          resourceId,
+          resourceType,
+          'flowInput'
+        )
+      );
+    }
+  }, [dispatch, flowId, resourceId, resourceType, sampleData]);
+
   const handleEditorClick = () => {
     setShowEditor(!showEditor);
   };
@@ -73,21 +114,6 @@ export default function DynaRelativeURIWithLookup(props) {
     onFieldChange(id, val);
   };
 
-  const getSampleData = () => {
-    if (!connection) return '{}';
-
-    return JSON.stringify(
-      {
-        connection: {
-          _id: connection._id,
-          name: connection.name,
-        },
-      },
-      null,
-      2
-    );
-  };
-
   let description = '';
   const { type } = connection || {};
 
@@ -95,13 +121,15 @@ export default function DynaRelativeURIWithLookup(props) {
     description = `Relative to: ${connection[type].baseURI}`;
   }
 
+  // console.log('id, resourceName', id, resourceName);
+
   return (
     <Fragment>
       {showEditor && (
         <UrlEditorDialog
           title="Relative URI Editor"
           id={id}
-          data={getSampleData()}
+          data={formattedSampleData}
           rule={value}
           onClose={handleClose}
         />

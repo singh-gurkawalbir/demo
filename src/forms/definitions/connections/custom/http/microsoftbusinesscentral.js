@@ -15,6 +15,8 @@ export default {
     '/http/auth/failValues': [
       'The SAML2 token is not valid because its validity period has ended.',
     ],
+    '/http/auth/token/refreshMethod': 'POST',
+    '/http/auth/token/refreshMediaType': 'urlencoded',
   }),
   fieldMap: {
     name: { fieldId: 'name' },

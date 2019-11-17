@@ -6,7 +6,15 @@ import actions from '../../../../actions';
 import CsvParseEditorDialog from '../../../AFE/CsvParseEditor/Dialog';
 
 export default function DynaCsvParse(props) {
-  const { id, onFieldChange, value, label, resourceId, resourceType } = props;
+  const {
+    id,
+    onFieldChange,
+    value,
+    label,
+    resourceId,
+    resourceType,
+    disabled,
+  } = props;
   const [showEditor, setShowEditor] = useState(false);
   const handleEditorClick = () => {
     setShowEditor(!showEditor);
@@ -71,6 +79,7 @@ export default function DynaCsvParse(props) {
           data={csvData}
           rule={value}
           onClose={handleClose}
+          disabled={disabled}
         />
       )}
       <Button

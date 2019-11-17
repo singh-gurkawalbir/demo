@@ -13,6 +13,7 @@ export default function Hooks(props) {
     onSave,
     onCancel,
     defaultValue = {},
+    disabled,
     resourceType = 'exports',
     isPageGenerator = false,
     resourceId,
@@ -69,8 +70,9 @@ export default function Hooks(props) {
   return (
     <LoadResources resources="scripts, stacks">
       <div>
-        <DynaForm fieldMeta={fieldMeta}>
+        <DynaForm fieldMeta={fieldMeta} disabled={disabled}>
           <DynaSubmit
+            disabled={disabled}
             data-test={`saveHook-${resourceId}`}
             onClick={handleSubmit}>
             Save

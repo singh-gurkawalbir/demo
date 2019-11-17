@@ -26,6 +26,7 @@ export default {
       startAdornment: 'https://',
       endAdornment: '/rest',
       label: 'Subdomain',
+      required: true,
       helpText:
         'Please enter your SugarCRM subdomain. For example, in https://jpeyoy4394.trial.sugarcrm.eu/http/v11_2/ "jpeyoy4394.trial.sugarcrm.eu" is the subdomain.',
       validWhen: {

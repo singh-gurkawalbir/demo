@@ -11,81 +11,57 @@ import RefreshGenericResource from './RefreshGenericResource';
 export default function DynaSelectOptionsGenerator(props) {
   const {
     connectionId,
-    resourceType,
-    mode,
     options = {},
     filterKey,
-    recordType,
-    disableOptionsLoad,
-    selectField,
+    commMetaPath,
+    disableFetch,
   } = props;
+  const disableOptionsLoad = options.disableFetch || disableFetch;
   const dispatch = useDispatch();
   const { status, data, errorMessage } = useSelector(state =>
-    selectors.metadataOptionsAndResources(
+    selectors.metadataOptionsAndResources({
       state,
       connectionId,
-      mode,
-      options.resourceToFetch || resourceType,
-      options.filterKey || filterKey,
-      options.recordType || recordType,
-      selectField
-    )
+      commMetaPath: options.commMetaPath || commMetaPath,
+      filterKey: options.filterKey || filterKey,
+    })
   );
   const handleFetchResource = useCallback(() => {
-    const resource = options.resourceToFetch || resourceType;
-
-    if (resource && !data && !disableOptionsLoad) {
+    if (!data && !disableOptionsLoad) {
       dispatch(
-        actions.metadata.request({
+        actions.metadata.request(
           connectionId,
-          metadataType: resource,
-          mode,
-          filterKey: options.filterKey || filterKey,
-          recordType: options.recordType || recordType,
-          selectField,
-        })
+          options.commMetaPath || commMetaPath
+        )
       );
     }
   }, [
+    commMetaPath,
     connectionId,
     data,
     disableOptionsLoad,
     dispatch,
-    filterKey,
-    mode,
-    options.filterKey,
-    options.recordType,
-    options.resourceToFetch,
-    recordType,
-    resourceType,
-    selectField,
+    options.commMetaPath,
   ]);
   const handleRefreshResource = () => {
-    const resource = options.resourceToFetch || resourceType;
-
-    if (resource) {
-      dispatch(
-        actions.metadata.refresh(
-          connectionId,
-          resource,
-          mode,
-          options.filterKey || filterKey,
-          options.recordType || recordType,
-          selectField
-        )
-      );
-    }
+    dispatch(
+      actions.metadata.refresh(
+        connectionId,
+        options.commMetaPath || commMetaPath
+      )
+    );
   };
 
   return (
     <RefreshGenericResource
-      resourceToFetch={options.resourceToFetch || resourceType}
+      resourceToFetch={options.commMetaPath || commMetaPath}
       resetValue={options.resetValue}
       handleFetchResource={handleFetchResource}
       handleRefreshResource={handleRefreshResource}
       fieldStatus={status}
       fieldData={data}
       fieldError={errorMessage}
+      disableOptionsLoad={disableOptionsLoad}
       {...props}
     />
   );

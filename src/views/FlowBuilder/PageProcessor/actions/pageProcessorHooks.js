@@ -12,7 +12,14 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-function HooksDialog({ flowId, resource, resourceType, open, onClose }) {
+function HooksDialog({
+  flowId,
+  resource,
+  resourceType,
+  isViewMode,
+  open,
+  onClose,
+}) {
   const dispatch = useDispatch();
   const classes = useStyles();
   const resourceId = resource._id;
@@ -26,10 +33,15 @@ function HooksDialog({ flowId, resource, resourceType, open, onClose }) {
   };
 
   return (
-    <ModalDialog show={open} handleClose={onClose}>
-      <div className={classes.wrapper}>Hooks</div>
+    <ModalDialog
+      show={open}
+      disabled={isViewMode}
+      className={classes.wrapper}
+      handleClose={onClose}>
+      <div>Hooks</div>
       <Hooks
         onSave={onSave}
+        disabled={isViewMode}
         onCancel={onClose}
         defaultValue={defaultValue}
         resourceType={resourceType}

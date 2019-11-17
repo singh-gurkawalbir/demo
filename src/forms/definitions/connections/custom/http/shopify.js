@@ -86,6 +86,7 @@ export default {
       endAdornment: '.myshopify.com',
       type: 'text',
       label: 'Store URL',
+      required: true,
       helpText:
         'Go to your Shopify store and you can find out the store name in the browser URL. For example - if your Shopify store URL is "https://demo-store.myshopify.com/"", then provide "demo-store" as the store name.',
       validWhen: {

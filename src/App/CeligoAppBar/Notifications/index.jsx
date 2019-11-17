@@ -1,44 +1,25 @@
-import React, { Component, Fragment } from 'react';
-import { connect } from 'react-redux';
-import { withStyles } from '@material-ui/core/styles';
-import RootRef from '@material-ui/core/RootRef';
-import Typography from '@material-ui/core/Typography';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import IconButton from '@material-ui/core/IconButton';
+import { useState, useCallback, Fragment } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { makeStyles } from '@material-ui/core/styles';
+import {
+  Typography,
+  Tooltip,
+  IconButton,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemSecondaryAction,
+} from '@material-ui/core';
+// TODO: Azhar, can you update these to Celigo icons? (if needed)
 import AcceptIcon from '@material-ui/icons/Check';
 import DismissIcon from '@material-ui/icons/Clear';
 import Badge from '@material-ui/core/Badge';
-import NotificationsIcon from '@material-ui/icons/Notifications';
+import NotificationsIcon from '../../../components/icons/NotificationsIcon';
 import ArrowPopper from '../../../components/ArrowPopper';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
 
-const mapStateToProps = state => ({
-  notifications: selectors.notifications(state),
-});
-const mapDispatchToProps = dispatch => ({
-  onClick: (action, id) => {
-    switch (action) {
-      case 'accept':
-        return dispatch(actions.user.org.accounts.acceptInvite(id));
-      case 'reject':
-        return dispatch(actions.user.org.accounts.rejectInvite(id));
-      default:
-        return null;
-    }
-  },
-});
-
-@withStyles(() => ({
-  currentContainer: {
-    alignItems: 'center',
-    '&:hover': {
-      cursor: 'pointer',
-    },
-  },
+const useStyles = makeStyles(() => ({
   itemContainer: {
     '& button': { display: 'none' },
     '&:hover button': {
@@ -48,121 +29,114 @@ const mapDispatchToProps = dispatch => ({
   itemRoot: {
     paddingRight: 90,
   },
-}))
-class Notifications extends Component {
-  state = {
-    anchorEl: null,
-  };
+}));
 
-  accountArrowRef = React.createRef();
+export default function Notifications() {
+  const classes = useStyles();
+  const [anchorEl, setAnchorEl] = useState(null);
+  const dispatch = useDispatch();
+  // note the use of custom comparator. This checks the content of notifications,
+  // not the reference. This prevents re-renders when the notifications
+  // lengths match. It is hard to imagine a situation were the number of notifications
+  // remains the same and the notifications themselves change. usually new ones get
+  // added or removed (if rejected/accepted).
+  const notifications = useSelector(
+    state => selectors.notifications(state),
+    // if the following expression is 'true', no re-render is performed
+    (left, right) => left.length === right.length
+  );
+  const handleClick = useCallback(
+    event => {
+      setAnchorEl(!anchorEl ? event.currentTarget : null);
+    },
+    [anchorEl]
+  );
+  const handleClose = useCallback(() => {
+    setAnchorEl(null);
+  }, []);
+  const handleAction = useCallback(
+    (action, id) => () => {
+      switch (action) {
+        case 'accept':
+          return dispatch(actions.user.org.accounts.acceptInvite(id));
+        case 'reject':
+          return dispatch(actions.user.org.accounts.rejectInvite(id));
+        default:
+          return null;
+      }
+    },
+    [dispatch]
+  );
+  const open = !!anchorEl;
 
-  handleClick = event => {
-    this.setState({
-      anchorEl: !this.state.anchorEl ? event.currentTarget : null,
-    });
-  };
-
-  handleClose = () => {
-    this.setState({ anchorEl: null });
-  };
-
-  componentDidMount() {
-    this.setState({
-      anchorEl: this.accountArrowRef.current,
-    });
-  }
-
-  render() {
-    const { anchorEl } = this.state;
-    const { classes, notifications, onClick } = this.props;
-    const open = !!anchorEl;
-
-    if (!notifications || notifications.length === 0) {
-      return null;
-    }
-
+  if (!notifications || notifications.length === 0) {
     return (
-      <Fragment>
-        <span
-          data-test="notificationsIconToggle"
-          onClick={this.handleClick}
-          className={classes.currentContainer}>
-          <RootRef rootRef={this.accountArrowRef}>
-            <IconButton size="small" color="inherit">
-              <Badge badgeContent={notifications.length} color="primary">
-                <NotificationsIcon />
-              </Badge>
-            </IconButton>
-          </RootRef>
-        </span>
-
-        <ArrowPopper
-          id="notifications"
-          className={classes.popper}
-          open={open}
-          anchorEl={anchorEl}
-          placement="bottom-end"
-          onClose={this.handleClose}>
-          <List dense>
-            {notifications.map(a => (
-              <ListItem
-                classes={{
-                  root: classes.itemRoot,
-                  container: classes.itemContainer,
-                }}
-                key={`${a.id}`}>
-                <ListItemText
-                  primary={
-                    <Fragment>
-                      <Typography component="span">
-                        {a.ownerUser.name || a.ownerUser.company}
-                      </Typography>
-                    </Fragment>
-                  }
-                  secondary={
-                    <Fragment>
-                      <Typography component="span">
-                        {a.ownerUser.email}
-                      </Typography>
-                      <Typography component="span">
-                        {'is inviting you to join their account.'}
-                      </Typography>
-                      <Typography component="span">
-                        {'Please accept or decline this invitation.'}
-                      </Typography>
-                    </Fragment>
-                  }
-                />
-                <ListItemSecondaryAction>
-                  <IconButton
-                    className={classes.button}
-                    data-test={`accept ${a.ownerUser.name ||
-                      a.ownerUser.company}`}
-                    aria-label="Accept"
-                    onClick={() => {
-                      onClick('accept', a.id);
-                    }}>
-                    <AcceptIcon />
-                  </IconButton>
-                  <IconButton
-                    className={classes.button}
-                    data-test={`dismiss ${a.ownerUser.name ||
-                      a.ownerUser.company}`}
-                    aria-label="Dismiss"
-                    onClick={() => {
-                      onClick('reject', a.id);
-                    }}>
-                    <DismissIcon />
-                  </IconButton>
-                </ListItemSecondaryAction>
-              </ListItem>
-            ))}
-          </List>
-        </ArrowPopper>
-      </Fragment>
+      <Tooltip title="No notifications" placement="bottom">
+        <IconButton size="small" color="inherit">
+          <NotificationsIcon />
+        </IconButton>
+      </Tooltip>
     );
   }
-}
 
-// prettier-ignore
-export default connect(mapStateToProps, mapDispatchToProps)(Notifications);
+  return (
+    <Fragment>
+      <IconButton size="small" color="inherit" onClick={handleClick}>
+        <Badge badgeContent={notifications.length} color="primary">
+          <NotificationsIcon />
+        </Badge>
+      </IconButton>
+
+      <ArrowPopper
+        id="notifications"
+        className={classes.popper}
+        open={open}
+        anchorEl={anchorEl}
+        placement="bottom-end"
+        onClose={handleClose}>
+        <List dense>
+          {notifications.map(a => (
+            <ListItem
+              classes={{
+                root: classes.itemRoot,
+                container: classes.itemContainer,
+              }}
+              key={`${a.id}`}>
+              <ListItemText
+                primary={
+                  <Typography component="span">
+                    {a.ownerUser.name || a.ownerUser.company}
+                  </Typography>
+                }
+                secondary={
+                  <Typography>
+                    {a.ownerUser.email} is inviting you to join their account.
+                    Please accept or decline this invitation.
+                  </Typography>
+                }
+              />
+              <ListItemSecondaryAction>
+                <IconButton
+                  className={classes.button}
+                  data-test={`accept ${a.ownerUser.name ||
+                    a.ownerUser.company}`}
+                  aria-label="Accept"
+                  onClick={handleAction('accept', a.id)}>
+                  <AcceptIcon />
+                </IconButton>
+                <IconButton
+                  className={classes.button}
+                  data-test={`dismiss ${a.ownerUser.name ||
+                    a.ownerUser.company}`}
+                  aria-label="Dismiss"
+                  onClick={handleAction('reject', a.id)}>
+                  <DismissIcon />
+                </IconButton>
+              </ListItemSecondaryAction>
+            </ListItem>
+          ))}
+        </List>
+      </ArrowPopper>
+    </Fragment>
+  );
+}

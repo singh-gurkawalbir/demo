@@ -49,6 +49,8 @@ const PageProcessor = ({
   index,
   onMove,
   isLast,
+  integrationId,
+  isViewMode,
   ...pp
 }) => {
   const pending = !!pp._connectionId;
@@ -152,6 +154,7 @@ const PageProcessor = ({
     collect: monitor => ({
       isDragging: monitor.isDragging(),
     }),
+    canDrag: !isViewMode,
   });
   const opacity = isDragging ? 0.2 : 1;
 
@@ -274,10 +277,12 @@ const PageProcessor = ({
           name={
             pending ? 'Pending configuration' : resource.name || resource.id
           }
+          isViewMode={isViewMode}
           onBlockClick={handleBlockClick}
           connectorType={resource.adaptorType || resource.type}
           assistant={resource.assistant}
           ref={ref}
+          integrationId={integrationId}
           opacity={opacity} /* used for drag n drop */
           blockType={pp.type === 'export' ? 'lookup' : 'import'}
           flowId={flowId}

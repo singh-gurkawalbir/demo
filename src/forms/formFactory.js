@@ -144,7 +144,8 @@ const getResourceFormAssets = ({
         }
         // get edit form meta branch
         else if (type === 'netsuite') {
-          meta = meta.netsuite[resource.netsuite.type];
+          if (resource.type === 'blob') meta = meta.netsuite.blob;
+          else meta = meta.netsuite[resource.netsuite.type];
         } else if (['mysql', 'postgresql', 'mssql'].indexOf(type) !== -1) {
           meta = meta.rdbms;
         } else if (resource && resource.assistant) {
@@ -168,12 +169,15 @@ const getResourceFormAssets = ({
     case 'scripts':
     case 'accesstokens':
     case 'connectorLicenses':
+    case 'integrations':
       meta = formMeta[resourceType];
       ({ fieldMap, preSave, init, layout } = meta);
       break;
     case 'stacks':
     case 'templates':
     case 'connectors':
+    case 'iClients':
+    case 'asyncHelpers':
     case 'pageProcessor':
     case 'pageGenerator':
       meta = formMeta[resourceType];

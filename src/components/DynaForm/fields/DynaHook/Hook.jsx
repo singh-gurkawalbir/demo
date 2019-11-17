@@ -155,6 +155,7 @@ export default function DynaHook(props) {
           title="Script Editor"
           id={id}
           key={id}
+          disabled={disabled}
           data={JSON.stringify(preHookData, null, 2)}
           scriptId={value._scriptId}
           entryFunction={value.function}
@@ -196,6 +197,7 @@ export default function DynaHook(props) {
                   id="stackId"
                   label="Stacks"
                   value={value._stackId}
+                  disabled={disabled}
                   onFieldChange={handleFieldChange('_stackId')}
                   options={[{ items: allStacksOptions || [] }]}
                 />
@@ -211,6 +213,7 @@ export default function DynaHook(props) {
                     id="scriptId"
                     label="Scripts"
                     value={value._scriptId}
+                    disabled={disabled}
                     onFieldChange={handleFieldChange('_scriptId')}
                     options={[{ items: allScriptsOptions || [] }]}
                   />
@@ -219,6 +222,7 @@ export default function DynaHook(props) {
               <IconButton
                 onClick={handleCreateScriptClick}
                 className={classes.editorButton}
+                disabled={disabled}
                 data-test={id}>
                 <AddIcon />
               </IconButton>
@@ -228,6 +232,7 @@ export default function DynaHook(props) {
             <IconButton
               onClick={handleEditorClick}
               className={classes.editorButton}
+              disabled={disabled}
               data-test={id}>
               <EditIcon />
             </IconButton>

@@ -7,6 +7,7 @@ import connectors from './resources/connector';
 import templates from './resources/template';
 import accesstokens from './resources/accesstoken';
 import connectorLicenses from './resources/connectorLicense';
+import integrations from './resources/integration';
 
 export default {
   connections,
@@ -18,4 +19,5 @@ export default {
   stacks,
   accesstokens,
   connectorLicenses,
+  integrations,
 };

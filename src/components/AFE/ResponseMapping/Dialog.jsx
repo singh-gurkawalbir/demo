@@ -86,7 +86,14 @@ export const reducer = (state, action) => {
 };
 
 export default function ResponseMappingDialog(props) {
-  const { resource, resourceIndex, flowId, resourceType, onClose } = props;
+  const {
+    resource,
+    resourceIndex,
+    flowId,
+    resourceType,
+    onClose,
+    disabled,
+  } = props;
   const { merged: flow = {} } = useSelector(state =>
     selectors.resourceData(state, 'flows', flowId)
   );
@@ -225,6 +232,7 @@ export default function ResponseMappingDialog(props) {
                   <Grid container direction="row">
                     <Grid item xs>
                       <DynaTypeableSelect
+                        disabled={disabled}
                         labelName="name"
                         valueName="id"
                         value={r[keyName]}
@@ -240,6 +248,7 @@ export default function ResponseMappingDialog(props) {
                     </Grid>
                     <Grid item xs>
                       <DynaTypeableSelect
+                        disabled={disabled}
                         value={r[valueName]}
                         hideOptions
                         onBlur={(id, evt) => {
@@ -253,6 +262,7 @@ export default function ResponseMappingDialog(props) {
                     </Grid>
                     <Grid item key="delete_button">
                       <IconButton
+                        disabled={disabled}
                         data-test="deleteMapping"
                         aria-label="delete"
                         onClick={() => {
@@ -271,6 +281,7 @@ export default function ResponseMappingDialog(props) {
       </DialogContent>
       <DialogActions>
         <Button
+          disabled={disabled}
           data-test="saveMapping"
           onClick={() => handleSubmit(false)}
           variant="contained"
@@ -279,6 +290,7 @@ export default function ResponseMappingDialog(props) {
           Save
         </Button>
         <Button
+          disabled={disabled}
           data-test="saveAndCloseMapping"
           onClick={() => handleSubmit(true)}
           variant="contained"

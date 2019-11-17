@@ -19,6 +19,7 @@ export default {
       startAdornment: 'https://',
       endAdornment: '.snapfulfil.net/',
       label: 'Subdomain',
+      required: true,
       validWhen: {
         matchesRegEx: {
           pattern: '^[\\S]+$',

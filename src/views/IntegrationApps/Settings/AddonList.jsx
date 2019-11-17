@@ -29,6 +29,20 @@ const useStyles = makeStyles(theme => ({
     borderColor: theme.palette.secondary.lightest,
     margin: '0 auto',
     borderRadius: '4px',
+    padding: theme.spacing(2),
+    textAlign: 'left',
+  },
+  header: {
+    padding: theme.spacing(2, 0),
+    '&:before': {
+      content: '""',
+      width: '100%',
+      height: 6,
+      background: theme.palette.primary.dark,
+      position: 'absolute',
+      top: 0,
+      left: 0,
+    },
   },
   description: {
     width: '200px',
@@ -72,7 +86,7 @@ export default function AddonsList({ integrationId }) {
             <div className={classes.header}>
               <Typography variant="h4">{data.name}</Typography>
             </div>
-            <Typography>{data.description}</Typography>
+            <Typography variant="body2">{data.description}</Typography>
             <CardActions className={classes.cardAction}>
               <Button
                 data-test="contactSales"

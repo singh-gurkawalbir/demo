@@ -10,6 +10,8 @@ export default {
     '/http/auth/oauth/authURI': `https://www.dropbox.com/1/oauth2/authorize`,
     '/http/auth/oauth/tokenURI': `https://api.dropboxapi.com/1/oauth2/token`,
     '/http/auth/oauth/scopeDelimiter': ' ',
+    '/http/auth/token/refreshMethod': 'POST',
+    '/http/auth/token/refreshMediaType': 'urlencoded',
   }),
   fieldMap: {
     name: { fieldId: 'name' },
