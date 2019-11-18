@@ -30,7 +30,7 @@ export default {
     type: 'refreshableselect',
     commMetaPath: r =>
       r &&
-      `/netsuite/metadata/webservices/connections/${r._connectionId}/recordTypes`,
+      `netsuite/metadata/webservices/connections/${r._connectionId}/recordTypes?recordTypeOnly=true`,
     filterKey: 'webservices-recordTypes',
     placeholder: 'Please select a record type',
     helpKey: 'export.netsuite.searches.recordType',
