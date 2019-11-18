@@ -134,6 +134,7 @@ export default function IntegrationAppSettings(props) {
   const [currentStore, setCurrentStore] = useState(defaultStoreId);
   const [storeChanged, setStoreChanged] = useState(false);
   const [requestLicense, setRequestLicense] = useState(false);
+  const [requestMappingMetadata, setRequestMappingMetadata] = useState(false);
   const integrationAppFlowSections = useSelector(state =>
     selectors.integrationAppFlowSections(state, integrationId, currentStore)
   );
@@ -151,6 +152,22 @@ export default function IntegrationAppSettings(props) {
       setRequestLicense(true);
     }
   }, [addOnState, dispatch, integration, requestLicense]);
+
+  useEffect(() => {
+    if (addOnState && !addOnState.mappingMapping && !requestMappingMetadata) {
+      dispatch(
+        actions.integrationApp.settings.requestMappingMetadata(integration._id)
+      );
+      setRequestMappingMetadata(true);
+    }
+  }, [
+    addOnState,
+    dispatch,
+    integration,
+    requestLicense,
+    requestMappingMetadata,
+  ]);
+
   const showAPITokens = permissions.accesstokens.view;
   const hasAddOns =
     addOnState &&
