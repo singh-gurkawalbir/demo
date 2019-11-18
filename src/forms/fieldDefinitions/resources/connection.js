@@ -1261,6 +1261,12 @@ export default {
   'ftp.pgpEncryptKey': {
     type: 'text',
     label: 'PGP Public Key',
+    requiredWhen: [
+      {
+        field: 'ftp.pgpDecryptKey',
+        is: [''],
+      },
+    ],
     description:
       'Note: for security reasons this field must always be re-entered.',
   },
@@ -1286,12 +1292,24 @@ export default {
   'ftp.pgpDecryptKey': {
     type: 'text',
     label: 'PGP Private Key',
+    requiredWhen: [
+      {
+        field: 'ftp.pgpEncryptKey',
+        is: [''],
+      },
+    ],
     description:
       'Note: for security reasons this field must always be re-entered.',
   },
   'ftp.pgpPassphrase': {
     type: 'text',
     label: 'PGP Passphrase',
+    requiredWhen: [
+      {
+        field: 'ftp.pgpDecryptKey',
+        isNot: [''],
+      },
+    ],
     description:
       'Note: for security reasons this field must always be re-entered.',
   },

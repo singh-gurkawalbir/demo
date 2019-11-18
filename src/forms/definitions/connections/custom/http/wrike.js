@@ -10,6 +10,8 @@ export default {
     '/http/auth/oauth/authURI': 'https://www.wrike.com/oauth2/authorize/v4',
     '/http/auth/oauth/tokenURI': 'https://www.wrike.com/oauth2/token',
     '/http/auth/oauth/scopeDelimiter': ',',
+    '/http/auth/token/refreshMethod': 'POST',
+    '/http/auth/token/refreshMediaType': 'urlencoded',
   }),
   fieldMap: {
     name: { fieldId: 'name' },

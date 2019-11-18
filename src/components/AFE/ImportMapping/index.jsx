@@ -137,6 +137,7 @@ export default function ImportMapping(props) {
     extractFields = [],
     onCancel,
     onSave,
+    disabled,
     options = {},
   } = props;
   const [changeIdentifier, setChangeIdentifier] = useState(0);
@@ -146,18 +147,18 @@ export default function ImportMapping(props) {
   const [state, dispatchLocalAction] = useReducer(reducer, mappings || []);
   const mappingsTmp = deepClone(state);
   const dispatch = useDispatch();
-  const sampleData = useSelector(state =>
+  const importSampleData = useSelector(state =>
     selectors.getImportSampleData(state, resourceId)
   );
 
   useEffect(() => {
-    if (!sampleData) {
+    if (!importSampleData) {
       dispatch(actions.importSampleData.request(resourceId));
     }
-  }, [sampleData, dispatch, resourceId]);
+  }, [importSampleData, dispatch, resourceId]);
 
   const formattedGenerateFields = MappingUtil.getFormattedGenerateData(
-    sampleData,
+    importSampleData,
     application
   );
   const validateMapping = mappings => {
@@ -350,6 +351,7 @@ export default function ImportMapping(props) {
                         valueName="id"
                         value={mapping.extract || mapping.hardCodedValueTmp}
                         options={extractFields}
+                        disabled={disabled}
                         onBlur={(id, evt) => {
                           handleFieldUpdate(
                             mapping.index,
@@ -366,6 +368,7 @@ export default function ImportMapping(props) {
                         labelName="name"
                         valueName="id"
                         options={formattedGenerateFields}
+                        disabled={disabled}
                         onBlur={(id, evt) => {
                           handleFieldUpdate(
                             mapping.index,
@@ -384,6 +387,7 @@ export default function ImportMapping(props) {
                         generate={mapping.generate}
                         application={application}
                         updateLookup={updateLookupHandler}
+                        disabled={disabled}
                         lookup={
                           mapping &&
                           mapping.lookupName &&
@@ -397,7 +401,7 @@ export default function ImportMapping(props) {
                       <IconButton
                         data-test="editMapping"
                         aria-label="delete"
-                        disabled={mapping.isRequired}
+                        disabled={mapping.isRequired || disabled}
                         onClick={() => {
                           handleDelete(mapping.index);
                         }}
@@ -425,6 +429,7 @@ export default function ImportMapping(props) {
         )}
         {isStandaloneMapping && (
           <Button
+            disabled={disabled}
             data-test="saveMapping"
             onClick={() => handleSubmit(false)}
             variant="contained"
@@ -434,6 +439,7 @@ export default function ImportMapping(props) {
           </Button>
         )}
         <Button
+          disabled={disabled}
           data-test="saveAndCloseMapping"
           onClick={() => handleSubmit(true)}
           variant="contained"

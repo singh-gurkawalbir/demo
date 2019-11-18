@@ -1,4 +1,4 @@
-import { useReducer, useState } from 'react';
+import { useReducer, useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector, useDispatch } from 'react-redux';
 import produce from 'immer';
@@ -18,6 +18,7 @@ import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import CloseIcon from '../../icons/CloseIcon';
 import mappingUtil from '../../../utils/mapping';
+import getJSONPaths from '../../../utils/jsonPaths';
 import * as resourceUtil from '../../../utils/resource';
 
 const useStyles = makeStyles(theme => ({
@@ -86,7 +87,14 @@ export const reducer = (state, action) => {
 };
 
 export default function ResponseMappingDialog(props) {
-  const { resource, resourceIndex, flowId, resourceType, onClose } = props;
+  const {
+    resource,
+    resourceIndex,
+    flowId,
+    resourceType,
+    onClose,
+    disabled,
+  } = props;
   const { merged: flow = {} } = useSelector(state =>
     selectors.resourceData(state, 'flows', flowId)
   );
@@ -100,13 +108,34 @@ export default function ResponseMappingDialog(props) {
   const valueName = 'generate';
   const classes = useStyles();
   const dispatch = useDispatch();
-  let extractsList =
-    resource && resource.responseTransform && resource.responseTransform.rules;
+  const extractFields = useSelector(state =>
+    selectors.getSampleData(
+      state,
+      flowId,
+      resource._id,
+      'responseMappingExtract',
+      {
+        isImport: resourceType === 'imports',
+      }
+    )
+  );
 
-  if (!extractsList) {
-    extractsList = mappingUtil.getResponseMappingDefaultExtracts(resourceType);
-  }
+  useEffect(() => {
+    if (!extractFields) {
+      dispatch(
+        actions.flowData.requestSampleData(
+          flowId,
+          resource._id,
+          resourceType,
+          'responseMappingExtract'
+        )
+      );
+    }
+  }, [dispatch, extractFields, flowId, resource._id, resourceType]);
 
+  const defaultExtractFields = mappingUtil.getResponseMappingDefaultExtracts(
+    resourceType
+  );
   const responseMappings =
     pageProcessorsObject && pageProcessorsObject.responseMapping;
   const formattedResponseMapping = mappingUtil.getMappingsForApp({
@@ -188,6 +217,17 @@ export default function ResponseMappingDialog(props) {
     }
   };
 
+  let formattedExtractFields = defaultExtractFields;
+
+  if (extractFields) {
+    const extractPaths = getJSONPaths(extractFields);
+
+    formattedExtractFields =
+      (extractPaths &&
+        extractPaths.map(obj => ({ name: obj.id, id: obj.id }))) ||
+      [];
+  }
+
   return (
     <Dialog fullScreen={false} open scroll="paper" maxWidth={false}>
       <IconButton
@@ -225,10 +265,11 @@ export default function ResponseMappingDialog(props) {
                   <Grid container direction="row">
                     <Grid item xs>
                       <DynaTypeableSelect
+                        disabled={disabled}
                         labelName="name"
                         valueName="id"
                         value={r[keyName]}
-                        options={extractsList || []}
+                        options={formattedExtractFields || []}
                         onBlur={(id, evt) => {
                           handleFieldUpdate(
                             r.index,
@@ -240,6 +281,7 @@ export default function ResponseMappingDialog(props) {
                     </Grid>
                     <Grid item xs>
                       <DynaTypeableSelect
+                        disabled={disabled}
                         value={r[valueName]}
                         hideOptions
                         onBlur={(id, evt) => {
@@ -253,6 +295,7 @@ export default function ResponseMappingDialog(props) {
                     </Grid>
                     <Grid item key="delete_button">
                       <IconButton
+                        disabled={disabled}
                         data-test="deleteMapping"
                         aria-label="delete"
                         onClick={() => {
@@ -271,6 +314,7 @@ export default function ResponseMappingDialog(props) {
       </DialogContent>
       <DialogActions>
         <Button
+          disabled={disabled}
           data-test="saveMapping"
           onClick={() => handleSubmit(false)}
           variant="contained"
@@ -279,6 +323,7 @@ export default function ResponseMappingDialog(props) {
           Save
         </Button>
         <Button
+          disabled={disabled}
           data-test="saveAndCloseMapping"
           onClick={() => handleSubmit(true)}
           variant="contained"

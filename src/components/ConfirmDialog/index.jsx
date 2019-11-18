@@ -77,3 +77,11 @@ function createElementReconfirm(properties) {
 export function confirmDialog(properties) {
   createElementReconfirm(properties);
 }
+
+export function defaultConfirmDialog(message, callback) {
+  confirmDialog({
+    title: 'Confirm',
+    message: `Are you sure you want to ${message}`,
+    buttons: [{ label: 'Cancel' }, { label: 'Yes', onClick: callback }],
+  });
+}

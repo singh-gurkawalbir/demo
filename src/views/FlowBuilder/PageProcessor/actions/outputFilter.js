@@ -6,7 +6,13 @@ import Icon from '../../../../components/icons/InputFilterIcon';
 import helpTextMap from '../../../../components/Help/helpTextMap';
 import OutputFilterEditorDialog from '../../../../components/AFE/FilterEditor/Dialog';
 
-function OutputFilterDialog({ flowId, resource, resourceType, onClose }) {
+function OutputFilterDialog({
+  flowId,
+  resource,
+  isViewMode,
+  resourceType,
+  onClose,
+}) {
   const dispatch = useDispatch();
   const resourceId = resource._id;
   const sampleData = useSelector(state =>
@@ -54,6 +60,7 @@ function OutputFilterDialog({ flowId, resource, resourceType, onClose }) {
     <OutputFilterEditorDialog
       title="Define Output Filter"
       id={resourceId + flowId}
+      disabled={isViewMode}
       data={sampleData}
       rule={rules}
       onClose={handleClose}

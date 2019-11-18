@@ -4,7 +4,12 @@ import ModalDialog from '../../ModalDialog';
 import DynaForm from '../../DynaForm';
 import DynaSubmit from '../../DynaForm/DynaSubmit';
 
-export default function OperandSettingsDialog({ ruleData, onClose, onSubmit }) {
+export default function OperandSettingsDialog({
+  ruleData,
+  onClose,
+  onSubmit,
+  disabled,
+}) {
   const transformations = {
     number: [
       { value: 'ceiling', label: 'Ceiling' },
@@ -118,6 +123,7 @@ export default function OperandSettingsDialog({ ruleData, onClose, onSubmit }) {
       <span>Operand Settings</span>
       <Fragment>
         <DynaForm
+          disabled={disabled}
           fieldMeta={fieldMeta}
           optionsHandler={fieldMeta.optionsHandler}>
           <Button

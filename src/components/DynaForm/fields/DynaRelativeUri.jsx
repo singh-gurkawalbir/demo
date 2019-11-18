@@ -1,11 +1,12 @@
-import { useState, Fragment } from 'react';
-import { useSelector } from 'react-redux';
+import { useState, useEffect, Fragment } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { TextField, IconButton } from '@material-ui/core';
 import OpenInNewIcon from 'mdi-react/OpenInNewIcon';
 import * as selectors from '../../../reducers';
 import UrlEditorDialog from '../../../components/AFE/UrlEditor/Dialog';
 import getFormattedSampleData from '../../../utils/sampleData';
+import actions from '../../../actions';
 
 const useStyles = makeStyles(theme => ({
   textField: {
@@ -58,6 +59,7 @@ export default function DynaRelativeUri(props) {
     setShowEditor(!showEditor);
   };
 
+  const dispatch = useDispatch();
   const handleClose = (shouldCommit, editorValues) => {
     const { template } = editorValues;
 
@@ -84,6 +86,23 @@ export default function DynaRelativeUri(props) {
     null,
     2
   );
+
+  useEffect(() => {
+    // Request for sample data only incase of flow context
+    // TODO : @Raghu Do we show default data in stand alone context?
+    // What type of sample data is expected in case of Page generators
+    if (flowId && !sampleData) {
+      dispatch(
+        actions.flowData.requestSampleData(
+          flowId,
+          resourceId,
+          resourceType,
+          'flowInput'
+        )
+      );
+    }
+  }, [dispatch, flowId, resourceId, resourceType, sampleData]);
+
   const handleFieldChange = event => {
     const { value } = event.target;
 
@@ -97,13 +116,6 @@ export default function DynaRelativeUri(props) {
     description = `Relative to: ${connection[type].baseURI}`;
   }
 
-  // console.log(
-  //   'id, resourceName, formattedSampleData',
-  //   id,
-  //   resourceName,
-  //   formattedSampleData
-  // );
-
   return (
     <Fragment>
       {showEditor && (
@@ -113,6 +125,7 @@ export default function DynaRelativeUri(props) {
           data={formattedSampleData}
           rule={value}
           onClose={handleClose}
+          disabled={disabled}
         />
       )}
       <IconButton

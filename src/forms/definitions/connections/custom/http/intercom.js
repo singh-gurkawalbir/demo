@@ -9,6 +9,8 @@ export default {
     '/http/auth/oauth/authURI': 'https://app.intercom.io/oauth',
     '/http/auth/oauth/tokenURI': 'https://api.intercom.io/auth/eagle/token',
     '/http/auth/oauth/accessTokenPath': 'access_token',
+    '/http/auth/token/refreshMethod': 'POST',
+    '/http/auth/token/refreshMediaType': 'urlencoded',
   }),
   fieldMap: {
     name: { fieldId: 'name' },

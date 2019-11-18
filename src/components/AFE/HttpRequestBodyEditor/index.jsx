@@ -1,7 +1,14 @@
 import HandlebarsEditor from '../HandlebarsEditor';
 
 export default function HttpRequestBodyEditor(props) {
-  const { editorId, contentType, layout = 'compact', rule, data } = props;
+  const {
+    editorId,
+    disabled,
+    contentType,
+    layout = 'compact',
+    rule,
+    data,
+  } = props;
   const mode = contentType || 'json';
 
   return (
@@ -9,6 +16,7 @@ export default function HttpRequestBodyEditor(props) {
       editorId={editorId}
       rule={rule}
       data={data}
+      disabled={disabled}
       strict={false}
       ruleMode="handlebars"
       dataMode="json"

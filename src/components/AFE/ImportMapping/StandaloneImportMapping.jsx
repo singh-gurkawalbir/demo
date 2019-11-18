@@ -20,7 +20,14 @@ import { getImportOperationDetails } from '../../../utils/assistant';
  */
 
 export default function StandaloneImportMapping(props) {
-  const { id, resourceId, onClose, connectionId, extractFields } = props;
+  const {
+    id,
+    resourceId,
+    onClose,
+    connectionId,
+    extractFields,
+    disabled,
+  } = props;
   const dispatch = useDispatch();
   const resourceData = useSelector(state =>
     selectors.resource(state, 'imports', resourceId)
@@ -159,6 +166,7 @@ export default function StandaloneImportMapping(props) {
   return (
     <LoadResources resources="imports">
       <ImportMapping
+        disabled={disabled}
         title="Define Import Mapping"
         key={changeIdentifier}
         id={id}

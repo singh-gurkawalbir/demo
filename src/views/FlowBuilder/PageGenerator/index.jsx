@@ -42,7 +42,16 @@ const useStyles = makeStyles(theme => ({
     borderRight: `3px dotted ${theme.palette.divider}`,
   },
 }));
-const PageGenerator = ({ history, match, index, isLast, flowId, ...pg }) => {
+const PageGenerator = ({
+  history,
+  match,
+  index,
+  isLast,
+  flowId,
+  integrationId,
+  isViewMode,
+  ...pg
+}) => {
   const pending = !pg._exportId;
   const resourceId = pg._connectionId || pg._exportId;
   const resourceType = pg._connectionId ? 'connections' : 'exports';
@@ -83,6 +92,7 @@ const PageGenerator = ({ history, match, index, isLast, flowId, ...pg }) => {
     collect: monitor => ({
       isDragging: monitor.isDragging(),
     }),
+    canDrag: !isViewMode,
   });
   const opacity = isDragging ? 0.5 : 1;
 
@@ -185,7 +195,9 @@ const PageGenerator = ({ history, match, index, isLast, flowId, ...pg }) => {
   return (
     <div className={classes.pgContainer}>
       <AppBlock
+        integrationId={integrationId}
         name={blockName}
+        isViewMode={isViewMode}
         onBlockClick={handleBlockClick}
         connectorType={connectorType}
         assistant={assistant}
