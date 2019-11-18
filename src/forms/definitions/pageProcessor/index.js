@@ -31,6 +31,10 @@ export default {
       }`,
     };
 
+    if (newValues['/adaptorType'] === 'NetSuiteImport') {
+      newValues['/adaptorType'] = 'NetSuiteDistributedImport';
+    }
+
     if (app.assistant) {
       newValues['/assistant'] = app.assistant;
     }
