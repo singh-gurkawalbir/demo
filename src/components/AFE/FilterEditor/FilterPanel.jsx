@@ -33,11 +33,12 @@ const useStyles = makeStyles(theme => ({
     overflowY: 'auto',
   },
 }));
+const defaultData = {};
 
 export default function FilterPanel({
   editorId,
   readOnly,
-  data = {},
+  data = defaultData,
   rule,
   disabled,
 }) {
@@ -69,7 +70,7 @@ export default function FilterPanel({
 
     return getJSONPaths(isArray(d) ? d[0] : d, null, {
       wrapSpecialChars: true,
-    });
+    }).filter(p => p.id && !p.id.includes('[*].'));
   }, [data]);
 
   useEffect(() => {
@@ -127,7 +128,9 @@ export default function FilterPanel({
           valueField.val(rulesState[ruleId].data.lhs.value).trigger('change');
         }
 
-        valueField.on('change', () => handleFilterRulesChange());
+        valueField
+          .unbind('change')
+          .on('change', () => handleFilterRulesChange());
       }
     }
 
@@ -152,7 +155,9 @@ export default function FilterPanel({
             .trigger('change');
         }
 
-        expressionField.on('change', () => handleFilterRulesChange());
+        expressionField
+          .unbind('change')
+          .on('change', () => handleFilterRulesChange());
       }
     }
 
@@ -234,7 +239,7 @@ export default function FilterPanel({
           });
         }
 
-        field.on('change', () => handleFilterRulesChange());
+        field.unbind('change').on('change', () => handleFilterRulesChange());
       }
     }
 
@@ -260,7 +265,9 @@ export default function FilterPanel({
             .trigger('change');
         }
 
-        expressionField.on('change', () => handleFilterRulesChange());
+        expressionField
+          .unbind('change')
+          .on('change', () => handleFilterRulesChange());
       }
     }
 
@@ -677,9 +684,11 @@ export default function FilterPanel({
         filters: filtersConfig,
         rules,
       });
-      qbContainer.on('rulesChanged.queryBuilder', () => {
-        handleFilterRulesChange();
-      });
+      qbContainer
+        .unbind('rulesChanged.queryBuilder')
+        .on('rulesChanged.queryBuilder', () => {
+          handleFilterRulesChange();
+        });
       qbContainer.queryBuilder('setFilters', true, filtersConfig);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
