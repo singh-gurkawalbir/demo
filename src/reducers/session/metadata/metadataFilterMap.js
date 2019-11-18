@@ -76,6 +76,15 @@ export default {
         custom: d.custom,
         triggerable: d.triggerable,
       })),
+  'salesforce-sObjects-noReferenceFields': data =>
+    data.fields
+      .filter(r => r.referenceTo && r.referenceTo.length > 0)
+      .map(d => ({
+        label: d.label,
+        value: d.name,
+        custom: d.custom,
+        triggerable: d.triggerable,
+      })),
   'salesforce-recordType': data =>
     data.fields.map(d => ({
       label: d.label,

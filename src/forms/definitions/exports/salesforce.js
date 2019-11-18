@@ -119,8 +119,9 @@ export default {
       fieldId: 'once.booleanField',
     },
     'salesforce.sObjectType': {
+      connectionId: r => r._connectionId,
       fieldId: 'salesforce.sObjectType',
-      type: 'refreshableselect',
+      type: 'salesforcesobjecttype',
       filterKey: 'salesforce-sObjects-triggerable',
       commMetaPath: r =>
         `salesforce/metadata/connections/${r._connectionId}/sObjectTypes`,
@@ -128,9 +129,14 @@ export default {
     'salesforce.objectType': { fieldId: 'salesforce.objectType' },
     'salesforce.id': { fieldId: 'salesforce.id' },
     'salesforce.distributed.requiredTrigger': {
+      type: 'salesforcerequiredtrigger',
+      refreshOptionsOnChangesTo: ['salesforce.sObjectType'],
       fieldId: 'salesforce.distributed.requiredTrigger',
     },
     'salesforce.distributed.referencedFields': {
+      connectionId: r => r._connectionId,
+      refreshOptionsOnChangesTo: ['salesforce.sObjectType'],
+      type: 'salesforcereferencedfields',
       fieldId: 'salesforce.distributed.referencedFields',
     },
     'salesforce.distributed.relatedLists.referencedFields': {

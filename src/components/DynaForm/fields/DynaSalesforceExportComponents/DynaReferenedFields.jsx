@@ -20,23 +20,17 @@ const SecondLevelModal = () => {
 };
 
 const FirstLevelModal = props => {
-  const { options: selectedSObject, resourceType, resourceId } = props;
-  const { merged } = useSelector(state =>
-    selectors.resourceData(state, resourceType, resourceId)
-  );
-  const { _connectionId: connectionId } = merged;
+  const { options: selectedSObject, connectionId } = props;
   const selectOptions = useSelector(state => {
     const options = [];
 
     options[0] = {};
-
-    const { data } = selectors.optionsFromMetadata(
+    const { data } = selectors.optionsFromMetadata({
       state,
       connectionId,
-      'salesforce',
-      selectedSObject,
-      null
-    );
+      commMetaPath: `salesforce/metadata/connections/${connectionId}/sObjectTypes/${selectedSObject}`,
+      filterKey: 'salesforce-sObjects-noReferenceFields',
+    });
 
     options[0].items = data;
 
@@ -93,7 +87,7 @@ export default function DynaRequiredTrigger(props) {
   return (
     <Fragment>
       {firstLevelModalOpen ? <FirstLevelModal {...props} /> : null}
-      <DynaText {...props} />
+      <DynaText {...props} options={null} />
       <EditIcon onClick={toggle} />
     </Fragment>
   );

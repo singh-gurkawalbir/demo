@@ -74,6 +74,6 @@ function TreeNavigation(props) {
   );
 }
 
-export default function(props) {
+export default function TreeComponent(props) {
   return <TreeNavigation {...props} Node={Checkbox} />;
 }

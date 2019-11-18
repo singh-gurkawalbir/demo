@@ -102,7 +102,7 @@ export default {
   date: DynaDate,
   sqlquerybuilder: DynaSQLQueryBuilder,
   relativeuriwithlookup: DynaRelativeURIWithLookup,
-  salesforcesobjecttype: Salesforce.DynaRequiredTrigger,
-  salesforcerequiredtrigger: Salesforce.DynaReferenedFields,
-  salesforcereferencedfields: Salesforce.DynaSObjectType,
+  salesforcerequiredtrigger: Salesforce.DynaRequiredTrigger,
+  salesforcereferencedfields: Salesforce.DynaReferenedFields,
+  salesforcesobjecttype: Salesforce.DynaSObjectType,
 };

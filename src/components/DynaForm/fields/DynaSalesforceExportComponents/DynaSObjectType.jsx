@@ -4,23 +4,16 @@ import RefreshGenericResource from '../DynaRefreshableSelect';
 import actions from '../../../../actions';
 
 export default function DynaRequiredTrigger(props) {
-  const { value, connectionId, mode, resourceType, selectField } = props;
+  const { value, connectionId, commMetaPath } = props;
   const dispatch = useDispatch();
 
   useEffect(() => {
     if (value) {
       dispatch(
-        actions.metadata.refresh(
-          connectionId,
-          resourceType,
-          mode,
-          { referenceTo: { $ne: [] } },
-          value,
-          selectField
-        )
+        actions.metadata.request(connectionId, `${commMetaPath}/${value}`)
       );
     }
-  }, [connectionId, dispatch, mode, resourceType, selectField, value]);
+  }, [commMetaPath, connectionId, dispatch, value]);
 
   return <RefreshGenericResource {...props} />;
 }
