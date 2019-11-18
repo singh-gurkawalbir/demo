@@ -85,11 +85,19 @@ export default function getRequestOptions(
 
       Object.keys(filters).forEach(k => {
         if (filters[k]) {
-          qs.push(
-            `${
-              ['integrationId', 'flowId'].includes(k) ? '_' : ''
-            }${k}=${encodeURIComponent(filters[k])}`
-          );
+          if (k === 'flowIds') {
+            if (filters[k].length > 0) {
+              filters[k].forEach((flowId, index) => {
+                qs.push(`_flowId_in[${index}]=${encodeURIComponent(flowId)}`);
+              });
+            }
+          } else {
+            qs.push(
+              `${
+                ['integrationId', 'flowId'].includes(k) ? '_' : ''
+              }${k}=${encodeURIComponent(filters[k])}`
+            );
+          }
         }
       });
 
