@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/styles';
-import { FormContext } from 'react-forms-processor/dist';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 
@@ -15,7 +14,7 @@ const useStyles = makeStyles({
   },
 });
 
-function DynaSoqlQuery(props) {
+export default function DynaSoqlQuery(props) {
   const {
     id,
     name,
@@ -28,31 +27,23 @@ function DynaSoqlQuery(props) {
     metadataType,
     recordType,
     multiline,
-    mode,
     filterKey,
-    selectField,
-    formContext,
   } = props;
-  const { value: formValues } = formContext;
-  const soqlField = formValues['/salesforce/soql'];
-  let query = soqlField && soqlField.query;
+  const query = value && value.query;
   const classes = useStyles();
   const dispatch = useDispatch();
   const [soqlQuery, setSoqlQuery] = useState(false);
   const [sObject, setsObject] = useState(true);
+  const commMetaPath = `salesforce/metadata/connections/${connectionId}/${metadataType}/${recordType}`;
   const { data = {} } = useSelector(state =>
-    selectors.metadataOptionsAndResources(
+    selectors.metadataOptionsAndResources({
       state,
       connectionId,
-      mode,
-      metadataType,
+      commMetaPath,
       filterKey,
-      recordType,
-      selectField
-    )
+    })
   );
-  const handleFieldOnBlur = e => {
-    query = e.target.value;
+  const handleFieldOnBlur = () => {
     setsObject(true);
   };
 
@@ -62,27 +53,27 @@ function DynaSoqlQuery(props) {
 
   useEffect(() => {
     if (query && sObject) {
-      dispatch(
-        actions.metadata.request({
-          connectionId,
-          metadataType,
-          recordType,
-          addInfo: { query },
-        })
-      );
+      dispatch(actions.metadata.request(connectionId, commMetaPath, { query }));
       setSoqlQuery(true);
       setsObject(false);
     }
-  }, [connectionId, dispatch, metadataType, query, recordType, sObject]);
+  }, [
+    commMetaPath,
+    connectionId,
+    dispatch,
+    metadataType,
+    query,
+    recordType,
+    sObject,
+  ]);
   useEffect(() => {
     if (soqlQuery && data.entityName) {
       onFieldChange(id, { ...value, entityName: data.entityName });
       dispatch(
-        actions.metadata.request({
+        actions.metadata.request(
           connectionId,
-          metadataType: 'sObjectTypes',
-          recordType: data.entityName,
-        })
+          `salesforce/metadata/connections/${connectionId}/sObjectTypes/${data.entityName}`
+        )
       );
       setSoqlQuery(false);
     }
@@ -118,11 +109,3 @@ function DynaSoqlQuery(props) {
     </div>
   );
 }
-
-const DynaSoqlQueryFormContext = props => (
-  <FormContext.Consumer {...props}>
-    {form => <DynaSoqlQuery {...props} formContext={form} />}
-  </FormContext.Consumer>
-);
-
-export default DynaSoqlQueryFormContext;

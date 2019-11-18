@@ -76,6 +76,7 @@ export default {
       picklistValues: d.picklistValues,
       type: d.type,
     })),
+  'salesforce-soqlQuery': data => data,
   default: data =>
     data.map(item => ({
       label: item.name,

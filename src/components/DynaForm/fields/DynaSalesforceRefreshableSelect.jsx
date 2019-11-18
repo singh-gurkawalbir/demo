@@ -9,40 +9,27 @@ function DynaSalesforceSelectOptionsGenerator(props) {
   const {
     connectionId,
     metadataType,
-    mode,
     filterKey,
-    selectField,
     formContext,
     fieldName,
   } = props;
   const { value: formValues } = formContext;
   const soqlQueryField = formValues['/salesforce/soql'];
   const entityName = (soqlQueryField && soqlQueryField.entityName) || '';
+  const commMetaPath = `salesforce/metadata/connections/${connectionId}/${metadataType}/${entityName}`;
   const dispatch = useDispatch();
   const { data = [], status, errorMessage } = useSelector(state =>
-    selectors.metadataOptionsAndResources(
+    selectors.metadataOptionsAndResources({
       state,
       connectionId,
-      mode,
-      metadataType,
+      commMetaPath,
       filterKey,
-      entityName,
-      selectField
-    )
+    })
   );
   const options = salesforceExportSelectOptions(data, fieldName);
   const handleRefreshResource = () => {
     if (metadataType) {
-      dispatch(
-        actions.metadata.refresh(
-          connectionId,
-          metadataType,
-          mode,
-          filterKey,
-          entityName,
-          selectField
-        )
-      );
+      dispatch(actions.metadata.refresh(connectionId, commMetaPath));
     }
   };
 
