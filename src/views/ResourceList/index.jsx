@@ -1,11 +1,10 @@
 import { Fragment, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { withRouter, Link } from 'react-router-dom';
-import shortid from 'shortid';
 import { makeStyles } from '@material-ui/core/styles';
 import AddIcon from '../../components/icons/AddIcon';
 import CeligoPageBar from '../../components/CeligoPageBar';
-import { MODEL_PLURAL_TO_LABEL } from '../../utils/resource';
+import { MODEL_PLURAL_TO_LABEL, generateNewId } from '../../utils/resource';
 import infoText from './infoText';
 import IconTextButton from '../../components/IconTextButton';
 import * as selectors from '../../reducers';
@@ -62,9 +61,7 @@ function ResourceList(props) {
             <IconTextButton
               data-test="addNewResource"
               component={Link}
-              to={`${
-                location.pathname
-              }/add/${resourceType}/new-${shortid.generate()}`}
+              to={`${location.pathname}/add/${resourceType}/${generateNewId()}`}
               variant="text"
               color="primary">
               <AddIcon /> Create {resourceName}

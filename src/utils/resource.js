@@ -1,4 +1,5 @@
 import { values } from 'lodash';
+import shortid from 'shortid';
 import getRoutePath from './routePaths';
 import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../constants/resource';
 
@@ -271,3 +272,5 @@ export function isFileExport(resource) {
     ? ['ftp', 's3'].includes(adaptorTypeMap[resource.adaptorType])
     : resource.type === 'simple';
 }
+
+export const generateNewId = () => `new-${shortid.generate()}`;

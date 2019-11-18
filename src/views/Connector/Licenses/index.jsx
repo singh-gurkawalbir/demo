@@ -1,7 +1,6 @@
 import { Fragment, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
-import shortid from 'shortid';
 import { makeStyles } from '@material-ui/core/styles';
 import CeligoPageBar from '../../../components/CeligoPageBar';
 import IconTextButton from '../../../components/IconTextButton';
@@ -14,6 +13,7 @@ import KeywordSearch from '../../../components/KeywordSearch';
 import infoText from '../../ResourceList/infoText';
 import actions from '../../../actions';
 import metadata from './metadata';
+import { generateNewId } from '../../../utils/resource';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -66,9 +66,7 @@ export default function Licenses(props) {
           />
           <IconTextButton
             component={Link}
-            to={`${
-              location.pathname
-            }/add/connectorLicenses/new-${shortid.generate()}`}
+            to={`${location.pathname}/add/connectorLicenses/${generateNewId()}`}
             variant="text"
             color="primary">
             <AddIcon /> New License
