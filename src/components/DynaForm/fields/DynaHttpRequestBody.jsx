@@ -94,9 +94,12 @@ export default function DynaHttpRequestBody(props) {
     handleEditorClick();
   };
 
-  if (!parsedRule && sampleData) {
-    if (contentType === 'json') parsedRule = getJSONSampleTemplate(sampleData);
-    else parsedRule = getXMLSampleTemplate(sampleData);
+  if (!parsedRule) {
+    const sampleDataTmp = sampleData || { myField: 'sample' };
+
+    if (contentType === 'json')
+      parsedRule = getJSONSampleTemplate(sampleDataTmp);
+    else parsedRule = getXMLSampleTemplate(sampleDataTmp);
   }
 
   let lookupField;

@@ -9,7 +9,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function ScheduleDialog({ flowId, resource, open, onClose }) {
+function ScheduleDialog({ flowId, isViewMode, resource, open, onClose }) {
   const classes = useStyles();
   const resourceId = resource._id;
 
@@ -17,6 +17,7 @@ function ScheduleDialog({ flowId, resource, open, onClose }) {
     <Dialog
       open={open}
       onClose={onClose}
+      disabled={isViewMode}
       PaperProps={{ className: classes.paper }}>
       <DialogTitle disableTypography>
         <Typography variant="h6">Export Schedule</Typography>

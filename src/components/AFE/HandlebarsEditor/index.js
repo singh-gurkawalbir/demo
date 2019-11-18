@@ -19,9 +19,14 @@ export default function HandlebarsEditor(props) {
     disabled,
     enableAutocomplete,
   } = props;
-  const { template, data, result, error, violations } = useSelector(state =>
-    selectors.editor(state, editorId)
-  );
+  const {
+    template,
+    data,
+    result,
+    error,
+    violations,
+    initChangeIdentifier,
+  } = useSelector(state => selectors.editor(state, editorId));
   const handlebarHelperFunction = useSelector(state =>
     selectors.editorHelperFunctions(state)
   );
@@ -59,6 +64,7 @@ export default function HandlebarsEditor(props) {
 
   return (
     <Editor
+      changeIdentifier={initChangeIdentifier}
       disabled={disabled}
       editorId={editorId}
       handleInit={handleInit}

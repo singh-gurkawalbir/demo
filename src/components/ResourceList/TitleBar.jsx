@@ -5,10 +5,10 @@ import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import { Link } from 'react-router-dom';
-import shortid from 'shortid';
 import Button from '@material-ui/core/Button';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
+import { generateNewId } from '../../utils/resource';
 import { RESOURCE_TYPE_PLURAL_TO_SINGULAR } from '../../constants/resource';
 import getRoutePath from '../../utils/routePaths';
 
@@ -81,7 +81,7 @@ class TitleBar extends Component {
           data-test="createNewResource"
           component={Link}
           // className={classes.link}
-          to={getRoutePath(`/${resourceType}/add/new-${shortid.generate()}`)}>
+          to={getRoutePath(`/${resourceType}/add/${generateNewId()}`)}>
           + Create New {`${RESOURCE_TYPE_PLURAL_TO_SINGULAR[resourceType]}`}
         </Button>
       </div>

@@ -1,13 +1,13 @@
 import { useState, Fragment } from 'react';
 import { useSelector } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom';
-import shortid from 'shortid';
 import { makeStyles } from '@material-ui/styles';
+import * as selectors from '../../../../../reducers';
+import { generateNewId } from '../../../../../utils/resource';
 import RegisterConnections from '../../../../../components/RegisterConnections';
 import LoadResources from '../../../../../components/LoadResources';
 import CeligoTable from '../../../../../components/CeligoTable';
 import metadata from '../../../../../components/ResourceTable/metadata/connections';
-import * as selectors from '../../../../../reducers';
 import IconTextButton from '../../../../../components/IconTextButton';
 import AddIcon from '../../../../../components/icons/AddIcon';
 import ConnectionsIcon from '../../../../../components/icons/ConnectionsIcon';
@@ -66,9 +66,7 @@ export default function ConnectionsPanel({ integrationId }) {
           <Fragment>
             <IconTextButton
               component={Link}
-              to={`${
-                location.pathname
-              }/add/connections/new-${shortid.generate()}`}>
+              to={`${location.pathname}/add/connections/${generateNewId()}`}>
               <AddIcon /> Create connection
             </IconTextButton>
             <IconTextButton onClick={() => setShowRegister(true)}>

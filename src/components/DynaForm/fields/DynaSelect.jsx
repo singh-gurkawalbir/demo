@@ -124,6 +124,7 @@ export default function DynaSelect(props) {
           IconComponent={ArrowDownIcon}
           disableUnderline
           displayEmpty
+          disabled={disabled}
           onChange={e => {
             onFieldChange(id, e.target.value);
           }}

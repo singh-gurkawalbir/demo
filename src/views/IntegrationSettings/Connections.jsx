@@ -2,7 +2,7 @@ import { Fragment, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { useHistory, Link } from 'react-router-dom';
-import shortid from 'shortid';
+import { generateNewId } from '../../utils/resource';
 import * as selectors from '../../reducers';
 import LoadResources from '../../components/LoadResources';
 import CeligoTable from '../../components/CeligoTable';
@@ -76,7 +76,7 @@ export default function Connections(props) {
               component={Link}
               to={`${
                 history.location.pathname
-              }/add/connections/new-${shortid.generate()}`}
+              }/add/connections/${generateNewId()}`}
               variant="text"
               color="primary">
               <AddIcon /> New Connection

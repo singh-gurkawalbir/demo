@@ -2,7 +2,7 @@ export default {
   // Todo why helpKey is it named csv file id like to change it to
   // something meaningful
   'file.type': {
-    type: 'select',
+    type: 'filetypeselect',
     label: 'File Type',
     required: true,
     defaultValue: r => (r && r.file && r.file.type) || 'csv',
@@ -19,6 +19,11 @@ export default {
         ],
       },
     ],
+    userDefinitionId: r =>
+      r &&
+      r.file &&
+      r.file.fileDefinition &&
+      r.file.fileDefinition._fileDefinitionId,
   },
   'edix12.format': {
     type: 'filedefinitionselect',
