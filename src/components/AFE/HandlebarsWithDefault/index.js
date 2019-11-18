@@ -24,6 +24,7 @@ export default function HandlebarsWithDefaults(props) {
     result,
     error,
     violations,
+    initChangeIdentifier,
   } = useSelector(state => selectors.editor(state, editorId));
   const handlebarHelperFunction = useSelector(state =>
     selectors.editorHelperFunctions(state)
@@ -66,6 +67,7 @@ export default function HandlebarsWithDefaults(props) {
 
   return (
     <Editor
+      changeIdentifier={initChangeIdentifier}
       editorId={editorId}
       handleInit={handleInit}
       handleChange={handleChange}
