@@ -52,7 +52,7 @@ export default {
     'netsuite_da.blob.operation': { fieldId: 'netsuite_da.blob.operation' },
     ignoreExisting: {
       fieldId: 'ignoreExisting',
-      visibleWhen: [
+      visibleWhenAll: [
         { field: 'netsuite_da.operation', is: ['add'] },
         {
           field: 'inputMode',
@@ -62,7 +62,7 @@ export default {
     },
     ignoreMissing: {
       fieldId: 'ignoreMissing',
-      visibleWhen: [
+      visibleWhenAll: [
         { field: 'netsuite_da.operation', is: ['update'] },
         {
           field: 'inputMode',
