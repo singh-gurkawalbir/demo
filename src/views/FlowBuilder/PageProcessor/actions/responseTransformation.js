@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => ({
 function ResponseTransformationDialog(props) {
   const dispatch = useDispatch();
   const classes = useStyles();
-  const { open, onClose, resource, integrationId } = props;
+  const { open, onClose, resource, isViewMode } = props;
   const resourceId = resource._id;
   const { sampleResponseData, responseTransform } = resource;
   const fieldMeta = {
@@ -83,7 +83,7 @@ function ResponseTransformationDialog(props) {
       <DialogTitle>Response Transform</DialogTitle>
       <DialogContent>
         <DynaForm
-          integrationId={integrationId}
+          disabled={isViewMode}
           fieldMeta={fieldMeta}
           optionsHandler={optionsHandler}>
           <Button data-test="cancelResponseTransform" onClick={onClose}>

@@ -34,8 +34,9 @@ export default {
       },
     ],
   },
+
   'file.type': {
-    type: 'select',
+    type: 'filetypeselect',
     label: 'File type',
     required: true,
     defaultValue: r => (r && r.file && r.file.type) || 'csv',
@@ -52,6 +53,11 @@ export default {
         ],
       },
     ],
+    userDefinitionId: r =>
+      r &&
+      r.file &&
+      r.file.fileDefinition &&
+      r.file.fileDefinition._fileDefinitionId,
   },
   'file.output': {
     type: 'select',
@@ -126,6 +132,7 @@ export default {
         is: ['xml'],
       },
     ],
+    required: true,
   },
   'file.fileDefinition.resourcePath': {
     label: 'Resource Path',

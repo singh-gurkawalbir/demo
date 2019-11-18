@@ -1,9 +1,8 @@
 export default {
   columns: [
     {
-      heading: 'Please select flows to attach',
+      heading: 'Select all flows',
       value: r => r && r.name,
-      orderBy: 'name',
     },
   ],
 };

@@ -11,7 +11,6 @@ import RefreshGenericResource from './RefreshGenericResource';
 export default function DynaSelectOptionsGenerator(props) {
   const {
     connectionId,
-    resourceType,
     options = {},
     filterKey,
     commMetaPath,
@@ -45,21 +44,17 @@ export default function DynaSelectOptionsGenerator(props) {
     options.commMetaPath,
   ]);
   const handleRefreshResource = () => {
-    const resource = options.resourceToFetch || resourceType;
-
-    if (resource) {
-      dispatch(
-        actions.metadata.refresh(
-          connectionId,
-          options.commMetaPath || commMetaPath
-        )
-      );
-    }
+    dispatch(
+      actions.metadata.refresh(
+        connectionId,
+        options.commMetaPath || commMetaPath
+      )
+    );
   };
 
   return (
     <RefreshGenericResource
-      resourceToFetch={options.resourceToFetch || resourceType}
+      resourceToFetch={options.commMetaPath || commMetaPath}
       resetValue={options.resetValue}
       handleFetchResource={handleFetchResource}
       handleRefreshResource={handleRefreshResource}

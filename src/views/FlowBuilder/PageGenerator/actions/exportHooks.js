@@ -1,18 +1,21 @@
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  Typography,
-} from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import { Fragment } from 'react';
 import { useDispatch } from 'react-redux';
 import Icon from '../../../../components/icons/HookIcon';
 import actions from '../../../../actions';
 import Hooks from '../../../../components/Hooks';
 import helpTextMap from '../../../../components/Help/helpTextMap';
+import ModalDialog from '../../../../components/ModalDialog';
 
-function HooksDialog({ flowId, resource, open, onClose }) {
+const useStyles = makeStyles(() => ({
+  wrapper: {
+    minWidth: 580,
+  },
+}));
+
+function HooksDialog({ flowId, isViewMode, resource, open, onClose }) {
   const dispatch = useDispatch();
+  const classes = useStyles();
   const resourceId = resource._id;
   const resourceType = 'exports';
   const defaultValue = resource.hooks || {};
@@ -25,22 +28,19 @@ function HooksDialog({ flowId, resource, open, onClose }) {
   };
 
   return (
-    <Dialog open={open}>
-      <DialogTitle>
-        <Typography variant="h6">Hooks</Typography>
-      </DialogTitle>
-      <DialogContent>
-        <Hooks
-          onSave={onSave}
-          onCancel={onClose}
-          defaultValue={defaultValue}
-          flowId={flowId}
-          resourceId={resourceId}
-          resourceType={resourceType}
-          isPageGenerator
-        />
-      </DialogContent>
-    </Dialog>
+    <ModalDialog show={open} handleClose={onClose} disabled={isViewMode}>
+      <div className={classes.wrapper}>Hooks</div>
+      <Hooks
+        onSave={onSave}
+        onCancel={onClose}
+        disabled={isViewMode}
+        defaultValue={defaultValue}
+        flowId={flowId}
+        resourceId={resourceId}
+        resourceType={resourceType}
+        isPageGenerator
+      />
+    </ModalDialog>
   );
 }
 

@@ -6,16 +6,20 @@ import actions from '../../../../actions';
 import Hooks from '../../../../components/Hooks';
 import ModalDialog from '../../../../components/ModalDialog';
 
-const useStyles = makeStyles(theme => ({
-  paper: {
-    padding: theme.spacing(3),
-  },
+const useStyles = makeStyles(() => ({
   wrapper: {
-    minWidth: 450,
+    minWidth: 580,
   },
 }));
 
-function HooksDialog({ flowId, resource, resourceType, open, onClose }) {
+function HooksDialog({
+  flowId,
+  resource,
+  resourceType,
+  isViewMode,
+  open,
+  onClose,
+}) {
   const dispatch = useDispatch();
   const classes = useStyles();
   const resourceId = resource._id;
@@ -29,10 +33,15 @@ function HooksDialog({ flowId, resource, resourceType, open, onClose }) {
   };
 
   return (
-    <ModalDialog show={open} className={classes.wrapper} handleClose={onClose}>
+    <ModalDialog
+      show={open}
+      disabled={isViewMode}
+      className={classes.wrapper}
+      handleClose={onClose}>
       <div>Hooks</div>
       <Hooks
         onSave={onSave}
+        disabled={isViewMode}
         onCancel={onClose}
         defaultValue={defaultValue}
         resourceType={resourceType}

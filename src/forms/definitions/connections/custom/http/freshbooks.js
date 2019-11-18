@@ -5,8 +5,6 @@ export default {
     '/assistant': 'freshbooks',
     '/http/auth/type': 'oauth',
     '/http/mediaType': 'json',
-    '/http/auth/token/refreshMethod': 'POST',
-    '/http/auth/token/refreshMediaType': 'urlencoded',
     '/http/baseURI': 'https://api.freshbooks.com/',
     '/http/auth/oauth/authURI':
       'https://my.freshbooks.com/service/auth/oauth/authorize',

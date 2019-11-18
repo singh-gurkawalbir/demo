@@ -10,10 +10,12 @@ export default function getFormattedSampleData({
 }) {
   const data = {
     connection: {},
-    data: {
-      myField: 'sample',
-    },
   };
+  const _sd = sampleData || {
+    myField: 'sample',
+  };
+
+  data.data = useSampleDataAsArray ? [_sd] : _sd;
 
   if (connection) {
     data.connection.name = connection.name;
@@ -33,13 +35,23 @@ export default function getFormattedSampleData({
     data.connection[connection.type] = hbSubDoc;
   }
 
-  if (sampleData) {
-    data.data = useSampleDataAsArray ? [sampleData] : sampleData;
-  }
-
   data[resourceType === 'imports' ? 'import' : 'export'] = {
     name: resourceName,
   };
 
   return data;
+}
+
+export function getDefaultData(obj) {
+  const _obj = obj;
+
+  Object.keys(_obj).forEach(key => {
+    if (typeof _obj[key] === 'object' && _obj[key] !== null) {
+      getDefaultData(_obj[key]);
+    } else {
+      _obj[key] = { default: '' };
+    }
+  });
+
+  return _obj;
 }

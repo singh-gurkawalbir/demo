@@ -14,7 +14,7 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(0, 0),
   },
   actionColHead: {
-    // any smaller and table "giggles" when transitioning to/from hover state
+    // any smaller and table "jiggles" when transitioning to/from hover state
     width: 125,
     textAlign: 'center',
   },
@@ -39,7 +39,7 @@ export default function ActionMenu({ actions }) {
   }
 
   const open = Boolean(anchorEl);
-  const id = open ? 'simple-popover' : undefined;
+  const id = open ? 'more-row-actions' : undefined;
 
   if (!actions || !actions.length) return null;
 
