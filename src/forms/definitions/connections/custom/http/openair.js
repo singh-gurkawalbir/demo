@@ -100,6 +100,8 @@ export default {
       id: 'http.unencrypted.namespace',
       type: 'text',
       label: 'API Namespace',
+      defaultValue: r =>
+        (r && r.http && r.http.unencrypted.namespace) || 'default',
       helpText: 'Please enter the API Namespace of your account.',
       required: true,
     },

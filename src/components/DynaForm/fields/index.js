@@ -5,6 +5,7 @@ import DynaLabel from './DynaLabel';
 import DynaCeligoTable from './DynaCeligoTable';
 import DynaSelectResource from './DynaSelectResource';
 import DynaSelectApplication from './DynaSelectApplication';
+import DynaFileTypeSelect from './select/DynaFileTypeSelect';
 import DynaText from './DynaText';
 import DynaCheckbox from './DynaCheckbox';
 import DynaRelativeUri from './DynaRelativeUri';
@@ -64,6 +65,7 @@ export default {
   csvColumnMapper: DynaCSVColumnMapper,
   selectresource: DynaSelectResource,
   selectapplication: DynaSelectApplication,
+  filetypeselect: DynaFileTypeSelect,
   multiselect: DynaMultiSelect,
   radiogroup: DynaRadioGroup,
   relativeuri: DynaRelativeUri,
