@@ -1,7 +1,11 @@
 import { takeLatest, put, select, call } from 'redux-saga/effects';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
-import { resource, resourceFormState } from '../../reducers';
+import {
+  resource,
+  resourceFormState,
+  getResourceSampleDataWithStatus,
+} from '../../reducers';
 import {
   getAddedLookupInFlow,
   isRawDataPatchSet,
@@ -16,10 +20,9 @@ function* saveRawDataOnResource({
   rawData,
   resourceType = 'exports',
 }) {
-  // patch req on resource
   if (!resourceId || !rawData) return;
   const rawDataKey = yield call(uploadRawData, {
-    file: typeof rawData !== 'string' ? JSON.stringify(rawData) : rawData,
+    file: rawData,
   });
   const patchSet = [
     {
@@ -34,8 +37,7 @@ function* saveRawDataOnResource({
   yield put(actions.resource.commitStaged(resourceType, resourceId, 'value'));
 }
 
-// WIP Implementation
-function* fetchRawDataForFTP({ resourceId }) {
+function* fetchRawDataForFTP({ resourceId, tempResourceId }) {
   const resourceObj = yield select(resource, 'exports', resourceId);
   const isFileTypeExport = isFileExport(resourceObj);
 
@@ -43,13 +45,13 @@ function* fetchRawDataForFTP({ resourceId }) {
   // Incase of FTP, raw data to be saved in the data in Parse Stage ( JSON )
   // tempResourceId if passed used incase of newly created export
   // to fetch Sample data saved against temp id in state
-  // const { data: rawData } = yield select(
-  //   getResourceSampleDataWithStatus,
-  //   tempResourceId || resourceId,
-  //   'raw'
-  // );
+  const { data: rawData } = yield select(
+    getResourceSampleDataWithStatus,
+    tempResourceId || resourceId,
+    'raw'
+  );
 
-  return false;
+  return rawData || {};
 }
 
 function* fetchAndSaveRawDataForResource({
@@ -58,19 +60,20 @@ function* fetchAndSaveRawDataForResource({
   flowId,
   tempResourceId,
 }) {
-  if (type === 'exports') {
-    const ftpRawData = yield call(fetchRawDataForFTP, {
+  // For File exports sample data is extracted from the state
+  const ftpRawData = yield call(fetchRawDataForFTP, {
+    resourceId,
+    tempResourceId,
+  });
+
+  if (ftpRawData) {
+    return yield call(saveRawDataOnResource, {
       resourceId,
-      tempResourceId,
+      rawData: ftpRawData && ftpRawData.body,
     });
+  }
 
-    if (ftpRawData && ftpRawData.body) {
-      return yield call(saveRawDataOnResource, {
-        resourceId,
-        rawData: ftpRawData.body,
-      });
-    }
-
+  if (type === 'exports') {
     const exportPreviewData = yield call(exportPreview, {
       resourceId,
       hidden: true,
@@ -82,15 +85,6 @@ function* fetchAndSaveRawDataForResource({
       yield call(saveRawDataOnResource, { resourceId, rawData: parseData });
     }
   } else {
-    const ftpRawData = yield call(fetchRawDataForFTP, { resourceId });
-
-    if (ftpRawData) {
-      return yield call(saveRawDataOnResource, {
-        resourceId,
-        rawData: ftpRawData,
-      });
-    }
-
     const pageProcessorPreviewData = yield call(pageProcessorPreview, {
       flowId,
       _pageProcessorId: resourceId,

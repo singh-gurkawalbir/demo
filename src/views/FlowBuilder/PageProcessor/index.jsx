@@ -2,14 +2,13 @@ import { useRef, Fragment, useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { useDrag, useDrop } from 'react-dnd-cjs';
-import shortid from 'shortid';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import itemTypes from '../itemTypes';
 import AppBlock from '../AppBlock';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
-import { getResourceSubType } from '../../../utils/resource';
+import { getResourceSubType, generateNewId } from '../../../utils/resource';
 import importMappingAction from './actions/importMapping';
 import inputFilterAction from './actions/inputFilter';
 import pageProcessorHooksAction from './actions/pageProcessorHooks';
@@ -162,7 +161,7 @@ const PageProcessor = ({
   // #endregion
 
   function handleBlockClick() {
-    const newId = `new-${shortid.generate()}`;
+    const newId = generateNewId();
 
     if (pending) {
       // generate newId

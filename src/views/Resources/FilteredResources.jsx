@@ -13,7 +13,7 @@ import {
 } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import Avatar from '@material-ui/core/Avatar';
-import shortid from 'shortid';
+import { generateNewId } from '../../utils/resource';
 import ApplicationImg from '../../components/icons/ApplicationImg';
 import ResourceImage from '../../components/icons/ResourceImg';
 import actions from '../../actions';
@@ -82,7 +82,7 @@ class FilteredResources extends Component {
                     color="primary"
                     aria-label="Add"
                     component={Link}
-                    to={`/pg/resources/${resourceType}/add/new-${shortid.generate()}`}
+                    to={`/pg/resources/${resourceType}/add/${generateNewId()}`}
                     className={classes.addResource}>
                     Add
                   </Button>
