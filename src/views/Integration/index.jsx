@@ -85,6 +85,11 @@ export default function Integration({ match }) {
     patchIntegration('/name', title);
   }
 
+  function handleDelete() {
+    dispatch(actions.resource.delete('integrations', integrationId));
+    history.push(getRoutePath('/dashboard'));
+  }
+
   function handleDescriptionChange(description) {
     patchIntegration('/description', description);
   }
@@ -128,7 +133,10 @@ export default function Integration({ match }) {
             </IconTextButton>
           )}
 
-          <IconTextButton variant="text" data-test="deleteIntegration">
+          <IconTextButton
+            variant="text"
+            data-test="deleteIntegration"
+            onClick={handleDelete}>
             <TrashIcon /> Delete integration
           </IconTextButton>
         </CeligoPageBar>
