@@ -640,7 +640,15 @@ export default function FilterPanel({
               return vr.error;
             }
 
-            return lhsValue && rhsValue ? true : 'Error';
+            if (vr.isValid) {
+              return true;
+            }
+
+            if (lhsValue && rhsValue) {
+              return true;
+            }
+
+            return 'Error';
           },
         },
       });
