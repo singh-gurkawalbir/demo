@@ -11,7 +11,8 @@ import actions from '../../actions';
 import ArrowLeftIcon from '../icons/ArrowLeftIcon';
 import ArrowRightIcon from '../icons/ArrowRightIcon';
 import CeligoSelect from '../CeligoSelect';
-import { STANDALONE_INTEGRATION } from '../../utils/constants';
+import StoreSelector from './StoreSelector';
+import FlowSelector from './FlowSelector';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -112,30 +113,6 @@ function Filters({
     hideEmpty = false,
     currentPage = 0,
   } = useSelector(state => selectors.filter(state, filterKey));
-  const integration = useSelector(state =>
-    selectors.integrationAppSettings(state, integrationId)
-  );
-  const { supportsMultiStore, storeLabel } = integration.settings || {};
-  const filteredFlows = useSelector(state => {
-    if (integration && integration._connectorId) {
-      return selectors.integrationAppFlowSettings(
-        state,
-        integrationId,
-        null,
-        storeId
-      ).flows;
-    }
-
-    const flows = selectors.resourceList(state, { type: 'flows' }).resources;
-
-    return flows.filter(flow => {
-      if (!integrationId || integrationId === STANDALONE_INTEGRATION.id) {
-        return !flow._integrationId; // standalone integration flows
-      }
-
-      return flow._integrationId === integrationId;
-    });
-  });
   // #endregion
   const { rowsPerPage } = paging;
   const maxPage = Math.ceil(totalJobs / rowsPerPage) - 1;
@@ -195,34 +172,19 @@ function Filters({
         </MenuItem>
       </CeligoSelect>
 
-      {supportsMultiStore && (
-        <CeligoSelect
-          className={classes.flow}
-          onChange={e => patchFilter('storeId', e.target.value)}
-          displayEmpty
-          value={storeId || ''}>
-          <MenuItem value="">Select a {storeLabel}</MenuItem>
-          {integration.stores.map(opt => (
-            <MenuItem key={opt.value} value={opt.value}>
-              {opt.label || opt.value}
-            </MenuItem>
-          ))}
-        </CeligoSelect>
-      )}
+      <StoreSelector
+        integrationId={integrationId}
+        value={storeId}
+        onChange={storeId => patchFilter('storeId', storeId)}
+      />
 
       {!flowId && (
-        <CeligoSelect
-          className={classes.flow}
-          onChange={e => patchFilter('flowId', e.target.value)}
-          displayEmpty
-          value={_flowId || ''}>
-          <MenuItem value="">Select flow</MenuItem>
-          {filteredFlows.map(opt => (
-            <MenuItem key={opt._id} value={opt._id}>
-              {opt.name || opt._id}
-            </MenuItem>
-          ))}
-        </CeligoSelect>
+        <FlowSelector
+          integrationId={integrationId}
+          storeId={storeId}
+          value={_flowId}
+          onChange={flowId => patchFilter('flowId', flowId)}
+        />
       )}
 
       <CeligoSelect

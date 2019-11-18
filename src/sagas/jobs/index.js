@@ -102,8 +102,9 @@ export function* requestJobCollection({ integrationId, flowId, filters = {} }) {
     );
 
     jobFilters.flowIds = map(flows, '_id');
-    delete jobFilters.storeId;
   }
+
+  delete jobFilters.storeId;
 
   switch (jobFilters.status) {
     case 'all':
