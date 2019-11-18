@@ -1,5 +1,5 @@
-import React, { useState, Fragment } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useState, useEffect, Fragment } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { IconButton } from '@material-ui/core';
 import OpenInNewIcon from 'mdi-react/OpenInNewIcon';
@@ -7,6 +7,7 @@ import * as selectors from '../../../../reducers';
 import UrlEditorDialog from '../../../../components/AFE/UrlEditor/Dialog';
 import InputWithLookupHandlebars from './InputWithLookupHandlebars';
 import getFormattedSampleData from '../../../../utils/sampleData';
+import actions from '../../../../actions';
 
 const useStyles = makeStyles(theme => ({
   textField: {
@@ -57,6 +58,7 @@ export default function DynaRelativeURIWithLookup(props) {
   const connection = useSelector(state =>
     selectors.resource(state, 'connections', connectionId)
   );
+  const dispatch = useDispatch();
   const sampleData = useSelector(state =>
     selectors.getSampleData(state, flowId, resourceId, 'flowInput', {
       isImport: resourceType === 'imports',
@@ -73,6 +75,23 @@ export default function DynaRelativeURIWithLookup(props) {
     null,
     2
   );
+
+  useEffect(() => {
+    // Request for sample data only incase of flow context
+    // TODO : @Raghu Do we show default data in stand alone context?
+    // What type of sample data is expected in case of Page generators
+    if (flowId && !sampleData) {
+      dispatch(
+        actions.flowData.requestSampleData(
+          flowId,
+          resourceId,
+          resourceType,
+          'flowInput'
+        )
+      );
+    }
+  }, [dispatch, flowId, resourceId, resourceType, sampleData]);
+
   const handleEditorClick = () => {
     setShowEditor(!showEditor);
   };

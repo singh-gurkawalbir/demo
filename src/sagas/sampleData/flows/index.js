@@ -86,8 +86,7 @@ export function* fetchPageGeneratorPreview({ flowId, _pageGeneratorId }) {
   try {
     const previewData = yield call(exportPreview, {
       resourceId: _pageGeneratorId,
-      // TODO : @Raghu Make it to true when FTP Exports offline preview implemented
-      runOffline: false,
+      runOffline: true,
     });
     const parseData = getPreviewStageData(previewData, 'parse');
 

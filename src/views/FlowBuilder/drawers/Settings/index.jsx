@@ -18,7 +18,12 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function SettingsDrawer({ flow, history, ...props }) {
+export default function SettingsDrawer({
+  flow,
+  history,
+  isViewMode,
+  ...props
+}) {
   const dispatch = useDispatch();
   const { resources: integrations } = useSelector(state =>
     selectors.resourceList(state, { type: 'integrations' })
@@ -130,7 +135,7 @@ export default function SettingsDrawer({ flow, history, ...props }) {
         <Close />
       </IconButton>
       <TitleBar title="Settings" />
-      <DynaForm fieldMeta={fieldMeta} render>
+      <DynaForm disabled={isViewMode} fieldMeta={fieldMeta} render>
         <DynaSubmit onClick={handleSubmit} color="primary" variant="outlined">
           Save
         </DynaSubmit>

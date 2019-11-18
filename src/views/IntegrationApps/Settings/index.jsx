@@ -384,7 +384,9 @@ export default function IntegrationAppSettings(props) {
               />
               <Route
                 path={`${urlRegexPrefix}/tokens`}
-                component={AccessTokens}
+                render={props => (
+                  <AccessTokens {...props} integrationId={integrationId} />
+                )}
               />
               <Route
                 path={`${urlRegexPrefix}/connections`}

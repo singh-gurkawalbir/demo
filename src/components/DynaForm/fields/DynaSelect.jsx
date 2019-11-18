@@ -107,12 +107,6 @@ export default function DynaSelect(props) {
 
   items = [defaultItem, ...items];
 
-  const handleSelectChange = evt => {
-    const { value: evtValue } = evt.target;
-
-    onFieldChange(id, evtValue);
-  };
-
   return (
     <div>
       <FormControl
@@ -130,7 +124,12 @@ export default function DynaSelect(props) {
           IconComponent={ArrowDownIcon}
           disableUnderline
           displayEmpty
-          onChange={handleSelectChange}
+          disabled={disabled}
+          onChange={evt => {
+            const { value: evtValue } = evt.target;
+
+            onFieldChange(id, evtValue);
+          }}
           input={<Input name={name} id={id} />}>
           {items}
         </Select>
