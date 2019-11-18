@@ -1,18 +1,25 @@
-import { Dialog, DialogTitle, DialogContent } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { Fragment } from 'react';
 import { useDispatch } from 'react-redux';
 import Icon from '../../../../components/icons/HookIcon';
 import actions from '../../../../actions';
 import Hooks from '../../../../components/Hooks';
+import ModalDialog from '../../../../components/ModalDialog';
 
-const useStyles = makeStyles(theme => ({
-  paper: {
-    padding: theme.spacing(3),
+const useStyles = makeStyles(() => ({
+  wrapper: {
+    minWidth: 580,
   },
 }));
 
-function HooksDialog({ flowId, resource, resourceType, open, onClose }) {
+function HooksDialog({
+  flowId,
+  resource,
+  resourceType,
+  isViewMode,
+  open,
+  onClose,
+}) {
   const dispatch = useDispatch();
   const classes = useStyles();
   const resourceId = resource._id;
@@ -26,19 +33,22 @@ function HooksDialog({ flowId, resource, resourceType, open, onClose }) {
   };
 
   return (
-    <Dialog open={open} PaperProps={{ className: classes.paper }}>
-      <DialogTitle>Hooks</DialogTitle>
-      <DialogContent>
-        <Hooks
-          onSave={onSave}
-          onCancel={onClose}
-          defaultValue={defaultValue}
-          resourceType={resourceType}
-          resourceId={resourceId}
-          flowId={flowId}
-        />
-      </DialogContent>
-    </Dialog>
+    <ModalDialog
+      show={open}
+      disabled={isViewMode}
+      className={classes.wrapper}
+      handleClose={onClose}>
+      <div>Hooks</div>
+      <Hooks
+        onSave={onSave}
+        disabled={isViewMode}
+        onCancel={onClose}
+        defaultValue={defaultValue}
+        resourceType={resourceType}
+        resourceId={resourceId}
+        flowId={flowId}
+      />
+    </ModalDialog>
   );
 }
 

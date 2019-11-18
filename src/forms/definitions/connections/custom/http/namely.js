@@ -27,6 +27,7 @@ export default {
       startAdornment: 'https://',
       endAdornment: '.namely.com',
       label: 'Company Name',
+      required: true,
       helpText: 'Your subdomain. For example, https://mysubdomain.namely.com',
       validWhen: {
         matchesRegEx: {

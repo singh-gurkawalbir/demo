@@ -2,13 +2,15 @@ export default {
   preSave: formValues => ({
     ...formValues,
     '/type': 'http',
-    '/assistant': 'google',
+    '/assistant': 'googleanalytics',
     '/http/auth/type': 'oauth',
     '/http/mediaType': 'json',
     '/http/baseURI': 'https://www.googleapis.com/analytics/',
     '/http/auth/oauth/authURI': 'https://accounts.google.com/o/oauth2/auth',
     '/http/auth/oauth/tokenURI': 'https://accounts.google.com/o/oauth2/token',
     '/http/auth/oauth/scopeDelimiter': ' ',
+    '/http/auth/token/refreshMethod': 'POST',
+    '/http/auth/token/refreshMediaType': 'urlencoded',
   }),
   fieldMap: {
     name: { fieldId: 'name' },

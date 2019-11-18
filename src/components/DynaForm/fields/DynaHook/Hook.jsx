@@ -1,14 +1,13 @@
 import { useState, Fragment, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import TextField from '@material-ui/core/TextField';
 import IconButton from '@material-ui/core/IconButton';
 import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
 import { isFunction } from 'lodash';
 import shortid from 'shortid';
+import DynaSelect from '../DynaSelect';
+import DynaText from '../DynaText';
 import * as selectors from '../../../../reducers';
 import JavaScriptEditorDialog from '../../../../components/AFE/JavaScriptEditor/Dialog';
 import EditIcon from '../../../icons/EditIcon';
@@ -17,52 +16,24 @@ import CreateScriptDialog from './CreateScriptDialog';
 import { saveScript } from './utils';
 
 const useStyles = makeStyles(theme => ({
-  select: {
-    display: 'flex !important',
-    flexWrap: 'nowrap',
-    background: theme.palette.background.paper,
-    border: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
-    transitionProperty: 'border',
-    transitionDuration: theme.transitions.duration.short,
-    transitionTimingFunction: theme.transitions.easing.easeInOut,
-    overflow: 'hidden',
-    height: 50,
-    width: '50%',
-    justifyContent: 'flex-end',
-    borderRadius: 2,
-    '& > Label': {
-      paddingTop: 10,
-    },
-    '&:hover': {
-      borderColor: theme.palette.primary.main,
-    },
-    '& > *': {
-      padding: [[0, 12]],
-    },
-    '& > div > div ': {
-      paddingBottom: 5,
-    },
-    '& svg': {
-      right: 8,
-    },
-  },
   wrapper: {
     display: 'flex',
     alignItems: 'flex-start',
-    marginBottom: 6,
   },
   label: {
     minWidth: 100,
     marginTop: 10,
     marginBottom: 10,
   },
-  textField: {
-    width: 'calc(50% - 30px)',
+  field: {
+    width: '50%',
     paddingRight: theme.spacing(1),
+    '& >.MuiFormControl-root': {
+      width: '100%',
+    },
   },
   editorButton: {
-    marginLeft: 5,
+    marginRight: 5,
     background: theme.palette.background.paper,
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
@@ -134,8 +105,8 @@ export default function DynaHook(props) {
     handleEditorClick();
   };
 
-  const handleFieldChange = field => event => {
-    onFieldChange(id, { ...value, [field]: event.target.value });
+  const handleFieldChange = field => (event, fieldValue) => {
+    onFieldChange(id, { ...value, [field]: fieldValue });
   };
 
   const handleCreateScriptClick = () => {
@@ -168,6 +139,15 @@ export default function DynaHook(props) {
     value,
   ]);
 
+  const allScriptsOptions = allScripts.map(script => ({
+    label: script.name,
+    value: script._id,
+  }));
+  const allStacksOptions = allStacks.map(stack => ({
+    label: stack.name,
+    value: stack._id,
+  }));
+
   return (
     <Fragment>
       {showEditor && (
@@ -175,6 +155,7 @@ export default function DynaHook(props) {
           title="Script Editor"
           id={id}
           key={id}
+          disabled={disabled}
           data={JSON.stringify(preHookData, null, 2)}
           scriptId={value._scriptId}
           entryFunction={value.function}
@@ -191,59 +172,57 @@ export default function DynaHook(props) {
       <div className={classes.inputContainer}>
         <InputLabel className={classes.label}>{label}</InputLabel>
         <div className={classes.wrapper}>
-          <TextField
-            key={id}
-            name={name}
-            label="Function"
-            InputLabelProps={{
-              shrink: true,
-            }}
-            className={classes.textField}
-            placeholder={placeholder}
-            disabled={disabled}
-            required={required}
-            error={!isValid}
-            value={value.function}
-            variant="filled"
-            onChange={handleFieldChange('function')}
-          />
+          <div className={classes.field}>
+            <DynaText
+              key={id}
+              name={name}
+              label="Function"
+              InputLabelProps={{
+                shrink: true,
+              }}
+              placeholder={placeholder}
+              disabled={disabled}
+              required={required}
+              error={!isValid}
+              value={value.function}
+              onFieldChange={handleFieldChange('function')}
+            />
+          </div>
           {hookType === 'stack' && (
-            <FormControl className={classes.select}>
-              <InputLabel htmlFor="stackId">Stack</InputLabel>
-              <Select
-                id="stackId"
-                margin="dense"
-                variant="filled"
-                value={value._stackId}
-                onChange={handleFieldChange('_stackId')}>
-                {allStacks.map(s => (
-                  <MenuItem key={s._id} value={s._id}>
-                    {s.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+            // Todo Azhar select field is small
+            <div className={classes.field}>
+              <FormControl className={classes.select}>
+                <InputLabel htmlFor="stackId">Stack</InputLabel>
+                <DynaSelect
+                  id="stackId"
+                  label="Stacks"
+                  value={value._stackId}
+                  disabled={disabled}
+                  onFieldChange={handleFieldChange('_stackId')}
+                  options={[{ items: allStacksOptions || [] }]}
+                />
+              </FormControl>
+            </div>
           )}
           {hookType === 'script' && (
             <Fragment>
-              <FormControl className={classes.select}>
-                <InputLabel htmlFor="scriptId">Script</InputLabel>
-                <Select
-                  id="scriptId"
-                  margin="dense"
-                  variant="filled"
-                  value={value._scriptId}
-                  onChange={handleFieldChange('_scriptId')}>
-                  {allScripts.map(s => (
-                    <MenuItem key={s._id} value={s._id}>
-                      {s.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+              <div className={classes.field}>
+                <FormControl className={classes.select}>
+                  <InputLabel htmlFor="scriptId">Script</InputLabel>
+                  <DynaSelect
+                    id="scriptId"
+                    label="Scripts"
+                    value={value._scriptId}
+                    disabled={disabled}
+                    onFieldChange={handleFieldChange('_scriptId')}
+                    options={[{ items: allScriptsOptions || [] }]}
+                  />
+                </FormControl>
+              </div>
               <IconButton
                 onClick={handleCreateScriptClick}
                 className={classes.editorButton}
+                disabled={disabled}
                 data-test={id}>
                 <AddIcon />
               </IconButton>
@@ -253,6 +232,7 @@ export default function DynaHook(props) {
             <IconButton
               onClick={handleEditorClick}
               className={classes.editorButton}
+              disabled={disabled}
               data-test={id}>
               <EditIcon />
             </IconButton>

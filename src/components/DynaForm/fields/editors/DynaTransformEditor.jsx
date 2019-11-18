@@ -14,6 +14,7 @@ export default function DynaTransformEditor(props) {
     resourceType,
     onFieldChange,
     value,
+    disabled,
   } = props;
   const [showEditor, setShowEditor] = useState(false);
   const dispatch = useDispatch();
@@ -69,6 +70,7 @@ export default function DynaTransformEditor(props) {
           data={preTransformData || sampleData}
           rule={firstRuleSet}
           onClose={handleClose}
+          disabled={disabled}
         />
       )}
       <Button

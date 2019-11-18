@@ -10,6 +10,8 @@ export default {
     }.api.accelo.com`,
     '/http/ping/relativeURI': '/api/v0/companies',
     '/http/ping/method': 'GET',
+    '/http/auth/token/refreshMethod': 'POST',
+    '/http/auth/token/refreshMediaType': 'urlencoded',
     '/http/auth/oauth/authURI': `https://${
       formValues['/http/acceloSubdomain']
     }.api.accelo.com/oauth2/v0/authorize`,
@@ -26,6 +28,7 @@ export default {
       startAdornment: 'https://',
       endAdornment: '.api.accelo.com',
       label: 'Subdomain',
+      required: true,
       helpText:
         'Please enter your subdomain here which you configured in Deployment Information page while signing up for your new Accelo account.',
       validWhen: {

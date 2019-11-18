@@ -16,11 +16,12 @@ const useStyles = makeStyles(theme => ({
   suggestionsContainerOpen: {
     position: 'absolute',
     zIndex: 1,
-    marginTop: theme.spacing(1),
     left: 0,
     right: 0,
     maxHeight: 300,
     overflow: 'scroll',
+    borderRadius: '0px 0px 4px 4px',
+    marginTop: theme.spacing(0.5),
   },
   dynaFieldWrapper: {
     width: '100%',
@@ -35,6 +36,9 @@ const useStyles = makeStyles(theme => ({
     margin: 0,
     padding: 0,
     listStyleType: 'none',
+    '& li': {
+      borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
+    },
   },
   divider: {
     height: theme.spacing(2),
@@ -79,28 +83,22 @@ function renderSuggestion(suggestion, { query, isHighlighted }) {
   );
 }
 
-function getSuggestions({ val, suggestions, showAllSuggestions }) {
+function getSuggestions(val, suggestions, showAllSuggestions) {
+  const { value } = val;
+
   if (showAllSuggestions) {
     return suggestions;
   }
 
-  const inputValue = val.trim().toLowerCase();
+  const inputValue = value.trim().toLowerCase();
   const inputLength = inputValue.length;
-  let count = 0;
 
   return inputLength === 0
     ? []
-    : suggestions.filter(suggestion => {
-        const keep =
-          count < 5 &&
-          suggestion.label.slice(0, inputLength).toLowerCase() === inputValue;
-
-        if (keep) {
-          count += 1;
-        }
-
-        return keep;
-      });
+    : suggestions.filter(
+        suggestion =>
+          suggestion.label.slice(0, inputLength).toLowerCase() === inputValue
+      );
 }
 
 function getSuggestionValue(suggestion) {
@@ -118,6 +116,7 @@ export default function DynaAutoSuggest(props) {
     showAllSuggestions,
     label,
     valueName,
+    autoFocus,
     options = {},
   } = props;
   const classes = useStyles();
@@ -126,8 +125,10 @@ export default function DynaAutoSuggest(props) {
     value: valueName ? option[valueName] : option,
   }));
   const [stateSuggestions, setSuggestions] = useState(suggestions || []);
-  const handleSuggestionsFetchRequested = ({ val }) => {
-    setSuggestions(getSuggestions({ val, suggestions, showAllSuggestions }));
+  const handleSuggestionsFetchRequested = val => {
+    const _suggestions = getSuggestions(val, suggestions, showAllSuggestions);
+
+    setSuggestions(_suggestions);
   };
 
   const handleSuggestionsClearRequested = () => {
@@ -159,7 +160,9 @@ export default function DynaAutoSuggest(props) {
             id,
             label,
             placeholder,
+            autoFocus,
             value,
+            disabled,
             onChange: handleChange,
           }}
           theme={{
@@ -169,7 +172,7 @@ export default function DynaAutoSuggest(props) {
             suggestion: classes.suggestion,
           }}
           renderSuggestionsContainer={options => (
-            <Paper {...options.containerProps} square>
+            <Paper {...options.containerProps} square elevation={2}>
               {options.children}
             </Paper>
           )}

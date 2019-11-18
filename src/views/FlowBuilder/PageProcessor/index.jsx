@@ -9,9 +9,8 @@ import itemTypes from '../itemTypes';
 import AppBlock from '../AppBlock';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
-import { getResourceSubType, adaptorTypeMap } from '../../../utils/resource';
+import { getResourceSubType } from '../../../utils/resource';
 import importMappingAction from './actions/importMapping';
-import templateMappingAction from './actions/templateMapping';
 import inputFilterAction from './actions/inputFilter';
 import pageProcessorHooksAction from './actions/pageProcessorHooks';
 import outputFilterAction from './actions/outputFilter';
@@ -50,6 +49,8 @@ const PageProcessor = ({
   index,
   onMove,
   isLast,
+  integrationId,
+  isViewMode,
   ...pp
 }) => {
   const pending = !!pp._connectionId;
@@ -153,6 +154,7 @@ const PageProcessor = ({
     collect: monitor => ({
       isDragging: monitor.isDragging(),
     }),
+    canDrag: !isViewMode,
   });
   const opacity = isDragging ? 0.2 : 1;
 
@@ -202,10 +204,6 @@ const PageProcessor = ({
   }
 
   // #region Configure available processor actions
-
-  // Template mapping action is shown only for http import resource
-  const isHTTPImport =
-    resource.adaptorType && adaptorTypeMap[resource.adaptorType] === 'http';
   // Add Help texts for actions common to lookups and imports manually
   const processorActions = [
     {
@@ -238,14 +236,6 @@ const PageProcessor = ({
           ...importMappingAction,
           isUsed: usedActions[actionsMap.importMapping],
         },
-        ...(isHTTPImport
-          ? [
-              {
-                ...templateMappingAction,
-                isUsed: usedActions[actionsMap.templateMapping],
-              },
-            ]
-          : []),
         {
           ...responseTransformationAction,
           isUsed: usedActions[actionsMap.responseTransformation],
@@ -287,10 +277,12 @@ const PageProcessor = ({
           name={
             pending ? 'Pending configuration' : resource.name || resource.id
           }
+          isViewMode={isViewMode}
           onBlockClick={handleBlockClick}
           connectorType={resource.adaptorType || resource.type}
           assistant={resource.assistant}
           ref={ref}
+          integrationId={integrationId}
           opacity={opacity} /* used for drag n drop */
           blockType={pp.type === 'export' ? 'lookup' : 'import'}
           flowId={flowId}

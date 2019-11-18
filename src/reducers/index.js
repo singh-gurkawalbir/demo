@@ -120,6 +120,32 @@ export function resourceFormState(state, resourceType, resourceId) {
   );
 }
 
+export function resourceFormSaveProcessTerminated(
+  state,
+  resourceType,
+  resourceId
+) {
+  return fromSession.resourceFormSaveProcessTerminated(
+    state && state.session,
+    resourceType,
+    resourceId
+  );
+}
+
+export function clonePreview(state, resourceType, resourceId) {
+  return fromSession.previewTemplate(
+    state && state.session,
+    `${resourceType}-${resourceId}`
+  );
+}
+
+export function cloneData(state, resourceType, resourceId) {
+  return fromSession.template(
+    state && state.session,
+    `${resourceType}-${resourceId}`
+  );
+}
+
 export function previewTemplate(state, templateId) {
   return fromSession.previewTemplate(state && state.session, templateId);
 }
@@ -149,6 +175,10 @@ export function templateInstallSteps(state, templateId) {
       unCompletedStep.isCurrentStep = true;
     }
   });
+}
+
+export function cloneInstallSteps(state, resourceType, resourceId) {
+  return templateInstallSteps(state, `${resourceType}-${resourceId}`);
 }
 
 export function templateConnectionMap(state, templateId) {
@@ -532,6 +562,7 @@ export function resourceList(state, options = {}) {
   if (
     !options.ignoreEnvironmentFilter &&
     !['accesstokens', 'agents', 'iclients', 'scripts', 'stacks'].includes(
+      /* These resources are common for both production & sandbox environments. */
       options.type
     )
   ) {
@@ -542,6 +573,30 @@ export function resourceList(state, options = {}) {
   }
 
   return fromData.resourceList(state && state.data, options);
+}
+
+const emptyObject = {};
+
+export function flowDetails(state, id) {
+  const flow = resource(state, 'flows', id);
+
+  if (!flow) return emptyObject;
+
+  return produce(flow, draft => {
+    const exportId =
+      draft.pageGenerators && draft.pageGenerators.length
+        ? draft.pageGenerators[0]._exportId
+        : draft._exportId;
+    const pg = resource(state, 'exports', exportId);
+    const allExports = resourceList(state, {
+      resourceType: 'exports',
+    }).resources;
+
+    draft.isRealtime = isRealtimeExport(pg);
+    draft.isSimpleImport = isSimpleImportFlow(pg);
+    draft.isRunnable = isRunnable(allExports, pg, draft);
+    draft.showScheduleIcon = showScheduleIcon(allExports, pg, draft);
+  });
 }
 
 export function flowListWithMetadata(state, options) {
@@ -752,6 +807,10 @@ export function integrationAppSettingsFormState(state, integrationId, flowId) {
   );
 }
 
+export function integrationAppAddOnState(state, integrationId) {
+  return fromSession.integrationAppAddOnState(state.session, integrationId);
+}
+
 export function checkUpgradeRequested(state, licenseId) {
   return fromSession.checkUpgradeRequested(state && state.session, licenseId);
 }
@@ -938,9 +997,18 @@ export function integrationAppFlowSettings(state, id, section, storeId) {
   let allSections = sections;
 
   if (supportsMultiStore) {
-    const store = sections.find(s => s.id === storeId) || {};
+    if (storeId) {
+      // If storeId passed, return sections from that store
+      const store = sections.find(s => s.id === storeId) || {};
 
-    allSections = store.sections || [];
+      allSections = store.sections || [];
+    } else {
+      // If no storeId is passed, return all sections from all stores
+      allSections = [];
+      sections.forEach(sec => {
+        allSections.push(...sec.sections);
+      });
+    }
   }
 
   const selectedSection =
@@ -1169,6 +1237,24 @@ export function resourcePermissions(state, resourceType, resourceId) {
   }
 
   return {};
+}
+
+export function isFormAMonitorLevelAccess(state, integrationId) {
+  const { accessLevel } = userPermissions(state);
+
+  // if all forms is monitor level
+  if (accessLevel === 'monitor') return true;
+
+  // check integration level is monitor level
+  const { accessLevel: accessLevelIntegration } = resourcePermissions(
+    state,
+    'integrations',
+    integrationId
+  );
+
+  if (accessLevelIntegration === 'monitor') return true;
+
+  return false;
 }
 
 export function publishedConnectors(state) {
@@ -1756,24 +1842,18 @@ export function stagedResource(state, id, scope) {
   return fromSession.stagedResource(state && state.session, id, scope);
 }
 
-export function optionsFromMetadata(
+export function optionsFromMetadata({
   state,
   connectionId,
-  applicationType,
-  metadataType,
-  mode,
-  recordType,
-  selectField
-) {
-  return fromSession.optionsFromMetadata(
-    state && state.session,
+  commMetaPath,
+  filterKey,
+}) {
+  return fromSession.optionsFromMetadata({
+    state: state && state.session,
     connectionId,
-    applicationType,
-    metadataType,
-    mode,
-    recordType,
-    selectField
-  );
+    commMetaPath,
+    filterKey,
+  });
 }
 
 export function optionsMapFromMetadata(
@@ -1800,82 +1880,19 @@ export const getPreBuiltFileDefinitions = (state, format) =>
 export const getFileDefinition = (state, definitionId, options) =>
   fromData.getFileDefinition(state && state.data, definitionId, options);
 
-export function commMetadataPathGen(
-  applicationType,
-  connectionId,
-  metadataType,
-  mode,
-  recordType,
-  selectField,
-  addInfo
-) {
-  let commMetadataPath;
-
-  if (applicationType === 'netsuite') {
-    if (mode === 'webservices' && metadataType !== 'recordTypes') {
-      commMetadataPath = `netSuiteWS/${metadataType}`;
-    } else {
-      commMetadataPath = `${applicationType}/metadata/${mode}/connections/${connectionId}/${metadataType}`;
-
-      if (selectField && recordType) {
-        commMetadataPath += `/${recordType}/selectFieldValues/${selectField}`;
-      } else if (recordType) {
-        commMetadataPath += `/${recordType}`;
-      }
-    }
-  } else if (applicationType === 'salesforce') {
-    commMetadataPath = `${applicationType}/metadata/connections/${connectionId}/${metadataType}`;
-
-    if (recordType) {
-      commMetadataPath += `/${recordType}`;
-    }
-  } else {
-    throw Error('Invalid application type...cannot support it');
-  }
-
-  if (addInfo) {
-    if (addInfo.refreshCache === true) {
-      commMetadataPath += '?refreshCache=true';
-    }
-
-    if (addInfo.recordTypeOnly === true) {
-      commMetadataPath += `${
-        addInfo.refreshCache === true ? '&' : '?'
-      }recordTypeOnly=true`;
-    }
-
-    if (addInfo.query) {
-      commMetadataPath += `?q=${addInfo.query}`;
-    }
-  }
-
-  return commMetadataPath;
-}
-
-export function metadataOptionsAndResources(
+export function metadataOptionsAndResources({
   state,
   connectionId,
-  mode,
-  metadataType,
+  commMetaPath,
   filterKey,
-  recordType,
-  selectField
-) {
-  const connection = resource(state, 'connections', connectionId);
-  // determining application type from the connection
-  const applicationType = connection && connection.type;
-  const key = filterKey ? `${metadataType}-${filterKey}` : metadataType;
-
+}) {
   return (
-    optionsFromMetadata(
+    optionsFromMetadata({
       state,
       connectionId,
-      applicationType,
-      key,
-      mode,
-      recordType,
-      selectField
-    ) || {}
+      commMetaPath,
+      filterKey,
+    }) || {}
   );
 }
 
@@ -2164,26 +2181,23 @@ export function getImportSampleData(state, resourceId) {
   } else if (adaptorType === 'NetSuiteDistributedImport') {
     // eslint-disable-next-line camelcase
     const { _connectionId: connectionId, netsuite_da } = resource;
-    const { data: sampleData } = metadataOptionsAndResources(
+    const commMetaPath = `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${netsuite_da.recordType}`;
+    const { data: sampleData } = metadataOptionsAndResources({
       state,
       connectionId,
-      'suitescript',
-      'recordTypes',
-      `record-${netsuite_da.recordType}`,
-      netsuite_da.recordType
-    );
+      commMetaPath,
+    });
 
     return sampleData;
   } else if (adaptorType === 'SalesforceImport') {
     const { _connectionId: connectionId, salesforce } = resource;
-    const { data: sampleData } = metadataOptionsAndResources(
+    const commMetaPath = `salesforce/metadata/connections/${connectionId}/sObjectTypes/${salesforce.sObjectType}`;
+    const { data: sampleData } = metadataOptionsAndResources({
       state,
       connectionId,
-      'salesforce',
-      'sObjectTypes',
-      null,
-      salesforce.sObjectType
-    );
+      commMetaPath,
+      filterKey: 'salesforce-recordType',
+    });
 
     return sampleData;
   }

@@ -19,23 +19,29 @@ const useStyles = makeStyles(theme => ({
     transitionDuration: theme.transitions.duration.short,
     transitionTimingFunction: theme.transitions.easing.easeInOut,
     overflow: 'hidden',
-    height: 50,
+    minHeight: 50,
     justifyContent: 'flex-end',
     borderRadius: 2,
     '& > Label': {
-      paddingTop: 10,
+      marginTop: theme.spacing(-1),
+      '&.MuiInputLabel-shrink': {
+        paddingTop: theme.spacing(2),
+      },
     },
     '&:hover': {
       borderColor: theme.palette.primary.main,
     },
+
     '& > *': {
       padding: [[0, 12]],
+      background: 'none',
     },
     '& > div > div ': {
       paddingBottom: 5,
     },
     '& svg': {
-      right: 8,
+      right: theme.spacing(1),
+      top: theme.spacing(-1),
     },
   },
   chips: {
@@ -116,6 +122,7 @@ export default function DynaMultiSelect(props) {
         <Select
           multiple
           data-test={id}
+          disabled={disabled}
           value={processedValue}
           IconComponent={ArrowDownIcon}
           onChange={evt => {

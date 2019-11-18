@@ -60,7 +60,7 @@ export default function getExistingResourcePagePath(resourceDetails = {}) {
         break;
 
       case 'integrations':
-        path = `/${type}/${id}/settings/flows`;
+        path = `/${type}/${id}/flows`;
         break;
 
       default:
@@ -281,4 +281,16 @@ export function salesforceExportSelectOptions(data, fieldName) {
   }
 
   return options.map(op => ({ label: op.label, value: op.value }));
+}
+
+/*
+ * Given a resource, returns true if it is File Export
+ * FTP / S3 / DataLoader
+ */
+export function isFileExport(resource) {
+  if (!resource) return false;
+
+  return resource.adaptorType
+    ? ['ftp', 's3'].includes(adaptorTypeMap[resource.adaptorType])
+    : resource.type === 'simple';
 }

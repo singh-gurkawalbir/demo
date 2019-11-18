@@ -1,19 +1,17 @@
-import { Dialog, Typography, DialogTitle } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
-import { useEffect, Fragment } from 'react';
+import { useEffect, Fragment, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import Icon from '../../../../components/icons/InputFilterIcon';
+import InputFilterEditorDialog from '../../../../components/AFE/FilterEditor/Dialog';
 
-const useStyles = makeStyles(theme => ({
-  paper: {
-    padding: theme.spacing(3),
-  },
-}));
-
-function InputFilterDialog({ flowId, resource, resourceType, open, onClose }) {
-  const classes = useStyles();
+function InputFilterDialog({
+  flowId,
+  resource,
+  resourceType,
+  isViewMode,
+  onClose,
+}) {
   const dispatch = useDispatch();
   const resourceId = resource._id;
   const sampleData = useSelector(state =>
@@ -21,6 +19,30 @@ function InputFilterDialog({ flowId, resource, resourceType, open, onClose }) {
       isImport: resourceType === 'imports',
     })
   );
+  const rules = useMemo(
+    () => resource && resource.filter && resource.filter.rules,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
+  const handleClose = (shouldCommit, editorValues) => {
+    if (shouldCommit) {
+      const { rule } = editorValues;
+      const path = '/filter';
+      const value = {
+        rules: rule || [],
+        version: '1',
+      };
+      const patchSet = [{ op: 'replace', path, value }];
+
+      // Save the resource
+      dispatch(actions.resource.patchStaged(resourceId, patchSet, 'value'));
+      dispatch(
+        actions.resource.commitStaged(resourceType, resourceId, 'value')
+      );
+    }
+
+    onClose();
+  };
 
   useEffect(() => {
     if (!sampleData) {
@@ -36,19 +58,14 @@ function InputFilterDialog({ flowId, resource, resourceType, open, onClose }) {
   }, [dispatch, flowId, resourceId, resourceType, sampleData]);
 
   return (
-    <Dialog
-      open={open}
-      onClose={onClose}
-      PaperProps={{ className: classes.paper }}>
-      <DialogTitle disableTypography>
-        <Typography variant="h6">Input Filter</Typography>
-      </DialogTitle>
-      <Typography>flowId: {flowId}</Typography>
-      <Typography>resourceId: {resourceId}</Typography>
-      {sampleData && (
-        <Typography> SampleData: {JSON.stringify(sampleData)}</Typography>
-      )}
-    </Dialog>
+    <InputFilterEditorDialog
+      title="Define Input Filter"
+      id={resourceId + flowId}
+      disabled={isViewMode}
+      data={sampleData}
+      rule={rules}
+      onClose={handleClose}
+    />
   );
 }
 

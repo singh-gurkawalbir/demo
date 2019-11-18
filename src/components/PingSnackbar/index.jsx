@@ -117,7 +117,7 @@ class PingSnackbar extends React.Component {
     if (commState === COMM_STATES.LOADING)
       return <CancellableSpinner onHandleCancel={onHandleCancel} />;
     else if (commState === COMM_STATES.ERROR) {
-      const errors = messages.match(/"message":"(.*?)"/g);
+      const errors = messages && messages.match(/"message":"(.*?)"/g);
 
       if (!errors) {
         return messages;

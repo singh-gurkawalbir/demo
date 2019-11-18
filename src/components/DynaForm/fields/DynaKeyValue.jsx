@@ -1,9 +1,10 @@
 import { useState, useEffect, Fragment } from 'react';
-import Input from '@material-ui/core/Input';
+import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
-import { IconButton, FormControl, FormLabel } from '@material-ui/core';
+import { IconButton, FormLabel, FormControl } from '@material-ui/core';
 import ErroredMessageComponent from './ErroredMessageComponent';
-import CloseIcon from '../../icons/CloseIcon';
+import TrashIcon from '../../icons/TrashIcon';
+import AutoSuggest from './DynaAutoSuggest';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -13,18 +14,27 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(1),
     overflowY: 'off',
   },
-  input: {
-    flex: '1 1 auto',
-    marginRight: theme.spacing(2),
-  },
+
   rowContainer: {
     display: 'flex',
+    marginBottom: 6,
   },
   label: {
-    fontSize: '12px',
+    marginBottom: 6,
   },
 }));
 
+/**
+ *
+ *
+ * const suggestionConfig = {
+    keyConfig: {
+      suggestions: [{"id": 1}, {"id": 2}],
+      labelName: 'id',
+      valueName: 'id',
+    },
+  }
+ */
 export function KeyValueComponent(props) {
   const {
     value,
@@ -33,9 +43,15 @@ export function KeyValueComponent(props) {
     dataTest,
     keyName = 'key',
     valueName = 'value',
+    suggestionConfig = {},
     classes,
     showDelete,
+    disabled,
   } = props;
+  const {
+    keyConfig: suggestKeyConfig,
+    valueConfig: suggestValueConfig,
+  } = suggestionConfig;
   const [values, setValues] = useState([]);
   const [rowInd, setRowInd] = useState(0);
   const [isKey, setIsKey] = useState(true);
@@ -56,9 +72,7 @@ export function KeyValueComponent(props) {
     }
   };
 
-  const handleUpdate = (row, event, field) => {
-    const { value } = event.target;
-
+  const handleUpdate = (row, value, field) => {
     if (row !== undefined) {
       values[row][field] = value;
     } else {
@@ -81,64 +95,121 @@ export function KeyValueComponent(props) {
   };
 
   const tableData = values ? values.map((r, n) => ({ ...r, row: n })) : [];
-  const handleKeyUpdate = row => event => handleUpdate(row, event, keyName);
-  const handleValueUpdate = row => event => handleUpdate(row, event, valueName);
+  const handleKeyUpdate = row => event => {
+    const { value } = event.target;
+
+    handleUpdate(row, value, keyName);
+  };
+
+  const handleValueUpdate = row => event => {
+    const { value } = event.target;
+
+    handleUpdate(row, value, valueName);
+  };
 
   return (
-    <div data-test={dataTest} className={classes.container}>
+    <FormControl
+      disabled={disabled}
+      data-test={dataTest}
+      className={classes.container}>
       <FormLabel className={classes.label}>{label}</FormLabel>
       <Fragment key={`${rowInd}-${isKey}`}>
         {tableData.map(r => (
           <div className={classes.rowContainer} key={r.row}>
-            <FormControl>
-              <Input
+            {suggestKeyConfig && (
+              <AutoSuggest
+                disabled={disabled}
+                value={r[keyName]}
+                autoFocus={r.row === rowInd && isKey}
+                placeholder={keyName}
+                variant="filled"
+                onFieldChange={(_, _value) =>
+                  handleUpdate(r.row, _value, keyName)
+                }
+                labelName={suggestKeyConfig.labelName}
+                valueName={suggestKeyConfig.valueName}
+                options={{ suggestions: suggestKeyConfig.suggestions }}
+                fullWidth
+              />
+            )}
+            {!suggestKeyConfig && (
+              <TextField
+                disabled={disabled}
                 autoFocus={r.row === rowInd && isKey}
                 defaultValue={r[keyName]}
                 placeholder={keyName}
-                className={classes.input}
+                variant="filled"
                 onChange={handleKeyUpdate(r.row)}
+                fullWidth
               />
-            </FormControl>
-            <FormControl>
-              <Input
+            )}
+
+            {suggestValueConfig && (
+              <AutoSuggest
+                disabled={disabled}
+                value={r[valueName]}
+                autoFocus={r.row === rowInd && isKey}
+                placeholder={valueName}
+                variant="filled"
+                labelName={suggestValueConfig.labelName}
+                valueName={suggestValueConfig.valueName}
+                onFieldChange={(_, _value) =>
+                  handleUpdate(r.row, _value, valueName)
+                }
+                options={{ suggestions: suggestValueConfig.suggestions }}
+                fullWidth
+              />
+            )}
+            {!suggestValueConfig && (
+              <TextField
+                disabled={disabled}
                 autoFocus={r.row === rowInd && !isKey}
                 defaultValue={r[valueName]}
                 placeholder={valueName}
-                className={classes.input}
+                variant="filled"
                 onChange={handleValueUpdate(r.row)}
+                fullWidth
               />
-            </FormControl>
+            )}
+
             {showDelete && (
               <IconButton
+                disabled={disabled}
                 data-test="deleteKeyValue"
                 aria-label="delete"
                 onClick={handleDelete(r.row)}>
-                <CloseIcon />
+                <TrashIcon />
               </IconButton>
             )}
           </div>
         ))}
       </Fragment>
       <div key="new" className={classes.rowContainer}>
-        <Input
+        <TextField
+          disabled={disabled}
           value=""
-          placeholder={keyName}
-          className={classes.input}
+          label={keyName}
+          variant="filled"
           onChange={handleKeyUpdate()}
+          fullWidth
         />
-        <Input
+
+        <TextField
+          disabled={disabled}
           value=""
-          placeholder={valueName}
-          className={classes.input}
+          label={valueName}
+          variant="filled"
           onChange={handleValueUpdate()}
+          fullWidth
         />
+
         {showDelete && (
           <IconButton data-test="deleteKeyValue" aria-label="delete" disabled>
-            <CloseIcon />
+            <TrashIcon />
           </IconButton>
         )}
       </div>
-    </div>
+    </FormControl>
   );
 }
 

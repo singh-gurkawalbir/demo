@@ -13,6 +13,8 @@ export default {
       'https://start.exactonline.com/api/oauth2/token',
     '/http/auth/oauth/scopeDelimiter': ' ',
     '/http/auth/token/location': 'header',
+    '/http/auth/token/refreshMethod': 'POST',
+    '/http/auth/token/refreshMediaType': 'urlencoded',
   }),
   fieldMap: {
     name: { fieldId: 'name' },

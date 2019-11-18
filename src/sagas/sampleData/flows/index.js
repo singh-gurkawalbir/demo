@@ -7,7 +7,6 @@ import { apiCallWithRetry } from '../..';
 import { evaluateExternalProcessor } from '../../../sagas/editor';
 import { getResource } from '../../resources';
 import {
-  fetchFlowResources,
   requestSampleDataForExports,
   requestSampleDataForImports,
   updateStateForProcessorData,
@@ -19,9 +18,9 @@ import {
 } from './flowUpdates';
 import {
   getSampleDataStage,
-  getParseStageData,
-  getLastExportDateTime,
+  getPreviewStageData,
 } from '../../../utils/flowData';
+import { exportPreview, pageProcessorPreview } from '../previewCalls';
 import MappingUtil from '../../../utils/mapping';
 import { adaptorTypeMap } from '../../../utils/resource';
 
@@ -39,6 +38,7 @@ function* requestSampleData({
     yield call(requestSampleDataForImports, {
       flowId,
       resourceId,
+      resourceType,
       sampleDataStage,
     });
   } else {
@@ -55,50 +55,16 @@ export function* fetchPageProcessorPreview({
   flowId,
   _pageProcessorId,
   previewType,
+  resourceType = 'exports',
 }) {
   if (!flowId || !_pageProcessorId) return;
-  const { merged } = yield select(resourceData, 'flows', flowId, SCOPES.VALUE);
-  const flow = { ...merged };
-
-  if (
-    !(flow.pageProcessors && flow.pageProcessors.length) ||
-    !(flow.pageGenerators && flow.pageGenerators.length)
-  )
-    return;
-  const pageGeneratorMap = yield call(fetchFlowResources, {
-    flow,
-    type: 'pageGenerators',
-  });
-  const pageProcessorMap = yield call(fetchFlowResources, {
-    flow,
-    type: 'pageProcessors',
-    eliminateDataProcessors: true,
-  });
-
-  if (previewType === 'flowInput') {
-    // make the _pageProcessor as import so that BE calculates flow data till that processor
-    flow.pageProcessors = flow.pageProcessors.map(pageProcessor => {
-      if (pageProcessor._exportId === _pageProcessorId) {
-        pageProcessorMap[_pageProcessorId].options = {};
-
-        return {
-          ...pageProcessor,
-          type: 'import',
-          _importId: pageProcessor._exportId,
-        };
-      }
-
-      return pageProcessor;
-    });
-  }
-
-  const body = { flow, _pageProcessorId, pageGeneratorMap, pageProcessorMap };
 
   try {
-    const previewData = yield call(apiCallWithRetry, {
-      path: '/pageProcessors/preview',
-      opts: { method: 'POST', body },
-      message: `Fetching flows Preview`,
+    const previewData = yield call(pageProcessorPreview, {
+      flowId,
+      _pageProcessorId,
+      previewType,
+      resourceType,
     });
 
     yield put(
@@ -115,39 +81,14 @@ export function* fetchPageProcessorPreview({
 }
 
 export function* fetchPageGeneratorPreview({ flowId, _pageGeneratorId }) {
-  const { merged: resource } = yield select(
-    resourceData,
-    'exports',
-    _pageGeneratorId
-  );
-  let body = { ...resource };
-
-  if (body.type === 'delta') {
-    body.postData = {
-      lastExportDateTime: getLastExportDateTime(),
-    };
-  }
-
-  if (body.rawData) {
-    body = {
-      ...body,
-      verbose: true,
-      runOfflineOptions: {
-        runOffline: true,
-        runOfflineSource: 'db',
-      },
-    };
-  }
-
-  const path = `/exports/preview`;
+  if (!flowId || !_pageGeneratorId) return;
 
   try {
-    const previewData = yield call(apiCallWithRetry, {
-      path,
-      opts: { method: 'POST', body },
-      message: `Fetching Exports Preview`,
+    const previewData = yield call(exportPreview, {
+      resourceId: _pageGeneratorId,
+      runOffline: true,
     });
-    const parseData = getParseStageData(previewData);
+    const parseData = getPreviewStageData(previewData, 'parse');
 
     yield put(
       actions.flowData.receivedPreviewData(

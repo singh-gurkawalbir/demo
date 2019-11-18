@@ -6,7 +6,7 @@ import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import helpTextMap from '../../../../components/Help/helpTextMap';
 
-function ImportMappingDialog({ flowId, resource, onClose }) {
+function ImportMappingDialog({ flowId, isViewMode, resource, onClose }) {
   const resourceId = resource._id;
   const connectionId = resource._connectionId;
   const dispatch = useDispatch();
@@ -32,6 +32,7 @@ function ImportMappingDialog({ flowId, resource, onClose }) {
   return (
     <Fragment>
       <StandaloneImportMapping
+        disabled={isViewMode}
         resourceId={resourceId}
         extractFields={extractFields}
         connectionId={connectionId}

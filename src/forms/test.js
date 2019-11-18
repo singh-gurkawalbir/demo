@@ -1000,8 +1000,7 @@ describe('form factory new layout', () => {
         testMeta,
         resourceType,
         resource,
-        false,
-        true
+        { developerMode: true }
       );
 
       expect(val).toEqual({
@@ -1064,9 +1063,7 @@ describe('form factory new layout', () => {
       const val = formFactory.getFieldsWithDefaults(
         testMeta,
         resourceType,
-        resource,
-        false,
-        false
+        resource
       );
 
       expect(val).toEqual({
@@ -1576,11 +1573,11 @@ describe('integrationSettingsToDynaFormMetadata', () => {
                 fields: [
                   {
                     name: 'fieldB',
-                    hidden: true,
+                    hidden: false,
                   },
                   {
                     name: 'fieldC',
-                    hidden: true,
+                    hidden: false,
                   },
                 ],
               },
@@ -1641,7 +1638,7 @@ describe('integrationSettingsToDynaFormMetadata', () => {
                 fields: [
                   {
                     name: 'fieldB',
-                    hidden: true,
+                    hidden: false,
                   },
                 ],
               },
@@ -1707,11 +1704,11 @@ describe('integrationSettingsToDynaFormMetadata', () => {
                 fields: [
                   {
                     name: 'fieldB',
-                    hidden: true,
+                    hidden: false,
                   },
                   {
                     name: 'fieldC',
-                    hidden: true,
+                    hidden: false,
                   },
                 ],
               },
@@ -1772,7 +1769,7 @@ describe('integrationSettingsToDynaFormMetadata', () => {
                 fields: [
                   {
                     name: 'fieldB',
-                    hidden: true,
+                    hidden: false,
                   },
                 ],
               },
@@ -1836,11 +1833,11 @@ describe('integrationSettingsToDynaFormMetadata', () => {
                 fields: [
                   {
                     name: 'fieldB',
-                    hidden: true,
+                    hidden: false,
                   },
                   {
                     name: 'fieldC',
-                    hidden: true,
+                    hidden: false,
                   },
                 ],
               },

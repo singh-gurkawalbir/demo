@@ -1,16 +1,25 @@
 import { isTransactionWSRecordType } from '../../../../utils/metadata';
+import { isNewId } from '../../../../utils/resource';
 
 export default {
-  preSave: formValues => ({
-    ...formValues,
-    '/netsuite/searches': [
-      {
-        savedSearchId: formValues['/netsuite/webservices/searchId'],
-        recordType: formValues['/netsuite/webservices/recordType'],
-        criteria: [],
-      },
-    ],
-  }),
+  preSave: formValues => {
+    const retValues = {
+      ...formValues,
+      '/netsuite/searches': [
+        {
+          savedSearchId: formValues['/netsuite/webservices/searchId'],
+          recordType: formValues['/netsuite/webservices/recordType'],
+          criteria: [],
+        },
+      ],
+    };
+
+    if (retValues['/type'] === 'all') {
+      retValues['/type'] = undefined;
+    }
+
+    return retValues;
+  },
 
   optionsHandler: (fieldId, fields) => {
     if (fieldId === 'netsuite.webservices.searchId') {
@@ -27,12 +36,8 @@ export default {
         record = 'transaction';
       }
 
-      // returns corresponding relative uri path based on recordType selected
       return {
-        resourceToFetch:
-          recordTypeField &&
-          record &&
-          `searchMetadata/${recordTypeField.connectionId}?recordType=${record}`,
+        commMetaPath: `netSuiteWS/searchMetadata/${recordTypeField.connectionId}?recordType=${record}`,
       };
     }
 
@@ -46,12 +51,8 @@ export default {
         record = 'customRecord';
       }
 
-      // returns corresponding relative uri path based on recordType selected
       return {
-        resourceToFetch:
-          recordTypeField &&
-          record &&
-          `recordMetadata/${recordTypeField.connectionId}?type=export&recordType=${record}`,
+        commMetaPath: `netSuiteWS/recordMetadata/${recordTypeField.connectionId}?type=export&recordType=${record}`,
         resetValue:
           recordTypeField &&
           recordTypeField.value !== recordTypeField.defaultValue,
@@ -76,6 +77,15 @@ export default {
       type: 'select',
       label: 'Export Type',
       required: true,
+      defaultValue: r => {
+        const isNew = isNewId(r._id);
+
+        // if its create
+        if (isNew) return '';
+        const output = r && r.type;
+
+        return output || 'all';
+      },
       options: [
         {
           items: [
@@ -101,11 +111,10 @@ export default {
       id: 'delta.dateField',
       label: 'Date field',
       type: 'refreshableselect',
-      filterKey: 'dateField',
       required: true,
       placeholder: 'Please select a date field',
       connectionId: r => r && r._connectionId,
-      mode: 'webservices',
+      filterKey: 'webservices-dateField',
       refreshOptionsOnChangesTo: ['netsuite.webservices.recordType'],
       visibleWhenAll: [
         { field: 'netsuite.webservices.recordType', isNot: [''] },
@@ -117,10 +126,9 @@ export default {
       label: 'Boolean Field',
       type: 'refreshableselect',
       placeholder: 'Please select a Boolean field',
-      filterKey: 'booleanField',
       required: true,
       connectionId: r => r && r._connectionId,
-      mode: 'webservices',
+      filterKey: 'webservices-booleanField',
       refreshOptionsOnChangesTo: ['netsuite.webservices.recordType'],
       visibleWhenAll: [
         { field: 'netsuite.webservices.recordType', isNot: [''] },

@@ -6,7 +6,15 @@ import actions from '../../../../actions';
 import XmlParseEditorDialog from '../../../AFE/XmlParseEditor/Dialog';
 
 export default function DynaXmlParse(props) {
-  const { id, onFieldChange, value, label, resourceId, resourceType } = props;
+  const {
+    id,
+    onFieldChange,
+    value,
+    label,
+    resourceId,
+    resourceType,
+    disabled,
+  } = props;
   const [showEditor, setShowEditor] = useState(false);
   const handleEditorClick = () => {
     setShowEditor(!showEditor);
@@ -77,6 +85,7 @@ export default function DynaXmlParse(props) {
           data={xmlData}
           rule={value}
           onClose={handleClose}
+          disabled={disabled}
         />
       )}
       <Button data-test={id} variant="contained" onClick={handleEditorClick}>

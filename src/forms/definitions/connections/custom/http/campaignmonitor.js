@@ -10,6 +10,8 @@ export default {
     '/http/auth/oauth/authURI': 'https://api.createsend.com/oauth',
     '/http/auth/oauth/tokenURI': 'https://api.createsend.com/oauth/token',
     '/http/auth/oauth/scopeDelimiter': ' ',
+    '/http/auth/token/refreshMethod': 'POST',
+    '/http/auth/token/refreshMediaType': 'urlencoded',
   }),
   fieldMap: {
     name: { fieldId: 'name' },

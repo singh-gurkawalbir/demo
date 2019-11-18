@@ -29,6 +29,7 @@ const Editor = props => {
     handleChange,
     enableAutocomplete,
     showDefaultData,
+    disabled,
   } = props;
 
   useEffect(() => {
@@ -45,6 +46,7 @@ const Editor = props => {
         <CodePanel
           name="rule"
           value={rule}
+          readOnly={disabled}
           mode={ruleMode}
           onChange={data => {
             handleChange('template', data);

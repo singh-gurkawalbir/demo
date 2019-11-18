@@ -1,3 +1,4 @@
+import { fade } from '@material-ui/core/styles/';
 import colors from './colors';
 
 const appBarHeight = 36;
@@ -68,7 +69,6 @@ export default {
         borderRadius: '17px',
         fontSize: '13px',
         lineHeight: '15px',
-        minWidth: '100px',
         border: '1px solid',
         textTransform: 'none',
         boxShadow: 'none',
@@ -115,9 +115,22 @@ export default {
         textTransform: 'none',
         fontSize: '13px',
         lineHeight: '15px',
-        minWidth: '100px',
         padding: '6px 20px',
         border: '1px solid',
+        '&:disabled': {
+          color: colors.celigoNeutral4,
+          background: colors.celigoNeutral2,
+          borderColor: colors.celigoNeutral3,
+        },
+      },
+      outlinedPrimary: {
+        backgroundColor: colors.celigoAccent2,
+        borderColor: colors.celigoAccent2,
+        color: colors.celigoWhite,
+        '&:hover': {
+          backgroundColor: colors.celigoAccent4,
+          borderColor: colors.celigoAccent3,
+        },
       },
       outlinedSecondary: {
         backgroundColor: colors.celigoWhite,
@@ -128,13 +141,8 @@ export default {
           backgroundColor: colors.celigoWhite,
           borderColor: colors.celigoAccent3,
         },
-        '&:disabled': {
-          color: colors.celigoNeutral4,
-          background: colors.celigoWhite,
-        },
       },
       text: {
-        textTransform: 'uppercase',
         fontSize: '13px',
         lineHeight: '15px',
         '&::after': {
@@ -168,9 +176,17 @@ export default {
         minHeight: appBarHeight,
       },
     },
+    MuiList: {
+      padding: {
+        paddingTop: 0,
+        paddingBottom: 0,
+      },
+    },
     MuiMenuItem: {
       root: {
-        // BorderBottom should be like this, because color is taking precendence here
+        minHeight: 42,
+        fontSize: 'unset',
+
         borderBottom: `1px solid ${colors.celigoNeutral3}`,
         '&$selected': {
           backgroundColor: colors.celigoNeutral2,
@@ -197,6 +213,10 @@ export default {
           position: 'absolute',
           background: 'transparent',
           left: '0px',
+        },
+        '& > svg': {
+          paddingRight: 8,
+          fontSize: '1.8rem',
         },
       },
     },
@@ -272,6 +292,11 @@ export default {
       root: {
         paddingBottom: 5,
         paddingTop: 5,
+      },
+      button: {
+        '&:hover': {
+          backgroundColor: colors.celigoNeutral1,
+        },
       },
     },
     MuiTableRow: {
@@ -390,6 +415,7 @@ export default {
     MuiRadio: {
       root: {
         color: colors.celigoNeutral5,
+        paddingRight: 5,
       },
     },
     MuiInputBase: {
@@ -433,6 +459,46 @@ export default {
       root: {
         backgroundColor: colors.celigoNeutral3,
         color: colors.celigoNeutral8,
+      },
+    },
+    MuiBackdrop: {
+      root: {
+        backgroundColor: fade(colors.celigoNeutral6, 0.7),
+      },
+    },
+    MuiFormGroup: {
+      root: {
+        flexDirection: 'row',
+      },
+    },
+    MuiDivider: {
+      root: {
+        backgroundColor: colors.celigoNeutral3,
+      },
+    },
+    MuiTabs: {
+      root: {
+        minHeight: 36,
+      },
+    },
+    MuiTab: {
+      root: {
+        minHeight: 36,
+        minWidth: 140,
+        textTransform: 'none',
+      },
+      labelIcon: {
+        minHeight: 'unset',
+      },
+      wrapper: {
+        '& > svg': {
+          fontSize: '1.1rem',
+        },
+        flexDirection: 'row',
+        '& > *:first-child': {
+          marginBottom: '0 !important',
+          marginRight: 8,
+        },
       },
     },
   },

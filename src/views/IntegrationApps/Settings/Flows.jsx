@@ -11,7 +11,10 @@ import CeligoTable from '../../../components/CeligoTable';
 const useStyles = makeStyles({
   expansionPanel: {
     maxWidth: '45vw',
-    marginLeft: '-7px',
+    '& > div:first-child': {
+      minHeight: '15px',
+      paddingLeft: 1,
+    },
   },
 });
 

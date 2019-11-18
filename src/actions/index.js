@@ -106,7 +106,8 @@ const recycleBin = {
 const resource = {
   downloadFile: (id, resourceType) =>
     action(actionTypes.RESOURCE.DOWNLOAD_FILE, { resourceType, id }),
-  created: (id, tempId) => action(actionTypes.RESOURCE.CREATED, { id, tempId }),
+  created: (id, tempId, resourceType) =>
+    action(actionTypes.RESOURCE.CREATED, { id, tempId, resourceType }),
 
   request: (resourceType, id, message) =>
     action(actionTypes.RESOURCE.REQUEST, { resourceType, id, message }),
@@ -116,8 +117,13 @@ const resource = {
 
   received: (resourceType, resource) =>
     action(actionTypes.RESOURCE.RECEIVED, { resourceType, resource }),
-  updated: (resourceType, resourceId, patch) =>
-    action(actionTypes.RESOURCE.UPDATED, { resourceType, resourceId, patch }),
+  updated: (resourceType, resourceId, master, patch) =>
+    action(actionTypes.RESOURCE.UPDATED, {
+      resourceType,
+      resourceId,
+      master,
+      patch,
+    }),
   receivedCollection: (resourceType, collection) =>
     action(actionTypes.RESOURCE.RECEIVED_COLLECTION, {
       resourceType,
@@ -197,9 +203,10 @@ const resource = {
         resourceId,
       }),
 
-    requestToken: (resourceId, values) =>
+    requestToken: (resourceId, fieldId, values) =>
       action(actionTypes.TOKEN.REQUEST, {
         resourceId,
+        fieldId,
         values,
       }),
     saveToken: (resourceId, fieldsToBeSetWithValues) =>
@@ -286,119 +293,29 @@ const connectors = {
   },
 };
 const metadata = {
-  request: ({
-    connectionId,
-    metadataType,
-    mode,
-    filterKey,
-    recordType,
-    selectField,
-    addInfo,
-  }) => {
-    if (mode) {
-      return action(actionTypes.METADATA.NETSUITE_REQUEST, {
-        connectionId,
-        metadataType,
-        mode,
-        filterKey,
-        recordType,
-        selectField,
-        addInfo,
-      });
-    }
-
-    return action(actionTypes.METADATA.SALESFORCE_REQUEST, {
+  request: (connectionId, commMetaPath, addInfo) =>
+    action(actionTypes.METADATA.REQUEST, {
       connectionId,
-      metadataType,
-      recordType,
-      selectField,
+      commMetaPath,
       addInfo,
-    });
-  },
-  refresh: (
-    connectionId,
-    metadataType,
-    mode,
-    filterKey,
-    recordType,
-    selectField
-  ) =>
+    }),
+  refresh: (connectionId, commMetaPath) =>
     action(actionTypes.METADATA.REFRESH, {
       connectionId,
-      metadataType,
-      mode,
-      filterKey,
-      recordType,
-      selectField,
+      commMetaPath,
     }),
-  netsuite: {
-    receivedCollection: (
+  receivedCollection: (metadata, connectionId, commMetaPath) =>
+    action(actionTypes.METADATA.RECEIVED, {
       metadata,
-      metadataType,
       connectionId,
-      mode,
-      filterKey,
-      recordType,
-      selectField
-    ) =>
-      action(actionTypes.METADATA.RECEIVED_NETSUITE, {
-        metadata,
-        metadataType,
-        connectionId,
-        mode,
-        filterKey,
-        recordType,
-        selectField,
-      }),
-    receivedError: (
+      commMetaPath,
+    }),
+  receivedError: (metadataError, connectionId, commMetaPath) =>
+    action(actionTypes.METADATA.RECEIVED_ERROR, {
       metadataError,
-      metadataType,
       connectionId,
-      mode,
-      filterKey,
-      recordType,
-      selectField
-    ) =>
-      action(actionTypes.METADATA.RECEIVED_NETSUITE_ERROR, {
-        metadataError,
-        metadataType,
-        connectionId,
-        mode,
-        filterKey,
-        recordType,
-        selectField,
-      }),
-  },
-  salesforce: {
-    receivedCollection: (
-      metadata,
-      metadataType,
-      connectionId,
-      recordType,
-      selectField
-    ) =>
-      action(actionTypes.METADATA.RECEIVED_SALESFORCE, {
-        metadata,
-        metadataType,
-        connectionId,
-        recordType,
-        selectField,
-      }),
-    receivedError: (
-      metadataError,
-      metadataType,
-      connectionId,
-      recordType,
-      selectField
-    ) =>
-      action(actionTypes.METADATA.RECEIVED_SALESFORCE_ERROR, {
-        metadataError,
-        metadataType,
-        connectionId,
-        recordType,
-        selectField,
-      }),
-  },
+      commMetaPath,
+    }),
 };
 const fileDefinitions = {
   preBuilt: {
@@ -446,6 +363,19 @@ const integrationApp = {
       action(actionTypes.INTEGRATION_APPS.SETTINGS.UPGRADE_REQUESTED, {
         licenseId,
       }),
+    requestAddOnLicenseMetadata: integrationId =>
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.ADDON_LICENSES_METADATA, {
+        integrationId,
+      }),
+    addOnLicenseMetadataUpdate: (integrationId, response) =>
+      action(
+        actionTypes.INTEGRATION_APPS.SETTINGS.ADDON_LICENSES_METADATA_UPDATE,
+        {
+          integrationId,
+          response,
+        }
+      ),
+
     upgrade: (integration, license) =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.UPGRADE, {
         integration,
@@ -472,10 +402,12 @@ const integrationApp = {
       action(actionTypes.INTEGRATION_APPS.SETTINGS.FORM.SUBMIT_FAILED, params),
   },
   installer: {
-    installStep: (integrationId, installerFunction) =>
+    installStep: (integrationId, installerFunction, storeId, addOnId) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.REQUEST, {
         id: integrationId,
         installerFunction,
+        storeId,
+        addOnId,
       }),
     updateStep: (integrationId, installerFunction, update) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.UPDATE, {
@@ -506,11 +438,12 @@ const integrationApp = {
         uninstallerFunction,
         update,
       }),
-    stepUninstall: (storeId, integrationId, uninstallerFunction) =>
+    stepUninstall: (storeId, integrationId, uninstallerFunction, addOnId) =>
       action(actionTypes.INTEGRATION_APPS.UNINSTALLER.STEP.REQUEST, {
         storeId,
         id: integrationId,
         uninstallerFunction,
+        addOnId,
       }),
     receivedUninstallSteps: (uninstallSteps, storeId, id) =>
       action(actionTypes.INTEGRATION_APPS.UNINSTALLER.RECEIVED_STEPS, {
@@ -556,16 +489,23 @@ const ashare = {
   receivedCollection: ashares =>
     resource.receivedCollection('ashares', ashares),
 };
+const clone = {
+  requestPreview: (resourceType, resourceId) =>
+    action(actionTypes.CLONE.PREVIEW_REQUEST, { resourceType, resourceId }),
+  createComponents: (resourceType, resourceId) =>
+    action(actionTypes.CLONE.CREATE_COMPONENTS, { resourceType, resourceId }),
+};
 const template = {
   generateZip: integrationId =>
     action(actionTypes.TEMPLATE.ZIP_GENERATE, { integrationId }),
   requestPreview: templateId =>
     action(actionTypes.TEMPLATE.PREVIEW_REQUEST, { templateId }),
-  installStepsReceived: (installSteps, connectionMap, templateId) =>
+  installStepsReceived: (installSteps, connectionMap, templateId, data) =>
     action(actionTypes.TEMPLATE.STEPS_RECEIVED, {
       installSteps,
       connectionMap,
       templateId,
+      data,
     }),
   failedPreview: templateId =>
     action(actionTypes.TEMPLATE.FAILURE, { templateId }),
@@ -581,8 +521,8 @@ const template = {
     }),
   updateStep: (step, templateId) =>
     action(actionTypes.TEMPLATE.UPDATE_STEP, { step, templateId }),
-  createComponents: templateId =>
-    action(actionTypes.TEMPLATE.CREATE_COMPONENTS, { templateId }),
+  createComponents: (templateId, runKey) =>
+    action(actionTypes.TEMPLATE.CREATE_COMPONENTS, { templateId, runKey }),
   clearUploaded: templateId =>
     action(actionTypes.TEMPLATE.CLEAR_UPLOADED, { templateId }),
   clearTemplate: templateId =>
@@ -810,20 +750,29 @@ const editor = {
 //
 // #region DynaForm Actions
 const resourceForm = {
-  init: (resourceType, resourceId, isNew, skipCommit) =>
+  init: (resourceType, resourceId, isNew, skipCommit, flowId) =>
     action(actionTypes.RESOURCE_FORM.INIT, {
       resourceType,
       resourceId,
       isNew,
       skipCommit,
+      flowId,
     }),
-  initComplete: (resourceType, resourceId, fieldMeta, isNew, skipCommit) =>
+  initComplete: (
+    resourceType,
+    resourceId,
+    fieldMeta,
+    isNew,
+    skipCommit,
+    flowId
+  ) =>
     action(actionTypes.RESOURCE_FORM.INIT_COMPLETE, {
       resourceId,
       resourceType,
       fieldMeta,
       isNew,
       skipCommit,
+      flowId,
     }),
   submit: (resourceType, resourceId, values, match, skipClose) =>
     action(actionTypes.RESOURCE_FORM.SUBMIT, {
@@ -838,6 +787,11 @@ const resourceForm = {
       resourceType,
       resourceId,
       formValues,
+    }),
+  submitFailed: (resourceType, resourceId) =>
+    action(actionTypes.RESOURCE_FORM.SUBMIT_FAILED, {
+      resourceType,
+      resourceId,
     }),
   clear: (resourceType, resourceId) =>
     action(actionTypes.RESOURCE_FORM.CLEAR, { resourceType, resourceId }),
@@ -993,6 +947,7 @@ export default {
   flow,
   agent,
   template,
+  clone,
   file,
   assistantMetadata,
   stack,

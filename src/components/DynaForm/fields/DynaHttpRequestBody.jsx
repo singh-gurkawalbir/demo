@@ -1,32 +1,35 @@
-import { useState, Fragment } from 'react';
+import { useState, useEffect, Fragment } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import Button from '@material-ui/core/Button';
+import * as selectors from '../../../reducers';
 import HttpRequestBodyEditorDialog from '../../../components/AFE/HttpRequestBodyEditor/Dialog';
 import DynaLookupEditor from './DynaLookupEditor';
 import {
   getXMLSampleTemplate,
   getJSONSampleTemplate,
 } from '../../AFE/HttpRequestBodyEditor/templateMapping';
-
-// TODO: This is sample data for testing. To be replaced with actual sample data
-const sampleData = {
-  // id: '48327',
-  // recordType: 'customer',
-  // Name: '1ScrewedUp',
-  // Email: '',
-  // Phone: '',
-  // 'Office Phone': '',
-  // Fax: '',
-  // 'Primary Contact': '',
-  // 'Alt. Email': '',
-};
+import actions from '../../../actions';
+import getFormattedSampleData from '../../../utils/sampleData';
 
 export default function DynaHttpRequestBody(props) {
-  const { id, onFieldChange, options, value, label, resourceId } = props;
-  const { lookups: lookupsObj, saveIndex, contentType } = options;
+  const {
+    id,
+    onFieldChange,
+    options,
+    value,
+    label,
+    resourceId,
+    connectionId,
+    resourceType,
+    flowId,
+    arrayIndex,
+    useSampleDataAsArray,
+  } = props;
+  const { lookups: lookupsObj, contentType, resourceName } = options;
   const [showEditor, setShowEditor] = useState(false);
-  let parsedData =
-    options && typeof saveIndex === 'number' && Array.isArray(value)
-      ? value[saveIndex]
+  let parsedRule =
+    options && typeof arrayIndex === 'number' && Array.isArray(value)
+      ? value[arrayIndex]
       : value;
   const lookupFieldId = lookupsObj && lookupsObj.fieldId;
   const lookups = lookupsObj && lookupsObj.data;
@@ -34,15 +37,53 @@ export default function DynaHttpRequestBody(props) {
     setShowEditor(!showEditor);
   };
 
+  const dispatch = useDispatch();
+  const connection = useSelector(state =>
+    selectors.resource(state, 'connections', connectionId)
+  );
+  const sampleData = useSelector(state =>
+    selectors.getSampleData(state, flowId, resourceId, 'flowInput', {
+      isImport: resourceType === 'imports',
+    })
+  );
+  // constructing data
+  const formattedSampleData = JSON.stringify(
+    getFormattedSampleData({
+      connection,
+      sampleData,
+      useSampleDataAsArray,
+      resourceType,
+      resourceName,
+    }),
+    null,
+    2
+  );
+
+  useEffect(() => {
+    // Request for sample data only incase of flow context
+    // TODO : @Raghu Do we show default data in stand alone context?
+    // What type of sample data is expected in case of Page generators
+    if (flowId && !sampleData) {
+      dispatch(
+        actions.flowData.requestSampleData(
+          flowId,
+          resourceId,
+          resourceType,
+          'flowInput'
+        )
+      );
+    }
+  }, [dispatch, flowId, resourceId, resourceType, sampleData]);
+
   const handleClose = (shouldCommit, editorValues) => {
     if (shouldCommit) {
       const { template } = editorValues;
 
-      if (typeof saveIndex === 'number' && Array.isArray(value)) {
-        // save to array at position saveIndex
+      if (typeof arrayIndex === 'number' && Array.isArray(value)) {
+        // save to array at position arrayIndex
         const valueTmp = value;
 
-        valueTmp[saveIndex] = template;
+        valueTmp[arrayIndex] = template;
         onFieldChange(id, valueTmp);
       } else {
         // save to field
@@ -53,9 +94,12 @@ export default function DynaHttpRequestBody(props) {
     handleEditorClick();
   };
 
-  if (!parsedData) {
-    if (contentType === 'json') parsedData = getJSONSampleTemplate(sampleData);
-    else parsedData = getXMLSampleTemplate(sampleData);
+  if (!parsedRule) {
+    const sampleDataTmp = sampleData || { myField: 'sample' };
+
+    if (contentType === 'json')
+      parsedRule = getJSONSampleTemplate(sampleDataTmp);
+    else parsedRule = getXMLSampleTemplate(sampleDataTmp);
   }
 
   let lookupField;
@@ -78,8 +122,9 @@ export default function DynaHttpRequestBody(props) {
           contentType={contentType === 'json' ? 'json' : 'xml'}
           title="Build HTTP Request Body"
           id={`${resourceId}-${id}`}
-          rule={parsedData}
+          rule={parsedRule}
           onFieldChange={onFieldChange}
+          data={formattedSampleData}
           onClose={handleClose}
           action={lookupField}
         />

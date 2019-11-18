@@ -5,6 +5,8 @@ export default {
     '/assistant': 'microsoftdynamics365',
     '/http/auth/type': 'oauth',
     '/http/mediaType': 'json',
+    '/http/auth/token/refreshMethod': 'POST',
+    '/http/auth/token/refreshMediaType': 'urlencoded',
     '/http/baseURI': `https://${
       formValues['/http/microsoftDynamics365Subdomain']
     }.dynamics.com`,
@@ -21,6 +23,7 @@ export default {
       startAdornment: 'https://',
       endAdornment: '.dynamics.com',
       label: 'Subdomain',
+      required: true,
       helpText:
         'Please enter your team name here which you configured while signing up for a new Zendesk account.',
       validWhen: {

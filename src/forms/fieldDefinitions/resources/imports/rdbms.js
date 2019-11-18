@@ -18,8 +18,9 @@ export default {
   'rdbms.query': {
     id: 'rdbms.query',
     type: 'sqlquerybuilder',
+    arrayIndex: 0,
     label: 'Launch Query Builder',
-    refreshOptionsOnChangesTo: ['rdbms.lookups'],
+    refreshOptionsOnChangesTo: ['rdbms.lookups', 'rdbms.queryType'],
   },
   'rdbms.existingDataId': {
     type: 'text',

@@ -292,7 +292,7 @@ function extractRules(fields, currFieldName, value) {
     const { name, hidden, required } = field;
     let rule = { ref: name };
 
-    if (hidden) {
+    if (!hidden) {
       rule = {
         ...rule,
         visibleRule: { field: currFieldName, is: [value] },
@@ -368,7 +368,7 @@ export const translateDependencyProps = fieldMap => {
   return fieldMapCopy;
 };
 
-const translateFieldProps = (fields, _integrationId) =>
+const translateFieldProps = (fields = [], _integrationId) =>
   fields.map(field => {
     // TODO: generate correct name path
     const { name, options, default: defaultValue, tooltip } = field;
@@ -401,6 +401,8 @@ export const integrationSettingsToDynaFormMetadata = (
   isGeneral
 ) => {
   const finalData = {};
+
+  if (!meta || (!meta.fields && !meta.sections)) return null;
   const { fields, sections } = meta;
 
   if (fields) {
@@ -437,7 +439,8 @@ export const integrationSettingsToDynaFormMetadata = (
     }));
   }
 
-  finalData.fieldMap = translateDependencyProps(finalData.fieldMap);
+  if (finalData.fieldMap)
+    finalData.fieldMap = translateDependencyProps(finalData.fieldMap);
 
   // Wrap everything in a adavancedSettings container
   if (!isGeneral) {

@@ -80,13 +80,16 @@ export function* refreshResourceData({ flowId, resourceId, resourceType }) {
 export function* requestSampleDataForImports({
   flowId,
   resourceId,
+  resourceType,
   sampleDataStage,
 }) {
   switch (sampleDataStage) {
-    case 'raw': {
+    case 'raw':
+    case 'flowInput': {
       yield call(fetchPageProcessorPreview, {
         flowId,
         _pageProcessorId: resourceId,
+        resourceType,
         previewType: sampleDataStage,
       });
       break;
@@ -100,14 +103,31 @@ export function* requestSampleDataForImports({
         SCOPES.VALUE
       );
 
-      yield put(
-        actions.flowData.receivedPreviewData(
-          flowId,
-          resourceId,
-          resource && resource.sampleResponseData,
-          'sampleResponse'
-        )
-      );
+      try {
+        // @TODO Raghu: Handle sample response as a XML
+        const sampleResponse = JSON.parse(
+          resource && resource.sampleResponseData
+        );
+
+        yield put(
+          actions.flowData.receivedPreviewData(
+            flowId,
+            resourceId,
+            sampleResponse,
+            'sampleResponse'
+          )
+        );
+      } catch (e) {
+        yield put(
+          actions.flowData.receivedPreviewData(
+            flowId,
+            resourceId,
+            {},
+            'sampleResponse'
+          )
+        );
+      }
+
       break;
     }
 

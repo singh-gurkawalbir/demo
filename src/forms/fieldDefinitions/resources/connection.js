@@ -711,6 +711,7 @@ export default {
           { label: 'Basic', value: 'basic' },
           { label: 'Token', value: 'token' },
           { label: 'Custom', value: 'custom' },
+          { label: 'Cookie', value: 'cookie' },
         ],
       },
     ],
@@ -725,6 +726,7 @@ export default {
         items: [
           { label: 'XML', value: 'xml' },
           { label: 'JSON', value: 'json' },
+          { label: 'URL Encoded', value: 'urlencoded' },
         ],
       },
     ],
@@ -744,6 +746,12 @@ export default {
   'http.baseURI': {
     type: 'text',
     label: 'Base URI',
+    requiredWhen: [
+      {
+        field: 'http.auth.type',
+        is: ['cookie'],
+      },
+    ],
     visibleWhen: [
       {
         field: 'http.auth.type',
@@ -1054,6 +1062,35 @@ export default {
       'Note: for security reasons this field must always be re-entered.',
     label: 'Refresh Token',
   },
+  'http.auth.cookie.uri': {
+    type: 'text',
+    label: 'Cookie URI',
+  },
+  'http.auth.cookie.body': {
+    type: 'text',
+    label: 'Cookie Body',
+  },
+  'http.auth.cookie.method': {
+    type: 'select',
+    label: 'Cookie Method',
+    options: [
+      {
+        items: [
+          { label: 'GET', value: 'GET' },
+          { label: 'POST', value: 'POST' },
+        ],
+      },
+    ],
+  },
+  'http.auth.cookie.successStatusCode': {
+    type: 'text',
+    label: 'Cookie Success Status Code',
+    validWhen: [
+      {
+        matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
+      },
+    ],
+  },
   'http.rateLimits': {
     type: 'labeltitle',
     label: 'API Rate Limits',
@@ -1224,6 +1261,12 @@ export default {
   'ftp.pgpEncryptKey': {
     type: 'text',
     label: 'PGP Public Key',
+    requiredWhen: [
+      {
+        field: 'ftp.pgpDecryptKey',
+        is: [''],
+      },
+    ],
     description:
       'Note: for security reasons this field must always be re-entered.',
   },
@@ -1249,12 +1292,24 @@ export default {
   'ftp.pgpDecryptKey': {
     type: 'text',
     label: 'PGP Private Key',
+    requiredWhen: [
+      {
+        field: 'ftp.pgpEncryptKey',
+        is: [''],
+      },
+    ],
     description:
       'Note: for security reasons this field must always be re-entered.',
   },
   'ftp.pgpPassphrase': {
     type: 'text',
     label: 'PGP Passphrase',
+    requiredWhen: [
+      {
+        field: 'ftp.pgpDecryptKey',
+        isNot: [''],
+      },
+    ],
     description:
       'Note: for security reasons this field must always be re-entered.',
   },
@@ -1337,13 +1392,14 @@ export default {
     visibleWhen: [
       {
         field: 'as2.partnerStationInfo.auth.type',
-        isNot: ['none'],
+        is: ['basic', 'token'],
       },
     ],
   },
   'as2.partnerStationInfo.auth.type': {
     type: 'select',
     label: 'Authentication Type',
+    required: true,
     options: [
       {
         items: [
@@ -1360,7 +1416,7 @@ export default {
     visibleWhen: [
       {
         field: 'as2.partnerStationInfo.auth.type',
-        isNot: ['none'],
+        is: ['basic', 'token'],
       },
     ],
   },
@@ -1371,7 +1427,7 @@ export default {
     visibleWhen: [
       {
         field: 'as2.partnerStationInfo.auth.type',
-        isNot: ['none'],
+        is: ['basic', 'token'],
       },
     ],
   },
@@ -1808,6 +1864,10 @@ export default {
     type: 'editor',
     mode: 'text',
     label: "Partner's Certificate:",
+  },
+  'as2.preventCanonicalization': {
+    label: 'Prevent Canonicalization',
+    type: 'checkbox',
   },
   'as2.concurrencyLevel': {
     label: 'Concurrency Level',

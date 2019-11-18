@@ -1,4 +1,4 @@
-import { formatLastModified } from '../../components/CeligoTable/util';
+import moment from 'moment';
 import Restore from '../../components/ResourceTable/actions/RecycleBin/Restore';
 import Purge from '../../components/ResourceTable/actions/RecycleBin/Purge';
 
@@ -15,12 +15,20 @@ export default {
       orderBy: 'model',
     },
     {
-      heading: 'Deleted On',
-      value: r => formatLastModified(r.doc && r.doc.lastModified),
+      heading: 'Deleted Date',
+      value: r => moment(r.doc && r.doc.lastModified).format('MMM Do, YYYY'),
     },
     {
       heading: 'Auto Purge',
-      value: r => formatLastModified(r.doc && r.doc.lastModified),
+      value: r => {
+        const restoreWithin = Math.ceil(
+          (30 * 24 * 60 * 60 * 1000 -
+            (Date.now() - new Date(r.doc && r.doc.lastModified))) /
+            (24 * 60 * 60 * 1000)
+        );
+
+        return `${restoreWithin} ${restoreWithin === 1 ? 'day' : 'days'}`;
+      },
     },
   ],
   rowActions: [Restore, Purge],

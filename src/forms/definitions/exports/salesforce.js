@@ -1,3 +1,5 @@
+import { isNewId } from '../../../utils/resource';
+
 export default {
   preSave: formValues => {
     const retValues = { ...formValues };
@@ -19,6 +21,8 @@ export default {
       retValues['/salesforce/sObjectType'] =
         retValues['/salesforce/objectType'];
     }
+
+    delete retValues['/outputMode'];
 
     return {
       ...retValues,
@@ -46,8 +50,23 @@ export default {
           ],
         },
       ],
-      defaultValue: r =>
-        r && r.salesforce && r.salesforce.id ? 'blob' : 'records',
+      defaultDisabled: r => {
+        const isNew = isNewId(r._id);
+
+        if (!isNew) return true;
+
+        return false;
+      },
+      defaultValue: r => {
+        const isNew = isNewId(r._id);
+
+        // if its create
+        if (isNew) return 'records';
+
+        const output = r && r.salesforce && r.salesforce.id;
+
+        return output ? 'blob' : 'records';
+      },
     },
     'salesforce.soql': {
       id: 'salesforce.soql',
@@ -70,6 +89,15 @@ export default {
       id: 'type',
       type: 'select',
       label: 'Export Type',
+      defaultValue: r => {
+        const isNew = isNewId(r._id);
+
+        // if its create
+        if (isNew) return '';
+        const output = r && r.type;
+
+        return output || 'all';
+      },
       required: true,
       options: [
         {
