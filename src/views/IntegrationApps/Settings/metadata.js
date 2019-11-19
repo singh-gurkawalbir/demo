@@ -7,7 +7,7 @@ import OnOff from '../../../components/OnOff';
 import MappingDialog from '../../../components/MappingDialog/Mapping';
 import FlowSettings from './Actions/FlowSettings';
 import Description from './Actions/Description';
-import MatchRuleEngine from './Actions/MatchRuleEngine';
+// import MatchRuleEngine from './Actions/MatchRuleEngine';
 
 export default {
   columns: (sectionContext, actionProps) => {
@@ -91,7 +91,7 @@ export default {
           const settings = flowSettings.find(f => f._id === r._id) || {};
 
           return (
-            <MatchRuleEngine
+            <Schedule.component
               resource={r}
               disable={!settings.matchingRules}
               settings={settings}
