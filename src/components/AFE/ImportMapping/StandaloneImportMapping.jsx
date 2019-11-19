@@ -32,13 +32,17 @@ export default function StandaloneImportMapping(props) {
   const resourceData = useSelector(state =>
     selectors.resource(state, 'imports', resourceId)
   );
-  const [assistantState, setAssistantState] = useState({
-    assistantLoaded: false,
-    changeIdentifier: 0,
-  });
-  const { assistantLoaded, changeIdentifier } = assistantState;
+  const isAssistant = !!(resourceData && resourceData.assistant);
+  const isIntegrationApp = !!(resourceData && resourceData._connectorId);
+  const integrationId = resourceData && resourceData._integrationId;
+  const [assistantLoaded, setAssistantLoaded] = useState(false);
+  const [integrationAppLoaded, setIntegrationAppLoaded] = useState(false);
+  const [changeIdentifier, setChangeIdentifier] = useState(0);
   const options = {};
   const resourceType = ResourceUtil.getResourceSubType(resourceData);
+  /**  Block START : to get assistance metadata from
+   *   selector and dispatching an action if not loaded
+   */
   const assistantData = useSelector(state =>
     selectors.assistantData(state, {
       adaptorType: resourceType.type,
@@ -56,10 +60,48 @@ export default function StandaloneImportMapping(props) {
 
   useEffect(() => {
     // fetching assistant data in case resource type is assistant
-    if (resourceType.assistant && !assistantData) {
+    if (isAssistant && !assistantData) {
       fetchAssistantResource();
     }
-  }, [assistantData, fetchAssistantResource, resourceType.assistant]);
+  }, [
+    assistantData,
+    fetchAssistantResource,
+    isAssistant,
+    resourceType.assistant,
+  ]);
+
+  /**  Block ENDS */
+
+  /**  Block START : to get integration app mapping metadata from
+   *   selector and dispatching an action if not loaded
+   */
+
+  const { mappingMetadata: integrationAppMappingMetadata } = useSelector(
+    state => selectors.integrationAppAddOnState(state, integrationId)
+  );
+  const fetchIntegrationAppMappingMetadata = useCallback(() => {
+    dispatch(
+      actions.integrationApp.settings.requestMappingMetadata(integrationId)
+    );
+  }, [dispatch, integrationId]);
+
+  useEffect(() => {
+    // fetching mapping metadata data in case of integration apps
+    if (
+      resourceData &&
+      resourceData._connectorId &&
+      !integrationAppMappingMetadata
+    ) {
+      fetchIntegrationAppMappingMetadata();
+    }
+  }, [
+    dispatch,
+    fetchIntegrationAppMappingMetadata,
+    integrationAppMappingMetadata,
+    resourceData,
+  ]);
+
+  /**  Block ENDS */
 
   if (resourceType.type === ResourceUtil.adaptorTypeMap.SalesforceImport) {
     options.connectionId = connectionId;
@@ -72,47 +114,42 @@ export default function StandaloneImportMapping(props) {
     options.connectionId = connectionId;
   }
 
-  const mappings = MappingUtil.getMappingFromResource(
-    resourceData,
-    resourceType.type
-  );
+  const mappingOptions = {};
 
-  if (assistantData) {
+  if (isAssistant && assistantData && !assistantLoaded) {
+    setAssistantLoaded(!assistantLoaded);
+    setChangeIdentifier(changeIdentifier + 1);
     const { assistantMetadata } = resourceData;
     const { operation, resource, version } = assistantMetadata;
-    const assistantOperationDetail = getImportOperationDetails({
+    const { requiredMappings } = getImportOperationDetails({
       operation,
       resource,
       version,
       assistantData,
     });
-    const { requiredMappings } = assistantOperationDetail;
 
-    if (requiredMappings && Array.isArray(requiredMappings)) {
-      requiredMappings.forEach(_mandatoryMapping => {
-        const _mappingObj = mappings.find(
-          _mapping => _mapping.generate === _mandatoryMapping
-        );
-
-        if (_mappingObj) {
-          _mappingObj.isRequired = true;
-        } else {
-          mappings.push({
-            generate: _mandatoryMapping,
-            isRequired: true,
-          });
-        }
-      });
-    }
-
-    if (!assistantLoaded) {
-      setAssistantState({
-        assistantLoaded: !assistantLoaded,
-        changeIdentifier: changeIdentifier + 1,
-      });
-    }
+    mappingOptions.assistant = {
+      requiredMappings,
+    };
+  } else if (
+    isIntegrationApp &&
+    integrationAppMappingMetadata &&
+    !integrationAppLoaded
+  ) {
+    setIntegrationAppLoaded(!integrationAppLoaded);
+    setChangeIdentifier(changeIdentifier + 1);
+    mappingOptions.integrationApp = {
+      mappingMetadata: integrationAppMappingMetadata,
+      connectorExternalId: resourceData.externalId,
+    };
   }
 
+  const mappings = MappingUtil.getMappingFromResource(
+    resourceData,
+    resourceType.type,
+    false,
+    mappingOptions
+  );
   const lookups = LookupUtil.getLookupFromResource(
     resourceData,
     resourceType.type
