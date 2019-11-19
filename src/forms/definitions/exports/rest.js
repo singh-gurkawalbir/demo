@@ -202,6 +202,7 @@ export default {
     'rest.lastPageStatusCode': { fieldId: 'rest.lastPageStatusCode' },
     'rest.lastPagePath': { fieldId: 'rest.lastPagePath' },
     'rest.lastPageValue': { fieldId: 'rest.lastPageValue' },
+    exportOneToMany: { formId: 'exportOneToMany' },
     advancedSettings: {
       formId: 'advancedSettings',
       visibleWhenAll: [
@@ -216,6 +217,7 @@ export default {
     fields: [
       'common',
       'outputMode',
+      'exportOneToMany',
       'exportData',
       'rest.method',
       'rest.headers',

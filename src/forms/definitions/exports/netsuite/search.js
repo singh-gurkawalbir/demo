@@ -136,10 +136,12 @@ export default {
       ],
     },
     'netsuite.skipGrouping': { fieldId: 'netsuite.skipGrouping' },
+    exportOneToMany: { formId: 'exportOneToMany' },
   },
   layout: {
     fields: [
       'common',
+      'exportOneToMany',
       'netsuite.netsuiteExportlabel',
       'netsuite.webservices.recordType',
       'netsuite.webservices.searchId',

@@ -31,6 +31,7 @@ export default {
 
   fieldMap: {
     common: { formId: 'common' },
+    exportOneToMany: { formId: 'exportOneToMany' },
     'salesforce.executionType': { fieldId: 'salesforce.executionType' },
     exportData: {
       id: 'exportData',
@@ -166,6 +167,7 @@ export default {
     fields: [
       'common',
       'outputMode',
+      'exportOneToMany',
       'salesforce.executionType',
       'exportData',
       'salesforce.sObjectType',

@@ -50,6 +50,7 @@ export default {
         },
       ],
     },
+    exportOneToMany: { formId: 'exportOneToMany' },
     'delta.dateField': {
       fieldId: 'delta.dateField',
     },
@@ -61,6 +62,7 @@ export default {
   layout: {
     fields: [
       'common',
+      'exportOneToMany',
       'exportData',
       'mongodb.collection',
       'mongodb.filter',

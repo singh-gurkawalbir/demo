@@ -178,7 +178,6 @@ export default {
     label: 'What would you like to export from NetSuite?',
     type: 'labeltitle',
   },
-
   'netsuite.searches': {
     type: 'text',
     keyName: 'name',
@@ -191,6 +190,10 @@ export default {
     type: 'text',
     label: 'NetSuite metadata',
   },
+  'netsuite.export.forceReload': {
+    type: 'checkbox',
+    label: 'Reload Record Before Export',
+  },
   'netsuite.selectoption': {
     type: 'text',
     label: 'NetSuite selectoption',
@@ -199,7 +202,6 @@ export default {
     type: 'text',
     label: 'NetSuite custom Field Metadata',
   },
-
   'netsuite.statsOnly': {
     type: 'checkbox',
     label: 'NetSuite stats Only',
@@ -235,7 +237,7 @@ export default {
   },
   'netsuite.restlet.batchSize': {
     type: 'text',
-    label: 'NetSuite restlet batch Size',
+    label: 'Batch Size Limit',
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
