@@ -1,6 +1,5 @@
-import { useMemo } from 'react';
+import { useMemo, Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Typography } from '@material-ui/core';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
 import DynaForm from '../../components/DynaForm';
@@ -153,11 +152,10 @@ export default function ProfileComponent() {
   };
 
   return (
-    <div>
-      <Typography variant="h6">Profile</Typography>
+    <Fragment>
       <DynaForm fieldMeta={fieldMeta} render>
         <DynaSubmit onClick={handleSubmit}>Save</DynaSubmit>
       </DynaForm>
-    </div>
+    </Fragment>
   );
 }

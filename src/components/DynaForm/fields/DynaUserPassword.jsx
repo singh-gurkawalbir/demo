@@ -7,13 +7,14 @@ import actions from '../../../actions';
 
 const useStyles = makeStyles(() => ({
   editRowElement: {
-    marginLeft: 'auto',
-    marginRight: 'auto',
+    margin: `0 !important`,
     display: 'flex',
+    flexDirection: `row !important`,
     justifyContent: 'flex-start' /* center horizontally */,
     alignItems: 'center' /* center vertically */,
     height: '50%',
     width: '70%',
+    marginBottom: 6,
   },
 }));
 

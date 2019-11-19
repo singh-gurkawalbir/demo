@@ -12,9 +12,9 @@ const useStyles = makeStyles(theme => ({
     width: '70%',
   },
   editRowElement: {
-    marginLeft: 'auto',
-    marginRight: 'auto',
+    margin: `0 !important`,
     display: 'flex',
+    flexDirection: `row !important`,
     justifyContent: 'flex-start' /* center horizontally */,
     alignItems: 'center' /* center vertically */,
     height: '50%',
