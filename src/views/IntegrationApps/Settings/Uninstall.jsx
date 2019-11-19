@@ -29,7 +29,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function Uninstall(props) {
   const classes = useStyles();
-  const { storeId, integrationId } = props;
+  const { storeId, integrationId } = props.match.params;
   const dispatch = useDispatch();
   const integration =
     useSelector(state =>

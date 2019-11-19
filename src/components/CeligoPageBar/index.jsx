@@ -50,6 +50,7 @@ export default function CeligoPageBar({
   infoText,
   subtitle,
   titleTag,
+  className,
 }) {
   const classes = useStyles();
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
@@ -68,7 +69,7 @@ export default function CeligoPageBar({
       <SlideOnScroll threshold={250}>
         <ElevateOnScroll threshold={0}>
           <Paper
-            className={clsx(classes.pageHeader, {
+            className={clsx(classes.pageHeader, className, {
               [classes.pageHeaderShift]: drawerOpened,
             })}
             elevation={0}

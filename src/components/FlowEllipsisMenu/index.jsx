@@ -58,7 +58,7 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
           break;
 
         case 'clone':
-          history.push(`/pg/clone/flow/${flowId}`);
+          history.push(`/pg/clone/flows/${flowId}/preview`);
           break;
 
         case 'delete':
