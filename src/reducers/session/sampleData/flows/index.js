@@ -89,10 +89,17 @@ export default function(state = {}, action) {
 
       case actionTypes.FLOW_DATA.PROCESSOR_DATA_RECEIVED: {
         const { data: receivedData } = processedData || {};
+
+        if (!draft[flowId]) {
+          return;
+        }
+
         const resourceMap =
-          draft[flowId][
-            isPageGenerator ? 'pageGeneratorsMap' : 'pageProcessorsMap'
-          ] || {};
+          (draft[flowId] &&
+            draft[flowId][
+              isPageGenerator ? 'pageGeneratorsMap' : 'pageProcessorsMap'
+            ]) ||
+          {};
 
         resourceMap[resourceId] = {
           ...resourceMap[resourceId],
