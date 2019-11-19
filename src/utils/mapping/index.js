@@ -160,7 +160,7 @@ export default {
       options,
     });
   },
-  getMappingsForApp: ({ mappings, appType, options }) => {
+  getMappingsForApp: ({ mappings, appType, options = {} }) => {
     let _mappings = mappings;
 
     if (options.integrationApp) {
