@@ -93,10 +93,12 @@ export default {
       ],
     },
     'netsuite.skipGrouping': { fieldId: 'netsuite.skipGrouping' },
+    exportOneToMany: { formId: 'exportOneToMany' },
   },
   layout: {
     fields: [
       'common',
+      'exportOneToMany',
       'netsuite.netsuiteExportlabel',
       'netsuite.restlet.recordType',
       'netsuite.restlet.searchId',

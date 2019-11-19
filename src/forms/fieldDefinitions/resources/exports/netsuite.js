@@ -330,8 +330,4 @@ export default {
     type: 'checkbox',
     label: 'NetSuite search Preferences return Search Columns',
   },
-  skipRetries: {
-    type: 'checkbox',
-    label: 'Skip Retries',
-  },
 };
