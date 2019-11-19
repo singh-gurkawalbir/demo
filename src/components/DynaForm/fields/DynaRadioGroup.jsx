@@ -9,13 +9,18 @@ import {
 } from '@material-ui/core';
 import clsx from 'clsx';
 import ErroredMessageComponent from './ErroredMessageComponent';
+import RadioBtnSelectedIcon from '../../icons/RadioBtnSelectedIcon';
+import RadioBtnUnselectedIcon from '../../icons/RadioBtnUnselectedIcon';
 
 const useStyles = makeStyles({
   rowFlexWrapper: {
     flexDirection: 'row',
+    paddingLeft: 5,
   },
   flexItems: {
-    flex: 1,
+    // flex: 1,
+    wordBreak: 'break-all',
+    lineHeight: '20px',
   },
   fullWidth: {
     width: '100%',
@@ -49,7 +54,21 @@ export default function DynaRadio(props) {
               <FormControlLabel
                 key={item}
                 value={item}
-                control={<Radio color="primary" />}
+                control={
+                  <Radio
+                    color="primary"
+                    icon={
+                      <span>
+                        <RadioBtnUnselectedIcon />
+                      </span>
+                    }
+                    checkedIcon={
+                      <span>
+                        <RadioBtnSelectedIcon />
+                      </span>
+                    }
+                  />
+                }
                 label={item}
                 className={clsx({
                   [classes.flexItems]: showOptionsHorizontally,
@@ -62,7 +81,21 @@ export default function DynaRadio(props) {
             <FormControlLabel
               key={item.value}
               value={item.value}
-              control={<Radio color="primary" />}
+              control={
+                <Radio
+                  color="primary"
+                  icon={
+                    <span>
+                      <RadioBtnUnselectedIcon />
+                    </span>
+                  }
+                  checkedIcon={
+                    <span>
+                      <RadioBtnSelectedIcon />
+                    </span>
+                  }
+                />
+              }
               label={item.label || item.value}
               className={clsx({
                 [classes.flexItems]: showOptionsHorizontally,

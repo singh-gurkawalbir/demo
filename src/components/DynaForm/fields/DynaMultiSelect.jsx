@@ -25,7 +25,11 @@ const useStyles = makeStyles(theme => ({
     '& > Label': {
       marginTop: theme.spacing(-1),
       '&.MuiInputLabel-shrink': {
-        paddingTop: theme.spacing(2),
+        marginTop: 5,
+      },
+      '& + div': {
+        marginTop: 0,
+        top: 0,
       },
     },
     '&:hover': {
@@ -37,11 +41,10 @@ const useStyles = makeStyles(theme => ({
       background: 'none',
     },
     '& > div > div ': {
-      paddingBottom: 5,
+      paddingTop: theme.spacing(3),
     },
     '& svg': {
       right: theme.spacing(1),
-      top: theme.spacing(-1),
     },
   },
   chips: {

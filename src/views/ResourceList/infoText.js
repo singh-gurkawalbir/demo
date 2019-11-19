@@ -82,4 +82,6 @@ export default {
     
     IMPORTANT: it may take up to one minute for API token changes to propagate 
     and take effect.`,
+  cloning: `
+   Cloning can be used to create a copy of a flow, export, import, orchestration, or an entire integration. Cloning is useful for testing changes without affecting your production integrations (i.e. when you clone something you can choose a different set of connection records). Cloning supports both sandbox and production environments.`,
 };

@@ -13,6 +13,9 @@ import LoadResources from '../../components/LoadResources';
 import getRoutePath from '../../utils/routePaths';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import Spinner from '../../components/Spinner';
+import Loader from '../../components/Loader';
+import infoText from '../../views/ResourceList/infoText';
+import CeligoPageBar from '../../components/CeligoPageBar';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -53,7 +56,7 @@ const useStyles = makeStyles(theme => ({
     marginBottom: '10px',
   },
   componentPadding: {
-    padding: '25px 25px 0 25px',
+    padding: theme.spacing(3, 3, 12, 3),
   },
   componentsTable: {
     paddingTop: '20px',
@@ -135,9 +138,10 @@ export default function ClonePreview(props) {
 
   if (!components || isEmpty(components)) {
     return (
-      <Typography>
-        Loading Clone Preview <Spinner />
-      </Typography>
+      <Loader open>
+        <Typography variant="h4">Loading Clone Preview</Typography>
+        <Spinner color="primary" />
+      </Loader>
     );
   }
 
@@ -282,45 +286,20 @@ export default function ClonePreview(props) {
 
   return (
     <LoadResources resources={[resourceType, 'integrations']} required>
-      <div className={classes.marketplaceBox}>
-        <div className={classes.mpExplore}>
-          <Fragment>
-            <div className={classes.templateBody}>
-              <div>
-                <Typography variant="h3">Cloning</Typography>
-              </div>
-              <div className={classes.container}>
-                <Grid container>
-                  <Grid item xs={3}>
-                    <div className={classes.appDetails}>
-                      <div className="app-details">
-                        <Typography>
-                          Cloning can be used to create a copy of a flow,
-                          export, import, orchestration, or an entire
-                          integration. Cloning is useful for testing changes
-                          without affecting your production integrations (i.e.
-                          when you clone something you can choose a different
-                          set of connection records). Cloning supports both
-                          sandbox and production environments.{' '}
-                        </Typography>
-                      </div>
-                    </div>
-                  </Grid>
-                  <Grid className={classes.componentPadding} item xs={9}>
-                    <DynaForm
-                      fieldMeta={fieldMeta}
-                      optionsHandler={fieldMeta.optionsHandler}>
-                      <DynaSubmit data-test="clone" onClick={clone}>
-                        {`Clone ${MODEL_PLURAL_TO_LABEL[resourceType]}`}
-                      </DynaSubmit>
-                    </DynaForm>
-                  </Grid>
-                </Grid>
-              </div>
-            </div>
-          </Fragment>
-        </div>
-      </div>
+      <CeligoPageBar title="Cloning" infoText={infoText.cloning} />
+      <Fragment>
+        <Grid container>
+          <Grid className={classes.componentPadding} item xs={12}>
+            <DynaForm
+              fieldMeta={fieldMeta}
+              optionsHandler={fieldMeta.optionsHandler}>
+              <DynaSubmit data-test="clone" onClick={clone}>
+                {`Clone ${MODEL_PLURAL_TO_LABEL[resourceType]}`}
+              </DynaSubmit>
+            </DynaForm>
+          </Grid>
+        </Grid>
+      </Fragment>
     </LoadResources>
   );
 }

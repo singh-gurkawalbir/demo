@@ -2,6 +2,8 @@ import { PureComponent } from 'react';
 import Loadable from 'react-loadable';
 import { withStyles } from '@material-ui/core/styles';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import Typography from '@material-ui/core/Typography';
+import Loader from '../components/Loader';
 
 @withStyles(theme => ({
   view: {
@@ -34,12 +36,15 @@ class Loading extends PureComponent {
       throw error;
     } else if (timedOut || pastDelay) {
       return (
-        <CircularProgress
-          size={50}
-          classes={{
-            circleIndeterminate: classes.spinner,
-          }}
-        />
+        <Loader open>
+          <Typography variant="h4">Loading</Typography>
+          <CircularProgress
+            size={24}
+            classes={{
+              circleIndeterminate: classes.spinner,
+            }}
+          />
+        </Loader>
       );
     }
 

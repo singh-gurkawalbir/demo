@@ -12,6 +12,8 @@ const ArrowUpIcon = require('../../src/components/icons/ArrowUpIcon').default;
 const AuditLogIcon = require('../../src/components/icons/AuditLogIcon').default;
 const CalendarIcon = require('../../src/components/icons/CalendarIcon').default;
 const CancelIcon = require('../../src/components/icons/CancelIcon').default;
+const CheckboxUnselectedIcon = require('../../src/components/icons/CheckboxUnselectedIcon').default;
+const CheckboxSelectedIcon = require('../../src/components/icons/CheckboxSelectedIcon').default;
 const CloseIcon = require('../../src/components/icons/CloseIcon').default;
 const CopyIcon = require('../../src/components/icons/CopyIcon').default;
 const ConnectorIcon = require('../../src/components/icons/ConnectorIcon').default;
@@ -63,6 +65,8 @@ const PublishedIcon = require('../../src/components/icons/PublishedIcon').defaul
 const PermissionsManageIcon = require('../../src/components/icons/PermissionsManageIcon').default;
 const PermissionsMonitorIcon = require('../../src/components/icons/PermissionsMonitorIcon').default;
 const PermissionExplorerIcon = require('../../src/components/icons/PermissionExplorerIcon').default;
+const RadioBtnSelectedIcon = require('../../src/components/icons/RadioBtnSelectedIcon').default;
+const RadioBtnUnselectedIcon = require('../../src/components/icons/RadioBtnUnselectedIcon').default;
 const ResourcesIcon = require('../../src/components/icons/ResourcesIcon').default;
 const RegenerateTokenIcon = require('../../src/components/icons/RegenerateTokenIcon').default;
 const RefreshIcon = require('../../src/components/icons/RefreshIcon').default;
@@ -155,6 +159,14 @@ const icon = {
     <div style={wrapper}>
       <CancelIcon style={icon}/>
       <p>Cancel</p>
+    </div>
+     <div style={wrapper}>
+      <CheckboxUnselectedIcon style={icon} />
+      <p>CheckboxUnselected</p>
+    </div>
+    <div style={wrapper}>
+      <  CheckboxSelectedIcon style={icon} />
+      <p>CheckboxSelected</p>
     </div>
     <div style={wrapper}>
       <CloseIcon style={icon}/>
@@ -356,6 +368,14 @@ const icon = {
     <div style={wrapper}>
       <PermissionExplorerIcon style={icon} />
       <p>PermissionExplorer</p>
+    </div>
+    <div style={wrapper}>
+      <RadioBtnSelectedIcon style={icon} />
+      <p>RadioBtnSelected</p>
+    </div>
+    <div style={wrapper}>
+      <RadioBtnUnselectedIcon style={icon} />
+      <p>RadioBtnUnselected</p>
     </div>
      <div style={wrapper}>
       <ResourcesIcon style={icon} />

@@ -415,7 +415,7 @@ export default {
     MuiRadio: {
       root: {
         color: colors.celigoNeutral5,
-        paddingRight: 5,
+        padding: 5,
       },
     },
     MuiInputBase: {
@@ -437,6 +437,13 @@ export default {
         color: colors.celigoNeutral6,
         '&: disabled': {
           cursor: 'not-allowed',
+        },
+      },
+      label: {
+        width: 24,
+        height: 24,
+        '& > span': {
+          height: 28,
         },
       },
     },
@@ -474,6 +481,11 @@ export default {
     MuiDivider: {
       root: {
         backgroundColor: colors.celigoNeutral3,
+      },
+    },
+    MuiCheckbox: {
+      root: {
+        color: colors.celigoNeutral5,
       },
     },
     MuiTabs: {

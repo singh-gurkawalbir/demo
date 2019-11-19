@@ -1,8 +1,7 @@
 import { useState, Fragment } from 'react';
-import IconButton from '@material-ui/core/IconButton';
 import ImportMappingSettings from './';
-
-const SettingsIcon = require('../../../components/icons/SettingsIcon').default;
+import SettingsIcon from '../../icons/SettingsIcon';
+import ActionButton from '../../ActionButton';
 
 export default function MappingSettingsField(props) {
   const {
@@ -48,14 +47,14 @@ export default function MappingSettingsField(props) {
           disabled={disabled}
         />
       )}
-      <IconButton
+      <ActionButton
         data-test="toggleImportMappingSettings"
         disabled={isDisabled}
-        aria-label="delete"
+        aria-label="settings"
         onClick={handleBtnClick}
         key="settings">
         <SettingsIcon />
-      </IconButton>
+      </ActionButton>
     </Fragment>
   );
 }

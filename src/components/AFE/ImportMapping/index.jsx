@@ -1,17 +1,9 @@
 import { useReducer, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import produce from 'immer';
-import {
-  Button,
-  IconButton,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  Grid,
-  DialogActions,
-  Typography,
-} from '@material-ui/core';
+import Button from '@material-ui/core/Button';
 import deepClone from 'lodash/cloneDeep';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
@@ -19,7 +11,10 @@ import MappingSettings from '../ImportMappingSettings/MappingSettingsField';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import DynaTypeableSelect from '../../DynaForm/fields/DynaTypeableSelect';
 import MappingUtil from '../../../utils/mapping';
-import CloseIcon from '../../icons/CloseIcon';
+import TrashIcon from '../../icons/TrashIcon';
+import ModalDialog from '../../ModalDialog';
+import ButtonsGroup from '../../ButtonGroup';
+import ActionButton from '../../ActionButton';
 
 const useStyles = makeStyles(theme => ({
   modalContent: {
@@ -31,8 +26,8 @@ const useStyles = makeStyles(theme => ({
     overflowY: 'off',
   },
   header: {
-    height: '100%',
-    maxHeight: '28px',
+    display: 'flex',
+    width: '100%',
   },
   root: {
     flexGrow: 1,
@@ -41,10 +36,22 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     padding: '0px',
   },
-  closeButton: {
-    position: 'absolute',
-    right: theme.spacing(1),
-    top: theme.spacing(1),
+  child: {
+    flexBasis: '40%',
+  },
+  childHeader: {
+    flexBasis: '42%',
+  },
+  innerRow: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    marginBottom: theme.spacing(1),
+    '& > div': {
+      marginRight: theme.spacing(1),
+      '&:last-child': {
+        marginRight: 0,
+      },
+    },
   },
 }));
 
@@ -74,9 +81,9 @@ export const reducer = (state, action) => {
           if (field === 'extract') {
             if (inputValue !== '') {
               /* User removes the extract completely and blurs out, 
-              extract field should be replaced back with last valid content
-              Change the extract value only when he has provided valid content
-            */
+extract field should be replaced back with last valid content
+Change the extract value only when he has provided valid content
+*/
 
               if (inputValue.indexOf('"') === 0) {
                 if (inputValue.charAt(inputValue.length - 1) !== '"')
@@ -128,7 +135,6 @@ export default function ImportMapping(props) {
   // generateFields and extractFields are passed as an array of field names
   const {
     title,
-    showDialogClose,
     mappings = {},
     lookups = [],
     application,
@@ -266,146 +272,128 @@ export default function ImportMapping(props) {
   const getLookup = name => lookupState.find(lookup => lookup.name === name);
 
   return (
-    <Dialog fullScreen={false} open scroll="paper" maxWidth={false}>
-      {showDialogClose && (
-        <IconButton
-          aria-label="Close"
-          data-test="closeImportMapping"
-          className={classes.closeButton}
-          onClick={handleCancel}>
-          <CloseIcon />
-        </IconButton>
-      )}
-      <DialogTitle disableTypography>
-        <Typography variant="h6">{title}</Typography>
-      </DialogTitle>
-      <DialogContent className={classes.modalContent}>
-        <div className={classes.container}>
-          <Grid container className={classes.root}>
-            <Grid item xs={12} className={classes.header}>
-              <Grid container>
-                <Grid key="heading_extract" item xs>
-                  <span className={classes.alignLeft}>Source Record Field</span>
-                </Grid>
-                <Grid key="heading_generate" item xs>
-                  <span className={classes.alignLeft}>{generateLabel}</span>
-                </Grid>
-                <Grid key="settings_button_header" item />
-                <Grid key="delete_button_header" item />
-              </Grid>
-            </Grid>
-            <Grid container key={changeIdentifier} direction="column">
-              {tableData.map(mapping => (
-                <Grid item className={classes.rowContainer} key={mapping.index}>
-                  <Grid container direction="row">
-                    <Grid item xs>
-                      <DynaTypeableSelect
-                        id={`extract-${mapping.index}`}
-                        labelName="name"
-                        valueName="id"
-                        value={mapping.extract || mapping.hardCodedValueTmp}
-                        options={extractFields}
-                        disabled={mapping.isNotEditable || disabled}
-                        onBlur={(id, evt) => {
-                          handleFieldUpdate(
-                            mapping.index,
-                            { target: { value: evt } },
-                            'extract'
-                          );
-                        }}
-                      />
-                    </Grid>
-                    <Grid item xs>
-                      <DynaTypeableSelect
-                        id={`generate-${mapping.index}`}
-                        value={mapping.generate}
-                        labelName="name"
-                        valueName="id"
-                        options={formattedGenerateFields}
-                        disabled={mapping.isRequired || disabled}
-                        onBlur={(id, evt) => {
-                          handleFieldUpdate(
-                            mapping.index,
-                            { target: { value: evt } },
-                            'generate'
-                          );
-                        }}
-                      />
-                    </Grid>
-                    <Grid item>
-                      <MappingSettings
-                        id={mapping.index}
-                        onSave={handleSettingsClose}
-                        value={mapping}
-                        options={options}
-                        generate={mapping.generate}
-                        application={application}
-                        updateLookup={updateLookupHandler}
-                        disabled={mapping.isNotEditable || disabled}
-                        lookup={
-                          mapping &&
-                          mapping.lookupName &&
-                          getLookup(mapping.lookupName)
-                        }
-                        extractFields={extractFields}
-                        generateFields={formattedGenerateFields}
-                      />
-                    </Grid>
-                    <Grid item key="delete_button">
-                      <IconButton
-                        data-test="editMapping"
-                        aria-label="delete"
-                        disabled={
-                          mapping.isRequired ||
-                          mapping.isNotEditable ||
-                          disabled
-                        }
-                        onClick={() => {
-                          handleDelete(mapping.index);
-                        }}
-                        className={classes.margin}>
-                        <CloseIcon />
-                      </IconButton>
-                    </Grid>
-                  </Grid>
-                </Grid>
-              ))}
-            </Grid>
-          </Grid>
+    <ModalDialog handleClose={handleCancel} show width="md">
+      <div>{title}</div>
+      <div className={classes.container}>
+        <div className={classes.root}>
+          <div className={classes.header}>
+            <div className={classes.header}>
+              <Typography varaint="h4" className={classes.childHeader}>
+                Source Record Field
+              </Typography>
+
+              <Typography varaint="h4" className={classes.childHeader}>
+                {generateLabel}
+              </Typography>
+            </div>
+          </div>
+          <div key={changeIdentifier}>
+            {tableData.map(mapping => (
+              <div className={classes.rowContainer} key={mapping.index}>
+                <div className={classes.innerRow}>
+                  <div className={classes.child}>
+                    <DynaTypeableSelect
+                      id={`extract-${mapping.index}`}
+                      labelName="name"
+                      valueName="id"
+                      value={mapping.extract || mapping.hardCodedValueTmp}
+                      options={extractFields}
+                      disabled={mapping.isNotEditable || disabled}
+                      onBlur={(id, evt) => {
+                        handleFieldUpdate(
+                          mapping.index,
+                          { target: { value: evt } },
+                          'extract'
+                        );
+                      }}
+                    />
+                  </div>
+                  <div className={classes.child}>
+                    <DynaTypeableSelect
+                      id={`generate-${mapping.index}`}
+                      value={mapping.generate}
+                      labelName="name"
+                      valueName="id"
+                      options={formattedGenerateFields}
+                      disabled={mapping.isRequired || disabled}
+                      onBlur={(id, evt) => {
+                        handleFieldUpdate(
+                          mapping.index,
+                          { target: { value: evt } },
+                          'generate'
+                        );
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <MappingSettings
+                      id={mapping.index}
+                      onSave={handleSettingsClose}
+                      value={mapping}
+                      options={options}
+                      generate={mapping.generate}
+                      application={application}
+                      updateLookup={updateLookupHandler}
+                      disabled={mapping.isNotEditable || disabled}
+                      lookup={
+                        mapping &&
+                        mapping.lookupName &&
+                        getLookup(mapping.lookupName)
+                      }
+                      extractFields={extractFields}
+                      generateFields={formattedGenerateFields}
+                    />
+                  </div>
+                  <div key="delete_button">
+                    <ActionButton
+                      data-test="editMapping"
+                      aria-label="delete"
+                      disabled={
+                        mapping.isRequired || mapping.isNotEditable || disabled
+                      }
+                      onClick={() => {
+                        handleDelete(mapping.index);
+                      }}>
+                      <TrashIcon />
+                    </ActionButton>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
-      </DialogContent>
-      <DialogActions>
-        {!isStandaloneMapping && (
-          <Button
-            data-test="cancelMapping"
-            onClick={handleCancel}
-            variant="contained"
-            size="small"
-            color="secondary">
-            Cancel
-          </Button>
-        )}
-        {isStandaloneMapping && (
+      </div>
+      <div>
+        <ButtonsGroup>
+          {isStandaloneMapping && (
+            <Button
+              disabled={disabled}
+              data-test="saveMapping"
+              onClick={() => handleSubmit(false)}
+              variant="outlined"
+              color="secondary">
+              Save
+            </Button>
+          )}
           <Button
             disabled={disabled}
-            data-test="saveMapping"
-            onClick={() => handleSubmit(false)}
-            variant="contained"
-            size="small"
-            color="secondary">
-            Save
+            data-test="saveAndCloseMapping"
+            onClick={() => handleSubmit(true)}
+            variant="outlined"
+            color="primary">
+            {isStandaloneMapping ? 'Save and Close' : 'Save'}
           </Button>
-        )}
-        <Button
-          disabled={disabled}
-          data-test="saveAndCloseMapping"
-          onClick={() => handleSubmit(true)}
-          variant="contained"
-          size="small"
-          color="secondary">
-          {isStandaloneMapping ? 'Save and Close' : 'Save'}
-        </Button>
-      </DialogActions>
-    </Dialog>
+          {!isStandaloneMapping && (
+            <Button
+              data-test="cancelMapping"
+              onClick={handleCancel}
+              variant="text"
+              color="primary">
+              Cancel
+            </Button>
+          )}
+        </ButtonsGroup>
+      </div>
+    </ModalDialog>
   );
 }

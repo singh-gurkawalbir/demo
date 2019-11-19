@@ -3,15 +3,11 @@ import classNames from 'classnames';
 import { makeStyles } from '@material-ui/core/styles';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import FormLabel from '@material-ui/core/FormLabel';
-import IconButton from '@material-ui/core/IconButton';
-import OpenInNewIcon from 'mdi-react/OpenInNewIcon';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
 import Button from '@material-ui/core/Button';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import { Typography } from '@material-ui/core';
 import CodeEditor from '../../../components/CodeEditor';
+import ActionButton from '../../ActionButton';
+import ExitIcon from '../../icons/ExitIcon';
+import ModalDialog from '../../ModalDialog';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -92,45 +88,40 @@ export default function DynaEditor(props) {
   }
 
   const editorDialog = (
-    <Dialog
-      open
-      onClose={handleEditorClick}
+    <ModalDialog
+      show
+      handleClose={handleEditorClick}
       aria-labelledby="form-dialog-title">
-      <DialogTitle id="form-dialog-title" disableTypography>
-        <Typography variant="h6">{label}</Typography>
-      </DialogTitle>
-      <DialogContent>
-        <div className={classes.editorContainer}>
-          <CodeEditor
-            name={id}
-            value={value}
-            mode={resultantMode}
-            readOnly={disabled}
-            onChange={value => handleUpdate(value)}
-          />
-        </div>
-      </DialogContent>
-      <DialogActions>
+      <div>{label}</div>
+      <div className={classes.editorContainer}>
+        <CodeEditor
+          name={id}
+          value={value}
+          mode={resultantMode}
+          readOnly={disabled}
+          onChange={value => handleUpdate(value)}
+        />
+      </div>
+      <div>
         <Button
           data-test="showEditor"
           onClick={handleEditorClick}
-          variant="contained"
-          size="small"
-          color="secondary">
+          variant="outlined"
+          color="primary">
           Done
         </Button>
-      </DialogActions>
-    </Dialog>
+      </div>
+    </ModalDialog>
   );
 
   return (
     <Fragment>
-      <IconButton
+      <ActionButton
         data-test={id}
         onClick={handleEditorClick}
         className={classes.editorButton}>
-        <OpenInNewIcon />
-      </IconButton>
+        <ExitIcon />
+      </ActionButton>
       <div className={classes.container}>
         {showEditor && editorDialog}
 
