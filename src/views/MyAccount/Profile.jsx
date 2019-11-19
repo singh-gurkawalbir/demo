@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Typography } from '@material-ui/core';
 import actions from '../../actions';
@@ -9,12 +9,54 @@ import dateTimezones from '../../utils/dateTimezones';
 import dateFormats from '../../utils/dateFormats';
 
 export default function ProfileComponent() {
-  const userProfilePreferencesProps = useSelector(state =>
+  const preferences = useSelector(state =>
     selectors.userProfilePreferencesProps(state)
   );
-  const [state] = useState({
-    ...userProfilePreferencesProps,
-  });
+  const dateTimeZonesList = useMemo(
+    () => [
+      {
+        items:
+          (dateTimezones &&
+            dateTimezones.map(date => ({
+              label: date.value,
+              value: date.name,
+            }))) ||
+          [],
+      },
+    ],
+    []
+  );
+  const dateFormatList = useMemo(
+    () => [
+      {
+        items:
+          (dateFormats &&
+            dateFormats.map(date => ({
+              label: date.value,
+              value: date.name,
+            }))) ||
+          [],
+      },
+    ],
+    []
+  );
+  const timeFormatList = useMemo(
+    () => [
+      {
+        items: [
+          {
+            label: '2:34:25 pm',
+            value: 'h:mm:ss a',
+          },
+          {
+            label: '14:34:25',
+            value: 'H:mm:ss',
+          },
+        ],
+      },
+    ],
+    []
+  );
   const dispatch = useDispatch();
   const handleSubmit = formVal => {
     const completePayloadCopy = { ...formVal };
@@ -35,14 +77,14 @@ export default function ProfileComponent() {
         name: 'name',
         type: 'text',
         label: 'Name',
-        defaultValue: state && state.name,
+        defaultValue: preferences && preferences.name,
       },
       email: {
         id: 'email',
         name: 'email',
         type: 'useremail',
         label: 'Email',
-        value: state && state.email,
+        value: preferences && preferences.email,
       },
       password: {
         id: 'password',
@@ -54,78 +96,45 @@ export default function ProfileComponent() {
         name: 'company',
         type: 'text',
         label: 'Company',
-        defaultValue: state && state.company,
+        defaultValue: preferences && preferences.company,
       },
       phone: {
         id: 'phone',
         name: 'phone',
         type: 'text',
         label: 'Phone',
-        defaultValue: state && state.phone,
+        defaultValue: preferences && preferences.phone,
       },
       timezone: {
         id: 'timezone',
         name: 'timezone',
         type: 'select',
         label: 'Time Zone',
-        defaultValue: state && state.timezone,
-        options: [
-          {
-            items:
-              (dateTimezones &&
-                dateTimezones.map(date => ({
-                  label: date.value,
-                  value: date.name,
-                }))) ||
-              [],
-          },
-        ],
+        defaultValue: preferences && preferences.timezone,
+        options: dateTimeZonesList,
       },
       dateFormat: {
         id: 'dateFormat',
         name: 'dateFormat',
         type: 'select',
         label: 'Date format',
-        defaultValue: state && state.dateFormat,
-        options: [
-          {
-            items:
-              (dateFormats &&
-                dateFormats.map(date => ({
-                  label: date.value,
-                  value: date.name,
-                }))) ||
-              [],
-          },
-        ],
+        defaultValue: preferences && preferences.dateFormat,
+        options: dateFormatList,
       },
       timeFormat: {
         id: 'timeFormat',
         name: 'timeFormat',
         type: 'select',
         label: 'Time Format',
-        defaultValue: state && state.timeFormat,
-        options: [
-          {
-            items: [
-              {
-                label: '2:34:25 pm',
-                value: 'h:mm:ss a',
-              },
-              {
-                label: '14:34:25',
-                value: 'H:mm:ss',
-              },
-            ],
-          },
-        ],
+        defaultValue: preferences && preferences.timeFormat,
+        options: timeFormatList,
       },
       developer: {
         id: 'developer',
         name: 'developer',
         type: 'checkbox',
         label: 'Developer Mode',
-        defaultValue: state && state.developer,
+        defaultValue: preferences && preferences.developer,
       },
     },
     layout: {
