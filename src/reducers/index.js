@@ -1015,7 +1015,9 @@ export function integrationAppFlowSettings(state, id, section, storeId) {
   }
 
   const selectedSection =
-    allSections.find(sec => sec.title.replace(/\s/g, '') === section) || {};
+    allSections.find(
+      sec => sec.title && sec.title.replace(/\s/g, '') === section
+    ) || {};
 
   if (!section) {
     allSections.forEach(sec => {
