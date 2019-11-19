@@ -16,6 +16,7 @@ export default {
   },
   fieldMap: {
     common: { formId: 'common' },
+
     exportRdbmsData: {
       fieldId: 'exportRdbmsData',
       type: 'labeltitle',
@@ -52,10 +53,12 @@ export default {
       visibleWhen: [{ field: 'type', is: ['once'] }],
     },
     advancedSettings: { formId: 'advancedSettings' },
+    exportOneToMany: { formId: 'exportOneToMany' },
   },
   layout: {
     fields: [
       'common',
+      'exportOneToMany',
       'exportRdbmsData',
       'rdbms.query',
       'type',

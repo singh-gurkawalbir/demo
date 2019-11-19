@@ -54,11 +54,13 @@ export default {
     'once.booleanField': {
       fieldId: 'once.booleanField',
     },
+    exportOneToMany: { formId: 'exportOneToMany' },
     advancedSettings: { formId: 'advancedSettings' },
   },
   layout: {
     fields: [
       'common',
+      'exportOneToMany',
       'exportData',
       'wrapper.function',
       'wrapper.configuration',

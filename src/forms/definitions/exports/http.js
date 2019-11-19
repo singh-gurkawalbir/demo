@@ -231,6 +231,7 @@ export default {
         },
       ],
     },
+    exportOneToMany: { formId: 'exportOneToMany' },
     configureAsyncHelper: {
       fieldId: 'configureAsyncHelper',
       visibleWhen: [
@@ -248,6 +249,7 @@ export default {
     fields: [
       'common',
       'outputMode',
+      'exportOneToMany',
       'exportData',
       'http.method',
       'http.headers',
