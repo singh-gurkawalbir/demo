@@ -74,10 +74,6 @@ export default {
         field: 'netsuite_da.operation',
         is: ['update', 'addupdate'],
       },
-      {
-        field: 'inputMode',
-        is: ['records'],
-      },
     ],
   },
   'netsuite_da.hooks.preMap.function': {

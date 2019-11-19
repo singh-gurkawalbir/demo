@@ -2,7 +2,6 @@ import { Typography } from '@material-ui/core';
 import { Fragment } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector, useDispatch } from 'react-redux';
-import shortid from 'shortid';
 import { Link } from 'react-router-dom';
 import * as selectors from '../../reducers';
 import ResourceTable from '../../components/ResourceTable';
@@ -17,6 +16,7 @@ import LoadResources from '../../components/LoadResources';
 import infoText from '../ResourceList/infoText';
 import CheckPermissions from '../../components/CheckPermissions';
 import { PERMISSIONS } from '../../utils/constants';
+import { generateNewId } from '../../utils/resource';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -24,6 +24,9 @@ const useStyles = makeStyles(theme => ({
   },
   resultContainer: {
     padding: theme.spacing(3, 3, 12, 3),
+  },
+  secondaryHeader: {
+    maxWidth: '64%',
   },
 }));
 
@@ -54,21 +57,23 @@ export default function AccessTokenList(props) {
         }>
         <ResourceDrawer {...newProps} />
 
-        <CeligoPageBar title="Access Tokens" infoText={infoText.accesstokens}>
+        <CeligoPageBar
+          title="Access Tokens"
+          infoText={infoText.accesstokens}
+          className={classes.secondaryHeader}>
           <div className={classes.actions}>
             <SearchInput variant="light" onChange={handleKeywordChange} />
             <IconTextButton
               data-test="newAccessToken"
               component={Link}
-              to={`${
-                location.pathname
-              }/add/accesstokens/new-${shortid.generate()}`}
+              to={`${location.pathname}/add/accesstokens/${generateNewId()}`}
               variant="text"
               color="primary">
               <AddIcon /> New Access Token
             </IconTextButton>
           </div>
         </CeligoPageBar>
+
         <div className={classes.resultContainer}>
           <LoadResources required resources="accesstokens">
             {list.resources && list.resources.length > 0 ? (

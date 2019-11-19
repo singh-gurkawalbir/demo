@@ -988,8 +988,11 @@ export function integrationAppGeneralSettings(state, id, storeId) {
 export function integrationAppFlowSettings(state, id, section, storeId) {
   if (!state) return {};
   const integrationResource = fromData.integrationAppSettings(state.data, id);
-  const { supportsMultiStore, showMatchRuleEngine, sections = [] } =
-    integrationResource.settings || {};
+  const {
+    supportsMultiStore,
+    supportsMatchRuleEngine: showMatchRuleEngine,
+    sections = [],
+  } = integrationResource.settings || {};
   let requiredFlows = [];
   let hasNSInternalIdLookup = false;
   let showFlowSettings = false;
@@ -1012,7 +1015,9 @@ export function integrationAppFlowSettings(state, id, section, storeId) {
   }
 
   const selectedSection =
-    allSections.find(sec => sec.title.replace(/\s/g, '') === section) || {};
+    allSections.find(
+      sec => sec.title && sec.title.replace(/\s/g, '') === section
+    ) || {};
 
   if (!section) {
     allSections.forEach(sec => {

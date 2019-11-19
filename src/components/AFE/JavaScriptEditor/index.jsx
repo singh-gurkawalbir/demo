@@ -49,13 +49,11 @@ export default function JavaScriptEditor(props) {
   const parsedData = result ? result.data : '';
 
   return (
-    <PanelGrid className={classes.template}>
+    <PanelGrid
+      key={`${editorId}-${initChangeIdentifier}`}
+      className={classes.template}>
       <PanelGridItem gridArea="rule">
-        <JavaScriptPanel
-          disabled={disabled}
-          key={`${editorId}-${initChangeIdentifier}`}
-          editorId={editorId}
-        />
+        <JavaScriptPanel disabled={disabled} editorId={editorId} />
       </PanelGridItem>
       <PanelGridItem gridArea="data">
         <PanelTitle title="Function Input" />

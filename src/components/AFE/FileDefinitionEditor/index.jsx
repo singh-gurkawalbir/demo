@@ -7,9 +7,14 @@ import { FILE_GENERATOR } from './constants';
 
 export default function FileDefinitionEditor(props) {
   const { editorId, layout = 'column', processor, disabled } = props;
-  const { rule, data, result, error, violations } = useSelector(state =>
-    selectors.editor(state, editorId)
-  );
+  const {
+    rule,
+    data,
+    result,
+    error,
+    violations,
+    initChangeIdentifier,
+  } = useSelector(state => selectors.editor(state, editorId));
   const dispatch = useDispatch();
   const handleRuleChange = rule => {
     dispatch(actions.editor.patch(editorId, { rule }));
@@ -44,6 +49,7 @@ export default function FileDefinitionEditor(props) {
 
   return (
     <Editor
+      changeIdentifier={initChangeIdentifier}
       handleInit={handleInit}
       handleDataChange={handleDataChange}
       handleRuleChange={handleRuleChange}

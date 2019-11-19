@@ -124,7 +124,7 @@ export default {
       default:
     }
   },
-  getMappingFromResource: (resourceObj, appType, getRawMappings) => {
+  getMappingFromResource: (resourceObj, appType, getRawMappings, options) => {
     if (!resourceObj) {
       return;
     }
@@ -157,12 +157,36 @@ export default {
     return MappingUtil.getMappingsForApp({
       mappings,
       appType,
+      options,
     });
   },
-  getMappingsForApp: ({ mappings, appType }) => {
+  getMappingsForApp: ({ mappings, appType, options = {} }) => {
+    let _mappings = mappings;
+
+    if (options.integrationApp) {
+      const { mappingMetadata, connectorExternalId } = options.integrationApp;
+
+      _mappings = MappingUtil.generateFieldAndListMappingsforIA(
+        mappings,
+        mappingMetadata,
+        connectorExternalId
+      );
+    }
+
+    if (options.assistant) {
+      const { requiredMappings } = options.assistant;
+
+      _mappings = MappingUtil.generateFieldAndListMappingsforAssistant(
+        mappings,
+        requiredMappings
+      );
+    }
+
     switch (appType) {
       case adaptorTypeMap.NetSuiteDistributedImport:
-        return NetsuiteMapping.getFieldsAndListMappings({ mappings });
+        return NetsuiteMapping.getFieldsAndListMappings({
+          mappings: _mappings,
+        });
       case adaptorTypeMap.RESTImport:
       case adaptorTypeMap.AS2Import:
       case adaptorTypeMap.FTPImport:
@@ -173,7 +197,7 @@ export default {
       case adaptorTypeMap.WrapperImport:
       case adaptorTypeMap.RDBMSImport:
       case adaptorTypeMap.SalesforceImport:
-        return MappingUtil.getFieldsAndListMappings({ mappings });
+        return MappingUtil.getFieldsAndListMappings({ mappings: _mappings });
       default:
     }
   },
@@ -302,5 +326,117 @@ export default {
     }
 
     return formattedGenerateFields;
+  },
+  generateFieldAndListMappingsforAssistant: (mappings, requiredMappings) => {
+    if (requiredMappings && Array.isArray(requiredMappings)) {
+      requiredMappings.forEach(f => {
+        let fld = f;
+        let fldContainer;
+
+        if (fld.indexOf('[*].') > 0) {
+          fldContainer = mappings.lists.find(
+            l => l.generate === fld.split('[*].')[0]
+          );
+
+          // eslint-disable-next-line prefer-destructuring
+          fld = fld.split('[*].')[1];
+        } else {
+          fldContainer = mappings;
+        }
+
+        const field = fldContainer.fields.find(l => l.generate === fld);
+
+        if (field) {
+          field.isRequired = true;
+        }
+      });
+    }
+
+    return mappings;
+  },
+  generateFieldAndListMappingsforIA: (
+    mappings,
+    mappingMetadata,
+    connectorExternalId
+  ) => {
+    const connectorMappingMetadata = mappingMetadata[connectorExternalId];
+
+    connectorMappingMetadata.forEach(meta => {
+      let mappingContainer;
+
+      if (meta.generateList) {
+        mappingContainer = mappings.lists.find(
+          list => list.generate === meta.generateList
+        );
+      } else {
+        mappingContainer = mappings;
+      }
+
+      meta.requiredGenerateFields.forEach(fieldId => {
+        const field = mappingContainer.fields.find(
+          field => field.generate === fieldId
+        );
+
+        if (field) field.isRequired = true;
+      });
+      meta.nonEditableGenerateFields.forEach(fieldId => {
+        const field = mappingContainer.fields.find(
+          field => field.generate === fieldId
+        );
+
+        if (field) field.isNotEditable = true;
+      });
+    });
+
+    return mappings;
+  },
+
+  validateMappings: mappings => {
+    const duplicateMappings = mappings
+      .map(e => e.generate)
+      .map((e, i, final) => final.indexOf(e) !== i && i)
+      .filter(obj => mappings[obj])
+      .map(e => mappings[e].generate);
+
+    if (duplicateMappings.length) {
+      return {
+        status: false,
+        message: `You have duplicate mappings for the field(s): ${duplicateMappings.join(
+          ','
+        )}`,
+      };
+    }
+
+    const mappingsWithoutExtract = mappings
+      .filter(mapping => {
+        if (!('hardCodedValue' in mapping || mapping.extract)) return true;
+
+        return false;
+      })
+      .map(mapping => mapping.generate);
+
+    if (mappingsWithoutExtract.length) {
+      return {
+        status: false,
+        message: `Extract Fields missing for field(s): ${mappingsWithoutExtract.join(
+          ','
+        )}`,
+      };
+    }
+
+    const mappingsWithoutGenerate = mappings.filter(mapping => {
+      if (!mapping.generate) return true;
+
+      return false;
+    });
+
+    if (mappingsWithoutGenerate.length) {
+      return {
+        status: false,
+        message: 'Generate Fields missing for mapping(s)',
+      };
+    }
+
+    return { status: true };
   },
 };

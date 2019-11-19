@@ -151,9 +151,9 @@ export default function Panel(props) {
       // selected.
 
       if (resourceType === 'integrations') {
-        props.history.replace(`/pg/${resourceType}/${newResourceId}/flows`);
-
-        return;
+        return props.history.replace(
+          `/pg/${resourceType}/${newResourceId}/flows`
+        );
       }
 
       const resourceIdPatch = stagedProcessor.patch.find(

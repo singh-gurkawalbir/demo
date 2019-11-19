@@ -47,10 +47,15 @@ import DynaGenerateUrl from './DynaGenerateUrl';
 import DynaGenerateToken from './DynaGenerateToken';
 import DynaSelectForSetFields from './select/DynaSelectForSetFields';
 import DynaTextForSetFields from './text/DynaTextForSetFields';
+import DynaSoqlQuery from './DynaSoqlQuery';
+import DynaSalesforceRefreshableSelect from './DynaSalesforceRefreshableSelect';
 import DynaRefreshableIntegrationAppSetting from './DynaRefreshableSelect/RefreshableIntegrationAppSetting';
 import DynaDate from './dateTime/DynaDate';
+import DynaToggle from './DynaToggle';
 import DynaSQLQueryBuilder from './DynaSQLQueryBuilder';
 import DynaRelativeURIWithLookup from './DynaRelativeURIWithLookup';
+import DynaUserEmail from './DynaUserEmail';
+import DynaUserPassword from './DynaUserPassword';
 
 export default {
   mapping: DynaImportMapping,
@@ -105,8 +110,13 @@ export default {
   generatetoken: DynaGenerateToken,
   selectforsetfields: DynaSelectForSetFields,
   textforsetfields: DynaTextForSetFields,
+  toggle: DynaToggle,
+  soqlquery: DynaSoqlQuery,
+  salesforcerefreshableselect: DynaSalesforceRefreshableSelect,
   integrationapprefreshableselect: DynaRefreshableIntegrationAppSetting,
   date: DynaDate,
   sqlquerybuilder: DynaSQLQueryBuilder,
   relativeuriwithlookup: DynaRelativeURIWithLookup,
+  useremail: DynaUserEmail,
+  userpassword: DynaUserPassword,
 };

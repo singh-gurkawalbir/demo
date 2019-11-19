@@ -39,7 +39,7 @@ export default {
     },
   },
   'rest.blobMethod': {
-    type: 'radiogroup',
+    type: 'select',
     label: 'Method',
     required: true,
     options: [
@@ -136,8 +136,8 @@ export default {
         is: ['POST', 'PUT', 'DELETE', 'PATCH'],
       },
       {
-        field: 'rest.blobMethod',
-        is: ['POST', 'PUT', 'DELETE'],
+        field: 'inputMode',
+        is: ['blob'],
       },
     ],
   },

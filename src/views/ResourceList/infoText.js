@@ -82,6 +82,4 @@ export default {
     
     IMPORTANT: it may take up to one minute for API token changes to propagate 
     and take effect.`,
-  marketplace: `
-    Marketplace help info`,
 };
