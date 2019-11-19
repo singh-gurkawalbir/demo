@@ -48,11 +48,12 @@ export default function TransformEditor(props) {
   const parsedData = result && result.data && result.data[0];
 
   return (
-    <PanelGrid className={classes.template}>
+    <PanelGrid
+      key={`${editorId}-${initChangeIdentifier}`}
+      className={classes.template}>
       <PanelGridItem gridArea="rule">
         <PanelTitle title="Transform Rules" />
         <TransformPanel
-          key={`${editorId}-${initChangeIdentifier}`}
           keyName={keyName}
           valueName={valueName}
           editorId={editorId}

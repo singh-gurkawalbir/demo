@@ -137,7 +137,7 @@ export default function ImportMapping(props) {
     extractFields = [],
     onCancel,
     onSave,
-    integrationId,
+    disabled,
     options = {},
   } = props;
   const [changeIdentifier, setChangeIdentifier] = useState(0);
@@ -147,75 +147,20 @@ export default function ImportMapping(props) {
   const [state, dispatchLocalAction] = useReducer(reducer, mappings || []);
   const mappingsTmp = deepClone(state);
   const dispatch = useDispatch();
-  const sampleData = useSelector(state =>
+  const importSampleData = useSelector(state =>
     selectors.getImportSampleData(state, resourceId)
   );
 
   useEffect(() => {
-    if (!sampleData) {
+    if (!importSampleData) {
       dispatch(actions.importSampleData.request(resourceId));
     }
-  }, [sampleData, dispatch, resourceId]);
+  }, [importSampleData, dispatch, resourceId]);
 
   const formattedGenerateFields = MappingUtil.getFormattedGenerateData(
-    sampleData,
+    importSampleData,
     application
   );
-  const validateMapping = mappings => {
-    const duplicateMappings = mappings
-      .map(e => e.generate)
-      .map((e, i, final) => final.indexOf(e) !== i && i)
-      .filter(obj => mappings[obj])
-      .map(e => mappings[e].generate);
-
-    if (duplicateMappings.length) {
-      enquesnackbar({
-        message: `You have duplicate mappings for the field(s): ${duplicateMappings.join(
-          ','
-        )}`,
-        variant: 'error',
-      });
-
-      return false;
-    }
-
-    const mappingsWithoutExtract = mappings
-      .filter(mapping => {
-        if (!('hardCodedValue' in mapping || mapping.extract)) return true;
-
-        return false;
-      })
-      .map(mapping => mapping.generate);
-
-    if (mappingsWithoutExtract.length) {
-      enquesnackbar({
-        message: `Extract Fields missing for field(s): ${mappingsWithoutExtract.join(
-          ','
-        )}`,
-        variant: 'error',
-      });
-
-      return false;
-    }
-
-    const mappingsWithoutGenerate = mappings.filter(mapping => {
-      if (!mapping.generate) return true;
-
-      return false;
-    });
-
-    if (mappingsWithoutGenerate.length) {
-      enquesnackbar({
-        message: 'Generate Fields missing for mapping(s)',
-        variant: 'error',
-      });
-
-      return false;
-    }
-
-    return true;
-  };
-
   const handleCancel = () => {
     onCancel();
   };
@@ -224,8 +169,12 @@ export default function ImportMapping(props) {
     let mappings = state.map(
       ({ index, hardCodedValueTmp, ...others }) => others
     );
+    const {
+      status: validationStatus,
+      message: validationErrMsg,
+    } = MappingUtil.validateMappings(mappings);
 
-    if (validateMapping(mappings)) {
+    if (validationStatus) {
       mappings = MappingUtil.generateMappingsForApp({
         mappings,
         generateFields: formattedGenerateFields,
@@ -237,6 +186,11 @@ export default function ImportMapping(props) {
       } else {
         onSave(mappings, lookupState);
       }
+    } else {
+      enquesnackbar({
+        message: validationErrMsg,
+        variant: 'error',
+      });
     }
   };
 
@@ -310,9 +264,6 @@ export default function ImportMapping(props) {
   };
 
   const getLookup = name => lookupState.find(lookup => lookup.name === name);
-  const isViewMode = useSelector(state =>
-    selectors.isFormAMonitorLevelAccess(state, integrationId)
-  );
 
   return (
     <Dialog fullScreen={false} open scroll="paper" maxWidth={false}>
@@ -354,7 +305,7 @@ export default function ImportMapping(props) {
                         valueName="id"
                         value={mapping.extract || mapping.hardCodedValueTmp}
                         options={extractFields}
-                        disabled={isViewMode}
+                        disabled={mapping.isNotEditable || disabled}
                         onBlur={(id, evt) => {
                           handleFieldUpdate(
                             mapping.index,
@@ -371,7 +322,7 @@ export default function ImportMapping(props) {
                         labelName="name"
                         valueName="id"
                         options={formattedGenerateFields}
-                        disabled={isViewMode}
+                        disabled={mapping.isRequired || disabled}
                         onBlur={(id, evt) => {
                           handleFieldUpdate(
                             mapping.index,
@@ -390,7 +341,7 @@ export default function ImportMapping(props) {
                         generate={mapping.generate}
                         application={application}
                         updateLookup={updateLookupHandler}
-                        disabled={isViewMode}
+                        disabled={mapping.isNotEditable || disabled}
                         lookup={
                           mapping &&
                           mapping.lookupName &&
@@ -404,7 +355,11 @@ export default function ImportMapping(props) {
                       <IconButton
                         data-test="editMapping"
                         aria-label="delete"
-                        disabled={mapping.isRequired || isViewMode}
+                        disabled={
+                          mapping.isRequired ||
+                          mapping.isNotEditable ||
+                          disabled
+                        }
                         onClick={() => {
                           handleDelete(mapping.index);
                         }}
@@ -432,7 +387,7 @@ export default function ImportMapping(props) {
         )}
         {isStandaloneMapping && (
           <Button
-            disabled={isViewMode}
+            disabled={disabled}
             data-test="saveMapping"
             onClick={() => handleSubmit(false)}
             variant="contained"
@@ -442,7 +397,7 @@ export default function ImportMapping(props) {
           </Button>
         )}
         <Button
-          disabled={isViewMode}
+          disabled={disabled}
           data-test="saveAndCloseMapping"
           onClick={() => handleSubmit(true)}
           variant="contained"

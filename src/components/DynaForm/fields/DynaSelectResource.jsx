@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import shortid from 'shortid';
 import sift from 'sift';
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector, useDispatch } from 'react-redux';
@@ -13,6 +12,7 @@ import DynaSelect from './DynaSelect';
 import DynaMultiSelect from './DynaMultiSelect';
 import actions from '../../../actions';
 import resourceMeta from '../../../forms/definitions';
+import { generateNewId } from '../../../utils/resource';
 import {
   defaultPatchSetConverter,
   getMissingPatchSet,
@@ -48,7 +48,6 @@ const useStyles = makeStyles(theme => ({
     },
   },
 }));
-const newId = () => `new-${shortid.generate()}`;
 
 function DynaSelectResource(props) {
   const {
@@ -66,7 +65,7 @@ function DynaSelectResource(props) {
     ignoreEnvironmentFilter,
   } = props;
   const classes = useStyles();
-  const [newResourceId, setNewResourceId] = useState(newId());
+  const [newResourceId, setNewResourceId] = useState(generateNewId());
   const { resources = [] } = useSelector(state =>
     selectors.resourceList(state, {
       type: resourceType,
@@ -81,7 +80,7 @@ function DynaSelectResource(props) {
     if (createdId) {
       onFieldChange(id, createdId);
       // in case someone clicks + again to add another resource...
-      setNewResourceId(newId());
+      setNewResourceId(generateNewId());
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [createdId]);

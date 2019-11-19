@@ -1,7 +1,6 @@
 import { useEffect, useState, Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
-import shortid from 'shortid';
 import { makeStyles } from '@material-ui/core/styles';
 import { difference } from 'lodash';
 import * as selectors from '../../reducers';
@@ -17,6 +16,7 @@ import AddIcon from '../../components/icons/AddIcon';
 // TODO Azhar
 import DataLoaderIcon from '../../components/icons/DataLoaderIcon';
 import getRoutePath from '../../utils/routePaths';
+import { generateNewId } from '../../utils/resource';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -92,7 +92,7 @@ function Dashboard(props) {
         <IconTextButton
           data-test="newIntegration"
           component={Link}
-          to={`${location.pathname}/add/integrations/new-${shortid.generate()}`}
+          to={`${location.pathname}/add/integrations/${generateNewId()}`}
           variant="text"
           color="primary">
           <AddIcon />

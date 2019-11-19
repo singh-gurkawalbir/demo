@@ -10,6 +10,8 @@ export default {
       'https://app.practicepanther.com/oauth/authorize',
     '/http/auth/oauth/tokenURI': 'https://app.practicepanther.com/oauth/token',
     '/http/auth/oauth/accessTokenPath': 'access_token',
+    '/http/auth/token/refreshMethod': 'POST',
+    '/http/auth/token/refreshMediaType': 'urlencoded',
   }),
   fieldMap: {
     name: { fieldId: 'name' },

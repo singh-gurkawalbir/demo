@@ -157,6 +157,7 @@ import ware2go from './ware2go';
 import messagemedia from './messagemedia';
 import vend from './vend';
 import miva from './miva';
+import target from './target';
 
 export default {
   sharepoint,
@@ -317,4 +318,5 @@ export default {
   messagemedia,
   vend,
   miva,
+  target,
 };

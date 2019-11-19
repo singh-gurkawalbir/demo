@@ -132,6 +132,7 @@ function AppBlock({
   resourceType,
   resource,
   integrationId,
+  isViewMode,
   ...rest
 }) {
   const classes = useStyles();
@@ -182,7 +183,7 @@ function AppBlock({
         <a.Component
           open={activeAction === a.name}
           flowId={flowId}
-          integrationId={integrationId}
+          isViewMode={isViewMode}
           resource={resource}
           resourceIndex={resourceIndex}
           resourceType={resourceType}
