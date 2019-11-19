@@ -132,7 +132,7 @@ export const getFlowUpdatesFromPatch = (patchSet = []) => {
   return updates;
 };
 
-// Checks specifically for the raw data patch call on resource
-// So patchSet would be [{path:'/rawData', value:{}}]
+// Checks specifically for the raw data / sample data patch call on resource
+// So patchSet would be [{path:'/rawData', value:{}}] or [{path:'/sampleData', value:{}}]
 export const isRawDataPatchSet = (patchSet = []) =>
-  patchSet[0] && patchSet[0].path === '/rawData';
+  patchSet[0] && ['/rawData', '/sampleData'].includes(patchSet[0].path);
