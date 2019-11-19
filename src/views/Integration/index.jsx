@@ -1,4 +1,4 @@
-import { Fragment, useCallback } from 'react';
+import { Fragment, useCallback, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link, useHistory } from 'react-router-dom';
 import { makeStyles, Tabs, Tab } from '@material-ui/core';
@@ -21,6 +21,10 @@ import FlowsPanel from './panels/Flows';
 import ConnectionsPanel from './panels/Connections';
 import DashboardPanel from './panels/Dashboard';
 import getRoutePath from '../../utils/routePaths';
+import { INTEGRATION_DELETE_VALIDATE } from '../../utils/messageStore';
+import { confirmDialog } from '../../components/ConfirmDialog';
+import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
+import { STANDALONE_INTEGRATION } from '../../utils/constants';
 
 const tabs = [
   { path: 'flows', label: 'Flows', Icon: FlowsIcon, Panel: FlowsPanel },
@@ -52,9 +56,23 @@ export default function Integration({ match }) {
   const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
+  const [enquesnackbar] = useEnqueueSnackbar();
   const { integrationId, tab } = match.params;
+  const [isDeleting, setIsDeleting] = useState(false);
   const integration = useSelector(state =>
     selectors.resource(state, 'integrations', integrationId)
+  );
+  const flows = useSelector(
+    state =>
+      selectors.resourceList(state, {
+        type: 'flows',
+        filter: {
+          _integrationId:
+            integrationId === STANDALONE_INTEGRATION.id
+              ? undefined
+              : integrationId,
+        },
+      }).resources
   );
   const currentTabIndex = tabs.findIndex(t => t.path === tab) || 0;
 
@@ -86,12 +104,45 @@ export default function Integration({ match }) {
   }
 
   function handleDelete() {
-    dispatch(actions.resource.delete('integrations', integrationId));
-    history.push(getRoutePath('/dashboard'));
+    if (flows.length !== 0) {
+      enquesnackbar({
+        message: INTEGRATION_DELETE_VALIDATE,
+        variant: 'info',
+      });
+
+      return;
+    }
+
+    confirmDialog({
+      title: 'Confirm',
+      // eslint-disable-next-line prettier/prettier
+      message: `Are you sure you want to delete ${integration ? integration.name : integrationId} integration?`,
+      buttons: [
+        {
+          label: 'Cancel',
+        },
+        {
+          label: 'Yes',
+          onClick: () => {
+            dispatch(actions.resource.delete('integrations', integrationId));
+            setIsDeleting(true);
+            // history.push(getRoutePath('/dashboard'));
+          },
+        },
+      ],
+    });
   }
 
   function handleDescriptionChange(description) {
     patchIntegration('/description', description);
+  }
+
+  if (!integration && isDeleting) {
+    ['integrations', 'tiles', 'scripts'].forEach(resource =>
+      dispatch(actions.resource.requestCollection(resource))
+    );
+    setIsDeleting(false);
+    history.push(getRoutePath('dashboard'));
   }
 
   // TODO: <ResourceDrawer> Can be further optimized to take advantage
