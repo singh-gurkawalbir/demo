@@ -1,3 +1,5 @@
+import { isNewId } from '../../../utils/resource';
+
 export default {
   name: {
     type: 'text',
@@ -13,7 +15,8 @@ export default {
   autoPurgeAt: {
     type: 'select',
     label: 'Auto Purge Token',
-    required: true,
+    required: r => isNewId(r && r._id),
+    defaultValue: 'none',
     // TODO dynamic options for connector tokens
     options: [
       {

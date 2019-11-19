@@ -23,7 +23,9 @@ export default {
   preSave: formValues => {
     const accessTokenData = { ...formValues };
 
-    if (accessTokenData['/autoPurgeAt'] === 'never') {
+    if (accessTokenData['/autoPurgeAt'] === 'none') {
+      delete accessTokenData['/autoPurgeAt'];
+    } else if (accessTokenData['/autoPurgeAt'] === 'never') {
       accessTokenData['/autoPurgeAt'] = '';
     } else {
       const currDate = new Date();
