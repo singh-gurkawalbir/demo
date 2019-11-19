@@ -69,9 +69,10 @@ export default {
       (r &&
         r.netsuite &&
         r.netsuite.distributed &&
-        r.netsuite.distributed.executionContext) ||
-      'userinterface,webstore',
-    valueDelimiter: ',',
+        r.netsuite.distributed.executionContext) || [
+        'userinterface',
+        'webstore',
+      ],
     required: true,
     helpText:
       'The invited user will have permissions to manage the integrations selected here.',
@@ -103,9 +104,7 @@ export default {
       (r &&
         r.netsuite &&
         r.netsuite.distributed &&
-        r.netsuite.distributed.executionType) ||
-      'create,edit,xedit',
-    valueDelimiter: ',',
+        r.netsuite.distributed.executionType) || ['create', 'edit', 'xedit'],
     required: true,
     helpText:
       'The invited user will have permissions to manage the integrations selected here.',
