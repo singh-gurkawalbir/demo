@@ -7,6 +7,7 @@ import * as selectors from '../../reducers';
 import { defaultConfirmDialog } from '../ConfirmDialog';
 import AuditLogDialog from '../AuditLog/AuditLogDialog';
 import ReferencesDialog from '../ResourceReferences';
+import MappingIcon from '../icons/MapDataIcon';
 import EllipsisIcon from '../icons/EllipsisHorizontalIcon';
 import DownloadIcon from '../icons/DownloadIcon';
 import TrashIcon from '../icons/TrashIcon';
@@ -18,6 +19,7 @@ import DetachIcon from '../icons/ConnectionsIcon';
 const allActions = {
   detach: { action: 'detach', label: 'Detach flow', Icon: DetachIcon },
   clone: { action: 'clone', label: 'Clone flow', Icon: CloneIcon },
+  mapping: { action: 'mapping', label: 'Edit mapping', Icon: MappingIcon },
   audit: { action: 'audit', label: 'View audit log', Icon: AuditIcon },
   references: { action: 'references', label: 'View references', Icon: RefIcon },
   download: { action: 'download', label: 'Download flow', Icon: DownloadIcon },
@@ -27,7 +29,8 @@ const allActions = {
 export default function FlowEllipsisMenu({ flowId, exclude }) {
   const history = useHistory();
   const dispatch = useDispatch();
-  const flow = useSelector(state => selectors.flowDetails(state, flowId)) || {};
+  const flowDetails =
+    useSelector(state => selectors.flowDetails(state, flowId)) || {};
   const patchFlow = useCallback(
     (path, value) => {
       const patchSet = [{ op: 'replace', path, value }];
@@ -44,7 +47,7 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
     setAnchorEl(event.currentTarget);
   }, []);
   const handleMenuClose = useCallback(() => setAnchorEl(null), []);
-  const flowName = flow.name || flow._Id;
+  const flowName = flowDetails.name || flowDetails._Id;
   const handleActionClick = useCallback(
     action => () => {
       switch (action) {
@@ -72,10 +75,14 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
               // sitting on a page with the deleted flowId in the url.
               // we do not want a browser history to contain the deleted flow id.
               history.replace(
-                `/pg/integrations/${flow._integrationId || 'none'}`
+                `/pg/integrations/${flowDetails._integrationId || 'none'}`
               );
             }
           );
+          break;
+
+        case 'mapping':
+          history.push(`${history.location.pathname}/mapping`);
           break;
 
         case 'audit':
@@ -100,7 +107,7 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
 
       setAnchorEl(null);
     },
-    [dispatch, flow._integrationId, flowId, flowName, history, patchFlow]
+    [dispatch, flowDetails._integrationId, flowId, flowName, history, patchFlow]
   );
   const open = Boolean(anchorEl);
   const actionsPopoverId = open ? 'more-row-actions' : undefined;
@@ -108,8 +115,12 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
 
   // TODO: we need to add logic to properly determine which of the
   // below actions should be made available for this flow.
-  if (flow._integrationId) availableActions.push(allActions.detach);
-  availableActions.push(allActions.clone);
+  if (flowDetails._integrationId) availableActions.push(allActions.detach);
+
+  // TODO: the showMapping prop is hardcoded to always return true. Logic needs
+  // to be added in the data-layer to properly determine this flag.
+  if (flowDetails.showMapping) availableActions.push(allActions.mapping);
+
   availableActions.push(allActions.audit);
   availableActions.push(allActions.references);
   availableActions.push(allActions.download);

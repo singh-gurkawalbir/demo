@@ -15,6 +15,7 @@ import SettingsIcon from '../../../../../components/icons/SettingsIcon';
 import PanelHeader from '../../../common/PanelHeader';
 import FlowCard from '../../../common/FlowCard';
 import ConfigureDrawer from './ConfigureDrawer';
+import SettingsDrawer from './SettingsDrawer';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -58,6 +59,11 @@ function FlowList({ integrationId, storeId }) {
   return (
     <LoadResources required resources="flows">
       <ConfigureDrawer
+        integrationId={integrationId}
+        storeId={storeId}
+        sectionId={sectionId}
+      />
+      <SettingsDrawer
         integrationId={integrationId}
         storeId={storeId}
         sectionId={sectionId}

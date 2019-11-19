@@ -10,6 +10,7 @@ import * as selectors from '../../../../reducers';
 import { defaultConfirmDialog } from '../../../../components/ConfirmDialog';
 import FlowEllipsisMenu from '../../../../components/FlowEllipsisMenu';
 import RunIcon from '../../../../components/icons/RunIcon';
+import SettingsIcon from '../../../../components/icons/SettingsIcon';
 import OnOffSwitch from '../../../../components/SwitchToggle';
 import InfoIconButton from '../InfoIconButton';
 
@@ -57,7 +58,8 @@ export default function FlowCard({ flowId, excludeActions }) {
   const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
-  const flow = useSelector(state => selectors.flowDetails(state, flowId)) || {};
+  const flowDetails =
+    useSelector(state => selectors.flowDetails(state, flowId)) || {};
   const patchFlow = useCallback(
     (path, value) => {
       const patchSet = [{ op: 'replace', path, value }];
@@ -67,15 +69,15 @@ export default function FlowCard({ flowId, excludeActions }) {
     },
     [dispatch, flowId]
   );
-  const flowName = flow.name || flow._Id;
+  const flowName = flowDetails.name || flowDetails._Id;
   const handleActionClick = useCallback(
     action => () => {
       switch (action) {
         case 'disable':
           defaultConfirmDialog(
-            `${flow.disabled ? 'enable' : 'disable'} ${flowName}?`,
+            `${flowDetails.disabled ? 'enable' : 'disable'} ${flowName}?`,
             () => {
-              patchFlow('/disabled', !flow.disabled);
+              patchFlow('/disabled', !flowDetails.disabled);
             }
           );
           break;
@@ -83,7 +85,7 @@ export default function FlowCard({ flowId, excludeActions }) {
         case 'run':
           dispatch(actions.flow.run({ flowId }));
           history.push(
-            `/pg/integrations/${flow._integrationId || 'none'}/dashboard`
+            `/pg/integrations/${flowDetails._integrationId || 'none'}/dashboard`
           );
 
           break;
@@ -93,15 +95,15 @@ export default function FlowCard({ flowId, excludeActions }) {
     },
     [
       dispatch,
-      flow._integrationId,
-      flow.disabled,
+      flowDetails._integrationId,
+      flowDetails.disabled,
       flowId,
       flowName,
       history,
       patchFlow,
     ]
   );
-  const { name, description, lastModified, disabled } = flow;
+  const { name, description, lastModified, disabled } = flowDetails;
   // TODO: set status based on flow criteria...
   const status = 'success';
   // TODO: this property was copied from the old flow list page... i dont know what its for...
@@ -110,9 +112,9 @@ export default function FlowCard({ flowId, excludeActions }) {
   // TODO: This function needs to be enhanced to handle all
   // the various cases.. realtime, scheduled, cron, not scheduled, etc...
   function getRunLabel() {
-    if (flow.isReatime) return `Realtime`;
+    if (flowDetails.isReatime) return `Realtime`;
 
-    if (flow.isSimpleExport) return 'Never runs';
+    if (flowDetails.isSimpleExport) return 'Never runs';
 
     return 'Never Runs';
   }
@@ -138,12 +140,20 @@ export default function FlowCard({ flowId, excludeActions }) {
           </Typography>
         </Grid>
         <Grid container item xs={3} justify="flex-end" alignItems="center">
+          {flowDetails.hasSettings && (
+            <IconButton
+              size="small"
+              component={Link}
+              to={`${history.location.pathname}/${flowId}/settings`}>
+              <SettingsIcon />
+            </IconButton>
+          )}
           <OnOffSwitch
             disabled={disableCard}
             on={!disableCard && !disabled}
             onClick={handleActionClick('disable')}
           />
-          {flow.isRunnable && (
+          {flowDetails.isRunnable && (
             <IconButton size="small" onClick={handleActionClick('run')}>
               <RunIcon />
             </IconButton>

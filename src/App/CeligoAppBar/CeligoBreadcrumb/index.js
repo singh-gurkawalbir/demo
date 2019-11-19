@@ -189,11 +189,14 @@ const commonChildRoutes = [
   // metadata needs to be carried in the url.. keeping it simple for now.
   { path: '/clone', breadcrumb: () => 'Clone' },
   {
-    path: '/:operation/:resourceType/:id',
-    breadcrumb: ({ operation, resourceType }) =>
-      `${operation === 'add' ? 'Add' : 'Edit'} ${
-        MODEL_PLURAL_TO_LABEL[resourceType]
-      }`,
+    path: '/add/:resourceType/:id',
+    breadcrumb: ({ resourceType }) =>
+      `Add ${MODEL_PLURAL_TO_LABEL[resourceType]}`,
+  },
+  {
+    path: '/edit/:resourceType/:id',
+    breadcrumb: ({ resourceType }) =>
+      `Edit ${MODEL_PLURAL_TO_LABEL[resourceType]}`,
   },
 ];
 

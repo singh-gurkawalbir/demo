@@ -49,7 +49,10 @@ export default function ResourceDrawerRoute({
 }) {
   return (
     <Route
-      path={`${match.url}/:operation/:resourceType/:id`}
+      path={[
+        `${match.url}/add/:resourceType/:id`,
+        `${match.url}/edit/:resourceType/:id`,
+      ]}
       // Note that we disable the eslint warning since Route
       // uses "children" as a prop and this is the intended
       // use (per their docs)
