@@ -158,21 +158,6 @@ export default {
       },
       defaultValue: r => (r && r.blobKeyPath ? 'blob' : 'records'),
     },
-    'file.csv.rowDelimiter': {
-      id: 'file.csv.rowDelimiter',
-      type: 'checkbox',
-      label: 'Row Delimiter',
-      visibleWhenAll: [
-        {
-          field: 'file.type',
-          is: ['csv'],
-        },
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
-      ],
-    },
     'ftp.useTempFile': { fieldId: 'ftp.useTempFile' },
     'ftp.inProgressFileName': { fieldId: 'ftp.inProgressFileName' },
     'ftp.blobUseTempFile': { fieldId: 'ftp.blobUseTempFile' },
@@ -217,7 +202,6 @@ export default {
         collapsed: true,
         label: 'Advanced',
         fields: [
-          'file.csv.rowDelimiter',
           'ftp.useTempFile',
           'ftp.inProgressFileName',
           'fileAdvancedSettings',
