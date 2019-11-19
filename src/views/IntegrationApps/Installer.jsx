@@ -12,8 +12,10 @@ import {
 import ArrowBackIcon from '../../components/icons/ArrowLeftIcon';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
+import { getResourceSubType } from '../../utils/resource';
 import LoadResources from '../../components/LoadResources';
 import openExternalUrl from '../../utils/window';
+import resourceConstants from '../../forms/constants/connection';
 import ArrowRightIcon from '../../components/icons/ArrowRightIcon';
 import ConnectionSetupDialog from '../../components/ResourceSetupDialog';
 import InstallationStep from '../../components/InstallStep';
@@ -43,6 +45,13 @@ const useStyles = makeStyles(theme => ({
     background: theme.palette.background.default,
   },
 }));
+const getConnectionType = resource => {
+  const { assistant, type } = getResourceSubType(resource);
+
+  if (assistant) return assistant;
+
+  return type;
+};
 
 export default function ConnectorInstallation(props) {
   const classes = useStyles();
@@ -55,6 +64,9 @@ export default function ConnectorInstallation(props) {
   );
   const installSteps = useSelector(state =>
     selectors.integrationInstallSteps(state, integrationId)
+  );
+  const selectedConnection = useSelector(state =>
+    selectors.resource(state, 'connections', selectedConnectionId)
   );
 
   useEffect(() => {
@@ -180,8 +192,17 @@ export default function ConnectorInstallation(props) {
     props.history.push(`/pg`);
   };
 
-  const handleSubmitComplete = () => {
+  const handleSubmitComplete = (connId, isAuthorized) => {
     const step = installSteps.find(s => s.isCurrentStep);
+
+    if (
+      resourceConstants.OAUTH_APPLICATIONS.includes(
+        getConnectionType(selectedConnection)
+      ) &&
+      !isAuthorized
+    ) {
+      return;
+    }
 
     dispatch(
       actions.integrationApp.installer.updateStep(
