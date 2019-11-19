@@ -50,6 +50,8 @@ import DynaRefreshableIntegrationAppSetting from './DynaRefreshableSelect/Refres
 import DynaDate from './dateTime/DynaDate';
 import DynaSQLQueryBuilder from './DynaSQLQueryBuilder';
 import DynaRelativeURIWithLookup from './DynaRelativeURIWithLookup';
+import DynaUserEmail from './DynaUserEmail';
+import DynaUserPassword from './DynaUserPassword';
 
 export default {
   mapping: DynaImportMapping,
@@ -107,4 +109,6 @@ export default {
   date: DynaDate,
   sqlquerybuilder: DynaSQLQueryBuilder,
   relativeuriwithlookup: DynaRelativeURIWithLookup,
+  useremail: DynaUserEmail,
+  userpassword: DynaUserPassword,
 };
