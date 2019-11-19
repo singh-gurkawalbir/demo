@@ -39,7 +39,7 @@ export default {
     },
   },
   'rest.blobMethod': {
-    type: 'radiogroup',
+    type: 'select',
     label: 'Method',
     required: true,
     options: [

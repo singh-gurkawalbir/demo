@@ -161,61 +161,6 @@ export default function ImportMapping(props) {
     importSampleData,
     application
   );
-  const validateMapping = mappings => {
-    const duplicateMappings = mappings
-      .map(e => e.generate)
-      .map((e, i, final) => final.indexOf(e) !== i && i)
-      .filter(obj => mappings[obj])
-      .map(e => mappings[e].generate);
-
-    if (duplicateMappings.length) {
-      enquesnackbar({
-        message: `You have duplicate mappings for the field(s): ${duplicateMappings.join(
-          ','
-        )}`,
-        variant: 'error',
-      });
-
-      return false;
-    }
-
-    const mappingsWithoutExtract = mappings
-      .filter(mapping => {
-        if (!('hardCodedValue' in mapping || mapping.extract)) return true;
-
-        return false;
-      })
-      .map(mapping => mapping.generate);
-
-    if (mappingsWithoutExtract.length) {
-      enquesnackbar({
-        message: `Extract Fields missing for field(s): ${mappingsWithoutExtract.join(
-          ','
-        )}`,
-        variant: 'error',
-      });
-
-      return false;
-    }
-
-    const mappingsWithoutGenerate = mappings.filter(mapping => {
-      if (!mapping.generate) return true;
-
-      return false;
-    });
-
-    if (mappingsWithoutGenerate.length) {
-      enquesnackbar({
-        message: 'Generate Fields missing for mapping(s)',
-        variant: 'error',
-      });
-
-      return false;
-    }
-
-    return true;
-  };
-
   const handleCancel = () => {
     onCancel();
   };
@@ -224,8 +169,12 @@ export default function ImportMapping(props) {
     let mappings = state.map(
       ({ index, hardCodedValueTmp, ...others }) => others
     );
+    const {
+      status: validationStatus,
+      message: validationErrMsg,
+    } = MappingUtil.validateMappings(mappings);
 
-    if (validateMapping(mappings)) {
+    if (validationStatus) {
       mappings = MappingUtil.generateMappingsForApp({
         mappings,
         generateFields: formattedGenerateFields,
@@ -237,6 +186,11 @@ export default function ImportMapping(props) {
       } else {
         onSave(mappings, lookupState);
       }
+    } else {
+      enquesnackbar({
+        message: validationErrMsg,
+        variant: 'error',
+      });
     }
   };
 
@@ -351,7 +305,7 @@ export default function ImportMapping(props) {
                         valueName="id"
                         value={mapping.extract || mapping.hardCodedValueTmp}
                         options={extractFields}
-                        disabled={disabled}
+                        disabled={mapping.isNotEditable || disabled}
                         onBlur={(id, evt) => {
                           handleFieldUpdate(
                             mapping.index,
@@ -368,7 +322,7 @@ export default function ImportMapping(props) {
                         labelName="name"
                         valueName="id"
                         options={formattedGenerateFields}
-                        disabled={disabled}
+                        disabled={mapping.isRequired || disabled}
                         onBlur={(id, evt) => {
                           handleFieldUpdate(
                             mapping.index,
@@ -387,7 +341,7 @@ export default function ImportMapping(props) {
                         generate={mapping.generate}
                         application={application}
                         updateLookup={updateLookupHandler}
-                        disabled={disabled}
+                        disabled={mapping.isNotEditable || disabled}
                         lookup={
                           mapping &&
                           mapping.lookupName &&
@@ -401,7 +355,11 @@ export default function ImportMapping(props) {
                       <IconButton
                         data-test="editMapping"
                         aria-label="delete"
-                        disabled={mapping.isRequired || disabled}
+                        disabled={
+                          mapping.isRequired ||
+                          mapping.isNotEditable ||
+                          disabled
+                        }
                         onClick={() => {
                           handleDelete(mapping.index);
                         }}

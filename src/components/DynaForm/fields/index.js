@@ -5,6 +5,7 @@ import DynaLabel from './DynaLabel';
 import DynaCeligoTable from './DynaCeligoTable';
 import DynaSelectResource from './DynaSelectResource';
 import DynaSelectApplication from './DynaSelectApplication';
+import DynaFileTypeSelect from './select/DynaFileTypeSelect';
 import DynaText from './DynaText';
 import DynaCheckbox from './DynaCheckbox';
 import DynaRelativeUri from './DynaRelativeUri';
@@ -43,6 +44,8 @@ import DynaImportMapping from './DynaImportMapping';
 import DynaFieldExpressionSelect from './DynaFieldExpressionSelect';
 import DynaAutoSuggest from './DynaAutoSuggest';
 import DynaGenerateUrl from './DynaGenerateUrl';
+import DynaSoqlQuery from './DynaSoqlQuery';
+import DynaSalesforceRefreshableSelect from './DynaSalesforceRefreshableSelect';
 import DynaRefreshableIntegrationAppSetting from './DynaRefreshableSelect/RefreshableIntegrationAppSetting';
 import DynaDate from './dateTime/DynaDate';
 import DynaSQLQueryBuilder from './DynaSQLQueryBuilder';
@@ -63,6 +66,7 @@ export default {
   csvColumnMapper: DynaCSVColumnMapper,
   selectresource: DynaSelectResource,
   selectapplication: DynaSelectApplication,
+  filetypeselect: DynaFileTypeSelect,
   multiselect: DynaMultiSelect,
   radiogroup: DynaRadioGroup,
   relativeuri: DynaRelativeUri,
@@ -97,6 +101,8 @@ export default {
   fieldexpressionselect: DynaFieldExpressionSelect,
   autosuggest: DynaAutoSuggest,
   generateurl: DynaGenerateUrl,
+  soqlquery: DynaSoqlQuery,
+  salesforcerefreshableselect: DynaSalesforceRefreshableSelect,
   integrationapprefreshableselect: DynaRefreshableIntegrationAppSetting,
   date: DynaDate,
   sqlquerybuilder: DynaSQLQueryBuilder,

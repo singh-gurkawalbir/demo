@@ -6,12 +6,9 @@ import actions from '../../../../actions';
 import Hooks from '../../../../components/Hooks';
 import ModalDialog from '../../../../components/ModalDialog';
 
-const useStyles = makeStyles(theme => ({
-  paper: {
-    padding: theme.spacing(3),
-  },
+const useStyles = makeStyles(() => ({
   wrapper: {
-    minWidth: 450,
+    minWidth: 580,
   },
 }));
 

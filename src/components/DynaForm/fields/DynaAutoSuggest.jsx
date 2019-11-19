@@ -83,28 +83,22 @@ function renderSuggestion(suggestion, { query, isHighlighted }) {
   );
 }
 
-function getSuggestions({ val, suggestions, showAllSuggestions }) {
+function getSuggestions(val, suggestions, showAllSuggestions) {
+  const { value } = val;
+
   if (showAllSuggestions) {
     return suggestions;
   }
 
-  const inputValue = val.trim().toLowerCase();
+  const inputValue = value.trim().toLowerCase();
   const inputLength = inputValue.length;
-  let count = 0;
 
   return inputLength === 0
     ? []
-    : suggestions.filter(suggestion => {
-        const keep =
-          count < 5 &&
-          suggestion.label.slice(0, inputLength).toLowerCase() === inputValue;
-
-        if (keep) {
-          count += 1;
-        }
-
-        return keep;
-      });
+    : suggestions.filter(
+        suggestion =>
+          suggestion.label.slice(0, inputLength).toLowerCase() === inputValue
+      );
 }
 
 function getSuggestionValue(suggestion) {
@@ -122,6 +116,7 @@ export default function DynaAutoSuggest(props) {
     showAllSuggestions,
     label,
     valueName,
+    autoFocus,
     options = {},
   } = props;
   const classes = useStyles();
@@ -130,8 +125,10 @@ export default function DynaAutoSuggest(props) {
     value: valueName ? option[valueName] : option,
   }));
   const [stateSuggestions, setSuggestions] = useState(suggestions || []);
-  const handleSuggestionsFetchRequested = ({ val }) => {
-    setSuggestions(getSuggestions({ val, suggestions, showAllSuggestions }));
+  const handleSuggestionsFetchRequested = val => {
+    const _suggestions = getSuggestions(val, suggestions, showAllSuggestions);
+
+    setSuggestions(_suggestions);
   };
 
   const handleSuggestionsClearRequested = () => {
@@ -163,6 +160,7 @@ export default function DynaAutoSuggest(props) {
             id,
             label,
             placeholder,
+            autoFocus,
             value,
             disabled,
             onChange: handleChange,

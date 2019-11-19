@@ -5,7 +5,7 @@ import IconButton from '@material-ui/core/IconButton';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import { isFunction } from 'lodash';
-import shortid from 'shortid';
+import { generateNewId } from '../../../../utils/resource';
 import DynaSelect from '../DynaSelect';
 import DynaText from '../DynaText';
 import * as selectors from '../../../../reducers';
@@ -25,12 +25,15 @@ const useStyles = makeStyles(theme => ({
     marginTop: 10,
     marginBottom: 10,
   },
-  textField: {
-    width: 'calc(50% - 30px)',
+  field: {
+    width: '50%',
     paddingRight: theme.spacing(1),
+    '& >.MuiFormControl-root': {
+      width: '100%',
+    },
   },
   editorButton: {
-    marginLeft: 5,
+    marginRight: 5,
     background: theme.palette.background.paper,
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
@@ -50,8 +53,7 @@ const useStyles = makeStyles(theme => ({
 export default function DynaHook(props) {
   const [showEditor, setShowEditor] = useState(false);
   const [showCreateScriptDialog, setShowCreateScriptDialog] = useState(false);
-  const getNewId = () => `new-${shortid.generate()}`;
-  const [tempScriptId, setTempScriptId] = useState(getNewId());
+  const [tempScriptId, setTempScriptId] = useState(generateNewId());
   const [isNewScriptIdAssigned, setIsNewScriptIdAssigned] = useState(false);
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -107,7 +109,7 @@ export default function DynaHook(props) {
   };
 
   const handleCreateScriptClick = () => {
-    setTempScriptId(getNewId());
+    setTempScriptId(generateNewId());
     setIsNewScriptIdAssigned(false);
     setShowCreateScriptDialog(true);
   };
@@ -169,7 +171,7 @@ export default function DynaHook(props) {
       <div className={classes.inputContainer}>
         <InputLabel className={classes.label}>{label}</InputLabel>
         <div className={classes.wrapper}>
-          <div className={classes.textField}>
+          <div className={classes.field}>
             <DynaText
               key={id}
               name={name}
@@ -187,29 +189,35 @@ export default function DynaHook(props) {
           </div>
           {hookType === 'stack' && (
             // Todo Azhar select field is small
-            <FormControl className={classes.select}>
-              <InputLabel htmlFor="stackId">Stack</InputLabel>
-              <DynaSelect
-                id="stackId"
-                value={value._stackId}
-                disabled={disabled}
-                onFieldChange={handleFieldChange('_stackId')}
-                options={[{ items: allStacksOptions || [] }]}
-              />
-            </FormControl>
+            <div className={classes.field}>
+              <FormControl className={classes.select}>
+                <InputLabel htmlFor="stackId">Stack</InputLabel>
+                <DynaSelect
+                  id="stackId"
+                  label="Stacks"
+                  value={value._stackId}
+                  disabled={disabled}
+                  onFieldChange={handleFieldChange('_stackId')}
+                  options={[{ items: allStacksOptions || [] }]}
+                />
+              </FormControl>
+            </div>
           )}
           {hookType === 'script' && (
             <Fragment>
-              <FormControl className={classes.select}>
-                <InputLabel htmlFor="scriptId">Script</InputLabel>
-                <DynaSelect
-                  id="scriptId"
-                  disabled={disabled}
-                  value={value._scriptId}
-                  onFieldChange={handleFieldChange('_scriptId')}
-                  options={[{ items: allScriptsOptions || [] }]}
-                />
-              </FormControl>
+              <div className={classes.field}>
+                <FormControl className={classes.select}>
+                  <InputLabel htmlFor="scriptId">Script</InputLabel>
+                  <DynaSelect
+                    id="scriptId"
+                    label="Scripts"
+                    value={value._scriptId}
+                    disabled={disabled}
+                    onFieldChange={handleFieldChange('_scriptId')}
+                    options={[{ items: allScriptsOptions || [] }]}
+                  />
+                </FormControl>
+              </div>
               <IconButton
                 onClick={handleCreateScriptClick}
                 className={classes.editorButton}
@@ -223,6 +231,7 @@ export default function DynaHook(props) {
             <IconButton
               onClick={handleEditorClick}
               className={classes.editorButton}
+              disabled={disabled}
               data-test={id}>
               <EditIcon />
             </IconButton>

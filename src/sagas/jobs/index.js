@@ -10,6 +10,7 @@ import {
   fork,
 } from 'redux-saga/effects';
 import qs from 'qs';
+import { map } from 'lodash';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
@@ -91,6 +92,19 @@ export function* requestJobCollection({ integrationId, flowId, filters = {} }) {
   if (flowId) {
     jobFilters.flowId = flowId;
   }
+
+  if (!jobFilters.flowId && jobFilters.storeId) {
+    const { flows } = yield select(
+      selectors.integrationAppFlowSettings,
+      integrationId,
+      null,
+      jobFilters.storeId
+    );
+
+    jobFilters.flowIds = map(flows, '_id');
+  }
+
+  delete jobFilters.storeId;
 
   switch (jobFilters.status) {
     case 'all':
