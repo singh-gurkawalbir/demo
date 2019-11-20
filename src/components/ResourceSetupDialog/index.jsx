@@ -6,9 +6,12 @@ import {
   DialogTitle,
   Typography,
 } from '@material-ui/core';
+import { useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import ResourceForm from '../../components/ResourceFormFactory';
 import LoadResources from '../LoadResources';
 import CloseIcon from '../icons/CloseIcon';
+import * as selectors from '../../reducers';
 import AddOrSelect from './AddOrSelect';
 import { RESOURCE_TYPE_PLURAL_TO_SINGULAR } from '../../constants/resource';
 
@@ -30,6 +33,14 @@ export default function ResourceModal(props) {
     resourceType = 'connections',
   } = props;
   const classes = useStyles();
+  const isAuthorized = useSelector(state =>
+    selectors.isAuthorized(state, resourceId)
+  );
+
+  useEffect(() => {
+    if (isAuthorized && !addOrSelect)
+      onSubmitComplete(resourceId, isAuthorized);
+  }, [isAuthorized, resourceId, onSubmitComplete, addOrSelect]);
 
   return (
     <LoadResources required resources="connections">

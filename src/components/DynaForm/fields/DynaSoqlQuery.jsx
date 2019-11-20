@@ -24,8 +24,6 @@ export default function DynaSoqlQuery(props) {
     value = {},
     label,
     connectionId,
-    metadataType,
-    recordType,
     multiline,
     filterKey,
   } = props;
@@ -34,7 +32,8 @@ export default function DynaSoqlQuery(props) {
   const dispatch = useDispatch();
   const [soqlQuery, setSoqlQuery] = useState(false);
   const [sObject, setsObject] = useState(true);
-  const commMetaPath = `salesforce/metadata/connections/${connectionId}/${metadataType}/${recordType}`;
+  const [queryChanged, setQueryChanged] = useState(true);
+  const commMetaPath = `salesforce/metadata/connections/${connectionId}/query/columns`;
   const { data = {} } = useSelector(state =>
     selectors.metadataOptionsAndResources({
       state,
@@ -49,23 +48,18 @@ export default function DynaSoqlQuery(props) {
 
   const handleFieldChange = e => {
     onFieldChange(id, { ...value, query: e.target.value });
+    setsObject(false);
+    setQueryChanged(true);
   };
 
   useEffect(() => {
-    if (query && sObject) {
+    if (query && sObject && queryChanged) {
       dispatch(actions.metadata.request(connectionId, commMetaPath, { query }));
       setSoqlQuery(true);
       setsObject(false);
+      setQueryChanged(false);
     }
-  }, [
-    commMetaPath,
-    connectionId,
-    dispatch,
-    metadataType,
-    query,
-    recordType,
-    sObject,
-  ]);
+  }, [commMetaPath, connectionId, dispatch, query, queryChanged, sObject]);
   useEffect(() => {
     if (soqlQuery && data.entityName) {
       onFieldChange(id, { ...value, entityName: data.entityName });
@@ -82,9 +76,7 @@ export default function DynaSoqlQuery(props) {
     data.entityName,
     dispatch,
     id,
-    metadataType,
     onFieldChange,
-    recordType,
     soqlQuery,
     value,
   ]);
