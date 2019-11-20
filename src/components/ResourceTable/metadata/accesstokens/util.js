@@ -2,11 +2,16 @@ import moment from 'moment';
 
 export const getAutoPurgeAtAsString = at => {
   let autoPurge = 'Never';
+
+  if (!at.autoPurgeAt) {
+    return autoPurge;
+  }
+
   const dtAutoPurgeAt = moment(at.autoPurgeAt);
 
   if (dtAutoPurgeAt.diff(moment(), 'seconds') <= 0) {
     autoPurge = 'Purged';
-  } else if (at.autoPurgeAt) {
+  } else {
     const dtAutoPurgeAt = moment(at.autoPurgeAt);
     const dtEoDToday = moment().endOf('day');
 
