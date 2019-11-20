@@ -101,7 +101,7 @@ export default {
       some(importDocs || [], imp => {
         const conn = connections.find(c => c._id === imp._connectionId);
 
-        return imp.type === 'distributed' && conn.type === 'netsuite';
+        return imp.distributed && conn.type === 'netsuite';
       });
     const salesforceBundleNeeded = some(exportDocs || [], exp => {
       const conn = connections.find(c => c._id === exp._connectionId);
