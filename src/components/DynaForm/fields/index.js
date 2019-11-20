@@ -48,6 +48,7 @@ import DynaSoqlQuery from './DynaSoqlQuery';
 import DynaSalesforceRefreshableSelect from './DynaSalesforceRefreshableSelect';
 import DynaRefreshableIntegrationAppSetting from './DynaRefreshableSelect/RefreshableIntegrationAppSetting';
 import DynaDate from './dateTime/DynaDate';
+import DynaToggle from './DynaToggle';
 import DynaSQLQueryBuilder from './DynaSQLQueryBuilder';
 import DynaRelativeURIWithLookup from './DynaRelativeURIWithLookup';
 import DynaUserEmail from './DynaUserEmail';
@@ -104,6 +105,7 @@ export default {
   fieldexpressionselect: DynaFieldExpressionSelect,
   autosuggest: DynaAutoSuggest,
   generateurl: DynaGenerateUrl,
+  toggle: DynaToggle,
   soqlquery: DynaSoqlQuery,
   salesforcerefreshableselect: DynaSalesforceRefreshableSelect,
   integrationapprefreshableselect: DynaRefreshableIntegrationAppSetting,

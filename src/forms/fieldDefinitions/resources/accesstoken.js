@@ -1,3 +1,5 @@
+import { isNewId } from '../../../utils/resource';
+
 export default {
   name: {
     type: 'text',
@@ -13,41 +15,47 @@ export default {
   autoPurgeAt: {
     type: 'select',
     label: 'Auto Purge Token',
+    required: r => isNewId(r && r._id),
+    defaultValue: 'none',
     // TODO dynamic options for connector tokens
-    options: [
-      {
-        items: [
-          {
-            label: 'Never',
-            value: 'never',
-          },
-          {
-            label: '1 Hour',
-            value: '3600000', // TODO need to move to usage of moment. Currently cant use modules here.
-          },
-          {
-            label: '4 Hours',
-            value: '14400000',
-          },
-          {
-            label: '1 Day',
-            value: '86400000',
-          },
-          {
-            label: '4 Days',
-            value: '345600000',
-          },
-          {
-            label: '10 Days',
-            value: '864000000',
-          },
-          {
-            label: '30 Days',
-            value: '2592000000',
-          },
-        ],
-      },
-    ],
+    options: r => {
+      const items = [
+        {
+          label: 'Never',
+          value: 'never',
+        },
+        {
+          label: '1 Hour',
+          value: '3600000', // TODO need to move to usage of moment. Currently cant use modules here.
+        },
+        {
+          label: '4 Hours',
+          value: '14400000',
+        },
+        {
+          label: '1 Day',
+          value: '86400000',
+        },
+        {
+          label: '4 Days',
+          value: '345600000',
+        },
+        {
+          label: '10 Days',
+          value: '864000000',
+        },
+        {
+          label: '30 Days',
+          value: '2592000000',
+        },
+      ];
+
+      if (r._connectorId) {
+        items.shift();
+      }
+
+      return [{ items }];
+    },
   },
   fullAccess: {
     type: 'radiogroup',

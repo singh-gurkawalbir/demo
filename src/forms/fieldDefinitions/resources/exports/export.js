@@ -61,13 +61,36 @@ export default {
     label: 'Data URITemplate',
     connectionId: r => r && r._connectionId,
   },
+  exportOneToMany: {
+    label: 'How should this export be parameterized?',
+    type: 'labeltitle',
+  },
   oneToMany: {
-    type: 'checkbox',
-    label: 'One To Many',
+    type: 'radiogroup',
+    label:
+      'Does each individual record being processed need to execute multiple different exports?',
+    defaultValue: r => (r && r.pathToMany ? 'true' : 'false'),
+    visible: r => !!(r && r.isLookup),
+    options: [
+      {
+        items: [
+          { label: 'Yes(Advanced)', value: 'true' },
+          { label: 'No', value: 'false' },
+        ],
+      },
+    ],
   },
   pathToMany: {
     type: 'text',
-    label: 'Path To Many',
+    label:
+      'If records being processed are represented by Objects then please specify the JSON path to the child objects that should be used to parameterize each export',
+    placeholder: 'Optional. Not needed for row/array formats.',
+    visibleWhen: [
+      {
+        field: 'oneToMany',
+        is: [true],
+      },
+    ],
   },
   // sampleData: {
   //   type: 'editor',
