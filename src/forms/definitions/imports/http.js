@@ -334,7 +334,11 @@ export default {
 
       label: 'Build HTTP Request Body For Create',
       arrayIndex: 1,
-      refreshOptionsOnChangesTo: ['http.lookups'],
+      refreshOptionsOnChangesTo: [
+        'http.lookups',
+        'http.requestMediaType',
+        'name',
+      ],
       visibleWhenAll: [
         {
           field: 'http.compositeType',
@@ -548,7 +552,11 @@ export default {
       useSampleDataAsArray: true,
       label: 'Build HTTP Request Body For Update',
       arrayIndex: 0,
-      refreshOptionsOnChangesTo: ['http.lookups'],
+      refreshOptionsOnChangesTo: [
+        'http.lookups',
+        'http.requestMediaType',
+        'name',
+      ],
       visibleWhenAll: [
         {
           field: 'http.compositeType',
@@ -740,7 +748,11 @@ export default {
     },
     'http.body': {
       fieldId: 'http.body',
-      refreshOptionsOnChangesTo: ['http.requestMediaType'],
+      refreshOptionsOnChangesTo: [
+        'http.requestMediaType',
+        'http.lookups',
+        'name',
+      ],
     },
 
     'http.ignoreEmptyNodes': { fieldId: 'http.ignoreEmptyNodes' },

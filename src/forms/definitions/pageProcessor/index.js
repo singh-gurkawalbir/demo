@@ -88,7 +88,6 @@ export default {
       id: 'isNew',
       name: 'isNew',
       type: 'radiogroup',
-      showOptionsHorizontally: true,
       // label: 'Build new or use existing?',
       defaultValue: 'true',
       options: [

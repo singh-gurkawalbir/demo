@@ -1,4 +1,5 @@
 import HandlebarsEditor from '../HandlebarsEditor';
+import * as completers from '../editorSetup/completers';
 
 export default function HttpRequestBodyEditor(props) {
   const {
@@ -8,8 +9,13 @@ export default function HttpRequestBodyEditor(props) {
     layout = 'compact',
     rule,
     data,
+    lookups,
   } = props;
   const mode = contentType || 'json';
+
+  if (lookups && lookups.length) {
+    completers.handleBarsCompleters.setLookupCompleter(lookups);
+  }
 
   return (
     <HandlebarsEditor

@@ -124,6 +124,7 @@ export default function DynaHttpRequestBody(props) {
           id={`${resourceId}-${id}`}
           rule={parsedRule}
           onFieldChange={onFieldChange}
+          lookups={lookups}
           data={formattedSampleData}
           onClose={handleClose}
           action={lookupField}

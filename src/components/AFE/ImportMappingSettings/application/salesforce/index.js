@@ -41,7 +41,6 @@ export default {
           type: 'radiogroup',
           label: 'Field Mapping Type',
           defaultValue: MappingUtil.getFieldMappingType(value),
-          showOptionsHorizontally: true,
           fullWidth: true,
           options: [
             {
@@ -59,7 +58,6 @@ export default {
           name: '_mode',
           type: 'radiogroup',
           label: '',
-          showOptionsHorizontally: true,
           fullWidth: true,
           visibleWhen: [{ field: 'fieldMappingType', is: ['lookup'] }],
           defaultValue: lookup.name && lookup.map ? 'static' : 'dynamic',
@@ -163,6 +161,7 @@ export default {
           type: 'radiogroup',
           defaultValue: MappingUtil.getDefaultActionValue(value),
           label: 'Action to take if value not found',
+          showOptionsVertically: true,
           options: [
             {
               items: [
@@ -243,6 +242,7 @@ export default {
             MappingUtil.getDefaultLookupActionValue(value, lookup) ||
             'disallowFailure',
           label: 'Action to take if unique match not found',
+          showOptionsVertically: true,
           options: [
             {
               items: [
