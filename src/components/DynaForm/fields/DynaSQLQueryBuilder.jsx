@@ -192,6 +192,7 @@ export default function DynaSQLQueryBuilder(props) {
           title="SQL Query Builder"
           id={`${resourceId}-${id}`}
           rule={parsedRule}
+          lookups={lookups}
           sampleData={formattedSampleData}
           defaultData={formattedDefaultData}
           onFieldChange={onFieldChange}

@@ -1,14 +1,19 @@
 import HandlebarsWithDefaultEditor from '../HandlebarsWithDefault';
+import * as completers from '../editorSetup/completers';
 
 export default function SqlQueryBuilderEditor(props) {
   const {
     rule,
     editorId,
     disabled,
+    lookups,
     layout = 'compact',
     sampleData,
     defaultData,
   } = props;
+  const _lookups = lookups && Array.isArray(lookups) ? lookups : [];
+
+  completers.handleBarsCompleters.setLookupCompleter(_lookups);
 
   return (
     <HandlebarsWithDefaultEditor
