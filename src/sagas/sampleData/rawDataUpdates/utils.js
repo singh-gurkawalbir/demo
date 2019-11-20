@@ -1,4 +1,4 @@
-import { put, call } from 'redux-saga/effects';
+import { put, call, delay } from 'redux-saga/effects';
 import actions from '../../../actions';
 import { uploadRawData } from '../../uploadFile';
 
@@ -16,7 +16,8 @@ export function* saveSampleDataOnResource({
     },
   ];
 
-  // Save the resource
+  // Mocking delay to make sure stage is cleared for this resourceId
+  yield delay(50);
   yield put(actions.resource.patchStaged(resourceId, patchSet, 'value'));
   yield put(actions.resource.commitStaged(resourceType, resourceId, 'value'));
 }

@@ -37,6 +37,7 @@ import {
 } from './flowsUtil';
 import { getUsedActionsMapForResource } from '../utils/flows';
 import { isValidResourceReference } from '../utils/resource';
+import { processSampleData } from '../utils/sampleData';
 
 const combinedReducers = combineReducers({
   app,
@@ -2180,7 +2181,7 @@ export function getImportSampleData(state, resourceId) {
   const { merged: resource } = resourceData(state, 'imports', resourceId);
   const { assistant, adaptorType, sampleData } = resource;
 
-  if (sampleData) return sampleData;
+  if (sampleData) return processSampleData(sampleData, resource);
   else if (assistant) {
     // get assistants sample data
   } else if (adaptorType === 'NetSuiteDistributedImport') {
