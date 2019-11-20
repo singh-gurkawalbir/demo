@@ -380,7 +380,7 @@ export default function JobDashboard({
         flowId={flowId}
         numJobsSelected={numJobsSelected}
         onActionClick={handleActionClick}
-        disableButtons={disableActions}
+        disableActions={disableActions}
       />
       <JobTable
         onSelectChange={handleSelectChange}
