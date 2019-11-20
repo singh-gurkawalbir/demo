@@ -82,7 +82,7 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
           break;
 
         case 'mapping':
-          history.push(`${history.location.pathname}/mapping`);
+          history.push(`${history.location.pathname}/${flowId}/mapping`);
           break;
 
         case 'audit':

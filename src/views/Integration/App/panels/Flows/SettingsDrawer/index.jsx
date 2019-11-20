@@ -1,4 +1,4 @@
-import React from 'react';
+import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { Route, useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -67,9 +67,9 @@ function SettingsDrawer({ integrationId, storeId, sectionId }) {
     integrationId,
     true
   );
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     history.goBack();
-  };
+  }, [history]);
 
   return (
     <Drawer
@@ -80,7 +80,7 @@ function SettingsDrawer({ integrationId, storeId, sectionId }) {
         paper: classes.drawerPaper,
       }}
       onClose={handleClose}>
-      <DrawerTitleBar title={`Configure flow: ${flowName}`} />
+      <DrawerTitleBar title={`Settings: ${flowName}`} />
 
       {fieldMeta && (
         <ActionsFactory
@@ -88,6 +88,8 @@ function SettingsDrawer({ integrationId, storeId, sectionId }) {
           flowId={flowId}
           storeId={storeId}
           onSubmitComplete={handleClose}
+          // TODO: why do we need to spread the form state here?
+          // what does this accomplish? In some places we do not do this.
           {...formState}
           fieldMeta={fieldMeta}
         />

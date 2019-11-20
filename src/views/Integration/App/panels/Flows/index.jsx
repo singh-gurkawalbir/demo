@@ -16,6 +16,7 @@ import PanelHeader from '../../../common/PanelHeader';
 import FlowCard from '../../../common/FlowCard';
 import ConfigureDrawer from './ConfigureDrawer';
 import SettingsDrawer from './SettingsDrawer';
+import MappingDrawer from './MappingDrawer';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -64,6 +65,11 @@ function FlowList({ integrationId, storeId }) {
         sectionId={sectionId}
       />
       <SettingsDrawer
+        integrationId={integrationId}
+        storeId={storeId}
+        sectionId={sectionId}
+      />
+      <MappingDrawer
         integrationId={integrationId}
         storeId={storeId}
         sectionId={sectionId}

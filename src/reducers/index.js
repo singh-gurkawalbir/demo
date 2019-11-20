@@ -2155,6 +2155,40 @@ export function getAllConnectionIdsUsedInSelectedFlows(state, selectedFlows) {
   return connectionIdsToRegister;
 }
 
+const emptyList = [];
+
+// returns a list of import resources for a given flow,
+// identified by flowId.
+export function flowImports(state, id) {
+  const importIds = [];
+  const flow = resource(state, 'flows', id);
+
+  if (!flow) return emptyList;
+
+  if (flow._importId) {
+    importIds.push(flow._importId);
+  } else if (flow.pageProcessors && flow.pageProcessors.length) {
+    flow.pageProcessors.forEach(p => {
+      if (p._importId) {
+        importIds.push(p._importId);
+      }
+    });
+  }
+
+  // wherever possible, to prevent re-renders in components using this
+  // selector, return a static pointer.
+  if (importIds.length === 0) return emptyList;
+
+  const imports = resourceList(state, { type: 'imports' }).resources;
+
+  // possibly imports are not loaded in the state yet?
+  if (!imports || imports.length === 0) return emptyList;
+
+  return imports.filter(i => importIds.indexOf(i._id) > -1);
+}
+
+// TODO: The selector below should be deprecated and the above selector
+// should be used instead.
 export function getAllPageProcessorImports(state, pageProcessors) {
   let ppImports = [];
   const pageProcessorIds = [];
