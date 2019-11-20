@@ -76,6 +76,11 @@ const connection = {
       deregisteredId,
       integrationId,
     }),
+  updateIClients: (iClients, connectionId) =>
+    action(actionTypes.CONNECTION.UPDATE_ICLIENTS, {
+      iClients,
+      connectionId,
+    }),
 };
 const marketplace = {
   requestConnectors: () =>
@@ -217,6 +222,8 @@ const resource = {
     requestTokenFailed: (resourceId, message) =>
       action(actionTypes.TOKEN.FAILED, { resourceId, message }),
     clearToken: resourceId => action(actionTypes.TOKEN.CLEAR, { resourceId }),
+    requestIClients: connectionId =>
+      action(actionTypes.ICLIENTS, { connectionId }),
 
     netsuite: {
       requestUserRoles: (connectionId, values) =>

@@ -52,6 +52,7 @@ import DynaSQLQueryBuilder from './DynaSQLQueryBuilder';
 import DynaRelativeURIWithLookup from './DynaRelativeURIWithLookup';
 import DynaUserEmail from './DynaUserEmail';
 import DynaUserPassword from './DynaUserPassword';
+import DynaIclient from './DynaIclient';
 
 export default {
   mapping: DynaImportMapping,
@@ -111,4 +112,5 @@ export default {
   relativeuriwithlookup: DynaRelativeURIWithLookup,
   useremail: DynaUserEmail,
   userpassword: DynaUserPassword,
+  dynaiclient: DynaIclient,
 };
