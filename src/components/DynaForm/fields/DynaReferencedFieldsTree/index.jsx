@@ -1,11 +1,9 @@
 import React, { Fragment, useCallback } from 'react';
-import { useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import TreeView from '@material-ui/lab/TreeView';
 import TreeItem from '@material-ui/lab/TreeItem';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import { Checkbox } from '@material-ui/core';
 
 const useStyles = makeStyles({
   root: {
@@ -52,15 +50,14 @@ function RootNodes(props) {
   );
 }
 
-function TreeNavigation(props) {
+export default function TreeNavigation(props) {
   const classes = useStyles();
-  const { Node } = props;
-  const dispatch = useDispatch();
+  const { handleFetchResource } = props;
   const fetchFieldsAndReferencedFields = useCallback(
     (nodeId, expanded) => {
-      if (expanded) dispatch(/* make call to get referenced fields */);
+      if (expanded && handleFetchResource) handleFetchResource(nodeId);
     },
-    [dispatch]
+    [handleFetchResource]
   );
 
   return (
@@ -69,11 +66,7 @@ function TreeNavigation(props) {
       onNodeToggle={fetchFieldsAndReferencedFields}
       defaultCollapseIcon={<ExpandMoreIcon />}
       defaultExpandIcon={<ChevronRightIcon />}>
-      <RootNodes Node={Node} />
+      <RootNodes {...props} />
     </TreeView>
   );
-}
-
-export default function TreeComponent(props) {
-  return <TreeNavigation {...props} Node={Checkbox} />;
 }

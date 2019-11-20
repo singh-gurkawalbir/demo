@@ -138,6 +138,13 @@ export default {
       refreshOptionsOnChangesTo: ['salesforce.sObjectType'],
       type: 'salesforcereferencedfields',
       fieldId: 'salesforce.distributed.referencedFields',
+      validWhen: [
+        {
+          field: 'salesforce.sObjectType',
+          isNot: [''],
+        },
+      ],
+      defaultDisabled: true,
     },
     'salesforce.distributed.relatedLists.referencedFields': {
       fieldId: 'salesforce.distributed.relatedLists.referencedFields',

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, cloneElement } from 'react';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
@@ -58,7 +58,7 @@ const useStyles = makeStyles(theme => ({
  * disabled property is part of props being send from Form factory
  * setting disableOptionsLoad = false will restrict fetch of resources
  */
-function RefreshGenericResource(props) {
+export default function RefreshGenericResource(props) {
   const {
     description,
     disabled,
@@ -74,6 +74,7 @@ function RefreshGenericResource(props) {
     handleFetchResource,
     handleRefreshResource,
     fieldError,
+    children,
   } = props;
   const classes = useStyles();
   const defaultValue = props.defaultValue || (multiselect ? [] : '');
@@ -136,11 +137,10 @@ function RefreshGenericResource(props) {
         <InputLabel shrink htmlFor={id}>
           {label}
         </InputLabel>
-        {multiselect ? (
-          <DynaMultiSelect {...props} options={[{ items: options || [] }]} />
-        ) : (
-          <DynaSelect {...props} options={[{ items: options || [] }]} />
-        )}
+        {cloneElement(children, {
+          ...props,
+          options: [{ items: options || [] }],
+        })}
         {!isLoading && <RefreshIcon onClick={handleRefreshResource} />}
         {fieldData && isLoading && <Spinner />}
         {description && <FormHelperText>{description}</FormHelperText>}
@@ -152,4 +152,12 @@ function RefreshGenericResource(props) {
   );
 }
 
-export default RefreshGenericResource;
+export function DynaGenericSelect(props) {
+  const { multiselect } = props;
+
+  return (
+    <RefreshGenericResource {...props}>
+      {multiselect ? <DynaMultiSelect /> : <DynaSelect />}
+    </RefreshGenericResource>
+  );
+}

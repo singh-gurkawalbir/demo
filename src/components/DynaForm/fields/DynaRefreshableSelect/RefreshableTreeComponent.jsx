@@ -1,155 +1,237 @@
-import { useEffect, useState } from 'react';
-import InputLabel from '@material-ui/core/InputLabel';
-import FormControl from '@material-ui/core/FormControl';
-import FormHelperText from '@material-ui/core/FormHelperText';
-import { makeStyles } from '@material-ui/core/styles';
-import Spinner from '../../../Spinner';
+import { useState, Fragment, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import TreeView from '@material-ui/lab/TreeView';
+import TreeItem from '@material-ui/lab/TreeItem';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import * as selectors from '../../../../reducers';
+import actions from '../../../../actions';
 import RefreshIcon from '../../../icons/RefreshIcon';
-import DynaSelect from '../DynaSelect';
-import DynaMultiSelect from '../DynaMultiSelect';
+import DynaCheckbox from '../DynaCheckbox';
 
-const useStyles = makeStyles(theme => ({
-  inlineElements: {
-    display: 'inline',
-  },
-  root: {
-    display: 'flex !important',
-    flexWrap: 'nowrap',
-    background: theme.palette.background.paper,
-    border: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
-    transitionProperty: 'border',
-    transitionDuration: theme.transitions.duration.short,
-    transitionTimingFunction: theme.transitions.easing.easeInOut,
-    overflow: 'hidden',
-    height: 50,
-    justifyContent: 'flex-end',
-    borderRadius: 2,
-    '& > Label': {
-      paddingTop: 10,
-    },
-    '&:hover': {
-      borderColor: theme.palette.primary.main,
-    },
-    '& > *': {
-      padding: [[0, 12]],
-    },
-    '& > div > div ': {
-      paddingBottom: 5,
-    },
-    '& svg': {
-      right: 8,
-    },
-  },
-  selectElement: {
-    width: '80%',
-  },
-  chips: {
-    display: 'flex',
-    flexWrap: 'wrap',
-  },
-  chip: {
-    margin: theme.spacing(0.25),
-  },
-}));
-
-/**
- *
- * disabled property is part of props being send from Form factory
- * setting disableOptionsLoad = false will restrict fetch of resources
- */
-function RefreshGenericResource(props) {
+const fieldToOption = field => ({
+  label: field.label,
+  value: field.value,
+  referenceTo: field.referenceTo,
+});
+const NestedValueCheckbox = props => {
   const {
-    description,
-    disabled,
-    disableOptionsLoad,
-    id,
+    setSelectedValues,
+    attachedParentNode,
+    selectedValues,
     label,
-    resourceToFetch,
-    resetValue,
-    multiselect,
-    onFieldChange,
-    fieldData,
-    fieldStatus,
-    handleFetchResource,
-    handleRefreshResource,
-    fieldError,
   } = props;
-  const classes = useStyles();
-  const defaultValue = props.defaultValue || (multiselect ? [] : '');
-  // component is in loading state in both request and refresh cases
-  const isLoading =
-    !disableOptionsLoad &&
-    (!fieldStatus ||
-      fieldStatus === 'requested' ||
-      fieldStatus === 'refreshed');
-  // Boolean state to minimize calls on useEffect
-  const [isDefaultValueChanged, setIsDefaultValueChanged] = useState(false);
-
-  // Resets field's value to value provided as argument
-  useEffect(() => {
-    if (isDefaultValueChanged) {
-      if (resetValue) {
-        onFieldChange(id, multiselect ? [] : '');
-      } else {
-        onFieldChange(id, defaultValue);
-      }
-
-      setIsDefaultValueChanged(false);
-    }
-  }, [
-    id,
-    resetValue,
-    multiselect,
-    defaultValue,
-    isDefaultValueChanged,
-    onFieldChange,
-    setIsDefaultValueChanged,
-  ]);
-  useEffect(() => {
-    if (!fieldData && !disableOptionsLoad && handleFetchResource) {
-      handleFetchResource();
-    }
-  }, [disableOptionsLoad, fieldData, handleFetchResource]);
-
-  useEffect(() => {
-    // Reset selected values on change of resourceToFetch
-    if (resourceToFetch) {
-      setIsDefaultValueChanged(true);
-    }
-  }, [resourceToFetch, setIsDefaultValueChanged]);
-
-  if (!fieldData && !disableOptionsLoad) return <Spinner />;
-
-  const options = (fieldData || []).map(options => {
-    const { label, value } = options;
-
-    return { label, value };
-  });
 
   return (
-    <div>
-      <FormControl
-        key={id}
-        disabled={disabled}
-        className={classes.inlineElements}>
-        <InputLabel shrink htmlFor={id}>
-          {label}
-        </InputLabel>
-        {multiselect ? (
-          <DynaMultiSelect {...props} options={[{ items: options || [] }]} />
-        ) : (
-          <DynaSelect {...props} options={[{ items: options || [] }]} />
-        )}
-        {!isLoading && <RefreshIcon onClick={handleRefreshResource} />}
-        {fieldData && isLoading && <Spinner />}
-        {description && <FormHelperText>{description}</FormHelperText>}
-        {fieldError && (
-          <FormHelperText error="true">{fieldError}</FormHelperText>
-        )}
-      </FormControl>
-    </div>
+    <DynaCheckbox
+      onFieldChange={(id, checkedValue) => {
+        setSelectedValues(selectedValues => {
+          if (checkedValue) return [...selectedValues, attachedParentNode];
+
+          return selectedValues.filter(
+            selectedValue => selectedValue !== attachedParentNode
+          );
+        });
+      }}
+      label={label}
+      value={!!selectedValues.includes(attachedParentNode)}
+    />
+  );
+};
+
+const RefreshTreeElement = props => {
+  const {
+    label,
+    selectedParent,
+    connectionId,
+    metaBasePath,
+    // setExpanded,
+    expanded,
+    referenceTo,
+    parentValue,
+    level,
+  } = props;
+  const nodeId = `${parentValue}${level},${referenceTo}`;
+  const { status } = useSelector(state =>
+    selectors.metadataOptionsAndResources({
+      state,
+      connectionId,
+      commMetaPath: `${metaBasePath}${selectedParent}`,
+      filterKey: 'salesforce-sObjects-referenceFields',
+    })
+  );
+
+  return (
+    <TreeItem
+      key={label}
+      label={`${parentValue} Fields...`}
+      nodeId={nodeId}
+      expandIcon={
+        status === 'refreshed' ? <RefreshIcon /> : <ChevronRightIcon />
+      }>
+      {expanded.includes(nodeId) ? (
+        <TreeViewComponent
+          {...props}
+          key={label}
+          label={label}
+          selectedParent={selectedParent}
+        />
+      ) : (
+        <Fragment />
+      )}
+    </TreeItem>
+  );
+};
+
+function TreeViewComponent(props) {
+  const {
+    connectionId,
+    selectedParent,
+    setSelectedValues,
+    selectedValues,
+    parentValue,
+    level,
+  } = props;
+  const metaBasePath = `salesforce/metadata/connections/${connectionId}/sObjectTypes/`;
+  const { referenceFields, nonReferenceFields, status } = useSelector(state => {
+    const {
+      data: referenceFields,
+      ...rest
+    } = selectors.metadataOptionsAndResources({
+      state,
+      connectionId,
+      commMetaPath: `${metaBasePath}${selectedParent}`,
+      filterKey: 'salesforce-sObjects-referenceFields',
+    });
+    const { data: nonReferenceFields } = selectors.metadataOptionsAndResources({
+      state,
+      connectionId,
+      commMetaPath: `${metaBasePath}${selectedParent}`,
+      filterKey: 'salesforce-sObjects-nonReferenceFields',
+    });
+
+    return {
+      ...rest,
+      nonReferenceFields:
+        (nonReferenceFields && nonReferenceFields.map(fieldToOption)) || null,
+      referenceFields:
+        (referenceFields && referenceFields.map(fieldToOption)) || null,
+    };
+  });
+
+  if (status !== 'received') return null;
+
+  return (
+    <Fragment>
+      {(nonReferenceFields &&
+        nonReferenceFields.map(item => {
+          const { label, value } = item;
+          const attachedParentNode = parentValue
+            ? `${parentValue}.${value}`
+            : value;
+
+          return (
+            <div key={value}>
+              <NestedValueCheckbox
+                setSelectedValues={setSelectedValues}
+                attachedParentNode={attachedParentNode}
+                selectedValues={selectedValues}
+                label={label}
+              />
+            </div>
+          );
+        })) ||
+        null}
+
+      {(referenceFields &&
+        referenceFields.map(item => {
+          const { label, value, referenceTo } = item;
+
+          return (
+            <RefreshTreeElement
+              {...props}
+              key={label}
+              level={level + 1}
+              label={label}
+              referenceTo={referenceTo}
+              selectedParent={referenceTo}
+              parentValue={value}
+            />
+          );
+        })) ||
+        null}
+    </Fragment>
   );
 }
 
-export default RefreshGenericResource;
+export default function RefreshableTreeComponent(props) {
+  const { connectionId, selectedParent, setSelectedValues } = props;
+  const metaBasePath = `salesforce/metadata/connections/${connectionId}/sObjectTypes/`;
+  const [expanded, setExpanded] = useState([]);
+  const dispatch = useDispatch();
+  const statusSelector = useSelector(state => selectedParent =>
+    selectors.metadataOptionsAndResources({
+      state,
+      connectionId,
+      commMetaPath: `${metaBasePath}${selectedParent}`,
+      filterKey: 'salesforce-sObjects-referenceFields',
+    })
+  );
+  const onNodeToggle = (nodeId, expanded) => {
+    // check for node id
+
+    const referenceTo = nodeId.split(',')[1];
+    const { status } = statusSelector(referenceTo);
+
+    if (expanded) {
+      if (status !== 'received')
+        dispatch(
+          actions.metadata.refresh(
+            connectionId,
+            `${metaBasePath}${referenceTo}`
+          )
+        );
+      setExpanded(openNodes => [...openNodes, nodeId]);
+    } else
+      setExpanded(openNodes =>
+        openNodes.filter(openNode => openNode !== nodeId)
+      );
+  };
+
+  const [hasCalled, setHasCalled] = useState(false);
+
+  useEffect(() => {
+    if (!hasCalled && statusSelector(selectedParent) !== 'received')
+      dispatch(
+        actions.metadata.refresh(
+          connectionId,
+          `${metaBasePath}${selectedParent}`
+        )
+      );
+    setHasCalled(true);
+  }, [
+    dispatch,
+    connectionId,
+    hasCalled,
+    selectedParent,
+    metaBasePath,
+    statusSelector,
+  ]);
+
+  return (
+    <TreeView
+      expanded={expanded}
+      onNodeToggle={onNodeToggle}
+      defaultCollapseIcon={<ExpandMoreIcon />}
+      defaultExpandIcon={<ChevronRightIcon />}>
+      <TreeViewComponent
+        setExpanded={setExpanded}
+        {...props}
+        setSelectedValues={setSelectedValues}
+        metaBasePath={metaBasePath}
+        expanded={expanded}
+        level={1}
+      />
+    </TreeView>
+  );
+}
