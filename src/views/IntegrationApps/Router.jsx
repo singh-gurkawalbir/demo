@@ -24,6 +24,16 @@ export default function IntegrationAppsRouter({ match }) {
         component={IntegrationAppSettings}
       />
       <Route
+        path={`${match.url}/:integrationId/settings/:storeId/:section/edit/:resourceType/:resourceId`}
+        exact
+        component={IntegrationAppSettings}
+      />
+      <Route
+        path={`${match.url}/:integrationId/settings/:section/edit/:resourceType/:resourceId`}
+        exact
+        component={IntegrationAppSettings}
+      />
+      <Route
         path={`${match.url}/:integrationId/settings`}
         component={IntegrationAppSettings}
       />
