@@ -21,7 +21,9 @@ describe('commitStagedChanges saga', () => {
     const saga = commitStagedChanges({ resourceType, id });
     const selectEffect = saga.next().value;
 
-    expect(selectEffect).toEqual(
+    expect(selectEffect).toEqual(select(selectors.userPreferences));
+
+    expect(saga.next().value).toEqual(
       select(selectors.resourceData, resourceType, id, undefined)
     );
 
@@ -35,7 +37,9 @@ describe('commitStagedChanges saga', () => {
       const saga = commitStagedChanges({ resourceType, id });
       const selectEffect = saga.next().value;
 
-      expect(selectEffect).toEqual(
+      expect(selectEffect).toEqual(select(selectors.userPreferences));
+
+      expect(saga.next().value).toEqual(
         select(selectors.resourceData, resourceType, id, undefined)
       );
 
@@ -74,7 +78,9 @@ describe('commitStagedChanges saga', () => {
       const saga = commitStagedChanges({ resourceType, id });
       const selectEffect = saga.next().value;
 
-      expect(selectEffect).toEqual(
+      expect(selectEffect).toEqual(select(selectors.userPreferences));
+
+      expect(saga.next().value).toEqual(
         select(selectors.resourceData, resourceType, id, undefined)
       );
 
@@ -135,7 +141,9 @@ describe('commitStagedChanges saga', () => {
       const saga = commitStagedChanges({ resourceType, id: tempId });
       const selectEffect = saga.next().value;
 
-      expect(selectEffect).toEqual(
+      expect(selectEffect).toEqual(select(selectors.userPreferences));
+
+      expect(saga.next().value).toEqual(
         select(selectors.resourceData, resourceType, tempId, undefined)
       );
 
