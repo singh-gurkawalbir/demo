@@ -160,7 +160,7 @@ export default {
           keyName: 'export',
           keyLabel: 'Export Field',
           valueName: 'import',
-          valueLabel: 'Import Field (HTTP)',
+          valueLabel: 'Import Field (Netsuite)',
           defaultValue:
             lookup.map &&
             Object.keys(lookup.map).map(key => ({
