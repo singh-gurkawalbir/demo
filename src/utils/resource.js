@@ -261,6 +261,29 @@ export function isValidResourceReference(
   }
 }
 
+export function salesforceExportSelectOptions(data, fieldName) {
+  let options;
+
+  switch (fieldName) {
+    case 'deltaExportDateFields':
+      options = data.filter(f => ['datetime', 'date'].indexOf(f.type) > -1);
+      break;
+    case 'onceExportBooleanFields':
+      options = data.filter(f => f.type === 'boolean' && f.updateable);
+      break;
+    case 'externalIdFields':
+      options = data.filter(f => f.externalId || f.name === 'Id');
+      break;
+    case 'referenceFields':
+      options = data.filter(f => f.referenceTo.length !== 0);
+      break;
+    default:
+      options = data;
+  }
+
+  return options.map(op => ({ label: op.label, value: op.value }));
+}
+
 /*
  * Given a resource, returns true if it is File Export
  * FTP / S3 / DataLoader

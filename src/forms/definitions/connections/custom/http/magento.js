@@ -5,7 +5,7 @@ export default {
     '/assistant': 'magento',
     '/http/auth/type': 'token',
     '/http/mediaType': 'json',
-    '/http/baseURI': `${formValues['/http/baseURI']}/`,
+    '/http/baseURI': `${formValues['/http/baseURI']}`,
     '/http/auth/token/location': 'header',
     '/http/auth/token/scheme': 'Bearer',
     '/http/auth/token/headerName': 'Authorization',
@@ -30,6 +30,7 @@ export default {
     'http.baseURI': {
       fieldId: 'http.baseURI',
       helpText: 'The Base URI of Magento.',
+      required: true,
     },
     'http.unencrypted.username': {
       id: 'http.unencrypted.username',

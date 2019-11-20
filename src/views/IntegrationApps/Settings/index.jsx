@@ -277,10 +277,14 @@ export default function IntegrationAppSettings(props) {
   const handleTagChangeHandler = tag => {
     const patchSet = [{ op: 'replace', path: '/tag', value: tag }];
 
+    // dispatch(
+    //   actions.resource.patch('integrations', integrationId, patchSet, {
+    //     doNotRefetch: true,
+    //   })
+    // );
+    dispatch(actions.resource.patchStaged(integrationId, patchSet, 'value'));
     dispatch(
-      actions.resource.patch('integrations', integrationId, patchSet, {
-        doNotRefetch: true,
-      })
+      actions.resource.commitStaged('integrations', integrationId, 'value')
     );
   };
 
@@ -293,7 +297,7 @@ export default function IntegrationAppSettings(props) {
           title={integration.name}
           titleTag={
             <ChipInput
-              value={integration.tag || 'tag'}
+              value={integration.tag}
               className={classes.tag}
               variant="outlined"
               onChange={handleTagChangeHandler}

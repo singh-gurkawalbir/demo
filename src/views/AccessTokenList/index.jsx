@@ -25,6 +25,9 @@ const useStyles = makeStyles(theme => ({
   resultContainer: {
     padding: theme.spacing(3, 3, 12, 3),
   },
+  secondaryHeader: {
+    maxWidth: '64%',
+  },
 }));
 
 export default function AccessTokenList(props) {
@@ -54,7 +57,10 @@ export default function AccessTokenList(props) {
         }>
         <ResourceDrawer {...newProps} />
 
-        <CeligoPageBar title="Access Tokens" infoText={infoText.accesstokens}>
+        <CeligoPageBar
+          title="Access Tokens"
+          infoText={infoText.accesstokens}
+          className={classes.secondaryHeader}>
           <div className={classes.actions}>
             <SearchInput variant="light" onChange={handleKeywordChange} />
             <IconTextButton
@@ -67,6 +73,7 @@ export default function AccessTokenList(props) {
             </IconTextButton>
           </div>
         </CeligoPageBar>
+
         <div className={classes.resultContainer}>
           <LoadResources required resources="accesstokens">
             {list.resources && list.resources.length > 0 ? (

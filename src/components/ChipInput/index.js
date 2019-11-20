@@ -20,8 +20,12 @@ export default function ChipInput(props) {
   const [tag, setTag] = useState(value);
   const [isChipView, setIsChipView] = useState(true);
   const handleBlur = e => {
-    e.preventDefault();
     setIsChipView(true);
+
+    if (tag === e.target.value || (!e.target.value && !tag)) {
+      return;
+    }
+
     setTag(e.target.value);
     onChange(e.target.value);
   };
@@ -37,7 +41,7 @@ export default function ChipInput(props) {
         <Chip
           {...props}
           onClick={handleTagClick}
-          label={tag}
+          label={tag || 'tag'}
           size="small"
           icon={<EditIcon />}
         />
