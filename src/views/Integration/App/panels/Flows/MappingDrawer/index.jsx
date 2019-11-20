@@ -19,9 +19,8 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.background.default,
     zIndex: theme.zIndex.drawer + 1,
   },
-  form: {
-    maxHeight: `calc(100vh - 180px)`,
-    padding: theme.spacing(2, 3),
+  content: {
+    padding: theme.spacing(3),
   },
 }));
 
@@ -48,25 +47,27 @@ function MappingDrawer() {
         paper: classes.drawerPaper,
       }}
       onClose={handleClose}>
-      <DrawerTitleBar title={`Edit mapping(s) for flow ${flowName}`} />
-      <LoadResources required="true" resources="imports">
-        {importId ? (
-          <StandaloneImportMapping
-            // why is this prop called resourceId? Is it possible to pass in
-            // any resourceID? I think now.. since it probably ONLY works with
-            // am importId, this prop should be called as such.
-            resourceId={importId}
-            // TODO: Why do we need to pass in a connectionId?
-            // is this the connectionID that exists on the import resource?
-            // if so, why doesn't this child component look-up the
-            // connectionId on its own?
-            connectionId={imp._connectionId}
-            onClose={handleClose}
-          />
-        ) : (
-          <SelectImport flowId={flowId} />
-        )}
-      </LoadResources>
+      <DrawerTitleBar title={`Edit mapping for flow ${flowName}`} />
+      <div className={classes.content}>
+        <LoadResources required="true" resources="imports">
+          {importId ? (
+            <StandaloneImportMapping
+              // why is this prop called resourceId? Is it possible to pass in
+              // any resourceID? I think now.. since it probably ONLY works with
+              // am importId, this prop should be called as such.
+              resourceId={importId}
+              // TODO: Why do we need to pass in a connectionId?
+              // is this the connectionID that exists on the import resource?
+              // if so, why doesn't this child component look-up the
+              // connectionId on its own?
+              connectionId={imp._connectionId}
+              onClose={handleClose}
+            />
+          ) : (
+            <SelectImport flowId={flowId} />
+          )}
+        </LoadResources>
+      </div>
     </Drawer>
   );
 }

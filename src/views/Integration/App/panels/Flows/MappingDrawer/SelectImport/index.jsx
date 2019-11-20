@@ -5,9 +5,12 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Button } from '@material-ui/core';
 import * as selectors from '../../../../../../../reducers';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
   button: {
-    textAlign: 'left',
+    color: theme.palette.primary.main,
+  },
+  text: {
+    marginBottom: theme.spacing(2),
   },
 }));
 
@@ -38,14 +41,17 @@ export default function SelectImport({ flowId }) {
   // Finally, render a table of imports to choose from...
   return (
     <Fragment>
-      <Typography>Select which import you would like to edit.</Typography>
+      <Typography className={classes.text} variant="h5">
+        This flow contains several imports, each of which have mapping. Select
+        which import you would like to edit the mapping for.
+      </Typography>
       {imports.map(i => (
         <Button
           className={classes.button}
           key={i._id}
           component={Link}
           to={`${match.url}/${i._id}`}>
-          <Typography>{i.name || i._id}</Typography>
+          <Typography color="primary">{i.name || i._id}</Typography>
           <Typography variant="caption">{i.description}</Typography>
         </Button>
       ))}
