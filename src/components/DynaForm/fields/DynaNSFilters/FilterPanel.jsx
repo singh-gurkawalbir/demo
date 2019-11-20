@@ -11,19 +11,18 @@ import { makeStyles } from '@material-ui/core/styles';
 import 'jQuery-QueryBuilder';
 import 'jQuery-QueryBuilder/dist/css/query-builder.default.css';
 import jQuery from 'jquery';
-import { isEmpty, isArray, isString } from 'lodash';
+import { isEmpty } from 'lodash';
 import config from './config';
 import './queryBuilder.css';
 import {
   convertIOFilterExpression,
   getFilterList,
   generateRulesState,
-  generateIOFilterExpression,
+  generateIOExpression,
   getFilterRuleId,
 } from './util';
-// import OperandSettingsDialog from './OperandSettingsDialog';
+import OperandSettingsDialog from './OperandSettingsDialog';
 import actions from '../../../../actions';
-import getJSONPaths from '../../../../utils/jsonPaths';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -34,10 +33,12 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 const defaultData = {};
+const defaultFilters = [];
 
 export default function FilterPanel({
   editorId,
   readOnly,
+  filters = defaultFilters,
   data = defaultData,
   rule,
 }) {
@@ -53,6 +54,8 @@ export default function FilterPanel({
     value => {
       if (editorId) {
         dispatch(actions.editor.patch(editorId, { rule: value || [] }));
+      } else {
+        console.log(`rules ${JSON.stringify(value)}`);
       }
     },
     [dispatch, editorId]
@@ -108,10 +111,14 @@ export default function FilterPanel({
   );
 
   useEffect(() => {
-    const rules = convertIOFilterExpression(rule);
+    let qbRules = convertIOFilterExpression(rule, data);
 
-    setRules(rules);
-    setRulesState(generateRulesState(rules));
+    if (qbRules && qbRules.length === 1 && !qbRules[0].id) {
+      qbRules = [];
+    }
+
+    setRules(qbRules);
+    setRulesState(generateRulesState(qbRules));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -129,7 +136,7 @@ export default function FilterPanel({
       return undefined;
     }
 
-    return generateIOFilterExpression(result);
+    return generateIOExpression(result);
   };
 
   const handleFilterRulesChange = () => {
@@ -145,29 +152,6 @@ export default function FilterPanel({
   };
 
   const updateUIForLHSRule = ({ rule = {} }) => {
-    function updateUIForValue(rule) {
-      if (
-        rule.$el.find('.rule-filter-container input[name=value]').length === 0
-      ) {
-        rule.$el
-          .find('[name$=_filter]')
-          .after('<input name="value" class="io-filter-type form-control">');
-
-        const ruleId = getFilterRuleId(rule);
-        const valueField = rule.$el.find(
-          '.rule-filter-container input[name=value]'
-        );
-
-        if (rulesState[ruleId].data && rulesState[ruleId].data.lhs) {
-          valueField.val(rulesState[ruleId].data.lhs.value).trigger('change');
-        }
-
-        valueField
-          .unbind('change')
-          .on('change', () => handleFilterRulesChange());
-      }
-    }
-
     function updateUIForExpression(rule) {
       if (
         rule.$el.find('.rule-filter-container textarea[name=expression]')
@@ -195,50 +179,24 @@ export default function FilterPanel({
       }
     }
 
-    if (!readOnly) {
-      if (
-        rule.$el.find('.rule-filter-container img.settings-icon').length === 0
-      ) {
-        rule.$el
-          .find('[name$=_filter]')
-          .after(
-            '<img style="display:none;" class="settings-icon" src="https://d142hkd03ds8ug.cloudfront.net/images/icons/icon/gear.png">'
-          );
-        rule.$el
-          .find('.rule-filter-container img.settings-icon')
-          .unbind('click')
-          .on('click', () => {
-            showOperandSettings({ rule });
-          });
-      }
-
-      rule.$el
-        .find('.rule-filter-container')
-        .unbind('mouseover')
-        .on('mouseover', () => {
-          rule.$el.find('.rule-filter-container img.settings-icon').show();
-        });
-      rule.$el
-        .find('.rule-filter-container')
-        .unbind('mouseout')
-        .on('mouseout', () => {
-          rule.$el.find('.rule-filter-container img.settings-icon').hide();
-        });
-    }
-
     rule.$el.find('.rule-filter-container .io-filter-type').remove();
 
     if (rule.filter) {
       const ruleId = getFilterRuleId(rule);
-      const filterType = rulesState[ruleId].data.lhs.type;
+      let filterType = rulesState[ruleId].data.lhs.type;
 
-      if (filterType === 'value') {
-        rule.$el.find('[name$=_filter]').hide();
-        updateUIForValue(rule);
-      } else if (filterType === 'field') {
+      if (
+        filterType === 'field' &&
+        ['formuladate', 'formulanumeric', 'formulatext'].indexOf(
+          rule.filter.id
+        ) > -1
+      ) {
+        filterType = 'expression';
+      }
+
+      if (filterType === 'field') {
         rule.$el.find('[name$=_filter]').show();
       } else if (filterType === 'expression') {
-        rule.$el.find('[name$=_filter]').hide();
         updateUIForExpression(rule);
       }
     }
@@ -253,7 +211,7 @@ export default function FilterPanel({
           '<select name="field" class="io-filter-type form-control">',
         ];
 
-        filtersMetadata.forEach(v => {
+        data.forEach(v => {
           selectHtml.push(`<option value="${v.id}">${v.name || v.id}</option>`);
         });
         selectHtml.push('</select>');
@@ -336,107 +294,6 @@ export default function FilterPanel({
       isValid: true,
       error: '',
     };
-    let op;
-
-    if (r.lhs.type === 'expression') {
-      try {
-        JSON.parse(r.lhs.expression);
-
-        if (JSON.parse(r.lhs.expression).length < 2) {
-          toReturn.isValid = false;
-          toReturn.error = 'Please enter a valid expression.';
-        }
-      } catch (ex) {
-        toReturn.isValid = false;
-        toReturn.error = 'Expression should be a valid JSON.';
-      }
-
-      if (toReturn.isValid) {
-        [op] = JSON.parse(r.lhs.expression);
-
-        if (
-          [
-            'add',
-            'subtract',
-            'divide',
-            'multiply',
-            'modulo',
-            'ceiling',
-            'floor',
-            'number',
-          ].includes(op)
-        ) {
-          r.lhs.dataType = 'number';
-        } else if (op === 'epochtime') {
-          r.lhs.dataType = 'epochtime';
-        } else if (op === 'boolean') {
-          r.lhs.dataType = 'boolean';
-        } else {
-          r.lhs.dataType = 'string';
-        }
-      }
-    }
-
-    if (!toReturn.isValid) {
-      return toReturn;
-    }
-
-    if (r.rhs.type === 'expression') {
-      try {
-        JSON.parse(r.rhs.expression);
-
-        if (JSON.parse(r.rhs.expression).length < 2) {
-          toReturn.isValid = false;
-          toReturn.error = 'Please enter a valid expression.';
-        }
-      } catch (ex) {
-        toReturn.isValid = false;
-        toReturn.error = 'Expression should be a valid JSON.';
-      }
-
-      if (toReturn.isValid) {
-        [op] = JSON.parse(r.rhs.expression);
-
-        if (
-          [
-            'add',
-            'subtract',
-            'divide',
-            'multiply',
-            'modulo',
-            'ceiling',
-            'floor',
-            'number',
-          ].includes(op)
-        ) {
-          r.rhs.dataType = 'number';
-        } else if (op === 'epochtime') {
-          r.rhs.dataType = 'epochtime';
-        } else if (op === 'boolean') {
-          r.rhs.dataType = 'boolean';
-        } else {
-          r.rhs.dataType = 'string';
-        }
-      }
-    }
-
-    if (!toReturn.isValid) {
-      return toReturn;
-    }
-
-    /*
-      if (r.lhs.dataType === 'epochtime' || r.rhs.dataType === 'epochtime') {
-        r.lhs.dataType = r.rhs.dataType = 'epochtime'
-      }
-      */
-    if (r.lhs.dataType && r.rhs.dataType && r.lhs.dataType !== r.rhs.dataType) {
-      toReturn.isValid = false;
-      toReturn.error = 'Data types of both the operands should match.';
-    }
-
-    if (!toReturn.isValid) {
-      return toReturn;
-    }
 
     if (r.lhs.type && !r.lhs[r.lhs.type]) {
       toReturn.isValid = false;
@@ -554,36 +411,14 @@ export default function FilterPanel({
             .find(`.rule-filter-container [name=${rule.id}_filter]`)
             .val();
 
-          if (r.lhs.type !== 'field') {
+          if (
+            ['formuladate', 'formulanumeric', 'formulatext'].indexOf(lhsValue) >
+            -1
+          ) {
+            r.lhs.type = 'expression';
             lhsValue = rule.$el
-              .find(`.rule-filter-container [name=${r.lhs.type}]`)
+              .find('.rule-filter-container [name=expression]')
               .val();
-
-            if (!lhsValue) {
-              lhsValue = r.lhs[r.lhs.type];
-            }
-
-            if (r.lhs.type === 'expression') {
-              try {
-                lhsValue = JSON.parse(lhsValue);
-              } catch (ex) {
-                // do nothing
-              }
-            }
-          }
-
-          if (r.lhs.type === 'field') {
-            if (
-              lhsValue &&
-              (lhsValue === '_CONTEXT.lastExportDateTime' ||
-                lhsValue === '_CONTEXT.currentExportDateTime')
-            ) {
-              r.lhs.dataType = 'epochtime';
-            }
-          }
-
-          if (!r.lhs.dataType) {
-            r.lhs.dataType = 'string';
           }
 
           let rhsValue = rule.$el
@@ -598,20 +433,6 @@ export default function FilterPanel({
 
           if (!rhsValue) {
             rhsValue = r.rhs[r.rhs.type];
-          }
-
-          if (r.rhs.type === 'field') {
-            if (
-              rhsValue &&
-              (rhsValue === '_CONTEXT.lastExportDateTime' ||
-                rhsValue === '_CONTEXT.currentExportDateTime')
-            ) {
-              r.rhs.dataType = 'epochtime';
-            }
-          }
-
-          if (!r.rhs.dataType) {
-            r.rhs.dataType = 'string';
           }
 
           r.lhs[r.lhs.type || 'field'] = lhsValue;
@@ -634,20 +455,6 @@ export default function FilterPanel({
                 .val();
             }
 
-            if (r.lhs.type === 'field') {
-              if (
-                lhsValue &&
-                (lhsValue === '_CONTEXT.lastExportDateTime' ||
-                  lhsValue === '_CONTEXT.currentExportDateTime')
-              ) {
-                r.lhs.dataType = 'epochtime';
-              }
-            }
-
-            if (!r.lhs.dataType) {
-              r.lhs.dataType = 'string';
-            }
-
             let rhsValue = rule.$el
               .find(`.rule-value-container [name=${rule.id}_value_0]`)
               .val();
@@ -658,23 +465,10 @@ export default function FilterPanel({
                 .val();
             }
 
-            if (r.rhs.type === 'field') {
-              if (
-                rhsValue &&
-                (rhsValue === '_CONTEXT.lastExportDateTime' ||
-                  rhsValue === '_CONTEXT.currentExportDateTime')
-              ) {
-                r.rhs.dataType = 'epochtime';
-              }
-            }
-
-            if (!r.rhs.dataType) {
-              r.rhs.dataType = 'string';
-            }
-
             r.lhs[r.lhs.type || 'field'] = lhsValue;
             r.rhs[r.rhs.type || 'value'] = rhsValue;
             rule.data = r;
+
             const vr = validateRule(rule);
 
             if (!vr.isValid) {
@@ -716,7 +510,7 @@ export default function FilterPanel({
       qbContainer.queryBuilder({
         ...config,
         filters: filtersConfig,
-        rules,
+        rules: [],
       });
       qbContainer
         .unbind('rulesChanged.queryBuilder')
@@ -761,18 +555,18 @@ export default function FilterPanel({
   return (
     <div className={classes.container}>
       <div ref={qbuilder} />
-      {/* {showOperandSettingsFor && (
+      {showOperandSettingsFor && (
         <OperandSettingsDialog
           ruleData={
             rulesState[getFilterRuleId(showOperandSettingsFor.rule)].data[
               showOperandSettingsFor.rhs ? 'rhs' : 'lhs'
             ]
           }
-          disabled={disabled}
+          // disabled={disabled}
           onClose={handleCloseOperandSettings}
           onSubmit={handleSubmitOperandSettings}
         />
-      )} */}
+      )}
     </div>
   );
 }

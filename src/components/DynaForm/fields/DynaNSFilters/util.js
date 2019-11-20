@@ -1,32 +1,14 @@
 /* eslint-disable no-param-reassign */
-import {
-  invert,
-  isBoolean,
-  isNumber,
-  isString,
-  isArray,
-  tail,
-  filter,
-} from 'lodash';
+import { invert, isString, isArray, tail, filter } from 'lodash';
 
 const operatorsMap = {
   jQueryToIOFilters: {
-    is_empty: 'empty',
-    is_not_empty: 'notempty',
-    equal: 'equals',
-    not_equal: 'notequals',
-
-    greater: 'greaterthan',
-    greater_or_equal: 'greaterthanequals',
-    less: 'lessthan',
-    less_or_equal: 'lessthanequals',
-
-    begins_with: 'startswith',
-    ends_with: 'endswith',
-    contains: 'contains',
-    not_contains: 'doesnotcontain',
-
-    matches: 'matches',
+    is: 'is',
+    equalto: 'equalto',
+    on: 'on',
+    anyof: 'anyof',
+    isempty: 'isempty',
+    isnotempty: 'isnotempty',
   },
 };
 
@@ -36,14 +18,149 @@ export function getFilterRuleId(rule) {
   return rule.id.split('_rule_')[1];
 }
 
-export function convertIOFilterExpression(filterExpression = []) {
-  const dataTypes = ['boolean', 'epochtime', 'number', 'string'];
-  const transformations = ['ceiling', 'floor', 'lowercase', 'uppercase'];
+export function isComplexNSExpression(exp) {
+  let toReturn = false;
+
+  if (isArray(exp)) {
+    exp.forEach((e, i) => {
+      if (!toReturn) {
+        if (isArray(e)) {
+          toReturn = isComplexNSExpression(e);
+        } else if (i > 0 && ['AND', 'OR'].includes(e)) {
+          toReturn = true;
+        }
+      }
+    });
+  }
+
+  return toReturn;
+}
+
+export function updateNSExpressionForNOTs(exp) {
+  for (let i = 0; i < exp.length; i += 1) {
+    if (exp[i] === 'NOT') {
+      exp[i] = isArray(exp[i + 1][0])
+        ? ['NOT', updateNSExpressionForNOTs(exp[i + 1])]
+        : ['NOT', exp[i + 1]];
+      exp.splice(i + 1, 1);
+    } else if (isArray(exp[i])) {
+      exp[i] = updateNSExpressionForNOTs(exp[i]);
+    }
+  }
+
+  return exp;
+}
+
+export function updateNSExpressionForConditions(exp) {
+  let toReturn = [];
+  let prevCondition;
+
+  if (isArray(exp) && exp.length === 1) {
+    return updateNSExpressionForConditions(exp[0]);
+  }
+
+  if (exp[0] === 'NOT') {
+    if (isArray(exp[1]) && isArray(exp[1][0])) {
+      toReturn.push('NOT');
+      toReturn.push(updateNSExpressionForConditions(exp[1]));
+    }
+  } else {
+    for (let i = 0; i < exp.length; i += 1) {
+      if (exp[i] === 'AND' || exp[i] === 'OR') {
+        if (prevCondition !== exp[i]) {
+          prevCondition = exp[i];
+          toReturn.push(exp[i]);
+        }
+
+        if (toReturn.length === 1) {
+          if (isComplexNSExpression(exp[i - 1])) {
+            toReturn.push(updateNSExpressionForConditions(exp[i - 1]));
+          } else {
+            toReturn.push(exp[i - 1]);
+          }
+        }
+
+        if (isComplexNSExpression(exp[i + 1])) {
+          toReturn.push(updateNSExpressionForConditions(exp[i + 1]));
+        } else {
+          toReturn.push(exp[i + 1]);
+        }
+
+        i += 1;
+      }
+    }
+  }
+
+  if (toReturn.length === 0) {
+    toReturn = ['AND', exp];
+  }
+
+  return toReturn;
+}
+
+export function convertNSExpressionToQueryBuilderRules(exp, exportData) {
+  function parseFilter(exp) {
+    const toReturn = {};
+    let field;
+    let filteredFields;
+
+    [toReturn.id] = exp;
+    [, toReturn.operator] = exp;
+    toReturn.data = {
+      lhs: {
+        type: 'field',
+        field: exp[0],
+      },
+    };
+
+    if (
+      exp[0].indexOf('formuladate:') === 0 ||
+      exp[0].indexOf('formulanumeric:') === 0 ||
+      exp[0].indexOf('formulatext:') === 0
+    ) {
+      toReturn.data.lhs.type = 'expression';
+      [toReturn.id] = exp[0].split(':');
+      toReturn.data.lhs.field = toReturn.id;
+      toReturn.data.lhs.expression = exp[0].replace(`${toReturn.id}:`, '');
+    }
+
+    toReturn.data.rhs = {};
+
+    if (exp[2]) {
+      if (exp[2].indexOf('{{') > -1) {
+        field = exp[2]
+          .replace('{{{', '')
+          .replace('}}}', '')
+          .replace('{{', '')
+          .replace('}}', '');
+
+        filteredFields = exportData.filter(f => f.id === field);
+
+        if (filteredFields.length > 0) {
+          toReturn.data.rhs = {
+            type: 'field',
+            field,
+          };
+        } else {
+          toReturn.data.rhs = {
+            type: 'expression',
+            expression: exp[2],
+          };
+        }
+      } else {
+        toReturn.data.rhs = {
+          type: 'value',
+          value: exp[2],
+        };
+      }
+    }
+
+    return toReturn;
+  }
 
   function iterate(exp) {
-    const toReturn = {};
+    let toReturn = {};
     let oneRule = {};
-    let temp = {};
     let i = 0;
 
     if (!exp.length) {
@@ -71,75 +188,15 @@ export function convertIOFilterExpression(filterExpression = []) {
         }
 
         delete toReturn.rulesTemp;
-      } else if (operatorsMap.ioFiltersToJQuery[exp[0].toLowerCase()]) {
-        toReturn.operator =
-          operatorsMap.ioFiltersToJQuery[exp[0].toLowerCase()];
-        toReturn.lhs = {};
-        toReturn.rhs = {};
-
-        for (i = 1; i < exp.length; i += 1) {
-          if (i === 1) {
-            temp = toReturn.lhs;
-          } else {
-            temp = toReturn.rhs;
-          }
-
-          if (isArray(exp[i])) {
-            if (
-              !dataTypes.includes(exp[i][0].toLowerCase()) &&
-              !transformations.includes(exp[i][0].toLowerCase())
-            ) {
-              temp.type = 'expression';
-              temp.expression = exp[i];
-            } else {
-              let dataTypeFound = false;
-              let tempExp = exp[i];
-
-              do {
-                if (transformations.includes(tempExp[0].toLowerCase())) {
-                  if (!temp.transformations) {
-                    temp.transformations = [];
-                  }
-
-                  temp.transformations.push(tempExp[0].toLowerCase());
-                  [, tempExp] = tempExp;
-                } else {
-                  dataTypeFound = true;
-                }
-              } while (!dataTypeFound);
-
-              temp.dataType = tempExp[0].toLowerCase();
-              temp.type = 'field';
-              [, [, temp.field]] = tempExp;
-
-              if (tempExp[1][0] === 'context') {
-                temp.field = ['_CONTEXT', temp.field].join('.');
-              }
-
-              if (i === 1) {
-                toReturn.id = temp.field;
-              }
-            }
-          } else {
-            temp.type = 'value';
-            temp.value = exp[i];
-
-            if (isBoolean(exp[i])) {
-              temp.dataType = 'boolean';
-            } else if (isNumber(exp[i])) {
-              temp.dataType = 'number';
-            } else if (isString(exp[i])) {
-              temp.dataType = 'string';
-            }
-          }
-        }
+      } else {
+        toReturn = parseFilter(exp);
       }
     }
 
     return toReturn;
   }
 
-  let tr = iterate(filterExpression);
+  let tr = iterate(exp);
 
   if (!tr.condition) {
     tr = {
@@ -153,6 +210,15 @@ export function convertIOFilterExpression(filterExpression = []) {
   }
 
   return tr;
+}
+
+export function convertIOFilterExpression(filterExpression = []) {
+  let e = updateNSExpressionForNOTs(filterExpression);
+
+  e = updateNSExpressionForConditions(e);
+  e = convertNSExpressionToQueryBuilderRules(e);
+
+  return e;
 }
 
 export function getFilterList(jsonPaths, rules) {
@@ -198,10 +264,7 @@ export function generateRulesState(rules) {
       } else {
         ruleIndex += 1;
         rulesState[ruleIndex] = {
-          data: {
-            lhs: rr.lhs,
-            rhs: rr.rhs,
-          },
+          data: rr.data,
         };
       }
     });
@@ -212,125 +275,55 @@ export function generateRulesState(rules) {
   return rulesState;
 }
 
-export function generateIOFilterExpression(rules) {
-  function iterate(r) {
-    let exp = [];
-    let lhs;
-    let rhs;
+export function generateIOExpression(exp) {
+  const toReturn = [];
+  let lhs;
+  let rhs;
+  let filter;
 
-    if (r.condition) {
-      exp.push(r.condition.toLowerCase());
+  for (let i = 0; i < exp.rules.length; i += 1) {
+    if (exp.rules[i].not) {
+      toReturn.push('NOT');
     }
 
-    r.rules.forEach(rr => {
-      if (rr.condition) {
-        exp.push(iterate(rr));
+    if (exp.rules[i].rules && exp.rules[i].rules.length > 0) {
+      toReturn.push(generateIOExpression(exp.rules[i]));
+    } else {
+      if (
+        ['formuladate', 'formulanumeric', 'formulatext'].indexOf(
+          exp.rules[i].id
+        ) > -1
+      ) {
+        lhs = [exp.rules[i].id, exp.rules[i].data.lhs.expression].join(':');
       } else {
-        lhs = undefined;
-        rhs = undefined;
+        lhs = exp.rules[i].id;
+      }
 
-        if (rr.data.lhs.type === 'field') {
-          lhs = [rr.data.lhs.dataType, ['extract', rr.data.lhs.field]];
+      filter = [lhs, exp.rules[i].operator];
 
-          if (rr.data.lhs.field.indexOf('_CONTEXT.') === 0) {
-            lhs[1] = ['context', rr.data.lhs.field.replace('_CONTEXT.', '')];
-          }
+      if (['isempty', 'isnotempty'].indexOf(exp.rules[i].operator) > -1) {
+        filter.push('');
+      } else if (exp.rules[i].data && exp.rules[i].data.rhs) {
+        rhs = exp.rules[i].data.rhs[exp.rules[i].data.rhs.type || 'field'];
 
-          if (rr.data.lhs.transformations) {
-            JSON.parse(JSON.stringify(rr.data.lhs.transformations)).forEach(
-              t => {
-                lhs = [t, lhs];
-              }
-            );
-          }
-        } else if (rr.data.lhs.type === 'value') {
-          lhs = rr.data.lhs.value;
-
-          switch (rr.data.lhs.dataType) {
-            case 'number':
-              lhs = parseInt(rr.data.lhs.value, 10);
-              break;
-            case 'boolean':
-              lhs =
-                lhs &&
-                lhs.toString() &&
-                lhs.toString().toLowerCase() === 'true';
-              break;
-            default:
-          }
-        } else if (rr.data.lhs.type === 'expression') {
-          try {
-            lhs = JSON.parse(rr.data.lhs.expression);
-          } catch (ex) {
-            // error in parsing expression
-          }
+        if (exp.rules[i].data.rhs.type === 'field') {
+          rhs = `{{{${rhs}}}}`;
         }
 
-        if (rr.value === null) {
-          exp.push([operatorsMap.jQueryToIOFilters[rr.operator], lhs]);
-        } else {
-          if (rr.data.rhs.type === 'field') {
-            rhs = [rr.data.rhs.dataType, ['extract', rr.data.rhs.field]];
-
-            if (rr.data.rhs.field.indexOf('_CONTEXT.') === 0) {
-              rhs[1] = ['context', rr.data.rhs.field.replace('_CONTEXT.', '')];
-            }
-
-            if (rr.data.rhs.transformations) {
-              JSON.parse(JSON.stringify(rr.data.rhs.transformations)).forEach(
-                t => {
-                  rhs = [t, rhs];
-                }
-              );
-            }
-          } else if (rr.data.rhs.type === 'value') {
-            rhs = rr.data.rhs.value;
-
-            switch (rr.data.rhs.dataType) {
-              case 'number':
-                rhs = parseInt(rr.data.rhs.value, 10);
-                break;
-              case 'boolean':
-                rhs =
-                  rhs &&
-                  rhs.toString() &&
-                  rhs.toString().toLowerCase() === 'true';
-                break;
-              default:
-            }
-          } else if (rr.data.rhs.type === 'expression') {
-            try {
-              rhs = JSON.parse(rr.data.rhs.expression);
-            } catch (ex) {
-              // error in parsing expression
-            }
-          }
-
-          if (
-            rr.data.lhs.dataType === 'epochtime' ||
-            rr.data.rhs.dataType === 'epochtime'
-          ) {
-            rr.data.lhs.dataType = 'epochtime';
-            rr.data.rhs.dataType = 'epochtime';
-          }
-
-          exp.push([operatorsMap.jQueryToIOFilters[rr.operator], lhs, rhs]);
+        if (rhs) {
+          filter.push(rhs);
         }
       }
-    });
 
-    if (r.condition && r.rules && r.rules.length <= 1) {
-      [, exp] = exp;
+      toReturn.push(filter);
     }
 
-    if (r.not && exp) {
-      exp = ['not', exp];
+    if (i < exp.rules.length - 1) {
+      toReturn.push(exp.condition || 'AND');
     }
-
-    return exp;
   }
 
-  return iterate(rules);
+  return toReturn.length === 1 ? toReturn[0] : toReturn;
 }
 
 export function validateFilterRule(rule) {

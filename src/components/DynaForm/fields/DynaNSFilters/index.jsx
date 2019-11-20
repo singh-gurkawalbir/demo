@@ -6,8 +6,8 @@ import FilterPanel from './FilterPanel';
 
 export default function DynaNSFilters(props) {
   const dispatch = useDispatch();
-  const { connectionId, options = {} } = props;
-  const data = useSelector(
+  const { connectionId, extractFields, options = {} } = props;
+  const filters = useSelector(
     state =>
       selectors.metadataOptionsAndResources({
         state,
@@ -18,7 +18,7 @@ export default function DynaNSFilters(props) {
   );
 
   useEffect(() => {
-    if (!data && !options.disableFetch) {
+    if (!filters && !options.disableFetch) {
       dispatch(actions.metadata.request(connectionId, options.commMetaPath));
     }
   }, [
@@ -26,18 +26,18 @@ export default function DynaNSFilters(props) {
     options.disableFetch,
     options.commMetaPath,
     connectionId,
-    data,
+    filters,
   ]);
 
-  if (!data) {
+  if (!filters) {
     return null;
   }
 
   return (
     <Fragment>
-      {/* Testing {JSON.stringify(props)} {JSON.stringify(data)} */}
+      {`props ${JSON.stringify(props)}`}
       {`Rendered @ ${new Date().toISOString()}`}
-      <FilterPanel data={data} />
+      <FilterPanel filters={filters} data={extractFields} />
     </Fragment>
   );
 }
