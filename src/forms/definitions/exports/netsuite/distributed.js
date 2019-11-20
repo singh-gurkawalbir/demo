@@ -34,6 +34,12 @@ export default {
       visibleWhen: [{ field: 'netsuite.distributed.recordType', isNot: [''] }],
     },
     type: { fieldId: 'type', visible: false, defaultValue: 'distributed' },
+    dataURITemplate: {
+      fieldId: 'dataURITemplate',
+    },
+    'netsuite.distributed.forceReload': {
+      fieldId: 'netsuite.distributed.forceReload',
+    },
   },
   layout: {
     fields: [
@@ -44,6 +50,14 @@ export default {
       'netsuite.distributed.executionType',
       'netsuite.distributed.sublists',
       'type',
+    ],
+    type: 'collapse',
+    containers: [
+      {
+        collapsed: true,
+        label: 'Advanced',
+        fields: ['dataURITemplate', 'netsuite.distributed.forceReload'],
+      },
     ],
   },
 };

@@ -19,6 +19,7 @@ export default {
   },
   'salesforce.executionType': {
     type: 'radiogroup',
+    required: true,
     label: 'Execution Type',
     defaultValue: r => {
       const isNew = isNewId(r._id);
