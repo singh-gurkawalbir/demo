@@ -48,6 +48,7 @@ import DynaRefreshableIntegrationAppSetting from './DynaRefreshableSelect/Refres
 import DynaDate from './dateTime/DynaDate';
 import DynaSQLQueryBuilder from './DynaSQLQueryBuilder';
 import DynaRelativeURIWithLookup from './DynaRelativeURIWithLookup';
+import DynaNSFilters from './DynaNSFilters';
 
 export default {
   mapping: DynaImportMapping,
@@ -103,4 +104,5 @@ export default {
   date: DynaDate,
   sqlquerybuilder: DynaSQLQueryBuilder,
   relativeuriwithlookup: DynaRelativeURIWithLookup,
+  netsuitefilters: DynaNSFilters,
 };
