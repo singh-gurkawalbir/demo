@@ -75,6 +75,7 @@ export default {
       triggerable: d.triggerable,
       picklistValues: d.picklistValues,
       type: d.type,
+      updateable: d.updateable,
     })),
   'salesforce-soqlQuery': data => data,
   default: data =>
