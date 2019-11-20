@@ -81,7 +81,7 @@ function GenerateUrl(props) {
               data-test="copyToClipboard"
               title="Copy to clipboard"
               size="small">
-              copy to clipboard
+              Copy URL
             </Button>
           </CopyToClipboard>
         )}

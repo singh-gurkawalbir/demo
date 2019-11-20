@@ -1,10 +1,10 @@
 import DynaText from '../DynaText';
 
 export default function DynaTextSetFieldValues(props) {
-  const { onFieldChange, setFieldValue = '', setFieldIds = [] } = props;
+  const { onFieldChange, setFieldIds = [] } = props;
   const setFormFields = () => {
     setFieldIds.forEach(fieldId => {
-      onFieldChange(fieldId, setFieldValue);
+      onFieldChange(fieldId, '');
     });
   };
 

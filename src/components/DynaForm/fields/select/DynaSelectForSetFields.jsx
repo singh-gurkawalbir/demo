@@ -1,10 +1,10 @@
 import DynaSelect from '../DynaSelect';
 
 export default function DynaSelectSetFieldValues(props) {
-  const { onFieldChange, setFieldValue = '', setFieldIds = [] } = props;
+  const { onFieldChange, setFieldIds = [] } = props;
   const setFormFields = () => {
     setFieldIds.forEach(fieldId => {
-      onFieldChange(fieldId, setFieldValue);
+      onFieldChange(fieldId, '');
     });
   };
 

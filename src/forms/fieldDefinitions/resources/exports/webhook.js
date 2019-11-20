@@ -3,7 +3,6 @@ export default {
     type: 'selectforsetfields',
     label: 'Provider',
     required: true,
-    setFieldValue: '',
     setFieldIds: ['webhook.url'],
     options: [
       {
@@ -42,7 +41,6 @@ export default {
     type: 'textforsetfields',
     label: 'Key (Secret)',
     inputType: 'password',
-    setFieldValue: '',
     setFieldIds: ['webhook.url'],
     visibleWhen: [
       {
@@ -68,7 +66,6 @@ export default {
     type: 'selectforsetfields',
     label: 'Verification Type',
     required: true,
-    setFieldValue: '',
     setFieldIds: ['webhook.url'],
     options: [
       {
@@ -90,7 +87,6 @@ export default {
   'webhook.algorithm': {
     type: 'selectforsetfields',
     label: 'Algorithm',
-    setFieldValue: '',
     setFieldIds: ['webhook.url'],
     options: [
       {
@@ -111,7 +107,6 @@ export default {
     type: 'selectforsetfields',
     label: 'Header (Containing HMAC)',
     required: true,
-    setFieldValue: '',
     setFieldIds: ['webhook.url'],
     options: [
       {
@@ -132,7 +127,6 @@ export default {
     type: 'selectforsetfields',
     label: 'Encoding',
     required: true,
-    setFieldValue: '',
     setFieldIds: ['webhook.url'],
     options: [
       {
@@ -194,7 +188,6 @@ export default {
     type: 'textforsetfields',
     label: 'Path',
     required: true,
-    setFieldValue: '',
     setFieldIds: ['webhook.url'],
     visibleWhenAll: [
       {
@@ -208,10 +201,9 @@ export default {
     ],
   },
   'webhook.token': {
-    type: 'generatetoken',
+    type: 'webhooktokengenerator',
     label: 'Custom URL Token',
     buttonLabel: 'Generate new token',
-    setFieldValue: '',
     setFieldIds: ['webhook.url'],
     visibleWhen: [
       {

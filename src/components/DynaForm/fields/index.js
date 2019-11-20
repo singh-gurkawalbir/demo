@@ -44,7 +44,7 @@ import DynaImportMapping from './DynaImportMapping';
 import DynaFieldExpressionSelect from './DynaFieldExpressionSelect';
 import DynaAutoSuggest from './DynaAutoSuggest';
 import DynaGenerateUrl from './DynaGenerateUrl';
-import DynaGenerateToken from './DynaGenerateToken';
+import DynaWebhookTokenGenerator from './DynaWebhookTokenGenerator';
 import DynaSelectForSetFields from './select/DynaSelectForSetFields';
 import DynaTextForSetFields from './text/DynaTextForSetFields';
 import DynaSoqlQuery from './DynaSoqlQuery';
@@ -107,7 +107,7 @@ export default {
   fieldexpressionselect: DynaFieldExpressionSelect,
   autosuggest: DynaAutoSuggest,
   generateurl: DynaGenerateUrl,
-  generatetoken: DynaGenerateToken,
+  webhooktokengenerator: DynaWebhookTokenGenerator,
   selectforsetfields: DynaSelectForSetFields,
   textforsetfields: DynaTextForSetFields,
   toggle: DynaToggle,

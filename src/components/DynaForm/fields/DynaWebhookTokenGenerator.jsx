@@ -13,19 +13,23 @@ import DynaTextForSetFields from './text/DynaTextForSetFields';
 import { getWebhookUrl } from '../../../utils/resource';
 
 const useStyles = makeStyles(() => ({
-  children: {
-    flex: 1,
+  root: {
+    display: 'flex',
+    flexDirection: 'row',
+  },
+  textField: {
+    flexBasis: '70%',
+    '& div': { width: '100%' },
   },
 }));
 
-function GenerateToken(props) {
+function DynaWebhookTokenGenerator(props) {
   const {
     onFieldChange,
     resourceId,
     id,
     value,
     buttonLabel,
-    setFieldValue = '',
     setFieldIds = [],
     formContext,
     name,
@@ -45,7 +49,7 @@ function GenerateToken(props) {
     setToken(tokenValue);
     onFieldChange(id, tokenValue);
     setFieldIds.forEach(fieldId => {
-      onFieldChange(fieldId, setFieldValue);
+      onFieldChange(fieldId, '');
     });
     const formValuesCopy = deepClone(formValues);
 
@@ -88,15 +92,13 @@ function GenerateToken(props) {
   }, [finalResourceId, formValues, id, onFieldChange, resourceId, url]);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'row' }}>
-      <div style={{ flexBasis: '70%', '& div': { width: '100%' } }}>
+    <div className={classes.root}>
+      <div className={classes.textField}>
         <DynaTextForSetFields
           {...props}
           required
-          className={classes.children}
           style={{ width: '100%' }}
           value={value}
-          setFieldValue={setFieldValue}
           setFieldIds={setFieldIds}
         />
       </div>
@@ -114,7 +116,7 @@ function GenerateToken(props) {
               data-test="copyToClipboard"
               title="Copy to clipboard"
               size="small">
-              copy token
+              Copy Token
             </Button>
           </CopyToClipboard>
         ) : (
@@ -125,10 +127,10 @@ function GenerateToken(props) {
   );
 }
 
-const DynaGenerateTokenFormContext = props => (
+const DynaWebhookTokenGeneratorFormContext = props => (
   <FormContext.Consumer {...props}>
-    {form => <GenerateToken {...props} formContext={form} />}
+    {form => <DynaWebhookTokenGenerator {...props} formContext={form} />}
   </FormContext.Consumer>
 );
 
-export default DynaGenerateTokenFormContext;
+export default DynaWebhookTokenGeneratorFormContext;
