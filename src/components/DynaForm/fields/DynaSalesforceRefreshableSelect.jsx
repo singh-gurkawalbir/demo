@@ -6,17 +6,11 @@ import RefreshGenericResource from './DynaRefreshableSelect/RefreshGenericResour
 import { salesforceExportSelectOptions } from '../../../utils/resource';
 
 function DynaSalesforceSelectOptionsGenerator(props) {
-  const {
-    connectionId,
-    metadataType,
-    filterKey,
-    formContext,
-    fieldName,
-  } = props;
+  const { connectionId, filterKey, formContext, fieldName } = props;
   const { value: formValues } = formContext;
   const soqlQueryField = formValues['/salesforce/soql'];
   const entityName = (soqlQueryField && soqlQueryField.entityName) || '';
-  const commMetaPath = `salesforce/metadata/connections/${connectionId}/${metadataType}/${entityName}`;
+  const commMetaPath = `salesforce/metadata/connections/${connectionId}/sObjectTypes/${entityName}`;
   const dispatch = useDispatch();
   const { data = [], status, errorMessage } = useSelector(state =>
     selectors.metadataOptionsAndResources({
@@ -27,11 +21,8 @@ function DynaSalesforceSelectOptionsGenerator(props) {
     })
   );
   const options = salesforceExportSelectOptions(data, fieldName);
-  const handleRefreshResource = () => {
-    if (metadataType) {
-      dispatch(actions.metadata.refresh(connectionId, commMetaPath));
-    }
-  };
+  const handleRefreshResource = () =>
+    dispatch(actions.metadata.refresh(connectionId, commMetaPath));
 
   return (
     <RefreshGenericResource

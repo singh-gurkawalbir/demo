@@ -81,6 +81,8 @@ export default (state = {}, action) => {
     connectionIds,
     integrationId,
     deregisteredId,
+    iClients,
+    connectionId,
   } = action;
 
   // Some resources are managed by custom reducers.
@@ -105,6 +107,7 @@ export default (state = {}, action) => {
   }
 
   let resourceIndex;
+  const newState = { ...state };
 
   switch (type) {
     case actionTypes.RESOURCE.RECEIVED_COLLECTION: {
@@ -246,6 +249,12 @@ export default (state = {}, action) => {
       }
 
       return state;
+    case actionTypes.CONNECTION.UPDATE_ICLIENTS:
+      resourceIndex = state.connections.findIndex(r => r._id === connectionId);
+      newState.connections[resourceIndex].iClients = iClients;
+
+      return newState;
+
     case actionTypes.RESOURCE.CLEAR_COLLECTION:
       return produce(state, draft => {
         draft[resourceType] = [];
