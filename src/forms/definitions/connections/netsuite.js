@@ -78,6 +78,9 @@ export default {
       fieldId: 'netsuite._iClientId',
       visibleWhen: [{ field: 'netsuite.authType', is: ['token'] }],
       filter: { provider: 'netsuite' },
+      type: 'dynaiclient',
+      connectionId: r => r && r._id,
+      connectorId: r => r && r._connectorId,
     },
     'netsuite.account': {
       fieldId: 'netsuite.account',

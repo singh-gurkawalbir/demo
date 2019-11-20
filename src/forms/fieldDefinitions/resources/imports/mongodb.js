@@ -54,6 +54,13 @@ export default {
       },
     ],
   },
+  'mongodb.query': {
+    id: 'mongodb.query',
+    type: 'sqlquerybuilder',
+    arrayIndex: 0,
+    label: 'Launch Query Builder',
+    refreshOptionsOnChangesTo: ['mongodb.lookups', 'mongodb.method'],
+  },
   'mongodb.ignoreLookupFilters': {
     type: 'textarea',
     label: 'Ignore Lookup Filters',

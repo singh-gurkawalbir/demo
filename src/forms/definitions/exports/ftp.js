@@ -99,11 +99,13 @@ export default {
       ],
     },
     fileAdvancedSettings: { formId: 'fileAdvancedSettings' },
+    exportOneToMany: { formId: 'exportOneToMany' },
   },
   layout: {
     fields: [
       'common',
       'outputMode',
+      'exportOneToMany',
       'exportData',
       'ftp.directoryPath',
       'file.output',

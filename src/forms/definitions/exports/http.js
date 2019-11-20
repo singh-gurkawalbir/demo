@@ -6,8 +6,40 @@ export default {
 
     if (retValues['/type'] === 'all') {
       retValues['/type'] = undefined;
+      retValues['/test'] = undefined;
+      retValues['/delta'] = undefined;
+      retValues['/once'] = undefined;
+      delete retValues['/test/limit'];
+      delete retValues['/delta/dateFormat'];
+      delete retValues['/delta/lagOffset'];
+      delete retValues['/once/booleanField'];
+      delete retValues['/http/once/relativeURI'];
+      delete retValues['/http/once/body'];
+      delete retValues['/http/once/method'];
     } else if (retValues['/type'] === 'test') {
       retValues['/test/limit'] = 1;
+      retValues['/delta'] = undefined;
+      retValues['/once'] = undefined;
+      delete retValues['/delta/dateFormat'];
+      delete retValues['/delta/lagOffset'];
+      delete retValues['/once/booleanField'];
+      delete retValues['/http/once/relativeURI'];
+      delete retValues['/http/once/body'];
+      delete retValues['/http/once/method'];
+    } else if (retValues['/type'] === 'delta') {
+      retValues['/once'] = undefined;
+      retValues['/test'] = undefined;
+      delete retValues['/test/limit'];
+      delete retValues['/once/booleanField'];
+      delete retValues['/http/once/relativeURI'];
+      delete retValues['/http/once/body'];
+      delete retValues['/http/once/method'];
+    } else if (retValues['/type'] === 'once') {
+      retValues['/delta'] = undefined;
+      retValues['/test'] = undefined;
+      delete retValues['/test/limit'];
+      delete retValues['/delta/dateFormat'];
+      delete retValues['/delta/lagOffset'];
     }
 
     if (retValues['/outputMode'] === 'blob') {
@@ -231,6 +263,7 @@ export default {
         },
       ],
     },
+    exportOneToMany: { formId: 'exportOneToMany' },
     configureAsyncHelper: {
       fieldId: 'configureAsyncHelper',
       visibleWhen: [
@@ -248,6 +281,7 @@ export default {
     fields: [
       'common',
       'outputMode',
+      'exportOneToMany',
       'exportData',
       'http.method',
       'http.headers',

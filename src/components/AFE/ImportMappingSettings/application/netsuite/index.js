@@ -194,8 +194,8 @@ export default {
               items:
                 (extractFields &&
                   extractFields.map(field => ({
-                    label: field,
-                    value: field,
+                    label: field.name,
+                    value: field.id,
                   }))) ||
                 [],
             },
@@ -366,7 +366,13 @@ export default {
 
           if (expressionField.value) expressionValue = expressionField.value;
 
-          if (extractField.value) expressionValue += extractField.value;
+          const extractValue = extractField.value;
+
+          if (extractValue)
+            expressionValue +=
+              extractValue.indexOf(' ') > -1
+                ? `{{[${extractValue}]}}`
+                : `{{${extractValue}}}`;
 
           if (functionsField.value) expressionValue += functionsField.value;
 

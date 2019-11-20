@@ -6,8 +6,12 @@ export default {
 
     if (retValues['/type'] === 'all') {
       retValues['/type'] = undefined;
+      retValues['/rdbms/once/query'] = undefined;
     } else if (retValues['/type'] === 'test') {
       retValues['/test/limit'] = 1;
+      retValues['/rdbms/once/query'] = undefined;
+    } else if (retValues['/type'] === 'delta') {
+      retValues['/rdbms/once/query'] = undefined;
     }
 
     return {
@@ -16,6 +20,7 @@ export default {
   },
   fieldMap: {
     common: { formId: 'common' },
+
     exportRdbmsData: {
       fieldId: 'exportRdbmsData',
       type: 'labeltitle',
@@ -52,10 +57,12 @@ export default {
       visibleWhen: [{ field: 'type', is: ['once'] }],
     },
     advancedSettings: { formId: 'advancedSettings' },
+    exportOneToMany: { formId: 'exportOneToMany' },
   },
   layout: {
     fields: [
       'common',
+      'exportOneToMany',
       'exportRdbmsData',
       'rdbms.query',
       'type',

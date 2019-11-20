@@ -1,4 +1,4 @@
-import { Fragment, useCallback } from 'react';
+import { Fragment, useCallback, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import * as selectors from '../../../reducers';
@@ -21,6 +21,10 @@ import ConnectionsPanel from './panels/Connections';
 import DashboardPanel from './panels/Dashboard';
 import getRoutePath from '../../../utils/routePaths';
 import IntegrationTabs from '../common/Tabs';
+import { INTEGRATION_DELETE_VALIDATE } from '../../../utils/messageStore';
+import { STANDALONE_INTEGRATION } from '../../../utils/constants';
+import { confirmDialog } from '../../../components/ConfirmDialog';
+import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 
 const tabs = [
   { path: 'flows', label: 'Flows', Icon: FlowsIcon, Panel: FlowsPanel },
@@ -39,12 +43,27 @@ const tabs = [
   { path: 'admin', label: 'Admin', Icon: AdminIcon, Panel: AdminPanel },
 ];
 
-export default function Integration({ match }) {
-  const dispatch = useDispatch();
+export default function Integration({ history, match }) {
   const { integrationId } = match.params;
+  const dispatch = useDispatch();
+  const [enqueueSnackbar] = useEnqueueSnackbar();
   const integration = useSelector(state =>
     selectors.resource(state, 'integrations', integrationId)
   );
+  const [isDeleting, setIsDeleting] = useState(false);
+  const cantDelete = useSelector(state => {
+    const flows = selectors.resourceList(state, {
+      type: 'flows',
+      filter: {
+        _integrationId:
+          integrationId === STANDALONE_INTEGRATION.id
+            ? undefined
+            : integrationId,
+      },
+    }).resources;
+
+    return flows.length > 0;
+  });
   const patchIntegration = useCallback(
     (path, value) => {
       const patchSet = [{ op: 'replace', path, value }];
@@ -61,8 +80,47 @@ export default function Integration({ match }) {
     patchIntegration('/name', title);
   }
 
+  function handleDelete() {
+    if (cantDelete) {
+      enqueueSnackbar({
+        message: INTEGRATION_DELETE_VALIDATE,
+        variant: 'info',
+      });
+
+      return;
+    }
+
+    const name = integration ? integration.name : integrationId;
+
+    confirmDialog({
+      title: 'Confirm',
+      message: `Are you sure you want to delete ${name} integration?`,
+      buttons: [
+        {
+          label: 'Cancel',
+        },
+        {
+          label: 'Yes',
+          onClick: () => {
+            dispatch(actions.resource.delete('integrations', integrationId));
+            setIsDeleting(true);
+          },
+        },
+      ],
+    });
+  }
+
   function handleDescriptionChange(description) {
     patchIntegration('/description', description);
+  }
+
+  if (!integration && isDeleting) {
+    ['integrations', 'tiles', 'scripts'].forEach(resource =>
+      dispatch(actions.resource.requestCollection(resource))
+    );
+
+    setIsDeleting(false);
+    history.push(getRoutePath('dashboard'));
   }
 
   // TODO: <ResourceDrawer> Can be further optimized to take advantage
@@ -104,7 +162,10 @@ export default function Integration({ match }) {
             </IconTextButton>
           )}
 
-          <IconTextButton variant="text" data-test="deleteIntegration">
+          <IconTextButton
+            variant="text"
+            data-test="deleteIntegration"
+            onClick={handleDelete}>
             <TrashIcon /> Delete integration
           </IconTextButton>
         </CeligoPageBar>

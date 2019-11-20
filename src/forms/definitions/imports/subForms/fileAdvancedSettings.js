@@ -3,13 +3,20 @@ export default {
     'file.skipAggregation': {
       fieldId: 'file.skipAggregation',
     },
-    compressFiles: {
+    'file.compressFiles': {
       id: 'file.compressFiles',
       type: 'checkbox',
       label: 'Compress Files',
     },
     'file.compressionFormat': {
       fieldId: 'file.compressionFormat',
+      visibleWhen: [
+        {
+          field: 'file.compressFiles',
+          is: [true],
+        },
+      ],
+      requiredWhen: [{ field: 'file.compressFiles', is: [true] }],
     },
     'file.csv.wrapWithQuotes': {
       fieldId: 'file.csv.wrapWithQuotes',
@@ -24,7 +31,8 @@ export default {
   layout: {
     fields: [
       'file.skipAggregation',
-      'compressFiles',
+      'file.compressFiles',
+      'file.compressionFormat',
       'file.csv.wrapWithQuotes',
       'file.csv.replaceTabWithSpace',
       'file.csv.replaceNewLineWithSpace',

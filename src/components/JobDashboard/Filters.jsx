@@ -172,11 +172,13 @@ function Filters({
         </MenuItem>
       </CeligoSelect>
 
-      <StoreSelector
-        integrationId={integrationId}
-        value={storeId}
-        onChange={storeId => patchFilter('storeId', storeId)}
-      />
+      {!flowId && (
+        <StoreSelector
+          integrationId={integrationId}
+          value={storeId}
+          onChange={storeId => patchFilter('storeId', storeId)}
+        />
+      )}
 
       {!flowId && (
         <FlowSelector

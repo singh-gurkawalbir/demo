@@ -455,9 +455,16 @@ export const integrationSettingsToDynaFormMetadata = (
   return finalData;
 };
 
+export const getDomain = () =>
+  window.document.location.hostname.replace('www.', '');
+
+export const isProduction = () =>
+  ['integrator.io', 'eu.integrator.io'].includes(getDomain());
+
 // #END_REGION Integration App from utils
 
 export default {
   getFieldById,
   defaultPatchSetConverter,
+  isProduction,
 };

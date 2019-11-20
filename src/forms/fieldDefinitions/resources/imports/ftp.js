@@ -24,8 +24,11 @@ export default {
     ],
   },
   'ftp.inProgressFileName': {
-    type: 'text',
+    type: 'autosuggest',
     label: 'In Progress File Name',
+    showAllSuggestions: true,
+    defaultValue: 'file-{{timestamp}}',
+    refreshOptionsOnChangesTo: ['file.type', 'ftp.inProgressFileName'],
     visibleWhenAll: [
       {
         field: 'ftp.useTempFile',

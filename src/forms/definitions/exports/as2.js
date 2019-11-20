@@ -1,8 +1,14 @@
 export default {
+  preSave: formValues => {
+    const newValues = { ...formValues };
+
+    newValues['/file/type'] = 'filedefinition';
+
+    return newValues;
+  },
   optionsHandler: (fieldId, fields) => {
     if (fieldId === 'file.filedefinition.rules') {
       // Fetch format specific Field Definition field to fetch id
-      // if (fileType.value === 'filedefinition')
       const definitionFieldId = 'edix12.format';
       const definition = fields.find(field => field.id === definitionFieldId);
       const resourcePath = fields.find(
@@ -33,10 +39,12 @@ export default {
       fieldId: 'file.filedefinition.rules',
     },
     advancedSettings: { formId: 'advancedSettings' },
+    exportOneToMany: { formId: 'exportOneToMany' },
   },
   layout: {
     fields: [
       'common',
+      'exportOneToMany',
       'exportData',
       'edix12.format',
       'file.fileDefinition.resourcePath',
@@ -47,4 +55,13 @@ export default {
       { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },
     ],
   },
+  actions: [
+    {
+      id: 'cancel',
+    },
+    {
+      // Button that saves file defs and then submit resource
+      id: 'savedefinition',
+    },
+  ],
 };

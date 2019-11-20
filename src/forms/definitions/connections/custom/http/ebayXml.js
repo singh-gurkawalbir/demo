@@ -32,7 +32,7 @@ export default {
         const baseUri = r && r.http && r.http.baseURI;
 
         if (baseUri) {
-          if (baseUri.indexOf('sandbox') === -1) {
+          if (baseUri.indexOf('sandbox') !== -1) {
             return 'sandbox';
           }
 
