@@ -10,6 +10,7 @@ import { isNewId } from '../../utils/resource';
 import metadataSagas from './meta';
 import getRequestOptions from '../../utils/requestOptions';
 import { defaultPatchSetConverter } from '../../forms/utils';
+import conversionUtil from '../../utils/httpToRestConnectionConversionUtil';
 
 export function* commitStagedChanges({ resourceType, id, scope }) {
   const { patch, merged, master } = yield select(
@@ -43,6 +44,13 @@ export function* commitStagedChanges({ resourceType, id, scope }) {
   }
 
   let updated;
+  let updatedMerged = merged;
+
+  if (resourceType === 'connections') {
+    console.log(`final data submission1 -- ${JSON.stringify(merged)}`);
+    updatedMerged = conversionUtil.convertConnJSONObjHTTPtoREST(merged);
+    console.log(`final data submission2 -- ${JSON.stringify(updatedMerged)}`);
+  }
 
   try {
     updated = yield call(apiCallWithRetry, {
