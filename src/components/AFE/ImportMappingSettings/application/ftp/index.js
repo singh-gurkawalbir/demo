@@ -303,15 +303,19 @@ export default {
           let expressionValue = '';
 
           if (expressionField.value) expressionValue = expressionField.value;
-          const extractValue = extractField.value;
 
-          if (extractValue)
+          if (extractField.value) {
+            const extractValue = extractField.value;
+
             expressionValue +=
               extractValue.indexOf(' ') > -1
                 ? `{{[${extractValue}]}}`
                 : `{{${extractValue}}}`;
-
-          if (functionsField.value) expressionValue += functionsField.value;
+            extractField.value = '';
+          } else if (functionsField.value) {
+            expressionValue += functionsField.value;
+            functionsField.value = '';
+          }
 
           return expressionValue;
         }

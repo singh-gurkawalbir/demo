@@ -177,7 +177,6 @@ export default {
           name: 'functions',
           type: 'fieldexpressionselect',
           label: 'Function',
-          resetAfterSelection: true,
           visibleWhen: [{ field: 'fieldMappingType', is: ['multifield'] }],
         },
         extract: {
@@ -185,7 +184,6 @@ export default {
           name: 'extract',
           type: 'select',
           label: 'Field',
-          resetAfterSelection: true,
           visibleWhen: [{ field: 'fieldMappingType', is: ['multifield'] }],
           options: [
             {
@@ -364,15 +362,18 @@ export default {
 
           if (expressionField.value) expressionValue = expressionField.value;
 
-          const extractValue = extractField.value;
+          if (extractField.value) {
+            const extractValue = extractField.value;
 
-          if (extractValue)
             expressionValue +=
               extractValue.indexOf(' ') > -1
                 ? `{{[${extractValue}]}}`
                 : `{{${extractValue}}}`;
-
-          if (functionsField.value) expressionValue += functionsField.value;
+            extractField.value = '';
+          } else if (functionsField.value) {
+            expressionValue += functionsField.value;
+            functionsField.value = '';
+          }
 
           return expressionValue;
         } else if (fieldId === 'lookup.recordType') {

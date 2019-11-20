@@ -395,15 +395,18 @@ export default {
 
           if (expressionField.value) expressionValue = expressionField.value;
 
-          const extractValue = extractField.value;
+          if (extractField.value) {
+            const extractValue = extractField.value;
 
-          if (extractValue)
             expressionValue +=
               extractValue.indexOf(' ') > -1
                 ? `{{[${extractValue}]}}`
                 : `{{${extractValue}}}`;
-
-          if (functionsField.value) expressionValue += functionsField.value;
+            extractField.value = '';
+          } else if (functionsField.value) {
+            expressionValue += functionsField.value;
+            functionsField.value = '';
+          }
 
           return expressionValue;
         }
