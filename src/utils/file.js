@@ -65,6 +65,15 @@ export function getCsvFromXlsx(data) {
   };
 }
 
+/*
+ * sample csv content
+ * "a,b,c
+ * 1,2,3
+ * 4,5,6"
+ * Extracts headers from the above csv content [a,b,c] if includeHeader is true
+ * Else, default headers [Column0, Column1, ...ColumnN] are considered
+ * Returns [[a,a], [b,b], [c,c]]
+ */
 const generateFields = (data, options = {}) => {
   const {
     columnDelimiter = ',',
@@ -95,6 +104,14 @@ const generateFields = (data, options = {}) => {
   return fields;
 };
 
+/*
+ * sample csv content
+ * "a,b,c
+ * 1,2,3
+ * 4,5,6"
+ * Extracts headers from the above csv content [a,b,c]
+ * Returns [{id: 'a', type: 'string'}, {id: 'b', type: 'string'}, {id: 'c', type: 'string'}]
+ */
 export function extractFieldsFromCsv(data = '', options = {}) {
   if (typeof data !== 'string') return;
   const fields = generateFields(data, options);

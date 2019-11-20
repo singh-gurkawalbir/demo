@@ -59,7 +59,6 @@ export function getDefaultData(obj) {
 }
 
 export function processSampleData(sampleData, resource) {
-  // Check for edge cases incase of empty sample data
   if (!resource || !sampleData || isEmpty(sampleData)) return sampleData;
 
   // All file type's sample data logic handled here
@@ -72,6 +71,7 @@ export function processSampleData(sampleData, resource) {
         case 'csv':
           return extractFieldsFromCsv(sampleData, csv);
         case 'xlsx':
+          // for xlsx files sample data is stored in csv format
           return extractFieldsFromCsv(sampleData, xlsx);
         case 'json':
         case 'filedefinition':
@@ -79,6 +79,7 @@ export function processSampleData(sampleData, resource) {
         default:
       }
     }
+    // For all other adapters logic can be handled here
   }
 
   return sampleData;

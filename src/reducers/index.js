@@ -2188,6 +2188,7 @@ export function getImportSampleData(state, resourceId) {
   const { merged: resource } = resourceData(state, 'imports', resourceId);
   const { assistant, adaptorType, sampleData } = resource;
 
+  // Formats sample data into readable form
   if (sampleData) return processSampleData(sampleData, resource);
   else if (assistant) {
     // get assistants sample data
