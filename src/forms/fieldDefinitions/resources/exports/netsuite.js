@@ -286,7 +286,7 @@ export default {
   },
   'netsuite.distributed.forceReload': {
     type: 'checkbox',
-    label: 'NetSuite distributed force Reload',
+    label: 'Reload Record Before Export',
   },
   'netsuite.distributed.ioEnvironment': {
     type: 'text',

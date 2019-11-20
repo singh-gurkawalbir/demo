@@ -116,6 +116,17 @@ export default {
       ],
     },
     'netsuite.skipGrouping': { fieldId: 'netsuite.skipGrouping' },
+    advancedSettings: {
+      formId: 'advancedSettings',
+      visibleWhenAll: [
+        {
+          field: 'outputMode',
+          is: ['records'],
+        },
+      ],
+    },
+    'netsuite.restlet.batchSize': { fieldId: 'netsuite.restlet.batchSize' },
+    // skipRetries: { fieldId: 'skipRetries' },
     exportOneToMany: { formId: 'exportOneToMany' },
   },
   layout: {
@@ -132,6 +143,16 @@ export default {
       'netsuite.skipGrouping',
     ],
     type: 'collapse',
-    containers: [],
+    containers: [
+      {
+        collapsed: true,
+        label: 'Advanced',
+        fields: [
+          'advancedSettings',
+          'netsuite.restlet.batchSize',
+          // 'skipRetries',
+        ],
+      },
+    ],
   },
 };
