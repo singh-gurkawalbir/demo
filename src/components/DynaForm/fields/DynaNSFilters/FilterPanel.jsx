@@ -40,7 +40,6 @@ export default function FilterPanel({
   readOnly,
   data = defaultData,
   rule,
-  disabled,
 }) {
   console.log(`data in FP ${JSON.stringify(data)}`);
   const qbuilder = useRef(null);
@@ -59,8 +58,53 @@ export default function FilterPanel({
     [dispatch, editorId]
   );
   const jsonPathsFromData = useMemo(
-    () => data.map(sf => ({ id: sf.value, ...sf, name: sf.label })),
-    [data]
+    () =>
+      [
+        {
+          label: '1099-MISC Category',
+          value: 'category1099misc',
+          type: 'select',
+        },
+        { label: 'Balance', value: 'balance', type: 'currency' },
+        {
+          label: 'Cash Flow Rate Type',
+          value: 'cashflowratetype',
+          type: 'select',
+        },
+        { label: 'Description', value: 'description', type: 'text' },
+        {
+          label: 'External ID (Text)',
+          value: 'externalidstring',
+          type: 'text',
+        },
+        { label: 'ExternalId', value: 'externalid', type: 'select' },
+        { label: 'Formula (Date)', value: 'formuladate', type: 'date' },
+        { label: 'Formula (Numeric)', value: 'formulanumeric', type: 'float' },
+        { label: 'Formula (Text)', value: 'formulatext', type: 'text' },
+        {
+          label: 'General Rate Type',
+          value: 'generalratetype',
+          type: 'select',
+        },
+        { label: 'Inactive', value: 'isinactive', type: 'checkbox' },
+        { label: 'Internal ID', value: 'internalid', type: 'select' },
+        {
+          label: 'Internal ID (Number)',
+          value: 'internalidnumber',
+          type: 'integer',
+        },
+        { label: 'Name', value: 'name', type: 'text' },
+        { label: 'Number', value: 'number', type: 'text' },
+        {
+          label: 'Show in Fixed Assets Management',
+          value: 'custrecord_fam_account_showinfixedasset',
+          type: 'multiselect',
+        },
+        { label: 'Subaccount of', value: 'parent', type: 'select' },
+        { label: 'Subsidiaries', value: 'subsidiary', type: 'select' },
+        { label: 'Type', value: 'type', type: 'select' },
+      ].map(sf => ({ id: sf.value, ...sf, name: sf.label })),
+    []
   );
 
   useEffect(() => {
@@ -449,7 +493,7 @@ export default function FilterPanel({
           }
 
           if (!rulesState[ruleId].data.rhs.type) {
-            rulesState[ruleId].data.rhs.type = 'value';
+            rulesState[ruleId].data.rhs.type = 'field';
           }
 
           setTimeout(() => {
