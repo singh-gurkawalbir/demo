@@ -5,7 +5,7 @@ export default {
     '/assistant': 'magento',
     '/rest/authType': 'token',
     '/rest/mediaType': 'json',
-    '/rest/baseURI': `${formValues['/rest/baseURI']}/`,
+    '/rest/baseURI': `${formValues['/rest/baseURI']}`,
     '/rest/tokenLocation': 'header',
     '/rest/authScheme': 'Bearer',
     '/rest/authHeader': 'Authorization',
@@ -30,6 +30,7 @@ export default {
     'rest.baseURI': {
       fieldId: 'rest.baseURI',
       helpText: 'The Base URI of Magento.',
+      required: true,
     },
     'rest.unencrypted.username': {
       id: 'rest.unencrypted.username',

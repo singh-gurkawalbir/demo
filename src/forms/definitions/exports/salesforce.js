@@ -6,8 +6,31 @@ export default {
 
     if (retValues['/type'] === 'all') {
       retValues['/type'] = undefined;
+      retValues['/test'] = undefined;
+      retValues['/delta'] = undefined;
+      retValues['/once'] = undefined;
+      delete retValues['/test/limit'];
+      delete retValues['/delta/dateField'];
+      delete retValues['/delta/lagOffset'];
+      delete retValues['/once/booleanField'];
     } else if (retValues['/type'] === 'test') {
       retValues['/test/limit'] = 1;
+      retValues['/delta'] = undefined;
+      retValues['/once'] = undefined;
+      delete retValues['/delta/dateField'];
+      delete retValues['/delta/lagOffset'];
+      delete retValues['/once/booleanField'];
+    } else if (retValues['/type'] === 'delta') {
+      retValues['/once'] = undefined;
+      retValues['/test'] = undefined;
+      delete retValues['/test/limit'];
+      delete retValues['/once/booleanField'];
+    } else if (retValues['/type'] === 'once') {
+      retValues['/delta'] = undefined;
+      retValues['/test'] = undefined;
+      delete retValues['/test/limit'];
+      delete retValues['/delta/dateField'];
+      delete retValues['/delta/lagOffset'];
     }
 
     if (retValues['/salesforce/executionType'] === 'scheduled') {
@@ -31,6 +54,7 @@ export default {
 
   fieldMap: {
     common: { formId: 'common' },
+    exportOneToMany: { formId: 'exportOneToMany' },
     'salesforce.executionType': { fieldId: 'salesforce.executionType' },
     exportData: {
       id: 'exportData',
@@ -166,6 +190,7 @@ export default {
     fields: [
       'common',
       'outputMode',
+      'exportOneToMany',
       'salesforce.executionType',
       'exportData',
       'salesforce.sObjectType',
