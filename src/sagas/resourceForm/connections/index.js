@@ -389,14 +389,18 @@ function* commitAndAuthorizeConnection({ resourceId }) {
 }
 
 function* requestIClients({ connectionId }) {
-  const { iclients } = yield apiCallWithRetry({
-    path: `/connections/${connectionId}/iclients`,
-    opts: {
-      method: 'GET',
-    },
-  });
+  try {
+    const { iclients } = yield apiCallWithRetry({
+      path: `/connections/${connectionId}/iclients`,
+      opts: {
+        method: 'GET',
+      },
+    });
 
-  yield put(actions.connection.updateIClients(iclients, connectionId));
+    yield put(actions.connection.updateIClients(iclients, connectionId));
+  } catch (e) {
+    // exception handler
+  }
 }
 
 export default [
