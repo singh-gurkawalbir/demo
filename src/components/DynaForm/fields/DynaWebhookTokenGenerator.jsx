@@ -12,14 +12,10 @@ import actions from '../../../actions';
 import DynaTextForSetFields from './text/DynaTextForSetFields';
 import { getWebhookUrl } from '../../../utils/resource';
 
+// TODO Azhar
 const useStyles = makeStyles(() => ({
-  root: {
-    display: 'flex',
-    flexDirection: 'row',
-  },
-  textField: {
-    flexBasis: '70%',
-    '& div': { width: '100%' },
+  children: {
+    flex: 1,
   },
 }));
 
@@ -92,11 +88,12 @@ function DynaWebhookTokenGenerator(props) {
   }, [finalResourceId, formValues, id, onFieldChange, resourceId, url]);
 
   return (
-    <div className={classes.root}>
-      <div className={classes.textField}>
+    <div style={{ display: 'flex', flexDirection: 'row' }}>
+      <div style={{ flexBasis: '70%', '& div': { width: '100%' } }}>
         <DynaTextForSetFields
           {...props}
           required
+          className={classes.children}
           style={{ width: '100%' }}
           value={value}
           setFieldIds={setFieldIds}
