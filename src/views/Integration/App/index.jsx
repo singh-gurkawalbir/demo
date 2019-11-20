@@ -16,6 +16,7 @@ import IconTextButton from '../../../components/IconTextButton';
 import CeligoPageBar from '../../../components/CeligoPageBar';
 import ResourceDrawer from '../../../components/drawer/Resource';
 import ChipInput from '../../../components/ChipInput';
+import GeneralPanel from './panels/General';
 import AdminPanel from './panels/Admin';
 import FlowsPanel from './panels/Flows';
 import ConnectionsPanel from './panels/Connections';
@@ -23,6 +24,7 @@ import DashboardPanel from './panels/Dashboard';
 import IntegrationTabs from '../common/Tabs';
 
 const tabs = [
+  { path: 'general', label: 'General', Icon: AdminIcon, Panel: GeneralPanel },
   { path: 'flows', label: 'Flows', Icon: FlowsIcon, Panel: FlowsPanel },
   {
     path: 'dashboard',

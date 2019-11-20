@@ -9,7 +9,6 @@ import {
 import { makeStyles } from '@material-ui/styles';
 import { List, ListItem } from '@material-ui/core';
 import { STANDALONE_INTEGRATION } from '../../../../../utils/constants';
-import GeneralSection from './sections/General';
 import AuditLogSection from './sections/AuditLog';
 import SubscriptionSection from './sections/Subscription';
 import NotificationsSection from './sections/Notifications';
@@ -42,7 +41,6 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 const allSections = [
-  { path: 'general', label: 'General', Section: GeneralSection, id: 'general' },
   {
     path: 'notifications',
     label: 'Notifications',
