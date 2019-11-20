@@ -34,6 +34,7 @@ export default {
   dataURITemplate: {
     type: 'relativeuri',
     label: 'Data URI Template',
+    refreshOptionsOnChangesTo: ['name'],
     connectionId: r => r && r._connectionId,
   },
 };

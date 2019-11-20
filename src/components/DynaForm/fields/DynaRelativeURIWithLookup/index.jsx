@@ -131,6 +131,7 @@ export default function DynaRelativeURIWithLookup(props) {
           id={id}
           data={formattedSampleData}
           rule={value}
+          lookups={lookupData}
           onClose={handleClose}
         />
       )}

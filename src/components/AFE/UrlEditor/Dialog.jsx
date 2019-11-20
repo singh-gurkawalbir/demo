@@ -2,7 +2,7 @@ import EditorDialog from '../EditorDialog';
 import UrlEditor from './';
 
 export default function UrlEditorDialog(props) {
-  const { id, rule, data, disabled, ...rest } = props;
+  const { id, rule, lookups, data, disabled, ...rest } = props;
   const defaults = {
     layout: 'column',
     width: '70vw',
@@ -17,7 +17,13 @@ export default function UrlEditorDialog(props) {
       {...rest}
       disabled={disabled}
       showFullScreen>
-      <UrlEditor disabled={disabled} editorId={id} rule={rule} data={data} />
+      <UrlEditor
+        lookups={lookups}
+        disabled={disabled}
+        editorId={id}
+        rule={rule}
+        data={data}
+      />
     </EditorDialog>
   );
 }

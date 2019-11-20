@@ -1,7 +1,11 @@
 import HandlebarsEditor from '../HandlebarsEditor';
+import * as completers from '../editorSetup/completers';
 
 export default function UrlEditor(props) {
-  const { editorId, layout = 'column', rule, data, disabled } = props;
+  const { editorId, lookups, layout = 'column', rule, data, disabled } = props;
+  const _lookups = lookups && Array.isArray(lookups) ? lookups : [];
+
+  completers.handleBarsCompleters.setLookupCompleter(_lookups);
 
   return (
     <HandlebarsEditor

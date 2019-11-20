@@ -293,7 +293,7 @@ export default {
       id: 'http.relativeURICreate',
       type: 'relativeuriwithlookup',
       connectionId: r => r && r._connectionId,
-      refreshOptionsOnChangesTo: ['http.lookups'],
+      refreshOptionsOnChangesTo: ['http.lookups', 'name'],
       label: 'Relative URI',
       placeholder: 'Optional',
       visibleWhenAll: [
@@ -516,7 +516,7 @@ export default {
       id: 'http.relativeURIUpdate',
       type: 'relativeuriwithlookup',
       connectionId: r => r && r._connectionId,
-      refreshOptionsOnChangesTo: ['http.lookups'],
+      refreshOptionsOnChangesTo: ['http.lookups', 'name'],
       label: 'Relative URI',
       placeholder: 'Optional',
       visibleWhenAll: [

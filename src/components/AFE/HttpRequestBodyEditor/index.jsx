@@ -12,10 +12,9 @@ export default function HttpRequestBodyEditor(props) {
     lookups,
   } = props;
   const mode = contentType || 'json';
+  const _lookups = lookups && Array.isArray(lookups) ? lookups : [];
 
-  if (lookups && lookups.length) {
-    completers.handleBarsCompleters.setLookupCompleter(lookups);
-  }
+  completers.handleBarsCompleters.setLookupCompleter(_lookups);
 
   return (
     <HandlebarsEditor
