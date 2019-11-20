@@ -41,8 +41,9 @@ export default function FilterPanel({
   filters = defaultFilters,
   data = defaultData,
   rule,
+  id,
+  onFieldChange,
 }) {
-  console.log(`data in FP ${JSON.stringify(data)}`);
   const qbuilder = useRef(null);
   const classes = useStyles();
   const [showOperandSettingsFor, setShowOperandSettingsFor] = useState();
@@ -55,66 +56,26 @@ export default function FilterPanel({
       if (editorId) {
         dispatch(actions.editor.patch(editorId, { rule: value || [] }));
       } else {
-        console.log(`rules ${JSON.stringify(value)}`);
+        onFieldChange(id, value);
       }
     },
-    [dispatch, editorId]
+    [dispatch, editorId, id, onFieldChange]
   );
   const jsonPathsFromData = useMemo(
-    () =>
-      [
-        {
-          label: '1099-MISC Category',
-          value: 'category1099misc',
-          type: 'select',
-        },
-        { label: 'Balance', value: 'balance', type: 'currency' },
-        {
-          label: 'Cash Flow Rate Type',
-          value: 'cashflowratetype',
-          type: 'select',
-        },
-        { label: 'Description', value: 'description', type: 'text' },
-        {
-          label: 'External ID (Text)',
-          value: 'externalidstring',
-          type: 'text',
-        },
-        { label: 'ExternalId', value: 'externalid', type: 'select' },
-        { label: 'Formula (Date)', value: 'formuladate', type: 'date' },
-        { label: 'Formula (Numeric)', value: 'formulanumeric', type: 'float' },
-        { label: 'Formula (Text)', value: 'formulatext', type: 'text' },
-        {
-          label: 'General Rate Type',
-          value: 'generalratetype',
-          type: 'select',
-        },
-        { label: 'Inactive', value: 'isinactive', type: 'checkbox' },
-        { label: 'Internal ID', value: 'internalid', type: 'select' },
-        {
-          label: 'Internal ID (Number)',
-          value: 'internalidnumber',
-          type: 'integer',
-        },
-        { label: 'Name', value: 'name', type: 'text' },
-        { label: 'Number', value: 'number', type: 'text' },
-        {
-          label: 'Show in Fixed Assets Management',
-          value: 'custrecord_fam_account_showinfixedasset',
-          type: 'multiselect',
-        },
-        { label: 'Subaccount of', value: 'parent', type: 'select' },
-        { label: 'Subsidiaries', value: 'subsidiary', type: 'select' },
-        { label: 'Type', value: 'type', type: 'select' },
-      ].map(sf => ({ id: sf.value, ...sf, name: sf.label })),
-    []
+    () => filters.map(sf => ({ id: sf.value, ...sf, name: sf.label })),
+    [filters]
   );
 
   useEffect(() => {
-    let qbRules = convertIOFilterExpression(rule, data);
+    const qbRules = convertIOFilterExpression(rule, data);
 
-    if (qbRules && qbRules.length === 1 && !qbRules[0].id) {
-      qbRules = [];
+    if (
+      qbRules &&
+      qbRules.rules &&
+      qbRules.rules.length === 1 &&
+      !qbRules.rules[0].id
+    ) {
+      qbRules.rules = [];
     }
 
     setRules(qbRules);
@@ -510,7 +471,7 @@ export default function FilterPanel({
       qbContainer.queryBuilder({
         ...config,
         filters: filtersConfig,
-        rules: [],
+        rules,
       });
       qbContainer
         .unbind('rulesChanged.queryBuilder')

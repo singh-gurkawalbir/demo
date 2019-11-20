@@ -6,7 +6,14 @@ import FilterPanel from './FilterPanel';
 
 export default function DynaNSFilters(props) {
   const dispatch = useDispatch();
-  const { connectionId, extractFields, options = {} } = props;
+  const {
+    id,
+    defaultValue,
+    connectionId,
+    data,
+    options = {},
+    onFieldChange,
+  } = props;
   const filters = useSelector(
     state =>
       selectors.metadataOptionsAndResources({
@@ -35,9 +42,13 @@ export default function DynaNSFilters(props) {
 
   return (
     <Fragment>
-      {`props ${JSON.stringify(props)}`}
-      {`Rendered @ ${new Date().toISOString()}`}
-      <FilterPanel filters={filters} data={extractFields} />
+      <FilterPanel
+        filters={filters}
+        data={data}
+        id={id}
+        onFieldChange={onFieldChange}
+        rule={defaultValue}
+      />
     </Fragment>
   );
 }

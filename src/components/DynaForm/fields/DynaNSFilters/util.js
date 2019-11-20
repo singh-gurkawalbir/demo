@@ -212,11 +212,11 @@ export function convertNSExpressionToQueryBuilderRules(exp, exportData) {
   return tr;
 }
 
-export function convertIOFilterExpression(filterExpression = []) {
+export function convertIOFilterExpression(filterExpression = [], data = []) {
   let e = updateNSExpressionForNOTs(filterExpression);
 
   e = updateNSExpressionForConditions(e);
-  e = convertNSExpressionToQueryBuilderRules(e);
+  e = convertNSExpressionToQueryBuilderRules(e, data);
 
   return e;
 }
@@ -248,7 +248,9 @@ export function getFilterList(jsonPaths, rules) {
     });
   }
 
-  iterate(rules);
+  if (rules.length > 0) {
+    iterate(rules);
+  }
 
   return jsonPaths;
 }

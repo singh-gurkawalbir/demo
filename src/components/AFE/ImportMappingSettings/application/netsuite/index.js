@@ -146,7 +146,7 @@ export default {
             { field: 'fieldMappingType', is: ['lookup'] },
             { field: 'lookup.mode', is: ['dynamic'] },
           ],
-          extractFields,
+          data: extractFields,
         },
         'lookup.resultField': {
           id: 'lookup.resultField',
