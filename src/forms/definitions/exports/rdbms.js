@@ -6,8 +6,12 @@ export default {
 
     if (retValues['/type'] === 'all') {
       retValues['/type'] = undefined;
+      retValues['/rdbms/once/query'] = undefined;
     } else if (retValues['/type'] === 'test') {
       retValues['/test/limit'] = 1;
+      retValues['/rdbms/once/query'] = undefined;
+    } else if (retValues['/type'] === 'delta') {
+      retValues['/rdbms/once/query'] = undefined;
     }
 
     return {
