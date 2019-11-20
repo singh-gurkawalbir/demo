@@ -1,6 +1,7 @@
 import { select, call } from 'redux-saga/effects';
 import { resource, getResourceSampleDataWithStatus } from '../../../reducers';
 import { saveRawDataOnResource, saveSampleDataOnResource } from './utils';
+import { isJsonString } from '../../../utils/string';
 
 function* fetchRawDataForFileAdaptors({ resourceId, tempResourceId, type }) {
   // Incase of FTP, raw data to be saved in the data in Parse Stage ( JSON )
@@ -27,6 +28,16 @@ function* fetchRawDataForFileAdaptors({ resourceId, tempResourceId, type }) {
     tempResourceId || resourceId,
     stage
   );
+
+  if (type === 'imports' && resourceObj.file.type === 'filedefinition') {
+    // For Imports File definitions, sample data is the json format of structured file parser data
+    return (
+      rawData &&
+      rawData.body &&
+      isJsonString(rawData.body) &&
+      JSON.parse(rawData.body)
+    );
+  }
 
   return rawData && rawData.body;
 }
