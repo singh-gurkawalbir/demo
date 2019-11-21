@@ -82,10 +82,12 @@ export default {
   // check it is referenced to a single table
   'salesforce-sObjects-referenceFields': data =>
     data.fields
-      .filter(r => r.referenceTo && r.referenceTo.length > 0)
+      .filter(
+        r => r.referenceTo && r.referenceTo.length > 0 && r.relationshipName
+      )
       .map(d => ({
-        label: d.label,
-        value: d.name,
+        label: d.relationshipName,
+        value: d.relationshipName,
         custom: d.custom,
         triggerable: d.triggerable,
         referenceTo: d.referenceTo[0],
@@ -99,6 +101,15 @@ export default {
         value: d.name,
         custom: d.custom,
         triggerable: d.triggerable,
+      }))
+      .sort(sortElements),
+  'salesforce-sObjects-childReferenceTo': data =>
+    data.childRelationships
+      .filter(r => !!r.relationshipName)
+      .map(d => ({
+        label: d.relationshipName,
+        value: d.relationshipName,
+        childSObject: d.childSObject,
       }))
       .sort(sortElements),
   'salesforce-recordType': data =>

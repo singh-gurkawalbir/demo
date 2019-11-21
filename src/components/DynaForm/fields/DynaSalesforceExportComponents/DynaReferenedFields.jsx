@@ -14,7 +14,7 @@ import DynaSelect from '../DynaSelect';
 import RefreshableTreeComponent from '../DynaRefreshableSelect/RefreshableTreeComponent';
 import Spinner from '../../../Spinner';
 
-const SecondLevelModal = props => {
+export const ReferencedFieldsModal = props => {
   const { handleClose, onFieldChange, id, value, ...rest } = props;
   const [selectedValues, setSelectedValues] = useState(
     value ? value.split(',') : []
@@ -104,7 +104,7 @@ const FirstLevelModal = props => {
         <DynaText id={id} onFieldChange={onFieldChange} value={value} />
         <AddIcon disabled={!!selectedParent} onClick={toggle} />
         {secondLevelModalOpen ? (
-          <SecondLevelModal
+          <ReferencedFieldsModal
             id={id}
             resourceType={resourceType}
             connectionId={connectionId}

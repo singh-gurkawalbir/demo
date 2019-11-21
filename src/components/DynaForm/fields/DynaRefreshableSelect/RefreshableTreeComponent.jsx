@@ -90,6 +90,7 @@ function TreeViewComponent(props) {
     setSelectedValues,
     selectedValues,
     parentValue,
+    skipFirstLevelFields,
     level,
   } = props;
   const metaBasePath = `salesforce/metadata/connections/${connectionId}/sObjectTypes/`;
@@ -120,10 +121,11 @@ function TreeViewComponent(props) {
   });
 
   if (status !== 'received') return null;
+  const skipNonReferencedFields = skipFirstLevelFields && level === 1;
 
   return (
     <Fragment>
-      {(nonReferenceFields &&
+      {(!skipNonReferencedFields &&
         nonReferenceFields.map(item => {
           const { label, value } = item;
           const attachedParentNode = parentValue

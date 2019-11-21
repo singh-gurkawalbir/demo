@@ -75,6 +75,7 @@ export default function RefreshGenericResource(props) {
     handleRefreshResource,
     fieldError,
     children,
+    removeRefresh = false,
   } = props;
   const classes = useStyles();
   const defaultValue = props.defaultValue || (multiselect ? [] : '');
@@ -141,7 +142,9 @@ export default function RefreshGenericResource(props) {
           ...props,
           options: [{ items: options || [] }],
         })}
-        {!isLoading && <RefreshIcon onClick={handleRefreshResource} />}
+        {!isLoading && !removeRefresh && (
+          <RefreshIcon onClick={handleRefreshResource} />
+        )}
         {fieldData && isLoading && <Spinner />}
         {description && <FormHelperText>{description}</FormHelperText>}
         {fieldError && (

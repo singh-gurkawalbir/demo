@@ -48,6 +48,7 @@ import DynaDate from './dateTime/DynaDate';
 import DynaSQLQueryBuilder from './DynaSQLQueryBuilder';
 import DynaRelativeURIWithLookup from './DynaRelativeURIWithLookup';
 import Salesforce from './DynaSalesforceExportComponents';
+import { ReferencedFieldsModal } from './DynaSalesforceExportComponents/DynaReferenedFields';
 
 export default {
   mapping: DynaImportMapping,
@@ -105,4 +106,7 @@ export default {
   salesforcerequiredtrigger: Salesforce.DynaRequiredTrigger,
   salesforcereferencedfields: Salesforce.DynaReferenedFields,
   salesforcesobjecttype: Salesforce.DynaSObjectType,
+  salesforcerelatedfieldsmodal: ReferencedFieldsModal,
+  salesforcerelatedfields: Salesforce.DynaRelatedFields,
+  salesforcetreemodal: Salesforce.DynaTreeModal,
 };

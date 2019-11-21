@@ -3,8 +3,11 @@ import { isNewId } from '../../../utils/resource';
 export default {
   optionsHandler: (fieldId, fields) => {
     if (
-      fieldId === 'salesforce.distributed.triggerMessage' ||
-      fieldId === 'salesforce.distributed.referencedFields'
+      [
+        'salesforce.distributed.triggerMessage',
+        'salesforce.distributed.referencedFields',
+        'salesforce.distributed.relatedLists.referencedFields',
+      ].includes(fieldId)
     ) {
       const { value } = fields.find(
         field => field.id === 'salesforce.sObjectType'
@@ -147,7 +150,17 @@ export default {
       defaultDisabled: true,
     },
     'salesforce.distributed.relatedLists.referencedFields': {
+      type: 'salesforcerelatedfields',
+      connectionId: r => r._connectionId,
+      refreshOptionsOnChangesTo: ['salesforce.sObjectType'],
       fieldId: 'salesforce.distributed.relatedLists.referencedFields',
+      validWhen: [
+        {
+          field: 'salesforce.sObjectType',
+          isNot: [''],
+        },
+      ],
+      defaultDisabled: true,
     },
     'salesforce.distributed.qualifier': {
       fieldId: 'salesforce.distributed.qualifier',
