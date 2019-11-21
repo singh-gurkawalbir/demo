@@ -380,6 +380,20 @@ export function* requestDeregister({ connectionId, integrationId }) {
   }
 }
 
+export function* requestDebugLogs({ url }) {
+  let response;
+
+  try {
+    response = yield call(apiCallWithRetry, { path: url });
+    yield put(actions.connection.receivedDebugLogs(response));
+  } catch (error) {
+    if (error.status === 404) {
+      response = 'No Debug Logs found for the specified connectionId';
+      yield put(actions.connection.receivedDebugLogs(response));
+    }
+  }
+}
+
 export const resourceSagas = [
   takeEvery(actionTypes.RESOURCE.REQUEST, getResource),
   takeEvery(
@@ -395,5 +409,6 @@ export const resourceSagas = [
   takeEvery(actionTypes.CONNECTION.REGISTER_REQUEST, requestRegister),
   takeEvery(actionTypes.RESOURCE.UPDATE_NOTIFICATIONS, updateNotifications),
   takeEvery(actionTypes.CONNECTION.DEREGISTER_REQUEST, requestDeregister),
+  takeEvery(actionTypes.CONNECTION.DEBUG_LOGS_REQUEST, requestDebugLogs),
   ...metadataSagas,
 ];

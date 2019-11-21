@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { Drawer, IconButton, Tabs, Tab } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
@@ -7,11 +7,14 @@ import ArrowUpIcon from '../../../../components/icons/ArrowUpIcon';
 import ArrowDownIcon from '../../../../components/icons/ArrowDownIcon';
 import ConnectionsIcon from '../../../../components/icons/ConnectionsIcon';
 import AuditLogIcon from '../../../../components/icons/AuditLogIcon';
+import DebugIcon from '../../../../components/icons/DebugIcon';
 import RunIcon from '../../../../components/icons/RunIcon';
+import CloseIcon from '../../../../components/icons/CloseIcon';
 import * as selectors from '../../../../reducers';
 import ConnectionPanel from './panels/Connection';
 import RunDashboardPanel from './panels/RunDashboard';
 import AuditPanel from './panels/Audit';
+import actions from '../../../../actions';
 
 const useStyles = makeStyles(theme => ({
   drawer: {
@@ -70,7 +73,9 @@ function TabPanel({ children, value, index, classes }) {
 
 export default function BottomDrawer({ size, setSize, flow }) {
   const classes = useStyles();
+  const dispatch = useDispatch();
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
+  const connectionDebugLogs = useSelector(state => selectors.debugLogs(state));
   const [tabValue, setTabValue] = useState(0);
   const maxStep = 3; // set maxStep to 4 to allow 100% drawer coverage.
 
@@ -94,6 +99,12 @@ export default function BottomDrawer({ size, setSize, flow }) {
       'aria-controls': `tabpanel-${index}`,
     };
   }
+
+  const handleDebugLogsClose = event => {
+    event.stopPropagation();
+    setTabValue(0);
+    dispatch(actions.connection.clearDebugLogs());
+  };
 
   return (
     <Drawer
@@ -124,6 +135,21 @@ export default function BottomDrawer({ size, setSize, flow }) {
           />
           <Tab {...tabProps(1)} icon={<RunIcon />} label="Run Dashboard" />
           <Tab {...tabProps(2)} icon={<AuditLogIcon />} label="Audit Log" />
+          {connectionDebugLogs && (
+            <Tab
+              {...tabProps(3)}
+              icon={<DebugIcon />}
+              component="div"
+              label={
+                <div>
+                  DebugLogs
+                  <IconButton onClick={handleDebugLogsClose}>
+                    <CloseIcon />
+                  </IconButton>
+                </div>
+              }
+            />
+          )}
         </Tabs>
         <div className={classes.actionsContainer}>
           <IconButton
@@ -150,6 +176,11 @@ export default function BottomDrawer({ size, setSize, flow }) {
       <TabPanel value={tabValue} index={2} classes={classes}>
         <AuditPanel flow={flow} />
       </TabPanel>
+      {connectionDebugLogs && (
+        <TabPanel value={tabValue} index={3} classes={classes}>
+          {connectionDebugLogs}
+        </TabPanel>
+      )}
     </Drawer>
   );
 }

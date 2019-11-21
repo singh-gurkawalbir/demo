@@ -2320,3 +2320,7 @@ export function getUsedActionsForResource(
 
   return getUsedActionsMapForResource(resource, resourceType, flowNode);
 }
+
+export function debugLogs(state) {
+  return fromSession.debugLogs(state && state.session);
+}
