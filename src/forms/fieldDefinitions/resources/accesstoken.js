@@ -80,6 +80,10 @@ export default {
     type: 'selectresource',
     resourceType: 'connections',
     label: 'Connections',
+    multiselect: true,
+    allowEdit: false,
+    allowNew: false,
+    valueDelimiter: ',',
     visibleWhen: [
       {
         field: 'fullAccess',
@@ -92,6 +96,10 @@ export default {
     type: 'selectresource',
     resourceType: 'exports',
     label: 'Exports',
+    multiselect: true,
+    allowEdit: false,
+    allowNew: false,
+    valueDelimiter: ',',
     visibleWhen: [
       {
         field: 'fullAccess',
@@ -104,6 +112,10 @@ export default {
     type: 'selectresource',
     resourceType: 'imports',
     label: 'Imports',
+    multiselect: true,
+    allowEdit: false,
+    allowNew: false,
+    valueDelimiter: ',',
     visibleWhen: [
       {
         field: 'fullAccess',
