@@ -12,7 +12,8 @@ const useStyles = makeStyles(theme => ({
     overflow: 'auto',
   },
   addOnContainer: {
-    margin: theme.spacing(2),
+    backgroundColor: theme.palette.background.default,
+    padding: theme.spacing(3),
     display: 'grid',
     gridTemplateColumns: `repeat(auto-fill, minmax(300px, 1fr));`,
     gridGap: theme.spacing(2),

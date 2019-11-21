@@ -30,9 +30,19 @@ const useStyles = makeStyles(theme => ({
     fontSize: 13,
   },
 }));
+// These routes are shared for IA and DIY routes.
+const flowBuilderRoutes = {
+  path: '/flowBuilder/:flowId',
+  breadcrumb: () => 'Flow builder',
+  childRoutes: [
+    { path: '/schedule', breadcrumb: () => 'Schedule' },
+    { path: '/settings', breadcrumb: () => 'Settings' },
+  ],
+};
 // These routes are shared for IAs with and without /store/ url segment.
 // to keep the code DRY, lets extract the common sub-set of routes.
 const integrationAppRoutes = [
+  flowBuilderRoutes,
   {
     path: '/flows',
     breadcrumb: () => 'Flows',
@@ -67,14 +77,7 @@ const routes = [
           { path: '/notifications', breadcrumb: () => 'Notifications' },
         ],
       },
-      {
-        path: '/flowBuilder/:flowId',
-        breadcrumb: () => 'Flow builder',
-        childRoutes: [
-          { path: '/schedule', breadcrumb: () => 'Schedule' },
-          { path: '/settings', breadcrumb: () => 'Settings' },
-        ],
-      },
+      flowBuilderRoutes,
     ],
   },
   {

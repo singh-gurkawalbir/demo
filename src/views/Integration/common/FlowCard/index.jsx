@@ -119,13 +119,18 @@ export default function FlowCard({ flowId, excludeActions }) {
     return 'Never Runs';
   }
 
+  const isIntegrationApp = !!flowDetails._connectorId;
+  const flowBuilderTo = isIntegrationApp
+    ? `/pg/integrationApp/${flowDetails._integrationId}/flowBuilder/${flowId}`
+    : `flowBuilder/${flowId}`;
+
   return (
     <div className={classes.root}>
       <div className={clsx(classes.statusBar, classes[status])} />
       <div className={classes.cardContent}>
         <Grid item xs={9}>
           <div>
-            <Link to={`flowBuilder/${flowId}`}>
+            <Link to={flowBuilderTo}>
               <Typography
                 color="primary"
                 variant="h4"
