@@ -36,13 +36,13 @@ const defaultData = {};
 const defaultFilters = [];
 
 export default function FilterPanel({
-  editorId,
-  readOnly,
-  filters = defaultFilters,
-  data = defaultData,
-  rule,
   id,
   onFieldChange,
+  editorId,
+  rule,
+  filters = defaultFilters,
+  data = defaultData,
+  readOnly,
 }) {
   const qbuilder = useRef(null);
   const classes = useStyles();

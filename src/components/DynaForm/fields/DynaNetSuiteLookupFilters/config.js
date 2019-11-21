@@ -67,5 +67,5 @@ export default {
     delete_rule: ' ',
     delete_group: ' ',
   },
-  display_empty_filter: false, // self.readOnly,
+  display_empty_filter: false,
 };
