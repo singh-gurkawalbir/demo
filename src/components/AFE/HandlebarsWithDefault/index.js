@@ -16,6 +16,7 @@ export default function HandlebarsWithDefaults(props) {
     templateClassName,
     resultTitle,
     disabled,
+    lookups = [],
   } = props;
   const {
     template,
@@ -29,7 +30,9 @@ export default function HandlebarsWithDefaults(props) {
   const handlebarHelperFunction = useSelector(state =>
     selectors.editorHelperFunctions(state)
   );
+  const _lookups = lookups && Array.isArray(lookups) ? lookups : [];
 
+  completers.handleBarsCompleters.setLookupCompleter(_lookups);
   completers.handleBarsCompleters.setFunctionCompleter(handlebarHelperFunction);
   useEffect(() => {
     if (!violations) {
