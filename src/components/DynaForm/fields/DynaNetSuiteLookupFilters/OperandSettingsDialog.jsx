@@ -1,8 +1,8 @@
 import { Fragment } from 'react';
 import { Button } from '@material-ui/core';
 import ModalDialog from '../../../ModalDialog';
-import DynaForm from '../../../DynaForm';
-import DynaSubmit from '../../../DynaForm/DynaSubmit';
+import DynaForm from '../..';
+import DynaSubmit from '../../DynaSubmit';
 
 export default function OperandSettingsDialog({
   ruleData,

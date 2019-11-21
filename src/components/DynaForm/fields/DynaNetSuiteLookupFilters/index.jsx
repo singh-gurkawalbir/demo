@@ -5,7 +5,7 @@ import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import FilterPanel from './FilterPanel';
 
-export default function DynaNSFilters(props) {
+export default function DynaNetSuiteLookupFilters(props) {
   const dispatch = useDispatch();
   const {
     id,

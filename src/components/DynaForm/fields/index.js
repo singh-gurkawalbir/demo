@@ -54,7 +54,7 @@ import DynaDate from './dateTime/DynaDate';
 import DynaToggle from './DynaToggle';
 import DynaSQLQueryBuilder from './DynaSQLQueryBuilder';
 import DynaRelativeURIWithLookup from './DynaRelativeURIWithLookup';
-import DynaNSFilters from './DynaNSFilters';
+import DynaNetSuiteLookupFilters from './DynaNetSuiteLookupFilters';
 import DynaNetSuiteLookup from './DynaNetSuiteLookup';
 import DynaUserEmail from './DynaUserEmail';
 import DynaUserPassword from './DynaUserPassword';
@@ -120,7 +120,7 @@ export default {
   date: DynaDate,
   sqlquerybuilder: DynaSQLQueryBuilder,
   relativeuriwithlookup: DynaRelativeURIWithLookup,
-  netsuitefilters: DynaNSFilters,
+  netsuitelookupfilters: DynaNetSuiteLookupFilters,
   netsuitelookup: DynaNetSuiteLookup,
   useremail: DynaUserEmail,
   userpassword: DynaUserPassword,

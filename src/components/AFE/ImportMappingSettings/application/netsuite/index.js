@@ -138,7 +138,7 @@ export default {
         'lookup.expression': {
           id: 'lookup.expression',
           name: 'lookup.expression',
-          type: 'netsuitefilters',
+          type: 'netsuitelookupfilters',
           label: 'NS Filters',
           connectionId,
           refreshOptionsOnChangesTo: ['lookup.recordType'],
