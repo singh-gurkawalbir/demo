@@ -2,7 +2,7 @@ import EditorDialog from '../EditorDialog';
 import UrlEditor from './';
 
 export default function UrlEditorDialog(props) {
-  const { id, rule, lookups, data, disabled, ...rest } = props;
+  const { id, rule, lookups = [], data, disabled, ...rest } = props;
   const defaults = {
     layout: 'column',
     width: '70vw',

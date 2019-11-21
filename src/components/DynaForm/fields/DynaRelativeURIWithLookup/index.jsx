@@ -47,14 +47,14 @@ export default function DynaRelativeURIWithLookup(props) {
     required,
     value,
     label,
-    options,
+    options = {},
     resourceId,
     useSampleDataAsArray,
     resourceType,
     flowId,
   } = props;
   const { resourceName, lookups } = options;
-  const { fieldId: lookupFieldId, data: lookupData } = lookups;
+  const { fieldId: lookupFieldId, data: lookupData } = lookups || {};
   const connection = useSelector(state =>
     selectors.resource(state, 'connections', connectionId)
   );

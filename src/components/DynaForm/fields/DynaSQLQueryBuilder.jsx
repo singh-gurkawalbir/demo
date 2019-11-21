@@ -41,7 +41,7 @@ export default function DynaSQLQueryBuilder(props) {
   const {
     id,
     onFieldChange,
-    options,
+    options = {},
     disabled,
     value,
     label,
@@ -52,7 +52,7 @@ export default function DynaSQLQueryBuilder(props) {
   } = props;
   const { lookups: lookupObj, queryType } = options;
   const lookupFieldId = lookupObj && lookupObj.fieldId;
-  const lookups = lookupObj && lookupObj.data;
+  const lookups = (lookupObj && lookupObj.data) || [];
   const [showEditor, setShowEditor] = useState(false);
   const dispatch = useDispatch();
   const [dataState, setDataState] = useState({

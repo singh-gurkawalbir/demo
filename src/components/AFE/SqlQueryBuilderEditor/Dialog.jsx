@@ -11,7 +11,7 @@ function SqlQueryBuilderEditorDialog(props) {
   const {
     id,
     rule,
-    lookups,
+    lookups = [],
     sampleData,
     defaultData,
     disabled,

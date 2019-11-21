@@ -5,7 +5,7 @@ export default function SqlQueryBuilderEditor(props) {
     rule,
     editorId,
     disabled,
-    lookups,
+    lookups = [],
     layout = 'compact',
     sampleData,
     defaultData,
