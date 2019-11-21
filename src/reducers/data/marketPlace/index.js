@@ -1,4 +1,5 @@
 import produce from 'immer';
+import moment from 'moment';
 import actionTypes from '../../../actions/types';
 
 export default (state = {}, action) => {
@@ -39,7 +40,7 @@ export function connectors(state, application, sandbox, licenses) {
       licenses.forEach(l => {
         if (
           !hasLicense &&
-          !l.hasExpired &&
+          moment(l.expires) - moment() > 0 &&
           l.type === 'connector' &&
           l._connectorId === conn._id &&
           !l._integrationId &&
