@@ -2,12 +2,12 @@ import { useSelector, useDispatch } from 'react-redux';
 import { IconButton } from '@material-ui/core';
 import * as selectors from '../../../../../reducers';
 import Icon from '../../../../icons/DownloadIcon';
-// import openExternalUrl from '../../../../../utils/window';
+import openExternalUrl from '../../../../../utils/window';
 import actions from '../../../../../actions';
 
 export default {
   label: 'Download debug logs',
-  component: function DownloadDebugLogs({ resource }) {
+  component: function DownloadDebugLogs({ resource, type }) {
     const dispatch = useDispatch();
     let url = `/connections/${resource._id}/debug`;
     const additionalHeaders = useSelector(state =>
@@ -20,8 +20,12 @@ export default {
         }`;
       }
 
-      // openExternalUrl({ url });
-      dispatch(actions.connection.requestDebugLogs(url));
+      if (type === 'flowBuilder') {
+        dispatch(actions.connection.requestDebugLogs(url));
+      } else {
+        url = `/api${url}`;
+        openExternalUrl({ url });
+      }
     };
 
     return (
