@@ -9,6 +9,7 @@ import {
   Typography,
   IconButton,
 } from '@material-ui/core';
+// TODO: Azhar, please fix these icons message
 import ZoomOutIcon from '@material-ui/icons/ZoomOutMap';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
