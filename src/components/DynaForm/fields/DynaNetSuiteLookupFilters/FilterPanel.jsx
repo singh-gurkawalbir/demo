@@ -15,10 +15,10 @@ import { isEmpty } from 'lodash';
 import config from './config';
 import './queryBuilder.css';
 import {
-  convertIOFilterExpression,
+  convertNetSuiteLookupFilterExpression,
   getFilterList,
   generateRulesState,
-  generateIOExpression,
+  generateNetSuiteLookupFilterExpression,
   getFilterRuleId,
 } from './util';
 import OperandSettingsDialog from './OperandSettingsDialog';
@@ -67,7 +67,7 @@ export default function FilterPanel({
   );
 
   useEffect(() => {
-    const qbRules = convertIOFilterExpression(rule, data);
+    const qbRules = convertNetSuiteLookupFilterExpression(rule, data);
 
     if (
       qbRules &&
@@ -91,13 +91,13 @@ export default function FilterPanel({
 
   const isValid = () => jQuery(qbuilder.current).queryBuilder('validate');
   const getRules = (options = {}) => {
-    const result = jQuery(qbuilder.current).queryBuilder('getRules', options);
+    const qbRules = jQuery(qbuilder.current).queryBuilder('getRules', options);
 
-    if (isEmpty(result) || (result && !result.valid)) {
+    if (isEmpty(qbRules) || (qbRules && !qbRules.valid)) {
       return undefined;
     }
 
-    return generateIOExpression(result);
+    return generateNetSuiteLookupFilterExpression(qbRules);
   };
 
   const handleFilterRulesChange = () => {

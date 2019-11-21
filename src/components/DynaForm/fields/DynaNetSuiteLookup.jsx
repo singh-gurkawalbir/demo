@@ -92,12 +92,6 @@ export default function DynaNetSuiteLookup(props) {
     }
   }, [dispatch, extractFields, flowId, resourceId]);
 
-  const handleFieldChange = event => {
-    const { value } = event.target;
-
-    onFieldChange(id, value);
-  };
-
   let rule = [];
 
   if (value) {
@@ -134,12 +128,11 @@ export default function DynaNetSuiteLookup(props) {
         className={classes.textField}
         placeholder={placeholder}
         helperText={isValid ? '' : errorMessages}
-        disabled={disabled}
+        disabled
         required={required}
         error={!isValid}
         value={value}
         variant="filled"
-        onChange={handleFieldChange}
       />
     </Fragment>
   );

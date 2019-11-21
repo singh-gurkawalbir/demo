@@ -36,33 +36,33 @@ export function isComplexNSExpression(exp) {
   return toReturn;
 }
 
-export function updateNSExpressionForNOTs(exp) {
+export function updateNetSuiteLookupFilterExpressionForNOTs(exp) {
   for (let i = 0; i < exp.length; i += 1) {
     if (exp[i] === 'NOT') {
       exp[i] = isArray(exp[i + 1][0])
-        ? ['NOT', updateNSExpressionForNOTs(exp[i + 1])]
+        ? ['NOT', updateNetSuiteLookupFilterExpressionForNOTs(exp[i + 1])]
         : ['NOT', exp[i + 1]];
       exp.splice(i + 1, 1);
     } else if (isArray(exp[i])) {
-      exp[i] = updateNSExpressionForNOTs(exp[i]);
+      exp[i] = updateNetSuiteLookupFilterExpressionForNOTs(exp[i]);
     }
   }
 
   return exp;
 }
 
-export function updateNSExpressionForConditions(exp) {
+export function updateNetSuiteLookupFilterExpressionForConditions(exp) {
   let toReturn = [];
   let prevCondition;
 
   if (isArray(exp) && exp.length === 1) {
-    return updateNSExpressionForConditions(exp[0]);
+    return updateNetSuiteLookupFilterExpressionForConditions(exp[0]);
   }
 
   if (exp[0] === 'NOT') {
     if (isArray(exp[1]) && isArray(exp[1][0])) {
       toReturn.push('NOT');
-      toReturn.push(updateNSExpressionForConditions(exp[1]));
+      toReturn.push(updateNetSuiteLookupFilterExpressionForConditions(exp[1]));
     }
   } else {
     for (let i = 0; i < exp.length; i += 1) {
@@ -74,14 +74,18 @@ export function updateNSExpressionForConditions(exp) {
 
         if (toReturn.length === 1) {
           if (isComplexNSExpression(exp[i - 1])) {
-            toReturn.push(updateNSExpressionForConditions(exp[i - 1]));
+            toReturn.push(
+              updateNetSuiteLookupFilterExpressionForConditions(exp[i - 1])
+            );
           } else {
             toReturn.push(exp[i - 1]);
           }
         }
 
         if (isComplexNSExpression(exp[i + 1])) {
-          toReturn.push(updateNSExpressionForConditions(exp[i + 1]));
+          toReturn.push(
+            updateNetSuiteLookupFilterExpressionForConditions(exp[i + 1])
+          );
         } else {
           toReturn.push(exp[i + 1]);
         }
@@ -98,33 +102,36 @@ export function updateNSExpressionForConditions(exp) {
   return toReturn;
 }
 
-export function convertNSExpressionToQueryBuilderRules(exp, exportData) {
+export function convertNetSuiteLookupFilterExpressionToQueryBuilderRules(
+  exp,
+  data
+) {
   function parseFilter(exp) {
-    const toReturn = {};
-    let field;
-    let filteredFields;
-
-    [toReturn.id] = exp;
-    [, toReturn.operator] = exp;
-    toReturn.data = {
-      lhs: {
-        type: 'field',
-        field: exp[0],
+    const rule = {
+      id: exp[0],
+      operator: exp[1],
+      data: {
+        lhs: {
+          type: 'field',
+          field: exp[0],
+        },
       },
     };
+    let field;
+    let filteredFields;
 
     if (
       exp[0].indexOf('formuladate:') === 0 ||
       exp[0].indexOf('formulanumeric:') === 0 ||
       exp[0].indexOf('formulatext:') === 0
     ) {
-      toReturn.data.lhs.type = 'expression';
-      [toReturn.id] = exp[0].split(':');
-      toReturn.data.lhs.field = toReturn.id;
-      toReturn.data.lhs.expression = exp[0].replace(`${toReturn.id}:`, '');
+      rule.data.lhs.type = 'expression';
+      [rule.id] = exp[0].split(':');
+      rule.data.lhs.field = rule.id;
+      rule.data.lhs.expression = exp[0].replace(`${rule.id}:`, '');
     }
 
-    toReturn.data.rhs = {};
+    rule.data.rhs = {};
 
     if (exp[2]) {
       if (exp[2].indexOf('{{') > -1) {
@@ -134,42 +141,41 @@ export function convertNSExpressionToQueryBuilderRules(exp, exportData) {
           .replace('{{', '')
           .replace('}}', '');
 
-        filteredFields = exportData.filter(f => f.id === field);
+        filteredFields = data.filter(f => f.id === field);
 
         if (filteredFields.length > 0) {
-          toReturn.data.rhs = {
+          rule.data.rhs = {
             type: 'field',
             field,
           };
         } else {
-          toReturn.data.rhs = {
+          rule.data.rhs = {
             type: 'expression',
             expression: exp[2],
           };
         }
       } else {
-        toReturn.data.rhs = {
+        rule.data.rhs = {
           type: 'value',
           value: exp[2],
         };
       }
     }
 
-    return toReturn;
+    return rule;
   }
 
   function iterate(exp) {
-    let toReturn = {};
-    let oneRule = {};
+    let rules = {};
     let i = 0;
 
     if (!exp.length) {
-      return toReturn;
+      return rules;
     }
 
     if (isString(exp[0])) {
       if (exp[0].toUpperCase() === 'NOT') {
-        toReturn.not = true;
+        rules.not = true;
         [, exp] = exp;
 
         if (!['AND', 'OR'].includes(exp[0].toUpperCase())) {
@@ -178,47 +184,54 @@ export function convertNSExpressionToQueryBuilderRules(exp, exportData) {
       }
 
       if (['AND', 'OR'].includes(exp[0].toUpperCase())) {
-        toReturn.condition = exp[0].toUpperCase();
-        toReturn.rulesTemp = tail(exp, 1);
-        toReturn.rules = [];
+        rules.condition = exp[0].toUpperCase();
+        rules.rulesTemp = tail(exp, 1);
+        rules.rules = [];
 
-        for (i = 0; i < toReturn.rulesTemp.length; i += 1) {
-          oneRule = iterate(toReturn.rulesTemp[i]);
-          toReturn.rules.push(oneRule);
+        for (i = 0; i < rules.rulesTemp.length; i += 1) {
+          rules.rules.push(iterate(rules.rulesTemp[i]));
         }
 
-        delete toReturn.rulesTemp;
+        delete rules.rulesTemp;
       } else {
-        toReturn = parseFilter(exp);
+        rules = parseFilter(exp);
       }
     }
 
-    return toReturn;
+    return rules;
   }
 
-  let tr = iterate(exp);
+  let qbRules = iterate(exp);
 
-  if (!tr.condition) {
-    tr = {
+  if (!qbRules.condition) {
+    qbRules = {
       condition: 'AND',
-      rules: tr,
+      rules: qbRules,
     };
   }
 
-  if (!isArray(tr.rules)) {
-    tr.rules = [tr.rules];
+  if (!isArray(qbRules.rules)) {
+    qbRules.rules = [qbRules.rules];
   }
 
-  return tr;
+  return qbRules;
 }
 
-export function convertIOFilterExpression(filterExpression = [], data = []) {
-  let e = updateNSExpressionForNOTs(filterExpression);
+export function convertNetSuiteLookupFilterExpression(
+  filterExpression = [],
+  data = []
+) {
+  let expression = updateNetSuiteLookupFilterExpressionForNOTs(
+    filterExpression
+  );
 
-  e = updateNSExpressionForConditions(e);
-  e = convertNSExpressionToQueryBuilderRules(e, data);
+  expression = updateNetSuiteLookupFilterExpressionForConditions(expression);
+  expression = convertNetSuiteLookupFilterExpressionToQueryBuilderRules(
+    expression,
+    data
+  );
 
-  return e;
+  return expression;
 }
 
 export function getFilterList(jsonPaths, rules) {
@@ -277,38 +290,41 @@ export function generateRulesState(rules) {
   return rulesState;
 }
 
-export function generateIOExpression(exp) {
-  const toReturn = [];
+export function generateNetSuiteLookupFilterExpression(qbRules) {
+  const nsFilterExpression = [];
   let lhs;
   let rhs;
   let filter;
 
-  for (let i = 0; i < exp.rules.length; i += 1) {
-    if (exp.rules[i].not) {
-      toReturn.push('NOT');
+  for (let i = 0; i < qbRules.rules.length; i += 1) {
+    if (qbRules.rules[i].not) {
+      nsFilterExpression.push('NOT');
     }
 
-    if (exp.rules[i].rules && exp.rules[i].rules.length > 0) {
-      toReturn.push(generateIOExpression(exp.rules[i]));
+    if (qbRules.rules[i].rules && qbRules.rules[i].rules.length > 0) {
+      nsFilterExpression.push(
+        generateNetSuiteLookupFilterExpression(qbRules.rules[i])
+      );
     } else {
       if (
         ['formuladate', 'formulanumeric', 'formulatext'].indexOf(
-          exp.rules[i].id
+          qbRules.rules[i].id
         ) > -1
       ) {
-        lhs = [exp.rules[i].id, exp.rules[i].data.lhs.expression].join(':');
+        lhs = `${qbRules.rules[i].id}:${qbRules.rules[i].data.lhs.expression}`;
       } else {
-        lhs = exp.rules[i].id;
+        lhs = qbRules.rules[i].id;
       }
 
-      filter = [lhs, exp.rules[i].operator];
+      filter = [lhs, qbRules.rules[i].operator];
 
-      if (['isempty', 'isnotempty'].indexOf(exp.rules[i].operator) > -1) {
+      if (['isempty', 'isnotempty'].indexOf(qbRules.rules[i].operator) > -1) {
         filter.push('');
-      } else if (exp.rules[i].data && exp.rules[i].data.rhs) {
-        rhs = exp.rules[i].data.rhs[exp.rules[i].data.rhs.type || 'field'];
+      } else if (qbRules.rules[i].data && qbRules.rules[i].data.rhs) {
+        rhs =
+          qbRules.rules[i].data.rhs[qbRules.rules[i].data.rhs.type || 'field'];
 
-        if (exp.rules[i].data.rhs.type === 'field') {
+        if (qbRules.rules[i].data.rhs.type === 'field') {
           rhs = `{{{${rhs}}}}`;
         }
 
@@ -317,15 +333,17 @@ export function generateIOExpression(exp) {
         }
       }
 
-      toReturn.push(filter);
+      nsFilterExpression.push(filter);
     }
 
-    if (i < exp.rules.length - 1) {
-      toReturn.push(exp.condition || 'AND');
+    if (i < qbRules.rules.length - 1) {
+      nsFilterExpression.push(qbRules.condition || 'AND');
     }
   }
 
-  return toReturn.length === 1 ? toReturn[0] : toReturn;
+  return nsFilterExpression.length === 1
+    ? nsFilterExpression[0]
+    : nsFilterExpression;
 }
 
 export function validateFilterRule(rule) {

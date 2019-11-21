@@ -2,7 +2,7 @@ import EditorDialog from '../EditorDialog';
 import DynaNetSuiteLookupFilters from '../../DynaForm/fields/DynaNetSuiteLookupFilters';
 
 export default function NetSuiteLookupFilterEditorDialog(props) {
-  const { id, rule, data, disabled, ...rest } = props;
+  const { id } = props;
   const defaults = {
     layout: 'column',
     width: '70vw',
@@ -12,10 +12,8 @@ export default function NetSuiteLookupFilterEditorDialog(props) {
 
   return (
     <EditorDialog
-      id={id}
       {...defaults}
-      {...rest}
-      disabled={disabled}
+      {...props}
       showFullScreen
       showLayoutOptions={false}
       hidePreviewAction>
