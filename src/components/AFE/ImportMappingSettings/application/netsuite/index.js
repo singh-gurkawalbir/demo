@@ -133,6 +133,19 @@ export default {
             { field: 'lookup.mode', is: ['dynamic'] },
           ],
         },
+        'lookup.expression': {
+          id: 'lookup.expression',
+          name: 'lookup.expression',
+          type: 'netsuitelookupfilters',
+          label: 'NS Filters',
+          connectionId,
+          refreshOptionsOnChangesTo: ['lookup.recordType'],
+          visibleWhenAll: [
+            { field: 'fieldMappingType', is: ['lookup'] },
+            { field: 'lookup.mode', is: ['dynamic'] },
+          ],
+          data: extractFields,
+        },
         'lookup.resultField': {
           id: 'lookup.resultField',
           name: 'resultField',
@@ -338,6 +351,7 @@ export default {
           'fieldMappingType',
           'lookup.mode',
           'lookup.recordType',
+          'lookup.expression',
           'lookup.resultField',
           'lookup.mapList',
           'functions',
@@ -379,6 +393,18 @@ export default {
         } else if (fieldId === 'lookup.recordType') {
           return {
             resourceToFetch: 'recordTypes',
+          };
+        } else if (fieldId === 'lookup.expression') {
+          const recordTypeField = fields.find(
+            field => field.id === 'lookup.recordType'
+          );
+
+          return {
+            disableFetch: !(recordTypeField && recordTypeField.value),
+            commMetaPath: recordTypeField
+              ? `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${recordTypeField.value}/searchFilters?includeJoinFilters=true`
+              : '',
+            resetValue: [],
           };
         } else if (fieldId === 'lookup.resultField') {
           const recordTypeField = fields.find(

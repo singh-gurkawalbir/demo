@@ -66,6 +66,7 @@ export default function EditorDialog(props) {
     height = '50vh',
     onClose,
     disabled,
+    hidePreviewAction = false,
   } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -93,7 +94,7 @@ export default function EditorDialog(props) {
     setState({ ...state, fullScreen: !fullScreen });
   const size = fullScreen ? { height } : { height, width };
   const showPreviewAction =
-    editor && !editor.violations && !editor.autoEvaluate;
+    !hidePreviewAction && editor && !editor.violations && !editor.autoEvaluate;
   const disableSave = !editor || editor.violations || disabled;
 
   return (
