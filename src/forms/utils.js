@@ -398,7 +398,7 @@ const translateFieldProps = (fields = [], _integrationId) =>
 export const integrationSettingsToDynaFormMetadata = (
   meta,
   integrationId,
-  isGeneral
+  skipContainerWrap
 ) => {
   const finalData = {};
 
@@ -443,7 +443,7 @@ export const integrationSettingsToDynaFormMetadata = (
     finalData.fieldMap = translateDependencyProps(finalData.fieldMap);
 
   // Wrap everything in a adavancedSettings container
-  if (!isGeneral) {
+  if (!skipContainerWrap) {
     finalData.layout = {
       type: 'collapse',
       containers: [{ ...finalData.layout, label: 'Advanced Settings' }],

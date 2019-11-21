@@ -125,10 +125,8 @@ export default function DynaSelect(props) {
           disableUnderline
           displayEmpty
           disabled={disabled}
-          onChange={evt => {
-            const { value: evtValue } = evt.target;
-
-            onFieldChange(id, evtValue);
+          onChange={e => {
+            onFieldChange(id, e.target.value);
           }}
           input={<Input name={name} id={id} />}>
           {items}
