@@ -30,7 +30,7 @@ export default function HandlebarsWithDefaults(props) {
   const handlebarHelperFunction = useSelector(state =>
     selectors.editorHelperFunctions(state)
   );
-  const _lookups = lookups && Array.isArray(lookups) ? lookups : [];
+  const _lookups = Array.isArray(lookups) ? lookups : [];
 
   completers.handleBarsCompleters.setLookupCompleter(_lookups);
   completers.handleBarsCompleters.setFunctionCompleter(handlebarHelperFunction);

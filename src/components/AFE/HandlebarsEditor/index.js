@@ -33,7 +33,7 @@ export default function HandlebarsEditor(props) {
   );
 
   completers.handleBarsCompleters.setFunctionCompleter(handlebarHelperFunction);
-  const _lookups = lookups && Array.isArray(lookups) ? lookups : [];
+  const _lookups = Array.isArray(lookups) ? lookups : [];
 
   completers.handleBarsCompleters.setLookupCompleter(_lookups);
   useEffect(() => {

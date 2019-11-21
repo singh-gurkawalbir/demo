@@ -15,7 +15,7 @@ export default function DynaHttpRequestBody(props) {
   const {
     id,
     onFieldChange,
-    options,
+    options = {},
     value,
     label,
     resourceId,
