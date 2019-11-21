@@ -72,7 +72,6 @@ export default {
       label: 'This application supports two options for exporting data',
       defaultValue: r => (r && r.type) || 'api',
       required: true,
-      showOptionsHorizontally: true,
       options: [
         {
           items: [
@@ -92,7 +91,6 @@ export default {
       id: 'isNew',
       name: 'isNew',
       type: 'radiogroup',
-      showOptionsHorizontally: true,
       // label: 'Build new or use existing?',
       defaultValue: 'true',
       options: [

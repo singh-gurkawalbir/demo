@@ -21,7 +21,6 @@ const exportHooksMetadata = ({
         type: 'radiogroup',
         label: 'Hook Type',
         defaultValue: defaultHookType,
-        showOptionsHorizontally: true,
         fullWidth: true,
         options: [
           {
@@ -79,7 +78,6 @@ const importHooksMetadata = ({
       type: 'radiogroup',
       label: 'Hook Type',
       defaultValue: defaultHookType,
-      showOptionsHorizontally: true,
       fullWidth: true,
       options: [
         {
