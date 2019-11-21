@@ -122,3 +122,10 @@ export const getUsedActionsMapForResource = (
 
   return usedActions;
 };
+
+export const isImportMappingAvailable = resource => {
+  const { adaptorType } = resource;
+  const appType = adaptorTypeMap[adaptorType];
+
+  return ['mongodb', 'rdbms'].indexOf(appType) === -1;
+};
