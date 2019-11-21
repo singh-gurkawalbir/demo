@@ -467,7 +467,10 @@ function FlowBuilder(props) {
             <SettingsIcon />
           </IconButton>
 
-          <FlowEllipsisMenu flowId={flowId} exclude={['detach', 'audit']} />
+          <FlowEllipsisMenu
+            flowId={flowId}
+            exclude={['mapping', 'detach', 'audit']}
+          />
         </div>
       </CeligoPageBar>
       <div

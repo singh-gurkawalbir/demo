@@ -98,11 +98,18 @@ const useStyles = makeStyles(theme => ({
 function LHSItem(props) {
   const classes = useStyles();
   const { to, label, pathname } = props;
+  let activeClassName;
+
+  if (pathname) {
+    activeClassName = pathname === to ? classes.activeLink : '';
+  } else {
+    activeClassName = classes.activeLink;
+  }
 
   return (
     <ListItem className={classes.listItem}>
       <NavLink
-        activeClassName={pathname === to ? classes.activeLink : ''}
+        activeClassName={activeClassName}
         className={classes.link}
         to={to}>
         {label}
@@ -259,8 +266,9 @@ export default function IntegrationAppSettings(props) {
       (defaultStoreId !== currentStore &&
         !integration.stores.find(s => s.value === currentStore)) ||
       !currentStore
-    )
+    ) {
       setCurrentStore(defaultStoreId);
+    }
   }, [currentStore, defaultStoreId, integration.stores]);
 
   const handleStoreChange = (id, value) => {

@@ -336,16 +336,19 @@ export default {
 
     return formattedGenerateFields;
   },
-  generateFieldAndListMappingsforAssistant: (mappings, requiredMappings) => {
+  generateFieldAndListMappingsforAssistant: (
+    mappings = [],
+    requiredMappings
+  ) => {
     if (requiredMappings && Array.isArray(requiredMappings)) {
       requiredMappings.forEach(f => {
         let fld = f;
         let fldContainer;
 
         if (fld.indexOf('[*].') > 0) {
-          fldContainer = mappings.lists.find(
-            l => l.generate === fld.split('[*].')[0]
-          );
+          fldContainer =
+            mappings.lists &&
+            mappings.lists.find(l => l.generate === fld.split('[*].')[0]);
 
           // eslint-disable-next-line prefer-destructuring
           fld = fld.split('[*].')[1];
@@ -353,7 +356,9 @@ export default {
           fldContainer = mappings;
         }
 
-        const field = fldContainer.fields.find(l => l.generate === fld);
+        const field =
+          fldContainer.fields &&
+          fldContainer.fields.find(l => l.generate === fld);
 
         if (field) {
           field.isRequired = true;

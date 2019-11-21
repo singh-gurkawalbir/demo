@@ -388,6 +388,21 @@ function* commitAndAuthorizeConnection({ resourceId }) {
   }
 }
 
+function* requestIClients({ connectionId }) {
+  try {
+    const { iclients } = yield apiCallWithRetry({
+      path: `/connections/${connectionId}/iclients`,
+      opts: {
+        method: 'GET',
+      },
+    });
+
+    yield put(actions.connection.updateIClients(iclients, connectionId));
+  } catch (e) {
+    // exception handler
+  }
+}
+
 export default [
   takeEvery(actionTypes.TEST_CONNECTION, pingConnection),
   takeEvery(actionTypes.TOKEN.REQUEST, requestToken),
@@ -400,4 +415,5 @@ export default [
     actionTypes.RESOURCE_FORM.COMMIT_AND_AUTHORIZE,
     commitAndAuthorizeConnection
   ),
+  takeEvery(actionTypes.ICLIENTS, requestIClients),
 ];

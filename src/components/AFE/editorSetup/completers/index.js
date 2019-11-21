@@ -45,6 +45,42 @@ export const FunctionCompleter = {
   },
 };
 
+export const LookupCompleter = {
+  lookupsHints: [],
+  getCompletions(editor, session, pos, prefix, callback) {
+    const validText = textAfterBracesMatchers(editor);
+
+    if (!validText) return callback(null, []);
+
+    const insertMatch = (editor, completionMetaData) => {
+      const { matchingResult } = completionMetaData;
+
+      insertMatchingResult(editor, matchingResult);
+    };
+
+    const textAfterBraces = validText[1];
+
+    return callback(
+      null,
+      this.lookupsHints
+        .filter(
+          hint =>
+            textAfterBraces.length === 0 ||
+            hint.name.startsWith(textAfterBraces)
+        )
+        .map(hint => ({
+          caption: hint.name,
+          value: hint.name,
+          meta: 'lookup',
+          matchingResult: `lookup "${hint.name}" this`,
+          completer: {
+            insertMatch,
+          },
+        }))
+    );
+  },
+};
+
 export const JsonCompleter = {
   identifierRegexps: [/[.*]/],
   jsonHints: [],
@@ -96,8 +132,12 @@ export const handleBarsCompleters = {
   setJsonCompleter: jsonData => {
     JsonCompleter.jsonHints = loadJsonHints(jsonData);
   },
+  setLookupCompleter: lookups => {
+    LookupCompleter.lookupsHints = lookups;
+  },
   getCompleters: () => ({
     JsonCompleter,
     FunctionCompleter,
+    LookupCompleter,
   }),
 };

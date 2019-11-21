@@ -41,7 +41,10 @@ const MyAccount = loadable(() =>
   import(/* webpackChunkName: 'MyAccount' */ '../../views/MyAccount')
 );
 const Integration = loadable(() =>
-  import(/* webpackChunkName: 'Integration' */ '../../views/Integration')
+  import(/* webpackChunkName: 'Integration' */ '../../views/Integration/DIY')
+);
+const IntegrationApp = loadable(() =>
+  import(/* webpackChunkName: 'IntegrationApp' */ '../../views/Integration/App')
 );
 const AccessTokenList = loadable(() =>
   import(
@@ -102,12 +105,23 @@ export default class AppRouting extends Component {
           component={TemplateInstall}
         />
         <Route
-          path={['/pg/integrations/:integrationId/flowBuilder/:flowId']}
+          path={[
+            '/pg/integrationApp/:integrationId/flowBuilder/:flowId',
+            '/pg/integrations/:integrationId/flowBuilder/:flowId',
+          ]}
           component={FlowBuilder}
         />
         <Route
           path="/pg/integrations/:integrationId/:tab"
           component={Integration}
+        />
+        <Route
+          path={[
+            '/pg/integrationApp/:integrationId/store/:storeId/:tab',
+            '/pg/integrationApp/:integrationId/:tab',
+            '/pg/integrationApp/:integrationId',
+          ]}
+          component={IntegrationApp}
         />
         <Route
           path="/pg/connectors/:connectorId/connectorLicenses"

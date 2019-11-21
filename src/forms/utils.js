@@ -398,7 +398,7 @@ const translateFieldProps = (fields = [], _integrationId) =>
 export const integrationSettingsToDynaFormMetadata = (
   meta,
   integrationId,
-  isGeneral
+  skipContainerWrap
 ) => {
   const finalData = {};
 
@@ -443,7 +443,7 @@ export const integrationSettingsToDynaFormMetadata = (
     finalData.fieldMap = translateDependencyProps(finalData.fieldMap);
 
   // Wrap everything in a adavancedSettings container
-  if (!isGeneral) {
+  if (!skipContainerWrap) {
     finalData.layout = {
       type: 'collapse',
       containers: [{ ...finalData.layout, label: 'Advanced Settings' }],
@@ -455,9 +455,16 @@ export const integrationSettingsToDynaFormMetadata = (
   return finalData;
 };
 
+export const getDomain = () =>
+  window.document.location.hostname.replace('www.', '');
+
+export const isProduction = () =>
+  ['integrator.io', 'eu.integrator.io'].includes(getDomain());
+
 // #END_REGION Integration App from utils
 
 export default {
   getFieldById,
   defaultPatchSetConverter,
+  isProduction,
 };
