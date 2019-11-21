@@ -41,7 +41,6 @@ export default {
           type: 'radiogroup',
           label: 'Field Mapping Type',
           defaultValue: mappingUtil.getFieldMappingType(value),
-          showOptionsHorizontally: true,
           fullWidth: true,
           options: [
             {
@@ -59,7 +58,6 @@ export default {
           name: '_mode',
           type: 'radiogroup',
           label: '',
-          showOptionsHorizontally: true,
           fullWidth: true,
           visibleWhen: [{ field: 'fieldMappingType', is: ['lookup'] }],
           defaultValue: lookup.name && lookup.map ? 'static' : 'dynamic',
@@ -126,7 +124,6 @@ export default {
           name: 'functions',
           type: 'fieldexpressionselect',
           label: 'Function',
-          resetAfterSelection: true,
           visibleWhen: [{ field: 'fieldMappingType', is: ['multifield'] }],
         },
         extract: {
@@ -134,7 +131,6 @@ export default {
           name: 'extract',
           type: 'select',
           label: 'Field',
-          resetAfterSelection: true,
           visibleWhen: [{ field: 'fieldMappingType', is: ['multifield'] }],
           options: [
             {
@@ -163,6 +159,7 @@ export default {
           type: 'radiogroup',
           defaultValue: mappingUtil.getDefaultActionValue(value),
           label: 'Action to take if value not found',
+          showOptionsVertically: true,
           options: [
             {
               items: [
@@ -243,6 +240,7 @@ export default {
             mappingUtil.getDefaultLookupActionValue(value, lookup) ||
             'disallowFailure',
           label: 'Action to take if unique match not found',
+          showOptionsVertically: true,
           options: [
             {
               items: [
@@ -400,15 +398,18 @@ export default {
 
           if (expressionField.value) expressionValue = expressionField.value;
 
-          const extractValue = extractField.value;
+          if (extractField.value) {
+            const extractValue = extractField.value;
 
-          if (extractValue)
             expressionValue +=
               extractValue.indexOf(' ') > -1
                 ? `{{[${extractValue}]}}`
                 : `{{${extractValue}}}`;
-
-          if (functionsField.value) expressionValue += functionsField.value;
+            extractField.value = '';
+          } else if (functionsField.value) {
+            expressionValue += functionsField.value;
+            functionsField.value = '';
+          }
 
           return expressionValue;
         } else if (fieldId === 'lookup.recordType') {

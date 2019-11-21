@@ -90,7 +90,6 @@ export default {
           type: 'radiogroup',
           label: 'Field Mapping Type',
           defaultValue: mappingUtil.getFieldMappingType(value),
-          showOptionsHorizontally: true,
           fullWidth: true,
           options: [
             {
@@ -108,7 +107,6 @@ export default {
           name: '_mode',
           type: 'radiogroup',
           label: '',
-          showOptionsHorizontally: true,
           fullWidth: true,
           visibleWhen: [{ field: 'fieldMappingType', is: ['lookup'] }],
           defaultValue: lookup.name && (lookup.map ? 'static' : 'dynamic'),
@@ -160,7 +158,7 @@ export default {
           keyName: 'export',
           keyLabel: 'Export Field',
           valueName: 'import',
-          valueLabel: 'Import Field (HTTP)',
+          valueLabel: 'Import Field (Netsuite)',
           defaultValue:
             lookup.map &&
             Object.keys(lookup.map).map(key => ({
@@ -179,7 +177,6 @@ export default {
           name: 'functions',
           type: 'fieldexpressionselect',
           label: 'Function',
-          resetAfterSelection: true,
           visibleWhen: [{ field: 'fieldMappingType', is: ['multifield'] }],
         },
         extract: {
@@ -187,7 +184,6 @@ export default {
           name: 'extract',
           type: 'select',
           label: 'Field',
-          resetAfterSelection: true,
           visibleWhen: [{ field: 'fieldMappingType', is: ['multifield'] }],
           options: [
             {
@@ -244,6 +240,7 @@ export default {
             mappingUtil.getDefaultLookupActionValue(value, lookup) ||
             'disallowFailure',
           label: 'Action to take if unique match not found',
+          showOptionsVertically: true,
           options: [
             {
               items: [
@@ -320,7 +317,6 @@ export default {
           type: 'radiogroup',
           label: 'Value',
           defaultValue: value.hardCodedValue,
-          showOptionsHorizontally: true,
           fullWidth: true,
           options: [
             {
@@ -366,15 +362,18 @@ export default {
 
           if (expressionField.value) expressionValue = expressionField.value;
 
-          const extractValue = extractField.value;
+          if (extractField.value) {
+            const extractValue = extractField.value;
 
-          if (extractValue)
             expressionValue +=
               extractValue.indexOf(' ') > -1
                 ? `{{[${extractValue}]}}`
                 : `{{${extractValue}}}`;
-
-          if (functionsField.value) expressionValue += functionsField.value;
+            extractField.value = '';
+          } else if (functionsField.value) {
+            expressionValue += functionsField.value;
+            functionsField.value = '';
+          }
 
           return expressionValue;
         } else if (fieldId === 'lookup.recordType') {

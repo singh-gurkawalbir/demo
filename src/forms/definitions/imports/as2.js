@@ -16,6 +16,14 @@ export default {
       };
     }
 
+    if (fieldId === 'dataURITemplate') {
+      const nameField = fields.find(field => field.fieldId === 'name');
+
+      return {
+        resourceName: nameField && nameField.value,
+      };
+    }
+
     return null;
   },
   fieldMap: {
