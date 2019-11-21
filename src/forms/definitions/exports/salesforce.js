@@ -150,7 +150,7 @@ export default {
       defaultDisabled: true,
     },
     'salesforce.distributed.relatedLists.referencedFields': {
-      type: 'salesforcerelatedfields',
+      type: 'salesforcerelatedlist',
       connectionId: r => r._connectionId,
       refreshOptionsOnChangesTo: ['salesforce.sObjectType'],
       fieldId: 'salesforce.distributed.relatedLists.referencedFields',

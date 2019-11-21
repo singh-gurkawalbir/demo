@@ -109,6 +109,8 @@ export default {
       .map(d => ({
         label: d.relationshipName,
         value: d.relationshipName,
+        name: d.name,
+        field: d.field,
         childSObject: d.childSObject,
       }))
       .sort(sortElements),

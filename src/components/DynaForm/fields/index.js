@@ -106,7 +106,7 @@ export default {
   salesforcerequiredtrigger: Salesforce.DynaRequiredTrigger,
   salesforcereferencedfields: Salesforce.DynaReferenedFields,
   salesforcesobjecttype: Salesforce.DynaSObjectType,
-  salesforcerelatedfieldsmodal: ReferencedFieldsModal,
-  salesforcerelatedfields: Salesforce.DynaRelatedFields,
+  salesforcerelatedlistmodal: ReferencedFieldsModal,
+  salesforcerelatedlist: Salesforce.DynaRelatedList,
   salesforcetreemodal: Salesforce.DynaTreeModal,
 };
