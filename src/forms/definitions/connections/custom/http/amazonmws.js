@@ -139,10 +139,12 @@ export default {
     },
     'http._iClientId': {
       id: 'http._iClientId',
-      type: 'selectresource',
       resourceType: 'iClients',
       filter: { provider: 'amazonmws' },
       label: 'IClient',
+      type: 'dynaiclient',
+      connectionId: r => r && r._id,
+      connectorId: r => r && r._connectorId,
       helpText:
         'Please specify the Amazon MWS "MarketplaceId" for this connection. This value is required for specific Amzaon MWS requests to succeed. Please note that you must be registered to sell in the Amazon MWS "MarketplaceId" selected, else your Amazon MWS calls will fail.',
     },

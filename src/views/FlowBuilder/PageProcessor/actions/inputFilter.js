@@ -20,14 +20,19 @@ function InputFilterDialog({
     })
   );
   const rules = useMemo(
-    () => resource && resource.filter && resource.filter.rules,
+    () =>
+      resource &&
+      resource.filter &&
+      (resourceType === 'imports'
+        ? resource.filter.rules
+        : resource.inputFilter.rules),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
   const handleClose = (shouldCommit, editorValues) => {
     if (shouldCommit) {
       const { rule } = editorValues;
-      const path = '/filter';
+      const path = resourceType === 'imports' ? '/filter' : '/inputFilter';
       const value = {
         rules: rule || [],
         version: '1',

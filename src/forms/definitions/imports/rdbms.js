@@ -33,6 +33,9 @@ export default {
     'rdbms.query': {
       fieldId: 'rdbms.query',
     },
+    'rdbms.queryUpdate': {
+      fieldId: 'rdbms.queryUpdate',
+    },
     'rdbms.queryType': { fieldId: 'rdbms.queryType' },
     ignoreExisting: {
       fieldId: 'ignoreExisting',
@@ -57,6 +60,7 @@ export default {
       'rdbms.existingDataId',
       'rdbms.lookups',
       'rdbms.query',
+      'rdbms.queryUpdate',
       'dataMappings',
     ],
     type: 'collapse',
