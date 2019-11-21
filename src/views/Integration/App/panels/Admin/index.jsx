@@ -1,4 +1,5 @@
 // import clsx from 'clsx';
+import { useSelector } from 'react-redux';
 import {
   Route,
   Switch,
@@ -8,12 +9,13 @@ import {
 } from 'react-router-dom';
 import { makeStyles } from '@material-ui/styles';
 import { List, ListItem } from '@material-ui/core';
-import { STANDALONE_INTEGRATION } from '../../../../../utils/constants';
+import * as selectors from '../../../../../reducers';
 import AuditLogSection from './sections/AuditLog';
 import SubscriptionSection from './sections/Subscription';
 import NotificationsSection from './sections/Notifications';
 import UsersSection from './sections/Users';
 import UninstallSection from './sections/Uninstall';
+import ApiTokensSection from './sections/ApiTokens';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -66,15 +68,23 @@ const allSections = [
     Section: UninstallSection,
     id: 'uninstall',
   },
+  {
+    path: 'apitoken',
+    label: 'API tokens',
+    Section: ApiTokensSection,
+    id: 'apitoken',
+  },
 ];
 
 export default function AdminPanel({ integrationId, ...sectionProps }) {
   const classes = useStyles();
   const match = useRouteMatch();
-  const availableSections =
-    integrationId === STANDALONE_INTEGRATION.id
-      ? allSections.slice(0, allSections.length - 1) // remove readme (last) section
-      : allSections;
+  const permissions = useSelector(state => selectors.userPermissions(state));
+  const showAPITokens = permissions.accesstokens.view;
+  const availableSections = showAPITokens
+    ? allSections
+    : // remove api token (last) section;
+      allSections.slice(0, allSections.length - 1);
 
   // if someone arrives at this view without requesting a section, then we
   // handle this by redirecting them to the first available section. We can

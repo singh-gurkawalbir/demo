@@ -1,4 +1,4 @@
-import { Fragment, useCallback } from 'react';
+import { Fragment, useCallback, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -21,9 +21,10 @@ import AdminPanel from './panels/Admin';
 import FlowsPanel from './panels/Flows';
 import ConnectionsPanel from './panels/Connections';
 import DashboardPanel from './panels/Dashboard';
+import AddOnsPanel from './panels/AddOns';
 import IntegrationTabs from '../common/Tabs';
 
-const tabs = [
+const allTabs = [
   { path: 'general', label: 'General', Icon: AdminIcon, Panel: GeneralPanel },
   { path: 'flows', label: 'Flows', Icon: FlowsIcon, Panel: FlowsPanel },
   {
@@ -39,6 +40,7 @@ const tabs = [
     Panel: ConnectionsPanel,
   },
   { path: 'admin', label: 'Admin', Icon: AdminIcon, Panel: AdminPanel },
+  { path: 'addons', label: 'Add-ons', Icon: AdminIcon, Panel: AddOnsPanel },
 ];
 const useStyles = makeStyles(theme => ({
   tag: {
@@ -51,15 +53,16 @@ const useStyles = makeStyles(theme => ({
   storeSelect: {
     fontFamily: 'Roboto500',
     fontSize: 13,
-    transition: theme.transitions.create('border'),
+    borderRadius: 4,
+    backgroundColor: `rgb(0,0,0,0)`,
+    transition: theme.transitions.create('background-color'),
     paddingLeft: theme.spacing(1),
-    border: `solid 1px transparent`,
     height: 'unset',
     '&:hover': {
-      borderColor: theme.palette.primary.light,
+      backgroundColor: `rgb(0,0,0,0.05)`,
     },
     '& > div': {
-      paddingTop: theme.spacing(1) + 1,
+      paddingTop: theme.spacing(1),
     },
   },
 }));
@@ -68,7 +71,7 @@ export default function IntegrationApp({ match, history }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const { integrationId, storeId, tab } = match.params;
-  // Note this selector should return undefined/null if no
+  // TODO: Note this selector should return undefined/null if no
   // integration exists. not a stubbed out complex object.
   const integration = useSelector(state =>
     selectors.integrationAppSettings(state, integrationId)
@@ -76,14 +79,59 @@ export default function IntegrationApp({ match, history }) {
   const defaultStoreId = useSelector(state =>
     selectors.defaultStoreId(state, integrationId, storeId)
   );
+  // TODO: This selector isn't actually returning add on state.
+  // it is returning ALL integration settings state.
+  const addOnState = useSelector(state =>
+    selectors.integrationAppAddOnState(state, integrationId)
+  );
+  //
+  //
+  // TODO: All the code below should be moved into the data layer.
+  // the addonState selector should return a status to indicted if there
+  // is a pending request in progress. This would be used to dispatch
+  // a request instead of all these useEffects and local state management.
+  const [requestLicense, setRequestLicense] = useState(false);
+  const [requestMappingMetadata, setRequestMappingMetadata] = useState(false);
+
+  useEffect(() => {
+    if (addOnState && !addOnState.addOns && !requestLicense) {
+      dispatch(
+        actions.integrationApp.settings.requestAddOnLicenseMetadata(
+          integrationId
+        )
+      );
+      setRequestLicense(true);
+    }
+  }, [addOnState, dispatch, integrationId, requestLicense]);
+
+  useEffect(() => {
+    if (addOnState && !addOnState.mappingMapping && !requestMappingMetadata) {
+      dispatch(
+        actions.integrationApp.settings.requestMappingMetadata(integrationId)
+      );
+      setRequestMappingMetadata(true);
+    }
+  }, [addOnState, dispatch, integrationId, requestMappingMetadata]);
+
+  const hasAddOns =
+    addOnState &&
+    addOnState.addOns &&
+    addOnState.addOns.addOnMetaData &&
+    addOnState.addOns.addOnMetaData.length > 0;
+  // All the code ABOVE this comment should be moved from this component to the data-layer.
+  //
+  //
+  const availableTabs = hasAddOns
+    ? allTabs
+    : // remove addons tab if IA doesn't have any.
+      allTabs.slice(0, allTabs.length - 1);
   const handleTagChangeHandler = useCallback(
     tag => {
       const patchSet = [{ op: 'replace', path: '/tag', value: tag }];
 
+      dispatch(actions.resource.patchStaged(integrationId, patchSet, 'value'));
       dispatch(
-        actions.resource.patch('integrations', integrationId, patchSet, {
-          doNotRefetch: true, // could this prop be renamed to 'skipFetch'?
-        })
+        actions.resource.commitStaged('integrations', integrationId, 'value')
       );
     },
     [dispatch, integrationId]
@@ -99,8 +147,6 @@ export default function IntegrationApp({ match, history }) {
   const handleAddNewStoreClick = useCallback(() => {
     history.push(`/pg/connectors/${integrationId}/install/addNewStore`);
   }, [history, integrationId]);
-
-  // console.log(integrationId, storeId, tab);
 
   // There is no need for further processing if no integration
   // is returned. Most likely case is that there is a pending IO
@@ -173,7 +219,7 @@ export default function IntegrationApp({ match, history }) {
         )}
       </CeligoPageBar>
 
-      <IntegrationTabs tabs={tabs} />
+      <IntegrationTabs tabs={availableTabs} />
     </Fragment>
   );
 }
