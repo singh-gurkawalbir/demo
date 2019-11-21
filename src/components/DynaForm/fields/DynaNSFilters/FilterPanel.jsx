@@ -55,8 +55,8 @@ export default function FilterPanel({
     value => {
       if (editorId) {
         dispatch(actions.editor.patch(editorId, { rule: value || [] }));
-      } else {
-        onFieldChange(id, value);
+      } else if (onFieldChange) {
+        onFieldChange(id, JSON.stringify(value));
       }
     },
     [dispatch, editorId, id, onFieldChange]

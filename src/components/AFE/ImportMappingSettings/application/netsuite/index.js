@@ -402,7 +402,7 @@ export default {
 
           return {
             disableFetch: !(recordTypeField && recordTypeField.value),
-            commMetaPath: `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${recordTypeField.value}/searchFilters`,
+            commMetaPath: `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${recordTypeField.value}/searchFilters?includeJoinFilters=true`,
             resetValue: [],
           };
         } else if (fieldId === 'lookup.resultField') {

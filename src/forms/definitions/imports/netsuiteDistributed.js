@@ -121,4 +121,20 @@ export default {
       },
     ],
   },
+  optionsHandler: (fieldId, fields) => {
+    if (fieldId === 'netsuite_da.internalIdLookup.expression') {
+      const recordTypeField = fields.find(
+        field => field.id === 'netsuite_da.recordType'
+      );
+      const connectionId = '565c9d38012f7d0861a6b12e';
+
+      return {
+        disableFetch: !(recordTypeField && recordTypeField.value),
+        commMetaPath: `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${recordTypeField.value}/searchFilters?includeJoinFilters=true`,
+        resetValue: [],
+      };
+    }
+
+    return null;
+  },
 };

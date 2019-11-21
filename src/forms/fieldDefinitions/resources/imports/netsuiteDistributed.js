@@ -63,7 +63,7 @@ export default {
     ],
   },
   'netsuite_da.internalIdLookup.expression': {
-    type: 'text',
+    type: 'netsuitelookup',
     label: 'How can we find existing records?',
     visibleWhen: [
       {

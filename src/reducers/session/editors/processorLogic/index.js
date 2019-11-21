@@ -8,6 +8,7 @@ import structuredFileParser from './structuredFileParser';
 import structuredFileGenerator from './structuredFileGenerator';
 import sql from './sql';
 import filter from './filter';
+import netsuiteLookup from './netsuiteLookup';
 
 const logicMap = {
   xmlParser,
@@ -20,6 +21,7 @@ const logicMap = {
   structuredFileGenerator,
   sql,
   filter,
+  netsuiteLookup,
 };
 
 function getLogic(editor) {
