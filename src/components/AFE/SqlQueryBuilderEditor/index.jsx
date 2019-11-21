@@ -5,6 +5,7 @@ export default function SqlQueryBuilderEditor(props) {
     rule,
     editorId,
     disabled,
+    lookups = [],
     layout = 'compact',
     sampleData,
     defaultData,
@@ -18,6 +19,7 @@ export default function SqlQueryBuilderEditor(props) {
       defaultData={defaultData}
       sampleData={sampleData}
       layout={layout}
+      lookups={lookups}
       // override the default implementation for layout
       // templateClassName={}
       processor="sqlQueryBuilder"

@@ -39,7 +39,6 @@ export default {
           type: 'radiogroup',
           label: 'Field Mapping Type',
           defaultValue: MappingUtil.getFieldMappingType(value),
-          showOptionsHorizontally: true,
           fullWidth: true,
           options: [
             {
@@ -112,6 +111,7 @@ export default {
           type: 'radiogroup',
           defaultValue: MappingUtil.getDefaultActionValue(value),
           label: 'Action to take if value not found',
+          showOptionsVertically: true,
           options: [
             {
               items: [
@@ -163,6 +163,7 @@ export default {
             MappingUtil.getDefaultLookupActionValue(value, lookup) ||
             'disallowFailure',
           label: 'Action to take if unique match not found',
+          showOptionsVertically: true,
           options: [
             {
               items: [
@@ -302,15 +303,19 @@ export default {
           let expressionValue = '';
 
           if (expressionField.value) expressionValue = expressionField.value;
-          const extractValue = extractField.value;
 
-          if (extractValue)
+          if (extractField.value) {
+            const extractValue = extractField.value;
+
             expressionValue +=
               extractValue.indexOf(' ') > -1
                 ? `{{[${extractValue}]}}`
                 : `{{${extractValue}}}`;
-
-          if (functionsField.value) expressionValue += functionsField.value;
+            extractField.value = '';
+          } else if (functionsField.value) {
+            expressionValue += functionsField.value;
+            functionsField.value = '';
+          }
 
           return expressionValue;
         }

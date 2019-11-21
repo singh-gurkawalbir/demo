@@ -81,7 +81,6 @@ export default function AddOrSelect(props) {
         {...props}
         id="selectType"
         label="What would you like to do?"
-        showOptionsHorizontally
         defaultValue={useNew ? 'new' : 'existing'}
         fullWidth
         onFieldChange={handleTypeChange}
