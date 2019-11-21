@@ -1,4 +1,4 @@
-import MappingUtil from './mapping';
+import mappingUtil from './mapping';
 import { adaptorTypeMap } from './resource';
 
 export const actionsMap = {
@@ -57,7 +57,7 @@ const isActionUsed = (resource, flowNode, action) => {
     case actionsMap.importMapping: {
       const appType =
         resource.adaptorType && adaptorTypeMap[resource.adaptorType];
-      const mappings = MappingUtil.getMappingFromResource(
+      const mappings = mappingUtil.getMappingFromResource(
         resource,
         appType,
         true

@@ -1,5 +1,5 @@
 import dateTimezones from '../../../../../utils/dateTimezones';
-import MappingUtil from '../../../../../utils/mapping';
+import mappingUtil from '../../../../../utils/mapping';
 
 export default {
   getMetaData: (options = {}) => {
@@ -11,7 +11,7 @@ export default {
           name: 'dataType',
           type: 'select',
           label: 'Data Type',
-          defaultValue: MappingUtil.getDefaultDataType(value),
+          defaultValue: mappingUtil.getDefaultDataType(value),
           options: [
             {
               items: [
@@ -38,7 +38,7 @@ export default {
           name: 'fieldMappingType',
           type: 'radiogroup',
           label: 'Field Mapping Type',
-          defaultValue: MappingUtil.getFieldMappingType(value),
+          defaultValue: mappingUtil.getFieldMappingType(value),
           showOptionsHorizontally: true,
           fullWidth: true,
           options: [
@@ -103,14 +103,14 @@ export default {
           refreshOptionsOnChangesTo: ['functions', 'extract'],
           type: 'text',
           label: 'Expression',
-          defaultValue: MappingUtil.getDefaultExpression(value),
+          defaultValue: mappingUtil.getDefaultExpression(value),
           visibleWhen: [{ field: 'fieldMappingType', is: ['multifield'] }],
         },
         standardAction: {
           id: 'standardAction',
           name: 'standardAction',
           type: 'radiogroup',
-          defaultValue: MappingUtil.getDefaultActionValue(value),
+          defaultValue: mappingUtil.getDefaultActionValue(value),
           label: 'Action to take if value not found',
           options: [
             {
@@ -133,7 +133,7 @@ export default {
           id: 'hardcodedAction',
           name: 'hardcodedAction',
           type: 'radiogroup',
-          defaultValue: MappingUtil.getHardCodedActionValue(value) || 'default',
+          defaultValue: mappingUtil.getHardCodedActionValue(value) || 'default',
           label: 'Options',
           options: [
             {
@@ -160,7 +160,7 @@ export default {
           name: 'lookupAction',
           type: 'radiogroup',
           defaultValue:
-            MappingUtil.getDefaultLookupActionValue(value, lookup) ||
+            mappingUtil.getDefaultLookupActionValue(value, lookup) ||
             'disallowFailure',
           label: 'Action to take if unique match not found',
           options: [
