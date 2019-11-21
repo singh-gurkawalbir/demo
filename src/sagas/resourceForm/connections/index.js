@@ -9,6 +9,8 @@ import * as selectors from '../../../reducers/index';
 import { commitStagedChanges } from '../../resources';
 import functionsTransformerMap from '../../../components/DynaForm/fields/DynaTokenGenerator/functionTransformersMap';
 import { isNewId } from '../../../utils/resource';
+import conversionUtil from '../../../utils/httpToRestConnectionConversionUtil';
+import { REST_ASSISTANTS } from '../../../utils/constants';
 
 function* createPayload({ values, resourceId }) {
   const resourceType = 'connections';
@@ -29,7 +31,24 @@ function* createPayload({ values, resourceId }) {
     connectionResource = {};
   }
 
-  return jsonpatch.applyPatch(connectionResource.merged, patchSet).newDocument;
+  const returnData = jsonpatch.applyPatch(connectionResource.merged, patchSet)
+    .newDocument;
+
+  // We built all connection assistants on HTTP adaptor on React. With recent changes to decouple REST deprecation
+  // and React we are forced to convert HTTP to REST doc for existing REST assistants since we dont want to build
+  // 150 odd connection assistants again. Once React becomes the only app and when assistants are migrated we would
+  // remove this code and let all docs be built on HTTP adaptor.
+  if (
+    connectionResource.merged &&
+    connectionResource.merged.assistant &&
+    REST_ASSISTANTS.indexOf(connectionResource.merged.assistant) > -1
+  ) {
+    connectionResource.merged = conversionUtil.convertConnJSONObjHTTPtoREST(
+      connectionResource.merged
+    );
+  }
+
+  return returnData;
 }
 
 export function* netsuiteUserRoles({ connectionId, values }) {
