@@ -8,7 +8,7 @@ import Run from '../../actions/Flows/Run';
 import OnOff from '../../../../components/OnOff';
 import ViewReferences from '../../actions/References';
 import Delete from '../../actions/Delete';
-import MappingDialog from '../../../MappingDialog/Mapping';
+// import MappingDialog from '../../../MappingDialog/Mapping';
 import Clone from '../../actions/Clone';
 
 export default {
@@ -33,9 +33,10 @@ export default {
       value: function MappingAction(r) {
         if (r && r.pageProcessors) {
           return <FieldMappings.component resource={r} />;
-        } else if (r && r._importId) {
-          return <MappingDialog resourceId={r._importId} />;
         }
+        // else if (r && r._importId) {
+        //   return <MappingDialog resourceId={r._importId} />;
+        // }
       },
     },
     {

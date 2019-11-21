@@ -10,6 +10,7 @@ import {
 } from '@material-ui/core';
 import ViewColumnIcon from '@material-ui/icons/ViewColumn';
 import ViewCompactIcon from '@material-ui/icons/ViewCompact';
+// TODO: Azhar, please fix these icons message.
 import ViewRowIcon from '@material-ui/icons/HorizontalSplit';
 import ZoomOutIcon from '@material-ui/icons/ZoomOutMap';
 import ToggleButton from '@material-ui/lab/ToggleButton';
