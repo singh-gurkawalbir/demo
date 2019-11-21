@@ -160,7 +160,17 @@ export default {
         { field: 'type', is: ['once'] },
       ],
     },
+    advancedSettings: {
+      formId: 'advancedSettings',
+      visibleWhenAll: [
+        {
+          field: 'outputMode',
+          is: ['records'],
+        },
+      ],
+    },
     'netsuite.skipGrouping': { fieldId: 'netsuite.skipGrouping' },
+    // skipRetries: { fieldId: 'skipRetries' },
     exportOneToMany: { formId: 'exportOneToMany' },
   },
   layout: {
@@ -177,8 +187,16 @@ export default {
       'once.booleanField',
       'netsuite.skipGrouping',
     ],
-
     type: 'collapse',
-    containers: [],
+    containers: [
+      {
+        collapsed: true,
+        label: 'Advanced',
+        fields: [
+          'advancedSettings',
+          // 'skipRetries'
+        ],
+      },
+    ],
   },
 };
