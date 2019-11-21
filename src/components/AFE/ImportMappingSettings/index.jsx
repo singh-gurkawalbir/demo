@@ -10,6 +10,7 @@ import {
 import DynaForm from '../../DynaForm';
 import DynaSubmit from '../../DynaForm/DynaSubmit';
 import ApplicationMappingSettings from './application';
+import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 
 const useStyles = makeStyles(() => ({
   modalContent: {
@@ -32,6 +33,7 @@ export default function ImportMappingSettings(props) {
   } = props;
   const { generate, extract } = value;
   const classes = useStyles();
+  const [enquesnackbar] = useEnqueueSnackbar();
   const fieldMeta = ApplicationMappingSettings.getMetaData({
     application,
     value,
@@ -42,16 +44,30 @@ export default function ImportMappingSettings(props) {
     options,
   });
   const handleSubmit = formVal => {
-    const mappingObj = ApplicationMappingSettings.getFormattedValue(
+    const {
+      settings,
+      lookup: updatedLookup,
+      errorStatus,
+      errorMessage,
+    } = ApplicationMappingSettings.getFormattedValue(
       { generate, extract, lookup },
       formVal
     );
 
+    if (errorStatus) {
+      enquesnackbar({
+        message: errorMessage,
+        variant: 'error',
+      });
+
+      return;
+    }
+
     // Update lookup
-    if (mappingObj.lookup) {
+    if (updatedLookup) {
       const isDelete = false;
 
-      updateLookup(isDelete, mappingObj.lookup);
+      updateLookup(isDelete, updatedLookup);
     } else if (lookup) {
       // When user tries to reconfigure setting and tries to remove lookup, delete existing lookup
       const isDelete = true;
@@ -59,7 +75,7 @@ export default function ImportMappingSettings(props) {
       updateLookup(isDelete, lookup);
     }
 
-    onClose(true, mappingObj.settings);
+    onClose(true, settings);
   };
 
   return (

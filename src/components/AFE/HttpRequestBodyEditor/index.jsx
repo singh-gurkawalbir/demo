@@ -8,6 +8,7 @@ export default function HttpRequestBodyEditor(props) {
     layout = 'compact',
     rule,
     data,
+    lookups,
   } = props;
   const mode = contentType || 'json';
 
@@ -16,6 +17,7 @@ export default function HttpRequestBodyEditor(props) {
       editorId={editorId}
       rule={rule}
       data={data}
+      lookups={lookups}
       disabled={disabled}
       strict={false}
       ruleMode="handlebars"
