@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import { Fragment, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import Icon from '../../../../components/icons/MapDataIcon';
 import actions from '../../../../actions';
@@ -10,33 +10,36 @@ import MappingDialog from '../../../../components/AFE/ImportMapping/Dialog';
 function ImportMappingDialog({ flowId, isViewMode, resource, onClose }) {
   const resourceId = resource._id;
   const dispatch = useDispatch();
-  const handleSave = ({ mappings, lookups, adapterType }) => {
-    if (mappings) {
-      const patchSet = [];
-      const mappingPath = mappingUtil.getMappingPath(adapterType);
+  const handleSave = useCallback(
+    ({ mappings, lookups, adaptorType }) => {
+      if (mappings) {
+        const patchSet = [];
+        const mappingPath = mappingUtil.getMappingPath(adaptorType);
 
-      // if mapping doesnt exist in resouce object , perform add patch else replace patch
-      patchSet.push({
-        op: mappings ? 'replace' : 'add',
-        path: mappingPath,
-        value: mappings,
-      });
-
-      // update _lookup only if its being passed as param to function
-      if (lookups) {
-        const lookupPath = lookupUtil.getLookupPath(adapterType);
-
+        // if mapping doesnt exist in resouce object , perform add patch else replace patch
         patchSet.push({
-          op: lookups ? 'replace' : 'add',
-          path: lookupPath,
-          value: lookups,
+          op: mappings ? 'replace' : 'add',
+          path: mappingPath,
+          value: mappings,
         });
-      }
 
-      dispatch(actions.resource.patchStaged(resourceId, patchSet, 'value'));
-      dispatch(actions.resource.commitStaged('imports', resourceId, 'value'));
-    }
-  };
+        // update _lookup only if its being passed as param to function
+        if (lookups) {
+          const lookupPath = lookupUtil.getLookupPath(adaptorType);
+
+          patchSet.push({
+            op: lookups ? 'replace' : 'add',
+            path: lookupPath,
+            value: lookups,
+          });
+        }
+
+        dispatch(actions.resource.patchStaged(resourceId, patchSet, 'value'));
+        dispatch(actions.resource.commitStaged('imports', resourceId, 'value'));
+      }
+    },
+    [dispatch, resourceId]
+  );
 
   return (
     <Fragment>

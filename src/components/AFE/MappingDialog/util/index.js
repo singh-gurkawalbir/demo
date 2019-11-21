@@ -2,11 +2,11 @@ import mappingUtil from '../../../../utils/mapping';
 
 export const preSaveValidate = ({ mappings = [], enquesnackbar }) => {
   const {
-    status: validationStatus,
-    message: validationErrMsg,
+    isSuccess,
+    errMessage: validationErrMsg,
   } = mappingUtil.validateMappings(mappings);
 
-  if (validationStatus) {
+  if (isSuccess) {
     return true;
   }
 

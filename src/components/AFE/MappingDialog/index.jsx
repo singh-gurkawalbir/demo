@@ -68,7 +68,7 @@ export default function MappingDialog(props) {
   const {
     mappings,
     lookups,
-    adapterType,
+    adaptorType,
     application,
     generateFields,
   } = useSelector(state => selectors.mapping(state, id));
@@ -91,7 +91,7 @@ export default function MappingDialog(props) {
     onSave({
       mappings: _mappings,
       lookups,
-      adapterType,
+      adaptorType,
     });
 
     if (shouldClose) {

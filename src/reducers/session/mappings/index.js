@@ -106,14 +106,16 @@ export default function reducer(state = {}, action) {
 }
 
 // #region PUBLIC SELECTORS
+const emptySet = [];
+
 export function mapping(state, id) {
   if (!state) {
-    return [];
+    return emptySet;
   }
 
   const mappings = state[id];
 
-  if (!mappings) return [];
+  if (!mappings) return emptySet;
 
   return mappings;
 }

@@ -396,8 +396,8 @@ export default {
 
     if (duplicateMappings.length) {
       return {
-        status: false,
-        message: `You have duplicate mappings for the field(s): ${duplicateMappings.join(
+        isSuccess: false,
+        errMessage: `You have duplicate mappings for the field(s): ${duplicateMappings.join(
           ','
         )}`,
       };
@@ -413,8 +413,8 @@ export default {
 
     if (mappingsWithoutExtract.length) {
       return {
-        status: false,
-        message: `Extract Fields missing for field(s): ${mappingsWithoutExtract.join(
+        isSuccess: false,
+        errMessage: `Extract Fields missing for field(s): ${mappingsWithoutExtract.join(
           ','
         )}`,
       };
@@ -428,11 +428,11 @@ export default {
 
     if (mappingsWithoutGenerate.length) {
       return {
-        status: false,
-        message: 'Generate Fields missing for mapping(s)',
+        isSuccess: false,
+        errMessage: 'Generate Fields missing for mapping(s)',
       };
     }
 
-    return { status: true };
+    return { isSuccess: true };
   },
 };
