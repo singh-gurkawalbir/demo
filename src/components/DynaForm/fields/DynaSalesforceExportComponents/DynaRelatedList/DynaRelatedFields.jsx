@@ -55,10 +55,10 @@ function EditListItemModal(props) {
       const { value: selectedValue } = fields.find(
         field => field.id === 'childRelationship'
       );
-      const { childSObject: selectedChildSObject } =
+      const { childSObject: referenceTo } =
         options.find(option => option.value === selectedValue) || {};
 
-      return selectedChildSObject;
+      return { referenceTo, relationshipName: '' };
     }
   };
 

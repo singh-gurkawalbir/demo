@@ -86,8 +86,9 @@ export default {
         r => r.referenceTo && r.referenceTo.length > 0 && r.relationshipName
       )
       .map(d => ({
-        label: d.relationshipName,
-        value: d.relationshipName,
+        label: d.label,
+        value: d.name,
+        relationshipName: d.relationshipName,
         custom: d.custom,
         triggerable: d.triggerable,
         referenceTo: d.referenceTo[0],
@@ -110,6 +111,7 @@ export default {
         label: d.relationshipName,
         value: d.relationshipName,
         name: d.name,
+        relationshipName: d.relationshipName,
         field: d.field,
         childSObject: d.childSObject,
       }))

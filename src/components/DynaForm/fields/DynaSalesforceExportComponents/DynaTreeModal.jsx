@@ -34,18 +34,13 @@ export const ReferencedFieldsModal = props => {
 };
 
 export default function DynaTreeModal(props) {
-  const {
-    id,
-    onFieldChange,
-    value,
-    selectedParent,
-    options: selectedParentReferenceTo,
-  } = props;
+  const { id, onFieldChange, value, selectedParent, options } = props;
   const [secondLevelModalOpen, setSecondLevelModalOpen] = useState(false);
   const toggle = useCallback(
     () => setSecondLevelModalOpen(state => !state),
     []
   );
+  const { referenceTo, relationshipName } = options;
 
   return (
     <Fragment>
@@ -54,7 +49,8 @@ export default function DynaTreeModal(props) {
       {secondLevelModalOpen ? (
         <ReferencedFieldsModal
           {...props}
-          selectedParent={selectedParentReferenceTo}
+          selectedReferenceTo={referenceTo}
+          selectedRelationshipName={relationshipName}
           handleClose={toggle}
         />
       ) : null}

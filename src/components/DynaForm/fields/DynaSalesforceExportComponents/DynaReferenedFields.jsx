@@ -59,10 +59,10 @@ const FirstLevelModal = props => {
       const { value: selectedValue } = fields.find(
         field => field.id === 'parentSObjectType'
       );
-      const { referenceTo: selectedReferenceTo } =
+      const { referenceTo, relationshipName } =
         options.find(option => option.value === selectedValue) || {};
 
-      return selectedReferenceTo;
+      return { referenceTo, relationshipName };
     }
   };
 

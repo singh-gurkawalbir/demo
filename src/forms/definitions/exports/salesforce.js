@@ -4,8 +4,8 @@ export default {
   optionsHandler: (fieldId, fields) => {
     if (
       [
+        'salesforce.distributed.requiredTrigger',
         'salesforce.distributed.triggerMessage',
-        'salesforce.distributed.referencedFields',
         'salesforce.distributed.relatedLists.referencedFields',
       ].includes(fieldId)
     ) {

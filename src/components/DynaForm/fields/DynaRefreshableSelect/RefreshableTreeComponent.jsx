@@ -14,6 +14,11 @@ const fieldToOption = field => ({
   value: field.value,
   referenceTo: field.referenceTo,
 });
+const fieldToOptionReferencedFields = field => ({
+  label: field.relationshipName,
+  value: field.relationshipName,
+  referenceTo: field.referenceTo,
+});
 const NestedValueCheckbox = props => {
   const {
     setSelectedValues,
@@ -42,21 +47,20 @@ const NestedValueCheckbox = props => {
 const RefreshTreeElement = props => {
   const {
     label,
-    selectedParent,
     connectionId,
     metaBasePath,
     // setExpanded,
     expanded,
-    referenceTo,
-    parentValue,
+    selectedReferenceTo,
+    selectedRelationshipName,
     level,
   } = props;
-  const nodeId = `${parentValue}${level},${referenceTo}`;
+  const nodeId = `${selectedRelationshipName}${level},${selectedReferenceTo}`;
   const { status } = useSelector(state =>
     selectors.metadataOptionsAndResources({
       state,
       connectionId,
-      commMetaPath: `${metaBasePath}${selectedParent}`,
+      commMetaPath: `${metaBasePath}${selectedReferenceTo}`,
       filterKey: 'salesforce-sObjects-referenceFields',
     })
   );
@@ -64,18 +68,13 @@ const RefreshTreeElement = props => {
   return (
     <TreeItem
       key={label}
-      label={`${parentValue} Fields...`}
+      label={`${selectedRelationshipName} Fields...`}
       nodeId={nodeId}
       expandIcon={
         status === 'refreshed' ? <RefreshIcon /> : <ChevronRightIcon />
       }>
       {expanded.includes(nodeId) ? (
-        <TreeViewComponent
-          {...props}
-          key={label}
-          label={label}
-          selectedParent={selectedParent}
-        />
+        <TreeViewComponent {...props} key={label} />
       ) : (
         <Fragment />
       )}
@@ -86,10 +85,10 @@ const RefreshTreeElement = props => {
 function TreeViewComponent(props) {
   const {
     connectionId,
-    selectedParent,
+    selectedReferenceTo,
     setSelectedValues,
     selectedValues,
-    parentValue,
+    nestedRelationShipNames,
     skipFirstLevelFields,
     level,
   } = props;
@@ -101,13 +100,13 @@ function TreeViewComponent(props) {
     } = selectors.metadataOptionsAndResources({
       state,
       connectionId,
-      commMetaPath: `${metaBasePath}${selectedParent}`,
+      commMetaPath: `${metaBasePath}${selectedReferenceTo}`,
       filterKey: 'salesforce-sObjects-referenceFields',
     });
     const { data: nonReferenceFields } = selectors.metadataOptionsAndResources({
       state,
       connectionId,
-      commMetaPath: `${metaBasePath}${selectedParent}`,
+      commMetaPath: `${metaBasePath}${selectedReferenceTo}`,
       filterKey: 'salesforce-sObjects-nonReferenceFields',
     });
 
@@ -116,7 +115,9 @@ function TreeViewComponent(props) {
       nonReferenceFields:
         (nonReferenceFields && nonReferenceFields.map(fieldToOption)) || null,
       referenceFields:
-        (referenceFields && referenceFields.map(fieldToOption)) || null,
+        (referenceFields &&
+          referenceFields.map(fieldToOptionReferencedFields)) ||
+        null,
     };
   });
 
@@ -128,8 +129,8 @@ function TreeViewComponent(props) {
       {(!skipNonReferencedFields &&
         nonReferenceFields.map(item => {
           const { label, value } = item;
-          const attachedParentNode = parentValue
-            ? `${parentValue}.${value}`
+          const attachedParentNode = nestedRelationShipNames
+            ? `${nestedRelationShipNames}.${value}`
             : value;
 
           return (
@@ -155,9 +156,13 @@ function TreeViewComponent(props) {
               key={label}
               level={level + 1}
               label={label}
-              referenceTo={referenceTo}
-              selectedParent={referenceTo}
-              parentValue={value}
+              selectedReferenceTo={referenceTo}
+              selectedRelationshipName={value}
+              nestedRelationShipNames={
+                nestedRelationShipNames
+                  ? `${nestedRelationShipNames}.${value}`
+                  : value
+              }
             />
           );
         })) ||
@@ -167,15 +172,20 @@ function TreeViewComponent(props) {
 }
 
 export default function RefreshableTreeComponent(props) {
-  const { connectionId, selectedParent, setSelectedValues } = props;
+  const {
+    connectionId,
+    selectedReferenceTo,
+    selectedRelationshipName,
+    setSelectedValues,
+  } = props;
   const metaBasePath = `salesforce/metadata/connections/${connectionId}/sObjectTypes/`;
   const [expanded, setExpanded] = useState([]);
   const dispatch = useDispatch();
-  const statusSelector = useSelector(state => selectedParent =>
+  const statusSelector = useSelector(state => selectedReferenceTo =>
     selectors.metadataOptionsAndResources({
       state,
       connectionId,
-      commMetaPath: `${metaBasePath}${selectedParent}`,
+      commMetaPath: `${metaBasePath}${selectedReferenceTo}`,
       filterKey: 'salesforce-sObjects-referenceFields',
     })
   );
@@ -203,11 +213,11 @@ export default function RefreshableTreeComponent(props) {
   const [hasCalled, setHasCalled] = useState(false);
 
   useEffect(() => {
-    if (!hasCalled && statusSelector(selectedParent) !== 'received')
+    if (!hasCalled && statusSelector(selectedReferenceTo) !== 'received')
       dispatch(
         actions.metadata.refresh(
           connectionId,
-          `${metaBasePath}${selectedParent}`
+          `${metaBasePath}${selectedReferenceTo}`
         )
       );
     setHasCalled(true);
@@ -215,7 +225,7 @@ export default function RefreshableTreeComponent(props) {
     dispatch,
     connectionId,
     hasCalled,
-    selectedParent,
+    selectedReferenceTo,
     metaBasePath,
     statusSelector,
   ]);
@@ -231,6 +241,9 @@ export default function RefreshableTreeComponent(props) {
         {...props}
         setSelectedValues={setSelectedValues}
         metaBasePath={metaBasePath}
+        selectedReferenceTo={selectedReferenceTo}
+        selectedRelationshipName={selectedRelationshipName}
+        nestedRelationShipNames={selectedRelationshipName}
         expanded={expanded}
         level={1}
       />
