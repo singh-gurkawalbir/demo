@@ -278,7 +278,7 @@ export default {
       id: 'rest.relativeURICreate',
       type: 'relativeuriwithlookup',
       connectionId: r => r && r._connectionId,
-      refreshOptionsOnChangesTo: ['rest.lookups'],
+      refreshOptionsOnChangesTo: ['rest.lookups', 'name'],
       label: 'Relative URI',
       required: true,
       visibleWhenAll: [
@@ -523,7 +523,7 @@ export default {
       id: 'rest.relativeURIUpdate',
       type: 'relativeuriwithlookup',
       connectionId: r => r && r._connectionId,
-      refreshOptionsOnChangesTo: ['rest.lookups'],
+      refreshOptionsOnChangesTo: ['rest.lookups', 'name'],
       label: 'Relative URI',
       required: true,
       visibleWhenAll: [

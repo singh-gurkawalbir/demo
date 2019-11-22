@@ -1,4 +1,4 @@
-import MappingUtil from '../../../../../utils/mapping';
+import mappingUtil from '../../../../../utils/mapping';
 import dateTimezones from '../../../../../utils/dateTimezones';
 import dateFormats from '../../../../../utils/dateFormats';
 
@@ -40,8 +40,7 @@ export default {
           name: 'fieldMappingType',
           type: 'radiogroup',
           label: 'Field Mapping Type',
-          defaultValue: MappingUtil.getFieldMappingType(value),
-          showOptionsHorizontally: true,
+          defaultValue: mappingUtil.getFieldMappingType(value),
           fullWidth: true,
           options: [
             {
@@ -59,7 +58,6 @@ export default {
           name: '_mode',
           type: 'radiogroup',
           label: '',
-          showOptionsHorizontally: true,
           fullWidth: true,
           visibleWhen: [{ field: 'fieldMappingType', is: ['lookup'] }],
           defaultValue: lookup.name && lookup.map ? 'static' : 'dynamic',
@@ -126,7 +124,6 @@ export default {
           name: 'functions',
           type: 'fieldexpressionselect',
           label: 'Function',
-          resetAfterSelection: true,
           visibleWhen: [{ field: 'fieldMappingType', is: ['multifield'] }],
         },
         extract: {
@@ -134,7 +131,6 @@ export default {
           name: 'extract',
           type: 'select',
           label: 'Field',
-          resetAfterSelection: true,
           visibleWhen: [{ field: 'fieldMappingType', is: ['multifield'] }],
           options: [
             {
@@ -154,15 +150,16 @@ export default {
           refreshOptionsOnChangesTo: ['functions', 'extract'],
           type: 'text',
           label: 'Expression',
-          defaultValue: MappingUtil.getDefaultExpression(value),
+          defaultValue: mappingUtil.getDefaultExpression(value),
           visibleWhen: [{ field: 'fieldMappingType', is: ['multifield'] }],
         },
         standardAction: {
           id: 'standardAction',
           name: 'standardAction',
           type: 'radiogroup',
-          defaultValue: MappingUtil.getDefaultActionValue(value),
+          defaultValue: mappingUtil.getDefaultActionValue(value),
           label: 'Action to take if value not found',
+          showOptionsVertically: true,
           options: [
             {
               items: [
@@ -213,7 +210,7 @@ export default {
           id: 'hardcodedAction',
           name: 'hardcodedAction',
           type: 'radiogroup',
-          defaultValue: MappingUtil.getHardCodedActionValue(value) || 'default',
+          defaultValue: mappingUtil.getHardCodedActionValue(value) || 'default',
           label: 'Options',
           options: [
             {
@@ -240,9 +237,10 @@ export default {
           name: 'lookupAction',
           type: 'radiogroup',
           defaultValue:
-            MappingUtil.getDefaultLookupActionValue(value, lookup) ||
+            mappingUtil.getDefaultLookupActionValue(value, lookup) ||
             'disallowFailure',
           label: 'Action to take if unique match not found',
+          showOptionsVertically: true,
           options: [
             {
               items: [
@@ -400,15 +398,18 @@ export default {
 
           if (expressionField.value) expressionValue = expressionField.value;
 
-          const extractValue = extractField.value;
+          if (extractField.value) {
+            const extractValue = extractField.value;
 
-          if (extractValue)
             expressionValue +=
               extractValue.indexOf(' ') > -1
                 ? `{{[${extractValue}]}}`
                 : `{{${extractValue}}}`;
-
-          if (functionsField.value) expressionValue += functionsField.value;
+            extractField.value = '';
+          } else if (functionsField.value) {
+            expressionValue += functionsField.value;
+            functionsField.value = '';
+          }
 
           return expressionValue;
         } else if (fieldId === 'lookup.recordType') {

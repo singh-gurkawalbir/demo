@@ -16,7 +16,7 @@ export default {
     return (
       <IconButton
         data-test="regenerateToken"
-        resize="small"
+        size="small"
         onClick={() => handleRegenerateClick()}>
         <Icon />
       </IconButton>

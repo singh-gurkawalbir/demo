@@ -325,7 +325,6 @@ export const getMetadata = ({ flow, integration, preferences }) => {
         name: 'activeTab',
         type: 'radiogroup',
         label: '',
-        showOptionsHorizontally: true,
         fullWidth: true,
         defaultValue: flow.activeTab,
         options: [

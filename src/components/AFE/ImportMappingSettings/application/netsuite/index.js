@@ -1,4 +1,4 @@
-import MappingUtil from '../../../../../utils/mapping';
+import mappingUtil from '../../../../../utils/mapping';
 
 export default {
   getMetaData: (params = {}) => {
@@ -89,8 +89,7 @@ export default {
           name: 'fieldMappingType',
           type: 'radiogroup',
           label: 'Field Mapping Type',
-          defaultValue: MappingUtil.getFieldMappingType(value),
-          showOptionsHorizontally: true,
+          defaultValue: mappingUtil.getFieldMappingType(value),
           fullWidth: true,
           options: [
             {
@@ -108,7 +107,6 @@ export default {
           name: '_mode',
           type: 'radiogroup',
           label: '',
-          showOptionsHorizontally: true,
           fullWidth: true,
           visibleWhen: [{ field: 'fieldMappingType', is: ['lookup'] }],
           defaultValue: lookup.name && (lookup.map ? 'static' : 'dynamic'),
@@ -135,6 +133,19 @@ export default {
             { field: 'lookup.mode', is: ['dynamic'] },
           ],
         },
+        'lookup.expression': {
+          id: 'lookup.expression',
+          name: 'lookup.expression',
+          type: 'netsuitelookupfilters',
+          label: 'NS Filters',
+          connectionId,
+          refreshOptionsOnChangesTo: ['lookup.recordType'],
+          visibleWhenAll: [
+            { field: 'fieldMappingType', is: ['lookup'] },
+            { field: 'lookup.mode', is: ['dynamic'] },
+          ],
+          data: extractFields,
+        },
         'lookup.resultField': {
           id: 'lookup.resultField',
           name: 'resultField',
@@ -160,7 +171,7 @@ export default {
           keyName: 'export',
           keyLabel: 'Export Field',
           valueName: 'import',
-          valueLabel: 'Import Field (HTTP)',
+          valueLabel: 'Import Field (Netsuite)',
           defaultValue:
             lookup.map &&
             Object.keys(lookup.map).map(key => ({
@@ -179,7 +190,6 @@ export default {
           name: 'functions',
           type: 'fieldexpressionselect',
           label: 'Function',
-          resetAfterSelection: true,
           visibleWhen: [{ field: 'fieldMappingType', is: ['multifield'] }],
         },
         extract: {
@@ -187,7 +197,6 @@ export default {
           name: 'extract',
           type: 'select',
           label: 'Field',
-          resetAfterSelection: true,
           visibleWhen: [{ field: 'fieldMappingType', is: ['multifield'] }],
           options: [
             {
@@ -207,14 +216,14 @@ export default {
           refreshOptionsOnChangesTo: ['functions', 'extract'],
           type: 'text',
           label: 'Expression',
-          defaultValue: MappingUtil.getDefaultExpression(value),
+          defaultValue: mappingUtil.getDefaultExpression(value),
           visibleWhen: [{ field: 'fieldMappingType', is: ['multifield'] }],
         },
         hardcodedAction: {
           id: 'hardcodedAction',
           name: 'hardcodedAction',
           type: 'radiogroup',
-          defaultValue: MappingUtil.getHardCodedActionValue(value) || 'default',
+          defaultValue: mappingUtil.getHardCodedActionValue(value) || 'default',
           label: 'Options',
           options: [
             {
@@ -241,9 +250,10 @@ export default {
           name: 'lookupAction',
           type: 'radiogroup',
           defaultValue:
-            MappingUtil.getDefaultLookupActionValue(value, lookup) ||
+            mappingUtil.getDefaultLookupActionValue(value, lookup) ||
             'disallowFailure',
           label: 'Action to take if unique match not found',
+          showOptionsVertically: true,
           options: [
             {
               items: [
@@ -320,7 +330,6 @@ export default {
           type: 'radiogroup',
           label: 'Value',
           defaultValue: value.hardCodedValue,
-          showOptionsHorizontally: true,
           fullWidth: true,
           options: [
             {
@@ -342,6 +351,7 @@ export default {
           'fieldMappingType',
           'lookup.mode',
           'lookup.recordType',
+          'lookup.expression',
           'lookup.resultField',
           'lookup.mapList',
           'functions',
@@ -366,20 +376,35 @@ export default {
 
           if (expressionField.value) expressionValue = expressionField.value;
 
-          const extractValue = extractField.value;
+          if (extractField.value) {
+            const extractValue = extractField.value;
 
-          if (extractValue)
             expressionValue +=
               extractValue.indexOf(' ') > -1
                 ? `{{[${extractValue}]}}`
                 : `{{${extractValue}}}`;
-
-          if (functionsField.value) expressionValue += functionsField.value;
+            extractField.value = '';
+          } else if (functionsField.value) {
+            expressionValue += functionsField.value;
+            functionsField.value = '';
+          }
 
           return expressionValue;
         } else if (fieldId === 'lookup.recordType') {
           return {
             resourceToFetch: 'recordTypes',
+          };
+        } else if (fieldId === 'lookup.expression') {
+          const recordTypeField = fields.find(
+            field => field.id === 'lookup.recordType'
+          );
+
+          return {
+            disableFetch: !(recordTypeField && recordTypeField.value),
+            commMetaPath: recordTypeField
+              ? `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${recordTypeField.value}/searchFilters?includeJoinFilters=true`
+              : '',
+            resetValue: [],
           };
         } else if (fieldId === 'lookup.resultField') {
           const recordTypeField = fields.find(

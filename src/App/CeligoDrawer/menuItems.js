@@ -6,7 +6,7 @@ import SupportIcon from '../../components/icons/SupportIcon';
 import ExportsIcon from '../../components/icons/ExportsIcon';
 import FlowBuilderIcon from '../../components/icons/FlowBuilderIcon';
 import DataLoaderIcon from '../../components/icons/DataLoaderIcon';
-import AppBuilderIcon from '../../components/icons/AppBuilderIcon';
+// import AppBuilderIcon from '../../components/icons/AppBuilderIcon';
 import PermissionExplorerIcon from '../../components/icons/PermissionExplorerIcon';
 import EditorsPlaygroundIcon from '../../components/icons/EditorsPlaygroundIcon';
 import ConnectionsIcon from '../../components/icons/ConnectionsIcon';
@@ -74,11 +74,13 @@ export default function menuItems(userProfile, userPermissions) {
       label: 'Dev Tools',
       Icon: ToolsIcon,
       children: [
-        {
-          label: 'App builder',
-          path: '/resources',
-          Icon: AppBuilderIcon,
-        },
+        // We can add this back once we move back to custom forms
+        // and IA feature development.
+        // {
+        //   label: 'App builder',
+        //   path: '/resources',
+        //   Icon: AppBuilderIcon,
+        // },
         {
           label: 'Editor playground',
           path: '/editors',
