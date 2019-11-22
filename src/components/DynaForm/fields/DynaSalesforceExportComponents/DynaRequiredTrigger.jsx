@@ -1,5 +1,4 @@
 import { Fragment } from 'react';
-import { Typography } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import DynaText from '../DynaText';
 import * as selectors from '../../../../reducers';
@@ -19,18 +18,16 @@ const getTriggerCode = sObjectType => {
     */
 const getTriggerCodeHelpText = (sObjectType, baseURI) => (
   <Fragment>
-    <Typography>
-      A Salesforce (Apex) trigger is required per SObject type to facilitate
-      realtime data exports. You will need to copy the trigger text above and
-      then click
-      <a
-        // eslint-disable-next-line react/jsx-no-target-blank
-        target="_blank"
-        href={`${baseURI}/setup/build/editApexTrigger.apexp?retURL=%2Fp%2Fsetup%2Flayout%2FApexTriggerList&entity=${sObjectType}`}>
-        here
-      </a>
-      to manually create the trigger in your Salesforce account.
-    </Typography>
+    A Salesforce (Apex) trigger is required per SObject type to facilitate
+    realtime data exports. You will need to copy the trigger text above and then
+    click
+    <a
+      // eslint-disable-next-line react/jsx-no-target-blank
+      target="_blank"
+      href={`${baseURI}/setup/build/editApexTrigger.apexp?retURL=%2Fp%2Fsetup%2Flayout%2FApexTriggerList&entity=${sObjectType}`}>
+      here
+    </a>
+    to manually create the trigger in your Salesforce account.
   </Fragment>
 );
 

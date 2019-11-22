@@ -1,20 +1,22 @@
-import { Fragment, useCallback, useState } from 'react';
+import { Fragment, useCallback, useState, useEffect } from 'react';
+import { deepClone } from 'fast-json-patch';
 import { useSelector } from 'react-redux';
+import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Button } from '@material-ui/core';
 import IconTextButton from '../../../../IconTextButton';
 import EditIcon from '../../../../icons/EditIcon';
 import ArrowLeftIcon from '../../../../icons/ArrowLeftIcon';
 import ModalDialog from '../../../../ModalDialog';
 import DynaForm from '../../..';
-import DynaText from '../../DynaText';
 import DynaSubmit from '../../../DynaSubmit';
 import * as selectors from '../../../../../reducers';
 import AddIcon from '../../../../icons/AddIcon';
 import CeligoTable from '../../../../CeligoTable';
 import metadata from './metadata';
+import CodeEditor from '../../../../CodeEditor';
 
 const getRelationShipName = (options, parentField, childSObject) => {
-  const { relationshipName } =
+  const { label: relationshipName } =
     options.find(
       option =>
         option.field === parentField && option.childSObject === childSObject
@@ -34,8 +36,7 @@ const getParentFieldAndSObject = (options, relationshipName) => {
 function EditListItemModal(props) {
   const {
     connectionId,
-    onFieldChange,
-    id,
+    setValue,
     value,
     handleClose,
     options: selectedSObject,
@@ -61,12 +62,12 @@ function EditListItemModal(props) {
     }
   };
 
-  const { referencedFields, filter, orderBy, parentField, childSObject } =
+  const { referencedFields, filter, orderBy, parentField, sObjectType } =
     value[selectedElement] || {};
   const relationshipName = getRelationShipName(
     options,
     parentField,
-    childSObject
+    sObjectType
   );
   const fieldMeta = {
     fieldMap: {
@@ -129,12 +130,12 @@ function EditListItemModal(props) {
             ...rest,
           };
 
-          onFieldChange(
-            id,
-            selectedElement
-              ? (value[selectedElement] = updatedValue)
-              : (value && value.push(updatedValue)) || [value]
+          setValue(
+            selectedElement !== null
+              ? (value[selectedElement] = updatedValue) && value
+              : (value && [...value, updatedValue]) || [updatedValue]
           );
+          handleClose();
         }}>
         Add Selected
       </DynaSubmit>
@@ -150,8 +151,13 @@ function RelatedListView(props) {
     connectionId,
     handleDeleteItem,
     handleEditItem,
-    count,
   } = props;
+  const [count, setCount] = useState(0);
+  const length = value && value.length;
+
+  useEffect(() => {
+    if (length) setCount(count => count + 1);
+  }, [length]);
   const { data: options } = useSelector(state =>
     selectors.optionsFromMetadata({
       state,
@@ -162,11 +168,11 @@ function RelatedListView(props) {
   );
   const updatedValue = value
     ? value.map((eachValue, index) => {
-        const { parentField, childSObject } = eachValue;
+        const { parentField, sObjectType } = eachValue;
         const relationshipName = getRelationShipName(
           options,
           parentField,
-          childSObject
+          sObjectType
         );
 
         return { index, relationshipName, ...eachValue };
@@ -191,19 +197,17 @@ function FirstLevelModal(props) {
     []
   );
   const [selectedElement, setSelectedElement] = useState(null);
-  const { onFieldChange, id, value } = props;
-  const [count, setCount] = useState(0);
+  const { onFieldChange, id, value: actualValue } = props;
+  const [value, setValue] = useState(deepClone(actualValue));
   const handleDeleteItem = index => {
     // remount celigo table after delete
-    const copyValue = [...value];
 
-    delete copyValue[index];
-    onFieldChange(id, copyValue);
-    setCount(count => count + 1);
+    setValue(value => value.filter((val, ind) => ind !== index));
   };
 
   const handleEditItem = index => {
     setSelectedElement(index);
+    toggleListItemModelOpen();
   };
 
   return (
@@ -223,7 +227,7 @@ function FirstLevelModal(props) {
 
             <RelatedListView
               {...rest}
-              count={count}
+              value={value}
               handleClose={toggleListItemModelOpen}
               handleEditItem={handleEditItem}
               handleDeleteItem={handleDeleteItem}
@@ -232,21 +236,48 @@ function FirstLevelModal(props) {
         ) : (
           <Fragment>
             <IconTextButton>
-              <ArrowLeftIcon onClick={toggleListItemModelOpen} />
+              <ArrowLeftIcon
+                onClick={() => {
+                  toggleListItemModelOpen();
+                }}
+              />
               Back to related list
             </IconTextButton>
 
             <EditListItemModal
               {...rest}
+              value={value}
+              setValue={setValue}
               selectedElement={selectedElement}
               handleClose={toggleListItemModelOpen}
             />
           </Fragment>
         )}
       </Fragment>
+      {!editListItemModelOpen && (
+        <Fragment>
+          <Button onClick={handleClose}> Cancel</Button>
+          <Button
+            onClick={() => {
+              onFieldChange(id, value);
+              handleClose();
+            }}>
+            Save
+          </Button>
+        </Fragment>
+      )}
     </ModalDialog>
   );
 }
+
+const useStyles = makeStyles(theme => ({
+  inlineEditorContainer: {
+    border: '1px solid rgb(0,0,0,0.1)',
+    marginRight: theme.spacing(1),
+    marginTop: theme.spacing(1),
+    height: theme.spacing(10),
+  },
+}));
 
 export default function DynaRelatedFields(props) {
   const [firstLevelModalOpen, setFirstLevelModalOpen] = useState(false);
@@ -254,16 +285,21 @@ export default function DynaRelatedFields(props) {
     () => setFirstLevelModalOpen(state => !state),
     []
   );
-
   //   const [referencedFields, setReferencedFields] = useState('');
+  const classes = useStyles();
+  const { disabled } = props;
 
   return (
     <Fragment>
       {firstLevelModalOpen ? (
         <FirstLevelModal {...props} handleClose={toggleFirstLevelModalOpen} />
       ) : null}
-      <DynaText {...props} options={null} />
-      <EditIcon onClick={toggleFirstLevelModalOpen} />
+      <div className={classes.inlineEditorContainer}>
+        <CodeEditor {...props} mode="json" readOnly />
+        <IconTextButton onClick={toggleFirstLevelModalOpen} disabled={disabled}>
+          <EditIcon />
+        </IconTextButton>
+      </div>
     </Fragment>
   );
 }

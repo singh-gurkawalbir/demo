@@ -8,6 +8,7 @@ import ModalDialog from '../../../ModalDialog';
 import RefreshableTreeComponent from '../DynaRefreshableSelect/RefreshableTreeComponent';
 import DynaForm from '../../../DynaForm';
 import DynaSubmit from '../../DynaSubmit';
+import IconTextButton from '../../../IconTextButton';
 
 export const ReferencedFieldsModal = props => {
   const { handleClose, onFieldChange, id, value, ...rest } = props;
@@ -107,11 +108,11 @@ const FirstLevelModal = props => {
   );
 };
 
-export default function DynaRequiredTrigger(props) {
+export default function DynaRelatedFields(props) {
   const [firstLevelModalOpen, setFirstLevelModalOpen] = useState(false);
   const toggle = useCallback(() => setFirstLevelModalOpen(state => !state), []);
-
   //   const [referencedFields, setReferencedFields] = useState('');
+  const { disabled } = props;
 
   return (
     <Fragment>
@@ -119,7 +120,9 @@ export default function DynaRequiredTrigger(props) {
         <FirstLevelModal {...props} handleClose={toggle} />
       ) : null}
       <DynaText {...props} options={null} />
-      <EditIcon onClick={toggle} />
+      <IconTextButton onClick={toggle} disabled={disabled}>
+        <EditIcon />
+      </IconTextButton>
     </Fragment>
   );
 }

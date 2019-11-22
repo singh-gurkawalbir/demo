@@ -129,7 +129,6 @@ export default {
       commMetaPath: r =>
         `salesforce/metadata/connections/${r._connectionId}/sObjectTypes`,
     },
-    'salesforce.objectType': { fieldId: 'salesforce.objectType' },
     'salesforce.id': { fieldId: 'salesforce.id' },
     'salesforce.distributed.requiredTrigger': {
       type: 'salesforcerequiredtrigger',
@@ -141,26 +140,24 @@ export default {
       refreshOptionsOnChangesTo: ['salesforce.sObjectType'],
       type: 'salesforcereferencedfields',
       fieldId: 'salesforce.distributed.referencedFields',
-      validWhen: [
+      disabledWhen: [
         {
           field: 'salesforce.sObjectType',
-          isNot: [''],
+          is: [''],
         },
       ],
-      defaultDisabled: true,
     },
     'salesforce.distributed.relatedLists.referencedFields': {
       type: 'salesforcerelatedlist',
       connectionId: r => r._connectionId,
       refreshOptionsOnChangesTo: ['salesforce.sObjectType'],
       fieldId: 'salesforce.distributed.relatedLists.referencedFields',
-      validWhen: [
+      disabledWhen: [
         {
           field: 'salesforce.sObjectType',
-          isNot: [''],
+          is: [''],
         },
       ],
-      defaultDisabled: true,
     },
     'salesforce.distributed.qualifier': {
       fieldId: 'salesforce.distributed.qualifier',
@@ -186,7 +183,6 @@ export default {
       'delta.dateField',
       'delta.lagOffset',
       'once.booleanField',
-      'salesforce.objectType',
       'salesforce.id',
     ],
     type: 'collapse',

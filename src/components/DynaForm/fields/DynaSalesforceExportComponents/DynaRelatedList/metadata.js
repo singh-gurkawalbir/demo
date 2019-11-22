@@ -3,11 +3,11 @@ import EditIcon from '../../../../icons/EditIcon';
 
 const Delete = {
   label: 'Delete',
-  component({ handleDeleteItem, childSObject, parentField }) {
+  component({ handleDeleteItem, resource }) {
     return (
       <DeleteIcon
         onClick={() => {
-          handleDeleteItem(childSObject, parentField);
+          handleDeleteItem(resource.index);
         }}
       />
     );
@@ -15,11 +15,11 @@ const Delete = {
 };
 const Edit = {
   label: 'Edit',
-  component({ handleEditItem, childSObject, parentField }) {
+  component({ handleEditItem, resource }) {
     return (
       <EditIcon
         onClick={() => {
-          handleEditItem(childSObject, parentField);
+          handleEditItem(resource.index);
         }}
       />
     );
@@ -35,13 +35,13 @@ export default {
 
     {
       heading: 'Child SObject',
-      value: r => r && r.childSObject,
+      value: r => r && r.sObjectType,
       orderBy: 'lastModified',
     },
     {
       heading: 'Referenced Fields',
       value(r) {
-        return r && r.filter;
+        return r && r.referencedFields;
       },
     },
     {
