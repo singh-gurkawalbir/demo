@@ -150,7 +150,7 @@ export default {
     label: 'Relative URI',
     placeholder: 'Optional',
     connectionId: r => r && r._connectionId,
-    refreshOptionsOnChangesTo: ['http.lookups'],
+    refreshOptionsOnChangesTo: ['http.lookups', 'name'],
     visibleWhen: [
       {
         field: 'http.method',

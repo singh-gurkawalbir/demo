@@ -198,6 +198,7 @@ export default function DynaStaticMapWidget(props) {
           id="allowFailures"
           label="Action to take if unique match not found"
           onFieldChange={handleAllowFailuresClick}
+          showOptionsVertically
           options={[
             {
               items: [

@@ -53,6 +53,11 @@ export default function(state = {}, action) {
 
       case actionTypes.FLOW_DATA.PREVIEW_DATA_RECEIVED: {
         if (!resourceId) return;
+
+        if (!draft[flowId]) {
+          draft[flowId] = {};
+        }
+
         const resourceMap =
           draft[flowId][
             isPageGenerator ? 'pageGeneratorsMap' : 'pageProcessorsMap'

@@ -18,6 +18,7 @@ export default function HandlebarsEditor(props) {
     ruleMode,
     disabled,
     enableAutocomplete,
+    lookups = [],
   } = props;
   const {
     template,
@@ -32,7 +33,9 @@ export default function HandlebarsEditor(props) {
   );
 
   completers.handleBarsCompleters.setFunctionCompleter(handlebarHelperFunction);
+  const _lookups = Array.isArray(lookups) ? lookups : [];
 
+  completers.handleBarsCompleters.setLookupCompleter(_lookups);
   useEffect(() => {
     completers.handleBarsCompleters.setJsonCompleter(data);
   }, [data]);

@@ -12,6 +12,10 @@ import getRequestOptions from '../../utils/requestOptions';
 import { defaultPatchSetConverter } from '../../forms/utils';
 
 export function* commitStagedChanges({ resourceType, id, scope }) {
+  const userPreferences = yield select(selectors.userPreferences);
+  const isSandbox = userPreferences
+    ? userPreferences.environment === 'sandbox'
+    : false;
   const { patch, merged, master } = yield select(
     selectors.resourceData,
     resourceType,
@@ -40,6 +44,12 @@ export function* commitStagedChanges({ resourceType, id, scope }) {
 
       return;
     }
+  } else if (
+    ['exports', 'imports', 'connections', 'flows', 'integrations'].includes(
+      resourceType
+    )
+  ) {
+    merged.sandbox = isSandbox;
   }
 
   let updated;
@@ -98,7 +108,9 @@ export function* commitStagedChanges({ resourceType, id, scope }) {
       updated.assistantMetadata = assistantMetadata;
       // Fix for updating lastModified after above patch request
       // @TODO: Raghu Remove this once patch request gives back the resource in response
-      const origin = yield call(apiCallWithRetry, { path });
+      const origin = yield call(apiCallWithRetry, {
+        path: `/${resourceType}/${updated._id}`,
+      });
 
       updated.lastModified = origin.lastModified;
     }

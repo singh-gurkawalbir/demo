@@ -180,6 +180,7 @@ export default {
     required: true,
     label: 'Relative URI',
     connectionId: r => r && r._connectionId,
+    refreshOptionsOnChangesTo: ['name'],
     requiredWhen: [
       {
         field: 'outputMode',

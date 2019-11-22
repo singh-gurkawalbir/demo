@@ -2,7 +2,7 @@ import { useSelector } from 'react-redux';
 import { useState, Fragment } from 'react';
 import Button from '@material-ui/core/Button';
 import ImportMapping from '../../../components/AFE/ImportMapping';
-import MappingUtil from '../../../utils/mapping';
+import mappingUtil from '../../../utils/mapping';
 import * as ResourceUtil from '../../../utils/resource';
 import * as selectors from '../../../reducers';
 
@@ -66,7 +66,7 @@ export default function DynaImportMapping(props) {
   let mappings = {};
 
   if (isModalVisible) {
-    mappings = MappingUtil.getMappingsForApp({
+    mappings = mappingUtil.getMappingsForApp({
       mappings: value === '' ? {} : value,
       appType: application,
     });

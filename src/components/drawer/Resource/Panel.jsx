@@ -176,9 +176,10 @@ export default function Panel(props) {
       dispatch(actions.resource.created(resourceId, id));
       onClose();
     } else {
+      // For webhook generate URL case
       if (formState.skipClose) {
         props.history.replace(
-          `/pg/${resourceType}/edit/${resourceType}/${newResourceId}`
+          `/pg/${resourceType}/edit/${resourceType}/${newResourceId || id}`
         );
 
         return;
@@ -238,7 +239,7 @@ export default function Panel(props) {
       </div>
 
       <Route
-        path={`${match.url}/:operation/:resourceType/:id`}
+        path={`${match.url}/:operation(add|edit)/:resourceType/:id`}
         render={props => (
           <Panel {...props} zIndex={zIndex + 1} onClose={onClose} />
         )}

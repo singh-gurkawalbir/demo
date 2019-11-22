@@ -208,7 +208,7 @@ export function fieldMeta({ resource, assistantData }) {
 
       if (
         operationDetails.queryParameters &&
-        operationDetails.queryParameters.length > 0
+        operationDetails.queryParameters.filter(qp => !qp.readOnly).length > 0
       ) {
         searchParameterFields = searchParameterFieldsMeta({
           label: operationDetails.queryParametersLabel,
