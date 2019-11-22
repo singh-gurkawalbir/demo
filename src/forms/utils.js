@@ -272,11 +272,14 @@ const refGeneration = field => {
   throw new Error('cant generate reference');
 };
 
-const getFieldConfig = (field = {}) => {
+const getFieldConfig = (field = {}, resource) => {
   const newField = { ...field };
 
   if (!newField.type || newField.type === 'input') {
     newField.type = 'text';
+  } else if (newField.type === 'expression') {
+    newField.type = 'ianetsuitelookup';
+    newField.resource = resource;
   } else if (newField.type === 'radio') {
     newField.type = 'radiogroup';
   } else if (newField.type === 'file') {
@@ -368,14 +371,14 @@ export const translateDependencyProps = fieldMap => {
   return fieldMapCopy;
 };
 
-const translateFieldProps = (fields = [], _integrationId) =>
+const translateFieldProps = (fields = [], _integrationId, resource) =>
   fields.map(field => {
     // TODO: generate correct name path
     const { name, options, default: defaultValue, tooltip } = field;
     // name is the unique identifier....verify with Ashok
 
     return {
-      ...getFieldConfig(field),
+      ...getFieldConfig(field, resource),
       defaultValue,
       name: `/${name}`,
       _integrationId,
@@ -398,15 +401,21 @@ const translateFieldProps = (fields = [], _integrationId) =>
 export const integrationSettingsToDynaFormMetadata = (
   meta,
   integrationId,
-  skipContainerWrap
+  skipContainerWrap,
+  options = {}
 ) => {
   const finalData = {};
+  const { resource } = options;
 
   if (!meta || (!meta.fields && !meta.sections)) return null;
   const { fields, sections } = meta;
 
   if (fields) {
-    const addedFieldIdFields = translateFieldProps(fields, integrationId);
+    const addedFieldIdFields = translateFieldProps(
+      fields,
+      integrationId,
+      resource
+    );
 
     finalData.fieldMap = addedFieldIdFields.reduce(
       convertFieldsToFieldReferneceObj,
@@ -420,7 +429,8 @@ export const integrationSettingsToDynaFormMetadata = (
     sections.forEach(section => {
       finalData.fieldMap = translateFieldProps(
         section.fields,
-        integrationId
+        integrationId,
+        resource
       ).reduce(convertFieldsToFieldReferneceObj, finalData.fieldMap || {});
     });
 
@@ -433,7 +443,7 @@ export const integrationSettingsToDynaFormMetadata = (
     finalData.layout.containers = sections.map(section => ({
       collapsed: section.collapsed || true,
       label: section.title,
-      fields: translateFieldProps(section.fields, integrationId).map(
+      fields: translateFieldProps(section.fields, integrationId, resource).map(
         refGeneration
       ),
     }));
