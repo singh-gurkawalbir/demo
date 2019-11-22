@@ -7,6 +7,7 @@ export default {
     if (newValues['/inputMode'] === 'blob') {
       newValues['/netsuite_da/operation'] =
         newValues['/netsuite_da/blob/operation'];
+      newValues['/netsuite_da/recordType'] = 'file';
     }
 
     return {
