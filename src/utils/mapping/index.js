@@ -1,7 +1,7 @@
 import { adaptorTypeMap } from '../resource';
-import generateFields from './sampleGenerateData';
-import MappingUtil from '.';
+import mappingUtil from '.';
 import NetsuiteMapping from './application/netsuite';
+import getJSONPaths from '../jsonPaths';
 
 const LookupResponseMappingExtracts = [
   'data',
@@ -154,7 +154,7 @@ export default {
 
     if (getRawMappings) return mappings;
 
-    return MappingUtil.getMappingsForApp({
+    return mappingUtil.getMappingsForApp({
       mappings,
       appType,
       options,
@@ -166,7 +166,7 @@ export default {
     if (options.integrationApp) {
       const { mappingMetadata, connectorExternalId } = options.integrationApp;
 
-      _mappings = MappingUtil.generateFieldAndListMappingsforIA(
+      _mappings = mappingUtil.generateFieldAndListMappingsforIA(
         mappings,
         mappingMetadata,
         connectorExternalId
@@ -176,7 +176,7 @@ export default {
     if (options.assistant) {
       const { requiredMappings } = options.assistant;
 
-      _mappings = MappingUtil.generateFieldAndListMappingsforAssistant(
+      _mappings = mappingUtil.generateFieldAndListMappingsforAssistant(
         mappings,
         requiredMappings
       );
@@ -197,7 +197,7 @@ export default {
       case adaptorTypeMap.WrapperImport:
       case adaptorTypeMap.RDBMSImport:
       case adaptorTypeMap.SalesforceImport:
-        return MappingUtil.getFieldsAndListMappings({ mappings: _mappings });
+        return mappingUtil.getFieldsAndListMappings({ mappings: _mappings });
       default:
     }
   },
@@ -224,7 +224,7 @@ export default {
       case adaptorTypeMap.WrapperImport:
       case adaptorTypeMap.SalesforceImport:
       case adaptorTypeMap.RDBMSImport:
-        return MappingUtil.generateMappingFieldsAndList({ mappings });
+        return mappingUtil.generateMappingFieldsAndList({ mappings });
 
       default:
     }
@@ -292,7 +292,6 @@ export default {
 
     return formattedMapping;
   },
-  getSampleGenerateFields: () => generateFields,
   getResponseMappingDefaultExtracts: resourceType => {
     const extractFields =
       resourceType === 'imports'
@@ -307,22 +306,28 @@ export default {
   getFormattedGenerateData: (sampleData, application) => {
     let formattedGenerateFields = [];
 
-    if (application === adaptorTypeMap.SalesforceImport) {
-      formattedGenerateFields =
-        sampleData &&
-        sampleData.map(d => ({
+    if (sampleData) {
+      if (application === adaptorTypeMap.SalesforceImport) {
+        formattedGenerateFields = sampleData.map(d => ({
           id: d.value,
           name: d.label,
           type: d.type,
           options: d.picklistValues,
         }));
-    } else if (application === adaptorTypeMap.NetSuiteDistributedImport) {
-      formattedGenerateFields =
-        sampleData &&
-        sampleData.map(d => ({
+      } else if (application === adaptorTypeMap.NetSuiteDistributedImport) {
+        formattedGenerateFields = sampleData.map(d => ({
           id: d.value,
           name: d.label,
         }));
+      } else if (application === adaptorTypeMap.FTPImport) {
+        const formattedSampleData =
+          sampleData &&
+          (Array.isArray(sampleData) ? sampleData : getJSONPaths(sampleData));
+
+        formattedGenerateFields =
+          formattedSampleData &&
+          formattedSampleData.map(sd => ({ ...sd, name: sd.id }));
+      }
     }
 
     return formattedGenerateFields;
@@ -400,8 +405,8 @@ export default {
 
     if (duplicateMappings.length) {
       return {
-        status: false,
-        message: `You have duplicate mappings for the field(s): ${duplicateMappings.join(
+        isSuccess: false,
+        errMessage: `You have duplicate mappings for the field(s): ${duplicateMappings.join(
           ','
         )}`,
       };
@@ -417,8 +422,8 @@ export default {
 
     if (mappingsWithoutExtract.length) {
       return {
-        status: false,
-        message: `Extract Fields missing for field(s): ${mappingsWithoutExtract.join(
+        isSuccess: false,
+        errMessage: `Extract Fields missing for field(s): ${mappingsWithoutExtract.join(
           ','
         )}`,
       };
@@ -432,11 +437,11 @@ export default {
 
     if (mappingsWithoutGenerate.length) {
       return {
-        status: false,
-        message: 'Generate Fields missing for mapping(s)',
+        isSuccess: false,
+        errMessage: 'Generate Fields missing for mapping(s)',
       };
     }
 
-    return { status: true };
+    return { isSuccess: true };
   },
 };

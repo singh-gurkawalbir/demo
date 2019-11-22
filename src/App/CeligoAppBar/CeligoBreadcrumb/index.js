@@ -1,7 +1,9 @@
+import { useSelector } from 'react-redux';
 import { matchPath, Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Breadcrumbs, Typography } from '@material-ui/core';
 import { MODEL_PLURAL_TO_LABEL } from '../../../utils/resource';
+import * as selectors from '../../../reducers';
 import ArrowRightIcon from '../../../components/icons/ArrowRightIcon';
 import IntegrationCrumb from './crumbs/Integration';
 import MarketplaceCrumb from './crumbs/Marketplace';
@@ -28,6 +30,48 @@ const useStyles = makeStyles(theme => ({
     fontSize: 13,
   },
 }));
+// These routes are shared for IA and DIY routes.
+const flowBuilderRoutes = {
+  path: '/flowBuilder/:flowId',
+  breadcrumb: () => 'Flow builder',
+  childRoutes: [
+    { path: '/schedule', breadcrumb: () => 'Schedule' },
+    { path: '/settings', breadcrumb: () => 'Settings' },
+  ],
+};
+// These routes are shared for IAs with and without /store/ url segment.
+// to keep the code DRY, lets extract the common sub-set of routes.
+const integrationAppRoutes = [
+  flowBuilderRoutes,
+  { path: '/general', breadcrumb: () => 'General' },
+  { path: '/addons', breadcrumb: () => 'Add-ons' },
+  { path: '/dashboard', breadcrumb: () => 'Dashboard' },
+  { path: '/connections', breadcrumb: () => 'Connections' },
+  {
+    path: '/admin',
+    breadcrumb: () => 'Admin',
+    childRoutes: [
+      { path: '/apitokens', breadcrumb: () => 'Api tokens' },
+      { path: '/users', breadcrumb: () => 'Users' },
+      { path: '/audit', breadcrumb: () => 'Audit log' },
+      { path: '/subscription', breadcrumb: () => 'Subscription' },
+      { path: '/uninstall', breadcrumb: () => 'Uninstall' },
+      { path: '/notifications', breadcrumb: () => 'Notifications' },
+    ],
+  },
+  {
+    path: '/flows',
+    breadcrumb: () => 'Flows',
+    childRoutes: [
+      {
+        path: '/:section',
+        breadcrumb: a => a.section,
+        childRoutes: [{ path: '/:section', breadcrumb: a => a.section }],
+      },
+    ],
+  },
+];
+// Main route table.
 const routes = [
   {
     path: '/pg/integrations/:integrationId/',
@@ -46,14 +90,7 @@ const routes = [
           { path: '/notifications', breadcrumb: () => 'Notifications' },
         ],
       },
-      {
-        path: '/flowBuilder/:flowId',
-        breadcrumb: () => 'Flow builder',
-        childRoutes: [
-          { path: '/schedule', breadcrumb: () => 'Schedule' },
-          { path: '/settings', breadcrumb: () => 'Settings' },
-        ],
-      },
+      flowBuilderRoutes,
     ],
   },
   {
@@ -65,6 +102,18 @@ const routes = [
     breadcrumb: () => 'installBase',
   },
   { path: '/pg/dashboard' }, // exclusion of breadcrumb prop will skip this segment.
+  {
+    path: '/pg/integrationApp/:integrationId',
+    breadcrumb: IntegrationAppCrumb,
+    childRoutes: [
+      ...integrationAppRoutes,
+      {
+        path: '/store/:storeId',
+        breadcrumb: StoreCrumb,
+        childRoutes: integrationAppRoutes,
+      },
+    ],
+  },
   {
     path: '/pg/connectors/:integrationId/settings',
     breadcrumb: IntegrationAppCrumb,
@@ -156,11 +205,14 @@ const commonChildRoutes = [
   // metadata needs to be carried in the url.. keeping it simple for now.
   { path: '/clone', breadcrumb: () => 'Clone' },
   {
-    path: '/:operation/:resourceType/:id',
-    breadcrumb: ({ operation, resourceType }) =>
-      `${operation === 'add' ? 'Add' : 'Edit'} ${
-        MODEL_PLURAL_TO_LABEL[resourceType]
-      }`,
+    path: '/add/:resourceType/:id',
+    breadcrumb: ({ resourceType }) =>
+      `Add ${MODEL_PLURAL_TO_LABEL[resourceType]}`,
+  },
+  {
+    path: '/edit/:resourceType/:id',
+    breadcrumb: ({ resourceType }) =>
+      `Edit ${MODEL_PLURAL_TO_LABEL[resourceType]}`,
   },
 ];
 
@@ -230,9 +282,12 @@ function parseUrl(pathname, routes, url = '', params = {}) {
 
 export default function CeligoBreadcrumb({ location }) {
   const classes = useStyles();
+  const shouldShowAppRouting = useSelector(state =>
+    selectors.shouldShowAppRouting(state)
+  );
   const breadcrumbs = [
     { url: '/pg', breadcrumb: () => 'Home' },
-    ...parseUrl(location, routes),
+    ...parseUrl(location, shouldShowAppRouting ? routes : []),
   ];
 
   return (

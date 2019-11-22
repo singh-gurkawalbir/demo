@@ -44,6 +44,9 @@ import DynaImportMapping from './DynaImportMapping';
 import DynaFieldExpressionSelect from './DynaFieldExpressionSelect';
 import DynaAutoSuggest from './DynaAutoSuggest';
 import DynaGenerateUrl from './DynaGenerateUrl';
+import DynaWebhookTokenGenerator from './DynaWebhookTokenGenerator';
+import DynaSelectForSetFields from './select/DynaSelectForSetFields';
+import DynaTextForSetFields from './text/DynaTextForSetFields';
 import DynaSoqlQuery from './DynaSoqlQuery';
 import DynaSalesforceRefreshableSelect from './DynaSalesforceRefreshableSelect';
 import DynaRefreshableIntegrationAppSetting from './DynaRefreshableSelect/RefreshableIntegrationAppSetting';
@@ -51,6 +54,8 @@ import DynaDate from './dateTime/DynaDate';
 import DynaToggle from './DynaToggle';
 import DynaSQLQueryBuilder from './DynaSQLQueryBuilder';
 import DynaRelativeURIWithLookup from './DynaRelativeURIWithLookup';
+import DynaNetSuiteLookupFilters from './DynaNetSuiteLookupFilters';
+import DynaNetSuiteLookup from './DynaNetSuiteLookup';
 import DynaUserEmail from './DynaUserEmail';
 import DynaUserPassword from './DynaUserPassword';
 import DynaIclient from './DynaIclient';
@@ -105,6 +110,9 @@ export default {
   fieldexpressionselect: DynaFieldExpressionSelect,
   autosuggest: DynaAutoSuggest,
   generateurl: DynaGenerateUrl,
+  webhooktokengenerator: DynaWebhookTokenGenerator,
+  selectforsetfields: DynaSelectForSetFields,
+  textforsetfields: DynaTextForSetFields,
   toggle: DynaToggle,
   soqlquery: DynaSoqlQuery,
   salesforcerefreshableselect: DynaSalesforceRefreshableSelect,
@@ -112,6 +120,8 @@ export default {
   date: DynaDate,
   sqlquerybuilder: DynaSQLQueryBuilder,
   relativeuriwithlookup: DynaRelativeURIWithLookup,
+  netsuitelookupfilters: DynaNetSuiteLookupFilters,
+  netsuitelookup: DynaNetSuiteLookup,
   useremail: DynaUserEmail,
   userpassword: DynaUserPassword,
   dynaiclient: DynaIclient,

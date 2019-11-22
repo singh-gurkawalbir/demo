@@ -37,7 +37,7 @@ export default function LoadResources({ children, resources, required }) {
   }, [dispatch, isAllDataReady]);
 
   if (isAllDataReady || !required) {
-    return children;
+    return children || null;
   }
 
   return null;

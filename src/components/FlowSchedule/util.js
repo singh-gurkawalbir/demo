@@ -331,7 +331,6 @@ export const getMetadata = ({
         name: 'activeTab',
         type: 'radiogroup',
         label: '',
-        showOptionsHorizontally: true,
         fullWidth: true,
         defaultValue: resource.activeTab,
         options: [
