@@ -179,7 +179,9 @@ export default function ImportMapping(props) {
                 <Grid item>
                   <MappingSettings
                     id={`fieldMappingSettings-${mapping.index}`}
-                    onSave={patchSettings}
+                    onSave={(id, evt) => {
+                      patchSettings(mapping.index, evt);
+                    }}
                     value={mapping}
                     options={options}
                     generate={mapping.generate}

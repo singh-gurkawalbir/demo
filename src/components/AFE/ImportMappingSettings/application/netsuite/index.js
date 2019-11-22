@@ -56,7 +56,6 @@ export default {
                 { label: 'String', value: 'string' },
                 { label: 'Number', value: 'number' },
                 { label: 'Boolean', value: 'boolean' },
-                { label: 'Date', value: 'date' },
                 { label: 'Number Array', value: 'numberarray' },
                 { label: 'String Array', value: 'stringarray' },
               ],
@@ -163,15 +162,18 @@ export default {
           id: 'lookup.mapList',
           name: '_mapList',
           type: 'staticMap',
-          connectionId: fieldId.indexOf('.internalid') && connectionId,
-          selectField: fieldId
-            ? fieldId.substr(0, fieldId.indexOf('.internalid'))
-            : undefined,
+          valueLabel: 'Import Field (NetSuite)',
+          commMetaPath:
+            fieldId &&
+            `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${recordType}/selectFieldValues/${fieldId.substr(
+              0,
+              fieldId.indexOf('.internalid')
+            )}`,
+          connectionId: fieldId && connectionId,
           label: '',
           keyName: 'export',
           keyLabel: 'Export Field',
           valueName: 'import',
-          valueLabel: 'Import Field (Netsuite)',
           defaultValue:
             lookup.map &&
             Object.keys(lookup.map).map(key => ({
@@ -179,7 +181,6 @@ export default {
               import: lookup.map[key],
             })),
           map: lookup.map,
-          recordType,
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
             { field: 'lookup.mode', is: ['static'] },
@@ -432,7 +433,6 @@ export default {
       delete fieldMeta.fieldMap.hardcodedAction;
       delete fieldMeta.fieldMap.hardcodedDefault;
       delete fieldMeta.fieldMap.hardcodedCheckbox;
-
       fields = fields.filter(
         el =>
           el !== 'hardcodedAction' &&
@@ -443,6 +443,8 @@ export default {
       delete fieldMeta.fieldMap.hardcodedAction;
       delete fieldMeta.fieldMap.hardcodedDefault;
       delete fieldMeta.fieldMap.hardcodedSelect;
+      delete fieldMeta.fieldMap['lookup.mapList'].commMetaPath;
+      delete fieldMeta.fieldMap['lookup.mapList'].connectionId;
 
       fields = fields.filter(
         el =>
@@ -453,6 +455,9 @@ export default {
     } else {
       delete fieldMeta.fieldMap.hardcodedSelect;
       delete fieldMeta.fieldMap.hardcodedCheckbox;
+      delete fieldMeta.fieldMap['lookup.mapList'].commMetaPath;
+      delete fieldMeta.fieldMap['lookup.mapList'].connectionId;
+
       fields = fields.filter(
         el => el !== 'hardcodedSelect' && el !== 'hardcodedCheckbox'
       );
