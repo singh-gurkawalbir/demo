@@ -99,7 +99,7 @@ export default function ImportMappingSettings(props) {
           </Button>
           <DynaSubmit
             disabled={disabled}
-            data-test={`fieldMappingSettingsSave-${index}`}
+            id={`fieldMappingSettingsSave-${index}`}
             onClick={handleSubmit}>
             Save
           </DynaSubmit>
