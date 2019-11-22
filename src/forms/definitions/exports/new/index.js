@@ -51,7 +51,6 @@ export default {
       label: 'This application supports two options for exporting data',
       defaultValue: r => (r && r.type) || 'api',
       required: true,
-      showOptionsHorizontally: true,
       options: [
         {
           items: [

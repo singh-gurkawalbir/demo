@@ -1,23 +1,24 @@
 import { useState, Fragment } from 'react';
 import { IconButton } from '@material-ui/core';
 import MappingIcon from '../icons/MapDataIcon';
-import StandaloneImportMapping from '../AFE/ImportMapping/StandaloneImportMapping';
+// import StandaloneImportMapping from '../AFE/ImportMapping/StandaloneImportMapping';
 
-export default function Mapping({ resourceId, connectionId }) {
+export default function Mapping() {
+  // { resourceId, connectionId }
   const [showDialog, setShowDialog] = useState(false);
-  const handleClose = () => {
-    setShowDialog(false);
-  };
+  // const handleClose = () => {
+  //   setShowDialog(false);
+  // };
 
   return (
     <Fragment>
-      {showDialog && (
+      {/* {showDialog && (
         <StandaloneImportMapping
           resourceId={resourceId}
           connectionId={connectionId}
           onClose={handleClose}
         />
-      )}
+      )} */}
       <IconButton
         data-test="toggleMappingDialog"
         size="small"

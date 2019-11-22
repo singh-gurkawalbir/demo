@@ -25,7 +25,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function MappingDialog({ onClose, resource }) {
+export default function SelectMappingDialog({ onClose, resource }) {
   const classes = useStyles();
   const imports = useSelector(state =>
     selectors.getAllPageProcessorImports(

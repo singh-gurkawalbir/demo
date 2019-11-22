@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useCallback } from 'react';
+import { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { isString } from 'lodash';
 import * as selectors from '../../../../reducers';
@@ -16,6 +16,7 @@ export default function DynaNetSuiteLookupFilters(props) {
     onFieldChange,
     editorId,
   } = props;
+  const { disableFetch, commMetaPath } = options;
   let rule = [];
 
   if (isString(value)) {
@@ -30,7 +31,7 @@ export default function DynaNetSuiteLookupFilters(props) {
 
   const handleEditorInit = useCallback(() => {
     dispatch(
-      actions.editor.init(editorId, 'netsuiteLookup', {
+      actions.editor.init(editorId, 'netsuiteLookupFilter', {
         data,
         autoEvaluate: false,
         rule,
@@ -42,6 +43,10 @@ export default function DynaNetSuiteLookupFilters(props) {
     if (editorId) {
       handleEditorInit();
     }
+    /**
+     * TODO: fix dependencies
+     * If we add editorId and handleEditorInit as dependencies this is causing re-render infinitely.
+     */
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const filters = useSelector(
@@ -49,38 +54,29 @@ export default function DynaNetSuiteLookupFilters(props) {
       selectors.metadataOptionsAndResources({
         state,
         connectionId,
-        commMetaPath: options.commMetaPath,
+        commMetaPath,
       }).data,
     (left, right) => left.length === right.length
   );
 
   useEffect(() => {
-    if (!filters && !options.disableFetch) {
-      dispatch(actions.metadata.request(connectionId, options.commMetaPath));
+    if (!filters && !disableFetch && commMetaPath) {
+      dispatch(actions.metadata.request(connectionId, commMetaPath));
     }
-  }, [
-    dispatch,
-    options.disableFetch,
-    options.commMetaPath,
-    connectionId,
-    filters,
-  ]);
+  }, [dispatch, disableFetch, commMetaPath, connectionId, filters]);
 
   if (!filters) {
     return null;
   }
 
   return (
-    <Fragment>
-      {/* {`props ${JSON.stringify(props)}`} */}
-      <FilterPanel
-        editorId={editorId}
-        filters={filters}
-        data={data}
-        id={id}
-        onFieldChange={onFieldChange}
-        rule={rule}
-      />
-    </Fragment>
+    <FilterPanel
+      id={id}
+      editorId={editorId}
+      rule={rule}
+      data={data}
+      filters={filters}
+      onFieldChange={onFieldChange}
+    />
   );
 }

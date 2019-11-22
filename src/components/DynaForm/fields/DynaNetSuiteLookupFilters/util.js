@@ -1,93 +1,89 @@
 /* eslint-disable no-param-reassign */
-import { invert, isString, isArray, tail, filter } from 'lodash';
-
-const operatorsMap = {
-  jQueryToIOFilters: {
-    is: 'is',
-    equalto: 'equalto',
-    on: 'on',
-    anyof: 'anyof',
-    isempty: 'isempty',
-    isnotempty: 'isnotempty',
-  },
-};
-
-operatorsMap.ioFiltersToJQuery = invert(operatorsMap.jQueryToIOFilters);
+import { isString, isArray, tail, filter } from 'lodash';
 
 export function getFilterRuleId(rule) {
   return rule.id.split('_rule_')[1];
 }
 
-export function isComplexNSExpression(exp) {
-  let toReturn = false;
+export function isComplexNetSuiteFilterExpression(expression) {
+  let isComplexExpression = false;
 
-  if (isArray(exp)) {
-    exp.forEach((e, i) => {
-      if (!toReturn) {
+  if (isArray(expression)) {
+    expression.forEach((e, i) => {
+      if (!isComplexExpression) {
         if (isArray(e)) {
-          toReturn = isComplexNSExpression(e);
+          isComplexExpression = isComplexNetSuiteFilterExpression(e);
         } else if (i > 0 && ['AND', 'OR'].includes(e)) {
-          toReturn = true;
+          isComplexExpression = true;
         }
       }
     });
   }
 
-  return toReturn;
+  return isComplexExpression;
 }
 
-export function updateNetSuiteLookupFilterExpressionForNOTs(exp) {
-  for (let i = 0; i < exp.length; i += 1) {
-    if (exp[i] === 'NOT') {
-      exp[i] = isArray(exp[i + 1][0])
-        ? ['NOT', updateNetSuiteLookupFilterExpressionForNOTs(exp[i + 1])]
-        : ['NOT', exp[i + 1]];
-      exp.splice(i + 1, 1);
-    } else if (isArray(exp[i])) {
-      exp[i] = updateNetSuiteLookupFilterExpressionForNOTs(exp[i]);
+export function updateNetSuiteLookupFilterExpressionForNOTs(expression) {
+  for (let i = 0; i < expression.length; i += 1) {
+    if (expression[i] === 'NOT') {
+      expression[i] = isArray(expression[i + 1][0])
+        ? [
+            'NOT',
+            updateNetSuiteLookupFilterExpressionForNOTs(expression[i + 1]),
+          ]
+        : ['NOT', expression[i + 1]];
+      expression.splice(i + 1, 1);
+    } else if (isArray(expression[i])) {
+      expression[i] = updateNetSuiteLookupFilterExpressionForNOTs(
+        expression[i]
+      );
     }
   }
 
-  return exp;
+  return expression;
 }
 
-export function updateNetSuiteLookupFilterExpressionForConditions(exp) {
-  let toReturn = [];
+export function updateNetSuiteLookupFilterExpressionForConditions(expression) {
+  let updatedExpression = [];
   let prevCondition;
 
-  if (isArray(exp) && exp.length === 1) {
-    return updateNetSuiteLookupFilterExpressionForConditions(exp[0]);
+  if (isArray(expression) && expression.length === 1) {
+    return updateNetSuiteLookupFilterExpressionForConditions(expression[0]);
   }
 
-  if (exp[0] === 'NOT') {
-    if (isArray(exp[1]) && isArray(exp[1][0])) {
-      toReturn.push('NOT');
-      toReturn.push(updateNetSuiteLookupFilterExpressionForConditions(exp[1]));
+  if (expression[0] === 'NOT') {
+    if (isArray(expression[1]) && isArray(expression[1][0])) {
+      updatedExpression.push('NOT');
+      updatedExpression.push(
+        updateNetSuiteLookupFilterExpressionForConditions(expression[1])
+      );
     }
   } else {
-    for (let i = 0; i < exp.length; i += 1) {
-      if (exp[i] === 'AND' || exp[i] === 'OR') {
-        if (prevCondition !== exp[i]) {
-          prevCondition = exp[i];
-          toReturn.push(exp[i]);
+    for (let i = 0; i < expression.length; i += 1) {
+      if (expression[i] === 'AND' || expression[i] === 'OR') {
+        if (prevCondition !== expression[i]) {
+          prevCondition = expression[i];
+          updatedExpression.push(expression[i]);
         }
 
-        if (toReturn.length === 1) {
-          if (isComplexNSExpression(exp[i - 1])) {
-            toReturn.push(
-              updateNetSuiteLookupFilterExpressionForConditions(exp[i - 1])
+        if (updatedExpression.length === 1) {
+          if (isComplexNetSuiteFilterExpression(expression[i - 1])) {
+            updatedExpression.push(
+              updateNetSuiteLookupFilterExpressionForConditions(
+                expression[i - 1]
+              )
             );
           } else {
-            toReturn.push(exp[i - 1]);
+            updatedExpression.push(expression[i - 1]);
           }
         }
 
-        if (isComplexNSExpression(exp[i + 1])) {
-          toReturn.push(
-            updateNetSuiteLookupFilterExpressionForConditions(exp[i + 1])
+        if (isComplexNetSuiteFilterExpression(expression[i + 1])) {
+          updatedExpression.push(
+            updateNetSuiteLookupFilterExpressionForConditions(expression[i + 1])
           );
         } else {
-          toReturn.push(exp[i + 1]);
+          updatedExpression.push(expression[i + 1]);
         }
 
         i += 1;
@@ -95,25 +91,25 @@ export function updateNetSuiteLookupFilterExpressionForConditions(exp) {
     }
   }
 
-  if (toReturn.length === 0) {
-    toReturn = ['AND', exp];
+  if (updatedExpression.length === 0) {
+    updatedExpression = ['AND', expression];
   }
 
-  return toReturn;
+  return updatedExpression;
 }
 
 export function convertNetSuiteLookupFilterExpressionToQueryBuilderRules(
-  exp,
+  expression,
   data
 ) {
-  function parseFilter(exp) {
+  function parseFilter(expression) {
     const rule = {
-      id: exp[0],
-      operator: exp[1],
+      id: expression[0],
+      operator: expression[1],
       data: {
         lhs: {
           type: 'field',
-          field: exp[0],
+          field: expression[0],
         },
       },
     };
@@ -121,21 +117,21 @@ export function convertNetSuiteLookupFilterExpressionToQueryBuilderRules(
     let filteredFields;
 
     if (
-      exp[0].indexOf('formuladate:') === 0 ||
-      exp[0].indexOf('formulanumeric:') === 0 ||
-      exp[0].indexOf('formulatext:') === 0
+      expression[0].indexOf('formuladate:') === 0 ||
+      expression[0].indexOf('formulanumeric:') === 0 ||
+      expression[0].indexOf('formulatext:') === 0
     ) {
       rule.data.lhs.type = 'expression';
-      [rule.id] = exp[0].split(':');
+      [rule.id] = expression[0].split(':');
       rule.data.lhs.field = rule.id;
-      rule.data.lhs.expression = exp[0].replace(`${rule.id}:`, '');
+      rule.data.lhs.expression = expression[0].replace(`${rule.id}:`, '');
     }
 
     rule.data.rhs = {};
 
-    if (exp[2]) {
-      if (exp[2].indexOf('{{') > -1) {
-        field = exp[2]
+    if (expression[2]) {
+      if (expression[2].indexOf('{{') > -1) {
+        field = expression[2]
           .replace('{{{', '')
           .replace('}}}', '')
           .replace('{{', '')
@@ -151,13 +147,13 @@ export function convertNetSuiteLookupFilterExpressionToQueryBuilderRules(
         } else {
           rule.data.rhs = {
             type: 'expression',
-            expression: exp[2],
+            expression: expression[2],
           };
         }
       } else {
         rule.data.rhs = {
           type: 'value',
-          value: exp[2],
+          value: expression[2],
         };
       }
     }
@@ -165,27 +161,27 @@ export function convertNetSuiteLookupFilterExpressionToQueryBuilderRules(
     return rule;
   }
 
-  function iterate(exp) {
+  function iterate(expression) {
     let rules = {};
     let i = 0;
 
-    if (!exp.length) {
+    if (!expression.length) {
       return rules;
     }
 
-    if (isString(exp[0])) {
-      if (exp[0].toUpperCase() === 'NOT') {
+    if (isString(expression[0])) {
+      if (expression[0].toUpperCase() === 'NOT') {
         rules.not = true;
-        [, exp] = exp;
+        [, expression] = expression;
 
-        if (!['AND', 'OR'].includes(exp[0].toUpperCase())) {
-          exp = ['and', exp];
+        if (!['AND', 'OR'].includes(expression[0].toUpperCase())) {
+          expression = ['and', expression];
         }
       }
 
-      if (['AND', 'OR'].includes(exp[0].toUpperCase())) {
-        rules.condition = exp[0].toUpperCase();
-        rules.rulesTemp = tail(exp, 1);
+      if (['AND', 'OR'].includes(expression[0].toUpperCase())) {
+        rules.condition = expression[0].toUpperCase();
+        rules.rulesTemp = tail(expression, 1);
         rules.rules = [];
 
         for (i = 0; i < rules.rulesTemp.length; i += 1) {
@@ -194,14 +190,14 @@ export function convertNetSuiteLookupFilterExpressionToQueryBuilderRules(
 
         delete rules.rulesTemp;
       } else {
-        rules = parseFilter(exp);
+        rules = parseFilter(expression);
       }
     }
 
     return rules;
   }
 
-  let qbRules = iterate(exp);
+  let qbRules = iterate(expression);
 
   if (!qbRules.condition) {
     qbRules = {
@@ -358,7 +354,7 @@ export function validateFilterRule(rule) {
     'number',
   ];
   const r = rule.data;
-  const toReturn = {
+  const validation = {
     isValid: true,
     error: '',
   };
@@ -369,15 +365,15 @@ export function validateFilterRule(rule) {
       JSON.parse(r.lhs.expression);
 
       if (JSON.parse(r.lhs.expression).length < 2) {
-        toReturn.isValid = false;
-        toReturn.error = 'Please enter a valid expression.';
+        validation.isValid = false;
+        validation.error = 'Please enter a valid expression.';
       }
     } catch (ex) {
-      toReturn.isValid = false;
-      toReturn.error = 'Expression should be a valid JSON.';
+      validation.isValid = false;
+      validation.error = 'Expression should be a valid JSON.';
     }
 
-    if (toReturn.isValid) {
+    if (validation.isValid) {
       [op] = JSON.parse(r.lhs.expression);
 
       if (arithmeticOperators.includes(op)) {
@@ -392,8 +388,8 @@ export function validateFilterRule(rule) {
     }
   }
 
-  if (!toReturn.isValid) {
-    return toReturn;
+  if (!validation.isValid) {
+    return validation;
   }
 
   if (r.rhs.type === 'expression') {
@@ -401,15 +397,15 @@ export function validateFilterRule(rule) {
       JSON.parse(r.rhs.expression);
 
       if (JSON.parse(r.rhs.expression).length < 2) {
-        toReturn.isValid = false;
-        toReturn.error = 'Please enter a valid expression.';
+        validation.isValid = false;
+        validation.error = 'Please enter a valid expression.';
       }
     } catch (ex) {
-      toReturn.isValid = false;
-      toReturn.error = 'Expression should be a valid JSON.';
+      validation.isValid = false;
+      validation.error = 'Expression should be a valid JSON.';
     }
 
-    if (toReturn.isValid) {
+    if (validation.isValid) {
       [op] = JSON.parse(r.rhs.expression);
 
       if (arithmeticOperators.includes(op)) {
@@ -424,41 +420,36 @@ export function validateFilterRule(rule) {
     }
   }
 
-  if (!toReturn.isValid) {
-    return toReturn;
+  if (!validation.isValid) {
+    return validation;
   }
 
-  /*
-    if (r.lhs.dataType === 'epochtime' || r.rhs.dataType === 'epochtime') {
-      r.lhs.dataType = r.rhs.dataType = 'epochtime'
-    }
-    */
   if (r.lhs.dataType && r.rhs.dataType && r.lhs.dataType !== r.rhs.dataType) {
-    toReturn.isValid = false;
-    toReturn.error = 'Data types of both the operands should match.';
+    validation.isValid = false;
+    validation.error = 'Data types of both the operands should match.';
   }
 
-  if (!toReturn.isValid) {
-    return toReturn;
+  if (!validation.isValid) {
+    return validation;
   }
 
   if (r.lhs.type && !r.lhs[r.lhs.type]) {
-    toReturn.isValid = false;
-    toReturn.error = 'Please select left operand.';
+    validation.isValid = false;
+    validation.error = 'Please select left operand.';
   }
 
-  if (!toReturn.isValid) {
-    return toReturn;
+  if (!validation.isValid) {
+    return validation;
   }
 
   if (r.rhs.type && !r.rhs[r.rhs.type]) {
-    toReturn.isValid = false;
-    toReturn.error = 'Please select right operand.';
+    validation.isValid = false;
+    validation.error = 'Please select right operand.';
   }
 
-  if (!toReturn.isValid) {
-    return toReturn;
+  if (!validation.isValid) {
+    return validation;
   }
 
-  return toReturn;
+  return validation;
 }

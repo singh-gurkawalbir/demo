@@ -47,10 +47,7 @@ export default function OperandSettingsDialog({
     <ModalDialog show>
       <span>Operand Settings</span>
       <Fragment>
-        <DynaForm
-          disabled={disabled}
-          fieldMeta={fieldMeta}
-          optionsHandler={fieldMeta.optionsHandler}>
+        <DynaForm disabled={disabled} fieldMeta={fieldMeta}>
           <Button
             data-test="cancelOperandSettings"
             onClick={() => {

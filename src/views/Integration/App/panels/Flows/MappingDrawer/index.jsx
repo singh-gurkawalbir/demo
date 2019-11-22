@@ -6,7 +6,7 @@ import { Drawer } from '@material-ui/core';
 import * as selectors from '../../../../../../reducers';
 import DrawerTitleBar from '../../../../../../components/drawer/TitleBar';
 import LoadResources from '../../../../../../components/LoadResources';
-import StandaloneImportMapping from '../../../../../../components/AFE/ImportMapping/StandaloneImportMapping';
+import StandaloneMapping from '../../../../../../components/AFE/ImportMapping/StandaloneMapping';
 import SelectImport from './SelectImport';
 
 const useStyles = makeStyles(theme => ({
@@ -31,9 +31,6 @@ function MappingDrawer() {
   const { flowId, importId } = match.params;
   const flow = useSelector(state => selectors.resource(state, 'flows', flowId));
   const flowName = flow.name || flow._id;
-  const imp = useSelector(state =>
-    selectors.resource(state, 'imports', importId)
-  );
   const handleClose = useCallback(() => {
     history.goBack();
   }, [history]);
@@ -51,16 +48,13 @@ function MappingDrawer() {
       <div className={classes.content}>
         <LoadResources required="true" resources="imports">
           {importId ? (
-            <StandaloneImportMapping
+            <StandaloneMapping
+              id={`${importId}-${flowId}`}
               // why is this prop called resourceId? Is it possible to pass in
               // any resourceID? I think now.. since it probably ONLY works with
               // am importId, this prop should be called as such.
               resourceId={importId}
-              // TODO: Why do we need to pass in a connectionId?
-              // is this the connectionID that exists on the import resource?
-              // if so, why doesn't this child component look-up the
-              // connectionId on its own?
-              connectionId={imp._connectionId}
+              flowId={flowId}
               onClose={handleClose}
             />
           ) : (

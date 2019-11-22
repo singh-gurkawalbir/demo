@@ -253,6 +253,12 @@ export function editor(state, id) {
   return fromSession.editor(state.session, id);
 }
 
+export function mapping(state, id) {
+  if (!state) return [];
+
+  return fromSession.mapping(state.session, id);
+}
+
 export function editorHelperFunctions(state) {
   return (
     (state &&

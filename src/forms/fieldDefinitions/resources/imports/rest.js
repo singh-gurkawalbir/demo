@@ -129,7 +129,7 @@ export default {
     label: 'Relative URI',
     required: true,
     connectionId: r => r && r._connectionId,
-    refreshOptionsOnChangesTo: ['rest.lookups'],
+    refreshOptionsOnChangesTo: ['rest.lookups', 'name'],
     visibleWhen: [
       {
         field: 'rest.method',
