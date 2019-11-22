@@ -31,7 +31,6 @@ export default {
     'mongodb.lookups': { fieldId: 'mongodb.lookups', visible: false },
     'mongodb.document': {
       fieldId: 'mongodb.document',
-      defaultValue: r => r && r.mongodb && r.mongodb.document,
     },
     'mongodb.method': { fieldId: 'mongodb.method' },
     'mongodb.collection': { fieldId: 'mongodb.collection' },
