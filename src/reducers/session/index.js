@@ -281,6 +281,10 @@ export function createdResourceId(state, tempId) {
   return fromResource.createdResourceId(state && state.resource, tempId);
 }
 
+export function integratorLicenseActionMessage(state) {
+  return fromResource.integratorLicenseActionMessage(state && state.resource);
+}
+
 export function resourceReferences(state) {
   return fromResource.resourceReferences(state && state.resource);
 }

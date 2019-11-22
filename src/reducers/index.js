@@ -1172,6 +1172,53 @@ export function integratorLicense(state) {
   return fromUser.integratorLicense(state.user, preferences.defaultAShareId);
 }
 
+export function integratorLicenseActionDetails(state) {
+  let licenseActionDetails = {};
+  const license = integratorLicense(state);
+
+  if (!license) {
+    return licenseActionDetails;
+  }
+
+  if (license.tier === 'none') {
+    if (!license.trialEndDate) {
+      licenseActionDetails = {
+        action: 'startTrial',
+        label: 'GO UNLIMITED FOR 30 DAYS',
+      };
+    }
+  } else if (license.tier === 'free') {
+    if (!license.trialEndDate) {
+      licenseActionDetails = {
+        action: 'startTrial',
+        label: 'GO UNLIMITED FOR 30 DAYS',
+      };
+    } else if (license.status === 'TRIAL_EXPIRED') {
+      licenseActionDetails = {
+        action: 'upgrade',
+        label: 'UPGRADE NOW',
+      };
+    } else if (license.status === 'IN_TRIAL') {
+      if (license.expiresInDays < 1) {
+        licenseActionDetails = {
+          action: 'upgrade',
+          label: 'UPGRADE NOW',
+        };
+      } else {
+        licenseActionDetails = {
+          action: 'upgrade',
+          label: `${license.expiresInDays} DAYS LEFT UPGRADE NOW`,
+        };
+        licenseActionDetails.expiresSoon = license.expiresInDays < 10;
+      }
+    }
+  }
+
+  licenseActionDetails.upgradeRequested = license.upgradeRequested;
+
+  return licenseActionDetails;
+}
+
 export function accountSummary(state) {
   return fromUser.accountSummary(state.user);
 }
@@ -1926,6 +1973,10 @@ export function isValidatingNetsuiteUserRoles(state) {
 
 export function createdResourceId(state, tempId) {
   return fromSession.createdResourceId(state && state.session, tempId);
+}
+
+export function integratorLicenseActionMessage(state) {
+  return fromSession.integratorLicenseActionMessage(state && state.session);
 }
 
 // #endregion Session metadata selectors

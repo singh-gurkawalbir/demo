@@ -251,30 +251,19 @@ export default function FilterPanel({
 
   const validateRule = rule => {
     const r = rule.data;
-    const toReturn = {
-      isValid: true,
-      error: '',
-    };
 
     if (r.lhs.type && !r.lhs[r.lhs.type]) {
-      toReturn.isValid = false;
-      toReturn.error = 'Please select left operand.';
-    }
-
-    if (!toReturn.isValid) {
-      return toReturn;
+      return { isValid: false, error: 'Please select left operand.' };
     }
 
     if (r.rhs.type && !r.rhs[r.rhs.type]) {
-      toReturn.isValid = false;
-      toReturn.error = 'Please select right operand.';
+      return { isValid: false, error: 'Please select right operand.' };
     }
 
-    if (!toReturn.isValid) {
-      return toReturn;
-    }
-
-    return toReturn;
+    return {
+      isValid: true,
+      error: '',
+    };
   };
 
   const generateFiltersConfig = (jsonPaths = []) => {
@@ -436,15 +425,7 @@ export default function FilterPanel({
               return vr.error;
             }
 
-            if (vr.isValid) {
-              return true;
-            }
-
-            if (lhsValue && rhsValue) {
-              return true;
-            }
-
-            return 'Error';
+            return true;
           },
         },
       });
