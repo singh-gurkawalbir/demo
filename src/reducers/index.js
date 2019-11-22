@@ -612,7 +612,7 @@ export function flowDetails(state, id) {
     // TODO: add logic to properly determine if this flow should
     // display mapping/settings. This would come from the IA metadata.
     draft.showMapping = true;
-    draft.hasSettings = true;
+    draft.hasSettings = !!flow._connectorId;
   });
 }
 
