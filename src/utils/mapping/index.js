@@ -318,6 +318,7 @@ export default {
         formattedGenerateFields = sampleData.map(d => ({
           id: d.value,
           name: d.label,
+          type: d.type,
         }));
       } else if (application === adaptorTypeMap.FTPImport) {
         const formattedSampleData =
