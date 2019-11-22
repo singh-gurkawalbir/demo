@@ -469,7 +469,7 @@ function FlowBuilder(props) {
 
           <FlowEllipsisMenu
             flowId={flowId}
-            exclude={['mapping', 'detach', 'audit']}
+            exclude={['mapping', 'detach', 'audit', 'schedule']}
           />
         </div>
       </CeligoPageBar>
