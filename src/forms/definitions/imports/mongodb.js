@@ -1,6 +1,6 @@
 export default {
   optionsHandler: (fieldId, fields) => {
-    if (fieldId === 'mongodb.query') {
+    if (fieldId === 'mongodb.document') {
       const lookupField = fields.find(
         field => field.fieldId === 'mongodb.lookups'
       );
@@ -29,8 +29,9 @@ export default {
       label: 'How would you like the data imported?',
     },
     'mongodb.lookups': { fieldId: 'mongodb.lookups', visible: false },
-    'mongodb.query': {
-      fieldId: 'mongodb.query',
+    'mongodb.document': {
+      fieldId: 'mongodb.document',
+      defaultValue: r => r && r.mongodb && r.mongodb.document,
     },
     'mongodb.method': { fieldId: 'mongodb.method' },
     'mongodb.collection': { fieldId: 'mongodb.collection' },
@@ -63,7 +64,7 @@ export default {
       'ignoreMissing',
       'mongodb.ignoreExtract',
       'mongodb.lookups',
-      'mongodb.query',
+      'mongodb.document',
       'dataMappings',
     ],
     type: 'collapse',

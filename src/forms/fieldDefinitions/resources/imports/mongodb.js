@@ -54,8 +54,8 @@ export default {
       },
     ],
   },
-  'mongodb.query': {
-    id: 'mongodb.query',
+  'mongodb.document': {
+    id: 'mongodb.document',
     type: 'sqlquerybuilder',
     arrayIndex: 0,
     label: 'Launch Query Builder',
