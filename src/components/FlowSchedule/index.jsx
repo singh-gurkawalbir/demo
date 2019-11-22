@@ -40,32 +40,19 @@ export default function FlowSchedule(props) {
   const scheduleStartMinute = getScheduleStartMinute(resource, preferences);
   const handleSubmit = formVal => {
     const scheduleVal = getScheduleVal(formVal, scheduleStartMinute);
-    let patchSet;
+    const patchSet = [
+      {
+        op: 'replace',
+        path:
+          pg && pg._exportId
+            ? `/pageGenerators/${index}/schedule`
+            : '/schedule',
+        value: scheduleVal,
+      },
+    ];
 
-    if (pg && pg._exportId) {
-      const patchSet = [
-        {
-          op: 'replace',
-          path: `/pageGenerators/${index}/schedule`,
-          value: scheduleVal,
-        },
-      ];
-
-      dispatch(actions.resource.patchStaged(flow._id, patchSet, 'value'));
-      dispatch(actions.resource.commitStaged('flows', flow._id, 'value'));
-    } else {
-      patchSet = [
-        {
-          op: 'replace',
-          path: '/schedule',
-          value: scheduleVal,
-        },
-      ];
-
-      dispatch(actions.resource.patchStaged(flow._id, patchSet, 'value'));
-      dispatch(actions.resource.commitStaged('flows', flow._id, 'value'));
-    }
-
+    dispatch(actions.resource.patchStaged(flow._id, patchSet, 'value'));
+    dispatch(actions.resource.commitStaged('flows', flow._id, 'value'));
     onClose();
   };
 
