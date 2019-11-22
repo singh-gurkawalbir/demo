@@ -145,7 +145,7 @@ export default function IntegrationApp({ match, history }) {
       );
 
       history.push(
-        `/pg/integrationApp/${integrationId}/store/${storeId}/flows`
+        `/pg/integrationApp/${integrationId}/child/${storeId}/flows`
       );
     },
     [dispatch, history, integrationId]
@@ -173,7 +173,7 @@ export default function IntegrationApp({ match, history }) {
       return (
         <Redirect
           push={false}
-          to={`/pg/integrationApp/${integrationId}/store/${defaultStoreId}/flows`}
+          to={`/pg/integrationApp/${integrationId}/child/${defaultStoreId}/flows`}
         />
       );
     }
