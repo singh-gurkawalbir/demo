@@ -31,7 +31,7 @@ function* createPayload({ values, resourceId }) {
     connectionResource = {};
   }
 
-  const returnData = jsonpatch.applyPatch(connectionResource.merged, patchSet)
+  let returnData = jsonpatch.applyPatch(connectionResource.merged, patchSet)
     .newDocument;
 
   // We built all connection assistants on HTTP adaptor on React. With recent changes to decouple REST deprecation
@@ -39,13 +39,10 @@ function* createPayload({ values, resourceId }) {
   // 150 odd connection assistants again. Once React becomes the only app and when assistants are migrated we would
   // remove this code and let all docs be built on HTTP adaptor.
   if (
-    connectionResource.merged &&
-    connectionResource.merged.assistant &&
-    REST_ASSISTANTS.indexOf(connectionResource.merged.assistant) > -1
+    returnData.assistant &&
+    REST_ASSISTANTS.indexOf(returnData.assistant) > -1
   ) {
-    connectionResource.merged = conversionUtil.convertConnJSONObjHTTPtoREST(
-      connectionResource.merged
-    );
+    returnData = conversionUtil.convertConnJSONObjHTTPtoREST(returnData);
   }
 
   return returnData;
