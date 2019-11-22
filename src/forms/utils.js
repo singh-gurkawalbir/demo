@@ -278,7 +278,7 @@ const getFieldConfig = (field = {}, resource) => {
   if (!newField.type || newField.type === 'input') {
     newField.type = 'text';
   } else if (newField.type === 'expression') {
-    newField.type = 'ianetsuitelookup';
+    newField.type = 'iaexpression';
     newField.resource = resource;
   } else if (newField.type === 'radio') {
     newField.type = 'radiogroup';
