@@ -11,7 +11,7 @@ import {
   getMetadata,
   setValues,
   getScheduleStartMinute,
-  getPatchSet,
+  getScheduleVal,
 } from './util';
 
 const useStyles = makeStyles(theme => ({
@@ -27,30 +27,54 @@ const useStyles = makeStyles(theme => ({
 
 export default function FlowSchedule(props) {
   const dispatch = useDispatch();
-  const { onClose, className, disabled } = props;
-  let { flow } = props;
+  const { onClose, className, disabled, pg, index } = props;
+  const { flow } = props;
   const preferences = useSelector(state =>
     selectors.userProfilePreferencesProps(state)
   );
   const integration = useSelector(state =>
     selectors.resource(state, 'integrations', flow._integrationId)
   );
-  const scheduleStartMinute = getScheduleStartMinute(flow, preferences);
+  let resource = pg || flow;
+  const schedule = (pg && pg.schedule) || flow.schedule;
+  const scheduleStartMinute = getScheduleStartMinute(resource, preferences);
   const handleSubmit = formVal => {
-    const patchSet = getPatchSet(formVal, scheduleStartMinute);
+    const scheduleVal = getScheduleVal(formVal, scheduleStartMinute);
+    let patchSet;
 
-    dispatch(actions.resource.patchStaged(flow._id, patchSet, 'value'));
-    dispatch(actions.resource.commitStaged('flows', flow._id, 'value'));
+    if (pg && pg._exportId) {
+      const patchSet = [
+        {
+          op: 'replace',
+          path: `/pageGenerators/${index}/schedule`,
+          value: scheduleVal,
+        },
+      ];
+
+      dispatch(actions.resource.patchStaged(flow._id, patchSet, 'value'));
+      dispatch(actions.resource.commitStaged('flows', flow._id, 'value'));
+    } else {
+      patchSet = [
+        {
+          op: 'replace',
+          path: '/schedule',
+          value: scheduleVal,
+        },
+      ];
+
+      dispatch(actions.resource.patchStaged(flow._id, patchSet, 'value'));
+      dispatch(actions.resource.commitStaged('flows', flow._id, 'value'));
+    }
 
     onClose();
   };
 
   const classes = useStyles();
 
-  flow = setValues(flow);
+  resource = setValues(resource, schedule);
 
-  if (flow && !flow.frequency) {
-    flow.frequency = '';
+  if (resource && !resource.frequency) {
+    resource.frequency = '';
   }
 
   return (
@@ -66,9 +90,11 @@ export default function FlowSchedule(props) {
         <DynaForm
           disabled={disabled}
           fieldMeta={getMetadata({
-            flow,
+            resource,
             integration,
             preferences,
+            flow,
+            schedule,
           })}>
           <DynaSubmit onClick={handleSubmit} color="primary">
             Save

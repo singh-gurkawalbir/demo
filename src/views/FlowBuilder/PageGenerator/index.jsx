@@ -207,6 +207,8 @@ const PageGenerator = ({
         actions={generatorActions}
         flowId={flowId}
         resource={resource}
+        pg={pg}
+        index={index}
       />
       <div
         /* -- connecting line */

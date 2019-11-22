@@ -133,6 +133,8 @@ function AppBlock({
   resource,
   integrationId,
   isViewMode,
+  pg,
+  index,
   ...rest
 }) {
   const classes = useStyles();
@@ -187,6 +189,8 @@ function AppBlock({
           resource={resource}
           resourceIndex={resourceIndex}
           resourceType={resourceType}
+          pg={pg}
+          index={index}
           onClose={() => setActiveAction(null)}
         />
       </Fragment>
