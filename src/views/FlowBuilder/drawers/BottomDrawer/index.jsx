@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Drawer, IconButton, Tabs, Tab } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
@@ -76,10 +76,11 @@ export default function BottomDrawer({ size, setSize, flow }) {
   const dispatch = useDispatch();
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
   const connectionDebugLogs = useSelector(state => selectors.debugLogs(state));
-  // const { resources: connections } = useSelector(state =>
-  //   selectors.resourceList(state, { type: 'connections' })
-  // );
+  const connectionIdNameMap = useSelector(state =>
+    selectors.resourceNamesByIds(state, 'connections')
+  );
   const [tabValue, setTabValue] = useState(0);
+  const [clearConnectionLogs, setClearConnectionLogs] = useState(true);
   const maxStep = 3; // set maxStep to 4 to allow 100% drawer coverage.
 
   function handleSizeChange(direction) {
@@ -109,15 +110,15 @@ export default function BottomDrawer({ size, setSize, flow }) {
     dispatch(actions.connection.clearDebugLogs(connectionId));
   };
 
-  // useEffect(
-  //   () => () => {
-  //     connectionDebugLogs &&
-  //       Object.keys(connectionDebugLogs).forEach(connectionId =>
-  //         dispatch(actions.connection.clearDebugLogs(connectionId))
-  //       );
-  //   },
-  //   [connectionDebugLogs, dispatch]
-  // );
+  useEffect(() => {
+    if (clearConnectionLogs) {
+      connectionDebugLogs &&
+        Object.keys(connectionDebugLogs).forEach(connectionId =>
+          dispatch(actions.connection.clearDebugLogs(connectionId))
+        );
+      setClearConnectionLogs(false);
+    }
+  }, [clearConnectionLogs, connectionDebugLogs, dispatch]);
 
   return (
     <Drawer
@@ -159,7 +160,7 @@ export default function BottomDrawer({ size, setSize, flow }) {
                     component="div"
                     label={
                       <div>
-                        DebugLogs
+                        {connectionIdNameMap[connectionId]} - DEBUG
                         <IconButton
                           onClick={event =>
                             handleDebugLogsClose(event, connectionId)

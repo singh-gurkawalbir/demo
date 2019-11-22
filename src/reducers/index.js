@@ -2333,7 +2333,11 @@ export function debugLogs(state) {
   return fromSession.debugLogs(state && state.session);
 }
 
-// export function resourceNamesByType(state, type) {
-//   const { resources } = resourceList(state, { type });
-//   const
-// }
+export function resourceNamesByIds(state, type) {
+  const { resources } = resourceList(state, { type });
+  const resourceIdNameMap = {};
+
+  resources.forEach(r => (resourceIdNameMap[r._id] = r.name || r._id));
+
+  return resourceIdNameMap;
+}
