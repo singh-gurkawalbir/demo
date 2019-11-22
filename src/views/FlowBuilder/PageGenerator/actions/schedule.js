@@ -1,7 +1,10 @@
 import { Dialog, Typography, DialogTitle } from '@material-ui/core';
+import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import Icon from '../../../../components/icons/CalendarIcon';
 import helpTextMap from '../../../../components/Help/helpTextMap';
+import * as selectors from '../../../../reducers';
+import FlowSchedule from '../../../../components/FlowSchedule';
 
 const useStyles = makeStyles(theme => ({
   paper: {
@@ -9,9 +12,18 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function ScheduleDialog({ flowId, isViewMode, resource, open, onClose }) {
+function ScheduleDialog({
+  flowId,
+  isViewMode,
+  resource,
+  open,
+  onClose,
+  pg,
+  index,
+}) {
   const classes = useStyles();
   const resourceId = resource._id;
+  const flow = useSelector(state => selectors.resource(state, 'flows', flowId));
 
   return (
     <Dialog
@@ -22,8 +34,13 @@ function ScheduleDialog({ flowId, isViewMode, resource, open, onClose }) {
       <DialogTitle disableTypography>
         <Typography variant="h6">Export Schedule</Typography>
       </DialogTitle>
-      <Typography>flowId: {flowId}</Typography>
-      <Typography>exportId: {resourceId}</Typography>
+      <FlowSchedule
+        flow={flow}
+        pageGeneratorId={resourceId}
+        onClose={onClose}
+        pg={pg}
+        index={index}
+      />
     </Dialog>
   );
 }
