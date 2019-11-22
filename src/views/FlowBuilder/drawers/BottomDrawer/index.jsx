@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Drawer, IconButton, Tabs, Tab } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
@@ -76,6 +76,9 @@ export default function BottomDrawer({ size, setSize, flow }) {
   const dispatch = useDispatch();
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
   const connectionDebugLogs = useSelector(state => selectors.debugLogs(state));
+  // const { resources: connections } = useSelector(state =>
+  //   selectors.resourceList(state, { type: 'connections' })
+  // );
   const [tabValue, setTabValue] = useState(0);
   const maxStep = 3; // set maxStep to 4 to allow 100% drawer coverage.
 
@@ -100,15 +103,21 @@ export default function BottomDrawer({ size, setSize, flow }) {
     };
   }
 
-  const handleDebugLogsClose = event => {
+  const handleDebugLogsClose = (event, connectionId) => {
     event.stopPropagation();
     setTabValue(0);
-    dispatch(actions.connection.clearDebugLogs());
+    dispatch(actions.connection.clearDebugLogs(connectionId));
   };
 
-  useEffect(() => () => dispatch(actions.connection.clearDebugLogs()), [
-    dispatch,
-  ]);
+  // useEffect(
+  //   () => () => {
+  //     connectionDebugLogs &&
+  //       Object.keys(connectionDebugLogs).forEach(connectionId =>
+  //         dispatch(actions.connection.clearDebugLogs(connectionId))
+  //       );
+  //   },
+  //   [connectionDebugLogs, dispatch]
+  // );
 
   return (
     <Drawer
@@ -139,21 +148,29 @@ export default function BottomDrawer({ size, setSize, flow }) {
           />
           <Tab {...tabProps(1)} icon={<RunIcon />} label="Run Dashboard" />
           <Tab {...tabProps(2)} icon={<AuditLogIcon />} label="Audit Log" />
-          {connectionDebugLogs && (
-            <Tab
-              {...tabProps(3)}
-              icon={<DebugIcon />}
-              component="div"
-              label={
-                <div>
-                  DebugLogs
-                  <IconButton onClick={handleDebugLogsClose}>
-                    <CloseIcon />
-                  </IconButton>
-                </div>
-              }
-            />
-          )}
+          {connectionDebugLogs &&
+            Object.keys(connectionDebugLogs).map(
+              (connectionId, cIndex) =>
+                connectionDebugLogs[connectionId] && (
+                  <Tab
+                    {...tabProps(cIndex + 3)}
+                    icon={<DebugIcon />}
+                    key={connectionId}
+                    component="div"
+                    label={
+                      <div>
+                        DebugLogs
+                        <IconButton
+                          onClick={event =>
+                            handleDebugLogsClose(event, connectionId)
+                          }>
+                          <CloseIcon />
+                        </IconButton>
+                      </div>
+                    }
+                  />
+                )
+            )}
         </Tabs>
         <div className={classes.actionsContainer}>
           <IconButton
@@ -180,11 +197,19 @@ export default function BottomDrawer({ size, setSize, flow }) {
       <TabPanel value={tabValue} index={2} classes={classes}>
         <AuditPanel flow={flow} />
       </TabPanel>
-      {connectionDebugLogs && (
-        <TabPanel value={tabValue} index={3} classes={classes}>
-          {connectionDebugLogs}
-        </TabPanel>
-      )}
+      {connectionDebugLogs &&
+        Object.keys(connectionDebugLogs).map(
+          (connectionId, cIndex) =>
+            connectionDebugLogs[connectionId] && (
+              <TabPanel
+                value={tabValue}
+                key={connectionId}
+                index={cIndex + 3}
+                classes={classes}>
+                {connectionDebugLogs[connectionId]}
+              </TabPanel>
+            )
+        )}
     </Drawer>
   );
 }

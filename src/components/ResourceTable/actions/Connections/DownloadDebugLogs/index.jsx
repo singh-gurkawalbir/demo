@@ -21,7 +21,7 @@ export default {
       }
 
       if (type === 'flowBuilder') {
-        dispatch(actions.connection.requestDebugLogs(url));
+        dispatch(actions.connection.requestDebugLogs(url, resource._id));
       } else {
         url = `/api${url}`;
         openExternalUrl({ url });

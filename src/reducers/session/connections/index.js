@@ -1,23 +1,23 @@
+import produce from 'immer';
 import actionTypes from '../../../actions/types';
 
 export default (state = {}, action) => {
-  const { type, debugLogs } = action;
-  let newState;
+  const { type, debugLogs, connectionId } = action;
 
-  switch (type) {
-    case actionTypes.CONNECTION.DEBUG_LOGS_RECEIVED:
-      newState = { ...state, debugLogs };
+  return produce(state, draft => {
+    switch (type) {
+      case actionTypes.CONNECTION.DEBUG_LOGS_RECEIVED:
+        draft.debugLogs = { ...draft.debugLogs, [connectionId]: debugLogs };
+        break;
+      case actionTypes.CONNECTION.DEBUG_LOGS_CLEAR:
+        if (draft.debugLogs && draft.debugLogs[connectionId]) {
+          delete draft.debugLogs[connectionId];
+        }
 
-      return newState;
-    case actionTypes.CONNECTION.DEBUG_LOGS_CLEAR:
-      newState = { ...state };
-      delete newState.debugLogs;
-
-      return newState;
-
-    default:
-      return state;
-  }
+        break;
+      default:
+    }
+  });
 };
 
 export function debugLogs(state) {

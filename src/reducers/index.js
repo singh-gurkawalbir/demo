@@ -2332,3 +2332,8 @@ export function getUsedActionsForResource(
 export function debugLogs(state) {
   return fromSession.debugLogs(state && state.session);
 }
+
+// export function resourceNamesByType(state, type) {
+//   const { resources } = resourceList(state, { type });
+//   const
+// }

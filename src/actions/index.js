@@ -81,11 +81,15 @@ const connection = {
       iClients,
       connectionId,
     }),
-  requestDebugLogs: url =>
-    action(actionTypes.CONNECTION.DEBUG_LOGS_REQUEST, { url }),
-  receivedDebugLogs: debugLogs =>
-    action(actionTypes.CONNECTION.DEBUG_LOGS_RECEIVED, { debugLogs }),
-  clearDebugLogs: () => action(actionTypes.CONNECTION.DEBUG_LOGS_CLEAR, {}),
+  requestDebugLogs: (url, connectionId) =>
+    action(actionTypes.CONNECTION.DEBUG_LOGS_REQUEST, { url, connectionId }),
+  receivedDebugLogs: (debugLogs, connectionId) =>
+    action(actionTypes.CONNECTION.DEBUG_LOGS_RECEIVED, {
+      debugLogs,
+      connectionId,
+    }),
+  clearDebugLogs: connectionId =>
+    action(actionTypes.CONNECTION.DEBUG_LOGS_CLEAR, { connectionId }),
 };
 const marketplace = {
   requestConnectors: () =>

@@ -380,16 +380,16 @@ export function* requestDeregister({ connectionId, integrationId }) {
   }
 }
 
-export function* requestDebugLogs({ url }) {
+export function* requestDebugLogs({ url, connectionId }) {
   let response;
 
   try {
     response = yield call(apiCallWithRetry, { path: url });
-    yield put(actions.connection.receivedDebugLogs(response));
+    yield put(actions.connection.receivedDebugLogs(response, connectionId));
   } catch (error) {
     if (error.status === 404) {
-      response = 'No Debug Logs found for the specified connectionId';
-      yield put(actions.connection.receivedDebugLogs(response));
+      response = `No Debug Logs found for the specified connectionId: ${connectionId}`;
+      yield put(actions.connection.receivedDebugLogs(response, connectionId));
     }
   }
 }
