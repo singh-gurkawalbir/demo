@@ -40,7 +40,7 @@ export default function DynaRequiredTrigger(props) {
   const { merged: connRes } = useSelector(state =>
     selectors.resourceData(state, 'connections', _connectionId)
   );
-  const { salesforce } = connRes;
+  const { salesforce } = connRes || {};
   const helpText = getTriggerCodeHelpText(
     selectedOption,
     salesforce && salesforce.baseURI

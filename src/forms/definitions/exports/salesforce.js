@@ -5,12 +5,12 @@ export default {
     if (
       [
         'salesforce.distributed.requiredTrigger',
-        'salesforce.distributed.triggerMessage',
-        'salesforce.distributed.relatedLists.referencedFields',
+        'salesforce.distributed.referencedFields',
+        'salesforce.distributed.relatedLists',
       ].includes(fieldId)
     ) {
       const { value } = fields.find(
-        field => field.id === 'salesforce.sObjectType'
+        field => field.id === 'salesforce.distributed.sObjectType'
       );
 
       return value;
@@ -121,9 +121,9 @@ export default {
     'once.booleanField': {
       fieldId: 'once.booleanField',
     },
-    'salesforce.sObjectType': {
+    'salesforce.distributed.sObjectType': {
       connectionId: r => r._connectionId,
-      fieldId: 'salesforce.sObjectType',
+      fieldId: 'salesforce.distributed.sObjectType',
       type: 'salesforcesobjecttype',
       filterKey: 'salesforce-sObjects-triggerable',
       commMetaPath: r =>
@@ -132,29 +132,29 @@ export default {
     'salesforce.id': { fieldId: 'salesforce.id' },
     'salesforce.distributed.requiredTrigger': {
       type: 'salesforcerequiredtrigger',
-      refreshOptionsOnChangesTo: ['salesforce.sObjectType'],
+      refreshOptionsOnChangesTo: ['salesforce.distributed.sObjectType'],
       fieldId: 'salesforce.distributed.requiredTrigger',
     },
     'salesforce.distributed.referencedFields': {
       connectionId: r => r._connectionId,
-      refreshOptionsOnChangesTo: ['salesforce.sObjectType'],
+      refreshOptionsOnChangesTo: ['salesforce.distributed.sObjectType'],
       type: 'salesforcereferencedfields',
       fieldId: 'salesforce.distributed.referencedFields',
       disabledWhen: [
         {
-          field: 'salesforce.sObjectType',
+          field: 'salesforce.distributed.sObjectType',
           is: [''],
         },
       ],
     },
-    'salesforce.distributed.relatedLists.referencedFields': {
+    'salesforce.distributed.relatedLists': {
       type: 'salesforcerelatedlist',
       connectionId: r => r._connectionId,
-      refreshOptionsOnChangesTo: ['salesforce.sObjectType'],
-      fieldId: 'salesforce.distributed.relatedLists.referencedFields',
+      refreshOptionsOnChangesTo: ['salesforce.distributed.sObjectType'],
+      fieldId: 'salesforce.distributed.relatedLists',
       disabledWhen: [
         {
-          field: 'salesforce.sObjectType',
+          field: 'salesforce.distributed.sObjectType',
           is: [''],
         },
       ],
@@ -173,10 +173,10 @@ export default {
       'outputMode',
       'salesforce.executionType',
       'exportData',
-      'salesforce.sObjectType',
+      'salesforce.distributed.sObjectType',
       'salesforce.distributed.requiredTrigger',
       'salesforce.distributed.referencedFields',
-      'salesforce.distributed.relatedLists.referencedFields',
+      'salesforce.distributed.relatedLists',
       'salesforce.distributed.qualifier',
       'salesforce.soql.query',
       'type',
