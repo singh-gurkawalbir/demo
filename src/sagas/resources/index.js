@@ -10,18 +10,17 @@ import { isNewId } from '../../utils/resource';
 import metadataSagas from './meta';
 import getRequestOptions from '../../utils/requestOptions';
 import { defaultPatchSetConverter } from '../../forms/utils';
+import conversionUtil from '../../utils/httpToRestConnectionConversionUtil';
+import { REST_ASSISTANTS } from '../../utils/constants';
 
 export function* commitStagedChanges({ resourceType, id, scope }) {
   const userPreferences = yield select(selectors.userPreferences);
   const isSandbox = userPreferences
     ? userPreferences.environment === 'sandbox'
     : false;
-  const { patch, merged, master } = yield select(
-    selectors.resourceData,
-    resourceType,
-    id,
-    scope
-  );
+  const data = yield select(selectors.resourceData, resourceType, id, scope);
+  const { patch, master } = data;
+  let { merged } = data;
   const isNew = isNewId(id);
 
   // console.log('commitStaged saga', resourceType, id, patch, merged, master);
@@ -53,6 +52,18 @@ export function* commitStagedChanges({ resourceType, id, scope }) {
   }
 
   let updated;
+
+  // We built all connection assistants on HTTP adaptor on React. With recent changes to decouple REST deprecation
+  // and React we are forced to convert HTTP to REST doc for existing REST assistants since we dont want to build
+  // 150 odd connection assistants again. Once React becomes the only app and when assistants are migrated we would
+  // remove this code and let all docs be built on HTTP adaptor.
+  if (
+    resourceType === 'connections' &&
+    merged.assistant &&
+    REST_ASSISTANTS.indexOf(merged.assistant) > -1
+  ) {
+    merged = conversionUtil.convertConnJSONObjHTTPtoREST(merged);
+  }
 
   try {
     updated = yield call(apiCallWithRetry, {

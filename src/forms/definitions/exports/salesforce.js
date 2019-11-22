@@ -43,6 +43,7 @@ export default {
     if (retValues['/outputMode'] === 'blob') {
       retValues['/salesforce/sObjectType'] =
         retValues['/salesforce/objectType'];
+      retValues['/type'] = 'blob';
     }
 
     delete retValues['/outputMode'];
