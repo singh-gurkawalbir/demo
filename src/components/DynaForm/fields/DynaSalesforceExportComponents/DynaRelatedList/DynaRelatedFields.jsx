@@ -295,6 +295,7 @@ export default function DynaRelatedFields(props) {
         <FirstLevelModal {...props} handleClose={toggleFirstLevelModalOpen} />
       ) : null}
       <div className={classes.inlineEditorContainer}>
+        <span>{props.label}</span>
         <CodeEditor {...props} mode="json" readOnly />
         <IconTextButton onClick={toggleFirstLevelModalOpen} disabled={disabled}>
           <EditIcon />
