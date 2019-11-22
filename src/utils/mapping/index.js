@@ -1,6 +1,7 @@
 import { adaptorTypeMap } from '../resource';
 import mappingUtil from '.';
 import NetsuiteMapping from './application/netsuite';
+import getJSONPaths from '../jsonPaths';
 
 const LookupResponseMappingExtracts = [
   'data',
@@ -317,7 +318,16 @@ export default {
         formattedGenerateFields = sampleData.map(d => ({
           id: d.value,
           name: d.label,
+          type: d.type,
         }));
+      } else if (application === adaptorTypeMap.FTPImport) {
+        const formattedSampleData =
+          sampleData &&
+          (Array.isArray(sampleData) ? sampleData : getJSONPaths(sampleData));
+
+        formattedGenerateFields =
+          formattedSampleData &&
+          formattedSampleData.map(sd => ({ ...sd, name: sd.id }));
       }
     }
 

@@ -83,8 +83,11 @@ function getParsedData(resourceData) {
   return resourceData.parse || resourceData.raw || DEFAULT_VALUE;
 }
 
-function getSampleData(resourceData) {
-  return resourceData.transform || resourceData.parse || DEFAULT_VALUE;
+function getSampleData(resourceData, stage) {
+  // If stage mentioned, fetch stage data
+  return stage
+    ? resourceData[stage] || DEFAULT_VALUE
+    : resourceData.transform || resourceData.parse || DEFAULT_VALUE;
 }
 
 function getTransformData(resourceData) {
@@ -107,6 +110,8 @@ export function getResourceSampleData(state, resourceId, stage) {
       return getRawData(resourceData);
     case 'parse':
       return getParsedData(resourceData);
+    case 'csv':
+      return getSampleData(resourceData, 'csv');
     case 'sample':
       return getSampleData(resourceData);
     case 'transform':

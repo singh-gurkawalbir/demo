@@ -83,8 +83,8 @@ export default function reducer(state = {}, action) {
         }
 
         break;
-      case actionTypes.MAPPING.PATCH_SETTING:
-        if (draft[id][index]) {
+      case actionTypes.MAPPING.PATCH_SETTINGS:
+        if (draft[id].mappings[index]) {
           const valueTmp = { ...value };
 
           valueTmp.rowIdentifier += 1;
@@ -93,7 +93,7 @@ export default function reducer(state = {}, action) {
             valueTmp.hardCodedValueTmp = `"${valueTmp.hardCodedValue}"`;
           }
 
-          draft[id][index] = { ...valueTmp };
+          draft[id].mappings[index] = { ...valueTmp };
         }
 
         break;

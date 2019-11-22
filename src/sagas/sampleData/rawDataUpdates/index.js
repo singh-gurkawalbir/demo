@@ -1,58 +1,15 @@
-import { takeLatest, put, select, call } from 'redux-saga/effects';
-import actions from '../../actions';
-import actionTypes from '../../actions/types';
-import {
-  resource,
-  resourceFormState,
-  getResourceSampleDataWithStatus,
-} from '../../reducers';
+import { takeLatest, select, call } from 'redux-saga/effects';
+import actionTypes from '../../../actions/types';
+import { resource, resourceFormState } from '../../../reducers';
 import {
   getAddedLookupInFlow,
   isRawDataPatchSet,
   getPreviewStageData,
-} from '../../utils/flowData';
-import { isFileExport } from '../../utils/resource';
-import { exportPreview, pageProcessorPreview } from './previewCalls';
-import { uploadRawData } from '../uploadFile';
-
-function* saveRawDataOnResource({
-  resourceId,
-  rawData,
-  resourceType = 'exports',
-}) {
-  if (!resourceId || !rawData) return;
-  const rawDataKey = yield call(uploadRawData, {
-    file: rawData,
-  });
-  const patchSet = [
-    {
-      op: 'add',
-      path: '/rawData',
-      value: rawDataKey,
-    },
-  ];
-
-  // Save the resource
-  yield put(actions.resource.patchStaged(resourceId, patchSet, 'value'));
-  yield put(actions.resource.commitStaged(resourceType, resourceId, 'value'));
-}
-
-function* fetchRawDataForFTP({ resourceId, tempResourceId }) {
-  const resourceObj = yield select(resource, 'exports', resourceId);
-  const isFileTypeExport = isFileExport(resourceObj);
-
-  if (!isFileTypeExport) return;
-  // Incase of FTP, raw data to be saved in the data in Parse Stage ( JSON )
-  // tempResourceId if passed used incase of newly created export
-  // to fetch Sample data saved against temp id in state
-  const { data: rawData } = yield select(
-    getResourceSampleDataWithStatus,
-    tempResourceId || resourceId,
-    'raw'
-  );
-
-  return rawData || {};
-}
+} from '../../../utils/flowData';
+import { isFileAdaptor } from '../../../utils/resource';
+import { exportPreview, pageProcessorPreview } from '../previewCalls';
+import { saveRawDataOnResource } from './utils';
+import saveRawDataForFileAdaptors from './fileAdaptorUpdates';
 
 function* fetchAndSaveRawDataForResource({
   type,
@@ -60,16 +17,17 @@ function* fetchAndSaveRawDataForResource({
   flowId,
   tempResourceId,
 }) {
-  // For File exports sample data is extracted from the state
-  const ftpRawData = yield call(fetchRawDataForFTP, {
-    resourceId,
-    tempResourceId,
-  });
+  const resourceObj = yield select(
+    resource,
+    type === 'imports' ? 'imports' : 'exports',
+    resourceId
+  );
 
-  if (ftpRawData) {
-    return yield call(saveRawDataOnResource, {
+  if (isFileAdaptor(resourceObj)) {
+    return yield call(saveRawDataForFileAdaptors, {
       resourceId,
-      rawData: ftpRawData && ftpRawData.body,
+      tempResourceId,
+      type,
     });
   }
 
@@ -82,7 +40,10 @@ function* fetchAndSaveRawDataForResource({
     if (exportPreviewData) {
       const parseData = getPreviewStageData(exportPreviewData, 'raw');
 
-      yield call(saveRawDataOnResource, { resourceId, rawData: parseData });
+      yield call(saveRawDataOnResource, {
+        resourceId,
+        rawData: parseData && JSON.stringify(parseData),
+      });
     }
   } else {
     const pageProcessorPreviewData = yield call(pageProcessorPreview, {
@@ -95,7 +56,8 @@ function* fetchAndSaveRawDataForResource({
     if (pageProcessorPreviewData) {
       yield call(saveRawDataOnResource, {
         resourceId,
-        rawData: pageProcessorPreviewData,
+        rawData:
+          pageProcessorPreviewData && JSON.stringify(pageProcessorPreviewData),
       });
     }
   }
@@ -117,6 +79,14 @@ function* onResourceCreate({ id, resourceType, tempId }) {
       });
     }
   }
+
+  if (resourceType === 'imports') {
+    yield call(fetchAndSaveRawDataForResource, {
+      type: 'imports',
+      resourceId: id,
+      tempResourceId: tempId,
+    });
+  }
 }
 
 function* onResourceUpdate({
@@ -125,9 +95,8 @@ function* onResourceUpdate({
   master = {},
   patch = [],
 }) {
-  if (resourceType === 'exports') {
-    // check for raw data patch set , if yes stop it here
-    if (isRawDataPatchSet(patch)) return;
+  // If it is a raw data patch set on need to update again
+  if (resourceType === 'exports' && patch.length && !isRawDataPatchSet(patch)) {
     const { flowId } = yield select(
       resourceFormState,
       resourceType,
@@ -167,6 +136,11 @@ function* onResourceUpdate({
         resourceId: addedPageProcessorId,
       });
     }
+  }
+
+  // If it is a raw data patch set on need to update again
+  if (resourceType === 'imports' && patch.length && !isRawDataPatchSet(patch)) {
+    yield call(fetchAndSaveRawDataForResource, { type: 'imports', resourceId });
   }
 }
 

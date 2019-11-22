@@ -162,7 +162,8 @@ export default {
     if (
       fieldId === 'http.relativeURI' ||
       fieldId === 'http.relativeURIUpdate' ||
-      fieldId === 'http.relativeURICreate'
+      fieldId === 'http.relativeURICreate' ||
+      fieldId === 'http.existingDataId'
     ) {
       const lookupField = fields.find(
         field => field.fieldId === 'http.lookups'
@@ -673,8 +674,10 @@ export default {
     },
     'http.existingDataId': {
       id: 'http.existingDataId',
-      type: 'text',
+      type: 'relativeuriwithlookup',
       label: 'Existing Data Id',
+      connectionId: r => r && r._connectionId,
+      refreshOptionsOnChangesTo: ['http.lookups', 'name'],
       visibleWhenAll: [
         {
           field: 'http.compositeType',

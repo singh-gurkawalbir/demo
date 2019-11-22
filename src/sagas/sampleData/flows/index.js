@@ -86,7 +86,7 @@ export function* fetchPageGeneratorPreview({ flowId, _pageGeneratorId }) {
   try {
     const previewData = yield call(exportPreview, {
       resourceId: _pageGeneratorId,
-      runOffline: false,
+      runOffline: true,
     });
     const parseData = getPreviewStageData(previewData, 'parse');
 

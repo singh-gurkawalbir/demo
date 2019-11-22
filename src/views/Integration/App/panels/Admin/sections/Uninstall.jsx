@@ -10,8 +10,11 @@ import * as selectors from '../../../../../../reducers';
 import DeleteIcon from '../../../../../../components/icons/TrashIcon';
 
 const useStyles = makeStyles(theme => ({
+  content: {
+    marginLeft: theme.spacing(2),
+  },
   button: {
-    margin: theme.spacing(1),
+    margin: theme.spacing(3, 0),
     color: theme.palette.error.main,
     borderColor: theme.palette.error.main,
     '&:hover': {
@@ -22,7 +25,7 @@ const useStyles = makeStyles(theme => ({
   rightIcon: {
     marginLeft: theme.spacing(1),
   },
-  margin: {
+  divider: {
     marginTop: '30px',
     marginBottom: '30px',
   },
@@ -71,28 +74,30 @@ export default function UninstallSection({ storeId, integrationId }) {
     <Fragment>
       <PanelHeader title="Uninstall" />
 
-      <Typography variant="h5">
-        Use this page to uninstall this instance (i.e. this tile) of the
-        Integration App. Uninstalling an Integration App will remove all
-        components, including the integration tile, from your integrator.io
-        account. After uninstalling you can re-install from the marketplace as
-        long as you have a valid subscription. Please be very certain that you
-        want to uninstall as this action cannot be undone.
-      </Typography>
-      <Divider className={classes.margin} />
-      <Typography variant="h4">
-        Once you uninstall this connector there is no going back. Please be
-        certain.
-      </Typography>
-      <Button
-        data-test="uninstallConnector"
-        variant="outlined"
-        color="secondary"
-        className={classes.button}
-        onClick={handleUninstall}>
-        Uninstall
-        <DeleteIcon className={classes.rightIcon} />
-      </Button>
+      <div className={classes.content}>
+        <Typography variant="h5">
+          Use this page to uninstall this instance (i.e. this tile) of the
+          Integration App. Uninstalling an Integration App will remove all
+          components, including the integration tile, from your integrator.io
+          account. After uninstalling you can re-install from the marketplace as
+          long as you have a valid subscription. Please be very certain that you
+          want to uninstall as this action cannot be undone.
+        </Typography>
+        <Divider className={classes.divider} />
+        <Typography variant="h5">
+          Once you uninstall this connector there is no going back. Please be
+          certain.
+        </Typography>
+        <Button
+          data-test="uninstallConnector"
+          variant="outlined"
+          color="secondary"
+          className={classes.button}
+          onClick={handleUninstall}>
+          Uninstall
+          <DeleteIcon className={classes.rightIcon} />
+        </Button>
+      </div>
     </Fragment>
   );
 }

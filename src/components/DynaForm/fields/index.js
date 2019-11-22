@@ -56,6 +56,7 @@ import DynaSQLQueryBuilder from './DynaSQLQueryBuilder';
 import DynaRelativeURIWithLookup from './DynaRelativeURIWithLookup';
 import DynaNetSuiteLookupFilters from './DynaNetSuiteLookupFilters';
 import DynaNetSuiteLookup from './DynaNetSuiteLookup';
+import DynaIAExpression from './DynaIAExpression';
 import DynaUserEmail from './DynaUserEmail';
 import DynaUserPassword from './DynaUserPassword';
 import DynaIclient from './DynaIclient';
@@ -122,6 +123,7 @@ export default {
   relativeuriwithlookup: DynaRelativeURIWithLookup,
   netsuitelookupfilters: DynaNetSuiteLookupFilters,
   netsuitelookup: DynaNetSuiteLookup,
+  iaexpression: DynaIAExpression,
   useremail: DynaUserEmail,
   userpassword: DynaUserPassword,
   dynaiclient: DynaIclient,
