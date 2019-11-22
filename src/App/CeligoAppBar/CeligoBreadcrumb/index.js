@@ -43,13 +43,26 @@ const flowBuilderRoutes = {
 // to keep the code DRY, lets extract the common sub-set of routes.
 const integrationAppRoutes = [
   flowBuilderRoutes,
+  { path: '/general', breadcrumb: () => 'General' },
+  { path: '/addons', breadcrumb: () => 'Add-ons' },
+  { path: '/dashboard', breadcrumb: () => 'Dashboard' },
+  { path: '/connections', breadcrumb: () => 'Connections' },
+  {
+    path: '/admin',
+    breadcrumb: () => 'Admin',
+    childRoutes: [
+      { path: '/apitokens', breadcrumb: () => 'Api tokens' },
+      { path: '/users', breadcrumb: () => 'Users' },
+      { path: '/audit', breadcrumb: () => 'Audit log' },
+      { path: '/subscription', breadcrumb: () => 'Subscription' },
+      { path: '/uninstall', breadcrumb: () => 'Uninstall' },
+      { path: '/notifications', breadcrumb: () => 'Notifications' },
+    ],
+  },
   {
     path: '/flows',
     breadcrumb: () => 'Flows',
     childRoutes: [
-      { path: '/dashboard', breadcrumb: () => 'Dashboard' },
-      { path: '/connections', breadcrumb: () => 'Connections' },
-      { path: '/admin', breadcrumb: () => 'Admin' },
       {
         path: '/:section',
         breadcrumb: a => a.section,
