@@ -1,4 +1,4 @@
-import React, { Fragment, useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
 import Button from '@material-ui/core/Button';
@@ -26,9 +26,8 @@ export default function LicenseAction() {
       left.label === right.label &&
       left.upgradeRequested === right.upgradeRequested
   );
-  const integratorLicenseActionMessage = useSelector(
-    state => selectors.integratorLicenseActionMessage(state),
-    (left, right) => left === right
+  const integratorLicenseActionMessage = useSelector(state =>
+    selectors.integratorLicenseActionMessage(state)
   );
 
   useEffect(() => {
@@ -48,7 +47,7 @@ export default function LicenseAction() {
     },
     (left, right) => left === right
   );
-  const onClick = useCallback(() => {
+  const handleClick = useCallback(() => {
     if (licenseActionDetails.action === 'startTrial') {
       return dispatch(actions.user.org.accounts.requestTrialLicense());
     }
@@ -68,19 +67,15 @@ export default function LicenseAction() {
   }
 
   return (
-    <Fragment>
-      <Button
-        data-test={licenseActionDetails.label}
-        className={
-          licenseActionDetails.expiresSoon
-            ? classes.expiresSoon
-            : classes.inTrial
-        }
-        variant="contained"
-        color="secondary"
-        onClick={onClick}>
-        {licenseActionDetails.label}
-      </Button>
-    </Fragment>
+    <Button
+      data-test={licenseActionDetails.label}
+      className={
+        licenseActionDetails.expiresSoon ? classes.expiresSoon : classes.inTrial
+      }
+      variant="contained"
+      color="secondary"
+      onClick={handleClick}>
+      {licenseActionDetails.label}
+    </Button>
   );
 }
