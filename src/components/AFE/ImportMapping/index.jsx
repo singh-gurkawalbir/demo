@@ -143,7 +143,7 @@ export default function ImportMapping(props) {
                 <Grid item xs>
                   <DynaTypeableSelect
                     key={`extract-${editorId}-${initChangeIdentifier}-${mapping.rowIdentifier}`}
-                    // id={`extract-${mapping.index}`}
+                    id={`fieldMappingExtract-${mapping.index}`}
                     labelName="name"
                     valueName="id"
                     value={mapping.extract || mapping.hardCodedValueTmp}
@@ -161,7 +161,7 @@ export default function ImportMapping(props) {
                 <Grid item xs>
                   <DynaTypeableSelect
                     key={`generate-${editorId}-${initChangeIdentifier}-${mapping.rowIdentifier}`}
-                    // id={`generate-${mapping.index}`}
+                    id={`fieldMappingGenerate-${mapping.index}`}
                     value={mapping.generate}
                     labelName="name"
                     valueName="id"
@@ -178,7 +178,7 @@ export default function ImportMapping(props) {
                 </Grid>
                 <Grid item>
                   <MappingSettings
-                    id={mapping.index}
+                    id={`fieldMappingSettings-${mapping.index}`}
                     onSave={patchSettings}
                     value={mapping}
                     options={options}
@@ -197,7 +197,7 @@ export default function ImportMapping(props) {
                 </Grid>
                 <Grid item key="delete_button">
                   <IconButton
-                    data-test="editMapping"
+                    data-test={`fieldMappingRemove-${mapping.index}`}
                     aria-label="delete"
                     disabled={
                       mapping.isRequired || mapping.isNotEditable || disabled

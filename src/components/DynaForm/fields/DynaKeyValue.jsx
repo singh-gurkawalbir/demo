@@ -120,6 +120,8 @@ export function KeyValueComponent(props) {
               <AutoSuggest
                 disabled={disabled}
                 value={r[keyName]}
+                id={`${keyName}-${r.row}`}
+                data-test={`${keyName}-${r.row}`}
                 autoFocus={r.row === rowInd && isKey}
                 placeholder={keyName}
                 variant="filled"
@@ -137,6 +139,8 @@ export function KeyValueComponent(props) {
                 disabled={disabled}
                 autoFocus={r.row === rowInd && isKey}
                 defaultValue={r[keyName]}
+                id={`${keyName}-${r.row}`}
+                data-test={`${keyName}-${r.row}`}
                 placeholder={keyName}
                 variant="filled"
                 onChange={handleKeyUpdate(r.row)}
@@ -148,6 +152,8 @@ export function KeyValueComponent(props) {
               <AutoSuggest
                 disabled={disabled}
                 value={r[valueName]}
+                id={`${valueName}-${r.row}`}
+                data-test={`${valueName}-${r.row}`}
                 autoFocus={r.row === rowInd && isKey}
                 placeholder={valueName}
                 variant="filled"
@@ -164,6 +170,8 @@ export function KeyValueComponent(props) {
               <TextField
                 disabled={disabled}
                 autoFocus={r.row === rowInd && !isKey}
+                id={`${valueName}-${r.row}`}
+                data-test={`${valueName}-${r.row}`}
                 defaultValue={r[valueName]}
                 placeholder={valueName}
                 variant="filled"
@@ -175,8 +183,8 @@ export function KeyValueComponent(props) {
             {showDelete && (
               <IconButton
                 disabled={disabled}
-                data-test="deleteKeyValue"
-                aria-label="delete"
+                id={`delete-${r.row}`}
+                data-test={`delete-${r.row}`}
                 onClick={handleDelete(r.row)}>
                 <TrashIcon />
               </IconButton>
@@ -188,6 +196,8 @@ export function KeyValueComponent(props) {
         <TextField
           disabled={disabled}
           value=""
+          id={`new-${keyName}`}
+          data-test={`new-${keyName}`}
           label={keyName}
           variant="filled"
           onChange={handleKeyUpdate()}
@@ -197,6 +207,8 @@ export function KeyValueComponent(props) {
         <TextField
           disabled={disabled}
           value=""
+          id={`new-${valueName}`}
+          data-test={`new-${valueName}`}
           label={valueName}
           variant="filled"
           onChange={handleValueUpdate()}
