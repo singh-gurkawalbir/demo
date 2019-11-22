@@ -35,7 +35,6 @@ export default function MappingSettingsField(props) {
     <Fragment>
       {showSettings && (
         <ImportMappingSettings
-          id={id}
           application={application}
           updateLookup={updateLookup}
           title="Settings"

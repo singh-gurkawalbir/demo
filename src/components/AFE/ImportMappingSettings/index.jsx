@@ -31,7 +31,7 @@ export default function ImportMappingSettings(props) {
     options,
     disabled,
   } = props;
-  const { generate, extract } = value;
+  const { generate, extract, index } = value;
   const classes = useStyles();
   const [enquesnackbar] = useEnqueueSnackbar();
   const fieldMeta = ApplicationMappingSettings.getMetaData({
@@ -89,7 +89,7 @@ export default function ImportMappingSettings(props) {
           fieldMeta={fieldMeta}
           optionsHandler={fieldMeta.optionsHandler}>
           <Button
-            data-test="cancelMappingSettings"
+            data-test={`fieldMappingSettingsCancel-${index}`}
             variant="text"
             color="primary"
             onClick={() => {
@@ -99,7 +99,7 @@ export default function ImportMappingSettings(props) {
           </Button>
           <DynaSubmit
             disabled={disabled}
-            data-test="saveMappingSettings"
+            data-test={`fieldMappingSettingsSave-${index}`}
             onClick={handleSubmit}>
             Save
           </DynaSubmit>
