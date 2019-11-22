@@ -275,11 +275,11 @@ const useStyles = makeStyles(theme => ({
     border: '1px solid rgb(0,0,0,0.1)',
     marginRight: theme.spacing(1),
     marginTop: theme.spacing(1),
-    height: theme.spacing(10),
+    height: theme.spacing(30),
   },
 }));
 
-export default function DynaRelatedFields(props) {
+export default function DynaRelatedList(props) {
   const [firstLevelModalOpen, setFirstLevelModalOpen] = useState(false);
   const toggleFirstLevelModalOpen = useCallback(
     () => setFirstLevelModalOpen(state => !state),
