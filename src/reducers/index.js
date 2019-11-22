@@ -37,6 +37,7 @@ import {
 } from './flowsUtil';
 import { getUsedActionsMapForResource } from '../utils/flows';
 import { isValidResourceReference } from '../utils/resource';
+import { processSampleData } from '../utils/sampleData';
 
 const combinedReducers = combineReducers({
   app,
@@ -251,6 +252,12 @@ export function editor(state, id) {
   if (!state) return {};
 
   return fromSession.editor(state.session, id);
+}
+
+export function mapping(state, id) {
+  if (!state) return [];
+
+  return fromSession.mapping(state.session, id);
 }
 
 export function editorHelperFunctions(state) {
@@ -561,7 +568,14 @@ export function resource(state, resourceType, id) {
 export function resourceList(state, options = {}) {
   if (
     !options.ignoreEnvironmentFilter &&
-    !['accesstokens', 'agents', 'iclients', 'scripts', 'stacks'].includes(
+    ![
+      'accesstokens',
+      'agents',
+      'iclients',
+      'scripts',
+      'stacks',
+      'templates',
+    ].includes(
       /* These resources are common for both production & sandbox environments. */
       options.type
     )
@@ -573,6 +587,34 @@ export function resourceList(state, options = {}) {
   }
 
   return fromData.resourceList(state && state.data, options);
+}
+
+const emptyObject = {};
+
+export function flowDetails(state, id) {
+  const flow = resource(state, 'flows', id);
+
+  if (!flow) return emptyObject;
+
+  return produce(flow, draft => {
+    const exportId =
+      draft.pageGenerators && draft.pageGenerators.length
+        ? draft.pageGenerators[0]._exportId
+        : draft._exportId;
+    const pg = resource(state, 'exports', exportId);
+    const allExports = resourceList(state, {
+      resourceType: 'exports',
+    }).resources;
+
+    draft.isRealtime = isRealtimeExport(pg);
+    draft.isSimpleImport = isSimpleImportFlow(pg);
+    draft.isRunnable = isRunnable(allExports, pg, draft);
+    draft.showScheduleIcon = showScheduleIcon(allExports, pg, draft);
+    // TODO: add logic to properly determine if this flow should
+    // display mapping/settings. This would come from the IA metadata.
+    draft.showMapping = true;
+    draft.hasSettings = !!flow._connectorId;
+  });
 }
 
 export function flowListWithMetadata(state, options) {
@@ -964,8 +1006,11 @@ export function integrationAppGeneralSettings(state, id, storeId) {
 export function integrationAppFlowSettings(state, id, section, storeId) {
   if (!state) return {};
   const integrationResource = fromData.integrationAppSettings(state.data, id);
-  const { supportsMultiStore, showMatchRuleEngine, sections = [] } =
-    integrationResource.settings || {};
+  const {
+    supportsMultiStore,
+    supportsMatchRuleEngine: showMatchRuleEngine,
+    sections = [],
+  } = integrationResource.settings || {};
   let requiredFlows = [];
   let hasNSInternalIdLookup = false;
   let showFlowSettings = false;
@@ -988,7 +1033,9 @@ export function integrationAppFlowSettings(state, id, section, storeId) {
   }
 
   const selectedSection =
-    allSections.find(sec => sec.title.replace(/\s/g, '') === section) || {};
+    allSections.find(
+      sec => sec.title && sec.title.replace(/\s/g, '') === section
+    ) || {};
 
   if (!section) {
     allSections.forEach(sec => {
@@ -2127,6 +2174,40 @@ export function getAllConnectionIdsUsedInSelectedFlows(state, selectedFlows) {
   return connectionIdsToRegister;
 }
 
+const emptyList = [];
+
+// returns a list of import resources for a given flow,
+// identified by flowId.
+export function flowImports(state, id) {
+  const importIds = [];
+  const flow = resource(state, 'flows', id);
+
+  if (!flow) return emptyList;
+
+  if (flow._importId) {
+    importIds.push(flow._importId);
+  } else if (flow.pageProcessors && flow.pageProcessors.length) {
+    flow.pageProcessors.forEach(p => {
+      if (p._importId) {
+        importIds.push(p._importId);
+      }
+    });
+  }
+
+  // wherever possible, to prevent re-renders in components using this
+  // selector, return a static pointer.
+  if (importIds.length === 0) return emptyList;
+
+  const imports = resourceList(state, { type: 'imports' }).resources;
+
+  // possibly imports are not loaded in the state yet?
+  if (!imports || imports.length === 0) return emptyList;
+
+  return imports.filter(i => importIds.indexOf(i._id) > -1);
+}
+
+// TODO: The selector below should be deprecated and the above selector
+// should be used instead.
 export function getAllPageProcessorImports(state, pageProcessors) {
   let ppImports = [];
   const pageProcessorIds = [];
@@ -2151,7 +2232,8 @@ export function getImportSampleData(state, resourceId) {
   const { merged: resource } = resourceData(state, 'imports', resourceId);
   const { assistant, adaptorType, sampleData } = resource;
 
-  if (sampleData) return sampleData;
+  // Formats sample data into readable form
+  if (sampleData) return processSampleData(sampleData, resource);
   else if (assistant) {
     // get assistants sample data
   } else if (adaptorType === 'NetSuiteDistributedImport') {

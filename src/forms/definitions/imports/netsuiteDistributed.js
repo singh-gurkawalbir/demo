@@ -7,6 +7,7 @@ export default {
     if (newValues['/inputMode'] === 'blob') {
       newValues['/netsuite_da/operation'] =
         newValues['/netsuite_da/blob/operation'];
+      newValues['/netsuite_da/recordType'] = 'file';
     }
 
     return {
@@ -52,7 +53,7 @@ export default {
     'netsuite_da.blob.operation': { fieldId: 'netsuite_da.blob.operation' },
     ignoreExisting: {
       fieldId: 'ignoreExisting',
-      visibleWhen: [
+      visibleWhenAll: [
         { field: 'netsuite_da.operation', is: ['add'] },
         {
           field: 'inputMode',
@@ -62,7 +63,7 @@ export default {
     },
     ignoreMissing: {
       fieldId: 'ignoreMissing',
-      visibleWhen: [
+      visibleWhenAll: [
         { field: 'netsuite_da.operation', is: ['update'] },
         {
           field: 'inputMode',
@@ -120,5 +121,22 @@ export default {
         fields: ['advancedSettings', 'deleteAfterImport'],
       },
     ],
+  },
+  optionsHandler: (fieldId, fields) => {
+    if (fieldId === 'netsuite_da.internalIdLookup.expression') {
+      const recordTypeField = fields.find(
+        field => field.id === 'netsuite_da.recordType'
+      );
+
+      return {
+        disableFetch: !(recordTypeField && recordTypeField.value),
+        commMetaPath: recordTypeField
+          ? `netsuite/metadata/suitescript/connections/${recordTypeField.connectionId}/recordTypes/${recordTypeField.value}/searchFilters?includeJoinFilters=true`
+          : '',
+        resetValue: [],
+      };
+    }
+
+    return null;
   },
 };

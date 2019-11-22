@@ -1,7 +1,6 @@
 import { Fragment, useState, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import shortid from 'shortid';
 import { makeStyles } from '@material-ui/core/styles';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import * as selectors from '../../reducers';
@@ -18,6 +17,7 @@ import infoText from '../ResourceList/infoText';
 import metadata from './metadata';
 import CheckPermissions from '../../components/CheckPermissions';
 import { PERMISSIONS } from '../../utils/constants';
+import { generateNewId } from '../../utils/resource';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -85,9 +85,7 @@ export default function TemplateList(props) {
             <IconTextButton
               data-test="addNewTemplate"
               component={Link}
-              to={`${
-                location.pathname
-              }/add/templates/new-${shortid.generate()}`}
+              to={`${location.pathname}/add/templates/${generateNewId()}`}
               variant="text"
               color="primary">
               <AddIcon /> New Template

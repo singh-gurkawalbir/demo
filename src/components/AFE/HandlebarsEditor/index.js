@@ -18,16 +18,24 @@ export default function HandlebarsEditor(props) {
     ruleMode,
     disabled,
     enableAutocomplete,
+    lookups = [],
   } = props;
-  const { template, data, result, error, violations } = useSelector(state =>
-    selectors.editor(state, editorId)
-  );
+  const {
+    template,
+    data,
+    result,
+    error,
+    violations,
+    initChangeIdentifier,
+  } = useSelector(state => selectors.editor(state, editorId));
   const handlebarHelperFunction = useSelector(state =>
     selectors.editorHelperFunctions(state)
   );
 
   completers.handleBarsCompleters.setFunctionCompleter(handlebarHelperFunction);
+  const _lookups = Array.isArray(lookups) ? lookups : [];
 
+  completers.handleBarsCompleters.setLookupCompleter(_lookups);
   useEffect(() => {
     completers.handleBarsCompleters.setJsonCompleter(data);
   }, [data]);
@@ -59,6 +67,7 @@ export default function HandlebarsEditor(props) {
 
   return (
     <Editor
+      changeIdentifier={initChangeIdentifier}
       disabled={disabled}
       editorId={editorId}
       handleInit={handleInit}

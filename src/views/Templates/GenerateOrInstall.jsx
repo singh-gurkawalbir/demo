@@ -3,7 +3,7 @@ import CeligoPageBar from '../../components/CeligoPageBar';
 import GenerateZip from '../../components/GenerateZip';
 import UploadFile from '../../views/InstallIntegration/UploadFile';
 import RadioGroup from '../../components/DynaForm/fields/DynaRadioGroup';
-import { TEMPLATE_GENERATE_OR_INSTALL_HELPINFO } from '../../utils/constants';
+import { TEMPLATE_GENERATE_OR_INSTALL_HELPINFO } from '../../utils/helpInfo';
 
 export default function GenerateOrInstall(props) {
   const { history } = props;

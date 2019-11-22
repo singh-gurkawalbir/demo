@@ -4,8 +4,12 @@ export default {
       const lookupField = fields.find(
         field => field.fieldId === 'rdbms.lookups'
       );
+      const queryTypeField = fields.find(
+        field => field.fieldId === 'rdbms.queryType'
+      );
 
       return {
+        queryType: queryTypeField && queryTypeField.value,
         lookups: {
           // passing lookupId fieldId and data since we will be modifying lookups
           //  from 'Manage lookups' option inside 'SQL Query Builder'
@@ -28,6 +32,9 @@ export default {
     'rdbms.lookups': { fieldId: 'rdbms.lookups', visible: false },
     'rdbms.query': {
       fieldId: 'rdbms.query',
+    },
+    'rdbms.queryUpdate': {
+      fieldId: 'rdbms.queryUpdate',
     },
     'rdbms.queryType': { fieldId: 'rdbms.queryType' },
     ignoreExisting: {
@@ -53,6 +60,7 @@ export default {
       'rdbms.existingDataId',
       'rdbms.lookups',
       'rdbms.query',
+      'rdbms.queryUpdate',
       'dataMappings',
     ],
     type: 'collapse',

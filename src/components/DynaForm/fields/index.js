@@ -5,6 +5,7 @@ import DynaLabel from './DynaLabel';
 import DynaCeligoTable from './DynaCeligoTable';
 import DynaSelectResource from './DynaSelectResource';
 import DynaSelectApplication from './DynaSelectApplication';
+import DynaFileTypeSelect from './select/DynaFileTypeSelect';
 import DynaText from './DynaText';
 import DynaCheckbox from './DynaCheckbox';
 import DynaRelativeUri from './DynaRelativeUri';
@@ -43,12 +44,24 @@ import DynaImportMapping from './DynaImportMapping';
 import DynaFieldExpressionSelect from './DynaFieldExpressionSelect';
 import DynaAutoSuggest from './DynaAutoSuggest';
 import DynaGenerateUrl from './DynaGenerateUrl';
+import DynaWebhookTokenGenerator from './DynaWebhookTokenGenerator';
+import DynaSelectForSetFields from './select/DynaSelectForSetFields';
+import DynaTextForSetFields from './text/DynaTextForSetFields';
+import DynaSoqlQuery from './DynaSoqlQuery';
+import DynaSalesforceRefreshableSelect from './DynaSalesforceRefreshableSelect';
 import DynaRefreshableIntegrationAppSetting from './DynaRefreshableSelect/RefreshableIntegrationAppSetting';
 import DynaDate from './dateTime/DynaDate';
+import DynaToggle from './DynaToggle';
 import DynaSQLQueryBuilder from './DynaSQLQueryBuilder';
 import DynaRelativeURIWithLookup from './DynaRelativeURIWithLookup';
 import Salesforce from './DynaSalesforceExportComponents';
 import { ReferencedFieldsModal } from './DynaSalesforceExportComponents/DynaReferenedFields';
+import DynaNetSuiteLookupFilters from './DynaNetSuiteLookupFilters';
+import DynaNetSuiteLookup from './DynaNetSuiteLookup';
+import DynaIAExpression from './DynaIAExpression';
+import DynaUserEmail from './DynaUserEmail';
+import DynaUserPassword from './DynaUserPassword';
+import DynaIclient from './DynaIclient';
 
 export default {
   mapping: DynaImportMapping,
@@ -65,6 +78,7 @@ export default {
   csvColumnMapper: DynaCSVColumnMapper,
   selectresource: DynaSelectResource,
   selectapplication: DynaSelectApplication,
+  filetypeselect: DynaFileTypeSelect,
   multiselect: DynaMultiSelect,
   radiogroup: DynaRadioGroup,
   relativeuri: DynaRelativeUri,
@@ -99,6 +113,12 @@ export default {
   fieldexpressionselect: DynaFieldExpressionSelect,
   autosuggest: DynaAutoSuggest,
   generateurl: DynaGenerateUrl,
+  webhooktokengenerator: DynaWebhookTokenGenerator,
+  selectforsetfields: DynaSelectForSetFields,
+  textforsetfields: DynaTextForSetFields,
+  toggle: DynaToggle,
+  soqlquery: DynaSoqlQuery,
+  salesforcerefreshableselect: DynaSalesforceRefreshableSelect,
   integrationapprefreshableselect: DynaRefreshableIntegrationAppSetting,
   date: DynaDate,
   sqlquerybuilder: DynaSQLQueryBuilder,
@@ -109,4 +129,10 @@ export default {
   salesforcerelatedlistmodal: ReferencedFieldsModal,
   salesforcerelatedlist: Salesforce.DynaRelatedList,
   salesforcetreemodal: Salesforce.DynaTreeModal,
+  netsuitelookupfilters: DynaNetSuiteLookupFilters,
+  netsuitelookup: DynaNetSuiteLookup,
+  iaexpression: DynaIAExpression,
+  useremail: DynaUserEmail,
+  userpassword: DynaUserPassword,
+  dynaiclient: DynaIclient,
 };

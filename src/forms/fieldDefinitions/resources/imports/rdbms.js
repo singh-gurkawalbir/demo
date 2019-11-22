@@ -19,8 +19,27 @@ export default {
     id: 'rdbms.query',
     type: 'sqlquerybuilder',
     arrayIndex: 0,
-    label: 'Launch Query Builder',
-    refreshOptionsOnChangesTo: ['rdbms.lookups'],
+    label: 'Launch Query Builder for Insert',
+    refreshOptionsOnChangesTo: ['rdbms.lookups', 'rdbms.queryType'],
+    visibleWhen: [
+      {
+        field: 'rdbms.queryType',
+        is: ['COMPOSITE', 'INSERT'],
+      },
+    ],
+  },
+  'rdbms.queryUpdate': {
+    id: 'rdbms.queryUpdate',
+    type: 'sqlquerybuilder',
+    arrayIndex: 0,
+    label: 'Launch Query Builder for Update',
+    refreshOptionsOnChangesTo: ['rdbms.lookups', 'rdbms.queryType'],
+    visibleWhen: [
+      {
+        field: 'rdbms.queryType',
+        is: ['COMPOSITE', 'UPDATE'],
+      },
+    ],
   },
   'rdbms.existingDataId': {
     type: 'text',

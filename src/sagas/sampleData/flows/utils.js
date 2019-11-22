@@ -103,14 +103,31 @@ export function* requestSampleDataForImports({
         SCOPES.VALUE
       );
 
-      yield put(
-        actions.flowData.receivedPreviewData(
-          flowId,
-          resourceId,
-          resource && resource.sampleResponseData,
-          'sampleResponse'
-        )
-      );
+      try {
+        // @TODO Raghu: Handle sample response as a XML
+        const sampleResponse = JSON.parse(
+          resource && resource.sampleResponseData
+        );
+
+        yield put(
+          actions.flowData.receivedPreviewData(
+            flowId,
+            resourceId,
+            sampleResponse,
+            'sampleResponse'
+          )
+        );
+      } catch (e) {
+        yield put(
+          actions.flowData.receivedPreviewData(
+            flowId,
+            resourceId,
+            {},
+            'sampleResponse'
+          )
+        );
+      }
+
       break;
     }
 

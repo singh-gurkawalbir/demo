@@ -21,8 +21,31 @@ export default {
 
     if (retValues['/type'] === 'all') {
       retValues['/type'] = undefined;
+      retValues['/test'] = undefined;
+      retValues['/delta'] = undefined;
+      retValues['/once'] = undefined;
+      delete retValues['/test/limit'];
+      delete retValues['/delta/dateField'];
+      delete retValues['/delta/lagOffset'];
+      delete retValues['/once/booleanField'];
     } else if (retValues['/type'] === 'test') {
       retValues['/test/limit'] = 1;
+      retValues['/delta'] = undefined;
+      retValues['/once'] = undefined;
+      delete retValues['/delta/dateField'];
+      delete retValues['/delta/lagOffset'];
+      delete retValues['/once/booleanField'];
+    } else if (retValues['/type'] === 'delta') {
+      retValues['/once'] = undefined;
+      retValues['/test'] = undefined;
+      delete retValues['/test/limit'];
+      delete retValues['/once/booleanField'];
+    } else if (retValues['/type'] === 'once') {
+      retValues['/delta'] = undefined;
+      retValues['/test'] = undefined;
+      delete retValues['/test/limit'];
+      delete retValues['/delta/dateField'];
+      delete retValues['/delta/lagOffset'];
     }
 
     if (retValues['/salesforce/executionType'] === 'scheduled') {
@@ -35,6 +58,7 @@ export default {
     if (retValues['/outputMode'] === 'blob') {
       retValues['/salesforce/sObjectType'] =
         retValues['/salesforce/objectType'];
+      retValues['/type'] = 'blob';
     }
 
     delete retValues['/outputMode'];
@@ -43,8 +67,10 @@ export default {
       ...retValues,
     };
   },
+
   fieldMap: {
     common: { formId: 'common' },
+    exportOneToMany: { formId: 'exportOneToMany' },
     'salesforce.executionType': { fieldId: 'salesforce.executionType' },
     exportData: {
       id: 'exportData',
@@ -82,7 +108,22 @@ export default {
         return output ? 'blob' : 'records';
       },
     },
-    'salesforce.soql.query': { fieldId: 'salesforce.soql.query' },
+    'salesforce.soql': {
+      id: 'salesforce.soql',
+      type: 'soqlquery',
+      label: 'SOQL Query',
+      omitWhenHidden: true,
+      filterKey: 'salesforce-soqlQuery',
+      required: true,
+      multiline: true,
+      connectionId: r => r && r._connectionId,
+      defaultValue: r => r && r.salesforce && r.salesforce.soql,
+      refreshOptionsOnChangesTo: ['delta.dateField', 'once.booleanField'],
+      visibleWhenAll: [
+        { field: 'salesforce.executionType', is: ['scheduled'] },
+        { field: 'outputMode', is: ['records'] },
+      ],
+    },
     type: {
       id: 'type',
       type: 'select',
@@ -113,13 +154,29 @@ export default {
       ],
     },
     'delta.dateField': {
-      fieldId: 'delta.dateField',
+      id: 'delta.dateField',
+      type: 'salesforcerefreshableselect',
+      label: 'Date Field',
+      placeholder: 'Please select a date field',
+      fieldName: 'deltaExportDateFields',
+      filterKey: 'salesforce-recordType',
+      connectionId: r => r && r._connectionId,
+      required: true,
+      visibleWhen: [{ field: 'type', is: ['delta'] }],
     },
     'delta.lagOffset': {
       fieldId: 'delta.lagOffset',
     },
     'once.booleanField': {
-      fieldId: 'once.booleanField',
+      id: 'once.booleanField',
+      type: 'salesforcerefreshableselect',
+      label: 'Boolean Field',
+      placeholder: 'Please select a boolean field',
+      fieldName: 'onceExportBooleanFields',
+      filterKey: 'salesforce-recordType',
+      connectionId: r => r && r._connectionId,
+      required: true,
+      visibleWhen: [{ field: 'type', is: ['once'] }],
     },
     'salesforce.distributed.sObjectType': {
       connectionId: r => r._connectionId,
@@ -171,6 +228,7 @@ export default {
     fields: [
       'common',
       'outputMode',
+      'exportOneToMany',
       'salesforce.executionType',
       'exportData',
       'salesforce.distributed.sObjectType',
@@ -178,7 +236,7 @@ export default {
       'salesforce.distributed.referencedFields',
       'salesforce.distributed.relatedLists',
       'salesforce.distributed.qualifier',
-      'salesforce.soql.query',
+      'salesforce.soql',
       'type',
       'delta.dateField',
       'delta.lagOffset',

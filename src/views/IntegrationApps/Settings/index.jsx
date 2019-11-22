@@ -98,11 +98,18 @@ const useStyles = makeStyles(theme => ({
 function LHSItem(props) {
   const classes = useStyles();
   const { to, label, pathname } = props;
+  let activeClassName;
+
+  if (pathname) {
+    activeClassName = pathname === to ? classes.activeLink : '';
+  } else {
+    activeClassName = classes.activeLink;
+  }
 
   return (
     <ListItem className={classes.listItem}>
       <NavLink
-        activeClassName={pathname === to ? classes.activeLink : ''}
+        activeClassName={activeClassName}
         className={classes.link}
         to={to}>
         {label}
@@ -134,6 +141,7 @@ export default function IntegrationAppSettings(props) {
   const [currentStore, setCurrentStore] = useState(defaultStoreId);
   const [storeChanged, setStoreChanged] = useState(false);
   const [requestLicense, setRequestLicense] = useState(false);
+  const [requestMappingMetadata, setRequestMappingMetadata] = useState(false);
   const integrationAppFlowSections = useSelector(state =>
     selectors.integrationAppFlowSections(state, integrationId, currentStore)
   );
@@ -151,6 +159,22 @@ export default function IntegrationAppSettings(props) {
       setRequestLicense(true);
     }
   }, [addOnState, dispatch, integration, requestLicense]);
+
+  useEffect(() => {
+    if (addOnState && !addOnState.mappingMapping && !requestMappingMetadata) {
+      dispatch(
+        actions.integrationApp.settings.requestMappingMetadata(integration._id)
+      );
+      setRequestMappingMetadata(true);
+    }
+  }, [
+    addOnState,
+    dispatch,
+    integration,
+    requestLicense,
+    requestMappingMetadata,
+  ]);
+
   const showAPITokens = permissions.accesstokens.view;
   const hasAddOns =
     addOnState &&
@@ -242,8 +266,9 @@ export default function IntegrationAppSettings(props) {
       (defaultStoreId !== currentStore &&
         !integration.stores.find(s => s.value === currentStore)) ||
       !currentStore
-    )
+    ) {
       setCurrentStore(defaultStoreId);
+    }
   }, [currentStore, defaultStoreId, integration.stores]);
 
   const handleStoreChange = (id, value) => {
@@ -260,10 +285,14 @@ export default function IntegrationAppSettings(props) {
   const handleTagChangeHandler = tag => {
     const patchSet = [{ op: 'replace', path: '/tag', value: tag }];
 
+    // dispatch(
+    //   actions.resource.patch('integrations', integrationId, patchSet, {
+    //     doNotRefetch: true,
+    //   })
+    // );
+    dispatch(actions.resource.patchStaged(integrationId, patchSet, 'value'));
     dispatch(
-      actions.resource.patch('integrations', integrationId, patchSet, {
-        doNotRefetch: true,
-      })
+      actions.resource.commitStaged('integrations', integrationId, 'value')
     );
   };
 
@@ -276,7 +305,7 @@ export default function IntegrationAppSettings(props) {
           title={integration.name}
           titleTag={
             <ChipInput
-              value={integration.tag || 'tag'}
+              value={integration.tag}
               className={classes.tag}
               variant="outlined"
               onChange={handleTagChangeHandler}
@@ -384,7 +413,9 @@ export default function IntegrationAppSettings(props) {
               />
               <Route
                 path={`${urlRegexPrefix}/tokens`}
-                component={AccessTokens}
+                render={props => (
+                  <AccessTokens {...props} integrationId={integrationId} />
+                )}
               />
               <Route
                 path={`${urlRegexPrefix}/connections`}

@@ -6,8 +6,31 @@ export default {
 
     if (retValues['/type'] === 'all') {
       retValues['/type'] = undefined;
+      retValues['/test'] = undefined;
+      retValues['/delta'] = undefined;
+      retValues['/once'] = undefined;
+      delete retValues['/test/limit'];
+      delete retValues['/delta/dateField'];
+      delete retValues['/delta/lagOffset'];
+      delete retValues['/once/booleanField'];
     } else if (retValues['/type'] === 'test') {
       retValues['/test/limit'] = 1;
+      retValues['/delta'] = undefined;
+      retValues['/once'] = undefined;
+      delete retValues['/delta/dateField'];
+      delete retValues['/delta/lagOffset'];
+      delete retValues['/once/booleanField'];
+    } else if (retValues['/type'] === 'delta') {
+      retValues['/once'] = undefined;
+      retValues['/test'] = undefined;
+      delete retValues['/test/limit'];
+      delete retValues['/once/booleanField'];
+    } else if (retValues['/type'] === 'once') {
+      retValues['/delta'] = undefined;
+      retValues['/test'] = undefined;
+      delete retValues['/test/limit'];
+      delete retValues['/delta/lagOffset'];
+      delete retValues['/delta/dateField'];
     }
 
     return {
@@ -93,10 +116,23 @@ export default {
       ],
     },
     'netsuite.skipGrouping': { fieldId: 'netsuite.skipGrouping' },
+    advancedSettings: {
+      formId: 'advancedSettings',
+      visibleWhenAll: [
+        {
+          field: 'outputMode',
+          is: ['records'],
+        },
+      ],
+    },
+    'netsuite.restlet.batchSize': { fieldId: 'netsuite.restlet.batchSize' },
+    // skipRetries: { fieldId: 'skipRetries' },
+    exportOneToMany: { formId: 'exportOneToMany' },
   },
   layout: {
     fields: [
       'common',
+      'exportOneToMany',
       'netsuite.netsuiteExportlabel',
       'netsuite.restlet.recordType',
       'netsuite.restlet.searchId',
@@ -107,6 +143,16 @@ export default {
       'netsuite.skipGrouping',
     ],
     type: 'collapse',
-    containers: [],
+    containers: [
+      {
+        collapsed: true,
+        label: 'Advanced',
+        fields: [
+          'advancedSettings',
+          'netsuite.restlet.batchSize',
+          // 'skipRetries',
+        ],
+      },
+    ],
   },
 };

@@ -44,11 +44,9 @@ export default {
     return fieldMeta;
   },
   optionsHandler: (fieldId, fields) => {
-    if (fieldId === 'ftp.fileName') {
+    if (fieldId === 'ftp.fileName' || fieldId === 'ftp.inProgressFileName') {
       const fileTypeField = fields.find(field => field.fieldId === 'file.type');
-      const fileNameField = fields.find(
-        field => field.fieldId === 'ftp.fileName'
-      );
+      const fileNameField = fields.find(field => field.fieldId === fieldId);
       let suggestionList = [];
 
       if (
@@ -57,12 +55,27 @@ export default {
         fileTypeField &&
         fileTypeField.value
       ) {
-        const extension = fileTypeField.value;
+        const extension =
+          fileTypeField.value +
+          (fieldId === 'ftp.inProgressFileName' ? '.tmp' : '');
         const lastDotIndex = fileNameField.value.lastIndexOf('.');
-        const fileNameWithoutExt =
-          lastDotIndex !== -1
-            ? fileNameField.value.substring(0, lastDotIndex)
-            : fileNameField.value;
+        const secondLastDotIndex = fileNameField.value.lastIndexOf(
+          '.',
+          fileNameField.value.lastIndexOf('.') - 1
+        );
+        let fileNameWithoutExt = '';
+
+        if (secondLastDotIndex !== -1) {
+          fileNameWithoutExt = fileNameField.value.substring(
+            0,
+            secondLastDotIndex
+          );
+        } else if (lastDotIndex !== -1) {
+          fileNameWithoutExt = fileNameField.value.substring(0, lastDotIndex);
+        } else {
+          fileNameWithoutExt = fileNameField.value;
+        }
+
         const bracesStartIndex = fileNameWithoutExt.indexOf('{');
         const textBeforeBraces =
           bracesStartIndex !== -1
@@ -158,23 +171,10 @@ export default {
       },
       defaultValue: r => (r && r.blobKeyPath ? 'blob' : 'records'),
     },
-    'file.csv.rowDelimiter': {
-      id: 'file.csv.rowDelimiter',
-      type: 'checkbox',
-      label: 'Row Delimiter',
-      visibleWhenAll: [
-        {
-          field: 'file.type',
-          is: ['csv'],
-        },
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
-      ],
-    },
     'ftp.useTempFile': { fieldId: 'ftp.useTempFile' },
-    'ftp.inProgressFileName': { fieldId: 'ftp.inProgressFileName' },
+    'ftp.inProgressFileName': {
+      fieldId: 'ftp.inProgressFileName',
+    },
     'ftp.blobUseTempFile': { fieldId: 'ftp.blobUseTempFile' },
     'ftp.blobInProgressFileName': { fieldId: 'ftp.blobInProgressFileName' },
     deleteAfterImport: {
@@ -217,7 +217,6 @@ export default {
         collapsed: true,
         label: 'Advanced',
         fields: [
-          'file.csv.rowDelimiter',
           'ftp.useTempFile',
           'ftp.inProgressFileName',
           'fileAdvancedSettings',

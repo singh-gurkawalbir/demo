@@ -25,7 +25,7 @@ const getFormattedLookup = (lookup, formVal) => {
   } else {
     lookupTmp.map = {};
     formVal._mapList.forEach(obj => {
-      lookupTmp.map[obj.export] = obj.import;
+      if (obj.import && obj.export) lookupTmp.map[obj.export] = obj.import;
     });
   }
 
@@ -110,6 +110,8 @@ export default {
   },
   getFormattedValue: (value, formVal) => {
     const { generate, extract, lookup } = value;
+    let errorStatus = false;
+    let errorMessage = '';
     const settings = {};
 
     settings.generate = generate;
@@ -193,6 +195,21 @@ export default {
     let updatedLookup;
 
     if (formVal.fieldMappingType === 'lookup') {
+      if (formVal._mode === 'static') {
+        let atleastOneValMapped = false;
+
+        formVal._mapList.forEach(obj => {
+          if (obj.export && obj.import) {
+            atleastOneValMapped = true;
+          }
+        });
+
+        if (!atleastOneValMapped) {
+          errorStatus = true;
+          errorMessage = 'Please map atleast one value.';
+        }
+      }
+
       updatedLookup = getFormattedLookup(lookup, formVal);
 
       settings.lookupName = updatedLookup && updatedLookup.name;
@@ -201,6 +218,8 @@ export default {
     return {
       settings,
       lookup: updatedLookup,
+      errorStatus,
+      errorMessage,
     };
   },
 };

@@ -17,6 +17,8 @@ export function* getNetsuiteOrSalesforceMeta({
   if (addInfo) {
     if (addInfo.refreshCache === true) {
       path += `${path.indexOf('?') > -1 ? '&' : '?'}refreshCache=true`;
+    } else if (addInfo.query) {
+      path += `?q=${addInfo.query}`;
     }
   }
 

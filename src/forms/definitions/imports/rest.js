@@ -218,6 +218,10 @@ export default {
       label: 'Create New Data',
       visibleWhenAll: [
         {
+          field: 'rest.method',
+          is: ['COMPOSITE'],
+        },
+        {
           field: 'rest.compositeType',
           is: ['createandupdate', 'createandignore'],
         },
@@ -274,10 +278,9 @@ export default {
       id: 'rest.relativeURICreate',
       type: 'relativeuriwithlookup',
       connectionId: r => r && r._connectionId,
-      refreshOptionsOnChangesTo: ['rest.lookups'],
+      refreshOptionsOnChangesTo: ['rest.lookups', 'name'],
       label: 'Relative URI',
       required: true,
-      placeholder: 'Optional',
       visibleWhenAll: [
         {
           field: 'rest.compositeType',
@@ -460,6 +463,10 @@ export default {
       label: 'Upate Existing Data',
       visibleWhenAll: [
         {
+          field: 'rest.method',
+          is: ['COMPOSITE'],
+        },
+        {
           field: 'rest.compositeType',
           is: ['createandupdate', 'updateandignore'],
         },
@@ -516,10 +523,9 @@ export default {
       id: 'rest.relativeURIUpdate',
       type: 'relativeuriwithlookup',
       connectionId: r => r && r._connectionId,
-      refreshOptionsOnChangesTo: ['rest.lookups'],
+      refreshOptionsOnChangesTo: ['rest.lookups', 'name'],
       label: 'Relative URI',
       required: true,
-      placeholder: 'Optional',
       visibleWhenAll: [
         {
           field: 'rest.compositeType',

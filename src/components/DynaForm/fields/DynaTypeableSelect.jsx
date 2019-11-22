@@ -41,6 +41,10 @@ export default function DynaTypeableSelect(props) {
   };
 
   const handleBlur = () => {
+    if (value === inputValue) {
+      return;
+    }
+
     if (onBlur) onBlur(id, inputValue);
     setInputState({ ...inputState, isFocus: false });
   };
@@ -57,9 +61,10 @@ export default function DynaTypeableSelect(props) {
   return (
     <FormControl disabled={disabled} className={classes.root}>
       <Select
-        key={id}
+        id={id}
         data-test={id}
         inputValue={inputVal}
+        isDisabled={disabled}
         value={selectedValue}
         noOptionsMessage={() => null}
         placeholder={placeholder || ''}

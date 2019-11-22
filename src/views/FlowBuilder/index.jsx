@@ -2,7 +2,6 @@ import { useState, useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import clsx from 'clsx';
-import shortid from 'shortid';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { Typography, IconButton } from '@material-ui/core';
 import * as selectors from '../../reducers';
@@ -26,6 +25,8 @@ import SettingsIcon from '../../components/icons/SettingsIcon';
 import CalendarIcon from '../../components/icons/CalendarIcon';
 import EditableText from '../../components/EditableText';
 import SwitchOnOff from '../../components/OnOff';
+import { generateNewId } from '../../utils/resource';
+import FlowEllipsisMenu from '../../components/FlowEllipsisMenu';
 
 // #region FLOW SCHEMA: FOR REFERENCE DELETE ONCE FB IS COMPLETE
 /* 
@@ -205,7 +206,6 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function FlowBuilder(props) {
-  const getNewId = () => `new-${shortid.generate()}`;
   const { match, history } = props;
   const { flowId, integrationId } = match.params;
   const isNewFlow = !flowId || flowId.startsWith('new');
@@ -214,8 +214,8 @@ function FlowBuilder(props) {
   const dispatch = useDispatch();
   // Bottom drawer is shown for existing flows and docked for new flow
   const [size, setSize] = useState(isNewFlow ? 0 : 1);
-  const [newGeneratorId, setNewGeneratorId] = useState(getNewId());
-  const [newProcessorId, setNewProcessorId] = useState(getNewId());
+  const [newGeneratorId, setNewGeneratorId] = useState(generateNewId());
+  const [newProcessorId, setNewProcessorId] = useState(generateNewId());
   //
   // #region Selectors
   const newFlowId = useSelector(state =>
@@ -239,6 +239,9 @@ function FlowBuilder(props) {
 
     return imp ? 'import' : 'export';
   });
+  const isViewMode = useSelector(state =>
+    selectors.isFormAMonitorLevelAccess(state, integrationId)
+  );
   const flowData = useSelector(state =>
     selectors.getFlowDataState(state, flowId)
   );
@@ -294,7 +297,7 @@ function FlowBuilder(props) {
         { _exportId: createdGeneratorId },
       ]);
       // in case someone clicks + again to add another resource...
-      setNewGeneratorId(getNewId());
+      setNewGeneratorId(generateNewId());
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -311,7 +314,7 @@ function FlowBuilder(props) {
 
       patchFlow('/pageProcessors', [...pageProcessors, newProcessor]);
 
-      setNewProcessorId(getNewId());
+      setNewProcessorId(generateNewId());
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -333,7 +336,7 @@ function FlowBuilder(props) {
   };
 
   function handleAddGenerator() {
-    const newTempGeneratorId = getNewId();
+    const newTempGeneratorId = generateNewId();
 
     setNewGeneratorId(newTempGeneratorId);
     pushOrReplaceHistory(
@@ -342,7 +345,7 @@ function FlowBuilder(props) {
   }
 
   function handleAddProcessor() {
-    const newTempProcessorId = getNewId();
+    const newTempProcessorId = generateNewId();
 
     setNewProcessorId(newTempProcessorId);
     pushOrReplaceHistory(
@@ -370,7 +373,7 @@ function FlowBuilder(props) {
   // This block initializes a new flow (patch, no commit)
   // and replaces the url to reflect the new temp id.
   if (flowId === 'new') {
-    const newId = getNewId();
+    const newId = generateNewId();
     const newUrl = rewriteUrl(newId);
     const patchSet = [
       { op: 'add', path: '/name', value: 'New flow' },
@@ -423,42 +426,51 @@ function FlowBuilder(props) {
         integrationId={integrationId}
       />
       <RunDrawer {...props} flowId={flowId} />
-      <ScheduleDrawer {...props} flow={flow} />
-      <SettingsDrawer {...props} flow={flow} />
+      <ScheduleDrawer isViewMode={isViewMode} {...props} flow={flow} />
+      <SettingsDrawer isViewMode={isViewMode} {...props} flow={flow} />
       {/* <WizardDrawer {...props} flowId={flowId} /> */}
 
       <CeligoPageBar
         title={
-          <EditableText onChange={handleTitleChange}>{flow.name}</EditableText>
+          <EditableText disabled={isViewMode} onChange={handleTitleChange}>
+            {flow.name}
+          </EditableText>
         }
         subtitle={`Last saved: ${isNewFlow ? 'Never' : flow.lastModified}`}
         infoText={flow.description}>
         <div className={classes.actions}>
           <SwitchOnOff.component
             resource={flow}
-            disabled={isNewFlow}
+            disabled={isNewFlow || isViewMode}
             data-test="switchFlowOnOff"
           />
           <IconButton
-            disabled={isNewFlow || !(flow && flow.isRunnable)}
+            disabled={isNewFlow || !(flow && flow.isRunnable) || isViewMode}
             data-test="runFlow"
             onClick={() => {
               dispatch(actions.flow.run({ flowId }));
             }}>
             <RunIcon />
           </IconButton>
+
           <IconButton
             disabled={isNewFlow && !(flow && flow.showScheduleIcon)}
             data-test="scheduleFlow"
             onClick={() => handleDrawerOpen('schedule')}>
             <CalendarIcon />
           </IconButton>
+
           <IconButton
             disabled={isNewFlow}
             onClick={() => handleDrawerOpen('settings')}
             data-test="flowSettings">
             <SettingsIcon />
           </IconButton>
+
+          <FlowEllipsisMenu
+            flowId={flowId}
+            exclude={['mapping', 'detach', 'audit']}
+          />
         </div>
       </CeligoPageBar>
       <div
@@ -478,7 +490,10 @@ function FlowBuilder(props) {
               className={classes.sourceTitle}
               variant="overline">
               SOURCE APPLICATIONS
-              <IconButton data-test="addGenerator" onClick={handleAddGenerator}>
+              <IconButton
+                data-test="addGenerator"
+                disabled={isViewMode}
+                onClick={handleAddGenerator}>
                 <AddIcon />
               </IconButton>
             </Typography>
@@ -495,6 +510,7 @@ function FlowBuilder(props) {
                     `${pg.application}${pg.webhookOnly}`
                   }
                   index={i}
+                  isViewMode={isViewMode}
                   isLast={pageGenerators.length === i + 1}
                 />
               ))}
@@ -502,6 +518,7 @@ function FlowBuilder(props) {
                 <AppBlock
                   integrationId={integrationId}
                   className={classes.newPG}
+                  isViewMode={isViewMode}
                   onBlockClick={handleAddGenerator}
                   blockType="newPG"
                 />
@@ -514,7 +531,10 @@ function FlowBuilder(props) {
               className={classes.destinationTitle}
               variant="overline">
               DESTINATION &amp; LOOKUP APPLICATIONS
-              <IconButton data-test="addProcessor" onClick={handleAddProcessor}>
+              <IconButton
+                disabled={isViewMode}
+                data-test="addProcessor"
+                onClick={handleAddProcessor}>
                 <AddIcon />
               </IconButton>
             </Typography>
@@ -526,6 +546,7 @@ function FlowBuilder(props) {
                   integrationId={integrationId}
                   key={pp._importId || pp._exportId || pp._connectionId}
                   index={i}
+                  isViewMode={isViewMode}
                   isLast={pageProcessors.length === i + 1}
                   onMove={handleMove}
                 />
@@ -534,6 +555,7 @@ function FlowBuilder(props) {
                 <AppBlock
                   className={classes.newPP}
                   integrationId={integrationId}
+                  isViewMode={isViewMode}
                   onBlockClick={handleAddProcessor}
                   blockType="newPP"
                 />
@@ -549,7 +571,7 @@ function FlowBuilder(props) {
                 ? `calc(${size * 25}vh + ${theme.spacing(3)}px)`
                 : bottomDrawerMin + theme.spacing(3),
             }}>
-            <TrashCan onDrop={handleDelete} />
+            <TrashCan disabled={isViewMode} onDrop={handleDelete} />
           </div>
         )}
 

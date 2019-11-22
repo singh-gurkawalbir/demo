@@ -13,12 +13,24 @@ export default (state = {}, action) => {
         break;
       case actionTypes.INTEGRATION_APPS.SETTINGS.ADDON_LICENSES_METADATA_UPDATE:
         if (response && response.addOns) {
-          draft[integrationId] = {
-            addOns: {
-              addOnMetaData: response.addOns && response.addOns.addOnMetaData,
-              addOnLicenses: response.addOns && response.addOns.addOnLicenses,
-            },
+          if (!draft[integrationId]) {
+            draft[integrationId] = {};
+          }
+
+          draft[integrationId].addOns = {
+            addOnMetaData: response.addOns && response.addOns.addOnMetaData,
+            addOnLicenses: response.addOns && response.addOns.addOnLicenses,
           };
+        }
+
+        break;
+      case actionTypes.INTEGRATION_APPS.SETTINGS.MAPPING_METADATA_UPDATE:
+        if (response && response) {
+          if (!draft[integrationId]) {
+            draft[integrationId] = {};
+          }
+
+          draft[integrationId].mappingMetadata = response;
         }
 
         break;

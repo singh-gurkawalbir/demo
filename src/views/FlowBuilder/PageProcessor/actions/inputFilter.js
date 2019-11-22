@@ -5,7 +5,13 @@ import actions from '../../../../actions';
 import Icon from '../../../../components/icons/InputFilterIcon';
 import InputFilterEditorDialog from '../../../../components/AFE/FilterEditor/Dialog';
 
-function InputFilterDialog({ flowId, resource, resourceType, onClose }) {
+function InputFilterDialog({
+  flowId,
+  resource,
+  resourceType,
+  isViewMode,
+  onClose,
+}) {
   const dispatch = useDispatch();
   const resourceId = resource._id;
   const sampleData = useSelector(state =>
@@ -14,14 +20,19 @@ function InputFilterDialog({ flowId, resource, resourceType, onClose }) {
     })
   );
   const rules = useMemo(
-    () => resource && resource.filter && resource.filter.rules,
+    () =>
+      resource &&
+      resource.filter &&
+      (resourceType === 'imports'
+        ? resource.filter.rules
+        : resource.inputFilter.rules),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
   const handleClose = (shouldCommit, editorValues) => {
     if (shouldCommit) {
       const { rule } = editorValues;
-      const path = '/filter';
+      const path = resourceType === 'imports' ? '/filter' : '/inputFilter';
       const value = {
         rules: rule || [],
         version: '1',
@@ -55,6 +66,7 @@ function InputFilterDialog({ flowId, resource, resourceType, onClose }) {
     <InputFilterEditorDialog
       title="Define Input Filter"
       id={resourceId + flowId}
+      disabled={isViewMode}
       data={sampleData}
       rule={rules}
       onClose={handleClose}

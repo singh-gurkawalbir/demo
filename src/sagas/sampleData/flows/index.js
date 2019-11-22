@@ -21,7 +21,7 @@ import {
   getPreviewStageData,
 } from '../../../utils/flowData';
 import { exportPreview, pageProcessorPreview } from '../previewCalls';
-import MappingUtil from '../../../utils/mapping';
+import mappingUtil from '../../../utils/mapping';
 import { adaptorTypeMap } from '../../../utils/resource';
 
 function* requestSampleData({
@@ -86,8 +86,7 @@ export function* fetchPageGeneratorPreview({ flowId, _pageGeneratorId }) {
   try {
     const previewData = yield call(exportPreview, {
       resourceId: _pageGeneratorId,
-      // TODO : @Raghu Make it to true when FTP Exports offline preview implemented
-      runOffline: false,
+      runOffline: true,
     });
     const parseData = getPreviewStageData(previewData, 'parse');
 
@@ -263,7 +262,7 @@ export function* requestProcessorData({
     // mapping fields are processed here against raw data
     const appType =
       resource.adaptorType && adaptorTypeMap[resource.adaptorType];
-    const mappings = MappingUtil.getMappingFromResource(
+    const mappings = mappingUtil.getMappingFromResource(
       resource,
       appType,
       true

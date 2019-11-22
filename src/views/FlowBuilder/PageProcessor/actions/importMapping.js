@@ -1,42 +1,56 @@
-import { useEffect, Fragment } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { Fragment, useCallback } from 'react';
+import { useDispatch } from 'react-redux';
 import Icon from '../../../../components/icons/MapDataIcon';
-import StandaloneImportMapping from '../../../../components/AFE/ImportMapping/StandaloneImportMapping';
-import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import helpTextMap from '../../../../components/Help/helpTextMap';
+import mappingUtil from '../../../../utils/mapping';
+import lookupUtil from '../../../../utils/lookup';
+import MappingDialog from '../../../../components/AFE/ImportMapping/Dialog';
 
-function ImportMappingDialog({ flowId, integrationId, resource, onClose }) {
+function ImportMappingDialog({ flowId, isViewMode, resource, onClose }) {
   const resourceId = resource._id;
-  const connectionId = resource._connectionId;
   const dispatch = useDispatch();
-  const extractFields = useSelector(state =>
-    selectors.getSampleData(state, flowId, resourceId, 'importMappingExtract', {
-      isImport: true,
-    })
-  );
+  const handleSave = useCallback(
+    ({ mappings, lookups, adaptorType }) => {
+      if (mappings) {
+        const patchSet = [];
+        const mappingPath = mappingUtil.getMappingPath(adaptorType);
 
-  useEffect(() => {
-    if (!extractFields) {
-      dispatch(
-        actions.flowData.requestSampleData(
-          flowId,
-          resourceId,
-          'imports',
-          'importMappingExtract'
-        )
-      );
-    }
-  }, [dispatch, extractFields, flowId, resourceId]);
+        // if mapping doesnt exist in resouce object , perform add patch else replace patch
+        patchSet.push({
+          op: mappings ? 'replace' : 'add',
+          path: mappingPath,
+          value: mappings,
+        });
+
+        // update _lookup only if its being passed as param to function
+        if (lookups) {
+          const lookupPath = lookupUtil.getLookupPath(adaptorType);
+
+          patchSet.push({
+            op: lookups ? 'replace' : 'add',
+            path: lookupPath,
+            value: lookups,
+          });
+        }
+
+        dispatch(actions.resource.patchStaged(resourceId, patchSet, 'value'));
+        dispatch(actions.resource.commitStaged('imports', resourceId, 'value'));
+      }
+    },
+    [dispatch, resourceId]
+  );
 
   return (
     <Fragment>
-      <StandaloneImportMapping
-        integrationId={integrationId}
+      <MappingDialog
+        id={`${resourceId}-${flowId}`}
+        title="Define Import Mapping"
+        disabled={isViewMode}
+        flowId={flowId}
         resourceId={resourceId}
-        extractFields={extractFields}
-        connectionId={connectionId}
         onClose={onClose}
+        onSave={handleSave}
       />
     </Fragment>
   );

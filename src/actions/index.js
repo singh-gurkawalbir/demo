@@ -76,6 +76,11 @@ const connection = {
       deregisteredId,
       integrationId,
     }),
+  updateIClients: (iClients, connectionId) =>
+    action(actionTypes.CONNECTION.UPDATE_ICLIENTS, {
+      iClients,
+      connectionId,
+    }),
 };
 const marketplace = {
   requestConnectors: () =>
@@ -217,6 +222,8 @@ const resource = {
     requestTokenFailed: (resourceId, message) =>
       action(actionTypes.TOKEN.FAILED, { resourceId, message }),
     clearToken: resourceId => action(actionTypes.TOKEN.CLEAR, { resourceId }),
+    requestIClients: connectionId =>
+      action(actionTypes.ICLIENTS, { connectionId }),
 
     netsuite: {
       requestUserRoles: (connectionId, values) =>
@@ -375,7 +382,15 @@ const integrationApp = {
           response,
         }
       ),
-
+    requestMappingMetadata: integrationId =>
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.MAPPING_METADATA, {
+        integrationId,
+      }),
+    mappingMetadataUpdate: (integrationId, response) =>
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.MAPPING_METADATA_UPDATE, {
+        integrationId,
+        response,
+      }),
     upgrade: (integration, license) =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.UPGRADE, {
         integration,
@@ -747,7 +762,25 @@ const editor = {
     action(actionTypes.EDITOR_EVALUATE_RESPONSE, { id, result }),
 };
 // #endregion
-//
+// #region Mapping actions
+const mapping = {
+  init: (id, mappings, lookups, adaptorType, application, generateFields) =>
+    action(actionTypes.MAPPING.INIT, {
+      id,
+      mappings,
+      lookups,
+      adaptorType,
+      application,
+      generateFields,
+    }),
+  patchField: (id, field, index, value) =>
+    action(actionTypes.MAPPING.PATCH_FIELD, { id, field, index, value }),
+  updateLookup: (id, lookups) =>
+    action(actionTypes.MAPPING.UPDATE_LOOKUP, { id, lookups }),
+  patchSettings: (id, index, value) =>
+    action(actionTypes.MAPPING.PATCH_SETTINGS, { id, index, value }),
+  delete: (id, index) => action(actionTypes.MAPPING.DELETE, { id, index }),
+};
 // #region DynaForm Actions
 const resourceForm = {
   init: (resourceType, resourceId, isNew, skipCommit, flowId) =>
@@ -957,4 +990,5 @@ export default {
   connection,
   marketplace,
   recycleBin,
+  mapping,
 };

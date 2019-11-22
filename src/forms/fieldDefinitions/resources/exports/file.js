@@ -8,10 +8,14 @@ export default {
     label: 'Sample File (that would be exported)',
     mode: r => r && r.file && r.file.type,
     required: r => isNewId(r && r._id),
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'file.type',
         is: ['csv', 'json', 'xlsx', 'xml'],
+      },
+      {
+        field: 'outputMode',
+        is: ['records'],
       },
     ],
   },
@@ -34,8 +38,9 @@ export default {
       },
     ],
   },
+
   'file.type': {
-    type: 'select',
+    type: 'filetypeselect',
     label: 'File type',
     required: true,
     defaultValue: r => (r && r.file && r.file.type) || 'csv',
@@ -52,6 +57,11 @@ export default {
         ],
       },
     ],
+    userDefinitionId: r =>
+      r &&
+      r.file &&
+      r.file.fileDefinition &&
+      r.file.fileDefinition._fileDefinitionId,
   },
   'file.output': {
     type: 'select',
@@ -126,6 +136,7 @@ export default {
         is: ['xml'],
       },
     ],
+    required: true,
   },
   'file.fileDefinition.resourcePath': {
     label: 'Resource Path',
@@ -201,10 +212,14 @@ export default {
   'file.csv': {
     type: 'csvparse',
     label: 'Configure CSV parse options',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'file.type',
         is: ['csv'],
+      },
+      {
+        field: 'outputMode',
+        is: ['records'],
       },
     ],
   },

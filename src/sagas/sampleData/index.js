@@ -6,6 +6,7 @@ import { apiCallWithRetry } from '../index';
 import { resourceData, getResourceSampleDataWithStatus } from '../../reducers';
 import { createFormValuesPatchSet, SCOPES } from '../resourceForm';
 import { evaluateExternalProcessor } from '../../sagas/editor';
+import { getCsvFromXlsx } from '../../utils/file';
 
 /*
  * Parsers for different file types used for converting into JSON format
@@ -121,7 +122,8 @@ function* processRawData({ resourceId, resourceType, values = {}, stage }) {
     return yield call(transformData, { resourceId, values, stage });
   }
 
-  const { type, file, formValues } = values;
+  const { type, formValues } = values;
+  let { file } = values;
 
   // Update Raw Data with the file uploaded before parsing
   yield put(
@@ -136,6 +138,18 @@ function* processRawData({ resourceId, resourceType, values = {}, stage }) {
     );
 
     return;
+  }
+
+  // For xlsx file , content gets converted to 'csv' before parsing
+  if (type === 'xlsx') {
+    const { result } = getCsvFromXlsx(file);
+
+    file = result;
+    // Saving csv file content for xlsx in sample data for future use
+    // Incase of FTP Imports, sampleData field in resource expects 'csvContent' for xlsx file upload to be saved
+    yield put(
+      actions.sampleData.update(resourceId, { data: [{ body: file }] }, 'csv')
+    );
   }
 
   const processorData = values.editorValues || {};

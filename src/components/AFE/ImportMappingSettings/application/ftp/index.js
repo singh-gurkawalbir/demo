@@ -1,5 +1,5 @@
 import dateTimezones from '../../../../../utils/dateTimezones';
-import MappingUtil from '../../../../../utils/mapping';
+import mappingUtil from '../../../../../utils/mapping';
 
 export default {
   getMetaData: (options = {}) => {
@@ -11,7 +11,7 @@ export default {
           name: 'dataType',
           type: 'select',
           label: 'Data Type',
-          defaultValue: MappingUtil.getDefaultDataType(value),
+          defaultValue: mappingUtil.getDefaultDataType(value),
           options: [
             {
               items: [
@@ -38,8 +38,7 @@ export default {
           name: 'fieldMappingType',
           type: 'radiogroup',
           label: 'Field Mapping Type',
-          defaultValue: MappingUtil.getFieldMappingType(value),
-          showOptionsHorizontally: true,
+          defaultValue: mappingUtil.getFieldMappingType(value),
           fullWidth: true,
           options: [
             {
@@ -89,8 +88,8 @@ export default {
               items:
                 (extractFields &&
                   extractFields.map(field => ({
-                    label: field,
-                    value: field,
+                    label: field.name,
+                    value: field.id,
                   }))) ||
                 [],
             },
@@ -103,15 +102,16 @@ export default {
           refreshOptionsOnChangesTo: ['functions', 'extract'],
           type: 'text',
           label: 'Expression',
-          defaultValue: MappingUtil.getDefaultExpression(value),
+          defaultValue: mappingUtil.getDefaultExpression(value),
           visibleWhen: [{ field: 'fieldMappingType', is: ['multifield'] }],
         },
         standardAction: {
           id: 'standardAction',
           name: 'standardAction',
           type: 'radiogroup',
-          defaultValue: MappingUtil.getDefaultActionValue(value),
+          defaultValue: mappingUtil.getDefaultActionValue(value),
           label: 'Action to take if value not found',
+          showOptionsVertically: true,
           options: [
             {
               items: [
@@ -133,7 +133,7 @@ export default {
           id: 'hardcodedAction',
           name: 'hardcodedAction',
           type: 'radiogroup',
-          defaultValue: MappingUtil.getHardCodedActionValue(value) || 'default',
+          defaultValue: mappingUtil.getHardCodedActionValue(value) || 'default',
           label: 'Options',
           options: [
             {
@@ -160,9 +160,10 @@ export default {
           name: 'lookupAction',
           type: 'radiogroup',
           defaultValue:
-            MappingUtil.getDefaultLookupActionValue(value, lookup) ||
+            mappingUtil.getDefaultLookupActionValue(value, lookup) ||
             'disallowFailure',
           label: 'Action to take if unique match not found',
+          showOptionsVertically: true,
           options: [
             {
               items: [
@@ -303,9 +304,18 @@ export default {
 
           if (expressionField.value) expressionValue = expressionField.value;
 
-          if (extractField.value) expressionValue += extractField.value;
+          if (extractField.value) {
+            const extractValue = extractField.value;
 
-          if (functionsField.value) expressionValue += functionsField.value;
+            expressionValue +=
+              extractValue.indexOf(' ') > -1
+                ? `{{[${extractValue}]}}`
+                : `{{${extractValue}}}`;
+            extractField.value = '';
+          } else if (functionsField.value) {
+            expressionValue += functionsField.value;
+            functionsField.value = '';
+          }
 
           return expressionValue;
         }

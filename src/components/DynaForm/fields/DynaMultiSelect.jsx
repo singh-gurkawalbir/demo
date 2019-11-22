@@ -91,7 +91,7 @@ export default function DynaMultiSelect(props) {
   let processedValue = value;
 
   if (valueDelimiter && typeof value === 'string') {
-    processedValue = value.split(valueDelimiter);
+    processedValue = value ? value.split(valueDelimiter) : [];
   }
 
   if (processedValue && !Array.isArray(processedValue)) {
@@ -122,6 +122,7 @@ export default function DynaMultiSelect(props) {
         <Select
           multiple
           data-test={id}
+          disabled={disabled}
           value={processedValue}
           IconComponent={ArrowDownIcon}
           onChange={evt => {

@@ -2,14 +2,13 @@ import { useRef, Fragment, useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { useDrag, useDrop } from 'react-dnd-cjs';
-import shortid from 'shortid';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import itemTypes from '../itemTypes';
 import AppBlock from '../AppBlock';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
-import { getResourceSubType } from '../../../utils/resource';
+import { getResourceSubType, generateNewId } from '../../../utils/resource';
 import importMappingAction from './actions/importMapping';
 import inputFilterAction from './actions/inputFilter';
 import pageProcessorHooksAction from './actions/pageProcessorHooks';
@@ -18,7 +17,7 @@ import transformationAction from './actions/transformation';
 import responseMapping from './actions/responseMapping';
 import responseTransformationAction from './actions/responseTransformation';
 import proceedOnFailureAction from './actions/proceedOnFailure';
-import { actionsMap } from '../../../utils/flows';
+import { actionsMap, isImportMappingAvailable } from '../../../utils/flows';
 import helpTextMap from '../../../components/Help/helpTextMap';
 
 const useStyles = makeStyles(theme => ({
@@ -50,6 +49,7 @@ const PageProcessor = ({
   onMove,
   isLast,
   integrationId,
+  isViewMode,
   ...pp
 }) => {
   const pending = !!pp._connectionId;
@@ -153,6 +153,7 @@ const PageProcessor = ({
     collect: monitor => ({
       isDragging: monitor.isDragging(),
     }),
+    canDrag: !isViewMode,
   });
   const opacity = isDragging ? 0.2 : 1;
 
@@ -160,7 +161,7 @@ const PageProcessor = ({
   // #endregion
 
   function handleBlockClick() {
-    const newId = `new-${shortid.generate()}`;
+    const newId = generateNewId();
 
     if (pending) {
       // generate newId
@@ -203,6 +204,7 @@ const PageProcessor = ({
 
   // #region Configure available processor actions
   // Add Help texts for actions common to lookups and imports manually
+
   const processorActions = [
     {
       ...inputFilterAction,
@@ -230,10 +232,14 @@ const PageProcessor = ({
       );
     } else {
       processorActions.push(
-        {
-          ...importMappingAction,
-          isUsed: usedActions[actionsMap.importMapping],
-        },
+        ...(isImportMappingAvailable(resource)
+          ? [
+              {
+                ...importMappingAction,
+                isUsed: usedActions[actionsMap.importMapping],
+              },
+            ]
+          : []),
         {
           ...responseTransformationAction,
           isUsed: usedActions[actionsMap.responseTransformation],
@@ -275,6 +281,7 @@ const PageProcessor = ({
           name={
             pending ? 'Pending configuration' : resource.name || resource.id
           }
+          isViewMode={isViewMode}
           onBlockClick={handleBlockClick}
           connectorType={resource.adaptorType || resource.type}
           assistant={resource.assistant}

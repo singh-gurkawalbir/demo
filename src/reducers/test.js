@@ -4322,7 +4322,7 @@ describe('integrationApp Settings reducers', () => {
         hasNSInternalIdLookup: false,
         sections: undefined,
         showFlowSettings: true,
-        showMatchRuleEngine: undefined,
+        showMatchRuleEngine: true,
       });
     });
 
@@ -4590,7 +4590,7 @@ describe('integrationApp Settings reducers', () => {
         hasNSInternalIdLookup: false,
         sections: undefined,
         showFlowSettings: false,
-        showMatchRuleEngine: undefined,
+        showMatchRuleEngine: true,
       });
     });
 
@@ -4628,7 +4628,7 @@ describe('integrationApp Settings reducers', () => {
         hasNSInternalIdLookup: false,
         sections: undefined,
         showFlowSettings: false,
-        showMatchRuleEngine: undefined,
+        showMatchRuleEngine: true,
       });
     });
   });

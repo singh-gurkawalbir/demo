@@ -63,7 +63,7 @@ export default {
     ],
   },
   'netsuite_da.internalIdLookup.expression': {
-    type: 'text',
+    type: 'netsuitelookup',
     label: 'How can we find existing records?',
     visibleWhen: [
       {
@@ -73,10 +73,6 @@ export default {
       {
         field: 'netsuite_da.operation',
         is: ['update', 'addupdate'],
-      },
-      {
-        field: 'inputMode',
-        is: ['records'],
       },
     ],
   },

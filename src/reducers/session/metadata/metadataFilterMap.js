@@ -124,10 +124,13 @@ export default {
       triggerable: d.triggerable,
       picklistValues: d.picklistValues,
       type: d.type,
+      updateable: d.updateable,
     })),
+  'salesforce-soqlQuery': data => data,
   default: data =>
     data.map(item => ({
       label: item.name,
       value: item.id,
+      type: item.type,
     })),
 };

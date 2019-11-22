@@ -39,7 +39,7 @@ export default {
     },
   },
   'rest.blobMethod': {
-    type: 'radiogroup',
+    type: 'select',
     label: 'Method',
     required: true,
     options: [
@@ -129,15 +129,15 @@ export default {
     label: 'Relative URI',
     required: true,
     connectionId: r => r && r._connectionId,
-    refreshOptionsOnChangesTo: ['rest.lookups'],
+    refreshOptionsOnChangesTo: ['rest.lookups', 'name'],
     visibleWhen: [
       {
         field: 'rest.method',
         is: ['POST', 'PUT', 'DELETE', 'PATCH'],
       },
       {
-        field: 'rest.blobMethod',
-        is: ['POST', 'PUT', 'DELETE'],
+        field: 'inputMode',
+        is: ['blob'],
       },
     ],
   },

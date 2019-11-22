@@ -4,9 +4,10 @@ import FieldMappings from '../../../components/ResourceTable/actions/Flows/Field
 import Schedule from '../../../components/ResourceTable/actions/Flows/Schedule';
 import Run from '../../../components/ResourceTable/actions/Flows/Run';
 import OnOff from '../../../components/OnOff';
-import MappingDialog from '../../../components/MappingDialog/Mapping';
+// import MappingDialog from '../../../components/MappingDialog/Mapping';
 import FlowSettings from './Actions/FlowSettings';
 import Description from './Actions/Description';
+// import MatchRuleEngine from './Actions/MatchRuleEngine';
 
 export default {
   columns: (sectionContext, actionProps) => {
@@ -77,9 +78,11 @@ export default {
 
         if (r && r.pageProcessors) {
           return <FieldMappings.component resource={r} />;
-        } else if (r && r._importId) {
-          return <MappingDialog resourceId={r._importId} />;
         }
+        // else if (r && r._importId) {
+        //   return
+        //   <MappingDialog resourceId={r._importId} />;
+        // }
       },
     });
 
@@ -87,7 +90,15 @@ export default {
       columnData.push({
         heading: 'Matching Rule Engine',
         value: function ScheduleAction(r) {
-          return <Schedule.component resource={r} />;
+          const settings = flowSettings.find(f => f._id === r._id) || {};
+
+          return (
+            <Schedule.component
+              resource={r}
+              disable={!settings.matchingRules}
+              settings={settings}
+            />
+          );
         },
       });
     }

@@ -132,6 +132,9 @@ function AppBlock({
   resourceType,
   resource,
   integrationId,
+  isViewMode,
+  pg,
+  index,
   ...rest
 }) {
   const classes = useStyles();
@@ -182,10 +185,12 @@ function AppBlock({
         <a.Component
           open={activeAction === a.name}
           flowId={flowId}
-          integrationId={integrationId}
+          isViewMode={isViewMode}
           resource={resource}
           resourceIndex={resourceIndex}
           resourceType={resourceType}
+          pg={pg}
+          index={index}
           onClose={() => setActiveAction(null)}
         />
       </Fragment>

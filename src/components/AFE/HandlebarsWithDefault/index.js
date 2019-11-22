@@ -16,6 +16,7 @@ export default function HandlebarsWithDefaults(props) {
     templateClassName,
     resultTitle,
     disabled,
+    lookups = [],
   } = props;
   const {
     template,
@@ -24,11 +25,14 @@ export default function HandlebarsWithDefaults(props) {
     result,
     error,
     violations,
+    initChangeIdentifier,
   } = useSelector(state => selectors.editor(state, editorId));
   const handlebarHelperFunction = useSelector(state =>
     selectors.editorHelperFunctions(state)
   );
+  const _lookups = Array.isArray(lookups) ? lookups : [];
 
+  completers.handleBarsCompleters.setLookupCompleter(_lookups);
   completers.handleBarsCompleters.setFunctionCompleter(handlebarHelperFunction);
   useEffect(() => {
     if (!violations) {
@@ -66,6 +70,7 @@ export default function HandlebarsWithDefaults(props) {
 
   return (
     <Editor
+      changeIdentifier={initChangeIdentifier}
       editorId={editorId}
       handleInit={handleInit}
       handleChange={handleChange}

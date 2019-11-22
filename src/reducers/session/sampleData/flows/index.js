@@ -53,6 +53,11 @@ export default function(state = {}, action) {
 
       case actionTypes.FLOW_DATA.PREVIEW_DATA_RECEIVED: {
         if (!resourceId) return;
+
+        if (!draft[flowId]) {
+          draft[flowId] = {};
+        }
+
         const resourceMap =
           draft[flowId][
             isPageGenerator ? 'pageGeneratorsMap' : 'pageProcessorsMap'
@@ -89,10 +94,17 @@ export default function(state = {}, action) {
 
       case actionTypes.FLOW_DATA.PROCESSOR_DATA_RECEIVED: {
         const { data: receivedData } = processedData || {};
+
+        if (!draft[flowId]) {
+          return;
+        }
+
         const resourceMap =
-          draft[flowId][
-            isPageGenerator ? 'pageGeneratorsMap' : 'pageProcessorsMap'
-          ] || {};
+          (draft[flowId] &&
+            draft[flowId][
+              isPageGenerator ? 'pageGeneratorsMap' : 'pageProcessorsMap'
+            ]) ||
+          {};
 
         resourceMap[resourceId] = {
           ...resourceMap[resourceId],
