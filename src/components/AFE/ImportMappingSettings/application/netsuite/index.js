@@ -315,11 +315,12 @@ export default {
             generateFieldType === 'multiselect' && value.hardCodedValue
               ? value.hardCodedValue.split(',')
               : value.hardCodedValue,
-          recordType,
-          resourceType: 'recordTypes',
-          selectField: fieldId
-            ? fieldId.substr(0, fieldId.indexOf('.internalid'))
-            : undefined,
+          commMetaPath:
+            fieldId &&
+            `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${recordType}/selectFieldValues/${fieldId.substr(
+              0,
+              fieldId.indexOf('.internalid')
+            )}`,
           connectionId,
           // refreshOptionsOnChangesTo: ['lookup.recordType'],
           visibleWhenAll: [{ field: 'fieldMappingType', is: ['hardCoded'] }],
