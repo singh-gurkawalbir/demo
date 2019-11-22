@@ -49,7 +49,7 @@ export default function MappingSettingsField(props) {
         />
       )}
       <IconButton
-        data-test="toggleImportMappingSettings"
+        data-test={id}
         disabled={isDisabled}
         aria-label="delete"
         onClick={handleBtnClick}
