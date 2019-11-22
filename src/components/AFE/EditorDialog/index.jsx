@@ -10,6 +10,7 @@ import {
 } from '@material-ui/core';
 import ViewColumnIcon from '@material-ui/icons/ViewColumn';
 import ViewCompactIcon from '@material-ui/icons/ViewCompact';
+// TODO: Azhar, please fix these icons message.
 import ViewRowIcon from '@material-ui/icons/HorizontalSplit';
 import ZoomOutIcon from '@material-ui/icons/ZoomOutMap';
 import ToggleButton from '@material-ui/lab/ToggleButton';
@@ -65,6 +66,7 @@ export default function EditorDialog(props) {
     height = '50vh',
     onClose,
     disabled,
+    hidePreviewAction = false,
   } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -92,7 +94,7 @@ export default function EditorDialog(props) {
     setState({ ...state, fullScreen: !fullScreen });
   const size = fullScreen ? { height } : { height, width };
   const showPreviewAction =
-    editor && !editor.violations && !editor.autoEvaluate;
+    !hidePreviewAction && editor && !editor.violations && !editor.autoEvaluate;
   const disableSave = !editor || editor.violations || disabled;
 
   return (

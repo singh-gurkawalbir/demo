@@ -17,6 +17,7 @@ import integrationApps, * as fromIntegrationApps from './integrationApps';
 import templates, * as fromTemplates from './templates';
 import oAuthAuthorize, * as fromOAuthAuthorize from './oAuthAuthorize';
 import resource, * as fromResource from './resource';
+import mappings, * as fromMappings from './mappings';
 
 export default combineReducers({
   stage,
@@ -37,6 +38,7 @@ export default combineReducers({
   integrationApps,
   templates,
   oAuthAuthorize,
+  mappings,
 });
 
 // #region PUBLIC SELECTORS
@@ -74,6 +76,12 @@ export function editor(state, id) {
   if (!state) return {};
 
   return fromEditors.editor(state.editors, id);
+}
+
+export function mapping(state, id) {
+  if (!state) return [];
+
+  return fromMappings.mapping(state.mappings, id);
 }
 
 export function processorRequestOptions(state, id) {
