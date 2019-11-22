@@ -100,14 +100,13 @@ export default function FilterPanel({
     return generateNetSuiteLookupFilterExpression(qbRules);
   };
 
-  const handleFilterRulesChange = () => {
+  const handleFilterRulesChange = useCallback(() => {
     if (isValid()) {
       const rule = getRules();
 
       patchEditor(rule);
     }
-  };
-
+  }, [patchEditor]);
   const showOperandSettings = ({ rule, rhs }) => {
     setShowOperandSettingsFor({ rule, rhs });
   };
