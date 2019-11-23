@@ -26,6 +26,103 @@ const getHours = (startTime, endTime, frequency) => {
   return uniq(values).join(',');
 };
 
+export const getExportsFromSelectedDeltaFlow = (
+  selectedDeltaFlowId,
+  flows,
+  exports
+) => {
+  const temp = [];
+
+  if (selectedDeltaFlowId) {
+    const selectedDeltaFlow = flows.find(
+      flow => flow._id === selectedDeltaFlowId
+    );
+
+    selectedDeltaFlow &&
+      selectedDeltaFlow.pageGenerators.forEach(pg => {
+        temp.push(exports.find(exp => exp._id === pg._exportId));
+      });
+  }
+
+  return [
+    {
+      items:
+        (temp &&
+          temp.map(exp => ({
+            label: exp.name,
+            value: exp._id,
+          }))) ||
+        [],
+    },
+  ];
+};
+
+export const getAllDeltaFlows = (flows, flow, exports) => {
+  const deltaFlows = flows.filter(f => {
+    let isDeltaFlow = false;
+
+    if (f._id === flow._id) {
+      return false;
+    }
+
+    if (f.pageGenerators) {
+      f.pageGenerators.forEach(pg => {
+        const exp = exports && exports.find(e => e._id === pg._exportId);
+
+        if (exp && exp.type === 'delta') {
+          isDeltaFlow = true;
+        }
+      });
+    } else if (f && f._exportId) {
+      const exp = exports && exports.find(e => e._id === f._exportId);
+
+      if (exp && exp.type === 'delta') {
+        isDeltaFlow = true;
+      }
+    }
+
+    return isDeltaFlow;
+  });
+
+  return [
+    {
+      items:
+        (deltaFlows &&
+          deltaFlows.map(f => ({
+            label: f.name,
+            value: f._id,
+          }))) ||
+        [],
+    },
+  ];
+};
+
+export const isDeltaFlowModel = (integration, pg, exp, flow, exports) => {
+  let isDeltaFlow = false;
+
+  if (pg && pg._exportId) {
+    if (exp && exp.type === 'delta' && !(exp.delta && exp.delta.lagOffset)) {
+      isDeltaFlow = true;
+    }
+  } else {
+    flow &&
+      flow.pageGenerators &&
+      flow.pageGenerators.forEach(pg => {
+        const flowExp = exports && exports.find(e => e._id === pg._exportId);
+
+        if (
+          flowExp &&
+          flowExp.type === 'delta' &&
+          !(flowExp.delta && flowExp.delta.lagOffset)
+        ) {
+          isDeltaFlow = true;
+        }
+      });
+  }
+
+  return isDeltaFlow;
+};
+
 export const getCronExpression = (data, scheduleStartMinute) => {
   const frequency = data && data.frequency;
   const toReturn = ['?', '*', '*', '*', '*', '*'];
@@ -280,6 +377,10 @@ export const getMetadata = ({
   preferences,
   flow,
   schedule,
+  exp,
+  exports,
+  pg,
+  flows,
 }) => {
   const startTimeData = HOURS_LIST.map(
     hour =>
@@ -406,6 +507,7 @@ export const getMetadata = ({
             items: endTimeOptions,
           },
         ],
+        refreshOptionsOnChangesTo: ['frequency'],
         visibleWhenAll: [
           {
             field: 'activeTab',
@@ -498,6 +600,33 @@ export const getMetadata = ({
           },
         ],
       },
+      _keepDeltaBehindFlowId: {
+        id: '_keepDeltaBehindFlowId',
+        name: '_keepDeltaBehindFlowId',
+        type: 'select',
+        visible: isDeltaFlowModel(integration, pg, exp, flow, exports),
+        label: 'Master flow:',
+        defaultValue: resource && resource._keepDeltaBehindFlowId,
+        options: getAllDeltaFlows(flows, flow, exports),
+      },
+      _keepDeltaBehindExportId: {
+        id: '_keepDeltaBehindExportId',
+        name: '_keepDeltaBehindExportId',
+        label: 'Delta export:',
+        type: 'select',
+        options: getExportsFromSelectedDeltaFlow(
+          resource && resource._keepDeltaBehindFlowId,
+          flows,
+          exports
+        ),
+        visible: !!(
+          isDeltaFlowModel(integration, pg, exp, flow, exports) &&
+          pg &&
+          pg._exportId
+        ),
+        refreshOptionsOnChangesTo: ['_keepDeltaBehindFlowId'],
+        defaultValue: resource && resource._keepDeltaBehindExportId,
+      },
     },
     layout: {
       fields: [
@@ -510,6 +639,60 @@ export const getMetadata = ({
         'dayToRunOn',
         'schedule',
       ],
+      type: 'collapse',
+      containers: [
+        {
+          collapsed: true,
+          label: 'Synchronize delta export',
+          fields: ['_keepDeltaBehindFlowId', '_keepDeltaBehindExportId'],
+        },
+      ],
+    },
+    optionsHandler: (fieldId, fields) => {
+      if (fieldId === '_keepDeltaBehindExportId') {
+        const keepDeltaBehindFlowId = fields.find(
+          field => field.id === '_keepDeltaBehindFlowId'
+        );
+
+        return getExportsFromSelectedDeltaFlow(
+          keepDeltaBehindFlowId && keepDeltaBehindFlowId.value,
+          flows,
+          exports
+        );
+      } else if (fieldId === 'endTime') {
+        const frequency = fields.find(field => field.id === 'frequency').value;
+        let minutes = 0;
+
+        if (frequency === 'every_half_hour') {
+          minutes = 30;
+        } else if (frequency === 'every_quarter') {
+          minutes = 45;
+        }
+
+        const options = HOURS_LIST.map(
+          hour =>
+            moment()
+              .startOf('day')
+              .add(hour, 'h')
+              .add(minutes, 'm')
+              .format('LT'),
+          Number
+        );
+
+        return [
+          {
+            items:
+              (options &&
+                options.map(opt => ({
+                  label: opt,
+                  value: opt,
+                }))) ||
+              [],
+          },
+        ];
+      }
+
+      return null;
     },
   };
 };

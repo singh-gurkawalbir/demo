@@ -7,6 +7,7 @@ import actions from '../../actions';
 import * as selectors from '../../reducers';
 import DynaForm from '../DynaForm';
 import DynaSubmit from '../DynaForm/DynaSubmit';
+import { sanitizePatchSet } from '../../forms/utils';
 import {
   getMetadata,
   setValues,
@@ -35,6 +36,15 @@ export default function FlowSchedule(props) {
   const integration = useSelector(state =>
     selectors.resource(state, 'integrations', flow._integrationId)
   );
+  const exp = useSelector(state =>
+    selectors.resource(state, 'exports', pg && pg._exportId)
+  );
+  const exports = useSelector(
+    state => selectors.resourceList(state, { type: 'exports' }).resources
+  );
+  const flows = useSelector(
+    state => selectors.resourceList(state, { type: 'flows' }).resources
+  );
   let resource = pg || flow;
   const schedule = (pg && pg.schedule) || flow.schedule;
   const scheduleStartMinute = getScheduleStartMinute(resource, preferences);
@@ -49,9 +59,32 @@ export default function FlowSchedule(props) {
             : '/schedule',
         value: scheduleVal,
       },
+      {
+        op: 'replace',
+        path:
+          pg && pg._exportId
+            ? `/pageGenerators/${index}/_keepDeltaBehindFlowId`
+            : '/_keepDeltaBehindFlowId',
+        value:
+          formVal && formVal._keepDeltaBehindFlowId
+            ? formVal._keepDeltaBehindFlowId
+            : undefined,
+      },
+      {
+        op: 'replace',
+        path:
+          pg && pg._exportId
+            ? `/pageGenerators/${index}/_keepDeltaBehindExportId`
+            : '/_keepDeltaBehindExportId',
+        value:
+          pg && pg._exportId && formVal && formVal._keepDeltaBehindFlowId
+            ? formVal._keepDeltaBehindExportId
+            : undefined,
+      },
     ];
+    const sanitized = sanitizePatchSet({ patchSet, flow });
 
-    dispatch(actions.resource.patchStaged(flow._id, patchSet, 'value'));
+    dispatch(actions.resource.patchStaged(flow._id, sanitized, 'value'));
     dispatch(actions.resource.commitStaged('flows', flow._id, 'value'));
     onClose();
   };
@@ -63,6 +96,18 @@ export default function FlowSchedule(props) {
   if (resource && !resource.frequency) {
     resource.frequency = '';
   }
+
+  const fieldMeta = getMetadata({
+    resource,
+    integration,
+    preferences,
+    flow,
+    schedule,
+    exp,
+    exports,
+    pg,
+    flows,
+  });
 
   return (
     <Fragment>
@@ -76,13 +121,8 @@ export default function FlowSchedule(props) {
       <div className={clsx(classes.modalContent, className)}>
         <DynaForm
           disabled={disabled}
-          fieldMeta={getMetadata({
-            resource,
-            integration,
-            preferences,
-            flow,
-            schedule,
-          })}>
+          fieldMeta={fieldMeta}
+          optionsHandler={fieldMeta.optionsHandler}>
           <DynaSubmit onClick={handleSubmit} color="primary">
             Save
           </DynaSubmit>
