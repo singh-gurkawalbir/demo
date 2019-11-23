@@ -15,6 +15,7 @@ const useStyles = makeStyles({
   },
 });
 
+// TODO(Aditya): remove this component and use DynaRelativeURIWithLookup after refractor
 export default function DynaRelativeUri(props) {
   const [showEditor, setShowEditor] = useState(false);
   const classes = useStyles();
