@@ -123,7 +123,7 @@ export default {
           name: 'recordType',
           filterKey: 'suitescript-recordTypes',
           commMetaPath: `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes`,
-          defaultValue: '',
+          defaultValue: lookup.recordType,
           type: 'refreshableselect',
           label: 'Search Record Type',
           connectionId,
@@ -134,7 +134,7 @@ export default {
         },
         'lookup.expression': {
           id: 'lookup.expression',
-          name: 'lookup.expression',
+          name: 'lookupExpression',
           type: 'netsuitelookupfilters',
           label: 'NS Filters',
           connectionId,
@@ -143,6 +143,7 @@ export default {
             { field: 'fieldMappingType', is: ['lookup'] },
             { field: 'lookup.mode', is: ['dynamic'] },
           ],
+          value: lookup.expression,
           data: extractFields,
         },
         'lookup.resultField': {
@@ -150,7 +151,8 @@ export default {
           name: 'resultField',
           type: 'refreshableselect',
           label: 'Value Field',
-          defaultValue: '',
+          defaultValue: lookup.resultField,
+          savedRecordType: lookup.recordType,
           connectionId,
           refreshOptionsOnChangesTo: ['lookup.recordType'],
           visibleWhenAll: [
@@ -406,17 +408,24 @@ export default {
             commMetaPath: recordTypeField
               ? `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${recordTypeField.value}/searchFilters?includeJoinFilters=true`
               : '',
-            resetValue: [],
           };
         } else if (fieldId === 'lookup.resultField') {
           const recordTypeField = fields.find(
             field => field.id === 'lookup.recordType'
           );
+          const recordType = recordTypeField.value;
+          const resultField = fields.find(
+            field => field.id === 'lookup.resultField'
+          );
+
+          if (resultField.savedRecordType !== recordType) {
+            resultField.savedRecordType = recordType;
+            resultField.value = '';
+          }
 
           return {
-            disableFetch: !(recordTypeField && recordTypeField.value),
+            disableFetch: !recordType,
             commMetaPath: `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${recordTypeField.value}/searchColumns`,
-            resetValue: [],
           };
         }
 
