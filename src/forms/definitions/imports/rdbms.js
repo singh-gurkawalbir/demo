@@ -21,14 +21,14 @@ export default {
 
     if (fieldId === 'rdbms.existingDataId') {
       const lookupField = fields.find(
-        field => field.fieldId === 'http.lookups'
+        field => field.fieldId === 'rdbms.lookups'
       );
       const nameField = fields.find(field => field.fieldId === 'name');
 
       return {
         resourceName: nameField && nameField.value,
         lookups: {
-          fieldId: 'http.lookups',
+          fieldId: 'rdbms.lookups',
           data:
             (lookupField &&
               Array.isArray(lookupField.value) &&
@@ -70,7 +70,7 @@ export default {
       fieldId: 'rdbms.existingDataId',
       type: 'relativeuriwithlookup',
       connectionId: r => r && r._connectionId,
-      refreshOptionsOnChangesTo: ['http.lookups', 'name'],
+      refreshOptionsOnChangesTo: ['rdbms.lookups', 'name'],
     },
     dataMappings: { formId: 'dataMappings' },
   },
