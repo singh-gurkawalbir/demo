@@ -1,11 +1,63 @@
-// import { Fragment } from 'react';
-import { Redirect } from 'react-router-dom';
-// import { Typography } from '@material-ui/core';
-// import PanelHeader from '../../../../common/PanelHeader';
+import { Fragment } from 'react';
+import { useSelector } from 'react-redux';
+import { Link, useLocation, useRouteMatch } from 'react-router-dom';
+import { makeStyles } from '@material-ui/core/styles';
+import { Typography } from '@material-ui/core';
+import * as selectors from '../../../../../../reducers';
+import ResourceDrawer from '../../../../../../components/drawer/Resource';
+import PanelHeader from '../../../../common/PanelHeader';
+import ResourceTable from '../../../../../../components/ResourceTable';
+import IconTextButton from '../../../../../../components/IconTextButton';
+import LoadResources from '../../../../../../components/LoadResources';
+import AddIcon from '../../../../../../components/icons/AddIcon';
+import { generateNewId } from '../../../../../../utils/resource';
 
-export default function ApiTokenSection() {
-  // TODO: My guess is that we want to render the access tokens within the IA admin
-  // panel like all other admin panels. Redirecting to the resource list view since
-  // this is exactly what the /connector/ IA code does.
-  return <Redirect to="/pg/accessTokens" />;
+const useStyles = makeStyles(theme => ({
+  content: {
+    marginLeft: theme.spacing(2),
+  },
+}));
+
+export default function ApiTokenSection({ integrationId }) {
+  const classes = useStyles();
+  const location = useLocation();
+  const match = useRouteMatch();
+  // const filter = useSelector(state =>
+  //   selectors.filter(state, 'accesstokens')
+  // ) || { take: 3 };
+  const list = useSelector(state =>
+    selectors.accessTokenList(state, { integrationId })
+  );
+
+  return (
+    <Fragment>
+      <ResourceDrawer match={match} />
+
+      <PanelHeader title="API tokens">
+        <IconTextButton
+          data-test="newAccessToken"
+          component={Link}
+          to={`${location.pathname}/add/accesstokens/${generateNewId()}`}
+          variant="text"
+          color="primary">
+          <AddIcon /> New Access Token
+        </IconTextButton>
+      </PanelHeader>
+
+      <div className={classes.resultContainer}>
+        <LoadResources required resources="accesstokens">
+          {list.resources && list.resources.length > 0 ? (
+            <ResourceTable
+              resourceType="accesstokens"
+              resources={list.resources}
+            />
+          ) : (
+            <Typography>
+              No API tokens yet exist for this integration.
+            </Typography>
+          )}
+        </LoadResources>
+      </div>
+    </Fragment>
+  );
 }

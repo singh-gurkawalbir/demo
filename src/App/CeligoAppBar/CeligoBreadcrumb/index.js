@@ -57,6 +57,7 @@ const integrationAppRoutes = [
       { path: '/subscription', breadcrumb: () => 'Subscription' },
       { path: '/uninstall', breadcrumb: () => 'Uninstall' },
       { path: '/notifications', breadcrumb: () => 'Notifications' },
+      { path: '/apitoken', breadcrumb: () => 'API tokens' },
     ],
   },
   {
