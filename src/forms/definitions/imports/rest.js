@@ -151,7 +151,8 @@ export default {
       fieldId === 'rest.body' ||
       fieldId === 'rest.relativeURI' ||
       fieldId === 'rest.relativeURICreate' ||
-      fieldId === 'rest.relativeURIUpdate'
+      fieldId === 'rest.relativeURIUpdate' ||
+      fieldId === 'rest.existingDataId'
     ) {
       const lookupField = fields.find(
         field => field.fieldId === 'rest.lookups'
@@ -697,7 +698,9 @@ export default {
     },
     'rest.existingDataId': {
       id: 'rest.existingDataId',
-      type: 'text',
+      type: 'relativeuriwithlookup',
+      connectionId: r => r && r._connectionId,
+      refreshOptionsOnChangesTo: ['rest.lookups', 'name'],
       label: 'Existing Data Id',
       required: true,
       visibleWhenAll: [
