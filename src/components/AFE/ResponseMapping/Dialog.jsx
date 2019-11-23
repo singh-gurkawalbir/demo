@@ -1,25 +1,20 @@
 import { useReducer, useState, useEffect } from 'react';
+import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector, useDispatch } from 'react-redux';
 import produce from 'immer';
-import {
-  Button,
-  IconButton,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  Grid,
-  DialogActions,
-  Typography,
-} from '@material-ui/core';
+import Button from '@material-ui/core/Button';
 import deepClone from 'lodash/cloneDeep';
 import DynaTypeableSelect from '../../DynaForm/fields/DynaTypeableSelect';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
-import CloseIcon from '../../icons/CloseIcon';
+import TrashIcon from '../../icons/TrashIcon';
 import mappingUtil from '../../../utils/mapping';
 import getJSONPaths from '../../../utils/jsonPaths';
 import * as resourceUtil from '../../../utils/resource';
+import ModalDialog from '../../ModalDialog';
+import ButtonsGroup from '../../ButtonGroup';
+import ActionButton from '../../ActionButton';
 
 const useStyles = makeStyles(theme => ({
   modalContent: {
@@ -31,8 +26,8 @@ const useStyles = makeStyles(theme => ({
     overflowY: 'off',
   },
   header: {
-    height: '100%',
-    maxHeight: '28',
+    display: 'flex',
+    width: '100%',
   },
   root: {
     flexGrow: 1,
@@ -41,10 +36,22 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     padding: '0px',
   },
-  closeButton: {
-    position: 'absolute',
-    right: theme.spacing(1),
-    top: theme.spacing(1),
+  child: {
+    flexBasis: '40%',
+  },
+  childHeader: {
+    flexBasis: '46%',
+  },
+  innerRow: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    marginBottom: theme.spacing(1),
+    '& > div': {
+      marginRight: theme.spacing(1),
+      '&:last-child': {
+        marginRight: 0,
+      },
+    },
   },
 }));
 
@@ -229,109 +236,96 @@ export default function ResponseMappingDialog(props) {
   }
 
   return (
-    <Dialog fullScreen={false} open scroll="paper" maxWidth={false}>
-      <IconButton
-        aria-label="Close"
-        data-test="closeImportMapping"
-        className={classes.closeButton}
-        onClick={onClose}>
-        <CloseIcon />
-      </IconButton>
-      <DialogTitle disableTypography>
-        <Typography variant="h6">Define Response Mapping</Typography> 
-      </DialogTitle>
-      <DialogContent className={classes.modalContent}>
-        <div className={classes.container}>
-          <Grid container className={classes.root}>
-            <Grid item xs={12} className={classes.header}>
-              <Grid container>
-                <Grid key="heading_extract" item xs>
-                  <span className={classes.alignLeft}>
-                    {resourceType === 'imports' ? 'Import' : 'Lookup'} Response
-                    Field
-                  </span>
-                </Grid>
-                <Grid key="heading_generate" item xs>
-                  <span className={classes.alignLeft}>
-                    Source Record Field (New/Existing Field)
-                  </span>
-                </Grid>
-                <Grid key="settings_button_header" item />
-              </Grid>
-            </Grid>
-            <Grid container key={changeIdentifier} direction="column">
-              {tableData.map(r => (
-                <Grid item className={classes.rowContainer} key={r.index}>
-                  <Grid container direction="row">
-                    <Grid item xs>
-                      <DynaTypeableSelect
-                        disabled={disabled}
-                        labelName="name"
-                        valueName="id"
-                        value={r[keyName]}
-                        options={formattedExtractFields || []}
-                        onBlur={(id, evt) => {
-                          handleFieldUpdate(
-                            r.index,
-                            { target: { value: evt } },
-                            keyName
-                          );
-                        }}
-                      />
-                    </Grid>
-                    <Grid item xs>
-                      <DynaTypeableSelect
-                        disabled={disabled}
-                        value={r[valueName]}
-                        hideOptions
-                        onBlur={(id, evt) => {
-                          handleFieldUpdate(
-                            r.index,
-                            { target: { value: evt } },
-                            valueName
-                          );
-                        }}
-                      />
-                    </Grid>
-                    <Grid item key="delete_button">
-                      <IconButton
-                        disabled={disabled}
-                        data-test="deleteMapping"
-                        aria-label="delete"
-                        onClick={() => {
-                          handleDelete(r.index);
-                        }}
-                        className={classes.margin}>
-                        <CloseIcon />
-                      </IconButton>
-                    </Grid>
-                  </Grid>
-                </Grid>
-              ))}
-            </Grid>
-          </Grid>
+    <ModalDialog handleClose={onClose} show width="md">
+      <div>Define Response Mapping</div>
+      <div className={classes.container}>
+        <div className={classes.root}>
+          <div className={classes.header}>
+            <Typography
+              varaint="h4"
+              className={classes.childHeader}
+              key="heading_extract">
+              {resourceType === 'imports' ? 'Import' : 'Lookup'} Response Field
+            </Typography>
+
+            <Typography
+              varaint="h4"
+              className={classes.childHeader}
+              key="heading_generate">
+              Source Record Field (New/Existing Field)
+            </Typography>
+          </div>
+          <div key={changeIdentifier}>
+            {tableData.map(r => (
+              <div className={classes.rowContainer} key={r.index}>
+                <div className={classes.innerRow}>
+                  <div className={classes.child}>
+                    <DynaTypeableSelect
+                      disabled={disabled}
+                      labelName="name"
+                      valueName="id"
+                      value={r[keyName]}
+                      options={formattedExtractFields || []}
+                      onBlur={(id, evt) => {
+                        handleFieldUpdate(
+                          r.index,
+                          { target: { value: evt } },
+                          keyName
+                        );
+                      }}
+                    />
+                  </div>
+                  <div className={classes.child}>
+                    <DynaTypeableSelect
+                      disabled={disabled}
+                      value={r[valueName]}
+                      hideOptions
+                      onBlur={(id, evt) => {
+                        handleFieldUpdate(
+                          r.index,
+                          { target: { value: evt } },
+                          valueName
+                        );
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <ActionButton
+                      disabled={disabled}
+                      data-test="deleteMapping"
+                      aria-label="delete"
+                      onClick={() => {
+                        handleDelete(r.index);
+                      }}>
+                      <TrashIcon />
+                    </ActionButton>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
-      </DialogContent>
-      <DialogActions>
-        <Button
-          disabled={disabled}
-          data-test="saveMapping"
-          onClick={() => handleSubmit(false)}
-          variant="contained"
-          size="small"
-          color="secondary">
-          Save
-        </Button>
-        <Button
-          disabled={disabled}
-          data-test="saveAndCloseMapping"
-          onClick={() => handleSubmit(true)}
-          variant="contained"
-          size="small"
-          color="secondary">
-          Save and close
-        </Button>
-      </DialogActions>
-    </Dialog>
+      </div>
+      <div>
+        <ButtonsGroup>
+          <Button
+            disabled={disabled}
+            data-test="saveMapping"
+            onClick={() => handleSubmit(false)}
+            variant="outlined"
+            color="secondary">
+            Save
+          </Button>
+          <Button
+            disabled={disabled}
+            data-test="saveAndCloseMapping"
+            onClick={() => handleSubmit(true)}
+            variant="outlined"
+            color="primary">
+            Save and close
+          </Button>
+        </ButtonsGroup>
+      </div>
+    </ModalDialog>
   );
 }

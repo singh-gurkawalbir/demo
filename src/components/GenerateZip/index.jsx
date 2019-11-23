@@ -1,20 +1,18 @@
 import React, { useState, Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { MenuItem, Select, FormControl, Button } from '@material-ui/core';
+import { MenuItem, FormControl, Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
+import CeligoSelect from '../../components/CeligoSelect';
 
 const useStyles = makeStyles(theme => ({
   selectIntegration: {
     width: theme.spacing(50),
   },
-  form: {
-    marginLeft: theme.spacing(3),
-  },
   submit: {
     marginLeft: theme.spacing(10),
-    marginTop: theme.spacing(4),
+    marginTop: theme.spacing(2),
     marginRight: 'auto',
   },
 }));
@@ -43,8 +41,8 @@ export default function GenerateZip(props) {
 
   return (
     <Fragment>
-      <FormControl className={classes.form}>
-        <Select
+      <FormControl>
+        <CeligoSelect
           id="integration"
           className={classes.selectIntegration}
           value={selectedIntegrationId}
@@ -59,7 +57,7 @@ export default function GenerateZip(props) {
                 {integration.name}
               </MenuItem>
             ))}
-        </Select>
+        </CeligoSelect>
         <br />
         <Button
           data-test="generateTemplateZip"

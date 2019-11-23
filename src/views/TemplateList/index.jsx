@@ -13,11 +13,12 @@ import IconTextButton from '../../components/IconTextButton';
 import AddIcon from '../../components/icons/AddIcon';
 import GenerateZipDialog from './GenerateZipDialog';
 import UploadFileDialog from '../../views/InstallIntegration';
-import infoText from '../ResourceList/infoText';
+import InfoText from '../ResourceList/infoText';
 import metadata from './metadata';
 import CheckPermissions from '../../components/CheckPermissions';
 import { PERMISSIONS } from '../../utils/constants';
 import { generateNewId } from '../../utils/resource';
+import InstallIcon from '../../components/icons/InstallIcon';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -64,18 +65,20 @@ export default function TemplateList(props) {
             onClose={() => setShowUploadZipDialog(false)}
           />
         )}
-        <CeligoPageBar title="Templates" infoText={infoText.templates}>
+        <CeligoPageBar title="Templates" InfoText={InfoText.templates}>
           <div className={classes.actions}>
             <IconTextButton
               data-test="uploadTemplateZip"
               onClick={() => setShowUploadZipDialog(true)}
               variant="text">
+              <InstallIcon />
               Install Integration
             </IconTextButton>
             <IconTextButton
               data-test="generateTemplateZip"
               onClick={() => setShowGenerateZipDialog(true)}
               variant="text">
+              <AddIcon />
               Generate Template Zip
             </IconTextButton>
             <KeywordSearch

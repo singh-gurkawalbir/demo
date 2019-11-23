@@ -2328,3 +2328,16 @@ export function getUsedActionsForResource(
 
   return getUsedActionsMapForResource(resource, resourceType, flowNode);
 }
+
+export function debugLogs(state) {
+  return fromSession.debugLogs(state && state.session);
+}
+
+export function resourceNamesByIds(state, type) {
+  const { resources } = resourceList(state, { type });
+  const resourceIdNameMap = {};
+
+  resources.forEach(r => (resourceIdNameMap[r._id] = r.name || r._id));
+
+  return resourceIdNameMap;
+}

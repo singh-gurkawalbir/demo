@@ -29,36 +29,39 @@ export default {
     type: 'filedefinitionselect',
     label: 'EDI X12 Format',
     format: 'edi',
-    required: r => !r,
+    required: true,
     visibleWhenAll: [
       {
         field: 'file.type',
         is: ['filedefinition'],
       },
+      { field: 'file.output', is: ['records'] },
     ],
   },
   'fixed.format': {
     type: 'filedefinitionselect',
     label: 'Format',
     format: 'fixed',
-    required: r => !r,
+    required: true,
     visibleWhenAll: [
       {
         field: 'file.type',
         is: ['fixed'],
       },
+      { field: 'file.output', is: ['records'] },
     ],
   },
   'edifact.format': {
     type: 'filedefinitionselect',
     label: 'EDIFACT Format',
     format: 'ediFact',
-    required: r => !r,
+    required: true,
     visibleWhenAll: [
       {
         field: 'file.type',
         is: ['delimited/edifact'],
       },
+      { field: 'file.output', is: ['records'] },
     ],
   },
   'file.filedefinition.rules': {

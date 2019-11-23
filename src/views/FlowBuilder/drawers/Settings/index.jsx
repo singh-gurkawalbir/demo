@@ -16,6 +16,9 @@ const useStyles = makeStyles(theme => ({
     right: theme.spacing(1),
     top: 2,
   },
+  settingsContent: {
+    padding: theme.spacing(2),
+  },
 }));
 
 export default function SettingsDrawer({
@@ -135,14 +138,19 @@ export default function SettingsDrawer({
         <Close />
       </IconButton>
       <TitleBar title="Settings" />
-      <DynaForm disabled={isViewMode} fieldMeta={fieldMeta} render>
-        <DynaSubmit onClick={handleSubmit} color="primary" variant="outlined">
-          Save
-        </DynaSubmit>
-        <Button onClick={() => history.goBack()} variant="text" color="primary">
-          Cancel
-        </Button>
-      </DynaForm>
+      <div className={classes.settingsContent}>
+        <DynaForm disabled={isViewMode} fieldMeta={fieldMeta} render>
+          <DynaSubmit onClick={handleSubmit} color="primary" variant="outlined">
+            Save
+          </DynaSubmit>
+          <Button
+            onClick={() => history.goBack()}
+            variant="text"
+            color="primary">
+            Cancel
+          </Button>
+        </DynaForm>
+      </div>
     </SettingsDrawerRouter>
   );
 }

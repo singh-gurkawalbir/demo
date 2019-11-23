@@ -65,7 +65,7 @@ export default function DynaAddEditLookup(props) {
       )}
       <Button
         data-test={id}
-        variant="outlined"
+        variant="contained"
         className={clsx({ [classes.button]: isEdit })}
         color="secondary"
         onClick={handleEditorClick}>

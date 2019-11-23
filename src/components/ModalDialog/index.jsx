@@ -13,6 +13,9 @@ import CloseIcon from '../icons/CloseIcon';
     float: 'right',
     textTransform: 'inherit',
   },
+  titleText: {
+    maxWidth: '95%',
+  },
   iconButton: {
     position: 'absolute',
     top: theme.spacing(1) + 4,
@@ -21,6 +24,11 @@ import CloseIcon from '../icons/CloseIcon';
   },
   actions: {
     justifyContent: 'flex-start',
+    padding: theme.spacing(1, 3),
+    borderTop: `1px solid ${theme.palette.secondary.lightest} `,
+  },
+  modalTitle: {
+    minWidth: '450px',
   },
 }))
 export default class ModalDialog extends Component {
@@ -39,7 +47,9 @@ export default class ModalDialog extends Component {
         <Dialog open={show} maxWidth={width}>
           {this.props.children[0] && (
             <DialogTitle className={classes.modalTitle} disableTypography>
-              <Typography variant="h3">{this.props.children[0]}</Typography>
+              <Typography variant="h3" className={classes.titleText}>
+                {this.props.children[0]}
+              </Typography>
               {handleClose && (
                 <IconButton
                   onClick={handleClose}

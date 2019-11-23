@@ -1,8 +1,9 @@
-import { Dialog, Typography, DialogTitle } from '@material-ui/core';
+import { Typography, DialogTitle } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import Icon from '../../../../components/icons/CalendarIcon';
 import helpTextMap from '../../../../components/Help/helpTextMap';
+import ModalDialog from '../../../../components/ModalDialog';
 import * as selectors from '../../../../reducers';
 import FlowSchedule from '../../../../components/FlowSchedule';
 
@@ -26,9 +27,10 @@ function ScheduleDialog({
   const flow = useSelector(state => selectors.resource(state, 'flows', flowId));
 
   return (
-    <Dialog
-      open={open}
-      onClose={onClose}
+    <ModalDialog
+      show={open}
+      handleClose={onClose}
+      maxWidth={false}
       disabled={isViewMode}
       PaperProps={{ className: classes.paper }}>
       <DialogTitle disableTypography>
@@ -41,7 +43,7 @@ function ScheduleDialog({
         pg={pg}
         index={index}
       />
-    </Dialog>
+    </ModalDialog>
   );
 }
 

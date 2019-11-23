@@ -5,10 +5,10 @@ import Checkbox from '@material-ui/core/Checkbox';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import { Input, Chip, MenuItem } from '@material-ui/core';
-import Select from '@material-ui/core/Select';
 import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
+import CeligoSelect from '../../CeligoSelect';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -41,6 +41,14 @@ const useStyles = makeStyles(theme => ({
   formControl: {
     margin: theme.spacing(1),
   },
+  select: {
+    minWidth: 180,
+    padding: theme.spacing(1),
+  },
+  label: {
+    zIndex: 1,
+    padding: theme.spacing(0.6, 1),
+  },
 }));
 
 export default function CsvParsePanel(props) {
@@ -70,9 +78,10 @@ export default function CsvParsePanel(props) {
           <InputLabel shrink htmlFor="columnDelimiter">
             Column Delimiter
           </InputLabel>
-          <Select
+          <CeligoSelect
             native
             value={columnDelimiter}
+            className={classes.select}
             onChange={event =>
               patchEditor('columnDelimiter', event.target.value)
             }
@@ -86,15 +95,16 @@ export default function CsvParsePanel(props) {
             <option value="|" data-test="pipe">
               Pipe (|)
             </option>
-          </Select>
+          </CeligoSelect>
         </FormControl>
         <FormControl disabled={disabled} className={classes.formControl}>
           <InputLabel shrink htmlFor="rowDelimiter">
             Row Delimiter
           </InputLabel>
-          <Select
+          <CeligoSelect
             native
             value={rowDelimiter}
+            className={classes.select}
             onChange={event => patchEditor('rowDelimiter', event.target.value)}
             inputProps={{ id: 'rowDelimiter' }}>
             <option value="" data-test="autoDetect">
@@ -109,7 +119,7 @@ export default function CsvParsePanel(props) {
             <option value="crlf" data-test="crlf">
               CRLF (\r\n)
             </option>
-          </Select>
+          </CeligoSelect>
         </FormControl>
 
         <FormControlLabel
@@ -155,7 +165,7 @@ export default function CsvParsePanel(props) {
         {multipleRowsPerRecord && allColumns && (
           <FormControl disabled={disabled} className={classes.formControl}>
             <InputLabel htmlFor="select-multiple-chip">Key Columns</InputLabel>
-            <Select
+            <CeligoSelect
               multiple
               value={keyColumns}
               data-test="keyColumns"
@@ -174,7 +184,7 @@ export default function CsvParsePanel(props) {
                   {name}
                 </MenuItem>
               ))}
-            </Select>
+            </CeligoSelect>
           </FormControl>
         )}
       </FormGroup>

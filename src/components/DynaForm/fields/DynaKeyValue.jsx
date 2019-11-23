@@ -1,10 +1,11 @@
 import { useState, useEffect, Fragment } from 'react';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
-import { IconButton, FormLabel, FormControl } from '@material-ui/core';
+import { FormLabel, FormControl } from '@material-ui/core';
 import ErroredMessageComponent from './ErroredMessageComponent';
 import TrashIcon from '../../icons/TrashIcon';
 import AutoSuggest from './DynaAutoSuggest';
+import ActionButton from '../../ActionButton';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -120,6 +121,8 @@ export function KeyValueComponent(props) {
               <AutoSuggest
                 disabled={disabled}
                 value={r[keyName]}
+                id={`${keyName}-${r.row}`}
+                data-test={`${keyName}-${r.row}`}
                 autoFocus={r.row === rowInd && isKey}
                 placeholder={keyName}
                 variant="filled"
@@ -137,6 +140,8 @@ export function KeyValueComponent(props) {
                 disabled={disabled}
                 autoFocus={r.row === rowInd && isKey}
                 defaultValue={r[keyName]}
+                id={`${keyName}-${r.row}`}
+                data-test={`${keyName}-${r.row}`}
                 placeholder={keyName}
                 variant="filled"
                 onChange={handleKeyUpdate(r.row)}
@@ -148,6 +153,8 @@ export function KeyValueComponent(props) {
               <AutoSuggest
                 disabled={disabled}
                 value={r[valueName]}
+                id={`${valueName}-${r.row}`}
+                data-test={`${valueName}-${r.row}`}
                 autoFocus={r.row === rowInd && isKey}
                 placeholder={valueName}
                 variant="filled"
@@ -164,6 +171,8 @@ export function KeyValueComponent(props) {
               <TextField
                 disabled={disabled}
                 autoFocus={r.row === rowInd && !isKey}
+                id={`${valueName}-${r.row}`}
+                data-test={`${valueName}-${r.row}`}
                 defaultValue={r[valueName]}
                 placeholder={valueName}
                 variant="filled"
@@ -173,13 +182,13 @@ export function KeyValueComponent(props) {
             )}
 
             {showDelete && (
-              <IconButton
+              <ActionButton
                 disabled={disabled}
-                data-test="deleteKeyValue"
-                aria-label="delete"
+                id={`delete-${r.row}`}
+                data-test={`delete-${r.row}`}
                 onClick={handleDelete(r.row)}>
                 <TrashIcon />
-              </IconButton>
+              </ActionButton>
             )}
           </div>
         ))}
@@ -188,6 +197,8 @@ export function KeyValueComponent(props) {
         <TextField
           disabled={disabled}
           value=""
+          id={`new-${keyName}`}
+          data-test={`new-${keyName}`}
           label={keyName}
           variant="filled"
           onChange={handleKeyUpdate()}
@@ -197,6 +208,8 @@ export function KeyValueComponent(props) {
         <TextField
           disabled={disabled}
           value=""
+          id={`new-${valueName}`}
+          data-test={`new-${valueName}`}
           label={valueName}
           variant="filled"
           onChange={handleValueUpdate()}
@@ -204,9 +217,9 @@ export function KeyValueComponent(props) {
         />
 
         {showDelete && (
-          <IconButton data-test="deleteKeyValue" aria-label="delete" disabled>
+          <ActionButton data-test="deleteKeyValue" aria-label="delete" disabled>
             <TrashIcon />
-          </IconButton>
+          </ActionButton>
         )}
       </div>
     </FormControl>
