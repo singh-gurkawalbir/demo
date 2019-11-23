@@ -11,6 +11,7 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.background.default,
     height: '100%',
     overflowY: 'auto',
+    width: '100%',
     marginTop: theme.spacing(1),
   },
   input: {

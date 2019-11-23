@@ -160,8 +160,6 @@ const useStyles = makeStyles(theme => ({
     height: '100%',
     display: 'flex',
     overflow: 'auto',
-    borderTop: 'solid 1px',
-    borderColor: theme.palette.secondary.lightest,
   },
   generatorContainer: {
     display: 'flex',

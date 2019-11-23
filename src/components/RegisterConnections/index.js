@@ -1,36 +1,14 @@
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  Button,
-  IconButton,
-  Typography,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-} from '@material-ui/core';
-import CloseIcon from '@material-ui/icons/Close';
-import { makeStyles } from '@material-ui/core/styles';
+import Button from '@material-ui/core/Button';
 import actions from '../../actions';
 import LoadResources from '../../components/LoadResources';
 import CeligoTable from '../../components/CeligoTable';
 import * as selectors from '../../reducers';
 import metadata from './metadata';
-
-const useStyles = makeStyles(theme => ({
-  title: {
-    marginLeft: theme.spacing(4),
-    padding: theme.spacing(2),
-  },
-  closeButton: {
-    position: 'absolute',
-    right: theme.spacing(1),
-    top: theme.spacing(1),
-  },
-}));
+import ModalDialog from '../../components/ModalDialog';
 
 export default function RegisterConnections({ onClose, integrationId }) {
-  const classes = useStyles();
   const connectionsToReg = useSelector(state =>
     selectors.availableConnectionsToRegister(state, integrationId)
   );
@@ -50,18 +28,13 @@ export default function RegisterConnections({ onClose, integrationId }) {
   };
 
   return (
-    <Dialog open maxWidth={false}>
-      <IconButton
-        data-test="closeRegisterConnectionsDialog"
-        aria-label="Close"
-        className={classes.closeButton}
-        onClick={onClose}>
-        <CloseIcon />
-      </IconButton>
-      <DialogTitle className={classes.title} disableTypography>
-        <Typography variant="h6">Register Connections</Typography>
-      </DialogTitle>
-      <DialogContent>
+    <ModalDialog
+      show
+      handleClose={onClose}
+      data-test="closeRegisterConnectionsDialog"
+      width="lg">
+      <div>Register Connections</div>
+      <div>
         <LoadResources required resources="connections">
           <CeligoTable
             data={connectionsToReg}
@@ -70,16 +43,16 @@ export default function RegisterConnections({ onClose, integrationId }) {
             selectableRows
           />
         </LoadResources>
-      </DialogContent>
-      <DialogActions>
+      </div>
+      <div>
         <Button
           data-test="registerConnections"
           onClick={handleRegisterClick}
-          variant="contained"
+          variant="outlined"
           color="primary">
           Register
         </Button>
-      </DialogActions>
-    </Dialog>
+      </div>
+    </ModalDialog>
   );
 }

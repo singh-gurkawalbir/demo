@@ -1,7 +1,7 @@
 import { Fragment } from 'react';
 import { useDispatch } from 'react-redux';
 import { IconButton } from '@material-ui/core';
-import Icon from '../../../../icons/TrashIcon';
+import Icon from '../../../../icons/PurgeIcon';
 import actions from '../../../../../actions';
 import { confirmDialog } from '../../../../ConfirmDialog';
 import { RESOURCE_TYPE_LABEL_TO_SINGULAR } from '../../../../../constants/resource';

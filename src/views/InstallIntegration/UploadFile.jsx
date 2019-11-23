@@ -41,6 +41,7 @@ export default function UploadFile(props) {
         <Button
           data-test="selectFile"
           variant="contained"
+          color="primary"
           component="span"
           className={classes.uploadButton}>
           Select Template Zip File

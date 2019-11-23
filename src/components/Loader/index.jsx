@@ -11,7 +11,7 @@ const useStyles = makeStyles(theme => ({
     justifyItems: 'center',
     alignItems: 'center',
     flexDirection: 'column',
-    backgroundColor: fade(theme.palette.secondary.light, 0.7),
+    backgroundColor: fade(theme.palette.secondary.light, 0.5),
   },
   paper: {
     padding: theme.spacing(2, 4),
