@@ -3,6 +3,7 @@ Icons Components
 const colors = require('../../src/theme/colors.js').default;
 const AddIcon = require('../../src/components/icons/AddIcon').default;
 const AdjustInventoryIcon = require('../../src/components/icons/AdjustInventoryIcon').default;
+const AdminIcon = require('../../src/components/icons/AdminIcon').default;
 const AppBuilderIcon = require('../../src/components/icons/AppBuilderIcon').default;
 const ArrowLeftIcon = require('../../src/components/icons/ArrowLeftIcon').default;
 const AgentsIcon = require('../../src/components/icons/AgentsIcon').default;
@@ -22,6 +23,7 @@ const CeligoMarkIcon = require('../../src/components/icons/CeligoMarkIcon').defa
 const ConnectionsIcon = require('../../src/components/icons/ConnectionsIcon').default;
 const TransformIcon = require('../../src/components/icons/TransformIcon').default;
 const DataLoaderIcon = require('../../src/components/icons/DataLoaderIcon').default;
+const DashboardIcon = require('../../src/components/icons/DashboardIcon').default;
 const DebugIcon = require('../../src/components/icons/DebugIcon').default;
 const DownloadIcon = require('../../src/components/icons/DownloadIcon').default;
 const EditIcon = require('../../src/components/icons/EditIcon').default;
@@ -35,6 +37,7 @@ const ExportsIcon = require('../../src/components/icons/ExportsIcon').default;
 const ExpandWindowIcon = require('../../src/components/icons/ExpandWindowIcon').default;
 const FilterIcon = require('../../src/components/icons/FilterIcon').default;
 const FlowBuilderIcon = require('../../src/components/icons/FlowBuilderIcon').default;
+const FlowsIcon = require('../../src/components/icons/FlowsIcon').default;
 const FlowBuilderAppIcon = require('../../src/components/icons/FlowBuilderAppIcon').default;
 const FullScreenOpenIcon = require('../../src/components/icons/FullScreenOpenIcon').default;
 const FullScreenCloseIcon = require('../../src/components/icons/FullScreenCloseIcon').default;
@@ -63,6 +66,7 @@ const OutputFilterIcon = require('../../src/components/icons/OutputFilterIcon').
 const PublishIcon = require('../../src/components/icons/PublishIcon').default;
 const PublishedIcon = require('../../src/components/icons/PublishedIcon').default;
 const PermissionsManageIcon = require('../../src/components/icons/PermissionsManageIcon').default;
+const PurgeIcon = require('../../src/components/icons/PurgeIcon').default;
 const PermissionsMonitorIcon = require('../../src/components/icons/PermissionsMonitorIcon').default;
 const PermissionExplorerIcon = require('../../src/components/icons/PermissionExplorerIcon').default;
 const RadioBtnSelectedIcon = require('../../src/components/icons/RadioBtnSelectedIcon').default;
@@ -123,6 +127,10 @@ const icon = {
     <div style={wrapper}>
       <AdjustInventoryIcon style={icon}/> 
       <p>AdjustInventory</p>
+    </div>
+       <div style={wrapper}>
+      <AdminIcon style={icon}/> 
+      <p>Admin</p>
     </div>
     <div style={wrapper}>
       <AppBuilderIcon style={icon}/> 
@@ -197,6 +205,10 @@ const icon = {
       <p>DataLoader</p>
     </div>
     <div style={wrapper}>
+      <DashboardIcon style={icon} />
+      <p>Dashboard</p>
+    </div>
+    <div style={wrapper}>
       <DebugIcon style={icon} />
       <p>Debug</p>
     </div>
@@ -247,6 +259,10 @@ const icon = {
     <div style={wrapper}>
       <FlowBuilderIcon style={icon} />
       <p>FlowBuilder</p>
+    </div>
+     <div style={wrapper}>
+      <FlowsIcon style={icon} />
+      <p>Flows</p>
     </div>
     <div style={wrapper}>
       <FlowBuilderAppIcon style={icon} />
@@ -360,6 +376,10 @@ const icon = {
     <div style={wrapper}>
       <PermissionsManageIcon style={icon} />
       <p>PermissionsManage</p>
+    </div>
+    <div style={wrapper}>
+      <PurgeIcon style={icon} />
+      <p>Purge</p>
     </div>
      <div style={wrapper}>
       <PermissionsMonitorIcon style={icon} />

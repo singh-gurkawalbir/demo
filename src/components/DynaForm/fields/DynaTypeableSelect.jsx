@@ -3,7 +3,7 @@ import Select from 'react-select';
 import { makeStyles, useTheme, fade } from '@material-ui/core/styles';
 import { FormControl } from '@material-ui/core';
 
-// Todo Aditya Replace the component with DynaSelectApplication
+// TODO: Aditya Replace the component with DynaSelectApplication
 const useStyles = makeStyles(theme => ({
   optionRoot: {
     display: 'flex',
@@ -107,7 +107,8 @@ export default function DynaTypeableSelect(props) {
       },
     }),
     control: () => ({
-      width: 300,
+      minWidth: 300,
+      width: '100%',
       height: 50,
       border: '1px solid',
       borderColor: theme.palette.divider,
