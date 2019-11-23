@@ -4,11 +4,11 @@ import DynaText from '../DynaText';
 import * as selectors from '../../../../reducers';
 
 const getTriggerCode = sObjectType => {
-  let toReturn = `trigger <name> on ${sObjectType} (after insert, after update) {\n  integrator_da__.RealTimeExportResult result = integrator_da__.RealTimeExporter.run(); \n}`;
+  let triggerCodeText = `trigger <name> on ${sObjectType} (after insert, after update) {\n  integrator_da__.RealTimeExportResult result = integrator_da__.RealTimeExporter.run(); \n}`;
 
-  toReturn += `\n/* Please use the below code for batch export */\n/*\ntrigger <name> on ${sObjectType} (after insert, after update) {\n  integrator_da__.RealTimeExporter.runBatch();\n}\n*/`;
+  triggerCodeText += `\n/* Please use the below code for batch export */\n/*\ntrigger <name> on ${sObjectType} (after insert, after update) {\n  integrator_da__.RealTimeExporter.runBatch();\n}\n*/`;
 
-  return toReturn;
+  return triggerCodeText;
 };
 
 /* return 'A Salesforce (Apex) trigger is required per SObject type to facilitate realtime data exports.  Salesforce does not provide a mechanism to deploy this code automatically, and therefore you will need to copy the trigger text above and then click '+
