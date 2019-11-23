@@ -38,6 +38,7 @@ import {
 import { getUsedActionsMapForResource } from '../utils/flows';
 import { isValidResourceReference } from '../utils/resource';
 import { processSampleData } from '../utils/sampleData';
+import inferErrorMessage from '../utils/inferErrorMessage';
 
 const combinedReducers = combineReducers({
   app,
@@ -90,6 +91,18 @@ export function appErrored(state) {
 // #region PUBLIC COMMS SELECTORS
 export function allLoadingOrErrored(state) {
   return fromComms.allLoadingOrErrored(state.comms);
+}
+
+export function allLoadingOrErroredWithCorrectlyInferredErroredMessage(state) {
+  const resourceStatuses = allLoadingOrErrored(state);
+
+  if (!resourceStatuses) return null;
+
+  return resourceStatuses.map(comm => {
+    const { message, ...rest } = comm;
+
+    return { ...rest, message: inferErrorMessage(message) };
+  });
 }
 
 export function isLoadingAnyResource(state) {
@@ -539,7 +552,7 @@ export function testConnectionCommState(state) {
 
   return {
     commState: comm.status,
-    message: comm.message,
+    message: inferErrorMessage(comm.message),
   };
 }
 
