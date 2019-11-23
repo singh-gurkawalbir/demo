@@ -4,6 +4,7 @@ import filters, * as fromFilters from './filters';
 import editors, * as fromEditors from './editors';
 import metadata, * as fromMetadata from './metadata';
 import connectors, * as fromConnectors from './connectors';
+import connections, * as fromConnections from './connections';
 import resourceForm, * as fromResourceForm from './resourceForm';
 import agentAccessTokens, * as fromAgentAccessTokens from './agentAccessTokens';
 import stackSystemTokens, * as fromStackSystemTokens from './stackSystemTokens';
@@ -24,6 +25,7 @@ export default combineReducers({
   editors,
   metadata,
   connectors,
+  connections,
   connectionToken,
   resourceForm,
   agentAccessTokens,
@@ -290,5 +292,9 @@ export function assistantData(state, { adaptorType, assistant }) {
     adaptorType,
     assistant,
   });
+}
+
+export function debugLogs(state) {
+  return fromConnections.debugLogs(state && state.connections);
 }
 // #endregion
