@@ -36,11 +36,9 @@ function Tile({ tile, history }) {
         getRoutePath(`/connectors/${tile._integrationId}/uninstall`)
       );
     } else if (tile._connectorId) {
-      history.push(
-        getRoutePath(`/connectors/${tile._integrationId}/settings/flows`)
-      );
+      history.push(getRoutePath(`/integrationApp/${tile._integrationId}`));
     } else {
-      history.push(getRoutePath(`/integrations/${tile._integrationId}/flows`));
+      history.push(getRoutePath(`/integrations/${tile._integrationId}`));
     }
   }
 

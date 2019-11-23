@@ -43,6 +43,7 @@ const useStyles = makeStyles(theme => ({
     borderColor: theme.palette.secondary.lightest,
     borderTop: 0,
     display: 'flex',
+    justifyContent: `space-between`,
     alignItems: 'center',
     width: '100%',
   },

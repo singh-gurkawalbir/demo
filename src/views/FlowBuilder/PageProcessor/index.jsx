@@ -50,6 +50,7 @@ const PageProcessor = ({
   isLast,
   integrationId,
   isViewMode,
+  onDelete,
   ...pp
 }) => {
   const pending = !!pp._connectionId;
@@ -278,15 +279,16 @@ const PageProcessor = ({
           <div className={clsx(classes.dottedLine, classes.lineLeft)} />
         )}
         <AppBlock
+          integrationId={integrationId}
           name={
             pending ? 'Pending configuration' : resource.name || resource.id
           }
+          onDelete={onDelete}
           isViewMode={isViewMode}
           onBlockClick={handleBlockClick}
           connectorType={resource.adaptorType || resource.type}
           assistant={resource.assistant}
           ref={ref}
-          integrationId={integrationId}
           opacity={opacity} /* used for drag n drop */
           blockType={pp.type === 'export' ? 'lookup' : 'import'}
           flowId={flowId}
