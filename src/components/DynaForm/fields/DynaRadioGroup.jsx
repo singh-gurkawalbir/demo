@@ -9,8 +9,6 @@ import {
 } from '@material-ui/core';
 import clsx from 'clsx';
 import ErroredMessageComponent from './ErroredMessageComponent';
-import RadioBtnSelectedIcon from '../../icons/RadioBtnSelectedIcon';
-import RadioBtnUnselectedIcon from '../../icons/RadioBtnUnselectedIcon';
 
 const useStyles = makeStyles({
   rowFlexWrapper: {
@@ -57,21 +55,7 @@ export default function DynaRadio(props) {
               <FormControlLabel
                 key={item}
                 value={item}
-                control={
-                  <Radio
-                    color="primary"
-                    icon={
-                      <span>
-                        <RadioBtnUnselectedIcon />
-                      </span>
-                    }
-                    checkedIcon={
-                      <span>
-                        <RadioBtnSelectedIcon />
-                      </span>
-                    }
-                  />
-                }
+                control={<Radio color="primary" />}
                 label={item}
               />
             );
@@ -81,21 +65,7 @@ export default function DynaRadio(props) {
             <FormControlLabel
               key={item.value}
               value={item.value}
-              control={
-                <Radio
-                  color="primary"
-                  icon={
-                    <span>
-                      <RadioBtnUnselectedIcon />
-                    </span>
-                  }
-                  checkedIcon={
-                    <span>
-                      <RadioBtnSelectedIcon />
-                    </span>
-                  }
-                />
-              }
+              control={<Radio color="primary" />}
               label={item.label || item.value}
             />
           );
