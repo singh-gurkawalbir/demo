@@ -18,7 +18,22 @@ export default function reducer(state = {}, action) {
       delete newState.references;
 
       return newState;
+    case actionTypes.LICENSE_TRIAL_ISSUED:
+      newState = {
+        ...state,
+        integratorLicenseActionMessage:
+          'Activated! Your 30 days of unlimited flows starts now.',
+      };
 
+      return newState;
+    case actionTypes.LICENSE_UPGRADE_REQUEST_SUBMITTED:
+      newState = {
+        ...state,
+        integratorLicenseActionMessage:
+          'Your request has been received. We will contact you soon.',
+      };
+
+      return newState;
     default:
       return state;
   }
@@ -52,5 +67,13 @@ export function resourceReferences(state) {
   );
 
   return referencesArray;
+}
+
+export function integratorLicenseActionMessage(state) {
+  if (!state) {
+    return;
+  }
+
+  return state.integratorLicenseActionMessage;
 }
 // #endregion
