@@ -4,6 +4,7 @@ import DynaText from '../DynaText';
 import AddIcon from '../../../icons/AddIcon';
 import RefreshableTreeComponent from '../DynaRefreshableSelect/RefreshableTreeComponent';
 import ModalDialog from '../../../ModalDialog';
+import IconTextButton from '../../../IconTextButton';
 
 export const ReferencedFieldsModal = props => {
   const { handleClose, onFieldChange, id, value, ...rest } = props;
@@ -34,7 +35,7 @@ export const ReferencedFieldsModal = props => {
 };
 
 export default function DynaTreeModal(props) {
-  const { id, onFieldChange, value, selectedParent, options } = props;
+  const { id, onFieldChange, value, disabled, options } = props;
   const [secondLevelModalOpen, setSecondLevelModalOpen] = useState(false);
   const toggle = useCallback(
     () => setSecondLevelModalOpen(state => !state),
@@ -45,7 +46,9 @@ export default function DynaTreeModal(props) {
   return (
     <Fragment>
       <DynaText id={id} onFieldChange={onFieldChange} value={value} />
-      <AddIcon disabled={!!selectedParent} onClick={toggle} />
+      <IconTextButton onClick={toggle} disabled={disabled}>
+        <AddIcon />
+      </IconTextButton>
       {secondLevelModalOpen ? (
         <ReferencedFieldsModal
           {...props}

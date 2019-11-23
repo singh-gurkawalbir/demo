@@ -84,6 +84,7 @@ const FirstLevelModal = props => {
         name: '/referencedFields',
         refreshOptionsOnChangesTo: ['parentSObjectType'],
         type: 'salesforcetreemodal',
+        disabledWhen: [{ field: 'parentSObjectType', is: [''] }],
       },
     },
     layout: {

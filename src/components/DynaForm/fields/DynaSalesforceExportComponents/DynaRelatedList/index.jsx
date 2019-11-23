@@ -90,6 +90,7 @@ function EditListItemModal(props) {
         type: 'salesforcetreemodal',
         skipFirstLevelFields: true,
         defaultValue: referencedFields,
+        disabledWhen: [{ field: 'childRelationship', is: [''] }],
       },
       filterExpression: {
         label: 'Filter Expression',
