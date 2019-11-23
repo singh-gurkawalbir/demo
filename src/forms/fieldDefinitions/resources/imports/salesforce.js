@@ -363,6 +363,7 @@ export default {
   'salesforce.blobsObjectType': {
     type: 'select',
     label: 'SObject Type',
+    defaultValue: r => r && r.salesforce && r.salesforce.sObjectType,
     visibleWhen: [
       {
         field: 'inputMode',
@@ -401,6 +402,7 @@ export default {
     type: 'radiogroup',
     label: 'Operation',
     required: true,
+    defaultValue: r => r && r.salesforce && r.salesforce.operation,
     options: [
       {
         items: [
