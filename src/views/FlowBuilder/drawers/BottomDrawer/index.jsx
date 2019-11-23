@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Drawer, IconButton, Tabs, Tab } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
@@ -105,11 +105,14 @@ export default function BottomDrawer({ size, setSize, flow }) {
     };
   }
 
-  const handleDebugLogsClose = (event, connectionId) => {
-    event.stopPropagation();
-    setTabValue(0);
-    dispatch(actions.connection.clearDebugLogs(connectionId));
-  };
+  const handleDebugLogsClose = useCallback(
+    (event, connectionId) => {
+      event.stopPropagation();
+      setTabValue(0);
+      dispatch(actions.connection.clearDebugLogs(connectionId));
+    },
+    [dispatch]
+  );
 
   useEffect(() => {
     if (clearConnectionLogs) {
