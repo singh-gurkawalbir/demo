@@ -1,8 +1,7 @@
 import { useSelector, useDispatch } from 'react-redux';
-import { makeStyles, IconButton, Button } from '@material-ui/core';
+import { makeStyles, Button } from '@material-ui/core';
 import clsx from 'clsx';
 import { Fragment } from 'react';
-import Close from '../icons/CloseIcon';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
 import DynaForm from '../DynaForm';
@@ -111,13 +110,6 @@ export default function FlowSchedule(props) {
 
   return (
     <Fragment>
-      <IconButton
-        data-test="closeFlowSchedule"
-        aria-label="Close"
-        className={classes.closeButton}
-        onClick={onClose}>
-        <Close />
-      </IconButton>
       <div className={clsx(classes.modalContent, className)}>
         <DynaForm
           disabled={disabled}
