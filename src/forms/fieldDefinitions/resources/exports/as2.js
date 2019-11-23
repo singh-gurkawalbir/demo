@@ -7,7 +7,6 @@ export default {
     type: 'filedefinitionselect',
     label: 'EDI X12 Format',
     format: 'edi',
-    required: r => !r,
   },
   'file.filedefinition.rules': {
     type: 'filedefinitioneditor',
