@@ -1,12 +1,11 @@
 import { useSelector } from 'react-redux';
 import DynaConnectoroNColumnMap from './DynaConnectorNColumnMap';
-import DynaNSStaticMap from './DynaNSStaticMap';
-import DynaSFStaticMap from './DynaSFStaticMap';
 import DynaStaticMap from './DynaStaticMap';
 import DynaTableView from './DynaTable';
 import DynaStaticMapWidget from './DynaStaticMapWidget';
 import LoadResources from '../../../../components/LoadResources';
 import * as selectors from '../../../../reducers';
+import DynaRefreshableStaticMap from './DynaRefreshableStaticMap';
 
 export default function DynaTable(props) {
   const {
@@ -33,11 +32,7 @@ export default function DynaTable(props) {
   } else if (optionsMap && optionsMap.length && _integrationId) {
     tableType = 'connectorStaticMap';
   } else if (connectionId && connection) {
-    if (connection.type === 'netsuite') {
-      tableType = 'nsStaticMap';
-    } else {
-      tableType = 'sfStaticMap';
-    }
+    tableType = 'refreshableStaticMap';
   } else {
     tableType = 'generic';
   }
@@ -47,8 +42,9 @@ export default function DynaTable(props) {
       {tableType === 'connectorStaticMap' && (
         <DynaConnectoroNColumnMap {...props} />
       )}
-      {tableType === 'nsStaticMap' && <DynaNSStaticMap {...props} />}
-      {tableType === 'sfStaticMap' && <DynaSFStaticMap {...props} />}
+      {tableType === 'refreshableStaticMap' && (
+        <DynaRefreshableStaticMap {...props} />
+      )}
       {tableType === 'staticMap' && <DynaStaticMap {...props} />}
       {tableType === 'staticMapWidget' && <DynaStaticMapWidget {...props} />}
       {tableType === 'generic' && <DynaTableView collapsable {...props} />}
