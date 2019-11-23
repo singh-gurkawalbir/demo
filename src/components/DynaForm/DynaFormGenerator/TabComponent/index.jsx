@@ -18,6 +18,9 @@ const useStyle = makeStyles(theme => ({
   MuiTabWrapper: {
     justifyContent: 'left',
   },
+  MuiTabsIndicator: {
+    right: 'unset',
+  },
 }));
 
 export default function TabComponent(props) {
@@ -29,6 +32,7 @@ export default function TabComponent(props) {
     <div className={classes.root}>
       <Tabs
         value={selectedTab}
+        classes={{ indicator: classes.MuiTabsIndicator }}
         className={classes.tabsContainer}
         variant="scrollable"
         orientation="vertical"
