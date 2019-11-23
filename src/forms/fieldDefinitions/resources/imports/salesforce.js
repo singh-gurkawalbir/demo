@@ -344,7 +344,6 @@ export default {
   'salesforce.attachment.isPrivate': {
     type: 'checkbox',
     label: 'Is Private?',
-    required: true,
     visibleWhenAll: [
       {
         field: 'inputMode',
