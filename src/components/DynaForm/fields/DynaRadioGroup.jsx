@@ -11,6 +11,15 @@ import clsx from 'clsx';
 import ErroredMessageComponent from './ErroredMessageComponent';
 
 const useStyles = makeStyles({
+  rowFlexWrapper: {
+    flexDirection: 'row',
+    paddingLeft: 5,
+  },
+  flexItems: {
+    // flex: 1,
+    wordBreak: 'break-all',
+    lineHeight: '20px',
+  },
   columnFlexWrapper: {
     flexDirection: 'column',
   },

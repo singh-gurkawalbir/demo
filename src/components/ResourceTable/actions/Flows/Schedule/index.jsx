@@ -1,7 +1,8 @@
 import { useState, Fragment } from 'react';
-import { IconButton, Dialog, DialogTitle, Typography } from '@material-ui/core';
+import { IconButton } from '@material-ui/core';
 import Icon from '../../../../icons/CalendarIcon';
 import FlowSchedule from '../../../../FlowSchedule';
+import ModalDialog from '../../../../ModalDialog';
 
 export default {
   label: 'Schedule',
@@ -18,12 +19,12 @@ export default {
     return (
       <Fragment>
         {showSchedule && (
-          <Dialog open maxWidth={false}>
-            <DialogTitle disableTypography>
-              <Typography variant="h6">Flow Schedule</Typography>
-            </DialogTitle>
-            <FlowSchedule flow={resource} onClose={handleClose} />
-          </Dialog>
+          <ModalDialog show maxWidth={false}>
+            <div>Flow Schedule</div>
+            <div>
+              <FlowSchedule flow={resource} onClose={handleClose} />
+            </div>
+          </ModalDialog>
         )}
         <IconButton
           data-test="showFlowSchedule"

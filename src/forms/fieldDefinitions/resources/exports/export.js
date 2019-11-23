@@ -64,6 +64,7 @@ export default {
   exportOneToMany: {
     label: 'How should this export be parameterized?',
     type: 'labeltitle',
+    visible: r => !!(r && r.isLookup),
   },
   oneToMany: {
     type: 'radiogroup',
@@ -541,5 +542,10 @@ export default {
   sampleData: {
     type: 'sampledata',
     label: 'Sample Data',
+  },
+  skipRetries: {
+    type: 'checkbox',
+    label: 'Skip Retries',
+    visible: r => !(r && r.isLookup),
   },
 };

@@ -6,10 +6,9 @@ import actions from '../../../actions';
 import LoadResources from '../../../components/LoadResources';
 import TrashIcon from '../../../components/icons/TrashIcon';
 import CopyIcon from '../../../components/icons/CopyIcon';
-// TODO: Azhar, please update these next 3 icons, once provided by the product team.
-import FlowsIcon from '../../../components/icons/FlowBuilderIcon';
-import AdminIcon from '../../../components/icons/SettingsIcon';
-import DashboardIcon from '../../../components/icons/AdjustInventoryIcon';
+import FlowsIcon from '../../../components/icons/FlowsIcon';
+import AdminIcon from '../../../components/icons/AdminIcon';
+import DashboardIcon from '../../../components/icons/DashboardIcon';
 import ConnectionsIcon from '../../../components/icons/ConnectionsIcon';
 import IconTextButton from '../../../components/IconTextButton';
 import CeligoPageBar from '../../../components/CeligoPageBar';

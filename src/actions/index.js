@@ -81,6 +81,15 @@ const connection = {
       iClients,
       connectionId,
     }),
+  requestDebugLogs: (url, connectionId) =>
+    action(actionTypes.CONNECTION.DEBUG_LOGS_REQUEST, { url, connectionId }),
+  receivedDebugLogs: (debugLogs, connectionId) =>
+    action(actionTypes.CONNECTION.DEBUG_LOGS_RECEIVED, {
+      debugLogs,
+      connectionId,
+    }),
+  clearDebugLogs: connectionId =>
+    action(actionTypes.CONNECTION.DEBUG_LOGS_CLEAR, { connectionId }),
 };
 const marketplace = {
   requestConnectors: () =>
