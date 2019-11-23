@@ -34,7 +34,6 @@ export default function MappingSettingsField(props) {
     <Fragment>
       {showSettings && (
         <ImportMappingSettings
-          id={id}
           application={application}
           updateLookup={updateLookup}
           title="Settings"
@@ -48,7 +47,7 @@ export default function MappingSettingsField(props) {
         />
       )}
       <ActionButton
-        data-test="toggleImportMappingSettings"
+        data-test={id}
         disabled={isDisabled}
         aria-label="settings"
         onClick={handleBtnClick}

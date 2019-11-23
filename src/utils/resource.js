@@ -285,10 +285,10 @@ export function salesforceExportSelectOptions(data, fieldName) {
 }
 
 /*
- * Given a resource, returns true if it is File Export
+ * Given a resource, returns true if it is File Export / Import
  * FTP / S3 / DataLoader
  */
-export function isFileExport(resource) {
+export function isFileAdaptor(resource) {
   if (!resource) return false;
 
   return resource.adaptorType

@@ -17,7 +17,7 @@ import transformationAction from './actions/transformation';
 import responseMapping from './actions/responseMapping';
 import responseTransformationAction from './actions/responseTransformation';
 import proceedOnFailureAction from './actions/proceedOnFailure';
-import { actionsMap } from '../../../utils/flows';
+import { actionsMap, isImportMappingAvailable } from '../../../utils/flows';
 import helpTextMap from '../../../components/Help/helpTextMap';
 
 const useStyles = makeStyles(theme => ({
@@ -50,6 +50,7 @@ const PageProcessor = ({
   isLast,
   integrationId,
   isViewMode,
+  onDelete,
   ...pp
 }) => {
   const pending = !!pp._connectionId;
@@ -204,6 +205,7 @@ const PageProcessor = ({
 
   // #region Configure available processor actions
   // Add Help texts for actions common to lookups and imports manually
+
   const processorActions = [
     {
       ...inputFilterAction,
@@ -231,10 +233,14 @@ const PageProcessor = ({
       );
     } else {
       processorActions.push(
-        {
-          ...importMappingAction,
-          isUsed: usedActions[actionsMap.importMapping],
-        },
+        ...(isImportMappingAvailable(resource)
+          ? [
+              {
+                ...importMappingAction,
+                isUsed: usedActions[actionsMap.importMapping],
+              },
+            ]
+          : []),
         {
           ...responseTransformationAction,
           isUsed: usedActions[actionsMap.responseTransformation],
@@ -273,15 +279,16 @@ const PageProcessor = ({
           <div className={clsx(classes.dottedLine, classes.lineLeft)} />
         )}
         <AppBlock
+          integrationId={integrationId}
           name={
             pending ? 'Pending configuration' : resource.name || resource.id
           }
+          onDelete={onDelete}
           isViewMode={isViewMode}
           onBlockClick={handleBlockClick}
           connectorType={resource.adaptorType || resource.type}
           assistant={resource.assistant}
           ref={ref}
-          integrationId={integrationId}
           opacity={opacity} /* used for drag n drop */
           blockType={pp.type === 'export' ? 'lookup' : 'import'}
           flowId={flowId}

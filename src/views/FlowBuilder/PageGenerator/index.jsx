@@ -50,6 +50,7 @@ const PageGenerator = ({
   flowId,
   integrationId,
   isViewMode,
+  onDelete,
   ...pg
 }) => {
   const pending = !pg._exportId;
@@ -197,6 +198,7 @@ const PageGenerator = ({
       <AppBlock
         integrationId={integrationId}
         name={blockName}
+        onDelete={onDelete}
         isViewMode={isViewMode}
         onBlockClick={handleBlockClick}
         connectorType={connectorType}
@@ -207,6 +209,8 @@ const PageGenerator = ({
         actions={generatorActions}
         flowId={flowId}
         resource={resource}
+        pg={pg}
+        index={index}
       />
       <div
         /* -- connecting line */

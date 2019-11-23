@@ -37,6 +37,7 @@ import {
 } from './flowsUtil';
 import { getUsedActionsMapForResource } from '../utils/flows';
 import { isValidResourceReference } from '../utils/resource';
+import { processSampleData } from '../utils/sampleData';
 
 const combinedReducers = combineReducers({
   app,
@@ -251,6 +252,12 @@ export function editor(state, id) {
   if (!state) return {};
 
   return fromSession.editor(state.session, id);
+}
+
+export function mapping(state, id) {
+  if (!state) return [];
+
+  return fromSession.mapping(state.session, id);
 }
 
 export function editorHelperFunctions(state) {
@@ -606,7 +613,7 @@ export function flowDetails(state, id) {
     // TODO: add logic to properly determine if this flow should
     // display mapping/settings. This would come from the IA metadata.
     draft.showMapping = true;
-    draft.hasSettings = true;
+    draft.hasSettings = !!flow._connectorId;
   });
 }
 
@@ -2225,7 +2232,8 @@ export function getImportSampleData(state, resourceId) {
   const { merged: resource } = resourceData(state, 'imports', resourceId);
   const { assistant, adaptorType, sampleData } = resource;
 
-  if (sampleData) return sampleData;
+  // Formats sample data into readable form
+  if (sampleData) return processSampleData(sampleData, resource);
   else if (assistant) {
     // get assistants sample data
   } else if (adaptorType === 'NetSuiteDistributedImport') {
@@ -2319,4 +2327,17 @@ export function getUsedActionsForResource(
   const { merged: resource } = resourceData(state, resourceType, resourceId);
 
   return getUsedActionsMapForResource(resource, resourceType, flowNode);
+}
+
+export function debugLogs(state) {
+  return fromSession.debugLogs(state && state.session);
+}
+
+export function resourceNamesByIds(state, type) {
+  const { resources } = resourceList(state, { type });
+  const resourceIdNameMap = {};
+
+  resources.forEach(r => (resourceIdNameMap[r._id] = r.name || r._id));
+
+  return resourceIdNameMap;
 }

@@ -239,10 +239,7 @@ export default function Panel(props) {
       </div>
 
       <Route
-        path={[
-          `${match.url}/add/:resourceType/:id`,
-          `${match.url}/edit/:resourceType/:id`,
-        ]}
+        path={`${match.url}/:operation(add|edit)/:resourceType/:id`}
         render={props => (
           <Panel {...props} zIndex={zIndex + 1} onClose={onClose} />
         )}

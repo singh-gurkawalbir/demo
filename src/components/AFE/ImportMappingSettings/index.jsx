@@ -3,6 +3,7 @@ import Button from '@material-ui/core/Button';
 import DynaForm from '../../DynaForm';
 import DynaSubmit from '../../DynaForm/DynaSubmit';
 import ApplicationMappingSettings from './application';
+import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import ModalDialog from '../../ModalDialog';
 
 export default function ImportMappingSettings(props) {
@@ -18,7 +19,8 @@ export default function ImportMappingSettings(props) {
     options,
     disabled,
   } = props;
-  const { generate, extract } = value;
+  const { generate, extract, index } = value;
+  const [enquesnackbar] = useEnqueueSnackbar();
   const fieldMeta = ApplicationMappingSettings.getMetaData({
     application,
     value,
@@ -29,16 +31,30 @@ export default function ImportMappingSettings(props) {
     options,
   });
   const handleSubmit = formVal => {
-    const mappingObj = ApplicationMappingSettings.getFormattedValue(
+    const {
+      settings,
+      lookup: updatedLookup,
+      errorStatus,
+      errorMessage,
+    } = ApplicationMappingSettings.getFormattedValue(
       { generate, extract, lookup },
       formVal
     );
 
+    if (errorStatus) {
+      enquesnackbar({
+        message: errorMessage,
+        variant: 'error',
+      });
+
+      return;
+    }
+
     // Update lookup
-    if (mappingObj.lookup) {
+    if (updatedLookup) {
       const isDelete = false;
 
-      updateLookup(isDelete, mappingObj.lookup);
+      updateLookup(isDelete, updatedLookup);
     } else if (lookup) {
       // When user tries to reconfigure setting and tries to remove lookup, delete existing lookup
       const isDelete = true;
@@ -46,7 +62,7 @@ export default function ImportMappingSettings(props) {
       updateLookup(isDelete, lookup);
     }
 
-    onClose(true, mappingObj.settings);
+    onClose(true, settings);
   };
 
   return (
@@ -59,12 +75,12 @@ export default function ImportMappingSettings(props) {
           optionsHandler={fieldMeta.optionsHandler}>
           <DynaSubmit
             disabled={disabled}
-            data-test="saveMappingSettings"
+            id={`fieldMappingSettingsSave-${index}`}
             onClick={handleSubmit}>
             Save
           </DynaSubmit>
           <Button
-            data-test="cancelMappingSettings"
+            data-test={`fieldMappingSettingsCancel-${index}`}
             variant="text"
             color="primary"
             onClick={() => {

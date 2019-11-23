@@ -145,6 +145,11 @@ function* processRawData({ resourceId, resourceType, values = {}, stage }) {
     const { result } = getCsvFromXlsx(file);
 
     file = result;
+    // Saving csv file content for xlsx in sample data for future use
+    // Incase of FTP Imports, sampleData field in resource expects 'csvContent' for xlsx file upload to be saved
+    yield put(
+      actions.sampleData.update(resourceId, { data: [{ body: file }] }, 'csv')
+    );
   }
 
   const processorData = values.editorValues || {};

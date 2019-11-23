@@ -153,15 +153,6 @@ export default {
         },
       ],
     },
-    'file.csv.rowDelimiter': {
-      fieldId: 'file.csv.rowDelimiter',
-      visibleWhen: [
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
-      ],
-    },
     fileAdvancedSettings: {
       formId: 'fileAdvancedSettings',
       visibleWhenAll: [
@@ -191,12 +182,32 @@ export default {
       {
         collapsed: true,
         label: 'Advanced',
-        fields: [
-          'file.csv.rowDelimiter',
-          'fileAdvancedSettings',
-          'deleteAfterImport',
-        ],
+        fields: ['fileAdvancedSettings', 'deleteAfterImport'],
       },
     ],
   },
+  actions: [
+    {
+      id: 'cancel',
+    },
+    {
+      id: 'save',
+      visibleWhen: [
+        {
+          field: 'file.type',
+          isNot: ['filedefinition', 'fixed', 'delimited/edifact'],
+        },
+      ],
+    },
+    {
+      // Button that saves file defs and then submit resource
+      id: 'savedefinition',
+      visibleWhen: [
+        {
+          field: 'file.type',
+          is: ['filedefinition', 'fixed', 'delimited/edifact'],
+        },
+      ],
+    },
+  ],
 };

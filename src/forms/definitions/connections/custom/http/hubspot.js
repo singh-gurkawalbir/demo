@@ -10,10 +10,12 @@ export default {
     } else {
       retValues['/http/auth/oauth/authURI'] =
         'https://app.hubspot.com/oauth/authorize';
+      retValues['/http/auth/token/refreshMethod'] = 'POST';
+      retValues['/http/auth/token/refreshMediaType'] = 'urlencoded';
+      retValues['/http/auth/token/token'] = undefined;
       retValues['/http/auth/oauth/tokenURI'] =
         'https://api.hubapi.com/oauth/v1/token';
       retValues['/http/auth/oauth/scopeDelimiter'] = ' ';
-      retValues['/http/auth/token/token'] = undefined;
     }
 
     return {

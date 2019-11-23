@@ -22,6 +22,9 @@ const useStyles = makeStyles({
     wordBreak: 'break-all',
     lineHeight: '20px',
   },
+  columnFlexWrapper: {
+    flexDirection: 'column',
+  },
   fullWidth: {
     width: '100%',
   },
@@ -36,8 +39,8 @@ export default function DynaRadio(props) {
     required,
     value,
     disabled,
-    // showOptionsHorizontally is used to control options to render horizontally
-    showOptionsHorizontally,
+    // use showOptionsVertically to render vertically
+    showOptionsVertically,
     // set fullWidth to true for component to occupy fill width
     fullWidth,
     label,
@@ -70,9 +73,6 @@ export default function DynaRadio(props) {
                   />
                 }
                 label={item}
-                className={clsx({
-                  [classes.flexItems]: showOptionsHorizontally,
-                })}
               />
             );
           }
@@ -97,9 +97,6 @@ export default function DynaRadio(props) {
                 />
               }
               label={item.label || item.value}
-              className={clsx({
-                [classes.flexItems]: showOptionsHorizontally,
-              })}
             />
           );
         })
@@ -119,7 +116,7 @@ export default function DynaRadio(props) {
         data-test={id}
         aria-label={label}
         className={clsx({
-          [classes.rowFlexWrapper]: showOptionsHorizontally,
+          [classes.columnFlexWrapper]: showOptionsVertically,
         })}
         name={name}
         defaultValue={defaultValue}

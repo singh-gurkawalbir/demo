@@ -4,6 +4,7 @@ import filters, * as fromFilters from './filters';
 import editors, * as fromEditors from './editors';
 import metadata, * as fromMetadata from './metadata';
 import connectors, * as fromConnectors from './connectors';
+import connections, * as fromConnections from './connections';
 import resourceForm, * as fromResourceForm from './resourceForm';
 import agentAccessTokens, * as fromAgentAccessTokens from './agentAccessTokens';
 import stackSystemTokens, * as fromStackSystemTokens from './stackSystemTokens';
@@ -16,6 +17,7 @@ import integrationApps, * as fromIntegrationApps from './integrationApps';
 import templates, * as fromTemplates from './templates';
 import oAuthAuthorize, * as fromOAuthAuthorize from './oAuthAuthorize';
 import resource, * as fromResource from './resource';
+import mappings, * as fromMappings from './mappings';
 
 export default combineReducers({
   stage,
@@ -23,6 +25,7 @@ export default combineReducers({
   editors,
   metadata,
   connectors,
+  connections,
   connectionToken,
   resourceForm,
   agentAccessTokens,
@@ -35,6 +38,7 @@ export default combineReducers({
   integrationApps,
   templates,
   oAuthAuthorize,
+  mappings,
 });
 
 // #region PUBLIC SELECTORS
@@ -72,6 +76,12 @@ export function editor(state, id) {
   if (!state) return {};
 
   return fromEditors.editor(state.editors, id);
+}
+
+export function mapping(state, id) {
+  if (!state) return [];
+
+  return fromMappings.mapping(state.mappings, id);
 }
 
 export function processorRequestOptions(state, id) {
@@ -282,5 +292,9 @@ export function assistantData(state, { adaptorType, assistant }) {
     adaptorType,
     assistant,
   });
+}
+
+export function debugLogs(state) {
+  return fromConnections.debugLogs(state && state.connections);
 }
 // #endregion

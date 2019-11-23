@@ -8,10 +8,14 @@ export default {
     label: 'Sample File (that would be exported)',
     mode: r => r && r.file && r.file.type,
     required: r => isNewId(r && r._id),
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'file.type',
         is: ['csv', 'json', 'xlsx', 'xml'],
+      },
+      {
+        field: 'outputMode',
+        is: ['records'],
       },
     ],
   },
@@ -208,10 +212,14 @@ export default {
   'file.csv': {
     type: 'csvparse',
     label: 'Configure CSV parse options',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'file.type',
         is: ['csv'],
+      },
+      {
+        field: 'outputMode',
+        is: ['records'],
       },
     ],
   },

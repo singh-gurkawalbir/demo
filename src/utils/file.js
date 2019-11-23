@@ -1,4 +1,5 @@
 import XLSX from 'xlsx';
+import { each } from 'lodash';
 
 export function getFileReaderOptions(type) {
   if (!type) return {};
@@ -62,4 +63,58 @@ export function getCsvFromXlsx(data) {
     success: true,
     result,
   };
+}
+
+/*
+ * sample csv content
+ * "a,b,c
+ * 1,2,3
+ * 4,5,6"
+ * Extracts headers from the above csv content [a,b,c] if includeHeader is true
+ * Else, default headers [Column0, Column1, ...ColumnN] are considered
+ * Returns [[a,a], [b,b], [c,c]]
+ */
+const generateFields = (data, options = {}) => {
+  const {
+    columnDelimiter = ',',
+    rowDelimiter = '\n',
+    includeHeader = true,
+  } = options;
+  let fieldsList;
+
+  if (columnDelimiter && rowDelimiter) {
+    fieldsList = data.split(rowDelimiter)[0].split(columnDelimiter);
+  } else {
+    fieldsList = data;
+  }
+
+  const fields = [];
+
+  each(fieldsList, (field, index) => {
+    const column = includeHeader
+      ? // eslint-disable-next-line no-useless-escape
+        field.replace(/^\"(.*)\"$/, '$1')
+      : `Column${index}`;
+
+    if (column) {
+      fields.push([column, column]);
+    }
+  });
+
+  return fields;
+};
+
+/*
+ * sample csv content
+ * "a,b,c
+ * 1,2,3
+ * 4,5,6"
+ * Extracts headers from the above csv content [a,b,c]
+ * Returns [{id: 'a', type: 'string'}, {id: 'b', type: 'string'}, {id: 'c', type: 'string'}]
+ */
+export function extractFieldsFromCsv(data = '', options = {}) {
+  if (typeof data !== 'string') return;
+  const fields = generateFields(data, options);
+
+  return fields.map(col => ({ id: col[0], type: 'string' }));
 }

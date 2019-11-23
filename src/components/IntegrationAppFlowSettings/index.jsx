@@ -26,7 +26,8 @@ export default function IntegrationAppFlowSettings(props) {
   const translatedMeta = integrationSettingsToDynaFormMetadata(
     settings,
     _integrationId,
-    true
+    true,
+    { resource }
   );
   const handleCloseDialog = () => {
     onClose();

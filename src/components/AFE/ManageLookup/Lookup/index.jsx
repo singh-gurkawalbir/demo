@@ -190,6 +190,7 @@ export default function Lookup(props) {
         name: 'failRecord',
         type: 'radiogroup',
         label: 'Action to take if unique match not found',
+        showOptionsVertically: true,
         defaultValue: getFailedRecordDefault() || 'disallowFailure',
         options: [
           {

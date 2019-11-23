@@ -145,22 +145,26 @@ export default function FlowCard({ flowId, excludeActions }) {
           </Typography>
         </Grid>
         <Grid container item xs={3} justify="flex-end" alignItems="center">
-          {flowDetails.hasSettings && (
-            <IconButton
-              size="small"
-              component={Link}
-              to={`${history.location.pathname}/${flowId}/settings`}>
-              <SettingsIcon />
-            </IconButton>
-          )}
           <OnOffSwitch
             disabled={disableCard}
             on={!disableCard && !disabled}
             onClick={handleActionClick('disable')}
           />
-          {flowDetails.isRunnable && (
-            <IconButton size="small" onClick={handleActionClick('run')}>
-              <RunIcon />
+
+          <IconButton
+            disabled={!flowDetails.isRunnable}
+            size="small"
+            onClick={handleActionClick('run')}>
+            <RunIcon />
+          </IconButton>
+
+          {flowDetails._connectorId && (
+            <IconButton
+              size="small"
+              disabled={!flowDetails.hasSettings}
+              component={Link}
+              to={`${history.location.pathname}/${flowId}/settings`}>
+              <SettingsIcon />
             </IconButton>
           )}
 
