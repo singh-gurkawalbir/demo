@@ -15,6 +15,7 @@ import Spinner from '../../../Spinner';
 import RefreshIcon from '../../../icons/RefreshIcon';
 import DynaSelect from '../DynaSelect';
 import DeleteIcon from '../../../icons/TrashIcon';
+import DynaTypeableSelect from '../DynaTypeableSelect';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -127,9 +128,10 @@ export const DynaTable = props => {
       Array.isArray(metadata.optionsMap)
     ) {
       setOptionsMap(metadata.optionsMap);
+      setChangeIdentifier(changeIdentifier + 1);
       setShouldResetOptions(false);
     }
-  }, [metadata, shouldResetOptions]);
+  }, [changeIdentifier, metadata, shouldResetOptions]);
 
   useEffect(
     () => () => {
@@ -153,7 +155,10 @@ export const DynaTable = props => {
   // If all required fields are present in last row, add a dummy row at the end so user can enter values
   if (!requiredFieldsMissing) {
     optionsMap.forEach(option => {
-      lastRow[option.id] = option.type === 'select' ? undefined : '';
+      lastRow[option.id] =
+        option.type === 'select' || option.type === 'autosuggest'
+          ? undefined
+          : '';
     });
     dispatchLocalAction({ type: 'addNew', lastRowData: lastRow });
   }
@@ -164,16 +169,21 @@ export const DynaTable = props => {
       let modifiedOptions;
 
       if ((op.options || []).length) {
+        const items = op.options.filter(Boolean).map(opt => ({
+          label: opt.text || opt.label,
+          value: opt.id || opt.value,
+        }));
+        const options =
+          op.type === 'select'
+            ? [
+                {
+                  items,
+                },
+              ]
+            : items;
+
         modifiedOptions = {
-          options: [
-            {
-              // Filter out non-truthy values from options. IA sends [null] as initial options for select and multisselect fields
-              items: op.options.filter(Boolean).map(opt => ({
-                label: opt.text || opt.label,
-                value: opt.id || opt.value,
-              })),
-            },
-          ],
+          options,
         };
       }
 
@@ -267,10 +277,11 @@ export const DynaTable = props => {
                 {arr.values.map(r => (
                   <Grid
                     item
-                    key={r.readOnly ? r.value || r.id : r.id}
+                    key={`${r.readOnly ? r.value || r.id : r.id}`}
                     xs={r.space || true}>
                     {['input', 'text', 'number'].includes(r.type) && (
                       <Input
+                        id={`input-${r.id}-${arr.row}`}
                         defaultValue={r.value}
                         placeholder={r.id}
                         readOnly={!!r.readOnly}
@@ -281,6 +292,7 @@ export const DynaTable = props => {
                     )}
                     {r.type === 'select' && (
                       <DynaSelect
+                        id={`suggest-${r.id}-${arr.row}`}
                         value={r.value}
                         placeholder={r.id}
                         options={r.options || []}
@@ -294,11 +306,28 @@ export const DynaTable = props => {
                         className={classes.root}
                       />
                     )}
+                    {r.type === 'autosuggest' && (
+                      <DynaTypeableSelect
+                        id={`suggest-${r.id}-${arr.row}`}
+                        key={`suggest-${r.id}-${arr.row}-${r.value}-${r.optionChangeIdentifer}`}
+                        value={r.value}
+                        labelName="label"
+                        valueName="value"
+                        options={r.options}
+                        onBlur={(id, evt) => {
+                          handleUpdate(
+                            arr.row,
+                            { target: { value: evt } },
+                            r.id
+                          );
+                        }}
+                      />
+                    )}
                   </Grid>
                 ))}
                 <Grid item key="delete_button">
                   <IconButton
-                    data-test="deleteTableRow"
+                    data-test={`deleteTableRow-${arr.row}`}
                     aria-label="delete"
                     onClick={handleRemoveRow(arr.row)}
                     className={classes.margin}>
