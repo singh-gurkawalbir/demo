@@ -152,6 +152,13 @@ export default {
           type: 'refreshableselect',
           label: 'Value Field',
           defaultValue: lookup.resultField,
+          /** savedRecordType is not being used with the intension of passing prop to the component.
+           * But being used in reference to optionHandler.
+           * RecordType field is a refreshableselect component and onFieldChange event is triggered after network call success.
+           * When RecordType field is changed, we need to reset value of result field.
+           * savedRecordType helps in storing recordType and check is made in option handler if to reset the value or not
+           *
+           * * */
           savedRecordType: lookup.recordType,
           connectionId,
           refreshOptionsOnChangesTo: ['lookup.recordType'],
