@@ -13,8 +13,8 @@ import AddIcon from '../../../../../../components/icons/AddIcon';
 import { generateNewId } from '../../../../../../utils/resource';
 
 const useStyles = makeStyles(theme => ({
-  content: {
-    marginLeft: theme.spacing(2),
+  resultContainer: {
+    padding: theme.spacing(3, 3, 12, 3),
   },
 }));
 
@@ -22,9 +22,6 @@ export default function ApiTokenSection({ integrationId }) {
   const classes = useStyles();
   const location = useLocation();
   const match = useRouteMatch();
-  // const filter = useSelector(state =>
-  //   selectors.filter(state, 'accesstokens')
-  // ) || { take: 3 };
   const list = useSelector(state =>
     selectors.accessTokenList(state, { integrationId })
   );
