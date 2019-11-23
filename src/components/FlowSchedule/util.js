@@ -97,7 +97,7 @@ export const getAllDeltaFlows = (flows, flow, exports) => {
   ];
 };
 
-export const isDeltaFlowModel = (integration, pg, exp, flow, exports) => {
+export const isDeltaFlowModel = (pg, exp, flow, exports) => {
   let isDeltaFlow = false;
 
   if (pg && pg._exportId) {
