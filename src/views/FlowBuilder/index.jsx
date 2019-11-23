@@ -17,7 +17,6 @@ import ScheduleDrawer from './drawers/Schedule';
 import SettingsDrawer from './drawers/Settings';
 import PageProcessor from './PageProcessor';
 import PageGenerator from './PageGenerator';
-import TrashCan from './TrashCan';
 import AppBlock from './AppBlock';
 import itemTypes from './itemTypes';
 import RunIcon from '../../components/icons/RunIcon';
@@ -161,8 +160,6 @@ const useStyles = makeStyles(theme => ({
     height: '100%',
     display: 'flex',
     overflow: 'auto',
-    borderTop: 'solid 1px',
-    borderColor: theme.palette.secondary.lightest,
   },
   generatorContainer: {
     display: 'flex',
@@ -271,7 +268,7 @@ function FlowBuilder(props) {
     [pageProcessors, patchFlow]
   );
   const handleDelete = useCallback(
-    ({ index, type }) => {
+    type => index => {
       if (type === itemTypes.PAGE_PROCESSOR) {
         const newOrder = [...pageProcessors];
 
@@ -469,7 +466,7 @@ function FlowBuilder(props) {
 
           <FlowEllipsisMenu
             flowId={flowId}
-            exclude={['mapping', 'detach', 'audit']}
+            exclude={['mapping', 'detach', 'audit', 'schedule']}
           />
         </div>
       </CeligoPageBar>
@@ -502,6 +499,7 @@ function FlowBuilder(props) {
               {pageGenerators.map((pg, i) => (
                 <PageGenerator
                   {...pg}
+                  onDelete={handleDelete(itemTypes.PAGE_GENERATOR)}
                   flowId={flowId}
                   integrationId={integrationId}
                   key={
@@ -542,6 +540,7 @@ function FlowBuilder(props) {
               {pageProcessors.map((pp, i) => (
                 <PageProcessor
                   {...pp}
+                  onDelete={handleDelete(itemTypes.PAGE_PROCESSOR)}
                   flowId={flowId}
                   integrationId={integrationId}
                   key={pp._importId || pp._exportId || pp._connectionId}
@@ -570,9 +569,8 @@ function FlowBuilder(props) {
               bottom: size
                 ? `calc(${size * 25}vh + ${theme.spacing(3)}px)`
                 : bottomDrawerMin + theme.spacing(3),
-            }}>
-            <TrashCan disabled={isViewMode} onDrop={handleDelete} />
-          </div>
+            }}
+          />
         )}
 
         {/* CANVAS END */}

@@ -1,5 +1,9 @@
 import { fade } from '@material-ui/core/styles/';
 import colors from './colors';
+// import CheckboxIcon from '../components/icons/CheckboxUnselectedIcon';
+// import CheckboxSelectedIcon from '../components/icons/CheckboxSelectedIcon';
+// import RadioBtnIcon from '../components/icons/RadioBtnUnselectedIcon';
+// import RadioBtnSelectedIcon from '../components/icons/RadioBtnSelectedIcon';
 
 const appBarHeight = 36;
 
@@ -180,6 +184,13 @@ export default {
       padding: {
         paddingTop: 0,
         paddingBottom: 0,
+      },
+    },
+    MuiFormHelperText: {
+      contained: {
+        color: colors.celigoError,
+        marginLeft: 0,
+        marginBottom: 8,
       },
     },
     MuiMenuItem: {
@@ -415,7 +426,7 @@ export default {
     MuiRadio: {
       root: {
         color: colors.celigoNeutral5,
-        paddingRight: 5,
+        padding: 5,
       },
     },
     MuiInputBase: {
@@ -437,6 +448,13 @@ export default {
         color: colors.celigoNeutral6,
         '&: disabled': {
           cursor: 'not-allowed',
+        },
+      },
+      label: {
+        width: 24,
+        height: 24,
+        '& > span': {
+          height: 28,
         },
       },
     },
@@ -476,6 +494,11 @@ export default {
         backgroundColor: colors.celigoNeutral3,
       },
     },
+    MuiCheckbox: {
+      root: {
+        color: colors.celigoNeutral5,
+      },
+    },
     MuiTabs: {
       root: {
         minHeight: 36,
@@ -502,4 +525,16 @@ export default {
       },
     },
   },
+  // TODO: Dave It is giving an error in console
+
+  // props: {
+  //   MuiCheckbox: {
+  //     icon: CheckboxIcon,
+  //     checkedIcon: CheckboxSelectedIcon,
+  //   },
+  //   MuiRadio: {
+  //     icon: RadioBtnIcon,
+  //     checkedIcon: RadioBtnSelectedIcon,
+  //   },
+  // },
 };

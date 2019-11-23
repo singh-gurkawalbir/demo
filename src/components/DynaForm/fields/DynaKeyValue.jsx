@@ -1,10 +1,11 @@
 import { useState, useEffect, Fragment } from 'react';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
-import { IconButton, FormLabel, FormControl } from '@material-ui/core';
+import { FormLabel, FormControl } from '@material-ui/core';
 import ErroredMessageComponent from './ErroredMessageComponent';
 import TrashIcon from '../../icons/TrashIcon';
 import AutoSuggest from './DynaAutoSuggest';
+import ActionButton from '../../ActionButton';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -181,13 +182,13 @@ export function KeyValueComponent(props) {
             )}
 
             {showDelete && (
-              <IconButton
+              <ActionButton
                 disabled={disabled}
                 id={`delete-${r.row}`}
                 data-test={`delete-${r.row}`}
                 onClick={handleDelete(r.row)}>
                 <TrashIcon />
-              </IconButton>
+              </ActionButton>
             )}
           </div>
         ))}
@@ -216,9 +217,9 @@ export function KeyValueComponent(props) {
         />
 
         {showDelete && (
-          <IconButton data-test="deleteKeyValue" aria-label="delete" disabled>
+          <ActionButton data-test="deleteKeyValue" aria-label="delete" disabled>
             <TrashIcon />
-          </IconButton>
+          </ActionButton>
         )}
       </div>
     </FormControl>
