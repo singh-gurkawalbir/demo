@@ -181,12 +181,6 @@ export default {
     label: 'Relative URI',
     connectionId: r => r && r._connectionId,
     refreshOptionsOnChangesTo: ['name'],
-    requiredWhen: [
-      {
-        field: 'outputMode',
-        is: ['blob'],
-      },
-    ],
   },
   'rest.successPath': {
     type: 'text',
