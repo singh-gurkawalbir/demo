@@ -1,33 +1,21 @@
 import React, { useState, useEffect, Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import { IconButton } from '@material-ui/core';
-import OpenInNewIcon from 'mdi-react/OpenInNewIcon';
 import * as selectors from '../../../../reducers';
 import UrlEditorDialog from '../../../../components/AFE/UrlEditor/Dialog';
 import InputWithLookupHandlebars from './InputWithLookupHandlebars';
 import getFormattedSampleData from '../../../../utils/sampleData';
 import actions from '../../../../actions';
+import ActionButton from '../../../ActionButton';
+import ExitIcon from '../../../icons/ExitIcon';
 
 const useStyles = makeStyles(theme => ({
   textField: {
     minWidth: 200,
   },
-  editorButton: {
+  exitButton: {
     float: 'right',
-    marginLeft: 5,
-    background: theme.palette.background.paper,
-    border: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
-    height: 50,
-    width: 50,
-    borderRadius: 2,
-    '&:hover': {
-      background: theme.palette.background.paper,
-      '& > span': {
-        color: theme.palette.primary.main,
-      },
-    },
+    marginLeft: theme.spacing(1),
   },
 }));
 
@@ -135,12 +123,12 @@ export default function DynaRelativeURIWithLookup(props) {
           onClose={handleClose}
         />
       )}
-      <IconButton
+      <ActionButton
         data-test={id}
         onClick={handleEditorClick}
-        className={classes.editorButton}>
-        <OpenInNewIcon />
-      </IconButton>
+        className={classes.exitButton}>
+        <ExitIcon />
+      </ActionButton>
       <InputWithLookupHandlebars
         key={id}
         name={name}

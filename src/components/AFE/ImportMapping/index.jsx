@@ -1,27 +1,24 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
-import { IconButton, Grid } from '@material-ui/core';
 import actions from '../../../actions';
 import MappingSettings from '../ImportMappingSettings/MappingSettingsField';
 import DynaTypeableSelect from '../../DynaForm/fields/DynaTypeableSelect';
 import mappingUtil from '../../../utils/mapping';
-import CloseIcon from '../../icons/CloseIcon';
+import TrashIcon from '../../icons/TrashIcon';
 import * as selectors from '../../../reducers';
+import ActionButton from '../../ActionButton';
 
 const useStyles = makeStyles(theme => ({
-  modalContent: {
-    height: '100vh',
-    width: '70vw',
-  },
   container: {
     marginTop: theme.spacing(1),
     overflowY: 'off',
   },
   header: {
-    height: '100%',
-    maxHeight: '28px',
+    display: 'flex',
+    width: '100%',
   },
   root: {
     flexGrow: 1,
@@ -30,10 +27,28 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     padding: '0px',
   },
-  closeButton: {
-    position: 'absolute',
-    right: theme.spacing(1),
-    top: theme.spacing(1),
+  child: {
+    flexBasis: '100%',
+    '& + div': {
+      width: '100%',
+    },
+  },
+  childHeader: {
+    flexBasis: '46%',
+    '& > div:first-child': {
+      width: '100%',
+    },
+  },
+  innerRow: {
+    display: 'flex',
+    width: '100%',
+    marginBottom: theme.spacing(1),
+    '& > div': {
+      marginRight: theme.spacing(1),
+      '&:last-child': {
+        marginRight: 0,
+      },
+    },
   },
 }));
 
@@ -123,24 +138,21 @@ export default function ImportMapping(props) {
     <div
       className={classes.container}
       key={`mapping-${editorId}-${initChangeIdentifier}`}>
-      <Grid container className={classes.root}>
-        <Grid item xs={12} className={classes.header}>
-          <Grid container>
-            <Grid key="heading_extract" item xs>
-              <span className={classes.alignLeft}>Source Record Field</span>
-            </Grid>
-            <Grid key="heading_generate" item xs>
-              <span className={classes.alignLeft}>{generateLabel}</span>
-            </Grid>
-            <Grid key="settings_button_header" item />
-            <Grid key="delete_button_header" item />
-          </Grid>
-        </Grid>
-        <Grid container direction="column">
+      <div className={classes.root}>
+        <div className={classes.header}>
+          <Typography varaint="h4" className={classes.childHeader}>
+            Source Record Field
+          </Typography>
+
+          <Typography varaint="h4" className={classes.childHeader}>
+            {generateLabel}
+          </Typography>
+        </div>
+        <div>
           {tableData.map(mapping => (
-            <Grid item className={classes.rowContainer} key={mapping.index}>
-              <Grid container direction="row">
-                <Grid item xs>
+            <div className={classes.rowContainer} key={mapping.index}>
+              <div className={classes.innerRow}>
+                <div className={classes.childHeader}>
                   <DynaTypeableSelect
                     key={`extract-${editorId}-${initChangeIdentifier}-${mapping.rowIdentifier}`}
                     id={`fieldMappingExtract-${mapping.index}`}
@@ -157,8 +169,8 @@ export default function ImportMapping(props) {
                       );
                     }}
                   />
-                </Grid>
-                <Grid item xs>
+                </div>
+                <div className={classes.childHeader}>
                   <DynaTypeableSelect
                     key={`generate-${editorId}-${initChangeIdentifier}-${mapping.rowIdentifier}`}
                     id={`fieldMappingGenerate-${mapping.index}`}
@@ -175,8 +187,8 @@ export default function ImportMapping(props) {
                       );
                     }}
                   />
-                </Grid>
-                <Grid item>
+                </div>
+                <div>
                   <MappingSettings
                     id={`fieldMappingSettings-${mapping.index}`}
                     onSave={patchSettings}
@@ -194,9 +206,9 @@ export default function ImportMapping(props) {
                     extractFields={extractFields}
                     generateFields={generateFields}
                   />
-                </Grid>
-                <Grid item key="delete_button">
-                  <IconButton
+                </div>
+                <div key="delete_button">
+                  <ActionButton
                     data-test={`fieldMappingRemove-${mapping.index}`}
                     aria-label="delete"
                     disabled={
@@ -206,14 +218,14 @@ export default function ImportMapping(props) {
                       handleDelete(mapping.index);
                     }}
                     className={classes.margin}>
-                    <CloseIcon />
-                  </IconButton>
-                </Grid>
-              </Grid>
-            </Grid>
+                    <TrashIcon />
+                  </ActionButton>
+                </div>
+              </div>
+            </div>
           ))}
-        </Grid>
-      </Grid>
+        </div>
+      </div>
     </div>
   );
 }

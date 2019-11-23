@@ -1,7 +1,8 @@
-import { Dialog, DialogContent, DialogTitle, Button } from '@material-ui/core';
+import Button from '@material-ui/core/Button';
 import DynaForm from '../..';
 import DynaSubmit from '../../DynaSubmit';
 import { getCreateScriptMetadata } from './utils';
+import ModalDialog from '../../../ModalDialog';
 
 export default function CreateScriptDialog(props) {
   const { onClose, scriptId } = props;
@@ -10,18 +11,18 @@ export default function CreateScriptDialog(props) {
   const handleSubmit = values => onClose(true, values);
 
   return (
-    <Dialog open maxWidth={false}>
-      <DialogTitle>Create Script</DialogTitle>
-      <DialogContent style={{ width: '30vw' }}>
+    <ModalDialog show handleClose={onCancel}>
+      <div>Create Script</div>
+      <div>
         <DynaForm fieldMeta={metadata}>
-          <Button data-test="cancelScript" onClick={onCancel}>
-            Cancel
-          </Button>
           <DynaSubmit data-test="saveScript" onClick={handleSubmit}>
             Save
           </DynaSubmit>
+          <Button data-test="cancelScript" onClick={onCancel}>
+            Cancel
+          </Button>
         </DynaForm>
-      </DialogContent>
-    </Dialog>
+      </div>
+    </ModalDialog>
   );
 }
