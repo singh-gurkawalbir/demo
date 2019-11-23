@@ -23,7 +23,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function ActionButton({ className, children, ...props }) {
+export default function ActionButton({ className, children, ...props }) {
   const classes = useStyles();
 
   return (
@@ -32,5 +32,3 @@ function ActionButton({ className, children, ...props }) {
     </IconButton>
   );
 }
-
-export default ActionButton;

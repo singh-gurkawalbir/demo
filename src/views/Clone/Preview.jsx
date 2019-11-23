@@ -14,7 +14,6 @@ import getRoutePath from '../../utils/routePaths';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import Spinner from '../../components/Spinner';
 import Loader from '../../components/Loader';
-import infoText from '../../views/ResourceList/infoText';
 import CeligoPageBar from '../../components/CeligoPageBar';
 
 const useStyles = makeStyles(theme => ({
@@ -65,6 +64,8 @@ const useStyles = makeStyles(theme => ({
 
 export default function ClonePreview(props) {
   const classes = useStyles(props);
+  const cloningDescription = `
+  Cloning can be used to create a copy of a flow, export, import, orchestration, or an entire integration. Cloning is useful for testing changes without affecting your production integrations (i.e. when you clone something you can choose a different set of connection records). Cloning supports both sandbox and production environments.`;
   const { resourceType, resourceId } = props.match.params;
   const [requested, setRequested] = useState(false);
   const dispatch = useDispatch();
@@ -286,7 +287,7 @@ export default function ClonePreview(props) {
 
   return (
     <LoadResources resources={[resourceType, 'integrations']} required>
-      <CeligoPageBar title="Cloning" infoText={infoText.cloning} />
+      <CeligoPageBar title="Cloning" infoText={cloningDescription} />
       <Fragment>
         <Grid container>
           <Grid className={classes.componentPadding} item xs={12}>
