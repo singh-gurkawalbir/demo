@@ -303,7 +303,7 @@ export default {
       name: m,
     }));
   },
-  getFormattedGenerateData: (sampleData, application) => {
+  getFormattedGenerateData: (sampleData, application, { resource }) => {
     let formattedGenerateFields = [];
 
     if (sampleData) {
@@ -319,7 +319,10 @@ export default {
           id: d.value,
           name: d.label,
         }));
-      } else if (application === adaptorTypeMap.FTPImport) {
+      } else if (
+        application === adaptorTypeMap.FTPImport ||
+        resource.assistant
+      ) {
         const formattedSampleData =
           sampleData &&
           (Array.isArray(sampleData) ? sampleData : getJSONPaths(sampleData));

@@ -9,7 +9,15 @@ export default (
   },
   action
 ) => {
-  const { type, metadata, metadataError, connectionId, commMetaPath } = action;
+  const {
+    type,
+    metadata,
+    metadataError,
+    connectionId,
+    commMetaPath,
+    previewData,
+    resourceId,
+  } = action;
   const key = commMetaPath;
   let newState;
 
@@ -23,6 +31,18 @@ export default (
       };
 
       return { ...state, ...{ application: newState } };
+    }
+
+    case actionTypes.METADATA.ASSISTANT_PREVIEW_RECEIVED: {
+      newState = { ...state };
+
+      if (!newState.preview) {
+        newState.preview = {};
+      }
+
+      newState.preview[resourceId] = previewData;
+
+      return newState;
     }
 
     case actionTypes.METADATA.REFRESH: {
@@ -181,4 +201,12 @@ export function assistantData(state, { adaptorType, assistant }) {
   }
 
   return { ...state.assistants[adaptorType][assistant] };
+}
+
+export function assistantPreviewData(state, { resourceId }) {
+  if (!state || !state.preview) {
+    return null;
+  }
+
+  return { ...state.preview[resourceId] };
 }

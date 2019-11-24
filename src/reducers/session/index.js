@@ -291,4 +291,10 @@ export function assistantData(state, { adaptorType, assistant }) {
     assistant,
   });
 }
+
+export function assistantPreviewData(state, { resourceId }) {
+  return fromMetadata.assistantData(state && state.metadata, {
+    resourceId,
+  });
+}
 // #endregion
