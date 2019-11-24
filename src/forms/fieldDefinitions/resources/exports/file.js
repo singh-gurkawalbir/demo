@@ -8,10 +8,14 @@ export default {
     label: 'Sample File (that would be exported)',
     mode: r => r && r.file && r.file.type,
     required: r => isNewId(r && r._id),
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'file.type',
         is: ['csv', 'json', 'xlsx', 'xml'],
+      },
+      {
+        field: 'outputMode',
+        is: ['records'],
       },
     ],
   },
@@ -147,8 +151,8 @@ export default {
   'edix12.format': {
     type: 'filedefinitionselect',
     label: 'EDI X12 Format',
+    required: true,
     format: 'edi',
-    required: r => !r,
     visibleWhenAll: [
       {
         field: 'file.type',
@@ -160,8 +164,8 @@ export default {
   'fixed.format': {
     type: 'filedefinitionselect',
     label: 'Format',
+    required: true,
     format: 'fixed',
-    required: r => !r,
     visibleWhenAll: [
       {
         field: 'file.type',
@@ -173,8 +177,8 @@ export default {
   'edifact.format': {
     type: 'filedefinitionselect',
     label: 'EDIFACT Format',
+    required: true,
     format: 'ediFact',
-    required: r => !r,
     visibleWhenAll: [
       {
         field: 'file.type',
@@ -208,10 +212,14 @@ export default {
   'file.csv': {
     type: 'csvparse',
     label: 'Configure CSV parse options',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'file.type',
         is: ['csv'],
+      },
+      {
+        field: 'outputMode',
+        is: ['records'],
       },
     ],
   },

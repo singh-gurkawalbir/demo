@@ -1,6 +1,6 @@
-import React, { Fragment, useState, useEffect } from 'react';
+import React, { Fragment, useState, useEffect, useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography } from '@material-ui/core';
+import { Typography, IconButton } from '@material-ui/core';
 import clsx from 'clsx';
 import AddIcon from '../../../components/icons/AddIcon';
 import ActionIconButton from '../ActionIconButton';
@@ -9,6 +9,7 @@ import ResourceButton from '../ResourceButton';
 // import StatusCircle from '../../../components/StatusCircle';
 // import Status from '../../../components/Status/';
 import BubbleSvg from '../BubbleSvg';
+import CloseIcon from '../../../components/icons/CloseIcon';
 
 const blockHeight = 170;
 const blockWidth = 275;
@@ -80,6 +81,10 @@ const useStyles = makeStyles(theme => ({
   bubbleContainer: {
     position: 'relative',
     display: 'flex',
+    '&:hover > button': {
+      display: 'block',
+      color: 'unset',
+    },
   },
   bubble: {
     position: 'absolute',
@@ -114,10 +119,19 @@ const useStyles = makeStyles(theme => ({
       fontSize: '12px',
     },
   },
+  deleteButton: {
+    position: `absolute`,
+    right: -theme.spacing(0.5),
+    top: -theme.spacing(0.5),
+    zIndex: 1,
+    transition: theme.transitions.create('color'),
+    color: 'rgb(0,0,0,0)',
+  },
 }));
 
 function AppBlock({
   className,
+  onDelete,
   children,
   forwardedRef,
   onBlockClick,
@@ -133,6 +147,8 @@ function AppBlock({
   resource,
   integrationId,
   isViewMode,
+  pg,
+  index,
   ...rest
 }) {
   const classes = useStyles();
@@ -148,6 +164,8 @@ function AppBlock({
       return () => clearTimeout(timer);
     }
   }, [isOver, expanded]);
+
+  const handleDelete = useCallback(index => () => onDelete(index), [onDelete]);
 
   function handleExpandClick() {
     setExpanded(true);
@@ -187,6 +205,8 @@ function AppBlock({
           resource={resource}
           resourceIndex={resourceIndex}
           resourceType={resourceType}
+          pg={pg}
+          index={index}
           onClose={() => setActiveAction(null)}
         />
       </Fragment>
@@ -208,6 +228,14 @@ function AppBlock({
         className={clsx(classes.box, { [classes.draggable]: !isNew })}
         style={{ opacity }}>
         <div className={classes.bubbleContainer}>
+          {!isViewMode && (
+            <IconButton
+              size="small"
+              className={classes.deleteButton}
+              onClick={handleDelete(index)}>
+              <CloseIcon />
+            </IconButton>
+          )}
           <BubbleSvg
             height={blockHeight}
             width={blockWidth}

@@ -39,7 +39,7 @@ const flowBuilderRoutes = {
     { path: '/settings', breadcrumb: () => 'Settings' },
   ],
 };
-// These routes are shared for IAs with and without /store/ url segment.
+// These routes are shared for IAs with and without /child/ url segment.
 // to keep the code DRY, lets extract the common sub-set of routes.
 const integrationAppRoutes = [
   flowBuilderRoutes,
@@ -57,6 +57,7 @@ const integrationAppRoutes = [
       { path: '/subscription', breadcrumb: () => 'Subscription' },
       { path: '/uninstall', breadcrumb: () => 'Uninstall' },
       { path: '/notifications', breadcrumb: () => 'Notifications' },
+      { path: '/apitoken', breadcrumb: () => 'API tokens' },
     ],
   },
   {
@@ -108,7 +109,7 @@ const routes = [
     childRoutes: [
       ...integrationAppRoutes,
       {
-        path: '/store/:storeId',
+        path: '/child/:storeId',
         breadcrumb: StoreCrumb,
         childRoutes: integrationAppRoutes,
       },

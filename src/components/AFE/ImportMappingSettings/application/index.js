@@ -22,6 +22,9 @@ const getFormattedLookup = (lookup, formVal) => {
     lookupTmp.relativeURI = formVal._relativeURI;
     lookupTmp.extract = formVal._extract;
     lookupTmp.postBody = formVal._postBody;
+    lookupTmp.recordType = formVal.recordType;
+    lookupTmp.resultField = formVal.resultField;
+    lookupTmp.expression = formVal.lookupExpression;
   } else {
     lookupTmp.map = {};
     formVal._mapList.forEach(obj => {

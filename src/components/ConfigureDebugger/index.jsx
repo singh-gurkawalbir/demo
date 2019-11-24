@@ -1,11 +1,6 @@
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Radio from '@material-ui/core/Radio';
 import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import DialogContent from '@material-ui/core/DialogContent';
-import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
 import { Typography } from '@material-ui/core';
 import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
@@ -15,6 +10,7 @@ import moment from 'moment';
 import { useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../actions';
+import ModalDialog from '../ModalDialog';
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -71,18 +67,9 @@ export default function ConfigureDebugger(props) {
   }
 
   return (
-    <Dialog open maxWidth={false}>
-      <DialogTitle disableTypography>
-        <Typography variant="h6">{name}</Typography>
-        <IconButton
-          aria-label="Close"
-          data-test="closeConfigureDebugger"
-          className={classes.closeButton}
-          onClick={onClose}>
-          <CloseIcon />
-        </IconButton>
-      </DialogTitle>
-      <DialogContent className={classes.content}>
+    <ModalDialog show handleClose={onClose}>
+      <div>{name}</div>
+      <div>
         <form onSubmit={handleOnSubmit}>
           <FormControl component="fieldset">
             <FormLabel component="legend">Debug Duration:</FormLabel>
@@ -107,23 +94,21 @@ export default function ConfigureDebugger(props) {
             </RadioGroup>
           </FormControl>
           {minutes > 1 && (
-            <Typography>
+            <Typography variant="body2">
               Debug mode is enabled for next {minutes} minutes.
             </Typography>
           )}
-          <div>
-            <Button
-              data-test="saveDebuggerConfiguration"
-              variant="contained"
-              color="primary"
-              type="submit"
-              className={classes.submit}
-              value="Save">
-              {saveLabel}
-            </Button>
-          </div>
+          <Button
+            data-test="saveDebuggerConfiguration"
+            variant="contained"
+            color="primary"
+            type="submit"
+            className={classes.submit}
+            value="Save">
+            {saveLabel}
+          </Button>
         </form>
-      </DialogContent>
-    </Dialog>
+      </div>
+    </ModalDialog>
   );
 }

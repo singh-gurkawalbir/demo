@@ -1,17 +1,17 @@
 import { useSelector, useDispatch } from 'react-redux';
-import { makeStyles, IconButton, Button } from '@material-ui/core';
+import { makeStyles, Button } from '@material-ui/core';
 import clsx from 'clsx';
 import { Fragment } from 'react';
-import Close from '../icons/CloseIcon';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
 import DynaForm from '../DynaForm';
 import DynaSubmit from '../DynaForm/DynaSubmit';
+import { sanitizePatchSet } from '../../forms/utils';
 import {
   getMetadata,
   setValues,
   getScheduleStartMinute,
-  getPatchSet,
+  getScheduleVal,
 } from './util';
 
 const useStyles = makeStyles(theme => ({
@@ -27,49 +27,94 @@ const useStyles = makeStyles(theme => ({
 
 export default function FlowSchedule(props) {
   const dispatch = useDispatch();
-  const { onClose, className, disabled } = props;
-  let { flow } = props;
+  const { onClose, className, disabled, pg, index } = props;
+  const { flow } = props;
   const preferences = useSelector(state =>
     selectors.userProfilePreferencesProps(state)
   );
   const integration = useSelector(state =>
     selectors.resource(state, 'integrations', flow._integrationId)
   );
-  const scheduleStartMinute = getScheduleStartMinute(flow, preferences);
+  const exp = useSelector(state =>
+    selectors.resource(state, 'exports', pg && pg._exportId)
+  );
+  const exports = useSelector(
+    state => selectors.resourceList(state, { type: 'exports' }).resources
+  );
+  const flows = useSelector(
+    state => selectors.resourceList(state, { type: 'flows' }).resources
+  );
+  let resource = pg || flow;
+  const schedule = (pg && pg.schedule) || flow.schedule;
+  const scheduleStartMinute = getScheduleStartMinute(resource, preferences);
   const handleSubmit = formVal => {
-    const patchSet = getPatchSet(formVal, scheduleStartMinute);
+    const scheduleVal = getScheduleVal(formVal, scheduleStartMinute);
+    const patchSet = [
+      {
+        op: 'replace',
+        path:
+          pg && pg._exportId
+            ? `/pageGenerators/${index}/schedule`
+            : '/schedule',
+        value: scheduleVal,
+      },
+      {
+        op: 'replace',
+        path:
+          pg && pg._exportId
+            ? `/pageGenerators/${index}/_keepDeltaBehindFlowId`
+            : '/_keepDeltaBehindFlowId',
+        value:
+          formVal && formVal._keepDeltaBehindFlowId
+            ? formVal._keepDeltaBehindFlowId
+            : undefined,
+      },
+      {
+        op: 'replace',
+        path:
+          pg && pg._exportId
+            ? `/pageGenerators/${index}/_keepDeltaBehindExportId`
+            : '/_keepDeltaBehindExportId',
+        value:
+          pg && pg._exportId && formVal && formVal._keepDeltaBehindFlowId
+            ? formVal._keepDeltaBehindExportId
+            : undefined,
+      },
+    ];
+    const sanitized = sanitizePatchSet({ patchSet, flow });
 
-    dispatch(actions.resource.patchStaged(flow._id, patchSet, 'value'));
+    dispatch(actions.resource.patchStaged(flow._id, sanitized, 'value'));
     dispatch(actions.resource.commitStaged('flows', flow._id, 'value'));
-
     onClose();
   };
 
   const classes = useStyles();
 
-  flow = setValues(flow);
+  resource = setValues(resource, schedule);
 
-  if (flow && !flow.frequency) {
-    flow.frequency = '';
+  if (resource && !resource.frequency) {
+    resource.frequency = '';
   }
+
+  const fieldMeta = getMetadata({
+    resource,
+    integration,
+    preferences,
+    flow,
+    schedule,
+    exp,
+    exports,
+    pg,
+    flows,
+  });
 
   return (
     <Fragment>
-      <IconButton
-        data-test="closeFlowSchedule"
-        aria-label="Close"
-        className={classes.closeButton}
-        onClick={onClose}>
-        <Close />
-      </IconButton>
       <div className={clsx(classes.modalContent, className)}>
         <DynaForm
           disabled={disabled}
-          fieldMeta={getMetadata({
-            flow,
-            integration,
-            preferences,
-          })}>
+          fieldMeta={fieldMeta}
+          optionsHandler={fieldMeta.optionsHandler}>
           <DynaSubmit onClick={handleSubmit} color="primary">
             Save
           </DynaSubmit>

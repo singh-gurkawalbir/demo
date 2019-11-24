@@ -8,7 +8,7 @@ const useStyle = makeStyles(theme => ({
     width: '100%',
     overflowX: 'hidden',
     marginTop: -1,
-    padding: theme.spacing(3),
+    padding: theme.spacing(2),
   },
 }));
 

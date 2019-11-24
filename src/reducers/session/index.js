@@ -4,6 +4,7 @@ import filters, * as fromFilters from './filters';
 import editors, * as fromEditors from './editors';
 import metadata, * as fromMetadata from './metadata';
 import connectors, * as fromConnectors from './connectors';
+import connections, * as fromConnections from './connections';
 import resourceForm, * as fromResourceForm from './resourceForm';
 import agentAccessTokens, * as fromAgentAccessTokens from './agentAccessTokens';
 import stackSystemTokens, * as fromStackSystemTokens from './stackSystemTokens';
@@ -24,6 +25,7 @@ export default combineReducers({
   editors,
   metadata,
   connectors,
+  connections,
   connectionToken,
   resourceForm,
   agentAccessTokens,
@@ -281,6 +283,10 @@ export function createdResourceId(state, tempId) {
   return fromResource.createdResourceId(state && state.resource, tempId);
 }
 
+export function integratorLicenseActionMessage(state) {
+  return fromResource.integratorLicenseActionMessage(state && state.resource);
+}
+
 export function resourceReferences(state) {
   return fromResource.resourceReferences(state && state.resource);
 }
@@ -296,5 +302,9 @@ export function assistantPreviewData(state, { resourceId }) {
   return fromMetadata.assistantData(state && state.metadata, {
     resourceId,
   });
+}
+
+export function debugLogs(state) {
+  return fromConnections.debugLogs(state && state.connections);
 }
 // #endregion

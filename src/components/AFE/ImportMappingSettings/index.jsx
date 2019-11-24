@@ -1,22 +1,10 @@
 import React from 'react';
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  Button,
-  makeStyles,
-  Typography,
-} from '@material-ui/core';
+import Button from '@material-ui/core/Button';
 import DynaForm from '../../DynaForm';
 import DynaSubmit from '../../DynaForm/DynaSubmit';
 import ApplicationMappingSettings from './application';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
-
-const useStyles = makeStyles(() => ({
-  modalContent: {
-    width: '70vw',
-  },
-}));
+import ModalDialog from '../../ModalDialog';
 
 export default function ImportMappingSettings(props) {
   const {
@@ -31,8 +19,7 @@ export default function ImportMappingSettings(props) {
     options,
     disabled,
   } = props;
-  const { generate, extract } = value;
-  const classes = useStyles();
+  const { generate, extract, index } = value;
   const [enquesnackbar] = useEnqueueSnackbar();
   const fieldMeta = ApplicationMappingSettings.getMetaData({
     application,
@@ -79,17 +66,21 @@ export default function ImportMappingSettings(props) {
   };
 
   return (
-    <Dialog open maxWidth={false}>
-      <DialogTitle disableTypography>
-        <Typography variant="h6">{title}</Typography>
-      </DialogTitle>
-      <DialogContent className={classes.modalContent}>
+    <ModalDialog handleClose={onClose} show maxWidth="lg">
+      <div>{title}</div>
+      <div>
         <DynaForm
           disabled={disabled}
           fieldMeta={fieldMeta}
           optionsHandler={fieldMeta.optionsHandler}>
+          <DynaSubmit
+            disabled={disabled}
+            id={`fieldMappingSettingsSave-${index}`}
+            onClick={handleSubmit}>
+            Save
+          </DynaSubmit>
           <Button
-            data-test="cancelMappingSettings"
+            data-test={`fieldMappingSettingsCancel-${index}`}
             variant="text"
             color="primary"
             onClick={() => {
@@ -97,14 +88,8 @@ export default function ImportMappingSettings(props) {
             }}>
             Cancel
           </Button>
-          <DynaSubmit
-            disabled={disabled}
-            data-test="saveMappingSettings"
-            onClick={handleSubmit}>
-            Save
-          </DynaSubmit>
         </DynaForm>
-      </DialogContent>
-    </Dialog>
+      </div>
+    </ModalDialog>
   );
 }

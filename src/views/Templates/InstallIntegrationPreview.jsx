@@ -8,6 +8,7 @@ import CeligoTable from '../../components/CeligoTable';
 import { confirmDialog } from '../../components/ConfirmDialog';
 import templateUtil from '../../utils/template';
 import Spinner from '../../components/Spinner';
+import Loader from '../../components/Loader';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -42,8 +43,12 @@ const useStyles = makeStyles(theme => ({
     paddingBottom: '20px',
   },
   componentsTable: {
-    paddingTop: '20px',
-    borderTop: `solid 1px ${theme.palette.secondary.lightest}`,
+    padding: theme.spacing(2),
+    border: 'solid 1px',
+    borderColor: theme.palette.secondary.lightest,
+    background: theme.palette.background.paper,
+    marginBottom: theme.spacing(1),
+    borderRadius: theme.spacing(0.5),
   },
 }));
 
@@ -123,9 +128,12 @@ export default function TemplatePreview(props) {
                     />
                   )}
                   {!objects.length && (
-                    <Typography variant="h4">
-                      Loading Preview Components <Spinner />
-                    </Typography>
+                    <Loader>
+                      <Typography variant="h4">
+                        Loading Preview Components
+                      </Typography>
+                      <Spinner />
+                    </Loader>
                   )}
                   <div align="right" className={classes.installButton}>
                     <Button

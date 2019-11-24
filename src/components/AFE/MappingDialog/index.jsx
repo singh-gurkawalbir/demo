@@ -119,7 +119,7 @@ export default function MappingDialog(props) {
         </div>
         <div className={classes.toggleContainer}>
           <ToggleButton
-            data-test="toggleEditorSize"
+            data-test="toggleMappingEditorSize"
             className={classes.fullScreen}
             value="max"
             onClick={handleFullScreenClick}
@@ -141,13 +141,13 @@ export default function MappingDialog(props) {
       <DialogActions className={classes.actions}>
         <Button
           color="primary"
-          data-test="closeEditor"
+          data-test="saveImportMapping"
           onClick={() => handleSave()}>
           Save
         </Button>
         <Button
           variant="outlined"
-          data-test="saveEditor"
+          data-test="saveAndCloseImportMapping"
           color="primary"
           onClick={() => handleSave(true)}>
           Save and Close

@@ -24,7 +24,6 @@ export default (
   switch (type) {
     case actionTypes.METADATA.REQUEST: {
       newState = { ...state.application };
-
       newState[connectionId] = {
         ...newState[connectionId],
         [key]: { status: 'requested' },
@@ -66,9 +65,19 @@ export default (
     // the children and subsequently re-renders.
     case actionTypes.METADATA.RECEIVED: {
       newState = { ...state.application };
+      let changeIdentifier = 1;
+
+      if (
+        newState[connectionId] &&
+        newState[connectionId][key] &&
+        newState[connectionId][key].changeIdentifier
+      ) {
+        changeIdentifier = newState[connectionId][key].changeIdentifier + 1;
+      }
+
       newState[connectionId] = {
         ...newState[connectionId],
-        [key]: { status: 'received', data: metadata },
+        [key]: { status: 'received', data: metadata, changeIdentifier },
       };
 
       return { ...state, ...{ application: newState } };
@@ -126,7 +135,7 @@ export const optionsFromMetadata = ({
 }) => {
   const applicationResource = (state && state.application) || null;
   const path = commMetaPath;
-  const { status, data, errorMessage } =
+  const { status, data, errorMessage, changeIdentifier } =
     (applicationResource &&
       applicationResource[connectionId] &&
       applicationResource[connectionId][path]) ||
@@ -139,7 +148,7 @@ export const optionsFromMetadata = ({
   const metaFilter = metadataFilterMap[filterKey || 'default'];
   const transformedData = metaFilter(data);
 
-  return { data: transformedData, status, errorMessage };
+  return { data: transformedData, status, errorMessage, changeIdentifier };
 };
 
 export const optionsMapFromMetadata = (
