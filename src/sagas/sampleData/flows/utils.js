@@ -162,11 +162,12 @@ export function* requestSampleDataForExports({
   sampleDataStage,
 }) {
   const resourceType = 'exports';
-  const isPageGeneratorExport = yield call(isPageGenerator, {
+  const isPageGeneratorExport = yield select(
+    isPageGenerator,
     flowId,
     resourceId,
-    resourceType,
-  });
+    resourceType
+  );
 
   if (['flowInput', 'raw'].includes(sampleDataStage)) {
     if (isPageGeneratorExport) {
