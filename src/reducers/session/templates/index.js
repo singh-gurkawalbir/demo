@@ -24,6 +24,7 @@ export default function reducer(state = {}, action) {
   } = step;
   let currentStep;
   let bundleStep;
+  const connMap = {};
 
   return produce(state, draft => {
     // eslint-disable-next-line default-case
@@ -84,10 +85,23 @@ export default function reducer(state = {}, action) {
           if (status === 'completed') {
             currentStep.completed = true;
 
+            const { connectionMap = {} } = draft[templateId];
+
+            if (verifyBundleStep) {
+              const connectionIds = [];
+
+              Object.keys(connectionMap).forEach(key => {
+                if (connectionMap[key].type === verifyBundleStep) {
+                  connectionIds.push(connectionMap[key]._id);
+                  connMap[connectionMap[key]._id] = newConnectionId;
+                }
+              });
+            }
+
             if (newConnectionId) {
               draft[templateId].cMap = {
                 ...(draft[templateId].cMap || {}),
-                [_connectionId]: newConnectionId,
+                ...connMap,
               };
             } else if (stackId) {
               draft[templateId].stackId = stackId;

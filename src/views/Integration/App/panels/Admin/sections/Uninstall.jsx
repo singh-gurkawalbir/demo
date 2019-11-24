@@ -36,15 +36,33 @@ export default function UninstallSection({ storeId, integrationId }) {
   const dispatch = useDispatch();
   const history = useHistory();
   const match = useRouteMatch();
+  const integration =
+    useSelector(state =>
+      selectors.integrationAppSettings(state, integrationId)
+    ) || {};
   const uninstallSteps = useSelector(state =>
     selectors.integrationUninstallSteps(state, integrationId)
   );
 
   useEffect(() => {
     if (uninstallSteps && uninstallSteps.length) {
-      history.push(`${match.url}/uninstall/${storeId}`);
+      dispatch(actions.resource.request('integrations', integrationId));
+
+      if (integration.settings && integration.settings.supportsMultiStore) {
+        history.push(`/pg/connectors/${integrationId}/uninstall/${storeId}`);
+      } else {
+        history.push(`/pg/connectors/${integrationId}/uninstall`);
+      }
     }
-  }, [history, match.url, storeId, uninstallSteps]);
+  }, [
+    dispatch,
+    history,
+    integration.settings,
+    integrationId,
+    match.url,
+    storeId,
+    uninstallSteps,
+  ]);
 
   const initUninstall = () => {
     dispatch(

@@ -26,6 +26,8 @@ import jsonUtil from '../../utils/json';
 import { INSTALL_STEP_TYPES } from '../../utils/constants';
 import { SCOPES } from '../../sagas/resourceForm';
 import getRoutePath from '../../utils/routePaths';
+import Loader from '../Loader';
+import Spinner from '../Spinner';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -70,6 +72,7 @@ export default function InstallationWizard(props) {
     resource,
     handleSetupComplete,
   } = props;
+  const [installInProgress, setInstallInProgress] = useState(false);
   const [connection, setSelectedConnectionId] = useState(null);
   const [stackId, setShowStackDialog] = useState(null);
   const [isSetupComplete, setIsSetupComplete] = useState(false);
@@ -103,6 +106,8 @@ export default function InstallationWizard(props) {
   useEffect(() => {
     if (isSetupComplete) {
       // Send the gathered information to BE to create all components
+      setInstallInProgress(true);
+
       if (type === 'clone') {
         dispatch(actions.clone.createComponents(resourceType, resourceId));
       } else if (type === 'template') {
@@ -121,6 +126,7 @@ export default function InstallationWizard(props) {
   ]);
   useEffect(() => {
     if (createdComponents) {
+      setInstallInProgress(false);
       handleSetupComplete(createdComponents);
     }
   }, [createdComponents, handleSetupComplete]);
@@ -247,6 +253,15 @@ export default function InstallationWizard(props) {
   const handleStackClose = () => {
     setShowStackDialog(false);
   };
+
+  if (installInProgress) {
+    return (
+      <Loader open>
+        {type === 'clone' ? 'Cloning' : 'Installing'}
+        <Spinner />
+      </Loader>
+    );
+  }
 
   return (
     <LoadResources required resources="connections,integrations">
