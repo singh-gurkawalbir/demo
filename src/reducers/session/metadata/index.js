@@ -5,6 +5,7 @@ import metadataFilterMap from './metadataFilterMap';
 export default (
   state = {
     application: {},
+    preview: {},
     assistants: { rest: {}, http: {} },
   },
   action
@@ -33,15 +34,11 @@ export default (
     }
 
     case actionTypes.METADATA.ASSISTANT_PREVIEW_RECEIVED: {
-      newState = { ...state };
+      newState = { ...state.preview };
 
-      if (!newState.preview) {
-        newState.preview = {};
-      }
+      newState[resourceId] = previewData;
 
-      newState.preview[resourceId] = previewData;
-
-      return newState;
+      return { ...state, preview: newState };
     }
 
     case actionTypes.METADATA.REFRESH: {
@@ -212,10 +209,10 @@ export function assistantData(state, { adaptorType, assistant }) {
   return { ...state.assistants[adaptorType][assistant] };
 }
 
-export function assistantPreviewData(state, { resourceId }) {
+export function assistantPreviewData(state, resourceId) {
   if (!state || !state.preview) {
     return null;
   }
 
-  return { ...state.preview[resourceId] };
+  return state.preview[resourceId];
 }

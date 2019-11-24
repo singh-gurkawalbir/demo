@@ -2209,10 +2209,8 @@ export function assistantData(state, { adaptorType, assistant }) {
   });
 }
 
-export function assistantPreviewData(state, { resourceId }) {
-  return fromSession.assistantData(state && state.session, {
-    resourceId,
-  });
+export function assistantPreviewData(state, resourceId) {
+  return fromSession.assistantPreviewData(state && state.session, resourceId);
 }
 
 export function getAllConnectionIdsUsedInSelectedFlows(state, selectedFlows) {
@@ -2294,23 +2292,12 @@ export function getImportSampleData(state, resourceId) {
   else if (assistant) {
     if (resource.sampleData) {
       return resource.sampleData;
-    } else if (resource.previewConfig) {
-      const { sampleData } = assistantPreviewData({
-        state,
-        resourceId,
-      });
-
-      return sampleData;
-      // const assistantDatas = assistantData(state, {
-      //   adaptorType: resource.type,
-      //   assistant: resource.assistant,
-      // });
-      // const assistantConfig = convertFromImport(
-      //   resource,
-      //   assistantDatas,
-      //   resource.type
-      // );
     }
+
+    const sampleData = assistantPreviewData(state, resourceId);
+
+    return sampleData;
+
     // get assistants sample data
   } else if (adaptorType === 'NetSuiteDistributedImport') {
     // eslint-disable-next-line camelcase

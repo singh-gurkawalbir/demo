@@ -298,10 +298,8 @@ export function assistantData(state, { adaptorType, assistant }) {
   });
 }
 
-export function assistantPreviewData(state, { resourceId }) {
-  return fromMetadata.assistantData(state && state.metadata, {
-    resourceId,
-  });
+export function assistantPreviewData(state, resourceId) {
+  return fromMetadata.assistantPreviewData(state && state.metadata, resourceId);
 }
 
 export function debugLogs(state) {
