@@ -4,7 +4,9 @@ import {
   LinearProgress,
   Button,
   Snackbar,
+  Typography,
 } from '@material-ui/core';
+import { Fragment } from 'react';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
 import { COMM_STATES } from '../../reducers/comms';
@@ -32,6 +34,16 @@ const Dismiss = props =>
     </Button>
   );
 
+export const ErroredMessageList = ({ messages }) =>
+  messages
+    ? messages.map((msg, index) => (
+        <Fragment key={msg}>
+          <Typography color="error">{msg}</Typography>
+          {index > 0 && <br />}
+        </Fragment>
+      ))
+    : null;
+
 export default function NetworkSnackbar() {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -39,7 +51,7 @@ export default function NetworkSnackbar() {
     selectors.isAllLoadingCommsAboveThreshold(state)
   );
   const allLoadingOrErrored = useSelector(state =>
-    selectors.allLoadingOrErrored(state)
+    selectors.allLoadingOrErroredWithCorrectlyInferredErroredMessage(state)
   );
   const isLoadingAnyResource = useSelector(state =>
     selectors.isLoadingAnyResource(state)
@@ -55,7 +67,11 @@ export default function NetworkSnackbar() {
 
   const notification = r => {
     if (r.status === COMM_STATES.ERROR)
-      return <li key={r.name}>{`Error ${r.message}.`}</li>;
+      return (
+        <li key={r.name}>
+          {r.message && <ErroredMessageList messages={r.message} />}
+        </li>
+      );
 
     let msg = ` ${r.message}...`;
 
@@ -63,7 +79,11 @@ export default function NetworkSnackbar() {
       msg += ` Retry ${r.retryCount}`;
     }
 
-    return <li key={r.name}>{msg}</li>;
+    return (
+      <li key={r.name}>
+        <Typography>{msg}</Typography>
+      </li>
+    );
   };
 
   const msg = (
