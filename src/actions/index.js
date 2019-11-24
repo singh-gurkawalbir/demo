@@ -659,68 +659,39 @@ const importSampleData = {
 };
 const flowData = {
   init: flow => action(actionTypes.FLOW_DATA.INIT, { flow }),
-  requestPreviewData: (flowId, resourceId, previewType, isPageGenerator) =>
+  requestPreviewData: (flowId, resourceId, previewType) =>
     action(actionTypes.FLOW_DATA.PREVIEW_DATA_REQUEST, {
       flowId,
       resourceId,
       previewType,
-      isPageGenerator,
     }),
-  receivedPreviewData: (
-    flowId,
-    resourceId,
-    previewData,
-    previewType,
-    isPageGenerator
-  ) =>
+  receivedPreviewData: (flowId, resourceId, previewData, previewType) =>
     action(actionTypes.FLOW_DATA.PREVIEW_DATA_RECEIVED, {
       flowId,
       resourceId,
       previewData,
       previewType,
-      isPageGenerator,
     }),
-  requestProcessorData: (
-    flowId,
-    resourceId,
-    resourceType,
-    processor,
-    isPageGenerator
-  ) =>
+  requestProcessorData: (flowId, resourceId, resourceType, processor) =>
     action(actionTypes.FLOW_DATA.PROCESSOR_DATA_REQUEST, {
       flowId,
       resourceId,
       resourceType,
       processor,
-      isPageGenerator,
     }),
-  receivedProcessorData: (
-    flowId,
-    resourceId,
-    processor,
-    processedData,
-    isPageGenerator
-  ) =>
+  receivedProcessorData: (flowId, resourceId, processor, processedData) =>
     action(actionTypes.FLOW_DATA.PROCESSOR_DATA_RECEIVED, {
       flowId,
       resourceId,
       processor,
       processedData,
-      isPageGenerator,
     }),
-  requestSampleData: (
-    flowId,
-    resourceId,
-    resourceType,
-    stage,
-    isPageGenerator
-  ) =>
+  requestSampleData: (flowId, resourceId, resourceType, stage) =>
     action(actionTypes.FLOW_DATA.SAMPLE_DATA_REQUEST, {
       flowId,
       resourceId,
       resourceType,
       stage,
-      isPageGenerator,
     }),
   reset: (flowId, resourceId) =>
     action(actionTypes.FLOW_DATA.RESET, { flowId, resourceId }),

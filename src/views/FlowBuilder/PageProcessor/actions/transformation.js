@@ -16,7 +16,12 @@ function TransformationDialog({
   const dispatch = useDispatch();
   const resourceId = resource._id;
   const sampleData = useSelector(state =>
-    selectors.getSampleData(state, flowId, resourceId, 'transform')
+    selectors.getSampleData(state, {
+      flowId,
+      resourceId,
+      resourceType,
+      stage: 'transform',
+    })
   );
   const transformLookup =
     resourceType === 'exports' ? 'transform' : 'responseTransform';

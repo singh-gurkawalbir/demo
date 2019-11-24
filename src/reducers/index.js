@@ -276,22 +276,23 @@ export function processorRequestOptions(state, id) {
   return fromSession.processorRequestOptions(state.session, id);
 }
 
-export function getSampleData(state, flowId, resourceId, stage, options = {}) {
-  return fromSession.getSampleData(
-    state && state.session,
+export function getSampleData(
+  state,
+  { flowId, resourceId, resourceType, stage }
+) {
+  return fromSession.getSampleData(state && state.session, {
     flowId,
     resourceId,
+    resourceType,
     stage,
-    options
-  );
+  });
 }
 
-export function getFlowDataState(state, flowId, resourceId, isPageGenerator) {
+export function getFlowDataState(state, flowId, resourceId) {
   return fromSession.getFlowDataState(
     state && state.session,
     flowId,
-    resourceId,
-    isPageGenerator
+    resourceId
   );
 }
 

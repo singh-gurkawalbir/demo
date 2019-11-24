@@ -1,6 +1,11 @@
 import produce from 'immer';
 import actionTypes from '../../../../actions/types';
-import { getSampleDataStage, reset, compare } from '../../../../utils/flowData';
+import {
+  getSampleDataStage,
+  reset,
+  compare,
+  isPageGeneratorResource,
+} from '../../../../utils/flowData';
 
 export default function(state = {}, action) {
   const {
@@ -15,7 +20,6 @@ export default function(state = {}, action) {
     previewType,
     processor,
     processedData,
-    isPageGenerator,
   } = action;
 
   return produce(state, draft => {
@@ -36,7 +40,9 @@ export default function(state = {}, action) {
         if (!resourceId) return;
         const resourceMap =
           draft[flowId][
-            isPageGenerator ? 'pageGeneratorsMap' : 'pageProcessorsMap'
+            isPageGeneratorResource(draft[flowId], resourceId)
+              ? 'pageGeneratorsMap'
+              : 'pageProcessorsMap'
           ] || {};
         const stage = previewType || 'raw';
 
@@ -53,14 +59,11 @@ export default function(state = {}, action) {
 
       case actionTypes.FLOW_DATA.PREVIEW_DATA_RECEIVED: {
         if (!resourceId) return;
-
-        if (!draft[flowId]) {
-          draft[flowId] = {};
-        }
-
         const resourceMap =
           draft[flowId][
-            isPageGenerator ? 'pageGeneratorsMap' : 'pageProcessorsMap'
+            isPageGeneratorResource(draft[flowId], resourceId)
+              ? 'pageGeneratorsMap'
+              : 'pageProcessorsMap'
           ] || {};
         const stage = previewType || 'raw';
 
@@ -79,7 +82,9 @@ export default function(state = {}, action) {
       case actionTypes.FLOW_DATA.PROCESSOR_DATA_REQUEST: {
         const resourceMap =
           draft[flowId][
-            isPageGenerator ? 'pageGeneratorsMap' : 'pageProcessorsMap'
+            isPageGeneratorResource(draft[flowId], resourceId)
+              ? 'pageGeneratorsMap'
+              : 'pageProcessorsMap'
           ] || {};
 
         resourceMap[resourceId] = {
@@ -94,15 +99,12 @@ export default function(state = {}, action) {
 
       case actionTypes.FLOW_DATA.PROCESSOR_DATA_RECEIVED: {
         const { data: receivedData } = processedData || {};
-
-        if (!draft[flowId]) {
-          return;
-        }
-
         const resourceMap =
           (draft[flowId] &&
             draft[flowId][
-              isPageGenerator ? 'pageGeneratorsMap' : 'pageProcessorsMap'
+              isPageGeneratorResource(draft[flowId], resourceId)
+                ? 'pageGeneratorsMap'
+                : 'pageProcessorsMap'
             ]) ||
           {};
 
@@ -197,14 +199,14 @@ export default function(state = {}, action) {
   });
 }
 
-export function getFlowDataState(state, flowId, resourceId, isPageGenerator) {
+export function getFlowDataState(state, flowId, resourceId) {
   if (!state || !flowId) return;
   const flow = state[flowId];
 
   // Returns flow state
   if (!resourceId) return flow;
   // Returns PP/PG's state
-  const resourceMap = isPageGenerator
+  const resourceMap = isPageGeneratorResource(flow, resourceId)
     ? flow.pageGeneratorsMap
     : flow.pageProcessorsMap;
 
@@ -213,18 +215,14 @@ export function getFlowDataState(state, flowId, resourceId, isPageGenerator) {
 
 export function getSampleData(
   state,
-  flowId,
-  resourceId,
-  stage,
-  { isPageGenerator, isImport }
+  { flowId, resourceId, resourceType, stage }
 ) {
   // returns input data for that stage to populate
   const flow = state[flowId];
-  const resourceType = isImport ? 'imports' : 'exports';
   const sampleDataStage = getSampleDataStage(stage, resourceType);
 
   if (!flow || !sampleDataStage || !resourceId) return;
-  const resourceMap = isPageGenerator
+  const resourceMap = isPageGeneratorResource(flow, resourceId)
     ? flow.pageGeneratorsMap
     : flow.pageProcessorsMap;
 

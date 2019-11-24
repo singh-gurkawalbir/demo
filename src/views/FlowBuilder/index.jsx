@@ -241,9 +241,6 @@ function FlowBuilder(props) {
   const isViewMode = useSelector(state =>
     selectors.isFormAMonitorLevelAccess(state, integrationId)
   );
-  const flowData = useSelector(state =>
-    selectors.getFlowDataState(state, flowId)
-  );
   // #endregion
   const patchFlow = useCallback(
     (path, value) => {
@@ -319,12 +316,6 @@ function FlowBuilder(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [createdProcessorResourceType, createdProcessorId, patchFlow]);
   // #endregion
-
-  useEffect(() => {
-    if (!isNewFlow && !flowData && flow && flow._id) {
-      dispatch(actions.flowData.init(flow));
-    }
-  }, [dispatch, flow, flowData, isNewFlow]);
 
   const pushOrReplaceHistory = to => {
     if (match.isExact) {
