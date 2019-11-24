@@ -353,7 +353,10 @@ export default {
           fldContainer = mappings;
         }
 
-        const field = fldContainer.fields.find(l => l.generate === fld);
+        const field =
+          fldContainer &&
+          fldContainer.fields &&
+          fldContainer.fields.find(l => l.generate === fld);
 
         if (field) {
           field.isRequired = true;

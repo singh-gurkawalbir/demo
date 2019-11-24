@@ -3,38 +3,51 @@ import actionTypes from '../../../actions/types';
 import { resourceData, assistantData } from '../../../reducers';
 import { SCOPES } from '../../resourceForm';
 import { convertFromImport, convertToExport } from '../../../utils/assistant';
-import { getNetsuiteOrSalesforceMeta } from '../../resources/meta';
+import {
+  getNetsuiteOrSalesforceMeta,
+  requestAssistantMetadata,
+} from '../../resources/meta';
 import { apiCallWithRetry } from '../..';
 import actions from '../../../actions';
 
 function* fetchAssistantSampleData({ resource }) {
   // Fetch assistant's sample data logic
   let sampleDataWrapper;
+  let assistantMetadata;
   const previewPath = `/exports/preview`;
-  const assistantMetadata = yield select(assistantData, {
+
+  assistantMetadata = yield select(assistantData, {
     adaptorType: resource.adaptorType === 'HTTPImport' ? 'http' : 'rest',
     assistant: resource.assistant,
   });
+
+  if (!assistantMetadata) {
+    assistantMetadata = yield call(requestAssistantMetadata, {
+      adaptorType: resource.adaptorType === 'HTTPImport' ? 'http' : 'rest',
+      assistant: resource.assistant,
+    });
+  }
+
   const assistantConfig = convertFromImport({
     importDoc: resource,
     assistantData: assistantMetadata,
     adaptorType: resource.type,
   });
   const importEndpoint = assistantConfig.operationDetails;
-  let exportConfig;
+  const exportConfig = {};
 
-  if (importEndpoint) {
-    if (importEndpoint.sampleData) {
-      yield put(
-        actions.metadata.assistantImportPreview(
-          resource._id,
-          importEndpoint.sampleData
-        )
-      );
+  if (importEndpoint && importEndpoint.sampleData) {
+    yield put(
+      actions.metadata.assistantImportPreview(
+        resource._id,
+        importEndpoint.sampleData
+      )
+    );
 
-      return;
-    }
+    return;
+  }
 
+  if (importEndpoint && importEndpoint.previewConfig) {
     if (
       importEndpoint.howToFindIdentifier &&
       importEndpoint.howToFindIdentifier.lookupOperationDetails &&
