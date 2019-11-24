@@ -45,7 +45,6 @@ function* initFlowData({ flowId, resourceId, resourceType }) {
     const processorType = isPageGenerator ? 'pageGenerators' : 'pageProcessors';
 
     // creates a temp page processor / page generator on flow doc
-    // @TODO Raghu: Can we be sure that flow doc has pageGenerators: [] and pageProcessors: []? or need a fail safe condition
     // Sample Lookup on Flow Doc: { _id: 456, pageGenerators: [], pageProcessors: [{type: 'export', _exportId: 123}]}
     clonedFlow[processorType] = [
       ...(clonedFlow[processorType] || []),
