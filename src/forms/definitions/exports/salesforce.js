@@ -1,6 +1,21 @@
 import { isNewId } from '../../../utils/resource';
 
 export default {
+  optionsHandler: (fieldId, fields) => {
+    if (
+      [
+        'salesforce.distributed.requiredTrigger',
+        'salesforce.distributed.referencedFields',
+        'salesforce.distributed.relatedLists',
+      ].includes(fieldId)
+    ) {
+      const { value } = fields.find(
+        field => field.id === 'salesforce.distributed.sObjectType'
+      );
+
+      return value;
+    }
+  },
   preSave: formValues => {
     const retValues = { ...formValues };
 
@@ -163,17 +178,43 @@ export default {
       required: true,
       visibleWhen: [{ field: 'type', is: ['once'] }],
     },
-    'salesforce.sObjectType': { fieldId: 'salesforce.sObjectType' },
-    'salesforce.objectType': { fieldId: 'salesforce.objectType' },
+    'salesforce.distributed.sObjectType': {
+      connectionId: r => r._connectionId,
+      fieldId: 'salesforce.distributed.sObjectType',
+      type: 'salesforcesobjecttype',
+      filterKey: 'salesforce-sObjects-triggerable',
+      commMetaPath: r =>
+        `salesforce/metadata/connections/${r._connectionId}/sObjectTypes`,
+    },
     'salesforce.id': { fieldId: 'salesforce.id' },
     'salesforce.distributed.requiredTrigger': {
+      type: 'salesforcerequiredtrigger',
+      refreshOptionsOnChangesTo: ['salesforce.distributed.sObjectType'],
       fieldId: 'salesforce.distributed.requiredTrigger',
     },
     'salesforce.distributed.referencedFields': {
+      connectionId: r => r._connectionId,
+      refreshOptionsOnChangesTo: ['salesforce.distributed.sObjectType'],
+      type: 'salesforcereferencedfields',
       fieldId: 'salesforce.distributed.referencedFields',
+      disabledWhen: [
+        {
+          field: 'salesforce.distributed.sObjectType',
+          is: [''],
+        },
+      ],
     },
-    'salesforce.distributed.relatedLists.referencedFields': {
-      fieldId: 'salesforce.distributed.relatedLists.referencedFields',
+    'salesforce.distributed.relatedLists': {
+      type: 'salesforcerelatedlist',
+      connectionId: r => r._connectionId,
+      refreshOptionsOnChangesTo: ['salesforce.distributed.sObjectType'],
+      fieldId: 'salesforce.distributed.relatedLists',
+      disabledWhen: [
+        {
+          field: 'salesforce.distributed.sObjectType',
+          is: [''],
+        },
+      ],
     },
     'salesforce.distributed.qualifier': {
       fieldId: 'salesforce.distributed.qualifier',
@@ -190,17 +231,16 @@ export default {
       'exportOneToMany',
       'salesforce.executionType',
       'exportData',
-      'salesforce.sObjectType',
+      'salesforce.distributed.sObjectType',
       'salesforce.distributed.requiredTrigger',
       'salesforce.distributed.referencedFields',
-      'salesforce.distributed.relatedLists.referencedFields',
+      'salesforce.distributed.relatedLists',
       'salesforce.distributed.qualifier',
       'salesforce.soql',
       'type',
       'delta.dateField',
       'delta.lagOffset',
       'once.booleanField',
-      'salesforce.objectType',
       'salesforce.id',
     ],
     type: 'collapse',
