@@ -56,7 +56,6 @@ export default {
                 { label: 'String', value: 'string' },
                 { label: 'Number', value: 'number' },
                 { label: 'Boolean', value: 'boolean' },
-                { label: 'Date', value: 'date' },
                 { label: 'Number Array', value: 'numberarray' },
                 { label: 'String Array', value: 'stringarray' },
               ],
@@ -124,7 +123,7 @@ export default {
           name: 'recordType',
           filterKey: 'suitescript-recordTypes',
           commMetaPath: `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes`,
-          defaultValue: '',
+          defaultValue: lookup.recordType,
           type: 'refreshableselect',
           label: 'Search Record Type',
           connectionId,
@@ -135,7 +134,7 @@ export default {
         },
         'lookup.expression': {
           id: 'lookup.expression',
-          name: 'lookup.expression',
+          name: 'lookupExpression',
           type: 'netsuitelookupfilters',
           label: 'NS Filters',
           connectionId,
@@ -144,6 +143,7 @@ export default {
             { field: 'fieldMappingType', is: ['lookup'] },
             { field: 'lookup.mode', is: ['dynamic'] },
           ],
+          value: lookup.expression,
           data: extractFields,
         },
         'lookup.resultField': {
@@ -151,7 +151,15 @@ export default {
           name: 'resultField',
           type: 'refreshableselect',
           label: 'Value Field',
-          defaultValue: '',
+          defaultValue: lookup.resultField,
+          /** savedRecordType is not being used with the intension of passing prop to the component.
+           * But being used in reference to optionHandler.
+           * RecordType field is a refreshableselect component and onFieldChange event is triggered after network call success.
+           * When RecordType field is changed, we need to reset value of result field.
+           * savedRecordType helps in storing recordType and check is made in option handler if to reset the value or not
+           *
+           * * */
+          savedRecordType: lookup.recordType,
           connectionId,
           refreshOptionsOnChangesTo: ['lookup.recordType'],
           visibleWhenAll: [
@@ -163,15 +171,18 @@ export default {
           id: 'lookup.mapList',
           name: '_mapList',
           type: 'staticMap',
-          connectionId: fieldId.indexOf('.internalid') && connectionId,
-          selectField: fieldId
-            ? fieldId.substr(0, fieldId.indexOf('.internalid'))
-            : undefined,
+          valueLabel: 'Import Field (NetSuite)',
+          commMetaPath:
+            fieldId &&
+            `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${recordType}/selectFieldValues/${fieldId.substr(
+              0,
+              fieldId.indexOf('.internalid')
+            )}`,
+          connectionId: fieldId && connectionId,
           label: '',
           keyName: 'export',
           keyLabel: 'Export Field',
           valueName: 'import',
-          valueLabel: 'Import Field (Netsuite)',
           defaultValue:
             lookup.map &&
             Object.keys(lookup.map).map(key => ({
@@ -179,7 +190,6 @@ export default {
               import: lookup.map[key],
             })),
           map: lookup.map,
-          recordType,
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
             { field: 'lookup.mode', is: ['static'] },
@@ -405,17 +415,24 @@ export default {
             commMetaPath: recordTypeField
               ? `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${recordTypeField.value}/searchFilters?includeJoinFilters=true`
               : '',
-            resetValue: [],
           };
         } else if (fieldId === 'lookup.resultField') {
           const recordTypeField = fields.find(
             field => field.id === 'lookup.recordType'
           );
+          const recordType = recordTypeField.value;
+          const resultField = fields.find(
+            field => field.id === 'lookup.resultField'
+          );
+
+          if (resultField.savedRecordType !== recordType) {
+            resultField.savedRecordType = recordType;
+            resultField.value = '';
+          }
 
           return {
-            disableFetch: !(recordTypeField && recordTypeField.value),
+            disableFetch: !recordType,
             commMetaPath: `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${recordTypeField.value}/searchColumns`,
-            resetValue: [],
           };
         }
 
@@ -432,7 +449,6 @@ export default {
       delete fieldMeta.fieldMap.hardcodedAction;
       delete fieldMeta.fieldMap.hardcodedDefault;
       delete fieldMeta.fieldMap.hardcodedCheckbox;
-
       fields = fields.filter(
         el =>
           el !== 'hardcodedAction' &&
@@ -443,6 +459,8 @@ export default {
       delete fieldMeta.fieldMap.hardcodedAction;
       delete fieldMeta.fieldMap.hardcodedDefault;
       delete fieldMeta.fieldMap.hardcodedSelect;
+      delete fieldMeta.fieldMap['lookup.mapList'].commMetaPath;
+      delete fieldMeta.fieldMap['lookup.mapList'].connectionId;
 
       fields = fields.filter(
         el =>
@@ -453,6 +471,9 @@ export default {
     } else {
       delete fieldMeta.fieldMap.hardcodedSelect;
       delete fieldMeta.fieldMap.hardcodedCheckbox;
+      delete fieldMeta.fieldMap['lookup.mapList'].commMetaPath;
+      delete fieldMeta.fieldMap['lookup.mapList'].connectionId;
+
       fields = fields.filter(
         el => el !== 'hardcodedSelect' && el !== 'hardcodedCheckbox'
       );

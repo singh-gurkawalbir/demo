@@ -15,7 +15,7 @@ const useStyles = makeStyles(theme => ({
   },
   suggestionsContainerOpen: {
     position: 'absolute',
-    zIndex: 1,
+    zIndex: 2,
     left: 0,
     right: 0,
     maxHeight: 300,
@@ -38,6 +38,10 @@ const useStyles = makeStyles(theme => ({
     listStyleType: 'none',
     '& li': {
       borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
+      '& div': {
+        whiteSpace: 'normal',
+        wordBreak: 'break-all',
+      },
     },
   },
   divider: {

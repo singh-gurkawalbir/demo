@@ -54,6 +54,7 @@ module.exports.sections = [
           'src/components/StatusCircle/index.jsx',
           'src/components/StatusTag/index.jsx',
           'src/components/Loader/index.jsx',
+          'src/components/ActionButton/index.jsx',
         ],
       },
     ],

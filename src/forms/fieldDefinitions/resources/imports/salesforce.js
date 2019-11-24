@@ -344,7 +344,6 @@ export default {
   'salesforce.attachment.isPrivate': {
     type: 'checkbox',
     label: 'Is Private?',
-    required: true,
     visibleWhenAll: [
       {
         field: 'inputMode',
@@ -363,6 +362,7 @@ export default {
   'salesforce.blobsObjectType': {
     type: 'select',
     label: 'SObject Type',
+    defaultValue: r => r && r.salesforce && r.salesforce.sObjectType,
     visibleWhen: [
       {
         field: 'inputMode',
@@ -401,6 +401,7 @@ export default {
     type: 'radiogroup',
     label: 'Operation',
     required: true,
+    defaultValue: r => r && r.salesforce && r.salesforce.operation,
     options: [
       {
         items: [

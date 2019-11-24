@@ -19,6 +19,25 @@ export default {
       };
     }
 
+    if (fieldId === 'rdbms.existingDataId') {
+      const lookupField = fields.find(
+        field => field.fieldId === 'rdbms.lookups'
+      );
+      const nameField = fields.find(field => field.fieldId === 'name');
+
+      return {
+        resourceName: nameField && nameField.value,
+        lookups: {
+          fieldId: 'rdbms.lookups',
+          data:
+            (lookupField &&
+              Array.isArray(lookupField.value) &&
+              lookupField.value) ||
+            [],
+        },
+      };
+    }
+
     return null;
   },
 
@@ -47,7 +66,12 @@ export default {
       label: 'Ignore Missing Records',
       visibleWhen: [{ field: 'rdbms.queryType', is: ['UPDATE'] }],
     },
-    'rdbms.existingDataId': { fieldId: 'rdbms.existingDataId' },
+    'rdbms.existingDataId': {
+      fieldId: 'rdbms.existingDataId',
+      type: 'relativeuriwithlookup',
+      connectionId: r => r && r._connectionId,
+      refreshOptionsOnChangesTo: ['rdbms.lookups', 'name'],
+    },
     dataMappings: { formId: 'dataMappings' },
   },
   layout: {

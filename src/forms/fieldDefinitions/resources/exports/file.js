@@ -151,8 +151,8 @@ export default {
   'edix12.format': {
     type: 'filedefinitionselect',
     label: 'EDI X12 Format',
+    required: true,
     format: 'edi',
-    required: r => !r,
     visibleWhenAll: [
       {
         field: 'file.type',
@@ -164,8 +164,8 @@ export default {
   'fixed.format': {
     type: 'filedefinitionselect',
     label: 'Format',
+    required: true,
     format: 'fixed',
-    required: r => !r,
     visibleWhenAll: [
       {
         field: 'file.type',
@@ -177,8 +177,8 @@ export default {
   'edifact.format': {
     type: 'filedefinitionselect',
     label: 'EDIFACT Format',
+    required: true,
     format: 'ediFact',
-    required: r => !r,
     visibleWhenAll: [
       {
         field: 'file.type',
