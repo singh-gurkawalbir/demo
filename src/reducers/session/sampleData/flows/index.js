@@ -1,11 +1,7 @@
 import produce from 'immer';
 import actionTypes from '../../../../actions/types';
-import {
-  getSampleDataStage,
-  reset,
-  compare,
-  isPageGeneratorResource,
-} from '../../../../utils/flowData';
+import { getSampleDataStage, reset, compare } from '../../../../utils/flowData';
+import { isPageGeneratorResource } from '../../../../utils/flows';
 
 export default function(state = {}, action) {
   const {

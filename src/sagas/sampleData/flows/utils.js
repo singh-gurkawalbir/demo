@@ -1,5 +1,5 @@
 import { put, select, call } from 'redux-saga/effects';
-import { resourceData } from '../../../reducers';
+import { resourceData, isPageGenerator } from '../../../reducers';
 import { SCOPES } from '../../resourceForm';
 import actions from '../../../actions';
 import { getLastExportDateTime } from '../../../utils/flowData';
@@ -8,18 +8,6 @@ import {
   fetchPageGeneratorPreview,
   requestProcessorData,
 } from './';
-
-export function* isPageGeneratorResource({ flowId, resourceId }) {
-  const { merged: flow = {} } = yield select(
-    resourceData,
-    'flows',
-    flowId,
-    'value'
-  );
-  const { pageGenerators = [] } = flow;
-
-  return !!pageGenerators.find(pg => pg._exportId === resourceId);
-}
 
 export function* fetchFlowResources({ flow, type, eliminateDataProcessors }) {
   const resourceMap = {};
@@ -174,13 +162,14 @@ export function* requestSampleDataForExports({
   sampleDataStage,
 }) {
   const resourceType = 'exports';
-  const isPageGenerator = yield call(isPageGeneratorResource, {
+  const isPageGeneratorExport = yield call(isPageGenerator, {
     flowId,
     resourceId,
+    resourceType,
   });
 
   if (['flowInput', 'raw'].includes(sampleDataStage)) {
-    if (isPageGenerator) {
+    if (isPageGeneratorExport) {
       yield call(fetchPageGeneratorPreview, {
         flowId,
         _pageGeneratorId: resourceId,

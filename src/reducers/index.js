@@ -35,8 +35,10 @@ import {
   isRunnable,
   showScheduleIcon,
 } from './flowsUtil';
-import { getUsedActionsMapForResource } from '../utils/flows';
-import { isPageGeneratorResource } from '../utils/flowData';
+import {
+  getUsedActionsMapForResource,
+  isPageGeneratorResource,
+} from '../utils/flows';
 import { isValidResourceReference, isNewId } from '../utils/resource';
 import { processSampleData } from '../utils/sampleData';
 

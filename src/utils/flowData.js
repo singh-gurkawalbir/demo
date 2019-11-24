@@ -136,11 +136,3 @@ export const getFlowUpdatesFromPatch = (patchSet = []) => {
 // So patchSet would be [{path:'/rawData', value:{}}] or [{path:'/sampleData', value:{}}]
 export const isRawDataPatchSet = (patchSet = []) =>
   patchSet[0] && ['/rawData', '/sampleData'].includes(patchSet[0].path);
-
-// Given a flow doc and resourceId , returns true if it is a page generator
-// Returns falls if provided invalid flow doc
-export const isPageGeneratorResource = (flow = {}, resourceId) => {
-  const { pageGenerators = [] } = flow;
-
-  return !!pageGenerators.find(pg => pg._exportId === resourceId);
-};
