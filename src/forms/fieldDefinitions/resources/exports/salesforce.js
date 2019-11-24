@@ -17,6 +17,20 @@ export default {
       },
     ],
   },
+  'salesforce.distributed.sObjectType': {
+    label: 'SObject Type',
+    required: true,
+    visibleWhenAll: [
+      {
+        field: 'salesforce.executionType',
+        is: ['realtime'],
+      },
+      {
+        field: 'outputMode',
+        is: ['records'],
+      },
+    ],
+  },
   'salesforce.executionType': {
     type: 'radiogroup',
     required: true,
@@ -115,7 +129,7 @@ export default {
       },
     ],
   },
-  'salesforce.distributed.relatedLists.referencedFields': {
+  'salesforce.distributed.relatedLists': {
     type: 'text',
     delimiter: ',',
     label: 'Related Lists',

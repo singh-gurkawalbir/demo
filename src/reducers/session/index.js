@@ -209,22 +209,23 @@ export function getResourceSampleDataWithStatus(state, resourceId, stage) {
   );
 }
 
-export function getSampleData(state, flowId, resourceId, stage, options) {
-  return fromFlowData.getSampleData(
-    state && state.flowData,
+export function getSampleData(
+  state,
+  { flowId, resourceId, resourceType, stage }
+) {
+  return fromFlowData.getSampleData(state && state.flowData, {
     flowId,
     resourceId,
+    resourceType,
     stage,
-    options
-  );
+  });
 }
 
-export function getFlowDataState(state, flowId, resourceId, isPageGenerator) {
+export function getFlowDataState(state, flowId, resourceId) {
   return fromFlowData.getFlowDataState(
     state && state.flowData,
     flowId,
-    resourceId,
-    isPageGenerator
+    resourceId
   );
 }
 

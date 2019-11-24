@@ -10,8 +10,11 @@ function TransformationDialog({ flowId, resource, onClose, isViewMode }) {
   const dispatch = useDispatch();
   const resourceId = resource._id;
   const sampleData = useSelector(state =>
-    selectors.getSampleData(state, flowId, resourceId, 'transform', {
-      isPageGenerator: true,
+    selectors.getSampleData(state, {
+      flowId,
+      resourceId,
+      resourceType: 'exports',
+      stage: 'transform',
     })
   );
   const rules = useMemo(

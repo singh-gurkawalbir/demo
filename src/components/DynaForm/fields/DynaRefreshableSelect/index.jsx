@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
-import RefreshGenericResource from './RefreshGenericResource';
+import { DynaGenericSelect } from './RefreshGenericResource';
 
 /**
  *
@@ -53,7 +53,7 @@ export default function DynaSelectOptionsGenerator(props) {
   };
 
   return (
-    <RefreshGenericResource
+    <DynaGenericSelect
       resourceToFetch={options.commMetaPath || commMetaPath}
       resetValue={options.resetValue}
       handleFetchResource={handleFetchResource}
