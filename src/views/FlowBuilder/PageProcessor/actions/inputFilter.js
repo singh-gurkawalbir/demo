@@ -15,8 +15,11 @@ function InputFilterDialog({
   const dispatch = useDispatch();
   const resourceId = resource._id;
   const sampleData = useSelector(state =>
-    selectors.getSampleData(state, flowId, resourceId, 'inputFilter', {
-      isImport: resourceType === 'imports',
+    selectors.getSampleData(state, {
+      flowId,
+      resourceId,
+      resourceType,
+      stage: 'inputFilter',
     })
   );
   const rules = useMemo(

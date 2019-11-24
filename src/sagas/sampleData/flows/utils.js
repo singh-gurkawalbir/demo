@@ -1,5 +1,5 @@
 import { put, select, call } from 'redux-saga/effects';
-import { resourceData } from '../../../reducers';
+import { resourceData, isPageGenerator } from '../../../reducers';
 import { SCOPES } from '../../resourceForm';
 import actions from '../../../actions';
 import { getLastExportDateTime } from '../../../utils/flowData';
@@ -55,24 +55,13 @@ export function* refreshResourceData({ flowId, resourceId, resourceType }) {
   // Incase of exports, stage is transform so that it updates raw and transform stage
   // Incase of imports, we refresh raw data
   const stageToUpdate = resourceType === 'exports' ? 'transform' : 'raw';
-  let isPageGenerator = false;
-
-  if (resourceType !== 'imports') {
-    // find resource in pageGenerators list for the flow. If exists , then make isPageGenerator as true
-    const { merged: flow = {} } = yield select(resourceData, 'flows', flowId);
-    const { pageGenerators = [] } = flow;
-    const resource = pageGenerators.find(pg => pg._exportId === resourceId);
-
-    if (resource) isPageGenerator = true;
-  }
 
   yield put(
     actions.flowData.requestProcessorData(
       flowId,
       resourceId,
       resourceType,
-      stageToUpdate,
-      isPageGenerator
+      stageToUpdate
     )
   );
 }
@@ -171,12 +160,16 @@ export function* requestSampleDataForExports({
   flowId,
   resourceId,
   sampleDataStage,
-  isPageGenerator,
 }) {
   const resourceType = 'exports';
+  const isPageGeneratorExport = yield call(isPageGenerator, {
+    flowId,
+    resourceId,
+    resourceType,
+  });
 
   if (['flowInput', 'raw'].includes(sampleDataStage)) {
-    if (isPageGenerator) {
+    if (isPageGeneratorExport) {
       yield call(fetchPageGeneratorPreview, {
         flowId,
         _pageGeneratorId: resourceId,
@@ -194,7 +187,6 @@ export function* requestSampleDataForExports({
       resourceId,
       resourceType,
       processor: sampleDataStage,
-      isPageGenerator,
     });
   }
 }
@@ -204,15 +196,13 @@ export function* updateStateForProcessorData({
   resourceId,
   stage,
   processedData,
-  isPageGenerator,
 }) {
   yield put(
     actions.flowData.receivedProcessorData(
       flowId,
       resourceId,
       stage,
-      processedData,
-      isPageGenerator
+      processedData
     )
   );
 }

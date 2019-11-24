@@ -35,8 +35,11 @@ import {
   isRunnable,
   showScheduleIcon,
 } from './flowsUtil';
-import { getUsedActionsMapForResource } from '../utils/flows';
-import { isValidResourceReference } from '../utils/resource';
+import {
+  getUsedActionsMapForResource,
+  isPageGeneratorResource,
+} from '../utils/flows';
+import { isValidResourceReference, isNewId } from '../utils/resource';
 import { processSampleData } from '../utils/sampleData';
 
 const combinedReducers = combineReducers({
@@ -276,22 +279,23 @@ export function processorRequestOptions(state, id) {
   return fromSession.processorRequestOptions(state.session, id);
 }
 
-export function getSampleData(state, flowId, resourceId, stage, options = {}) {
-  return fromSession.getSampleData(
-    state && state.session,
+export function getSampleData(
+  state,
+  { flowId, resourceId, resourceType, stage }
+) {
+  return fromSession.getSampleData(state && state.session, {
     flowId,
     resourceId,
+    resourceType,
     stage,
-    options
-  );
+  });
 }
 
-export function getFlowDataState(state, flowId, resourceId, isPageGenerator) {
+export function getFlowDataState(state, flowId, resourceId) {
   return fromSession.getFlowDataState(
     state && state.session,
     flowId,
-    resourceId,
-    isPageGenerator
+    resourceId
   );
 }
 
@@ -2367,6 +2371,27 @@ export function getFlowReferencesForResource(state, resourceId, resourceType) {
   });
 
   return flowRefs;
+}
+
+/*
+ * Given flowId, resourceId determines whether resource is a pg/pp
+ */
+export function isPageGenerator(state, flowId, resourceId, resourceType) {
+  // If imports , straight forward not a pg
+  if (resourceType === 'imports') return false;
+
+  // Incase of new resource (export/lookup), flow doc does not have this resource yet
+  // So, get staged resource and determine export/lookup based on isLookup flag
+  if (isNewId(resourceId)) {
+    const { merged: resource } = resourceData(state, 'exports', resourceId);
+
+    return !resource.isLookup;
+  }
+
+  // Search in flow doc to determine pg/pp
+  const { merged: flow } = resourceData(state, 'flows', flowId, 'value');
+
+  return isPageGeneratorResource(flow, resourceId);
 }
 
 export function getUsedActionsForResource(

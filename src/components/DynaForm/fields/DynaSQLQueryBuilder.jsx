@@ -62,13 +62,19 @@ export default function DynaSQLQueryBuilder(props) {
   });
   const { sampleDataLoaded, extractFieldsLoaded, changeIdentifier } = dataState;
   const sampleData = useSelector(state =>
-    selectors.getSampleData(state, flowId, resourceId, 'flowInput', {
-      isImport: resourceType === 'imports',
+    selectors.getSampleData(state, {
+      flowId,
+      resourceId,
+      resourceType,
+      stage: 'flowInput',
     })
   );
   const extractFields = useSelector(state =>
-    selectors.getSampleData(state, flowId, resourceId, 'importMappingExtract', {
-      isImport: true,
+    selectors.getSampleData(state, {
+      flowId,
+      resourceId,
+      resourceType,
+      stage: 'importMappingExtract',
     })
   );
 
