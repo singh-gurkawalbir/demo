@@ -41,14 +41,19 @@ export default function DynaHttpRequestBody(props) {
   const connection = useSelector(state =>
     selectors.resource(state, 'connections', connectionId)
   );
-  const sampleData = useSelector(state =>
-    selectors.getSampleData(state, {
-      flowId,
-      resourceId,
-      resourceType,
-      stage: 'flowInput',
-    })
+  const isPageGenerator = useSelector(state =>
+    selectors.isPageGenerator(state, flowId, resourceId, resourceType)
   );
+  const sampleData = useSelector(state => {
+    if (!isPageGenerator) {
+      return selectors.getSampleData(state, {
+        flowId,
+        resourceId,
+        resourceType,
+        stage: 'flowInput',
+      });
+    }
+  });
   // constructing data
   const formattedSampleData = JSON.stringify(
     getFormattedSampleData({
@@ -66,7 +71,7 @@ export default function DynaHttpRequestBody(props) {
     // Request for sample data only incase of flow context
     // TODO : @Raghu Do we show default data in stand alone context?
     // What type of sample data is expected in case of Page generators
-    if (flowId && !sampleData) {
+    if (flowId && !sampleData && !isPageGenerator) {
       dispatch(
         actions.flowData.requestSampleData(
           flowId,
@@ -76,7 +81,7 @@ export default function DynaHttpRequestBody(props) {
         )
       );
     }
-  }, [dispatch, flowId, resourceId, resourceType, sampleData]);
+  }, [dispatch, flowId, isPageGenerator, resourceId, resourceType, sampleData]);
 
   const handleClose = (shouldCommit, editorValues) => {
     if (shouldCommit) {
