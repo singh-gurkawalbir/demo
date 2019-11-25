@@ -111,10 +111,10 @@ export default function IntegratorAppUninstalleer(props) {
     ? (integration.stores.find(s => s.value === storeId) || {}).label
     : undefined;
   const handleStepClick = step => {
-    const { uninstallURL, uninstallerFunction } = step;
+    const { installURL, uninstallerFunction } = step;
 
     // handle connection step click
-    if (uninstallURL) {
+    if (installURL) {
       if (!step.isTriggered) {
         dispatch(
           actions.integrationApp.uninstaller.updateStep(
@@ -123,7 +123,7 @@ export default function IntegratorAppUninstalleer(props) {
             'inProgress'
           )
         );
-        openExternalUrl({ url: uninstallURL });
+        openExternalUrl({ url: installURL });
       } else {
         if (step.verifying) {
           return false;
