@@ -28,6 +28,8 @@ function* fetchAssistantSampleData({ resource }) {
     });
   }
 
+  // TODO: (Sravan) move this preview config logic to assistants Util.
+
   const assistantConfig = convertFromImport({
     importDoc: resource,
     assistantData: assistantMetadata,

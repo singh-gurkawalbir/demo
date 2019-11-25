@@ -2311,10 +2311,7 @@ export function getImportSampleData(state, resourceId) {
       return resource.sampleData;
     }
 
-    const sampleData = assistantPreviewData(state, resourceId);
-
-    return sampleData;
-
+    return assistantPreviewData(state, resourceId);
     // get assistants sample data
   } else if (adaptorType === 'NetSuiteDistributedImport') {
     // eslint-disable-next-line camelcase

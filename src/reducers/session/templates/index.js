@@ -88,11 +88,8 @@ export default function reducer(state = {}, action) {
             const { connectionMap = {} } = draft[templateId];
 
             if (verifyBundleStep) {
-              const connectionIds = [];
-
               Object.keys(connectionMap).forEach(key => {
                 if (connectionMap[key].type === verifyBundleStep) {
-                  connectionIds.push(connectionMap[key]._id);
                   connMap[connectionMap[key]._id] = newConnectionId;
                 }
               });
