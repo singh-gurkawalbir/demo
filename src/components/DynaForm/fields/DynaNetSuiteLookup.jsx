@@ -83,7 +83,7 @@ export default function DynaNetSuiteLookup(props) {
   }
 
   useEffect(() => {
-    if (!extractFields) {
+    if (flowId && !extractFields) {
       dispatch(
         actions.flowData.requestSampleData(
           flowId,
