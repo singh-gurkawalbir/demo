@@ -1,3 +1,4 @@
+import deepClone from 'lodash/cloneDeep';
 import { adaptorTypeMap } from '../resource';
 import mappingUtil from '.';
 import NetsuiteMapping from './application/netsuite';
@@ -154,18 +155,21 @@ export default {
       default:
     }
 
-    if (!mappings.fields) {
-      mappings.fields = [];
+    // creating deep copy of mapping object to avoid alteration to resource mapping object
+    const mappingCopy = deepClone(mappings);
+
+    if (!mappingCopy.fields) {
+      mappingCopy.fields = [];
     }
 
-    if (!mappings.lists) {
-      mappings.lists = [];
+    if (!mappingCopy.lists) {
+      mappingCopy.lists = [];
     }
 
-    if (getRawMappings) return mappings;
+    if (getRawMappings) return mappingCopy;
 
     return mappingUtil.getMappingsForApp({
-      mappings,
+      mappings: mappingCopy,
       appType,
       options,
     });
