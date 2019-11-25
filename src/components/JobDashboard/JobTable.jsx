@@ -128,7 +128,7 @@ function JobTable({
             <TableCell>Actions</TableCell>
           </TableRow>
         </TableHead>
-        <TableBody>
+        <TableBody data-test={`${integrationName}Dashboard`}>
           {jobsInCurrentPage.map(job => (
             <JobDetail
               key={job._id}

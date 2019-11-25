@@ -132,6 +132,7 @@ export default function FlowCard({ flowId, excludeActions }) {
           <div>
             <Link to={flowBuilderTo}>
               <Typography
+                data-test={flowName}
                 color="primary"
                 variant="h4"
                 className={classes.flowLink}>
@@ -146,6 +147,7 @@ export default function FlowCard({ flowId, excludeActions }) {
         </Grid>
         <Grid container item xs={3} justify="flex-end" alignItems="center">
           <OnOffSwitch
+            data-test={`toggleOnAndOffFlow${flowName}`}
             disabled={disableCard}
             on={!disableCard && !disabled}
             onClick={handleActionClick('disable')}
@@ -154,6 +156,7 @@ export default function FlowCard({ flowId, excludeActions }) {
           <IconButton
             disabled={!flowDetails.isRunnable}
             size="small"
+            data-test={`runFlow${flowName}`}
             onClick={handleActionClick('run')}>
             <RunIcon />
           </IconButton>
@@ -163,6 +166,7 @@ export default function FlowCard({ flowId, excludeActions }) {
               size="small"
               disabled={!flowDetails.hasSettings}
               component={Link}
+              data-test={`flowSettings${flowName}`}
               to={`${history.location.pathname}/${flowId}/settings`}>
               <SettingsIcon />
             </IconButton>

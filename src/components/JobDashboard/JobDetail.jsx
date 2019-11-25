@@ -202,7 +202,7 @@ function JobDetail({
             </li>
           </ul>
         </TableCell>
-        <TableCell>{job.name}</TableCell>
+        <TableCell data-test={job.name}>{job.name}</TableCell>
         <TableCell>
           <JobStatus job={job} />
         </TableCell>

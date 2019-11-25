@@ -77,7 +77,10 @@ function FlowList({ integrationId, storeId }) {
 
       <PanelHeader title={`${section.title} flows`}>
         {hasAdvancedSettings && (
-          <IconTextButton component={Link} to={`${sectionId}/configure`}>
+          <IconTextButton
+            data-test={`configure${section.title}`}
+            component={Link}
+            to={`${sectionId}/configure`}>
             <SettingsIcon /> Configure {section.title}
           </IconTextButton>
         )}
