@@ -44,6 +44,7 @@ export default {
 
     if (retValues['/outputMode'] === 'blob') {
       retValues['/type'] = 'blob';
+      retValues['/http/method'] = retValues['/http/blobMethod'];
     }
 
     delete retValues['/outputMode'];
@@ -172,6 +173,7 @@ export default {
       },
     },
     'http.method': { fieldId: 'http.method' },
+    'http.blobMethod': { fieldId: 'http.blobMethod' },
     'http.headers': { fieldId: 'http.headers' },
     'http.relativeURI': { fieldId: 'http.relativeURI' },
     'http.body': { fieldId: 'http.body' },
@@ -254,6 +256,7 @@ export default {
     'http.paging.lastPagePath': { fieldId: 'http.paging.lastPagePath' },
     'http.paging.lastPageValues': { fieldId: 'http.paging.lastPageValues' },
     'http.response.blobFormat': { fieldId: 'http.response.blobFormat' },
+    skipRetries: { fieldId: 'skipRetries' },
     advancedSettings: {
       formId: 'advancedSettings',
       visibleWhenAll: [
@@ -284,6 +287,7 @@ export default {
       'exportOneToMany',
       'exportData',
       'http.method',
+      'http.blobMethod',
       'http.headers',
       'http.relativeURI',
       'http.body',
@@ -330,6 +334,7 @@ export default {
         label: 'Advanced',
         fields: [
           'advancedSettings',
+          'skipRetries',
           'configureAsyncHelper',
           'http._asyncHelperId',
         ],

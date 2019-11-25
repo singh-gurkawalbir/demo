@@ -44,6 +44,7 @@ export default {
 
     if (retValues['/outputMode'] === 'blob') {
       retValues['/type'] = 'blob';
+      retValues['/rest/method'] = retValues['/rest/blobMethod'];
     }
 
     delete retValues['/outputMode'];
@@ -160,6 +161,9 @@ export default {
     'rest.method': {
       fieldId: 'rest.method',
     },
+    'rest.blobMethod': {
+      fieldId: 'rest.blobMethod',
+    },
     'rest.headers': { fieldId: 'rest.headers' },
     'rest.relativeURI': { fieldId: 'rest.relativeURI' },
     'rest.postBody': {
@@ -252,6 +256,7 @@ export default {
       'exportOneToMany',
       'exportData',
       'rest.method',
+      'rest.blobMethod',
       'rest.headers',
       'rest.relativeURI',
       'rest.postBody',
