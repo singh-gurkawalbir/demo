@@ -261,6 +261,10 @@ export function getFilterList(jsonPaths, rules) {
     iterate(rules);
   }
 
+  if (jsonPaths.length === 0) {
+    jsonPaths.push({ id: 'sampleField', name: 'sampleField' });
+  }
+
   return jsonPaths;
 }
 
