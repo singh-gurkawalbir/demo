@@ -270,7 +270,7 @@ export default function JobActionsMenu({
       });
     } else if (action === 'viewRetries') {
       setShowRetriesDialog(true);
-    } else if (action === 'editFlow') {
+    } else if (['editFlow', 'viewFlow'].includes(action)) {
       history.push(
         getRoutePath(
           `/integrations/${job._integrationId || 'none'}/flowBuilder/${
