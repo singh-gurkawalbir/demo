@@ -303,7 +303,7 @@ export default {
       name: m,
     }));
   },
-  getFormattedGenerateData: (sampleData, application) => {
+  getFormattedGenerateData: (sampleData, application, { resource }) => {
     let formattedGenerateFields = [];
 
     if (sampleData) {
@@ -320,7 +320,10 @@ export default {
           name: d.label,
           type: d.type,
         }));
-      } else if (application === adaptorTypeMap.FTPImport) {
+      } else if (
+        application === adaptorTypeMap.FTPImport ||
+        resource.assistant
+      ) {
         const formattedSampleData =
           sampleData &&
           (Array.isArray(sampleData) ? sampleData : getJSONPaths(sampleData));
@@ -350,7 +353,10 @@ export default {
           fldContainer = mappings;
         }
 
-        const field = fldContainer.fields.find(l => l.generate === fld);
+        const field =
+          fldContainer &&
+          fldContainer.fields &&
+          fldContainer.fields.find(l => l.generate === fld);
 
         if (field) {
           field.isRequired = true;
