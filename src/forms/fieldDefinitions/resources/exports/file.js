@@ -158,10 +158,7 @@ export default {
         field: 'file.type',
         is: ['filedefinition'],
       },
-      {
-        field: 'outputMode',
-        is: ['records'],
-      },
+      { field: 'file.output', is: ['records'] },
     ],
   },
   'fixed.format': {
@@ -174,10 +171,7 @@ export default {
         field: 'file.type',
         is: ['fixed'],
       },
-      {
-        field: 'outputMode',
-        is: ['records'],
-      },
+      { field: 'file.output', is: ['records'] },
     ],
   },
   'edifact.format': {
@@ -190,10 +184,7 @@ export default {
         field: 'file.type',
         is: ['delimited/edifact'],
       },
-      {
-        field: 'outputMode',
-        is: ['records'],
-      },
+      { field: 'file.output', is: ['records'] },
     ],
   },
   'file.filedefinition.rules': {
@@ -204,10 +195,7 @@ export default {
         field: 'file.type',
         is: ['filedefinition', 'fixed', 'delimited/edifact'],
       },
-      {
-        field: 'outputMode',
-        is: ['records'],
-      },
+      { field: 'file.output', is: ['records'] },
     ],
     refreshOptionsOnChangesTo: [
       'edix12.format',
