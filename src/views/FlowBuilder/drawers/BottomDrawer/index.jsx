@@ -57,6 +57,9 @@ const useStyles = makeStyles(theme => ({
   noScroll: {
     overflowY: 'hidden',
   },
+  customTab: {
+    maxWidth: 500,
+  },
 }));
 
 function TabPanel({ children, value, index, classes }) {
@@ -158,6 +161,7 @@ export default function BottomDrawer({ size, setSize, flow }) {
               (connectionId, cIndex) =>
                 connectionDebugLogs[connectionId] && (
                   <Tab
+                    className={classes.customTab}
                     {...tabProps(cIndex + 3)}
                     icon={<DebugIcon />}
                     key={connectionId}
