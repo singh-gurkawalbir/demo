@@ -54,7 +54,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function FlowCard({ flowId, excludeActions }) {
+export default function FlowCard({ flowId, excludeActions, storeId }) {
   const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
@@ -77,9 +77,24 @@ export default function FlowCard({ flowId, excludeActions }) {
           defaultConfirmDialog(
             `${flowDetails.disabled ? 'enable' : 'disable'} ${flowName}?`,
             () => {
-              patchFlow('/disabled', !flowDetails.disabled);
+              if (flowDetails._connectorId) {
+                dispatch(
+                  actions.integrationApp.settings.update(
+                    flowDetails._integrationId,
+                    flowDetails._id,
+                    storeId,
+                    {
+                      '/flowId': flowDetails._id,
+                      '/disabled': !flowDetails.disabled,
+                    }
+                  )
+                );
+              } else {
+                patchFlow('/disabled', !flowDetails.disabled);
+              }
             }
           );
+
           break;
 
         case 'run':
@@ -95,12 +110,15 @@ export default function FlowCard({ flowId, excludeActions }) {
     },
     [
       dispatch,
+      flowDetails._connectorId,
+      flowDetails._id,
       flowDetails._integrationId,
       flowDetails.disabled,
       flowId,
       flowName,
       history,
       patchFlow,
+      storeId,
     ]
   );
   const { name, description, lastModified, disabled } = flowDetails;
