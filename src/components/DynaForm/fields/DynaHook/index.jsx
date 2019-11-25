@@ -5,14 +5,7 @@ import actions from '../../../../actions';
 import Hook from './Hook';
 
 export default function DynaHook(props) {
-  const {
-    flowId,
-    resourceType,
-    resourceId,
-    hookStage,
-    disabled,
-    isPageGenerator,
-  } = props;
+  const { flowId, resourceType, resourceId, hookStage, disabled } = props;
   const dispatch = useDispatch();
   const [isPreHookDataRequested, setIsPreHookDataRequested] = useState(false);
   const requestForPreHookData = () => {
@@ -29,8 +22,7 @@ export default function DynaHook(props) {
           flowId,
           resourceId,
           resourceType,
-          stage,
-          isPageGenerator
+          stage
         );
       }
 
@@ -42,7 +34,7 @@ export default function DynaHook(props) {
         hookStage
       );
     },
-    [hookStage, isPageGenerator]
+    [hookStage]
   );
   // Selector to get sample data for different hook types
   const getSampleDataSelector = ({ state, flowId, resourceId, stage }) => {
@@ -62,13 +54,12 @@ export default function DynaHook(props) {
     }
 
     // Fetch corresponding data for specific hookStage ('preSavePage',  'preMap', 'postMap', 'postSubmit')
-    const sampleData = selectors.getSampleData(
-      state,
+    const sampleData = selectors.getSampleData(state, {
       flowId,
       resourceId,
-      resourceType === 'exports' ? stage : hookStage,
-      { isPageGenerator, isImport: resourceType === 'imports' }
-    );
+      resourceType,
+      stage: resourceType === 'exports' ? stage : hookStage,
+    });
 
     if (sampleData) {
       return { errors: [], data: [sampleData] };

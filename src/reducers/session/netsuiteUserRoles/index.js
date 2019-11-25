@@ -39,7 +39,7 @@ export default (state = {}, action) => {
   }
 };
 
-function sortElements(a, b) {
+export function sortElements(a, b) {
   if (!a || !b || !a.label || !b.label) return 0;
 
   return a.label.localeCompare(b.label);

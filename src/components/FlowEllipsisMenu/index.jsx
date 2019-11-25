@@ -143,6 +143,7 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
   availableActions.push(allActions.schedule);
   availableActions.push(allActions.audit);
   availableActions.push(allActions.references);
+  availableActions.push(allActions.clone);
   availableActions.push(allActions.download);
   availableActions.push(allActions.delete);
 

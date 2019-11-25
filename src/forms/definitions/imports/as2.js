@@ -39,6 +39,11 @@ export default {
       defaultValue: 'filedefinition',
       visible: false,
     },
+    'file.skipAggregation': {
+      fieldId: 'file.skipAggregation',
+      defaultValue: 'true',
+      visible: false,
+    },
     'edix12.format': {
       fieldId: 'edix12.format',
       label: 'EDI Format',
@@ -61,6 +66,7 @@ export default {
       'importData',
       'distributed',
       'file.type',
+      'file.skipAggregation',
       'edix12.format',
       'as2.fileNameTemplate',
       'as2.messageIdTemplate',
@@ -78,4 +84,13 @@ export default {
       },
     ],
   },
+  actions: [
+    {
+      id: 'cancel',
+    },
+    {
+      // Button that saves file defs and then submit resource
+      id: 'savedefinition',
+    },
+  ],
 };

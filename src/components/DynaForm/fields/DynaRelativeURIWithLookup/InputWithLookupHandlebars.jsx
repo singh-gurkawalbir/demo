@@ -82,6 +82,7 @@ export default function InputWithLookupHandlebars(props) {
     lookups,
     required,
     value,
+    connectionType,
   } = props;
   const classes = useStyles();
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -96,10 +97,18 @@ export default function InputWithLookupHandlebars(props) {
     const lastIndexOfBracesBeforeCursor = tmpStr.lastIndexOf('{');
 
     if (lookup) {
+      let lookupHandlebarExp = '';
+
+      if (connectionType === 'http') {
+        lookupHandlebarExp = `{lookup "${lookup.name}" this}`;
+      } else {
+        lookupHandlebarExp = `{${lookup.name}}`;
+      }
+
       const newValue = `${userInput.substring(
         0,
         lastIndexOfBracesBeforeCursor + 1
-      )}{lookup "${lookup.name}" this}}}`;
+      )}${lookupHandlebarExp}}}`;
 
       setState({ ...state, userInput: newValue });
       onFieldChange(id, newValue);

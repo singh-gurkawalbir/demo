@@ -64,8 +64,11 @@ export default function DynaNetSuiteLookup(props) {
   };
 
   const extractFields = useSelector(state =>
-    selectors.getSampleData(state, flowId, resourceId, 'importMappingExtract', {
-      isImport: true,
+    selectors.getSampleData(state, {
+      flowId,
+      resourceId,
+      resourceType: 'imports',
+      stage: 'importMappingExtract',
     })
   );
   let formattedExtractFields = [];

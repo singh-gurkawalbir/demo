@@ -40,6 +40,7 @@ export default function DynaRelativeURIWithLookup(props) {
     useSampleDataAsArray,
     resourceType,
     flowId,
+    arrayIndex,
   } = props;
   const { resourceName, lookups } = options;
   const { fieldId: lookupFieldId, data: lookupData } = lookups || {};
@@ -48,8 +49,11 @@ export default function DynaRelativeURIWithLookup(props) {
   );
   const dispatch = useDispatch();
   const sampleData = useSelector(state =>
-    selectors.getSampleData(state, flowId, resourceId, 'flowInput', {
-      isImport: resourceType === 'imports',
+    selectors.getSampleData(state, {
+      flowId,
+      resourceId,
+      resourceType,
+      stage: 'flowInput',
     })
   );
   const formattedSampleData = JSON.stringify(
@@ -88,18 +92,27 @@ export default function DynaRelativeURIWithLookup(props) {
     onFieldChange(lookupFieldId, lookups);
   };
 
+  const handleFieldChange = (_id, val) => {
+    if (typeof arrayIndex === 'number' && Array.isArray(value)) {
+      // save to array at position arrayIndex
+      const valueTmp = value;
+
+      valueTmp[arrayIndex] = val;
+      onFieldChange(id, valueTmp);
+    } else {
+      // save to field
+      onFieldChange(id, val);
+    }
+  };
+
   const handleClose = (shouldCommit, editorValues) => {
     const { template } = editorValues;
 
     if (shouldCommit) {
-      onFieldChange(id, template);
+      handleFieldChange(id, template);
     }
 
     handleEditorClick();
-  };
-
-  const handleFieldChange = (_id, val) => {
-    onFieldChange(id, val);
   };
 
   let description = '';
@@ -109,7 +122,10 @@ export default function DynaRelativeURIWithLookup(props) {
     description = `Relative to: ${connection[type].baseURI}`;
   }
 
-  // console.log('id, resourceName', id, resourceName);
+  const extactedVal =
+    options && typeof arrayIndex === 'number' && Array.isArray(value)
+      ? value[arrayIndex]
+      : value;
 
   return (
     <Fragment>
@@ -118,7 +134,7 @@ export default function DynaRelativeURIWithLookup(props) {
           title="Relative URI Editor"
           id={id}
           data={formattedSampleData}
-          rule={value}
+          rule={extactedVal}
           lookups={lookupData}
           onClose={handleClose}
         />
@@ -143,7 +159,8 @@ export default function DynaRelativeURIWithLookup(props) {
         lookups={lookupData}
         onLookupUpdate={handleLookupUpdate}
         required={required}
-        value={value}
+        value={extactedVal}
+        connectionType={connection.type}
       />
     </Fragment>
   );

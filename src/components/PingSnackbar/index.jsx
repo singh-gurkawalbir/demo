@@ -14,6 +14,7 @@ import WarningIcon from '@material-ui/icons/Warning';
 import { withStyles } from '@material-ui/core/styles';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import { COMM_STATES } from '../../reducers/comms';
+import { ErroredMessageList } from '../NetworkSnackbar';
 
 const variantIcon = {
   success: CheckCircleIcon,
@@ -117,19 +118,7 @@ class PingSnackbar extends React.Component {
     if (commState === COMM_STATES.LOADING)
       return <CancellableSpinner onHandleCancel={onHandleCancel} />;
     else if (commState === COMM_STATES.ERROR) {
-      const errors = messages && messages.match(/"message":"(.*?)"/g);
-
-      if (!errors) {
-        return messages;
-      }
-
-      return (
-        <ul>
-          {errors.map(msg => (
-            <li key={msg}>{msg}</li>
-          ))}
-        </ul>
-      );
+      return <ErroredMessageList messages={messages} />;
     } else if (commState === COMM_STATES.SUCCESS) {
       return messages;
     }

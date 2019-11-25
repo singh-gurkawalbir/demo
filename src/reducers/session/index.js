@@ -209,22 +209,23 @@ export function getResourceSampleDataWithStatus(state, resourceId, stage) {
   );
 }
 
-export function getSampleData(state, flowId, resourceId, stage, options) {
-  return fromFlowData.getSampleData(
-    state && state.flowData,
+export function getSampleData(
+  state,
+  { flowId, resourceId, resourceType, stage }
+) {
+  return fromFlowData.getSampleData(state && state.flowData, {
     flowId,
     resourceId,
+    resourceType,
     stage,
-    options
-  );
+  });
 }
 
-export function getFlowDataState(state, flowId, resourceId, isPageGenerator) {
+export function getFlowDataState(state, flowId, resourceId) {
   return fromFlowData.getFlowDataState(
     state && state.flowData,
     flowId,
-    resourceId,
-    isPageGenerator
+    resourceId
   );
 }
 
@@ -283,6 +284,10 @@ export function createdResourceId(state, tempId) {
   return fromResource.createdResourceId(state && state.resource, tempId);
 }
 
+export function integratorLicenseActionMessage(state) {
+  return fromResource.integratorLicenseActionMessage(state && state.resource);
+}
+
 export function resourceReferences(state) {
   return fromResource.resourceReferences(state && state.resource);
 }
@@ -292,6 +297,10 @@ export function assistantData(state, { adaptorType, assistant }) {
     adaptorType,
     assistant,
   });
+}
+
+export function assistantPreviewData(state, resourceId) {
+  return fromMetadata.assistantPreviewData(state && state.metadata, resourceId);
 }
 
 export function debugLogs(state) {

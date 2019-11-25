@@ -15,6 +15,7 @@ const useStyles = makeStyles({
   },
 });
 
+// TODO(Aditya): remove this component and use DynaRelativeURIWithLookup after refractor
 export default function DynaRelativeUri(props) {
   const [showEditor, setShowEditor] = useState(false);
   const classes = useStyles();
@@ -40,6 +41,9 @@ export default function DynaRelativeUri(props) {
   const connection = useSelector(state =>
     selectors.resource(state, 'connections', connectionId)
   );
+  const isPageGenerator = useSelector(state =>
+    selectors.isPageGenerator(state, flowId, resourceId, resourceType)
+  );
   const handleEditorClick = () => {
     setShowEditor(!showEditor);
   };
@@ -55,11 +59,16 @@ export default function DynaRelativeUri(props) {
     handleEditorClick();
   };
 
-  const sampleData = useSelector(state =>
-    selectors.getSampleData(state, flowId, resourceId, 'flowInput', {
-      isImport: resourceType === 'imports',
-    })
-  );
+  const sampleData = useSelector(state => {
+    if (!isPageGenerator) {
+      return selectors.getSampleData(state, {
+        flowId,
+        resourceId,
+        resourceType,
+        stage: 'flowInput',
+      });
+    }
+  });
   const formattedSampleData = JSON.stringify(
     getFormattedSampleData({
       connection,
@@ -76,7 +85,7 @@ export default function DynaRelativeUri(props) {
     // Request for sample data only incase of flow context
     // TODO : @Raghu Do we show default data in stand alone context?
     // What type of sample data is expected in case of Page generators
-    if (flowId && !sampleData) {
+    if (flowId && !sampleData && !isPageGenerator) {
       dispatch(
         actions.flowData.requestSampleData(
           flowId,
@@ -86,7 +95,7 @@ export default function DynaRelativeUri(props) {
         )
       );
     }
-  }, [dispatch, flowId, resourceId, resourceType, sampleData]);
+  }, [dispatch, flowId, isPageGenerator, resourceId, resourceType, sampleData]);
 
   const handleFieldChange = event => {
     const { value } = event.target;

@@ -217,7 +217,7 @@ const connectors = [
   },
   { id: 'coupa', name: 'Coupa', type: 'rest', assistant: 'coupa' },
   { id: 'dcl', name: 'Dcl', type: 'http', assistant: 'dcl' },
-  { id: 'desk', name: 'Desk', type: 'rest', assistant: 'desk' },
+  // { id: 'desk', name: 'Desk', type: 'rest', assistant: 'desk' },
   // { id: 'dnb', name: 'dnb', type: 'http', assistant: 'dnb' },
   { id: 'docusign', name: 'DocuSign', type: 'rest', assistant: 'docusign' },
   // {
@@ -620,12 +620,12 @@ const connectors = [
     assistant: 'spreecommerce',
   },
   { id: 'squareup', name: 'Square', type: 'rest', assistant: 'squareup' },
-  {
-    id: 'steelbrick',
-    name: 'Steelbrick',
-    type: 'http',
-    assistant: 'steelbrick',
-  },
+  // {
+  //   id: 'steelbrick',
+  //   name: 'Steelbrick',
+  //   type: 'http',
+  //   assistant: 'steelbrick',
+  // },
   { id: 'strata', name: 'Strata', type: 'rest', assistant: 'strata' },
   {
     id: 'stripe',

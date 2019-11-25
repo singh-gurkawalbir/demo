@@ -38,7 +38,6 @@ function HooksDialog({ flowId, isViewMode, resource, open, onClose }) {
         flowId={flowId}
         resourceId={resourceId}
         resourceType={resourceType}
-        isPageGenerator
       />
     </ModalDialog>
   );

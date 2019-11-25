@@ -115,16 +115,14 @@ export default function ResponseMappingDialog(props) {
   const valueName = 'generate';
   const classes = useStyles();
   const dispatch = useDispatch();
+  const resourceId = resource._id;
   const extractFields = useSelector(state =>
-    selectors.getSampleData(
-      state,
+    selectors.getSampleData(state, {
       flowId,
-      resource._id,
-      'responseMappingExtract',
-      {
-        isImport: resourceType === 'imports',
-      }
-    )
+      resourceId,
+      stage: 'responseMappingExtract',
+      resourceType: 'imports',
+    })
   );
 
   useEffect(() => {
@@ -132,13 +130,13 @@ export default function ResponseMappingDialog(props) {
       dispatch(
         actions.flowData.requestSampleData(
           flowId,
-          resource._id,
+          resourceId,
           resourceType,
           'responseMappingExtract'
         )
       );
     }
-  }, [dispatch, extractFields, flowId, resource._id, resourceType]);
+  }, [dispatch, extractFields, flowId, resourceId, resourceType]);
 
   const defaultExtractFields = mappingUtil.getResponseMappingDefaultExtracts(
     resourceType
