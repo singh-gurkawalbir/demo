@@ -14,14 +14,12 @@ export function* pageProcessorPreview({
   resourceType = 'exports',
   hidden = false,
 }) {
-  if (!flowId || !_pageProcessorId)
-    throw new Error(' No flowId or _pageProcessorId');
+  if (!flowId || !_pageProcessorId) return;
   const { merged } = yield select(resourceData, 'flows', flowId, SCOPES.VALUE);
   const flow = deepClone(merged);
 
   // Incase of no pgs, preview call is stopped here
-  if (!flow.pageGenerators || !flow.pageGenerators.length)
-    throw new Error(' No Page generators to execute preview call');
+  if (!flow.pageGenerators || !flow.pageGenerators.length) return;
   // Incase of first new pp, pageProcessors does not exist on flow doc. So add default [] for pps
   flow.pageProcessors = flow.pageProcessors || [];
   const pageGeneratorMap = yield call(fetchFlowResources, {
