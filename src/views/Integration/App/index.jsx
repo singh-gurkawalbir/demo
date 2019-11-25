@@ -208,6 +208,7 @@ export default function IntegrationApp({ match, history }) {
             </IconTextButton>
             <Select
               displayEmpty
+              data-test={`select${storeLabel}`}
               className={classes.storeSelect}
               onChange={handleStoreChange}
               value="">

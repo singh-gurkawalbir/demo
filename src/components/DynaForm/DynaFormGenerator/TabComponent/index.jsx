@@ -48,6 +48,7 @@ export default function TabComponent(props) {
             classes={{ wrapper: classes.MuiTabWrapper }}
             label={label}
             key={label}
+            data-test={label}
           />
         ))}
       </Tabs>
