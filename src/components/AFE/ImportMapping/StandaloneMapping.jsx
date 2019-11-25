@@ -189,8 +189,7 @@ export default function StandaloneMapping(props) {
 
   const formattedGenerateFields = mappingUtil.getFormattedGenerateData(
     importSampleData,
-    application,
-    { resource: resourceData }
+    application
   );
 
   return (

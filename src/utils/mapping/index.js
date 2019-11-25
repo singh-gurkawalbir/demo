@@ -313,7 +313,7 @@ export default {
       name: m,
     }));
   },
-  getFormattedGenerateData: (sampleData, application, { resource }) => {
+  getFormattedGenerateData: (sampleData, application) => {
     let formattedGenerateFields = [];
 
     if (sampleData) {
@@ -330,19 +330,16 @@ export default {
           name: d.label,
           type: d.type,
         }));
-      } else if (
-        application === adaptorTypeMap.FTPImport ||
-        resource.assistant
-      ) {
-        const formattedSampleData = Array.isArray(sampleData)
-          ? sampleData
-          : getJSONPaths(sampleData);
+      } else {
+        let formattedSampleData = {};
 
-        formattedGenerateFields =
-          formattedSampleData &&
-          formattedSampleData.map(sd => ({ ...sd, name: sd.id }));
-      } else if (typeof sampleData === 'string' && isJsonString(sampleData)) {
-        const formattedSampleData = getJSONPaths(JSON.parse(sampleData));
+        if (typeof sampleData === 'string' && isJsonString(sampleData)) {
+          formattedSampleData = getJSONPaths(JSON.parse(sampleData));
+        } else if (typeof sampleData === 'object') {
+          formattedSampleData = Array.isArray(sampleData)
+            ? sampleData
+            : getJSONPaths(sampleData);
+        }
 
         formattedGenerateFields =
           formattedSampleData &&
