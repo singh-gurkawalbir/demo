@@ -135,7 +135,8 @@ export default {
 
     switch (appType) {
       case adaptorTypeMap.NetSuiteDistributedImport:
-        mappings = resourceObj.netsuite_da && resourceObj.netsuite_da.mapping;
+        mappings = (resourceObj.netsuite_da &&
+          resourceObj.netsuite_da.mapping) || { fields: [], lists: [] };
         break;
       case adaptorTypeMap.RESTImport:
       case adaptorTypeMap.AS2Import:
@@ -144,7 +145,7 @@ export default {
       case adaptorTypeMap.HTTPImport:
       case adaptorTypeMap.WrapperImport:
       case adaptorTypeMap.S3Import:
-        mappings = resourceObj.mapping;
+        mappings = resourceObj.mapping || { fields: [], lists: [] };
         break;
       case adaptorTypeMap.XMLImport:
       case adaptorTypeMap.MongodbImport:
@@ -343,9 +344,17 @@ export default {
         let fldContainer;
 
         if (fld.indexOf('[*].') > 0) {
-          fldContainer = mappings.lists.find(
-            l => l.generate === fld.split('[*].')[0]
-          );
+          fldContainer =
+            mappings.lists &&
+            mappings.lists.find(l => l.generate === fld.split('[*].')[0]);
+
+          if (!fldContainer) {
+            fldContainer = {
+              fields: [],
+              generate: fld.split('[*].')[0],
+            };
+            mappings.lists.push(fldContainer);
+          }
 
           // eslint-disable-next-line prefer-destructuring
           fld = fld.split('[*].')[1];
@@ -353,14 +362,20 @@ export default {
           fldContainer = mappings;
         }
 
-        const field =
+        let field =
           fldContainer &&
           fldContainer.fields &&
           fldContainer.fields.find(l => l.generate === fld);
 
-        if (field) {
-          field.isRequired = true;
+        if (!field) {
+          field = {
+            extract: '',
+            generate: fld,
+          };
+          fldContainer.fields.push(field);
         }
+
+        field.isRequired = true;
       });
     }
 
@@ -377,9 +392,9 @@ export default {
       let mappingContainer;
 
       if (meta.generateList) {
-        mappingContainer = mappings.lists.find(
-          list => list.generate === meta.generateList
-        );
+        mappingContainer =
+          mappings.lists &&
+          mappings.lists.find(list => list.generate === meta.generateList);
       } else {
         mappingContainer = mappings;
       }
