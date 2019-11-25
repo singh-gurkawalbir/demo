@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import ImportMapping from './index';
 import * as ResourceUtil from '../../../utils/resource';
@@ -11,6 +11,12 @@ import getJSONPaths from '../../../utils/jsonPaths';
 
 export default function StandaloneMapping(props) {
   const { id, flowId, resourceId, disabled } = props;
+  const [assistantLoaded, setAssistantLoaded] = useState(false);
+  const [
+    integrationAppMetadataLoaded,
+    setIntegrationAppMetadataLoaded,
+  ] = useState(false);
+  const [changeIdentifier, setChangeIdentifier] = useState(0);
   const resourceData = useSelector(state =>
     selectors.resource(state, 'imports', resourceId)
   );
@@ -131,6 +137,11 @@ export default function StandaloneMapping(props) {
   const mappingOptions = {};
 
   if (isAssistant && assistantData) {
+    if (!assistantLoaded) {
+      setAssistantLoaded(true);
+      setChangeIdentifier(changeIdentifier + 1);
+    }
+
     const { assistantMetadata } = resourceData;
     const { operation, resource, version } = assistantMetadata;
     const { requiredMappings } = getImportOperationDetails({
@@ -144,6 +155,11 @@ export default function StandaloneMapping(props) {
       requiredMappings,
     };
   } else if (isIntegrationApp && integrationAppMappingMetadata) {
+    if (!integrationAppMetadataLoaded) {
+      setIntegrationAppMetadataLoaded(true);
+      setChangeIdentifier(changeIdentifier + 1);
+    }
+
     mappingOptions.integrationApp = {
       mappingMetadata: integrationAppMappingMetadata,
       connectorExternalId: resourceData.externalId,
@@ -179,6 +195,7 @@ export default function StandaloneMapping(props) {
 
   return (
     <ImportMapping
+      key={changeIdentifier}
       editorId={id}
       disabled={disabled}
       extractFields={formattedExtractFields}
