@@ -73,6 +73,7 @@ export default {
     },
     'netsuite_da.internalIdLookup.expression': {
       fieldId: 'netsuite_da.internalIdLookup.expression',
+      refreshOptionsOnChangesTo: ['netsuite_da.recordType'],
     },
     deleteAfterImport: {
       fieldId: 'deleteAfterImport',
