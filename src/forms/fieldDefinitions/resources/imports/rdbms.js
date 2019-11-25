@@ -20,11 +20,7 @@ export default {
       }
 
       if (r.rdbms.queryType) {
-        if (
-          r.rdbms.queryType.length > 1 ||
-          r.ignoreMissing ||
-          r.ignoreExisting
-        ) {
+        if (r.rdbms.queryType.length > 1) {
           toReturn = 'COMPOSITE';
         } else if (r.rdbms.queryType && r.rdbms.queryType.length === 1) {
           [toReturn] = r.rdbms.queryType;
@@ -77,7 +73,11 @@ export default {
     type: 'text',
     label: 'Existing Data Id',
     required: true,
-    visibleWhen: [
+    visibleWhenAll: [
+      {
+        field: 'rdbms.queryType',
+        is: ['INSERT'],
+      },
       {
         field: 'ignoreExisting',
         is: [true],
@@ -88,10 +88,10 @@ export default {
     type: 'text',
     label: 'Existing Data Id',
     required: true,
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'rdbms.queryType',
-        is: ['COMPOSITE'],
+        is: ['COMPOSITE', 'UPDATE'],
       },
       {
         field: 'ignoreMissing',

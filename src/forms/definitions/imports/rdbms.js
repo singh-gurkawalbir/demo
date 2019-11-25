@@ -17,16 +17,11 @@ export default {
     } else if (retValues['/rdbms/queryType'] === 'INSERT') {
       retValues['/rdbms/query'] = [retValues['/rdbms/query']];
       retValues['/rdbms/queryType'] = [retValues['/rdbms/queryType']];
-      retValues['/rdbms/updateLookupName'] = undefined;
-      retValues['/rdbms/updateExtract'] = undefined;
       retValues['/ignoreMissing'] = false;
     } else if (retValues['/rdbms/queryType'] === 'UPDATE') {
       retValues['/rdbms/query'] = [retValues['/rdbms/query']];
       retValues['/rdbms/queryType'] = [retValues['/rdbms/queryType']];
-      retValues['/rdbms/ignoreLookupName'] = undefined;
-      retValues['/rdbms/ignoreExtract'] = undefined;
       retValues['/ignoreExisting'] = false;
-      retValues['/ignoreMissing'] = false;
     }
 
     delete retValues['/inputMode'];
@@ -96,7 +91,7 @@ export default {
           return '';
         }
 
-        if (r.rdbms.query.length > 1 || r.ignoreMissing || r.ignoreExisting) {
+        if (r.rdbms.query.length > 1) {
           if (r.rdbms.query.length > 1) {
             return r.rdbms.query && r.rdbms.query[1];
           }
@@ -114,7 +109,7 @@ export default {
           return '';
         }
 
-        if (r.rdbms.query.length > 1 || r.ignoreMissing || r.ignoreExisting) {
+        if (r.rdbms.query.length > 1) {
           return r.rdbms.query && r.rdbms.query[0];
         }
 
@@ -128,11 +123,13 @@ export default {
       fieldId: 'ignoreExisting',
       label: 'Ignore Existing Records',
       visibleWhen: [{ field: 'rdbms.queryType', is: ['INSERT'] }],
+      defaultValue: r => r && r.ignoreExisting,
     },
     ignoreMissing: {
       fieldId: 'ignoreMissing',
       label: 'Ignore Missing Records',
       visibleWhen: [{ field: 'rdbms.queryType', is: ['UPDATE'] }],
+      defaultValue: r => r && r.ignoreMissing,
     },
     'rdbms.ignoreExtract': {
       fieldId: 'rdbms.ignoreExtract',
