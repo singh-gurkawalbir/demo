@@ -135,8 +135,8 @@ export default {
 
     switch (appType) {
       case adaptorTypeMap.NetSuiteDistributedImport:
-        mappings = (resourceObj.netsuite_da &&
-          resourceObj.netsuite_da.mapping) || { fields: [], lists: [] };
+        mappings =
+          (resourceObj.netsuite_da && resourceObj.netsuite_da.mapping) || {};
         break;
       case adaptorTypeMap.RESTImport:
       case adaptorTypeMap.AS2Import:
@@ -145,12 +145,20 @@ export default {
       case adaptorTypeMap.HTTPImport:
       case adaptorTypeMap.WrapperImport:
       case adaptorTypeMap.S3Import:
-        mappings = resourceObj.mapping || { fields: [], lists: [] };
+        mappings = resourceObj.mapping || {};
         break;
       case adaptorTypeMap.XMLImport:
       case adaptorTypeMap.MongodbImport:
       case adaptorTypeMap.RDBMSImport:
       default:
+    }
+
+    if (!mappings.fields) {
+      mappings.fields = [];
+    }
+
+    if (!mappings.lists) {
+      mappings.lists = [];
     }
 
     if (getRawMappings) return mappings;
