@@ -77,7 +77,6 @@ export default function IntegratorAppUninstalleer(props) {
       uninstallSteps.length &&
       !uninstallSteps.reduce((result, step) => result || !step.completed, false)
     ) {
-      dispatch(actions.resource.request('integrations', integrationId));
       setIsSetupComplete(true);
     }
   }, [dispatch, integrationId, uninstallSteps]);

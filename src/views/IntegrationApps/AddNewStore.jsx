@@ -16,6 +16,8 @@ import LoadResources from '../../components/LoadResources';
 import openExternalUrl from '../../utils/window';
 import ConnectionSetupDialog from '../../components/ResourceSetupDialog';
 import InstallationStep from '../../components/InstallStep';
+import Spinner from '../../components/Spinner';
+import Loader from '../../components/Loader';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -78,20 +80,22 @@ export default function IntegrationAppAddNewStore(props) {
       // redirect to integration Settings
       dispatch(actions.integrationApp.store.clearSteps(integrationId));
       dispatch(actions.resource.request('integrations', integrationId));
-      dispatch(actions.resource.request('flows', integrationId));
-      dispatch(actions.resource.request('exports', integrationId));
-      dispatch(actions.resource.request('imports', integrationId));
-      dispatch(actions.resource.request('connections', integrationId));
-      props.history.push(`/pg/connectors/${integrationId}/settings/flows`);
+      dispatch(actions.resource.requestCollection('flows'));
+      dispatch(actions.resource.requestCollection('exports'));
+      dispatch(actions.resource.requestCollection('imports'));
+      dispatch(actions.resource.requestCollection('connections'));
+      props.history.push(`/pg/integrationApp/${integrationId}/flows`);
     }
   }, [dispatch, integrationId, isSetupComplete, props.history]);
 
   if (!addNewStoreSteps || !addNewStoreSteps.length) {
-    return <Typography>Loading new store installation steps</Typography>;
-  }
-
-  if (!integration || !integration._connectorId) {
-    return <Typography>No Integration Found</Typography>;
+    return (
+      <Loader open>
+        <Typography>
+          Loading installation steps <Spinner />
+        </Typography>
+      </Loader>
+    );
   }
 
   const handleStepClick = step => {
@@ -180,7 +184,7 @@ export default function IntegrationAppAddNewStore(props) {
   };
 
   return (
-    <LoadResources required resources="connections,integrations">
+    <LoadResources required resources={['integrations', 'connections']}>
       {selectedConnectionId && (
         <ConnectionSetupDialog
           resourceId={selectedConnectionId}
