@@ -335,7 +335,7 @@ export default {
           type: d.type,
         }));
       } else {
-        let formattedSampleData = {};
+        let formattedSampleData = [];
 
         if (typeof sampleData === 'string' && isJsonString(sampleData)) {
           formattedSampleData = getJSONPaths(JSON.parse(sampleData));
