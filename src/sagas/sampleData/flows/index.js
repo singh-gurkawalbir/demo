@@ -1,4 +1,5 @@
-import { put, select, call, takeEvery } from 'redux-saga/effects';
+import { put, select, call, takeEvery, takeLatest } from 'redux-saga/effects';
+import { deepClone } from 'fast-json-patch';
 import { resourceData, getSampleData } from '../../../reducers';
 import { SCOPES } from '../../resourceForm';
 import actionTypes from '../../../actions/types';
@@ -22,15 +23,55 @@ import {
 } from '../../../utils/flowData';
 import { exportPreview, pageProcessorPreview } from '../previewCalls';
 import mappingUtil from '../../../utils/mapping';
-import { adaptorTypeMap } from '../../../utils/resource';
+import { adaptorTypeMap, isNewId } from '../../../utils/resource';
+
+function* initFlowData({ flowId, resourceId, resourceType }) {
+  const { merged: flow } = yield select(resourceData, 'flows', flowId);
+  const clonedFlow = deepClone(flow);
+
+  if (isNewId(flowId)) {
+    clonedFlow._id = flowId;
+  }
+
+  if (isNewId(resourceId)) {
+    // For a new export/lookup/import initiating flow with this new temp id
+    const { merged: resource } = yield select(
+      resourceData,
+      resourceType,
+      resourceId,
+      'value'
+    );
+    const isPageGenerator = resourceType === 'exports' && !resource.isLookup;
+    const processorType = isPageGenerator ? 'pageGenerators' : 'pageProcessors';
+
+    // creates a temp page processor / page generator on flow doc
+    // Sample Lookup on Flow Doc: { _id: 456, pageGenerators: [], pageProcessors: [{type: 'export', _exportId: 123}]}
+    clonedFlow[processorType] = [
+      ...(clonedFlow[processorType] || []),
+      {
+        type: resourceType === 'exports' ? 'export' : 'import',
+        [isPageGenerator || resource.isLookup
+          ? '_exportId'
+          : '_importId']: resourceId,
+      },
+    ];
+  }
+
+  yield put(actions.flowData.init(clonedFlow));
+}
 
 function* requestSampleData({
   flowId,
   resourceId,
   resourceType,
   stage,
-  isPageGenerator,
+  isInitialized,
 }) {
+  // Updates flow state
+  if (!isInitialized) {
+    yield call(initFlowData, { flowId, resourceId, resourceType });
+  }
+
   // Updates preProcessedData for the procesors
   const sampleDataStage = getSampleDataStage(stage, resourceType);
 
@@ -46,7 +87,6 @@ function* requestSampleData({
       flowId,
       resourceId,
       sampleDataStage,
-      isPageGenerator,
     });
   }
 }
@@ -104,13 +144,7 @@ export function* fetchPageGeneratorPreview({ flowId, _pageGeneratorId }) {
   }
 }
 
-function* processData({
-  flowId,
-  resourceId,
-  processorData,
-  isPageGenerator,
-  stage,
-}) {
+function* processData({ flowId, resourceId, processorData, stage }) {
   try {
     const processedData = yield call(evaluateExternalProcessor, {
       processorData,
@@ -121,7 +155,6 @@ function* processData({
       resourceId,
       stage,
       processedData,
-      isPageGenerator,
     });
   } catch (e) {
     // Handle errors
@@ -183,7 +216,6 @@ export function* requestProcessorData({
   resourceId,
   resourceType,
   processor,
-  isPageGenerator,
   processorStage,
 }) {
   // If provided processorStage is 'stage' else by default processor name becomes its stage
@@ -195,13 +227,12 @@ export function* requestProcessorData({
     resourceId,
     SCOPES.VALUE
   );
-  let preProcessedData = yield select(
-    getSampleData,
+  let preProcessedData = yield select(getSampleData, {
     flowId,
     resourceId,
+    resourceType,
     stage,
-    { isPageGenerator, isImport: resourceType === 'imports' }
-  );
+  });
   let processorData;
 
   if (!preProcessedData) {
@@ -210,11 +241,13 @@ export function* requestProcessorData({
       resourceId,
       resourceType,
       stage,
-      isPageGenerator,
+      isInitialized: true,
     });
-    preProcessedData = yield select(getSampleData, flowId, resourceId, stage, {
-      isPageGenerator,
-      isImport: resourceType === 'imports',
+    preProcessedData = yield select(getSampleData, {
+      flowId,
+      resourceId,
+      resourceType,
+      stage,
     });
   }
 
@@ -285,7 +318,6 @@ export function* requestProcessorData({
       flowId,
       resourceId,
       processedData: { data: [preProcessedData] },
-      isPageGenerator,
       stage,
     });
   }
@@ -294,7 +326,6 @@ export function* requestProcessorData({
     flowId,
     resourceId,
     processorData,
-    isPageGenerator,
     stage,
   });
 }
@@ -305,7 +336,7 @@ export default [
     fetchPageProcessorPreview
   ),
   takeEvery(actionTypes.FLOW_DATA.PROCESSOR_DATA_REQUEST, requestProcessorData),
-  takeEvery(actionTypes.FLOW_DATA.SAMPLE_DATA_REQUEST, requestSampleData),
+  takeLatest(actionTypes.FLOW_DATA.SAMPLE_DATA_REQUEST, requestSampleData),
   takeEvery(
     actionTypes.FLOW_DATA.FLOWS_FOR_RESOURCE_UPDATE,
     updateFlowsDataForResource

@@ -49,8 +49,11 @@ export default function DynaRelativeURIWithLookup(props) {
   );
   const dispatch = useDispatch();
   const sampleData = useSelector(state =>
-    selectors.getSampleData(state, flowId, resourceId, 'flowInput', {
-      isImport: resourceType === 'imports',
+    selectors.getSampleData(state, {
+      flowId,
+      resourceId,
+      resourceType,
+      stage: 'flowInput',
     })
   );
   const formattedSampleData = JSON.stringify(
@@ -157,6 +160,7 @@ export default function DynaRelativeURIWithLookup(props) {
         onLookupUpdate={handleLookupUpdate}
         required={required}
         value={extactedVal}
+        connectionType={connection.type}
       />
     </Fragment>
   );

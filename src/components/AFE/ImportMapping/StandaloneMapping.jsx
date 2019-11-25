@@ -22,8 +22,11 @@ export default function StandaloneMapping(props) {
   const connectionId = resourceData._connectionId;
   const dispatch = useDispatch();
   const extractFields = useSelector(state =>
-    selectors.getSampleData(state, flowId, resourceId, 'importMappingExtract', {
-      isImport: true,
+    selectors.getSampleData(state, {
+      flowId,
+      resourceId,
+      stage: 'importMappingExtract',
+      resourceType: 'imports',
     })
   );
   const requestSampleData = useCallback(() => {

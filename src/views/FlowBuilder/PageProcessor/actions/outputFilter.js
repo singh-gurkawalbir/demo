@@ -16,7 +16,12 @@ function OutputFilterDialog({
   const dispatch = useDispatch();
   const resourceId = resource._id;
   const sampleData = useSelector(state =>
-    selectors.getSampleData(state, flowId, resourceId, 'outputFilter')
+    selectors.getSampleData(state, {
+      flowId,
+      resourceId,
+      resourceType,
+      stage: 'outputFilter',
+    })
   );
   const rules = useMemo(
     () => resource && resource.filter && resource.filter.rules,

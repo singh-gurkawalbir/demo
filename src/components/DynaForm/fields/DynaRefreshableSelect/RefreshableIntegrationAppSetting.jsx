@@ -1,6 +1,6 @@
 import { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import RefreshGenericResource from './RefreshGenericResource';
+import { DynaGenericSelect } from './RefreshGenericResource';
 import actions from '../../../../actions';
 import * as selectors from '../../../../reducers';
 
@@ -41,7 +41,7 @@ export default function RefreshableIntegrationAppSetting(props) {
   }, [fieldName, onFieldChange, options, value, valueAndLabel]);
 
   return (
-    <RefreshGenericResource
+    <DynaGenericSelect
       {...props}
       resourceToFetch={null}
       resetValue={null}
