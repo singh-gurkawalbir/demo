@@ -1,5 +1,6 @@
 import { useState, useEffect, Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import deepClone from 'lodash/cloneDeep';
 import Button from '@material-ui/core/Button';
 import * as selectors from '../../../reducers';
 import HttpRequestBodyEditorDialog from '../../../components/AFE/HttpRequestBodyEditor/Dialog';
@@ -55,9 +56,10 @@ export default function DynaHttpRequestBody(props) {
     }
   });
   // constructing data
+  const connectionCopy = deepClone(connection);
   const formattedSampleData = JSON.stringify(
     getFormattedSampleData({
-      connection,
+      connection: connectionCopy,
       sampleData,
       useSampleDataAsArray,
       resourceType,
