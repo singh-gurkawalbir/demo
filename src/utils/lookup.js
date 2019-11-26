@@ -1,3 +1,4 @@
+import deepClone from 'lodash/cloneDeep';
 import { adaptorTypeMap } from './resource';
 
 export default {
@@ -6,28 +7,39 @@ export default {
       return;
     }
 
+    let lookup;
+
     /* TODO: With support for different application being adding up, 
     path for lookup to be updated below */
     switch (appType) {
       case adaptorTypeMap.NetSuiteDistributedImport:
-        return resourceObj.netsuite_da && resourceObj.netsuite_da.lookups;
+        lookup = resourceObj.netsuite_da && resourceObj.netsuite_da.lookups;
+        break;
       case adaptorTypeMap.RESTImport:
-        return resourceObj.rest && resourceObj.rest.lookups;
+        lookup = resourceObj.rest && resourceObj.rest.lookups;
+        break;
       case adaptorTypeMap.FTPImport:
       case adaptorTypeMap.S3Import:
       case adaptorTypeMap.AS2Import:
-        return resourceObj.file && resourceObj.file.lookups;
+        lookup = resourceObj.file && resourceObj.file.lookups;
+        break;
       case adaptorTypeMap.WrapperImport:
-        return resourceObj.wrapper && resourceObj.wrapper.lookups;
+        lookup = resourceObj.wrapper && resourceObj.wrapper.lookups;
+        break;
       case adaptorTypeMap.HTTPImport:
-        return resourceObj.http && resourceObj.http.lookups;
+        lookup = resourceObj.http && resourceObj.http.lookups;
+        break;
       case adaptorTypeMap.SalesforceImport:
-        return resourceObj.salesforce && resourceObj.salesforce.lookups;
+        lookup = resourceObj.salesforce && resourceObj.salesforce.lookups;
+        break;
       case adaptorTypeMap.XMLImport:
       case adaptorTypeMap.MongodbImport:
       case adaptorTypeMap.RDBMSImport:
       default:
     }
+
+    // returning deep cloned lookup object to avoid resource object manipulation
+    return deepClone(lookup);
   },
   getLookupPath: application => {
     switch (application) {

@@ -49,6 +49,10 @@ function Tile({ tile, history }) {
       // TODO - open connection edit
     } else if (tile.status === TILE_STATUS.IS_PENDING_SETUP) {
       history.push(getRoutePath(`/connectors/${tile._integrationId}/setup`));
+    } else if (tile._connectorId) {
+      history.push(
+        getRoutePath(`/integrationApp/${tile._integrationId}/dashboard`)
+      );
     } else {
       history.push(
         getRoutePath(`/integrations/${tile._integrationId}/dashboard`)

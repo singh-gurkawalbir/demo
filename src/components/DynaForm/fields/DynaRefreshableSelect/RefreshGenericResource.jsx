@@ -143,7 +143,10 @@ export default function RefreshGenericResource(props) {
           options: [{ items: options || [] }],
         })}
         {!isLoading && !removeRefresh && (
-          <RefreshIcon onClick={handleRefreshResource} />
+          <RefreshIcon
+            data-test="refreshResource"
+            onClick={handleRefreshResource}
+          />
         )}
         {fieldData && isLoading && <Spinner />}
         {description && <FormHelperText>{description}</FormHelperText>}

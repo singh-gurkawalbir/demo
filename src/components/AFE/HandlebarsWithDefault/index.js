@@ -64,7 +64,7 @@ export default function HandlebarsWithDefaults(props) {
         sampleData: props.sampleData,
       })
     );
-    // get Helper functions when the editor intializes
+    // get Helper functions when the editor initializes
     dispatch(actions.editor.refreshHelperFunctions());
   };
 

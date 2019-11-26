@@ -10,8 +10,9 @@ export function* installStep({ id, installerFunction, storeId, addOnId }) {
   try {
     stepCompleteResponse = yield call(apiCallWithRetry, {
       path,
+      timeout: 5 * 60 * 1000,
       opts: { body: { storeId, addOnId }, method: 'PUT' },
-      message: `Installing`,
+      hidden: true,
     }) || {};
   } catch (error) {
     yield put(
@@ -49,7 +50,9 @@ export function* installStoreStep({ id, installerFunction }) {
   try {
     stepCompleteResponse = yield call(apiCallWithRetry, {
       path,
+      timeout: 5 * 60 * 1000,
       opts: { body: {}, method: 'PUT' },
+      hidden: true,
       message: `Installing`,
     }) || {};
   } catch (error) {
@@ -79,6 +82,7 @@ export function* addNewStore({ id }) {
     steps = yield call(apiCallWithRetry, {
       path,
       opts: { body: {}, method: 'PUT' },
+      hidden: true,
       message: `Installing`,
     });
   } catch (error) {
@@ -86,6 +90,7 @@ export function* addNewStore({ id }) {
   }
 
   if (steps) {
+    yield put(actions.resource.requestCollection('connections'));
     yield put(actions.integrationApp.store.receivedNewStoreSteps(id, steps));
   }
 }
