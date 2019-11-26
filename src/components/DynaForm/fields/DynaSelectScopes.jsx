@@ -25,7 +25,7 @@ const TransferListModal = props => {
   };
 
   return (
-    <ModalDialog show handleClose={handleClose}>
+    <ModalDialog show onClose={handleClose}>
       <Fragment>
         <span>Scopes Editor</span>
       </Fragment>

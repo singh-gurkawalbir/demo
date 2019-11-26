@@ -164,10 +164,13 @@ export default function CsvParsePanel(props) {
         />
         {multipleRowsPerRecord && allColumns && (
           <FormControl disabled={disabled} className={classes.formControl}>
-            <InputLabel htmlFor="select-multiple-chip">Key Columns</InputLabel>
+            <InputLabel htmlFor="select-multiple-chip" shrink>
+              Key Columns
+            </InputLabel>
             <CeligoSelect
               multiple
               value={keyColumns}
+              className={classes.select}
               data-test="keyColumns"
               onChange={e => patchEditor('keyColumns', e.target.value)}
               input={<Input id="select-multiple-chip" />}

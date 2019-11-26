@@ -7,15 +7,16 @@ import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import LoadResources from '../../../components/LoadResources';
 import AddIcon from '../../../components/icons/AddIcon';
-// TODO: Azhar, please update these next 3 icons, once provided by the product team.
-import FlowsIcon from '../../../components/icons/FlowBuilderIcon';
-import AdminIcon from '../../../components/icons/SettingsIcon';
-import DashboardIcon from '../../../components/icons/AdjustInventoryIcon';
+import FlowsIcon from '../../../components/icons/FlowsIcon';
+import GeneralIcon from '../../../components/icons/SettingsIcon';
+import AdminIcon from '../../../components/icons/AdminIcon';
+import DashboardIcon from '../../../components/icons/DashboardIcon';
 import ConnectionsIcon from '../../../components/icons/ConnectionsIcon';
 import IconTextButton from '../../../components/IconTextButton';
 import CeligoPageBar from '../../../components/CeligoPageBar';
 import ResourceDrawer from '../../../components/drawer/Resource';
 import ChipInput from '../../../components/ChipInput';
+import ArrowDownIcon from '../../../components/icons/ArrowDownIcon';
 import GeneralPanel from './panels/General';
 import AdminPanel from './panels/Admin';
 import FlowsPanel from './panels/Flows';
@@ -25,7 +26,7 @@ import AddOnsPanel from './panels/AddOns';
 import IntegrationTabs from '../common/Tabs';
 
 const allTabs = [
-  { path: 'general', label: 'General', Icon: AdminIcon, Panel: GeneralPanel },
+  { path: 'general', label: 'General', Icon: GeneralIcon, Panel: GeneralPanel },
   { path: 'flows', label: 'Flows', Icon: FlowsIcon, Panel: FlowsPanel },
   {
     path: 'dashboard',
@@ -40,7 +41,7 @@ const allTabs = [
     Panel: ConnectionsPanel,
   },
   { path: 'admin', label: 'Admin', Icon: AdminIcon, Panel: AdminPanel },
-  { path: 'addons', label: 'Add-ons', Icon: AdminIcon, Panel: AddOnsPanel },
+  { path: 'addons', label: 'Add-ons', Icon: AddIcon, Panel: AddOnsPanel },
 ];
 const useStyles = makeStyles(theme => ({
   tag: {
@@ -212,6 +213,7 @@ export default function IntegrationApp({ match, history }) {
               data-test={`select${storeLabel}`}
               className={classes.storeSelect}
               onChange={handleStoreChange}
+              IconComponent={ArrowDownIcon}
               value="">
               <MenuItem disabled value="">
                 Select {storeLabel}

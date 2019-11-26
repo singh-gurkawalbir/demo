@@ -35,7 +35,7 @@ class ChangePassword extends Component {
     const { show, onhandleClose, error, success, message } = this.props;
 
     return (
-      <ModalDialog show={show} handleClose={onhandleClose} maxWidth="lg">
+      <ModalDialog show={show} onClose={onhandleClose}>
         <span>Change Password</span>
         {success ? (
           <span>{message}</span>

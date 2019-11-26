@@ -15,6 +15,8 @@ import FlowCard from '../../../common/FlowCard';
 const useStyles = makeStyles(theme => ({
   root: {
     backgroundColor: theme.palette.common.white,
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
   },
 }));
 
