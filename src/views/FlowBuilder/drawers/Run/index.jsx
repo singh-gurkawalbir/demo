@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 // import { makeStyles } from '@material-ui/core/styles';
 import RightDrawerRouter from '../RightDrawer';
 import TitleBar from '../TitleBar';
@@ -5,7 +6,7 @@ import TitleBar from '../TitleBar';
 // const useStyles = makeStyles(() => ({}));
 
 export default function RunDrawer({ flowId, history, ...props }) {
-  const handleSubmit = () => history.goBack();
+  const handleSubmit = useCallback(() => history.goBack(), [history]);
   // const classes = useStyles();
 
   return (

@@ -174,22 +174,7 @@ describe('autoEvaluateProcessor saga', () => {
 
     expect(selectEffect).toEqual(select(selectors.editor, id));
 
-    const callEffect = saga.next({ autoEvaluate: true }).value;
-
-    expect(callEffect).toEqual(call(evaluateProcessor, { id }));
-
-    const finalEffect = saga.next();
-
-    expect(finalEffect).toEqual({ done: true, value: undefined });
-  });
-
-  test('should not pause if no delay is set.', () => {
-    const saga = autoEvaluateProcessor({ id });
-    const selectEffect = saga.next().value;
-
-    expect(selectEffect).toEqual(select(selectors.editor, id));
-
-    const callEffect = saga.next({ autoEvaluate: true }).value;
+    const callEffect = saga.next({ autoEvaluate: false }).value;
 
     expect(callEffect).toEqual(call(evaluateProcessor, { id }));
 
