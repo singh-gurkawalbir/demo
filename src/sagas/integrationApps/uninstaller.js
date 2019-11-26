@@ -2,6 +2,7 @@ import { call, put, takeLatest } from 'redux-saga/effects';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
+import { getResource } from '../resources';
 
 export function* preUninstall({ storeId, id }) {
   const path = `/integrations/${id}/uninstaller/preUninstallFunction`;
@@ -10,6 +11,7 @@ export function* preUninstall({ storeId, id }) {
   try {
     uninstallSteps = yield call(apiCallWithRetry, {
       path,
+      timeout: 5 * 60 * 1000,
       opts: { body: { storeId }, method: 'PUT' },
       message: `Fetching Uninstall steps`,
     });
@@ -33,6 +35,7 @@ export function* uninstallStep({ storeId, id, uninstallerFunction, addOnId }) {
   try {
     stepCompleteResponse = yield call(apiCallWithRetry, {
       path,
+      timeout: 5 * 60 * 1000,
       opts: { body: { storeId, addOnId }, method: 'PUT' },
       message: `Uninstalling`,
     }) || {};
@@ -49,6 +52,11 @@ export function* uninstallStep({ storeId, id, uninstallerFunction, addOnId }) {
   }
 
   if (stepCompleteResponse && stepCompleteResponse.success) {
+    // After successful completion of step IA could update integration in the BE. Need to get updated doc.
+    yield call(getResource, {
+      resourceType: 'integrations',
+      id,
+    });
     yield put(
       actions.integrationApp.uninstaller.updateStep(
         id,
@@ -71,6 +79,7 @@ export function* uninstallIntegration({ integrationId }) {
   try {
     yield call(apiCallWithRetry, {
       path,
+      timeout: 5 * 60 * 1000,
       opts: { body: {}, method: 'DELETE' },
       message: `Uninstalling`,
     });
