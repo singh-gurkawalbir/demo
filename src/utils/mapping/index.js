@@ -1,7 +1,9 @@
+import deepClone from 'lodash/cloneDeep';
 import { adaptorTypeMap } from '../resource';
 import mappingUtil from '.';
 import NetsuiteMapping from './application/netsuite';
 import getJSONPaths from '../jsonPaths';
+import { isJsonString } from '../../utils/string';
 
 const LookupResponseMappingExtracts = [
   'data',
@@ -135,8 +137,8 @@ export default {
 
     switch (appType) {
       case adaptorTypeMap.NetSuiteDistributedImport:
-        mappings = (resourceObj.netsuite_da &&
-          resourceObj.netsuite_da.mapping) || { fields: [], lists: [] };
+        mappings =
+          (resourceObj.netsuite_da && resourceObj.netsuite_da.mapping) || {};
         break;
       case adaptorTypeMap.RESTImport:
       case adaptorTypeMap.AS2Import:
@@ -145,7 +147,7 @@ export default {
       case adaptorTypeMap.HTTPImport:
       case adaptorTypeMap.WrapperImport:
       case adaptorTypeMap.S3Import:
-        mappings = resourceObj.mapping || { fields: [], lists: [] };
+        mappings = resourceObj.mapping || {};
         break;
       case adaptorTypeMap.XMLImport:
       case adaptorTypeMap.MongodbImport:
@@ -153,10 +155,21 @@ export default {
       default:
     }
 
-    if (getRawMappings) return mappings;
+    // creating deep copy of mapping object to avoid alteration to resource mapping object
+    const mappingCopy = deepClone(mappings);
+
+    if (!mappingCopy.fields) {
+      mappingCopy.fields = [];
+    }
+
+    if (!mappingCopy.lists) {
+      mappingCopy.lists = [];
+    }
+
+    if (getRawMappings) return mappingCopy;
 
     return mappingUtil.getMappingsForApp({
-      mappings,
+      mappings: mappingCopy,
       appType,
       options,
     });
@@ -304,7 +317,7 @@ export default {
       name: m,
     }));
   },
-  getFormattedGenerateData: (sampleData, application, { resource }) => {
+  getFormattedGenerateData: (sampleData, application) => {
     let formattedGenerateFields = [];
 
     if (sampleData) {
@@ -321,13 +334,16 @@ export default {
           name: d.label,
           type: d.type,
         }));
-      } else if (
-        application === adaptorTypeMap.FTPImport ||
-        resource.assistant
-      ) {
-        const formattedSampleData =
-          sampleData &&
-          (Array.isArray(sampleData) ? sampleData : getJSONPaths(sampleData));
+      } else {
+        let formattedSampleData = [];
+
+        if (typeof sampleData === 'string' && isJsonString(sampleData)) {
+          formattedSampleData = getJSONPaths(JSON.parse(sampleData));
+        } else if (typeof sampleData === 'object') {
+          formattedSampleData = Array.isArray(sampleData)
+            ? sampleData
+            : getJSONPaths(sampleData);
+        }
 
         formattedGenerateFields =
           formattedSampleData &&
