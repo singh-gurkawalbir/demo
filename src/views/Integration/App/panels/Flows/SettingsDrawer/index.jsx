@@ -7,6 +7,7 @@ import * as selectors from '../../../../../../reducers';
 import { integrationSettingsToDynaFormMetadata } from '../../../../../../forms/utils';
 import { ActionsFactory } from '../../../../../../components/ResourceFormFactory';
 import DrawerTitleBar from '../../../../../../components/drawer/TitleBar';
+import LoadResources from '../../../../../../components/LoadResources';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -104,7 +105,9 @@ export default function SettingsDrawerRoute(props) {
 
   return (
     <Route exact path={`${match.url}/:flowId/settings`}>
-      <SettingsDrawer {...props} />
+      <LoadResources required resources="exports,imports,flows,connections">
+        <SettingsDrawer {...props} />
+      </LoadResources>
     </Route>
   );
 }
