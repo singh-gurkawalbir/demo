@@ -110,6 +110,7 @@ export default function IntegratorAppUninstalleer(props) {
     ? (integration.stores.find(s => s.value === storeId) || {}).label
     : undefined;
   const handleStepClick = step => {
+    // TODO: installURL should eventually changed to uninstallURL. Currently it is left as installURL to support shopify uninstallation.
     const { installURL, uninstallerFunction } = step;
 
     // handle connection step click
