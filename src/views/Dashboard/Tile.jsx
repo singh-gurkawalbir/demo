@@ -50,7 +50,6 @@ function Tile({ tile, history }) {
     } else if (tile.status === TILE_STATUS.IS_PENDING_SETUP) {
       history.push(getRoutePath(`/connectors/${tile._integrationId}/setup`));
     } else if (tile._connectorId) {
-      //
       history.push(
         getRoutePath(`/integrationApp/${tile._integrationId}/dashboard`)
       );
