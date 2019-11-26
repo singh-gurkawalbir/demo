@@ -10,7 +10,7 @@ export default {
       ].includes(fieldId)
     ) {
       const { value } = fields.find(
-        field => field.id === 'salesforce.distributed.sObjectType'
+        field => field.id === 'salesforce.sObjectType'
       );
 
       return value;
@@ -178,9 +178,9 @@ export default {
       required: true,
       visibleWhen: [{ field: 'type', is: ['once'] }],
     },
-    'salesforce.distributed.sObjectType': {
+    'salesforce.sObjectType': {
       connectionId: r => r._connectionId,
-      fieldId: 'salesforce.distributed.sObjectType',
+      fieldId: 'salesforce.sObjectType',
       type: 'salesforcesobjecttype',
       filterKey: 'salesforce-sObjects-triggerable',
       commMetaPath: r =>
@@ -189,17 +189,17 @@ export default {
     'salesforce.id': { fieldId: 'salesforce.id' },
     'salesforce.distributed.requiredTrigger': {
       type: 'salesforcerequiredtrigger',
-      refreshOptionsOnChangesTo: ['salesforce.distributed.sObjectType'],
+      refreshOptionsOnChangesTo: ['salesforce.sObjectType'],
       fieldId: 'salesforce.distributed.requiredTrigger',
     },
     'salesforce.distributed.referencedFields': {
       connectionId: r => r._connectionId,
-      refreshOptionsOnChangesTo: ['salesforce.distributed.sObjectType'],
+      refreshOptionsOnChangesTo: ['salesforce.sObjectType'],
       type: 'salesforcereferencedfields',
       fieldId: 'salesforce.distributed.referencedFields',
       disabledWhen: [
         {
-          field: 'salesforce.distributed.sObjectType',
+          field: 'salesforce.sObjectType',
           is: [''],
         },
       ],
@@ -207,11 +207,11 @@ export default {
     'salesforce.distributed.relatedLists': {
       type: 'salesforcerelatedlist',
       connectionId: r => r._connectionId,
-      refreshOptionsOnChangesTo: ['salesforce.distributed.sObjectType'],
+      refreshOptionsOnChangesTo: ['salesforce.sObjectType'],
       fieldId: 'salesforce.distributed.relatedLists',
       disabledWhen: [
         {
-          field: 'salesforce.distributed.sObjectType',
+          field: 'salesforce.sObjectType',
           is: [''],
         },
       ],
@@ -231,7 +231,7 @@ export default {
       'exportOneToMany',
       'salesforce.executionType',
       'exportData',
-      'salesforce.distributed.sObjectType',
+      'salesforce.sObjectType',
       'salesforce.distributed.requiredTrigger',
       'salesforce.distributed.referencedFields',
       'salesforce.distributed.relatedLists',

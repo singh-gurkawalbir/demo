@@ -88,6 +88,7 @@ function FlowList({ integrationId, storeId }) {
       {flows.map(f => (
         <FlowCard
           key={f._id}
+          storeId={storeId}
           flowId={f._id}
           excludeActions={['detach', 'clone', 'delete']}
         />

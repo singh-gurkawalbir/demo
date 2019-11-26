@@ -592,6 +592,7 @@ export function resourceList(state, options = {}) {
       'scripts',
       'stacks',
       'templates',
+      'published',
     ].includes(
       /* These resources are common for both production & sandbox environments. */
       options.type

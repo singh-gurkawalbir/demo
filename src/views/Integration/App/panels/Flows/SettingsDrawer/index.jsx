@@ -32,7 +32,7 @@ function SettingsDrawer({ integrationId, storeId, sectionId }) {
   const { flowId } = match.params;
   const flow =
     useSelector(state => selectors.resource(state, 'flows', flowId)) || {};
-  const flowName = flow.name || flow._Id;
+  const flowName = flow.name || flow._id;
   // TODO: Fix this convoluted way of getting settings for a specific flow.
   // the data layer should have a simple, clean, selector api, that, given a flowId,
   // returns the flow settings. Right now to look up this info, i need to
@@ -65,7 +65,8 @@ function SettingsDrawer({ integrationId, storeId, sectionId }) {
   const fieldMeta = integrationSettingsToDynaFormMetadata(
     anotherFlowSettings,
     integrationId,
-    true
+    true,
+    { resource: flow }
   );
   const handleClose = useCallback(() => {
     history.goBack();
