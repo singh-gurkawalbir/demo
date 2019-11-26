@@ -5,7 +5,6 @@ export default {
     type: 'text',
     label: 'SObject Type',
     required: true,
-    omitWhenHidden: true,
     visibleWhenAll: [
       {
         field: 'salesforce.executionType',
