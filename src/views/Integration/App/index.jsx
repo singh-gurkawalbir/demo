@@ -173,7 +173,8 @@ export default function IntegrationApp({ match, history }) {
       return (
         <Redirect
           push={false}
-          to={`/pg/integrationApp/${integrationId}/child/${defaultStoreId}/flows`}
+          to={`/pg/integrationApp/${integrationId}/child/${defaultStoreId}/${tab ||
+            'flows'}`}
         />
       );
     }
