@@ -19,12 +19,12 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function ConnectionsPanel({ integrationId }) {
+export default function ConnectionsPanel({ integrationId, storeId }) {
   const classes = useStyles();
   const [showRegister, setShowRegister] = useState(false);
   const location = useLocation();
   const connections = useSelector(state =>
-    selectors.integrationConnectionList(state, integrationId)
+    selectors.integrationAppConnectionList(state, integrationId, storeId)
   );
   // TODO: All this logic should go into a single selector called "canManageConnections",
   // or some equivalent name. This would also reduce the complexity of managing
