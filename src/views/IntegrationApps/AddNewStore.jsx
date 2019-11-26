@@ -16,6 +16,8 @@ import LoadResources from '../../components/LoadResources';
 import openExternalUrl from '../../utils/window';
 import ConnectionSetupDialog from '../../components/ResourceSetupDialog';
 import InstallationStep from '../../components/InstallStep';
+import { getResourceSubType } from '../../utils/resource';
+import resourceConstants from '../../forms/constants/connection';
 import Spinner from '../../components/Spinner';
 import Loader from '../../components/Loader';
 
@@ -42,6 +44,13 @@ const useStyles = makeStyles(theme => ({
     background: theme.palette.background.default,
   },
 }));
+const getConnectionType = resource => {
+  const { assistant, type } = getResourceSubType(resource);
+
+  if (assistant) return assistant;
+
+  return type;
+};
 
 export default function IntegrationAppAddNewStore(props) {
   const classes = useStyles();
@@ -55,6 +64,9 @@ export default function IntegrationAppAddNewStore(props) {
   );
   const addNewStoreSteps = useSelector(state =>
     selectors.addNewStoreSteps(state, integrationId)
+  );
+  const selectedConnection = useSelector(state =>
+    selectors.resource(state, 'connections', selectedConnectionId)
   );
 
   useEffect(() => {
@@ -160,8 +172,17 @@ export default function IntegrationAppAddNewStore(props) {
     props.history.goBack();
   };
 
-  const handleSubmitComplete = () => {
+  const handleSubmitComplete = (connId, isAuthorized) => {
     const step = addNewStoreSteps.find(s => s.isCurrentStep);
+
+    if (
+      resourceConstants.OAUTH_APPLICATIONS.includes(
+        getConnectionType(selectedConnection)
+      ) &&
+      !isAuthorized
+    ) {
+      return;
+    }
 
     dispatch(
       actions.integrationApp.store.updateStep(
