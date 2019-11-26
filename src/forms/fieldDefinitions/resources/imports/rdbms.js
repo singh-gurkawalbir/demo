@@ -88,10 +88,10 @@ export default {
     type: 'text',
     label: 'Existing Data Id',
     required: true,
-    visibleWhenAll: [
+    visibleWhen: [
       {
         field: 'rdbms.queryType',
-        is: ['COMPOSITE', 'UPDATE'],
+        is: ['COMPOSITE'],
       },
       {
         field: 'ignoreMissing',

@@ -18,7 +18,7 @@ export default {
       retValues['/rdbms/query'] = [retValues['/rdbms/query']];
       retValues['/rdbms/queryType'] = [retValues['/rdbms/queryType']];
       retValues['/ignoreMissing'] = false;
-    } else if (retValues['/rdbms/queryType'] === 'UPDATE') {
+    } else {
       retValues['/rdbms/query'] = [retValues['/rdbms/query']];
       retValues['/rdbms/queryType'] = [retValues['/rdbms/queryType']];
       retValues['/ignoreExisting'] = false;
@@ -92,14 +92,10 @@ export default {
         }
 
         if (r.rdbms.query.length > 1) {
-          if (r.rdbms.query.length > 1) {
-            return r.rdbms.query && r.rdbms.query[1];
-          }
-
-          return r.rdbms.query && r.rdbms.query[0];
+          return r.rdbms.query && r.rdbms.query[1];
         }
 
-        return '';
+        return r.rdbms.query && r.rdbms.query[0];
       },
     },
     'rdbms.queryUpdate': {
@@ -109,7 +105,7 @@ export default {
           return '';
         }
 
-        if (r.rdbms.query.length > 1) {
+        if (r.rdbms.query.length > 0) {
           return r.rdbms.query && r.rdbms.query[0];
         }
 
@@ -123,13 +119,11 @@ export default {
       fieldId: 'ignoreExisting',
       label: 'Ignore Existing Records',
       visibleWhen: [{ field: 'rdbms.queryType', is: ['INSERT'] }],
-      defaultValue: r => r && r.ignoreExisting,
     },
     ignoreMissing: {
       fieldId: 'ignoreMissing',
       label: 'Ignore Missing Records',
       visibleWhen: [{ field: 'rdbms.queryType', is: ['UPDATE'] }],
-      defaultValue: r => r && r.ignoreMissing,
     },
     'rdbms.ignoreExtract': {
       fieldId: 'rdbms.ignoreExtract',
