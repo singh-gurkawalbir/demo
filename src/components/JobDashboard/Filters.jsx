@@ -175,6 +175,7 @@ function Filters({
       {!flowId && (
         <StoreSelector
           integrationId={integrationId}
+          data-test="selectStore"
           value={storeId}
           onChange={storeId => patchFilter('storeId', storeId)}
         />
@@ -183,6 +184,7 @@ function Filters({
       {!flowId && (
         <FlowSelector
           integrationId={integrationId}
+          data-test="selectAFlow"
           storeId={storeId}
           value={_flowId}
           onChange={flowId => patchFilter('flowId', flowId)}
@@ -191,6 +193,7 @@ function Filters({
 
       <CeligoSelect
         className={classes.status}
+        data-test="selectAJobStatus"
         onChange={e => patchFilter('status', e.target.value)}
         value={status}>
         {[
@@ -217,6 +220,7 @@ function Filters({
             <Checkbox
               // indeterminate={numSelected > 0 && numSelected < rowCount}
               checked={hideEmpty}
+              data-test="hideEmptyJobs"
               color="primary"
               onChange={e => patchFilter('hideEmpty', e.target.checked)}
             />
@@ -228,6 +232,7 @@ function Filters({
         <IconButton
           disabled={currentPage === 0}
           size="small"
+          data-test="decrementPage"
           onClick={() => handlePageChange(-1)}>
           <ArrowLeftIcon />
         </IconButton>
@@ -239,6 +244,7 @@ function Filters({
             : firstRowIndex + rowsPerPage} of {totalJobs}
         </div>
         <IconButton
+          data-test="incrementPage"
           disabled={maxPage === currentPage}
           size="small"
           onClick={() => handlePageChange(1)}>
