@@ -52,7 +52,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function CsvParsePanel(props) {
-  const { editorId } = props;
+  const { editorId, disabled } = props;
   const classes = useStyles(props);
   const {
     columnDelimiter = '',
@@ -62,7 +62,6 @@ export default function CsvParsePanel(props) {
     multipleRowsPerRecord = false,
     trimSpaces = true,
     result,
-    disabled,
   } = useSelector(state => selectors.editor(state, editorId));
   const dispatch = useDispatch();
   const patchEditor = (option, value) => {

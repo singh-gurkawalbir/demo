@@ -5,7 +5,7 @@ export default function CsvParseEditorDialog(props) {
   const { id, rule, data, disabled, ...rest } = props;
   const defaults = {
     width: '80vw',
-    height: '50vh',
+    height: '70vh',
     open: true,
   };
 
