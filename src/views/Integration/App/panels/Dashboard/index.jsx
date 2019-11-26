@@ -20,8 +20,10 @@ export default function DashboardPanel({ integrationId, storeId }) {
     selectors.filter(state, 'jobs')
   );
 
+  // We may not have an IA that supports children, but those who do,
+  // we want to reset the jobs filter any time the store changes.
   useEffect(() => {
-    if (storeId !== filterStoreId) {
+    if (storeId && storeId !== filterStoreId) {
       dispatch(
         actions.patchFilter('jobs', {
           storeId,
