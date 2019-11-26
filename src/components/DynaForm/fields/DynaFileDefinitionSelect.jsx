@@ -4,10 +4,9 @@ import DynaSelect from './DynaSelect';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import Spinner from '../../Spinner';
-import { isNewId } from '../../../utils/resource';
 
 export default function DynaFileDefinitionSelect(props) {
-  const { format, onFieldChange, resourceId } = props;
+  const { format, onFieldChange } = props;
   const dispatch = useDispatch();
   // Get File definitions based on the file type format
   // Formats: edix12, fixed or edifact
@@ -36,15 +35,10 @@ export default function DynaFileDefinitionSelect(props) {
     // !status indicates no request has been made for fetching file defs
     // Else status will be 'request', 'received' or 'error'
 
-    if (isNewId(resourceId) && !fileDefinitions.length && !status) {
+    if (!fileDefinitions.length && !status) {
       dispatch(actions.fileDefinitions.preBuilt.request());
     }
-  }, [dispatch, fileDefinitions, resourceId, status]);
-
-  // Incase of Editing an export, this field is not shown
-  if (!isNewId(resourceId)) {
-    return null;
-  }
+  }, [dispatch, fileDefinitions, status]);
 
   if (status === 'requested') {
     return <Spinner />;
