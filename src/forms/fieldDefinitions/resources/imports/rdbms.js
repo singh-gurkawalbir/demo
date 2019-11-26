@@ -22,7 +22,7 @@ export default {
       if (r.rdbms.queryType) {
         if (r.rdbms.queryType.length > 1) {
           toReturn = 'COMPOSITE';
-        } else if (r.rdbms.queryType && r.rdbms.queryType.length === 1) {
+        } else if (r.rdbms.queryType.length === 1) {
           [toReturn] = r.rdbms.queryType;
         }
       }

@@ -2,12 +2,10 @@ export default {
   preSave: formValues => {
     const retValues = { ...formValues };
 
-    if (retValues['/inputMode'] === 'blob') {
-      retValues['/rdbms/queryType'] = retValues['/rdbms/queryType'];
-    } else if (retValues['/rdbms/queryType'] === 'COMPOSITE') {
+    if (retValues['/rdbms/queryType'] === 'COMPOSITE') {
       retValues['/rdbms/query'] = [
-        retValues['/rdbms/queryInsert'],
         retValues['/rdbms/queryUpdate'],
+        retValues['/rdbms/queryInsert'],
       ];
       retValues['/rdbms/queryType'] = ['UPDATE', 'INSERT'];
       retValues['/rdbms/ignoreLookupName'] = undefined;
@@ -94,8 +92,6 @@ export default {
         if (r.rdbms.query.length > 1) {
           return r.rdbms.query && r.rdbms.query[1];
         }
-
-        return r.rdbms.query && r.rdbms.query[0];
       },
     },
     'rdbms.queryUpdate': {
