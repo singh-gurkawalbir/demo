@@ -27,6 +27,7 @@ const OVERWRITABLE_PROPERTIES = Object.freeze([
   'queryParameters',
   'requestMediaType',
   'response',
+  'sampleData',
   'responseIdPath',
   'successMediaType',
   'successPath',
@@ -305,6 +306,7 @@ export function getImportVersionAndResource({
       if (ep) {
         versionAndResource.version = version.version;
         versionAndResource.resource = resource.id;
+        versionAndResource.sampleData = resource.sampleData;
       }
     });
   });
@@ -413,7 +415,7 @@ export function getImportOperationDetails({
     resource,
     assistantData: assistantData.import,
   });
-  let operationDetails = {};
+  let operationDetails = { sampleData: resourceDetails.sampleData };
 
   if (resourceDetails && resourceDetails.operations) {
     operationDetails = resourceDetails.operations.find(op => {
@@ -1171,6 +1173,7 @@ export function updateFormValues({
 export function convertFromImport({ importDoc, assistantData, adaptorType }) {
   let { version, resource, operation, lookupType } =
     importDoc.assistantMetadata || {};
+  let sampleData;
   let { ignoreExisting, ignoreMissing } = importDoc;
 
   if (importDoc.assistantMetadata) {
@@ -1229,12 +1232,13 @@ export function convertFromImport({ importDoc, assistantData, adaptorType }) {
         assistantData: assistantData.import,
       });
 
-      ({ version, resource } = versionAndResource);
+      ({ version, resource, sampleData } = versionAndResource);
     }
   }
 
   assistantMetadata.version = version;
   assistantMetadata.resource = resource;
+  assistantMetadata.sampleData = sampleData;
   assistantMetadata.operation = operation;
 
   if (!operation) {

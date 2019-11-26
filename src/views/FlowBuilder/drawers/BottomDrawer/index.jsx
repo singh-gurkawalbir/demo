@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Drawer, IconButton, Tabs, Tab } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
@@ -57,6 +57,9 @@ const useStyles = makeStyles(theme => ({
   noScroll: {
     overflowY: 'hidden',
   },
+  customTab: {
+    maxWidth: 500,
+  },
 }));
 
 function TabPanel({ children, value, index, classes }) {
@@ -105,11 +108,14 @@ export default function BottomDrawer({ size, setSize, flow }) {
     };
   }
 
-  const handleDebugLogsClose = (event, connectionId) => {
-    event.stopPropagation();
-    setTabValue(0);
-    dispatch(actions.connection.clearDebugLogs(connectionId));
-  };
+  const handleDebugLogsClose = useCallback(
+    (event, connectionId) => {
+      event.stopPropagation();
+      setTabValue(0);
+      dispatch(actions.connection.clearDebugLogs(connectionId));
+    },
+    [dispatch]
+  );
 
   useEffect(() => {
     if (clearConnectionLogs) {
@@ -155,6 +161,7 @@ export default function BottomDrawer({ size, setSize, flow }) {
               (connectionId, cIndex) =>
                 connectionDebugLogs[connectionId] && (
                   <Tab
+                    className={classes.customTab}
                     {...tabProps(cIndex + 3)}
                     icon={<DebugIcon />}
                     key={connectionId}

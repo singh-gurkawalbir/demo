@@ -5,11 +5,20 @@ import metadataFilterMap from './metadataFilterMap';
 export default (
   state = {
     application: {},
+    preview: {},
     assistants: { rest: {}, http: {} },
   },
   action
 ) => {
-  const { type, metadata, metadataError, connectionId, commMetaPath } = action;
+  const {
+    type,
+    metadata,
+    metadataError,
+    connectionId,
+    commMetaPath,
+    previewData,
+    resourceId,
+  } = action;
   const key = commMetaPath;
   let newState;
 
@@ -22,6 +31,14 @@ export default (
       };
 
       return { ...state, ...{ application: newState } };
+    }
+
+    case actionTypes.METADATA.ASSISTANT_PREVIEW_RECEIVED: {
+      newState = { ...state.preview };
+
+      newState[resourceId] = previewData;
+
+      return { ...state, preview: newState };
     }
 
     case actionTypes.METADATA.REFRESH: {
@@ -190,4 +207,12 @@ export function assistantData(state, { adaptorType, assistant }) {
   }
 
   return { ...state.assistants[adaptorType][assistant] };
+}
+
+export function assistantPreviewData(state, resourceId) {
+  if (!state || !state.preview) {
+    return null;
+  }
+
+  return state.preview[resourceId];
 }

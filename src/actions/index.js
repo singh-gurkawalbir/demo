@@ -332,6 +332,11 @@ const metadata = {
       connectionId,
       commMetaPath,
     }),
+  assistantImportPreview: (resourceId, previewData) =>
+    action(actionTypes.METADATA.ASSISTANT_PREVIEW_RECEIVED, {
+      resourceId,
+      previewData,
+    }),
 };
 const fileDefinitions = {
   preBuilt: {

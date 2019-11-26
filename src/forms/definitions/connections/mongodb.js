@@ -34,9 +34,6 @@ export default {
     'mongodb.replicaSet': { fieldId: 'mongodb.replicaSet' },
     'mongodb.ssl': { fieldId: 'mongodb.ssl' },
     'mongodb.authSource': { fieldId: 'mongodb.authSource' },
-    _borrowConcurrencyFromConnectionId: {
-      fieldId: '_borrowConcurrencyFromConnectionId',
-    },
   },
   layout: {
     fields: [
@@ -53,12 +50,7 @@ export default {
       {
         collapsed: true,
         label: 'Advanced Settings',
-        fields: [
-          'mongodb.replicaSet',
-          'mongodb.ssl',
-          'mongodb.authSource',
-          '_borrowConcurrencyFromConnectionId',
-        ],
+        fields: ['mongodb.replicaSet', 'mongodb.ssl', 'mongodb.authSource'],
       },
     ],
   },

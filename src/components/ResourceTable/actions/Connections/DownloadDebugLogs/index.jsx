@@ -1,12 +1,17 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { IconButton } from '@material-ui/core';
 import * as selectors from '../../../../../reducers';
-import Icon from '../../../../icons/DownloadIcon';
+import DownloadIcon from '../../../../icons/DownloadIcon';
+// TODO Azhar
+import DebugIcon from '../../../../icons/DebugIcon';
 import openExternalUrl from '../../../../../utils/window';
 import actions from '../../../../../actions';
 
 export default {
-  label: 'Download debug logs',
+  label: (r, actionProps) =>
+    actionProps.type === 'flowBuilder'
+      ? 'Open debugger'
+      : 'Download debug logs',
   component: function DownloadDebugLogs({ resource, type }) {
     const dispatch = useDispatch();
     let url = `/connections/${resource._id}/debug`;
@@ -33,7 +38,7 @@ export default {
         data-test="downloadDebugLog"
         size="small"
         onClick={onDownloadDebugLogClick}>
-        <Icon />
+        {type === 'flowBuilder' ? <DebugIcon /> : <DownloadIcon />}
       </IconButton>
     );
   },

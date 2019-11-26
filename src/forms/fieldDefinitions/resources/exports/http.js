@@ -51,7 +51,6 @@ export default {
   'http.method': {
     type: 'select',
     label: 'HTTP Method',
-    defaultValue: r => r && r.http && r.http.method,
     required: true,
     options: [
       {
@@ -60,6 +59,32 @@ export default {
           { label: 'PUT', value: 'PUT' },
           { label: 'POST', value: 'POST' },
         ],
+      },
+    ],
+    visibleWhen: [
+      {
+        field: 'outputMode',
+        is: ['records'],
+      },
+    ],
+  },
+  'http.blobMethod': {
+    type: 'select',
+    label: 'HTTP Method',
+    required: true,
+    defaultValue: r => r && r.http && r.http.method,
+    options: [
+      {
+        items: [
+          { label: 'GET', value: 'GET' },
+          { label: 'POST', value: 'POST' },
+        ],
+      },
+    ],
+    visibleWhen: [
+      {
+        field: 'outputMode',
+        is: ['blob'],
       },
     ],
   },
