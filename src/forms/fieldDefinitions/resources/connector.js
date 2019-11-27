@@ -21,7 +21,6 @@ export default {
   },
   contactEmail: {
     type: 'text',
-    delimiter: ',',
     label: 'Contact Emails',
     required: true,
   },
