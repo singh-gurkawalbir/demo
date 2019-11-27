@@ -1,16 +1,9 @@
-import { makeStyles } from '@material-ui/core/styles';
 import { Fragment } from 'react';
 import { useDispatch } from 'react-redux';
 import Icon from '../../../../components/icons/HookIcon';
 import actions from '../../../../actions';
 import Hooks from '../../../../components/Hooks';
 import ModalDialog from '../../../../components/ModalDialog';
-
-const useStyles = makeStyles(() => ({
-  wrapper: {
-    minWidth: 580,
-  },
-}));
 
 function HooksDialog({
   flowId,
@@ -21,7 +14,6 @@ function HooksDialog({
   onClose,
 }) {
   const dispatch = useDispatch();
-  const classes = useStyles();
   const resourceId = resource._id;
   const defaultValue = resource.hooks || {};
   const onSave = selectedHook => {
@@ -36,8 +28,8 @@ function HooksDialog({
     <ModalDialog
       show={open}
       disabled={isViewMode}
-      className={classes.wrapper}
-      handleClose={onClose}>
+      onClose={onClose}
+      minWidth="sm">
       <div>Hooks</div>
       <Hooks
         onSave={onSave}

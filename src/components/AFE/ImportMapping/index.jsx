@@ -35,6 +35,7 @@ const useStyles = makeStyles(theme => ({
   },
   childHeader: {
     flexBasis: '46%',
+    overflow: 'hidden',
     '& > div:first-child': {
       width: '100%',
     },

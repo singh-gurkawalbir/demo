@@ -6,10 +6,9 @@ import DynaNetSuiteLookup from './DynaNetSuiteLookup';
 import DynaSFLookup from './DynaNetSuiteLookup';
 import DynaNSQualifier from './DynaNetSuiteLookup';
 import DynaSFQualifier from './DynaNetSuiteLookup';
-import LoadResources from '../../LoadResources';
 
 export default function DynaIAExpression(props) {
-  const { flowId, properties = {}, type } = props;
+  const { flowId, properties = {}, expressionType: type } = props;
   let resourceId;
   let commMetaPath;
   let filterType;
@@ -50,9 +49,7 @@ export default function DynaIAExpression(props) {
   );
 
   if (!resource) {
-    return (
-      <LoadResources required resources="imports,exports,connections,flows" />
-    );
+    return null;
   }
 
   if (type === 'import') {
