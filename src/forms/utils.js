@@ -117,22 +117,18 @@ export const isExpansionPanelErrored = (meta, fieldStates) => {
   );
   const { layout, fieldMap } = meta;
 
-  return invalidFields.some(field => {
-    const { id } = field;
-
-    return !!getFieldByIdFromLayout(layout, fieldMap, id);
-  });
+  return invalidFields.some(
+    ({ id }) => !!getFieldByIdFromLayout(layout, fieldMap, id)
+  );
 };
 
 export const isAnyExpansionPanelFieldVisible = (meta, fieldStates) => {
   const visibleFields = fieldStates.filter(field => field.visible);
   const { layout, fieldMap } = meta;
 
-  return visibleFields.some(field => {
-    const { id } = field;
-
-    return !!getFieldByIdFromLayout(layout, fieldMap, id);
-  });
+  return visibleFields.some(
+    ({ id }) => !!getFieldByIdFromLayout(layout, fieldMap, id)
+  );
 };
 
 export const getFieldByName = ({ fieldMeta, name }) => {

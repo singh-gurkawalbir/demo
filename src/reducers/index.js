@@ -628,7 +628,7 @@ export function flowDetails(state, id) {
     draft.isRealtime = isRealtimeExport(pg);
     draft.isSimpleImport = isSimpleImportFlow(pg);
     draft.isRunnable = isRunnable(allExports, pg, draft);
-    draft.showScheduleIcon = showScheduleIcon(allExports, pg, draft);
+    draft.canSchedule = showScheduleIcon(allExports, pg, draft);
     // TODO: add logic to properly determine if this flow should
     // display mapping/settings. This would come from the IA metadata.
     draft.showMapping = true;
