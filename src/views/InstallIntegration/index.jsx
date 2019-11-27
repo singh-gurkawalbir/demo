@@ -8,7 +8,7 @@ export default function InstallIntegrationDialog(props) {
 
   return (
     <ModalDialog
-      handleClose={onClose}
+      onClose={onClose}
       show
       aria-labelledby="integration-install-dialog">
       <div> Upload Integration Zip File</div>

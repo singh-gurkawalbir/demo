@@ -25,10 +25,12 @@ export default function JavaScriptEditor(props) {
     state => selectors.editor(state, editorId)
   );
   const dispatch = useDispatch();
-  const handleDataChange = data => {
-    dispatch(actions.editor.patch(editorId, { data }));
-  };
-
+  const handleDataChange = useCallback(
+    data => {
+      dispatch(actions.editor.patch(editorId, { data }));
+    },
+    [dispatch, editorId]
+  );
   // TODO : props.data is causing a recursive call ..its because of a selector merging patches and creating
   // new instances ?
   // TODO: @Aditya Scripts is not loading when props.data gets refreshed
@@ -39,6 +41,7 @@ export default function JavaScriptEditor(props) {
         entryFunction: entryFunction || 'main',
         data: props.data,
         autoEvaluate: true,
+        autoEvaluateDelay: 1000,
       })
     );
   }, [dispatch, editorId, scriptId, entryFunction, props.data]);

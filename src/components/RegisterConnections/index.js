@@ -30,9 +30,9 @@ export default function RegisterConnections({ onClose, integrationId }) {
   return (
     <ModalDialog
       show
-      handleClose={onClose}
+      onClose={onClose}
       data-test="closeRegisterConnectionsDialog"
-      width="lg">
+      maxWidth="lg">
       <div>Register Connections</div>
       <div>
         <LoadResources required resources="connections">

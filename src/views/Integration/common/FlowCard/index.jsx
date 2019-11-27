@@ -54,7 +54,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function FlowCard({ flowId, excludeActions }) {
+export default function FlowCard({ flowId, excludeActions, storeId }) {
   const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
@@ -77,16 +77,39 @@ export default function FlowCard({ flowId, excludeActions }) {
           defaultConfirmDialog(
             `${flowDetails.disabled ? 'enable' : 'disable'} ${flowName}?`,
             () => {
-              patchFlow('/disabled', !flowDetails.disabled);
+              if (flowDetails._connectorId) {
+                dispatch(
+                  actions.integrationApp.settings.update(
+                    flowDetails._integrationId,
+                    flowDetails._id,
+                    storeId,
+                    {
+                      '/flowId': flowDetails._id,
+                      '/disabled': !flowDetails.disabled,
+                    }
+                  )
+                );
+              } else {
+                patchFlow('/disabled', !flowDetails.disabled);
+              }
             }
           );
+
           break;
 
         case 'run':
           dispatch(actions.flow.run({ flowId }));
-          history.push(
-            `/pg/integrations/${flowDetails._integrationId || 'none'}/dashboard`
-          );
+
+          if (flowDetails._connectorId) {
+            history.push(
+              `/pg/integrationApp/${flowDetails._integrationId}/dashboard`
+            );
+          } else {
+            history.push(
+              `/pg/integrations/${flowDetails._integrationId ||
+                'none'}/dashboard`
+            );
+          }
 
           break;
 
@@ -95,12 +118,15 @@ export default function FlowCard({ flowId, excludeActions }) {
     },
     [
       dispatch,
+      flowDetails._connectorId,
+      flowDetails._id,
       flowDetails._integrationId,
       flowDetails.disabled,
       flowId,
       flowName,
       history,
       patchFlow,
+      storeId,
     ]
   );
   const { name, description, lastModified, disabled } = flowDetails;
@@ -132,6 +158,7 @@ export default function FlowCard({ flowId, excludeActions }) {
           <div>
             <Link to={flowBuilderTo}>
               <Typography
+                data-test={flowName}
                 color="primary"
                 variant="h4"
                 className={classes.flowLink}>
@@ -146,6 +173,7 @@ export default function FlowCard({ flowId, excludeActions }) {
         </Grid>
         <Grid container item xs={3} justify="flex-end" alignItems="center">
           <OnOffSwitch
+            data-test={`toggleOnAndOffFlow${flowName}`}
             disabled={disableCard}
             on={!disableCard && !disabled}
             onClick={handleActionClick('disable')}
@@ -154,6 +182,7 @@ export default function FlowCard({ flowId, excludeActions }) {
           <IconButton
             disabled={!flowDetails.isRunnable}
             size="small"
+            data-test={`runFlow${flowName}`}
             onClick={handleActionClick('run')}>
             <RunIcon />
           </IconButton>
@@ -163,6 +192,7 @@ export default function FlowCard({ flowId, excludeActions }) {
               size="small"
               disabled={!flowDetails.hasSettings}
               component={Link}
+              data-test={`flowSettings${flowName}`}
               to={`${history.location.pathname}/${flowId}/settings`}>
               <SettingsIcon />
             </IconButton>

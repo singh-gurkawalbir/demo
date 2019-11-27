@@ -13,7 +13,7 @@ export const ReferencedFieldsModal = props => {
   );
 
   return (
-    <ModalDialog show handleClose={handleClose}>
+    <ModalDialog show onClose={handleClose}>
       <Typography>Select Referenced Fields</Typography>
       <RefreshableTreeComponent
         {...rest}

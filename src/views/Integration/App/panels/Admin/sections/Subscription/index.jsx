@@ -161,13 +161,16 @@ export default function SubscriptionSection({ storeId, integrationId }) {
           <div className={classes.planContent}>
             <Grid container className={classes.container}>
               <Grid item xs={2}>
-                <Typography className={classes.item}> {plan} </Typography>
+                <Typography data-test="iaPlan" className={classes.item}>
+                  {' '}
+                  {plan}{' '}
+                </Typography>
               </Grid>
               <Grid item xs={4}>
-                <Typography className={classes.item}>
+                <Typography data-test="iaVersion" className={classes.item}>
                   {`Version ${version}`}
                 </Typography>
-                <Typography className={classes.item}>
+                <Typography data-test="integrationId" className={classes.item}>
                   {`Integration ID ${integrationId}`}
                 </Typography>
               </Grid>
