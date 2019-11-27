@@ -159,7 +159,7 @@ export default {
             childSObject.fields.forEach(field => {
               _data.push({
                 value: `${child.relationshipName}[*].${field.name}`,
-                label: `${child.relationshipName}[*].${field.label}`,
+                label: `${child.relationshipName}: ${field.label}`,
                 type: field.type,
                 custom: field.custom,
                 triggerable: field.triggerable,
@@ -169,9 +169,11 @@ export default {
             });
           } else {
             _data.push({
-              value: `_child_'${child.relationshipName}`,
+              value: `_child_${child.relationshipName}`,
               label: `${child.relationshipName} : Fields...`,
               type: 'childRelationship',
+              childSObject: child.childSObject,
+              relationshipName: child.relationshipName,
             });
           }
         }

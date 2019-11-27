@@ -191,6 +191,18 @@ export default function StandaloneMapping(props) {
     importSampleData,
     application
   );
+  const fetchSalesforceSObjectMetadata = sObject => {
+    dispatch(
+      actions.metadata.request(
+        connectionId,
+        `salesforce/metadata/connections/${connectionId}/sObjectTypes/${sObject}`
+      )
+    );
+  };
+
+  const optionalHandler = {
+    fetchSalesforceSObjectMetadata,
+  };
 
   return (
     <ImportMapping
@@ -204,6 +216,7 @@ export default function StandaloneMapping(props) {
       application={application}
       lookups={lookups}
       options={options}
+      optionalHanlder={optionalHandler}
     />
   );
 }

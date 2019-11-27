@@ -327,6 +327,8 @@ export default {
           name: d.label,
           type: d.type,
           options: d.picklistValues,
+          childSObject: d.childSObject,
+          relationshipName: d.relationshipName,
         }));
       } else if (application === adaptorTypeMap.NetSuiteDistributedImport) {
         formattedGenerateFields = sampleData.map(d => ({
