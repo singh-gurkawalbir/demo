@@ -129,7 +129,6 @@ export const optionsFromMetadata = ({
   connectionId,
   commMetaPath,
   filterKey,
-  options = {},
 }) => {
   const applicationResource = (state && state.application) || null;
   const path = commMetaPath;
@@ -146,12 +145,11 @@ export const optionsFromMetadata = ({
   let transformedData;
 
   if (filterKey === 'salesforce-sObjectTypeMetadata') {
-    const generates = [];
-    const { sObjectMetadataPath } = options;
+    const _data = [];
 
     if (data && data.fields) {
       data.fields.forEach(field => {
-        generates.push({
+        _data.push({
           id: field.name,
           name: field.label,
           type: field.type,
@@ -161,25 +159,24 @@ export const optionsFromMetadata = ({
 
     if (data.childRelationships && data.childRelationships.length) {
       data.childRelationships.forEach(child => {
-        // childRelation.childSObject
         if (child.relationshipName) {
-          const path1 = `${sObjectMetadataPath}/${child.childSObject}`;
+          const sObjectMetadataPath = `salesforce/metadata/connections/${connectionId}/sObjectTypes/${child.childSObject}`;
           const { data: childSObject } =
             (applicationResource &&
               applicationResource[connectionId] &&
-              applicationResource[connectionId][path1]) ||
+              applicationResource[connectionId][sObjectMetadataPath]) ||
             {};
 
           if (childSObject && childSObject.fields.length) {
             childSObject.fields.forEach(field => {
-              generates.push({
+              _data.push({
                 id: `${child.relationshipName}[*].${field.name}`,
                 name: `${child.relationshipName}[*].${field.label}`,
                 type: field.type,
               });
             });
           } else {
-            generates.push({
+            _data.push({
               id: `_child_'${child.relationshipName}`,
               name: `${child.relationshipName} : Fields...`,
               type: 'childRelationship',
@@ -189,11 +186,11 @@ export const optionsFromMetadata = ({
       });
     }
 
-    transformedData = generates;
+    transformedData = _data;
   } else {
     const metaFilter = metadataFilterMap[filterKey || 'default'];
 
-    transformedData = metaFilter(data, options);
+    transformedData = metaFilter(data);
   }
 
   return { data: transformedData, status, errorMessage, changeIdentifier };
