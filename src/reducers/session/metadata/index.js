@@ -142,56 +142,11 @@ export const optionsFromMetadata = ({
     return { status, data, errorMessage };
   }
 
-  let transformedData;
-
-  if (filterKey === 'salesforce-sObjectTypeMetadata') {
-    const _data = [];
-
-    if (data && data.fields) {
-      data.fields.forEach(field => {
-        _data.push({
-          id: field.name,
-          name: field.label,
-          type: field.type,
-        });
-      });
-    }
-
-    if (data.childRelationships && data.childRelationships.length) {
-      data.childRelationships.forEach(child => {
-        if (child.relationshipName) {
-          const sObjectMetadataPath = `salesforce/metadata/connections/${connectionId}/sObjectTypes/${child.childSObject}`;
-          const { data: childSObject } =
-            (applicationResource &&
-              applicationResource[connectionId] &&
-              applicationResource[connectionId][sObjectMetadataPath]) ||
-            {};
-
-          if (childSObject && childSObject.fields.length) {
-            childSObject.fields.forEach(field => {
-              _data.push({
-                id: `${child.relationshipName}[*].${field.name}`,
-                name: `${child.relationshipName}[*].${field.label}`,
-                type: field.type,
-              });
-            });
-          } else {
-            _data.push({
-              id: `_child_'${child.relationshipName}`,
-              name: `${child.relationshipName} : Fields...`,
-              type: 'childRelationship',
-            });
-          }
-        }
-      });
-    }
-
-    transformedData = _data;
-  } else {
-    const metaFilter = metadataFilterMap[filterKey || 'default'];
-
-    transformedData = metaFilter(data);
-  }
+  const metaFilter = metadataFilterMap[filterKey || 'default'];
+  const transformedData = metaFilter(data, {
+    applicationResource,
+    connectionId,
+  });
 
   return { data: transformedData, status, errorMessage, changeIdentifier };
 };
