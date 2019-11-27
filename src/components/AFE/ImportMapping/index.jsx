@@ -59,7 +59,6 @@ export default function ImportMapping(props) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const { fetchSalesforceSObjectMetadata } = optionalHanlder;
-  // const generateFieldStr = JSON.stringify(generateFields);
   const { mappings, lookups, initChangeIdentifier } = useSelector(state =>
     selectors.mapping(state, editorId)
   );
