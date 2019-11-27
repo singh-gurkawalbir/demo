@@ -17,38 +17,31 @@ const useStyles = makeStyles(theme => ({
     overflowY: 'off',
   },
   header: {
-    display: 'flex',
+    display: 'grid',
     width: '100%',
-  },
-  root: {
-    flexGrow: 1,
+    gridTemplateColumns: '45% 45% 50px 50px',
+    gridColumnGap: '1%',
   },
   rowContainer: {
-    display: 'flex',
+    display: 'block',
     padding: '0px',
   },
   child: {
-    flexBasis: '100%',
     '& + div': {
       width: '100%',
     },
   },
   childHeader: {
-    flexBasis: '46%',
-    '& > div:first-child': {
+    '& > div': {
       width: '100%',
     },
   },
   innerRow: {
-    display: 'flex',
+    display: 'grid',
     width: '100%',
+    gridTemplateColumns: '45% 45% 50px 50px',
     marginBottom: theme.spacing(1),
-    '& > div': {
-      marginRight: theme.spacing(1),
-      '&:last-child': {
-        marginRight: 0,
-      },
-    },
+    gridColumnGap: '1%',
   },
 }));
 

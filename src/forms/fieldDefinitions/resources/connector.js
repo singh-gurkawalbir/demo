@@ -21,7 +21,6 @@ export default {
   },
   contactEmail: {
     type: 'text',
-    delimiter: ',',
     label: 'Contact Emails',
     required: true,
   },
@@ -31,8 +30,9 @@ export default {
     required: true,
   },
   _stackId: {
-    type: 'text',
+    type: 'selectresource',
     label: 'Stack',
+    resourceType: 'stacks',
     required: true,
   },
   uninstallerFunction: {

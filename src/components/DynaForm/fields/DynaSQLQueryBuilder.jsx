@@ -109,7 +109,7 @@ export default function DynaSQLQueryBuilder(props) {
   }
 
   useEffect(() => {
-    if (!extractFields) {
+    if (flowId && !extractFields) {
       dispatch(
         actions.flowData.requestSampleData(
           flowId,

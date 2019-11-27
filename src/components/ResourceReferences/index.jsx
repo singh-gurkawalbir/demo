@@ -58,7 +58,7 @@ function ResourceReferences(props) {
         </Loader>
       )}
       {resourceReferences && resourceReferences.length !== 0 && (
-        <ModalDialog handleClose={onClose} show>
+        <ModalDialog onClose={onClose} show>
           <div>
             {title
               ? `Unable to delete ${RESOURCE_TYPE_PLURAL_TO_SINGULAR[resourceType]} as`
