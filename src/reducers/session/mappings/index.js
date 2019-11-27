@@ -85,7 +85,9 @@ export default function reducer(state = {}, action) {
         break;
       case actionTypes.MAPPING.PATCH_SETTINGS:
         if (draft[id].mappings[index]) {
-          const valueTmp = { ...value };
+          const valueTmp = { ...draft[id].mappings[index] };
+
+          Object.assign(valueTmp, value);
 
           valueTmp.rowIdentifier += 1;
 

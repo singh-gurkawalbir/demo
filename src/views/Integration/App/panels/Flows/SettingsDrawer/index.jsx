@@ -7,6 +7,7 @@ import * as selectors from '../../../../../../reducers';
 import { integrationSettingsToDynaFormMetadata } from '../../../../../../forms/utils';
 import { ActionsFactory } from '../../../../../../components/ResourceFormFactory';
 import DrawerTitleBar from '../../../../../../components/drawer/TitleBar';
+import LoadResources from '../../../../../../components/LoadResources';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -32,7 +33,7 @@ function SettingsDrawer({ integrationId, storeId, sectionId }) {
   const { flowId } = match.params;
   const flow =
     useSelector(state => selectors.resource(state, 'flows', flowId)) || {};
-  const flowName = flow.name || flow._Id;
+  const flowName = flow.name || flow._id;
   // TODO: Fix this convoluted way of getting settings for a specific flow.
   // the data layer should have a simple, clean, selector api, that, given a flowId,
   // returns the flow settings. Right now to look up this info, i need to
@@ -65,7 +66,8 @@ function SettingsDrawer({ integrationId, storeId, sectionId }) {
   const fieldMeta = integrationSettingsToDynaFormMetadata(
     anotherFlowSettings,
     integrationId,
-    true
+    true,
+    { resource: flow }
   );
   const handleClose = useCallback(() => {
     history.goBack();
@@ -103,7 +105,9 @@ export default function SettingsDrawerRoute(props) {
 
   return (
     <Route exact path={`${match.url}/:flowId/settings`}>
-      <SettingsDrawer {...props} />
+      <LoadResources required resources="exports,imports,flows,connections">
+        <SettingsDrawer {...props} />
+      </LoadResources>
     </Route>
   );
 }

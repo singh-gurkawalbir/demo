@@ -7,31 +7,50 @@ import DynaSFLookup from './DynaNetSuiteLookup';
 import DynaNSQualifier from './DynaNetSuiteLookup';
 import DynaSFQualifier from './DynaNetSuiteLookup';
 
-export default function DynaIANetSuiteLookup(props) {
-  const { resource: flow, properties = {}, type } = props;
+export default function DynaIAExpression(props) {
+  const { flowId, properties = {}, expressionType: type } = props;
   let resourceId;
   let commMetaPath;
   let filterType;
   let ExpressionBuilder;
+  const flow = useSelector(state => selectors.resource(state, 'flows', flowId));
 
-  if (properties._importId) {
-    resourceId = properties._importId;
-  } else if (flow._importId) {
-    resourceId = flow._importId;
-  } else if (flow.pageProcessors) {
-    const firstImportPageProcessor = flow.pageProcessors.find(
-      pp => !!pp._importId
-    );
+  if (type === 'import') {
+    if (properties._importId) {
+      resourceId = properties._importId;
+    } else if (flow && flow._importId) {
+      resourceId = flow._importId;
+    } else if (flow && flow.pageProcessors) {
+      const firstImportPageProcessor = flow.pageProcessors.find(
+        pp => !!pp._importId
+      );
 
-    resourceId = firstImportPageProcessor._importId;
+      resourceId = firstImportPageProcessor._importId;
+    }
+  } else if (type === 'export') {
+    if (properties._exportId) {
+      resourceId = properties._exportId;
+    } else if (flow && flow._exportId) {
+      resourceId = flow._exportId;
+    } else if (flow && flow.pageGenerators && flow.pageGenerators.length) {
+      resourceId = flow.pageGenerators[0]._exportId;
+    }
   }
 
   const resource = useSelector(state =>
-    selectors.resource(state, 'imports', resourceId)
+    selectors.resource(
+      state,
+      type === 'export' ? 'exports' : 'imports',
+      resourceId
+    )
   );
   const connection = useSelector(state =>
-    selectors.resource(state, 'connections', resource._connectionId)
+    selectors.resource(state, 'connections', resource && resource._connectionId)
   );
+
+  if (!resource) {
+    return null;
+  }
 
   if (type === 'import') {
     if (connection.type === 'netsuite') {

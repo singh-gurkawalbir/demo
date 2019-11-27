@@ -29,12 +29,10 @@ export default {
   ignoreExisting: {
     type: 'checkbox',
     label: 'Ignore Existing',
-    defaultValue: false,
   },
   ignoreMissing: {
     type: 'checkbox',
     label: 'Ignore Missing',
-    defaultValue: false,
   },
   idLockTemplate: {
     type: 'text',

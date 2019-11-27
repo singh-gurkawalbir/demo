@@ -26,7 +26,7 @@ export default {
       type: 'text',
       label: 'MWS Auth Token',
       helpText: 'The MWS authorization token.',
-      required: true,
+      required: false,
     },
     'http.unencrypted.marketplaceId': {
       id: 'http.unencrypted.marketplaceId',

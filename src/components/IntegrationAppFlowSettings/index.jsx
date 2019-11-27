@@ -5,17 +5,9 @@ import { integrationSettingsToDynaFormMetadata } from '../../forms/utils';
 import ModalDialog from '../ModalDialog';
 
 const useStyles = makeStyles(theme => ({
-  modalContent: {
-    width: '70vw',
-  },
   container: {
     marginTop: theme.spacing(1),
     overflowY: 'off',
-  },
-  closeButton: {
-    position: 'absolute',
-    right: theme.spacing(1),
-    top: theme.spacing(1),
   },
 }));
 
@@ -35,7 +27,7 @@ export default function IntegrationAppFlowSettings(props) {
 
   return (
     <LoadResources resources="imports,exports">
-      <ModalDialog width="md" show handleClose={handleCloseDialog}>
+      <ModalDialog maxWidth="md" show onClose={handleCloseDialog}>
         <div>{`Flow Settings - ${resource.name}`}</div>
         <div>
           <div className={classes.container}>

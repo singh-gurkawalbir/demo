@@ -1,23 +1,15 @@
 import { Fragment } from 'react';
-import { Dialog, DialogTitle, DialogContent } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import DynaForm from '../../../../components/DynaForm';
 import DynaSubmit from '../../../../components/DynaForm/DynaSubmit';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import Icon from '../../../../components/icons/FilterIcon';
-
-const useStyles = makeStyles(theme => ({
-  paper: {
-    padding: theme.spacing(3),
-  },
-}));
+import ModalDialog from '../../../../components/ModalDialog';
 
 function ProceedOnFailureDialog(props) {
   const dispatch = useDispatch();
-  const classes = useStyles();
   const { open, onClose, flowId, resourceIndex, isViewMode } = props;
   const { merged: flow = {} } = useSelector(state =>
     selectors.resourceData(state, 'flows', flowId)
@@ -72,11 +64,9 @@ function ProceedOnFailureDialog(props) {
   };
 
   return (
-    <Dialog open={open} PaperProps={{ className: classes.paper }}>
-      <DialogTitle>
-        What should happen to a record if the lookup fails?
-      </DialogTitle>
-      <DialogContent>
+    <ModalDialog show={open} onClose={onClose}>
+      <div> What should happen to a record if the lookup fails?</div>
+      <div>
         <DynaForm disabled={isViewMode} fieldMeta={fieldMeta}>
           <Button data-test="cancelProceedOnFailure" onClick={onClose}>
             Cancel
@@ -88,8 +78,8 @@ function ProceedOnFailureDialog(props) {
             Save
           </DynaSubmit>
         </DynaForm>
-      </DialogContent>
-    </Dialog>
+      </div>
+    </ModalDialog>
   );
 }
 

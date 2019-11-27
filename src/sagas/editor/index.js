@@ -39,7 +39,7 @@ export function* evaluateProcessor({ id }) {
   // console.log(`editorProcessorOptions for ${id}`, processor, body);
 
   try {
-    // we are hidding this comm activity from the network snackbar
+    // we are hiding this comm activity from the network snackbar
 
     const results = yield call(invokeProcessor, { processor, body });
 
@@ -85,6 +85,11 @@ export function* autoEvaluateProcessor({ id }) {
 
   if (editor.autoEvaluateDelay) {
     yield delay(editor.autoEvaluateDelay);
+  } else {
+    // editor is configured for autoEvaluate, but no delay.
+    // we WANT a minimum delay to prevent immediate re-renders
+    // while a user is typing.
+    yield delay(1000);
   }
 
   return yield call(evaluateProcessor, { id });
@@ -96,7 +101,7 @@ export function* refreshHelperFunctions() {
 
   // if update time is not defined its missing in the local storage
   // hence we have to retrieve the helper functions and
-  // persit it in the local storage
+  // persist it in the local storage
 
   if (
     !updateTime ||
@@ -142,5 +147,5 @@ export default [
     [actionTypes.EDITOR_INIT, actionTypes.EDITOR_PATCH],
     autoEvaluateProcessor
   ),
-  takeEvery(actionTypes.EDITOR_EVALUATE_REQUEST, evaluateProcessor),
+  takeLatest(actionTypes.EDITOR_EVALUATE_REQUEST, evaluateProcessor),
 ];

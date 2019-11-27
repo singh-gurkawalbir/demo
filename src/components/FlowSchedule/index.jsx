@@ -1,7 +1,6 @@
+import { Fragment, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { makeStyles, Button } from '@material-ui/core';
-import clsx from 'clsx';
-import { Fragment } from 'react';
+import Button from '@material-ui/core/Button';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
 import DynaForm from '../DynaForm';
@@ -14,21 +13,15 @@ import {
   getScheduleVal,
 } from './util';
 
-const useStyles = makeStyles(theme => ({
-  modalContent: {
-    width: '60vw',
-  },
-  closeButton: {
-    position: 'absolute',
-    right: theme.spacing(1),
-    top: 2,
-  },
-}));
-
-export default function FlowSchedule(props) {
+export default function FlowSchedule({
+  flow,
+  onClose,
+  className,
+  disabled,
+  pg,
+  index,
+}) {
   const dispatch = useDispatch();
-  const { onClose, className, disabled, pg, index } = props;
-  const { flow } = props;
   const preferences = useSelector(state =>
     selectors.userProfilePreferencesProps(state)
   );
@@ -47,48 +40,49 @@ export default function FlowSchedule(props) {
   let resource = pg || flow;
   const schedule = (pg && pg.schedule) || flow.schedule;
   const scheduleStartMinute = getScheduleStartMinute(resource, preferences);
-  const handleSubmit = formVal => {
-    const scheduleVal = getScheduleVal(formVal, scheduleStartMinute);
-    const patchSet = [
-      {
-        op: 'replace',
-        path:
-          pg && pg._exportId
-            ? `/pageGenerators/${index}/schedule`
-            : '/schedule',
-        value: scheduleVal,
-      },
-      {
-        op: 'replace',
-        path:
-          pg && pg._exportId
-            ? `/pageGenerators/${index}/_keepDeltaBehindFlowId`
-            : '/_keepDeltaBehindFlowId',
-        value:
-          formVal && formVal._keepDeltaBehindFlowId
-            ? formVal._keepDeltaBehindFlowId
-            : undefined,
-      },
-      {
-        op: 'replace',
-        path:
-          pg && pg._exportId
-            ? `/pageGenerators/${index}/_keepDeltaBehindExportId`
-            : '/_keepDeltaBehindExportId',
-        value:
-          pg && pg._exportId && formVal && formVal._keepDeltaBehindFlowId
-            ? formVal._keepDeltaBehindExportId
-            : undefined,
-      },
-    ];
-    const sanitized = sanitizePatchSet({ patchSet, flow });
+  const handleSubmit = useCallback(
+    formVal => {
+      const scheduleVal = getScheduleVal(formVal, scheduleStartMinute);
+      const patchSet = [
+        {
+          op: 'replace',
+          path:
+            pg && pg._exportId
+              ? `/pageGenerators/${index}/schedule`
+              : '/schedule',
+          value: scheduleVal,
+        },
+        {
+          op: 'replace',
+          path:
+            pg && pg._exportId
+              ? `/pageGenerators/${index}/_keepDeltaBehindFlowId`
+              : '/_keepDeltaBehindFlowId',
+          value:
+            formVal && formVal._keepDeltaBehindFlowId
+              ? formVal._keepDeltaBehindFlowId
+              : undefined,
+        },
+        {
+          op: 'replace',
+          path:
+            pg && pg._exportId
+              ? `/pageGenerators/${index}/_keepDeltaBehindExportId`
+              : '/_keepDeltaBehindExportId',
+          value:
+            pg && pg._exportId && formVal && formVal._keepDeltaBehindFlowId
+              ? formVal._keepDeltaBehindExportId
+              : undefined,
+        },
+      ];
+      const sanitized = sanitizePatchSet({ patchSet, flow });
 
-    dispatch(actions.resource.patchStaged(flow._id, sanitized, 'value'));
-    dispatch(actions.resource.commitStaged('flows', flow._id, 'value'));
-    onClose();
-  };
-
-  const classes = useStyles();
+      dispatch(actions.resource.patchStaged(flow._id, sanitized, 'value'));
+      dispatch(actions.resource.commitStaged('flows', flow._id, 'value'));
+      onClose();
+    },
+    [dispatch, flow, index, onClose, pg, scheduleStartMinute]
+  );
 
   resource = setValues(resource, schedule);
 
@@ -110,7 +104,7 @@ export default function FlowSchedule(props) {
 
   return (
     <Fragment>
-      <div className={clsx(classes.modalContent, className)}>
+      <div className={className}>
         <DynaForm
           disabled={disabled}
           fieldMeta={fieldMeta}
