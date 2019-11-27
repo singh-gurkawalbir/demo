@@ -17,8 +17,8 @@ function ImportMappingDialog({ flowId, isViewMode, resource, onClose }) {
         const mappingPath = mappingUtil.getMappingPath(adaptorType);
 
         // TODO: Below is cut and paste code. This should not have passed review.
-        // this code bock is wrapped in a "if (mappings) {}" block, so both ternary operators
-        // below are unnecessary (its always an add)
+        // this code block is wrapped in a "if (mappings) {}" block, so both ternary operators
+        // below are unnecessary (the operation is always a replace)
 
         // if mapping doesn't exist in resource object, perform add patch else replace patch
         patchSet.push({
@@ -72,9 +72,9 @@ export default {
   position: 'middle',
   Icon,
   // TODO: This helpText prop can easily be derived in the parent code using the
-  // name prop. No need to add complexity to the metadata as refactoring will be
-  // harder. what id we want to change the root path of all fb help text? We now need
-  // to modify every action.
+  // name prop above. No need to add complexity to the metadata as refactoring may be
+  // harder. What if we want to change the root path of all fb help text keys? We
+  // will now need to modify every sibling action's metadata individually.
   helpText: helpTextMap['fb.pp.imports.importMapping'],
   Component: ImportMapping,
 };
