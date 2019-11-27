@@ -75,7 +75,7 @@ export default function ImportMappingSettings(props) {
           optionsHandler={fieldMeta.optionsHandler}>
           <DynaSubmit
             disabled={disabled}
-            id={`fieldMappingSettingsSave-${index}`}
+            id="fieldMappingSettingsSave"
             onClick={handleSubmit}>
             Save
           </DynaSubmit>
