@@ -1,20 +1,24 @@
+import { useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button, IconButton } from '@material-ui/core';
-import { useDispatch, useSelector } from 'react-redux';
-import SettingsDrawerRouter from '../RightDrawer';
-import TitleBar from '../TitleBar';
 import DynaForm from '../../../../components/DynaForm';
 import DynaSubmit from '../../../../components/DynaForm/DynaSubmit';
 import Close from '../../../../components/icons/CloseIcon';
 import * as selectors from '../../../../reducers';
 import { STANDALONE_INTEGRATION } from '../../../../utils/constants';
 import actions from '../../../../actions';
+import SettingsDrawerRouter from '../RightDrawer';
+import TitleBar from '../TitleBar';
 
 const useStyles = makeStyles(theme => ({
   closeButton: {
     position: 'absolute',
     right: theme.spacing(1),
     top: 2,
+  },
+  settingsContent: {
+    padding: theme.spacing(2),
   },
 }));
 
@@ -31,6 +35,7 @@ export default function SettingsDrawer({
   let flows = useSelector(
     state => selectors.flowListWithMetadata(state, { type: 'flows' }).resources
   );
+  const handleClose = useCallback(() => history.goBack(), [history]);
 
   flows =
     flows &&
@@ -131,18 +136,20 @@ export default function SettingsDrawer({
         data-test="closeFlowSchedule"
         aria-label="Close"
         className={classes.closeButton}
-        onClick={() => history.goBack()}>
+        onClick={handleClose}>
         <Close />
       </IconButton>
       <TitleBar title="Settings" />
-      <DynaForm disabled={isViewMode} fieldMeta={fieldMeta} render>
-        <DynaSubmit onClick={handleSubmit} color="primary" variant="outlined">
-          Save
-        </DynaSubmit>
-        <Button onClick={() => history.goBack()} variant="text" color="primary">
-          Cancel
-        </Button>
-      </DynaForm>
+      <div className={classes.settingsContent}>
+        <DynaForm disabled={isViewMode} fieldMeta={fieldMeta} render>
+          <DynaSubmit onClick={handleSubmit} color="primary" variant="outlined">
+            Save
+          </DynaSubmit>
+          <Button onClick={handleClose} variant="text" color="primary">
+            Cancel
+          </Button>
+        </DynaForm>
+      </div>
     </SettingsDrawerRouter>
   );
 }

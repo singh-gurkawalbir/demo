@@ -28,7 +28,7 @@ import anaplan from './anaplan';
 import atera from './atera';
 import chargebee from './chargebee';
 import avalara from './avalara';
-import desk from './desk';
+// import desk from './desk';
 import easypost from './easypost';
 import freshdesk from './freshdesk';
 import greenhouse from './greenhouse';
@@ -73,7 +73,7 @@ import box from './box';
 import sageone from './sageone';
 // import yahoo from './yahoo';
 // import hybris from './hybris';
-import steelbrick from './steelbrick';
+// import steelbrick from './steelbrick';
 import squareup from './squareup';
 // import surveymonkey from './surveymonkey';
 import stripe from './stripe';
@@ -190,7 +190,7 @@ export default {
   tophatter,
   zohocrm,
   tsheets,
-  steelbrick,
+  // steelbrick,
   squareup,
   postmark,
   zendesk,
@@ -242,7 +242,7 @@ export default {
   woocommerce,
   shipwire,
   zuora,
-  desk,
+  // desk,
   wrike,
   eventbrite,
   // yammer,

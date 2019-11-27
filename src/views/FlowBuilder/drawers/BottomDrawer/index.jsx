@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useState, useEffect, useCallback } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { Drawer, IconButton, Tabs, Tab } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
@@ -7,11 +7,14 @@ import ArrowUpIcon from '../../../../components/icons/ArrowUpIcon';
 import ArrowDownIcon from '../../../../components/icons/ArrowDownIcon';
 import ConnectionsIcon from '../../../../components/icons/ConnectionsIcon';
 import AuditLogIcon from '../../../../components/icons/AuditLogIcon';
+import DebugIcon from '../../../../components/icons/DebugIcon';
 import RunIcon from '../../../../components/icons/RunIcon';
+import CloseIcon from '../../../../components/icons/CloseIcon';
 import * as selectors from '../../../../reducers';
 import ConnectionPanel from './panels/Connection';
 import RunDashboardPanel from './panels/RunDashboard';
 import AuditPanel from './panels/Audit';
+import actions from '../../../../actions';
 
 const useStyles = makeStyles(theme => ({
   drawer: {
@@ -43,6 +46,7 @@ const useStyles = makeStyles(theme => ({
     borderColor: theme.palette.secondary.lightest,
     borderTop: 0,
     display: 'flex',
+    justifyContent: `space-between`,
     alignItems: 'center',
     width: '100%',
   },
@@ -53,40 +57,73 @@ const useStyles = makeStyles(theme => ({
   noScroll: {
     overflowY: 'hidden',
   },
+  customTab: {
+    maxWidth: 500,
+  },
 }));
 
 function TabPanel({ children, value, index, classes }) {
+  const hidden = value !== index;
+
   return (
     <div
       role="tabpanel"
       className={classes.tabPanel}
-      hidden={value !== index}
+      hidden={hidden}
       id={`tabpanel-${index}`}
       aria-labelledby={`tab-${index}`}>
-      <div>{children}</div>
+      <div>{!hidden && children}</div>
     </div>
   );
 }
 
 export default function BottomDrawer({ size, setSize, flow }) {
   const classes = useStyles();
+  const dispatch = useDispatch();
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
+  const connectionDebugLogs = useSelector(state => selectors.debugLogs(state));
+  const connectionIdNameMap = useSelector(state =>
+    selectors.resourceNamesByIds(state, 'connections')
+  );
   const [tabValue, setTabValue] = useState(0);
+  const [clearConnectionLogs, setClearConnectionLogs] = useState(true);
   const maxStep = 3; // set maxStep to 4 to allow 100% drawer coverage.
+  const handleSizeChange = useCallback(
+    direction => () => {
+      if (size === maxStep && direction === 1) return setSize(0);
 
-  function handleSizeChange(direction) {
-    if (size === maxStep && direction === 1) return setSize(0);
+      if (size === 0 && direction === -1) return setSize(maxStep);
 
-    if (size === 0 && direction === -1) return setSize(maxStep);
+      setSize(size + direction);
+    },
+    [setSize, size]
+  );
+  const handleTabChange = useCallback(
+    (event, newValue) => {
+      setTabValue(newValue);
 
-    setSize(size + direction);
-  }
+      if (size === 0) setSize(1);
+    },
+    [setSize, size]
+  );
+  const handleDebugLogsClose = useCallback(
+    connectionId => event => {
+      event.stopPropagation();
+      setTabValue(0);
+      dispatch(actions.connection.clearDebugLogs(connectionId));
+    },
+    [dispatch]
+  );
 
-  function handleTabChange(event, newValue) {
-    setTabValue(newValue);
-
-    if (size === 0) setSize(1);
-  }
+  useEffect(() => {
+    if (clearConnectionLogs) {
+      connectionDebugLogs &&
+        Object.keys(connectionDebugLogs).forEach(connectionId =>
+          dispatch(actions.connection.clearDebugLogs(connectionId))
+        );
+      setClearConnectionLogs(false);
+    }
+  }, [clearConnectionLogs, connectionDebugLogs, dispatch]);
 
   function tabProps(index) {
     return {
@@ -124,18 +161,40 @@ export default function BottomDrawer({ size, setSize, flow }) {
           />
           <Tab {...tabProps(1)} icon={<RunIcon />} label="Run Dashboard" />
           <Tab {...tabProps(2)} icon={<AuditLogIcon />} label="Audit Log" />
+          {connectionDebugLogs &&
+            Object.keys(connectionDebugLogs).map(
+              (connectionId, cIndex) =>
+                connectionDebugLogs[connectionId] && (
+                  <Tab
+                    className={classes.customTab}
+                    {...tabProps(cIndex + 3)}
+                    icon={<DebugIcon />}
+                    key={connectionId}
+                    component="div"
+                    label={
+                      <div>
+                        {connectionIdNameMap[connectionId]} - DEBUG
+                        <IconButton
+                          onClick={handleDebugLogsClose(connectionId)}>
+                          <CloseIcon />
+                        </IconButton>
+                      </div>
+                    }
+                  />
+                )
+            )}
         </Tabs>
         <div className={classes.actionsContainer}>
           <IconButton
             data-test="increaseFlowBuilderBottomDrawer"
             size="small"
-            onClick={() => handleSizeChange(1)}>
+            onClick={handleSizeChange(1)}>
             <ArrowUpIcon />
           </IconButton>
           <IconButton
             data-test="decreaseFlowBuilderBottomDrawer"
             size="small"
-            onClick={() => handleSizeChange(-1)}>
+            onClick={handleSizeChange(-1)}>
             <ArrowDownIcon />
           </IconButton>
         </div>
@@ -150,6 +209,19 @@ export default function BottomDrawer({ size, setSize, flow }) {
       <TabPanel value={tabValue} index={2} classes={classes}>
         <AuditPanel flow={flow} />
       </TabPanel>
+      {connectionDebugLogs &&
+        Object.keys(connectionDebugLogs).map(
+          (connectionId, cIndex) =>
+            connectionDebugLogs[connectionId] && (
+              <TabPanel
+                value={tabValue}
+                key={connectionId}
+                index={cIndex + 3}
+                classes={classes}>
+                {connectionDebugLogs[connectionId]}
+              </TabPanel>
+            )
+        )}
     </Drawer>
   );
 }

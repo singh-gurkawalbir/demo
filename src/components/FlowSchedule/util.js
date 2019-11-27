@@ -26,6 +26,103 @@ const getHours = (startTime, endTime, frequency) => {
   return uniq(values).join(',');
 };
 
+export const getExportsFromSelectedDeltaFlow = (
+  selectedDeltaFlowId,
+  flows,
+  exports
+) => {
+  const temp = [];
+
+  if (selectedDeltaFlowId) {
+    const selectedDeltaFlow = flows.find(
+      flow => flow._id === selectedDeltaFlowId
+    );
+
+    selectedDeltaFlow &&
+      selectedDeltaFlow.pageGenerators.forEach(pg => {
+        temp.push(exports.find(exp => exp._id === pg._exportId));
+      });
+  }
+
+  return [
+    {
+      items:
+        (temp &&
+          temp.map(exp => ({
+            label: exp.name,
+            value: exp._id,
+          }))) ||
+        [],
+    },
+  ];
+};
+
+export const getAllDeltaFlows = (flows, flow, exports) => {
+  const deltaFlows = flows.filter(f => {
+    let isDeltaFlow = false;
+
+    if (f._id === flow._id) {
+      return false;
+    }
+
+    if (f.pageGenerators) {
+      f.pageGenerators.forEach(pg => {
+        const exp = exports && exports.find(e => e._id === pg._exportId);
+
+        if (exp && exp.type === 'delta') {
+          isDeltaFlow = true;
+        }
+      });
+    } else if (f && f._exportId) {
+      const exp = exports && exports.find(e => e._id === f._exportId);
+
+      if (exp && exp.type === 'delta') {
+        isDeltaFlow = true;
+      }
+    }
+
+    return isDeltaFlow;
+  });
+
+  return [
+    {
+      items:
+        (deltaFlows &&
+          deltaFlows.map(f => ({
+            label: f.name,
+            value: f._id,
+          }))) ||
+        [],
+    },
+  ];
+};
+
+export const isDeltaFlowModel = (pg, exp, flow, exports) => {
+  let isDeltaFlow = false;
+
+  if (pg && pg._exportId) {
+    if (exp && exp.type === 'delta' && !(exp.delta && exp.delta.lagOffset)) {
+      isDeltaFlow = true;
+    }
+  } else {
+    flow &&
+      flow.pageGenerators &&
+      flow.pageGenerators.forEach(pg => {
+        const flowExp = exports && exports.find(e => e._id === pg._exportId);
+
+        if (
+          flowExp &&
+          flowExp.type === 'delta' &&
+          !(flowExp.delta && flowExp.delta.lagOffset)
+        ) {
+          isDeltaFlow = true;
+        }
+      });
+  }
+
+  return isDeltaFlow;
+};
+
 export const getCronExpression = (data, scheduleStartMinute) => {
   const frequency = data && data.frequency;
   const toReturn = ['?', '*', '*', '*', '*', '*'];
@@ -274,13 +371,23 @@ export const getCronExpression = (data, scheduleStartMinute) => {
   return toReturn.join(' ');
 };
 
-export const getMetadata = ({ flow, integration, preferences }) => {
+export const getMetadata = ({
+  resource,
+  integration,
+  preferences,
+  flow,
+  schedule,
+  exp,
+  exports,
+  pg,
+  flows,
+}) => {
   const startTimeData = HOURS_LIST.map(
     hour =>
       moment()
         .startOf('day')
         .add(hour, 'h')
-        .add(flow.scheduleStartMinute || 0, 'm')
+        .add(resource.scheduleStartMinute || 0, 'm')
         .format('LT'),
     Number
   );
@@ -291,8 +398,8 @@ export const getMetadata = ({ flow, integration, preferences }) => {
     startTimeOptions.push({ label: opt, value: opt });
   });
 
-  if (flow && flow.endTimeOptions) {
-    flow.endTimeOptions.forEach(opt => {
+  if (resource && resource.endTimeOptions) {
+    resource.endTimeOptions.forEach(opt => {
       endTimeOptions.push({ label: opt, value: opt });
     });
   }
@@ -325,9 +432,8 @@ export const getMetadata = ({ flow, integration, preferences }) => {
         name: 'activeTab',
         type: 'radiogroup',
         label: '',
-        showOptionsHorizontally: true,
         fullWidth: true,
-        defaultValue: flow.activeTab,
+        defaultValue: resource.activeTab,
         options: [
           {
             items: [
@@ -342,7 +448,7 @@ export const getMetadata = ({ flow, integration, preferences }) => {
         name: 'frequency',
         type: 'select',
         label: 'Frequency',
-        defaultValue: flow.frequency,
+        defaultValue: resource.frequency,
         options: [
           {
             items: [
@@ -371,7 +477,7 @@ export const getMetadata = ({ flow, integration, preferences }) => {
         name: 'startTime',
         type: 'select',
         label: 'Start Time',
-        defaultValue: flow && flow.startTime,
+        defaultValue: resource && resource.startTime,
         options: [
           {
             items: startTimeOptions,
@@ -395,12 +501,13 @@ export const getMetadata = ({ flow, integration, preferences }) => {
         name: 'endTime',
         type: 'select',
         label: 'End Time',
-        defaultValue: flow && flow.endTime,
+        defaultValue: resource && resource.endTime,
         options: [
           {
             items: endTimeOptions,
           },
         ],
+        refreshOptionsOnChangesTo: ['frequency'],
         visibleWhenAll: [
           {
             field: 'activeTab',
@@ -417,7 +524,15 @@ export const getMetadata = ({ flow, integration, preferences }) => {
         name: 'daysToRunOn',
         type: 'multiselect',
         label: 'Days To Run On',
-        defaultValue: flow.daysToRunOn || ['1', '2', '3', '4', '5', '6', '0'],
+        defaultValue: resource.daysToRunOn || [
+          '1',
+          '2',
+          '3',
+          '4',
+          '5',
+          '6',
+          '0',
+        ],
         options: [
           {
             items: [
@@ -447,7 +562,7 @@ export const getMetadata = ({ flow, integration, preferences }) => {
         name: 'dayToRunOn',
         type: 'select',
         label: 'Day To Run On',
-        defaultValue: flow.dayToRunOn,
+        defaultValue: resource.dayToRunOn,
         options: [
           {
             items: [
@@ -477,13 +592,40 @@ export const getMetadata = ({ flow, integration, preferences }) => {
         name: 'schedule',
         type: 'text',
         label: 'Schedule',
-        defaultValue: flow.schedule,
+        defaultValue: schedule,
         visibleWhenAll: [
           {
             field: 'activeTab',
             is: [ADVANCED_TAB],
           },
         ],
+      },
+      _keepDeltaBehindFlowId: {
+        id: '_keepDeltaBehindFlowId',
+        name: '_keepDeltaBehindFlowId',
+        type: 'select',
+        visible: isDeltaFlowModel(integration, pg, exp, flow, exports),
+        label: 'Master flow:',
+        defaultValue: resource && resource._keepDeltaBehindFlowId,
+        options: getAllDeltaFlows(flows, flow, exports),
+      },
+      _keepDeltaBehindExportId: {
+        id: '_keepDeltaBehindExportId',
+        name: '_keepDeltaBehindExportId',
+        label: 'Delta export:',
+        type: 'select',
+        options: getExportsFromSelectedDeltaFlow(
+          resource && resource._keepDeltaBehindFlowId,
+          flows,
+          exports
+        ),
+        visible: !!(
+          isDeltaFlowModel(integration, pg, exp, flow, exports) &&
+          pg &&
+          pg._exportId
+        ),
+        refreshOptionsOnChangesTo: ['_keepDeltaBehindFlowId'],
+        defaultValue: resource && resource._keepDeltaBehindExportId,
       },
     },
     layout: {
@@ -497,13 +639,67 @@ export const getMetadata = ({ flow, integration, preferences }) => {
         'dayToRunOn',
         'schedule',
       ],
+      type: 'collapse',
+      containers: [
+        {
+          collapsed: true,
+          label: 'Synchronize delta export',
+          fields: ['_keepDeltaBehindFlowId', '_keepDeltaBehindExportId'],
+        },
+      ],
+    },
+    optionsHandler: (fieldId, fields) => {
+      if (fieldId === '_keepDeltaBehindExportId') {
+        const keepDeltaBehindFlowId = fields.find(
+          field => field.id === '_keepDeltaBehindFlowId'
+        );
+
+        return getExportsFromSelectedDeltaFlow(
+          keepDeltaBehindFlowId && keepDeltaBehindFlowId.value,
+          flows,
+          exports
+        );
+      } else if (fieldId === 'endTime') {
+        const frequency = fields.find(field => field.id === 'frequency').value;
+        let minutes = 0;
+
+        if (frequency === 'every_half_hour') {
+          minutes = 30;
+        } else if (frequency === 'every_quarter') {
+          minutes = 45;
+        }
+
+        const options = HOURS_LIST.map(
+          hour =>
+            moment()
+              .startOf('day')
+              .add(hour, 'h')
+              .add(minutes, 'm')
+              .format('LT'),
+          Number
+        );
+
+        return [
+          {
+            items:
+              (options &&
+                options.map(opt => ({
+                  label: opt,
+                  value: opt,
+                }))) ||
+              [],
+          },
+        ];
+      }
+
+      return null;
     },
   };
 };
 
-export const setValues = data => {
-  const flow = { ...data };
-  const value = flow.schedule;
+export const setValues = (data, schedule) => {
+  const resource = { ...data };
+  const value = schedule;
   const frequency = {
     '1': 'every_hour',
     '2': 'every_two_hours',
@@ -514,72 +710,72 @@ export const setValues = data => {
   };
   let hours;
 
-  flow.frequency = undefined;
-  flow.startTime = undefined;
-  flow.endTime = undefined;
-  flow.endTimeOptions = HOURS_LIST.map(
+  resource.frequency = undefined;
+  resource.startTime = undefined;
+  resource.endTime = undefined;
+  resource.endTimeOptions = HOURS_LIST.map(
     hour =>
       moment()
         .startOf('day')
         .add(hour, 'h')
-        .add(flow.scheduleStartMinute, 'm')
+        .add(resource.scheduleStartMinute, 'm')
         .format('LT'),
     Number
   );
-  flow.daysToRunOn = ['1', '2', '3', '4', '5', '6', '0'];
-  flow.dayToRunOn = undefined;
+  resource.daysToRunOn = ['1', '2', '3', '4', '5', '6', '0'];
+  resource.dayToRunOn = undefined;
 
   if (!value) {
-    flow.activeTab = PRESET_TAB;
+    resource.activeTab = PRESET_TAB;
 
-    return flow;
+    return resource;
   }
 
-  flow.activeTab = ADVANCED_TAB;
+  resource.activeTab = ADVANCED_TAB;
   const cronArr = value.split(' ');
 
   if (cronArr.length !== 6 || cronArr[DATE] !== '?' || cronArr[MONTH] !== '*') {
-    return flow;
+    return resource;
   }
 
   if (
     cronArr.join(' ') === '? */15 * ? * *' ||
     cronArr.join(' ') === '? 10-59/15 * ? * *'
   ) {
-    flow.activeTab = PRESET_TAB;
-    flow.frequency = 'every_quarter';
-    flow.daysToRunOn =
+    resource.activeTab = PRESET_TAB;
+    resource.frequency = 'every_quarter';
+    resource.daysToRunOn =
       cronArr[WEEKDAY] === '*'
         ? ['1', '2', '3', '4', '5', '6', '0']
         : cronArr[WEEKDAY].split(',');
 
-    return flow;
+    return resource;
   }
 
   if (
     cronArr.join(' ') === '? */30 * ? * *' ||
     cronArr.join(' ') === '? 10-59/30 * ? * *'
   ) {
-    flow.activeTab = PRESET_TAB;
-    flow.frequency = 'every_half_hour';
-    flow.daysToRunOn =
+    resource.activeTab = PRESET_TAB;
+    resource.frequency = 'every_half_hour';
+    resource.daysToRunOn =
       cronArr[WEEKDAY] === '*'
         ? ['1', '2', '3', '4', '5', '6', '0']
         : cronArr[WEEKDAY].split(',');
 
-    return flow;
+    return resource;
   }
 
   if (/\?\s0\s\*\/(1|2|4|6|8|12)\s\?\s\*\s\*/.test(cronArr.join(' '))) {
-    flow.activeTab = PRESET_TAB;
-    flow.frequency =
+    resource.activeTab = PRESET_TAB;
+    resource.frequency =
       frequency[value.match(/\?\s0\s\*\/(1|2|4|6|8|12)\s\?\s\*\s\*/)[1]];
-    flow.daysToRunOn =
+    resource.daysToRunOn =
       cronArr[WEEKDAY] === '*'
         ? ['1', '2', '3', '4', '5', '6', '0']
         : cronArr[WEEKDAY].split(',');
 
-    return flow;
+    return resource;
   }
 
   if (
@@ -588,46 +784,46 @@ export const setValues = data => {
     cronArr[MINUTES] === '0,15,30,45' ||
     cronArr[MINUTES] === '10,25,40,55'
   ) {
-    flow.activeTab = PRESET_TAB;
-    flow.frequency =
+    resource.activeTab = PRESET_TAB;
+    resource.frequency =
       cronArr[MINUTES] === '0,30' || cronArr[MINUTES] === '10,40'
         ? 'every_half_hour'
         : 'every_quarter';
 
     if (cronArr[HOURS] !== '*' && cronArr[HOURS] !== '?') {
       hours = cronArr[HOURS].split(',');
-      flow.startTime = moment()
+      resource.startTime = moment()
         .startOf('day')
         .add(hours[0], 'h')
-        .add(flow.scheduleStartMinute, 'm')
+        .add(resource.scheduleStartMinute, 'm')
         .format('LT');
 
       if (hours.length) {
-        const minutes = flow.frequency === 'every_quarter' ? 45 : 30;
+        const minutes = resource.frequency === 'every_quarter' ? 45 : 30;
 
-        flow.endTimeOptions = HOURS_LIST.map(
+        resource.endTimeOptions = HOURS_LIST.map(
           hour =>
             moment()
               .startOf('day')
               .add(hour, 'h')
               .add(minutes, 'm')
-              .add(flow.scheduleStartMinute, 'm')
+              .add(resource.scheduleStartMinute, 'm')
               .format('LT'),
           Number
         );
-        flow.endTime = moment(flow.startTime, 'LT')
+        resource.endTime = moment(resource.startTime, 'LT')
           .add(hours.length - 1, 'h')
           .add(minutes, 'm')
           .format('LT');
       }
     }
 
-    flow.daysToRunOn =
+    resource.daysToRunOn =
       cronArr[WEEKDAY] === '*'
         ? ['1', '2', '3', '4', '5', '6', '0']
         : cronArr[WEEKDAY].split(',');
 
-    return flow;
+    return resource;
   }
 
   if (
@@ -639,7 +835,7 @@ export const setValues = data => {
     let symDiff = true;
 
     if (hours.length > 1) {
-      flow.activeTab = PRESET_TAB;
+      resource.activeTab = PRESET_TAB;
       const diff = hours[1] - hours[0];
 
       for (let i = 1; i < hours.length; i += 1) {
@@ -649,23 +845,23 @@ export const setValues = data => {
       }
 
       if (symDiff) {
-        flow.frequency = frequency[diff.toString()];
-        flow.startTime = moment()
+        resource.frequency = frequency[diff.toString()];
+        resource.startTime = moment()
           .startOf('day')
           .add(hours[0], 'h')
-          .add(flow.scheduleStartMinute, 'm')
+          .add(resource.scheduleStartMinute, 'm')
           .format('LT');
-        flow.endTime = moment(flow.startTime, 'LT')
+        resource.endTime = moment(resource.startTime, 'LT')
           .add(diff * (hours.length - 1), 'h')
           .format('LT');
       }
 
-      flow.daysToRunOn =
+      resource.daysToRunOn =
         cronArr[WEEKDAY] === '*'
           ? ['1', '2', '3', '4', '5', '6', '0']
           : cronArr[WEEKDAY].split(',');
 
-      return flow;
+      return resource;
     }
   }
 
@@ -675,37 +871,37 @@ export const setValues = data => {
     cronArr[HOURS].split(',').length === 1
   ) {
     if (cronArr[WEEKDAY] !== '*' && cronArr[WEEKDAY].split(',').length === 1) {
-      flow.activeTab = PRESET_TAB;
-      flow.frequency = 'once_weekly';
-      flow.startTime = moment()
+      resource.activeTab = PRESET_TAB;
+      resource.frequency = 'once_weekly';
+      resource.startTime = moment()
         .startOf('day')
         .add(cronArr[HOURS], 'h')
-        .add(flow.scheduleStartMinute, 'm')
+        .add(resource.scheduleStartMinute, 'm')
         .format('LT');
-      flow.endTime = undefined;
-      flow.dayToRunOn = cronArr[WEEKDAY];
+      resource.endTime = undefined;
+      resource.dayToRunOn = cronArr[WEEKDAY];
     } else {
-      flow.activeTab = PRESET_TAB;
-      flow.frequency = 'once_daily';
-      flow.startTime = moment()
+      resource.activeTab = PRESET_TAB;
+      resource.frequency = 'once_daily';
+      resource.startTime = moment()
         .startOf('day')
         .add(cronArr[HOURS], 'h')
-        .add(flow.scheduleStartMinute, 'm')
+        .add(resource.scheduleStartMinute, 'm')
         .format('LT');
-      flow.endTime = undefined;
-      flow.daysToRunOn =
+      resource.endTime = undefined;
+      resource.daysToRunOn =
         cronArr[WEEKDAY] === '*'
           ? ['1', '2', '3', '4', '5', '6', '0']
           : cronArr[WEEKDAY].split(',');
     }
 
-    return flow;
+    return resource;
   }
 
-  return flow;
+  return resource;
 };
 
-export const getScheduleStartMinute = (flow, preferences) => {
+export const getScheduleStartMinute = (resource, preferences) => {
   let scheduleStartMinute = 0;
 
   if (preferences && preferences.scheduleShiftForFlowsCreatedAfter) {
@@ -714,8 +910,8 @@ export const getScheduleStartMinute = (flow, preferences) => {
     );
 
     if (
-      !flow.createdAt ||
-      changeStartMinuteForFlowsCreatedAfter.diff(moment(flow.createdAt)) < 0
+      !resource.createdAt ||
+      changeStartMinuteForFlowsCreatedAfter.diff(moment(resource.createdAt)) < 0
     ) {
       scheduleStartMinute = 10;
     }
@@ -724,7 +920,7 @@ export const getScheduleStartMinute = (flow, preferences) => {
   return scheduleStartMinute;
 };
 
-export const getPatchSet = (formVal, scheduleStartMinute) => {
+export const getScheduleVal = (formVal, scheduleStartMinute) => {
   let scheduleValue;
 
   if (formVal.activeTab === ADVANCED_TAB) {
@@ -746,13 +942,7 @@ export const getPatchSet = (formVal, scheduleStartMinute) => {
         : getCronExpression(formVal, scheduleStartMinute);
   }
 
-  return [
-    {
-      op: 'replace',
-      path: '/schedule',
-      value: scheduleValue,
-    },
-  ];
+  return scheduleValue;
 };
 
 export default { getCronExpression, getMetadata, setValues };

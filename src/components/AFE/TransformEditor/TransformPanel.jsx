@@ -4,6 +4,7 @@ import actions from '../../../actions';
 import * as selectors from '../../../reducers';
 import { KeyValueComponent } from '../../DynaForm/fields/DynaKeyValue';
 import getJSONPaths from '../../../utils/jsonPaths';
+import { isJsonString } from '../../../utils/string';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -11,6 +12,7 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.background.default,
     height: '100%',
     overflowY: 'auto',
+    width: '100%',
     marginTop: theme.spacing(1),
   },
   input: {
@@ -34,7 +36,17 @@ export default function TransformPanel(props) {
     dispatch(actions.editor.patch(editorId, { rule: value }));
   };
 
-  const dataFields = getJSONPaths(data || {});
+  let parsedData;
+
+  // We are supporting passing of string and json to editor. Check if we want to have a consistency.
+  // The change to be made in other editors too
+  if (data && typeof data === 'string' && isJsonString(data)) {
+    parsedData = JSON.parse(data);
+  } else if (data && typeof data === 'object') {
+    parsedData = data;
+  }
+
+  const dataFields = getJSONPaths(parsedData || {});
   const suggestionConfig = {
     keyConfig: {
       suggestions: dataFields,

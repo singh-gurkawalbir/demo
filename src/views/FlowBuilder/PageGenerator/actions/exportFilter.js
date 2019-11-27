@@ -10,8 +10,11 @@ function ExportFilterDialog({ flowId, resource, isViewMode, onClose }) {
   const dispatch = useDispatch();
   const resourceId = resource._id;
   const sampleData = useSelector(state =>
-    selectors.getSampleData(state, flowId, resourceId, 'outputFilter', {
-      isPageGenerator: true,
+    selectors.getSampleData(state, {
+      flowId,
+      resourceId,
+      resourceType: 'exports',
+      stage: 'outputFilter',
     })
   );
   const rules = useMemo(

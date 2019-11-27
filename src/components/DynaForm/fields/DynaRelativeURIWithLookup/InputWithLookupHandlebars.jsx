@@ -9,12 +9,10 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     marginLeft: 0,
     listStyleType: 'none',
-    paddingLeft: 10,
-    marginTop: 0,
-    paddingTop: 10,
+    paddingLeft: 0,
+    marginTop: theme.spacing(1),
     maxHeight: 400,
     overflow: 'auto',
-    background: '#f3f3f3',
     paddingInlineStart: theme.spacing(1),
     '& li': {
       height: 40,
@@ -84,6 +82,7 @@ export default function InputWithLookupHandlebars(props) {
     lookups,
     required,
     value,
+    connectionType,
   } = props;
   const classes = useStyles();
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -98,10 +97,18 @@ export default function InputWithLookupHandlebars(props) {
     const lastIndexOfBracesBeforeCursor = tmpStr.lastIndexOf('{');
 
     if (lookup) {
+      let lookupHandlebarExp = '';
+
+      if (connectionType === 'http') {
+        lookupHandlebarExp = `{lookup "${lookup.name}" this}`;
+      } else {
+        lookupHandlebarExp = `{${lookup.name}}`;
+      }
+
       const newValue = `${userInput.substring(
         0,
         lastIndexOfBracesBeforeCursor + 1
-      )}{lookup "${lookup.name}" this}}}`;
+      )}${lookupHandlebarExp}}}`;
 
       setState({ ...state, userInput: newValue });
       onFieldChange(id, newValue);

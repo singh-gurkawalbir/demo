@@ -1,13 +1,20 @@
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { IconButton } from '@material-ui/core';
 import * as selectors from '../../../../../reducers';
-import Icon from '../../../../icons/DownloadIcon';
+import DownloadIcon from '../../../../icons/DownloadIcon';
+// TODO Azhar
+import DebugIcon from '../../../../icons/DebugIcon';
 import openExternalUrl from '../../../../../utils/window';
+import actions from '../../../../../actions';
 
 export default {
-  label: 'Download debug logs',
-  component: function DownloadDebugLogs({ resource }) {
-    let url = `/api/connections/${resource._id}/debug`;
+  label: (r, actionProps) =>
+    actionProps.type === 'flowBuilder'
+      ? 'Open debugger'
+      : 'Download debug logs',
+  component: function DownloadDebugLogs({ resource, type }) {
+    const dispatch = useDispatch();
+    let url = `/connections/${resource._id}/debug`;
     const additionalHeaders = useSelector(state =>
       selectors.accountShareHeader(state, url)
     );
@@ -18,7 +25,12 @@ export default {
         }`;
       }
 
-      openExternalUrl({ url });
+      if (type === 'flowBuilder') {
+        dispatch(actions.connection.requestDebugLogs(url, resource._id));
+      } else {
+        url = `/api${url}`;
+        openExternalUrl({ url });
+      }
     };
 
     return (
@@ -26,7 +38,7 @@ export default {
         data-test="downloadDebugLog"
         size="small"
         onClick={onDownloadDebugLogClick}>
-        <Icon />
+        {type === 'flowBuilder' ? <DebugIcon /> : <DownloadIcon />}
       </IconButton>
     );
   },

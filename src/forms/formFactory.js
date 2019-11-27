@@ -2,6 +2,7 @@ import { get, cloneDeep } from 'lodash';
 import masterFieldHash from '../forms/fieldDefinitions';
 import formMeta from './definitions';
 import { getResourceSubType } from '../utils/resource';
+import { REST_ASSISTANTS } from '../utils/constants';
 
 const getAllOptionsHandlerSubForms = (
   fieldMap,
@@ -80,11 +81,13 @@ const getResourceFormAssets = ({
       } else if (resource && resource.assistant) {
         meta = formMeta.connections.custom[type];
 
-        /* TODO This is a temp fix for expediting QA testing of IAs as they are blocked on REST deprecation.
-        Once all IAs are moved to HTTP layer we can remove this below check and correspoding metadata files
-        in forms folder */
-        if (resource._connectorId) {
-          meta = formMeta.connections.custom.restIntegrationApps;
+        /* TODO This is a temp fix until React becomes the only app and when REST deprecation is done from backend
+        perspective and when all assistant metadata files are moved over to HTTP adaptor */
+        if (
+          resource.assistant &&
+          REST_ASSISTANTS.indexOf(resource.assistant) > -1
+        ) {
+          meta = formMeta.connections.custom.http;
         }
 
         if (meta) {

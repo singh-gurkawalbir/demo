@@ -9,7 +9,6 @@ const exportHooksMetadata = ({
   flowId,
   resourceId,
   resourceType,
-  isPageGenerator,
 }) => {
   const defaultHookType = getHookType(defaultValue);
 
@@ -21,7 +20,6 @@ const exportHooksMetadata = ({
         type: 'radiogroup',
         label: 'Hook Type',
         defaultValue: defaultHookType,
-        showOptionsHorizontally: true,
         fullWidth: true,
         options: [
           {
@@ -41,7 +39,6 @@ const exportHooksMetadata = ({
         flowId,
         resourceId,
         resourceType,
-        isPageGenerator,
         defaultValue:
           defaultHookType === 'script' ? defaultValue.preSavePage : {},
         visibleWhen: [{ field: 'hookType', is: ['script'] }],
@@ -79,7 +76,6 @@ const importHooksMetadata = ({
       type: 'radiogroup',
       label: 'Hook Type',
       defaultValue: defaultHookType,
-      showOptionsHorizontally: true,
       fullWidth: true,
       options: [
         {
@@ -128,10 +124,9 @@ const importHooksMetadata = ({
 export default function getHooksMetadata(
   resourceType,
   resource,
-  isPageGenerator,
   defaultValues
 ) {
   return resourceType === 'exports'
-    ? exportHooksMetadata({ ...defaultValues, resourceType, isPageGenerator })
+    ? exportHooksMetadata({ ...defaultValues, resourceType })
     : importHooksMetadata({ ...defaultValues, resourceType, resource });
 }

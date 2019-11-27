@@ -35,8 +35,13 @@ import {
   isRunnable,
   showScheduleIcon,
 } from './flowsUtil';
-import { getUsedActionsMapForResource } from '../utils/flows';
-import { isValidResourceReference } from '../utils/resource';
+import {
+  getUsedActionsMapForResource,
+  isPageGeneratorResource,
+} from '../utils/flows';
+import { isValidResourceReference, isNewId } from '../utils/resource';
+import { processSampleData } from '../utils/sampleData';
+import inferErrorMessage from '../utils/inferErrorMessage';
 
 const combinedReducers = combineReducers({
   app,
@@ -89,6 +94,18 @@ export function appErrored(state) {
 // #region PUBLIC COMMS SELECTORS
 export function allLoadingOrErrored(state) {
   return fromComms.allLoadingOrErrored(state.comms);
+}
+
+export function allLoadingOrErroredWithCorrectlyInferredErroredMessage(state) {
+  const resourceStatuses = allLoadingOrErrored(state);
+
+  if (!resourceStatuses) return null;
+
+  return resourceStatuses.map(comm => {
+    const { message, ...rest } = comm;
+
+    return { ...rest, message: inferErrorMessage(message) };
+  });
 }
 
 export function isLoadingAnyResource(state) {
@@ -253,6 +270,12 @@ export function editor(state, id) {
   return fromSession.editor(state.session, id);
 }
 
+export function mapping(state, id) {
+  if (!state) return [];
+
+  return fromSession.mapping(state.session, id);
+}
+
 export function editorHelperFunctions(state) {
   return (
     (state &&
@@ -269,22 +292,23 @@ export function processorRequestOptions(state, id) {
   return fromSession.processorRequestOptions(state.session, id);
 }
 
-export function getSampleData(state, flowId, resourceId, stage, options = {}) {
-  return fromSession.getSampleData(
-    state && state.session,
+export function getSampleData(
+  state,
+  { flowId, resourceId, resourceType, stage }
+) {
+  return fromSession.getSampleData(state && state.session, {
     flowId,
     resourceId,
+    resourceType,
     stage,
-    options
-  );
+  });
 }
 
-export function getFlowDataState(state, flowId, resourceId, isPageGenerator) {
+export function getFlowDataState(state, flowId, resourceId) {
   return fromSession.getFlowDataState(
     state && state.session,
     flowId,
-    resourceId,
-    isPageGenerator
+    resourceId
   );
 }
 
@@ -532,7 +556,7 @@ export function testConnectionCommState(state) {
 
   return {
     commState: comm.status,
-    message: comm.message,
+    message: inferErrorMessage(comm.message),
   };
 }
 
@@ -568,6 +592,7 @@ export function resourceList(state, options = {}) {
       'scripts',
       'stacks',
       'templates',
+      'published',
     ].includes(
       /* These resources are common for both production & sandbox environments. */
       options.type
@@ -606,7 +631,7 @@ export function flowDetails(state, id) {
     // TODO: add logic to properly determine if this flow should
     // display mapping/settings. This would come from the IA metadata.
     draft.showMapping = true;
-    draft.hasSettings = true;
+    draft.hasSettings = !!flow._connectorId;
   });
 }
 
@@ -1164,6 +1189,53 @@ export function integratorLicense(state) {
   const preferences = userPreferences(state);
 
   return fromUser.integratorLicense(state.user, preferences.defaultAShareId);
+}
+
+export function integratorLicenseActionDetails(state) {
+  let licenseActionDetails = {};
+  const license = integratorLicense(state);
+
+  if (!license) {
+    return licenseActionDetails;
+  }
+
+  if (license.tier === 'none') {
+    if (!license.trialEndDate) {
+      licenseActionDetails = {
+        action: 'startTrial',
+        label: 'GO UNLIMITED FOR 30 DAYS',
+      };
+    }
+  } else if (license.tier === 'free') {
+    if (!license.trialEndDate) {
+      licenseActionDetails = {
+        action: 'startTrial',
+        label: 'GO UNLIMITED FOR 30 DAYS',
+      };
+    } else if (license.status === 'TRIAL_EXPIRED') {
+      licenseActionDetails = {
+        action: 'upgrade',
+        label: 'UPGRADE NOW',
+      };
+    } else if (license.status === 'IN_TRIAL') {
+      if (license.expiresInDays < 1) {
+        licenseActionDetails = {
+          action: 'upgrade',
+          label: 'UPGRADE NOW',
+        };
+      } else {
+        licenseActionDetails = {
+          action: 'upgrade',
+          label: `${license.expiresInDays} DAYS LEFT UPGRADE NOW`,
+        };
+        licenseActionDetails.expiresSoon = license.expiresInDays < 10;
+      }
+    }
+  }
+
+  licenseActionDetails.upgradeRequested = license.upgradeRequested;
+
+  return licenseActionDetails;
 }
 
 export function accountSummary(state) {
@@ -1922,6 +1994,10 @@ export function createdResourceId(state, tempId) {
   return fromSession.createdResourceId(state && state.session, tempId);
 }
 
+export function integratorLicenseActionMessage(state) {
+  return fromSession.integratorLicenseActionMessage(state && state.session);
+}
+
 // #endregion Session metadata selectors
 
 // #region Session token selectors
@@ -2151,6 +2227,10 @@ export function assistantData(state, { adaptorType, assistant }) {
   });
 }
 
+export function assistantPreviewData(state, resourceId) {
+  return fromSession.assistantPreviewData(state && state.session, resourceId);
+}
+
 export function getAllConnectionIdsUsedInSelectedFlows(state, selectedFlows) {
   let connectionIdsToRegister = [];
 
@@ -2225,8 +2305,14 @@ export function getImportSampleData(state, resourceId) {
   const { merged: resource } = resourceData(state, 'imports', resourceId);
   const { assistant, adaptorType, sampleData } = resource;
 
-  if (sampleData) return sampleData;
+  // Formats sample data into readable form
+  if (sampleData) return processSampleData(sampleData, resource);
   else if (assistant) {
+    if (resource.sampleData) {
+      return resource.sampleData;
+    }
+
+    return assistantPreviewData(state, resourceId);
     // get assistants sample data
   } else if (adaptorType === 'NetSuiteDistributedImport') {
     // eslint-disable-next-line camelcase
@@ -2310,6 +2396,27 @@ export function getFlowReferencesForResource(state, resourceId, resourceType) {
   return flowRefs;
 }
 
+/*
+ * Given flowId, resourceId determines whether resource is a pg/pp
+ */
+export function isPageGenerator(state, flowId, resourceId, resourceType) {
+  // If imports , straight forward not a pg
+  if (resourceType === 'imports') return false;
+
+  // Incase of new resource (export/lookup), flow doc does not have this resource yet
+  // So, get staged resource and determine export/lookup based on isLookup flag
+  if (isNewId(resourceId)) {
+    const { merged: resource } = resourceData(state, 'exports', resourceId);
+
+    return !resource.isLookup;
+  }
+
+  // Search in flow doc to determine pg/pp
+  const { merged: flow } = resourceData(state, 'flows', flowId, 'value');
+
+  return isPageGeneratorResource(flow, resourceId);
+}
+
 export function getUsedActionsForResource(
   state,
   resourceId,
@@ -2319,4 +2426,17 @@ export function getUsedActionsForResource(
   const { merged: resource } = resourceData(state, resourceType, resourceId);
 
   return getUsedActionsMapForResource(resource, resourceType, flowNode);
+}
+
+export function debugLogs(state) {
+  return fromSession.debugLogs(state && state.session);
+}
+
+export function resourceNamesByIds(state, type) {
+  const { resources } = resourceList(state, { type });
+  const resourceIdNameMap = {};
+
+  resources.forEach(r => (resourceIdNameMap[r._id] = r.name || r._id));
+
+  return resourceIdNameMap;
 }

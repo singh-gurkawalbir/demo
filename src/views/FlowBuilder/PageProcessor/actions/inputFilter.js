@@ -15,8 +15,11 @@ function InputFilterDialog({
   const dispatch = useDispatch();
   const resourceId = resource._id;
   const sampleData = useSelector(state =>
-    selectors.getSampleData(state, flowId, resourceId, 'inputFilter', {
-      isImport: resourceType === 'imports',
+    selectors.getSampleData(state, {
+      flowId,
+      resourceId,
+      resourceType,
+      stage: 'inputFilter',
     })
   );
   const rules = useMemo(
@@ -25,7 +28,7 @@ function InputFilterDialog({
       resource.filter &&
       (resourceType === 'imports'
         ? resource.filter.rules
-        : resource.inputFilter.rules),
+        : resource.inputFilter && resource.inputFilter.rules),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );

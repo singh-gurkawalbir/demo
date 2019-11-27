@@ -1,7 +1,6 @@
 import { useState, Fragment, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import IconButton from '@material-ui/core/IconButton';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import { isFunction } from 'lodash';
@@ -14,6 +13,7 @@ import EditIcon from '../../../icons/EditIcon';
 import AddIcon from '../../../icons/AddIcon';
 import CreateScriptDialog from './CreateScriptDialog';
 import { saveScript } from './utils';
+import ActionButton from '../../../ActionButton';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -30,22 +30,6 @@ const useStyles = makeStyles(theme => ({
     paddingRight: theme.spacing(1),
     '& >.MuiFormControl-root': {
       width: '100%',
-    },
-  },
-  editorButton: {
-    marginRight: 5,
-    background: theme.palette.background.paper,
-    border: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
-    height: 50,
-    width: 50,
-    borderRadius: 2,
-    color: theme.palette.text.hint,
-    '&:hover': {
-      background: theme.palette.background.paper,
-      '& > span': {
-        color: theme.palette.primary.main,
-      },
     },
   },
 }));
@@ -188,7 +172,6 @@ export default function DynaHook(props) {
             />
           </div>
           {hookType === 'stack' && (
-            // Todo Azhar select field is small
             <div className={classes.field}>
               <FormControl className={classes.select}>
                 <InputLabel htmlFor="stackId">Stack</InputLabel>
@@ -218,23 +201,21 @@ export default function DynaHook(props) {
                   />
                 </FormControl>
               </div>
-              <IconButton
+              <ActionButton
                 onClick={handleCreateScriptClick}
-                className={classes.editorButton}
                 disabled={disabled}
                 data-test={id}>
                 <AddIcon />
-              </IconButton>
+              </ActionButton>
             </Fragment>
           )}
           {hookType === 'script' && value._scriptId && (
-            <IconButton
+            <ActionButton
               onClick={handleEditorClick}
-              className={classes.editorButton}
               disabled={disabled}
               data-test={id}>
               <EditIcon />
-            </IconButton>
+            </ActionButton>
           )}
         </div>
       </div>

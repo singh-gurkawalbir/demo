@@ -269,8 +269,11 @@ export default {
     label: 'NetSuite distributed disabled',
   },
   'netsuite.distributed.qualifier': {
-    type: 'text',
-    label: 'NetSuite distributed qualifier',
+    label: 'Field Specific Qualification Criteria',
+    type: 'netsuitequalifier',
+    placeholder: 'Define Qualification Criteria',
+    helpKey: 'export.netsuite.qualifier',
+    connectionId: r => r && r._connectionId,
   },
   'netsuite.distributed.hooks.preSend.fileInternalId': {
     type: 'text',

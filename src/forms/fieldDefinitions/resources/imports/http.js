@@ -149,8 +149,9 @@ export default {
     type: 'relativeuriwithlookup',
     label: 'Relative URI',
     placeholder: 'Optional',
+    arrayIndex: 0,
     connectionId: r => r && r._connectionId,
-    refreshOptionsOnChangesTo: ['http.lookups'],
+    refreshOptionsOnChangesTo: ['http.lookups', 'name'],
     visibleWhen: [
       {
         field: 'http.method',

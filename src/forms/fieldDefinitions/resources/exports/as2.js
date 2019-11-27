@@ -3,12 +3,6 @@ export default {
     label: 'Resource Path',
     type: 'text',
   },
-  'edix12.format': {
-    type: 'filedefinitionselect',
-    label: 'EDI X12 Format',
-    format: 'edi',
-    required: r => !r,
-  },
   'file.filedefinition.rules': {
     type: 'filedefinitioneditor',
     label: 'File Definition Rules ',
@@ -34,6 +28,7 @@ export default {
   dataURITemplate: {
     type: 'relativeuri',
     label: 'Data URI Template',
+    refreshOptionsOnChangesTo: ['name'],
     connectionId: r => r && r._connectionId,
   },
 };

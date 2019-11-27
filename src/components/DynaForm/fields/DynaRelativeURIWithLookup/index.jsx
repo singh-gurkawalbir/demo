@@ -1,33 +1,21 @@
 import React, { useState, useEffect, Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import { IconButton } from '@material-ui/core';
-import OpenInNewIcon from 'mdi-react/OpenInNewIcon';
 import * as selectors from '../../../../reducers';
 import UrlEditorDialog from '../../../../components/AFE/UrlEditor/Dialog';
 import InputWithLookupHandlebars from './InputWithLookupHandlebars';
 import getFormattedSampleData from '../../../../utils/sampleData';
 import actions from '../../../../actions';
+import ActionButton from '../../../ActionButton';
+import ExitIcon from '../../../icons/ExitIcon';
 
 const useStyles = makeStyles(theme => ({
   textField: {
     minWidth: 200,
   },
-  editorButton: {
+  exitButton: {
     float: 'right',
-    marginLeft: 5,
-    background: theme.palette.background.paper,
-    border: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
-    height: 50,
-    width: 50,
-    borderRadius: 2,
-    '&:hover': {
-      background: theme.palette.background.paper,
-      '& > span': {
-        color: theme.palette.primary.main,
-      },
-    },
+    marginLeft: theme.spacing(1),
   },
 }));
 
@@ -47,21 +35,25 @@ export default function DynaRelativeURIWithLookup(props) {
     required,
     value,
     label,
-    options,
+    options = {},
     resourceId,
     useSampleDataAsArray,
     resourceType,
     flowId,
+    arrayIndex,
   } = props;
   const { resourceName, lookups } = options;
-  const { fieldId: lookupFieldId, data: lookupData } = lookups;
+  const { fieldId: lookupFieldId, data: lookupData } = lookups || {};
   const connection = useSelector(state =>
     selectors.resource(state, 'connections', connectionId)
   );
   const dispatch = useDispatch();
   const sampleData = useSelector(state =>
-    selectors.getSampleData(state, flowId, resourceId, 'flowInput', {
-      isImport: resourceType === 'imports',
+    selectors.getSampleData(state, {
+      flowId,
+      resourceId,
+      resourceType,
+      stage: 'flowInput',
     })
   );
   const formattedSampleData = JSON.stringify(
@@ -100,18 +92,27 @@ export default function DynaRelativeURIWithLookup(props) {
     onFieldChange(lookupFieldId, lookups);
   };
 
+  const handleFieldChange = (_id, val) => {
+    if (typeof arrayIndex === 'number' && Array.isArray(value)) {
+      // save to array at position arrayIndex
+      const valueTmp = value;
+
+      valueTmp[arrayIndex] = val;
+      onFieldChange(id, valueTmp);
+    } else {
+      // save to field
+      onFieldChange(id, val);
+    }
+  };
+
   const handleClose = (shouldCommit, editorValues) => {
     const { template } = editorValues;
 
     if (shouldCommit) {
-      onFieldChange(id, template);
+      handleFieldChange(id, template);
     }
 
     handleEditorClick();
-  };
-
-  const handleFieldChange = (_id, val) => {
-    onFieldChange(id, val);
   };
 
   let description = '';
@@ -121,7 +122,10 @@ export default function DynaRelativeURIWithLookup(props) {
     description = `Relative to: ${connection[type].baseURI}`;
   }
 
-  // console.log('id, resourceName', id, resourceName);
+  const extactedVal =
+    options && typeof arrayIndex === 'number' && Array.isArray(value)
+      ? value[arrayIndex]
+      : value;
 
   return (
     <Fragment>
@@ -130,16 +134,17 @@ export default function DynaRelativeURIWithLookup(props) {
           title="Relative URI Editor"
           id={id}
           data={formattedSampleData}
-          rule={value}
+          rule={extactedVal}
+          lookups={lookupData}
           onClose={handleClose}
         />
       )}
-      <IconButton
+      <ActionButton
         data-test={id}
         onClick={handleEditorClick}
-        className={classes.editorButton}>
-        <OpenInNewIcon />
-      </IconButton>
+        className={classes.exitButton}>
+        <ExitIcon />
+      </ActionButton>
       <InputWithLookupHandlebars
         key={id}
         name={name}
@@ -154,7 +159,8 @@ export default function DynaRelativeURIWithLookup(props) {
         lookups={lookupData}
         onLookupUpdate={handleLookupUpdate}
         required={required}
-        value={value}
+        value={extactedVal}
+        connectionType={connection.type}
       />
     </Fragment>
   );

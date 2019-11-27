@@ -1,15 +1,8 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import { Button } from '@material-ui/core';
 import DynaForm from '../../../DynaForm';
 import DynaSubmit from '../../../DynaForm/DynaSubmit';
-
-const useStyles = makeStyles(() => ({
-  container: {
-    minWidth: '60vw',
-  },
-}));
 
 export default function Lookup(props) {
   const {
@@ -20,7 +13,6 @@ export default function Lookup(props) {
     disabled,
     showDynamicLookupOnly = false,
   } = props;
-  const classes = useStyles();
   const isEdit = !!(lookup && lookup.name);
   const handleSubmit = formVal => {
     const lookupObj = {};
@@ -198,6 +190,7 @@ export default function Lookup(props) {
         name: 'failRecord',
         type: 'radiogroup',
         label: 'Action to take if unique match not found',
+        showOptionsVertically: true,
         defaultValue: getFailedRecordDefault() || 'disallowFailure',
         options: [
           {
@@ -274,27 +267,28 @@ export default function Lookup(props) {
   }
 
   return (
-    <div className={classes.container}>
+    <div>
       <DynaForm disabled={disabled} fieldMeta={fieldMeta}>
         {error && (
           <div>
-            <Typography
-              color="error"
-              variant="h5"
-              className={classes.errorContainer}>
+            <Typography color="error" variant="h5">
               {error}
             </Typography>
           </div>
         )}
-        <Button data-test="cancelLookupForm" onClick={onCancel}>
-          Cancel
-        </Button>
         <DynaSubmit
           disabled={disabled}
           data-test="saveLookupForm"
           onClick={handleSubmit}>
           Save
         </DynaSubmit>
+        <Button
+          data-test="cancelLookupForm"
+          onClick={onCancel}
+          variant="text"
+          color="primary">
+          Cancel
+        </Button>
       </DynaForm>
     </div>
   );

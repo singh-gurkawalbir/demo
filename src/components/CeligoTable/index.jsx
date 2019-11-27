@@ -16,6 +16,8 @@ import actions from '../../actions';
 import * as selectors from '../../reducers';
 import ActionMenu from './ActionMenu';
 import EllipsisHorizontalIcon from '../icons/EllipsisHorizontalIcon';
+import CheckboxUnselectedIcon from '../icons/CheckboxUnselectedIcon';
+import CheckboxSelectedIcon from '../icons/CheckboxSelectedIcon';
 
 const useStyles = makeStyles(theme => ({
   visuallyHidden: {
@@ -154,6 +156,16 @@ export default function CeligoTable({
           {selectableRows && (
             <TableCell>
               <Checkbox
+                icon={
+                  <span>
+                    <CheckboxUnselectedIcon />
+                  </span>
+                }
+                checkedIcon={
+                  <span>
+                    <CheckboxSelectedIcon />
+                  </span>
+                }
                 onChange={event => handleSelectAllChange(event)}
                 checked={isAllSelected}
                 color="primary"
@@ -210,6 +222,16 @@ export default function CeligoTable({
                     onChange={event => handleSelectChange(event, r._id)}
                     checked={!!selectedResources[r._id]}
                     color="primary"
+                    icon={
+                      <span>
+                        <CheckboxUnselectedIcon />
+                      </span>
+                    }
+                    checkedIcon={
+                      <span>
+                        <CheckboxSelectedIcon />
+                      </span>
+                    }
                   />
                 )}
               </TableCell>
@@ -243,7 +265,10 @@ export default function CeligoTable({
                     ? rowActions(r, actionProps)
                     : rowActions
                   ).map(({ label, component: Action }) => ({
-                    label: typeof label === 'function' ? label(r) : label,
+                    label:
+                      typeof label === 'function'
+                        ? label(r, actionProps)
+                        : label,
                     component: <Action {...actionProps} resource={r} />,
                   }))}
                 />

@@ -45,11 +45,6 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-/**
- *
- * @param resetAfterSelection (boolean) : Use this if select needs to reset everytime after selection
- *
- */
 export default function DynaSelect(props) {
   const {
     disabled,
@@ -64,7 +59,6 @@ export default function DynaSelect(props) {
     required,
     label,
     onFieldChange,
-    resetAfterSelection,
   } = props;
   const classes = useStyles();
   let items = options.reduce(
@@ -93,7 +87,7 @@ export default function DynaSelect(props) {
   );
   let finalTextValue;
 
-  if (resetAfterSelection || value === undefined || value === null) {
+  if (value === undefined || value === null) {
     finalTextValue = defaultValue;
   } else {
     finalTextValue = value;

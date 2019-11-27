@@ -8,6 +8,8 @@ import structuredFileParser from './structuredFileParser';
 import structuredFileGenerator from './structuredFileGenerator';
 import sql from './sql';
 import filter from './filter';
+import netsuiteLookupFilter from './netsuiteLookupFilter';
+import netsuiteQualificationCriteria from './netsuiteQualificationCriteria';
 
 const logicMap = {
   xmlParser,
@@ -20,6 +22,9 @@ const logicMap = {
   structuredFileGenerator,
   sql,
   filter,
+  netsuiteLookupFilter,
+  netsuiteQualificationCriteria,
+  salesforceQualificationCriteria: netsuiteQualificationCriteria,
 };
 
 function getLogic(editor) {

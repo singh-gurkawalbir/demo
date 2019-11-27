@@ -16,6 +16,14 @@ export default {
       };
     }
 
+    if (fieldId === 'dataURITemplate') {
+      const nameField = fields.find(field => field.fieldId === 'name');
+
+      return {
+        resourceName: nameField && nameField.value,
+      };
+    }
+
     return null;
   },
   fieldMap: {
@@ -29,6 +37,11 @@ export default {
     'file.type': {
       fieldId: 'file.type',
       defaultValue: 'filedefinition',
+      visible: false,
+    },
+    'file.skipAggregation': {
+      fieldId: 'file.skipAggregation',
+      defaultValue: 'true',
       visible: false,
     },
     'edix12.format': {
@@ -53,6 +66,7 @@ export default {
       'importData',
       'distributed',
       'file.type',
+      'file.skipAggregation',
       'edix12.format',
       'as2.fileNameTemplate',
       'as2.messageIdTemplate',
@@ -70,4 +84,13 @@ export default {
       },
     ],
   },
+  actions: [
+    {
+      id: 'cancel',
+    },
+    {
+      // Button that saves file defs and then submit resource
+      id: 'savedefinition',
+    },
+  ],
 };

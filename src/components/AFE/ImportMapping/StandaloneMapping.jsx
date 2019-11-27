@@ -1,46 +1,68 @@
 import { useEffect, useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import MappingUtil from '../../../utils/mapping';
+import ImportMapping from './index';
 import * as ResourceUtil from '../../../utils/resource';
-import LookupUtil from '../../../utils/lookup';
+import lookupUtil from '../../../utils/lookup';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
-import ImportMapping from './';
-import LoadResources from '../../../components/LoadResources';
-import getJSONPaths from '../../../utils/jsonPaths';
 import { getImportOperationDetails } from '../../../utils/assistant';
+import mappingUtil from '../../../utils/mapping';
+import getJSONPaths from '../../../utils/jsonPaths';
 
-/**
- *
- *(This component can be used to manage Import lookups)
- * @export
- * @param {string} id (unique Id)
- * @param {string} resourceId (Import Resource Id)
- * @param {function} onClose (callback for closing the mapping dialog)
- */
-
-export default function StandaloneImportMapping(props) {
-  const {
-    id,
-    resourceId,
-    onClose,
-    connectionId,
-    extractFields,
-    disabled,
-  } = props;
-  const dispatch = useDispatch();
+export default function StandaloneMapping(props) {
+  const { id, flowId, resourceId, disabled } = props;
+  const [assistantLoaded, setAssistantLoaded] = useState(false);
+  const [
+    integrationAppMetadataLoaded,
+    setIntegrationAppMetadataLoaded,
+  ] = useState(false);
+  const [changeIdentifier, setChangeIdentifier] = useState(0);
   const resourceData = useSelector(state =>
     selectors.resource(state, 'imports', resourceId)
   );
-  const isAssistant = !!(resourceData && resourceData.assistant);
-  const isIntegrationApp = !!(resourceData && resourceData._connectorId);
-  const integrationId = resourceData && resourceData._integrationId;
-  const [assistantLoaded, setAssistantLoaded] = useState(false);
-  const [integrationAppLoaded, setIntegrationAppLoaded] = useState(false);
-  const [changeIdentifier, setChangeIdentifier] = useState(0);
+  const isAssistant = !!resourceData.assistant;
+  const isIntegrationApp = !!resourceData._connectorId;
+  const integrationId = resourceData._integrationId;
   const options = {};
   const resourceType = ResourceUtil.getResourceSubType(resourceData);
-  /**  Block START : to get assistance metadata from
+  const connectionId = resourceData._connectionId;
+  const dispatch = useDispatch();
+  const extractFields = useSelector(state =>
+    selectors.getSampleData(state, {
+      flowId,
+      resourceId,
+      stage: 'importMappingExtract',
+      resourceType: 'imports',
+    })
+  );
+  const requestSampleData = useCallback(() => {
+    dispatch(
+      actions.flowData.requestSampleData(
+        flowId,
+        resourceId,
+        'imports',
+        'importMappingExtract'
+      )
+    );
+  }, [dispatch, flowId, resourceId]);
+
+  useEffect(() => {
+    if (!extractFields) {
+      requestSampleData();
+    }
+  }, [dispatch, extractFields, flowId, requestSampleData, resourceId]);
+
+  const importSampleData = useSelector(state =>
+    selectors.getImportSampleData(state, resourceId)
+  );
+
+  useEffect(() => {
+    if (!importSampleData) {
+      dispatch(actions.importSampleData.request(resourceId));
+    }
+  }, [importSampleData, dispatch, resourceId]);
+
+  /**  get assistance metadata from
    *   selector and dispatching an action if not loaded
    */
   const assistantData = useSelector(state =>
@@ -70,9 +92,7 @@ export default function StandaloneImportMapping(props) {
     resourceType.assistant,
   ]);
 
-  /**  Block ENDS */
-
-  /**  Block START : to get integration app mapping metadata from
+  /**  get integration app mapping metadata from
    *   selector and dispatching an action if not loaded
    */
 
@@ -101,7 +121,7 @@ export default function StandaloneImportMapping(props) {
     resourceData,
   ]);
 
-  /**  Block ENDS */
+  const application = resourceType.type;
 
   if (resourceType.type === ResourceUtil.adaptorTypeMap.SalesforceImport) {
     options.connectionId = connectionId;
@@ -116,9 +136,12 @@ export default function StandaloneImportMapping(props) {
 
   const mappingOptions = {};
 
-  if (isAssistant && assistantData && !assistantLoaded) {
-    setAssistantLoaded(!assistantLoaded);
-    setChangeIdentifier(changeIdentifier + 1);
+  if (isAssistant && assistantData) {
+    if (!assistantLoaded) {
+      setAssistantLoaded(true);
+      setChangeIdentifier(changeIdentifier + 1);
+    }
+
     const { assistantMetadata } = resourceData;
     const { operation, resource, version } = assistantMetadata;
     const { requiredMappings } = getImportOperationDetails({
@@ -131,64 +154,28 @@ export default function StandaloneImportMapping(props) {
     mappingOptions.assistant = {
       requiredMappings,
     };
-  } else if (
-    isIntegrationApp &&
-    integrationAppMappingMetadata &&
-    !integrationAppLoaded
-  ) {
-    setIntegrationAppLoaded(!integrationAppLoaded);
-    setChangeIdentifier(changeIdentifier + 1);
+  } else if (isIntegrationApp && integrationAppMappingMetadata) {
+    if (!integrationAppMetadataLoaded) {
+      setIntegrationAppMetadataLoaded(true);
+      setChangeIdentifier(changeIdentifier + 1);
+    }
+
     mappingOptions.integrationApp = {
       mappingMetadata: integrationAppMappingMetadata,
       connectorExternalId: resourceData.externalId,
     };
   }
 
-  const mappings = MappingUtil.getMappingFromResource(
+  const mappings = mappingUtil.getMappingFromResource(
     resourceData,
     resourceType.type,
     false,
     mappingOptions
   );
-  const lookups = LookupUtil.getLookupFromResource(
+  const lookups = lookupUtil.getLookupFromResource(
     resourceData,
     resourceType.type
   );
-  const handleSave = (_mappings, _lookups, closeModal) => {
-    // perform save operation only when mapping object is passed as parameter to the function.
-    if (_mappings) {
-      const patchSet = [];
-      const mappingPath = MappingUtil.getMappingPath(resourceType.type);
-
-      // if mapping doesnt exist in resouce object , perform add patch else replace patch
-      patchSet.push({
-        op: mappings ? 'replace' : 'add',
-        path: mappingPath,
-        value: _mappings,
-      });
-
-      // update _lookup only if its being passed as param to function
-      if (_lookups) {
-        const lookupPath = LookupUtil.getLookupPath(resourceType.type);
-
-        patchSet.push({
-          op: lookups ? 'replace' : 'add',
-          path: lookupPath,
-          value: _lookups,
-        });
-      }
-
-      dispatch(actions.resource.patchStaged(resourceId, patchSet, 'value'));
-      dispatch(actions.resource.commitStaged('imports', resourceId, 'value'));
-    }
-
-    if (closeModal) onClose();
-  };
-
-  const handleCancel = () => {
-    onClose();
-  };
-
   let formattedExtractFields = [];
 
   if (extractFields) {
@@ -200,24 +187,23 @@ export default function StandaloneImportMapping(props) {
       [];
   }
 
+  const formattedGenerateFields = mappingUtil.getFormattedGenerateData(
+    importSampleData,
+    application
+  );
+
   return (
-    <LoadResources resources="imports">
-      <ImportMapping
-        disabled={disabled}
-        title="Define Import Mapping"
-        key={changeIdentifier}
-        id={id}
-        application={resourceType.type}
-        lookups={lookups}
-        isStandaloneMapping
-        resourceId={resourceId}
-        mappings={mappings}
-        showDialogClose
-        extractFields={formattedExtractFields}
-        onCancel={handleCancel}
-        onSave={handleSave}
-        options={options}
-      />
-    </LoadResources>
+    <ImportMapping
+      key={changeIdentifier}
+      editorId={id}
+      disabled={disabled}
+      extractFields={formattedExtractFields}
+      generateFields={formattedGenerateFields}
+      value={mappings}
+      adaptorType={resourceType.type}
+      application={application}
+      lookups={lookups}
+      options={options}
+    />
   );
 }

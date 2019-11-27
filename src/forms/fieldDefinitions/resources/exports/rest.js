@@ -12,6 +12,32 @@ export default {
         ],
       },
     ],
+    visibleWhen: [
+      {
+        field: 'outputMode',
+        is: ['records'],
+      },
+    ],
+  },
+  'rest.blobMethod': {
+    type: 'select',
+    label: 'HTTP Method',
+    required: true,
+    defaultValue: r => r && r.rest && r.rest.method,
+    options: [
+      {
+        items: [
+          { label: 'GET', value: 'GET' },
+          { label: 'POST', value: 'POST' },
+        ],
+      },
+    ],
+    visibleWhen: [
+      {
+        field: 'outputMode',
+        is: ['blob'],
+      },
+    ],
   },
   'rest.postBody': {
     type: 'httprequestbody',
@@ -180,12 +206,7 @@ export default {
     required: true,
     label: 'Relative URI',
     connectionId: r => r && r._connectionId,
-    requiredWhen: [
-      {
-        field: 'outputMode',
-        is: ['blob'],
-      },
-    ],
+    refreshOptionsOnChangesTo: ['name'],
   },
   'rest.successPath': {
     type: 'text',

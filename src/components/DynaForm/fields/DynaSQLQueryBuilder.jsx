@@ -41,7 +41,7 @@ export default function DynaSQLQueryBuilder(props) {
   const {
     id,
     onFieldChange,
-    options,
+    options = {},
     disabled,
     value,
     label,
@@ -52,7 +52,7 @@ export default function DynaSQLQueryBuilder(props) {
   } = props;
   const { lookups: lookupObj, queryType } = options;
   const lookupFieldId = lookupObj && lookupObj.fieldId;
-  const lookups = lookupObj && lookupObj.data;
+  const lookups = (lookupObj && lookupObj.data) || [];
   const [showEditor, setShowEditor] = useState(false);
   const dispatch = useDispatch();
   const [dataState, setDataState] = useState({
@@ -62,13 +62,19 @@ export default function DynaSQLQueryBuilder(props) {
   });
   const { sampleDataLoaded, extractFieldsLoaded, changeIdentifier } = dataState;
   const sampleData = useSelector(state =>
-    selectors.getSampleData(state, flowId, resourceId, 'flowInput', {
-      isImport: resourceType === 'imports',
+    selectors.getSampleData(state, {
+      flowId,
+      resourceId,
+      resourceType,
+      stage: 'flowInput',
     })
   );
   const extractFields = useSelector(state =>
-    selectors.getSampleData(state, flowId, resourceId, 'importMappingExtract', {
-      isImport: true,
+    selectors.getSampleData(state, {
+      flowId,
+      resourceId,
+      resourceType,
+      stage: 'importMappingExtract',
     })
   );
 
@@ -192,6 +198,7 @@ export default function DynaSQLQueryBuilder(props) {
           title="SQL Query Builder"
           id={`${resourceId}-${id}`}
           rule={parsedRule}
+          lookups={lookups}
           sampleData={formattedSampleData}
           defaultData={formattedDefaultData}
           onFieldChange={onFieldChange}

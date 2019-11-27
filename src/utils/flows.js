@@ -1,4 +1,4 @@
-import MappingUtil from './mapping';
+import mappingUtil from './mapping';
 import { adaptorTypeMap } from './resource';
 
 export const actionsMap = {
@@ -57,7 +57,7 @@ const isActionUsed = (resource, flowNode, action) => {
     case actionsMap.importMapping: {
       const appType =
         resource.adaptorType && adaptorTypeMap[resource.adaptorType];
-      const mappings = MappingUtil.getMappingFromResource(
+      const mappings = mappingUtil.getMappingFromResource(
         resource,
         appType,
         true
@@ -128,4 +128,12 @@ export const isImportMappingAvailable = resource => {
   const appType = adaptorTypeMap[adaptorType];
 
   return ['mongodb', 'rdbms'].indexOf(appType) === -1;
+};
+
+// Given a flow doc and resourceId , returns true if it is a page generator
+// Returns falls if provided invalid flow doc
+export const isPageGeneratorResource = (flow = {}, resourceId) => {
+  const { pageGenerators = [] } = flow;
+
+  return !!pageGenerators.find(pg => pg._exportId === resourceId);
 };

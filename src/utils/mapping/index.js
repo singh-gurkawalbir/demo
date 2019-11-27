@@ -1,7 +1,9 @@
+import deepClone from 'lodash/cloneDeep';
 import { adaptorTypeMap } from '../resource';
-import generateFields from './sampleGenerateData';
-import MappingUtil from '.';
+import mappingUtil from '.';
 import NetsuiteMapping from './application/netsuite';
+import getJSONPaths from '../jsonPaths';
+import { isJsonString } from '../../utils/string';
 
 const LookupResponseMappingExtracts = [
   'data',
@@ -135,7 +137,8 @@ export default {
 
     switch (appType) {
       case adaptorTypeMap.NetSuiteDistributedImport:
-        mappings = resourceObj.netsuite_da && resourceObj.netsuite_da.mapping;
+        mappings =
+          (resourceObj.netsuite_da && resourceObj.netsuite_da.mapping) || {};
         break;
       case adaptorTypeMap.RESTImport:
       case adaptorTypeMap.AS2Import:
@@ -144,7 +147,7 @@ export default {
       case adaptorTypeMap.HTTPImport:
       case adaptorTypeMap.WrapperImport:
       case adaptorTypeMap.S3Import:
-        mappings = resourceObj.mapping;
+        mappings = resourceObj.mapping || {};
         break;
       case adaptorTypeMap.XMLImport:
       case adaptorTypeMap.MongodbImport:
@@ -152,10 +155,21 @@ export default {
       default:
     }
 
-    if (getRawMappings) return mappings;
+    // creating deep copy of mapping object to avoid alteration to resource mapping object
+    const mappingCopy = deepClone(mappings);
 
-    return MappingUtil.getMappingsForApp({
-      mappings,
+    if (!mappingCopy.fields) {
+      mappingCopy.fields = [];
+    }
+
+    if (!mappingCopy.lists) {
+      mappingCopy.lists = [];
+    }
+
+    if (getRawMappings) return mappingCopy;
+
+    return mappingUtil.getMappingsForApp({
+      mappings: mappingCopy,
       appType,
       options,
     });
@@ -166,7 +180,7 @@ export default {
     if (options.integrationApp) {
       const { mappingMetadata, connectorExternalId } = options.integrationApp;
 
-      _mappings = MappingUtil.generateFieldAndListMappingsforIA(
+      _mappings = mappingUtil.generateFieldAndListMappingsforIA(
         mappings,
         mappingMetadata,
         connectorExternalId
@@ -176,7 +190,7 @@ export default {
     if (options.assistant) {
       const { requiredMappings } = options.assistant;
 
-      _mappings = MappingUtil.generateFieldAndListMappingsforAssistant(
+      _mappings = mappingUtil.generateFieldAndListMappingsforAssistant(
         mappings,
         requiredMappings
       );
@@ -197,7 +211,7 @@ export default {
       case adaptorTypeMap.WrapperImport:
       case adaptorTypeMap.RDBMSImport:
       case adaptorTypeMap.SalesforceImport:
-        return MappingUtil.getFieldsAndListMappings({ mappings: _mappings });
+        return mappingUtil.getFieldsAndListMappings({ mappings: _mappings });
       default:
     }
   },
@@ -224,7 +238,7 @@ export default {
       case adaptorTypeMap.WrapperImport:
       case adaptorTypeMap.SalesforceImport:
       case adaptorTypeMap.RDBMSImport:
-        return MappingUtil.generateMappingFieldsAndList({ mappings });
+        return mappingUtil.generateMappingFieldsAndList({ mappings });
 
       default:
     }
@@ -292,7 +306,6 @@ export default {
 
     return formattedMapping;
   },
-  getSampleGenerateFields: () => generateFields,
   getResponseMappingDefaultExtracts: resourceType => {
     const extractFields =
       resourceType === 'imports'
@@ -307,30 +320,40 @@ export default {
   getFormattedGenerateData: (sampleData, application) => {
     let formattedGenerateFields = [];
 
-    if (application === adaptorTypeMap.SalesforceImport) {
-      formattedGenerateFields =
-        sampleData &&
-        sampleData.map(d => ({
+    if (sampleData) {
+      if (application === adaptorTypeMap.SalesforceImport) {
+        formattedGenerateFields = sampleData.map(d => ({
           id: d.value,
           name: d.label,
           type: d.type,
           options: d.picklistValues,
         }));
-    } else if (application === adaptorTypeMap.NetSuiteDistributedImport) {
-      formattedGenerateFields =
-        sampleData &&
-        sampleData.map(d => ({
+      } else if (application === adaptorTypeMap.NetSuiteDistributedImport) {
+        formattedGenerateFields = sampleData.map(d => ({
           id: d.value,
           name: d.label,
+          type: d.type,
         }));
+      } else {
+        let formattedSampleData = [];
+
+        if (typeof sampleData === 'string' && isJsonString(sampleData)) {
+          formattedSampleData = getJSONPaths(JSON.parse(sampleData));
+        } else if (typeof sampleData === 'object') {
+          formattedSampleData = Array.isArray(sampleData)
+            ? sampleData
+            : getJSONPaths(sampleData);
+        }
+
+        formattedGenerateFields =
+          formattedSampleData &&
+          formattedSampleData.map(sd => ({ ...sd, name: sd.id }));
+      }
     }
 
     return formattedGenerateFields;
   },
-  generateFieldAndListMappingsforAssistant: (
-    mappings = [],
-    requiredMappings
-  ) => {
+  generateFieldAndListMappingsforAssistant: (mappings, requiredMappings) => {
     if (requiredMappings && Array.isArray(requiredMappings)) {
       requiredMappings.forEach(f => {
         let fld = f;
@@ -341,19 +364,34 @@ export default {
             mappings.lists &&
             mappings.lists.find(l => l.generate === fld.split('[*].')[0]);
 
+          if (!fldContainer) {
+            fldContainer = {
+              fields: [],
+              generate: fld.split('[*].')[0],
+            };
+            mappings.lists.push(fldContainer);
+          }
+
           // eslint-disable-next-line prefer-destructuring
           fld = fld.split('[*].')[1];
         } else {
           fldContainer = mappings;
         }
 
-        const field =
+        let field =
+          fldContainer &&
           fldContainer.fields &&
           fldContainer.fields.find(l => l.generate === fld);
 
-        if (field) {
-          field.isRequired = true;
+        if (!field) {
+          field = {
+            extract: '',
+            generate: fld,
+          };
+          fldContainer.fields.push(field);
         }
+
+        field.isRequired = true;
       });
     }
 
@@ -370,9 +408,9 @@ export default {
       let mappingContainer;
 
       if (meta.generateList) {
-        mappingContainer = mappings.lists.find(
-          list => list.generate === meta.generateList
-        );
+        mappingContainer =
+          mappings.lists &&
+          mappings.lists.find(list => list.generate === meta.generateList);
       } else {
         mappingContainer = mappings;
       }
@@ -405,8 +443,8 @@ export default {
 
     if (duplicateMappings.length) {
       return {
-        status: false,
-        message: `You have duplicate mappings for the field(s): ${duplicateMappings.join(
+        isSuccess: false,
+        errMessage: `You have duplicate mappings for the field(s): ${duplicateMappings.join(
           ','
         )}`,
       };
@@ -422,8 +460,8 @@ export default {
 
     if (mappingsWithoutExtract.length) {
       return {
-        status: false,
-        message: `Extract Fields missing for field(s): ${mappingsWithoutExtract.join(
+        isSuccess: false,
+        errMessage: `Extract Fields missing for field(s): ${mappingsWithoutExtract.join(
           ','
         )}`,
       };
@@ -437,11 +475,11 @@ export default {
 
     if (mappingsWithoutGenerate.length) {
       return {
-        status: false,
-        message: 'Generate Fields missing for mapping(s)',
+        isSuccess: false,
+        errMessage: 'Generate Fields missing for mapping(s)',
       };
     }
 
-    return { status: true };
+    return { isSuccess: true };
   },
 };

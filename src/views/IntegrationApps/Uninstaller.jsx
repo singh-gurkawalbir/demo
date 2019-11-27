@@ -77,7 +77,6 @@ export default function IntegratorAppUninstalleer(props) {
       uninstallSteps.length &&
       !uninstallSteps.reduce((result, step) => result || !step.completed, false)
     ) {
-      dispatch(actions.resource.request('integrations', integrationId));
       setIsSetupComplete(true);
     }
   }, [dispatch, integrationId, uninstallSteps]);
@@ -86,7 +85,7 @@ export default function IntegratorAppUninstalleer(props) {
     if (isSetupComplete) {
       // redirect to integration Settings
       if (integration.mode !== 'uninstall') {
-        props.history.push(`/pg/connectors/${integrationId}/settings/flows`);
+        props.history.push(`/pg/integrationApp/${integrationId}/flows`);
       } else {
         dispatch(
           actions.integrationApp.uninstaller.uninstallIntegration(integrationId)
@@ -111,6 +110,7 @@ export default function IntegratorAppUninstalleer(props) {
     ? (integration.stores.find(s => s.value === storeId) || {}).label
     : undefined;
   const handleStepClick = step => {
+    // TODO: installURL should eventually changed to uninstallURL. Currently it is left as installURL to support shopify uninstallation.
     const { installURL, uninstallerFunction } = step;
 
     // handle connection step click

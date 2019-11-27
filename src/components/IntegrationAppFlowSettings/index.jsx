@@ -1,15 +1,8 @@
 import { makeStyles } from '@material-ui/core/styles';
-import {
-  IconButton,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  Typography,
-} from '@material-ui/core';
 import LoadResources from '../../components/LoadResources';
-import CloseIcon from '../icons/CloseIcon';
 import DynaFormWithDynamicActions from '../../views/IntegrationApps/Settings/FlowSettingsForm';
 import { integrationSettingsToDynaFormMetadata } from '../../forms/utils';
+import ModalDialog from '../ModalDialog';
 
 const useStyles = makeStyles(theme => ({
   modalContent: {
@@ -33,7 +26,8 @@ export default function IntegrationAppFlowSettings(props) {
   const translatedMeta = integrationSettingsToDynaFormMetadata(
     settings,
     _integrationId,
-    true
+    true,
+    { resource }
   );
   const handleCloseDialog = () => {
     onClose();
@@ -41,18 +35,9 @@ export default function IntegrationAppFlowSettings(props) {
 
   return (
     <LoadResources resources="imports,exports">
-      <Dialog fullScreen={false} open scroll="paper" maxWidth={false}>
-        <IconButton
-          aria-label="Close"
-          data-test="closeIAFlowSettings"
-          className={classes.closeButton}
-          onClick={handleCloseDialog}>
-          <CloseIcon />
-        </IconButton>
-        <DialogTitle disableTypography>
-          <Typography variant="h6">{`Flow Settings - ${resource.name}`}</Typography>
-        </DialogTitle>
-        <DialogContent className={classes.modalContent}>
+      <ModalDialog width="md" show handleClose={handleCloseDialog}>
+        <div>{`Flow Settings - ${resource.name}`}</div>
+        <div>
           <div className={classes.container}>
             <DynaFormWithDynamicActions
               editMode={false}
@@ -63,8 +48,8 @@ export default function IntegrationAppFlowSettings(props) {
               fieldMeta={translatedMeta}
             />
           </div>
-        </DialogContent>
-      </Dialog>
+        </div>
+      </ModalDialog>
     </LoadResources>
   );
 }

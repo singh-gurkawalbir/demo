@@ -49,10 +49,7 @@ export default function DynaResponseTransformEditor(props) {
         <TransformEditorDialog
           title="Transform Mapping"
           id={id + resourceId}
-          data={
-            options.sampleResponseData &&
-            JSON.parse(JSON.stringify(options.sampleResponseData))
-          }
+          data={options.sampleResponseData}
           rule={firstRuleSet}
           onClose={handleClose}
           disabled={disabled}

@@ -5,24 +5,40 @@ import metadataFilterMap from './metadataFilterMap';
 export default (
   state = {
     application: {},
+    preview: {},
     assistants: { rest: {}, http: {} },
   },
   action
 ) => {
-  const { type, metadata, metadataError, connectionId, commMetaPath } = action;
+  const {
+    type,
+    metadata,
+    metadataError,
+    connectionId,
+    commMetaPath,
+    previewData,
+    resourceId,
+  } = action;
   const key = commMetaPath;
   let newState;
 
   switch (type) {
     case actionTypes.METADATA.REQUEST: {
       newState = { ...state.application };
-
       newState[connectionId] = {
         ...newState[connectionId],
         [key]: { status: 'requested' },
       };
 
       return { ...state, ...{ application: newState } };
+    }
+
+    case actionTypes.METADATA.ASSISTANT_PREVIEW_RECEIVED: {
+      newState = { ...state.preview };
+
+      newState[resourceId] = previewData;
+
+      return { ...state, preview: newState };
     }
 
     case actionTypes.METADATA.REFRESH: {
@@ -46,9 +62,19 @@ export default (
     // the children and subsequently re-renders.
     case actionTypes.METADATA.RECEIVED: {
       newState = { ...state.application };
+      let changeIdentifier = 1;
+
+      if (
+        newState[connectionId] &&
+        newState[connectionId][key] &&
+        newState[connectionId][key].changeIdentifier
+      ) {
+        changeIdentifier = newState[connectionId][key].changeIdentifier + 1;
+      }
+
       newState[connectionId] = {
         ...newState[connectionId],
-        [key]: { status: 'received', data: metadata },
+        [key]: { status: 'received', data: metadata, changeIdentifier },
       };
 
       return { ...state, ...{ application: newState } };
@@ -106,7 +132,7 @@ export const optionsFromMetadata = ({
 }) => {
   const applicationResource = (state && state.application) || null;
   const path = commMetaPath;
-  const { status, data, errorMessage } =
+  const { status, data, errorMessage, changeIdentifier } =
     (applicationResource &&
       applicationResource[connectionId] &&
       applicationResource[connectionId][path]) ||
@@ -119,7 +145,7 @@ export const optionsFromMetadata = ({
   const metaFilter = metadataFilterMap[filterKey || 'default'];
   const transformedData = metaFilter(data);
 
-  return { data: transformedData, status, errorMessage };
+  return { data: transformedData, status, errorMessage, changeIdentifier };
 };
 
 export const optionsMapFromMetadata = (
@@ -181,4 +207,12 @@ export function assistantData(state, { adaptorType, assistant }) {
   }
 
   return { ...state.assistants[adaptorType][assistant] };
+}
+
+export function assistantPreviewData(state, resourceId) {
+  if (!state || !state.preview) {
+    return null;
+  }
+
+  return state.preview[resourceId];
 }

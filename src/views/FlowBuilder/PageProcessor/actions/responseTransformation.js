@@ -1,23 +1,15 @@
 import { Fragment } from 'react';
 import { useDispatch } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
-import { Dialog, DialogTitle, DialogContent } from '@material-ui/core';
 import DynaForm from '../../../../components/DynaForm';
 import DynaSubmit from '../../../../components/DynaForm/DynaSubmit';
 import actions from '../../../../actions';
 import Icon from '../../../../components/icons/TransformIcon';
 import helpTextMap from '../../../../components/Help/helpTextMap';
-
-const useStyles = makeStyles(theme => ({
-  paper: {
-    padding: theme.spacing(3),
-  },
-}));
+import ModalDialog from '../../../../components/ModalDialog';
 
 function ResponseTransformationDialog(props) {
   const dispatch = useDispatch();
-  const classes = useStyles();
   const { open, onClose, resource, isViewMode } = props;
   const resourceId = resource._id;
   const { sampleResponseData, responseTransform } = resource;
@@ -79,22 +71,22 @@ function ResponseTransformationDialog(props) {
   };
 
   return (
-    <Dialog open={open} PaperProps={{ className: classes.paper }}>
-      <DialogTitle>Response Transform</DialogTitle>
-      <DialogContent>
+    <ModalDialog handleClose={onClose} show={open}>
+      <div>Response Transform</div>
+      <div>
         <DynaForm
           disabled={isViewMode}
           fieldMeta={fieldMeta}
           optionsHandler={optionsHandler}>
-          <Button data-test="cancelResponseTransform" onClick={onClose}>
-            Cancel
-          </Button>
           <DynaSubmit data-test="saveResponseTransform" onClick={handleSubmit}>
             Save
           </DynaSubmit>
+          <Button data-test="cancelResponseTransform" onClick={onClose}>
+            Cancel
+          </Button>
         </DynaForm>
-      </DialogContent>
-    </Dialog>
+      </div>
+    </ModalDialog>
   );
 }
 

@@ -1,4 +1,5 @@
 import { getWSRecordId } from '../../../utils/metadata';
+import { sortElements } from '../netsuiteUserRoles';
 
 /*
 This file consists of filter map which is used to filter netsuite and salesforce metadata
@@ -25,6 +26,15 @@ export default {
           item.id.indexOf('.') === -1
       )
       .map(item => ({ label: item.name, value: item.id })),
+  'suitescript-bodyField': data =>
+    data
+      .filter(item => !item.sublist)
+      .map(item => ({
+        label: item.name,
+        value: item.id,
+        type: item.type,
+        options: item.options,
+      })),
   'webservices-recordTypes': data =>
     data.map(item => ({
       label: item.label,
@@ -67,6 +77,54 @@ export default {
       custom: d.custom,
       triggerable: d.triggerable,
     })),
+  'salesforce-sObjects-triggerable': data =>
+    data
+      .filter(r => r.triggerable)
+      .map(d => ({
+        label: d.label,
+        value: d.name,
+        custom: d.custom,
+        triggerable: d.triggerable,
+      }))
+      .sort(sortElements),
+
+  // check it is referenced to a single table
+  'salesforce-sObjects-referenceFields': data =>
+    data.fields
+      .filter(
+        r => r.referenceTo && r.referenceTo.length > 0 && r.relationshipName
+      )
+      .map(d => ({
+        label: d.label,
+        value: d.name,
+        relationshipName: d.relationshipName,
+        custom: d.custom,
+        triggerable: d.triggerable,
+        referenceTo: d.referenceTo[0],
+      }))
+      .sort(sortElements),
+  'salesforce-sObjects-nonReferenceFields': data =>
+    data.fields
+      .filter(r => !r.referenceTo || r.referenceTo.length === 0)
+      .map(d => ({
+        label: d.label,
+        value: d.name,
+        custom: d.custom,
+        triggerable: d.triggerable,
+      }))
+      .sort(sortElements),
+  'salesforce-sObjects-childReferenceTo': data =>
+    data.childRelationships
+      .filter(r => !!r.relationshipName)
+      .map(d => ({
+        label: d.relationshipName,
+        value: d.relationshipName,
+        name: d.name,
+        relationshipName: d.relationshipName,
+        field: d.field,
+        childSObject: d.childSObject,
+      }))
+      .sort(sortElements),
   'salesforce-recordType': data =>
     data.fields.map(d => ({
       label: d.label,
@@ -82,5 +140,6 @@ export default {
     data.map(item => ({
       label: item.name,
       value: item.id,
+      type: item.type,
     })),
 };

@@ -138,11 +138,17 @@ export default function IntegrationApp({ match, history }) {
   );
   const handleStoreChange = useCallback(
     e => {
+      const storeId = e.target.value;
+
+      dispatch(
+        actions.patchFilter('jobs', { storeId, flowId: '', currentPage: 0 })
+      );
+
       history.push(
-        `/pg/integrationApp/${integrationId}/store/${e.target.value}/flows`
+        `/pg/integrationApp/${integrationId}/child/${storeId}/flows`
       );
     },
-    [history, integrationId]
+    [dispatch, history, integrationId]
   );
   const handleAddNewStoreClick = useCallback(() => {
     history.push(`/pg/connectors/${integrationId}/install/addNewStore`);
@@ -167,7 +173,8 @@ export default function IntegrationApp({ match, history }) {
       return (
         <Redirect
           push={false}
-          to={`/pg/integrationApp/${integrationId}/store/${defaultStoreId}/flows`}
+          to={`/pg/integrationApp/${integrationId}/child/${defaultStoreId}/${tab ||
+            'flows'}`}
         />
       );
     }
@@ -202,6 +209,7 @@ export default function IntegrationApp({ match, history }) {
             </IconTextButton>
             <Select
               displayEmpty
+              data-test={`select${storeLabel}`}
               className={classes.storeSelect}
               onChange={handleStoreChange}
               value="">

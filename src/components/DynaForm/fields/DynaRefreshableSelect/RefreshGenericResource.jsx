@@ -1,14 +1,12 @@
-import { useEffect, useState } from 'react';
-import MenuItem from '@material-ui/core/MenuItem';
+import { useEffect, useState, cloneElement } from 'react';
 import InputLabel from '@material-ui/core/InputLabel';
-import Input from '@material-ui/core/Input';
 import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
-import Select from '@material-ui/core/Select';
-import Chip from '@material-ui/core/Chip';
 import { makeStyles } from '@material-ui/core/styles';
 import Spinner from '../../../Spinner';
 import RefreshIcon from '../../../icons/RefreshIcon';
+import DynaSelect from '../DynaSelect';
+import DynaMultiSelect from '../DynaMultiSelect';
 
 const useStyles = makeStyles(theme => ({
   inlineElements: {
@@ -60,14 +58,12 @@ const useStyles = makeStyles(theme => ({
  * disabled property is part of props being send from Form factory
  * setting disableOptionsLoad = false will restrict fetch of resources
  */
-function RefreshGenericResource(props) {
+export default function RefreshGenericResource(props) {
   const {
     description,
     disabled,
     disableOptionsLoad,
     id,
-    name,
-    value,
     label,
     resourceToFetch,
     resetValue,
@@ -77,8 +73,9 @@ function RefreshGenericResource(props) {
     fieldStatus,
     handleFetchResource,
     handleRefreshResource,
-    placeholder,
     fieldError,
+    children,
+    removeRefresh = false,
   } = props;
   const classes = useStyles();
   const defaultValue = props.defaultValue || (multiselect ? [] : '');
@@ -126,35 +123,11 @@ function RefreshGenericResource(props) {
 
   if (!fieldData && !disableOptionsLoad) return <Spinner />;
 
-  let optionMenuItems = (fieldData || []).map(options => {
+  const options = (fieldData || []).map(options => {
     const { label, value } = options;
 
-    return (
-      <MenuItem key={value} value={value}>
-        {label}
-      </MenuItem>
-    );
+    return { label, value };
   });
-  const placeHolderMenu = (
-    <MenuItem key="" value="" disabled>
-      {placeholder}
-    </MenuItem>
-  );
-  const createChip = value => {
-    const fieldOption = fieldData.find(option => option.value === value);
-
-    return fieldOption ? (
-      <Chip
-        key={value}
-        label={fieldOption.label || value}
-        className={classes.chip}
-      />
-    ) : null;
-  };
-
-  optionMenuItems = multiselect
-    ? optionMenuItems
-    : [placeHolderMenu, ...optionMenuItems];
 
   return (
     <div>
@@ -165,40 +138,16 @@ function RefreshGenericResource(props) {
         <InputLabel shrink htmlFor={id}>
           {label}
         </InputLabel>
-        {multiselect ? (
-          <Select
-            data-test={id}
-            multiple
-            value={value || defaultValue}
-            onChange={evt => {
-              evt.stopPropagation();
-              onFieldChange(id, evt.target.value);
-            }}
-            input={<Input name={name} id={id} />}
-            className={classes.root}
-            renderValue={selected => (
-              <div className={classes.chips}>
-                {selected &&
-                  typeof selected.map === 'function' &&
-                  selected.map(createChip)}
-              </div>
-            )}>
-            {optionMenuItems}
-          </Select>
-        ) : (
-          <Select
-            data-test={id}
-            displayEmpty
-            value={value || defaultValue}
-            onChange={evt => {
-              onFieldChange(id, evt.target.value);
-            }}
-            input={<Input id={id} name={name} />}
-            className={classes.selectElement}>
-            {optionMenuItems}
-          </Select>
+        {cloneElement(children, {
+          ...props,
+          options: [{ items: options || [] }],
+        })}
+        {!isLoading && !removeRefresh && (
+          <RefreshIcon
+            data-test="refreshResource"
+            onClick={handleRefreshResource}
+          />
         )}
-        {!isLoading && <RefreshIcon onClick={handleRefreshResource} />}
         {fieldData && isLoading && <Spinner />}
         {description && <FormHelperText>{description}</FormHelperText>}
         {fieldError && (
@@ -209,4 +158,12 @@ function RefreshGenericResource(props) {
   );
 }
 
-export default RefreshGenericResource;
+export function DynaGenericSelect(props) {
+  const { multiselect } = props;
+
+  return (
+    <RefreshGenericResource {...props}>
+      {multiselect ? <DynaMultiSelect /> : <DynaSelect />}
+    </RefreshGenericResource>
+  );
+}

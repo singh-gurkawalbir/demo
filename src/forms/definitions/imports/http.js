@@ -162,7 +162,8 @@ export default {
     if (
       fieldId === 'http.relativeURI' ||
       fieldId === 'http.relativeURIUpdate' ||
-      fieldId === 'http.relativeURICreate'
+      fieldId === 'http.relativeURICreate' ||
+      fieldId === 'http.existingDataId'
     ) {
       const lookupField = fields.find(
         field => field.fieldId === 'http.lookups'
@@ -292,8 +293,9 @@ export default {
     'http.relativeURICreate': {
       id: 'http.relativeURICreate',
       type: 'relativeuriwithlookup',
+      arrayIndex: 1,
       connectionId: r => r && r._connectionId,
-      refreshOptionsOnChangesTo: ['http.lookups'],
+      refreshOptionsOnChangesTo: ['http.lookups', 'name'],
       label: 'Relative URI',
       placeholder: 'Optional',
       visibleWhenAll: [
@@ -334,7 +336,11 @@ export default {
 
       label: 'Build HTTP Request Body For Create',
       arrayIndex: 1,
-      refreshOptionsOnChangesTo: ['http.lookups'],
+      refreshOptionsOnChangesTo: [
+        'http.lookups',
+        'http.requestMediaType',
+        'name',
+      ],
       visibleWhenAll: [
         {
           field: 'http.compositeType',
@@ -511,8 +517,9 @@ export default {
     'http.relativeURIUpdate': {
       id: 'http.relativeURIUpdate',
       type: 'relativeuriwithlookup',
+      arrayIndex: 0,
       connectionId: r => r && r._connectionId,
-      refreshOptionsOnChangesTo: ['http.lookups'],
+      refreshOptionsOnChangesTo: ['http.lookups', 'name'],
       label: 'Relative URI',
       placeholder: 'Optional',
       visibleWhenAll: [
@@ -548,7 +555,11 @@ export default {
       useSampleDataAsArray: true,
       label: 'Build HTTP Request Body For Update',
       arrayIndex: 0,
-      refreshOptionsOnChangesTo: ['http.lookups'],
+      refreshOptionsOnChangesTo: [
+        'http.lookups',
+        'http.requestMediaType',
+        'name',
+      ],
       visibleWhenAll: [
         {
           field: 'http.compositeType',
@@ -665,8 +676,10 @@ export default {
     },
     'http.existingDataId': {
       id: 'http.existingDataId',
-      type: 'text',
+      type: 'relativeuriwithlookup',
       label: 'Existing Data Id',
+      connectionId: r => r && r._connectionId,
+      refreshOptionsOnChangesTo: ['http.lookups', 'name'],
       visibleWhenAll: [
         {
           field: 'http.compositeType',
@@ -740,7 +753,11 @@ export default {
     },
     'http.body': {
       fieldId: 'http.body',
-      refreshOptionsOnChangesTo: ['http.requestMediaType'],
+      refreshOptionsOnChangesTo: [
+        'http.requestMediaType',
+        'http.lookups',
+        'name',
+      ],
     },
 
     'http.ignoreEmptyNodes': { fieldId: 'http.ignoreEmptyNodes' },

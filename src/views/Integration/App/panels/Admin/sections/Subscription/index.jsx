@@ -1,6 +1,6 @@
 import { Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useHistory, useRouteMatch } from 'react-router-dom';
+import { useRouteMatch, Link } from 'react-router-dom';
 import moment from 'moment';
 import { makeStyles } from '@material-ui/styles';
 import { Button, Grid, Divider, Typography } from '@material-ui/core';
@@ -83,7 +83,6 @@ const useStyles = makeStyles(theme => ({
 export default function SubscriptionSection({ storeId, integrationId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const history = useHistory();
   const match = useRouteMatch();
   const { supportsMultiStore } = !!storeId;
   const integration = useSelector(state =>
@@ -162,13 +161,16 @@ export default function SubscriptionSection({ storeId, integrationId }) {
           <div className={classes.planContent}>
             <Grid container className={classes.container}>
               <Grid item xs={2}>
-                <Typography className={classes.item}> {plan} </Typography>
+                <Typography data-test="iaPlan" className={classes.item}>
+                  {' '}
+                  {plan}{' '}
+                </Typography>
               </Grid>
               <Grid item xs={4}>
-                <Typography className={classes.item}>
+                <Typography data-test="iaVersion" className={classes.item}>
                   {`Version ${version}`}
                 </Typography>
-                <Typography className={classes.item}>
+                <Typography data-test="integrationId" className={classes.item}>
                   {`Integration ID ${integrationId}`}
                 </Typography>
               </Grid>
@@ -213,9 +215,8 @@ export default function SubscriptionSection({ storeId, integrationId }) {
                 variant="outlined"
                 color="primary"
                 className={classes.button}
-                onClick={() =>
-                  history.push(match.url.replace('subscription', 'addons'))
-                }>
+                component={Link}
+                to={match.url.replace('admin/subscription', 'addons')}>
                 GET ADD-ONS
               </Button>
             </div>

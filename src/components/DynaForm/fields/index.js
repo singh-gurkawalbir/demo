@@ -54,9 +54,15 @@ import DynaDate from './dateTime/DynaDate';
 import DynaToggle from './DynaToggle';
 import DynaSQLQueryBuilder from './DynaSQLQueryBuilder';
 import DynaRelativeURIWithLookup from './DynaRelativeURIWithLookup';
+import Salesforce from './DynaSalesforceExportComponents';
+import { ReferencedFieldsModal } from './DynaSalesforceExportComponents/DynaReferenedFields';
+import DynaNetSuiteLookupFilters from './DynaNetSuiteLookupFilters';
+import DynaNetSuiteLookup from './DynaNetSuiteLookup';
+import DynaIAExpression from './DynaIAExpression';
 import DynaUserEmail from './DynaUserEmail';
 import DynaUserPassword from './DynaUserPassword';
 import DynaIclient from './DynaIclient';
+import DynaNetSuiteQualifier from './DynaNetSuiteQualifier';
 
 export default {
   mapping: DynaImportMapping,
@@ -118,7 +124,17 @@ export default {
   date: DynaDate,
   sqlquerybuilder: DynaSQLQueryBuilder,
   relativeuriwithlookup: DynaRelativeURIWithLookup,
+  salesforcerequiredtrigger: Salesforce.DynaRequiredTrigger,
+  salesforcereferencedfields: Salesforce.DynaReferenedFields,
+  salesforcesobjecttype: Salesforce.DynaSObjectType,
+  salesforcerelatedlistmodal: ReferencedFieldsModal,
+  salesforcerelatedlist: Salesforce.DynaRelatedList,
+  salesforcetreemodal: Salesforce.DynaTreeModal,
+  netsuitelookupfilters: DynaNetSuiteLookupFilters,
+  netsuitelookup: DynaNetSuiteLookup,
+  iaexpression: DynaIAExpression,
   useremail: DynaUserEmail,
   userpassword: DynaUserPassword,
   dynaiclient: DynaIclient,
+  netsuitequalifier: DynaNetSuiteQualifier,
 };
