@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
@@ -49,9 +49,7 @@ export default function ImportMapping(props) {
   // generateFields and extractFields are passed as an array of field names
   const {
     editorId,
-    value = [],
     application,
-    adaptorType,
     generateFields = [],
     extractFields = [],
     disabled,
@@ -61,31 +59,7 @@ export default function ImportMapping(props) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const { fetchSalesforceSObjectMetadata } = optionalHanlder;
-  const [unresolvedGenerate, setUnresolvedGenerate] = useState({
-    sObjectRelationshipName: undefined,
-    index: -1,
-  });
-  const {
-    sObjectRelationshipName,
-    index: unresolvedGenerateIndex,
-  } = unresolvedGenerate;
-  const handleInit = useCallback(() => {
-    dispatch(
-      actions.mapping.init(
-        editorId,
-        value,
-        props.lookups || [],
-        adaptorType,
-        application,
-        generateFields
-      )
-    );
-  }, [dispatch, editorId]);
-
-  useEffect(() => {
-    handleInit();
-  }, []);
-
+  // const generateFieldStr = JSON.stringify(generateFields);
   const { mappings, lookups, initChangeIdentifier } = useSelector(state =>
     selectors.mapping(state, editorId)
   );
@@ -139,23 +113,6 @@ export default function ImportMapping(props) {
     dispatch(actions.mapping.updateLookup(editorId, lookupsTmp));
   };
 
-  useEffect(() => {
-    if (sObjectRelationshipName && unresolvedGenerateIndex !== -1) {
-      const childSObject = generateFields.find(
-        field => field.id.indexOf(`${sObjectRelationshipName}[*].`) > -1
-      );
-
-      if (childSObject) {
-        handleFieldUpdate(
-          unresolvedGenerateIndex,
-          { target: { value: childSObject.id } },
-          'generate'
-        );
-        setUnresolvedGenerate({ relationshipName: undefined, index: -1 });
-      }
-    }
-  }, [generateFields, handleFieldUpdate, unresolvedGenerateIndex]);
-
   const handleGenerateUpdate = mapping => (id, val) => {
     if (val && val.indexOf('_child_') > -1) {
       const childRelationshipField = generateFields.find(
@@ -165,10 +122,13 @@ export default function ImportMapping(props) {
       if (childRelationshipField) {
         const { childSObject, relationshipName } = childRelationshipField;
 
-        setUnresolvedGenerate({
-          sObjectRelationshipName: relationshipName,
-          index: mapping.index,
-        });
+        dispatch(
+          actions.mapping.patchIncompleteGenerates(
+            editorId,
+            mapping.index,
+            relationshipName
+          )
+        );
         fetchSalesforceSObjectMetadata(childSObject);
       }
     }
