@@ -26,6 +26,15 @@ export default {
           item.id.indexOf('.') === -1
       )
       .map(item => ({ label: item.name, value: item.id })),
+  'suitescript-bodyField': data =>
+    data
+      .filter(item => !item.sublist)
+      .map(item => ({
+        label: item.name,
+        value: item.id,
+        type: item.type,
+        options: item.options,
+      })),
   'webservices-recordTypes': data =>
     data.map(item => ({
       label: item.label,
