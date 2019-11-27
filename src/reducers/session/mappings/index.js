@@ -134,6 +134,7 @@ export default function reducer(state = {}, action) {
 
           if (valueTmp.hardCodedValue) {
             valueTmp.hardCodedValueTmp = `"${valueTmp.hardCodedValue}"`;
+            delete valueTmp.extract;
           }
 
           draft[id].mappings[index] = { ...valueTmp };
