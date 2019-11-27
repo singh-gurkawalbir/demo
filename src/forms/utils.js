@@ -284,8 +284,15 @@ const getFieldConfig = (field = {}, resource) => {
     newField.type = 'radiogroup';
   } else if (newField.type === 'file') {
     newField.type = 'uploadfile';
-  } else if (newField.type === 'select' && newField.supportsRefresh)
+  } else if (newField.type === 'select' && newField.supportsRefresh) {
     newField.type = 'integrationapprefreshableselect';
+  } else if (newField.type === 'referencedFieldsDialog') {
+    newField.type = 'salesforcereferencedfieldsia';
+    newField.resource = resource;
+  } else if (newField.type === 'relatedListsDialog') {
+    newField.type = 'salesforcerelatedlistia';
+    newField.resource = resource;
+  }
 
   return newField;
 };

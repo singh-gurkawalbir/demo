@@ -832,6 +832,25 @@ export function getAllConnectionIdsUsedInTheFlow(state, flow) {
 
   return uniq(connectionIds.concat(borrowConnectionIds));
 }
+
+export function getFlowsAssociatedExportFromIAMetadata(state, fieldMeta) {
+  const { resource: flowResource, properties } = fieldMeta;
+  let resourceId;
+
+  if (properties._exportId) {
+    resourceId = properties._exportId;
+  } else if (flowResource && flowResource._exportId) {
+    resourceId = flowResource._exportId;
+  } else if (
+    flowResource &&
+    flowResource.pageGenerators &&
+    flowResource.pageGenerators.length
+  ) {
+    resourceId = flowResource.pageGenerators[0]._exportId;
+  }
+
+  return resource(state, 'exports', resourceId);
+}
 // #begin integrationApps Region
 
 export function integrationAppSettingsFormState(state, integrationId, flowId) {

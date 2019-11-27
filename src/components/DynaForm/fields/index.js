@@ -129,6 +129,9 @@ export default {
   salesforcerelatedlistmodal: ReferencedFieldsModal,
   salesforcerelatedlist: Salesforce.DynaRelatedList,
   salesforcetreemodal: Salesforce.DynaTreeModal,
+  salesforcereferencedfieldsia:
+    Salesforce.IASettingsComponents.DynaReferencedFieldsIA,
+  salesforcerelatedlistia: Salesforce.IASettingsComponents.DynaRelatedListIA,
   netsuitelookupfilters: DynaNetSuiteLookupFilters,
   netsuitelookup: DynaNetSuiteLookup,
   iaexpression: DynaIAExpression,
