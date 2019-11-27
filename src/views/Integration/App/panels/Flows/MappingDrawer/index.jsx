@@ -12,7 +12,7 @@ import SelectImport from './SelectImport';
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
     marginTop: theme.appBarHeight,
-    width: 660,
+    width: 800,
     border: 'solid 1px',
     borderColor: theme.palette.secondary.lightest,
     boxShadow: `-4px 4px 8px rgba(0,0,0,0.15)`,
@@ -20,7 +20,9 @@ const useStyles = makeStyles(theme => ({
     zIndex: theme.zIndex.drawer + 1,
   },
   content: {
+    borderTop: `solid 1px ${theme.palette.secondary.lightest}`,
     padding: theme.spacing(3),
+    maxHeight: `calc(100vh - 180px)`,
   },
 }));
 
