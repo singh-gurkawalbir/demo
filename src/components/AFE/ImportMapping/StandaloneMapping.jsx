@@ -193,7 +193,7 @@ export default function StandaloneMapping(props) {
     importSampleData,
     application
   );
-  const [state, setState] = useState([]);
+  const [importSampleDataState, setImportSampleDataState] = useState([]);
   const handleInit = useCallback(() => {
     dispatch(
       actions.mapping.init(
@@ -212,9 +212,9 @@ export default function StandaloneMapping(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  if (initTriggered && !isEqual(state, importSampleData)) {
+  if (initTriggered && !isEqual(importSampleDataState, importSampleData)) {
     dispatch(actions.mapping.updateGenerates(id, formattedGenerateFields));
-    setState(importSampleData);
+    setImportSampleDataState(importSampleData);
   }
 
   const fetchSalesforceSObjectMetadata = sObject => {
