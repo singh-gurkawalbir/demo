@@ -129,6 +129,7 @@ export const optionsFromMetadata = ({
   connectionId,
   commMetaPath,
   filterKey,
+  options = {},
 }) => {
   const applicationResource = (state && state.application) || null;
   const path = commMetaPath;
@@ -142,8 +143,58 @@ export const optionsFromMetadata = ({
     return { status, data, errorMessage };
   }
 
-  const metaFilter = metadataFilterMap[filterKey || 'default'];
-  const transformedData = metaFilter(data);
+  let transformedData;
+
+  if (filterKey === 'salesforce-sObjectTypeMetadata') {
+    const generates = [];
+    const { sObjectMetadataPath } = options;
+
+    if (data && data.fields) {
+      data.fields.forEach(field => {
+        generates.push({
+          id: field.name,
+          name: field.label,
+          type: field.type,
+        });
+      });
+    }
+
+    if (data.childRelationships && data.childRelationships.length) {
+      data.childRelationships.forEach(child => {
+        // childRelation.childSObject
+        if (child.relationshipName) {
+          const path1 = `${sObjectMetadataPath}/${child.childSObject}`;
+          const { data: childSObject } =
+            (applicationResource &&
+              applicationResource[connectionId] &&
+              applicationResource[connectionId][path1]) ||
+            {};
+
+          if (childSObject && childSObject.fields.length) {
+            childSObject.fields.forEach(field => {
+              generates.push({
+                id: `${child.relationshipName}[*].${field.name}`,
+                name: `${child.relationshipName}[*].${field.label}`,
+                type: field.type,
+              });
+            });
+          } else {
+            generates.push({
+              id: `_child_'${child.relationshipName}`,
+              name: `${child.relationshipName} : Fields...`,
+              type: 'childRelationship',
+            });
+          }
+        }
+      });
+    }
+
+    transformedData = generates;
+  } else {
+    const metaFilter = metadataFilterMap[filterKey || 'default'];
+
+    transformedData = metaFilter(data, options);
+  }
 
   return { data: transformedData, status, errorMessage, changeIdentifier };
 };

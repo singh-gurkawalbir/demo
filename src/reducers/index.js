@@ -1935,12 +1935,14 @@ export function optionsFromMetadata({
   connectionId,
   commMetaPath,
   filterKey,
+  options,
 }) {
   return fromSession.optionsFromMetadata({
     state: state && state.session,
     connectionId,
     commMetaPath,
     filterKey,
+    options,
   });
 }
 
@@ -1973,6 +1975,7 @@ export function metadataOptionsAndResources({
   connectionId,
   commMetaPath,
   filterKey,
+  options,
 }) {
   return (
     optionsFromMetadata({
@@ -1980,6 +1983,7 @@ export function metadataOptionsAndResources({
       connectionId,
       commMetaPath,
       filterKey,
+      options,
     }) || {}
   );
 }
@@ -2332,7 +2336,10 @@ export function getImportSampleData(state, resourceId) {
       state,
       connectionId,
       commMetaPath,
-      filterKey: 'salesforce-recordType',
+      filterKey: 'salesforce-sObjectTypeMetadata',
+      options: {
+        sObjectMetadataPath: `salesforce/metadata/connections/${connectionId}/sObjectTypes`,
+      },
     });
 
     return sampleData;

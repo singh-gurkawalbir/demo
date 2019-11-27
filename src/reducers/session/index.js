@@ -101,12 +101,14 @@ export function optionsFromMetadata({
   connectionId,
   commMetaPath,
   filterKey,
+  options,
 }) {
   return fromMetadata.optionsFromMetadata({
     state: state && state.metadata,
     connectionId,
     commMetaPath,
     filterKey,
+    options,
   });
 }
 
