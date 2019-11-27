@@ -8,7 +8,6 @@ import ResourceList from '../ResourceList';
 export default function IntegrationAppsRouter({ match }) {
   return (
     <Switch>
-      <Route path="/pg/:resourceType" exact component={ResourceList} />
       <Route
         path={`${match.url}/:integrationId/setup`}
         component={IntegrationAppInstallation}
@@ -58,6 +57,7 @@ export default function IntegrationAppsRouter({ match }) {
         ]}
         component={IntegrationAppUninstallation}
       />
+      <Route path="/pg/:resourceType" component={ResourceList} />
     </Switch>
   );
 }

@@ -71,7 +71,7 @@ function ResponseTransformationDialog(props) {
   };
 
   return (
-    <ModalDialog handleClose={onClose} show={open}>
+    <ModalDialog onClose={onClose} show={open}>
       <div>Response Transform</div>
       <div>
         <DynaForm

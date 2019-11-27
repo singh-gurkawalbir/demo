@@ -16,42 +16,38 @@ import ModalDialog from '../../ModalDialog';
 import ButtonsGroup from '../../ButtonGroup';
 import ActionButton from '../../ActionButton';
 
+// TODO: Azhar once Mapping dialog design is ready make a component
 const useStyles = makeStyles(theme => ({
-  modalContent: {
-    height: '100vh',
-    width: '70vw',
-  },
   container: {
     marginTop: theme.spacing(1),
     overflowY: 'off',
   },
   header: {
-    display: 'flex',
+    display: 'grid',
     width: '100%',
-  },
-  root: {
-    flexGrow: 1,
+    gridTemplateColumns: '45% 45% 50px',
+    gridColumnGap: '1%',
   },
   rowContainer: {
-    display: 'flex',
+    display: 'block',
     padding: '0px',
   },
   child: {
-    flexBasis: '40%',
+    '& + div': {
+      width: '100%',
+    },
   },
   childHeader: {
-    flexBasis: '46%',
+    '& > div': {
+      width: '100%',
+    },
   },
   innerRow: {
-    display: 'flex',
-    justifyContent: 'space-between',
+    display: 'grid',
+    width: '100%',
+    gridTemplateColumns: '45% 45% 50px 50px',
     marginBottom: theme.spacing(1),
-    '& > div': {
-      marginRight: theme.spacing(1),
-      '&:last-child': {
-        marginRight: 0,
-      },
-    },
+    gridColumnGap: '1%',
   },
 }));
 
@@ -234,7 +230,7 @@ export default function ResponseMappingDialog(props) {
   }
 
   return (
-    <ModalDialog handleClose={onClose} show width="md">
+    <ModalDialog onClose={onClose} show minWidth="md" maxWidth="md">
       <div>Define Response Mapping</div>
       <div className={classes.container}>
         <div className={classes.root}>
@@ -257,7 +253,7 @@ export default function ResponseMappingDialog(props) {
             {tableData.map(r => (
               <div className={classes.rowContainer} key={r.index}>
                 <div className={classes.innerRow}>
-                  <div className={classes.child}>
+                  <div className={classes.childHeader}>
                     <DynaTypeableSelect
                       disabled={disabled}
                       labelName="name"
@@ -273,7 +269,7 @@ export default function ResponseMappingDialog(props) {
                       }}
                     />
                   </div>
-                  <div className={classes.child}>
+                  <div className={classes.childHeader}>
                     <DynaTypeableSelect
                       disabled={disabled}
                       value={r[valueName]}

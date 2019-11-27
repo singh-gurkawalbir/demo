@@ -5,7 +5,7 @@ export default function LookupDialog(props) {
   const { id, onClose } = props;
 
   return (
-    <ModalDialog show handleClose={onClose} key={id}>
+    <ModalDialog show onClose={onClose} key={id}>
       <div>Add Lookup</div>
       <div>
         <Lookup {...props} />

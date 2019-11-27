@@ -25,9 +25,8 @@ function InputFilterDialog({
   const rules = useMemo(
     () =>
       resource &&
-      resource.filter &&
       (resourceType === 'imports'
-        ? resource.filter.rules
+        ? resource.filter && resource.filter.rules
         : resource.inputFilter && resource.inputFilter.rules),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []
