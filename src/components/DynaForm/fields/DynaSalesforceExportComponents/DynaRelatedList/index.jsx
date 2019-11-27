@@ -212,7 +212,7 @@ function FirstLevelModal(props) {
   };
 
   return (
-    <ModalDialog show handleClose={handleClose}>
+    <ModalDialog show onClose={handleClose}>
       <Typography>Related Lists</Typography>
       <Fragment>
         {!editListItemModelOpen ? (

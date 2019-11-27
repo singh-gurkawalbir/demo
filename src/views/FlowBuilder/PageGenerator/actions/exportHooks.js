@@ -28,7 +28,7 @@ function HooksDialog({ flowId, isViewMode, resource, open, onClose }) {
   };
 
   return (
-    <ModalDialog show={open} handleClose={onClose} disabled={isViewMode}>
+    <ModalDialog show={open} onClose={onClose} disabled={isViewMode}>
       <div className={classes.wrapper}>Hooks</div>
       <Hooks
         onSave={onSave}
