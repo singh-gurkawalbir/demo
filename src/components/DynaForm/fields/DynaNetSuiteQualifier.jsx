@@ -1,4 +1,4 @@
-import { useState, Fragment } from 'react';
+import { useState, Fragment, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { TextField, IconButton } from '@material-ui/core';
 import OpenInNewIcon from 'mdi-react/OpenInNewIcon';
@@ -38,10 +38,36 @@ export default function DynaNetSuiteQualifier(props) {
     onFieldChange,
     placeholder,
     required,
+    defaultValue,
     value,
     label,
     options,
   } = props;
+  const [isDefaultValueChanged, setIsDefaultValueChanged] = useState(false);
+
+  useEffect(() => {
+    if (options.commMetaPath) {
+      setIsDefaultValueChanged(true);
+    }
+  }, [options.commMetaPath]);
+
+  useEffect(() => {
+    if (isDefaultValueChanged) {
+      if (options.resetValue) {
+        onFieldChange(id, []);
+      } else {
+        onFieldChange(id, defaultValue);
+      }
+
+      setIsDefaultValueChanged(false);
+    }
+  }, [
+    defaultValue,
+    id,
+    isDefaultValueChanged,
+    onFieldChange,
+    options.resetValue,
+  ]);
   const handleEditorClick = () => {
     setShowEditor(!showEditor);
   };
@@ -50,7 +76,7 @@ export default function DynaNetSuiteQualifier(props) {
     const { rule } = editorValues;
 
     if (shouldCommit) {
-      onFieldChange(id, JSON.stringify(rule));
+      onFieldChange(id, rule);
     }
 
     handleEditorClick();

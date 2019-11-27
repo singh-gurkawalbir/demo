@@ -181,6 +181,11 @@ export default function FilterPanel({
   };
 
   const updateUIForRHSRule = ({ name, rule = {} }) => {
+    console.log(
+      `updateUIForRHSRule ${getFilterRuleId(rule)} ${JSON.stringify(
+        rulesState[getFilterRuleId(rule)].data
+      )}`
+    );
     function updateUIForField(rule) {
       if (
         rule.$el.find('.rule-value-container select[name=field]').length === 0
@@ -287,11 +292,20 @@ export default function FilterPanel({
     const filters = [];
 
     jsonPaths.forEach(v => {
-      filters.push({
+      const filter = {
         id: v.id,
         label: v.name,
         type: 'string',
-        input(rule, name) {
+      };
+
+      if (v.options && v.options.length > 0) {
+        filter.input = 'select';
+        filter.values = {};
+        v.options.forEach(opt => {
+          filter.values[opt.id] = opt.text;
+        });
+      } else {
+        filter.input = (rule, name) => {
           const ruleId = getFilterRuleId(rule);
 
           if (!rulesState[ruleId]) {
@@ -370,8 +384,9 @@ export default function FilterPanel({
               ? ''
               : '<img style="display:none;" class="settings-icon" src="https://d142hkd03ds8ug.cloudfront.net/images/icons/icon/gear.png">'
           }`;
-        },
-        valueGetter(rule) {
+        };
+
+        filter.valueGetter = rule => {
           const ruleId = getFilterRuleId(rule);
           const r = rulesState[ruleId].data;
           const lhsValue = rule.$el
@@ -396,8 +411,9 @@ export default function FilterPanel({
           rule.data = r;
 
           return rhsValue;
-        },
-        validation: {
+        };
+
+        filter.validation = {
           callback(value, rule) {
             const ruleId = getFilterRuleId(rule);
             const r = rulesState[ruleId].data;
@@ -433,8 +449,10 @@ export default function FilterPanel({
 
             return true;
           },
-        },
-      });
+        };
+      }
+
+      filters.push(filter);
     });
 
     return filters;

@@ -96,6 +96,7 @@ export function convertNetSuiteQualifierExpressionToQueryBuilderRules(
             temp = toReturn.rhs;
             temp.type = 'value';
             temp.value = exp[i];
+            toReturn.value = exp[i];
           }
         }
 
@@ -163,8 +164,6 @@ export function getFilterList(jsonPaths, rules) {
     jsonPaths.push({ id: 'sampleField', name: 'sampleField' });
   }
 
-  console.log(`jsonPaths2 ${JSON.stringify(jsonPaths)}`);
-
   return jsonPaths;
 }
 
@@ -196,6 +195,7 @@ export function generateRulesState(rules) {
 }
 
 export function generateNetSuiteLookupFilterExpression(qbRules) {
+  console.log(`qbRules ${JSON.stringify(qbRules)}`);
   const nsFilterExpression = [];
   let lhs;
   let rhs;
@@ -223,6 +223,8 @@ export function generateNetSuiteLookupFilterExpression(qbRules) {
         if (rhs) {
           filter.push(rhs);
         }
+      } else {
+        filter.push(qbRules.rules[i].value);
       }
 
       nsFilterExpression.push(filter);
