@@ -1,3 +1,9 @@
+const convertObjectMessageIntoString = message => {
+  if (message && typeof message === 'object') return JSON.stringify(message);
+
+  return message;
+};
+
 export default function inferErrorMessage(inputMessage) {
   let msg;
 
@@ -9,14 +15,15 @@ export default function inferErrorMessage(inputMessage) {
   }
 
   const { message, errors } = msg;
+  let finalFormattedMessage;
 
   if (message) {
     // mostly a csrf message format
-    return [message];
+    finalFormattedMessage = [message];
   } else if (errors) {
-    return errors.map(error => error.message);
-  }
-
+    finalFormattedMessage = errors.map(error => error.message);
+  } else finalFormattedMessage = [msg];
   // Unknown error message format response lets just return it completely
-  return [msg];
+
+  return finalFormattedMessage.map(convertObjectMessageIntoString);
 }

@@ -1,7 +1,7 @@
 import { Fragment, useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { IconButton } from '@material-ui/core';
-import Icon from '../../../../components/icons/HookIcon';
+import Icon from '../../../../components/icons/StacksIcon';
 import ShareStackDialog from '../../../../components/ShareStackDialog';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';

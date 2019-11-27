@@ -99,9 +99,17 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
 
         case 'run':
           dispatch(actions.flow.run({ flowId }));
-          history.push(
-            `/pg/integrations/${flowDetails._integrationId || 'none'}/dashboard`
-          );
+
+          if (flowDetails._connectorId) {
+            history.push(
+              `/pg/integrationApp/${flowDetails._integrationId}/dashboard`
+            );
+          } else {
+            history.push(
+              `/pg/integrations/${flowDetails._integrationId ||
+                'none'}/dashboard`
+            );
+          }
 
           break;
 
