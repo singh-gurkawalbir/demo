@@ -37,7 +37,7 @@ export default function ApiTokenSection({ integrationId }) {
           to={`${location.pathname}/add/accesstokens/${generateNewId()}`}
           variant="text"
           color="primary">
-          <AddIcon /> New Access Token
+          <AddIcon /> New API Token
         </IconTextButton>
       </PanelHeader>
 
