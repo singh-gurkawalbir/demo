@@ -4,6 +4,7 @@ import { Route, useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Drawer, Button } from '@material-ui/core';
 import mappingUtil from '../../../../../../utils/mapping';
+import lookupUtil from '../../../../../../utils/lookup';
 import useEnqueueSnackbar from '../../../../../../hooks/enqueueSnackbar';
 import * as selectors from '../../../../../../reducers';
 import actions from '../../../../../../actions';
@@ -45,7 +46,7 @@ function MappingDrawer() {
   const mappingEditorId = `${importId}-${flowId}`;
   const {
     mappings,
-    // lookups,
+    lookups,
     adaptorType,
     application,
     generateFields,
@@ -88,14 +89,22 @@ function MappingDrawer() {
 
     if (!mappingConfig) return;
 
-    const mappingPath = mappingUtil.getMappingPath(adaptorType);
     const patchSet = [
       {
         op: 'replace',
-        path: mappingPath,
+        path: mappingUtil.getMappingPath(adaptorType),
         value: mappingConfig,
       },
     ];
+
+    // update _lookup only if its being passed as param to function
+    if (lookups) {
+      patchSet.push({
+        op: 'replace',
+        path: lookupUtil.getLookupPath(adaptorType),
+        value: lookups,
+      });
+    }
 
     dispatch(actions.resource.patchStaged(importId, patchSet, 'value'));
     dispatch(actions.resource.commitStaged('imports', importId, 'value'));
@@ -106,6 +115,7 @@ function MappingDrawer() {
     enqueueSnackbar,
     generateFields,
     importId,
+    lookups,
     mappings,
   ]);
 

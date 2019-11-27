@@ -16,8 +16,8 @@ const useStyles = makeStyles(theme => ({
 export default function DashboardPanel({ integrationId, storeId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const { storeId: filterStoreId } = useSelector(state =>
-    selectors.filter(state, 'jobs')
+  const filterStoreId = useSelector(
+    state => selectors.filter(state, 'jobs').storeId
   );
 
   // We may not have an IA that supports children, but those who do,

@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
 
+const emptySet = [];
 /**
  * Works very similar to getJSONPaths, with difference that it checks for the length of any array it encounters.
  * and represents each array object with its index 0, instead of '*' like we do in getJSONPaths, only when array length is 1.
@@ -13,6 +14,7 @@ import * as _ from 'lodash';
  * getUnionObject([{a:'fasd',b:'cas',e:"e"},{f:'g'},{a:'aaa', b:'a'}])
  * {a: 'aaa', b: 'a', e: 'e', f: 'g'}
  */
+
 export function getUnionObject(arr) {
   let toReturn = {};
 
@@ -55,6 +57,8 @@ export function getUnionObject(arr) {
       ]
     */
 export default function getJSONPaths(dataIn, prefix, options = {}) {
+  if (!dataIn) return emptySet;
+
   let paths = [];
   let type;
 
