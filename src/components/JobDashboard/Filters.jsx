@@ -11,7 +11,6 @@ import actions from '../../actions';
 import ArrowLeftIcon from '../icons/ArrowLeftIcon';
 import ArrowRightIcon from '../icons/ArrowRightIcon';
 import CeligoSelect from '../CeligoSelect';
-import StoreSelector from './StoreSelector';
 import FlowSelector from './FlowSelector';
 
 const useStyles = makeStyles(theme => ({
@@ -171,14 +170,6 @@ function Filters({
           {numJobsSelected} selected jobs
         </MenuItem>
       </CeligoSelect>
-
-      {!flowId && (
-        <StoreSelector
-          integrationId={integrationId}
-          value={storeId}
-          onChange={storeId => patchFilter('storeId', storeId)}
-        />
-      )}
 
       {!flowId && (
         <FlowSelector

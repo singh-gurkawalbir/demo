@@ -43,6 +43,7 @@ import { isValidResourceReference, isNewId } from '../utils/resource';
 import { processSampleData } from '../utils/sampleData';
 import inferErrorMessage from '../utils/inferErrorMessage';
 
+const emptySet = [];
 const combinedReducers = combineReducers({
   app,
   session,
@@ -861,9 +862,7 @@ export function integrationConnectionList(state, integrationId) {
     const registeredConnections = integration._registeredConnectionIds;
 
     if (registeredConnections) {
-      resources = resources.filter(
-        conn => registeredConnections.indexOf(conn._id) >= 0
-      );
+      resources = resources.filter(c => registeredConnections.includes(c._id));
     }
   } else if (integration._connectorId) {
     resources = resources.filter(conn => conn._integrationId === integrationId);
@@ -873,7 +872,8 @@ export function integrationConnectionList(state, integrationId) {
 }
 
 export function integrationAppResourceList(state, integrationId, storeId) {
-  if (!state) return { connections: [], flows: [] };
+  if (!state) return { connections: emptySet, flows: emptySet };
+
   const integrationResource = fromData.integrationAppSettings(
     state.data,
     integrationId

@@ -138,17 +138,11 @@ export default function IntegrationApp({ match, history }) {
   );
   const handleStoreChange = useCallback(
     e => {
-      const storeId = e.target.value;
+      const newStoreId = e.target.value;
 
-      dispatch(
-        actions.patchFilter('jobs', { storeId, flowId: '', currentPage: 0 })
-      );
-
-      history.push(
-        `/pg/integrationApp/${integrationId}/child/${storeId}/flows`
-      );
+      history.push(history.location.pathname.replace(storeId, newStoreId));
     },
-    [dispatch, history, integrationId]
+    [history, storeId]
   );
   const handleAddNewStoreClick = useCallback(() => {
     history.push(`/pg/connectors/${integrationId}/install/addNewStore`);
