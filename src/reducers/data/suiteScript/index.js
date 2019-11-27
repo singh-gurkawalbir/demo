@@ -1,3 +1,4 @@
+import { isArray } from 'lodash';
 import actionTypes from '../../../actions/types';
 import { SUITESCRIPT_CONNECTORS } from '../../../utils/constants';
 
@@ -17,7 +18,8 @@ export default (state = {}, action) => {
       const connectionId = resourceTypeParts[2];
       const connectionIdState = {
         ...(state[connectionId] || {}),
-        tiles: collection || [],
+        /** TODO: We can remove isArray check on collection once the backend issue IO-11743 is fixed. */
+        tiles: isArray(collection) ? collection : [],
       };
 
       return { ...state, [connectionId]: connectionIdState };

@@ -27,8 +27,14 @@ import CloseIcon from '../icons/CloseIcon';
     padding: theme.spacing(1, 3),
     borderTop: `1px solid ${theme.palette.secondary.lightest} `,
   },
-  modalTitle: {
+  paper: {
     minWidth: '450px',
+  },
+  sm: {
+    minWidth: theme.breakpoints.values.sm,
+  },
+  md: {
+    minWidth: theme.breakpoints.values.md,
   },
 }))
 export default class ModalDialog extends Component {
@@ -36,29 +42,35 @@ export default class ModalDialog extends Component {
     const {
       classes,
       show,
-      handleClose,
+      onClose,
       actionLabel,
       actionHandler,
-      width,
+      maxWidth,
+      minWidth,
+      fullScreen,
     } = this.props;
 
     return (
       <div>
-        <Dialog open={show} maxWidth={width}>
+        <Dialog
+          open={show}
+          maxWidth={maxWidth}
+          fullScreen={fullScreen}
+          PaperProps={{ className: classes.paper }}>
           {this.props.children[0] && (
-            <DialogTitle className={classes.modalTitle} disableTypography>
+            <DialogTitle className={classes[minWidth]} disableTypography>
               <Typography variant="h3" className={classes.titleText}>
                 {this.props.children[0]}
               </Typography>
-              {handleClose && (
+              {onClose && (
                 <IconButton
-                  onClick={handleClose}
+                  onClick={onClose}
                   className={classes.iconButton}
                   autoFocus>
                   <CloseIcon />
                 </IconButton>
               )}
-              {!handleClose && actionHandler && (
+              {!onClose && actionHandler && (
                 <Button
                   className={classes.actionButton}
                   onClick={actionHandler}>

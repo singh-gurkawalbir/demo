@@ -15,8 +15,7 @@ export default function DynaApiIdentifier(props) {
   return (
     <Typography data-test={id} variant="body1" className={classes.text}>
       Invoke this {MODEL_PLURAL_TO_LABEL[resourceType]} via [POST] to:
-      https://api.staging.integrator.io/
-      {value}
+      {` ${process.env.API_ENDPOINT}/${value}`}
     </Typography>
   );
 }

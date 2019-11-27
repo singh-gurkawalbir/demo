@@ -66,7 +66,7 @@ export default function ImportMappingSettings(props) {
   };
 
   return (
-    <ModalDialog handleClose={onClose} show maxWidth="lg">
+    <ModalDialog onClose={onClose} show minWidth="md" maxWidth="lg">
       <div>{title}</div>
       <div>
         <DynaForm

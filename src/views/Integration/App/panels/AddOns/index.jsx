@@ -10,6 +10,8 @@ const useStyles = makeStyles(theme => ({
   root: {
     backgroundColor: theme.palette.common.white,
     overflow: 'auto',
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
   },
   addOnContainer: {
     // backgroundColor: theme.palette.background.default,

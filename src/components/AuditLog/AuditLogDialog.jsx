@@ -28,7 +28,7 @@ export default class AuditLogDialog extends Component {
     } = this.props;
 
     return (
-      <ModalDialog handleClose={onClose} show width="xl">
+      <ModalDialog onClose={onClose} show maxWidth="xl">
         <div>{title}</div>
         <div>
           <AuditLog resourceType={resourceType} resourceId={resourceId} />

@@ -1,6 +1,5 @@
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import { withStyles } from '@material-ui/core/styles';
 import AceEditor from 'react-ace';
 import 'brace/mode/javascript';
 import 'brace/mode/handlebars';
@@ -18,17 +17,8 @@ import handlebarCompleterSetup from '../AFE/editorSetup/editorCompleterSetup/ind
 
 const mapStateToProps = state => ({
   theme: selectors.editorTheme(state.user),
-  editors: state && state.session && state.session.editors,
 });
 
-@withStyles({
-  // root: {
-  //   fontSize: 16,
-  //   width: '100%',
-  //   height: '100%',
-  //   position: 'relative',
-  // },
-})
 class CodeEditor extends Component {
   componentDidMount() {
     // TODO: anytime the container DOM element changes size (both height and width)
@@ -40,6 +30,11 @@ class CodeEditor extends Component {
     // component changed its size...
     this.resize();
   }
+  handleLoad = enableAutocomplete => editor => {
+    if (enableAutocomplete) {
+      handlebarCompleterSetup(editor);
+    }
+  };
 
   handleChange = value => {
     if (this.props.onChange) {
@@ -66,7 +61,6 @@ class CodeEditor extends Component {
       showGutter,
       showInvisibles,
       enableAutocomplete,
-      classes,
     } = this.props;
     const valueAsString =
       typeof value === 'string' ? value : JSON.stringify(value, null, 2);
@@ -74,7 +68,6 @@ class CodeEditor extends Component {
     return (
       <AceEditor
         name={name}
-        className={classes.root}
         value={valueAsString}
         mode={mode}
         readOnly={readOnly}
@@ -85,11 +78,7 @@ class CodeEditor extends Component {
         enableLiveAutocompletion={enableAutocomplete}
         enableBasicAutocompletion={enableAutocomplete}
         theme={theme}
-        onLoad={editor => {
-          if (enableAutocomplete) {
-            handlebarCompleterSetup(editor);
-          }
-        }}
+        onLoad={this.handleLoad(enableAutocomplete)}
         onChange={this.handleChange}
         ref={c => {
           this.aceEditor = c;

@@ -157,7 +157,7 @@ describe('autoEvaluateProcessor saga', () => {
     expect(effect.done).toEqual(true);
   });
 
-  test('should do nothing if editor existsbut auto evaluate is off.', () => {
+  test('should do nothing if editor exists but auto evaluate is off.', () => {
     const saga = autoEvaluateProcessor({ id });
     const selectEffect = saga.next().value;
 
@@ -168,29 +168,18 @@ describe('autoEvaluateProcessor saga', () => {
     expect(effect.done).toEqual(true);
   });
 
-  test('should not pause if no delay is set.', () => {
+  test('should have default pause if no delay is set.', () => {
     const saga = autoEvaluateProcessor({ id });
     const selectEffect = saga.next().value;
+    const defaultDelay = 1000;
 
     expect(selectEffect).toEqual(select(selectors.editor, id));
 
-    const callEffect = saga.next({ autoEvaluate: true }).value;
+    let callEffect = saga.next({ autoEvaluate: true }).value;
 
-    expect(callEffect).toEqual(call(evaluateProcessor, { id }));
+    expect(callEffect).toEqual(delay(defaultDelay));
 
-    const finalEffect = saga.next();
-
-    expect(finalEffect).toEqual({ done: true, value: undefined });
-  });
-
-  test('should not pause if no delay is set.', () => {
-    const saga = autoEvaluateProcessor({ id });
-    const selectEffect = saga.next().value;
-
-    expect(selectEffect).toEqual(select(selectors.editor, id));
-
-    const callEffect = saga.next({ autoEvaluate: true }).value;
-
+    callEffect = saga.next().value;
     expect(callEffect).toEqual(call(evaluateProcessor, { id }));
 
     const finalEffect = saga.next();
