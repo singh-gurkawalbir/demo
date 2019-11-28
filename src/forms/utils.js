@@ -279,7 +279,7 @@ const getFieldConfig = (field = {}, resource) => {
     newField.type = 'text';
   } else if (newField.type === 'expression') {
     newField.type = 'iaexpression';
-    newField.resource = resource;
+    newField.flowId = resource._id;
   } else if (newField.type === 'radio') {
     newField.type = 'radiogroup';
   } else if (newField.type === 'file') {

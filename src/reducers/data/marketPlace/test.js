@@ -1,4 +1,5 @@
 /* global describe, test, expect */
+import moment from 'moment';
 import reducer, * as selectors from './';
 import actions from '../../../actions';
 
@@ -66,14 +67,23 @@ describe('marketplace reducers', () => {
 describe('marketplace selectors', () => {
   describe('connectors', () => {
     const testConnectors = [
-      { _id: '123' },
+      { _id: '123', applications: ['some application'] },
       { _id: '456', applications: ['some application'] },
     ];
     const licenses = [
       {
-        hasExpired: false,
+        expires: moment()
+          .subtract(1, 'days')
+          .toISOString(),
         type: 'connector',
         _connectorId: '456',
+      },
+      {
+        expires: moment()
+          .add(1, 'days')
+          .toISOString(),
+        type: 'connector',
+        _connectorId: '123',
       },
     ];
 
@@ -89,7 +99,10 @@ describe('marketplace selectors', () => {
 
       expect(
         selectors.connectors(state, 'some application', false, licenses)
-      ).toEqual([{ ...state.connectors[1], canInstall: true }]);
+      ).toEqual([
+        { _id: '123', applications: ['some application'], canInstall: true },
+        { _id: '456', applications: ['some application'], canInstall: false },
+      ]);
     });
   });
   describe('templates', () => {

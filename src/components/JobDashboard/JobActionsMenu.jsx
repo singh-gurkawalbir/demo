@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react';
+import { Fragment, useState, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import Menu from '@material-ui/core/Menu';
 import { makeStyles } from '@material-ui/core';
@@ -104,6 +104,35 @@ export default function JobActionsMenu({
       }
     }
   }
+
+  const handleCommsStatus = useCallback(
+    objStatus => {
+      const messages = {
+        runFlow: {
+          [COMM_STATES.SUCCESS]: `${job.name} flow has been queued successfully`,
+          [COMM_STATES.ERROR]: `${objStatus.runFlow &&
+            objStatus.runFlow.message}`,
+        },
+      };
+
+      ['runFlow'].forEach(a => {
+        if (
+          objStatus[a] &&
+          [COMM_STATES.SUCCESS, COMM_STATES.ERROR].includes(objStatus[a].status)
+        ) {
+          if (!messages[a] || !messages[a][objStatus[a].status]) {
+            return;
+          }
+
+          enqueueSnackbar({
+            message: messages[a][objStatus[a].status],
+            variant: objStatus[a].status,
+          });
+        }
+      });
+    },
+    [enqueueSnackbar, job.name]
+  );
 
   function handleMenuClose() {
     setAnchorEl(null);
@@ -310,33 +339,7 @@ export default function JobActionsMenu({
       <CommStatus
         actionsToMonitor={actionsToMonitor}
         autoClearOnComplete
-        commStatusHandler={objStatus => {
-          const messages = {
-            runFlow: {
-              [COMM_STATES.SUCCESS]: `${job.name} flow has been queued successfully`,
-              [COMM_STATES.ERROR]: `${objStatus.runFlow &&
-                objStatus.runFlow.message}`,
-            },
-          };
-
-          ['runFlow'].forEach(a => {
-            if (
-              objStatus[a] &&
-              [COMM_STATES.SUCCESS, COMM_STATES.ERROR].includes(
-                objStatus[a].status
-              )
-            ) {
-              if (!messages[a] || !messages[a][objStatus[a].status]) {
-                return;
-              }
-
-              enqueueSnackbar({
-                message: messages[a][objStatus[a].status],
-                variant: objStatus[a].status,
-              });
-            }
-          });
-        }}
+        commStatusHandler={handleCommsStatus}
       />
       <Menu
         anchorEl={anchorEl}
