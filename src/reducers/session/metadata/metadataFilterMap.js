@@ -127,7 +127,7 @@ export default {
       updateable: d.updateable,
     })),
   'salesforce-soqlQuery': data => data,
-  'salesforce-sObjectTypeMetadata': (data, options = {}) => {
+  'salesforce-sObjectCompositeMetadata': (data, options = {}) => {
     const { applicationResource, connectionId } = options;
     const _data = [];
 

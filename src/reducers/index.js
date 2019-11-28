@@ -2334,7 +2334,10 @@ export function getImportSampleData(state, resourceId) {
       state,
       connectionId,
       commMetaPath,
-      filterKey: 'salesforce-sObjectTypeMetadata',
+      filterKey:
+        salesforce.api === 'compositerecord'
+          ? 'salesforce-sObjectCompositeMetadata'
+          : 'salesforce-recordType',
     });
 
     return sampleData;
