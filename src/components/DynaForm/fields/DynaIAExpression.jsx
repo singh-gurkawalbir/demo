@@ -4,8 +4,8 @@ import * as selectors from '../../../reducers';
 import DynaNetSuiteLookup from './DynaNetSuiteLookup';
 // TODO: change the references to point to correct filters
 import DynaSFLookup from './DynaNetSuiteLookup';
-import DynaNSQualifier from './DynaNetSuiteLookup';
 import DynaSFQualifier from './DynaSFQualifier';
+import DynaNSQualifier from './DynaNetSuiteQualificationCriteria';
 
 export default function DynaIAExpression(props) {
   const { flowId, properties = {}, expressionType: type } = props;

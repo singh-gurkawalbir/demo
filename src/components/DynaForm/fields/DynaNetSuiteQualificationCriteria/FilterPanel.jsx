@@ -18,10 +18,9 @@ import {
   convertNetSuiteQualifierExpressionToQueryBuilderRules,
   getFilterList,
   generateRulesState,
-  generateNetSuiteLookupFilterExpression,
+  generateNetSuiteQualifierExpression,
   getFilterRuleId,
 } from './util';
-import OperandSettingsDialog from './OperandSettingsDialog';
 import actions from '../../../../actions';
 
 const useStyles = makeStyles(theme => ({
@@ -40,11 +39,9 @@ export default function FilterPanel({
   editorId,
   rule,
   filters = defaultFilters,
-  readOnly,
 }) {
   const qbuilder = useRef(null);
   const classes = useStyles();
-  const [showOperandSettingsFor, setShowOperandSettingsFor] = useState();
   const [rules, setRules] = useState();
   const [filtersMetadata, setFiltersMetadata] = useState();
   const [rulesState, setRulesState] = useState({});
@@ -74,6 +71,11 @@ export default function FilterPanel({
           } else {
             filterData.id = `text:${filter.value}`;
           }
+        } else if (filter.type === 'checkbox') {
+          filterData.options = [
+            { id: 'T', text: 'Yes' },
+            { id: 'F', text: 'No' },
+          ];
         }
 
         return filterData;
@@ -115,7 +117,7 @@ export default function FilterPanel({
       return undefined;
     }
 
-    return generateNetSuiteLookupFilterExpression(qbRules);
+    return generateNetSuiteQualifierExpression(qbRules);
   };
 
   const handleFilterRulesChange = useCallback(() => {
@@ -125,6 +127,7 @@ export default function FilterPanel({
       patchEditor(rule);
     }
   }, [patchEditor]);
+<<<<<<< HEAD
   const showOperandSettings = ({ rule, rhs }) => {
     setShowOperandSettingsFor({ rule, rhs });
   };
@@ -266,14 +269,16 @@ export default function FilterPanel({
     }
   };
 
+=======
+>>>>>>> 5efc6e41ff00ce89cdb83a4861fe937367baed76
   const validateRule = rule => {
     const r = rule.data;
 
-    if (r.lhs.type && !r.lhs[r.lhs.type]) {
+    if (!r.lhs.field) {
       return { isValid: false, error: 'Please select left operand.' };
     }
 
-    if (r.rhs.type && !r.rhs[r.rhs.type]) {
+    if (!r.rhs.value) {
       return { isValid: false, error: 'Please select right operand.' };
     }
 
@@ -287,11 +292,24 @@ export default function FilterPanel({
     const filters = [];
 
     jsonPaths.forEach(v => {
-      filters.push({
+      const filter = {
         id: v.id,
         label: v.name,
         type: 'string',
-        input(rule, name) {
+      };
+
+      if (v.options && v.options.length > 0) {
+        filter.input = 'select';
+        filter.values = {};
+        v.options.forEach(opt => {
+          if (filter.id.includes('text:')) {
+            filter.values[opt.text] = opt.text;
+          } else {
+            filter.values[opt.id] = opt.text;
+          }
+        });
+      } else {
+        filter.input = (rule, name) => {
           const ruleId = getFilterRuleId(rule);
 
           if (!rulesState[ruleId]) {
@@ -317,112 +335,52 @@ export default function FilterPanel({
           }
 
           if (!rulesState[ruleId].data.rhs.type) {
-            rulesState[ruleId].data.rhs.type = 'field';
-          }
-
-          setTimeout(() => {
-            updateUIForLHSRule({ rule, name });
-          });
-
-          if (!readOnly) {
-            rule.$el
-              .find('.rule-value-container')
-              .unbind('mouseover')
-              .on('mouseover', () => {
-                rule.$el.find('.rule-value-container img.settings-icon').show();
-                rule.$el
-                  .find('.rule-value-container img.settings-icon')
-                  .unbind('click')
-                  .on('click', () => {
-                    if (rulesState[ruleId].data.rhs.type === 'field') {
-                      const rhsField = rule.$el
-                        .find(
-                          `.rule-value-container [name=${rulesState[ruleId].data.rhs.type}]`
-                        )
-                        .val();
-
-                      if (rhsField) {
-                        rulesState[ruleId].data.rhs.field = rhsField;
-                      }
-                    }
-
-                    showOperandSettings({ rule, rhs: true });
-                  });
-              });
-            rule.$el
-              .find('.rule-value-container')
-              .unbind('mouseout')
-              .on('mouseout', () => {
-                rule.$el.find('.rule-value-container img.settings-icon').hide();
-              });
-          }
-
-          if (rulesState[ruleId].data.rhs.type !== 'value') {
-            setTimeout(() => {
-              updateUIForRHSRule({ rule, name });
-            });
+            rulesState[ruleId].data.rhs.type = 'value';
           }
 
           return `<input class="form-control" name="${name}" value="${rulesState[
             ruleId
-          ].data.rhs.value || ''}">${
-            readOnly
-              ? ''
-              : '<img style="display:none;" class="settings-icon" src="https://d142hkd03ds8ug.cloudfront.net/images/icons/icon/gear.png">'
-          }`;
-        },
-        valueGetter(rule) {
+          ].data.rhs.value || ''}">`;
+        };
+
+        filter.valueGetter = rule => {
           const ruleId = getFilterRuleId(rule);
-          const r = rulesState[ruleId].data;
+          const r = (rulesState[ruleId] || {}).data || {};
           const lhsValue = rule.$el
             .find(`.rule-filter-container [name=${rule.id}_filter]`)
             .val();
-          let rhsValue = rule.$el
+          const rhsValue = rule.$el
             .find(`.rule-value-container [name=${rule.id}_value_0]`)
             .val();
 
-          if (r.rhs.type !== 'value') {
-            rhsValue = rule.$el
-              .find(`.rule-value-container [name=${r.rhs.type}]`)
-              .val();
+          if (!r.lhs) {
+            r.lhs = {};
           }
 
-          if (!rhsValue) {
-            rhsValue = r.rhs[r.rhs.type];
+          if (!r.rhs) {
+            r.rhs = {};
           }
 
-          r.lhs[r.lhs.type || 'field'] = lhsValue;
-          r.rhs[r.rhs.type || 'value'] = rhsValue;
+          r.lhs.field = lhsValue;
+          r.rhs.value = rhsValue;
           rule.data = r;
 
           return rhsValue;
-        },
-        validation: {
+        };
+
+        filter.validation = {
           callback(value, rule) {
             const ruleId = getFilterRuleId(rule);
             const r = rulesState[ruleId].data;
-            let lhsValue = rule.$el
+            const lhsValue = rule.$el
               .find(`.rule-filter-container [name=${rule.id}_filter]`)
               .val();
-
-            if (r.lhs.type !== 'field') {
-              lhsValue = rule.$el
-                .find(`.rule-filter-container [name=${r.lhs.type}]`)
-                .val();
-            }
-
-            let rhsValue = rule.$el
+            const rhsValue = rule.$el
               .find(`.rule-value-container [name=${rule.id}_value_0]`)
               .val();
 
-            if (r.rhs.type !== 'value') {
-              rhsValue = rule.$el
-                .find(`.rule-value-container [name=${r.rhs.type}]`)
-                .val();
-            }
-
-            r.lhs[r.lhs.type || 'field'] = lhsValue;
-            r.rhs[r.rhs.type || 'value'] = rhsValue;
+            r.lhs.field = lhsValue;
+            r.rhs.value = rhsValue;
             rule.data = r;
 
             const vr = validateRule(rule);
@@ -433,8 +391,10 @@ export default function FilterPanel({
 
             return true;
           },
-        },
-      });
+        };
+      }
+
+      filters.push(filter);
     });
 
     return filters;
@@ -445,15 +405,15 @@ export default function FilterPanel({
       const filtersConfig = generateFiltersConfig(filtersMetadata);
       const qbContainer = jQuery(qbuilder.current);
 
-      qbContainer.on('afterUpdateRuleOperator.queryBuilder', (e, rule) => {
-        if (
-          rule.operator &&
-          (rule.operator.type === 'is_empty' ||
-            rule.operator.type === 'is_not_empty')
-        ) {
-          rule.filter.valueGetter(rule);
-        }
-      });
+      // qbContainer.on('afterUpdateRuleOperator.queryBuilder', (e, rule) => {
+      //   if (
+      //     rule.operator &&
+      //     (rule.operator.type === 'is_empty' ||
+      //       rule.operator.type === 'is_not_empty')
+      //   ) {
+      //     rule.filter.valueGetter(rule);
+      //   }
+      // });
 
       qbContainer.queryBuilder({
         ...config,
@@ -470,51 +430,9 @@ export default function FilterPanel({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filtersMetadata]);
 
-  const handleCloseOperandSettings = () => {
-    setShowOperandSettingsFor();
-  };
-
-  const handleSubmitOperandSettings = operandSettings => {
-    const ruleData =
-      rulesState[getFilterRuleId(showOperandSettingsFor.rule)].data[
-        showOperandSettingsFor.rhs ? 'rhs' : 'lhs'
-      ];
-
-    rulesState[getFilterRuleId(showOperandSettingsFor.rule)].data[
-      showOperandSettingsFor.rhs ? 'rhs' : 'lhs'
-    ] = { ...ruleData, ...operandSettings };
-
-    if (showOperandSettingsFor.rhs) {
-      updateUIForRHSRule({
-        rule: showOperandSettingsFor.rule,
-        name: `${showOperandSettingsFor.rule.id}_value_0`,
-      });
-    } else {
-      updateUIForLHSRule({
-        rule: showOperandSettingsFor.rule,
-        name: `${showOperandSettingsFor.rule.id}_value_0`,
-      });
-    }
-
-    handleFilterRulesChange();
-    handleCloseOperandSettings();
-  };
-
   return (
     <div className={classes.container}>
-      <div ref={qbuilder} />
-      {showOperandSettingsFor && (
-        <OperandSettingsDialog
-          ruleData={
-            rulesState[getFilterRuleId(showOperandSettingsFor.rule)].data[
-              showOperandSettingsFor.rhs ? 'rhs' : 'lhs'
-            ]
-          }
-          // disabled={disabled}
-          onClose={handleCloseOperandSettings}
-          onSubmit={handleSubmitOperandSettings}
-        />
-      )}
+      <div className="netsuite-qualifier" ref={qbuilder} />
     </div>
   );
 }

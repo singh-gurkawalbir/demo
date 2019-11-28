@@ -28,7 +28,12 @@ export default {
       .map(item => ({ label: item.name, value: item.id })),
   'suitescript-bodyField': data =>
     data
-      .filter(item => !item.sublist)
+      .filter(
+        item =>
+          !item.sublist &&
+          !item.id.includes('celigo_replaceAllLines_') &&
+          !item.id.includes('celigo_groupLinesBy_')
+      )
       .map(item => ({
         label: item.name,
         value: item.id,
