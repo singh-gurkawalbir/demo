@@ -12,6 +12,7 @@ export default function AddEditLookup(props) {
     onCancel,
     error,
     disabled,
+    options = {},
     showDynamicLookupOnly = false,
   } = props;
   const isEdit = !!(lookup && lookup.name);
@@ -24,6 +25,7 @@ export default function AddEditLookup(props) {
         lookupObj.map[obj.export] = obj.import;
       });
     } else {
+      lookupObj.query = formVal.query;
       lookupObj.method = formVal.method;
       lookupObj.relativeURI = formVal.relativeURI;
       lookupObj.body = formVal.body;
@@ -54,11 +56,13 @@ export default function AddEditLookup(props) {
     onSave(isEdit, lookupObj);
   };
 
-  const fieldMeta = lookupMetadata.getLookupMetadata(
+  const { isSQLLookup, sampleData } = options;
+  const fieldMeta = lookupMetadata.getLookupMetadata({
     lookup,
-    isEdit,
-    showDynamicLookupOnly
-  );
+    showDynamicLookupOnly,
+    isSQLLookup,
+    sampleData,
+  });
 
   return (
     <div>

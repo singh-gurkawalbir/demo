@@ -1,4 +1,6 @@
-const getDefaultMetadata = (lookup, isEdit, showDynamicLookupOnly) => {
+import rdbmsMetadata from './rdbmsMetadata';
+
+const getDefaultMetadata = ({ lookup, showDynamicLookupOnly }) => {
   const fieldMeta = {
     fieldMap: {
       relativeURI: {
@@ -85,7 +87,7 @@ const getDefaultMetadata = (lookup, isEdit, showDynamicLookupOnly) => {
         keyLabel: 'Export Field',
         valueName: 'import',
         valueLabel: 'Import Field (HTTP)',
-        map: isEdit && lookup && lookup.map,
+        map: lookup && lookup.map,
         visibleWhen: [
           {
             field: 'mode',
@@ -100,11 +102,6 @@ const getDefaultMetadata = (lookup, isEdit, showDynamicLookupOnly) => {
   };
 
   if (showDynamicLookupOnly) {
-    delete fieldMeta.fieldMap.mode;
-    delete fieldMeta.fieldMap.mapList;
-    fieldMeta.layout.fields = fieldMeta.layout.fields.filter(
-      el => el !== 'mode' && el !== 'mapList'
-    );
     const { relativeURI, method, body, extract } = fieldMeta.fieldMap;
 
     delete relativeURI.visibleWhen;
@@ -124,6 +121,20 @@ const getDefaultMetadata = (lookup, isEdit, showDynamicLookupOnly) => {
 };
 
 export default {
-  getLookupMetadata: (lookup, isEdit, showDynamicLookupOnly) =>
-    getDefaultMetadata(lookup, isEdit, showDynamicLookupOnly),
+  getLookupMetadata: ({
+    lookup,
+    showDynamicLookupOnly,
+    isSQLLookup,
+    sampleData,
+  }) => {
+    if (isSQLLookup) {
+      return rdbmsMetadata.getLookupMetadata({
+        lookup,
+        showDynamicLookupOnly,
+        sampleData,
+      });
+    }
+
+    return getDefaultMetadata({ lookup, showDynamicLookupOnly });
+  },
 };
