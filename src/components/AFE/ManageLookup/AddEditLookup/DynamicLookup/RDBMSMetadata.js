@@ -5,7 +5,7 @@ export default {
         query: {
           id: 'query',
           name: 'query',
-          type: 'text',
+          type: 'query',
           label: 'Query',
           defaultValue: lookup.query,
           visibleWhen: [

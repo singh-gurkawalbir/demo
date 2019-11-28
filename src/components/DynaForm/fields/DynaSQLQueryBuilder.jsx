@@ -183,6 +183,7 @@ export default function DynaSQLQueryBuilder(props) {
     lookupField = (
       <DynaLookupEditor
         id={lookupFieldId}
+        isSQLLookup
         label="Manage Lookups"
         value={lookups}
         onFieldChange={onFieldChange}

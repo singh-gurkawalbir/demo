@@ -16,11 +16,12 @@ const getFailedRecordDefault = (isEdit, lookup) => {
 };
 
 export default {
-  getLookupMetadata: (lookup, isEdit, showDynamicLookupOnly) => {
+  getLookupMetadata: (lookup, isEdit, showDynamicLookupOnly, isSQLLookup) => {
     const dynamicLookupMetadata = dynamicMetadata.getLookupMetadata(
       lookup,
       isEdit,
-      showDynamicLookupOnly
+      showDynamicLookupOnly,
+      isSQLLookup
     );
     const {
       fieldMap: dynamicFieldMap,

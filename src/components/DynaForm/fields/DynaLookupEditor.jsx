@@ -4,7 +4,7 @@ import ManageLookupDialog from '../../../components/AFE/ManageLookup/Dialog';
 
 export default function DynaLookupEditor(props) {
   const [showEditor, setShowEditor] = useState(false);
-  const { id, onFieldChange, value, label } = props;
+  const { id, isSQLLookup, onFieldChange, value, label } = props;
   const handleEditorClick = () => {
     setShowEditor(!showEditor);
   };
@@ -19,6 +19,7 @@ export default function DynaLookupEditor(props) {
         <ManageLookupDialog
           id={id}
           lookups={value}
+          isSQLLookup={isSQLLookup}
           onCancel={handleEditorClick}
           onUpdate={handleUpdate}
         />

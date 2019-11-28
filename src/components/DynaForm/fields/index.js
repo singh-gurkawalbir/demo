@@ -62,6 +62,7 @@ import DynaIAExpression from './DynaIAExpression';
 import DynaUserEmail from './DynaUserEmail';
 import DynaUserPassword from './DynaUserPassword';
 import DynaIclient from './DynaIclient';
+import DynaQuery from './DynaQuery';
 
 export default {
   mapping: DynaImportMapping,
@@ -135,4 +136,5 @@ export default {
   useremail: DynaUserEmail,
   userpassword: DynaUserPassword,
   dynaiclient: DynaIclient,
+  query: DynaQuery,
 };
