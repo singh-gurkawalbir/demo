@@ -39,7 +39,6 @@ export default function FilterPanel({
   editorId,
   rule,
   filters = defaultFilters,
-  readOnly,
 }) {
   const qbuilder = useRef(null);
   const classes = useStyles();
@@ -131,11 +130,11 @@ export default function FilterPanel({
   const validateRule = rule => {
     const r = rule.data;
 
-    if (r.lhs.type && !r.lhs[r.lhs.type]) {
+    if (!r.lhs.field) {
       return { isValid: false, error: 'Please select left operand.' };
     }
 
-    if (r.rhs.type && !r.rhs[r.rhs.type]) {
+    if (!r.rhs.value) {
       return { isValid: false, error: 'Please select right operand.' };
     }
 
@@ -192,38 +191,7 @@ export default function FilterPanel({
           }
 
           if (!rulesState[ruleId].data.rhs.type) {
-            rulesState[ruleId].data.rhs.type = 'field';
-          }
-
-          if (!readOnly) {
-            rule.$el
-              .find('.rule-value-container')
-              .unbind('mouseover')
-              .on('mouseover', () => {
-                rule.$el.find('.rule-value-container img.settings-icon').show();
-                rule.$el
-                  .find('.rule-value-container img.settings-icon')
-                  .unbind('click')
-                  .on('click', () => {
-                    if (rulesState[ruleId].data.rhs.type === 'field') {
-                      const rhsField = rule.$el
-                        .find(
-                          `.rule-value-container [name=${rulesState[ruleId].data.rhs.type}]`
-                        )
-                        .val();
-
-                      if (rhsField) {
-                        rulesState[ruleId].data.rhs.field = rhsField;
-                      }
-                    }
-                  });
-              });
-            rule.$el
-              .find('.rule-value-container')
-              .unbind('mouseout')
-              .on('mouseout', () => {
-                rule.$el.find('.rule-value-container img.settings-icon').hide();
-              });
+            rulesState[ruleId].data.rhs.type = 'value';
           }
 
           return `<input class="form-control" name="${name}" value="${rulesState[
@@ -233,26 +201,24 @@ export default function FilterPanel({
 
         filter.valueGetter = rule => {
           const ruleId = getFilterRuleId(rule);
-          const r = rulesState[ruleId].data;
+          const r = (rulesState[ruleId] || {}).data || {};
           const lhsValue = rule.$el
             .find(`.rule-filter-container [name=${rule.id}_filter]`)
             .val();
-          let rhsValue = rule.$el
+          const rhsValue = rule.$el
             .find(`.rule-value-container [name=${rule.id}_value_0]`)
             .val();
 
-          if (r.rhs.type !== 'value') {
-            rhsValue = rule.$el
-              .find(`.rule-value-container [name=${r.rhs.type}]`)
-              .val();
+          if (!r.lhs) {
+            r.lhs = {};
           }
 
-          if (!rhsValue) {
-            rhsValue = r.rhs[r.rhs.type];
+          if (!r.rhs) {
+            r.rhs = {};
           }
 
-          r.lhs[r.lhs.type || 'field'] = lhsValue;
-          r.rhs[r.rhs.type || 'value'] = rhsValue;
+          r.lhs.field = lhsValue;
+          r.rhs.value = rhsValue;
           rule.data = r;
 
           return rhsValue;
@@ -262,28 +228,15 @@ export default function FilterPanel({
           callback(value, rule) {
             const ruleId = getFilterRuleId(rule);
             const r = rulesState[ruleId].data;
-            let lhsValue = rule.$el
+            const lhsValue = rule.$el
               .find(`.rule-filter-container [name=${rule.id}_filter]`)
               .val();
-
-            if (r.lhs.type !== 'field') {
-              lhsValue = rule.$el
-                .find(`.rule-filter-container [name=${r.lhs.type}]`)
-                .val();
-            }
-
-            let rhsValue = rule.$el
+            const rhsValue = rule.$el
               .find(`.rule-value-container [name=${rule.id}_value_0]`)
               .val();
 
-            if (r.rhs.type !== 'value') {
-              rhsValue = rule.$el
-                .find(`.rule-value-container [name=${r.rhs.type}]`)
-                .val();
-            }
-
-            r.lhs[r.lhs.type || 'field'] = lhsValue;
-            r.rhs[r.rhs.type || 'value'] = rhsValue;
+            r.lhs.field = lhsValue;
+            r.rhs.value = rhsValue;
             rule.data = r;
 
             const vr = validateRule(rule);
@@ -308,15 +261,15 @@ export default function FilterPanel({
       const filtersConfig = generateFiltersConfig(filtersMetadata);
       const qbContainer = jQuery(qbuilder.current);
 
-      qbContainer.on('afterUpdateRuleOperator.queryBuilder', (e, rule) => {
-        if (
-          rule.operator &&
-          (rule.operator.type === 'is_empty' ||
-            rule.operator.type === 'is_not_empty')
-        ) {
-          rule.filter.valueGetter(rule);
-        }
-      });
+      // qbContainer.on('afterUpdateRuleOperator.queryBuilder', (e, rule) => {
+      //   if (
+      //     rule.operator &&
+      //     (rule.operator.type === 'is_empty' ||
+      //       rule.operator.type === 'is_not_empty')
+      //   ) {
+      //     rule.filter.valueGetter(rule);
+      //   }
+      // });
 
       qbContainer.queryBuilder({
         ...config,
@@ -335,7 +288,7 @@ export default function FilterPanel({
 
   return (
     <div className={classes.container}>
-      <div ref={qbuilder} />
+      <div className="netsuite-qualifier" ref={qbuilder} />
     </div>
   );
 }

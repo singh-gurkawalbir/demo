@@ -20,32 +20,11 @@ export function getFilterRuleId(rule) {
   return rule.id.split('_rule_')[1];
 }
 
-export function updateNetSuiteLookupFilterExpressionForNOTs(expression) {
-  for (let i = 0; i < expression.length; i += 1) {
-    if (expression[i] === 'NOT') {
-      expression[i] = isArray(expression[i + 1][0])
-        ? [
-            'NOT',
-            updateNetSuiteLookupFilterExpressionForNOTs(expression[i + 1]),
-          ]
-        : ['NOT', expression[i + 1]];
-      expression.splice(i + 1, 1);
-    } else if (isArray(expression[i])) {
-      expression[i] = updateNetSuiteLookupFilterExpressionForNOTs(
-        expression[i]
-      );
-    }
-  }
-
-  return expression;
-}
-
 export function convertNetSuiteQualifierExpressionToQueryBuilderRules(
   qualifierExpression = []
 ) {
   function iterate(exp) {
     const toReturn = {};
-    let temp = {};
     let i = 0;
 
     if (!exp.length) {
@@ -75,13 +54,11 @@ export function convertNetSuiteQualifierExpressionToQueryBuilderRules(
 
         for (i = 0; i < exp.length; i += 2) {
           if (i === 0) {
-            temp = toReturn.lhs;
-            temp.type = 'field';
-            temp.value = exp[i];
+            toReturn.lhs.type = 'field';
+            toReturn.lhs.value = exp[i];
           } else {
-            temp = toReturn.rhs;
-            temp.type = 'value';
-            temp.value = exp[i];
+            toReturn.rhs.type = 'value';
+            toReturn.rhs.value = exp[i];
             toReturn.value = exp[i];
           }
         }
@@ -182,6 +159,19 @@ export function generateNetSuiteLookupFilterExpression(qbRules) {
   let rhs;
   let filter;
 
+  /**
+   * A and B and C is not allowed in backend.
+   * So, we need to convert it to A and [B and C]
+   */
+  if (qbRules.rules.length > 2) {
+    const [firstRule, ...otherRules] = qbRules.rules;
+
+    qbRules.rules = [
+      firstRule,
+      { condition: qbRules.condition, rules: otherRules },
+    ];
+  }
+
   for (let i = 0; i < qbRules.rules.length; i += 1) {
     if (qbRules.rules[i].rules && qbRules.rules[i].rules.length > 0) {
       nsFilterExpression.push(
@@ -219,116 +209,4 @@ export function generateNetSuiteLookupFilterExpression(qbRules) {
   return nsFilterExpression.length === 1
     ? nsFilterExpression[0]
     : nsFilterExpression;
-}
-
-export function validateFilterRule(rule) {
-  const arithmeticOperators = [
-    'add',
-    'subtract',
-    'divide',
-    'multiply',
-    'modulo',
-    'ceiling',
-    'floor',
-    'number',
-  ];
-  const r = rule.data;
-  const validation = {
-    isValid: true,
-    error: '',
-  };
-  let op;
-
-  if (r.lhs.type === 'expression') {
-    try {
-      JSON.parse(r.lhs.expression);
-
-      if (JSON.parse(r.lhs.expression).length < 2) {
-        validation.isValid = false;
-        validation.error = 'Please enter a valid expression.';
-      }
-    } catch (ex) {
-      validation.isValid = false;
-      validation.error = 'Expression should be a valid JSON.';
-    }
-
-    if (validation.isValid) {
-      [op] = JSON.parse(r.lhs.expression);
-
-      if (arithmeticOperators.includes(op)) {
-        r.lhs.dataType = 'number';
-      } else if (op === 'epochtime') {
-        r.lhs.dataType = 'epochtime';
-      } else if (op === 'boolean') {
-        r.lhs.dataType = 'boolean';
-      } else {
-        r.lhs.dataType = 'string';
-      }
-    }
-  }
-
-  if (!validation.isValid) {
-    return validation;
-  }
-
-  if (r.rhs.type === 'expression') {
-    try {
-      JSON.parse(r.rhs.expression);
-
-      if (JSON.parse(r.rhs.expression).length < 2) {
-        validation.isValid = false;
-        validation.error = 'Please enter a valid expression.';
-      }
-    } catch (ex) {
-      validation.isValid = false;
-      validation.error = 'Expression should be a valid JSON.';
-    }
-
-    if (validation.isValid) {
-      [op] = JSON.parse(r.rhs.expression);
-
-      if (arithmeticOperators.includes(op)) {
-        r.rhs.dataType = 'number';
-      } else if (op === 'epochtime') {
-        r.rhs.dataType = 'epochtime';
-      } else if (op === 'boolean') {
-        r.rhs.dataType = 'boolean';
-      } else {
-        r.rhs.dataType = 'string';
-      }
-    }
-  }
-
-  if (!validation.isValid) {
-    return validation;
-  }
-
-  if (r.lhs.dataType && r.rhs.dataType && r.lhs.dataType !== r.rhs.dataType) {
-    validation.isValid = false;
-    validation.error = 'Data types of both the operands should match.';
-  }
-
-  if (!validation.isValid) {
-    return validation;
-  }
-
-  if (r.lhs.type && !r.lhs[r.lhs.type]) {
-    validation.isValid = false;
-    validation.error = 'Please select left operand.';
-  }
-
-  if (!validation.isValid) {
-    return validation;
-  }
-
-  if (r.rhs.type && !r.rhs[r.rhs.type]) {
-    validation.isValid = false;
-    validation.error = 'Please select right operand.';
-  }
-
-  if (!validation.isValid) {
-    return validation;
-  }
-
-  return validation;
 }
