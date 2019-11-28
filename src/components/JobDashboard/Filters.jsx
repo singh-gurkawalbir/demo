@@ -181,6 +181,7 @@ function Filters({
       )}
 
       <CeligoSelect
+        data-test="flowStatusFilter"
         className={classes.status}
         onChange={e => patchFilter('status', e.target.value)}
         value={status}>
@@ -202,6 +203,7 @@ function Filters({
       </CeligoSelect>
       <div className={classes.hideLabel}>
         <FormControlLabel
+          data-test="hideEmptyJobsFilter"
           label="Hide empty jobs"
           classes={{ label: classes.hideEmptyLabel }}
           control={

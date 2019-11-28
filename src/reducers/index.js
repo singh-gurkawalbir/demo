@@ -2139,7 +2139,9 @@ export function flowJobs(state) {
     const additionalProps = {
       endedAtAsString: getEndedAtAsString(job),
       name:
-        resourceMap.flows[job._flowId] && resourceMap.flows[job._flowId].name,
+        resourceMap.flows &&
+        resourceMap.flows[job._flowId] &&
+        resourceMap.flows[job._flowId].name,
     };
 
     if (job.doneExporting && job.numPagesGenerated > 0) {

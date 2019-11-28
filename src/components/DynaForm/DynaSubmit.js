@@ -16,7 +16,9 @@ function FormButton({
 
   return (
     <Button
-      data-test={id}
+      data-test={
+        id || (typeof children === 'string' && children) || 'saveButton'
+      }
       variant="outlined"
       color={color || 'primary'}
       className={className}
