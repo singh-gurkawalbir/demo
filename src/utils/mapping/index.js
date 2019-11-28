@@ -406,32 +406,33 @@ export default {
   ) => {
     const connectorMappingMetadata = mappingMetadata[connectorExternalId];
 
-    connectorMappingMetadata.forEach(meta => {
-      let mappingContainer;
+    connectorMappingMetadata &&
+      connectorMappingMetadata.forEach(meta => {
+        let mappingContainer;
 
-      if (meta.generateList) {
-        mappingContainer =
-          mappings.lists &&
-          mappings.lists.find(list => list.generate === meta.generateList);
-      } else {
-        mappingContainer = mappings;
-      }
+        if (meta.generateList) {
+          mappingContainer =
+            mappings.lists &&
+            mappings.lists.find(list => list.generate === meta.generateList);
+        } else {
+          mappingContainer = mappings;
+        }
 
-      meta.requiredGenerateFields.forEach(fieldId => {
-        const field = mappingContainer.fields.find(
-          field => field.generate === fieldId
-        );
+        meta.requiredGenerateFields.forEach(fieldId => {
+          const field = mappingContainer.fields.find(
+            field => field.generate === fieldId
+          );
 
-        if (field) field.isRequired = true;
+          if (field) field.isRequired = true;
+        });
+        meta.nonEditableGenerateFields.forEach(fieldId => {
+          const field = mappingContainer.fields.find(
+            field => field.generate === fieldId
+          );
+
+          if (field) field.isNotEditable = true;
+        });
       });
-      meta.nonEditableGenerateFields.forEach(fieldId => {
-        const field = mappingContainer.fields.find(
-          field => field.generate === fieldId
-        );
-
-        if (field) field.isNotEditable = true;
-      });
-    });
 
     return mappings;
   },
