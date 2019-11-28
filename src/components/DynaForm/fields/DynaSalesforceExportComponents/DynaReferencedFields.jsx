@@ -5,38 +5,11 @@ import EditIcon from '../../../icons/EditIcon';
 import DynaText from '../DynaText';
 import * as selectors from '../../../../reducers';
 import ModalDialog from '../../../ModalDialog';
-import RefreshableTreeComponent from '../DynaRefreshableSelect/RefreshableTreeComponent';
 import DynaForm from '../../../DynaForm';
 import DynaSubmit from '../../DynaSubmit';
 import IconTextButton from '../../../IconTextButton';
-
-export const ReferencedFieldsModal = props => {
-  const { handleClose, onFieldChange, id, value, ...rest } = props;
-  const [selectedValues, setSelectedValues] = useState(
-    value ? value.split(',') : []
-  );
-
-  return (
-    <ModalDialog show handleClose={handleClose}>
-      <Typography>Select Referenced Fields</Typography>
-      <RefreshableTreeComponent
-        {...rest}
-        setSelectedValues={setSelectedValues}
-        selectedValues={selectedValues}
-      />
-      <Fragment>
-        <Button onClick={handleClose}>Cancel</Button>
-        <Button
-          onClick={() => {
-            onFieldChange(id, selectedValues.join(','));
-            handleClose();
-          }}>
-          Add Selected
-        </Button>
-      </Fragment>
-    </ModalDialog>
-  );
-};
+import { useCallMetadataAndReturnStatus } from './DynaRelatedList';
+import Spinner from '../../../Spinner';
 
 const FirstLevelModal = props => {
   const {
@@ -85,6 +58,7 @@ const FirstLevelModal = props => {
         refreshOptionsOnChangesTo: ['parentSObjectType'],
         type: 'salesforcetreemodal',
         disabledWhen: [{ field: 'parentSObjectType', is: [''] }],
+        defaultValue: props.value,
       },
     },
     layout: {
@@ -109,11 +83,12 @@ const FirstLevelModal = props => {
   );
 };
 
-export default function DynaRelatedFields(props) {
+export default function DynaReferencedFields(props) {
   const [firstLevelModalOpen, setFirstLevelModalOpen] = useState(false);
   const toggle = useCallback(() => setFirstLevelModalOpen(state => !state), []);
   //   const [referencedFields, setReferencedFields] = useState('');
   const { disabled } = props;
+  const { status } = useCallMetadataAndReturnStatus(props);
 
   return (
     <Fragment>
@@ -121,9 +96,13 @@ export default function DynaRelatedFields(props) {
         <FirstLevelModal {...props} handleClose={toggle} />
       ) : null}
       <DynaText {...props} options={null} />
-      <IconTextButton onClick={toggle} disabled={disabled}>
-        <EditIcon />
-      </IconTextButton>
+      {status === 'refreshed' ? (
+        <Spinner />
+      ) : (
+        <IconTextButton onClick={toggle} disabled={disabled}>
+          <EditIcon />
+        </IconTextButton>
+      )}
     </Fragment>
   );
 }

@@ -1,6 +1,6 @@
 import { Fragment, useCallback, useState, useEffect } from 'react';
 import { deepClone } from 'fast-json-patch';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Button } from '@material-ui/core';
 import IconTextButton from '../../../../IconTextButton';
@@ -14,6 +14,8 @@ import AddIcon from '../../../../icons/AddIcon';
 import CeligoTable from '../../../../CeligoTable';
 import metadata from './metadata';
 import CodeEditor from '../../../../CodeEditor';
+import actions from '../../../../../actions';
+import Spinner from '../../../../Spinner';
 
 const getRelationShipName = (options, parentField, childSObject) => {
   const { label: relationshipName } =
@@ -26,12 +28,13 @@ const getRelationShipName = (options, parentField, childSObject) => {
 };
 
 const getParentFieldAndSObject = (options, relationshipName) => {
-  const { childSObject: sObjectType, field: parentField } = options.find(
-    option => option.value === relationshipName
-  );
+  const { childSObject: sObjectType, field: parentField } =
+    options.find(option => option.value === relationshipName) || {};
 
   return { sObjectType, parentField };
 };
+
+const defaultValueOptions = [];
 
 function EditListItemModal(props) {
   const {
@@ -42,14 +45,16 @@ function EditListItemModal(props) {
     options: selectedSObject,
     selectedElement,
   } = props;
-  const { data: options } = useSelector(state =>
-    selectors.optionsFromMetadata({
+  const options = useSelector(state => {
+    const { data } = selectors.optionsFromMetadata({
       state,
       connectionId,
       commMetaPath: `salesforce/metadata/connections/${connectionId}/sObjectTypes/${selectedSObject}`,
       filterKey: 'salesforce-sObjects-childReferenceTo',
-    })
-  );
+    });
+
+    return data || defaultValueOptions;
+  });
   const optionsHandler = (fieldId, fields) => {
     if (fieldId === 'referencedFields') {
       const { value: selectedValue } = fields.find(
@@ -212,7 +217,7 @@ function FirstLevelModal(props) {
   };
 
   return (
-    <ModalDialog show handleClose={handleClose}>
+    <ModalDialog show onClose={handleClose}>
       <Typography>Related Lists</Typography>
       <Fragment>
         {!editListItemModelOpen ? (
@@ -280,15 +285,39 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+export function useCallMetadataAndReturnStatus(props) {
+  const { options: selectedSObject, connectionId } = props;
+  const dispatch = useDispatch();
+  const commMetaPath = `salesforce/metadata/connections/${connectionId}/sObjectTypes/${selectedSObject}`;
+  const { options, status } = useSelector(state => {
+    const { data, status } = selectors.optionsFromMetadata({
+      state,
+      connectionId,
+      commMetaPath,
+      filterKey: 'salesforce-sObjects-childReferenceTo',
+    });
+
+    return { options: data || defaultValueOptions, status };
+  });
+
+  useEffect(() => {
+    if (!status && selectedSObject && typeof selectedSObject === 'string') {
+      dispatch(actions.metadata.request(connectionId, commMetaPath));
+    }
+  }, [commMetaPath, connectionId, dispatch, selectedSObject, status]);
+
+  return { status, options };
+}
+
 export default function DynaRelatedList(props) {
   const [firstLevelModalOpen, setFirstLevelModalOpen] = useState(false);
   const toggleFirstLevelModalOpen = useCallback(
     () => setFirstLevelModalOpen(state => !state),
     []
   );
-  //   const [referencedFields, setReferencedFields] = useState('');
   const classes = useStyles();
   const { disabled } = props;
+  const { status } = useCallMetadataAndReturnStatus(props);
 
   return (
     <Fragment>
@@ -298,9 +327,15 @@ export default function DynaRelatedList(props) {
       <div className={classes.inlineEditorContainer}>
         <span>{props.label}</span>
         <CodeEditor {...props} mode="json" readOnly />
-        <IconTextButton onClick={toggleFirstLevelModalOpen} disabled={disabled}>
-          <EditIcon />
-        </IconTextButton>
+        {status === 'refreshed' ? (
+          <Spinner />
+        ) : (
+          <IconTextButton
+            onClick={toggleFirstLevelModalOpen}
+            disabled={disabled}>
+            <EditIcon />
+          </IconTextButton>
+        )}
       </div>
     </Fragment>
   );

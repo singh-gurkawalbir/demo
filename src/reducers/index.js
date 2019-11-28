@@ -43,6 +43,7 @@ import { isValidResourceReference, isNewId } from '../utils/resource';
 import { processSampleData } from '../utils/sampleData';
 import inferErrorMessage from '../utils/inferErrorMessage';
 
+const emptySet = [];
 const combinedReducers = combineReducers({
   app,
   session,
@@ -627,7 +628,7 @@ export function flowDetails(state, id) {
     draft.isRealtime = isRealtimeExport(pg);
     draft.isSimpleImport = isSimpleImportFlow(pg);
     draft.isRunnable = isRunnable(allExports, pg, draft);
-    draft.showScheduleIcon = showScheduleIcon(allExports, pg, draft);
+    draft.canSchedule = showScheduleIcon(allExports, pg, draft);
     // TODO: add logic to properly determine if this flow should
     // display mapping/settings. This would come from the IA metadata.
     draft.showMapping = true;
@@ -833,6 +834,25 @@ export function getAllConnectionIdsUsedInTheFlow(state, flow) {
 
   return uniq(connectionIds.concat(borrowConnectionIds));
 }
+
+export function getFlowsAssociatedExportFromIAMetadata(state, fieldMeta) {
+  const { resource: flowResource, properties } = fieldMeta;
+  let resourceId;
+
+  if (properties && properties._exportId) {
+    resourceId = properties._exportId;
+  } else if (flowResource && flowResource._exportId) {
+    resourceId = flowResource._exportId;
+  } else if (
+    flowResource &&
+    flowResource.pageGenerators &&
+    flowResource.pageGenerators.length
+  ) {
+    resourceId = flowResource.pageGenerators[0]._exportId;
+  }
+
+  return resource(state, 'exports', resourceId);
+}
 // #begin integrationApps Region
 
 export function integrationAppSettingsFormState(state, integrationId, flowId) {
@@ -861,9 +881,7 @@ export function integrationConnectionList(state, integrationId) {
     const registeredConnections = integration._registeredConnectionIds;
 
     if (registeredConnections) {
-      resources = resources.filter(
-        conn => registeredConnections.indexOf(conn._id) >= 0
-      );
+      resources = resources.filter(c => registeredConnections.includes(c._id));
     }
   } else if (integration._connectorId) {
     resources = resources.filter(conn => conn._integrationId === integrationId);
@@ -873,7 +891,8 @@ export function integrationConnectionList(state, integrationId) {
 }
 
 export function integrationAppResourceList(state, integrationId, storeId) {
-  if (!state) return { connections: [], flows: [] };
+  if (!state) return { connections: emptySet, flows: emptySet };
+
   const integrationResource = fromData.integrationAppSettings(
     state.data,
     integrationId
@@ -2139,7 +2158,9 @@ export function flowJobs(state) {
     const additionalProps = {
       endedAtAsString: getEndedAtAsString(job),
       name:
-        resourceMap.flows[job._flowId] && resourceMap.flows[job._flowId].name,
+        resourceMap.flows &&
+        resourceMap.flows[job._flowId] &&
+        resourceMap.flows[job._flowId].name,
     };
 
     if (job.doneExporting && job.numPagesGenerated > 0) {
@@ -2332,7 +2353,10 @@ export function getImportSampleData(state, resourceId) {
       state,
       connectionId,
       commMetaPath,
-      filterKey: 'salesforce-recordType',
+      filterKey:
+        salesforce.api === 'compositerecord'
+          ? 'salesforce-sObjectCompositeMetadata'
+          : 'salesforce-recordType',
     });
 
     return sampleData;

@@ -11,7 +11,6 @@ import actions from '../../actions';
 import ArrowLeftIcon from '../icons/ArrowLeftIcon';
 import ArrowRightIcon from '../icons/ArrowRightIcon';
 import CeligoSelect from '../CeligoSelect';
-import StoreSelector from './StoreSelector';
 import FlowSelector from './FlowSelector';
 
 const useStyles = makeStyles(theme => ({
@@ -173,15 +172,6 @@ function Filters({
       </CeligoSelect>
 
       {!flowId && (
-        <StoreSelector
-          integrationId={integrationId}
-          data-test="selectStore"
-          value={storeId}
-          onChange={storeId => patchFilter('storeId', storeId)}
-        />
-      )}
-
-      {!flowId && (
         <FlowSelector
           integrationId={integrationId}
           data-test="selectAFlow"
@@ -192,8 +182,8 @@ function Filters({
       )}
 
       <CeligoSelect
+        data-test="flowStatusFilter"
         className={classes.status}
-        data-test="selectAJobStatus"
         onChange={e => patchFilter('status', e.target.value)}
         value={status}>
         {[
@@ -214,6 +204,7 @@ function Filters({
       </CeligoSelect>
       <div className={classes.hideLabel}>
         <FormControlLabel
+          data-test="hideEmptyJobsFilter"
           label="Hide empty jobs"
           classes={{ label: classes.hideEmptyLabel }}
           control={

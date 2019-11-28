@@ -42,7 +42,6 @@ export default combineReducers({
 });
 
 // #region PUBLIC SELECTORS
-
 export function netsuiteUserRoles(
   state,
   connectionId,
@@ -67,33 +66,23 @@ export function connectionTokens(state, resourceId) {
 }
 
 export function filter(state, name) {
-  if (!state) return {};
-
-  return fromFilters.filter(state.filters, name);
+  return fromFilters.filter(state && state.filters, name);
 }
 
 export function editor(state, id) {
-  if (!state) return {};
-
-  return fromEditors.editor(state.editors, id);
+  return fromEditors.editor(state && state.editors, id);
 }
 
 export function mapping(state, id) {
-  if (!state) return [];
-
-  return fromMappings.mapping(state.mappings, id);
+  return fromMappings.mapping(state && state.mappings, id);
 }
 
 export function processorRequestOptions(state, id) {
-  if (!state) return {};
-
-  return fromEditors.processorRequestOptions(state.editors, id);
+  return fromEditors.processorRequestOptions(state && state.editors, id);
 }
 
 export function stagedResource(state, id, scope) {
-  if (!state) return {};
-
-  return fromStage.stagedResource(state.stage, id, scope);
+  return fromStage.stagedResource(state && state.stage, id, scope);
 }
 
 export function optionsFromMetadata({

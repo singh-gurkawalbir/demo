@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useCallback } from 'react';
+import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
@@ -10,6 +10,7 @@ import mappingUtil from '../../../utils/mapping';
 import TrashIcon from '../../icons/TrashIcon';
 import * as selectors from '../../../reducers';
 import ActionButton from '../../ActionButton';
+import { adaptorTypeMap } from '../../../utils/resource';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -17,38 +18,31 @@ const useStyles = makeStyles(theme => ({
     overflowY: 'off',
   },
   header: {
-    display: 'flex',
+    display: 'grid',
     width: '100%',
-  },
-  root: {
-    flexGrow: 1,
+    gridTemplateColumns: '45% 45% 50px 50px',
+    gridColumnGap: '1%',
   },
   rowContainer: {
-    display: 'flex',
+    display: 'block',
     padding: '0px',
   },
   child: {
-    flexBasis: '100%',
     '& + div': {
       width: '100%',
     },
   },
   childHeader: {
-    flexBasis: '46%',
-    '& > div:first-child': {
+    '& > div': {
       width: '100%',
     },
   },
   innerRow: {
-    display: 'flex',
+    display: 'grid',
     width: '100%',
+    gridTemplateColumns: '45% 45% 50px 50px',
     marginBottom: theme.spacing(1),
-    '& > div': {
-      marginRight: theme.spacing(1),
-      '&:last-child': {
-        marginRight: 0,
-      },
-    },
+    gridColumnGap: '1%',
   },
 }));
 
@@ -56,33 +50,16 @@ export default function ImportMapping(props) {
   // generateFields and extractFields are passed as an array of field names
   const {
     editorId,
-    value = [],
     application,
-    adaptorType,
     generateFields = [],
     extractFields = [],
     disabled,
+    optionalHanlder,
     options = {},
   } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
-  const handleInit = useCallback(() => {
-    dispatch(
-      actions.mapping.init(
-        editorId,
-        value,
-        props.lookups || [],
-        adaptorType,
-        application,
-        generateFields
-      )
-    );
-  }, [dispatch, editorId]);
-
-  useEffect(() => {
-    handleInit();
-  }, []);
-
+  const { fetchSalesforceSObjectMetadata } = optionalHanlder;
   const { mappings, lookups, initChangeIdentifier } = useSelector(state =>
     selectors.mapping(state, editorId)
   );
@@ -100,12 +77,14 @@ export default function ImportMapping(props) {
 
     return obj;
   });
-  const handleFieldUpdate = (rowIndex, event, field) => {
-    const { value } = event.target;
+  const handleFieldUpdate = useCallback(
+    (rowIndex, event, field) => {
+      const { value } = event.target;
 
-    dispatch(actions.mapping.patchField(editorId, field, rowIndex, value));
-  };
-
+      dispatch(actions.mapping.patchField(editorId, field, rowIndex, value));
+    },
+    [dispatch, editorId]
+  );
   const patchSettings = (row, settings) => {
     dispatch(actions.mapping.patchSettings(editorId, row, settings));
   };
@@ -132,6 +111,33 @@ export default function ImportMapping(props) {
     }
 
     dispatch(actions.mapping.updateLookup(editorId, lookupsTmp));
+  };
+
+  const handleGenerateUpdate = mapping => (id, val) => {
+    if (
+      application === adaptorTypeMap.SalesforceImport &&
+      val &&
+      val.indexOf('_child_') > -1
+    ) {
+      const childRelationshipField = generateFields.find(
+        field => field.id === val
+      );
+
+      if (childRelationshipField) {
+        const { childSObject, relationshipName } = childRelationshipField;
+
+        dispatch(
+          actions.mapping.patchIncompleteGenerates(
+            editorId,
+            mapping.index,
+            relationshipName
+          )
+        );
+        fetchSalesforceSObjectMetadata(childSObject);
+      }
+    }
+
+    handleFieldUpdate(mapping.index, { target: { value: val } }, 'generate');
   };
 
   return (
@@ -179,13 +185,7 @@ export default function ImportMapping(props) {
                     valueName="id"
                     options={generateFields}
                     disabled={mapping.isRequired || disabled}
-                    onBlur={(id, evt) => {
-                      handleFieldUpdate(
-                        mapping.index,
-                        { target: { value: evt } },
-                        'generate'
-                      );
-                    }}
+                    onBlur={handleGenerateUpdate(mapping)}
                   />
                 </div>
                 <div>

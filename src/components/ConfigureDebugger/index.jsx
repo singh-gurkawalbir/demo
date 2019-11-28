@@ -67,7 +67,7 @@ export default function ConfigureDebugger(props) {
   }
 
   return (
-    <ModalDialog show handleClose={onClose}>
+    <ModalDialog show onClose={onClose}>
       <div>{name}</div>
       <div>
         <form onSubmit={handleOnSubmit}>

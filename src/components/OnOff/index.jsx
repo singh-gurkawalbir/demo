@@ -10,6 +10,8 @@ export default {
     disabled,
     storeId,
   }) {
+    // TODO: Connector specific things to be added for schedule drawer incase of !isDisabled && isConnector
+
     const dispatch = useDispatch();
     const enableOrDisableFlow = () => {
       const enable = flow.disabled;
