@@ -8,6 +8,7 @@ import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import RefreshIcon from '../../../icons/RefreshIcon';
 import DynaCheckbox from '../DynaCheckbox';
+import Spinner from '../../../Spinner';
 
 const fieldToOption = field => ({
   label: field.label,
@@ -120,31 +121,34 @@ function TreeViewComponent(props) {
         null,
     };
   });
-
-  if (status !== 'received') return null;
   const skipNonReferencedFields = skipFirstLevelFields && level === 1;
 
   return (
     <Fragment>
-      {(!skipNonReferencedFields &&
-        nonReferenceFields.map(item => {
-          const { label, value } = item;
-          const attachedParentNode = nestedRelationShipNames
-            ? `${nestedRelationShipNames}.${value}`
-            : value;
+      {status === 'refreshed' ? (
+        <Spinner />
+      ) : (
+        (!skipNonReferencedFields &&
+          nonReferenceFields &&
+          nonReferenceFields.map(item => {
+            const { label, value } = item;
+            const attachedParentNode = nestedRelationShipNames
+              ? `${nestedRelationShipNames}.${value}`
+              : value;
 
-          return (
-            <div key={value}>
-              <NestedValueCheckbox
-                setSelectedValues={setSelectedValues}
-                attachedParentNode={attachedParentNode}
-                selectedValues={selectedValues}
-                label={label}
-              />
-            </div>
-          );
-        })) ||
-        null}
+            return (
+              <div key={value}>
+                <NestedValueCheckbox
+                  setSelectedValues={setSelectedValues}
+                  attachedParentNode={attachedParentNode}
+                  selectedValues={selectedValues}
+                  label={label}
+                />
+              </div>
+            );
+          })) ||
+        null
+      )}
 
       {(referenceFields &&
         referenceFields.map(item => {

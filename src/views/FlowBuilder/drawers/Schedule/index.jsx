@@ -17,11 +17,13 @@ export default function ScheduleDrawer({
   flow,
   history,
   isViewMode,
+  isConnector,
   ...props
 }) {
   const handleClose = useCallback(() => history.goBack(), [history]);
   const classes = useStyle();
 
+  // TODO: Connector specific things to be added for schedule drawer incase of !isViewMode && isConnector
   return (
     <RightDrawerRouter {...props} path="schedule">
       <TitleBar title="Flow Schedule" />

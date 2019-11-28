@@ -15,11 +15,13 @@ import * as selectors from '../../reducers';
 import AddOrSelect from './AddOrSelect';
 import { RESOURCE_TYPE_PLURAL_TO_SINGULAR } from '../../constants/resource';
 
+// TODO: Azhar, can you use your generic modal here so we dont need custom styles?
 const useStyles = makeStyles(() => ({
   iconButton: {
     position: 'absolute',
-    top: '5px',
-    right: '10px',
+    top: 3,
+    right: 4,
+    padding: 10,
   },
 }));
 

@@ -35,7 +35,7 @@ const Dismiss = props =>
   );
 
 export const ErroredMessageList = ({ messages }) =>
-  messages
+  messages && messages.length > 0
     ? messages.map((msg, index) => (
         <Fragment key={msg}>
           <Typography color="error">{msg}</Typography>
