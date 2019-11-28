@@ -36,7 +36,6 @@ export default {
     {
       heading: 'Child SObject',
       value: r => r && r.sObjectType,
-      orderBy: 'lastModified',
     },
     {
       heading: 'Referenced Fields',

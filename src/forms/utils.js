@@ -446,7 +446,7 @@ export const integrationSettingsToDynaFormMetadata = (
       finalData.layout = {};
     }
 
-    finalData.layout.type = 'tab';
+    finalData.layout.type = 'tabIA';
     finalData.layout.containers = sections.map(section => ({
       collapsed: section.collapsed || true,
       label: section.title,
@@ -467,7 +467,7 @@ export const integrationSettingsToDynaFormMetadata = (
     };
   }
 
-  finalData.actions = [{ id: 'saveintegrationsettings' }];
+  finalData.actions = [];
 
   return finalData;
 };
