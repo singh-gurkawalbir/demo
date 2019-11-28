@@ -1,4 +1,4 @@
-import React from 'react';
+import { useCallback } from 'react';
 import { Route } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
@@ -18,20 +18,21 @@ const useStyles = makeStyles(theme => ({
 
 export function RightDrawer({ open, match, history, children }) {
   const classes = useStyles();
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     history.goBack();
-  };
+  }, [history]);
+  const isOpen = open || !!match;
 
   return (
     <Drawer
       variant="persistent"
       anchor="right"
-      open={open || !!match}
+      open={isOpen}
       classes={{
         paper: classes.drawerPaper,
       }}
       onClose={handleClose}>
-      {children}
+      {isOpen && children}
     </Drawer>
   );
 }
