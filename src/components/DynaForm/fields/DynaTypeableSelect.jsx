@@ -91,7 +91,6 @@ export default function DynaTypeableSelect(props) {
   const customStyles = {
     option: (provided, state) => ({
       ...provided,
-      padding: '0px',
       color: state.isSelected
         ? theme.palette.secondary.main
         : theme.palette.secondary.light,
@@ -99,7 +98,8 @@ export default function DynaTypeableSelect(props) {
         state.isSelected || state.isFocused
           ? theme.palette.background.paper2
           : theme.palette.background.paper,
-      border: 'none',
+      borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
+      padding: '10px',
       minHeight: '48px',
       '&:active': {
         backgroundColor: theme.palette.background.paper,
@@ -107,7 +107,6 @@ export default function DynaTypeableSelect(props) {
       },
     }),
     control: () => ({
-      minWidth: 300,
       width: '100%',
       height: 50,
       border: '1px solid',
@@ -135,7 +134,8 @@ export default function DynaTypeableSelect(props) {
       position: 'absolute',
       backgroundColor: theme.palette.background.paper,
       width: '100%',
-      boxShadow: `0px 0 1px rgba(0,0,0,0.2)`,
+      boxShadow: `0px 3px 5px rgba(0,0,0,0.2)`,
+      borderRadius: theme.spacing(0, 0, 0.5, 0.5),
     }),
     input: () => ({
       color: theme.palette.secondary.light,
