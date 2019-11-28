@@ -7,8 +7,9 @@ const operatorsMap = {
     is_not_empty: 'notempty',
     equal: '=',
     not_equal: '!=',
-    contains: '?',
-
+    like: '?',
+    contains: 'contains',
+    not_contains: 'doesNotContain',
     greater: '&gt;',
     less: '&lt;',
   },
@@ -46,9 +47,8 @@ export function convertNetSuiteQualifierExpressionToQueryBuilderRules(
         }
 
         delete toReturn.rulesTemp;
-      } else if (operatorsMap.ioFiltersToJQuery[exp[1].toLowerCase()]) {
-        toReturn.operator =
-          operatorsMap.ioFiltersToJQuery[exp[1].toLowerCase()];
+      } else if (operatorsMap.ioFiltersToJQuery[exp[1]]) {
+        toReturn.operator = operatorsMap.ioFiltersToJQuery[exp[1]];
         toReturn.lhs = {};
         toReturn.rhs = {};
 
