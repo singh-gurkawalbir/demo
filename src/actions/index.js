@@ -691,6 +691,13 @@ const flowData = {
       processor,
       processedData,
     }),
+  receivedError: (flowId, resourceId, stage, error) =>
+    action(actionTypes.FLOW_DATA.RECEIVED_ERROR, {
+      flowId,
+      resourceId,
+      stage,
+      error,
+    }),
   requestSampleData: (flowId, resourceId, resourceType, stage) =>
     action(actionTypes.FLOW_DATA.SAMPLE_DATA_REQUEST, {
       flowId,

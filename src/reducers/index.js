@@ -305,6 +305,18 @@ export function getSampleData(
   });
 }
 
+export function getSampleDataContext(
+  state,
+  { flowId, resourceId, resourceType, stage }
+) {
+  return fromSession.getSampleDataContext(state && state.session, {
+    flowId,
+    resourceId,
+    resourceType,
+    stage,
+  });
+}
+
 export function getFlowDataState(state, flowId, resourceId) {
   return fromSession.getFlowDataState(
     state && state.session,

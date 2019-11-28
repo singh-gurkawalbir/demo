@@ -11,6 +11,7 @@ import {
   requestSampleDataForExports,
   requestSampleDataForImports,
   updateStateForProcessorData,
+  handleFlowDataStageErrors,
 } from './utils';
 import {
   updateFlowsDataForResource,
@@ -68,6 +69,7 @@ function* requestSampleData({
   isInitialized,
 }) {
   // Updates flow state
+  // isInitialized prop is passed explicitly from internal sagas calling this Saga
   if (!isInitialized) {
     yield call(initFlowData, { flowId, resourceId, resourceType });
   }
@@ -75,19 +77,34 @@ function* requestSampleData({
   // Updates preProcessedData for the procesors
   const sampleDataStage = getSampleDataStage(stage, resourceType);
 
-  if (resourceType === 'imports') {
-    yield call(requestSampleDataForImports, {
+  try {
+    if (resourceType === 'imports') {
+      yield call(requestSampleDataForImports, {
+        flowId,
+        resourceId,
+        resourceType,
+        sampleDataStage,
+      });
+    } else {
+      yield call(requestSampleDataForExports, {
+        flowId,
+        resourceId,
+        sampleDataStage,
+      });
+    }
+  } catch (e) {
+    yield call(handleFlowDataStageErrors, {
       flowId,
       resourceId,
-      resourceType,
-      sampleDataStage,
+      stage: sampleDataStage,
+      error: e,
     });
-  } else {
-    yield call(requestSampleDataForExports, {
-      flowId,
-      resourceId,
-      sampleDataStage,
-    });
+
+    // using isInitialized to handle base case not to throw error
+    // Error is thrown from the root stage to the main stage for which sample data is requested
+    // Ex: requestSampleDat(stage: 'outputFilter') and Error is at raw stage.
+    // All raw, transform, hooks stages on which outputFilter depends are updated with error
+    if (isInitialized) throw e;
   }
 }
 
@@ -105,6 +122,7 @@ export function* fetchPageProcessorPreview({
       _pageProcessorId,
       previewType,
       resourceType,
+      throwOnError: true,
     });
 
     yield put(
@@ -117,6 +135,7 @@ export function* fetchPageProcessorPreview({
     );
   } catch (e) {
     // Error handler
+    throw e;
   }
 }
 
@@ -127,6 +146,7 @@ export function* fetchPageGeneratorPreview({ flowId, _pageGeneratorId }) {
     const previewData = yield call(exportPreview, {
       resourceId: _pageGeneratorId,
       runOffline: true,
+      throwOnError: true,
     });
     const parseData = getPreviewStageData(previewData, 'parse');
 
@@ -141,6 +161,7 @@ export function* fetchPageGeneratorPreview({ flowId, _pageGeneratorId }) {
     );
   } catch (e) {
     // Error handler
+    throw e;
   }
 }
 
@@ -158,6 +179,7 @@ function* processData({ flowId, resourceId, processorData, stage }) {
     });
   } catch (e) {
     // Handle errors
+    throw e;
   }
 }
 
@@ -207,7 +229,7 @@ function* processMappingData({
       )
     );
   } catch (e) {
-    // Handle Errors
+    throw e;
   }
 }
 
@@ -233,101 +255,106 @@ export function* requestProcessorData({
     resourceType,
     stage,
   });
-  let processorData;
 
-  if (!preProcessedData) {
-    yield call(requestSampleData, {
-      flowId,
-      resourceId,
-      resourceType,
-      stage,
-      isInitialized: true,
-    });
-    preProcessedData = yield select(getSampleData, {
-      flowId,
-      resourceId,
-      resourceType,
-      stage,
-    });
-  }
+  try {
+    let processorData;
 
-  if (stage === 'transform' || stage === 'responseTransform') {
-    const transform = { ...resource[processor] };
-    const [rule] = transform.rules || [];
-
-    if (!(rule && rule.length)) {
-      hasNoRulesToProcess = true;
-    }
-
-    processorData = { data: preProcessedData, rule, processor: 'transform' };
-  }
-  // Below list are all Possible hook types
-  else if (
-    ['hooks', 'preMap', 'postMap', 'postSubmit', 'postAggregate'].includes(
-      stage
-    )
-  ) {
-    const { hooks = {} } = { ...resource };
-    // Default hooks stage is preSavePage for Exports
-    // Other stages are hook stages for Imports
-    const hookType = stage === 'hooks' ? 'preSavePage' : stage;
-    const hook = hooks[hookType] || {};
-
-    if (hook._scriptId) {
-      const scriptId = hook._scriptId;
-      const data = { data: [preProcessedData], errors: [] };
-      const script = yield call(getResource, {
-        resourceType: 'scripts',
-        id: scriptId,
-      });
-      const { content: code } = script;
-
-      processorData = {
-        data,
-        code,
-        entryFunction: hook.function,
-        processor: 'javascript',
-      };
-    } else {
-      hasNoRulesToProcess = true;
-    }
-  } else if (stage === 'importMappingExtract') {
-    // mapping fields are processed here against raw data
-    const appType =
-      resource.adaptorType && adaptorTypeMap[resource.adaptorType];
-    const mappings = mappingUtil.getMappingFromResource(
-      resource,
-      appType,
-      true
-    );
-
-    if (preProcessedData && mappings)
-      return yield call(processMappingData, {
+    if (!preProcessedData) {
+      yield call(requestSampleData, {
         flowId,
         resourceId,
-        mappings,
-        processor,
-        preProcessedData,
+        resourceType,
+        stage,
+        isInitialized: true,
       });
-    hasNoRulesToProcess = true;
-  }
+      preProcessedData = yield select(getSampleData, {
+        flowId,
+        resourceId,
+        resourceType,
+        stage,
+      });
+    }
 
-  if (hasNoRulesToProcess) {
-    // update processorStage with preprocessed data if there are no rules to process
-    return yield call(updateStateForProcessorData, {
+    if (stage === 'transform' || stage === 'responseTransform') {
+      const transform = { ...resource[processor] };
+      const [rule] = transform.rules || [];
+
+      if (!(rule && rule.length)) {
+        hasNoRulesToProcess = true;
+      }
+
+      processorData = { data: preProcessedData, rule, processor: 'transform' };
+    }
+    // Below list are all Possible hook types
+    else if (
+      ['hooks', 'preMap', 'postMap', 'postSubmit', 'postAggregate'].includes(
+        stage
+      )
+    ) {
+      const { hooks = {} } = { ...resource };
+      // Default hooks stage is preSavePage for Exports
+      // Other stages are hook stages for Imports
+      const hookType = stage === 'hooks' ? 'preSavePage' : stage;
+      const hook = hooks[hookType] || {};
+
+      if (hook._scriptId) {
+        const scriptId = hook._scriptId;
+        const data = { data: [preProcessedData], errors: [] };
+        const script = yield call(getResource, {
+          resourceType: 'scripts',
+          id: scriptId,
+        });
+        const { content: code } = script;
+
+        processorData = {
+          data,
+          code,
+          entryFunction: hook.function,
+          processor: 'javascript',
+        };
+      } else {
+        hasNoRulesToProcess = true;
+      }
+    } else if (stage === 'importMappingExtract') {
+      // mapping fields are processed here against raw data
+      const appType =
+        resource.adaptorType && adaptorTypeMap[resource.adaptorType];
+      const mappings = mappingUtil.getMappingFromResource(
+        resource,
+        appType,
+        true
+      );
+
+      if (preProcessedData && mappings)
+        return yield call(processMappingData, {
+          flowId,
+          resourceId,
+          mappings,
+          processor,
+          preProcessedData,
+        });
+      hasNoRulesToProcess = true;
+    }
+
+    if (hasNoRulesToProcess) {
+      // update processorStage with preprocessed data if there are no rules to process
+      return yield call(updateStateForProcessorData, {
+        flowId,
+        resourceId,
+        processedData: { data: [preProcessedData] },
+        stage,
+      });
+    }
+
+    yield call(processData, {
       flowId,
       resourceId,
-      processedData: { data: [preProcessedData] },
+      processorData,
       stage,
     });
+  } catch (e) {
+    throw e;
   }
-
-  yield call(processData, {
-    flowId,
-    resourceId,
-    processorData,
-    stage,
-  });
 }
 
 export default [
