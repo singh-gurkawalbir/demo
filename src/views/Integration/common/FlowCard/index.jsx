@@ -138,7 +138,7 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
   // TODO: This function needs to be enhanced to handle all
   // the various cases.. realtime, scheduled, cron, not scheduled, etc...
   function getRunLabel() {
-    if (flowDetails.isReatime) return `Realtime`;
+    if (flowDetails.isRealtime) return `Realtime`;
 
     if (flowDetails.isSimpleExport) return 'Never runs';
 

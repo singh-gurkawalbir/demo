@@ -21,6 +21,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function FlowsPanel({ integrationId }) {
+  const isStandalone = integrationId === 'none';
   const classes = useStyles();
   const [showDialog, setShowDialog] = useState(false);
   let flows = useSelector(
@@ -53,11 +54,13 @@ export default function FlowsPanel({ integrationId }) {
           data-test="createFlow">
           <AddIcon /> Create flow
         </IconTextButton>
-        <IconTextButton
-          onClick={() => setShowDialog(true)}
-          data-test="attachFlow">
-          <AttachIcon /> Attach flow
-        </IconTextButton>
+        {!isStandalone && (
+          <IconTextButton
+            onClick={() => setShowDialog(true)}
+            data-test="attachFlow">
+            <AttachIcon /> Attach flow
+          </IconTextButton>
+        )}
       </PanelHeader>
 
       <LoadResources required resources="flows">
