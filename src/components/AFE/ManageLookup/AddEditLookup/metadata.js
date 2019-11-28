@@ -16,13 +16,20 @@ const getFailedRecordDefault = (isEdit, lookup) => {
 };
 
 export default {
-  getLookupMetadata: (lookup, isEdit, showDynamicLookupOnly, isSQLLookup) => {
-    const dynamicLookupMetadata = dynamicMetadata.getLookupMetadata(
+  getLookupMetadata: ({
+    lookup,
+    isEdit,
+    showDynamicLookupOnly,
+    isSQLLookup,
+    sampleData,
+  }) => {
+    const dynamicLookupMetadata = dynamicMetadata.getLookupMetadata({
       lookup,
       isEdit,
       showDynamicLookupOnly,
-      isSQLLookup
-    );
+      isSQLLookup,
+      sampleData,
+    });
     const {
       fieldMap: dynamicFieldMap,
       layout: dynamicLayout,
@@ -128,6 +135,14 @@ export default {
         ],
       },
     };
+
+    if (showDynamicLookupOnly) {
+      delete fieldMeta.fieldMap.mode;
+      delete fieldMeta.fieldMap.mapList;
+      fieldMeta.layout.fields = fieldMeta.layout.fields.filter(
+        el => el !== 'mode' && el !== 'mapList'
+      );
+    }
 
     return fieldMeta;
   },

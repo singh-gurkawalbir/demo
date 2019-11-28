@@ -5,7 +5,7 @@ import AddEditLookup from './AddEditLookup';
 import LookupList from './LookupList';
 
 export default function ManageLookup(props) {
-  const { lookups, onUpdate, onCancel, disabled, isSQLLookup } = props;
+  const { lookups, onUpdate, onCancel, disabled, options } = props;
   const [isListView, showListView] = useState(true);
   const [lookup, setLookup] = useState({});
   const [error, setError] = useState();
@@ -79,7 +79,7 @@ export default function ManageLookup(props) {
           lookup={lookup}
           error={error}
           onCancel={toggleLookupMode}
-          isSQLLookup={isSQLLookup}
+          options={options}
           onSave={handleSubmit}
           disabled={disabled}
         />

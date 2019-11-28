@@ -178,6 +178,10 @@ export default function DynaSQLQueryBuilder(props) {
   };
 
   let lookupField;
+  const lookupOptions = {
+    isSQLLookup: true,
+    sampleData: formattedSampleData,
+  };
 
   if (lookupFieldId) {
     lookupField = (
@@ -186,6 +190,7 @@ export default function DynaSQLQueryBuilder(props) {
         isSQLLookup
         label="Manage Lookups"
         value={lookups}
+        options={lookupOptions}
         onFieldChange={onFieldChange}
       />
     );

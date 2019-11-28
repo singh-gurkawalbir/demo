@@ -9,7 +9,7 @@ import DynaText from './DynaText';
  * DynaQuery is being used to Define Query under Database Lookup
  */
 export default function DynaQuery(props) {
-  const { id, onFieldChange, disabled, value, label } = props;
+  const { id, onFieldChange, sampleData = {}, disabled, value, label } = props;
   const [showEditor, setShowEditor] = useState(false);
   const handleEditorClick = () => {
     setShowEditor(!showEditor);
@@ -27,13 +27,13 @@ export default function DynaQuery(props) {
 
   return (
     <Fragment>
-      <DynaText value={value} disabled multiline />
+      <DynaText label={label} value={value} disabled multiline />
       {showEditor && (
         <SqlQueryBuilderEditorDialog
           title="Lookups"
           id={`lookupQueryBuilder-${id}`}
           rule={value}
-          sampleData={[]}
+          sampleData={sampleData}
           onClose={handleClose}
           disabled={disabled}
           showDefaultData={false}
@@ -44,7 +44,7 @@ export default function DynaQuery(props) {
         variant="outlined"
         color="secondary"
         onClick={handleEditorClick}>
-        {label}
+        Define {label}
       </Button>
     </Fragment>
   );

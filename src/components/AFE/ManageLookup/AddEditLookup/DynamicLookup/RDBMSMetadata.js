@@ -1,5 +1,5 @@
 export default {
-  getLookupMetadata: (lookup, isEdit, showDynamicLookupOnly) => {
+  getLookupMetadata: ({ lookup, showDynamicLookupOnly, sampleData }) => {
     const fieldMeta = {
       fieldMap: {
         query: {
@@ -7,6 +7,7 @@ export default {
           name: 'query',
           type: 'query',
           label: 'Query',
+          sampleData,
           defaultValue: lookup.query,
           visibleWhen: [
             {
