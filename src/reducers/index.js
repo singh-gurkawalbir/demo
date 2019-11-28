@@ -839,7 +839,7 @@ export function getFlowsAssociatedExportFromIAMetadata(state, fieldMeta) {
   const { resource: flowResource, properties } = fieldMeta;
   let resourceId;
 
-  if (properties._exportId) {
+  if (properties && properties._exportId) {
     resourceId = properties._exportId;
   } else if (flowResource && flowResource._exportId) {
     resourceId = flowResource._exportId;

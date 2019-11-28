@@ -2,11 +2,26 @@ import { useSelector } from 'react-redux';
 import * as selectors from '../../../../../reducers';
 import DynaReferencedFields from '../DynaReferenedFields';
 
-export default function DynaReferencedFieldsIA(fieldMetaProps) {
+export const useGetSalesforceExportDetails = props => {
   const exportResource = useSelector(state =>
-    selectors.getFlowsAssociatedExportFromIAMetadata(state, fieldMetaProps)
+    selectors.getFlowsAssociatedExportFromIAMetadata(state, props)
   );
-  const { sObjectType } = exportResource || {};
+  const { _connectionId: connectionId } = exportResource || {};
+  const { sObjectType } = (exportResource && exportResource.salesforce) || {};
 
-  return <DynaReferencedFields {...fieldMetaProps} options={sObjectType} />;
+  return { sObjectType, connectionId };
+};
+
+export default function DynaReferencedFieldsIA(fieldMetaProps) {
+  const { sObjectType, connectionId } = useGetSalesforceExportDetails(
+    fieldMetaProps
+  );
+
+  return (
+    <DynaReferencedFields
+      {...fieldMetaProps}
+      options={sObjectType}
+      connectionId={connectionId}
+    />
+  );
 }
