@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import _ from 'lodash';
 import ModalDialog from '../../ModalDialog';
-import Lookup from './Lookup';
-import LookupListing from './LookupListing';
+import AddEditLookup from './AddEditLookup';
+import LookupList from './LookupList';
 
 export default function ManageLookup(props) {
   const { lookups, onUpdate, onCancel, disabled } = props;
@@ -67,7 +67,7 @@ export default function ManageLookup(props) {
       maxWidth="lg">
       <span>Manage Lookups</span>
       {isListView ? (
-        <LookupListing
+        <LookupList
           lookups={lookups}
           onUpdate={handleEdit}
           onDelete={handleDelete}
@@ -75,7 +75,7 @@ export default function ManageLookup(props) {
           disabled={disabled}
         />
       ) : (
-        <Lookup
+        <AddEditLookup
           lookup={lookup}
           error={error}
           onCancel={toggleLookupMode}
