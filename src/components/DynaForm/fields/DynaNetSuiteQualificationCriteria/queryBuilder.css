@@ -88,11 +88,3 @@
 .rule-filter-container {
   padding-right: 25px;
 }
-
-.rules-group-container
-  .rules-group-container
-  .rules-group-container
-  .rules-group-container
-  [data-add='group'] {
-  display: none;
-}

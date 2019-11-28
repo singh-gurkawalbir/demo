@@ -1,6 +1,5 @@
 import { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { isString } from 'lodash';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import FilterPanel from './FilterPanel';

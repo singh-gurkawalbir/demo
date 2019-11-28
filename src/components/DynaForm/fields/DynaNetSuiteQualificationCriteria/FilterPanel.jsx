@@ -21,7 +21,6 @@ import {
   generateNetSuiteLookupFilterExpression,
   getFilterRuleId,
 } from './util';
-import OperandSettingsDialog from './OperandSettingsDialog';
 import actions from '../../../../actions';
 
 const useStyles = makeStyles(theme => ({
@@ -44,7 +43,6 @@ export default function FilterPanel({
 }) {
   const qbuilder = useRef(null);
   const classes = useStyles();
-  const [showOperandSettingsFor, setShowOperandSettingsFor] = useState();
   const [rules, setRules] = useState();
   const [filtersMetadata, setFiltersMetadata] = useState();
   const [rulesState, setRulesState] = useState({});
@@ -74,6 +72,11 @@ export default function FilterPanel({
           } else {
             filterData.id = `text:${filter.value}`;
           }
+        } else if (filter.type === 'checkbox') {
+          filterData.options = [
+            { id: 'T', text: 'Yes' },
+            { id: 'F', text: 'No' },
+          ];
         }
 
         return filterData;
@@ -125,152 +128,6 @@ export default function FilterPanel({
       patchEditor(rule);
     }
   }, [patchEditor]);
-  const showOperandSettings = ({ rule, rhs }) => {
-    setShowOperandSettingsFor({ rule, rhs });
-  };
-
-  const updateUIForLHSRule = ({ rule = {} }) => {
-    function updateUIForExpression(rule) {
-      if (
-        rule.$el.find('.rule-filter-container textarea[name=expression]')
-          .length === 0
-      ) {
-        rule.$el
-          .find('[name$=_filter]')
-          .after(
-            '<textarea name="expression" class="io-filter-type form-control"></textarea>'
-          );
-        const ruleId = getFilterRuleId(rule);
-        const expressionField = rule.$el.find(
-          '.rule-filter-container textarea[name=expression]'
-        );
-
-        if (rulesState[ruleId].data && rulesState[ruleId].data.lhs) {
-          expressionField
-            .val(JSON.stringify(rulesState[ruleId].data.lhs.expression))
-            .trigger('change');
-        }
-
-        expressionField
-          .unbind('change')
-          .on('change', () => handleFilterRulesChange());
-      }
-    }
-
-    rule.$el.find('.rule-filter-container .io-filter-type').remove();
-
-    if (rule.filter) {
-      const ruleId = getFilterRuleId(rule);
-      let filterType = rulesState[ruleId].data.lhs.type;
-
-      if (
-        filterType === 'field' &&
-        ['formuladate', 'formulanumeric', 'formulatext'].indexOf(
-          rule.filter.id
-        ) > -1
-      ) {
-        filterType = 'expression';
-      }
-
-      if (filterType === 'field') {
-        rule.$el.find('[name$=_filter]').show();
-      } else if (filterType === 'expression') {
-        updateUIForExpression(rule);
-      }
-    }
-  };
-
-  const updateUIForRHSRule = ({ name, rule = {} }) => {
-    console.log(
-      `updateUIForRHSRule ${getFilterRuleId(rule)} ${JSON.stringify(
-        rulesState[getFilterRuleId(rule)].data
-      )}`
-    );
-    function updateUIForField(rule) {
-      if (
-        rule.$el.find('.rule-value-container select[name=field]').length === 0
-      ) {
-        const selectHtml = [
-          '<select name="field" class="io-filter-type form-control">',
-        ];
-
-        data.forEach(v => {
-          selectHtml.push(`<option value="${v.id}">${v.name || v.id}</option>`);
-        });
-        selectHtml.push('</select>');
-        rule.$el.find('.rule-value-container').prepend(selectHtml.join(''));
-
-        const ruleId = getFilterRuleId(rule);
-        const field = rule.$el.find(
-          '.rule-value-container  select[name=field]'
-        );
-
-        if (rulesState[ruleId].data && rulesState[ruleId].data.rhs) {
-          field.val(rulesState[ruleId].data.rhs.field);
-          setTimeout(() => {
-            rule.$el
-              .find('.rule-value-container  select[name=field]')
-              .trigger('change');
-          });
-        }
-
-        field.unbind('change').on('change', () => handleFilterRulesChange());
-      }
-    }
-
-    function updateUIForExpression(rule) {
-      if (
-        rule.$el.find('.rule-value-container textarea[name=expression]')
-          .length === 0
-      ) {
-        rule.$el
-          .find('.rule-value-container')
-          .prepend(
-            '<textarea name="expression" class="io-filter-type form-control"></textarea>'
-          );
-
-        const ruleId = getFilterRuleId(rule);
-        const expressionField = rule.$el.find(
-          '.rule-value-container  textarea[name=expression]'
-        );
-
-        if (rulesState[ruleId].data && rulesState[ruleId].data.rhs) {
-          expressionField
-            .val(JSON.stringify(rulesState[ruleId].data.rhs.expression))
-            .trigger('change');
-        }
-
-        expressionField
-          .unbind('change')
-          .on('change', () => handleFilterRulesChange());
-      }
-    }
-
-    const ruleId = getFilterRuleId(rule);
-
-    rule.$el.find('.rule-value-container .io-filter-type').remove();
-    const ruleState = rulesState[ruleId].data;
-
-    if (ruleState.rhs.type) {
-      const filterType = rulesState[ruleId].data.rhs.type;
-
-      if (filterType === 'value') {
-        if (!rule.$el.find(`[name=${name}]`).is(':visible')) {
-          rule.$el.find(`[name=${name}]`).show();
-          rule.$el.find(`[name=${name}]`).val('');
-        }
-      } else if (filterType === 'field') {
-        rule.$el.find(`[name=${name}]`).hide();
-        rule.$el.find(`[name=${name}]`).val('field'); // to bypass validation
-        updateUIForField(rule);
-      } else if (filterType === 'expression') {
-        rule.$el.find(`[name=${name}]`).hide();
-        rule.$el.find(`[name=${name}]`).val('expression'); // to bypass validation
-        updateUIForExpression(rule);
-      }
-    }
-  };
-
   const validateRule = rule => {
     const r = rule.data;
 
@@ -302,7 +159,11 @@ export default function FilterPanel({
         filter.input = 'select';
         filter.values = {};
         v.options.forEach(opt => {
-          filter.values[opt.id] = opt.text;
+          if (filter.id.includes('text:')) {
+            filter.values[opt.text] = opt.text;
+          } else {
+            filter.values[opt.id] = opt.text;
+          }
         });
       } else {
         filter.input = (rule, name) => {
@@ -334,10 +195,6 @@ export default function FilterPanel({
             rulesState[ruleId].data.rhs.type = 'field';
           }
 
-          setTimeout(() => {
-            updateUIForLHSRule({ rule, name });
-          });
-
           if (!readOnly) {
             rule.$el
               .find('.rule-value-container')
@@ -359,8 +216,6 @@ export default function FilterPanel({
                         rulesState[ruleId].data.rhs.field = rhsField;
                       }
                     }
-
-                    showOperandSettings({ rule, rhs: true });
                   });
               });
             rule.$el
@@ -371,19 +226,9 @@ export default function FilterPanel({
               });
           }
 
-          if (rulesState[ruleId].data.rhs.type !== 'value') {
-            setTimeout(() => {
-              updateUIForRHSRule({ rule, name });
-            });
-          }
-
           return `<input class="form-control" name="${name}" value="${rulesState[
             ruleId
-          ].data.rhs.value || ''}">${
-            readOnly
-              ? ''
-              : '<img style="display:none;" class="settings-icon" src="https://d142hkd03ds8ug.cloudfront.net/images/icons/icon/gear.png">'
-          }`;
+          ].data.rhs.value || ''}">`;
         };
 
         filter.valueGetter = rule => {
@@ -488,51 +333,9 @@ export default function FilterPanel({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filtersMetadata]);
 
-  const handleCloseOperandSettings = () => {
-    setShowOperandSettingsFor();
-  };
-
-  const handleSubmitOperandSettings = operandSettings => {
-    const ruleData =
-      rulesState[getFilterRuleId(showOperandSettingsFor.rule)].data[
-        showOperandSettingsFor.rhs ? 'rhs' : 'lhs'
-      ];
-
-    rulesState[getFilterRuleId(showOperandSettingsFor.rule)].data[
-      showOperandSettingsFor.rhs ? 'rhs' : 'lhs'
-    ] = { ...ruleData, ...operandSettings };
-
-    if (showOperandSettingsFor.rhs) {
-      updateUIForRHSRule({
-        rule: showOperandSettingsFor.rule,
-        name: `${showOperandSettingsFor.rule.id}_value_0`,
-      });
-    } else {
-      updateUIForLHSRule({
-        rule: showOperandSettingsFor.rule,
-        name: `${showOperandSettingsFor.rule.id}_value_0`,
-      });
-    }
-
-    handleFilterRulesChange();
-    handleCloseOperandSettings();
-  };
-
   return (
     <div className={classes.container}>
       <div ref={qbuilder} />
-      {showOperandSettingsFor && (
-        <OperandSettingsDialog
-          ruleData={
-            rulesState[getFilterRuleId(showOperandSettingsFor.rule)].data[
-              showOperandSettingsFor.rhs ? 'rhs' : 'lhs'
-            ]
-          }
-          // disabled={disabled}
-          onClose={handleCloseOperandSettings}
-          onSubmit={handleSubmitOperandSettings}
-        />
-      )}
     </div>
   );
 }

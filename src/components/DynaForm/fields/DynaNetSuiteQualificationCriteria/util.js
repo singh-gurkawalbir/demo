@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import { isString, isArray, tail, filter, invert } from 'lodash';
+import { isString, isArray, filter, invert } from 'lodash';
 
 const operatorsMap = {
   jQueryToIOFilters: {
@@ -18,24 +18,6 @@ operatorsMap.ioFiltersToJQuery = invert(operatorsMap.jQueryToIOFilters);
 
 export function getFilterRuleId(rule) {
   return rule.id.split('_rule_')[1];
-}
-
-export function isComplexNetSuiteFilterExpression(expression) {
-  let isComplexExpression = false;
-
-  if (isArray(expression)) {
-    expression.forEach((e, i) => {
-      if (!isComplexExpression) {
-        if (isArray(e)) {
-          isComplexExpression = isComplexNetSuiteFilterExpression(e);
-        } else if (i > 0 && ['AND', 'OR'].includes(e)) {
-          isComplexExpression = true;
-        }
-      }
-    });
-  }
-
-  return isComplexExpression;
 }
 
 export function updateNetSuiteLookupFilterExpressionForNOTs(expression) {
@@ -59,8 +41,7 @@ export function updateNetSuiteLookupFilterExpressionForNOTs(expression) {
 }
 
 export function convertNetSuiteQualifierExpressionToQueryBuilderRules(
-  qualifierExpression = [],
-  filters = []
+  qualifierExpression = []
 ) {
   function iterate(exp) {
     const toReturn = {};
@@ -77,8 +58,13 @@ export function convertNetSuiteQualifierExpressionToQueryBuilderRules(
         [toReturn.rulesTemp] = exp;
         toReturn.rules = [];
         toReturn.rules.push(iterate(toReturn.rulesTemp));
-        [, , toReturn.rulesTemp] = exp;
-        toReturn.rules.push(iterate(toReturn.rulesTemp));
+        [, , ...toReturn.rulesTemp] = exp;
+
+        if (toReturn.rulesTemp.length === 1) {
+          toReturn.rules.push(iterate(toReturn.rulesTemp[0]));
+        } else {
+          toReturn.rules.push(iterate(toReturn.rulesTemp));
+        }
 
         delete toReturn.rulesTemp;
       } else if (operatorsMap.ioFiltersToJQuery[exp[1].toLowerCase()]) {
@@ -112,8 +98,6 @@ export function convertNetSuiteQualifierExpressionToQueryBuilderRules(
   }
 
   let tr = iterate(qualifierExpression);
-
-  console.log(`tr ${JSON.stringify(tr)}`);
 
   if (!tr.condition) {
     tr = {
@@ -189,13 +173,10 @@ export function generateRulesState(rules) {
 
   iterate(rules);
 
-  console.log(`rulesState ${JSON.stringify(rulesState)}`);
-
   return rulesState;
 }
 
 export function generateNetSuiteLookupFilterExpression(qbRules) {
-  console.log(`qbRules ${JSON.stringify(qbRules)}`);
   const nsFilterExpression = [];
   let lhs;
   let rhs;
@@ -231,7 +212,7 @@ export function generateNetSuiteLookupFilterExpression(qbRules) {
     }
 
     if (i < qbRules.rules.length - 1) {
-      nsFilterExpression.push(qbRules.condition || 'AND');
+      nsFilterExpression.push((qbRules.condition || 'AND').toLowerCase());
     }
   }
 
