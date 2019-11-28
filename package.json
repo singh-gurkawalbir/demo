@@ -32,6 +32,7 @@
     "codemirror": "5.40.2",
     "deep-freeze": "0.0.1",
     "dexie": "2.0.4",
+    "dompurify": "2.0.7",
     "error-stack-parser": "2.0.2",
     "fast-json-patch": "2.0.7",
     "hookrouter": "1.2.3",
