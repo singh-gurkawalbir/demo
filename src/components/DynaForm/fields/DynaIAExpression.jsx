@@ -4,7 +4,7 @@ import * as selectors from '../../../reducers';
 import DynaNetSuiteLookup from './DynaNetSuiteLookup';
 // TODO: change the references to point to correct filters
 import DynaSFLookup from './DynaNetSuiteLookup';
-import DynaNSQualifier from './DynaNetSuiteLookup';
+import DynaNSQualifier from './DynaNetSuiteQualificationCriteria';
 import DynaSFQualifier from './DynaNetSuiteLookup';
 
 export default function DynaIAExpression(props) {
