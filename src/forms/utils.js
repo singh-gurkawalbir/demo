@@ -280,8 +280,15 @@ const getFieldConfig = (field = {}, resource) => {
     newField.type = 'radiogroup';
   } else if (newField.type === 'file') {
     newField.type = 'uploadfile';
-  } else if (newField.type === 'select' && newField.supportsRefresh)
+  } else if (newField.type === 'select' && newField.supportsRefresh) {
     newField.type = 'integrationapprefreshableselect';
+  } else if (newField.type === 'referencedFieldsDialog') {
+    newField.type = 'salesforcereferencedfieldsia';
+    newField.resource = resource;
+  } else if (newField.type === 'relatedListsDialog') {
+    newField.type = 'salesforcerelatedlistia';
+    newField.resource = resource;
+  }
 
   return newField;
 };
@@ -435,7 +442,7 @@ export const integrationSettingsToDynaFormMetadata = (
       finalData.layout = {};
     }
 
-    finalData.layout.type = 'tab';
+    finalData.layout.type = 'tabIA';
     finalData.layout.containers = sections.map(section => ({
       collapsed: section.collapsed || true,
       label: section.title,
@@ -456,7 +463,7 @@ export const integrationSettingsToDynaFormMetadata = (
     };
   }
 
-  finalData.actions = [{ id: 'saveintegrationsettings' }];
+  finalData.actions = [];
 
   return finalData;
 };

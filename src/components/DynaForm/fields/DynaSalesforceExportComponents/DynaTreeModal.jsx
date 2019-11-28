@@ -6,11 +6,18 @@ import RefreshableTreeComponent from '../DynaRefreshableSelect/RefreshableTreeCo
 import ModalDialog from '../../../ModalDialog';
 import IconTextButton from '../../../IconTextButton';
 
+function extractValues(value) {
+  // Specific case in handling referencedFields
+  if (value && value.length === 1 && typeof value[0] === 'string') {
+    return value[0].split(',');
+  }
+
+  return value || [];
+}
+
 export const ReferencedFieldsModal = props => {
   const { handleClose, onFieldChange, id, value, ...rest } = props;
-  const [selectedValues, setSelectedValues] = useState(
-    value ? value.split(',') : []
-  );
+  const [selectedValues, setSelectedValues] = useState(extractValues(value));
 
   return (
     <ModalDialog show onClose={handleClose}>
@@ -24,7 +31,7 @@ export const ReferencedFieldsModal = props => {
         <Button onClick={handleClose}>Cancel</Button>
         <Button
           onClick={() => {
-            onFieldChange(id, selectedValues.join(','));
+            onFieldChange(id, selectedValues);
             handleClose();
           }}>
           Add Selected
@@ -45,7 +52,12 @@ export default function DynaTreeModal(props) {
 
   return (
     <Fragment>
-      <DynaText id={id} onFieldChange={onFieldChange} value={value} />
+      <DynaText
+        id={id}
+        onFieldChange={onFieldChange}
+        value={value}
+        delimiter=","
+      />
       <IconTextButton onClick={toggle} disabled={disabled}>
         <AddIcon />
       </IconTextButton>
