@@ -10,6 +10,7 @@ import mappingUtil from '../../../utils/mapping';
 import TrashIcon from '../../icons/TrashIcon';
 import * as selectors from '../../../reducers';
 import ActionButton from '../../ActionButton';
+import { adaptorTypeMap } from '../../../utils/resource';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -113,7 +114,11 @@ export default function ImportMapping(props) {
   };
 
   const handleGenerateUpdate = mapping => (id, val) => {
-    if (val && val.indexOf('_child_') > -1) {
+    if (
+      application === adaptorTypeMap.SalesforceImport &&
+      val &&
+      val.indexOf('_child_') > -1
+    ) {
       const childRelationshipField = generateFields.find(
         field => field.id === val
       );
