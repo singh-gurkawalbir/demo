@@ -80,20 +80,7 @@
 .pull-right {
   float: right;
 }
-.rule-container .settings-icon {
-  height: 20px;
-  padding-left: 5px;
-  margin-right: -25px;
-}
+
 .rule-filter-container {
   padding-right: 25px;
-}
-
-.netsuite-lookup-filters
-  .rules-group-container
-  .rules-group-container
-  .rules-group-container
-  .rules-group-container
-  [data-add='group'] {
-  display: none;
 }

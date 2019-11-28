@@ -760,10 +760,18 @@ const mapping = {
     }),
   patchField: (id, field, index, value) =>
     action(actionTypes.MAPPING.PATCH_FIELD, { id, field, index, value }),
+  updateGenerates: (id, generateFields) =>
+    action(actionTypes.MAPPING.UPDATE_GENERATES, { id, generateFields }),
   updateLookup: (id, lookups) =>
     action(actionTypes.MAPPING.UPDATE_LOOKUP, { id, lookups }),
   patchSettings: (id, index, value) =>
     action(actionTypes.MAPPING.PATCH_SETTINGS, { id, index, value }),
+  patchIncompleteGenerates: (id, index, value) =>
+    action(actionTypes.MAPPING.PATCH_INCOMPLETE_GENERATES, {
+      id,
+      index,
+      value,
+    }),
   delete: (id, index) => action(actionTypes.MAPPING.DELETE, { id, index }),
 };
 // #region DynaForm Actions

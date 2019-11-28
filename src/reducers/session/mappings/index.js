@@ -1,6 +1,8 @@
 import produce from 'immer';
 import actionTypes from '../../../actions/types';
 
+const emptySet = [];
+
 export default function reducer(state = {}, action) {
   const {
     id,
@@ -28,6 +30,7 @@ export default function reducer(state = {}, action) {
 
           draft[id] = {
             mappings: mappings.map(m => ({ ...m, rowIdentifier: 0 })),
+            incompleteGenerates: [],
             lookups,
             initChangeIdentifier,
             application,
@@ -41,6 +44,32 @@ export default function reducer(state = {}, action) {
         draft[id].initChangeIdentifier += 1;
         draft[id].mappings.splice(index, 1);
         break;
+      case actionTypes.MAPPING.UPDATE_GENERATES: {
+        draft[id].generateFields = generateFields;
+        const { incompleteGenerates } = draft[id];
+
+        // Special case for salesforce
+        incompleteGenerates.forEach(generateObj => {
+          const {
+            value: incompleteGenValue,
+            index: incompleteGenIndex,
+          } = generateObj;
+          const childSObject = generateFields.find(
+            field => field.id.indexOf(`${incompleteGenValue}[*].`) > -1
+          );
+
+          if (childSObject) {
+            const objCopy = { ...draft[id].mappings[incompleteGenIndex] };
+
+            objCopy.generate = childSObject.id;
+            objCopy.rowIdentifier += 1;
+            draft[id].mappings[incompleteGenIndex] = objCopy;
+          }
+        });
+
+        break;
+      }
+
       case actionTypes.MAPPING.PATCH_FIELD:
         if (draft[id].mappings[index]) {
           const objCopy = { ...draft[id].mappings[index] };
@@ -83,6 +112,20 @@ export default function reducer(state = {}, action) {
         }
 
         break;
+      case actionTypes.MAPPING.PATCH_INCOMPLETE_GENERATES: {
+        const incompleteGeneObj = draft[id].incompleteGenerates.find(
+          gen => gen.index === index
+        );
+
+        if (incompleteGeneObj) {
+          incompleteGeneObj.value = value;
+        } else {
+          draft[id].incompleteGenerates.push({ index, value });
+        }
+
+        break;
+      }
+
       case actionTypes.MAPPING.PATCH_SETTINGS:
         if (draft[id].mappings[index]) {
           const valueTmp = { ...draft[id].mappings[index] };
@@ -93,6 +136,7 @@ export default function reducer(state = {}, action) {
 
           if (valueTmp.hardCodedValue) {
             valueTmp.hardCodedValueTmp = `"${valueTmp.hardCodedValue}"`;
+            delete valueTmp.extract;
           }
 
           draft[id].mappings[index] = { ...valueTmp };
@@ -108,8 +152,6 @@ export default function reducer(state = {}, action) {
 }
 
 // #region PUBLIC SELECTORS
-const emptySet = [];
-
 export function mapping(state, id) {
   if (!state) {
     return emptySet;
