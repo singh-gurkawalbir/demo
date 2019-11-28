@@ -1,4 +1,17 @@
 export default {
+  optionsHandler: (fieldId, fields) => {
+    if (fieldId === 'mongodb.document') {
+      const queryTypeField = fields.find(
+        field => field.fieldId === 'mongodb.method'
+      );
+
+      return {
+        queryType: queryTypeField && queryTypeField.value,
+      };
+    }
+
+    return null;
+  },
   fieldMap: {
     common: { formId: 'common' },
     importData: {

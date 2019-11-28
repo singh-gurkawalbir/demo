@@ -59,6 +59,8 @@ export default {
     type: 'sqlquerybuilder',
     arrayIndex: 0,
     label: 'Launch Query Builder',
+    refreshOptionsOnChangesTo: ['mongodb.method'],
+    title: 'MongoDB Data Builder',
   },
   'mongodb.ignoreLookupFilters': {
     type: 'textarea',
