@@ -124,7 +124,7 @@ export default {
   sqlquerybuilder: DynaSQLQueryBuilder,
   relativeuriwithlookup: DynaRelativeURIWithLookup,
   salesforcerequiredtrigger: Salesforce.DynaRequiredTrigger,
-  salesforcereferencedfields: Salesforce.DynaReferenedFields,
+  salesforcereferencedfields: Salesforce.DynaReferencedFields,
   salesforcerelatedlistmodal: ReferencedFieldsModal,
   salesforcerelatedlist: Salesforce.DynaRelatedList,
   salesforcetreemodal: Salesforce.DynaTreeModal,

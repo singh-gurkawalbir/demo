@@ -1,6 +1,6 @@
 import { useSelector } from 'react-redux';
 import * as selectors from '../../../../../reducers';
-import DynaReferencedFields from '../DynaReferenedFields';
+import DynaReferencedFields from '../DynaReferencedFields';
 
 export const useGetSalesforceExportDetails = props => {
   const exportResource = useSelector(state =>

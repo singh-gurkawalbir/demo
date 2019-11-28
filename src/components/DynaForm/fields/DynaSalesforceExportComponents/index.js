@@ -1,12 +1,12 @@
 import DynaRequiredTrigger from './DynaRequiredTrigger';
-import DynaReferenedFields from './DynaReferenedFields';
+import DynaReferencedFields from './DynaReferencedFields';
 import DynaRelatedList from './DynaRelatedList';
 import DynaTreeModal from './DynaTreeModal';
 import IASettingsComponents from './IASettingsComponents';
 
 export default {
   DynaRequiredTrigger,
-  DynaReferenedFields,
+  DynaReferencedFields,
   DynaRelatedList,
   DynaTreeModal,
   IASettingsComponents,
