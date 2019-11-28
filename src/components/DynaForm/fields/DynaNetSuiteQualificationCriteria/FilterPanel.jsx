@@ -18,7 +18,7 @@ import {
   convertNetSuiteQualifierExpressionToQueryBuilderRules,
   getFilterList,
   generateRulesState,
-  generateNetSuiteLookupFilterExpression,
+  generateNetSuiteQualifierExpression,
   getFilterRuleId,
 } from './util';
 import actions from '../../../../actions';
@@ -117,7 +117,7 @@ export default function FilterPanel({
       return undefined;
     }
 
-    return generateNetSuiteLookupFilterExpression(qbRules);
+    return generateNetSuiteQualifierExpression(qbRules);
   };
 
   const handleFilterRulesChange = useCallback(() => {

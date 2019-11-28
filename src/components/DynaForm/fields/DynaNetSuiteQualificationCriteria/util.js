@@ -153,7 +153,7 @@ export function generateRulesState(rules) {
   return rulesState;
 }
 
-export function generateNetSuiteLookupFilterExpression(qbRules) {
+export function generateNetSuiteQualifierExpression(qbRules) {
   const nsFilterExpression = [];
   let lhs;
   let rhs;
@@ -175,7 +175,7 @@ export function generateNetSuiteLookupFilterExpression(qbRules) {
   for (let i = 0; i < qbRules.rules.length; i += 1) {
     if (qbRules.rules[i].rules && qbRules.rules[i].rules.length > 0) {
       nsFilterExpression.push(
-        generateNetSuiteLookupFilterExpression(qbRules.rules[i])
+        generateNetSuiteQualifierExpression(qbRules.rules[i])
       );
     } else {
       lhs = qbRules.rules[i].id;
