@@ -1,7 +1,7 @@
 import dynamicMetadata from './DynamicLookup/metadata';
 
-const getFailedRecordDefault = (isEdit, lookup) => {
-  if (!isEdit || !lookup || !lookup.allowFailures) {
+const getFailedRecordDefault = lookup => {
+  if (!lookup || !lookup.allowFailures) {
     return 'disallowFailure';
   }
 
@@ -18,14 +18,12 @@ const getFailedRecordDefault = (isEdit, lookup) => {
 export default {
   getLookupMetadata: ({
     lookup,
-    isEdit,
     showDynamicLookupOnly,
     isSQLLookup,
     sampleData,
   }) => {
     const dynamicLookupMetadata = dynamicMetadata.getLookupMetadata({
       lookup,
-      isEdit,
       showDynamicLookupOnly,
       isSQLLookup,
       sampleData,
@@ -42,7 +40,7 @@ export default {
           name: 'mode',
           type: 'radiogroup',
           label: '',
-          defaultValue: isEdit && lookup && lookup.map ? 'static' : 'dynamic',
+          defaultValue: lookup && (lookup.map ? 'static' : 'dynamic'),
           options: [
             {
               items: [
@@ -62,7 +60,7 @@ export default {
           keyLabel: 'Export Field',
           valueName: 'import',
           valueLabel: 'Import Field (HTTP)',
-          map: isEdit && lookup && lookup.map,
+          map: lookup && lookup.map,
           visibleWhen: [
             {
               field: 'mode',
@@ -84,8 +82,7 @@ export default {
           type: 'radiogroup',
           label: 'Action to take if unique match not found',
           showOptionsVertically: true,
-          defaultValue:
-            getFailedRecordDefault(isEdit, lookup) || 'disallowFailure',
+          defaultValue: getFailedRecordDefault(lookup) || 'disallowFailure',
           options: [
             {
               items: [
