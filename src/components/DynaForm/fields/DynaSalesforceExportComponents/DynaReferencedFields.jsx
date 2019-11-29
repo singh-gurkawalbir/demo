@@ -70,7 +70,9 @@ const FirstLevelModal = props => {
     <ModalDialog show handleClose={handleClose}>
       <Typography>Referenced Fields</Typography>
       <DynaForm optionsHandler={optionsHandler} fieldMeta={fieldMeta}>
-        <Button onClick={handleClose}>Cancel</Button>
+        <Button data-test="closeReferencedFields" onClick={handleClose}>
+          Cancel
+        </Button>
         <DynaSubmit
           onClick={values => {
             onFieldChange(id, values['/referencedFields']);
@@ -99,7 +101,10 @@ export default function DynaReferencedFields(props) {
       {status === 'refreshed' ? (
         <Spinner />
       ) : (
-        <IconTextButton onClick={toggle} disabled={disabled}>
+        <IconTextButton
+          data-test="editReferencedFields"
+          onClick={toggle}
+          disabled={disabled}>
           <EditIcon />
         </IconTextButton>
       )}
