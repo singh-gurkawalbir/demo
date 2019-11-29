@@ -10,7 +10,7 @@ export function getFilterRuleId(rule) {
 const updateRulesForSOQL = (dataIn = { rules: [] }) => {
   dataIn.rules.forEach(r => {
     if (r.rules && r.rules.length > 0) {
-      self.updateRulesForSOQL(r);
+      updateRulesForSOQL(r);
     } else if (
       ['equal', 'not_equal'].indexOf(r.operator) > -1 &&
       r.value === null

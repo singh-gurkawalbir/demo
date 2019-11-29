@@ -15,7 +15,7 @@ import 'jQuery-QueryBuilder/dist/css/query-builder.default.css';
 import jQuery from 'jquery';
 import { isEmpty, uniqBy } from 'lodash';
 import config from './config';
-import '../DynaNetSuiteLookupFilters/queryBuilder.css';
+import './queryBuilder.css';
 import {
   convertSalesforceQualificationCriteria,
   getFilterList,
@@ -40,6 +40,7 @@ export default function FilterPanel({
   rule,
   filters = defaultFilters,
 }) {
+  // TODO: is this the right way to add reference to window object? check the best way to do this.
   window.SQLParser = sqlParser;
   const qbuilder = useRef(null);
   const classes = useStyles();
@@ -127,11 +128,6 @@ export default function FilterPanel({
         ...config,
         filters: filtersConfig || [],
       });
-      qbContainer
-        .unbind('rulesChanged.queryBuilder')
-        .on('rulesChanged.queryBuilder', () => {
-          handleFilterRulesChange();
-        });
       qbContainer.queryBuilder('setFilters', true, filtersConfig);
       setBuilderInitComplete(true);
     }
@@ -155,8 +151,14 @@ export default function FilterPanel({
       }
 
       setRules(qbRules);
+
       //   jQuery(qbuilder.current).queryBuilder('setRulesFromSQL', rule);
-      jQuery(qbuilder.current).queryBuilder('setRules', qbRules);
+      if (qbRules) jQuery(qbuilder.current).queryBuilder('setRules', qbRules);
+      jQuery(qbuilder.current)
+        .unbind('rulesChanged.queryBuilder')
+        .on('rulesChanged.queryBuilder', () => {
+          handleFilterRulesChange();
+        });
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -15,7 +15,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function DynaSFQualifier(props) {
+export default function DynaSalesforceQualifier(props) {
   const [showEditor, setShowEditor] = useState(false);
   const classes = useStyles();
   const {
