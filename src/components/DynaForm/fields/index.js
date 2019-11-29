@@ -63,6 +63,7 @@ import DynaUserEmail from './DynaUserEmail';
 import DynaUserPassword from './DynaUserPassword';
 import DynaIclient from './DynaIclient';
 import DynaNetSuiteQualifier from './DynaNetSuiteQualifier';
+import DynaQuery from './DynaQuery';
 
 export default {
   mapping: DynaImportMapping,
@@ -139,4 +140,5 @@ export default {
   userpassword: DynaUserPassword,
   dynaiclient: DynaIclient,
   netsuitequalifier: DynaNetSuiteQualifier,
+  query: DynaQuery,
 };
