@@ -58,7 +58,6 @@ export default {
           { label: 'Jobvite', value: 'jobvite' },
           { label: 'LiquidPlanner', value: 'liquidplanner' },
           { label: 'Magento 2', value: 'magento' },
-          { label: 'labelly', value: 'labelly' },
           { label: 'NetSuite', value: 'netsuite' },
           { label: 'OpenAir', value: 'openair' },
           { label: 'PayPal', value: 'paypal' },
