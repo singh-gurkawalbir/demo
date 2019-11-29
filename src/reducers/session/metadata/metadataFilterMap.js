@@ -11,6 +11,13 @@ export default {
       label: item.name,
       value: item.scriptId && item.scriptId.toLowerCase(),
     })),
+  'suitescript-sublists': data =>
+    data
+      .map(item => ({
+        label: item.name,
+        value: item.id,
+      }))
+      .sort(sortElements),
   'suitescript-dateField': data =>
     data
       .filter(item => item.type === 'datetime' || item.type === 'datetimetz')
