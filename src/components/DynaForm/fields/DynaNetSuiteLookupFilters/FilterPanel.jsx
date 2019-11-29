@@ -495,7 +495,7 @@ export default function FilterPanel({
 
   return (
     <div className={classes.container}>
-      <div ref={qbuilder} />
+      <div className="netsuite-lookup-filters" ref={qbuilder} />
       {showOperandSettingsFor && (
         <OperandSettingsDialog
           ruleData={

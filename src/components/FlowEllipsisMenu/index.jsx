@@ -140,7 +140,8 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
   // to be added in the data-layer to properly determine this flag.
   if (flowDetails.showMapping) availableActions.push(allActions.mapping);
 
-  availableActions.push(allActions.schedule);
+  if (flowDetails.canSchedule) availableActions.push(allActions.schedule);
+
   availableActions.push(allActions.audit);
   availableActions.push(allActions.references);
   availableActions.push(allActions.clone);

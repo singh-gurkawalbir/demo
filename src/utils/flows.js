@@ -137,3 +137,8 @@ export const isPageGeneratorResource = (flow = {}, resourceId) => {
 
   return !!pageGenerators.find(pg => pg._exportId === resourceId);
 };
+
+/*
+ * Based on _connectorId on flow Doc, we determine whether this flow is a connector
+ */
+export const isConnector = (flow = {}) => !!flow._connectorId;

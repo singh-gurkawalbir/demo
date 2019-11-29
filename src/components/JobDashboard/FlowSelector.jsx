@@ -41,6 +41,7 @@ export default function FlowSelector({
 
   return (
     <CeligoSelect
+      data-test="selectAFlowFilter"
       className={classes.flow}
       onChange={e => onChange(e.target.value)}
       displayEmpty
