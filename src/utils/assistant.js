@@ -152,7 +152,28 @@ export function getMatchingRoute(routes, url) {
 }
 
 export function mergeHeaders(headers = {}, overwrites = {}) {
-  return assign({ ...headers }, { ...overwrites });
+  let headersMap = {};
+  let overwritesMap = {};
+
+  if (isArray(headers)) {
+    headersMap = headers.reduce(
+      (obj, h) => ({ ...obj, [h.name]: h.value }),
+      headersMap
+    );
+  } else {
+    headersMap = { ...headers };
+  }
+
+  if (isArray(overwrites)) {
+    overwritesMap = overwrites.reduce(
+      (obj, h) => ({ ...obj, [h.name]: h.value }),
+      overwritesMap
+    );
+  } else {
+    overwritesMap = { ...overwrites };
+  }
+
+  return assign(headersMap, overwritesMap);
 }
 
 export function mergeQueryParameters(queryParameters = [], overwrites = []) {
@@ -165,6 +186,13 @@ export function populateDefaults({
   isChildAnOperation = false,
 }) {
   const childWithDefaults = { ...child };
+
+  if (isArray(childWithDefaults.headers)) {
+    childWithDefaults.headers = childWithDefaults.headers.reduce(
+      (obj, h) => ({ ...obj, [h.name]: h.value }),
+      {}
+    );
+  }
 
   OVERWRITABLE_PROPERTIES.forEach(prop => {
     if (['delta', 'headers', 'paging', 'queryParameters'].includes(prop)) {
