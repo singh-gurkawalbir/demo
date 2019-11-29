@@ -63,11 +63,8 @@ import DynaUserEmail from './DynaUserEmail';
 import DynaUserPassword from './DynaUserPassword';
 import DynaIclient from './DynaIclient';
 import DynaNetSuiteQualifier from './DynaNetSuiteQualifier';
-<<<<<<< HEAD
 import DynaSalesforceQualifier from './DynaSalesforceQualifier';
-=======
 import DynaQuery from './DynaQuery';
->>>>>>> d886bad34907bf6fbfd74360497898ed120075a7
 
 export default {
   mapping: DynaImportMapping,
