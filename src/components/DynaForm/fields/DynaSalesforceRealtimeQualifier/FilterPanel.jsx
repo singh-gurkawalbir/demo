@@ -68,15 +68,34 @@ export default function FilterPanel({
     setFiltersMetadata(getFilterList(jsonPathsFromData, rules || []));
   }, [jsonPathsFromData, rules]);
 
-  const isValid = () => jQuery(qbuilder.current).queryBuilder('validate');
-  const getRules = (options = {}) => {
-    const qbRules = jQuery(qbuilder.current).queryBuilder('getSQL', options);
+  const isValid = () => true; // jQuery(qbuilder.current).queryBuilder('validate');
+  const getRules = () => {
+    const result = jQuery(qbuilder.current).queryBuilder('getSQL');
 
-    if (isEmpty(qbRules) || (qbRules && !qbRules.valid)) {
+    if (isEmpty(result) || !result.sql) {
       return undefined;
     }
 
-    return qbRules;
+    result.sql = result.sql.replace(
+      // eslint-disable-next-line no-useless-escape
+      /'\d{4}-\d{2}-\d{2}\T\d{2}:\d{2}:\d{2}\.\d{3}[+,-]\d{4}'/g,
+      dt => dt.replace(/'/g, '')
+    );
+    result.sql = result.sql.replace(
+      // eslint-disable-next-line no-useless-escape
+      /'\d{4}-\d{2}-\d{2}\T\d{2}:\d{2}:\d{2}[+,-]\d{2}:\d{2}'/g,
+      dt => dt.replace(/'/g, '')
+    );
+    result.sql = result.sql.replace(
+      // eslint-disable-next-line no-useless-escape
+      /'\d{4}-\d{2}-\d{2}\T\d{2}:\d{2}:\d{2}Z'/g,
+      dt => dt.replace(/'/g, '')
+    );
+    result.sql = result.sql.replace(/'\d{4}-\d{2}-\d{2}(?!T)'/g, dt =>
+      dt.replace(/'/g, '')
+    );
+
+    return result.sql;
   };
 
   const handleFilterRulesChange = useCallback(() => {
@@ -104,11 +123,9 @@ export default function FilterPanel({
       //       rule.filter.valueGetter(rule);
       //     }
       //   });
-
       qbContainer.queryBuilder({
         ...config,
         filters: filtersConfig || [],
-        rules,
       });
       qbContainer
         .unbind('rulesChanged.queryBuilder')
@@ -138,6 +155,8 @@ export default function FilterPanel({
       }
 
       setRules(qbRules);
+      //   jQuery(qbuilder.current).queryBuilder('setRulesFromSQL', rule);
+      jQuery(qbuilder.current).queryBuilder('setRules', qbRules);
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
