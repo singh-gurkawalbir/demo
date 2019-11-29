@@ -1,7 +1,9 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Tabs, Tab } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import FormGenerator from '../';
+import DynaForm from '../../index';
+import IntegrationSettingsSaveButton from '../../../ResourceFormFactory/Actions/IntegrationSettingsSaveButton';
+import FormGenerator from '..';
 
 const useStyle = makeStyles(theme => ({
   root: {
@@ -23,8 +25,8 @@ const useStyle = makeStyles(theme => ({
   },
 }));
 
-export default function TabComponent(props) {
-  const { containers, fieldMap } = props;
+function TabComponent(props) {
+  const { containers, fieldMap, children, ...rest } = props;
   const classes = useStyle();
   const [selectedTab, setSelectedTab] = useState(0);
 
@@ -55,12 +57,46 @@ export default function TabComponent(props) {
       <div className={classes.panelContainer}>
         {containers.map(({ label, ...layout }, index) => (
           <div key={label}>
-            {selectedTab === index && (
-              <FormGenerator layout={layout} fieldMap={fieldMap} />
-            )}
+            {selectedTab === index &&
+              React.cloneElement(children, { ...rest, layout, fieldMap })}
           </div>
         ))}
       </div>
     </div>
+  );
+}
+
+function FormWithSave(props) {
+  const { layout, fieldMap, ...rest } = props;
+  const fieldMeta = { layout, fieldMap };
+  const { integrationId, flowId, storeId, resourceId, resourceType } = rest;
+  const dynaFormProps = {
+    integrationId,
+    flowId,
+    storeId,
+    resourceId,
+    resourceType,
+  };
+
+  return (
+    <DynaForm {...dynaFormProps} fieldMeta={fieldMeta}>
+      <IntegrationSettingsSaveButton {...rest} />
+    </DynaForm>
+  );
+}
+
+export function TabIAComponent(props) {
+  return (
+    <TabComponent {...props}>
+      <FormWithSave />
+    </TabComponent>
+  );
+}
+
+export function TabComponentSimple(props) {
+  return (
+    <TabComponent {...props}>
+      <FormGenerator />
+    </TabComponent>
   );
 }

@@ -55,7 +55,7 @@ import DynaToggle from './DynaToggle';
 import DynaSQLQueryBuilder from './DynaSQLQueryBuilder';
 import DynaRelativeURIWithLookup from './DynaRelativeURIWithLookup';
 import Salesforce from './DynaSalesforceExportComponents';
-import { ReferencedFieldsModal } from './DynaSalesforceExportComponents/DynaReferenedFields';
+import { ReferencedFieldsModal } from './DynaSalesforceExportComponents/DynaTreeModal';
 import DynaNetSuiteLookupFilters from './DynaNetSuiteLookupFilters';
 import DynaNetSuiteLookup from './DynaNetSuiteLookup';
 import DynaIAExpression from './DynaIAExpression';
@@ -63,7 +63,11 @@ import DynaUserEmail from './DynaUserEmail';
 import DynaUserPassword from './DynaUserPassword';
 import DynaIclient from './DynaIclient';
 import DynaNetSuiteQualifier from './DynaNetSuiteQualifier';
+<<<<<<< HEAD
 import DynaSalesforceQualifier from './DynaSalesforceQualifier';
+=======
+import DynaQuery from './DynaQuery';
+>>>>>>> d886bad34907bf6fbfd74360497898ed120075a7
 
 export default {
   mapping: DynaImportMapping,
@@ -127,11 +131,13 @@ export default {
   salesforcequalifier: DynaSalesforceQualifier,
   relativeuriwithlookup: DynaRelativeURIWithLookup,
   salesforcerequiredtrigger: Salesforce.DynaRequiredTrigger,
-  salesforcereferencedfields: Salesforce.DynaReferenedFields,
-  salesforcesobjecttype: Salesforce.DynaSObjectType,
+  salesforcereferencedfields: Salesforce.DynaReferencedFields,
   salesforcerelatedlistmodal: ReferencedFieldsModal,
   salesforcerelatedlist: Salesforce.DynaRelatedList,
   salesforcetreemodal: Salesforce.DynaTreeModal,
+  salesforcereferencedfieldsia:
+    Salesforce.IASettingsComponents.DynaReferencedFieldsIA,
+  salesforcerelatedlistia: Salesforce.IASettingsComponents.DynaRelatedListIA,
   netsuitelookupfilters: DynaNetSuiteLookupFilters,
   netsuitelookup: DynaNetSuiteLookup,
   iaexpression: DynaIAExpression,
@@ -139,4 +145,5 @@ export default {
   userpassword: DynaUserPassword,
   dynaiclient: DynaIclient,
   netsuitequalifier: DynaNetSuiteQualifier,
+  query: DynaQuery,
 };

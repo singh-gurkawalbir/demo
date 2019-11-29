@@ -628,7 +628,7 @@ export function flowDetails(state, id) {
     draft.isRealtime = isRealtimeExport(pg);
     draft.isSimpleImport = isSimpleImportFlow(pg);
     draft.isRunnable = isRunnable(allExports, pg, draft);
-    draft.showScheduleIcon = showScheduleIcon(allExports, pg, draft);
+    draft.canSchedule = showScheduleIcon(allExports, pg, draft);
     // TODO: add logic to properly determine if this flow should
     // display mapping/settings. This would come from the IA metadata.
     draft.showMapping = true;
@@ -833,6 +833,25 @@ export function getAllConnectionIdsUsedInTheFlow(state, flow) {
   });
 
   return uniq(connectionIds.concat(borrowConnectionIds));
+}
+
+export function getFlowsAssociatedExportFromIAMetadata(state, fieldMeta) {
+  const { resource: flowResource, properties } = fieldMeta;
+  let resourceId;
+
+  if (properties && properties._exportId) {
+    resourceId = properties._exportId;
+  } else if (flowResource && flowResource._exportId) {
+    resourceId = flowResource._exportId;
+  } else if (
+    flowResource &&
+    flowResource.pageGenerators &&
+    flowResource.pageGenerators.length
+  ) {
+    resourceId = flowResource.pageGenerators[0]._exportId;
+  }
+
+  return resource(state, 'exports', resourceId);
 }
 // #begin integrationApps Region
 
@@ -2334,7 +2353,10 @@ export function getImportSampleData(state, resourceId) {
       state,
       connectionId,
       commMetaPath,
-      filterKey: 'salesforce-recordType',
+      filterKey:
+        salesforce.api === 'compositerecord'
+          ? 'salesforce-sObjectCompositeMetadata'
+          : 'salesforce-recordType',
     });
 
     return sampleData;

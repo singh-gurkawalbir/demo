@@ -2,7 +2,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { FormContext } from 'react-forms-processor/dist';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
-import RefreshGenericResource from './DynaRefreshableSelect/RefreshGenericResource';
+import { DynaGenericSelect } from './DynaRefreshableSelect/RefreshGenericResource';
 import { salesforceExportSelectOptions } from '../../../utils/resource';
 
 function DynaSalesforceSelectOptionsGenerator(props) {
@@ -25,7 +25,7 @@ function DynaSalesforceSelectOptionsGenerator(props) {
     dispatch(actions.metadata.refresh(connectionId, commMetaPath));
 
   return (
-    <RefreshGenericResource
+    <DynaGenericSelect
       handleRefreshResource={handleRefreshResource}
       fieldStatus={status}
       fieldData={options}

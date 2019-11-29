@@ -1,5 +1,7 @@
 import actionTypes from '../../../actions/types';
 
+const emptyObj = {};
+
 export default function reducer(state = {}, action) {
   const { type, name, filter } = action;
   let newState;
@@ -25,9 +27,9 @@ export default function reducer(state = {}, action) {
 // #region PUBLIC SELECTORS
 export function filter(state, name) {
   if (!state) {
-    return {};
+    return emptyObj;
   }
 
-  return state[name] || {};
+  return state[name] || emptyObj;
 }
 // #endregion
