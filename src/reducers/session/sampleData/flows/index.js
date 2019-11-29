@@ -40,7 +40,7 @@ export default function(state = {}, action) {
               ? 'pageGeneratorsMap'
               : 'pageProcessorsMap'
           ] || {};
-        const stage = previewType || 'raw';
+        const stage = previewType;
 
         resourceMap[resourceId] = {
           ...resourceMap[resourceId],
@@ -63,7 +63,7 @@ export default function(state = {}, action) {
                 : 'pageProcessorsMap'
             ]) ||
           {};
-        const stage = previewType || 'raw';
+        const stage = previewType;
 
         resourceMap[resourceId] = {
           ...resourceMap[resourceId],
