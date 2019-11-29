@@ -1,13 +1,24 @@
 export default {
   optionsHandler: (field, fields) => {
-    if (field === 'netsuite.distributed.sublists') {
-      const recordTypeField = fields.find(
-        field => field.fieldId === 'netsuite.distributed.recordType'
-      );
+    const recordTypeField = fields.find(
+      field => field.fieldId === 'netsuite.distributed.recordType'
+    );
 
+    if (field === 'netsuite.distributed.sublists') {
       // returns corresponding relative uri path
       return {
-        commMetaPath: `netsuite/metadata/suitescript/connections/${recordTypeField.connectionId}/recordTypes/${recordTypeField.value}/sublists`,
+        commMetaPath: recordTypeField
+          ? `netsuite/metadata/suitescript/connections/${recordTypeField.connectionId}/recordTypes/${recordTypeField.value}/sublists`
+          : '',
+        resetValue:
+          recordTypeField &&
+          recordTypeField.value !== recordTypeField.defaultValue,
+      };
+    } else if (field === 'netsuite.distributed.qualifier') {
+      return {
+        commMetaPath: recordTypeField
+          ? `netsuite/metadata/suitescript/connections/${recordTypeField.connectionId}/recordTypes/${recordTypeField.value}?includeSelectOptions=true`
+          : '',
         resetValue:
           recordTypeField &&
           recordTypeField.value !== recordTypeField.defaultValue,
@@ -33,6 +44,11 @@ export default {
       refreshOptionsOnChangesTo: ['netsuite.distributed.recordType'],
       visibleWhen: [{ field: 'netsuite.distributed.recordType', isNot: [''] }],
     },
+    'netsuite.distributed.qualifier': {
+      fieldId: 'netsuite.distributed.qualifier',
+      refreshOptionsOnChangesTo: ['netsuite.distributed.recordType'],
+      visibleWhen: [{ field: 'netsuite.distributed.recordType', isNot: [''] }],
+    },
     type: { fieldId: 'type', visible: false, defaultValue: 'distributed' },
     dataURITemplate: {
       fieldId: 'dataURITemplate',
@@ -49,6 +65,7 @@ export default {
       'netsuite.distributed.executionContext',
       'netsuite.distributed.executionType',
       'netsuite.distributed.sublists',
+      'netsuite.distributed.qualifier',
       'type',
     ],
     type: 'collapse',

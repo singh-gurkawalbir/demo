@@ -1,6 +1,8 @@
 import produce from 'immer';
 import actionTypes from '../../../actions/types';
 
+const emptySet = [];
+
 export default function reducer(state = {}, action) {
   const {
     id,
@@ -150,8 +152,6 @@ export default function reducer(state = {}, action) {
 }
 
 // #region PUBLIC SELECTORS
-const emptySet = [];
-
 export function mapping(state, id) {
   if (!state) {
     return emptySet;

@@ -91,7 +91,8 @@ export default function DynaMultiSelect(props) {
       ),
     []
   );
-  let processedValue = value;
+  // TODO: This must be handled better
+  let processedValue = value || [];
 
   if (valueDelimiter && typeof value === 'string') {
     processedValue = value ? value.split(valueDelimiter) : [];

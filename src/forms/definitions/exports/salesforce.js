@@ -181,7 +181,7 @@ export default {
     'salesforce.sObjectType': {
       connectionId: r => r._connectionId,
       fieldId: 'salesforce.sObjectType',
-      type: 'salesforcesobjecttype',
+      type: 'refreshableselect',
       filterKey: 'salesforce-sObjects-triggerable',
       commMetaPath: r =>
         `salesforce/metadata/connections/${r._connectionId}/sObjectTypes`,
@@ -196,6 +196,7 @@ export default {
       connectionId: r => r._connectionId,
       refreshOptionsOnChangesTo: ['salesforce.sObjectType'],
       type: 'salesforcereferencedfields',
+      delimiter: ',',
       fieldId: 'salesforce.distributed.referencedFields',
       disabledWhen: [
         {
