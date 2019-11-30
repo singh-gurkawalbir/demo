@@ -113,9 +113,6 @@ export default {
   'netsuite.distributed.sublists': {
     label: 'Sublists to include',
     type: 'refreshableselect',
-    commMetaPath: r =>
-      r &&
-      `netsuite/metadata/suitescript/connections/${r._connectionId}/savedSearches`,
     filterKey: 'suitescript-sublists',
     multiselect: true,
     placeholder: 'Please select Sublists',
