@@ -1,3 +1,5 @@
+import { isNewId } from '../../../utils/resource';
+
 export default {
   preSave: formValues => {
     const newValues = formValues;
@@ -10,8 +12,8 @@ export default {
       newValues['/as2/partnerStationInfo/auth/token'] = undefined;
     } else if (newValues['/as2/partnerStationInfo/auth/type'] === 'token') {
       newValues['/as2/partnerStationInfo/auth/basic'] = undefined;
-    } else {
-      newValues['/as2/partnerStationInfo/auth/type'] = undefined;
+    } else if (newValues['/as2/partnerStationInfo/auth/type'] === 'none') {
+      delete newValues['/as2/partnerStationInfo/auth/type'];
     }
 
     return newValues;
@@ -66,6 +68,20 @@ export default {
     },
     'as2.partnerStationInfo.auth.type': {
       fieldId: 'as2.partnerStationInfo.auth.type',
+      defaultValue: r => {
+        const isNew = isNewId(r._id);
+
+        // if its create
+        if (isNew) return '';
+        const output =
+          r &&
+          r.as2 &&
+          r.as2.partnerStationInfo &&
+          r.as2.partnerStationInfo.auth &&
+          r.as2.partnerStationInfo.auth.type;
+
+        return output || 'none';
+      },
     },
     'as2.partnerStationInfo.auth.failStatusCode': {
       fieldId: 'as2.partnerStationInfo.auth.failStatusCode',

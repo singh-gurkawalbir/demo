@@ -234,6 +234,9 @@ export default {
       fieldId: 'salesforce.distributed.qualifier',
       refreshOptionsOnChangesTo: ['salesforce.sObjectType'],
     },
+    'salesforce.objectType': {
+      fieldId: 'salesforce.objectType',
+    },
     advancedSettings: {
       formId: 'advancedSettings',
       visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
@@ -247,6 +250,7 @@ export default {
       'salesforce.executionType',
       'exportData',
       'salesforce.sObjectType',
+      'salesforce.objectType',
       'salesforce.distributed.requiredTrigger',
       'salesforce.distributed.referencedFields',
       'salesforce.distributed.relatedLists',
