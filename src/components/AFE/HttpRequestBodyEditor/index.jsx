@@ -7,6 +7,9 @@ export default function HttpRequestBodyEditor(props) {
     contentType,
     layout = 'compact',
     rule,
+    resultTitle,
+    dataTitle,
+    ruleTitle,
     data,
     lookups,
   } = props;
@@ -24,9 +27,9 @@ export default function HttpRequestBodyEditor(props) {
       dataMode="json"
       layout={layout}
       resultMode={mode}
-      ruleTitle={`HTTP Body Template (${mode})`}
-      dataTitle="Data"
-      resultTitle="Final HTTP Body"
+      ruleTitle={ruleTitle || `HTTP Body Template (${mode})`}
+      dataTitle={dataTitle || 'Data'}
+      resultTitle={resultTitle || 'Final HTTP Body'}
       enableAutocomplete
     />
   );
