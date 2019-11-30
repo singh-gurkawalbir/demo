@@ -26,7 +26,8 @@ export default function DynaHttpRequestBody(props) {
     arrayIndex,
     useSampleDataAsArray,
   } = props;
-  const { lookups: lookupsObj, contentType, resourceName } = options;
+  const { lookups: lookupsObj, resourceName } = options;
+  const contentType = options.contentType || props.contentType;
   const [showEditor, setShowEditor] = useState(false);
   let parsedRule =
     options && typeof arrayIndex === 'number' && Array.isArray(value)
