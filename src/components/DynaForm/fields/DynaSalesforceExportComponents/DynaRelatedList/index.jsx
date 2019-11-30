@@ -223,6 +223,7 @@ function FirstLevelModal(props) {
         {!editListItemModelOpen ? (
           <Fragment>
             <IconTextButton
+              data-test="addOrEditNewRelatedList"
               onClick={() => {
                 toggleListItemModelOpen();
                 setSelectedElement(null);
@@ -262,8 +263,11 @@ function FirstLevelModal(props) {
       </Fragment>
       {!editListItemModelOpen && (
         <Fragment>
-          <Button onClick={handleClose}> Cancel</Button>
+          <Button data-test="closeRelatedListModal" onClick={handleClose}>
+            Cancel
+          </Button>
           <Button
+            data-test="saveRelatedList"
             onClick={() => {
               onFieldChange(id, value);
               handleClose();
@@ -316,7 +320,7 @@ export default function DynaRelatedList(props) {
     []
   );
   const classes = useStyles();
-  const { disabled } = props;
+  const { disabled, id } = props;
   const { status } = useCallMetadataAndReturnStatus(props);
 
   return (
@@ -326,11 +330,17 @@ export default function DynaRelatedList(props) {
       ) : null}
       <div className={classes.inlineEditorContainer}>
         <span>{props.label}</span>
-        <CodeEditor {...props} mode="json" readOnly />
+        <CodeEditor
+          {...props}
+          mode="json"
+          data-test={id || 'relatedListContent'}
+          readOnly
+        />
         {status === 'refreshed' ? (
           <Spinner />
         ) : (
           <IconTextButton
+            data-test="editRelatedList"
             onClick={toggleFirstLevelModalOpen}
             disabled={disabled}>
             <EditIcon />

@@ -113,9 +113,7 @@ export default {
     ],
   },
   'salesforce.distributed.qualifier': {
-    type: 'text',
     label: 'Field Specific Qualification Criteria',
-    multiline: true,
     omitWhenHidden: true,
     visibleWhenAll: [
       {
@@ -127,6 +125,10 @@ export default {
         is: ['records'],
       },
     ],
+    type: 'salesforcequalifier',
+    placeholder: 'Define Qualification Criteria',
+    helpKey: 'export.salesforce.qualifier',
+    connectionId: r => r && r._connectionId,
   },
   'salesforce.distributed.relatedLists': {
     type: 'text',
@@ -158,6 +160,7 @@ export default {
   'salesforce.objectType': {
     type: 'select',
     required: true,
+    defaultValue: r => r && r.salesforce && r.salesforce.sObjectType,
     label: 'SObject Type',
     options: [
       {

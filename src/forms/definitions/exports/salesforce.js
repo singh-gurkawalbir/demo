@@ -14,6 +14,19 @@ export default {
       );
 
       return value;
+    } else if (fieldId === 'salesforce.distributed.qualifier') {
+      const sObjectTypeField = fields.find(
+        field => field.fieldId === 'salesforce.sObjectType'
+      );
+
+      return {
+        commMetaPath: sObjectTypeField
+          ? `salesforce/metadata/connections/${sObjectTypeField.connectionId}/sObjectTypes/${sObjectTypeField.value}`
+          : '',
+        resetValue:
+          sObjectTypeField &&
+          sObjectTypeField.value !== sObjectTypeField.defaultValue,
+      };
     }
   },
   preSave: formValues => {
@@ -217,8 +230,12 @@ export default {
         },
       ],
     },
+    'salesforce.objectType': {
+      fieldId: 'salesforce.objectType',
+    },
     'salesforce.distributed.qualifier': {
       fieldId: 'salesforce.distributed.qualifier',
+      refreshOptionsOnChangesTo: ['salesforce.sObjectType'],
     },
     advancedSettings: {
       formId: 'advancedSettings',
@@ -233,6 +250,7 @@ export default {
       'salesforce.executionType',
       'exportData',
       'salesforce.sObjectType',
+      'salesforce.objectType',
       'salesforce.distributed.requiredTrigger',
       'salesforce.distributed.referencedFields',
       'salesforce.distributed.relatedLists',

@@ -21,7 +21,7 @@ export default function inferErrorMessage(inputMessage) {
     // mostly a csrf message format
     finalFormattedMessage = [message];
   } else if (errors) {
-    finalFormattedMessage = errors.map(error => error.message);
+    finalFormattedMessage = errors.map(error => error.message || error);
   } else finalFormattedMessage = [msg];
   // Unknown error message format response lets just return it completely
 

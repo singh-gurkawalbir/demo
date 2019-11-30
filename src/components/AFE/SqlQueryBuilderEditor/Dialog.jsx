@@ -15,6 +15,7 @@ function SqlQueryBuilderEditorDialog(props) {
     sampleData,
     defaultData,
     disabled,
+    showDefaultData,
     ...rest
   } = props;
 
@@ -27,6 +28,7 @@ function SqlQueryBuilderEditorDialog(props) {
         defaultData={defaultData}
         rule={rule}
         editorId={id}
+        showDefaultData={showDefaultData}
       />
     </EditorDialog>
   );
