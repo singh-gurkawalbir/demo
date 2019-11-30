@@ -89,4 +89,28 @@ export default {
       { collapsed: true, label: 'Advanced', fields: ['fileAdvancedSettings'] },
     ],
   },
+  actions: [
+    {
+      id: 'cancel',
+    },
+    {
+      id: 'save',
+      visibleWhen: [
+        {
+          field: 'file.type',
+          isNot: ['filedefinition', 'fixed', 'delimited/edifact'],
+        },
+      ],
+    },
+    {
+      // Button that saves file defs and then submit resource
+      id: 'savedefinition',
+      visibleWhen: [
+        {
+          field: 'file.type',
+          is: ['filedefinition', 'fixed', 'delimited/edifact'],
+        },
+      ],
+    },
+  ],
 };

@@ -9,6 +9,7 @@ export default function SqlQueryBuilderEditor(props) {
     layout = 'compact',
     sampleData,
     defaultData,
+    showDefaultData = true,
   } = props;
 
   return (
@@ -28,7 +29,7 @@ export default function SqlQueryBuilderEditor(props) {
       resultMode="text"
       ruleTitle="Template"
       resultTitle="Preview"
-      showDefaultData
+      showDefaultData={showDefaultData}
     />
   );
 }

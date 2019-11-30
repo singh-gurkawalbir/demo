@@ -1,10 +1,10 @@
 import { useState, Fragment } from 'react';
 import { Button } from '@material-ui/core';
-import ManageLookup from '../../../components/AFE/ManageLookup';
+import ManageLookupDialog from '../../../components/AFE/ManageLookup/Dialog';
 
 export default function DynaLookupEditor(props) {
   const [showEditor, setShowEditor] = useState(false);
-  const { id, onFieldChange, value, label } = props;
+  const { id, onFieldChange, value, label, options } = props;
   const handleEditorClick = () => {
     setShowEditor(!showEditor);
   };
@@ -16,11 +16,12 @@ export default function DynaLookupEditor(props) {
   return (
     <Fragment>
       {showEditor && (
-        <ManageLookup
+        <ManageLookupDialog
           id={id}
           lookups={value}
           onCancel={handleEditorClick}
           onUpdate={handleUpdate}
+          options={options}
         />
       )}
       <Button
