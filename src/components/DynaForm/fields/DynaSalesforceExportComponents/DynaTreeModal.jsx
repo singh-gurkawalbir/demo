@@ -28,8 +28,11 @@ export const ReferencedFieldsModal = props => {
         selectedValues={selectedValues}
       />
       <Fragment>
-        <Button onClick={handleClose}>Cancel</Button>
+        <Button data-test="closeReferencedFieldsDialog" onClick={handleClose}>
+          Cancel
+        </Button>
         <Button
+          data-test="addSelected"
           onClick={() => {
             onFieldChange(id, selectedValues);
             handleClose();
@@ -58,7 +61,10 @@ export default function DynaTreeModal(props) {
         value={value}
         delimiter=","
       />
-      <IconTextButton onClick={toggle} disabled={disabled}>
+      <IconTextButton
+        data-test="openReferencedFieldsDialog"
+        onClick={toggle}
+        disabled={disabled}>
         <AddIcon />
       </IconTextButton>
       {secondLevelModalOpen ? (
