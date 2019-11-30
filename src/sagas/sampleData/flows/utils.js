@@ -2,12 +2,12 @@ import { put, select, call } from 'redux-saga/effects';
 import { resourceData, isPageGenerator } from '../../../reducers';
 import { SCOPES } from '../../resourceForm';
 import actions from '../../../actions';
-import { getLastExportDateTime } from '../../../utils/flowData';
 import {
   fetchPageProcessorPreview,
   fetchPageGeneratorPreview,
   requestProcessorData,
 } from './';
+import getPreviewOptionsForResource from './pageProcessorPreviewOptions';
 
 export function* fetchFlowResources({ flow, type, eliminateDataProcessors }) {
   const resourceMap = {};
@@ -38,10 +38,12 @@ export function* fetchFlowResources({ flow, type, eliminateDataProcessors }) {
 
         resourceMap[resourceId].options = {};
 
-        if (resourceType === 'exports' && resource.type === 'delta') {
-          resourceMap[resourceId].options.postData = {
-            lastExportDateTime: getLastExportDateTime(),
-          };
+        if (resourceType === 'exports') {
+          // Gets required uiData (for real time exports - FTP, NS, SF, Web hook) and postData to pass for Page processors
+          resourceMap[resourceId].options = yield call(
+            getPreviewOptionsForResource,
+            { resource }
+          );
         }
       }
     }

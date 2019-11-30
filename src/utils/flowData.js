@@ -3,6 +3,7 @@
  */
 import { keys } from 'lodash';
 import moment from 'moment';
+import { isRealTimeOrDistributedResource, isFileAdaptor } from './resource';
 
 const sampleDataStage = {
   exports: {
@@ -136,3 +137,9 @@ export const getFlowUpdatesFromPatch = (patchSet = []) => {
 // So patchSet would be [{path:'/rawData', value:{}}] or [{path:'/sampleData', value:{}}]
 export const isRawDataPatchSet = (patchSet = []) =>
   patchSet[0] && ['/rawData', '/sampleData'].includes(patchSet[0].path);
+
+/*
+ * File adaptor / Real time( NS/ SF/ Webhooks) resources need UI Data to be passed in Page processor preview
+ */
+export const isUIDataExpectedForResource = resource =>
+  isRealTimeOrDistributedResource(resource) || isFileAdaptor(resource);

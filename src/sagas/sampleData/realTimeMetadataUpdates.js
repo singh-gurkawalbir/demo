@@ -1,40 +1,49 @@
-import { call } from 'redux-saga/effects';
+import { call, select } from 'redux-saga/effects';
 import { getNetsuiteOrSalesforceMeta } from '../resources/meta';
-import { adaptorTypeMap } from '../../utils/resource';
+import { getMetadataOptions } from '../../reducers';
+import { getNetsuiteRealTimeSampleData } from '../../utils/sampleData';
+
+/*
+ * Should return sample data back from this saga
+ * const sampleData = yield call(requestRealTimeMetadata, {resource})
+ * Used in 2 places
+ * 1. While constructing options.uiData for page processor preview call
+ * 2. Pass on for export preview call
+ */
 
 export default function* requestRealTimeMetadata({ resource }) {
   const { adaptorType } = resource;
-  const appType = adaptorTypeMap[adaptorType];
 
-  if (appType) {
-    switch (appType) {
-      case 'netsuite': {
-        const {
-          _connectionId: connectionId,
-          netsuite = {},
-          // eslint-disable-next-line camelcase
-          netsuite_da = {},
-        } = resource;
+  if (adaptorType) {
+    switch (adaptorType) {
+      case 'NetSuiteExport': {
+        const { _connectionId: connectionId, netsuite = {} } = resource;
         const recordType =
-          (netsuite.distributed && netsuite.distributed.recordType) ||
-          netsuite_da.recordType;
+          netsuite.distributed && netsuite.distributed.recordType;
 
-        yield call(getNetsuiteOrSalesforceMeta, {
+        if (!recordType) return;
+        const commMetaPath = `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${recordType}`;
+        let nsMetadata = yield select(getMetadataOptions, {
           connectionId,
-          commMetaPath: `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${recordType}`,
+          commMetaPath,
+          filterKey: 'raw',
         });
 
-        break;
-      }
+        if (!nsMetadata || !nsMetadata.data) {
+          yield call(getNetsuiteOrSalesforceMeta, {
+            connectionId,
+            commMetaPath,
+          });
+          nsMetadata = yield select(getMetadataOptions, {
+            connectionId,
+            commMetaPath,
+            filterKey: 'raw',
+          });
+        }
 
-      case 'salesforce': {
-        const { _connectionId: connectionId, salesforce } = resource;
+        const { data: metadata } = nsMetadata;
 
-        yield call(getNetsuiteOrSalesforceMeta, {
-          connectionId,
-          commMetaPath: `salesforce/metadata/connections/${connectionId}/sObjectTypes/${salesforce.sObjectType}`,
-        });
-        break;
+        return getNetsuiteRealTimeSampleData(metadata, recordType);
       }
 
       default:

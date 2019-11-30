@@ -297,3 +297,23 @@ export function isFileAdaptor(resource) {
 }
 
 export const generateNewId = () => `new-${shortid.generate()}`;
+
+export function isRealTimeOrDistributedResource(
+  resource,
+  resourceType = 'exports'
+) {
+  if (!resource) return false;
+  const { type, adaptorType } = resource;
+
+  // For Exports
+  if (resourceType === 'exports') {
+    return (
+      ['distributed', 'webhook'].includes(type) ||
+      adaptorTypeMap[adaptorType] === 'as2'
+    );
+  }
+
+  // For Imports Nestuite and Salesforce are Distributed Imports
+  // Update If added any later
+  return ['netsuite', 'salesforce'].includes(adaptorTypeMap[adaptorType]);
+}

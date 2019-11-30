@@ -23,8 +23,13 @@ import {
   getPreviewStageData,
 } from '../../../utils/flowData';
 import { exportPreview, pageProcessorPreview } from '../previewCalls';
+import requestRealTimeMetadata from '../realTimeMetadataUpdates';
 import mappingUtil from '../../../utils/mapping';
-import { adaptorTypeMap, isNewId } from '../../../utils/resource';
+import {
+  adaptorTypeMap,
+  isNewId,
+  isRealTimeOrDistributedResource,
+} from '../../../utils/resource';
 
 function* initFlowData({ flowId, resourceId, resourceType }) {
   const { merged: flow } = yield select(resourceData, 'flows', flowId);
@@ -69,6 +74,8 @@ function* requestSampleData({
   refresh = false,
   isInitialized,
 }) {
+  if (!flowId || !resourceId) return;
+
   // Updates flow state
   // isInitialized prop is passed explicitly from internal sagas calling this Saga
   if (!isInitialized) {
@@ -150,22 +157,33 @@ export function* fetchPageProcessorPreview({
 
 export function* fetchPageGeneratorPreview({ flowId, _pageGeneratorId }) {
   if (!flowId || !_pageGeneratorId) return;
+  const { merged: resource = {} } = yield select(
+    resourceData,
+    'exports',
+    _pageGeneratorId
+  );
 
   try {
-    const previewData = yield call(exportPreview, {
-      resourceId: _pageGeneratorId,
-      runOffline: true,
-      throwOnError: true,
-    });
-    const parseData = getPreviewStageData(previewData, 'parse');
+    let previewData;
+
+    if (isRealTimeOrDistributedResource(resource)) {
+      // fetch data from real time sample data
+      previewData = yield call(requestRealTimeMetadata, { resource });
+    } else {
+      previewData = yield call(exportPreview, {
+        resourceId: _pageGeneratorId,
+        runOffline: true,
+        throwOnError: true,
+      });
+      previewData = getPreviewStageData(previewData, 'parse');
+    }
 
     yield put(
       actions.flowData.receivedPreviewData(
         flowId,
         _pageGeneratorId,
-        parseData,
-        'raw',
-        true
+        previewData,
+        'raw'
       )
     );
   } catch (e) {

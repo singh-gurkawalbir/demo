@@ -6,7 +6,10 @@ import {
   isRawDataPatchSet,
   getPreviewStageData,
 } from '../../../utils/flowData';
-import { isFileAdaptor } from '../../../utils/resource';
+import {
+  isFileAdaptor,
+  isRealTimeOrDistributedResource,
+} from '../../../utils/resource';
 import { exportPreview, pageProcessorPreview } from '../previewCalls';
 import { saveRawDataOnResource } from './utils';
 import saveRawDataForFileAdaptors from './fileAdaptorUpdates';
@@ -30,6 +33,10 @@ function* fetchAndSaveRawDataForResource({
       type,
     });
   }
+
+  // Raw data need not be updated on save for real time resources
+  // Covers - NS/SF/Webhooks
+  if (isRealTimeOrDistributedResource(resourceObj)) return;
 
   if (type === 'exports') {
     const exportPreviewData = yield call(exportPreview, {

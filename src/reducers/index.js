@@ -2015,6 +2015,32 @@ export function metadataOptionsAndResources({
   );
 }
 
+/*
+ * TODO: @Raghu - Should be removed and use above selector
+ * Function Definition needs to be changed to 
+ * metadataOptionsAndResources(
+    state,
+    { 
+      connectionId,
+      commMetaPath,
+      filterKey,
+  }) to support yield select
+  * Change needs to be done all the places where it is getting called
+ */
+export function getMetadataOptions(
+  state,
+  { connectionId, commMetaPath, filterKey }
+) {
+  return (
+    optionsFromMetadata({
+      state,
+      connectionId,
+      commMetaPath,
+      filterKey,
+    }) || {}
+  );
+}
+
 export function isValidatingNetsuiteUserRoles(state) {
   const commPath = commKeyGen('/netsuite/alluserroles', 'POST');
 
