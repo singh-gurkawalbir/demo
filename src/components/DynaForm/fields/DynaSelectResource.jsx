@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import sift from 'sift';
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector, useDispatch } from 'react-redux';
-import { withRouter, Link } from 'react-router-dom';
+import { useHistory, Link, useLocation } from 'react-router-dom';
 import { IconButton } from '@material-ui/core';
 import * as selectors from '../../../reducers';
 import AddIcon from '../../icons/AddIcon';
@@ -17,6 +17,54 @@ import {
   defaultPatchSetConverter,
   getMissingPatchSet,
 } from '../../../forms/utils';
+
+const handleAddNewResource = args => {
+  const {
+    dispatch,
+    history,
+    location,
+    resourceType,
+    options,
+    newResourceId,
+  } = args;
+
+  if (
+    [
+      'exports',
+      'imports',
+      'connections',
+      'pageProcessor',
+      'pageGenerator',
+    ].includes(resourceType)
+  ) {
+    let values;
+
+    if (['pageProcessor', 'pageGenerator'].includes(resourceType))
+      values = resourceMeta[resourceType].preSave({
+        application: options.appType,
+        '/name': `New ${options.appType} resource`,
+      });
+    else
+      values = resourceMeta[resourceType].new.preSave({
+        application: options.appType,
+        '/name': `New ${options.appType} resource`,
+      });
+    const patchValues = defaultPatchSetConverter(values);
+    const missingPatches = getMissingPatchSet(
+      patchValues.map(patch => patch.path)
+    );
+
+    dispatch(
+      actions.resource.patchStaged(
+        newResourceId,
+        [...missingPatches, ...patchValues],
+        'value'
+      )
+    );
+  }
+
+  history.push(`${location.pathname}/edit/${resourceType}/${newResourceId}`);
+};
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -59,12 +107,14 @@ function DynaSelectResource(props) {
     resourceType,
     allowNew,
     allowEdit,
-    location,
     options,
     filter,
     ignoreEnvironmentFilter,
   } = props;
   const classes = useStyles();
+  const location = useLocation();
+  const dispatch = useDispatch();
+  const history = useHistory();
   const [newResourceId, setNewResourceId] = useState(generateNewId());
   const { resources = [] } = useSelector(state =>
     selectors.resourceList(state, {
@@ -75,6 +125,13 @@ function DynaSelectResource(props) {
   const createdId = useSelector(state =>
     selectors.createdResourceId(state, newResourceId)
   );
+
+  useEffect(() => {
+    if (options.appType) {
+      onFieldChange(id, '');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, options.appType]);
 
   useEffect(() => {
     if (createdId) {
@@ -102,49 +159,19 @@ function DynaSelectResource(props) {
     label: conn.name,
     value: conn._id,
   }));
-  const dispatch = useDispatch();
-  const addNewResource = () => {
-    if (
-      [
-        'exports',
-        'imports',
-        'connections',
-        'pageProcessor',
-        'pageGenerator',
-      ].includes(resourceType)
-    ) {
-      let values;
+  const handleAddNewResourceMemo = useCallback(
+    () =>
+      handleAddNewResource({
+        dispatch,
+        history,
+        location,
+        resourceType,
+        options,
+        newResourceId,
+      }),
+    [dispatch, history, location, newResourceId, options, resourceType]
+  );
 
-      if (['pageProcessor', 'pageGenerator'].includes(resourceType))
-        values = resourceMeta[resourceType].preSave({
-          application: options.appType,
-          '/name': `New ${options.appType} resource`,
-        });
-      else
-        values = resourceMeta[resourceType].new.preSave({
-          application: options.appType,
-          '/name': `New ${options.appType} resource`,
-        });
-      const patchValues = defaultPatchSetConverter(values);
-      const missingPatches = getMissingPatchSet(
-        patchValues.map(patch => patch.path)
-      );
-
-      dispatch(
-        actions.resource.patchStaged(
-          newResourceId,
-          [...missingPatches, ...patchValues],
-          'value'
-        )
-      );
-    }
-
-    props.history.push(
-      `${location.pathname}/edit/${resourceType}/${newResourceId}`
-    );
-  };
-
-  // Disable adding a new resource when the user has selected an existing resource
   return (
     <div className={classes.root}>
       <LoadResources required resources={resourceType}>
@@ -168,7 +195,7 @@ function DynaSelectResource(props) {
           <IconButton
             data-test="addNewResource"
             className={classes.iconButton}
-            onClick={addNewResource}
+            onClick={handleAddNewResourceMemo}
             size="small">
             <AddIcon />
           </IconButton>
@@ -176,6 +203,7 @@ function DynaSelectResource(props) {
 
         {allowEdit && (
           <IconButton
+            // Disable adding a new resource when the user has selected an existing resource
             disabled={!value}
             data-test="editNewResource"
             className={classes.iconButton}
@@ -190,4 +218,4 @@ function DynaSelectResource(props) {
   );
 }
 
-export default withRouter(DynaSelectResource);
+export default DynaSelectResource;
