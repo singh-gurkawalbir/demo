@@ -2,7 +2,7 @@ import { Fragment, useCallback, useState, useEffect } from 'react';
 import { deepClone } from 'fast-json-patch';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography, Button } from '@material-ui/core';
+import Button from '@material-ui/core/Button';
 import IconTextButton from '../../../../IconTextButton';
 import EditIcon from '../../../../icons/EditIcon';
 import ArrowLeftIcon from '../../../../icons/ArrowLeftIcon';
@@ -16,6 +16,7 @@ import metadata from './metadata';
 import CodeEditor from '../../../../CodeEditor';
 import actions from '../../../../../actions';
 import Spinner from '../../../../Spinner';
+import ActionButton from '../../../../ActionButton';
 
 const getRelationShipName = (options, parentField, childSObject) => {
   const { label: relationshipName } =
@@ -218,8 +219,8 @@ function FirstLevelModal(props) {
 
   return (
     <ModalDialog show onClose={handleClose}>
-      <Typography>Related Lists</Typography>
-      <Fragment>
+      <div>Related Lists</div>
+      <div>
         {!editListItemModelOpen ? (
           <Fragment>
             <IconTextButton
@@ -260,21 +261,27 @@ function FirstLevelModal(props) {
             />
           </Fragment>
         )}
-      </Fragment>
+      </div>
       {!editListItemModelOpen && (
-        <Fragment>
-          <Button data-test="closeRelatedListModal" onClick={handleClose}>
-            Cancel
-          </Button>
+        <div>
           <Button
             data-test="saveRelatedList"
+            variant="outlined"
+            color="primary"
             onClick={() => {
               onFieldChange(id, value);
               handleClose();
             }}>
             Save
           </Button>
-        </Fragment>
+          <Button
+            data-test="closeRelatedListModal"
+            onClick={handleClose}
+            variant="text"
+            color="primary">
+            Cancel
+          </Button>
+        </div>
       )}
     </ModalDialog>
   );
@@ -286,6 +293,10 @@ const useStyles = makeStyles(theme => ({
     marginRight: theme.spacing(1),
     marginTop: theme.spacing(1),
     height: theme.spacing(30),
+    width: '100%',
+  },
+  wrapperEditorContainer: {
+    flexDirection: `row !important`,
   },
 }));
 
@@ -328,24 +339,28 @@ export default function DynaRelatedList(props) {
       {firstLevelModalOpen ? (
         <FirstLevelModal {...props} handleClose={toggleFirstLevelModalOpen} />
       ) : null}
-      <div className={classes.inlineEditorContainer}>
-        <span>{props.label}</span>
-        <CodeEditor
-          {...props}
-          mode="json"
-          data-test={id || 'relatedListContent'}
-          readOnly
-        />
-        {status === 'refreshed' ? (
-          <Spinner />
-        ) : (
-          <IconTextButton
-            data-test="editRelatedList"
-            onClick={toggleFirstLevelModalOpen}
-            disabled={disabled}>
-            <EditIcon />
-          </IconTextButton>
-        )}
+      <div className={classes.wrapperEditorContainer}>
+        <div className={classes.inlineEditorContainer}>
+          <span>{props.label}</span>
+          <CodeEditor
+            {...props}
+            mode="json"
+            data-test={id || 'relatedListContent'}
+            readOnly
+          />
+        </div>
+        <div>
+          {status === 'refreshed' ? (
+            <Spinner />
+          ) : (
+            <ActionButton
+              data-test="editRelatedList"
+              onClick={toggleFirstLevelModalOpen}
+              disabled={disabled}>
+              <EditIcon />
+            </ActionButton>
+          )}
+        </div>
       </div>
     </Fragment>
   );
