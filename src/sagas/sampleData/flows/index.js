@@ -66,6 +66,7 @@ function* requestSampleData({
   resourceId,
   resourceType,
   stage,
+  refresh = false,
   isInitialized,
 }) {
   // Updates flow state
@@ -74,8 +75,16 @@ function* requestSampleData({
     yield call(initFlowData, { flowId, resourceId, resourceType });
   }
 
+  if (refresh) {
+    // refresh prop resets the entire state from this resourceId in flow state to fetch again
+    yield put(actions.flowData.reset(flowId, resourceId));
+  }
+
   // Updates preProcessedData for the procesors
   const sampleDataStage = getSampleDataStage(stage, resourceType);
+
+  // Updates sample data stage status as requested
+  yield put(actions.flowData.requestStage(flowId, resourceId, sampleDataStage));
 
   try {
     if (resourceType === 'imports') {
