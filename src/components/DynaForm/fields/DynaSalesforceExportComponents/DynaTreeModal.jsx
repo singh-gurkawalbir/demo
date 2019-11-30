@@ -1,4 +1,4 @@
-import { Typography, Button } from '@material-ui/core';
+import Button from '@material-ui/core/Button';
 import { Fragment, useCallback, useState } from 'react';
 import DynaText from '../DynaText';
 import AddIcon from '../../../icons/AddIcon';
@@ -21,13 +21,16 @@ export const ReferencedFieldsModal = props => {
 
   return (
     <ModalDialog show onClose={handleClose}>
-      <Typography>Select Referenced Fields</Typography>
-      <RefreshableTreeComponent
-        {...rest}
-        setSelectedValues={setSelectedValues}
-        selectedValues={selectedValues}
-      />
-      <Fragment>
+      <div>Select Referenced Fields</div>
+      <div>
+        <RefreshableTreeComponent
+          {...rest}
+          setSelectedValues={setSelectedValues}
+          selectedValues={selectedValues}
+        />
+      </div>
+
+      <div>
         <Button data-test="closeReferencedFieldsDialog" onClick={handleClose}>
           Cancel
         </Button>
@@ -39,7 +42,7 @@ export const ReferencedFieldsModal = props => {
           }}>
           Add Selected
         </Button>
-      </Fragment>
+      </div>
     </ModalDialog>
   );
 };

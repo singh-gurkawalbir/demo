@@ -41,7 +41,7 @@ export default {
       },
     ],
   },
-  'netsuite_da.blob.operation': {
+  'netsuite.operation': {
     type: 'radiogroup',
     label: 'Operation',
     required: true,
@@ -136,7 +136,7 @@ export default {
     label: 'Name',
     visibleWhenAll: [
       {
-        field: 'netsuite_da.blob.operation',
+        field: 'netsuite.operation',
         is: ['add', 'addupdate'],
       },
       {
@@ -150,7 +150,7 @@ export default {
     label: 'File Type',
     visibleWhenAll: [
       {
-        field: 'netsuite_da.blob.operation',
+        field: 'netsuite.operation',
         is: ['add', 'addupdate'],
       },
       {
@@ -164,7 +164,7 @@ export default {
     label: 'Folder',
     visibleWhenAll: [
       {
-        field: 'netsuite_da.blob.operation',
+        field: 'netsuite.operation',
         is: ['add', 'addupdate'],
       },
       {
@@ -178,7 +178,7 @@ export default {
     label: 'File Internal Id',
     visibleWhenAll: [
       {
-        field: 'netsuite_da.blob.operation',
+        field: 'netsuite.operation',
         is: ['update', 'delete'],
       },
       {
