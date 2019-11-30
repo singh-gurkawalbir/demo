@@ -230,6 +230,9 @@ export default {
         },
       ],
     },
+    'salesforce.objectType': {
+      fieldId: 'salesforce.objectType',
+    },
     'salesforce.distributed.qualifier': {
       fieldId: 'salesforce.distributed.qualifier',
       refreshOptionsOnChangesTo: ['salesforce.sObjectType'],
@@ -247,6 +250,7 @@ export default {
       'salesforce.executionType',
       'exportData',
       'salesforce.sObjectType',
+      'salesforce.objectType',
       'salesforce.distributed.requiredTrigger',
       'salesforce.distributed.referencedFields',
       'salesforce.distributed.relatedLists',
