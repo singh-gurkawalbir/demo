@@ -1,0 +1,99 @@
+.query-builder .rules-group-container {
+  padding: 10px;
+  border: 1px solid #e6e6e6 !important;
+  background: rgba(236, 236, 236, 0.5) !important;
+  border-radius: 0 !important;
+}
+
+.query-builder .btn {
+  background-color: #007ec5;
+  border-color: #007ec5;
+  border-radius: 0;
+  border: solid 1px transparent;
+  font-size: 12px;
+  line-height: 17px;
+  font-weight: 300;
+  color: #fff;
+}
+
+.query-builder .btn.active {
+  background-image: none;
+  outline: 0;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+
+.query-builder .glyphicon-check:before {
+  content: '\e067';
+}
+.query-builder .glyphicon-unchecked:before {
+  content: '';
+}
+.query-builder .glyphicon-remove:before {
+  content: '\2715';
+}
+
+.query-builder .glyphicon-warning-sign:before {
+  content: '\26A0';
+}
+
+.query-builder .btn-default {
+  color: #000;
+  background: #fff;
+  border-color: #bbb;
+}
+
+.query-builder .btn.btn-xs.btn-danger {
+  background-color: #aaa;
+}
+
+.query-builder .rules-group-container .rules-group-header .btn-primary {
+  background-color: #bbb;
+  border-color: #bbb;
+  padding: 2px;
+}
+
+.query-builder .rules-group-container .rules-group-header .btn-primary.active {
+  background-color: #4ed964;
+  border-color: #4ed964;
+  padding: 2px;
+}
+
+.query-builder .btn-group,
+.btn-group-vertical {
+  position: relative;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.query-builder .form-control {
+  height: 34px;
+  padding: 6px 12px;
+  font-size: 14px;
+  line-height: 1.42857143;
+  color: #555;
+  background-color: #fff;
+  background-image: none;
+  border: 1px solid #ddd;
+}
+
+.pull-right {
+  float: right;
+}
+.rule-container .settings-icon {
+  height: 20px;
+  padding-left: 5px;
+  margin-right: -25px;
+}
+.rule-filter-container {
+  padding-right: 25px;
+}
+
+.netsuite-lookup-filters
+  .rules-group-container
+  .rules-group-container
+  .rules-group-container
+  .rules-group-container
+  [data-add='group'] {
+  display: none;
+}

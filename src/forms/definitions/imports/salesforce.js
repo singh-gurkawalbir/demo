@@ -119,6 +119,7 @@ export default {
     },
     'salesforce.idLookup.whereClause': {
       fieldId: 'salesforce.idLookup.whereClause',
+      refreshOptionsOnChangesTo: ['salesforce.sObjectType'],
     },
     ignoreExisting: {
       fieldId: 'ignoreExisting',
@@ -219,5 +220,22 @@ export default {
         fields: ['advancedSettings', 'deleteAfterImport'],
       },
     ],
+  },
+  optionsHandler: (fieldId, fields) => {
+    if (fieldId === 'salesforce.idLookup.whereClause') {
+      const sObjectTypeField = fields.find(
+        field => field.id === 'salesforce.sObjectType'
+      );
+
+      return {
+        disableFetch: !(sObjectTypeField && sObjectTypeField.value),
+        commMetaPath: sObjectTypeField
+          ? `salesforce/metadata/connections/${sObjectTypeField.connectionId}/sObjectTypes/${sObjectTypeField.value}`
+          : '',
+        resetValue: [],
+      };
+    }
+
+    return null;
   },
 };
