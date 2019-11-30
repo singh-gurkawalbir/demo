@@ -4,8 +4,8 @@ import * as selectors from '../../../reducers';
 import DynaNetSuiteLookup from './DynaNetSuiteLookup';
 // TODO: change the references to point to correct filters
 import DynaSFLookup from './DynaNetSuiteLookup';
-import DynaNSQualifier from './DynaNetSuiteLookup';
-import DynaSFQualifier from './DynaNetSuiteLookup';
+import DynaSFQualifier from './DynaSalesforceQualifier';
+import DynaNSQualifier from './DynaNetSuiteQualificationCriteria';
 
 export default function DynaIAExpression(props) {
   const { flowId, properties = {}, expressionType: type } = props;
@@ -66,7 +66,7 @@ export default function DynaIAExpression(props) {
       commMetaPath = `salesforce/metadata/connections/${connection._id}/sObjectTypes/${resource.salesforce.sObjectType}`;
     } else {
       filterType = 'netsuiteQualifier';
-      commMetaPath = `netsuite/metadata/suitescript/connections/${connection._id}/recordTypes/${resource.netsuite_da.recordType}/searchFilters?includeJoinFilters=true`;
+      commMetaPath = `netsuite/metadata/suitescript/connections/${connection._id}/recordTypes/${resource.netsuite.distributed.recordType}/searchFilters?includeJoinFilters=true`;
     }
   }
 

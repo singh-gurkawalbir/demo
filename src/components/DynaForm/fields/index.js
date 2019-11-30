@@ -55,13 +55,16 @@ import DynaToggle from './DynaToggle';
 import DynaSQLQueryBuilder from './DynaSQLQueryBuilder';
 import DynaRelativeURIWithLookup from './DynaRelativeURIWithLookup';
 import Salesforce from './DynaSalesforceExportComponents';
-import { ReferencedFieldsModal } from './DynaSalesforceExportComponents/DynaReferenedFields';
+import { ReferencedFieldsModal } from './DynaSalesforceExportComponents/DynaTreeModal';
 import DynaNetSuiteLookupFilters from './DynaNetSuiteLookupFilters';
 import DynaNetSuiteLookup from './DynaNetSuiteLookup';
 import DynaIAExpression from './DynaIAExpression';
 import DynaUserEmail from './DynaUserEmail';
 import DynaUserPassword from './DynaUserPassword';
 import DynaIclient from './DynaIclient';
+import DynaNetSuiteQualifier from './DynaNetSuiteQualifier';
+import DynaSalesforceQualifier from './DynaSalesforceQualifier';
+import DynaQuery from './DynaQuery';
 
 export default {
   mapping: DynaImportMapping,
@@ -122,17 +125,22 @@ export default {
   integrationapprefreshableselect: DynaRefreshableIntegrationAppSetting,
   date: DynaDate,
   sqlquerybuilder: DynaSQLQueryBuilder,
+  salesforcequalifier: DynaSalesforceQualifier,
   relativeuriwithlookup: DynaRelativeURIWithLookup,
   salesforcerequiredtrigger: Salesforce.DynaRequiredTrigger,
-  salesforcereferencedfields: Salesforce.DynaReferenedFields,
-  salesforcesobjecttype: Salesforce.DynaSObjectType,
+  salesforcereferencedfields: Salesforce.DynaReferencedFields,
   salesforcerelatedlistmodal: ReferencedFieldsModal,
   salesforcerelatedlist: Salesforce.DynaRelatedList,
   salesforcetreemodal: Salesforce.DynaTreeModal,
+  salesforcereferencedfieldsia:
+    Salesforce.IASettingsComponents.DynaReferencedFieldsIA,
+  salesforcerelatedlistia: Salesforce.IASettingsComponents.DynaRelatedListIA,
   netsuitelookupfilters: DynaNetSuiteLookupFilters,
   netsuitelookup: DynaNetSuiteLookup,
   iaexpression: DynaIAExpression,
   useremail: DynaUserEmail,
   userpassword: DynaUserPassword,
   dynaiclient: DynaIclient,
+  netsuitequalifier: DynaNetSuiteQualifier,
+  query: DynaQuery,
 };

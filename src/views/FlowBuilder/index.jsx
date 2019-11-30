@@ -25,6 +25,7 @@ import CalendarIcon from '../../components/icons/CalendarIcon';
 import EditableText from '../../components/EditableText';
 import SwitchOnOff from '../../components/OnOff';
 import { generateNewId } from '../../utils/resource';
+import { isConnector } from '../../utils/flows';
 import FlowEllipsisMenu from '../../components/FlowEllipsisMenu';
 
 // #region FLOW SCHEMA: FOR REFERENCE DELETE ONCE FB IS COMPLETE
@@ -236,9 +237,11 @@ function FlowBuilder(props) {
 
     return imp ? 'import' : 'export';
   });
-  const isViewMode = useSelector(state =>
+  const isConnectorType = isConnector(flow);
+  const isMonitorLevelAccess = useSelector(state =>
     selectors.isFormAMonitorLevelAccess(state, integrationId)
   );
+  const isViewMode = isMonitorLevelAccess || isConnectorType;
   // #endregion
   const patchFlow = useCallback(
     (path, value) => {
@@ -411,10 +414,16 @@ function FlowBuilder(props) {
       <ResourceDrawer
         {...props}
         flowId={flowId}
+        disabled={isViewMode}
         integrationId={integrationId}
       />
       <RunDrawer {...props} flowId={flowId} />
-      <ScheduleDrawer isViewMode={isViewMode} {...props} flow={flow} />
+      <ScheduleDrawer
+        isViewMode={isMonitorLevelAccess}
+        isConnector={isConnectorType}
+        {...props}
+        flow={flow}
+      />
       <SettingsDrawer isViewMode={isViewMode} {...props} flow={flow} />
       {/* <WizardDrawer {...props} flowId={flowId} /> */}
 
@@ -429,11 +438,14 @@ function FlowBuilder(props) {
         <div className={classes.actions}>
           <SwitchOnOff.component
             resource={flow}
-            disabled={isNewFlow || isViewMode}
+            disabled={isNewFlow || isMonitorLevelAccess}
+            isConnector={isConnectorType}
             data-test="switchFlowOnOff"
           />
           <IconButton
-            disabled={isNewFlow || !(flow && flow.isRunnable) || isViewMode}
+            disabled={
+              isNewFlow || !(flow && flow.isRunnable) || isMonitorLevelAccess
+            }
             data-test="runFlow"
             onClick={() => {
               dispatch(actions.flow.run({ flowId }));
@@ -454,11 +466,12 @@ function FlowBuilder(props) {
             data-test="flowSettings">
             <SettingsIcon />
           </IconButton>
-
-          <FlowEllipsisMenu
-            flowId={flowId}
-            exclude={['mapping', 'detach', 'audit', 'schedule']}
-          />
+          {!isConnectorType && (
+            <FlowEllipsisMenu
+              flowId={flowId}
+              exclude={['mapping', 'detach', 'audit', 'schedule']}
+            />
+          )}
         </div>
       </CeligoPageBar>
       <div

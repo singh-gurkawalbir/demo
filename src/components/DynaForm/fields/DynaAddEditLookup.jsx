@@ -2,7 +2,7 @@ import { useState, Fragment } from 'react';
 import clsx from 'clsx';
 import { Button, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import LookupDialog from '../../AFE/ManageLookup/Lookup/Dialog';
+import AddEditLookupDialog from '../../AFE/ManageLookup/AddEditLookup/Dialog';
 
 const useStyles = makeStyles({
   container: {
@@ -50,7 +50,7 @@ export default function DynaAddEditLookup(props) {
   return (
     <Fragment>
       {showLookup && (
-        <LookupDialog
+        <AddEditLookupDialog
           lookup={value}
           showDynamicLookupOnly={showDynamicLookupOnly}
           id={id}

@@ -22,7 +22,7 @@ export default function DynaFileDefinitionSelect(props) {
   function handleFileDefinitionChange(id, value) {
     const definitionSelected = fileDefinitions.find(def => def.value === value);
 
-    if (!definitionSelected.template) {
+    if (definitionSelected && !definitionSelected.template) {
       dispatch(
         actions.fileDefinitions.definition.preBuilt.request(format, value)
       );
