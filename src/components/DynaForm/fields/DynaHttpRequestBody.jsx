@@ -19,6 +19,10 @@ export default function DynaHttpRequestBody(props) {
     options = {},
     value,
     label,
+    title,
+    resultTitle,
+    ruleTitle,
+    dataTitle,
     resourceId,
     connectionId,
     resourceType,
@@ -130,7 +134,7 @@ export default function DynaHttpRequestBody(props) {
       {showEditor && (
         <HttpRequestBodyEditorDialog
           contentType={contentType === 'json' ? 'json' : 'xml'}
-          title="Build HTTP Request Body"
+          title={title || 'Build HTTP Request Body'}
           id={`${resourceId}-${id}`}
           rule={parsedRule}
           onFieldChange={onFieldChange}
@@ -138,6 +142,9 @@ export default function DynaHttpRequestBody(props) {
           data={formattedSampleData}
           onClose={handleClose}
           action={lookupField}
+          ruleTitle={ruleTitle}
+          dataTitle={dataTitle}
+          resultTitle={resultTitle}
         />
       )}
       <Button
