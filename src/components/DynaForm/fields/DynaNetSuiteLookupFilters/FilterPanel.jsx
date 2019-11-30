@@ -11,7 +11,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import 'jQuery-QueryBuilder';
 import 'jQuery-QueryBuilder/dist/css/query-builder.default.css';
 import jQuery from 'jquery';
-import { isEmpty } from 'lodash';
+import { isEmpty, uniqBy } from 'lodash';
 import config from './config';
 import './queryBuilder.css';
 import {
@@ -62,7 +62,11 @@ export default function FilterPanel({
     [dispatch, editorId, id, onFieldChange]
   );
   const jsonPathsFromData = useMemo(
-    () => filters.map(sf => ({ id: sf.value, ...sf, name: sf.label })),
+    () =>
+      uniqBy(
+        filters.map(sf => ({ id: sf.value, ...sf, name: sf.label })),
+        'id'
+      ),
     [filters]
   );
 
