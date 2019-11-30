@@ -1,7 +1,10 @@
 import { call, select } from 'redux-saga/effects';
 import { getNetsuiteOrSalesforceMeta } from '../resources/meta';
 import { getMetadataOptions } from '../../reducers';
-import { getNetsuiteRealTimeSampleData } from '../../utils/sampleData';
+import {
+  getNetsuiteRealTimeSampleData,
+  getSalesforceRealTimeSampleData,
+} from '../../utils/sampleData';
 
 /*
  * Should return sample data back from this saga
@@ -44,6 +47,34 @@ export default function* requestRealTimeMetadata({ resource }) {
         const { data: metadata } = nsMetadata;
 
         return getNetsuiteRealTimeSampleData(metadata, recordType);
+      }
+
+      case 'SalesforceExport': {
+        // Adding basic flow for Salesforce Sample data
+        // Need to add actual logic and return the same
+        const { _connectionId: connectionId, salesforce } = resource;
+        const commMetaPath = `salesforce/metadata/connections/${connectionId}/sObjectTypes/${salesforce.sObjectType}`;
+        let sfMetadata = yield select(getMetadataOptions, {
+          connectionId,
+          commMetaPath,
+          filterKey: 'raw',
+        });
+
+        if (!sfMetadata || !sfMetadata.data) {
+          yield call(getNetsuiteOrSalesforceMeta, {
+            connectionId,
+            commMetaPath,
+          });
+          sfMetadata = yield select(getMetadataOptions, {
+            connectionId,
+            commMetaPath,
+            filterKey: 'raw',
+          });
+        }
+
+        const { data: metadata } = sfMetadata;
+
+        return getSalesforceRealTimeSampleData(metadata);
       }
 
       default:

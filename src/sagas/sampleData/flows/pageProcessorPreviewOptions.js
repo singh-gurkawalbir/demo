@@ -26,10 +26,9 @@ function* getUIDataForResource({ resource }) {
 
   if (adaptorType) {
     switch (adaptorType) {
-      case 'NetSuiteExport': {
+      case 'NetSuiteExport':
+      case 'SalesforceExport':
         return yield call(requestRealTimeMetadata, { resource });
-      }
-
       case 'WebhookExport': {
         // Sample data exists on resource
         // TODO: @Raghu Add webhooks form field sample data feature
