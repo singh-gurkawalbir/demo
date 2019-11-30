@@ -5,7 +5,7 @@ import DynaNetSuiteLookup from './DynaNetSuiteLookup';
 // TODO: change the references to point to correct filters
 import DynaSFLookup from './DynaNetSuiteLookup';
 import DynaSFQualifier from './DynaSalesforceQualifier';
-import DynaNSQualifier from './DynaNetSuiteQualificationCriteria';
+import DynaNSQualifier from './DynaNetSuiteQualifier';
 
 export default function DynaIAExpression(props) {
   const { flowId, properties = {}, expressionType: type } = props;
