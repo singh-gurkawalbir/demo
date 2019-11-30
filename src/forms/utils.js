@@ -463,7 +463,8 @@ export const integrationSettingsToDynaFormMetadata = (
     };
   }
 
-  finalData.actions = [];
+  if (!sections) finalData.actions = [{ id: 'saveintegrationsettings' }];
+  else finalData.actions = [];
 
   return finalData;
 };

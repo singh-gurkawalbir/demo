@@ -33,6 +33,7 @@ const wrapper = {
 const fieldStyle = {
   flexGrow: '1',
   textAlign: 'left',
+  width: '100%',
 };
 const fieldsToSkipHelpPopper = ['labeltitle'];
 const FieldActions = props => {
