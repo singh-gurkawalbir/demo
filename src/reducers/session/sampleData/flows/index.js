@@ -34,6 +34,27 @@ export default function(state = {}, action) {
         break;
       }
 
+      case actionTypes.FLOW_DATA.STAGE_REQUEST: {
+        if (!resourceId || !flowId || !stage) return;
+        const resourceMap =
+          draft[flowId][
+            isPageGeneratorResource(draft[flowId], resourceId)
+              ? 'pageGeneratorsMap'
+              : 'pageProcessorsMap'
+          ] || {};
+
+        resourceMap[resourceId] = {
+          ...resourceMap[resourceId],
+        };
+        resourceMap[resourceId][stage] = {
+          ...resourceMap[resourceId][stage],
+          status: 'requested',
+        };
+        break;
+      }
+
+      // TODO: @Raghu Below request actions for preview and processor can be removed
+      // as we are now handling request stage using generic stageRequest action above
       case actionTypes.FLOW_DATA.PREVIEW_DATA_REQUEST: {
         if (!resourceId) return;
         const resourceMap =
