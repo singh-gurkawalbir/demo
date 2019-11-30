@@ -10,6 +10,7 @@ import sql from './sql';
 import filter from './filter';
 import netsuiteLookupFilter from './netsuiteLookupFilter';
 import netsuiteQualificationCriteria from './netsuiteQualificationCriteria';
+import salesforceQualifier from './salesforceQualifier';
 
 const logicMap = {
   xmlParser,
@@ -24,6 +25,7 @@ const logicMap = {
   filter,
   netsuiteLookupFilter,
   netsuiteQualificationCriteria,
+  salesforceQualifier,
 };
 
 function getLogic(editor) {

@@ -63,6 +63,8 @@ import DynaUserEmail from './DynaUserEmail';
 import DynaUserPassword from './DynaUserPassword';
 import DynaIclient from './DynaIclient';
 import DynaNetSuiteQualifier from './DynaNetSuiteQualifier';
+import DynaSalesforceQualifier from './DynaSalesforceQualifier';
+import DynaQuery from './DynaQuery';
 
 export default {
   mapping: DynaImportMapping,
@@ -123,6 +125,7 @@ export default {
   integrationapprefreshableselect: DynaRefreshableIntegrationAppSetting,
   date: DynaDate,
   sqlquerybuilder: DynaSQLQueryBuilder,
+  salesforcequalifier: DynaSalesforceQualifier,
   relativeuriwithlookup: DynaRelativeURIWithLookup,
   salesforcerequiredtrigger: Salesforce.DynaRequiredTrigger,
   salesforcereferencedfields: Salesforce.DynaReferencedFields,
@@ -139,4 +142,5 @@ export default {
   userpassword: DynaUserPassword,
   dynaiclient: DynaIclient,
   netsuitequalifier: DynaNetSuiteQualifier,
+  query: DynaQuery,
 };

@@ -71,6 +71,7 @@
     "redux-saga-requests-fetch": "0.9.6",
     "shortid": "2.2.14",
     "sift": "^8.5.0",
+    "sql-parser-mistic": "^1.2.3",
     "typeface-roboto": "0.0.75",
     "why-did-you-update": "0.1.1",
     "xlsx": "0.15.1"

@@ -2,6 +2,19 @@ import produce from 'immer';
 import { sortBy } from 'lodash';
 import actionTypes from '../../../actions/types';
 
+const addSubHeaderElement = (acc, curr) => {
+  if (acc.length === 0) {
+    acc.push(...[{ subHeader: curr.vendor }, curr]);
+  } else if (
+    acc[acc.length - 1].vendor &&
+    acc[acc.length - 1].vendor !== curr.vendor
+  )
+    acc.push(...[{ subHeader: curr.vendor }, curr]);
+  else acc.push(curr);
+
+  return acc;
+};
+
 function generateFileDefinitionOptions({ definitions }) {
   if (!definitions || !definitions.length) return {};
   const categorizedDefinitionMap = {};
@@ -39,15 +52,15 @@ function generateFileDefinitionOptions({ definitions }) {
   categorizedDefinitionMap.edi = sortBy(
     categorizedDefinitionMap.edi,
     sortByKeys
-  );
+  ).reduce(addSubHeaderElement, []);
   categorizedDefinitionMap.ediFact = sortBy(
     categorizedDefinitionMap.ediFact,
     sortByKeys
-  );
+  ).reduce(addSubHeaderElement, []);
   categorizedDefinitionMap.fixed = sortBy(
     categorizedDefinitionMap.fixed,
     sortByKeys
-  );
+  ).reduce(addSubHeaderElement, []);
 
   return categorizedDefinitionMap;
 }

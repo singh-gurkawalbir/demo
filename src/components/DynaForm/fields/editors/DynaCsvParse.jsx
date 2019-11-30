@@ -9,7 +9,7 @@ export default function DynaCsvParse(props) {
   const {
     id,
     onFieldChange,
-    value,
+    value = {},
     label,
     resourceId,
     resourceType,
@@ -77,6 +77,7 @@ export default function DynaCsvParse(props) {
           id={id + resourceId}
           mode="csv"
           data={csvData}
+          /** rule to be passed as json */
           rule={value}
           onClose={handleClose}
           disabled={disabled}
