@@ -82,8 +82,6 @@ export default function FilterPanel({
   useEffect(() => {
     const qbRules = convertSalesforceLookupFilterExpression(rule, data);
 
-    console.log(`qbRules ${JSON.stringify(qbRules)}`);
-
     if (
       qbRules &&
       qbRules.rules &&

@@ -88,12 +88,3 @@
 .rule-filter-container {
   padding-right: 25px;
 }
-
-.netsuite-lookup-filters
-  .rules-group-container
-  .rules-group-container
-  .rules-group-container
-  .rules-group-container
-  [data-add='group'] {
-  display: none;
-}

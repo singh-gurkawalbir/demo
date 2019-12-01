@@ -19,28 +19,7 @@ export function getFilterRuleId(rule) {
   return rule.id.split('_rule_')[1];
 }
 
-export function isComplexSalesforceFilterExpression(expression) {
-  let isComplexExpression = false;
-
-  if (isArray(expression)) {
-    expression.forEach((e, i) => {
-      if (!isComplexExpression) {
-        if (isArray(e)) {
-          isComplexExpression = isComplexSalesforceFilterExpression(e);
-        } else if (i > 0 && ['AND', 'OR'].includes(e)) {
-          isComplexExpression = true;
-        }
-      }
-    });
-  }
-
-  return isComplexExpression;
-}
-
 export function convertSalesforceLookupFilterExpression(expression, data = []) {
-  console.log(
-    `convertSalesforceLookupFilterExpression expression ${expression}`
-  );
   function generateRules(expression) {
     let toReturn = {};
     let value = expression;
@@ -48,8 +27,6 @@ export function convertSalesforceLookupFilterExpression(expression, data = []) {
     if (expression.type === 'SimpleExprParentheses') {
       [value] = expression.value.value;
     }
-
-    console.log(`value ${JSON.stringify(value)}`);
 
     if (['AND', 'OR'].includes(value.operator)) {
       toReturn.condition = value.operator.toUpperCase();
@@ -74,13 +51,6 @@ export function convertSalesforceLookupFilterExpression(expression, data = []) {
       };
     }
 
-    // if (!toReturn.condition) {
-    //   return {
-    //     condition: 'AND',
-    //     rules: [toReturn],
-    //   };
-    // }
-
     return toReturn;
   }
 
@@ -91,23 +61,20 @@ export function convertSalesforceLookupFilterExpression(expression, data = []) {
     };
   }
 
-  let updatedExpression = expression.replace(/{{{/g, "'{{{");
-
-  console.log(`updatedExpression1 ${updatedExpression}`);
-
-  updatedExpression = updatedExpression.replace(/}}}\)/g, "}}}')");
-  console.log(`updatedExpression2 ${updatedExpression}`);
-
+  const updatedExpression = expression
+    .replace(/{{{/g, "'{{{")
+    .replace(/}}}\)/g, "}}}')");
   let whereClause;
 
   try {
     whereClause = parser.parse(`select * from table where ${updatedExpression}`)
       .value.where;
   } catch (ex) {
-    return {};
+    return {
+      condition: 'AND',
+      rules: [],
+    };
   }
-
-  console.log(`whereClause ${JSON.stringify(whereClause)}`);
 
   let qbRules = generateRules(whereClause);
 
@@ -189,10 +156,6 @@ export function generateSalesforceLookupFilterExpression(
   qbRules,
   salesforceFilterDataTypes
 ) {
-  console.log(
-    `salesforceFilterDataTypes ${JSON.stringify(salesforceFilterDataTypes)}`
-  );
-
   let lhs;
   let rhs;
   let salesforceFilterExpression = '';
@@ -248,119 +211,5 @@ export function generateSalesforceLookupFilterExpression(
     salesforceFilterExpression = `(${salesforceFilterExpression})`;
   }
 
-  console.log(`salesforceFilterExpression ${salesforceFilterExpression}`);
-
   return salesforceFilterExpression;
-}
-
-export function validateFilterRule(rule) {
-  const arithmeticOperators = [
-    'add',
-    'subtract',
-    'divide',
-    'multiply',
-    'modulo',
-    'ceiling',
-    'floor',
-    'number',
-  ];
-  const r = rule.data;
-  const validation = {
-    isValid: true,
-    error: '',
-  };
-  let op;
-
-  if (r.lhs.type === 'expression') {
-    try {
-      JSON.parse(r.lhs.expression);
-
-      if (JSON.parse(r.lhs.expression).length < 2) {
-        validation.isValid = false;
-        validation.error = 'Please enter a valid expression.';
-      }
-    } catch (ex) {
-      validation.isValid = false;
-      validation.error = 'Expression should be a valid JSON.';
-    }
-
-    if (validation.isValid) {
-      [op] = JSON.parse(r.lhs.expression);
-
-      if (arithmeticOperators.includes(op)) {
-        r.lhs.dataType = 'number';
-      } else if (op === 'epochtime') {
-        r.lhs.dataType = 'epochtime';
-      } else if (op === 'boolean') {
-        r.lhs.dataType = 'boolean';
-      } else {
-        r.lhs.dataType = 'string';
-      }
-    }
-  }
-
-  if (!validation.isValid) {
-    return validation;
-  }
-
-  if (r.rhs.type === 'expression') {
-    try {
-      JSON.parse(r.rhs.expression);
-
-      if (JSON.parse(r.rhs.expression).length < 2) {
-        validation.isValid = false;
-        validation.error = 'Please enter a valid expression.';
-      }
-    } catch (ex) {
-      validation.isValid = false;
-      validation.error = 'Expression should be a valid JSON.';
-    }
-
-    if (validation.isValid) {
-      [op] = JSON.parse(r.rhs.expression);
-
-      if (arithmeticOperators.includes(op)) {
-        r.rhs.dataType = 'number';
-      } else if (op === 'epochtime') {
-        r.rhs.dataType = 'epochtime';
-      } else if (op === 'boolean') {
-        r.rhs.dataType = 'boolean';
-      } else {
-        r.rhs.dataType = 'string';
-      }
-    }
-  }
-
-  if (!validation.isValid) {
-    return validation;
-  }
-
-  if (r.lhs.dataType && r.rhs.dataType && r.lhs.dataType !== r.rhs.dataType) {
-    validation.isValid = false;
-    validation.error = 'Data types of both the operands should match.';
-  }
-
-  if (!validation.isValid) {
-    return validation;
-  }
-
-  if (r.lhs.type && !r.lhs[r.lhs.type]) {
-    validation.isValid = false;
-    validation.error = 'Please select left operand.';
-  }
-
-  if (!validation.isValid) {
-    return validation;
-  }
-
-  if (r.rhs.type && !r.rhs[r.rhs.type]) {
-    validation.isValid = false;
-    validation.error = 'Please select right operand.';
-  }
-
-  if (!validation.isValid) {
-    return validation;
-  }
-
-  return validation;
 }
