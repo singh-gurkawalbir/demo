@@ -99,11 +99,13 @@ function DynaFileDefinitionEditor(props) {
 
     if (resourceType === 'imports') {
       rule = JSON.stringify(fileDefinitionRules, null, 2);
-      formattedSampleData = JSON.stringify(
-        Array.isArray(sampleData) && sampleData.length ? sampleData[0] : {},
-        null,
-        2
-      );
+      formattedSampleData =
+        sampleData &&
+        JSON.stringify(
+          Array.isArray(sampleData) && sampleData.length ? sampleData[0] : {},
+          null,
+          2
+        );
     } else {
       rule = JSON.stringify(
         {
@@ -164,7 +166,7 @@ function DynaFileDefinitionEditor(props) {
             title="File Definition Editor"
             id={id + resourceId}
             processor={processor}
-            data={sampleData}
+            data={sampleData || props.sampleData}
             rule={value}
             onClose={handleClose}
             disabled={disabled}
