@@ -33,14 +33,18 @@ const pathRegex = {
 
 export function getPreviewStageData(previewData, previewStage = 'parse') {
   const stages = (previewData && previewData.stages) || [];
+
+  // Incase of raw preview stage, returns the first stage data is in
+  // Incase of http/rest first stage is 'raw' but for NS/SF it is parse
+  if (previewStage === 'raw') {
+    const initialStage = stages[0];
+
+    return initialStage.data;
+  }
+
   const parseStage = stages.find(stage => stage.name === previewStage);
 
-  return (
-    parseStage &&
-    (previewStage === 'raw'
-      ? parseStage.data
-      : parseStage.data && parseStage.data[0])
-  );
+  return parseStage && parseStage.data && parseStage.data[0];
 }
 
 export const getSampleDataStage = (stage, resourceType = 'exports') =>
