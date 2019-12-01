@@ -27,7 +27,7 @@ const LOOKUP_ACTION = {
   LOOKUP_SELECT: 'LOOKUP_SELECT',
 };
 const prefixRegexp = '.*{{((?!(}|{)).)*$';
-const getSuggestionsFromLookup = (lookups = [], handleUpdate) => {
+const getSuggestionsFromLookup = (lookups = [], handleUpdate, options) => {
   const suggestions = [
     {
       fixed: true,
@@ -39,6 +39,7 @@ const getSuggestionsFromLookup = (lookups = [], handleUpdate) => {
           label="New Lookup"
           onSave={handleUpdate(LOOKUP_ACTION.LOOKUP_ADD)}
           onSavelabel="Add New Lookup"
+          options={options}
         />
       ),
     },
@@ -57,6 +58,7 @@ const getSuggestionsFromLookup = (lookups = [], handleUpdate) => {
             onSave={handleUpdate(LOOKUP_ACTION.LOOKUP_EDIT, lookup)}
             showDynamicLookupOnly
             value={lookup}
+            options={options}
           />
         ),
       });
@@ -77,6 +79,8 @@ export default function InputWithLookupHandlebars(props) {
     errorMessages,
     disabled,
     multiline,
+    sampleData,
+    isSqlImport,
     onFieldChange,
     onLookupUpdate,
     lookups,
@@ -162,7 +166,11 @@ export default function InputWithLookupHandlebars(props) {
     setShowSuggestions(false);
   };
 
-  const suggestions = getSuggestionsFromLookup(lookups, handleUpdate);
+  const options = {
+    isSQLLookup: isSqlImport,
+    sampleData,
+  };
+  const suggestions = getSuggestionsFromLookup(lookups, handleUpdate, options);
   const handleSuggestions = e => {
     const pointerIndex = e.target.selectionStart;
     const _showSuggestion = !!(

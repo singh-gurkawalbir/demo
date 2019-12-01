@@ -1,6 +1,5 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import Grid from '@material-ui/core/Grid';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -11,17 +10,21 @@ import Paper from '@material-ui/core/Paper';
 
 const styles = theme => ({
   root: {
-    margin: 'auto',
+    display: 'grid',
+    gridTemplateColumns: `1fr 100px 1fr`,
   },
   paper: {
-    width: 270,
     height: 300,
     wordBreak: 'break-word',
     overflow: 'auto',
-    background: theme.palette.background.paper2,
   },
   button: {
     margin: theme.spacing(1),
+  },
+  actions: {
+    alignItems: 'center',
+    display: 'flex',
+    flexDirection: 'column',
   },
 });
 
@@ -106,54 +109,52 @@ function TransferList(props) {
   );
 
   return (
-    <Grid container className={classes.root}>
-      <Grid item>{customList(left)}</Grid>
-      <Grid item>
-        <Grid container direction="column" alignItems="center">
-          <Button
-            variant="outlined"
-            size="small"
-            className={classes.button}
-            onClick={handleAllRight}
-            data-test="movaAllRight"
-            disabled={left.length === 0}
-            aria-label="move all right">
-            ≫
-          </Button>
-          <Button
-            variant="outlined"
-            size="small"
-            className={classes.button}
-            data-test="moveSelectedRight"
-            onClick={handleCheckedRight}
-            disabled={leftChecked.length === 0}
-            aria-label="move selected right">
-            &gt;
-          </Button>
-          <Button
-            variant="outlined"
-            size="small"
-            data-test="moveSelectedLeft"
-            className={classes.button}
-            onClick={handleCheckedLeft}
-            disabled={rightChecked.length === 0}
-            aria-label="move selected left">
-            &lt;
-          </Button>
-          <Button
-            variant="outlined"
-            size="small"
-            data-test="moveAllLeft"
-            className={classes.button}
-            onClick={handleAllLeft}
-            disabled={right.length === 0}
-            aria-label="move all left">
-            ≪
-          </Button>
-        </Grid>
-      </Grid>
-      <Grid item>{customList(right)}</Grid>
-    </Grid>
+    <div container className={classes.root}>
+      <div>{customList(left)}</div>
+      <div className={classes.actions}>
+        <Button
+          variant="outlined"
+          size="small"
+          className={classes.button}
+          onClick={handleAllRight}
+          data-test="movaAllRight"
+          disabled={left.length === 0}
+          aria-label="move all right">
+          ≫
+        </Button>
+        <Button
+          variant="outlined"
+          size="small"
+          className={classes.button}
+          data-test="moveSelectedRight"
+          onClick={handleCheckedRight}
+          disabled={leftChecked.length === 0}
+          aria-label="move selected right">
+          &gt;
+        </Button>
+        <Button
+          variant="outlined"
+          size="small"
+          data-test="moveSelectedLeft"
+          className={classes.button}
+          onClick={handleCheckedLeft}
+          disabled={rightChecked.length === 0}
+          aria-label="move selected left">
+          &lt;
+        </Button>
+        <Button
+          variant="outlined"
+          size="small"
+          data-test="moveAllLeft"
+          className={classes.button}
+          onClick={handleAllLeft}
+          disabled={right.length === 0}
+          aria-label="move all left">
+          ≪
+        </Button>
+      </div>
+      <div>{customList(right)}</div>
+    </div>
   );
 }
 

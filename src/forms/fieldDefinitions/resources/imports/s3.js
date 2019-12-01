@@ -36,7 +36,7 @@ export default {
     label: 'File Key',
     required: true,
     showAllSuggestions: true,
-    defaultValue: 'file-{{timestamp}}',
+    defaultValue: r => (r && r.s3 && r.s3.fileKey) || 'file-{{timestamp}}',
     refreshOptionsOnChangesTo: ['file.type', 's3.fileKey'],
   },
 };
