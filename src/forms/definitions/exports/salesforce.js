@@ -230,12 +230,12 @@ export default {
         },
       ],
     },
+    'salesforce.objectType': {
+      fieldId: 'salesforce.objectType',
+    },
     'salesforce.distributed.qualifier': {
       fieldId: 'salesforce.distributed.qualifier',
       refreshOptionsOnChangesTo: ['salesforce.sObjectType'],
-    },
-    'salesforce.objectType': {
-      fieldId: 'salesforce.objectType',
     },
     advancedSettings: {
       formId: 'advancedSettings',

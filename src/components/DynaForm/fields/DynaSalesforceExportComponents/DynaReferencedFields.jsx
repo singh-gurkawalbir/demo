@@ -1,16 +1,25 @@
-import { Fragment, useState, useCallback } from 'react';
+import { useState, useCallback } from 'react';
+import { makeStyles } from '@material-ui/core/styles';
 import { useSelector } from 'react-redux';
-import { Typography, Button } from '@material-ui/core';
+import Button from '@material-ui/core/Button';
 import EditIcon from '../../../icons/EditIcon';
 import DynaText from '../DynaText';
 import * as selectors from '../../../../reducers';
 import ModalDialog from '../../../ModalDialog';
 import DynaForm from '../../../DynaForm';
 import DynaSubmit from '../../DynaSubmit';
-import IconTextButton from '../../../IconTextButton';
 import { useCallMetadataAndReturnStatus } from './DynaRelatedList';
 import Spinner from '../../../Spinner';
+import ActionButton from '../../../ActionButton';
 
+const useStyles = makeStyles({
+  fieldWrapper: {
+    flexDirection: `row !important`,
+  },
+  actionButton: {
+    marginLeft: 5,
+  },
+});
 const FirstLevelModal = props => {
   const {
     options: selectedSObject,
@@ -67,12 +76,10 @@ const FirstLevelModal = props => {
   };
 
   return (
-    <ModalDialog show handleClose={handleClose}>
-      <Typography>Referenced Fields</Typography>
+    <ModalDialog show onClose={handleClose}>
+      <div>Referenced Fields</div>
+
       <DynaForm optionsHandler={optionsHandler} fieldMeta={fieldMeta}>
-        <Button data-test="closeReferencedFields" onClick={handleClose}>
-          Cancel
-        </Button>
         <DynaSubmit
           onClick={values => {
             onFieldChange(id, values['/referencedFields']);
@@ -80,12 +87,20 @@ const FirstLevelModal = props => {
           }}>
           Save
         </DynaSubmit>
+        <Button
+          data-test="closeReferencedFields"
+          onClick={handleClose}
+          variant="text"
+          color="primary">
+          Cancel
+        </Button>
       </DynaForm>
     </ModalDialog>
   );
 };
 
 export default function DynaReferencedFields(props) {
+  const classes = useStyles();
   const [firstLevelModalOpen, setFirstLevelModalOpen] = useState(false);
   const toggle = useCallback(() => setFirstLevelModalOpen(state => !state), []);
   //   const [referencedFields, setReferencedFields] = useState('');
@@ -93,7 +108,7 @@ export default function DynaReferencedFields(props) {
   const { status } = useCallMetadataAndReturnStatus(props);
 
   return (
-    <Fragment>
+    <div className={classes.fieldWrapper}>
       {firstLevelModalOpen ? (
         <FirstLevelModal {...props} handleClose={toggle} />
       ) : null}
@@ -101,13 +116,14 @@ export default function DynaReferencedFields(props) {
       {status === 'refreshed' ? (
         <Spinner />
       ) : (
-        <IconTextButton
+        <ActionButton
           data-test="editReferencedFields"
           onClick={toggle}
-          disabled={disabled}>
+          disabled={disabled}
+          className={classes.actionButton}>
           <EditIcon />
-        </IconTextButton>
+        </ActionButton>
       )}
-    </Fragment>
+    </div>
   );
 }

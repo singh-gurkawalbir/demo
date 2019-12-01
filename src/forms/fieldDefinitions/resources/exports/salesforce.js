@@ -160,8 +160,8 @@ export default {
   'salesforce.objectType': {
     type: 'select',
     required: true,
-    label: 'SObject Type',
     defaultValue: r => r && r.salesforce && r.salesforce.sObjectType,
+    label: 'SObject Type',
     options: [
       {
         items: [
