@@ -124,12 +124,14 @@ export default {
     'rdbms.ignoreExtract': {
       fieldId: 'rdbms.ignoreExtract',
       type: 'relativeuriwithlookup',
+      adaptorType: r => r && r.adaptorType,
       connectionId: r => r && r._connectionId,
       refreshOptionsOnChangesTo: ['rdbms.lookups', 'ignoreLookupname'],
     },
     'rdbms.updateExtract': {
       fieldId: 'rdbms.updateExtract',
       type: 'relativeuriwithlookup',
+      adaptorType: r => r && r.adaptorType,
       connectionId: r => r && r._connectionId,
       refreshOptionsOnChangesTo: ['rdbms.lookups', 'updateLookupname'],
     },
