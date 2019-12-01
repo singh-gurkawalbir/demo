@@ -162,7 +162,6 @@ export default {
     required: true,
     defaultValue: r => r && r.salesforce && r.salesforce.sObjectType,
     label: 'SObject Type',
-    defaultValue: r => r && r.salesforce && r.salesforce.sObjectType,
     options: [
       {
         items: [

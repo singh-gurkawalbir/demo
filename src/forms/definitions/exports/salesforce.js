@@ -237,9 +237,6 @@ export default {
       fieldId: 'salesforce.distributed.qualifier',
       refreshOptionsOnChangesTo: ['salesforce.sObjectType'],
     },
-    'salesforce.objectType': {
-      fieldId: 'salesforce.objectType',
-    },
     advancedSettings: {
       formId: 'advancedSettings',
       visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
