@@ -19,7 +19,8 @@ import {
   getLastExportDateTime,
   isUIDataExpectedForResource,
 } from '../../../utils/flowData';
-import requestRealTimeMetadata from '../realTimeMetadataUpdates';
+import requestRealTimeMetadata from '../sampleDataGenerator/realTimeSampleData';
+import requestFileAdaptorSampleData from '../sampleDataGenerator/fileAdaptorSampleData';
 
 function* getUIDataForResource({ resource }) {
   const { adaptorType, sampleData } = resource;
@@ -29,6 +30,11 @@ function* getUIDataForResource({ resource }) {
       case 'NetSuiteExport':
       case 'SalesforceExport':
         return yield call(requestRealTimeMetadata, { resource });
+      case 'FTPExport':
+      case 'S3Export': {
+        return yield call(requestFileAdaptorSampleData, { resource });
+      }
+
       case 'WebhookExport': {
         // Sample data exists on resource
         // TODO: @Raghu Add webhooks form field sample data feature

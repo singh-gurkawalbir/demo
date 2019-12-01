@@ -12,7 +12,7 @@ import {
   requestSampleDataForImports,
   updateStateForProcessorData,
   handleFlowDataStageErrors,
-} from './utils';
+} from '../utils/flowDataUtils';
 import {
   updateFlowsDataForResource,
   updateFlowData,
@@ -22,13 +22,15 @@ import {
   getSampleDataStage,
   getPreviewStageData,
 } from '../../../utils/flowData';
-import { exportPreview, pageProcessorPreview } from '../previewCalls';
-import requestRealTimeMetadata from '../realTimeMetadataUpdates';
+import { exportPreview, pageProcessorPreview } from '../utils/previewCalls';
+import requestRealTimeMetadata from '../sampleDataGenerator/realTimeSampleData';
+import requestFileAdaptorSampleData from '../sampleDataGenerator/fileAdaptorSampleData';
 import mappingUtil from '../../../utils/mapping';
 import {
   adaptorTypeMap,
   isNewId,
   isRealTimeOrDistributedResource,
+  isFileAdaptor,
 } from '../../../utils/resource';
 
 function* initFlowData({ flowId, resourceId, resourceType }) {
@@ -169,6 +171,9 @@ export function* fetchPageGeneratorPreview({ flowId, _pageGeneratorId }) {
     if (isRealTimeOrDistributedResource(resource)) {
       // fetch data from real time sample data
       previewData = yield call(requestRealTimeMetadata, { resource });
+    } else if (isFileAdaptor(resource)) {
+      // fetch data for file adaptors and get parsed based on file type to JSON
+      previewData = yield call(requestFileAdaptorSampleData, { resource });
     } else {
       previewData = yield call(exportPreview, {
         resourceId: _pageGeneratorId,

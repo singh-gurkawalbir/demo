@@ -6,8 +6,8 @@ import {
   fetchPageProcessorPreview,
   fetchPageGeneratorPreview,
   requestProcessorData,
-} from './';
-import getPreviewOptionsForResource from './pageProcessorPreviewOptions';
+} from '../flows';
+import getPreviewOptionsForResource from '../flows/pageProcessorPreviewOptions';
 
 export function* fetchFlowResources({ flow, type, eliminateDataProcessors }) {
   const resourceMap = {};

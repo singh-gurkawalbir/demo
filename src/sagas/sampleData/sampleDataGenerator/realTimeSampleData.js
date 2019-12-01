@@ -1,10 +1,10 @@
 import { call, select } from 'redux-saga/effects';
-import { getNetsuiteOrSalesforceMeta } from '../resources/meta';
-import { getMetadataOptions } from '../../reducers';
+import { getNetsuiteOrSalesforceMeta } from '../../resources/meta';
+import { getMetadataOptions } from '../../../reducers';
 import {
   getNetsuiteRealTimeSampleData,
   getSalesforceRealTimeSampleData,
-} from '../../utils/sampleData';
+} from '../../../utils/sampleData';
 
 /*
  * Should return sample data back from this saga

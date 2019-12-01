@@ -10,7 +10,7 @@ import {
   isFileAdaptor,
   isRealTimeOrDistributedResource,
 } from '../../../utils/resource';
-import { exportPreview, pageProcessorPreview } from '../previewCalls';
+import { exportPreview, pageProcessorPreview } from '../utils/previewCalls';
 import { saveRawDataOnResource } from './utils';
 import saveRawDataForFileAdaptors from './fileAdaptorUpdates';
 
