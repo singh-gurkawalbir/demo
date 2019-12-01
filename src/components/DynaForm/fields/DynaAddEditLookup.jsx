@@ -37,6 +37,7 @@ export default function DynaAddEditLookup(props) {
     onSave,
     showDynamicLookupOnly = false,
     value = {},
+    options = {},
   } = props;
   const handleEditorClick = () => {
     setShowLookup(!showLookup);
@@ -56,6 +57,7 @@ export default function DynaAddEditLookup(props) {
           id={id}
           onCancel={handleEditorClick}
           onSave={handleSave}
+          options={options}
         />
       )}
       {isEdit && (
