@@ -78,6 +78,7 @@ function DynaFileDefinitionEditor(props) {
    * 1. In creation of an export, from FileDefinitions list based on 'definitionId' and 'format'
    * 2. In Editing an existing export, from UserSupportedFileDefinitions based on userDefinitionId
    */
+  // TODO: @Raghu Move this logic to a selector instead of having logic here
   const { sampleData, rule } = useSelector(state => {
     let template;
 
