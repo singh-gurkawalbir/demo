@@ -41,7 +41,7 @@ export function* parseFileDefinition({ sampleData, resource }) {
   const { file = {} } = resource;
   const { _fileDefinitionId } = file.fileDefinition || {};
 
-  if (!_fileDefinitionId) return {};
+  if (!_fileDefinitionId || !sampleData) return {};
 
   try {
     const parsedFileDefinitionData = yield call(apiCallWithRetry, {

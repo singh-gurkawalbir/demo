@@ -354,7 +354,8 @@ export const getFormattedSalesForceMetadata = metadata => {
 export const getReferenceFieldsMap = (referenceFields = []) => {
   const fieldsToAttach = {};
 
-  each(referenceFields, field => {
+  each(referenceFields, (field = '') => {
+    if (!field) return;
     const fieldSplit = field.split('.');
     const key = fieldSplit[0];
 

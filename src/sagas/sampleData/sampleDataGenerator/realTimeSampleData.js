@@ -27,16 +27,16 @@ function* attachRelatedLists({ metadata, relatedLists = [], connectionId }) {
       connectionId,
       commMetaPath,
     });
-    const relatedListMetadataFields = sfMetadata.data && sfMetadata.data.fields;
-    const parentFieldMetadata = findParentFieldInMetadata(
-      relatedListMetadataFields,
-      parentField
-    );
+    const relatedListMetadataFields =
+      (sfMetadata.data && sfMetadata.data.fields) || [];
+    const parentFieldMetadata =
+      findParentFieldInMetadata(relatedListMetadataFields, parentField) || {};
     const relatedListMetadata = {
       ...parentFieldMetadata,
       ...getReferenceFieldsMap(referencedFields),
     };
 
+    // TODO Raghu : Discuss with Sravan
     mergedMetadata = {
       ...mergedMetadata,
       [parentFieldMetadata.relationshipName || sObjectType]: [
@@ -87,9 +87,15 @@ export default function* requestRealTimeMetadata({ resource }) {
 
         return yield call(attachRelatedLists, {
           metadata,
-          relatedLists,
+          relatedLists: relatedLists || [],
           connectionId,
         });
+      }
+
+      case 'WebhookExport': {
+        const { sampleData } = resource;
+
+        return sampleData;
       }
 
       default:
