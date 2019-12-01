@@ -22,6 +22,7 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     gridTemplateColumns: '45% 45% 50px 50px',
     gridColumnGap: '1%',
+    marginBottom: theme.spacing(0.5),
   },
   rowContainer: {
     display: 'block',
@@ -146,11 +147,11 @@ export default function ImportMapping(props) {
       key={`mapping-${editorId}-${initChangeIdentifier}`}>
       <div className={classes.root}>
         <div className={classes.header}>
-          <Typography varaint="h4" className={classes.childHeader}>
+          <Typography variant="subtitle2" className={classes.childHeader}>
             Source Record Field
           </Typography>
 
-          <Typography varaint="h4" className={classes.childHeader}>
+          <Typography variant="subtitle2" className={classes.childHeader}>
             {generateLabel}
           </Typography>
         </div>

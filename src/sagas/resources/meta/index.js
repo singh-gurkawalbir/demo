@@ -6,6 +6,7 @@ import { commStatusByKey } from '../../../reducers/index';
 import getRequestOptions from '../../../utils/requestOptions';
 import commKeyGenerator from '../../../utils/commKeyGenerator';
 import { COMM_STATES } from '../../../reducers/comms';
+import { isJsonString } from '../../../utils/string';
 
 export function* getNetsuiteOrSalesforceMeta({
   connectionId,
@@ -18,7 +19,7 @@ export function* getNetsuiteOrSalesforceMeta({
     if (addInfo.refreshCache === true) {
       path += `${path.indexOf('?') > -1 ? '&' : '?'}refreshCache=true`;
     } else if (addInfo.query) {
-      path += `?q=${addInfo.query}`;
+      path += `?q=${encodeURIComponent(addInfo.query)}`;
     }
   }
 
@@ -52,7 +53,9 @@ export function* getNetsuiteOrSalesforceMeta({
   } catch (error) {
     // Handling error statuses in  between 400 and 500 to show customized error
     if (error.status >= 400 && error.status < 500) {
-      const parsedError = JSON.parse(error.message);
+      const parsedError = isJsonString(error.message)
+        ? JSON.parse(error.message)
+        : error.message;
 
       yield put(
         actions.metadata.receivedError(

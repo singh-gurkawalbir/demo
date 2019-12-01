@@ -212,6 +212,8 @@ export function* updateIntegrationSettings({
       })
     );
     yield put(actions.resource.request('integrations', integrationId));
+    // Flow enable/disable requires reloading of flows.
+    yield put(actions.resource.requestCollection('flows'));
   }
 }
 

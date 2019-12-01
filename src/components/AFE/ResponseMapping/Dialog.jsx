@@ -27,6 +27,7 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     gridTemplateColumns: '45% 45% 50px',
     gridColumnGap: '1%',
+    marginBottom: theme.spacing(0.5),
   },
   rowContainer: {
     display: 'block',
@@ -236,14 +237,14 @@ export default function ResponseMappingDialog(props) {
         <div className={classes.root}>
           <div className={classes.header}>
             <Typography
-              varaint="h4"
+              variant="subtitle2"
               className={classes.childHeader}
               key="heading_extract">
               {resourceType === 'imports' ? 'Import' : 'Lookup'} Response Field
             </Typography>
 
             <Typography
-              varaint="h4"
+              variant="subtitle2"
               className={classes.childHeader}
               key="heading_generate">
               Source Record Field (New/Existing Field)
