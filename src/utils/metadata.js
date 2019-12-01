@@ -337,3 +337,39 @@ export const getFormattedSalesForceMetadata = metadata => {
 
   return formattedSFMetadata;
 };
+
+/*
+ * "referencedFields": [
+      "CreatedBy.Username",
+      "CreatedBy.CompanyName",
+      "test1",
+      "test2"
+    ],
+    @output: { 
+      CreatedBy: { Username: CreatedBy.Username, CompanyName: CreatedBy.CompanyName }, 
+      test1: test1,
+      test2: test2
+    }
+ */
+export const getReferenceFieldsMap = (referenceFields = []) => {
+  const fieldsToAttach = {};
+
+  each(referenceFields, field => {
+    const fieldSplit = field.split('.');
+    const key = fieldSplit[0];
+
+    if (fieldSplit[1]) {
+      fieldsToAttach[key] = {
+        ...(fieldsToAttach[key] || {}),
+        [fieldSplit[1]]: field,
+      };
+    } else {
+      fieldsToAttach[key] = key;
+    }
+  });
+
+  return fieldsToAttach;
+};
+
+export const findParentFieldInMetadata = (fields = [], parentField) =>
+  fields.find(field => field.name === parentField);

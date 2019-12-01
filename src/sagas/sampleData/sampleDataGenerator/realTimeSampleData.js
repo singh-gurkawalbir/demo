@@ -1,11 +1,13 @@
-import { call, select } from 'redux-saga/effects';
-import { getNetsuiteOrSalesforceMeta } from '../../resources/meta';
-import { getMetadataOptions } from '../../../reducers';
+import { call } from 'redux-saga/effects';
+import fetchMetadata from '../utils/metadataUtils';
 import {
   getNetsuiteRealTimeSampleData,
   getSalesforceRealTimeSampleData,
 } from '../../../utils/sampleData';
-
+import {
+  getReferenceFieldsMap,
+  findParentFieldInMetadata,
+} from '../../../utils/metadata';
 /*
  * Should return sample data back from this saga
  * const sampleData = yield call(requestRealTimeMetadata, {resource})
@@ -13,6 +15,38 @@ import {
  * 1. While constructing options.uiData for page processor preview call
  * 2. Pass on for export preview call
  */
+
+function* attachRelatedLists({ metadata, relatedLists = [], connectionId }) {
+  let mergedMetadata = metadata;
+
+  for (let listIndex = 0; listIndex < relatedLists.length; listIndex += 1) {
+    const relatedList = relatedLists[listIndex];
+    const { sObjectType, parentField, referencedFields = [] } = relatedList;
+    const commMetaPath = `salesforce/metadata/connections/${connectionId}/sObjectTypes/${sObjectType}`;
+    const sfMetadata = yield call(fetchMetadata, {
+      connectionId,
+      commMetaPath,
+    });
+    const relatedListMetadataFields = sfMetadata.data && sfMetadata.data.fields;
+    const parentFieldMetadata = findParentFieldInMetadata(
+      relatedListMetadataFields,
+      parentField
+    );
+    const relatedListMetadata = {
+      ...parentFieldMetadata,
+      ...getReferenceFieldsMap(referencedFields),
+    };
+
+    mergedMetadata = {
+      ...mergedMetadata,
+      [parentFieldMetadata.relationshipName || sObjectType]: [
+        relatedListMetadata,
+      ],
+    };
+  }
+
+  return mergedMetadata;
+}
 
 export default function* requestRealTimeMetadata({ resource }) {
   const { adaptorType } = resource;
@@ -26,24 +60,10 @@ export default function* requestRealTimeMetadata({ resource }) {
 
         if (!recordType) return;
         const commMetaPath = `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${recordType}`;
-        let nsMetadata = yield select(getMetadataOptions, {
+        const nsMetadata = yield call(fetchMetadata, {
           connectionId,
           commMetaPath,
-          filterKey: 'raw',
         });
-
-        if (!nsMetadata || !nsMetadata.data) {
-          yield call(getNetsuiteOrSalesforceMeta, {
-            connectionId,
-            commMetaPath,
-          });
-          nsMetadata = yield select(getMetadataOptions, {
-            connectionId,
-            commMetaPath,
-            filterKey: 'raw',
-          });
-        }
-
         const { data: metadata } = nsMetadata;
 
         return getNetsuiteRealTimeSampleData(metadata, recordType);
@@ -53,28 +73,23 @@ export default function* requestRealTimeMetadata({ resource }) {
         // Adding basic flow for Salesforce Sample data
         // Need to add actual logic and return the same
         const { _connectionId: connectionId, salesforce } = resource;
-        const commMetaPath = `salesforce/metadata/connections/${connectionId}/sObjectTypes/${salesforce.sObjectType}`;
-        let sfMetadata = yield select(getMetadataOptions, {
+        const { sObjectType, distributed = {} } = salesforce;
+        const { referencedFields = [], relatedLists = [] } = distributed;
+        const commMetaPath = `salesforce/metadata/connections/${connectionId}/sObjectTypes/${sObjectType}`;
+        const sfMetadata = yield call(fetchMetadata, {
           connectionId,
           commMetaPath,
-          filterKey: 'raw',
         });
+        let { data: metadata } = sfMetadata;
 
-        if (!sfMetadata || !sfMetadata.data) {
-          yield call(getNetsuiteOrSalesforceMeta, {
-            connectionId,
-            commMetaPath,
-          });
-          sfMetadata = yield select(getMetadataOptions, {
-            connectionId,
-            commMetaPath,
-            filterKey: 'raw',
-          });
-        }
+        metadata = getSalesforceRealTimeSampleData(metadata);
+        metadata = { ...metadata, ...getReferenceFieldsMap(referencedFields) };
 
-        const { data: metadata } = sfMetadata;
-
-        return getSalesforceRealTimeSampleData(metadata);
+        return yield call(attachRelatedLists, {
+          metadata,
+          relatedLists,
+          connectionId,
+        });
       }
 
       default:
