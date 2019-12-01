@@ -1,5 +1,5 @@
 import { call } from 'redux-saga/effects';
-import parseFileData from '../utils/fileParserUtils';
+import { parseFileData, parseFileDefinition } from '../utils/fileParserUtils';
 
 export default function* requestFileAdaptorSampleData({ resource }) {
   const { file, sampleData } = resource;
@@ -17,5 +17,13 @@ export default function* requestFileAdaptorSampleData({ resource }) {
   if (type === 'json') {
     return sampleData;
   }
-  // think about how to parse fds as we dont have parse rules
+
+  if (type === 'filedefinition') {
+    const { data: fileDefinitionSampleData } = yield call(parseFileDefinition, {
+      sampleData,
+      resource,
+    });
+
+    return fileDefinitionSampleData;
+  }
 }
