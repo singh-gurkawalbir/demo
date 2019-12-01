@@ -242,6 +242,7 @@ export default {
   'rest.successValues': {
     type: 'text',
     label: 'Success Values',
+    delimiter: ',',
     visibleWhen: [
       {
         field: 'outputMode',
