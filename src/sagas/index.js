@@ -1,5 +1,14 @@
 import 'abortcontroller-polyfill/dist/polyfill-patch-fetch';
-import { all, call, put, take, race, delay } from 'redux-saga/effects';
+import {
+  all,
+  call,
+  put,
+  take,
+  select,
+  race,
+  delay,
+  cancelled,
+} from 'redux-saga/effects';
 import { createRequestInstance, sendRequest } from 'redux-saga-requests';
 import { createDriver } from 'redux-saga-requests-fetch';
 import actions from '../actions';
@@ -33,6 +42,8 @@ import fileDefinitionSagas from './fileDefinitions';
 import { marketplaceSagas } from './marketPlace';
 import { accessTokenSagas } from './accessToken';
 import { recycleBinSagas } from './recycleBin';
+import * as selectors from '../reducers';
+import { COMM_STATES } from '../reducers/comms';
 
 export function* unauthenticateAndDeleteProfile() {
   yield put(actions.auth.failure('Authentication Failure'));
@@ -42,7 +53,7 @@ export function* unauthenticateAndDeleteProfile() {
 // TODO: decide if we this saga has to have takeLatest
 // api call
 export function* apiCallWithRetry(args) {
-  const { path, timeout = 2 * 60 * 1000 } = args;
+  const { path, timeout = 2 * 60 * 1000, opts } = args;
   const apiRequestAction = {
     type: 'API_WATCHER',
     request: { url: path, args },
@@ -75,6 +86,18 @@ export function* apiCallWithRetry(args) {
     return data;
   } catch (error) {
     throw error;
+  } finally {
+    if (yield cancelled()) {
+      // yield cancelled is true when the saga gets cancelled
+      // lets perform some cleanup here by completing any ongoing requests
+
+      const method = (opts && opts.method) || 'GET';
+      const status = yield select(selectors.commStatusPerPath, path, method);
+
+      // only dispatch a completed action when the request state is not completed
+      if (status !== COMM_STATES.SUCCESS)
+        yield put(actions.api.complete(path, method, 'Request Aborted'));
+    }
   }
 }
 
