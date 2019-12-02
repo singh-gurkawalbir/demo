@@ -25,15 +25,15 @@ const TransferListModal = props => {
   };
 
   return (
-    <ModalDialog show onClose={handleClose}>
-      <Fragment>
-        <span>Scopes Editor</span>
-      </Fragment>
+    <ModalDialog show onClose={handleClose} maxWidth="lg">
+      <div>Scopes Editor</div>
+
       <TransferList {...transferListProps} />
       <Fragment>
         <Button
           data-test="saveSelectedScopes"
-          variant="contained"
+          variant="outlined"
+          color="secondary"
           onClick={() => onFieldChange(id, selectedScopes)}>
           Save
         </Button>

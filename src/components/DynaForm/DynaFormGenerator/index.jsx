@@ -2,7 +2,7 @@ import { FormFragment } from 'react-forms-processor/dist';
 import { makeStyles } from '@material-ui/core/styles';
 import CollapsedComponents from './CollapsedComponents';
 import ColumnComponents from './ColumnComponents';
-import TabComponent from './TabComponent';
+import { TabIAComponent, TabComponentSimple } from './TabComponent';
 
 // TODO: Checked with little change
 const useStyles = makeStyles({
@@ -56,8 +56,11 @@ export default function FormGenerator(props) {
     ConvertedContainer = CollapsedComponents;
   } else if (type === 'column') {
     ConvertedContainer = ColumnComponents;
+  } else if (type === 'tabIA') {
+    // Tab refers to IA settings tab...and each tab would have a save button that would only save that tabs values to IA
+    ConvertedContainer = TabIAComponent;
   } else if (type === 'tab') {
-    ConvertedContainer = TabComponent;
+    ConvertedContainer = TabComponentSimple;
   } else {
     return (
       <div className={classes.fieldsContainer}>
@@ -65,6 +68,7 @@ export default function FormGenerator(props) {
         {containers &&
           containers.map((container, index) => (
             <FormGenerator
+              {...props}
               // eslint-disable-next-line react/no-array-index-key
               key={index}
               classes={classes}
@@ -80,6 +84,7 @@ export default function FormGenerator(props) {
     <div className={classes.fieldsContainer}>
       {fieldsComponent}
       <ConvertedContainer
+        {...props}
         classes={classes}
         fieldMap={fieldMap}
         containers={containers}

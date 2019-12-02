@@ -16,6 +16,7 @@ import ModalDialog from '../../ModalDialog';
 import ButtonsGroup from '../../ButtonGroup';
 import ActionButton from '../../ActionButton';
 
+// TODO Aditya: Convert Response Mapping and Import mapping to re-use same component
 // TODO: Azhar once Mapping dialog design is ready make a component
 const useStyles = makeStyles(theme => ({
   container: {
@@ -27,6 +28,7 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     gridTemplateColumns: '45% 45% 50px',
     gridColumnGap: '1%',
+    marginBottom: theme.spacing(0.5),
   },
   rowContainer: {
     display: 'block',
@@ -236,14 +238,14 @@ export default function ResponseMappingDialog(props) {
         <div className={classes.root}>
           <div className={classes.header}>
             <Typography
-              varaint="h4"
+              variant="subtitle2"
               className={classes.childHeader}
               key="heading_extract">
               {resourceType === 'imports' ? 'Import' : 'Lookup'} Response Field
             </Typography>
 
             <Typography
-              varaint="h4"
+              variant="subtitle2"
               className={classes.childHeader}
               key="heading_generate">
               Source Record Field (New/Existing Field)
@@ -255,6 +257,7 @@ export default function ResponseMappingDialog(props) {
                 <div className={classes.innerRow}>
                   <div className={classes.childHeader}>
                     <DynaTypeableSelect
+                      id={`extract-${r.index}`}
                       disabled={disabled}
                       labelName="name"
                       valueName="id"
@@ -271,6 +274,7 @@ export default function ResponseMappingDialog(props) {
                   </div>
                   <div className={classes.childHeader}>
                     <DynaTypeableSelect
+                      id={`generate-${r.index}`}
                       disabled={disabled}
                       value={r[valueName]}
                       hideOptions
@@ -286,7 +290,7 @@ export default function ResponseMappingDialog(props) {
                   <div>
                     <ActionButton
                       disabled={disabled}
-                      data-test="deleteMapping"
+                      data-test={`delete-${r.index}`}
                       aria-label="delete"
                       onClick={() => {
                         handleDelete(r.index);

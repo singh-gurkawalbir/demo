@@ -1,5 +1,6 @@
 import { useEffect, useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { isEqual } from 'lodash';
 import ImportMapping from './index';
 import * as ResourceUtil from '../../../utils/resource';
 import lookupUtil from '../../../utils/lookup';
@@ -17,6 +18,7 @@ export default function StandaloneMapping(props) {
     setIntegrationAppMetadataLoaded,
   ] = useState(false);
   const [changeIdentifier, setChangeIdentifier] = useState(0);
+  const [initTriggered, setInitTriggered] = useState(false);
   const resourceData = useSelector(state =>
     selectors.resource(state, 'imports', resourceId)
   );
@@ -191,6 +193,42 @@ export default function StandaloneMapping(props) {
     importSampleData,
     application
   );
+  const [importSampleDataState, setImportSampleDataState] = useState([]);
+  const handleInit = useCallback(() => {
+    dispatch(
+      actions.mapping.init(
+        id,
+        mappings,
+        lookups || [],
+        resourceType.type,
+        application
+      )
+    );
+  }, [application, dispatch, id, lookups, mappings, resourceType.type]);
+
+  useEffect(() => {
+    handleInit();
+    setInitTriggered(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  if (initTriggered && !isEqual(importSampleDataState, importSampleData)) {
+    dispatch(actions.mapping.updateGenerates(id, formattedGenerateFields));
+    setImportSampleDataState(importSampleData);
+  }
+
+  const fetchSalesforceSObjectMetadata = sObject => {
+    dispatch(
+      actions.metadata.request(
+        connectionId,
+        `salesforce/metadata/connections/${connectionId}/sObjectTypes/${sObject}`
+      )
+    );
+  };
+
+  const optionalHandler = {
+    fetchSalesforceSObjectMetadata,
+  };
 
   return (
     <ImportMapping
@@ -204,6 +242,7 @@ export default function StandaloneMapping(props) {
       application={application}
       lookups={lookups}
       options={options}
+      optionalHanlder={optionalHandler}
     />
   );
 }

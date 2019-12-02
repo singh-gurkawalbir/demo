@@ -3,19 +3,19 @@ import getJSONPaths from '../../../utils/jsonPaths';
 
 export function getJSONSampleTemplate(data) {
   let toReturn = '';
-  const eFields = getJSONPaths(data, null, { wrapSpecialChars: true });
+  const eFields = getJSONPaths(data[0], null, { wrapSpecialChars: true });
 
   toReturn += '{{#each data}}\n';
   toReturn += '{{#if @index}} , {{/if}}\n';
   toReturn += '{\n';
 
-  if (Array.isArray(data)) {
+  if (Array.isArray(data) && Array.isArray(data[0])) {
     const headerFields = [];
     const listFields = [];
     const previewData = data;
 
-    Object.keys(previewData[0]).forEach(prop => {
-      const val = previewData[0][prop];
+    Object.keys(previewData[0][0]).forEach(prop => {
+      const val = previewData[0][0][prop];
       let notHeader = false;
 
       previewData[0].forEach(obj => {
@@ -100,17 +100,17 @@ export function getXMLSampleTemplate(data) {
   toReturn += '{{#each data}}\n';
 
   if (data) {
-    const eFields = getJSONPaths(data, null, {
+    const eFields = getJSONPaths(data[0], null, {
       wrapSpecialChars: true,
     });
 
-    if (Array.isArray(data)) {
+    if (Array.isArray(data) && Array.isArray(data[0])) {
       toReturn += '  <record id="{{this.0.id}}">\n';
       const headerFields = [];
       const listFields = [];
       const previewData = data;
 
-      Object.keys(previewData[0]).forEach(prop => {
+      Object.keys(previewData[0][0]).forEach(prop => {
         const val = previewData[0][0][prop];
         let notHeader = false;
 

@@ -64,13 +64,14 @@ class DynaForm extends Component {
         showValidationBeforeTouched={showValidationBeforeTouched}
         renderer={renderer}>
         <div className={clsx(classes.fieldContainer, className)}>
-          <DynaFormGenerator layout={layout} fieldMap={fieldMap} />
+          <DynaFormGenerator {...rest} layout={layout} fieldMap={fieldMap} />
         </div>
         {/* The children are action buttons for the form */}
-
-        <div className={classes.actions}>
-          <ButtonGroup>{children}</ButtonGroup>
-        </div>
+        {children && (
+          <div className={classes.actions}>
+            <ButtonGroup>{children}</ButtonGroup>
+          </div>
+        )}
       </Form>
     );
   }

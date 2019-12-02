@@ -83,7 +83,7 @@ const ExpansionPannelExpandOnInValidState = props => {
           <Typography>{header}</Typography>
         </ExpansionPanelSummary>
         <ExpansionPanelDetails>
-          <FormGenerator layout={layout} fieldMap={fieldMap} />
+          <FormGenerator {...props} layout={layout} fieldMap={fieldMap} />
         </ExpansionPanelDetails>
       </ExpansionPanel>
     </div>

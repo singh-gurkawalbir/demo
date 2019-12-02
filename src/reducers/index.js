@@ -3,7 +3,7 @@ import { combineReducers } from 'redux';
 import jsonPatch from 'fast-json-patch';
 import moment from 'moment';
 import produce from 'immer';
-import { uniq, some, map, keys } from 'lodash';
+import { uniq, some, map, keys, isEmpty } from 'lodash';
 import app, * as fromApp from './app';
 import data, * as fromData from './data';
 import session, * as fromSession from './session';
@@ -42,6 +42,7 @@ import {
 import { isValidResourceReference, isNewId } from '../utils/resource';
 import { processSampleData } from '../utils/sampleData';
 import inferErrorMessage from '../utils/inferErrorMessage';
+import getRoutePath from '../utils/routePaths';
 
 const emptySet = [];
 const combinedReducers = combineReducers({
@@ -127,6 +128,12 @@ export function isAllLoadingCommsAboveThreshold(state) {
   );
 }
 
+export function commStatusPerPath(state, path, method) {
+  const key = commKeyGen(path, method);
+
+  return fromComms.commStatus(state && state.comms, key);
+}
+
 // #endregion
 
 // #region PUBLIC SESSION SELECTORS
@@ -164,12 +171,85 @@ export function cloneData(state, resourceType, resourceId) {
   );
 }
 
+export function isSetupComplete(
+  state,
+  { templateId, resourceType, resourceId }
+) {
+  let isSetupComplete = false;
+  const installSteps =
+    fromSession.templateInstallSteps(
+      state && state.session,
+      templateId || `${resourceType}-${resourceId}`
+    ) || [];
+
+  isSetupComplete =
+    installSteps.length &&
+    !installSteps.reduce((result, step) => result || !step.completed, false);
+
+  return isSetupComplete;
+}
+
+export function redirectToOnInstallationComplete(
+  state,
+  { resourceType = 'integrations', resourceId, templateId }
+) {
+  let redirectTo = 'dashboard';
+  let flow;
+  let flowDetails;
+  let integration;
+  const { createdComponents: components } = fromSession.template(
+    state && state.session,
+    templateId || `${resourceType}-${resourceId}`
+  );
+
+  if (!components) {
+    return false;
+  }
+
+  switch (resourceType) {
+    case 'integrations':
+      integration = components.find(c => c.model === 'Integration');
+
+      if (integration) redirectTo = `/integrations/${integration._id}/flows`;
+      break;
+    case 'flows':
+      flow = components.find(c => c.model === 'Flow');
+
+      if (flow) {
+        // eslint-disable-next-line no-use-before-define
+        flowDetails = resource(state, 'flows', flow._id);
+
+        if (flowDetails) {
+          redirectTo = `integrations/${flowDetails._integrationId ||
+            'none'}/flows`;
+        }
+      }
+
+      break;
+    case 'exports':
+    case 'imports':
+      redirectTo = resourceType;
+      break;
+    default:
+      break;
+  }
+
+  return getRoutePath(redirectTo);
+}
+
 export function previewTemplate(state, templateId) {
   return fromSession.previewTemplate(state && state.session, templateId);
 }
 
 export function isFileUploaded(state) {
   return fromSession.isFileUploaded(state && state.session);
+}
+
+export function installSetup(state, { resourceType, resourceId, templateId }) {
+  return fromSession.template(
+    state && state.session,
+    templateId || `${resourceType}-${resourceId}`
+  );
 }
 
 export function templateSetup(state, templateId) {
@@ -834,6 +914,25 @@ export function getAllConnectionIdsUsedInTheFlow(state, flow) {
 
   return uniq(connectionIds.concat(borrowConnectionIds));
 }
+
+export function getFlowsAssociatedExportFromIAMetadata(state, fieldMeta) {
+  const { resource: flowResource, properties } = fieldMeta;
+  let resourceId;
+
+  if (properties && properties._exportId) {
+    resourceId = properties._exportId;
+  } else if (flowResource && flowResource._exportId) {
+    resourceId = flowResource._exportId;
+  } else if (
+    flowResource &&
+    flowResource.pageGenerators &&
+    flowResource.pageGenerators.length
+  ) {
+    resourceId = flowResource.pageGenerators[0]._exportId;
+  }
+
+  return resource(state, 'exports', resourceId);
+}
 // #begin integrationApps Region
 
 export function integrationAppSettingsFormState(state, integrationId, flowId) {
@@ -1019,6 +1118,23 @@ export function integrationAppGeneralSettings(state, id, storeId) {
     fields,
     sections: subSections,
   };
+}
+
+export function hasGeneralSettings(state, integrationId, storeId) {
+  if (!state) return false;
+  const integrationResource = fromData.integrationAppSettings(
+    state.data,
+    integrationId
+  );
+  const { supportsMultiStore, general } = integrationResource.settings || {};
+
+  if (supportsMultiStore) {
+    return !!(general || []).find(s => s.id === storeId);
+  } else if (Array.isArray(general)) {
+    return !!general.find(s => s.title === 'General');
+  }
+
+  return !isEmpty(general);
 }
 
 export function integrationAppFlowSettings(state, id, section, storeId) {
@@ -2334,7 +2450,10 @@ export function getImportSampleData(state, resourceId) {
       state,
       connectionId,
       commMetaPath,
-      filterKey: 'salesforce-recordType',
+      filterKey:
+        salesforce.api === 'compositerecord'
+          ? 'salesforce-sObjectCompositeMetadata'
+          : 'salesforce-recordType',
     });
 
     return sampleData;

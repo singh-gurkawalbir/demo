@@ -10,7 +10,7 @@ export default {
     label: 'File Name',
     required: true,
     showAllSuggestions: true,
-    defaultValue: 'file-{{timestamp}}',
+    defaultValue: r => (r && r.ftp && r.ftp.fileName) || 'file-{{timestamp}}',
     refreshOptionsOnChangesTo: ['file.type', 'ftp.fileName'],
   },
   'ftp.useTempFile': {
