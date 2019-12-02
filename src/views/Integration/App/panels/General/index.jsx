@@ -33,11 +33,14 @@ export default function GeneralPanel({ integrationId, storeId }) {
     <div className={classes.root}>
       <PanelHeader title="General" />
 
-      <DynaFormWithDynamicActions
-        fieldMeta={translatedMeta}
-        integrationId={integrationId}
-        storeId={storeId}
-      />
+      {translatedMeta && (
+        <DynaFormWithDynamicActions
+          key={storeId}
+          fieldMeta={translatedMeta}
+          integrationId={integrationId}
+          storeId={storeId}
+        />
+      )}
     </div>
   );
 }
