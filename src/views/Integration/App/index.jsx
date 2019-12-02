@@ -142,7 +142,7 @@ export default function IntegrationApp({ match, history }) {
     e => {
       const newStoreId = e.target.value;
 
-      // Redirect to flows tab of new store
+      // Redirect to current tab of new store
       history.push(
         getRoutePath(
           `integrationApp/${integrationId}/child/${newStoreId}/${tab}`
