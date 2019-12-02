@@ -320,6 +320,11 @@ export const filterSubListProperties = eFields => {
   return filteredSubLists;
 };
 
+/*
+ * metadata = { fields: [{name: id1, label: name1, test: 1}, {name: id2, label: name2, test: 2}]}
+ * Flattens fields list extracting Objects as { id, name } from each field's name and label
+ * @output: [{id: id1, name: name1}, {id: id2, name: name2}]
+ */
 export const getFormattedSalesForceMetadata = metadata => {
   const formattedSFMetadata = [];
   const { fields = [] } = metadata || {};
@@ -371,6 +376,3 @@ export const getReferenceFieldsMap = (referenceFields = []) => {
 
   return fieldsToAttach;
 };
-
-export const findParentFieldInMetadata = (fields = [], parentField) =>
-  fields.find(field => field.name === parentField);

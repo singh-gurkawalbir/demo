@@ -4,10 +4,7 @@ import {
   getNetsuiteRealTimeSampleData,
   getSalesforceRealTimeSampleData,
 } from '../../../utils/sampleData';
-import {
-  getReferenceFieldsMap,
-  findParentFieldInMetadata,
-} from '../../../utils/metadata';
+import { getReferenceFieldsMap } from '../../../utils/metadata';
 /*
  * Should return sample data back from this saga
  * const sampleData = yield call(requestRealTimeMetadata, {resource})
@@ -16,32 +13,34 @@ import {
  * 2. Pass on for export preview call
  */
 
-function* attachRelatedLists({ metadata, relatedLists = [], connectionId }) {
+function* attachRelatedLists({
+  metadata,
+  relatedLists = [],
+  connectionId,
+  childRelationships = [],
+}) {
   let mergedMetadata = metadata;
 
   for (let listIndex = 0; listIndex < relatedLists.length; listIndex += 1) {
     const relatedList = relatedLists[listIndex];
-    const { sObjectType, parentField, referencedFields = [] } = relatedList;
+    const { sObjectType, referencedFields = [] } = relatedList;
     const commMetaPath = `salesforce/metadata/connections/${connectionId}/sObjectTypes/${sObjectType}`;
-    const sfMetadata = yield call(fetchMetadata, {
+    const { data: sfMetadata = {} } = yield call(fetchMetadata, {
       connectionId,
       commMetaPath,
     });
-    const relatedListMetadataFields =
-      (sfMetadata.data && sfMetadata.data.fields) || [];
-    const parentFieldMetadata =
-      findParentFieldInMetadata(relatedListMetadataFields, parentField) || {};
     const relatedListMetadata = {
-      ...parentFieldMetadata,
+      ...getSalesforceRealTimeSampleData(sfMetadata),
       ...getReferenceFieldsMap(referencedFields),
     };
+    const { relationshipName } =
+      childRelationships.find(
+        relation => relation.childSObject === sObjectType
+      ) || {};
 
-    // TODO Raghu : Discuss with Sravan
     mergedMetadata = {
       ...mergedMetadata,
-      [parentFieldMetadata.relationshipName || sObjectType]: [
-        relatedListMetadata,
-      ],
+      [relationshipName || sObjectType]: [relatedListMetadata],
     };
   }
 
@@ -81,6 +80,7 @@ export default function* requestRealTimeMetadata({ resource }) {
           commMetaPath,
         });
         let { data: metadata } = sfMetadata;
+        const { childRelationships } = metadata;
 
         metadata = getSalesforceRealTimeSampleData(metadata);
         metadata = { ...metadata, ...getReferenceFieldsMap(referencedFields) };
@@ -88,6 +88,7 @@ export default function* requestRealTimeMetadata({ resource }) {
         return yield call(attachRelatedLists, {
           metadata,
           relatedLists: relatedLists || [],
+          childRelationships,
           connectionId,
         });
       }
