@@ -65,7 +65,7 @@ export default function AddEditLookup(props) {
   });
 
   return (
-    <div>
+    <div data-test="lookup-form">
       <DynaForm disabled={disabled} fieldMeta={fieldMeta}>
         {error && (
           <div>

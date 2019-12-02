@@ -219,19 +219,24 @@ export default {
           ],
           defaultValue: lookup.default,
         },
-        exportDateFormat: {
-          id: 'exportDateFormat',
-          name: 'exportDateFormat',
+        extractDateFormat: {
+          id: 'extractDateFormat',
+          name: 'extractDateFormat',
           type: 'text',
           label: 'Export Date Format',
+          defaultValue: value.extractDateFormat,
           placeholder: '',
-          visibleWhen: [{ field: 'dataType', is: ['date'] }],
+          visibleWhenAll: [
+            { field: 'dataType', is: ['date'] },
+            { field: 'fieldMappingType', is: ['standard'] },
+          ],
         },
-        exportDateTimeZone: {
-          id: 'exportDateTimeZone',
-          name: 'exportDateTimeZone',
+        extractDateTimezone: {
+          id: 'extractDateTimezone',
+          name: 'extractDateTimezone',
           type: 'select',
           label: 'Export Date TimeZone',
+          defaultValue: value.extractDateTimezone,
           options: [
             {
               items:
@@ -243,21 +248,29 @@ export default {
                 [],
             },
           ],
-          visibleWhen: [{ field: 'dataType', is: ['date'] }],
+          visibleWhenAll: [
+            { field: 'dataType', is: ['date'] },
+            { field: 'fieldMappingType', is: ['standard'] },
+          ],
         },
-        importDateFormat: {
-          id: 'importDateFormat',
-          name: 'importDateFormat',
+        generateDateFormat: {
+          id: 'generateDateFormat',
+          name: 'generateDateFormat',
           type: 'text',
           label: 'Import Date Format',
+          defaultValue: value.generateDateFormat,
           placeholder: '',
-          visibleWhen: [{ field: 'dataType', is: ['date'] }],
+          visibleWhenAll: [
+            { field: 'dataType', is: ['date'] },
+            { field: 'fieldMappingType', is: ['standard'] },
+          ],
         },
-        importDateTimeZone: {
-          id: 'importDateTimeZone',
-          name: 'importDateTimeZone',
+        generateDateTimezone: {
+          id: 'generateDateTimezone',
+          name: 'generateDateTimezone',
           type: 'select',
           label: 'Import Date TimeZone',
+          defaultValue: value.generateDateTimezone,
           options: [
             {
               items:
@@ -269,7 +282,10 @@ export default {
                 [],
             },
           ],
-          visibleWhen: [{ field: 'dataType', is: ['date'] }],
+          visibleWhenAll: [
+            { field: 'dataType', is: ['date'] },
+            { field: 'fieldMappingType', is: ['standard'] },
+          ],
         },
       },
       layout: {
@@ -287,10 +303,10 @@ export default {
           'default',
           'hardcodedDefault',
           'lookupDefault',
-          'exportDateFormat',
-          'exportDateTimeZone',
-          'importDateFormat',
-          'importDateTimeZone',
+          'extractDateFormat',
+          'extractDateTimezone',
+          'generateDateFormat',
+          'generateDateTimezone',
         ],
       },
       optionsHandler: (fieldId, fields) => {
