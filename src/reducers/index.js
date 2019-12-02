@@ -128,6 +128,12 @@ export function isAllLoadingCommsAboveThreshold(state) {
   );
 }
 
+export function commStatusPerPath(state, path, method) {
+  const key = commKeyGen(path, method);
+
+  return fromComms.commStatus(state && state.comms, key);
+}
+
 // #endregion
 
 // #region PUBLIC SESSION SELECTORS
