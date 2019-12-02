@@ -88,7 +88,7 @@ export default function InstallationWizard(props) {
       })
     ) || {};
   const redirectTo = useSelector(state =>
-    selectors.redirectToOnCloneComplete(state, {
+    selectors.redirectToOnInstallationComplete(state, {
       resourceType,
       resourceId,
       templateId,

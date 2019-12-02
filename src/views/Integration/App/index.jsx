@@ -86,6 +86,9 @@ export default function IntegrationApp({ match, history }) {
   const addOnState = useSelector(state =>
     selectors.integrationAppAddOnState(state, integrationId)
   );
+  const hideGeneralTab = useSelector(
+    state => !selectors.hasGeneralSettings(state, integrationId, storeId)
+  );
   //
   //
   // TODO: All the code below should be moved into the data layer.
@@ -127,6 +130,11 @@ export default function IntegrationApp({ match, history }) {
     ? allTabs
     : // remove addons tab if IA doesn't have any.
       allTabs.slice(0, allTabs.length - 1);
+
+  if (hideGeneralTab) {
+    availableTabs.shift();
+  }
+
   const handleTagChangeHandler = useCallback(
     tag => {
       const patchSet = [{ op: 'replace', path: '/tag', value: tag }];
@@ -181,6 +189,19 @@ export default function IntegrationApp({ match, history }) {
     }
   } else if (!tab) {
     return <Redirect push={false} to={`${match.url}/flows`} />;
+  }
+
+  if (tab === 'general' && hideGeneralTab) {
+    return (
+      <Redirect
+        push={false}
+        to={
+          supportsMultiStore
+            ? `/pg/integrationApp/${integrationId}/child/${storeId}/flows`
+            : `/pg/integrationApp/${integrationId}/flows`
+        }
+      />
+    );
   }
 
   // TODO: <ResourceDrawer> Can be further optimized to take advantage
