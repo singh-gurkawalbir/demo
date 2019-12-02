@@ -293,7 +293,7 @@ export const getFormattedNSCustomerSampleData = metadata => {
     results[0].id = 'primarycurrency.name';
   }
 
-  return results;
+  return metadata;
 };
 
 export const filterSubListProperties = eFields => {
