@@ -183,7 +183,7 @@ export function isSetupComplete(
   return isSetupComplete;
 }
 
-export function redirectToOnCloneComplete(
+export function redirectToOnInstallationComplete(
   state,
   { resourceType = 'integrations', resourceId, templateId }
 ) {

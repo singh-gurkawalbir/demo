@@ -20,11 +20,11 @@ export default function GeneralPanel({ integrationId, storeId }) {
   // have selectors that do too much and as such, they are wasteful and
   // hard to understand and reuse. In this example, this component doesn't
   // need the flows returned by the selector.
-  const { flows, ...rest } = useSelector(state =>
+  const generalSectionMetadata = useSelector(state =>
     selectors.integrationAppGeneralSettings(state, integrationId, storeId)
   );
   const translatedMeta = integrationSettingsToDynaFormMetadata(
-    rest,
+    generalSectionMetadata,
     integrationId,
     true
   );
