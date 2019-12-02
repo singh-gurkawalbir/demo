@@ -147,3 +147,15 @@ export const isRawDataPatchSet = (patchSet = []) =>
  */
 export const isUIDataExpectedForResource = resource =>
   isRealTimeOrDistributedResource(resource) || isFileAdaptor(resource);
+
+// A dummy _Context field to expose on each preview data on flows
+export const getContextInfo = () => ({
+  _CONTEXT: {
+    lastExportDateTime: moment()
+      .add(-7, 'd')
+      .toISOString(),
+    currentExportDateTime: moment()
+      .add(-24, 'h')
+      .toISOString(),
+  },
+});

@@ -21,6 +21,7 @@ import {
 import {
   getSampleDataStage,
   getPreviewStageData,
+  getContextInfo,
 } from '../../../utils/flowData';
 import { exportPreview, pageProcessorPreview } from '../utils/previewCalls';
 import requestRealTimeMetadata from '../sampleDataGenerator/realTimeSampleData';
@@ -135,7 +136,7 @@ export function* fetchPageProcessorPreview({
   if (!flowId || !_pageProcessorId) return;
 
   try {
-    const previewData = yield call(pageProcessorPreview, {
+    let previewData = yield call(pageProcessorPreview, {
       flowId,
       _pageProcessorId,
       previewType,
@@ -143,6 +144,10 @@ export function* fetchPageProcessorPreview({
       throwOnError: true,
     });
 
+    previewData = {
+      ...previewData,
+      ...getContextInfo(),
+    };
     yield put(
       actions.flowData.receivedPreviewData(
         flowId,
@@ -183,6 +188,10 @@ export function* fetchPageGeneratorPreview({ flowId, _pageGeneratorId }) {
       previewData = getPreviewStageData(previewData, 'parse');
     }
 
+    previewData = {
+      ...previewData,
+      ...getContextInfo(),
+    };
     yield put(
       actions.flowData.receivedPreviewData(
         flowId,
