@@ -121,20 +121,27 @@ export default {
 
     if (formVal.dataType === 'date') {
       settings.dataType = 'string';
-      settings.exportDateTimeZone = formVal.exportDateTimeZone;
-      settings.exportDateFormat = formVal.exportDateFormat;
-      settings.importDateFormat = formVal.importDateFormat;
-      settings.importDateTimeZone = formVal.importDateTimeZone;
     } else if (formVal.dataType) {
       settings.dataType = formVal.dataType;
     }
 
-    if (formVal.extractDateFormat) {
-      settings.extractDateFormat = formVal.extractDateFormat;
-    }
+    // setting date fields
+    if (formVal.fieldMappingType === 'standard') {
+      if (formVal.extractDateFormat) {
+        settings.extractDateFormat = formVal.extractDateFormat;
+      }
 
-    if (formVal.extractDateTimezone) {
-      settings.extractDateTimezone = formVal.extractDateTimezone;
+      if (formVal.extractDateTimezone) {
+        settings.extractDateTimezone = formVal.extractDateTimezone;
+      }
+
+      if (formVal.generateDateFormat) {
+        settings.generateDateFormat = formVal.generateDateFormat;
+      }
+
+      if (formVal.generateDateTimezone) {
+        settings.generateDateTimezone = formVal.generateDateTimezone;
+      }
     }
 
     if (formVal.discardIfEmpty) {
@@ -189,7 +196,13 @@ export default {
       }
     }
 
-    if (formVal.fieldMappingType === 'multifield') {
+    // setting extract value
+    if (
+      formVal.fieldMappingType === 'standard' &&
+      extract.indexOf('{{') !== -1
+    ) {
+      settings.extract = '';
+    } else if (formVal.fieldMappingType === 'multifield') {
       settings.extract = formVal.expression;
     } else if (formVal.fieldMappingType !== 'hardCoded') {
       settings.extract = extract;
