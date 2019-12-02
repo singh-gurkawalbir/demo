@@ -3,7 +3,7 @@ import { combineReducers } from 'redux';
 import jsonPatch from 'fast-json-patch';
 import moment from 'moment';
 import produce from 'immer';
-import { uniq, some, map, keys } from 'lodash';
+import { uniq, some, map, keys, isEmpty } from 'lodash';
 import app, * as fromApp from './app';
 import data, * as fromData from './data';
 import session, * as fromSession from './session';
@@ -1112,6 +1112,23 @@ export function integrationAppGeneralSettings(state, id, storeId) {
     fields,
     sections: subSections,
   };
+}
+
+export function hasGeneralSettings(state, integrationId, storeId) {
+  if (!state) return false;
+  const integrationResource = fromData.integrationAppSettings(
+    state.data,
+    integrationId
+  );
+  const { supportsMultiStore, general } = integrationResource.settings || {};
+
+  if (supportsMultiStore) {
+    return !!(general || []).find(s => s.id === storeId);
+  } else if (Array.isArray(general)) {
+    return !!general.find(s => s.title === 'General');
+  }
+
+  return !isEmpty(general);
 }
 
 export function integrationAppFlowSettings(state, id, section, storeId) {

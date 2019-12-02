@@ -23,6 +23,9 @@ export default function GeneralPanel({ integrationId, storeId }) {
   const generalSectionMetadata = useSelector(state =>
     selectors.integrationAppGeneralSettings(state, integrationId, storeId)
   );
+  const hasGeneralSettings = useSelector(state =>
+    selectors.hasGeneralSettings(state, integrationId, storeId)
+  );
   const translatedMeta = integrationSettingsToDynaFormMetadata(
     generalSectionMetadata,
     integrationId,
@@ -33,7 +36,7 @@ export default function GeneralPanel({ integrationId, storeId }) {
     <div className={classes.root}>
       <PanelHeader title="General" />
 
-      {translatedMeta && (
+      {hasGeneralSettings && (
         <DynaFormWithDynamicActions
           key={storeId}
           fieldMeta={translatedMeta}
