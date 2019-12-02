@@ -1,3 +1,5 @@
+import dateTimezones from '../../../../../utils/dateTimezones';
+import dateFormats from '../../../../../utils/dateFormats';
 import mappingUtil from '../../../../../utils/mapping';
 
 export default {
@@ -352,6 +354,44 @@ export default {
           ],
           visibleWhenAll: [{ field: 'fieldMappingType', is: ['hardCoded'] }],
         },
+        extractDateFormat: {
+          id: 'extractDateFormat',
+          name: 'extractDateFormat',
+          type: 'select',
+          label: 'Date format',
+          defaultValue: value.extractDateFormat,
+          options: [
+            {
+              items:
+                (dateFormats &&
+                  dateFormats.map(date => ({
+                    label: date.value,
+                    value: date.name,
+                  }))) ||
+                [],
+            },
+          ],
+          visibleWhen: [{ field: 'fieldMappingType', is: ['standard'] }],
+        },
+        extractDateTimezone: {
+          id: 'extractDateTimezone',
+          name: 'extractDateTimezone',
+          type: 'select',
+          label: 'Time Zone',
+          defaultValue: value.extractDateTimezone,
+          options: [
+            {
+              items:
+                (dateTimezones &&
+                  dateTimezones.map(date => ({
+                    label: date.value,
+                    value: date.name,
+                  }))) ||
+                [],
+            },
+          ],
+          visibleWhen: [{ field: 'fieldMappingType', is: ['standard'] }],
+        },
       },
       layout: {
         fields: [
@@ -374,6 +414,8 @@ export default {
           'lookupDefault',
           'hardcodedSelect',
           'hardcodedCheckbox',
+          'extractDateFormat',
+          'extractDateTimezone',
         ],
       },
       optionsHandler: (fieldId, fields) => {
@@ -476,6 +518,19 @@ export default {
 
       fields = fields.filter(
         el => el !== 'hardcodedSelect' && el !== 'hardcodedCheckbox'
+      );
+    }
+
+    if (
+      fieldMetadata &&
+      fieldMetadata.type !== 'date' &&
+      fieldMetadata.type !== 'datetime'
+    ) {
+      delete fieldMeta.fieldMap.extractDateFormat;
+      delete fieldMeta.fieldMap.extractDateTimezone;
+
+      fields = fields.filter(
+        el => el !== 'extractDateFormat' && el !== 'extractDateTimezone'
       );
     }
 

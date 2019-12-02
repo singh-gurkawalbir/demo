@@ -42,6 +42,7 @@ import {
 import { isValidResourceReference, isNewId } from '../utils/resource';
 import { processSampleData } from '../utils/sampleData';
 import inferErrorMessage from '../utils/inferErrorMessage';
+import getRoutePath from '../utils/routePaths';
 
 const emptySet = [];
 const combinedReducers = combineReducers({
@@ -164,12 +165,85 @@ export function cloneData(state, resourceType, resourceId) {
   );
 }
 
+export function isSetupComplete(
+  state,
+  { templateId, resourceType, resourceId }
+) {
+  let isSetupComplete = false;
+  const installSteps =
+    fromSession.templateInstallSteps(
+      state && state.session,
+      templateId || `${resourceType}-${resourceId}`
+    ) || [];
+
+  isSetupComplete =
+    installSteps.length &&
+    !installSteps.reduce((result, step) => result || !step.completed, false);
+
+  return isSetupComplete;
+}
+
+export function redirectToOnCloneComplete(
+  state,
+  { resourceType = 'integrations', resourceId, templateId }
+) {
+  let redirectTo = 'dashboard';
+  let flow;
+  let flowDetails;
+  let integration;
+  const { createdComponents: components } = fromSession.template(
+    state && state.session,
+    templateId || `${resourceType}-${resourceId}`
+  );
+
+  if (!components) {
+    return false;
+  }
+
+  switch (resourceType) {
+    case 'integrations':
+      integration = components.find(c => c.model === 'Integration');
+
+      if (integration) redirectTo = `/integrations/${integration._id}/flows`;
+      break;
+    case 'flows':
+      flow = components.find(c => c.model === 'Flow');
+
+      if (flow) {
+        // eslint-disable-next-line no-use-before-define
+        flowDetails = resource(state, 'flows', flow._id);
+
+        if (flowDetails) {
+          redirectTo = `integrations/${flowDetails._integrationId ||
+            'none'}/flows`;
+        }
+      }
+
+      break;
+    case 'exports':
+    case 'imports':
+      redirectTo = resourceType;
+      break;
+    default:
+      break;
+  }
+
+  return getRoutePath(redirectTo);
+}
+
 export function previewTemplate(state, templateId) {
   return fromSession.previewTemplate(state && state.session, templateId);
 }
 
 export function isFileUploaded(state) {
   return fromSession.isFileUploaded(state && state.session);
+}
+
+export function installSetup(state, { resourceType, resourceId, templateId }) {
+  return fromSession.template(
+    state && state.session,
+    templateId || `${resourceType}-${resourceId}`
+  );
 }
 
 export function templateSetup(state, templateId) {

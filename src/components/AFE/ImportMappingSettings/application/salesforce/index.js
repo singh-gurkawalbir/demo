@@ -330,6 +330,7 @@ export default {
           name: 'extractDateFormat',
           type: 'select',
           label: 'Date format',
+          defaultValue: value.extractDateFormat,
           options: [
             {
               items:
@@ -348,6 +349,7 @@ export default {
           name: 'extractDateTimezone',
           type: 'select',
           label: 'Time Zone',
+          defaultValue: value.extractDateTimezone,
           options: [
             {
               items:

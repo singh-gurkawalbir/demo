@@ -1,14 +1,14 @@
 import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import * as selectors from '../../reducers';
+import { useHistory } from 'react-router-dom';
 import actions from '../../actions';
+import * as selectors from '../../reducers';
 import LoadResources from '../../components/LoadResources';
-import getRoutePath from '../../utils/routePaths';
 import InstallWizard from '../../components/InstallationWizard';
-import templateUtil from '../../utils/template';
 
 export default function Clone(props) {
   const { resourceType, resourceId } = props.match.params;
+  const history = useHistory();
   const dispatch = useDispatch();
   const resource =
     useSelector(state => selectors.resource(state, resourceType, resourceId)) ||
@@ -17,33 +17,11 @@ export default function Clone(props) {
     selectors.cloneInstallSteps(state, resourceType, resourceId)
   );
   const handleSetupComplete = useCallback(
-    createdComponents => {
+    redirectTo => {
+      history.push(redirectTo);
       dispatch(actions.template.clearTemplate(`${resourceType}-${resourceId}`));
-      const dependentResources =
-        templateUtil.getDependentResources(createdComponents) || [];
-
-      dependentResources.forEach(res => {
-        dispatch(actions.resource.requestCollection(res));
-      });
-
-      if (['integrations', 'flows'].includes(resourceType)) {
-        // redirect to integration Settings
-        const integration = createdComponents.find(
-          c => c.model === 'Integration'
-        );
-
-        if (integration) {
-          props.history.push(
-            getRoutePath(`/integrations/${integration._id}/flows`)
-          );
-        } else {
-          props.history.push('/');
-        }
-      } else {
-        props.history.push(getRoutePath(`/${resourceType}`));
-      }
     },
-    [dispatch, props.history, resourceType, resourceId]
+    [dispatch, history, resourceId, resourceType]
   );
 
   return (

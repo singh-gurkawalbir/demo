@@ -70,7 +70,10 @@ export default function ModalDialog({
               </IconButton>
             )}
             {!onClose && actionHandler && (
-              <Button className={classes.actionButton} onClick={actionHandler}>
+              <Button
+                className={classes.actionButton}
+                onClick={actionHandler}
+                data-test={actionLabel}>
                 {actionLabel}
               </Button>
             )}
