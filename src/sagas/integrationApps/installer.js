@@ -22,6 +22,7 @@ export function* installStep({ id, installerFunction, storeId, addOnId }) {
         'failed'
       )
     );
+    yield put(actions.api.failure(path, 'PUT', error.message, false));
 
     return undefined;
   }
@@ -72,6 +73,7 @@ export function* installStoreStep({ id, installerFunction }) {
     yield put(
       actions.integrationApp.store.updateStep(id, installerFunction, 'failed')
     );
+    yield put(actions.api.failure(path, 'PUT', error, false));
 
     return undefined;
   }
