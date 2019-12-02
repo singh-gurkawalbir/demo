@@ -2,8 +2,7 @@
 import { useSelector } from 'react-redux';
 import * as selectors from '../../../reducers';
 import DynaNetSuiteLookup from './DynaNetSuiteLookup';
-// TODO: change the references to point to correct filters
-import DynaSFLookup from './DynaNetSuiteLookup';
+import DynaSFLookup from './DynaSalesforceLookup';
 import DynaSFQualifier from './DynaSalesforceQualifier';
 import DynaNSQualifier from './DynaNetSuiteQualifier';
 

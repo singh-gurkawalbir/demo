@@ -128,7 +128,20 @@ export default function reducer(state = {}, action) {
 
       case actionTypes.MAPPING.PATCH_SETTINGS:
         if (draft[id].mappings[index]) {
-          const valueTmp = { ...draft[id].mappings[index] };
+          const {
+            generate,
+            extract,
+            isNotEditable,
+            index: mappingIndex,
+            isRequired,
+          } = draft[id].mappings[index];
+          const valueTmp = {
+            generate,
+            extract,
+            isNotEditable,
+            index: mappingIndex,
+            isRequired,
+          };
 
           Object.assign(valueTmp, value);
 

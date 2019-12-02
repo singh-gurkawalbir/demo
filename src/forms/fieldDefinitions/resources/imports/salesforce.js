@@ -485,7 +485,7 @@ export default {
     ],
   },
   'salesforce.idLookup.whereClause': {
-    type: 'text',
+    type: 'salesforcelookup',
     label: 'Where Clause',
     visibleWhenAll: [
       {

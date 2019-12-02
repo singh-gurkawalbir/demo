@@ -8,6 +8,7 @@ import getFormattedSampleData from '../../../../utils/sampleData';
 import actions from '../../../../actions';
 import ActionButton from '../../../ActionButton';
 import ExitIcon from '../../../icons/ExitIcon';
+import { adaptorTypeMap } from '../../../../utils/resource';
 
 const useStyles = makeStyles(theme => ({
   textField: {
@@ -41,6 +42,7 @@ export default function DynaRelativeURIWithLookup(props) {
     resourceType,
     flowId,
     arrayIndex,
+    adaptorType,
   } = props;
   const { resourceName, lookups } = options;
   const { fieldId: lookupFieldId, data: lookupData } = lookups || {};
@@ -126,6 +128,8 @@ export default function DynaRelativeURIWithLookup(props) {
     options && typeof arrayIndex === 'number' && Array.isArray(value)
       ? value[arrayIndex]
       : value;
+  const isSqlImport =
+    adaptorType && adaptorTypeMap[adaptorType] === adaptorTypeMap.RDBMSImport;
 
   return (
     <Fragment>
@@ -151,8 +155,10 @@ export default function DynaRelativeURIWithLookup(props) {
         label={label}
         placeholder={placeholder}
         isValid={isValid}
+        sampleData={formattedSampleData}
         description={description}
         errorMessages={errorMessages}
+        isSqlImport={isSqlImport}
         disabled={disabled}
         multiline={multiline}
         onFieldChange={handleFieldChange}
