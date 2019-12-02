@@ -24,6 +24,7 @@ import ConnectionsPanel from './panels/Connections';
 import DashboardPanel from './panels/Dashboard';
 import AddOnsPanel from './panels/AddOns';
 import IntegrationTabs from '../common/Tabs';
+import getRoutePath from '../../../utils/routePaths';
 
 const allTabs = [
   { path: 'general', label: 'General', Icon: GeneralIcon, Panel: GeneralPanel },
@@ -141,9 +142,14 @@ export default function IntegrationApp({ match, history }) {
     e => {
       const newStoreId = e.target.value;
 
-      history.push(history.location.pathname.replace(storeId, newStoreId));
+      // Redirect to current tab of new store
+      history.push(
+        getRoutePath(
+          `integrationApp/${integrationId}/child/${newStoreId}/${tab}`
+        )
+      );
     },
-    [history, storeId]
+    [history, integrationId, tab]
   );
   const handleAddNewStoreClick = useCallback(() => {
     history.push(`/pg/connectors/${integrationId}/install/addNewStore`);

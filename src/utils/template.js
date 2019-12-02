@@ -2,10 +2,6 @@
 import { some, reduce, uniq, map } from 'lodash';
 import applications from '../constants/applications';
 import {
-  RESOURCE_TYPE_LABEL_TO_SINGULAR,
-  RESOURCE_TYPE_SINGULAR_TO_PLURAL,
-} from '../constants/resource';
-import {
   NETSUITE_BUNDLE_URL,
   SALESFORCE_DA_PACKAGE_URL,
   INSTALL_STEP_TYPES,
@@ -13,10 +9,7 @@ import {
 
 export default {
   getDependentResources: createdComponents =>
-    uniq(map(createdComponents, 'model')).map(
-      res =>
-        RESOURCE_TYPE_SINGULAR_TO_PLURAL[RESOURCE_TYPE_LABEL_TO_SINGULAR[res]]
-    ),
+    uniq(map(createdComponents, 'model')).map(res => `${res.toLowerCase()}s`),
   getInstallSteps: previewData => {
     const connectionMap = {};
     const installSteps = [];

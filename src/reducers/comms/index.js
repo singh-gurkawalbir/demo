@@ -51,7 +51,7 @@ export default (state = initialState, action) => {
       newState.message = message || 'unknown error';
 
       // if not defined it should be false
-      if (hidden) newState.hidden = hidden;
+      newState.hidden = !!hidden;
       delete newState.retry;
       delete newState.timestamp;
 
