@@ -196,7 +196,13 @@ export default {
       }
     }
 
-    if (formVal.fieldMappingType === 'multifield') {
+    // setting extract value
+    if (
+      formVal.fieldMappingType === 'standard' &&
+      extract.indexOf('{{') !== -1
+    ) {
+      settings.extract = '';
+    } else if (formVal.fieldMappingType === 'multifield') {
       settings.extract = formVal.expression;
     } else if (formVal.fieldMappingType !== 'hardCoded') {
       settings.extract = extract;
