@@ -50,7 +50,7 @@ export default function RefreshableIntegrationAppSetting(props) {
       fieldStatus={!isLoading}
       fieldData={options || []}
       fieldError={null}
-      value={value && value.id}
+      value={valueAndLabel ? value && value.id : value}
     />
   );
 }
