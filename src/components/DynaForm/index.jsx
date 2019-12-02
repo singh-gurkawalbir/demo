@@ -48,6 +48,12 @@ class DynaForm extends Component {
     const { layout, fieldMap } = fieldMeta;
     const renderer = getRenderer(editMode, fieldMeta, resourceId, resourceType);
 
+    // TODO: This is a helpful logger to find re-renders of forms.
+    // Sometimes forms are rendered in hidden tabs/drawers and thus still
+    // cause re-renders, even when hidden outputting the layout makes it easy
+    // to identify the source.
+    // console.log('RENDER: DynaForm', layout);
+
     if (!layout) {
       return null;
     }
@@ -72,7 +78,7 @@ class DynaForm extends Component {
 
 export default function DisabledDynaFormPerUserPermissions(props) {
   // Disabled is a prop to deliberately disable the Form this is added to support a DynaForm within a DynaForm
-  const { integrationId, fieldMeta, disabled } = props;
+  const { integrationId, disabled } = props;
   // pass in the integration Id to find access level of its associated forms
   const isFormAMonitorLevelAccess = useSelector(state =>
     selectors.isFormAMonitorLevelAccess(state, integrationId)
@@ -86,7 +92,6 @@ export default function DisabledDynaFormPerUserPermissions(props) {
       // when its in view mode we disable validation before touch this ensures that there is no
       // required fields errored messages
       showValidationBeforeTouched={!viewMode}
-      fieldMeta={fieldMeta}
     />
   );
 }
