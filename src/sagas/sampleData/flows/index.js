@@ -144,7 +144,7 @@ export function* fetchPageProcessorPreview({
       throwOnError: true,
     });
 
-    previewData = {
+    previewData = previewData && {
       ...previewData,
       ...getContextInfo(),
     };
@@ -188,7 +188,7 @@ export function* fetchPageGeneratorPreview({ flowId, _pageGeneratorId }) {
       previewData = getPreviewStageData(previewData, 'parse');
     }
 
-    previewData = {
+    previewData = previewData && {
       ...previewData,
       ...getContextInfo(),
     };

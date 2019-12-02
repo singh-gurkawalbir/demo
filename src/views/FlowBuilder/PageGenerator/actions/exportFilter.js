@@ -47,8 +47,7 @@ function ExportFilterDialog({ flowId, resource, isViewMode, onClose }) {
           flowId,
           resourceId,
           'exports',
-          'outputFilter',
-          true
+          'outputFilter'
         )
       );
     }
