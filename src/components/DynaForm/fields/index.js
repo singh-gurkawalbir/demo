@@ -67,6 +67,7 @@ import DynaSalesforceQualifier from './DynaSalesforceQualifier';
 import DynaQuery from './DynaQuery';
 import DynaSalesforceLookupFilters from './DynaSalesforceLookupFilters';
 import DynaSalesforceLookup from './DynaSalesforceLookup';
+import DynaMultiSubsidiaryMapping from './DynaTableView/DynaMultiSubsidiaryMapping';
 
 export default {
   mapping: DynaImportMapping,
@@ -77,10 +78,10 @@ export default {
   textarea: DynaText,
   checkbox: DynaCheckbox,
   select: DynaSelect,
-  subsidiaryMapWidget: DynaStaticMap,
   xmlMapper: DynaXMLMapper,
   trueFixedWidthColumnMapper: DynaTrueFixedWidthColumnMapper,
   csvColumnMapper: DynaCSVColumnMapper,
+  subsidiaryMapWidget: DynaMultiSubsidiaryMapping,
   selectresource: DynaSelectResource,
   selectapplication: DynaSelectApplication,
   filetypeselect: DynaFileTypeSelect,
