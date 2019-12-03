@@ -364,16 +364,21 @@ export const translateDependencyProps = fieldMap => {
     rules.forEach(rule => {
       const { ref, visibleRule, requiredRule } = rule;
 
-      if (visibleRule) {
-        fieldMapCopy[ref].visibleWhenAll = pushRuleToMeta(
-          fieldMapCopy[ref].visibleWhenAll,
-          visibleRule
-        );
-      } else if (requiredRule) {
-        fieldMapCopy[ref].validWhenAll = pushRuleToMeta(
-          fieldMapCopy[ref].validWhenAll,
-          requiredRule
-        );
+      // im doing this check to prevent pushing rules to non existent refs
+      // this can happen when fields are hidden and removed from the meta
+      // So the rules generated from the dependencies are not needed then
+      if (fieldMapCopy[ref]) {
+        if (visibleRule) {
+          fieldMapCopy[ref].visibleWhenAll = pushRuleToMeta(
+            fieldMapCopy[ref].visibleWhenAll,
+            visibleRule
+          );
+        } else if (requiredRule) {
+          fieldMapCopy[ref].validWhenAll = pushRuleToMeta(
+            fieldMapCopy[ref].validWhenAll,
+            requiredRule
+          );
+        }
       }
     });
   });

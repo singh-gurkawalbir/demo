@@ -74,7 +74,11 @@ export default function DynaTypeableSelect(props) {
       return;
     }
 
-    if (onBlur) onBlur(id, inputValue);
+    // check if entered value is a part of suggestions
+    const selectedObj = suggestions.find(o => o.label === inputValue);
+    const val = selectedObj ? selectedObj.value : inputValue;
+
+    if (onBlur) onBlur(id, val);
     setInputState({ ...inputState, isFocus: false });
   };
 
