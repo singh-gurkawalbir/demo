@@ -6,7 +6,7 @@ import { extractFieldsFromCsv } from './file';
 export default function getFormattedSampleData({
   connection,
   sampleData,
-  useSampleDataAsArray,
+  // useSampleDataAsArray,
   resourceType,
   resourceName,
 }) {
@@ -17,7 +17,7 @@ export default function getFormattedSampleData({
     myField: 'sample',
   };
 
-  data.data = useSampleDataAsArray ? [_sd] : _sd;
+  data.data = [_sd];
 
   if (connection) {
     data.connection.name = connection.name;
