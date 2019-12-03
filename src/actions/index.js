@@ -337,6 +337,10 @@ const metadata = {
       resourceId,
       previewData,
     }),
+  resetAssistantImportPreview: resourceId =>
+    action(actionTypes.METADATA.ASSISTANT_PREVIEW_RESET, {
+      resourceId,
+    }),
 };
 const fileDefinitions = {
   preBuilt: {
