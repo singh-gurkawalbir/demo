@@ -4,7 +4,7 @@ import * as selectors from '../../../reducers';
 import DynaNetSuiteLookup from './DynaNetSuiteLookup';
 import DynaSFLookup from './DynaSalesforceLookup';
 import DynaSFQualifier from './DynaSalesforceQualifier';
-import DynaNSQualifier from './DynaNetSuiteQualificationCriteria';
+import DynaNSQualifier from './DynaNetSuiteQualifier';
 
 export default function DynaIAExpression(props) {
   const { flowId, properties = {}, expressionType: type } = props;

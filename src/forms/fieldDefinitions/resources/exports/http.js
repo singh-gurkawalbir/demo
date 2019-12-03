@@ -402,7 +402,6 @@ export default {
   },
   'http.once.body': {
     type: 'httprequestbody',
-    useSampleDataAsArray: true,
     connectionId: r => r && r._connectionId,
     label: 'Build HTTP Request Body',
     visibleWhenAll: [

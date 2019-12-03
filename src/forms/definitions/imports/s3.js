@@ -130,6 +130,28 @@ export default {
     },
     's3.fileKey': { fieldId: 's3.fileKey' },
     blobKeyPath: { fieldId: 'blobKeyPath' },
+    'file.xml.body': {
+      id: 'file.xml.body',
+      type: 'httprequestbody',
+      connectionId: r => r && r._connectionId,
+      label: 'Launch XML Builder',
+      title: 'XML Document Editor',
+      ruleTitle: 'Type your template here.',
+      resultTitle: 'Your evaluated result!',
+      dataTitle: 'Resources available in your template.',
+      refreshOptionsOnChangesTo: ['file.type'],
+      required: true,
+      visibleWhenAll: [
+        {
+          field: 'file.type',
+          is: ['xml'],
+        },
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
+      ],
+    },
     file: {
       formId: 'file',
       visibleWhenAll: [
@@ -173,6 +195,7 @@ export default {
       's3.bucket',
       'fileType',
       's3.fileKey',
+      'file.xml.body',
       'file',
       'dataMappings',
       'file.lookups',
