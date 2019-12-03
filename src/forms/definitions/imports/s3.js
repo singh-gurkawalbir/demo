@@ -1,4 +1,3 @@
-import timeStamps from '../../../utils/timeStamps';
 import { isNewId } from '../../../utils/resource';
 
 export default {
@@ -30,39 +29,17 @@ export default {
   },
   optionsHandler: (fieldId, fields) => {
     if (fieldId === 's3.fileKey') {
+      const fileNameField = fields.find(field => field.fieldId === fieldId);
       const fileTypeField = fields.find(field => field.fieldId === 'file.type');
-      const fileNameField = fields.find(
-        field => field.fieldId === 's3.fileKey'
-      );
-      let suggestionList = [];
+      const newExtension = fileTypeField.value;
 
-      if (
-        fileNameField &&
-        fileNameField.value &&
-        fileTypeField &&
-        fileTypeField.value
-      ) {
-        const extension = fileTypeField.value;
-        const lastDotIndex = fileNameField.value.lastIndexOf('.');
-        const fileNameWithoutExt =
-          lastDotIndex !== -1
-            ? fileNameField.value.substring(0, lastDotIndex)
-            : fileNameField.value;
-        const bracesStartIndex = fileNameWithoutExt.indexOf('{');
-        const textBeforeBraces =
-          bracesStartIndex !== -1
-            ? fileNameWithoutExt.substring(0, bracesStartIndex)
-            : fileNameWithoutExt;
+      if (newExtension) {
+        const fileName = fileNameField.value;
+        const lastDotIndex = fileName.lastIndexOf('.');
+        const fileNameWithoutExt = fileName.substring(0, lastDotIndex);
 
-        suggestionList = timeStamps.map(
-          timestamp =>
-            `${textBeforeBraces}{{timestamp(${timestamp._id})}}.${extension}`
-        );
-
-        fileNameField.value = `${fileNameWithoutExt}.${extension}`;
+        fileNameField.value = `${fileNameWithoutExt}.${newExtension}`;
       }
-
-      return { suggestions: suggestionList };
     }
 
     const fileType = fields.find(field => field.id === 'file.type');
