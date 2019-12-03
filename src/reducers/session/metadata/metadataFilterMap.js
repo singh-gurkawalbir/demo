@@ -6,6 +6,8 @@ This file consists of filter map which is used to filter netsuite and salesforce
 */
 
 export default {
+  // raw stage is to retrieve the actual data stored  in the state without filters
+  raw: data => data,
   'suitescript-recordTypes': data =>
     data.map(item => ({
       label: item.name,
