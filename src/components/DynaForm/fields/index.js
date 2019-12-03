@@ -65,6 +65,8 @@ import DynaIclient from './DynaIclient';
 import DynaNetSuiteQualifier from './DynaNetSuiteQualifier';
 import DynaSalesforceQualifier from './DynaSalesforceQualifier';
 import DynaQuery from './DynaQuery';
+import DynaSalesforceLookupFilters from './DynaSalesforceLookupFilters';
+import DynaSalesforceLookup from './DynaSalesforceLookup';
 
 export default {
   mapping: DynaImportMapping,
@@ -143,4 +145,6 @@ export default {
   dynaiclient: DynaIclient,
   netsuitequalifier: DynaNetSuiteQualifier,
   query: DynaQuery,
+  salesforcelookupfilters: DynaSalesforceLookupFilters,
+  salesforcelookup: DynaSalesforceLookup,
 };

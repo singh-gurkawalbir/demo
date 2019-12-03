@@ -332,8 +332,6 @@ export default {
       id: 'http.bodyCreate',
       type: 'httprequestbody',
       connectionId: r => r && r._connectionId,
-      useSampleDataAsArray: true,
-
       label: 'Build HTTP Request Body For Create',
       arrayIndex: 1,
       refreshOptionsOnChangesTo: [
@@ -552,7 +550,6 @@ export default {
       id: 'http.bodyUpdate',
       type: 'httprequestbody',
       connectionId: r => r && r._connectionId,
-      useSampleDataAsArray: true,
       label: 'Build HTTP Request Body For Update',
       arrayIndex: 0,
       refreshOptionsOnChangesTo: [

@@ -80,7 +80,7 @@ export default function ConnectionsPanel({ integrationId, storeId }) {
         )}
       </PanelHeader>
 
-      <LoadResources required resources="connections">
+      <LoadResources required resources="connections,flows,exports,imports">
         <CeligoTable
           data={connections}
           {...metadata}

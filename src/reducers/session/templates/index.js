@@ -2,6 +2,9 @@ import produce from 'immer';
 import actionTypes from '../../../actions/types';
 import { INSTALL_STEP_TYPES } from '../../../utils/constants';
 
+const defaultSteps = [];
+const emptyObject = {};
+
 export default function reducer(state = {}, action) {
   const {
     type,
@@ -132,7 +135,11 @@ export default function reducer(state = {}, action) {
 
 // #region PUBLIC SELECTORS
 export function template(state, templateId) {
-  return (state || {})[templateId] || {};
+  if (!state || !state[templateId]) {
+    return emptyObject;
+  }
+
+  return state[templateId];
 }
 
 export function previewTemplate(state, templateId) {
@@ -141,7 +148,7 @@ export function previewTemplate(state, templateId) {
 
 export function isFileUploaded(state) {
   if (!state) {
-    return {};
+    return emptyObject;
   }
 
   let uploadedZipFound;
@@ -158,10 +165,18 @@ export function isFileUploaded(state) {
 }
 
 export function templateInstallSteps(state, templateId) {
-  return ((state || {})[templateId] || {}).installSteps || [];
+  if (!state || !state[templateId]) {
+    return defaultSteps;
+  }
+
+  return state[templateId].installSteps || defaultSteps;
 }
 
 export function connectionMap(state, templateId) {
-  return ((state || {})[templateId] || {}).connectionMap || {};
+  if (!state || !state[templateId] || !state[templateId].connectionMap) {
+    return emptyObject;
+  }
+
+  return state[templateId].connectionMap;
 }
 // #endregion

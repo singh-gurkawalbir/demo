@@ -122,7 +122,14 @@ export function* onErrorSaga(error, action) {
         actions.api.failure(path, method, JSON.stringify(error.data), hidden)
       );
     } else {
-      yield put(actions.api.failure(path, method, JSON.stringify(error.data)));
+      yield put(
+        actions.api.failure(
+          path,
+          method,
+          JSON.stringify(error.data),
+          origReq && origReq.args && origReq.args.hidden
+        )
+      );
     }
 
     // give up and let the parent saga try.

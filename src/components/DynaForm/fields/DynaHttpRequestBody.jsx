@@ -28,7 +28,6 @@ export default function DynaHttpRequestBody(props) {
     resourceType,
     flowId,
     arrayIndex,
-    useSampleDataAsArray,
   } = props;
   const { lookups: lookupsObj, contentType, resourceName } = options;
   const [showEditor, setShowEditor] = useState(false);
@@ -61,17 +60,13 @@ export default function DynaHttpRequestBody(props) {
   });
   // constructing data
   const connectionCopy = deepClone(connection);
-  const formattedSampleData = JSON.stringify(
-    getFormattedSampleData({
-      connection: connectionCopy,
-      sampleData,
-      useSampleDataAsArray,
-      resourceType,
-      resourceName,
-    }),
-    null,
-    2
-  );
+  const formattedSampleData = getFormattedSampleData({
+    connection: connectionCopy,
+    sampleData,
+    resourceType,
+    resourceName,
+  });
+  const stringifiedSampleData = JSON.stringify(formattedSampleData, null, 2);
 
   useEffect(() => {
     // Request for sample data only incase of flow context
@@ -109,11 +104,9 @@ export default function DynaHttpRequestBody(props) {
   };
 
   if (!parsedRule) {
-    const sampleDataTmp = sampleData || { myField: 'sample' };
-
     if (contentType === 'json')
-      parsedRule = getJSONSampleTemplate(sampleDataTmp);
-    else parsedRule = getXMLSampleTemplate(sampleDataTmp);
+      parsedRule = getJSONSampleTemplate(formattedSampleData.data);
+    else parsedRule = getXMLSampleTemplate(formattedSampleData.data);
   }
 
   let lookupField;
@@ -139,7 +132,7 @@ export default function DynaHttpRequestBody(props) {
           rule={parsedRule}
           onFieldChange={onFieldChange}
           lookups={lookups}
-          data={formattedSampleData}
+          data={stringifiedSampleData}
           onClose={handleClose}
           action={lookupField}
           ruleTitle={ruleTitle}
