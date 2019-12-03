@@ -167,7 +167,6 @@ export default {
   },
   'http.body': {
     type: 'httprequestbody',
-    useSampleDataAsArray: true,
     connectionId: r => r && r._connectionId,
     arrayIndex: 0,
     defaultValue: r =>

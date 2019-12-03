@@ -375,31 +375,33 @@ export const translateDependencyProps = fieldMap => {
 };
 
 const translateFieldProps = (fields = [], _integrationId, resource) =>
-  fields.map(field => {
-    // TODO: generate correct name path
-    const { name, options, default: defaultValue, tooltip } = field;
-    // name is the unique identifier....verify with Ashok
+  fields
+    .map(field => {
+      // TODO: generate correct name path
+      const { name, options, default: defaultValue, tooltip } = field;
+      // name is the unique identifier....verify with Ashok
 
-    return {
-      ...getFieldConfig(field, resource),
-      defaultValue,
-      name: `/${name}`,
-      _integrationId,
-      id: name,
-      helpText: tooltip,
-      options: [
-        {
-          items:
-            (options &&
-              options.map(option => ({
-                label: option && option[1],
-                value: option && option[0],
-              }))) ||
-            [],
-        },
-      ],
-    };
-  });
+      return {
+        ...getFieldConfig(field, resource),
+        defaultValue,
+        name: `/${name}`,
+        _integrationId,
+        id: name,
+        helpText: tooltip,
+        options: [
+          {
+            items:
+              (options &&
+                options.map(option => ({
+                  label: option && option[1],
+                  value: option && option[0],
+                }))) ||
+              [],
+          },
+        ],
+      };
+    })
+    .filter(f => !f.hidden);
 
 export const integrationSettingsToDynaFormMetadata = (
   meta,
