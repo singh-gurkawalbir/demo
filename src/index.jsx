@@ -5,7 +5,6 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import { Provider } from 'react-redux';
 import createSagaMiddleware from 'redux-saga';
 import { createLogger } from 'redux-logger';
-import { SnackbarProvider } from 'notistack';
 import App from './App';
 import rootReducer from './reducers';
 import rootSaga from './sagas';
@@ -51,9 +50,7 @@ sagaMiddleware.run(rootSaga);
 
 render(
   <Provider store={store}>
-    <SnackbarProvider maxSnack={3}>
-      <App />
-    </SnackbarProvider>
+    <App />
   </Provider>,
   document.getElementById('root')
 );
