@@ -214,6 +214,12 @@ export function* updateIntegrationSettings({
     yield put(actions.resource.request('integrations', integrationId));
     // Flow enable/disable requires reloading of flows.
     yield put(actions.resource.requestCollection('flows'));
+
+    // If settings object is sent to response, we need to refetch resources as they are modified by IA
+    if (response.settings) {
+      yield put(actions.resource.requestCollection('exports'));
+      yield put(actions.resource.requestCollection('imports'));
+    }
   }
 }
 
