@@ -580,6 +580,7 @@ export function* retrySelectedRetries({ jobId, flowJobId, selectedRetryIds }) {
   }
 
   yield call(getJobFamily, { jobId: flowJobId });
+  yield put(actions.job.requestInProgressJobStatus());
 }
 
 export function* requestRetryData({ retryId }) {
