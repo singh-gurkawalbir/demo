@@ -12,10 +12,7 @@ export default {
       generateFields,
       options,
     } = params;
-    const {
-      connectionId,
-      // sObjectType
-    } = options;
+    const { connectionId } = options;
     const selectedGenerateObj = generateFields.find(
       field => field.id === generate
     );
@@ -119,7 +116,6 @@ export default {
           type: 'refreshableselect',
           filterKey: 'salesforce-recordType',
           savedSObjectType: lookup.sObjectType,
-          // commMetaPath: `salesforce/metadata/connections/${connectionId}/sObjectTypes`,
           defaultValue: lookup.resultField,
           connectionId,
           refreshOptionsOnChangesTo: ['lookup.sObjectType'],
@@ -332,7 +328,6 @@ export default {
           name: 'lookupDefault',
           type: 'text',
           label: 'Default Lookup Value',
-          // placeholder: 'Enter Default Value',
           visibleWhenAll: [
             { field: 'lookupAction', is: ['default'] },
             { field: 'fieldMappingType', is: ['lookup'] },
