@@ -51,6 +51,7 @@ import DynaSoqlQuery from './DynaSoqlQuery';
 import DynaSalesforceRefreshableSelect from './DynaSalesforceRefreshableSelect';
 import DynaRefreshableIntegrationAppSetting from './DynaRefreshableSelect/RefreshableIntegrationAppSetting';
 import DynaDate from './dateTime/DynaDate';
+import DynaDateTime from './dateTime/DynaDateTime';
 import DynaToggle from './DynaToggle';
 import DynaSQLQueryBuilder from './DynaSQLQueryBuilder';
 import DynaRelativeURIWithLookup from './DynaRelativeURIWithLookup';
@@ -126,6 +127,7 @@ export default {
   salesforcerefreshableselect: DynaSalesforceRefreshableSelect,
   integrationapprefreshableselect: DynaRefreshableIntegrationAppSetting,
   date: DynaDate,
+  datetime: DynaDateTime,
   sqlquerybuilder: DynaSQLQueryBuilder,
   salesforcequalifier: DynaSalesforceQualifier,
   relativeuriwithlookup: DynaRelativeURIWithLookup,
