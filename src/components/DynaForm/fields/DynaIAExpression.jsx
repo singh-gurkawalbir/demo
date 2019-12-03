@@ -92,9 +92,9 @@ export default function DynaIAExpression(props) {
   return (
     <ExpressionBuilder
       {...props}
-      flowId={resource._id}
+      flowId={flowId}
       options={options}
-      resourceId={resourceId}
+      resourceId={resource._id}
     />
   );
 }
