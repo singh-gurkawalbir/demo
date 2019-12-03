@@ -220,6 +220,7 @@ export default {
       r.file &&
       r.file.fileDefinition &&
       r.file.fileDefinition._fileDefinitionId,
+    sampleData: r => r && r.sampleData,
   },
   'file.csv': {
     type: 'csvparse',

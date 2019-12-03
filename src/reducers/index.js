@@ -385,6 +385,18 @@ export function getSampleData(
   });
 }
 
+export function getSampleDataContext(
+  state,
+  { flowId, resourceId, resourceType, stage }
+) {
+  return fromSession.getSampleDataContext(state && state.session, {
+    flowId,
+    resourceId,
+    resourceType,
+    stage,
+  });
+}
+
 export function getFlowDataState(state, flowId, resourceId) {
   return fromSession.getFlowDataState(
     state && state.session,
@@ -2090,6 +2102,32 @@ export function metadataOptionsAndResources({
   commMetaPath,
   filterKey,
 }) {
+  return (
+    optionsFromMetadata({
+      state,
+      connectionId,
+      commMetaPath,
+      filterKey,
+    }) || {}
+  );
+}
+
+/*
+ * TODO: @Raghu - Should be removed and use above selector
+ * Function Definition needs to be changed to 
+ * metadataOptionsAndResources(
+    state,
+    { 
+      connectionId,
+      commMetaPath,
+      filterKey,
+  }) to support yield select
+  * Change needs to be done all the places where it is getting called
+ */
+export function getMetadataOptions(
+  state,
+  { connectionId, commMetaPath, filterKey }
+) {
   return (
     optionsFromMetadata({
       state,
