@@ -134,6 +134,7 @@ export default function reducer(state = {}, action) {
             isNotEditable,
             index: mappingIndex,
             isRequired,
+            rowIdentifier,
           } = draft[id].mappings[index];
           const valueTmp = {
             generate,
@@ -141,6 +142,7 @@ export default function reducer(state = {}, action) {
             isNotEditable,
             index: mappingIndex,
             isRequired,
+            rowIdentifier,
           };
 
           Object.assign(valueTmp, value);

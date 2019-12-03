@@ -475,28 +475,10 @@ export default {
     ],
     defaultValue: r => r && r.salesforce && r.salesforce.operation,
   },
-  'salesforce.idLookup.extract': {
-    type: 'text',
-    label: 'How can we find existing records?',
-    visibleWhenAll: [
-      {
-        field: 'ignoreExisting',
-        is: [true],
-      },
-      {
-        field: 'salesforce.operation',
-        is: ['update', 'addupdate'],
-      },
-      {
-        field: 'inputMode',
-        is: ['records'],
-      },
-    ],
-  },
   'salesforce.idLookup.whereClause': {
-    type: 'text',
-    label: 'Where Clause',
-    visibleWhenAll: [
+    type: 'salesforcelookup',
+    label: 'How can we find existing records?',
+    visibleWhen: [
       {
         field: 'ignoreExisting',
         is: [true],
@@ -504,25 +486,16 @@ export default {
       {
         field: 'salesforce.operation',
         is: ['update', 'addupdate'],
-      },
-      {
-        field: 'inputMode',
-        is: ['records'],
       },
     ],
   },
   'salesforce.upsertpicklistvalues.fullName': {
-    type: 'select',
+    type: 'text',
+    visible: false,
+  },
+  'salesforce.upsert.externalIdField': {
+    type: 'text',
     label: 'Which External ID field should be used to Upsert?',
-    options: [
-      {
-        // To do replace statistically instead of dynamic
-        items: [
-          { label: 'AccountID', value: 'accountid' },
-          { label: 'CustomerID', value: 'customerid' },
-        ],
-      },
-    ],
     visibleWhenAll: [
       {
         field: 'salesforce.operation',
@@ -534,7 +507,7 @@ export default {
       },
     ],
   },
-  'salesforce.upsert.externalIdField': {
+  'salesforce.idLookup.extract': {
     type: 'text',
     label: 'Which export data field should map to External ID?',
     visibleWhenAll: [
