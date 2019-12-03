@@ -6,7 +6,6 @@ import {
   ExpansionPanelSummary,
   Typography,
   Grid,
-  IconButton,
   ExpansionPanelDetails,
   ExpansionPanel,
 } from '@material-ui/core';
@@ -16,6 +15,8 @@ import RefreshIcon from '../../../icons/RefreshIcon';
 import DynaSelect from '../DynaSelect';
 import DeleteIcon from '../../../icons/TrashIcon';
 import DynaTypeableSelect from '../DynaTypeableSelect';
+import ActionButton from '../../../ActionButton';
+import IconTextButton from '../../../IconTextButton';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -256,7 +257,12 @@ export const DynaTable = props => {
                 <Grid key={r.id} item xs={r.space || true}>
                   <span>{r.label || r.name}</span>
                   {r.supportsRefresh && !isLoading && (
-                    <RefreshIcon onClick={onFetchResource(r.id)} />
+                    <IconTextButton
+                      variant="contained"
+                      color="secondary"
+                      onClick={onFetchResource(r.id)}>
+                      Refresh <RefreshIcon />
+                    </IconTextButton>
                   )}
                   {r.supportsRefresh && isLoading && <Spinner size={24} />}
                 </Grid>
@@ -326,13 +332,13 @@ export const DynaTable = props => {
                   </Grid>
                 ))}
                 <Grid item key="delete_button">
-                  <IconButton
+                  <ActionButton
                     data-test={`deleteTableRow-${arr.row}`}
                     aria-label="delete"
                     onClick={handleRemoveRow(arr.row)}
                     className={classes.margin}>
                     <DeleteIcon fontSize="small" />
-                  </IconButton>
+                  </ActionButton>
                 </Grid>
               </Grid>
             </Grid>
