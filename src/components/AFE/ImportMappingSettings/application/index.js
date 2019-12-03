@@ -201,6 +201,7 @@ export default {
     // setting extract value
     if (
       formVal.fieldMappingType === 'standard' &&
+      extract &&
       extract.indexOf('{{') !== -1
     ) {
       settings.extract = '';
