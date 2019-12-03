@@ -24,12 +24,14 @@ export default function IntegrationSettingsSaveButton(props) {
   const dispatch = useDispatch();
   const [disableSave, setDisableSave] = useState(false);
   const handleSubmitForm = values => {
+    const allValuesWithFlowId = { ...values, '/flowId': flowId };
+
     dispatch(
       actions.integrationApp.settings.update(
         integrationId,
         flowId,
         storeId,
-        values
+        allValuesWithFlowId
       )
     );
     setDisableSave(true);
