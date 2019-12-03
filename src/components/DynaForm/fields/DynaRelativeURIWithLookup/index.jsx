@@ -38,7 +38,6 @@ export default function DynaRelativeURIWithLookup(props) {
     label,
     options = {},
     resourceId,
-    useSampleDataAsArray,
     resourceType,
     flowId,
     arrayIndex,
@@ -62,7 +61,6 @@ export default function DynaRelativeURIWithLookup(props) {
     getFormattedSampleData({
       connection,
       sampleData,
-      useSampleDataAsArray,
       resourceType,
       resourceName,
     }),
