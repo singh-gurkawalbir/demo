@@ -1904,6 +1904,22 @@ export default {
       },
     ],
   },
+  'as2.contentBasedFlowRouter': {
+    type: 'hook',
+    label: '',
+    required: false,
+    preHookData: {
+      httpHeaders: {
+        'as2-from': 'OpenAS2_appA',
+        'as2-to': 'OpenAS2_appB',
+      },
+      mimeHeaders: {
+        'content-type': 'application/edi-x12',
+        'content-disposition': 'Attachment; filename=rfc1767.dat',
+      },
+      rawMessageBody: 'sample message',
+    },
+  },
   // #endregion as2
   // #region netsuite
   'netsuite.authType': {

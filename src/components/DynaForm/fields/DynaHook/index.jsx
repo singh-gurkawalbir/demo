@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import Hook from './Hook';
+import LoadResources from '../../../LoadResources';
 
 export default function DynaHook(props) {
   const { flowId, resourceType, resourceId, hookStage, disabled } = props;
@@ -88,11 +89,13 @@ export default function DynaHook(props) {
   ]);
 
   return (
-    <Hook
-      disabled={disabled}
-      preHookData={preHookData}
-      requestForPreHookData={requestForPreHookData}
-      {...props}
-    />
+    <LoadResources resources="scripts">
+      <Hook
+        disabled={disabled}
+        preHookData={preHookData}
+        requestForPreHookData={requestForPreHookData}
+        {...props}
+      />
+    </LoadResources>
   );
 }
