@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { TextField } from '@material-ui/core';
 import DynaAddEditLookup from '../DynaAddEditLookup';
@@ -96,6 +96,10 @@ export default function InputWithLookupHandlebars(props) {
     filteredSuggestions: [],
   });
   const { userInput, cursorPosition, filteredSuggestions } = state;
+
+  useEffect(() => {
+    if (value !== userInput) setState({ ...state, userInput: value });
+  }, [state, userInput, value]);
   const handleLookupSelect = lookup => {
     const tmpStr = userInput.substring(0, cursorPosition);
     const lastIndexOfBracesBeforeCursor = tmpStr.lastIndexOf('{');
