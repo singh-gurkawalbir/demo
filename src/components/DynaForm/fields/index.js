@@ -68,6 +68,7 @@ import DynaQuery from './DynaQuery';
 import DynaSalesforceLookupFilters from './DynaSalesforceLookupFilters';
 import DynaSalesforceLookup from './DynaSalesforceLookup';
 import DynaMultiSubsidiaryMapping from './DynaTableView/DynaMultiSubsidiaryMapping';
+import DynaTimestampFileName from './DynaTimestampFileName';
 
 export default {
   mapping: DynaImportMapping,
@@ -148,4 +149,5 @@ export default {
   query: DynaQuery,
   salesforcelookupfilters: DynaSalesforceLookupFilters,
   salesforcelookup: DynaSalesforceLookup,
+  timestampfilename: DynaTimestampFileName,
 };

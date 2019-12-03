@@ -315,10 +315,11 @@ const metadata = {
       commMetaPath,
       addInfo,
     }),
-  refresh: (connectionId, commMetaPath) =>
+  refresh: (connectionId, commMetaPath, addInfo) =>
     action(actionTypes.METADATA.REFRESH, {
       connectionId,
       commMetaPath,
+      addInfo,
     }),
   receivedCollection: (metadata, connectionId, commMetaPath) =>
     action(actionTypes.METADATA.RECEIVED, {
