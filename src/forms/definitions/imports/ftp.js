@@ -65,9 +65,22 @@ export default {
         fileTypeField &&
         fileTypeField.value
       ) {
-        const extension =
-          fileTypeField.value +
-          (fieldId === 'ftp.inProgressFileName' ? '.tmp' : '');
+        let extension = '';
+
+        if (
+          ['filedefinition', 'fixed', 'delimited/edifact'].includes(
+            fileTypeField.value
+          )
+        ) {
+          extension = `edi${
+            fieldId === 'ftp.inProgressFileName' ? '.tmp' : ''
+          }`;
+        } else {
+          extension =
+            fileTypeField.value +
+            (fieldId === 'ftp.inProgressFileName' ? '.tmp' : '');
+        }
+
         const lastDotIndex = fileNameField.value.lastIndexOf('.');
         const secondLastDotIndex = fileNameField.value.lastIndexOf(
           '.',
