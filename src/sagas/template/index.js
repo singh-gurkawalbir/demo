@@ -1,8 +1,10 @@
-import { call, takeEvery, put, select } from 'redux-saga/effects';
+import { call, takeEvery, put, select, all } from 'redux-saga/effects';
 import actionTypes from '../../actions/types';
 import actions from '../../actions';
 import { apiCallWithRetry } from '../index';
 import * as selectors from '../../reducers';
+import templateUtil from '../../utils/template';
+import { getResourceCollection } from '../resources';
 
 export function* generateZip({ integrationId }) {
   const path = `/integrations/${integrationId}/template`;
@@ -70,6 +72,14 @@ export function* createComponents({ templateId, runKey }) {
     return undefined;
   }
 
+  const dependentResources =
+    templateUtil.getDependentResources(components) || [];
+
+  yield all(
+    dependentResources.map(resourceType =>
+      call(getResourceCollection, { resourceType })
+    )
+  );
   yield put(actions.template.createdComponents(components, templateId));
 }
 
@@ -97,7 +107,7 @@ export function* verifyBundleOrPackageInstall({
     return undefined;
   }
 
-  if ((response || {}).success) {
+  if (response && response.success) {
     yield put(
       actions.template.updateStep(
         { status: 'completed', installURL: step.installURL },
@@ -105,6 +115,21 @@ export function* verifyBundleOrPackageInstall({
       )
     );
   } else {
+    if (
+      response &&
+      !response.success &&
+      (response.resBody || response.message)
+    ) {
+      yield put(
+        actions.api.failure(
+          path,
+          'GET',
+          response.resBody || response.message,
+          false
+        )
+      );
+    }
+
     yield put(
       actions.template.updateStep(
         { status: 'failed', installURL: step.installURL },

@@ -22,6 +22,7 @@ export function* installStep({ id, installerFunction, storeId, addOnId }) {
         'failed'
       )
     );
+    yield put(actions.api.failure(path, 'PUT', error.message, false));
 
     return undefined;
   }
@@ -40,6 +41,19 @@ export function* installStep({ id, installerFunction, storeId, addOnId }) {
         actions.integrationApp.settings.requestAddOnLicenseMetadata(id)
       );
     }
+  } else if (
+    stepCompleteResponse &&
+    !stepCompleteResponse.success &&
+    (stepCompleteResponse.resBody || stepCompleteResponse.message)
+  ) {
+    yield put(
+      actions.api.failure(
+        path,
+        'PUT',
+        stepCompleteResponse.resBody || stepCompleteResponse.message,
+        false
+      )
+    );
   }
 }
 
@@ -59,6 +73,7 @@ export function* installStoreStep({ id, installerFunction }) {
     yield put(
       actions.integrationApp.store.updateStep(id, installerFunction, 'failed')
     );
+    yield put(actions.api.failure(path, 'PUT', error, false));
 
     return undefined;
   }
@@ -69,6 +84,19 @@ export function* installStoreStep({ id, installerFunction }) {
         id,
         installerFunction,
         stepCompleteResponse.stepsToUpdate
+      )
+    );
+  } else if (
+    stepCompleteResponse &&
+    !stepCompleteResponse.success &&
+    (stepCompleteResponse.resBody || stepCompleteResponse.message)
+  ) {
+    yield put(
+      actions.api.failure(
+        path,
+        'PUT',
+        stepCompleteResponse.resBody || stepCompleteResponse.message,
+        false
       )
     );
   }

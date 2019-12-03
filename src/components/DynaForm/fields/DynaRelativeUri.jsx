@@ -35,7 +35,6 @@ export default function DynaRelativeUri(props) {
     required,
     value,
     resourceId,
-    useSampleDataAsArray,
     resourceType,
     flowId,
     label,
@@ -77,7 +76,6 @@ export default function DynaRelativeUri(props) {
     getFormattedSampleData({
       connection,
       sampleData,
-      useSampleDataAsArray,
       resourceType,
       resourceName,
     }),
