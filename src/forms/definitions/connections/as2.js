@@ -14,6 +14,14 @@ export default {
       newValues['/as2/partnerStationInfo/auth/type'] = undefined;
     }
 
+    if (
+      !newValues['/as2/contentBasedFlowRouter'] ||
+      !newValues['/as2/contentBasedFlowRouter']._scriptId ||
+      !newValues['/as2/contentBasedFlowRouter'].function
+    ) {
+      newValues['/as2/contentBasedFlowRouter'] = undefined;
+    }
+
     return newValues;
   },
   fieldMap: {
@@ -187,6 +195,9 @@ export default {
     'as2.partnerStationInfo.rateLimit.failValues': {
       fieldId: 'as2.partnerStationInfo.rateLimit.failValues',
     },
+    'as2.contentBasedFlowRouter': {
+      fieldId: 'as2.contentBasedFlowRouter',
+    },
     'as2.concurrencyLevel': { fieldId: 'as2.concurrencyLevel' },
     'as2.preventCanonicalization': { fieldId: 'as2.preventCanonicalization' },
   },
@@ -258,6 +269,11 @@ export default {
           'as2.partnerStationInfo.rateLimit.failPath',
           'as2.partnerStationInfo.rateLimit.failValues',
         ],
+      },
+      {
+        collapsed: true,
+        label: 'Routing Rules',
+        fields: ['as2.contentBasedFlowRouter'],
       },
       {
         collapsed: true,
