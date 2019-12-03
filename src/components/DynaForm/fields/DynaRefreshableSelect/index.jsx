@@ -47,7 +47,10 @@ export default function DynaSelectOptionsGenerator(props) {
     dispatch(
       actions.metadata.refresh(
         connectionId,
-        options.commMetaPath || commMetaPath
+        options.commMetaPath || commMetaPath,
+        {
+          refreshCache: true,
+        }
       )
     );
   };
