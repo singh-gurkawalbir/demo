@@ -5,6 +5,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import { isFunction } from 'lodash';
 import { generateNewId } from '../../../../utils/resource';
+import { hooksToFunctionNamesMap } from '../../../../utils/hooks';
 import DynaSelect from '../DynaSelect';
 import DynaText from '../DynaText';
 import * as selectors from '../../../../reducers';
@@ -61,6 +62,7 @@ export default function DynaHook(props) {
     value = {},
     label,
     hookType = 'script',
+    hookStage = 'preSavePage',
     preHookData = {},
     requestForPreHookData,
   } = props;
@@ -141,7 +143,7 @@ export default function DynaHook(props) {
           disabled={disabled}
           data={JSON.stringify(preHookData, null, 2)}
           scriptId={value._scriptId}
-          entryFunction={value.function}
+          entryFunction={value.function || hooksToFunctionNamesMap[hookStage]}
           onClose={handleClose}
         />
       )}
