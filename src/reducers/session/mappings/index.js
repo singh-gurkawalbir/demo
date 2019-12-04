@@ -32,7 +32,7 @@ export default function reducer(state = {}, action) {
             mappings: mappings.map(m => ({ ...m, rowIdentifier: 0 })),
             incompleteGenerates: [],
             lookups,
-            initChangeIdentifier,
+            initChangeIdentifier: initChangeIdentifier + 1,
             application,
             adaptorType,
             generateFields,

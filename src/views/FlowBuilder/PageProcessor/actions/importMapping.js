@@ -7,7 +7,13 @@ import mappingUtil from '../../../../utils/mapping';
 import lookupUtil from '../../../../utils/lookup';
 import MappingDialog from '../../../../components/AFE/ImportMapping/Dialog';
 
-function ImportMappingDialog({ flowId, isViewMode, resource, onClose }) {
+function ImportMappingDialog({
+  flowId,
+  isMonitorLevelAccess,
+  resource,
+  onClose,
+}) {
+  // mappings are only disabled in case of monitor level access
   const resourceId = resource._id;
   const dispatch = useDispatch();
   const handleSave = useCallback(
@@ -50,7 +56,7 @@ function ImportMappingDialog({ flowId, isViewMode, resource, onClose }) {
       <MappingDialog
         id={`${resourceId}-${flowId}`}
         title="Define Import Mapping"
-        disabled={isViewMode}
+        disabled={isMonitorLevelAccess}
         flowId={flowId}
         resourceId={resourceId}
         onClose={onClose}

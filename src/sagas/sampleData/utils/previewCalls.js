@@ -99,6 +99,12 @@ export function* exportPreview({
     };
   }
 
+  // type Once need not be passed in preview as it gets executed in preview call
+  // so remove type once
+  if (body.type === 'once') {
+    delete body.type;
+  }
+
   if (runOffline && body.rawData) {
     body = {
       ...body,
