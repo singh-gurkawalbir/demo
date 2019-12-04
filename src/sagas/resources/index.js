@@ -211,6 +211,7 @@ export function* updateIntegrationSettings({
         flowId,
       })
     );
+    // integration doc will be update by IA team, need to refetch to get latest copy from db.
     yield put(actions.resource.request('integrations', integrationId));
     // Flow enable/disable requires reloading of flows.
     yield put(actions.resource.requestCollection('flows'));
