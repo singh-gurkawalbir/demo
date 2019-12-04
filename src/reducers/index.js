@@ -714,7 +714,7 @@ export function flowDetails(state, id) {
         : draft._exportId;
     const pg = resource(state, 'exports', exportId);
     const allExports = resourceList(state, {
-      resourceType: 'exports',
+      type: 'exports',
     }).resources;
 
     draft.isRealtime = isRealtimeExport(pg);
@@ -738,7 +738,7 @@ export function flowListWithMetadata(state, options) {
         : f._exportId;
     const exp = resource(state, 'exports', _exportId);
     const exports = resourceList(state, {
-      resourceType: 'exports',
+      type: 'exports',
     }).resources;
 
     if (isRealtimeExport(exp)) {
