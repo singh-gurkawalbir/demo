@@ -41,12 +41,19 @@ export default {
     if (fieldId === 's3.fileKey') {
       const fileNameField = fields.find(field => field.fieldId === fieldId);
       const fileTypeField = fields.find(field => field.fieldId === 'file.type');
-      const newExtension = fileTypeField.value;
+      const newExtension = [
+        'filedefinition',
+        'fixed',
+        'delimited/edifact',
+      ].includes(fileTypeField.value)
+        ? 'edi'
+        : fileTypeField.value;
 
       if (newExtension) {
         const fileName = fileNameField.value;
         const lastDotIndex = fileName.lastIndexOf('.');
-        const fileNameWithoutExt = fileName.substring(0, lastDotIndex);
+        const fileNameWithoutExt =
+          lastDotIndex !== -1 ? fileName.substring(0, lastDotIndex) : fileName;
 
         fileNameField.value = `${fileNameWithoutExt}.${newExtension}`;
       }
@@ -77,7 +84,9 @@ export default {
     return null;
   },
   fieldMap: {
-    common: { formId: 'common' },
+    common: {
+      formId: 'common',
+    },
     importData: {
       id: 'importData',
       type: 'labeltitle',
@@ -90,8 +99,14 @@ export default {
       options: [
         {
           items: [
-            { label: 'Records', value: 'records' },
-            { label: 'Blob Keys', value: 'blob' },
+            {
+              label: 'Records',
+              value: 'records',
+            },
+            {
+              label: 'Blob Keys',
+              value: 'blob',
+            },
           ],
         },
       ],
@@ -104,8 +119,12 @@ export default {
       },
       defaultValue: r => (r && r.blobKeyPath ? 'blob' : 'records'),
     },
-    's3.region': { fieldId: 's3.region' },
-    's3.bucket': { fieldId: 's3.bucket' },
+    's3.region': {
+      fieldId: 's3.region',
+    },
+    's3.bucket': {
+      fieldId: 's3.bucket',
+    },
     fileType: {
       formId: 'fileType',
       visibleWhenAll: [
@@ -115,8 +134,12 @@ export default {
         },
       ],
     },
-    's3.fileKey': { fieldId: 's3.fileKey' },
-    blobKeyPath: { fieldId: 'blobKeyPath' },
+    's3.fileKey': {
+      fieldId: 's3.fileKey',
+    },
+    blobKeyPath: {
+      fieldId: 'blobKeyPath',
+    },
     'file.xml.body': {
       id: 'file.xml.body',
       type: 'httprequestbody',
@@ -148,7 +171,9 @@ export default {
         },
       ],
     },
-    dataMappings: { formId: 'dataMappings' },
+    dataMappings: {
+      formId: 'dataMappings',
+    },
     'file.lookups': {
       fieldId: 'file.lookups',
       visible: false,
