@@ -209,8 +209,8 @@ function AppBlock({
           isViewMode={isViewMode}
           resource={resource}
           resourceIndex={resourceIndex}
+          resourceId={resource._id}
           resourceType={resourceType}
-          pg={pg}
           index={index}
           onClose={handleActionClose}
         />

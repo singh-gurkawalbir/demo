@@ -76,8 +76,9 @@ export function* evaluateExternalProcessor({ processorData }) {
 
 export function* autoEvaluateProcessor({ id }) {
   const editor = yield select(selectors.editor, id);
+  const editorViolations = yield select(selectors.editorViolations, id);
 
-  if (!editor || (editor.violations && editor.violations.length)) {
+  if (!editor || (editorViolations && editorViolations.length)) {
     return; // nothing to do...
   }
 

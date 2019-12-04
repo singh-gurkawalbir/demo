@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import CodePanel from '../GenericEditor/CodePanel';
 import TransformPanel from './TransformPanel';
@@ -20,9 +20,10 @@ const useStyles = makeStyles({
 
 export default function TransformEditor(props) {
   const { editorId, disabled } = props;
-  const classes = useStyles(props);
+  const classes = useStyles();
   const { data, result, error, violations, initChangeIdentifier } = useSelector(
-    state => selectors.editor(state, editorId)
+    state => selectors.editor(state, editorId),
+    shallowEqual
   );
   const dispatch = useDispatch();
   const keyName = 'extract';
@@ -37,9 +38,12 @@ export default function TransformEditor(props) {
       })
     );
   }, [dispatch, editorId, props.data, props.rule]);
-  const handleDataChange = data => {
-    dispatch(actions.editor.patch(editorId, { data }));
-  };
+  const handleDataChange = useCallback(
+    data => {
+      dispatch(actions.editor.patch(editorId, { data }));
+    },
+    [dispatch, editorId]
+  );
 
   useEffect(() => {
     handleInit();

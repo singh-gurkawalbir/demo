@@ -38,10 +38,10 @@ function NonSigninHeaderComponents(props) {
   );
 }
 
-export const PageContentComponents = props => (
+export const PageContentComponents = () => (
   <Switch>
-    <Route path="/pg/signin" component={Signin} {...props} />
-    <Route path="/pg*" component={PageContent} {...props} />
+    <Route path="/pg/signin" component={Signin} />
+    <Route path="/pg*" component={PageContent} />
   </Switch>
 );
 
@@ -52,7 +52,7 @@ export default function App() {
   const theme = useMemo(() => themeProvider(themeName), [themeName]);
 
   // eslint-disable-next-line
-  //console.log(reloadCount, environment);
+  // console.log('render: <App>', reloadCount);
 
   return (
     <MuiThemeProvider key={reloadCount} theme={theme}>
