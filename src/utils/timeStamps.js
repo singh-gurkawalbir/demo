@@ -96,10 +96,6 @@ export default [
     name: 'DD MONTH, YYYY hh-mm-ss',
   },
   {
-    _id: 'DDMMYY',
-    name: 'DDMMYY',
-  },
-  {
     _id: 'DDMMYYYY',
     name: 'DDMMYYYY',
   },
@@ -128,10 +124,6 @@ export default [
     name: 'DD-MM-YYYY hh-mm-ss',
   },
   {
-    _id: 'YYMMDD',
-    name: 'YYMMDD',
-  },
-  {
     _id: 'YYYYMMDD',
     name: 'YYYYMMDD',
   },
@@ -144,10 +136,6 @@ export default [
     name: 'YYYYMMDD hh-mm-ss',
   },
   {
-    _id: 'MMDDYY',
-    name: 'MMDDYY',
-  },
-  {
     _id: 'MMDDYYYY',
     name: 'MMDDYYYY',
   },
@@ -158,14 +146,6 @@ export default [
   {
     _id: 'MMDDYYYY hh-mm-ss',
     name: 'MMDDYYYY hh-mm-ss',
-  },
-  {
-    _id: 'YY-MM-DD',
-    name: 'YY-MM-DD',
-  },
-  {
-    _id: 'YYYY-MM-DD',
-    name: 'YYYY-MM-DD',
   },
   {
     _id: 'YYYY-MM-DD hh:mm:ss',

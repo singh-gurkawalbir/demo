@@ -315,10 +315,11 @@ const metadata = {
       commMetaPath,
       addInfo,
     }),
-  refresh: (connectionId, commMetaPath) =>
+  refresh: (connectionId, commMetaPath, addInfo) =>
     action(actionTypes.METADATA.REFRESH, {
       connectionId,
       commMetaPath,
+      addInfo,
     }),
   receivedCollection: (metadata, connectionId, commMetaPath) =>
     action(actionTypes.METADATA.RECEIVED, {
@@ -668,6 +669,8 @@ const importSampleData = {
 };
 const flowData = {
   init: flow => action(actionTypes.FLOW_DATA.INIT, { flow }),
+  requestStage: (flowId, resourceId, stage) =>
+    action(actionTypes.FLOW_DATA.STAGE_REQUEST, { flowId, resourceId, stage }),
   requestPreviewData: (flowId, resourceId, previewType) =>
     action(actionTypes.FLOW_DATA.PREVIEW_DATA_REQUEST, {
       flowId,
@@ -695,12 +698,20 @@ const flowData = {
       processor,
       processedData,
     }),
-  requestSampleData: (flowId, resourceId, resourceType, stage) =>
+  receivedError: (flowId, resourceId, stage, error) =>
+    action(actionTypes.FLOW_DATA.RECEIVED_ERROR, {
+      flowId,
+      resourceId,
+      stage,
+      error,
+    }),
+  requestSampleData: (flowId, resourceId, resourceType, stage, refresh) =>
     action(actionTypes.FLOW_DATA.SAMPLE_DATA_REQUEST, {
       flowId,
       resourceId,
       resourceType,
       stage,
+      refresh,
     }),
   reset: (flowId, resourceId) =>
     action(actionTypes.FLOW_DATA.RESET, { flowId, resourceId }),

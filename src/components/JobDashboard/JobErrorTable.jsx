@@ -1,6 +1,6 @@
 import { useState, useEffect, Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import TablePagination from '@material-ui/core/TablePagination';
 import Button from '@material-ui/core/Button';
@@ -18,14 +18,14 @@ import CeligoTable from '../../components/CeligoTable';
 import JobErrorMessage from './JobErrorMessage';
 import { JOB_STATUS } from '../../utils/constants';
 
-const styles = () => ({
+const useStyles = makeStyles(theme => ({
   tablePaginationRoot: { float: 'left' },
   spinner: {
     left: '0px',
     right: '0px',
     top: '60px',
     bottom: '0px',
-    background: 'rgba(0,0,0,0.7)',
+    background: 'rgba(106, 123, 137, 0.7)',
     width: '100%',
     position: 'absolute',
     textAlign: 'center',
@@ -35,24 +35,23 @@ const styles = () => ({
     height: 'inherit',
     zIndex: '3',
     '& div': {
-      width: '20px !important',
-      height: '20px !important',
+      color: theme.palette.background.paper,
     },
     '& span': {
       marginLeft: '10px',
       color: '#fff',
     },
   },
-});
+}));
 
 function JobErrorTable({
-  classes,
   rowsPerPage = 10,
   jobErrors,
   errorCount,
   job,
   onCloseClick,
 }) {
+  const classes = useStyles();
   const dispatch = useDispatch();
   const [enqueueSnackbar] = useEnqueueSnackbar();
   const [currentPage, setCurrentPage] = useState(0);
@@ -269,7 +268,7 @@ function JobErrorTable({
           />
         ) : (
           <div className={classes.spinner}>
-            <Spinner /> <span>Loading retry data...</span>
+            <Spinner size={20} /> <span>Loading retry data...</span>
           </div>
         ))}
       <Typography>
@@ -279,7 +278,7 @@ function JobErrorTable({
       </Typography>
       {errorCount < 1000 && jobErrorsInCurrentPage.length === 0 ? (
         <div className={classes.spinner}>
-          <Spinner /> <span>Loading errors...</span>
+          <Spinner size={20} /> <span>Loading errors...</span>
         </div>
       ) : (
         <Fragment>
@@ -434,4 +433,4 @@ function JobErrorTable({
   );
 }
 
-export default withStyles(styles)(JobErrorTable);
+export default JobErrorTable;

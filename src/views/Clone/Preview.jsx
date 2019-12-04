@@ -154,7 +154,7 @@ export default function ClonePreview(props) {
         name: 'name',
         type: 'text',
         label: 'Name',
-        defaultValue: `Clone - ${resource.name}`,
+        defaultValue: `Clone - ${resource ? resource.name : ''}`,
       },
       environment: {
         id: 'environment',
@@ -193,7 +193,7 @@ export default function ClonePreview(props) {
         name: 'description',
         type: 'labeltitle',
         disablePopover: true,
-        label: resource.description,
+        label: resource && resource.description,
       },
       message: {
         id: 'message',

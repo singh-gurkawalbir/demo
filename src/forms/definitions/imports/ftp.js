@@ -1,4 +1,3 @@
-import timeStamps from '../../../utils/timeStamps';
 import { isNewId } from '../../../utils/resource';
 
 export default {
@@ -55,52 +54,17 @@ export default {
   },
   optionsHandler: (fieldId, fields) => {
     if (fieldId === 'ftp.fileName' || fieldId === 'ftp.inProgressFileName') {
-      const fileTypeField = fields.find(field => field.fieldId === 'file.type');
       const fileNameField = fields.find(field => field.fieldId === fieldId);
-      let suggestionList = [];
+      const fileTypeField = fields.find(field => field.fieldId === 'file.type');
+      const newExtension = fileTypeField.value;
 
-      if (
-        fileNameField &&
-        fileNameField.value &&
-        fileTypeField &&
-        fileTypeField.value
-      ) {
-        const extension =
-          fileTypeField.value +
-          (fieldId === 'ftp.inProgressFileName' ? '.tmp' : '');
-        const lastDotIndex = fileNameField.value.lastIndexOf('.');
-        const secondLastDotIndex = fileNameField.value.lastIndexOf(
-          '.',
-          fileNameField.value.lastIndexOf('.') - 1
-        );
-        let fileNameWithoutExt = '';
+      if (newExtension) {
+        const fileName = fileNameField.value;
+        const lastDotIndex = fileName.lastIndexOf('.');
+        const fileNameWithoutExt = fileName.substring(0, lastDotIndex);
 
-        if (secondLastDotIndex !== -1) {
-          fileNameWithoutExt = fileNameField.value.substring(
-            0,
-            secondLastDotIndex
-          );
-        } else if (lastDotIndex !== -1) {
-          fileNameWithoutExt = fileNameField.value.substring(0, lastDotIndex);
-        } else {
-          fileNameWithoutExt = fileNameField.value;
-        }
-
-        const bracesStartIndex = fileNameWithoutExt.indexOf('{');
-        const textBeforeBraces =
-          bracesStartIndex !== -1
-            ? fileNameWithoutExt.substring(0, bracesStartIndex)
-            : fileNameWithoutExt;
-
-        suggestionList = timeStamps.map(
-          timestamp =>
-            `${textBeforeBraces}{{timestamp(${timestamp._id})}}.${extension}`
-        );
-
-        fileNameField.value = `${fileNameWithoutExt}.${extension}`;
+        fileNameField.value = `${fileNameWithoutExt}.${newExtension}`;
       }
-
-      return { suggestions: suggestionList };
     }
 
     const fileType = fields.find(field => field.id === 'file.type');

@@ -51,6 +51,7 @@ import DynaSoqlQuery from './DynaSoqlQuery';
 import DynaSalesforceRefreshableSelect from './DynaSalesforceRefreshableSelect';
 import DynaRefreshableIntegrationAppSetting from './DynaRefreshableSelect/RefreshableIntegrationAppSetting';
 import DynaDate from './dateTime/DynaDate';
+import DynaDateTime from './dateTime/DynaDateTime';
 import DynaToggle from './DynaToggle';
 import DynaSQLQueryBuilder from './DynaSQLQueryBuilder';
 import DynaRelativeURIWithLookup from './DynaRelativeURIWithLookup';
@@ -65,6 +66,10 @@ import DynaIclient from './DynaIclient';
 import DynaNetSuiteQualifier from './DynaNetSuiteQualifier';
 import DynaSalesforceQualifier from './DynaSalesforceQualifier';
 import DynaQuery from './DynaQuery';
+import DynaSalesforceLookupFilters from './DynaSalesforceLookupFilters';
+import DynaSalesforceLookup from './DynaSalesforceLookup';
+import DynaMultiSubsidiaryMapping from './DynaTableView/DynaMultiSubsidiaryMapping';
+import DynaTimestampFileName from './DynaTimestampFileName';
 
 export default {
   mapping: DynaImportMapping,
@@ -75,10 +80,10 @@ export default {
   textarea: DynaText,
   checkbox: DynaCheckbox,
   select: DynaSelect,
-  subsidiaryMapWidget: DynaStaticMap,
   xmlMapper: DynaXMLMapper,
   trueFixedWidthColumnMapper: DynaTrueFixedWidthColumnMapper,
   csvColumnMapper: DynaCSVColumnMapper,
+  subsidiaryMapWidget: DynaMultiSubsidiaryMapping,
   selectresource: DynaSelectResource,
   selectapplication: DynaSelectApplication,
   filetypeselect: DynaFileTypeSelect,
@@ -124,6 +129,7 @@ export default {
   salesforcerefreshableselect: DynaSalesforceRefreshableSelect,
   integrationapprefreshableselect: DynaRefreshableIntegrationAppSetting,
   date: DynaDate,
+  datetime: DynaDateTime,
   sqlquerybuilder: DynaSQLQueryBuilder,
   salesforcequalifier: DynaSalesforceQualifier,
   relativeuriwithlookup: DynaRelativeURIWithLookup,
@@ -143,4 +149,7 @@ export default {
   dynaiclient: DynaIclient,
   netsuitequalifier: DynaNetSuiteQualifier,
   query: DynaQuery,
+  salesforcelookupfilters: DynaSalesforceLookupFilters,
+  salesforcelookup: DynaSalesforceLookup,
+  timestampfilename: DynaTimestampFileName,
 };
