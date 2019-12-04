@@ -1230,6 +1230,45 @@ export function integrationAppFlowSettings(state, id, section, storeId) {
   };
 }
 
+export function hasIAFlowSettings(state, integrationId, flowId, storeId) {
+  const integration = resource(state, 'integrations', integrationId);
+  let sections;
+
+  if (!integration._connectorId) {
+    // return false for DIY integrations.
+    return false;
+  }
+
+  if (integration.settings && integration.settings.supportsMultiStore) {
+    // If IA is a multistore setup, fetch the correct store to iterate.
+    const store = integration.settings.sections.find(
+      section => section.id === storeId
+    );
+
+    if (store) {
+      ({ sections = [] } = store);
+    }
+  } else {
+    ({ sections = [] } = integration.settings);
+  }
+
+  if (!sections || !Array.isArray(sections) || !sections.length) {
+    // For all invalid data passed, return false
+    return false;
+  }
+
+  const { flows } = sections.reduce((a, b) => ({
+    flows: [...a.flows, ...b.flows],
+  }));
+  const flow = flows.find(flow => flow._id === flowId);
+
+  if (flow) {
+    return !!flow.settings;
+  }
+
+  return false;
+}
+
 export function defaultStoreId(state, id, store) {
   return fromData.defaultStoreId(state && state.data, id, store);
 }

@@ -60,6 +60,14 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
   const dispatch = useDispatch();
   const flowDetails =
     useSelector(state => selectors.flowDetails(state, flowId)) || {};
+  const hasFlowSettings = useSelector(state =>
+    selectors.hasIAFlowSettings(
+      state,
+      flowDetails._integrationId,
+      flowId,
+      storeId
+    )
+  );
   const patchFlow = useCallback(
     (path, value) => {
       const patchSet = [{ op: 'replace', path, value }];
@@ -69,7 +77,7 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
     },
     [dispatch, flowId]
   );
-  const flowName = flowDetails.name || flowDetails._Id;
+  const flowName = flowDetails.name || flowDetails._id;
   const handleActionClick = useCallback(
     action => () => {
       switch (action) {
@@ -191,7 +199,7 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
           {flowDetails._connectorId && (
             <IconButton
               size="small"
-              disabled={!flowDetails.hasSettings}
+              disabled={!hasFlowSettings}
               component={Link}
               data-test={`flowSettings${flowName}`}
               to={`${history.location.pathname}/${flowId}/settings`}>
