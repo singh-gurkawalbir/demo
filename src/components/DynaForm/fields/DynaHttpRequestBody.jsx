@@ -28,7 +28,6 @@ export default function DynaHttpRequestBody(props) {
     resourceType,
     flowId,
     arrayIndex,
-    useSampleDataAsArray,
   } = props;
   const { lookups: lookupsObj, contentType, resourceName } = options;
   const [showEditor, setShowEditor] = useState(false);
@@ -64,7 +63,6 @@ export default function DynaHttpRequestBody(props) {
   const formattedSampleData = getFormattedSampleData({
     connection: connectionCopy,
     sampleData,
-    useSampleDataAsArray,
     resourceType,
     resourceName,
   });

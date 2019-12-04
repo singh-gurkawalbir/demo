@@ -214,6 +214,18 @@ export function getSampleData(
   });
 }
 
+export function getSampleDataContext(
+  state,
+  { flowId, resourceId, resourceType, stage }
+) {
+  return fromFlowData.getSampleDataContext(state && state.flowData, {
+    flowId,
+    resourceId,
+    resourceType,
+    stage,
+  });
+}
+
 export function getFlowDataState(state, flowId, resourceId) {
   return fromFlowData.getFlowDataState(
     state && state.flowData,

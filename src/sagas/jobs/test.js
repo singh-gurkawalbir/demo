@@ -1615,6 +1615,9 @@ describe('job sagas', () => {
       expect(saga.next().value).toEqual(
         call(getJobFamily, { jobId: flowJobId })
       );
+      expect(saga.next().value).toEqual(
+        put(actions.job.requestInProgressJobStatus())
+      );
       expect(saga.next().done).toEqual(true);
     });
 

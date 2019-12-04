@@ -50,8 +50,7 @@ function TransformationDialog({ flowId, resource, onClose, isViewMode }) {
           flowId,
           exportId,
           'exports',
-          'transform',
-          true
+          'transform'
         )
       );
     }

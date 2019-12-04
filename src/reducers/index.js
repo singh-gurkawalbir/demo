@@ -382,6 +382,18 @@ export function getSampleData(
   });
 }
 
+export function getSampleDataContext(
+  state,
+  { flowId, resourceId, resourceType, stage }
+) {
+  return fromSession.getSampleDataContext(state && state.session, {
+    flowId,
+    resourceId,
+    resourceType,
+    stage,
+  });
+}
+
 export function getFlowDataState(state, flowId, resourceId) {
   return fromSession.getFlowDataState(
     state && state.session,
@@ -1840,7 +1852,6 @@ export function resourceData(state, resourceType, id, scope) {
 
   if (!master && !patch) return { merged: {} };
 
-  // console.log('patch:', patch);
   let merged;
   let lastChange;
 
@@ -1852,7 +1863,6 @@ export function resourceData(state, resourceType, id, scope) {
       jsonPatch.deepClone(patch)
     );
 
-    // console.log('patchResult', patchResult);
     merged = patchResult.newDocument;
 
     if (patch.length) lastChange = patch[patch.length - 1].timestamp;
@@ -2041,6 +2051,32 @@ export function metadataOptionsAndResources({
   commMetaPath,
   filterKey,
 }) {
+  return (
+    optionsFromMetadata({
+      state,
+      connectionId,
+      commMetaPath,
+      filterKey,
+    }) || {}
+  );
+}
+
+/*
+ * TODO: @Raghu - Should be removed and use above selector
+ * Function Definition needs to be changed to 
+ * metadataOptionsAndResources(
+    state,
+    { 
+      connectionId,
+      commMetaPath,
+      filterKey,
+  }) to support yield select
+  * Change needs to be done all the places where it is getting called
+ */
+export function getMetadataOptions(
+  state,
+  { connectionId, commMetaPath, filterKey }
+) {
   return (
     optionsFromMetadata({
       state,
@@ -2375,29 +2411,32 @@ export function getImportSampleData(state, resourceId) {
   const { assistant, adaptorType, sampleData } = resource;
 
   // Formats sample data into readable form
-  if (sampleData) return processSampleData(sampleData, resource);
+  if (sampleData)
+    return {
+      data: processSampleData(sampleData, resource),
+    };
   else if (assistant) {
     if (resource.sampleData) {
-      return resource.sampleData;
+      return { data: resource.sampleData };
     }
 
-    return assistantPreviewData(state, resourceId);
+    return { data: assistantPreviewData(state, resourceId) };
     // get assistants sample data
   } else if (adaptorType === 'NetSuiteDistributedImport') {
     // eslint-disable-next-line camelcase
     const { _connectionId: connectionId, netsuite_da } = resource;
     const commMetaPath = `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${netsuite_da.recordType}`;
-    const { data: sampleData } = metadataOptionsAndResources({
+    const { data, status } = metadataOptionsAndResources({
       state,
       connectionId,
       commMetaPath,
     });
 
-    return sampleData;
+    return { data, status };
   } else if (adaptorType === 'SalesforceImport') {
     const { _connectionId: connectionId, salesforce } = resource;
     const commMetaPath = `salesforce/metadata/connections/${connectionId}/sObjectTypes/${salesforce.sObjectType}`;
-    const { data: sampleData } = metadataOptionsAndResources({
+    const { data, status } = metadataOptionsAndResources({
       state,
       connectionId,
       commMetaPath,
@@ -2407,8 +2446,10 @@ export function getImportSampleData(state, resourceId) {
           : 'salesforce-recordType',
     });
 
-    return sampleData;
+    return { data, status };
   }
+
+  return emptyObject;
 }
 
 export function flowConnectionList(state, flow) {

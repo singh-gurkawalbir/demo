@@ -16,6 +16,8 @@ export default function(state = {}, action) {
     previewType,
     processor,
     processedData,
+    stage,
+    error,
   } = action;
 
   return produce(state, draft => {
@@ -32,14 +34,39 @@ export default function(state = {}, action) {
         break;
       }
 
+      case actionTypes.FLOW_DATA.STAGE_REQUEST: {
+        if (!resourceId || !flowId || !stage) return;
+        const resourceMap =
+          (draft[flowId] &&
+            draft[flowId][
+              isPageGeneratorResource(draft[flowId], resourceId)
+                ? 'pageGeneratorsMap'
+                : 'pageProcessorsMap'
+            ]) ||
+          {};
+
+        resourceMap[resourceId] = {
+          ...resourceMap[resourceId],
+        };
+        resourceMap[resourceId][stage] = {
+          ...resourceMap[resourceId][stage],
+          status: 'requested',
+        };
+        break;
+      }
+
+      // TODO: @Raghu Below request actions for preview and processor can be removed
+      // as we are now handling request stage using generic stageRequest action above
       case actionTypes.FLOW_DATA.PREVIEW_DATA_REQUEST: {
         if (!resourceId) return;
         const resourceMap =
-          draft[flowId][
-            isPageGeneratorResource(draft[flowId], resourceId)
-              ? 'pageGeneratorsMap'
-              : 'pageProcessorsMap'
-          ] || {};
+          (draft[flowId] &&
+            draft[flowId][
+              isPageGeneratorResource(draft[flowId], resourceId)
+                ? 'pageGeneratorsMap'
+                : 'pageProcessorsMap'
+            ]) ||
+          {};
         const stage = previewType || 'raw';
 
         resourceMap[resourceId] = {
@@ -126,6 +153,27 @@ export default function(state = {}, action) {
         break;
       }
 
+      case actionTypes.FLOW_DATA.RECEIVED_ERROR: {
+        const resourceMap =
+          (draft[flowId] &&
+            draft[flowId][
+              isPageGeneratorResource(draft[flowId], resourceId)
+                ? 'pageGeneratorsMap'
+                : 'pageProcessorsMap'
+            ]) ||
+          {};
+
+        resourceMap[resourceId] = {
+          ...resourceMap[resourceId],
+        };
+        resourceMap[resourceId][stage] = {
+          ...resourceMap[resourceId][stage],
+        };
+        resourceMap[resourceId][stage].status = 'error';
+        resourceMap[resourceId][stage].error = error;
+        break;
+      }
+
       case actionTypes.FLOW_DATA.FLOW_RESPONSE_MAPPING_UPDATE: {
         const flow = draft[flowId];
         const resource = flow.pageProcessors[resourceIndex];
@@ -199,6 +247,8 @@ export default function(state = {}, action) {
   });
 }
 
+const DEFAULT_VALUE = {};
+
 export function getFlowDataState(state, flowId, resourceId) {
   if (!state || !flowId) return;
   const flow = state[flowId];
@@ -232,4 +282,24 @@ export function getSampleData(
     resourceMap[resourceId][sampleDataStage] &&
     resourceMap[resourceId][sampleDataStage].data
   );
+}
+
+export function getSampleDataContext(
+  state,
+  { flowId, resourceId, resourceType, stage }
+) {
+  // returns input data for that stage to populate
+  const flow = state[flowId];
+  const sampleDataStage = getSampleDataStage(stage, resourceType);
+
+  if (!flow || !sampleDataStage || !resourceId) return DEFAULT_VALUE;
+  const resourceMap = isPageGeneratorResource(flow, resourceId)
+    ? flow.pageGeneratorsMap
+    : flow.pageProcessorsMap;
+  const flowStageContext =
+    resourceMap &&
+    resourceMap[resourceId] &&
+    resourceMap[resourceId][sampleDataStage];
+
+  return flowStageContext || DEFAULT_VALUE;
 }

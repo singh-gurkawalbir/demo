@@ -24,12 +24,16 @@ export default function IntegrationSettingsSaveButton(props) {
   const dispatch = useDispatch();
   const [disableSave, setDisableSave] = useState(false);
   const handleSubmitForm = values => {
+    // Adding flow id to the payload mimicking the save behavior of ampersand
+    // TODO:Have to investigate the save behavior...tabs vs all tabs
+    const allValuesWithFlowId = { ...values, '/flowId': flowId };
+
     dispatch(
       actions.integrationApp.settings.update(
         integrationId,
         flowId,
         storeId,
-        values
+        allValuesWithFlowId
       )
     );
     setDisableSave(true);
