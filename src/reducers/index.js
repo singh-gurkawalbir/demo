@@ -755,7 +755,7 @@ export function flowDetails(state, id) {
     const flowSettings = getIAFlowSettings(state, flow._integrationId, id);
 
     draft.showMapping = flowSettings.showMapping;
-    draft.hasSettings = !!flowSettings.settings;
+    draft.hasSettings = !!flowSettings.settings || !!flowSettings.sections;
     draft.showSchedule = flowSettings.showSchedule;
     draft.disableSlider = flowSettings.disableSlider;
   });

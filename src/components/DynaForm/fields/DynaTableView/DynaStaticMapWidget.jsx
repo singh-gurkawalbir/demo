@@ -34,7 +34,7 @@ export default function DynaStaticMapWidget(props) {
     map = {},
     defaultValue,
     onFieldChange,
-    hideAllowFailures,
+    hideLookupAllowFailures,
     generates = [],
     extractFieldHeader,
     generateFieldHeader,
@@ -193,7 +193,7 @@ export default function DynaStaticMapWidget(props) {
           handleCleanupHandler={handleCleanup}
         />
         <Divider className={classes.margin} />
-        {!hideAllowFailures && (
+        {!hideLookupAllowFailures && (
           <Fragment>
             <RadioGroup
               {...props}
