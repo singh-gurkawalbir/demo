@@ -223,6 +223,8 @@ function FlowBuilder(props) {
   const { merged: flow = {} } = useSelector(state =>
     selectors.flowMetadata(state, flowId)
   );
+  const flowDetails =
+    useSelector(state => selectors.flowDetails(state, flowId)) || {};
   const { pageProcessors = [], pageGenerators = [] } = flow;
   const createdGeneratorId = useSelector(state =>
     selectors.createdResourceId(state, newGeneratorId)
@@ -452,13 +454,14 @@ function FlowBuilder(props) {
             }}>
             <RunIcon />
           </IconButton>
-
-          <IconButton
-            disabled={isNewFlow && !(flow && flow.showScheduleIcon)}
-            data-test="scheduleFlow"
-            onClick={() => handleDrawerOpen('schedule')}>
-            <CalendarIcon />
-          </IconButton>
+          {flowDetails.canSchedule && (
+            <IconButton
+              disabled={isNewFlow && !(flow && flow.showScheduleIcon)}
+              data-test="scheduleFlow"
+              onClick={() => handleDrawerOpen('schedule')}>
+              <CalendarIcon />
+            </IconButton>
+          )}
 
           <IconButton
             disabled={isNewFlow}
