@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { useCallback, useState, useEffect } from 'react';
+import { useCallback, useState, useEffect, Fragment } from 'react';
 import {
   ExpansionPanelSummary,
   Typography,
@@ -34,6 +34,7 @@ export default function DynaStaticMapWidget(props) {
     map = {},
     defaultValue,
     onFieldChange,
+    hideAllowFailures,
     generates = [],
     extractFieldHeader,
     generateFieldHeader,
@@ -192,38 +193,42 @@ export default function DynaStaticMapWidget(props) {
           handleCleanupHandler={handleCleanup}
         />
         <Divider className={classes.margin} />
-        <RadioGroup
-          {...props}
-          value={radioState}
-          id="allowFailures"
-          label="Action to take if unique match not found"
-          onFieldChange={handleAllowFailuresClick}
-          showOptionsVertically
-          options={[
-            {
-              items: [
-                { label: `Fail Record`, value: 'allowFailures' },
+        {!hideAllowFailures && (
+          <Fragment>
+            <RadioGroup
+              {...props}
+              value={radioState}
+              id="allowFailures"
+              label="Action to take if unique match not found"
+              onFieldChange={handleAllowFailuresClick}
+              showOptionsVertically
+              options={[
                 {
-                  label: `Use Empty String as Default Value`,
-                  value: 'useEmptyString',
+                  items: [
+                    { label: `Fail Record`, value: 'allowFailures' },
+                    {
+                      label: `Use Empty String as Default Value`,
+                      value: 'useEmptyString',
+                    },
+                    { label: `Use Null as Default Value`, value: 'useNull' },
+                    {
+                      label: `Use Custom Default Value`,
+                      value: 'defaultLookup',
+                    },
+                  ],
                 },
-                { label: `Use Null as Default Value`, value: 'useNull' },
-                {
-                  label: `Use Custom Default Value`,
-                  value: 'defaultLookup',
-                },
-              ],
-            },
-          ]}
-        />
-        {showDefault && (
-          <DynaSelect
-            label="Default Lookup Value"
-            name="defaultValue"
-            onFieldChange={handleDefaultValueChange}
-            value={defaultVal}
-            options={[{ items: defaultOptions }]}
-          />
+              ]}
+            />
+            {showDefault && (
+              <DynaSelect
+                label="Default Lookup Value"
+                name="defaultValue"
+                onFieldChange={handleDefaultValueChange}
+                value={defaultVal}
+                options={[{ items: defaultOptions }]}
+              />
+            )}
+          </Fragment>
         )}
       </ExpansionPanelDetails>
     </ExpansionPanel>

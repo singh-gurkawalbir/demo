@@ -60,14 +60,6 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
   const dispatch = useDispatch();
   const flowDetails =
     useSelector(state => selectors.flowDetails(state, flowId)) || {};
-  const hasFlowSettings = useSelector(state =>
-    selectors.hasIAFlowSettings(
-      state,
-      flowDetails._integrationId,
-      flowId,
-      storeId
-    )
-  );
   const patchFlow = useCallback(
     (path, value) => {
       const patchSet = [{ op: 'replace', path, value }];
@@ -181,12 +173,14 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
           </Typography>
         </Grid>
         <Grid container item xs={3} justify="flex-end" alignItems="center">
-          <OnOffSwitch
-            data-test={`toggleOnAndOffFlow${flowName}`}
-            disabled={disableCard}
-            on={!disableCard && !disabled}
-            onClick={handleActionClick('disable')}
-          />
+          {!flowDetails.disableSlider && (
+            <OnOffSwitch
+              data-test={`toggleOnAndOffFlow${flowName}`}
+              disabled={disableCard}
+              on={!disableCard && !disabled}
+              onClick={handleActionClick('disable')}
+            />
+          )}
 
           <IconButton
             disabled={!flowDetails.isRunnable}
@@ -199,7 +193,7 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
           {flowDetails._connectorId && (
             <IconButton
               size="small"
-              disabled={!hasFlowSettings}
+              disabled={!flowDetails.hasSettings}
               component={Link}
               data-test={`flowSettings${flowName}`}
               to={`${history.location.pathname}/${flowId}/settings`}>
