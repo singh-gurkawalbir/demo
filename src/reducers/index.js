@@ -738,7 +738,7 @@ export function flowListWithMetadata(state, options) {
         : f._exportId;
     const exp = resource(state, 'exports', _exportId);
     const exports = resourceList(state, {
-      resourceType: 'exports',
+      type: 'exports',
     }).resources;
 
     if (isRealtimeExport(exp)) {
