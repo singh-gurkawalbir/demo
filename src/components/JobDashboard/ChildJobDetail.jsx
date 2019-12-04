@@ -11,7 +11,52 @@ import { JOB_STATUS } from '../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   checkAction: {
-    paddingLeft: theme.spacing(5),
+    paddingLeft: theme.spacing(6),
+  },
+  name: {
+    width: '18.15%',
+  },
+  status: {
+    width: '10.15',
+  },
+  success: {
+    width: '9%',
+    textAlign: 'right',
+  },
+  ignore: {
+    width: '7.5%',
+    textAlign: 'right',
+  },
+  error: {
+    width: '10.15%',
+    textAlign: 'right',
+    color: theme.palette.error.main,
+  },
+  resolved: {
+    width: '9%',
+    textAlign: 'right',
+  },
+  pages: {
+    width: '7.5%',
+    textAlign: 'right',
+  },
+  duration: {
+    width: '9%',
+    textAlign: 'right',
+  },
+  completed: {
+    width: '10.5%',
+  },
+  actions: {
+    width: '8.35%',
+    textAlign: 'center',
+  },
+  stateBtn: {
+    color: theme.palette.error.main,
+    float: 'right',
+    '&:hover': {
+      color: `${theme.palette.error.dark} !important`,
+    },
   },
 }));
 
@@ -77,24 +122,26 @@ export default function ChildJobDetail({
           onChange={event => handleSelectChange(event)}
         />
       </TableCell>
-      <TableCell>{job.name || jobType}</TableCell>
-      <TableCell>
+      <TableCell className={classes.name}>{job.name || jobType}</TableCell>
+      <TableCell className={classes.status}>
         <JobStatus job={job} />
       </TableCell>
-      <TableCell>{getSuccess(job)}</TableCell>
-      <TableCell>{job.numIgnore}</TableCell>
+      <TableCell className={classes.success}>{getSuccess(job)}</TableCell>
+      <TableCell className={classes.ignore}>{job.numIgnore}</TableCell>
       <TableCell
         onMouseEnter={() => {
           setShowViewErrorsLink(true);
         }}
         onMouseLeave={() => {
           setShowViewErrorsLink(false);
-        }}>
+        }}
+        className={classes.error}>
         {showViewErrorsLink && !isJobInProgress && job.numError > 0 ? (
           <Button
             data-test="jobNumErrorView"
             variant="text"
             color="primary"
+            className={classes.stateBtn}
             onClick={() => {
               handleViewErrorsClick(false);
             }}>
@@ -110,7 +157,8 @@ export default function ChildJobDetail({
         }}
         onMouseLeave={() => {
           setShowViewErrorsLink(false);
-        }}>
+        }}
+        className={classes.resolved}>
         {showViewErrorsLink && !isJobInProgress && job.numResolved > 0 ? (
           <Button
             data-test="jobsNumResolvedView"
@@ -125,10 +173,12 @@ export default function ChildJobDetail({
           job.numResolved
         )}
       </TableCell>
-      <TableCell>{getPages(job, parentJob)}</TableCell>
-      <TableCell>{job.duration}</TableCell>
-      <TableCell>{job.endedAtAsString}</TableCell>
-      <TableCell>
+      <TableCell className={classes.pages}>
+        {getPages(job, parentJob)}
+      </TableCell>
+      <TableCell className={classes.duration}>{job.duration}</TableCell>
+      <TableCell className={classes.completed}>{job.endedAtAsString}</TableCell>
+      <TableCell className={classes.actions}>
         <JobActionsMenu
           job={job}
           userPermissionsOnIntegration={userPermissionsOnIntegration}

@@ -188,7 +188,6 @@ export default {
     },
     MuiFormHelperText: {
       contained: {
-        color: colors.celigoError,
         marginLeft: 0,
         marginBottom: 8,
       },

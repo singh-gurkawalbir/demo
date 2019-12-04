@@ -2,11 +2,11 @@ import MomentDateFnsUtils from '@date-io/moment';
 import { useState, useEffect } from 'react';
 import {
   MuiPickersUtilsProvider,
-  KeyboardDatePicker,
+  KeyboardDateTimePicker,
 } from '@material-ui/pickers';
 import ErroredMessageComponent from '../ErroredMessageComponent';
 
-export default function DatePicker(props) {
+export default function DateTimePicker(props) {
   const { id, label, onFieldChange, value, disabled } = props;
   const [dateValue, setDateValue] = useState(value || null);
 
@@ -17,9 +17,9 @@ export default function DatePicker(props) {
 
   return (
     <MuiPickersUtilsProvider utils={MomentDateFnsUtils}>
-      <KeyboardDatePicker
+      <KeyboardDateTimePicker
         label={label}
-        format="MM/DD/YYYY"
+        format="MM/DD/YYYY HH:mm a"
         value={dateValue}
         inputVariant="outlined"
         InputLabelProps={{ shrink: true }}
