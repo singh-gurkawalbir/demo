@@ -33,18 +33,24 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'center',
     alignItems: 'center',
     height: 'inherit',
-    padding: 16,
+    zIndex: 1,
+    padding: 22,
     '& span': {
       marginLeft: '10px',
-      color: '#fff',
+      color: theme.palette.background.paper,
     },
   },
   checkAction: {
     listStyle: 'none',
     padding: 0,
-    minWidth: '60px',
+    margin: 0,
+    display: 'flex',
+    justifyContent: 'flex-start',
     '& li': {
       float: 'left',
+      '&:empty': {
+        marginLeft: 22,
+      },
     },
   },
   moreIcon: {
@@ -52,6 +58,51 @@ const useStyles = makeStyles(theme => ({
   },
   checkIcon: {
     padding: 0,
+  },
+  name: {
+    width: '18.15%',
+  },
+  status: {
+    width: '10.15%',
+  },
+  success: {
+    width: '9%',
+    textAlign: 'right',
+  },
+  ignore: {
+    width: '7.5%',
+    textAlign: 'right',
+  },
+  error: {
+    width: '10.15%',
+    textAlign: 'right',
+    color: theme.palette.error.main,
+  },
+  resolved: {
+    width: '9%',
+    textAlign: 'right',
+  },
+  pages: {
+    width: '7.5%',
+    textAlign: 'right',
+  },
+  duration: {
+    width: '9%',
+    textAlign: 'right',
+  },
+  completed: {
+    width: '10.5%',
+  },
+  actions: {
+    width: '8.35%',
+    textAlign: 'center',
+  },
+  stateBtn: {
+    color: theme.palette.error.main,
+    float: 'right',
+    '&:hover': {
+      color: `${theme.palette.error.dark} !important`,
+    },
   },
 }));
 
@@ -202,25 +253,28 @@ function JobDetail({
             </li>
           </ul>
         </TableCell>
-        <TableCell data-test={job.name}>{job.name}</TableCell>
-        <TableCell>
+        <TableCell className={classes.name} data-test={job.name}>
+          {job.name}
+        </TableCell>
+        <TableCell className={classes.status}>
           <JobStatus job={job} />
         </TableCell>
-        <TableCell>{getSuccess(job)}</TableCell>
-        <TableCell>{job.numIgnore}</TableCell>
+        <TableCell className={classes.success}>{getSuccess(job)}</TableCell>
+        <TableCell className={classes.ignore}>{job.numIgnore}</TableCell>
         <TableCell
-          align="right"
           onMouseEnter={() => {
             setShowViewErrorsLink(true);
           }}
           onMouseLeave={() => {
             setShowViewErrorsLink(false);
-          }}>
+          }}
+          className={classes.error}>
           {showViewErrorsLink && !isJobInProgress && job.numError > 0 ? (
             <Button
               data-test="viewJobErrors"
               variant="text"
               color="primary"
+              className={classes.stateBtn}
               onClick={() => {
                 handleViewErrorsClick(false);
               }}>
@@ -236,7 +290,8 @@ function JobDetail({
           }}
           onMouseLeave={() => {
             setShowViewErrorsLink(false);
-          }}>
+          }}
+          className={classes.resolved}>
           {showViewErrorsLink && !isJobInProgress && job.numResolved > 0 ? (
             <Button
               variant="text"
@@ -251,10 +306,12 @@ function JobDetail({
             job.numResolved
           )}
         </TableCell>
-        <TableCell>{getPages(job)}</TableCell>
-        <TableCell>{job.duration}</TableCell>
-        <TableCell>{job.endedAtAsString}</TableCell>
-        <TableCell>
+        <TableCell className={classes.pages}>{getPages(job)}</TableCell>
+        <TableCell className={classes.duration}>{job.duration}</TableCell>
+        <TableCell className={classes.completed}>
+          {job.endedAtAsString}
+        </TableCell>
+        <TableCell className={classes.actions}>
           <JobActionsMenu
             job={job}
             userPermissionsOnIntegration={userPermissionsOnIntegration}
@@ -262,13 +319,12 @@ function JobDetail({
             isFlowBuilderView={isFlowBuilderView}
           />
         </TableCell>
-
-        {expanded && !job.children && (
-          <TableCell className={classes.spinner}>
-            <Spinner size={20} /> <span>Loading child jobs...</span>
-          </TableCell>
-        )}
       </TableRow>
+      {expanded && !job.children && (
+        <div className={classes.spinner}>
+          <Spinner size={20} /> <span>Loading child jobs...</span>
+        </div>
+      )}
       {expanded &&
         job.children &&
         job.children.map(cJob => (
