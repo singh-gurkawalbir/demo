@@ -23,6 +23,8 @@ const getFormattedLookup = (lookup, formVal) => {
     lookupTmp.extract = formVal._extract;
     lookupTmp.postBody = formVal._postBody;
     lookupTmp.recordType = formVal.recordType;
+    lookupTmp.whereClause = formVal.whereClause;
+    lookupTmp.sObjectType = formVal.sObjectType;
     lookupTmp.resultField = formVal.resultField;
     lookupTmp.expression = formVal.lookupExpression;
   } else {
@@ -199,6 +201,7 @@ export default {
     // setting extract value
     if (
       formVal.fieldMappingType === 'standard' &&
+      extract &&
       extract.indexOf('{{') !== -1
     ) {
       settings.extract = '';

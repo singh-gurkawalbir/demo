@@ -16,7 +16,7 @@ import SelectImport from './SelectImport';
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
     marginTop: theme.appBarHeight,
-    width: 800,
+    width: 824,
     border: 'solid 1px',
     borderColor: theme.palette.secondary.lightest,
     boxShadow: `-4px 4px 8px rgba(0,0,0,0.15)`,
@@ -130,7 +130,7 @@ function MappingDrawer() {
       onClose={handleClose}>
       <DrawerTitleBar title={`Edit mapping for flow ${flowName}`} />
       <div className={classes.content}>
-        <LoadResources required="true" resources="imports">
+        <LoadResources required="true" resources="imports, exports">
           {importId ? (
             <Fragment>
               <div className={classes.mappingContainer}>

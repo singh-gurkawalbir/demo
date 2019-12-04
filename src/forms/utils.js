@@ -282,12 +282,19 @@ const getFieldConfig = (field = {}, resource) => {
     newField.type = 'uploadfile';
   } else if (newField.type === 'select' && newField.supportsRefresh) {
     newField.type = 'integrationapprefreshableselect';
+  } else if (newField.type === 'multiselect' && newField.supportsRefresh) {
+    newField.type = 'integrationapprefreshableselect';
+    newField.multiselect = true;
   } else if (newField.type === 'referencedFieldsDialog') {
     newField.type = 'salesforcereferencedfieldsia';
     newField.resource = resource;
   } else if (newField.type === 'relatedListsDialog') {
     newField.type = 'salesforcerelatedlistia';
     newField.resource = resource;
+  }
+
+  if (newField.disabled) {
+    newField.defaultDisabled = true;
   }
 
   return newField;
@@ -357,16 +364,21 @@ export const translateDependencyProps = fieldMap => {
     rules.forEach(rule => {
       const { ref, visibleRule, requiredRule } = rule;
 
-      if (visibleRule) {
-        fieldMapCopy[ref].visibleWhenAll = pushRuleToMeta(
-          fieldMapCopy[ref].visibleWhenAll,
-          visibleRule
-        );
-      } else if (requiredRule) {
-        fieldMapCopy[ref].validWhenAll = pushRuleToMeta(
-          fieldMapCopy[ref].validWhenAll,
-          requiredRule
-        );
+      // im doing this check to prevent pushing rules to non existent refs
+      // this can happen when fields are hidden and removed from the meta
+      // So the rules generated from the dependencies are not needed then
+      if (fieldMapCopy[ref]) {
+        if (visibleRule) {
+          fieldMapCopy[ref].visibleWhenAll = pushRuleToMeta(
+            fieldMapCopy[ref].visibleWhenAll,
+            visibleRule
+          );
+        } else if (requiredRule) {
+          fieldMapCopy[ref].validWhenAll = pushRuleToMeta(
+            fieldMapCopy[ref].validWhenAll,
+            requiredRule
+          );
+        }
       }
     });
   });

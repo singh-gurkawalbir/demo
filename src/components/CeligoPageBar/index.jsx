@@ -41,6 +41,9 @@ const useStyles = makeStyles(theme => ({
       },
     },
   },
+  lastSaved: {
+    float: 'left',
+  },
 }));
 
 export default function CeligoPageBar({
@@ -106,7 +109,9 @@ export default function CeligoPageBar({
                     </Fragment>
                   )}
                 </Typography>
-                <Typography variant="caption">{subtitle}</Typography>
+                <Typography variant="caption" className={classes.lastSaved}>
+                  {subtitle}
+                </Typography>
               </Grid>
               <Grid item>{children}</Grid>
             </Grid>

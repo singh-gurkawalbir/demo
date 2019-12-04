@@ -19,6 +19,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     flexWrap: 'wrap',
     alignItems: 'center',
+
     '& > *': {
       marginRight: 10,
       '&:first-child': {
@@ -26,50 +27,26 @@ const useStyles = makeStyles(theme => ({
       },
     },
   },
-  select: {
-    background: theme.palette.background.paper,
-    border: '1px solid',
-    paddingRight: theme.spacing(3),
-    borderColor: theme.palette.secondary.lightest,
-    transitionProperty: 'border',
-    transitionDuration: theme.transitions.duration.short,
-    transitionTimingFunction: theme.transitions.easing.easeInOut,
-    overflow: 'hidden',
-    height: 42,
-    textAlign: 'left',
-    borderRadius: 2,
-    '& > div': {
-      maxWidth: '85%',
-    },
-    '& > Label': {
-      paddingTop: 10,
-    },
-    '&:hover': {
-      borderColor: theme.palette.primary.main,
-    },
-    '& > *': {
-      padding: [[0, 0, 0, 12]],
-    },
-    '& > div > div ': {
-      paddingBottom: 5,
-    },
-    '& svg': {
-      right: theme.spacing(1),
-      paddingLeft: 0,
-    },
-  },
   retry: {
     minWidth: 90,
+    borderRadius: theme.spacing(0.5),
+    height: theme.spacing(4.5),
   },
   resolve: {
     minWidth: 100,
+    borderRadius: theme.spacing(0.5),
+    height: theme.spacing(4.5),
   },
   status: {
     minWidth: 134,
+    borderRadius: theme.spacing(0.5),
+    height: theme.spacing(4.5),
   },
   flow: {
     minWidth: 130,
     maxWidth: 200,
+    borderRadius: theme.spacing(0.5),
+    height: theme.spacing(4.5),
   },
   selectEmpty: {
     marginTop: theme.spacing.double,

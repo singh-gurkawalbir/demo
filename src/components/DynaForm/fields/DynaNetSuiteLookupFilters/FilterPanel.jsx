@@ -217,7 +217,7 @@ export default function FilterPanel({
 
         if (rulesState[ruleId].data && rulesState[ruleId].data.rhs) {
           expressionField
-            .val(JSON.stringify(rulesState[ruleId].data.rhs.expression))
+            .val(rulesState[ruleId].data.rhs.expression)
             .trigger('change');
         }
 
