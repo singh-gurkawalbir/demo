@@ -50,6 +50,7 @@ export default function DynaSQLQueryBuilder(props) {
     resourceId,
     flowId,
     resourceType,
+    hideDefaultData,
   } = props;
   const { lookups: lookupObj, queryType } = options;
   const lookupFieldId = lookupObj && lookupObj.fieldId;
@@ -212,6 +213,7 @@ export default function DynaSQLQueryBuilder(props) {
           onClose={handleClose}
           action={lookupField}
           disabled={disabled}
+          showDefaultData={!hideDefaultData}
         />
       )}
       <Button
