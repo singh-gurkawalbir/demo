@@ -2465,10 +2465,6 @@ export function getImportSampleData(state, resourceId) {
       data: processSampleData(sampleData, resource),
     };
   else if (assistant) {
-    if (resource.sampleData) {
-      return { data: resource.sampleData };
-    }
-
     return { data: assistantPreviewData(state, resourceId) };
     // get assistants sample data
   } else if (adaptorType === 'NetSuiteDistributedImport') {
