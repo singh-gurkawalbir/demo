@@ -21,9 +21,11 @@ const useStyles = makeStyles({
 export default function TransformEditor(props) {
   const { editorId, disabled } = props;
   const classes = useStyles();
-  const { data, result, error, violations, initChangeIdentifier } = useSelector(
-    state => selectors.editor(state, editorId),
-    shallowEqual
+  const { data, result, error, initChangeIdentifier } = useSelector(state =>
+    selectors.editor(state, editorId)
+  );
+  const violations = useSelector(state =>
+    selectors.editorViolations(state, editorId)
   );
   const dispatch = useDispatch();
   const keyName = 'extract';
