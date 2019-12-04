@@ -60,7 +60,7 @@ export default {
     ],
     visible: r => !(r && r.isLookup),
     visibleWhen: r => {
-      if (r && r.isLookup) return false;
+      if (r && r.isLookup) return [];
 
       return [
         {
