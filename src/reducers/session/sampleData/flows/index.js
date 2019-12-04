@@ -37,11 +37,13 @@ export default function(state = {}, action) {
       case actionTypes.FLOW_DATA.STAGE_REQUEST: {
         if (!resourceId || !flowId || !stage) return;
         const resourceMap =
-          draft[flowId][
-            isPageGeneratorResource(draft[flowId], resourceId)
-              ? 'pageGeneratorsMap'
-              : 'pageProcessorsMap'
-          ] || {};
+          (draft[flowId] &&
+            draft[flowId][
+              isPageGeneratorResource(draft[flowId], resourceId)
+                ? 'pageGeneratorsMap'
+                : 'pageProcessorsMap'
+            ]) ||
+          {};
 
         resourceMap[resourceId] = {
           ...resourceMap[resourceId],
@@ -58,11 +60,13 @@ export default function(state = {}, action) {
       case actionTypes.FLOW_DATA.PREVIEW_DATA_REQUEST: {
         if (!resourceId) return;
         const resourceMap =
-          draft[flowId][
-            isPageGeneratorResource(draft[flowId], resourceId)
-              ? 'pageGeneratorsMap'
-              : 'pageProcessorsMap'
-          ] || {};
+          (draft[flowId] &&
+            draft[flowId][
+              isPageGeneratorResource(draft[flowId], resourceId)
+                ? 'pageGeneratorsMap'
+                : 'pageProcessorsMap'
+            ]) ||
+          {};
         const stage = previewType || 'raw';
 
         resourceMap[resourceId] = {

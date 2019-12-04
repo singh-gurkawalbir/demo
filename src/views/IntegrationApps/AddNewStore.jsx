@@ -103,9 +103,8 @@ export default function IntegrationAppAddNewStore(props) {
   if (!addNewStoreSteps || !addNewStoreSteps.length) {
     return (
       <Loader open>
-        <Typography>
-          Loading installation steps <Spinner />
-        </Typography>
+        <Spinner color="primary" />
+        <Typography variant="h5">Loading installation steps</Typography>
       </Loader>
     );
   }

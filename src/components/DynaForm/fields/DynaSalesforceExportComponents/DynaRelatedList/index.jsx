@@ -218,7 +218,7 @@ function FirstLevelModal(props) {
   };
 
   return (
-    <ModalDialog show onClose={handleClose}>
+    <ModalDialog show onClose={handleClose} maxWidth="lg">
       <div>Related Lists</div>
       <div>
         {!editListItemModelOpen ? (
@@ -289,14 +289,20 @@ function FirstLevelModal(props) {
 
 const useStyles = makeStyles(theme => ({
   inlineEditorContainer: {
-    border: '1px solid rgb(0,0,0,0.1)',
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
     marginRight: theme.spacing(1),
     marginTop: theme.spacing(1),
     height: theme.spacing(30),
+    overflow: 'hidden',
     width: '100%',
   },
   wrapperEditorContainer: {
     flexDirection: `row !important`,
+  },
+  label: {
+    margin: 5,
+    display: 'flex',
   },
 }));
 
@@ -341,7 +347,7 @@ export default function DynaRelatedList(props) {
       ) : null}
       <div className={classes.wrapperEditorContainer}>
         <div className={classes.inlineEditorContainer}>
-          <span>{props.label}</span>
+          <span className={classes.label}>{props.label}</span>
           <CodeEditor
             {...props}
             mode="json"

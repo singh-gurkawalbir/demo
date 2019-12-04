@@ -24,11 +24,49 @@ const useStyles = makeStyles(theme => ({
   },
   table: {
     minWidth: 700,
+    position: 'relative',
   },
   checkFlow: {
-    paddingLeft: '30px',
+    paddingLeft: 30,
   },
   tablePaginationRoot: { float: 'left' },
+  name: {
+    width: '18.15%',
+  },
+  status: {
+    width: '10.15%',
+  },
+  success: {
+    width: '9%',
+    textAlign: 'right',
+  },
+  ignore: {
+    width: '7.5%',
+    textAlign: 'right',
+  },
+  error: {
+    width: '10.15%',
+    textAlign: 'right',
+  },
+  resolved: {
+    width: '9%',
+    textAlign: 'right',
+  },
+  pages: {
+    width: '7.5%',
+    textAlign: 'right',
+  },
+  duration: {
+    width: '9%',
+    textAlign: 'right',
+  },
+  completed: {
+    width: '10.5%',
+  },
+  actions: {
+    width: '8.35%',
+    textAlign: 'center',
+  },
 }));
 
 function JobTable({
@@ -107,7 +145,7 @@ function JobTable({
       <Table className={classes.table}>
         <TableHead>
           <TableRow>
-            <TableCell padding="checkbox" className={classes.checkFlow}>
+            <TableCell className={classes.checkFlow}>
               <Checkbox
                 disabled={jobsInCurrentPage.length === 0}
                 checked={isSelectAllChecked}
@@ -116,16 +154,16 @@ function JobTable({
                 inputProps={{ 'aria-label': 'Select all jobs' }}
               />
             </TableCell>
-            <TableCell>Flow</TableCell>
-            <TableCell>Status</TableCell>
-            <TableCell>Success</TableCell>
-            <TableCell>Ignore</TableCell>
-            <TableCell>Error</TableCell>
-            <TableCell>Resolved</TableCell>
-            <TableCell>Pages</TableCell>
-            <TableCell>Duration</TableCell>
-            <TableCell>Completed</TableCell>
-            <TableCell>Actions</TableCell>
+            <TableCell className={classes.name}>Flow</TableCell>
+            <TableCell className={classes.status}>Status</TableCell>
+            <TableCell className={classes.success}>Success</TableCell>
+            <TableCell className={classes.ignore}>Ignore</TableCell>
+            <TableCell className={classes.error}>Error</TableCell>
+            <TableCell className={classes.resolved}>Resolved</TableCell>
+            <TableCell className={classes.pages}>Pages</TableCell>
+            <TableCell className={classes.duration}>Duration</TableCell>
+            <TableCell className={classes.completed}>Completed</TableCell>
+            <TableCell className={classes.actions}>Actions</TableCell>
           </TableRow>
         </TableHead>
         <TableBody data-test={`${integrationName}Dashboard`}>
