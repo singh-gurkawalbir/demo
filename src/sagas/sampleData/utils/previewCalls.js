@@ -99,6 +99,10 @@ export function* exportPreview({
     };
   }
 
+  if (body.type === 'once') {
+    delete body.type;
+  }
+
   if (runOffline && body.rawData) {
     body = {
       ...body,
