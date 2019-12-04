@@ -3,6 +3,7 @@ import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
+import clsx from 'clsx';
 import actions from '../../../actions';
 import MappingSettings from '../ImportMappingSettings/MappingSettingsField';
 import DynaTypeableSelect from '../../DynaForm/fields/DynaTypeableSelect';
@@ -11,6 +12,7 @@ import TrashIcon from '../../icons/TrashIcon';
 import * as selectors from '../../../reducers';
 import ActionButton from '../../ActionButton';
 import { adaptorTypeMap } from '../../../utils/resource';
+import LockIcon from '../../icons/LockIcon';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -44,6 +46,23 @@ const useStyles = makeStyles(theme => ({
     gridTemplateColumns: '45% 45% 50px 50px',
     marginBottom: theme.spacing(1),
     gridColumnGap: '1%',
+  },
+  childRow: {
+    display: 'flex',
+    position: 'relative',
+  },
+
+  disableChildRow: {
+    cursor: 'not-allowed',
+    // TODO: (Aditya) Temp fix. To be removed on changing Import Mapping as Dyna Form
+    '& > div > div > div': {
+      background: theme.palette.secondary.lightest,
+    },
+  },
+  lockIcon: {
+    position: 'absolute',
+    right: 10,
+    top: 10,
   },
 }));
 
@@ -159,7 +178,11 @@ export default function ImportMapping(props) {
           {tableData.map(mapping => (
             <div className={classes.rowContainer} key={mapping.index}>
               <div className={classes.innerRow}>
-                <div className={classes.childHeader}>
+                <div
+                  className={clsx(classes.childHeader, classes.childRow, {
+                    [classes.disableChildRow]:
+                      mapping.isNotEditable || disabled,
+                  })}>
                   <DynaTypeableSelect
                     key={`extract-${editorId}-${initChangeIdentifier}-${mapping.rowIdentifier}`}
                     id={`fieldMappingExtract-${mapping.index}`}
@@ -167,6 +190,7 @@ export default function ImportMapping(props) {
                     valueName="id"
                     value={mapping.extract || mapping.hardCodedValueTmp}
                     options={extractFields}
+                    hideOptions={mapping.isNotEditable || disabled}
                     disabled={mapping.isNotEditable || disabled}
                     onBlur={(id, evt) => {
                       handleFieldUpdate(
@@ -176,9 +200,19 @@ export default function ImportMapping(props) {
                       );
                     }}
                   />
+
+                  {mapping.isNotEditable && (
+                    <span className={classes.lockIcon}>
+                      <LockIcon />
+                    </span>
+                  )}
                 </div>
-                <div className={classes.childHeader}>
+                <div
+                  className={clsx(classes.childHeader, classes.childRow, {
+                    [classes.disableChildRow]: mapping.isRequired || disabled,
+                  })}>
                   <DynaTypeableSelect
+                    hideOptions={mapping.isRequired || disabled}
                     key={`generate-${editorId}-${initChangeIdentifier}-${mapping.rowIdentifier}`}
                     id={`fieldMappingGenerate-${mapping.index}`}
                     value={mapping.generate}
@@ -188,6 +222,11 @@ export default function ImportMapping(props) {
                     disabled={mapping.isRequired || disabled}
                     onBlur={handleGenerateUpdate(mapping)}
                   />
+                  {mapping.isRequired && (
+                    <span className={classes.lockIcon}>
+                      <LockIcon />
+                    </span>
+                  )}
                 </div>
                 <div>
                   <MappingSettings
