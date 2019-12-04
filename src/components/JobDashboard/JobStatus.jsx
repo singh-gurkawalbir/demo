@@ -1,22 +1,33 @@
-import { Fragment } from 'react';
-import IconButton from '@material-ui/core/IconButton';
+import { makeStyles } from '@material-ui/core/styles';
 import { JOB_STATUS, JOB_TYPES } from '../../utils/constants';
 import { JOB_UI_STATUS } from './util';
 import Spinner from '../Spinner';
 
+const useStyles = makeStyles({
+  state: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  spinnerWrapper: {
+    marginRight: 10,
+  },
+});
+
 export default function JobStatus({ job }) {
+  const classes = useStyles();
+
   if (job.type === JOB_TYPES.FLOW) {
     if (
       job.uiStatus === JOB_STATUS.QUEUED ||
       (job.uiStatus === JOB_STATUS.RUNNING && !job.doneExporting)
     ) {
       return (
-        <Fragment>
-          <IconButton>
+        <div className={classes.state}>
+          <div className={classes.spinnerWrapper}>
             <Spinner size={24} color="primary" />
-          </IconButton>
+          </div>
           {JOB_UI_STATUS[job.uiStatus]}
-        </Fragment>
+        </div>
       );
     }
 

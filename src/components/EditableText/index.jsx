@@ -7,8 +7,13 @@ const useStyles = makeStyles(theme => ({
   text: {
     borderColor: 'transparent',
     transition: theme.transitions.create(['border', 'background-color']),
+    maxWidth: 650,
+    textOverflow: 'ellipsis',
+    overflow: 'hidden',
+    float: 'left',
+    whiteSpace: 'nowrap',
     '&:hover': {
-      backgroundColor: 'rgb(0,0,0,0.03)',
+      backgroundColor: theme.palette.background.paper2,
       borderBottom: `solid 1px ${fade(theme.palette.primary.light, 0.5)}`,
     },
   }, // not used...

@@ -12,8 +12,11 @@ import TrashIcon from '../../icons/TrashIcon';
 import * as selectors from '../../../reducers';
 import ActionButton from '../../ActionButton';
 import { adaptorTypeMap } from '../../../utils/resource';
+import RefreshIcon from '../../icons/RefreshIcon';
+import Spinner from '../../Spinner';
 import LockIcon from '../../icons/LockIcon';
 
+// TODO Azhar style header
 const useStyles = makeStyles(theme => ({
   container: {
     marginTop: theme.spacing(1),
@@ -51,7 +54,6 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     position: 'relative',
   },
-
   disableChildRow: {
     cursor: 'not-allowed',
     // TODO: (Aditya) Temp fix. To be removed on changing Import Mapping as Dyna Form
@@ -64,6 +66,15 @@ const useStyles = makeStyles(theme => ({
     right: 10,
     top: 10,
   },
+  refreshButton: {
+    marginLeft: 5,
+    marginRight: 0,
+  },
+  spinner: {
+    marginLeft: 5,
+    width: 50,
+    height: 50,
+  },
 }));
 
 export default function ImportMapping(props) {
@@ -75,11 +86,18 @@ export default function ImportMapping(props) {
     extractFields = [],
     disabled,
     optionalHanlder,
+    isExtractsLoading,
+    isGeneratesLoading,
+    isGenerateRefreshSupported,
     options = {},
   } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
-  const { fetchSalesforceSObjectMetadata } = optionalHanlder;
+  const {
+    fetchSalesforceSObjectMetadata,
+    refreshGenerateFields,
+    refreshExtractFields,
+  } = optionalHanlder;
   const { mappings, lookups, initChangeIdentifier } = useSelector(state =>
     selectors.mapping(state, editorId)
   );
@@ -168,10 +186,40 @@ export default function ImportMapping(props) {
         <div className={classes.header}>
           <Typography variant="subtitle2" className={classes.childHeader}>
             Source Record Field
+            <span>
+              {!isExtractsLoading && (
+                <ActionButton
+                  onClick={refreshExtractFields}
+                  className={classes.refreshButton}
+                  data-test="refreshExtracts">
+                  <RefreshIcon />
+                </ActionButton>
+              )}
+              {isExtractsLoading && (
+                <span className={classes.spinner}>
+                  <Spinner size={24} color="primary" />
+                </span>
+              )}
+            </span>
           </Typography>
 
           <Typography variant="subtitle2" className={classes.childHeader}>
             {generateLabel}
+            <span>
+              {isGenerateRefreshSupported && !isGeneratesLoading && (
+                <ActionButton
+                  onClick={refreshGenerateFields}
+                  className={classes.refreshButton}
+                  data-test="refreshGenerates">
+                  <RefreshIcon />
+                </ActionButton>
+              )}
+              {isGeneratesLoading && (
+                <span className={classes.spinner}>
+                  <Spinner size={24} color="primary" />
+                </span>
+              )}
+            </span>
           </Typography>
         </div>
         <div>

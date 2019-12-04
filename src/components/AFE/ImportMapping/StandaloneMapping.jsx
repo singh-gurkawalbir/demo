@@ -29,21 +29,23 @@ export default function StandaloneMapping(props) {
   const resourceType = ResourceUtil.getResourceSubType(resourceData);
   const connectionId = resourceData._connectionId;
   const dispatch = useDispatch();
-  const extractFields = useSelector(state =>
-    selectors.getSampleData(state, {
+  const sampleDataObj = useSelector(state =>
+    selectors.getSampleDataContext(state, {
       flowId,
       resourceId,
       stage: 'importMappingExtract',
       resourceType: 'imports',
     })
   );
+  const { data: extractFields, status: extractStatus } = sampleDataObj || {};
   const requestSampleData = useCallback(() => {
     dispatch(
       actions.flowData.requestSampleData(
         flowId,
         resourceId,
         'imports',
-        'importMappingExtract'
+        'importMappingExtract',
+        true
       )
     );
   }, [dispatch, flowId, resourceId]);
@@ -54,15 +56,20 @@ export default function StandaloneMapping(props) {
     }
   }, [dispatch, extractFields, flowId, requestSampleData, resourceId]);
 
-  const importSampleData = useSelector(state =>
+  const importSampleDataObj = useSelector(state =>
     selectors.getImportSampleData(state, resourceId)
   );
+  const { data: importSampleData, status: generateStatus } =
+    importSampleDataObj || {};
+  const requestImportSampleData = useCallback(() => {
+    dispatch(actions.importSampleData.request(resourceId));
+  }, [dispatch, resourceId]);
 
   useEffect(() => {
     if (!importSampleData) {
-      dispatch(actions.importSampleData.request(resourceId));
+      requestImportSampleData();
     }
-  }, [importSampleData, dispatch, resourceId]);
+  }, [importSampleData, dispatch, resourceId, requestImportSampleData]);
 
   /**  get assistance metadata from
    *   selector and dispatching an action if not loaded
@@ -239,7 +246,12 @@ export default function StandaloneMapping(props) {
 
   const optionalHandler = {
     fetchSalesforceSObjectMetadata,
+    refreshGenerateFields: requestImportSampleData,
+    refreshExtractFields: requestSampleData,
   };
+  const isGenerateRefreshSupported =
+    resourceType.type === ResourceUtil.adaptorTypeMap.SalesforceImport ||
+    resourceType.type === ResourceUtil.adaptorTypeMap.NetSuiteImport;
 
   return (
     <ImportMapping
@@ -250,6 +262,9 @@ export default function StandaloneMapping(props) {
       generateFields={formattedGenerateFields}
       value={mappings}
       adaptorType={resourceType.type}
+      isExtractsLoading={extractStatus === 'requested'}
+      isGeneratesLoading={generateStatus === 'requested'}
+      isGenerateRefreshSupported={isGenerateRefreshSupported}
       application={application}
       lookups={lookups}
       options={options}
