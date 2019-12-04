@@ -1,8 +1,10 @@
-import { call, takeEvery, put, select } from 'redux-saga/effects';
+import { call, takeEvery, put, select, all } from 'redux-saga/effects';
 import actionTypes from '../../actions/types';
 import actions from '../../actions';
 import { apiCallWithRetry } from '../index';
 import * as selectors from '../../reducers';
+import templateUtil from '../../utils/template';
+import { getResourceCollection } from '../resources';
 
 export function* requestPreview({ resourceType, resourceId }) {
   const path = `/${resourceType}/${resourceId}/clone/preview`;
@@ -57,6 +59,14 @@ export function* createComponents({ resourceType, resourceId }) {
     return undefined;
   }
 
+  const dependentResources =
+    templateUtil.getDependentResources(components) || [];
+
+  yield all(
+    dependentResources.map(resourceType =>
+      call(getResourceCollection, { resourceType })
+    )
+  );
   yield put(
     actions.template.createdComponents(
       components,

@@ -3,7 +3,7 @@ import { combineReducers } from 'redux';
 import jsonPatch from 'fast-json-patch';
 import moment from 'moment';
 import produce from 'immer';
-import { uniq, some, map, keys } from 'lodash';
+import { uniq, some, map, keys, isEmpty } from 'lodash';
 import app, * as fromApp from './app';
 import data, * as fromData from './data';
 import session, * as fromSession from './session';
@@ -42,6 +42,7 @@ import {
 import { isValidResourceReference, isNewId } from '../utils/resource';
 import { processSampleData } from '../utils/sampleData';
 import inferErrorMessage from '../utils/inferErrorMessage';
+import getRoutePath from '../utils/routePaths';
 
 const emptySet = [];
 const combinedReducers = combineReducers({
@@ -127,6 +128,12 @@ export function isAllLoadingCommsAboveThreshold(state) {
   );
 }
 
+export function commStatusPerPath(state, path, method) {
+  const key = commKeyGen(path, method);
+
+  return fromComms.commStatus(state && state.comms, key);
+}
+
 // #endregion
 
 // #region PUBLIC SESSION SELECTORS
@@ -164,12 +171,85 @@ export function cloneData(state, resourceType, resourceId) {
   );
 }
 
+export function isSetupComplete(
+  state,
+  { templateId, resourceType, resourceId }
+) {
+  let isSetupComplete = false;
+  const installSteps =
+    fromSession.templateInstallSteps(
+      state && state.session,
+      templateId || `${resourceType}-${resourceId}`
+    ) || [];
+
+  isSetupComplete =
+    installSteps.length &&
+    !installSteps.reduce((result, step) => result || !step.completed, false);
+
+  return isSetupComplete;
+}
+
+export function redirectToOnInstallationComplete(
+  state,
+  { resourceType = 'integrations', resourceId, templateId }
+) {
+  let redirectTo = 'dashboard';
+  let flow;
+  let flowDetails;
+  let integration;
+  const { createdComponents: components } = fromSession.template(
+    state && state.session,
+    templateId || `${resourceType}-${resourceId}`
+  );
+
+  if (!components) {
+    return false;
+  }
+
+  switch (resourceType) {
+    case 'integrations':
+      integration = components.find(c => c.model === 'Integration');
+
+      if (integration) redirectTo = `/integrations/${integration._id}/flows`;
+      break;
+    case 'flows':
+      flow = components.find(c => c.model === 'Flow');
+
+      if (flow) {
+        // eslint-disable-next-line no-use-before-define
+        flowDetails = resource(state, 'flows', flow._id);
+
+        if (flowDetails) {
+          redirectTo = `integrations/${flowDetails._integrationId ||
+            'none'}/flows`;
+        }
+      }
+
+      break;
+    case 'exports':
+    case 'imports':
+      redirectTo = resourceType;
+      break;
+    default:
+      break;
+  }
+
+  return getRoutePath(redirectTo);
+}
+
 export function previewTemplate(state, templateId) {
   return fromSession.previewTemplate(state && state.session, templateId);
 }
 
 export function isFileUploaded(state) {
   return fromSession.isFileUploaded(state && state.session);
+}
+
+export function installSetup(state, { resourceType, resourceId, templateId }) {
+  return fromSession.template(
+    state && state.session,
+    templateId || `${resourceType}-${resourceId}`
+  );
 }
 
 export function templateSetup(state, templateId) {
@@ -298,6 +378,18 @@ export function getSampleData(
   { flowId, resourceId, resourceType, stage }
 ) {
   return fromSession.getSampleData(state && state.session, {
+    flowId,
+    resourceId,
+    resourceType,
+    stage,
+  });
+}
+
+export function getSampleDataContext(
+  state,
+  { flowId, resourceId, resourceType, stage }
+) {
+  return fromSession.getSampleDataContext(state && state.session, {
     flowId,
     resourceId,
     resourceType,
@@ -1038,6 +1130,23 @@ export function integrationAppGeneralSettings(state, id, storeId) {
     fields,
     sections: subSections,
   };
+}
+
+export function hasGeneralSettings(state, integrationId, storeId) {
+  if (!state) return false;
+  const integrationResource = fromData.integrationAppSettings(
+    state.data,
+    integrationId
+  );
+  const { supportsMultiStore, general } = integrationResource.settings || {};
+
+  if (supportsMultiStore) {
+    return !!(general || []).find(s => s.id === storeId);
+  } else if (Array.isArray(general)) {
+    return !!general.find(s => s.title === 'General');
+  }
+
+  return !isEmpty(general);
 }
 
 export function integrationAppFlowSettings(state, id, section, storeId) {
@@ -1792,7 +1901,6 @@ export function resourceData(state, resourceType, id, scope) {
 
   if (!master && !patch) return { merged: {} };
 
-  // console.log('patch:', patch);
   let merged;
   let lastChange;
 
@@ -1804,7 +1912,6 @@ export function resourceData(state, resourceType, id, scope) {
       jsonPatch.deepClone(patch)
     );
 
-    // console.log('patchResult', patchResult);
     merged = patchResult.newDocument;
 
     if (patch.length) lastChange = patch[patch.length - 1].timestamp;
@@ -1993,6 +2100,32 @@ export function metadataOptionsAndResources({
   commMetaPath,
   filterKey,
 }) {
+  return (
+    optionsFromMetadata({
+      state,
+      connectionId,
+      commMetaPath,
+      filterKey,
+    }) || {}
+  );
+}
+
+/*
+ * TODO: @Raghu - Should be removed and use above selector
+ * Function Definition needs to be changed to 
+ * metadataOptionsAndResources(
+    state,
+    { 
+      connectionId,
+      commMetaPath,
+      filterKey,
+  }) to support yield select
+  * Change needs to be done all the places where it is getting called
+ */
+export function getMetadataOptions(
+  state,
+  { connectionId, commMetaPath, filterKey }
+) {
   return (
     optionsFromMetadata({
       state,
@@ -2327,29 +2460,32 @@ export function getImportSampleData(state, resourceId) {
   const { assistant, adaptorType, sampleData } = resource;
 
   // Formats sample data into readable form
-  if (sampleData) return processSampleData(sampleData, resource);
+  if (sampleData)
+    return {
+      data: processSampleData(sampleData, resource),
+    };
   else if (assistant) {
     if (resource.sampleData) {
-      return resource.sampleData;
+      return { data: resource.sampleData };
     }
 
-    return assistantPreviewData(state, resourceId);
+    return { data: assistantPreviewData(state, resourceId) };
     // get assistants sample data
   } else if (adaptorType === 'NetSuiteDistributedImport') {
     // eslint-disable-next-line camelcase
     const { _connectionId: connectionId, netsuite_da } = resource;
     const commMetaPath = `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${netsuite_da.recordType}`;
-    const { data: sampleData } = metadataOptionsAndResources({
+    const { data, status } = metadataOptionsAndResources({
       state,
       connectionId,
       commMetaPath,
     });
 
-    return sampleData;
+    return { data, status };
   } else if (adaptorType === 'SalesforceImport') {
     const { _connectionId: connectionId, salesforce } = resource;
     const commMetaPath = `salesforce/metadata/connections/${connectionId}/sObjectTypes/${salesforce.sObjectType}`;
-    const { data: sampleData } = metadataOptionsAndResources({
+    const { data, status } = metadataOptionsAndResources({
       state,
       connectionId,
       commMetaPath,
@@ -2359,8 +2495,10 @@ export function getImportSampleData(state, resourceId) {
           : 'salesforce-recordType',
     });
 
-    return sampleData;
+    return { data, status };
   }
+
+  return emptyObject;
 }
 
 export function flowConnectionList(state, flow) {

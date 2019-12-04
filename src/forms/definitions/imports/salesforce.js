@@ -119,6 +119,7 @@ export default {
     },
     'salesforce.idLookup.whereClause': {
       fieldId: 'salesforce.idLookup.whereClause',
+      refreshOptionsOnChangesTo: ['salesforce.sObjectType'],
     },
     ignoreExisting: {
       fieldId: 'ignoreExisting',
@@ -203,12 +204,11 @@ export default {
       'salesforce.contentVersion.tagCsv',
       'salesforce.contentVersion.contentLocation',
       'salesforce.compositeOperation',
-      'salesforce.idLookup.extract',
-      'salesforce.idLookup.whereClause',
       'ignoreExisting',
       'ignoreMissing',
-      'salesforce.upsertpicklistvalues.fullName',
+      'salesforce.idLookup.whereClause',
       'salesforce.upsert.externalIdField',
+      'salesforce.idLookup.extract',
       'dataMappings',
     ],
     type: 'collapse',
@@ -219,5 +219,22 @@ export default {
         fields: ['advancedSettings', 'deleteAfterImport'],
       },
     ],
+  },
+  optionsHandler: (fieldId, fields) => {
+    if (fieldId === 'salesforce.idLookup.whereClause') {
+      const sObjectTypeField = fields.find(
+        field => field.id === 'salesforce.sObjectType'
+      );
+
+      return {
+        disableFetch: !(sObjectTypeField && sObjectTypeField.value),
+        commMetaPath: sObjectTypeField
+          ? `salesforce/metadata/connections/${sObjectTypeField.connectionId}/sObjectTypes/${sObjectTypeField.value}`
+          : '',
+        resetValue: [],
+      };
+    }
+
+    return null;
   },
 };

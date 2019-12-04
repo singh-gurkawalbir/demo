@@ -1,13 +1,14 @@
 import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
 import LoadResources from '../../components/LoadResources';
 import InstallWizard from '../../components/InstallationWizard';
-import templateUtil from '../../utils/template';
 
 export default function TemplateInstall(props) {
   const { templateId } = props.match.params;
+  const history = useHistory();
   const dispatch = useDispatch();
   const template =
     useSelector(state => selectors.marketplaceTemplate(state, templateId)) ||
@@ -18,27 +19,11 @@ export default function TemplateInstall(props) {
     selectors.templateInstallSteps(state, templateId)
   );
   const handleSetupComplete = useCallback(
-    createdComponents => {
-      // redirect to integration Settings
-      const integration = createdComponents.find(
-        c => c.model === 'Integration'
-      );
-
+    redirectTo => {
+      history.push(redirectTo);
       dispatch(actions.template.clearTemplate(templateId));
-      const dependentResources =
-        templateUtil.getDependentResources(createdComponents) || [];
-
-      dependentResources.forEach(res => {
-        dispatch(actions.resource.requestCollection(res));
-      });
-
-      if (integration) {
-        props.history.push(`/pg/integrations/${integration._id}/flows`);
-      } else {
-        props.history.push('/');
-      }
     },
-    [dispatch, props.history, templateId]
+    [dispatch, history, templateId]
   );
 
   return (
