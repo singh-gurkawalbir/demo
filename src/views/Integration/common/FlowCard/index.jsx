@@ -86,7 +86,8 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
                     {
                       '/flowId': flowDetails._id,
                       '/disabled': !flowDetails.disabled,
-                    }
+                    },
+                    { action: 'flowEnableDisable' }
                   )
                 );
               } else {
