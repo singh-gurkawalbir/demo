@@ -147,6 +147,7 @@ function AppBlock({
   resource,
   integrationId,
   isViewMode,
+  isMonitorLevelAccess,
   pg,
   index,
   ...rest
@@ -207,6 +208,7 @@ function AppBlock({
           open={activeAction === a.name}
           flowId={flowId}
           isViewMode={isViewMode}
+          isMonitorLevelAccess={isMonitorLevelAccess}
           resource={resource}
           resourceIndex={resourceIndex}
           resourceId={resource._id}

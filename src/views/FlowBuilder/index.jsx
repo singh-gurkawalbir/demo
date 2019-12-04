@@ -554,6 +554,7 @@ function FlowBuilder() {
                   }
                   index={i}
                   isViewMode={isViewMode}
+                  isMonitorLevelAccess={isMonitorLevelAccess}
                   isLast={pageProcessors.length === i + 1}
                   onMove={handleMove}
                 />
