@@ -110,7 +110,7 @@ export default function DynaNetSuiteQualifier(props) {
         disabled
         required={required}
         error={!isValid}
-        value={JSON.stringify(value)}
+        value={JSON.stringify(value || [])}
         variant="filled"
       />
     </Fragment>
