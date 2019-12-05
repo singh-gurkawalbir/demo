@@ -115,7 +115,7 @@ export function MultiSubsidiaryMapWidgetDialog(props) {
 export default function DynaMultiSubsidiaryMapping(props) {
   const [showEditor, setShowEditor] = useState(false);
   const classes = useStyles();
-  const { id, onFieldChange } = props;
+  const { id, onFieldChange, title } = props;
   const handleEditorClick = () => {
     setShowEditor(!showEditor);
   };
@@ -139,7 +139,7 @@ export default function DynaMultiSubsidiaryMapping(props) {
       )}
       <Card className={classes.textField}>
         <CardContent>
-          <Typography>hello</Typography>
+          <Typography>{title}</Typography>
           <ActionButton
             data-test={id}
             onClick={handleEditorClick}
