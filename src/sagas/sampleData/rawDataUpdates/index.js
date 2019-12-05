@@ -148,14 +148,14 @@ function* onResourceUpdate({
 
   // If it is a raw data patch set on need to update again
   if (resourceType === 'imports' && patch.length && !isRawDataPatchSet(patch)) {
-    const { merged: resource = {} } = yield select(
+    const { merged: importResource = {} } = yield select(
       resourceData,
       'imports',
       resourceId
     );
 
     // Whenever an assistant import gets updated, its preview data ( sampleData ) needs to be reset
-    if (resource.assistant) {
+    if (importResource.assistant) {
       return yield put(
         actions.metadata.resetAssistantImportPreview(resourceId)
       );
