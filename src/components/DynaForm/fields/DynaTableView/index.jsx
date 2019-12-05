@@ -61,12 +61,10 @@ export default function DynaTable(props) {
         <DynaConnectoroNColumnMap {...updatedProps} />
       )}
       {tableType === 'refreshableStaticMap' && (
-        <DynaRefreshableStaticMap {...updatedProps} />
+        <DynaRefreshableStaticMap {...props} />
       )}
-      {tableType === 'staticMap' && <DynaStaticMap {...updatedProps} />}
-      {tableType === 'staticMapWidget' && (
-        <DynaStaticMapWidget {...updatedProps} />
-      )}
+      {tableType === 'staticMap' && <DynaStaticMap {...props} />}
+      {tableType === 'staticMapWidget' && <DynaStaticMapWidget {...props} />}
       {tableType === 'generic' && (
         <DynaTableView collapsable {...updatedProps} />
       )}
