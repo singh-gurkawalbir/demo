@@ -3,7 +3,6 @@ import sift from 'sift';
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, Link, useLocation } from 'react-router-dom';
-import { IconButton } from '@material-ui/core';
 import * as selectors from '../../../reducers';
 import AddIcon from '../../icons/AddIcon';
 import EditIcon from '../../icons/EditIcon';
@@ -17,6 +16,7 @@ import {
   defaultPatchSetConverter,
   getMissingPatchSet,
 } from '../../../forms/utils';
+import ActionButton from '../../../components/ActionButton';
 
 const handleAddNewResource = args => {
   const {
@@ -66,13 +66,15 @@ const handleAddNewResource = args => {
   history.push(`${location.pathname}/edit/${resourceType}/${newResourceId}`);
 };
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles({
   root: {
     flexDirection: 'row !important',
     display: 'flex',
     alignItems: 'flex-start',
     '& > div:first-child': {
       width: '100%',
+      marginRight: 6,
+      overflow: 'scroll',
     },
   },
   actions: {
@@ -80,22 +82,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     alignItems: 'flex-start',
   },
-  iconButton: {
-    alignSelf: 'flex-end',
-    border: '1px solid',
-    background: theme.palette.background.paper,
-    marginLeft: 5,
-    borderColor: theme.palette.secondary.lightest,
-    borderRadius: 0,
-    width: 50,
-    height: 50,
-    color: theme.palette.text.hint,
-    '&:hover': {
-      background: theme.palette.background.paper,
-      color: theme.palette.primary.main,
-    },
-  },
-}));
+});
 
 function DynaSelectResource(props) {
   const {
@@ -192,26 +179,22 @@ function DynaSelectResource(props) {
       </LoadResources>
       <div className={classes.actions}>
         {allowNew && (
-          <IconButton
+          <ActionButton
             data-test="addNewResource"
-            className={classes.iconButton}
-            onClick={handleAddNewResourceMemo}
-            size="small">
+            onClick={handleAddNewResourceMemo}>
             <AddIcon />
-          </IconButton>
+          </ActionButton>
         )}
 
         {allowEdit && (
-          <IconButton
-            // Disable adding a new resource when the user has selected an existing resource
+          // Disable adding a new resource when the user has selected an existing resource
+          <ActionButton
             disabled={!value}
             data-test="editNewResource"
-            className={classes.iconButton}
             component={Link}
-            to={`${location.pathname}/edit/${resourceType}/${value}`}
-            size="small">
+            to={`${location.pathname}/edit/${resourceType}/${value}`}>
             <EditIcon />
-          </IconButton>
+          </ActionButton>
         )}
       </div>
     </div>

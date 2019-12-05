@@ -551,6 +551,7 @@ function FlowBuilder(props) {
                   key={pp._importId || pp._exportId || pp._connectionId}
                   index={i}
                   isViewMode={isViewMode}
+                  isMonitorLevelAccess={isMonitorLevelAccess}
                   isLast={pageProcessors.length === i + 1}
                   onMove={handleMove}
                 />

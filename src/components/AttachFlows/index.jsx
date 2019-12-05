@@ -1,32 +1,14 @@
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  Button,
-  IconButton,
-  Typography,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  makeStyles,
-} from '@material-ui/core';
-import CloseIcon from '../icons/CloseIcon';
+import Button from '@material-ui/core/Button';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
 import LoadResources from '../LoadResources';
 import CeligoTable from '../CeligoTable';
 import metadata from './metadata';
-
-const useStyles = makeStyles(theme => ({
-  closeButton: {
-    position: 'absolute',
-    right: theme.spacing(1),
-    top: 2,
-  },
-}));
+import ModalDialog from '../ModalDialog';
 
 export default function AttachFlows({ onClose, integrationId }) {
-  const classes = useStyles();
   const flows = useSelector(state =>
     selectors
       .resourceList(state, { type: 'flows' })
@@ -70,18 +52,9 @@ export default function AttachFlows({ onClose, integrationId }) {
   };
 
   return (
-    <Dialog open maxWidth={false}>
-      <DialogTitle disableTypography>
-        <Typography variant="h6">Attach Flows</Typography>
-        <IconButton
-          aria-label="Close"
-          data-test="closeAttachFlows"
-          className={classes.closeButton}
-          onClick={onClose}>
-          <CloseIcon />
-        </IconButton>
-      </DialogTitle>
-      <DialogContent>
+    <ModalDialog show maxWidth={false} onClose={onClose}>
+      <div>Attach Flows</div>
+      <div>
         <LoadResources
           required
           resources="flows, connections, exports, imports">
@@ -92,16 +65,16 @@ export default function AttachFlows({ onClose, integrationId }) {
             selectableRows
           />
         </LoadResources>
-      </DialogContent>
-      <DialogActions>
+      </div>
+      <div>
         <Button
           data-test="attachFlows"
           onClick={handleAttachFlowsClick}
-          variant="contained"
+          variant="outlined"
           color="primary">
           Attach
         </Button>
-      </DialogActions>
-    </Dialog>
+      </div>
+    </ModalDialog>
   );
 }
