@@ -235,7 +235,7 @@ export default function IntegrationApp({ match, history }) {
               className={classes.storeSelect}
               onChange={handleStoreChange}
               IconComponent={ArrowDownIcon}
-              value="">
+              value={storeId}>
               <MenuItem disabled value="">
                 Select {storeLabel}
               </MenuItem>

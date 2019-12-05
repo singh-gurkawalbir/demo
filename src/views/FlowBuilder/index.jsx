@@ -452,13 +452,14 @@ function FlowBuilder(props) {
             }}>
             <RunIcon />
           </IconButton>
-
-          <IconButton
-            disabled={isNewFlow && !(flow && flow.showScheduleIcon)}
-            data-test="scheduleFlow"
-            onClick={() => handleDrawerOpen('schedule')}>
-            <CalendarIcon />
-          </IconButton>
+          {flow && flow.showScheduleIcon && (
+            <IconButton
+              disabled={isNewFlow}
+              data-test="scheduleFlow"
+              onClick={() => handleDrawerOpen('schedule')}>
+              <CalendarIcon />
+            </IconButton>
+          )}
 
           <IconButton
             disabled={isNewFlow}

@@ -14,8 +14,8 @@ const sampleDataStage = {
     responseMappingExtract: 'hooks',
   },
   imports: {
-    inputFilter: 'raw',
-    preMap: 'raw',
+    inputFilter: 'flowInput',
+    preMap: 'flowInput',
     importMappingExtract: 'preMap',
     responseMappingExtract: 'responseTransform',
     postMap: 'preMap',
@@ -37,7 +37,7 @@ export function getPreviewStageData(previewData, previewStage = 'parse') {
   // Incase of raw preview stage, returns the first stage data is in
   // Incase of http/rest first stage is 'raw' but for NS/SF it is parse
   if (previewStage === 'raw') {
-    const initialStage = stages[0];
+    const initialStage = stages[0] || {};
 
     return initialStage.data;
   }

@@ -35,6 +35,7 @@ export default {
     type: 'sqlquerybuilder',
     arrayIndex: 0,
     label: 'Launch Query Builder',
+    title: 'SQL Query Builder',
     refreshOptionsOnChangesTo: ['rdbms.lookups', 'rdbms.queryType'],
     visibleWhen: [
       {
@@ -48,6 +49,7 @@ export default {
     type: 'sqlquerybuilder',
     arrayIndex: 0,
     label: 'Launch Query Builder for Insert',
+    title: 'SQL Query Builder',
     refreshOptionsOnChangesTo: ['rdbms.lookups', 'rdbms.queryType'],
     visibleWhen: [
       {
@@ -61,6 +63,7 @@ export default {
     type: 'sqlquerybuilder',
     arrayIndex: 0,
     label: 'Launch Query Builder for Update',
+    title: 'SQL Query Builder',
     refreshOptionsOnChangesTo: ['rdbms.lookups', 'rdbms.queryType'],
     visibleWhen: [
       {
@@ -96,6 +99,10 @@ export default {
       {
         field: 'ignoreMissing',
         is: [true],
+      },
+      {
+        field: 'ignoreExisting',
+        is: [false],
       },
     ],
   },

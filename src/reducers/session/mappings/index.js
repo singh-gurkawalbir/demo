@@ -147,6 +147,11 @@ export default function reducer(state = {}, action) {
 
           Object.assign(valueTmp, value);
 
+          // removing lookups
+          if (!value.lookupName) {
+            delete valueTmp.lookupName;
+          }
+
           valueTmp.rowIdentifier += 1;
 
           if (valueTmp.hardCodedValue) {

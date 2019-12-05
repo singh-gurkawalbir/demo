@@ -37,15 +37,19 @@ export default {
     defaultValue: r => {
       const isNew = isNewId(r._id);
 
-      // if its create
-      if (isNew) return '';
+      if (r && r.isLookup) {
+        return 'scheduled';
+      }
+
+      if (isNew)
+        // if its create
+        return '';
 
       const output =
         r && r.salesforce && r.salesforce.soql && r.salesforce.soql.query;
 
       return output ? 'scheduled' : 'realtime';
     },
-
     options: [
       {
         items: [
@@ -54,28 +58,38 @@ export default {
         ],
       },
     ],
-    visibleWhen: [
-      {
-        field: 'outputMode',
-        is: ['records'],
-      },
-    ],
+    visible: r => !(r && r.isLookup),
+    visibleWhen: r => {
+      if (r && r.isLookup) return [];
+
+      return [
+        {
+          field: 'outputMode',
+          is: ['records'],
+        },
+      ];
+    },
   },
   'salesforce.soql.query': {
     type: 'editor',
     mode: 'sql',
     label: 'SOQL Query',
     omitWhenHidden: true,
-    visibleWhenAll: [
-      {
-        field: 'salesforce.executionType',
-        is: ['scheduled'],
-      },
-      {
-        field: 'outputMode',
-        is: ['records'],
-      },
-    ],
+    visible: r => !!(r && r.isLookup),
+    visibleWhenAll: r => {
+      if (r && r.isLookup) return [];
+
+      return [
+        {
+          field: 'outputMode',
+          is: ['records'],
+        },
+        {
+          field: 'salesforce.executionType',
+          is: ['scheduled'],
+        },
+      ];
+    },
   },
   'salesforce.distributed.referencedFields': {
     type: 'text',

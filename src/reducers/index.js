@@ -707,13 +707,17 @@ export function getIAFlowSettings(state, integrationId, flowId) {
   const integration = resource(state, 'integrations', integrationId);
   const allFlows = [];
 
-  if (!integration._connectorId) {
+  if (!integration || !integration._connectorId) {
     // return empty object for DIY integrations.
     return flowSettings;
   }
 
   if (integration.settings && integration.settings.supportsMultiStore) {
     integration.settings.sections.forEach(section => {
+      if (!section.sections) {
+        return;
+      }
+
       const { flows } = section.sections.reduce((a, b) => ({
         flows: [...a.flows, ...b.flows],
       }));
@@ -728,7 +732,7 @@ export function getIAFlowSettings(state, integrationId, flowId) {
     allFlows.push(...(flows || []));
   }
 
-  return allFlows.find(flow => flow._id === flowId) || {};
+  return allFlows.find(flow => flow._id === flowId) || emptyObject;
 }
 
 export function flowDetails(state, id) {
@@ -743,7 +747,7 @@ export function flowDetails(state, id) {
         : draft._exportId;
     const pg = resource(state, 'exports', exportId);
     const allExports = resourceList(state, {
-      resourceType: 'exports',
+      type: 'exports',
     }).resources;
 
     draft.isRealtime = isRealtimeExport(pg);
@@ -771,7 +775,7 @@ export function flowListWithMetadata(state, options) {
         : f._exportId;
     const exp = resource(state, 'exports', _exportId);
     const exports = resourceList(state, {
-      resourceType: 'exports',
+      type: 'exports',
     }).resources;
 
     if (isRealtimeExport(exp)) {
@@ -2498,10 +2502,6 @@ export function getImportSampleData(state, resourceId) {
       data: processSampleData(sampleData, resource),
     };
   else if (assistant) {
-    if (resource.sampleData) {
-      return { data: resource.sampleData };
-    }
-
     return { data: assistantPreviewData(state, resourceId) };
     // get assistants sample data
   } else if (adaptorType === 'NetSuiteDistributedImport') {

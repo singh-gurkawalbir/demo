@@ -3,7 +3,11 @@ import TextField from '@material-ui/core/TextField';
 import { useDispatch } from 'react-redux';
 import { FormContext } from 'react-forms-processor/dist';
 import actions from '../../../actions';
-import { getFileReaderOptions, getCsvFromXlsx } from '../../../utils/file';
+import {
+  getFileReaderOptions,
+  getCsvFromXlsx,
+  isValidFileType,
+} from '../../../utils/file';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 
 function DynaUploadFile(props) {
@@ -80,6 +84,16 @@ function DynaUploadFile(props) {
     const file = event.target.files[0];
 
     if (!file) return;
+
+    if (options && !isValidFileType(options, file)) {
+      onFieldChange(id, '');
+
+      return enqueueSnackbar({
+        message: `Please select valid ${options} file`,
+        variant: 'error',
+      });
+    }
+
     const fileReaderOptions = getFileReaderOptions(options);
     const fileReader = new FileReader();
 

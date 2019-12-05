@@ -38,6 +38,16 @@ export default {
           isNot: [''],
         },
       ];
+    } else {
+      // make visibility of format fields false incase of edit mode of file adaptors
+      const fields = ['edix12.format', 'fixed.format', 'edifact.format'];
+
+      fields.forEach(field => {
+        const formatField = fieldMeta.fieldMap[field];
+
+        delete formatField.visibleWhenAll;
+        formatField.visible = false;
+      });
     }
 
     return fieldMeta;
