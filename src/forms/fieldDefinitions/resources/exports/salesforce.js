@@ -77,7 +77,7 @@ export default {
     omitWhenHidden: true,
     visible: r => !!(r && r.isLookup),
     visibleWhenAll: r => {
-      if (r && r.isLookup) return false;
+      if (r && r.isLookup) return [];
 
       return [
         {
