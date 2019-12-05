@@ -15,7 +15,7 @@ export default function* requestFileAdaptorSampleData({ resource }) {
   }
 
   if (type === 'json') {
-    return sampleData;
+    return Array.isArray(sampleData) ? sampleData[0] : sampleData;
   }
 
   if (type === 'filedefinition') {
