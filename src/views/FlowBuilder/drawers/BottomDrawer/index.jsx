@@ -62,7 +62,7 @@ const useStyles = makeStyles(theme => ({
     maxWidth: 500,
   },
   connectionWarning: {
-    color: theme.palette.warning.main,
+    color: theme.palette.error.main,
   },
 }));
 
