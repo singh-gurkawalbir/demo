@@ -1,3 +1,5 @@
+import { isNewId } from '../../../../utils/resource';
+
 export default {
   'salesforce.api': {
     type: 'radiogroup',
@@ -18,6 +20,13 @@ export default {
         ],
       },
     ],
+    defaultDisabled: r => {
+      const isNew = isNewId(r._id);
+
+      if (!isNew) return true;
+
+      return false;
+    },
   },
   'salesforce.document.id': {
     type: 'text',

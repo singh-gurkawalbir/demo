@@ -82,6 +82,8 @@ export default {
   getDefaultExpression: value => {
     if (value.extract && value.extract.indexOf('{{') !== -1) {
       return value.extract;
+    } else if (value.extract) {
+      return `{{${value.extract}}}`;
     }
   },
   getMappingPath: application => {

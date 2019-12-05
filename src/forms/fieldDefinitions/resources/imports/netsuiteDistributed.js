@@ -65,6 +65,7 @@ export default {
   'netsuite_da.internalIdLookup.expression': {
     type: 'netsuitelookup',
     label: 'How can we find existing records?',
+    required: true,
     visibleWhen: [
       {
         field: 'ignoreExisting',

@@ -27,7 +27,8 @@ export default {
     type: 'timestampfilename',
     label: 'In Progress File Name',
     showAllSuggestions: true,
-    defaultValue: 'file-{{timestamp}}',
+    defaultValue: r =>
+      (r && r.ftp && r.ftp.inProgressFileName) || 'file-{{timestamp}}',
     refreshOptionsOnChangesTo: ['file.type'],
     visibleWhenAll: [
       {
