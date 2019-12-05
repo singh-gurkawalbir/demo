@@ -1,4 +1,5 @@
 import { useSelector, useDispatch } from 'react-redux';
+import clsx from 'clsx';
 import {
   makeStyles,
   MenuItem,
@@ -27,29 +28,18 @@ const useStyles = makeStyles(theme => ({
       },
     },
   },
-  retry: {
-    minWidth: 90,
+  filterButton: {
     borderRadius: theme.spacing(0.5),
     height: theme.spacing(4.5),
+  },
+  retry: {
+    minWidth: 90,
   },
   resolve: {
     minWidth: 100,
-    borderRadius: theme.spacing(0.5),
-    height: theme.spacing(4.5),
   },
   status: {
     minWidth: 134,
-    borderRadius: theme.spacing(0.5),
-    height: theme.spacing(4.5),
-  },
-  flow: {
-    minWidth: 130,
-    maxWidth: 200,
-    borderRadius: theme.spacing(0.5),
-    height: theme.spacing(4.5),
-  },
-  selectEmpty: {
-    marginTop: theme.spacing.double,
   },
   hideEmptyLabel: {
     marginTop: theme.spacing(0.5),
@@ -117,7 +107,7 @@ function Filters({
   return (
     <div className={classes.root}>
       <CeligoSelect
-        className={classes.retry}
+        className={clsx(classes.filterButton, classes.retry)}
         data-test="retryJobs"
         onChange={e => onActionClick(e.target.value)}
         displayEmpty
@@ -135,7 +125,7 @@ function Filters({
       <CeligoSelect
         disabled={disableActions}
         data-test="resolveJobs"
-        className={classes.resolve}
+        className={clsx(classes.filterButton, classes.resolve)}
         onChange={e => onActionClick(e.target.value)}
         displayEmpty
         value="">
@@ -160,7 +150,7 @@ function Filters({
 
       <CeligoSelect
         data-test="flowStatusFilter"
-        className={classes.status}
+        className={clsx(classes.filterButton, classes.status)}
         onChange={e => patchFilter('status', e.target.value)}
         value={status}>
         {[

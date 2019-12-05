@@ -14,7 +14,7 @@ import TrashIcon from '../icons/TrashIcon';
 import CloneIcon from '../icons/CopyIcon';
 import AuditIcon from '../icons/AuditLogIcon';
 import RefIcon from '../icons/ViewReferencesIcon';
-import DetachIcon from '../icons/ConnectionsIcon';
+import DetachIcon from '../icons/unLinkedIcon';
 import CalendarIcon from '../icons/CalendarIcon';
 
 const allActions = {

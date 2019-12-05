@@ -13,7 +13,10 @@ export default function IntegrationTabs({ tabs }) {
   const history = useHistory();
   const match = useRouteMatch();
   const { tab } = match.params;
-  const currentTabIndex = tabs.findIndex(t => t.path === tab) || 0;
+  let currentTabIndex = tabs.findIndex(t => t.path === tab);
+
+  // if you cant find tab index default it to zero
+  currentTabIndex = currentTabIndex === -1 ? 0 : currentTabIndex;
   const handleTabChange = useCallback(
     (event, newTabIndex) => {
       const newTab = tabs[newTabIndex].path;

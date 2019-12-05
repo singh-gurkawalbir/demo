@@ -33,6 +33,7 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     height: '100%',
     padding: theme.spacing(0, 0, 3, 0),
+    overflowX: 'scroll',
   },
   listItem: {
     color: theme.palette.text.primary,

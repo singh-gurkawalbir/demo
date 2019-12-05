@@ -707,7 +707,7 @@ export function getIAFlowSettings(state, integrationId, flowId) {
   const integration = resource(state, 'integrations', integrationId);
   const allFlows = [];
 
-  if (!integration._connectorId) {
+  if (!integration || !integration._connectorId) {
     // return empty object for DIY integrations.
     return flowSettings;
   }
@@ -722,14 +722,14 @@ export function getIAFlowSettings(state, integrationId, flowId) {
         flows: [...a.flows, ...b.flows],
       }));
 
-      if (flows && flows.length) allFlows.push(...flows);
+      allFlows.push(...(flows || []));
     });
   } else {
     const { flows } = integration.settings.sections.reduce((a, b) => ({
       flows: [...a.flows, ...b.flows],
     }));
 
-    if (flows && flows.length) allFlows.push(...flows);
+    allFlows.push(...(flows || []));
   }
 
   return allFlows.find(flow => flow._id === flowId) || emptyObject;
