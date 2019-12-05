@@ -2452,6 +2452,18 @@ export function getImportSampleData(state, resourceId) {
   return emptyObject;
 }
 
+export function isAnyFlowConnectionOffline(state, flowId) {
+  const flow = resource(state, 'flows', flowId);
+
+  if (!flow) return false;
+
+  const connectionIds = getAllConnectionIdsUsedInTheFlow(state, flow);
+  const connectionList =
+    resourcesByIds(state, 'connections', connectionIds) || [];
+
+  return connectionList.some(c => c.offline);
+}
+
 export function flowConnectionList(state, flow) {
   const connectionIds = getAllConnectionIdsUsedInTheFlow(state, flow);
   const connectionList = resourcesByIds(state, 'connections', connectionIds);
