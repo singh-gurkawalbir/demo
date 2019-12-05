@@ -8,6 +8,7 @@ import { integrationSettingsToDynaFormMetadata } from '../../../../../../forms/u
 import { ActionsFactory } from '../../../../../../components/ResourceFormFactory';
 import DrawerTitleBar from '../../../../../../components/drawer/TitleBar';
 import LoadResources from '../../../../../../components/LoadResources';
+import getRoutePath from '../../../../../../utils/routePaths';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -26,7 +27,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function SettingsDrawer({ integrationId, storeId, sectionId }) {
+function SettingsDrawer({ integrationId, storeId }) {
   const classes = useStyles();
   const history = useHistory();
   const match = useRouteMatch();
@@ -45,33 +46,18 @@ function SettingsDrawer({ integrationId, storeId, sectionId }) {
   const formState = useSelector(state =>
     selectors.integrationAppSettingsFormState(state, integrationId, flowId)
   );
-  const { flowSettings } = useSelector(state =>
-    selectors.integrationAppFlowSettings(
-      state,
-      integrationId,
-      sectionId,
-      storeId
-    )
+  const { settings: fields, sections } = useSelector(state =>
+    selectors.getIAFlowSettings(state, integrationId, flowId)
   );
-  const settings = flowSettings.find(f => f._id === flowId);
-  // this data-layer is ridiculously bad.
-  const anotherFlowSettings = {};
-
-  if (settings.settings) {
-    anotherFlowSettings.fields = settings.settings;
-  } else if (settings.sections) {
-    anotherFlowSettings.sections = settings.sections;
-  }
-
   const fieldMeta = integrationSettingsToDynaFormMetadata(
-    anotherFlowSettings,
+    { fields, sections },
     integrationId,
     true,
     { resource: flow }
   );
   const handleClose = useCallback(() => {
-    history.goBack();
-  }, [history]);
+    history.push(getRoutePath(match.url));
+  }, [history, match.url]);
 
   return (
     <Drawer

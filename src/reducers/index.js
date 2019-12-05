@@ -714,21 +714,25 @@ export function getIAFlowSettings(state, integrationId, flowId) {
 
   if (integration.settings && integration.settings.supportsMultiStore) {
     integration.settings.sections.forEach(section => {
+      if (!section.sections) {
+        return;
+      }
+
       const { flows } = section.sections.reduce((a, b) => ({
         flows: [...a.flows, ...b.flows],
       }));
 
-      allFlows.push(...flows);
+      if (flows && flows.length) allFlows.push(...flows);
     });
   } else {
     const { flows } = integration.settings.sections.reduce((a, b) => ({
       flows: [...a.flows, ...b.flows],
     }));
 
-    allFlows.push(...flows);
+    if (flows && flows.length) allFlows.push(...flows);
   }
 
-  return allFlows.find(flow => flow._id === flowId) || {};
+  return allFlows.find(flow => flow._id === flowId) || emptyObject;
 }
 
 export function flowDetails(state, id) {
