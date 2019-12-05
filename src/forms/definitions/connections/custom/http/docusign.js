@@ -21,6 +21,7 @@ export default {
     environment: {
       id: 'environment',
       type: 'select',
+      required: true,
       label: 'Environment',
       options: [
         {

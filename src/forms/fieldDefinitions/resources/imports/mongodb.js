@@ -63,10 +63,29 @@ export default {
     id: 'mongodb.document',
     type: 'sqlquerybuilder',
     hideDefaultData: true,
-    arrayIndex: 0,
     label: 'Launch Query Builder',
     refreshOptionsOnChangesTo: ['mongodb.method'],
     title: 'MongoDB Data Builder',
+    visibleWhen: [
+      {
+        field: 'mongodb.method',
+        is: ['insertMany'],
+      },
+    ],
+  },
+  'mongodb.update': {
+    id: 'mongodb.update',
+    type: 'sqlquerybuilder',
+    hideDefaultData: true,
+    label: 'Launch Query Builder',
+    refreshOptionsOnChangesTo: ['mongodb.method'],
+    title: 'MongoDB Data Builder',
+    visibleWhen: [
+      {
+        field: 'mongodb.method',
+        is: ['updateOne'],
+      },
+    ],
   },
   'mongodb.ignoreLookupFilter': {
     type: 'textarea',
@@ -83,7 +102,8 @@ export default {
     ],
   },
   'mongodb.filter': {
-    type: 'textarea',
+    type: 'editor',
+    mode: 'json',
     label: 'Filter',
     required: true,
     visibleWhen: [
