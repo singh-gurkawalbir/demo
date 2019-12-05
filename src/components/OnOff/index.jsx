@@ -38,7 +38,8 @@ export default {
                     flow._integrationId,
                     flow._id,
                     storeId,
-                    { '/flowId': flow._id, '/disabled': !enable }
+                    { '/flowId': flow._id, '/disabled': !enable },
+                    { action: 'flowEnableDisable' }
                   )
                 );
               } else {
