@@ -1,4 +1,27 @@
 export default {
+  preSave: formValues => {
+    const retValues = {
+      ...formValues,
+    };
+
+    if (
+      retValues['/mongodb/ignoreExtract'] !== '' &&
+      retValues['/mongodb/lookupType'] === 'source'
+    ) {
+      retValues['/mongodb/ignoreLookupFilter'] = undefined;
+    } else if (
+      retValues['/mongodb/ignoreLookupFilter'] !== '' &&
+      retValues['/mongodb/lookupType'] === 'lookup'
+    ) {
+      retValues['/mongodb/ignoreExtract'] = undefined;
+    }
+
+    delete retValues['/inputMode'];
+
+    return {
+      ...retValues,
+    };
+  },
   optionsHandler: (fieldId, fields) => {
     if (fieldId === 'mongodb.document') {
       const queryTypeField = fields.find(
@@ -13,7 +36,9 @@ export default {
     return null;
   },
   fieldMap: {
-    common: { formId: 'common' },
+    common: {
+      formId: 'common',
+    },
     importData: {
       id: 'importData',
       type: 'labeltitle',
@@ -22,22 +47,48 @@ export default {
     'mongodb.document': {
       fieldId: 'mongodb.document',
     },
-    'mongodb.method': { fieldId: 'mongodb.method' },
-    'mongodb.collection': { fieldId: 'mongodb.collection' },
+    'mongodb.method': {
+      fieldId: 'mongodb.method',
+    },
+    'mongodb.collection': {
+      fieldId: 'mongodb.collection',
+    },
     ignoreExisting: {
       fieldId: 'ignoreExisting',
-      visibleWhen: [{ field: 'mongodb.method', is: ['insertMany'] }],
+      visibleWhen: [
+        {
+          field: 'mongodb.method',
+          is: ['insertMany'],
+        },
+      ],
     },
-    'mongodb.lookupType': { fieldId: 'mongodb.lookupType' },
-    'mongodb.ignoreLookupFilters': { fieldId: 'mongodb.ignoreLookupFilters' },
-    'mongodb.filter': { fieldId: 'mongodb.filter' },
-    'mongodb.upsert': { fieldId: 'mongodb.upsert' },
+    'mongodb.lookupType': {
+      fieldId: 'mongodb.lookupType',
+    },
+    'mongodb.ignoreLookupFilter': {
+      fieldId: 'mongodb.ignoreLookupFilter',
+    },
+    'mongodb.filter': {
+      fieldId: 'mongodb.filter',
+    },
+    'mongodb.upsert': {
+      fieldId: 'mongodb.upsert',
+    },
     ignoreMissing: {
       fieldId: 'ignoreMissing',
-      visibleWhen: [{ field: 'mongodb.method', is: ['updateOne'] }],
+      visibleWhen: [
+        {
+          field: 'mongodb.method',
+          is: ['updateOne'],
+        },
+      ],
     },
-    'mongodb.ignoreExtract': { fieldId: 'mongodb.ignoreExtract' },
-    dataMappings: { formId: 'dataMappings' },
+    'mongodb.ignoreExtract': {
+      fieldId: 'mongodb.ignoreExtract',
+    },
+    dataMappings: {
+      formId: 'dataMappings',
+    },
   },
   layout: {
     fields: [
@@ -47,7 +98,7 @@ export default {
       'mongodb.collection',
       'ignoreExisting',
       'mongodb.lookupType',
-      'mongodb.ignoreLookupFilters',
+      'mongodb.ignoreLookupFilter',
       'mongodb.filter',
       'mongodb.upsert',
       'ignoreMissing',
