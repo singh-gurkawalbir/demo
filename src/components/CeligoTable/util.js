@@ -1,6 +1,6 @@
 import { Fragment } from 'react';
-import TimeAgo from 'react-timeago';
 import { Link } from 'react-router-dom';
+import TimeAgo from 'react-timeago';
 import { Typography } from '@material-ui/core';
 import StatusCircle from '../StatusCircle';
 import { getApp } from '../../constants/applications';
@@ -19,9 +19,10 @@ export const getResourceLink = (resourceType, resource, location = {}) => (
         ? resource.user && resource.user.email
         : resource.name || resource._id}
     </Link>
-    <Typography>{resource.shared ? 'Shared' : ''}</Typography>
+    {resource.shared && <Typography>Shared</Typography>}
   </Fragment>
 );
+
 export const getResourceReferenceLink = ref => (
   <Link
     to={getRoutePath(`${ref.resourceType}/edit/${ref.resourceType}/${ref.id}`)}>
