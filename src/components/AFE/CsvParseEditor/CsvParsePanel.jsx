@@ -39,6 +39,9 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.background.default,
     overflowY: 'auto',
     height: '100%',
+    '& > div:first-child': {
+      flexDirection: 'column',
+    },
   },
   formControl: {
     margin: theme.spacing(1),
@@ -186,6 +189,7 @@ export default function CsvParsePanel(props) {
               label="Number Of Rows To Skip"
               data-test="rowsToSkip"
               disabled={disabled}
+              isValid={rowsToSkip >= 0}
               onFieldChange={(id, value) => patchEditor('rowsToSkip', value)}
             />
           </FormControl>
