@@ -702,6 +702,35 @@ export function resourceList(state, options = {}) {
 
 const emptyObject = {};
 
+export function getIAFlowSettings(state, integrationId, flowId) {
+  const flowSettings = {};
+  const integration = resource(state, 'integrations', integrationId);
+  const allFlows = [];
+
+  if (!integration._connectorId) {
+    // return empty object for DIY integrations.
+    return flowSettings;
+  }
+
+  if (integration.settings && integration.settings.supportsMultiStore) {
+    integration.settings.sections.forEach(section => {
+      const { flows } = section.sections.reduce((a, b) => ({
+        flows: [...a.flows, ...b.flows],
+      }));
+
+      allFlows.push(...flows);
+    });
+  } else {
+    const { flows } = integration.settings.sections.reduce((a, b) => ({
+      flows: [...a.flows, ...b.flows],
+    }));
+
+    allFlows.push(...flows);
+  }
+
+  return allFlows.find(flow => flow._id === flowId) || {};
+}
+
 export function flowDetails(state, id) {
   const flow = resource(state, 'flows', id);
 
@@ -723,8 +752,12 @@ export function flowDetails(state, id) {
     draft.canSchedule = showScheduleIcon(allExports, pg, draft);
     // TODO: add logic to properly determine if this flow should
     // display mapping/settings. This would come from the IA metadata.
-    draft.showMapping = true;
-    draft.hasSettings = !!flow._connectorId;
+    const flowSettings = getIAFlowSettings(state, flow._integrationId, id);
+
+    draft.showMapping = flowSettings.showMapping;
+    draft.hasSettings = !!flowSettings.settings || !!flowSettings.sections;
+    draft.showSchedule = flowSettings.showSchedule;
+    draft.disableSlider = flowSettings.disableSlider;
   });
 }
 

@@ -69,7 +69,7 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
     },
     [dispatch, flowId]
   );
-  const flowName = flowDetails.name || flowDetails._Id;
+  const flowName = flowDetails.name || flowDetails._id;
   const handleActionClick = useCallback(
     action => () => {
       switch (action) {
@@ -86,7 +86,8 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
                     {
                       '/flowId': flowDetails._id,
                       '/disabled': !flowDetails.disabled,
-                    }
+                    },
+                    { action: 'flowEnableDisable' }
                   )
                 );
               } else {
@@ -172,12 +173,14 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
           </Typography>
         </Grid>
         <Grid container item xs={3} justify="flex-end" alignItems="center">
-          <OnOffSwitch
-            data-test={`toggleOnAndOffFlow${flowName}`}
-            disabled={disableCard}
-            on={!disableCard && !disabled}
-            onClick={handleActionClick('disable')}
-          />
+          {!flowDetails.disableSlider && (
+            <OnOffSwitch
+              data-test={`toggleOnAndOffFlow${flowName}`}
+              disabled={disableCard}
+              on={!disableCard && !disabled}
+              onClick={handleActionClick('disable')}
+            />
+          )}
 
           <IconButton
             disabled={!flowDetails.isRunnable}
