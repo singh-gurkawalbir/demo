@@ -5,7 +5,7 @@ import { SCOPES } from '../../resourceForm';
 import { apiCallWithRetry } from '../../index';
 import { fetchFlowResources } from './flowDataUtils';
 import { getLastExportDateTime } from '../../../utils/flowData';
-import { isNewId } from '../../../utils/resource';
+import { isNewId, adaptorTypeMap } from '../../../utils/resource';
 
 export function* pageProcessorPreview({
   flowId,
@@ -103,6 +103,13 @@ export function* exportPreview({
   // so remove type once
   if (body.type === 'once') {
     delete body.type;
+    const { adaptorType } = body;
+    const appType = adaptorType && adaptorTypeMap[adaptorType];
+
+    // Manually removing once doc incase of preview to restrict execution on once query - Bug fix IO-11988
+    if (appType && body[appType] && body[appType].once) {
+      delete body[appType].once;
+    }
   }
 
   if (runOffline && body.rawData) {
