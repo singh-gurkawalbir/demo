@@ -141,4 +141,4 @@ export const isPageGeneratorResource = (flow = {}, resourceId) => {
 /*
  * Based on _connectorId on flow Doc, we determine whether this flow is a connector
  */
-export const isConnector = (flow = {}) => !!flow._connectorId;
+export const isConnector = (flow = {}) => !!(flow && flow._connectorId);
