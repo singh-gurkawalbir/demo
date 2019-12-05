@@ -23,6 +23,7 @@ export default {
     'http.auth.oauth.scope': {
       fieldId: 'http.auth.oauth.scope',
       scopes: [
+        'offline_access',
         'User.Export.All',
         'User.Invite.All',
         'User.Read',
