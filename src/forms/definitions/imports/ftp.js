@@ -12,6 +12,10 @@ export default {
         newValues['/ftp/blobInProgressFileName'];
     }
 
+    if (newValues['/ftp/useTempFile'] === false) {
+      newValues['/ftp/inProgressFileName'] = undefined;
+    }
+
     delete newValues['/inputMode'];
 
     return {
