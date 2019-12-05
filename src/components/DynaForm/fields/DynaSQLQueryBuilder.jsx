@@ -2,40 +2,14 @@ import { useState, useEffect, Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { cloneDeep } from 'lodash';
 import Button from '@material-ui/core/Button';
+import { adaptorTypeMap } from '../../../utils/resource';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import SqlQueryBuilderEditorDialog from '../../../components/AFE/SqlQueryBuilderEditor/Dialog';
 import DynaLookupEditor from './DynaLookupEditor';
 import { getDefaultData } from '../../../utils/sampleData';
 import getJSONPaths, { getUnionObject } from '../../../utils/jsonPaths';
-
-const getSampleSQLTemplate = (sampleData, eFields, isInsert) => {
-  let toReturn = '';
-
-  if (eFields && eFields.length > 0 && Array.isArray(sampleData)) {
-    if (isInsert) {
-      toReturn = `${'Insert into Employee(id) Values({{data.0.'}${
-        eFields[0].id
-      }}})`;
-    } else {
-      toReturn = `${'Update Employee SET name={{data.0.'}${
-        eFields[0].id
-      }}} where id ={{data.0.${eFields[0].id}}}`;
-    }
-  } else if (eFields && eFields.length > 0) {
-    if (isInsert) {
-      toReturn = `${'Insert into Employee(id) Values({{data.'}${
-        eFields[0].id
-      }}})`;
-    } else {
-      toReturn = `${'Update Employee SET name={{data.'}${
-        eFields[0].id
-      }}} where id ={{data.${eFields[0].id}}}`;
-    }
-  }
-
-  return toReturn;
-};
+import sqlUtil from '../../../utils/sql';
 
 export default function DynaSQLQueryBuilder(props) {
   const {
@@ -62,6 +36,10 @@ export default function DynaSQLQueryBuilder(props) {
     extractFieldsLoaded: false,
     changeIdentifier: 0,
   });
+  const { merged: resourceData } = useSelector(state =>
+    selectors.resourceData(state, 'imports', resourceId)
+  );
+  const { adaptorType: resourceAdapterType } = resourceData;
   const { sampleDataLoaded, extractFieldsLoaded, changeIdentifier } = dataState;
   const sampleData = useSelector(state =>
     selectors.getSampleData(state, {
@@ -131,11 +109,19 @@ export default function DynaSQLQueryBuilder(props) {
   if (sampleData && extractFields && !parsedRule) {
     const extractPaths = getJSONPaths(extractFields);
 
-    parsedRule = getSampleSQLTemplate(
-      sampleData,
-      extractPaths,
-      queryType === 'INSERT'
-    );
+    if (adaptorTypeMap[resourceAdapterType] === adaptorTypeMap.MongodbImport) {
+      parsedRule = sqlUtil.getSampleMongoDbTemplate(
+        sampleData,
+        extractPaths,
+        queryType === 'insertMany'
+      );
+    } else {
+      parsedRule = sqlUtil.getSampleSQLTemplate(
+        sampleData,
+        extractPaths,
+        queryType === 'INSERT'
+      );
+    }
   }
 
   let defaultData = {};

@@ -1,6 +1,6 @@
 export default {
   optionsHandler: (fieldId, fields) => {
-    if (fieldId === 'mongodb.document') {
+    if (fieldId === 'mongodb.document' || fieldId === 'mongodb.update') {
       const queryTypeField = fields.find(
         field => field.fieldId === 'mongodb.method'
       );
@@ -21,6 +21,9 @@ export default {
     },
     'mongodb.document': {
       fieldId: 'mongodb.document',
+    },
+    'mongodb.update': {
+      fieldId: 'mongodb.update',
     },
     'mongodb.method': { fieldId: 'mongodb.method' },
     'mongodb.collection': { fieldId: 'mongodb.collection' },
@@ -53,6 +56,7 @@ export default {
       'ignoreMissing',
       'mongodb.ignoreExtract',
       'mongodb.document',
+      'mongodb.update',
       'dataMappings',
     ],
     type: 'collapse',
