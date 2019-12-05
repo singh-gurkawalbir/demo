@@ -214,10 +214,21 @@ export default function StandaloneMapping(props) {
   }, [application, dispatch, id, lookups, mappings, resourceType.type]);
 
   useEffect(() => {
-    handleInit();
-    setInitTriggered(true);
+    if (
+      (isIntegrationApp && integrationAppMetadataLoaded) ||
+      (isAssistant && assistantLoaded) ||
+      (!isAssistant && !isIntegrationApp)
+    ) {
+      handleInit();
+      setInitTriggered(true);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [
+    isIntegrationApp,
+    integrationAppMetadataLoaded,
+    isAssistant,
+    assistantLoaded,
+  ]);
 
   if (initTriggered && !isEqual(importSampleDataState, importSampleData)) {
     dispatch(actions.mapping.updateGenerates(id, formattedGenerateFields));

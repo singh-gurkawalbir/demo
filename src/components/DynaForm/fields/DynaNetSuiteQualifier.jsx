@@ -55,8 +55,6 @@ export default function DynaNetSuiteQualifier(props) {
     if (isDefaultValueChanged) {
       if (options.resetValue) {
         onFieldChange(id, []);
-      } else {
-        onFieldChange(id, defaultValue);
       }
 
       setIsDefaultValueChanged(false);

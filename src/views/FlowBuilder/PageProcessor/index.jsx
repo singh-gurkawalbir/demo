@@ -50,6 +50,7 @@ const PageProcessor = ({
   isLast,
   integrationId,
   isViewMode,
+  isMonitorLevelAccess,
   onDelete,
   ...pp
 }) => {
@@ -285,6 +286,7 @@ const PageProcessor = ({
           }
           onDelete={onDelete}
           isViewMode={isViewMode}
+          isMonitorLevelAccess={isMonitorLevelAccess}
           onBlockClick={handleBlockClick}
           connectorType={resource.adaptorType || resource.type}
           assistant={resource.assistant}

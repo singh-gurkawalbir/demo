@@ -166,6 +166,7 @@ export function* updateIntegrationSettings({
   integrationId,
   values,
   flowId,
+  options = {},
 }) {
   const path = `/integrations/${integrationId}/settings/persistSettings`;
   let payload = jsonPatch.applyPatch({}, defaultPatchSetConverter(values))
@@ -211,9 +212,38 @@ export function* updateIntegrationSettings({
         flowId,
       })
     );
+    // integration doc will be update by IA team, need to refetch to get latest copy from db.
     yield put(actions.resource.request('integrations', integrationId));
-    // Flow enable/disable requires reloading of flows.
-    yield put(actions.resource.requestCollection('flows'));
+
+    // If settings object is sent to response, we need to refetch resources as they are modified by IA
+    if (response.settings) {
+      yield put(actions.resource.requestCollection('exports'));
+      yield put(actions.resource.requestCollection('flows'));
+      yield put(actions.resource.requestCollection('imports'));
+    }
+
+    // If persistSettings is called for IA flow enable/disable
+    if (options.action === 'flowEnableDisable') {
+      const flowDetails = yield select(selectors.resource, 'flows', flowId);
+      const patchSet = [
+        {
+          op: 'replace',
+          path: '/disabled',
+          // IA sends back pending object containing flow state, patch that state to data store
+          value: response.pending
+            ? response.pending.disabled
+            : !flowDetails.disabled,
+        },
+      ];
+
+      // Regardless of success or failure update the data store to latest value.
+      yield put(actions.resource.patchStaged(flowId, patchSet, 'value'));
+
+      // If the action is successful, update the flow status in db.
+      if (response.success) {
+        yield put(actions.resource.commitStaged('flows', flowId, 'value'));
+      }
+    }
   }
 }
 
