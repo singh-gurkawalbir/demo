@@ -718,14 +718,14 @@ export function getIAFlowSettings(state, integrationId, flowId) {
         flows: [...a.flows, ...b.flows],
       }));
 
-      allFlows.push(...flows);
+      allFlows.push(...(flows || []));
     });
   } else {
     const { flows } = integration.settings.sections.reduce((a, b) => ({
       flows: [...a.flows, ...b.flows],
     }));
 
-    allFlows.push(...flows);
+    allFlows.push(...(flows || []));
   }
 
   return allFlows.find(flow => flow._id === flowId) || {};
