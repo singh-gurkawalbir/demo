@@ -171,8 +171,8 @@ export const DynaTable = props => {
 
       if ((op.options || []).length) {
         const items = op.options.filter(Boolean).map(opt => ({
-          label: opt.text || opt.label,
-          value: opt.id || opt.value,
+          label: Array.isArray(opt) ? opt[1] : opt.text || opt.label,
+          value: Array.isArray(opt) ? opt[0] : opt.id || opt.value,
         }));
         const options =
           op.type === 'select'
@@ -264,7 +264,9 @@ export const DynaTable = props => {
                       Refresh <RefreshIcon />
                     </IconTextButton>
                   )}
-                  {r.supportsRefresh && isLoading && <Spinner size={24} />}
+                  {r.supportsRefresh && isLoading === r.id && (
+                    <Spinner size={24} />
+                  )}
                 </Grid>
               ))}
               <Grid key="delete_button_header" item />
