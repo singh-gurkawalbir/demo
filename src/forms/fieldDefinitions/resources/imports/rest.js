@@ -161,6 +161,7 @@ export default {
       Array.isArray(((r || {}).rest || {}).body) ? r.rest.body[0] : undefined,
     label: 'Build HTTP Request Body',
     connectionId: r => r && r._connectionId,
+    contentType: 'json',
     refreshOptionsOnChangesTo: ['rest.lookups'],
     visibleWhen: [
       {

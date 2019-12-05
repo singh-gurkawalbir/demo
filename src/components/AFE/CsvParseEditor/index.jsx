@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { string } from 'prop-types';
+import { string, object } from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import CodePanel from '../GenericEditor/CodePanel';
 import CsvParsePanel from './CsvParsePanel';
@@ -34,7 +34,7 @@ export default function CsvParseEditor(props) {
       actions.editor.init(editorId, 'csvParser', {
         data: props.data,
         autoEvaluate: true,
-        rule: props.rule,
+        ...props.rule,
       })
     );
   }, [dispatch, editorId, props.data, props.rule]);
@@ -50,7 +50,7 @@ export default function CsvParseEditor(props) {
     <PanelGrid className={classes.template}>
       <PanelGridItem gridArea="rule">
         <PanelTitle title="CSV Parse Options" />
-        <CsvParsePanel editorId={editorId} />
+        <CsvParsePanel disabled={disabled} editorId={editorId} />
       </PanelGridItem>
       <PanelGridItem gridArea="data">
         <PanelTitle title="CSV to Parse" />
@@ -78,6 +78,6 @@ export default function CsvParseEditor(props) {
 }
 
 CsvParseEditor.propTypes = {
-  rule: string,
+  rule: object,
   data: string,
 };

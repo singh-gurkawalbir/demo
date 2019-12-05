@@ -1,6 +1,31 @@
 import XLSX from 'xlsx';
 import { each } from 'lodash';
 
+/*
+ * Validates file type against all possible file types when user uploads a file
+ * validFileTypes - Took reference from 'integrator' Repository
+ */
+export function isValidFileType(fileType, file) {
+  const validFileTypes = {
+    csv: [
+      'text/csv',
+      'text/plain',
+      'application/vnd.ms-excel',
+      'application/comma-separated-values',
+      '',
+      undefined,
+    ],
+    json: ['application/json', '', undefined],
+    xml: ['application/xml', 'text/xml', '', undefined],
+    xlsx: [
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'application/vnd.ms-excel',
+    ],
+  };
+
+  return validFileTypes[fileType].includes(file.type);
+}
+
 export function getFileReaderOptions(type) {
   if (!type) return {};
 

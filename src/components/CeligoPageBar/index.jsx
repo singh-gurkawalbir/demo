@@ -81,7 +81,8 @@ export default function CeligoPageBar({
               <Grid item>
                 <Typography variant="h3">
                   {history && (
-                    <IconButton onClick={() => history.goBack()}>
+                    // eslint-disable-next-line react/jsx-handler-names
+                    <IconButton onClick={history.goBack}>
                       <ArrowLeftIcon />
                     </IconButton>
                   )}

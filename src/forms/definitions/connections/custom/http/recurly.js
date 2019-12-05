@@ -17,7 +17,7 @@ export default {
       type: 'text',
       startAdornment: 'https://',
       endAdornment: '.recurly.com',
-      label: 'Enter subdomain into the base uri',
+      label: 'Subdomain',
       required: true,
       helpText:
         'Please enter your subdomain here which you configured while activating your new Recurly account.',

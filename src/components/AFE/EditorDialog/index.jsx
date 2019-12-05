@@ -144,7 +144,10 @@ export default function EditorDialog(props) {
           )}
         </div>
       </div>
-      <DialogContent style={size} className={classes.dialogContent}>
+      <DialogContent
+        style={size}
+        className={classes.dialogContent}
+        key={`${id}-${layout}`}>
         {// Is there a better way to do this?
         children && cloneElement(children, { layout })}
       </DialogContent>

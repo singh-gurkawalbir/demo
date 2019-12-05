@@ -70,12 +70,14 @@ describe('File Definitions', () => {
         status: 'received',
         data: {
           edi: [
+            { subHeader: 'Amazon Vendor Central' },
             {
               format: 'delimited',
               label: 'Amazon VC 850',
               value: 'amazonedi850',
               vendor: 'Amazon Vendor Central',
             },
+            { subHeader: 'The Home Depot' },
             {
               format: 'delimited/x12',
               label: 'The Home Depot 997',
@@ -84,6 +86,7 @@ describe('File Definitions', () => {
             },
           ],
           ediFact: [
+            { subHeader: "Macy's" },
             {
               format: 'delimited/edifact',
               label: "Macy's 850 Outbound",
@@ -92,6 +95,7 @@ describe('File Definitions', () => {
             },
           ],
           fixed: [
+            { subHeader: "Macy's" },
             {
               format: 'fixed',
               label: "Macy's 850 Inbound",
@@ -131,6 +135,7 @@ describe('File Definitions', () => {
       preBuiltFileDefinitions: {
         data: {
           edi: [
+            { subHeader: 'Amazon Vendor Central' },
             {
               format: 'delimited',
               label: 'Amazon VC 850',
