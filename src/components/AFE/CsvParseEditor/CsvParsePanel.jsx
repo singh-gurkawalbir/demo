@@ -9,6 +9,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
 import CeligoSelect from '../../CeligoSelect';
+import DynaText from '../../DynaForm/fields/DynaText';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -36,6 +37,7 @@ const useStyles = makeStyles(theme => ({
   container: {
     padding: 10,
     backgroundColor: theme.palette.background.default,
+    overflowY: 'auto',
     height: '100%',
   },
   formControl: {
@@ -58,11 +60,19 @@ export default function CsvParsePanel(props) {
     columnDelimiter = '',
     rowDelimiter = '',
     keyColumns = [],
-    hasHeaderRow = true,
+    hasHeaderRow = false,
+    includeHeader = false,
     multipleRowsPerRecord = false,
-    trimSpaces = true,
+    trimSpaces = false,
     result,
+    rowsToSkip,
+    wrapWithQuotes = false,
+    replaceTabWithSpace = false,
+    replaceNewlineWithSpace = false,
+    truncateLastRowDelimiter = false,
+    resourceType,
   } = useSelector(state => selectors.editor(state, editorId));
+  const isImport = resourceType === 'imports';
   const dispatch = useDispatch();
   const patchEditor = (option, value) => {
     dispatch(actions.editor.patch(editorId, { [option]: value }));
@@ -96,56 +106,91 @@ export default function CsvParsePanel(props) {
             </option>
           </CeligoSelect>
         </FormControl>
-        <FormControl disabled={disabled} className={classes.formControl}>
-          <InputLabel shrink htmlFor="rowDelimiter">
-            Row Delimiter
-          </InputLabel>
-          <CeligoSelect
-            native
-            value={rowDelimiter}
-            className={classes.select}
-            onChange={event => patchEditor('rowDelimiter', event.target.value)}
-            inputProps={{ id: 'rowDelimiter' }}>
-            <option value="" data-test="autoDetect">
-              Auto Detect
-            </option>
-            <option value="cr" data-test="cr">
-              CR (\r)
-            </option>
-            <option value="lf" data-test="lf">
-              LF (\n)
-            </option>
-            <option value="crlf" data-test="crlf">
-              CRLF (\r\n)
-            </option>
-          </CeligoSelect>
-        </FormControl>
+        {isImport && (
+          <FormControl disabled={disabled} className={classes.formControl}>
+            <InputLabel shrink htmlFor="rowDelimiter">
+              Row Delimiter
+            </InputLabel>
+            <CeligoSelect
+              native
+              value={rowDelimiter}
+              className={classes.select}
+              onChange={event =>
+                patchEditor('rowDelimiter', event.target.value)
+              }
+              inputProps={{ id: 'rowDelimiter' }}>
+              <option value="" data-test="autoDetect">
+                Auto Detect
+              </option>
+              <option value="cr" data-test="cr">
+                CR (\r)
+              </option>
+              <option value="lf" data-test="lf">
+                LF (\n)
+              </option>
+              <option value="crlf" data-test="crlf">
+                CRLF (\r\n)
+              </option>
+            </CeligoSelect>
+          </FormControl>
+        )}
+        {!isImport && (
+          <FormControlLabel
+            disabled={disabled}
+            control={
+              <Checkbox
+                color="primary"
+                checked={trimSpaces}
+                data-test="trimSpaces"
+                onChange={() => patchEditor('trimSpaces', !trimSpaces)}
+              />
+            }
+            label="Trim Spaces"
+          />
+        )}
+        {!isImport && (
+          <FormControlLabel
+            disabled={disabled}
+            control={
+              <Checkbox
+                color="primary"
+                checked={hasHeaderRow}
+                data-test="hasHeaderRow"
+                onChange={() => patchEditor('hasHeaderRow', !hasHeaderRow)}
+              />
+            }
+            label="File Has Header"
+          />
+        )}
+        {isImport && (
+          <FormControlLabel
+            disabled={disabled}
+            control={
+              <Checkbox
+                color="primary"
+                checked={includeHeader}
+                data-test="includeHeader"
+                onChange={() => patchEditor('includeHeader', !includeHeader)}
+              />
+            }
+            label="Include Header"
+          />
+        )}
+        {!isImport && (
+          <FormControl disabled={disabled} className={classes.formControl}>
+            <DynaText
+              color="primary"
+              checked={rowsToSkip}
+              inputType="number"
+              value={rowsToSkip}
+              label="Number Of Rows To Skip"
+              data-test="rowsToSkip"
+              disabled={disabled}
+              onFieldChange={(id, value) => patchEditor('rowsToSkip', value)}
+            />
+          </FormControl>
+        )}
 
-        <FormControlLabel
-          disabled={disabled}
-          control={
-            <Checkbox
-              // Why it is commented ?
-              color="primary"
-              checked={hasHeaderRow}
-              data-test="hasHeaderRow"
-              onChange={() => patchEditor('hasHeaderRow', !hasHeaderRow)}
-            />
-          }
-          label="Has Header Row"
-        />
-        <FormControlLabel
-          disabled={disabled}
-          control={
-            <Checkbox
-              color="primary"
-              checked={trimSpaces}
-              data-test="trimSpaces"
-              onChange={() => patchEditor('trimSpaces', !trimSpaces)}
-            />
-          }
-          label="Trim Spaces"
-        />
         <FormControlLabel
           disabled={disabled}
           control={
@@ -188,6 +233,76 @@ export default function CsvParsePanel(props) {
               ))}
             </CeligoSelect>
           </FormControl>
+        )}
+        {isImport && (
+          <FormControlLabel
+            disabled={disabled}
+            control={
+              <Checkbox
+                color="primary"
+                checked={truncateLastRowDelimiter}
+                data-test="truncateLastRowDelimiter"
+                onChange={() => {
+                  patchEditor(
+                    'truncateLastRowDelimiter',
+                    !truncateLastRowDelimiter
+                  );
+                }}
+              />
+            }
+            label="Truncare last row delimiter"
+          />
+        )}
+        {isImport && (
+          <FormControlLabel
+            disabled={disabled}
+            control={
+              <Checkbox
+                color="primary"
+                checked={wrapWithQuotes}
+                data-test="wrapWithQuotes"
+                onChange={() => {
+                  patchEditor('wrapWithQuotes', !wrapWithQuotes);
+                }}
+              />
+            }
+            label="Wrap with quotes"
+          />
+        )}
+        {isImport && (
+          <FormControlLabel
+            disabled={disabled}
+            control={
+              <Checkbox
+                color="primary"
+                checked={replaceTabWithSpace}
+                data-test="replaceTabWithSpace"
+                onChange={() => {
+                  patchEditor('replaceTabWithSpace', !replaceTabWithSpace);
+                }}
+              />
+            }
+            label="Replace tab with space"
+          />
+        )}
+        {isImport && (
+          <FormControlLabel
+            disabled={disabled}
+            control={
+              <Checkbox
+                color="primary"
+                checked={replaceNewlineWithSpace}
+                data-test="replaceNewlineWithSpace"
+                onChange={() => {
+                  patchEditor(
+                    'replaceNewlineWithSpace',
+                    !replaceNewlineWithSpace
+                  );
+                }}
+              />
+            }
+            label="Replace new line with space"
+          />
         )}
       </FormGroup>
     </div>

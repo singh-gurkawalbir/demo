@@ -20,7 +20,7 @@ const useStyles = makeStyles({
 });
 
 export default function CsvParseEditor(props) {
-  const { editorId, disabled } = props;
+  const { editorId, disabled, resourceType } = props;
   const classes = useStyles(props);
   const { data, result, error, violations } = useSelector(state =>
     selectors.editor(state, editorId)
@@ -30,11 +30,17 @@ export default function CsvParseEditor(props) {
     dispatch(
       actions.editor.init(editorId, 'csvParser', {
         data: props.data,
+        resourceType,
         autoEvaluate: true,
+        multipleRowsPerRecord: !!(
+          props.rule &&
+          props.rule.keyColumns &&
+          props.rule.keyColumns.length
+        ),
         ...props.rule,
       })
     );
-  }, [dispatch, editorId, props.data, props.rule]);
+  }, [dispatch, editorId, props.data, props.rule, resourceType]);
   const handleDataChange = data => {
     dispatch(actions.editor.patch(editorId, { data }));
   };
