@@ -714,6 +714,10 @@ export function getIAFlowSettings(state, integrationId, flowId) {
 
   if (integration.settings && integration.settings.supportsMultiStore) {
     integration.settings.sections.forEach(section => {
+      if (!section.sections) {
+        return;
+      }
+
       const { flows } = section.sections.reduce((a, b) => ({
         flows: [...a.flows, ...b.flows],
       }));
@@ -728,7 +732,7 @@ export function getIAFlowSettings(state, integrationId, flowId) {
     allFlows.push(...(flows || []));
   }
 
-  return allFlows.find(flow => flow._id === flowId) || {};
+  return allFlows.find(flow => flow._id === flowId) || emptyObject;
 }
 
 export function flowDetails(state, id) {
