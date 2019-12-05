@@ -76,7 +76,6 @@ export function* requestSampleDataForImports({
 }) {
   try {
     switch (sampleDataStage) {
-      case 'raw':
       case 'flowInput': {
         yield call(fetchPageProcessorPreview, {
           flowId,
