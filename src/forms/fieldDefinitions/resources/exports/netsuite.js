@@ -116,6 +116,7 @@ export default {
     commMetaPath: r =>
       r &&
       `netsuite/metadata/suitescript/connections/${r._connectionId}/savedSearches`,
+    filterKey: 'suitescript-sublists',
     multiselect: true,
     placeholder: 'Please select Sublists',
     helpKey: 'export.netsuite.sublists',
