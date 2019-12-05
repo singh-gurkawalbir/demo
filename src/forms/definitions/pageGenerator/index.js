@@ -165,7 +165,7 @@ export default {
     },
     outputMode: {
       id: 'outputMode',
-      type: 'radiogroup',
+      type: 'mode',
       visibleWhenAll: [
         visibleWhenIsNew,
         { field: 'application', is: ['netsuite'] },

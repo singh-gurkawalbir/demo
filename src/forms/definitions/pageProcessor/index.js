@@ -171,7 +171,7 @@ export default {
     },
     outputMode: {
       id: 'outputMode',
-      type: 'radiogroup',
+      type: 'mode',
       visibleWhenAll: [
         visibleWhenIsNew,
         { field: 'resourceType', is: ['exports'] },

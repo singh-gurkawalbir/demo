@@ -83,7 +83,8 @@ export default {
     ],
   },
   'mongodb.filter': {
-    type: 'textarea',
+    type: 'editor',
+    mode: 'json',
     label: 'Filter',
     required: true,
     visibleWhen: [
