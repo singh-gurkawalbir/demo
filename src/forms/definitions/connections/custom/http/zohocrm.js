@@ -5,10 +5,17 @@ export default {
     '/assistant': 'zohocrm',
     '/http/auth/type': 'oauth',
     '/http/mediaType': 'json',
-    '/http/baseURI': 'https://www.zohoapis.com/crm',
+    '/http/baseURI': `https://www.zohoapis${
+      formValues['/http/zohoSubdomain']
+    }/crm`,
     '/http/auth/token/location': 'header',
-    '/http/auth/oauth/authURI': 'https://accounts.zoho.com/oauth/v2/auth',
-    '/http/auth/oauth/tokenURI': 'https://accounts.zoho.com/oauth/v2/token',
+    '/http/auth/oauth/authURI':
+      formValues['/http/zohoSubdomain'] === '.com.cn'
+        ? 'https://accounts.zoho.com.cn/oauth/v2/auth'
+        : 'https://accounts.zoho.com/oauth/v2/auth',
+    '/http/auth/oauth/tokenURI': `https://accounts.zoho${
+      formValues['/http/zohoSubdomain']
+    }/oauth/v2/token`,
     '/http/auth/oauth/scopeDelimiter': ',',
     '/http/auth/token/refreshMethod': 'POST',
     '/http/auth/token/refreshMediaType': 'urlencoded',
@@ -16,6 +23,33 @@ export default {
   }),
   fieldMap: {
     name: { fieldId: 'name' },
+    'http.zohoSubdomain': {
+      id: 'http.zohoSubdomain',
+      type: 'text',
+      startAdornment: 'https://www.zohoapis',
+      endAdornment: '/crm',
+      label: 'Subdomain',
+      required: true,
+      helpText:
+        'Please enter the Domain. Input ".com" to connect to US data-center. Input ".in" to connect to India data-center. Input ".com.cn" to connect to China data-center. Input ".eu" to connect to Europe data-center.',
+      validWhen: {
+        matchesRegEx: {
+          pattern: '^[\\S]+$',
+          message: 'Subdomain should not contain spaces.',
+        },
+      },
+      defaultValue: r => {
+        const baseUri = r && r.http && r.http.baseURI;
+        const subdomain =
+          baseUri &&
+          baseUri.substring(
+            baseUri.indexOf('https://www.zohoapis') + 20,
+            baseUri.indexOf('/crm')
+          );
+
+        return subdomain;
+      },
+    },
     'http.auth.oauth.scope': {
       fieldId: 'http.auth.oauth.scope',
       scopes: [
@@ -28,21 +62,14 @@ export default {
         'ZohoCRM.settings.roles.READ',
         'ZohoCRM.settings.profiles.ALL',
         'ZohoCRM.settings.profiles.READ',
-        'ZohoCRM.settings.modules.read',
-        'ZohoCRM.settings.modules.all',
-        'ZohoCRM.settings.all',
         'ZohoCRM.settings.fields.read',
         'ZohoCRM.settings.fields.all',
-        'ZohoCRM.settings.all',
         'ZohoCRM.settings.layouts.read',
         'ZohoCRM.settings.layouts.all',
-        'ZohoCRM.settings.all',
         'ZohoCRM.settings.related_lists.read',
         'ZohoCRM.settings.related_lists.all',
-        'ZohoCRM.settings.all',
         'ZohoCRM.settings.custom_views.read',
         'ZohoCRM.settings.custom_views.all',
-        'ZohoCRM.settings.all',
         'ZohoCRM.org.ALL',
         'ZohoCRM.org.READ',
         'ZohoCRM.notifications.ALL',
@@ -153,12 +180,6 @@ export default {
         'ZohoCRM.modules.invoices.WRITE',
         'ZohoCRM.modules.invoices.READ',
         'ZohoCRM.modules.invoices.DELETE',
-        'ZohoCRM.modules.notes.ALL',
-        'ZohoCRM.modules.notes.CREATE',
-        'ZohoCRM.modules.notes.UPDATE',
-        'ZohoCRM.modules.notes.WRITE',
-        'ZohoCRM.modules.notes.READ',
-        'ZohoCRM.modules.notes.DELETE',
         'ZohoCRM.modules.approvals.ALL',
         'ZohoCRM.modules.approvals.CREATE',
         'ZohoCRM.modules.approvals.UPDATE',
@@ -171,26 +192,29 @@ export default {
         'ZohoCRM.modules.activities.WRITE',
         'ZohoCRM.modules.activities.READ',
         'ZohoCRM.modules.activities.DELETE',
-        'ZohoCRM.modules.activities.ALL',
-        'ZohoCRM.modules.activities.CREATE',
-        'ZohoCRM.modules.activities.UPDATE',
-        'ZohoCRM.modules.activities.WRITE',
-        'ZohoCRM.modules.activities.READ',
-        'ZohoCRM.modules.activities.DELETE',
         'ZohoCRM.bulk.read',
-        'ZohoCRM.modules.all',
         'ZohoCRM.modules.notes.ALL',
         'ZohoCRM.modules.notes.READ',
         'ZohoCRM.modules.notes.CREATE',
         'ZohoCRM.modules.notes.WRITE',
         'ZohoCRM.modules.notes.UPDATE',
         'ZohoCRM.modules.notes.DELETE',
+        'ZohoCRM.modules.custom.all',
+        'ZohoCRM.modules.custom.CREATE',
+        'ZohoCRM.modules.custom.UPDATE',
+        'ZohoCRM.modules.custom.WRITE',
+        'ZohoCRM.modules.custom.READ',
+        'ZohoCRM.modules.custom.DELETE',
+        'ZohoCRM.settings.functions.all',
+        'ZohoCRM.functions.execute.read',
+        'ZohoCRM.functions.execute.create',
+        'ZohoCRM.settings.layout_rules.read',
       ],
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: ['name', 'http.auth.oauth.scope'],
+    fields: ['name', 'http.zohoSubdomain', 'http.auth.oauth.scope'],
     type: 'collapse',
     containers: [
       { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
