@@ -189,11 +189,12 @@ export function* updateIntegrationSettings({
         method: 'put',
         body: payload,
       },
+      hidden: false,
       message: 'Saving integration settings',
     });
     // eslint-disable-next-line no-empty
   } catch (e) {
-    yield put(
+    return yield put(
       actions.integrationApp.settings.submitFailed({
         storeId,
         integrationId,
