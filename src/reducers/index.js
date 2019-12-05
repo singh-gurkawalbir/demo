@@ -2337,7 +2337,8 @@ export function flowJobs(state) {
       additionalProps.percentComplete = Math.floor(
         (job.numPagesProcessed * 100) /
           (job.numPagesGenerated *
-            ((resourceMap.flows[job._flowId] &&
+            ((resourceMap.flows &&
+              resourceMap.flows[job._flowId] &&
               resourceMap.flows[job._flowId].numImports) ||
               1))
       );
