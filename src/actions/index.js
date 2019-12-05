@@ -415,12 +415,13 @@ const integrationApp = {
         integration,
         license,
       }),
-    update: (integrationId, flowId, storeId, values) =>
+    update: (integrationId, flowId, storeId, values, options) =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.UPDATE, {
         integrationId,
         flowId,
         storeId,
         values,
+        options,
       }),
     clear: (integrationId, flowId) =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.FORM.CLEAR, {

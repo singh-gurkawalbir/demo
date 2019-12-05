@@ -94,6 +94,7 @@ const TokensApiIcon = require('../../src/components/icons/TokensApiIcon').defaul
 const TransferIcon = require('../../src/components/icons/TransferIcon').default;
 const TrashIcon = require('../../src/components/icons/TrashIcon').default;
 const UnlockIcon = require('../../src/components/icons/UnlockIcon').default;
+const UnlinkedIcon = require('../../src/components/icons/UnlinkedIcon').default;
 const UploadIcon = require('../../src/components/icons/UploadIcon').default;
 const UnpublishedIcon = require('../../src/components/icons/UnpublishedIcon').default;
 const ViewReferencesIcon = require('../../src/components/icons/ViewReferencesIcon').default;
@@ -505,6 +506,10 @@ const icon = {
     <div style={wrapper}>
       <UnlockIcon style={icon} />
       <p>Unlock</p>
+    </div>
+    <div style={wrapper}>
+      <UnlinkedIcon style={icon} />
+      <p>Unlinked</p>
     </div>
     <div style={wrapper}>
       <ViewReferencesIcon style={icon} />
