@@ -5,16 +5,14 @@ import DynaNetSuiteLookup from './DynaNetSuiteLookup';
 import DynaSFLookup from './DynaSalesforceLookup';
 import DynaSFQualifier from './DynaSalesforceQualifier';
 import DynaNSQualifier from './DynaNetSuiteQualifier';
-import { isJsonString } from '../../../utils/string';
 
 export default function DynaIAExpression(props) {
-  const { flowId, properties = {}, expressionType: type, value } = props;
+  const { flowId, properties = {}, expressionType: type } = props;
   let resourceId;
   let commMetaPath;
   let filterType;
   let ExpressionBuilder;
   const flow = useSelector(state => selectors.resource(state, 'flows', flowId));
-  const parsedValue = isJsonString(value) ? JSON.parse(value) : value;
 
   if (type === 'import') {
     if (properties._importId) {
@@ -94,7 +92,6 @@ export default function DynaIAExpression(props) {
   return (
     <ExpressionBuilder
       {...props}
-      value={parsedValue}
       flowId={flowId}
       options={options}
       resourceId={resource._id}
