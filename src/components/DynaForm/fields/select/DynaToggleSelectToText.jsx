@@ -12,7 +12,8 @@ const useStyles = makeStyles({
 
 export default function DynaToggleSelectToText(props) {
   const classes = useStyles();
-  const [isText, setIsText] = useState(false);
+  const { isTextComponent } = props;
+  const [isText, setIsText] = useState(isTextComponent);
   const { textHrefLabel, selectHrefLabel, ...rest } = props;
 
   return (

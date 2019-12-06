@@ -163,6 +163,7 @@ export default function DynaRelativeURIWithLookup(props) {
         lookups={lookupData}
         onLookupUpdate={handleLookupUpdate}
         required={required}
+        connectionId={connectionId}
         value={extactedVal}
         connectionType={connection.type}
       />

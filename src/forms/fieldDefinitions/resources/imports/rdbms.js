@@ -36,7 +36,11 @@ export default {
     arrayIndex: 0,
     label: 'Launch Query Builder',
     title: 'SQL Query Builder',
-    refreshOptionsOnChangesTo: ['rdbms.lookups', 'rdbms.queryType'],
+    refreshOptionsOnChangesTo: [
+      'rdbms.lookups',
+      'rdbms.queryType',
+      'modelMetadata',
+    ],
     visibleWhen: [
       {
         field: 'rdbms.queryType',
@@ -47,10 +51,13 @@ export default {
   'rdbms.queryInsert': {
     id: 'rdbms.queryInsert',
     type: 'sqlquerybuilder',
-    arrayIndex: 0,
     label: 'Launch Query Builder for Insert',
     title: 'SQL Query Builder',
-    refreshOptionsOnChangesTo: ['rdbms.lookups', 'rdbms.queryType'],
+    refreshOptionsOnChangesTo: [
+      'rdbms.lookups',
+      'rdbms.queryType',
+      'modelMetadata',
+    ],
     visibleWhen: [
       {
         field: 'rdbms.queryType',
@@ -61,10 +68,13 @@ export default {
   'rdbms.queryUpdate': {
     id: 'rdbms.queryUpdate',
     type: 'sqlquerybuilder',
-    arrayIndex: 0,
     label: 'Launch Query Builder for Update',
     title: 'SQL Query Builder',
-    refreshOptionsOnChangesTo: ['rdbms.lookups', 'rdbms.queryType'],
+    refreshOptionsOnChangesTo: [
+      'rdbms.lookups',
+      'rdbms.queryType',
+      'modelMetadata',
+    ],
     visibleWhen: [
       {
         field: 'rdbms.queryType',

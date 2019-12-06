@@ -23,22 +23,33 @@ export default {
     }
 
     delete retValues['/inputMode'];
+    delete retValues['/rdbms/queryUpdate'];
+    delete retValues['/rdbms/queryInsert'];
 
     return {
       ...retValues,
     };
   },
   optionsHandler: (fieldId, fields) => {
-    if (fieldId === 'rdbms.query') {
+    if (
+      fieldId === 'rdbms.query' ||
+      fieldId === 'rdbms.queryUpdate' ||
+      fieldId === 'rdbms.queryInsert'
+    ) {
       const lookupField = fields.find(
         field => field.fieldId === 'rdbms.lookups'
       );
       const queryTypeField = fields.find(
         field => field.fieldId === 'rdbms.queryType'
       );
+      const modelMetadataField = fields.find(
+        field => field.fieldId === 'modelMetadata'
+      );
 
       return {
         queryType: queryTypeField && queryTypeField.value,
+        modelMetadataFieldId: modelMetadataField.fieldId,
+        modelMetadata: modelMetadataField && modelMetadataField.value,
         lookups: {
           // passing lookupId fieldId and data since we will be modifying lookups
           //  from 'Manage lookups' option inside 'SQL Query Builder'
@@ -48,7 +59,10 @@ export default {
       };
     }
 
-    if (fieldId === 'rdbms.ignoreExtract' || 'rdbms.updateExtract') {
+    if (
+      fieldId === 'rdbms.ignoreExtract' ||
+      fieldId === 'rdbms.updateExtract'
+    ) {
       const lookupField = fields.find(
         field => field.fieldId === 'rdbms.lookups'
       );
@@ -72,6 +86,7 @@ export default {
 
   fieldMap: {
     common: { formId: 'common' },
+    modelMetadata: { fieldId: 'modelMetadata', visible: false },
     importData: {
       id: 'importData',
       type: 'labeltitle',
@@ -140,6 +155,7 @@ export default {
   layout: {
     fields: [
       'common',
+      'modelMetadata',
       'importData',
       'rdbms.queryType',
       'ignoreExisting',

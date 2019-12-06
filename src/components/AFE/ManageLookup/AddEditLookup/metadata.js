@@ -21,12 +21,14 @@ export default {
     showDynamicLookupOnly,
     isSQLLookup,
     sampleData,
+    connectionId,
   }) => {
     const dynamicLookupMetadata = dynamicMetadata.getLookupMetadata({
       lookup,
       showDynamicLookupOnly,
       isSQLLookup,
       sampleData,
+      connectionId,
     });
     const {
       fieldMap: dynamicFieldMap,

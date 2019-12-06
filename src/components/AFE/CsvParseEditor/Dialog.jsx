@@ -2,7 +2,7 @@ import EditorDialog from '../EditorDialog';
 import CsvParseEditor from './';
 
 export default function CsvParseEditorDialog(props) {
-  const { id, rule, data, disabled, ...rest } = props;
+  const { id, rule, data, disabled, resourceType, ...rest } = props;
   const defaults = {
     width: '80vw',
     height: '70vh',
@@ -19,6 +19,7 @@ export default function CsvParseEditorDialog(props) {
       showFullScreen>
       <CsvParseEditor
         disabled={disabled}
+        resourceType={resourceType}
         editorId={id}
         rule={rule}
         data={data}
