@@ -1,6 +1,7 @@
 import { useState, Fragment, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { TextField, IconButton } from '@material-ui/core';
+import { isArray } from 'lodash';
 import OpenInNewIcon from '../../../components/icons/ExitIcon';
 import NetSuiteQualificationCriteriaEditor from '../../AFE/NetSuiteQualificationCriteriaEditor';
 
@@ -88,7 +89,7 @@ export default function DynaNetSuiteQualifier(props) {
     try {
       rule = JSON.parse(value);
     } catch (e) {
-      // do nothing
+      rule = value;
     }
   }
 
@@ -120,7 +121,7 @@ export default function DynaNetSuiteQualifier(props) {
         disabled
         required={required}
         error={!isValid}
-        value={value}
+        value={isArray(value) ? JSON.stringify(value) : value}
         variant="filled"
       />
     </Fragment>
