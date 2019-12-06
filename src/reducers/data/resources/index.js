@@ -151,8 +151,9 @@ export default (state = {}, action) => {
               pageProcessors,
               _exportId,
               _importId,
+              ...rest
             } = flow;
-            const updatedFlow = { ...flow, pageGenerators, pageProcessors };
+            const updatedFlow = { ...rest, pageGenerators, pageProcessors };
 
             // Supports Old Flows with _exportId and _importId converted to __pageGenerators and _pageProcessors
             if (!pageGenerators && _exportId) {
