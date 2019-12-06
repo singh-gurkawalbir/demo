@@ -691,7 +691,8 @@ const connectors = [
 
 export const groupApplications = resourceType => {
   const filteredConnectors = connectors.filter(connector => {
-    if (resourceType && resourceType !== 'exports')
+    // Webhooks are shown only for exports and for page generators in flow context
+    if (resourceType && !['exports', 'pageGenerator'].includes(resourceType))
       return !connector.webhookOnly;
 
     return true;
