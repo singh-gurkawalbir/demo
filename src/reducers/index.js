@@ -1135,7 +1135,7 @@ export function integrationAppFlowSections(state, id, store) {
 
   return flowSections.map(sec => ({
     ...sec,
-    titleId: sec.title ? sec.title.replace(/\s/g, '') : '',
+    titleId: sec.title ? sec.title.replace(/\s/g, '').replace(/\W/g, '_') : '',
   }));
 }
 
@@ -1211,7 +1211,9 @@ export function integrationAppFlowSettings(state, id, section, storeId) {
 
   const selectedSection =
     allSections.find(
-      sec => sec.title && sec.title.replace(/\s/g, '') === section
+      sec =>
+        sec.title &&
+        sec.title.replace(/\s/g, '').replace(/\W/g, '_') === section
     ) || {};
 
   if (!section) {

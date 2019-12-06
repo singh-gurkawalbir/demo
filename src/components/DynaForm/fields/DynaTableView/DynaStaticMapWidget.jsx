@@ -98,8 +98,9 @@ export default function DynaStaticMapWidget(props) {
       supportsRefresh: supportsGeneratesRefresh,
     },
   ];
-  const { isLoading, shouldReset, data: metadata } = useSelector(state =>
-    selectors.connectorMetadata(state, id, null, _integrationId, optionsMap)
+  const { isLoading, shouldReset, data: metadata, fieldType } = useSelector(
+    state =>
+      selectors.connectorMetadata(state, id, null, _integrationId, optionsMap)
   );
   let defaultOptions = generates.filter(Boolean).map(val => ({
     value: val.id,
@@ -183,7 +184,7 @@ export default function DynaStaticMapWidget(props) {
         <DynaTableView
           {...props}
           optionsMap={optionsMap}
-          isLoading={isLoading}
+          isLoading={isLoading ? fieldType : false}
           hideLabel
           shouldReset={shouldReset}
           metadata={metadata}
