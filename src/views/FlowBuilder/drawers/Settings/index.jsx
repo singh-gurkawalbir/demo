@@ -6,8 +6,7 @@ import { Button, IconButton } from '@material-ui/core';
 import DynaForm from '../../../../components/DynaForm';
 import DynaSubmit from '../../../../components/DynaForm/DynaSubmit';
 import Close from '../../../../components/icons/CloseIcon';
-import * as selectors from '../../../../reducers';
-import { STANDALONE_INTEGRATION } from '../../../../utils/constants';
+import { resourceList, getNextDataFlows } from '../../../../reducers';
 import actions from '../../../../actions';
 import SettingsDrawerRouter from '../RightDrawer';
 import TitleBar from '../TitleBar';
@@ -28,22 +27,10 @@ export default function SettingsDrawer({ flow, isViewMode, ...props }) {
   const dispatch = useDispatch();
   const history = useHistory();
   const { resources: integrations } = useSelector(state =>
-    selectors.resourceList(state, { type: 'integrations' })
+    resourceList(state, { type: 'integrations' })
   );
-  let flows = useSelector(
-    state => selectors.flowListWithMetadata(state, { type: 'flows' }).resources
-  );
+  const nextDataFlows = useSelector(state => getNextDataFlows(state, flow));
   const handleClose = useCallback(() => history.goBack(), [history]);
-
-  flows =
-    flows &&
-    flows.filter(
-      f =>
-        f._integrationId ===
-          (flow._integrationId === STANDALONE_INTEGRATION.id
-            ? undefined
-            : flow._integrationId) && f._id !== flow._id
-    );
   const fieldMeta = {
     fieldMap: {
       name: {
@@ -88,7 +75,7 @@ export default function SettingsDrawer({ flow, isViewMode, ...props }) {
         defaultValue: (flow && flow._runNextFlowIds) || [],
         options: [
           {
-            items: flows.map(i => ({ label: i.name, value: i._id })),
+            items: nextDataFlows.map(i => ({ label: i.name, value: i._id })),
           },
         ],
       },
