@@ -1,14 +1,16 @@
+import ResourceDrawerLink from '../../../ResourceDrawerLink';
 import Delete from '../../actions/Delete';
 import References from '../../actions/References';
 import AuditLogs from '../../actions/AuditLogs';
-import { getResourceLink, formatLastModified } from '../../../CeligoTable/util';
+import { formatLastModified } from '../../../CeligoTable/util';
 
 export default {
   columns: [
     {
       heading: 'Name',
-      value: (r, actionProps, location) =>
-        getResourceLink('scripts', r, location),
+      value: function ScriptsDrawerLink(r) {
+        return <ResourceDrawerLink resourceType="scripts" resource={r} />;
+      },
       orderBy: 'name',
     },
     {

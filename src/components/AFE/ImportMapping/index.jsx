@@ -10,6 +10,7 @@ import DynaTypeableSelect from '../../DynaForm/fields/DynaTypeableSelect';
 import mappingUtil from '../../../utils/mapping';
 import TrashIcon from '../../icons/TrashIcon';
 import * as selectors from '../../../reducers';
+import IconTextButton from '../../IconTextButton';
 import ActionButton from '../../ActionButton';
 import { adaptorTypeMap } from '../../../utils/resource';
 import RefreshIcon from '../../icons/RefreshIcon';
@@ -18,8 +19,7 @@ import LockIcon from '../../icons/LockIcon';
 
 // TODO Azhar style header
 const useStyles = makeStyles(theme => ({
-  container: {
-    marginTop: theme.spacing(1),
+  root: {
     overflowY: 'off',
   },
   header: {
@@ -27,7 +27,7 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     gridTemplateColumns: '45% 45% 50px 50px',
     gridColumnGap: '1%',
-    marginBottom: theme.spacing(0.5),
+    marginBottom: theme.spacing(2),
   },
   rowContainer: {
     display: 'block',
@@ -67,7 +67,7 @@ const useStyles = makeStyles(theme => ({
     top: 10,
   },
   refreshButton: {
-    marginLeft: 5,
+    marginLeft: theme.spacing(1),
     marginRight: 0,
   },
   spinner: {
@@ -178,48 +178,52 @@ export default function ImportMapping(props) {
     handleFieldUpdate(mapping.index, { target: { value: val } }, 'generate');
   };
 
+  function RefreshButton(props) {
+    return (
+      <IconTextButton
+        variant="contained"
+        color="secondary"
+        className={classes.refreshButton}
+        {...props}>
+        Refresh <RefreshIcon />
+      </IconTextButton>
+    );
+  }
+
   return (
     <div
-      className={classes.container}
+      className={classes.root}
       key={`mapping-${editorId}-${initChangeIdentifier}`}>
-      <div className={classes.root}>
+      <div>
         <div className={classes.header}>
-          <Typography variant="subtitle2" className={classes.childHeader}>
+          <Typography variant="h5" className={classes.childHeader}>
             Source Record Field
-            <span>
-              {!isExtractsLoading && (
-                <ActionButton
-                  onClick={refreshExtractFields}
-                  className={classes.refreshButton}
-                  data-test="refreshExtracts">
-                  <RefreshIcon />
-                </ActionButton>
-              )}
-              {isExtractsLoading && (
-                <span className={classes.spinner}>
-                  <Spinner size={24} color="primary" />
-                </span>
-              )}
-            </span>
+            {!isExtractsLoading && (
+              <RefreshButton
+                onClick={refreshExtractFields}
+                data-test="refreshExtracts"
+              />
+            )}
+            {isExtractsLoading && (
+              <span className={classes.spinner}>
+                <Spinner size={24} color="primary" />
+              </span>
+            )}
           </Typography>
 
-          <Typography variant="subtitle2" className={classes.childHeader}>
+          <Typography variant="h5" className={classes.childHeader}>
             {generateLabel}
-            <span>
-              {isGenerateRefreshSupported && !isGeneratesLoading && (
-                <ActionButton
-                  onClick={refreshGenerateFields}
-                  className={classes.refreshButton}
-                  data-test="refreshGenerates">
-                  <RefreshIcon />
-                </ActionButton>
-              )}
-              {isGeneratesLoading && (
-                <span className={classes.spinner}>
-                  <Spinner size={24} color="primary" />
-                </span>
-              )}
-            </span>
+            {isGenerateRefreshSupported && !isGeneratesLoading && (
+              <RefreshButton
+                onClick={refreshGenerateFields}
+                data-test="refreshGenerates"
+              />
+            )}
+            {isGeneratesLoading && (
+              <span className={classes.spinner}>
+                <Spinner size={24} color="primary" />
+              </span>
+            )}
           </Typography>
         </div>
         <div>

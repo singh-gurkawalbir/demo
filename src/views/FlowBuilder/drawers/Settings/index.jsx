@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button, IconButton } from '@material-ui/core';
 import DynaForm from '../../../../components/DynaForm';
@@ -22,13 +23,10 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function SettingsDrawer({
-  flow,
-  history,
-  isViewMode,
-  ...props
-}) {
+export default function SettingsDrawer({ flow, isViewMode, ...props }) {
+  const classes = useStyles();
   const dispatch = useDispatch();
+  const history = useHistory();
   const { resources: integrations } = useSelector(state =>
     selectors.resourceList(state, { type: 'integrations' })
   );
@@ -127,8 +125,6 @@ export default function SettingsDrawer({
     dispatch(actions.resource.commitStaged('flows', flow._id, 'value'));
     history.goBack();
   };
-
-  const classes = useStyles();
 
   return (
     <SettingsDrawerRouter {...props} path="settings">

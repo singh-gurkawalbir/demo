@@ -1,9 +1,10 @@
+import ResourceDrawerLink from '../../../ResourceDrawerLink';
 import Delete from '../../actions/Delete';
 import References from '../../actions/References';
 import AuditLogs from '../../actions/AuditLogs';
 import StackShares from '../../actions/StackShares';
 import StackSystemToken from '../../../../components/StackSystemToken';
-import { getResourceLink, formatLastModified } from '../../../CeligoTable/util';
+import { formatLastModified } from '../../../CeligoTable/util';
 
 const getSystemToken = stack => <StackSystemToken stackId={stack._id} />;
 
@@ -11,8 +12,9 @@ export default {
   columns: [
     {
       heading: 'Name',
-      value: (r, actionProps, location) =>
-        getResourceLink('stacks', r, location),
+      value: function StacksDrawerLink(r) {
+        return <ResourceDrawerLink resourceType="stacks" resource={r} />;
+      },
       orderBy: 'name',
     },
     {

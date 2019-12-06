@@ -1,16 +1,18 @@
 import Link from '@material-ui/core/Link';
+import ResourceDrawerLink from '../../../ResourceDrawerLink';
 import Delete from '../../actions/Delete';
 import TogglePublish from '../../actions/TogglePublish';
 import InstallBase from '../../actions/Connectors/InstallBase';
 import Licenses from '../../actions/Connectors/Licenses';
-import { getResourceLink, formatLastModified } from '../../../CeligoTable/util';
+import { formatLastModified } from '../../../CeligoTable/util';
 
 export default {
   columns: [
     {
       heading: 'Name',
-      value: (r, actionProps, location) =>
-        getResourceLink('connectors', r, location),
+      value: function ConnectorsDrawerLink(r) {
+        return <ResourceDrawerLink resourceType="connectors" resource={r} />;
+      },
       orderBy: 'name',
     },
     {
