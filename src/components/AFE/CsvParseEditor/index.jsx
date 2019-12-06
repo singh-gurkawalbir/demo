@@ -3,7 +3,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { string, object } from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import CodePanel from '../GenericEditor/CodePanel';
-import CsvParsePanel from './CsvParsePanel';
+import ImportCsvParsePanel from './CsvParsePanel/import';
+import ExportCsvParsePanel from './CsvParsePanel/export';
 import PanelGrid from '../PanelGrid';
 import PanelTitle from '../PanelTitle';
 import PanelGridItem from '../PanelGridItem';
@@ -33,7 +34,7 @@ export default function CsvParseEditor(props) {
     dispatch(
       actions.editor.init(editorId, 'csvParser', {
         data: props.data,
-        resourceType,
+        resourceType: props.resourceType,
         autoEvaluate: true,
         multipleRowsPerRecord: !!(
           props.rule &&
@@ -43,7 +44,7 @@ export default function CsvParseEditor(props) {
         ...props.rule,
       })
     );
-  }, [dispatch, editorId, props.data, props.rule, resourceType]);
+  }, [dispatch, editorId, props.data, props.resourceType, props.rule]);
   const handleDataChange = data => {
     dispatch(actions.editor.patch(editorId, { data }));
   };
@@ -56,7 +57,11 @@ export default function CsvParseEditor(props) {
     <PanelGrid className={classes.template}>
       <PanelGridItem gridArea="rule">
         <PanelTitle title="CSV Parse Options" />
-        <CsvParsePanel disabled={disabled} editorId={editorId} />
+        {resourceType === 'imports' ? (
+          <ImportCsvParsePanel disabled={disabled} editorId={editorId} />
+        ) : (
+          <ExportCsvParsePanel disabled={disabled} editorId={editorId} />
+        )}
       </PanelGridItem>
       <PanelGridItem gridArea="data">
         <PanelTitle title="CSV to Parse" />
