@@ -1,4 +1,3 @@
-import { Fragment } from 'react';
 import { useSelector } from 'react-redux';
 import { Link, Redirect, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -6,8 +5,13 @@ import { Typography, Button } from '@material-ui/core';
 import * as selectors from '../../../../../../../reducers';
 
 const useStyles = makeStyles(theme => ({
+  root: {
+    marginTop: theme.spacing(3),
+  },
   button: {
-    color: theme.palette.primary.main,
+    // color: theme.palette.primary.main,
+    width: `calc(100% - ${theme.spacing(3)}px)`,
+    display: 'block',
   },
   text: {
     marginBottom: theme.spacing(2),
@@ -38,7 +42,7 @@ export default function SelectImport({ flowId }) {
 
   // Finally, render a table of imports to choose from...
   return (
-    <Fragment>
+    <div className={classes.root}>
       <Typography className={classes.text} variant="h5">
         This flow contains several imports, each of which have mapping.
       </Typography>
@@ -51,11 +55,13 @@ export default function SelectImport({ flowId }) {
             className={classes.button}
             component={Link}
             to={`${match.url}/${i._id}`}>
-            <Typography color="primary">{i.name || i._id}</Typography>
-            <Typography variant="caption">{i.description}</Typography>
+            <Typography variant="h6" color="primary">
+              {i.name || i._id}
+            </Typography>
+            {i.description && <Typography>{i.description}</Typography>}
           </Button>
         </div>
       ))}
-    </Fragment>
+    </div>
   );
 }

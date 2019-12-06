@@ -15,7 +15,7 @@ const useStyles = makeStyles({
   },
 });
 
-function ButtonsGroup(props) {
+function ButtonGroup(props) {
   const classes = useStyles();
 
   return (
@@ -25,4 +25,4 @@ function ButtonsGroup(props) {
   );
 }
 
-export default ButtonsGroup;
+export default ButtonGroup;
