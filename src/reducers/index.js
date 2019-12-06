@@ -792,6 +792,27 @@ export function flowListWithMetadata(state, options) {
   return { resources: flows };
 }
 
+/*
+ * Gives all other valid flows of same Integration
+ */
+export function getNextDataFlows(state, flow) {
+  const flows = flowListWithMetadata(state, { type: 'flows' }).resources || [];
+  const { _integrationId } = flow;
+  // Incase of standalone Integrations, _integrationId is undefined for flow resources
+  const flowIntegrationId =
+    _integrationId === STANDALONE_INTEGRATION ? undefined : _integrationId;
+
+  // Returns all valid flows under this integration
+  return flows.filter(
+    f =>
+      f._integrationId === flowIntegrationId &&
+      f._id !== flow._id &&
+      !f.isRealtime &&
+      !f.isSimpleImport &&
+      !f.disabled
+  );
+}
+
 export function resourceListWithPermissions(state, options) {
   const list = resourceList(state, options);
   // eslint-disable-next-line no-use-before-define
