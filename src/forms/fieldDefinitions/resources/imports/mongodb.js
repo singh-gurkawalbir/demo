@@ -33,7 +33,7 @@ export default {
     label: 'How should we identify existing records?',
     required: true,
     defaultValue: r =>
-      r && r.mongodb && r.mongodb.ignoreLookupFilter ? 'lookup' : 'source',
+      r && r.mongodb && r.mongodb.ignoreExtract ? 'source' : 'lookup',
     options: [
       {
         items: [
