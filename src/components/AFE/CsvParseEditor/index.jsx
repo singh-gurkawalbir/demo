@@ -20,10 +20,13 @@ const useStyles = makeStyles({
 });
 
 export default function CsvParseEditor(props) {
-  const { editorId, disabled, resourceType } = props;
-  const classes = useStyles(props);
-  const { data, result, error, violations } = useSelector(state =>
+  const { editorId, disabled } = props;
+  const classes = useStyles();
+  const { data, result, error, resourceType } = useSelector(state =>
     selectors.editor(state, editorId)
+  );
+  const violations = useSelector(state =>
+    selectors.editorViolations(state, editorId)
   );
   const dispatch = useDispatch();
   const handleInit = useCallback(() => {

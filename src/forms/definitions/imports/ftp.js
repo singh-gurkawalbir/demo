@@ -12,6 +12,10 @@ export default {
         newValues['/ftp/blobInProgressFileName'];
     }
 
+    if (newValues['/ftp/useTempFile'] === false) {
+      newValues['/ftp/inProgressFileName'] = undefined;
+    }
+
     delete newValues['/inputMode'];
 
     return {
@@ -193,7 +197,7 @@ export default {
     },
     inputMode: {
       id: 'inputMode',
-      type: 'radiogroup',
+      type: 'mode',
       label: 'Input Mode',
       options: [
         {

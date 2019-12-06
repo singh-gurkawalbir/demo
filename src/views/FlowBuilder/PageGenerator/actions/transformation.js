@@ -1,4 +1,4 @@
-import { useEffect, Fragment, useMemo } from 'react';
+import { useEffect, useMemo, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
@@ -8,11 +8,11 @@ import helpTextMap from '../../../../components/Help/helpTextMap';
 
 function TransformationDialog({ flowId, resource, onClose, isViewMode }) {
   const dispatch = useDispatch();
-  const resourceId = resource._id;
+  const exportId = resource._id;
   const sampleData = useSelector(state =>
     selectors.getSampleData(state, {
       flowId,
-      resourceId,
+      resourceId: exportId,
       resourceType: 'exports',
       stage: 'transform',
     })
@@ -22,41 +22,44 @@ function TransformationDialog({ flowId, resource, onClose, isViewMode }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
-  const handleClose = (shouldCommit, editorValues) => {
-    if (shouldCommit) {
-      const { rule } = editorValues;
-      const path = '/transform';
-      const value = {
-        rules: rule ? [rule] : [[]],
-        version: '1',
-      };
-      const patchSet = [{ op: 'replace', path, value }];
+  const handleClose = useCallback(
+    (shouldCommit, editorValues) => {
+      if (shouldCommit) {
+        const { rule } = editorValues;
+        const path = '/transform';
+        const value = {
+          rules: rule ? [rule] : [[]],
+          version: '1',
+        };
+        const patchSet = [{ op: 'replace', path, value }];
 
-      // Save the resource
-      dispatch(actions.resource.patchStaged(resourceId, patchSet, 'value'));
-      dispatch(actions.resource.commitStaged('exports', resourceId, 'value'));
-    }
+        // Save the resource
+        dispatch(actions.resource.patchStaged(exportId, patchSet, 'value'));
+        dispatch(actions.resource.commitStaged('exports', exportId, 'value'));
+      }
 
-    onClose();
-  };
+      onClose();
+    },
+    [dispatch, onClose, exportId]
+  );
 
   useEffect(() => {
     if (!sampleData) {
       dispatch(
         actions.flowData.requestSampleData(
           flowId,
-          resourceId,
+          exportId,
           'exports',
           'transform'
         )
       );
     }
-  }, [dispatch, flowId, resourceId, sampleData]);
+  }, [dispatch, flowId, exportId, sampleData]);
 
   return (
     <TransformEditorDialog
       title="Transform Mapping"
-      id={resourceId}
+      id={exportId}
       disabled={isViewMode}
       data={sampleData}
       rule={rules && rules[0]}
@@ -66,9 +69,9 @@ function TransformationDialog({ flowId, resource, onClose, isViewMode }) {
 }
 
 function Transformation(props) {
-  const { open } = props;
+  if (!props.open) return null;
 
-  return <Fragment>{open && <TransformationDialog {...props} />}</Fragment>;
+  return <TransformationDialog {...props} />;
 }
 
 export default {

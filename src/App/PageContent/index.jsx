@@ -16,6 +16,8 @@ const useStyles = makeStyles(theme => ({
 export default function PageContent() {
   const classes = useStyles();
 
+  // console.log('render: PageContent');
+
   return (
     <main className={classes.content}>
       <div

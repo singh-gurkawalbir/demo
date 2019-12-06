@@ -70,8 +70,10 @@ import DynaSalesforceLookupFilters from './DynaSalesforceLookupFilters';
 import DynaSalesforceLookup from './DynaSalesforceLookup';
 import DynaMultiSubsidiaryMapping from './DynaTableView/DynaMultiSubsidiaryMapping';
 import DynaTimestampFileName from './DynaTimestampFileName';
+import DynaMode from './DynaMode';
 
 export default {
+  mode: DynaMode,
   mapping: DynaImportMapping,
   toggleSelectToText: DynaToggleSelectToText,
   selectscopes: DynaSelectScopes,

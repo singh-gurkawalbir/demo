@@ -55,6 +55,8 @@ export default function DynaNetSuiteQualifier(props) {
     if (isDefaultValueChanged) {
       if (options.resetValue) {
         onFieldChange(id, []);
+      } else if (defaultValue) {
+        onFieldChange(id, defaultValue);
       }
 
       setIsDefaultValueChanged(false);
@@ -74,11 +76,21 @@ export default function DynaNetSuiteQualifier(props) {
     const { rule } = editorValues;
 
     if (shouldCommit) {
-      onFieldChange(id, rule);
+      onFieldChange(id, JSON.stringify(rule));
     }
 
     handleEditorClick();
   };
+
+  let rule = [];
+
+  if (value) {
+    try {
+      rule = JSON.parse(value);
+    } catch (e) {
+      // do nothing
+    }
+  }
 
   return (
     <Fragment>
@@ -86,7 +98,7 @@ export default function DynaNetSuiteQualifier(props) {
         <NetSuiteQualificationCriteriaEditor
           title="Qualification Criteria"
           id={id}
-          value={value}
+          value={rule}
           onClose={handleClose}
           disabled={disabled}
           options={options}
@@ -108,7 +120,7 @@ export default function DynaNetSuiteQualifier(props) {
         disabled
         required={required}
         error={!isValid}
-        value={JSON.stringify(value)}
+        value={value}
         variant="filled"
       />
     </Fragment>
