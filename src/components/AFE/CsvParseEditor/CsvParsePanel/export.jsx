@@ -10,6 +10,7 @@ import actions from '../../../../actions';
 import * as selectors from '../../../../reducers';
 import CeligoSelect from '../../../CeligoSelect';
 import DynaText from '../../../DynaForm/fields/DynaText';
+import options from './options';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -75,6 +76,7 @@ export default function ExportCsvParsePanel(props) {
 
   const allColumns = getColumns(result);
 
+  // TODO: Refractor to use dyna form
   return (
     <div className={classes.container}>
       <FormGroup column="true">
@@ -90,15 +92,11 @@ export default function ExportCsvParsePanel(props) {
               patchEditor('columnDelimiter', event.target.value)
             }
             inputProps={{ id: 'columnDelimiter' }}>
-            <option value="" data-test="autoDetect">
-              Auto Detect
-            </option>
-            <option value="," data-test="comma">
-              Comma (,)
-            </option>
-            <option value="|" data-test="pipe">
-              Pipe (|)
-            </option>
+            {options.ColumnDelimiterOptions.map(opt => (
+              <option key={opt.type} value={opt.value} data-test={opt.type}>
+                {opt.label}
+              </option>
+            ))}
           </CeligoSelect>
         </FormControl>
 
