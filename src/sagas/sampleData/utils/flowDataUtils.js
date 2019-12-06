@@ -9,6 +9,23 @@ import {
 } from '../flows';
 import getPreviewOptionsForResource from '../flows/pageProcessorPreviewOptions';
 
+/*
+ * Given a flow, filters out all the pending PGs and PPs without resourceId
+ */
+export function filterPendingResources({ flow = {} }) {
+  const { pageGenerators: pgs = [], pageProcessors: pps = [], ...rest } = flow;
+  const filteredPageGenerators = pgs.filter(pg => !!pg._exportId);
+  const filteredPageProcessors = pps.filter(
+    pp => !!pp[pp.type === 'import' ? '_importId' : '_exportId']
+  );
+
+  return {
+    ...rest,
+    pageGenerators: filteredPageGenerators,
+    pageProcessors: filteredPageProcessors,
+  };
+}
+
 export function* fetchFlowResources({ flow, type, eliminateDataProcessors }) {
   const resourceMap = {};
   const resourceList = flow[type];
