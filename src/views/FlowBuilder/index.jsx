@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { withRouter } from 'react-router-dom';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
+import { withRouter, useHistory, useRouteMatch } from 'react-router-dom';
 import clsx from 'clsx';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { Typography, IconButton } from '@material-ui/core';
@@ -25,6 +25,7 @@ import CalendarIcon from '../../components/icons/CalendarIcon';
 import EditableText from '../../components/EditableText';
 import SwitchOnOff from '../../components/OnOff';
 import { generateNewId } from '../../utils/resource';
+import { isConnector } from '../../utils/flows';
 import FlowEllipsisMenu from '../../components/FlowEllipsisMenu';
 
 // #region FLOW SCHEMA: FOR REFERENCE DELETE ONCE FB IS COMPLETE
@@ -202,9 +203,10 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function FlowBuilder(props) {
-  const { match, history } = props;
+function FlowBuilder() {
+  const match = useRouteMatch();
   const { flowId, integrationId } = match.params;
+  const history = useHistory();
   const isNewFlow = !flowId || flowId.startsWith('new');
   const classes = useStyles();
   const theme = useTheme();
@@ -219,8 +221,9 @@ function FlowBuilder(props) {
     selectors.createdResourceId(state, flowId)
   );
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
-  const { merged: flow = {} } = useSelector(state =>
-    selectors.flowMetadata(state, flowId)
+  const flow = useSelector(
+    state => selectors.flowDetails(state, flowId),
+    shallowEqual
   );
   const { pageProcessors = [], pageGenerators = [] } = flow;
   const createdGeneratorId = useSelector(state =>
@@ -236,9 +239,11 @@ function FlowBuilder(props) {
 
     return imp ? 'import' : 'export';
   });
-  const isViewMode = useSelector(state =>
+  const isConnectorType = isConnector(flow);
+  const isMonitorLevelAccess = useSelector(state =>
     selectors.isFormAMonitorLevelAccess(state, integrationId)
   );
+  const isViewMode = isMonitorLevelAccess || isConnectorType;
   // #endregion
   const patchFlow = useCallback(
     (path, value) => {
@@ -404,19 +409,22 @@ function FlowBuilder(props) {
   // #endregion
 
   // eslint-disable-next-line
-  // console.log(flow);
+  // console.log('render: <FlowBuilder>');
 
   return (
     <LoadResources required resources="flows, imports, exports">
       <ResourceDrawer
-        {...props}
         flowId={flowId}
+        disabled={isViewMode}
         integrationId={integrationId}
       />
-      <RunDrawer {...props} flowId={flowId} />
-      <ScheduleDrawer isViewMode={isViewMode} {...props} flow={flow} />
-      <SettingsDrawer isViewMode={isViewMode} {...props} flow={flow} />
-      {/* <WizardDrawer {...props} flowId={flowId} /> */}
+      <RunDrawer flowId={flowId} />
+      <ScheduleDrawer
+        isViewMode={isMonitorLevelAccess}
+        isConnector={isConnectorType}
+        flow={flow}
+      />
+      <SettingsDrawer isViewMode={isViewMode} flow={flow} />
 
       <CeligoPageBar
         title={
@@ -429,24 +437,28 @@ function FlowBuilder(props) {
         <div className={classes.actions}>
           <SwitchOnOff.component
             resource={flow}
-            disabled={isNewFlow || isViewMode}
+            disabled={isNewFlow || isMonitorLevelAccess}
+            isConnector={isConnectorType}
             data-test="switchFlowOnOff"
           />
           <IconButton
-            disabled={isNewFlow || !(flow && flow.isRunnable) || isViewMode}
+            disabled={
+              isNewFlow || !(flow && flow.isRunnable) || isMonitorLevelAccess
+            }
             data-test="runFlow"
             onClick={() => {
               dispatch(actions.flow.run({ flowId }));
             }}>
             <RunIcon />
           </IconButton>
-
-          <IconButton
-            disabled={isNewFlow && !(flow && flow.showScheduleIcon)}
-            data-test="scheduleFlow"
-            onClick={() => handleDrawerOpen('schedule')}>
-            <CalendarIcon />
-          </IconButton>
+          {flow && flow.showScheduleIcon && (
+            <IconButton
+              disabled={isNewFlow}
+              data-test="scheduleFlow"
+              onClick={() => handleDrawerOpen('schedule')}>
+              <CalendarIcon />
+            </IconButton>
+          )}
 
           <IconButton
             disabled={isNewFlow}
@@ -454,11 +466,12 @@ function FlowBuilder(props) {
             data-test="flowSettings">
             <SettingsIcon />
           </IconButton>
-
-          <FlowEllipsisMenu
-            flowId={flowId}
-            exclude={['mapping', 'detach', 'audit', 'schedule']}
-          />
+          {!isConnectorType && (
+            <FlowEllipsisMenu
+              flowId={flowId}
+              exclude={['mapping', 'detach', 'audit', 'schedule']}
+            />
+          )}
         </div>
       </CeligoPageBar>
       <div
@@ -534,9 +547,15 @@ function FlowBuilder(props) {
                   onDelete={handleDelete(itemTypes.PAGE_PROCESSOR)}
                   flowId={flowId}
                   integrationId={integrationId}
-                  key={pp._importId || pp._exportId || pp._connectionId}
+                  key={
+                    pp._importId ||
+                    pp._exportId ||
+                    pp._connectionId ||
+                    `${pp.application}-${i}`
+                  }
                   index={i}
                   isViewMode={isViewMode}
+                  isMonitorLevelAccess={isMonitorLevelAccess}
                   isLast={pageProcessors.length === i + 1}
                   onMove={handleMove}
                 />

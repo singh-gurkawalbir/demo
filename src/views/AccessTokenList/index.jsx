@@ -54,7 +54,7 @@ export default function AccessTokenList(props) {
         }>
         <ResourceDrawer {...newProps} />
 
-        <CeligoPageBar title="Access Tokens" infoText={infoText.accesstokens}>
+        <CeligoPageBar title="API Tokens" infoText={infoText.accesstokens}>
           <div className={classes.actions}>
             <SearchInput variant="light" onChange={handleKeywordChange} />
             <IconTextButton
@@ -63,7 +63,7 @@ export default function AccessTokenList(props) {
               to={`${location.pathname}/add/accesstokens/${generateNewId()}`}
               variant="text"
               color="primary">
-              <AddIcon /> New Access Token
+              <AddIcon /> New API Token
             </IconTextButton>
           </div>
         </CeligoPageBar>

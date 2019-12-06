@@ -2,7 +2,7 @@ import { makeStyles } from '@material-ui/styles';
 import { IconButton } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
-import ButtonsGroup from '../../ButtonGroup';
+import ButtonGroup from '../../ButtonGroup';
 import WarningIcon from '../../icons/WarningIcon';
 import CloseIcon from '../../icons/CloseIcon';
 
@@ -65,14 +65,14 @@ function TrialExpireNotification({ content }) {
         </div>
       </div>
       <div className={classes.footer}>
-        <ButtonsGroup>
+        <ButtonGroup>
           <Button data-test="uninstall" variant="text" color="primary">
             UNINSTALL
           </Button>
           <Button data-test="contactSales" variant="text" color="primary">
             Contact Sales
           </Button>
-        </ButtonsGroup>
+        </ButtonGroup>
       </div>
       <div />
     </div>

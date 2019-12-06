@@ -52,7 +52,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function CsvParsePanel(props) {
-  const { editorId } = props;
+  const { editorId, disabled } = props;
   const classes = useStyles(props);
   const {
     columnDelimiter = '',
@@ -62,7 +62,6 @@ export default function CsvParsePanel(props) {
     multipleRowsPerRecord = false,
     trimSpaces = true,
     result,
-    disabled,
   } = useSelector(state => selectors.editor(state, editorId));
   const dispatch = useDispatch();
   const patchEditor = (option, value) => {
@@ -164,10 +163,13 @@ export default function CsvParsePanel(props) {
         />
         {multipleRowsPerRecord && allColumns && (
           <FormControl disabled={disabled} className={classes.formControl}>
-            <InputLabel htmlFor="select-multiple-chip">Key Columns</InputLabel>
+            <InputLabel htmlFor="select-multiple-chip" shrink>
+              Key Columns
+            </InputLabel>
             <CeligoSelect
               multiple
               value={keyColumns}
+              className={classes.select}
               data-test="keyColumns"
               onChange={e => patchEditor('keyColumns', e.target.value)}
               input={<Input id="select-multiple-chip" />}

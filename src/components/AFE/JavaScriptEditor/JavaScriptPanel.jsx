@@ -54,6 +54,13 @@ export default function JavaScriptPanel(props) {
   const requestScript = useCallback(() => {
     dispatch(actions.resource.request('scripts', scriptId));
   }, [dispatch, scriptId]);
+  const handleCodeChange = useCallback(code => patchEditor('code', code), [
+    patchEditor,
+  ]);
+  const handleScriptChange = useCallback(
+    event => patchEditor('scriptId', event.target.value),
+    [patchEditor]
+  );
 
   useEffect(() => {
     // TODO: What if for the requested script is non existent...
@@ -78,7 +85,7 @@ export default function JavaScriptPanel(props) {
             margin="dense"
             value={scriptId}
             disabled={disabled}
-            onChange={event => patchEditor('scriptId', event.target.value)}>
+            onChange={handleScriptChange}>
             {allScripts.map(s => (
               <MenuItem key={s._id} value={s._id}>
                 {s.name}
@@ -107,7 +114,7 @@ export default function JavaScriptPanel(props) {
             readOnly={disabled}
             value={code}
             mode="javascript"
-            onChange={code => patchEditor('code', code)}
+            onChange={handleCodeChange}
           />
         )}
       </div>

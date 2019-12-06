@@ -7,15 +7,16 @@ import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import LoadResources from '../../../components/LoadResources';
 import AddIcon from '../../../components/icons/AddIcon';
-// TODO: Azhar, please update these next 3 icons, once provided by the product team.
-import FlowsIcon from '../../../components/icons/FlowBuilderIcon';
-import AdminIcon from '../../../components/icons/SettingsIcon';
-import DashboardIcon from '../../../components/icons/AdjustInventoryIcon';
+import FlowsIcon from '../../../components/icons/FlowsIcon';
+import GeneralIcon from '../../../components/icons/SettingsIcon';
+import AdminIcon from '../../../components/icons/AdminIcon';
+import DashboardIcon from '../../../components/icons/DashboardIcon';
 import ConnectionsIcon from '../../../components/icons/ConnectionsIcon';
 import IconTextButton from '../../../components/IconTextButton';
 import CeligoPageBar from '../../../components/CeligoPageBar';
 import ResourceDrawer from '../../../components/drawer/Resource';
 import ChipInput from '../../../components/ChipInput';
+import ArrowDownIcon from '../../../components/icons/ArrowDownIcon';
 import GeneralPanel from './panels/General';
 import AdminPanel from './panels/Admin';
 import FlowsPanel from './panels/Flows';
@@ -23,9 +24,10 @@ import ConnectionsPanel from './panels/Connections';
 import DashboardPanel from './panels/Dashboard';
 import AddOnsPanel from './panels/AddOns';
 import IntegrationTabs from '../common/Tabs';
+import getRoutePath from '../../../utils/routePaths';
 
 const allTabs = [
-  { path: 'general', label: 'General', Icon: AdminIcon, Panel: GeneralPanel },
+  { path: 'general', label: 'General', Icon: GeneralIcon, Panel: GeneralPanel },
   { path: 'flows', label: 'Flows', Icon: FlowsIcon, Panel: FlowsPanel },
   {
     path: 'dashboard',
@@ -40,7 +42,7 @@ const allTabs = [
     Panel: ConnectionsPanel,
   },
   { path: 'admin', label: 'Admin', Icon: AdminIcon, Panel: AdminPanel },
-  { path: 'addons', label: 'Add-ons', Icon: AdminIcon, Panel: AddOnsPanel },
+  { path: 'addons', label: 'Add-ons', Icon: AddIcon, Panel: AddOnsPanel },
 ];
 const useStyles = makeStyles(theme => ({
   tag: {
@@ -84,6 +86,9 @@ export default function IntegrationApp({ match, history }) {
   const addOnState = useSelector(state =>
     selectors.integrationAppAddOnState(state, integrationId)
   );
+  const hideGeneralTab = useSelector(
+    state => !selectors.hasGeneralSettings(state, integrationId, storeId)
+  );
   //
   //
   // TODO: All the code below should be moved into the data layer.
@@ -125,6 +130,11 @@ export default function IntegrationApp({ match, history }) {
     ? allTabs
     : // remove addons tab if IA doesn't have any.
       allTabs.slice(0, allTabs.length - 1);
+
+  if (hideGeneralTab) {
+    availableTabs.shift();
+  }
+
   const handleTagChangeHandler = useCallback(
     tag => {
       const patchSet = [{ op: 'replace', path: '/tag', value: tag }];
@@ -138,17 +148,16 @@ export default function IntegrationApp({ match, history }) {
   );
   const handleStoreChange = useCallback(
     e => {
-      const storeId = e.target.value;
+      const newStoreId = e.target.value;
 
-      dispatch(
-        actions.patchFilter('jobs', { storeId, flowId: '', currentPage: 0 })
-      );
-
+      // Redirect to current tab of new store
       history.push(
-        `/pg/integrationApp/${integrationId}/child/${storeId}/flows`
+        getRoutePath(
+          `integrationApp/${integrationId}/child/${newStoreId}/${tab}`
+        )
       );
     },
-    [dispatch, history, integrationId]
+    [history, integrationId, tab]
   );
   const handleAddNewStoreClick = useCallback(() => {
     history.push(`/pg/connectors/${integrationId}/install/addNewStore`);
@@ -173,12 +182,26 @@ export default function IntegrationApp({ match, history }) {
       return (
         <Redirect
           push={false}
-          to={`/pg/integrationApp/${integrationId}/child/${defaultStoreId}/flows`}
+          to={`/pg/integrationApp/${integrationId}/child/${defaultStoreId}/${tab ||
+            'flows'}`}
         />
       );
     }
   } else if (!tab) {
     return <Redirect push={false} to={`${match.url}/flows`} />;
+  }
+
+  if (tab === 'general' && hideGeneralTab) {
+    return (
+      <Redirect
+        push={false}
+        to={
+          supportsMultiStore
+            ? `/pg/integrationApp/${integrationId}/child/${storeId}/flows`
+            : `/pg/integrationApp/${integrationId}/flows`
+        }
+      />
+    );
   }
 
   // TODO: <ResourceDrawer> Can be further optimized to take advantage
@@ -208,9 +231,11 @@ export default function IntegrationApp({ match, history }) {
             </IconTextButton>
             <Select
               displayEmpty
+              data-test={`select${storeLabel}`}
               className={classes.storeSelect}
               onChange={handleStoreChange}
-              value="">
+              IconComponent={ArrowDownIcon}
+              value={storeId}>
               <MenuItem disabled value="">
                 Select {storeLabel}
               </MenuItem>

@@ -77,6 +77,9 @@ export default function EditorDialog(props) {
   });
   const { layout, fullScreen } = state;
   const editor = useSelector(state => selectors.editor(state, id));
+  const editorViolations = useSelector(state =>
+    selectors.editorViolations(state, id)
+  );
   const handlePreview = () => dispatch(actions.editor.evaluateRequest(id));
   const handleClose = shouldCommit => {
     if (shouldCommit && !preSaveValidate({ editor, enquesnackbar })) {
@@ -94,8 +97,8 @@ export default function EditorDialog(props) {
     setState({ ...state, fullScreen: !fullScreen });
   const size = fullScreen ? { height } : { height, width };
   const showPreviewAction =
-    !hidePreviewAction && editor && !editor.violations && !editor.autoEvaluate;
-  const disableSave = !editor || editor.violations || disabled;
+    !hidePreviewAction && editor && !editorViolations && !editor.autoEvaluate;
+  const disableSave = !editor || editorViolations || disabled;
 
   return (
     <Dialog
@@ -141,7 +144,10 @@ export default function EditorDialog(props) {
           )}
         </div>
       </div>
-      <DialogContent style={size} className={classes.dialogContent}>
+      <DialogContent
+        style={size}
+        className={classes.dialogContent}
+        key={`${id}-${layout}`}>
         {// Is there a better way to do this?
         children && cloneElement(children, { layout })}
       </DialogContent>

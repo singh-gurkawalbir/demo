@@ -5,6 +5,7 @@ import { DndProvider } from 'react-dnd-cjs';
 import HTML5Backend from 'react-dnd-html5-backend-cjs';
 import { MuiThemeProvider, makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
+import { SnackbarProvider } from 'notistack';
 import FontStager from '../components/FontStager';
 import themeProvider from '../theme/themeProvider';
 import CeligoAppBar from './CeligoAppBar';
@@ -38,10 +39,10 @@ function NonSigninHeaderComponents(props) {
   );
 }
 
-export const PageContentComponents = props => (
+export const PageContentComponents = () => (
   <Switch>
-    <Route path="/pg/signin" component={Signin} {...props} />
-    <Route path="/pg*" component={PageContent} {...props} />
+    <Route path="/pg/signin" component={Signin} />
+    <Route path="/pg*" component={PageContent} />
   </Switch>
 );
 
@@ -52,28 +53,30 @@ export default function App() {
   const theme = useMemo(() => themeProvider(themeName), [themeName]);
 
   // eslint-disable-next-line
-  //console.log(reloadCount, environment);
+  // console.log('render: <App>', reloadCount);
 
   return (
     <MuiThemeProvider key={reloadCount} theme={theme}>
-      <FontStager />
-      <CssBaseline />
-      <DndProvider backend={HTML5Backend}>
-        <BrowserRouter>
-          <div className={classes.root}>
-            <NetworkSnackbar />
-            {/* Headers */}
-            <Switch>
-              <Route path="/pg/signin" component={null} />
-              <Route path="/pg*" component={NonSigninHeaderComponents} />
-            </Switch>
-            {/* page content */}
-            <WithAuth>
-              <PageContentComponents />
-            </WithAuth>
-          </div>
-        </BrowserRouter>
-      </DndProvider>
+      <SnackbarProvider maxSnack={3}>
+        <FontStager />
+        <CssBaseline />
+        <DndProvider backend={HTML5Backend}>
+          <BrowserRouter>
+            <div className={classes.root}>
+              <NetworkSnackbar />
+              {/* Headers */}
+              <Switch>
+                <Route path="/pg/signin" component={null} />
+                <Route path="/pg*" component={NonSigninHeaderComponents} />
+              </Switch>
+              {/* page content */}
+              <WithAuth>
+                <PageContentComponents />
+              </WithAuth>
+            </div>
+          </BrowserRouter>
+        </DndProvider>
+      </SnackbarProvider>
     </MuiThemeProvider>
   );
 }

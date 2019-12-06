@@ -1,3 +1,5 @@
+import { isNewId } from '../../../utils/resource';
+
 export default {
   preSave: formValues => {
     const newValues = formValues;
@@ -10,8 +12,16 @@ export default {
       newValues['/as2/partnerStationInfo/auth/token'] = undefined;
     } else if (newValues['/as2/partnerStationInfo/auth/type'] === 'token') {
       newValues['/as2/partnerStationInfo/auth/basic'] = undefined;
-    } else {
-      newValues['/as2/partnerStationInfo/auth/type'] = undefined;
+    } else if (newValues['/as2/partnerStationInfo/auth/type'] === 'none') {
+      delete newValues['/as2/partnerStationInfo/auth/type'];
+    }
+
+    if (
+      !newValues['/as2/contentBasedFlowRouter'] ||
+      !newValues['/as2/contentBasedFlowRouter']._scriptId ||
+      !newValues['/as2/contentBasedFlowRouter'].function
+    ) {
+      newValues['/as2/contentBasedFlowRouter'] = undefined;
     }
 
     return newValues;
@@ -66,6 +76,20 @@ export default {
     },
     'as2.partnerStationInfo.auth.type': {
       fieldId: 'as2.partnerStationInfo.auth.type',
+      defaultValue: r => {
+        const isNew = isNewId(r._id);
+
+        // if its create
+        if (isNew) return '';
+        const output =
+          r &&
+          r.as2 &&
+          r.as2.partnerStationInfo &&
+          r.as2.partnerStationInfo.auth &&
+          r.as2.partnerStationInfo.auth.type;
+
+        return output || 'none';
+      },
     },
     'as2.partnerStationInfo.auth.failStatusCode': {
       fieldId: 'as2.partnerStationInfo.auth.failStatusCode',
@@ -187,6 +211,9 @@ export default {
     'as2.partnerStationInfo.rateLimit.failValues': {
       fieldId: 'as2.partnerStationInfo.rateLimit.failValues',
     },
+    'as2.contentBasedFlowRouter': {
+      fieldId: 'as2.contentBasedFlowRouter',
+    },
     'as2.concurrencyLevel': { fieldId: 'as2.concurrencyLevel' },
     'as2.preventCanonicalization': { fieldId: 'as2.preventCanonicalization' },
   },
@@ -258,6 +285,11 @@ export default {
           'as2.partnerStationInfo.rateLimit.failPath',
           'as2.partnerStationInfo.rateLimit.failValues',
         ],
+      },
+      {
+        collapsed: true,
+        label: 'Routing Rules',
+        fields: ['as2.contentBasedFlowRouter'],
       },
       {
         collapsed: true,

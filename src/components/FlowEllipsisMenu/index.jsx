@@ -14,7 +14,7 @@ import TrashIcon from '../icons/TrashIcon';
 import CloneIcon from '../icons/CopyIcon';
 import AuditIcon from '../icons/AuditLogIcon';
 import RefIcon from '../icons/ViewReferencesIcon';
-import DetachIcon from '../icons/ConnectionsIcon';
+import DetachIcon from '../icons/unLinkedIcon';
 import CalendarIcon from '../icons/CalendarIcon';
 
 const allActions = {
@@ -136,11 +136,10 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
   // below actions should be made available for this flow.
   if (integrationId) availableActions.push(allActions.detach);
 
-  // TODO: the showMapping prop is hardcoded to always return true. Logic needs
-  // to be added in the data-layer to properly determine this flag.
   if (flowDetails.showMapping) availableActions.push(allActions.mapping);
 
-  availableActions.push(allActions.schedule);
+  if (flowDetails.showSchedule) availableActions.push(allActions.schedule);
+
   availableActions.push(allActions.audit);
   availableActions.push(allActions.references);
   availableActions.push(allActions.clone);

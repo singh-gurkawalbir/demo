@@ -24,9 +24,11 @@ export default function HandlebarsWithDefaults(props) {
     defaultData,
     result,
     error,
-    violations,
     initChangeIdentifier,
   } = useSelector(state => selectors.editor(state, editorId));
+  const violations = useSelector(state =>
+    selectors.editorViolations(state, editorId)
+  );
   const handlebarHelperFunction = useSelector(state =>
     selectors.editorHelperFunctions(state)
   );
@@ -64,7 +66,7 @@ export default function HandlebarsWithDefaults(props) {
         sampleData: props.sampleData,
       })
     );
-    // get Helper functions when the editor intializes
+    // get Helper functions when the editor initializes
     dispatch(actions.editor.refreshHelperFunctions());
   };
 

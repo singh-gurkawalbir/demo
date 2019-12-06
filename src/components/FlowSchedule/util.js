@@ -604,7 +604,7 @@ export const getMetadata = ({
         id: '_keepDeltaBehindFlowId',
         name: '_keepDeltaBehindFlowId',
         type: 'select',
-        visible: isDeltaFlowModel(integration, pg, exp, flow, exports),
+        visible: isDeltaFlowModel(pg, exp, flow, exports),
         label: 'Master flow:',
         defaultValue: resource && resource._keepDeltaBehindFlowId,
         options: getAllDeltaFlows(flows, flow, exports),
@@ -620,7 +620,7 @@ export const getMetadata = ({
           exports
         ),
         visible: !!(
-          isDeltaFlowModel(integration, pg, exp, flow, exports) &&
+          isDeltaFlowModel(pg, exp, flow, exports) &&
           pg &&
           pg._exportId
         ),

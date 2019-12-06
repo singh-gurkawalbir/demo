@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import sift from 'sift';
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector, useDispatch } from 'react-redux';
-import { withRouter, Link } from 'react-router-dom';
-import { IconButton } from '@material-ui/core';
+import { useHistory, Link, useLocation } from 'react-router-dom';
 import * as selectors from '../../../reducers';
 import AddIcon from '../../icons/AddIcon';
 import EditIcon from '../../icons/EditIcon';
@@ -17,14 +16,65 @@ import {
   defaultPatchSetConverter,
   getMissingPatchSet,
 } from '../../../forms/utils';
+import ActionButton from '../../../components/ActionButton';
 
-const useStyles = makeStyles(theme => ({
+const handleAddNewResource = args => {
+  const {
+    dispatch,
+    history,
+    location,
+    resourceType,
+    options,
+    newResourceId,
+  } = args;
+
+  if (
+    [
+      'exports',
+      'imports',
+      'connections',
+      'pageProcessor',
+      'pageGenerator',
+    ].includes(resourceType)
+  ) {
+    let values;
+
+    if (['pageProcessor', 'pageGenerator'].includes(resourceType))
+      values = resourceMeta[resourceType].preSave({
+        application: options.appType,
+        '/name': `New ${options.appType} resource`,
+      });
+    else
+      values = resourceMeta[resourceType].new.preSave({
+        application: options.appType,
+        '/name': `New ${options.appType} resource`,
+      });
+    const patchValues = defaultPatchSetConverter(values);
+    const missingPatches = getMissingPatchSet(
+      patchValues.map(patch => patch.path)
+    );
+
+    dispatch(
+      actions.resource.patchStaged(
+        newResourceId,
+        [...missingPatches, ...patchValues],
+        'value'
+      )
+    );
+  }
+
+  history.push(`${location.pathname}/edit/${resourceType}/${newResourceId}`);
+};
+
+const useStyles = makeStyles({
   root: {
     flexDirection: 'row !important',
     display: 'flex',
     alignItems: 'flex-start',
     '& > div:first-child': {
       width: '100%',
+      marginRight: 6,
+      overflow: 'scroll',
     },
   },
   actions: {
@@ -32,22 +82,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     alignItems: 'flex-start',
   },
-  iconButton: {
-    alignSelf: 'flex-end',
-    border: '1px solid',
-    background: theme.palette.background.paper,
-    marginLeft: 5,
-    borderColor: theme.palette.secondary.lightest,
-    borderRadius: 0,
-    width: 50,
-    height: 50,
-    color: theme.palette.text.hint,
-    '&:hover': {
-      background: theme.palette.background.paper,
-      color: theme.palette.primary.main,
-    },
-  },
-}));
+});
 
 function DynaSelectResource(props) {
   const {
@@ -59,12 +94,14 @@ function DynaSelectResource(props) {
     resourceType,
     allowNew,
     allowEdit,
-    location,
     options,
     filter,
     ignoreEnvironmentFilter,
   } = props;
   const classes = useStyles();
+  const location = useLocation();
+  const dispatch = useDispatch();
+  const history = useHistory();
   const [newResourceId, setNewResourceId] = useState(generateNewId());
   const { resources = [] } = useSelector(state =>
     selectors.resourceList(state, {
@@ -75,6 +112,13 @@ function DynaSelectResource(props) {
   const createdId = useSelector(state =>
     selectors.createdResourceId(state, newResourceId)
   );
+
+  useEffect(() => {
+    if (options.appType) {
+      onFieldChange(id, '');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, options.appType]);
 
   useEffect(() => {
     if (createdId) {
@@ -102,49 +146,19 @@ function DynaSelectResource(props) {
     label: conn.name,
     value: conn._id,
   }));
-  const dispatch = useDispatch();
-  const addNewResource = () => {
-    if (
-      [
-        'exports',
-        'imports',
-        'connections',
-        'pageProcessor',
-        'pageGenerator',
-      ].includes(resourceType)
-    ) {
-      let values;
+  const handleAddNewResourceMemo = useCallback(
+    () =>
+      handleAddNewResource({
+        dispatch,
+        history,
+        location,
+        resourceType,
+        options,
+        newResourceId,
+      }),
+    [dispatch, history, location, newResourceId, options, resourceType]
+  );
 
-      if (['pageProcessor', 'pageGenerator'].includes(resourceType))
-        values = resourceMeta[resourceType].preSave({
-          application: options.appType,
-          '/name': `New ${options.appType} resource`,
-        });
-      else
-        values = resourceMeta[resourceType].new.preSave({
-          application: options.appType,
-          '/name': `New ${options.appType} resource`,
-        });
-      const patchValues = defaultPatchSetConverter(values);
-      const missingPatches = getMissingPatchSet(
-        patchValues.map(patch => patch.path)
-      );
-
-      dispatch(
-        actions.resource.patchStaged(
-          newResourceId,
-          [...missingPatches, ...patchValues],
-          'value'
-        )
-      );
-    }
-
-    props.history.push(
-      `${location.pathname}/edit/${resourceType}/${newResourceId}`
-    );
-  };
-
-  // Disable adding a new resource when the user has selected an existing resource
   return (
     <div className={classes.root}>
       <LoadResources required resources={resourceType}>
@@ -165,29 +179,26 @@ function DynaSelectResource(props) {
       </LoadResources>
       <div className={classes.actions}>
         {allowNew && (
-          <IconButton
+          <ActionButton
             data-test="addNewResource"
-            className={classes.iconButton}
-            onClick={addNewResource}
-            size="small">
+            onClick={handleAddNewResourceMemo}>
             <AddIcon />
-          </IconButton>
+          </ActionButton>
         )}
 
         {allowEdit && (
-          <IconButton
+          // Disable adding a new resource when the user has selected an existing resource
+          <ActionButton
             disabled={!value}
             data-test="editNewResource"
-            className={classes.iconButton}
             component={Link}
-            to={`${location.pathname}/edit/${resourceType}/${value}`}
-            size="small">
+            to={`${location.pathname}/edit/${resourceType}/${value}`}>
             <EditIcon />
-          </IconButton>
+          </ActionButton>
         )}
       </div>
     </div>
   );
 }
 
-export default withRouter(DynaSelectResource);
+export default DynaSelectResource;

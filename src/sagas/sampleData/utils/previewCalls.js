@@ -1,11 +1,11 @@
 import { select, call } from 'redux-saga/effects';
 import deepClone from 'lodash/cloneDeep';
-import { resourceData } from '../../reducers';
-import { SCOPES } from '../resourceForm';
-import { apiCallWithRetry } from '../index';
-import { fetchFlowResources } from './flows/utils';
-import { getLastExportDateTime } from '../../utils/flowData';
-import { isNewId } from '../../utils/resource';
+import { resourceData } from '../../../reducers';
+import { SCOPES } from '../../resourceForm';
+import { apiCallWithRetry } from '../../index';
+import { fetchFlowResources, filterPendingResources } from './flowDataUtils';
+import { getLastExportDateTime } from '../../../utils/flowData';
+import { isNewId, adaptorTypeMap } from '../../../utils/resource';
 
 export function* pageProcessorPreview({
   flowId,
@@ -13,10 +13,11 @@ export function* pageProcessorPreview({
   previewType,
   resourceType = 'exports',
   hidden = false,
+  throwOnError = false,
 }) {
   if (!flowId || !_pageProcessorId) return;
   const { merged } = yield select(resourceData, 'flows', flowId, SCOPES.VALUE);
-  const flow = deepClone(merged);
+  const flow = yield call(filterPendingResources, { flow: deepClone(merged) });
 
   // Incase of no pgs, preview call is stopped here
   if (!flow.pageGenerators || !flow.pageGenerators.length) return;
@@ -73,6 +74,9 @@ export function* pageProcessorPreview({
     return previewData;
   } catch (e) {
     // Error handler
+    if (throwOnError) {
+      throw e;
+    }
   }
 }
 
@@ -80,6 +84,7 @@ export function* exportPreview({
   resourceId,
   hidden = false,
   runOffline = false,
+  throwOnError = false,
 }) {
   const { merged: resource } = yield select(
     resourceData,
@@ -92,6 +97,19 @@ export function* exportPreview({
     body.postData = {
       lastExportDateTime: getLastExportDateTime(),
     };
+  }
+
+  // type Once need not be passed in preview as it gets executed in preview call
+  // so remove type once
+  if (body.type === 'once') {
+    delete body.type;
+    const { adaptorType } = body;
+    const appType = adaptorType && adaptorTypeMap[adaptorType];
+
+    // Manually removing once doc incase of preview to restrict execution on once query - Bug fix IO-11988
+    if (appType && body[appType] && body[appType].once) {
+      delete body[appType].once;
+    }
   }
 
   if (runOffline && body.rawData) {
@@ -120,5 +138,8 @@ export function* exportPreview({
     return previewData;
   } catch (e) {
     // Error handler
+    if (throwOnError) {
+      throw e;
+    }
   }
 }

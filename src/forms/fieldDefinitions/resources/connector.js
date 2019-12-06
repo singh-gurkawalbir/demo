@@ -18,12 +18,24 @@ export default {
   websiteURL: {
     type: 'text',
     label: 'Website URL',
+    validWhen: {
+      matchesRegEx: {
+        pattern:
+          "^(?:http(s)?:\\/\\/)?[\\w.-]+(?:\\.[\\w\\.-]+)+[\\w\\-\\._~:/?#[\\]@!\\$&'\\(\\)\\*\\+,;=.]+$",
+        message: 'Please enter a valid URL.',
+      },
+    },
   },
   contactEmail: {
     type: 'text',
-    delimiter: ',',
     label: 'Contact Emails',
     required: true,
+    validWhen: {
+      matchesRegEx: {
+        pattern: '^\\w+([\\.-]?\\w+)*@\\w+([\\.-]?\\w+)*(\\.\\w{2,3})+$',
+        message: 'Please enter a valid Email.',
+      },
+    },
   },
   installerFunction: {
     type: 'text',
@@ -31,8 +43,9 @@ export default {
     required: true,
   },
   _stackId: {
-    type: 'text',
+    type: 'selectresource',
     label: 'Stack',
+    resourceType: 'stacks',
     required: true,
   },
   uninstallerFunction: {
@@ -77,7 +90,6 @@ export default {
           { label: 'Jobvite', value: 'jobvite' },
           { label: 'LiquidPlanner', value: 'liquidplanner' },
           { label: 'Magento 2', value: 'magento' },
-          { label: 'labelly', value: 'labelly' },
           { label: 'NetSuite', value: 'netsuite' },
           { label: 'OpenAir', value: 'openair' },
           { label: 'PayPal', value: 'paypal' },

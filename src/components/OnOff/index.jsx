@@ -10,6 +10,8 @@ export default {
     disabled,
     storeId,
   }) {
+    // TODO: Connector specific things to be added for schedule drawer incase of !isDisabled && isConnector
+
     const dispatch = useDispatch();
     const enableOrDisableFlow = () => {
       const enable = flow.disabled;
@@ -36,7 +38,8 @@ export default {
                     flow._integrationId,
                     flow._id,
                     storeId,
-                    { '/flowId': flow._id, '/disabled': !enable }
+                    { '/flowId': flow._id, '/disabled': !enable },
+                    { action: 'flowEnableDisable' }
                   )
                 );
               } else {

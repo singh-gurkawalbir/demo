@@ -1,7 +1,7 @@
 import { IconButton } from '@material-ui/core';
 import { useDispatch } from 'react-redux';
 import actions from '../../../../../actions';
-import Icon from '../../../../../components/icons/HookIcon';
+import Icon from '../../../../../components/icons/RegenerateTokenIcon';
 
 export default {
   label: 'Reactivate token',

@@ -113,9 +113,7 @@ export default {
   'netsuite.distributed.sublists': {
     label: 'Sublists to include',
     type: 'refreshableselect',
-    commMetaPath: r =>
-      r &&
-      `netsuite/metadata/suitescript/connections/${r._connectionId}/savedSearches`,
+    filterKey: 'suitescript-sublists',
     multiselect: true,
     placeholder: 'Please select Sublists',
     helpKey: 'export.netsuite.sublists',
@@ -269,8 +267,11 @@ export default {
     label: 'NetSuite distributed disabled',
   },
   'netsuite.distributed.qualifier': {
-    type: 'text',
-    label: 'NetSuite distributed qualifier',
+    label: 'Field Specific Qualification Criteria',
+    type: 'netsuitequalifier',
+    placeholder: 'Define Qualification Criteria',
+    helpKey: 'export.netsuite.qualifier',
+    connectionId: r => r && r._connectionId,
   },
   'netsuite.distributed.hooks.preSend.fileInternalId': {
     type: 'text',

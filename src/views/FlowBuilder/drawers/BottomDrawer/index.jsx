@@ -6,6 +6,7 @@ import clsx from 'clsx';
 import ArrowUpIcon from '../../../../components/icons/ArrowUpIcon';
 import ArrowDownIcon from '../../../../components/icons/ArrowDownIcon';
 import ConnectionsIcon from '../../../../components/icons/ConnectionsIcon';
+import WarningIcon from '../../../../components/icons/WarningIcon';
 import AuditLogIcon from '../../../../components/icons/AuditLogIcon';
 import DebugIcon from '../../../../components/icons/DebugIcon';
 import RunIcon from '../../../../components/icons/RunIcon';
@@ -60,17 +61,22 @@ const useStyles = makeStyles(theme => ({
   customTab: {
     maxWidth: 500,
   },
+  connectionWarning: {
+    color: theme.palette.error.main,
+  },
 }));
 
 function TabPanel({ children, value, index, classes }) {
+  const hidden = value !== index;
+
   return (
     <div
       role="tabpanel"
       className={classes.tabPanel}
-      hidden={value !== index}
+      hidden={hidden}
       id={`tabpanel-${index}`}
       aria-labelledby={`tab-${index}`}>
-      <div>{children}</div>
+      <div>{!hidden && children}</div>
     </div>
   );
 }
@@ -79,6 +85,9 @@ export default function BottomDrawer({ size, setSize, flow }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
+  const isAnyFlowConnectionOffline = useSelector(state =>
+    selectors.isAnyFlowConnectionOffline(state, flow._id)
+  );
   const connectionDebugLogs = useSelector(state => selectors.debugLogs(state));
   const connectionIdNameMap = useSelector(state =>
     selectors.resourceNamesByIds(state, 'connections')
@@ -86,30 +95,26 @@ export default function BottomDrawer({ size, setSize, flow }) {
   const [tabValue, setTabValue] = useState(0);
   const [clearConnectionLogs, setClearConnectionLogs] = useState(true);
   const maxStep = 3; // set maxStep to 4 to allow 100% drawer coverage.
+  const handleSizeChange = useCallback(
+    direction => () => {
+      if (size === maxStep && direction === 1) return setSize(0);
 
-  function handleSizeChange(direction) {
-    if (size === maxStep && direction === 1) return setSize(0);
+      if (size === 0 && direction === -1) return setSize(maxStep);
 
-    if (size === 0 && direction === -1) return setSize(maxStep);
+      setSize(size + direction);
+    },
+    [setSize, size]
+  );
+  const handleTabChange = useCallback(
+    (event, newValue) => {
+      setTabValue(newValue);
 
-    setSize(size + direction);
-  }
-
-  function handleTabChange(event, newValue) {
-    setTabValue(newValue);
-
-    if (size === 0) setSize(1);
-  }
-
-  function tabProps(index) {
-    return {
-      id: `tab-${index}`,
-      'aria-controls': `tabpanel-${index}`,
-    };
-  }
-
+      if (size === 0) setSize(1);
+    },
+    [setSize, size]
+  );
   const handleDebugLogsClose = useCallback(
-    (event, connectionId) => {
+    connectionId => event => {
       event.stopPropagation();
       setTabValue(0);
       dispatch(actions.connection.clearDebugLogs(connectionId));
@@ -126,6 +131,13 @@ export default function BottomDrawer({ size, setSize, flow }) {
       setClearConnectionLogs(false);
     }
   }, [clearConnectionLogs, connectionDebugLogs, dispatch]);
+
+  function tabProps(index) {
+    return {
+      id: `tab-${index}`,
+      'aria-controls': `tabpanel-${index}`,
+    };
+  }
 
   return (
     <Drawer
@@ -151,7 +163,13 @@ export default function BottomDrawer({ size, setSize, flow }) {
           aria-label="scrollable auto tabs example">
           <Tab
             {...tabProps(0)}
-            icon={<ConnectionsIcon />}
+            icon={
+              isAnyFlowConnectionOffline ? (
+                <WarningIcon className={classes.connectionWarning} />
+              ) : (
+                <ConnectionsIcon />
+              )
+            }
             label="Connections"
           />
           <Tab {...tabProps(1)} icon={<RunIcon />} label="Run Dashboard" />
@@ -170,9 +188,7 @@ export default function BottomDrawer({ size, setSize, flow }) {
                       <div>
                         {connectionIdNameMap[connectionId]} - DEBUG
                         <IconButton
-                          onClick={event =>
-                            handleDebugLogsClose(event, connectionId)
-                          }>
+                          onClick={handleDebugLogsClose(connectionId)}>
                           <CloseIcon />
                         </IconButton>
                       </div>
@@ -185,13 +201,13 @@ export default function BottomDrawer({ size, setSize, flow }) {
           <IconButton
             data-test="increaseFlowBuilderBottomDrawer"
             size="small"
-            onClick={() => handleSizeChange(1)}>
+            onClick={handleSizeChange(1)}>
             <ArrowUpIcon />
           </IconButton>
           <IconButton
             data-test="decreaseFlowBuilderBottomDrawer"
             size="small"
-            onClick={() => handleSizeChange(-1)}>
+            onClick={handleSizeChange(-1)}>
             <ArrowDownIcon />
           </IconButton>
         </div>

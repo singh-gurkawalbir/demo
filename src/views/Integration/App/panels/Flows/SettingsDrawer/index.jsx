@@ -7,11 +7,13 @@ import * as selectors from '../../../../../../reducers';
 import { integrationSettingsToDynaFormMetadata } from '../../../../../../forms/utils';
 import { ActionsFactory } from '../../../../../../components/ResourceFormFactory';
 import DrawerTitleBar from '../../../../../../components/drawer/TitleBar';
+import LoadResources from '../../../../../../components/LoadResources';
+import getRoutePath from '../../../../../../utils/routePaths';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
     marginTop: theme.appBarHeight,
-    width: 660,
+    width: 824,
     border: 'solid 1px',
     borderColor: theme.palette.secondary.lightest,
     boxShadow: `-4px 4px 8px rgba(0,0,0,0.15)`,
@@ -25,14 +27,14 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function SettingsDrawer({ integrationId, storeId, sectionId }) {
+function SettingsDrawer({ integrationId, storeId }) {
   const classes = useStyles();
   const history = useHistory();
   const match = useRouteMatch();
   const { flowId } = match.params;
   const flow =
     useSelector(state => selectors.resource(state, 'flows', flowId)) || {};
-  const flowName = flow.name || flow._Id;
+  const flowName = flow.name || flow._id;
   // TODO: Fix this convoluted way of getting settings for a specific flow.
   // the data layer should have a simple, clean, selector api, that, given a flowId,
   // returns the flow settings. Right now to look up this info, i need to
@@ -44,32 +46,18 @@ function SettingsDrawer({ integrationId, storeId, sectionId }) {
   const formState = useSelector(state =>
     selectors.integrationAppSettingsFormState(state, integrationId, flowId)
   );
-  const { flowSettings } = useSelector(state =>
-    selectors.integrationAppFlowSettings(
-      state,
-      integrationId,
-      sectionId,
-      storeId
-    )
+  const { settings: fields, sections } = useSelector(state =>
+    selectors.getIAFlowSettings(state, integrationId, flowId)
   );
-  const settings = flowSettings.find(f => f._id === flowId);
-  // this data-layer is ridiculously bad.
-  const anotherFlowSettings = {};
-
-  if (settings.settings) {
-    anotherFlowSettings.fields = settings.settings;
-  } else if (settings.sections) {
-    anotherFlowSettings.sections = settings.sections;
-  }
-
   const fieldMeta = integrationSettingsToDynaFormMetadata(
-    anotherFlowSettings,
+    { fields, sections },
     integrationId,
-    true
+    true,
+    { resource: flow }
   );
   const handleClose = useCallback(() => {
-    history.goBack();
-  }, [history]);
+    history.push(getRoutePath(match.url));
+  }, [history, match.url]);
 
   return (
     <Drawer
@@ -103,7 +91,9 @@ export default function SettingsDrawerRoute(props) {
 
   return (
     <Route exact path={`${match.url}/:flowId/settings`}>
-      <SettingsDrawer {...props} />
+      <LoadResources required resources="exports,imports,flows,connections">
+        <SettingsDrawer {...props} />
+      </LoadResources>
     </Route>
   );
 }

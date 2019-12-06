@@ -37,6 +37,11 @@ export default function ReadmeSection({ integrationId }) {
   const monitorLevelAccess = useSelector(state =>
     selectors.isFormAMonitorLevelAccess(state, integrationId)
   );
+  // TODO: Shiva, can you please enhance the permission api to return
+  // the necessary tile lever perms to show/hide the readme code editor.
+  // const permissions = useSelector(state =>
+  //   selectors.permissions(state, 'account1')
+  // );
   const [value, setValue] = useState(integration && integration.readme);
 
   function handleChange(value) {

@@ -84,11 +84,13 @@ export function ActionsFactory(props) {
 
   // When action buttons is provided in the metadata then we generate the action buttons for you
   if (actions) {
-    const ActionButtons = actions.map(action => {
-      const Action = consolidatedActions[action.id];
+    const ActionButtons =
+      actions.length > 0 &&
+      actions.map(action => {
+        const Action = consolidatedActions[action.id];
 
-      return <Action key={action.id} {...props} {...action} />;
-    });
+        return <Action key={action.id} {...props} {...action} />;
+      });
 
     return <DynaForm {...props}>{ActionButtons}</DynaForm>;
   }

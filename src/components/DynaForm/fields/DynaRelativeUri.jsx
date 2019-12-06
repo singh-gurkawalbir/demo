@@ -2,18 +2,22 @@ import { useState, useEffect, Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { TextField } from '@material-ui/core';
-import OpenInNewIcon from 'mdi-react/OpenInNewIcon';
 import * as selectors from '../../../reducers';
 import UrlEditorDialog from '../../../components/AFE/UrlEditor/Dialog';
 import getFormattedSampleData from '../../../utils/sampleData';
 import actions from '../../../actions';
 import ActionButton from '../../ActionButton';
+import ExitIcon from '../../icons/ExitIcon';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   textField: {
     minWidth: 200,
   },
-});
+  exitButton: {
+    float: 'right',
+    marginLeft: theme.spacing(1),
+  },
+}));
 
 // TODO(Aditya): remove this component and use DynaRelativeURIWithLookup after refractor
 export default function DynaRelativeUri(props) {
@@ -31,7 +35,6 @@ export default function DynaRelativeUri(props) {
     required,
     value,
     resourceId,
-    useSampleDataAsArray,
     resourceType,
     flowId,
     label,
@@ -73,7 +76,6 @@ export default function DynaRelativeUri(props) {
     getFormattedSampleData({
       connection,
       sampleData,
-      useSampleDataAsArray,
       resourceType,
       resourceName,
     }),
@@ -122,8 +124,11 @@ export default function DynaRelativeUri(props) {
           disabled={disabled}
         />
       )}
-      <ActionButton data-test={id} onClick={handleEditorClick}>
-        <OpenInNewIcon />
+      <ActionButton
+        data-test={id}
+        onClick={handleEditorClick}
+        className={classes.exitButton}>
+        <ExitIcon />
       </ActionButton>
       <TextField
         key={id}

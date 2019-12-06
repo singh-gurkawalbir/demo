@@ -35,7 +35,10 @@ export default {
         field: 'file.type',
         is: ['filedefinition'],
       },
-      { field: 'file.output', is: ['records'] },
+      {
+        field: 'inputMode',
+        is: ['records'],
+      },
     ],
   },
   'fixed.format': {
@@ -48,7 +51,10 @@ export default {
         field: 'file.type',
         is: ['fixed'],
       },
-      { field: 'file.output', is: ['records'] },
+      {
+        field: 'inputMode',
+        is: ['records'],
+      },
     ],
   },
   'edifact.format': {
@@ -61,7 +67,10 @@ export default {
         field: 'file.type',
         is: ['delimited/edifact'],
       },
-      { field: 'file.output', is: ['records'] },
+      {
+        field: 'inputMode',
+        is: ['records'],
+      },
     ],
   },
   'file.filedefinition.rules': {
@@ -72,7 +81,10 @@ export default {
         field: 'file.type',
         is: ['filedefinition', 'fixed', 'delimited/edifact'],
       },
-      { field: 'file.output', is: ['records'] },
+      {
+        field: 'inputMode',
+        is: ['records'],
+      },
     ],
     refreshOptionsOnChangesTo: [
       'edix12.format',
@@ -85,6 +97,7 @@ export default {
       r.file &&
       r.file.fileDefinition &&
       r.file.fileDefinition._fileDefinitionId,
+    sampleData: r => r && r.sampleData,
   },
   uploadFile: {
     type: 'uploadfile',
@@ -100,6 +113,7 @@ export default {
   'file.csv': {
     type: 'csvparse',
     label: 'Configure CSV parse options',
+    defaultValue: r => (r.file && r.file.csv) || {},
     visibleWhenAll: [
       {
         field: 'file.type',

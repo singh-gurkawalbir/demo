@@ -5,9 +5,9 @@ export default {
     const newValues = { ...formValues };
 
     if (newValues['/inputMode'] === 'blob') {
-      newValues['/netsuite_da/operation'] =
-        newValues['/netsuite_da/blob/operation'];
-      newValues['/netsuite_da/recordType'] = 'file';
+      newValues['/netsuite/recordType'] = 'file';
+      newValues['/distributed'] = false;
+      newValues['/adaptorType'] = 'NetSuiteImport';
     }
 
     return {
@@ -23,7 +23,7 @@ export default {
     },
     inputMode: {
       id: 'inputMode',
-      type: 'radiogroup',
+      type: 'mode',
       label: 'Input Mode',
       options: [
         {
@@ -50,7 +50,7 @@ export default {
     'netsuite.file.name': { fieldId: 'netsuite.file.name' },
     'netsuite.file.fileType': { fieldId: 'netsuite.file.fileType' },
     'netsuite.file.folder': { fieldId: 'netsuite.file.folder' },
-    'netsuite_da.blob.operation': { fieldId: 'netsuite_da.blob.operation' },
+    'netsuite.operation': { fieldId: 'netsuite.operation' },
     ignoreExisting: {
       fieldId: 'ignoreExisting',
       visibleWhenAll: [
@@ -104,7 +104,7 @@ export default {
       'distributed',
       'netsuite_da.recordType',
       'netsuite_da.operation',
-      'netsuite_da.blob.operation',
+      'netsuite.operation',
       'ignoreExisting',
       'ignoreMissing',
       'netsuite_da.internalIdLookup.expression',

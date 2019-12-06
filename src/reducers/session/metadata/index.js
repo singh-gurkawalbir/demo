@@ -41,6 +41,13 @@ export default (
       return { ...state, preview: newState };
     }
 
+    case actionTypes.METADATA.ASSISTANT_PREVIEW_RESET: {
+      newState = { ...state.preview };
+      delete newState[resourceId];
+
+      return { ...state, preview: newState };
+    }
+
     case actionTypes.METADATA.REFRESH: {
       newState = { ...state.application };
 
@@ -143,7 +150,10 @@ export const optionsFromMetadata = ({
   }
 
   const metaFilter = metadataFilterMap[filterKey || 'default'];
-  const transformedData = metaFilter(data);
+  const transformedData = metaFilter(data, {
+    applicationResource,
+    connectionId,
+  });
 
   return { data: transformedData, status, errorMessage, changeIdentifier };
 };

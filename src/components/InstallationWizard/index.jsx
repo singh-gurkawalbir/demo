@@ -25,7 +25,6 @@ import {
 import jsonUtil from '../../utils/json';
 import { INSTALL_STEP_TYPES } from '../../utils/constants';
 import { SCOPES } from '../../sagas/resourceForm';
-import getRoutePath from '../../utils/routePaths';
 import Loader from '../Loader';
 import Spinner from '../Spinner';
 
@@ -75,33 +74,26 @@ export default function InstallationWizard(props) {
   const [installInProgress, setInstallInProgress] = useState(false);
   const [connection, setSelectedConnectionId] = useState(null);
   const [stackId, setShowStackDialog] = useState(null);
-  const [isSetupComplete, setIsSetupComplete] = useState(false);
+  // const [isSetupComplete, setIsSetupComplete] = useState(false);
   const dispatch = useDispatch();
-  const { connectionMap, createdComponents } =
-    useSelector(state => {
-      if (type === 'clone') {
-        return selectors.cloneData(state, resourceType, resourceId);
-      } else if (type === 'template') {
-        return selectors.templateSetup(state, templateId);
-      }
-    }) || {};
-
-  useEffect(() => {
-    if (
-      installSteps.length &&
-      !installSteps.reduce((result, step) => result || !step.completed, false)
-    ) {
-      setIsSetupComplete(true);
-    } else if (!installSteps.length) {
-      if (type === 'clone') {
-        props.history.push(
-          getRoutePath(`/clone/${resourceType}/${resourceId}/preview`)
-        );
-      } else {
-        props.history.push(getRoutePath('/dashboard'));
-      }
-    }
-  }, [installSteps, props.history, resourceId, resourceType, type]);
+  const isSetupComplete = useSelector(state =>
+    selectors.isSetupComplete(state, { resourceId, resourceType, templateId })
+  );
+  const { connectionMap } =
+    useSelector(state =>
+      selectors.installSetup(state, {
+        templateId,
+        resourceType,
+        resourceId,
+      })
+    ) || {};
+  const redirectTo = useSelector(state =>
+    selectors.redirectToOnInstallationComplete(state, {
+      resourceType,
+      resourceId,
+      templateId,
+    })
+  );
 
   useEffect(() => {
     if (isSetupComplete) {
@@ -125,11 +117,18 @@ export default function InstallationWizard(props) {
     runKey,
   ]);
   useEffect(() => {
-    if (createdComponents) {
+    if (redirectTo) {
       setInstallInProgress(false);
-      handleSetupComplete(createdComponents);
+      handleSetupComplete(redirectTo);
     }
-  }, [createdComponents, handleSetupComplete]);
+  }, [
+    dispatch,
+    handleSetupComplete,
+    redirectTo,
+    resourceId,
+    resourceType,
+    templateId,
+  ]);
 
   if (!installSteps) {
     return <Typography>Invalid Configuration</Typography>;

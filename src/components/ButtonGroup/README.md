@@ -1,7 +1,7 @@
 ```js
     const Button = require('@material-ui/core/Button').default;
-    <ButtonsGroup>
+    <ButtonGroup>
           <Button color="primary" variant="outlined">Save</Button>
           <Button variant="text" color="primary">Cancel</Button>
-    </ButtonsGroup>
+    </ButtonGroup>
 ```

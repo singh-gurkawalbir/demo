@@ -41,6 +41,9 @@ const useStyles = makeStyles(theme => ({
       },
     },
   },
+  subTitle: {
+    float: 'left',
+  },
 }));
 
 export default function CeligoPageBar({
@@ -78,7 +81,8 @@ export default function CeligoPageBar({
               <Grid item>
                 <Typography variant="h3">
                   {history && (
-                    <IconButton onClick={() => history.goBack()}>
+                    // eslint-disable-next-line react/jsx-handler-names
+                    <IconButton onClick={history.goBack}>
                       <ArrowLeftIcon />
                     </IconButton>
                   )}
@@ -106,7 +110,9 @@ export default function CeligoPageBar({
                     </Fragment>
                   )}
                 </Typography>
-                <Typography variant="caption">{subtitle}</Typography>
+                <Typography variant="caption" className={classes.subTitle}>
+                  {subtitle}
+                </Typography>
               </Grid>
               <Grid item>{children}</Grid>
             </Grid>

@@ -1,4 +1,5 @@
 import { useSelector, useDispatch } from 'react-redux';
+import clsx from 'clsx';
 import {
   makeStyles,
   MenuItem,
@@ -11,7 +12,6 @@ import actions from '../../actions';
 import ArrowLeftIcon from '../icons/ArrowLeftIcon';
 import ArrowRightIcon from '../icons/ArrowRightIcon';
 import CeligoSelect from '../CeligoSelect';
-import StoreSelector from './StoreSelector';
 import FlowSelector from './FlowSelector';
 
 const useStyles = makeStyles(theme => ({
@@ -20,6 +20,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     flexWrap: 'wrap',
     alignItems: 'center',
+
     '& > *': {
       marginRight: 10,
       '&:first-child': {
@@ -27,37 +28,9 @@ const useStyles = makeStyles(theme => ({
       },
     },
   },
-  select: {
-    background: theme.palette.background.paper,
-    border: '1px solid',
-    paddingRight: theme.spacing(3),
-    borderColor: theme.palette.secondary.lightest,
-    transitionProperty: 'border',
-    transitionDuration: theme.transitions.duration.short,
-    transitionTimingFunction: theme.transitions.easing.easeInOut,
-    overflow: 'hidden',
-    height: 42,
-    textAlign: 'left',
-    borderRadius: 2,
-    '& > div': {
-      maxWidth: '85%',
-    },
-    '& > Label': {
-      paddingTop: 10,
-    },
-    '&:hover': {
-      borderColor: theme.palette.primary.main,
-    },
-    '& > *': {
-      padding: [[0, 0, 0, 12]],
-    },
-    '& > div > div ': {
-      paddingBottom: 5,
-    },
-    '& svg': {
-      right: theme.spacing(1),
-      paddingLeft: 0,
-    },
+  filterButton: {
+    borderRadius: theme.spacing(0.5),
+    height: theme.spacing(4.5),
   },
   retry: {
     minWidth: 90,
@@ -67,13 +40,6 @@ const useStyles = makeStyles(theme => ({
   },
   status: {
     minWidth: 134,
-  },
-  flow: {
-    minWidth: 130,
-    maxWidth: 200,
-  },
-  selectEmpty: {
-    marginTop: theme.spacing.double,
   },
   hideEmptyLabel: {
     marginTop: theme.spacing(0.5),
@@ -141,7 +107,7 @@ function Filters({
   return (
     <div className={classes.root}>
       <CeligoSelect
-        className={classes.retry}
+        className={clsx(classes.filterButton, classes.retry)}
         data-test="retryJobs"
         onChange={e => onActionClick(e.target.value)}
         displayEmpty
@@ -159,7 +125,7 @@ function Filters({
       <CeligoSelect
         disabled={disableActions}
         data-test="resolveJobs"
-        className={classes.resolve}
+        className={clsx(classes.filterButton, classes.resolve)}
         onChange={e => onActionClick(e.target.value)}
         displayEmpty
         value="">
@@ -173,16 +139,9 @@ function Filters({
       </CeligoSelect>
 
       {!flowId && (
-        <StoreSelector
-          integrationId={integrationId}
-          value={storeId}
-          onChange={storeId => patchFilter('storeId', storeId)}
-        />
-      )}
-
-      {!flowId && (
         <FlowSelector
           integrationId={integrationId}
+          data-test="selectAFlow"
           storeId={storeId}
           value={_flowId}
           onChange={flowId => patchFilter('flowId', flowId)}
@@ -190,7 +149,8 @@ function Filters({
       )}
 
       <CeligoSelect
-        className={classes.status}
+        data-test="flowStatusFilter"
+        className={clsx(classes.filterButton, classes.status)}
         onChange={e => patchFilter('status', e.target.value)}
         value={status}>
         {[
@@ -211,12 +171,14 @@ function Filters({
       </CeligoSelect>
       <div className={classes.hideLabel}>
         <FormControlLabel
+          data-test="hideEmptyJobsFilter"
           label="Hide empty jobs"
           classes={{ label: classes.hideEmptyLabel }}
           control={
             <Checkbox
               // indeterminate={numSelected > 0 && numSelected < rowCount}
               checked={hideEmpty}
+              data-test="hideEmptyJobs"
               color="primary"
               onChange={e => patchFilter('hideEmpty', e.target.checked)}
             />
@@ -228,6 +190,7 @@ function Filters({
         <IconButton
           disabled={currentPage === 0}
           size="small"
+          data-test="decrementPage"
           onClick={() => handlePageChange(-1)}>
           <ArrowLeftIcon />
         </IconButton>
@@ -239,6 +202,7 @@ function Filters({
             : firstRowIndex + rowsPerPage} of {totalJobs}
         </div>
         <IconButton
+          data-test="incrementPage"
           disabled={maxPage === currentPage}
           size="small"
           onClick={() => handlePageChange(1)}>

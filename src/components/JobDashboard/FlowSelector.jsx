@@ -4,10 +4,12 @@ import * as selectors from '../../reducers';
 import CeligoSelect from '../CeligoSelect';
 import { STANDALONE_INTEGRATION } from '../../utils/constants';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
   flow: {
     minWidth: 130,
     maxWidth: 200,
+    borderRadius: theme.spacing(0.5),
+    height: theme.spacing(4.5),
   },
 }));
 
@@ -41,6 +43,7 @@ export default function FlowSelector({
 
   return (
     <CeligoSelect
+      data-test="selectAFlowFilter"
       className={classes.flow}
       onChange={e => onChange(e.target.value)}
       displayEmpty

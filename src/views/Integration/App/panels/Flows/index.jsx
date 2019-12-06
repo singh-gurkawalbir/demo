@@ -21,6 +21,8 @@ import MappingDrawer from './MappingDrawer';
 const useStyles = makeStyles(theme => ({
   root: {
     backgroundColor: theme.palette.common.white,
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
   },
   subNav: {
     minWidth: 200,
@@ -31,6 +33,7 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     height: '100%',
     padding: theme.spacing(0, 0, 3, 0),
+    overflowX: 'scroll',
   },
   listItem: {
     color: theme.palette.text.primary,
@@ -77,7 +80,10 @@ function FlowList({ integrationId, storeId }) {
 
       <PanelHeader title={`${section.title} flows`}>
         {hasAdvancedSettings && (
-          <IconTextButton component={Link} to={`${sectionId}/configure`}>
+          <IconTextButton
+            data-test={`configure${section.title}`}
+            component={Link}
+            to={`${sectionId}/configure`}>
             <SettingsIcon /> Configure {section.title}
           </IconTextButton>
         )}
@@ -85,6 +91,7 @@ function FlowList({ integrationId, storeId }) {
       {flows.map(f => (
         <FlowCard
           key={f._id}
+          storeId={storeId}
           flowId={f._id}
           excludeActions={['detach', 'clone', 'delete']}
         />

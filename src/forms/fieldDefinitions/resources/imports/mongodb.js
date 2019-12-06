@@ -5,8 +5,14 @@ export default {
     options: [
       {
         items: [
-          { label: 'InsertMany', value: 'insertMany' },
-          { label: 'UpdateOne', value: 'updateOne' },
+          {
+            label: 'InsertMany',
+            value: 'insertMany',
+          },
+          {
+            label: 'UpdateOne',
+            value: 'updateOne',
+          },
         ],
       },
     ],
@@ -25,11 +31,20 @@ export default {
   'mongodb.lookupType': {
     type: 'select',
     label: 'How should we identify existing records?',
+    required: true,
+    defaultValue: r =>
+      r && r.mongodb && r.mongodb.ignoreExtract ? 'source' : 'lookup',
     options: [
       {
         items: [
-          { label: 'Records have a specific field populated', value: 'source' },
-          { label: 'Run a dynamic search against Mongodb', value: 'lookup' },
+          {
+            label: 'Records have a specific field populated',
+            value: 'source',
+          },
+          {
+            label: 'Run a dynamic search against Mongodb',
+            value: 'lookup',
+          },
         ],
       },
     ],
@@ -43,28 +58,43 @@ export default {
         is: ['insertMany'],
       },
     ],
-    requiredWhen: [
-      {
-        field: 'ignoreExisting',
-        is: [true],
-      },
+  },
+  'mongodb.document': {
+    id: 'mongodb.document',
+    type: 'sqlquerybuilder',
+    hideDefaultData: true,
+    label: 'Launch Query Builder',
+    refreshOptionsOnChangesTo: ['mongodb.method'],
+    title: 'MongoDB Data Builder',
+    visibleWhen: [
       {
         field: 'mongodb.method',
         is: ['insertMany'],
       },
     ],
   },
-  'mongodb.document': {
-    id: 'mongodb.document',
+  'mongodb.update': {
+    id: 'mongodb.update',
     type: 'sqlquerybuilder',
-    arrayIndex: 0,
+    hideDefaultData: true,
     label: 'Launch Query Builder',
-    refreshOptionsOnChangesTo: ['mongodb.lookups', 'mongodb.method'],
-  },
-  'mongodb.ignoreLookupFilters': {
-    type: 'textarea',
-    label: 'Ignore Lookup Filters',
+    refreshOptionsOnChangesTo: ['mongodb.method'],
+    title: 'MongoDB Data Builder',
     visibleWhen: [
+      {
+        field: 'mongodb.method',
+        is: ['updateOne'],
+      },
+    ],
+  },
+  'mongodb.ignoreLookupFilter': {
+    type: 'textarea',
+    label: 'Ignore Lookup Filter',
+    visibleWhenAll: [
+      {
+        field: 'ignoreExisting',
+        is: [true],
+      },
       {
         field: 'mongodb.lookupType',
         is: ['lookup'],
@@ -72,15 +102,11 @@ export default {
     ],
   },
   'mongodb.filter': {
-    type: 'textarea',
+    type: 'editor',
+    mode: 'json',
     label: 'Filter',
+    required: true,
     visibleWhen: [
-      {
-        field: 'mongodb.method',
-        is: ['updateOne'],
-      },
-    ],
-    requiredWhen: [
       {
         field: 'mongodb.method',
         is: ['updateOne'],
@@ -100,17 +126,8 @@ export default {
   'mongodb.ignoreExtract': {
     type: 'text',
     label: 'Which Field?',
+    required: true,
     visibleWhen: [
-      {
-        field: 'ignoreMissing',
-        is: [true],
-      },
-      {
-        field: 'mongodb.lookupType',
-        is: ['source'],
-      },
-    ],
-    requiredWhen: [
       {
         field: 'ignoreMissing',
         is: [true],

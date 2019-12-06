@@ -277,11 +277,12 @@ const auditLogs = {
   clear: () => action(actionTypes.AUDIT_LOGS_CLEAR),
 };
 const connectors = {
-  refreshMetadata: (fieldType, fieldName, _integrationId) =>
+  refreshMetadata: (fieldType, fieldName, _integrationId, options) =>
     action(actionTypes.CONNECTORS.METADATA_REQUEST, {
       fieldType,
       fieldName,
       _integrationId,
+      options,
     }),
   failedMetadata: (fieldName, _integrationId) =>
     action(actionTypes.CONNECTORS.METADATA_FAILURE, {
@@ -315,10 +316,11 @@ const metadata = {
       commMetaPath,
       addInfo,
     }),
-  refresh: (connectionId, commMetaPath) =>
+  refresh: (connectionId, commMetaPath, addInfo) =>
     action(actionTypes.METADATA.REFRESH, {
       connectionId,
       commMetaPath,
+      addInfo,
     }),
   receivedCollection: (metadata, connectionId, commMetaPath) =>
     action(actionTypes.METADATA.RECEIVED, {
@@ -336,6 +338,10 @@ const metadata = {
     action(actionTypes.METADATA.ASSISTANT_PREVIEW_RECEIVED, {
       resourceId,
       previewData,
+    }),
+  resetAssistantImportPreview: resourceId =>
+    action(actionTypes.METADATA.ASSISTANT_PREVIEW_RESET, {
+      resourceId,
     }),
 };
 const fileDefinitions = {
@@ -410,12 +416,13 @@ const integrationApp = {
         integration,
         license,
       }),
-    update: (integrationId, flowId, storeId, values) =>
+    update: (integrationId, flowId, storeId, values, options) =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.UPDATE, {
         integrationId,
         flowId,
         storeId,
         values,
+        options,
       }),
     clear: (integrationId, flowId) =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.FORM.CLEAR, {
@@ -664,6 +671,8 @@ const importSampleData = {
 };
 const flowData = {
   init: flow => action(actionTypes.FLOW_DATA.INIT, { flow }),
+  requestStage: (flowId, resourceId, stage) =>
+    action(actionTypes.FLOW_DATA.STAGE_REQUEST, { flowId, resourceId, stage }),
   requestPreviewData: (flowId, resourceId, previewType) =>
     action(actionTypes.FLOW_DATA.PREVIEW_DATA_REQUEST, {
       flowId,
@@ -691,12 +700,20 @@ const flowData = {
       processor,
       processedData,
     }),
-  requestSampleData: (flowId, resourceId, resourceType, stage) =>
+  receivedError: (flowId, resourceId, stage, error) =>
+    action(actionTypes.FLOW_DATA.RECEIVED_ERROR, {
+      flowId,
+      resourceId,
+      stage,
+      error,
+    }),
+  requestSampleData: (flowId, resourceId, resourceType, stage, refresh) =>
     action(actionTypes.FLOW_DATA.SAMPLE_DATA_REQUEST, {
       flowId,
       resourceId,
       resourceType,
       stage,
+      refresh,
     }),
   reset: (flowId, resourceId) =>
     action(actionTypes.FLOW_DATA.RESET, { flowId, resourceId }),
@@ -760,10 +777,18 @@ const mapping = {
     }),
   patchField: (id, field, index, value) =>
     action(actionTypes.MAPPING.PATCH_FIELD, { id, field, index, value }),
+  updateGenerates: (id, generateFields) =>
+    action(actionTypes.MAPPING.UPDATE_GENERATES, { id, generateFields }),
   updateLookup: (id, lookups) =>
     action(actionTypes.MAPPING.UPDATE_LOOKUP, { id, lookups }),
   patchSettings: (id, index, value) =>
     action(actionTypes.MAPPING.PATCH_SETTINGS, { id, index, value }),
+  patchIncompleteGenerates: (id, index, value) =>
+    action(actionTypes.MAPPING.PATCH_INCOMPLETE_GENERATES, {
+      id,
+      index,
+      value,
+    }),
   delete: (id, index) => action(actionTypes.MAPPING.DELETE, { id, index }),
 };
 // #region DynaForm Actions

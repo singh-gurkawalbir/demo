@@ -1,7 +1,7 @@
 import actionTypes from '../../../actions/types';
 
 export default (state = {}, action) => {
-  const { type, metadata, fieldName, _integrationId } = action;
+  const { type, metadata, fieldName, fieldType, _integrationId } = action;
   const newState = { ...state };
 
   if (!newState[_integrationId]) {
@@ -10,18 +10,19 @@ export default (state = {}, action) => {
 
   switch (type) {
     case actionTypes.CONNECTORS.METADATA_REQUEST:
-      newState[_integrationId][fieldName] = { isLoading: true };
+      newState[_integrationId][fieldName] = { isLoading: true, fieldType };
 
       return newState;
     case actionTypes.CONNECTORS.METADATA_RECEIVED:
       newState[_integrationId][fieldName] = {
         isLoading: false,
+        fieldType,
         data: metadata,
       };
 
       return newState;
     case actionTypes.CONNECTORS.METADATA_FAILURE:
-      newState[_integrationId][fieldName] = { isLoading: false };
+      newState[_integrationId][fieldName] = { isLoading: false, fieldType };
 
       return newState;
     case actionTypes.CONNECTORS.METADATA_CLEAR:

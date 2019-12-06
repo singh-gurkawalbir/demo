@@ -165,7 +165,7 @@ export default {
     },
     outputMode: {
       id: 'outputMode',
-      type: 'radiogroup',
+      type: 'mode',
       visibleWhenAll: [
         visibleWhenIsNew,
         { field: 'application', is: ['netsuite'] },
@@ -295,7 +295,7 @@ export default {
       expression.push({ _connectorId: { $exists: false } });
       const filter = { $and: expression };
 
-      return { filter };
+      return { filter, appType: app.type };
     }
 
     return null;

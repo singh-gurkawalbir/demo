@@ -7,10 +7,26 @@ import Spinner from '../../../Spinner';
 import RefreshIcon from '../../../icons/RefreshIcon';
 import DynaSelect from '../DynaSelect';
 import DynaMultiSelect from '../DynaMultiSelect';
+import ActionButton from '../../../ActionButton';
 
 const useStyles = makeStyles(theme => ({
   inlineElements: {
-    display: 'inline',
+    display: 'flex',
+    flexDirection: `row !important`,
+  },
+  label: {
+    '& + div': {
+      width: '100%',
+    },
+  },
+  refreshButton: {
+    marginLeft: 5,
+    marginRight: 0,
+  },
+  spinner: {
+    marginLeft: 5,
+    width: 50,
+    height: 50,
   },
   root: {
     display: 'flex !important',
@@ -135,7 +151,7 @@ export default function RefreshGenericResource(props) {
         key={id}
         disabled={disabled}
         className={classes.inlineElements}>
-        <InputLabel shrink htmlFor={id}>
+        <InputLabel shrink htmlFor={id} className={classes.label}>
           {label}
         </InputLabel>
         {cloneElement(children, {
@@ -143,9 +159,18 @@ export default function RefreshGenericResource(props) {
           options: [{ items: options || [] }],
         })}
         {!isLoading && !removeRefresh && (
-          <RefreshIcon onClick={handleRefreshResource} />
+          <ActionButton
+            onClick={handleRefreshResource}
+            className={classes.refreshButton}
+            data-test="refreshResource">
+            <RefreshIcon />
+          </ActionButton>
         )}
-        {fieldData && isLoading && <Spinner />}
+        {fieldData && isLoading && (
+          <span className={classes.spinner}>
+            <Spinner size={48} color="primary" />
+          </span>
+        )}
         {description && <FormHelperText>{description}</FormHelperText>}
         {fieldError && (
           <FormHelperText error="true">{fieldError}</FormHelperText>
