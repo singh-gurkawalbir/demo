@@ -1,6 +1,6 @@
 import { Fragment, useCallback, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Redirect } from 'react-router-dom';
+import { Redirect, generatePath } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Select, MenuItem } from '@material-ui/core';
 import * as selectors from '../../../reducers';
@@ -80,6 +80,9 @@ export default function IntegrationApp({ match, history }) {
   );
   const defaultStoreId = useSelector(state =>
     selectors.defaultStoreId(state, integrationId, storeId)
+  );
+  const redirectTo = useSelector(state =>
+    selectors.shouldRedirect(state, integrationId)
   );
   // TODO: This selector isn't actually returning add on state.
   // it is returning ALL integration settings state.
@@ -168,6 +171,21 @@ export default function IntegrationApp({ match, history }) {
   // call for integrations.
   if (!integration || !integration._id) {
     return <LoadResources required resources="integrations" />;
+  }
+
+  if (redirectTo) {
+    const path = generatePath(match.path, {
+      integrationId,
+      storeId,
+      tab: redirectTo,
+    });
+
+    dispatch(actions.integrationApp.settings.clearRedirect(integrationId));
+    history.push(path);
+
+    return null;
+    // TODO: This approach navigating to the url but not rendering the component.
+    // return <Redirect push={false} to={path} />;
   }
 
   const { supportsMultiStore, storeLabel } = integration.settings || {};

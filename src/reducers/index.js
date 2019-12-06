@@ -986,10 +986,14 @@ export function getFlowsAssociatedExportFromIAMetadata(state, fieldMeta) {
 
 export function integrationAppSettingsFormState(state, integrationId, flowId) {
   return fromSession.integrationAppSettingsFormState(
-    state.session,
+    state && state.session,
     integrationId,
     flowId
   );
+}
+
+export function shouldRedirect(state, integrationId) {
+  return fromSession.shouldRedirect(state && state.session, integrationId);
 }
 
 export function integrationAppAddOnState(state, integrationId) {

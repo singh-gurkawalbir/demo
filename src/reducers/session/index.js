@@ -245,6 +245,13 @@ export function integrationAppSettingsFormState(state, integrationId, flowId) {
   );
 }
 
+export function shouldRedirect(state, integrationId) {
+  return fromIntegrationApps.shouldRedirect(
+    state && state.integrationApps,
+    integrationId
+  );
+}
+
 export function integrationAppAddOnState(state, integrationId) {
   return fromIntegrationApps.integrationAppAddOnState(
     state && state.integrationApps,

@@ -386,6 +386,15 @@ const integrationApp = {
         integration,
         options,
       }),
+    redirect: (integrationId, redirectTo) =>
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.REDIRECT, {
+        integrationId,
+        redirectTo,
+      }),
+    clearRedirect: integrationId =>
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.CLEAR_REDIRECT, {
+        integrationId,
+      }),
     requestedUpgrade: licenseId =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.UPGRADE_REQUESTED, {
         licenseId,
