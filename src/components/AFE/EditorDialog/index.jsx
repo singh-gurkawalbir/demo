@@ -147,7 +147,8 @@ export default function EditorDialog(props) {
       <DialogContent
         style={size}
         className={classes.dialogContent}
-        key={`${id}-${layout}`}>
+        // key to be dependent on layout and fullscreen for content to re-render to fit in properly.
+        key={`${id}-${layout}-${fullScreen ? 'lg' : 'sm'}`}>
         {// Is there a better way to do this?
         children && cloneElement(children, { layout })}
       </DialogContent>

@@ -6,9 +6,9 @@ import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import { Input, Chip, MenuItem } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import actions from '../../../actions';
-import * as selectors from '../../../reducers';
-import CeligoSelect from '../../CeligoSelect';
+import actions from '../../../../actions';
+import * as selectors from '../../../../reducers';
+import CeligoSelect from '../../../CeligoSelect';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -36,7 +36,11 @@ const useStyles = makeStyles(theme => ({
   container: {
     padding: 10,
     backgroundColor: theme.palette.background.default,
+    overflowY: 'auto',
     height: '100%',
+    '& > div:first-child': {
+      flexDirection: 'column',
+    },
   },
   formControl: {
     margin: theme.spacing(1),
@@ -51,17 +55,20 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function CsvParsePanel(props) {
+export default function ImportCsvParsePanel(props) {
   const { editorId, disabled } = props;
   const classes = useStyles(props);
   const {
     columnDelimiter = '',
     rowDelimiter = '',
     keyColumns = [],
-    hasHeaderRow = true,
+    includeHeader = false,
     multipleRowsPerRecord = false,
-    trimSpaces = true,
     result,
+    wrapWithQuotes = false,
+    replaceTabWithSpace = false,
+    replaceNewlineWithSpace = false,
+    truncateLastRowDelimiter = false,
   } = useSelector(state => selectors.editor(state, editorId));
   const dispatch = useDispatch();
   const patchEditor = (option, value) => {
@@ -120,32 +127,19 @@ export default function CsvParsePanel(props) {
             </option>
           </CeligoSelect>
         </FormControl>
+        <FormControlLabel
+          disabled={disabled}
+          control={
+            <Checkbox
+              color="primary"
+              checked={includeHeader}
+              data-test="includeHeader"
+              onChange={() => patchEditor('includeHeader', !includeHeader)}
+            />
+          }
+          label="Include Header"
+        />
 
-        <FormControlLabel
-          disabled={disabled}
-          control={
-            <Checkbox
-              // Why it is commented ?
-              color="primary"
-              checked={hasHeaderRow}
-              data-test="hasHeaderRow"
-              onChange={() => patchEditor('hasHeaderRow', !hasHeaderRow)}
-            />
-          }
-          label="Has Header Row"
-        />
-        <FormControlLabel
-          disabled={disabled}
-          control={
-            <Checkbox
-              color="primary"
-              checked={trimSpaces}
-              data-test="trimSpaces"
-              onChange={() => patchEditor('trimSpaces', !trimSpaces)}
-            />
-          }
-          label="Trim Spaces"
-        />
         <FormControlLabel
           disabled={disabled}
           control={
@@ -189,6 +183,68 @@ export default function CsvParsePanel(props) {
             </CeligoSelect>
           </FormControl>
         )}
+        <FormControlLabel
+          disabled={disabled}
+          control={
+            <Checkbox
+              color="primary"
+              checked={truncateLastRowDelimiter}
+              data-test="truncateLastRowDelimiter"
+              onChange={() => {
+                patchEditor(
+                  'truncateLastRowDelimiter',
+                  !truncateLastRowDelimiter
+                );
+              }}
+            />
+          }
+          label="Truncare last row delimiter"
+        />
+        <FormControlLabel
+          disabled={disabled}
+          control={
+            <Checkbox
+              color="primary"
+              checked={wrapWithQuotes}
+              data-test="wrapWithQuotes"
+              onChange={() => {
+                patchEditor('wrapWithQuotes', !wrapWithQuotes);
+              }}
+            />
+          }
+          label="Wrap with quotes"
+        />
+        <FormControlLabel
+          disabled={disabled}
+          control={
+            <Checkbox
+              color="primary"
+              checked={replaceTabWithSpace}
+              data-test="replaceTabWithSpace"
+              onChange={() => {
+                patchEditor('replaceTabWithSpace', !replaceTabWithSpace);
+              }}
+            />
+          }
+          label="Replace tab with space"
+        />
+        <FormControlLabel
+          disabled={disabled}
+          control={
+            <Checkbox
+              color="primary"
+              checked={replaceNewlineWithSpace}
+              data-test="replaceNewlineWithSpace"
+              onChange={() => {
+                patchEditor(
+                  'replaceNewlineWithSpace',
+                  !replaceNewlineWithSpace
+                );
+              }}
+            />
+          }
+          label="Replace new line with space"
+        />
       </FormGroup>
     </div>
   );

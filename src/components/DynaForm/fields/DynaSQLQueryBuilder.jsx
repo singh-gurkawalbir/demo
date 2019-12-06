@@ -26,7 +26,12 @@ export default function DynaSQLQueryBuilder(props) {
     resourceType,
     hideDefaultData,
   } = props;
-  const { lookups: lookupObj, queryType } = options;
+  const {
+    lookups: lookupObj,
+    modelMetadata,
+    modelMetadataFieldId,
+    queryType,
+  } = options;
   const lookupFieldId = lookupObj && lookupObj.fieldId;
   const lookups = (lookupObj && lookupObj.data) || [];
   const [showEditor, setShowEditor] = useState(false);
@@ -125,22 +130,29 @@ export default function DynaSQLQueryBuilder(props) {
   }
 
   let defaultData = {};
+  let formattedDefaultData;
 
-  if (sampleData) {
-    if (
-      Array.isArray(sampleData) &&
-      !!sampleData.length &&
-      typeof sampleData[0] === 'object'
-    ) {
-      defaultData = cloneDeep(getUnionObject(sampleData));
-    } else defaultData = cloneDeep(sampleData);
+  if (modelMetadata) {
+    formattedDefaultData = JSON.stringify({ data: modelMetadata }, null, 2);
+  } else {
+    if (sampleData) {
+      if (
+        Array.isArray(sampleData) &&
+        !!sampleData.length &&
+        typeof sampleData[0] === 'object'
+      ) {
+        defaultData = cloneDeep(getUnionObject(sampleData));
+      } else defaultData = cloneDeep(sampleData);
+    }
+
+    formattedDefaultData = JSON.stringify(
+      { data: getDefaultData(defaultData) },
+      null,
+      2
+    );
   }
 
-  const formattedDefaultData = JSON.stringify(
-    { data: getDefaultData(defaultData) },
-    null,
-    2
-  );
+  // the behavior is different from ampersand where we were displaying sample data directly. It is to be wrapped as {data: sampleData}
   const formattedSampleData = JSON.stringify({ data: sampleData }, null, 2);
   const handleEditorClick = () => {
     setShowEditor(!showEditor);
@@ -148,7 +160,7 @@ export default function DynaSQLQueryBuilder(props) {
 
   const handleClose = (shouldCommit, editorValues) => {
     if (shouldCommit) {
-      const { template } = editorValues;
+      const { template, defaultData } = editorValues;
 
       if (typeof arrayIndex === 'number' && Array.isArray(value)) {
         // save to array at position arrayIndex
@@ -159,6 +171,20 @@ export default function DynaSQLQueryBuilder(props) {
       } else {
         // save to field
         onFieldChange(id, template);
+      }
+
+      if (modelMetadataFieldId && !hideDefaultData) {
+        let parsedDefaultData;
+
+        try {
+          parsedDefaultData = JSON.parse(defaultData);
+
+          if (parsedDefaultData.data) {
+            onFieldChange(modelMetadataFieldId, parsedDefaultData.data);
+          }
+        } catch (e) {
+          // do nothing
+        }
       }
     }
 
