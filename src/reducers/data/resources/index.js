@@ -408,7 +408,7 @@ export function resourceList(
   }
 
   const filtered = filteredByEnvironment.filter(
-    filter ? sift(filter) : matchTest
+    filter ? sift({ $and: [filter, matchTest] }) : matchTest
   );
 
   result.filtered = filtered.length;
