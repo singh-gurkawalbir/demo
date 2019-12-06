@@ -78,18 +78,15 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
           break;
 
         case 'delete':
-          defaultConfirmDialog(
-            'Are you sure you want to delete this flow?',
-            () => {
-              dispatch(actions.resource.delete('flows', flowId));
-              // TODO: If this is re-used for IA flows, this route
-              // would not be the same if flow._connectorId had a value.
-              // Also note we want to replace vs push because a user may be
-              // sitting on a page with the deleted flowId in the url.
-              // we do not want a browser history to contain the deleted flow id.
-              history.replace(`/pg/integrations/${integrationId || 'none'}`);
-            }
-          );
+          defaultConfirmDialog('delete this flow?', () => {
+            dispatch(actions.resource.delete('flows', flowId));
+            // TODO: If this is re-used for IA flows, this route
+            // would not be the same if flow._connectorId had a value.
+            // Also note we want to replace vs push because a user may be
+            // sitting on a page with the deleted flowId in the url.
+            // we do not want a browser history to contain the deleted flow id.
+            history.replace(`/pg/integrations/${integrationId || 'none'}`);
+          });
           break;
 
         case 'mapping':
