@@ -150,6 +150,13 @@ function MappingDrawer() {
                 onClick={handleSave}>
                 Save
               </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                data-test="saveImportMapping"
+                onClick={handleSave}>
+                Cancel
+              </Button>
             </Fragment>
           ) : (
             <SelectImport flowId={flowId} />
