@@ -1763,6 +1763,10 @@ export function resourceData(state, resourceType, id, scope) {
     type = 'connectorLicenses';
   }
 
+  if (resourceType.indexOf('/accesstokens') >= 0) {
+    type = 'accesstokens';
+  }
+
   const master = resource(state, type, id);
   const { patch, conflict } = fromSession.stagedResource(
     state.session,

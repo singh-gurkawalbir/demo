@@ -27,6 +27,11 @@ export function* commitStagedChanges({ resourceType, id, scope }) {
 
   if (!patch) return; // nothing to do.
 
+  if (!isNew && resourceType.indexOf('/accesstokens') >= 0) {
+    // eslint-disable-next-line no-param-reassign
+    resourceType = 'accesstokens';
+  }
+
   const path = isNew ? `/${resourceType}` : `/${resourceType}/${id}`;
 
   // only updates need to check for conflicts.

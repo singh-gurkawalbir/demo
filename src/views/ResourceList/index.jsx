@@ -15,6 +15,7 @@ import ShowMoreDrawer from '../../components/drawer/ShowMore';
 import KeywordSearch from '../../components/KeywordSearch';
 import CheckPermissions from '../../components/CheckPermissions';
 import { PERMISSIONS } from '../../utils/constants';
+import { connectorFilter } from './util';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -36,6 +37,7 @@ function ResourceList(props) {
   const list = useSelector(state =>
     selectors.resourceListWithPermissions(state, {
       type: resourceType,
+      filter: connectorFilter(resourceType),
       ...{ ...defaultFilter, ...filter },
     })
   );

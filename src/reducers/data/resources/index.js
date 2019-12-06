@@ -23,6 +23,10 @@ function replaceOrInsertResource(state, resourceType, resourceValue) {
     type = 'connectorLicenses';
   }
 
+  if (type.indexOf('/accesstokens') >= 0) {
+    type = 'accesstokens';
+  }
+
   if (!state[type]) {
     return { ...state, [type]: [resource] };
   }
