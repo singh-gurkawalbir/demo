@@ -26,7 +26,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export function MultiSubsidiaryMapping(props) {
+export default function DynaMultiSubsidiaryMapping(props) {
   const { optionsMap, _integrationId, id, onDataChange } = props;
   const addSupportsRefreshToOptions = option => ({
     ...option,
@@ -112,7 +112,7 @@ export function MultiSubsidiaryMapWidgetDialog(props) {
   );
 }
 
-export default function DynaMultiSubsidiaryMapping(props) {
+export function MultiSubsidiaryMapping(props) {
   const [showEditor, setShowEditor] = useState(false);
   const classes = useStyles();
   const { id, onFieldChange, title } = props;
