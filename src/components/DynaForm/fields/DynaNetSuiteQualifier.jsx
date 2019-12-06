@@ -30,7 +30,7 @@ export default function DynaNetSuiteQualifier(props) {
   const [showEditor, setShowEditor] = useState(false);
   const classes = useStyles();
   const {
-    disabled,
+    // disabled,
     errorMessages,
     id,
     isValid,
@@ -100,7 +100,7 @@ export default function DynaNetSuiteQualifier(props) {
           id={id}
           value={rule}
           onClose={handleClose}
-          disabled={disabled}
+          // disabled={disabled}
           options={options}
         />
       )}
