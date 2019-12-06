@@ -78,7 +78,6 @@ export default function DynaMultiSelect(props) {
     required,
   } = props;
   const classes = useStyles();
-  // TODO: This must be handled better
   let processedValue = value || [];
 
   if (valueDelimiter && typeof value === 'string') {
