@@ -27,9 +27,10 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function DynaMultiSubsidiaryMapping(props) {
-  const { optionsMap, _integrationId, id, onDataChange } = props;
+  const { optionsMap, _integrationId, id } = props;
   const addSupportsRefreshToOptions = option => ({
     ...option,
+    required: ['paymentAccount', 'subsidiary'].includes(option.id),
     supportsRefresh: option.id !== 'dummyCustomer',
   });
   const modifiedOptionsMap = optionsMap.map(addSupportsRefreshToOptions);
@@ -37,13 +38,6 @@ export default function DynaMultiSubsidiaryMapping(props) {
   const { isLoading, shouldReset, data: metadata, fieldType } = useSelector(
     state =>
       selectors.connectorMetadata(state, id, null, _integrationId, optionsMap)
-  );
-  const handleValueChange = useCallback(
-    (tableid, value = []) => {
-      onDataChange(value);
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [id]
   );
   const handleRefreshClick = useCallback(
     fieldId => {
@@ -70,7 +64,6 @@ export default function DynaMultiSubsidiaryMapping(props) {
       isLoading={isLoading ? fieldType : false}
       shouldReset={shouldReset}
       metadata={metadata}
-      onFieldChange={handleValueChange}
       handleCleanupHandler={handleCleanup}
       handleRefreshClickHandler={handleRefreshClick}
       optionsMap={modifiedOptionsMap}
