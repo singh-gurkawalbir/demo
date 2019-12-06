@@ -87,6 +87,7 @@ export default function InputWithLookupHandlebars(props) {
     required,
     value,
     connectionType,
+    connectionId,
   } = props;
   const classes = useStyles();
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -173,6 +174,7 @@ export default function InputWithLookupHandlebars(props) {
   const options = {
     isSQLLookup: isSqlImport,
     sampleData,
+    connectionId,
   };
   const suggestions = getSuggestionsFromLookup(lookups, handleUpdate, options);
   const handleSuggestions = e => {

@@ -38,7 +38,7 @@ export default function DynaRelativeUri(props) {
     resourceType,
     flowId,
     label,
-    options,
+    options = {},
   } = props;
   const { resourceName } = options;
   const connection = useSelector(state =>

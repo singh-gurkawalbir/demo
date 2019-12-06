@@ -56,12 +56,13 @@ export default function AddEditLookup(props) {
     onSave(isEdit, lookupObj);
   };
 
-  const { isSQLLookup, sampleData } = options;
+  const { isSQLLookup, sampleData, connectionId } = options;
   const fieldMeta = lookupMetadata.getLookupMetadata({
     lookup,
     showDynamicLookupOnly,
     isSQLLookup,
     sampleData,
+    connectionId,
   });
 
   return (
