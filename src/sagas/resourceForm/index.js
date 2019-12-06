@@ -1,4 +1,12 @@
-import { call, put, select, takeEvery } from 'redux-saga/effects';
+import {
+  call,
+  put,
+  select,
+  takeEvery,
+  take,
+  fork,
+  cancel,
+} from 'redux-saga/effects';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
@@ -258,6 +266,23 @@ export function* submitFormValues({ resourceType, resourceId, values, match }) {
   );
 }
 
+export function* submitResourceForm(params) {
+  const submitTask = yield fork(submitFormValues, params);
+  const action = yield take(actionTypes.RESOURCE_FORM.SUBMIT_ABORTED);
+  const { resourceType, resourceId } = params;
+
+  if (
+    action &&
+    action.resourceType === resourceType &&
+    action.resourceId === resourceId
+  ) {
+    // perform submit cleanup
+    yield cancel(submitTask);
+
+    yield put(actions.resource.clearStaged(resourceId));
+  }
+}
+
 export function* saveResourceWithDefinitionID({ formValues, definitionId }) {
   const { resourceId, resourceType, values } = formValues;
   const newValues = { ...values };
@@ -420,6 +445,6 @@ export const resourceFormSagas = [
   takeEvery(actionTypes.RESOURCE.INIT_CUSTOM_FORM, initCustomForm),
   takeEvery(actionTypes.RESOURCE.PATCH_FORM_FIELD, patchFormField),
   takeEvery(actionTypes.RESOURCE_FORM.INIT, initFormValues),
-  takeEvery(actionTypes.RESOURCE_FORM.SUBMIT, submitFormValues),
+  takeEvery(actionTypes.RESOURCE_FORM.SUBMIT, submitResourceForm),
   ...connectionSagas,
 ];

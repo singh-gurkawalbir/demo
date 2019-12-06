@@ -42,6 +42,7 @@ export default function reducer(state = {}, action) {
         ...state,
         [key]: {
           ...state[key],
+          submitAborted: false,
           submitComplete: false,
           submitFailed: false,
           formValues: undefined,
@@ -59,6 +60,9 @@ export default function reducer(state = {}, action) {
         ...state,
         [key]: { ...state[key], submitFailed: true, formValues },
       };
+
+    case actionTypes.RESOURCE_FORM.SUBMIT_ABORTED:
+      return { ...state, [key]: { submitAborted: true } };
     case actionTypes.RESOURCE_FORM.CLEAR:
       return { ...state, [key]: {} };
     default:
@@ -86,8 +90,8 @@ export function resourceFormSaveProcessTerminated(
   const key = `${resourceType}-${resourceId}`;
 
   if (!state[key]) return false;
-  const { submitFailed, submitCompleted } = state[key];
+  const { submitFailed, submitCompleted, submitAborted } = state[key];
 
-  return !!(submitFailed || submitCompleted);
+  return !!(submitFailed || submitCompleted || submitAborted);
 }
 // #endregion

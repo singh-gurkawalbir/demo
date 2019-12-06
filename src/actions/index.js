@@ -835,6 +835,11 @@ const resourceForm = {
       resourceType,
       resourceId,
     }),
+  submitAborted: (resourceType, resourceId) =>
+    action(actionTypes.RESOURCE_FORM.SUBMIT_ABORTED, {
+      resourceType,
+      resourceId,
+    }),
   clear: (resourceType, resourceId) =>
     action(actionTypes.RESOURCE_FORM.CLEAR, { resourceType, resourceId }),
 };

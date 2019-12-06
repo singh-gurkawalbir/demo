@@ -31,7 +31,13 @@ export function* commitStagedChanges({ resourceType, id, scope }) {
 
   // only updates need to check for conflicts.
   if (!isNew) {
-    const origin = yield call(apiCallWithRetry, { path });
+    let origin;
+
+    try {
+      origin = yield call(apiCallWithRetry, { path });
+    } catch (error) {
+      return { error };
+    }
 
     if (origin.lastModified !== master.lastModified) {
       let conflict = jsonPatch.compare(master, origin);

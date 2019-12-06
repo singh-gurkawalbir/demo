@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import { Fragment, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Route } from 'react-router-dom';
 import { makeStyles, Typography, IconButton } from '@material-ui/core';
@@ -77,6 +77,11 @@ export default function Panel(props) {
   const newResourceId = useSelector(state =>
     selectors.createdResourceId(state, id)
   );
+  const abortAndClose = useCallback(() => {
+    dispatch(actions.resourceForm.submitAborted(resourceType, id));
+    onClose();
+    dispatch(actions.resource.clearStaged(id));
+  }, [dispatch, id, onClose, resourceType]);
   // if this form is for a page processor, we don't know if
   // the new resource is an export or import. We determine this by
   // peeking into the patch set from the first step in PP/PG creation.
@@ -232,7 +237,7 @@ export default function Panel(props) {
             cancelButtonLabel="Cancel"
             submitButtonLabel={submitButtonLabel}
             onSubmitComplete={handleSubmitComplete}
-            onCancel={onClose}
+            onCancel={abortAndClose}
             {...props}
           />
         </LoadResources>
@@ -241,7 +246,7 @@ export default function Panel(props) {
       <Route
         path={`${match.url}/:operation(add|edit)/:resourceType/:id`}
         render={props => (
-          <Panel {...props} zIndex={zIndex + 1} onClose={onClose} />
+          <Panel {...props} zIndex={zIndex + 1} onClose={abortAndClose} />
         )}
       />
     </Fragment>
