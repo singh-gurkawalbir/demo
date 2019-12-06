@@ -1,5 +1,5 @@
+import ResourceDrawerLink from '../../../ResourceDrawerLink';
 import Delete from '../../actions/Delete';
-import { getResourceLink } from '../../../CeligoTable/util';
 import AuditLogs from '../../actions/AuditLogs';
 import Reactivate from '../../actions/AccessTokens/Reactivate';
 import Revoke from '../../actions/AccessTokens/Revoke';
@@ -13,8 +13,9 @@ export default {
   columns: [
     {
       heading: 'Name',
-      value: (r, actionProps, location) =>
-        getResourceLink('accesstokens', r, location),
+      value: function TokenDrawerLink(r) {
+        return <ResourceDrawerLink resourceType="accesstokens" resource={r} />;
+      },
       orderBy: 'name',
     },
     {

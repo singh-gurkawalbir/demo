@@ -225,7 +225,11 @@ export default {
   'file.csv': {
     type: 'csvparse',
     label: 'Configure CSV parse options',
-    defaultValue: r => (r.file && r.file.csv) || {},
+    defaultValue: r =>
+      (r.file && r.file.csv) || {
+        rowsToSkip: 0,
+        trimSpaces: true,
+      },
     visibleWhenAll: [
       {
         field: 'file.type',

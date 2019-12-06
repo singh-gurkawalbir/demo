@@ -36,6 +36,12 @@ export default {
       ).toISOString();
     }
 
+    if (accessTokenData['/fullAccess'] === 'true') {
+      accessTokenData['/fullAccess'] = true;
+    } else {
+      accessTokenData['/fullAccess'] = false;
+    }
+
     return accessTokenData;
   },
 };

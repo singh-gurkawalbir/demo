@@ -10,6 +10,7 @@ import * as selectors from '../../../../../../reducers';
 import actions from '../../../../../../actions';
 import DrawerTitleBar from '../../../../../../components/drawer/TitleBar';
 import LoadResources from '../../../../../../components/LoadResources';
+import ButtonGroup from '../../../../../../components/ButtonGroup';
 import StandaloneMapping from '../../../../../../components/AFE/ImportMapping/StandaloneMapping';
 import SelectImport from './SelectImport';
 
@@ -20,7 +21,7 @@ const useStyles = makeStyles(theme => ({
     border: 'solid 1px',
     borderColor: theme.palette.secondary.lightest,
     boxShadow: `-4px 4px 8px rgba(0,0,0,0.15)`,
-    backgroundColor: theme.palette.background.default,
+    backgroundColor: theme.palette.background.white,
     zIndex: theme.zIndex.drawer + 1,
   },
   content: {
@@ -62,62 +63,68 @@ function MappingDrawer() {
   // mappingUtil.validateMappings, this could be done within the mapping selector.
   // Also note that we already have an editor interface and all efforts should be
   // to have the same interface across all AFEs. Currently mapping config is an outlier.
-  const handleSave = useCallback(() => {
-    const {
-      isSuccess,
-      errMessage: validationErrMsg,
-    } = mappingUtil.validateMappings(mappings);
+  const handleSave = useCallback(
+    close => () => {
+      const {
+        isSuccess,
+        errMessage: validationErrMsg,
+      } = mappingUtil.validateMappings(mappings);
 
-    if (!isSuccess) {
-      enqueueSnackbar({
-        message: validationErrMsg,
-        variant: 'error',
+      if (!isSuccess) {
+        enqueueSnackbar({
+          message: validationErrMsg,
+          variant: 'error',
+        });
+
+        if (close) handleClose();
+
+        return;
+      }
+
+      let mappingConfig = mappings.map(
+        ({ index, hardCodedValueTmp, rowIdentifier, ...others }) => others
+      );
+
+      mappingConfig = mappingUtil.generateMappingsForApp({
+        mappings: mappingConfig,
+        generateFields,
+        appType: application,
       });
 
-      return;
-    }
+      if (!mappingConfig) return;
 
-    let mappingConfig = mappings.map(
-      ({ index, hardCodedValueTmp, rowIdentifier, ...others }) => others
-    );
+      const patchSet = [
+        {
+          op: 'replace',
+          path: mappingUtil.getMappingPath(adaptorType),
+          value: mappingConfig,
+        },
+      ];
 
-    mappingConfig = mappingUtil.generateMappingsForApp({
-      mappings: mappingConfig,
+      // update _lookup only if its being passed as param to function
+      if (lookups) {
+        patchSet.push({
+          op: 'replace',
+          path: lookupUtil.getLookupPath(adaptorType),
+          value: lookups,
+        });
+      }
+
+      dispatch(actions.resource.patchStaged(importId, patchSet, 'value'));
+      dispatch(actions.resource.commitStaged('imports', importId, 'value'));
+    },
+    [
+      adaptorType,
+      application,
+      dispatch,
+      enqueueSnackbar,
       generateFields,
-      appType: application,
-    });
-
-    if (!mappingConfig) return;
-
-    const patchSet = [
-      {
-        op: 'replace',
-        path: mappingUtil.getMappingPath(adaptorType),
-        value: mappingConfig,
-      },
-    ];
-
-    // update _lookup only if its being passed as param to function
-    if (lookups) {
-      patchSet.push({
-        op: 'replace',
-        path: lookupUtil.getLookupPath(adaptorType),
-        value: lookups,
-      });
-    }
-
-    dispatch(actions.resource.patchStaged(importId, patchSet, 'value'));
-    dispatch(actions.resource.commitStaged('imports', importId, 'value'));
-  }, [
-    adaptorType,
-    application,
-    dispatch,
-    enqueueSnackbar,
-    generateFields,
-    importId,
-    lookups,
-    mappings,
-  ]);
+      handleClose,
+      importId,
+      lookups,
+      mappings,
+    ]
+  );
 
   return (
     <Drawer
@@ -143,13 +150,28 @@ function MappingDrawer() {
                   flowId={flowId}
                 />
               </div>
-              <Button
-                variant="contained"
-                color="primary"
-                data-test="saveImportMapping"
-                onClick={handleSave}>
-                Save
-              </Button>
+              <ButtonGroup>
+                <Button
+                  variant="outlined"
+                  color="secondary"
+                  data-test="saveImportMapping"
+                  onClick={handleSave()}>
+                  Save
+                </Button>
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  data-test="saveImportMapping"
+                  onClick={handleSave(true)}>
+                  Save & Close
+                </Button>
+                <Button
+                  variant="text"
+                  data-test="saveImportMapping"
+                  onClick={handleClose}>
+                  Cancel
+                </Button>
+              </ButtonGroup>
             </Fragment>
           ) : (
             <SelectImport flowId={flowId} />

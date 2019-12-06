@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { Button } from '@material-ui/core';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
@@ -18,7 +19,7 @@ export default function Hooks(props) {
     resourceId,
     flowId,
   } = props;
-  const [enquesnackbar] = useEnqueueSnackbar();
+  const [enqueueSnackbar] = useEnqueueSnackbar();
   const { merged: resource } = useSelector(state =>
     resourceData(state, resourceType, resourceId, 'value')
   );
@@ -27,44 +28,49 @@ export default function Hooks(props) {
     resourceId,
     flowId,
   });
-  const handleSubmit = values => {
-    const { hookType } = values;
-    const selectedHook = {};
-    let isInvalidHook = false;
+  const handleSubmit = useCallback(
+    values => {
+      const { hookType } = values;
+      const selectedHook = {};
+      let isInvalidHook = false;
 
-    if (resourceType === 'exports') {
-      const value = values[`${hookType}-preSavePage`];
+      if (resourceType === 'exports') {
+        const value = values[`${hookType}-preSavePage`];
 
-      if (!isValidHook(value)) {
-        isInvalidHook = true;
-      } else {
-        selectedHook.preSavePage = value;
-      }
-    } else {
-      importHooksList.forEach(hook => {
-        const value = values[`${hookType}-${hook}`];
-
-        if (value) {
-          if (!isValidHook(value, true)) {
-            isInvalidHook = true;
-
-            return;
-          }
-
-          selectedHook[hook] = value;
+        if (!isValidHook(value)) {
+          isInvalidHook = true;
+        } else {
+          selectedHook.preSavePage = value;
         }
-      });
-    }
+      } else {
+        importHooksList.forEach(hook => {
+          const value = values[`${hookType}-${hook}`];
 
-    if (isInvalidHook) {
-      return enquesnackbar({
-        message: 'Please fill the mandatory fields',
-        variant: 'error',
-      });
-    }
+          if (value) {
+            if (!isValidHook(value, true)) {
+              isInvalidHook = true;
 
-    onSave(selectedHook);
-  };
+              return;
+            }
+
+            selectedHook[hook] = value;
+          }
+        });
+      }
+
+      if (isInvalidHook) {
+        return enqueueSnackbar({
+          message: 'Please fill the mandatory fields',
+          variant: 'error',
+        });
+      }
+
+      onSave(selectedHook);
+    },
+    [enqueueSnackbar, onSave, resourceType]
+  );
+
+  // console.log('RENDER: Hooks');
 
   return (
     <LoadResources resources="scripts, stacks">
