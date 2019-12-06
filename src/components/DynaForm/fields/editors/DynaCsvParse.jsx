@@ -37,6 +37,7 @@ export default function DynaCsvParse(props) {
     if (shouldCommit) {
       const {
         columnDelimiter,
+        rowDelimiter,
         hasHeaderRow,
         keyColumns,
         rowsToSkip,
@@ -45,6 +46,7 @@ export default function DynaCsvParse(props) {
 
       onFieldChange(id, {
         columnDelimiter,
+        rowDelimiter,
         hasHeaderRow,
         keyColumns,
         rowsToSkip,
