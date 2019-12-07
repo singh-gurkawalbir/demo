@@ -1,5 +1,44 @@
 import DynaTableView from './DynaTable';
 
+const optionsMap = [
+  {
+    id: 'fieldName',
+    label: 'Field Description',
+    type: 'input',
+    required: true,
+    space: 4,
+  },
+  {
+    id: 'startPosition',
+    label: 'Start Position',
+    required: true,
+    type: 'number',
+    space: 1,
+  },
+  {
+    id: 'endPosition',
+    label: 'End Position',
+    required: true,
+    type: 'number',
+    space: 1,
+  },
+  {
+    id: 'length',
+    label: 'Length',
+    required: false,
+    type: 'number',
+    readOnly: true,
+    space: 1,
+  },
+  {
+    id: 'regex',
+    label: 'Regex',
+    required: false,
+    type: 'input',
+    space: 4,
+  },
+];
+
 export default function DynaTrueFixedWidthColmnMapper(props) {
   const { value, onFieldChange } = props;
   let newValue;
@@ -53,45 +92,6 @@ export default function DynaTrueFixedWidthColmnMapper(props) {
       );
     }
   };
-
-  const optionsMap = [
-    {
-      id: 'fieldName',
-      label: 'Field Description',
-      type: 'input',
-      required: true,
-      space: 4,
-    },
-    {
-      id: 'startPosition',
-      label: 'Start Position',
-      required: true,
-      type: 'number',
-      space: 1,
-    },
-    {
-      id: 'endPosition',
-      label: 'End Position',
-      required: true,
-      type: 'number',
-      space: 1,
-    },
-    {
-      id: 'length',
-      label: 'Length',
-      required: false,
-      type: 'number',
-      readOnly: true,
-      space: 1,
-    },
-    {
-      id: 'regex',
-      label: 'Regex',
-      required: false,
-      type: 'input',
-      space: 4,
-    },
-  ];
 
   return (
     <DynaTableView

@@ -428,9 +428,12 @@ function FlowBuilder() {
 
       <CeligoPageBar
         title={
-          <EditableText disabled={isViewMode} onChange={handleTitleChange}>
-            {flow.name}
-          </EditableText>
+          <EditableText
+            disabled={isViewMode}
+            text={flow.name}
+            defaultText={`Unnamed (id:${flowId})`}
+            onChange={handleTitleChange}
+          />
         }
         subtitle={`Last saved: ${isNewFlow ? 'Never' : flow.lastModified}`}
         infoText={flow.description}>

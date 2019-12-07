@@ -1,4 +1,4 @@
-import { useReducer, useEffect, useState } from 'react';
+import { useReducer, useEffect, useState, useCallback } from 'react';
 import produce from 'immer';
 import { makeStyles } from '@material-ui/core/styles';
 import {
@@ -330,7 +330,7 @@ export const DynaTable = props => {
                     )}
                   </Grid>
                 ))}
-                <Grid item key="delete_button">
+                <Grid item key="delete_button" xs={1}>
                   <ActionButton
                     data-test={`deleteTableRow-${arr.row}`}
                     aria-label="delete"
@@ -351,6 +351,7 @@ export const DynaTable = props => {
 export default function CollapsableTable(props) {
   const { title, collapsable = false } = props;
   const [shouldExpand, setShouldExpand] = useState(false);
+  const handleClick = useCallback(() => setShouldExpand(expand => !expand), []);
 
   return collapsable ? (
     <ExpansionPanel
@@ -358,7 +359,7 @@ export default function CollapsableTable(props) {
       expanded={shouldExpand}>
       <ExpansionPanelSummary
         data-test={title}
-        onClick={() => setShouldExpand(expand => !expand)}
+        onClick={handleClick}
         expandIcon={<ExpandMoreIcon />}>
         <Typography>{title}</Typography>
       </ExpansionPanelSummary>

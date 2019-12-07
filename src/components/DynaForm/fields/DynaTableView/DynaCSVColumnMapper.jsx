@@ -9,6 +9,8 @@ export default function DynaCSVColumnMapper(props) {
   } = props;
   let columnOptions = [];
 
+  // console.log(props);
+
   if (value && !maxNumberOfColumns) {
     columnOptions = value
       .filter(el => el.column)
@@ -53,6 +55,8 @@ export default function DynaCSVColumnMapper(props) {
       supportsRefresh: false,
     },
   ];
+
+  // console.log('render: <DynaCSVColumnMapper>');
 
   return (
     <DynaTableView {...props} collapsable hideLabel optionsMap={optionsMap} />
