@@ -1,6 +1,8 @@
 import produce from 'immer';
 import actionTypes from '../../../actions/types';
 
+const emptyObj = {};
+
 export default (state = {}, action) => {
   const { type, integrationId, flowId, licenseId, response } = action;
   const key = `${integrationId}-${flowId}`;
@@ -53,20 +55,20 @@ export default (state = {}, action) => {
 // #region PUBLIC SELECTORS
 export function integrationAppSettingsFormState(state, integrationId, flowId) {
   if (!state) {
-    return {};
+    return emptyObj;
   }
 
   const key = `${integrationId}-${flowId}`;
 
-  return state[key] || {};
+  return state[key] || emptyObj;
 }
 
 export function integrationAppAddOnState(state, integrationId) {
   if (!state) {
-    return {};
+    return emptyObj;
   }
 
-  return state[integrationId] || {};
+  return state[integrationId] || emptyObj;
 }
 
 export function checkUpgradeRequested(state, licenseId) {

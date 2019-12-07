@@ -1,5 +1,5 @@
-import { useCallback } from 'react';
-import { useSelector } from 'react-redux';
+import { useCallback, useMemo } from 'react';
+import { useSelector, shallowEqual } from 'react-redux';
 import { Route, useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
@@ -47,21 +47,27 @@ function SettingsDrawer({ integrationId, storeId }) {
   const formState = useSelector(state =>
     selectors.integrationAppSettingsFormState(state, integrationId, flowId)
   );
-  const { settings: fields, sections } = useSelector(state =>
-    selectors.getIAFlowSettings(state, integrationId, flowId)
+  const { settings: fields, sections } = useSelector(
+    state => selectors.getIAFlowSettings(state, integrationId, flowId),
+    shallowEqual
   );
-  const fieldMeta = integrationSettingsToDynaFormMetadata(
-    { fields, sections },
-    integrationId,
-    true,
-    { resource: flow }
+  const fieldMeta = useMemo(
+    () =>
+      integrationSettingsToDynaFormMetadata(
+        { fields, sections },
+        integrationId,
+        true,
+        { resource: flow }
+      ),
+    [fields, flow, integrationId, sections]
   );
   const handleClose = useCallback(() => {
     history.push(getRoutePath(match.url));
   }, [history, match.url]);
 
+  // console.log('render <SettingsDrawer>');
+
   return (
-    // console.log('render <SettingsDrawer>');
     <Drawer
       // variant="persistent"
       anchor="right"

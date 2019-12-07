@@ -21,6 +21,8 @@ export default function DynaConnectorNColumnMap(props) {
     dispatch(actions.connectors.clearMetadata(id, _integrationId));
   }, [_integrationId, dispatch, id]);
 
+  // console.log('render: <DynaConnectorNColumnMap>');
+
   return (
     <DynaTableView
       {...props}

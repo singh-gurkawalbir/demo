@@ -204,12 +204,11 @@ export default function IntegrationApp({ match, history }) {
     );
   }
 
-  // TODO: <ResourceDrawer> Can be further optimized to take advantage
-  // of the 'useRouteMatch' hook now available in react-router-dom to break
-  // the need for parent components passing any props at all.
+  // console.log('render: <IntegrationApp>');
+
   return (
     <Fragment>
-      <ResourceDrawer match={match} />
+      <ResourceDrawer />
       <CeligoPageBar
         title={integration.name}
         titleTag={
