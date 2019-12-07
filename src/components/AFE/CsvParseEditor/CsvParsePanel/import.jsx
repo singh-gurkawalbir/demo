@@ -9,6 +9,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../../../actions';
 import * as selectors from '../../../../reducers';
 import CeligoSelect from '../../../CeligoSelect';
+import options from './options';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -88,19 +89,16 @@ export default function ImportCsvParsePanel(props) {
             native
             value={columnDelimiter}
             className={classes.select}
+            placeholder="Please Select"
             onChange={event =>
               patchEditor('columnDelimiter', event.target.value)
             }
             inputProps={{ id: 'columnDelimiter' }}>
-            <option value="" data-test="autoDetect">
-              Auto Detect
-            </option>
-            <option value="," data-test="comma">
-              Comma (,)
-            </option>
-            <option value="|" data-test="pipe">
-              Pipe (|)
-            </option>
+            {options.ColumnDelimiterOptions.map(opt => (
+              <option key={opt.type} value={opt.value} data-test={opt.type}>
+                {opt.label}
+              </option>
+            ))}
           </CeligoSelect>
         </FormControl>
         <FormControl disabled={disabled} className={classes.formControl}>
@@ -112,10 +110,8 @@ export default function ImportCsvParsePanel(props) {
             value={rowDelimiter}
             className={classes.select}
             onChange={event => patchEditor('rowDelimiter', event.target.value)}
+            placeholder="Please Select"
             inputProps={{ id: 'rowDelimiter' }}>
-            <option value="" data-test="autoDetect">
-              Auto Detect
-            </option>
             <option value="cr" data-test="cr">
               CR (\r)
             </option>
