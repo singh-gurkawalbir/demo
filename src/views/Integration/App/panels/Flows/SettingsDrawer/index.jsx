@@ -13,17 +13,18 @@ import getRoutePath from '../../../../../../utils/routePaths';
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
     marginTop: theme.appBarHeight,
-    width: 824,
+    minWidth: 824,
+    maxWidth: 999,
     border: 'solid 1px',
     borderColor: theme.palette.secondary.lightest,
     boxShadow: `-4px 4px 8px rgba(0,0,0,0.15)`,
     backgroundColor: theme.palette.background.default,
     zIndex: theme.zIndex.drawer + 1,
   },
-  form: {
-    maxHeight: `calc(100vh - 180px)`,
+  settingsForm: {
+    maxHeight: `calc(100vh - 120px)`,
     // maxHeight: 'unset',
-    padding: theme.spacing(2, 3),
+    // padding: theme.spacing(2, 3),
   },
 }));
 
@@ -60,6 +61,7 @@ function SettingsDrawer({ integrationId, storeId }) {
   }, [history, match.url]);
 
   return (
+    // console.log('render <SettingsDrawer>');
     <Drawer
       // variant="persistent"
       anchor="right"
@@ -72,6 +74,7 @@ function SettingsDrawer({ integrationId, storeId }) {
 
       {fieldMeta && (
         <ActionsFactory
+          className={classes.settingsForm}
           integrationId={integrationId}
           flowId={flowId}
           storeId={storeId}

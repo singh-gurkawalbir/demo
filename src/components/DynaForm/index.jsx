@@ -14,7 +14,7 @@ const useStyles = makeStyles(theme => ({
     // backgroundColor: theme.palette.background.paper2,
     borderColor: 'rgb(0,0,0,0.1)',
     minHeight: '30vh',
-    maxHeight: `60vh`,
+    maxHeight: `100%`,
     overflowY: 'auto',
     padding: theme.spacing(1),
   },
