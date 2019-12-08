@@ -17,6 +17,7 @@ export default function AddOrSelect(props) {
     onSubmitComplete,
     connectionType,
     resource,
+    environment,
     resourceType = 'connections',
   } = props;
   const [useNew, setUseNew] = useState(true);
@@ -26,7 +27,7 @@ export default function AddOrSelect(props) {
       RESOURCE_TYPE_PLURAL_TO_SINGULAR[resourceType]
     ];
   const resourceList = useSelector(state =>
-    selectors.filteredResourceList(state, resource, resourceType)
+    selectors.filteredResourceList(state, resource, resourceType, environment)
   );
   const options = resourceList.map(c => ({ label: c.name, value: c._id }));
   const newId = useSelector(state =>

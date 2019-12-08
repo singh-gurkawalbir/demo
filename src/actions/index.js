@@ -386,7 +386,7 @@ const integrationApp = {
         integration,
         options,
       }),
-    redirect: (integrationId, redirectTo) =>
+    redirectTo: (integrationId, redirectTo) =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.REDIRECT, {
         integrationId,
         redirectTo,
