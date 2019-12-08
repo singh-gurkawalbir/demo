@@ -239,6 +239,17 @@ export function* submitFormValues({ resourceType, resourceId, values, match }) {
       }
     }
 
+    const integrationIdPatch =
+      patch && patch.find(p => p.op === 'add' && p.path === '/_integrationId');
+
+    if (
+      integrationIdPatch &&
+      integrationIdPatch.value &&
+      resourceType === 'accesstokens'
+    ) {
+      type = `integrations/${integrationIdPatch.value}/accesstokens`;
+    }
+
     if (patch && patch.length) {
       const error = yield call(commitStagedChanges, {
         resourceType: type,

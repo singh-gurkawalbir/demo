@@ -73,6 +73,10 @@ export function editor(state, id) {
   return fromEditors.editor(state && state.editors, id);
 }
 
+export function editorViolations(state, id) {
+  return fromEditors.editorViolations(state && state.editors, id);
+}
+
 export function mapping(state, id) {
   return fromMappings.mapping(state && state.mappings, id);
 }

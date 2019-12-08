@@ -71,6 +71,7 @@ import DynaSalesforceLookup from './DynaSalesforceLookup';
 import DynaMultiSubsidiaryMapping from './DynaTableView/DynaMultiSubsidiaryMapping';
 import DynaTimestampFileName from './DynaTimestampFileName';
 import DynaMode from './DynaMode';
+import DynaAutoSuggestFlowSampleData from './DynaAutoSuggestFlowSampleData';
 
 export default {
   mode: DynaMode,
@@ -154,4 +155,5 @@ export default {
   salesforcelookupfilters: DynaSalesforceLookupFilters,
   salesforcelookup: DynaSalesforceLookup,
   timestampfilename: DynaTimestampFileName,
+  autosuggestflowsampledata: DynaAutoSuggestFlowSampleData,
 };

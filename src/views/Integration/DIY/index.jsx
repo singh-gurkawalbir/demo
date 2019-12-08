@@ -133,18 +133,20 @@ export default function Integration({ history, match }) {
         <CeligoPageBar
           title={
             integration ? (
-              <EditableText onChange={handleTitleChange}>
-                {integration.name}
-              </EditableText>
+              <EditableText
+                text={integration.name}
+                onChange={handleTitleChange}
+              />
             ) : (
               'Standalone integrations'
             )
           }
           infoText={
             integration ? (
-              <EditableText onChange={handleDescriptionChange}>
-                {integration.description}
-              </EditableText>
+              <EditableText
+                text={integration.description}
+                onChange={handleDescriptionChange}
+              />
             ) : (
               undefined
             )

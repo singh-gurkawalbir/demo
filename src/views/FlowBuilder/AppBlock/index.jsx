@@ -176,6 +176,7 @@ function AppBlock({
     },
     [activeAction]
   );
+  const handleActionClose = useCallback(() => setActiveAction(null), []);
   const hasActions = actions && Array.isArray(actions) && actions.length;
   let leftActions = [];
   let middleActions = [];
@@ -210,10 +211,10 @@ function AppBlock({
           isMonitorLevelAccess={isMonitorLevelAccess}
           resource={resource}
           resourceIndex={resourceIndex}
+          resourceId={resource._id}
           resourceType={resourceType}
-          pg={pg}
           index={index}
-          onClose={() => setActiveAction(null)}
+          onClose={handleActionClose}
         />
       </Fragment>
     ));

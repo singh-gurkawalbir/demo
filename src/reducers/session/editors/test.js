@@ -188,7 +188,7 @@ describe('editor selectors', () => {
         valid: {
           initOpts: {
             rowDelimiter: 'crlf',
-            columnDelimiter: 'tab',
+            columnDelimiter: '\t',
             hasHeaderRow: true,
             trimSpaces: true,
             data: 'a,b,c',

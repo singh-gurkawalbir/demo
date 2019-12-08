@@ -35,13 +35,14 @@ export default {
     label: 'Ignore Missing',
   },
   idLockTemplate: {
-    type: 'text',
+    type: 'relativeuri',
     label: 'Concurrency Id Lock Template',
   },
   dataURITemplate: {
-    type: 'text',
-    label: 'Data URI Template',
+    type: 'relativeuri',
+    label: 'Data URITemplate',
     placeholder: 'Optional',
+    connectionId: r => r && r._connectionId,
   },
   oneToMany: {
     type: 'radiogroup',
@@ -75,7 +76,6 @@ export default {
       },
     ],
   },
-
   blobKeyPath: {
     type: 'text',
     label: 'Blob Key Path',

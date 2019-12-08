@@ -77,4 +77,17 @@ export default {
       },
     ],
   },
+  preSave: formValues => {
+    const newValues = formValues;
+
+    try {
+      newValues['/netsuite/distributed/qualifier'] = JSON.parse(
+        newValues['/netsuite/distributed/qualifier']
+      );
+    } catch (ex) {
+      newValues['/netsuite/distributed/qualifier'] = undefined;
+    }
+
+    return newValues;
+  },
 };

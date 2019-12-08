@@ -3,7 +3,7 @@ import deepClone from 'lodash/cloneDeep';
 import { resourceData } from '../../../reducers';
 import { SCOPES } from '../../resourceForm';
 import { apiCallWithRetry } from '../../index';
-import { fetchFlowResources } from './flowDataUtils';
+import { fetchFlowResources, filterPendingResources } from './flowDataUtils';
 import { getLastExportDateTime } from '../../../utils/flowData';
 import { isNewId, adaptorTypeMap } from '../../../utils/resource';
 
@@ -17,7 +17,7 @@ export function* pageProcessorPreview({
 }) {
   if (!flowId || !_pageProcessorId) return;
   const { merged } = yield select(resourceData, 'flows', flowId, SCOPES.VALUE);
-  const flow = deepClone(merged);
+  const flow = yield call(filterPendingResources, { flow: deepClone(merged) });
 
   // Incase of no pgs, preview call is stopped here
   if (!flow.pageGenerators || !flow.pageGenerators.length) return;
