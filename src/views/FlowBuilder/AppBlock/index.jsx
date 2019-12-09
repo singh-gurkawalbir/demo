@@ -149,6 +149,7 @@ function AppBlock({
   isViewMode,
   isMonitorLevelAccess,
   pg,
+  schedule,
   index,
   ...rest
 }) {
@@ -215,6 +216,7 @@ function AppBlock({
           resourceType={resourceType}
           index={index}
           onClose={handleActionClose}
+          schedule={schedule}
         />
       </Fragment>
     ));

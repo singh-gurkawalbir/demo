@@ -57,6 +57,7 @@ const PageGenerator = ({
   const pending = !pg._exportId;
   const resourceId = pg._connectionId || pg._exportId;
   const resourceType = pg._connectionId ? 'connections' : 'exports';
+  const { schedule } = pg;
   const classes = useStyles();
   const dispatch = useDispatch();
   const [newGeneratorId, setNewGeneratorId] = useState(null);
@@ -235,6 +236,7 @@ const PageGenerator = ({
         flowId={flowId}
         resource={resource}
         index={index}
+        schedule={schedule}
       />
       <div
         /* -- connecting line */
