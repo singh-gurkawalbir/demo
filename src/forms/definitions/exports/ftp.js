@@ -12,6 +12,12 @@ export default {
 
     delete newValues['/outputMode'];
 
+    if (newValues['/file/decompressFiles'] === false) {
+      newValues['/file/compressionFormat'] = undefined;
+    }
+
+    delete newValues['/file/decompressFiles'];
+
     return {
       ...newValues,
     };
