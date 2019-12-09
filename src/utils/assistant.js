@@ -1530,6 +1530,9 @@ export function convertToImport({ assistantConfig, assistantData }) {
       importDoc.successPath = [operationDetails.successPath];
 
       if (isArray(operationDetails.successValues)) {
+        /**
+         * TODO We can remove this check once T&A team fixes the metadata.
+         */
         importDoc.successValues = operationDetails.successValues;
       } else {
         importDoc.successValues = [operationDetails.successValues];
