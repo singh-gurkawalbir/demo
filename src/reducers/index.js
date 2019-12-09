@@ -836,24 +836,33 @@ export function resourcesByIds(state, resourceType, resourceIds) {
   return resources.filter(r => resourceIds.indexOf(r._id) >= 0);
 }
 
-export function matchingConnectionList(state, connection = {}) {
+export function matchingConnectionList(state, connection = {}, environment) {
   const { resources = [] } = resourceList(state, {
     type: 'connections',
     filter: {
       $where() {
         if (connection.assistant) {
-          return this.assistant === connection.assistant && !this._connectorId;
+          return (
+            this.assistant === connection.assistant &&
+            !this._connectorId &&
+            (!environment || !!this.sandbox === (environment === 'sandbox'))
+          );
         }
 
         if (['netsuite'].indexOf(connection.type) > -1) {
           return (
             this.type === 'netsuite' &&
             !this._connectorId &&
-            (this.netsuite.account && this.netsuite.environment)
+            (this.netsuite.account && this.netsuite.environment) &&
+            (!environment || !!this.sandbox === (environment === 'sandbox'))
           );
         }
 
-        return this.type === connection.type && !this._connectorId;
+        return (
+          this.type === connection.type &&
+          !this._connectorId &&
+          (!environment || !!this.sandbox === (environment === 'sandbox'))
+        );
       },
     },
   });
@@ -872,9 +881,14 @@ export function matchingStackList(state) {
   return resources;
 }
 
-export function filteredResourceList(state, resource, resourceType) {
+export function filteredResourceList(
+  state,
+  resource,
+  resourceType,
+  environment
+) {
   return resourceType === 'connections'
-    ? matchingConnectionList(state, resource)
+    ? matchingConnectionList(state, resource, environment)
     : matchingStackList(state);
 }
 
@@ -1001,10 +1015,14 @@ export function getFlowsAssociatedExportFromIAMetadata(state, fieldMeta) {
 
 export function integrationAppSettingsFormState(state, integrationId, flowId) {
   return fromSession.integrationAppSettingsFormState(
-    state.session,
+    state && state.session,
     integrationId,
     flowId
   );
+}
+
+export function shouldRedirect(state, integrationId) {
+  return fromSession.shouldRedirect(state && state.session, integrationId);
 }
 
 export function integrationAppAddOnState(state, integrationId) {
