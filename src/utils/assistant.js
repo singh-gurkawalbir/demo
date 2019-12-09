@@ -226,7 +226,7 @@ export function populateDefaults({
           !Object.prototype.hasOwnProperty.call(childWithDefaults, prop) &&
           Object.prototype.hasOwnProperty.call(parent, prop)
         ) {
-          if (isObject(parent[prop])) {
+          if (!isArray(parent[prop]) && isObject(parent[prop])) {
             childWithDefaults[prop] = defaultsDeep(
               childWithDefaults[prop],
               parent[prop]
@@ -240,7 +240,7 @@ export function populateDefaults({
       !Object.prototype.hasOwnProperty.call(childWithDefaults, prop) &&
       Object.prototype.hasOwnProperty.call(parent, prop)
     ) {
-      if (isObject(parent[prop])) {
+      if (!isArray(parent[prop]) && isObject(parent[prop])) {
         childWithDefaults[prop] = defaultsDeep(
           childWithDefaults[prop],
           parent[prop]
@@ -1528,7 +1528,12 @@ export function convertToImport({ assistantConfig, assistantData }) {
       importDoc.body = [operationDetails.body || null];
       importDoc.responseIdPath = [operationDetails.responseIdPath];
       importDoc.successPath = [operationDetails.successPath];
-      importDoc.successValues = [operationDetails.successValues];
+
+      if (isArray(operationDetails.successValues)) {
+        importDoc.successValues = operationDetails.successValues;
+      } else {
+        importDoc.successValues = [operationDetails.successValues];
+      }
     }
   } else if (adaptorType === 'http') {
     if (isArray(operationDetails.method)) {
