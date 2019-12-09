@@ -76,6 +76,7 @@ describe('user selectors', () => {
             id: ACCOUNT_IDS.OWN,
             hasSandbox: true,
             selected: true,
+            hasConnectorSandbox: false,
           },
         ]);
       });
@@ -107,6 +108,7 @@ describe('user selectors', () => {
             id: ACCOUNT_IDS.OWN,
             hasSandbox: true,
             selected: true,
+            hasConnectorSandbox: false,
           },
         ]);
       });
@@ -133,6 +135,7 @@ describe('user selectors', () => {
             id: ACCOUNT_IDS.OWN,
             hasSandbox: false,
             selected: true,
+            hasConnectorSandbox: false,
           },
         ]);
       });
@@ -175,11 +178,13 @@ describe('user selectors', () => {
             company: 'Company One',
             canLeave: true,
             selected: true,
+            hasConnectorSandbox: false,
           },
           {
             id: 'ashare2',
             hasSandbox: false,
             canLeave: true,
+            hasConnectorSandbox: false,
           },
         ]);
       });
@@ -219,12 +224,14 @@ describe('user selectors', () => {
             hasSandbox: true,
             company: 'Company One',
             canLeave: true,
+            hasConnectorSandbox: false,
           },
           {
             id: 'ashare2',
             hasSandbox: false,
             selected: true,
             canLeave: true,
+            hasConnectorSandbox: false,
           },
         ]);
       });

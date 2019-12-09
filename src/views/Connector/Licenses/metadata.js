@@ -1,16 +1,17 @@
 import { Typography } from '@material-ui/core';
 import Delete from '../../../components/ResourceTable/actions/Delete';
-import {
-  getResourceLink,
-  formatLastModified,
-} from '../../../components/CeligoTable/util';
+import ResourceDrawerLink from '../../../components/ResourceDrawerLink';
+import { formatLastModified } from '../../../components/CeligoTable/util';
 
 export default {
   columns: [
     {
       heading: 'Email',
-      value: (r, actionProps, location) =>
-        getResourceLink('connectorLicenses', r, location),
+      value: function ConnectorLicensesDrawerLink(r) {
+        return (
+          <ResourceDrawerLink resourceType="connectorLicenses" resource={r} />
+        );
+      },
     },
     {
       heading: 'Status',

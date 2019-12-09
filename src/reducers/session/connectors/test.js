@@ -19,7 +19,9 @@ describe('Connector metadata', () => {
       actions.connectors.refreshMetadata(fieldId, id, _integrationId)
     );
 
-    expect(requestReducer).toEqual({ '1': { id: { isLoading: true } } });
+    expect(requestReducer).toEqual({
+      '1': { id: { fieldType: 'rest.headers', isLoading: true } },
+    });
   });
 
   test('should store data received from  metadata request in the app redux store in expected format', () => {
@@ -45,7 +47,8 @@ describe('Connector metadata', () => {
     expect(receivedState).toEqual({
       '123123': {
         'rest.headers': {
-          data: exampleResponse,
+          data: { id: 'account', name: 'Account' },
+          fieldType: 'id',
           isLoading: false,
         },
       },
@@ -72,7 +75,11 @@ describe('Connector metadata', () => {
 
     expect(receivedState1).toEqual({
       '123123': {
-        'rest.headers': { data: { dummy: 'data' }, isLoading: false },
+        'rest.headers': {
+          data: { dummy: 'data' },
+          fieldType: 'id',
+          isLoading: false,
+        },
       },
     });
     const requestState2 = reducer(
@@ -95,8 +102,16 @@ describe('Connector metadata', () => {
 
     expect(receivedState2).toEqual({
       '123123': {
-        'rest.headers': { data: { dummy: 'data' }, isLoading: false },
-        'rest.secondField': { data: { dummy: 'data' }, isLoading: false },
+        'rest.headers': {
+          data: { dummy: 'data' },
+          fieldType: 'id',
+          isLoading: false,
+        },
+        'rest.secondField': {
+          data: { dummy: 'data' },
+          fieldType: 'id',
+          isLoading: false,
+        },
       },
     });
   });
@@ -155,7 +170,11 @@ describe('Connector metadata', () => {
 
       expect(receivedState1).toEqual({
         '123123': {
-          'rest.headers': { data: { dummy: 'data' }, isLoading: false },
+          'rest.headers': {
+            data: { dummy: 'data' },
+            fieldType: 'id',
+            isLoading: false,
+          },
         },
       });
       const requestState2 = reducer(
@@ -178,8 +197,16 @@ describe('Connector metadata', () => {
 
       expect(receivedState2).toEqual({
         '123123': {
-          'rest.headers': { data: { dummy: 'data' }, isLoading: false },
-          'rest.secondField': { data: { dummy: 'data' }, isLoading: false },
+          'rest.headers': {
+            data: { dummy: 'data' },
+            fieldType: 'id',
+            isLoading: false,
+          },
+          'rest.secondField': {
+            data: { dummy: 'data' },
+            fieldType: 'id',
+            isLoading: false,
+          },
         },
       });
       const receivedState = reducer(
@@ -190,7 +217,11 @@ describe('Connector metadata', () => {
       expect(receivedState).toEqual({
         '123123': {
           'rest.headers': {},
-          'rest.secondField': { data: { dummy: 'data' }, isLoading: false },
+          'rest.secondField': {
+            data: { dummy: 'data' },
+            fieldType: 'id',
+            isLoading: false,
+          },
         },
       });
     });

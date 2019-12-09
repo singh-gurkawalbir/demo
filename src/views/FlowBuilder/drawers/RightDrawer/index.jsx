@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { Route } from 'react-router-dom';
+import { Route, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 
@@ -37,7 +37,9 @@ export function RightDrawer({ open, match, history, children }) {
   );
 }
 
-export default function RightDrawerRoute({ path, match, children }) {
+export default function RightDrawerRoute({ path, children }) {
+  const match = useRouteMatch();
+
   return (
     <Route
       path={`${match.url}/${path}`}

@@ -38,21 +38,28 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function ShowMoreDrawer(props) {
-  const { count, maxCount, filterKey } = props;
+  const { count, maxCount, filterKey, pageSize = 10 } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
-  // TODO: we need to pass in default filter here probably..ow we have hardcoded {take:5}.
+  // TODO: we need to pass in default filter here probably.
+  // or we have hardcoded {take:5}.
   // or set filter explicitly if missing in the parent...
-  // n
   const filter = useSelector(state => selectors.filter(state, filterKey)) || {
-    take: 5,
+    take: pageSize,
   };
   const handleMore = () => {
-    dispatch(actions.patchFilter(filterKey, { take: (filter.take || 3) + 2 }));
+    dispatch(
+      actions.patchFilter(filterKey, {
+        take: (filter.take || pageSize) + pageSize,
+      })
+    );
   };
 
   if (count >= maxCount) return null;
+
+  const nextPageSize =
+    count + pageSize <= maxCount ? pageSize : maxCount - count;
 
   return (
     <Paper
@@ -71,7 +78,7 @@ export default function ShowMoreDrawer(props) {
         color="primary"
         className={classes.button}>
         <RefreshIcon className={classes.icon} />
-        Load the next ({maxCount - count}) results
+        Load the next ({nextPageSize}) results
       </Button>
     </Paper>
   );

@@ -113,6 +113,10 @@ export default {
   'file.csv': {
     type: 'csvparse',
     label: 'Configure CSV parse options',
+    defaultValue: r =>
+      (r.file && r.file.csv) || {
+        includeHeader: true,
+      },
     visibleWhenAll: [
       {
         field: 'file.type',

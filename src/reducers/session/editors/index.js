@@ -92,15 +92,23 @@ export default function reducer(state = {}, action) {
 
 // #region PUBLIC SELECTORS
 export function editor(state, id) {
-  if (!state) {
-    return {};
-  }
+  if (!state) return emptyObj;
 
   const editor = state[id];
 
   if (!editor) return emptyObj;
 
-  return { ...editor, violations: processorLogic.validate(editor) };
+  return editor || emptyObj;
+}
+
+export function editorViolations(state, id) {
+  if (!state) return;
+
+  const editor = state[id];
+
+  if (!editor) return;
+
+  return processorLogic.validate(editor);
 }
 
 export function processorRequestOptions(state, id) {

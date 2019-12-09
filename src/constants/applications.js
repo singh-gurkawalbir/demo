@@ -25,19 +25,24 @@ const connectors = [
     keywords: 'technology,protocol',
     group: 'tech',
   },
-  { id: 'ftp', name: 'FTP', type: 'ftp', keywords: 'technology,protocol' },
+  {
+    id: 'ftp',
+    name: 'FTP',
+    type: 'ftp',
+    keywords: 'sftp,ftps,technology,protocol',
+  },
   {
     id: 'wrapper',
     name: 'Wrapper',
     type: 'wrapper',
-    keywords: 'technology,protocol',
+    keywords: 'technology',
     group: 'tech',
   },
   {
     id: 'webhook',
     name: 'Webhook',
     type: 'webhook',
-    keywords: 'technology,protocol',
+    keywords: 'technology, realtime',
     group: 'tech',
     webhookOnly: true,
   },
@@ -686,7 +691,8 @@ const connectors = [
 
 export const groupApplications = resourceType => {
   const filteredConnectors = connectors.filter(connector => {
-    if (resourceType && resourceType !== 'exports')
+    // Webhooks are shown only for exports and for page generators in flow context
+    if (resourceType && !['exports', 'pageGenerator'].includes(resourceType))
       return !connector.webhookOnly;
 
     return true;

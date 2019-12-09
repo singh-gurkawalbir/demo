@@ -1,5 +1,5 @@
 import { useRef, Fragment, useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { useDrag, useDrop } from 'react-dnd-cjs';
 import clsx from 'clsx';
@@ -61,17 +61,26 @@ const PageProcessor = ({
   const classes = useStyles();
   const dispatch = useDispatch();
   const [newProcessorId, setNewProcessorId] = useState(null);
-  const { merged: resource = {} } = useSelector(state =>
-    selectors.resourceData(
-      state,
-      pending ? 'connections' : resourceType,
-      resourceId
-    )
-  );
+  const resource =
+    useSelector(state =>
+      selectors.resource(
+        state,
+        pending ? 'connections' : resourceType,
+        resourceId
+      )
+    ) || {};
   // Returns map of all possible actions with true/false whether actions performed on the resource
-  const usedActions = useSelector(state =>
-    selectors.getUsedActionsForResource(state, resourceId, resourceType, pp)
-  );
+  const usedActions =
+    useSelector(
+      state =>
+        selectors.getUsedActionsForResource(
+          state,
+          resourceId,
+          resourceType,
+          pp
+        ),
+      shallowEqual
+    ) || {};
   const createdProcessorId = useSelector(state =>
     selectors.createdResourceId(state, newProcessorId)
   );
@@ -269,8 +278,10 @@ const PageProcessor = ({
       );
     }
   }
-
   // #endregion
+
+  // console.log('render: <PageProcessor>');
+  // console.log(pp, usedActions);
 
   return (
     <Fragment>

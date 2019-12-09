@@ -18,11 +18,24 @@ export default {
   websiteURL: {
     type: 'text',
     label: 'Website URL',
+    validWhen: {
+      matchesRegEx: {
+        pattern:
+          "^(?:http(s)?:\\/\\/)?[\\w.-]+(?:\\.[\\w\\.-]+)+[\\w\\-\\._~:/?#[\\]@!\\$&'\\(\\)\\*\\+,;=.]+$",
+        message: 'Please enter a valid URL.',
+      },
+    },
   },
   contactEmail: {
     type: 'text',
     label: 'Contact Emails',
     required: true,
+    validWhen: {
+      matchesRegEx: {
+        pattern: '^\\w+([\\.-]?\\w+)*@\\w+([\\.-]?\\w+)*(\\.\\w{2,3})+$',
+        message: 'Please enter a valid Email.',
+      },
+    },
   },
   installerFunction: {
     type: 'text',

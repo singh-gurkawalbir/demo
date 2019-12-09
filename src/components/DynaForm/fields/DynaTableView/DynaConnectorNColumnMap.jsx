@@ -7,8 +7,9 @@ import DynaTableView from './DynaTable';
 export default function DynaConnectorNColumnMap(props) {
   const { optionsMap, id, _integrationId } = props;
   const dispatch = useDispatch();
-  const { isLoading, shouldReset, data: metadata } = useSelector(state =>
-    selectors.connectorMetadata(state, id, null, _integrationId, optionsMap)
+  const { isLoading, shouldReset, data: metadata, fieldType } = useSelector(
+    state =>
+      selectors.connectorMetadata(state, id, null, _integrationId, optionsMap)
   );
   const handleRefreshClick = useCallback(
     fieldId => {
@@ -20,11 +21,13 @@ export default function DynaConnectorNColumnMap(props) {
     dispatch(actions.connectors.clearMetadata(id, _integrationId));
   }, [_integrationId, dispatch, id]);
 
+  // console.log('render: <DynaConnectorNColumnMap>');
+
   return (
     <DynaTableView
       {...props}
       collapsable
-      isLoading={isLoading}
+      isLoading={isLoading ? fieldType : false}
       shouldReset={shouldReset}
       metadata={metadata}
       handleCleanupHandler={handleCleanup}

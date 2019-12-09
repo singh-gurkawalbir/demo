@@ -1,3 +1,5 @@
+import { isNewId } from '../../../../utils/resource';
+
 export default {
   'salesforce.api': {
     type: 'radiogroup',
@@ -18,6 +20,13 @@ export default {
         ],
       },
     ],
+    defaultDisabled: r => {
+      const isNew = isNewId(r._id);
+
+      if (!isNew) return true;
+
+      return false;
+    },
   },
   'salesforce.document.id': {
     type: 'text',
@@ -478,6 +487,10 @@ export default {
         field: 'salesforce.operation',
         is: ['update', 'addupdate'],
       },
+      {
+        field: 'salesforce.compositeOperation',
+        is: ['update', 'addupdate'],
+      },
     ],
   },
   'salesforce.upsertpicklistvalues.fullName': {
@@ -485,8 +498,9 @@ export default {
     visible: false,
   },
   'salesforce.upsert.externalIdField': {
-    type: 'text',
+    type: 'refreshableselect',
     label: 'Which External ID field should be used to Upsert?',
+    filterKey: 'salesforce-externalIdFields',
     visibleWhenAll: [
       {
         field: 'salesforce.operation',
@@ -499,7 +513,7 @@ export default {
     ],
   },
   'salesforce.idLookup.extract': {
-    type: 'text',
+    type: 'autosuggestflowsampledata',
     label: 'Which export data field should map to External ID?',
     visibleWhenAll: [
       {

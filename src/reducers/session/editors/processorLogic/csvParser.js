@@ -1,15 +1,17 @@
 const requestBody = editor => {
   const rowDelimiterMap = {
-    '': undefined,
     cr: '\r',
     lf: '\n',
     crlf: '\r\n',
   };
   const columnDelimiterMap = {
-    '': undefined,
     ',': ',',
     '|': '|',
-    tab: '\t',
+    '': ';',
+    // space
+    ' ': ' ',
+    // Tab
+    '\t': '\t',
   };
 
   return {

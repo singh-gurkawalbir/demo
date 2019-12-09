@@ -35,7 +35,12 @@ export default {
     type: 'sqlquerybuilder',
     arrayIndex: 0,
     label: 'Launch Query Builder',
-    refreshOptionsOnChangesTo: ['rdbms.lookups', 'rdbms.queryType'],
+    title: 'SQL Query Builder',
+    refreshOptionsOnChangesTo: [
+      'rdbms.lookups',
+      'rdbms.queryType',
+      'modelMetadata',
+    ],
     visibleWhen: [
       {
         field: 'rdbms.queryType',
@@ -46,9 +51,13 @@ export default {
   'rdbms.queryInsert': {
     id: 'rdbms.queryInsert',
     type: 'sqlquerybuilder',
-    arrayIndex: 0,
     label: 'Launch Query Builder for Insert',
-    refreshOptionsOnChangesTo: ['rdbms.lookups', 'rdbms.queryType'],
+    title: 'SQL Query Builder',
+    refreshOptionsOnChangesTo: [
+      'rdbms.lookups',
+      'rdbms.queryType',
+      'modelMetadata',
+    ],
     visibleWhen: [
       {
         field: 'rdbms.queryType',
@@ -59,9 +68,13 @@ export default {
   'rdbms.queryUpdate': {
     id: 'rdbms.queryUpdate',
     type: 'sqlquerybuilder',
-    arrayIndex: 0,
     label: 'Launch Query Builder for Update',
-    refreshOptionsOnChangesTo: ['rdbms.lookups', 'rdbms.queryType'],
+    title: 'SQL Query Builder',
+    refreshOptionsOnChangesTo: [
+      'rdbms.lookups',
+      'rdbms.queryType',
+      'modelMetadata',
+    ],
     visibleWhen: [
       {
         field: 'rdbms.queryType',
@@ -96,6 +109,10 @@ export default {
       {
         field: 'ignoreMissing',
         is: [true],
+      },
+      {
+        field: 'ignoreExisting',
+        is: [false],
       },
     ],
   },

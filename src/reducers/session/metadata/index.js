@@ -41,6 +41,13 @@ export default (
       return { ...state, preview: newState };
     }
 
+    case actionTypes.METADATA.ASSISTANT_PREVIEW_RESET: {
+      newState = { ...state.preview };
+      delete newState[resourceId];
+
+      return { ...state, preview: newState };
+    }
+
     case actionTypes.METADATA.REFRESH: {
       newState = { ...state.application };
 

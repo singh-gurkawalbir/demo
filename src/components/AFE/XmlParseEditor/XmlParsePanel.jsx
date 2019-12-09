@@ -30,9 +30,8 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function XmlParsePanel(props) {
-  const { editorId, disabled } = props;
-  const classes = useStyles(props);
+export default function XmlParsePanel({ editorId, disabled }) {
+  const classes = useStyles();
   const {
     advanced = false,
     trimSpaces = false,

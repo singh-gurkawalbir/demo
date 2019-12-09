@@ -70,8 +70,11 @@ import DynaSalesforceLookupFilters from './DynaSalesforceLookupFilters';
 import DynaSalesforceLookup from './DynaSalesforceLookup';
 import DynaMultiSubsidiaryMapping from './DynaTableView/DynaMultiSubsidiaryMapping';
 import DynaTimestampFileName from './DynaTimestampFileName';
+import DynaMode from './DynaMode';
+import DynaAutoSuggestFlowSampleData from './DynaAutoSuggestFlowSampleData';
 
 export default {
+  mode: DynaMode,
   mapping: DynaImportMapping,
   toggleSelectToText: DynaToggleSelectToText,
   selectscopes: DynaSelectScopes,
@@ -152,4 +155,5 @@ export default {
   salesforcelookupfilters: DynaSalesforceLookupFilters,
   salesforcelookup: DynaSalesforceLookup,
   timestampfilename: DynaTimestampFileName,
+  autosuggestflowsampledata: DynaAutoSuggestFlowSampleData,
 };
