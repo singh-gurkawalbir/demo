@@ -17,14 +17,22 @@ export default {
         field: 'outputMode',
         is: ['records'],
       },
+      {
+        field: 'file.output',
+        is: ['records'],
+      },
     ],
   },
   'file.encoding': {
     type: 'select',
     label: 'File encoding',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'outputMode',
+        is: ['records'],
+      },
+      {
+        field: 'file.output',
         is: ['records'],
       },
     ],
@@ -55,6 +63,12 @@ export default {
           { label: 'Fixed Width', value: 'fixed' },
           { label: 'EDIFACT', value: 'delimited/edifact' },
         ],
+      },
+    ],
+    visibleWhen: [
+      {
+        field: 'file.output',
+        is: ['records'],
       },
     ],
     userDefinitionId: r =>
@@ -237,6 +251,10 @@ export default {
       },
       {
         field: 'outputMode',
+        is: ['records'],
+      },
+      {
+        field: 'file.output',
         is: ['records'],
       },
     ],
