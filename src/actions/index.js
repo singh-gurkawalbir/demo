@@ -277,11 +277,12 @@ const auditLogs = {
   clear: () => action(actionTypes.AUDIT_LOGS_CLEAR),
 };
 const connectors = {
-  refreshMetadata: (fieldType, fieldName, _integrationId) =>
+  refreshMetadata: (fieldType, fieldName, _integrationId, options) =>
     action(actionTypes.CONNECTORS.METADATA_REQUEST, {
       fieldType,
       fieldName,
       _integrationId,
+      options,
     }),
   failedMetadata: (fieldName, _integrationId) =>
     action(actionTypes.CONNECTORS.METADATA_FAILURE, {
@@ -338,6 +339,10 @@ const metadata = {
       resourceId,
       previewData,
     }),
+  resetAssistantImportPreview: resourceId =>
+    action(actionTypes.METADATA.ASSISTANT_PREVIEW_RESET, {
+      resourceId,
+    }),
 };
 const fileDefinitions = {
   preBuilt: {
@@ -380,6 +385,15 @@ const integrationApp = {
       action(actionTypes.INTEGRATION_APPS.SETTINGS.REQUEST_UPGRADE, {
         integration,
         options,
+      }),
+    redirectTo: (integrationId, redirectTo) =>
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.REDIRECT, {
+        integrationId,
+        redirectTo,
+      }),
+    clearRedirect: integrationId =>
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.CLEAR_REDIRECT, {
+        integrationId,
       }),
     requestedUpgrade: licenseId =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.UPGRADE_REQUESTED, {

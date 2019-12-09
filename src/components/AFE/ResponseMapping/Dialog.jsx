@@ -13,7 +13,7 @@ import mappingUtil from '../../../utils/mapping';
 import getJSONPaths from '../../../utils/jsonPaths';
 import * as resourceUtil from '../../../utils/resource';
 import ModalDialog from '../../ModalDialog';
-import ButtonsGroup from '../../ButtonGroup';
+import ButtonGroup from '../../ButtonGroup';
 import ActionButton from '../../ActionButton';
 
 // TODO Aditya: Convert Response Mapping and Import mapping to re-use same component
@@ -305,7 +305,7 @@ export default function ResponseMappingDialog(props) {
         </div>
       </div>
       <div>
-        <ButtonsGroup>
+        <ButtonGroup>
           <Button
             disabled={disabled}
             data-test="saveMapping"
@@ -322,7 +322,7 @@ export default function ResponseMappingDialog(props) {
             color="primary">
             Save and close
           </Button>
-        </ButtonsGroup>
+        </ButtonGroup>
       </div>
     </ModalDialog>
   );

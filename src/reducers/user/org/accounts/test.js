@@ -230,18 +230,21 @@ describe('account (ashares) reducers', () => {
             email: 'name@gmail.com',
             id: 'abc',
             hasSandbox: false,
+            hasConnectorSandbox: false,
           },
           {
             company: 'Celigo Playground',
             email: 'playground@celigo.com',
             id: 'def',
             hasSandbox: true,
+            hasConnectorSandbox: false,
           },
           {
             company: 'ghi 789 company',
             email: 'ghi789@celigo.com',
             id: 'ghi',
             hasSandbox: true,
+            hasConnectorSandbox: false,
           },
         ];
         const result = selectors.sharedAccounts(state);
@@ -279,6 +282,7 @@ describe('account (ashares) reducers', () => {
           type: 'integrator',
           sandbox: true,
           hasSandbox: true,
+          hasConnectorSandbox: false,
         });
 
         const state2 = reducer(
@@ -290,18 +294,21 @@ describe('account (ashares) reducers', () => {
           type: 'integrator',
           sandbox: false,
           hasSandbox: false,
+          hasConnectorSandbox: false,
         });
 
         expect(selectors.integratorLicense(state2, 'def')).toEqual({
           type: 'integrator',
           sandbox: true,
           hasSandbox: true,
+          hasConnectorSandbox: false,
         });
         expect(selectors.integratorLicense(state2, 'ghi')).toEqual({
           type: 'integrator',
           sandbox: false,
           numSandboxAddOnFlows: 2,
           hasSandbox: true,
+          hasConnectorSandbox: false,
         });
       });
       test('should return correct status, expiresInDays of integrator license', () => {
@@ -317,6 +324,7 @@ describe('account (ashares) reducers', () => {
           type: 'integrator',
           tier: 'none',
           hasSandbox: false,
+          hasConnectorSandbox: false,
         });
 
         const state2 = reducer(
@@ -490,18 +498,21 @@ describe('account (ashares) reducers', () => {
             company: 'Celigo Inc',
             canLeave: true,
             hasSandbox: false,
+            hasConnectorSandbox: false,
           },
           {
             id: 'def',
             company: 'Celigo Playground',
             canLeave: true,
             hasSandbox: true,
+            hasConnectorSandbox: false,
           },
           {
             id: 'ghi',
             company: 'ghi 789 company',
             canLeave: true,
             hasSandbox: true,
+            hasConnectorSandbox: false,
           },
         ];
         const result = selectors.accountSummary(state);
@@ -518,6 +529,7 @@ describe('account (ashares) reducers', () => {
           {
             id: ACCOUNT_IDS.OWN,
             hasSandbox: true,
+            hasConnectorSandbox: false,
           },
         ];
         const result = selectors.accountSummary(state);

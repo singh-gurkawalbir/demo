@@ -150,6 +150,13 @@ export default {
       updateable: d.updateable,
     })),
   'salesforce-soqlQuery': data => data,
+  'salesforce-externalIdFields': data =>
+    data.fields
+      .filter(f => f.externalId || f.name === 'Id')
+      .map(d => ({
+        label: d.label,
+        value: d.name,
+      })),
   'salesforce-sObjectCompositeMetadata': (data, options = {}) => {
     const { applicationResource, connectionId } = options;
     const _data = [];

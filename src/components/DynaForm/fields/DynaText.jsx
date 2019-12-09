@@ -48,10 +48,11 @@ export default function DynaText(props) {
   }, [id, onFieldChange, options, valueChanged]);
 
   const handleFieldChange = event => {
-    const { value } = event.target;
+    const { value, valueAsNumber } = event.target;
+    const returnVal = inputType === 'number' ? valueAsNumber : value;
 
     if (!delimiter) {
-      onFieldChange(id, value);
+      onFieldChange(id, returnVal);
 
       return;
     }
@@ -60,6 +61,7 @@ export default function DynaText(props) {
   };
 
   const classes = useStyles();
+  const inpValue = value === '' && inputType === 'number' ? 0 : value;
 
   return (
     <div className={classes.dynaFieldWrapper}>
@@ -86,7 +88,7 @@ export default function DynaText(props) {
         rowsMax={rowsMax}
         required={required}
         error={!isValid}
-        value={value}
+        value={inpValue}
         variant="filled"
         onChange={handleFieldChange}
         className={classes.formField}

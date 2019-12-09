@@ -8,6 +8,14 @@ export const importHooksList = [
   'postAggregate',
 ];
 
+export const hooksToFunctionNamesMap = {
+  preSavePage: 'preSavePageFunction',
+  preMap: 'preMapFuncton',
+  postMap: 'postMapFunction',
+  postSubmit: 'postSubmitFunction',
+  postAggregate: 'postAggregateFunction',
+};
+
 export const hooksLabelMap = {
   preMap: 'Pre Map',
   postMap: 'Post Map',

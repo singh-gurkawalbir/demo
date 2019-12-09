@@ -9,7 +9,7 @@ export default function DynaCsvParse(props) {
   const {
     id,
     onFieldChange,
-    value,
+    value = {},
     label,
     resourceId,
     resourceType,
@@ -36,20 +36,41 @@ export default function DynaCsvParse(props) {
   const handleClose = (shouldCommit, editorValues) => {
     if (shouldCommit) {
       const {
+        rowDelimiter,
         columnDelimiter,
         hasHeaderRow,
+        includeHeader,
         keyColumns,
         rowsToSkip,
         trimSpaces,
+        wrapWithQuotes,
+        replaceTabWithSpace,
+        replaceNewlineWithSpace,
+        truncateLastRowDelimiter,
+        resourceType: editorResourceType,
       } = editorValues;
 
-      onFieldChange(id, {
-        columnDelimiter,
-        hasHeaderRow,
-        keyColumns,
-        rowsToSkip,
-        trimSpaces,
-      });
+      if (editorResourceType === 'imports') {
+        onFieldChange(id, {
+          rowDelimiter,
+          columnDelimiter,
+          includeHeader,
+          keyColumns,
+          truncateLastRowDelimiter,
+          replaceTabWithSpace,
+          replaceNewlineWithSpace,
+          wrapWithQuotes,
+        });
+      } else {
+        onFieldChange(id, {
+          columnDelimiter,
+          hasHeaderRow,
+          keyColumns,
+          rowsToSkip,
+          trimSpaces,
+        });
+      }
+
       // On change of rules, trigger sample data update
       // It calls processor on final rules to parse csv file
       dispatch(
@@ -77,6 +98,8 @@ export default function DynaCsvParse(props) {
           id={id + resourceId}
           mode="csv"
           data={csvData}
+          resourceType={resourceType}
+          /** rule to be passed as json */
           rule={value}
           onClose={handleClose}
           disabled={disabled}

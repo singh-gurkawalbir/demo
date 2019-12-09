@@ -33,7 +33,7 @@ export default {
     label: 'How should we identify existing records?',
     required: true,
     defaultValue: r =>
-      r && r.mongodb && r.mongodb.ignoreLookupFilter ? 'lookup' : 'source',
+      r && r.mongodb && r.mongodb.ignoreExtract ? 'source' : 'lookup',
     options: [
       {
         items: [
@@ -62,9 +62,30 @@ export default {
   'mongodb.document': {
     id: 'mongodb.document',
     type: 'sqlquerybuilder',
-    arrayIndex: 0,
+    hideDefaultData: true,
     label: 'Launch Query Builder',
-    refreshOptionsOnChangesTo: ['mongodb.lookups', 'mongodb.method'],
+    refreshOptionsOnChangesTo: ['mongodb.method'],
+    title: 'MongoDB Data Builder',
+    visibleWhen: [
+      {
+        field: 'mongodb.method',
+        is: ['insertMany'],
+      },
+    ],
+  },
+  'mongodb.update': {
+    id: 'mongodb.update',
+    type: 'sqlquerybuilder',
+    hideDefaultData: true,
+    label: 'Launch Query Builder',
+    refreshOptionsOnChangesTo: ['mongodb.method'],
+    title: 'MongoDB Data Builder',
+    visibleWhen: [
+      {
+        field: 'mongodb.method',
+        is: ['updateOne'],
+      },
+    ],
   },
   'mongodb.ignoreLookupFilter': {
     type: 'textarea',
@@ -81,7 +102,8 @@ export default {
     ],
   },
   'mongodb.filter': {
-    type: 'textarea',
+    type: 'editor',
+    mode: 'json',
     label: 'Filter',
     required: true,
     visibleWhen: [

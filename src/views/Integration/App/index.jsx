@@ -1,6 +1,6 @@
 import { Fragment, useCallback, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Redirect } from 'react-router-dom';
+import { Redirect, generatePath } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Select, MenuItem } from '@material-ui/core';
 import * as selectors from '../../../reducers';
@@ -80,6 +80,9 @@ export default function IntegrationApp({ match, history }) {
   );
   const defaultStoreId = useSelector(state =>
     selectors.defaultStoreId(state, integrationId, storeId)
+  );
+  const redirectTo = useSelector(state =>
+    selectors.shouldRedirect(state, integrationId)
   );
   // TODO: This selector isn't actually returning add on state.
   // it is returning ALL integration settings state.
@@ -170,6 +173,21 @@ export default function IntegrationApp({ match, history }) {
     return <LoadResources required resources="integrations" />;
   }
 
+  if (redirectTo) {
+    const path = generatePath(match.path, {
+      integrationId,
+      storeId,
+      tab: redirectTo,
+    });
+
+    dispatch(actions.integrationApp.settings.clearRedirect(integrationId));
+    history.push(path);
+
+    return null;
+    // TODO: This approach navigating to the url but not rendering the component.
+    // return <Redirect push={false} to={path} />;
+  }
+
   const { supportsMultiStore, storeLabel } = integration.settings || {};
 
   // To support breadcrumbs, and also to have a more robust url interface,
@@ -204,12 +222,11 @@ export default function IntegrationApp({ match, history }) {
     );
   }
 
-  // TODO: <ResourceDrawer> Can be further optimized to take advantage
-  // of the 'useRouteMatch' hook now available in react-router-dom to break
-  // the need for parent components passing any props at all.
+  // console.log('render: <IntegrationApp>');
+
   return (
     <Fragment>
-      <ResourceDrawer match={match} />
+      <ResourceDrawer />
       <CeligoPageBar
         title={integration.name}
         titleTag={
@@ -235,7 +252,7 @@ export default function IntegrationApp({ match, history }) {
               className={classes.storeSelect}
               onChange={handleStoreChange}
               IconComponent={ArrowDownIcon}
-              value="">
+              value={storeId}>
               <MenuItem disabled value="">
                 Select {storeLabel}
               </MenuItem>

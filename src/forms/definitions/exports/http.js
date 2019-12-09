@@ -142,7 +142,7 @@ export default {
     },
     outputMode: {
       id: 'outputMode',
-      type: 'radiogroup',
+      type: 'mode',
       label: 'Output Mode',
       required: true,
       options: [

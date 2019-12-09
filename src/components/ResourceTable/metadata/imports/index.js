@@ -1,9 +1,9 @@
+import ResourceDrawerLink from '../../../ResourceDrawerLink';
 import Delete from '../../actions/Delete';
 import References from '../../actions/References';
 import AuditLogs from '../../actions/AuditLogs';
 import Clone from '../../actions/Clone';
 import {
-  getResourceLink,
   formatLastModified,
   getConnectorName,
 } from '../../../CeligoTable/util';
@@ -12,8 +12,9 @@ export default {
   columns: [
     {
       heading: 'Name',
-      value: (r, actionProps, location) =>
-        getResourceLink('imports', r, location),
+      value: function ImportsDrawerLink(r) {
+        return <ResourceDrawerLink resourceType="imports" resource={r} />;
+      },
       orderBy: 'name',
     },
     { heading: 'Connector', value: r => getConnectorName(r) },

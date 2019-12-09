@@ -1,6 +1,7 @@
-import { takeLatest, select, call } from 'redux-saga/effects';
+import { takeLatest, select, call, put } from 'redux-saga/effects';
 import actionTypes from '../../../actions/types';
-import { resource, resourceFormState } from '../../../reducers';
+import actions from '../../../actions';
+import { resource, resourceFormState, resourceData } from '../../../reducers';
 import {
   getAddedLookupInFlow,
   isRawDataPatchSet,
@@ -147,7 +148,23 @@ function* onResourceUpdate({
 
   // If it is a raw data patch set on need to update again
   if (resourceType === 'imports' && patch.length && !isRawDataPatchSet(patch)) {
-    yield call(fetchAndSaveRawDataForResource, { type: 'imports', resourceId });
+    const { merged: importResource = {} } = yield select(
+      resourceData,
+      'imports',
+      resourceId
+    );
+
+    // Whenever an assistant import gets updated, its preview data ( sampleData ) needs to be reset
+    if (importResource.assistant) {
+      return yield put(
+        actions.metadata.resetAssistantImportPreview(resourceId)
+      );
+    }
+
+    yield call(fetchAndSaveRawDataForResource, {
+      type: 'imports',
+      resourceId,
+    });
   }
 }
 

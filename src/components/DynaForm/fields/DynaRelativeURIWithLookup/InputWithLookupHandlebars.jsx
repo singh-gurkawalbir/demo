@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { TextField } from '@material-ui/core';
 import DynaAddEditLookup from '../DynaAddEditLookup';
@@ -87,6 +87,7 @@ export default function InputWithLookupHandlebars(props) {
     required,
     value,
     connectionType,
+    connectionId,
   } = props;
   const classes = useStyles();
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -96,6 +97,10 @@ export default function InputWithLookupHandlebars(props) {
     filteredSuggestions: [],
   });
   const { userInput, cursorPosition, filteredSuggestions } = state;
+
+  useEffect(() => {
+    if (value !== userInput) setState({ ...state, userInput: value });
+  }, [state, userInput, value]);
   const handleLookupSelect = lookup => {
     const tmpStr = userInput.substring(0, cursorPosition);
     const lastIndexOfBracesBeforeCursor = tmpStr.lastIndexOf('{');
@@ -169,6 +174,7 @@ export default function InputWithLookupHandlebars(props) {
   const options = {
     isSQLLookup: isSqlImport,
     sampleData,
+    connectionId,
   };
   const suggestions = getSuggestionsFromLookup(lookups, handleUpdate, options);
   const handleSuggestions = e => {

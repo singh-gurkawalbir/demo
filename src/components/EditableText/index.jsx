@@ -34,20 +34,25 @@ export default function EditableText({
   onChange,
   disabled,
   className,
-  children,
+  text = '',
+  defaultText,
 }) {
   const classes = useStyles();
   const [isEdit, setIsEdit] = useState(false);
-  const [value, setValue] = useState(children);
+  const [value, setValue] = useState(text);
 
   function handleCancel() {
     setIsEdit(false);
-    setValue(children);
+    setValue(text);
   }
 
   function handleChange() {
     setIsEdit(false);
-    onChange(value);
+
+    // only call the onChange if the text actually changed.
+    if (value !== text) {
+      onChange(value);
+    }
   }
 
   function handleKeyDown(e) {
@@ -79,7 +84,7 @@ export default function EditableText({
         <span
           onClick={handleEditClick}
           className={clsx(classes.text, className)}>
-          {children}
+          {text || defaultText}
         </span>
       )}
     </Fragment>

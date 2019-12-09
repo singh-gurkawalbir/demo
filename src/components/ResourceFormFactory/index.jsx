@@ -78,6 +78,8 @@ export function ActionsFactory(props) {
   const { actions } = props.fieldMeta;
   const connectionType = getConnectionType(resource);
 
+  // console.log('render: <ActionsFactory>');
+
   if (variant === 'view') {
     return <DynaForm {...props} />;
   }

@@ -73,6 +73,10 @@ export function editor(state, id) {
   return fromEditors.editor(state && state.editors, id);
 }
 
+export function editorViolations(state, id) {
+  return fromEditors.editorViolations(state && state.editors, id);
+}
+
 export function mapping(state, id) {
   return fromMappings.mapping(state && state.mappings, id);
 }
@@ -242,6 +246,13 @@ export function integrationAppSettingsFormState(state, integrationId, flowId) {
     state && state.integrationApps,
     integrationId,
     flowId
+  );
+}
+
+export function shouldRedirect(state, integrationId) {
+  return fromIntegrationApps.shouldRedirect(
+    state && state.integrationApps,
+    integrationId
   );
 }
 
