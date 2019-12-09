@@ -80,6 +80,7 @@ export default {
   'file.output': {
     type: 'select',
     label: 'Output Mode',
+    defaultValue: r => (r && r.file && r.file.output) || 'records',
     options: [
       {
         items: [
