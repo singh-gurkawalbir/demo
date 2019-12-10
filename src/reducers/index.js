@@ -420,6 +420,10 @@ export function userPreferences(state) {
   return fromUser.userPreferences((state && state.user) || null);
 }
 
+export function currentEnvironment(state) {
+  return userPreferences(state).environment;
+}
+
 export function accountShareHeader(state, path) {
   return fromUser.accountShareHeader(state && state.user, path);
 }
@@ -837,8 +841,16 @@ export function resourcesByIds(state, resourceType, resourceIds) {
 }
 
 export function matchingConnectionList(state, connection = {}, environment) {
+  if (!environment) {
+    const preferences = userPreferences(state);
+
+    // eslint-disable-next-line no-param-reassign
+    ({ environment } = preferences);
+  }
+
   const { resources = [] } = resourceList(state, {
     type: 'connections',
+    ignoreEnvironmentFilter: true,
     filter: {
       $where() {
         if (connection.assistant) {
