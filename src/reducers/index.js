@@ -1360,18 +1360,21 @@ export function addNewStoreSteps(state, integrationId) {
     state && state.session,
     integrationId
   );
+  const { steps } = addNewStoreSteps;
 
-  if (!addNewStoreSteps || !Array.isArray(addNewStoreSteps)) {
-    return [];
+  if (!steps || !Array.isArray(steps)) {
+    return addNewStoreSteps;
   }
 
-  return produce(addNewStoreSteps, draft => {
+  const modifiedSteps = produce(steps, draft => {
     const unCompletedStep = draft.find(s => !s.completed);
 
     if (unCompletedStep) {
       unCompletedStep.isCurrentStep = true;
     }
   });
+
+  return { steps: modifiedSteps };
 }
 
 // #end integrationApps Region
