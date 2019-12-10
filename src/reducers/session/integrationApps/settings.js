@@ -1,8 +1,17 @@
 import produce from 'immer';
 import actionTypes from '../../../actions/types';
 
+const emptyObj = {};
+
 export default (state = {}, action) => {
-  const { type, integrationId, flowId, licenseId, response } = action;
+  const {
+    type,
+    integrationId,
+    flowId,
+    licenseId,
+    response,
+    redirectTo,
+  } = action;
   const key = `${integrationId}-${flowId}`;
 
   return produce(state, draft => {
@@ -43,6 +52,16 @@ export default (state = {}, action) => {
       case actionTypes.INTEGRATION_APPS.SETTINGS.FORM.CLEAR:
         delete draft[key];
         break;
+      case actionTypes.INTEGRATION_APPS.SETTINGS.CLEAR_REDIRECT:
+        if (draft[integrationId]) delete draft[integrationId].redirectTo;
+        break;
+      case actionTypes.INTEGRATION_APPS.SETTINGS.REDIRECT:
+        if (!draft[integrationId]) {
+          draft[integrationId] = {};
+        }
+
+        draft[integrationId].redirectTo = redirectTo;
+        break;
       case actionTypes.INTEGRATION_APPS.SETTINGS.UPGRADE_REQUESTED:
         draft[licenseId] = true;
         break;
@@ -53,20 +72,28 @@ export default (state = {}, action) => {
 // #region PUBLIC SELECTORS
 export function integrationAppSettingsFormState(state, integrationId, flowId) {
   if (!state) {
-    return {};
+    return emptyObj;
   }
 
   const key = `${integrationId}-${flowId}`;
 
-  return state[key] || {};
+  return state[key] || emptyObj;
 }
 
 export function integrationAppAddOnState(state, integrationId) {
   if (!state) {
-    return {};
+    return emptyObj;
   }
 
-  return state[integrationId] || {};
+  return state[integrationId] || emptyObj;
+}
+
+export function shouldRedirect(state, integrationId) {
+  if (!state || !state[integrationId]) {
+    return null;
+  }
+
+  return state[integrationId].redirectTo;
 }
 
 export function checkUpgradeRequested(state, licenseId) {

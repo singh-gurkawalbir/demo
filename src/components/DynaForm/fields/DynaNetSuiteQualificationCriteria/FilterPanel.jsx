@@ -11,7 +11,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import 'jQuery-QueryBuilder';
 import 'jQuery-QueryBuilder/dist/css/query-builder.default.css';
 import jQuery from 'jquery';
-import { isEmpty } from 'lodash';
+import { isEmpty, uniqBy } from 'lodash';
 import config from './config';
 import './queryBuilder.css';
 import {
@@ -58,28 +58,31 @@ export default function FilterPanel({
   );
   const jsonPathsFromData = useMemo(
     () =>
-      filters.map(filter => {
-        const filterData = {
-          id: filter.value,
-          ...filter,
-          name: filter.label,
-        };
+      uniqBy(
+        filters.map(filter => {
+          const filterData = {
+            id: filter.value,
+            ...filter,
+            name: filter.label,
+          };
 
-        if (filter.type === 'select') {
-          if (filter.value.includes('.internalid')) {
-            filterData.id = `val:${filter.value.replace('.internalid', '')}`;
-          } else {
-            filterData.id = `text:${filter.value}`;
+          if (filter.type === 'select') {
+            if (filter.value.includes('.internalid')) {
+              filterData.id = `val:${filter.value.replace('.internalid', '')}`;
+            } else {
+              filterData.id = `text:${filter.value}`;
+            }
+          } else if (filter.type === 'checkbox') {
+            filterData.options = [
+              { id: 'T', text: 'Yes' },
+              { id: 'F', text: 'No' },
+            ];
           }
-        } else if (filter.type === 'checkbox') {
-          filterData.options = [
-            { id: 'T', text: 'Yes' },
-            { id: 'F', text: 'No' },
-          ];
-        }
 
-        return filterData;
-      }),
+          return filterData;
+        }),
+        'id'
+      ),
     [filters]
   );
 

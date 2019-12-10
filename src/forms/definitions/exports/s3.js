@@ -12,6 +12,12 @@ export default {
 
     delete newValues['/outputMode'];
 
+    if (newValues['/file/decompressFiles'] === false) {
+      newValues['/file/compressionFormat'] = undefined;
+    }
+
+    delete newValues['/file/decompressFiles'];
+
     return {
       ...newValues,
     };
@@ -61,7 +67,7 @@ export default {
     },
     outputMode: {
       id: 'outputMode',
-      type: 'radiogroup',
+      type: 'mode',
       label: 'Output Mode',
       required: true,
       options: [

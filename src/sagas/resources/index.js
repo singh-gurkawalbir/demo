@@ -27,6 +27,11 @@ export function* commitStagedChanges({ resourceType, id, scope }) {
 
   if (!patch) return; // nothing to do.
 
+  if (!isNew && resourceType.indexOf('/accesstokens') >= 0) {
+    // eslint-disable-next-line no-param-reassign
+    resourceType = 'accesstokens';
+  }
+
   const path = isNew ? `/${resourceType}` : `/${resourceType}/${id}`;
 
   // only updates need to check for conflicts.
@@ -222,11 +227,22 @@ export function* updateIntegrationSettings({
     // integration doc will be update by IA team, need to refetch to get latest copy from db.
     yield put(actions.resource.request('integrations', integrationId));
 
+    // When a staticMapWidget is saved, the map object from field will be saved to one/many mappings as static-lookup mapping.
+    // Hence we need to refresh imports and mappings to reflect the changes
+    yield put(actions.resource.requestCollection('imports'));
+
     // If settings object is sent to response, we need to refetch resources as they are modified by IA
     if (response.settings) {
       yield put(actions.resource.requestCollection('exports'));
       yield put(actions.resource.requestCollection('flows'));
-      yield put(actions.resource.requestCollection('imports'));
+    }
+
+    if (response._flowId) {
+      // when Save button on section triggers a flow on integrationApp, it will send back _flowId in the response.
+      // UI should navigate to dashboard so that user can the see the flow status.
+      yield put(
+        actions.integrationApp.settings.redirectTo(integrationId, 'dashboard')
+      );
     }
 
     // If persistSettings is called for IA flow enable/disable

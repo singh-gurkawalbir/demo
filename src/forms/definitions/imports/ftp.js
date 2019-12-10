@@ -12,6 +12,15 @@ export default {
         newValues['/ftp/blobInProgressFileName'];
     }
 
+    if (newValues['/ftp/useTempFile'] === false) {
+      newValues['/ftp/inProgressFileName'] = undefined;
+    }
+
+    if (newValues['/file/compressFiles'] === false) {
+      newValues['/file/compressionFormat'] = undefined;
+    }
+
+    delete newValues['/file/compressFiles'];
     delete newValues['/inputMode'];
 
     return {
@@ -193,7 +202,7 @@ export default {
     },
     inputMode: {
       id: 'inputMode',
-      type: 'radiogroup',
+      type: 'mode',
       label: 'Input Mode',
       options: [
         {

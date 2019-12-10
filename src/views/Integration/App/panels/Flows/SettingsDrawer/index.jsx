@@ -1,5 +1,5 @@
-import { useCallback } from 'react';
-import { useSelector } from 'react-redux';
+import { useCallback, useMemo } from 'react';
+import { useSelector, shallowEqual } from 'react-redux';
 import { Route, useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
@@ -8,25 +8,27 @@ import { integrationSettingsToDynaFormMetadata } from '../../../../../../forms/u
 import { ActionsFactory } from '../../../../../../components/ResourceFormFactory';
 import DrawerTitleBar from '../../../../../../components/drawer/TitleBar';
 import LoadResources from '../../../../../../components/LoadResources';
+import getRoutePath from '../../../../../../utils/routePaths';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
     marginTop: theme.appBarHeight,
-    width: 824,
+    minWidth: 824,
+    maxWidth: 999,
     border: 'solid 1px',
     borderColor: theme.palette.secondary.lightest,
     boxShadow: `-4px 4px 8px rgba(0,0,0,0.15)`,
     backgroundColor: theme.palette.background.default,
     zIndex: theme.zIndex.drawer + 1,
   },
-  form: {
-    maxHeight: `calc(100vh - 180px)`,
+  settingsForm: {
+    maxHeight: `calc(100vh - 120px)`,
     // maxHeight: 'unset',
-    padding: theme.spacing(2, 3),
+    // padding: theme.spacing(2, 3),
   },
 }));
 
-function SettingsDrawer({ integrationId, storeId, sectionId }) {
+function SettingsDrawer({ integrationId, storeId }) {
   const classes = useStyles();
   const history = useHistory();
   const match = useRouteMatch();
@@ -45,33 +47,25 @@ function SettingsDrawer({ integrationId, storeId, sectionId }) {
   const formState = useSelector(state =>
     selectors.integrationAppSettingsFormState(state, integrationId, flowId)
   );
-  const { flowSettings } = useSelector(state =>
-    selectors.integrationAppFlowSettings(
-      state,
-      integrationId,
-      sectionId,
-      storeId
-    )
+  const { settings: fields, sections } = useSelector(
+    state => selectors.getIAFlowSettings(state, integrationId, flowId),
+    shallowEqual
   );
-  const settings = flowSettings.find(f => f._id === flowId);
-  // this data-layer is ridiculously bad.
-  const anotherFlowSettings = {};
-
-  if (settings.settings) {
-    anotherFlowSettings.fields = settings.settings;
-  } else if (settings.sections) {
-    anotherFlowSettings.sections = settings.sections;
-  }
-
-  const fieldMeta = integrationSettingsToDynaFormMetadata(
-    anotherFlowSettings,
-    integrationId,
-    true,
-    { resource: flow }
+  const fieldMeta = useMemo(
+    () =>
+      integrationSettingsToDynaFormMetadata(
+        { fields, sections },
+        integrationId,
+        true,
+        { resource: flow }
+      ),
+    [fields, flow, integrationId, sections]
   );
   const handleClose = useCallback(() => {
-    history.goBack();
-  }, [history]);
+    history.push(getRoutePath(match.url));
+  }, [history, match.url]);
+
+  // console.log('render <SettingsDrawer>');
 
   return (
     <Drawer
@@ -86,6 +80,7 @@ function SettingsDrawer({ integrationId, storeId, sectionId }) {
 
       {fieldMeta && (
         <ActionsFactory
+          className={classes.settingsForm}
           integrationId={integrationId}
           flowId={flowId}
           storeId={storeId}

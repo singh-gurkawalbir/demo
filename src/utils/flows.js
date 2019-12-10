@@ -124,6 +124,8 @@ export const getUsedActionsMapForResource = (
 };
 
 export const isImportMappingAvailable = resource => {
+  if (!resource) return false;
+
   const { adaptorType } = resource;
   const appType = adaptorTypeMap[adaptorType];
 

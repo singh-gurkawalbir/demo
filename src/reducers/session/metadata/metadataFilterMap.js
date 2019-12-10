@@ -13,6 +13,13 @@ export default {
       label: item.name,
       value: item.scriptId && item.scriptId.toLowerCase(),
     })),
+  'suitescript-sublists': data =>
+    data
+      .map(item => ({
+        label: item.name,
+        value: item.id,
+      }))
+      .sort(sortElements),
   'suitescript-dateField': data =>
     data
       .filter(item => item.type === 'datetime' || item.type === 'datetimetz')
@@ -143,6 +150,13 @@ export default {
       updateable: d.updateable,
     })),
   'salesforce-soqlQuery': data => data,
+  'salesforce-externalIdFields': data =>
+    data.fields
+      .filter(f => f.externalId || f.name === 'Id')
+      .map(d => ({
+        label: d.label,
+        value: d.name,
+      })),
   'salesforce-sObjectCompositeMetadata': (data, options = {}) => {
     const { applicationResource, connectionId } = options;
     const _data = [];

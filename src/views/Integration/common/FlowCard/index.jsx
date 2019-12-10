@@ -163,7 +163,7 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
                 color="primary"
                 variant="h4"
                 className={classes.flowLink}>
-                {name}
+                {name || `Unnamed (id: ${flowId})`}
               </Typography>
             </Link>
             <InfoIconButton info={description} />

@@ -6,7 +6,9 @@ export default {
     const lookup =
       resource.rest &&
       resource.rest.lookups &&
-      resource.rest.lookups.get(retValues['/rest/existingDataId']);
+      resource.rest.lookups.find(
+        lookup => lookup.name === retValues['/rest/existingDataId']
+      );
 
     if (retValues['/inputMode'] === 'blob') {
       retValues['/rest/method'] = retValues['/rest/blobMethod'];
@@ -183,7 +185,7 @@ export default {
     },
     inputMode: {
       id: 'inputMode',
-      type: 'radiogroup',
+      type: 'mode',
       label: 'Input Mode',
       options: [
         {

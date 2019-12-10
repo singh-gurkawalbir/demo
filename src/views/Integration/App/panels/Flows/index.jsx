@@ -60,6 +60,8 @@ function FlowList({ integrationId, storeId }) {
   );
   const section = flowSections.find(s => s.titleId === sectionId);
 
+  // console.log('render: <Flow Settings>');
+
   return (
     <LoadResources required resources="flows">
       <ConfigureDrawer

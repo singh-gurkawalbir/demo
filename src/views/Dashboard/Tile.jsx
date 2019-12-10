@@ -1,3 +1,4 @@
+import { useDispatch } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import Typography from '@material-ui/core/Typography';
 import HomePageCardContainer from '../../components/HomePageCard/HomePageCardContainer';
@@ -19,8 +20,10 @@ import PermissionsMonitorIcon from '../../components/icons/PermissionsMonitorIco
 import { INTEGRATION_ACCESS_LEVELS, TILE_STATUS } from '../../utils/constants';
 import { tileStatus } from './util';
 import getRoutePath from '../../utils/routePaths';
+import actions from '../../actions';
 
 function Tile({ tile, history }) {
+  const dispatch = useDispatch();
   const numFlowsText = `${tile.numFlows} Flow${tile.numFlows === 1 ? '' : 's'}`;
   const accessLevel =
     tile.integration &&
@@ -49,14 +52,23 @@ function Tile({ tile, history }) {
       // TODO - open connection edit
     } else if (tile.status === TILE_STATUS.IS_PENDING_SETUP) {
       history.push(getRoutePath(`/connectors/${tile._integrationId}/setup`));
-    } else if (tile._connectorId) {
-      history.push(
-        getRoutePath(`/integrationApp/${tile._integrationId}/dashboard`)
-      );
     } else {
-      history.push(
-        getRoutePath(`/integrations/${tile._integrationId}/dashboard`)
-      );
+      if (status.variant === 'error') {
+        /**
+         * TODO Check if there is a better way to set the status filter on the Job Dashboard.
+         */
+        dispatch(actions.patchFilter('jobs', { status: 'error' }));
+      }
+
+      if (tile._connectorId) {
+        history.push(
+          getRoutePath(`/integrationApp/${tile._integrationId}/dashboard`)
+        );
+      } else {
+        history.push(
+          getRoutePath(`/integrations/${tile._integrationId}/dashboard`)
+        );
+      }
     }
   }
 

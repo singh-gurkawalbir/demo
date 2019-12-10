@@ -42,6 +42,7 @@ import getRoutePath from '../utils/routePaths';
 import { COMM_STATES } from './comms/networkComms';
 
 const emptySet = [];
+const emptyObject = {};
 const combinedReducers = combineReducers({
   app,
   session,
@@ -321,9 +322,7 @@ export function filter(state, name) {
 }
 
 export function agentAccessToken(state, id) {
-  if (!state) return {};
-
-  return fromSession.agentAccessToken(state.session, id);
+  return fromSession.agentAccessToken(state && state.session, id);
 }
 
 export function stackSystemToken(state, id) {
@@ -343,15 +342,15 @@ export function apiAccessToken(state, id) {
 }
 
 export function editor(state, id) {
-  if (!state) return {};
+  return fromSession.editor(state && state.session, id);
+}
 
-  return fromSession.editor(state.session, id);
+export function editorViolations(state, id) {
+  return fromSession.editorViolations(state && state.session, id);
 }
 
 export function mapping(state, id) {
-  if (!state) return [];
-
-  return fromSession.mapping(state.session, id);
+  return fromSession.mapping(state && state.session, id);
 }
 
 export function editorHelperFunctions(state) {
@@ -365,9 +364,7 @@ export function editorHelperFunctions(state) {
 }
 
 export function processorRequestOptions(state, id) {
-  if (!state) return {};
-
-  return fromSession.processorRequestOptions(state.session, id);
+  return fromSession.processorRequestOptions(state && state.session, id);
 }
 
 export function getSampleData(
@@ -418,6 +415,10 @@ export function developerMode(state) {
 
 export function userPreferences(state) {
   return fromUser.userPreferences((state && state.user) || null);
+}
+
+export function currentEnvironment(state) {
+  return userPreferences(state).environment;
 }
 
 export function accountShareHeader(state, path) {
@@ -652,20 +653,21 @@ export function resourceList(state, options = {}) {
   return fromData.resourceList(state && state.data, options);
 }
 
-const emptyObject = {};
-
 export function getIAFlowSettings(state, integrationId, flowId) {
-  const flowSettings = {};
   const integration = resource(state, 'integrations', integrationId);
   const allFlows = [];
 
   if (!integration || !integration._connectorId) {
     // return empty object for DIY integrations.
-    return flowSettings;
+    return emptyObject;
   }
 
   if (integration.settings && integration.settings.supportsMultiStore) {
     integration.settings.sections.forEach(section => {
+      if (!section.sections) {
+        return;
+      }
+
       const { flows } = section.sections.reduce((a, b) => ({
         flows: [...a.flows, ...b.flows],
       }));
@@ -680,7 +682,7 @@ export function getIAFlowSettings(state, integrationId, flowId) {
     allFlows.push(...(flows || []));
   }
 
-  return allFlows.find(flow => flow._id === flowId) || {};
+  return allFlows.find(flow => flow._id === flowId) || emptyObject;
 }
 
 export function flowDetails(state, id) {
@@ -746,6 +748,27 @@ export function flowListWithMetadata(state, options) {
   return { resources: flows };
 }
 
+/*
+ * Gives all other valid flows of same Integration
+ */
+export function getNextDataFlows(state, flow) {
+  const flows = flowListWithMetadata(state, { type: 'flows' }).resources || [];
+  const { _integrationId } = flow;
+  // Incase of standalone Integrations, _integrationId is undefined for flow resources
+  const flowIntegrationId =
+    _integrationId === STANDALONE_INTEGRATION ? undefined : _integrationId;
+
+  // Returns all valid flows under this integration
+  return flows.filter(
+    f =>
+      f._integrationId === flowIntegrationId &&
+      f._id !== flow._id &&
+      !f.isRealtime &&
+      !f.isSimpleImport &&
+      !f.disabled
+  );
+}
+
 export function resourceListWithPermissions(state, options) {
   const list = resourceList(state, options);
   // eslint-disable-next-line no-use-before-define
@@ -769,24 +792,39 @@ export function resourcesByIds(state, resourceType, resourceIds) {
   return resources.filter(r => resourceIds.indexOf(r._id) >= 0);
 }
 
-export function matchingConnectionList(state, connection = {}) {
+export function matchingConnectionList(state, connection = {}, environment) {
+  if (!environment) {
+    // eslint-disable-next-line no-param-reassign
+    environment = currentEnvironment(state);
+  }
+
   const { resources = [] } = resourceList(state, {
     type: 'connections',
+    ignoreEnvironmentFilter: true,
     filter: {
       $where() {
         if (connection.assistant) {
-          return this.assistant === connection.assistant && !this._connectorId;
+          return (
+            this.assistant === connection.assistant &&
+            !this._connectorId &&
+            (!environment || !!this.sandbox === (environment === 'sandbox'))
+          );
         }
 
         if (['netsuite'].indexOf(connection.type) > -1) {
           return (
             this.type === 'netsuite' &&
             !this._connectorId &&
-            (this.netsuite.account && this.netsuite.environment)
+            (this.netsuite.account && this.netsuite.environment) &&
+            (!environment || !!this.sandbox === (environment === 'sandbox'))
           );
         }
 
-        return this.type === connection.type && !this._connectorId;
+        return (
+          this.type === connection.type &&
+          !this._connectorId &&
+          (!environment || !!this.sandbox === (environment === 'sandbox'))
+        );
       },
     },
   });
@@ -805,9 +843,14 @@ export function matchingStackList(state) {
   return resources;
 }
 
-export function filteredResourceList(state, resource, resourceType) {
+export function filteredResourceList(
+  state,
+  resource,
+  resourceType,
+  environment
+) {
   return resourceType === 'connections'
-    ? matchingConnectionList(state, resource)
+    ? matchingConnectionList(state, resource, environment)
     : matchingStackList(state);
 }
 
@@ -934,10 +977,14 @@ export function getFlowsAssociatedExportFromIAMetadata(state, fieldMeta) {
 
 export function integrationAppSettingsFormState(state, integrationId, flowId) {
   return fromSession.integrationAppSettingsFormState(
-    state.session,
+    state && state.session,
     integrationId,
     flowId
   );
+}
+
+export function shouldRedirect(state, integrationId) {
+  return fromSession.shouldRedirect(state && state.session, integrationId);
 }
 
 export function integrationAppAddOnState(state, integrationId) {
@@ -1089,7 +1136,7 @@ export function integrationAppFlowSections(state, id, store) {
 
   return flowSections.map(sec => ({
     ...sec,
-    titleId: sec.title ? sec.title.replace(/\s/g, '') : '',
+    titleId: sec.title ? sec.title.replace(/\s/g, '').replace(/\W/g, '_') : '',
   }));
 }
 
@@ -1165,7 +1212,9 @@ export function integrationAppFlowSettings(state, id, section, storeId) {
 
   const selectedSection =
     allSections.find(
-      sec => sec.title && sec.title.replace(/\s/g, '') === section
+      sec =>
+        sec.title &&
+        sec.title.replace(/\s/g, '').replace(/\W/g, '_') === section
     ) || {};
 
   if (!section) {
@@ -1263,18 +1312,21 @@ export function addNewStoreSteps(state, integrationId) {
     state && state.session,
     integrationId
   );
+  const { steps } = addNewStoreSteps;
 
-  if (!addNewStoreSteps || !Array.isArray(addNewStoreSteps)) {
-    return [];
+  if (!steps || !Array.isArray(steps)) {
+    return addNewStoreSteps;
   }
 
-  return produce(addNewStoreSteps, draft => {
+  const modifiedSteps = produce(steps, draft => {
     const unCompletedStep = draft.find(s => !s.completed);
 
     if (unCompletedStep) {
       unCompletedStep.isCurrentStep = true;
     }
   });
+
+  return { steps: modifiedSteps };
 }
 
 // #end integrationApps Region
@@ -1825,56 +1877,16 @@ export function resourceStatus(
   };
 }
 
-export function flowMetadata(state, id, scope) {
-  if (!state || !id) return {};
-
-  const flows = flowListWithMetadata(state, {
-    type: 'flows',
-    filter: {
-      _id: id,
-    },
-  }).resources;
-  const master = flows && flows[0];
-  const { patch, conflict } = fromSession.stagedResource(
-    state.session,
-    id,
-    scope
-  );
-
-  if (!master && !patch) return { merged: {} };
-
-  let merged;
-  let lastChange;
-
-  if (patch) {
-    const patchResult = jsonPatch.applyPatch(
-      master ? jsonPatch.deepClone(master) : {},
-      jsonPatch.deepClone(patch)
-    );
-
-    merged = patchResult.newDocument;
-
-    if (patch.length) lastChange = patch[patch.length - 1].timestamp;
-  }
-
-  const data = {
-    master,
-    patch,
-    lastChange,
-    merged: merged || master,
-  };
-
-  if (conflict) data.conflict = conflict;
-
-  return data;
-}
-
 export function resourceData(state, resourceType, id, scope) {
   if (!state || !resourceType || !id) return {};
   let type = resourceType;
 
   if (resourceType.indexOf('/licenses') >= 0) {
     type = 'connectorLicenses';
+  }
+
+  if (resourceType.indexOf('/accesstokens') >= 0) {
+    type = 'accesstokens';
   }
 
   const master = resource(state, type, id);
@@ -2289,7 +2301,8 @@ export function flowJobs(state) {
       additionalProps.percentComplete = Math.floor(
         (job.numPagesProcessed * 100) /
           (job.numPagesGenerated *
-            ((resourceMap.flows[job._flowId] &&
+            ((resourceMap.flows &&
+              resourceMap.flows[job._flowId] &&
               resourceMap.flows[job._flowId].numImports) ||
               1))
       );
@@ -2448,14 +2461,14 @@ export function getImportSampleData(state, resourceId) {
   const { merged: resource } = resourceData(state, 'imports', resourceId);
   const { assistant, adaptorType, sampleData } = resource;
 
-  // Formats sample data into readable form
-  if (sampleData)
+  if (assistant) {
+    // get assistants sample data
+    return { data: assistantPreviewData(state, resourceId) };
+  } else if (sampleData) {
+    // Formats sample data into readable form
     return {
       data: processSampleData(sampleData, resource),
     };
-  else if (assistant) {
-    return { data: assistantPreviewData(state, resourceId) };
-    // get assistants sample data
   } else if (adaptorType === 'NetSuiteDistributedImport') {
     // eslint-disable-next-line camelcase
     const { _connectionId: connectionId, netsuite_da } = resource;
@@ -2484,6 +2497,18 @@ export function getImportSampleData(state, resourceId) {
   }
 
   return emptyObject;
+}
+
+export function isAnyFlowConnectionOffline(state, flowId) {
+  const flow = resource(state, 'flows', flowId);
+
+  if (!flow) return false;
+
+  const connectionIds = getAllConnectionIdsUsedInTheFlow(state, flow);
+  const connectionList =
+    resourcesByIds(state, 'connections', connectionIds) || [];
+
+  return connectionList.some(c => c.offline);
 }
 
 export function flowConnectionList(state, flow) {
@@ -2570,9 +2595,11 @@ export function getUsedActionsForResource(
   resourceType,
   flowNode
 ) {
-  const { merged: resource } = resourceData(state, resourceType, resourceId);
+  const r = resource(state, resourceType, resourceId);
 
-  return getUsedActionsMapForResource(resource, resourceType, flowNode);
+  if (!r) return emptyObject;
+
+  return getUsedActionsMapForResource(r, resourceType, flowNode);
 }
 
 export function debugLogs(state) {

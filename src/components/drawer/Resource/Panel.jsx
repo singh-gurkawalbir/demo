@@ -1,6 +1,6 @@
 import { Fragment, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Route } from 'react-router-dom';
+import { Route, useLocation } from 'react-router-dom';
 import { makeStyles, Typography, IconButton } from '@material-ui/core';
 import LoadResources from '../../../components/LoadResources';
 import ResourceForm from '../../../components/ResourceFormFactory';
@@ -65,10 +65,11 @@ const determineRequiredResources = type => {
 };
 
 export default function Panel(props) {
-  const { match, location, onClose, zIndex } = props;
+  const classes = useStyles(props);
+  const { match, onClose, zIndex } = props;
   const { id, resourceType, operation } = match.params;
   const isNew = operation === 'add';
-  const classes = useStyles(props);
+  const location = useLocation();
   const dispatch = useDispatch();
   const [enqueueSnackbar] = useEnqueueSnackbar();
   const formState = useSelector(state =>

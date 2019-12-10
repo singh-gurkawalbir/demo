@@ -52,6 +52,10 @@ export function* getNetsuiteOrSalesforceMeta({
     return metadata;
   } catch (error) {
     // Handling error statuses in  between 400 and 500 to show customized error
+    if (error.status === 403 || error.status === 401) {
+      return;
+    }
+
     if (error.status >= 400 && error.status < 500) {
       const parsedError = isJsonString(error.message)
         ? JSON.parse(error.message)

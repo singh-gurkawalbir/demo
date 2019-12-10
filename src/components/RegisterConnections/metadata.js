@@ -1,16 +1,23 @@
 import {
-  getResourceLink,
   onlineStatus,
   formatLastModified,
   getConnectorName,
 } from '../CeligoTable/util';
+import ResourceDrawerLink from '../ResourceDrawerLink';
 
 export default {
-  columns: [
+  columns: (r, { onClose }) => [
     {
       heading: 'Name',
-      value: (r, actionProps, location) =>
-        getResourceLink('connections', r, location),
+      value: function RegisterConnectionsDrawerLink(r) {
+        return (
+          <ResourceDrawerLink
+            resourceType="connections"
+            resource={r}
+            onClick={onClose}
+          />
+        );
+      },
       orderBy: 'name',
     },
     { heading: 'Status', value: r => onlineStatus(r) },
