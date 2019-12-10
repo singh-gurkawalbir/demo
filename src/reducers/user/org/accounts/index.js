@@ -152,6 +152,10 @@ export function integratorLicense(state, accountId) {
   ioLicense.hasSandbox =
     ioLicense.sandbox || ioLicense.numSandboxAddOnFlows > 0;
 
+  ioLicense.hasConnectorSandbox =
+    account.ownerUser.licenses.filter(l => l.type === 'connector' && l.sandbox)
+      .length > 0;
+
   if (ioLicense.expires) {
     ioLicense.status =
       moment(ioLicense.expires) > moment() ? 'ACTIVE' : 'EXPIRED';
@@ -202,20 +206,16 @@ export function sharedAccounts(state) {
     if (!a.ownerUser || !a.ownerUser.licenses) return;
 
     const ioLicense = a.ownerUser.licenses.find(l => l.type === 'integrator');
-    let hasSandbox =
-      ioLicense && (ioLicense.sandbox || ioLicense.numSandboxAddOnFlows > 0);
-
-    if (!hasSandbox) {
-      hasSandbox =
-        a.ownerUser.licenses.filter(l => l.type === 'connector' && l.sandbox)
-          .length > 0;
-    }
 
     shared.push({
       id: a._id,
       company: a.ownerUser.company,
       email: a.ownerUser.email,
-      hasSandbox,
+      hasSandbox:
+        ioLicense && (ioLicense.sandbox || ioLicense.numSandboxAddOnFlows > 0),
+      hasConnectorSandbox:
+        a.ownerUser.licenses.filter(l => l.type === 'connector' && l.sandbox)
+          .length > 0,
     });
   });
 
@@ -233,6 +233,7 @@ export function accountSummary(state) {
       accounts.push({
         id: ACCOUNT_IDS.OWN,
         hasSandbox: !!ownLicense.hasSandbox,
+        hasConnectorSandbox: !!ownLicense.hasConnectorSandbox,
       });
     }
 
@@ -245,6 +246,7 @@ export function accountSummary(state) {
       company: a.company,
       canLeave: shared.length > 1,
       hasSandbox: !!a.hasSandbox,
+      hasConnectorSandbox: !!a.hasConnectorSandbox,
     });
   });
 

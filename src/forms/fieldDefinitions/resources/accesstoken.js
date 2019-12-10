@@ -83,6 +83,10 @@ export default {
     multiselect: true,
     allowEdit: false,
     allowNew: false,
+    filter: r =>
+      r._connectorId
+        ? { _connectorId: { $exists: true } }
+        : { _connectorId: { $exists: false } },
     valueDelimiter: ',',
     visibleWhen: [
       {
@@ -98,6 +102,10 @@ export default {
     label: 'Exports',
     multiselect: true,
     allowEdit: false,
+    filter: r =>
+      r._connectorId
+        ? { _connectorId: { $exists: true } }
+        : { _connectorId: { $exists: false } },
     allowNew: false,
     valueDelimiter: ',',
     visibleWhen: [
@@ -114,6 +122,10 @@ export default {
     label: 'Imports',
     multiselect: true,
     allowEdit: false,
+    filter: r =>
+      r._connectorId
+        ? { _connectorId: { $exists: true } }
+        : { _connectorId: { $exists: false } },
     allowNew: false,
     valueDelimiter: ',',
     visibleWhen: [

@@ -431,7 +431,7 @@ function FlowBuilder() {
           <EditableText
             disabled={isViewMode}
             text={flow.name}
-            defaultText={`Unnamed (id:${flowId})`}
+            defaultText={isNewFlow ? 'New flow' : `Unnamed (id:${flowId})`}
             onChange={handleTitleChange}
           />
         }
