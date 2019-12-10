@@ -23,7 +23,7 @@ export default function DynaSalesforceLookup(props) {
   const [showEditor, setShowEditor] = useState(false);
   const classes = useStyles();
   const {
-    disabled,
+    // disabled,
     errorMessages,
     id,
     isValid,
@@ -98,7 +98,7 @@ export default function DynaSalesforceLookup(props) {
           data={formattedExtractFields}
           value={value}
           onClose={handleClose}
-          disabled={disabled}
+          // disabled={disabled}
           options={options}
         />
       )}
