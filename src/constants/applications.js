@@ -674,7 +674,7 @@ const connectors = [
     type: 'rest',
     assistant: 'woocommerce',
   },
-  { id: 'wrike', name: 'Wrike', type: 'rest', assistant: 'wrike' },
+  { id: 'wrike', name: 'Wrike', type: 'http', assistant: 'wrike' },
   // { id: 'xcart', name: 'X-Cart', type: 'http', assistant: 'xcart' },
   // { id: 'yahoo', name: 'Yahoo', type: 'http', assistant: 'yahoo' },
   // { id: 'yammer', name: 'Yammer', type: 'rest', assistant: 'yammer' },
