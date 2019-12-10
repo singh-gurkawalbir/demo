@@ -10,6 +10,7 @@ import {
 import {
   isFileAdaptor,
   isRealTimeOrDistributedResource,
+  isBlobTypeResource,
 } from '../../../utils/resource';
 import { exportPreview } from '../utils/previewCalls';
 import { saveRawDataOnResource } from './utils';
@@ -22,6 +23,16 @@ function* fetchAndSaveRawDataForResource({ type, resourceId, tempResourceId }) {
     resourceId
   );
 
+  // Raw data need not be updated on save for real time resources
+  // Covers - NS/SF/Webhooks
+  // Also for Blob type resources ,no need to update as its a sample blob key as sample data
+  if (
+    isRealTimeOrDistributedResource(resourceObj) ||
+    isBlobTypeResource(resourceObj)
+  )
+    return;
+
+  // For file adaptors , raw data is fetched from uploaded file stored in state
   if (isFileAdaptor(resourceObj)) {
     return yield call(saveRawDataForFileAdaptors, {
       resourceId,
@@ -29,10 +40,6 @@ function* fetchAndSaveRawDataForResource({ type, resourceId, tempResourceId }) {
       type,
     });
   }
-
-  // Raw data need not be updated on save for real time resources
-  // Covers - NS/SF/Webhooks
-  if (isRealTimeOrDistributedResource(resourceObj)) return;
 
   if (type === 'exports') {
     const exportPreviewData = yield call(exportPreview, {
