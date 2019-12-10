@@ -842,10 +842,8 @@ export function resourcesByIds(state, resourceType, resourceIds) {
 
 export function matchingConnectionList(state, connection = {}, environment) {
   if (!environment) {
-    const preferences = userPreferences(state);
-
     // eslint-disable-next-line no-param-reassign
-    ({ environment } = preferences);
+    environment = currentEnvironment(state);
   }
 
   const { resources = [] } = resourceList(state, {
