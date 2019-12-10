@@ -129,13 +129,13 @@ export default function IntegrationApp({ match, history }) {
   // All the code ABOVE this comment should be moved from this component to the data-layer.
   //
   //
-  const availableTabs = hasAddOns
+  let availableTabs = hasAddOns
     ? allTabs
-    : // remove addons tab if IA doesn't have any.
+    : // remove addons tab (end) if IA doesn't have any.
       allTabs.slice(0, allTabs.length - 1);
 
   if (hideGeneralTab) {
-    availableTabs.shift();
+    availableTabs = availableTabs.slice(1);
   }
 
   const handleTagChangeHandler = useCallback(
