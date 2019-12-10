@@ -20,6 +20,7 @@ export default function DynaSQLQueryBuilder(props) {
     value,
     label,
     title,
+    ruleTitle,
     arrayIndex,
     resourceId,
     flowId,
@@ -226,6 +227,7 @@ export default function DynaSQLQueryBuilder(props) {
           action={lookupField}
           disabled={disabled}
           showDefaultData={!hideDefaultData}
+          ruleTitle={ruleTitle}
         />
       )}
       <Button
