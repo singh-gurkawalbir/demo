@@ -194,7 +194,7 @@ export default function ImportCsvParsePanel(props) {
               }}
             />
           }
-          label="Truncare last row delimiter"
+          label="Truncate last row delimiter"
         />
         <FormControlLabel
           disabled={disabled}
