@@ -1,12 +1,4 @@
-import {
-  call,
-  put,
-  select,
-  takeEvery,
-  take,
-  fork,
-  cancel,
-} from 'redux-saga/effects';
+import { call, put, select, takeEvery, take, race } from 'redux-saga/effects';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
@@ -267,20 +259,19 @@ export function* submitFormValues({ resourceType, resourceId, values, match }) {
 }
 
 export function* submitResourceForm(params) {
-  const submitTask = yield fork(submitFormValues, params);
-  const action = yield take(actionTypes.RESOURCE_FORM.SUBMIT_ABORTED);
   const { resourceType, resourceId } = params;
+  const { cancelSave } = yield race({
+    saveForm: call(submitFormValues, params),
+    cancelSave: take(
+      action =>
+        action.type === actionTypes.RESOURCE_FORM.SUBMIT_ABORTED &&
+        action.resourceType === resourceType &&
+        action.resourceId === resourceId
+    ),
+  });
 
-  if (
-    action &&
-    action.resourceType === resourceType &&
-    action.resourceId === resourceId
-  ) {
-    // perform submit cleanup
-    yield cancel(submitTask);
-
-    yield put(actions.resource.clearStaged(resourceId));
-  }
+  // perform submit cleanup
+  if (cancelSave) yield put(actions.resource.clearStaged(resourceId));
 }
 
 export function* saveResourceWithDefinitionID({ formValues, definitionId }) {

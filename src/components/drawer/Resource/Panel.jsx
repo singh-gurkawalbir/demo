@@ -246,7 +246,7 @@ export default function Panel(props) {
       <Route
         path={`${match.url}/:operation(add|edit)/:resourceType/:id`}
         render={props => (
-          <Panel {...props} zIndex={zIndex + 1} onClose={abortAndClose} />
+          <Panel {...props} zIndex={zIndex + 1} onClose={onClose} />
         )}
       />
     </Fragment>

@@ -5,7 +5,7 @@ import { apiCallWithRetry } from '../../index';
 import { commStatusByKey } from '../../../reducers/index';
 import getRequestOptions from '../../../utils/requestOptions';
 import commKeyGenerator from '../../../utils/commKeyGenerator';
-import { COMM_STATES } from '../../../reducers/comms';
+import { COMM_STATES } from '../../../reducers/comms/networkComms';
 import { isJsonString } from '../../../utils/string';
 
 export function* getNetsuiteOrSalesforceMeta({

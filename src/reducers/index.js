@@ -21,11 +21,7 @@ import {
   ACCOUNT_IDS,
   SUITESCRIPT_CONNECTORS,
 } from '../utils/constants';
-import {
-  changePasswordParams,
-  changeEmailParams,
-  pingConnectionParams,
-} from '../sagas/api/apiPaths';
+import { changePasswordParams, changeEmailParams } from '../sagas/api/apiPaths';
 import { getFieldById } from '../forms/utils';
 import { upgradeButtonText, expiresInfo } from '../utils/license';
 import commKeyGen from '../utils/commKeyGenerator';
@@ -43,6 +39,7 @@ import { isValidResourceReference, isNewId } from '../utils/resource';
 import { processSampleData } from '../utils/sampleData';
 import inferErrorMessage from '../utils/inferErrorMessage';
 import getRoutePath from '../utils/routePaths';
+import { COMM_STATES } from './comms/networkComms';
 
 const emptySet = [];
 const combinedReducers = combineReducers({
@@ -122,7 +119,7 @@ export function isAllLoadingCommsAboveThreshold(state) {
   return (
     loadingOrErrored.filter(
       resource =>
-        resource.status === fromComms.COMM_STATES.LOADING &&
+        resource.status === COMM_STATES.LOADING &&
         Date.now() - resource.timestamp < Number(process.env.NETWORK_THRESHOLD)
     ).length === 0
   );
@@ -482,11 +479,7 @@ export function isAuthInitialized(state) {
 }
 
 export function isAuthLoading(state) {
-  return (
-    state &&
-    state.auth &&
-    state.auth.commStatus === fromComms.COMM_STATES.LOADING
-  );
+  return state && state.auth && state.auth.commStatus === COMM_STATES.LOADING;
 }
 
 export function authenticationErrored(state) {
@@ -538,14 +531,9 @@ export function changePasswordSuccess(state) {
     changePasswordParams.path,
     changePasswordParams.opts.method
   );
+  const status = fromComms.commStatus(state && state.comms, commKey);
 
-  return (
-    state &&
-    state.comms &&
-    state.comms[commKey] &&
-    state.comms[commKey].status &&
-    state.comms[commKey].status === fromComms.COMM_STATES.SUCCESS
-  );
+  return status === COMM_STATES.SUCCESS;
 }
 
 export function changePasswordFailure(state) {
@@ -553,14 +541,9 @@ export function changePasswordFailure(state) {
     changePasswordParams.path,
     changePasswordParams.opts.method
   );
+  const status = fromComms.commStatus(state && state.comms, commKey);
 
-  return (
-    state &&
-    state.comms &&
-    state.comms[commKey] &&
-    state.comms[commKey].status &&
-    state.comms[commKey].status === fromComms.COMM_STATES.ERROR
-  );
+  return status === COMM_STATES.ERROR;
 }
 
 export function changePasswordMsg(state) {
@@ -568,14 +551,9 @@ export function changePasswordMsg(state) {
     changePasswordParams.path,
     changePasswordParams.opts.method
   );
+  const message = fromComms.requestMessage(state && state.comms, commKey);
 
-  return (
-    (state &&
-      state.comms &&
-      state.comms[commKey] &&
-      state.comms[commKey].message) ||
-    ''
-  );
+  return message || '';
 }
 
 export function changeEmailFailure(state) {
@@ -583,14 +561,9 @@ export function changeEmailFailure(state) {
     changeEmailParams.path,
     changeEmailParams.opts.method
   );
+  const status = fromComms.commStatus(state && state.comms, commKey);
 
-  return (
-    state &&
-    state.comms &&
-    state.comms[commKey] &&
-    state.comms[commKey].status &&
-    state.comms[commKey].status === fromComms.COMM_STATES.ERROR
-  );
+  return status === COMM_STATES.ERROR;
 }
 
 export function changeEmailSuccess(state) {
@@ -598,14 +571,9 @@ export function changeEmailSuccess(state) {
     changeEmailParams.path,
     changeEmailParams.opts.method
   );
+  const status = fromComms.commStatus(state && state.comms, commKey);
 
-  return (
-    state &&
-    state.comms &&
-    state.comms[commKey] &&
-    state.comms[commKey].status &&
-    state.comms[commKey].status === fromComms.COMM_STATES.SUCCESS
-  );
+  return status === COMM_STATES.SUCCESS;
 }
 
 export function changeEmailMsg(state) {
@@ -613,43 +581,27 @@ export function changeEmailMsg(state) {
     changeEmailParams.path,
     changeEmailParams.opts.method
   );
+  const message = fromComms.requestMessage(state && state.comms, commKey);
 
-  return (
-    (state &&
-      state.comms &&
-      state.comms[commKey] &&
-      state.comms[commKey].message) ||
-    ''
-  );
+  return message || '';
 }
 
 // #endregion PASSWORD & EMAIL update selectors for modals
 
 // #region USER SELECTORS
-export function testConnectionCommState(state) {
-  const commKey = commKeyGen(
-    pingConnectionParams.path,
-    pingConnectionParams.opts.method
+export function testConnectionCommState(state, resourceId) {
+  const status = fromComms.testConnectionState(
+    state && state.comms,
+    resourceId
+  );
+  const message = fromComms.testConnectionMessage(
+    state && state.comms,
+    resourceId
   );
 
-  if (
-    !(
-      state &&
-      state.comms &&
-      state.comms[commKey] &&
-      state.comms[commKey].status
-    )
-  )
-    return {
-      commState: null,
-      message: null,
-    };
-
-  const comm = state.comms[commKey];
-
   return {
-    commState: comm.status,
-    message: inferErrorMessage(comm.message),
+    commState: status,
+    message,
   };
 }
 
@@ -2194,7 +2146,11 @@ export function connectionTokens(state, resourceId) {
 // #endregion
 
 export function commStatusByKey(state, key) {
-  const commStatus = state && state.comms && state.comms[key];
+  const commStatus =
+    state &&
+    state.comms &&
+    state.comms.networkComms &&
+    state.comms.networkComms[key];
 
   return commStatus;
 }

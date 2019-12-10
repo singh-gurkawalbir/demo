@@ -201,9 +201,29 @@ const resource = {
     }),
   connections: {
     test: (resourceId, values) =>
-      action(actionTypes.TEST_CONNECTION, {
+      action(actionTypes.CONNECTION.TEST, {
         resourceId,
         values,
+      }),
+
+    testErrored: (resourceId, message) =>
+      action(actionTypes.CONNECTION.TEST_ERRORED, {
+        resourceId,
+        message,
+      }),
+    testCancelled: (resourceId, message) =>
+      action(actionTypes.CONNECTION.TEST_CANCELLED, {
+        resourceId,
+        message,
+      }),
+    testSuccessful: (resourceId, message) =>
+      action(actionTypes.CONNECTION.TEST_SUCCESSFUL, {
+        resourceId,
+        message,
+      }),
+    testClear: resourceId =>
+      action(actionTypes.CONNECTION.TEST_CLEAR, {
+        resourceId,
       }),
     saveAndAuthorize: (resourceId, values) =>
       action(actionTypes.RESOURCE_FORM.SAVE_AND_AUTHORIZE, {

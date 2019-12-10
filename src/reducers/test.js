@@ -11,7 +11,7 @@ import {
   TILE_STATUS,
   SUITESCRIPT_CONNECTORS,
 } from '../utils/constants';
-import { COMM_STATES } from './comms';
+import { COMM_STATES } from './comms/networkComms';
 
 describe('global selectors', () => {
   describe(`isProfileDataReady`, () => {
@@ -942,9 +942,12 @@ describe('commStatusByKey', () => {
     const state = reducer(
       {
         comms: {
-          'GET:/test': { something: 'something' },
+          networkComms: {
+            'GET:/test': { something: 'something' },
+          },
         },
       },
+
       'some action'
     );
 
@@ -956,7 +959,9 @@ describe('commStatusByKey', () => {
     const state = reducer(
       {
         comms: {
-          'GET:/test': { something: 'something' },
+          networkComms: {
+            'GET:/test': { something: 'something' },
+          },
         },
       },
       'some action'
