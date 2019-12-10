@@ -207,7 +207,6 @@ export const REST_ASSISTANTS = [
   'slack',
   'desk',
   'eventbrite',
-  'wrike',
   'smartsheet',
   'campaignmonitor',
   'mailchimp',
