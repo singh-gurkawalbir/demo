@@ -112,13 +112,13 @@ export default function ImportCsvParsePanel(props) {
             onChange={event => patchEditor('rowDelimiter', event.target.value)}
             placeholder="Please Select"
             inputProps={{ id: 'rowDelimiter' }}>
-            <option value="cr" data-test="cr">
-              CR (\r)
-            </option>
-            <option value="lf" data-test="lf">
+            <option value="\n" data-test="lf">
               LF (\n)
             </option>
-            <option value="crlf" data-test="crlf">
+            <option value="\r" data-test="cr">
+              CR (\r)
+            </option>
+            <option value="\r\n" data-test="crlf">
               CRLF (\r\n)
             </option>
           </CeligoSelect>
@@ -194,7 +194,7 @@ export default function ImportCsvParsePanel(props) {
               }}
             />
           }
-          label="Truncare last row delimiter"
+          label="Truncate last row delimiter"
         />
         <FormControlLabel
           disabled={disabled}

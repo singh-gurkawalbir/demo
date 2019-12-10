@@ -116,6 +116,8 @@ export default {
     defaultValue: r =>
       (r.file && r.file.csv) || {
         includeHeader: true,
+        rowDelimiter: '\n',
+        columnDelimiter: ',',
       },
     visibleWhenAll: [
       {
