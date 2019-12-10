@@ -11,16 +11,11 @@ import {
   isFileAdaptor,
   isRealTimeOrDistributedResource,
 } from '../../../utils/resource';
-import { exportPreview, pageProcessorPreview } from '../utils/previewCalls';
+import { exportPreview } from '../utils/previewCalls';
 import { saveRawDataOnResource } from './utils';
 import saveRawDataForFileAdaptors from './fileAdaptorUpdates';
 
-function* fetchAndSaveRawDataForResource({
-  type,
-  resourceId,
-  flowId,
-  tempResourceId,
-}) {
+function* fetchAndSaveRawDataForResource({ type, resourceId, tempResourceId }) {
   const resourceObj = yield select(
     resource,
     type === 'imports' ? 'imports' : 'exports',
@@ -54,20 +49,21 @@ function* fetchAndSaveRawDataForResource({
       });
     }
   } else {
-    const pageProcessorPreviewData = yield call(pageProcessorPreview, {
-      flowId,
-      _pageProcessorId: resourceId,
-      previewType: 'raw',
-      hidden: true,
-    });
-
-    if (pageProcessorPreviewData) {
-      yield call(saveRawDataOnResource, {
-        resourceId,
-        rawData:
-          pageProcessorPreviewData && JSON.stringify(pageProcessorPreviewData),
-      });
-    }
+    // TODO @Raghu : Commenting this now as there is no BE Support on saving raw data for PPs
+    // Add it back when BE supports offline mode for PPs
+    // const pageProcessorPreviewData = yield call(pageProcessorPreview, {
+    //   flowId,
+    //   _pageProcessorId: resourceId,
+    //   previewType: 'raw',
+    //   hidden: true,
+    // });
+    // if (pageProcessorPreviewData) {
+    //   yield call(saveRawDataOnResource, {
+    //     resourceId,
+    //     rawData:
+    //       pageProcessorPreviewData && JSON.stringify(pageProcessorPreviewData),
+    //   });
+    // }
   }
 }
 
