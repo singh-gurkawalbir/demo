@@ -420,6 +420,10 @@ export function userPreferences(state) {
   return fromUser.userPreferences((state && state.user) || null);
 }
 
+export function currentEnvironment(state) {
+  return userPreferences(state).environment;
+}
+
 export function accountShareHeader(state, path) {
   return fromUser.accountShareHeader(state && state.user, path);
 }
@@ -837,8 +841,14 @@ export function resourcesByIds(state, resourceType, resourceIds) {
 }
 
 export function matchingConnectionList(state, connection = {}, environment) {
+  if (!environment) {
+    // eslint-disable-next-line no-param-reassign
+    environment = currentEnvironment(state);
+  }
+
   const { resources = [] } = resourceList(state, {
     type: 'connections',
+    ignoreEnvironmentFilter: true,
     filter: {
       $where() {
         if (connection.assistant) {
@@ -1350,18 +1360,21 @@ export function addNewStoreSteps(state, integrationId) {
     state && state.session,
     integrationId
   );
+  const { steps } = addNewStoreSteps;
 
-  if (!addNewStoreSteps || !Array.isArray(addNewStoreSteps)) {
-    return [];
+  if (!steps || !Array.isArray(steps)) {
+    return addNewStoreSteps;
   }
 
-  return produce(addNewStoreSteps, draft => {
+  const modifiedSteps = produce(steps, draft => {
     const unCompletedStep = draft.find(s => !s.completed);
 
     if (unCompletedStep) {
       unCompletedStep.isCurrentStep = true;
     }
   });
+
+  return { steps: modifiedSteps };
 }
 
 // #end integrationApps Region

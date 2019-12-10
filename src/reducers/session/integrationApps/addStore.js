@@ -2,7 +2,7 @@ import produce from 'immer';
 import actionTypes from '../../../actions/types';
 
 export default (state = {}, action) => {
-  const { id, type, update, steps, installerFunction } = action;
+  const { id, type, update, steps, installerFunction, message } = action;
   let step;
 
   return produce(state, draft => {
@@ -13,7 +13,10 @@ export default (state = {}, action) => {
     // eslint-disable-next-line default-case
     switch (type) {
       case actionTypes.INTEGRATION_APPS.STORE.RECEIVED:
-        draft[id] = steps;
+        draft[id] = { steps };
+        break;
+      case actionTypes.INTEGRATION_APPS.STORE.FAILURE:
+        draft[id] = { error: message };
         break;
       case actionTypes.INTEGRATION_APPS.STORE.COMPLETE:
         steps.forEach(step => {
