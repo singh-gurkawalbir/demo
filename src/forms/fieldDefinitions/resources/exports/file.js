@@ -17,14 +17,22 @@ export default {
         field: 'outputMode',
         is: ['records'],
       },
+      {
+        field: 'file.output',
+        is: ['records'],
+      },
     ],
   },
   'file.encoding': {
     type: 'select',
     label: 'File encoding',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'outputMode',
+        is: ['records'],
+      },
+      {
+        field: 'file.output',
         is: ['records'],
       },
     ],
@@ -57,6 +65,12 @@ export default {
         ],
       },
     ],
+    visibleWhen: [
+      {
+        field: 'file.output',
+        is: ['records'],
+      },
+    ],
     userDefinitionId: r =>
       r &&
       r.file &&
@@ -66,6 +80,7 @@ export default {
   'file.output': {
     type: 'select',
     label: 'Output Mode',
+    defaultValue: r => (r && r.file && r.file.output) || 'records',
     options: [
       {
         items: [
@@ -237,6 +252,10 @@ export default {
       },
       {
         field: 'outputMode',
+        is: ['records'],
+      },
+      {
+        field: 'file.output',
         is: ['records'],
       },
     ],

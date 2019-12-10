@@ -487,6 +487,10 @@ export default {
         field: 'salesforce.operation',
         is: ['update', 'addupdate'],
       },
+      {
+        field: 'salesforce.compositeOperation',
+        is: ['update', 'addupdate'],
+      },
     ],
   },
   'salesforce.upsertpicklistvalues.fullName': {

@@ -123,16 +123,16 @@ export default {
     },
     ignoreExisting: {
       fieldId: 'ignoreExisting',
-      visibleWhen: [{ field: 'salesforce.operation', is: ['insert'] }],
+      visibleWhen: [
+        { field: 'salesforce.operation', is: ['insert'] },
+        { field: 'salesforce.compositeOperation', is: ['insert'] },
+      ],
     },
     ignoreMissing: {
       fieldId: 'ignoreMissing',
-      visibleWhenAll: [
+      visibleWhen: [
         { field: 'salesforce.operation', is: ['update'] },
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
+        { field: 'salesforce.compositeOperation', is: ['update'] },
       ],
     },
     'salesforce.upsertpicklistvalues.fullName': {
