@@ -1,9 +1,10 @@
 import { makeStyles } from '@material-ui/core/styles';
-import { useState, useEffect } from 'react';
+import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../actions';
 import DynaAction from '../../DynaForm/DynaAction';
 import * as selectors from '../../../reducers';
+import { useLoadingSnackbarOnSave } from './SaveButton';
 
 const useStyles = makeStyles(theme => ({
   actionButton: {
@@ -22,24 +23,24 @@ export default function IntegrationSettingsSaveButton(props) {
     disabled,
   } = props;
   const dispatch = useDispatch();
-  const [disableSave, setDisableSave] = useState(false);
-  const handleSubmitForm = values => {
-    // Adding flow id to the payload mimicking the save behavior of ampersand
-    // TODO:Have to investigate the save behavior...tabs vs all tabs
-    const allValuesWithFlowId = { ...values, '/flowId': flowId };
+  const onSave = useCallback(
+    values => {
+      // Adding flow id to the payload mimicking the save behavior of ampersand
+      // TODO:Have to investigate the save behavior...tabs vs all tabs
+      const allValuesWithFlowId = { ...values, '/flowId': flowId };
 
-    dispatch(
-      actions.integrationApp.settings.update(
-        integrationId,
-        flowId,
-        storeId,
-        allValuesWithFlowId
-      )
-    );
-    setDisableSave(true);
-  };
-
-  const formState = useSelector(state => {
+      dispatch(
+        actions.integrationApp.settings.update(
+          integrationId,
+          flowId,
+          storeId,
+          allValuesWithFlowId
+        )
+      );
+    },
+    [dispatch, flowId, integrationId, storeId]
+  );
+  const { submitCompleted } = useSelector(state => {
     const {
       submitComplete,
       submitFailed,
@@ -49,12 +50,11 @@ export default function IntegrationSettingsSaveButton(props) {
       submitCompleted: submitComplete || submitFailed,
     };
   });
-
-  useEffect(() => {
-    if (formState.submitCompleted) {
-      setDisableSave(false);
-    }
-  }, [formState.submitCompleted]);
+  const { handleSubmitForm, disableSave } = useLoadingSnackbarOnSave({
+    resourceType: 'Integration Settings',
+    saveTerminated: submitCompleted,
+    onSave,
+  });
 
   return (
     <DynaAction

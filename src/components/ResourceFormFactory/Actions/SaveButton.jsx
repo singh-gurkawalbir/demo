@@ -1,9 +1,38 @@
 import { withStyles } from '@material-ui/core/styles';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import actions from '../../../actions';
 import DynaAction from '../../DynaForm/DynaAction';
 import * as selectors from '../../../reducers';
+import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
+import { MODEL_PLURAL_TO_LABEL } from '../../../utils/resource';
+
+export const useLoadingSnackbarOnSave = props => {
+  const { saveTerminated, onSave, resourceType } = props;
+  const [disableSave, setDisableSave] = useState(false);
+  const [snackbar, closeSnackbar] = useEnqueueSnackbar();
+  const handleSubmitForm = values => {
+    onSave(values);
+    setDisableSave(true);
+    snackbar({
+      variant: 'info',
+      message: `Saving your ${MODEL_PLURAL_TO_LABEL[resourceType] ||
+        resourceType} `,
+      persist: true,
+    });
+  };
+
+  useEffect(() => {
+    if (saveTerminated) {
+      setDisableSave(false);
+      closeSnackbar();
+    }
+
+    return closeSnackbar;
+  }, [closeSnackbar, saveTerminated]);
+
+  return { handleSubmitForm, disableSave };
+};
 
 const styles = theme => ({
   actionButton: {
@@ -24,17 +53,19 @@ const SaveButton = props => {
   const saveTerminated = useSelector(state =>
     selectors.resourceFormSaveProcessTerminated(state, resourceType, resourceId)
   );
-  const [disableSave, setDisableSave] = useState(false);
-  const handleSubmitForm = values => {
-    dispatch(
-      actions.resourceForm.submit(resourceType, resourceId, values, match)
-    );
-    setDisableSave(true);
-  };
-
-  useEffect(() => {
-    if (saveTerminated) setDisableSave(false);
-  }, [saveTerminated]);
+  const onSave = useCallback(
+    values => {
+      dispatch(
+        actions.resourceForm.submit(resourceType, resourceId, values, match)
+      );
+    },
+    [dispatch, match, resourceId, resourceType]
+  );
+  const { handleSubmitForm, disableSave } = useLoadingSnackbarOnSave({
+    saveTerminated,
+    onSave,
+    resourceType,
+  });
 
   return (
     <DynaAction
