@@ -17,6 +17,7 @@ export default function DynaCsvGenerate(props) {
     disabled,
   } = props;
   const [showEditor, setShowEditor] = useState(false);
+  const [sampleDataLoaded, setSampleDataLoaded] = useState(false);
   const handleEditorClick = () => {
     setShowEditor(!showEditor);
   };
@@ -45,8 +46,15 @@ export default function DynaCsvGenerate(props) {
   }, [dispatch, flowId, resourceId, resourceType]);
 
   useEffect(() => {
-    fetchSampleData();
-  }, [fetchSampleData]);
+    if (!sampleDataLoaded) {
+      fetchSampleData();
+    }
+  }, [fetchSampleData, sampleDataLoaded]);
+  useEffect(() => {
+    if (!sampleDataLoaded && sampleData) {
+      setSampleDataLoaded(true);
+    }
+  }, [sampleData, sampleDataLoaded]);
   const handleClose = (shouldCommit, editorValues) => {
     if (shouldCommit) {
       const {
@@ -82,6 +90,7 @@ export default function DynaCsvGenerate(props) {
     <Fragment>
       {showEditor && (
         <CsvConfigEditorDialog
+          key={sampleDataLoaded}
           title="CSV generate options"
           id={id + resourceId}
           mode="csv"
