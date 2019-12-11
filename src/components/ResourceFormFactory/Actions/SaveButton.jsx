@@ -11,16 +11,19 @@ export const useLoadingSnackbarOnSave = props => {
   const { saveTerminated, onSave, resourceType } = props;
   const [disableSave, setDisableSave] = useState(false);
   const [snackbar, closeSnackbar] = useEnqueueSnackbar();
-  const handleSubmitForm = values => {
-    onSave(values);
-    setDisableSave(true);
-    snackbar({
-      variant: 'info',
-      message: `Saving your ${MODEL_PLURAL_TO_LABEL[resourceType] ||
-        resourceType} `,
-      persist: true,
-    });
-  };
+  const handleSubmitForm = useCallback(
+    values => {
+      onSave(values);
+      setDisableSave(true);
+      snackbar({
+        variant: 'info',
+        message: `Saving your ${MODEL_PLURAL_TO_LABEL[resourceType] ||
+          resourceType} `,
+        persist: true,
+      });
+    },
+    [onSave, resourceType, snackbar]
+  );
 
   useEffect(() => {
     if (saveTerminated) {

@@ -26,11 +26,11 @@ export const PingMessage = props => {
   const testConnectionCommState = useSelector(state =>
     selectors.testConnectionCommState(state, resourceId)
   );
-  const cancelTest = useCallback(
+  const handleCancelTest = useCallback(
     () => dispatch(actions.resource.connections.testCancelled(resourceId)),
     [dispatch, resourceId]
   );
-  const testClear = useCallback(
+  const handleTestClear = useCallback(
     () => dispatch(actions.resource.connections.testClear(resourceId)),
     [dispatch, resourceId]
   );
@@ -38,8 +38,8 @@ export const PingMessage = props => {
   return (
     <PingSnackbar
       commStatus={testConnectionCommState}
-      onHandleClose={testClear}
-      onHandleCancelTask={cancelTest}
+      onHandleClose={handleTestClear}
+      onHandleCancelTask={handleCancelTest}
     />
   );
 };
