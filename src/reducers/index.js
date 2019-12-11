@@ -1321,10 +1321,8 @@ export function integrationAppFlows(state, integrationId, storeId) {
   }).resources;
   const integration = integrationAppSettings(state, integrationId);
 
-  if (integration.settings && integration.settings.stores && storeId) {
-    const store = integration.settings.stores.find(
-      store => store.value === storeId
-    );
+  if (integration.stores && storeId) {
+    const store = integration.stores.find(store => store.value === storeId);
     const { flows } = integrationAppFlowSettings(
       state,
       integrationId,
