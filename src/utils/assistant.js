@@ -1555,8 +1555,17 @@ export function convertToImport({ assistantConfig, assistantData }) {
       importDoc.response = {};
     }
 
+    /**
+     * TODO We can remove the below code of setting response.resourceIdPath and response.successPath
+     * from operationDetails once all the assistant metadata files are updated to use
+     * operationDetails.response (https://celigo.atlassian.net/browse/AS-953).
+     */
     importDoc.response.resourceIdPath = operationDetails.responseIdPath;
     importDoc.response.successPath = operationDetails.successPath;
+
+    Object.keys(operationDetails.response || {}).forEach(
+      prop => (importDoc.response[prop] = operationDetails.response[prop])
+    );
   }
 
   const assistantMetadata = { resource };
