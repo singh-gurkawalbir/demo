@@ -119,7 +119,7 @@ export default function ResponseMappingDialog(props) {
       flowId,
       resourceId,
       stage: 'responseMappingExtract',
-      resourceType: 'imports',
+      resourceType,
     })
   );
 
