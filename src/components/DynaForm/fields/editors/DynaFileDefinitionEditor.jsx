@@ -169,7 +169,9 @@ function DynaFileDefinitionEditor(props) {
             processor={processor}
             data={
               sampleData ||
-              (props.sampleData && JSON.stringify(props.sampleData, null, 2))
+              (resourceType === 'exports'
+                ? props.sampleData
+                : JSON.stringify(props.sampleData, null, 2))
             }
             rule={value}
             onClose={handleClose}
