@@ -244,6 +244,7 @@ export default {
       (r.file && r.file.csv) || {
         rowsToSkip: 0,
         trimSpaces: true,
+        columnDelimiter: ',',
       },
     visibleWhenAll: [
       {

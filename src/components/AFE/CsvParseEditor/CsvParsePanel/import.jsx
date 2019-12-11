@@ -4,7 +4,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
-import { Input, Chip, MenuItem } from '@material-ui/core';
+import { Input, Chip, MenuItem, ListItemText } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../../../actions';
 import * as selectors from '../../../../reducers';
@@ -53,6 +53,12 @@ const useStyles = makeStyles(theme => ({
   label: {
     zIndex: 1,
     padding: theme.spacing(0.6, 1),
+  },
+  menuItems: {
+    paddingRight: 0,
+    '&:before': {
+      display: 'none',
+    },
   },
 }));
 
@@ -112,13 +118,13 @@ export default function ImportCsvParsePanel(props) {
             onChange={event => patchEditor('rowDelimiter', event.target.value)}
             placeholder="Please Select"
             inputProps={{ id: 'rowDelimiter' }}>
-            <option value="cr" data-test="cr">
-              CR (\r)
-            </option>
-            <option value="lf" data-test="lf">
+            <option value="\n" data-test="lf">
               LF (\n)
             </option>
-            <option value="crlf" data-test="crlf">
+            <option value="\r" data-test="cr">
+              CR (\r)
+            </option>
+            <option value="\r\n" data-test="crlf">
               CRLF (\r\n)
             </option>
           </CeligoSelect>
@@ -172,8 +178,16 @@ export default function ImportCsvParsePanel(props) {
               )}
               MenuProps={MenuProps}>
               {allColumns.map(name => (
-                <MenuItem key={name} value={name} data-test={name}>
-                  {name}
+                <MenuItem
+                  key={name}
+                  value={name}
+                  data-test={name}
+                  className={classes.menuItems}>
+                  <Checkbox
+                    checked={keyColumns.indexOf(name) !== -1}
+                    color="primary"
+                  />
+                  <ListItemText primary={name} />
                 </MenuItem>
               ))}
             </CeligoSelect>
@@ -194,7 +208,7 @@ export default function ImportCsvParsePanel(props) {
               }}
             />
           }
-          label="Truncare last row delimiter"
+          label="Truncate last row delimiter"
         />
         <FormControlLabel
           disabled={disabled}

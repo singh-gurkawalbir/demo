@@ -2318,9 +2318,9 @@ export default {
   'mongodb.host': {
     type: 'text',
     required: true,
-    delimiter: ',',
     omitWhenValueIs: [''],
     label: 'Host(s)',
+    defaultValue: r => r && r.mongodb && r.mongodb.host[0],
   },
   'mongodb.database': {
     type: 'text',

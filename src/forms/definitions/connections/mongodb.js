@@ -2,9 +2,10 @@ export default {
   preSave: formValues => {
     const newValues = { ...formValues };
 
+    newValues['/mongodb/host'] = [newValues['/mongodb/host']];
     delete newValues['/mode'];
 
-    return formValues;
+    return newValues;
   },
   fieldMap: {
     name: { fieldId: 'name' },

@@ -523,6 +523,11 @@ const integrationApp = {
         id: integrationId,
         installerFunction,
       }),
+    failedNewStoreSteps: (integrationId, message) =>
+      action(actionTypes.INTEGRATION_APPS.STORE.FAILURE, {
+        id: integrationId,
+        message,
+      }),
     receivedNewStoreSteps: (integrationId, steps) =>
       action(actionTypes.INTEGRATION_APPS.STORE.RECEIVED, {
         id: integrationId,
