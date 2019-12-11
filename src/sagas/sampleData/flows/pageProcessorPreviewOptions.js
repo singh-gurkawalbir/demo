@@ -35,7 +35,8 @@ function* getUIDataForResource({ resource }) {
       case 'SalesforceExport':
         return yield call(requestRealTimeMetadata, { resource });
       case 'FTPExport':
-      case 'S3Export': {
+      case 'S3Export':
+      case 'AS2Export': {
         return yield call(requestFileAdaptorSampleData, { resource });
       }
 
