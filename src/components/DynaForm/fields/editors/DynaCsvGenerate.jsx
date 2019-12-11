@@ -84,7 +84,7 @@ export default function DynaCsvGenerate(props) {
     <Fragment>
       {showEditor && (
         <CsvConfigEditorDialog
-          title="CSV parse options"
+          title="CSV generate options"
           id={id + resourceId}
           mode="csv"
           data={stringifiedSampleData}
