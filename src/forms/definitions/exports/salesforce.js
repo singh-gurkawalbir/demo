@@ -66,6 +66,10 @@ export default {
       retValues['/salesforce/api'] = 'rest';
     } else if (retValues['/salesforce/executionType'] === 'realtime') {
       retValues['/type'] = 'distributed';
+
+      if (!retValues['/salesforce/distributed/qualifier']) {
+        retValues['/salesforce/distributed/qualifier'] = null;
+      }
     }
 
     if (retValues['/outputMode'] === 'blob') {
