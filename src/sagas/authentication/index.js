@@ -19,6 +19,7 @@ import {
 import * as selectors from '../../reducers';
 import { initializationResources } from '../../reducers/data/resources';
 import { ACCOUNT_IDS } from '../../utils/constants';
+import * as gainsight from '../../utils/tracking/gainsight';
 
 export function* retrievingOrgDetails() {
   yield all([
@@ -63,6 +64,24 @@ export function* validateDefaultASharedIdAndGetOneIfTheExistingIsInvalid(
   return yield select(selectors.getOneValidSharedAccountId);
 }
 
+export function* sendUserIdentityToGainsight() {
+  const { _id, name, email, company, createdAt } = yield select(
+    selectors.userProfile
+  );
+  const { defaultAShareId } = yield select(selectors.userPreferences);
+  const nameParts = (name || '').split(' ');
+
+  gainsight.sendUserIdentity({
+    id: _id,
+    email,
+    firstName: nameParts[0],
+    lastName: nameParts[1],
+    signUpDate: createdAt,
+    accountId: defaultAShareId === ACCOUNT_IDS.OWN ? _id : defaultAShareId,
+    companyName: company || name,
+  });
+}
+
 export function* retrieveAppInitializationResources() {
   yield call(retrievingOrgDetails);
   yield call(retrievingUserDetails);
@@ -89,6 +108,7 @@ export function* retrieveAppInitializationResources() {
   }
 
   yield put(actions.auth.defaultAccountSet());
+  yield call(sendUserIdentityToGainsight);
 }
 
 export function* getCSRFTokenBackend() {

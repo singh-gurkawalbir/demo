@@ -12,6 +12,7 @@ import getRequestOptions from '../../utils/requestOptions';
 import { defaultPatchSetConverter } from '../../forms/utils';
 import conversionUtil from '../../utils/httpToRestConnectionConversionUtil';
 import { REST_ASSISTANTS } from '../../utils/constants';
+import * as gainsight from '../../utils/tracking/gainsight';
 
 export function* commitStagedChanges({ resourceType, id, scope }) {
   const userPreferences = yield select(selectors.userPreferences);
@@ -144,6 +145,10 @@ export function* commitStagedChanges({ resourceType, id, scope }) {
 
   if (isNew) {
     yield put(actions.resource.created(updated._id, id, resourceType));
+    gainsight.trackEvent(`${resourceType.toUpperCase()}_CREATED`, {
+      type: updated.type || updated.adaptorType,
+      assistant: merged.assistant,
+    });
   }
 }
 

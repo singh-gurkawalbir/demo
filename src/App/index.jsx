@@ -1,4 +1,4 @@
-import { useMemo, Fragment } from 'react';
+import { useMemo, Fragment, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import { DndProvider } from 'react-dnd-cjs';
@@ -17,6 +17,7 @@ import NetworkSnackbar from '../components/NetworkSnackbar';
 import * as selectors from '../reducers';
 import WithAuth from './AppRoutingWithAuth';
 import Signin from '../views/SignIn';
+import * as gainsight from '../utils/tracking/gainsight';
 
 // The makeStyles function below does not have access to the theme.
 // We can only use the theme in components that are children of
@@ -54,6 +55,10 @@ export default function App() {
 
   // eslint-disable-next-line
   // console.log('render: <App>', reloadCount);
+
+  useEffect(() => {
+    gainsight.initialize({});
+  }, []);
 
   return (
     <MuiThemeProvider key={reloadCount} theme={theme}>

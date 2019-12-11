@@ -5,6 +5,7 @@ import Button from '@material-ui/core/Button';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
+import * as gainsight from '../../../utils/tracking/gainsight';
 
 const useStyles = makeStyles(theme => ({
   inTrial: {
@@ -49,6 +50,8 @@ export default function LicenseAction() {
   );
   const handleClick = useCallback(() => {
     if (licenseActionDetails.action === 'startTrial') {
+      gainsight.trackEvent('GO_UNLIMITED_BUTTON_CLICKED');
+
       return dispatch(actions.user.org.accounts.requestTrialLicense());
     }
 
