@@ -20,26 +20,28 @@ export default function FlowSelector({
   onChange,
 }) {
   const classes = useStyles();
-  const filteredFlows = useSelector(state => {
-    if (storeId) {
-      return selectors.integrationAppFlowSettings(
-        state,
-        integrationId,
-        null,
-        storeId
-      ).flows;
-    }
+  const storeFlows = useSelector(state =>
+    selectors.integrationAppFlows(state, integrationId, storeId)
+  );
+  const filteredFlows = useSelector(
+    state =>
+      selectors.resourceList(state, {
+        type: 'flows',
+        filter: {
+          $where() {
+            if (!integrationId || integrationId === STANDALONE_INTEGRATION.id) {
+              return !this._integrationId; // standalone integration flows
+            }
 
-    const flows = selectors.resourceList(state, { type: 'flows' }).resources;
+            if (storeId) {
+              return storeFlows.includes(this._id);
+            }
 
-    return flows.filter(flow => {
-      if (!integrationId || integrationId === STANDALONE_INTEGRATION.id) {
-        return !flow._integrationId; // standalone integration flows
-      }
-
-      return flow._integrationId === integrationId;
-    });
-  });
+            return this._integrationId === integrationId;
+          },
+        },
+      }).resources
+  );
 
   return (
     <CeligoSelect
