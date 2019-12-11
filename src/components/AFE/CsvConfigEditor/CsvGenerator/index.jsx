@@ -35,11 +35,6 @@ export default function CsvGenerateEditor(props) {
       actions.editor.init(editorId, 'csvDataGenerator', {
         data: props.data,
         autoEvaluate: true,
-        multipleRowsPerRecord: !!(
-          props.rule &&
-          props.rule.keyColumns &&
-          props.rule.keyColumns.length
-        ),
         ...props.rule,
       })
     );
