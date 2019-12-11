@@ -1,6 +1,6 @@
 import xmlParser from './xmlParser';
 import csvParser from './csvParser';
-import csvGenerate from './csvGenerate';
+import csvDataGenerator from './csvDataGenerator';
 import merge from './merge';
 import transform from './transform';
 import handlebars from './handlebars';
@@ -17,7 +17,7 @@ import salesforceLookupFilter from './salesforceLookupFilter';
 const logicMap = {
   xmlParser,
   csvParser,
-  csvGenerate,
+  csvDataGenerator,
   merge,
   transform,
   handlebars,

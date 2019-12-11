@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { string, object } from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
@@ -22,7 +22,8 @@ const useStyles = makeStyles({
 export default function CsvGenerateEditor(props) {
   const { editorId, disabled } = props;
   const classes = useStyles();
-  const { data, result, error } = useSelector(state =>
+  const [editorInit, setEditorInit] = useState(false);
+  const { data, result, error, initChangeIdentifier } = useSelector(state =>
     selectors.editor(state, editorId)
   );
   const violations = useSelector(state =>
@@ -31,7 +32,7 @@ export default function CsvGenerateEditor(props) {
   const dispatch = useDispatch();
   const handleInit = useCallback(() => {
     dispatch(
-      actions.editor.init(editorId, 'csvGenerate', {
+      actions.editor.init(editorId, 'csvDataGenerator', {
         data: props.data,
         autoEvaluate: true,
         multipleRowsPerRecord: !!(
@@ -48,11 +49,14 @@ export default function CsvGenerateEditor(props) {
   };
 
   useEffect(() => {
-    handleInit();
-  }, [handleInit]);
+    if (!editorInit) {
+      handleInit();
+      setEditorInit(true);
+    }
+  }, [data, editorInit, handleInit]);
 
   return (
-    <PanelGrid className={classes.template}>
+    <PanelGrid className={classes.template} key={initChangeIdentifier}>
       <PanelGridItem gridArea="rule">
         <PanelTitle title="CSV Generate Options" />
         <CsvGeneratePanel disabled={disabled} editorId={editorId} />
@@ -62,7 +66,7 @@ export default function CsvGenerateEditor(props) {
         <CodePanel
           name="data"
           value={data}
-          mode="text"
+          mode="json"
           onChange={handleDataChange}
           readOnly={disabled}
         />
@@ -72,7 +76,7 @@ export default function CsvGenerateEditor(props) {
         <CodePanel
           name="result"
           value={result && result.data ? result.data : ''}
-          mode="json"
+          mode="text"
           readOnly
         />
       </PanelGridItem>

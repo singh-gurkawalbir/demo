@@ -1,3 +1,5 @@
+import util from '../../../../utils/json';
+
 const requestBody = editor => ({
   rules: {
     columnDelimiter: editor.columnDelimiter,
@@ -11,11 +13,10 @@ const requestBody = editor => ({
     replaceNewlineWithSpace: editor.replaceNewlineWithSpace,
     wrapWithQuotes: editor.wrapWithQuotes,
   },
-  data: editor.data,
+  data: [JSON.parse(editor.data)],
 });
 const validate = editor => ({
-  dataError:
-    (!editor.data || !editor.data.length) && 'Must provide some sample data.',
+  dataError: util.validateJsonString(editor.data),
 });
 
 export default {

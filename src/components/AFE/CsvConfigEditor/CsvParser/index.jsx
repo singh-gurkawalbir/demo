@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { string, object } from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
@@ -22,6 +22,7 @@ const useStyles = makeStyles({
 export default function CsvParseEditor(props) {
   const { editorId, disabled } = props;
   const classes = useStyles();
+  const [editorInit, setEditorInit] = useState(false);
   const { data, result, error } = useSelector(state =>
     selectors.editor(state, editorId)
   );
@@ -48,8 +49,11 @@ export default function CsvParseEditor(props) {
   };
 
   useEffect(() => {
-    handleInit();
-  }, [handleInit]);
+    if (!editorInit) {
+      handleInit();
+      setEditorInit(true);
+    }
+  }, [editorInit, handleInit]);
 
   return (
     <PanelGrid className={classes.template}>

@@ -16,26 +16,24 @@ export default function CsvConfigEditorDialog(props) {
       id={id}
       {...defaults}
       {...rest}
-      // showLayoutOptions={false}
+      showLayoutOptions={false}
       disabled={disabled}
       showFullScreen>
-      <div>
-        {csvEditorType === 'generate' ? (
-          <CsvGenerateEditor
-            disabled={disabled}
-            editorId={id}
-            rule={rule}
-            data={data}
-          />
-        ) : (
-          <CsvParseEditor
-            disabled={disabled}
-            editorId={id}
-            rule={rule}
-            data={data}
-          />
-        )}
-      </div>
+      {csvEditorType === 'generate' ? (
+        <CsvGenerateEditor
+          disabled={disabled}
+          editorId={id}
+          rule={rule}
+          data={data}
+        />
+      ) : (
+        <CsvParseEditor
+          disabled={disabled}
+          editorId={id}
+          rule={rule}
+          data={data}
+        />
+      )}
     </EditorDialog>
   );
 }
