@@ -12,7 +12,7 @@ function* fetchRawDataForFileAdaptors({ resourceId, tempResourceId, type }) {
     type === 'imports' ? 'imports' : 'exports',
     resourceId
   );
-  // For file types csv, xml, json -  file content is fetched from raw stage
+  // For file types csv, xml -  file content is fetched from raw stage
   let stage = 'raw';
 
   /*
@@ -24,6 +24,11 @@ function* fetchRawDataForFileAdaptors({ resourceId, tempResourceId, type }) {
   if (resourceObj.file.type === 'xlsx') {
     // For xlsx file type csv content is stored in 'csv' stage of sample data
     stage = 'csv';
+  }
+
+  if (resourceObj.file.type === 'json') {
+    // For JSON file type parsed json content in stored in 'parse' stage of sample data
+    stage = 'parse';
   }
 
   const { data: rawData } = yield select(
