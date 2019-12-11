@@ -22,6 +22,7 @@ import {
   getSampleDataStage,
   getPreviewStageData,
   getContextInfo,
+  getBlobResourceSampleData,
 } from '../../../utils/flowData';
 import { exportPreview, pageProcessorPreview } from '../utils/previewCalls';
 import requestRealTimeMetadata from '../sampleDataGenerator/realTimeSampleData';
@@ -32,6 +33,7 @@ import {
   isNewId,
   isRealTimeOrDistributedResource,
   isFileAdaptor,
+  isBlobTypeResource,
 } from '../../../utils/resource';
 
 function* initFlowData({ flowId, resourceId, resourceType }) {
@@ -173,7 +175,11 @@ export function* fetchPageGeneratorPreview({ flowId, _pageGeneratorId }) {
   try {
     let previewData;
 
-    if (isRealTimeOrDistributedResource(resource)) {
+    if (isBlobTypeResource(resource)) {
+      // Incase of Blob resource, sample data ( Blob type ) is uploaded to S3 in real time
+      // So, its key (blobKey) is the sample data
+      previewData = getBlobResourceSampleData();
+    } else if (isRealTimeOrDistributedResource(resource)) {
       // fetch data from real time sample data
       previewData = yield call(requestRealTimeMetadata, { resource });
     } else if (isFileAdaptor(resource)) {

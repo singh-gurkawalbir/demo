@@ -1,7 +1,7 @@
 import { isEmpty, each, isArray } from 'lodash';
 import moment from 'moment';
 import jsonUtil from './json';
-import { isFileAdaptor } from './resource';
+import { isFileAdaptor, isBlobTypeResource } from './resource';
 import { extractFieldsFromCsv } from './file';
 import {
   getFormattedNSSalesOrderMetadataData,
@@ -85,6 +85,10 @@ export function processSampleData(sampleData, resource) {
           return sampleData;
         default:
       }
+    }
+
+    if (isBlobTypeResource(resource)) {
+      return sampleData;
     }
     // For all other adapters logic can be handled here
   }
