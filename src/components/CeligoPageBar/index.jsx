@@ -15,7 +15,7 @@ const useStyles = makeStyles(theme => ({
   pageHeader: {
     zIndex: theme.zIndex.appBar - 1,
     padding: theme.spacing(3),
-    height: theme.pageBarHeight,
+    minHeight: theme.pageBarHeight,
     width: `calc(100% - ${theme.spacing(2 * 3) + 1}px)`,
     position: 'fixed',
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,

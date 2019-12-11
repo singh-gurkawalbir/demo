@@ -10,6 +10,9 @@ const useStyles = makeStyles({
   formField: {
     width: '100%',
   },
+  startAdornmentWrapper: {
+    display: 'flex',
+  },
 });
 
 export default function DynaText(props) {
@@ -73,7 +76,11 @@ export default function DynaText(props) {
         label={label}
         InputProps={{
           startAdornment: startAdornment ? (
-            <InputAdornment position="start">{startAdornment}</InputAdornment>
+            <InputAdornment
+              position="start"
+              className={classes.startAdornmentWrapper}>
+              {startAdornment}
+            </InputAdornment>
           ) : null,
           endAdornment: endAdornment ? (
             <InputAdornment position="end">{endAdornment}</InputAdornment>

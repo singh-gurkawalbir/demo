@@ -19,7 +19,7 @@ function ButtonGroup(props) {
   const classes = useStyles();
 
   return (
-    <div>
+    <div style={{ color: '#ffccdd' }}>
       <div className={classes.wrapper}>{props.children}</div>
     </div>
   );
