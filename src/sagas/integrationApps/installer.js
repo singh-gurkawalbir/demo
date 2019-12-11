@@ -114,6 +114,11 @@ export function* addNewStore({ id }) {
       message: `Installing`,
     });
   } catch (error) {
+    yield put(actions.api.failure(path, 'PUT', error && error.message, false));
+    yield put(
+      actions.integrationApp.store.failedNewStoreSteps(id, error.message)
+    );
+
     return undefined;
   }
 

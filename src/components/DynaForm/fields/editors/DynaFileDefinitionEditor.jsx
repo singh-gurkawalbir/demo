@@ -167,7 +167,10 @@ function DynaFileDefinitionEditor(props) {
             title="File Definition Editor"
             id={id + resourceId}
             processor={processor}
-            data={sampleData || props.sampleData}
+            data={
+              sampleData ||
+              (props.sampleData && JSON.stringify(props.sampleData, null, 2))
+            }
             rule={value}
             onClose={handleClose}
             disabled={disabled}

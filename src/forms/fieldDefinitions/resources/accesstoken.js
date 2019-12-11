@@ -84,9 +84,9 @@ export default {
     allowEdit: false,
     allowNew: false,
     filter: r =>
-      r._connectorId
-        ? { _connectorId: { $exists: true } }
-        : { _connectorId: { $exists: false } },
+      r._integrationId
+        ? { _integrationId: r._integrationId }
+        : { _integrationId: { $exists: false } },
     valueDelimiter: ',',
     visibleWhen: [
       {
@@ -103,9 +103,9 @@ export default {
     multiselect: true,
     allowEdit: false,
     filter: r =>
-      r._connectorId
-        ? { _connectorId: { $exists: true } }
-        : { _connectorId: { $exists: false } },
+      r._integrationId
+        ? { _integrationId: r._integrationId }
+        : { _integrationId: { $exists: false } },
     allowNew: false,
     valueDelimiter: ',',
     visibleWhen: [
@@ -123,9 +123,9 @@ export default {
     multiselect: true,
     allowEdit: false,
     filter: r =>
-      r._connectorId
-        ? { _connectorId: { $exists: true } }
-        : { _connectorId: { $exists: false } },
+      r._integrationId
+        ? { _integrationId: r._integrationId }
+        : { _integrationId: { $exists: false } },
     allowNew: false,
     valueDelimiter: ',',
     visibleWhen: [

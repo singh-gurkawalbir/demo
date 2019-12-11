@@ -51,7 +51,7 @@ export default function FilterPanel({
   const patchEditor = useCallback(
     value => {
       if (editorId) {
-        dispatch(actions.editor.patch(editorId, { rule: value || [] }));
+        dispatch(actions.editor.patch(editorId, { rule: value || '' }));
       } else if (onFieldChange) {
         onFieldChange(id, value);
       }
