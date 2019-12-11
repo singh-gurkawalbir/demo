@@ -1,4 +1,29 @@
 export default {
+  preSave: formValues => {
+    const newValues = Object.assign({}, formValues);
+
+    if (newValues['/wrapper/encrypted']) {
+      try {
+        newValues['/wrapper/encrypted'] = JSON.parse(
+          newValues['/wrapper/encrypted']
+        );
+      } catch (ex) {
+        newValues['/wrapper/encrypted'] = undefined;
+      }
+    }
+
+    if (newValues['/wrapper/unencrypted']) {
+      try {
+        newValues['/wrapper/unencrypted'] = JSON.parse(
+          newValues['/wrapper/unencrypted']
+        );
+      } catch (ex) {
+        newValues['/wrapper/unencrypted'] = undefined;
+      }
+    }
+
+    return newValues;
+  },
   fieldMap: {
     name: { fieldId: 'name' },
     'wrapper.unencrypted': { fieldId: 'wrapper.unencrypted' },
