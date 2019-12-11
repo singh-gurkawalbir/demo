@@ -13,15 +13,16 @@ import { makeStyles } from '@material-ui/core/styles';
 import 'jQuery-QueryBuilder';
 import 'jQuery-QueryBuilder/dist/css/query-builder.default.css';
 import jQuery from 'jquery';
-import { isEmpty, uniqBy } from 'lodash';
+import { isEmpty } from 'lodash';
 import config from './config';
 import './queryBuilder.css';
 import {
   convertSalesforceQualificationCriteria,
   getFilterList,
-  getFilterConfig,
+  getAllFiltersConfig,
 } from './util';
 import actions from '../../../../actions';
+import useEnqueueSnackbar from '../../../../hooks/enqueueSnackbar';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -45,6 +46,11 @@ export default function FilterPanel({
   const qbuilder = useRef(null);
   const classes = useStyles();
   const [rules, setRules] = useState();
+  const [referencedFieldsResolved, setReferencedFieldsResolved] = useState(
+    false
+  );
+  const [referenceFields, setReferenceFields] = useState([]);
+  const [enqueueSnackbar] = useEnqueueSnackbar();
   const [builderInitComplete, setBuilderInitComplete] = useState(false);
   const [filtersMetadata, setFiltersMetadata] = useState();
   const dispatch = useDispatch();
@@ -62,14 +68,12 @@ export default function FilterPanel({
     () => filters.map(sf => ({ id: sf.value, ...sf, name: sf.label })),
     [filters]
   );
-  const generateFiltersConfig = (jsonPaths = []) =>
-    jsonPaths.map(v => getFilterConfig(v));
 
   useEffect(() => {
     setFiltersMetadata(getFilterList(jsonPathsFromData, rules || []));
   }, [jsonPathsFromData, rules]);
 
-  const isValid = () => true; // jQuery(qbuilder.current).queryBuilder('validate');
+  const isValid = () => jQuery(qbuilder.current).queryBuilder('validate');
   const getRules = () => {
     const result = jQuery(qbuilder.current).queryBuilder('getSQL');
 
@@ -109,37 +113,50 @@ export default function FilterPanel({
 
   useEffect(() => {
     if (filtersMetadata) {
-      const filtersConfig = uniqBy(
-        generateFiltersConfig(filtersMetadata),
-        'id'
+      const filtersConfig = getAllFiltersConfig(
+        filtersMetadata,
+        referenceFields
       );
       const qbContainer = jQuery(qbuilder.current);
 
-      //   qbContainer.on('afterUpdateRuleOperator.queryBuilder', (e, rule) => {
-      //     if (
-      //       rule.operator &&
-      //       (rule.operator.type === 'is_empty' ||
-      //         rule.operator.type === 'is_not_empty')
-      //     ) {
-      //       rule.filter.valueGetter(rule);
-      //     }
-      //   });
-      qbContainer.queryBuilder({
-        ...config,
-        filters: filtersConfig || [],
-      });
-      qbContainer.queryBuilder('setFilters', true, filtersConfig);
+      try {
+        qbContainer.queryBuilder({
+          ...config,
+          filters: filtersConfig || [],
+        });
+
+        qbContainer.queryBuilder('setFilters', true, filtersConfig);
+      } catch (e) {
+        enqueueSnackbar({
+          message: 'Error occured while parsing expression.',
+          variant: 'error',
+        });
+      }
+
       setBuilderInitComplete(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filtersMetadata]);
 
   useEffect(() => {
-    if (builderInitComplete) {
-      const qbRules = convertSalesforceQualificationCriteria(
-        rule,
-        qbuilder.current
+    // update queryBuilder filters with reference fields
+    if (referenceFields && referenceFields.length && builderInitComplete) {
+      const filtersConfig = getAllFiltersConfig(
+        filtersMetadata,
+        referenceFields
       );
+
+      jQuery(qbuilder.current).queryBuilder('setFilters', true, filtersConfig);
+      setReferencedFieldsResolved(true);
+    }
+  }, [referenceFields, filtersMetadata, builderInitComplete]);
+
+  useEffect(() => {
+    if (builderInitComplete) {
+      const {
+        rules: qbRules,
+        referenceFieldsUsed,
+      } = convertSalesforceQualificationCriteria(rule, qbuilder.current);
 
       if (
         qbRules &&
@@ -150,19 +167,42 @@ export default function FilterPanel({
         qbRules.rules = [];
       }
 
-      setRules(qbRules);
+      if (!referencedFieldsResolved) {
+        setRules(qbRules);
+      }
 
-      //   jQuery(qbuilder.current).queryBuilder('setRulesFromSQL', rule);
-      if (qbRules) jQuery(qbuilder.current).queryBuilder('setRules', qbRules);
-      jQuery(qbuilder.current)
-        .unbind('rulesChanged.queryBuilder')
-        .on('rulesChanged.queryBuilder', () => {
-          handleFilterRulesChange();
+      if (
+        referenceFieldsUsed &&
+        referenceFieldsUsed.length &&
+        !referenceFields.length
+      ) {
+        setReferenceFields(referenceFieldsUsed);
+      } else {
+        setReferencedFieldsResolved(true);
+      }
+
+      try {
+        if (referencedFieldsResolved) {
+          if (qbRules) {
+            jQuery(qbuilder.current).queryBuilder('setRules', qbRules);
+          }
+
+          jQuery(qbuilder.current)
+            .unbind('rulesChanged.queryBuilder')
+            .on('rulesChanged.queryBuilder', () => {
+              handleFilterRulesChange();
+            });
+        }
+      } catch (e) {
+        enqueueSnackbar({
+          message: 'Error occured while parsing expression.',
+          variant: 'error',
         });
+      }
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [builderInitComplete]);
+  }, [builderInitComplete, referencedFieldsResolved]);
 
   return (
     <div className={classes.container}>
