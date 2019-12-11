@@ -2,15 +2,14 @@ import React, { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { string, object } from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
-import CodePanel from '../GenericEditor/CodePanel';
-import ImportCsvParsePanel from './CsvParsePanel/import';
-import ExportCsvParsePanel from './CsvParsePanel/export';
-import PanelGrid from '../PanelGrid';
-import PanelTitle from '../PanelTitle';
-import PanelGridItem from '../PanelGridItem';
-import ErrorGridItem from '../ErrorGridItem';
-import actions from '../../../actions';
-import * as selectors from '../../../reducers';
+import CodePanel from '../../GenericEditor/CodePanel';
+import PanelGrid from '../../PanelGrid';
+import PanelTitle from '../../PanelTitle';
+import PanelGridItem from '../../PanelGridItem';
+import ErrorGridItem from '../../ErrorGridItem';
+import actions from '../../../../actions';
+import * as selectors from '../../../../reducers';
+import CsvGeneratePanel from './Panel';
 
 const useStyles = makeStyles({
   template: {
@@ -20,10 +19,10 @@ const useStyles = makeStyles({
   },
 });
 
-export default function CsvParseEditor(props) {
+export default function CsvGenerateEditor(props) {
   const { editorId, disabled } = props;
   const classes = useStyles();
-  const { data, result, error, resourceType } = useSelector(state =>
+  const { data, result, error } = useSelector(state =>
     selectors.editor(state, editorId)
   );
   const violations = useSelector(state =>
@@ -32,9 +31,8 @@ export default function CsvParseEditor(props) {
   const dispatch = useDispatch();
   const handleInit = useCallback(() => {
     dispatch(
-      actions.editor.init(editorId, 'csvParser', {
+      actions.editor.init(editorId, 'csvGenerate', {
         data: props.data,
-        resourceType: props.resourceType,
         autoEvaluate: true,
         multipleRowsPerRecord: !!(
           props.rule &&
@@ -44,7 +42,7 @@ export default function CsvParseEditor(props) {
         ...props.rule,
       })
     );
-  }, [dispatch, editorId, props.data, props.resourceType, props.rule]);
+  }, [dispatch, editorId, props.data, props.rule]);
   const handleDataChange = data => {
     dispatch(actions.editor.patch(editorId, { data }));
   };
@@ -56,15 +54,11 @@ export default function CsvParseEditor(props) {
   return (
     <PanelGrid className={classes.template}>
       <PanelGridItem gridArea="rule">
-        <PanelTitle title="CSV Parse Options" />
-        {resourceType === 'imports' ? (
-          <ImportCsvParsePanel disabled={disabled} editorId={editorId} />
-        ) : (
-          <ExportCsvParsePanel disabled={disabled} editorId={editorId} />
-        )}
+        <PanelTitle title="CSV Generate Options" />
+        <CsvGeneratePanel disabled={disabled} editorId={editorId} />
       </PanelGridItem>
       <PanelGridItem gridArea="data">
-        <PanelTitle title="CSV to Parse" />
+        <PanelTitle title="Flow data" />
         <CodePanel
           name="data"
           value={data}
@@ -74,7 +68,7 @@ export default function CsvParseEditor(props) {
         />
       </PanelGridItem>
       <PanelGridItem gridArea="result">
-        <PanelTitle title="Parsed Result" />
+        <PanelTitle title="Generated Result" />
         <CodePanel
           name="result"
           value={result && result.data ? result.data : ''}
@@ -88,7 +82,7 @@ export default function CsvParseEditor(props) {
   );
 }
 
-CsvParseEditor.propTypes = {
+CsvGenerateEditor.propTypes = {
   rule: object,
   data: string,
 };

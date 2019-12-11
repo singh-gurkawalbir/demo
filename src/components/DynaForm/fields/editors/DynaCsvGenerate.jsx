@@ -1,17 +1,18 @@
-import { useState, Fragment } from 'react';
+import { useState, Fragment, useEffect, useCallback } from 'react';
 import Button from '@material-ui/core/Button';
 import { useSelector, useDispatch } from 'react-redux';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import CsvConfigEditorDialog from '../../../AFE/CsvConfigEditor/Dialog';
 
-export default function DynaCsvParse(props) {
+export default function DynaCsvGenerate(props) {
   const {
     id,
     onFieldChange,
     value = {},
     label,
     resourceId,
+    flowId,
     resourceType,
     disabled,
   } = props;
@@ -24,51 +25,60 @@ export default function DynaCsvParse(props) {
   /*
    * Fetches Raw data - CSV file to be parsed based on the rules
    */
-  const { csvData } = useSelector(state => {
-    const rawData = selectors.getResourceSampleDataWithStatus(
-      state,
+  const sampleData = useSelector(state =>
+    selectors.getSampleData(state, {
+      flowId,
       resourceId,
-      'raw'
+      resourceType,
+      stage: 'flowInput',
+    })
+  );
+  const fetchSampleData = useCallback(() => {
+    dispatch(
+      actions.flowData.requestSampleData(
+        flowId,
+        resourceId,
+        resourceType,
+        'flowInput'
+      )
     );
+  }, [dispatch, flowId, resourceId, resourceType]);
 
-    return { csvData: rawData && rawData.data && rawData.data.body };
-  });
+  useEffect(() => {
+    fetchSampleData();
+  }, [fetchSampleData]);
   const handleClose = (shouldCommit, editorValues) => {
     if (shouldCommit) {
       const {
+        rowDelimiter,
         columnDelimiter,
-        hasHeaderRow,
+        includeHeader,
         keyColumns,
-        rowsToSkip,
-        trimSpaces,
+        wrapWithQuotes,
+        replaceTabWithSpace,
+        replaceNewlineWithSpace,
+        truncateLastRowDelimiter,
       } = editorValues;
 
       onFieldChange(id, {
+        rowDelimiter,
         columnDelimiter,
-        hasHeaderRow,
+        includeHeader,
         keyColumns,
-        rowsToSkip,
-        trimSpaces,
+        truncateLastRowDelimiter,
+        replaceTabWithSpace,
+        replaceNewlineWithSpace,
+        wrapWithQuotes,
       });
 
       // On change of rules, trigger sample data update
       // It calls processor on final rules to parse csv file
-      dispatch(
-        actions.sampleData.request(
-          resourceId,
-          resourceType,
-          {
-            type: 'csv',
-            file: csvData,
-            editorValues,
-          },
-          'file'
-        )
-      );
     }
 
     handleEditorClick();
   };
+
+  const stringifiedSampleData = sampleData ? JSON.stringify(sampleData) : '';
 
   return (
     <Fragment>
@@ -77,9 +87,9 @@ export default function DynaCsvParse(props) {
           title="CSV parse options"
           id={id + resourceId}
           mode="csv"
-          data={csvData}
+          data={stringifiedSampleData}
           resourceType={resourceType}
-          csvEditorType="parse"
+          csvEditorType="generate"
           /** rule to be passed as json */
           rule={value}
           onClose={handleClose}

@@ -6,10 +6,11 @@ import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import { Input, Chip, MenuItem, ListItemText } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import actions from '../../../../actions';
-import * as selectors from '../../../../reducers';
-import CeligoSelect from '../../../CeligoSelect';
-import options from './options';
+import actions from '../../../../../actions';
+import * as selectors from '../../../../../reducers';
+import CeligoSelect from '../../../../CeligoSelect';
+import DynaText from '../../../../DynaForm/fields/DynaText';
+import options from '../../options';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -62,20 +63,17 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function ImportCsvParsePanel(props) {
+export default function CsvParsePanel(props) {
   const { editorId, disabled } = props;
   const classes = useStyles(props);
   const {
     columnDelimiter = '',
-    rowDelimiter = '',
     keyColumns = [],
-    includeHeader = false,
+    hasHeaderRow = false,
     multipleRowsPerRecord = false,
+    trimSpaces = false,
     result,
-    wrapWithQuotes = false,
-    replaceTabWithSpace = false,
-    replaceNewlineWithSpace = false,
-    truncateLastRowDelimiter = false,
+    rowsToSkip,
   } = useSelector(state => selectors.editor(state, editorId));
   const dispatch = useDispatch();
   const patchEditor = (option, value) => {
@@ -84,6 +82,7 @@ export default function ImportCsvParsePanel(props) {
 
   const allColumns = getColumns(result);
 
+  // TODO: Refractor to use dyna form
   return (
     <div className={classes.container}>
       <FormGroup column="true">
@@ -95,7 +94,6 @@ export default function ImportCsvParsePanel(props) {
             native
             value={columnDelimiter}
             className={classes.select}
-            placeholder="Please Select"
             onChange={event =>
               patchEditor('columnDelimiter', event.target.value)
             }
@@ -107,40 +105,44 @@ export default function ImportCsvParsePanel(props) {
             ))}
           </CeligoSelect>
         </FormControl>
-        <FormControl disabled={disabled} className={classes.formControl}>
-          <InputLabel shrink htmlFor="rowDelimiter">
-            Row Delimiter
-          </InputLabel>
-          <CeligoSelect
-            native
-            value={rowDelimiter}
-            className={classes.select}
-            onChange={event => patchEditor('rowDelimiter', event.target.value)}
-            placeholder="Please Select"
-            inputProps={{ id: 'rowDelimiter' }}>
-            <option value="\n" data-test="lf">
-              LF (\n)
-            </option>
-            <option value="\r" data-test="cr">
-              CR (\r)
-            </option>
-            <option value="\r\n" data-test="crlf">
-              CRLF (\r\n)
-            </option>
-          </CeligoSelect>
-        </FormControl>
+
         <FormControlLabel
           disabled={disabled}
           control={
             <Checkbox
               color="primary"
-              checked={includeHeader}
-              data-test="includeHeader"
-              onChange={() => patchEditor('includeHeader', !includeHeader)}
+              checked={trimSpaces}
+              data-test="trimSpaces"
+              onChange={() => patchEditor('trimSpaces', !trimSpaces)}
             />
           }
-          label="Include Header"
+          label="Trim Spaces"
         />
+        <FormControlLabel
+          disabled={disabled}
+          control={
+            <Checkbox
+              color="primary"
+              checked={hasHeaderRow}
+              data-test="hasHeaderRow"
+              onChange={() => patchEditor('hasHeaderRow', !hasHeaderRow)}
+            />
+          }
+          label="File Has Header"
+        />
+        <FormControl disabled={disabled} className={classes.formControl}>
+          <DynaText
+            color="primary"
+            checked={rowsToSkip}
+            inputType="number"
+            value={rowsToSkip}
+            label="Number Of Rows To Skip"
+            data-test="rowsToSkip"
+            disabled={disabled}
+            isValid={rowsToSkip >= 0}
+            onFieldChange={(id, value) => patchEditor('rowsToSkip', value)}
+          />
+        </FormControl>
 
         <FormControlLabel
           disabled={disabled}
@@ -193,68 +195,6 @@ export default function ImportCsvParsePanel(props) {
             </CeligoSelect>
           </FormControl>
         )}
-        <FormControlLabel
-          disabled={disabled}
-          control={
-            <Checkbox
-              color="primary"
-              checked={truncateLastRowDelimiter}
-              data-test="truncateLastRowDelimiter"
-              onChange={() => {
-                patchEditor(
-                  'truncateLastRowDelimiter',
-                  !truncateLastRowDelimiter
-                );
-              }}
-            />
-          }
-          label="Truncate last row delimiter"
-        />
-        <FormControlLabel
-          disabled={disabled}
-          control={
-            <Checkbox
-              color="primary"
-              checked={wrapWithQuotes}
-              data-test="wrapWithQuotes"
-              onChange={() => {
-                patchEditor('wrapWithQuotes', !wrapWithQuotes);
-              }}
-            />
-          }
-          label="Wrap with quotes"
-        />
-        <FormControlLabel
-          disabled={disabled}
-          control={
-            <Checkbox
-              color="primary"
-              checked={replaceTabWithSpace}
-              data-test="replaceTabWithSpace"
-              onChange={() => {
-                patchEditor('replaceTabWithSpace', !replaceTabWithSpace);
-              }}
-            />
-          }
-          label="Replace tab with space"
-        />
-        <FormControlLabel
-          disabled={disabled}
-          control={
-            <Checkbox
-              color="primary"
-              checked={replaceNewlineWithSpace}
-              data-test="replaceNewlineWithSpace"
-              onChange={() => {
-                patchEditor(
-                  'replaceNewlineWithSpace',
-                  !replaceNewlineWithSpace
-                );
-              }}
-            />
-          }
-          label="Replace new line with space"
-        />
       </FormGroup>
     </div>
   );
