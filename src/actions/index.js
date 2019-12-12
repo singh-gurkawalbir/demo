@@ -751,6 +751,7 @@ const app = {
   errored: () => action(actionTypes.APP_ERRORED),
   clearError: () => action(actionTypes.APP_CLEAR_ERROR),
 };
+const toggleBanner = () => action(actionTypes.APP_TOGGLE_BANNER);
 const toggleDrawer = () => action(actionTypes.APP_TOGGLE_DRAWER);
 const patchFilter = (name, filter) =>
   action(actionTypes.PATCH_FILTER, { name, filter });
@@ -981,6 +982,7 @@ const assistantMetadata = {
 
 export default {
   app,
+  toggleBanner,
   toggleDrawer,
   metadata,
   fileDefinitions,

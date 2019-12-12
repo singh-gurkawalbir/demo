@@ -1,7 +1,12 @@
 import actionTypes from '../../actions/types';
 
 export default function(
-  state = { appErrored: false, drawerOpened: true, count: 1 },
+  state = {
+    appErrored: false,
+    drawerOpened: true,
+    bannerOpened: true,
+    count: 1,
+  },
   action
 ) {
   switch (action.type) {
@@ -10,6 +15,10 @@ export default function(
       const newCount = count + 1;
 
       return { count: newCount };
+    }
+
+    case actionTypes.APP_TOGGLE_BANNER: {
+      return { ...state, bannerOpened: !state.bannerOpened };
     }
 
     case actionTypes.APP_TOGGLE_DRAWER: {
@@ -35,6 +44,12 @@ export default function(
 }
 
 // #region Selectors
+export function bannerOpened(state) {
+  if (!state) return true;
+
+  return !!state.bannerOpened;
+}
+
 export function drawerOpened(state) {
   if (!state) return true;
 
