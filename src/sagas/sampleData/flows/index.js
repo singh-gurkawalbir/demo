@@ -139,7 +139,7 @@ export function* fetchPageProcessorPreview({
   if (!flowId || !_pageProcessorId) return;
 
   try {
-    let previewData = yield call(pageProcessorPreview, {
+    const previewData = yield call(pageProcessorPreview, {
       flowId,
       _pageProcessorId,
       previewType,
@@ -147,10 +147,6 @@ export function* fetchPageProcessorPreview({
       throwOnError: true,
     });
 
-    previewData = previewData && {
-      ...previewData,
-      ...getContextInfo(),
-    };
     yield put(
       actions.flowData.receivedPreviewData(
         flowId,
@@ -195,10 +191,6 @@ export function* fetchPageGeneratorPreview({ flowId, _pageGeneratorId }) {
       previewData = getPreviewStageData(previewData, 'parse');
     }
 
-    previewData = previewData && {
-      ...previewData,
-      ...getContextInfo(),
-    };
     yield put(
       actions.flowData.receivedPreviewData(
         flowId,
@@ -279,6 +271,54 @@ function* processMappingData({
   } catch (e) {
     throw e;
   }
+}
+
+/*
+ * This saga handles 2 sample data stages
+ * 1. flowInputWithContext 2. hooksWithContext
+ * Above stages are replica of flowInput and hooks stage with added Context Info specifically for Input and outputFilter stages
+ */
+export function* requestSampleDataWithContext({
+  flowId,
+  resourceId,
+  resourceType,
+  sampleDataStage,
+}) {
+  const stage =
+    sampleDataStage === 'flowInputWithContext' ? 'flowInput' : 'hooks';
+  let sampleData = yield select(getSampleData, {
+    flowId,
+    resourceId,
+    resourceType,
+    stage,
+  });
+
+  if (!sampleData) {
+    yield call(requestSampleData, {
+      flowId,
+      resourceId,
+      resourceType,
+      stage,
+      isInitialized: true,
+    });
+    sampleData = yield select(getSampleData, {
+      flowId,
+      resourceId,
+      resourceType,
+      stage,
+    });
+  }
+
+  const sampleDataWithContextInfo = { ...sampleData, ...getContextInfo() };
+
+  yield put(
+    actions.flowData.receivedPreviewData(
+      flowId,
+      resourceId,
+      sampleDataWithContextInfo,
+      sampleDataStage
+    )
+  );
 }
 
 export function* requestProcessorData({
