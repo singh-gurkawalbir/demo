@@ -21,7 +21,7 @@ export default function FlowSelector({
 }) {
   const classes = useStyles();
   const storeFlows = useSelector(
-    state => selectors.integrationAppFlows(state, integrationId, storeId),
+    state => selectors.integrationAppFlowIds(state, integrationId, storeId),
     (left, right) => left.length === right.length
   );
   const filteredFlows = useSelector(

@@ -96,7 +96,7 @@ export function* requestJobCollection({ integrationId, flowId, filters = {} }) {
   if (!jobFilters.flowId) {
     if (jobFilters.storeId) {
       const { flows } = yield select(
-        selectors.integrationAppFlows,
+        selectors.integrationAppFlowIds,
         integrationId,
         jobFilters.storeId
       );

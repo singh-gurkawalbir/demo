@@ -1314,7 +1314,7 @@ export function integrationAppFlowSettings(state, id, section, storeId) {
 
 // This selector is used in dashboard, it shows all the flows including the flows not in sections.
 // Integration App settings page should not use this selector.
-export function integrationAppFlows(state, integrationId, storeId) {
+export function integrationAppFlowIds(state, integrationId, storeId) {
   const allIntegrationFlows = resourceList(state, {
     type: 'flows',
     filter: { _integrationId: integrationId },
