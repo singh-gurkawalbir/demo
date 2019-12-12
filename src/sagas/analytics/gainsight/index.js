@@ -34,9 +34,13 @@ export function trackEvent({ eventId, details }) {
 
 export function* trackResourceCreatedEvent({ id, resourceType }) {
   const resource = yield select(selectors.resource, resourceType, id);
-  const eventId = `${RESOURCE_TYPE_PLURAL_TO_SINGULAR[
-    resourceType
-  ].toUpperCase()}_CREATED`;
+  const resourceTypeSingular = RESOURCE_TYPE_PLURAL_TO_SINGULAR[resourceType];
+
+  if (!resourceTypeSingular) {
+    return true;
+  }
+
+  const eventId = `${resourceTypeSingular.toUpperCase()}_CREATED`;
   /**
    * TODO We need to update this to get the required details for each resource type
    * once https://celigo.atlassian.net/browse/IO-10222 is updated with required details.
