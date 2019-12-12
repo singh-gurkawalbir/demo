@@ -4,7 +4,7 @@ import actions from '../../actions';
 import { apiCallWithRetry } from '../index';
 import * as selectors from '../../reducers';
 import templateUtil from '../../utils/template';
-import { getResourceCollection } from '../resources';
+import { getResource } from '../resources';
 
 export function* generateZip({ integrationId }) {
   const path = `/integrations/${integrationId}/template`;
@@ -76,8 +76,8 @@ export function* createComponents({ templateId, runKey }) {
     templateUtil.getDependentResources(components) || [];
 
   yield all(
-    dependentResources.map(resourceType =>
-      call(getResourceCollection, { resourceType })
+    dependentResources.map(({ resourceType, id }) =>
+      call(getResource, { resourceType, id })
     )
   );
   yield put(actions.template.createdComponents(components, templateId));

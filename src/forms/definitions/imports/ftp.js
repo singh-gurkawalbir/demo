@@ -16,6 +16,11 @@ export default {
       newValues['/ftp/inProgressFileName'] = undefined;
     }
 
+    if (newValues['/file/compressFiles'] === false) {
+      newValues['/file/compressionFormat'] = undefined;
+    }
+
+    delete newValues['/file/compressFiles'];
     delete newValues['/inputMode'];
 
     return {
@@ -285,9 +290,6 @@ export default {
   },
   actions: [
     {
-      id: 'cancel',
-    },
-    {
       id: 'save',
       visibleWhen: [
         {
@@ -305,6 +307,9 @@ export default {
           is: ['filedefinition', 'fixed', 'delimited/edifact'],
         },
       ],
+    },
+    {
+      id: 'cancel',
     },
   ],
 };

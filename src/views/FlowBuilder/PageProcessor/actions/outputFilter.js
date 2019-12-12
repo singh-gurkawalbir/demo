@@ -5,6 +5,7 @@ import actions from '../../../../actions';
 import Icon from '../../../../components/icons/OutputFilterIcon';
 import helpTextMap from '../../../../components/Help/helpTextMap';
 import OutputFilterEditorDialog from '../../../../components/AFE/FilterEditor/Dialog';
+import { RESOURCE_TYPE_PLURAL_TO_SINGULAR } from '../../../../constants/resource';
 
 function OutputFilterDialog({
   flowId,
@@ -43,6 +44,18 @@ function OutputFilterDialog({
       dispatch(
         actions.resource.commitStaged(resourceType, resourceId, 'value')
       );
+
+      if (!rules || rules.length === 0) {
+        if (value.rules.length > 0) {
+          dispatch(
+            actions.analytics.gainsight.trackEvent(
+              `${RESOURCE_TYPE_PLURAL_TO_SINGULAR[
+                resourceType
+              ].toUpperCase()}_HAS_CONFIGURED_FILTER`
+            )
+          );
+        }
+      }
     }
 
     onClose();

@@ -427,13 +427,15 @@ export default {
 
           if (field) field.isRequired = true;
         });
-        meta.nonEditableGenerateFields.forEach(fieldId => {
-          const field = mappingContainer.fields.find(
-            field => field.generate === fieldId
-          );
+        meta.nonEditableGenerateFields &&
+          Array.isArray(meta.nonEditableGenerateFields) &&
+          meta.nonEditableGenerateFields.forEach(fieldId => {
+            const field = mappingContainer.fields.find(
+              field => field.generate === fieldId
+            );
 
-          if (field) field.isNotEditable = true;
-        });
+            if (field) field.isNotEditable = true;
+          });
       });
 
     return mappings;

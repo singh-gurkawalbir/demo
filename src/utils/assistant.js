@@ -226,7 +226,7 @@ export function populateDefaults({
           !Object.prototype.hasOwnProperty.call(childWithDefaults, prop) &&
           Object.prototype.hasOwnProperty.call(parent, prop)
         ) {
-          if (isObject(parent[prop])) {
+          if (!isArray(parent[prop]) && isObject(parent[prop])) {
             childWithDefaults[prop] = defaultsDeep(
               childWithDefaults[prop],
               parent[prop]
@@ -240,7 +240,7 @@ export function populateDefaults({
       !Object.prototype.hasOwnProperty.call(childWithDefaults, prop) &&
       Object.prototype.hasOwnProperty.call(parent, prop)
     ) {
-      if (isObject(parent[prop])) {
+      if (!isArray(parent[prop]) && isObject(parent[prop])) {
         childWithDefaults[prop] = defaultsDeep(
           childWithDefaults[prop],
           parent[prop]
@@ -1528,7 +1528,15 @@ export function convertToImport({ assistantConfig, assistantData }) {
       importDoc.body = [operationDetails.body || null];
       importDoc.responseIdPath = [operationDetails.responseIdPath];
       importDoc.successPath = [operationDetails.successPath];
-      importDoc.successValues = [operationDetails.successValues];
+
+      if (isArray(operationDetails.successValues)) {
+        /**
+         * TODO We can remove this check once T&A team fixes the metadata.
+         */
+        importDoc.successValues = operationDetails.successValues;
+      } else {
+        importDoc.successValues = [operationDetails.successValues];
+      }
     }
   } else if (adaptorType === 'http') {
     if (isArray(operationDetails.method)) {
@@ -1547,8 +1555,17 @@ export function convertToImport({ assistantConfig, assistantData }) {
       importDoc.response = {};
     }
 
+    /**
+     * TODO We can remove the below code of setting response.resourceIdPath and response.successPath
+     * from operationDetails once all the assistant metadata files are updated to use
+     * operationDetails.response (https://celigo.atlassian.net/browse/AS-953).
+     */
     importDoc.response.resourceIdPath = operationDetails.responseIdPath;
     importDoc.response.successPath = operationDetails.successPath;
+
+    Object.keys(operationDetails.response || {}).forEach(
+      prop => (importDoc.response[prop] = operationDetails.response[prop])
+    );
   }
 
   const assistantMetadata = { resource };

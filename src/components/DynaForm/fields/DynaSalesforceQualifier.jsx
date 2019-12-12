@@ -77,7 +77,7 @@ export default function DynaSalesforceQualifier(props) {
         disabled
         required={required}
         error={!isValid}
-        value={value}
+        value={value || ''}
         variant="filled"
       />
     </Fragment>

@@ -66,6 +66,14 @@ export default {
       retValues['/salesforce/api'] = 'rest';
     } else if (retValues['/salesforce/executionType'] === 'realtime') {
       retValues['/type'] = 'distributed';
+
+      /**
+       * When no qualifier or if it is an empty string we are sending null in ampersand app.
+       * If there is no difference in setting null vs empty string from backend perspective, we can remove this check.
+       */
+      if (!retValues['/salesforce/distributed/qualifier']) {
+        retValues['/salesforce/distributed/qualifier'] = null;
+      }
     }
 
     if (retValues['/outputMode'] === 'blob') {
