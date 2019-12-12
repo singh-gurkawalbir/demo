@@ -19,15 +19,10 @@ const requestBody = editor =>
   ({
     rules: {
       columnDelimiter: editor.columnDelimiter,
-      rowDelimiter: editor.rowDelimiter,
-      keyColumns: editor.multipleRowsPerRecord && editor.keyColumns,
       hasHeaderRow: editor.hasHeaderRow,
+      keyColumns: editor.multipleRowsPerRecord && editor.keyColumns,
+      rowsToSkip: editor.rowsToSkip,
       trimSpaces: editor.trimSpaces,
-      includeHeader: editor.includeHeader,
-      truncateLastRowDelimiter: editor.truncateLastRowDelimiter,
-      replaceTabWithSpace: editor.replaceTabWithSpace,
-      replaceNewlineWithSpace: editor.replaceNewlineWithSpace,
-      wrapWithQuotes: editor.wrapWithQuotes,
     },
     data: editor.data,
   });

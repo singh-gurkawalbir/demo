@@ -112,7 +112,7 @@ export default {
   },
   'file.csv': {
     type: 'csvgenerate',
-    label: 'Configure CSV generate options',
+    label: 'Configure CSV Generate Options',
     defaultValue: r =>
       (r.file && r.file.csv) || {
         includeHeader: true,

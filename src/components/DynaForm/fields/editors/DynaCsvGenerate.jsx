@@ -84,14 +84,16 @@ export default function DynaCsvGenerate(props) {
     handleEditorClick();
   };
 
-  const stringifiedSampleData = sampleData ? JSON.stringify(sampleData) : '';
+  const stringifiedSampleData = sampleData
+    ? JSON.stringify(sampleData, null, 2)
+    : '';
 
   return (
     <Fragment>
       {showEditor && (
         <CsvConfigEditorDialog
           key={sampleDataLoaded}
-          title="CSV generate options"
+          title="CSV Generate Options"
           id={id + resourceId}
           mode="csv"
           data={stringifiedSampleData}

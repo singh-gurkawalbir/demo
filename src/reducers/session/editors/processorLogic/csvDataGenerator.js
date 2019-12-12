@@ -4,7 +4,6 @@ const requestBody = editor => ({
   rules: {
     columnDelimiter: editor.columnDelimiter,
     rowDelimiter: editor.rowDelimiter,
-    keyColumns: editor.multipleRowsPerRecord && editor.keyColumns,
     hasHeaderRow: editor.hasHeaderRow,
     trimSpaces: editor.trimSpaces,
     includeHeader: editor.includeHeader,
