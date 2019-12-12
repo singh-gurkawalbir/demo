@@ -1626,22 +1626,24 @@ describe('integrationApps reducer test cases', () => {
         );
         const expectedValue = {
           addStore: {
-            '2': [
-              {
-                completed: false,
-                description: 'Install the bank in CAM',
-                imageURL: '/images/company-logos/cashapp.png',
-                installerFunction: 'installConnectorComponents',
-                name: 'Install Bank',
-              },
-              {
-                completed: false,
-                description: 'Install the bundle in NetSuite',
-                imageURL: '/images/company-logos/netsuite.png',
-                installerFunction: 'installConnectorComponents',
-                name: 'Install Bundle in NetSuite',
-              },
-            ],
+            '2': {
+              steps: [
+                {
+                  completed: false,
+                  description: 'Install the bank in CAM',
+                  imageURL: '/images/company-logos/cashapp.png',
+                  installerFunction: 'installConnectorComponents',
+                  name: 'Install Bank',
+                },
+                {
+                  completed: false,
+                  description: 'Install the bundle in NetSuite',
+                  imageURL: '/images/company-logos/netsuite.png',
+                  installerFunction: 'installConnectorComponents',
+                  name: 'Install Bundle in NetSuite',
+                },
+              ],
+            },
           },
           installer: {},
           settings: {},
@@ -1676,22 +1678,24 @@ describe('integrationApps reducer test cases', () => {
                 name: 'Install Bundle in NetSuite',
               },
             ],
-            '2': [
-              {
-                completed: false,
-                description: 'Install the bank in CAM',
-                imageURL: '/images/company-logos/cashapp.png',
-                installerFunction: 'installConnectorComponents',
-                name: 'Install Bank',
-              },
-              {
-                completed: false,
-                description: 'Install the bundle in NetSuite',
-                imageURL: '/images/company-logos/netsuite.png',
-                installerFunction: 'installConnectorComponents',
-                name: 'Install Bundle in NetSuite',
-              },
-            ],
+            '2': {
+              steps: [
+                {
+                  completed: false,
+                  description: 'Install the bank in CAM',
+                  imageURL: '/images/company-logos/cashapp.png',
+                  installerFunction: 'installConnectorComponents',
+                  name: 'Install Bank',
+                },
+                {
+                  completed: false,
+                  description: 'Install the bundle in NetSuite',
+                  imageURL: '/images/company-logos/netsuite.png',
+                  installerFunction: 'installConnectorComponents',
+                  name: 'Install Bundle in NetSuite',
+                },
+              ],
+            },
           },
           installer: {},
           settings: {},

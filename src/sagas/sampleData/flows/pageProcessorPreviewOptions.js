@@ -18,12 +18,16 @@ import { call } from 'redux-saga/effects';
 import {
   getLastExportDateTime,
   isUIDataExpectedForResource,
+  getBlobResourceSampleData,
 } from '../../../utils/flowData';
 import requestRealTimeMetadata from '../sampleDataGenerator/realTimeSampleData';
 import requestFileAdaptorSampleData from '../sampleDataGenerator/fileAdaptorSampleData';
+import { isBlobTypeResource } from '../../../utils/resource';
 
 function* getUIDataForResource({ resource }) {
   const { adaptorType, sampleData } = resource;
+
+  if (isBlobTypeResource(resource)) return getBlobResourceSampleData();
 
   if (adaptorType) {
     switch (adaptorType) {
@@ -31,7 +35,8 @@ function* getUIDataForResource({ resource }) {
       case 'SalesforceExport':
         return yield call(requestRealTimeMetadata, { resource });
       case 'FTPExport':
-      case 'S3Export': {
+      case 'S3Export':
+      case 'AS2Export': {
         return yield call(requestFileAdaptorSampleData, { resource });
       }
 

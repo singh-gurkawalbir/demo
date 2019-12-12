@@ -65,7 +65,7 @@ export default function DynaIAExpression(props) {
       commMetaPath = `salesforce/metadata/connections/${connection._id}/sObjectTypes/${resource.salesforce.sObjectType}`;
     } else {
       filterType = 'netsuiteQualifier';
-      commMetaPath = `netsuite/metadata/suitescript/connections/${connection._id}/recordTypes/${resource.netsuite.distributed.recordType}/searchFilters?includeJoinFilters=true`;
+      commMetaPath = `netsuite/metadata/suitescript/connections/${connection._id}/recordTypes/${resource.netsuite.distributed.recordType}?includeSelectOptions=true`;
     }
   }
 

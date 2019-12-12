@@ -1,3 +1,4 @@
+import { useCallback, Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import clsx from 'clsx';
 import {
@@ -11,7 +12,9 @@ import * as selectors from '../../reducers';
 import actions from '../../actions';
 import ArrowLeftIcon from '../icons/ArrowLeftIcon';
 import ArrowRightIcon from '../icons/ArrowRightIcon';
+import RefreshIcon from '../icons/RefreshIcon';
 import CeligoSelect from '../CeligoSelect';
+import IconTextButton from '../IconTextButton';
 import FlowSelector from './FlowSelector';
 
 const useStyles = makeStyles(theme => ({
@@ -44,7 +47,7 @@ const useStyles = makeStyles(theme => ({
   hideEmptyLabel: {
     marginTop: theme.spacing(0.5),
   },
-  pagingContainer: {
+  rightActionContainer: {
     flexGrow: 1,
     display: 'flex',
     justifyContent: 'flex-end',
@@ -52,6 +55,9 @@ const useStyles = makeStyles(theme => ({
   },
   pagingText: {
     alignSelf: 'center',
+  },
+  refreshButton: {
+    marginRight: theme.spacing(1),
   },
   hideLabel: {
     marginLeft: '10px',
@@ -74,7 +80,7 @@ function Filters({
   );
   const {
     storeId,
-    flowId: _flowId,
+    flowId: filterFlowId,
     status = 'all',
     hideEmpty = false,
     currentPage = 0,
@@ -83,26 +89,34 @@ function Filters({
   const { rowsPerPage } = paging;
   const maxPage = Math.ceil(totalJobs / rowsPerPage) - 1;
   const firstRowIndex = rowsPerPage * currentPage;
+  const patchFilter = useCallback(
+    (key, value) => {
+      const filter = { [key]: value };
 
-  function patchFilter(key, value) {
-    const filter = { [key]: value };
+      // any time a filter changes (that is not setting the page)
+      // we need to reset the results to show the first page.
+      if (key !== 'currentPage') {
+        filter.currentPage = 0;
+      }
 
-    // any time a filter changes (that is not setting the page)
-    // we need to reset the results to show the first page.
-    if (key !== 'currentPage') {
-      filter.currentPage = 0;
-    }
+      if (key === 'storeId') {
+        filter.flowId = '';
+      }
 
-    if (key === 'storeId') {
-      filter.flowId = '';
-    }
-
-    dispatch(actions.patchFilter(filterKey, filter));
-  }
-
-  function handlePageChange(offset) {
-    patchFilter('currentPage', currentPage + offset);
-  }
+      dispatch(actions.patchFilter(filterKey, filter));
+    },
+    [dispatch, filterKey]
+  );
+  const handlePageChange = useCallback(
+    offset => () => {
+      patchFilter('currentPage', currentPage + offset);
+    },
+    [currentPage, patchFilter]
+  );
+  const handleRefreshClick = useCallback(() => {
+    dispatch(actions.job.clear());
+    patchFilter('currentPage', 0);
+  }, [dispatch, patchFilter]);
 
   return (
     <div className={classes.root}>
@@ -143,7 +157,7 @@ function Filters({
           integrationId={integrationId}
           data-test="selectAFlow"
           storeId={storeId}
-          value={_flowId}
+          value={filterFlowId}
           onChange={flowId => patchFilter('flowId', flowId)}
         />
       )}
@@ -186,28 +200,38 @@ function Filters({
         />
       </div>
 
-      <div className={classes.pagingContainer}>
-        <IconButton
-          disabled={currentPage === 0}
-          size="small"
-          data-test="decrementPage"
-          onClick={() => handlePageChange(-1)}>
-          <ArrowLeftIcon />
-        </IconButton>
-        <div className={classes.pagingText}>
-          {firstRowIndex + 1}
-          {' - '}
-          {currentPage === maxPage
-            ? totalJobs
-            : firstRowIndex + rowsPerPage} of {totalJobs}
-        </div>
-        <IconButton
-          data-test="incrementPage"
-          disabled={maxPage === currentPage}
-          size="small"
-          onClick={() => handlePageChange(1)}>
-          <ArrowRightIcon />
-        </IconButton>
+      <div className={classes.rightActionContainer}>
+        <IconTextButton
+          className={classes.refreshButton}
+          onClick={handleRefreshClick}>
+          <RefreshIcon /> Refresh
+        </IconTextButton>
+        {maxPage > 0 && (
+          <Fragment>
+            <IconButton
+              disabled={currentPage === 0}
+              size="small"
+              data-test="decrementPage"
+              onClick={handlePageChange(-1)}>
+              <ArrowLeftIcon />
+            </IconButton>
+            <div className={classes.pagingText}>
+              {firstRowIndex + 1}
+              {' - '}
+              {currentPage === maxPage
+                ? totalJobs
+                : firstRowIndex + rowsPerPage}{' '}
+              of {totalJobs}
+            </div>
+            <IconButton
+              data-test="incrementPage"
+              disabled={maxPage === currentPage}
+              size="small"
+              onClick={handlePageChange(1)}>
+              <ArrowRightIcon />
+            </IconButton>
+          </Fragment>
+        )}
       </div>
     </div>
   );

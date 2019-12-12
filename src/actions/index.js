@@ -523,6 +523,11 @@ const integrationApp = {
         id: integrationId,
         installerFunction,
       }),
+    failedNewStoreSteps: (integrationId, message) =>
+      action(actionTypes.INTEGRATION_APPS.STORE.FAILURE, {
+        id: integrationId,
+        message,
+      }),
     receivedNewStoreSteps: (integrationId, steps) =>
       action(actionTypes.INTEGRATION_APPS.STORE.RECEIVED, {
         id: integrationId,
@@ -746,6 +751,7 @@ const app = {
   errored: () => action(actionTypes.APP_ERRORED),
   clearError: () => action(actionTypes.APP_CLEAR_ERROR),
 };
+const toggleBanner = () => action(actionTypes.APP_TOGGLE_BANNER);
 const toggleDrawer = () => action(actionTypes.APP_TOGGLE_DRAWER);
 const patchFilter = (name, filter) =>
   action(actionTypes.PATCH_FILTER, { name, filter });
@@ -972,10 +978,20 @@ const assistantMetadata = {
       metadata,
     }),
 };
+const analytics = {
+  gainsight: {
+    trackEvent: (eventId, details) =>
+      action(actionTypes.ANALYTICS.GAINSIGHT.TRACK_EVENT, {
+        eventId,
+        details,
+      }),
+  },
+};
 // #endregion
 
 export default {
   app,
+  toggleBanner,
   toggleDrawer,
   metadata,
   fileDefinitions,
@@ -1010,4 +1026,5 @@ export default {
   marketplace,
   recycleBin,
   mapping,
+  analytics,
 };

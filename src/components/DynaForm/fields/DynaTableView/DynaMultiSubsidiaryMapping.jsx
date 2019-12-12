@@ -31,7 +31,12 @@ export default function DynaMultiSubsidiaryMapping(props) {
   const addSupportsRefreshToOptions = option => ({
     ...option,
     required: ['paymentAccount', 'subsidiary'].includes(option.id),
-    supportsRefresh: option.id !== 'dummyCustomer',
+    supportsRefresh: [
+      'paymentAccount',
+      'subsidiary',
+      'debitAccount',
+      'depositAccount',
+    ].includes(option.id),
   });
   const modifiedOptionsMap = optionsMap.map(addSupportsRefreshToOptions);
   const dispatch = useDispatch();

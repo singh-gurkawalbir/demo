@@ -12,6 +12,12 @@ export default {
 
     delete newValues['/outputMode'];
 
+    if (newValues['/file/decompressFiles'] === false) {
+      newValues['/file/compressionFormat'] = undefined;
+    }
+
+    delete newValues['/file/decompressFiles'];
+
     return {
       ...newValues,
     };
@@ -127,9 +133,6 @@ export default {
   },
   actions: [
     {
-      id: 'cancel',
-    },
-    {
       id: 'save',
       visibleWhen: [
         {
@@ -147,6 +150,9 @@ export default {
           is: ['filedefinition', 'fixed', 'delimited/edifact'],
         },
       ],
+    },
+    {
+      id: 'cancel',
     },
   ],
 };

@@ -1,7 +1,7 @@
 import { isEmpty, each, isArray } from 'lodash';
 import moment from 'moment';
 import jsonUtil from './json';
-import { isFileAdaptor } from './resource';
+import { isFileAdaptor, isBlobTypeResource } from './resource';
 import { extractFieldsFromCsv } from './file';
 import {
   getFormattedNSSalesOrderMetadataData,
@@ -9,6 +9,7 @@ import {
   filterSubListProperties,
   getFormattedSalesForceMetadata,
 } from './metadata';
+import { getUnionObject } from './jsonPaths';
 
 export default function getFormattedSampleData({
   connection,
@@ -85,6 +86,10 @@ export function processSampleData(sampleData, resource) {
           return sampleData;
         default:
       }
+    }
+
+    if (isBlobTypeResource(resource)) {
+      return sampleData;
     }
     // For all other adapters logic can be handled here
   }
@@ -292,4 +297,19 @@ export const getSalesforceRealTimeSampleData = sfMetadata => {
   });
 
   return salesforceSampleData;
+};
+
+/*
+ * Handles Sample data of JSON file type
+ * Incase of Array content, we merge all objects properties and have a combined object
+ * Ex: [{a: 5, b: 6}, {c: 7}, {a: 6, d: 11}] gets converted to [{a: 6, b: 6, c: 7, d: 11}]
+ */
+export const processJsonSampleData = sampleData => {
+  if (!sampleData) return sampleData;
+
+  if (Array.isArray(sampleData)) {
+    return getUnionObject(sampleData);
+  }
+
+  return sampleData;
 };

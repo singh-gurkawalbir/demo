@@ -99,7 +99,7 @@ export default {
     type: 'radiogroup',
     label:
       'Does each individual record being processed need to execute multiple different exports?',
-    defaultValue: r => (r && r.pathToMany ? 'true' : 'false'),
+    defaultValue: r => (r && r.oneToMany ? 'true' : 'false'),
     visible: r => !!(r && r.isLookup),
     options: [
       {

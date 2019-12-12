@@ -20,7 +20,7 @@ export default {
     ],
   },
 
-  preSave: formValues => {
+  preSave: (formValues, resource) => {
     const accessTokenData = { ...formValues };
 
     if (accessTokenData['/autoPurgeAt'] === 'none') {
@@ -36,7 +36,7 @@ export default {
       ).toISOString();
     }
 
-    if (accessTokenData['/fullAccess'] === 'true') {
+    if (accessTokenData['/fullAccess'] === 'true' && !resource._integrationId) {
       accessTokenData['/fullAccess'] = true;
     } else {
       accessTokenData['/fullAccess'] = false;

@@ -49,6 +49,9 @@ export default function Integration({ history, match }) {
   const integration = useSelector(state =>
     selectors.resource(state, 'integrations', integrationId)
   );
+  const currentEnvironment = useSelector(state =>
+    selectors.currentEnvironment(state)
+  );
   const [isDeleting, setIsDeleting] = useState(false);
   const cantDelete = useSelector(state => {
     const flows = selectors.resourceList(state, {
@@ -120,6 +123,18 @@ export default function Integration({ history, match }) {
 
     setIsDeleting(false);
     history.push(getRoutePath('dashboard'));
+  }
+
+  // If this integration does not belong to this environment, then switch the environment.
+  if (
+    integration &&
+    !!integration.sandbox !== (currentEnvironment === 'sandbox')
+  ) {
+    dispatch(
+      actions.user.preferences.update({
+        environment: integration.sandbox ? 'sandbox' : 'production',
+      })
+    );
   }
 
   // TODO: <ResourceDrawer> Can be further optimized to take advantage

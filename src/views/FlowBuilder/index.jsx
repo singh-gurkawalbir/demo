@@ -213,6 +213,7 @@ function FlowBuilder() {
   const dispatch = useDispatch();
   // Bottom drawer is shown for existing flows and docked for new flow
   const [size, setSize] = useState(isNewFlow ? 0 : 1);
+  const [tabValue, setTabValue] = useState(0);
   const [newGeneratorId, setNewGeneratorId] = useState(generateNewId());
   const [newProcessorId, setNewProcessorId] = useState(generateNewId());
   //
@@ -354,6 +355,13 @@ function FlowBuilder() {
     patchFlow('/name', title);
   }
 
+  const handleFlowRun = useCallback(() => {
+    dispatch(actions.flow.run({ flowId }));
+    // Highlights Run Dashboard in the bottom drawer
+    setTabValue(1);
+    // Raises Bottom Drawer size
+    setSize(2);
+  }, [dispatch, flowId]);
   // #region New Flow Creation logic
   const rewriteUrl = id => {
     const parts = match.url.split('/');
@@ -431,7 +439,7 @@ function FlowBuilder() {
           <EditableText
             disabled={isViewMode}
             text={flow.name}
-            defaultText={`Unnamed (id:${flowId})`}
+            defaultText={isNewFlow ? 'New flow' : `Unnamed (id:${flowId})`}
             onChange={handleTitleChange}
           />
         }
@@ -449,9 +457,7 @@ function FlowBuilder() {
               isNewFlow || !(flow && flow.isRunnable) || isMonitorLevelAccess
             }
             data-test="runFlow"
-            onClick={() => {
-              dispatch(actions.flow.run({ flowId }));
-            }}>
+            onClick={handleFlowRun}>
             <RunIcon />
           </IconButton>
           {flow && flow.showScheduleIcon && (
@@ -588,7 +594,13 @@ function FlowBuilder() {
 
         {/* CANVAS END */}
       </div>
-      <BottomDrawer flow={flow} size={size} setSize={setSize} />
+      <BottomDrawer
+        flow={flow}
+        size={size}
+        setSize={setSize}
+        tabValue={tabValue}
+        setTabValue={setTabValue}
+      />
     </LoadResources>
   );
 }
