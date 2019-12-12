@@ -50,10 +50,12 @@ export default function DynaText(props) {
 
   const handleFieldChange = event => {
     const { value, valueAsNumber } = event.target;
-    let returnVal = inputType === 'number' ? valueAsNumber : value;
+    let returnVal;
 
-    if (isNaN(returnVal)) {
-      returnVal = null;
+    if (inputType === 'number') {
+      returnVal = isNaN(valueAsNumber) ? null : valueAsNumber;
+    } else {
+      returnVal = value;
     }
 
     if (!delimiter) {
