@@ -4,6 +4,7 @@ import * as selectors from '../../../reducers';
 import * as gainsight from '../../../utils/analytics/gainsight';
 import { ACCOUNT_IDS } from '../../../utils/constants';
 import { RESOURCE_TYPE_PLURAL_TO_SINGULAR } from '../../../constants/resource';
+import { getResourceSubType } from '../../../utils/resource';
 
 export function* identifyUser() {
   const { _id, name, email, company, createdAt } = yield select(
@@ -24,14 +25,11 @@ export function* identifyUser() {
     signUpDate: createdAt ? new Date(createdAt).getTime() : '',
   };
 
-  try {
-    gainsight.identity(userInfo, accountInfo);
-    // eslint-disable-next-line no-empty
-  } catch (error) {}
+  gainsight.identify(userInfo, accountInfo);
 }
 
-export function trackEvent(id, details) {
-  gainsight.track(id, details);
+export function trackEvent({ eventId, details }) {
+  gainsight.track(eventId, details);
 }
 
 export function* trackResourceCreatedEvent({ id, resourceType }) {
@@ -39,18 +37,16 @@ export function* trackResourceCreatedEvent({ id, resourceType }) {
   const eventId = `${RESOURCE_TYPE_PLURAL_TO_SINGULAR[
     resourceType
   ].toUpperCase()}_CREATED`;
-  const details = {};
+  /**
+   * TODO We need to update this to get the required details for each resource type
+   * once https://celigo.atlassian.net/browse/IO-10222 is updated with required details.
+   */
+  const details = getResourceSubType(resource);
 
-  if (['connections', 'exports', 'imports'].includes(resourceType)) {
-    details.type = resource.type || resource.adaptorType;
-    details.assistant = resource.assistant;
-  }
-
-  trackEvent(eventId, details);
+  trackEvent({ eventId, details });
 }
 
 export const gainsightSagas = [
-  // takeEvery(actionTypes.ANALYTICS.GAINSIGHT.IDENTIFY_USER, identifyUser),
   takeEvery(actionTypes.DEFAULT_ACCOUNT_SET, identifyUser),
   takeEvery(actionTypes.RESOURCE.CREATED, trackResourceCreatedEvent),
   takeEvery(actionTypes.ANALYTICS.GAINSIGHT.TRACK_EVENT, trackEvent),

@@ -18,6 +18,7 @@ import * as selectors from '../reducers';
 import WithAuth from './AppRoutingWithAuth';
 import Signin from '../views/SignIn';
 import * as gainsight from '../utils/analytics/gainsight';
+import { getDomain } from '../utils/resource';
 
 // The makeStyles function below does not have access to the theme.
 // We can only use the theme in components that are children of
@@ -62,7 +63,7 @@ export default function App() {
       'staging.integrator.io': 'AP-YRACIJBGZVAM-2',
       'integrator.io': 'AP-JB3PQTNZWXAO-2',
       'eu.integrator.io': 'AP-NDDMWBJ5SKRY-2',
-    }[window.location.hostname.replace('www.', '')];
+    }[getDomain()];
 
     gainsight.initialize({ tagKey });
   }, []);

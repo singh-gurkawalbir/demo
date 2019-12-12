@@ -979,9 +979,11 @@ const assistantMetadata = {
 };
 const analytics = {
   gainsight: {
-    identifyUser: () => action(actionTypes.ANALYTICS.GAINSIGHT.IDENTIFY_USER),
     trackEvent: (eventId, details) =>
-      action(actionTypes.ANALYTICS.GAINSIGHT.TRACK_EVENT, eventId, details),
+      action(actionTypes.ANALYTICS.GAINSIGHT.TRACK_EVENT, {
+        eventId,
+        details,
+      }),
   },
 };
 // #endregion
