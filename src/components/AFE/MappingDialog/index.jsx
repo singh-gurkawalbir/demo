@@ -10,13 +10,14 @@ import {
   IconButton,
 } from '@material-ui/core';
 // TODO: Azhar, please fix these icons message
-import ZoomOutIcon from '@material-ui/icons/ZoomOutMap';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import { preSaveValidate } from './util';
 import * as selectors from '../../../reducers';
 import CloseIcon from '../../icons/CloseIcon';
 import mappingUtil from '../../../utils/mapping';
+import FullScreenOpenIcon from '../../icons/FullScreenOpenIcon';
+import FullScreenCloseIcon from '../../icons/FullScreenCloseIcon';
 
 const useStyles = makeStyles(theme => ({
   dialogContent: {
@@ -124,7 +125,7 @@ export default function MappingDialog(props) {
             value="max"
             onClick={handleFullScreenClick}
             selected={fullScreen}>
-            <ZoomOutIcon />
+            {fullScreen ? <FullScreenCloseIcon /> : <FullScreenOpenIcon />}
           </ToggleButton>
         </div>
         <IconButton
