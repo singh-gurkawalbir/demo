@@ -28,11 +28,17 @@ const LOOKUP_ACTION = {
   LOOKUP_SELECT: 'LOOKUP_SELECT',
 };
 const prefixRegexp = '.*{{((?!(}|{)).)*$';
-const getSuggestionsFromLookup = (lookups = [], handleUpdate, options) => {
+const getSuggestions = (
+  lookups = [],
+  extractFields = [],
+  handleUpdate,
+  options
+) => {
   const suggestions = [
     {
       fixed: true,
       label: 'New Lookup',
+      type: 'lookup',
       component: (
         <DynaAddEditLookup
           showDynamicLookupOnly
@@ -50,6 +56,7 @@ const getSuggestionsFromLookup = (lookups = [], handleUpdate, options) => {
     if (!lookup.map) {
       suggestions.push({
         label: lookup.name,
+        type: 'lookup',
         component: (
           <DynaAddEditLookup
             id={lookup.name}
@@ -64,6 +71,13 @@ const getSuggestionsFromLookup = (lookups = [], handleUpdate, options) => {
         ),
       });
     }
+  });
+  extractFields.forEach(field => {
+    suggestions.push({
+      label: field.name,
+      type: 'extract',
+      value: field.id,
+    });
   });
 
   return suggestions;
@@ -140,7 +154,8 @@ export default function InputWithLookupHandlebars(props) {
       newValue = `${preText}${handlebarExp}${postText}`;
     }
 
-    setState({ ...state, userInput: newValue, cursorPosition: -1 });
+    setState({ ...state, userInput: newValue });
+    setShowSuggestions(false);
     onFieldChange(id, newValue);
   };
 
@@ -196,7 +211,12 @@ export default function InputWithLookupHandlebars(props) {
     sampleData,
     connectionId,
   };
-  const suggestions = getSuggestionsFromLookup(lookups, handleUpdate, options);
+  const suggestions = getSuggestions(
+    lookups,
+    extractFields,
+    handleUpdate,
+    options
+  );
   const handleSuggestions = e => {
     const pointerIndex = e.target.selectionStart;
     const _showSuggestion = !!(
@@ -232,17 +252,19 @@ export default function InputWithLookupHandlebars(props) {
   if (showSuggestions && userInput && filteredSuggestions.length) {
     suggestionsListComponent = (
       <ul className={classes.suggestions}>
-        {filteredSuggestions.map(suggestion => (
-          <li key={suggestion.label}>{suggestion.component}</li>
-        ))}
-        {Array.isArray(extractFields) &&
-          extractFields.map(extract => (
+        {filteredSuggestions.map(suggestion => {
+          if (suggestion.type === 'lookup') {
+            return <li key={suggestion.label}>{suggestion.component}</li>;
+          }
+
+          return (
             <li
-              key={extract.id}
-              onClick={() => handleSuggestionClick(extract.id)}>
-              {extract.name}
+              key={suggestion.value}
+              onClick={() => handleSuggestionClick(suggestion.value)}>
+              {suggestion.label}
             </li>
-          ))}
+          );
+        })}
       </ul>
     );
   }
