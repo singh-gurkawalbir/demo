@@ -17,7 +17,7 @@ import NetworkSnackbar from '../components/NetworkSnackbar';
 import * as selectors from '../reducers';
 import WithAuth from './AppRoutingWithAuth';
 import Signin from '../views/SignIn';
-import * as gainsight from '../utils/tracking/gainsight';
+import * as gainsight from '../utils/analytics/gainsight';
 
 // The makeStyles function below does not have access to the theme.
 // We can only use the theme in components that are children of
@@ -57,7 +57,14 @@ export default function App() {
   // console.log('render: <App>', reloadCount);
 
   useEffect(() => {
-    gainsight.initialize({});
+    const tagKey = {
+      'localhost.io': 'AP-CAGNPCDUT5BV-2',
+      'staging.integrator.io': 'AP-YRACIJBGZVAM-2',
+      'integrator.io': 'AP-JB3PQTNZWXAO-2',
+      'eu.integrator.io': 'AP-NDDMWBJ5SKRY-2',
+    }[window.location.hostname.replace('www.', '')];
+
+    gainsight.initialize({ tagKey });
   }, []);
 
   return (

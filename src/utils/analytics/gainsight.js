@@ -1,5 +1,5 @@
 /* global aptrinsic */
-export function initialize({ tagKey = 'AP-CAGNPCDUT5BV-2' }) {
+export function initialize({ tagKey }) {
   /* eslint-disable */
   (function(n, t, a, e) {
     const i = 'aptrinsic';
@@ -34,31 +34,10 @@ export function initialize({ tagKey = 'AP-CAGNPCDUT5BV-2' }) {
   /* eslint-enable */
 }
 
-export function sendUserIdentity({
-  id,
-  email,
-  firstName,
-  lastName,
-  signUpDate,
-  accountId,
-  companyName,
-}) {
-  const accountInfo = {
-    id: accountId || id,
-    name: companyName,
-  };
-  const userInfo = {
-    id: `${accountInfo.id}_${id}`,
-    _userId: id,
-    email,
-    firstName,
-    lastName,
-    signUpDate: signUpDate ? new Date(signUpDate).getTime() : '',
-  };
-
+export function identity(userInfo, accountInfo) {
   aptrinsic('identify', userInfo, accountInfo);
 }
 
-export function trackEvent(eventId, details = {}) {
+export function track(eventId, details = {}) {
   aptrinsic('track', eventId, details);
 }
