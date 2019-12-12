@@ -103,31 +103,45 @@ export default function InputWithLookupHandlebars(props) {
   useEffect(() => {
     if (value !== userInput) setState({ ...state, userInput: value });
   }, [state, userInput, value]);
-  const handleLookupSelect = lookup => {
+
+  const handleSuggestionClick = (_val, isLookup) => {
     const tmpStr = userInput.substring(0, cursorPosition);
     const lastIndexOfBracesBeforeCursor = tmpStr.lastIndexOf('{');
+    let handlebarExp = '';
 
-    if (lookup) {
-      let lookupHandlebarExp = '';
-
-      if (connectionType === 'http') {
-        lookupHandlebarExp = `{lookup "${lookup.name}" this}`;
-      } else {
-        lookupHandlebarExp = `{${lookup.name}}`;
-      }
-
-      const newValue = `${userInput.substring(
-        0,
-        lastIndexOfBracesBeforeCursor + 1
-      )}${lookupHandlebarExp}}}`;
-
-      setState({ ...state, userInput: newValue });
-      onFieldChange(id, newValue);
+    if (isLookup && connectionType === 'http') {
+      handlebarExp = `{lookup "${_val}" this}`;
+    } else {
+      handlebarExp = `{${_val}}`;
     }
-  };
 
-  const handleExtractSelect = () => {
-    // console.log('extract', extract);
+    const closeBraceIndexAfterCursor = value.indexOf(
+      '}',
+      lastIndexOfBracesBeforeCursor + 1
+    );
+    const openBraceIndexAfterCursor = value.indexOf(
+      '{',
+      lastIndexOfBracesBeforeCursor + 1
+    );
+    let newValue = '';
+    const preText = `${value.substring(0, lastIndexOfBracesBeforeCursor + 1)}`;
+
+    if (
+      closeBraceIndexAfterCursor === -1 ||
+      (openBraceIndexAfterCursor !== -1 &&
+        openBraceIndexAfterCursor < closeBraceIndexAfterCursor)
+    ) {
+      const postText = `${value.substring(lastIndexOfBracesBeforeCursor + 1)}`;
+
+      newValue = `${preText}${handlebarExp}}}${postText}`;
+    } else {
+      const postText = `${value.substring(closeBraceIndexAfterCursor)}`;
+
+      newValue = `${preText}${handlebarExp}${postText}`;
+    }
+
+    setState({ ...state, userInput: newValue, cursorPosition: -1 });
+    onFieldChange(id, newValue);
   };
 
   const handleLookupEdit = (oldlookup, modifiedLookup) => {
@@ -137,7 +151,7 @@ export default function InputWithLookupHandlebars(props) {
     );
 
     if (indexOldLookup !== -1) lookupsTmp[indexOldLookup] = modifiedLookup;
-    handleLookupSelect(modifiedLookup);
+    handleSuggestionClick(modifiedLookup.name, true);
     onLookupUpdate(lookupsTmp);
   };
 
@@ -145,7 +159,7 @@ export default function InputWithLookupHandlebars(props) {
     if (lookup) {
       const _lookups = [...lookups, lookup];
 
-      handleLookupSelect(lookup);
+      handleSuggestionClick(lookup.name, true);
       onLookupUpdate(_lookups);
     }
   };
@@ -169,7 +183,7 @@ export default function InputWithLookupHandlebars(props) {
         handleLookupAdd(lookup);
         break;
       case LOOKUP_ACTION.LOOKUP_SELECT:
-        handleLookupSelect(oldLookup);
+        handleSuggestionClick(oldLookup.name, true);
         break;
       default:
     }
@@ -223,7 +237,9 @@ export default function InputWithLookupHandlebars(props) {
         ))}
         {Array.isArray(extractFields) &&
           extractFields.map(extract => (
-            <li key={extract.id} onClick={() => handleExtractSelect(extract)}>
+            <li
+              key={extract.id}
+              onClick={() => handleSuggestionClick(extract.id)}>
               {extract.name}
             </li>
           ))}
