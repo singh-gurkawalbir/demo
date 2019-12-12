@@ -3,7 +3,7 @@ import Button from '@material-ui/core/Button';
 import { useSelector, useDispatch } from 'react-redux';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
-import CsvParseEditorDialog from '../../../AFE/CsvParseEditor/Dialog';
+import CsvConfigEditorDialog from '../../../AFE/CsvConfigEditor/Dialog';
 
 export default function DynaCsvParse(props) {
   const {
@@ -36,40 +36,24 @@ export default function DynaCsvParse(props) {
   const handleClose = (shouldCommit, editorValues) => {
     if (shouldCommit) {
       const {
-        rowDelimiter,
         columnDelimiter,
         hasHeaderRow,
-        includeHeader,
         keyColumns,
         rowsToSkip,
         trimSpaces,
-        wrapWithQuotes,
-        replaceTabWithSpace,
-        replaceNewlineWithSpace,
-        truncateLastRowDelimiter,
-        resourceType: editorResourceType,
       } = editorValues;
+      const savedVal = {
+        columnDelimiter,
+        hasHeaderRow,
+        keyColumns,
+        trimSpaces,
+      };
 
-      if (editorResourceType === 'imports') {
-        onFieldChange(id, {
-          rowDelimiter,
-          columnDelimiter,
-          includeHeader,
-          keyColumns,
-          truncateLastRowDelimiter,
-          replaceTabWithSpace,
-          replaceNewlineWithSpace,
-          wrapWithQuotes,
-        });
-      } else {
-        onFieldChange(id, {
-          columnDelimiter,
-          hasHeaderRow,
-          keyColumns,
-          rowsToSkip,
-          trimSpaces,
-        });
+      if (Number.isInteger(rowsToSkip)) {
+        savedVal.rowsToSkip = rowsToSkip;
       }
+
+      onFieldChange(id, savedVal);
 
       // On change of rules, trigger sample data update
       // It calls processor on final rules to parse csv file
@@ -93,12 +77,13 @@ export default function DynaCsvParse(props) {
   return (
     <Fragment>
       {showEditor && (
-        <CsvParseEditorDialog
-          title="CSV parse options"
+        <CsvConfigEditorDialog
+          title="CSV Parse Options"
           id={id + resourceId}
           mode="csv"
           data={csvData}
           resourceType={resourceType}
+          csvEditorType="parse"
           /** rule to be passed as json */
           rule={value}
           onClose={handleClose}
