@@ -11,7 +11,7 @@ import flowStartDateMetadata from './metadata';
 import Spinner from '../Spinner';
 
 export default function FlowStartDate(props) {
-  const { flowId, onClose, disabled, isJobDashBoard } = props;
+  const { flowId, onClose, disabled, isJobDashboard } = props;
   const dispatch = useDispatch();
   const history = useHistory();
   const [state, setState] = useState({
@@ -80,7 +80,7 @@ export default function FlowStartDate(props) {
       customStartDate = customStartDate ? customStartDate.toISOString() : null;
     }
 
-    if (isJobDashBoard) {
+    if (isJobDashboard) {
       dispatch(actions.flow.run({ flowId: flow._id, customStartDate }));
     } else {
       dispatch(actions.flow.run({ flowId: flow._id, customStartDate }));
@@ -111,13 +111,13 @@ export default function FlowStartDate(props) {
     <Fragment>
       <DynaForm disabled={disabled} fieldMeta={fieldMeta}>
         <Button
-          data-test="cancelOperandSettings"
+          data-test="close"
           onClick={() => {
             onClose();
           }}>
           Cancel
         </Button>
-        <DynaSubmit data-test="saveOperandSettings" onClick={handleSubmit}>
+        <DynaSubmit data-test="submit" onClick={handleSubmit}>
           Run
         </DynaSubmit>
       </DynaForm>

@@ -57,8 +57,8 @@ export default function JobActionsMenu({
   }
 
   const [showDilaog, setShowDilaog] = useState(false);
-  const isDeltaFlow =
-    useSelector(state => selectors.isDeltaFlow(state, job._flowId)) || false;
+  const flowDetails =
+    useSelector(state => selectors.flowDetails(state, job._flowId)) || {};
 
   if (isJobCompleted) {
     if (job.retries && job.retries.length > 0) {
@@ -162,7 +162,10 @@ export default function JobActionsMenu({
         setShowFilesDownloadDialog(true);
       }
     } else if (action === 'runFlow') {
-      if (isDeltaFlow) {
+      if (
+        flowDetails.isDeltaFlow &&
+        (!flowDetails._connectorId || !!flowDetails.showStartDateDialog)
+      ) {
         setShowDilaog('true');
       } else {
         dispatch(actions.flow.run({ flowId: job._flowId }));
@@ -332,9 +335,9 @@ export default function JobActionsMenu({
 
   return (
     <Fragment>
-      {showDilaog && isDeltaFlow && (
+      {showDilaog && flowDetails.isDeltaFlow && (
         <FlowStartDateDialog
-          isJobDashBoard
+          isJobDashboard
           flowId={job._flowId}
           onClose={() => setShowDilaog(false)}
         />

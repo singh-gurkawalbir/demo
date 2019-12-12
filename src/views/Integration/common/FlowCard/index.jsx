@@ -62,8 +62,6 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
   const flowDetails =
     useSelector(state => selectors.flowDetails(state, flowId)) || {};
   const [showDilaog, setShowDilaog] = useState(false);
-  const isDeltaFlow =
-    useSelector(state => selectors.isDeltaFlow(state, flowId)) || false;
   const patchFlow = useCallback(
     (path, value) => {
       const patchSet = [{ op: 'replace', path, value }];
@@ -103,7 +101,10 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
           break;
 
         case 'run':
-          if (isDeltaFlow) {
+          if (
+            flowDetails.isDeltaFlow &&
+            (!flowDetails._connectorId || !!flowDetails.showStartDateDialog)
+          ) {
             setShowDilaog('true');
           } else {
             dispatch(actions.flow.run({ flowId }));
@@ -131,10 +132,11 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
       flowDetails._id,
       flowDetails._integrationId,
       flowDetails.disabled,
+      flowDetails.isDeltaFlow,
+      flowDetails.showStartDateDialog,
       flowId,
       flowName,
       history,
-      isDeltaFlow,
       patchFlow,
       storeId,
     ]
@@ -163,7 +165,7 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
   return (
     <div className={classes.root}>
       <div className={clsx(classes.statusBar, classes[status])} />
-      {showDilaog && isDeltaFlow && (
+      {showDilaog && flowDetails.isDeltaFlow && (
         <FlowStartDateDialog
           flowId={flowDetails._id}
           onClose={() => setShowDilaog(false)}

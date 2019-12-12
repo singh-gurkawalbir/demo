@@ -782,6 +782,7 @@ export function flowDetails(state, id) {
     draft.isSimpleImport = isSimpleImportFlow(pg);
     draft.isRunnable = isRunnable(allExports, pg, draft);
     draft.canSchedule = showScheduleIcon(allExports, pg, draft);
+    draft.isDeltaFlow = isDeltaFlow(state, id);
     // TODO: add logic to properly determine if this flow should
     // display mapping/settings. This would come from the IA metadata.
     const flowSettings = getIAFlowSettings(state, flow._integrationId, id);
@@ -789,6 +790,7 @@ export function flowDetails(state, id) {
     draft.showMapping = flowSettings.showMapping;
     draft.hasSettings = !!flowSettings.settings || !!flowSettings.sections;
     draft.showSchedule = flowSettings.showSchedule;
+    draft.showStartDateDialog = flowSettings.showStartDateDialog;
     draft.disableSlider = flowSettings.disableSlider;
   });
 }
