@@ -4,6 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { TextField } from '@material-ui/core';
 import DynaAddEditLookup from '../DynaAddEditLookup';
 
+// TODO Aditya (Refractor)
 const useStyles = makeStyles(theme => ({
   suggestions: {
     width: '100%',
@@ -11,7 +12,7 @@ const useStyles = makeStyles(theme => ({
     listStyleType: 'none',
     paddingLeft: 0,
     marginTop: theme.spacing(1),
-    maxHeight: 400,
+    maxHeight: 200,
     overflow: 'auto',
     paddingInlineStart: theme.spacing(1),
     '& li': {
@@ -88,6 +89,7 @@ export default function InputWithLookupHandlebars(props) {
     value,
     connectionType,
     connectionId,
+    extractFields = [],
   } = props;
   const classes = useStyles();
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -122,6 +124,10 @@ export default function InputWithLookupHandlebars(props) {
       setState({ ...state, userInput: newValue });
       onFieldChange(id, newValue);
     }
+  };
+
+  const handleExtractSelect = () => {
+    // console.log('extract', extract);
   };
 
   const handleLookupEdit = (oldlookup, modifiedLookup) => {
@@ -215,6 +221,12 @@ export default function InputWithLookupHandlebars(props) {
         {filteredSuggestions.map(suggestion => (
           <li key={suggestion.label}>{suggestion.component}</li>
         ))}
+        {Array.isArray(extractFields) &&
+          extractFields.map(extract => (
+            <li key={extract.id} onClick={() => handleExtractSelect(extract)}>
+              {extract.name}
+            </li>
+          ))}
       </ul>
     );
   }
