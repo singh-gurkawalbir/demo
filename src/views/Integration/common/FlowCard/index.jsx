@@ -13,7 +13,7 @@ import RunIcon from '../../../../components/icons/RunIcon';
 import SettingsIcon from '../../../../components/icons/SettingsIcon';
 import OnOffSwitch from '../../../../components/SwitchToggle';
 import InfoIconButton from '../InfoIconButton';
-import DeltaDialog from '../../../../components/DeltaDialog/Dialog';
+import FlowStartDateDialog from '../../../../components/FlowStartDate/Dialog';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -164,9 +164,9 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
     <div className={classes.root}>
       <div className={clsx(classes.statusBar, classes[status])} />
       {showDilaog && isDeltaFlow && (
-        <DeltaDialog
+        <FlowStartDateDialog
           flowId={flowDetails._id}
-          closeDialog={() => setShowDilaog(false)}
+          onClose={() => setShowDilaog(false)}
         />
       )}
       <div className={classes.cardContent}>

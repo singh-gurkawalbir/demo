@@ -18,7 +18,7 @@ import JobFilesDownloadDialog from './JobFilesDownloadDialog';
 import MoreVertIcon from '../icons/EllipsisVerticalIcon';
 import getRoutePath from '../../utils/routePaths';
 import * as selectors from '../../reducers';
-import DeltaDialog from '../DeltaDialog/Dialog';
+import FlowStartDateDialog from '../FlowStartDate/Dialog';
 
 const useStyle = makeStyles({
   iconBtn: {
@@ -333,10 +333,10 @@ export default function JobActionsMenu({
   return (
     <Fragment>
       {showDilaog && isDeltaFlow && (
-        <DeltaDialog
-          isDashBoard
+        <FlowStartDateDialog
+          isJobDashBoard
           flowId={job._flowId}
-          closeDialog={() => setShowDilaog(false)}
+          onClose={() => setShowDilaog(false)}
         />
       )}
       {showRetriesDialog && (
