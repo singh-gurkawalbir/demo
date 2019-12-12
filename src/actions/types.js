@@ -399,6 +399,11 @@ const RECYCLEBIN = {
   RESTORE: 'RESTORE',
   PURGE: 'PURGE',
 };
+const ANALYTICS = {
+  GAINSIGHT: {
+    TRACK_EVENT: 'ANALYTICS_GAINSIGHT_TRACK_EVENT',
+  },
+};
 
 export default {
   NETSUITE_USER_ROLES,
@@ -495,4 +500,5 @@ export default {
   RECYCLEBIN,
   ICLIENTS,
   MAPPING,
+  ANALYTICS,
 };
