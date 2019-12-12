@@ -47,6 +47,19 @@ export default {
       fieldId: 'as2.encrypted.userPrivateKey',
     },
     'as2.userStationInfo.ipAddresses': {
+      label: 'AS2 IP Addresses: ',
+      value: (
+        <span>
+          Click{' '}
+          <a
+            // eslint-disable-next-line react/jsx-no-target-blank
+            target="_blank"
+            href="https://celigosuccess.zendesk.com/hc/en-us/articles/115003717028-Whitelist-integrator-io-IPs">
+            here
+          </a>{' '}
+          to see the list of IP Addresses
+        </span>
+      ),
       fieldId: 'as2.userStationInfo.ipAddresses',
     },
     'as2.partnerStationInfo.as2URI': {
