@@ -1,5 +1,5 @@
 import { Fragment, useState, useCallback } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Menu from '@material-ui/core/Menu';
 import { makeStyles } from '@material-ui/core';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -17,6 +17,8 @@ import JobRetriesDialog from './JobRetriesDialog';
 import JobFilesDownloadDialog from './JobFilesDownloadDialog';
 import MoreVertIcon from '../icons/EllipsisVerticalIcon';
 import getRoutePath from '../../utils/routePaths';
+import * as selectors from '../../reducers';
+import DeltaDialog from '../DeltaDialog/Dialog';
 
 const useStyle = makeStyles({
   iconBtn: {
@@ -53,6 +55,10 @@ export default function JobActionsMenu({
   if (isJobInProgress || job.status === JOB_STATUS.RETRYING) {
     menuOptions.push({ label: 'Cancel', action: 'cancelJob' });
   }
+
+  const [showDilaog, setShowDilaog] = useState(false);
+  const isDeltaFlow =
+    useSelector(state => selectors.isDeltaFlow(state, job._flowId)) || false;
 
   if (isJobCompleted) {
     if (job.retries && job.retries.length > 0) {
@@ -156,15 +162,19 @@ export default function JobActionsMenu({
         setShowFilesDownloadDialog(true);
       }
     } else if (action === 'runFlow') {
-      dispatch(actions.flow.run({ flowId: job._flowId }));
-      setActionsToMonitor({
-        ...actionsToMonitor,
-        [action]: {
-          action: actionTypes.FLOW.RUN,
-          resourceId: job._flowId,
-        },
-      });
-      dispatch(actions.job.paging.setCurrentPage(0));
+      if (isDeltaFlow) {
+        setShowDilaog('true');
+      } else {
+        dispatch(actions.flow.run({ flowId: job._flowId }));
+        setActionsToMonitor({
+          ...actionsToMonitor,
+          [action]: {
+            action: actionTypes.FLOW.RUN,
+            resourceId: job._flowId,
+          },
+        });
+        dispatch(actions.job.paging.setCurrentPage(0));
+      }
     } else if (action === 'cancelJob') {
       confirmDialog({
         title: 'Confirm',
@@ -322,6 +332,13 @@ export default function JobActionsMenu({
 
   return (
     <Fragment>
+      {showDilaog && isDeltaFlow && (
+        <DeltaDialog
+          isDashBoard
+          flowId={job._flowId}
+          closeDialog={() => setShowDilaog(false)}
+        />
+      )}
       {showRetriesDialog && (
         <JobRetriesDialog
           job={job}

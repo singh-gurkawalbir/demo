@@ -737,6 +737,32 @@ export function getIAFlowSettings(state, integrationId, flowId) {
   return allFlows.find(flow => flow._id === flowId) || emptyObject;
 }
 
+export function isDeltaFlow(state, id) {
+  const flow = resource(state, 'flows', id);
+  const exports = resourceList(state, {
+    type: 'exports',
+  }).resources;
+
+  if (!flow) return false;
+  let isDeltaFlow = false;
+
+  flow &&
+    flow.pageGenerators &&
+    flow.pageGenerators.forEach(pg => {
+      const flowExp = exports && exports.find(e => e._id === pg._exportId);
+
+      if (
+        flowExp &&
+        flowExp.type === 'delta' &&
+        !(flowExp.delta && flowExp.delta.lagOffset)
+      ) {
+        isDeltaFlow = true;
+      }
+    });
+
+  return isDeltaFlow;
+}
+
 export function flowDetails(state, id) {
   const flow = resource(state, 'flows', id);
 
@@ -2695,6 +2721,10 @@ export function getUsedActionsForResource(
 
 export function debugLogs(state) {
   return fromSession.debugLogs(state && state.session);
+}
+
+export function getLastExportDateTime(state, flowId) {
+  return fromSession.getLastExportDateTime(state && state.session, flowId);
 }
 
 export function resourceNamesByIds(state, type) {

@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useHistory } from 'react-router-dom';
 import TimeAgo from 'react-timeago';
@@ -13,6 +13,7 @@ import RunIcon from '../../../../components/icons/RunIcon';
 import SettingsIcon from '../../../../components/icons/SettingsIcon';
 import OnOffSwitch from '../../../../components/SwitchToggle';
 import InfoIconButton from '../InfoIconButton';
+import DeltaDialog from '../../../../components/DeltaDialog/Dialog';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -60,6 +61,9 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
   const dispatch = useDispatch();
   const flowDetails =
     useSelector(state => selectors.flowDetails(state, flowId)) || {};
+  const [showDilaog, setShowDilaog] = useState(false);
+  const isDeltaFlow =
+    useSelector(state => selectors.isDeltaFlow(state, flowId)) || false;
   const patchFlow = useCallback(
     (path, value) => {
       const patchSet = [{ op: 'replace', path, value }];
@@ -99,17 +103,21 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
           break;
 
         case 'run':
-          dispatch(actions.flow.run({ flowId }));
-
-          if (flowDetails._connectorId) {
-            history.push(
-              `/pg/integrationApp/${flowDetails._integrationId}/dashboard`
-            );
+          if (isDeltaFlow) {
+            setShowDilaog('true');
           } else {
-            history.push(
-              `/pg/integrations/${flowDetails._integrationId ||
-                'none'}/dashboard`
-            );
+            dispatch(actions.flow.run({ flowId }));
+
+            if (flowDetails._connectorId) {
+              history.push(
+                `/pg/integrationApp/${flowDetails._integrationId}/dashboard`
+              );
+            } else {
+              history.push(
+                `/pg/integrations/${flowDetails._integrationId ||
+                  'none'}/dashboard`
+              );
+            }
           }
 
           break;
@@ -126,6 +134,7 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
       flowId,
       flowName,
       history,
+      isDeltaFlow,
       patchFlow,
       storeId,
     ]
@@ -154,6 +163,12 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
   return (
     <div className={classes.root}>
       <div className={clsx(classes.statusBar, classes[status])} />
+      {showDilaog && isDeltaFlow && (
+        <DeltaDialog
+          flowId={flowDetails._id}
+          closeDialog={() => setShowDilaog(false)}
+        />
+      )}
       <div className={classes.cardContent}>
         <Grid item xs={9}>
           <div>
