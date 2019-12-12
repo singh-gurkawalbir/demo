@@ -26,7 +26,14 @@ export default {
   },
   fieldMap: {
     name: { fieldId: 'name' },
-    'wrapper.unencrypted': { fieldId: 'wrapper.unencrypted' },
+    'wrapper.unencrypted': {
+      fieldId: 'wrapper.unencrypted',
+      defaultValue: r =>
+        r &&
+        r.wrapper &&
+        r.wrapper.unencrypted &&
+        JSON.stringify(r.wrapper.unencrypted),
+    },
     'wrapper.encrypted': { fieldId: 'wrapper.encrypted' },
     'wrapper.pingFunction': { fieldId: 'wrapper.pingFunction' },
     'wrapper._stackId': { fieldId: 'wrapper._stackId' },
