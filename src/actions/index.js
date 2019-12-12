@@ -978,6 +978,15 @@ const assistantMetadata = {
       metadata,
     }),
 };
+const analytics = {
+  gainsight: {
+    trackEvent: (eventId, details) =>
+      action(actionTypes.ANALYTICS.GAINSIGHT.TRACK_EVENT, {
+        eventId,
+        details,
+      }),
+  },
+};
 // #endregion
 
 export default {
@@ -1017,4 +1026,5 @@ export default {
   marketplace,
   recycleBin,
   mapping,
+  analytics,
 };

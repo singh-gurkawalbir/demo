@@ -42,6 +42,7 @@ import fileDefinitionSagas from './fileDefinitions';
 import { marketplaceSagas } from './marketPlace';
 import { accessTokenSagas } from './accessToken';
 import { recycleBinSagas } from './recycleBin';
+import analyticsSagas from './analytics';
 import * as selectors from '../reducers';
 import { COMM_STATES } from '../reducers/comms';
 
@@ -137,5 +138,6 @@ export default function* rootSaga() {
     ...marketplaceSagas,
     ...accessTokenSagas,
     ...recycleBinSagas,
+    ...analyticsSagas,
   ]);
 }
