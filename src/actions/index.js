@@ -334,7 +334,12 @@ const metadata = {
       connectionId,
       commMetaPath,
     }),
-  assistantImportPreview: (resourceId, previewData) =>
+  requestAssistantImportPreview: resourceId =>
+    action(actionTypes.METADATA.ASSISTANT_PREVIEW_REQUESTED, {
+      resourceId,
+    }),
+
+  receivedAssistantImportPreview: (resourceId, previewData) =>
     action(actionTypes.METADATA.ASSISTANT_PREVIEW_RECEIVED, {
       resourceId,
       previewData,
@@ -797,6 +802,8 @@ const mapping = {
     action(actionTypes.MAPPING.UPDATE_LOOKUP, { id, lookups }),
   patchSettings: (id, index, value) =>
     action(actionTypes.MAPPING.PATCH_SETTINGS, { id, index, value }),
+  setVisibility: (id, value) =>
+    action(actionTypes.MAPPING.SET_VISIBILITY, { id, value }),
   patchIncompleteGenerates: (id, index, value) =>
     action(actionTypes.MAPPING.PATCH_INCOMPLETE_GENERATES, {
       id,

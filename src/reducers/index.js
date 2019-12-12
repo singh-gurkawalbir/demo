@@ -2507,11 +2507,12 @@ export function getImportSampleData(state, resourceId) {
 
   if (assistant) {
     // get assistants sample data
-    return { data: assistantPreviewData(state, resourceId) };
+    return assistantPreviewData(state, resourceId);
   } else if (sampleData) {
     // Formats sample data into readable form
     return {
       data: processSampleData(sampleData, resource),
+      status: 'received',
     };
   } else if (adaptorType === 'NetSuiteDistributedImport') {
     // eslint-disable-next-line camelcase

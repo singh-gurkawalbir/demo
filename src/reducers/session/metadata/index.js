@@ -33,10 +33,25 @@ export default (
       return { ...state, ...{ application: newState } };
     }
 
+    case actionTypes.METADATA.ASSISTANT_PREVIEW_REQUESTED: {
+      newState = { ...state.preview };
+
+      newState[resourceId] = {
+        ...newState[resourceId],
+        status: 'requested',
+      };
+
+      return { ...state, preview: newState };
+    }
+
     case actionTypes.METADATA.ASSISTANT_PREVIEW_RECEIVED: {
       newState = { ...state.preview };
 
-      newState[resourceId] = previewData;
+      newState[resourceId] = {
+        ...newState[resourceId],
+        status: 'received',
+        data: previewData,
+      };
 
       return { ...state, preview: newState };
     }
