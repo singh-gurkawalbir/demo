@@ -242,7 +242,6 @@ export default function ImportMapping(props) {
                     valueName="id"
                     value={mapping.extract || mapping.hardCodedValueTmp}
                     options={extractFields}
-                    hideOptions={mapping.isNotEditable || disabled}
                     disabled={mapping.isNotEditable || disabled}
                     onBlur={(id, evt) => {
                       handleFieldUpdate(
@@ -264,7 +263,6 @@ export default function ImportMapping(props) {
                     [classes.disableChildRow]: mapping.isRequired || disabled,
                   })}>
                   <DynaTypeableSelect
-                    hideOptions={mapping.isRequired || disabled}
                     key={`generate-${editorId}-${initChangeIdentifier}-${mapping.rowIdentifier}`}
                     id={`fieldMappingGenerate-${mapping.index}`}
                     value={mapping.generate}
