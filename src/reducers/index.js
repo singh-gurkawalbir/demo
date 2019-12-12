@@ -1520,14 +1520,14 @@ export function userPermissions(state) {
   return fromUser.permissions(state.user);
 }
 
-export const resourcePermissionsToLookUpTo = {
+const parentResourceToLookUpTo = {
   flows: 'integrations',
   connections: 'integrations',
 };
 const getParentsResourceId = (state, resourceType, resourceId) => {
   if (!resourceType) return null;
 
-  const parentResourceType = resourcePermissionsToLookUpTo[resourceType];
+  const parentResourceType = parentResourceToLookUpTo[resourceType];
 
   if (!parentResourceType) return null;
 
