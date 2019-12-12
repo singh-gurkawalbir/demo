@@ -104,18 +104,10 @@ export default {
     ],
   },
   'webhook.header': {
-    type: 'selectforsetfields',
+    type: 'textforsetfields',
     label: 'Header (Containing HMAC)',
     required: true,
     setFieldIds: ['webhook.url'],
-    options: [
-      {
-        items: [
-          { label: 'SHA-1', value: 'sha1' },
-          { label: 'SHA-256', value: 'sha256' },
-        ],
-      },
-    ],
     visibleWhen: [
       {
         field: 'webhook.verify',
