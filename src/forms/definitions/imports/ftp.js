@@ -290,9 +290,6 @@ export default {
   },
   actions: [
     {
-      id: 'cancel',
-    },
-    {
       id: 'save',
       visibleWhen: [
         {
@@ -310,6 +307,9 @@ export default {
           is: ['filedefinition', 'fixed', 'delimited/edifact'],
         },
       ],
+    },
+    {
+      id: 'cancel',
     },
   ],
 };

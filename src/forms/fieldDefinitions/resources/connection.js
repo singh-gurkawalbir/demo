@@ -1749,6 +1749,12 @@ export default {
         ],
       },
     ],
+    visibleWhen: [
+      {
+        field: 'as2.partnerStationInfo.encryptionType',
+        isNot: ['NONE'],
+      },
+    ],
   },
   'as2.partnerStationInfo.signatureEncoding': {
     type: 'select',
@@ -1788,7 +1794,7 @@ export default {
   },
   'as2.userStationInfo.mdn.mdnEncoding': {
     type: 'select',
-    label: 'Incoming Message Encoding',
+    label: 'MDN Encoding',
     options: [
       {
         items: [
@@ -1844,7 +1850,7 @@ export default {
   },
   'as2.userStationInfo.encoding': {
     type: 'select',
-    label: 'MDN Encoding',
+    label: 'Incoming Message Encoding',
     required: true,
     options: [
       {
@@ -1852,6 +1858,12 @@ export default {
           { label: 'Base64', value: 'base64' },
           { label: 'Binary', value: 'binary' },
         ],
+      },
+    ],
+    visibleWhen: [
+      {
+        field: 'as2.userStationInfo.encryptionType',
+        isNot: ['NONE'],
       },
     ],
   },
@@ -2255,16 +2267,19 @@ export default {
     type: 'editor',
     mode: 'json',
     label: 'Encrypted',
+    defaultValue: '',
   },
   'wrapper.pingFunction': {
     type: 'text',
     label: 'Ping Function',
+    required: true,
   },
   'wrapper._stackId': {
     label: 'Stack',
     type: 'selectresource',
     placeholder: 'Please select a stack',
     resourceType: 'stacks',
+    required: true,
   },
   'wrapper.concurrencyLevel': {
     type: 'select',

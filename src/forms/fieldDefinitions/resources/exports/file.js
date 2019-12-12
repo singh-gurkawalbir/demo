@@ -239,7 +239,7 @@ export default {
   },
   'file.csv': {
     type: 'csvparse',
-    label: 'Configure CSV parse options',
+    label: 'Configure CSV Parse Options',
     defaultValue: r =>
       (r.file && r.file.csv) || {
         rowsToSkip: 0,

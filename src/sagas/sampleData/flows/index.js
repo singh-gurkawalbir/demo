@@ -1,5 +1,6 @@
 import { put, select, call, takeEvery, takeLatest } from 'redux-saga/effects';
 import { deepClone } from 'fast-json-patch';
+import { isEmpty } from 'lodash';
 import { resourceData, getSampleData } from '../../../reducers';
 import { SCOPES } from '../../resourceForm';
 import actionTypes from '../../../actions/types';
@@ -22,6 +23,7 @@ import {
   getSampleDataStage,
   getPreviewStageData,
   getContextInfo,
+  getBlobResourceSampleData,
 } from '../../../utils/flowData';
 import { exportPreview, pageProcessorPreview } from '../utils/previewCalls';
 import requestRealTimeMetadata from '../sampleDataGenerator/realTimeSampleData';
@@ -32,6 +34,8 @@ import {
   isNewId,
   isRealTimeOrDistributedResource,
   isFileAdaptor,
+  isBlobTypeResource,
+  isAS2Resource,
 } from '../../../utils/resource';
 
 function* initFlowData({ flowId, resourceId, resourceType }) {
@@ -136,7 +140,7 @@ export function* fetchPageProcessorPreview({
   if (!flowId || !_pageProcessorId) return;
 
   try {
-    let previewData = yield call(pageProcessorPreview, {
+    const previewData = yield call(pageProcessorPreview, {
       flowId,
       _pageProcessorId,
       previewType,
@@ -144,10 +148,6 @@ export function* fetchPageProcessorPreview({
       throwOnError: true,
     });
 
-    previewData = previewData && {
-      ...previewData,
-      ...getContextInfo(),
-    };
     yield put(
       actions.flowData.receivedPreviewData(
         flowId,
@@ -173,12 +173,16 @@ export function* fetchPageGeneratorPreview({ flowId, _pageGeneratorId }) {
   try {
     let previewData;
 
-    if (isRealTimeOrDistributedResource(resource)) {
+    if (isBlobTypeResource(resource)) {
+      // Incase of Blob resource, sample data ( Blob type ) is uploaded to S3 in real time
+      // So, its key (blobKey) is the sample data
+      previewData = getBlobResourceSampleData();
+    } else if (isFileAdaptor(resource) || isAS2Resource(resource)) {
+      // fetch data for file adaptors and AS2 resource and get parsed based on file type to JSON
+      previewData = yield call(requestFileAdaptorSampleData, { resource });
+    } else if (isRealTimeOrDistributedResource(resource)) {
       // fetch data from real time sample data
       previewData = yield call(requestRealTimeMetadata, { resource });
-    } else if (isFileAdaptor(resource)) {
-      // fetch data for file adaptors and get parsed based on file type to JSON
-      previewData = yield call(requestFileAdaptorSampleData, { resource });
     } else {
       previewData = yield call(exportPreview, {
         resourceId: _pageGeneratorId,
@@ -188,10 +192,6 @@ export function* fetchPageGeneratorPreview({ flowId, _pageGeneratorId }) {
       previewData = getPreviewStageData(previewData, 'parse');
     }
 
-    previewData = previewData && {
-      ...previewData,
-      ...getContextInfo(),
-    };
     yield put(
       actions.flowData.receivedPreviewData(
         flowId,
@@ -272,6 +272,90 @@ function* processMappingData({
   } catch (e) {
     throw e;
   }
+}
+
+/*
+ * This saga handles 2 sample data stages
+ * 1. flowInputWithContext 2. hooksWithContext
+ * Above stages are replica of flowInput and hooks stage with added Context Info specifically for Input and outputFilter stages
+ */
+export function* requestSampleDataWithContext({
+  flowId,
+  resourceId,
+  resourceType,
+  sampleDataStage,
+}) {
+  const stage =
+    sampleDataStage === 'flowInputWithContext' ? 'flowInput' : 'hooks';
+  let sampleData = yield select(getSampleData, {
+    flowId,
+    resourceId,
+    resourceType,
+    stage,
+  });
+
+  if (!sampleData) {
+    yield call(requestSampleData, {
+      flowId,
+      resourceId,
+      resourceType,
+      stage,
+      isInitialized: true,
+    });
+    sampleData = yield select(getSampleData, {
+      flowId,
+      resourceId,
+      resourceType,
+      stage,
+    });
+  }
+
+  const { merged: resource = {} } = yield select(
+    resourceData,
+    resourceType,
+    resourceId
+  );
+  let sampleDataWithContextInfo;
+
+  if (sampleData) {
+    sampleDataWithContextInfo = Array.isArray(sampleData)
+      ? [...sampleData]
+      : { ...sampleData };
+  }
+
+  // For resources other than real time , context info is passed
+  // Any other conditions to not show context Info can be added here
+  if (
+    !isEmpty(sampleDataWithContextInfo) &&
+    !(
+      isRealTimeOrDistributedResource(resource, resourceType) &&
+      isBlobTypeResource(resource)
+    )
+  ) {
+    if (Array.isArray(sampleDataWithContextInfo)) {
+      // Incase of array add context to the first object
+      const [firstObject, ...rest] = sampleDataWithContextInfo;
+
+      sampleDataWithContextInfo = [
+        ...[{ ...firstObject, ...getContextInfo() }],
+        ...rest,
+      ];
+    } else {
+      sampleDataWithContextInfo = {
+        ...sampleDataWithContextInfo,
+        ...getContextInfo(),
+      };
+    }
+  }
+
+  yield put(
+    actions.flowData.receivedPreviewData(
+      flowId,
+      resourceId,
+      sampleDataWithContextInfo,
+      sampleDataStage
+    )
+  );
 }
 
 export function* requestProcessorData({

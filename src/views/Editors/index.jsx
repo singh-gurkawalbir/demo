@@ -7,7 +7,7 @@ import UrlEditorDialog from '../../components/AFE/UrlEditor/Dialog';
 import MergeEditorDialog from '../../components/AFE/MergeEditor/Dialog';
 import FileDefinitionEditorDialog from '../../components/AFE/FileDefinitionEditor/Dialog';
 import HttpRequestBodyEditorDialog from '../../components/AFE/HttpRequestBodyEditor/Dialog';
-import CsvParseEditorDialog from '../../components/AFE/CsvParseEditor/Dialog';
+import CsvConfigEditorDialog from '../../components/AFE/CsvConfigEditor/Dialog';
 import XmlParseEditorDialog from '../../components/AFE/XmlParseEditor/Dialog';
 import TransformEditorDialog from '../../components/AFE/TransformEditor/Dialog';
 import JavaScriptEditorDialog from '../../components/AFE/JavaScriptEditor/Dialog';
@@ -104,8 +104,9 @@ export default class Editors extends Component {
 
       case 'CsvParseEditor':
         return (
-          <CsvParseEditorDialog
+          <CsvConfigEditorDialog
             title="Delimited File Parser"
+            csvEditorType="parse"
             id={editorName}
             data={rawData}
             onClose={this.handleClose}

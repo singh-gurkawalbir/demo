@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import produce from 'immer';
 import Button from '@material-ui/core/Button';
 import deepClone from 'lodash/cloneDeep';
+import { isEmpty } from 'lodash';
 import DynaTypeableSelect from '../../DynaForm/fields/DynaTypeableSelect';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
@@ -119,7 +120,7 @@ export default function ResponseMappingDialog(props) {
       flowId,
       resourceId,
       stage: 'responseMappingExtract',
-      resourceType: 'imports',
+      resourceType,
     })
   );
 
@@ -222,7 +223,7 @@ export default function ResponseMappingDialog(props) {
 
   let formattedExtractFields = defaultExtractFields;
 
-  if (extractFields) {
+  if (!isEmpty(extractFields)) {
     const extractPaths = getJSONPaths(extractFields);
 
     formattedExtractFields =
