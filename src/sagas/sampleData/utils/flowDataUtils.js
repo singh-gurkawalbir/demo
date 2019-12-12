@@ -104,6 +104,18 @@ export function* requestSampleDataForImports({
         break;
       }
 
+      case 'flowInputWithContext': {
+        // This stage is added explicitly to feed context info for input filter
+        // TODO @Raghu: Find the better way for this case
+        yield call(requestSampleDataWithContext, {
+          flowId,
+          resourceId,
+          resourceType,
+          sampleDataStage,
+        });
+        break;
+      }
+
       case 'sampleResponse': {
         const { merged: resource } = yield select(
           resourceData,

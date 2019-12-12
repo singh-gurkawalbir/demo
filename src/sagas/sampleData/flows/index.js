@@ -309,7 +309,26 @@ export function* requestSampleDataWithContext({
     });
   }
 
-  const sampleDataWithContextInfo = { ...sampleData, ...getContextInfo() };
+  const { merged: resource = {} } = yield select(
+    resourceData,
+    resourceType,
+    resourceId
+  );
+  let sampleDataWithContextInfo = { ...sampleData };
+
+  // For resources other than real time , context info is passed
+  // Any other conditions to not show context Info can be added here
+  if (
+    !(
+      isRealTimeOrDistributedResource(resource, resourceType) &&
+      isBlobTypeResource(resource)
+    )
+  ) {
+    sampleDataWithContextInfo = {
+      ...sampleDataWithContextInfo,
+      ...getContextInfo(),
+    };
+  }
 
   yield put(
     actions.flowData.receivedPreviewData(
