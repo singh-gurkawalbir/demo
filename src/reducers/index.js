@@ -1316,6 +1316,49 @@ export function integrationAppFlowSettings(state, id, section, storeId) {
   };
 }
 
+// This selector is used in dashboard, it shows all the flows including the flows not in sections.
+// Integration App settings page should not use this selector.
+export function integrationAppFlowIds(state, integrationId, storeId) {
+  const allIntegrationFlows = resourceList(state, {
+    type: 'flows',
+    filter: { _integrationId: integrationId },
+  }).resources;
+  const integration = integrationAppSettings(state, integrationId);
+
+  if (integration.stores && storeId) {
+    const store = integration.stores.find(store => store.value === storeId);
+    const { flows } = integrationAppFlowSettings(
+      state,
+      integrationId,
+      null,
+      storeId
+    );
+
+    if (store) {
+      return map(
+        allIntegrationFlows.filter(f => {
+          // TODO: this is not reliable way to extract store flows. With current integration json,
+          // there is no good way to extract this
+          // Extract store from the flow name. (Regex extracts store label from flow name)
+          // Flow name usually follows this format: <Flow Name> [<StoreLabel>]
+          const flowStore = /\s\[(.*)\]$/.test(f.name)
+            ? /\s\[(.*)\]$/.exec(f.name)[1]
+            : null;
+
+          return flowStore
+            ? flowStore === store.label
+            : flows.indexOf(f._id) > -1;
+        }),
+        '_id'
+      );
+    }
+
+    return map(flows, '_id');
+  }
+
+  return map(allIntegrationFlows, '_id');
+}
+
 export function defaultStoreId(state, id, store) {
   return fromData.defaultStoreId(state && state.data, id, store);
 }
