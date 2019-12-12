@@ -11,14 +11,14 @@ import {
 
 const sampleDataStage = {
   exports: {
-    inputFilter: 'flowInput',
+    inputFilter: 'flowInputWithContext',
     transform: 'raw',
     hooks: 'transform',
-    outputFilter: 'hooks',
     responseMappingExtract: 'hooks',
+    outputFilter: 'hooksWithContext',
   },
   imports: {
-    inputFilter: 'flowInput',
+    inputFilter: 'flowInputWithContext',
     preMap: 'flowInput',
     importMappingExtract: 'preMap',
     responseMappingExtract: 'responseTransform',
@@ -27,6 +27,12 @@ const sampleDataStage = {
     responseTransform: 'sampleResponse',
   },
 };
+const lastExportDateTime = moment()
+  .add(-7, 'd')
+  .toISOString();
+const currentExportDateTime = moment()
+  .add(-24, 'h')
+  .toISOString();
 // Regex for parsing patchSet paths to listen field specific changes of a resource
 // sample Sequence path:  '/pageProcessors' or '/pageGenerators'
 // sample responseMapping path: '/pageProcessors/${resourceIndex}/responseMapping
@@ -156,14 +162,7 @@ export const isUIDataExpectedForResource = resource =>
 
 // A dummy _Context field to expose on each preview data on flows
 export const getContextInfo = () => ({
-  _CONTEXT: {
-    lastExportDateTime: moment()
-      .add(-7, 'd')
-      .toISOString(),
-    currentExportDateTime: moment()
-      .add(-24, 'h')
-      .toISOString(),
-  },
+  _CONTEXT: { lastExportDateTime, currentExportDateTime },
 });
 /*
  * Gives a sample data for Blob resource
