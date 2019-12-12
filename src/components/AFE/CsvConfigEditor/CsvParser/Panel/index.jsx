@@ -6,11 +6,11 @@ import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import { Input, Chip, MenuItem, ListItemText } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import actions from '../../../../actions';
-import * as selectors from '../../../../reducers';
-import CeligoSelect from '../../../CeligoSelect';
-import DynaText from '../../../DynaForm/fields/DynaText';
-import options from './options';
+import actions from '../../../../../actions';
+import * as selectors from '../../../../../reducers';
+import CeligoSelect from '../../../../CeligoSelect';
+import DynaText from '../../../../DynaForm/fields/DynaText';
+import options from '../../options';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -63,7 +63,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function ExportCsvParsePanel(props) {
+export default function CsvParsePanel(props) {
   const { editorId, disabled } = props;
   const classes = useStyles(props);
   const {

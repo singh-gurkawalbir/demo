@@ -301,7 +301,12 @@ describe('Reducers in the root reducer', () => {
     const state = reducer(someInitialState, actions.auth.clearStore());
 
     expect(state).toEqual({
-      app: { appErrored: false, drawerOpened: true, count: 1 },
+      app: {
+        appErrored: false,
+        drawerOpened: true,
+        bannerOpened: true,
+        count: 1,
+      },
       auth: {
         commStatus: COMM_STATES.LOADING,
         initialized: false,
