@@ -409,7 +409,6 @@ export default {
     const connectorMappingMetadata = mappingMetadata[connectorExternalId];
 
     connectorMappingMetadata &&
-      Array.isArray(connectorMappingMetadata) &&
       connectorMappingMetadata.forEach(meta => {
         let mappingContainer;
 

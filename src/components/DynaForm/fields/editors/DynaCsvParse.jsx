@@ -42,14 +42,18 @@ export default function DynaCsvParse(props) {
         rowsToSkip,
         trimSpaces,
       } = editorValues;
-
-      onFieldChange(id, {
+      const savedVal = {
         columnDelimiter,
         hasHeaderRow,
         keyColumns,
-        rowsToSkip,
         trimSpaces,
-      });
+      };
+
+      if (Number.isInteger(rowsToSkip)) {
+        savedVal.rowsToSkip = rowsToSkip;
+      }
+
+      onFieldChange(id, savedVal);
 
       // On change of rules, trigger sample data update
       // It calls processor on final rules to parse csv file

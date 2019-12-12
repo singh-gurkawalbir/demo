@@ -53,7 +53,7 @@ export default function DynaText(props) {
     let returnVal = inputType === 'number' ? valueAsNumber : value;
 
     if (isNaN(returnVal)) {
-      returnVal = undefined;
+      returnVal = null;
     }
 
     if (!delimiter) {
