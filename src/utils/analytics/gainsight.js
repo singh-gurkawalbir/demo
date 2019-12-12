@@ -34,7 +34,7 @@ export function initialize({ tagKey }) {
     );
     /* eslint-enable */
   } catch (ex) {
-    // We can't do anything here, just a safe check it prevent it from crashing our app.
+    // We can't do anything here, just a safe check to prevent it from crashing our app.
   }
 }
 
@@ -42,7 +42,7 @@ export function identify(userInfo, accountInfo) {
   try {
     aptrinsic('identify', userInfo, accountInfo);
   } catch (ex) {
-    // We can't do anything here, just a safe check it prevent it from crashing our app.
+    // We can't do anything here, just a safe check to prevent it from crashing our app.
   }
 }
 
@@ -50,6 +50,6 @@ export function track(eventId, details = {}) {
   try {
     aptrinsic('track', eventId, details);
   } catch (ex) {
-    // We can't do anything here, just a safe check it prevent it from crashing our app.
+    // We can't do anything here, just a safe check to prevent it from crashing our app.
   }
 }
