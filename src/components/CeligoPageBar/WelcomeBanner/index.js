@@ -49,7 +49,7 @@ export default function WelcomeBanner() {
   const environment = useSelector(
     state => selectors.userPreferences(state).environment
   );
-  const isSandbox = environment === 'sandbox' || true;
+  const isSandbox = environment === 'sandbox';
   const handleClose = useCallback(() => dispatch(actions.toggleBanner()), [
     dispatch,
   ]);
