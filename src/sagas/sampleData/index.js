@@ -7,6 +7,7 @@ import { resourceData, getResourceSampleDataWithStatus } from '../../reducers';
 import { createFormValuesPatchSet, SCOPES } from '../resourceForm';
 import { evaluateExternalProcessor } from '../../sagas/editor';
 import { getCsvFromXlsx } from '../../utils/file';
+import { processJsonSampleData } from '../../utils/sampleData';
 
 /*
  * Parsers for different file types used for converting into JSON format
@@ -132,9 +133,13 @@ function* processRawData({ resourceId, resourceType, values = {}, stage }) {
 
   // JSON file does not need parsing
   if (type === 'json') {
-    // Update the same JSON file in parse stage as it does not need any parsing
+    // Update the parsed JSON file in parse stage
     yield put(
-      actions.sampleData.update(resourceId, { data: [{ body: file }] }, 'parse')
+      actions.sampleData.update(
+        resourceId,
+        { data: [{ body: processJsonSampleData(file) }] },
+        'parse'
+      )
     );
 
     return;

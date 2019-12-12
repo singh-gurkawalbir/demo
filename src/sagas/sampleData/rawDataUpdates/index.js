@@ -11,6 +11,7 @@ import {
   isFileAdaptor,
   isRealTimeOrDistributedResource,
   isBlobTypeResource,
+  isAS2Resource,
 } from '../../../utils/resource';
 import { exportPreview } from '../utils/previewCalls';
 import { saveRawDataOnResource } from './utils';
@@ -27,13 +28,14 @@ function* fetchAndSaveRawDataForResource({ type, resourceId, tempResourceId }) {
   // Covers - NS/SF/Webhooks
   // Also for Blob type resources ,no need to update as its a sample blob key as sample data
   if (
-    isRealTimeOrDistributedResource(resourceObj) ||
+    (!isAS2Resource(resourceObj) &&
+      isRealTimeOrDistributedResource(resourceObj)) ||
     isBlobTypeResource(resourceObj)
   )
     return;
 
-  // For file adaptors , raw data is fetched from uploaded file stored in state
-  if (isFileAdaptor(resourceObj)) {
+  // For file adaptors and AS2 resource , raw data is fetched from uploaded file stored in state
+  if (isFileAdaptor(resourceObj) || isAS2Resource(resourceObj)) {
     return yield call(saveRawDataForFileAdaptors, {
       resourceId,
       tempResourceId,

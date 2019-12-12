@@ -71,11 +71,11 @@ export default {
   },
   actions: [
     {
-      id: 'cancel',
-    },
-    {
       // Button that saves file defs and then submit resource
       id: 'savedefinition',
+    },
+    {
+      id: 'cancel',
     },
   ],
 };

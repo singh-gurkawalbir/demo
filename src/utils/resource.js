@@ -321,3 +321,9 @@ export function isRealTimeOrDistributedResource(
 // All resources with type 'blob' is a Blob resource
 export const isBlobTypeResource = (resource = {}) =>
   resource && resource.type === 'blob';
+
+export const isAS2Resource = resource => {
+  const { adaptorType } = resource || {};
+
+  return adaptorTypeMap[adaptorType] === 'as2';
+};

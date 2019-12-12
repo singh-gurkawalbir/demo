@@ -2255,16 +2255,19 @@ export default {
     type: 'editor',
     mode: 'json',
     label: 'Encrypted',
+    defaultValue: '',
   },
   'wrapper.pingFunction': {
     type: 'text',
     label: 'Ping Function',
+    required: true,
   },
   'wrapper._stackId': {
     label: 'Stack',
     type: 'selectresource',
     placeholder: 'Please select a stack',
     resourceType: 'stacks',
+    required: true,
   },
   'wrapper.concurrencyLevel': {
     type: 'select',
