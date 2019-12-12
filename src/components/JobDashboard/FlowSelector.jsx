@@ -1,5 +1,4 @@
 import { useSelector } from 'react-redux';
-import { map } from 'lodash';
 import { makeStyles, MenuItem } from '@material-ui/core';
 import * as selectors from '../../reducers';
 import CeligoSelect from '../CeligoSelect';
@@ -21,8 +20,9 @@ export default function FlowSelector({
   onChange,
 }) {
   const classes = useStyles();
-  const storeFlows = useSelector(state =>
-    map(selectors.integrationAppFlows(state, integrationId, storeId), '_id')
+  const storeFlows = useSelector(
+    state => selectors.integrationAppFlows(state, integrationId, storeId),
+    (left, right) => left.length === right.length
   );
   const filteredFlows = useSelector(
     state =>

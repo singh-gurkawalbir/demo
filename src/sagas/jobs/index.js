@@ -101,7 +101,7 @@ export function* requestJobCollection({ integrationId, flowId, filters = {} }) {
         jobFilters.storeId
       );
 
-      jobFilters.flowIds = map(flows, '_id');
+      jobFilters.flowIds = flows;
     } else if (integrationId === STANDALONE_INTEGRATION.id) {
       /**
        * For Standalone integration, we need to send the list of flow ids filtered by environment.

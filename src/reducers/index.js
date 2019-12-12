@@ -1331,25 +1331,28 @@ export function integrationAppFlows(state, integrationId, storeId) {
     );
 
     if (store) {
-      return allIntegrationFlows.filter(f => {
-        // TODO: this is not reliable way to extract store flows. With current integration json,
-        // there is no good way to extract this
-        // Extract store from the flow name. (Regex extracts store label from flow name)
-        // Flow name usually follows this format: <Flow Name> [<StoreLabel>]
-        const flowStore = /\s\[(.*)\]$/.test(f.name)
-          ? /\s\[(.*)\]$/.exec(f.name)[1]
-          : null;
+      return map(
+        allIntegrationFlows.filter(f => {
+          // TODO: this is not reliable way to extract store flows. With current integration json,
+          // there is no good way to extract this
+          // Extract store from the flow name. (Regex extracts store label from flow name)
+          // Flow name usually follows this format: <Flow Name> [<StoreLabel>]
+          const flowStore = /\s\[(.*)\]$/.test(f.name)
+            ? /\s\[(.*)\]$/.exec(f.name)[1]
+            : null;
 
-        return flowStore
-          ? flowStore === store.label
-          : flows.indexOf(f._id) > -1;
-      });
+          return flowStore
+            ? flowStore === store.label
+            : flows.indexOf(f._id) > -1;
+        }),
+        '_id'
+      );
     }
 
-    return flows;
+    return map(flows, '_id');
   }
 
-  return allIntegrationFlows;
+  return map(allIntegrationFlows, '_id');
 }
 
 export function defaultStoreId(state, id, store) {
