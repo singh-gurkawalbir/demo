@@ -1,5 +1,6 @@
 import { useEffect, useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { makeStyles } from '@material-ui/core/styles';
 import { isEqual } from 'lodash';
 import ImportMapping from './index';
 import * as ResourceUtil from '../../../utils/resource';
@@ -11,8 +12,19 @@ import mappingUtil from '../../../utils/mapping';
 import getJSONPaths from '../../../utils/jsonPaths';
 import Spinner from '../../Spinner';
 
+// TODO: Azhar to review
+const useStyles = makeStyles({
+  spinnerWrapper: {
+    display: 'flex',
+    '&> div:first-child': {
+      margin: 'auto',
+    },
+  },
+});
+
 export default function StandaloneMapping(props) {
   const { id, flowId, resourceId, disabled } = props;
+  const classes = useStyles();
   const [flowSampleDataLoaded, setFlowSampleDataLoaded] = useState(false);
   const [importSampleDataLoaded, setImportSampleDataLoaded] = useState(false);
   const [assistantLoaded, setAssistantLoaded] = useState(false);
@@ -272,10 +284,14 @@ export default function StandaloneMapping(props) {
       !flowSampleDataLoaded ||
       ((isNetsuite || isSalesforce || isAssistant) && !importSampleDataLoaded)
     ) {
-      return <Spinner />;
+      return (
+        <div className={classes.spinnerWrapper}>
+          <Spinner />
+        </div>
+      );
     }
-    // dispatch an action to show mappings
 
+    // dispatch an action to show mappings
     dispatch(actions.mapping.setVisibility(id, true));
   }
 
