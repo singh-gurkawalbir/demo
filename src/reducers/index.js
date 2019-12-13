@@ -1542,6 +1542,14 @@ const getParentsResourceId = (state, resourceType, resourceId) => {
 export const getResourceEditUrl = (state, resourceType, resourceId) => {
   if (resourceType === 'flows') {
     const integrationId = getParentsResourceId(state, resourceType, resourceId);
+    const { _connectorId } = resource(state, resourceType, resourceId) || {};
+
+    // if _connectorId its an integrationApp
+    if (_connectorId) {
+      return getRoutePath(
+        `/integrationApp/${integrationId}/flowBuilder/${resourceId}`
+      );
+    }
 
     return getRoutePath(
       `/integrations/${integrationId}/flowBuilder/${resourceId}`
