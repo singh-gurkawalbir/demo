@@ -10,6 +10,10 @@ export default {
         lookup => lookup.name === retValues['/rest/existingDataId']
       );
 
+    if (retValues['/sampleData'] === '') {
+      retValues['/sampleData'] = undefined;
+    }
+
     if (retValues['/inputMode'] === 'blob') {
       retValues['/rest/method'] = retValues['/rest/blobMethod'];
     } else if (retValues['/rest/method'] === 'COMPOSITE') {
@@ -143,6 +147,8 @@ export default {
     }
 
     delete retValues['/inputMode'];
+
+    console.log('retValues', retValues);
 
     return {
       ...retValues,
