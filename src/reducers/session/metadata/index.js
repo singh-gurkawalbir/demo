@@ -38,6 +38,10 @@ export default (
         draft.preview[resourceId].status = 'requested';
         break;
       case actionTypes.METADATA.ASSISTANT_PREVIEW_RECEIVED:
+        if (!draft.preview[resourceId]) {
+          draft.preview[resourceId] = {};
+        }
+
         draft.preview[resourceId].status = 'received';
         draft.preview[resourceId].data = previewData;
         break;
