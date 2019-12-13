@@ -357,20 +357,14 @@ export default {
         extractDateFormat: {
           id: 'extractDateFormat',
           name: 'extractDateFormat',
-          type: 'select',
+          type: 'autosuggest',
+          options: {
+            suggestions: dateFormats,
+          },
+          labelName: 'name',
+          valueName: 'value',
           label: 'Date format',
           defaultValue: value.extractDateFormat,
-          options: [
-            {
-              items:
-                (dateFormats &&
-                  dateFormats.map(date => ({
-                    label: date.value,
-                    value: date.name,
-                  }))) ||
-                [],
-            },
-          ],
           visibleWhen: [{ field: 'fieldMappingType', is: ['standard'] }],
         },
         extractDateTimezone: {
