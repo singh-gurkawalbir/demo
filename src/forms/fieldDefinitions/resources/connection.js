@@ -474,7 +474,7 @@ export default {
       {
         items: [
           { label: 'MAC', value: 'MAC' },
-          { label: 'OAuth', value: 'OAuth' },
+          { label: 'OAuth 2.0', value: 'OAuth' },
           { label: 'Bearer', value: 'Bearer' },
           // { label: 'Hmac', value: 'Hmac' },
           { label: 'None', value: ' ' },
@@ -1511,7 +1511,7 @@ export default {
         items: [
           { label: 'Bearer', value: 'bearer' },
           { label: 'MAC', value: 'mac' },
-          { label: 'OAuth', value: 'oauth' },
+          { label: 'OAuth 2.0', value: 'oauth' },
           { label: 'None', value: 'none' },
         ],
       },
