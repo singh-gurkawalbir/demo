@@ -6,11 +6,14 @@ export default (state = {}, action) => {
 
   return produce(state, draft => {
     switch (type) {
-      case actionTypes.FLOW.LAST_EXPORT_DATE_TIME_UPDATE:
+      case actionTypes.FLOW.RECEIVED_LAST_EXPORT_DATE_TIME:
         draft.lastExportDateTime = {
-          ...draft.lastExportDateTime,
-          [flowId]: response && response.lastExportDateTime,
+          [flowId]: {
+            data: response.lastExportDateTime,
+            status: 'received',
+          },
         };
+
         break;
 
       default:

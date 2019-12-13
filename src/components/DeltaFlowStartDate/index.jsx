@@ -1,7 +1,6 @@
 import React, { Fragment, useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import moment from 'moment-timezone';
-import { useHistory } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
@@ -10,10 +9,9 @@ import DynaSubmit from '../DynaForm/DynaSubmit';
 import flowStartDateMetadata from './metadata';
 import Spinner from '../Spinner';
 
-export default function FlowStartDate(props) {
-  const { flowId, onClose, disabled, isJobDashboard } = props;
+export default function DeltaFlowStartDate(props) {
+  const { flowId, onClose, disabled, runDeltaFlow } = props;
   const dispatch = useDispatch();
-  const history = useHistory();
   const [state, setState] = useState({
     changeIdentifier: 0,
     lastExportDateTimeLoaded: false,
@@ -25,7 +23,10 @@ export default function FlowStartDate(props) {
   );
   const lastExportDateTime = useSelector(state =>
     selectors.getLastExportDateTime(state, flow._id)
-  );
+  ).data;
+  const selectorStatus = useSelector(state =>
+    selectors.getLastExportDateTime(state, flow._id)
+  ).status;
   let startDate;
   const timeZone = preferences && preferences.timezone;
 
@@ -49,12 +50,15 @@ export default function FlowStartDate(props) {
   const fetchLastExportDateTime = useCallback(() => {
     dispatch(actions.flow.requestLastExportDateTime({ flowId: flow._id }));
   }, [dispatch, flow._id]);
+  const cancelDialog = useCallback(() => {
+    onClose();
+  }, [onClose]);
 
   useEffect(() => {
     fetchLastExportDateTime();
   }, [fetchLastExportDateTime]);
   useEffect(() => {
-    if (!lastExportDateTimeLoaded && lastExportDateTime) {
+    if (!lastExportDateTimeLoaded && selectorStatus) {
       setState({
         changeIdentifier: changeIdentifier + 1,
         lastExportDateTimeLoaded: true,
@@ -65,6 +69,7 @@ export default function FlowStartDate(props) {
     fetchLastExportDateTime,
     lastExportDateTime,
     lastExportDateTimeLoaded,
+    selectorStatus,
   ]);
 
   const handleSubmit = formVal => {
@@ -80,24 +85,12 @@ export default function FlowStartDate(props) {
       customStartDate = customStartDate ? customStartDate.toISOString() : null;
     }
 
-    if (isJobDashboard) {
-      dispatch(actions.flow.run({ flowId: flow._id, customStartDate }));
-    } else {
-      dispatch(actions.flow.run({ flowId: flow._id, customStartDate }));
-
-      if (flow._connectorId) {
-        history.push(`/pg/integrationApp/${flow._integrationId}/dashboard`);
-      } else {
-        history.push(
-          `/pg/integrations/${flow._integrationId || 'none'}/dashboard`
-        );
-      }
-    }
+    runDeltaFlow(customStartDate);
 
     onClose();
   };
 
-  if (!timeZone || !startDate) {
+  if (!timeZone || !selectorStatus) {
     return <Spinner />;
   }
 
@@ -110,11 +103,7 @@ export default function FlowStartDate(props) {
   return (
     <Fragment>
       <DynaForm disabled={disabled} fieldMeta={fieldMeta}>
-        <Button
-          data-test="close"
-          onClick={() => {
-            onClose();
-          }}>
+        <Button data-test="close" onClick={cancelDialog}>
           Cancel
         </Button>
         <DynaSubmit data-test="submit" onClick={handleSubmit}>

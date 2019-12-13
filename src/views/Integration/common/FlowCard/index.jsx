@@ -13,7 +13,7 @@ import RunIcon from '../../../../components/icons/RunIcon';
 import SettingsIcon from '../../../../components/icons/SettingsIcon';
 import OnOffSwitch from '../../../../components/SwitchToggle';
 import InfoIconButton from '../InfoIconButton';
-import FlowStartDateDialog from '../../../../components/FlowStartDate/Dialog';
+import FlowStartDateDialog from '../../../../components/DeltaFlowStartDate/Dialog';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -72,6 +72,28 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
     [dispatch, flowId]
   );
   const flowName = flowDetails.name || flowDetails._id;
+  const handleRunDeltaFlow = useCallback(
+    customStartDate => {
+      dispatch(actions.flow.run({ flowId, customStartDate }));
+
+      if (flowDetails._connectorId) {
+        history.push(
+          `/pg/integrationApp/${flowDetails._integrationId}/dashboard`
+        );
+      } else {
+        history.push(
+          `/pg/integrations/${flowDetails._integrationId || 'none'}/dashboard`
+        );
+      }
+    },
+    [
+      dispatch,
+      flowDetails._connectorId,
+      flowDetails._integrationId,
+      flowId,
+      history,
+    ]
+  );
   const handleActionClick = useCallback(
     action => () => {
       switch (action) {
@@ -107,18 +129,7 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
           ) {
             setShowDilaog('true');
           } else {
-            dispatch(actions.flow.run({ flowId }));
-
-            if (flowDetails._connectorId) {
-              history.push(
-                `/pg/integrationApp/${flowDetails._integrationId}/dashboard`
-              );
-            } else {
-              history.push(
-                `/pg/integrations/${flowDetails._integrationId ||
-                  'none'}/dashboard`
-              );
-            }
+            handleRunDeltaFlow();
           }
 
           break;
@@ -134,9 +145,8 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
       flowDetails.disabled,
       flowDetails.isDeltaFlow,
       flowDetails.showStartDateDialog,
-      flowId,
       flowName,
-      history,
+      handleRunDeltaFlow,
       patchFlow,
       storeId,
     ]
@@ -161,6 +171,9 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
   const flowBuilderTo = isIntegrationApp
     ? `/pg/integrationApp/${flowDetails._integrationId}/flowBuilder/${flowId}`
     : `flowBuilder/${flowId}`;
+  const closeDeltaDialog = () => {
+    setShowDilaog(false);
+  };
 
   return (
     <div className={classes.root}>
@@ -168,7 +181,8 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
       {showDilaog && flowDetails.isDeltaFlow && (
         <FlowStartDateDialog
           flowId={flowDetails._id}
-          onClose={() => setShowDilaog(false)}
+          onClose={closeDeltaDialog}
+          runDeltaFlow={handleRunDeltaFlow}
         />
       )}
       <div className={classes.cardContent}>

@@ -6,7 +6,7 @@ export default function FlowStartDateDialog({
   flowId,
   onClose,
   disabled,
-  isJobDashboard,
+  runDeltaFlow,
 }) {
   const defaults = {
     width: '70vw',
@@ -20,10 +20,10 @@ export default function FlowStartDateDialog({
         <Typography variant="h6">Delta Flow</Typography>
       </DialogTitle>
       <FlowStartDate
-        isJobDashboard={isJobDashboard}
         flowId={flowId}
         onClose={onClose}
         disabled={disabled}
+        runDeltaFlow={runDeltaFlow}
       />
     </Dialog>
   );

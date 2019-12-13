@@ -18,7 +18,7 @@ import JobFilesDownloadDialog from './JobFilesDownloadDialog';
 import MoreVertIcon from '../icons/EllipsisVerticalIcon';
 import getRoutePath from '../../utils/routePaths';
 import * as selectors from '../../reducers';
-import FlowStartDateDialog from '../FlowStartDate/Dialog';
+import FlowStartDateDialog from '../DeltaFlowStartDate/Dialog';
 
 const useStyle = makeStyles({
   iconBtn: {
@@ -148,6 +148,10 @@ export default function JobActionsMenu({
     setAnchorEl(event.currentTarget);
   }
 
+  const handleRunDeltaFlow = customStartDate => {
+    dispatch(actions.flow.run({ flowId: job._flowId, customStartDate }));
+  };
+
   function handleActionClick(action) {
     handleMenuClose();
 
@@ -168,7 +172,7 @@ export default function JobActionsMenu({
       ) {
         setShowDilaog('true');
       } else {
-        dispatch(actions.flow.run({ flowId: job._flowId }));
+        handleRunDeltaFlow();
         setActionsToMonitor({
           ...actionsToMonitor,
           [action]: {
@@ -333,13 +337,17 @@ export default function JobActionsMenu({
     setShowFilesDownloadDialog(false);
   }
 
+  const closeDeltaDialog = () => {
+    setShowDilaog(false);
+  };
+
   return (
     <Fragment>
       {showDilaog && flowDetails.isDeltaFlow && (
         <FlowStartDateDialog
-          isJobDashboard
           flowId={job._flowId}
-          onClose={() => setShowDilaog(false)}
+          onClose={closeDeltaDialog}
+          runDeltaFlow={handleRunDeltaFlow}
         />
       )}
       {showRetriesDialog && (

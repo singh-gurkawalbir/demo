@@ -971,7 +971,10 @@ const flow = {
   requestLastExportDateTime: ({ flowId }) =>
     action(actionTypes.FLOW.REQUEST_LAST_EXPORT_DATE_TIME, { flowId }),
   lastExportDateTimeUpdate: (flowId, response) =>
-    action(actionTypes.FLOW.LAST_EXPORT_DATE_TIME_UPDATE, { flowId, response }),
+    action(actionTypes.FLOW.RECEIVED_LAST_EXPORT_DATE_TIME, {
+      flowId,
+      response,
+    }),
 };
 const assistantMetadata = {
   request: ({ adaptorType, assistant }) =>

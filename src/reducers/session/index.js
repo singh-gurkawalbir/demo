@@ -322,6 +322,11 @@ export function debugLogs(state) {
 }
 
 export function getLastExportDateTime(state, flowId) {
-  return fromFlows.getLastExportDateTime(state && state.flows, flowId);
+  const lastExportDateTime = {};
+
+  return (
+    fromFlows.getLastExportDateTime(state && state.flows, flowId) ||
+    lastExportDateTime
+  );
 }
 // #endregion
