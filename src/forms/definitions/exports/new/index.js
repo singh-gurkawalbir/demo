@@ -104,49 +104,9 @@ export default {
       defaultValue: '',
       visibleWhen: [{ field: 'application', isNot: [''] }],
     },
-    // 'netsuite.execution.type': {
-    //   id: 'netsuite.execution.type',
-    //   name: 'executionType',
-    //   type: 'radiogroup',
-    //   label: 'Execution Type',
-    //   required: true,
-    //   options: [
-    //     {
-    //       items: [
-    //         { label: 'Real-time', value: 'distributed' },
-    //         { label: 'Scheduled', value: 'scheduled' },
-    //       ],
-    //     },
-    //   ],
-    //   visibleWhen: [{ field: 'application', is: ['netsuite'] }],
-    // },
-    // 'netsuite.api.type': {
-    //   id: 'netsuite.api.type',
-    //   name: 'apiType',
-    //   type: 'radiogroup',
-    //   label: 'API Type',
-    //   required: true,
-    //   options: [
-    //     {
-    //       items: [
-    //         { label: 'RESTlet (Recommended)', value: 'restlet' },
-    //         { label: 'Web Services', value: 'search' },
-    //       ],
-    //     },
-    //   ],
-    //   visibleWhen: [{ field: 'netsuite.execution.type', is: ['scheduled'] }],
-    // },
   },
   layout: {
-    fields: [
-      'application',
-      'type',
-      'connection',
-      'name',
-      'description',
-      // 'netsuite.execution.type',
-      // 'netsuite.api.type',
-    ],
+    fields: ['application', 'type', 'connection', 'name', 'description'],
   },
   optionsHandler: (fieldId, fields) => {
     const appField = fields.find(field => field.id === 'application');

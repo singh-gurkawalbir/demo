@@ -173,7 +173,16 @@ export default {
         return false;
       },
       defaultValue: r => {
-        if (r && r.netsuite) return r.netsuite.internalId ? 'blob' : 'records';
+        const isNew = isNewId(r._id);
+
+        // if its create
+        if (isNew) return 'records';
+
+        const output = r && r.netsuite && r.netsuite.internalId;
+
+        if (output === 'blob') return 'blob';
+
+        return 'records';
       },
     },
     'netsuite.api.type': {
