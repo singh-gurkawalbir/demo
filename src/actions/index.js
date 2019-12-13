@@ -970,7 +970,7 @@ const flow = {
     action(actionTypes.FLOW.RUN, { flowId, customStartDate }),
   requestLastExportDateTime: ({ flowId }) =>
     action(actionTypes.FLOW.REQUEST_LAST_EXPORT_DATE_TIME, { flowId }),
-  lastExportDateTimeUpdate: (flowId, response) =>
+  receivedLastExportDateTime: (flowId, response) =>
     action(actionTypes.FLOW.RECEIVED_LAST_EXPORT_DATE_TIME, {
       flowId,
       response,

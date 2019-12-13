@@ -321,9 +321,9 @@ export function debugLogs(state) {
   return fromConnections.debugLogs(state && state.connections);
 }
 
-export function getLastExportDateTime(state, flowId) {
-  const lastExportDateTime = {};
+const lastExportDateTime = {};
 
+export function getLastExportDateTime(state, flowId) {
   return (
     fromFlows.getLastExportDateTime(state && state.flows, flowId) ||
     lastExportDateTime

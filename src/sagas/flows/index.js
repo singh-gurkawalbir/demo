@@ -55,11 +55,14 @@ export function* getLastExportDateTime({ flowId }) {
       },
     });
   } catch (error) {
+    yield put(actions.api.failure(path, 'GET', error && error.message, false));
+    yield put(actions.flow.receivedLastExportDateTime(flowId));
+
     return undefined;
   }
 
   if (response) {
-    yield put(actions.flow.lastExportDateTimeUpdate(flowId, response));
+    yield put(actions.flow.receivedLastExportDateTime(flowId, response));
   }
 }
 

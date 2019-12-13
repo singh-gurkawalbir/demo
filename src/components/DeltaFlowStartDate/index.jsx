@@ -94,6 +94,10 @@ export default function DeltaFlowStartDate(props) {
     return <Spinner />;
   }
 
+  if (selectorStatus === 'error') {
+    onClose();
+  }
+
   const fieldMeta = flowStartDateMetadata.getMetadata({
     timeZone,
     startDate,

@@ -9,8 +9,8 @@ export default (state = {}, action) => {
       case actionTypes.FLOW.RECEIVED_LAST_EXPORT_DATE_TIME:
         draft.lastExportDateTime = {
           [flowId]: {
-            data: response.lastExportDateTime,
-            status: 'received',
+            data: response && response.lastExportDateTime,
+            status: response ? 'received' : 'error',
           },
         };
 
