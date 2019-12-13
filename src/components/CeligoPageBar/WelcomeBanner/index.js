@@ -27,7 +27,7 @@ const useStyles = makeStyles(theme => ({
     borderColor: theme.palette.sandbox.dark,
     color: theme.palette.sandbox.contrastText,
     '&:hover': {
-      borderColor: theme.palette.sandbox.light,
+      borderColor: theme.palette.sandbox.dark,
       backgroundColor: theme.palette.sandbox.light,
     },
   },
