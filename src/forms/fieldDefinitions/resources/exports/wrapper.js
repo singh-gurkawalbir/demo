@@ -5,9 +5,7 @@ export default {
     required: true,
   },
   'wrapper.configuration': {
-    type: 'editor',
-    mode: 'json',
-    saveMode: 'json',
+    type: 'text',
     label: 'Configuration',
   },
 };
