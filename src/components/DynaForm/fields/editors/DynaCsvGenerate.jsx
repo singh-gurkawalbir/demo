@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import CsvConfigEditorDialog from '../../../AFE/CsvConfigEditor/Dialog';
+import csvOptions from '../../../AFE/CsvConfigEditor/options';
 
 export default function DynaCsvGenerate(props) {
   const {
@@ -68,8 +69,8 @@ export default function DynaCsvGenerate(props) {
       } = editorValues;
 
       onFieldChange(id, {
-        rowDelimiter,
-        columnDelimiter,
+        rowDelimiter: csvOptions.RowDelimiterMap[rowDelimiter],
+        columnDelimiter: csvOptions.ColumnDelimiterMap[columnDelimiter],
         includeHeader,
         truncateLastRowDelimiter,
         replaceTabWithSpace,

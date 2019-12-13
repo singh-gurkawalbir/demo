@@ -187,7 +187,7 @@ describe('editor selectors', () => {
         processor: 'csvParser',
         valid: {
           initOpts: {
-            columnDelimiter: '\t',
+            columnDelimiter: 'tab',
             hasHeaderRow: true,
             trimSpaces: true,
             data: 'a,b,c',
@@ -216,8 +216,8 @@ describe('editor selectors', () => {
         processor: 'csvDataGenerator',
         valid: {
           initOpts: {
-            columnDelimiter: '\t',
-            rowDelimiter: '\r\n',
+            columnDelimiter: 'tab',
+            rowDelimiter: 'crlf',
             hasHeaderRow: true,
             trimSpaces: true,
             includeHeader: false,
