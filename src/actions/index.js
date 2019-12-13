@@ -201,9 +201,29 @@ const resource = {
     }),
   connections: {
     test: (resourceId, values) =>
-      action(actionTypes.TEST_CONNECTION, {
+      action(actionTypes.CONNECTION.TEST, {
         resourceId,
         values,
+      }),
+
+    testErrored: (resourceId, message) =>
+      action(actionTypes.CONNECTION.TEST_ERRORED, {
+        resourceId,
+        message,
+      }),
+    testCancelled: (resourceId, message) =>
+      action(actionTypes.CONNECTION.TEST_CANCELLED, {
+        resourceId,
+        message,
+      }),
+    testSuccessful: (resourceId, message) =>
+      action(actionTypes.CONNECTION.TEST_SUCCESSFUL, {
+        resourceId,
+        message,
+      }),
+    testClear: resourceId =>
+      action(actionTypes.CONNECTION.TEST_CLEAR, {
+        resourceId,
       }),
     saveAndAuthorize: (resourceId, values) =>
       action(actionTypes.RESOURCE_FORM.SAVE_AND_AUTHORIZE, {
@@ -334,7 +354,12 @@ const metadata = {
       connectionId,
       commMetaPath,
     }),
-  assistantImportPreview: (resourceId, previewData) =>
+  requestAssistantImportPreview: resourceId =>
+    action(actionTypes.METADATA.ASSISTANT_PREVIEW_REQUESTED, {
+      resourceId,
+    }),
+
+  receivedAssistantImportPreview: (resourceId, previewData) =>
     action(actionTypes.METADATA.ASSISTANT_PREVIEW_RECEIVED, {
       resourceId,
       previewData,
@@ -412,13 +437,18 @@ const integrationApp = {
         }
       ),
     requestMappingMetadata: integrationId =>
-      action(actionTypes.INTEGRATION_APPS.SETTINGS.MAPPING_METADATA, {
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.MAPPING_METADATA_REQUEST, {
         integrationId,
       }),
     mappingMetadataUpdate: (integrationId, response) =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.MAPPING_METADATA_UPDATE, {
         integrationId,
         response,
+      }),
+    mappingMetadataError: (integrationId, error) =>
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.MAPPING_METADATA_ERROR, {
+        integrationId,
+        error,
       }),
     upgrade: (integration, license) =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.UPGRADE, {
@@ -798,6 +828,8 @@ const mapping = {
     action(actionTypes.MAPPING.UPDATE_LOOKUP, { id, lookups }),
   patchSettings: (id, index, value) =>
     action(actionTypes.MAPPING.PATCH_SETTINGS, { id, index, value }),
+  setVisibility: (id, value) =>
+    action(actionTypes.MAPPING.SET_VISIBILITY, { id, value }),
   patchIncompleteGenerates: (id, index, value) =>
     action(actionTypes.MAPPING.PATCH_INCOMPLETE_GENERATES, {
       id,
@@ -848,6 +880,11 @@ const resourceForm = {
     }),
   submitFailed: (resourceType, resourceId) =>
     action(actionTypes.RESOURCE_FORM.SUBMIT_FAILED, {
+      resourceType,
+      resourceId,
+    }),
+  submitAborted: (resourceType, resourceId) =>
+    action(actionTypes.RESOURCE_FORM.SUBMIT_ABORTED, {
       resourceType,
       resourceId,
     }),

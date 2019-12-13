@@ -9,7 +9,7 @@ import {
 import { Fragment } from 'react';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
-import { COMM_STATES } from '../../reducers/comms';
+import { COMM_STATES } from '../../reducers/comms/networkComms';
 import RawHtml from '../RawHtml';
 
 const useStyles = makeStyles(theme => ({

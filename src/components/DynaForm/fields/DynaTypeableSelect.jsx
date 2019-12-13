@@ -48,7 +48,6 @@ export default function DynaTypeableSelect(props) {
     placeholder,
     onBlur,
     labelName,
-    hideOptions,
     valueName,
     options = [],
   } = props;
@@ -59,8 +58,9 @@ export default function DynaTypeableSelect(props) {
   const [inputState, setInputState] = useState({
     inputValue: value || '',
     isFocus: false,
+    filter: false,
   });
-  const { inputValue, isFocus } = inputState;
+  const { filter, inputValue, isFocus } = inputState;
   const handleChange = newObj => {
     const newVal = newObj.value;
 
@@ -82,8 +82,13 @@ export default function DynaTypeableSelect(props) {
     setInputState({ ...inputState, isFocus: false });
   };
 
-  const handleInputChange = newVal => {
-    setInputState({ isFocus: true, inputValue: newVal });
+  const handleFocus = () => {
+    setInputState({ ...inputState, isFocus: false });
+  };
+
+  const handleInputChange = (newVal, event) => {
+    if (event.action === 'input-change')
+      setInputState({ filter: true, isFocus: true, inputValue: newVal });
   };
 
   const selectedValue =
@@ -183,6 +188,13 @@ export default function DynaTypeableSelect(props) {
       return { ...provided, opacity, transition, color };
     },
   };
+  const filterOption = (options, rawInput) => {
+    if (filter) {
+      return options.label.toLowerCase().indexOf(rawInput.toLowerCase()) !== -1;
+    }
+
+    return true;
+  };
 
   return (
     <FormControl disabled={disabled} className={classes.root}>
@@ -198,13 +210,13 @@ export default function DynaTypeableSelect(props) {
         onChange={handleChange}
         onBlur={handleBlur}
         styles={customStyles}
-        components={
-          hideOptions && {
-            DropdownIndicator: () => null,
-            IndicatorSeparator: () => null,
-          }
-        }
+        onFocus={handleFocus}
+        components={{
+          DropdownIndicator: () => null,
+          IndicatorSeparator: () => null,
+        }}
         options={suggestions}
+        filterOption={filterOption}
       />
     </FormControl>
   );
