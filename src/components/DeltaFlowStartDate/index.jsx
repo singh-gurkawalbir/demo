@@ -21,7 +21,7 @@ export default function DeltaFlowStartDate(props) {
   const preferences = useSelector(state =>
     selectors.userProfilePreferencesProps(state)
   );
-  const lastExportDateTime = useSelector(state =>
+  let lastExportDateTime = useSelector(state =>
     selectors.getLastExportDateTime(state, flow._id)
   ).data;
   const selectorStatus = useSelector(state =>
@@ -29,6 +29,10 @@ export default function DeltaFlowStartDate(props) {
   ).status;
   let startDate;
   const timeZone = preferences && preferences.timezone;
+
+  if (!lastExportDateTime) {
+    lastExportDateTime = new Date();
+  }
 
   if (lastExportDateTime) {
     if (
