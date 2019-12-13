@@ -64,6 +64,7 @@ export default function MappingDialog(props) {
     noMappingHeight = '20vh',
     onClose,
     onSave,
+    disabled,
   } = props;
   const classes = useStyles();
   const [fullScreen, setFullScreen] = useState(props.fullScreen || false);
@@ -148,12 +149,14 @@ export default function MappingDialog(props) {
       {showMappings && (
         <DialogActions className={classes.actions}>
           <Button
+            disabled={disabled}
             color="primary"
             data-test="saveImportMapping"
             onClick={() => handleSave()}>
             Save
           </Button>
           <Button
+            disabled={disabled}
             variant="outlined"
             data-test="saveAndCloseImportMapping"
             color="primary"
