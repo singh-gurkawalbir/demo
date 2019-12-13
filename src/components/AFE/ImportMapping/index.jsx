@@ -200,6 +200,7 @@ export default function ImportMapping(props) {
             Source Record Field
             {!isExtractsLoading && (
               <RefreshButton
+                disabled={disabled}
                 onClick={refreshExtractFields}
                 data-test="refreshExtracts"
               />
@@ -215,6 +216,7 @@ export default function ImportMapping(props) {
             {generateLabel}
             {isGenerateRefreshSupported && !isGeneratesLoading && (
               <RefreshButton
+                disabled={disabled}
                 onClick={refreshGenerateFields}
                 data-test="refreshGenerates"
               />
