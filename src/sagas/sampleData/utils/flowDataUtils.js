@@ -111,7 +111,7 @@ export function* requestSampleDataForImports({
           flowId,
           resourceId,
           resourceType,
-          sampleDataStage,
+          stage: sampleDataStage,
         });
         break;
       }
@@ -227,7 +227,7 @@ export function* requestSampleDataForExports({
         flowId,
         resourceId,
         resourceType,
-        sampleDataStage,
+        stage: sampleDataStage,
       });
     } else {
       yield call(requestProcessorData, {

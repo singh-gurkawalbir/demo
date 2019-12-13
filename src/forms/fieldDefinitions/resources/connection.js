@@ -1920,6 +1920,7 @@ export default {
     type: 'hook',
     label: '',
     required: false,
+    hookStage: 'contentBasedFlowRouter',
     preHookData: {
       httpHeaders: {
         'as2-from': 'OpenAS2_appA',
