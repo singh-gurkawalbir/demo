@@ -112,7 +112,9 @@ export default function DynaSQLQueryBuilder(props) {
       : value;
 
   if (sampleData && extractFields && !parsedRule) {
-    const extractPaths = getJSONPaths(extractFields);
+    const extractPaths = getJSONPaths(extractFields, null, {
+      wrapSpecialChars: true,
+    });
 
     if (adaptorTypeMap[resourceAdapterType] === adaptorTypeMap.MongodbImport) {
       parsedRule = sqlUtil.getSampleMongoDbTemplate(
