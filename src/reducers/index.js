@@ -1522,7 +1522,6 @@ export function userPermissions(state) {
 
 const parentResourceToLookUpTo = {
   flows: 'integrations',
-  connections: 'integrations',
 };
 const getParentsResourceId = (state, resourceType, resourceId) => {
   if (!resourceType) return null;
@@ -1542,10 +1541,10 @@ const getParentsResourceId = (state, resourceType, resourceId) => {
 
 export const getResourceEditUrl = (state, resourceType, resourceId) => {
   if (resourceType === 'flows') {
-    const integraionId = getParentsResourceId(state, resourceType, resourceId);
+    const integrationId = getParentsResourceId(state, resourceType, resourceId);
 
     return getRoutePath(
-      `/integrations/${integraionId}/flowBuilder/${resourceId}`
+      `/integrations/${integrationId}/flowBuilder/${resourceId}`
     );
   }
 
