@@ -4,7 +4,7 @@ import { withStyles } from '@material-ui/core/styles';
 import actions from '../../../actions';
 import DynaAction from '../../DynaForm/DynaAction';
 import * as selectors from '../../../reducers';
-import { useLoadingSnackbarOnSave } from './SaveButton';
+import { useLoadingSnackbarOnSave } from '.';
 
 const styles = theme => ({
   actionButton: {

@@ -591,7 +591,7 @@ export function changeEmailMsg(state) {
 
 // #region USER SELECTORS
 export function testConnectionCommState(state, resourceId) {
-  const status = fromComms.testConnectionState(
+  const status = fromComms.testConnectionStatus(
     state && state.comms,
     resourceId
   );

@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../actions';
 import DynaAction from '../../DynaForm/DynaAction';
 import * as selectors from '../../../reducers';
-import { useLoadingSnackbarOnSave } from './SaveButton';
+import { useLoadingSnackbarOnSave } from '.';
 
 const useStyles = makeStyles(theme => ({
   actionButton: {
@@ -40,15 +40,13 @@ export default function IntegrationSettingsSaveButton(props) {
     },
     [dispatch, flowId, integrationId, storeId]
   );
-  const { submitCompleted } = useSelector(state => {
+  const submitCompleted = useSelector(state => {
     const {
       submitComplete,
       submitFailed,
     } = selectors.integrationAppSettingsFormState(state, integrationId, flowId);
 
-    return {
-      submitCompleted: submitComplete || submitFailed,
-    };
+    return submitComplete || submitFailed;
   });
   const { handleSubmitForm, disableSave } = useLoadingSnackbarOnSave({
     resourceType: 'Integration Settings',

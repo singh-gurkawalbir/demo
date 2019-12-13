@@ -7,8 +7,8 @@ export default combineReducers({
   ping,
 });
 
-export function testConnectionState(state, resourceId) {
-  return fromPing.testConnectionState(state && state.ping, resourceId);
+export function testConnectionStatus(state, resourceId) {
+  return fromPing.testConnectionStatus(state && state.ping, resourceId);
 }
 
 export function testConnectionMessage(state, resourceId) {

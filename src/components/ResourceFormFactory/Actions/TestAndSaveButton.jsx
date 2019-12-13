@@ -8,7 +8,7 @@ import GenericConfirmDialog from '../../ConfirmDialog';
 import DynaAction from '../../DynaForm/DynaAction';
 import { PING_STATES } from '../../../reducers/comms/ping';
 import { PingMessage } from './TestButton';
-import { useLoadingSnackbarOnSave } from './SaveButton';
+import { useLoadingSnackbarOnSave } from '.';
 
 const styles = theme => ({
   actions: {

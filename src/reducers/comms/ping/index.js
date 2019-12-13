@@ -59,7 +59,7 @@ export default (state = {}, action) => {
   });
 };
 
-export const testConnectionState = (state, resourceId) => {
+export const testConnectionStatus = (state, resourceId) => {
   if (!state || !state[resourceId]) return null;
   const { status } = state[resourceId];
 
