@@ -4,6 +4,7 @@ import ftpFile from './ftpFile';
 import advancedSettings from './advancedSettings';
 import fileAdvancedSettings from './fileAdvancedSettings';
 import exportOneToMany from './exportOneToMany';
+import netsuite from './netsuite';
 
 export default {
   common,
@@ -12,4 +13,5 @@ export default {
   advancedSettings,
   fileAdvancedSettings,
   exportOneToMany,
+  ...netsuite,
 };

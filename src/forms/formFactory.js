@@ -144,11 +144,6 @@ const getResourceFormAssets = ({
       if (meta) {
         if (isNew) {
           meta = meta.new;
-        }
-        // get edit form meta branch
-        else if (type === 'netsuite') {
-          if (resource.type === 'blob') meta = meta.netsuite.blob;
-          else meta = meta.netsuite[resource.netsuite.type];
         } else if (['mysql', 'postgresql', 'mssql'].indexOf(type) !== -1) {
           meta = meta.rdbms;
         } else if (resource && resource.assistant) {

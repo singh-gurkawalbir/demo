@@ -1,5 +1,5 @@
 import applications from '../../../constants/applications';
-import { appTypeToAdaptorType, isNewId } from '../../../utils/resource';
+import { appTypeToAdaptorType } from '../../../utils/resource';
 
 const visibleWhenHasApp = { field: 'application', isNot: [''] };
 const visibleWhenIsNew = { field: 'isNew', is: ['true'] };
@@ -43,14 +43,6 @@ export default {
     // On creation of a new page processor lookup,  isLookup is set true
     if (isNew && resourceType === 'exports') {
       newValues['/isLookup'] = true;
-
-      if (app.type === 'netsuite') {
-        if (newValues['/outputMode'] === 'records') {
-          newValues['/netsuite/type'] = apiType;
-        } else {
-          newValues['/netsuite/type'] = 'blob';
-        }
-      }
     }
 
     // console.log('presave values', newValues);
@@ -169,54 +161,6 @@ export default {
       defaultValue: '',
       visibleWhenAll: [visibleWhenHasApp, visibleWhenIsNew],
     },
-    outputMode: {
-      id: 'outputMode',
-      type: 'mode',
-      visibleWhenAll: [
-        visibleWhenIsNew,
-        { field: 'resourceType', is: ['exports'] },
-        { field: 'application', is: ['netsuite'] },
-      ],
-      label: 'Output Mode',
-      options: [
-        {
-          items: [
-            { label: 'Records', value: 'records' },
-            { label: 'Blob Keys', value: 'blob' },
-          ],
-        },
-      ],
-      defaultDisabled: r => {
-        const isNew = isNewId(r._id);
-
-        if (!isNew) return true;
-
-        return false;
-      },
-      defaultValue: r =>
-        r && r.netsuite && r.netsuite.internalId ? 'blob' : 'records',
-    },
-    netsuiteApiType: {
-      id: 'netsuite.api.type',
-      name: 'apiType',
-      type: 'radiogroup',
-      label: 'API Type',
-      required: true,
-      options: [
-        {
-          items: [
-            { label: 'RESTlet (Recommended)', value: 'restlet' },
-            { label: 'Web Services', value: 'search' },
-          ],
-        },
-      ],
-      visibleWhenAll: [
-        visibleWhenIsNew,
-        { field: 'resourceType', is: ['exports'] },
-        { field: 'application', is: ['netsuite'] },
-        { field: 'outputMode', is: ['records'] },
-      ],
-    },
   },
   layout: {
     fields: [
@@ -228,8 +172,6 @@ export default {
       'connection',
       'name',
       'description',
-      'outputMode',
-      'netsuiteApiType',
     ],
   },
   optionsHandler: (fieldId, fields) => {
