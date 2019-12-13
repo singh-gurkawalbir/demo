@@ -20,115 +20,109 @@ export default (
     resourceId,
   } = action;
   const key = commMetaPath;
-  let newState;
 
-  switch (type) {
-    case actionTypes.METADATA.REQUEST: {
-      newState = { ...state.application };
-      newState[connectionId] = {
-        ...newState[connectionId],
-        [key]: { status: 'requested' },
-      };
+  return produce(state, draft => {
+    switch (type) {
+      case actionTypes.METADATA.REQUEST:
+        if (!draft.application[connectionId]) {
+          draft.application[connectionId] = {};
+        }
 
-      return { ...state, ...{ application: newState } };
-    }
+        draft.application[connectionId][key] = { status: 'requested' };
+        break;
+      case actionTypes.METADATA.ASSISTANT_PREVIEW_REQUESTED:
+        if (!draft.preview[resourceId]) {
+          draft.preview[resourceId] = {};
+        }
 
-    case actionTypes.METADATA.ASSISTANT_PREVIEW_RECEIVED: {
-      newState = { ...state.preview };
+        draft.preview[resourceId].status = 'requested';
+        break;
+      case actionTypes.METADATA.ASSISTANT_PREVIEW_RECEIVED:
+        if (!draft.preview[resourceId]) {
+          draft.preview[resourceId] = {};
+        }
 
-      newState[resourceId] = previewData;
+        draft.preview[resourceId].status = 'received';
+        draft.preview[resourceId].data = previewData;
+        break;
+      case actionTypes.METADATA.ASSISTANT_PREVIEW_RESET:
+        delete draft.preview[resourceId];
+        break;
+      case actionTypes.METADATA.REFRESH:
+        if (
+          draft.application[connectionId] &&
+          draft.application[connectionId][key] &&
+          draft.application[connectionId][key].status
+        ) {
+          draft.application[connectionId][key].status = 'refreshed';
+        }
 
-      return { ...state, preview: newState };
-    }
+        break;
 
-    case actionTypes.METADATA.ASSISTANT_PREVIEW_RESET: {
-      newState = { ...state.preview };
-      delete newState[resourceId];
+      // This is quiet a deep object...ensuring i am creating
+      // new instances all the way to the children of the object.
+      // This is to ensure that a react component listening
+      // to just the root of the object realizes they are updates to
+      // the children and subsequently re-renders.
+      case actionTypes.METADATA.RECEIVED: {
+        let changeIdentifier = 1;
 
-      return { ...state, preview: newState };
-    }
+        if (!draft.application[connectionId]) {
+          draft.application[connectionId] = {};
+        } else if (
+          draft.application[connectionId] &&
+          draft.application[connectionId][key] &&
+          draft.application[connectionId][key].changeIdentifier
+        ) {
+          changeIdentifier =
+            draft.application[connectionId][key].changeIdentifier + 1;
+        }
 
-    case actionTypes.METADATA.REFRESH: {
-      newState = { ...state.application };
-
-      if (
-        newState[connectionId] &&
-        newState[connectionId][key] &&
-        newState[connectionId][key].status
-      ) {
-        newState[connectionId][key].status = 'refreshed';
+        draft.application[connectionId][key] = {
+          status: 'received',
+          data: metadata,
+          changeIdentifier,
+        };
+        break;
       }
 
-      return { ...state, ...{ application: newState } };
-    }
+      // Error handler
 
-    // This is quiet a deep object...ensuring i am creating
-    // new instances all the way to the children of the object.
-    // This is to ensure that a react component listening
-    // to just the root of the object realizes they are updates to
-    // the children and subsequently re-renders.
-    case actionTypes.METADATA.RECEIVED: {
-      newState = { ...state.application };
-      let changeIdentifier = 1;
+      case actionTypes.METADATA.RECEIVED_ERROR: {
+        const defaultError = 'Error occured';
 
-      if (
-        newState[connectionId] &&
-        newState[connectionId][key] &&
-        newState[connectionId][key].changeIdentifier
-      ) {
-        changeIdentifier = newState[connectionId][key].changeIdentifier + 1;
-      }
-
-      newState[connectionId] = {
-        ...newState[connectionId],
-        [key]: { status: 'received', data: metadata, changeIdentifier },
-      };
-
-      return { ...state, ...{ application: newState } };
-    }
-
-    // Error handler
-
-    case actionTypes.METADATA.RECEIVED_ERROR: {
-      newState = { ...state.application };
-      const defaultError = 'Error occured';
-
-      if (
-        newState[connectionId] &&
-        newState[connectionId][key] &&
-        newState[connectionId][key].status === 'refreshed'
-      ) {
-        newState[connectionId][key].status = 'error';
-        newState[connectionId][key].errorMessage =
-          metadataError || defaultError;
-      } else {
-        newState[connectionId] = {
-          ...newState[connectionId],
-          [key]: {
+        if (
+          draft.application[connectionId] &&
+          draft.application[connectionId][key] &&
+          draft.application[connectionId][key].status === 'refreshed'
+        ) {
+          draft.application[connectionId][key].status = 'error';
+          draft.application[connectionId][key].errorMessage =
+            metadataError || defaultError;
+        } else {
+          draft.application[connectionId][key] = {
             status: 'error',
             data: [],
             errorMessage: metadataError || defaultError,
-          },
-        };
+          };
+        }
+
+        break;
       }
 
-      return { ...state, ...{ application: newState } };
-    }
+      case actionTypes.METADATA.ASSISTANT_RECEIVED: {
+        const { adaptorType, assistant, metadata } = action;
 
-    case actionTypes.METADATA.ASSISTANT_RECEIVED: {
-      const { adaptorType, assistant, metadata } = action;
-
-      return produce(state, draft => {
         if (draft.assistants[adaptorType]) {
-          // eslint-disable-next-line no-param-reassign
           draft.assistants[adaptorType][assistant] = metadata;
         }
-      });
-    }
 
-    default:
-      return state;
-  }
+        break;
+      }
+
+      default:
+    }
+  });
 };
 
 export const optionsFromMetadata = ({

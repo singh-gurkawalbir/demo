@@ -1,5 +1,6 @@
 import { useEffect, useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { makeStyles } from '@material-ui/core/styles';
 import { isEqual } from 'lodash';
 import ImportMapping from './index';
 import * as ResourceUtil from '../../../utils/resource';
@@ -9,9 +10,23 @@ import actions from '../../../actions';
 import { getImportOperationDetails } from '../../../utils/assistant';
 import mappingUtil from '../../../utils/mapping';
 import getJSONPaths from '../../../utils/jsonPaths';
+import Spinner from '../../Spinner';
+
+// TODO: Azhar to review
+const useStyles = makeStyles({
+  spinnerWrapper: {
+    display: 'flex',
+    '&> div:first-child': {
+      margin: 'auto',
+    },
+  },
+});
 
 export default function StandaloneMapping(props) {
   const { id, flowId, resourceId, disabled } = props;
+  const classes = useStyles();
+  const [flowSampleDataLoaded, setFlowSampleDataLoaded] = useState(false);
+  const [importSampleDataLoaded, setImportSampleDataLoaded] = useState(false);
   const [assistantLoaded, setAssistantLoaded] = useState(false);
   const [
     integrationAppMetadataLoaded,
@@ -27,8 +42,15 @@ export default function StandaloneMapping(props) {
   const integrationId = resourceData._integrationId;
   const options = {};
   const resourceType = ResourceUtil.getResourceSubType(resourceData);
+  const isSalesforce =
+    resourceType.type === ResourceUtil.adaptorTypeMap.SalesforceImport;
+  const isNetsuite =
+    resourceType.type === ResourceUtil.adaptorTypeMap.NetSuiteImport;
   const connectionId = resourceData._connectionId;
   const dispatch = useDispatch();
+  const { visible: showMappings } = useSelector(state =>
+    selectors.mapping(state, id)
+  );
   const sampleDataObj = useSelector(state =>
     selectors.getSampleDataContext(state, {
       flowId,
@@ -51,6 +73,15 @@ export default function StandaloneMapping(props) {
   }, [dispatch, flowId, resourceId]);
 
   useEffect(() => {
+    if (
+      !flowSampleDataLoaded &&
+      (extractStatus === 'received' || extractStatus === 'error')
+    ) {
+      setFlowSampleDataLoaded(true);
+    }
+  }, [extractStatus, flowSampleDataLoaded]);
+
+  useEffect(() => {
     if (!extractFields) {
       requestSampleData();
     }
@@ -64,6 +95,15 @@ export default function StandaloneMapping(props) {
   const requestImportSampleData = useCallback(() => {
     dispatch(actions.importSampleData.request(resourceId));
   }, [dispatch, resourceId]);
+
+  useEffect(() => {
+    if (
+      !importSampleDataLoaded &&
+      (generateStatus === 'received' || generateStatus === 'error')
+    ) {
+      setImportSampleDataLoaded(true);
+    }
+  }, [generateStatus, importSampleDataLoaded]);
 
   useEffect(() => {
     if (!importSampleData) {
@@ -105,8 +145,11 @@ export default function StandaloneMapping(props) {
    *   selector and dispatching an action if not loaded
    */
 
-  const { mappingMetadata: integrationAppMappingMetadata } = useSelector(
-    state => selectors.integrationAppAddOnState(state, integrationId)
+  const {
+    mappingMetadata: integrationAppMappingMetadata,
+    status: integrationAppMappingStatus,
+  } = useSelector(state =>
+    selectors.integrationAppAddOnState(state, integrationId)
   );
   const fetchIntegrationAppMappingMetadata = useCallback(() => {
     dispatch(
@@ -132,12 +175,12 @@ export default function StandaloneMapping(props) {
 
   const application = resourceType.type;
 
-  if (resourceType.type === ResourceUtil.adaptorTypeMap.SalesforceImport) {
+  if (isSalesforce) {
     options.connectionId = connectionId;
     options.sObjectType = resourceData.salesforce.sObjectType;
   }
 
-  if (resourceType.type === ResourceUtil.adaptorTypeMap.NetSuiteImport) {
+  if (isNetsuite) {
     options.recordType =
       resourceData.netsuite_da && resourceData.netsuite_da.recordType;
     options.connectionId = connectionId;
@@ -163,14 +206,18 @@ export default function StandaloneMapping(props) {
     mappingOptions.assistant = {
       requiredMappings,
     };
-  } else if (isIntegrationApp && integrationAppMappingMetadata) {
+  } else if (
+    isIntegrationApp &&
+    (integrationAppMappingStatus === 'received' ||
+      integrationAppMappingStatus === 'error')
+  ) {
     if (!integrationAppMetadataLoaded) {
       setIntegrationAppMetadataLoaded(true);
       setChangeIdentifier(changeIdentifier + 1);
     }
 
     mappingOptions.integrationApp = {
-      mappingMetadata: integrationAppMappingMetadata,
+      mappingMetadata: integrationAppMappingMetadata || {},
       connectorExternalId: resourceData.externalId,
     };
   }
@@ -229,6 +276,24 @@ export default function StandaloneMapping(props) {
     isAssistant,
     assistantLoaded,
   ]);
+
+  if (!showMappings) {
+    if (
+      (isIntegrationApp && !integrationAppMetadataLoaded) ||
+      (isAssistant && !assistantLoaded) ||
+      !flowSampleDataLoaded ||
+      ((isNetsuite || isSalesforce || isAssistant) && !importSampleDataLoaded)
+    ) {
+      return (
+        <div className={classes.spinnerWrapper}>
+          <Spinner />
+        </div>
+      );
+    }
+
+    // dispatch an action to show mappings
+    dispatch(actions.mapping.setVisibility(id, true));
+  }
 
   if (initTriggered && !isEqual(importSampleDataState, importSampleData)) {
     dispatch(actions.mapping.updateGenerates(id, formattedGenerateFields));
