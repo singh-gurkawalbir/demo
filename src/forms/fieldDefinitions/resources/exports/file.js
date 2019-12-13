@@ -282,7 +282,7 @@ export default {
     ],
   },
   'file.xlsx.keyColumns': {
-    type: 'text',
+    type: 'filekeycolumn',
     label: 'Key Columns',
     visibleWhenAll: [
       {
