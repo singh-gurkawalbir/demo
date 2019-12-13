@@ -29,7 +29,16 @@ export default {
   fieldMap: {
     name: { fieldId: 'name' },
     as2url: { fieldId: 'as2url' },
-    'as2.as2Id': { fieldId: 'as2.as2Id' },
+    'as2.as2Id': {
+      fieldId: 'as2.as2Id',
+      defaultDisabled: r => {
+        const isNew = isNewId(r._id);
+
+        if (!isNew) return true;
+
+        return false;
+      },
+    },
     requiremdnspartners: { fieldId: 'requiremdnspartners' },
     requireasynchronousmdns: { fieldId: 'requireasynchronousmdns' },
     'as2.userStationInfo.mdn.mdnSigning': {
@@ -52,7 +61,16 @@ export default {
     'as2.partnerStationInfo.as2URI': {
       fieldId: 'as2.partnerStationInfo.as2URI',
     },
-    'as2.partnerId': { fieldId: 'as2.partnerId' },
+    'as2.partnerId': {
+      fieldId: 'as2.partnerId',
+      defaultDisabled: r => {
+        const isNew = isNewId(r._id);
+
+        if (!isNew) return true;
+
+        return false;
+      },
+    },
     partnerrequireasynchronousmdns: {
       fieldId: 'partnerrequireasynchronousmdns',
     },
