@@ -1,3 +1,4 @@
+import produce from 'immer';
 import actionTypes from '../../../actions/types';
 import commKeyGenerator from '../../../utils/commKeyGenerator';
 
@@ -12,76 +13,66 @@ Object.freeze(COMM_STATES);
 
 export default (state = initialState, action) => {
   const { type, path, message, hidden, method = 'GET', key } = action;
-  let newState;
   const timestamp = Date.now();
   const commKey = commKeyGenerator(path, method);
 
-  switch (type) {
-    case actionTypes.API_REQUEST:
-      newState = { ...state[commKey] };
-      newState.timestamp = timestamp;
-      newState.status = COMM_STATES.LOADING;
-      newState.message = message;
-      newState.hidden = hidden;
-      newState.method = method;
-      delete newState.retry;
+  return produce(state, draft => {
+    switch (type) {
+      case actionTypes.API_REQUEST:
+        if (!draft[commKey]) draft[commKey] = {};
+        draft[commKey].timestamp = timestamp;
+        draft[commKey].status = COMM_STATES.LOADING;
+        draft[commKey].message = message;
+        draft[commKey].hidden = hidden;
+        draft[commKey].method = method;
+        delete draft[commKey].retry;
 
-      return { ...state, [commKey]: newState };
+        break;
+      case actionTypes.API_COMPLETE:
+        if (!draft[commKey]) draft[commKey] = {};
+        draft[commKey].status = COMM_STATES.SUCCESS;
+        draft[commKey].message = message;
+        delete draft[commKey].retry;
+        delete draft[commKey].timestamp;
 
-    case actionTypes.API_COMPLETE:
-      newState = { ...state[commKey] };
-      newState.status = COMM_STATES.SUCCESS;
-      newState.message = message;
-      delete newState.retry;
-      delete newState.timestamp;
+        break;
+      case actionTypes.API_RETRY:
+        if (!draft[commKey]) draft[commKey] = {};
+        draft[commKey].retry = draft[commKey].retry || 0;
+        draft[commKey].retry += 1;
+        draft[commKey].timestamp = timestamp;
 
-      return { ...state, [commKey]: newState };
+        break;
 
-    case actionTypes.API_RETRY:
-      newState = { ...state[commKey] };
-      newState.retry = newState.retry || 0;
-      newState.retry += 1;
-      newState.timestamp = timestamp;
+      case actionTypes.API_FAILURE:
+        if (!draft[commKey]) draft[commKey] = {};
+        draft[commKey].status = COMM_STATES.ERROR;
+        draft[commKey].message = message || 'unknown error';
 
-      return { ...state, [commKey]: newState };
+        // if not defined it should be false
+        draft[commKey].hidden = !!hidden;
+        delete draft[commKey].retry;
+        delete draft[commKey].timestamp;
 
-    case actionTypes.API_FAILURE:
-      newState = { ...state[commKey] };
-      newState.status = COMM_STATES.ERROR;
-      newState.message = message || 'unknown error';
+        break;
+      case actionTypes.CLEAR_COMMS:
+        Object.keys(draft).forEach(i => {
+          if (
+            draft[i].status === COMM_STATES.ERROR ||
+            draft[i].status === COMM_STATES.SUCCESS
+          )
+            delete draft[i];
+        });
 
-      // if not defined it should be false
-      newState.hidden = !!hidden;
-      delete newState.retry;
-      delete newState.timestamp;
+        break;
+      case actionTypes.CLEAR_COMM_BY_KEY: {
+        delete draft[key];
+        break;
+      }
 
-      return { ...state, [commKey]: newState };
-    case actionTypes.CLEAR_COMMS:
-      newState = { ...state[commKey] };
-      Object.keys(newState).forEach(i => {
-        if (
-          newState[i].status === COMM_STATES.ERROR ||
-          newState[i].status === COMM_STATES.SUCCESS
-        )
-          delete newState[i];
-      });
-
-      return newState;
-    case actionTypes.CLEAR_COMM_BY_KEY: {
-      const { [key]: value, ...rest } = state;
-
-      return rest;
+      default:
     }
-    // case actionTypes.CLEAR_SUCCESS_COMMS:
-    //   newState = Object.assign({}, state);
-    //   Object.keys(newState).forEach(i => {
-    //     if (newState[i].success) delete newState[i];
-    //   });
-
-    //   return newState;
-    default:
-      return state;
-  }
+  });
 };
 
 // #region PUBLIC SELECTORS
