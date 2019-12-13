@@ -58,7 +58,8 @@ export function getPreviewStageData(previewData, previewStage = 'parse') {
 }
 
 export const getSampleDataStage = (stage, resourceType = 'exports') =>
-  sampleDataStage[resourceType][stage] || stage;
+  (sampleDataStage[resourceType] && sampleDataStage[resourceType][stage]) ||
+  stage;
 
 // @TODO: Raghu Change this to return instead of inplace updates to flow
 export const reset = (flow, index, isPageGenerator) => {
