@@ -16,8 +16,11 @@ const sampleDataStage = {
     hooks: 'transform',
     responseMappingExtract: 'hooks',
     outputFilter: 'hooksWithContext',
+    hooksWithContext: 'hooks',
+    flowInputWithContext: 'flowInput',
   },
   imports: {
+    flowInputWithContext: 'flowInput',
     inputFilter: 'flowInputWithContext',
     preMap: 'flowInput',
     importMappingExtract: 'preMap',

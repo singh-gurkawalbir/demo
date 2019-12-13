@@ -283,10 +283,8 @@ export function* requestSampleDataWithContext({
   flowId,
   resourceId,
   resourceType,
-  sampleDataStage,
+  stage,
 }) {
-  const stage =
-    sampleDataStage === 'flowInputWithContext' ? 'flowInput' : 'hooks';
   let sampleData = yield select(getSampleData, {
     flowId,
     resourceId,
@@ -353,7 +351,7 @@ export function* requestSampleDataWithContext({
       flowId,
       resourceId,
       sampleDataWithContextInfo,
-      sampleDataStage
+      stage
     )
   );
 }
