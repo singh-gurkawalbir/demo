@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useHistory } from 'react-router-dom';
 import TimeAgo from 'react-timeago';
@@ -13,6 +13,7 @@ import RunIcon from '../../../../components/icons/RunIcon';
 import SettingsIcon from '../../../../components/icons/SettingsIcon';
 import OnOffSwitch from '../../../../components/SwitchToggle';
 import InfoIconButton from '../InfoIconButton';
+import FlowStartDateDialog from '../../../../components/DeltaFlowStartDate/Dialog';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -60,6 +61,7 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
   const dispatch = useDispatch();
   const flowDetails =
     useSelector(state => selectors.flowDetails(state, flowId)) || {};
+  const [showDilaog, setShowDilaog] = useState(false);
   const patchFlow = useCallback(
     (path, value) => {
       const patchSet = [{ op: 'replace', path, value }];
@@ -70,6 +72,28 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
     [dispatch, flowId]
   );
   const flowName = flowDetails.name || flowDetails._id;
+  const handleRunDeltaFlow = useCallback(
+    customStartDate => {
+      dispatch(actions.flow.run({ flowId, customStartDate }));
+
+      if (flowDetails._connectorId) {
+        history.push(
+          `/pg/integrationApp/${flowDetails._integrationId}/dashboard`
+        );
+      } else {
+        history.push(
+          `/pg/integrations/${flowDetails._integrationId || 'none'}/dashboard`
+        );
+      }
+    },
+    [
+      dispatch,
+      flowDetails._connectorId,
+      flowDetails._integrationId,
+      flowId,
+      history,
+    ]
+  );
   const handleActionClick = useCallback(
     action => () => {
       switch (action) {
@@ -99,17 +123,13 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
           break;
 
         case 'run':
-          dispatch(actions.flow.run({ flowId }));
-
-          if (flowDetails._connectorId) {
-            history.push(
-              `/pg/integrationApp/${flowDetails._integrationId}/dashboard`
-            );
+          if (
+            flowDetails.isDeltaFlow &&
+            (!flowDetails._connectorId || !!flowDetails.showStartDateDialog)
+          ) {
+            setShowDilaog('true');
           } else {
-            history.push(
-              `/pg/integrations/${flowDetails._integrationId ||
-                'none'}/dashboard`
-            );
+            handleRunDeltaFlow();
           }
 
           break;
@@ -123,9 +143,10 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
       flowDetails._id,
       flowDetails._integrationId,
       flowDetails.disabled,
-      flowId,
+      flowDetails.isDeltaFlow,
+      flowDetails.showStartDateDialog,
       flowName,
-      history,
+      handleRunDeltaFlow,
       patchFlow,
       storeId,
     ]
@@ -150,10 +171,20 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
   const flowBuilderTo = isIntegrationApp
     ? `/pg/integrationApp/${flowDetails._integrationId}/flowBuilder/${flowId}`
     : `flowBuilder/${flowId}`;
+  const closeDeltaDialog = () => {
+    setShowDilaog(false);
+  };
 
   return (
     <div className={classes.root}>
       <div className={clsx(classes.statusBar, classes[status])} />
+      {showDilaog && flowDetails.isDeltaFlow && (
+        <FlowStartDateDialog
+          flowId={flowDetails._id}
+          onClose={closeDeltaDialog}
+          runDeltaFlow={handleRunDeltaFlow}
+        />
+      )}
       <div className={classes.cardContent}>
         <Grid item xs={9}>
           <div>
