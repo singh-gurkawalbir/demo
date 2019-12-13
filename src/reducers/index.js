@@ -1571,6 +1571,45 @@ export function userPermissions(state) {
   return fromUser.permissions(state.user);
 }
 
+const parentResourceToLookUpTo = {
+  flows: 'integrations',
+};
+const getParentsResourceId = (state, resourceType, resourceId) => {
+  if (!resourceType) return null;
+
+  const parentResourceType = parentResourceToLookUpTo[resourceType];
+
+  if (!parentResourceType) return null;
+
+  if (parentResourceType === 'integrations') {
+    const { _integrationId } = resource(state, resourceType, resourceId) || {};
+
+    return _integrationId;
+  }
+
+  return null;
+};
+
+export const getResourceEditUrl = (state, resourceType, resourceId) => {
+  if (resourceType === 'flows') {
+    const integrationId = getParentsResourceId(state, resourceType, resourceId);
+    const { _connectorId } = resource(state, resourceType, resourceId) || {};
+
+    // if _connectorId its an integrationApp
+    if (_connectorId) {
+      return getRoutePath(
+        `/integrationApp/${integrationId}/flowBuilder/${resourceId}`
+      );
+    }
+
+    return getRoutePath(
+      `/integrations/${integrationId}/flowBuilder/${resourceId}`
+    );
+  }
+
+  return getRoutePath(`${resourceType}/edit/${resourceType}/${resourceId}`);
+};
+
 export function resourcePermissions(state, resourceType, resourceId) {
   const permissions = userPermissions(state);
 

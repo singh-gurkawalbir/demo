@@ -20,9 +20,12 @@ export default (state = {}, action) => {
         break;
       case actionTypes.INTEGRATION_APPS.STORE.COMPLETE:
         steps.forEach(step => {
-          const stepIndex = (draft[id] || []).findIndex(
-            s => s.installerFunction === step.installerFunction
-          );
+          let stepIndex = -1;
+
+          if (draft[id] && draft[id].steps)
+            stepIndex = draft[id].steps.findIndex(
+              s => s.installerFunction === step.installerFunction
+            );
 
           if (stepIndex !== -1) {
             draft[id][stepIndex] = {
@@ -38,9 +41,10 @@ export default (state = {}, action) => {
         delete draft[id];
         break;
       case actionTypes.INTEGRATION_APPS.STORE.UPDATE:
-        step = (draft[id] || []).find(
-          s => s.installerFunction === installerFunction
-        );
+        if (draft[id] && draft[id].steps)
+          step = draft[id].steps.find(
+            s => s.installerFunction === installerFunction
+          );
 
         if (step) {
           if (update === 'inProgress') {
