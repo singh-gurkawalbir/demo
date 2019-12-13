@@ -43,7 +43,7 @@ function* getUIDataForResource({ resource }) {
       case 'WebhookExport': {
         // Sample data exists on resource
         // TODO: @Raghu Add webhooks form field sample data feature
-        return sampleData;
+        return sampleData || {};
       }
 
       default:
