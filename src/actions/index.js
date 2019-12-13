@@ -417,13 +417,18 @@ const integrationApp = {
         }
       ),
     requestMappingMetadata: integrationId =>
-      action(actionTypes.INTEGRATION_APPS.SETTINGS.MAPPING_METADATA, {
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.MAPPING_METADATA_REQUEST, {
         integrationId,
       }),
     mappingMetadataUpdate: (integrationId, response) =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.MAPPING_METADATA_UPDATE, {
         integrationId,
         response,
+      }),
+    mappingMetadataError: (integrationId, error) =>
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.MAPPING_METADATA_ERROR, {
+        integrationId,
+        error,
       }),
     upgrade: (integration, license) =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.UPGRADE, {

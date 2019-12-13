@@ -133,8 +133,11 @@ export default function StandaloneMapping(props) {
    *   selector and dispatching an action if not loaded
    */
 
-  const { mappingMetadata: integrationAppMappingMetadata } = useSelector(
-    state => selectors.integrationAppAddOnState(state, integrationId)
+  const {
+    mappingMetadata: integrationAppMappingMetadata,
+    status: integrationAppMappingStatus,
+  } = useSelector(state =>
+    selectors.integrationAppAddOnState(state, integrationId)
   );
   const fetchIntegrationAppMappingMetadata = useCallback(() => {
     dispatch(
@@ -191,14 +194,18 @@ export default function StandaloneMapping(props) {
     mappingOptions.assistant = {
       requiredMappings,
     };
-  } else if (isIntegrationApp && integrationAppMappingMetadata) {
+  } else if (
+    isIntegrationApp &&
+    (integrationAppMappingStatus === 'received' ||
+      integrationAppMappingStatus === 'error')
+  ) {
     if (!integrationAppMetadataLoaded) {
       setIntegrationAppMetadataLoaded(true);
       setChangeIdentifier(changeIdentifier + 1);
     }
 
     mappingOptions.integrationApp = {
-      mappingMetadata: integrationAppMappingMetadata,
+      mappingMetadata: integrationAppMappingMetadata || {},
       connectorExternalId: resourceData.externalId,
     };
   }
