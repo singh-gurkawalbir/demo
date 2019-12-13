@@ -1113,7 +1113,7 @@ describe('integrationApps reducer test cases', () => {
       });
       test('should find the integration with id and set isTriggered flag to true', () => {
         const state = reducer(
-          { addStore: { 1: addNewStoreSteps } },
+          { addStore: { 1: { steps: addNewStoreSteps } } },
           actions.integrationApp.store.updateStep(
             1,
             'installConnectorComponents',
@@ -1122,23 +1122,25 @@ describe('integrationApps reducer test cases', () => {
         );
         const expectedValue = {
           addStore: {
-            '1': [
-              {
-                completed: false,
-                description: 'Install the bank in CAM',
-                imageURL: '/images/company-logos/cashapp.png',
-                installerFunction: 'installConnectorComponents',
-                isTriggered: true,
-                name: 'Install Bank',
-              },
-              {
-                completed: false,
-                description: 'Install the bundle in NetSuite',
-                imageURL: '/images/company-logos/netsuite.png',
-                installerFunction: 'installConnectorComponents',
-                name: 'Install Bundle in NetSuite',
-              },
-            ],
+            '1': {
+              steps: [
+                {
+                  completed: false,
+                  description: 'Install the bank in CAM',
+                  imageURL: '/images/company-logos/cashapp.png',
+                  installerFunction: 'installConnectorComponents',
+                  isTriggered: true,
+                  name: 'Install Bank',
+                },
+                {
+                  completed: false,
+                  description: 'Install the bundle in NetSuite',
+                  imageURL: '/images/company-logos/netsuite.png',
+                  installerFunction: 'installConnectorComponents',
+                  name: 'Install Bundle in NetSuite',
+                },
+              ],
+            },
           },
           installer: {},
           settings: {},
@@ -1152,8 +1154,8 @@ describe('integrationApps reducer test cases', () => {
         const integrationId = 1;
         const initialState = {
           addStore: {
-            1: addNewStoreSteps,
-            2: addNewStoreSteps,
+            1: { steps: addNewStoreSteps },
+            2: { steps: addNewStoreSteps },
           },
         };
         const state = reducer(
@@ -1166,39 +1168,43 @@ describe('integrationApps reducer test cases', () => {
         );
         const expectedValue = {
           addStore: {
-            '1': [
-              {
-                completed: false,
-                description: 'Install the bank in CAM',
-                imageURL: '/images/company-logos/cashapp.png',
-                installerFunction: 'installConnectorComponents',
-                isTriggered: true,
-                name: 'Install Bank',
-              },
-              {
-                completed: false,
-                description: 'Install the bundle in NetSuite',
-                imageURL: '/images/company-logos/netsuite.png',
-                installerFunction: 'installConnectorComponents',
-                name: 'Install Bundle in NetSuite',
-              },
-            ],
-            '2': [
-              {
-                completed: false,
-                description: 'Install the bank in CAM',
-                imageURL: '/images/company-logos/cashapp.png',
-                installerFunction: 'installConnectorComponents',
-                name: 'Install Bank',
-              },
-              {
-                completed: false,
-                description: 'Install the bundle in NetSuite',
-                imageURL: '/images/company-logos/netsuite.png',
-                installerFunction: 'installConnectorComponents',
-                name: 'Install Bundle in NetSuite',
-              },
-            ],
+            '1': {
+              steps: [
+                {
+                  completed: false,
+                  description: 'Install the bank in CAM',
+                  imageURL: '/images/company-logos/cashapp.png',
+                  installerFunction: 'installConnectorComponents',
+                  isTriggered: true,
+                  name: 'Install Bank',
+                },
+                {
+                  completed: false,
+                  description: 'Install the bundle in NetSuite',
+                  imageURL: '/images/company-logos/netsuite.png',
+                  installerFunction: 'installConnectorComponents',
+                  name: 'Install Bundle in NetSuite',
+                },
+              ],
+            },
+            '2': {
+              steps: [
+                {
+                  completed: false,
+                  description: 'Install the bank in CAM',
+                  imageURL: '/images/company-logos/cashapp.png',
+                  installerFunction: 'installConnectorComponents',
+                  name: 'Install Bank',
+                },
+                {
+                  completed: false,
+                  description: 'Install the bundle in NetSuite',
+                  imageURL: '/images/company-logos/netsuite.png',
+                  installerFunction: 'installConnectorComponents',
+                  name: 'Install Bundle in NetSuite',
+                },
+              ],
+            },
           },
           installer: {},
           settings: {},
@@ -1212,7 +1218,7 @@ describe('integrationApps reducer test cases', () => {
     describe(`integrationApps addNewStore install step verify action`, () => {
       test('should not affect the existing state when incorrect function name is passed', () => {
         const state = reducer(
-          { addStore: { 1: addNewStoreSteps } },
+          { addStore: { 1: { steps: addNewStoreSteps } } },
           actions.integrationApp.store.updateStep(
             1,
             'INCORRECT_FUNCTION_NAME',
@@ -1221,22 +1227,24 @@ describe('integrationApps reducer test cases', () => {
         );
         const expectedValue = {
           addStore: {
-            '1': [
-              {
-                completed: false,
-                description: 'Install the bank in CAM',
-                imageURL: '/images/company-logos/cashapp.png',
-                installerFunction: 'installConnectorComponents',
-                name: 'Install Bank',
-              },
-              {
-                completed: false,
-                description: 'Install the bundle in NetSuite',
-                imageURL: '/images/company-logos/netsuite.png',
-                installerFunction: 'installConnectorComponents',
-                name: 'Install Bundle in NetSuite',
-              },
-            ],
+            '1': {
+              steps: [
+                {
+                  completed: false,
+                  description: 'Install the bank in CAM',
+                  imageURL: '/images/company-logos/cashapp.png',
+                  installerFunction: 'installConnectorComponents',
+                  name: 'Install Bank',
+                },
+                {
+                  completed: false,
+                  description: 'Install the bundle in NetSuite',
+                  imageURL: '/images/company-logos/netsuite.png',
+                  installerFunction: 'installConnectorComponents',
+                  name: 'Install Bundle in NetSuite',
+                },
+              ],
+            },
           },
           installer: {},
           settings: {},
@@ -1247,7 +1255,7 @@ describe('integrationApps reducer test cases', () => {
       });
       test('should find the integration with id and set verifying flag to true', () => {
         const state = reducer(
-          { addStore: { 1: addNewStoreSteps } },
+          { addStore: { 1: { steps: addNewStoreSteps } } },
           actions.integrationApp.store.updateStep(
             1,
             'installConnectorComponents',
@@ -1256,24 +1264,26 @@ describe('integrationApps reducer test cases', () => {
         );
         const expectedValue = {
           addStore: {
-            '1': [
-              {
-                completed: false,
-                description: 'Install the bank in CAM',
-                imageURL: '/images/company-logos/cashapp.png',
-                installerFunction: 'installConnectorComponents',
-                isTriggered: true,
-                name: 'Install Bank',
-                verifying: true,
-              },
-              {
-                completed: false,
-                description: 'Install the bundle in NetSuite',
-                imageURL: '/images/company-logos/netsuite.png',
-                installerFunction: 'installConnectorComponents',
-                name: 'Install Bundle in NetSuite',
-              },
-            ],
+            '1': {
+              steps: [
+                {
+                  completed: false,
+                  description: 'Install the bank in CAM',
+                  imageURL: '/images/company-logos/cashapp.png',
+                  installerFunction: 'installConnectorComponents',
+                  isTriggered: true,
+                  name: 'Install Bank',
+                  verifying: true,
+                },
+                {
+                  completed: false,
+                  description: 'Install the bundle in NetSuite',
+                  imageURL: '/images/company-logos/netsuite.png',
+                  installerFunction: 'installConnectorComponents',
+                  name: 'Install Bundle in NetSuite',
+                },
+              ],
+            },
           },
           installer: {},
           settings: {},
@@ -1287,8 +1297,8 @@ describe('integrationApps reducer test cases', () => {
         const integrationId = 1;
         const initialState = {
           addStore: {
-            1: addNewStoreSteps,
-            2: addNewStoreSteps,
+            1: { steps: addNewStoreSteps },
+            2: { steps: addNewStoreSteps },
           },
         };
         const state = reducer(
@@ -1301,44 +1311,48 @@ describe('integrationApps reducer test cases', () => {
         );
         const expectedValue = {
           addStore: {
-            '1': [
-              {
-                completed: false,
-                description: 'Install the bank in CAM',
-                imageURL: '/images/company-logos/cashapp.png',
-                installerFunction: 'installConnectorComponents',
-                isTriggered: true,
-                name: 'Install Bank',
-                verifying: true,
-              },
-              {
-                completed: false,
-                description: 'Install the bundle in NetSuite',
-                imageURL: '/images/company-logos/netsuite.png',
-                installerFunction: 'installConnectorComponents',
-                name: 'Install Bundle in NetSuite',
-              },
-            ],
-            '2': [
-              {
-                completed: false,
-                description: 'Install the bank in CAM',
-                imageURL: '/images/company-logos/cashapp.png',
-                installerFunction: 'installConnectorComponents',
-                name: 'Install Bank',
-              },
-              {
-                completed: false,
-                description: 'Install the bundle in NetSuite',
-                imageURL: '/images/company-logos/netsuite.png',
-                installerFunction: 'installConnectorComponents',
-                name: 'Install Bundle in NetSuite',
-              },
-            ],
+            '1': {
+              steps: [
+                {
+                  completed: false,
+                  description: 'Install the bank in CAM',
+                  imageURL: '/images/company-logos/cashapp.png',
+                  installerFunction: 'installConnectorComponents',
+                  isTriggered: true,
+                  name: 'Install Bank',
+                  verifying: true,
+                },
+                {
+                  completed: false,
+                  description: 'Install the bundle in NetSuite',
+                  imageURL: '/images/company-logos/netsuite.png',
+                  installerFunction: 'installConnectorComponents',
+                  name: 'Install Bundle in NetSuite',
+                },
+              ],
+            },
+            '2': {
+              steps: [
+                {
+                  completed: false,
+                  description: 'Install the bank in CAM',
+                  imageURL: '/images/company-logos/cashapp.png',
+                  installerFunction: 'installConnectorComponents',
+                  name: 'Install Bank',
+                },
+                {
+                  completed: false,
+                  description: 'Install the bundle in NetSuite',
+                  imageURL: '/images/company-logos/netsuite.png',
+                  installerFunction: 'installConnectorComponents',
+                  name: 'Install Bundle in NetSuite',
+                },
+              ],
+            },
           },
           installer: {},
-          uninstaller: {},
           settings: {},
+          uninstaller: {},
         };
 
         expect(state).toEqual(expectedValue);
@@ -1348,7 +1362,7 @@ describe('integrationApps reducer test cases', () => {
     describe(`integrationApps addNewStore install_step failed action`, () => {
       test('should not affect the existing state when incorrect function name is passed', () => {
         const state = reducer(
-          { addStore: { 1: addNewStoreSteps } },
+          { addStore: { 1: { steps: addNewStoreSteps } } },
           actions.integrationApp.store.updateStep(
             1,
             'INCORRECT_FUNCTION_NAME',
@@ -1357,22 +1371,24 @@ describe('integrationApps reducer test cases', () => {
         );
         const expectedValue = {
           addStore: {
-            '1': [
-              {
-                completed: false,
-                description: 'Install the bank in CAM',
-                imageURL: '/images/company-logos/cashapp.png',
-                installerFunction: 'installConnectorComponents',
-                name: 'Install Bank',
-              },
-              {
-                completed: false,
-                description: 'Install the bundle in NetSuite',
-                imageURL: '/images/company-logos/netsuite.png',
-                installerFunction: 'installConnectorComponents',
-                name: 'Install Bundle in NetSuite',
-              },
-            ],
+            '1': {
+              steps: [
+                {
+                  completed: false,
+                  description: 'Install the bank in CAM',
+                  imageURL: '/images/company-logos/cashapp.png',
+                  installerFunction: 'installConnectorComponents',
+                  name: 'Install Bank',
+                },
+                {
+                  completed: false,
+                  description: 'Install the bundle in NetSuite',
+                  imageURL: '/images/company-logos/netsuite.png',
+                  installerFunction: 'installConnectorComponents',
+                  name: 'Install Bundle in NetSuite',
+                },
+              ],
+            },
           },
           installer: {},
           settings: {},
@@ -1383,7 +1399,7 @@ describe('integrationApps reducer test cases', () => {
       });
       test('should find the integration with id and reset all flags', () => {
         const state = reducer(
-          { addStore: { 1: addNewStoreSteps } },
+          { addStore: { 1: { steps: addNewStoreSteps } } },
           actions.integrationApp.store.updateStep(
             1,
             'installConnectorComponents',
@@ -1392,24 +1408,26 @@ describe('integrationApps reducer test cases', () => {
         );
         const expectedValue = {
           addStore: {
-            '1': [
-              {
-                completed: false,
-                description: 'Install the bank in CAM',
-                imageURL: '/images/company-logos/cashapp.png',
-                installerFunction: 'installConnectorComponents',
-                isTriggered: false,
-                name: 'Install Bank',
-                verifying: false,
-              },
-              {
-                completed: false,
-                description: 'Install the bundle in NetSuite',
-                imageURL: '/images/company-logos/netsuite.png',
-                installerFunction: 'installConnectorComponents',
-                name: 'Install Bundle in NetSuite',
-              },
-            ],
+            '1': {
+              steps: [
+                {
+                  completed: false,
+                  description: 'Install the bank in CAM',
+                  imageURL: '/images/company-logos/cashapp.png',
+                  installerFunction: 'installConnectorComponents',
+                  isTriggered: false,
+                  name: 'Install Bank',
+                  verifying: false,
+                },
+                {
+                  completed: false,
+                  description: 'Install the bundle in NetSuite',
+                  imageURL: '/images/company-logos/netsuite.png',
+                  installerFunction: 'installConnectorComponents',
+                  name: 'Install Bundle in NetSuite',
+                },
+              ],
+            },
           },
           installer: {},
           settings: {},
@@ -1443,9 +1461,7 @@ describe('integrationApps reducer test cases', () => {
                 description: 'Install the bank in CAM',
                 imageURL: '/images/company-logos/cashapp.png',
                 installerFunction: 'installConnectorComponents',
-                isTriggered: false,
                 name: 'Install Bank',
-                verifying: false,
               },
               {
                 completed: false,
@@ -1484,7 +1500,7 @@ describe('integrationApps reducer test cases', () => {
     describe(`integrationApps addNewStore install step completed action`, () => {
       test('should not affect the existing state when incorrect function name is passed', () => {
         const state = reducer(
-          { addStore: { 1: addNewStoreSteps } },
+          { addStore: { 1: { steps: addNewStoreSteps } } },
           actions.integrationApp.store.updateStep(
             1,
             'INCORRECT_FUNCTION_NAME',
@@ -1493,22 +1509,24 @@ describe('integrationApps reducer test cases', () => {
         );
         const expectedValue = {
           addStore: {
-            '1': [
-              {
-                completed: false,
-                description: 'Install the bank in CAM',
-                imageURL: '/images/company-logos/cashapp.png',
-                installerFunction: 'installConnectorComponents',
-                name: 'Install Bank',
-              },
-              {
-                completed: false,
-                description: 'Install the bundle in NetSuite',
-                imageURL: '/images/company-logos/netsuite.png',
-                installerFunction: 'installConnectorComponents',
-                name: 'Install Bundle in NetSuite',
-              },
-            ],
+            '1': {
+              steps: [
+                {
+                  completed: false,
+                  description: 'Install the bank in CAM',
+                  imageURL: '/images/company-logos/cashapp.png',
+                  installerFunction: 'installConnectorComponents',
+                  name: 'Install Bank',
+                },
+                {
+                  completed: false,
+                  description: 'Install the bundle in NetSuite',
+                  imageURL: '/images/company-logos/netsuite.png',
+                  installerFunction: 'installConnectorComponents',
+                  name: 'Install Bundle in NetSuite',
+                },
+              ],
+            },
           },
           installer: {},
           settings: {},
@@ -1519,7 +1537,7 @@ describe('integrationApps reducer test cases', () => {
       });
       test('should find the integration with id and reset all flags', () => {
         const state = reducer(
-          { addStore: { 1: addNewStoreSteps } },
+          { addStore: { 1: { steps: addNewStoreSteps } } },
           actions.integrationApp.uninstaller.updateStep(
             1,
             'installConnectorComponents',
@@ -1528,22 +1546,24 @@ describe('integrationApps reducer test cases', () => {
         );
         const expectedValue = {
           addStore: {
-            '1': [
-              {
-                completed: false,
-                description: 'Install the bank in CAM',
-                imageURL: '/images/company-logos/cashapp.png',
-                installerFunction: 'installConnectorComponents',
-                name: 'Install Bank',
-              },
-              {
-                completed: false,
-                description: 'Install the bundle in NetSuite',
-                imageURL: '/images/company-logos/netsuite.png',
-                installerFunction: 'installConnectorComponents',
-                name: 'Install Bundle in NetSuite',
-              },
-            ],
+            '1': {
+              steps: [
+                {
+                  completed: false,
+                  description: 'Install the bank in CAM',
+                  imageURL: '/images/company-logos/cashapp.png',
+                  installerFunction: 'installConnectorComponents',
+                  name: 'Install Bank',
+                },
+                {
+                  completed: false,
+                  description: 'Install the bundle in NetSuite',
+                  imageURL: '/images/company-logos/netsuite.png',
+                  installerFunction: 'installConnectorComponents',
+                  name: 'Install Bundle in NetSuite',
+                },
+              ],
+            },
           },
           installer: {},
           uninstaller: {},
@@ -1557,8 +1577,8 @@ describe('integrationApps reducer test cases', () => {
         const integrationId = 1;
         const initialState = {
           addStore: {
-            1: addNewStoreSteps,
-            2: addNewStoreSteps,
+            1: { steps: addNewStoreSteps },
+            2: { steps: addNewStoreSteps },
           },
         };
         const state = reducer(
@@ -1571,40 +1591,44 @@ describe('integrationApps reducer test cases', () => {
         );
         const expectedValue = {
           addStore: {
-            '1': [
-              {
-                completed: true,
-                description: 'Install the bank in CAM',
-                imageURL: '/images/company-logos/cashapp.png',
-                installerFunction: 'installConnectorComponents',
-                isTriggered: false,
-                name: 'Install Bank',
-                verifying: false,
-              },
-              {
-                completed: false,
-                description: 'Install the bundle in NetSuite',
-                imageURL: '/images/company-logos/netsuite.png',
-                installerFunction: 'installConnectorComponents',
-                name: 'Install Bundle in NetSuite',
-              },
-            ],
-            '2': [
-              {
-                completed: false,
-                description: 'Install the bank in CAM',
-                imageURL: '/images/company-logos/cashapp.png',
-                installerFunction: 'installConnectorComponents',
-                name: 'Install Bank',
-              },
-              {
-                completed: false,
-                description: 'Install the bundle in NetSuite',
-                imageURL: '/images/company-logos/netsuite.png',
-                installerFunction: 'installConnectorComponents',
-                name: 'Install Bundle in NetSuite',
-              },
-            ],
+            '1': {
+              steps: [
+                {
+                  completed: true,
+                  description: 'Install the bank in CAM',
+                  imageURL: '/images/company-logos/cashapp.png',
+                  installerFunction: 'installConnectorComponents',
+                  isTriggered: false,
+                  name: 'Install Bank',
+                  verifying: false,
+                },
+                {
+                  completed: false,
+                  description: 'Install the bundle in NetSuite',
+                  imageURL: '/images/company-logos/netsuite.png',
+                  installerFunction: 'installConnectorComponents',
+                  name: 'Install Bundle in NetSuite',
+                },
+              ],
+            },
+            '2': {
+              steps: [
+                {
+                  completed: false,
+                  description: 'Install the bank in CAM',
+                  imageURL: '/images/company-logos/cashapp.png',
+                  installerFunction: 'installConnectorComponents',
+                  name: 'Install Bank',
+                },
+                {
+                  completed: false,
+                  description: 'Install the bundle in NetSuite',
+                  imageURL: '/images/company-logos/netsuite.png',
+                  installerFunction: 'installConnectorComponents',
+                  name: 'Install Bundle in NetSuite',
+                },
+              ],
+            },
           },
           installer: {},
           settings: {},
@@ -1654,7 +1678,7 @@ describe('integrationApps reducer test cases', () => {
       });
       test('should not affect other integrations when new store steps are received', () => {
         const state = reducer(
-          { addStore: { 1: addNewStoreSteps } },
+          { addStore: { 1: { steps: addNewStoreSteps } } },
           actions.integrationApp.store.receivedNewStoreSteps(
             2,
             addNewStoreSteps
@@ -1662,22 +1686,24 @@ describe('integrationApps reducer test cases', () => {
         );
         const expectedValue = {
           addStore: {
-            '1': [
-              {
-                completed: false,
-                description: 'Install the bank in CAM',
-                imageURL: '/images/company-logos/cashapp.png',
-                installerFunction: 'installConnectorComponents',
-                name: 'Install Bank',
-              },
-              {
-                completed: false,
-                description: 'Install the bundle in NetSuite',
-                imageURL: '/images/company-logos/netsuite.png',
-                installerFunction: 'installConnectorComponents',
-                name: 'Install Bundle in NetSuite',
-              },
-            ],
+            '1': {
+              steps: [
+                {
+                  completed: false,
+                  description: 'Install the bank in CAM',
+                  imageURL: '/images/company-logos/cashapp.png',
+                  installerFunction: 'installConnectorComponents',
+                  name: 'Install Bank',
+                },
+                {
+                  completed: false,
+                  description: 'Install the bundle in NetSuite',
+                  imageURL: '/images/company-logos/netsuite.png',
+                  installerFunction: 'installConnectorComponents',
+                  name: 'Install Bundle in NetSuite',
+                },
+              ],
+            },
             '2': {
               steps: [
                 {
@@ -1706,7 +1732,7 @@ describe('integrationApps reducer test cases', () => {
       });
       test('should not affect the state when new integration store steps are received and no integrationId is passed', () => {
         const state = reducer(
-          { addStore: { 1: addNewStoreSteps } },
+          { addStore: { 1: { steps: addNewStoreSteps } } },
           actions.integrationApp.store.receivedNewStoreSteps(
             undefined,
             addNewStoreSteps
@@ -1714,22 +1740,24 @@ describe('integrationApps reducer test cases', () => {
         );
         const expectedValue = {
           addStore: {
-            '1': [
-              {
-                completed: false,
-                description: 'Install the bank in CAM',
-                imageURL: '/images/company-logos/cashapp.png',
-                installerFunction: 'installConnectorComponents',
-                name: 'Install Bank',
-              },
-              {
-                completed: false,
-                description: 'Install the bundle in NetSuite',
-                imageURL: '/images/company-logos/netsuite.png',
-                installerFunction: 'installConnectorComponents',
-                name: 'Install Bundle in NetSuite',
-              },
-            ],
+            '1': {
+              steps: [
+                {
+                  completed: false,
+                  description: 'Install the bank in CAM',
+                  imageURL: '/images/company-logos/cashapp.png',
+                  installerFunction: 'installConnectorComponents',
+                  name: 'Install Bank',
+                },
+                {
+                  completed: false,
+                  description: 'Install the bundle in NetSuite',
+                  imageURL: '/images/company-logos/netsuite.png',
+                  installerFunction: 'installConnectorComponents',
+                  name: 'Install Bundle in NetSuite',
+                },
+              ],
+            },
           },
           installer: {},
           settings: {},
@@ -1740,7 +1768,7 @@ describe('integrationApps reducer test cases', () => {
       });
       test('should not affect the state new integration store steps are received and no integrationId is passed', () => {
         const state = reducer(
-          { addStore: { 1: addNewStoreSteps } },
+          { addStore: { 1: { steps: addNewStoreSteps } } },
           actions.integrationApp.store.receivedNewStoreSteps(
             undefined,
             addNewStoreSteps
@@ -1748,22 +1776,24 @@ describe('integrationApps reducer test cases', () => {
         );
         const expectedValue = {
           addStore: {
-            '1': [
-              {
-                completed: false,
-                description: 'Install the bank in CAM',
-                imageURL: '/images/company-logos/cashapp.png',
-                installerFunction: 'installConnectorComponents',
-                name: 'Install Bank',
-              },
-              {
-                completed: false,
-                description: 'Install the bundle in NetSuite',
-                imageURL: '/images/company-logos/netsuite.png',
-                installerFunction: 'installConnectorComponents',
-                name: 'Install Bundle in NetSuite',
-              },
-            ],
+            '1': {
+              steps: [
+                {
+                  completed: false,
+                  description: 'Install the bank in CAM',
+                  imageURL: '/images/company-logos/cashapp.png',
+                  installerFunction: 'installConnectorComponents',
+                  name: 'Install Bank',
+                },
+                {
+                  completed: false,
+                  description: 'Install the bundle in NetSuite',
+                  imageURL: '/images/company-logos/netsuite.png',
+                  installerFunction: 'installConnectorComponents',
+                  name: 'Install Bundle in NetSuite',
+                },
+              ],
+            },
           },
           installer: {},
           settings: {},
@@ -1791,7 +1821,7 @@ describe('integrationApps reducer test cases', () => {
 
       test('should update the addStore state and remove the integrationId if found', () => {
         const state = reducer(
-          { addStore: { 1: addNewStoreSteps } },
+          { addStore: { 1: { steps: addNewStoreSteps } } },
           actions.integrationApp.store.clearSteps(1)
         );
         const expectedValue = {
@@ -1805,27 +1835,34 @@ describe('integrationApps reducer test cases', () => {
       });
       test('should not affect other integrations when new clearSteps are called on one integration', () => {
         const state = reducer(
-          { addStore: { 1: addNewStoreSteps, 2: addNewStoreSteps } },
+          {
+            addStore: {
+              1: { steps: addNewStoreSteps },
+              2: { steps: addNewStoreSteps },
+            },
+          },
           actions.integrationApp.store.clearSteps(2)
         );
         const expectedValue = {
           addStore: {
-            '1': [
-              {
-                completed: false,
-                description: 'Install the bank in CAM',
-                imageURL: '/images/company-logos/cashapp.png',
-                installerFunction: 'installConnectorComponents',
-                name: 'Install Bank',
-              },
-              {
-                completed: false,
-                description: 'Install the bundle in NetSuite',
-                imageURL: '/images/company-logos/netsuite.png',
-                installerFunction: 'installConnectorComponents',
-                name: 'Install Bundle in NetSuite',
-              },
-            ],
+            '1': {
+              steps: [
+                {
+                  completed: false,
+                  description: 'Install the bank in CAM',
+                  imageURL: '/images/company-logos/cashapp.png',
+                  installerFunction: 'installConnectorComponents',
+                  name: 'Install Bank',
+                },
+                {
+                  completed: false,
+                  description: 'Install the bundle in NetSuite',
+                  imageURL: '/images/company-logos/netsuite.png',
+                  installerFunction: 'installConnectorComponents',
+                  name: 'Install Bundle in NetSuite',
+                },
+              ],
+            },
           },
           installer: {},
           settings: {},
@@ -1836,27 +1873,29 @@ describe('integrationApps reducer test cases', () => {
       });
       test('should not affect the state when clearSteps is called and no integrationId is passed', () => {
         const state = reducer(
-          { addStore: { 1: addNewStoreSteps } },
+          { addStore: { 1: { steps: addNewStoreSteps } } },
           actions.integrationApp.store.clearSteps()
         );
         const expectedValue = {
           addStore: {
-            '1': [
-              {
-                completed: false,
-                description: 'Install the bank in CAM',
-                imageURL: '/images/company-logos/cashapp.png',
-                installerFunction: 'installConnectorComponents',
-                name: 'Install Bank',
-              },
-              {
-                completed: false,
-                description: 'Install the bundle in NetSuite',
-                imageURL: '/images/company-logos/netsuite.png',
-                installerFunction: 'installConnectorComponents',
-                name: 'Install Bundle in NetSuite',
-              },
-            ],
+            '1': {
+              steps: [
+                {
+                  completed: false,
+                  description: 'Install the bank in CAM',
+                  imageURL: '/images/company-logos/cashapp.png',
+                  installerFunction: 'installConnectorComponents',
+                  name: 'Install Bank',
+                },
+                {
+                  completed: false,
+                  description: 'Install the bundle in NetSuite',
+                  imageURL: '/images/company-logos/netsuite.png',
+                  installerFunction: 'installConnectorComponents',
+                  name: 'Install Bundle in NetSuite',
+                },
+              ],
+            },
           },
           installer: {},
           settings: {},
