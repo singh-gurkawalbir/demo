@@ -6,7 +6,7 @@ import actions from '../../actions';
 import Filters from './Filters';
 import JobTable from './JobTable';
 import actionTypes from '../../actions/types';
-import { COMM_STATES } from '../../reducers/comms';
+import { COMM_STATES } from '../../reducers/comms/networkComms';
 import CommStatus from '../CommStatus';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import { UNDO_TIME } from './util';
