@@ -103,7 +103,7 @@ export default {
   },
   'mongodb.filter': {
     type: 'editor',
-    mode: 'json',
+    mode: 'text',
     label: 'Filter',
     required: true,
     visibleWhen: [

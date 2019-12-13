@@ -148,8 +148,6 @@ export default {
 
     delete retValues['/inputMode'];
 
-    console.log('retValues', retValues);
-
     return {
       ...retValues,
     };
