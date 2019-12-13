@@ -1,10 +1,11 @@
-import { getResourceReferenceLink } from '../CeligoTable/util';
+import { GetResourceReferenceLink } from '../CeligoTable/util';
 
 export default {
   columns: [
     {
       heading: 'Name',
-      value: r => getResourceReferenceLink(r),
+      // eslint-disable-next-line react/display-name
+      value: r => <GetResourceReferenceLink r={r} />,
     },
     {
       heading: 'Type',

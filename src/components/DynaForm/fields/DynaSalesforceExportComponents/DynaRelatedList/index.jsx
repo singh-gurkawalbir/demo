@@ -85,6 +85,7 @@ function EditListItemModal(props) {
         filterKey: 'salesforce-sObjects-childReferenceTo',
         commMetaPath: `salesforce/metadata/connections/${connectionId}/sObjectTypes/${selectedSObject}`,
         removeRefresh: true,
+        required: true,
         defaultValue: relationshipName,
       },
       referencedFields: {

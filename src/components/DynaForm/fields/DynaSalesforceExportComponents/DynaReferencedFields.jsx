@@ -57,6 +57,7 @@ const FirstLevelModal = props => {
         type: 'refreshableselect',
         filterKey: 'salesforce-sObjects-referenceFields',
         commMetaPath: `salesforce/metadata/connections/${connectionId}/sObjectTypes/${selectedSObject}`,
+        required: true,
         removeRefresh: true,
       },
 
