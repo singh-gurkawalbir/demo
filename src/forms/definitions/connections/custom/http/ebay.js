@@ -75,12 +75,13 @@ export default {
 
         if (baseUri) {
           if (baseUri.indexOf('sandbox') !== -1) {
-            return r && r.http && r.http.scope;
+            return (r && r.http && r.http.scope) || [];
           }
         }
 
         return [];
       },
+      required: true,
     },
     'http.scopeProduction': {
       id: 'http.scopeProduction',
@@ -103,13 +104,14 @@ export default {
 
         if (baseUri) {
           if (baseUri.indexOf('sandbox') === -1) {
-            return r && r.http && r.http.scope;
+            return (r && r.http && r.http.scope) || [];
           }
         }
 
         return [];
       },
       visibleWhen: [{ field: 'accountType', is: ['production'] }],
+      required: true,
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },

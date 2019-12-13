@@ -5,7 +5,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import Chip from '@material-ui/core/Chip';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
+import ListItemText from '@material-ui/core/ListItemText';
 import Checkbox from '@material-ui/core/Checkbox';
 import ArrowDownIcon from '../../icons/ArrowDownIcon';
 import ErroredMessageComponent from './ErroredMessageComponent';
@@ -95,15 +95,11 @@ export default function DynaMultiSelect(props) {
           if (typeof item === 'string') {
             return (
               <MenuItem key={item} value={item} className={classes.menuItems}>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={processedValue.indexOf(item) !== -1}
-                      color="primary"
-                    />
-                  }
-                  label={item}
+                <Checkbox
+                  checked={processedValue.indexOf(item) !== -1}
+                  color="primary"
                 />
+                <ListItemText primary={item} />
               </MenuItem>
             );
           }
@@ -113,15 +109,11 @@ export default function DynaMultiSelect(props) {
               key={item.value}
               value={item.value}
               className={classes.menuItems}>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={processedValue.indexOf(item.value) !== -1}
-                    color="primary"
-                  />
-                }
-                label={item.label || item.value}
+              <Checkbox
+                checked={processedValue.indexOf(item.value) !== -1}
+                color="primary"
               />
+              <ListItemText primary={item.label || item.value} />
             </MenuItem>
           );
         })

@@ -4,6 +4,7 @@ import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import Icon from '../../../../components/icons/InputFilterIcon';
 import InputFilterEditorDialog from '../../../../components/AFE/FilterEditor/Dialog';
+import { RESOURCE_TYPE_PLURAL_TO_SINGULAR } from '../../../../constants/resource';
 
 function InputFilterDialog({
   flowId,
@@ -46,6 +47,18 @@ function InputFilterDialog({
       dispatch(
         actions.resource.commitStaged(resourceType, resourceId, 'value')
       );
+
+      if (!rules || rules.length === 0) {
+        if (value.rules.length > 0) {
+          dispatch(
+            actions.analytics.gainsight.trackEvent(
+              `${RESOURCE_TYPE_PLURAL_TO_SINGULAR[
+                resourceType
+              ].toUpperCase()}_HAS_CONFIGURED_INCOMING_FILTER`
+            )
+          );
+        }
+      }
     }
 
     onClose();

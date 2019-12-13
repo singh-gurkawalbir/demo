@@ -4,13 +4,13 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
-import { Input, Chip, MenuItem } from '@material-ui/core';
+import { Input, Chip, MenuItem, ListItemText } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import actions from '../../../../actions';
-import * as selectors from '../../../../reducers';
-import CeligoSelect from '../../../CeligoSelect';
-import DynaText from '../../../DynaForm/fields/DynaText';
-import options from './options';
+import actions from '../../../../../actions';
+import * as selectors from '../../../../../reducers';
+import CeligoSelect from '../../../../CeligoSelect';
+import DynaText from '../../../../DynaForm/fields/DynaText';
+import options from '../../options';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -55,9 +55,15 @@ const useStyles = makeStyles(theme => ({
     zIndex: 1,
     padding: theme.spacing(0.6, 1),
   },
+  menuItems: {
+    paddingRight: 0,
+    '&:before': {
+      display: 'none',
+    },
+  },
 }));
 
-export default function ExportCsvParsePanel(props) {
+export default function CsvParsePanel(props) {
   const { editorId, disabled } = props;
   const classes = useStyles(props);
   const {
@@ -174,8 +180,16 @@ export default function ExportCsvParsePanel(props) {
               )}
               MenuProps={MenuProps}>
               {allColumns.map(name => (
-                <MenuItem key={name} value={name} data-test={name}>
-                  {name}
+                <MenuItem
+                  key={name}
+                  value={name}
+                  data-test={name}
+                  className={classes.menuItems}>
+                  <Checkbox
+                    checked={keyColumns.indexOf(name) !== -1}
+                    color="primary"
+                  />
+                  <ListItemText primary={name} />
                 </MenuItem>
               ))}
             </CeligoSelect>

@@ -1,6 +1,21 @@
 import { isNewId } from '../../../utils/resource';
 
 export default {
+  preSave: formValues => {
+    const newValues = {
+      ...formValues,
+    };
+
+    if (newValues['/file/compressFiles'] === false) {
+      newValues['/file/compressionFormat'] = undefined;
+    }
+
+    delete newValues['/file/compressFiles'];
+
+    return {
+      ...newValues,
+    };
+  },
   init: fieldMeta => {
     const fileDefinitionRulesField =
       fieldMeta.fieldMap['file.filedefinition.rules'];
@@ -223,9 +238,6 @@ export default {
   },
   actions: [
     {
-      id: 'cancel',
-    },
-    {
       id: 'save',
       visibleWhen: [
         {
@@ -243,6 +255,9 @@ export default {
           is: ['filedefinition', 'fixed', 'delimited/edifact'],
         },
       ],
+    },
+    {
+      id: 'cancel',
     },
   ],
 };

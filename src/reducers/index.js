@@ -39,7 +39,11 @@ import {
   getUsedActionsMapForResource,
   isPageGeneratorResource,
 } from '../utils/flows';
-import { isValidResourceReference, isNewId } from '../utils/resource';
+import {
+  isValidResourceReference,
+  isNewId,
+  getDomain,
+} from '../utils/resource';
 import { processSampleData } from '../utils/sampleData';
 import inferErrorMessage from '../utils/inferErrorMessage';
 import getRoutePath from '../utils/routePaths';
@@ -81,6 +85,10 @@ export default rootReducer;
 // https://hackernoon.com/selector-pattern-painless-redux-state-destructuring-bfc26b72b9ae
 
 // #region app selectors
+export function bannerOpened(state) {
+  return fromApp.bannerOpened(state && state.app);
+}
+
 export function drawerOpened(state) {
   return fromApp.drawerOpened(state && state.app);
 }
@@ -418,6 +426,10 @@ export function developerMode(state) {
 
 export function userPreferences(state) {
   return fromUser.userPreferences((state && state.user) || null);
+}
+
+export function currentEnvironment(state) {
+  return userPreferences(state).environment;
 }
 
 export function accountShareHeader(state, path) {
@@ -837,8 +849,14 @@ export function resourcesByIds(state, resourceType, resourceIds) {
 }
 
 export function matchingConnectionList(state, connection = {}, environment) {
+  if (!environment) {
+    // eslint-disable-next-line no-param-reassign
+    environment = currentEnvironment(state);
+  }
+
   const { resources = [] } = resourceList(state, {
     type: 'connections',
+    ignoreEnvironmentFilter: true,
     filter: {
       $where() {
         if (connection.assistant) {
@@ -1302,6 +1320,49 @@ export function integrationAppFlowSettings(state, id, section, storeId) {
   };
 }
 
+// This selector is used in dashboard, it shows all the flows including the flows not in sections.
+// Integration App settings page should not use this selector.
+export function integrationAppFlowIds(state, integrationId, storeId) {
+  const allIntegrationFlows = resourceList(state, {
+    type: 'flows',
+    filter: { _integrationId: integrationId },
+  }).resources;
+  const integration = integrationAppSettings(state, integrationId);
+
+  if (integration.stores && storeId) {
+    const store = integration.stores.find(store => store.value === storeId);
+    const { flows } = integrationAppFlowSettings(
+      state,
+      integrationId,
+      null,
+      storeId
+    );
+
+    if (store) {
+      return map(
+        allIntegrationFlows.filter(f => {
+          // TODO: this is not reliable way to extract store flows. With current integration json,
+          // there is no good way to extract this
+          // Extract store from the flow name. (Regex extracts store label from flow name)
+          // Flow name usually follows this format: <Flow Name> [<StoreLabel>]
+          const flowStore = /\s\[(.*)\]$/.test(f.name)
+            ? /\s\[(.*)\]$/.exec(f.name)[1]
+            : null;
+
+          return flowStore
+            ? flowStore === store.label
+            : flows.indexOf(f._id) > -1;
+        }),
+        '_id'
+      );
+    }
+
+    return map(flows, '_id');
+  }
+
+  return map(allIntegrationFlows, '_id');
+}
+
 export function defaultStoreId(state, id, store) {
   return fromData.defaultStoreId(state && state.data, id, store);
 }
@@ -1350,18 +1411,21 @@ export function addNewStoreSteps(state, integrationId) {
     state && state.session,
     integrationId
   );
+  const { steps } = addNewStoreSteps;
 
-  if (!addNewStoreSteps || !Array.isArray(addNewStoreSteps)) {
-    return [];
+  if (!steps || !Array.isArray(steps)) {
+    return addNewStoreSteps;
   }
 
-  return produce(addNewStoreSteps, draft => {
+  const modifiedSteps = produce(steps, draft => {
     const unCompletedStep = draft.find(s => !s.completed);
 
     if (unCompletedStep) {
       unCompletedStep.isCurrentStep = true;
     }
   });
+
+  return { steps: modifiedSteps };
 }
 
 // #end integrationApps Region
@@ -1812,50 +1876,67 @@ export function tiles(state) {
   let integration;
   let connector;
   let status;
+  const domain = getDomain();
 
-  return tiles.map(t => {
-    integration = integrations.find(i => i._id === t._integrationId) || {};
+  return tiles
+    .filter(t => {
+      /**
+       * IA QA certified only "Shopify - NetSuite" and "Salesforce - NetSuite (IO)" connectors on React.
+       * So, hide all other connector tiles on production until QA certifies.
+       */
+      if (!t._connectorId || domain !== 'integrator.io') {
+        return true;
+      }
 
-    if (t._connectorId && integration.mode === INTEGRATION_MODES.UNINSTALL) {
-      status = TILE_STATUS.UNINSTALL;
-    } else if (
-      t._connectorId &&
-      integration.mode !== INTEGRATION_MODES.SETTINGS
-    ) {
-      status = TILE_STATUS.IS_PENDING_SETUP;
-    } else if (t.offlineConnections && t.offlineConnections.length > 0) {
-      status = TILE_STATUS.HAS_OFFLINE_CONNECTIONS;
-    } else if (t.numError && t.numError > 0) {
-      status = TILE_STATUS.HAS_ERRORS;
-    } else {
-      status = TILE_STATUS.SUCCESS;
-    }
+      return ['54fa0b38a7044f9252000036', '5c8f30229f701b3e9a0aa817'].includes(
+        t._connectorId
+      );
+    })
+    .map(t => {
+      integration = integrations.find(i => i._id === t._integrationId) || {};
 
-    if (t._connectorId) {
-      connector = published.find(i => i._id === t._connectorId) || { user: {} };
+      if (t._connectorId && integration.mode === INTEGRATION_MODES.UNINSTALL) {
+        status = TILE_STATUS.UNINSTALL;
+      } else if (
+        t._connectorId &&
+        integration.mode !== INTEGRATION_MODES.SETTINGS
+      ) {
+        status = TILE_STATUS.IS_PENDING_SETUP;
+      } else if (t.offlineConnections && t.offlineConnections.length > 0) {
+        status = TILE_STATUS.HAS_OFFLINE_CONNECTIONS;
+      } else if (t.numError && t.numError > 0) {
+        status = TILE_STATUS.HAS_ERRORS;
+      } else {
+        status = TILE_STATUS.SUCCESS;
+      }
+
+      if (t._connectorId) {
+        connector = published.find(i => i._id === t._connectorId) || {
+          user: {},
+        };
+
+        return {
+          ...t,
+          status,
+          integration: {
+            mode: integration.mode,
+            permissions: integration.permissions,
+          },
+          connector: {
+            owner: connector.user.company || connector.user.name,
+            applications: connector.applications || [],
+          },
+        };
+      }
 
       return {
         ...t,
         status,
         integration: {
-          mode: integration.mode,
           permissions: integration.permissions,
         },
-        connector: {
-          owner: connector.user.company || connector.user.name,
-          applications: connector.applications || [],
-        },
       };
-    }
-
-    return {
-      ...t,
-      status,
-      integration: {
-        permissions: integration.permissions,
-      },
-    };
-  });
+    });
 }
 // #endregion
 
