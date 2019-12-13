@@ -226,7 +226,9 @@ export default {
       r && r.rest && r.rest.responseIdPath && r.rest.responseIdPath[0],
   },
   sampleData: {
-    type: 'textarea',
+    type: 'editor',
+    mode: 'json',
+    saveMode: 'json',
     label: 'If so,please paste it here',
     visibleWhenAll: [
       {
