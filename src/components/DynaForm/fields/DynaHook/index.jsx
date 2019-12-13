@@ -6,7 +6,14 @@ import Hook from './Hook';
 import LoadResources from '../../../LoadResources';
 
 export default function DynaHook(props) {
-  const { flowId, resourceType, resourceId, hookStage, disabled } = props;
+  const {
+    flowId,
+    resourceType,
+    resourceId,
+    // TODO:is this default value correct for hook stage verify with raghu
+    hookStage = 'preSavePage',
+    disabled,
+  } = props;
   const dispatch = useDispatch();
   const [isPreHookDataRequested, setIsPreHookDataRequested] = useState(false);
   const requestForPreHookData = () => {

@@ -12,13 +12,14 @@ import ViewColumnIcon from '@material-ui/icons/ViewColumn';
 import ViewCompactIcon from '@material-ui/icons/ViewCompact';
 // TODO: Azhar, please fix these icons message.
 import ViewRowIcon from '@material-ui/icons/HorizontalSplit';
-import ZoomOutIcon from '@material-ui/icons/ZoomOutMap';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import actions from '../../../actions';
 import { preSaveValidate } from './util';
 import * as selectors from '../../../reducers';
+import FullScreenOpenIcon from '../../icons/FullScreenOpenIcon';
+import FullScreenCloseIcon from '../../icons/FullScreenCloseIcon';
 
 const useStyles = makeStyles(theme => ({
   dialogContent: {
@@ -132,6 +133,7 @@ export default function EditorDialog(props) {
               </ToggleButton>
             </ToggleButtonGroup>
           )}
+
           {showFullScreen && (
             <ToggleButton
               data-test="toggleEditorSize"
@@ -139,7 +141,7 @@ export default function EditorDialog(props) {
               value="max"
               onClick={handleFullScreenClick}
               selected={fullScreen}>
-              <ZoomOutIcon />
+              {fullScreen ? <FullScreenCloseIcon /> : <FullScreenOpenIcon />}
             </ToggleButton>
           )}
         </div>

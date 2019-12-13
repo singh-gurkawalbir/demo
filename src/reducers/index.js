@@ -741,6 +741,32 @@ export function getIAFlowSettings(state, integrationId, flowId) {
   return allFlows.find(flow => flow._id === flowId) || emptyObject;
 }
 
+export function isDeltaFlow(state, id) {
+  const flow = resource(state, 'flows', id);
+  const exports = resourceList(state, {
+    type: 'exports',
+  }).resources;
+
+  if (!flow) return false;
+  let isDeltaFlow = false;
+
+  flow &&
+    flow.pageGenerators &&
+    flow.pageGenerators.forEach(pg => {
+      const flowExp = exports && exports.find(e => e._id === pg._exportId);
+
+      if (
+        flowExp &&
+        flowExp.type === 'delta' &&
+        !(flowExp.delta && flowExp.delta.lagOffset)
+      ) {
+        isDeltaFlow = true;
+      }
+    });
+
+  return isDeltaFlow;
+}
+
 export function flowDetails(state, id) {
   const flow = resource(state, 'flows', id);
 
@@ -760,6 +786,7 @@ export function flowDetails(state, id) {
     draft.isSimpleImport = isSimpleImportFlow(pg);
     draft.isRunnable = isRunnable(allExports, pg, draft);
     draft.canSchedule = showScheduleIcon(allExports, pg, draft);
+    draft.isDeltaFlow = isDeltaFlow(state, id);
     // TODO: add logic to properly determine if this flow should
     // display mapping/settings. This would come from the IA metadata.
     const flowSettings = getIAFlowSettings(state, flow._integrationId, id);
@@ -767,6 +794,7 @@ export function flowDetails(state, id) {
     draft.showMapping = flowSettings.showMapping;
     draft.hasSettings = !!flowSettings.settings || !!flowSettings.sections;
     draft.showSchedule = flowSettings.showSchedule;
+    draft.showStartDateDialog = flowSettings.showStartDateDialog;
     draft.disableSlider = flowSettings.disableSlider;
   });
 }
@@ -1570,6 +1598,45 @@ export function userAccessLevel(state) {
 export function userPermissions(state) {
   return fromUser.permissions(state.user);
 }
+
+const parentResourceToLookUpTo = {
+  flows: 'integrations',
+};
+const getParentsResourceId = (state, resourceType, resourceId) => {
+  if (!resourceType) return null;
+
+  const parentResourceType = parentResourceToLookUpTo[resourceType];
+
+  if (!parentResourceType) return null;
+
+  if (parentResourceType === 'integrations') {
+    const { _integrationId } = resource(state, resourceType, resourceId) || {};
+
+    return _integrationId;
+  }
+
+  return null;
+};
+
+export const getResourceEditUrl = (state, resourceType, resourceId) => {
+  if (resourceType === 'flows') {
+    const integrationId = getParentsResourceId(state, resourceType, resourceId);
+    const { _connectorId } = resource(state, resourceType, resourceId) || {};
+
+    // if _connectorId its an integrationApp
+    if (_connectorId) {
+      return getRoutePath(
+        `/integrationApp/${integrationId}/flowBuilder/${resourceId}`
+      );
+    }
+
+    return getRoutePath(
+      `/integrations/${integrationId}/flowBuilder/${resourceId}`
+    );
+  }
+
+  return getRoutePath(`${resourceType}/edit/${resourceType}/${resourceId}`);
+};
 
 export function resourcePermissions(state, resourceType, resourceId) {
   const permissions = userPermissions(state);
@@ -2716,6 +2783,10 @@ export function getUsedActionsForResource(
 
 export function debugLogs(state) {
   return fromSession.debugLogs(state && state.session);
+}
+
+export function getLastExportDateTime(state, flowId) {
+  return fromSession.getLastExportDateTime(state && state.session, flowId);
 }
 
 export function resourceNamesByIds(state, type) {

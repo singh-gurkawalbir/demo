@@ -63,7 +63,7 @@ export default function FlowsPanel({ integrationId }) {
         )}
       </PanelHeader>
 
-      <LoadResources required resources="flows">
+      <LoadResources required resources="flows,exports">
         {flows.map(f => (
           <FlowCard
             key={f._id}

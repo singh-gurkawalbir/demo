@@ -1,5 +1,6 @@
 import { put, select, call, takeEvery, takeLatest } from 'redux-saga/effects';
 import { deepClone } from 'fast-json-patch';
+import { isEmpty } from 'lodash';
 import { resourceData, getSampleData } from '../../../reducers';
 import { SCOPES } from '../../resourceForm';
 import actionTypes from '../../../actions/types';
@@ -314,20 +315,37 @@ export function* requestSampleDataWithContext({
     resourceType,
     resourceId
   );
-  let sampleDataWithContextInfo = { ...sampleData };
+  let sampleDataWithContextInfo;
+
+  if (sampleData) {
+    sampleDataWithContextInfo = Array.isArray(sampleData)
+      ? [...sampleData]
+      : { ...sampleData };
+  }
 
   // For resources other than real time , context info is passed
   // Any other conditions to not show context Info can be added here
   if (
+    !isEmpty(sampleDataWithContextInfo) &&
     !(
       isRealTimeOrDistributedResource(resource, resourceType) &&
       isBlobTypeResource(resource)
     )
   ) {
-    sampleDataWithContextInfo = {
-      ...sampleDataWithContextInfo,
-      ...getContextInfo(),
-    };
+    if (Array.isArray(sampleDataWithContextInfo)) {
+      // Incase of array add context to the first object
+      const [firstObject, ...rest] = sampleDataWithContextInfo;
+
+      sampleDataWithContextInfo = [
+        ...[{ ...firstObject, ...getContextInfo() }],
+        ...rest,
+      ];
+    } else {
+      sampleDataWithContextInfo = {
+        ...sampleDataWithContextInfo,
+        ...getContextInfo(),
+      };
+    }
   }
 
   yield put(

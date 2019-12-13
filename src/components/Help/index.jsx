@@ -5,6 +5,7 @@ import ArrowPopper from '../ArrowPopper';
 import helpTextMap from './helpTextMap';
 import HelpContent from '../HelpContent';
 import HelpIcon from '../../components/icons/HelpIcon';
+import RawHtml from '../RawHtml';
 
 function Help(props) {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -39,7 +40,13 @@ function Help(props) {
         id="helpBubble"
         open={open}
         anchorEl={anchorEl}>
-        <HelpContent {...rest}>{helpTextValue}</HelpContent>
+        <HelpContent {...rest}>
+          {/<\/?[a-z][\s\S]*>/i.test(helpTextValue) ? (
+            <RawHtml html={helpTextValue} />
+          ) : (
+            helpTextValue
+          )}
+        </HelpContent>
       </ArrowPopper>
     </Fragment>
   );
