@@ -18,6 +18,7 @@ import templates, * as fromTemplates from './templates';
 import oAuthAuthorize, * as fromOAuthAuthorize from './oAuthAuthorize';
 import resource, * as fromResource from './resource';
 import mappings, * as fromMappings from './mappings';
+import flows, * as fromFlows from './flows';
 
 export default combineReducers({
   stage,
@@ -39,6 +40,7 @@ export default combineReducers({
   templates,
   oAuthAuthorize,
   mappings,
+  flows,
 });
 
 // #region PUBLIC SELECTORS
@@ -317,5 +319,14 @@ export function assistantPreviewData(state, resourceId) {
 
 export function debugLogs(state) {
   return fromConnections.debugLogs(state && state.connections);
+}
+
+const lastExportDateTime = {};
+
+export function getLastExportDateTime(state, flowId) {
+  return (
+    fromFlows.getLastExportDateTime(state && state.flows, flowId) ||
+    lastExportDateTime
+  );
 }
 // #endregion

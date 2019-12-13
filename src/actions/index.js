@@ -966,7 +966,15 @@ const job = {
   },
 };
 const flow = {
-  run: ({ flowId }) => action(actionTypes.FLOW.RUN, { flowId }),
+  run: ({ flowId, customStartDate }) =>
+    action(actionTypes.FLOW.RUN, { flowId, customStartDate }),
+  requestLastExportDateTime: ({ flowId }) =>
+    action(actionTypes.FLOW.REQUEST_LAST_EXPORT_DATE_TIME, { flowId }),
+  receivedLastExportDateTime: (flowId, response) =>
+    action(actionTypes.FLOW.RECEIVED_LAST_EXPORT_DATE_TIME, {
+      flowId,
+      response,
+    }),
 };
 const assistantMetadata = {
   request: ({ adaptorType, assistant }) =>
