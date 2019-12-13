@@ -28,8 +28,8 @@ export default (state = {}, action) => {
             );
 
           if (stepIndex !== -1) {
-            draft[id][stepIndex] = {
-              ...draft[id][stepIndex],
+            draft[id].steps[stepIndex] = {
+              ...draft[id].steps[stepIndex],
               ...step,
               isTriggered: true,
               verifying: false,
@@ -41,10 +41,11 @@ export default (state = {}, action) => {
         delete draft[id];
         break;
       case actionTypes.INTEGRATION_APPS.STORE.UPDATE:
-        if (draft[id] && draft[id].steps)
+        if (draft[id] && draft[id].steps) {
           step = draft[id].steps.find(
             s => s.installerFunction === installerFunction
           );
+        }
 
         if (step) {
           if (update === 'inProgress') {
