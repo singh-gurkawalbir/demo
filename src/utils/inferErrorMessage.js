@@ -7,12 +7,14 @@ const convertObjectMessageIntoString = message => {
 export default function inferErrorMessage(inputMessage) {
   let msg;
 
-  try {
-    msg = JSON.parse(inputMessage);
-  } catch (e) {
-    // cannot serialize it...lets just return it as a single value
-    return [inputMessage];
-  }
+  if (typeof inputMessage === 'string') {
+    try {
+      msg = JSON.parse(inputMessage);
+    } catch (e) {
+      // cannot serialize it...lets just return it as a single value
+      return [inputMessage];
+    }
+  } else msg = inputMessage;
 
   const { message, errors } = msg;
   let finalFormattedMessage;

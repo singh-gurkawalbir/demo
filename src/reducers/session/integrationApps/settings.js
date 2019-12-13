@@ -11,6 +11,7 @@ export default (state = {}, action) => {
     licenseId,
     response,
     redirectTo,
+    error,
   } = action;
   const key = `${integrationId}-${flowId}`;
 
@@ -33,16 +34,29 @@ export default (state = {}, action) => {
         }
 
         break;
-      case actionTypes.INTEGRATION_APPS.SETTINGS.MAPPING_METADATA_UPDATE:
-        if (response && response) {
-          if (!draft[integrationId]) {
-            draft[integrationId] = {};
-          }
-
-          draft[integrationId].mappingMetadata = response;
+      case actionTypes.INTEGRATION_APPS.SETTINGS.MAPPING_METADATA_REQUEST:
+        if (!draft[integrationId]) {
+          draft[integrationId] = { status: 'requested' };
+        } else {
+          draft[integrationId].status = 'requested';
         }
 
         break;
+      case actionTypes.INTEGRATION_APPS.SETTINGS.MAPPING_METADATA_UPDATE:
+        if (response) {
+          draft[integrationId].mappingMetadata = response;
+          draft[integrationId].status = 'received';
+        }
+
+        break;
+      case actionTypes.INTEGRATION_APPS.SETTINGS.MAPPING_METADATA_ERROR:
+        if (error) {
+          draft[integrationId].status = 'error';
+          draft[integrationId].error = error;
+        }
+
+        break;
+
       case actionTypes.INTEGRATION_APPS.SETTINGS.FORM.SUBMIT_COMPLETE:
         draft[key] = { submitComplete: true };
         break;

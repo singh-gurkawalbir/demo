@@ -105,7 +105,7 @@ export default {
           { label: 'Lightspeed', value: 'lightspeed' },
           { label: 'Linkedin', value: 'linkedin' },
           { label: 'Liquidplanner', value: 'liquidplanner' },
-          { label: 'Magento', value: 'magento' },
+          { label: 'Magento 2', value: 'magento' },
           { label: 'Mailchimp', value: 'mailchimp' },
           { label: 'Mediaocean', value: 'mediaocean' },
           { label: 'Namely', value: 'namely' },
@@ -474,7 +474,7 @@ export default {
       {
         items: [
           { label: 'MAC', value: 'MAC' },
-          { label: 'OAuth', value: 'OAuth' },
+          { label: 'OAuth 2.0', value: 'OAuth' },
           { label: 'Bearer', value: 'Bearer' },
           // { label: 'Hmac', value: 'Hmac' },
           { label: 'None', value: ' ' },
@@ -1511,7 +1511,7 @@ export default {
         items: [
           { label: 'Bearer', value: 'bearer' },
           { label: 'MAC', value: 'mac' },
-          { label: 'OAuth', value: 'oauth' },
+          { label: 'OAuth 2.0', value: 'oauth' },
           { label: 'None', value: 'none' },
         ],
       },
@@ -1920,6 +1920,7 @@ export default {
     type: 'hook',
     label: '',
     required: false,
+    hookStage: 'contentBasedFlowRouter',
     preHookData: {
       httpHeaders: {
         'as2-from': 'OpenAS2_appA',

@@ -379,7 +379,7 @@ const connectors = [
     type: 'rest',
     assistant: 'liquidplanner',
   },
-  { id: 'magento', name: 'Magento', type: 'rest', assistant: 'magento' },
+  { id: 'magento', name: 'Magento 2', type: 'rest', assistant: 'magento' },
   {
     id: 'mailchimp',
     name: 'Mailchimp',

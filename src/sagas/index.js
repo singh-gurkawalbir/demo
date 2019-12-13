@@ -44,7 +44,7 @@ import { accessTokenSagas } from './accessToken';
 import { recycleBinSagas } from './recycleBin';
 import analyticsSagas from './analytics';
 import * as selectors from '../reducers';
-import { COMM_STATES } from '../reducers/comms';
+import { COMM_STATES } from '../reducers/comms/networkComms';
 
 export function* unauthenticateAndDeleteProfile() {
   yield put(actions.auth.failure('Authentication Failure'));

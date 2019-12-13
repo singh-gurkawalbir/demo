@@ -73,6 +73,7 @@ import DynaTimestampFileName from './DynaTimestampFileName';
 import DynaMode from './DynaMode';
 import DynaAutoSuggestFlowSampleData from './DynaAutoSuggestFlowSampleData';
 import DynaCsvGenerate from './editors/DynaCsvGenerate';
+import DynaFileKeyColumn from './DynaFileKeyColumn';
 
 export default {
   mode: DynaMode,
@@ -158,4 +159,5 @@ export default {
   salesforcelookup: DynaSalesforceLookup,
   timestampfilename: DynaTimestampFileName,
   autosuggestflowsampledata: DynaAutoSuggestFlowSampleData,
+  filekeycolumn: DynaFileKeyColumn,
 };
