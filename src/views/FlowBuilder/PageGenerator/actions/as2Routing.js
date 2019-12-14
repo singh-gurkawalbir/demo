@@ -1,26 +1,58 @@
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import Icon from '../../../../components/icons/HookIcon';
+import { Button } from '@material-ui/core';
+import Icon from '../../../../components/icons/RoutingIcon';
 import actions from '../../../../actions';
 import * as selectors from '../../../../reducers';
-import JavaScriptEditorDialog from '../../../../components/AFE/JavaScriptEditor/Dialog';
 import helpTextMap from '../../../../components/Help/helpTextMap';
+import ModalDialog from '../../../../components/ModalDialog';
+import DynaForm from '../../../../components/DynaForm';
+import DynaSubmit from '../../../../components/DynaForm/DynaSubmit';
+import LoadResources from '../../../../components/LoadResources';
 
-function As2RoutingDialog({ isViewMode, resource, open, onClose }) {
+const getFormMetadata = (flowId, connectionId, defaultValue) => ({
+  fieldMap: {
+    'as2.contentBasedFlowRouter': {
+      id: 'as2.contentBasedFlowRouter',
+      name: 'contentBasedFlowRouter',
+      type: 'hook',
+      label:
+        'Select  a script and function name to use for determining AS2 message routing',
+      hookType: 'script',
+      // we can "fake" sample data by piggy backing off the default hook and simply
+      // override the sample data below.
+      preHookData: {
+        httpHeaders: {
+          'as2-from': 'OpenAS2_appA',
+          'as2-to': 'OpenAS2_appB',
+        },
+        mimeHeaders: {
+          'content-type': 'application/edi-x12',
+          'content-disposition': 'Attachment; filename=rfc1767.dat',
+        },
+        rawMessageBody: 'sample message',
+      },
+      defaultValue,
+    },
+  },
+  layout: {
+    fields: ['as2.contentBasedFlowRouter'],
+  },
+});
+
+function As2RoutingDialog({ flowId, isViewMode, resource, open, onClose }) {
   const dispatch = useDispatch();
   const connectionId = resource._connectionId;
   const connection = useSelector(state =>
     selectors.resource(state, 'connections', connectionId)
   );
-  const handleClose = useCallback(
-    (shouldCommit, editor) => {
-      if (!shouldCommit) return onClose();
-
+  const handleSubmit = useCallback(
+    value => {
       const patchSet = [
         {
           op: 'replace',
           path: '/as2/contentBasedFlowRouter',
-          value: { _scriptId: editor.scriptId, function: editor.entryFunction },
+          value: value.contentBasedFlowRouter,
         },
       ];
 
@@ -36,26 +68,28 @@ function As2RoutingDialog({ isViewMode, resource, open, onClose }) {
     connection && connection.as2 && connection.as2.contentBasedFlowRouter
       ? connection.as2.contentBasedFlowRouter
       : {};
+  const fieldMeta = getFormMetadata(flowId, connectionId, value);
 
   return (
-    <JavaScriptEditorDialog
-      open={open}
-      title="AS2 routing rules"
-      id="as2routing"
-      data={JSON.stringify({ data: 'coming soon' }, null, 2)}
-      scriptId={value._scriptId}
-      entryFunction={value.function || 'main'}
-      onClose={handleClose}
-      onCancel={onClose}
-      disabled={isViewMode}
-    />
+    <ModalDialog show={open} onClose={onClose} disabled={isViewMode}>
+      <div>AS2 connection routing rules</div>
+      <LoadResources required resources="scripts">
+        <DynaForm fieldMeta={fieldMeta} disabled={isViewMode}>
+          <DynaSubmit
+            disabled={isViewMode}
+            data-test={`as2routing-${connectionId}`}
+            onClick={handleSubmit}>
+            Save
+          </DynaSubmit>
+          <Button
+            data-test={`cancelAs2routing-${connectionId}`}
+            onClick={onClose}>
+            Cancel
+          </Button>
+        </DynaForm>
+      </LoadResources>
+    </ModalDialog>
   );
-}
-
-function As2Routing(props) {
-  if (!props.open) return null;
-
-  return <As2RoutingDialog {...props} />;
 }
 
 export default {
@@ -64,5 +98,5 @@ export default {
   position: 'left',
   Icon,
   helpText: helpTextMap['fb.pg.exports.as2routing'],
-  Component: As2Routing,
+  Component: As2RoutingDialog,
 };

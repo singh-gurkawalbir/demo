@@ -18,21 +18,13 @@ export default function DynaHook(props) {
   // Fetches different input data for different hook types goes here
   const requestSampleData = useCallback(
     ({ flowId, resourceId, resourceType, stage }) => {
-      if (resourceType === 'exports') {
-        return actions.flowData.requestSampleData(
-          flowId,
-          resourceId,
-          resourceType,
-          stage
-        );
-      }
+      const finalStage = resourceType === 'exports' ? stage : hookStage;
 
-      // For Imports
       return actions.flowData.requestSampleData(
         flowId,
         resourceId,
         resourceType,
-        hookStage
+        finalStage
       );
     },
     [hookStage]
@@ -42,6 +34,10 @@ export default function DynaHook(props) {
     // Show empty JSON incase of out of flow context
     if (!flowId) {
       return {};
+    }
+
+    if (hookStage === 'as2routing') {
+      return { as2: { sample: { data: 'coming soon' } } };
     }
 
     // Post Aggregate Hook is shown default data
@@ -72,7 +68,7 @@ export default function DynaHook(props) {
   );
 
   useEffect(() => {
-    // Samle data is shown incase of flow context
+    // Sample data is shown incase of flow context
     if (!preHookData && flowId && isPreHookDataRequested) {
       dispatch(
         requestSampleData({ flowId, resourceId, resourceType, stage: 'hooks' })
