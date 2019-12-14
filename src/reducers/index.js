@@ -2020,8 +2020,8 @@ export function resourceData(state, resourceType, id, scope) {
     type = 'connectorLicenses';
   }
 
-  if (resourceType.indexOf('/accesstokens') >= 0) {
-    type = 'accesstokens';
+  if (resourceType.indexOf('integrations/') >= 0) {
+    type = resourceType.split('/').pop();
   }
 
   const master = resource(state, type, id);

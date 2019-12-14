@@ -101,6 +101,15 @@ export default function Panel(props) {
     resourceLabel = MODEL_PLURAL_TO_LABEL[resourceType];
   }
 
+  const isMultiStepSaveResource = [
+    'imports',
+    'exports',
+    'connections',
+    'pageGenerator',
+    'pageProcessor',
+  ].includes(resourceType);
+  const submitButtonLabel = isNew && isMultiStepSaveResource ? 'Next' : 'Save';
+
   function lookupProcessorResourceType() {
     if (!stagedProcessor || !stagedProcessor.patch) {
       // TODO: we need a better pattern for logging warnings. We need a common util method
@@ -167,17 +176,19 @@ export default function Panel(props) {
       );
       const resourceId = resourceIdPatch ? resourceIdPatch.value : null;
 
+      if (isMultiStepSaveResource) {
+        if (!resourceId) {
+          return props.history.replace(getEditUrl(id));
+        }
+
+        // Take care of existing resource selection.
+        enqueueSnackbar({
+          message: `${resourceLabel} added`,
+          variant: 'success',
+        });
+      }
       // this is NOT a case where a user selected an existing resource,
       // so move to step 2 of the form...
-      if (!resourceId) {
-        return props.history.replace(getEditUrl(id));
-      }
-
-      // Take care of existing resource selection.
-      enqueueSnackbar({
-        message: `${resourceLabel} added`,
-        variant: 'success',
-      });
 
       dispatch(actions.resource.created(resourceId, id));
       onClose();
@@ -200,17 +211,6 @@ export default function Panel(props) {
     }
   }
 
-  const submitButtonLabel =
-    isNew &&
-    [
-      'imports',
-      'exports',
-      'connections',
-      'pageGenerator',
-      'pageProcessor',
-    ].includes(resourceType)
-      ? 'Next'
-      : 'Save';
   const requiredResources = determineRequiredResources(resourceType);
 
   return (

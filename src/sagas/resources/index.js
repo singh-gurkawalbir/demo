@@ -27,9 +27,9 @@ export function* commitStagedChanges({ resourceType, id, scope }) {
 
   if (!patch) return; // nothing to do.
 
-  if (!isNew && resourceType.indexOf('/accesstokens') >= 0) {
+  if (!isNew && resourceType.indexOf('integrations/') >= 0) {
     // eslint-disable-next-line no-param-reassign
-    resourceType = 'accesstokens';
+    resourceType = resourceType.split('/').pop();
   }
 
   const path = isNew ? `/${resourceType}` : `/${resourceType}/${id}`;
