@@ -10,6 +10,8 @@ import ErrorGridItem from '../../ErrorGridItem';
 import actions from '../../../../actions';
 import * as selectors from '../../../../reducers';
 import CsvGeneratePanel from './Panel';
+import jsonUtil from '../../../../utils/json';
+import csvOptions from '../options';
 
 const useStyles = makeStyles({
   template: {
@@ -31,13 +33,38 @@ export default function CsvGenerateEditor(props) {
   );
   const dispatch = useDispatch();
   const handleInit = useCallback(() => {
-    dispatch(
-      actions.editor.init(editorId, 'csvDataGenerator', {
-        data: props.data,
-        autoEvaluate: true,
-        ...props.rule,
-      })
-    );
+    const options = {
+      data: props.data,
+      autoEvaluate: true,
+      multipleRowsPerRecord: !!(
+        props.rule &&
+        props.rule.keyColumns &&
+        props.rule.keyColumns.length
+      ),
+      ...props.rule,
+    };
+
+    // replacing column Delimiter with column delimiter map key. Ex: ',' replaced with 'comma'
+    if (options.columnDelimiter) {
+      const columnDelimiter = jsonUtil.getObjectKeyFromValue(
+        csvOptions.ColumnDelimiterMap,
+        options.columnDelimiter
+      );
+
+      options.columnDelimiter = columnDelimiter;
+    }
+
+    // replacing row Delimiter with row delimiter map key. Ex: '\n' replaced with 'lf'
+    if (options.rowDelimiter) {
+      const rowDelimiter = jsonUtil.getObjectKeyFromValue(
+        csvOptions.RowDelimiterMap,
+        options.rowDelimiter
+      );
+
+      options.rowDelimiter = rowDelimiter;
+    }
+
+    dispatch(actions.editor.init(editorId, 'csvDataGenerator', options));
   }, [dispatch, editorId, props.data, props.rule]);
   const handleDataChange = data => {
     dispatch(actions.editor.patch(editorId, { data }));
