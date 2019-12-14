@@ -129,7 +129,7 @@ export default function ClonePreview(props) {
             getRoutePath(`/integrations/${integration._id}/flows`)
           );
         } else {
-          props.history.push('/');
+          props.history.push(getRoutePath('dashboard'));
         }
       } else {
         props.history.push(getRoutePath(`/${resourceType}`));
@@ -184,7 +184,8 @@ export default function ClonePreview(props) {
               .filter(
                 i => !!i.sandbox === (preferences.environment === 'sandbox')
               )
-              .map(i => ({ label: i.name, value: i._id })),
+              .map(i => ({ label: i.name, value: i._id }))
+              .concat([{ label: 'Standalone Integration', value: 'none' }]),
           },
         ],
       },
@@ -236,7 +237,8 @@ export default function ClonePreview(props) {
           {
             items: integrations
               .filter(i => !!i.sandbox === (environment === 'sandbox'))
-              .map(i => ({ label: i.name, value: i._id })),
+              .map(i => ({ label: i.name, value: i._id }))
+              .concat([{ label: 'Standalone Integration', value: 'none' }]),
           },
         ];
       }

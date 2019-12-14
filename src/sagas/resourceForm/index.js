@@ -1,4 +1,4 @@
-import { call, put, select, takeEvery } from 'redux-saga/effects';
+import { call, put, select, takeEvery, take, race } from 'redux-saga/effects';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
@@ -245,9 +245,9 @@ export function* submitFormValues({ resourceType, resourceId, values, match }) {
     if (
       integrationIdPatch &&
       integrationIdPatch.value &&
-      resourceType === 'accesstokens'
+      (resourceType === 'accesstokens' || resourceType === 'connections')
     ) {
-      type = `integrations/${integrationIdPatch.value}/accesstokens`;
+      type = `integrations/${integrationIdPatch.value}/${resourceType}`;
     }
 
     if (patch && patch.length) {
@@ -267,6 +267,22 @@ export function* submitFormValues({ resourceType, resourceId, values, match }) {
   yield put(
     actions.resourceForm.submitComplete(resourceType, resourceId, finalValues)
   );
+}
+
+export function* submitResourceForm(params) {
+  const { resourceType, resourceId } = params;
+  const { cancelSave } = yield race({
+    saveForm: call(submitFormValues, params),
+    cancelSave: take(
+      action =>
+        action.type === actionTypes.RESOURCE_FORM.SUBMIT_ABORTED &&
+        action.resourceType === resourceType &&
+        action.resourceId === resourceId
+    ),
+  });
+
+  // perform submit cleanup
+  if (cancelSave) yield put(actions.resource.clearStaged(resourceId));
 }
 
 export function* saveResourceWithDefinitionID({ formValues, definitionId }) {
@@ -431,6 +447,6 @@ export const resourceFormSagas = [
   takeEvery(actionTypes.RESOURCE.INIT_CUSTOM_FORM, initCustomForm),
   takeEvery(actionTypes.RESOURCE.PATCH_FORM_FIELD, patchFormField),
   takeEvery(actionTypes.RESOURCE_FORM.INIT, initFormValues),
-  takeEvery(actionTypes.RESOURCE_FORM.SUBMIT, submitFormValues),
+  takeEvery(actionTypes.RESOURCE_FORM.SUBMIT, submitResourceForm),
   ...connectionSagas,
 ];

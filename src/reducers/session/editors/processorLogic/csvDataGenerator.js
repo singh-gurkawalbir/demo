@@ -1,9 +1,10 @@
 import util from '../../../../utils/json';
+import csvOptions from '../../../../components/AFE/CsvConfigEditor/options';
 
 const requestBody = editor => ({
   rules: {
-    columnDelimiter: editor.columnDelimiter,
-    rowDelimiter: editor.rowDelimiter,
+    columnDelimiter: csvOptions.ColumnDelimiterMap[editor.columnDelimiter],
+    rowDelimiter: csvOptions.RowDelimiterMap[editor.rowDelimiter],
     hasHeaderRow: editor.hasHeaderRow,
     trimSpaces: editor.trimSpaces,
     includeHeader: editor.includeHeader,

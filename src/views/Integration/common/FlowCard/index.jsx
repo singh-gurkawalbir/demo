@@ -1,5 +1,6 @@
 import clsx from 'clsx';
 import { useCallback, useState } from 'react';
+import cronstrue from 'cronstrue';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useHistory } from 'react-router-dom';
 import TimeAgo from 'react-timeago';
@@ -161,6 +162,11 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
   // the various cases.. realtime, scheduled, cron, not scheduled, etc...
   function getRunLabel() {
     if (flowDetails.isRealtime) return `Realtime`;
+
+    if (flowDetails.schedule)
+      return `Runs ${cronstrue.toString(
+        flowDetails.schedule.replace(/^\?/g, '0')
+      )}`;
 
     if (flowDetails.isSimpleExport) return 'Never runs';
 

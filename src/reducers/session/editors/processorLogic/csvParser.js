@@ -1,6 +1,8 @@
+import csvOptions from '../../../../components/AFE/CsvConfigEditor/options';
+
 const requestBody = editor => {
   const rules = {
-    columnDelimiter: editor.columnDelimiter,
+    columnDelimiter: csvOptions.ColumnDelimiterMap[editor.columnDelimiter],
     hasHeaderRow: editor.hasHeaderRow,
 
     trimSpaces: editor.trimSpaces,
@@ -19,22 +21,6 @@ const requestBody = editor => {
     data: editor.data,
   };
 };
-// commenting it due to complexity of converting value to map label during editor init and getting map value again during save. To be checked later
-// TODO Aditya (review )
-// const rowDelimiterMap = {
-//   cr: '\r',
-//   lf: '\n',
-//   crlf: '\r\n',
-// };
-// const columnDelimiterMap = {
-//   ',': ',',
-//   '|': '|',
-//   '': ';',
-//   // space
-//   ' ': ' ',
-//   // Tab
-//   '\t': '\t',
-// };
 
 const validate = editor => ({
   dataError:

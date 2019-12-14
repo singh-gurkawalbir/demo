@@ -103,6 +103,10 @@ export default function InputWithLookupHandlebars(props) {
     value,
     connectionType,
     connectionId,
+    resourceId,
+    resourceType,
+    resourceName,
+    flowId,
     extractFields = [],
   } = props;
   const classes = useStyles();
@@ -210,6 +214,10 @@ export default function InputWithLookupHandlebars(props) {
     isSQLLookup: isSqlImport,
     sampleData,
     connectionId,
+    resourceId,
+    resourceType,
+    flowId,
+    resourceName,
   };
   const suggestions = getSuggestions(
     lookups,

@@ -11,7 +11,7 @@ import {
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import UserForm from './UserForm';
-import { COMM_STATES } from '../../reducers/comms';
+import { COMM_STATES } from '../../reducers/comms/networkComms';
 import CommStatus from '../CommStatus';
 
 const mapDispatchToProps = dispatch => ({

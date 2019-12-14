@@ -7,6 +7,7 @@ export default function SqlQueryBuilderEditor(props) {
     disabled,
     lookups = [],
     layout = 'compact',
+    ruleTitle,
     sampleData,
     defaultData,
     showDefaultData = true,
@@ -27,7 +28,7 @@ export default function SqlQueryBuilderEditor(props) {
       ruleMode="handlebars"
       dataMode="json"
       resultMode="text"
-      ruleTitle="Template"
+      ruleTitle={ruleTitle || 'Template'}
       resultTitle="Preview"
       showDefaultData={showDefaultData}
     />

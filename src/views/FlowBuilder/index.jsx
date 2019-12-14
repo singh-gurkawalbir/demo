@@ -27,6 +27,7 @@ import SwitchOnOff from '../../components/OnOff';
 import { generateNewId } from '../../utils/resource';
 import { isConnector } from '../../utils/flows';
 import FlowEllipsisMenu from '../../components/FlowEllipsisMenu';
+import FlowStartDateDialog from '../../components/DeltaFlowStartDate/Dialog';
 
 // #region FLOW SCHEMA: FOR REFERENCE DELETE ONCE FB IS COMPLETE
 /* 
@@ -211,6 +212,7 @@ function FlowBuilder() {
   const classes = useStyles();
   const theme = useTheme();
   const dispatch = useDispatch();
+  const [showDilaog, setShowDilaog] = useState(false);
   // Bottom drawer is shown for existing flows and docked for new flow
   const [size, setSize] = useState(isNewFlow ? 0 : 1);
   const [tabValue, setTabValue] = useState(0);
@@ -355,13 +357,32 @@ function FlowBuilder() {
     patchFlow('/name', title);
   }
 
+  const handleRunDeltaFlow = useCallback(
+    customStartDate => {
+      dispatch(actions.flow.run({ flowId, customStartDate }));
+    },
+    [dispatch, flowId]
+  );
   const handleFlowRun = useCallback(() => {
-    dispatch(actions.flow.run({ flowId }));
+    if (
+      flow.isDeltaFlow &&
+      (!flow._connectorId || !!flow.showStartDateDialog)
+    ) {
+      setShowDilaog('true');
+    } else {
+      handleRunDeltaFlow();
+    }
+
     // Highlights Run Dashboard in the bottom drawer
     setTabValue(1);
     // Raises Bottom Drawer size
     setSize(2);
-  }, [dispatch, flowId]);
+  }, [
+    flow._connectorId,
+    flow.isDeltaFlow,
+    flow.showStartDateDialog,
+    handleRunDeltaFlow,
+  ]);
   // #region New Flow Creation logic
   const rewriteUrl = id => {
     const parts = match.url.split('/');
@@ -418,9 +439,19 @@ function FlowBuilder() {
 
   // eslint-disable-next-line
   // console.log('render: <FlowBuilder>');
+  const closeDeltaDialog = () => {
+    setShowDilaog(false);
+  };
 
   return (
     <LoadResources required resources="flows, imports, exports">
+      {showDilaog && flow.isDeltaFlow && (
+        <FlowStartDateDialog
+          flowId={flow._id}
+          onClose={closeDeltaDialog}
+          runDeltaFlow={handleRunDeltaFlow}
+        />
+      )}
       <ResourceDrawer
         flowId={flowId}
         disabled={isViewMode}
