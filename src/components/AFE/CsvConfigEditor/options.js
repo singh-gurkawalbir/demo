@@ -2,7 +2,7 @@ export default {
   ColumnDelimiterMap: {
     comma: ',',
     pipe: '|',
-    semicolon: '|',
+    semicolon: ';',
     space: ' ',
     tab: '\t',
   },
