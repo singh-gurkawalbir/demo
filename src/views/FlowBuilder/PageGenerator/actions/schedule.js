@@ -11,11 +11,12 @@ function ScheduleDialog({
   resource,
   open,
   onClose,
-  pg,
+  schedule,
   index,
 }) {
   const resourceId = resource._id;
   const flow = useSelector(state => selectors.resource(state, 'flows', flowId));
+  const pg = { _exportId: resourceId, schedule };
 
   return (
     <ModalDialog
