@@ -13,6 +13,7 @@ function SqlQueryBuilderEditorDialog(props) {
     rule,
     lookups = [],
     sampleData,
+    ruleTitle,
     defaultData,
     disabled,
     showDefaultData,
@@ -27,6 +28,7 @@ function SqlQueryBuilderEditorDialog(props) {
         sampleData={sampleData}
         defaultData={defaultData}
         rule={rule}
+        ruleTitle={ruleTitle}
         editorId={id}
         showDefaultData={showDefaultData}
       />
