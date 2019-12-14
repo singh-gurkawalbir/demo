@@ -2,7 +2,7 @@ import applications, {
   getWebhookConnectors,
   getWebhookOnlyConnectors,
 } from '../../../constants/applications';
-import { appTypeToAdaptorType, isNewId } from '../../../utils/resource';
+import { appTypeToAdaptorType } from '../../../utils/resource';
 
 const visibleWhenIsNew = { field: 'isNew', is: ['true'] };
 
@@ -42,17 +42,6 @@ export default {
         newValues['/assistant'] = app.assistant;
       }
     }
-
-    if (app.type === 'netsuite') {
-      if (newValues['/outputMode'] === 'records') {
-        newValues['/netsuite/type'] =
-          executionType === 'scheduled' ? apiType : executionType;
-      } else {
-        newValues['/netsuite/type'] = 'blob';
-      }
-    }
-
-    // console.log(app, newValues);
 
     return newValues;
   },
@@ -163,72 +152,6 @@ export default {
       defaultValue: '',
       visibleWhenAll: [visibleWhenIsNew, { field: 'application', isNot: [''] }],
     },
-    outputMode: {
-      id: 'outputMode',
-      type: 'mode',
-      visibleWhenAll: [
-        visibleWhenIsNew,
-        { field: 'application', is: ['netsuite'] },
-      ],
-      label: 'Output Mode',
-      options: [
-        {
-          items: [
-            { label: 'Records', value: 'records' },
-            { label: 'Blob Keys', value: 'blob' },
-          ],
-        },
-      ],
-      defaultDisabled: r => {
-        const isNew = isNewId(r._id);
-
-        if (!isNew) return true;
-
-        return false;
-      },
-      defaultValue: r =>
-        r && r.netsuite && r.netsuite.internalId ? 'blob' : 'records',
-    },
-    netsuiteExecutionType: {
-      id: 'netsuite.execution.type',
-      name: 'executionType',
-      type: 'radiogroup',
-      label: 'Execution Type',
-      required: true,
-      options: [
-        {
-          items: [
-            { label: 'Real-time', value: 'distributed' },
-            { label: 'Scheduled', value: 'scheduled' },
-          ],
-        },
-      ],
-      visibleWhenAll: [
-        visibleWhenIsNew,
-        { field: 'application', is: ['netsuite'] },
-        { field: 'outputMode', is: ['records'] },
-      ],
-    },
-    netsuiteApiType: {
-      id: 'netsuite.api.type',
-      name: 'apiType',
-      type: 'radiogroup',
-      label: 'API Type',
-      required: true,
-      options: [
-        {
-          items: [
-            { label: 'RESTlet (Recommended)', value: 'restlet' },
-            { label: 'Web Services', value: 'search' },
-          ],
-        },
-      ],
-      visibleWhenAll: [
-        visibleWhenIsNew,
-        { field: 'netsuite.execution.type', is: ['scheduled'] },
-        { field: 'outputMode', is: ['records'] },
-      ],
-    },
   },
   layout: {
     fields: [
@@ -239,9 +162,6 @@ export default {
       'connection',
       'name',
       'description',
-      'outputMode',
-      'netsuiteExecutionType',
-      'netsuiteApiType',
     ],
   },
 

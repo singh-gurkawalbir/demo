@@ -419,7 +419,7 @@ export default {
   'delta.lagOffset': {
     type: 'text',
     label: 'Offset',
-    visibleWhen: [{ field: 'type', is: ['delta'] }],
+    visibleWhenAll: [{ field: 'type', is: ['delta'] }],
   },
   'delta.endDateField': {
     type: 'text',
