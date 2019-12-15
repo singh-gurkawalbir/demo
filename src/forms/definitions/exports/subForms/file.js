@@ -98,6 +98,7 @@ export default {
         'file.fileDefinition.resourcePath',
         'file.type',
       ],
+      required: true,
     },
     'file.fileDefinition.resourcePath': {
       fieldId: 'file.fileDefinition.resourcePath',

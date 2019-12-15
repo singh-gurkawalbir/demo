@@ -76,6 +76,7 @@ export default {
         'edifact.format',
         'file.type',
       ],
+      required: true,
     },
   },
   layout: {
