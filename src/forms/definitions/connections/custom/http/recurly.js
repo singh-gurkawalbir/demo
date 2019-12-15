@@ -8,12 +8,12 @@ export default {
     '/http/ping/relativeURI': '/v2/accounts',
     '/http/auth/basic/password': '',
     '/http/ping/method': 'GET',
-    '/http/baseURI': `https://${formValues['/recurly/subdomain']}.recurly.com`,
+    '/http/baseURI': `https://${formValues['/recurlySubdomain']}.recurly.com`,
   }),
   fieldMap: {
     name: { fieldId: 'name' },
-    'recurly.subdomain': {
-      fieldId: 'recurly.subdomain',
+    recurlySubdomain: {
+      id: 'recurlySubdomain',
       type: 'text',
       startAdornment: 'https://',
       endAdornment: '.recurly.com',
@@ -49,7 +49,7 @@ export default {
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: ['name', 'recurly.subdomain', 'http.auth.basic.username'],
+    fields: ['name', 'recurlySubdomain', 'http.auth.basic.username'],
     type: 'collapse',
     containers: [
       { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },

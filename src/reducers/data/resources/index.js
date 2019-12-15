@@ -23,6 +23,7 @@ function replaceOrInsertResource(state, resourceType, resourceValue) {
     type = 'connectorLicenses';
   }
 
+  // For accesstokens and connections within an integration
   if (type.indexOf('integrations/') >= 0) {
     type = type.split('/').pop();
   }

@@ -2020,6 +2020,7 @@ export function resourceData(state, resourceType, id, scope) {
     type = 'connectorLicenses';
   }
 
+  // For accesstokens and connections within an integration
   if (resourceType.indexOf('integrations/') >= 0) {
     type = resourceType.split('/').pop();
   }
