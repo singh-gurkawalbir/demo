@@ -178,6 +178,10 @@ export default function DynaRelativeURIWithLookup(props) {
         connectionId={connectionId}
         value={extactedVal}
         connectionType={connection.type}
+        resourceId={resourceId}
+        resourceName={resourceName}
+        resourceType={resourceType}
+        flowId={flowId}
       />
     </Fragment>
   );

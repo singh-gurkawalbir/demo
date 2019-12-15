@@ -245,9 +245,9 @@ export function* submitFormValues({ resourceType, resourceId, values, match }) {
     if (
       integrationIdPatch &&
       integrationIdPatch.value &&
-      resourceType === 'accesstokens'
+      (resourceType === 'accesstokens' || resourceType === 'connections')
     ) {
-      type = `integrations/${integrationIdPatch.value}/accesstokens`;
+      type = `integrations/${integrationIdPatch.value}/${resourceType}`;
     }
 
     if (patch && patch.length) {

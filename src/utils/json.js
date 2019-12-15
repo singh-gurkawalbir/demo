@@ -85,4 +85,6 @@ export default {
       (result, key) => ({ ...result, [`/${key}`]: values[key] }),
       {}
     ),
+  getObjectKeyFromValue: (obj = {}, value) =>
+    Object.keys(obj)[Object.values(obj).indexOf(value)],
 };

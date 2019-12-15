@@ -2,15 +2,25 @@ import {
   getSupportedHooksForResource,
   hooksLabelMap,
   getHookType,
+  isStacksSupportedForResource,
 } from '../../utils/hooks';
 
 const exportHooksMetadata = ({
   defaultValue = {},
   flowId,
+  isStacksSupported,
   resourceId,
   resourceType,
 }) => {
   const defaultHookType = getHookType(defaultValue);
+  const hookTypes = [{ label: 'Script', value: 'script' }];
+  const layoutFields = ['hookType', 'preSavePage.script'];
+
+  // Stack options are not shown for blob exports
+  if (isStacksSupported) {
+    hookTypes.push({ label: 'Stack', value: 'stack' });
+    layoutFields.push('preSavePage.stack');
+  }
 
   return {
     fieldMap: {
@@ -23,10 +33,7 @@ const exportHooksMetadata = ({
         fullWidth: true,
         options: [
           {
-            items: [
-              { label: 'Script', value: 'script' },
-              { label: 'Stack', value: 'stack' },
-            ],
+            items: hookTypes,
           },
         ],
       },
@@ -55,7 +62,7 @@ const exportHooksMetadata = ({
       },
     },
     layout: {
-      fields: ['hookType', 'preSavePage.script', 'preSavePage.stack'],
+      fields: layoutFields,
     },
   };
 };
@@ -66,9 +73,16 @@ const importHooksMetadata = ({
   resourceType,
   defaultValue,
   resource,
+  isStacksSupported,
 }) => {
   const hooks = getSupportedHooksForResource(resource);
   const defaultHookType = getHookType(defaultValue);
+  const hookTypes = [{ label: 'Script', value: 'script' }];
+
+  if (isStacksSupported) {
+    hookTypes.push({ label: 'Stack', value: 'stack' });
+  }
+
   const fieldMap = {
     hookType: {
       id: 'hookType',
@@ -79,10 +93,7 @@ const importHooksMetadata = ({
       fullWidth: true,
       options: [
         {
-          items: [
-            { label: 'Script', value: 'script' },
-            { label: 'Stack', value: 'stack' },
-          ],
+          items: hookTypes,
         },
       ],
     },
@@ -106,16 +117,21 @@ const importHooksMetadata = ({
       defaultValue: defaultHookType === 'script' ? defaultValue[hook] : {},
       visibleWhen: [{ field: 'hookType', is: ['script'] }],
     };
-    fieldMap[stackId] = {
-      id: stackId,
-      name: `stack-${hook}`,
-      label: hooksLabelMap[hook],
-      type: 'hook',
-      hookType: 'stack',
-      defaultValue: defaultHookType === 'stack' ? defaultValue[hook] : {},
-      visibleWhen: [{ field: 'hookType', is: ['stack'] }],
-    };
-    layout.fields.push(scriptId, stackId);
+
+    if (isStacksSupported) {
+      fieldMap[stackId] = {
+        id: stackId,
+        name: `stack-${hook}`,
+        label: hooksLabelMap[hook],
+        type: 'hook',
+        hookType: 'stack',
+        defaultValue: defaultHookType === 'stack' ? defaultValue[hook] : {},
+        visibleWhen: [{ field: 'hookType', is: ['stack'] }],
+      };
+      layout.fields.push(scriptId, stackId);
+    } else {
+      layout.fields.push(scriptId);
+    }
   });
 
   return { fieldMap, layout };
@@ -126,7 +142,17 @@ export default function getHooksMetadata(
   resource,
   defaultValues
 ) {
+  const isStacksSupported = isStacksSupportedForResource(
+    resource,
+    resourceType
+  );
+
   return resourceType === 'exports'
-    ? exportHooksMetadata({ ...defaultValues, resourceType })
-    : importHooksMetadata({ ...defaultValues, resourceType, resource });
+    ? exportHooksMetadata({ ...defaultValues, resourceType, isStacksSupported })
+    : importHooksMetadata({
+        ...defaultValues,
+        resourceType,
+        resource,
+        isStacksSupported,
+      });
 }

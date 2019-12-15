@@ -1,5 +1,6 @@
 import dateTimezones from '../../../../../utils/dateTimezones';
 import mappingUtil from '../../../../../utils/mapping';
+import dateFormats from '../../../../../utils/dateFormats';
 
 export default {
   getMetaData: (params = {}) => {
@@ -307,9 +308,14 @@ export default {
         extractDateFormat: {
           id: 'extractDateFormat',
           name: 'extractDateFormat',
-          type: 'text',
+          type: 'autosuggest',
           label: 'Export Date Format',
           placeholder: '',
+          options: {
+            suggestions: dateFormats,
+          },
+          labelName: 'name',
+          valueName: 'value',
           defaultValue: value.extractDateFormat,
           visibleWhenAll: [
             { field: 'dataType', is: ['date'] },
@@ -341,10 +347,15 @@ export default {
         generateDateFormat: {
           id: 'generateDateFormat',
           name: 'generateDateFormat',
-          type: 'text',
+          type: 'autosuggest',
           defaultValue: value.generateDateFormat,
           label: 'Import Date Format',
           placeholder: '',
+          options: {
+            suggestions: dateFormats,
+          },
+          labelName: 'name',
+          valueName: 'value',
           visibleWhenAll: [
             { field: 'dataType', is: ['date'] },
             { field: 'fieldMappingType', is: ['standard'] },
