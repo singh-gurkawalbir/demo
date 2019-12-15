@@ -96,6 +96,8 @@ const PageGenerator = ({
       ];
 
       dispatch(actions.resource.patchStaged(flowId, patchSet, 'value'));
+      dispatch(actions.resource.commitStaged('flows', flowId, 'value'));
+      dispatch(actions.flowData.updateFlow(flowId));
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -145,7 +147,7 @@ const PageGenerator = ({
     }
 
     const to = pending
-      ? `${match.url}/add/exports/${newId}`
+      ? `${match.url}/add/pageGenerator/${newId}`
       : `${match.url}/edit/exports/${pg._exportId}`;
 
     if (match.isExact) {

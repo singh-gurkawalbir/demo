@@ -103,6 +103,8 @@ const PageProcessor = ({
 
       // console.log(pp, patchSet);
       dispatch(actions.resource.patchStaged(flowId, patchSet, 'value'));
+      dispatch(actions.resource.commitStaged('flows', flowId, 'value'));
+      dispatch(actions.flowData.updateFlow(flowId));
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
