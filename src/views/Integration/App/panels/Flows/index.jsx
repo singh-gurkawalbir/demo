@@ -95,7 +95,13 @@ function FlowList({ integrationId, storeId }) {
           key={f._id}
           storeId={storeId}
           flowId={f._id}
-          excludeActions={['detach', 'clone', 'delete']}
+          excludeActions={[
+            'detach',
+            'clone',
+            'delete',
+            'references',
+            'download',
+          ]}
         />
       ))}
     </LoadResources>
