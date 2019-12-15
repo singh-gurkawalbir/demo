@@ -36,8 +36,14 @@ export default {
       ).toISOString();
     }
 
-    if (accessTokenData['/fullAccess'] === 'true' && !resource._integrationId) {
-      accessTokenData['/fullAccess'] = true;
+    if (accessTokenData['/fullAccess'] === 'true') {
+      accessTokenData['/_connectionIds'] = [];
+      accessTokenData['/_exportIds'] = [];
+      accessTokenData['/_importIds'] = [];
+
+      if (!resource._integrationId) {
+        accessTokenData['/fullAccess'] = true;
+      }
     } else {
       accessTokenData['/fullAccess'] = false;
     }

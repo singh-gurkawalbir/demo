@@ -60,7 +60,15 @@ export default {
   fullAccess: {
     type: 'radiogroup',
     label: 'Scope',
-    defaultValue: r => (r.fullAccess ? 'true' : 'false'),
+    defaultValue: r =>
+      r.fullAccess ||
+      (r._connectorId &&
+        r.autoPurgeAt &&
+        !r._connectionIds.length &&
+        !r._exportIds.length &&
+        !r._importIds.length)
+        ? 'true'
+        : 'false',
     options: [
       {
         items: [

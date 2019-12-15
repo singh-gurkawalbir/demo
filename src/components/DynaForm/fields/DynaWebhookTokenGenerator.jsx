@@ -63,7 +63,11 @@ function DynaWebhookTokenGenerator(props) {
   };
 
   useEffect(() => {
-    if (finalResourceId) {
+    value && setToken(value);
+  }, [value]);
+
+  useEffect(() => {
+    if (finalResourceId && token) {
       const patchSet = [
         {
           op: 'replace',
