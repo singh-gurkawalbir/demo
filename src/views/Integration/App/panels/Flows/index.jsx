@@ -63,7 +63,7 @@ function FlowList({ integrationId, storeId }) {
   // console.log('render: <Flow Settings>');
 
   return (
-    <LoadResources required resources="flows">
+    <LoadResources required resources="flows,exports">
       <ConfigureDrawer
         integrationId={integrationId}
         storeId={storeId}
