@@ -359,7 +359,6 @@ export const getPathSegments = path => {
 };
 
 export const extractSampleDataAtResourcePath = (sampleData, resourcePath) => {
-  // TODO @Raghu: Add support for * as resourcePath incase of array sample data 
   if (!sampleData) return { value: null };
 
   if (!resourcePath) return sampleData;
@@ -381,13 +380,15 @@ export const extractSampleDataAtResourcePath = (sampleData, resourcePath) => {
  */
 export const processJsonSampleData = (sampleData, options = {}) => {
   if (!sampleData) return sampleData;
+  const { resourcePath } = options;
   let processedSampleData = sampleData;
 
   if (Array.isArray(sampleData)) {
     processedSampleData = getUnionObject(sampleData);
   }
 
-  if (options.resourcePath) {
+  // Handle resource paths other than * as '*' indicates extracting the very next element inside array the way we did above
+  if (resourcePath && resourcePath !== '*') {
     // Extract sample data at resource
     // check for array type if yes update with union thing
     processedSampleData = extractSampleDataAtResourcePath(
