@@ -523,7 +523,7 @@ export function getImportOperationDetails({
 
 export function convertFromExport({ exportDoc, assistantData, adaptorType }) {
   let { version, resource, operation } = exportDoc.assistantMetadata || {};
-  const { exportType } = exportDoc.assistantMetadata || {};
+  const { exportType, dontConvert } = exportDoc.assistantMetadata || {};
   const assistantMetadata = {
     pathParams: {},
     queryParams: {},
@@ -531,11 +531,11 @@ export function convertFromExport({ exportDoc, assistantData, adaptorType }) {
     exportType,
   };
 
-  if (!assistantMetadata.exportType && exportDoc) {
+  if (!dontConvert && !assistantMetadata.exportType && exportDoc) {
     assistantMetadata.exportType = exportDoc.type;
   }
 
-  if (!resource || !operation) {
+  if (!dontConvert && (!resource || !operation)) {
     if (
       exportDoc &&
       exportDoc[adaptorType] &&
@@ -1201,6 +1201,7 @@ export function updateFormValues({
 export function convertFromImport({ importDoc, assistantData, adaptorType }) {
   let { version, resource, operation, lookupType } =
     importDoc.assistantMetadata || {};
+  const { dontConvert } = importDoc.assistantMetadata || {};
   let sampleData;
   let { ignoreExisting, ignoreMissing } = importDoc;
 
@@ -1225,7 +1226,7 @@ export function convertFromImport({ importDoc, assistantData, adaptorType }) {
   };
   const importURLs = [];
 
-  if (!resource || !operation) {
+  if (!dontConvert && (!resource || !operation)) {
     if (
       importDoc &&
       importDoc[adaptorType] &&
@@ -1331,7 +1332,8 @@ export function convertFromImport({ importDoc, assistantData, adaptorType }) {
           if (p.isIdentifier) {
             pathParams[p.id] = url1Info.urlParts[index]
               .replace(/{/g, '')
-              .replace(/}/g, '');
+              .replace(/}/g, '')
+              .replace('data.0.', '');
           } else {
             pathParams[p.id] = url1Info.urlParts[index];
           }
@@ -1339,7 +1341,8 @@ export function convertFromImport({ importDoc, assistantData, adaptorType }) {
           if (p.isIdentifier) {
             pathParams[p.id] = url2Info.urlParts[index]
               .replace(/{/g, '')
-              .replace(/}/g, '');
+              .replace(/}/g, '')
+              .replace('data.0.', '');
           } else {
             pathParams[p.id] = url2Info.urlParts[index];
           }
@@ -1376,7 +1379,8 @@ export function convertFromImport({ importDoc, assistantData, adaptorType }) {
           if (importAdaptorSubSchema.ignoreExtract) {
             pathParams[p.id] = importAdaptorSubSchema.ignoreExtract
               .replace(/{/g, '')
-              .replace(/}/g, '');
+              .replace(/}/g, '')
+              .replace('data.0.', '');
           } else if (importAdaptorSubSchema.ignoreLookupName) {
             pathParams[p.id] = importAdaptorSubSchema.ignoreLookupName;
           }
