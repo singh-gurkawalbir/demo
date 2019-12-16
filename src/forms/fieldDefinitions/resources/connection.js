@@ -1,3 +1,5 @@
+import { URI_VALIDATION_PATTERN } from '../../../utils/constants';
+
 export default {
   // #region common
   // TODO: develop code for this two components
@@ -1347,6 +1349,12 @@ export default {
     type: 'text',
     label: "Partner's AS2 URL:",
     required: true,
+    validWhen: {
+      matchesRegEx: {
+        pattern: URI_VALIDATION_PATTERN,
+        message: 'Please enter a valid URI.',
+      },
+    },
   },
   'as2.partnerStationInfo.mdn.mdnURL': {
     type: 'text',
