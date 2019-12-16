@@ -1,10 +1,12 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Button, Card, CardActions, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import PanelHeader from '../../../common/PanelHeader';
+import { LICENSE_UPGRADE_REQUEST_RECEIVED } from '../../../../../utils/messageStore';
 import * as selectors from '../../../../../reducers';
 import actions from '../../../../../actions';
+import ModalDialog from '../../../../../components/ModalDialog';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -71,6 +73,7 @@ export default function AddOnsPanel({ integrationId }) {
   // along with the code in the ../App/index file. The addon state should
   // contain a status indicating the progress of API request to retrieve addon
   // details.
+  const [showMessage, setShowMessage] = useState(false);
   const addOnState = useSelector(state =>
     selectors.integrationAppAddOnState(state, integrationId)
   );
@@ -84,6 +87,10 @@ export default function AddOnsPanel({ integrationId }) {
 
     return license ? license._id : null;
   });
+  const onClose = () => {
+    setShowMessage(false);
+  };
+
   const handleContactSales = useCallback(
     addOnName => {
       // TODO: what kind of crazy logic is going on here?
@@ -98,6 +105,7 @@ export default function AddOnsPanel({ integrationId }) {
           licenseId,
         })
       );
+      setShowMessage(true);
     },
     [dispatch, integration, licenseId]
   );
@@ -126,6 +134,12 @@ export default function AddOnsPanel({ integrationId }) {
             </Card>
           ))}
       </div>
+      {showMessage && (
+        <ModalDialog show onClose={onClose}>
+          <div>License Upgrade Request</div>
+          <div>{LICENSE_UPGRADE_REQUEST_RECEIVED}</div>
+        </ModalDialog>
+      )}
     </div>
   );
 }
