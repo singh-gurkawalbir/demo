@@ -27,7 +27,6 @@ const LOOKUP_ACTION = {
   LOOKUP_ADD: 'LOOKUP_ADD',
   LOOKUP_SELECT: 'LOOKUP_SELECT',
 };
-const prefixRegexp = '.*{{((?!(}|{)).)*$';
 const getSuggestions = (
   lookups = [],
   extractFields = [],
@@ -76,7 +75,7 @@ const getSuggestions = (
     suggestions.push({
       label: field.name,
       type: 'extract',
-      value: field.id,
+      value: field.id.indexOf(' ') > -1 ? `[${field.id}]` : field.id,
     });
   });
 
@@ -101,19 +100,22 @@ export default function InputWithLookupHandlebars(props) {
     lookups,
     required,
     value,
-    connectionType,
     connectionId,
     resourceId,
     resourceType,
     resourceName,
     flowId,
+    getUpdatedFieldValue,
     extractFields = [],
+    prefixRegexp = '',
+    getMatchedValueforSuggestion,
   } = props;
   const classes = useStyles();
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [state, setState] = useState({
     cursorPosition: 0,
     userInput: value || '',
+    isFocus: false,
     filteredSuggestions: [],
   });
   const { userInput, cursorPosition, filteredSuggestions } = state;
@@ -123,40 +125,12 @@ export default function InputWithLookupHandlebars(props) {
   }, [state, userInput, value]);
 
   const handleSuggestionClick = (_val, isLookup) => {
-    const tmpStr = userInput.substring(0, cursorPosition);
-    const lastIndexOfBracesBeforeCursor = tmpStr.lastIndexOf('{');
-    let handlebarExp = '';
-
-    if (isLookup && connectionType === 'http') {
-      handlebarExp = `{lookup "${_val}" this}`;
-    } else {
-      handlebarExp = `{${_val}}`;
-    }
-
-    const closeBraceIndexAfterCursor = value.indexOf(
-      '}',
-      lastIndexOfBracesBeforeCursor + 1
+    const newValue = getUpdatedFieldValue(
+      userInput,
+      cursorPosition,
+      _val,
+      isLookup
     );
-    const openBraceIndexAfterCursor = value.indexOf(
-      '{',
-      lastIndexOfBracesBeforeCursor + 1
-    );
-    let newValue = '';
-    const preText = `${value.substring(0, lastIndexOfBracesBeforeCursor + 1)}`;
-
-    if (
-      closeBraceIndexAfterCursor === -1 ||
-      (openBraceIndexAfterCursor !== -1 &&
-        openBraceIndexAfterCursor < closeBraceIndexAfterCursor)
-    ) {
-      const postText = `${value.substring(lastIndexOfBracesBeforeCursor + 1)}`;
-
-      newValue = `${preText}${handlebarExp}}}${postText}`;
-    } else {
-      const postText = `${value.substring(closeBraceIndexAfterCursor)}`;
-
-      newValue = `${preText}${handlebarExp}${postText}`;
-    }
 
     setState({ ...state, userInput: newValue });
     setShowSuggestions(false);
@@ -227,21 +201,19 @@ export default function InputWithLookupHandlebars(props) {
   );
   const handleSuggestions = e => {
     const pointerIndex = e.target.selectionStart;
-    const _showSuggestion = !!(
-      e.target.value &&
-      e.target.value.substring(0, pointerIndex).match(prefixRegexp)
-    );
+    const _val = e.target.value;
+    const _showSuggestion = !!_val
+      .substring(0, pointerIndex)
+      .match(prefixRegexp);
     let _filteredSuggestions = [];
 
     if (_showSuggestion) {
-      const inpValue = e.target.value.substring(0, pointerIndex);
-      const startIndexOfBraces = inpValue.lastIndexOf('{{');
-      const inpValue2 = inpValue.substring(startIndexOfBraces + 2);
+      const matchedVal = getMatchedValueforSuggestion(_val, pointerIndex);
 
       _filteredSuggestions = suggestions.filter(
         suggestion =>
           suggestion.fixed ||
-          suggestion.label.toLowerCase().indexOf(inpValue2.toLowerCase()) > -1
+          suggestion.label.toLowerCase().indexOf(matchedVal.toLowerCase()) > -1
       );
       setState({
         ...state,
@@ -257,7 +229,7 @@ export default function InputWithLookupHandlebars(props) {
 
   let suggestionsListComponent;
 
-  if (showSuggestions && userInput && filteredSuggestions.length) {
+  if (showSuggestions && filteredSuggestions.length) {
     suggestionsListComponent = (
       <ul className={classes.suggestions}>
         {filteredSuggestions.map(suggestion => {

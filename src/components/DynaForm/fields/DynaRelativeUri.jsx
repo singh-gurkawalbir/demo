@@ -19,7 +19,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-// TODO(Aditya): remove this component and use DynaRelativeURIWithLookup after refractor
+// TODO(Aditya): remove this component and use DynaTextWithLookupExtract/RelativeURI after refractor
 export default function DynaRelativeUri(props) {
   const [showEditor, setShowEditor] = useState(false);
   const classes = useStyles();
