@@ -17,7 +17,7 @@ import { apiCallWithRetry } from '../index';
 import * as selectors from '../../reducers';
 import getRequestOptions from '../../utils/requestOptions';
 import openExternalUrl from '../../utils/window';
-import { JOB_TYPES } from '../../utils/constants';
+import { JOB_TYPES, STANDALONE_INTEGRATION } from '../../utils/constants';
 
 export function* getJobFamily({ jobId, type }) {
   const requestOptions = getRequestOptions(
@@ -93,15 +93,33 @@ export function* requestJobCollection({ integrationId, flowId, filters = {} }) {
     jobFilters.flowId = flowId;
   }
 
-  if (!jobFilters.flowId && jobFilters.storeId) {
-    const { flows } = yield select(
-      selectors.integrationAppFlowSettings,
-      integrationId,
-      null,
-      jobFilters.storeId
-    );
+  if (!jobFilters.flowId) {
+    if (jobFilters.storeId) {
+      const { flows } = yield select(
+        selectors.integrationAppFlowIds,
+        integrationId,
+        jobFilters.storeId
+      );
 
-    jobFilters.flowIds = map(flows, '_id');
+      jobFilters.flowIds = flows;
+    } else if (integrationId === STANDALONE_INTEGRATION.id) {
+      /**
+       * For Standalone integration, we need to send the list of flow ids filtered by environment.
+       * Otherwise, backend returns jobs from both production & sandbox environments.
+       */
+      const { resources = [] } = yield select(selectors.resourceList, {
+        type: 'flows',
+        filter: {
+          $where() {
+            return !this._integrationId;
+          },
+        },
+      });
+
+      if (resources.length > 0) {
+        jobFilters.flowIds = map(resources, '_id');
+      }
+    }
   }
 
   delete jobFilters.storeId;
@@ -561,6 +579,7 @@ export function* retrySelectedRetries({ jobId, flowJobId, selectedRetryIds }) {
   }
 
   yield call(getJobFamily, { jobId: flowJobId });
+  yield put(actions.job.requestInProgressJobStatus());
 }
 
 export function* requestRetryData({ retryId }) {

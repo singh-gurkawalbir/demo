@@ -35,6 +35,16 @@ function ExportFilterDialog({ flowId, resource, isViewMode, onClose }) {
       // Save the resource
       dispatch(actions.resource.patchStaged(resourceId, patchSet, 'value'));
       dispatch(actions.resource.commitStaged('exports', resourceId, 'value'));
+
+      if (!rules || rules.length === 0) {
+        if (value.rules.length > 0) {
+          dispatch(
+            actions.analytics.gainsight.trackEvent(
+              'EXPORT_HAS_CONFIGURED_FILTER'
+            )
+          );
+        }
+      }
     }
 
     onClose();
@@ -47,8 +57,7 @@ function ExportFilterDialog({ flowId, resource, isViewMode, onClose }) {
           flowId,
           resourceId,
           'exports',
-          'outputFilter',
-          true
+          'outputFilter'
         )
       );
     }

@@ -1,8 +1,10 @@
 import { makeStyles } from '@material-ui/core/styles';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { useState, useEffect } from 'react';
 import actions from '../../../actions';
 import DynaAction from '../../DynaForm/DynaAction';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
+import { resourceFormSaveProcessTerminated } from '../../../reducers';
 
 const useStyles = makeStyles(theme => ({
   actionButton: {
@@ -11,10 +13,19 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 const SaveFileDefinitionButton = props => {
-  const { submitButtonLabel = 'Submit', resourceType, resourceId } = props;
+  const {
+    submitButtonLabel = 'Submit',
+    resourceType,
+    resourceId,
+    disabled = false,
+  } = props;
   const dispatch = useDispatch();
   const classes = useStyles();
   const [enquesnackbar] = useEnqueueSnackbar();
+  const [disableSave, setDisableSave] = useState(false);
+  const saveTerminated = useSelector(state =>
+    resourceFormSaveProcessTerminated(state, resourceType, resourceId)
+  );
   const handleSubmitForm = values => {
     let definitionRules = values['/file/filedefinition/rules'];
 
@@ -28,6 +39,7 @@ const SaveFileDefinitionButton = props => {
           values,
         })
       );
+      setDisableSave(true);
     } catch (e) {
       // Handle incase of JSON parsing error
       enquesnackbar({
@@ -37,12 +49,17 @@ const SaveFileDefinitionButton = props => {
     }
   };
 
+  useEffect(() => {
+    if (saveTerminated) setDisableSave(false);
+  }, [saveTerminated]);
+
   return (
     <DynaAction
       {...props}
       className={classes.actionButton}
+      disabled={disabled || disableSave}
       onClick={handleSubmitForm}>
-      {submitButtonLabel}
+      {disableSave ? 'Saving' : submitButtonLabel}
     </DynaAction>
   );
 };

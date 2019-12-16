@@ -3,10 +3,15 @@ import { connect } from 'react-redux';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
 import getRequestOptions from '../../utils/requestOptions';
-import { COMM_STATES } from '../../reducers/comms';
+import { COMM_STATES } from '../../reducers/comms/networkComms';
 import commKeyGenerator from '../../utils/commKeyGenerator';
 
-const mapStateToProps = (state, { actionsToMonitor = {} }) => {
+const emptyObj = {};
+const mapStateToProps = (state, { actionsToMonitor }) => {
+  if (!actionsToMonitor || Object.keys(actionsToMonitor).length === 0) {
+    return { toMonitor: emptyObj };
+  }
+
   const toMonitor = {};
 
   Object.keys(actionsToMonitor).forEach(actionName => {

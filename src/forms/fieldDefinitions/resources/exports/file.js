@@ -17,14 +17,22 @@ export default {
         field: 'outputMode',
         is: ['records'],
       },
+      {
+        field: 'file.output',
+        is: ['records'],
+      },
     ],
   },
   'file.encoding': {
     type: 'select',
     label: 'File encoding',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'outputMode',
+        is: ['records'],
+      },
+      {
+        field: 'file.output',
         is: ['records'],
       },
     ],
@@ -57,6 +65,12 @@ export default {
         ],
       },
     ],
+    visibleWhen: [
+      {
+        field: 'file.output',
+        is: ['records'],
+      },
+    ],
     userDefinitionId: r =>
       r &&
       r.file &&
@@ -66,6 +80,7 @@ export default {
   'file.output': {
     type: 'select',
     label: 'Output Mode',
+    defaultValue: r => (r && r.file && r.file.output) || 'records',
     options: [
       {
         items: [
@@ -158,7 +173,10 @@ export default {
         field: 'file.type',
         is: ['filedefinition'],
       },
-      { field: 'file.output', is: ['records'] },
+      {
+        field: 'outputMode',
+        is: ['records'],
+      },
     ],
   },
   'fixed.format': {
@@ -171,7 +189,10 @@ export default {
         field: 'file.type',
         is: ['fixed'],
       },
-      { field: 'file.output', is: ['records'] },
+      {
+        field: 'outputMode',
+        is: ['records'],
+      },
     ],
   },
   'edifact.format': {
@@ -184,7 +205,10 @@ export default {
         field: 'file.type',
         is: ['delimited/edifact'],
       },
-      { field: 'file.output', is: ['records'] },
+      {
+        field: 'outputMode',
+        is: ['records'],
+      },
     ],
   },
   'file.filedefinition.rules': {
@@ -195,7 +219,10 @@ export default {
         field: 'file.type',
         is: ['filedefinition', 'fixed', 'delimited/edifact'],
       },
-      { field: 'file.output', is: ['records'] },
+      {
+        field: 'outputMode',
+        is: ['records'],
+      },
     ],
     refreshOptionsOnChangesTo: [
       'edix12.format',
@@ -208,10 +235,17 @@ export default {
       r.file &&
       r.file.fileDefinition &&
       r.file.fileDefinition._fileDefinitionId,
+    sampleData: r => r && r.sampleData,
   },
   'file.csv': {
     type: 'csvparse',
-    label: 'Configure CSV parse options',
+    label: 'Configure CSV Parse Options',
+    defaultValue: r =>
+      (r.file && r.file.csv) || {
+        rowsToSkip: 0,
+        trimSpaces: true,
+        columnDelimiter: ',',
+      },
     visibleWhenAll: [
       {
         field: 'file.type',
@@ -219,6 +253,10 @@ export default {
       },
       {
         field: 'outputMode',
+        is: ['records'],
+      },
+      {
+        field: 'file.output',
         is: ['records'],
       },
     ],
@@ -244,7 +282,7 @@ export default {
     ],
   },
   'file.xlsx.keyColumns': {
-    type: 'text',
+    type: 'filekeycolumn',
     label: 'Key Columns',
     visibleWhenAll: [
       {

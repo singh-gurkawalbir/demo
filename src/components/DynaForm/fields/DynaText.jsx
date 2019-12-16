@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import TextField from '@material-ui/core/TextField';
 import { InputAdornment } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
+import { isNaN } from 'lodash';
 
 const useStyles = makeStyles({
   dynaFieldWrapper: {
@@ -48,10 +49,17 @@ export default function DynaText(props) {
   }, [id, onFieldChange, options, valueChanged]);
 
   const handleFieldChange = event => {
-    const { value } = event.target;
+    const { value, valueAsNumber } = event.target;
+    let returnVal;
+
+    if (inputType === 'number') {
+      returnVal = isNaN(valueAsNumber) ? null : valueAsNumber;
+    } else {
+      returnVal = value;
+    }
 
     if (!delimiter) {
-      onFieldChange(id, value);
+      onFieldChange(id, returnVal);
 
       return;
     }
@@ -60,6 +68,7 @@ export default function DynaText(props) {
   };
 
   const classes = useStyles();
+  const inpValue = value === '' && inputType === 'number' ? 0 : value;
 
   return (
     <div className={classes.dynaFieldWrapper}>
@@ -86,7 +95,7 @@ export default function DynaText(props) {
         rowsMax={rowsMax}
         required={required}
         error={!isValid}
-        value={value}
+        value={inpValue}
         variant="filled"
         onChange={handleFieldChange}
         className={classes.formField}

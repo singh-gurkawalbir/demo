@@ -1,10 +1,10 @@
 import { select, call } from 'redux-saga/effects';
 import { resource, getResourceSampleDataWithStatus } from '../../../reducers';
-import { saveRawDataOnResource, saveSampleDataOnResource } from './utils';
+import { saveSampleDataOnResource } from './utils';
 import { isJsonString } from '../../../utils/string';
 
 function* fetchRawDataForFileAdaptors({ resourceId, tempResourceId, type }) {
-  // Incase of FTP, raw data to be saved in the data in Parse Stage ( JSON )
+  // Incase of FTP, raw data to be saved in the data in Raw Stage ( file content )
   // tempResourceId if passed used incase of newly created export
   // to fetch Sample data saved against temp id in state
   const resourceObj = yield select(
@@ -12,15 +12,23 @@ function* fetchRawDataForFileAdaptors({ resourceId, tempResourceId, type }) {
     type === 'imports' ? 'imports' : 'exports',
     resourceId
   );
+  // For file types csv, xml -  file content is fetched from raw stage
   let stage = 'raw';
 
   /*
    * For Imports, raw data is saved as 'sampleData' field.
    * For csv, xlsx sampleData to store is csv content
+   * This applies only for imports and exports is expected to fetch data from rawDataKey
+   * But for now exports follow same route of saving rawData in sampleData field as Imports do
    */
-  if (type === 'imports' && resourceObj.file.type === 'xlsx') {
+  if (resourceObj.file.type === 'xlsx') {
     // For xlsx file type csv content is stored in 'csv' stage of sample data
     stage = 'csv';
+  }
+
+  if (resourceObj.file.type === 'json') {
+    // For JSON file type parsed json content in stored in 'parse' stage of sample data
+    stage = 'parse';
   }
 
   const { data: rawData } = yield select(
@@ -29,14 +37,13 @@ function* fetchRawDataForFileAdaptors({ resourceId, tempResourceId, type }) {
     stage
   );
 
-  if (type === 'imports' && resourceObj.file.type === 'filedefinition') {
+  if (resourceObj.file.type === 'filedefinition') {
     // For Imports File definitions, sample data is the json format of structured file parser data
-    return (
-      rawData &&
-      rawData.body &&
-      isJsonString(rawData.body) &&
-      JSON.parse(rawData.body)
-    );
+    const fileDefinitionData = rawData && rawData.body;
+
+    return type === 'imports'
+      ? isJsonString(fileDefinitionData) && JSON.parse(fileDefinitionData)
+      : fileDefinitionData;
   }
 
   return rawData && rawData.body;
@@ -54,12 +61,14 @@ export default function* saveRawDataForFileAdaptors({
   });
 
   if (rawData) {
-    if (type === 'imports') {
-      // Raw data is saved as 'sampleData' field in resourceDoc for imports
-      return yield call(saveSampleDataOnResource, { resourceId, rawData });
-    }
+    // Raw data is saved as 'sampleData' field in resourceDoc for imports and exports
+    return yield call(saveSampleDataOnResource, {
+      resourceId,
+      rawData,
+      resourceType: type,
+    });
 
-    // Raw data is uploaded to S3 and key is saved in resourceDoc for Exports/ Lookups
-    return yield call(saveRawDataOnResource, { resourceId, rawData });
+    // TODO @Raghu Deferred for now :  Raw data is uploaded to S3 and key is saved in resourceDoc for Exports/ Lookups
+    // return yield call(saveRawDataOnResource, { resourceId, rawData });
   }
 }

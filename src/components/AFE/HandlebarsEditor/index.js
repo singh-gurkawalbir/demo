@@ -20,14 +20,12 @@ export default function HandlebarsEditor(props) {
     enableAutocomplete,
     lookups = [],
   } = props;
-  const {
-    template,
-    data,
-    result,
-    error,
-    violations,
-    initChangeIdentifier,
-  } = useSelector(state => selectors.editor(state, editorId));
+  const { template, data, result, error, initChangeIdentifier } = useSelector(
+    state => selectors.editor(state, editorId)
+  );
+  const violations = useSelector(state =>
+    selectors.editorViolations(state, editorId)
+  );
   const handlebarHelperFunction = useSelector(state =>
     selectors.editorHelperFunctions(state)
   );
@@ -53,12 +51,12 @@ export default function HandlebarsEditor(props) {
       actions.editor.init(editorId, 'handlebars', {
         strict: props.strict,
         autoEvaluate: true,
-        autoEvaluateDelay: 300,
+        autoEvaluateDelay: 500,
         template: props.rule,
         data: props.data,
       })
     );
-    // get Helper functions when the editor intializes
+    // get Helper functions when the editor initializes
     dispatch(actions.editor.refreshHelperFunctions());
   }, [dispatch, editorId, props.data, props.rule, props.strict]);
   const handlePreview = () => {

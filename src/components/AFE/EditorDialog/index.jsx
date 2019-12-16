@@ -12,13 +12,14 @@ import ViewColumnIcon from '@material-ui/icons/ViewColumn';
 import ViewCompactIcon from '@material-ui/icons/ViewCompact';
 // TODO: Azhar, please fix these icons message.
 import ViewRowIcon from '@material-ui/icons/HorizontalSplit';
-import ZoomOutIcon from '@material-ui/icons/ZoomOutMap';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import actions from '../../../actions';
 import { preSaveValidate } from './util';
 import * as selectors from '../../../reducers';
+import FullScreenOpenIcon from '../../icons/FullScreenOpenIcon';
+import FullScreenCloseIcon from '../../icons/FullScreenCloseIcon';
 
 const useStyles = makeStyles(theme => ({
   dialogContent: {
@@ -77,6 +78,9 @@ export default function EditorDialog(props) {
   });
   const { layout, fullScreen } = state;
   const editor = useSelector(state => selectors.editor(state, id));
+  const editorViolations = useSelector(state =>
+    selectors.editorViolations(state, id)
+  );
   const handlePreview = () => dispatch(actions.editor.evaluateRequest(id));
   const handleClose = shouldCommit => {
     if (shouldCommit && !preSaveValidate({ editor, enquesnackbar })) {
@@ -94,8 +98,8 @@ export default function EditorDialog(props) {
     setState({ ...state, fullScreen: !fullScreen });
   const size = fullScreen ? { height } : { height, width };
   const showPreviewAction =
-    !hidePreviewAction && editor && !editor.violations && !editor.autoEvaluate;
-  const disableSave = !editor || editor.violations || disabled;
+    !hidePreviewAction && editor && !editorViolations && !editor.autoEvaluate;
+  const disableSave = !editor || editorViolations || disabled;
 
   return (
     <Dialog
@@ -129,6 +133,7 @@ export default function EditorDialog(props) {
               </ToggleButton>
             </ToggleButtonGroup>
           )}
+
           {showFullScreen && (
             <ToggleButton
               data-test="toggleEditorSize"
@@ -136,12 +141,16 @@ export default function EditorDialog(props) {
               value="max"
               onClick={handleFullScreenClick}
               selected={fullScreen}>
-              <ZoomOutIcon />
+              {fullScreen ? <FullScreenCloseIcon /> : <FullScreenOpenIcon />}
             </ToggleButton>
           )}
         </div>
       </div>
-      <DialogContent style={size} className={classes.dialogContent}>
+      <DialogContent
+        style={size}
+        className={classes.dialogContent}
+        // key to be dependent on layout and fullscreen for content to re-render to fit in properly.
+        key={`${id}-${layout}-${fullScreen ? 'lg' : 'sm'}`}>
         {// Is there a better way to do this?
         children && cloneElement(children, { layout })}
       </DialogContent>

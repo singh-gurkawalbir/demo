@@ -48,7 +48,6 @@ export default function DynaTypeableSelect(props) {
     placeholder,
     onBlur,
     labelName,
-    hideOptions,
     valueName,
     options = [],
   } = props;
@@ -59,8 +58,9 @@ export default function DynaTypeableSelect(props) {
   const [inputState, setInputState] = useState({
     inputValue: value || '',
     isFocus: false,
+    filter: false,
   });
-  const { inputValue, isFocus } = inputState;
+  const { filter, inputValue, isFocus } = inputState;
   const handleChange = newObj => {
     const newVal = newObj.value;
 
@@ -74,12 +74,21 @@ export default function DynaTypeableSelect(props) {
       return;
     }
 
-    if (onBlur) onBlur(id, inputValue);
+    // check if entered value is a part of suggestions
+    const selectedObj = suggestions.find(o => o.label === inputValue);
+    const val = selectedObj ? selectedObj.value : inputValue;
+
+    if (onBlur) onBlur(id, val);
     setInputState({ ...inputState, isFocus: false });
   };
 
-  const handleInputChange = newVal => {
-    setInputState({ isFocus: true, inputValue: newVal });
+  const handleFocus = () => {
+    setInputState({ ...inputState, isFocus: false });
+  };
+
+  const handleInputChange = (newVal, event) => {
+    if (event.action === 'input-change')
+      setInputState({ filter: true, isFocus: true, inputValue: newVal });
   };
 
   const selectedValue =
@@ -91,7 +100,6 @@ export default function DynaTypeableSelect(props) {
   const customStyles = {
     option: (provided, state) => ({
       ...provided,
-      padding: '0px',
       color: state.isSelected
         ? theme.palette.secondary.main
         : theme.palette.secondary.light,
@@ -99,7 +107,8 @@ export default function DynaTypeableSelect(props) {
         state.isSelected || state.isFocused
           ? theme.palette.background.paper2
           : theme.palette.background.paper,
-      border: 'none',
+      borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
+      padding: '10px',
       minHeight: '48px',
       '&:active': {
         backgroundColor: theme.palette.background.paper,
@@ -107,7 +116,6 @@ export default function DynaTypeableSelect(props) {
       },
     }),
     control: () => ({
-      minWidth: 300,
       width: '100%',
       height: 50,
       border: '1px solid',
@@ -135,7 +143,8 @@ export default function DynaTypeableSelect(props) {
       position: 'absolute',
       backgroundColor: theme.palette.background.paper,
       width: '100%',
-      boxShadow: `0px 0 1px rgba(0,0,0,0.2)`,
+      boxShadow: `0px 3px 5px rgba(0,0,0,0.2)`,
+      borderRadius: theme.spacing(0, 0, 0.5, 0.5),
     }),
     input: () => ({
       color: theme.palette.secondary.light,
@@ -179,6 +188,13 @@ export default function DynaTypeableSelect(props) {
       return { ...provided, opacity, transition, color };
     },
   };
+  const filterOption = (options, rawInput) => {
+    if (filter) {
+      return options.label.toLowerCase().indexOf(rawInput.toLowerCase()) !== -1;
+    }
+
+    return true;
+  };
 
   return (
     <FormControl disabled={disabled} className={classes.root}>
@@ -194,13 +210,13 @@ export default function DynaTypeableSelect(props) {
         onChange={handleChange}
         onBlur={handleBlur}
         styles={customStyles}
-        components={
-          hideOptions && {
-            DropdownIndicator: () => null,
-            IndicatorSeparator: () => null,
-          }
-        }
+        onFocus={handleFocus}
+        components={{
+          DropdownIndicator: () => null,
+          IndicatorSeparator: () => null,
+        }}
         options={suggestions}
+        filterOption={filterOption}
       />
     </FormControl>
   );

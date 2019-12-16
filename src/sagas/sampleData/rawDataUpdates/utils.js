@@ -5,7 +5,7 @@ import { uploadRawData } from '../../uploadFile';
 export function* saveSampleDataOnResource({
   resourceId,
   rawData,
-  resourceType = 'imports',
+  resourceType,
 }) {
   if (!resourceId || !rawData) return;
   const patchSet = [

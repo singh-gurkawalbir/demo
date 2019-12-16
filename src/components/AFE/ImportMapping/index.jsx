@@ -1,54 +1,79 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useCallback } from 'react';
+import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
+import clsx from 'clsx';
 import actions from '../../../actions';
 import MappingSettings from '../ImportMappingSettings/MappingSettingsField';
 import DynaTypeableSelect from '../../DynaForm/fields/DynaTypeableSelect';
 import mappingUtil from '../../../utils/mapping';
 import TrashIcon from '../../icons/TrashIcon';
 import * as selectors from '../../../reducers';
+import IconTextButton from '../../IconTextButton';
 import ActionButton from '../../ActionButton';
+import { adaptorTypeMap } from '../../../utils/resource';
+import RefreshIcon from '../../icons/RefreshIcon';
+import Spinner from '../../Spinner';
+import LockIcon from '../../icons/LockIcon';
 
+// TODO Azhar style header
 const useStyles = makeStyles(theme => ({
-  container: {
-    marginTop: theme.spacing(1),
+  root: {
     overflowY: 'off',
   },
   header: {
-    display: 'flex',
+    display: 'grid',
     width: '100%',
-  },
-  root: {
-    flexGrow: 1,
+    gridTemplateColumns: '45% 45% 50px 50px',
+    gridColumnGap: '1%',
+    marginBottom: theme.spacing(2),
   },
   rowContainer: {
-    display: 'flex',
+    display: 'block',
     padding: '0px',
   },
   child: {
-    flexBasis: '100%',
     '& + div': {
       width: '100%',
     },
   },
   childHeader: {
-    flexBasis: '46%',
-    '& > div:first-child': {
+    '& > div': {
       width: '100%',
     },
   },
   innerRow: {
-    display: 'flex',
+    display: 'grid',
     width: '100%',
+    gridTemplateColumns: '45% 45% 50px 50px',
     marginBottom: theme.spacing(1),
-    '& > div': {
-      marginRight: theme.spacing(1),
-      '&:last-child': {
-        marginRight: 0,
-      },
+    gridColumnGap: '1%',
+  },
+  childRow: {
+    display: 'flex',
+    position: 'relative',
+  },
+  disableChildRow: {
+    cursor: 'not-allowed',
+    // TODO: (Aditya) Temp fix. To be removed on changing Import Mapping as Dyna Form
+    '& > div > div > div': {
+      background: theme.palette.secondary.lightest,
     },
+  },
+  lockIcon: {
+    position: 'absolute',
+    right: 10,
+    top: 10,
+  },
+  refreshButton: {
+    marginLeft: theme.spacing(1),
+    marginRight: 0,
+  },
+  spinner: {
+    marginLeft: 5,
+    width: 50,
+    height: 50,
   },
 }));
 
@@ -56,33 +81,23 @@ export default function ImportMapping(props) {
   // generateFields and extractFields are passed as an array of field names
   const {
     editorId,
-    value = [],
     application,
-    adaptorType,
     generateFields = [],
     extractFields = [],
     disabled,
+    optionalHanlder,
+    isExtractsLoading,
+    isGeneratesLoading,
+    isGenerateRefreshSupported,
     options = {},
   } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
-  const handleInit = useCallback(() => {
-    dispatch(
-      actions.mapping.init(
-        editorId,
-        value,
-        props.lookups || [],
-        adaptorType,
-        application,
-        generateFields
-      )
-    );
-  }, [dispatch, editorId]);
-
-  useEffect(() => {
-    handleInit();
-  }, []);
-
+  const {
+    fetchSalesforceSObjectMetadata,
+    refreshGenerateFields,
+    refreshExtractFields,
+  } = optionalHanlder;
   const { mappings, lookups, initChangeIdentifier } = useSelector(state =>
     selectors.mapping(state, editorId)
   );
@@ -100,12 +115,14 @@ export default function ImportMapping(props) {
 
     return obj;
   });
-  const handleFieldUpdate = (rowIndex, event, field) => {
-    const { value } = event.target;
+  const handleFieldUpdate = useCallback(
+    (rowIndex, event, field) => {
+      const { value } = event.target;
 
-    dispatch(actions.mapping.patchField(editorId, field, rowIndex, value));
-  };
-
+      dispatch(actions.mapping.patchField(editorId, field, rowIndex, value));
+    },
+    [dispatch, editorId]
+  );
   const patchSettings = (row, settings) => {
     dispatch(actions.mapping.patchSettings(editorId, row, settings));
   };
@@ -134,25 +151,92 @@ export default function ImportMapping(props) {
     dispatch(actions.mapping.updateLookup(editorId, lookupsTmp));
   };
 
+  const handleGenerateUpdate = mapping => (id, val) => {
+    if (
+      application === adaptorTypeMap.SalesforceImport &&
+      val &&
+      val.indexOf('_child_') > -1
+    ) {
+      const childRelationshipField = generateFields.find(
+        field => field.id === val
+      );
+
+      if (childRelationshipField) {
+        const { childSObject, relationshipName } = childRelationshipField;
+
+        dispatch(
+          actions.mapping.patchIncompleteGenerates(
+            editorId,
+            mapping.index,
+            relationshipName
+          )
+        );
+        fetchSalesforceSObjectMetadata(childSObject);
+      }
+    }
+
+    handleFieldUpdate(mapping.index, { target: { value: val } }, 'generate');
+  };
+
+  function RefreshButton(props) {
+    return (
+      <IconTextButton
+        variant="contained"
+        color="secondary"
+        className={classes.refreshButton}
+        {...props}>
+        Refresh <RefreshIcon />
+      </IconTextButton>
+    );
+  }
+
   return (
     <div
-      className={classes.container}
+      className={classes.root}
       key={`mapping-${editorId}-${initChangeIdentifier}`}>
-      <div className={classes.root}>
+      <div>
         <div className={classes.header}>
-          <Typography varaint="h4" className={classes.childHeader}>
+          <Typography variant="h5" className={classes.childHeader}>
             Source Record Field
+            {!isExtractsLoading && (
+              <RefreshButton
+                disabled={disabled}
+                onClick={refreshExtractFields}
+                data-test="refreshExtracts"
+              />
+            )}
+            {isExtractsLoading && (
+              <span className={classes.spinner}>
+                <Spinner size={24} color="primary" />
+              </span>
+            )}
           </Typography>
 
-          <Typography varaint="h4" className={classes.childHeader}>
+          <Typography variant="h5" className={classes.childHeader}>
             {generateLabel}
+            {isGenerateRefreshSupported && !isGeneratesLoading && (
+              <RefreshButton
+                disabled={disabled}
+                onClick={refreshGenerateFields}
+                data-test="refreshGenerates"
+              />
+            )}
+            {isGeneratesLoading && (
+              <span className={classes.spinner}>
+                <Spinner size={24} color="primary" />
+              </span>
+            )}
           </Typography>
         </div>
         <div>
           {tableData.map(mapping => (
             <div className={classes.rowContainer} key={mapping.index}>
               <div className={classes.innerRow}>
-                <div className={classes.childHeader}>
+                <div
+                  className={clsx(classes.childHeader, classes.childRow, {
+                    [classes.disableChildRow]:
+                      mapping.isNotEditable || disabled,
+                  })}>
                   <DynaTypeableSelect
                     key={`extract-${editorId}-${initChangeIdentifier}-${mapping.rowIdentifier}`}
                     id={`fieldMappingExtract-${mapping.index}`}
@@ -169,8 +253,17 @@ export default function ImportMapping(props) {
                       );
                     }}
                   />
+
+                  {mapping.isNotEditable && (
+                    <span className={classes.lockIcon}>
+                      <LockIcon />
+                    </span>
+                  )}
                 </div>
-                <div className={classes.childHeader}>
+                <div
+                  className={clsx(classes.childHeader, classes.childRow, {
+                    [classes.disableChildRow]: mapping.isRequired || disabled,
+                  })}>
                   <DynaTypeableSelect
                     key={`generate-${editorId}-${initChangeIdentifier}-${mapping.rowIdentifier}`}
                     id={`fieldMappingGenerate-${mapping.index}`}
@@ -179,14 +272,13 @@ export default function ImportMapping(props) {
                     valueName="id"
                     options={generateFields}
                     disabled={mapping.isRequired || disabled}
-                    onBlur={(id, evt) => {
-                      handleFieldUpdate(
-                        mapping.index,
-                        { target: { value: evt } },
-                        'generate'
-                      );
-                    }}
+                    onBlur={handleGenerateUpdate(mapping)}
                   />
+                  {mapping.isRequired && (
+                    <span className={classes.lockIcon}>
+                      <LockIcon />
+                    </span>
+                  )}
                 </div>
                 <div>
                   <MappingSettings

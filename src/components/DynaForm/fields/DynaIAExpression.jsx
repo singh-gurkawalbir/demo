@@ -2,36 +2,54 @@
 import { useSelector } from 'react-redux';
 import * as selectors from '../../../reducers';
 import DynaNetSuiteLookup from './DynaNetSuiteLookup';
-// TODO: change the references to point to correct filters
-import DynaSFLookup from './DynaNetSuiteLookup';
-import DynaNSQualifier from './DynaNetSuiteLookup';
-import DynaSFQualifier from './DynaNetSuiteLookup';
+import DynaSFLookup from './DynaSalesforceLookup';
+import DynaSFQualifier from './DynaSalesforceQualifier';
+import DynaNSQualifier from './DynaNetSuiteQualifier';
 
-export default function DynaIANetSuiteLookup(props) {
-  const { resource: flow, properties = {}, type } = props;
+export default function DynaIAExpression(props) {
+  const { flowId, properties = {}, expressionType: type } = props;
   let resourceId;
   let commMetaPath;
   let filterType;
   let ExpressionBuilder;
+  const flow = useSelector(state => selectors.resource(state, 'flows', flowId));
 
-  if (properties._importId) {
-    resourceId = properties._importId;
-  } else if (flow._importId) {
-    resourceId = flow._importId;
-  } else if (flow.pageProcessors) {
-    const firstImportPageProcessor = flow.pageProcessors.find(
-      pp => !!pp._importId
-    );
+  if (type === 'import') {
+    if (properties._importId) {
+      resourceId = properties._importId;
+    } else if (flow && flow._importId) {
+      resourceId = flow._importId;
+    } else if (flow && flow.pageProcessors) {
+      const firstImportPageProcessor = flow.pageProcessors.find(
+        pp => !!pp._importId
+      );
 
-    resourceId = firstImportPageProcessor._importId;
+      resourceId = firstImportPageProcessor._importId;
+    }
+  } else if (type === 'export') {
+    if (properties._exportId) {
+      resourceId = properties._exportId;
+    } else if (flow && flow._exportId) {
+      resourceId = flow._exportId;
+    } else if (flow && flow.pageGenerators && flow.pageGenerators.length) {
+      resourceId = flow.pageGenerators[0]._exportId;
+    }
   }
 
   const resource = useSelector(state =>
-    selectors.resource(state, 'imports', resourceId)
+    selectors.resource(
+      state,
+      type === 'export' ? 'exports' : 'imports',
+      resourceId
+    )
   );
   const connection = useSelector(state =>
-    selectors.resource(state, 'connections', resource._connectionId)
+    selectors.resource(state, 'connections', resource && resource._connectionId)
   );
+
+  if (!resource) {
+    return null;
+  }
 
   if (type === 'import') {
     if (connection.type === 'netsuite') {
@@ -47,7 +65,7 @@ export default function DynaIANetSuiteLookup(props) {
       commMetaPath = `salesforce/metadata/connections/${connection._id}/sObjectTypes/${resource.salesforce.sObjectType}`;
     } else {
       filterType = 'netsuiteQualifier';
-      commMetaPath = `netsuite/metadata/suitescript/connections/${connection._id}/recordTypes/${resource.netsuite_da.recordType}/searchFilters?includeJoinFilters=true`;
+      commMetaPath = `netsuite/metadata/suitescript/connections/${connection._id}/recordTypes/${resource.netsuite.distributed.recordType}?includeSelectOptions=true`;
     }
   }
 
@@ -74,9 +92,9 @@ export default function DynaIANetSuiteLookup(props) {
   return (
     <ExpressionBuilder
       {...props}
-      flowId={resource._id}
+      flowId={flowId}
       options={options}
-      resourceId={resourceId}
+      resourceId={resource._id}
     />
   );
 }

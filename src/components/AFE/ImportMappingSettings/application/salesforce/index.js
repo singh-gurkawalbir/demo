@@ -12,10 +12,7 @@ export default {
       generateFields,
       options,
     } = params;
-    const {
-      connectionId,
-      // sObjectType
-    } = options;
+    const { connectionId } = options;
     const selectedGenerateObj = generateFields.find(
       field => field.id === generate
     );
@@ -70,28 +67,58 @@ export default {
             },
           ],
         },
-        'lookup.recordType': {
-          id: 'lookup.recordType',
-          name: 'recordType',
-          defaultValue: '',
+        'lookup.sObjectType': {
+          id: 'lookup.sObjectType',
+          name: 'sObjectType',
+          defaultValue: lookup.sObjectType,
           type: 'refreshableselect',
           filterKey: 'salesforce-sObjects',
           commMetaPath: `salesforce/metadata/connections/${connectionId}/sObjectTypes`,
-          label: 'Search Record Type',
+          label: 'SObject Type',
           connectionId,
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
             { field: 'lookup.mode', is: ['dynamic'] },
           ],
         },
+        'lookup.whereClause': {
+          id: 'lookup.whereClause',
+          name: 'whereClause',
+          type: 'salesforcelookupfilters',
+          label: '',
+          connectionId,
+          filterKey: 'salesforce-recordType',
+          refreshOptionsOnChangesTo: ['lookup.sObjectType'],
+          visibleWhenAll: [
+            { field: 'fieldMappingType', is: ['lookup'] },
+            { field: 'lookup.mode', is: ['dynamic'] },
+          ],
+          value: lookup.whereClause,
+          data: extractFields,
+        },
+        'lookup.whereClauseText': {
+          id: 'lookup.whereClauseText',
+          name: 'whereClauseText',
+          label: 'Where Clause',
+          type: 'text',
+          multiline: true,
+          disableText: true,
+          refreshOptionsOnChangesTo: ['lookup.whereClause'],
+          visibleWhenAll: [
+            { field: 'fieldMappingType', is: ['lookup'] },
+            { field: 'lookup.mode', is: ['dynamic'] },
+          ],
+          defaultValue: lookup.whereClause,
+        },
         'lookup.resultField': {
           id: 'lookup.resultField',
           name: 'resultField',
           type: 'refreshableselect',
-          commMetaPath: `salesforce/metadata/connections/${connectionId}/sObjectTypes`,
-          defaultValue: '',
+          filterKey: 'salesforce-recordType',
+          savedSObjectType: lookup.sObjectType,
+          defaultValue: lookup.resultField,
           connectionId,
-          refreshOptionsOnChangesTo: ['lookup.recordType'],
+          refreshOptionsOnChangesTo: ['lookup.sObjectType'],
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
             { field: 'lookup.mode', is: ['dynamic'] },
@@ -113,7 +140,6 @@ export default {
               import: lookup.map[key],
             })),
           map: lookup.map,
-          // recordType,
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
             { field: 'lookup.mode', is: ['static'] },
@@ -302,7 +328,6 @@ export default {
           name: 'lookupDefault',
           type: 'text',
           label: 'Default Lookup Value',
-          // placeholder: 'Enter Default Value',
           visibleWhenAll: [
             { field: 'lookupAction', is: ['default'] },
             { field: 'fieldMappingType', is: ['lookup'] },
@@ -328,19 +353,14 @@ export default {
         extractDateFormat: {
           id: 'extractDateFormat',
           name: 'extractDateFormat',
-          type: 'select',
+          type: 'autosuggest',
+          options: {
+            suggestions: dateFormats,
+          },
+          labelName: 'name',
+          valueName: 'value',
           label: 'Date format',
-          options: [
-            {
-              items:
-                (dateFormats &&
-                  dateFormats.map(date => ({
-                    label: date.value,
-                    value: date.name,
-                  }))) ||
-                [],
-            },
-          ],
+          defaultValue: value.extractDateFormat,
           visibleWhen: [{ field: 'fieldMappingType', is: ['standard'] }],
         },
         extractDateTimezone: {
@@ -348,6 +368,7 @@ export default {
           name: 'extractDateTimezone',
           type: 'select',
           label: 'Time Zone',
+          defaultValue: value.extractDateTimezone,
           options: [
             {
               items:
@@ -368,7 +389,9 @@ export default {
           'discardIfEmpty',
           'fieldMappingType',
           'lookup.mode',
-          'lookup.recordType',
+          'lookup.sObjectType',
+          'lookup.whereClause',
+          'lookup.whereClauseText',
           'lookup.resultField',
           'lookup.mapList',
           'functions',
@@ -412,20 +435,43 @@ export default {
           }
 
           return expressionValue;
-        } else if (fieldId === 'lookup.recordType') {
-          return {
-            resourceToFetch: 'sObjectTypes',
-          };
-        } else if (fieldId === 'lookup.resultField') {
-          const recordTypeField = fields.find(
-            field => field.id === 'lookup.recordType'
+        } else if (fieldId === 'lookup.whereClause') {
+          const sObjectTypeField = fields.find(
+            field => field.id === 'lookup.sObjectType'
           );
 
           return {
-            recordType: recordTypeField && recordTypeField.value,
-            disableFetch: !(recordTypeField && recordTypeField.value),
-            resourceToFetch: `sObjectTypes`,
-            resetValue: [],
+            disableFetch: !(sObjectTypeField && sObjectTypeField.value),
+            commMetaPath: sObjectTypeField
+              ? `salesforce/metadata/connections/${connectionId}/sObjectTypes/${sObjectTypeField.value}`
+              : '',
+          };
+        } else if (fieldId === 'lookup.whereClauseText') {
+          const whereClauseField = fields.find(
+            field => field.id === 'lookup.whereClause'
+          );
+          const whereClauseTextField = fields.find(
+            field => field.id === 'lookup.whereClauseText'
+          );
+
+          whereClauseTextField.value = whereClauseField.value;
+        } else if (fieldId === 'lookup.resultField') {
+          const sObjectTypeField = fields.find(
+            field => field.id === 'lookup.sObjectType'
+          );
+          const sObjectType = sObjectTypeField.value;
+          const resultField = fields.find(
+            field => field.id === 'lookup.resultField'
+          );
+
+          if (resultField.savedSObjectType !== sObjectType) {
+            resultField.savedSObjectType = sObjectType;
+            resultField.value = '';
+          }
+
+          return {
+            disableFetch: !sObjectType,
+            commMetaPath: `salesforce/metadata/connections/${connectionId}/sObjectTypes/${sObjectTypeField.value}`,
           };
         }
 

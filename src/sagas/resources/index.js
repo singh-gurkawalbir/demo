@@ -27,11 +27,22 @@ export function* commitStagedChanges({ resourceType, id, scope }) {
 
   if (!patch) return; // nothing to do.
 
+  if (!isNew && resourceType.indexOf('integrations/') >= 0) {
+    // eslint-disable-next-line no-param-reassign
+    resourceType = resourceType.split('/').pop();
+  }
+
   const path = isNew ? `/${resourceType}` : `/${resourceType}/${id}`;
 
   // only updates need to check for conflicts.
   if (!isNew) {
-    const origin = yield call(apiCallWithRetry, { path });
+    let origin;
+
+    try {
+      origin = yield call(apiCallWithRetry, { path });
+    } catch (error) {
+      return { error };
+    }
 
     if (origin.lastModified !== master.lastModified) {
       let conflict = jsonPatch.compare(master, origin);
@@ -166,6 +177,7 @@ export function* updateIntegrationSettings({
   integrationId,
   values,
   flowId,
+  options = {},
 }) {
   const path = `/integrations/${integrationId}/settings/persistSettings`;
   let payload = jsonPatch.applyPatch({}, defaultPatchSetConverter(values))
@@ -188,11 +200,12 @@ export function* updateIntegrationSettings({
         method: 'put',
         body: payload,
       },
+      hidden: false,
       message: 'Saving integration settings',
     });
     // eslint-disable-next-line no-empty
   } catch (e) {
-    yield put(
+    return yield put(
       actions.integrationApp.settings.submitFailed({
         storeId,
         integrationId,
@@ -211,7 +224,49 @@ export function* updateIntegrationSettings({
         flowId,
       })
     );
+    // integration doc will be update by IA team, need to refetch to get latest copy from db.
     yield put(actions.resource.request('integrations', integrationId));
+
+    // When a staticMapWidget is saved, the map object from field will be saved to one/many mappings as static-lookup mapping.
+    // Hence we need to refresh imports and mappings to reflect the changes
+    yield put(actions.resource.requestCollection('imports'));
+
+    // If settings object is sent to response, we need to refetch resources as they are modified by IA
+    if (response.settings) {
+      yield put(actions.resource.requestCollection('exports'));
+      yield put(actions.resource.requestCollection('flows'));
+    }
+
+    if (response._flowId) {
+      // when Save button on section triggers a flow on integrationApp, it will send back _flowId in the response.
+      // UI should navigate to dashboard so that user can the see the flow status.
+      yield put(
+        actions.integrationApp.settings.redirectTo(integrationId, 'dashboard')
+      );
+    }
+
+    // If persistSettings is called for IA flow enable/disable
+    if (options.action === 'flowEnableDisable') {
+      const flowDetails = yield select(selectors.resource, 'flows', flowId);
+      const patchSet = [
+        {
+          op: 'replace',
+          path: '/disabled',
+          // IA sends back pending object containing flow state, patch that state to data store
+          value: response.pending
+            ? response.pending.disabled
+            : !flowDetails.disabled,
+        },
+      ];
+
+      // Regardless of success or failure update the data store to latest value.
+      yield put(actions.resource.patchStaged(flowId, patchSet, 'value'));
+
+      // If the action is successful, update the flow status in db.
+      if (response.success) {
+        yield put(actions.resource.commitStaged('flows', flowId, 'value'));
+      }
+    }
   }
 }
 

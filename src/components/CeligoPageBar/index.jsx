@@ -1,5 +1,6 @@
-import { Fragment, useState } from 'react';
+import { Fragment, useState, useCallback } from 'react';
 import { useSelector } from 'react-redux';
+import { useLocation } from 'react-router-dom';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Paper, Grid, IconButton } from '@material-ui/core';
@@ -10,18 +11,19 @@ import SlideOnScroll from '../SlideOnScroll';
 import ArrowLeftIcon from '../../components/icons/ArrowLeftIcon';
 import * as selectors from '../../reducers';
 import InfoIcon from '../icons/InfoIcon';
+import WelcomeBanner from './WelcomeBanner';
 
 const useStyles = makeStyles(theme => ({
   pageHeader: {
     zIndex: theme.zIndex.appBar - 1,
     padding: theme.spacing(3),
     height: theme.pageBarHeight,
-    width: `calc(100% - ${theme.spacing(2 * 3) + 1}px)`,
+    width: `calc(100% - ${theme.spacing(2 * 3) + 4}px)`,
     position: 'fixed',
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
   },
   pageHeaderShift: {
-    width: `calc(100% - ${theme.drawerWidth - theme.spacing(2)}px)`,
+    width: `calc(100% - ${theme.drawerWidth - theme.spacing(1)}px)`,
     transition: theme.transitions.create(['width', 'margin'], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
@@ -41,6 +43,12 @@ const useStyles = makeStyles(theme => ({
       },
     },
   },
+  subTitle: {
+    float: 'left',
+  },
+  bannerOffset: {
+    height: theme.pageBarHeight + 66,
+  },
 }));
 
 export default function CeligoPageBar({
@@ -53,16 +61,17 @@ export default function CeligoPageBar({
   className,
 }) {
   const classes = useStyles();
+  const location = useLocation();
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
+  const bannerOpened = useSelector(state => selectors.bannerOpened(state));
   const [anchorEl, setAnchorEl] = useState(null);
-
-  function handleInfoOpen(event) {
+  const handleInfoOpen = useCallback(event => {
     setAnchorEl(event.currentTarget);
-  }
-
-  function handleInfoClose() {
+  }, []);
+  const handleInfoClose = useCallback(() => {
     setAnchorEl(null);
-  }
+  }, []);
+  const showBanner = location.pathname.endsWith('/dashboard') && bannerOpened;
 
   return (
     <Fragment>
@@ -71,14 +80,18 @@ export default function CeligoPageBar({
           <Paper
             className={clsx(classes.pageHeader, className, {
               [classes.pageHeaderShift]: drawerOpened,
+              [classes.bannerOffset]: showBanner,
             })}
             elevation={0}
             square>
+            {showBanner && <WelcomeBanner />}
+
             <Grid container justify="space-between">
               <Grid item>
                 <Typography variant="h3">
                   {history && (
-                    <IconButton onClick={() => history.goBack()}>
+                    // eslint-disable-next-line react/jsx-handler-names
+                    <IconButton onClick={history.goBack}>
                       <ArrowLeftIcon />
                     </IconButton>
                   )}
@@ -106,14 +119,20 @@ export default function CeligoPageBar({
                     </Fragment>
                   )}
                 </Typography>
-                <Typography variant="caption">{subtitle}</Typography>
+                <Typography variant="caption" className={classes.subTitle}>
+                  {subtitle}
+                </Typography>
               </Grid>
               <Grid item>{children}</Grid>
             </Grid>
           </Paper>
         </ElevateOnScroll>
       </SlideOnScroll>
-      <div className={classes.pageBarOffset} />
+      <div
+        className={clsx(classes.pageBarOffset, {
+          [classes.bannerOffset]: showBanner,
+        })}
+      />
     </Fragment>
   );
 }

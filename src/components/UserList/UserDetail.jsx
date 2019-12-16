@@ -17,7 +17,7 @@ import {
 } from '../../utils/constants';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
-import { COMM_STATES } from '../../reducers/comms';
+import { COMM_STATES } from '../../reducers/comms/networkComms';
 import { confirmDialog } from '../ConfirmDialog';
 import CommStatus from '../CommStatus';
 
@@ -239,8 +239,8 @@ class UserDetail extends Component {
           </TableCell>
           {isAccountOwner && (
             <Fragment>
-              {integrationId && user._id !== ACCOUNT_IDS.OWN && (
-                <TableCell>
+              <TableCell>
+                {integrationId && user._id !== ACCOUNT_IDS.OWN && (
                   <IconButton
                     data-test="editUser"
                     onClick={() => {
@@ -248,8 +248,9 @@ class UserDetail extends Component {
                     }}>
                     <EditIcon />
                   </IconButton>
-                </TableCell>
-              )}
+                )}
+              </TableCell>
+
               {!integrationId && (
                 <Fragment>
                   <TableCell>

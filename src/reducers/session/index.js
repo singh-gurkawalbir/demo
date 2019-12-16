@@ -18,6 +18,7 @@ import templates, * as fromTemplates from './templates';
 import oAuthAuthorize, * as fromOAuthAuthorize from './oAuthAuthorize';
 import resource, * as fromResource from './resource';
 import mappings, * as fromMappings from './mappings';
+import flows, * as fromFlows from './flows';
 
 export default combineReducers({
   stage,
@@ -39,10 +40,10 @@ export default combineReducers({
   templates,
   oAuthAuthorize,
   mappings,
+  flows,
 });
 
 // #region PUBLIC SELECTORS
-
 export function netsuiteUserRoles(
   state,
   connectionId,
@@ -67,33 +68,27 @@ export function connectionTokens(state, resourceId) {
 }
 
 export function filter(state, name) {
-  if (!state) return {};
-
-  return fromFilters.filter(state.filters, name);
+  return fromFilters.filter(state && state.filters, name);
 }
 
 export function editor(state, id) {
-  if (!state) return {};
+  return fromEditors.editor(state && state.editors, id);
+}
 
-  return fromEditors.editor(state.editors, id);
+export function editorViolations(state, id) {
+  return fromEditors.editorViolations(state && state.editors, id);
 }
 
 export function mapping(state, id) {
-  if (!state) return [];
-
-  return fromMappings.mapping(state.mappings, id);
+  return fromMappings.mapping(state && state.mappings, id);
 }
 
 export function processorRequestOptions(state, id) {
-  if (!state) return {};
-
-  return fromEditors.processorRequestOptions(state.editors, id);
+  return fromEditors.processorRequestOptions(state && state.editors, id);
 }
 
 export function stagedResource(state, id, scope) {
-  if (!state) return {};
-
-  return fromStage.stagedResource(state.stage, id, scope);
+  return fromStage.stagedResource(state && state.stage, id, scope);
 }
 
 export function optionsFromMetadata({
@@ -221,6 +216,18 @@ export function getSampleData(
   });
 }
 
+export function getSampleDataContext(
+  state,
+  { flowId, resourceId, resourceType, stage }
+) {
+  return fromFlowData.getSampleDataContext(state && state.flowData, {
+    flowId,
+    resourceId,
+    resourceType,
+    stage,
+  });
+}
+
 export function getFlowDataState(state, flowId, resourceId) {
   return fromFlowData.getFlowDataState(
     state && state.flowData,
@@ -241,6 +248,13 @@ export function integrationAppSettingsFormState(state, integrationId, flowId) {
     state && state.integrationApps,
     integrationId,
     flowId
+  );
+}
+
+export function shouldRedirect(state, integrationId) {
+  return fromIntegrationApps.shouldRedirect(
+    state && state.integrationApps,
+    integrationId
   );
 }
 
@@ -305,5 +319,14 @@ export function assistantPreviewData(state, resourceId) {
 
 export function debugLogs(state) {
   return fromConnections.debugLogs(state && state.connections);
+}
+
+const lastExportDateTime = {};
+
+export function getLastExportDateTime(state, flowId) {
+  return (
+    fromFlows.getLastExportDateTime(state && state.flows, flowId) ||
+    lastExportDateTime
+  );
 }
 // #endregion

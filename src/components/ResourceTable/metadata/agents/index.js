@@ -3,7 +3,8 @@ import References from '../../actions/References';
 import AgentDownloadInstaller from '../../../AgentDownloadInstaller';
 import AgentToken from '../../../AgentToken';
 import AgentStatus from '../../../AgentStatus';
-import { getResourceLink, formatLastModified } from '../../../CeligoTable/util';
+import { formatLastModified } from '../../../CeligoTable/util';
+import ResourceDrawerLink from '../../../ResourceDrawerLink';
 
 const getAgentDownloadInstaller = agent => (
   <AgentDownloadInstaller agentId={agent._id} />
@@ -14,8 +15,9 @@ export default {
   columns: [
     {
       heading: 'Name',
-      value: (r, actionProps, location) =>
-        getResourceLink('agents', r, location),
+      value: function ExportDrawerLink(r) {
+        return <ResourceDrawerLink resourceType="agents" resource={r} />;
+      },
       orderBy: 'name',
     },
     {

@@ -1,32 +1,32 @@
-import { Component } from 'react';
+import { useCallback } from 'react';
 import { FormContext } from 'react-forms-processor/dist';
 import Button from '@material-ui/core/Button';
 
-class FormButton extends Component {
-  render() {
-    const {
-      disabled,
-      isValid,
-      onClick,
-      children,
-      id,
-      className,
-      value = {},
-      color,
-    } = this.props;
+function FormButton({
+  disabled,
+  isValid,
+  onClick,
+  children,
+  id,
+  className,
+  value = {},
+  color,
+}) {
+  const handleClick = useCallback(() => onClick(value), [onClick, value]);
 
-    return (
-      <Button
-        data-test={id}
-        variant="outlined"
-        color={color || 'primary'}
-        className={className}
-        disabled={disabled || !isValid}
-        onClick={() => onClick(value)}>
-        {children}
-      </Button>
-    );
-  }
+  return (
+    <Button
+      data-test={
+        id || (typeof children === 'string' && children) || 'saveButton'
+      }
+      variant="outlined"
+      color={color || 'primary'}
+      className={className}
+      disabled={disabled || !isValid}
+      onClick={handleClick}>
+      {children}
+    </Button>
+  );
 }
 
 const DynaSubmit = props => (

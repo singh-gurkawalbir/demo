@@ -10,8 +10,9 @@ export function* installStep({ id, installerFunction, storeId, addOnId }) {
   try {
     stepCompleteResponse = yield call(apiCallWithRetry, {
       path,
+      timeout: 5 * 60 * 1000,
       opts: { body: { storeId, addOnId }, method: 'PUT' },
-      message: `Installing`,
+      hidden: true,
     }) || {};
   } catch (error) {
     yield put(
@@ -21,6 +22,7 @@ export function* installStep({ id, installerFunction, storeId, addOnId }) {
         'failed'
       )
     );
+    yield put(actions.api.failure(path, 'PUT', error.message, false));
 
     return undefined;
   }
@@ -39,6 +41,19 @@ export function* installStep({ id, installerFunction, storeId, addOnId }) {
         actions.integrationApp.settings.requestAddOnLicenseMetadata(id)
       );
     }
+  } else if (
+    stepCompleteResponse &&
+    !stepCompleteResponse.success &&
+    (stepCompleteResponse.resBody || stepCompleteResponse.message)
+  ) {
+    yield put(
+      actions.api.failure(
+        path,
+        'PUT',
+        stepCompleteResponse.resBody || stepCompleteResponse.message,
+        false
+      )
+    );
   }
 }
 
@@ -49,13 +64,16 @@ export function* installStoreStep({ id, installerFunction }) {
   try {
     stepCompleteResponse = yield call(apiCallWithRetry, {
       path,
+      timeout: 5 * 60 * 1000,
       opts: { body: {}, method: 'PUT' },
+      hidden: true,
       message: `Installing`,
     }) || {};
   } catch (error) {
     yield put(
       actions.integrationApp.store.updateStep(id, installerFunction, 'failed')
     );
+    yield put(actions.api.failure(path, 'PUT', error, false));
 
     return undefined;
   }
@@ -66,6 +84,19 @@ export function* installStoreStep({ id, installerFunction }) {
         id,
         installerFunction,
         stepCompleteResponse.stepsToUpdate
+      )
+    );
+  } else if (
+    stepCompleteResponse &&
+    !stepCompleteResponse.success &&
+    (stepCompleteResponse.resBody || stepCompleteResponse.message)
+  ) {
+    yield put(
+      actions.api.failure(
+        path,
+        'PUT',
+        stepCompleteResponse.resBody || stepCompleteResponse.message,
+        false
       )
     );
   }
@@ -79,13 +110,20 @@ export function* addNewStore({ id }) {
     steps = yield call(apiCallWithRetry, {
       path,
       opts: { body: {}, method: 'PUT' },
+      hidden: true,
       message: `Installing`,
     });
   } catch (error) {
+    yield put(actions.api.failure(path, 'PUT', error && error.message, false));
+    yield put(
+      actions.integrationApp.store.failedNewStoreSteps(id, error.message)
+    );
+
     return undefined;
   }
 
   if (steps) {
+    yield put(actions.resource.requestCollection('connections'));
     yield put(actions.integrationApp.store.receivedNewStoreSteps(id, steps));
   }
 }

@@ -6,11 +6,20 @@ This file consists of filter map which is used to filter netsuite and salesforce
 */
 
 export default {
+  // raw stage is to retrieve the actual data stored  in the state without filters
+  raw: data => data,
   'suitescript-recordTypes': data =>
     data.map(item => ({
       label: item.name,
       value: item.scriptId && item.scriptId.toLowerCase(),
     })),
+  'suitescript-sublists': data =>
+    data
+      .map(item => ({
+        label: item.name,
+        value: item.id,
+      }))
+      .sort(sortElements),
   'suitescript-dateField': data =>
     data
       .filter(item => item.type === 'datetime' || item.type === 'datetimetz')
@@ -26,6 +35,20 @@ export default {
           item.id.indexOf('.') === -1
       )
       .map(item => ({ label: item.name, value: item.id })),
+  'suitescript-bodyField': data =>
+    data
+      .filter(
+        item =>
+          !item.sublist &&
+          !item.id.includes('celigo_replaceAllLines_') &&
+          !item.id.includes('celigo_groupLinesBy_')
+      )
+      .map(item => ({
+        label: item.name,
+        value: item.id,
+        type: item.type,
+        options: item.options,
+      })),
   'webservices-recordTypes': data =>
     data.map(item => ({
       label: item.label,
@@ -127,6 +150,68 @@ export default {
       updateable: d.updateable,
     })),
   'salesforce-soqlQuery': data => data,
+  'salesforce-externalIdFields': data =>
+    data.fields
+      .filter(f => f.externalId || f.name === 'Id')
+      .map(d => ({
+        label: d.label,
+        value: d.name,
+      })),
+  'salesforce-sObjectCompositeMetadata': (data, options = {}) => {
+    const { applicationResource, connectionId } = options;
+    const _data = [];
+
+    if (data && data.fields) {
+      data.fields.forEach(field => {
+        _data.push({
+          value: field.name,
+          label: field.label,
+          type: field.type,
+          custom: field.custom,
+          triggerable: field.triggerable,
+          picklistValues: field.picklistValues,
+          updateable: field.updateable,
+        });
+      });
+    }
+
+    if (data.childRelationships && data.childRelationships.length) {
+      data.childRelationships.forEach(child => {
+        if (child.relationshipName) {
+          const sObjectMetadataPath = `salesforce/metadata/connections/${connectionId}/sObjectTypes/${child.childSObject}`;
+          const { data: childSObject } =
+            (applicationResource &&
+              applicationResource[connectionId] &&
+              applicationResource[connectionId][sObjectMetadataPath]) ||
+            {};
+
+          if (childSObject && childSObject.fields.length) {
+            childSObject.fields.forEach(field => {
+              _data.push({
+                value: `${child.relationshipName}[*].${field.name}`,
+                label: `${child.relationshipName}: ${field.label}`,
+                type: field.type,
+                custom: field.custom,
+                triggerable: field.triggerable,
+                picklistValues: field.picklistValues,
+                updateable: field.updateable,
+              });
+            });
+          } else {
+            _data.push({
+              value: `_child_${child.relationshipName}`,
+              label: `${child.relationshipName} : Fields...`,
+              type: 'childRelationship',
+              childSObject: child.childSObject,
+              relationshipName: child.relationshipName,
+            });
+          }
+        }
+      });
+    }
+
+    return _data;
+  },
   default: data =>
     data.map(item => ({
       label: item.name,

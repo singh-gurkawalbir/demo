@@ -51,19 +51,32 @@ import DynaSoqlQuery from './DynaSoqlQuery';
 import DynaSalesforceRefreshableSelect from './DynaSalesforceRefreshableSelect';
 import DynaRefreshableIntegrationAppSetting from './DynaRefreshableSelect/RefreshableIntegrationAppSetting';
 import DynaDate from './dateTime/DynaDate';
+import DynaDateTime from './dateTime/DynaDateTime';
 import DynaToggle from './DynaToggle';
 import DynaSQLQueryBuilder from './DynaSQLQueryBuilder';
 import DynaRelativeURIWithLookup from './DynaRelativeURIWithLookup';
 import Salesforce from './DynaSalesforceExportComponents';
-import { ReferencedFieldsModal } from './DynaSalesforceExportComponents/DynaReferenedFields';
+import { ReferencedFieldsModal } from './DynaSalesforceExportComponents/DynaTreeModal';
 import DynaNetSuiteLookupFilters from './DynaNetSuiteLookupFilters';
 import DynaNetSuiteLookup from './DynaNetSuiteLookup';
 import DynaIAExpression from './DynaIAExpression';
 import DynaUserEmail from './DynaUserEmail';
 import DynaUserPassword from './DynaUserPassword';
 import DynaIclient from './DynaIclient';
+import DynaNetSuiteQualifier from './DynaNetSuiteQualifier';
+import DynaSalesforceQualifier from './DynaSalesforceQualifier';
+import DynaQuery from './DynaQuery';
+import DynaSalesforceLookupFilters from './DynaSalesforceLookupFilters';
+import DynaSalesforceLookup from './DynaSalesforceLookup';
+import DynaMultiSubsidiaryMapping from './DynaTableView/DynaMultiSubsidiaryMapping';
+import DynaTimestampFileName from './DynaTimestampFileName';
+import DynaMode from './DynaMode';
+import DynaAutoSuggestFlowSampleData from './DynaAutoSuggestFlowSampleData';
+import DynaCsvGenerate from './editors/DynaCsvGenerate';
+import DynaFileKeyColumn from './DynaFileKeyColumn';
 
 export default {
+  mode: DynaMode,
   mapping: DynaImportMapping,
   toggleSelectToText: DynaToggleSelectToText,
   selectscopes: DynaSelectScopes,
@@ -72,10 +85,10 @@ export default {
   textarea: DynaText,
   checkbox: DynaCheckbox,
   select: DynaSelect,
-  subsidiaryMapWidget: DynaStaticMap,
   xmlMapper: DynaXMLMapper,
   trueFixedWidthColumnMapper: DynaTrueFixedWidthColumnMapper,
   csvColumnMapper: DynaCSVColumnMapper,
+  subsidiaryMapWidget: DynaMultiSubsidiaryMapping,
   selectresource: DynaSelectResource,
   selectapplication: DynaSelectApplication,
   filetypeselect: DynaFileTypeSelect,
@@ -88,6 +101,7 @@ export default {
   staticMap: DynaStaticMap,
   staticMapWidget: DynaStaticMap,
   csvparse: DynaCsvParse,
+  csvgenerate: DynaCsvGenerate,
   xmlparse: DynaXmlParse,
   refreshableselect: DynaRefreshableSelect,
   transformeditor: DynaTransformEditor,
@@ -121,18 +135,29 @@ export default {
   salesforcerefreshableselect: DynaSalesforceRefreshableSelect,
   integrationapprefreshableselect: DynaRefreshableIntegrationAppSetting,
   date: DynaDate,
+  datetime: DynaDateTime,
   sqlquerybuilder: DynaSQLQueryBuilder,
+  salesforcequalifier: DynaSalesforceQualifier,
   relativeuriwithlookup: DynaRelativeURIWithLookup,
   salesforcerequiredtrigger: Salesforce.DynaRequiredTrigger,
-  salesforcereferencedfields: Salesforce.DynaReferenedFields,
-  salesforcesobjecttype: Salesforce.DynaSObjectType,
+  salesforcereferencedfields: Salesforce.DynaReferencedFields,
   salesforcerelatedlistmodal: ReferencedFieldsModal,
   salesforcerelatedlist: Salesforce.DynaRelatedList,
   salesforcetreemodal: Salesforce.DynaTreeModal,
+  salesforcereferencedfieldsia:
+    Salesforce.IASettingsComponents.DynaReferencedFieldsIA,
+  salesforcerelatedlistia: Salesforce.IASettingsComponents.DynaRelatedListIA,
   netsuitelookupfilters: DynaNetSuiteLookupFilters,
   netsuitelookup: DynaNetSuiteLookup,
   iaexpression: DynaIAExpression,
   useremail: DynaUserEmail,
   userpassword: DynaUserPassword,
   dynaiclient: DynaIclient,
+  netsuitequalifier: DynaNetSuiteQualifier,
+  query: DynaQuery,
+  salesforcelookupfilters: DynaSalesforceLookupFilters,
+  salesforcelookup: DynaSalesforceLookup,
+  timestampfilename: DynaTimestampFileName,
+  autosuggestflowsampledata: DynaAutoSuggestFlowSampleData,
+  filekeycolumn: DynaFileKeyColumn,
 };

@@ -1,68 +1,41 @@
-import timeStamps from '../../../utils/timeStamps';
 import { isNewId } from '../../../utils/resource';
 
 export default {
-  init: fieldMeta => {
-    const fileDefinitionRulesField =
-      fieldMeta.fieldMap['file.filedefinition.rules'];
+  preSave: formValues => {
+    const newValues = {
+      ...formValues,
+    };
 
-    if (!fileDefinitionRulesField.userDefinitionId) {
-      // In Import creation mode, delete generic visibleWhenAll rules
-      // Add custom visible when rules
-      delete fileDefinitionRulesField.visibleWhenAll;
-      fileDefinitionRulesField.visibleWhen = [
-        {
-          field: 'edix12.format',
-          isNot: [''],
-        },
-        {
-          field: 'fixed.format',
-          isNot: [''],
-        },
-        {
-          field: 'edifact.format',
-          isNot: [''],
-        },
-      ];
+    if (newValues['/file/compressFiles'] === false) {
+      newValues['/file/compressionFormat'] = undefined;
     }
 
-    return fieldMeta;
+    delete newValues['/file/compressFiles'];
+
+    return {
+      ...newValues,
+    };
   },
   optionsHandler: (fieldId, fields) => {
     if (fieldId === 's3.fileKey') {
+      const fileNameField = fields.find(field => field.fieldId === fieldId);
       const fileTypeField = fields.find(field => field.fieldId === 'file.type');
-      const fileNameField = fields.find(
-        field => field.fieldId === 's3.fileKey'
-      );
-      let suggestionList = [];
+      const newExtension = [
+        'filedefinition',
+        'fixed',
+        'delimited/edifact',
+      ].includes(fileTypeField.value)
+        ? 'edi'
+        : fileTypeField.value;
 
-      if (
-        fileNameField &&
-        fileNameField.value &&
-        fileTypeField &&
-        fileTypeField.value
-      ) {
-        const extension = fileTypeField.value;
-        const lastDotIndex = fileNameField.value.lastIndexOf('.');
+      if (newExtension) {
+        const fileName = fileNameField.value;
+        const lastDotIndex = fileName.lastIndexOf('.');
         const fileNameWithoutExt =
-          lastDotIndex !== -1
-            ? fileNameField.value.substring(0, lastDotIndex)
-            : fileNameField.value;
-        const bracesStartIndex = fileNameWithoutExt.indexOf('{');
-        const textBeforeBraces =
-          bracesStartIndex !== -1
-            ? fileNameWithoutExt.substring(0, bracesStartIndex)
-            : fileNameWithoutExt;
+          lastDotIndex !== -1 ? fileName.substring(0, lastDotIndex) : fileName;
 
-        suggestionList = timeStamps.map(
-          timestamp =>
-            `${textBeforeBraces}{{timestamp(${timestamp._id})}}.${extension}`
-        );
-
-        fileNameField.value = `${fileNameWithoutExt}.${extension}`;
+        fileNameField.value = `${fileNameWithoutExt}.${newExtension}`;
       }
-
-      return { suggestions: suggestionList };
     }
 
     const fileType = fields.find(field => field.id === 'file.type');
@@ -71,26 +44,12 @@ export default {
       return fileType.value;
     }
 
-    if (fieldId === 'file.filedefinition.rules') {
-      let definitionFieldId;
-
-      // Fetch format specific Field Definition field to fetch id
-      if (fileType.value === 'filedefinition')
-        definitionFieldId = 'edix12.format';
-      else if (fileType.value === 'fixed') definitionFieldId = 'fixed.format';
-      else definitionFieldId = 'edifact.format';
-      const definition = fields.find(field => field.id === definitionFieldId);
-
-      return {
-        format: definition && definition.format,
-        definitionId: definition && definition.value,
-      };
-    }
-
     return null;
   },
   fieldMap: {
-    common: { formId: 'common' },
+    common: {
+      formId: 'common',
+    },
     importData: {
       id: 'importData',
       type: 'labeltitle',
@@ -98,13 +57,19 @@ export default {
     },
     inputMode: {
       id: 'inputMode',
-      type: 'radiogroup',
+      type: 'mode',
       label: 'Input Mode',
       options: [
         {
           items: [
-            { label: 'Records', value: 'records' },
-            { label: 'Blob Keys', value: 'blob' },
+            {
+              label: 'Records',
+              value: 'records',
+            },
+            {
+              label: 'Blob Keys',
+              value: 'blob',
+            },
           ],
         },
       ],
@@ -117,8 +82,12 @@ export default {
       },
       defaultValue: r => (r && r.blobKeyPath ? 'blob' : 'records'),
     },
-    's3.region': { fieldId: 's3.region' },
-    's3.bucket': { fieldId: 's3.bucket' },
+    's3.region': {
+      fieldId: 's3.region',
+    },
+    's3.bucket': {
+      fieldId: 's3.bucket',
+    },
     fileType: {
       formId: 'fileType',
       visibleWhenAll: [
@@ -128,8 +97,34 @@ export default {
         },
       ],
     },
-    's3.fileKey': { fieldId: 's3.fileKey' },
-    blobKeyPath: { fieldId: 'blobKeyPath' },
+    's3.fileKey': {
+      fieldId: 's3.fileKey',
+    },
+    blobKeyPath: {
+      fieldId: 'blobKeyPath',
+    },
+    'file.xml.body': {
+      id: 'file.xml.body',
+      type: 'httprequestbody',
+      connectionId: r => r && r._connectionId,
+      label: 'Launch XML Builder',
+      title: 'XML Document Editor',
+      ruleTitle: 'Type your template here.',
+      resultTitle: 'Your evaluated result!',
+      dataTitle: 'Resources available in your template.',
+      refreshOptionsOnChangesTo: ['file.type'],
+      required: true,
+      visibleWhenAll: [
+        {
+          field: 'file.type',
+          is: ['xml'],
+        },
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
+      ],
+    },
     file: {
       formId: 'file',
       visibleWhenAll: [
@@ -139,7 +134,9 @@ export default {
         },
       ],
     },
-    dataMappings: { formId: 'dataMappings' },
+    dataMappings: {
+      formId: 'dataMappings',
+    },
     'file.lookups': {
       fieldId: 'file.lookups',
       visible: false,
@@ -173,6 +170,7 @@ export default {
       's3.bucket',
       'fileType',
       's3.fileKey',
+      'file.xml.body',
       'file',
       'dataMappings',
       'file.lookups',
@@ -187,9 +185,6 @@ export default {
     ],
   },
   actions: [
-    {
-      id: 'cancel',
-    },
     {
       id: 'save',
       visibleWhen: [
@@ -208,6 +203,9 @@ export default {
           is: ['filedefinition', 'fixed', 'delimited/edifact'],
         },
       ],
+    },
+    {
+      id: 'cancel',
     },
   ],
 };

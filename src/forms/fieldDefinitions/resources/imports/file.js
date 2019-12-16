@@ -35,7 +35,10 @@ export default {
         field: 'file.type',
         is: ['filedefinition'],
       },
-      { field: 'file.output', is: ['records'] },
+      {
+        field: 'inputMode',
+        is: ['records'],
+      },
     ],
   },
   'fixed.format': {
@@ -48,7 +51,10 @@ export default {
         field: 'file.type',
         is: ['fixed'],
       },
-      { field: 'file.output', is: ['records'] },
+      {
+        field: 'inputMode',
+        is: ['records'],
+      },
     ],
   },
   'edifact.format': {
@@ -61,7 +67,10 @@ export default {
         field: 'file.type',
         is: ['delimited/edifact'],
       },
-      { field: 'file.output', is: ['records'] },
+      {
+        field: 'inputMode',
+        is: ['records'],
+      },
     ],
   },
   'file.filedefinition.rules': {
@@ -72,7 +81,10 @@ export default {
         field: 'file.type',
         is: ['filedefinition', 'fixed', 'delimited/edifact'],
       },
-      { field: 'file.output', is: ['records'] },
+      {
+        field: 'inputMode',
+        is: ['records'],
+      },
     ],
     refreshOptionsOnChangesTo: [
       'edix12.format',
@@ -85,6 +97,7 @@ export default {
       r.file &&
       r.file.fileDefinition &&
       r.file.fileDefinition._fileDefinitionId,
+    sampleData: r => r && r.sampleData,
   },
   uploadFile: {
     type: 'uploadfile',
@@ -98,8 +111,14 @@ export default {
     ],
   },
   'file.csv': {
-    type: 'csvparse',
-    label: 'Configure CSV parse options',
+    type: 'csvgenerate',
+    label: 'Configure CSV Generate Options',
+    defaultValue: r =>
+      (r.file && r.file.csv) || {
+        includeHeader: true,
+        rowDelimiter: '\n',
+        columnDelimiter: ',',
+      },
     visibleWhenAll: [
       {
         field: 'file.type',
@@ -122,36 +141,6 @@ export default {
     label: 'Compression Format',
     options: [{ items: [{ label: 'gzip', value: 'gzip' }] }],
   },
-  'file.csv.wrapWithQuotes': {
-    type: 'checkbox',
-    label: 'Wrap with quotes',
-    visibleWhenAll: [
-      {
-        field: 'file.type',
-        is: ['csv'],
-      },
-    ],
-  },
-  'file.csv.replaceTabWithSpace': {
-    type: 'checkbox',
-    label: 'Replace tab with space',
-    visibleWhenAll: [
-      {
-        field: 'file.type',
-        is: ['csv'],
-      },
-    ],
-  },
-  'file.csv.replaceNewLineWithSpace': {
-    type: 'checkbox',
-    label: 'Replace new line with space',
-    visibleWhenAll: [
-      {
-        field: 'file.type',
-        is: ['csv'],
-      },
-    ],
-  },
   'file.skipAggregation': {
     type: 'checkbox',
     label: 'Skip Aggregation',
@@ -165,24 +154,5 @@ export default {
   'file.fileDefinition._fileDefinitionId': {
     type: 'text',
     label: 'File file Definition _file Definition Id',
-  },
-  'file.csv.rowDelimiter': {
-    type: 'select',
-    label: 'Row Delimiter',
-    options: [
-      {
-        items: [
-          { label: 'LF(\\n)', value: '\n' },
-          { label: 'CR(\\r)', value: '\r' },
-          { label: 'CR(\\r) LF(\\n) ', value: '\r\n' },
-        ],
-      },
-    ],
-    visibleWhenAll: [
-      {
-        field: 'file.type',
-        is: ['csv'],
-      },
-    ],
   },
 };

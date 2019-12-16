@@ -3,10 +3,7 @@ import actionTypes from '../../../actions/types';
 import { resourceData, assistantData } from '../../../reducers';
 import { SCOPES } from '../../resourceForm';
 import { convertFromImport, convertToExport } from '../../../utils/assistant';
-import {
-  getNetsuiteOrSalesforceMeta,
-  requestAssistantMetadata,
-} from '../../resources/meta';
+import { requestAssistantMetadata } from '../../resources/meta';
 import { apiCallWithRetry } from '../..';
 import actions from '../../../actions';
 
@@ -16,6 +13,7 @@ function* fetchAssistantSampleData({ resource }) {
   let assistantMetadata;
   const previewPath = `/exports/preview`;
 
+  yield put(actions.metadata.requestAssistantImportPreview(resource._id));
   assistantMetadata = yield select(assistantData, {
     adaptorType: resource.adaptorType === 'HTTPImport' ? 'http' : 'rest',
     assistant: resource.assistant,
@@ -40,7 +38,7 @@ function* fetchAssistantSampleData({ resource }) {
 
   if (importEndpoint && importEndpoint.sampleData) {
     yield put(
-      actions.metadata.assistantImportPreview(
+      actions.metadata.receivedAssistantImportPreview(
         resource._id,
         importEndpoint.sampleData
       )
@@ -111,7 +109,7 @@ function* fetchAssistantSampleData({ resource }) {
       });
 
       yield put(
-        actions.metadata.assistantImportPreview(
+        actions.metadata.receivedAssistantImportPreview(
           resource._id,
           sampleDataWrapper ? { sampleDataWrapper: previewData } : previewData
         )
@@ -141,20 +139,24 @@ function* requestSampleData({ resourceId }) {
         // eslint-disable-next-line camelcase
         const { _connectionId: connectionId, netsuite_da } = resource;
 
-        yield call(getNetsuiteOrSalesforceMeta, {
-          connectionId,
-          commMetaPath: `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${netsuite_da.recordType}`,
-        });
+        yield put(
+          actions.metadata.request(
+            connectionId,
+            `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${netsuite_da.recordType}`
+          )
+        );
         break;
       }
 
       case 'SalesforceImport': {
         const { _connectionId: connectionId, salesforce } = resource;
 
-        yield call(getNetsuiteOrSalesforceMeta, {
-          connectionId,
-          commMetaPath: `salesforce/metadata/connections/${connectionId}/sObjectTypes/${salesforce.sObjectType}`,
-        });
+        yield put(
+          actions.metadata.request(
+            connectionId,
+            `salesforce/metadata/connections/${connectionId}/sObjectTypes/${salesforce.sObjectType}`
+          )
+        );
         break;
       }
 

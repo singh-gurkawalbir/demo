@@ -147,7 +147,9 @@ function AppBlock({
   resource,
   integrationId,
   isViewMode,
+  isMonitorLevelAccess,
   pg,
+  schedule,
   index,
   ...rest
 }) {
@@ -166,11 +168,16 @@ function AppBlock({
   }, [isOver, expanded]);
 
   const handleDelete = useCallback(index => () => onDelete(index), [onDelete]);
-
-  function handleExpandClick() {
-    setExpanded(true);
-  }
-
+  const handleExpandClick = useCallback(() => setExpanded(true), []);
+  const handleMouseOver = useCallback(
+    isOver => () => {
+      if (!activeAction) {
+        setIsOver(isOver);
+      }
+    },
+    [activeAction]
+  );
+  const handleActionClose = useCallback(() => setActiveAction(null), []);
   const hasActions = actions && Array.isArray(actions) && actions.length;
   let leftActions = [];
   let middleActions = [];
@@ -202,12 +209,14 @@ function AppBlock({
           open={activeAction === a.name}
           flowId={flowId}
           isViewMode={isViewMode}
+          isMonitorLevelAccess={isMonitorLevelAccess}
           resource={resource}
           resourceIndex={resourceIndex}
+          resourceId={resource._id}
           resourceType={resourceType}
-          pg={pg}
           index={index}
-          onClose={() => setActiveAction(null)}
+          onClose={handleActionClose}
+          schedule={schedule}
         />
       </Fragment>
     ));
@@ -219,10 +228,10 @@ function AppBlock({
         <Typography variant="h5">{name}</Typography>
       </div>
       <div
-        onMouseEnter={() => setIsOver(true)}
-        onFocus={() => setIsOver(true)}
-        onMouseLeave={() => setIsOver(false)}
-        onBlur={() => setIsOver(false)}
+        onMouseEnter={handleMouseOver(true)}
+        onFocus={handleMouseOver(true)}
+        onMouseLeave={handleMouseOver(false)}
+        onBlur={handleMouseOver(false)}
         {...rest}
         ref={forwardedRef}
         className={clsx(classes.box, { [classes.draggable]: !isNew })}

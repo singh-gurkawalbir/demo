@@ -10,10 +10,23 @@ export default {
       ].includes(fieldId)
     ) {
       const { value } = fields.find(
-        field => field.id === 'salesforce.distributed.sObjectType'
+        field => field.id === 'salesforce.sObjectType'
       );
 
       return value;
+    } else if (fieldId === 'salesforce.distributed.qualifier') {
+      const sObjectTypeField = fields.find(
+        field => field.fieldId === 'salesforce.sObjectType'
+      );
+
+      return {
+        commMetaPath: sObjectTypeField
+          ? `salesforce/metadata/connections/${sObjectTypeField.connectionId}/sObjectTypes/${sObjectTypeField.value}`
+          : '',
+        resetValue:
+          sObjectTypeField &&
+          sObjectTypeField.value !== sObjectTypeField.defaultValue,
+      };
     }
   },
   preSave: formValues => {
@@ -53,6 +66,14 @@ export default {
       retValues['/salesforce/api'] = 'rest';
     } else if (retValues['/salesforce/executionType'] === 'realtime') {
       retValues['/type'] = 'distributed';
+
+      /**
+       * When no qualifier or if it is an empty string we are sending null in ampersand app.
+       * If there is no difference in setting null vs empty string from backend perspective, we can remove this check.
+       */
+      if (!retValues['/salesforce/distributed/qualifier']) {
+        retValues['/salesforce/distributed/qualifier'] = null;
+      }
     }
 
     if (retValues['/outputMode'] === 'blob') {
@@ -79,7 +100,7 @@ export default {
     },
     outputMode: {
       id: 'outputMode',
-      type: 'radiogroup',
+      type: 'mode',
       label: 'Output Mode',
       required: true,
       options: [
@@ -178,10 +199,10 @@ export default {
       required: true,
       visibleWhen: [{ field: 'type', is: ['once'] }],
     },
-    'salesforce.distributed.sObjectType': {
+    'salesforce.sObjectType': {
       connectionId: r => r._connectionId,
-      fieldId: 'salesforce.distributed.sObjectType',
-      type: 'salesforcesobjecttype',
+      fieldId: 'salesforce.sObjectType',
+      type: 'refreshableselect',
       filterKey: 'salesforce-sObjects-triggerable',
       commMetaPath: r =>
         `salesforce/metadata/connections/${r._connectionId}/sObjectTypes`,
@@ -189,17 +210,18 @@ export default {
     'salesforce.id': { fieldId: 'salesforce.id' },
     'salesforce.distributed.requiredTrigger': {
       type: 'salesforcerequiredtrigger',
-      refreshOptionsOnChangesTo: ['salesforce.distributed.sObjectType'],
+      refreshOptionsOnChangesTo: ['salesforce.sObjectType'],
       fieldId: 'salesforce.distributed.requiredTrigger',
     },
     'salesforce.distributed.referencedFields': {
       connectionId: r => r._connectionId,
-      refreshOptionsOnChangesTo: ['salesforce.distributed.sObjectType'],
+      refreshOptionsOnChangesTo: ['salesforce.sObjectType'],
       type: 'salesforcereferencedfields',
+      delimiter: ',',
       fieldId: 'salesforce.distributed.referencedFields',
       disabledWhen: [
         {
-          field: 'salesforce.distributed.sObjectType',
+          field: 'salesforce.sObjectType',
           is: [''],
         },
       ],
@@ -207,17 +229,21 @@ export default {
     'salesforce.distributed.relatedLists': {
       type: 'salesforcerelatedlist',
       connectionId: r => r._connectionId,
-      refreshOptionsOnChangesTo: ['salesforce.distributed.sObjectType'],
+      refreshOptionsOnChangesTo: ['salesforce.sObjectType'],
       fieldId: 'salesforce.distributed.relatedLists',
       disabledWhen: [
         {
-          field: 'salesforce.distributed.sObjectType',
+          field: 'salesforce.sObjectType',
           is: [''],
         },
       ],
     },
+    'salesforce.objectType': {
+      fieldId: 'salesforce.objectType',
+    },
     'salesforce.distributed.qualifier': {
       fieldId: 'salesforce.distributed.qualifier',
+      refreshOptionsOnChangesTo: ['salesforce.sObjectType'],
     },
     advancedSettings: {
       formId: 'advancedSettings',
@@ -231,7 +257,8 @@ export default {
       'exportOneToMany',
       'salesforce.executionType',
       'exportData',
-      'salesforce.distributed.sObjectType',
+      'salesforce.sObjectType',
+      'salesforce.objectType',
       'salesforce.distributed.requiredTrigger',
       'salesforce.distributed.referencedFields',
       'salesforce.distributed.relatedLists',

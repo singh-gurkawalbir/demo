@@ -12,36 +12,92 @@ export default {
         ],
       },
     ],
-    defaultValue: r =>
-      r && r.rdbms && r.rdbms.queryType && r.rdbms.queryType[0],
+    defaultValue: r => {
+      let toReturn = '';
+
+      if (!r || !r.rdbms) {
+        return toReturn;
+      }
+
+      if (r.rdbms.queryType) {
+        if (r.rdbms.queryType.length > 1) {
+          toReturn = 'COMPOSITE';
+        } else if (r.rdbms.queryType.length === 1) {
+          [toReturn] = r.rdbms.queryType;
+        }
+      }
+
+      return toReturn;
+    },
   },
   'rdbms.query': {
     id: 'rdbms.query',
     type: 'sqlquerybuilder',
     arrayIndex: 0,
-    label: 'Launch Query Builder for Insert',
-    refreshOptionsOnChangesTo: ['rdbms.lookups', 'rdbms.queryType'],
+    label: 'Launch Query Builder',
+    title: 'SQL Query Builder',
+    refreshOptionsOnChangesTo: [
+      'rdbms.lookups',
+      'rdbms.queryType',
+      'modelMetadata',
+    ],
     visibleWhen: [
       {
         field: 'rdbms.queryType',
-        is: ['COMPOSITE', 'INSERT'],
+        is: ['INSERT', 'UPDATE'],
+      },
+    ],
+  },
+  'rdbms.queryInsert': {
+    id: 'rdbms.queryInsert',
+    type: 'sqlquerybuilder',
+    label: 'Launch Query Builder for Insert',
+    title: 'SQL Query Builder',
+    refreshOptionsOnChangesTo: [
+      'rdbms.lookups',
+      'rdbms.queryType',
+      'modelMetadata',
+    ],
+    visibleWhen: [
+      {
+        field: 'rdbms.queryType',
+        is: ['COMPOSITE'],
       },
     ],
   },
   'rdbms.queryUpdate': {
     id: 'rdbms.queryUpdate',
     type: 'sqlquerybuilder',
-    arrayIndex: 0,
     label: 'Launch Query Builder for Update',
-    refreshOptionsOnChangesTo: ['rdbms.lookups', 'rdbms.queryType'],
+    title: 'SQL Query Builder',
+    refreshOptionsOnChangesTo: [
+      'rdbms.lookups',
+      'rdbms.queryType',
+      'modelMetadata',
+    ],
     visibleWhen: [
       {
         field: 'rdbms.queryType',
-        is: ['COMPOSITE', 'UPDATE'],
+        is: ['COMPOSITE'],
       },
     ],
   },
-  'rdbms.existingDataId': {
+  'rdbms.ignoreExtract': {
+    type: 'text',
+    label: 'Existing Data Id',
+    required: true,
+    visibleWhenAll: [
+      {
+        field: 'rdbms.queryType',
+        is: ['INSERT'],
+      },
+      {
+        field: 'ignoreExisting',
+        is: [true],
+      },
+    ],
+  },
+  'rdbms.updateExtract': {
     type: 'text',
     label: 'Existing Data Id',
     required: true,
@@ -51,12 +107,12 @@ export default {
         is: ['COMPOSITE'],
       },
       {
-        field: 'ignoreExisting',
+        field: 'ignoreMissing',
         is: [true],
       },
       {
-        field: 'ignoreMissing',
-        is: [true],
+        field: 'ignoreExisting',
+        is: [false],
       },
     ],
   },

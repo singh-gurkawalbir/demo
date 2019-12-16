@@ -1,3 +1,5 @@
+import { isNewId } from '../../../utils/resource';
+
 export default {
   preSave: formValues => {
     const newValues = formValues;
@@ -10,8 +12,16 @@ export default {
       newValues['/as2/partnerStationInfo/auth/token'] = undefined;
     } else if (newValues['/as2/partnerStationInfo/auth/type'] === 'token') {
       newValues['/as2/partnerStationInfo/auth/basic'] = undefined;
-    } else {
-      newValues['/as2/partnerStationInfo/auth/type'] = undefined;
+    } else if (newValues['/as2/partnerStationInfo/auth/type'] === 'none') {
+      delete newValues['/as2/partnerStationInfo/auth/type'];
+    }
+
+    if (
+      !newValues['/as2/contentBasedFlowRouter'] ||
+      !newValues['/as2/contentBasedFlowRouter']._scriptId ||
+      !newValues['/as2/contentBasedFlowRouter'].function
+    ) {
+      newValues['/as2/contentBasedFlowRouter'] = undefined;
     }
 
     return newValues;
@@ -19,7 +29,16 @@ export default {
   fieldMap: {
     name: { fieldId: 'name' },
     as2url: { fieldId: 'as2url' },
-    'as2.as2Id': { fieldId: 'as2.as2Id' },
+    'as2.as2Id': {
+      fieldId: 'as2.as2Id',
+      defaultDisabled: r => {
+        const isNew = isNewId(r._id);
+
+        if (!isNew) return true;
+
+        return false;
+      },
+    },
     requiremdnspartners: { fieldId: 'requiremdnspartners' },
     requireasynchronousmdns: { fieldId: 'requireasynchronousmdns' },
     'as2.userStationInfo.mdn.mdnSigning': {
@@ -37,12 +56,34 @@ export default {
       fieldId: 'as2.encrypted.userPrivateKey',
     },
     'as2.userStationInfo.ipAddresses': {
+      label: 'AS2 IP Addresses: ',
+      value: (
+        <span>
+          Click{' '}
+          <a
+            // eslint-disable-next-line react/jsx-no-target-blank
+            target="_blank"
+            href="https://celigosuccess.zendesk.com/hc/en-us/articles/115003717028-Whitelist-integrator-io-IPs">
+            here
+          </a>{' '}
+          to see the list of IP Addresses
+        </span>
+      ),
       fieldId: 'as2.userStationInfo.ipAddresses',
     },
     'as2.partnerStationInfo.as2URI': {
       fieldId: 'as2.partnerStationInfo.as2URI',
     },
-    'as2.partnerId': { fieldId: 'as2.partnerId' },
+    'as2.partnerId': {
+      fieldId: 'as2.partnerId',
+      defaultDisabled: r => {
+        const isNew = isNewId(r._id);
+
+        if (!isNew) return true;
+
+        return false;
+      },
+    },
     partnerrequireasynchronousmdns: {
       fieldId: 'partnerrequireasynchronousmdns',
     },
@@ -66,6 +107,20 @@ export default {
     },
     'as2.partnerStationInfo.auth.type': {
       fieldId: 'as2.partnerStationInfo.auth.type',
+      defaultValue: r => {
+        const isNew = isNewId(r._id);
+
+        // if its create
+        if (isNew) return '';
+        const output =
+          r &&
+          r.as2 &&
+          r.as2.partnerStationInfo &&
+          r.as2.partnerStationInfo.auth &&
+          r.as2.partnerStationInfo.auth.type;
+
+        return output || 'none';
+      },
     },
     'as2.partnerStationInfo.auth.failStatusCode': {
       fieldId: 'as2.partnerStationInfo.auth.failStatusCode',
@@ -187,6 +242,12 @@ export default {
     'as2.partnerStationInfo.rateLimit.failValues': {
       fieldId: 'as2.partnerStationInfo.rateLimit.failValues',
     },
+    'as2.partnerStationInfo.encoding': {
+      fieldId: 'as2.partnerStationInfo.encoding',
+    },
+    'as2.contentBasedFlowRouter': {
+      fieldId: 'as2.contentBasedFlowRouter',
+    },
     'as2.concurrencyLevel': { fieldId: 'as2.concurrencyLevel' },
     'as2.preventCanonicalization': { fieldId: 'as2.preventCanonicalization' },
   },
@@ -203,9 +264,9 @@ export default {
           'requiremdnspartners',
           'requireasynchronousmdns',
           'as2.userStationInfo.mdn.mdnSigning',
-          'as2.userStationInfo.encoding',
           'as2.userStationInfo.encryptionType',
           'as2.userStationInfo.signing',
+          'as2.userStationInfo.encoding',
           'as2.unencrypted.userPublicKey',
           'as2.encrypted.userPrivateKey',
           'as2.userStationInfo.ipAddresses',
@@ -222,6 +283,7 @@ export default {
           'as2.partnerStationInfo.mdn.mdnSigning',
           'as2.partnerStationInfo.encryptionType',
           'as2.partnerStationInfo.signing',
+          'as2.partnerStationInfo.encoding',
           'as2.partnerStationInfo.signatureEncoding',
           'as2.unencrypted.partnerCertificate',
         ],
@@ -258,6 +320,11 @@ export default {
           'as2.partnerStationInfo.rateLimit.failPath',
           'as2.partnerStationInfo.rateLimit.failValues',
         ],
+      },
+      {
+        collapsed: true,
+        label: 'Routing Rules',
+        fields: ['as2.contentBasedFlowRouter'],
       },
       {
         collapsed: true,

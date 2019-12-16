@@ -1,5 +1,5 @@
-import { Fragment, useMemo } from 'react';
-import { useSelector } from 'react-redux';
+import { Fragment, useMemo, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import infoText from '../ResourceList/infoText';
@@ -12,6 +12,7 @@ import KeywordSearch from '../../components/KeywordSearch';
 import metadata from './metadata';
 import CheckPermissions from '../../components/CheckPermissions';
 import { PERMISSIONS } from '../../utils/constants';
+import actions from '../../actions';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -25,6 +26,7 @@ const useStyles = makeStyles(theme => ({
 export default function RecycleBin(props) {
   const defaultFilter = useMemo(() => ({ take: 5 }), []);
   const classes = useStyles();
+  const dispatch = useDispatch();
   const filter =
     useSelector(state => selectors.filter(state, 'recycleBinTTL')) ||
     defaultFilter;
@@ -35,12 +37,13 @@ export default function RecycleBin(props) {
     })
   );
 
+  useEffect(() => {
+    dispatch(actions.resource.requestCollection('recycleBinTTL'));
+  }, [dispatch]);
+
   return (
     <Fragment>
-      <CheckPermissions
-        permission={
-          PERMISSIONS && PERMISSIONS.recyclebin && PERMISSIONS.recyclebin.view
-        }>
+      <CheckPermissions permission={PERMISSIONS.recyclebin.view}>
         <ResourceDrawer {...props} />
         <CeligoPageBar title="Recycle Bin" infoText={infoText.recycleBin}>
           <div className={classes.actions}>

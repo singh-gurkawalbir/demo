@@ -6,7 +6,7 @@ import actions from '../../actions';
 import Filters from './Filters';
 import JobTable from './JobTable';
 import actionTypes from '../../actions/types';
-import { COMM_STATES } from '../../reducers/comms';
+import { COMM_STATES } from '../../reducers/comms/networkComms';
 import CommStatus from '../CommStatus';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import { UNDO_TIME } from './util';
@@ -109,15 +109,11 @@ export default function JobDashboard({
     }
   }, [selectedJobs, numJobsSelected]);
 
-  function closeAllOpenSnackbars() {
-    closeSnackbar();
-  }
-
   function handleSelectChange(selJobs) {
     setSelectedJobs(selJobs);
   }
 
-  function resolveAllJobs() {
+  const resolveAllJobs = useCallback(() => {
     const selectedFlowId = flowId || filters.flowId;
     const numberOfJobsToResolve = jobs
       .filter(job => {
@@ -146,7 +142,7 @@ export default function JobDashboard({
       }, 0);
 
     setSelectedJobs({});
-    closeAllOpenSnackbars();
+    closeSnackbar();
     dispatch(actions.job.resolveAll({ flowId: selectedFlowId, integrationId }));
     enqueueSnackbar({
       message: `${numberOfJobsToResolve} jobs marked as resolved.`,
@@ -178,9 +174,16 @@ export default function JobDashboard({
         });
       },
     });
-  }
-
-  function resolveSelectedJobs() {
+  }, [
+    closeSnackbar,
+    dispatch,
+    enqueueSnackbar,
+    filters.flowId,
+    flowId,
+    integrationId,
+    jobs,
+  ]);
+  const resolveSelectedJobs = useCallback(() => {
     const jobsToResolve = [];
 
     Object.keys(selectedJobs).forEach(jobId => {
@@ -201,7 +204,7 @@ export default function JobDashboard({
     }
 
     setSelectedJobs({});
-    closeAllOpenSnackbars();
+    closeSnackbar();
     dispatch(actions.job.resolveSelected({ jobs: jobsToResolve }));
     enqueueSnackbar({
       message: `${numJobsSelected} jobs marked as resolved.`,
@@ -228,9 +231,8 @@ export default function JobDashboard({
         );
       },
     });
-  }
-
-  function retryAllJobs() {
+  }, [closeSnackbar, dispatch, enqueueSnackbar, numJobsSelected, selectedJobs]);
+  const retryAllJobs = useCallback(() => {
     const selectedFlowId = flowId || filters.flowId;
     const numberOfJobsToRetry = jobs
       .filter(job => {
@@ -259,7 +261,7 @@ export default function JobDashboard({
       }, 0);
 
     setSelectedJobs({});
-    closeAllOpenSnackbars();
+    closeSnackbar();
     dispatch(actions.job.retryAll({ flowId: selectedFlowId, integrationId }));
     enqueueSnackbar({
       message: `${numberOfJobsToRetry} jobs retried.`,
@@ -286,9 +288,16 @@ export default function JobDashboard({
         });
       },
     });
-  }
-
-  function retrySelectedJobs() {
+  }, [
+    closeSnackbar,
+    dispatch,
+    enqueueSnackbar,
+    filters.flowId,
+    flowId,
+    integrationId,
+    jobs,
+  ]);
+  const retrySelectedJobs = useCallback(() => {
     const jobsToRetry = [];
 
     Object.keys(selectedJobs).forEach(jobId => {
@@ -309,7 +318,7 @@ export default function JobDashboard({
     }
 
     setSelectedJobs({});
-    closeAllOpenSnackbars();
+    closeSnackbar();
     dispatch(actions.job.retrySelected({ jobs: jobsToRetry }));
     enqueueSnackbar({
       message: `${numJobsSelected} jobs retried.`,
@@ -336,43 +345,47 @@ export default function JobDashboard({
         );
       },
     });
-  }
-
-  function handleActionClick(action) {
-    if (action === 'resolveAll') {
-      resolveAllJobs();
-    } else if (action === 'resolveSelected') {
-      resolveSelectedJobs();
-    } else if (action === 'retryAll') {
-      retryAllJobs();
-    } else if (action === 'retrySelected') {
-      retrySelectedJobs();
-    }
-  }
-
-  function commStatusHandler(objStatus) {
-    ['resolveAll', 'resolveSelected', 'retryAll', 'retrySelected'].forEach(
-      action => {
-        if (
-          objStatus[action] &&
-          [COMM_STATES.ERROR].includes(objStatus[action].status) &&
-          objStatus[action].message
-        ) {
-          enqueueSnackbar({
-            message: objStatus[action].message,
-            variant: objStatus[action].status,
-          });
-        }
+  }, [closeSnackbar, dispatch, enqueueSnackbar, numJobsSelected, selectedJobs]);
+  const handleActionClick = useCallback(
+    action => {
+      if (action === 'resolveAll') {
+        resolveAllJobs();
+      } else if (action === 'resolveSelected') {
+        resolveSelectedJobs();
+      } else if (action === 'retryAll') {
+        retryAllJobs();
+      } else if (action === 'retrySelected') {
+        retrySelectedJobs();
       }
-    );
-  }
+    },
+    [resolveAllJobs, resolveSelectedJobs, retryAllJobs, retrySelectedJobs]
+  );
+  const handleCommsStatus = useCallback(
+    objStatus => {
+      ['resolveAll', 'resolveSelected', 'retryAll', 'retrySelected'].forEach(
+        action => {
+          if (
+            objStatus[action] &&
+            [COMM_STATES.ERROR].includes(objStatus[action].status) &&
+            objStatus[action].message
+          ) {
+            enqueueSnackbar({
+              message: objStatus[action].message,
+              variant: objStatus[action].status,
+            });
+          }
+        }
+      );
+    },
+    [enqueueSnackbar]
+  );
 
   return (
     <LoadResources required resources="integrations,flows,exports,imports">
       <CommStatus
         actionsToMonitor={actionsToMonitor}
         autoClearOnComplete
-        commStatusHandler={commStatusHandler}
+        commStatusHandler={handleCommsStatus}
       />
       <Filters
         filterKey={filterKey}

@@ -201,9 +201,29 @@ const resource = {
     }),
   connections: {
     test: (resourceId, values) =>
-      action(actionTypes.TEST_CONNECTION, {
+      action(actionTypes.CONNECTION.TEST, {
         resourceId,
         values,
+      }),
+
+    testErrored: (resourceId, message) =>
+      action(actionTypes.CONNECTION.TEST_ERRORED, {
+        resourceId,
+        message,
+      }),
+    testCancelled: (resourceId, message) =>
+      action(actionTypes.CONNECTION.TEST_CANCELLED, {
+        resourceId,
+        message,
+      }),
+    testSuccessful: (resourceId, message) =>
+      action(actionTypes.CONNECTION.TEST_SUCCESSFUL, {
+        resourceId,
+        message,
+      }),
+    testClear: resourceId =>
+      action(actionTypes.CONNECTION.TEST_CLEAR, {
+        resourceId,
       }),
     saveAndAuthorize: (resourceId, values) =>
       action(actionTypes.RESOURCE_FORM.SAVE_AND_AUTHORIZE, {
@@ -277,11 +297,12 @@ const auditLogs = {
   clear: () => action(actionTypes.AUDIT_LOGS_CLEAR),
 };
 const connectors = {
-  refreshMetadata: (fieldType, fieldName, _integrationId) =>
+  refreshMetadata: (fieldType, fieldName, _integrationId, options) =>
     action(actionTypes.CONNECTORS.METADATA_REQUEST, {
       fieldType,
       fieldName,
       _integrationId,
+      options,
     }),
   failedMetadata: (fieldName, _integrationId) =>
     action(actionTypes.CONNECTORS.METADATA_FAILURE, {
@@ -315,10 +336,11 @@ const metadata = {
       commMetaPath,
       addInfo,
     }),
-  refresh: (connectionId, commMetaPath) =>
+  refresh: (connectionId, commMetaPath, addInfo) =>
     action(actionTypes.METADATA.REFRESH, {
       connectionId,
       commMetaPath,
+      addInfo,
     }),
   receivedCollection: (metadata, connectionId, commMetaPath) =>
     action(actionTypes.METADATA.RECEIVED, {
@@ -332,10 +354,19 @@ const metadata = {
       connectionId,
       commMetaPath,
     }),
-  assistantImportPreview: (resourceId, previewData) =>
+  requestAssistantImportPreview: resourceId =>
+    action(actionTypes.METADATA.ASSISTANT_PREVIEW_REQUESTED, {
+      resourceId,
+    }),
+
+  receivedAssistantImportPreview: (resourceId, previewData) =>
     action(actionTypes.METADATA.ASSISTANT_PREVIEW_RECEIVED, {
       resourceId,
       previewData,
+    }),
+  resetAssistantImportPreview: resourceId =>
+    action(actionTypes.METADATA.ASSISTANT_PREVIEW_RESET, {
+      resourceId,
     }),
 };
 const fileDefinitions = {
@@ -380,6 +411,15 @@ const integrationApp = {
         integration,
         options,
       }),
+    redirectTo: (integrationId, redirectTo) =>
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.REDIRECT, {
+        integrationId,
+        redirectTo,
+      }),
+    clearRedirect: integrationId =>
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.CLEAR_REDIRECT, {
+        integrationId,
+      }),
     requestedUpgrade: licenseId =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.UPGRADE_REQUESTED, {
         licenseId,
@@ -397,7 +437,7 @@ const integrationApp = {
         }
       ),
     requestMappingMetadata: integrationId =>
-      action(actionTypes.INTEGRATION_APPS.SETTINGS.MAPPING_METADATA, {
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.MAPPING_METADATA_REQUEST, {
         integrationId,
       }),
     mappingMetadataUpdate: (integrationId, response) =>
@@ -405,17 +445,23 @@ const integrationApp = {
         integrationId,
         response,
       }),
+    mappingMetadataError: (integrationId, error) =>
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.MAPPING_METADATA_ERROR, {
+        integrationId,
+        error,
+      }),
     upgrade: (integration, license) =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.UPGRADE, {
         integration,
         license,
       }),
-    update: (integrationId, flowId, storeId, values) =>
+    update: (integrationId, flowId, storeId, values, options) =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.UPDATE, {
         integrationId,
         flowId,
         storeId,
         values,
+        options,
       }),
     clear: (integrationId, flowId) =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.FORM.CLEAR, {
@@ -506,6 +552,11 @@ const integrationApp = {
       action(actionTypes.INTEGRATION_APPS.STORE.INSTALL, {
         id: integrationId,
         installerFunction,
+      }),
+    failedNewStoreSteps: (integrationId, message) =>
+      action(actionTypes.INTEGRATION_APPS.STORE.FAILURE, {
+        id: integrationId,
+        message,
       }),
     receivedNewStoreSteps: (integrationId, steps) =>
       action(actionTypes.INTEGRATION_APPS.STORE.RECEIVED, {
@@ -664,6 +715,8 @@ const importSampleData = {
 };
 const flowData = {
   init: flow => action(actionTypes.FLOW_DATA.INIT, { flow }),
+  requestStage: (flowId, resourceId, stage) =>
+    action(actionTypes.FLOW_DATA.STAGE_REQUEST, { flowId, resourceId, stage }),
   requestPreviewData: (flowId, resourceId, previewType) =>
     action(actionTypes.FLOW_DATA.PREVIEW_DATA_REQUEST, {
       flowId,
@@ -691,12 +744,20 @@ const flowData = {
       processor,
       processedData,
     }),
-  requestSampleData: (flowId, resourceId, resourceType, stage) =>
+  receivedError: (flowId, resourceId, stage, error) =>
+    action(actionTypes.FLOW_DATA.RECEIVED_ERROR, {
+      flowId,
+      resourceId,
+      stage,
+      error,
+    }),
+  requestSampleData: (flowId, resourceId, resourceType, stage, refresh) =>
     action(actionTypes.FLOW_DATA.SAMPLE_DATA_REQUEST, {
       flowId,
       resourceId,
       resourceType,
       stage,
+      refresh,
     }),
   reset: (flowId, resourceId) =>
     action(actionTypes.FLOW_DATA.RESET, { flowId, resourceId }),
@@ -720,6 +781,7 @@ const app = {
   errored: () => action(actionTypes.APP_ERRORED),
   clearError: () => action(actionTypes.APP_CLEAR_ERROR),
 };
+const toggleBanner = () => action(actionTypes.APP_TOGGLE_BANNER);
 const toggleDrawer = () => action(actionTypes.APP_TOGGLE_DRAWER);
 const patchFilter = (name, filter) =>
   action(actionTypes.PATCH_FILTER, { name, filter });
@@ -760,10 +822,20 @@ const mapping = {
     }),
   patchField: (id, field, index, value) =>
     action(actionTypes.MAPPING.PATCH_FIELD, { id, field, index, value }),
+  updateGenerates: (id, generateFields) =>
+    action(actionTypes.MAPPING.UPDATE_GENERATES, { id, generateFields }),
   updateLookup: (id, lookups) =>
     action(actionTypes.MAPPING.UPDATE_LOOKUP, { id, lookups }),
   patchSettings: (id, index, value) =>
     action(actionTypes.MAPPING.PATCH_SETTINGS, { id, index, value }),
+  setVisibility: (id, value) =>
+    action(actionTypes.MAPPING.SET_VISIBILITY, { id, value }),
+  patchIncompleteGenerates: (id, index, value) =>
+    action(actionTypes.MAPPING.PATCH_INCOMPLETE_GENERATES, {
+      id,
+      index,
+      value,
+    }),
   delete: (id, index) => action(actionTypes.MAPPING.DELETE, { id, index }),
 };
 // #region DynaForm Actions
@@ -808,6 +880,11 @@ const resourceForm = {
     }),
   submitFailed: (resourceType, resourceId) =>
     action(actionTypes.RESOURCE_FORM.SUBMIT_FAILED, {
+      resourceType,
+      resourceId,
+    }),
+  submitAborted: (resourceType, resourceId) =>
+    action(actionTypes.RESOURCE_FORM.SUBMIT_ABORTED, {
       resourceType,
       resourceId,
     }),
@@ -926,7 +1003,15 @@ const job = {
   },
 };
 const flow = {
-  run: ({ flowId }) => action(actionTypes.FLOW.RUN, { flowId }),
+  run: ({ flowId, customStartDate }) =>
+    action(actionTypes.FLOW.RUN, { flowId, customStartDate }),
+  requestLastExportDateTime: ({ flowId }) =>
+    action(actionTypes.FLOW.REQUEST_LAST_EXPORT_DATE_TIME, { flowId }),
+  receivedLastExportDateTime: (flowId, response) =>
+    action(actionTypes.FLOW.RECEIVED_LAST_EXPORT_DATE_TIME, {
+      flowId,
+      response,
+    }),
 };
 const assistantMetadata = {
   request: ({ adaptorType, assistant }) =>
@@ -938,10 +1023,20 @@ const assistantMetadata = {
       metadata,
     }),
 };
+const analytics = {
+  gainsight: {
+    trackEvent: (eventId, details) =>
+      action(actionTypes.ANALYTICS.GAINSIGHT.TRACK_EVENT, {
+        eventId,
+        details,
+      }),
+  },
+};
 // #endregion
 
 export default {
   app,
+  toggleBanner,
   toggleDrawer,
   metadata,
   fileDefinitions,
@@ -976,4 +1071,5 @@ export default {
   marketplace,
   recycleBin,
   mapping,
+  analytics,
 };

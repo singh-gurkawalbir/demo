@@ -1,3 +1,5 @@
+import dateTimezones from '../../../../../utils/dateTimezones';
+import dateFormats from '../../../../../utils/dateFormats';
 import mappingUtil from '../../../../../utils/mapping';
 
 export default {
@@ -145,6 +147,20 @@ export default {
           ],
           value: lookup.expression,
           data: extractFields,
+        },
+        'lookup.expressionText': {
+          id: 'lookup.expressionText',
+          name: 'expressionText',
+          type: 'text',
+          label: 'Lookup Filter Expression',
+          multiline: true,
+          disableText: true,
+          refreshOptionsOnChangesTo: ['lookup.expression'],
+          visibleWhenAll: [
+            { field: 'fieldMappingType', is: ['lookup'] },
+            { field: 'lookup.mode', is: ['dynamic'] },
+          ],
+          defaultValue: lookup.expression,
         },
         'lookup.resultField': {
           id: 'lookup.resultField',
@@ -352,6 +368,38 @@ export default {
           ],
           visibleWhenAll: [{ field: 'fieldMappingType', is: ['hardCoded'] }],
         },
+        extractDateFormat: {
+          id: 'extractDateFormat',
+          name: 'extractDateFormat',
+          type: 'autosuggest',
+          options: {
+            suggestions: dateFormats,
+          },
+          labelName: 'name',
+          valueName: 'value',
+          label: 'Date format',
+          defaultValue: value.extractDateFormat,
+          visibleWhen: [{ field: 'fieldMappingType', is: ['standard'] }],
+        },
+        extractDateTimezone: {
+          id: 'extractDateTimezone',
+          name: 'extractDateTimezone',
+          type: 'select',
+          label: 'Time Zone',
+          defaultValue: value.extractDateTimezone,
+          options: [
+            {
+              items:
+                (dateTimezones &&
+                  dateTimezones.map(date => ({
+                    label: date.value,
+                    value: date.name,
+                  }))) ||
+                [],
+            },
+          ],
+          visibleWhen: [{ field: 'fieldMappingType', is: ['standard'] }],
+        },
       },
       layout: {
         fields: [
@@ -363,6 +411,7 @@ export default {
           'lookup.mode',
           'lookup.recordType',
           'lookup.expression',
+          'lookup.expressionText',
           'lookup.resultField',
           'lookup.mapList',
           'functions',
@@ -374,6 +423,8 @@ export default {
           'lookupDefault',
           'hardcodedSelect',
           'hardcodedCheckbox',
+          'extractDateFormat',
+          'extractDateTimezone',
         ],
       },
       optionsHandler: (fieldId, fields) => {
@@ -405,6 +456,15 @@ export default {
           return {
             resourceToFetch: 'recordTypes',
           };
+        } else if (fieldId === 'lookup.expressionText') {
+          const lookupExpressionField = fields.find(
+            field => field.id === 'lookup.expression'
+          );
+          const lookupExpressionTextField = fields.find(
+            field => field.id === 'lookup.expressionText'
+          );
+
+          lookupExpressionTextField.value = lookupExpressionField.value;
         } else if (fieldId === 'lookup.expression') {
           const recordTypeField = fields.find(
             field => field.id === 'lookup.recordType'
@@ -476,6 +536,19 @@ export default {
 
       fields = fields.filter(
         el => el !== 'hardcodedSelect' && el !== 'hardcodedCheckbox'
+      );
+    }
+
+    if (
+      fieldMetadata &&
+      fieldMetadata.type !== 'date' &&
+      fieldMetadata.type !== 'datetime'
+    ) {
+      delete fieldMeta.fieldMap.extractDateFormat;
+      delete fieldMeta.fieldMap.extractDateTimezone;
+
+      fields = fields.filter(
+        el => el !== 'extractDateFormat' && el !== 'extractDateTimezone'
       );
     }
 

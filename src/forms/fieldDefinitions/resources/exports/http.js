@@ -41,6 +41,25 @@ export default {
     label: 'Relative URI',
     connectionId: r => r && r._connectionId,
     refreshOptionsOnChangesTo: ['name'],
+    validWhen: {
+      someAreTrue: {
+        message:
+          'For delta exports please use lastExportDateTime in the relative URI or Request Body.',
+        conditions: [
+          {
+            field: 'type',
+            isNot: {
+              values: ['delta'],
+            },
+          },
+          {
+            matchesRegEx: {
+              pattern: '^(.*)lastExportDateTime',
+            },
+          },
+        ],
+      },
+    },
     requiredWhen: [
       {
         field: 'outputMode',
@@ -402,7 +421,6 @@ export default {
   },
   'http.once.body': {
     type: 'httprequestbody',
-    useSampleDataAsArray: true,
     connectionId: r => r && r._connectionId,
     label: 'Build HTTP Request Body',
     visibleWhenAll: [

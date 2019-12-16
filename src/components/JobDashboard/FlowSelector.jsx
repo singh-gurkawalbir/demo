@@ -4,10 +4,12 @@ import * as selectors from '../../reducers';
 import CeligoSelect from '../CeligoSelect';
 import { STANDALONE_INTEGRATION } from '../../utils/constants';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
   flow: {
     minWidth: 130,
     maxWidth: 200,
+    borderRadius: theme.spacing(0.5),
+    height: theme.spacing(4.5),
   },
 }));
 
@@ -18,29 +20,33 @@ export default function FlowSelector({
   onChange,
 }) {
   const classes = useStyles();
-  const filteredFlows = useSelector(state => {
-    if (storeId) {
-      return selectors.integrationAppFlowSettings(
-        state,
-        integrationId,
-        null,
-        storeId
-      ).flows;
-    }
+  const storeFlows = useSelector(
+    state => selectors.integrationAppFlowIds(state, integrationId, storeId),
+    (left, right) => left.length === right.length
+  );
+  const filteredFlows = useSelector(
+    state =>
+      selectors.resourceList(state, {
+        type: 'flows',
+        filter: {
+          $where() {
+            if (!integrationId || integrationId === STANDALONE_INTEGRATION.id) {
+              return !this._integrationId; // standalone integration flows
+            }
 
-    const flows = selectors.resourceList(state, { type: 'flows' }).resources;
+            if (storeId) {
+              return storeFlows.includes(this._id);
+            }
 
-    return flows.filter(flow => {
-      if (!integrationId || integrationId === STANDALONE_INTEGRATION.id) {
-        return !flow._integrationId; // standalone integration flows
-      }
-
-      return flow._integrationId === integrationId;
-    });
-  });
+            return this._integrationId === integrationId;
+          },
+        },
+      }).resources
+  );
 
   return (
     <CeligoSelect
+      data-test="selectAFlowFilter"
       className={classes.flow}
       onChange={e => onChange(e.target.value)}
       displayEmpty

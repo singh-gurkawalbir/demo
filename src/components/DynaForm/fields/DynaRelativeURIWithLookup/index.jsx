@@ -8,6 +8,8 @@ import getFormattedSampleData from '../../../../utils/sampleData';
 import actions from '../../../../actions';
 import ActionButton from '../../../ActionButton';
 import ExitIcon from '../../../icons/ExitIcon';
+import { adaptorTypeMap } from '../../../../utils/resource';
+import getJSONPaths from '../../../../utils/jsonPaths';
 
 const useStyles = makeStyles(theme => ({
   textField: {
@@ -37,10 +39,10 @@ export default function DynaRelativeURIWithLookup(props) {
     label,
     options = {},
     resourceId,
-    useSampleDataAsArray,
     resourceType,
     flowId,
     arrayIndex,
+    adaptorType,
   } = props;
   const { resourceName, lookups } = options;
   const { fieldId: lookupFieldId, data: lookupData } = lookups || {};
@@ -60,13 +62,22 @@ export default function DynaRelativeURIWithLookup(props) {
     getFormattedSampleData({
       connection,
       sampleData,
-      useSampleDataAsArray,
       resourceType,
       resourceName,
     }),
     null,
     2
   );
+  let formattedExtractFields = [];
+
+  if (sampleData) {
+    const extractPaths = getJSONPaths(sampleData);
+
+    formattedExtractFields =
+      (extractPaths &&
+        extractPaths.map(obj => ({ name: obj.id, id: obj.id }))) ||
+      [];
+  }
 
   useEffect(() => {
     // Request for sample data only incase of flow context
@@ -126,6 +137,8 @@ export default function DynaRelativeURIWithLookup(props) {
     options && typeof arrayIndex === 'number' && Array.isArray(value)
       ? value[arrayIndex]
       : value;
+  const isSqlImport =
+    adaptorType && adaptorTypeMap[adaptorType] === adaptorTypeMap.RDBMSImport;
 
   return (
     <Fragment>
@@ -151,16 +164,24 @@ export default function DynaRelativeURIWithLookup(props) {
         label={label}
         placeholder={placeholder}
         isValid={isValid}
+        sampleData={formattedSampleData}
         description={description}
         errorMessages={errorMessages}
+        isSqlImport={isSqlImport}
         disabled={disabled}
         multiline={multiline}
         onFieldChange={handleFieldChange}
+        extractFields={formattedExtractFields}
         lookups={lookupData}
         onLookupUpdate={handleLookupUpdate}
         required={required}
+        connectionId={connectionId}
         value={extactedVal}
         connectionType={connection.type}
+        resourceId={resourceId}
+        resourceName={resourceName}
+        resourceType={resourceType}
+        flowId={flowId}
       />
     </Fragment>
   );

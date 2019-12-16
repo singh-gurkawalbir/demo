@@ -78,6 +78,7 @@ function DynaFileDefinitionEditor(props) {
    * 1. In creation of an export, from FileDefinitions list based on 'definitionId' and 'format'
    * 2. In Editing an existing export, from UserSupportedFileDefinitions based on userDefinitionId
    */
+  // TODO: @Raghu Move this logic to a selector instead of having logic here
   const { sampleData, rule } = useSelector(state => {
     let template;
 
@@ -99,11 +100,13 @@ function DynaFileDefinitionEditor(props) {
 
     if (resourceType === 'imports') {
       rule = JSON.stringify(fileDefinitionRules, null, 2);
-      formattedSampleData = JSON.stringify(
-        Array.isArray(sampleData) && sampleData.length ? sampleData[0] : {},
-        null,
-        2
-      );
+      formattedSampleData =
+        sampleData &&
+        JSON.stringify(
+          Array.isArray(sampleData) && sampleData.length ? sampleData[0] : {},
+          null,
+          2
+        );
     } else {
       rule = JSON.stringify(
         {
@@ -164,7 +167,12 @@ function DynaFileDefinitionEditor(props) {
             title="File Definition Editor"
             id={id + resourceId}
             processor={processor}
-            data={sampleData}
+            data={
+              sampleData ||
+              (resourceType === 'exports'
+                ? props.sampleData
+                : JSON.stringify(props.sampleData, null, 2))
+            }
             rule={value}
             onClose={handleClose}
             disabled={disabled}

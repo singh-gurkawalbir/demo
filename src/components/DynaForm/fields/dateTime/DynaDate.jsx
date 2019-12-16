@@ -7,7 +7,7 @@ import {
 import ErroredMessageComponent from '../ErroredMessageComponent';
 
 export default function DatePicker(props) {
-  const { id, label, onFieldChange, value } = props;
+  const { id, label, onFieldChange, value, disabled } = props;
   const [dateValue, setDateValue] = useState(value || null);
 
   useEffect(() => {
@@ -24,6 +24,7 @@ export default function DatePicker(props) {
         inputVariant="outlined"
         InputLabelProps={{ shrink: true }}
         onChange={value => setDateValue(value)}
+        disabled={disabled}
       />
       <ErroredMessageComponent {...props} />
     </MuiPickersUtilsProvider>

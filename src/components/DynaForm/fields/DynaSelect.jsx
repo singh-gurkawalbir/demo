@@ -1,4 +1,5 @@
 import React from 'react';
+import { ListSubheader } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
@@ -76,6 +77,16 @@ export default function DynaSelect(props) {
             label = item.label || item.value;
           }
 
+          const { subHeader } = item;
+
+          if (subHeader) {
+            return (
+              <ListSubheader disableSticky key={subHeader}>
+                {subHeader}
+              </ListSubheader>
+            );
+          }
+
           return (
             <MenuItem key={value} value={value}>
               {label}
@@ -120,7 +131,8 @@ export default function DynaSelect(props) {
           displayEmpty
           disabled={disabled}
           onChange={e => {
-            onFieldChange(id, e.target.value);
+            // if value is undefined could be a subHeader element since it does not have value property
+            if (e.target.value !== undefined) onFieldChange(id, e.target.value);
           }}
           input={<Input name={name} id={id} />}>
           {items}

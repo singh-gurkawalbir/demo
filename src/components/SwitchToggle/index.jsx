@@ -69,18 +69,15 @@ const useStyle = makeStyles(theme => ({
 
 export default function SwitchOnOff({ on = false, onClick, ...rest }) {
   const classes = useStyle();
-  const [isOn, setIsOn] = React.useState(on);
 
   return (
-    <div
-      onClick={onClick ? () => onClick(isOn) : undefined}
-      className={classes.switchSlider}>
+    <div className={classes.switchSlider}>
       <input
         type="checkbox"
         {...rest}
-        checked={isOn}
+        checked={on}
         className={classes.switchCheck}
-        onChange={() => setIsOn(!isOn)}
+        onChange={onClick}
       />
     </div>
   );

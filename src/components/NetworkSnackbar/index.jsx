@@ -9,7 +9,8 @@ import {
 import { Fragment } from 'react';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
-import { COMM_STATES } from '../../reducers/comms';
+import { COMM_STATES } from '../../reducers/comms/networkComms';
+import RawHtml from '../RawHtml';
 
 const useStyles = makeStyles(theme => ({
   snackbar: {
@@ -35,10 +36,17 @@ const Dismiss = props =>
   );
 
 export const ErroredMessageList = ({ messages }) =>
-  messages
+  messages && messages.length > 0
     ? messages.map((msg, index) => (
         <Fragment key={msg}>
-          <Typography color="error">{msg}</Typography>
+          {
+            // Check if the message contains html elements, render it as html
+          }
+          {/<\/?[a-z][\s\S]*>/i.test(msg) ? (
+            <RawHtml html={msg} />
+          ) : (
+            <Typography color="error">{msg}</Typography>
+          )}
           {index > 0 && <br />}
         </Fragment>
       ))

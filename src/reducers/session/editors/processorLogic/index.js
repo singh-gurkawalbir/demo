@@ -1,5 +1,6 @@
 import xmlParser from './xmlParser';
 import csvParser from './csvParser';
+import csvDataGenerator from './csvDataGenerator';
 import merge from './merge';
 import transform from './transform';
 import handlebars from './handlebars';
@@ -9,10 +10,14 @@ import structuredFileGenerator from './structuredFileGenerator';
 import sql from './sql';
 import filter from './filter';
 import netsuiteLookupFilter from './netsuiteLookupFilter';
+import netsuiteQualificationCriteria from './netsuiteQualificationCriteria';
+import salesforceQualifier from './salesforceQualifier';
+import salesforceLookupFilter from './salesforceLookupFilter';
 
 const logicMap = {
   xmlParser,
   csvParser,
+  csvDataGenerator,
   merge,
   transform,
   handlebars,
@@ -22,6 +27,9 @@ const logicMap = {
   sql,
   filter,
   netsuiteLookupFilter,
+  netsuiteQualificationCriteria,
+  salesforceQualifier,
+  salesforceLookupFilter,
 };
 
 function getLogic(editor) {

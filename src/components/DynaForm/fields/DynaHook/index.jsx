@@ -3,9 +3,16 @@ import { useDispatch, useSelector } from 'react-redux';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import Hook from './Hook';
+import LoadResources from '../../../LoadResources';
 
 export default function DynaHook(props) {
-  const { flowId, resourceType, resourceId, hookStage, disabled } = props;
+  const {
+    flowId,
+    resourceType,
+    resourceId,
+    hookStage = 'preSavePage',
+    disabled,
+  } = props;
   const dispatch = useDispatch();
   const [isPreHookDataRequested, setIsPreHookDataRequested] = useState(false);
   const requestForPreHookData = () => {
@@ -66,9 +73,11 @@ export default function DynaHook(props) {
     }
   };
 
-  const preHookData = useSelector(state =>
-    getSampleDataSelector({ state, flowId, resourceId, stage: 'hooks' })
-  );
+  const preHookData = useSelector(state => {
+    if (props.preHookData) return props.preHookData;
+
+    return getSampleDataSelector({ state, flowId, resourceId, stage: 'hooks' });
+  });
 
   useEffect(() => {
     // Samle data is shown incase of flow context
@@ -88,11 +97,13 @@ export default function DynaHook(props) {
   ]);
 
   return (
-    <Hook
-      disabled={disabled}
-      preHookData={preHookData}
-      requestForPreHookData={requestForPreHookData}
-      {...props}
-    />
+    <LoadResources resources="scripts">
+      <Hook
+        disabled={disabled}
+        preHookData={preHookData}
+        requestForPreHookData={requestForPreHookData}
+        {...props}
+      />
+    </LoadResources>
   );
 }

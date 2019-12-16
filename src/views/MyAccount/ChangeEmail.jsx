@@ -36,7 +36,7 @@ class ChangeEmail extends Component {
     const { show, onhandleClose, error, success, message } = this.props;
 
     return (
-      <ModalDialog show={show} handleClose={onhandleClose}>
+      <ModalDialog show={show} onClose={onhandleClose}>
         Change Email
         {success ? (
           <Typography variant="body2">{message}</Typography>

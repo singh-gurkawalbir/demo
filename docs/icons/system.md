@@ -48,6 +48,7 @@ const HideContentIcon = require('../../src/components/icons/HideContentIcon').de
 const HomeIcon = require('../../src/components/icons/HomeIcon').default;
 const HookIcon = require('../../src/components/icons/HookIcon').default;
 const InfoIcon = require('../../src/components/icons/InfoIcon').default;
+const InviteUsersIcon = require('../../src/components/icons/InviteUsersIcon').default;
 const InstallIcon = require('../../src/components/icons/InstallIcon').default;
 const ImportsIcon = require('../../src/components/icons/ImportsIcon').default;
 const InputFilterIcon = require('../../src/components/icons/InputFilterIcon').default;
@@ -73,8 +74,10 @@ const RadioBtnSelectedIcon = require('../../src/components/icons/RadioBtnSelecte
 const RadioBtnUnselectedIcon = require('../../src/components/icons/RadioBtnUnselectedIcon').default;
 const ResourcesIcon = require('../../src/components/icons/ResourcesIcon').default;
 const RegenerateTokenIcon = require('../../src/components/icons/RegenerateTokenIcon').default;
+const RegisterConnectionIcon = require('../../src/components/icons/RegisterConnectionIcon').default;
 const RefreshIcon = require('../../src/components/icons/RefreshIcon').default;
 const RunIcon = require('../../src/components/icons/RunIcon').default;
+const RecycleBinIcon = require('../../src/components/icons/RecycleBinIcon').default;
 const StacksIcon = require('../../src/components/icons/StacksIcon').default;
 const ShowContentIcon = require('../../src/components/icons/ShowContentIcon').default;
 const SuccessIcon = require('../../src/components/icons/SuccessIcon').default;
@@ -91,6 +94,7 @@ const TokensApiIcon = require('../../src/components/icons/TokensApiIcon').defaul
 const TransferIcon = require('../../src/components/icons/TransferIcon').default;
 const TrashIcon = require('../../src/components/icons/TrashIcon').default;
 const UnlockIcon = require('../../src/components/icons/UnlockIcon').default;
+const UnlinkedIcon = require('../../src/components/icons/UnlinkedIcon').default;
 const UploadIcon = require('../../src/components/icons/UploadIcon').default;
 const UnpublishedIcon = require('../../src/components/icons/UnpublishedIcon').default;
 const ViewReferencesIcon = require('../../src/components/icons/ViewReferencesIcon').default;
@@ -309,6 +313,10 @@ const icon = {
       <p>Install</p>
     </div>
     <div style={wrapper}>
+      <InviteUsersIcon style={icon} />
+      <p>InviteUsers</p>
+    </div>
+    <div style={wrapper}>
       <ImportsIcon style={icon} />
       <p>Imports</p>
     </div>
@@ -415,6 +423,15 @@ const icon = {
       <p>Run</p>
     </div>
     <div style={wrapper}>
+      <RecycleBinIcon style={icon} />
+      <p>RecycleBin</p>
+    </div>
+     <div style={wrapper}>
+      <RegisterConnectionIcon style={icon} />
+      <p>  RegisterConnection</p>
+    </div>
+  
+    <div style={wrapper}>
       <StacksIcon style={icon} />
       <p>Stacks</p>
     </div>
@@ -489,6 +506,10 @@ const icon = {
     <div style={wrapper}>
       <UnlockIcon style={icon} />
       <p>Unlock</p>
+    </div>
+    <div style={wrapper}>
+      <UnlinkedIcon style={icon} />
+      <p>Unlinked</p>
     </div>
     <div style={wrapper}>
       <ViewReferencesIcon style={icon} />

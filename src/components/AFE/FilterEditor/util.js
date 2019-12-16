@@ -248,7 +248,7 @@ export function generateIOFilterExpression(rules) {
 
           switch (rr.data.lhs.dataType) {
             case 'number':
-              lhs = parseInt(rr.data.lhs.value, 10);
+              lhs = parseFloat(rr.data.lhs.value);
               break;
             case 'boolean':
               lhs =
@@ -288,7 +288,7 @@ export function generateIOFilterExpression(rules) {
 
             switch (rr.data.rhs.dataType) {
               case 'number':
-                rhs = parseInt(rr.data.rhs.value, 10);
+                rhs = parseFloat(rr.data.rhs.value);
                 break;
               case 'boolean':
                 rhs =

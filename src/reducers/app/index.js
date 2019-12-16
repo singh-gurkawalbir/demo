@@ -1,12 +1,24 @@
 import actionTypes from '../../actions/types';
 
-export default function(state = { drawerOpened: true, count: 1 }, action) {
+export default function(
+  state = {
+    appErrored: false,
+    drawerOpened: true,
+    bannerOpened: true,
+    count: 1,
+  },
+  action
+) {
   switch (action.type) {
     case actionTypes.APP_RELOAD: {
       const { count } = state;
       const newCount = count + 1;
 
       return { count: newCount };
+    }
+
+    case actionTypes.APP_TOGGLE_BANNER: {
+      return { ...state, bannerOpened: !state.bannerOpened };
     }
 
     case actionTypes.APP_TOGGLE_DRAWER: {
@@ -32,17 +44,27 @@ export default function(state = { drawerOpened: true, count: 1 }, action) {
 }
 
 // #region Selectors
+export function bannerOpened(state) {
+  if (!state) return true;
+
+  return !!state.bannerOpened;
+}
+
 export function drawerOpened(state) {
-  return state && state.drawerOpened;
+  if (!state) return true;
+
+  return !!state.drawerOpened;
 }
 
 export function reloadCount(state) {
-  return state && state.count;
+  if (!state) return 0;
+
+  return state.count;
 }
 
 export function appErrored(state) {
   if (!state) return null;
 
-  return state && state.appErrored;
+  return state.appErrored;
 }
 // #endregion

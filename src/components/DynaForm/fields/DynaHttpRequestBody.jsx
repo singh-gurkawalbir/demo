@@ -1,5 +1,6 @@
 import { useState, useEffect, Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import deepClone from 'lodash/cloneDeep';
 import Button from '@material-ui/core/Button';
 import * as selectors from '../../../reducers';
 import HttpRequestBodyEditorDialog from '../../../components/AFE/HttpRequestBodyEditor/Dialog';
@@ -18,14 +19,18 @@ export default function DynaHttpRequestBody(props) {
     options = {},
     value,
     label,
+    title,
+    resultTitle,
+    ruleTitle,
+    dataTitle,
     resourceId,
     connectionId,
     resourceType,
     flowId,
     arrayIndex,
-    useSampleDataAsArray,
   } = props;
-  const { lookups: lookupsObj, contentType, resourceName } = options;
+  const { lookups: lookupsObj, resourceName } = options;
+  const contentType = options.contentType || props.contentType;
   const [showEditor, setShowEditor] = useState(false);
   let parsedRule =
     options && typeof arrayIndex === 'number' && Array.isArray(value)
@@ -55,17 +60,14 @@ export default function DynaHttpRequestBody(props) {
     }
   });
   // constructing data
-  const formattedSampleData = JSON.stringify(
-    getFormattedSampleData({
-      connection,
-      sampleData,
-      useSampleDataAsArray,
-      resourceType,
-      resourceName,
-    }),
-    null,
-    2
-  );
+  const connectionCopy = deepClone(connection);
+  const formattedSampleData = getFormattedSampleData({
+    connection: connectionCopy,
+    sampleData,
+    resourceType,
+    resourceName,
+  });
+  const stringifiedSampleData = JSON.stringify(formattedSampleData, null, 2);
 
   useEffect(() => {
     // Request for sample data only incase of flow context
@@ -103,14 +105,21 @@ export default function DynaHttpRequestBody(props) {
   };
 
   if (!parsedRule) {
-    const sampleDataTmp = sampleData || { myField: 'sample' };
-
     if (contentType === 'json')
-      parsedRule = getJSONSampleTemplate(sampleDataTmp);
-    else parsedRule = getXMLSampleTemplate(sampleDataTmp);
+      parsedRule = getJSONSampleTemplate(formattedSampleData.data);
+    else parsedRule = getXMLSampleTemplate(formattedSampleData.data);
   }
 
   let lookupField;
+  const lookupOptions = {
+    isSQLLookup: false,
+    sampleData: formattedSampleData,
+    resourceId,
+    resourceType,
+    flowId,
+    connectionId,
+    resourceName,
+  };
 
   if (lookupFieldId) {
     lookupField = (
@@ -119,6 +128,7 @@ export default function DynaHttpRequestBody(props) {
         label="Manage Lookups"
         value={lookups}
         onFieldChange={onFieldChange}
+        options={lookupOptions}
       />
     );
   }
@@ -128,14 +138,17 @@ export default function DynaHttpRequestBody(props) {
       {showEditor && (
         <HttpRequestBodyEditorDialog
           contentType={contentType === 'json' ? 'json' : 'xml'}
-          title="Build HTTP Request Body"
+          title={title || 'Build HTTP Request Body'}
           id={`${resourceId}-${id}`}
           rule={parsedRule}
           onFieldChange={onFieldChange}
           lookups={lookups}
-          data={formattedSampleData}
+          data={stringifiedSampleData}
           onClose={handleClose}
           action={lookupField}
+          ruleTitle={ruleTitle}
+          dataTitle={dataTitle}
+          resultTitle={resultTitle}
         />
       )}
       <Button

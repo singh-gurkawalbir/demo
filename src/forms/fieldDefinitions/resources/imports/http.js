@@ -2,6 +2,7 @@ export default {
   'http.method': {
     type: 'radiogroup',
     label: 'Method',
+    required: true,
     visibleWhen: [
       {
         field: 'inputMode',
@@ -83,7 +84,7 @@ export default {
         ],
       },
     ],
-    defaultValue: r => (r && r.http ? r && r.http.requestMediaType : 'xml'),
+    defaultValue: r => (r && r.http ? r && r.http.requestMediaType : 'json'),
   },
   'http.compositeType': {
     type: 'select',
@@ -167,7 +168,6 @@ export default {
   },
   'http.body': {
     type: 'httprequestbody',
-    useSampleDataAsArray: true,
     connectionId: r => r && r._connectionId,
     arrayIndex: 0,
     defaultValue: r =>

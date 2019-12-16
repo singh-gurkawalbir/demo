@@ -12,6 +12,12 @@ export default {
 
     delete newValues['/outputMode'];
 
+    if (newValues['/file/decompressFiles'] === false) {
+      newValues['/file/compressionFormat'] = undefined;
+    }
+
+    delete newValues['/file/decompressFiles'];
+
     return {
       ...newValues,
     };
@@ -25,7 +31,7 @@ export default {
     },
     outputMode: {
       id: 'outputMode',
-      type: 'radiogroup',
+      type: 'mode',
       label: 'Output Mode',
       required: true,
       options: [
@@ -89,4 +95,28 @@ export default {
       { collapsed: true, label: 'Advanced', fields: ['fileAdvancedSettings'] },
     ],
   },
+  actions: [
+    {
+      id: 'save',
+      visibleWhen: [
+        {
+          field: 'file.type',
+          isNot: ['filedefinition', 'fixed', 'delimited/edifact'],
+        },
+      ],
+    },
+    {
+      // Button that saves file defs and then submit resource
+      id: 'savedefinition',
+      visibleWhen: [
+        {
+          field: 'file.type',
+          is: ['filedefinition', 'fixed', 'delimited/edifact'],
+        },
+      ],
+    },
+    {
+      id: 'cancel',
+    },
+  ],
 };

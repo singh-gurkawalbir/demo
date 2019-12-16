@@ -1,5 +1,5 @@
-import { Fragment, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { Fragment, useState, useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import Menu from '@material-ui/core/Menu';
 import { makeStyles } from '@material-ui/core';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -9,7 +9,7 @@ import { JOB_STATUS, JOB_TYPES } from '../../utils/constants';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { confirmDialog } from '../ConfirmDialog';
-import { COMM_STATES } from '../../reducers/comms';
+import { COMM_STATES } from '../../reducers/comms/networkComms';
 import CommStatus from '../CommStatus';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import { UNDO_TIME } from './util';
@@ -17,6 +17,8 @@ import JobRetriesDialog from './JobRetriesDialog';
 import JobFilesDownloadDialog from './JobFilesDownloadDialog';
 import MoreVertIcon from '../icons/EllipsisVerticalIcon';
 import getRoutePath from '../../utils/routePaths';
+import * as selectors from '../../reducers';
+import FlowStartDateDialog from '../DeltaFlowStartDate/Dialog';
 
 const useStyle = makeStyles({
   iconBtn: {
@@ -53,6 +55,10 @@ export default function JobActionsMenu({
   if (isJobInProgress || job.status === JOB_STATUS.RETRYING) {
     menuOptions.push({ label: 'Cancel', action: 'cancelJob' });
   }
+
+  const [showDilaog, setShowDilaog] = useState(false);
+  const flowDetails =
+    useSelector(state => selectors.flowDetails(state, job._flowId)) || {};
 
   if (isJobCompleted) {
     if (job.retries && job.retries.length > 0) {
@@ -105,6 +111,35 @@ export default function JobActionsMenu({
     }
   }
 
+  const handleCommsStatus = useCallback(
+    objStatus => {
+      const messages = {
+        runFlow: {
+          [COMM_STATES.SUCCESS]: `${job.name} flow has been queued successfully`,
+          [COMM_STATES.ERROR]: `${objStatus.runFlow &&
+            objStatus.runFlow.message}`,
+        },
+      };
+
+      ['runFlow'].forEach(a => {
+        if (
+          objStatus[a] &&
+          [COMM_STATES.SUCCESS, COMM_STATES.ERROR].includes(objStatus[a].status)
+        ) {
+          if (!messages[a] || !messages[a][objStatus[a].status]) {
+            return;
+          }
+
+          enqueueSnackbar({
+            message: messages[a][objStatus[a].status],
+            variant: objStatus[a].status,
+          });
+        }
+      });
+    },
+    [enqueueSnackbar, job.name]
+  );
+
   function handleMenuClose() {
     setAnchorEl(null);
   }
@@ -112,6 +147,10 @@ export default function JobActionsMenu({
   function handleMenuClick(event) {
     setAnchorEl(event.currentTarget);
   }
+
+  const handleRunDeltaFlow = customStartDate => {
+    dispatch(actions.flow.run({ flowId: job._flowId, customStartDate }));
+  };
 
   function handleActionClick(action) {
     handleMenuClose();
@@ -127,15 +166,22 @@ export default function JobActionsMenu({
         setShowFilesDownloadDialog(true);
       }
     } else if (action === 'runFlow') {
-      dispatch(actions.flow.run({ flowId: job._flowId }));
-      setActionsToMonitor({
-        ...actionsToMonitor,
-        [action]: {
-          action: actionTypes.FLOW.RUN,
-          resourceId: job._flowId,
-        },
-      });
-      dispatch(actions.job.paging.setCurrentPage(0));
+      if (
+        flowDetails.isDeltaFlow &&
+        (!flowDetails._connectorId || !!flowDetails.showStartDateDialog)
+      ) {
+        setShowDilaog('true');
+      } else {
+        handleRunDeltaFlow();
+        setActionsToMonitor({
+          ...actionsToMonitor,
+          [action]: {
+            action: actionTypes.FLOW.RUN,
+            resourceId: job._flowId,
+          },
+        });
+        dispatch(actions.job.paging.setCurrentPage(0));
+      }
     } else if (action === 'cancelJob') {
       confirmDialog({
         title: 'Confirm',
@@ -291,8 +337,19 @@ export default function JobActionsMenu({
     setShowFilesDownloadDialog(false);
   }
 
+  const closeDeltaDialog = () => {
+    setShowDilaog(false);
+  };
+
   return (
     <Fragment>
+      {showDilaog && flowDetails.isDeltaFlow && (
+        <FlowStartDateDialog
+          flowId={job._flowId}
+          onClose={closeDeltaDialog}
+          runDeltaFlow={handleRunDeltaFlow}
+        />
+      )}
       {showRetriesDialog && (
         <JobRetriesDialog
           job={job}
@@ -310,33 +367,7 @@ export default function JobActionsMenu({
       <CommStatus
         actionsToMonitor={actionsToMonitor}
         autoClearOnComplete
-        commStatusHandler={objStatus => {
-          const messages = {
-            runFlow: {
-              [COMM_STATES.SUCCESS]: `${job.name} flow has been queued successfully`,
-              [COMM_STATES.ERROR]: `${objStatus.runFlow &&
-                objStatus.runFlow.message}`,
-            },
-          };
-
-          ['runFlow'].forEach(a => {
-            if (
-              objStatus[a] &&
-              [COMM_STATES.SUCCESS, COMM_STATES.ERROR].includes(
-                objStatus[a].status
-              )
-            ) {
-              if (!messages[a] || !messages[a][objStatus[a].status]) {
-                return;
-              }
-
-              enqueueSnackbar({
-                message: messages[a][objStatus[a].status],
-                variant: objStatus[a].status,
-              });
-            }
-          });
-        }}
+        commStatusHandler={handleCommsStatus}
       />
       <Menu
         anchorEl={anchorEl}

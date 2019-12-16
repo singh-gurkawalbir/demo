@@ -3,13 +3,14 @@ import Button from '@material-ui/core/Button';
 import { useSelector, useDispatch } from 'react-redux';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
-import CsvParseEditorDialog from '../../../AFE/CsvParseEditor/Dialog';
+import CsvConfigEditorDialog from '../../../AFE/CsvConfigEditor/Dialog';
+import csvOptions from '../../../AFE/CsvConfigEditor/options';
 
 export default function DynaCsvParse(props) {
   const {
     id,
     onFieldChange,
-    value,
+    value = {},
     label,
     resourceId,
     resourceType,
@@ -42,14 +43,19 @@ export default function DynaCsvParse(props) {
         rowsToSkip,
         trimSpaces,
       } = editorValues;
-
-      onFieldChange(id, {
-        columnDelimiter,
+      const savedVal = {
+        columnDelimiter: csvOptions.ColumnDelimiterMap[columnDelimiter],
         hasHeaderRow,
         keyColumns,
-        rowsToSkip,
         trimSpaces,
-      });
+      };
+
+      if (Number.isInteger(rowsToSkip)) {
+        savedVal.rowsToSkip = rowsToSkip;
+      }
+
+      onFieldChange(id, savedVal);
+
       // On change of rules, trigger sample data update
       // It calls processor on final rules to parse csv file
       dispatch(
@@ -72,11 +78,14 @@ export default function DynaCsvParse(props) {
   return (
     <Fragment>
       {showEditor && (
-        <CsvParseEditorDialog
-          title="CSV parse options"
+        <CsvConfigEditorDialog
+          title="CSV Parse Options"
           id={id + resourceId}
           mode="csv"
           data={csvData}
+          resourceType={resourceType}
+          csvEditorType="parse"
+          /** rule to be passed as json */
           rule={value}
           onClose={handleClose}
           disabled={disabled}

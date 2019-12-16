@@ -1,6 +1,6 @@
 import { Fragment } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography } from '@material-ui/core';
+import { Typography, Chip } from '@material-ui/core';
 import ApplicationImg from '../icons/ApplicationImg';
 
 const useStyles = makeStyles(theme => ({
@@ -30,6 +30,11 @@ const useStyles = makeStyles(theme => ({
     maxWidth: '88%',
     textOverflow: 'ellipsis',
   },
+  floatRight: {
+    position: 'absolute',
+    right: '5px',
+    top: '50px',
+  },
   title: {
     color: theme.palette.background.paper,
     overflow: 'hidden',
@@ -42,9 +47,13 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function ConnectorTemplateContent(props) {
-  const { resource, title, application } = props;
-  const classes = useStyles(props);
+export default function ConnectorTemplateContent({
+  resource,
+  title,
+  application,
+}) {
+  const { name, description, free, user, applications } = resource;
+  const classes = useStyles();
 
   return (
     <Fragment>
@@ -54,30 +63,33 @@ export default function ConnectorTemplateContent(props) {
         </Typography>
         <Typography
           className={classes.user}
-          title={
-            resource.user.company || resource.user.name || resource.user.email
-          }>
-          {resource.user &&
-            (resource.user.company ||
-              resource.user.name ||
-              resource.user.email)}
+          title={user.company || user.name || user.email}>
+          {user && (user.company || user.name || user.email)}
         </Typography>
       </div>
       <div className={classes.content}>
         <ApplicationImg
           assistant={
-            resource.applications.length >= 2 &&
-            application === resource.applications[0]
-              ? resource.applications[1]
-              : resource.applications[0]
+            applications.length >= 2 && application === applications[0]
+              ? applications[1]
+              : applications[0]
           }
           size="large"
         />
+        {free && (
+          <Chip
+            variant="outlined"
+            color="primary"
+            size="small"
+            label="Free"
+            className={classes.floatRight}
+          />
+        )}
         <Typography className={classes.name} variant="h3">
-          {resource.name}
+          {name}
         </Typography>
         <Typography variant="body2" className={classes.description}>
-          {resource.description}
+          {description}
         </Typography>
       </div>
     </Fragment>
