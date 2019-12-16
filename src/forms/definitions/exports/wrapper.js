@@ -4,6 +4,10 @@ export default {
   preSave: formValues => {
     const retValues = { ...formValues };
 
+    if (retValues['/wrapper/configuration'] === '') {
+      retValues['/wrapper/configuration'] = undefined;
+    }
+
     if (retValues['/type'] === 'all') {
       retValues['/type'] = undefined;
       retValues['/test'] = undefined;

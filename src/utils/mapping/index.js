@@ -4,6 +4,7 @@ import mappingUtil from '.';
 import NetsuiteMapping from './application/netsuite';
 import getJSONPaths from '../jsonPaths';
 import { isJsonString } from '../../utils/string';
+import connectors from '../../constants/applications';
 
 const LookupResponseMappingExtracts = [
   'data',
@@ -104,7 +105,15 @@ export default {
       default:
     }
   },
-  getGenerateLabelForMapping: application => {
+  getGenerateLabelForMapping: (application, resource = {}) => {
+    if (resource.assistant) {
+      const assistant = connectors.find(
+        connector => connector.id === resource.assistant
+      );
+
+      if (assistant) return `${assistant.name} Field`;
+    }
+
     switch (application) {
       case adaptorTypeMap.RESTImport:
         return 'REST API Field';
