@@ -326,7 +326,7 @@ export default function StandaloneMapping(props) {
       extractFields={formattedExtractFields}
       generateFields={formattedGenerateFields}
       value={mappings}
-      adaptorType={resourceType.type}
+      resource={resourceData}
       isExtractsLoading={extractStatus === 'requested'}
       isGeneratesLoading={generateStatus === 'requested'}
       isGenerateRefreshSupported={isGenerateRefreshSupported}
