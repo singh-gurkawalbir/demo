@@ -87,8 +87,13 @@ export default function DynaTimestampFileName(props) {
         newValue = `${preText}${lookupHandlebarExp}${postText}`;
       }
 
-      setState({ ...state, userInput: newValue });
       onFieldChange(id, newValue);
+      setState({
+        ...state,
+        userInput: newValue,
+        cursorPosition: -1,
+        filteredSuggestions: [],
+      });
     }
   };
 
