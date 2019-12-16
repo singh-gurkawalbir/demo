@@ -299,17 +299,106 @@ export const getSalesforceRealTimeSampleData = sfMetadata => {
   return salesforceSampleData;
 };
 
+export const getPathSegments = path => {
+  const segments = [];
+  let buffer = [];
+  let inLiteral = false;
+  let escaped = false;
+  let wasLiteral = false;
+  let i;
+
+  if (!path) return [];
+
+  for (i = 0; i < path.length; i += 1) {
+    const char = path[i];
+
+    if (escaped) {
+      escaped = false;
+
+      if (char === ']') {
+        buffer[buffer.length - 1] = char;
+        // eslint-disable-next-line no-continue
+        continue;
+      }
+    }
+
+    if (char === '\\') escaped = true;
+
+    if (!inLiteral && char === ' ' && (buffer.length === 0 || wasLiteral))
+      // eslint-disable-next-line no-continue
+      continue;
+
+    if (!inLiteral && char === '[' && buffer.length === 0) {
+      inLiteral = true;
+      // eslint-disable-next-line no-continue
+      continue;
+    }
+
+    if (inLiteral && char === ']') {
+      inLiteral = false;
+      wasLiteral = true;
+      // eslint-disable-next-line no-continue
+      continue;
+    }
+
+    if (!inLiteral && (char === '.' || char === '[')) {
+      segments.push(buffer.join(''));
+      buffer = [];
+      inLiteral = char === '[';
+      wasLiteral = false;
+      // eslint-disable-next-line no-continue
+      continue;
+    }
+
+    buffer.push(char);
+  }
+
+  if (buffer.length) segments.push(buffer.join(''));
+
+  return segments;
+};
+
+export const extractSampleDataAtResourcePath = (sampleData, resourcePath) => {
+  // TODO @Raghu: Add support for * as resourcePath incase of array sample data 
+  if (!sampleData) return { value: null };
+
+  if (!resourcePath) return sampleData;
+
+  if (typeof resourcePath !== 'string') return;
+  const segments = getPathSegments(resourcePath);
+  let processedSampleData = sampleData;
+
+  // Segments : Array of level wiser paths to drill down the sample data
+  segments.forEach(path => (processedSampleData = processedSampleData[path]));
+
+  return processedSampleData;
+};
+
 /*
  * Handles Sample data of JSON file type
  * Incase of Array content, we merge all objects properties and have a combined object
  * Ex: [{a: 5, b: 6}, {c: 7}, {a: 6, d: 11}] gets converted to [{a: 6, b: 6, c: 7, d: 11}]
  */
-export const processJsonSampleData = sampleData => {
+export const processJsonSampleData = (sampleData, options = {}) => {
   if (!sampleData) return sampleData;
+  let processedSampleData = sampleData;
 
   if (Array.isArray(sampleData)) {
-    return getUnionObject(sampleData);
+    processedSampleData = getUnionObject(sampleData);
   }
 
-  return sampleData;
+  if (options.resourcePath) {
+    // Extract sample data at resource
+    // check for array type if yes update with union thing
+    processedSampleData = extractSampleDataAtResourcePath(
+      processedSampleData,
+      options.resourcePath
+    );
+
+    if (Array.isArray(processedSampleData)) {
+      processedSampleData = getUnionObject(processedSampleData);
+    }
+  }
+
+  return processedSampleData;
 };
