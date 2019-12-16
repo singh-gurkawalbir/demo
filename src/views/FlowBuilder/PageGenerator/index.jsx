@@ -69,6 +69,11 @@ const PageGenerator = ({
   const exportNeedsRouting = useSelector(state =>
     selectors.exportNeedsRouting(state, resourceId)
   );
+  const connectionHasAs2Routing = useSelector(state => {
+    if (!resource || resourceType !== 'exports') return false;
+
+    return selectors.connectionHasAs2Routing(state, resource._connectionId);
+  });
   // Returns map of all possible actions with true/false whether actions performed on the resource
   const usedActions =
     useSelector(
@@ -209,10 +214,10 @@ const PageGenerator = ({
       });
     }
 
-    if (exportNeedsRouting) {
+    if (exportNeedsRouting || connectionHasAs2Routing) {
       generatorActions.push({
         ...as2RoutingAction,
-        isUsed: usedActions[actionsMap.as2Routing],
+        isUsed: connectionHasAs2Routing,
       });
     }
 

@@ -320,6 +320,20 @@ export function exportNeedsRouting(state, id) {
   return siblingExports.length >= 2;
 }
 
+export function connectionHasAs2Routing(state, id) {
+  if (!state) return false;
+
+  const connection = resource(state, 'connections', id);
+
+  if (!connection) return false;
+
+  return !!(
+    connection.as2 &&
+    connection.as2.contentBasedFlowRouter &&
+    connection.as2.contentBasedFlowRouter._scriptId
+  );
+}
+
 export function integrationInstallSteps(state, id) {
   const integration = resource(state, 'integrations', id);
 
