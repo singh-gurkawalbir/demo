@@ -4,9 +4,13 @@ export default {
       id: 'file.decompressFiles',
       type: 'checkbox',
       label: 'Decompress Files',
-      visibleWhen: [
+      visibleWhenAll: [
         {
           field: 'outputMode',
+          is: ['records'],
+        },
+        {
+          field: 'file.output',
           is: ['records'],
         },
       ],

@@ -1,13 +1,26 @@
 import rdbmsMetadata from './rdbmsMetadata';
 
-const getDefaultMetadata = ({ lookup, showDynamicLookupOnly }) => {
+const getDefaultMetadata = ({
+  lookup,
+  showDynamicLookupOnly,
+  connectionId,
+  resourceId,
+  resourceType,
+  flowId,
+  resourceName,
+}) => {
   const fieldMeta = {
     fieldMap: {
       relativeURI: {
         id: 'relativeURI',
         name: 'relativeURI',
-        type: 'text',
+        type: 'relativeuri',
         label: 'Relative URI',
+        connectionId,
+        resourceName,
+        resourceId,
+        resourceType,
+        flowId,
         placeholder: 'Relative URI',
         defaultValue: lookup.relativeURI,
         visibleWhen: [
@@ -126,6 +139,11 @@ export default {
     showDynamicLookupOnly,
     isSQLLookup,
     sampleData,
+    connectionId,
+    resourceId,
+    resourceType,
+    flowId,
+    resourceName,
   }) => {
     if (isSQLLookup) {
       return rdbmsMetadata.getLookupMetadata({
@@ -135,6 +153,14 @@ export default {
       });
     }
 
-    return getDefaultMetadata({ lookup, showDynamicLookupOnly });
+    return getDefaultMetadata({
+      lookup,
+      showDynamicLookupOnly,
+      connectionId,
+      resourceId,
+      resourceType,
+      flowId,
+      resourceName,
+    });
   },
 };

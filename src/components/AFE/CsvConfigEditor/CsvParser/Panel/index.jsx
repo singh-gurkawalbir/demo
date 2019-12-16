@@ -4,11 +4,13 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
-import { Input, Chip, MenuItem } from '@material-ui/core';
+import { Input, Chip, MenuItem, ListItemText } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import actions from '../../../actions';
-import * as selectors from '../../../reducers';
-import CeligoSelect from '../../CeligoSelect';
+import actions from '../../../../../actions';
+import * as selectors from '../../../../../reducers';
+import CeligoSelect from '../../../../CeligoSelect';
+import DynaText from '../../../../DynaForm/fields/DynaText';
+import options from '../../options';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -36,7 +38,11 @@ const useStyles = makeStyles(theme => ({
   container: {
     padding: 10,
     backgroundColor: theme.palette.background.default,
+    overflowY: 'auto',
     height: '100%',
+    '& > div:first-child': {
+      flexDirection: 'column',
+    },
   },
   formControl: {
     margin: theme.spacing(1),
@@ -49,6 +55,12 @@ const useStyles = makeStyles(theme => ({
     zIndex: 1,
     padding: theme.spacing(0.6, 1),
   },
+  menuItems: {
+    paddingRight: 0,
+    '&:before': {
+      display: 'none',
+    },
+  },
 }));
 
 export default function CsvParsePanel(props) {
@@ -56,12 +68,12 @@ export default function CsvParsePanel(props) {
   const classes = useStyles(props);
   const {
     columnDelimiter = '',
-    rowDelimiter = '',
     keyColumns = [],
-    hasHeaderRow = true,
+    hasHeaderRow = false,
     multipleRowsPerRecord = false,
-    trimSpaces = true,
+    trimSpaces = false,
     result,
+    rowsToSkip,
   } = useSelector(state => selectors.editor(state, editorId));
   const dispatch = useDispatch();
   const patchEditor = (option, value) => {
@@ -70,6 +82,7 @@ export default function CsvParsePanel(props) {
 
   const allColumns = getColumns(result);
 
+  // TODO: Refractor to use dyna form
   return (
     <div className={classes.container}>
       <FormGroup column="true">
@@ -85,55 +98,14 @@ export default function CsvParsePanel(props) {
               patchEditor('columnDelimiter', event.target.value)
             }
             inputProps={{ id: 'columnDelimiter' }}>
-            <option value="" data-test="autoDetect">
-              Auto Detect
-            </option>
-            <option value="," data-test="comma">
-              Comma (,)
-            </option>
-            <option value="|" data-test="pipe">
-              Pipe (|)
-            </option>
-          </CeligoSelect>
-        </FormControl>
-        <FormControl disabled={disabled} className={classes.formControl}>
-          <InputLabel shrink htmlFor="rowDelimiter">
-            Row Delimiter
-          </InputLabel>
-          <CeligoSelect
-            native
-            value={rowDelimiter}
-            className={classes.select}
-            onChange={event => patchEditor('rowDelimiter', event.target.value)}
-            inputProps={{ id: 'rowDelimiter' }}>
-            <option value="" data-test="autoDetect">
-              Auto Detect
-            </option>
-            <option value="cr" data-test="cr">
-              CR (\r)
-            </option>
-            <option value="lf" data-test="lf">
-              LF (\n)
-            </option>
-            <option value="crlf" data-test="crlf">
-              CRLF (\r\n)
-            </option>
+            {options.ColumnDelimiterOptions.map(opt => (
+              <option key={opt.type} value={opt.value} data-test={opt.type}>
+                {opt.label}
+              </option>
+            ))}
           </CeligoSelect>
         </FormControl>
 
-        <FormControlLabel
-          disabled={disabled}
-          control={
-            <Checkbox
-              // Why it is commented ?
-              color="primary"
-              checked={hasHeaderRow}
-              data-test="hasHeaderRow"
-              onChange={() => patchEditor('hasHeaderRow', !hasHeaderRow)}
-            />
-          }
-          label="Has Header Row"
-        />
         <FormControlLabel
           disabled={disabled}
           control={
@@ -146,6 +118,32 @@ export default function CsvParsePanel(props) {
           }
           label="Trim Spaces"
         />
+        <FormControlLabel
+          disabled={disabled}
+          control={
+            <Checkbox
+              color="primary"
+              checked={hasHeaderRow}
+              data-test="hasHeaderRow"
+              onChange={() => patchEditor('hasHeaderRow', !hasHeaderRow)}
+            />
+          }
+          label="File Has Header"
+        />
+        <FormControl disabled={disabled} className={classes.formControl}>
+          <DynaText
+            color="primary"
+            checked={rowsToSkip}
+            inputType="number"
+            value={rowsToSkip}
+            label="Number Of Rows To Skip"
+            data-test="rowsToSkip"
+            disabled={disabled}
+            isValid={rowsToSkip >= 0}
+            onFieldChange={(id, value) => patchEditor('rowsToSkip', value)}
+          />
+        </FormControl>
+
         <FormControlLabel
           disabled={disabled}
           control={
@@ -182,8 +180,16 @@ export default function CsvParsePanel(props) {
               )}
               MenuProps={MenuProps}>
               {allColumns.map(name => (
-                <MenuItem key={name} value={name} data-test={name}>
-                  {name}
+                <MenuItem
+                  key={name}
+                  value={name}
+                  data-test={name}
+                  className={classes.menuItems}>
+                  <Checkbox
+                    checked={keyColumns.indexOf(name) !== -1}
+                    color="primary"
+                  />
+                  <ListItemText primary={name} />
                 </MenuItem>
               ))}
             </CeligoSelect>

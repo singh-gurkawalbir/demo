@@ -6,6 +6,7 @@ import clsx from 'clsx';
 import ArrowUpIcon from '../../../../components/icons/ArrowUpIcon';
 import ArrowDownIcon from '../../../../components/icons/ArrowDownIcon';
 import ConnectionsIcon from '../../../../components/icons/ConnectionsIcon';
+import WarningIcon from '../../../../components/icons/WarningIcon';
 import AuditLogIcon from '../../../../components/icons/AuditLogIcon';
 import DebugIcon from '../../../../components/icons/DebugIcon';
 import RunIcon from '../../../../components/icons/RunIcon';
@@ -60,6 +61,9 @@ const useStyles = makeStyles(theme => ({
   customTab: {
     maxWidth: 500,
   },
+  connectionWarning: {
+    color: theme.palette.error.main,
+  },
 }));
 
 function TabPanel({ children, value, index, classes }) {
@@ -77,15 +81,23 @@ function TabPanel({ children, value, index, classes }) {
   );
 }
 
-export default function BottomDrawer({ size, setSize, flow }) {
+export default function BottomDrawer({
+  size,
+  setSize,
+  flow,
+  setTabValue,
+  tabValue,
+}) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
+  const isAnyFlowConnectionOffline = useSelector(state =>
+    selectors.isAnyFlowConnectionOffline(state, flow._id)
+  );
   const connectionDebugLogs = useSelector(state => selectors.debugLogs(state));
   const connectionIdNameMap = useSelector(state =>
     selectors.resourceNamesByIds(state, 'connections')
   );
-  const [tabValue, setTabValue] = useState(0);
   const [clearConnectionLogs, setClearConnectionLogs] = useState(true);
   const maxStep = 3; // set maxStep to 4 to allow 100% drawer coverage.
   const handleSizeChange = useCallback(
@@ -104,7 +116,7 @@ export default function BottomDrawer({ size, setSize, flow }) {
 
       if (size === 0) setSize(1);
     },
-    [setSize, size]
+    [setSize, setTabValue, size]
   );
   const handleDebugLogsClose = useCallback(
     connectionId => event => {
@@ -112,7 +124,7 @@ export default function BottomDrawer({ size, setSize, flow }) {
       setTabValue(0);
       dispatch(actions.connection.clearDebugLogs(connectionId));
     },
-    [dispatch]
+    [dispatch, setTabValue]
   );
 
   useEffect(() => {
@@ -156,7 +168,13 @@ export default function BottomDrawer({ size, setSize, flow }) {
           aria-label="scrollable auto tabs example">
           <Tab
             {...tabProps(0)}
-            icon={<ConnectionsIcon />}
+            icon={
+              isAnyFlowConnectionOffline ? (
+                <WarningIcon className={classes.connectionWarning} />
+              ) : (
+                <ConnectionsIcon />
+              )
+            }
             label="Connections"
           />
           <Tab {...tabProps(1)} icon={<RunIcon />} label="Run Dashboard" />

@@ -3,19 +3,26 @@
  */
 import { keys } from 'lodash';
 import moment from 'moment';
-import { isRealTimeOrDistributedResource, isFileAdaptor } from './resource';
+import {
+  isRealTimeOrDistributedResource,
+  isFileAdaptor,
+  isBlobTypeResource,
+} from './resource';
 
 const sampleDataStage = {
   exports: {
-    inputFilter: 'flowInput',
+    inputFilter: 'flowInputWithContext',
     transform: 'raw',
     hooks: 'transform',
-    outputFilter: 'hooks',
     responseMappingExtract: 'hooks',
+    outputFilter: 'hooksWithContext',
+    hooksWithContext: 'hooks',
+    flowInputWithContext: 'flowInput',
   },
   imports: {
-    inputFilter: 'raw',
-    preMap: 'raw',
+    flowInputWithContext: 'flowInput',
+    inputFilter: 'flowInputWithContext',
+    preMap: 'flowInput',
     importMappingExtract: 'preMap',
     responseMappingExtract: 'responseTransform',
     postMap: 'preMap',
@@ -23,6 +30,12 @@ const sampleDataStage = {
     responseTransform: 'sampleResponse',
   },
 };
+const lastExportDateTime = moment()
+  .add(-7, 'd')
+  .toISOString();
+const currentExportDateTime = moment()
+  .add(-24, 'h')
+  .toISOString();
 // Regex for parsing patchSet paths to listen field specific changes of a resource
 // sample Sequence path:  '/pageProcessors' or '/pageGenerators'
 // sample responseMapping path: '/pageProcessors/${resourceIndex}/responseMapping
@@ -143,19 +156,20 @@ export const isRawDataPatchSet = (patchSet = []) =>
   patchSet[0] && ['/rawData', '/sampleData'].includes(patchSet[0].path);
 
 /*
- * File adaptor / Real time( NS/ SF/ Webhooks) resources need UI Data to be passed in Page processor preview
+ * File adaptor / Real time( NS/ SF/ Webhooks)/ Blob type resources need UI Data to be passed in Page processor preview
  */
 export const isUIDataExpectedForResource = resource =>
-  isRealTimeOrDistributedResource(resource) || isFileAdaptor(resource);
+  isRealTimeOrDistributedResource(resource) ||
+  isFileAdaptor(resource) ||
+  isBlobTypeResource(resource);
 
 // A dummy _Context field to expose on each preview data on flows
 export const getContextInfo = () => ({
-  _CONTEXT: {
-    lastExportDateTime: moment()
-      .add(-7, 'd')
-      .toISOString(),
-    currentExportDateTime: moment()
-      .add(-24, 'h')
-      .toISOString(),
-  },
+  _CONTEXT: { lastExportDateTime, currentExportDateTime },
+});
+/*
+ * Gives a sample data for Blob resource
+ */
+export const getBlobResourceSampleData = () => ({
+  blobKey: 'blobKey',
 });

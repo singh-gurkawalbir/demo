@@ -5,7 +5,7 @@ import { apiCallWithRetry } from '../../index';
 import { commStatusByKey } from '../../../reducers/index';
 import getRequestOptions from '../../../utils/requestOptions';
 import commKeyGenerator from '../../../utils/commKeyGenerator';
-import { COMM_STATES } from '../../../reducers/comms';
+import { COMM_STATES } from '../../../reducers/comms/networkComms';
 import { isJsonString } from '../../../utils/string';
 
 export function* getNetsuiteOrSalesforceMeta({
@@ -52,6 +52,10 @@ export function* getNetsuiteOrSalesforceMeta({
     return metadata;
   } catch (error) {
     // Handling error statuses in  between 400 and 500 to show customized error
+    if (error.status === 403 || error.status === 401) {
+      return;
+    }
+
     if (error.status >= 400 && error.status < 500) {
       const parsedError = isJsonString(error.message)
         ? JSON.parse(error.message)

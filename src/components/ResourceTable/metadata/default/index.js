@@ -1,13 +1,15 @@
+import ResourceDrawerLink from '../../../ResourceDrawerLink';
 import Delete from '../../actions/Delete';
 import References from '../../actions/References';
-import { getResourceLink, formatLastModified } from '../../../CeligoTable/util';
+import { formatLastModified } from '../../../CeligoTable/util';
 
 export default resourceType => ({
   columns: [
     {
       heading: 'Name',
-      value: (r, actionProps, location) =>
-        getResourceLink(resourceType, r, location),
+      value: function DefaultResourceDrawerLink(r) {
+        return <ResourceDrawerLink resourceType={resourceType} resource={r} />;
+      },
       orderBy: 'name',
     },
     {

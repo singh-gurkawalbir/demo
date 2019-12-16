@@ -25,19 +25,24 @@ const connectors = [
     keywords: 'technology,protocol',
     group: 'tech',
   },
-  { id: 'ftp', name: 'FTP', type: 'ftp', keywords: 'technology,protocol' },
+  {
+    id: 'ftp',
+    name: 'FTP',
+    type: 'ftp',
+    keywords: 'sftp,ftps,technology,protocol',
+  },
   {
     id: 'wrapper',
     name: 'Wrapper',
     type: 'wrapper',
-    keywords: 'technology,protocol',
+    keywords: 'technology',
     group: 'tech',
   },
   {
     id: 'webhook',
     name: 'Webhook',
     type: 'webhook',
-    keywords: 'technology,protocol',
+    keywords: 'technology, realtime',
     group: 'tech',
     webhookOnly: true,
   },
@@ -374,7 +379,7 @@ const connectors = [
     type: 'rest',
     assistant: 'liquidplanner',
   },
-  { id: 'magento', name: 'Magento', type: 'rest', assistant: 'magento' },
+  { id: 'magento', name: 'Magento 2', type: 'rest', assistant: 'magento' },
   {
     id: 'mailchimp',
     name: 'Mailchimp',
@@ -669,7 +674,7 @@ const connectors = [
     type: 'rest',
     assistant: 'woocommerce',
   },
-  { id: 'wrike', name: 'Wrike', type: 'rest', assistant: 'wrike' },
+  { id: 'wrike', name: 'Wrike', type: 'http', assistant: 'wrike' },
   // { id: 'xcart', name: 'X-Cart', type: 'http', assistant: 'xcart' },
   // { id: 'yahoo', name: 'Yahoo', type: 'http', assistant: 'yahoo' },
   // { id: 'yammer', name: 'Yammer', type: 'rest', assistant: 'yammer' },
@@ -686,7 +691,8 @@ const connectors = [
 
 export const groupApplications = resourceType => {
   const filteredConnectors = connectors.filter(connector => {
-    if (resourceType && resourceType !== 'exports')
+    // Webhooks are shown only for exports and for page generators in flow context
+    if (resourceType && !['exports', 'pageGenerator'].includes(resourceType))
       return !connector.webhookOnly;
 
     return true;

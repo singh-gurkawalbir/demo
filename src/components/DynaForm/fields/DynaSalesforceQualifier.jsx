@@ -19,7 +19,7 @@ export default function DynaSalesforceQualifier(props) {
   const [showEditor, setShowEditor] = useState(false);
   const classes = useStyles();
   const {
-    disabled,
+    // disabled,
     errorMessages,
     id,
     isValid,
@@ -57,7 +57,7 @@ export default function DynaSalesforceQualifier(props) {
           resourceId={resourceId}
           flowId={flowId}
           onClose={handleClose}
-          disabled={disabled}
+          // disabled={disabled}
           options={options}
         />
       )}
@@ -77,7 +77,7 @@ export default function DynaSalesforceQualifier(props) {
         disabled
         required={required}
         error={!isValid}
-        value={value}
+        value={value || ''}
         variant="filled"
       />
     </Fragment>

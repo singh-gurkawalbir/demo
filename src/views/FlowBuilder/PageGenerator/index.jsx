@@ -1,5 +1,5 @@
-import { useRef, useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useRef, useState, useEffect, useCallback } from 'react';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { useDrag } from 'react-dnd-cjs';
 import clsx from 'clsx';
@@ -22,6 +22,7 @@ import { actionsMap } from '../../../utils/flows';
 const blockHeight = 170;
 const lineHeightOffset = 63;
 const lineWidth = 130;
+const emptyObj = {};
 const useStyles = makeStyles(theme => ({
   pgContainer: {
     display: 'flex',
@@ -56,19 +57,32 @@ const PageGenerator = ({
   const pending = !pg._exportId;
   const resourceId = pg._connectionId || pg._exportId;
   const resourceType = pg._connectionId ? 'connections' : 'exports';
+  const { schedule } = pg;
   const classes = useStyles();
   const dispatch = useDispatch();
   const [newGeneratorId, setNewGeneratorId] = useState(null);
-  const { merged: resource = {} } = useSelector(state =>
-    !resourceId ? {} : selectors.resourceData(state, resourceType, resourceId)
+  const resource = useSelector(state =>
+    !resourceId
+      ? emptyObj
+      : selectors.resource(state, resourceType, resourceId) || emptyObj
   );
   // Returns map of all possible actions with true/false whether actions performed on the resource
-  const usedActions = useSelector(state =>
-    selectors.getUsedActionsForResource(state, resourceId, resourceType, pg)
-  );
+  const usedActions =
+    useSelector(
+      state =>
+        selectors.getUsedActionsForResource(
+          state,
+          resourceId,
+          resourceType,
+          pg
+        ),
+      shallowEqual
+    ) || {};
   const createdGeneratorId = useSelector(state =>
     selectors.createdResourceId(state, newGeneratorId)
   );
+
+  // console.log(pg, usedActions, createdGeneratorId);
 
   // #region Add Generator on creation effect
   useEffect(() => {
@@ -82,6 +96,8 @@ const PageGenerator = ({
       ];
 
       dispatch(actions.resource.patchStaged(flowId, patchSet, 'value'));
+      dispatch(actions.resource.commitStaged('flows', flowId, 'value'));
+      dispatch(actions.flowData.updateFlow(flowId));
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -96,8 +112,7 @@ const PageGenerator = ({
     canDrag: !isViewMode,
   });
   const opacity = isDragging ? 0.5 : 1;
-
-  function handleBlockClick() {
+  const handleBlockClick = useCallback(() => {
     const newId = generateNewId();
 
     if (pending) {
@@ -132,7 +147,7 @@ const PageGenerator = ({
     }
 
     const to = pending
-      ? `${match.url}/add/exports/${newId}`
+      ? `${match.url}/add/pageGenerator/${newId}`
       : `${match.url}/edit/exports/${pg._exportId}`;
 
     if (match.isExact) {
@@ -140,7 +155,18 @@ const PageGenerator = ({
     } else {
       history.replace(to);
     }
-  }
+  }, [
+    dispatch,
+    history,
+    match.isExact,
+    match.url,
+    pending,
+    pg._connectionId,
+    pg._exportId,
+    pg.application,
+    pg.webhookOnly,
+    resource,
+  ]);
 
   function getApplication() {
     if (!pending || resourceId) {
@@ -193,6 +219,8 @@ const PageGenerator = ({
   }
   // #endregion
 
+  // console.log('render: <PageGenerator>');
+
   return (
     <div className={classes.pgContainer}>
       <AppBlock
@@ -209,8 +237,8 @@ const PageGenerator = ({
         actions={generatorActions}
         flowId={flowId}
         resource={resource}
-        pg={pg}
         index={index}
+        schedule={schedule}
       />
       <div
         /* -- connecting line */

@@ -119,7 +119,9 @@ export const JsonCompleter = {
 
 export const loadJsonHints = value => {
   try {
-    return jsonComputePaths(JSON.parse(value));
+    return jsonComputePaths(JSON.parse(value), null, {
+      wrapSpecialChars: true,
+    });
   } catch (e) {
     return [];
   }

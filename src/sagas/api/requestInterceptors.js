@@ -11,7 +11,6 @@ import {
 } from './index';
 import { unauthenticateAndDeleteProfile } from '..';
 import { resourceStatus, accountShareHeader } from '../../reducers/index';
-import { pingConnectionParams } from '../api/apiPaths';
 import { isJsonString } from '../../utils/string';
 
 const tryCount = 3;
@@ -92,11 +91,6 @@ export function* onSuccessSaga(response, action) {
   // status code...so for these failed ping calls
   // we have the following code to support it
   // which essentially throws an exception to the parent
-  if (path === pingConnectionParams.path) {
-    const { errors } = response.data;
-
-    if (errors) yield call(throwExceptionUsingTheResponse, response);
-  }
 
   yield put(actions.api.complete(path, method));
   yield put(actions.auth.sessionTimestamp());
@@ -159,7 +153,10 @@ export function* onErrorSaga(error, action) {
   } else {
     // attempts failed after 'tryCount' attempts
     // this time yield an error...
-    yield put(actions.api.failure(path, method, error.data));
+    const errorMessage =
+      typeof error.data === 'object' ? JSON.stringify(error.data) : error.data;
+
+    yield put(actions.api.failure(path, method, errorMessage));
     // the parent saga may need to know if there was an error for
     // its own "Data story"...
     yield call(throwExceptionUsingTheResponse, error);

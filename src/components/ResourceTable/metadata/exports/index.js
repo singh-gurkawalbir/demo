@@ -3,17 +3,18 @@ import References from '../../actions/References';
 import AuditLogs from '../../actions/AuditLogs';
 import Clone from '../../actions/Clone';
 import {
-  getResourceLink,
   formatLastModified,
   getConnectorName,
 } from '../../../CeligoTable/util';
+import ResourceDrawerLink from '../../../ResourceDrawerLink';
 
 export default {
   columns: [
     {
       heading: 'Name',
-      value: (r, actionProps, location) =>
-        getResourceLink('exports', r, location),
+      value: function ExportDrawerLink(r) {
+        return <ResourceDrawerLink resourceType="exports" resource={r} />;
+      },
       orderBy: 'name',
     },
     { heading: 'Connector', value: r => getConnectorName(r) },

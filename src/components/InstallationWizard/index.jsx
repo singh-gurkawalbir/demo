@@ -74,12 +74,12 @@ export default function InstallationWizard(props) {
   const [installInProgress, setInstallInProgress] = useState(false);
   const [connection, setSelectedConnectionId] = useState(null);
   const [stackId, setShowStackDialog] = useState(null);
-  // const [isSetupComplete, setIsSetupComplete] = useState(false);
+  let environment;
   const dispatch = useDispatch();
   const isSetupComplete = useSelector(state =>
     selectors.isSetupComplete(state, { resourceId, resourceType, templateId })
   );
-  const { connectionMap } =
+  const { connectionMap, data } =
     useSelector(state =>
       selectors.installSetup(state, {
         templateId,
@@ -132,6 +132,10 @@ export default function InstallationWizard(props) {
 
   if (!installSteps) {
     return <Typography>Invalid Configuration</Typography>;
+  }
+
+  if (data) {
+    environment = data.sandbox ? 'sandbox' : 'production';
   }
 
   const handleStepClick = (step, conn) => {
@@ -269,6 +273,7 @@ export default function InstallationWizard(props) {
           resourceId={connection.newId}
           resource={connection.doc}
           resourceType="connections"
+          environment={environment}
           connectionType={connection.doc.type}
           onClose={handleConnectionClose}
           onSubmitComplete={handleSubmitComplete}

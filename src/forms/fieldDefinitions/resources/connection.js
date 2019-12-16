@@ -105,7 +105,7 @@ export default {
           { label: 'Lightspeed', value: 'lightspeed' },
           { label: 'Linkedin', value: 'linkedin' },
           { label: 'Liquidplanner', value: 'liquidplanner' },
-          { label: 'Magento', value: 'magento' },
+          { label: 'Magento 2', value: 'magento' },
           { label: 'Mailchimp', value: 'mailchimp' },
           { label: 'Mediaocean', value: 'mediaocean' },
           { label: 'Namely', value: 'namely' },
@@ -474,7 +474,7 @@ export default {
       {
         items: [
           { label: 'MAC', value: 'MAC' },
-          { label: 'OAuth', value: 'OAuth' },
+          { label: 'OAuth 2.0', value: 'OAuth' },
           { label: 'Bearer', value: 'Bearer' },
           // { label: 'Hmac', value: 'Hmac' },
           { label: 'None', value: ' ' },
@@ -1511,7 +1511,7 @@ export default {
         items: [
           { label: 'Bearer', value: 'bearer' },
           { label: 'MAC', value: 'mac' },
-          { label: 'OAuth', value: 'oauth' },
+          { label: 'OAuth 2.0', value: 'oauth' },
           { label: 'None', value: 'none' },
         ],
       },
@@ -1749,6 +1749,12 @@ export default {
         ],
       },
     ],
+    visibleWhen: [
+      {
+        field: 'as2.partnerStationInfo.encryptionType',
+        isNot: ['NONE'],
+      },
+    ],
   },
   'as2.partnerStationInfo.signatureEncoding': {
     type: 'select',
@@ -1788,7 +1794,7 @@ export default {
   },
   'as2.userStationInfo.mdn.mdnEncoding': {
     type: 'select',
-    label: 'Incoming Message Encoding',
+    label: 'MDN Encoding',
     options: [
       {
         items: [
@@ -1844,7 +1850,7 @@ export default {
   },
   'as2.userStationInfo.encoding': {
     type: 'select',
-    label: 'MDN Encoding',
+    label: 'Incoming Message Encoding',
     required: true,
     options: [
       {
@@ -1852,6 +1858,12 @@ export default {
           { label: 'Base64', value: 'base64' },
           { label: 'Binary', value: 'binary' },
         ],
+      },
+    ],
+    visibleWhen: [
+      {
+        field: 'as2.userStationInfo.encryptionType',
+        isNot: ['NONE'],
       },
     ],
   },
@@ -1908,6 +1920,7 @@ export default {
     type: 'hook',
     label: '',
     required: false,
+    hookStage: 'contentBasedFlowRouter',
     preHookData: {
       httpHeaders: {
         'as2-from': 'OpenAS2_appA',
@@ -2255,16 +2268,19 @@ export default {
     type: 'editor',
     mode: 'json',
     label: 'Encrypted',
+    defaultValue: '',
   },
   'wrapper.pingFunction': {
     type: 'text',
     label: 'Ping Function',
+    required: true,
   },
   'wrapper._stackId': {
     label: 'Stack',
     type: 'selectresource',
     placeholder: 'Please select a stack',
     resourceType: 'stacks',
+    required: true,
   },
   'wrapper.concurrencyLevel': {
     type: 'select',
@@ -2318,9 +2334,9 @@ export default {
   'mongodb.host': {
     type: 'text',
     required: true,
-    delimiter: ',',
     omitWhenValueIs: [''],
     label: 'Host(s)',
+    defaultValue: r => r && r.mongodb && r.mongodb.host[0],
   },
   'mongodb.database': {
     type: 'text',

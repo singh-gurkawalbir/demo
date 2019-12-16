@@ -1,3 +1,4 @@
+import ResourceDrawerLink from '../../../ResourceDrawerLink';
 import Delete from '../../actions/Delete';
 import References from '../../actions/References';
 import ConfigureDebugger from '../../actions/Connections/ConfigDebugger';
@@ -6,7 +7,6 @@ import DownloadDebugLogs from '../../actions/Connections/DownloadDebugLogs';
 import AuditLogs from '../../actions/AuditLogs';
 import RefreshMetadata from '../../actions/Connections/RefreshMetadata';
 import {
-  getResourceLink,
   onlineStatus,
   formatLastModified,
   getConnectorName,
@@ -19,10 +19,17 @@ export default {
     let columns = [
       {
         heading: 'Name',
-        value: (r, actionProps, location) =>
-          isConnectionEditable(r, actionProps.integrationId)
-            ? getResourceLink('connections', r, location)
-            : r.name,
+        value: function ConnectionDrawerLink(resource) {
+          return (
+            <ResourceDrawerLink
+              resourceType="connections"
+              resource={resource}
+              disabled={
+                !isConnectionEditable(resource, actionProps.integrationId)
+              }
+            />
+          );
+        },
         orderBy: 'name',
       },
       { heading: 'Status', value: r => onlineStatus(r) },

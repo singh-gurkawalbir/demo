@@ -12,47 +12,20 @@ export default {
         newValues['/ftp/blobInProgressFileName'];
     }
 
+    if (newValues['/ftp/useTempFile'] === false) {
+      newValues['/ftp/inProgressFileName'] = undefined;
+    }
+
+    if (newValues['/file/compressFiles'] === false) {
+      newValues['/file/compressionFormat'] = undefined;
+    }
+
+    delete newValues['/file/compressFiles'];
     delete newValues['/inputMode'];
 
     return {
       ...newValues,
     };
-  },
-  init: fieldMeta => {
-    const fileDefinitionRulesField =
-      fieldMeta.fieldMap['file.filedefinition.rules'];
-
-    if (!fileDefinitionRulesField.userDefinitionId) {
-      // In Import creation mode, delete generic visibleWhenAll rules
-      // Add custom visible when rules
-      delete fileDefinitionRulesField.visibleWhenAll;
-      fileDefinitionRulesField.visibleWhen = [
-        {
-          field: 'edix12.format',
-          isNot: [''],
-        },
-        {
-          field: 'fixed.format',
-          isNot: [''],
-        },
-        {
-          field: 'edifact.format',
-          isNot: [''],
-        },
-      ];
-    } else {
-      // make visibility of format fields false incase of edit mode of file adaptors
-      const fields = ['edix12.format', 'fixed.format', 'edifact.format'];
-
-      fields.forEach(field => {
-        const formatField = fieldMeta.fieldMap[field];
-
-        delete formatField.visibleWhenAll;
-        formatField.visible = false;
-      });
-    }
-
-    return fieldMeta;
   },
   optionsHandler: (fieldId, fields) => {
     if (fieldId === 'ftp.fileName') {
@@ -106,22 +79,6 @@ export default {
 
     if (fieldId === 'uploadFile') {
       return fileType.value;
-    }
-
-    if (fieldId === 'file.filedefinition.rules') {
-      let definitionFieldId;
-
-      // Fetch format specific Field Definition field to fetch id
-      if (fileType.value === 'filedefinition')
-        definitionFieldId = 'edix12.format';
-      else if (fileType.value === 'fixed') definitionFieldId = 'fixed.format';
-      else definitionFieldId = 'edifact.format';
-      const definition = fields.find(field => field.id === definitionFieldId);
-
-      return {
-        format: definition && definition.format,
-        definitionId: definition && definition.value,
-      };
     }
 
     return null;
@@ -281,9 +238,6 @@ export default {
   },
   actions: [
     {
-      id: 'cancel',
-    },
-    {
       id: 'save',
       visibleWhen: [
         {
@@ -301,6 +255,9 @@ export default {
           is: ['filedefinition', 'fixed', 'delimited/edifact'],
         },
       ],
+    },
+    {
+      id: 'cancel',
     },
   ],
 };

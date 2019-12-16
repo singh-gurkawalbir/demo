@@ -1,7 +1,7 @@
 /* global describe, test, expect */
 import reducer from './';
 import actions from '../../actions';
-import { COMM_STATES } from '../comms';
+import { COMM_STATES } from '../comms/networkComms';
 
 describe('authentication reducers', () => {
   test('any other action return default state', () => {

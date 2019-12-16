@@ -13,6 +13,7 @@ function* fetchAssistantSampleData({ resource }) {
   let assistantMetadata;
   const previewPath = `/exports/preview`;
 
+  yield put(actions.metadata.requestAssistantImportPreview(resource._id));
   assistantMetadata = yield select(assistantData, {
     adaptorType: resource.adaptorType === 'HTTPImport' ? 'http' : 'rest',
     assistant: resource.assistant,
@@ -37,7 +38,7 @@ function* fetchAssistantSampleData({ resource }) {
 
   if (importEndpoint && importEndpoint.sampleData) {
     yield put(
-      actions.metadata.assistantImportPreview(
+      actions.metadata.receivedAssistantImportPreview(
         resource._id,
         importEndpoint.sampleData
       )
@@ -108,7 +109,7 @@ function* fetchAssistantSampleData({ resource }) {
       });
 
       yield put(
-        actions.metadata.assistantImportPreview(
+        actions.metadata.receivedAssistantImportPreview(
           resource._id,
           sampleDataWrapper ? { sampleDataWrapper: previewData } : previewData
         )

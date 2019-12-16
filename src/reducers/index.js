@@ -21,11 +21,7 @@ import {
   ACCOUNT_IDS,
   SUITESCRIPT_CONNECTORS,
 } from '../utils/constants';
-import {
-  changePasswordParams,
-  changeEmailParams,
-  pingConnectionParams,
-} from '../sagas/api/apiPaths';
+import { changePasswordParams, changeEmailParams } from '../sagas/api/apiPaths';
 import { getFieldById } from '../forms/utils';
 import { upgradeButtonText, expiresInfo } from '../utils/license';
 import commKeyGen from '../utils/commKeyGenerator';
@@ -39,12 +35,18 @@ import {
   getUsedActionsMapForResource,
   isPageGeneratorResource,
 } from '../utils/flows';
-import { isValidResourceReference, isNewId } from '../utils/resource';
+import {
+  isValidResourceReference,
+  isNewId,
+  getDomain,
+} from '../utils/resource';
 import { processSampleData } from '../utils/sampleData';
 import inferErrorMessage from '../utils/inferErrorMessage';
 import getRoutePath from '../utils/routePaths';
+import { COMM_STATES } from './comms/networkComms';
 
 const emptySet = [];
+const emptyObject = {};
 const combinedReducers = combineReducers({
   app,
   session,
@@ -80,6 +82,10 @@ export default rootReducer;
 // https://hackernoon.com/selector-pattern-painless-redux-state-destructuring-bfc26b72b9ae
 
 // #region app selectors
+export function bannerOpened(state) {
+  return fromApp.bannerOpened(state && state.app);
+}
+
 export function drawerOpened(state) {
   return fromApp.drawerOpened(state && state.app);
 }
@@ -122,7 +128,7 @@ export function isAllLoadingCommsAboveThreshold(state) {
   return (
     loadingOrErrored.filter(
       resource =>
-        resource.status === fromComms.COMM_STATES.LOADING &&
+        resource.status === COMM_STATES.LOADING &&
         Date.now() - resource.timestamp < Number(process.env.NETWORK_THRESHOLD)
     ).length === 0
   );
@@ -324,9 +330,7 @@ export function filter(state, name) {
 }
 
 export function agentAccessToken(state, id) {
-  if (!state) return {};
-
-  return fromSession.agentAccessToken(state.session, id);
+  return fromSession.agentAccessToken(state && state.session, id);
 }
 
 export function stackSystemToken(state, id) {
@@ -346,15 +350,15 @@ export function apiAccessToken(state, id) {
 }
 
 export function editor(state, id) {
-  if (!state) return {};
+  return fromSession.editor(state && state.session, id);
+}
 
-  return fromSession.editor(state.session, id);
+export function editorViolations(state, id) {
+  return fromSession.editorViolations(state && state.session, id);
 }
 
 export function mapping(state, id) {
-  if (!state) return [];
-
-  return fromSession.mapping(state.session, id);
+  return fromSession.mapping(state && state.session, id);
 }
 
 export function editorHelperFunctions(state) {
@@ -368,9 +372,7 @@ export function editorHelperFunctions(state) {
 }
 
 export function processorRequestOptions(state, id) {
-  if (!state) return {};
-
-  return fromSession.processorRequestOptions(state.session, id);
+  return fromSession.processorRequestOptions(state && state.session, id);
 }
 
 export function getSampleData(
@@ -421,6 +423,10 @@ export function developerMode(state) {
 
 export function userPreferences(state) {
   return fromUser.userPreferences((state && state.user) || null);
+}
+
+export function currentEnvironment(state) {
+  return userPreferences(state).environment;
 }
 
 export function accountShareHeader(state, path) {
@@ -482,11 +488,7 @@ export function isAuthInitialized(state) {
 }
 
 export function isAuthLoading(state) {
-  return (
-    state &&
-    state.auth &&
-    state.auth.commStatus === fromComms.COMM_STATES.LOADING
-  );
+  return state && state.auth && state.auth.commStatus === COMM_STATES.LOADING;
 }
 
 export function authenticationErrored(state) {
@@ -538,14 +540,9 @@ export function changePasswordSuccess(state) {
     changePasswordParams.path,
     changePasswordParams.opts.method
   );
+  const status = fromComms.commStatus(state && state.comms, commKey);
 
-  return (
-    state &&
-    state.comms &&
-    state.comms[commKey] &&
-    state.comms[commKey].status &&
-    state.comms[commKey].status === fromComms.COMM_STATES.SUCCESS
-  );
+  return status === COMM_STATES.SUCCESS;
 }
 
 export function changePasswordFailure(state) {
@@ -553,14 +550,9 @@ export function changePasswordFailure(state) {
     changePasswordParams.path,
     changePasswordParams.opts.method
   );
+  const status = fromComms.commStatus(state && state.comms, commKey);
 
-  return (
-    state &&
-    state.comms &&
-    state.comms[commKey] &&
-    state.comms[commKey].status &&
-    state.comms[commKey].status === fromComms.COMM_STATES.ERROR
-  );
+  return status === COMM_STATES.ERROR;
 }
 
 export function changePasswordMsg(state) {
@@ -568,14 +560,9 @@ export function changePasswordMsg(state) {
     changePasswordParams.path,
     changePasswordParams.opts.method
   );
+  const message = fromComms.requestMessage(state && state.comms, commKey);
 
-  return (
-    (state &&
-      state.comms &&
-      state.comms[commKey] &&
-      state.comms[commKey].message) ||
-    ''
-  );
+  return message || '';
 }
 
 export function changeEmailFailure(state) {
@@ -583,14 +570,9 @@ export function changeEmailFailure(state) {
     changeEmailParams.path,
     changeEmailParams.opts.method
   );
+  const status = fromComms.commStatus(state && state.comms, commKey);
 
-  return (
-    state &&
-    state.comms &&
-    state.comms[commKey] &&
-    state.comms[commKey].status &&
-    state.comms[commKey].status === fromComms.COMM_STATES.ERROR
-  );
+  return status === COMM_STATES.ERROR;
 }
 
 export function changeEmailSuccess(state) {
@@ -598,14 +580,9 @@ export function changeEmailSuccess(state) {
     changeEmailParams.path,
     changeEmailParams.opts.method
   );
+  const status = fromComms.commStatus(state && state.comms, commKey);
 
-  return (
-    state &&
-    state.comms &&
-    state.comms[commKey] &&
-    state.comms[commKey].status &&
-    state.comms[commKey].status === fromComms.COMM_STATES.SUCCESS
-  );
+  return status === COMM_STATES.SUCCESS;
 }
 
 export function changeEmailMsg(state) {
@@ -613,43 +590,27 @@ export function changeEmailMsg(state) {
     changeEmailParams.path,
     changeEmailParams.opts.method
   );
+  const message = fromComms.requestMessage(state && state.comms, commKey);
 
-  return (
-    (state &&
-      state.comms &&
-      state.comms[commKey] &&
-      state.comms[commKey].message) ||
-    ''
-  );
+  return message || '';
 }
 
 // #endregion PASSWORD & EMAIL update selectors for modals
 
 // #region USER SELECTORS
-export function testConnectionCommState(state) {
-  const commKey = commKeyGen(
-    pingConnectionParams.path,
-    pingConnectionParams.opts.method
+export function testConnectionCommState(state, resourceId) {
+  const status = fromComms.testConnectionStatus(
+    state && state.comms,
+    resourceId
+  );
+  const message = fromComms.testConnectionMessage(
+    state && state.comms,
+    resourceId
   );
 
-  if (
-    !(
-      state &&
-      state.comms &&
-      state.comms[commKey] &&
-      state.comms[commKey].status
-    )
-  )
-    return {
-      commState: null,
-      message: null,
-    };
-
-  const comm = state.comms[commKey];
-
   return {
-    commState: comm.status,
-    message: inferErrorMessage(comm.message),
+    commState: status,
+    message,
   };
 }
 
@@ -700,20 +661,21 @@ export function resourceList(state, options = {}) {
   return fromData.resourceList(state && state.data, options);
 }
 
-const emptyObject = {};
-
 export function getIAFlowSettings(state, integrationId, flowId) {
-  const flowSettings = {};
   const integration = resource(state, 'integrations', integrationId);
   const allFlows = [];
 
-  if (!integration._connectorId) {
+  if (!integration || !integration._connectorId) {
     // return empty object for DIY integrations.
-    return flowSettings;
+    return emptyObject;
   }
 
   if (integration.settings && integration.settings.supportsMultiStore) {
     integration.settings.sections.forEach(section => {
+      if (!section.sections) {
+        return;
+      }
+
       const { flows } = section.sections.reduce((a, b) => ({
         flows: [...a.flows, ...b.flows],
       }));
@@ -728,7 +690,33 @@ export function getIAFlowSettings(state, integrationId, flowId) {
     allFlows.push(...(flows || []));
   }
 
-  return allFlows.find(flow => flow._id === flowId) || {};
+  return allFlows.find(flow => flow._id === flowId) || emptyObject;
+}
+
+export function isDeltaFlow(state, id) {
+  const flow = resource(state, 'flows', id);
+  const exports = resourceList(state, {
+    type: 'exports',
+  }).resources;
+
+  if (!flow) return false;
+  let isDeltaFlow = false;
+
+  flow &&
+    flow.pageGenerators &&
+    flow.pageGenerators.forEach(pg => {
+      const flowExp = exports && exports.find(e => e._id === pg._exportId);
+
+      if (
+        flowExp &&
+        flowExp.type === 'delta' &&
+        !(flowExp.delta && flowExp.delta.lagOffset)
+      ) {
+        isDeltaFlow = true;
+      }
+    });
+
+  return isDeltaFlow;
 }
 
 export function flowDetails(state, id) {
@@ -750,13 +738,17 @@ export function flowDetails(state, id) {
     draft.isSimpleImport = isSimpleImportFlow(pg);
     draft.isRunnable = isRunnable(allExports, pg, draft);
     draft.canSchedule = showScheduleIcon(allExports, pg, draft);
+    draft.isDeltaFlow = isDeltaFlow(state, id);
     // TODO: add logic to properly determine if this flow should
     // display mapping/settings. This would come from the IA metadata.
     const flowSettings = getIAFlowSettings(state, flow._integrationId, id);
 
     draft.showMapping = flowSettings.showMapping;
     draft.hasSettings = !!flowSettings.settings || !!flowSettings.sections;
-    draft.showSchedule = flowSettings.showSchedule;
+    draft.showSchedule = draft._connectorId
+      ? draft.canSchedule && !!flowSettings.showSchedule
+      : draft.canSchedule;
+    draft.showStartDateDialog = flowSettings.showStartDateDialog;
     draft.disableSlider = flowSettings.disableSlider;
   });
 }
@@ -794,6 +786,27 @@ export function flowListWithMetadata(state, options) {
   return { resources: flows };
 }
 
+/*
+ * Gives all other valid flows of same Integration
+ */
+export function getNextDataFlows(state, flow) {
+  const flows = flowListWithMetadata(state, { type: 'flows' }).resources || [];
+  const { _integrationId } = flow;
+  // Incase of standalone Integrations, _integrationId is undefined for flow resources
+  const flowIntegrationId =
+    _integrationId === STANDALONE_INTEGRATION ? undefined : _integrationId;
+
+  // Returns all valid flows under this integration
+  return flows.filter(
+    f =>
+      f._integrationId === flowIntegrationId &&
+      f._id !== flow._id &&
+      !f.isRealtime &&
+      !f.isSimpleImport &&
+      !f.disabled
+  );
+}
+
 export function resourceListWithPermissions(state, options) {
   const list = resourceList(state, options);
   // eslint-disable-next-line no-use-before-define
@@ -817,24 +830,39 @@ export function resourcesByIds(state, resourceType, resourceIds) {
   return resources.filter(r => resourceIds.indexOf(r._id) >= 0);
 }
 
-export function matchingConnectionList(state, connection = {}) {
+export function matchingConnectionList(state, connection = {}, environment) {
+  if (!environment) {
+    // eslint-disable-next-line no-param-reassign
+    environment = currentEnvironment(state);
+  }
+
   const { resources = [] } = resourceList(state, {
     type: 'connections',
+    ignoreEnvironmentFilter: true,
     filter: {
       $where() {
         if (connection.assistant) {
-          return this.assistant === connection.assistant && !this._connectorId;
+          return (
+            this.assistant === connection.assistant &&
+            !this._connectorId &&
+            (!environment || !!this.sandbox === (environment === 'sandbox'))
+          );
         }
 
         if (['netsuite'].indexOf(connection.type) > -1) {
           return (
             this.type === 'netsuite' &&
             !this._connectorId &&
-            (this.netsuite.account && this.netsuite.environment)
+            (this.netsuite.account && this.netsuite.environment) &&
+            (!environment || !!this.sandbox === (environment === 'sandbox'))
           );
         }
 
-        return this.type === connection.type && !this._connectorId;
+        return (
+          this.type === connection.type &&
+          !this._connectorId &&
+          (!environment || !!this.sandbox === (environment === 'sandbox'))
+        );
       },
     },
   });
@@ -853,9 +881,14 @@ export function matchingStackList(state) {
   return resources;
 }
 
-export function filteredResourceList(state, resource, resourceType) {
+export function filteredResourceList(
+  state,
+  resource,
+  resourceType,
+  environment
+) {
   return resourceType === 'connections'
-    ? matchingConnectionList(state, resource)
+    ? matchingConnectionList(state, resource, environment)
     : matchingStackList(state);
 }
 
@@ -982,10 +1015,14 @@ export function getFlowsAssociatedExportFromIAMetadata(state, fieldMeta) {
 
 export function integrationAppSettingsFormState(state, integrationId, flowId) {
   return fromSession.integrationAppSettingsFormState(
-    state.session,
+    state && state.session,
     integrationId,
     flowId
   );
+}
+
+export function shouldRedirect(state, integrationId) {
+  return fromSession.shouldRedirect(state && state.session, integrationId);
 }
 
 export function integrationAppAddOnState(state, integrationId) {
@@ -1137,7 +1174,7 @@ export function integrationAppFlowSections(state, id, store) {
 
   return flowSections.map(sec => ({
     ...sec,
-    titleId: sec.title ? sec.title.replace(/\s/g, '') : '',
+    titleId: sec.title ? sec.title.replace(/\s/g, '').replace(/\W/g, '_') : '',
   }));
 }
 
@@ -1213,7 +1250,9 @@ export function integrationAppFlowSettings(state, id, section, storeId) {
 
   const selectedSection =
     allSections.find(
-      sec => sec.title && sec.title.replace(/\s/g, '') === section
+      sec =>
+        sec.title &&
+        sec.title.replace(/\s/g, '').replace(/\W/g, '_') === section
     ) || {};
 
   if (!section) {
@@ -1261,6 +1300,49 @@ export function integrationAppFlowSettings(state, id, section, storeId) {
     showFlowSettings,
     showMatchRuleEngine,
   };
+}
+
+// This selector is used in dashboard, it shows all the flows including the flows not in sections.
+// Integration App settings page should not use this selector.
+export function integrationAppFlowIds(state, integrationId, storeId) {
+  const allIntegrationFlows = resourceList(state, {
+    type: 'flows',
+    filter: { _integrationId: integrationId },
+  }).resources;
+  const integration = integrationAppSettings(state, integrationId);
+
+  if (integration.stores && storeId) {
+    const store = integration.stores.find(store => store.value === storeId);
+    const { flows } = integrationAppFlowSettings(
+      state,
+      integrationId,
+      null,
+      storeId
+    );
+
+    if (store) {
+      return map(
+        allIntegrationFlows.filter(f => {
+          // TODO: this is not reliable way to extract store flows. With current integration json,
+          // there is no good way to extract this
+          // Extract store from the flow name. (Regex extracts store label from flow name)
+          // Flow name usually follows this format: <Flow Name> [<StoreLabel>]
+          const flowStore = /\s\[(.*)\]$/.test(f.name)
+            ? /\s\[(.*)\]$/.exec(f.name)[1]
+            : null;
+
+          return flowStore
+            ? flowStore === store.label
+            : flows.indexOf(f._id) > -1;
+        }),
+        '_id'
+      );
+    }
+
+    return map(flows, '_id');
+  }
+
+  return map(allIntegrationFlows, '_id');
 }
 
 export function defaultStoreId(state, id, store) {
@@ -1311,18 +1393,21 @@ export function addNewStoreSteps(state, integrationId) {
     state && state.session,
     integrationId
   );
+  const { steps } = addNewStoreSteps;
 
-  if (!addNewStoreSteps || !Array.isArray(addNewStoreSteps)) {
-    return [];
+  if (!steps || !Array.isArray(steps)) {
+    return addNewStoreSteps;
   }
 
-  return produce(addNewStoreSteps, draft => {
+  const modifiedSteps = produce(steps, draft => {
     const unCompletedStep = draft.find(s => !s.completed);
 
     if (unCompletedStep) {
       unCompletedStep.isCurrentStep = true;
     }
   });
+
+  return { steps: modifiedSteps };
 }
 
 // #end integrationApps Region
@@ -1467,6 +1552,45 @@ export function userAccessLevel(state) {
 export function userPermissions(state) {
   return fromUser.permissions(state.user);
 }
+
+const parentResourceToLookUpTo = {
+  flows: 'integrations',
+};
+const getParentsResourceId = (state, resourceType, resourceId) => {
+  if (!resourceType) return null;
+
+  const parentResourceType = parentResourceToLookUpTo[resourceType];
+
+  if (!parentResourceType) return null;
+
+  if (parentResourceType === 'integrations') {
+    const { _integrationId } = resource(state, resourceType, resourceId) || {};
+
+    return _integrationId;
+  }
+
+  return null;
+};
+
+export const getResourceEditUrl = (state, resourceType, resourceId) => {
+  if (resourceType === 'flows') {
+    const integrationId = getParentsResourceId(state, resourceType, resourceId);
+    const { _connectorId } = resource(state, resourceType, resourceId) || {};
+
+    // if _connectorId its an integrationApp
+    if (_connectorId) {
+      return getRoutePath(
+        `/integrationApp/${integrationId}/flowBuilder/${resourceId}`
+      );
+    }
+
+    return getRoutePath(
+      `/integrations/${integrationId}/flowBuilder/${resourceId}`
+    );
+  }
+
+  return getRoutePath(`${resourceType}/edit/${resourceType}/${resourceId}`);
+};
 
 export function resourcePermissions(state, resourceType, resourceId) {
   const permissions = userPermissions(state);
@@ -1773,50 +1897,67 @@ export function tiles(state) {
   let integration;
   let connector;
   let status;
+  const domain = getDomain();
 
-  return tiles.map(t => {
-    integration = integrations.find(i => i._id === t._integrationId) || {};
+  return tiles
+    .filter(t => {
+      /**
+       * IA QA certified only "Shopify - NetSuite" and "Salesforce - NetSuite (IO)" connectors on React.
+       * So, hide all other connector tiles on production until QA certifies.
+       */
+      if (!t._connectorId || domain !== 'integrator.io') {
+        return true;
+      }
 
-    if (t._connectorId && integration.mode === INTEGRATION_MODES.UNINSTALL) {
-      status = TILE_STATUS.UNINSTALL;
-    } else if (
-      t._connectorId &&
-      integration.mode !== INTEGRATION_MODES.SETTINGS
-    ) {
-      status = TILE_STATUS.IS_PENDING_SETUP;
-    } else if (t.offlineConnections && t.offlineConnections.length > 0) {
-      status = TILE_STATUS.HAS_OFFLINE_CONNECTIONS;
-    } else if (t.numError && t.numError > 0) {
-      status = TILE_STATUS.HAS_ERRORS;
-    } else {
-      status = TILE_STATUS.SUCCESS;
-    }
+      return ['54fa0b38a7044f9252000036', '5c8f30229f701b3e9a0aa817'].includes(
+        t._connectorId
+      );
+    })
+    .map(t => {
+      integration = integrations.find(i => i._id === t._integrationId) || {};
 
-    if (t._connectorId) {
-      connector = published.find(i => i._id === t._connectorId) || { user: {} };
+      if (t._connectorId && integration.mode === INTEGRATION_MODES.UNINSTALL) {
+        status = TILE_STATUS.UNINSTALL;
+      } else if (
+        t._connectorId &&
+        integration.mode !== INTEGRATION_MODES.SETTINGS
+      ) {
+        status = TILE_STATUS.IS_PENDING_SETUP;
+      } else if (t.offlineConnections && t.offlineConnections.length > 0) {
+        status = TILE_STATUS.HAS_OFFLINE_CONNECTIONS;
+      } else if (t.numError && t.numError > 0) {
+        status = TILE_STATUS.HAS_ERRORS;
+      } else {
+        status = TILE_STATUS.SUCCESS;
+      }
+
+      if (t._connectorId) {
+        connector = published.find(i => i._id === t._connectorId) || {
+          user: {},
+        };
+
+        return {
+          ...t,
+          status,
+          integration: {
+            mode: integration.mode,
+            permissions: integration.permissions,
+          },
+          connector: {
+            owner: connector.user.company || connector.user.name,
+            applications: connector.applications || [],
+          },
+        };
+      }
 
       return {
         ...t,
         status,
         integration: {
-          mode: integration.mode,
           permissions: integration.permissions,
         },
-        connector: {
-          owner: connector.user.company || connector.user.name,
-          applications: connector.applications || [],
-        },
       };
-    }
-
-    return {
-      ...t,
-      status,
-      integration: {
-        permissions: integration.permissions,
-      },
-    };
-  });
+    });
 }
 // #endregion
 
@@ -1873,56 +2014,16 @@ export function resourceStatus(
   };
 }
 
-export function flowMetadata(state, id, scope) {
-  if (!state || !id) return {};
-
-  const flows = flowListWithMetadata(state, {
-    type: 'flows',
-    filter: {
-      _id: id,
-    },
-  }).resources;
-  const master = flows && flows[0];
-  const { patch, conflict } = fromSession.stagedResource(
-    state.session,
-    id,
-    scope
-  );
-
-  if (!master && !patch) return { merged: {} };
-
-  let merged;
-  let lastChange;
-
-  if (patch) {
-    const patchResult = jsonPatch.applyPatch(
-      master ? jsonPatch.deepClone(master) : {},
-      jsonPatch.deepClone(patch)
-    );
-
-    merged = patchResult.newDocument;
-
-    if (patch.length) lastChange = patch[patch.length - 1].timestamp;
-  }
-
-  const data = {
-    master,
-    patch,
-    lastChange,
-    merged: merged || master,
-  };
-
-  if (conflict) data.conflict = conflict;
-
-  return data;
-}
-
 export function resourceData(state, resourceType, id, scope) {
   if (!state || !resourceType || !id) return {};
   let type = resourceType;
 
   if (resourceType.indexOf('/licenses') >= 0) {
     type = 'connectorLicenses';
+  }
+
+  if (resourceType.indexOf('integrations/') >= 0) {
+    type = resourceType.split('/').pop();
   }
 
   const master = resource(state, type, id);
@@ -2194,7 +2295,11 @@ export function connectionTokens(state, resourceId) {
 // #endregion
 
 export function commStatusByKey(state, key) {
-  const commStatus = state && state.comms && state.comms[key];
+  const commStatus =
+    state &&
+    state.comms &&
+    state.comms.networkComms &&
+    state.comms.networkComms[key];
 
   return commStatus;
 }
@@ -2333,7 +2438,8 @@ export function flowJobs(state) {
       additionalProps.percentComplete = Math.floor(
         (job.numPagesProcessed * 100) /
           (job.numPagesGenerated *
-            ((resourceMap.flows[job._flowId] &&
+            ((resourceMap.flows &&
+              resourceMap.flows[job._flowId] &&
               resourceMap.flows[job._flowId].numImports) ||
               1))
       );
@@ -2492,14 +2598,15 @@ export function getImportSampleData(state, resourceId) {
   const { merged: resource } = resourceData(state, 'imports', resourceId);
   const { assistant, adaptorType, sampleData } = resource;
 
-  // Formats sample data into readable form
-  if (sampleData)
+  if (assistant) {
+    // get assistants sample data
+    return assistantPreviewData(state, resourceId);
+  } else if (sampleData) {
+    // Formats sample data into readable form
     return {
       data: processSampleData(sampleData, resource),
+      status: 'received',
     };
-  else if (assistant) {
-    return { data: assistantPreviewData(state, resourceId) };
-    // get assistants sample data
   } else if (adaptorType === 'NetSuiteDistributedImport') {
     // eslint-disable-next-line camelcase
     const { _connectionId: connectionId, netsuite_da } = resource;
@@ -2528,6 +2635,18 @@ export function getImportSampleData(state, resourceId) {
   }
 
   return emptyObject;
+}
+
+export function isAnyFlowConnectionOffline(state, flowId) {
+  const flow = resource(state, 'flows', flowId);
+
+  if (!flow) return false;
+
+  const connectionIds = getAllConnectionIdsUsedInTheFlow(state, flow);
+  const connectionList =
+    resourcesByIds(state, 'connections', connectionIds) || [];
+
+  return connectionList.some(c => c.offline);
 }
 
 export function flowConnectionList(state, flow) {
@@ -2614,13 +2733,19 @@ export function getUsedActionsForResource(
   resourceType,
   flowNode
 ) {
-  const { merged: resource } = resourceData(state, resourceType, resourceId);
+  const r = resource(state, resourceType, resourceId);
 
-  return getUsedActionsMapForResource(resource, resourceType, flowNode);
+  if (!r) return emptyObject;
+
+  return getUsedActionsMapForResource(r, resourceType, flowNode);
 }
 
 export function debugLogs(state) {
   return fromSession.debugLogs(state && state.session);
+}
+
+export function getLastExportDateTime(state, flowId) {
+  return fromSession.getLastExportDateTime(state && state.session, flowId);
 }
 
 export function resourceNamesByIds(state, type) {

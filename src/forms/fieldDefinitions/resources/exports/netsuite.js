@@ -4,6 +4,7 @@ export default {
     label: 'Record type',
     required: true,
     type: 'refreshableselect',
+    visibleWhen: [{ field: 'netsuite.execution.type', is: ['distributed'] }],
     filterKey: 'suitescript-recordTypes',
     commMetaPath: r =>
       r &&
@@ -23,6 +24,10 @@ export default {
     resourceType: 'recordTypes',
     placeholder: 'Please select a record type',
     connectionId: r => r && r._connectionId,
+    visibleWhenAll: [
+      { field: 'netsuite.api.type', is: ['restlet'] },
+      { field: 'netsuite.execution.type', is: ['scheduled'] },
+    ],
   },
   'netsuite.webservices.recordType': {
     label: 'Record type',
@@ -35,6 +40,10 @@ export default {
     placeholder: 'Please select a record type',
     helpKey: 'export.netsuite.searches.recordType',
     connectionId: r => r && r._connectionId,
+    visibleWhenAll: [
+      { field: 'netsuite.api.type', is: ['search'] },
+      { field: 'netsuite.execution.type', is: ['scheduled'] },
+    ],
     defaultValue: r =>
       r &&
       r.netsuite &&
@@ -46,6 +55,7 @@ export default {
   'netsuite.distributed.executionContext': {
     type: 'multiselect',
     label: 'Execution context',
+    visibleWhen: [{ field: 'netsuite.execution.type', is: ['distributed'] }],
     options: [
       {
         items: [
@@ -106,6 +116,7 @@ export default {
         r.netsuite.distributed &&
         r.netsuite.distributed.executionType) || ['create', 'edit', 'xedit'],
     required: true,
+    visibleWhen: [{ field: 'netsuite.execution.type', is: ['distributed'] }],
     helpText:
       'The invited user will have permissions to manage the integrations selected here.',
   },
@@ -113,18 +124,24 @@ export default {
   'netsuite.distributed.sublists': {
     label: 'Sublists to include',
     type: 'refreshableselect',
-    commMetaPath: r =>
-      r &&
-      `netsuite/metadata/suitescript/connections/${r._connectionId}/savedSearches`,
+    filterKey: 'suitescript-sublists',
     multiselect: true,
     placeholder: 'Please select Sublists',
     helpKey: 'export.netsuite.sublists',
     connectionId: r => r && r._connectionId,
+    visibleWhenAll: [
+      { field: 'netsuite.distributed.recordType', isNot: [''] },
+      { field: 'netsuite.execution.type', is: ['distributed'] },
+    ],
   },
   // search id
   'netsuite.restlet.searchId': {
     type: 'nssavedsearch',
     required: true,
+    visibleWhenAll: [
+      { field: 'netsuite.api.type', is: ['restlet'] },
+      { field: 'netsuite.execution.type', is: ['scheduled'] },
+    ],
     commMetaPath: r =>
       r &&
       `netsuite/metadata/suitescript/connections/${r._connectionId}/savedSearches`,
@@ -137,6 +154,11 @@ export default {
     placeholder: 'Please select a saved search',
     filterKey: 'webservices-savedSearches',
     helpKey: 'export.netsuite.searches.searchId',
+    visibleWhenAll: [
+      { field: 'netsuite.webservices.recordType', isNot: [''] },
+      { field: 'netsuite.api.type', is: ['search'] },
+      { field: 'netsuite.execution.type', is: ['scheduled'] },
+    ],
     defaultValue: r =>
       r &&
       r.netsuite &&
@@ -274,6 +296,10 @@ export default {
     placeholder: 'Define Qualification Criteria',
     helpKey: 'export.netsuite.qualifier',
     connectionId: r => r && r._connectionId,
+    visibleWhenAll: [
+      { field: 'netsuite.distributed.recordType', isNot: [''] },
+      { field: 'netsuite.execution.type', is: ['distributed'] },
+    ],
   },
   'netsuite.distributed.hooks.preSend.fileInternalId': {
     type: 'text',

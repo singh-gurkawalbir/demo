@@ -3,7 +3,11 @@ import TextField from '@material-ui/core/TextField';
 import { useDispatch } from 'react-redux';
 import { FormContext } from 'react-forms-processor/dist';
 import actions from '../../../actions';
-import { getFileReaderOptions, getCsvFromXlsx } from '../../../utils/file';
+import {
+  getFileReaderOptions,
+  getCsvFromXlsx,
+  getUploadedFileStatus,
+} from '../../../utils/file';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 
 function DynaUploadFile(props) {
@@ -80,6 +84,18 @@ function DynaUploadFile(props) {
     const file = event.target.files[0];
 
     if (!file) return;
+    // Checks for file size and file types
+    const fileStatus = getUploadedFileStatus(file, options);
+
+    if (!fileStatus.success) {
+      onFieldChange(id, '');
+
+      return enqueueSnackbar({
+        message: fileStatus.error,
+        variant: 'error',
+      });
+    }
+
     const fileReaderOptions = getFileReaderOptions(options);
     const fileReader = new FileReader();
 

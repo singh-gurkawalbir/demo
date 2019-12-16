@@ -37,6 +37,7 @@ export default function RegisterConnections({ onClose, integrationId }) {
       <div>
         <LoadResources required resources="connections">
           <CeligoTable
+            actionProps={{ onClose }}
             data={connectionsToReg}
             onSelectChange={handleSelectChange}
             {...metadata}

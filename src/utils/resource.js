@@ -317,3 +317,13 @@ export function isRealTimeOrDistributedResource(
   // Update If added any later
   return ['netsuite', 'salesforce'].includes(adaptorTypeMap[adaptorType]);
 }
+
+// All resources with type 'blob' is a Blob export and with 'blobKeyPath' is a blob import
+export const isBlobTypeResource = (resource = {}) =>
+  resource && (resource.type === 'blob' || !!resource.blobKeyPath);
+
+export const isAS2Resource = resource => {
+  const { adaptorType } = resource || {};
+
+  return adaptorTypeMap[adaptorType] === 'as2';
+};

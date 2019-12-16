@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import produce from 'immer';
 import Button from '@material-ui/core/Button';
 import deepClone from 'lodash/cloneDeep';
+import { isEmpty } from 'lodash';
 import DynaTypeableSelect from '../../DynaForm/fields/DynaTypeableSelect';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
@@ -13,7 +14,7 @@ import mappingUtil from '../../../utils/mapping';
 import getJSONPaths from '../../../utils/jsonPaths';
 import * as resourceUtil from '../../../utils/resource';
 import ModalDialog from '../../ModalDialog';
-import ButtonsGroup from '../../ButtonGroup';
+import ButtonGroup from '../../ButtonGroup';
 import ActionButton from '../../ActionButton';
 
 // TODO Aditya: Convert Response Mapping and Import mapping to re-use same component
@@ -119,7 +120,7 @@ export default function ResponseMappingDialog(props) {
       flowId,
       resourceId,
       stage: 'responseMappingExtract',
-      resourceType: 'imports',
+      resourceType,
     })
   );
 
@@ -222,7 +223,7 @@ export default function ResponseMappingDialog(props) {
 
   let formattedExtractFields = defaultExtractFields;
 
-  if (extractFields) {
+  if (!isEmpty(extractFields)) {
     const extractPaths = getJSONPaths(extractFields);
 
     formattedExtractFields =
@@ -305,7 +306,7 @@ export default function ResponseMappingDialog(props) {
         </div>
       </div>
       <div>
-        <ButtonsGroup>
+        <ButtonGroup>
           <Button
             disabled={disabled}
             data-test="saveMapping"
@@ -322,7 +323,7 @@ export default function ResponseMappingDialog(props) {
             color="primary">
             Save and close
           </Button>
-        </ButtonsGroup>
+        </ButtonGroup>
       </div>
     </ModalDialog>
   );

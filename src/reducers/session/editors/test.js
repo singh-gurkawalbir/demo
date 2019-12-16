@@ -187,20 +187,21 @@ describe('editor selectors', () => {
         processor: 'csvParser',
         valid: {
           initOpts: {
-            rowDelimiter: 'crlf',
             columnDelimiter: 'tab',
             hasHeaderRow: true,
             trimSpaces: true,
             data: 'a,b,c',
+            rowsToSkip: 0,
           },
           expectedRequest: {
             body: {
               data: 'a,b,c',
               rules: {
-                rowDelimiter: '\r\n',
                 columnDelimiter: '\t',
-                hasHeaderRow: true,
                 trimSpaces: true,
+                keyColumns: undefined,
+                hasHeaderRow: true,
+                rowsToSkip: 0,
               },
             },
             processor: 'csvParser',
@@ -209,6 +210,41 @@ describe('editor selectors', () => {
         invalid: {
           initOpts: { data: '' },
           violations: { dataError: 'Must provide some sample data.' },
+        },
+      },
+      {
+        processor: 'csvDataGenerator',
+        valid: {
+          initOpts: {
+            columnDelimiter: 'tab',
+            rowDelimiter: 'crlf',
+            hasHeaderRow: true,
+            trimSpaces: true,
+            includeHeader: false,
+            truncateLastRowDelimiter: true,
+            data: '{ "a": 1, "b": 2, "c": 3 }',
+          },
+          expectedRequest: {
+            body: {
+              data: [{ a: 1, b: 2, c: 3 }],
+              rules: {
+                rowDelimiter: '\r\n',
+                columnDelimiter: '\t',
+                hasHeaderRow: true,
+                trimSpaces: true,
+                includeHeader: false,
+                replaceNewlineWithSpace: undefined,
+                replaceTabWithSpace: undefined,
+                truncateLastRowDelimiter: true,
+                wrapWithQuotes: undefined,
+              },
+            },
+            processor: 'csvDataGenerator',
+          },
+        },
+        invalid: {
+          initOpts: { data: '' },
+          violations: { dataError: 'Unexpected end of JSON input' },
         },
       },
       {

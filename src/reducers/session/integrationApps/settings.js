@@ -1,8 +1,18 @@
 import produce from 'immer';
 import actionTypes from '../../../actions/types';
 
+const emptyObj = {};
+
 export default (state = {}, action) => {
-  const { type, integrationId, flowId, licenseId, response } = action;
+  const {
+    type,
+    integrationId,
+    flowId,
+    licenseId,
+    response,
+    redirectTo,
+    error,
+  } = action;
   const key = `${integrationId}-${flowId}`;
 
   return produce(state, draft => {
@@ -24,16 +34,29 @@ export default (state = {}, action) => {
         }
 
         break;
-      case actionTypes.INTEGRATION_APPS.SETTINGS.MAPPING_METADATA_UPDATE:
-        if (response && response) {
-          if (!draft[integrationId]) {
-            draft[integrationId] = {};
-          }
-
-          draft[integrationId].mappingMetadata = response;
+      case actionTypes.INTEGRATION_APPS.SETTINGS.MAPPING_METADATA_REQUEST:
+        if (!draft[integrationId]) {
+          draft[integrationId] = { status: 'requested' };
+        } else {
+          draft[integrationId].status = 'requested';
         }
 
         break;
+      case actionTypes.INTEGRATION_APPS.SETTINGS.MAPPING_METADATA_UPDATE:
+        if (response) {
+          draft[integrationId].mappingMetadata = response;
+          draft[integrationId].status = 'received';
+        }
+
+        break;
+      case actionTypes.INTEGRATION_APPS.SETTINGS.MAPPING_METADATA_ERROR:
+        if (error) {
+          draft[integrationId].status = 'error';
+          draft[integrationId].error = error;
+        }
+
+        break;
+
       case actionTypes.INTEGRATION_APPS.SETTINGS.FORM.SUBMIT_COMPLETE:
         draft[key] = { submitComplete: true };
         break;
@@ -42,6 +65,16 @@ export default (state = {}, action) => {
         break;
       case actionTypes.INTEGRATION_APPS.SETTINGS.FORM.CLEAR:
         delete draft[key];
+        break;
+      case actionTypes.INTEGRATION_APPS.SETTINGS.CLEAR_REDIRECT:
+        if (draft[integrationId]) delete draft[integrationId].redirectTo;
+        break;
+      case actionTypes.INTEGRATION_APPS.SETTINGS.REDIRECT:
+        if (!draft[integrationId]) {
+          draft[integrationId] = {};
+        }
+
+        draft[integrationId].redirectTo = redirectTo;
         break;
       case actionTypes.INTEGRATION_APPS.SETTINGS.UPGRADE_REQUESTED:
         draft[licenseId] = true;
@@ -53,20 +86,28 @@ export default (state = {}, action) => {
 // #region PUBLIC SELECTORS
 export function integrationAppSettingsFormState(state, integrationId, flowId) {
   if (!state) {
-    return {};
+    return emptyObj;
   }
 
   const key = `${integrationId}-${flowId}`;
 
-  return state[key] || {};
+  return state[key] || emptyObj;
 }
 
 export function integrationAppAddOnState(state, integrationId) {
   if (!state) {
-    return {};
+    return emptyObj;
   }
 
-  return state[integrationId] || {};
+  return state[integrationId] || emptyObj;
+}
+
+export function shouldRedirect(state, integrationId) {
+  if (!state || !state[integrationId]) {
+    return null;
+  }
+
+  return state[integrationId].redirectTo;
 }
 
 export function checkUpgradeRequested(state, licenseId) {

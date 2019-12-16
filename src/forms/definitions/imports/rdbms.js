@@ -1,6 +1,12 @@
 export default {
-  preSave: formValues => {
+  preSave: (formValues, resource) => {
     const retValues = { ...formValues };
+    const lookup =
+      resource.rdbms &&
+      resource.rdbms.lookups &&
+      resource.rdbms.lookups.find(
+        l => `{{{${l.name}}}}` === retValues['/rdbms/ignoreExtract']
+      );
 
     if (retValues['/rdbms/queryType'] === 'COMPOSITE') {
       retValues['/rdbms/query'] = [
@@ -12,33 +18,71 @@ export default {
       retValues['/rdbms/ignoreExtract'] = undefined;
       retValues['/ignoreExisting'] = false;
       retValues['/ignoreMissing'] = false;
+
+      if (lookup) {
+        retValues['/rdbms/updateLookupName'] =
+          retValues['/rdbms/updateExtract'];
+        retValues['/rdbms/updateExtract'] = undefined;
+      } else {
+        retValues['/rdbms/updateExtract'];
+        retValues['/rdbms/updateLookupName'] = undefined;
+      }
     } else if (retValues['/rdbms/queryType'] === 'INSERT') {
       retValues['/rdbms/query'] = [retValues['/rdbms/query']];
       retValues['/rdbms/queryType'] = [retValues['/rdbms/queryType']];
       retValues['/ignoreMissing'] = false;
+
+      if (lookup) {
+        retValues['/rdbms/ignoreLookupName'] =
+          retValues['/rdbms/ignoreExtract'];
+        retValues['/rdbms/ignoreExtract'] = undefined;
+      } else {
+        retValues['/rdbms/ignoreExtract'];
+        retValues['/rdbms/ignoreLookupName'] = undefined;
+      }
     } else {
       retValues['/rdbms/query'] = [retValues['/rdbms/query']];
       retValues['/rdbms/queryType'] = [retValues['/rdbms/queryType']];
       retValues['/ignoreExisting'] = false;
+
+      if (lookup) {
+        retValues['/rdbms/updateLookupName'] =
+          retValues['/rdbms/updateExtract'];
+        retValues['/rdbms/updateExtract'] = undefined;
+      } else {
+        retValues['/rdbms/updateExtract'];
+        retValues['/rdbms/updateLookupName'] = undefined;
+      }
     }
 
     delete retValues['/inputMode'];
+    delete retValues['/rdbms/queryUpdate'];
+    delete retValues['/rdbms/queryInsert'];
 
     return {
       ...retValues,
     };
   },
   optionsHandler: (fieldId, fields) => {
-    if (fieldId === 'rdbms.query') {
+    if (
+      fieldId === 'rdbms.query' ||
+      fieldId === 'rdbms.queryUpdate' ||
+      fieldId === 'rdbms.queryInsert'
+    ) {
       const lookupField = fields.find(
         field => field.fieldId === 'rdbms.lookups'
       );
       const queryTypeField = fields.find(
         field => field.fieldId === 'rdbms.queryType'
       );
+      const modelMetadataField = fields.find(
+        field => field.fieldId === 'modelMetadata'
+      );
 
       return {
         queryType: queryTypeField && queryTypeField.value,
+        modelMetadataFieldId: modelMetadataField.fieldId,
+        modelMetadata: modelMetadataField && modelMetadataField.value,
         lookups: {
           // passing lookupId fieldId and data since we will be modifying lookups
           //  from 'Manage lookups' option inside 'SQL Query Builder'
@@ -48,7 +92,10 @@ export default {
       };
     }
 
-    if (fieldId === 'rdbms.ignoreExtract' || 'rdbms.updateExtract') {
+    if (
+      fieldId === 'rdbms.ignoreExtract' ||
+      fieldId === 'rdbms.updateExtract'
+    ) {
       const lookupField = fields.find(
         field => field.fieldId === 'rdbms.lookups'
       );
@@ -72,6 +119,7 @@ export default {
 
   fieldMap: {
     common: { formId: 'common' },
+    modelMetadata: { fieldId: 'modelMetadata', visible: false },
     importData: {
       id: 'importData',
       type: 'labeltitle',
@@ -126,20 +174,21 @@ export default {
       type: 'relativeuriwithlookup',
       adaptorType: r => r && r.adaptorType,
       connectionId: r => r && r._connectionId,
-      refreshOptionsOnChangesTo: ['rdbms.lookups', 'ignoreLookupname'],
+      refreshOptionsOnChangesTo: ['rdbms.lookups', 'name'],
     },
     'rdbms.updateExtract': {
       fieldId: 'rdbms.updateExtract',
       type: 'relativeuriwithlookup',
       adaptorType: r => r && r.adaptorType,
       connectionId: r => r && r._connectionId,
-      refreshOptionsOnChangesTo: ['rdbms.lookups', 'updateLookupname'],
+      refreshOptionsOnChangesTo: ['rdbms.lookups', 'name'],
     },
     dataMappings: { formId: 'dataMappings' },
   },
   layout: {
     fields: [
       'common',
+      'modelMetadata',
       'importData',
       'rdbms.queryType',
       'ignoreExisting',

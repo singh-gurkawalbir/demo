@@ -71,6 +71,9 @@ import DynaSalesforceLookup from './DynaSalesforceLookup';
 import DynaMultiSubsidiaryMapping from './DynaTableView/DynaMultiSubsidiaryMapping';
 import DynaTimestampFileName from './DynaTimestampFileName';
 import DynaMode from './DynaMode';
+import DynaAutoSuggestFlowSampleData from './DynaAutoSuggestFlowSampleData';
+import DynaCsvGenerate from './editors/DynaCsvGenerate';
+import DynaFileKeyColumn from './DynaFileKeyColumn';
 
 export default {
   mode: DynaMode,
@@ -98,6 +101,7 @@ export default {
   staticMap: DynaStaticMap,
   staticMapWidget: DynaStaticMap,
   csvparse: DynaCsvParse,
+  csvgenerate: DynaCsvGenerate,
   xmlparse: DynaXmlParse,
   refreshableselect: DynaRefreshableSelect,
   transformeditor: DynaTransformEditor,
@@ -154,4 +158,6 @@ export default {
   salesforcelookupfilters: DynaSalesforceLookupFilters,
   salesforcelookup: DynaSalesforceLookup,
   timestampfilename: DynaTimestampFileName,
+  autosuggestflowsampledata: DynaAutoSuggestFlowSampleData,
+  filekeycolumn: DynaFileKeyColumn,
 };

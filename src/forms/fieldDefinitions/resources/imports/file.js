@@ -111,9 +111,14 @@ export default {
     ],
   },
   'file.csv': {
-    type: 'csvparse',
-    label: 'Configure CSV parse options',
-    defaultValue: r => (r.file && r.file.csv) || {},
+    type: 'csvgenerate',
+    label: 'Configure CSV Generate Options',
+    defaultValue: r =>
+      (r.file && r.file.csv) || {
+        includeHeader: true,
+        rowDelimiter: '\n',
+        columnDelimiter: ',',
+      },
     visibleWhenAll: [
       {
         field: 'file.type',
@@ -136,36 +141,6 @@ export default {
     label: 'Compression Format',
     options: [{ items: [{ label: 'gzip', value: 'gzip' }] }],
   },
-  'file.csv.wrapWithQuotes': {
-    type: 'checkbox',
-    label: 'Wrap with quotes',
-    visibleWhenAll: [
-      {
-        field: 'file.type',
-        is: ['csv'],
-      },
-    ],
-  },
-  'file.csv.replaceTabWithSpace': {
-    type: 'checkbox',
-    label: 'Replace tab with space',
-    visibleWhenAll: [
-      {
-        field: 'file.type',
-        is: ['csv'],
-      },
-    ],
-  },
-  'file.csv.replaceNewLineWithSpace': {
-    type: 'checkbox',
-    label: 'Replace new line with space',
-    visibleWhenAll: [
-      {
-        field: 'file.type',
-        is: ['csv'],
-      },
-    ],
-  },
   'file.skipAggregation': {
     type: 'checkbox',
     label: 'Skip Aggregation',
@@ -179,24 +154,5 @@ export default {
   'file.fileDefinition._fileDefinitionId': {
     type: 'text',
     label: 'File file Definition _file Definition Id',
-  },
-  'file.csv.rowDelimiter': {
-    type: 'select',
-    label: 'Row Delimiter',
-    options: [
-      {
-        items: [
-          { label: 'LF(\\n)', value: '\n' },
-          { label: 'CR(\\r)', value: '\r' },
-          { label: 'CR(\\r) LF(\\n) ', value: '\r\n' },
-        ],
-      },
-    ],
-    visibleWhenAll: [
-      {
-        field: 'file.type',
-        is: ['csv'],
-      },
-    ],
   },
 };

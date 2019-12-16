@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { withRouter } from 'react-router-dom';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
+import { withRouter, useHistory, useRouteMatch } from 'react-router-dom';
 import clsx from 'clsx';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { Typography, IconButton } from '@material-ui/core';
@@ -27,6 +27,7 @@ import SwitchOnOff from '../../components/OnOff';
 import { generateNewId } from '../../utils/resource';
 import { isConnector } from '../../utils/flows';
 import FlowEllipsisMenu from '../../components/FlowEllipsisMenu';
+import FlowStartDateDialog from '../../components/DeltaFlowStartDate/Dialog';
 
 // #region FLOW SCHEMA: FOR REFERENCE DELETE ONCE FB IS COMPLETE
 /* 
@@ -203,15 +204,18 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function FlowBuilder(props) {
-  const { match, history } = props;
+function FlowBuilder() {
+  const match = useRouteMatch();
   const { flowId, integrationId } = match.params;
+  const history = useHistory();
   const isNewFlow = !flowId || flowId.startsWith('new');
   const classes = useStyles();
   const theme = useTheme();
   const dispatch = useDispatch();
+  const [showDilaog, setShowDilaog] = useState(false);
   // Bottom drawer is shown for existing flows and docked for new flow
   const [size, setSize] = useState(isNewFlow ? 0 : 1);
+  const [tabValue, setTabValue] = useState(0);
   const [newGeneratorId, setNewGeneratorId] = useState(generateNewId());
   const [newProcessorId, setNewProcessorId] = useState(generateNewId());
   //
@@ -220,8 +224,9 @@ function FlowBuilder(props) {
     selectors.createdResourceId(state, flowId)
   );
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
-  const { merged: flow = {} } = useSelector(state =>
-    selectors.flowMetadata(state, flowId)
+  const flow = useSelector(
+    state => selectors.flowDetails(state, flowId),
+    shallowEqual
   );
   const { pageProcessors = [], pageGenerators = [] } = flow;
   const createdGeneratorId = useSelector(state =>
@@ -352,6 +357,32 @@ function FlowBuilder(props) {
     patchFlow('/name', title);
   }
 
+  const handleRunDeltaFlow = useCallback(
+    customStartDate => {
+      dispatch(actions.flow.run({ flowId, customStartDate }));
+    },
+    [dispatch, flowId]
+  );
+  const handleFlowRun = useCallback(() => {
+    if (
+      flow.isDeltaFlow &&
+      (!flow._connectorId || !!flow.showStartDateDialog)
+    ) {
+      setShowDilaog('true');
+    } else {
+      handleRunDeltaFlow();
+    }
+
+    // Highlights Run Dashboard in the bottom drawer
+    setTabValue(1);
+    // Raises Bottom Drawer size
+    setSize(2);
+  }, [
+    flow._connectorId,
+    flow.isDeltaFlow,
+    flow.showStartDateDialog,
+    handleRunDeltaFlow,
+  ]);
   // #region New Flow Creation logic
   const rewriteUrl = id => {
     const parts = match.url.split('/');
@@ -407,31 +438,41 @@ function FlowBuilder(props) {
   // #endregion
 
   // eslint-disable-next-line
-  // console.log(flow);
+  // console.log('render: <FlowBuilder>');
+  const closeDeltaDialog = () => {
+    setShowDilaog(false);
+  };
 
   return (
     <LoadResources required resources="flows, imports, exports">
+      {showDilaog && flow.isDeltaFlow && (
+        <FlowStartDateDialog
+          flowId={flow._id}
+          onClose={closeDeltaDialog}
+          runDeltaFlow={handleRunDeltaFlow}
+        />
+      )}
       <ResourceDrawer
-        {...props}
         flowId={flowId}
         disabled={isViewMode}
         integrationId={integrationId}
       />
-      <RunDrawer {...props} flowId={flowId} />
+      <RunDrawer flowId={flowId} />
       <ScheduleDrawer
         isViewMode={isMonitorLevelAccess}
         isConnector={isConnectorType}
-        {...props}
         flow={flow}
       />
-      <SettingsDrawer isViewMode={isViewMode} {...props} flow={flow} />
-      {/* <WizardDrawer {...props} flowId={flowId} /> */}
+      <SettingsDrawer isViewMode={isViewMode} flow={flow} />
 
       <CeligoPageBar
         title={
-          <EditableText disabled={isViewMode} onChange={handleTitleChange}>
-            {flow.name}
-          </EditableText>
+          <EditableText
+            disabled={isViewMode}
+            text={flow.name}
+            defaultText={isNewFlow ? 'New flow' : `Unnamed (id:${flowId})`}
+            onChange={handleTitleChange}
+          />
         }
         subtitle={`Last saved: ${isNewFlow ? 'Never' : flow.lastModified}`}
         infoText={flow.description}>
@@ -447,9 +488,7 @@ function FlowBuilder(props) {
               isNewFlow || !(flow && flow.isRunnable) || isMonitorLevelAccess
             }
             data-test="runFlow"
-            onClick={() => {
-              dispatch(actions.flow.run({ flowId }));
-            }}>
+            onClick={handleFlowRun}>
             <RunIcon />
           </IconButton>
           {flow && flow.showScheduleIcon && (
@@ -548,7 +587,12 @@ function FlowBuilder(props) {
                   onDelete={handleDelete(itemTypes.PAGE_PROCESSOR)}
                   flowId={flowId}
                   integrationId={integrationId}
-                  key={pp._importId || pp._exportId || pp._connectionId}
+                  key={
+                    pp._importId ||
+                    pp._exportId ||
+                    pp._connectionId ||
+                    `${pp.application}-${i}`
+                  }
                   index={i}
                   isViewMode={isViewMode}
                   isMonitorLevelAccess={isMonitorLevelAccess}
@@ -581,7 +625,13 @@ function FlowBuilder(props) {
 
         {/* CANVAS END */}
       </div>
-      <BottomDrawer flow={flow} size={size} setSize={setSize} />
+      <BottomDrawer
+        flow={flow}
+        size={size}
+        setSize={setSize}
+        tabValue={tabValue}
+        setTabValue={setTabValue}
+      />
     </LoadResources>
   );
 }

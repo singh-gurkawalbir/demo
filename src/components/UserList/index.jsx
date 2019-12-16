@@ -19,7 +19,7 @@ import {
   ACCOUNT_IDS,
 } from '../../utils/constants';
 import UserDetail from './UserDetail';
-import { COMM_STATES } from '../../reducers/comms';
+import { COMM_STATES } from '../../reducers/comms/networkComms';
 
 const mapStateToProps = (state, { integrationId }) => {
   const permissions = selectors.userPermissions(state);

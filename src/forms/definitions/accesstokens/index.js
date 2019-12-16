@@ -20,7 +20,7 @@ export default {
     ],
   },
 
-  preSave: formValues => {
+  preSave: (formValues, resource) => {
     const accessTokenData = { ...formValues };
 
     if (accessTokenData['/autoPurgeAt'] === 'none') {
@@ -34,6 +34,12 @@ export default {
       accessTokenData['/autoPurgeAt'] = new Date(
         timeInMilliSeconds + parseInt(accessTokenData['/autoPurgeAt'], 10)
       ).toISOString();
+    }
+
+    if (accessTokenData['/fullAccess'] === 'true' && !resource._integrationId) {
+      accessTokenData['/fullAccess'] = true;
+    } else {
+      accessTokenData['/fullAccess'] = false;
     }
 
     return accessTokenData;

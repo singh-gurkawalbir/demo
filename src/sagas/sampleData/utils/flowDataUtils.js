@@ -6,8 +6,26 @@ import {
   fetchPageProcessorPreview,
   fetchPageGeneratorPreview,
   requestProcessorData,
+  requestSampleDataWithContext,
 } from '../flows';
 import getPreviewOptionsForResource from '../flows/pageProcessorPreviewOptions';
+
+/*
+ * Given a flow, filters out all the pending PGs and PPs without resourceId
+ */
+export function filterPendingResources({ flow = {} }) {
+  const { pageGenerators: pgs = [], pageProcessors: pps = [], ...rest } = flow;
+  const filteredPageGenerators = pgs.filter(pg => !!pg._exportId);
+  const filteredPageProcessors = pps.filter(
+    pp => !!pp[pp.type === 'import' ? '_importId' : '_exportId']
+  );
+
+  return {
+    ...rest,
+    pageGenerators: filteredPageGenerators,
+    pageProcessors: filteredPageProcessors,
+  };
+}
 
 export function* fetchFlowResources({ flow, type, eliminateDataProcessors }) {
   const resourceMap = {};
@@ -76,13 +94,24 @@ export function* requestSampleDataForImports({
 }) {
   try {
     switch (sampleDataStage) {
-      case 'raw':
       case 'flowInput': {
         yield call(fetchPageProcessorPreview, {
           flowId,
           _pageProcessorId: resourceId,
           resourceType,
           previewType: sampleDataStage,
+        });
+        break;
+      }
+
+      case 'flowInputWithContext': {
+        // This stage is added explicitly to feed context info for input filter
+        // TODO @Raghu: Find the better way for this case
+        yield call(requestSampleDataWithContext, {
+          flowId,
+          resourceId,
+          resourceType,
+          stage: sampleDataStage,
         });
         break;
       }
@@ -189,6 +218,17 @@ export function* requestSampleDataForExports({
           previewType: sampleDataStage,
         });
       }
+    } else if (
+      ['flowInputWithContext', 'hooksWithContext'].includes(sampleDataStage)
+    ) {
+      // These stages are added explicitly to feed context info for input/outputFilters
+      // TODO @Raghu: Find the better way for this case
+      yield call(requestSampleDataWithContext, {
+        flowId,
+        resourceId,
+        resourceType,
+        stage: sampleDataStage,
+      });
     } else {
       yield call(requestProcessorData, {
         flowId,
@@ -232,10 +272,17 @@ export function* handleFlowDataStageErrors({
     return;
   }
 
-  const errorsJSON = JSON.parse(error.message);
-  const { errors } = errorsJSON;
+  if (error.status >= 400 && error.status < 500) {
+    const errorsJSON = JSON.parse(error.message);
+    const { errors } = errorsJSON;
 
-  yield put(
-    actions.flowData.receivedError(flowId, resourceId, stage, errors[0].message)
-  );
+    yield put(
+      actions.flowData.receivedError(
+        flowId,
+        resourceId,
+        stage,
+        errors[0].message
+      )
+    );
+  }
 }

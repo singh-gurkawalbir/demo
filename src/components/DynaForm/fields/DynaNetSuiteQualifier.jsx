@@ -1,6 +1,7 @@
 import { useState, Fragment, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { TextField, IconButton } from '@material-ui/core';
+import { isArray } from 'lodash';
 import OpenInNewIcon from '../../../components/icons/ExitIcon';
 import NetSuiteQualificationCriteriaEditor from '../../AFE/NetSuiteQualificationCriteriaEditor';
 
@@ -30,7 +31,7 @@ export default function DynaNetSuiteQualifier(props) {
   const [showEditor, setShowEditor] = useState(false);
   const classes = useStyles();
   const {
-    disabled,
+    // disabled,
     errorMessages,
     id,
     isValid,
@@ -55,6 +56,8 @@ export default function DynaNetSuiteQualifier(props) {
     if (isDefaultValueChanged) {
       if (options.resetValue) {
         onFieldChange(id, []);
+      } else if (defaultValue) {
+        onFieldChange(id, defaultValue);
       }
 
       setIsDefaultValueChanged(false);
@@ -74,11 +77,21 @@ export default function DynaNetSuiteQualifier(props) {
     const { rule } = editorValues;
 
     if (shouldCommit) {
-      onFieldChange(id, rule);
+      onFieldChange(id, JSON.stringify(rule));
     }
 
     handleEditorClick();
   };
+
+  let rule = [];
+
+  if (value) {
+    try {
+      rule = JSON.parse(value);
+    } catch (e) {
+      rule = value;
+    }
+  }
 
   return (
     <Fragment>
@@ -86,9 +99,9 @@ export default function DynaNetSuiteQualifier(props) {
         <NetSuiteQualificationCriteriaEditor
           title="Qualification Criteria"
           id={id}
-          value={value}
+          value={rule}
           onClose={handleClose}
-          disabled={disabled}
+          // disabled={disabled}
           options={options}
         />
       )}
@@ -108,7 +121,7 @@ export default function DynaNetSuiteQualifier(props) {
         disabled
         required={required}
         error={!isValid}
-        value={JSON.stringify(value)}
+        value={isArray(value) ? JSON.stringify(value) : value}
         variant="filled"
       />
     </Fragment>
