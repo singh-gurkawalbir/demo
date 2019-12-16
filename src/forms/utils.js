@@ -137,6 +137,43 @@ export const getFieldByName = ({ fieldMeta, name }) => {
   return res && res.field;
 };
 
+export const getFieldByNameFromLayout = (layout, fieldMap, name) => {
+  if (!layout) return null;
+  const { fields, containers } = layout;
+
+  if (
+    fields &&
+    fields.map(fieldId => fieldMap[fieldId]).some(field => field.name === name)
+  ) {
+    return getFieldByName({ fieldMeta: { fieldMap }, name });
+  }
+
+  return (
+    containers &&
+    containers
+      .map(container => getFieldByNameFromLayout(container, fieldMap, name))
+      .reduce((acc, curr) => {
+        // get first matching field
+        // eslint-disable-next-line no-param-reassign
+        if (curr && !acc) acc = curr;
+
+        return acc;
+      }, null)
+  );
+};
+
+export const getAllFormValuesAssociatedToMeta = (values, meta = {}) => {
+  const { layout, fieldMap } = meta;
+
+  return Object.keys(values)
+    .filter(valueKey => !!getFieldByNameFromLayout(layout, fieldMap, valueKey))
+    .reduce((acc, curr) => {
+      acc[curr] = values[curr];
+
+      return acc;
+    }, {});
+};
+
 export const getMissingPatchSet = (paths, resource) => {
   const missing = [];
   const addMissing = missingPath => {

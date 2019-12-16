@@ -1,6 +1,6 @@
-import { useCallback, useMemo } from 'react';
-import { useSelector, shallowEqual, useDispatch } from 'react-redux';
-import { Route, useHistory, useRouteMatch } from 'react-router-dom';
+import { useMemo } from 'react';
+import { useSelector, shallowEqual } from 'react-redux';
+import { Route, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import * as selectors from '../../../../../../reducers';
@@ -8,7 +8,7 @@ import { integrationSettingsToDynaFormMetadata } from '../../../../../../forms/u
 import { FormStateManager } from '../../../../../../components/ResourceFormFactory';
 import DrawerTitleBar from '../../../../../../components/drawer/TitleBar';
 import LoadResources from '../../../../../../components/LoadResources';
-import actions from '../../../../../../actions';
+import { useIASettingsStateWithHandleClose } from '..';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -30,9 +30,7 @@ const useStyles = makeStyles(theme => ({
 
 function SettingsDrawer({ integrationId, storeId }) {
   const classes = useStyles();
-  const history = useHistory();
   const match = useRouteMatch();
-  const dispatch = useDispatch();
   const { flowId } = match.params;
   const flow =
     useSelector(state => selectors.resource(state, 'flows', flowId)) || {};
@@ -45,37 +43,26 @@ function SettingsDrawer({ integrationId, storeId }) {
   // props (all of which would cause re-renders of deep component trees)
   // We have a data-layer for a reason. There is absolutely no reason to proxy data-layer
   // results deeply through many nested components.
-  const formState = useSelector(state => {
-    const formState = selectors.integrationAppSettingsFormState(
-      state,
-      integrationId,
-      flowId
-    );
-
-    formState.initComplete = true;
-
-    return formState;
-  });
   const { settings: fields, sections } = useSelector(
     state => selectors.getIAFlowSettings(state, integrationId, flowId),
     shallowEqual
   );
-  const fieldMeta = useMemo(
+  const flowSettingsMemo = useMemo(
     () =>
       integrationSettingsToDynaFormMetadata(
         { fields, sections },
         integrationId,
         true,
-        { resource: flow }
+        {
+          resource: flow,
+        }
       ),
     [fields, flow, integrationId, sections]
   );
-  const handleClose = useCallback(() => {
-    dispatch(actions.integrationApp.settings.clear(integrationId, flowId));
-    history.goBack();
-  }, [dispatch, flowId, history, integrationId]);
-
-  // console.log('render <SettingsDrawer>');
+  const { formState, handleClose } = useIASettingsStateWithHandleClose(
+    integrationId,
+    flowId
+  );
 
   return (
     <Drawer
@@ -95,7 +82,7 @@ function SettingsDrawer({ integrationId, storeId }) {
         storeId={storeId}
         onSubmitComplete={handleClose}
         formState={formState}
-        fieldMeta={fieldMeta}
+        fieldMeta={flowSettingsMemo}
       />
     </Drawer>
   );

@@ -1,9 +1,11 @@
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
+import { useCallback } from 'react';
 import {
   Route,
   Link,
   NavLink,
   Redirect,
+  useHistory,
   useRouteMatch,
 } from 'react-router-dom';
 import { makeStyles } from '@material-ui/styles';
@@ -17,6 +19,7 @@ import FlowCard from '../../../common/FlowCard';
 import ConfigureDrawer from './ConfigureDrawer';
 import SettingsDrawer from './SettingsDrawer';
 import MappingDrawer from './MappingDrawer';
+import actions from '../../../../../actions';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -42,6 +45,29 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.primary.main,
   },
 }));
+
+export const useIASettingsStateWithHandleClose = (integrationId, flowId) => {
+  const dispatch = useDispatch();
+  const history = useHistory();
+  const formState = useSelector(state => {
+    const formState = selectors.integrationAppSettingsFormState(
+      state,
+      integrationId,
+      flowId
+    );
+
+    return { ...formState, initComplete: true };
+  }, shallowEqual);
+  const IASettingsHandleClose = useCallback(() => {
+    dispatch(actions.integrationApp.settings.clear(integrationId, flowId));
+    history.goBack();
+  }, [dispatch, flowId, history, integrationId]);
+
+  return {
+    handleClose: IASettingsHandleClose,
+    formState,
+  };
+};
 
 function FlowList({ integrationId, storeId }) {
   const match = useRouteMatch();

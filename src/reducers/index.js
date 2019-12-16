@@ -1265,6 +1265,43 @@ export function hasGeneralSettings(state, integrationId, storeId) {
   return !isEmpty(general);
 }
 
+export function integrationAppSectionMetadata(
+  state,
+  integrationId,
+  section,
+  storeId
+) {
+  if (!state) {
+    return {};
+  }
+
+  const integrationResource = fromData.integrationAppSettings(
+    state.data,
+    integrationId
+  );
+  const { supportsMultiStore, sections = [] } =
+    integrationResource.settings || {};
+  let allSections = sections;
+
+  if (supportsMultiStore) {
+    if (storeId) {
+      // If storeId passed, return sections from that store
+      const store = sections.find(s => s.id === storeId) || {};
+
+      allSections = store.sections || [];
+    }
+  }
+
+  const selectedSection =
+    allSections.find(
+      sec =>
+        sec.title &&
+        sec.title.replace(/\s/g, '').replace(/\W/g, '_') === section
+    ) || {};
+
+  return selectedSection;
+}
+
 export function integrationAppFlowSettings(state, id, section, storeId) {
   if (!state) return {};
   const integrationResource = fromData.integrationAppSettings(state.data, id);
