@@ -16,8 +16,11 @@ const sampleDataStage = {
     hooks: 'transform',
     responseMappingExtract: 'hooks',
     outputFilter: 'hooksWithContext',
+    hooksWithContext: 'hooks',
+    flowInputWithContext: 'flowInput',
   },
   imports: {
+    flowInputWithContext: 'flowInput',
     inputFilter: 'flowInputWithContext',
     preMap: 'flowInput',
     importMappingExtract: 'preMap',
@@ -58,8 +61,7 @@ export function getPreviewStageData(previewData, previewStage = 'parse') {
 }
 
 export const getSampleDataStage = (stage, resourceType = 'exports') =>
-  (sampleDataStage[resourceType] && sampleDataStage[resourceType][stage]) ||
-  stage;
+  sampleDataStage[resourceType][stage] || stage;
 
 // @TODO: Raghu Change this to return instead of inplace updates to flow
 export const reset = (flow, index, isPageGenerator) => {

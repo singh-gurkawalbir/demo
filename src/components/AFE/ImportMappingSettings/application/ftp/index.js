@@ -1,5 +1,6 @@
 import dateTimezones from '../../../../../utils/dateTimezones';
 import mappingUtil from '../../../../../utils/mapping';
+import dateFormats from '../../../../../utils/dateFormats';
 
 export default {
   getMetaData: (options = {}) => {
@@ -222,7 +223,12 @@ export default {
         extractDateFormat: {
           id: 'extractDateFormat',
           name: 'extractDateFormat',
-          type: 'text',
+          type: 'autosuggest',
+          options: {
+            suggestions: dateFormats,
+          },
+          labelName: 'name',
+          valueName: 'value',
           label: 'Export Date Format',
           defaultValue: value.extractDateFormat,
           placeholder: '',
@@ -256,7 +262,12 @@ export default {
         generateDateFormat: {
           id: 'generateDateFormat',
           name: 'generateDateFormat',
-          type: 'text',
+          type: 'autosuggest',
+          options: {
+            suggestions: dateFormats,
+          },
+          labelName: 'name',
+          valueName: 'value',
           label: 'Import Date Format',
           defaultValue: value.generateDateFormat,
           placeholder: '',

@@ -51,6 +51,7 @@ function MappingDrawer() {
     adaptorType,
     application,
     generateFields,
+    visible: showMappings,
   } = useSelector(state => selectors.mapping(state, mappingEditorId));
   const [enqueueSnackbar] = useEnqueueSnackbar();
   const handleClose = useCallback(() => {
@@ -150,28 +151,30 @@ function MappingDrawer() {
                   flowId={flowId}
                 />
               </div>
-              <ButtonGroup>
-                <Button
-                  variant="outlined"
-                  color="secondary"
-                  data-test="saveImportMapping"
-                  onClick={handleSave()}>
-                  Save
-                </Button>
-                <Button
-                  variant="outlined"
-                  color="primary"
-                  data-test="saveImportMapping"
-                  onClick={handleSave(true)}>
-                  Save & Close
-                </Button>
-                <Button
-                  variant="text"
-                  data-test="saveImportMapping"
-                  onClick={handleClose}>
-                  Cancel
-                </Button>
-              </ButtonGroup>
+              {showMappings && (
+                <ButtonGroup>
+                  <Button
+                    variant="outlined"
+                    color="secondary"
+                    data-test="saveImportMapping"
+                    onClick={handleSave()}>
+                    Save
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    data-test="saveImportMapping"
+                    onClick={handleSave(true)}>
+                    Save & Close
+                  </Button>
+                  <Button
+                    variant="text"
+                    data-test="saveImportMapping"
+                    onClick={handleClose}>
+                    Cancel
+                  </Button>
+                </ButtonGroup>
+              )}
             </Fragment>
           ) : (
             <SelectImport flowId={flowId} />

@@ -148,6 +148,20 @@ export default {
           value: lookup.expression,
           data: extractFields,
         },
+        'lookup.expressionText': {
+          id: 'lookup.expressionText',
+          name: 'expressionText',
+          type: 'text',
+          label: 'Lookup Filter Expression',
+          multiline: true,
+          disableText: true,
+          refreshOptionsOnChangesTo: ['lookup.expression'],
+          visibleWhenAll: [
+            { field: 'fieldMappingType', is: ['lookup'] },
+            { field: 'lookup.mode', is: ['dynamic'] },
+          ],
+          defaultValue: lookup.expression,
+        },
         'lookup.resultField': {
           id: 'lookup.resultField',
           name: 'resultField',
@@ -357,20 +371,14 @@ export default {
         extractDateFormat: {
           id: 'extractDateFormat',
           name: 'extractDateFormat',
-          type: 'select',
+          type: 'autosuggest',
+          options: {
+            suggestions: dateFormats,
+          },
+          labelName: 'name',
+          valueName: 'value',
           label: 'Date format',
           defaultValue: value.extractDateFormat,
-          options: [
-            {
-              items:
-                (dateFormats &&
-                  dateFormats.map(date => ({
-                    label: date.value,
-                    value: date.name,
-                  }))) ||
-                [],
-            },
-          ],
           visibleWhen: [{ field: 'fieldMappingType', is: ['standard'] }],
         },
         extractDateTimezone: {
@@ -403,6 +411,7 @@ export default {
           'lookup.mode',
           'lookup.recordType',
           'lookup.expression',
+          'lookup.expressionText',
           'lookup.resultField',
           'lookup.mapList',
           'functions',
@@ -447,6 +456,15 @@ export default {
           return {
             resourceToFetch: 'recordTypes',
           };
+        } else if (fieldId === 'lookup.expressionText') {
+          const lookupExpressionField = fields.find(
+            field => field.id === 'lookup.expression'
+          );
+          const lookupExpressionTextField = fields.find(
+            field => field.id === 'lookup.expressionText'
+          );
+
+          lookupExpressionTextField.value = lookupExpressionField.value;
         } else if (fieldId === 'lookup.expression') {
           const recordTypeField = fields.find(
             field => field.id === 'lookup.recordType'

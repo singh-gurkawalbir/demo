@@ -36,6 +36,7 @@ export default function reducer(state = {}, action) {
             application,
             adaptorType,
             generateFields,
+            visible: false,
           };
         }
 
@@ -165,6 +166,9 @@ export default function reducer(state = {}, action) {
         break;
       case actionTypes.MAPPING.UPDATE_LOOKUP:
         draft[id].lookups = lookups;
+        break;
+      case actionTypes.MAPPING.SET_VISIBILITY:
+        draft[id].visible = value;
         break;
       default:
     }

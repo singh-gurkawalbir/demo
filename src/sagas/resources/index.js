@@ -27,16 +27,22 @@ export function* commitStagedChanges({ resourceType, id, scope }) {
 
   if (!patch) return; // nothing to do.
 
-  if (!isNew && resourceType.indexOf('/accesstokens') >= 0) {
+  if (!isNew && resourceType.indexOf('integrations/') >= 0) {
     // eslint-disable-next-line no-param-reassign
-    resourceType = 'accesstokens';
+    resourceType = resourceType.split('/').pop();
   }
 
   const path = isNew ? `/${resourceType}` : `/${resourceType}/${id}`;
 
   // only updates need to check for conflicts.
   if (!isNew) {
-    const origin = yield call(apiCallWithRetry, { path });
+    let origin;
+
+    try {
+      origin = yield call(apiCallWithRetry, { path });
+    } catch (error) {
+      return { error };
+    }
 
     if (origin.lastModified !== master.lastModified) {
       let conflict = jsonPatch.compare(master, origin);

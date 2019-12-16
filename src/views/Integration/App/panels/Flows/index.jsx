@@ -89,7 +89,7 @@ function FlowList({ integrationId, storeId }) {
   // console.log('render: <Flow Settings>');
 
   return (
-    <LoadResources required resources="flows">
+    <LoadResources required resources="flows,exports">
       <ConfigureDrawer
         integrationId={integrationId}
         storeId={storeId}
@@ -121,7 +121,13 @@ function FlowList({ integrationId, storeId }) {
           key={f._id}
           storeId={storeId}
           flowId={f._id}
-          excludeActions={['detach', 'clone', 'delete']}
+          excludeActions={[
+            'detach',
+            'clone',
+            'delete',
+            'references',
+            'download',
+          ]}
         />
       ))}
     </LoadResources>

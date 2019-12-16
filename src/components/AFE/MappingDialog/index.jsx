@@ -61,8 +61,10 @@ export default function MappingDialog(props) {
     title,
     width = '80vw',
     height = '70vh',
+    noMappingHeight = '20vh',
     onClose,
     onSave,
+    disabled,
   } = props;
   const classes = useStyles();
   const [fullScreen, setFullScreen] = useState(props.fullScreen || false);
@@ -72,6 +74,7 @@ export default function MappingDialog(props) {
     adaptorType,
     application,
     generateFields,
+    visible: showMappings,
   } = useSelector(state => selectors.mapping(state, id));
   const [enquesnackbar] = useEnqueueSnackbar();
   const handleSave = shouldClose => {
@@ -101,7 +104,10 @@ export default function MappingDialog(props) {
   };
 
   const handleFullScreenClick = () => setFullScreen(!fullScreen);
-  const size = fullScreen ? { height } : { height, width };
+  let size;
+
+  if (showMappings) size = fullScreen ? { height } : { height, width };
+  else size = { height: noMappingHeight };
 
   return (
     <Dialog
@@ -136,24 +142,29 @@ export default function MappingDialog(props) {
           <CloseIcon />
         </IconButton>
       </div>
+
       <DialogContent style={size} className={classes.dialogContent}>
         {children}
       </DialogContent>
-      <DialogActions className={classes.actions}>
-        <Button
-          color="primary"
-          data-test="saveImportMapping"
-          onClick={() => handleSave()}>
-          Save
-        </Button>
-        <Button
-          variant="outlined"
-          data-test="saveAndCloseImportMapping"
-          color="primary"
-          onClick={() => handleSave(true)}>
-          Save and Close
-        </Button>
-      </DialogActions>
+      {showMappings && (
+        <DialogActions className={classes.actions}>
+          <Button
+            disabled={disabled}
+            color="primary"
+            data-test="saveImportMapping"
+            onClick={() => handleSave()}>
+            Save
+          </Button>
+          <Button
+            disabled={disabled}
+            variant="outlined"
+            data-test="saveAndCloseImportMapping"
+            color="primary"
+            onClick={() => handleSave(true)}>
+            Save and Close
+          </Button>
+        </DialogActions>
+      )}
     </Dialog>
   );
 }

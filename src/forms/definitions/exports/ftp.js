@@ -4,6 +4,11 @@ export default {
   preSave: formValues => {
     const newValues = { ...formValues };
 
+    if (newValues['/file/json/resourcePath'] === '') {
+      newValues['/file/json'] = undefined;
+      delete newValues['/file/json/resourcePath'];
+    }
+
     if (newValues['/outputMode'] === 'blob') {
       newValues['/file/skipDelete'] = newValues['/ftp/leaveFile'];
       newValues['/file/output'] = 'blobKeys';
@@ -21,42 +26,6 @@ export default {
     return {
       ...newValues,
     };
-  },
-  init: fieldMeta => {
-    const fileDefinitionRulesField =
-      fieldMeta.fieldMap['file.filedefinition.rules'];
-
-    if (!fileDefinitionRulesField.userDefinitionId) {
-      // In Export creation mode, delete generic visibleWhenAll rules
-      // Add custom visible when rules
-      delete fileDefinitionRulesField.visibleWhenAll;
-      fileDefinitionRulesField.visibleWhen = [
-        {
-          field: 'edix12.format',
-          isNot: [''],
-        },
-        {
-          field: 'fixed.format',
-          isNot: [''],
-        },
-        {
-          field: 'edifact.format',
-          isNot: [''],
-        },
-      ];
-    } else {
-      // make visibility of format fields false incase of edit mode of file adaptors
-      const fields = ['edix12.format', 'fixed.format', 'edifact.format'];
-
-      fields.forEach(field => {
-        const formatField = fieldMeta.fieldMap[field];
-
-        delete formatField.visibleWhenAll;
-        formatField.visible = false;
-      });
-    }
-
-    return fieldMeta;
   },
   fieldMap: {
     common: { formId: 'common' },

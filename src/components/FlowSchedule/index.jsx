@@ -39,7 +39,7 @@ export default function FlowSchedule({
   );
   let resource = pg || flow;
   const schedule = (pg && pg.schedule) || flow.schedule;
-  const scheduleStartMinute = getScheduleStartMinute(resource, preferences);
+  const scheduleStartMinute = getScheduleStartMinute(exp || flow, preferences);
   const handleSubmit = useCallback(
     formVal => {
       const scheduleVal = getScheduleVal(formVal, scheduleStartMinute);
@@ -84,7 +84,7 @@ export default function FlowSchedule({
     [dispatch, flow, index, onClose, pg, scheduleStartMinute]
   );
 
-  resource = setValues(resource, schedule);
+  resource = setValues(resource, schedule, scheduleStartMinute);
 
   if (resource && !resource.frequency) {
     resource.frequency = '';
@@ -100,6 +100,7 @@ export default function FlowSchedule({
     exports,
     pg,
     flows,
+    scheduleStartMinute,
   });
 
   return (

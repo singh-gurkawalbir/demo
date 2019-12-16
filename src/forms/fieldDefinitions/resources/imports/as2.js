@@ -1,10 +1,10 @@
 export default {
   'as2.fileNameTemplate': {
-    type: 'text',
+    type: 'relativeuri',
     label: 'File Name',
   },
   'as2.messageIdTemplate': {
-    type: 'text',
+    type: 'relativeuri',
     label: 'Message Id',
   },
   'as2.headers': {

@@ -73,7 +73,7 @@ export default function DynaTimestampFileName(props) {
         newValue = `${value.substring(
           0,
           lastIndexOfBracesBeforeCursor + 1
-        )}${lookupHandlebarExp}}}${value.substring(
+        )}${lookupHandlebarExp}${value.substring(
           lastIndexOfBracesBeforeCursor + 1
         )}`;
       } else {
@@ -87,8 +87,13 @@ export default function DynaTimestampFileName(props) {
         newValue = `${preText}${lookupHandlebarExp}${postText}`;
       }
 
-      setState({ ...state, userInput: newValue });
       onFieldChange(id, newValue);
+      setState({
+        ...state,
+        userInput: newValue,
+        cursorPosition: -1,
+        filteredSuggestions: [],
+      });
     }
   };
 

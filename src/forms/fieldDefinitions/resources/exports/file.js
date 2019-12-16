@@ -280,9 +280,10 @@ export default {
         is: ['xlsx'],
       },
     ],
+    defaultValue: r => !!(r && r.file && r.file.xlsx && r.file.xlsx.keyColumns),
   },
   'file.xlsx.keyColumns': {
-    type: 'text',
+    type: 'filekeycolumn',
     label: 'Key Columns',
     visibleWhenAll: [
       {

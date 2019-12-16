@@ -48,6 +48,7 @@ export default function DynaEditor(props) {
     isValid,
     editorClassName,
     disabled,
+    saveMode,
   } = props;
   const handleEditorClick = () => {
     setShowEditor(!showEditor);
@@ -57,7 +58,14 @@ export default function DynaEditor(props) {
     let sanitizedVal = editorVal;
 
     // convert to json if form value is an object
-    if (mode === 'json' && typeof value === 'object') {
+    if (saveMode === 'json' || (mode === 'json' && typeof value === 'object')) {
+      // user trying to remove the json. Handle removing the value during presave
+      if (editorVal === '') {
+        onFieldChange(id, '');
+
+        return;
+      }
+
       try {
         sanitizedVal = JSON.parse(editorVal);
       } catch (e) {

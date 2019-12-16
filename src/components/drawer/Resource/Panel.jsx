@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import { Fragment, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Route, useLocation } from 'react-router-dom';
 import { makeStyles, Typography, IconButton } from '@material-ui/core';
@@ -78,6 +78,11 @@ export default function Panel(props) {
   const newResourceId = useSelector(state =>
     selectors.createdResourceId(state, id)
   );
+  const abortAndClose = useCallback(() => {
+    dispatch(actions.resourceForm.submitAborted(resourceType, id));
+    onClose();
+    dispatch(actions.resource.clearStaged(id));
+  }, [dispatch, id, onClose, resourceType]);
   // if this form is for a page processor, we don't know if
   // the new resource is an export or import. We determine this by
   // peeking into the patch set from the first step in PP/PG creation.
@@ -95,6 +100,15 @@ export default function Panel(props) {
   } else {
     resourceLabel = MODEL_PLURAL_TO_LABEL[resourceType];
   }
+
+  const isMultiStepSaveResource = [
+    'imports',
+    'exports',
+    'connections',
+    'pageGenerator',
+    'pageProcessor',
+  ].includes(resourceType);
+  const submitButtonLabel = isNew && isMultiStepSaveResource ? 'Next' : 'Save';
 
   function lookupProcessorResourceType() {
     if (!stagedProcessor || !stagedProcessor.patch) {
@@ -162,17 +176,19 @@ export default function Panel(props) {
       );
       const resourceId = resourceIdPatch ? resourceIdPatch.value : null;
 
+      if (isMultiStepSaveResource) {
+        if (!resourceId) {
+          return props.history.replace(getEditUrl(id));
+        }
+
+        // Take care of existing resource selection.
+        enqueueSnackbar({
+          message: `${resourceLabel} added`,
+          variant: 'success',
+        });
+      }
       // this is NOT a case where a user selected an existing resource,
       // so move to step 2 of the form...
-      if (!resourceId) {
-        return props.history.replace(getEditUrl(id));
-      }
-
-      // Take care of existing resource selection.
-      enqueueSnackbar({
-        message: `${resourceLabel} added`,
-        variant: 'success',
-      });
 
       dispatch(actions.resource.created(resourceId, id));
       onClose();
@@ -195,17 +211,6 @@ export default function Panel(props) {
     }
   }
 
-  const submitButtonLabel =
-    isNew &&
-    [
-      'imports',
-      'exports',
-      'connections',
-      'pageGenerator',
-      'pageProcessor',
-    ].includes(resourceType)
-      ? 'Next'
-      : 'Save';
   const requiredResources = determineRequiredResources(resourceType);
 
   return (
@@ -233,7 +238,7 @@ export default function Panel(props) {
             cancelButtonLabel="Cancel"
             submitButtonLabel={submitButtonLabel}
             onSubmitComplete={handleSubmitComplete}
-            onCancel={onClose}
+            onCancel={abortAndClose}
             {...props}
           />
         </LoadResources>
