@@ -66,6 +66,8 @@ export default {
     label: 'Launch Query Builder',
     refreshOptionsOnChangesTo: ['mongodb.method'],
     title: 'MongoDB Data Builder',
+    ruleTitle:
+      'Template (use handlebar expressions to map fields from your export data)',
     visibleWhen: [
       {
         field: 'mongodb.method',
@@ -80,6 +82,8 @@ export default {
     label: 'Launch Query Builder',
     refreshOptionsOnChangesTo: ['mongodb.method'],
     title: 'MongoDB Data Builder',
+    ruleTitle:
+      'Template (use handlebar expressions to map fields from your export data)',
     visibleWhen: [
       {
         field: 'mongodb.method',

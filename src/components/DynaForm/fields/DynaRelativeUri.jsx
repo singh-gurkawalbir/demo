@@ -40,7 +40,7 @@ export default function DynaRelativeUri(props) {
     label,
     options = {},
   } = props;
-  const { resourceName } = options;
+  const resourceName = options.resourceName || props.resourceName;
   const connection = useSelector(state =>
     selectors.resource(state, 'connections', connectionId)
   );

@@ -16,42 +16,6 @@ export default {
       ...newValues,
     };
   },
-  init: fieldMeta => {
-    const fileDefinitionRulesField =
-      fieldMeta.fieldMap['file.filedefinition.rules'];
-
-    if (!fileDefinitionRulesField.userDefinitionId) {
-      // In Import creation mode, delete generic visibleWhenAll rules
-      // Add custom visible when rules
-      delete fileDefinitionRulesField.visibleWhenAll;
-      fileDefinitionRulesField.visibleWhen = [
-        {
-          field: 'edix12.format',
-          isNot: [''],
-        },
-        {
-          field: 'fixed.format',
-          isNot: [''],
-        },
-        {
-          field: 'edifact.format',
-          isNot: [''],
-        },
-      ];
-    } else {
-      // make visibility of format fields false incase of edit mode of file adaptors
-      const fields = ['edix12.format', 'fixed.format', 'edifact.format'];
-
-      fields.forEach(field => {
-        const formatField = fieldMeta.fieldMap[field];
-
-        delete formatField.visibleWhenAll;
-        formatField.visible = false;
-      });
-    }
-
-    return fieldMeta;
-  },
   optionsHandler: (fieldId, fields) => {
     if (fieldId === 's3.fileKey') {
       const fileNameField = fields.find(field => field.fieldId === fieldId);
@@ -78,22 +42,6 @@ export default {
 
     if (fieldId === 'uploadFile') {
       return fileType.value;
-    }
-
-    if (fieldId === 'file.filedefinition.rules') {
-      let definitionFieldId;
-
-      // Fetch format specific Field Definition field to fetch id
-      if (fileType.value === 'filedefinition')
-        definitionFieldId = 'edix12.format';
-      else if (fileType.value === 'fixed') definitionFieldId = 'fixed.format';
-      else definitionFieldId = 'edifact.format';
-      const definition = fields.find(field => field.id === definitionFieldId);
-
-      return {
-        format: definition && definition.format,
-        definitionId: definition && definition.value,
-      };
     }
 
     return null;

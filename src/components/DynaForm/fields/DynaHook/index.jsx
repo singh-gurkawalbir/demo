@@ -10,7 +10,6 @@ export default function DynaHook(props) {
     flowId,
     resourceType,
     resourceId,
-    // TODO:is this default value correct for hook stage verify with raghu
     hookStage = 'preSavePage',
     disabled,
   } = props;
@@ -74,9 +73,11 @@ export default function DynaHook(props) {
     }
   };
 
-  const preHookData = useSelector(state =>
-    getSampleDataSelector({ state, flowId, resourceId, stage: 'hooks' })
-  );
+  const preHookData = useSelector(state => {
+    if (props.preHookData) return props.preHookData;
+
+    return getSampleDataSelector({ state, flowId, resourceId, stage: 'hooks' });
+  });
 
   useEffect(() => {
     // Samle data is shown incase of flow context

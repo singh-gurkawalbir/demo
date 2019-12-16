@@ -29,7 +29,7 @@ export default {
     name: { fieldId: 'name' },
     'rest.baseURI': {
       fieldId: 'rest.baseURI',
-      helpText: 'The Base URI of Magento.',
+      helpText: 'The Base URI of Magento 2.',
       required: true,
     },
     'rest.unencrypted.username': {
@@ -61,7 +61,7 @@ export default {
       label: 'Generate Token',
       defaultValue: '',
       required: true,
-      helpText: 'The access token of your Magento account.',
+      helpText: 'The access token of your Magento 2 account.',
     },
     restAdvanced: { formId: 'restAdvanced' },
   },

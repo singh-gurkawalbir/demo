@@ -105,7 +105,7 @@ export default {
           { label: 'Lightspeed', value: 'lightspeed' },
           { label: 'Linkedin', value: 'linkedin' },
           { label: 'Liquidplanner', value: 'liquidplanner' },
-          { label: 'Magento', value: 'magento' },
+          { label: 'Magento 2', value: 'magento' },
           { label: 'Mailchimp', value: 'mailchimp' },
           { label: 'Mediaocean', value: 'mediaocean' },
           { label: 'Namely', value: 'namely' },
@@ -474,7 +474,7 @@ export default {
       {
         items: [
           { label: 'MAC', value: 'MAC' },
-          { label: 'OAuth', value: 'OAuth' },
+          { label: 'OAuth 2.0', value: 'OAuth' },
           { label: 'Bearer', value: 'Bearer' },
           // { label: 'Hmac', value: 'Hmac' },
           { label: 'None', value: ' ' },
@@ -1352,6 +1352,7 @@ export default {
     type: 'text',
     label: "Partner's URL for Asynchronous MDN:",
     required: true,
+    helpText: `This is the URL via which integrator.io will send asynchronous MDNs to your trading partner. Note that this URL will typically be different to the Partner's AS2 URL field above.`,
     visibleWhen: [
       {
         field: 'partnerrequireasynchronousmdns',
@@ -1511,7 +1512,7 @@ export default {
         items: [
           { label: 'Bearer', value: 'bearer' },
           { label: 'MAC', value: 'mac' },
-          { label: 'OAuth', value: 'oauth' },
+          { label: 'OAuth 2.0', value: 'oauth' },
           { label: 'None', value: 'none' },
         ],
       },
@@ -1717,6 +1718,8 @@ export default {
   partnerrequireasynchronousmdns: {
     type: 'checkbox',
     label: 'Partner Requires Asynchronous MDNs?',
+    helpText:
+      'Check this box if your trading partner requires MDNs to be sent asynchronously. By default, integrator.io is configured to send MDNs synchronously.',
   },
   'as2.userStationInfo.ipAddresses': {
     type: 'labelvalue',
@@ -1776,6 +1779,12 @@ export default {
     type: 'editor',
     mode: 'text',
     label: 'X.509 Private Key',
+    requiredWhen: [
+      {
+        field: 'as2.userStationInfo.encryptionType',
+        isNot: ['NONE'],
+      },
+    ],
   },
   'as2.userStationInfo.mdn.mdnSigning': {
     type: 'select',
@@ -1871,11 +1880,23 @@ export default {
     type: 'editor',
     mode: 'text',
     label: 'X.509 Public Certificate',
+    requiredWhen: [
+      {
+        field: 'as2.userStationInfo.encryptionType',
+        isNot: ['NONE'],
+      },
+    ],
   },
   'as2.unencrypted.partnerCertificate': {
     type: 'editor',
     mode: 'text',
     label: "Partner's Certificate:",
+    requiredWhen: [
+      {
+        field: 'as2.partnerStationInfo.encryptionType',
+        isNot: ['NONE'],
+      },
+    ],
   },
   'as2.preventCanonicalization': {
     label: 'Prevent Canonicalization',
@@ -1920,6 +1941,7 @@ export default {
     type: 'hook',
     label: '',
     required: false,
+    hookStage: 'contentBasedFlowRouter',
     preHookData: {
       httpHeaders: {
         'as2-from': 'OpenAS2_appA',

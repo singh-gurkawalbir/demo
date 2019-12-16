@@ -73,7 +73,7 @@ export default function CsvGeneratePanel(props) {
             }
             inputProps={{ id: 'columnDelimiter' }}>
             {options.ColumnDelimiterOptions.map(opt => (
-              <option key={opt.type} value={opt.value} data-test={opt.type}>
+              <option key={opt.value} value={opt.value} data-test={opt.value}>
                 {opt.label}
               </option>
             ))}
@@ -90,15 +90,11 @@ export default function CsvGeneratePanel(props) {
             onChange={event => patchEditor('rowDelimiter', event.target.value)}
             placeholder="Please Select"
             inputProps={{ id: 'rowDelimiter' }}>
-            <option value="\n" data-test="lf">
-              LF (\n)
-            </option>
-            <option value="\r" data-test="cr">
-              CR (\r)
-            </option>
-            <option value="\r\n" data-test="crlf">
-              CRLF (\r\n)
-            </option>
+            {options.RowDelimiterOptions.map(opt => (
+              <option key={opt.value} value={opt.value} data-test={opt.value}>
+                {opt.label}
+              </option>
+            ))}
           </CeligoSelect>
         </FormControl>
         <FormControlLabel

@@ -23,8 +23,8 @@ function replaceOrInsertResource(state, resourceType, resourceValue) {
     type = 'connectorLicenses';
   }
 
-  if (type.indexOf('/accesstokens') >= 0) {
-    type = 'accesstokens';
+  if (type.indexOf('integrations/') >= 0) {
+    type = type.split('/').pop();
   }
 
   if (!state[type]) {

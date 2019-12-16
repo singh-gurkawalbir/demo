@@ -3,9 +3,9 @@
 // the linter precommit step will fail. ...and the IDE doesnt like the globals
 // either.
 /* global describe, test, expect */
-import reducer, * as selectors from './';
-import actions from '../../actions';
-import commKeyGenerator from '../../utils/commKeyGenerator';
+import reducer, * as selectors from './index';
+import actions from '../../../actions';
+import commKeyGenerator from '../../../utils/commKeyGenerator';
 
 // Reference: JEST "matcher" doc: https://jestjs.io/docs/en/using-matchers
 const STATES = selectors.COMM_STATES;

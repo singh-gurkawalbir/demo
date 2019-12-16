@@ -1,9 +1,10 @@
 import { withStyles } from '@material-ui/core/styles';
-import { useEffect, useState } from 'react';
+import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import actions from '../../../actions';
 import DynaAction from '../../DynaForm/DynaAction';
 import * as selectors from '../../../reducers';
+import { useLoadingSnackbarOnSave } from '.';
 
 const styles = theme => ({
   actionButton: {
@@ -24,17 +25,19 @@ const SaveButton = props => {
   const saveTerminated = useSelector(state =>
     selectors.resourceFormSaveProcessTerminated(state, resourceType, resourceId)
   );
-  const [disableSave, setDisableSave] = useState(false);
-  const handleSubmitForm = values => {
-    dispatch(
-      actions.resourceForm.submit(resourceType, resourceId, values, match)
-    );
-    setDisableSave(true);
-  };
-
-  useEffect(() => {
-    if (saveTerminated) setDisableSave(false);
-  }, [saveTerminated]);
+  const onSave = useCallback(
+    values => {
+      dispatch(
+        actions.resourceForm.submit(resourceType, resourceId, values, match)
+      );
+    },
+    [dispatch, match, resourceId, resourceType]
+  );
+  const { handleSubmitForm, disableSave } = useLoadingSnackbarOnSave({
+    saveTerminated,
+    onSave,
+    resourceType,
+  });
 
   return (
     <DynaAction
