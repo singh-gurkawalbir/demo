@@ -1,26 +1,11 @@
-import React, { useState, Fragment } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import UrlEditorDialog from '../../../../components/AFE/UrlEditor/Dialog';
+import React, { Fragment } from 'react';
 import InputWithLookupHandlebars from './InputWithLookupHandlebars';
-import ActionButton from '../../../ActionButton';
-import ExitIcon from '../../../icons/ExitIcon';
 import { adaptorTypeMap } from '../../../../utils/resource';
 
-const useStyles = makeStyles(theme => ({
-  textField: {
-    minWidth: 200,
-  },
-  exitButton: {
-    float: 'right',
-    marginLeft: theme.spacing(1),
-  },
-}));
 // match all characters
 const prefixRegexp = '(.*?)';
 
 export default function IgnoreExistingData(props) {
-  const [showEditor, setShowEditor] = useState(false);
-  const classes = useStyles();
   const {
     connectionId,
     disabled,
@@ -46,10 +31,6 @@ export default function IgnoreExistingData(props) {
   } = props;
   const { resourceName, lookups } = options;
   const { fieldId: lookupFieldId, data: lookupData } = lookups || {};
-  const handleEditorClick = () => {
-    setShowEditor(!showEditor);
-  };
-
   const handleLookupUpdate = lookups => {
     onFieldChange(lookupFieldId, lookups);
   };
@@ -65,16 +46,6 @@ export default function IgnoreExistingData(props) {
       // save to field
       onFieldChange(id, val);
     }
-  };
-
-  const handleClose = (shouldCommit, editorValues) => {
-    const { template } = editorValues;
-
-    if (shouldCommit) {
-      handleFieldChange(id, template);
-    }
-
-    handleEditorClick();
   };
 
   const extactedVal =
@@ -102,22 +73,6 @@ export default function IgnoreExistingData(props) {
 
   return (
     <Fragment>
-      {showEditor && (
-        <UrlEditorDialog
-          title="Relative URI Editor"
-          id={id}
-          data={sampleData}
-          rule={extactedVal}
-          lookups={lookupData}
-          onClose={handleClose}
-        />
-      )}
-      <ActionButton
-        data-test={id}
-        onClick={handleEditorClick}
-        className={classes.exitButton}>
-        <ExitIcon />
-      </ActionButton>
       <InputWithLookupHandlebars
         key={id}
         name={name}
