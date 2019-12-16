@@ -745,7 +745,9 @@ export function flowDetails(state, id) {
 
     draft.showMapping = flowSettings.showMapping;
     draft.hasSettings = !!flowSettings.settings || !!flowSettings.sections;
-    draft.showSchedule = flowSettings.showSchedule;
+    draft.showSchedule = draft._connectorId
+      ? draft.canSchedule && !!flowSettings.showSchedule
+      : draft.canSchedule;
     draft.showStartDateDialog = flowSettings.showStartDateDialog;
     draft.disableSlider = flowSettings.disableSlider;
   });
