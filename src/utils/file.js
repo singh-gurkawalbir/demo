@@ -24,7 +24,11 @@ export function isValidFileType(fileType, file) {
     ],
   };
 
-  return validFileTypes[fileType].includes(file.type);
+  // In ADP connection, Client certificates need to included, those will not have file type.
+  //  File can not be validated if it doesn't have fie type, so assuming it is a valid file.
+  return validFileTypes[fileType]
+    ? validFileTypes[fileType].includes(file.type)
+    : true;
 }
 
 // Validates file size against MAX_FILE_SIZE as per Bug @IO-12216

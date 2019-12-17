@@ -80,7 +80,7 @@ export default {
             value: 'createandignore',
           },
           {
-            label: 'Update Existing Data & Ignore NEW Data',
+            label: 'Update Existing Data & Ignore New Data',
             value: 'updateandignore',
           },
         ],
