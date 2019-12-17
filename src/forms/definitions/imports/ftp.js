@@ -6,6 +6,56 @@ export default {
       ...formValues,
     };
 
+    if (newValues['/file/type'] === 'json') {
+      newValues['/file/xlsx'] = undefined;
+      newValues['/file/xml'] = undefined;
+      newValues['/file/csv'] = undefined;
+      newValues['/file/fileDefinition'] = undefined;
+      delete newValues['/file/xlsx/hasHeaderRow'];
+      delete newValues['/file/xlsx/rowsPerRecord'];
+      delete newValues['/file/xlsx/keyColumns'];
+      delete newValues['/file/xml/resourcePath'];
+      delete newValues['/file/csv/rowsToSkip'];
+      delete newValues['/file/csv/trimSpaces'];
+      delete newValues['/file/csv/columnDelimiter'];
+      delete newValues['/file/fileDefinition/resourcePath'];
+    } else if (newValues['/file/type'] === 'xml') {
+      newValues['/file/xlsx'] = undefined;
+      newValues['/file/json'] = undefined;
+      newValues['/file/csv'] = undefined;
+      newValues['/file/fileDefinition'] = undefined;
+      delete newValues['/file/csv/rowsToSkip'];
+      delete newValues['/file/csv/trimSpaces'];
+      delete newValues['/file/csv/columnDelimiter'];
+      delete newValues['/file/xlsx/hasHeaderRow'];
+      delete newValues['/file/xlsx/rowsPerRecord'];
+      delete newValues['/file/xlsx/keyColumns'];
+      delete newValues['/file/json/resourcePath'];
+      delete newValues['/file/fileDefinition/resourcePath'];
+    } else if (newValues['/file/type'] === 'xlsx') {
+      newValues['/file/json'] = undefined;
+      newValues['/file/csv'] = undefined;
+      newValues['/file/xml'] = undefined;
+      newValues['/file/fileDefinition'] = undefined;
+      delete newValues['/file/json/resourcePath'];
+      delete newValues['/file/csv/rowsToSkip'];
+      delete newValues['/file/csv/trimSpaces'];
+      delete newValues['/file/csv/columnDelimiter'];
+      delete newValues['/file/xml/resourcePath'];
+      delete newValues['/file/fileDefinition/resourcePath'];
+    } else if (newValues['/file/type'] === 'csv') {
+      newValues['/file/json'] = undefined;
+      newValues['/file/xlsx'] = undefined;
+      newValues['/file/xml'] = undefined;
+      newValues['/file/fileDefinition'] = undefined;
+      delete newValues['/file/json/resourcePath'];
+      delete newValues['/file/xml/resourcePath'];
+      delete newValues['/file/fileDefinition/resourcePath'];
+      delete newValues['/file/xlsx/hasHeaderRow'];
+      delete newValues['/file/xlsx/rowsPerRecord'];
+      delete newValues['/file/xlsx/keyColumns'];
+    }
+
     if (newValues['/inputMode'] === 'blob') {
       newValues['/ftp/useTempFile'] = newValues['/ftp/blobUseTempFile'];
       newValues['/ftp/inProgressFileName'] =
