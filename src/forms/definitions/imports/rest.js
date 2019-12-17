@@ -140,9 +140,13 @@ export default {
         if (lookup) {
           retValues['/rest/ignoreLookupName'] =
             retValues['/rest/existingDataId'];
+          retValues['/rest/ignoreExtract'] = null;
         } else {
           retValues['/rest/ignoreExtract'] = retValues['/rest/existingDataId'];
+          retValues['/rest/ignoreLookupName'] = null;
         }
+
+        retValues['/rest/existingDataId'] = undefined;
       }
     } else {
       retValues['/ignoreExisting'] = false;

@@ -82,9 +82,13 @@ export default {
         if (lookup) {
           retValues['/http/ignoreLookupName'] =
             retValues['/http/existingDataId'];
+          retValues['/http/ignoreExtract'] = null;
         } else {
           retValues['/http/ignoreExtract'] = retValues['/http/existingDataId'];
+          retValues['/http/ignoreLookupName'] = null;
         }
+
+        retValues['/http/existingDataId'] = undefined;
       } else if (retValues['/http/compositeType'] === 'updateandignore') {
         retValues['/http/relativeURI'] = [retValues['/http/relativeURIUpdate']];
         retValues['/http/method'] = [retValues['/http/compositeMethodUpdate']];
@@ -113,9 +117,13 @@ export default {
         if (lookup) {
           retValues['/http/ignoreLookupName'] =
             retValues['/http/existingDataId'];
+          retValues['/http/ignoreExtract'] = null;
         } else {
           retValues['/http/ignoreExtract'] = retValues['/http/existingDataId'];
+          retValues['/http/ignoreLookupName'] = null;
         }
+
+        retValues['/http/existingDataId'] = undefined;
       }
     } else {
       retValues['/ignoreExisting'] = false;
@@ -676,7 +684,7 @@ export default {
     'http.existingDataId': {
       id: 'http.existingDataId',
       type: 'textwithlookupextract',
-      fieldType: 'relativeUri',
+      fieldType: 'ignoreExistingData',
       label: 'Existing Data Id',
       connectionId: r => r && r._connectionId,
       refreshOptionsOnChangesTo: ['http.lookups', 'name'],
