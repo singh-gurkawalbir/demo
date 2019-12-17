@@ -46,12 +46,12 @@ export default {
       retValues['/ignoreExisting'] = false;
 
       if (lookup) {
-        retValues['/rdbms/updateLookupName'] =
-          retValues['/rdbms/updateExtract'];
-        retValues['/rdbms/updateExtract'] = undefined;
+        retValues['/rdbms/ignoreLookupName'] =
+          retValues['/rdbms/ignoreExtract'];
+        retValues['/rdbms/ignoreExtract'] = undefined;
       } else {
-        retValues['/rdbms/updateExtract'];
-        retValues['/rdbms/updateLookupName'] = undefined;
+        retValues['/rdbms/ignoreExtract'];
+        retValues['/rdbms/ignoreLookupName'] = undefined;
       }
     }
 
