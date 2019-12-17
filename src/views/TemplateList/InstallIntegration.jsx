@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
@@ -6,6 +6,8 @@ import actions from '../../actions';
 import * as selectors from '../../reducers';
 import getRoutePath from '../../utils/routePaths';
 import ModalDialog from '../../components/ModalDialog';
+import Loader from '../../components/Loader';
+import Spinner from '../../components/Spinner';
 
 const useStyles = makeStyles(theme => ({
   uploadButton: {
@@ -18,6 +20,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function InstallIntegrationDialog(props) {
   const { fileType, onClose } = props;
+  const [uploadInProgress, setUploadInProgress] = useState(false);
   const { isFileUploaded, templateId } = useSelector(state =>
     selectors.isFileUploaded(state)
   );
@@ -27,6 +30,7 @@ export default function InstallIntegrationDialog(props) {
   useEffect(() => {
     if (isFileUploaded) {
       props.history.push(getRoutePath(`/templates/${templateId}/preview`));
+      setUploadInProgress(false);
       dispatch(actions.template.clearUploaded(templateId));
     }
   }, [dispatch, isFileUploaded, props.history, templateId]);
@@ -34,7 +38,17 @@ export default function InstallIntegrationDialog(props) {
     const file = e.target.files[0];
 
     dispatch(actions.file.previewZip(file));
+    setUploadInProgress(true);
   };
+
+  if (uploadInProgress) {
+    return (
+      <Loader open>
+        Uploading...
+        <Spinner />
+      </Loader>
+    );
+  }
 
   return (
     <ModalDialog onClose={onClose} show>

@@ -1148,7 +1148,7 @@ describe('generateValidReactFormFieldId', () => {
 });
 
 describe('convertToReactFormFields', () => {
-  const testCases = [
+  let testCases = [
     [
       {
         fieldDetailsMap: {},
@@ -1199,6 +1199,7 @@ describe('convertToReactFormFields', () => {
             type: 'text',
             required: false,
             readOnly: false,
+            defaultValue: 'abc',
           },
         },
         layout: {
@@ -1212,7 +1213,7 @@ describe('convertToReactFormFields', () => {
         },
       },
       {
-        paramMeta: { fields: [{ id: 'f1' }] },
+        paramMeta: { fields: [{ id: 'f1', defaultValue: 'abc' }] },
       },
     ],
     [
@@ -1304,6 +1305,259 @@ describe('convertToReactFormFields', () => {
             readOnly: false,
             type: 'multiselect',
             defaultValue: ['one', 'two'],
+          },
+          id_text: {
+            id: 'id_text',
+            label: 'Text',
+            name: 'id_text',
+            placeholder: 'some placeholder',
+            required: true,
+            readOnly: false,
+            type: 'text',
+          },
+          id_readOnly2: {
+            id: 'id_readOnly2',
+            name: 'id_readOnly2',
+            readOnly: true,
+            required: false,
+            label: 'ReadOnly 2',
+            type: 'text',
+          },
+          id_checkbox: {
+            id: 'id_checkbox',
+            label: 'Checkbox',
+            name: 'id_checkbox',
+            required: false,
+            readOnly: false,
+            type: 'checkbox',
+            helpText: 'some help text',
+          },
+          id_select: {
+            id: 'id_select',
+            label: 'Select',
+            name: 'id_select',
+            options: [
+              {
+                items: [
+                  {
+                    label: 'desc',
+                    value: 'desc',
+                  },
+                  {
+                    label: 'asc',
+                    value: 'asc',
+                  },
+                ],
+              },
+            ],
+            required: false,
+            readOnly: false,
+            type: 'select',
+          },
+          id_textarea: {
+            id: 'id_textarea',
+            label: 'Text Area',
+            name: 'id_textarea',
+            required: false,
+            readOnly: false,
+            type: 'textarea',
+          },
+          id_input: {
+            id: 'id_input',
+            label: 'Input',
+            name: 'id_input',
+            required: false,
+            readOnly: false,
+            type: 'text',
+            validWhen: {
+              matchesRegEx: {
+                message: 'Must be a number.',
+                pattern: '^[\\d]+$',
+              },
+            },
+            // defaultValue: 121,
+          },
+          'id_some/thing': {
+            id: 'id_some/thing',
+            name: 'id_some/thing',
+            required: false,
+            readOnly: false,
+            type: 'text',
+            // defaultValue: 'something else',
+          },
+        },
+        layout: {
+          fields: ['id_multiselect', 'id_text'],
+          type: 'collapse',
+          containers: [
+            {
+              label: 'Optional',
+              collapsed: true,
+              fields: [
+                'id_readOnly1',
+                'id_checkbox',
+                'id_select',
+                'id_readOnly2',
+                'id_textarea',
+                'id_input',
+                'id_some/thing',
+              ],
+            },
+          ],
+        },
+        fieldDetailsMap: {
+          id_checkbox: {
+            id: 'id_checkbox',
+            inputType: 'checkbox',
+          },
+          id_multiselect: {
+            id: 'id_multiselect',
+            inputType: 'multiselect',
+            type: 'repeat',
+            indexed: true,
+          },
+          id_readOnly1: {
+            id: 'id_readOnly1',
+            inputType: 'text',
+          },
+          id_readOnly2: {
+            id: 'id_readOnly2',
+            inputType: 'text',
+          },
+          id_select: {
+            id: 'id_select',
+            inputType: 'select',
+          },
+          id_text: {
+            id: 'id_text',
+            inputType: 'text',
+          },
+          id_textarea: {
+            id: 'id_textarea',
+            inputType: 'textarea',
+            type: 'something',
+          },
+          id_input: {
+            id: 'id_input',
+            inputType: 'text',
+            type: 'integer',
+          },
+          'id_some/thing': {
+            id: 'id_some.thing',
+            inputType: 'text',
+          },
+        },
+      },
+      {
+        paramMeta: {
+          paramLocation: PARAMETER_LOCATION.QUERY,
+          fields: [
+            { id: 'id_readOnly1', readOnly: true, name: 'ReadOnly 1' },
+            {
+              id: 'id_checkbox',
+              fieldType: 'checkbox',
+              name: 'Checkbox',
+              description: 'some help text',
+            },
+            {
+              id: 'id_multiselect',
+              fieldType: 'multiselect',
+              name: 'MultiSelect',
+              type: 'repeat',
+              indexed: true,
+              required: true,
+              options: [
+                'active',
+                'closed',
+                'subscriber',
+                'non_subscriber',
+                'past_due',
+              ],
+            },
+            {
+              id: 'id_select',
+              fieldType: 'select',
+              name: 'Select',
+              options: ['desc', 'asc'],
+            },
+            {
+              id: 'id_text',
+              fieldType: 'text',
+              required: true,
+              name: 'Text',
+              placeholder: 'some placeholder',
+            },
+            { id: 'id_readOnly2', readOnly: true, name: 'ReadOnly 2' },
+            {
+              id: 'id_textarea',
+              fieldType: 'textarea',
+              name: 'Text Area',
+              type: 'something',
+            },
+            {
+              id: 'id_input',
+              fieldType: 'integer',
+              name: 'Input',
+              defaultValue: 121,
+            },
+            { id: 'id_some.thing', fieldType: 'something' },
+          ],
+          defaultValuesForDeltaExport: {
+            'id_some.thing': 'something else',
+          },
+        },
+        value: {
+          'id_multiselect.1': 'one',
+          'id_multiselect.2': 'two',
+          'id_multiselect.something': 'ten',
+        },
+      },
+    ],
+    [
+      {
+        fieldMap: {
+          id_readOnly1: {
+            id: 'id_readOnly1',
+            name: 'id_readOnly1',
+            readOnly: true,
+            required: false,
+            label: 'ReadOnly 1',
+            type: 'text',
+          },
+          id_multiselect: {
+            id: 'id_multiselect',
+            label: 'MultiSelect',
+            name: 'id_multiselect',
+            options: [
+              {
+                items: [
+                  {
+                    label: 'active',
+                    value: 'active',
+                  },
+                  {
+                    label: 'closed',
+                    value: 'closed',
+                  },
+                  {
+                    label: 'subscriber',
+                    value: 'subscriber',
+                  },
+                  {
+                    label: 'non_subscriber',
+                    value: 'non_subscriber',
+                  },
+                  {
+                    label: 'past_due',
+                    value: 'past_due',
+                  },
+                ],
+              },
+            ],
+            required: true,
+            readOnly: false,
+            type: 'multiselect',
+            defaultValue: [],
           },
           id_text: {
             id: 'id_text',
@@ -1505,14 +1759,12 @@ describe('convertToReactFormFields', () => {
             'id_some.thing': 'something else',
           },
         },
-        value: {
-          'id_multiselect.1': 'one',
-          'id_multiselect.2': 'two',
-          'id_multiselect.something': 'ten',
-        },
+        value: {},
       },
     ],
   ];
+
+  testCases = [testCases[testCases.length - 1]];
 
   each(testCases).test(
     'should return %o when passed  %o ',

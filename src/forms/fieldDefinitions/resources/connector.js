@@ -84,7 +84,6 @@ export default {
           { label: 'Clover', value: 'clover' },
           { label: 'eBay', value: 'ebay' },
           { label: 'FTP', value: 'ftp' },
-          { label: 'AS2', value: 'as2' },
           { label: 'Jet', value: 'jet' },
           { label: 'Jira', value: 'jira' },
           { label: 'Jobvite', value: 'jobvite' },

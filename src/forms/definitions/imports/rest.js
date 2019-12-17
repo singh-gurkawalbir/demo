@@ -17,6 +17,9 @@ export default {
     if (retValues['/inputMode'] === 'blob') {
       retValues['/rest/method'] = retValues['/rest/blobMethod'];
     } else if (retValues['/rest/method'] === 'COMPOSITE') {
+      retValues['/rest/successPath'] = undefined;
+      retValues['/rest/successValues'] = undefined;
+
       if (retValues['/rest/compositeType'] === 'createandupdate') {
         retValues['/rest/relativeURI'] = [
           retValues['/rest/relativeURIUpdate'],
@@ -706,7 +709,22 @@ export default {
       visibleWhenAll: [
         {
           field: 'rest.compositeType',
-          is: ['createandignore', 'updateandignore'],
+          is: ['createandignore'],
+        },
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
+      ],
+    },
+    ignoreNewData: {
+      id: 'ignoreNewData',
+      type: 'labeltitle',
+      label: 'Ignore New Data',
+      visibleWhenAll: [
+        {
+          field: 'rest.compositeType',
+          is: ['updateandignore'],
         },
         {
           field: 'inputMode',
@@ -820,6 +838,7 @@ export default {
       'rest.successValuesUpdate',
       'rest.responseIdPathUpdate',
       'ignoreExistingData',
+      'ignoreNewData',
       'rest.existingDataId',
       'sampleDataTitle',
       'sampleData',

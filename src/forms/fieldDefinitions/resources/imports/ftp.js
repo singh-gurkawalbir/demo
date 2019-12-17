@@ -30,7 +30,7 @@ export default {
     showAllSuggestions: true,
     defaultValue: r =>
       (r && r.ftp && r.ftp.inProgressFileName) || 'file-{{timestamp}}',
-    refreshOptionsOnChangesTo: ['file.type'],
+    refreshOptionsOnChangesTo: ['file.type', 'ftp.fileName'],
     visibleWhenAll: [
       {
         field: 'ftp.useTempFile',
