@@ -85,6 +85,8 @@ export default {
           label: 'Name',
           defaultValue: lookup.name,
           placeholder: 'Alphanumeric characters only please',
+          helpText:
+            'Name of the lookups that will be exposed to the mapping to refer.',
         },
         failRecord: {
           id: 'failRecord',

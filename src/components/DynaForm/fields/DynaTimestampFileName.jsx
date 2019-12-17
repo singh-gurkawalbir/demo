@@ -73,7 +73,7 @@ export default function DynaTimestampFileName(props) {
         newValue = `${value.substring(
           0,
           lastIndexOfBracesBeforeCursor + 1
-        )}${lookupHandlebarExp}}}${value.substring(
+        )}${lookupHandlebarExp}${value.substring(
           lastIndexOfBracesBeforeCursor + 1
         )}`;
       } else {
