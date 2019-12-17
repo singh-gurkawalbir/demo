@@ -81,6 +81,9 @@ export default function IntegrationApp({ match, history }) {
   const defaultStoreId = useSelector(state =>
     selectors.defaultStoreId(state, integrationId, storeId)
   );
+  const currentStore = useSelector(state =>
+    selectors.integrationAppStore(state, integrationId, storeId)
+  );
   const redirectTo = useSelector(state =>
     selectors.shouldRedirect(state, integrationId)
   );
@@ -220,6 +223,28 @@ export default function IntegrationApp({ match, history }) {
         }
       />
     );
+  }
+
+  let redirectToPage;
+
+  if (currentStore.mode === 'install') {
+    redirectToPage = getRoutePath(
+      `connectors/${integrationId}/install/addNewStore`
+    );
+  } else if (currentStore.mode === 'uninstall') {
+    redirectToPage = getRoutePath(
+      `connectors/${integrationId}/uninstall/${storeId}`
+    );
+  } else if (integration.mode === 'install') {
+    redirectToPage = getRoutePath(`connectors/${integrationId}/setup`);
+  } else if (integration.mode === 'uninstall') {
+    redirectToPage = getRoutePath(
+      `connectors/${integrationId}/uninstall${storeId ? `/${storeId}` : ''}`
+    );
+  }
+
+  if (redirectToPage) {
+    return <Redirect push={false} to={redirectToPage} />;
   }
 
   // console.log('render: <IntegrationApp>');
