@@ -62,16 +62,14 @@ export default function DynaRelativeUri(props) {
     handleEditorClick();
   };
 
-  const sampleData = useSelector(state => {
-    if (!isPageGenerator) {
-      return selectors.getSampleData(state, {
-        flowId,
-        resourceId,
-        resourceType,
-        stage: 'flowInput',
-      });
-    }
-  });
+  const { data: sampleData } = useSelector(state =>
+    selectors.getSampleDataContext(state, {
+      flowId,
+      resourceId,
+      resourceType,
+      stage: 'flowInput',
+    })
+  );
   const formattedSampleData = useMemo(
     () =>
       JSON.stringify(
