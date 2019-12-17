@@ -1,6 +1,7 @@
 export default {
   'mongodb.method': {
-    type: 'radiogroup',
+    type: 'ignorefieldvalue',
+    fieldsToUnCheck: ['ignoreExisting', 'ignoreMissing'],
     label: 'Method',
     options: [
       {
