@@ -645,6 +645,8 @@ const stack = {
     action(actionTypes.STACK.USER_SHARING_TOGGLE, { userId }),
   toggledUserStackSharing: ({ userId }) =>
     action(actionTypes.STACK.USER_SHARING_TOGGLED, { id: userId }),
+  reInviteStackUser: (userInfo, userId) =>
+    action(actionTypes.STACK.USER_REINVITE, { userInfo, userId }),
 };
 const user = {
   profile: {
