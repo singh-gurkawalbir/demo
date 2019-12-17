@@ -112,6 +112,8 @@ export const getSelectedHooksPatchSet = (selectedHooks, resource) => {
   const patchSet = [{ op: 'replace', path: '/hooks', value: hooks }];
 
   if (isSuiteScriptHooksSupportedForResource(resource)) {
+    // Sample Paths for NS Export is : netsuite/distributed/hooks incase of real time NS Export
+    // Path for NS Import is : '/netsuite_da/hooks' as netsuite_da is the only sub doc for NS Import
     // eslint-disable-next-line camelcase
     const { netsuite, netsuite_da } = resource || {};
     const netsuiteType = netsuite && netsuite.type;
@@ -137,9 +139,11 @@ export const getDefaultValuesForHooks = resource => {
   };
 
   if (isSuiteScriptHooksSupportedForResource(resource)) {
+    // netsuite prop for NS Export and netsuite_da prop incase of NS Import
     const { netsuite, netsuite_da: netsuiteImport } = resource || {};
     const netsuiteType = netsuite && netsuite.type;
 
+    // Checks for NS Export netsuite prop , extracts hooks from that. Else checks in netsuiteImport ( netsuite_da ) prop for NS Import
     defaultValues.suiteScriptHooks = netsuite
       ? netsuite && netsuite[netsuiteType] && netsuite[netsuiteType].hooks
       : netsuiteImport && netsuiteImport.hooks;
