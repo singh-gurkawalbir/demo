@@ -7,6 +7,7 @@ export default {
           name: 'query',
           type: 'query',
           label: 'Query',
+          helpText: 'The query that fetches records to be exported.',
           sampleData,
           defaultValue: lookup.query,
           visibleWhen: [
@@ -21,6 +22,8 @@ export default {
           name: 'extract',
           type: 'text',
           label: 'Column',
+          helpText:
+            'When integrator.io runs this lookup it will read the column named in this field from the SQL result set and return that single value as the result of the lookup. Please make sure this field contains a valid column name from your database table.',
           defaultValue: lookup.extract,
           visibleWhen: [
             {
