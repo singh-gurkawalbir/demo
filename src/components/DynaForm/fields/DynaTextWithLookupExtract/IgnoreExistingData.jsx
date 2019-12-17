@@ -27,6 +27,7 @@ export default function IgnoreExistingData(props) {
     sampleData,
     extractFields,
     connection,
+    showLookup,
   } = props;
   const { resourceName, lookups } = options;
   const { fieldId: lookupFieldId, data: lookupData } = lookups || {};
@@ -66,6 +67,7 @@ export default function IgnoreExistingData(props) {
         key={id}
         name={name}
         label={label}
+        showLookup={showLookup}
         placeholder={placeholder}
         isValid={isValid}
         sampleData={sampleData}

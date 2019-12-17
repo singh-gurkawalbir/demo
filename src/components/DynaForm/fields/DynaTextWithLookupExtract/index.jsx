@@ -17,6 +17,7 @@ export default function DynaTextWithLookupExtract(props) {
     flowId,
   } = props;
   const { resourceName } = options;
+  const isExport = resourceType === 'exports';
   const connection = useSelector(state =>
     selectors.resource(state, 'connections', connectionId)
   );
@@ -67,6 +68,13 @@ export default function DynaTextWithLookupExtract(props) {
       [];
   }
 
+  if (isExport) {
+    formattedExtractFields.push({
+      name: 'lastExportDateTime',
+      id: 'lastExportDateTime',
+    });
+  }
+
   useEffect(() => {
     // Request for sample data only incase of flow context
     // TODO : @Raghu Do we show default data in stand alone context?
@@ -87,6 +95,7 @@ export default function DynaTextWithLookupExtract(props) {
     <Fragment>
       {fieldType === 'relativeUri' && (
         <RelativeUri
+          showLookup={!isExport}
           sampleData={formattedSampleData}
           connection={connection}
           extractFields={formattedExtractFields}
@@ -95,6 +104,7 @@ export default function DynaTextWithLookupExtract(props) {
       )}
       {fieldType === 'ignoreExistingData' && (
         <IgnoreExistingData
+          showLookup={!isExport}
           sampleData={formattedSampleData}
           connection={connection}
           extractFields={formattedExtractFields}

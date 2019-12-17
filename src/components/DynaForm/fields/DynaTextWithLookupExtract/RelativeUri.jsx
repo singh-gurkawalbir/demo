@@ -42,6 +42,7 @@ export default function RelativeURI(props) {
     sampleData,
     extractFields,
     connection,
+    showLookup,
   } = props;
   const { resourceName, lookups } = options;
   const { fieldId: lookupFieldId, data: lookupData } = lookups || {};
@@ -166,6 +167,7 @@ export default function RelativeURI(props) {
       </ActionButton>
       <InputWithLookupHandlebars
         id={id}
+        showLookup={showLookup}
         key={id}
         name={name}
         label={label}

@@ -31,10 +31,13 @@ const getSuggestions = (
   lookups = [],
   extractFields = [],
   handleUpdate,
+  showLookup,
   options
 ) => {
-  const suggestions = [
-    {
+  const suggestions = [];
+
+  if (showLookup) {
+    suggestions.push({
       fixed: true,
       label: 'New Lookup',
       type: 'lookup',
@@ -48,29 +51,29 @@ const getSuggestions = (
           options={options}
         />
       ),
-    },
-  ];
+    });
+    lookups.forEach(lookup => {
+      if (!lookup.map) {
+        suggestions.push({
+          label: lookup.name,
+          type: 'lookup',
+          component: (
+            <DynaAddEditLookup
+              id={lookup.name}
+              label="Edit"
+              isEdit
+              onSelect={handleUpdate(LOOKUP_ACTION.LOOKUP_SELECT, lookup)}
+              onSave={handleUpdate(LOOKUP_ACTION.LOOKUP_EDIT, lookup)}
+              showDynamicLookupOnly
+              value={lookup}
+              options={options}
+            />
+          ),
+        });
+      }
+    });
+  }
 
-  lookups.forEach(lookup => {
-    if (!lookup.map) {
-      suggestions.push({
-        label: lookup.name,
-        type: 'lookup',
-        component: (
-          <DynaAddEditLookup
-            id={lookup.name}
-            label="Edit"
-            isEdit
-            onSelect={handleUpdate(LOOKUP_ACTION.LOOKUP_SELECT, lookup)}
-            onSave={handleUpdate(LOOKUP_ACTION.LOOKUP_EDIT, lookup)}
-            showDynamicLookupOnly
-            value={lookup}
-            options={options}
-          />
-        ),
-      });
-    }
-  });
   extractFields.forEach(field => {
     suggestions.push({
       label: field.name,
@@ -109,6 +112,7 @@ export default function InputWithLookupHandlebars(props) {
     extractFields = [],
     prefixRegexp = '',
     getMatchedValueforSuggestion,
+    showLookup,
   } = props;
   const classes = useStyles();
   const ref = useRef(null);
@@ -212,6 +216,7 @@ export default function InputWithLookupHandlebars(props) {
     lookups,
     extractFields,
     handleUpdate,
+    showLookup,
     options
   );
   const handleSuggestions = e => {
