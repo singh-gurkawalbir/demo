@@ -155,6 +155,10 @@ export default {
       if (formVal.generateDateTimezone) {
         settings.generateDateTimezone = formVal.generateDateTimezone;
       }
+
+      if ('isKey' in formVal) {
+        settings.isKey = formVal.isKey;
+      }
     }
 
     if (formVal.discardIfEmpty) {

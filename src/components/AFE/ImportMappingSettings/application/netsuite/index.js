@@ -115,6 +115,14 @@ export default {
             },
           ],
         },
+        isKey: {
+          id: 'isKey',
+          name: 'isKey',
+          type: 'checkbox',
+          label: 'Use as a key field to find existing lines',
+          visibleWhen: [{ field: 'fieldMappingType', is: ['standard'] }],
+          defaultValue: value.isKey,
+        },
         'lookup.mode': {
           id: 'lookup.mode',
           name: '_mode',
@@ -457,6 +465,7 @@ export default {
           'immutable',
           'useAsAnInitializeValue',
           'fieldMappingType',
+          'isKey',
           'lookup.mode',
           'lookup.recordType',
           'lookup.expression',
@@ -586,6 +595,14 @@ export default {
       },
     };
     let { fields } = fieldMeta.layout;
+
+    if (
+      !fieldMetadata ||
+      (fieldMetadata && fieldMetadata.id.indexOf('[*]') === -1)
+    ) {
+      delete fieldMeta.fieldMap.isKey;
+      fields = fields.filter(el => el !== 'isKey');
+    }
 
     if (
       recordType &&
