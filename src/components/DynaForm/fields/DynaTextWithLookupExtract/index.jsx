@@ -1,4 +1,4 @@
-import React, { useEffect, Fragment } from 'react';
+import React, { useEffect, useMemo, Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as selectors from '../../../../reducers';
 import getFormattedSampleData from '../../../../utils/sampleData';
@@ -48,15 +48,19 @@ export default function DynaTextWithLookupExtract(props) {
     }
   }, [dispatch, flowId, resourceId, resourceType, sampleData]);
 
-  const formattedSampleData = JSON.stringify(
-    getFormattedSampleData({
-      connection,
-      sampleData,
-      resourceType,
-      resourceName,
-    }),
-    null,
-    2
+  const formattedSampleData = useMemo(
+    () =>
+      JSON.stringify(
+        getFormattedSampleData({
+          connection,
+          sampleData,
+          resourceType,
+          resourceName,
+        }),
+        null,
+        2
+      ),
+    [connection, resourceName, resourceType, sampleData]
   );
   let formattedExtractFields = [];
 

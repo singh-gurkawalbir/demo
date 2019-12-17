@@ -1,6 +1,5 @@
-import { useState, useEffect, Fragment } from 'react';
+import { useState, useEffect, useMemo, Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import deepClone from 'lodash/cloneDeep';
 import Button from '@material-ui/core/Button';
 import * as selectors from '../../../reducers';
 import HttpRequestBodyEditorDialog from '../../../components/AFE/HttpRequestBodyEditor/Dialog';
@@ -49,25 +48,29 @@ export default function DynaHttpRequestBody(props) {
   const isPageGenerator = useSelector(state =>
     selectors.isPageGenerator(state, flowId, resourceId, resourceType)
   );
-  const sampleData = useSelector(state => {
-    if (!isPageGenerator) {
-      return selectors.getSampleData(state, {
-        flowId,
-        resourceId,
-        resourceType,
-        stage: 'flowInput',
-      });
-    }
-  });
+  const { data: sampleData } = useSelector(state =>
+    selectors.getSampleDataContext(state, {
+      flowId,
+      resourceId,
+      resourceType,
+      stage: 'flowInput',
+    })
+  );
   // constructing data
-  const connectionCopy = deepClone(connection);
-  const formattedSampleData = getFormattedSampleData({
-    connection: connectionCopy,
-    sampleData,
-    resourceType,
-    resourceName,
-  });
-  const stringifiedSampleData = JSON.stringify(formattedSampleData, null, 2);
+  const formattedSampleData = useMemo(
+    () =>
+      getFormattedSampleData({
+        connection,
+        sampleData,
+        resourceType,
+        resourceName,
+      }),
+    [connection, resourceName, resourceType, sampleData]
+  );
+  const stringifiedSampleData = useMemo(
+    () => JSON.stringify(formattedSampleData, null, 2),
+    [formattedSampleData]
+  );
 
   useEffect(() => {
     // Request for sample data only incase of flow context

@@ -1,4 +1,4 @@
-import { useState, useEffect, Fragment } from 'react';
+import { useState, useEffect, useMemo, Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { TextField } from '@material-ui/core';
@@ -72,15 +72,19 @@ export default function DynaRelativeUri(props) {
       });
     }
   });
-  const formattedSampleData = JSON.stringify(
-    getFormattedSampleData({
-      connection,
-      sampleData,
-      resourceType,
-      resourceName,
-    }),
-    null,
-    2
+  const formattedSampleData = useMemo(
+    () =>
+      JSON.stringify(
+        getFormattedSampleData({
+          connection,
+          sampleData,
+          resourceType,
+          resourceName,
+        }),
+        null,
+        2
+      ),
+    [connection, resourceName, resourceType, sampleData]
   );
 
   useEffect(() => {
