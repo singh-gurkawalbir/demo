@@ -1,4 +1,6 @@
+import { useCallback, Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import clsx from 'clsx';
 import {
   makeStyles,
   MenuItem,
@@ -10,8 +12,9 @@ import * as selectors from '../../reducers';
 import actions from '../../actions';
 import ArrowLeftIcon from '../icons/ArrowLeftIcon';
 import ArrowRightIcon from '../icons/ArrowRightIcon';
+import RefreshIcon from '../icons/RefreshIcon';
 import CeligoSelect from '../CeligoSelect';
-import StoreSelector from './StoreSelector';
+import IconTextButton from '../IconTextButton';
 import FlowSelector from './FlowSelector';
 
 const useStyles = makeStyles(theme => ({
@@ -20,6 +23,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     flexWrap: 'wrap',
     alignItems: 'center',
+
     '& > *': {
       marginRight: 10,
       '&:first-child': {
@@ -27,37 +31,9 @@ const useStyles = makeStyles(theme => ({
       },
     },
   },
-  select: {
-    background: theme.palette.background.paper,
-    border: '1px solid',
-    paddingRight: theme.spacing(3),
-    borderColor: theme.palette.secondary.lightest,
-    transitionProperty: 'border',
-    transitionDuration: theme.transitions.duration.short,
-    transitionTimingFunction: theme.transitions.easing.easeInOut,
-    overflow: 'hidden',
-    height: 42,
-    textAlign: 'left',
-    borderRadius: 2,
-    '& > div': {
-      maxWidth: '85%',
-    },
-    '& > Label': {
-      paddingTop: 10,
-    },
-    '&:hover': {
-      borderColor: theme.palette.primary.main,
-    },
-    '& > *': {
-      padding: [[0, 0, 0, 12]],
-    },
-    '& > div > div ': {
-      paddingBottom: 5,
-    },
-    '& svg': {
-      right: theme.spacing(1),
-      paddingLeft: 0,
-    },
+  filterButton: {
+    borderRadius: theme.spacing(0.5),
+    height: theme.spacing(4.5),
   },
   retry: {
     minWidth: 90,
@@ -68,17 +44,10 @@ const useStyles = makeStyles(theme => ({
   status: {
     minWidth: 134,
   },
-  flow: {
-    minWidth: 130,
-    maxWidth: 200,
-  },
-  selectEmpty: {
-    marginTop: theme.spacing.double,
-  },
   hideEmptyLabel: {
     marginTop: theme.spacing(0.5),
   },
-  pagingContainer: {
+  rightActionContainer: {
     flexGrow: 1,
     display: 'flex',
     justifyContent: 'flex-end',
@@ -86,6 +55,9 @@ const useStyles = makeStyles(theme => ({
   },
   pagingText: {
     alignSelf: 'center',
+  },
+  refreshButton: {
+    marginRight: theme.spacing(1),
   },
   hideLabel: {
     marginLeft: '10px',
@@ -108,7 +80,7 @@ function Filters({
   );
   const {
     storeId,
-    flowId: _flowId,
+    flowId: filterFlowId,
     status = 'all',
     hideEmpty = false,
     currentPage = 0,
@@ -117,31 +89,39 @@ function Filters({
   const { rowsPerPage } = paging;
   const maxPage = Math.ceil(totalJobs / rowsPerPage) - 1;
   const firstRowIndex = rowsPerPage * currentPage;
+  const patchFilter = useCallback(
+    (key, value) => {
+      const filter = { [key]: value };
 
-  function patchFilter(key, value) {
-    const filter = { [key]: value };
+      // any time a filter changes (that is not setting the page)
+      // we need to reset the results to show the first page.
+      if (key !== 'currentPage') {
+        filter.currentPage = 0;
+      }
 
-    // any time a filter changes (that is not setting the page)
-    // we need to reset the results to show the first page.
-    if (key !== 'currentPage') {
-      filter.currentPage = 0;
-    }
+      if (key === 'storeId') {
+        filter.flowId = '';
+      }
 
-    if (key === 'storeId') {
-      filter.flowId = '';
-    }
-
-    dispatch(actions.patchFilter(filterKey, filter));
-  }
-
-  function handlePageChange(offset) {
-    patchFilter('currentPage', currentPage + offset);
-  }
+      dispatch(actions.patchFilter(filterKey, filter));
+    },
+    [dispatch, filterKey]
+  );
+  const handlePageChange = useCallback(
+    offset => () => {
+      patchFilter('currentPage', currentPage + offset);
+    },
+    [currentPage, patchFilter]
+  );
+  const handleRefreshClick = useCallback(() => {
+    dispatch(actions.job.clear());
+    patchFilter('currentPage', 0);
+  }, [dispatch, patchFilter]);
 
   return (
     <div className={classes.root}>
       <CeligoSelect
-        className={classes.retry}
+        className={clsx(classes.filterButton, classes.retry)}
         data-test="retryJobs"
         onChange={e => onActionClick(e.target.value)}
         displayEmpty
@@ -159,7 +139,7 @@ function Filters({
       <CeligoSelect
         disabled={disableActions}
         data-test="resolveJobs"
-        className={classes.resolve}
+        className={clsx(classes.filterButton, classes.resolve)}
         onChange={e => onActionClick(e.target.value)}
         displayEmpty
         value="">
@@ -173,24 +153,18 @@ function Filters({
       </CeligoSelect>
 
       {!flowId && (
-        <StoreSelector
-          integrationId={integrationId}
-          value={storeId}
-          onChange={storeId => patchFilter('storeId', storeId)}
-        />
-      )}
-
-      {!flowId && (
         <FlowSelector
           integrationId={integrationId}
+          data-test="selectAFlow"
           storeId={storeId}
-          value={_flowId}
+          value={filterFlowId}
           onChange={flowId => patchFilter('flowId', flowId)}
         />
       )}
 
       <CeligoSelect
-        className={classes.status}
+        data-test="flowStatusFilter"
+        className={clsx(classes.filterButton, classes.status)}
         onChange={e => patchFilter('status', e.target.value)}
         value={status}>
         {[
@@ -211,12 +185,14 @@ function Filters({
       </CeligoSelect>
       <div className={classes.hideLabel}>
         <FormControlLabel
+          data-test="hideEmptyJobsFilter"
           label="Hide empty jobs"
           classes={{ label: classes.hideEmptyLabel }}
           control={
             <Checkbox
               // indeterminate={numSelected > 0 && numSelected < rowCount}
               checked={hideEmpty}
+              data-test="hideEmptyJobs"
               color="primary"
               onChange={e => patchFilter('hideEmpty', e.target.checked)}
             />
@@ -224,26 +200,38 @@ function Filters({
         />
       </div>
 
-      <div className={classes.pagingContainer}>
-        <IconButton
-          disabled={currentPage === 0}
-          size="small"
-          onClick={() => handlePageChange(-1)}>
-          <ArrowLeftIcon />
-        </IconButton>
-        <div className={classes.pagingText}>
-          {firstRowIndex + 1}
-          {' - '}
-          {currentPage === maxPage
-            ? totalJobs
-            : firstRowIndex + rowsPerPage} of {totalJobs}
-        </div>
-        <IconButton
-          disabled={maxPage === currentPage}
-          size="small"
-          onClick={() => handlePageChange(1)}>
-          <ArrowRightIcon />
-        </IconButton>
+      <div className={classes.rightActionContainer}>
+        <IconTextButton
+          className={classes.refreshButton}
+          onClick={handleRefreshClick}>
+          <RefreshIcon /> Refresh
+        </IconTextButton>
+        {maxPage > 0 && (
+          <Fragment>
+            <IconButton
+              disabled={currentPage === 0}
+              size="small"
+              data-test="decrementPage"
+              onClick={handlePageChange(-1)}>
+              <ArrowLeftIcon />
+            </IconButton>
+            <div className={classes.pagingText}>
+              {firstRowIndex + 1}
+              {' - '}
+              {currentPage === maxPage
+                ? totalJobs
+                : firstRowIndex + rowsPerPage}{' '}
+              of {totalJobs}
+            </div>
+            <IconButton
+              data-test="incrementPage"
+              disabled={maxPage === currentPage}
+              size="small"
+              onClick={handlePageChange(1)}>
+              <ArrowRightIcon />
+            </IconButton>
+          </Fragment>
+        )}
       </div>
     </div>
   );

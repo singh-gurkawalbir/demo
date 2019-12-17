@@ -23,6 +23,10 @@ function replaceOrInsertResource(state, resourceType, resourceValue) {
     type = 'connectorLicenses';
   }
 
+  if (type.indexOf('integrations/') >= 0) {
+    type = type.split('/').pop();
+  }
+
   if (!state[type]) {
     return { ...state, [type]: [resource] };
   }
@@ -151,8 +155,9 @@ export default (state = {}, action) => {
               pageProcessors,
               _exportId,
               _importId,
+              ...rest
             } = flow;
-            const updatedFlow = { ...flow, pageGenerators, pageProcessors };
+            const updatedFlow = { ...rest, pageGenerators, pageProcessors };
 
             // Supports Old Flows with _exportId and _importId converted to __pageGenerators and _pageProcessors
             if (!pageGenerators && _exportId) {
@@ -403,7 +408,7 @@ export function resourceList(
   }
 
   const filtered = filteredByEnvironment.filter(
-    filter ? sift(filter) : matchTest
+    filter ? sift({ $and: [filter, matchTest] }) : matchTest
   );
 
   result.filtered = filtered.length;

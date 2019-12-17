@@ -11,6 +11,7 @@ import functionsTransformerMap from '../../../components/DynaForm/fields/DynaTok
 import { isNewId } from '../../../utils/resource';
 import conversionUtil from '../../../utils/httpToRestConnectionConversionUtil';
 import { REST_ASSISTANTS } from '../../../utils/constants';
+import inferErrorMessage from '../../../utils/inferErrorMessage';
 
 function* createPayload({ values, resourceId }) {
   const resourceType = 'connections';
@@ -249,63 +250,57 @@ export function* requestToken({ resourceId, fieldId, values }) {
   }
 }
 
-export function* pingConnection({ resourceId, values }) {
-  try {
-    const connectionPayload = yield call(createPayload, {
-      values,
-      resourceType: 'connections',
-      resourceId,
-    });
-    // Either apiResp or cancelTask can race successfully
-    // , both will never happen
-    const { apiResp, cancelTask } = yield race({
-      apiResp: call(apiCallWithRetry, {
-        path: pingConnectionParams.path,
-        opts: {
-          body: connectionPayload,
-          ...pingConnectionParams.opts,
-        },
-        hidden: true,
-      }),
-      cancelTask: take(actionTypes.CANCEL_TASK),
-    });
+function* pingConnection({ resourceId, values }) {
+  const connectionPayload = yield call(createPayload, {
+    values,
+    resourceType: 'connections',
+    resourceId,
+  });
+  const resp = yield call(apiCallWithRetry, {
+    path: pingConnectionParams.path,
+    opts: {
+      body: connectionPayload,
+      ...pingConnectionParams.opts,
+    },
+    hidden: true,
+  });
 
-    // if the api call raced successfully without errors
-    if (apiResp) {
-      yield put(
-        actions.api.complete(
-          pingConnectionParams.path,
-          pingConnectionParams.opts.method,
-          'Connection is working fine!'
-        )
-      );
-    }
-
-    if (cancelTask) {
-      yield put(
-        actions.api.failure(
-          pingConnectionParams.path,
-          pingConnectionParams.opts.method,
-          'Request Cancelled'
-        )
-      );
-    }
-  } catch (e) {
-    // The ping test gives back a 200 response if the ping connection has failed
-    if (e.status === 200 || e.status === 422) {
-      // these errors are json errors
-      const errorsJSON = JSON.parse(e.message);
-      const { errors } = errorsJSON;
-
-      yield put(
-        actions.api.failure(
-          pingConnectionParams.path,
-          pingConnectionParams.opts.method,
-          errors && errors[0] && errors[0].message ? errors[0].message : errors
-        )
-      );
-    }
+  if (resp && resp.errors) {
+    return yield put(
+      actions.resource.connections.testErrored(
+        resourceId,
+        inferErrorMessage(resp)
+      )
+    );
   }
+
+  yield put(
+    actions.resource.connections.testSuccessful(
+      resourceId,
+      'Connection is working fine!'
+    )
+  );
+}
+
+export function* pingConnectionWithAbort(params) {
+  const { resourceId } = params;
+  const { abortPing } = yield race({
+    testConn: call(pingConnection, params),
+    abortPing: take(
+      action =>
+        action.type === actionTypes.CONNECTION.TEST_CANCELLED &&
+        action.resourceId === resourceId
+    ),
+  });
+
+  // perform submit cleanup
+  if (abortPing)
+    yield put(
+      actions.resource.connections.testCancelled(
+        resourceId,
+        'Request Cancelled'
+      )
+    );
 }
 
 export function* openOAuthWindowForConnection(resourceId) {
@@ -373,6 +368,21 @@ export function* saveAndAuthorizeConnection({ resourceId, values }) {
   }
 }
 
+function* saveAndAuthorizeConnectionForm(params) {
+  const { resourceId } = params;
+  const { cancelSave } = yield race({
+    apiResp: call(saveAndAuthorizeConnection, params),
+    cancelSave: take(
+      action =>
+        action.type === actionTypes.RESOURCE_FORM.SUBMIT_ABORTED &&
+        action.resourceId === resourceId
+    ),
+  });
+
+  // clean up
+  if (cancelSave) yield put(actions.resource.clearStaged(resourceId));
+}
+
 function* commitAndAuthorizeConnection({ resourceId }) {
   const error = yield call(commitStagedChanges, {
     resourceType: 'connections',
@@ -420,11 +430,11 @@ function* requestIClients({ connectionId }) {
 }
 
 export default [
-  takeEvery(actionTypes.TEST_CONNECTION, pingConnection),
+  takeEvery(actionTypes.CONNECTION.TEST, pingConnectionWithAbort),
   takeEvery(actionTypes.TOKEN.REQUEST, requestToken),
   takeEvery(
     actionTypes.RESOURCE_FORM.SAVE_AND_AUTHORIZE,
-    saveAndAuthorizeConnection
+    saveAndAuthorizeConnectionForm
   ),
   takeEvery(actionTypes.NETSUITE_USER_ROLES.REQUEST, netsuiteUserRoles),
   takeEvery(

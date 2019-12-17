@@ -1,3 +1,32 @@
+const dateTimeOptions = [
+  { label: 'YYYY-MM-DDTHH:mm:ss z', value: 'YYYY-MM-DDTHH:mm:ss z' },
+  { label: 'YYYY-MM-DDTHH:mm:ss', value: 'YYYY-MM-DDTHH:mm:ss' },
+  { label: 'YYYY-MM-DDTHH:mm:ssZ', value: 'YYYY-MM-DDTHH:mm:ssZ' },
+  { label: 'YYYY-MM-DDTHH:mm:ss[Z]', value: 'YYYY-MM-DDTHH:mm:ss[Z]' },
+  {
+    label: 'YYYY-MM-DDTHH:mm:ss.SSSZZ',
+    value: 'YYYY-MM-DDTHH:mm:ss.SSSZZ',
+  },
+  {
+    label: 'YYYY-MM-DDTHH:mm:ss.SSSSZZ',
+    value: 'YYYY-MM-DDTHH:mm:ss.SSSSZZ',
+  },
+  { label: 'YYYY-MM-DD hh:mm:ss', value: 'YYYY-MM-DD hh:mm:ss' },
+  { label: 'X (Unix timestamp)', value: 'X' },
+  { label: 'x (Unix ms timestamp)', value: 'x' },
+  { label: 'M/D/YYYY', value: 'M/D/YYYY' },
+  { label: 'YYMMDD', value: 'YYMMDD' },
+  { label: 'MMDDYY', value: 'MMDDYY' },
+  { label: 'DDMMYY', value: 'DDMMYY' },
+  { label: 'M/D/YY', value: 'M/D/YY' },
+  { label: 'D/M/YYYY', value: 'D/M/YYYY' },
+  { label: 'D/M/YY', value: 'D/M/YY' },
+  { label: 'MM/DD/YYYY', value: 'M/D/YYYY' },
+  { label: 'YYYY-MM-DD', value: 'YYYY-MM-DD' },
+  { label: 'MM/DD/YYYY HH:mm', value: 'MM/DD/YYYY HH:mm' },
+  { label: 'MM/DD/YYYY HH:mm:ss', value: 'MM/DD/YYYY HH:mm:ss' },
+];
+
 export default {
   // #region common
   name: {
@@ -58,7 +87,7 @@ export default {
   },
   dataURITemplate: {
     type: 'relativeuri',
-    label: 'Data URITemplate',
+    label: 'Override Data URI Template',
     connectionId: r => r && r._connectionId,
   },
   exportOneToMany: {
@@ -70,7 +99,7 @@ export default {
     type: 'radiogroup',
     label:
       'Does each individual record being processed need to execute multiple different exports?',
-    defaultValue: r => (r && r.pathToMany ? 'true' : 'false'),
+    defaultValue: r => (r && r.oneToMany ? 'true' : 'false'),
     visible: r => !!(r && r.isLookup),
     options: [
       {
@@ -168,7 +197,7 @@ export default {
           { label: 'Lightspeed', value: 'lightspeed' },
           { label: 'Linkedin', value: 'linkedin' },
           { label: 'Liquidplanner', value: 'liquidplanner' },
-          { label: 'Magento', value: 'magento' },
+          { label: 'Magento 2', value: 'magento' },
           { label: 'Mailchimp', value: 'mailchimp' },
           { label: 'Mediaocean', value: 'mediaocean' },
           { label: 'Namely', value: 'namely' },
@@ -366,36 +395,20 @@ export default {
     label: 'Delta date Format',
     options: [
       {
-        items: [
-          { label: 'YYYY-MM-DDTHH:mm:ss z', value: 'YYYY-MM-DDTHH:mm:ss z' },
-          { label: 'YYYY-MM-DDTHH:mm:ss', value: 'YYYY-MM-DDTHH:mm:ss' },
-          { label: 'YYYY-MM-DDTHH:mm:ssZ', value: 'YYYY-MM-DDTHH:mm:ssZ' },
-          { label: 'YYYY-MM-DDTHH:mm:ss[Z]', value: 'YYYY-MM-DDTHH:mm:ss[Z]' },
-          {
-            label: 'YYYY-MM-DDTHH:mm:ss.SSSZZ',
-            value: 'YYYY-MM-DDTHH:mm:ss.SSSZZ',
-          },
-          {
-            label: 'YYYY-MM-DDTHH:mm:ss.SSSSZZ',
-            value: 'YYYY-MM-DDTHH:mm:ss.SSSSZZ',
-          },
-          { label: 'YYYY-MM-DD hh:mm:ss', value: 'YYYY-MM-DD hh:mm:ss' },
-          { label: 'X (Unix timestamp)', value: 'X' },
-          { label: 'x (Unix ms timestamp)', value: 'x' },
-          { label: 'M/D/YYYY', value: 'M/D/YYYY' },
-          { label: 'YYMMDD', value: 'YYMMDD' },
-          { label: 'MMDDYY', value: 'MMDDYY' },
-          { label: 'DDMMYY', value: 'DDMMYY' },
-          { label: 'M/D/YY', value: 'M/D/YY' },
-          { label: 'D/M/YYYY', value: 'D/M/YYYY' },
-          { label: 'D/M/YY', value: 'D/M/YY' },
-          { label: 'MM/DD/YYYY', value: 'M/D/YYYY' },
-          { label: 'YYYY-MM-DD', value: 'YYYY-MM-DD' },
-          { label: 'MM/DD/YYYY HH:mm', value: 'MM/DD/YYYY HH:mm' },
-          { label: 'MM/DD/YYYY HH:mm:ss', value: 'MM/DD/YYYY HH:mm:ss' },
-        ],
+        items: dateTimeOptions,
       },
     ],
+    isTextComponent: r => {
+      if ((r && r.delta === undefined) || r.delta.dateFormat === undefined)
+        return false;
+
+      return !(
+        r &&
+        r.delta &&
+        r.delta.dateFormat &&
+        dateTimeOptions.find(option => option.value === r.delta.dateFormat)
+      );
+    },
     visibleWhen: [{ field: 'type', is: ['delta'] }],
   },
   'delta.startDate': {
@@ -406,7 +419,7 @@ export default {
   'delta.lagOffset': {
     type: 'text',
     label: 'Offset',
-    visibleWhen: [{ field: 'type', is: ['delta'] }],
+    visibleWhenAll: [{ field: 'type', is: ['delta'] }],
   },
   'delta.endDateField': {
     type: 'text',

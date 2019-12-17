@@ -21,6 +21,7 @@ export default {
     environment: {
       id: 'environment',
       type: 'select',
+      required: true,
       label: 'Environment',
       options: [
         {
@@ -33,7 +34,12 @@ export default {
       helpText:
         'Select either Production or Demo and then click Save & Authorize that opens up the DocuSign window where you can enter your DocuSign account email ID and password to establish the connection.',
       defaultValue: r => {
-        const authUri = r && r.http && r.http.authURI;
+        const authUri =
+          r &&
+          r.http &&
+          r.http.auth &&
+          r.http.auth.oauth &&
+          r.http.auth.oauth.authURI;
 
         if (authUri) {
           if (authUri.indexOf('account-d.docusign.com') !== -1) {

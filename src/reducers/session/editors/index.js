@@ -2,6 +2,8 @@ import { deepClone } from 'fast-json-patch';
 import actionTypes from '../../../actions/types';
 import processorLogic from './processorLogic';
 
+const emptyObj = {};
+
 export default function reducer(state = {}, action) {
   const {
     type,
@@ -90,20 +92,28 @@ export default function reducer(state = {}, action) {
 
 // #region PUBLIC SELECTORS
 export function editor(state, id) {
-  if (!state) {
-    return {};
-  }
+  if (!state) return emptyObj;
 
   const editor = state[id];
 
-  if (!editor) return {};
+  if (!editor) return emptyObj;
 
-  return { ...editor, violations: processorLogic.validate(editor) };
+  return editor || emptyObj;
+}
+
+export function editorViolations(state, id) {
+  if (!state) return;
+
+  const editor = state[id];
+
+  if (!editor) return;
+
+  return processorLogic.validate(editor);
 }
 
 export function processorRequestOptions(state, id) {
   if (!state || !state[id]) {
-    return {};
+    return emptyObj;
   }
 
   const editor = state[id];

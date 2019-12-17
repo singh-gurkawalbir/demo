@@ -9,6 +9,8 @@ const useStyles = makeStyles(theme => ({
   root: {
     backgroundColor: theme.palette.common.white,
     overflow: 'auto',
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
   },
 }));
 
@@ -18,11 +20,14 @@ export default function GeneralPanel({ integrationId, storeId }) {
   // have selectors that do too much and as such, they are wasteful and
   // hard to understand and reuse. In this example, this component doesn't
   // need the flows returned by the selector.
-  const { flows, ...rest } = useSelector(state =>
+  const generalSectionMetadata = useSelector(state =>
     selectors.integrationAppGeneralSettings(state, integrationId, storeId)
   );
+  const hasGeneralSettings = useSelector(state =>
+    selectors.hasGeneralSettings(state, integrationId, storeId)
+  );
   const translatedMeta = integrationSettingsToDynaFormMetadata(
-    rest,
+    generalSectionMetadata,
     integrationId,
     true
   );
@@ -31,11 +36,14 @@ export default function GeneralPanel({ integrationId, storeId }) {
     <div className={classes.root}>
       <PanelHeader title="General" />
 
-      <DynaFormWithDynamicActions
-        fieldMeta={translatedMeta}
-        integrationId={integrationId}
-        storeId={storeId}
-      />
+      {hasGeneralSettings && (
+        <DynaFormWithDynamicActions
+          key={storeId}
+          fieldMeta={translatedMeta}
+          integrationId={integrationId}
+          storeId={storeId}
+        />
+      )}
     </div>
   );
 }

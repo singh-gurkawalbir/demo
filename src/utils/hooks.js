@@ -1,5 +1,8 @@
 import { difference, values } from 'lodash';
-import { getResourceSubType } from './resource';
+import {
+  getResourceSubType,
+  isRealTimeOrDistributedResource,
+} from './resource';
 
 export const importHooksList = [
   'preMap',
@@ -7,6 +10,14 @@ export const importHooksList = [
   'postSubmit',
   'postAggregate',
 ];
+
+export const hooksToFunctionNamesMap = {
+  preSavePage: 'preSavePageFunction',
+  preMap: 'preMapFuncton',
+  postMap: 'postMapFunction',
+  postSubmit: 'postSubmitFunction',
+  postAggregate: 'postAggregateFunction',
+};
 
 export const hooksLabelMap = {
   preMap: 'Pre Map',
@@ -65,3 +76,7 @@ export const getHookType = (defaultValues = {}) => {
 
   return defaultHookType;
 };
+
+// For real time resources stacks are not shown
+export const isStacksSupportedForResource = (resource, resourceType) =>
+  !isRealTimeOrDistributedResource(resource, resourceType);

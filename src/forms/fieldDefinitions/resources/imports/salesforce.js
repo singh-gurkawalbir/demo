@@ -1,3 +1,5 @@
+import { isNewId } from '../../../../utils/resource';
+
 export default {
   'salesforce.api': {
     type: 'radiogroup',
@@ -18,6 +20,13 @@ export default {
         ],
       },
     ],
+    defaultDisabled: r => {
+      const isNew = isNewId(r._id);
+
+      if (!isNew) return true;
+
+      return false;
+    },
   },
   'salesforce.document.id': {
     type: 'text',
@@ -466,28 +475,10 @@ export default {
     ],
     defaultValue: r => r && r.salesforce && r.salesforce.operation,
   },
-  'salesforce.idLookup.extract': {
-    type: 'text',
-    label: 'How can we find existing records?',
-    visibleWhenAll: [
-      {
-        field: 'ignoreExisting',
-        is: [true],
-      },
-      {
-        field: 'salesforce.operation',
-        is: ['update', 'addupdate'],
-      },
-      {
-        field: 'inputMode',
-        is: ['records'],
-      },
-    ],
-  },
   'salesforce.idLookup.whereClause': {
-    type: 'text',
-    label: 'Where Clause',
-    visibleWhenAll: [
+    type: 'salesforcelookup',
+    label: 'How can we find existing records?',
+    visibleWhen: [
       {
         field: 'ignoreExisting',
         is: [true],
@@ -497,23 +488,19 @@ export default {
         is: ['update', 'addupdate'],
       },
       {
-        field: 'inputMode',
-        is: ['records'],
+        field: 'salesforce.compositeOperation',
+        is: ['update', 'addupdate'],
       },
     ],
   },
   'salesforce.upsertpicklistvalues.fullName': {
-    type: 'select',
+    type: 'text',
+    visible: false,
+  },
+  'salesforce.upsert.externalIdField': {
+    type: 'refreshableselect',
     label: 'Which External ID field should be used to Upsert?',
-    options: [
-      {
-        // To do replace statistically instead of dynamic
-        items: [
-          { label: 'AccountID', value: 'accountid' },
-          { label: 'CustomerID', value: 'customerid' },
-        ],
-      },
-    ],
+    filterKey: 'salesforce-externalIdFields',
     visibleWhenAll: [
       {
         field: 'salesforce.operation',
@@ -525,8 +512,8 @@ export default {
       },
     ],
   },
-  'salesforce.upsert.externalIdField': {
-    type: 'text',
+  'salesforce.idLookup.extract': {
+    type: 'autosuggestflowsampledata',
     label: 'Which export data field should map to External ID?',
     visibleWhenAll: [
       {

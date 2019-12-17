@@ -1,10 +1,6 @@
 /* eslint-disable no-plusplus */
-import { some, reduce, uniq, map } from 'lodash';
+import { some, reduce } from 'lodash';
 import applications from '../constants/applications';
-import {
-  RESOURCE_TYPE_LABEL_TO_SINGULAR,
-  RESOURCE_TYPE_SINGULAR_TO_PLURAL,
-} from '../constants/resource';
 import {
   NETSUITE_BUNDLE_URL,
   SALESFORCE_DA_PACKAGE_URL,
@@ -12,11 +8,11 @@ import {
 } from './constants';
 
 export default {
-  getDependentResources: createdComponents =>
-    uniq(map(createdComponents, 'model')).map(
-      res =>
-        RESOURCE_TYPE_SINGULAR_TO_PLURAL[RESOURCE_TYPE_LABEL_TO_SINGULAR[res]]
-    ),
+  getDependentResources: components =>
+    components.map(component => ({
+      resourceType: `${component.model.toLowerCase()}s`,
+      id: component._id,
+    })),
   getInstallSteps: previewData => {
     const connectionMap = {};
     const installSteps = [];

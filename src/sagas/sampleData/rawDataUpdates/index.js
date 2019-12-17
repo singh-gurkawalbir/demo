@@ -1,29 +1,41 @@
-import { takeLatest, select, call } from 'redux-saga/effects';
+import { takeLatest, select, call, put } from 'redux-saga/effects';
 import actionTypes from '../../../actions/types';
-import { resource, resourceFormState } from '../../../reducers';
+import actions from '../../../actions';
+import { resource, resourceFormState, resourceData } from '../../../reducers';
 import {
   getAddedLookupInFlow,
   isRawDataPatchSet,
   getPreviewStageData,
 } from '../../../utils/flowData';
-import { isFileAdaptor } from '../../../utils/resource';
-import { exportPreview, pageProcessorPreview } from '../previewCalls';
+import {
+  isFileAdaptor,
+  isRealTimeOrDistributedResource,
+  isBlobTypeResource,
+  isAS2Resource,
+} from '../../../utils/resource';
+import { exportPreview } from '../utils/previewCalls';
 import { saveRawDataOnResource } from './utils';
 import saveRawDataForFileAdaptors from './fileAdaptorUpdates';
 
-function* fetchAndSaveRawDataForResource({
-  type,
-  resourceId,
-  flowId,
-  tempResourceId,
-}) {
+function* fetchAndSaveRawDataForResource({ type, resourceId, tempResourceId }) {
   const resourceObj = yield select(
     resource,
     type === 'imports' ? 'imports' : 'exports',
     resourceId
   );
 
-  if (isFileAdaptor(resourceObj)) {
+  // Raw data need not be updated on save for real time resources
+  // Covers - NS/SF/Webhooks
+  // Also for Blob type resources ,no need to update as its a sample blob key as sample data
+  if (
+    (!isAS2Resource(resourceObj) &&
+      isRealTimeOrDistributedResource(resourceObj)) ||
+    isBlobTypeResource(resourceObj)
+  )
+    return;
+
+  // For file adaptors and AS2 resource , raw data is fetched from uploaded file stored in state
+  if (isFileAdaptor(resourceObj) || isAS2Resource(resourceObj)) {
     return yield call(saveRawDataForFileAdaptors, {
       resourceId,
       tempResourceId,
@@ -46,20 +58,21 @@ function* fetchAndSaveRawDataForResource({
       });
     }
   } else {
-    const pageProcessorPreviewData = yield call(pageProcessorPreview, {
-      flowId,
-      _pageProcessorId: resourceId,
-      previewType: 'raw',
-      hidden: true,
-    });
-
-    if (pageProcessorPreviewData) {
-      yield call(saveRawDataOnResource, {
-        resourceId,
-        rawData:
-          pageProcessorPreviewData && JSON.stringify(pageProcessorPreviewData),
-      });
-    }
+    // TODO @Raghu : Commenting this now as there is no BE Support on saving raw data for PPs
+    // Add it back when BE supports offline mode for PPs
+    // const pageProcessorPreviewData = yield call(pageProcessorPreview, {
+    //   flowId,
+    //   _pageProcessorId: resourceId,
+    //   previewType: 'raw',
+    //   hidden: true,
+    // });
+    // if (pageProcessorPreviewData) {
+    //   yield call(saveRawDataOnResource, {
+    //     resourceId,
+    //     rawData:
+    //       pageProcessorPreviewData && JSON.stringify(pageProcessorPreviewData),
+    //   });
+    // }
   }
 }
 
@@ -140,7 +153,23 @@ function* onResourceUpdate({
 
   // If it is a raw data patch set on need to update again
   if (resourceType === 'imports' && patch.length && !isRawDataPatchSet(patch)) {
-    yield call(fetchAndSaveRawDataForResource, { type: 'imports', resourceId });
+    const { merged: importResource = {} } = yield select(
+      resourceData,
+      'imports',
+      resourceId
+    );
+
+    // Whenever an assistant import gets updated, its preview data ( sampleData ) needs to be reset
+    if (importResource.assistant) {
+      return yield put(
+        actions.metadata.resetAssistantImportPreview(resourceId)
+      );
+    }
+
+    yield call(fetchAndSaveRawDataForResource, {
+      type: 'imports',
+      resourceId,
+    });
   }
 }
 

@@ -1,5 +1,5 @@
 import { useRef, Fragment, useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { useDrag, useDrop } from 'react-dnd-cjs';
 import clsx from 'clsx';
@@ -50,6 +50,7 @@ const PageProcessor = ({
   isLast,
   integrationId,
   isViewMode,
+  isMonitorLevelAccess,
   onDelete,
   ...pp
 }) => {
@@ -60,17 +61,26 @@ const PageProcessor = ({
   const classes = useStyles();
   const dispatch = useDispatch();
   const [newProcessorId, setNewProcessorId] = useState(null);
-  const { merged: resource = {} } = useSelector(state =>
-    selectors.resourceData(
-      state,
-      pending ? 'connections' : resourceType,
-      resourceId
-    )
-  );
+  const resource =
+    useSelector(state =>
+      selectors.resource(
+        state,
+        pending ? 'connections' : resourceType,
+        resourceId
+      )
+    ) || {};
   // Returns map of all possible actions with true/false whether actions performed on the resource
-  const usedActions = useSelector(state =>
-    selectors.getUsedActionsForResource(state, resourceId, resourceType, pp)
-  );
+  const usedActions =
+    useSelector(
+      state =>
+        selectors.getUsedActionsForResource(
+          state,
+          resourceId,
+          resourceType,
+          pp
+        ),
+      shallowEqual
+    ) || {};
   const createdProcessorId = useSelector(state =>
     selectors.createdResourceId(state, newProcessorId)
   );
@@ -93,6 +103,8 @@ const PageProcessor = ({
 
       // console.log(pp, patchSet);
       dispatch(actions.resource.patchStaged(flowId, patchSet, 'value'));
+      dispatch(actions.resource.commitStaged('flows', flowId, 'value'));
+      dispatch(actions.flowData.updateFlow(flowId));
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -268,8 +280,10 @@ const PageProcessor = ({
       );
     }
   }
-
   // #endregion
+
+  // console.log('render: <PageProcessor>');
+  // console.log(pp, usedActions);
 
   return (
     <Fragment>
@@ -285,6 +299,7 @@ const PageProcessor = ({
           }
           onDelete={onDelete}
           isViewMode={isViewMode}
+          isMonitorLevelAccess={isMonitorLevelAccess}
           onBlockClick={handleBlockClick}
           connectorType={resource.adaptorType || resource.type}
           assistant={resource.assistant}

@@ -41,7 +41,7 @@ export default {
       },
     ],
   },
-  'netsuite_da.blob.operation': {
+  'netsuite.operation': {
     type: 'radiogroup',
     label: 'Operation',
     required: true,
@@ -65,6 +65,7 @@ export default {
   'netsuite_da.internalIdLookup.expression': {
     type: 'netsuitelookup',
     label: 'How can we find existing records?',
+    required: true,
     visibleWhen: [
       {
         field: 'ignoreExisting',
@@ -136,7 +137,7 @@ export default {
     label: 'Name',
     visibleWhenAll: [
       {
-        field: 'netsuite_da.blob.operation',
+        field: 'netsuite.operation',
         is: ['add', 'addupdate'],
       },
       {
@@ -150,7 +151,7 @@ export default {
     label: 'File Type',
     visibleWhenAll: [
       {
-        field: 'netsuite_da.blob.operation',
+        field: 'netsuite.operation',
         is: ['add', 'addupdate'],
       },
       {
@@ -164,7 +165,7 @@ export default {
     label: 'Folder',
     visibleWhenAll: [
       {
-        field: 'netsuite_da.blob.operation',
+        field: 'netsuite.operation',
         is: ['add', 'addupdate'],
       },
       {
@@ -178,7 +179,7 @@ export default {
     label: 'File Internal Id',
     visibleWhenAll: [
       {
-        field: 'netsuite_da.blob.operation',
+        field: 'netsuite.operation',
         is: ['update', 'delete'],
       },
       {

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import {
   Typography,
@@ -20,6 +21,7 @@ import { getResourceSubType } from '../../utils/resource';
 import resourceConstants from '../../forms/constants/connection';
 import Spinner from '../../components/Spinner';
 import Loader from '../../components/Loader';
+import getRoutePath from '../../utils/routePaths';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -54,6 +56,7 @@ const getConnectionType = resource => {
 
 export default function IntegrationAppAddNewStore(props) {
   const classes = useStyles();
+  const history = useHistory();
   const { integrationId } = props.match.params;
   const [selectedConnectionId, setSelectedConnectionId] = useState(null);
   const [isSetupComplete, setIsSetupComplete] = useState(false);
@@ -62,7 +65,7 @@ export default function IntegrationAppAddNewStore(props) {
   const integration = useSelector(state =>
     selectors.integrationAppSettings(state, integrationId)
   );
-  const addNewStoreSteps = useSelector(state =>
+  const { steps: addNewStoreSteps, error } = useSelector(state =>
     selectors.addNewStoreSteps(state, integrationId)
   );
   const selectedConnection = useSelector(state =>
@@ -77,6 +80,7 @@ export default function IntegrationAppAddNewStore(props) {
   }, [addNewStoreSteps, requestedSteps, dispatch, integrationId]);
   useEffect(() => {
     if (
+      addNewStoreSteps &&
       addNewStoreSteps.length &&
       !addNewStoreSteps.reduce(
         (result, step) => result || !step.completed,
@@ -100,12 +104,17 @@ export default function IntegrationAppAddNewStore(props) {
     }
   }, [dispatch, integrationId, isSetupComplete, props.history]);
 
+  if (error) {
+    history.push(getRoutePath(`integrationApp/${integrationId}/flows`));
+
+    return null;
+  }
+
   if (!addNewStoreSteps || !addNewStoreSteps.length) {
     return (
       <Loader open>
-        <Typography>
-          Loading installation steps <Spinner />
-        </Typography>
+        <Spinner color="primary" />
+        <Typography variant="h5">Loading installation steps</Typography>
       </Loader>
     );
   }

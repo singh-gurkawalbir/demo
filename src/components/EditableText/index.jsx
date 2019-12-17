@@ -7,8 +7,13 @@ const useStyles = makeStyles(theme => ({
   text: {
     borderColor: 'transparent',
     transition: theme.transitions.create(['border', 'background-color']),
+    maxWidth: 650,
+    textOverflow: 'ellipsis',
+    overflow: 'hidden',
+    float: 'left',
+    whiteSpace: 'nowrap',
     '&:hover': {
-      backgroundColor: 'rgb(0,0,0,0.03)',
+      backgroundColor: theme.palette.background.paper2,
       borderBottom: `solid 1px ${fade(theme.palette.primary.light, 0.5)}`,
     },
   }, // not used...
@@ -29,20 +34,25 @@ export default function EditableText({
   onChange,
   disabled,
   className,
-  children,
+  text = '',
+  defaultText,
 }) {
   const classes = useStyles();
   const [isEdit, setIsEdit] = useState(false);
-  const [value, setValue] = useState(children);
+  const [value, setValue] = useState(text);
 
   function handleCancel() {
     setIsEdit(false);
-    setValue(children);
+    setValue(text);
   }
 
   function handleChange() {
     setIsEdit(false);
-    onChange(value);
+
+    // only call the onChange if the text actually changed.
+    if (value !== text) {
+      onChange(value);
+    }
   }
 
   function handleKeyDown(e) {
@@ -74,7 +84,7 @@ export default function EditableText({
         <span
           onClick={handleEditClick}
           className={clsx(classes.text, className)}>
-          {children}
+          {text || defaultText}
         </span>
       )}
     </Fragment>

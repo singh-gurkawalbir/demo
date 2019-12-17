@@ -1,12 +1,10 @@
-import Input from '@material-ui/core/Input';
-import { useReducer, useEffect, useState } from 'react';
+import { useReducer, useEffect, useState, useCallback } from 'react';
 import produce from 'immer';
 import { makeStyles } from '@material-ui/core/styles';
 import {
   ExpansionPanelSummary,
   Typography,
   Grid,
-  IconButton,
   ExpansionPanelDetails,
   ExpansionPanel,
 } from '@material-ui/core';
@@ -14,8 +12,11 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Spinner from '../../../Spinner';
 import RefreshIcon from '../../../icons/RefreshIcon';
 import DynaSelect from '../DynaSelect';
+import Input from '../DynaText';
 import DeleteIcon from '../../../icons/TrashIcon';
 import DynaTypeableSelect from '../DynaTypeableSelect';
+import ActionButton from '../../../ActionButton';
+import IconTextButton from '../../../IconTextButton';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -170,8 +171,8 @@ export const DynaTable = props => {
 
       if ((op.options || []).length) {
         const items = op.options.filter(Boolean).map(opt => ({
-          label: opt.text || opt.label,
-          value: opt.id || opt.value,
+          label: Array.isArray(opt) ? opt[1] : opt.text || opt.label,
+          value: Array.isArray(opt) ? opt[0] : opt.id || opt.value,
         }));
         const options =
           op.type === 'select'
@@ -197,15 +198,14 @@ export const DynaTable = props => {
     return { values: arr, row: index };
   });
   // Update handler. Listens to change in any field and dispatches action to update state
-  const handleUpdate = (row, event, field) => {
-    const newValue = event.target.value;
+  const handleUpdate = (row, value, field) => {
     const { id, onFieldChange, onRowChange } = props;
 
     dispatchLocalAction({
       type: 'updateField',
       index: row,
       field,
-      value: newValue,
+      value,
       setChangeIdentifier,
       lastRowData: (value || []).length ? value[value.length - 1] : {},
       onRowChange,
@@ -213,10 +213,10 @@ export const DynaTable = props => {
 
     if (state[row]) {
       const fieldValueToSet = onRowChange
-        ? onRowChange(state, row, field, newValue)
+        ? onRowChange(state, row, field, value)
         : preSubmit([
             ...state.slice(0, row),
-            { ...state[row], ...{ [field]: newValue } },
+            { ...state[row], ...{ [field]: value } },
             ...state.slice(row + 1, state.length),
           ]);
 
@@ -241,7 +241,7 @@ export const DynaTable = props => {
     onFieldChange(id, preSubmit(stateCopy));
   }
 
-  const handleAllUpdate = (row, id) => event => handleUpdate(row, event, id);
+  // const handleAllUpdate = (row, id) => event => handleUpdate(row, event, id);
   const onFetchResource = id => e => handleRefreshClick(e, id);
   const handleRemoveRow = row => e => dispatchActionToDelete(e, row);
 
@@ -256,9 +256,16 @@ export const DynaTable = props => {
                 <Grid key={r.id} item xs={r.space || true}>
                   <span>{r.label || r.name}</span>
                   {r.supportsRefresh && !isLoading && (
-                    <RefreshIcon onClick={onFetchResource(r.id)} />
+                    <IconTextButton
+                      variant="contained"
+                      color="secondary"
+                      onClick={onFetchResource(r.id)}>
+                      Refresh <RefreshIcon />
+                    </IconTextButton>
                   )}
-                  {r.supportsRefresh && isLoading && <Spinner size={24} />}
+                  {r.supportsRefresh && isLoading === r.id && (
+                    <Spinner size={24} />
+                  )}
                 </Grid>
               ))}
               <Grid key="delete_button_header" item />
@@ -282,12 +289,14 @@ export const DynaTable = props => {
                     {['input', 'text', 'number'].includes(r.type) && (
                       <Input
                         id={`input-${r.id}-${arr.row}`}
-                        defaultValue={r.value}
+                        value={r.value}
                         placeholder={r.id}
                         readOnly={!!r.readOnly}
                         type={r.type === 'input' ? 'text' : r.type}
                         className={classes.input}
-                        onChange={handleAllUpdate(arr.row, r.id)}
+                        onFieldChange={(id, value) => {
+                          handleUpdate(arr.row, value, r.id);
+                        }}
                       />
                     )}
                     {r.type === 'select' && (
@@ -296,12 +305,8 @@ export const DynaTable = props => {
                         value={r.value}
                         placeholder={r.id}
                         options={r.options || []}
-                        onFieldChange={(id, evt) => {
-                          handleUpdate(
-                            arr.row,
-                            { target: { value: evt } },
-                            r.id
-                          );
+                        onFieldChange={(id, value) => {
+                          handleUpdate(arr.row, value, r.id);
                         }}
                         className={classes.root}
                       />
@@ -315,24 +320,20 @@ export const DynaTable = props => {
                         valueName="value"
                         options={r.options}
                         onBlur={(id, evt) => {
-                          handleUpdate(
-                            arr.row,
-                            { target: { value: evt } },
-                            r.id
-                          );
+                          handleUpdate(arr.row, evt, r.id);
                         }}
                       />
                     )}
                   </Grid>
                 ))}
-                <Grid item key="delete_button">
-                  <IconButton
+                <Grid item key="delete_button" xs={1}>
+                  <ActionButton
                     data-test={`deleteTableRow-${arr.row}`}
                     aria-label="delete"
                     onClick={handleRemoveRow(arr.row)}
                     className={classes.margin}>
                     <DeleteIcon fontSize="small" />
-                  </IconButton>
+                  </ActionButton>
                 </Grid>
               </Grid>
             </Grid>
@@ -346,6 +347,7 @@ export const DynaTable = props => {
 export default function CollapsableTable(props) {
   const { title, collapsable = false } = props;
   const [shouldExpand, setShouldExpand] = useState(false);
+  const handleClick = useCallback(() => setShouldExpand(expand => !expand), []);
 
   return collapsable ? (
     <ExpansionPanel
@@ -353,7 +355,7 @@ export default function CollapsableTable(props) {
       expanded={shouldExpand}>
       <ExpansionPanelSummary
         data-test={title}
-        onClick={() => setShouldExpand(expand => !expand)}
+        onClick={handleClick}
         expandIcon={<ExpandMoreIcon />}>
         <Typography>{title}</Typography>
       </ExpansionPanelSummary>

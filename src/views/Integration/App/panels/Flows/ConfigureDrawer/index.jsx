@@ -7,6 +7,7 @@ import * as selectors from '../../../../../../reducers';
 import { integrationSettingsToDynaFormMetadata } from '../../../../../../forms/utils';
 import { ActionsFactory } from '../../../../../../components/ResourceFormFactory';
 import DrawerTitleBar from '../../../../../../components/drawer/TitleBar';
+import LoadResources from '../../../../../../components/LoadResources';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -51,23 +52,27 @@ function ConfigureDrawer({ integrationId, storeId, sectionId }) {
   };
 
   return (
-    <Drawer
-      // variant="persistent"
-      anchor="right"
-      open={!!match}
-      classes={{
-        paper: classes.drawerPaper,
-      }}
-      onClose={handleClose}>
-      <DrawerTitleBar title={`Configure all ${section.title} flows`} />
+    <LoadResources
+      required
+      resources={['flows', 'exports', 'imports', 'connections']}>
+      <Drawer
+        // variant="persistent"
+        anchor="right"
+        open={!!match}
+        classes={{
+          paper: classes.drawerPaper,
+        }}
+        onClose={handleClose}>
+        <DrawerTitleBar title={`Configure all ${section.title} flows`} />
 
-      <ActionsFactory
-        className={classes.form}
-        integrationId={integrationId}
-        storeId={storeId}
-        fieldMeta={translatedMeta}
-      />
-    </Drawer>
+        <ActionsFactory
+          className={classes.form}
+          integrationId={integrationId}
+          storeId={storeId}
+          fieldMeta={translatedMeta}
+        />
+      </Drawer>
+    </LoadResources>
   );
 }
 

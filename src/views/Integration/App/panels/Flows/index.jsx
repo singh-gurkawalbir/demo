@@ -21,6 +21,8 @@ import MappingDrawer from './MappingDrawer';
 const useStyles = makeStyles(theme => ({
   root: {
     backgroundColor: theme.palette.common.white,
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
   },
   subNav: {
     minWidth: 200,
@@ -31,6 +33,7 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     height: '100%',
     padding: theme.spacing(0, 0, 3, 0),
+    overflowX: 'scroll',
   },
   listItem: {
     color: theme.palette.text.primary,
@@ -57,8 +60,10 @@ function FlowList({ integrationId, storeId }) {
   );
   const section = flowSections.find(s => s.titleId === sectionId);
 
+  // console.log('render: <Flow Settings>');
+
   return (
-    <LoadResources required resources="flows">
+    <LoadResources required resources="flows,exports">
       <ConfigureDrawer
         integrationId={integrationId}
         storeId={storeId}
@@ -90,7 +95,13 @@ function FlowList({ integrationId, storeId }) {
           key={f._id}
           storeId={storeId}
           flowId={f._id}
-          excludeActions={['detach', 'clone', 'delete']}
+          excludeActions={[
+            'detach',
+            'clone',
+            'delete',
+            'references',
+            'download',
+          ]}
         />
       ))}
     </LoadResources>

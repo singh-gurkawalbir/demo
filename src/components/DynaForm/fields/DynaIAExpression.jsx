@@ -2,14 +2,12 @@
 import { useSelector } from 'react-redux';
 import * as selectors from '../../../reducers';
 import DynaNetSuiteLookup from './DynaNetSuiteLookup';
-// TODO: change the references to point to correct filters
-import DynaSFLookup from './DynaNetSuiteLookup';
-import DynaNSQualifier from './DynaNetSuiteLookup';
-import DynaSFQualifier from './DynaNetSuiteLookup';
-import LoadResources from '../../LoadResources';
+import DynaSFLookup from './DynaSalesforceLookup';
+import DynaSFQualifier from './DynaSalesforceQualifier';
+import DynaNSQualifier from './DynaNetSuiteQualifier';
 
 export default function DynaIAExpression(props) {
-  const { flowId, properties = {}, type } = props;
+  const { flowId, properties = {}, expressionType: type } = props;
   let resourceId;
   let commMetaPath;
   let filterType;
@@ -50,9 +48,7 @@ export default function DynaIAExpression(props) {
   );
 
   if (!resource) {
-    return (
-      <LoadResources required resources="imports,exports,connections,flows" />
-    );
+    return null;
   }
 
   if (type === 'import') {
@@ -69,7 +65,7 @@ export default function DynaIAExpression(props) {
       commMetaPath = `salesforce/metadata/connections/${connection._id}/sObjectTypes/${resource.salesforce.sObjectType}`;
     } else {
       filterType = 'netsuiteQualifier';
-      commMetaPath = `netsuite/metadata/suitescript/connections/${connection._id}/recordTypes/${resource.netsuite_da.recordType}/searchFilters?includeJoinFilters=true`;
+      commMetaPath = `netsuite/metadata/suitescript/connections/${connection._id}/recordTypes/${resource.netsuite.distributed.recordType}?includeSelectOptions=true`;
     }
   }
 
@@ -96,9 +92,9 @@ export default function DynaIAExpression(props) {
   return (
     <ExpressionBuilder
       {...props}
-      flowId={resource._id}
+      flowId={flowId}
       options={options}
-      resourceId={resourceId}
+      resourceId={resource._id}
     />
   );
 }

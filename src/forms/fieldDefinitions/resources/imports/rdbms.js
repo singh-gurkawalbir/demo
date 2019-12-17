@@ -3,6 +3,7 @@ export default {
     type: 'radiogroup',
     label: 'Query Type',
     required: true,
+    helpText: `Please select 'Insert' if you are only importing new records into the Database. Please select 'Update' if you are only importing changes to existing records in the Database. Please select 'Insert or Update' if you want your import to be more dynamic such that (1) if an existing record exists in the Database then that record will be updated, or (2) if an existing record does not exist then a new record will be created.`,
     options: [
       {
         items: [
@@ -35,7 +36,12 @@ export default {
     type: 'sqlquerybuilder',
     arrayIndex: 0,
     label: 'Launch Query Builder',
-    refreshOptionsOnChangesTo: ['rdbms.lookups', 'rdbms.queryType'],
+    title: 'SQL Query Builder',
+    refreshOptionsOnChangesTo: [
+      'rdbms.lookups',
+      'rdbms.queryType',
+      'modelMetadata',
+    ],
     visibleWhen: [
       {
         field: 'rdbms.queryType',
@@ -46,9 +52,13 @@ export default {
   'rdbms.queryInsert': {
     id: 'rdbms.queryInsert',
     type: 'sqlquerybuilder',
-    arrayIndex: 0,
     label: 'Launch Query Builder for Insert',
-    refreshOptionsOnChangesTo: ['rdbms.lookups', 'rdbms.queryType'],
+    title: 'SQL Query Builder',
+    refreshOptionsOnChangesTo: [
+      'rdbms.lookups',
+      'rdbms.queryType',
+      'modelMetadata',
+    ],
     visibleWhen: [
       {
         field: 'rdbms.queryType',
@@ -59,9 +69,13 @@ export default {
   'rdbms.queryUpdate': {
     id: 'rdbms.queryUpdate',
     type: 'sqlquerybuilder',
-    arrayIndex: 0,
     label: 'Launch Query Builder for Update',
-    refreshOptionsOnChangesTo: ['rdbms.lookups', 'rdbms.queryType'],
+    title: 'SQL Query Builder',
+    refreshOptionsOnChangesTo: [
+      'rdbms.lookups',
+      'rdbms.queryType',
+      'modelMetadata',
+    ],
     visibleWhen: [
       {
         field: 'rdbms.queryType',
@@ -73,6 +87,8 @@ export default {
     type: 'text',
     label: 'Existing Data Id',
     required: true,
+    helpText: `This field is used to inform integrator.io on how to identify existing records, and if a record is found to exist, it will be ignored (no operation performed for this record). integrator.io will determine if a record exists by the presence of a specific record property. Typically this would be a field that is only present on existing records such as an "ID", or "createDate". If this is the case, simply provide the field path to this property. Example: "customerId" or "dateCreated".
+    Alternatively you can identify existing records by using the result of a lookup. If the lookup returned a value, then this would be an indication that the record exists. An example of this would be a lookup that maps an email from the export record to an ID from the destination App. If this is how you wish to identify an existing lookup, first define the lookup and then simply enter the lookup's name in this field.`,
     visibleWhenAll: [
       {
         field: 'rdbms.queryType',
@@ -88,6 +104,8 @@ export default {
     type: 'text',
     label: 'Existing Data Id',
     required: true,
+    helpText: `This field is used to inform integrator.io on how to identify existing records, and if a record is found to not exist, it will be ignored (no operation performed for this record). integrator.io will determine if a record exists by the presence of a specific record property. Typically this would be a field that is only present on existing records such as an "ID", or "createDate". If this is your case, simply provide the field path to this property. Example: "customerId" or "dateCreated".
+    Alternatively you can identify existing records by using the result of a lookup. If the lookup returned a value, then this would be an indication that the record exists. An example of this would be a lookup that maps an email from the export record to an ID from the destination App. If this is how you wish to identify an existing lookup, first define the lookup and then simply enter the lookup's name in this field.`,
     visibleWhen: [
       {
         field: 'rdbms.queryType',
@@ -96,6 +114,10 @@ export default {
       {
         field: 'ignoreMissing',
         is: [true],
+      },
+      {
+        field: 'ignoreExisting',
+        is: [false],
       },
     ],
   },

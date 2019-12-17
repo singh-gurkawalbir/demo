@@ -98,7 +98,7 @@ function getSuggestions(val, suggestions, showAllSuggestions) {
   const inputLength = inputValue.length;
 
   return inputLength === 0
-    ? []
+    ? suggestions
     : suggestions.filter(
         suggestion =>
           suggestion.label.slice(0, inputLength).toLowerCase() === inputValue
@@ -145,6 +145,7 @@ export default function DynaAutoSuggest(props) {
     }
   };
 
+  const shouldRenderSuggestions = () => true;
   const autosuggestProps = {
     renderInputComponent,
     suggestions: stateSuggestions,
@@ -152,6 +153,7 @@ export default function DynaAutoSuggest(props) {
     onSuggestionsClearRequested: handleSuggestionsClearRequested,
     getSuggestionValue,
     renderSuggestion,
+    shouldRenderSuggestions,
   };
 
   return (

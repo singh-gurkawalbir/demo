@@ -1,5 +1,45 @@
 import XLSX from 'xlsx';
 import { each } from 'lodash';
+import { MAX_FILE_SIZE } from './constants';
+
+/*
+ * Validates file type against all possible file types when user uploads a file
+ * validFileTypes - Took reference from 'integrator' Repository
+ */
+export function isValidFileType(fileType, file) {
+  const validFileTypes = {
+    csv: [
+      'text/csv',
+      'text/plain',
+      'application/vnd.ms-excel',
+      'application/comma-separated-values',
+      '',
+      undefined,
+    ],
+    json: ['application/json', '', undefined],
+    xml: ['application/xml', 'text/xml', '', undefined],
+    xlsx: [
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'application/vnd.ms-excel',
+    ],
+  };
+
+  return validFileTypes[fileType].includes(file.type);
+}
+
+// Validates file size against MAX_FILE_SIZE as per Bug @IO-12216
+export const isValidFileSize = file => file.size <= MAX_FILE_SIZE;
+
+// TODO: @Raghu Move these error messages to constants
+export const getUploadedFileStatus = (file, fileType) => {
+  if (!isValidFileSize(file))
+    return { success: false, error: 'File exceeds max file size' };
+
+  if (fileType && !isValidFileType(fileType, file))
+    return { success: false, error: `Please select valid ${fileType} file` };
+
+  return { success: true };
+};
 
 export function getFileReaderOptions(type) {
   if (!type) return {};

@@ -188,9 +188,13 @@ export default {
     },
     MuiFormHelperText: {
       contained: {
-        color: colors.celigoError,
         marginLeft: 0,
         marginBottom: 8,
+      },
+    },
+    MuiMenu: {
+      list: {
+        maxHeight: 300,
       },
     },
     MuiMenuItem: {
@@ -529,12 +533,12 @@ export default {
 
   // props: {
   //   MuiCheckbox: {
-  //     icon: CheckboxIcon,
-  //     checkedIcon: CheckboxSelectedIcon,
+  //     icon: <CheckboxIcon />,
+  //     checkedIcon: <CheckboxSelectedIcon />,
   //   },
   //   MuiRadio: {
-  //     icon: RadioBtnIcon,
-  //     checkedIcon: RadioBtnSelectedIcon,
+  //     icon: <RadioBtnIcon />,
+  //     checkedIcon: <RadioBtnSelectedIcon />,
   //   },
   // },
 };

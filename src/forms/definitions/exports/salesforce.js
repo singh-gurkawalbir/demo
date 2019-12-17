@@ -14,6 +14,19 @@ export default {
       );
 
       return value;
+    } else if (fieldId === 'salesforce.distributed.qualifier') {
+      const sObjectTypeField = fields.find(
+        field => field.fieldId === 'salesforce.sObjectType'
+      );
+
+      return {
+        commMetaPath: sObjectTypeField
+          ? `salesforce/metadata/connections/${sObjectTypeField.connectionId}/sObjectTypes/${sObjectTypeField.value}`
+          : '',
+        resetValue:
+          sObjectTypeField &&
+          sObjectTypeField.value !== sObjectTypeField.defaultValue,
+      };
     }
   },
   preSave: formValues => {
@@ -53,6 +66,14 @@ export default {
       retValues['/salesforce/api'] = 'rest';
     } else if (retValues['/salesforce/executionType'] === 'realtime') {
       retValues['/type'] = 'distributed';
+
+      /**
+       * When no qualifier or if it is an empty string we are sending null in ampersand app.
+       * If there is no difference in setting null vs empty string from backend perspective, we can remove this check.
+       */
+      if (!retValues['/salesforce/distributed/qualifier']) {
+        retValues['/salesforce/distributed/qualifier'] = null;
+      }
     }
 
     if (retValues['/outputMode'] === 'blob') {
@@ -79,7 +100,7 @@ export default {
     },
     outputMode: {
       id: 'outputMode',
-      type: 'radiogroup',
+      type: 'mode',
       label: 'Output Mode',
       required: true,
       options: [
@@ -181,7 +202,7 @@ export default {
     'salesforce.sObjectType': {
       connectionId: r => r._connectionId,
       fieldId: 'salesforce.sObjectType',
-      type: 'salesforcesobjecttype',
+      type: 'refreshableselect',
       filterKey: 'salesforce-sObjects-triggerable',
       commMetaPath: r =>
         `salesforce/metadata/connections/${r._connectionId}/sObjectTypes`,
@@ -196,6 +217,7 @@ export default {
       connectionId: r => r._connectionId,
       refreshOptionsOnChangesTo: ['salesforce.sObjectType'],
       type: 'salesforcereferencedfields',
+      delimiter: ',',
       fieldId: 'salesforce.distributed.referencedFields',
       disabledWhen: [
         {
@@ -216,8 +238,12 @@ export default {
         },
       ],
     },
+    'salesforce.objectType': {
+      fieldId: 'salesforce.objectType',
+    },
     'salesforce.distributed.qualifier': {
       fieldId: 'salesforce.distributed.qualifier',
+      refreshOptionsOnChangesTo: ['salesforce.sObjectType'],
     },
     advancedSettings: {
       formId: 'advancedSettings',
@@ -232,6 +258,7 @@ export default {
       'salesforce.executionType',
       'exportData',
       'salesforce.sObjectType',
+      'salesforce.objectType',
       'salesforce.distributed.requiredTrigger',
       'salesforce.distributed.referencedFields',
       'salesforce.distributed.relatedLists',

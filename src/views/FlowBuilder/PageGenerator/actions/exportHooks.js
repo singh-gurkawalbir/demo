@@ -1,6 +1,6 @@
-import { makeStyles } from '@material-ui/core/styles';
-import { Fragment } from 'react';
+import { useCallback, Fragment } from 'react';
 import { useDispatch } from 'react-redux';
+import { makeStyles } from '@material-ui/core/styles';
 import Icon from '../../../../components/icons/HookIcon';
 import actions from '../../../../actions';
 import Hooks from '../../../../components/Hooks';
@@ -19,19 +19,24 @@ function HooksDialog({ flowId, isViewMode, resource, open, onClose }) {
   const resourceId = resource._id;
   const resourceType = 'exports';
   const defaultValue = resource.hooks || {};
-  const onSave = selectedHook => {
-    const patchSet = [{ op: 'replace', path: '/hooks', value: selectedHook }];
+  const handleSave = useCallback(
+    selectedHook => {
+      const patchSet = [{ op: 'replace', path: '/hooks', value: selectedHook }];
 
-    dispatch(actions.resource.patchStaged(resourceId, patchSet, 'value'));
-    dispatch(actions.resource.commitStaged(resourceType, resourceId, 'value'));
-    onClose();
-  };
+      dispatch(actions.resource.patchStaged(resourceId, patchSet, 'value'));
+      dispatch(
+        actions.resource.commitStaged(resourceType, resourceId, 'value')
+      );
+      onClose();
+    },
+    [dispatch, onClose, resourceId]
+  );
 
   return (
-    <ModalDialog show={open} handleClose={onClose} disabled={isViewMode}>
+    <ModalDialog show={open} onClose={onClose} disabled={isViewMode}>
       <div className={classes.wrapper}>Hooks</div>
       <Hooks
-        onSave={onSave}
+        onSave={handleSave}
         onCancel={onClose}
         disabled={isViewMode}
         defaultValue={defaultValue}

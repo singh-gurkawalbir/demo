@@ -30,6 +30,10 @@ export function integrationAppAddOnState(state, integrationId) {
   );
 }
 
+export function shouldRedirect(state, integrationId) {
+  return fromSettings.shouldRedirect(state && state.settings, integrationId);
+}
+
 export function checkUpgradeRequested(state, licenseId) {
   return fromSettings.checkUpgradeRequested(state && state.settings, licenseId);
 }

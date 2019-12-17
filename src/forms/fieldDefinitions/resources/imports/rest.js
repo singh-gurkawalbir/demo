@@ -161,6 +161,7 @@ export default {
       Array.isArray(((r || {}).rest || {}).body) ? r.rest.body[0] : undefined,
     label: 'Build HTTP Request Body',
     connectionId: r => r && r._connectionId,
+    contentType: 'json',
     refreshOptionsOnChangesTo: ['rest.lookups'],
     visibleWhen: [
       {
@@ -225,7 +226,9 @@ export default {
       r && r.rest && r.rest.responseIdPath && r.rest.responseIdPath[0],
   },
   sampleData: {
-    type: 'textarea',
+    type: 'editor',
+    mode: 'json',
+    saveMode: 'json',
     label: 'If so,please paste it here',
     visibleWhenAll: [
       {

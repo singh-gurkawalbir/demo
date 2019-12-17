@@ -42,6 +42,11 @@ export default {
       delete retValues['/delta/lagOffset'];
     }
 
+    if (!retValues['/rest/successValues'].length) {
+      retValues['/rest/successValues'] = undefined;
+      retValues['/rest/successPath'] = undefined;
+    }
+
     if (retValues['/outputMode'] === 'blob') {
       retValues['/type'] = 'blob';
       retValues['/rest/method'] = retValues['/rest/blobMethod'];
@@ -53,7 +58,6 @@ export default {
       retValues['/rest/nextPageRelativeURI'] = undefined;
       retValues['/rest/nextPagePath'] = undefined;
       retValues['/rest/linkHeaderRelation'] = undefined;
-      retValues['/rest/nextPageRelativeURI'] = undefined;
       retValues['/rest/pagingPostBody'] = undefined;
       retValues['/rest/skipArgument'] = undefined;
     } else if (retValues['/rest/pagingMethod'] === 'nextpageurl') {
@@ -65,14 +69,12 @@ export default {
     } else if (retValues['/rest/pagingMethod'] === 'relativeuri') {
       retValues['/rest/nextPagePath'] = undefined;
       retValues['/rest/linkHeaderRelation'] = undefined;
-      retValues['/rest/nextPageRelativeURI'] = undefined;
       retValues['/rest/pagingPostBody'] = undefined;
       retValues['/rest/pageArgument'] = undefined;
       retValues['/rest/skipArgument'] = undefined;
     } else if (retValues['/rest/pagingMethod'] === 'linkheader') {
       retValues['/rest/nextPageRelativeURI'] = undefined;
       retValues['/rest/nextPagePath'] = undefined;
-      retValues['/rest/nextPageRelativeURI'] = undefined;
       retValues['/rest/pagingPostBody'] = undefined;
       retValues['/rest/pageArgument'] = undefined;
       retValues['/rest/skipArgument'] = undefined;
@@ -80,17 +82,14 @@ export default {
       retValues['/rest/nextPageRelativeURI'] = undefined;
       retValues['/rest/nextPagePath'] = undefined;
       retValues['/rest/linkHeaderRelation'] = undefined;
-      retValues['/rest/nextPageRelativeURI'] = undefined;
       retValues['/rest/pagingPostBody'] = undefined;
       retValues['/rest/pageArgument'] = undefined;
     } else if (retValues['/rest/pagingMethod'] === 'token') {
       retValues['/rest/nextPageRelativeURI'] = undefined;
       retValues['/rest/linkHeaderRelation'] = undefined;
-      retValues['/rest/nextPageRelativeURI'] = undefined;
       retValues['/rest/pagingPostBody'] = undefined;
       retValues['/rest/skipArgument'] = undefined;
     } else if (retValues['/rest/pagingMethod'] === 'postbody') {
-      retValues['/rest/nextPageRelativeURI'] = undefined;
       retValues['/rest/nextPagePath'] = undefined;
       retValues['/rest/linkHeaderRelation'] = undefined;
       retValues['/rest/nextPageRelativeURI'] = undefined;

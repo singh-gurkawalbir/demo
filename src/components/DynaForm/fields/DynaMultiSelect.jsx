@@ -5,6 +5,8 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import Chip from '@material-ui/core/Chip';
+import ListItemText from '@material-ui/core/ListItemText';
+import Checkbox from '@material-ui/core/Checkbox';
 import ArrowDownIcon from '../../icons/ArrowDownIcon';
 import ErroredMessageComponent from './ErroredMessageComponent';
 
@@ -54,6 +56,12 @@ const useStyles = makeStyles(theme => ({
   chip: {
     margin: theme.spacing(0.25),
   },
+  menuItems: {
+    paddingRight: 0,
+    '&:before': {
+      display: 'none',
+    },
+  },
 }));
 
 export default function DynaMultiSelect(props) {
@@ -70,28 +78,7 @@ export default function DynaMultiSelect(props) {
     required,
   } = props;
   const classes = useStyles();
-  const items = options.reduce(
-    (itemsSoFar, option) =>
-      itemsSoFar.concat(
-        option.items.map(item => {
-          if (typeof item === 'string') {
-            return (
-              <MenuItem key={item} value={item}>
-                {item}
-              </MenuItem>
-            );
-          }
-
-          return (
-            <MenuItem key={item.value} value={item.value}>
-              {item.label || item.value}
-            </MenuItem>
-          );
-        })
-      ),
-    []
-  );
-  let processedValue = value;
+  let processedValue = value || [];
 
   if (valueDelimiter && typeof value === 'string') {
     processedValue = value ? value.split(valueDelimiter) : [];
@@ -101,6 +88,38 @@ export default function DynaMultiSelect(props) {
     processedValue = [processedValue];
   }
 
+  const items = options.reduce(
+    (itemsSoFar, option) =>
+      itemsSoFar.concat(
+        option.items.map(item => {
+          if (typeof item === 'string') {
+            return (
+              <MenuItem key={item} value={item} className={classes.menuItems}>
+                <Checkbox
+                  checked={processedValue.indexOf(item) !== -1}
+                  color="primary"
+                />
+                <ListItemText primary={item} />
+              </MenuItem>
+            );
+          }
+
+          return (
+            <MenuItem
+              key={item.value}
+              value={item.value}
+              className={classes.menuItems}>
+              <Checkbox
+                checked={processedValue.indexOf(item.value) !== -1}
+                color="primary"
+              />
+              <ListItemText primary={item.label || item.value} />
+            </MenuItem>
+          );
+        })
+      ),
+    []
+  );
   const createChip = value => {
     const fieldOption = options[0].items.find(option => option.value === value);
 

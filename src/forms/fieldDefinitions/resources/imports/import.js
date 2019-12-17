@@ -35,19 +35,20 @@ export default {
     label: 'Ignore Missing',
   },
   idLockTemplate: {
-    type: 'text',
+    type: 'relativeuri',
     label: 'Concurrency Id Lock Template',
   },
   dataURITemplate: {
-    type: 'text',
-    label: 'Data URI Template',
+    type: 'relativeuri',
+    label: 'Override Data URI Template',
     placeholder: 'Optional',
+    connectionId: r => r && r._connectionId,
   },
   oneToMany: {
     type: 'radiogroup',
     label:
       'Does each individual record being processed translate to multiple records in the import application?',
-    defaultValue: r => (r && r.pathToMany ? 'true' : 'false'),
+    defaultValue: r => (r && r.oneToMany ? 'true' : 'false'),
     options: [
       {
         items: [
@@ -75,7 +76,6 @@ export default {
       },
     ],
   },
-
   blobKeyPath: {
     type: 'text',
     label: 'Blob Key Path',
@@ -154,7 +154,7 @@ export default {
           { label: 'Lightspeed', value: 'lightspeed' },
           { label: 'Linkedin', value: 'linkedin' },
           { label: 'Liquidplanner', value: 'liquidplanner' },
-          { label: 'Magento', value: 'magento' },
+          { label: 'Magento 2', value: 'magento' },
           { label: 'Mailchimp', value: 'mailchimp' },
           { label: 'Mediaocean', value: 'mediaocean' },
           { label: 'Namely', value: 'namely' },

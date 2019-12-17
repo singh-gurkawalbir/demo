@@ -35,7 +35,7 @@ export default {
     },
     inputMode: {
       id: 'inputMode',
-      type: 'radiogroup',
+      type: 'mode',
       label: 'Input Mode',
       options: [
         {
@@ -119,19 +119,20 @@ export default {
     },
     'salesforce.idLookup.whereClause': {
       fieldId: 'salesforce.idLookup.whereClause',
+      refreshOptionsOnChangesTo: ['salesforce.sObjectType'],
     },
     ignoreExisting: {
       fieldId: 'ignoreExisting',
-      visibleWhen: [{ field: 'salesforce.operation', is: ['insert'] }],
+      visibleWhen: [
+        { field: 'salesforce.operation', is: ['insert'] },
+        { field: 'salesforce.compositeOperation', is: ['insert'] },
+      ],
     },
     ignoreMissing: {
       fieldId: 'ignoreMissing',
-      visibleWhenAll: [
+      visibleWhen: [
         { field: 'salesforce.operation', is: ['update'] },
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
+        { field: 'salesforce.compositeOperation', is: ['update'] },
       ],
     },
     'salesforce.upsertpicklistvalues.fullName': {
@@ -139,6 +140,7 @@ export default {
     },
     'salesforce.upsert.externalIdField': {
       fieldId: 'salesforce.upsert.externalIdField',
+      refreshOptionsOnChangesTo: ['salesforce.sObjectType'],
     },
     dataMappings: { formId: 'dataMappings' },
     deleteAfterImport: {
@@ -203,12 +205,11 @@ export default {
       'salesforce.contentVersion.tagCsv',
       'salesforce.contentVersion.contentLocation',
       'salesforce.compositeOperation',
-      'salesforce.idLookup.extract',
-      'salesforce.idLookup.whereClause',
       'ignoreExisting',
       'ignoreMissing',
-      'salesforce.upsertpicklistvalues.fullName',
+      'salesforce.idLookup.whereClause',
       'salesforce.upsert.externalIdField',
+      'salesforce.idLookup.extract',
       'dataMappings',
     ],
     type: 'collapse',
@@ -219,5 +220,36 @@ export default {
         fields: ['advancedSettings', 'deleteAfterImport'],
       },
     ],
+  },
+  optionsHandler: (fieldId, fields) => {
+    if (fieldId === 'salesforce.idLookup.whereClause') {
+      const sObjectTypeField = fields.find(
+        field => field.id === 'salesforce.sObjectType'
+      );
+
+      return {
+        disableFetch: !(sObjectTypeField && sObjectTypeField.value),
+        commMetaPath: sObjectTypeField
+          ? `salesforce/metadata/connections/${sObjectTypeField.connectionId}/sObjectTypes/${sObjectTypeField.value}`
+          : '',
+        resetValue: [],
+      };
+    }
+
+    if (fieldId === 'salesforce.upsert.externalIdField') {
+      const sObjectTypeField = fields.find(
+        field => field.id === 'salesforce.sObjectType'
+      );
+
+      return {
+        disableFetch: !(sObjectTypeField && sObjectTypeField.value),
+        commMetaPath: sObjectTypeField
+          ? `salesforce/metadata/connections/${sObjectTypeField.connectionId}/sObjectTypes/${sObjectTypeField.value}`
+          : '',
+        resetValue: '',
+      };
+    }
+
+    return null;
   },
 };

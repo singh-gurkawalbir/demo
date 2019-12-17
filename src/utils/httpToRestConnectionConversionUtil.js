@@ -49,8 +49,8 @@ function generateConnectionRestSubDocFromHttpSubDoc(httpDoc, assistantName) {
     'ping.body': 'pingBody',
     'ping.successPath': 'pingSuccessPath',
     'ping.successValues': 'pingSuccessValues',
-    'ping.failurePath': 'pingFailurePath',
-    'ping.failureValues': 'pingFailureValues',
+    'ping.failPath': 'pingFailurePath',
+    'ping.failValues': 'pingFailureValues',
     'auth.type': 'authType',
     'auth.basic.username': 'basicAuth.username',
     'auth.basic.password_crypt': 'basicAuth.password_crypt',
@@ -87,7 +87,7 @@ function generateConnectionRestSubDocFromHttpSubDoc(httpDoc, assistantName) {
     'auth.cookie.method': 'cookieAuth.method',
     'auth.cookie.successStatusCode': 'cookieAuth.successStatusCode',
   };
-  const restDoc = {};
+  let restDoc = {};
 
   _.forEach(connPropMap, (value, key) => {
     const restPath = value;
@@ -101,6 +101,8 @@ function generateConnectionRestSubDocFromHttpSubDoc(httpDoc, assistantName) {
   // need to handle media-types
 
   handleAssistantsHTTPtoREST(httpDoc, restDoc, assistantName);
+  restDoc = _.cloneDeep(restDoc);
+  replaceHTTPHandlebarExpression(restDoc);
 
   return restDoc;
 }
@@ -147,6 +149,76 @@ function extractAndSet(source, sPath, target, tPath, ...prcs) {
     if (!_.isUndefined(sVal)) {
       _.set(target, tPath, sVal);
     }
+  }
+}
+
+function replaceHTTPPlaceholdersinHandlebarstoREST(string) {
+  if (!string) {
+    return;
+  }
+
+  // search for indices at which this regex found and replace them accordingly
+  const regexStr = /connection\.http\.+?/; // this should be changed based on the doc type. Exports and Imports can have references to connections and Exports/Imports
+
+  /* eslint-disable no-cond-assign */
+  while (regexStr.exec(string) !== null) {
+    string = replaceHTTPrefWithCorrespondingREST(string);
+  }
+
+  return string;
+}
+
+function replaceHTTPHandlebarExpression(doc) {
+  // iterate through array and process each key, value
+  /* eslint-disable no-restricted-syntax */
+  for (const key in doc) {
+    if (typeof doc[key] === 'object') {
+      if (_.isArray(doc[key])) {
+        // iterate through array and process each value
+        for (const idx in doc[key]) {
+          if (typeof doc[key][idx] === 'object') {
+            replaceHTTPHandlebarExpression(doc[key][idx]);
+          } else {
+            doc[key][idx] = replaceHTTPPlaceholdersinHandlebarstoREST(
+              doc[key][idx]
+            );
+          }
+        }
+      } else {
+        replaceHTTPHandlebarExpression(doc[key]);
+      }
+    } else {
+      doc[key] = replaceHTTPPlaceholdersinHandlebarstoREST(doc[key]);
+    }
+  }
+}
+
+function replaceHTTPrefWithCorrespondingREST(str) {
+  if (str.indexOf('connection.http.encrypted') !== -1) {
+    return str.replace(
+      'connection.http.encrypted',
+      'connection.rest.encrypted'
+    );
+  } else if (str.indexOf('connection.http.unencrypted') !== -1) {
+    return str.replace(
+      'connection.http.unencrypted',
+      'connection.rest.unencrypted'
+    );
+  } else if (str.indexOf('connection.http.auth.basic') !== -1) {
+    return str.replace(
+      'connection.http.auth.basic',
+      'connection.rest.basicAuth'
+    );
+  } else if (str.indexOf('connection.http.auth.token.refreshToken') !== -1) {
+    return str.replace(
+      'connection.http.auth.token.refreshToken',
+      'connection.rest.refreshToken'
+    );
+  } else if (str.indexOf('connection.http.auth.token.token') !== -1) {
+    return str.replace(
+      'connection.http.auth.token.token',
+      'connection.rest.bearerToken'
+    );
   }
 }
 

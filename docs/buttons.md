@@ -65,12 +65,12 @@ Button Groups
 ```js
 const SpacedContainer = require('../src/styleguide/SpacedContainer').default;
 const Button = require('@material-ui/core/Button').default;
-const ButtonsGroup = require('../src/components/ButtonGroup').default;
+const ButtonGroup = require('../src/components/ButtonGroup').default;
 
 <SpacedContainer>
-    <ButtonsGroup>
+    <ButtonGroup>
       <Button variant="contained" color="primary" >Save</Button>
       <Button variant="text" color="primary">Cancel</Button>
-    </ButtonsGroup>
+    </ButtonGroup>
 </SpacedContainer>
 ```

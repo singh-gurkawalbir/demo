@@ -117,22 +117,18 @@ export const isExpansionPanelErrored = (meta, fieldStates) => {
   );
   const { layout, fieldMap } = meta;
 
-  return invalidFields.some(field => {
-    const { id } = field;
-
-    return !!getFieldByIdFromLayout(layout, fieldMap, id);
-  });
+  return invalidFields.some(
+    ({ id }) => !!getFieldByIdFromLayout(layout, fieldMap, id)
+  );
 };
 
 export const isAnyExpansionPanelFieldVisible = (meta, fieldStates) => {
   const visibleFields = fieldStates.filter(field => field.visible);
   const { layout, fieldMap } = meta;
 
-  return visibleFields.some(field => {
-    const { id } = field;
-
-    return !!getFieldByIdFromLayout(layout, fieldMap, id);
-  });
+  return visibleFields.some(
+    ({ id }) => !!getFieldByIdFromLayout(layout, fieldMap, id)
+  );
 };
 
 export const getFieldByName = ({ fieldMeta, name }) => {
@@ -284,8 +280,22 @@ const getFieldConfig = (field = {}, resource) => {
     newField.type = 'radiogroup';
   } else if (newField.type === 'file') {
     newField.type = 'uploadfile';
-  } else if (newField.type === 'select' && newField.supportsRefresh)
+  } else if (newField.type === 'select' && newField.supportsRefresh) {
     newField.type = 'integrationapprefreshableselect';
+  } else if (newField.type === 'multiselect' && newField.supportsRefresh) {
+    newField.type = 'integrationapprefreshableselect';
+    newField.multiselect = true;
+  } else if (newField.type === 'referencedFieldsDialog') {
+    newField.type = 'salesforcereferencedfieldsia';
+    newField.resource = resource;
+  } else if (newField.type === 'relatedListsDialog') {
+    newField.type = 'salesforcerelatedlistia';
+    newField.resource = resource;
+  }
+
+  if (newField.disabled) {
+    newField.defaultDisabled = true;
+  }
 
   return newField;
 };
@@ -354,16 +364,21 @@ export const translateDependencyProps = fieldMap => {
     rules.forEach(rule => {
       const { ref, visibleRule, requiredRule } = rule;
 
-      if (visibleRule) {
-        fieldMapCopy[ref].visibleWhenAll = pushRuleToMeta(
-          fieldMapCopy[ref].visibleWhenAll,
-          visibleRule
-        );
-      } else if (requiredRule) {
-        fieldMapCopy[ref].validWhenAll = pushRuleToMeta(
-          fieldMapCopy[ref].validWhenAll,
-          requiredRule
-        );
+      // im doing this check to prevent pushing rules to non existent refs
+      // this can happen when fields are hidden and removed from the meta
+      // So the rules generated from the dependencies are not needed then
+      if (fieldMapCopy[ref]) {
+        if (visibleRule) {
+          fieldMapCopy[ref].visibleWhenAll = pushRuleToMeta(
+            fieldMapCopy[ref].visibleWhenAll,
+            visibleRule
+          );
+        } else if (requiredRule) {
+          fieldMapCopy[ref].validWhenAll = pushRuleToMeta(
+            fieldMapCopy[ref].validWhenAll,
+            requiredRule
+          );
+        }
       }
     });
   });
@@ -372,31 +387,33 @@ export const translateDependencyProps = fieldMap => {
 };
 
 const translateFieldProps = (fields = [], _integrationId, resource) =>
-  fields.map(field => {
-    // TODO: generate correct name path
-    const { name, options, default: defaultValue, tooltip } = field;
-    // name is the unique identifier....verify with Ashok
+  fields
+    .map(field => {
+      // TODO: generate correct name path
+      const { name, options, default: defaultValue, tooltip } = field;
+      // name is the unique identifier....verify with Ashok
 
-    return {
-      ...getFieldConfig(field, resource),
-      defaultValue,
-      name: `/${name}`,
-      _integrationId,
-      id: name,
-      helpText: tooltip,
-      options: [
-        {
-          items:
-            (options &&
-              options.map(option => ({
-                label: option && option[1],
-                value: option && option[0],
-              }))) ||
-            [],
-        },
-      ],
-    };
-  });
+      return {
+        ...getFieldConfig(field, resource),
+        defaultValue,
+        name: `/${name}`,
+        _integrationId,
+        id: name,
+        helpText: tooltip,
+        options: [
+          {
+            items:
+              (options &&
+                options.map(option => ({
+                  label: option && option[1],
+                  value: option && option[0],
+                }))) ||
+              [],
+          },
+        ],
+      };
+    })
+    .filter(f => !f.hidden);
 
 export const integrationSettingsToDynaFormMetadata = (
   meta,
@@ -439,7 +456,7 @@ export const integrationSettingsToDynaFormMetadata = (
       finalData.layout = {};
     }
 
-    finalData.layout.type = 'tab';
+    finalData.layout.type = 'tabIA';
     finalData.layout.containers = sections.map(section => ({
       collapsed: section.collapsed || true,
       label: section.title,
@@ -460,7 +477,8 @@ export const integrationSettingsToDynaFormMetadata = (
     };
   }
 
-  finalData.actions = [{ id: 'saveintegrationsettings' }];
+  if (!sections) finalData.actions = [{ id: 'saveintegrationsettings' }];
+  else finalData.actions = [];
 
   return finalData;
 };

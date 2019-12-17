@@ -4,6 +4,7 @@ import mappingUtil from '.';
 import NetsuiteMapping from './application/netsuite';
 import getJSONPaths from '../jsonPaths';
 import { isJsonString } from '../../utils/string';
+import connectors from '../../constants/applications';
 
 const LookupResponseMappingExtracts = [
   'data',
@@ -82,6 +83,8 @@ export default {
   getDefaultExpression: value => {
     if (value.extract && value.extract.indexOf('{{') !== -1) {
       return value.extract;
+    } else if (value.extract) {
+      return `{{${value.extract}}}`;
     }
   },
   getMappingPath: application => {
@@ -102,7 +105,15 @@ export default {
       default:
     }
   },
-  getGenerateLabelForMapping: application => {
+  getGenerateLabelForMapping: (application, resource = {}) => {
+    if (resource.assistant) {
+      const assistant = connectors.find(
+        connector => connector.id === resource.assistant
+      );
+
+      if (assistant) return `${assistant.name} Field`;
+    }
+
     switch (application) {
       case adaptorTypeMap.RESTImport:
         return 'REST API Field';
@@ -327,6 +338,8 @@ export default {
           name: d.label,
           type: d.type,
           options: d.picklistValues,
+          childSObject: d.childSObject,
+          relationshipName: d.relationshipName,
         }));
       } else if (application === adaptorTypeMap.NetSuiteDistributedImport) {
         formattedGenerateFields = sampleData.map(d => ({
@@ -404,32 +417,35 @@ export default {
   ) => {
     const connectorMappingMetadata = mappingMetadata[connectorExternalId];
 
-    connectorMappingMetadata.forEach(meta => {
-      let mappingContainer;
+    connectorMappingMetadata &&
+      connectorMappingMetadata.forEach(meta => {
+        let mappingContainer;
 
-      if (meta.generateList) {
-        mappingContainer =
-          mappings.lists &&
-          mappings.lists.find(list => list.generate === meta.generateList);
-      } else {
-        mappingContainer = mappings;
-      }
+        if (meta.generateList) {
+          mappingContainer =
+            mappings.lists &&
+            mappings.lists.find(list => list.generate === meta.generateList);
+        } else {
+          mappingContainer = mappings;
+        }
 
-      meta.requiredGenerateFields.forEach(fieldId => {
-        const field = mappingContainer.fields.find(
-          field => field.generate === fieldId
-        );
+        meta.requiredGenerateFields.forEach(fieldId => {
+          const field = mappingContainer.fields.find(
+            field => field.generate === fieldId
+          );
 
-        if (field) field.isRequired = true;
+          if (field) field.isRequired = true;
+        });
+        meta.nonEditableGenerateFields &&
+          Array.isArray(meta.nonEditableGenerateFields) &&
+          meta.nonEditableGenerateFields.forEach(fieldId => {
+            const field = mappingContainer.fields.find(
+              field => field.generate === fieldId
+            );
+
+            if (field) field.isNotEditable = true;
+          });
       });
-      meta.nonEditableGenerateFields.forEach(fieldId => {
-        const field = mappingContainer.fields.find(
-          field => field.generate === fieldId
-        );
-
-        if (field) field.isNotEditable = true;
-      });
-    });
 
     return mappings;
   },

@@ -1,7 +1,15 @@
 /* global describe, test, expect, fail,beforeEach,afterEach */
 // see: https://medium.com/@alanraison/testing-redux-sagas-e6eaa08d0ee7
 // for good article on testing sagas..
-import { call, take, race, put, delay } from 'redux-saga/effects';
+import {
+  call,
+  take,
+  race,
+  put,
+  delay,
+  cancelled,
+  select,
+} from 'redux-saga/effects';
 import { sendRequest } from 'redux-saga-requests';
 import actionsTypes from '../actions/types';
 import actions from '../actions';
@@ -9,6 +17,8 @@ import { apiCallWithRetry } from './';
 import { APIException } from './api';
 import * as apiConsts from './api/apiPaths';
 import { netsuiteUserRoles } from './resourceForm/connections';
+import * as selectors from '../reducers';
+import { COMM_STATES } from '../reducers/comms/networkComms';
 
 // todo : should be moved to a seperate test file
 describe('netsuiteUserRoles', () => {
@@ -197,7 +207,9 @@ describe(`apiCallWithRetry saga`, () => {
       };
 
       expect(saga.next().value).toEqual(raceBetweenApiCallAndLogoutEffect);
-      expect(saga.next(resp).value).toEqual('some response');
+      expect(saga.next(resp).value).toEqual(cancelled());
+
+      expect(saga.next().value).toEqual('some response');
       expect(saga.next().done).toBe(true);
     });
 
@@ -249,7 +261,9 @@ describe(`apiCallWithRetry saga`, () => {
 
       const resp = { apiResp: undefined, logout: { something: 'dsd' } };
 
-      expect(saga.next(resp).value).toEqual(null);
+      expect(saga.next(resp).value).toEqual(cancelled());
+
+      expect(saga.next().value).toEqual(null);
 
       expect(saga.next().done).toBe(true);
     });
@@ -275,7 +289,9 @@ describe(`apiCallWithRetry saga`, () => {
       // if an effect does not succeeds in a race...we get an undefined
       const resp = { apiResp: undefined, logout: { something: 'dsd' } };
 
-      expect(saga.next(resp).value).toEqual(null);
+      expect(saga.next(resp).value).toEqual(cancelled());
+
+      expect(saga.next().value).toEqual(null);
 
       expect(saga.next().done).toBe(true);
     });
@@ -296,7 +312,7 @@ describe(`apiCallWithRetry saga`, () => {
       });
 
       // to resolve the race between two effects
-      expect(saga.next().value).toEqual(raceBetweenApiCallAndLogoutEffect);
+      expect(saga.next(false).value).toEqual(raceBetweenApiCallAndLogoutEffect);
       // if an effect does not succeeds in a race...we get an undefined
 
       // we expect an undefined data in the response
@@ -305,9 +321,93 @@ describe(`apiCallWithRetry saga`, () => {
         logout: undefined,
       };
 
-      expect(saga.next(resp).value).toEqual(undefined);
+      expect(saga.next(resp).value).toEqual(cancelled());
+
+      expect(saga.next().value).toEqual(undefined);
 
       expect(saga.next().done).toBe(true);
+    });
+
+    describe('apiCallWithRetry saga gets canceled by a parent saga ', () => {
+      test('should successfully cleanup and complete any incomplete requests when the saga cancels', () => {
+        const args = {
+          path,
+          opts,
+          method: 'GET',
+          hidden: undefined,
+          message: undefined,
+        };
+        const saga = apiCallWithRetry(args);
+        const apiRequestAction = {
+          type: 'API_WATCHER',
+          request: { url: path, args },
+        };
+        const raceBetweenApiCallAndLogoutEffect = race({
+          apiResp: call(sendRequest, apiRequestAction, {
+            dispatchRequestAction: true,
+          }),
+          logout: take(actionsTypes.USER_LOGOUT),
+          timeoutEffect: delay(2 * 60 * 1000),
+        });
+        // if an effect does not succeeds in a race...we get an undefined
+        const resp = {
+          apiResp: { response: { data: 'some response' } },
+          logout: undefined,
+        };
+
+        expect(saga.next().value).toEqual(raceBetweenApiCallAndLogoutEffect);
+        expect(saga.next(resp).value).toEqual(cancelled());
+        const resourceStatusEffect = select(
+          selectors.commStatusPerPath,
+          path,
+          'GET'
+        );
+
+        expect(saga.next(true).value).toEqual(resourceStatusEffect);
+        expect(saga.next(COMM_STATES.LOADING).value).toEqual(
+          put(actions.api.complete(path, 'GET', 'Request Aborted'))
+        );
+        expect(saga.next().done).toBe(true);
+      });
+
+      test('should successfully cleanup and not resend the (abort)completed action again', () => {
+        const args = {
+          path,
+          opts,
+          method: 'GET',
+          hidden: undefined,
+          message: undefined,
+        };
+        const saga = apiCallWithRetry(args);
+        const apiRequestAction = {
+          type: 'API_WATCHER',
+          request: { url: path, args },
+        };
+        const raceBetweenApiCallAndLogoutEffect = race({
+          apiResp: call(sendRequest, apiRequestAction, {
+            dispatchRequestAction: true,
+          }),
+          logout: take(actionsTypes.USER_LOGOUT),
+          timeoutEffect: delay(2 * 60 * 1000),
+        });
+        // if an effect does not succeeds in a race...we get an undefined
+        const resp = {
+          apiResp: { response: { data: 'some response' } },
+          logout: undefined,
+        };
+
+        expect(saga.next().value).toEqual(raceBetweenApiCallAndLogoutEffect);
+        expect(saga.next(resp).value).toEqual(cancelled());
+        const resourceStatusEffect = select(
+          selectors.commStatusPerPath,
+          path,
+          'GET'
+        );
+
+        expect(saga.next(true).value).toEqual(resourceStatusEffect);
+        // child saga has completed not necessary to resend the api.complete action
+        expect(saga.next(COMM_STATES.SUCCESS).done).toBe(true);
+      });
     });
   });
   describe('signout request', () => {
@@ -330,7 +430,9 @@ describe(`apiCallWithRetry saga`, () => {
       const resp = { response: { data: 'some response' } };
 
       expect(saga.next().value).toEqual(sendRequestEffect);
-      expect(saga.next(resp).value).toEqual('some response');
+      expect(saga.next(resp).value).toEqual(cancelled());
+
+      expect(saga.next().value).toEqual('some response');
       expect(saga.next().done).toBe(true);
     });
   });

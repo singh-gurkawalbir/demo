@@ -42,7 +42,7 @@ export default {
         {
           items: [
             { label: 'Token', value: 'token' },
-            { label: 'OAuth', value: 'oauth' },
+            { label: 'OAuth 2.0', value: 'oauth' },
           ],
         },
       ],

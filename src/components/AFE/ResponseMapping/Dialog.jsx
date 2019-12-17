@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import produce from 'immer';
 import Button from '@material-ui/core/Button';
 import deepClone from 'lodash/cloneDeep';
+import { isEmpty } from 'lodash';
 import DynaTypeableSelect from '../../DynaForm/fields/DynaTypeableSelect';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
@@ -13,45 +14,43 @@ import mappingUtil from '../../../utils/mapping';
 import getJSONPaths from '../../../utils/jsonPaths';
 import * as resourceUtil from '../../../utils/resource';
 import ModalDialog from '../../ModalDialog';
-import ButtonsGroup from '../../ButtonGroup';
+import ButtonGroup from '../../ButtonGroup';
 import ActionButton from '../../ActionButton';
 
+// TODO Aditya: Convert Response Mapping and Import mapping to re-use same component
+// TODO: Azhar once Mapping dialog design is ready make a component
 const useStyles = makeStyles(theme => ({
-  modalContent: {
-    height: '100vh',
-    width: '70vw',
-  },
   container: {
     marginTop: theme.spacing(1),
     overflowY: 'off',
   },
   header: {
-    display: 'flex',
+    display: 'grid',
     width: '100%',
-  },
-  root: {
-    flexGrow: 1,
+    gridTemplateColumns: '45% 45% 50px',
+    gridColumnGap: '1%',
+    marginBottom: theme.spacing(0.5),
   },
   rowContainer: {
-    display: 'flex',
+    display: 'block',
     padding: '0px',
   },
   child: {
-    flexBasis: '40%',
+    '& + div': {
+      width: '100%',
+    },
   },
   childHeader: {
-    flexBasis: '46%',
+    '& > div': {
+      width: '100%',
+    },
   },
   innerRow: {
-    display: 'flex',
-    justifyContent: 'space-between',
+    display: 'grid',
+    width: '100%',
+    gridTemplateColumns: '45% 45% 50px 50px',
     marginBottom: theme.spacing(1),
-    '& > div': {
-      marginRight: theme.spacing(1),
-      '&:last-child': {
-        marginRight: 0,
-      },
-    },
+    gridColumnGap: '1%',
   },
 }));
 
@@ -121,7 +120,7 @@ export default function ResponseMappingDialog(props) {
       flowId,
       resourceId,
       stage: 'responseMappingExtract',
-      resourceType: 'imports',
+      resourceType,
     })
   );
 
@@ -224,7 +223,7 @@ export default function ResponseMappingDialog(props) {
 
   let formattedExtractFields = defaultExtractFields;
 
-  if (extractFields) {
+  if (!isEmpty(extractFields)) {
     const extractPaths = getJSONPaths(extractFields);
 
     formattedExtractFields =
@@ -234,20 +233,20 @@ export default function ResponseMappingDialog(props) {
   }
 
   return (
-    <ModalDialog handleClose={onClose} show width="md">
+    <ModalDialog onClose={onClose} show minWidth="md" maxWidth="md">
       <div>Define Response Mapping</div>
       <div className={classes.container}>
         <div className={classes.root}>
           <div className={classes.header}>
             <Typography
-              varaint="h4"
+              variant="subtitle2"
               className={classes.childHeader}
               key="heading_extract">
               {resourceType === 'imports' ? 'Import' : 'Lookup'} Response Field
             </Typography>
 
             <Typography
-              varaint="h4"
+              variant="subtitle2"
               className={classes.childHeader}
               key="heading_generate">
               Source Record Field (New/Existing Field)
@@ -257,8 +256,9 @@ export default function ResponseMappingDialog(props) {
             {tableData.map(r => (
               <div className={classes.rowContainer} key={r.index}>
                 <div className={classes.innerRow}>
-                  <div className={classes.child}>
+                  <div className={classes.childHeader}>
                     <DynaTypeableSelect
+                      id={`extract-${r.index}`}
                       disabled={disabled}
                       labelName="name"
                       valueName="id"
@@ -273,8 +273,9 @@ export default function ResponseMappingDialog(props) {
                       }}
                     />
                   </div>
-                  <div className={classes.child}>
+                  <div className={classes.childHeader}>
                     <DynaTypeableSelect
+                      id={`generate-${r.index}`}
                       disabled={disabled}
                       value={r[valueName]}
                       hideOptions
@@ -290,7 +291,7 @@ export default function ResponseMappingDialog(props) {
                   <div>
                     <ActionButton
                       disabled={disabled}
-                      data-test="deleteMapping"
+                      data-test={`delete-${r.index}`}
                       aria-label="delete"
                       onClick={() => {
                         handleDelete(r.index);
@@ -305,7 +306,7 @@ export default function ResponseMappingDialog(props) {
         </div>
       </div>
       <div>
-        <ButtonsGroup>
+        <ButtonGroup>
           <Button
             disabled={disabled}
             data-test="saveMapping"
@@ -322,7 +323,7 @@ export default function ResponseMappingDialog(props) {
             color="primary">
             Save and close
           </Button>
-        </ButtonsGroup>
+        </ButtonGroup>
       </div>
     </ModalDialog>
   );

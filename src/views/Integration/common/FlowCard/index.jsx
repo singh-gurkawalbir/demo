@@ -1,5 +1,6 @@
 import clsx from 'clsx';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
+import cronstrue from 'cronstrue';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useHistory } from 'react-router-dom';
 import TimeAgo from 'react-timeago';
@@ -13,6 +14,7 @@ import RunIcon from '../../../../components/icons/RunIcon';
 import SettingsIcon from '../../../../components/icons/SettingsIcon';
 import OnOffSwitch from '../../../../components/SwitchToggle';
 import InfoIconButton from '../InfoIconButton';
+import FlowStartDateDialog from '../../../../components/DeltaFlowStartDate/Dialog';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -60,6 +62,7 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
   const dispatch = useDispatch();
   const flowDetails =
     useSelector(state => selectors.flowDetails(state, flowId)) || {};
+  const [showDilaog, setShowDilaog] = useState(false);
   const patchFlow = useCallback(
     (path, value) => {
       const patchSet = [{ op: 'replace', path, value }];
@@ -69,7 +72,29 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
     },
     [dispatch, flowId]
   );
-  const flowName = flowDetails.name || flowDetails._Id;
+  const flowName = flowDetails.name || flowDetails._id;
+  const handleRunDeltaFlow = useCallback(
+    customStartDate => {
+      dispatch(actions.flow.run({ flowId, customStartDate }));
+
+      if (flowDetails._connectorId) {
+        history.push(
+          `/pg/integrationApp/${flowDetails._integrationId}/dashboard`
+        );
+      } else {
+        history.push(
+          `/pg/integrations/${flowDetails._integrationId || 'none'}/dashboard`
+        );
+      }
+    },
+    [
+      dispatch,
+      flowDetails._connectorId,
+      flowDetails._integrationId,
+      flowId,
+      history,
+    ]
+  );
   const handleActionClick = useCallback(
     action => () => {
       switch (action) {
@@ -86,7 +111,8 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
                     {
                       '/flowId': flowDetails._id,
                       '/disabled': !flowDetails.disabled,
-                    }
+                    },
+                    { action: 'flowEnableDisable' }
                   )
                 );
               } else {
@@ -98,17 +124,13 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
           break;
 
         case 'run':
-          dispatch(actions.flow.run({ flowId }));
-
-          if (flowDetails._connectorId) {
-            history.push(
-              `/pg/integrationApp/${flowDetails._integrationId}/dashboard`
-            );
+          if (
+            flowDetails.isDeltaFlow &&
+            (!flowDetails._connectorId || !!flowDetails.showStartDateDialog)
+          ) {
+            setShowDilaog('true');
           } else {
-            history.push(
-              `/pg/integrations/${flowDetails._integrationId ||
-                'none'}/dashboard`
-            );
+            handleRunDeltaFlow();
           }
 
           break;
@@ -122,9 +144,10 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
       flowDetails._id,
       flowDetails._integrationId,
       flowDetails.disabled,
-      flowId,
+      flowDetails.isDeltaFlow,
+      flowDetails.showStartDateDialog,
       flowName,
-      history,
+      handleRunDeltaFlow,
       patchFlow,
       storeId,
     ]
@@ -138,7 +161,12 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
   // TODO: This function needs to be enhanced to handle all
   // the various cases.. realtime, scheduled, cron, not scheduled, etc...
   function getRunLabel() {
-    if (flowDetails.isReatime) return `Realtime`;
+    if (flowDetails.isRealtime) return `Realtime`;
+
+    if (flowDetails.schedule)
+      return `Runs ${cronstrue.toString(
+        flowDetails.schedule.replace(/^\?/g, '0')
+      )}`;
 
     if (flowDetails.isSimpleExport) return 'Never runs';
 
@@ -149,10 +177,20 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
   const flowBuilderTo = isIntegrationApp
     ? `/pg/integrationApp/${flowDetails._integrationId}/flowBuilder/${flowId}`
     : `flowBuilder/${flowId}`;
+  const closeDeltaDialog = () => {
+    setShowDilaog(false);
+  };
 
   return (
     <div className={classes.root}>
       <div className={clsx(classes.statusBar, classes[status])} />
+      {showDilaog && flowDetails.isDeltaFlow && (
+        <FlowStartDateDialog
+          flowId={flowDetails._id}
+          onClose={closeDeltaDialog}
+          runDeltaFlow={handleRunDeltaFlow}
+        />
+      )}
       <div className={classes.cardContent}>
         <Grid item xs={9}>
           <div>
@@ -162,7 +200,7 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
                 color="primary"
                 variant="h4"
                 className={classes.flowLink}>
-                {name}
+                {name || `Unnamed (id: ${flowId})`}
               </Typography>
             </Link>
             <InfoIconButton info={description} />
@@ -172,12 +210,14 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
           </Typography>
         </Grid>
         <Grid container item xs={3} justify="flex-end" alignItems="center">
-          <OnOffSwitch
-            data-test={`toggleOnAndOffFlow${flowName}`}
-            disabled={disableCard}
-            on={!disableCard && !disabled}
-            onClick={handleActionClick('disable')}
-          />
+          {!flowDetails.disableSlider && (
+            <OnOffSwitch
+              data-test={`toggleOnAndOffFlow${flowName}`}
+              disabled={disableCard}
+              on={!disableCard && !disabled}
+              onClick={handleActionClick('disable')}
+            />
+          )}
 
           <IconButton
             disabled={!flowDetails.isRunnable}

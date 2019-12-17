@@ -1,4 +1,3 @@
-import { Fragment } from 'react';
 import { useSelector } from 'react-redux';
 import { Link, Redirect, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -6,8 +5,13 @@ import { Typography, Button } from '@material-ui/core';
 import * as selectors from '../../../../../../../reducers';
 
 const useStyles = makeStyles(theme => ({
+  root: {
+    marginTop: theme.spacing(3),
+  },
   button: {
-    color: theme.palette.primary.main,
+    // color: theme.palette.primary.main,
+    width: `calc(100% - ${theme.spacing(3)}px)`,
+    display: 'block',
   },
   text: {
     marginBottom: theme.spacing(2),
@@ -24,12 +28,10 @@ export default function SelectImport({ flowId }) {
     return <Typography>No flow exists with id: {flowId}</Typography>;
   }
 
-  // if there is only one import then we can safely
+  // If there is only one import then we can safely
   // take the user to the mapping of that import
-  if (imports.length === 11) {
-    return (
-      <Redirect push={false} to={`${match.url}/${imports[0]._importId}`} />
-    );
+  if (imports.length === 1) {
+    return <Redirect push={false} to={`${match.url}/${imports[0]._id}`} />;
   }
 
   const flowName = flow.name || flow._id;
@@ -40,21 +42,26 @@ export default function SelectImport({ flowId }) {
 
   // Finally, render a table of imports to choose from...
   return (
-    <Fragment>
+    <div className={classes.root}>
       <Typography className={classes.text} variant="h5">
-        This flow contains several imports, each of which have mapping. Select
-        which import you would like to edit the mapping for.
+        This flow contains several imports, each of which have mapping.
+      </Typography>
+      <Typography className={classes.text} variant="h5">
+        Select which import you would like to edit the mapping for.
       </Typography>
       {imports.map(i => (
-        <Button
-          className={classes.button}
-          key={i._id}
-          component={Link}
-          to={`${match.url}/${i._id}`}>
-          <Typography color="primary">{i.name || i._id}</Typography>
-          <Typography variant="caption">{i.description}</Typography>
-        </Button>
+        <div key={i._id}>
+          <Button
+            className={classes.button}
+            component={Link}
+            to={`${match.url}/${i._id}`}>
+            <Typography variant="h6" color="primary">
+              {i.name || i._id}
+            </Typography>
+            {i.description && <Typography>{i.description}</Typography>}
+          </Button>
+        </div>
       ))}
-    </Fragment>
+    </div>
   );
 }

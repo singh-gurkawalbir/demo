@@ -6,16 +6,17 @@ export default {
     required: true,
   },
   'ftp.fileName': {
-    type: 'autosuggest',
+    type: 'timestampfilename',
     label: 'File Name',
     required: true,
     showAllSuggestions: true,
-    defaultValue: 'file-{{timestamp}}',
-    refreshOptionsOnChangesTo: ['file.type', 'ftp.fileName'],
+    defaultValue: r => (r && r.ftp && r.ftp.fileName) || 'file-{{timestamp}}',
+    refreshOptionsOnChangesTo: ['file.type'],
   },
   'ftp.useTempFile': {
     type: 'checkbox',
     label: 'Use temp file while upload in progress',
+    defaultValue: r => !!(r && r.ftp && r.ftp.inProgressFileName),
     visibleWhen: [
       {
         field: 'inputMode',
@@ -24,11 +25,12 @@ export default {
     ],
   },
   'ftp.inProgressFileName': {
-    type: 'autosuggest',
+    type: 'timestampfilename',
     label: 'In Progress File Name',
     showAllSuggestions: true,
-    defaultValue: 'file-{{timestamp}}',
-    refreshOptionsOnChangesTo: ['file.type', 'ftp.inProgressFileName'],
+    defaultValue: r =>
+      (r && r.ftp && r.ftp.inProgressFileName) || 'file-{{timestamp}}',
+    refreshOptionsOnChangesTo: ['file.type'],
     visibleWhenAll: [
       {
         field: 'ftp.useTempFile',

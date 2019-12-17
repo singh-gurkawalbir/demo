@@ -15,7 +15,10 @@ export default function EnvironmentToggle() {
     const accounts = selectors.accountSummary(state);
     const selectedAccount = accounts && accounts.find(a => a.selected);
 
-    if (selectedAccount && selectedAccount.hasSandbox) {
+    if (
+      selectedAccount &&
+      (selectedAccount.hasSandbox || selectedAccount.hasConnectorSandbox)
+    ) {
       return true;
     }
 

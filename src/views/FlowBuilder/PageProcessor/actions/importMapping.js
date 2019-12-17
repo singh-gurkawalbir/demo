@@ -7,7 +7,13 @@ import mappingUtil from '../../../../utils/mapping';
 import lookupUtil from '../../../../utils/lookup';
 import MappingDialog from '../../../../components/AFE/ImportMapping/Dialog';
 
-function ImportMappingDialog({ flowId, isViewMode, resource, onClose }) {
+function ImportMappingDialog({
+  flowId,
+  isMonitorLevelAccess,
+  resource,
+  onClose,
+}) {
+  // mappings are only disabled in case of monitor level access
   const resourceId = resource._id;
   const dispatch = useDispatch();
   const handleSave = useCallback(
@@ -16,7 +22,11 @@ function ImportMappingDialog({ flowId, isViewMode, resource, onClose }) {
         const patchSet = [];
         const mappingPath = mappingUtil.getMappingPath(adaptorType);
 
-        // if mapping doesnt exist in resouce object , perform add patch else replace patch
+        // TODO: Below is cut and paste code. This should not have passed review.
+        // this code block is wrapped in a "if (mappings) {}" block, so both ternary operators
+        // below are unnecessary (the operation is always a replace)
+
+        // if mapping doesn't exist in resource object, perform add patch else replace patch
         patchSet.push({
           op: mappings ? 'replace' : 'add',
           path: mappingPath,
@@ -46,7 +56,7 @@ function ImportMappingDialog({ flowId, isViewMode, resource, onClose }) {
       <MappingDialog
         id={`${resourceId}-${flowId}`}
         title="Define Import Mapping"
-        disabled={isViewMode}
+        disabled={isMonitorLevelAccess}
         flowId={flowId}
         resourceId={resourceId}
         onClose={onClose}
@@ -67,6 +77,10 @@ export default {
   name: 'importMapping',
   position: 'middle',
   Icon,
+  // TODO: This helpText prop can easily be derived in the parent code using the
+  // name prop above. No need to add complexity to the metadata as refactoring may be
+  // harder. What if we want to change the root path of all fb help text keys? We
+  // will now need to modify every sibling action's metadata individually.
   helpText: helpTextMap['fb.pp.imports.importMapping'],
   Component: ImportMapping,
 };

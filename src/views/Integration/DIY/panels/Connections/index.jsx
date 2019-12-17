@@ -1,6 +1,6 @@
-import { useState, Fragment } from 'react';
-import { useSelector } from 'react-redux';
-import { Link, useLocation } from 'react-router-dom';
+import { useState, Fragment, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { useHistory, useLocation } from 'react-router-dom';
 import { makeStyles } from '@material-ui/styles';
 import * as selectors from '../../../../../reducers';
 import { generateNewId } from '../../../../../utils/resource';
@@ -12,15 +12,20 @@ import IconTextButton from '../../../../../components/IconTextButton';
 import AddIcon from '../../../../../components/icons/AddIcon';
 import ConnectionsIcon from '../../../../../components/icons/ConnectionsIcon';
 import PanelHeader from '../../../common/PanelHeader';
+import actions from '../../../../../actions';
 
 const useStyles = makeStyles(theme => ({
   root: {
     backgroundColor: theme.palette.common.white,
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
   },
 }));
 
 export default function ConnectionsPanel({ integrationId }) {
   const classes = useStyles();
+  const dispatch = useDispatch();
+  const history = useHistory();
   const [showRegister, setShowRegister] = useState(false);
   const location = useLocation();
   const connections = useSelector(state =>
@@ -51,6 +56,18 @@ export default function ConnectionsPanel({ integrationId }) {
     !(integration && integration._connectorId) &&
     writePermissions;
   // all the above logic should be replaced by a single selector.
+  const [tempId, setTempId] = useState(null);
+  const newResourceId = useSelector(state =>
+    selectors.createdResourceId(state, tempId)
+  );
+
+  useEffect(() => {
+    if (newResourceId) {
+      dispatch(
+        actions.connection.requestRegister([newResourceId], integrationId)
+      );
+    }
+  }, [dispatch, integrationId, newResourceId]);
 
   return (
     <div className={classes.root}>
@@ -65,8 +82,24 @@ export default function ConnectionsPanel({ integrationId }) {
         {canManageConnections && (
           <Fragment>
             <IconTextButton
-              component={Link}
-              to={`${location.pathname}/add/connections/${generateNewId()}`}>
+              onClick={() => {
+                const newId = generateNewId();
+
+                setTempId(newId);
+                history.push(`${location.pathname}/add/connections/${newId}`);
+
+                const patchSet = [
+                  {
+                    op: 'add',
+                    path: '/_integrationId',
+                    value: integrationId,
+                  },
+                ];
+
+                dispatch(
+                  actions.resource.patchStaged(newId, patchSet, 'value')
+                );
+              }}>
               <AddIcon /> Create connection
             </IconTextButton>
             <IconTextButton onClick={() => setShowRegister(true)}>

@@ -1,7 +1,6 @@
 import { Fragment, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import clsx from 'clsx';
-import { makeStyles, Button } from '@material-ui/core';
+import Button from '@material-ui/core/Button';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
 import DynaForm from '../DynaForm';
@@ -14,17 +13,6 @@ import {
   getScheduleVal,
 } from './util';
 
-const useStyles = makeStyles(theme => ({
-  modalContent: {
-    width: '60vw',
-  },
-  closeButton: {
-    position: 'absolute',
-    right: theme.spacing(1),
-    top: 2,
-  },
-}));
-
 export default function FlowSchedule({
   flow,
   onClose,
@@ -34,7 +22,6 @@ export default function FlowSchedule({
   index,
 }) {
   const dispatch = useDispatch();
-  const classes = useStyles();
   const preferences = useSelector(state =>
     selectors.userProfilePreferencesProps(state)
   );
@@ -52,7 +39,7 @@ export default function FlowSchedule({
   );
   let resource = pg || flow;
   const schedule = (pg && pg.schedule) || flow.schedule;
-  const scheduleStartMinute = getScheduleStartMinute(resource, preferences);
+  const scheduleStartMinute = getScheduleStartMinute(exp || flow, preferences);
   const handleSubmit = useCallback(
     formVal => {
       const scheduleVal = getScheduleVal(formVal, scheduleStartMinute);
@@ -97,7 +84,7 @@ export default function FlowSchedule({
     [dispatch, flow, index, onClose, pg, scheduleStartMinute]
   );
 
-  resource = setValues(resource, schedule);
+  resource = setValues(resource, schedule, scheduleStartMinute);
 
   if (resource && !resource.frequency) {
     resource.frequency = '';
@@ -113,11 +100,12 @@ export default function FlowSchedule({
     exports,
     pg,
     flows,
+    scheduleStartMinute,
   });
 
   return (
     <Fragment>
-      <div className={clsx(classes.modalContent, className)}>
+      <div className={className}>
         <DynaForm
           disabled={disabled}
           fieldMeta={fieldMeta}

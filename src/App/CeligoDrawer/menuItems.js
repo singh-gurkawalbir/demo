@@ -16,7 +16,8 @@ import ImportsIcon from '../../components/icons/ImportsIcon';
 import StacksIcon from '../../components/icons/StacksIcon';
 import KnowledgeBaseIcon from '../../components/icons/KnowledgeBaseIcon';
 import TicketTagIcon from '../../components/icons/TicketTagIcon';
-import TrashIcon from '../../components/icons/TrashIcon';
+import RecycleBinIcon from '../../components/icons/RecycleBinIcon';
+import TokensApiIcon from '../../components/icons/TokensApiIcon';
 
 export default function menuItems(userProfile, userPermissions) {
   let items = [
@@ -53,8 +54,8 @@ export default function menuItems(userProfile, userPermissions) {
         { label: 'Stacks', path: '/stacks', Icon: StacksIcon },
         { label: 'Templates', path: '/templates', Icon: DataLoaderIcon },
         { label: 'Connectors', path: '/connectors', Icon: ConnectionsIcon },
-        { label: 'API Tokens', path: '/accesstokens', Icon: AgentsIcon },
-        { label: 'Recycle bin', path: '/recycleBin', Icon: TrashIcon },
+        { label: 'API Tokens', path: '/accesstokens', Icon: TokensApiIcon },
+        { label: 'Recycle bin', path: '/recycleBin', Icon: RecycleBinIcon },
       ],
     },
     {

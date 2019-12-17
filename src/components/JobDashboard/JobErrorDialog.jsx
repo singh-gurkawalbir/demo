@@ -1,29 +1,17 @@
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import Dialog from '@material-ui/core/Dialog';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import { Typography, IconButton, withStyles } from '@material-ui/core';
-import CloseIcon from '@material-ui/icons/Close';
+import { makeStyles } from '@material-ui/core';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
 import JobErrorTable from './JobErrorTable';
 import Spinner from '../Spinner';
+import ModalDialog from '../ModalDialog';
 
-const styles = theme => ({
-  title: {
-    minWidth: '640px',
-  },
-  closeButton: {
-    position: 'absolute',
-    right: theme.spacing(1),
-    top: theme.spacing(1),
-    color: theme.palette.grey[500],
-  },
+const useStyles = makeStyles(theme => ({
   spinner: {
     left: '0px',
     right: '0px',
-    background: 'rgba(0,0,0,0.7)',
+    background: 'rgba(106, 123, 137, 0.7)',
     width: '100%',
     position: 'absolute',
     textAlign: 'center',
@@ -37,13 +25,12 @@ const styles = theme => ({
     },
     '& span': {
       marginLeft: '10px',
-      color: '#fff',
+      color: theme.palette.background.paper,
     },
   },
-});
+}));
 
 function JobErrorDialog({
-  classes,
   jobId,
   parentJobId,
   showResolved,
@@ -113,20 +100,13 @@ function JobErrorDialog({
     onCloseClick();
   }
 
+  const classes = useStyles();
+
   return (
-    <Dialog open maxWidth={false}>
-      <DialogTitle className={classes.title} disableTypography>
-        <Typography variant="h6">
-          {`${integrationName} > ${flowJob && flowJob.name}`}
-        </Typography>
-        <IconButton
-          data-test="closeJobErrorDialog"
-          className={classes.closeButton}
-          onClick={handleCloseClick}>
-          <CloseIcon />
-        </IconButton>
-      </DialogTitle>
-      <DialogContent>
+    <ModalDialog show minWidth="md" maxWidth="xl" onClose={handleCloseClick}>
+      <div>{`${integrationName} > ${flowJob && flowJob.name}`}</div>
+
+      <div>
         {!job ? (
           <div className={classes.spinner}>
             <Spinner /> <span>Loading child jobs...</span>
@@ -139,9 +119,9 @@ function JobErrorDialog({
             onCloseClick={onCloseClick}
           />
         )}
-      </DialogContent>
-    </Dialog>
+      </div>
+    </ModalDialog>
   );
 }
 
-export default withStyles(styles)(JobErrorDialog);
+export default JobErrorDialog;

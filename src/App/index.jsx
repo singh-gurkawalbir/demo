@@ -1,10 +1,11 @@
-import { useMemo, Fragment } from 'react';
+import { useMemo, Fragment, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import { DndProvider } from 'react-dnd-cjs';
 import HTML5Backend from 'react-dnd-html5-backend-cjs';
 import { MuiThemeProvider, makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
+import { SnackbarProvider } from 'notistack';
 import FontStager from '../components/FontStager';
 import themeProvider from '../theme/themeProvider';
 import CeligoAppBar from './CeligoAppBar';
@@ -16,6 +17,8 @@ import NetworkSnackbar from '../components/NetworkSnackbar';
 import * as selectors from '../reducers';
 import WithAuth from './AppRoutingWithAuth';
 import Signin from '../views/SignIn';
+import * as gainsight from '../utils/analytics/gainsight';
+import { getDomain } from '../utils/resource';
 
 // The makeStyles function below does not have access to the theme.
 // We can only use the theme in components that are children of
@@ -38,10 +41,10 @@ function NonSigninHeaderComponents(props) {
   );
 }
 
-export const PageContentComponents = props => (
+export const PageContentComponents = () => (
   <Switch>
-    <Route path="/pg/signin" component={Signin} {...props} />
-    <Route path="/pg*" component={PageContent} {...props} />
+    <Route path="/pg/signin" component={Signin} />
+    <Route path="/pg*" component={PageContent} />
   </Switch>
 );
 
@@ -52,28 +55,41 @@ export default function App() {
   const theme = useMemo(() => themeProvider(themeName), [themeName]);
 
   // eslint-disable-next-line
-  //console.log(reloadCount, environment);
+  // console.log('render: <App>', reloadCount);
+
+  useEffect(() => {
+    const tagKey = {
+      'localhost.io': 'AP-CAGNPCDUT5BV-2',
+      'staging.integrator.io': 'AP-YRACIJBGZVAM-2',
+      'integrator.io': 'AP-JB3PQTNZWXAO-2',
+      'eu.integrator.io': 'AP-NDDMWBJ5SKRY-2',
+    }[getDomain()];
+
+    gainsight.initialize({ tagKey });
+  }, []);
 
   return (
     <MuiThemeProvider key={reloadCount} theme={theme}>
-      <FontStager />
-      <CssBaseline />
-      <DndProvider backend={HTML5Backend}>
-        <BrowserRouter>
-          <div className={classes.root}>
-            <NetworkSnackbar />
-            {/* Headers */}
-            <Switch>
-              <Route path="/pg/signin" component={null} />
-              <Route path="/pg*" component={NonSigninHeaderComponents} />
-            </Switch>
-            {/* page content */}
-            <WithAuth>
-              <PageContentComponents />
-            </WithAuth>
-          </div>
-        </BrowserRouter>
-      </DndProvider>
+      <SnackbarProvider maxSnack={3}>
+        <FontStager />
+        <CssBaseline />
+        <DndProvider backend={HTML5Backend}>
+          <BrowserRouter>
+            <div className={classes.root}>
+              <NetworkSnackbar />
+              {/* Headers */}
+              <Switch>
+                <Route path="/pg/signin" component={null} />
+                <Route path="/pg*" component={NonSigninHeaderComponents} />
+              </Switch>
+              {/* page content */}
+              <WithAuth>
+                <PageContentComponents />
+              </WithAuth>
+            </div>
+          </BrowserRouter>
+        </DndProvider>
+      </SnackbarProvider>
     </MuiThemeProvider>
   );
 }

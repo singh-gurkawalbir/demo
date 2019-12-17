@@ -20,9 +20,12 @@ const useStyles = makeStyles({
 
 export default function TransformEditor(props) {
   const { editorId, disabled } = props;
-  const classes = useStyles(props);
-  const { data, result, error, violations, initChangeIdentifier } = useSelector(
-    state => selectors.editor(state, editorId)
+  const classes = useStyles();
+  const { data, result, error, initChangeIdentifier } = useSelector(state =>
+    selectors.editor(state, editorId)
+  );
+  const violations = useSelector(state =>
+    selectors.editorViolations(state, editorId)
   );
   const dispatch = useDispatch();
   const keyName = 'extract';
@@ -37,9 +40,12 @@ export default function TransformEditor(props) {
       })
     );
   }, [dispatch, editorId, props.data, props.rule]);
-  const handleDataChange = data => {
-    dispatch(actions.editor.patch(editorId, { data }));
-  };
+  const handleDataChange = useCallback(
+    data => {
+      dispatch(actions.editor.patch(editorId, { data }));
+    },
+    [dispatch, editorId]
+  );
 
   useEffect(() => {
     handleInit();

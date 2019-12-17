@@ -1,32 +1,21 @@
 import { useState, useEffect, Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import { TextField, IconButton } from '@material-ui/core';
-import OpenInNewIcon from 'mdi-react/OpenInNewIcon';
+import { TextField } from '@material-ui/core';
 import * as selectors from '../../../reducers';
 import NetSuiteLookupFilterEditorDialog from '../../AFE/NetSuiteLookupFilterEditor';
 import actions from '../../../actions';
 import getJSONPaths from '../../../utils/jsonPaths';
+import ActionButton from '../../ActionButton';
+import ExitIcon from '../../icons/ExitIcon';
 
 const useStyles = makeStyles(theme => ({
   textField: {
     minWidth: 200,
   },
-  editorButton: {
+  exitButton: {
     float: 'right',
-    marginLeft: 5,
-    background: theme.palette.background.paper,
-    border: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
-    height: 50,
-    width: 50,
-    borderRadius: 2,
-    '&:hover': {
-      background: theme.palette.background.paper,
-      '& > span': {
-        color: theme.palette.primary.main,
-      },
-    },
+    marginLeft: theme.spacing(1),
   },
 }));
 
@@ -34,7 +23,7 @@ export default function DynaNetSuiteLookup(props) {
   const [showEditor, setShowEditor] = useState(false);
   const classes = useStyles();
   const {
-    disabled,
+    // disabled,
     errorMessages,
     id,
     isValid,
@@ -114,16 +103,16 @@ export default function DynaNetSuiteLookup(props) {
           data={formattedExtractFields}
           value={rule}
           onClose={handleClose}
-          disabled={disabled}
+          // disabled={disabled}
           options={options}
         />
       )}
-      <IconButton
+      <ActionButton
         data-test={id}
         onClick={handleEditorClick}
-        className={classes.editorButton}>
-        <OpenInNewIcon />
-      </IconButton>
+        className={classes.exitButton}>
+        <ExitIcon />
+      </ActionButton>
       <TextField
         key={id}
         name={name}

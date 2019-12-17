@@ -1,5 +1,5 @@
 import actionTypes from '../../actions/types';
-import { COMM_STATES } from '../comms/index';
+import { COMM_STATES } from '../comms/networkComms/index';
 
 export default function(
   state = { initialized: false, commStatus: COMM_STATES.LOADING },

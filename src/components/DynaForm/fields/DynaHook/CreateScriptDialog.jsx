@@ -11,7 +11,7 @@ export default function CreateScriptDialog(props) {
   const handleSubmit = values => onClose(true, values);
 
   return (
-    <ModalDialog show handleClose={onCancel}>
+    <ModalDialog show onClose={onCancel}>
       <div>Create Script</div>
       <div>
         <DynaForm fieldMeta={metadata}>

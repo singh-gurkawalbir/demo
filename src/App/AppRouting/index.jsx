@@ -63,6 +63,8 @@ const ConnectorLicenses = loadable(() =>
 @hot(module)
 export default class AppRouting extends Component {
   render() {
+    // console.log('render: <AppRouting>');
+
     return (
       <Switch>
         <Route
@@ -108,9 +110,9 @@ export default class AppRouting extends Component {
           path={[
             '/pg/integrationApp/:integrationId/flowBuilder/:flowId',
             '/pg/integrations/:integrationId/flowBuilder/:flowId',
-          ]}
-          component={FlowBuilder}
-        />
+          ]}>
+          <FlowBuilder />
+        </Route>
         <Route
           path="/pg/integrations/:integrationId/:tab"
           component={Integration}

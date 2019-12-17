@@ -1,25 +1,23 @@
+import csvOptions from '../../../../components/AFE/CsvConfigEditor/options';
+
 const requestBody = editor => {
-  const rowDelimiterMap = {
-    '': undefined,
-    cr: '\r',
-    lf: '\n',
-    crlf: '\r\n',
-  };
-  const columnDelimiterMap = {
-    '': undefined,
-    ',': ',',
-    '|': '|',
-    tab: '\t',
+  const rules = {
+    columnDelimiter: csvOptions.ColumnDelimiterMap[editor.columnDelimiter],
+    hasHeaderRow: editor.hasHeaderRow,
+
+    trimSpaces: editor.trimSpaces,
   };
 
+  if (Number.isInteger(editor.rowsToSkip)) {
+    rules.rowsToSkip = editor.rowsToSkip;
+  }
+
+  if (editor.multipleRowsPerRecord && editor.keyColumns) {
+    rules.keyColumns = editor.keyColumns;
+  }
+
   return {
-    rules: {
-      columnDelimiter: columnDelimiterMap[editor.columnDelimiter],
-      rowDelimiter: rowDelimiterMap[editor.rowDelimiter],
-      keyColumns: editor.multipleRowsPerRecord && editor.keyColumns,
-      hasHeaderRow: editor.hasHeaderRow,
-      trimSpaces: editor.trimSpaces,
-    },
+    rules,
     data: editor.data,
   };
 };
