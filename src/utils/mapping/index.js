@@ -57,6 +57,10 @@ export default {
       return 'disallowFailure';
     }
 
+    if (lookup && lookup.useDefaultOnMultipleMatches) {
+      return 'useDefaultOnMultipleMatches';
+    }
+
     if ('default' in lookup) {
       switch (lookup.default) {
         case '':
