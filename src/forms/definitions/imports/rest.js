@@ -17,6 +17,9 @@ export default {
     if (retValues['/inputMode'] === 'blob') {
       retValues['/rest/method'] = retValues['/rest/blobMethod'];
     } else if (retValues['/rest/method'] === 'COMPOSITE') {
+      retValues['/rest/successPath'] = undefined;
+      retValues['/rest/successValues'] = undefined;
+
       if (retValues['/rest/compositeType'] === 'createandupdate') {
         retValues['/rest/relativeURI'] = [
           retValues['/rest/relativeURIUpdate'],
