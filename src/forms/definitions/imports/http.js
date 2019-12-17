@@ -659,7 +659,26 @@ export default {
       visibleWhenAll: [
         {
           field: 'http.compositeType',
-          is: ['createandignore', 'updateandignore'],
+          is: ['createandignore'],
+        },
+        {
+          field: 'http.method',
+          is: ['COMPOSITE'],
+        },
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
+      ],
+    },
+    ignoreNewData: {
+      id: 'ignoreNewData',
+      type: 'labeltitle',
+      label: 'Ignore New Data',
+      visibleWhenAll: [
+        {
+          field: 'http.compositeType',
+          is: ['updateandignore'],
         },
         {
           field: 'http.method',
@@ -813,6 +832,7 @@ export default {
       'http.resourceIdPathUpdate',
       'http.resourcePathUpdate',
       'ignoreExistingData',
+      'ignoreNewData',
       'http.existingDataId',
       'mediatypeInformation',
       'http.successMediaType',
