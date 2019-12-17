@@ -531,6 +531,12 @@ export function convertFromExport({ exportDoc, assistantData, adaptorType }) {
     exportType,
   };
 
+  /**
+   * Derive exportType, version, resource and operation from exportDoc only on first run/init (dontConvert = false).
+   * If user changes anything (version, resource, operation, etc...) we are setting the flag dontConvert to true.
+   * And we just need to use the values directly from assistantMetadata.
+   */
+
   if (!dontConvert && !assistantMetadata.exportType && exportDoc) {
     assistantMetadata.exportType = exportDoc.type;
   }
@@ -951,6 +957,7 @@ export function convertToReactFormFields({ paramMeta = {}, value = {} }) {
   const fieldDetailsMap = {};
   const actualFieldIdToGeneratedFieldIdMap = {};
   const paramValues = { ...value };
+  const anyParamValuesSet = isEmpty(paramValues);
 
   paramMeta.fields &&
     paramMeta.fields.forEach(field => {
@@ -1021,9 +1028,13 @@ export function convertToReactFormFields({ paramMeta = {}, value = {} }) {
         },
         values: paramValues,
       });
-      let { defaultValue } = field;
+      /**
+       * Set default values only if there are no values for any params set.(IO-12293)
+       */
+      let { defaultValue } = anyParamValuesSet ? field : {};
 
       if (
+        anyParamValuesSet &&
         paramValue === undefined &&
         paramMeta.defaultValuesForDeltaExport &&
         Object.prototype.hasOwnProperty.call(
@@ -1225,6 +1236,12 @@ export function convertFromImport({ importDoc, assistantData, adaptorType }) {
     bodyParams: {},
   };
   const importURLs = [];
+
+  /**
+   * Derive version, resource and operation from importDoc only on first run/init (dontConvert = false).
+   * If user changes anything (version, resource, operation, etc...) we are setting the flag dontConvert to true.
+   * And we just need to use the values directly from assistantMetadata.
+   */
 
   if (!dontConvert && (!resource || !operation)) {
     if (
