@@ -15,6 +15,7 @@ export default function DynaTextWithLookupExtract(props) {
     resourceId,
     resourceType,
     flowId,
+    hideLookups = false,
   } = props;
   const { resourceName } = options;
   const isExport = resourceType === 'exports';
@@ -91,12 +92,15 @@ export default function DynaTextWithLookupExtract(props) {
     }
   }, [dispatch, flowId, resourceId, resourceType, sampleData]);
 
+  const showLookups = !isExport && !hideLookups;
+
   return (
     <Fragment>
       {fieldType === 'relativeUri' && (
         <RelativeUri
-          showLookup={!isExport}
+          showLookup={showLookups}
           sampleData={formattedSampleData}
+          showExtractsOnly
           connection={connection}
           extractFields={formattedExtractFields}
           {...props}
@@ -104,7 +108,7 @@ export default function DynaTextWithLookupExtract(props) {
       )}
       {fieldType === 'ignoreExistingData' && (
         <IgnoreExistingData
-          showLookup={!isExport}
+          showLookup={showLookups}
           sampleData={formattedSampleData}
           connection={connection}
           extractFields={formattedExtractFields}
