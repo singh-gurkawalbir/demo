@@ -957,6 +957,7 @@ export function convertToReactFormFields({ paramMeta = {}, value = {} }) {
   const fieldDetailsMap = {};
   const actualFieldIdToGeneratedFieldIdMap = {};
   const paramValues = { ...value };
+  const anyParamValuesSet = isEmpty(paramValues);
 
   paramMeta.fields &&
     paramMeta.fields.forEach(field => {
@@ -1028,12 +1029,12 @@ export function convertToReactFormFields({ paramMeta = {}, value = {} }) {
         values: paramValues,
       });
       /**
-       * Set default values only if there are no values for any params set.
+       * Set default values only if there are no values for any params set.(IO-12293)
        */
-      let { defaultValue } = isEmpty(paramValues) ? field : {};
+      let { defaultValue } = anyParamValuesSet ? field : {};
 
       if (
-        isEmpty(paramValues) &&
+        anyParamValuesSet &&
         paramValue === undefined &&
         paramMeta.defaultValuesForDeltaExport &&
         Object.prototype.hasOwnProperty.call(
