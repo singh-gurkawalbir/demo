@@ -696,7 +696,22 @@ export default {
       visibleWhenAll: [
         {
           field: 'rest.compositeType',
-          is: ['createandignore', 'updateandignore'],
+          is: ['createandignore'],
+        },
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
+      ],
+    },
+    ignoreNewData: {
+      id: 'ignoreNewData',
+      type: 'labeltitle',
+      label: 'Ignore New Data',
+      visibleWhenAll: [
+        {
+          field: 'rest.compositeType',
+          is: ['updateandignore'],
         },
         {
           field: 'inputMode',
@@ -809,6 +824,7 @@ export default {
       'rest.successValuesUpdate',
       'rest.responseIdPathUpdate',
       'ignoreExistingData',
+      'ignoreNewData',
       'rest.existingDataId',
       'sampleDataTitle',
       'sampleData',

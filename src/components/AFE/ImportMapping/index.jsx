@@ -84,6 +84,7 @@ export default function ImportMapping(props) {
     application,
     generateFields = [],
     extractFields = [],
+    resource = {},
     disabled,
     optionalHanlder,
     isExtractsLoading,
@@ -131,7 +132,10 @@ export default function ImportMapping(props) {
     dispatch(actions.mapping.delete(editorId, row));
   };
 
-  const generateLabel = mappingUtil.getGenerateLabelForMapping(application);
+  const generateLabel = mappingUtil.getGenerateLabelForMapping(
+    application,
+    resource
+  );
   const getLookup = name => lookups.find(lookup => lookup.name === name);
   const updateLookupHandler = (isDelete, obj) => {
     let lookupsTmp = [...lookups];
