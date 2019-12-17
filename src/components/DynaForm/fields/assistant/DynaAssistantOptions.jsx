@@ -72,6 +72,11 @@ export default function DynaAssistantOptions(props) {
             value: '',
           });
         });
+        patch.push({
+          op: 'replace',
+          path: `/assistantMetadata/dontConvert`,
+          value: true,
+        });
       }
 
       dispatch(
