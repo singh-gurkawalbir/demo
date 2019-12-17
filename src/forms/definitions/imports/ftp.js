@@ -48,8 +48,13 @@ export default {
         fileNameField.value = `${fileNameWithoutExt}.${newExtension}`;
       }
     } else if (fieldId === 'ftp.inProgressFileName') {
-      const fileNameField = fields.find(field => field.fieldId === fieldId);
+      const inprogressFileNameField = fields.find(
+        field => field.fieldId === fieldId
+      );
       const fileTypeField = fields.find(field => field.fieldId === 'file.type');
+      const fileNameField = fields.find(
+        field => field.fieldId === 'ftp.fileName'
+      );
       const newExtension = [
         'filedefinition',
         'fixed',
@@ -71,7 +76,7 @@ export default {
             ? fileNameWithoutTmp.substring(0, lastDotIndex)
             : fileNameWithoutTmp;
 
-        fileNameField.value = `${fileNameWithoutExt}.${newExtension}.tmp`;
+        inprogressFileNameField.value = `${fileNameWithoutExt}.${newExtension}.tmp`;
       }
     }
 
