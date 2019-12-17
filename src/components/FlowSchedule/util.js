@@ -675,7 +675,7 @@ export const getMetadata = ({
             moment()
               .startOf('day')
               .add(hour, 'h')
-              .add(minutes, 'm')
+              .add(minutes + scheduleStartMinute, 'm')
               .format('LT'),
           Number
         );

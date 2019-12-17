@@ -253,6 +253,12 @@ export function fieldMeta({ resource, assistantData }) {
     common: {
       formId: 'common',
     },
+    exportOneToMany: { formId: 'exportOneToMany' },
+    exportData: {
+      id: 'exportData',
+      type: 'labeltitle',
+      label: 'What would you like to Export?',
+    },
   };
   const fieldIds = [];
 
@@ -264,15 +270,7 @@ export function fieldMeta({ resource, assistantData }) {
   return {
     fieldMap,
     layout: {
-      fields: ['common'],
-      type: 'collapse',
-      containers: [
-        {
-          label: 'What would you like to export?',
-          collapsed: false,
-          fields: fieldIds,
-        },
-      ],
+      fields: ['common', 'exportOneToMany', 'exportData', ...fieldIds],
     },
   };
 }

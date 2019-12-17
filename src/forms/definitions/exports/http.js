@@ -42,9 +42,9 @@ export default {
       delete retValues['/delta/lagOffset'];
     }
 
-    if (!retValues['/http/successValues'].length) {
-      retValues['/http/successValues'] = undefined;
-      retValues['/http/successPath'] = undefined;
+    if (!retValues['/http/response/successValues'].length) {
+      retValues['/http/response/successValues'] = undefined;
+      retValues['/http/response/successPath'] = undefined;
     }
 
     if (retValues['/outputMode'] === 'blob') {
