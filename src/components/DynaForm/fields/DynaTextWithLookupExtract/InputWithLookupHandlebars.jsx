@@ -32,6 +32,7 @@ const getSuggestions = (
   extractFields = [],
   handleUpdate,
   showLookup,
+  handleLookupClick,
   options
 ) => {
   const suggestions = [];
@@ -46,6 +47,7 @@ const getSuggestions = (
           showDynamicLookupOnly
           id="add-lookup"
           label="New Lookup"
+          onClick={handleLookupClick}
           onSave={handleUpdate(LOOKUP_ACTION.LOOKUP_ADD)}
           onSavelabel="Add New Lookup"
           options={options}
@@ -62,6 +64,7 @@ const getSuggestions = (
               id={lookup.name}
               label="Edit"
               isEdit
+              onClick={handleLookupClick}
               onSelect={handleUpdate(LOOKUP_ACTION.LOOKUP_SELECT, lookup)}
               onSave={handleUpdate(LOOKUP_ACTION.LOOKUP_EDIT, lookup)}
               showDynamicLookupOnly
@@ -117,6 +120,7 @@ export default function InputWithLookupHandlebars(props) {
   const classes = useStyles();
   const ref = useRef(null);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [lookupShown, setLookupShown] = useState(false);
   const [state, setState] = useState({
     cursorPosition: 0,
     userInput: value || '',
@@ -131,7 +135,7 @@ export default function InputWithLookupHandlebars(props) {
 
   // close suggestions when clicked outside
   const handleClickOutside = event => {
-    if (ref.current && !ref.current.contains(event.target)) {
+    if (ref.current && !lookupShown && !ref.current.contains(event.target)) {
       setShowSuggestions(false);
     }
   };
@@ -165,6 +169,7 @@ export default function InputWithLookupHandlebars(props) {
     if (indexOldLookup !== -1) lookupsTmp[indexOldLookup] = modifiedLookup;
     handleSuggestionClick(modifiedLookup.name, true);
     onLookupUpdate(lookupsTmp);
+    setLookupShown(false);
   };
 
   const handleLookupAdd = lookup => {
@@ -173,6 +178,7 @@ export default function InputWithLookupHandlebars(props) {
 
       handleSuggestionClick(lookup.name, true);
       onLookupUpdate(_lookups);
+      setLookupShown(false);
     }
   };
 
@@ -212,11 +218,16 @@ export default function InputWithLookupHandlebars(props) {
     flowId,
     resourceName,
   };
+  const handleLookupClick = _showLookup => {
+    setLookupShown(_showLookup);
+  };
+
   const suggestions = getSuggestions(
     lookups,
     extractFields,
     handleUpdate,
     showLookup,
+    handleLookupClick,
     options
   );
   const handleSuggestions = e => {
