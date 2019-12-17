@@ -2,6 +2,18 @@ import dateTimezones from '../../../../../utils/dateTimezones';
 import dateFormats from '../../../../../utils/dateFormats';
 import mappingUtil from '../../../../../utils/mapping';
 
+const getNetsuiteSelectFieldValueUrl = ({
+  fieldMetadata,
+  connectionId,
+  fieldId,
+  recordType,
+}) =>
+  `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${recordType}/${
+    fieldMetadata && fieldMetadata.sublist
+      ? `sublists/${fieldMetadata.sublist}/`
+      : ''
+  }selectFieldValues/${fieldId.substr(0, fieldId.indexOf('.internalid'))}`;
+
 export default {
   getMetaData: (params = {}) => {
     const {
@@ -190,10 +202,12 @@ export default {
           valueLabel: 'Import Field (NetSuite)',
           commMetaPath:
             fieldId &&
-            `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${recordType}/selectFieldValues/${fieldId.substr(
-              0,
-              fieldId.indexOf('.internalid')
-            )}`,
+            getNetsuiteSelectFieldValueUrl({
+              fieldMetadata,
+              connectionId,
+              fieldId,
+              recordType,
+            }),
           connectionId: fieldId && connectionId,
           label: '',
           keyName: 'export',
@@ -325,10 +339,12 @@ export default {
               : value.hardCodedValue,
           commMetaPath:
             fieldId &&
-            `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${recordType}/selectFieldValues/${fieldId.substr(
-              0,
-              fieldId.indexOf('.internalid')
-            )}`,
+            getNetsuiteSelectFieldValueUrl({
+              fieldMetadata,
+              connectionId,
+              fieldId,
+              recordType,
+            }),
           connectionId,
           // refreshOptionsOnChangesTo: ['lookup.recordType'],
           visibleWhenAll: [{ field: 'fieldMappingType', is: ['hardCoded'] }],
@@ -345,10 +361,12 @@ export default {
               : lookup.default,
           commMetaPath:
             fieldId &&
-            `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${recordType}/selectFieldValues/${fieldId.substr(
-              0,
-              fieldId.indexOf('.internalid')
-            )}`,
+            getNetsuiteSelectFieldValueUrl({
+              fieldMetadata,
+              connectionId,
+              fieldId,
+              recordType,
+            }),
           connectionId,
           visibleWhenAll: [
             {
@@ -577,11 +595,15 @@ export default {
       delete fieldMeta.fieldMap.hardcodedAction;
       delete fieldMeta.fieldMap.hardcodedDefault;
       delete fieldMeta.fieldMap.hardcodedCheckbox;
+      delete fieldMeta.fieldMap.lookupDefault;
+      delete fieldMeta.fieldMap.lookupCheckbox;
       fields = fields.filter(
         el =>
           el !== 'hardcodedAction' &&
           el !== 'hardcodedDefault' &&
-          el !== 'hardcodedCheckbox'
+          el !== 'hardcodedCheckbox' &&
+          el !== 'lookupDefault' &&
+          el !== 'lookupCheckbox'
       );
     } else if (generateFieldType === 'checkbox') {
       delete fieldMeta.fieldMap.hardcodedAction;

@@ -2615,6 +2615,7 @@ export function getImportSampleData(state, resourceId) {
       state,
       connectionId,
       commMetaPath,
+      filterKey: 'suitescript-recordTypeDetail',
     });
 
     return { data, status };
