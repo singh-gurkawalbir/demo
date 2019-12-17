@@ -531,6 +531,12 @@ export function convertFromExport({ exportDoc, assistantData, adaptorType }) {
     exportType,
   };
 
+  /**
+   * Derive exportType, version, resource and operation from exportDoc only on first run/init (dontConvert = false).
+   * If user changes anything (version, resource, operation, etc...) we are setting the flag dontConvert to true.
+   * And we just need to use the values directly from assistantMetadata.
+   */
+
   if (!dontConvert && !assistantMetadata.exportType && exportDoc) {
     assistantMetadata.exportType = exportDoc.type;
   }
@@ -1229,6 +1235,12 @@ export function convertFromImport({ importDoc, assistantData, adaptorType }) {
     bodyParams: {},
   };
   const importURLs = [];
+
+  /**
+   * Derive version, resource and operation from importDoc only on first run/init (dontConvert = false).
+   * If user changes anything (version, resource, operation, etc...) we are setting the flag dontConvert to true.
+   * And we just need to use the values directly from assistantMetadata.
+   */
 
   if (!dontConvert && (!resource || !operation)) {
     if (
