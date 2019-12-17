@@ -1146,11 +1146,11 @@ export default {
     type: 'selectscopes',
     label: 'Configure Scopes',
   },
-  'clientCertificates.cert': {
+  'http.clientCertificates.cert': {
     type: 'uploadfile',
     label: 'SSL Certificate',
   },
-  'clientCertificates.key': {
+  'http.clientCertificates.key': {
     type: 'uploadfile',
     label: 'SSL Client Key',
   },
