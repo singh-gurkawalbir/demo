@@ -10,14 +10,14 @@ import DynaForm from '../../../../components/DynaForm';
 import DynaSubmit from '../../../../components/DynaForm/DynaSubmit';
 import LoadResources from '../../../../components/LoadResources';
 
-const getFormMetadata = (flowId, connectionId, defaultValue) => ({
+const getFieldMeta = defaultValue => ({
   fieldMap: {
     'as2.contentBasedFlowRouter': {
       id: 'as2.contentBasedFlowRouter',
       name: 'contentBasedFlowRouter',
       type: 'hook',
       label:
-        'Select  a script and function name to use for determining AS2 message routing',
+        'Choose a script and function name to use for determining AS2 message routing',
       hookType: 'script',
       // we can "fake" sample data by piggy backing off the default hook and simply
       // override the sample data below.
@@ -40,7 +40,7 @@ const getFormMetadata = (flowId, connectionId, defaultValue) => ({
   },
 });
 
-function As2RoutingDialog({ flowId, isViewMode, resource, open, onClose }) {
+function As2RoutingDialog({ isViewMode, resource, open, onClose }) {
   const dispatch = useDispatch();
   const connectionId = resource._connectionId;
   const connection = useSelector(state =>
@@ -68,7 +68,7 @@ function As2RoutingDialog({ flowId, isViewMode, resource, open, onClose }) {
     connection && connection.as2 && connection.as2.contentBasedFlowRouter
       ? connection.as2.contentBasedFlowRouter
       : {};
-  const fieldMeta = getFormMetadata(flowId, connectionId, value);
+  const fieldMeta = getFieldMeta(value);
 
   return (
     <ModalDialog show={open} onClose={onClose} disabled={isViewMode}>
