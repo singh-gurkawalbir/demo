@@ -24,7 +24,9 @@ export function isValidFileType(fileType, file) {
     ],
   };
 
-  return validFileTypes[fileType].includes(file.type);
+  return validFileTypes[fileType]
+    ? validFileTypes[fileType].includes(file.type)
+    : true;
 }
 
 // Validates file size against MAX_FILE_SIZE as per Bug @IO-12216
