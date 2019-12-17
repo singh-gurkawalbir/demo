@@ -23,7 +23,6 @@ export default function IgnoreExistingData(props) {
     resourceId,
     resourceType,
     flowId,
-    arrayIndex,
     adaptorType,
     sampleData,
     extractFields,
@@ -36,22 +35,11 @@ export default function IgnoreExistingData(props) {
   };
 
   const handleFieldChange = (_id, val) => {
-    if (typeof arrayIndex === 'number' && Array.isArray(value)) {
-      // save to array at position arrayIndex
-      const valueTmp = value;
+    // save to field
 
-      valueTmp[arrayIndex] = val;
-      onFieldChange(id, valueTmp);
-    } else {
-      // save to field
-      onFieldChange(id, val);
-    }
+    onFieldChange(id, val);
   };
 
-  const extactedVal =
-    options && typeof arrayIndex === 'number' && Array.isArray(value)
-      ? value[arrayIndex]
-      : value;
   const isSqlImport =
     adaptorType && adaptorTypeMap[adaptorType] === adaptorTypeMap.RDBMSImport;
   const getMatchedValueforSuggestion = (_val, cursorPosition) => {
@@ -90,7 +78,7 @@ export default function IgnoreExistingData(props) {
         onLookupUpdate={handleLookupUpdate}
         required={required}
         connectionId={connectionId}
-        value={extactedVal}
+        value={value}
         connectionType={connection.type}
         resourceId={resourceId}
         resourceName={resourceName}
