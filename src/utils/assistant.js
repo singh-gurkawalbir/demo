@@ -1021,9 +1021,13 @@ export function convertToReactFormFields({ paramMeta = {}, value = {} }) {
         },
         values: paramValues,
       });
-      let { defaultValue } = field;
+      /**
+       * Set default values only if there are no values for any params set.
+       */
+      let { defaultValue } = isEmpty(paramValues) ? field : {};
 
       if (
+        isEmpty(paramValues) &&
         paramValue === undefined &&
         paramMeta.defaultValuesForDeltaExport &&
         Object.prototype.hasOwnProperty.call(
