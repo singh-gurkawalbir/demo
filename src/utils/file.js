@@ -24,6 +24,8 @@ export function isValidFileType(fileType, file) {
     ],
   };
 
+  // In ADP connection, Client certificates need to included, those will not have file type.
+  //  File can not be validated if it doesn't have fie type, so assuming it is a valid file.
   return validFileTypes[fileType]
     ? validFileTypes[fileType].includes(file.type)
     : true;
