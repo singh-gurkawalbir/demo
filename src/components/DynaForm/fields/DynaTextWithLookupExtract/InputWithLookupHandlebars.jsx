@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { TextField } from '@material-ui/core';
 import DynaAddEditLookup from '../DynaAddEditLookup';
@@ -111,6 +111,7 @@ export default function InputWithLookupHandlebars(props) {
     getMatchedValueforSuggestion,
   } = props;
   const classes = useStyles();
+  const ref = useRef(null);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [state, setState] = useState({
     cursorPosition: 0,
@@ -124,6 +125,20 @@ export default function InputWithLookupHandlebars(props) {
     if (value !== userInput) setState({ ...state, userInput: value });
   }, [state, userInput, value]);
 
+  // close suggestions when clicked outside
+  const handleClickOutside = event => {
+    if (ref.current && !ref.current.contains(event.target)) {
+      setShowSuggestions(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('click', handleClickOutside, true);
+
+    return () => {
+      document.removeEventListener('click', handleClickOutside, true);
+    };
+  });
   const handleSuggestionClick = (_val, isLookup) => {
     const newValue = getUpdatedFieldValue(
       userInput,
@@ -250,9 +265,10 @@ export default function InputWithLookupHandlebars(props) {
   }
 
   return (
-    <React.Fragment>
+    <div ref={ref}>
       <TextField
         autoComplete="off"
+        id={id}
         key={id}
         data-test={id}
         name={name}
@@ -270,6 +286,6 @@ export default function InputWithLookupHandlebars(props) {
         variant="filled"
       />
       {suggestionsListComponent}
-    </React.Fragment>
+    </div>
   );
 }

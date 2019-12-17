@@ -62,6 +62,7 @@ export default function IgnoreExistingData(props) {
   return (
     <Fragment>
       <InputWithLookupHandlebars
+        id={id}
         key={id}
         name={name}
         label={label}

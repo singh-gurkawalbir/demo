@@ -165,6 +165,7 @@ export default function RelativeURI(props) {
         <ExitIcon />
       </ActionButton>
       <InputWithLookupHandlebars
+        id={id}
         key={id}
         name={name}
         label={label}
