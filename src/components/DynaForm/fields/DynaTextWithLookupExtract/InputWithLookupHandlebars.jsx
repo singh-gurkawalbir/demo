@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { TextField } from '@material-ui/core';
 import DynaAddEditLookup from '../DynaAddEditLookup';
@@ -27,15 +27,18 @@ const LOOKUP_ACTION = {
   LOOKUP_ADD: 'LOOKUP_ADD',
   LOOKUP_SELECT: 'LOOKUP_SELECT',
 };
-const prefixRegexp = '.*{{((?!(}|{)).)*$';
 const getSuggestions = (
   lookups = [],
   extractFields = [],
   handleUpdate,
+  showLookup,
+  handleLookupClick,
   options
 ) => {
-  const suggestions = [
-    {
+  const suggestions = [];
+
+  if (showLookup) {
+    suggestions.push({
       fixed: true,
       label: 'New Lookup',
       type: 'lookup',
@@ -44,39 +47,41 @@ const getSuggestions = (
           showDynamicLookupOnly
           id="add-lookup"
           label="New Lookup"
+          onClick={handleLookupClick}
           onSave={handleUpdate(LOOKUP_ACTION.LOOKUP_ADD)}
           onSavelabel="Add New Lookup"
           options={options}
         />
       ),
-    },
-  ];
+    });
+    lookups.forEach(lookup => {
+      if (!lookup.map) {
+        suggestions.push({
+          label: lookup.name,
+          type: 'lookup',
+          component: (
+            <DynaAddEditLookup
+              id={lookup.name}
+              label="Edit"
+              isEdit
+              onClick={handleLookupClick}
+              onSelect={handleUpdate(LOOKUP_ACTION.LOOKUP_SELECT, lookup)}
+              onSave={handleUpdate(LOOKUP_ACTION.LOOKUP_EDIT, lookup)}
+              showDynamicLookupOnly
+              value={lookup}
+              options={options}
+            />
+          ),
+        });
+      }
+    });
+  }
 
-  lookups.forEach(lookup => {
-    if (!lookup.map) {
-      suggestions.push({
-        label: lookup.name,
-        type: 'lookup',
-        component: (
-          <DynaAddEditLookup
-            id={lookup.name}
-            label="Edit"
-            isEdit
-            onSelect={handleUpdate(LOOKUP_ACTION.LOOKUP_SELECT, lookup)}
-            onSave={handleUpdate(LOOKUP_ACTION.LOOKUP_EDIT, lookup)}
-            showDynamicLookupOnly
-            value={lookup}
-            options={options}
-          />
-        ),
-      });
-    }
-  });
   extractFields.forEach(field => {
     suggestions.push({
       label: field.name,
       type: 'extract',
-      value: field.id,
+      value: field.id.indexOf(' ') > -1 ? `[${field.id}]` : field.id,
     });
   });
 
@@ -101,19 +106,25 @@ export default function InputWithLookupHandlebars(props) {
     lookups,
     required,
     value,
-    connectionType,
     connectionId,
     resourceId,
     resourceType,
     resourceName,
     flowId,
+    getUpdatedFieldValue,
     extractFields = [],
+    prefixRegexp = '',
+    getMatchedValueforSuggestion,
+    showLookup,
   } = props;
   const classes = useStyles();
+  const ref = useRef(null);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [lookupShown, setLookupShown] = useState(false);
   const [state, setState] = useState({
     cursorPosition: 0,
     userInput: value || '',
+    isFocus: false,
     filteredSuggestions: [],
   });
   const { userInput, cursorPosition, filteredSuggestions } = state;
@@ -122,41 +133,27 @@ export default function InputWithLookupHandlebars(props) {
     if (value !== userInput) setState({ ...state, userInput: value });
   }, [state, userInput, value]);
 
+  // close suggestions when clicked outside
+  const handleClickOutside = event => {
+    if (ref.current && !lookupShown && !ref.current.contains(event.target)) {
+      setShowSuggestions(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('click', handleClickOutside, true);
+
+    return () => {
+      document.removeEventListener('click', handleClickOutside, true);
+    };
+  });
   const handleSuggestionClick = (_val, isLookup) => {
-    const tmpStr = userInput.substring(0, cursorPosition);
-    const lastIndexOfBracesBeforeCursor = tmpStr.lastIndexOf('{');
-    let handlebarExp = '';
-
-    if (isLookup && connectionType === 'http') {
-      handlebarExp = `{lookup "${_val}" this}`;
-    } else {
-      handlebarExp = `{${_val}}`;
-    }
-
-    const closeBraceIndexAfterCursor = value.indexOf(
-      '}',
-      lastIndexOfBracesBeforeCursor + 1
+    const newValue = getUpdatedFieldValue(
+      userInput,
+      cursorPosition,
+      _val,
+      isLookup
     );
-    const openBraceIndexAfterCursor = value.indexOf(
-      '{',
-      lastIndexOfBracesBeforeCursor + 1
-    );
-    let newValue = '';
-    const preText = `${value.substring(0, lastIndexOfBracesBeforeCursor + 1)}`;
-
-    if (
-      closeBraceIndexAfterCursor === -1 ||
-      (openBraceIndexAfterCursor !== -1 &&
-        openBraceIndexAfterCursor < closeBraceIndexAfterCursor)
-    ) {
-      const postText = `${value.substring(lastIndexOfBracesBeforeCursor + 1)}`;
-
-      newValue = `${preText}${handlebarExp}}}${postText}`;
-    } else {
-      const postText = `${value.substring(closeBraceIndexAfterCursor)}`;
-
-      newValue = `${preText}${handlebarExp}${postText}`;
-    }
 
     setState({ ...state, userInput: newValue });
     setShowSuggestions(false);
@@ -172,6 +169,7 @@ export default function InputWithLookupHandlebars(props) {
     if (indexOldLookup !== -1) lookupsTmp[indexOldLookup] = modifiedLookup;
     handleSuggestionClick(modifiedLookup.name, true);
     onLookupUpdate(lookupsTmp);
+    setLookupShown(false);
   };
 
   const handleLookupAdd = lookup => {
@@ -180,6 +178,7 @@ export default function InputWithLookupHandlebars(props) {
 
       handleSuggestionClick(lookup.name, true);
       onLookupUpdate(_lookups);
+      setLookupShown(false);
     }
   };
 
@@ -219,29 +218,33 @@ export default function InputWithLookupHandlebars(props) {
     flowId,
     resourceName,
   };
+  const handleLookupClick = _showLookup => {
+    setLookupShown(_showLookup);
+  };
+
   const suggestions = getSuggestions(
     lookups,
     extractFields,
     handleUpdate,
+    showLookup,
+    handleLookupClick,
     options
   );
   const handleSuggestions = e => {
     const pointerIndex = e.target.selectionStart;
-    const _showSuggestion = !!(
-      e.target.value &&
-      e.target.value.substring(0, pointerIndex).match(prefixRegexp)
-    );
+    const _val = e.target.value;
+    const _showSuggestion = !!_val
+      .substring(0, pointerIndex)
+      .match(prefixRegexp);
     let _filteredSuggestions = [];
 
     if (_showSuggestion) {
-      const inpValue = e.target.value.substring(0, pointerIndex);
-      const startIndexOfBraces = inpValue.lastIndexOf('{{');
-      const inpValue2 = inpValue.substring(startIndexOfBraces + 2);
+      const matchedVal = getMatchedValueforSuggestion(_val, pointerIndex);
 
       _filteredSuggestions = suggestions.filter(
         suggestion =>
           suggestion.fixed ||
-          suggestion.label.toLowerCase().indexOf(inpValue2.toLowerCase()) > -1
+          suggestion.label.toLowerCase().indexOf(matchedVal.toLowerCase()) > -1
       );
       setState({
         ...state,
@@ -257,7 +260,7 @@ export default function InputWithLookupHandlebars(props) {
 
   let suggestionsListComponent;
 
-  if (showSuggestions && userInput && filteredSuggestions.length) {
+  if (showSuggestions && filteredSuggestions.length) {
     suggestionsListComponent = (
       <ul className={classes.suggestions}>
         {filteredSuggestions.map(suggestion => {
@@ -278,9 +281,10 @@ export default function InputWithLookupHandlebars(props) {
   }
 
   return (
-    <React.Fragment>
+    <div ref={ref}>
       <TextField
         autoComplete="off"
+        id={id}
         key={id}
         data-test={id}
         name={name}
@@ -298,6 +302,6 @@ export default function InputWithLookupHandlebars(props) {
         variant="filled"
       />
       {suggestionsListComponent}
-    </React.Fragment>
+    </div>
   );
 }

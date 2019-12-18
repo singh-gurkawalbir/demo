@@ -1,5 +1,6 @@
 import { isEmpty, each, isArray } from 'lodash';
 import moment from 'moment';
+import deepClone from 'lodash/cloneDeep';
 import jsonUtil from './json';
 import { isFileAdaptor, isBlobTypeResource } from './resource';
 import { extractFieldsFromCsv } from './file';
@@ -11,13 +12,15 @@ import {
 } from './metadata';
 import { getUnionObject, getTransformPaths } from './jsonPaths';
 
+// wrap the function inside useMemo since result may contain property 'lastExportDateTime' which refers to new Date()
 export default function getFormattedSampleData({
   connection,
   sampleData,
-  // useSampleDataAsArray,
   resourceType,
   resourceName,
 }) {
+  // create deep copy
+  const _connection = deepClone(connection);
   const data = {
     connection: {},
   };
@@ -27,9 +30,9 @@ export default function getFormattedSampleData({
 
   data.data = [_sd];
 
-  if (connection) {
-    data.connection.name = connection.name;
-    const connSubDoc = connection[connection.type];
+  if (_connection) {
+    data.connection.name = _connection.name;
+    const connSubDoc = _connection[_connection.type];
     const hbSubDoc = {};
 
     if (connSubDoc) {
@@ -42,12 +45,16 @@ export default function getFormattedSampleData({
       }
     }
 
-    data.connection[connection.type] = hbSubDoc;
+    data.connection[_connection.type] = hbSubDoc;
   }
 
   data[resourceType === 'imports' ? 'import' : 'export'] = {
     name: resourceName,
   };
+
+  if (resourceType === 'exports') {
+    data.lastExportDateTime = new Date().toISOString();
+  }
 
   return data;
 }

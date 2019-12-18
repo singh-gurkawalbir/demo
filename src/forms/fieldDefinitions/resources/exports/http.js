@@ -37,7 +37,8 @@ export default {
     ],
   },
   'http.relativeURI': {
-    type: 'relativeuri',
+    type: 'textwithlookupextract',
+    fieldType: 'relativeUri',
     label: 'Relative URI',
     connectionId: r => r && r._connectionId,
     refreshOptionsOnChangesTo: ['name'],
