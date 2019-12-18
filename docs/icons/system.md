@@ -414,16 +414,14 @@ const icon = {
       <RegenerateTokenIcon style={icon} />
       <p>RegenerateToken</p>
     </div>
-  
-    <div style={wrapper}>
-      <RefreshIcon style={icon} />
-      <p>Refresh</p>
-    </div>
     <div style={wrapper}>
       <RestoreIcon style={icon} />
       <p>Restore</p>
     </div>
-    
+    <div style={wrapper}>
+      <RefreshIcon style={icon} />
+      <p>Refresh</p>
+    </div>
      <div style={wrapper}>
       <RunIcon style={icon} />
       <p>Run</p>
