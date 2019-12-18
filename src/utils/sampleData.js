@@ -9,7 +9,7 @@ import {
   filterSubListProperties,
   getFormattedSalesForceMetadata,
 } from './metadata';
-import { getUnionObject } from './jsonPaths';
+import { getUnionObject, getTransformPaths } from './jsonPaths';
 
 export default function getFormattedSampleData({
   connection,
@@ -402,4 +402,24 @@ export const processJsonSampleData = (sampleData, options = {}) => {
   }
 
   return processedSampleData;
+};
+
+/*
+ * Returns Transformation rules set by flattening xmlJsonData
+ */
+export const generateTransformationRulesOnXMLData = xmlJsonData => {
+  const paths = getTransformPaths(xmlJsonData);
+  const rule = [];
+
+  paths.forEach(path => {
+    const extract = path;
+    const generate = path
+      .replace(/\[0]\._$/, '')
+      .replace(/\[0]\./g, '.')
+      .replace(/\$\.(\w*)$/, '$1');
+
+    rule.push({ extract, generate });
+  });
+
+  return [rule];
 };
