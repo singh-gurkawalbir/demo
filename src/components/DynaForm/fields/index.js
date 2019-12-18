@@ -74,6 +74,7 @@ import DynaMode from './DynaMode';
 import DynaAutoSuggestFlowSampleData from './DynaAutoSuggestFlowSampleData';
 import DynaCsvGenerate from './editors/DynaCsvGenerate';
 import DynaFileKeyColumn from './DynaFileKeyColumn';
+import DynaTextLagOffset from './DynaTextLagOffset';
 
 export default {
   mode: DynaMode,
@@ -160,4 +161,5 @@ export default {
   timestampfilename: DynaTimestampFileName,
   autosuggestflowsampledata: DynaAutoSuggestFlowSampleData,
   filekeycolumn: DynaFileKeyColumn,
+  textlagoffset: DynaTextLagOffset,
 };
