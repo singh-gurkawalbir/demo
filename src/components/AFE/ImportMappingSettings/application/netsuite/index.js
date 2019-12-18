@@ -120,7 +120,11 @@ export default {
           name: 'isKey',
           type: 'checkbox',
           label: 'Use as a key field to find existing lines',
-          visibleWhen: [{ field: 'fieldMappingType', is: ['standard'] }],
+          visibleWhen: [
+            { field: 'fieldMappingType', is: ['standard'] },
+            { field: 'fieldMappingType', is: ['multifield'] },
+            { field: 'lookup.mode', is: ['static', 'dynamic'] },
+          ],
           defaultValue: value.isKey,
         },
         'lookup.mode': {
@@ -465,7 +469,6 @@ export default {
           'immutable',
           'useAsAnInitializeValue',
           'fieldMappingType',
-          'isKey',
           'lookup.mode',
           'lookup.recordType',
           'lookup.expression',
@@ -485,6 +488,7 @@ export default {
           'lookupCheckbox',
           'extractDateFormat',
           'extractDateTimezone',
+          'isKey',
         ],
       },
       optionsHandler: (fieldId, fields) => {
