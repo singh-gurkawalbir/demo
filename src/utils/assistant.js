@@ -1107,6 +1107,25 @@ export function convertToReactFormFields({ paramMeta = {}, value = {} }) {
     fieldMap[field.id] = field;
   });
 
+  if (
+    paramMeta.oneMandatoryQueryParamFrom &&
+    paramMeta.oneMandatoryQueryParamFrom.length > 1
+  ) {
+    fields.forEach(field => {
+      if (paramMeta.oneMandatoryQueryParamFrom.includes(field.id)) {
+        fieldMap[field.id].requiredWhen = [];
+        paramMeta.oneMandatoryQueryParamFrom.forEach(f => {
+          if (f !== field.id) {
+            fieldMap[field.id].requiredWhen.push({
+              field: fieldMap[f].id,
+              is: [fieldMap[f].type === 'multiselect' ? [] : ''],
+            });
+          }
+        });
+      }
+    });
+  }
+
   if (requiredFields.length > 0 && optionalFields.length > 0) {
     return {
       fieldMap,
