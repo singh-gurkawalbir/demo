@@ -17,6 +17,9 @@ export default {
     if (retValues['/inputMode'] === 'blob') {
       retValues['/rest/method'] = retValues['/rest/blobMethod'];
     } else if (retValues['/rest/method'] === 'COMPOSITE') {
+      retValues['/rest/successPath'] = undefined;
+      retValues['/rest/successValues'] = undefined;
+
       if (retValues['/rest/compositeType'] === 'createandupdate') {
         retValues['/rest/relativeURI'] = [
           retValues['/rest/relativeURIUpdate'],
@@ -88,9 +91,13 @@ export default {
         if (lookup) {
           retValues['/rest/ignoreLookupName'] =
             retValues['/rest/existingDataId'];
+          retValues['/rest/ignoreExtract'] = null;
         } else {
           retValues['/rest/ignoreExtract'] = retValues['/rest/existingDataId'];
+          retValues['/rest/ignoreLookupName'] = null;
         }
+
+        retValues['/rest/existingDataId'] = undefined;
 
         if (retValues['/rest/successPathCreate']) {
           retValues['/rest/successPath'] = [
@@ -136,9 +143,13 @@ export default {
         if (lookup) {
           retValues['/rest/ignoreLookupName'] =
             retValues['/rest/existingDataId'];
+          retValues['/rest/ignoreExtract'] = null;
         } else {
           retValues['/rest/ignoreExtract'] = retValues['/rest/existingDataId'];
+          retValues['/rest/ignoreLookupName'] = null;
         }
+
+        retValues['/rest/existingDataId'] = undefined;
       }
     } else {
       retValues['/ignoreExisting'] = false;
@@ -283,7 +294,8 @@ export default {
     },
     'rest.relativeURICreate': {
       id: 'rest.relativeURICreate',
-      type: 'relativeuriwithlookup',
+      type: 'textwithlookupextract',
+      fieldType: 'relativeUri',
       arrayIndex: 1,
       connectionId: r => r && r._connectionId,
       refreshOptionsOnChangesTo: ['rest.lookups', 'name'],
@@ -529,7 +541,8 @@ export default {
     },
     'rest.relativeURIUpdate': {
       id: 'rest.relativeURIUpdate',
-      type: 'relativeuriwithlookup',
+      type: 'textwithlookupextract',
+      fieldType: 'relativeUri',
       arrayIndex: 0,
       connectionId: r => r && r._connectionId,
       refreshOptionsOnChangesTo: ['rest.lookups', 'name'],
@@ -696,7 +709,22 @@ export default {
       visibleWhenAll: [
         {
           field: 'rest.compositeType',
-          is: ['createandignore', 'updateandignore'],
+          is: ['createandignore'],
+        },
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
+      ],
+    },
+    ignoreNewData: {
+      id: 'ignoreNewData',
+      type: 'labeltitle',
+      label: 'Ignore New Data',
+      visibleWhenAll: [
+        {
+          field: 'rest.compositeType',
+          is: ['updateandignore'],
         },
         {
           field: 'inputMode',
@@ -706,7 +734,8 @@ export default {
     },
     'rest.existingDataId': {
       id: 'rest.existingDataId',
-      type: 'relativeuriwithlookup',
+      type: 'textwithlookupextract',
+      fieldType: 'ignoreExistingData',
       connectionId: r => r && r._connectionId,
       refreshOptionsOnChangesTo: ['rest.lookups', 'name'],
       label: 'Existing Data Id',
@@ -809,6 +838,7 @@ export default {
       'rest.successValuesUpdate',
       'rest.responseIdPathUpdate',
       'ignoreExistingData',
+      'ignoreNewData',
       'rest.existingDataId',
       'sampleDataTitle',
       'sampleData',

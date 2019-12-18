@@ -40,7 +40,7 @@ export default {
   },
   dataURITemplate: {
     type: 'relativeuri',
-    label: 'Data URITemplate',
+    label: 'Override Data URI Template',
     placeholder: 'Optional',
     connectionId: r => r && r._connectionId,
   },

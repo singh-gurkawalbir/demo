@@ -24,11 +24,13 @@ import {
   getPreviewStageData,
   getContextInfo,
   getBlobResourceSampleData,
+  isOneToManyImport,
 } from '../../../utils/flowData';
 import { exportPreview, pageProcessorPreview } from '../utils/previewCalls';
 import requestRealTimeMetadata from '../sampleDataGenerator/realTimeSampleData';
 import requestFileAdaptorSampleData from '../sampleDataGenerator/fileAdaptorSampleData';
 import mappingUtil from '../../../utils/mapping';
+import { processOneToManySampleData } from '../../../utils/sampleData';
 import {
   adaptorTypeMap,
   isNewId,
@@ -140,13 +142,26 @@ export function* fetchPageProcessorPreview({
   if (!flowId || !_pageProcessorId) return;
 
   try {
-    const previewData = yield call(pageProcessorPreview, {
+    let previewData = yield call(pageProcessorPreview, {
       flowId,
       _pageProcessorId,
       previewType,
       resourceType,
       throwOnError: true,
     });
+
+    if (resourceType === 'imports') {
+      const { merged: resource = {} } = yield select(
+        resourceData,
+        'imports',
+        _pageProcessorId,
+        'value'
+      );
+
+      if (isOneToManyImport(resource)) {
+        previewData = processOneToManySampleData(previewData, resource);
+      }
+    }
 
     yield put(
       actions.flowData.receivedPreviewData(

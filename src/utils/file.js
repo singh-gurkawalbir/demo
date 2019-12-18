@@ -1,6 +1,7 @@
 import XLSX from 'xlsx';
 import { each } from 'lodash';
 import { MAX_FILE_SIZE } from './constants';
+import { isJsonString } from './string';
 
 /*
  * Validates file type against all possible file types when user uploads a file
@@ -24,7 +25,11 @@ export function isValidFileType(fileType, file) {
     ],
   };
 
-  return validFileTypes[fileType].includes(file.type);
+  // In ADP connection, Client certificates need to included, those will not have file type.
+  //  File can not be validated if it doesn't have fie type, so assuming it is a valid file.
+  return validFileTypes[fileType]
+    ? validFileTypes[fileType].includes(file.type)
+    : true;
 }
 
 // Validates file size against MAX_FILE_SIZE as per Bug @IO-12216
@@ -54,6 +59,14 @@ export function getFileReaderOptions(type) {
 
   return {};
 }
+
+export const getJSONContent = data => {
+  if (!isJsonString(data)) {
+    return { success: false, error: 'Please provide valid JSON file' };
+  }
+
+  return { success: true, data: JSON.parse(data) };
+};
 
 /**
  * Reads the xslx content passed as string

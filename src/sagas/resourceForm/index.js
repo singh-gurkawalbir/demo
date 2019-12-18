@@ -16,6 +16,7 @@ import connectionSagas from '../resourceForm/connections';
 import { requestAssistantMetadata } from '../resources/meta';
 import { isNewId } from '../../utils/resource';
 import { uploadRawData } from '../uploadFile';
+import { patchTransformationRulesForXMLResource } from '../sampleData/utils/fileParserUtils';
 
 export const SCOPES = {
   META: 'meta',
@@ -184,23 +185,19 @@ export function* saveRawData({ values }) {
 }
 
 export function* submitFormValues({ resourceType, resourceId, values, match }) {
-  const formValues = values;
-
-  if (resourceType === 'exports') {
-    // @TODO Raghu:  Commented as it is a QA blocker. Decide how to save raw data
-    // formValues = yield call(saveRawData, { values });
-    delete formValues['/rawData'];
-  }
-
   const { patchSet, finalValues } = yield call(createFormValuesPatchSet, {
     resourceType,
     resourceId,
-    values: formValues,
+    values,
     scope: SCOPES.VALUE,
   });
 
   if (patchSet && patchSet.length > 0) {
     yield put(actions.resource.patchStaged(resourceId, patchSet, SCOPES.VALUE));
+  }
+
+  if (resourceType === 'exports' && isNewId(resourceId)) {
+    yield call(patchTransformationRulesForXMLResource, { resourceId });
   }
 
   const { skipCommit } = yield select(

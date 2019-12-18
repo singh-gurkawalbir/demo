@@ -76,6 +76,7 @@ const ResourcesIcon = require('../../src/components/icons/ResourcesIcon').defaul
 const RegenerateTokenIcon = require('../../src/components/icons/RegenerateTokenIcon').default;
 const RegisterConnectionIcon = require('../../src/components/icons/RegisterConnectionIcon').default;
 const RefreshIcon = require('../../src/components/icons/RefreshIcon').default;
+const RestoreIcon = require('../../src/components/icons/RestoreIcon').default;
 const RunIcon = require('../../src/components/icons/RunIcon').default;
 const RecycleBinIcon = require('../../src/components/icons/RecycleBinIcon').default;
 const StacksIcon = require('../../src/components/icons/StacksIcon').default;
@@ -418,6 +419,11 @@ const icon = {
       <RefreshIcon style={icon} />
       <p>Refresh</p>
     </div>
+    <div style={wrapper}>
+      <RestoreIcon style={icon} />
+      <p>Restore</p>
+    </div>
+    
      <div style={wrapper}>
       <RunIcon style={icon} />
       <p>Run</p>

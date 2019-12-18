@@ -1100,6 +1100,21 @@ export function integrationAppResourceList(state, integrationId, storeId) {
   };
 }
 
+export function integrationAppStore(state, integrationId, storeId) {
+  const integration = fromData.integrationAppSettings(
+    state && state.data,
+    integrationId
+  );
+
+  if (!integration || !integration.stores || !integration.stores.length) {
+    return emptyObject;
+  }
+
+  return (
+    integration.stores.find(store => store.value === storeId) || emptyObject
+  );
+}
+
 export function integrationAppConnectionList(state, integrationId, storeId) {
   return integrationAppResourceList(state, integrationId, storeId).connections;
 }
@@ -2652,6 +2667,7 @@ export function getImportSampleData(state, resourceId) {
       state,
       connectionId,
       commMetaPath,
+      filterKey: 'suitescript-recordTypeDetail',
     });
 
     return { data, status };

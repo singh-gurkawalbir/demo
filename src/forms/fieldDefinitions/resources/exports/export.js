@@ -87,7 +87,7 @@ export default {
   },
   dataURITemplate: {
     type: 'relativeuri',
-    label: 'Data URITemplate',
+    label: 'Override Data URI Template',
     connectionId: r => r && r._connectionId,
   },
   exportOneToMany: {
