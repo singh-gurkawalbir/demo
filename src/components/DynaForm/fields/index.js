@@ -22,6 +22,7 @@ import DynaResponseTransformEditor from './editors/DynaResponseTransformEditor';
 import DynaTextFtpPort from './DynaTextFtpPort';
 import DynaUploadFile from './DynaUploadFile';
 import DynaHook from './DynaHook';
+import DynaSuiteScriptHook from './DynaSuiteScriptHook';
 import DynaScriptContent from './DynaScriptContent';
 import DynaSelectScopes from './DynaSelectScopes';
 import DynaFileDefinitionSelect from './DynaFileDefinitionSelect';
@@ -54,7 +55,7 @@ import DynaDate from './dateTime/DynaDate';
 import DynaDateTime from './dateTime/DynaDateTime';
 import DynaToggle from './DynaToggle';
 import DynaSQLQueryBuilder from './DynaSQLQueryBuilder';
-import DynaRelativeURIWithLookup from './DynaRelativeURIWithLookup';
+import DynaTextWithLookupExtract from './DynaTextWithLookupExtract';
 import Salesforce from './DynaSalesforceExportComponents';
 import { ReferencedFieldsModal } from './DynaSalesforceExportComponents/DynaTreeModal';
 import DynaNetSuiteLookupFilters from './DynaNetSuiteLookupFilters';
@@ -111,6 +112,7 @@ export default {
   labeltitle: DynaLabel,
   celigotable: DynaCeligoTable,
   hook: DynaHook,
+  suitescripthook: DynaSuiteScriptHook,
   scriptcontent: DynaScriptContent,
   filedefinitionselect: DynaFileDefinitionSelect,
   filedefinitioneditor: DynaFileDefinitionEditor,
@@ -138,7 +140,7 @@ export default {
   datetime: DynaDateTime,
   sqlquerybuilder: DynaSQLQueryBuilder,
   salesforcequalifier: DynaSalesforceQualifier,
-  relativeuriwithlookup: DynaRelativeURIWithLookup,
+  textwithlookupextract: DynaTextWithLookupExtract,
   salesforcerequiredtrigger: Salesforce.DynaRequiredTrigger,
   salesforcereferencedfields: Salesforce.DynaReferencedFields,
   salesforcerelatedlistmodal: ReferencedFieldsModal,

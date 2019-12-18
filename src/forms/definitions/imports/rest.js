@@ -91,9 +91,13 @@ export default {
         if (lookup) {
           retValues['/rest/ignoreLookupName'] =
             retValues['/rest/existingDataId'];
+          retValues['/rest/ignoreExtract'] = null;
         } else {
           retValues['/rest/ignoreExtract'] = retValues['/rest/existingDataId'];
+          retValues['/rest/ignoreLookupName'] = null;
         }
+
+        retValues['/rest/existingDataId'] = undefined;
 
         if (retValues['/rest/successPathCreate']) {
           retValues['/rest/successPath'] = [
@@ -139,9 +143,13 @@ export default {
         if (lookup) {
           retValues['/rest/ignoreLookupName'] =
             retValues['/rest/existingDataId'];
+          retValues['/rest/ignoreExtract'] = null;
         } else {
           retValues['/rest/ignoreExtract'] = retValues['/rest/existingDataId'];
+          retValues['/rest/ignoreLookupName'] = null;
         }
+
+        retValues['/rest/existingDataId'] = undefined;
       }
     } else {
       retValues['/ignoreExisting'] = false;
@@ -286,7 +294,8 @@ export default {
     },
     'rest.relativeURICreate': {
       id: 'rest.relativeURICreate',
-      type: 'relativeuriwithlookup',
+      type: 'textwithlookupextract',
+      fieldType: 'relativeUri',
       arrayIndex: 1,
       connectionId: r => r && r._connectionId,
       refreshOptionsOnChangesTo: ['rest.lookups', 'name'],
@@ -532,7 +541,8 @@ export default {
     },
     'rest.relativeURIUpdate': {
       id: 'rest.relativeURIUpdate',
-      type: 'relativeuriwithlookup',
+      type: 'textwithlookupextract',
+      fieldType: 'relativeUri',
       arrayIndex: 0,
       connectionId: r => r && r._connectionId,
       refreshOptionsOnChangesTo: ['rest.lookups', 'name'],
@@ -724,7 +734,8 @@ export default {
     },
     'rest.existingDataId': {
       id: 'rest.existingDataId',
-      type: 'relativeuriwithlookup',
+      type: 'textwithlookupextract',
+      fieldType: 'ignoreExistingData',
       connectionId: r => r && r._connectionId,
       refreshOptionsOnChangesTo: ['rest.lookups', 'name'],
       label: 'Existing Data Id',

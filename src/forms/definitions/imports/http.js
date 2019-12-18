@@ -82,9 +82,13 @@ export default {
         if (lookup) {
           retValues['/http/ignoreLookupName'] =
             retValues['/http/existingDataId'];
+          retValues['/http/ignoreExtract'] = null;
         } else {
           retValues['/http/ignoreExtract'] = retValues['/http/existingDataId'];
+          retValues['/http/ignoreLookupName'] = null;
         }
+
+        retValues['/http/existingDataId'] = undefined;
       } else if (retValues['/http/compositeType'] === 'updateandignore') {
         retValues['/http/relativeURI'] = [retValues['/http/relativeURIUpdate']];
         retValues['/http/method'] = [retValues['/http/compositeMethodUpdate']];
@@ -113,9 +117,13 @@ export default {
         if (lookup) {
           retValues['/http/ignoreLookupName'] =
             retValues['/http/existingDataId'];
+          retValues['/http/ignoreExtract'] = null;
         } else {
           retValues['/http/ignoreExtract'] = retValues['/http/existingDataId'];
+          retValues['/http/ignoreLookupName'] = null;
         }
+
+        retValues['/http/existingDataId'] = undefined;
       }
     } else {
       retValues['/ignoreExisting'] = false;
@@ -292,7 +300,8 @@ export default {
     },
     'http.relativeURICreate': {
       id: 'http.relativeURICreate',
-      type: 'relativeuriwithlookup',
+      type: 'textwithlookupextract',
+      fieldType: 'relativeUri',
       arrayIndex: 1,
       connectionId: r => r && r._connectionId,
       refreshOptionsOnChangesTo: ['http.lookups', 'name'],
@@ -514,7 +523,8 @@ export default {
     },
     'http.relativeURIUpdate': {
       id: 'http.relativeURIUpdate',
-      type: 'relativeuriwithlookup',
+      type: 'textwithlookupextract',
+      fieldType: 'relativeUri',
       arrayIndex: 0,
       connectionId: r => r && r._connectionId,
       refreshOptionsOnChangesTo: ['http.lookups', 'name'],
@@ -692,7 +702,8 @@ export default {
     },
     'http.existingDataId': {
       id: 'http.existingDataId',
-      type: 'relativeuriwithlookup',
+      type: 'textwithlookupextract',
+      fieldType: 'ignoreExistingData',
       label: 'Existing Data Id',
       connectionId: r => r && r._connectionId,
       refreshOptionsOnChangesTo: ['http.lookups', 'name'],

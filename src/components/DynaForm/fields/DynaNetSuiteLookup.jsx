@@ -7,13 +7,13 @@ import NetSuiteLookupFilterEditorDialog from '../../AFE/NetSuiteLookupFilterEdit
 import actions from '../../../actions';
 import getJSONPaths from '../../../utils/jsonPaths';
 import ActionButton from '../../ActionButton';
-import ExitIcon from '../../icons/ExitIcon';
+import FilterIcon from '../../icons/FilterIcon';
 
 const useStyles = makeStyles(theme => ({
   textField: {
     minWidth: 200,
   },
-  exitButton: {
+  filterButton: {
     float: 'right',
     marginLeft: theme.spacing(1),
   },
@@ -110,8 +110,8 @@ export default function DynaNetSuiteLookup(props) {
       <ActionButton
         data-test={id}
         onClick={handleEditorClick}
-        className={classes.exitButton}>
-        <ExitIcon />
+        className={classes.filterButton}>
+        <FilterIcon />
       </ActionButton>
       <TextField
         key={id}

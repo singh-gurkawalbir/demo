@@ -74,7 +74,7 @@ const useStyles = makeStyles({
     '& > div:first-child': {
       width: '100%',
       marginRight: 6,
-      overflow: 'scroll',
+      overflow: 'auto',
     },
   },
   actions: {
