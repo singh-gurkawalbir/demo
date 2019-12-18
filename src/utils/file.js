@@ -1,6 +1,7 @@
 import XLSX from 'xlsx';
 import { each } from 'lodash';
 import { MAX_FILE_SIZE } from './constants';
+import { isJsonString } from './string';
 
 /*
  * Validates file type against all possible file types when user uploads a file
@@ -58,6 +59,14 @@ export function getFileReaderOptions(type) {
 
   return {};
 }
+
+export const getJSONContent = data => {
+  if (!isJsonString(data)) {
+    return { success: false, error: 'Please provide valid JSON file' };
+  }
+
+  return { success: true, data: JSON.parse(data) };
+};
 
 /**
  * Reads the xslx content passed as string

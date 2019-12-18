@@ -1,5 +1,6 @@
 import { isEmpty, each, isArray } from 'lodash';
 import moment from 'moment';
+import deepClone from 'lodash/cloneDeep';
 import jsonUtil from './json';
 import { isFileAdaptor, isBlobTypeResource } from './resource';
 import { extractFieldsFromCsv } from './file';
@@ -11,13 +12,15 @@ import {
 } from './metadata';
 import { getUnionObject, getTransformPaths } from './jsonPaths';
 
+// wrap the function inside useMemo since result may contain property 'lastExportDateTime' which refers to new Date()
 export default function getFormattedSampleData({
   connection,
   sampleData,
-  // useSampleDataAsArray,
   resourceType,
   resourceName,
 }) {
+  // create deep copy
+  const _connection = deepClone(connection);
   const data = {
     connection: {},
   };
@@ -27,9 +30,9 @@ export default function getFormattedSampleData({
 
   data.data = [_sd];
 
-  if (connection) {
-    data.connection.name = connection.name;
-    const connSubDoc = connection[connection.type];
+  if (_connection) {
+    data.connection.name = _connection.name;
+    const connSubDoc = _connection[_connection.type];
     const hbSubDoc = {};
 
     if (connSubDoc) {
@@ -42,12 +45,16 @@ export default function getFormattedSampleData({
       }
     }
 
-    data.connection[connection.type] = hbSubDoc;
+    data.connection[_connection.type] = hbSubDoc;
   }
 
   data[resourceType === 'imports' ? 'import' : 'export'] = {
     name: resourceName,
   };
+
+  if (resourceType === 'exports') {
+    data.lastExportDateTime = new Date().toISOString();
+  }
 
   return data;
 }
@@ -422,4 +429,74 @@ export const generateTransformationRulesOnXMLData = xmlJsonData => {
   });
 
   return [rule];
+};
+
+/*
+ * Expected : path provided should lead to a property which is an array 
+ * Sample Data :{
+    "a": 5,
+    "c": { "d": 7 },
+    "e": { "check": { "f": [ { "a": 1} ]} }
+    }
+  * pathSegments: ["e", "check", "f"] points to "f" attribute which is an array returns true
+  * If not an array returns false
+ */
+const isValidPathToMany = (sampleData, pathSegments) => {
+  let isValid = false;
+  let temp = { ...sampleData };
+
+  pathSegments.forEach(path => {
+    if (!temp) return;
+    temp = temp[path];
+  });
+
+  if (Array.isArray(temp)) {
+    isValid = true;
+  }
+
+  return isValid;
+};
+
+/*
+ * Incase of OneToMany Imports Sample data is modified based on pathToMany
+ * Sample Data :{
+    "a": 5,
+    "c": { "d": 7 },
+    "e": { "check": { "f": [ { "a": 1} ]} }
+    }
+  * pathToMany : "e.check.f" to point to "f" attribute 
+  * Output: { ( all Props other than path are under _PARENT level)
+  *   _PARENT: { "a": 5, "c": { "d": 7}, "e": { "check": {} } } 
+      "a": 1 ( properties inside "f" attribute are on to the main level )
+  * }
+ */
+export const processOneToManySampleData = (sampleData, resource) => {
+  const { pathToMany } = resource;
+  const pathSegments = getPathSegments(pathToMany);
+
+  if (!sampleData || !pathSegments || !pathSegments.length) return sampleData;
+
+  if (!isValidPathToMany(sampleData, pathSegments)) return sampleData;
+  let pathPointer = sampleData;
+  let sampleDataAtPath;
+
+  // Drill down the path and extract target sample data for the path provided
+  // Also delete the pointer to that sample data to not present in parent data
+  pathSegments.forEach((path, index) => {
+    if (index < pathSegments.length - 1) {
+      pathPointer = pathPointer[path];
+    } else {
+      sampleDataAtPath = [...pathPointer[path]];
+      delete pathPointer[path];
+    }
+  });
+  // sampleDataAtPath is an array at this point. So get union object with all merged properties
+  sampleDataAtPath = getUnionObject(sampleDataAtPath);
+  // Add sampleDataAtPath at main level and other properties under _PARENT key
+  const processedSampleData = {
+    _PARENT: sampleData,
+    ...sampleDataAtPath,
+  };
+
+  return processedSampleData;
 };

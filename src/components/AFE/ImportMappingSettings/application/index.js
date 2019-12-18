@@ -87,6 +87,7 @@ export default {
           value,
           lookup,
           extractFields,
+          options,
         });
         break;
       case adaptorTypeMap.NetSuiteDistributedImport:

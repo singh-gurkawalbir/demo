@@ -4,7 +4,8 @@ import dateFormats from '../../../../../utils/dateFormats';
 
 export default {
   getMetaData: (params = {}) => {
-    const { value, lookup = {}, extractFields } = params;
+    const { value, lookup = {}, extractFields, options } = params;
+    const { connectionId, resourceId, resourceName, flowId } = options;
     const fieldMeta = {
       fieldMap: {
         dataType: {
@@ -77,8 +78,13 @@ export default {
         },
         'lookup.relativeURI': {
           id: 'lookup.relativeURI',
-          name: '_relativeURI',
-          type: 'text',
+          type: 'textwithlookupextract',
+          fieldType: 'relativeUri',
+          hideLookups: true,
+          connectionId,
+          resourceId,
+          flowId,
+          resourceType: 'imports',
           label: 'Relative URI',
           placeholder: 'Relative URI',
           defaultValue: lookup.relativeURI,
@@ -436,6 +442,10 @@ export default {
           }
 
           return expressionValue;
+        }
+
+        if (fieldId === 'lookup.relativeURI') {
+          return { resourceName };
         }
 
         return null;

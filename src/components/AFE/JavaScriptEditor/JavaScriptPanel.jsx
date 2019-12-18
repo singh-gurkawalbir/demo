@@ -65,7 +65,7 @@ export default function JavaScriptPanel(props) {
   useEffect(() => {
     // TODO: What if for the requested script is non existent...
     // do we have a timeout for the spinner
-    if (scriptContent) {
+    if (scriptContent !== undefined) {
       patchEditor('code', scriptContent);
     } else if (scriptId) {
       requestScript();
@@ -103,7 +103,7 @@ export default function JavaScriptPanel(props) {
           label="Entry Function"
           margin="dense"
         />
-        {!scriptContent && scriptId ? (
+        {scriptContent === undefined && scriptId ? (
           <Fragment>
             <Typography>Retrieving your script</Typography>
             <Spinner />
