@@ -210,7 +210,7 @@ const PageGenerator = ({
     if (blockType === 'export') {
       generatorActions.push({
         ...scheduleAction,
-        isUsed: true, // usedActions[actionsMap.schedule],
+        isUsed: usedActions[actionsMap.schedule],
       });
     }
 
