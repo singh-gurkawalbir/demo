@@ -6,6 +6,7 @@ import actions from '../../../actions';
 import {
   getFileReaderOptions,
   getCsvFromXlsx,
+  getJSONContent,
   getUploadedFileStatus,
 } from '../../../utils/file';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
@@ -48,7 +49,16 @@ function DynaUploadFile(props) {
 
     // For JSON file, content should be parsed from String to JSON
     if (options === 'json') {
-      fileContent = JSON.parse(fileContent);
+      const { success, error, data } = getJSONContent(fileContent);
+
+      if (!success) {
+        return enqueueSnackbar({
+          message: error,
+          variant: 'error',
+        });
+      }
+
+      fileContent = data;
     }
 
     onFieldChange(id, fileContent);
