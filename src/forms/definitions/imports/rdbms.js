@@ -1,10 +1,10 @@
 export default {
-  preSave: (formValues, resource) => {
+  preSave: formValues => {
     const retValues = { ...formValues };
+    const lookups = retValues['/rdbms/lookups'];
     const lookup =
-      resource.rdbms &&
-      resource.rdbms.lookups &&
-      resource.rdbms.lookups.find(
+      lookups &&
+      lookups.find(
         l => `{{{${l.name}}}}` === retValues['/rdbms/ignoreExtract']
       );
 
