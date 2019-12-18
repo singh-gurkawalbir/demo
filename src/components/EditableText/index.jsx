@@ -8,10 +8,9 @@ const useStyles = makeStyles(theme => ({
     borderColor: 'transparent',
     transition: theme.transitions.create(['border', 'background-color']),
     maxWidth: 650,
-    textOverflow: 'ellipsis',
+    maxHeight: 60,
     overflow: 'hidden',
     float: 'left',
-    whiteSpace: 'nowrap',
     '&:hover': {
       backgroundColor: theme.palette.background.paper2,
       borderBottom: `solid 1px ${fade(theme.palette.primary.light, 0.5)}`,

@@ -1,15 +1,10 @@
-import React, { useState, useEffect, Fragment } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useState, Fragment } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import * as selectors from '../../../../reducers';
 import UrlEditorDialog from '../../../../components/AFE/UrlEditor/Dialog';
 import InputWithLookupHandlebars from './InputWithLookupHandlebars';
-import getFormattedSampleData from '../../../../utils/sampleData';
-import actions from '../../../../actions';
 import ActionButton from '../../../ActionButton';
 import ExitIcon from '../../../icons/ExitIcon';
 import { adaptorTypeMap } from '../../../../utils/resource';
-import getJSONPaths from '../../../../utils/jsonPaths';
 
 const useStyles = makeStyles(theme => ({
   textField: {
@@ -20,8 +15,9 @@ const useStyles = makeStyles(theme => ({
     marginLeft: theme.spacing(1),
   },
 }));
+const prefixRegexp = '.*{{((?!(}|{)).)*$';
 
-export default function DynaRelativeURIWithLookup(props) {
+export default function RelativeURI(props) {
   const [showEditor, setShowEditor] = useState(false);
   const classes = useStyles();
   const {
@@ -43,58 +39,13 @@ export default function DynaRelativeURIWithLookup(props) {
     flowId,
     arrayIndex,
     adaptorType,
+    sampleData,
+    extractFields,
+    connection,
+    showLookup,
   } = props;
   const { resourceName, lookups } = options;
   const { fieldId: lookupFieldId, data: lookupData } = lookups || {};
-  const connection = useSelector(state =>
-    selectors.resource(state, 'connections', connectionId)
-  );
-  const dispatch = useDispatch();
-  const sampleData = useSelector(state =>
-    selectors.getSampleData(state, {
-      flowId,
-      resourceId,
-      resourceType,
-      stage: 'flowInput',
-    })
-  );
-  const formattedSampleData = JSON.stringify(
-    getFormattedSampleData({
-      connection,
-      sampleData,
-      resourceType,
-      resourceName,
-    }),
-    null,
-    2
-  );
-  let formattedExtractFields = [];
-
-  if (sampleData) {
-    const extractPaths = getJSONPaths(sampleData);
-
-    formattedExtractFields =
-      (extractPaths &&
-        extractPaths.map(obj => ({ name: obj.id, id: obj.id }))) ||
-      [];
-  }
-
-  useEffect(() => {
-    // Request for sample data only incase of flow context
-    // TODO : @Raghu Do we show default data in stand alone context?
-    // What type of sample data is expected in case of Page generators
-    if (flowId && !sampleData) {
-      dispatch(
-        actions.flowData.requestSampleData(
-          flowId,
-          resourceId,
-          resourceType,
-          'flowInput'
-        )
-      );
-    }
-  }, [dispatch, flowId, resourceId, resourceType, sampleData]);
-
   const handleEditorClick = () => {
     setShowEditor(!showEditor);
   };
@@ -139,6 +90,62 @@ export default function DynaRelativeURIWithLookup(props) {
       : value;
   const isSqlImport =
     adaptorType && adaptorTypeMap[adaptorType] === adaptorTypeMap.RDBMSImport;
+  const getMatchedValueforSuggestion = (_val, cursorPosition) => {
+    const inpValue = _val.substring(0, cursorPosition);
+    const startIndexOfBraces = inpValue.lastIndexOf('{{');
+    const matchedString = inpValue.substring(startIndexOfBraces + 2);
+
+    return matchedString;
+  };
+
+  const getUpdatedFieldValue = (
+    userInput,
+    cursorPosition,
+    insertedVal,
+    isLookup
+  ) => {
+    const tmpStr = userInput.substring(0, cursorPosition);
+    const lastIndexOfBracesBeforeCursor = tmpStr.lastIndexOf('{');
+    let handlebarExp = '';
+
+    if (isLookup && connection.type === 'http') {
+      handlebarExp = `{lookup "${insertedVal}" this}`;
+    } else {
+      handlebarExp = `{${insertedVal}}`;
+    }
+
+    const closeBraceIndexAfterCursor = extactedVal.indexOf(
+      '}',
+      lastIndexOfBracesBeforeCursor + 1
+    );
+    const openBraceIndexAfterCursor = extactedVal.indexOf(
+      '{',
+      lastIndexOfBracesBeforeCursor + 1
+    );
+    let newValue = '';
+    const preText = `${extactedVal.substring(
+      0,
+      lastIndexOfBracesBeforeCursor + 1
+    )}`;
+
+    if (
+      closeBraceIndexAfterCursor === -1 ||
+      (openBraceIndexAfterCursor !== -1 &&
+        openBraceIndexAfterCursor < closeBraceIndexAfterCursor)
+    ) {
+      const postText = `${extactedVal.substring(
+        lastIndexOfBracesBeforeCursor + 1
+      )}`;
+
+      newValue = `${preText}${handlebarExp}}}${postText}`;
+    } else {
+      const postText = `${extactedVal.substring(closeBraceIndexAfterCursor)}`;
+
+      newValue = `${preText}${handlebarExp}${postText}`;
+    }
+
+    return newValue;
+  };
 
   return (
     <Fragment>
@@ -146,7 +153,7 @@ export default function DynaRelativeURIWithLookup(props) {
         <UrlEditorDialog
           title="Relative URI Editor"
           id={id}
-          data={formattedSampleData}
+          data={sampleData}
           rule={extactedVal}
           lookups={lookupData}
           onClose={handleClose}
@@ -159,19 +166,21 @@ export default function DynaRelativeURIWithLookup(props) {
         <ExitIcon />
       </ActionButton>
       <InputWithLookupHandlebars
+        id={id}
+        showLookup={showLookup}
         key={id}
         name={name}
         label={label}
         placeholder={placeholder}
         isValid={isValid}
-        sampleData={formattedSampleData}
+        sampleData={sampleData}
         description={description}
         errorMessages={errorMessages}
         isSqlImport={isSqlImport}
         disabled={disabled}
         multiline={multiline}
         onFieldChange={handleFieldChange}
-        extractFields={formattedExtractFields}
+        extractFields={extractFields}
         lookups={lookupData}
         onLookupUpdate={handleLookupUpdate}
         required={required}
@@ -182,6 +191,9 @@ export default function DynaRelativeURIWithLookup(props) {
         resourceName={resourceName}
         resourceType={resourceType}
         flowId={flowId}
+        getUpdatedFieldValue={getUpdatedFieldValue}
+        prefixRegexp={prefixRegexp}
+        getMatchedValueforSuggestion={getMatchedValueforSuggestion}
       />
     </Fragment>
   );

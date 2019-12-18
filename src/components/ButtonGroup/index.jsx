@@ -18,11 +18,7 @@ const useStyles = makeStyles({
 function ButtonGroup(props) {
   const classes = useStyles();
 
-  return (
-    <div>
-      <div className={classes.wrapper}>{props.children}</div>
-    </div>
-  );
+  return <div className={classes.wrapper}>{props.children}</div>;
 }
 
 export default ButtonGroup;

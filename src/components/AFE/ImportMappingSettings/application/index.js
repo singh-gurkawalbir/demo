@@ -46,8 +46,19 @@ const getFormattedLookup = (lookup, formVal) => {
       case 'useNull':
         lookupTmp.default = null;
         break;
+      case 'useDefaultOnMultipleMatches':
+        lookupTmp.useDefaultOnMultipleMatches = true;
+        lookupTmp.default =
+          formVal.lookupDefault ||
+          formVal.lookupSelect ||
+          formVal.lookupCheckbox;
+        break;
       case 'default':
-        lookupTmp.default = formVal.lookupDefault || formVal.lookupSFSelect;
+        lookupTmp.default =
+          formVal.lookupDefault ||
+          formVal.lookupSelect ||
+          formVal.lookupCheckbox ||
+          formVal.lookupSFSelect;
         break;
       default:
     }
@@ -76,6 +87,7 @@ export default {
           value,
           lookup,
           extractFields,
+          options,
         });
         break;
       case adaptorTypeMap.NetSuiteDistributedImport:
@@ -143,6 +155,10 @@ export default {
 
       if (formVal.generateDateTimezone) {
         settings.generateDateTimezone = formVal.generateDateTimezone;
+      }
+
+      if ('isKey' in formVal) {
+        settings.isKey = formVal.isKey;
       }
     }
 

@@ -13,10 +13,6 @@ import AuditLogSection from './sections/AuditLog';
 import ReadmeSection from './sections/Readme';
 import NotificationsSection from './sections/Notifications';
 import UsersSection from './sections/Users';
-import NotificationsIcon from '../../../../../components/icons/NotificationsIcon';
-import AuditLogIcon from '../../../../../components/icons/AuditLogIcon';
-import usersIcon from '../../../../../components/icons/GroupOfUsersIcon';
-import ReadmeIcon from '../../../../../components/icons/ShowContentIcon';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -54,28 +50,24 @@ const allSections = [
     label: 'Notifications',
     Section: NotificationsSection,
     id: 'notifications',
-    Icon: NotificationsIcon,
   },
   {
     path: 'audit',
     label: 'Audit log',
     Section: AuditLogSection,
     id: 'auditLog',
-    Icon: AuditLogIcon,
   },
   {
     path: 'users',
     label: 'Users',
     Section: UsersSection,
     id: 'users',
-    Icon: usersIcon,
   },
   {
     path: 'readme',
     label: 'Readme',
     Section: ReadmeSection,
     id: 'readMe',
-    Icon: ReadmeIcon,
   },
 ];
 
@@ -103,9 +95,8 @@ export default function AdminPanel({ integrationId }) {
       <div className={classes.container}>
         <div className={classes.subNav}>
           <List>
-            {availableSections.map(({ path, label, id, Icon }) => (
+            {availableSections.map(({ path, label, id }) => (
               <ListItem key={path}>
-                <Icon className={classes.icon} />
                 <NavLink
                   className={classes.listItem}
                   activeClassName={classes.activeListItem}
