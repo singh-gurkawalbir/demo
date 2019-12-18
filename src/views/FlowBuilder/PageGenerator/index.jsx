@@ -57,6 +57,7 @@ const PageGenerator = ({
   const pending = !pg._exportId;
   const resourceId = pg._connectionId || pg._exportId;
   const resourceType = pg._connectionId ? 'connections' : 'exports';
+  const { schedule } = pg;
   const classes = useStyles();
   const dispatch = useDispatch();
   const [newGeneratorId, setNewGeneratorId] = useState(null);
@@ -95,6 +96,8 @@ const PageGenerator = ({
       ];
 
       dispatch(actions.resource.patchStaged(flowId, patchSet, 'value'));
+      dispatch(actions.resource.commitStaged('flows', flowId, 'value'));
+      dispatch(actions.flowData.updateFlow(flowId));
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -144,7 +147,7 @@ const PageGenerator = ({
     }
 
     const to = pending
-      ? `${match.url}/add/exports/${newId}`
+      ? `${match.url}/add/pageGenerator/${newId}`
       : `${match.url}/edit/exports/${pg._exportId}`;
 
     if (match.isExact) {
@@ -235,6 +238,7 @@ const PageGenerator = ({
         flowId={flowId}
         resource={resource}
         index={index}
+        schedule={schedule}
       />
       <div
         /* -- connecting line */

@@ -1,20 +1,20 @@
 import { useCallback, useMemo } from 'react';
-import { useSelector, shallowEqual } from 'react-redux';
+import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { Route, useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import * as selectors from '../../../../../../reducers';
 import { integrationSettingsToDynaFormMetadata } from '../../../../../../forms/utils';
-import { ActionsFactory } from '../../../../../../components/ResourceFormFactory';
+import { FormStateManager } from '../../../../../../components/ResourceFormFactory';
 import DrawerTitleBar from '../../../../../../components/drawer/TitleBar';
 import LoadResources from '../../../../../../components/LoadResources';
-import getRoutePath from '../../../../../../utils/routePaths';
+import actions from '../../../../../../actions';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
     marginTop: theme.appBarHeight,
     minWidth: 824,
-    maxWidth: 999,
+    maxWidth: 1300,
     border: 'solid 1px',
     borderColor: theme.palette.secondary.lightest,
     boxShadow: `-4px 4px 8px rgba(0,0,0,0.15)`,
@@ -32,6 +32,7 @@ function SettingsDrawer({ integrationId, storeId }) {
   const classes = useStyles();
   const history = useHistory();
   const match = useRouteMatch();
+  const dispatch = useDispatch();
   const { flowId } = match.params;
   const flow =
     useSelector(state => selectors.resource(state, 'flows', flowId)) || {};
@@ -44,9 +45,17 @@ function SettingsDrawer({ integrationId, storeId }) {
   // props (all of which would cause re-renders of deep component trees)
   // We have a data-layer for a reason. There is absolutely no reason to proxy data-layer
   // results deeply through many nested components.
-  const formState = useSelector(state =>
-    selectors.integrationAppSettingsFormState(state, integrationId, flowId)
-  );
+  const formState = useSelector(state => {
+    const formState = selectors.integrationAppSettingsFormState(
+      state,
+      integrationId,
+      flowId
+    );
+
+    formState.initComplete = true;
+
+    return formState;
+  });
   const { settings: fields, sections } = useSelector(
     state => selectors.getIAFlowSettings(state, integrationId, flowId),
     shallowEqual
@@ -62,8 +71,9 @@ function SettingsDrawer({ integrationId, storeId }) {
     [fields, flow, integrationId, sections]
   );
   const handleClose = useCallback(() => {
-    history.push(getRoutePath(match.url));
-  }, [history, match.url]);
+    dispatch(actions.integrationApp.settings.clear(integrationId, flowId));
+    history.goBack();
+  }, [dispatch, flowId, history, integrationId]);
 
   // console.log('render <SettingsDrawer>');
 
@@ -78,19 +88,15 @@ function SettingsDrawer({ integrationId, storeId }) {
       onClose={handleClose}>
       <DrawerTitleBar title={`Settings: ${flowName}`} />
 
-      {fieldMeta && (
-        <ActionsFactory
-          className={classes.settingsForm}
-          integrationId={integrationId}
-          flowId={flowId}
-          storeId={storeId}
-          onSubmitComplete={handleClose}
-          // TODO: why do we need to spread the form state here?
-          // what does this accomplish? In some places we do not do this.
-          {...formState}
-          fieldMeta={fieldMeta}
-        />
-      )}
+      <FormStateManager
+        className={classes.settingsForm}
+        integrationId={integrationId}
+        flowId={flowId}
+        storeId={storeId}
+        onSubmitComplete={handleClose}
+        formState={formState}
+        fieldMeta={fieldMeta}
+      />
     </Drawer>
   );
 }

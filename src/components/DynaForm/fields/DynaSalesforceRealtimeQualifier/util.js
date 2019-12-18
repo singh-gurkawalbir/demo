@@ -1,6 +1,6 @@
 /* eslint-disable no-useless-escape */
 /* eslint-disable no-param-reassign */
-import { filter, isEmpty } from 'lodash';
+import { filter, isEmpty, uniqBy } from 'lodash';
 import jQuery from 'jquery';
 
 export function getFilterRuleId(rule) {
@@ -8,6 +8,8 @@ export function getFilterRuleId(rule) {
 }
 
 const updateRulesForSOQL = (dataIn = { rules: [] }) => {
+  const referenceFieldsUsed = [];
+
   dataIn.rules.forEach(r => {
     if (r.rules && r.rules.length > 0) {
       updateRulesForSOQL(r);
@@ -18,14 +20,17 @@ const updateRulesForSOQL = (dataIn = { rules: [] }) => {
       r.operator = r.operator === 'equal' ? 'is_null' : 'is_not_null';
     }
 
-    // if (r.id && r.id.indexOf('.') > -1) {
-    //   self.data.referenceFieldsUsed.push(r.id);
-    // }
+    if (r.id && r.id.indexOf('.') > -1) {
+      referenceFieldsUsed.push(r.id);
+    }
   });
+
+  return referenceFieldsUsed;
 };
 
 export function convertSalesforceQualificationCriteria(sql, queryBuilder) {
   let rules;
+  let referenceFieldsUsed;
 
   if (sql) {
     /*
@@ -47,10 +52,10 @@ export function convertSalesforceQualificationCriteria(sql, queryBuilder) {
     );
     sql = sql.replace(/\d{4}-\d{2}-\d{2}(?!T)/g, dt => `'${dt}'`);
     rules = jQuery(queryBuilder).queryBuilder('getRulesFromSQL', sql);
-    updateRulesForSOQL(rules);
+    referenceFieldsUsed = updateRulesForSOQL(rules);
   }
 
-  return rules;
+  return { rules, referenceFieldsUsed };
 }
 
 const getFilterTypeAndOperators = field => {
@@ -261,4 +266,13 @@ export function getSQL(queryBuilder) {
   );
 
   return result.sql;
+}
+
+export function getAllFiltersConfig(filtersMetadata = [], referenceFields) {
+  const referencedFields = referenceFields.map(f => ({ id: f, label: f }));
+
+  return uniqBy(
+    [...filtersMetadata, ...referencedFields].map(v => getFilterConfig(v)),
+    'id'
+  );
 }

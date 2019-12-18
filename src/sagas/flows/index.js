@@ -6,11 +6,18 @@ import getRequestOptions from '../../utils/requestOptions';
 import * as selectors from '../../reducers';
 import { JOB_STATUS, JOB_TYPES } from '../../utils/constants';
 
-export function* run({ flowId }) {
+export function* run({ flowId, customStartDate }) {
   const { path, opts } = getRequestOptions(actionTypes.FLOW.RUN, {
     resourceId: flowId,
+    customStartDate,
   });
   let job;
+
+  if (customStartDate) {
+    opts.body = {
+      export: { startDate: customStartDate },
+    };
+  }
 
   try {
     job = yield call(apiCallWithRetry, { path, opts });
@@ -36,4 +43,33 @@ export function* run({ flowId }) {
   yield put(actions.job.requestInProgressJobStatus());
 }
 
-export const flowSagas = [takeEvery(actionTypes.FLOW.RUN, run)];
+export function* getLastExportDateTime({ flowId }) {
+  const path = `/flows/${flowId}/lastExportDateTime`;
+  let response;
+
+  try {
+    response = yield call(apiCallWithRetry, {
+      path,
+      opts: {
+        method: 'GET',
+      },
+    });
+  } catch (error) {
+    yield put(actions.api.failure(path, 'GET', error && error.message, false));
+    yield put(actions.flow.receivedLastExportDateTime(flowId));
+
+    return undefined;
+  }
+
+  if (response) {
+    yield put(actions.flow.receivedLastExportDateTime(flowId, response));
+  }
+}
+
+export const flowSagas = [
+  takeEvery(actionTypes.FLOW.RUN, run),
+  takeEvery(
+    actionTypes.FLOW.REQUEST_LAST_EXPORT_DATE_TIME,
+    getLastExportDateTime
+  ),
+];

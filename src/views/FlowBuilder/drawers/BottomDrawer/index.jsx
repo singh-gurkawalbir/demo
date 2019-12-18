@@ -81,7 +81,13 @@ function TabPanel({ children, value, index, classes }) {
   );
 }
 
-export default function BottomDrawer({ size, setSize, flow }) {
+export default function BottomDrawer({
+  size,
+  setSize,
+  flow,
+  setTabValue,
+  tabValue,
+}) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
@@ -92,7 +98,6 @@ export default function BottomDrawer({ size, setSize, flow }) {
   const connectionIdNameMap = useSelector(state =>
     selectors.resourceNamesByIds(state, 'connections')
   );
-  const [tabValue, setTabValue] = useState(0);
   const [clearConnectionLogs, setClearConnectionLogs] = useState(true);
   const maxStep = 3; // set maxStep to 4 to allow 100% drawer coverage.
   const handleSizeChange = useCallback(
@@ -111,7 +116,7 @@ export default function BottomDrawer({ size, setSize, flow }) {
 
       if (size === 0) setSize(1);
     },
-    [setSize, size]
+    [setSize, setTabValue, size]
   );
   const handleDebugLogsClose = useCallback(
     connectionId => event => {
@@ -119,7 +124,7 @@ export default function BottomDrawer({ size, setSize, flow }) {
       setTabValue(0);
       dispatch(actions.connection.clearDebugLogs(connectionId));
     },
-    [dispatch]
+    [dispatch, setTabValue]
   );
 
   useEffect(() => {

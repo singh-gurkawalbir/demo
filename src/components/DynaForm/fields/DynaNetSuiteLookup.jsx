@@ -23,7 +23,7 @@ export default function DynaNetSuiteLookup(props) {
   const [showEditor, setShowEditor] = useState(false);
   const classes = useStyles();
   const {
-    disabled,
+    // disabled,
     errorMessages,
     id,
     isValid,
@@ -103,7 +103,7 @@ export default function DynaNetSuiteLookup(props) {
           data={formattedExtractFields}
           value={rule}
           onClose={handleClose}
-          disabled={disabled}
+          // disabled={disabled}
           options={options}
         />
       )}

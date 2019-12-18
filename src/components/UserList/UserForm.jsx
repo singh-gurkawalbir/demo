@@ -69,7 +69,7 @@ class UserForm extends Component {
           label: 'Email',
           defaultValue: isEditMode ? data.sharedWithUser.email : '',
           required: true,
-          disabled: isEditMode,
+          defaultDisabled: isEditMode,
           helpText:
             'Enter the email of the user you would like to invite to manage and/or monitor selected integrations.',
         },

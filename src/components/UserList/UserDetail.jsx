@@ -17,7 +17,7 @@ import {
 } from '../../utils/constants';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
-import { COMM_STATES } from '../../reducers/comms';
+import { COMM_STATES } from '../../reducers/comms/networkComms';
 import { confirmDialog } from '../ConfirmDialog';
 import CommStatus from '../CommStatus';
 

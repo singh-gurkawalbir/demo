@@ -17,14 +17,22 @@ export default {
         field: 'outputMode',
         is: ['records'],
       },
+      {
+        field: 'file.output',
+        is: ['records'],
+      },
     ],
   },
   'file.encoding': {
     type: 'select',
     label: 'File encoding',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'outputMode',
+        is: ['records'],
+      },
+      {
+        field: 'file.output',
         is: ['records'],
       },
     ],
@@ -57,6 +65,12 @@ export default {
         ],
       },
     ],
+    visibleWhen: [
+      {
+        field: 'file.output',
+        is: ['records'],
+      },
+    ],
     userDefinitionId: r =>
       r &&
       r.file &&
@@ -66,6 +80,7 @@ export default {
   'file.output': {
     type: 'select',
     label: 'Output Mode',
+    defaultValue: r => (r && r.file && r.file.output) || 'records',
     options: [
       {
         items: [
@@ -224,11 +239,12 @@ export default {
   },
   'file.csv': {
     type: 'csvparse',
-    label: 'Configure CSV parse options',
+    label: 'Configure CSV Parse Options',
     defaultValue: r =>
       (r.file && r.file.csv) || {
         rowsToSkip: 0,
         trimSpaces: true,
+        columnDelimiter: ',',
       },
     visibleWhenAll: [
       {
@@ -237,6 +253,10 @@ export default {
       },
       {
         field: 'outputMode',
+        is: ['records'],
+      },
+      {
+        field: 'file.output',
         is: ['records'],
       },
     ],
@@ -260,9 +280,10 @@ export default {
         is: ['xlsx'],
       },
     ],
+    defaultValue: r => !!(r && r.file && r.file.xlsx && r.file.xlsx.keyColumns),
   },
   'file.xlsx.keyColumns': {
-    type: 'text',
+    type: 'filekeycolumn',
     label: 'Key Columns',
     visibleWhenAll: [
       {

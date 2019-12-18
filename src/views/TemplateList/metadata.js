@@ -28,7 +28,7 @@ export default {
     {
       heading: 'Image',
       value(r) {
-        return <img src={r.imageURL} alt="Loading..." />;
+        return <img src={r.imageURL} alt="" />;
       },
     },
     {

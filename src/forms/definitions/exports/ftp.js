@@ -4,6 +4,61 @@ export default {
   preSave: formValues => {
     const newValues = { ...formValues };
 
+    if (newValues['/file/json/resourcePath'] === '') {
+      newValues['/file/json'] = undefined;
+      delete newValues['/file/json/resourcePath'];
+    }
+
+    if (newValues['/file/type'] === 'json') {
+      newValues['/file/xlsx'] = undefined;
+      newValues['/file/xml'] = undefined;
+      newValues['/file/csv'] = undefined;
+      newValues['/file/fileDefinition'] = undefined;
+      delete newValues['/file/xlsx/hasHeaderRow'];
+      delete newValues['/file/xlsx/rowsPerRecord'];
+      delete newValues['/file/xlsx/keyColumns'];
+      delete newValues['/file/xml/resourcePath'];
+      delete newValues['/file/csv/rowsToSkip'];
+      delete newValues['/file/csv/trimSpaces'];
+      delete newValues['/file/csv/columnDelimiter'];
+      delete newValues['/file/fileDefinition/resourcePath'];
+    } else if (newValues['/file/type'] === 'xml') {
+      newValues['/file/xlsx'] = undefined;
+      newValues['/file/json'] = undefined;
+      newValues['/file/csv'] = undefined;
+      newValues['/file/fileDefinition'] = undefined;
+      delete newValues['/file/csv/rowsToSkip'];
+      delete newValues['/file/csv/trimSpaces'];
+      delete newValues['/file/csv/columnDelimiter'];
+      delete newValues['/file/xlsx/hasHeaderRow'];
+      delete newValues['/file/xlsx/rowsPerRecord'];
+      delete newValues['/file/xlsx/keyColumns'];
+      delete newValues['/file/json/resourcePath'];
+      delete newValues['/file/fileDefinition/resourcePath'];
+    } else if (newValues['/file/type'] === 'xlsx') {
+      newValues['/file/json'] = undefined;
+      newValues['/file/csv'] = undefined;
+      newValues['/file/xml'] = undefined;
+      newValues['/file/fileDefinition'] = undefined;
+      delete newValues['/file/json/resourcePath'];
+      delete newValues['/file/csv/rowsToSkip'];
+      delete newValues['/file/csv/trimSpaces'];
+      delete newValues['/file/csv/columnDelimiter'];
+      delete newValues['/file/xml/resourcePath'];
+      delete newValues['/file/fileDefinition/resourcePath'];
+    } else if (newValues['/file/type'] === 'csv') {
+      newValues['/file/json'] = undefined;
+      newValues['/file/xlsx'] = undefined;
+      newValues['/file/xml'] = undefined;
+      newValues['/file/fileDefinition'] = undefined;
+      delete newValues['/file/json/resourcePath'];
+      delete newValues['/file/xml/resourcePath'];
+      delete newValues['/file/fileDefinition/resourcePath'];
+      delete newValues['/file/xlsx/hasHeaderRow'];
+      delete newValues['/file/xlsx/rowsPerRecord'];
+      delete newValues['/file/xlsx/keyColumns'];
+    }
+
     if (newValues['/outputMode'] === 'blob') {
       newValues['/file/skipDelete'] = newValues['/ftp/leaveFile'];
       newValues['/file/output'] = 'blobKeys';
@@ -12,45 +67,15 @@ export default {
 
     delete newValues['/outputMode'];
 
+    if (newValues['/file/decompressFiles'] === false) {
+      newValues['/file/compressionFormat'] = undefined;
+    }
+
+    delete newValues['/file/decompressFiles'];
+
     return {
       ...newValues,
     };
-  },
-  init: fieldMeta => {
-    const fileDefinitionRulesField =
-      fieldMeta.fieldMap['file.filedefinition.rules'];
-
-    if (!fileDefinitionRulesField.userDefinitionId) {
-      // In Export creation mode, delete generic visibleWhenAll rules
-      // Add custom visible when rules
-      delete fileDefinitionRulesField.visibleWhenAll;
-      fileDefinitionRulesField.visibleWhen = [
-        {
-          field: 'edix12.format',
-          isNot: [''],
-        },
-        {
-          field: 'fixed.format',
-          isNot: [''],
-        },
-        {
-          field: 'edifact.format',
-          isNot: [''],
-        },
-      ];
-    } else {
-      // make visibility of format fields false incase of edit mode of file adaptors
-      const fields = ['edix12.format', 'fixed.format', 'edifact.format'];
-
-      fields.forEach(field => {
-        const formatField = fieldMeta.fieldMap[field];
-
-        delete formatField.visibleWhenAll;
-        formatField.visible = false;
-      });
-    }
-
-    return fieldMeta;
   },
   fieldMap: {
     common: { formId: 'common' },
@@ -93,8 +118,6 @@ export default {
     'ftp.directoryPath': { fieldId: 'ftp.directoryPath' },
     'file.output': {
       fieldId: 'file.output',
-
-      defaultValue: r => (r && r.file && r.file.output) || 'records',
     },
     'ftp.fileNameStartsWith': { fieldId: 'ftp.fileNameStartsWith' },
     'ftp.fileNameEndsWith': { fieldId: 'ftp.fileNameEndsWith' },
@@ -131,9 +154,6 @@ export default {
   },
   actions: [
     {
-      id: 'cancel',
-    },
-    {
       id: 'save',
       visibleWhen: [
         {
@@ -151,6 +171,9 @@ export default {
           is: ['filedefinition', 'fixed', 'delimited/edifact'],
         },
       ],
+    },
+    {
+      id: 'cancel',
     },
   ],
 };

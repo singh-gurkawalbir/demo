@@ -320,11 +320,7 @@ export const DynaTable = props => {
                         valueName="value"
                         options={r.options}
                         onBlur={(id, evt) => {
-                          handleUpdate(
-                            arr.row,
-                            { target: { value: evt } },
-                            r.id
-                          );
+                          handleUpdate(arr.row, evt, r.id);
                         }}
                       />
                     )}

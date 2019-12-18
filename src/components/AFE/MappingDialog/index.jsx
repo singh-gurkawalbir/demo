@@ -10,13 +10,14 @@ import {
   IconButton,
 } from '@material-ui/core';
 // TODO: Azhar, please fix these icons message
-import ZoomOutIcon from '@material-ui/icons/ZoomOutMap';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import { preSaveValidate } from './util';
 import * as selectors from '../../../reducers';
 import CloseIcon from '../../icons/CloseIcon';
 import mappingUtil from '../../../utils/mapping';
+import FullScreenOpenIcon from '../../icons/FullScreenOpenIcon';
+import FullScreenCloseIcon from '../../icons/FullScreenCloseIcon';
 
 const useStyles = makeStyles(theme => ({
   dialogContent: {
@@ -60,8 +61,10 @@ export default function MappingDialog(props) {
     title,
     width = '80vw',
     height = '70vh',
+    noMappingHeight = '20vh',
     onClose,
     onSave,
+    disabled,
   } = props;
   const classes = useStyles();
   const [fullScreen, setFullScreen] = useState(props.fullScreen || false);
@@ -71,6 +74,7 @@ export default function MappingDialog(props) {
     adaptorType,
     application,
     generateFields,
+    visible: showMappings,
   } = useSelector(state => selectors.mapping(state, id));
   const [enquesnackbar] = useEnqueueSnackbar();
   const handleSave = shouldClose => {
@@ -100,7 +104,10 @@ export default function MappingDialog(props) {
   };
 
   const handleFullScreenClick = () => setFullScreen(!fullScreen);
-  const size = fullScreen ? { height } : { height, width };
+  let size;
+
+  if (showMappings) size = fullScreen ? { height } : { height, width };
+  else size = { height: noMappingHeight };
 
   return (
     <Dialog
@@ -124,7 +131,7 @@ export default function MappingDialog(props) {
             value="max"
             onClick={handleFullScreenClick}
             selected={fullScreen}>
-            <ZoomOutIcon />
+            {fullScreen ? <FullScreenCloseIcon /> : <FullScreenOpenIcon />}
           </ToggleButton>
         </div>
         <IconButton
@@ -135,24 +142,29 @@ export default function MappingDialog(props) {
           <CloseIcon />
         </IconButton>
       </div>
+
       <DialogContent style={size} className={classes.dialogContent}>
         {children}
       </DialogContent>
-      <DialogActions className={classes.actions}>
-        <Button
-          color="primary"
-          data-test="saveImportMapping"
-          onClick={() => handleSave()}>
-          Save
-        </Button>
-        <Button
-          variant="outlined"
-          data-test="saveAndCloseImportMapping"
-          color="primary"
-          onClick={() => handleSave(true)}>
-          Save and Close
-        </Button>
-      </DialogActions>
+      {showMappings && (
+        <DialogActions className={classes.actions}>
+          <Button
+            disabled={disabled}
+            color="primary"
+            data-test="saveImportMapping"
+            onClick={() => handleSave()}>
+            Save
+          </Button>
+          <Button
+            disabled={disabled}
+            variant="outlined"
+            data-test="saveAndCloseImportMapping"
+            color="primary"
+            onClick={() => handleSave(true)}>
+            Save and Close
+          </Button>
+        </DialogActions>
+      )}
     </Dialog>
   );
 }

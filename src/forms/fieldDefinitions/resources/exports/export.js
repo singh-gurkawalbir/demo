@@ -87,7 +87,7 @@ export default {
   },
   dataURITemplate: {
     type: 'relativeuri',
-    label: 'Data URITemplate',
+    label: 'Override Data URI Template',
     connectionId: r => r && r._connectionId,
   },
   exportOneToMany: {
@@ -99,7 +99,7 @@ export default {
     type: 'radiogroup',
     label:
       'Does each individual record being processed need to execute multiple different exports?',
-    defaultValue: r => (r && r.pathToMany ? 'true' : 'false'),
+    defaultValue: r => (r && r.oneToMany ? 'true' : 'false'),
     visible: r => !!(r && r.isLookup),
     options: [
       {
@@ -197,7 +197,7 @@ export default {
           { label: 'Lightspeed', value: 'lightspeed' },
           { label: 'Linkedin', value: 'linkedin' },
           { label: 'Liquidplanner', value: 'liquidplanner' },
-          { label: 'Magento', value: 'magento' },
+          { label: 'Magento 2', value: 'magento' },
           { label: 'Mailchimp', value: 'mailchimp' },
           { label: 'Mediaocean', value: 'mediaocean' },
           { label: 'Namely', value: 'namely' },
@@ -419,7 +419,7 @@ export default {
   'delta.lagOffset': {
     type: 'text',
     label: 'Offset',
-    visibleWhen: [{ field: 'type', is: ['delta'] }],
+    visibleWhenAll: [{ field: 'type', is: ['delta'] }],
   },
   'delta.endDateField': {
     type: 'text',

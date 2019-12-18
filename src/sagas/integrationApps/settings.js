@@ -44,7 +44,12 @@ export function* getMappingMetadata({ integrationId }) {
       hidden: true,
     });
   } catch (error) {
-    return undefined;
+    yield put(
+      actions.integrationApp.settings.mappingMetadataError(
+        integrationId,
+        error.message
+      )
+    );
   }
 
   if (response) {
@@ -120,7 +125,7 @@ export default [
     getAddOnLicenseMetadata
   ),
   takeLatest(
-    actionTypes.INTEGRATION_APPS.SETTINGS.MAPPING_METADATA,
+    actionTypes.INTEGRATION_APPS.SETTINGS.MAPPING_METADATA_REQUEST,
     getMappingMetadata
   ),
 ];

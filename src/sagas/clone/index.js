@@ -4,7 +4,7 @@ import actions from '../../actions';
 import { apiCallWithRetry } from '../index';
 import * as selectors from '../../reducers';
 import templateUtil from '../../utils/template';
-import { getResourceCollection } from '../resources';
+import { getResource } from '../resources';
 
 export function* requestPreview({ resourceType, resourceId }) {
   const path = `/${resourceType}/${resourceId}/clone/preview`;
@@ -63,8 +63,8 @@ export function* createComponents({ resourceType, resourceId }) {
     templateUtil.getDependentResources(components) || [];
 
   yield all(
-    dependentResources.map(resourceType =>
-      call(getResourceCollection, { resourceType })
+    dependentResources.map(({ resourceType, id }) =>
+      call(getResource, { resourceType, id })
     )
   );
   yield put(

@@ -381,13 +381,14 @@ export const getMetadata = ({
   exports,
   pg,
   flows,
+  scheduleStartMinute,
 }) => {
   const startTimeData = HOURS_LIST.map(
     hour =>
       moment()
         .startOf('day')
         .add(hour, 'h')
-        .add(resource.scheduleStartMinute || 0, 'm')
+        .add(scheduleStartMinute || 0, 'm')
         .format('LT'),
     Number
   );
@@ -674,7 +675,7 @@ export const getMetadata = ({
             moment()
               .startOf('day')
               .add(hour, 'h')
-              .add(minutes, 'm')
+              .add(minutes + scheduleStartMinute, 'm')
               .format('LT'),
           Number
         );
@@ -697,7 +698,7 @@ export const getMetadata = ({
   };
 };
 
-export const setValues = (data, schedule) => {
+export const setValues = (data, schedule, scheduleStartMinute) => {
   const resource = { ...data };
   const value = schedule;
   const frequency = {
@@ -718,7 +719,7 @@ export const setValues = (data, schedule) => {
       moment()
         .startOf('day')
         .add(hour, 'h')
-        .add(resource.scheduleStartMinute, 'm')
+        .add(scheduleStartMinute, 'm')
         .format('LT'),
     Number
   );
@@ -795,7 +796,7 @@ export const setValues = (data, schedule) => {
       resource.startTime = moment()
         .startOf('day')
         .add(hours[0], 'h')
-        .add(resource.scheduleStartMinute, 'm')
+        .add(scheduleStartMinute, 'm')
         .format('LT');
 
       if (hours.length) {
@@ -807,7 +808,7 @@ export const setValues = (data, schedule) => {
               .startOf('day')
               .add(hour, 'h')
               .add(minutes, 'm')
-              .add(resource.scheduleStartMinute, 'm')
+              .add(scheduleStartMinute, 'm')
               .format('LT'),
           Number
         );
@@ -849,7 +850,7 @@ export const setValues = (data, schedule) => {
         resource.startTime = moment()
           .startOf('day')
           .add(hours[0], 'h')
-          .add(resource.scheduleStartMinute, 'm')
+          .add(scheduleStartMinute, 'm')
           .format('LT');
         resource.endTime = moment(resource.startTime, 'LT')
           .add(diff * (hours.length - 1), 'h')
@@ -876,7 +877,7 @@ export const setValues = (data, schedule) => {
       resource.startTime = moment()
         .startOf('day')
         .add(cronArr[HOURS], 'h')
-        .add(resource.scheduleStartMinute, 'm')
+        .add(scheduleStartMinute, 'm')
         .format('LT');
       resource.endTime = undefined;
       resource.dayToRunOn = cronArr[WEEKDAY];
@@ -886,7 +887,7 @@ export const setValues = (data, schedule) => {
       resource.startTime = moment()
         .startOf('day')
         .add(cronArr[HOURS], 'h')
-        .add(resource.scheduleStartMinute, 'm')
+        .add(scheduleStartMinute, 'm')
         .format('LT');
       resource.endTime = undefined;
       resource.daysToRunOn =

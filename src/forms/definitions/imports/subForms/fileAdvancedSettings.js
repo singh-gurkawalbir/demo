@@ -19,24 +19,12 @@ export default {
       ],
       requiredWhen: [{ field: 'file.compressFiles', is: [true] }],
     },
-    'file.csv.wrapWithQuotes': {
-      fieldId: 'file.csv.wrapWithQuotes',
-    },
-    'file.csv.replaceTabWithSpace': {
-      fieldId: 'file.csv.replaceTabWithSpace',
-    },
-    'file.csv.replaceNewLineWithSpace': {
-      fieldId: 'file.csv.replaceNewLineWithSpace',
-    },
   },
   layout: {
     fields: [
       'file.skipAggregation',
       'file.compressFiles',
       'file.compressionFormat',
-      'file.csv.wrapWithQuotes',
-      'file.csv.replaceTabWithSpace',
-      'file.csv.replaceNewLineWithSpace',
     ],
   },
 };

@@ -6,6 +6,56 @@ export default {
       ...formValues,
     };
 
+    if (newValues['/file/type'] === 'json') {
+      newValues['/file/xlsx'] = undefined;
+      newValues['/file/xml'] = undefined;
+      newValues['/file/csv'] = undefined;
+      newValues['/file/fileDefinition'] = undefined;
+      delete newValues['/file/xlsx/hasHeaderRow'];
+      delete newValues['/file/xlsx/rowsPerRecord'];
+      delete newValues['/file/xlsx/keyColumns'];
+      delete newValues['/file/xml/resourcePath'];
+      delete newValues['/file/csv/rowsToSkip'];
+      delete newValues['/file/csv/trimSpaces'];
+      delete newValues['/file/csv/columnDelimiter'];
+      delete newValues['/file/fileDefinition/resourcePath'];
+    } else if (newValues['/file/type'] === 'xml') {
+      newValues['/file/xlsx'] = undefined;
+      newValues['/file/json'] = undefined;
+      newValues['/file/csv'] = undefined;
+      newValues['/file/fileDefinition'] = undefined;
+      delete newValues['/file/csv/rowsToSkip'];
+      delete newValues['/file/csv/trimSpaces'];
+      delete newValues['/file/csv/columnDelimiter'];
+      delete newValues['/file/xlsx/hasHeaderRow'];
+      delete newValues['/file/xlsx/rowsPerRecord'];
+      delete newValues['/file/xlsx/keyColumns'];
+      delete newValues['/file/json/resourcePath'];
+      delete newValues['/file/fileDefinition/resourcePath'];
+    } else if (newValues['/file/type'] === 'xlsx') {
+      newValues['/file/json'] = undefined;
+      newValues['/file/csv'] = undefined;
+      newValues['/file/xml'] = undefined;
+      newValues['/file/fileDefinition'] = undefined;
+      delete newValues['/file/json/resourcePath'];
+      delete newValues['/file/csv/rowsToSkip'];
+      delete newValues['/file/csv/trimSpaces'];
+      delete newValues['/file/csv/columnDelimiter'];
+      delete newValues['/file/xml/resourcePath'];
+      delete newValues['/file/fileDefinition/resourcePath'];
+    } else if (newValues['/file/type'] === 'csv') {
+      newValues['/file/json'] = undefined;
+      newValues['/file/xlsx'] = undefined;
+      newValues['/file/xml'] = undefined;
+      newValues['/file/fileDefinition'] = undefined;
+      delete newValues['/file/json/resourcePath'];
+      delete newValues['/file/xml/resourcePath'];
+      delete newValues['/file/fileDefinition/resourcePath'];
+      delete newValues['/file/xlsx/hasHeaderRow'];
+      delete newValues['/file/xlsx/rowsPerRecord'];
+      delete newValues['/file/xlsx/keyColumns'];
+    }
+
     if (newValues['/inputMode'] === 'blob') {
       newValues['/ftp/useTempFile'] = newValues['/ftp/blobUseTempFile'];
       newValues['/ftp/inProgressFileName'] =
@@ -16,47 +66,16 @@ export default {
       newValues['/ftp/inProgressFileName'] = undefined;
     }
 
+    if (newValues['/file/compressFiles'] === false) {
+      newValues['/file/compressionFormat'] = undefined;
+    }
+
+    delete newValues['/file/compressFiles'];
     delete newValues['/inputMode'];
 
     return {
       ...newValues,
     };
-  },
-  init: fieldMeta => {
-    const fileDefinitionRulesField =
-      fieldMeta.fieldMap['file.filedefinition.rules'];
-
-    if (!fileDefinitionRulesField.userDefinitionId) {
-      // In Import creation mode, delete generic visibleWhenAll rules
-      // Add custom visible when rules
-      delete fileDefinitionRulesField.visibleWhenAll;
-      fileDefinitionRulesField.visibleWhen = [
-        {
-          field: 'edix12.format',
-          isNot: [''],
-        },
-        {
-          field: 'fixed.format',
-          isNot: [''],
-        },
-        {
-          field: 'edifact.format',
-          isNot: [''],
-        },
-      ];
-    } else {
-      // make visibility of format fields false incase of edit mode of file adaptors
-      const fields = ['edix12.format', 'fixed.format', 'edifact.format'];
-
-      fields.forEach(field => {
-        const formatField = fieldMeta.fieldMap[field];
-
-        delete formatField.visibleWhenAll;
-        formatField.visible = false;
-      });
-    }
-
-    return fieldMeta;
   },
   optionsHandler: (fieldId, fields) => {
     if (fieldId === 'ftp.fileName') {
@@ -79,8 +98,13 @@ export default {
         fileNameField.value = `${fileNameWithoutExt}.${newExtension}`;
       }
     } else if (fieldId === 'ftp.inProgressFileName') {
-      const fileNameField = fields.find(field => field.fieldId === fieldId);
+      const inprogressFileNameField = fields.find(
+        field => field.fieldId === fieldId
+      );
       const fileTypeField = fields.find(field => field.fieldId === 'file.type');
+      const fileNameField = fields.find(
+        field => field.fieldId === 'ftp.fileName'
+      );
       const newExtension = [
         'filedefinition',
         'fixed',
@@ -102,7 +126,7 @@ export default {
             ? fileNameWithoutTmp.substring(0, lastDotIndex)
             : fileNameWithoutTmp;
 
-        fileNameField.value = `${fileNameWithoutExt}.${newExtension}.tmp`;
+        inprogressFileNameField.value = `${fileNameWithoutExt}.${newExtension}.tmp`;
       }
     }
 
@@ -110,22 +134,6 @@ export default {
 
     if (fieldId === 'uploadFile') {
       return fileType.value;
-    }
-
-    if (fieldId === 'file.filedefinition.rules') {
-      let definitionFieldId;
-
-      // Fetch format specific Field Definition field to fetch id
-      if (fileType.value === 'filedefinition')
-        definitionFieldId = 'edix12.format';
-      else if (fileType.value === 'fixed') definitionFieldId = 'fixed.format';
-      else definitionFieldId = 'edifact.format';
-      const definition = fields.find(field => field.id === definitionFieldId);
-
-      return {
-        format: definition && definition.format,
-        definitionId: definition && definition.value,
-      };
     }
 
     return null;
@@ -285,9 +293,6 @@ export default {
   },
   actions: [
     {
-      id: 'cancel',
-    },
-    {
       id: 'save',
       visibleWhen: [
         {
@@ -305,6 +310,9 @@ export default {
           is: ['filedefinition', 'fixed', 'delimited/edifact'],
         },
       ],
+    },
+    {
+      id: 'cancel',
     },
   ],
 };

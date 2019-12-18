@@ -111,6 +111,15 @@ export default function DynaHttpRequestBody(props) {
   }
 
   let lookupField;
+  const lookupOptions = {
+    isSQLLookup: false,
+    sampleData: formattedSampleData,
+    resourceId,
+    resourceType,
+    flowId,
+    connectionId,
+    resourceName,
+  };
 
   if (lookupFieldId) {
     lookupField = (
@@ -119,6 +128,7 @@ export default function DynaHttpRequestBody(props) {
         label="Manage Lookups"
         value={lookups}
         onFieldChange={onFieldChange}
+        options={lookupOptions}
       />
     );
   }

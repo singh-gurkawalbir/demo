@@ -22,6 +22,10 @@ export default {
     isSQLLookup,
     sampleData,
     connectionId,
+    resourceId,
+    resourceType,
+    flowId,
+    resourceName,
   }) => {
     const dynamicLookupMetadata = dynamicMetadata.getLookupMetadata({
       lookup,
@@ -29,6 +33,10 @@ export default {
       isSQLLookup,
       sampleData,
       connectionId,
+      resourceId,
+      resourceType,
+      flowId,
+      resourceName,
     });
     const {
       fieldMap: dynamicFieldMap,
@@ -77,6 +85,8 @@ export default {
           label: 'Name',
           defaultValue: lookup.name,
           placeholder: 'Alphanumeric characters only please',
+          helpText:
+            'Name of the lookups that will be exposed to the mapping to refer.',
         },
         failRecord: {
           id: 'failRecord',

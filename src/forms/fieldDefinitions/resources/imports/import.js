@@ -40,7 +40,7 @@ export default {
   },
   dataURITemplate: {
     type: 'relativeuri',
-    label: 'Data URITemplate',
+    label: 'Override Data URI Template',
     placeholder: 'Optional',
     connectionId: r => r && r._connectionId,
   },
@@ -48,7 +48,7 @@ export default {
     type: 'radiogroup',
     label:
       'Does each individual record being processed translate to multiple records in the import application?',
-    defaultValue: r => (r && r.pathToMany ? 'true' : 'false'),
+    defaultValue: r => (r && r.oneToMany ? 'true' : 'false'),
     options: [
       {
         items: [
@@ -154,7 +154,7 @@ export default {
           { label: 'Lightspeed', value: 'lightspeed' },
           { label: 'Linkedin', value: 'linkedin' },
           { label: 'Liquidplanner', value: 'liquidplanner' },
-          { label: 'Magento', value: 'magento' },
+          { label: 'Magento 2', value: 'magento' },
           { label: 'Mailchimp', value: 'mailchimp' },
           { label: 'Mediaocean', value: 'mediaocean' },
           { label: 'Namely', value: 'namely' },

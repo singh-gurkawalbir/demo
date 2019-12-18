@@ -13,9 +13,11 @@ export default function useEnqueueSnackbar() {
       showUndo,
       handleClose,
       autoHideDuration = 5000,
+      persist = false,
     }) =>
       enqueueSnackbar(message, {
         variant,
+        persist,
         anchorOrigin: {
           vertical: 'top',
           horizontal: 'center',

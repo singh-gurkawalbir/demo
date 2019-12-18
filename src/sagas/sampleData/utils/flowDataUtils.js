@@ -6,6 +6,7 @@ import {
   fetchPageProcessorPreview,
   fetchPageGeneratorPreview,
   requestProcessorData,
+  requestSampleDataWithContext,
 } from '../flows';
 import getPreviewOptionsForResource from '../flows/pageProcessorPreviewOptions';
 
@@ -99,6 +100,18 @@ export function* requestSampleDataForImports({
           _pageProcessorId: resourceId,
           resourceType,
           previewType: sampleDataStage,
+        });
+        break;
+      }
+
+      case 'flowInputWithContext': {
+        // This stage is added explicitly to feed context info for input filter
+        // TODO @Raghu: Find the better way for this case
+        yield call(requestSampleDataWithContext, {
+          flowId,
+          resourceId,
+          resourceType,
+          stage: sampleDataStage,
         });
         break;
       }
@@ -205,6 +218,17 @@ export function* requestSampleDataForExports({
           previewType: sampleDataStage,
         });
       }
+    } else if (
+      ['flowInputWithContext', 'hooksWithContext'].includes(sampleDataStage)
+    ) {
+      // These stages are added explicitly to feed context info for input/outputFilters
+      // TODO @Raghu: Find the better way for this case
+      yield call(requestSampleDataWithContext, {
+        flowId,
+        resourceId,
+        resourceType,
+        stage: sampleDataStage,
+      });
     } else {
       yield call(requestProcessorData, {
         flowId,

@@ -95,14 +95,13 @@ export function* requestJobCollection({ integrationId, flowId, filters = {} }) {
 
   if (!jobFilters.flowId) {
     if (jobFilters.storeId) {
-      const { flows } = yield select(
-        selectors.integrationAppFlowSettings,
+      const flowIds = yield select(
+        selectors.integrationAppFlowIds,
         integrationId,
-        null,
         jobFilters.storeId
       );
 
-      jobFilters.flowIds = map(flows, '_id');
+      jobFilters.flowIds = flowIds;
     } else if (integrationId === STANDALONE_INTEGRATION.id) {
       /**
        * For Standalone integration, we need to send the list of flow ids filtered by environment.

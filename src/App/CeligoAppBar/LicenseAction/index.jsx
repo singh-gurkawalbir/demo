@@ -49,6 +49,10 @@ export default function LicenseAction() {
   );
   const handleClick = useCallback(() => {
     if (licenseActionDetails.action === 'startTrial') {
+      dispatch(
+        actions.analytics.gainsight.trackEvent('GO_UNLIMITED_BUTTON_CLICKED')
+      );
+
       return dispatch(actions.user.org.accounts.requestTrialLicense());
     }
 

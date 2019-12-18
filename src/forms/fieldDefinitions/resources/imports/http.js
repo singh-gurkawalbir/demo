@@ -2,6 +2,7 @@ export default {
   'http.method': {
     type: 'radiogroup',
     label: 'Method',
+    required: true,
     visibleWhen: [
       {
         field: 'inputMode',
@@ -83,7 +84,7 @@ export default {
         ],
       },
     ],
-    defaultValue: r => (r && r.http ? r && r.http.requestMediaType : 'xml'),
+    defaultValue: r => (r && r.http ? r && r.http.requestMediaType : 'json'),
   },
   'http.compositeType': {
     type: 'select',
@@ -100,7 +101,7 @@ export default {
             value: 'createandignore',
           },
           {
-            label: 'Update Existing Data & Ignore NEW Data',
+            label: 'Update Existing Data & Ignore New Data',
             value: 'updateandignore',
           },
         ],

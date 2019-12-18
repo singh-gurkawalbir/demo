@@ -29,7 +29,16 @@ export default {
   fieldMap: {
     name: { fieldId: 'name' },
     as2url: { fieldId: 'as2url' },
-    'as2.as2Id': { fieldId: 'as2.as2Id' },
+    'as2.as2Id': {
+      fieldId: 'as2.as2Id',
+      defaultDisabled: r => {
+        const isNew = isNewId(r._id);
+
+        if (!isNew) return true;
+
+        return false;
+      },
+    },
     requiremdnspartners: { fieldId: 'requiremdnspartners' },
     requireasynchronousmdns: { fieldId: 'requireasynchronousmdns' },
     'as2.userStationInfo.mdn.mdnSigning': {
@@ -47,12 +56,34 @@ export default {
       fieldId: 'as2.encrypted.userPrivateKey',
     },
     'as2.userStationInfo.ipAddresses': {
+      label: 'AS2 IP Addresses: ',
+      value: (
+        <span>
+          Click{' '}
+          <a
+            // eslint-disable-next-line react/jsx-no-target-blank
+            target="_blank"
+            href="https://celigosuccess.zendesk.com/hc/en-us/articles/115003717028-Whitelist-integrator-io-IPs">
+            here
+          </a>{' '}
+          to see the list of IP Addresses
+        </span>
+      ),
       fieldId: 'as2.userStationInfo.ipAddresses',
     },
     'as2.partnerStationInfo.as2URI': {
       fieldId: 'as2.partnerStationInfo.as2URI',
     },
-    'as2.partnerId': { fieldId: 'as2.partnerId' },
+    'as2.partnerId': {
+      fieldId: 'as2.partnerId',
+      defaultDisabled: r => {
+        const isNew = isNewId(r._id);
+
+        if (!isNew) return true;
+
+        return false;
+      },
+    },
     partnerrequireasynchronousmdns: {
       fieldId: 'partnerrequireasynchronousmdns',
     },
@@ -211,6 +242,9 @@ export default {
     'as2.partnerStationInfo.rateLimit.failValues': {
       fieldId: 'as2.partnerStationInfo.rateLimit.failValues',
     },
+    'as2.partnerStationInfo.encoding': {
+      fieldId: 'as2.partnerStationInfo.encoding',
+    },
     'as2.contentBasedFlowRouter': {
       fieldId: 'as2.contentBasedFlowRouter',
     },
@@ -230,9 +264,9 @@ export default {
           'requiremdnspartners',
           'requireasynchronousmdns',
           'as2.userStationInfo.mdn.mdnSigning',
-          'as2.userStationInfo.encoding',
           'as2.userStationInfo.encryptionType',
           'as2.userStationInfo.signing',
+          'as2.userStationInfo.encoding',
           'as2.unencrypted.userPublicKey',
           'as2.encrypted.userPrivateKey',
           'as2.userStationInfo.ipAddresses',
@@ -249,6 +283,7 @@ export default {
           'as2.partnerStationInfo.mdn.mdnSigning',
           'as2.partnerStationInfo.encryptionType',
           'as2.partnerStationInfo.signing',
+          'as2.partnerStationInfo.encoding',
           'as2.partnerStationInfo.signatureEncoding',
           'as2.unencrypted.partnerCertificate',
         ],

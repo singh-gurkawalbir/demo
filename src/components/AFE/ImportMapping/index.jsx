@@ -84,6 +84,7 @@ export default function ImportMapping(props) {
     application,
     generateFields = [],
     extractFields = [],
+    resource = {},
     disabled,
     optionalHanlder,
     isExtractsLoading,
@@ -131,7 +132,10 @@ export default function ImportMapping(props) {
     dispatch(actions.mapping.delete(editorId, row));
   };
 
-  const generateLabel = mappingUtil.getGenerateLabelForMapping(application);
+  const generateLabel = mappingUtil.getGenerateLabelForMapping(
+    application,
+    resource
+  );
   const getLookup = name => lookups.find(lookup => lookup.name === name);
   const updateLookupHandler = (isDelete, obj) => {
     let lookupsTmp = [...lookups];
@@ -200,6 +204,7 @@ export default function ImportMapping(props) {
             Source Record Field
             {!isExtractsLoading && (
               <RefreshButton
+                disabled={disabled}
                 onClick={refreshExtractFields}
                 data-test="refreshExtracts"
               />
@@ -215,6 +220,7 @@ export default function ImportMapping(props) {
             {generateLabel}
             {isGenerateRefreshSupported && !isGeneratesLoading && (
               <RefreshButton
+                disabled={disabled}
                 onClick={refreshGenerateFields}
                 data-test="refreshGenerates"
               />
@@ -242,7 +248,6 @@ export default function ImportMapping(props) {
                     valueName="id"
                     value={mapping.extract || mapping.hardCodedValueTmp}
                     options={extractFields}
-                    hideOptions={mapping.isNotEditable || disabled}
                     disabled={mapping.isNotEditable || disabled}
                     onBlur={(id, evt) => {
                       handleFieldUpdate(
@@ -264,7 +269,6 @@ export default function ImportMapping(props) {
                     [classes.disableChildRow]: mapping.isRequired || disabled,
                   })}>
                   <DynaTypeableSelect
-                    hideOptions={mapping.isRequired || disabled}
                     key={`generate-${editorId}-${initChangeIdentifier}-${mapping.rowIdentifier}`}
                     id={`fieldMappingGenerate-${mapping.index}`}
                     value={mapping.generate}

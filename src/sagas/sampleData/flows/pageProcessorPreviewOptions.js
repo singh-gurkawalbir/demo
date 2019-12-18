@@ -2,28 +2,22 @@
  * Creating this file to support
  * 1.Existing flows
  * 2.Real time Exports as PG in the new Flows
- * TODO:
- * 1. FTP, NS, SF, Web hook
- * 2. All exports which has sample data field inside resource object
- * Clues:
- * 1. FTP - sampleData process and send
- * 2. NS - fetch from state/call and process
- * 3. SF - fetch from state/call and process
- * 4. Web hook - return sampleData
- * Other places to change:
- * 1. FTP - on save click , save on sampleData field the way old exports are getting saved
- * 2. Add webhooks sample data field functionality
+ * 3. FTP, NS, SF, AS2, Web hook
  */
 import { call } from 'redux-saga/effects';
 import {
   getLastExportDateTime,
   isUIDataExpectedForResource,
+  getBlobResourceSampleData,
 } from '../../../utils/flowData';
 import requestRealTimeMetadata from '../sampleDataGenerator/realTimeSampleData';
 import requestFileAdaptorSampleData from '../sampleDataGenerator/fileAdaptorSampleData';
+import { isBlobTypeResource } from '../../../utils/resource';
 
 function* getUIDataForResource({ resource }) {
   const { adaptorType, sampleData } = resource;
+
+  if (isBlobTypeResource(resource)) return getBlobResourceSampleData();
 
   if (adaptorType) {
     switch (adaptorType) {
@@ -31,14 +25,15 @@ function* getUIDataForResource({ resource }) {
       case 'SalesforceExport':
         return yield call(requestRealTimeMetadata, { resource });
       case 'FTPExport':
-      case 'S3Export': {
+      case 'S3Export':
+      case 'AS2Export': {
         return yield call(requestFileAdaptorSampleData, { resource });
       }
 
       case 'WebhookExport': {
         // Sample data exists on resource
         // TODO: @Raghu Add webhooks form field sample data feature
-        return sampleData;
+        return sampleData || {};
       }
 
       default:

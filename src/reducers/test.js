@@ -11,7 +11,7 @@ import {
   TILE_STATUS,
   SUITESCRIPT_CONNECTORS,
 } from '../utils/constants';
-import { COMM_STATES } from './comms';
+import { COMM_STATES } from './comms/networkComms';
 
 describe('global selectors', () => {
   describe(`isProfileDataReady`, () => {
@@ -301,7 +301,12 @@ describe('Reducers in the root reducer', () => {
     const state = reducer(someInitialState, actions.auth.clearStore());
 
     expect(state).toEqual({
-      app: { appErrored: false, drawerOpened: true, count: 1 },
+      app: {
+        appErrored: false,
+        drawerOpened: true,
+        bannerOpened: true,
+        count: 1,
+      },
       auth: {
         commStatus: COMM_STATES.LOADING,
         initialized: false,
@@ -942,9 +947,12 @@ describe('commStatusByKey', () => {
     const state = reducer(
       {
         comms: {
-          'GET:/test': { something: 'something' },
+          networkComms: {
+            'GET:/test': { something: 'something' },
+          },
         },
       },
+
       'some action'
     );
 
@@ -956,7 +964,9 @@ describe('commStatusByKey', () => {
     const state = reducer(
       {
         comms: {
-          'GET:/test': { something: 'something' },
+          networkComms: {
+            'GET:/test': { something: 'something' },
+          },
         },
       },
       'some action'

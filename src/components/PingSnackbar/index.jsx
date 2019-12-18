@@ -13,8 +13,8 @@ import SnackbarContent from '@material-ui/core/SnackbarContent';
 import WarningIcon from '@material-ui/icons/Warning';
 import { withStyles } from '@material-ui/core/styles';
 import LinearProgress from '@material-ui/core/LinearProgress';
-import { COMM_STATES } from '../../reducers/comms';
 import { ErroredMessageList } from '../NetworkSnackbar';
+import { PING_STATES } from '../../reducers/comms/ping';
 
 const variantIcon = {
   success: CheckCircleIcon,
@@ -102,6 +102,7 @@ const commStateToVariantType = {
   success: 'success',
   loading: 'info',
   error: 'error',
+  aborted: 'success',
 };
 const CancellableSpinner = props => (
   <div>
@@ -124,11 +125,14 @@ const CancellableSpinner = props => (
 
 class PingSnackbar extends React.Component {
   generateMessageBasedOnState = (commState, messages, onHandleCancel) => {
-    if (commState === COMM_STATES.LOADING)
+    if (commState === PING_STATES.LOADING)
       return <CancellableSpinner onHandleCancel={onHandleCancel} />;
-    else if (commState === COMM_STATES.ERROR) {
+    else if (commState === PING_STATES.ERROR) {
       return <ErroredMessageList messages={messages} />;
-    } else if (commState === COMM_STATES.SUCCESS) {
+    } else if (
+      commState === PING_STATES.SUCCESS ||
+      commState === PING_STATES.ABORTED
+    ) {
       return messages;
     }
   };

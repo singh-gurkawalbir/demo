@@ -220,11 +220,16 @@ const commonChildRoutes = [
 function parseUrl(pathname, routes, url = '', params = {}) {
   let crumbs = [];
 
+  // console.log(pathname, url, params);
+
   // stop iterating once we find a match. (return true)
   routes.some(r => {
     const match = matchPath(pathname, r);
 
     if (match) {
+      const newUrl = `${url}${match.url}`;
+      const newParams = { ...params, ...match.params };
+
       // Some routes may not be desired in the breadcrumb...
       // we handle this by not including a breadcrumb prop in the route metadata
       if (r.breadcrumb) {
@@ -232,8 +237,8 @@ function parseUrl(pathname, routes, url = '', params = {}) {
           ...match,
           // carry forward any params from parent routes in case a child crumb
           // needs parent route params to render (lookup data in app state for example)
-          params: { ...params, ...match.params },
-          url: `${url}${match.url}`,
+          params: newParams,
+          url: newUrl,
           breadcrumb: r.breadcrumb,
         });
       }
@@ -247,12 +252,7 @@ function parseUrl(pathname, routes, url = '', params = {}) {
 
         // possibly child routes? time to recuse.
         if (r.childRoutes) {
-          childCrumbs = parseUrl(
-            childPath,
-            r.childRoutes,
-            match.url,
-            match.params
-          );
+          childCrumbs = parseUrl(childPath, r.childRoutes, newUrl, newParams);
 
           crumbs = [...crumbs, ...childCrumbs];
         }
@@ -264,8 +264,8 @@ function parseUrl(pathname, routes, url = '', params = {}) {
           childCrumbs = parseUrl(
             childPath,
             commonChildRoutes,
-            match.url,
-            match.params
+            newUrl,
+            newParams
           );
 
           crumbs = [...crumbs, ...childCrumbs];

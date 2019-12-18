@@ -9,6 +9,7 @@ import actions from '../../../../actions';
 import ActionButton from '../../../ActionButton';
 import ExitIcon from '../../../icons/ExitIcon';
 import { adaptorTypeMap } from '../../../../utils/resource';
+import getJSONPaths from '../../../../utils/jsonPaths';
 
 const useStyles = makeStyles(theme => ({
   textField: {
@@ -67,6 +68,16 @@ export default function DynaRelativeURIWithLookup(props) {
     null,
     2
   );
+  let formattedExtractFields = [];
+
+  if (sampleData) {
+    const extractPaths = getJSONPaths(sampleData);
+
+    formattedExtractFields =
+      (extractPaths &&
+        extractPaths.map(obj => ({ name: obj.id, id: obj.id }))) ||
+      [];
+  }
 
   useEffect(() => {
     // Request for sample data only incase of flow context
@@ -160,12 +171,17 @@ export default function DynaRelativeURIWithLookup(props) {
         disabled={disabled}
         multiline={multiline}
         onFieldChange={handleFieldChange}
+        extractFields={formattedExtractFields}
         lookups={lookupData}
         onLookupUpdate={handleLookupUpdate}
         required={required}
         connectionId={connectionId}
         value={extactedVal}
         connectionType={connection.type}
+        resourceId={resourceId}
+        resourceName={resourceName}
+        resourceType={resourceType}
+        flowId={flowId}
       />
     </Fragment>
   );

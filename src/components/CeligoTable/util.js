@@ -1,11 +1,13 @@
 import { Fragment } from 'react';
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import TimeAgo from 'react-timeago';
 import { Typography } from '@material-ui/core';
 import StatusCircle from '../StatusCircle';
 import { getApp } from '../../constants/applications';
 import { getResourceSubType } from '../../utils/resource';
-import getRoutePath from '../../utils/routePaths';
+import * as selectors from '../../reducers';
+import LoadResources from '../LoadResources';
 
 export const getResourceLink = (resourceType, resource, location = {}) => (
   <Fragment>
@@ -23,12 +25,18 @@ export const getResourceLink = (resourceType, resource, location = {}) => (
   </Fragment>
 );
 
-export const getResourceReferenceLink = ref => (
-  <Link
-    to={getRoutePath(`${ref.resourceType}/edit/${ref.resourceType}/${ref.id}`)}>
-    {ref.name || ref.id}
-  </Link>
-);
+export const GetResourceReferenceLink = ({ r }) => {
+  const { name, id, resourceType } = r;
+  const routePath = useSelector(state =>
+    selectors.getResourceEditUrl(state, resourceType, id)
+  );
+
+  return (
+    <LoadResources resources={[resourceType]}>
+      <Link to={routePath}>{name || id}</Link>
+    </LoadResources>
+  );
+};
 
 export const getConnectorName = resource => {
   const { type, assistant, resourceType } = getResourceSubType(resource);
