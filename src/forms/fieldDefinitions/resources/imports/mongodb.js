@@ -1,7 +1,7 @@
 export default {
   'mongodb.method': {
     type: 'ignorefieldvalue',
-    fieldsToUnCheck: ['ignoreExisting', 'ignoreMissing'],
+    fieldsToReset: ['ignoreExisting', 'ignoreMissing'],
     label: 'Method',
     options: [
       {

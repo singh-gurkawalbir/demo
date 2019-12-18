@@ -1,10 +1,10 @@
 import DynaRadioGroup from './DynaRadioGroup';
 
 export default function IgnoreFields(props) {
-  const { fieldsToUnCheck, onFieldChange } = props;
+  const { fieldsToReset, onFieldChange } = props;
   const updatedOnFieldChange = (id, value) => {
     onFieldChange(id, value);
-    fieldsToUnCheck.forEach(id => {
+    fieldsToReset.forEach(id => {
       onFieldChange(id, '');
     });
   };
