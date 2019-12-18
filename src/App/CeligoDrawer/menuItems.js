@@ -19,7 +19,9 @@ import TicketTagIcon from '../../components/icons/TicketTagIcon';
 import RecycleBinIcon from '../../components/icons/RecycleBinIcon';
 import TokensApiIcon from '../../components/icons/TokensApiIcon';
 
-export default function menuItems(userProfile, userPermissions) {
+export default function menuItems(userProfile, userPermissions = {}) {
+  const isDeveloper = userProfile && userProfile.developer;
+  const canPublish = userProfile && userProfile.allowedToPublish;
   let items = [
     {
       label: 'Home',
@@ -87,37 +89,36 @@ export default function menuItems(userProfile, userPermissions) {
           path: '/editors',
           Icon: EditorsPlaygroundIcon,
         },
-        {
-          label: 'Permission explorer',
-          path: '/permissions',
-          Icon: PermissionExplorerIcon,
-        },
+        // {
+        //   label: 'Permission explorer',
+        //   path: '/permissions',
+        //   Icon: PermissionExplorerIcon,
+        // },
       ],
     },
   ];
 
   if (
-    userPermissions &&
-    (userPermissions.accessLevel === 'monitor' ||
-      userPermissions.accessLevel === 'tile')
+    userPermissions.accessLevel === 'monitor' ||
+    userPermissions.accessLevel === 'tile'
   ) {
     items = items.filter(i => i.label !== 'Resources');
   } else {
     const resourceItems = items.find(i => i.label === 'Resources');
 
-    if (userProfile && !userProfile.developer) {
+    if (!isDeveloper) {
       resourceItems.children = resourceItems.children.filter(
         i => !(i.label === 'Scripts' || i.label === 'Stacks')
       );
     }
 
-    if (userProfile && !userProfile.allowedToPublish) {
+    if (!canPublish) {
       resourceItems.children = resourceItems.children.filter(
         i => !(i.label === 'Templates' || i.label === 'Connectors')
       );
     }
 
-    if (userPermissions && userPermissions.accessLevel !== 'owner') {
+    if (userPermissions.accessLevel !== 'owner') {
       resourceItems.children = resourceItems.children.filter(
         i => i.label !== 'API Tokens'
       );
