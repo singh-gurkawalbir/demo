@@ -57,6 +57,10 @@ export default {
       return 'disallowFailure';
     }
 
+    if (lookup && lookup.useDefaultOnMultipleMatches) {
+      return 'useDefaultOnMultipleMatches';
+    }
+
     if ('default' in lookup) {
       switch (lookup.default) {
         case '':
@@ -346,6 +350,7 @@ export default {
           id: d.value,
           name: d.label,
           type: d.type,
+          sublist: d.sublist,
         }));
       } else {
         let formattedSampleData = [];

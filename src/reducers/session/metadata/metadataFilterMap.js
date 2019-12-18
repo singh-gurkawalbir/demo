@@ -13,6 +13,13 @@ export default {
       label: item.name,
       value: item.scriptId && item.scriptId.toLowerCase(),
     })),
+  'suitescript-recordTypeDetail': data =>
+    data.map(item => ({
+      label: item.name,
+      value: item.id,
+      type: item.type,
+      sublist: item.sublist,
+    })),
   'suitescript-sublists': data =>
     data
       .map(item => ({
