@@ -159,3 +159,58 @@ export default function getJSONPaths(dataIn, prefix, options = {}) {
     return 0;
   });
 }
+
+/**
+ * Works very similar to getJSONPaths, with difference that it checks for the length of any array it encounters.
+ * and represents each array object with its index 0, instead of '*' like we do in getJSONPaths, only when array length is 1.
+ * Reference from Integrator repository
+ * TODO @Raghu : Can't we use getJSONPaths by adding this enhancement
+ * @param {object} dataIn - sample data object.
+ * @param {string} prefix
+ *
+ * @returns {array}
+ *
+ * @example
+ *
+ * getTransformPaths({a:'fasd',b:[{c:'d'}], e:[{f:'g'},{f:'g'}]})
+ * ["a", "b[0].c", "e[*].f"]
+ */
+export const getTransformPaths = (dataIn, prefix) => {
+  let paths = [];
+  let type;
+
+  _.each(dataIn, (v, k) => {
+    type = Object.prototype.toString.apply(v);
+
+    if (type === '[object Array]') {
+      if (
+        Object.prototype.toString.apply(v[0]) === '[object Object]' &&
+        !_.isEmpty(v[0])
+      ) {
+        paths = paths.concat(
+          getTransformPaths(
+            getUnionObject(v),
+            prefix
+              ? [prefix, k + (v.length > 1 ? '[*]' : '[0]')].join('.')
+              : k + (v.length > 1 ? '[*]' : '[0]')
+          )
+        );
+      } else if (
+        Object.prototype.toString.apply(v[0]) === '[object Object]' &&
+        _.isEmpty(v[0])
+      ) {
+        paths.push(prefix ? [prefix, `${k}._`].join('.') : `${k}._`);
+      } else {
+        paths.push(prefix ? [prefix, k].join('.') : k);
+      }
+    } else if (type === '[object Object]') {
+      paths = paths.concat(
+        getTransformPaths(v, prefix ? [prefix, k].join('.') : k)
+      );
+    } else {
+      paths.push(prefix ? [prefix, k].join('.') : k);
+    }
+  });
+
+  return paths.sort();
+};
