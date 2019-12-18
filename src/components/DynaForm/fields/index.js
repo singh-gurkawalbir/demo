@@ -22,6 +22,7 @@ import DynaResponseTransformEditor from './editors/DynaResponseTransformEditor';
 import DynaTextFtpPort from './DynaTextFtpPort';
 import DynaUploadFile from './DynaUploadFile';
 import DynaHook from './DynaHook';
+import DynaSuiteScriptHook from './DynaSuiteScriptHook';
 import DynaScriptContent from './DynaScriptContent';
 import DynaSelectScopes from './DynaSelectScopes';
 import DynaFileDefinitionSelect from './DynaFileDefinitionSelect';
@@ -112,6 +113,7 @@ export default {
   labeltitle: DynaLabel,
   celigotable: DynaCeligoTable,
   hook: DynaHook,
+  suitescripthook: DynaSuiteScriptHook,
   scriptcontent: DynaScriptContent,
   filedefinitionselect: DynaFileDefinitionSelect,
   filedefinitioneditor: DynaFileDefinitionEditor,

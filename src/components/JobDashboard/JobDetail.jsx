@@ -4,6 +4,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import { makeStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
 import { Button } from '@material-ui/core';
+import clsx from 'clsx';
 import { useState, Fragment } from 'react';
 import { useDispatch } from 'react-redux';
 import { difference } from 'lodash';
@@ -76,7 +77,15 @@ const useStyles = makeStyles(theme => ({
   error: {
     width: '10.15%',
     textAlign: 'right',
+  },
+  errorCount: {
     color: theme.palette.error.main,
+  },
+  errorStatus: {
+    backgroundColor: theme.palette.error.main,
+    color: theme.palette.background.paper,
+    padding: theme.spacing(0.25, 1),
+    borderRadius: theme.spacing(0.25),
   },
   resolved: {
     width: '9%',
@@ -257,7 +266,12 @@ function JobDetail({
           {job.name}
         </TableCell>
         <TableCell className={classes.status}>
-          <JobStatus job={job} />
+          <span
+            className={clsx({
+              [classes.errorStatus]: job.numError > 0,
+            })}>
+            <JobStatus job={job} />
+          </span>
         </TableCell>
         <TableCell className={classes.success}>{getSuccess(job)}</TableCell>
         <TableCell className={classes.ignore}>{job.numIgnore}</TableCell>
@@ -268,7 +282,9 @@ function JobDetail({
           onMouseLeave={() => {
             setShowViewErrorsLink(false);
           }}
-          className={classes.error}>
+          className={clsx(classes.error, {
+            [classes.errorCount]: job.numError > 0,
+          })}>
           {showViewErrorsLink && !isJobInProgress && job.numError > 0 ? (
             <Button
               data-test="viewJobErrors"
