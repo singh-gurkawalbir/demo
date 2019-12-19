@@ -333,4 +333,12 @@ export default {
       },
     ],
   },
+  actions: [
+    {
+      id: 'save',
+    },
+    {
+      id: 'cancel',
+    },
+  ],
 };

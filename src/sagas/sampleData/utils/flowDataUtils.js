@@ -27,6 +27,32 @@ export function filterPendingResources({ flow = {} }) {
   };
 }
 
+/*
+ * Handles fetching new resource's data to feed into payload of pageProcessorPreview
+ * Any new missing prop on resource can be added here as it is a temporary resource
+ */
+export function* fetchResourceDataForNewFlowResource({
+  resourceId,
+  resourceType,
+}) {
+  const { merged: newResource = {} } = yield select(
+    resourceData,
+    resourceType,
+    resourceId,
+    'value'
+  );
+
+  // TODO @Raghu: Should handle in metadata to pass boolean instead of string
+  // eslint-disable-next-line no-param-reassign
+  if (newResource.oneToMany) {
+    const oneToMany = newResource.oneToMany === 'true';
+
+    return { ...newResource, oneToMany };
+  }
+
+  return newResource;
+}
+
 export function* fetchFlowResources({ flow, type, eliminateDataProcessors }) {
   const resourceMap = {};
   const resourceList = flow[type];
