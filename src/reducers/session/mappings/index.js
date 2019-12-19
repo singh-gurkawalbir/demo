@@ -199,7 +199,7 @@ export default function reducer(state = {}, action) {
         draft[id].lookups = lookups;
         break;
       case actionTypes.MAPPING.SET_VISIBILITY:
-        draft[id].visible = value;
+        if (draft[id]) draft[id].visible = value;
         break;
       default:
     }

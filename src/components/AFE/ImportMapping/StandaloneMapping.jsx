@@ -58,6 +58,8 @@ export default function StandaloneMapping(props) {
     })
   );
   const { data: extractFields, status: extractStatus } = sampleDataObj || {};
+
+  console.log('extractStatus', extractStatus);
   const requestSampleData = useCallback(() => {
     dispatch(
       actions.flowData.requestSampleData(
@@ -268,25 +270,18 @@ export default function StandaloneMapping(props) {
     }
   }, [dispatch, handleInit, id, initTriggered, isFetchingDuringInit]);
 
+  const setMappingVisibility = useCallback(
+    val => {
+      dispatch(actions.mapping.setVisibility(id, val));
+    },
+    [dispatch, id]
+  );
+
   useEffect(() => {
-    if (initTriggered) {
-      if (flowSampleDataLoaded && extractStatus === undefined) {
-        // console.log("dispatch hide")
-        dispatch(actions.mapping.setVisibility(id, false));
-        setFlowSampleDataLoaded(false);
-      } else if (!isFetchingDuringInit) {
-        // console.log("dispatch visible")
-        dispatch(actions.mapping.setVisibility(id, true));
-      }
+    if (!initTriggered && isFetchingDuringInit) {
+      setMappingVisibility(false);
     }
-  }, [
-    dispatch,
-    extractStatus,
-    flowSampleDataLoaded,
-    id,
-    initTriggered,
-    isFetchingDuringInit,
-  ]);
+  }, [dispatch, id, initTriggered, isFetchingDuringInit, setMappingVisibility]);
 
   if (!showMappings || isFetchingDuringInit) {
     return (
