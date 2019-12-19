@@ -285,6 +285,7 @@ export default {
   'file.xlsx.keyColumns': {
     type: 'filekeycolumn',
     label: 'Key Columns',
+    sampleData: r => r && r.sampleData,
     visibleWhenAll: [
       {
         field: 'file.xlsx.rowsPerRecord',
