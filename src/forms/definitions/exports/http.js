@@ -65,6 +65,7 @@ export default {
       retValues['/http/method'] = retValues['/http/blobMethod'];
     }
 
+    delete retValues['/http/blobMethod'];
     delete retValues['/outputMode'];
 
     if (retValues['/http/paging/method'] === 'page') {

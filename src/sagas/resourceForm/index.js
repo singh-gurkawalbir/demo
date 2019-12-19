@@ -196,10 +196,6 @@ export function* submitFormValues({ resourceType, resourceId, values, match }) {
     yield put(actions.resource.patchStaged(resourceId, patchSet, SCOPES.VALUE));
   }
 
-  if (resourceType === 'exports' && isNewId(resourceId)) {
-    yield call(patchTransformationRulesForXMLResource, { resourceId });
-  }
-
   const { skipCommit } = yield select(
     selectors.resourceFormState,
     resourceType,
@@ -208,6 +204,10 @@ export function* submitFormValues({ resourceType, resourceId, values, match }) {
 
   // fetch all possible pending patches.
   if (!skipCommit) {
+    if (resourceType === 'exports' && isNewId(resourceId)) {
+      yield call(patchTransformationRulesForXMLResource, { resourceId });
+    }
+
     const { patch } = yield select(
       selectors.stagedResource,
       resourceId,
