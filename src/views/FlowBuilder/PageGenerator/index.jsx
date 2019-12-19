@@ -11,6 +11,7 @@ import actions from '../../../actions';
 import applications from '../../../constants/applications';
 import { getResourceSubType, generateNewId } from '../../../utils/resource';
 import exportHooksAction from './actions/exportHooks';
+import as2RoutingAction from './actions/as2Routing';
 import transformationAction from './actions/transformation';
 import scheduleAction from './actions/schedule';
 import exportFilterAction from './actions/exportFilter';
@@ -66,6 +67,14 @@ const PageGenerator = ({
       ? emptyObj
       : selectors.resource(state, resourceType, resourceId) || emptyObj
   );
+  const exportNeedsRouting = useSelector(state =>
+    selectors.exportNeedsRouting(state, resourceId)
+  );
+  const connectionHasAs2Routing = useSelector(state => {
+    if (!resource || resourceType !== 'exports') return false;
+
+    return selectors.connectionHasAs2Routing(state, resource._connectionId);
+  });
   // Returns map of all possible actions with true/false whether actions performed on the resource
   const usedActions =
     useSelector(
@@ -201,10 +210,18 @@ const PageGenerator = ({
   let generatorActions = [];
 
   if (!pending) {
-    if (blockType === 'export' && !pending) {
-      generatorActions = [
-        { ...scheduleAction, isUsed: usedActions[actionsMap.schedule] },
-      ];
+    if (blockType === 'export') {
+      generatorActions.push({
+        ...scheduleAction,
+        isUsed: usedActions[actionsMap.schedule],
+      });
+    }
+
+    if (exportNeedsRouting || connectionHasAs2Routing) {
+      generatorActions.push({
+        ...as2RoutingAction,
+        isUsed: connectionHasAs2Routing,
+      });
     }
 
     generatorActions = [

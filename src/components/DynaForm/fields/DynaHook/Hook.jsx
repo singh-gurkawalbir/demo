@@ -45,11 +45,11 @@ export default function DynaHook(props) {
   const createdScriptId = useSelector(state =>
     selectors.createdResourceId(state, tempScriptId)
   );
-  const { resources: allScripts } = useSelector(state =>
-    selectors.resourceList(state, { type: 'scripts' })
+  const allScripts = useSelector(
+    state => selectors.resourceList(state, { type: 'scripts' }).resources
   );
-  const { resources: allStacks } = useSelector(state =>
-    selectors.resourceList(state, { type: 'stacks' })
+  const allStacks = useSelector(
+    state => selectors.resourceList(state, { type: 'stacks' }).resources
   );
   const {
     id,

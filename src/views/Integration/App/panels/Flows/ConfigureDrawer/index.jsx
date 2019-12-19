@@ -1,13 +1,14 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
-import { Route, useHistory, useRouteMatch } from 'react-router-dom';
+import React, { useMemo } from 'react';
+import { useSelector, shallowEqual } from 'react-redux';
+import { Route, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import * as selectors from '../../../../../../reducers';
 import { integrationSettingsToDynaFormMetadata } from '../../../../../../forms/utils';
-import { ActionsFactory } from '../../../../../../components/ResourceFormFactory';
+import { FormStateManager } from '../../../../../../components/ResourceFormFactory';
 import DrawerTitleBar from '../../../../../../components/drawer/TitleBar';
 import LoadResources from '../../../../../../components/LoadResources';
+import { useIASettingsStateWithHandleClose } from '..';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -28,28 +29,39 @@ const useStyles = makeStyles(theme => ({
 
 function ConfigureDrawer({ integrationId, storeId, sectionId }) {
   const classes = useStyles();
-  const history = useHistory();
   const match = useRouteMatch();
-  const flowSections = useSelector(state =>
-    selectors.integrationAppFlowSections(state, integrationId, storeId)
-  );
-  const flowSettings = useSelector(state =>
-    selectors.integrationAppFlowSettings(
+  const section = useSelector(state => {
+    const flowSections = selectors.integrationAppFlowSections(
       state,
       integrationId,
-      sectionId,
       storeId
-    )
+    );
+
+    return flowSections.find(s => s.titleId === sectionId);
+  });
+  const flowSettingsMeta = useSelector(
+    state =>
+      selectors.integrationAppSectionMetadata(
+        state,
+        integrationId,
+        sectionId,
+        storeId
+      ),
+    shallowEqual
   );
-  const section = flowSections.find(s => s.titleId === sectionId);
-  const translatedMeta = integrationSettingsToDynaFormMetadata(
-    flowSettings,
+  const translatedMeta = useMemo(
+    () =>
+      integrationSettingsToDynaFormMetadata(
+        flowSettingsMeta,
+        integrationId,
+        true
+      ),
+    [flowSettingsMeta, integrationId]
+  );
+  const { formState, handleClose } = useIASettingsStateWithHandleClose(
     integrationId,
-    true
+    null
   );
-  const handleClose = () => {
-    history.goBack();
-  };
 
   return (
     <LoadResources
@@ -65,7 +77,9 @@ function ConfigureDrawer({ integrationId, storeId, sectionId }) {
         onClose={handleClose}>
         <DrawerTitleBar title={`Configure all ${section.title} flows`} />
 
-        <ActionsFactory
+        <FormStateManager
+          onSubmitComplete={handleClose}
+          formState={formState}
           className={classes.form}
           integrationId={integrationId}
           storeId={storeId}

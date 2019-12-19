@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { Button } from '@material-ui/core';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
@@ -7,7 +7,12 @@ import DynaSubmit from '../DynaForm/DynaSubmit';
 import LoadResources from '../LoadResources';
 import getHooksMetadata from './hooksMetadata';
 import { resourceData } from '../../reducers';
-import { isValidHook, importHooksList } from '../../utils/hooks';
+import {
+  isValidHook,
+  isValidSuiteScriptHook,
+  importHooksList,
+  importSuiteScriptHooksList,
+} from '../../utils/hooks';
 
 export default function Hooks(props) {
   const {
@@ -23,51 +28,90 @@ export default function Hooks(props) {
   const { merged: resource } = useSelector(state =>
     resourceData(state, resourceType, resourceId, 'value')
   );
-  const fieldMeta = getHooksMetadata(resourceType, resource, {
-    defaultValue,
-    resourceId,
-    flowId,
-  });
-  const handleSubmit = useCallback(
+  const fieldMeta = useMemo(
+    () =>
+      getHooksMetadata(resourceType, resource, {
+        defaultValue,
+        resourceId,
+        flowId,
+      }),
+    [defaultValue, flowId, resource, resourceId, resourceType]
+  );
+  const getSelectedHooks = useCallback(
     values => {
       const { hookType } = values;
       const selectedHook = {};
       let isInvalidHook = false;
+      const hooksList =
+        resourceType === 'exports' ? ['preSavePage'] : importHooksList;
 
-      if (resourceType === 'exports') {
-        const value = values[`${hookType}-preSavePage`];
+      hooksList.forEach(hook => {
+        const value = values[`${hookType}-${hook}`];
 
-        if (!isValidHook(value)) {
-          isInvalidHook = true;
-        } else {
-          selectedHook.preSavePage = value;
-        }
-      } else {
-        importHooksList.forEach(hook => {
-          const value = values[`${hookType}-${hook}`];
+        if (value) {
+          if (!isValidHook(value, true)) {
+            isInvalidHook = true;
 
-          if (value) {
-            if (!isValidHook(value, true)) {
-              isInvalidHook = true;
-
-              return;
-            }
-
-            selectedHook[hook] = value;
+            return;
           }
-        });
-      }
 
-      if (isInvalidHook) {
+          selectedHook[hook] = value;
+        }
+      });
+
+      return { isInvalidHook, selectedHook };
+    },
+    [resourceType]
+  );
+  const getSelectedSuiteScriptHooks = useCallback(
+    values => {
+      // Extract selected suitescript hooks and validate the same
+      const selectedHook = {};
+      let isInvalidHook = false;
+      const suiteScriptHooksList =
+        resourceType === 'exports' ? ['preSend'] : importSuiteScriptHooksList;
+
+      suiteScriptHooksList.forEach(suiteScriptHook => {
+        const value = values[`suiteScript-${suiteScriptHook}`];
+
+        if (value) {
+          if (!isValidSuiteScriptHook(value, true)) {
+            isInvalidHook = true;
+
+            return;
+          }
+
+          selectedHook[suiteScriptHook] = value;
+        }
+      });
+
+      return { isInvalidHook, selectedHook };
+    },
+    [resourceType]
+  );
+  const handleSubmit = useCallback(
+    values => {
+      const selectedValues = {
+        hooks: getSelectedHooks(values),
+        suiteScriptHooks: getSelectedSuiteScriptHooks(values),
+      };
+
+      if (
+        selectedValues.hooks.isInvalidHook ||
+        selectedValues.suiteScriptHooks.isInvalidHook
+      ) {
         return enqueueSnackbar({
           message: 'Please fill the mandatory fields',
           variant: 'error',
         });
       }
 
-      onSave(selectedHook);
+      onSave({
+        hooks: selectedValues.hooks.selectedHook,
+        suiteScriptHooks: selectedValues.suiteScriptHooks.selectedHook,
+      });
     },
-    [enqueueSnackbar, onSave, resourceType]
+    [enqueueSnackbar, getSelectedHooks, getSelectedSuiteScriptHooks, onSave]
   );
 
   // console.log('RENDER: Hooks');

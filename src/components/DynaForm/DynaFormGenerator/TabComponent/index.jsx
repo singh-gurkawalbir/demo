@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, Fragment, useCallback } from 'react';
 import { Tabs, Tab } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import DynaForm from '../../index';
 import IntegrationSettingsSaveButton from '../../../ResourceFormFactory/Actions/IntegrationSettingsSaveButton';
 import FormGenerator from '..';
+import { getAllFormValuesAssociatedToMeta } from '../../../../forms/utils';
 
 const useStyle = makeStyles(theme => ({
   root: {
@@ -68,20 +68,19 @@ function TabComponent(props) {
 
 function FormWithSave(props) {
   const { layout, fieldMap, ...rest } = props;
-  const fieldMeta = { layout, fieldMap };
-  const { integrationId, flowId, storeId, resourceId, resourceType } = rest;
-  const dynaFormProps = {
-    integrationId,
-    flowId,
-    storeId,
-    resourceId,
-    resourceType,
-  };
+  const postProcessValuesFn = useCallback(
+    values => getAllFormValuesAssociatedToMeta(values, { layout, fieldMap }),
+    [fieldMap, layout]
+  );
 
   return (
-    <DynaForm {...dynaFormProps} fieldMeta={fieldMeta}>
-      <IntegrationSettingsSaveButton {...rest} />
-    </DynaForm>
+    <Fragment>
+      <FormGenerator {...props} />
+      <IntegrationSettingsSaveButton
+        {...rest}
+        postProcessValuesFn={postProcessValuesFn}
+      />
+    </Fragment>
   );
 }
 

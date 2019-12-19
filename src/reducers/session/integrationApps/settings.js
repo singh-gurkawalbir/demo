@@ -2,6 +2,11 @@ import produce from 'immer';
 import actionTypes from '../../../actions/types';
 
 const emptyObj = {};
+const getStateKey = (integrationId, flowId) => {
+  if (flowId) return `${integrationId}-${flowId}`;
+
+  return integrationId;
+};
 
 export default (state = {}, action) => {
   const {
@@ -13,7 +18,7 @@ export default (state = {}, action) => {
     redirectTo,
     error,
   } = action;
-  const key = `${integrationId}-${flowId}`;
+  const key = getStateKey(integrationId, flowId);
 
   return produce(state, draft => {
     // eslint-disable-next-line default-case
@@ -89,7 +94,7 @@ export function integrationAppSettingsFormState(state, integrationId, flowId) {
     return emptyObj;
   }
 
-  const key = `${integrationId}-${flowId}`;
+  const key = getStateKey(integrationId, flowId);
 
   return state[key] || emptyObj;
 }

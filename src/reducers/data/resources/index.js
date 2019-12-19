@@ -3,6 +3,9 @@ import moment from 'moment';
 import sift from 'sift';
 import actionTypes from '../../../actions/types';
 
+const emptySet = [];
+// const emptyObj = {};
+
 export const initializationResources = ['profile', 'preferences'];
 const accountResources = ['ashares', 'shared/ashares', 'licenses'];
 const resourceTypesToIgnore = [
@@ -294,11 +297,48 @@ export function resource(state, resourceType, id) {
   return match;
 }
 
+export function exportNeedsRouting(state, id) {
+  if (!state) return false;
+
+  const allExports = state.exports;
+
+  if (!allExports || allExports.length === 0) return false;
+
+  const exp = allExports.find(r => r._id === id);
+
+  if (!exp || exp.adaptorType !== 'AS2Export') return false;
+
+  const as2ConnectionId = exp._connectionId;
+
+  if (!as2ConnectionId) return false;
+
+  const siblingExports = allExports.filter(
+    e => e._connectionId === as2ConnectionId
+  );
+
+  // only AS2 exports that share their connection with another export need routing.
+  return siblingExports.length >= 2;
+}
+
+export function connectionHasAs2Routing(state, id) {
+  if (!state) return false;
+
+  const connection = resource(state, 'connections', id);
+
+  if (!connection) return false;
+
+  return !!(
+    connection.as2 &&
+    connection.as2.contentBasedFlowRouter &&
+    connection.as2.contentBasedFlowRouter._scriptId
+  );
+}
+
 export function integrationInstallSteps(state, id) {
   const integration = resource(state, 'integrations', id);
 
   if (!integration || !integration.install) {
-    return [];
+    return emptySet;
   }
 
   return produce(integration.install, draft => {

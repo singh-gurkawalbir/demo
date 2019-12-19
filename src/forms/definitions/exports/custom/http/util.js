@@ -126,6 +126,7 @@ export function searchParameterFieldsMeta({
   label,
   paramLocation,
   parameters = [],
+  oneMandatoryQueryParamFrom,
   value,
   deltaDefaults = {},
 }) {
@@ -143,11 +144,15 @@ export function searchParameterFieldsMeta({
       paramMeta: {
         paramLocation,
         fields: parameters,
+        oneMandatoryQueryParamFrom,
         defaultValuesForDeltaExport: deltaDefaults,
       },
     };
 
-    if (parameters.filter(p => !!p.required).length > 0) {
+    if (
+      parameters.filter(p => !!p.required).length > 0 ||
+      (oneMandatoryQueryParamFrom && oneMandatoryQueryParamFrom.length > 0)
+    ) {
       searchParamsField.required = true;
       searchParamsField.validWhen = {
         isNot: {
@@ -214,6 +219,8 @@ export function fieldMeta({ resource, assistantData }) {
           label: operationDetails.queryParametersLabel,
           paramLocation: PARAMETER_LOCATION.QUERY,
           parameters: operationDetails.queryParameters,
+          oneMandatoryQueryParamFrom:
+            operationDetails.oneMandatoryQueryParamFrom,
           value: assistantConfig.queryParams,
           deltaDefaults:
             assistantConfig.exportType === 'delta' &&
