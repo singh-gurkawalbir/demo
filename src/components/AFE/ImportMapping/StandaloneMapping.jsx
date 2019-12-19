@@ -58,8 +58,6 @@ export default function StandaloneMapping(props) {
     })
   );
   const { data: extractFields, status: extractStatus } = sampleDataObj || {};
-
-  console.log('extractStatus', extractStatus);
   const requestSampleData = useCallback(() => {
     dispatch(
       actions.flowData.requestSampleData(
