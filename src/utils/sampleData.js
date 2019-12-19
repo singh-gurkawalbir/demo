@@ -458,7 +458,7 @@ const isValidPathToMany = (sampleData, pathSegments) => {
 };
 
 /*
- * Incase of OneToMany Imports Sample data is modified based on pathToMany
+ * Incase of OneToMany Resource Sample data is modified based on pathToMany
  * Sample Data :{
     "a": 5,
     "c": { "d": 7 },
