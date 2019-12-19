@@ -178,6 +178,7 @@ export default function StandaloneMapping(props) {
     connectionId,
     resourceId,
     resourceName,
+    isGroupedSampleData: !!(extractFields && Array.isArray(extractFields)),
   };
 
   if (isSalesforce) {

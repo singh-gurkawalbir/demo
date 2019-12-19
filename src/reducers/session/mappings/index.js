@@ -102,6 +102,17 @@ export default function reducer(state = {}, action) {
             }
           } else {
             objCopy[field] = inputValue;
+
+            // remove isKey and useFirstRow if present when generate doesn't contain '[*].'
+            if (inputValue.indexOf('[*].') === -1) {
+              if ('isKey' in objCopy) {
+                delete objCopy.isKey;
+              }
+
+              if ('useFirstRow' in objCopy) {
+                delete objCopy.useFirstRow;
+              }
+            }
           }
 
           draft[id].mappings[index] = objCopy;
