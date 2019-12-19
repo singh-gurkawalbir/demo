@@ -137,6 +137,43 @@ export const getFieldByName = ({ fieldMeta, name }) => {
   return res && res.field;
 };
 
+export const getFieldByNameFromLayout = (layout, fieldMap, name) => {
+  if (!layout) return null;
+  const { fields, containers } = layout;
+
+  if (
+    fields &&
+    fields.map(fieldId => fieldMap[fieldId]).some(field => field.name === name)
+  ) {
+    return getFieldByName({ fieldMeta: { fieldMap }, name });
+  }
+
+  return (
+    containers &&
+    containers
+      .map(container => getFieldByNameFromLayout(container, fieldMap, name))
+      .reduce((acc, curr) => {
+        // get first matching field
+        // eslint-disable-next-line no-param-reassign
+        if (curr && !acc) acc = curr;
+
+        return acc;
+      }, null)
+  );
+};
+
+export const getAllFormValuesAssociatedToMeta = (values, meta = {}) => {
+  const { layout, fieldMap } = meta;
+
+  return Object.keys(values)
+    .filter(valueKey => !!getFieldByNameFromLayout(layout, fieldMap, valueKey))
+    .reduce((acc, curr) => {
+      acc[curr] = values[curr];
+
+      return acc;
+    }, {});
+};
+
 export const getMissingPatchSet = (paths, resource) => {
   const missing = [];
   const addMissing = missingPath => {
@@ -414,6 +451,45 @@ const translateFieldProps = (fields = [], _integrationId, resource) =>
       };
     })
     .filter(f => !f.hidden);
+const generateFieldsAndSections = (acc, field) => {
+  const ref = refGeneration(field);
+
+  if (!acc.containers) {
+    acc.containers = [];
+  }
+
+  if (field && field.properties && field.properties.sectionName) {
+    const { sectionName } = field.properties;
+    const matchingContainer = acc.containers.find(
+      container =>
+        container &&
+        container.containers &&
+        container.containers[0] &&
+        container.containers[0].label === sectionName
+    );
+
+    if (matchingContainer) {
+      matchingContainer.containers[0].fields.push(ref);
+    } else {
+      acc.containers.push({
+        type: 'collapse',
+        containers: [
+          {
+            collapsed: true,
+            label: sectionName,
+            fields: [ref],
+          },
+        ],
+      });
+    }
+  } else {
+    acc.containers.push({
+      fields: [ref],
+    });
+  }
+
+  return acc;
+};
 
 export const integrationSettingsToDynaFormMetadata = (
   meta,
@@ -439,7 +515,7 @@ export const integrationSettingsToDynaFormMetadata = (
       {}
     );
     finalData.layout = {};
-    finalData.layout.fields = addedFieldIdFields.map(refGeneration);
+    finalData.layout = addedFieldIdFields.reduce(generateFieldsAndSections, {});
   }
 
   if (sections) {
@@ -460,8 +536,9 @@ export const integrationSettingsToDynaFormMetadata = (
     finalData.layout.containers = sections.map(section => ({
       collapsed: section.collapsed || true,
       label: section.title,
-      fields: translateFieldProps(section.fields, integrationId, resource).map(
-        refGeneration
+      ...translateFieldProps(section.fields, integrationId, resource).reduce(
+        generateFieldsAndSections,
+        {}
       ),
     }));
   }

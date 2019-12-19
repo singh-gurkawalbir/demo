@@ -27,28 +27,10 @@ export default function DeltaFlowStartDate(props) {
   const selectorStatus = useSelector(state =>
     selectors.getLastExportDateTime(state, flow._id)
   ).status;
-  let startDate;
   const timeZone = preferences && preferences.timezone;
 
   if (!lastExportDateTime) {
     lastExportDateTime = new Date();
-  }
-
-  if (lastExportDateTime) {
-    if (
-      moment(lastExportDateTime)
-        .tz(timeZone)
-        .format(`${preferences.dateFormat} ${preferences.timeFormat}`) ===
-      'Invalid date'
-    ) {
-      startDate = '';
-    } else {
-      startDate = moment(lastExportDateTime)
-        .tz(timeZone)
-        .format(`${preferences.dateFormat} ${preferences.timeFormat}`);
-    }
-  } else {
-    startDate = '';
   }
 
   const fetchLastExportDateTime = useCallback(() => {
@@ -104,8 +86,8 @@ export default function DeltaFlowStartDate(props) {
 
   const fieldMeta = flowStartDateMetadata.getMetadata({
     timeZone,
-    startDate,
-    preferences,
+    startDate: lastExportDateTime,
+    format: `${preferences.dateFormat} ${preferences.timeFormat}`,
   });
 
   return (

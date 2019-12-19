@@ -1,7 +1,9 @@
 import React, { Fragment, useState, useEffect, useCallback } from 'react';
+import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, IconButton } from '@material-ui/core';
 import clsx from 'clsx';
+import * as selectors from '../../../reducers';
 import AddIcon from '../../../components/icons/AddIcon';
 import ActionIconButton from '../ActionIconButton';
 import ApplicationImg from '../../../components/icons/ApplicationImg';
@@ -158,6 +160,25 @@ function AppBlock({
   const [isOver, setIsOver] = useState(false);
   const [activeAction, setActiveAction] = useState(null);
   const isNew = blockType.startsWith('new');
+  const iconType = useSelector(state => {
+    if (!connectorType || !connectorType.startsWith('RDBMS')) {
+      return connectorType;
+    }
+
+    if (!resource || !resource._connectionId) {
+      return;
+    }
+
+    const connection = selectors.resource(
+      state,
+      'connections',
+      resource._connectionId
+    );
+
+    if (!connection || !connection.rdbms || !connection.rdbms.type) return;
+
+    return connection.rdbms.type;
+  });
 
   useEffect(() => {
     if (expanded && !isOver) {
@@ -262,11 +283,11 @@ function AppBlock({
           </div>
         </div>
         <div className={classes.appLogoContainer}>
-          {connectorType && (
+          {iconType && (
             <ApplicationImg
               className={classes.appLogo}
               size="large"
-              type={connectorType}
+              type={iconType}
               assistant={assistant}
             />
           )}
