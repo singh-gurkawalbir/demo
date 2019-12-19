@@ -16,7 +16,7 @@ import connectionSagas from '../resourceForm/connections';
 import { requestAssistantMetadata } from '../resources/meta';
 import { isNewId } from '../../utils/resource';
 import { uploadRawData } from '../uploadFile';
-import { patchTransformationRulesForXMLResource } from '../sampleData/utils/fileParserUtils';
+import patchTransformationRulesForXMLResource from '../sampleData/utils/xmlTransformationRulesGenerator';
 
 export const SCOPES = {
   META: 'meta',

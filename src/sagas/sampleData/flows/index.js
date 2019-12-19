@@ -24,7 +24,7 @@ import {
   getPreviewStageData,
   getContextInfo,
   getBlobResourceSampleData,
-  isOneToManyImport,
+  isOneToManyResource,
 } from '../../../utils/flowData';
 import { exportPreview, pageProcessorPreview } from '../utils/previewCalls';
 import requestRealTimeMetadata from '../sampleDataGenerator/realTimeSampleData';
@@ -159,18 +159,15 @@ export function* fetchPageProcessorPreview({
       resourceType,
       throwOnError: true,
     });
+    const { merged: resource = {} } = yield select(
+      resourceData,
+      resourceType,
+      _pageProcessorId,
+      'value'
+    );
 
-    if (resourceType === 'imports') {
-      const { merged: resource = {} } = yield select(
-        resourceData,
-        'imports',
-        _pageProcessorId,
-        'value'
-      );
-
-      if (isOneToManyImport(resource)) {
-        previewData = processOneToManySampleData(previewData, resource);
-      }
+    if (isOneToManyResource(resource)) {
+      previewData = processOneToManySampleData(previewData, resource);
     }
 
     yield put(
