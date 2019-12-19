@@ -66,6 +66,10 @@ export default {
         field: 'outputMode',
         is: ['blob'],
       },
+      {
+        field: 'http.body',
+        is: [''],
+      },
     ],
   },
   'http.method': {
@@ -112,6 +116,16 @@ export default {
     type: 'httprequestbody',
     connectionId: r => r && r._connectionId,
     label: 'Build HTTP Request Body',
+    requiredWhenAll: [
+      {
+        field: 'http.relativeURI',
+        is: [''],
+      },
+      {
+        field: 'http.body',
+        isNot: [''],
+      },
+    ],
   },
   'http.headers': {
     type: 'keyvalue',
