@@ -283,6 +283,43 @@ describe('Form Utils', () => {
         },
       });
     });
+    test('should not delete resource properties when we receive undefined replace patches when skipRemovePatches set to true', () => {
+      const resource = {
+        html: {
+          name: 'abc',
+          a: 'abcd',
+          b: 'efg',
+        },
+      };
+      const patchSet = [
+        {
+          op: 'replace',
+          path: '/html/rateLimit/failValues',
+          value: ['bad', 'fail'],
+        },
+        {
+          op: 'replace',
+          path: '/html/a',
+          value: undefined,
+        },
+      ];
+      const sanitized = sanitizePatchSet({
+        patchSet,
+        resource,
+        skipRemovePatches: true,
+      });
+      const merged = jsonPatch.applyPatch(resource, sanitized, false, true)
+        .newDocument;
+
+      expect(merged).toEqual({
+        html: {
+          name: 'abc',
+          a: undefined,
+          b: 'efg',
+          rateLimit: { failValues: ['bad', 'fail'] },
+        },
+      });
+    });
     test('should not generate a remove patch when we receive an undefined replace value patch and the corresponding resource property is not there', () => {
       const resource = {
         html: {

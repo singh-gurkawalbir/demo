@@ -202,18 +202,14 @@ export const sanitizePatchSet = ({
         const field = getFieldByName({ name: patch.path, fieldMeta });
 
         // default values of all fields are '' so when undefined value is being sent it indicates that we would like delete those properties
-        if (patch.value === undefined) {
+        if (patch.value === undefined && !skipRemovePatches) {
           const modifiedPath = patch.path
             .substring(1, patch.path.length)
             .replace(/\//g, '.');
 
           // consider it as a remove patch
-          if (get(resource, modifiedPath) && !skipRemovePatches)
+          if (get(resource, modifiedPath))
             removePatches.push({ path: patch.path, op: 'remove' });
-
-          if (skipRemovePatches) {
-            valuePatches.push(patch);
-          }
         } else if (
           !field ||
           field.defaultValue !== patch.value ||
