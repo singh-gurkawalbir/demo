@@ -26,6 +26,7 @@ const DataLoaderIcon = require('../../src/components/icons/DataLoaderIcon').defa
 const DashboardIcon = require('../../src/components/icons/DashboardIcon').default;
 const DebugIcon = require('../../src/components/icons/DebugIcon').default;
 const DownloadIcon = require('../../src/components/icons/DownloadIcon').default;
+const DownloadIntegrationIcon = require('../../src/components/icons/DownloadIntegrationIcon').default;
 const EditIcon = require('../../src/components/icons/EditIcon').default;
 const EditScriptIcon = require('../../src/components/icons/EditScriptIcon').default;
 const EditorsPlaygroundIcon = require('../../src/components/icons/EditorsPlaygroundIcon').default;
@@ -50,6 +51,7 @@ const HookIcon = require('../../src/components/icons/HookIcon').default;
 const InfoIcon = require('../../src/components/icons/InfoIcon').default;
 const InviteUsersIcon = require('../../src/components/icons/InviteUsersIcon').default;
 const InstallIcon = require('../../src/components/icons/InstallIcon').default;
+const InstallIntegrationIcon = require('../../src/components/icons/InstallIntegrationIcon').default;
 const ImportsIcon = require('../../src/components/icons/ImportsIcon').default;
 const InputFilterIcon = require('../../src/components/icons/InputFilterIcon').default;
 const KnowledgeBaseIcon = require('../../src/components/icons/KnowledgeBaseIcon').default;
@@ -221,6 +223,10 @@ const icon = {
       <DownloadIcon style={icon} />
       <p>Download</p>
     </div>
+    <div style={wrapper}>
+      <DownloadIntegrationIcon style={icon} />
+      <p>DownloadIntegration</p>
+    </div>
      <div style={wrapper}>
       <EditIcon style={icon} />
       <p>Edit</p>
@@ -312,6 +318,10 @@ const icon = {
     <div style={wrapper}>
       <InstallIcon style={icon} />
       <p>Install</p>
+    </div>
+    <div style={wrapper}>
+      <InstallIntegrationIcon style={icon} />
+      <p>InstallIntegration</p>
     </div>
     <div style={wrapper}>
       <InviteUsersIcon style={icon} />

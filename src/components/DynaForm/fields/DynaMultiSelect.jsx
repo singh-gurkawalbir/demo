@@ -58,6 +58,7 @@ const useStyles = makeStyles(theme => ({
   },
   menuItems: {
     paddingRight: 0,
+    paddingLeft: 0,
     '&:before': {
       display: 'none',
     },
