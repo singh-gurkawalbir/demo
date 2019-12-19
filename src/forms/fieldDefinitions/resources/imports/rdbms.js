@@ -1,6 +1,6 @@
 export default {
   'rdbms.queryType': {
-    type: 'ignorefieldvalue',
+    type: 'radiogroupforresetfields',
     label: 'Query Type',
     fieldsToReset: ['ignoreExisting', 'ignoreMissing', 'rdbms.ignoreExtract'],
     required: true,

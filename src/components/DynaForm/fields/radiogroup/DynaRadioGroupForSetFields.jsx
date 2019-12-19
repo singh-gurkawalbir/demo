@@ -1,6 +1,6 @@
 import DynaRadioGroup from './DynaRadioGroup';
 
-export default function IgnoreFields(props) {
+export default function DynaRadioGroupForSetFields(props) {
   const { fieldsToReset, onFieldChange } = props;
   const updatedOnFieldChange = (id, value) => {
     onFieldChange(id, value);

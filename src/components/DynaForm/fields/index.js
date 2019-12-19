@@ -1,5 +1,5 @@
 import DynaMultiSelect from './DynaMultiSelect';
-import DynaRadioGroup from './DynaRadioGroup';
+import DynaRadioGroup from './radiogroup/DynaRadioGroup';
 import DynaSelect from './DynaSelect';
 import DynaLabel from './DynaLabel';
 import DynaCeligoTable from './DynaCeligoTable';
@@ -75,7 +75,7 @@ import DynaMode from './DynaMode';
 import DynaAutoSuggestFlowSampleData from './DynaAutoSuggestFlowSampleData';
 import DynaCsvGenerate from './editors/DynaCsvGenerate';
 import DynaFileKeyColumn from './DynaFileKeyColumn';
-import DynaIgnoreFieldValues from './DynaIgnoreFieldValues';
+import DynaRadioGroupForSetFields from './radiogroup/DynaRadioGroupForSetFields';
 
 export default {
   mode: DynaMode,
@@ -163,5 +163,5 @@ export default {
   timestampfilename: DynaTimestampFileName,
   autosuggestflowsampledata: DynaAutoSuggestFlowSampleData,
   filekeycolumn: DynaFileKeyColumn,
-  ignorefieldvalue: DynaIgnoreFieldValues,
+  radiogroupforresetfields: DynaRadioGroupForSetFields,
 };

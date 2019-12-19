@@ -10,7 +10,7 @@ import {
 } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import actions from '../../../../actions';
-import RadioGroup from '../../../../components/DynaForm/fields/DynaRadioGroup';
+import RadioGroup from '../../../../components/DynaForm/fields/radiogroup/DynaRadioGroup';
 import DynaSelect from '../../../../components/DynaForm/fields/DynaSelect';
 import * as selectors from '../../../../reducers';
 import DynaTableView from './DynaTable';
