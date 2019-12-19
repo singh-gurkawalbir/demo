@@ -239,8 +239,8 @@ class UserDetail extends Component {
           </TableCell>
           {isAccountOwner && (
             <Fragment>
-              <TableCell>
-                {integrationId && user._id !== ACCOUNT_IDS.OWN && (
+              {integrationId && user._id !== ACCOUNT_IDS.OWN && (
+                <TableCell>
                   <IconButton
                     data-test="editUser"
                     onClick={() => {
@@ -248,8 +248,8 @@ class UserDetail extends Component {
                     }}>
                     <EditIcon />
                   </IconButton>
-                )}
-              </TableCell>
+                </TableCell>
+              )}
 
               {!integrationId && (
                 <Fragment>
