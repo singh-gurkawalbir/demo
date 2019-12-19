@@ -811,14 +811,10 @@ const editor = {
 // #endregion
 // #region Mapping actions
 const mapping = {
-  init: (id, mappings, lookups, adaptorType, application, generateFields) =>
+  init: ({ id, options }) =>
     action(actionTypes.MAPPING.INIT, {
       id,
-      mappings,
-      lookups,
-      adaptorType,
-      application,
-      generateFields,
+      options,
     }),
   patchField: (id, field, index, value) =>
     action(actionTypes.MAPPING.PATCH_FIELD, { id, field, index, value }),

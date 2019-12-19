@@ -4,7 +4,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import { isEqual } from 'lodash';
 import ImportMapping from './index';
 import * as ResourceUtil from '../../../utils/resource';
-import lookupUtil from '../../../utils/lookup';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import { getImportOperationDetails } from '../../../utils/assistant';
@@ -173,12 +172,13 @@ export default function StandaloneMapping(props) {
   ]);
 
   const application = resourceType.type;
+  const isGroupedSampleData = !!(extractFields && Array.isArray(extractFields));
   const options = {
     flowId,
     connectionId,
     resourceId,
     resourceName,
-    isGroupedSampleData: !!(extractFields && Array.isArray(extractFields)),
+    isGroupedSampleData,
   };
 
   if (isSalesforce) {
@@ -190,7 +190,12 @@ export default function StandaloneMapping(props) {
       resourceData.netsuite_da && resourceData.netsuite_da.recordType;
   }
 
-  const mappingOptions = {};
+  const mappingOptions = {
+    resourceData,
+    adaptorType: resourceType.type,
+    isGroupedSampleData,
+    application,
+  };
 
   if (isAssistant && assistantData) {
     if (!assistantLoaded) {
@@ -226,16 +231,6 @@ export default function StandaloneMapping(props) {
     };
   }
 
-  const mappings = mappingUtil.getMappingFromResource(
-    resourceData,
-    resourceType.type,
-    false,
-    mappingOptions
-  );
-  const lookups = lookupUtil.getLookupFromResource(
-    resourceData,
-    resourceType.type
-  );
   let formattedExtractFields = [];
 
   if (extractFields) {
@@ -254,49 +249,51 @@ export default function StandaloneMapping(props) {
   const [importSampleDataState, setImportSampleDataState] = useState([]);
   const handleInit = useCallback(() => {
     dispatch(
-      actions.mapping.init(
+      actions.mapping.init({
         id,
-        mappings,
-        lookups || [],
-        resourceType.type,
-        application
-      )
+        options: mappingOptions,
+      })
     );
-  }, [application, dispatch, id, lookups, mappings, resourceType.type]);
+  }, [dispatch, id, mappingOptions]);
+  const isFetchingDuringInit =
+    (isIntegrationApp && !integrationAppMetadataLoaded) ||
+    (isAssistant && !assistantLoaded) ||
+    !flowSampleDataLoaded ||
+    ((isNetsuite || isSalesforce || isAssistant) && !importSampleDataLoaded);
 
   useEffect(() => {
-    if (
-      (isIntegrationApp && integrationAppMetadataLoaded) ||
-      (isAssistant && assistantLoaded) ||
-      (!isAssistant && !isIntegrationApp)
-    ) {
+    if (!isFetchingDuringInit && !initTriggered) {
       handleInit();
       setInitTriggered(true);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, handleInit, id, initTriggered, isFetchingDuringInit]);
+
+  useEffect(() => {
+    if (initTriggered) {
+      if (flowSampleDataLoaded && extractStatus === undefined) {
+        // console.log("dispatch hide")
+        dispatch(actions.mapping.setVisibility(id, false));
+        setFlowSampleDataLoaded(false);
+      } else if (!isFetchingDuringInit) {
+        // console.log("dispatch visible")
+        dispatch(actions.mapping.setVisibility(id, true));
+      }
+    }
   }, [
-    isIntegrationApp,
-    integrationAppMetadataLoaded,
-    isAssistant,
-    assistantLoaded,
+    dispatch,
+    extractStatus,
+    flowSampleDataLoaded,
+    id,
+    initTriggered,
+    isFetchingDuringInit,
   ]);
 
-  if (!showMappings) {
-    if (
-      (isIntegrationApp && !integrationAppMetadataLoaded) ||
-      (isAssistant && !assistantLoaded) ||
-      !flowSampleDataLoaded ||
-      ((isNetsuite || isSalesforce || isAssistant) && !importSampleDataLoaded)
-    ) {
-      return (
-        <div className={classes.spinnerWrapper}>
-          <Spinner />
-        </div>
-      );
-    }
-
-    // dispatch an action to show mappings
-    dispatch(actions.mapping.setVisibility(id, true));
+  if (!showMappings || isFetchingDuringInit) {
+    return (
+      <div className={classes.spinnerWrapper}>
+        <Spinner />
+      </div>
+    );
   }
 
   if (initTriggered && !isEqual(importSampleDataState, importSampleData)) {
@@ -329,13 +326,11 @@ export default function StandaloneMapping(props) {
       disabled={disabled}
       extractFields={formattedExtractFields}
       generateFields={formattedGenerateFields}
-      value={mappings}
       resource={resourceData}
       isExtractsLoading={extractStatus === 'requested'}
       isGeneratesLoading={generateStatus === 'requested'}
       isGenerateRefreshSupported={isGenerateRefreshSupported}
       application={application}
-      lookups={lookups}
       options={options}
       optionalHanlder={optionalHandler}
     />

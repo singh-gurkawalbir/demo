@@ -1,5 +1,7 @@
 import produce from 'immer';
 import actionTypes from '../../../actions/types';
+import mappingUtil from '../../../utils/mapping';
+import lookupUtil from '../../../utils/lookup';
 
 const emptySet = [];
 
@@ -7,14 +9,12 @@ export default function reducer(state = {}, action) {
   const {
     id,
     type,
-    mappings,
-    adaptorType,
-    application,
     generateFields,
     lookups,
     value,
     index,
     field,
+    options = {},
   } = action;
 
   return produce(state, draft => {
@@ -25,18 +25,38 @@ export default function reducer(state = {}, action) {
     switch (type) {
       case actionTypes.MAPPING.INIT:
         {
+          const {
+            adaptorType,
+            resourceData,
+            application,
+            isGroupedSampleData,
+            ...additionalOptions
+          } = options;
+          const formattedMappings = mappingUtil.getMappingFromResource(
+            resourceData,
+            adaptorType,
+            false,
+            isGroupedSampleData,
+            additionalOptions
+          );
+          const lookups = lookupUtil.getLookupFromResource(
+            resourceData,
+            adaptorType
+          );
           const initChangeIdentifier =
             (draft[id] && draft[id].initChangeIdentifier) || 0;
 
           draft[id] = {
-            mappings: mappings.map(m => ({ ...m, rowIdentifier: 0 })),
+            mappings: formattedMappings.map(m => ({ ...m, rowIdentifier: 0 })),
             incompleteGenerates: [],
-            lookups,
+            lookups: lookups || [],
             initChangeIdentifier: initChangeIdentifier + 1,
             application,
+            resource: resourceData,
             adaptorType,
             generateFields,
-            visible: false,
+            visible: true,
+            isGroupedSampleData,
           };
         }
 

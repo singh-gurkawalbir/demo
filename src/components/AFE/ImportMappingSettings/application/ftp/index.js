@@ -3,8 +3,9 @@ import mappingUtil from '../../../../../utils/mapping';
 import dateFormats from '../../../../../utils/dateFormats';
 
 export default {
-  getMetaData: (options = {}) => {
-    const { value, lookup = {}, extractFields } = options;
+  getMetaData: (params = {}) => {
+    const { value, lookup = {}, extractFields, options = {} } = params;
+    const { isGroupedSampleData = false } = options;
     const fieldMeta = {
       fieldMap: {
         dataType: {
@@ -25,6 +26,13 @@ export default {
               ],
             },
           ],
+        },
+        useFirstRow: {
+          id: 'useFirstRow',
+          name: 'useFirstRow',
+          type: 'checkbox',
+          defaultValue: value.useFirstRow || false,
+          label: 'Use First Row',
         },
         discardIfEmpty: {
           id: 'discardIfEmpty',
@@ -302,6 +310,7 @@ export default {
       layout: {
         fields: [
           'dataType',
+          'useFirstRow',
           'discardIfEmpty',
           'fieldMappingType',
           'lookup.mapList',
@@ -350,6 +359,14 @@ export default {
         return null;
       },
     };
+    let { fields } = fieldMeta.layout;
+
+    if (!isGroupedSampleData) {
+      delete fieldMeta.fieldMap.useFirstRow;
+      fields = fields.filter(el => el !== 'isKey');
+    }
+
+    fieldMeta.layout.fields = fields;
 
     return fieldMeta;
   },
