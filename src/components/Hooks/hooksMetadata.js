@@ -2,17 +2,71 @@ import {
   getSupportedHooksForResource,
   hooksLabelMap,
   getHookType,
+  isStacksSupportedForResource,
+  isSuiteScriptHooksSupportedForResource,
+  importSuiteScriptHooksList,
 } from '../../utils/hooks';
 
-const exportHooksMetadata = ({
+const attachSuiteScriptHooks = (metadata, resourceType, defaultValues) => {
+  const fieldMap = {
+    'suiteScript-header': {
+      id: 'suiteScript-header',
+      name: 'suiteScript-header',
+      type: 'labeltitle',
+      label: `SuiteScript Hooks (NetSuite ${
+        resourceType === 'exports' ? 'Exports' : 'Imports'
+      } Only)`,
+    },
+  };
+  const layoutFields = ['suiteScript-header'];
+  const suiteScriptHooks =
+    resourceType === 'exports' ? ['preSend'] : importSuiteScriptHooksList;
+
+  suiteScriptHooks.forEach(suiteScriptHook => {
+    const suiteScriptHookId = `${suiteScriptHook}.suiteScript`;
+
+    fieldMap[suiteScriptHookId] = {
+      id: suiteScriptHookId,
+      name: `suiteScript-${suiteScriptHook}`,
+      type: 'suitescripthook',
+      defaultValue: defaultValues[suiteScriptHook] || {},
+      label: hooksLabelMap[suiteScriptHook],
+    };
+    layoutFields.push(suiteScriptHookId);
+  });
+
+  return {
+    ...metadata,
+    fieldMap: { ...metadata.fieldMap, ...fieldMap },
+    layout: {
+      fields: [...metadata.layout.fields, ...layoutFields],
+    },
+  };
+};
+
+const generateExportHooksMetadata = ({
   defaultValue = {},
   flowId,
+  isStacksSupported,
+  isSuiteScriptHooksSupported,
   resourceId,
   resourceType,
 }) => {
-  const defaultHookType = getHookType(defaultValue);
+  const {
+    hooks: defaultHooks,
+    suiteScriptHooks: defaultSuiteScriptHooks,
+  } = defaultValue;
+  const defaultHookType = getHookType(defaultHooks);
+  const hookTypes = [{ label: 'Script', value: 'script' }];
+  const layoutFields = ['hookType', 'preSavePage.script'];
 
-  return {
+  // Stack options are not shown for blob exports
+  if (isStacksSupported) {
+    hookTypes.push({ label: 'Stack', value: 'stack' });
+    layoutFields.push('preSavePage.stack');
+  }
+
+  const exportHooksMetadata = {
     fieldMap: {
       hookType: {
         id: 'hookType',
@@ -23,10 +77,7 @@ const exportHooksMetadata = ({
         fullWidth: true,
         options: [
           {
-            items: [
-              { label: 'Script', value: 'script' },
-              { label: 'Stack', value: 'stack' },
-            ],
+            items: hookTypes,
           },
         ],
       },
@@ -40,7 +91,7 @@ const exportHooksMetadata = ({
         resourceId,
         resourceType,
         defaultValue:
-          defaultHookType === 'script' ? defaultValue.preSavePage : {},
+          defaultHookType === 'script' ? defaultHooks.preSavePage : {},
         visibleWhen: [{ field: 'hookType', is: ['script'] }],
       },
       'preSavePage.stack': {
@@ -50,25 +101,45 @@ const exportHooksMetadata = ({
         type: 'hook',
         hookType: 'stack',
         defaultValue:
-          defaultHookType === 'stack' ? defaultValue.preSavePage : {},
+          defaultHookType === 'stack' ? defaultHooks.preSavePage : {},
         visibleWhen: [{ field: 'hookType', is: ['stack'] }],
       },
     },
     layout: {
-      fields: ['hookType', 'preSavePage.script', 'preSavePage.stack'],
+      fields: layoutFields,
     },
   };
+
+  return isSuiteScriptHooksSupported
+    ? attachSuiteScriptHooks(
+        exportHooksMetadata,
+        resourceType,
+        defaultSuiteScriptHooks
+      )
+    : exportHooksMetadata;
 };
 
-const importHooksMetadata = ({
+const generateImportHooksMetadata = ({
   flowId,
   resourceId,
   resourceType,
   defaultValue,
   resource,
+  isStacksSupported,
+  isSuiteScriptHooksSupported,
 }) => {
   const hooks = getSupportedHooksForResource(resource);
-  const defaultHookType = getHookType(defaultValue);
+  const {
+    hooks: defaultHooks,
+    suiteScriptHooks: defaultSuiteScriptHooks,
+  } = defaultValue;
+  const defaultHookType = getHookType(defaultHooks);
+  const hookTypes = [{ label: 'Script', value: 'script' }];
+
+  if (isStacksSupported) {
+    hookTypes.push({ label: 'Stack', value: 'stack' });
+  }
+
   const fieldMap = {
     hookType: {
       id: 'hookType',
@@ -79,10 +150,7 @@ const importHooksMetadata = ({
       fullWidth: true,
       options: [
         {
-          items: [
-            { label: 'Script', value: 'script' },
-            { label: 'Stack', value: 'stack' },
-          ],
+          items: hookTypes,
         },
       ],
     },
@@ -103,22 +171,35 @@ const importHooksMetadata = ({
       flowId,
       resourceId,
       resourceType,
-      defaultValue: defaultHookType === 'script' ? defaultValue[hook] : {},
+      defaultValue: defaultHookType === 'script' ? defaultHooks[hook] : {},
       visibleWhen: [{ field: 'hookType', is: ['script'] }],
     };
-    fieldMap[stackId] = {
-      id: stackId,
-      name: `stack-${hook}`,
-      label: hooksLabelMap[hook],
-      type: 'hook',
-      hookType: 'stack',
-      defaultValue: defaultHookType === 'stack' ? defaultValue[hook] : {},
-      visibleWhen: [{ field: 'hookType', is: ['stack'] }],
-    };
-    layout.fields.push(scriptId, stackId);
+
+    if (isStacksSupported) {
+      fieldMap[stackId] = {
+        id: stackId,
+        name: `stack-${hook}`,
+        label: hooksLabelMap[hook],
+        type: 'hook',
+        hookType: 'stack',
+        defaultValue: defaultHookType === 'stack' ? defaultHooks[hook] : {},
+        visibleWhen: [{ field: 'hookType', is: ['stack'] }],
+      };
+      layout.fields.push(scriptId, stackId);
+    } else {
+      layout.fields.push(scriptId);
+    }
   });
 
-  return { fieldMap, layout };
+  const importHooksMetadata = { fieldMap, layout };
+
+  return isSuiteScriptHooksSupported
+    ? attachSuiteScriptHooks(
+        importHooksMetadata,
+        resourceType,
+        defaultSuiteScriptHooks
+      )
+    : importHooksMetadata;
 };
 
 export default function getHooksMetadata(
@@ -126,7 +207,27 @@ export default function getHooksMetadata(
   resource,
   defaultValues
 ) {
+  const isStacksSupported = isStacksSupportedForResource(
+    resource,
+    resourceType
+  );
+  const isSuiteScriptHooksSupported = isSuiteScriptHooksSupportedForResource(
+    resource,
+    resourceType
+  );
+
   return resourceType === 'exports'
-    ? exportHooksMetadata({ ...defaultValues, resourceType })
-    : importHooksMetadata({ ...defaultValues, resourceType, resource });
+    ? generateExportHooksMetadata({
+        ...defaultValues,
+        resourceType,
+        isStacksSupported,
+        isSuiteScriptHooksSupported,
+      })
+    : generateImportHooksMetadata({
+        ...defaultValues,
+        resourceType,
+        resource,
+        isStacksSupported,
+        isSuiteScriptHooksSupported,
+      });
 }

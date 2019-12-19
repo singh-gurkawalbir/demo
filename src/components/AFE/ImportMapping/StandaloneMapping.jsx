@@ -40,13 +40,12 @@ export default function StandaloneMapping(props) {
   const isAssistant = !!resourceData.assistant;
   const isIntegrationApp = !!resourceData._connectorId;
   const integrationId = resourceData._integrationId;
-  const options = {};
   const resourceType = ResourceUtil.getResourceSubType(resourceData);
   const isSalesforce =
     resourceType.type === ResourceUtil.adaptorTypeMap.SalesforceImport;
   const isNetsuite =
     resourceType.type === ResourceUtil.adaptorTypeMap.NetSuiteImport;
-  const connectionId = resourceData._connectionId;
+  const { _connectionId: connectionId, name: resourceName } = resourceData;
   const dispatch = useDispatch();
   const { visible: showMappings } = useSelector(state =>
     selectors.mapping(state, id)
@@ -174,16 +173,20 @@ export default function StandaloneMapping(props) {
   ]);
 
   const application = resourceType.type;
+  const options = {
+    flowId,
+    connectionId,
+    resourceId,
+    resourceName,
+  };
 
   if (isSalesforce) {
-    options.connectionId = connectionId;
     options.sObjectType = resourceData.salesforce.sObjectType;
   }
 
   if (isNetsuite) {
     options.recordType =
       resourceData.netsuite_da && resourceData.netsuite_da.recordType;
-    options.connectionId = connectionId;
   }
 
   const mappingOptions = {};
@@ -326,7 +329,7 @@ export default function StandaloneMapping(props) {
       extractFields={formattedExtractFields}
       generateFields={formattedGenerateFields}
       value={mappings}
-      adaptorType={resourceType.type}
+      resource={resourceData}
       isExtractsLoading={extractStatus === 'requested'}
       isGeneratesLoading={generateStatus === 'requested'}
       isGenerateRefreshSupported={isGenerateRefreshSupported}

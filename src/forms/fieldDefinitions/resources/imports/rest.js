@@ -80,7 +80,7 @@ export default {
             value: 'createandignore',
           },
           {
-            label: 'Update Existing Data & Ignore NEW Data',
+            label: 'Update Existing Data & Ignore New Data',
             value: 'updateandignore',
           },
         ],
@@ -125,7 +125,8 @@ export default {
     },
   },
   'rest.relativeURI': {
-    type: 'relativeuriwithlookup',
+    type: 'textwithlookupextract',
+    fieldType: 'relativeUri',
     label: 'Relative URI',
     required: true,
     arrayIndex: 0,

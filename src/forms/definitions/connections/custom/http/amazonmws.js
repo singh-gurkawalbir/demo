@@ -1,16 +1,36 @@
 export default {
-  preSave: formValues => ({
-    ...formValues,
-    '/type': 'http',
-    '/assistant': 'amazonmws',
-    '/http/auth/type': 'custom',
-    '/http/mediaType': 'xml',
-    '/http/baseURI': 'https://mws.amazonservices.com/',
-    '/http/ping/relativeURI':
-      '/Sellers/2011-07-01?Action=ListMarketplaceParticipations&Version=2011-07-01',
-    '/http/ping/errorPath': '/ErrorResponse/Error/Message/text()',
-    '/http/ping/method': 'POST',
-  }),
+  preSave: formValues => {
+    let baseURI = '';
+
+    if (formValues['/http/unencrypted/marketplaceRegion'] === 'north_america') {
+      baseURI = 'https://mws.amazonservices.com';
+    } else if (formValues['/http/unencrypted/marketplaceRegion'] === 'europe') {
+      baseURI = 'https://mws-eu.amazonservices.com';
+    } else if (formValues['/http/unencrypted/marketplaceRegion'] === 'india') {
+      baseURI = 'https://mws.amazonservices.in';
+    } else if (formValues['/http/unencrypted/marketplaceRegion'] === 'china') {
+      baseURI = 'https://mws.amazonservices.com.cn';
+    } else if (formValues['/http/unencrypted/marketplaceRegion'] === 'japan') {
+      baseURI = 'https://mws.amazonservices.jp';
+    } else if (
+      formValues['/http/unencrypted/marketplaceRegion'] === 'australia'
+    ) {
+      baseURI = 'https://mws.amazonservices.com.au';
+    }
+
+    return {
+      ...formValues,
+      '/type': 'http',
+      '/assistant': 'amazonmws',
+      '/http/auth/type': 'custom',
+      '/http/mediaType': 'xml',
+      '/http/baseURI': baseURI,
+      '/http/ping/relativeURI':
+        '/Sellers/2011-07-01?Action=ListMarketplaceParticipations&Version=2011-07-01',
+      '/http/ping/errorPath': '/ErrorResponse/Error/Message/text()',
+      '/http/ping/method': 'POST',
+    };
+  },
   fieldMap: {
     name: { fieldId: 'name' },
     'http.unencrypted.sellerId': {
@@ -109,6 +129,30 @@ export default {
       helpText:
         'Please specify the Amazon MWS Region for this connection. Please note that you must be registered to sell in the Amazon MWS Region selected, else your Amazon MWS calls will fail.',
       required: true,
+      defaultValue: r => {
+        const baseUri = r && r.http && r.http.baseURI;
+
+        if (baseUri) {
+          switch (baseUri) {
+            case 'https://mws.amazonservices.com':
+              return 'north_america';
+            case 'https://mws-eu.amazonservices.com':
+              return 'europe';
+            case 'https://mws.amazonservices.in':
+              return 'india';
+            case 'https://mws.amazonservices.com.cn':
+              return 'china';
+            case 'https://mws.amazonservices.jp':
+              return 'japan';
+            case 'https://mws.amazonservices.com.au':
+              return 'australia';
+            default:
+              return 'north_america';
+          }
+        }
+
+        return '';
+      },
       options: [
         {
           items: [

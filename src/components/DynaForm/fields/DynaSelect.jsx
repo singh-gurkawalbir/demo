@@ -77,7 +77,7 @@ export default function DynaSelect(props) {
             label = item.label || item.value;
           }
 
-          const { subHeader } = item;
+          const { subHeader, disabled = false } = item;
 
           if (subHeader) {
             return (
@@ -88,7 +88,7 @@ export default function DynaSelect(props) {
           }
 
           return (
-            <MenuItem key={value} value={value}>
+            <MenuItem key={value} value={value} disabled={disabled}>
               {label}
             </MenuItem>
           );

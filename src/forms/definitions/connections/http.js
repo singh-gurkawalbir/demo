@@ -145,8 +145,8 @@ export default {
     'http.ping.successValues': { fieldId: 'http.ping.successValues' },
     'http.ping.errorPath': { fieldId: 'http.ping.errorPath' },
     httpAdvanced: { formId: 'httpAdvanced' },
-    'clientCertificates.cert': { fieldId: 'clientCertificates.cert' },
-    'clientCertificates.key': { fieldId: 'clientCertificates.key' },
+    'http.clientCertificates.cert': { fieldId: 'http.clientCertificates.cert' },
+    'http.clientCertificates.key': { fieldId: 'http.clientCertificates.key' },
     'http.clientCertificates.passphrase': {
       fieldId: 'http.clientCertificates.passphrase',
     },
@@ -199,8 +199,8 @@ export default {
         label: 'Advanced Settings',
         fields: [
           'httpAdvanced',
-          'clientCertificates.key',
-          'clientCertificates.cert',
+          'http.clientCertificates.key',
+          'http.clientCertificates.cert',
           'http.clientCertificates.passphrase',
         ],
       },

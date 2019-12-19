@@ -16,12 +16,6 @@ import NotificationsSection from './sections/Notifications';
 import UsersSection from './sections/Users';
 import UninstallSection from './sections/Uninstall';
 import ApiTokensSection from './sections/ApiTokens';
-import NotificationsIcon from '../../../../../components/icons/NotificationsIcon';
-import AuditLogIcon from '../../../../../components/icons/AuditLogIcon';
-import GroupOfUsersIcon from '../../../../../components/icons/GroupOfUsersIcon';
-import TokensApiIcon from '../../../../../components/icons/TokensApiIcon';
-import SubscriptionIcon from '../../../../../components/icons/SettingsIcon';
-import UninstallIcon from '../../../../../components/icons/TrashIcon';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -50,9 +44,6 @@ const useStyles = makeStyles(theme => ({
   activeListItem: {
     color: theme.palette.primary.main,
   },
-  icon: {
-    marginRight: 5,
-  },
 }));
 const allSections = [
   {
@@ -60,42 +51,36 @@ const allSections = [
     label: 'Notifications',
     Section: NotificationsSection,
     id: 'notifications',
-    Icon: NotificationsIcon,
   },
   {
     path: 'audit',
     label: 'Audit log',
     Section: AuditLogSection,
     id: 'auditLog',
-    Icon: AuditLogIcon,
   },
   {
     path: 'users',
     label: 'Users',
     Section: UsersSection,
     id: 'users',
-    Icon: GroupOfUsersIcon,
   },
   {
     path: 'subscription',
     label: 'Subscription',
     Section: SubscriptionSection,
     id: 'subscription',
-    Icon: SubscriptionIcon,
   },
   {
     path: 'uninstall',
     label: 'Uninstall',
     Section: UninstallSection,
     id: 'uninstall',
-    Icon: UninstallIcon,
   },
   {
     path: 'apitoken',
     label: 'API tokens',
     Section: ApiTokensSection,
     id: 'apitoken',
-    Icon: TokensApiIcon,
   },
 ];
 
@@ -125,9 +110,8 @@ export default function AdminPanel({ integrationId, ...sectionProps }) {
       <div className={classes.container}>
         <div className={classes.subNav}>
           <List>
-            {availableSections.map(({ path, label, id, Icon }) => (
+            {availableSections.map(({ path, label, id }) => (
               <ListItem key={path}>
-                <Icon className={classes.icon} />
                 <NavLink
                   className={classes.listItem}
                   activeClassName={classes.activeListItem}

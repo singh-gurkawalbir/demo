@@ -82,9 +82,13 @@ export default {
         if (lookup) {
           retValues['/http/ignoreLookupName'] =
             retValues['/http/existingDataId'];
+          retValues['/http/ignoreExtract'] = null;
         } else {
           retValues['/http/ignoreExtract'] = retValues['/http/existingDataId'];
+          retValues['/http/ignoreLookupName'] = null;
         }
+
+        retValues['/http/existingDataId'] = undefined;
       } else if (retValues['/http/compositeType'] === 'updateandignore') {
         retValues['/http/relativeURI'] = [retValues['/http/relativeURIUpdate']];
         retValues['/http/method'] = [retValues['/http/compositeMethodUpdate']];
@@ -113,9 +117,13 @@ export default {
         if (lookup) {
           retValues['/http/ignoreLookupName'] =
             retValues['/http/existingDataId'];
+          retValues['/http/ignoreExtract'] = null;
         } else {
           retValues['/http/ignoreExtract'] = retValues['/http/existingDataId'];
+          retValues['/http/ignoreLookupName'] = null;
         }
+
+        retValues['/http/existingDataId'] = undefined;
       }
     } else {
       retValues['/ignoreExisting'] = false;
@@ -292,7 +300,8 @@ export default {
     },
     'http.relativeURICreate': {
       id: 'http.relativeURICreate',
-      type: 'relativeuriwithlookup',
+      type: 'textwithlookupextract',
+      fieldType: 'relativeUri',
       arrayIndex: 1,
       connectionId: r => r && r._connectionId,
       refreshOptionsOnChangesTo: ['http.lookups', 'name'],
@@ -514,7 +523,8 @@ export default {
     },
     'http.relativeURIUpdate': {
       id: 'http.relativeURIUpdate',
-      type: 'relativeuriwithlookup',
+      type: 'textwithlookupextract',
+      fieldType: 'relativeUri',
       arrayIndex: 0,
       connectionId: r => r && r._connectionId,
       refreshOptionsOnChangesTo: ['http.lookups', 'name'],
@@ -659,7 +669,26 @@ export default {
       visibleWhenAll: [
         {
           field: 'http.compositeType',
-          is: ['createandignore', 'updateandignore'],
+          is: ['createandignore'],
+        },
+        {
+          field: 'http.method',
+          is: ['COMPOSITE'],
+        },
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
+      ],
+    },
+    ignoreNewData: {
+      id: 'ignoreNewData',
+      type: 'labeltitle',
+      label: 'Ignore New Data',
+      visibleWhenAll: [
+        {
+          field: 'http.compositeType',
+          is: ['updateandignore'],
         },
         {
           field: 'http.method',
@@ -673,7 +702,8 @@ export default {
     },
     'http.existingDataId': {
       id: 'http.existingDataId',
-      type: 'relativeuriwithlookup',
+      type: 'textwithlookupextract',
+      fieldType: 'ignoreExistingData',
       label: 'Existing Data Id',
       connectionId: r => r && r._connectionId,
       refreshOptionsOnChangesTo: ['http.lookups', 'name'],
@@ -813,6 +843,7 @@ export default {
       'http.resourceIdPathUpdate',
       'http.resourcePathUpdate',
       'ignoreExistingData',
+      'ignoreNewData',
       'http.existingDataId',
       'mediatypeInformation',
       'http.successMediaType',

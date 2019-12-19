@@ -6,7 +6,8 @@ import actions from '../../../actions';
 import {
   getFileReaderOptions,
   getCsvFromXlsx,
-  isValidFileType,
+  getJSONContent,
+  getUploadedFileStatus,
 } from '../../../utils/file';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 
@@ -48,7 +49,16 @@ function DynaUploadFile(props) {
 
     // For JSON file, content should be parsed from String to JSON
     if (options === 'json') {
-      fileContent = JSON.parse(fileContent);
+      const { success, error, data } = getJSONContent(fileContent);
+
+      if (!success) {
+        return enqueueSnackbar({
+          message: error,
+          variant: 'error',
+        });
+      }
+
+      fileContent = data;
     }
 
     onFieldChange(id, fileContent);
@@ -84,12 +94,14 @@ function DynaUploadFile(props) {
     const file = event.target.files[0];
 
     if (!file) return;
+    // Checks for file size and file types
+    const fileStatus = getUploadedFileStatus(file, options);
 
-    if (options && !isValidFileType(options, file)) {
+    if (!fileStatus.success) {
       onFieldChange(id, '');
 
       return enqueueSnackbar({
-        message: `Please select valid ${options} file`,
+        message: fileStatus.error,
         variant: 'error',
       });
     }

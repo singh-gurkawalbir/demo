@@ -1,4 +1,4 @@
-import { useState, useEffect, Fragment } from 'react';
+import { useState, useEffect, useMemo, Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { TextField } from '@material-ui/core';
@@ -19,7 +19,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-// TODO(Aditya): remove this component and use DynaRelativeURIWithLookup after refractor
+// TODO(Aditya): remove this component and use DynaTextWithLookupExtract/RelativeURI after refractor
 export default function DynaRelativeUri(props) {
   const [showEditor, setShowEditor] = useState(false);
   const classes = useStyles();
@@ -62,25 +62,27 @@ export default function DynaRelativeUri(props) {
     handleEditorClick();
   };
 
-  const sampleData = useSelector(state => {
-    if (!isPageGenerator) {
-      return selectors.getSampleData(state, {
-        flowId,
-        resourceId,
-        resourceType,
-        stage: 'flowInput',
-      });
-    }
-  });
-  const formattedSampleData = JSON.stringify(
-    getFormattedSampleData({
-      connection,
-      sampleData,
+  const { data: sampleData } = useSelector(state =>
+    selectors.getSampleDataContext(state, {
+      flowId,
+      resourceId,
       resourceType,
-      resourceName,
-    }),
-    null,
-    2
+      stage: 'flowInput',
+    })
+  );
+  const formattedSampleData = useMemo(
+    () =>
+      JSON.stringify(
+        getFormattedSampleData({
+          connection,
+          sampleData,
+          resourceType,
+          resourceName,
+        }),
+        null,
+        2
+      ),
+    [connection, resourceName, resourceType, sampleData]
   );
 
   useEffect(() => {

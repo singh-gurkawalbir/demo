@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useCallback } from 'react';
 import { connect } from 'react-redux';
 import { Typography } from '@material-ui/core';
 import actions from '../../actions';
@@ -121,20 +121,57 @@ export function ActionsFactory(props) {
   );
 }
 
+export const FormStateManager = props => {
+  const { formState, fieldMeta, onSubmitComplete } = props;
+  // once the form successfully completes submission (could be async)
+  // we call the parents callback so it can perform some action.
+
+  // TODO: This handler fired every render when i include the
+  // onSubmitComplete fn as a dependency... how do i solve this
+  // the right way? linter fails if i dont add it...
+
+  // eslint-disable-next-line padding-line-between-statements
+  const [count, setCount] = useState(0);
+  const remountForm = useCallback(() => setCount(count => count + 1), []);
+
+  useEffect(() => {
+    if (formState.submitComplete && onSubmitComplete) {
+      // console.log('fired onSubmitComplete');
+      onSubmitComplete();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formState.submitComplete /* , onSubmitComplete */]);
+
+  useEffect(() => {
+    remountForm();
+  }, [fieldMeta, remountForm]);
+
+  if (!formState.initComplete) {
+    return <Typography>Initializing Form</Typography>;
+  }
+
+  return (
+    <ActionsFactory
+      onCancel={remountForm}
+      {...props}
+      {...formState}
+      key={count}
+    />
+  );
+};
+
 export const ResourceFormFactory = props => {
   const {
     resourceType,
     formState,
     handleInitForm,
     handleClearResourceForm,
-    onSubmitComplete,
     resource,
     resourceId,
     isNew,
     lastPatchtimestamp,
     flowId,
   } = props;
-  const [count, setCount] = useState(0);
 
   useEffect(() => {
     handleInitForm(resourceType, resourceId, isNew, flowId);
@@ -150,46 +187,22 @@ export const ResourceFormFactory = props => {
     resourceType,
   ]);
 
-  // once the form successfully completes submission (could be async)
-  // we call the parents callback so it can perform some action.
-
-  // TODO: This handler fired every render when i include the
-  // onSubmitComplete fn as a dependency... how do i solve this
-  // the right way? linter fails if i dont add it...
-  useEffect(() => {
-    if (formState.submitComplete && onSubmitComplete) {
-      // console.log('fired onSubmitComplete');
-      onSubmitComplete();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formState.submitComplete /* , onSubmitComplete */]);
-
-  const { optionsHandler } = useMemo(
+  const optionsHandler = useMemo(
     () =>
       formFactory.getResourceFormAssets({
         resourceType,
         resource,
         isNew,
-      }),
+      }).optionsHandler,
     [isNew, resource, resourceType]
   );
   const { fieldMeta } = formState;
 
-  useEffect(() => {
-    setCount(count => count + 1);
-  }, [fieldMeta]);
-
-  if (!formState.initComplete) {
-    return <Typography>Initializing Form</Typography>;
-  }
-
   return (
-    <ActionsFactory
-      onCancel={() => setCount(count => count + 1)}
+    <FormStateManager
       {...props}
-      {...formState}
+      fieldMeta={fieldMeta}
       optionsHandler={optionsHandler}
-      key={count}
     />
   );
 };

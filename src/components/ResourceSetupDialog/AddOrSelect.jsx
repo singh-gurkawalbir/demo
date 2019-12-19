@@ -29,7 +29,11 @@ export default function AddOrSelect(props) {
   const resourceList = useSelector(state =>
     selectors.filteredResourceList(state, resource, resourceType, environment)
   );
-  const options = resourceList.map(c => ({ label: c.name, value: c._id }));
+  const options = resourceList.map(c => ({
+    label: c.offline ? `${c.name} - Offline` : c.name,
+    value: c._id,
+    disabled: !!c.offline,
+  }));
   const newId = useSelector(state =>
     selectors.createdResourceId(state, resourceId)
   );

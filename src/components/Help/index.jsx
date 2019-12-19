@@ -1,4 +1,4 @@
-import { useState, Fragment } from 'react';
+import { useState, Fragment, useCallback } from 'react';
 import IconButton from '@material-ui/core/IconButton';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import ArrowPopper from '../ArrowPopper';
@@ -9,22 +9,22 @@ import RawHtml from '../RawHtml';
 
 function Help(props) {
   const [anchorEl, setAnchorEl] = useState(null);
-  const handleMenu = event => {
-    if (anchorEl) {
-      setAnchorEl(null);
-    } else {
-      setAnchorEl(event.currentTarget);
-    }
-  };
-
-  const handleClose = () => {
+  const handleMenu = useCallback(
+    event => {
+      if (anchorEl) {
+        setAnchorEl(null);
+      } else {
+        setAnchorEl(event.currentTarget);
+      }
+    },
+    [anchorEl]
+  );
+  const handleClose = useCallback(() => {
     setAnchorEl(null);
-  };
-
-  const getHelpText = (helpText, helpKey) => helpText || helpTextMap[helpKey];
+  }, []);
   const { className, helpKey, helpText, ...rest } = props;
   const open = !!anchorEl;
-  const helpTextValue = getHelpText(helpText, helpKey);
+  const helpTextValue = helpText || helpTextMap[helpKey];
 
   if (!helpTextValue) return null;
 
