@@ -417,7 +417,7 @@ export default {
     visibleWhen: [{ field: 'type', is: ['delta'] }],
   },
   'delta.lagOffset': {
-    type: 'text',
+    type: 'textwithflowcontext',
     label: 'Offset',
     visibleWhenAll: [{ field: 'type', is: ['delta'] }],
   },
