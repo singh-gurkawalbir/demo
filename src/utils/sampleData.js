@@ -428,6 +428,8 @@ export const generateTransformationRulesOnXMLData = xmlJsonData => {
     rule.push({ extract, generate });
   });
 
+  // TODO @Raghu: Add a check to see if at least one rule has different extract and generate.
+  // Else no point in adding rules as the data is not going to change
   return [rule];
 };
 
