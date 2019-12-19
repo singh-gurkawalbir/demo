@@ -2,7 +2,7 @@ import dateTimezones from '../../utils/dateTimezones';
 
 export default {
   getMetadata: options => {
-    const { timeZone, startDate, preferences } = options;
+    const { timeZone, startDate, format } = options;
     const fieldMeta = {
       fieldMap: {
         deltaType: {
@@ -57,7 +57,7 @@ export default {
           defaultValue: startDate,
           requiredWhen: [{ field: 'deltaType', is: ['custom'] }],
           visibleWhen: [{ field: 'deltaType', is: ['custom'] }],
-          format: `${preferences.dateFormat} ${preferences.timeFormat}`,
+          format,
         },
       },
       layout: {

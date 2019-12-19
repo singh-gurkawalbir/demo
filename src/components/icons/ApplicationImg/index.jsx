@@ -1,7 +1,7 @@
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   small: {
     maxHeight: theme.spacing(4),
   },
@@ -9,7 +9,7 @@ const styles = theme => ({
     maxWidth: theme.spacing(16),
     maxHeight: theme.spacing(16),
   },
-});
+}));
 const iconMap = (type = '') => {
   if (type.toLowerCase().includes('ftp')) return 'ftp';
 
@@ -29,11 +29,18 @@ const iconMap = (type = '') => {
 
   if (type.toLowerCase().includes('mongodb')) return 'mongodb';
 
+  if (type.toLowerCase().includes('as2')) return 'as2';
+
   return type;
 };
 
-function ApplicationImg(props) {
-  const { size = 'small', assistant, type, classes, className } = props;
+export default function ApplicationImg({
+  size = 'small',
+  assistant,
+  type,
+  className,
+}) {
+  const classes = useStyles();
   let path;
 
   if (assistant) {
@@ -52,5 +59,3 @@ function ApplicationImg(props) {
     />
   );
 }
-
-export default withStyles(styles)(ApplicationImg);

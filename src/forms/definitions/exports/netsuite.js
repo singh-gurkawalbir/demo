@@ -55,9 +55,16 @@ export default {
     }
 
     if (netsuiteType === 'restlet') {
-      if (newValues['/restlet/type'] === 'all') {
-        newValues['/type'] = newValues['/restlet/type'];
-        delete newValues['/restlet/type'];
+      newValues['/type'] = newValues['/restlet/type'];
+      newValues['/delta/lagOffset'] = newValues['/restlet/delta/lagOffset'];
+      newValues['/delta/dateField'] = newValues['/restlet/delta/dateField'];
+      newValues['/once/booleanField'] = newValues['/restlet/once/booleanField'];
+      delete newValues['/restlet/type'];
+      delete newValues['/restlet/delta/lagOffset'];
+      delete newValues['/restlet/delta/dateField'];
+      delete newValues['/restlet/once/booleanField'];
+
+      if (newValues['/type'] === 'all') {
         newValues['/test'] = undefined;
         newValues['/delta'] = undefined;
         newValues['/type'] = undefined;
@@ -66,28 +73,19 @@ export default {
         delete newValues['/delta/dateField'];
         delete newValues['/delta/lagOffset'];
         delete newValues['/once/booleanField'];
-      } else if (newValues['/restlet/type'] === 'test') {
-        newValues['/type'] = newValues['/restlet/type'];
-        delete newValues['/restlet/type'];
+      } else if (newValues['/type'] === 'test') {
         newValues['/test/limit'] = 1;
         newValues['/delta'] = undefined;
         newValues['/once'] = undefined;
         delete newValues['/delta/dateField'];
         delete newValues['/delta/lagOffset'];
         delete newValues['/once/booleanField'];
-      } else if (newValues['/restlet/type'] === 'delta') {
-        newValues['/type'] = newValues['/restlet/type'];
-        delete newValues['/restlet/type'];
-        newValues['/delta/lagOffset'] = newValues['/delta/lagOffset'];
-        newValues['/delta/dateField'] = newValues['/delta/dateField'];
+      } else if (newValues['/type'] === 'delta') {
         newValues['/once'] = undefined;
         newValues['/test'] = undefined;
         delete newValues['/test/limit'];
         delete newValues['/once/booleanField'];
       } else if (newValues['/type'] === 'once') {
-        newValues['/type'] = newValues['/restlet/type'];
-        delete newValues['/restlet/type'];
-        newValues['/once/booleanField'] = newValues['/once/booleanField'];
         newValues['/delta'] = undefined;
         newValues['/test'] = undefined;
         delete newValues['/test/limit'];

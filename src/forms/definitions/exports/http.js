@@ -47,11 +47,25 @@ export default {
       retValues['/http/response/successPath'] = undefined;
     }
 
+    if (
+      retValues['/http/response/successValues'] === undefined &&
+      retValues['/http/response/successPath'] === undefined &&
+      retValues['/http/response/resourcePath'] === '' &&
+      retValues['/http/response/errorPath'] === ''
+    ) {
+      retValues['/http/response'] = undefined;
+      delete retValues['/http/response/resourcePath'];
+      delete retValues['/http/response/successValues'];
+      delete retValues['/http/response/successPath'];
+      delete retValues['/http/response/errorPath'];
+    }
+
     if (retValues['/outputMode'] === 'blob') {
       retValues['/type'] = 'blob';
       retValues['/http/method'] = retValues['/http/blobMethod'];
     }
 
+    delete retValues['/http/blobMethod'];
     delete retValues['/outputMode'];
 
     if (retValues['/http/paging/method'] === 'page') {

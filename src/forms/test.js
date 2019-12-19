@@ -9,6 +9,7 @@ import {
   getFieldByIdFromLayout,
   isExpansionPanelErrored,
   translateDependencyProps,
+  getAllFormValuesAssociatedToMeta,
 } from './utils';
 import formFactory, { getAmalgamatedOptionsHandler } from './formFactory';
 
@@ -278,6 +279,43 @@ describe('Form Utils', () => {
       expect(merged).toEqual({
         html: {
           name: 'abc',
+          b: 'efg',
+          rateLimit: { failValues: ['bad', 'fail'] },
+        },
+      });
+    });
+    test('should not delete resource properties when we receive undefined replace patches when skipRemovePatches set to true', () => {
+      const resource = {
+        html: {
+          name: 'abc',
+          a: 'abcd',
+          b: 'efg',
+        },
+      };
+      const patchSet = [
+        {
+          op: 'replace',
+          path: '/html/rateLimit/failValues',
+          value: ['bad', 'fail'],
+        },
+        {
+          op: 'replace',
+          path: '/html/a',
+          value: undefined,
+        },
+      ];
+      const sanitized = sanitizePatchSet({
+        patchSet,
+        resource,
+        skipRemovePatches: true,
+      });
+      const merged = jsonPatch.applyPatch(resource, sanitized, false, true)
+        .newDocument;
+
+      expect(merged).toEqual({
+        html: {
+          name: 'abc',
+          a: undefined,
           b: 'efg',
           rateLimit: { failValues: ['bad', 'fail'] },
         },
@@ -920,6 +958,101 @@ describe('Form Utils', () => {
           fieldStates
         )
       ).toEqual(true);
+    });
+  });
+
+  describe('getAllFormValuesAssociatedToMeta ', () => {
+    test('should only gather values of form associated to its metadata', () => {
+      const metadata = {
+        actions: undefined,
+        fieldMap: {
+          'custom.Field': {
+            defaultValue: '',
+            fieldId: 'custom.Field',
+            helpKey: 'someResourceType.custom.Field',
+            id: 'custom.Field',
+            name: '/custom/Field',
+            resourceId: undefined,
+            resourceType: 'someResourceType',
+            someProp: 'faa',
+            visibleWhenAll: [
+              {
+                field: 'fieldA',
+                is: ['someValue'],
+              },
+              {
+                field: 'someOtherField',
+                is: ['foo'],
+              },
+            ],
+          },
+          someField: {
+            defaultValue: '',
+            fieldId: 'someField',
+            helpKey: 'someResourceType.someField',
+            id: 'someField',
+            name: '/someField',
+            resourceId: undefined,
+            someProp: 'foo',
+            resourceType: 'someResourceType',
+            visibleWhenAll: [
+              { field: 'fieldA', is: ['someValue'] },
+              { field: 'someOtherField', is: ['foo'] },
+            ],
+          },
+          'file.decompressFiles': {
+            defaultValue: '',
+            fieldId: 'file.decompressFiles',
+            helpKey: 'someResourceType.file.decompressFiles',
+            id: 'file.decompressFiles',
+            name: '/file/decompressFiles',
+            resourceId: undefined,
+            resourceType: 'someResourceType',
+          },
+          exportData: {
+            defaultValue: '',
+            fieldId: 'exportData',
+            helpKey: 'someResourceType.exportData',
+            id: 'exportData',
+            name: '/exportData',
+            resourceId: undefined,
+            resourceType: 'someResourceType',
+          },
+        },
+        layout: {
+          type: 'collapse',
+          containers: [
+            {
+              fields: ['file.decompressFiles', 'someField'],
+              containers: [
+                {
+                  fields: ['custom.Field', 'exportData'],
+                },
+              ],
+            },
+          ],
+        },
+      };
+      const values = {
+        '/custom/Field': 'a',
+        '/someField': 'b',
+        '/file/decompressFiles': 'c',
+        '/exportData': 'd',
+        '/fieldA': 'somethingA',
+        '/fieldB': 'somethingB',
+        '/fieldC': 'somethingC',
+      };
+      const resultantValues = getAllFormValuesAssociatedToMeta(
+        values,
+        metadata
+      );
+
+      expect(resultantValues).toEqual({
+        '/custom/Field': 'a',
+        '/someField': 'b',
+        '/file/decompressFiles': 'c',
+        '/exportData': 'd',
+      });
     });
   });
 });

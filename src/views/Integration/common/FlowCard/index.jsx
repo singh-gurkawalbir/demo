@@ -78,9 +78,15 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
       dispatch(actions.flow.run({ flowId, customStartDate }));
 
       if (flowDetails._connectorId) {
-        history.push(
-          `/pg/integrationApp/${flowDetails._integrationId}/dashboard`
-        );
+        if (storeId) {
+          history.push(
+            `/pg/integrationApp/${flowDetails._integrationId}/child/${storeId}/dashboard`
+          );
+        } else {
+          history.push(
+            `/pg/integrationApp/${flowDetails._integrationId}/dashboard`
+          );
+        }
       } else {
         history.push(
           `/pg/integrations/${flowDetails._integrationId || 'none'}/dashboard`
@@ -93,6 +99,7 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
       flowDetails._integrationId,
       flowId,
       history,
+      storeId,
     ]
   );
   const handleActionClick = useCallback(
