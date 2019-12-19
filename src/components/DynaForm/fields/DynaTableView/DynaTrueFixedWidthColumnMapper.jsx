@@ -1,3 +1,4 @@
+import produce from 'immer';
 import DynaTableView from './DynaTable';
 
 const optionsMap = [
@@ -39,8 +40,13 @@ const optionsMap = [
   },
 ];
 
-export default function DynaTrueFixedWidthColmnMapper(props) {
-  const { value, onFieldChange } = props;
+export default function DynaTrueFixedWidthColmnMapper({
+  value,
+  onFieldChange,
+  id,
+  label,
+  title,
+}) {
   let newValue;
 
   if (value) {
@@ -55,31 +61,15 @@ export default function DynaTrueFixedWidthColmnMapper(props) {
     });
   }
 
-  const onRowChange = (state, row, field, newValue) => {
-    if (state[row]) {
+  const onRowChange = (state, field, newValue) =>
+    produce(state, draft => {
+      draft[field] = newValue;
+
       if (['startPosition', 'endPosition'].includes(field)) {
-        const newRow = Object.assign({}, state[row], { [field]: newValue });
-
-        return [
-          ...state.slice(0, row),
-          Object.assign({}, newRow, {
-            length: state[row].endPosition - state[row].startPosition + 1,
-          }),
-          ...state.slice(row + 1, state.length),
-        ];
+        draft.length = draft.endPosition - draft.startPosition + 1;
       }
-
-      return [
-        ...state.slice(0, row),
-        Object.assign({}, state[row], { [field]: newValue }),
-        ...state.slice(row + 1, state.length),
-      ];
-    }
-
-    return [...state];
-  };
-
-  const fieldChangeHandler = (id, val) => {
+    });
+  const fieldChangeHandler = (id, val = []) => {
     if (val && Array.isArray(val)) {
       onFieldChange(
         id,
@@ -95,7 +85,9 @@ export default function DynaTrueFixedWidthColmnMapper(props) {
 
   return (
     <DynaTableView
-      {...props}
+      id={id}
+      label={label}
+      title={title}
       optionsMap={optionsMap}
       value={newValue}
       onRowChange={onRowChange}
