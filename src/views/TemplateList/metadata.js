@@ -35,9 +35,11 @@ export default {
       heading: 'Website',
       value(r) {
         return (
-          <Link href={r.websiteURL} target="_blank">
-            Website
-          </Link>
+          r.websiteURL && (
+            <Link href={r.websiteURL} target="_blank">
+              Website
+            </Link>
+          )
         );
       },
     },
