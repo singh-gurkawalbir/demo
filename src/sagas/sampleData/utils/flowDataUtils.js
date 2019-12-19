@@ -44,7 +44,11 @@ export function* fetchResourceDataForNewFlowResource({
 
   // TODO @Raghu: Should handle in metadata to pass boolean instead of string
   // eslint-disable-next-line no-param-reassign
-  newResource.oneToMany = newResource.oneToMany === 'true';
+  if (newResource.oneToMany) {
+    const oneToMany = newResource.oneToMany === 'true';
+
+    return { ...newResource, oneToMany };
+  }
 
   return newResource;
 }
