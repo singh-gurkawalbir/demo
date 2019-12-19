@@ -13,10 +13,9 @@ export function* uploadFile({
   const path =
     uploadPath ||
     `/${resourceType}/${resourceId}/upload/signedURL?file_type=${fileType}`;
-  let response;
 
   try {
-    response = yield call(apiCallWithRetry, {
+    const response = yield call(apiCallWithRetry, {
       path,
       message: 'Getting signed URL for file upload',
     });
