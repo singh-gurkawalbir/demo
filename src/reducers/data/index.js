@@ -58,6 +58,13 @@ export function isAgentOnline(state, agentId) {
   return fromResources.isAgentOnline(state && state.resources, agentId);
 }
 
+export function exportNeedsRouting(state, id) {
+  return fromResources.exportNeedsRouting(state && state.resources, id);
+}
+
+export function connectionHasAs2Routing(state, id) {
+  return fromResources.connectionHasAs2Routing(state && state.resources, id);
+}
 // #endregion
 
 export function integrationUsers(state, integrationId) {

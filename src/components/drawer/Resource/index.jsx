@@ -17,13 +17,14 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function ResourceDrawer(props) {
+  const { parentRouteMatch } = props;
   const classes = useStyles();
   const match = useRouteMatch();
   const open = !!match;
   const history = useHistory();
   const handleClose = useCallback(() => {
-    history.goBack();
-  }, [history]);
+    history.replace(parentRouteMatch);
+  }, [history, parentRouteMatch]);
 
   return (
     <Drawer
@@ -61,6 +62,7 @@ export default function ResourceDrawerRoute({
       children={props => (
         <ResourceDrawer
           {...props}
+          parentRouteMatch={match.url}
           flowId={flowId}
           integrationId={integrationId}
           disabled={disabled}
