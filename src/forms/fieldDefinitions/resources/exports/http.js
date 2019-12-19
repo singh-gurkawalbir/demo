@@ -122,8 +122,12 @@ export default {
         is: [''],
       },
       {
-        field: 'http.body',
+        field: 'http.method',
         isNot: [''],
+      },
+      {
+        field: 'outputMode',
+        is: ['records'],
       },
     ],
   },
