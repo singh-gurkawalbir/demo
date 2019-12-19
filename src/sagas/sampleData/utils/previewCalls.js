@@ -3,7 +3,11 @@ import deepClone from 'lodash/cloneDeep';
 import { resourceData } from '../../../reducers';
 import { SCOPES } from '../../resourceForm';
 import { apiCallWithRetry } from '../../index';
-import { fetchFlowResources, filterPendingResources } from './flowDataUtils';
+import {
+  fetchFlowResources,
+  fetchResourceDataForNewFlowResource,
+  filterPendingResources,
+} from './flowDataUtils';
 import { getLastExportDateTime } from '../../../utils/flowData';
 import { isNewId, adaptorTypeMap } from '../../../utils/resource';
 
@@ -41,7 +45,13 @@ export function* pageProcessorPreview({
         : { type: 'export', _exportId: _pageProcessorId };
 
     flow.pageProcessors.push(newResourceDoc);
-    pageProcessorMap[_pageProcessorId] = { doc: {} };
+
+    pageProcessorMap[_pageProcessorId] = {
+      doc: yield call(fetchResourceDataForNewFlowResource, {
+        resourceId: _pageProcessorId,
+        resourceType,
+      }),
+    };
   }
 
   if (previewType === 'flowInput') {

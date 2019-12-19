@@ -1,4 +1,4 @@
-import DynaRadioGroup from './DynaRadioGroup';
+import DynaRadioGroup from './radiogroup/DynaRadioGroup';
 
 export default function DynaMode(props) {
   const { flowId } = props;

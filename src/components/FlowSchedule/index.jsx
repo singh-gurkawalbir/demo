@@ -75,7 +75,11 @@ export default function FlowSchedule({
               : undefined,
         },
       ];
-      const sanitized = sanitizePatchSet({ patchSet, flow });
+      const sanitized = sanitizePatchSet({
+        patchSet,
+        flow,
+        skipRemovePatches: true,
+      });
 
       dispatch(actions.resource.patchStaged(flow._id, sanitized, 'value'));
       dispatch(actions.resource.commitStaged('flows', flow._id, 'value'));

@@ -24,7 +24,7 @@ import {
   getPreviewStageData,
   getContextInfo,
   getBlobResourceSampleData,
-  isOneToManyImport,
+  isOneToManyResource,
 } from '../../../utils/flowData';
 import { exportPreview, pageProcessorPreview } from '../utils/previewCalls';
 import requestRealTimeMetadata from '../sampleDataGenerator/realTimeSampleData';
@@ -85,6 +85,16 @@ function* requestSampleData({
 }) {
   if (!flowId || !resourceId) return;
 
+  // TODO: @Raghu: I dont know where the best place for this code is to go...
+  // probably the only time we need sample data for a connection is
+  // for the AS2 routing script. This script acts on incoming AS2
+  // traffic (like a webhook) and the purpose of the script is to
+  // determine what flow the data should be routed to. So sample data is
+  // what the AS2 messages look like. Devesh will know the details of this.
+  if (resourceType === 'connections') {
+    return { as2: { sample: { data: 'coming soon' } } };
+  }
+
   // Updates flow state
   // isInitialized prop is passed explicitly from internal sagas calling this Saga
   if (!isInitialized) {
@@ -96,7 +106,7 @@ function* requestSampleData({
     yield put(actions.flowData.reset(flowId, resourceId));
   }
 
-  // Updates preProcessedData for the procesors
+  // Updates preProcessedData for the processors
   const sampleDataStage = getSampleDataStage(stage, resourceType);
 
   // Updates sample data stage status as requested
@@ -149,18 +159,15 @@ export function* fetchPageProcessorPreview({
       resourceType,
       throwOnError: true,
     });
+    const { merged: resource = {} } = yield select(
+      resourceData,
+      resourceType,
+      _pageProcessorId,
+      'value'
+    );
 
-    if (resourceType === 'imports') {
-      const { merged: resource = {} } = yield select(
-        resourceData,
-        'imports',
-        _pageProcessorId,
-        'value'
-      );
-
-      if (isOneToManyImport(resource)) {
-        previewData = processOneToManySampleData(previewData, resource);
-      }
+    if (isOneToManyResource(resource)) {
+      previewData = processOneToManySampleData(previewData, resource);
     }
 
     yield put(

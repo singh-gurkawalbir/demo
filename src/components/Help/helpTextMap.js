@@ -1291,6 +1291,8 @@ export default {
     'Define a ‘hook’ here to use custom code to process records returned by the export before the records are passed along to downstream applications.',
   'fb.pg.exports.schedule':
     'Define schedule to run export which overrides the flow schedule',
+  'fb.pg.exports.as2routing':
+    'AS2 Exports which share a connection require routing rules to be in place so that incoming messages can be properly routed to the correct flow. This export has a shared AS2 connection and thus needs routing rules to be in place.',
   'fb.pp.exports.transform':
     'Define a ‘transformation’ here to rename fields, remove fields, and/or structurally optimize records returned by the lookup before the records are merged back into the source record.',
   'fb.pp.exports.filter':

@@ -1,6 +1,7 @@
 export default {
   'mongodb.method': {
-    type: 'radiogroup',
+    type: 'radiogroupforresetfields',
+    fieldsToReset: ['ignoreExisting', 'ignoreMissing'],
     label: 'Method',
     options: [
       {
