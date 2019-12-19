@@ -74,7 +74,11 @@ export default {
       id: 'restlet.delta.lagOffset',
       type: 'text',
       label: 'Offset',
-      visibleWhen: [{ field: 'restlet.type', is: ['delta'] }],
+      defaultValue: r => r && r.delta && r.delta.lagOffset,
+      visibleWhenAll: [
+        { field: 'restlet.type', is: ['delta'] },
+        { field: 'netsuite.restlet.recordType', isNot: [''] },
+      ],
     },
     'restlet.once.booleanField': {
       id: 'restlet.once.booleanField',
@@ -83,6 +87,7 @@ export default {
       placeholder: 'Please select a Boolean field',
       filterKey: 'suitescript-booleanField',
       required: true,
+      defaultValue: r => r && r.once && r.once.booleanField,
       connectionId: r => r && r._connectionId,
       refreshOptionsOnChangesTo: ['netsuite.restlet.recordType'],
       visibleWhenAll: [
