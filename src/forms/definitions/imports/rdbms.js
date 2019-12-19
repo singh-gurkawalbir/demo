@@ -24,7 +24,6 @@ export default {
           retValues['/rdbms/updateExtract'];
         retValues['/rdbms/updateExtract'] = undefined;
       } else {
-        retValues['/rdbms/updateExtract'];
         retValues['/rdbms/updateLookupName'] = undefined;
       }
     } else if (retValues['/rdbms/queryType'] === 'INSERT') {
@@ -37,7 +36,6 @@ export default {
           retValues['/rdbms/ignoreExtract'];
         retValues['/rdbms/ignoreExtract'] = undefined;
       } else {
-        retValues['/rdbms/ignoreExtract'];
         retValues['/rdbms/ignoreLookupName'] = undefined;
       }
     } else {
@@ -50,7 +48,6 @@ export default {
           retValues['/rdbms/ignoreExtract'];
         retValues['/rdbms/ignoreExtract'] = undefined;
       } else {
-        retValues['/rdbms/ignoreExtract'];
         retValues['/rdbms/ignoreLookupName'] = undefined;
       }
     }
