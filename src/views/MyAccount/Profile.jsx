@@ -76,6 +76,7 @@ export default function ProfileComponent() {
         name: 'name',
         type: 'text',
         label: 'Name',
+        required: true,
         defaultValue: preferences && preferences.name,
       },
       email: {
@@ -124,6 +125,7 @@ export default function ProfileComponent() {
         id: 'dateFormat',
         name: 'dateFormat',
         type: 'select',
+        required: true,
         label: 'Date format',
         defaultValue: preferences && preferences.dateFormat,
         options: dateFormatList,
@@ -132,6 +134,7 @@ export default function ProfileComponent() {
         id: 'timeFormat',
         name: 'timeFormat',
         type: 'select',
+        required: true,
         label: 'Time Format',
         defaultValue: preferences && preferences.timeFormat,
         options: timeFormatList,

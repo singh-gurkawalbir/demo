@@ -11,6 +11,7 @@ const useStyles = makeStyles(theme => ({
     overflow: 'auto',
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
+    paddingBottom: theme.spacing(1),
   },
 }));
 

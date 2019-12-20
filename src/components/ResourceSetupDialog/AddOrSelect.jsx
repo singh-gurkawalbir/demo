@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import ResourceForm from '../../components/ResourceFormFactory';
-import RadioGroup from '../../components/DynaForm/fields/DynaRadioGroup';
+import RadioGroup from '../../components/DynaForm/fields/radiogroup/DynaRadioGroup';
 import DynaForm from '../../components/DynaForm';
 import * as selectors from '../../reducers';
 import LoadResources from '../LoadResources';
