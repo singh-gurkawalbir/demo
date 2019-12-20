@@ -29,21 +29,21 @@ export default function menuItems(userProfile, userPermissions = {}) {
       Icon: HomeIcon,
     },
     {
-      label: 'Flow builder',
-      path: '/integrations/none/flowBuilder/new',
-      Icon: FlowBuilderIcon,
+      label: 'Tools',
+      Icon: ToolsIcon,
+      children: [
+        {
+          label: 'Flow builder',
+          path: '/integrations/none/flowBuilder/new',
+          Icon: FlowBuilderIcon,
+        },
+        {
+          label: 'Data loader',
+          path: '/integrations/none/flowBuilder/dataLoader',
+          Icon: DataLoaderIcon,
+        },
+      ],
     },
-    // Hiding Tools menu since only flow builder was present.
-    // once we have multiple items under tools, we can restore
-    // this parent menu node.
-    // {
-    //   label: 'Tools',
-    //   Icon: ToolsIcon,
-    //   children: [
-    //     // hiding the data loader menu item until we build it.
-    //     // { label: 'Data loader', path: '/dataLoader', Icon: DataLoaderIcon },
-    //   ],
-    // },
     {
       label: 'Resources',
       Icon: ResourcesIcon,

@@ -212,7 +212,7 @@ function FlowBuilder() {
   const classes = useStyles();
   const theme = useTheme();
   const dispatch = useDispatch();
-  const [showDilaog, setShowDilaog] = useState(false);
+  const [showDialog, setShowDialog] = useState(false);
   // Bottom drawer is shown for existing flows and docked for new flow
   const [size, setSize] = useState(isNewFlow ? 0 : 1);
   const [tabValue, setTabValue] = useState(0);
@@ -368,7 +368,7 @@ function FlowBuilder() {
       flow.isDeltaFlow &&
       (!flow._connectorId || !!flow.showStartDateDialog)
     ) {
-      setShowDilaog('true');
+      setShowDialog(true);
     } else {
       handleRunDeltaFlow();
     }
@@ -383,20 +383,19 @@ function FlowBuilder() {
     flow.showStartDateDialog,
     handleRunDeltaFlow,
   ]);
+
   // #region New Flow Creation logic
-  const rewriteUrl = id => {
+  function rewriteUrl(id) {
     const parts = match.url.split('/');
 
     parts[parts.length - 1] = id;
 
     return parts.join('/');
-  };
+  }
 
-  // This block initializes a new flow (patch, no commit)
-  // and replaces the url to reflect the new temp id.
-  if (flowId === 'new') {
-    const newId = generateNewId();
-    const newUrl = rewriteUrl(newId);
+  // Initializes a new flow (patch, no commit)
+  // and replaces the url to reflect the new temp flow id.
+  function patchNewFlow(newFlowId, newPG) {
     const patchSet = [
       { op: 'add', path: '/name', value: 'New flow' },
 
@@ -410,7 +409,7 @@ function FlowBuilder() {
 
       // not sure we even need to init these arrays...
       // leave in for now to prevent downstream undefined reference errors.
-      { op: 'add', path: '/pageGenerators', value: [] },
+      { op: 'add', path: '/pageGenerators', value: newPG ? [newPG] : [] },
       { op: 'add', path: '/pageProcessors', value: [] },
     ];
 
@@ -422,8 +421,27 @@ function FlowBuilder() {
       });
     }
 
-    dispatch(actions.resource.patchStaged(newId, patchSet, 'value'));
-    history.replace(newUrl);
+    dispatch(actions.resource.patchStaged(newFlowId, patchSet, 'value'));
+  }
+
+  if (flowId === 'new') {
+    const newFlowId = generateNewId();
+
+    patchNewFlow(newFlowId);
+    history.replace(rewriteUrl(newFlowId));
+
+    return null;
+  }
+
+  if (flowId && flowId.toLowerCase().startsWith('dataloader')) {
+    const newFlowId = generateNewId();
+    const newExportId = generateNewId();
+    const patchSet = [{ op: 'add', path: '/type', value: 'simple' }];
+
+    dispatch(actions.resource.patchStaged(newExportId, patchSet, 'value'));
+    patchNewFlow(newFlowId, { _exportId: newExportId });
+
+    history.replace(rewriteUrl(`${newFlowId}/add/exports/${newExportId}`));
 
     return null;
   }
@@ -440,12 +458,12 @@ function FlowBuilder() {
   // eslint-disable-next-line
   // console.log('render: <FlowBuilder>');
   const closeDeltaDialog = () => {
-    setShowDilaog(false);
+    setShowDialog(false);
   };
 
   return (
     <LoadResources required resources="flows, imports, exports">
-      {showDilaog && flow.isDeltaFlow && (
+      {showDialog && flow.isDeltaFlow && (
         <FlowStartDateDialog
           flowId={flow._id}
           onClose={closeDeltaDialog}
