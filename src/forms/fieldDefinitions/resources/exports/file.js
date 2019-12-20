@@ -245,6 +245,8 @@ export default {
         rowsToSkip: 0,
         trimSpaces: true,
         columnDelimiter: ',',
+        hasHeaderRow: false,
+        rowDelimiter: '\n',
       },
     visibleWhenAll: [
       {
