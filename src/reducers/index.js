@@ -195,6 +195,22 @@ export function isSetupComplete(
   return isSetupComplete;
 }
 
+export function isUninstallComplete(state, { integrationId, storeId }) {
+  let isSetupComplete = false;
+  const uninstallSteps =
+    fromSession.uninstallSteps(
+      state && state.session,
+      integrationId,
+      storeId
+    ) || [];
+
+  isSetupComplete =
+    uninstallSteps.length &&
+    !uninstallSteps.reduce((result, step) => result || !step.completed, false);
+
+  return isSetupComplete;
+}
+
 export function redirectToOnInstallationComplete(
   state,
   { resourceType = 'integrations', resourceId, templateId }
@@ -1055,10 +1071,8 @@ export function integrationConnectionList(state, integrationId) {
 export function integrationAppResourceList(state, integrationId, storeId) {
   if (!state) return { connections: emptySet, flows: emptySet };
 
-  const integrationResource = fromData.integrationAppSettings(
-    state.data,
-    integrationId
-  );
+  const integrationResource =
+    fromData.integrationAppSettings(state.data, integrationId) || {};
   const { supportsMultiStore, sections } = integrationResource.settings || {};
   const { resources: integrationConnections } = resourceListWithPermissions(
     state,
@@ -1119,16 +1133,10 @@ export function integrationAppConnectionList(state, integrationId, storeId) {
   return integrationAppResourceList(state, integrationId, storeId).connections;
 }
 
-export function integrationAppSettings(state, id, storeId) {
-  if (!state) return { settings: {} };
-  const integrationResource = fromData.integrationAppSettings(state.data, id);
-  const uninstallSteps = fromSession.uninstallSteps(
-    state.resource,
-    id,
-    storeId
-  );
+export function integrationAppSettings(state, id) {
+  if (!state) return null;
 
-  return { ...integrationResource, ...uninstallSteps };
+  return fromData.integrationAppSettings(state.data, id);
 }
 
 export function integrationAppLicense(state, id) {
@@ -1167,9 +1175,10 @@ export function integrationAppLicense(state, id) {
 }
 
 export function integrationAppFlowSections(state, id, store) {
-  if (!state) return [];
+  if (!state) return emptySet;
   let flowSections = [];
-  const integrationResource = fromData.integrationAppSettings(state.data, id);
+  const integrationResource =
+    fromData.integrationAppSettings(state.data, id) || emptyObject;
   const { sections = [], supportsMultiStore } =
     integrationResource.settings || {};
 
@@ -1194,10 +1203,11 @@ export function integrationAppFlowSections(state, id, store) {
 }
 
 export function integrationAppGeneralSettings(state, id, storeId) {
-  if (!state) return {};
+  if (!state) return emptyObject;
   let fields;
   let subSections;
-  const integrationResource = fromData.integrationAppSettings(state.data, id);
+  const integrationResource =
+    fromData.integrationAppSettings(state.data, id) || emptyObject;
   const { supportsMultiStore, general } = integrationResource.settings || {};
 
   if (supportsMultiStore) {
@@ -1219,10 +1229,8 @@ export function integrationAppGeneralSettings(state, id, storeId) {
 
 export function hasGeneralSettings(state, integrationId, storeId) {
   if (!state) return false;
-  const integrationResource = fromData.integrationAppSettings(
-    state.data,
-    integrationId
-  );
+  const integrationResource =
+    fromData.integrationAppSettings(state.data, integrationId) || {};
   const { supportsMultiStore, general } = integrationResource.settings || {};
 
   if (supportsMultiStore) {
@@ -1272,8 +1280,9 @@ export function integrationAppSectionMetadata(
 }
 
 export function integrationAppFlowSettings(state, id, section, storeId) {
-  if (!state) return {};
-  const integrationResource = fromData.integrationAppSettings(state.data, id);
+  if (!state) return emptyObject;
+  const integrationResource =
+    fromData.integrationAppSettings(state.data, id) || emptyObject;
   const {
     supportsMultiStore,
     supportsMatchRuleEngine: showMatchRuleEngine,
@@ -1422,22 +1431,25 @@ export function integrationInstallSteps(state, integrationId) {
 }
 
 export function integrationUninstallSteps(state, integrationId) {
-  const uninstallSteps = fromSession.uninstallSteps(
+  const uninstallData = fromSession.uninstallData(
     state && state.session,
     integrationId
   );
+  const { steps: uninstallSteps, error } = uninstallData;
 
   if (!uninstallSteps || !Array.isArray(uninstallSteps)) {
-    return [];
+    return uninstallData;
   }
 
-  return produce(uninstallSteps, draft => {
+  const modifiedSteps = produce(uninstallSteps, draft => {
     const unCompletedStep = draft.find(s => !s.completed);
 
     if (unCompletedStep) {
       unCompletedStep.isCurrentStep = true;
     }
   });
+
+  return { steps: modifiedSteps, error };
 }
 
 export function addNewStoreSteps(state, integrationId) {

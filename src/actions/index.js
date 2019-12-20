@@ -526,6 +526,12 @@ const integrationApp = {
         id,
         storeId,
       }),
+    failedUninstallSteps: (id, error, storeId) =>
+      action(actionTypes.INTEGRATION_APPS.UNINSTALLER.FAILED_UNINSTALL_STEPS, {
+        id,
+        error,
+        storeId,
+      }),
     uninstallIntegration: integrationId =>
       action(actionTypes.INTEGRATION_APPS.UNINSTALLER.DELETE_INTEGRATION, {
         integrationId,
