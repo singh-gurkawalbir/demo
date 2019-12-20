@@ -241,7 +241,7 @@ export default {
 
         if (!atleastOneValMapped) {
           errorStatus = true;
-          errorMessage = 'Please map atleast one value.';
+          errorMessage = 'Please map at least one value.';
         }
       }
 
