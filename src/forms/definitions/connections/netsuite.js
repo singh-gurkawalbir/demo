@@ -6,13 +6,19 @@ export default {
       newValues['/netsuite/environment'] =
         newValues['/netsuite/tokenEnvironment'];
       newValues['/netsuite/account'] = newValues['/netsuite/tokenAccount'];
+      newValues['/netsuite/requestLevelCredentials'] = true;
+
+      newValues['/netsuite/wsdlVersion'] = 'next';
+      newValues['/netsuite/email'] = undefined;
+      newValues['/netsuite/password'] = undefined;
+    } else if (newValues['/netsuite/authType'] === 'basic') {
+      newValues['/netsuite/wsdlVersion'] = 'current';
+      newValues['/netsuite/tokenId'] = undefined;
+      newValues['/netsuite/tokenSecret'] = undefined;
+      newValues['/netsuite/_iClientId'] = undefined;
     }
 
-    return {
-      ...newValues,
-      '/netsuite/requestLevelCredentials': true,
-      '/netsuite/wsdlVersion': 'next',
-    };
+    return newValues;
   },
   optionsHandler(fieldId, fields) {
     const { value: env } =
