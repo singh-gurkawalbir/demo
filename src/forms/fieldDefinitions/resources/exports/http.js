@@ -66,6 +66,10 @@ export default {
         field: 'outputMode',
         is: ['blob'],
       },
+      {
+        field: 'http.body',
+        is: [''],
+      },
     ],
   },
   'http.method': {
@@ -112,6 +116,20 @@ export default {
     type: 'httprequestbody',
     connectionId: r => r && r._connectionId,
     label: 'Build HTTP Request Body',
+    requiredWhenAll: [
+      {
+        field: 'http.relativeURI',
+        is: [''],
+      },
+      {
+        field: 'http.method',
+        isNot: [''],
+      },
+      {
+        field: 'outputMode',
+        is: ['records'],
+      },
+    ],
   },
   'http.headers': {
     type: 'keyvalue',
@@ -356,6 +374,12 @@ export default {
   'http.response.resourcePath': {
     type: 'text',
     label: 'Resource Path',
+    requiredWhen: [
+      {
+        field: 'http.successMediaType',
+        is: ['xml'],
+      },
+    ],
   },
   'http.response.resourceIdPath': {
     type: 'text',

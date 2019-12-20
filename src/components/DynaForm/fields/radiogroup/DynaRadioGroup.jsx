@@ -8,7 +8,7 @@ import {
   Radio,
 } from '@material-ui/core';
 import clsx from 'clsx';
-import ErroredMessageComponent from './ErroredMessageComponent';
+import ErroredMessageComponent from '../ErroredMessageComponent';
 
 const useStyles = makeStyles({
   rowFlexWrapper: {

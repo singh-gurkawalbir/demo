@@ -93,12 +93,12 @@ export default function DeltaFlowStartDate(props) {
   return (
     <Fragment>
       <DynaForm disabled={disabled} fieldMeta={fieldMeta}>
-        <Button data-test="close" onClick={cancelDialog}>
-          Cancel
-        </Button>
         <DynaSubmit data-test="submit" onClick={handleSubmit}>
           Run
         </DynaSubmit>
+        <Button data-test="close" onClick={cancelDialog}>
+          Cancel
+        </Button>
       </DynaForm>
     </Fragment>
   );
