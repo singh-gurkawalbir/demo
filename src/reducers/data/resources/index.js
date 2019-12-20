@@ -3,8 +3,8 @@ import moment from 'moment';
 import sift from 'sift';
 import actionTypes from '../../../actions/types';
 
-const emptySet = [];
-// const emptyObj = {};
+const emptyObject = {};
+const emptyList = [];
 
 export const initializationResources = ['profile', 'preferences'];
 const accountResources = ['ashares', 'shared/ashares', 'licenses'];
@@ -338,7 +338,7 @@ export function integrationInstallSteps(state, id) {
   const integration = resource(state, 'integrations', id);
 
   if (!integration || !integration.install) {
-    return emptySet;
+    return emptyList;
   }
 
   return produce(integration.install, draft => {
@@ -352,15 +352,15 @@ export function integrationAppSettings(state, id) {
   const integration = resource(state, 'integrations', id);
 
   if (!integration || !integration._connectorId) {
-    return { settings: {} };
+    return null;
   }
 
   return produce(integration, draft => {
-    if (!draft.settings) {
-      draft.settings = {};
-    }
-
     if (draft.settings.general) {
+      if (!draft.settings) {
+        draft.settings = emptyObject;
+      }
+
       draft.settings.hasGeneralSettings = true;
     }
 
@@ -378,7 +378,7 @@ export function integrationAppSettings(state, id) {
 export function defaultStoreId(state, id, store) {
   const settings = integrationAppSettings(state, id);
 
-  if (settings.stores && settings.stores.length) {
+  if (settings && settings.stores && settings.stores.length) {
     if (settings.stores.find(s => s.value === store)) {
       return store;
     }

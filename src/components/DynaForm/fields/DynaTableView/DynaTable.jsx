@@ -290,7 +290,9 @@ export const DynaTable = props => {
                       <Input
                         id={`input-${r.id}-${arr.row}`}
                         value={r.value}
+                        inputType={r.type}
                         placeholder={r.id}
+                        disabled={!!r.readOnly}
                         readOnly={!!r.readOnly}
                         type={r.type === 'input' ? 'text' : r.type}
                         className={classes.input}
