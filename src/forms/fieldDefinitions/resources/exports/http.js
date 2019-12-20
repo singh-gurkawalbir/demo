@@ -374,6 +374,12 @@ export default {
   'http.response.resourcePath': {
     type: 'text',
     label: 'Resource Path',
+    requiredWhen: [
+      {
+        field: 'http.successMediaType',
+        is: ['xml'],
+      },
+    ],
   },
   'http.response.resourceIdPath': {
     type: 'text',
