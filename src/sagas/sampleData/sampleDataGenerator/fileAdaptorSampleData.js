@@ -1,5 +1,6 @@
 import { call } from 'redux-saga/effects';
 import { parseFileData, parseFileDefinition } from '../utils/fileParserUtils';
+import { processJsonSampleData } from '../../../utils/sampleData';
 
 export default function* requestFileAdaptorSampleData({ resource }) {
   const { file, sampleData } = resource;
@@ -15,7 +16,7 @@ export default function* requestFileAdaptorSampleData({ resource }) {
   }
 
   if (type === 'json') {
-    return Array.isArray(sampleData) ? sampleData[0] : sampleData;
+    return processJsonSampleData(sampleData, file[type]);
   }
 
   if (type === 'filedefinition') {

@@ -138,6 +138,8 @@ export function getResourceSubType(resource) {
   // if not, we cant proceed.
   if (!adaptorType && !type) return {};
 
+  // Note that "simple" (data-loader) exports dont have an adaptorType,
+  // but DO have a type prop with value "simple".
   return {
     type: adaptorTypeMap[adaptorType] || type,
     assistant,

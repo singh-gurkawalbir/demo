@@ -20,13 +20,23 @@ export default function IntegrationSettingsSaveButton(props) {
     integrationId,
     storeId,
     flowId,
+    postProcessValuesFn,
     disabled,
   } = props;
   const dispatch = useDispatch();
   const onSave = useCallback(
-    values => {
+    formValues => {
       // Adding flow id to the payload mimicking the save behavior of ampersand
       // TODO:Have to investigate the save behavior...tabs vs all tabs
+
+      let values;
+
+      if (postProcessValuesFn) {
+        values = postProcessValuesFn(formValues);
+      } else {
+        values = formValues;
+      }
+
       const allValuesWithFlowId = { ...values, '/flowId': flowId };
 
       dispatch(
@@ -38,7 +48,7 @@ export default function IntegrationSettingsSaveButton(props) {
         )
       );
     },
-    [dispatch, flowId, integrationId, storeId]
+    [dispatch, flowId, integrationId, postProcessValuesFn, storeId]
   );
   const submitCompleted = useSelector(state => {
     const {

@@ -173,3 +173,6 @@ export const getContextInfo = () => ({
 export const getBlobResourceSampleData = () => ({
   blobKey: 'blobKey',
 });
+
+export const isOneToManyResource = resource =>
+  !!(resource && resource.oneToMany && resource.pathToMany);

@@ -1,7 +1,6 @@
 import { call } from 'redux-saga/effects';
 import { evaluateExternalProcessor } from '../../../sagas/editor';
 import { apiCallWithRetry } from '../../index';
-
 /*
  * Below sagas are Parser sagas for resource sample data
  */

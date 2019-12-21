@@ -16,6 +16,7 @@ import connectionSagas from '../resourceForm/connections';
 import { requestAssistantMetadata } from '../resources/meta';
 import { isNewId } from '../../utils/resource';
 import { uploadRawData } from '../uploadFile';
+import patchTransformationRulesForXMLResource from '../sampleData/utils/xmlTransformationRulesGenerator';
 
 export const SCOPES = {
   META: 'meta',
@@ -171,10 +172,25 @@ export function* createFormValuesPatchSet({
   return { patchSet, finalValues };
 }
 
-export function* saveRawData({ values }) {
-  const rawData = values['/rawData'];
+export function* saveDataLoaderRawData({ resourceId, resourceType, values }) {
+  const { merged: resource } = yield select(
+    selectors.resourceData,
+    resourceType,
+    resourceId
+  );
 
-  if (!rawData) return values;
+  // dont do anything if this is not a simple (data loader) export.
+  if (!resource || resource.type !== 'simple') {
+    return values;
+  }
+
+  const rawData = yield select(
+    selectors.getResourceSampleDataWithStatus,
+    resourceId,
+    'raw'
+  );
+
+  if (!rawData) values;
 
   const rawDataKey = yield call(uploadRawData, {
     file: JSON.stringify(rawData),
@@ -184,18 +200,26 @@ export function* saveRawData({ values }) {
 }
 
 export function* submitFormValues({ resourceType, resourceId, values, match }) {
-  const formValues = values;
+  let formValues = { ...values };
 
   if (resourceType === 'exports') {
-    // @TODO Raghu:  Commented as it is a QA blocker. Decide how to save raw data
-    // formValues = yield call(saveRawData, { values });
     delete formValues['/rawData'];
+
+    // We have a special case for exports that define a "Data loader" flow.
+    // We need to store the raw data s3 key so that when a user 'runs' the flow,
+    // we can post the runKey to the api. For file connectors, we do not use rawData
+    // so this is a safe export field to use for this sub-type of export.
+    formValues = yield call(saveDataLoaderRawData, {
+      resourceType,
+      resourceId,
+      values,
+    });
   }
 
   const { patchSet, finalValues } = yield call(createFormValuesPatchSet, {
     resourceType,
     resourceId,
-    values: formValues,
+    values,
     scope: SCOPES.VALUE,
   });
 
@@ -211,6 +235,10 @@ export function* submitFormValues({ resourceType, resourceId, values, match }) {
 
   // fetch all possible pending patches.
   if (!skipCommit) {
+    if (resourceType === 'exports' && isNewId(resourceId)) {
+      yield call(patchTransformationRulesForXMLResource, { resourceId });
+    }
+
     const { patch } = yield select(
       selectors.stagedResource,
       resourceId,

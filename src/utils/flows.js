@@ -2,6 +2,7 @@ import mappingUtil from './mapping';
 import { adaptorTypeMap } from './resource';
 
 export const actionsMap = {
+  as2Routing: 'as2Routing',
   inputFilter: 'inputFilter',
   importMapping: 'importMapping',
   templateMapping: 'templateMapping',

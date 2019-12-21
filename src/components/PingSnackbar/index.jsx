@@ -46,6 +46,11 @@ const styles1 = theme => ({
     display: 'flex',
     alignItems: 'center',
   },
+  snackbarContentWrapper: {
+    '& > div:first-child': {
+      maxWidth: '90%',
+    },
+  },
   flexGrow: 0,
   justifyContent: 'center',
   textAlign: 'center',
@@ -57,7 +62,11 @@ function ClosableSnackbar(props) {
 
   return (
     <SnackbarContent
-      className={classNames(classes[variant], className)}
+      className={classNames(
+        classes[variant],
+        classes.snackbarContentWrapper,
+        className
+      )}
       aria-describedby="client-snackbar"
       message={
         <span id="client-snackbar" className={classes.message}>

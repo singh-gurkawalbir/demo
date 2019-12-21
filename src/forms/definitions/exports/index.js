@@ -5,7 +5,6 @@ import once from './once';
 import valueDelta from './valueDelta';
 import webhook from './webhook';
 import distributed from './distributed';
-import parsers from './parsers';
 import filter from './filter';
 import rest from './rest';
 import ftp from './ftp';
@@ -18,13 +17,14 @@ import salesforce from './salesforce';
 import wrapper from './wrapper';
 import mongodb from './mongodb';
 import as2 from './as2';
-import common from './common';
+// import common from './common';
 import newExport from './new';
 import custom from './custom';
+import simple from './simple';
 
 export default {
   new: newExport,
-  common,
+  // common,
   inputFilter,
   test,
   delta,
@@ -32,7 +32,6 @@ export default {
   valueDelta,
   webhook,
   distributed,
-  parsers,
   filter,
   ftp,
   rest,
@@ -46,4 +45,5 @@ export default {
   mongodb,
   as2,
   custom,
+  simple,
 };
