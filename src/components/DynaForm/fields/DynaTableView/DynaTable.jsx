@@ -64,7 +64,7 @@ function reducer(state, action) {
         if (state[index]) {
           if (onRowChange) {
             // eslint-disable-next-line no-param-reassign
-            draft = onRowChange(state, index, field, value);
+            draft[index] = onRowChange(state[index], field, value);
           } else {
             draft[index][field] = value;
           }
@@ -212,13 +212,13 @@ export const DynaTable = props => {
     });
 
     if (state[row]) {
-      const fieldValueToSet = onRowChange
-        ? onRowChange(state, row, field, value)
-        : preSubmit([
-            ...state.slice(0, row),
-            { ...state[row], ...{ [field]: value } },
-            ...state.slice(row + 1, state.length),
-          ]);
+      const fieldValueToSet = preSubmit([
+        ...state.slice(0, row),
+        onRowChange
+          ? onRowChange(state[row], field, value)
+          : { ...state[row], ...{ [field]: value } },
+        ...state.slice(row + 1, state.length),
+      ]);
 
       onFieldChange(id, fieldValueToSet);
     }

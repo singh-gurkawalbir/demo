@@ -1,5 +1,6 @@
 import { isEmpty, each, isArray } from 'lodash';
 import moment from 'moment';
+import deepClone from 'lodash/cloneDeep';
 import jsonUtil from './json';
 import { isFileAdaptor, isBlobTypeResource } from './resource';
 import { extractFieldsFromCsv } from './file';
@@ -9,15 +10,17 @@ import {
   filterSubListProperties,
   getFormattedSalesForceMetadata,
 } from './metadata';
-import { getUnionObject } from './jsonPaths';
+import { getUnionObject, getTransformPaths } from './jsonPaths';
 
+// wrap the function inside useMemo since result may contain property 'lastExportDateTime' which refers to new Date()
 export default function getFormattedSampleData({
   connection,
   sampleData,
-  // useSampleDataAsArray,
   resourceType,
   resourceName,
 }) {
+  // create deep copy
+  const _connection = deepClone(connection);
   const data = {
     connection: {},
   };
@@ -27,9 +30,9 @@ export default function getFormattedSampleData({
 
   data.data = [_sd];
 
-  if (connection) {
-    data.connection.name = connection.name;
-    const connSubDoc = connection[connection.type];
+  if (_connection) {
+    data.connection.name = _connection.name;
+    const connSubDoc = _connection[_connection.type];
     const hbSubDoc = {};
 
     if (connSubDoc) {
@@ -42,12 +45,16 @@ export default function getFormattedSampleData({
       }
     }
 
-    data.connection[connection.type] = hbSubDoc;
+    data.connection[_connection.type] = hbSubDoc;
   }
 
   data[resourceType === 'imports' ? 'import' : 'export'] = {
     name: resourceName,
   };
+
+  if (resourceType === 'exports') {
+    data.lastExportDateTime = new Date().toISOString();
+  }
 
   return data;
 }
@@ -299,17 +306,199 @@ export const getSalesforceRealTimeSampleData = sfMetadata => {
   return salesforceSampleData;
 };
 
+export const getPathSegments = path => {
+  const segments = [];
+  let buffer = [];
+  let inLiteral = false;
+  let escaped = false;
+  let wasLiteral = false;
+  let i;
+
+  if (!path) return [];
+
+  for (i = 0; i < path.length; i += 1) {
+    const char = path[i];
+
+    if (escaped) {
+      escaped = false;
+
+      if (char === ']') {
+        buffer[buffer.length - 1] = char;
+        // eslint-disable-next-line no-continue
+        continue;
+      }
+    }
+
+    if (char === '\\') escaped = true;
+
+    if (!inLiteral && char === ' ' && (buffer.length === 0 || wasLiteral))
+      // eslint-disable-next-line no-continue
+      continue;
+
+    if (!inLiteral && char === '[' && buffer.length === 0) {
+      inLiteral = true;
+      // eslint-disable-next-line no-continue
+      continue;
+    }
+
+    if (inLiteral && char === ']') {
+      inLiteral = false;
+      wasLiteral = true;
+      // eslint-disable-next-line no-continue
+      continue;
+    }
+
+    if (!inLiteral && (char === '.' || char === '[')) {
+      segments.push(buffer.join(''));
+      buffer = [];
+      inLiteral = char === '[';
+      wasLiteral = false;
+      // eslint-disable-next-line no-continue
+      continue;
+    }
+
+    buffer.push(char);
+  }
+
+  if (buffer.length) segments.push(buffer.join(''));
+
+  return segments;
+};
+
+export const extractSampleDataAtResourcePath = (sampleData, resourcePath) => {
+  if (!sampleData) return { value: null };
+
+  if (!resourcePath) return sampleData;
+
+  if (typeof resourcePath !== 'string') return;
+  const segments = getPathSegments(resourcePath);
+  let processedSampleData = sampleData;
+
+  // Segments : Array of level wiser paths to drill down the sample data
+  segments.forEach(path => (processedSampleData = processedSampleData[path]));
+
+  return processedSampleData;
+};
+
 /*
  * Handles Sample data of JSON file type
  * Incase of Array content, we merge all objects properties and have a combined object
  * Ex: [{a: 5, b: 6}, {c: 7}, {a: 6, d: 11}] gets converted to [{a: 6, b: 6, c: 7, d: 11}]
  */
-export const processJsonSampleData = sampleData => {
+export const processJsonSampleData = (sampleData, options = {}) => {
   if (!sampleData) return sampleData;
+  const { resourcePath } = options;
+  let processedSampleData = sampleData;
 
   if (Array.isArray(sampleData)) {
-    return getUnionObject(sampleData);
+    processedSampleData = getUnionObject(sampleData);
   }
 
-  return sampleData;
+  // Handle resource paths other than * as '*' indicates extracting the very next element inside array the way we did above
+  if (resourcePath && resourcePath !== '*') {
+    // Extract sample data at resource
+    // check for array type if yes update with union thing
+    processedSampleData = extractSampleDataAtResourcePath(
+      processedSampleData,
+      options.resourcePath
+    );
+
+    if (Array.isArray(processedSampleData)) {
+      processedSampleData = getUnionObject(processedSampleData);
+    }
+  }
+
+  return processedSampleData;
+};
+
+/*
+ * Returns Transformation rules set by flattening xmlJsonData
+ */
+export const generateTransformationRulesOnXMLData = xmlJsonData => {
+  const paths = getTransformPaths(xmlJsonData);
+  const rule = [];
+
+  paths.forEach(path => {
+    const extract = path;
+    const generate = path
+      .replace(/\[0]\._$/, '')
+      .replace(/\[0]\./g, '.')
+      .replace(/\$\.(\w*)$/, '$1');
+
+    rule.push({ extract, generate });
+  });
+
+  // TODO @Raghu: Add a check to see if at least one rule has different extract and generate.
+  // Else no point in adding rules as the data is not going to change
+  return [rule];
+};
+
+/*
+ * Expected : path provided should lead to a property which is an array 
+ * Sample Data :{
+    "a": 5,
+    "c": { "d": 7 },
+    "e": { "check": { "f": [ { "a": 1} ]} }
+    }
+  * pathSegments: ["e", "check", "f"] points to "f" attribute which is an array returns true
+  * If not an array returns false
+ */
+const isValidPathToMany = (sampleData, pathSegments) => {
+  let isValid = false;
+  let temp = { ...sampleData };
+
+  pathSegments.forEach(path => {
+    if (!temp) return;
+    temp = temp[path];
+  });
+
+  if (Array.isArray(temp)) {
+    isValid = true;
+  }
+
+  return isValid;
+};
+
+/*
+ * Incase of OneToMany Resource Sample data is modified based on pathToMany
+ * Sample Data :{
+    "a": 5,
+    "c": { "d": 7 },
+    "e": { "check": { "f": [ { "a": 1} ]} }
+    }
+  * pathToMany : "e.check.f" to point to "f" attribute 
+  * Output: { ( all Props other than path are under _PARENT level)
+  *   _PARENT: { "a": 5, "c": { "d": 7}, "e": { "check": {} } } 
+      "a": 1 ( properties inside "f" attribute are on to the main level )
+  * }
+ */
+export const processOneToManySampleData = (sampleData, resource) => {
+  const { pathToMany } = resource;
+  const pathSegments = getPathSegments(pathToMany);
+
+  if (!sampleData || !pathSegments || !pathSegments.length) return sampleData;
+
+  if (!isValidPathToMany(sampleData, pathSegments)) return sampleData;
+  let pathPointer = sampleData;
+  let sampleDataAtPath;
+
+  // Drill down the path and extract target sample data for the path provided
+  // Also delete the pointer to that sample data to not present in parent data
+  pathSegments.forEach((path, index) => {
+    if (index < pathSegments.length - 1) {
+      pathPointer = pathPointer[path];
+    } else {
+      sampleDataAtPath = [...pathPointer[path]];
+      delete pathPointer[path];
+    }
+  });
+  // sampleDataAtPath is an array at this point. So get union object with all merged properties
+  sampleDataAtPath = getUnionObject(sampleDataAtPath);
+  // Add sampleDataAtPath at main level and other properties under _PARENT key
+  const processedSampleData = {
+    _PARENT: sampleData,
+    ...sampleDataAtPath,
+  };
+
+  return processedSampleData;
 };

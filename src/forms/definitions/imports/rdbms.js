@@ -1,10 +1,10 @@
 export default {
-  preSave: (formValues, resource) => {
+  preSave: formValues => {
     const retValues = { ...formValues };
+    const lookups = retValues['/rdbms/lookups'];
     const lookup =
-      resource.rdbms &&
-      resource.rdbms.lookups &&
-      resource.rdbms.lookups.find(
+      lookups &&
+      lookups.find(
         l => `{{{${l.name}}}}` === retValues['/rdbms/ignoreExtract']
       );
 
@@ -24,7 +24,6 @@ export default {
           retValues['/rdbms/updateExtract'];
         retValues['/rdbms/updateExtract'] = undefined;
       } else {
-        retValues['/rdbms/updateExtract'];
         retValues['/rdbms/updateLookupName'] = undefined;
       }
     } else if (retValues['/rdbms/queryType'] === 'INSERT') {
@@ -37,7 +36,6 @@ export default {
           retValues['/rdbms/ignoreExtract'];
         retValues['/rdbms/ignoreExtract'] = undefined;
       } else {
-        retValues['/rdbms/ignoreExtract'];
         retValues['/rdbms/ignoreLookupName'] = undefined;
       }
     } else {
@@ -46,12 +44,11 @@ export default {
       retValues['/ignoreExisting'] = false;
 
       if (lookup) {
-        retValues['/rdbms/updateLookupName'] =
-          retValues['/rdbms/updateExtract'];
-        retValues['/rdbms/updateExtract'] = undefined;
+        retValues['/rdbms/ignoreLookupName'] =
+          retValues['/rdbms/ignoreExtract'];
+        retValues['/rdbms/ignoreExtract'] = undefined;
       } else {
-        retValues['/rdbms/updateExtract'];
-        retValues['/rdbms/updateLookupName'] = undefined;
+        retValues['/rdbms/ignoreLookupName'] = undefined;
       }
     }
 
@@ -171,14 +168,16 @@ export default {
     },
     'rdbms.ignoreExtract': {
       fieldId: 'rdbms.ignoreExtract',
-      type: 'relativeuriwithlookup',
+      type: 'textwithlookupextract',
+      fieldType: 'relativeUri',
       adaptorType: r => r && r.adaptorType,
       connectionId: r => r && r._connectionId,
       refreshOptionsOnChangesTo: ['rdbms.lookups', 'name'],
     },
     'rdbms.updateExtract': {
       fieldId: 'rdbms.updateExtract',
-      type: 'relativeuriwithlookup',
+      type: 'textwithlookupextract',
+      fieldType: 'relativeUri',
       adaptorType: r => r && r.adaptorType,
       connectionId: r => r && r._connectionId,
       refreshOptionsOnChangesTo: ['rdbms.lookups', 'name'],

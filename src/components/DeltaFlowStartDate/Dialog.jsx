@@ -1,6 +1,5 @@
-import { Dialog, Typography } from '@material-ui/core';
-import DialogTitle from '@material-ui/core/DialogTitle';
 import FlowStartDate from '.';
+import ModalDialog from '../ModalDialog';
 
 export default function FlowStartDateDialog({
   flowId,
@@ -8,23 +7,17 @@ export default function FlowStartDateDialog({
   disabled,
   runDeltaFlow,
 }) {
-  const defaults = {
-    width: '70vw',
-    height: '50vh',
-  };
-
-  // todo: Azhar needs to ux changes here
   return (
-    <Dialog open scroll="paper" maxWidth={false} {...defaults}>
-      <DialogTitle disableTypography>
-        <Typography variant="h6">Delta Flow</Typography>
-      </DialogTitle>
-      <FlowStartDate
-        flowId={flowId}
-        onClose={onClose}
-        disabled={disabled}
-        runDeltaFlow={runDeltaFlow}
-      />
-    </Dialog>
+    <ModalDialog show minWidth="sm" onClose={onClose}>
+      <div>Delta Flow</div>
+      <div>
+        <FlowStartDate
+          flowId={flowId}
+          onClose={onClose}
+          disabled={disabled}
+          runDeltaFlow={runDeltaFlow}
+        />
+      </div>
+    </ModalDialog>
   );
 }

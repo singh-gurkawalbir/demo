@@ -16,6 +16,7 @@ import connectionSagas from '../resourceForm/connections';
 import { requestAssistantMetadata } from '../resources/meta';
 import { isNewId } from '../../utils/resource';
 import { uploadRawData } from '../uploadFile';
+import patchTransformationRulesForXMLResource from '../sampleData/utils/xmlTransformationRulesGenerator';
 
 export const SCOPES = {
   META: 'meta',
@@ -218,7 +219,7 @@ export function* submitFormValues({ resourceType, resourceId, values, match }) {
   const { patchSet, finalValues } = yield call(createFormValuesPatchSet, {
     resourceType,
     resourceId,
-    values: formValues,
+    values,
     scope: SCOPES.VALUE,
   });
 
@@ -234,6 +235,10 @@ export function* submitFormValues({ resourceType, resourceId, values, match }) {
 
   // fetch all possible pending patches.
   if (!skipCommit) {
+    if (resourceType === 'exports' && isNewId(resourceId)) {
+      yield call(patchTransformationRulesForXMLResource, { resourceId });
+    }
+
     const { patch } = yield select(
       selectors.stagedResource,
       resourceId,

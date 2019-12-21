@@ -1,5 +1,5 @@
 import DynaMultiSelect from './DynaMultiSelect';
-import DynaRadioGroup from './DynaRadioGroup';
+import DynaRadioGroup from './radiogroup/DynaRadioGroup';
 import DynaSelect from './DynaSelect';
 import DynaLabel from './DynaLabel';
 import DynaCeligoTable from './DynaCeligoTable';
@@ -22,6 +22,7 @@ import DynaResponseTransformEditor from './editors/DynaResponseTransformEditor';
 import DynaTextFtpPort from './DynaTextFtpPort';
 import DynaUploadFile from './DynaUploadFile';
 import DynaHook from './DynaHook';
+import DynaSuiteScriptHook from './DynaSuiteScriptHook';
 import DynaScriptContent from './DynaScriptContent';
 import DynaSelectScopes from './DynaSelectScopes';
 import DynaFileDefinitionSelect from './DynaFileDefinitionSelect';
@@ -54,7 +55,7 @@ import DynaDate from './dateTime/DynaDate';
 import DynaDateTime from './dateTime/DynaDateTime';
 import DynaToggle from './DynaToggle';
 import DynaSQLQueryBuilder from './DynaSQLQueryBuilder';
-import DynaRelativeURIWithLookup from './DynaRelativeURIWithLookup';
+import DynaTextWithLookupExtract from './DynaTextWithLookupExtract';
 import Salesforce from './DynaSalesforceExportComponents';
 import { ReferencedFieldsModal } from './DynaSalesforceExportComponents/DynaTreeModal';
 import DynaNetSuiteLookupFilters from './DynaNetSuiteLookupFilters';
@@ -74,6 +75,8 @@ import DynaMode from './DynaMode';
 import DynaAutoSuggestFlowSampleData from './DynaAutoSuggestFlowSampleData';
 import DynaCsvGenerate from './editors/DynaCsvGenerate';
 import DynaFileKeyColumn from './DynaFileKeyColumn';
+import DynaRadioGroupForResetFields from './radiogroup/DynaRadioGroupForResetFields';
+import DynaTextWithFlowContext from './text/DynaTextWithFlowContext';
 
 export default {
   mode: DynaMode,
@@ -111,6 +114,7 @@ export default {
   labeltitle: DynaLabel,
   celigotable: DynaCeligoTable,
   hook: DynaHook,
+  suitescripthook: DynaSuiteScriptHook,
   scriptcontent: DynaScriptContent,
   filedefinitionselect: DynaFileDefinitionSelect,
   filedefinitioneditor: DynaFileDefinitionEditor,
@@ -138,7 +142,7 @@ export default {
   datetime: DynaDateTime,
   sqlquerybuilder: DynaSQLQueryBuilder,
   salesforcequalifier: DynaSalesforceQualifier,
-  relativeuriwithlookup: DynaRelativeURIWithLookup,
+  textwithlookupextract: DynaTextWithLookupExtract,
   salesforcerequiredtrigger: Salesforce.DynaRequiredTrigger,
   salesforcereferencedfields: Salesforce.DynaReferencedFields,
   salesforcerelatedlistmodal: ReferencedFieldsModal,
@@ -160,4 +164,6 @@ export default {
   timestampfilename: DynaTimestampFileName,
   autosuggestflowsampledata: DynaAutoSuggestFlowSampleData,
   filekeycolumn: DynaFileKeyColumn,
+  radiogroupforresetfields: DynaRadioGroupForResetFields,
+  textwithflowcontext: DynaTextWithFlowContext,
 };

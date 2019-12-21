@@ -1,9 +1,13 @@
-import { Fragment } from 'react';
+import { Fragment, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import Icon from '../../../../components/icons/HookIcon';
 import actions from '../../../../actions';
 import Hooks from '../../../../components/Hooks';
 import ModalDialog from '../../../../components/ModalDialog';
+import {
+  getSelectedHooksPatchSet,
+  getDefaultValuesForHooks,
+} from '../../../../utils/hooks';
 
 function HooksDialog({
   flowId,
@@ -15,14 +19,19 @@ function HooksDialog({
 }) {
   const dispatch = useDispatch();
   const resourceId = resource._id;
-  const defaultValue = resource.hooks || {};
-  const onSave = selectedHook => {
-    const patchSet = [{ op: 'replace', path: '/hooks', value: selectedHook }];
+  const defaultValue = getDefaultValuesForHooks(resource);
+  const onSave = useCallback(
+    selectedHooks => {
+      const patchSet = getSelectedHooksPatchSet(selectedHooks, resource);
 
-    dispatch(actions.resource.patchStaged(resourceId, patchSet, 'value'));
-    dispatch(actions.resource.commitStaged(resourceType, resourceId, 'value'));
-    onClose();
-  };
+      dispatch(actions.resource.patchStaged(resourceId, patchSet, 'value'));
+      dispatch(
+        actions.resource.commitStaged(resourceType, resourceId, 'value')
+      );
+      onClose();
+    },
+    [dispatch, onClose, resource, resourceId, resourceType]
+  );
 
   return (
     <ModalDialog

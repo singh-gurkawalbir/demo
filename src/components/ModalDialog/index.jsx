@@ -50,42 +50,38 @@ export default function ModalDialog({
   const classes = useStyles();
 
   return (
-    <div>
-      <Dialog
-        open={show}
-        maxWidth={maxWidth}
-        fullScreen={fullScreen}
-        PaperProps={{ className: classes.paper }}>
-        {children[0] && (
-          <DialogTitle className={classes[minWidth]} disableTypography>
-            <Typography variant="h3" className={classes.titleText}>
-              {children[0]}
-            </Typography>
-            {onClose && (
-              <IconButton
-                onClick={onClose}
-                className={classes.closeButton}
-                autoFocus>
-                <CloseIcon />
-              </IconButton>
-            )}
-            {!onClose && actionHandler && (
-              <Button
-                className={classes.actionButton}
-                onClick={actionHandler}
-                data-test={actionLabel}>
-                {actionLabel}
-              </Button>
-            )}
-          </DialogTitle>
-        )}
-        {children[1] && <DialogContent>{children[1]}</DialogContent>}
-        {children[2] && (
-          <DialogActions className={classes.actions}>
-            {children[2]}
-          </DialogActions>
-        )}
-      </Dialog>
-    </div>
+    <Dialog
+      open={show}
+      maxWidth={maxWidth}
+      fullScreen={fullScreen}
+      PaperProps={{ className: classes.paper }}>
+      {children[0] && (
+        <DialogTitle className={classes[minWidth]} disableTypography>
+          <Typography variant="h3" className={classes.titleText}>
+            {children[0]}
+          </Typography>
+          {onClose && (
+            <IconButton
+              onClick={onClose}
+              className={classes.closeButton}
+              autoFocus>
+              <CloseIcon />
+            </IconButton>
+          )}
+          {!onClose && actionHandler && (
+            <Button
+              className={classes.actionButton}
+              onClick={actionHandler}
+              data-test={actionLabel}>
+              {actionLabel}
+            </Button>
+          )}
+        </DialogTitle>
+      )}
+      {children[1] && <DialogContent>{children[1]}</DialogContent>}
+      {children[2] && (
+        <DialogActions className={classes.actions}>{children[2]}</DialogActions>
+      )}
+    </Dialog>
   );
 }

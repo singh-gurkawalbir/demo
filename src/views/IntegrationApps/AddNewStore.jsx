@@ -8,6 +8,7 @@ import {
   Grid,
   Paper,
   Breadcrumbs,
+  Button,
 } from '@material-ui/core';
 import ArrowBackIcon from '../../components/icons/ArrowLeftIcon';
 import ArrowRightIcon from '../../components/icons/ArrowRightIcon';
@@ -64,6 +65,11 @@ export default function IntegrationAppAddNewStore(props) {
   const dispatch = useDispatch();
   const integration = useSelector(state =>
     selectors.integrationAppSettings(state, integrationId)
+  );
+  const showUninstall = !!(
+    integration &&
+    integration.settings &&
+    integration.settings.defaultSectionId
   );
   const { steps: addNewStoreSteps, error } = useSelector(state =>
     selectors.addNewStoreSteps(state, integrationId)
@@ -209,6 +215,14 @@ export default function IntegrationAppAddNewStore(props) {
     setSelectedConnectionId(false);
   };
 
+  const handleUninstall = () => {
+    history.push(
+      getRoutePath(
+        `connectors/${integrationId}/uninstall/${integration.settings.defaultSectionId}`
+      )
+    );
+  };
+
   const handleClose = () => {
     setSelectedConnectionId(false);
   };
@@ -247,6 +261,16 @@ export default function IntegrationAppAddNewStore(props) {
                 </Breadcrumbs>
               </Paper>
             </Grid>
+            {showUninstall && (
+              <Grid item xs={1} className={classes.floatRight}>
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  onClick={handleUninstall}>
+                  Uninstall
+                </Button>
+              </Grid>
+            )}
           </Grid>
           <Grid container spacing={3} className={classes.stepTable}>
             {addNewStoreSteps.map((step, index) => (

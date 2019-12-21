@@ -147,7 +147,8 @@ export default {
   },
 
   'http.relativeURI': {
-    type: 'relativeuriwithlookup',
+    type: 'textwithlookupextract',
+    fieldType: 'relativeUri',
     label: 'Relative URI',
     placeholder: 'Optional',
     arrayIndex: 0,

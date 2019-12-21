@@ -6,6 +6,10 @@ import actions from '../../../../actions';
 import Hooks from '../../../../components/Hooks';
 import helpTextMap from '../../../../components/Help/helpTextMap';
 import ModalDialog from '../../../../components/ModalDialog';
+import {
+  getSelectedHooksPatchSet,
+  getDefaultValuesForHooks,
+} from '../../../../utils/hooks';
 
 const useStyles = makeStyles(() => ({
   wrapper: {
@@ -18,10 +22,10 @@ function HooksDialog({ flowId, isViewMode, resource, open, onClose }) {
   const classes = useStyles();
   const resourceId = resource._id;
   const resourceType = 'exports';
-  const defaultValue = resource.hooks || {};
+  const defaultValue = getDefaultValuesForHooks(resource);
   const handleSave = useCallback(
-    selectedHook => {
-      const patchSet = [{ op: 'replace', path: '/hooks', value: selectedHook }];
+    selectedHooks => {
+      const patchSet = getSelectedHooksPatchSet(selectedHooks, resource);
 
       dispatch(actions.resource.patchStaged(resourceId, patchSet, 'value'));
       dispatch(
@@ -29,7 +33,7 @@ function HooksDialog({ flowId, isViewMode, resource, open, onClose }) {
       );
       onClose();
     },
-    [dispatch, onClose, resourceId]
+    [dispatch, onClose, resource, resourceId]
   );
 
   return (
