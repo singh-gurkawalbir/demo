@@ -388,6 +388,12 @@ export default {
   'http.response.successPath': {
     type: 'text',
     label: 'Success Path',
+    requiredWhen: [
+      {
+        field: 'http.response.successValues',
+        isNot: [''],
+      },
+    ],
     visibleWhen: [
       {
         field: 'outputMode',
