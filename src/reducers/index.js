@@ -333,6 +333,7 @@ export function connectorFieldOptions(
     isLoading,
     options:
       (data &&
+        data.options &&
         data.options.map(option => ({
           value: option[0],
           label: option[1],
