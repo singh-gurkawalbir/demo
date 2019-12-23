@@ -6,6 +6,10 @@ const useStyles = makeStyles(theme => ({
   text: {
     padding: theme.spacing(1, 0),
   },
+  label: {
+    paddingRight: theme.spacing(1),
+    color: theme.palette.text.secondary,
+  },
 }));
 
 export default function DynaLabelValueElement(props) {
@@ -15,7 +19,7 @@ export default function DynaLabelValueElement(props) {
   return (
     <Typography data-test={id} variant="body1" className={classes.text}>
       {/* sanitize html value */}
-      {label}
+      <span className={classes.label}>{label}</span>
       {/<\/?[a-z][\s\S]*>/i.test(value) ? <RawHtml html={value} /> : value}
     </Typography>
   );

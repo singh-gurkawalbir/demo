@@ -287,6 +287,14 @@ export function uninstallSteps(state, id, storeId) {
   );
 }
 
+export function uninstallData(state, id, storeId) {
+  return fromIntegrationApps.uninstallData(
+    state && state.integrationApps,
+    id,
+    storeId
+  );
+}
+
 export function addNewStoreSteps(state, id) {
   return fromIntegrationApps.addNewStoreSteps(
     state && state.integrationApps,

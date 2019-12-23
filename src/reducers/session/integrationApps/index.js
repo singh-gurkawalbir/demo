@@ -46,6 +46,10 @@ export function uninstallSteps(state, id, storeId) {
   );
 }
 
+export function uninstallData(state, id, storeId) {
+  return fromUninstaller.uninstallData(state && state.uninstaller, id, storeId);
+}
+
 export function addNewStoreSteps(state, id) {
   return fromAddStore.addNewStoreSteps(state && state.addStore, id);
 }

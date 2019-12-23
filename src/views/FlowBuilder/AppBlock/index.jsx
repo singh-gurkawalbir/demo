@@ -150,7 +150,7 @@ function AppBlock({
   integrationId,
   isViewMode,
   isMonitorLevelAccess,
-  pg,
+  isPageGenerator,
   schedule,
   index,
   ...rest
@@ -262,7 +262,8 @@ function AppBlock({
             <IconButton
               size="small"
               className={classes.deleteButton}
-              onClick={handleDelete(index)}>
+              onClick={handleDelete(index)}
+              data-test={`remove-${isPageGenerator ? 'pg' : 'pp'}`}>
               <CloseIcon />
             </IconButton>
           )}

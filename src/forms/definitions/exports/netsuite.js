@@ -13,6 +13,10 @@ export default {
       newValues['/netsuite/type'] = undefined;
     }
 
+    if (newValues['/netsuite/type'] === 'distributed') {
+      newValues['/type'] = 'distributed';
+    }
+
     if (netsuiteType === 'search') {
       newValues['/netsuite/searches'] = [
         {

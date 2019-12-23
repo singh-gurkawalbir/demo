@@ -16,9 +16,18 @@ export function* preUninstall({ storeId, id }) {
       message: `Fetching Uninstall steps`,
     });
   } catch (error) {
+    yield put(actions.api.failure(path, 'PUT', error && error.message, false));
+    yield put(
+      actions.integrationApp.uninstaller.failedUninstallSteps(
+        id,
+        error.message || 'Failed to fetch Uninstall Steps.'
+      )
+    );
+
     return undefined;
   }
 
+  yield call(getResource, { resourceType: 'integrations', id });
   yield put(
     actions.integrationApp.uninstaller.receivedUninstallSteps(
       uninstallSteps,
