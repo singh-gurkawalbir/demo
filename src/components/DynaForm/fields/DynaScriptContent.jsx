@@ -6,6 +6,7 @@ import EditorField from './DynaEditor';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
 import { isNewId } from '../../../utils/resource';
+import scriptHookStubs from '../../../utils/scriptHookStubs';
 
 const useStyles = makeStyles({
   editor: {
@@ -14,7 +15,7 @@ const useStyles = makeStyles({
 });
 
 export default function DynaScriptContent(props) {
-  const { id, onFieldChange, resourceId } = props;
+  const { id, onFieldChange, resourceId, value, options = {} } = props;
   const classes = useStyles();
   const scriptContent = useSelector(state => {
     const data = selectors.resourceData(state, 'scripts', resourceId);
@@ -47,6 +48,20 @@ export default function DynaScriptContent(props) {
       setValueChanged(false);
     }
   }, [id, onFieldChange, scriptContent, valueChanged]);
+
+  useEffect(() => {
+    if (
+      options.scriptFunctionStub &&
+      scriptHookStubs[options.scriptFunctionStub]
+    ) {
+      // TODO @Raghu: Revisit updating script content
+      const updatedScriptContent =
+        value + scriptHookStubs[options.scriptFunctionStub];
+
+      onFieldChange(id, updatedScriptContent);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, options.scriptFunctionStub]);
 
   if (scriptContent === undefined) {
     return <Typography>Loading Script...</Typography>;

@@ -11,6 +11,16 @@ export const importHooksList = [
   'postSubmit',
   'postAggregate',
 ];
+
+/*
+ * Used for showing suggestions to select hook type in the application
+ */
+export const hooksList = [
+  'preSavePage' /* Used for Exports */,
+  ...importHooksList,
+  'contentBasedFlowRouter' /* Used in AS2 Connection */,
+];
+
 export const importSuiteScriptHooksList = ['preMap', 'postMap', 'postSubmit'];
 
 export const hooksToFunctionNamesMap = {
@@ -19,14 +29,17 @@ export const hooksToFunctionNamesMap = {
   postMap: 'postMapFunction',
   postSubmit: 'postSubmitFunction',
   postAggregate: 'postAggregateFunction',
+  contentBasedFlowRouter: 'contentBasedFlowRouterFunction',
 };
 
 export const hooksLabelMap = {
+  preSavePage: 'Pre Save Page',
   preSend: 'Pre Send',
   preMap: 'Pre Map',
   postMap: 'Post Map',
   postSubmit: 'Post Submit',
   postAggregate: 'Post Aggregate',
+  contentBasedFlowRouter: 'Content Based Flow Router',
 };
 export function getSupportedHooksForResource(resource) {
   let unSupportedHooks = [];
