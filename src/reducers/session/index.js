@@ -67,6 +67,13 @@ export function connectionTokens(state, resourceId) {
   );
 }
 
+export function tokenRequestLoading(state, resourceId) {
+  return fromConnectionToken.tokenRequestLoading(
+    state && state.connectionToken,
+    resourceId
+  );
+}
+
 export function filter(state, name) {
   return fromFilters.filter(state && state.filters, name);
 }

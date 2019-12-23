@@ -2352,6 +2352,10 @@ export function connectionTokens(state, resourceId) {
   return fromSession.connectionTokens(state && state.session, resourceId);
 }
 
+export function tokenRequestLoading(state, resourceId) {
+  return fromSession.tokenRequestLoading(state && state.session, resourceId);
+}
+
 // #endregion
 
 export function commStatusByKey(state, key) {
