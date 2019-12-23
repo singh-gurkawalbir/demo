@@ -154,7 +154,9 @@ export default {
     } else {
       retValues['/ignoreExisting'] = false;
       retValues['/ignoreMissing'] = false;
-      retValues['/rest/body'] = [retValues['/rest/body']];
+      retValues['/rest/body'] = retValues['/rest/body']
+        ? [retValues['/rest/body']]
+        : [];
     }
 
     delete retValues['/inputMode'];
