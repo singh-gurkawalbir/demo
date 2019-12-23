@@ -24,7 +24,7 @@ export default {
       generateFields,
       options,
     } = params;
-    const { connectionId, recordType } = options;
+    const { connectionId, recordType, isGroupedSampleData = false } = options;
     const fieldId =
       generate && generate.indexOf('[*].') !== -1
         ? generate.split('[*].')[1]
@@ -89,6 +89,13 @@ export default {
           type: 'checkbox',
           defaultValue: value.immutable || false,
           label: 'Immutable (Advanced)',
+        },
+        useFirstRow: {
+          id: 'useFirstRow',
+          name: 'useFirstRow',
+          type: 'checkbox',
+          defaultValue: value.useFirstRow || false,
+          label: 'Use First Row',
         },
         useAsAnInitializeValue: {
           id: 'useAsAnInitializeValue',
@@ -467,6 +474,7 @@ export default {
           'dataType',
           'discardIfEmpty',
           'immutable',
+          'useFirstRow',
           'useAsAnInitializeValue',
           'fieldMappingType',
           'lookup.mode',
@@ -600,10 +608,12 @@ export default {
     };
     let { fields } = fieldMeta.layout;
 
-    if (
-      !fieldMetadata ||
-      (fieldMetadata && fieldMetadata.id.indexOf('[*]') === -1)
-    ) {
+    if (!isGroupedSampleData || generate.indexOf('[*].') === -1) {
+      delete fieldMeta.fieldMap.useFirstRow;
+      fields = fields.filter(el => el !== 'useFirstRow');
+    }
+
+    if (generate.indexOf('[*].') === -1) {
       delete fieldMeta.fieldMap.isKey;
       fields = fields.filter(el => el !== 'isKey');
     }
