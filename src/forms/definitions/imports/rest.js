@@ -83,7 +83,11 @@ export default {
           ];
         }
 
-        retValues['/rest/body'] = [retValues['/rest/bodyCreate']];
+        if (retValues['/rest/bodyCreate'])
+          retValues['/rest/body'] = [retValues['/rest/bodyCreate']];
+        else {
+          delete retValues['/rest/body'];
+        }
 
         retValues['/ignoreExisting'] = true;
         retValues['/ignoreMissing'] = false;
