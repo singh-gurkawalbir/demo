@@ -463,14 +463,21 @@ const generateFieldsAndSections = (acc, field) => {
     acc.containers = [];
   }
 
-  if (field && field.properties && field.properties.sectionName) {
-    const { sectionName } = field.properties;
+  if (
+    (field && (field.properties && field.properties.sectionName)) ||
+    field.title
+  ) {
+    let expansionPanelTitle;
+
+    if (field.properties && field.properties.sectionName)
+      ({ sectionName: expansionPanelTitle } = field.properties);
+    else expansionPanelTitle = field.title;
     const matchingContainer = acc.containers.find(
       container =>
         container &&
         container.containers &&
         container.containers[0] &&
-        container.containers[0].label === sectionName
+        container.containers[0].label === expansionPanelTitle
     );
 
     if (matchingContainer) {
@@ -481,7 +488,7 @@ const generateFieldsAndSections = (acc, field) => {
         containers: [
           {
             collapsed: true,
-            label: sectionName,
+            label: expansionPanelTitle,
             fields: [ref],
           },
         ],

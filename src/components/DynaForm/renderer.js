@@ -70,6 +70,8 @@ const FieldActions = props => {
           caption={developer && helpKey}
           helpKey={helpKey}
           helpText={helpText}
+          fieldId={field.id}
+          resourceType={resourceContext && resourceContext.resourceType}
         />
       )}
     </div>

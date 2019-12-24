@@ -787,6 +787,8 @@ const app = {
   errored: () => action(actionTypes.APP_ERRORED),
   clearError: () => action(actionTypes.APP_CLEAR_ERROR),
 };
+const postFeedback = (resourceType, fieldId, helpful) =>
+  action(actionTypes.POST_FEEDBACK, { resourceType, fieldId, helpful });
 const toggleBanner = () => action(actionTypes.APP_TOGGLE_BANNER);
 const toggleDrawer = () => action(actionTypes.APP_TOGGLE_DRAWER);
 const patchFilter = (name, filter) =>
@@ -1037,6 +1039,7 @@ const analytics = {
 // #endregion
 
 export default {
+  postFeedback,
   app,
   toggleBanner,
   toggleDrawer,
