@@ -1,23 +1,39 @@
 export default {
-  preSave: formValues => ({
-    ...formValues,
-    '/type': 'http',
-    '/assistant': 'integratorio',
-    '/http/auth/type': 'custom',
-    '/http/mediaType': 'json',
-    '/http/ping/method': 'GET',
-    '/http/baseURI': `https://api${
-      formValues['/integrator/environment'] === 'staging' ? '.staging' : ''
-    }.integrator.io`,
-    '/http/ping/relativeURI': '/v1/connections',
-    '/http/headers': [
+  preSave: formValues => {
+    const retValues = { ...formValues };
+    let baseURI = '';
+
+    if (retValues['/integrator/region'] === 'europe') {
+      baseURI = 'https://api.eu.integrator.io';
+      retValues['/integrator/environment'] = undefined;
+    } else if (retValues['/integrator/environment'] === 'staging') {
+      baseURI = 'https://api.staging.integrator.io';
+    } else if (retValues['/integrator/environment'] === 'production') {
+      baseURI = 'https://api.integrator.io';
+    }
+
+    retValues['/http/headers'] = [
       {
         name: 'Authorization',
         value: `Bearer ${formValues['/integrator/token']}`,
       },
       { name: 'Content-Type', value: 'application/json' },
-    ],
-  }),
+    ];
+    delete retValues['/integrator/environment'];
+    delete retValues['/integrator/region'];
+    delete retValues['/integrator/token'];
+
+    return {
+      ...retValues,
+      '/type': 'http',
+      '/assistant': 'integratorio',
+      '/http/auth/type': 'custom',
+      '/http/mediaType': 'json',
+      '/http/ping/method': 'GET',
+      '/http/baseURI': baseURI,
+      '/http/ping/relativeURI': '/v1/connections',
+    };
+  },
   fieldMap: {
     name: { fieldId: 'name' },
     'integrator.environment': {
@@ -33,6 +49,12 @@ export default {
           ],
         },
       ],
+      visibleWhen: [
+        {
+          field: 'integrator.region',
+          is: ['north_america'],
+        },
+      ],
       helpText:
         'Please select your environment here. Select Sandbox if the account is created on https://staging.integrator.io. Select Production if the account is created on https://integrator.io.',
       defaultValue: r => {
@@ -46,8 +68,41 @@ export default {
           return 'production';
         }
 
-        return 'production';
+        return '';
       },
+    },
+    'integrator.region': {
+      id: 'integrator.region',
+      type: 'select',
+      label: 'Region',
+      helpText:
+        'Please select your region here. Select North America if the account is created on https://api.integrator.io. Select Europe if the account is created on https://api.eu.integrator.io.',
+      required: true,
+      defaultValue: r => {
+        const baseUri = r && r.http && r.http.baseURI;
+
+        if (baseUri) {
+          if (baseUri.indexOf('eu') !== -1) {
+            return 'europe';
+          }
+
+          return 'north_america';
+        }
+      },
+      options: [
+        {
+          items: [
+            {
+              value: 'north_america',
+              label: 'North America',
+            },
+            {
+              value: 'europe',
+              label: 'Europe',
+            },
+          ],
+        },
+      ],
     },
     'integrator.token': {
       id: 'integrator.token',
@@ -63,7 +118,12 @@ export default {
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: ['name', 'integrator.environment', 'integrator.token'],
+    fields: [
+      'name',
+      'integrator.region',
+      'integrator.environment',
+      'integrator.token',
+    ],
     type: 'collapse',
     containers: [
       { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
