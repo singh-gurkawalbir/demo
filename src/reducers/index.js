@@ -2685,7 +2685,7 @@ export function getImportSampleData(state, resourceId) {
     };
   } else if (adaptorType === 'NetSuiteDistributedImport') {
     // eslint-disable-next-line camelcase
-    const { _connectionId: connectionId, netsuite_da } = resource;
+    const { _connectionId: connectionId, netsuite_da = {} } = resource;
     const commMetaPath = `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${netsuite_da.recordType}`;
     const { data, status } = metadataOptionsAndResources({
       state,
