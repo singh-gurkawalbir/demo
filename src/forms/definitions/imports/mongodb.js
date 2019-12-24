@@ -79,6 +79,8 @@ export default {
     },
     ignoreMissing: {
       fieldId: 'ignoreMissing',
+      type: 'checkboxforresetfields',
+      fieldsToReset: ['mongodb.upsert'],
       visibleWhen: [
         {
           field: 'mongodb.method',
