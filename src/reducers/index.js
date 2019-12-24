@@ -333,6 +333,7 @@ export function connectorFieldOptions(
     isLoading,
     options:
       (data &&
+        data.options &&
         data.options.map(option => ({
           value: option[0],
           label: option[1],
@@ -2361,6 +2362,10 @@ export function integratorLicenseActionMessage(state) {
 
 export function connectionTokens(state, resourceId) {
   return fromSession.connectionTokens(state && state.session, resourceId);
+}
+
+export function tokenRequestLoading(state, resourceId) {
+  return fromSession.tokenRequestLoading(state && state.session, resourceId);
 }
 
 // #endregion

@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import * as selectors from '../../../reducers';
 import DynaMultiSelect from './DynaMultiSelect';
@@ -15,6 +16,7 @@ export default function DynaFileKeyColumn(props) {
     resourceId,
     isValid,
   } = props;
+  const [sampleData, setSampleData] = useState(props.sampleData || '');
   const { data: fileData } = useSelector(state => {
     const rawData = selectors.getResourceSampleDataWithStatus(
       state,
@@ -24,13 +26,21 @@ export default function DynaFileKeyColumn(props) {
 
     return { data: rawData && rawData.data && rawData.data.body };
   });
+
+  // fileData is updated when user uploads new file
+  if (fileData && fileData !== sampleData) {
+    setSampleData(fileData);
+
+    onFieldChange(id, []);
+  }
+
   const getFileHeaderOptions = (fileData = '') => {
     const headers = extractFieldsFromCsv(fileData) || [];
 
     return headers.map(header => ({ label: header.id, value: header.id }));
   };
 
-  const options = [{ items: getFileHeaderOptions(fileData) }];
+  const options = [{ items: getFileHeaderOptions(fileData || sampleData) }];
 
   return (
     <DynaMultiSelect

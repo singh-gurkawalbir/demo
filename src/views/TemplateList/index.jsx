@@ -86,12 +86,12 @@ export default function TemplateList(props) {
               defaultFilter={defaultFilter}
             />
             <IconTextButton
-              data-test="addNewTemplate"
+              data-test="addNewListing"
               component={Link}
               to={`${location.pathname}/add/templates/${generateNewId()}`}
               variant="text"
               color="primary">
-              <AddIcon /> New Template
+              <AddIcon /> New Listing
             </IconTextButton>
           </div>
         </CeligoPageBar>

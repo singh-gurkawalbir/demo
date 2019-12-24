@@ -53,11 +53,13 @@ describe('request interceptors...testing the various stages of an api request on
     headers: new Map([['content-type', 'application/text; charset=utf-8']]),
     data: textRespBody,
   };
+  /*
   const some401Response = {
     status: 401,
     headers: new Map([['content-type', 'application/json; charset=utf-8']]),
     data: jsonRespBody,
   };
+  */
   const some403Response = {
     status: 403,
     headers: new Map([['content-type', 'application/json; charset=utf-8']]),
@@ -347,6 +349,7 @@ describe('request interceptors...testing the various stages of an api request on
 
   describe('onErrorSaga', () => {
     describe('400 level errors', () => {
+      /*
       test('401 errors  should unauthenticate and delete', () => {
         const saga = onErrorSaga(
           some401Response,
@@ -373,6 +376,7 @@ describe('request interceptors...testing the various stages of an api request on
 
         expect(saga.next().done).toBe(true);
       });
+      */
       test('CSRF expiration errors(403 status code) should unauthenticate and delete', () => {
         const saga = onErrorSaga(
           some403Response,

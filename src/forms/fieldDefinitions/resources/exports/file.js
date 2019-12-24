@@ -245,6 +245,8 @@ export default {
         rowsToSkip: 0,
         trimSpaces: true,
         columnDelimiter: ',',
+        hasHeaderRow: false,
+        rowDelimiter: '\n',
       },
     visibleWhenAll: [
       {
@@ -285,6 +287,7 @@ export default {
   'file.xlsx.keyColumns': {
     type: 'filekeycolumn',
     label: 'Key Columns',
+    sampleData: r => r && r.sampleData,
     visibleWhenAll: [
       {
         field: 'file.xlsx.rowsPerRecord',

@@ -6,8 +6,12 @@ export default (state = {}, action) => {
 
   switch (type) {
     case actionTypes.TOKEN.CLEAR:
-    case actionTypes.TOKEN.REQUEST:
       newState[resourceId] = {};
+
+      return newState;
+
+    case actionTypes.TOKEN.REQUEST:
+      newState[resourceId] = { status: 'loading' };
 
       return newState;
     case actionTypes.TOKEN.RECEIVED:
@@ -15,13 +19,18 @@ export default (state = {}, action) => {
       newState[resourceId] = {
         ...newState[resourceId],
         fieldsToBeSetWithValues,
+        status: 'received',
       };
 
       return newState;
     case actionTypes.TOKEN.FAILED:
       if (!newState[resourceId]) newState[resourceId] = {};
       delete newState[resourceId].token;
-      newState[resourceId] = { ...newState[resourceId], message };
+      newState[resourceId] = {
+        ...newState[resourceId],
+        message,
+        status: 'failed',
+      };
 
       return newState;
 
@@ -36,4 +45,11 @@ export function connectionTokens(state, resourceId) {
 
   return state[resourceId];
 }
+
+export function tokenRequestLoading(state, resourceId) {
+  if (!state || !state[resourceId]) return false;
+
+  return state[resourceId] && state[resourceId].status === 'loading';
+}
+
 // #endregion
