@@ -118,6 +118,9 @@ export default {
         includeHeader: true,
         rowDelimiter: '\n',
         columnDelimiter: ',',
+        replaceNewlineWithSpace: false,
+        replaceTabWithSpace: false,
+        wrapWithQuotes: false,
       },
     visibleWhenAll: [
       {

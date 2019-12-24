@@ -87,6 +87,7 @@ export default {
           value,
           lookup,
           extractFields,
+          generate,
           options,
         });
         break;
@@ -118,6 +119,7 @@ export default {
           value,
           lookup,
           extractFields,
+          options,
         });
         break;
       default:
@@ -139,6 +141,14 @@ export default {
       settings.dataType = formVal.dataType;
     }
 
+    if ('isKey' in formVal) {
+      settings.isKey = formVal.isKey;
+    }
+
+    if ('useFirstRow' in formVal) {
+      settings.useFirstRow = formVal.useFirstRow;
+    }
+
     // setting date fields
     if (formVal.fieldMappingType === 'standard') {
       if (formVal.extractDateFormat) {
@@ -155,10 +165,6 @@ export default {
 
       if (formVal.generateDateTimezone) {
         settings.generateDateTimezone = formVal.generateDateTimezone;
-      }
-
-      if ('isKey' in formVal) {
-        settings.isKey = formVal.isKey;
       }
     }
 
@@ -241,7 +247,7 @@ export default {
 
         if (!atleastOneValMapped) {
           errorStatus = true;
-          errorMessage = 'Please map atleast one value.';
+          errorMessage = 'You need to map at least one value.';
         }
       }
 

@@ -178,13 +178,10 @@ export function* requestToken({ resourceId, fieldId, values }) {
       hidden: true,
     });
   } catch (e) {
-    const errorsJSON = JSON.parse(e.message);
-    const { errors } = errorsJSON;
-
     yield put(
       actions.resource.connections.requestTokenFailed(
         resourceId,
-        errors && errors[0] && errors[0].message ? errors[0].message : errors
+        inferErrorMessage(e.message)
       )
     );
 
