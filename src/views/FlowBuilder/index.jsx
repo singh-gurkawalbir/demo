@@ -225,6 +225,10 @@ function FlowBuilder() {
   );
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
   const flow = useSelector(
+    state => selectors.resourceData(state, 'flows', flowId).merged,
+    shallowEqual
+  );
+  const flowDetails = useSelector(
     state => selectors.flowDetails(state, flowId),
     shallowEqual
   );
@@ -365,8 +369,8 @@ function FlowBuilder() {
   );
   const handleFlowRun = useCallback(() => {
     if (
-      flow.isDeltaFlow &&
-      (!flow._connectorId || !!flow.showStartDateDialog)
+      flowDetails.isDeltaFlow &&
+      (!flowDetails._connectorId || !!flowDetails.showStartDateDialog)
     ) {
       setShowDialog(true);
     } else {
@@ -378,9 +382,9 @@ function FlowBuilder() {
     // Raises Bottom Drawer size
     setSize(2);
   }, [
-    flow._connectorId,
-    flow.isDeltaFlow,
-    flow.showStartDateDialog,
+    flowDetails._connectorId,
+    flowDetails.isDeltaFlow,
+    flowDetails.showStartDateDialog,
     handleRunDeltaFlow,
   ]);
 
@@ -395,9 +399,9 @@ function FlowBuilder() {
 
   // Initializes a new flow (patch, no commit)
   // and replaces the url to reflect the new temp flow id.
-  function patchNewFlow(newFlowId, newPG) {
+  function patchNewFlow(newFlowId, newName, newPG) {
     const patchSet = [
-      { op: 'add', path: '/name', value: 'New flow' },
+      { op: 'add', path: '/name', value: newName || 'New flow' },
 
       // TODO: The message below gets hidden from the end-user.
       // we need to trace the sagas and figure out how to present this
@@ -424,24 +428,23 @@ function FlowBuilder() {
     dispatch(actions.resource.patchStaged(newFlowId, patchSet, 'value'));
   }
 
+  // NEW FLOW REDIRECTION
   if (flowId === 'new') {
-    const newFlowId = generateNewId();
+    const tempId = generateNewId();
 
-    patchNewFlow(newFlowId);
-    history.replace(rewriteUrl(newFlowId));
+    patchNewFlow(tempId);
+    history.replace(rewriteUrl(tempId));
 
     return null;
   }
 
-  if (flowId && flowId.toLowerCase().startsWith('dataloader')) {
-    const newFlowId = generateNewId();
-    const newExportId = generateNewId();
-    const patchSet = [{ op: 'add', path: '/type', value: 'simple' }];
+  // NEW DATA LOADER REDIRECTION
+  if (flowId && flowId.toLowerCase() === 'dataloader') {
+    const tempId = generateNewId();
 
-    dispatch(actions.resource.patchStaged(newExportId, patchSet, 'value'));
-    patchNewFlow(newFlowId, { _exportId: newExportId });
+    patchNewFlow(tempId, 'New data loader flow', { application: 'dataLoader' });
 
-    history.replace(rewriteUrl(`${newFlowId}/add/exports/${newExportId}`));
+    history.replace(rewriteUrl(tempId));
 
     return null;
   }
@@ -463,7 +466,7 @@ function FlowBuilder() {
 
   return (
     <LoadResources required resources="flows, imports, exports">
-      {showDialog && flow.isDeltaFlow && (
+      {showDialog && flowDetails.isDeltaFlow && (
         <FlowStartDateDialog
           flowId={flow._id}
           onClose={closeDeltaDialog}
@@ -496,20 +499,22 @@ function FlowBuilder() {
         infoText={flow.description}>
         <div className={classes.actions}>
           <SwitchOnOff.component
-            resource={flow}
+            resource={flowDetails}
             disabled={isNewFlow || isMonitorLevelAccess}
             isConnector={isConnectorType}
             data-test="switchFlowOnOff"
           />
           <IconButton
             disabled={
-              isNewFlow || !(flow && flow.isRunnable) || isMonitorLevelAccess
+              isNewFlow ||
+              !(flowDetails && flowDetails.isRunnable) ||
+              isMonitorLevelAccess
             }
             data-test="runFlow"
             onClick={handleFlowRun}>
             <RunIcon />
           </IconButton>
-          {flow && flow.showScheduleIcon && (
+          {flowDetails && flowDetails.showScheduleIcon && (
             <IconButton
               disabled={isNewFlow}
               data-test="scheduleFlow"

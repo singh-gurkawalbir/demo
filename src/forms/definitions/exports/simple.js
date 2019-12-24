@@ -57,23 +57,13 @@ export default {
       delete newValues['/file/xlsx/keyColumns'];
     }
 
-    if (newValues['/outputMode'] === 'blob') {
-      newValues['/file/skipDelete'] = newValues['/ftp/leaveFile'];
-      newValues['/file/output'] = 'blobKeys';
-      newValues['/file/type'] = undefined;
-    }
-
-    delete newValues['/outputMode'];
-
     if (newValues['/file/decompressFiles'] === false) {
       newValues['/file/compressionFormat'] = undefined;
     }
 
     delete newValues['/file/decompressFiles'];
 
-    return {
-      ...newValues,
-    };
+    return newValues;
   },
   optionsHandler: (fieldId, fields) => {
     const fileType = fields.find(field => field.id === 'file.type');
@@ -83,12 +73,42 @@ export default {
     }
   },
   fieldMap: {
-    'file.type': { fieldId: 'file.type' },
+    name: { fieldId: 'name' },
+    'file.type': {
+      id: 'file.type',
+      name: '/file/type',
+      type: 'select',
+      label: 'File type',
+      defaultValue: r => (r && r.file && r.file.type) || 'csv',
+      options: [
+        {
+          items: [
+            { label: 'CSV', value: 'csv' },
+            { label: 'JSON', value: 'json' },
+            { label: 'XLSX', value: 'xlsx' },
+            { label: 'XML', value: 'xml' },
+          ],
+        },
+      ],
+    },
     uploadFile: {
-      fieldId: 'uploadFile',
+      id: 'uploadFile',
+      name: '/uploadFile',
+      type: 'uploadfile',
+      label: 'Upload the file to use',
+      mode: r => r && r.file && r.file.type,
+      required: r => !r.rawData,
       refreshOptionsOnChangesTo: 'file.type',
     },
-    'file.csv': { fieldId: 'file.csv' },
+    'file.csv': {
+      fieldId: 'file.csv',
+      visibleWhenAll: [
+        {
+          field: 'file.type',
+          is: ['csv'],
+        },
+      ],
+    },
     'file.xlsx.hasHeaderRow': { fieldId: 'file.xlsx.hasHeaderRow' },
     'file.xlsx.rowsPerRecord': { fieldId: 'file.xlsx.rowsPerRecord' },
     'file.xlsx.keyColumns': { fieldId: 'file.xlsx.keyColumns' },
@@ -97,9 +117,13 @@ export default {
       fieldId: 'file.json.resourcePath',
     },
     'fixed.format': { fieldId: 'fixed.format' },
+    'file.encoding': { fieldId: 'file.encoding' },
+    pageSize: { fieldId: 'pageSize' },
+    dataURITemplate: { fieldId: 'dataURITemplate' },
   },
   layout: {
     fields: [
+      'name',
       'file.type',
       'uploadFile',
       'file.csv',
@@ -108,6 +132,14 @@ export default {
       'file.xlsx.hasHeaderRow',
       'file.xlsx.rowsPerRecord',
       'file.xlsx.keyColumns',
+    ],
+    type: 'collapse',
+    containers: [
+      {
+        collapsed: true,
+        label: 'Advanced',
+        fields: ['file.encoding', 'pageSize', 'dataURITemplate'],
+      },
     ],
   },
 };

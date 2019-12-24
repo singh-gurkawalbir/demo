@@ -1,7 +1,7 @@
 import { isNewId } from '../../../../utils/resource';
 
 export default {
-  // Todo why helpKey is it named csv file id like to change it to
+  // TODO: why helpKey is it named csv file id like to change it to
   // something meaningful
   uploadFile: {
     type: 'uploadfile',

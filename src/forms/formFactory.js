@@ -156,8 +156,6 @@ const getResourceFormAssets = ({
           meta = meta[type];
         }
 
-        console.log(meta);
-
         if (meta) {
           ({ fieldMap, layout, init, preSave, actions } = meta);
         }
