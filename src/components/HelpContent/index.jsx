@@ -77,7 +77,6 @@ function HelpContent(props) {
 
     [dispatch, enquesnackbar, fieldId, resourceType]
   );
-  const isStandaloneResource = !!resourceType;
 
   return (
     <div className={classes.wrapper}>
@@ -86,29 +85,27 @@ function HelpContent(props) {
       </Typography>
       {caption && <Typography variant="caption">{caption}</Typography>}
       <div className={classes.content}>{children}</div>
-      {isStandaloneResource && (
-        <div className={classes.action}>
-          <Typography className={classes.actionTitle}>
-            Was this helpful?
-          </Typography>
-          <div className={classes.actionButtons}>
-            <Button
-              data-test="yesContentHelpful"
-              variant="outlined"
-              onClick={handleUpdateFeedBack(true)}
-              color="secondary">
-              Yes
-            </Button>
-            <Button
-              data-test="noContentHelpful"
-              variant="outlined"
-              color="secondary"
-              onClick={handleUpdateFeedBack(false)}>
-              No
-            </Button>
-          </div>
+      <div className={classes.action}>
+        <Typography className={classes.actionTitle}>
+          Was this helpful?
+        </Typography>
+        <div className={classes.actionButtons}>
+          <Button
+            data-test="yesContentHelpful"
+            variant="outlined"
+            onClick={handleUpdateFeedBack(true)}
+            color="secondary">
+            Yes
+          </Button>
+          <Button
+            data-test="noContentHelpful"
+            variant="outlined"
+            color="secondary"
+            onClick={handleUpdateFeedBack(false)}>
+            No
+          </Button>
         </div>
-      )}
+      </div>
     </div>
   );
 }
