@@ -63,6 +63,7 @@ const getResourceFormAssets = ({
   resource,
   isNew = false,
   assistantData,
+  connection,
 }) => {
   let fieldMap;
   let layout = [];
@@ -152,6 +153,16 @@ const getResourceFormAssets = ({
             resource,
             assistantData
           );
+        } else if (type === 'rest') {
+          const { mediaType } = (connection && connection[type]) || {};
+
+          meta = meta[type];
+
+          if (mediaType === 'csv') {
+            meta = meta.csv;
+          } else {
+            meta = meta.json;
+          }
         } else {
           meta = meta[type];
         }

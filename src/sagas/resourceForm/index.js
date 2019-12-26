@@ -15,6 +15,7 @@ import { getResource, commitStagedChanges } from '../resources';
 import connectionSagas from '../resourceForm/connections';
 import { requestAssistantMetadata } from '../resources/meta';
 import { isNewId } from '../../utils/resource';
+import { uploadRawData } from '../uploadFile';
 import patchTransformationRulesForXMLResource from '../sampleData/utils/xmlTransformationRulesGenerator';
 
 export const SCOPES = {
@@ -147,9 +148,20 @@ export function* createFormValuesPatchSet({
       data: values,
     });
   } else {
+    let connection;
+
+    if (resource && resource._connectionId) {
+      connection = yield select(
+        selectors.resource,
+        'connections',
+        resource._connectionId
+      );
+    }
+
     const { preSave } = factory.getResourceFormAssets({
       resourceType,
       resource,
+      connection,
       isNew: formState.isNew,
     });
 
@@ -169,6 +181,18 @@ export function* createFormValuesPatchSet({
   // console.log('patch set', patchSet);
 
   return { patchSet, finalValues };
+}
+
+export function* saveRawData({ values }) {
+  const rawData = values['/rawData'];
+
+  if (!rawData) return values;
+
+  const rawDataKey = yield call(uploadRawData, {
+    file: JSON.stringify(rawData),
+  });
+
+  return { ...values, '/rawData': rawDataKey };
 }
 
 export function* submitFormValues({ resourceType, resourceId, values, match }) {
@@ -328,11 +352,22 @@ export function* initFormValues({
     }
   }
 
+  let connection;
+
+  if (resource && resource._connectionId) {
+    connection = yield select(
+      selectors.resource,
+      'connections',
+      resource._connectionId
+    );
+  }
+
   const defaultFormAssets = factory.getResourceFormAssets({
     resourceType,
     resource,
     isNew,
     assistantData,
+    connection,
   });
   const { customForm } = resource;
   const form =

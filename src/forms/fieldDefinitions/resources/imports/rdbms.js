@@ -87,6 +87,7 @@ export default {
   'rdbms.ignoreExtract': {
     type: 'textwithlookupextract',
     label: 'Existing Data Id',
+    fieldType: 'ignoreExistingData',
     required: true,
     defaultValue: r =>
       r && r.rdbms && r.rdbms.ignoreLookupName
@@ -108,6 +109,7 @@ export default {
   'rdbms.updateExtract': {
     type: 'textwithlookupextract',
     label: 'Existing Data Id',
+    fieldType: 'ignoreExistingData',
     required: true,
     defaultValue: r =>
       r && r.rdbms && r.rdbms.updateLookupName
