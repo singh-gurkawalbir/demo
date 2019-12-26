@@ -1,10 +1,13 @@
-import { useCallback } from 'react';
+import { useCallback, useState, Fragment } from 'react';
 import { makeStyles, fade } from '@material-ui/core/styles';
+import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import { Button } from '@material-ui/core';
 import { useDispatch } from 'react-redux';
 import actions from '../../actions';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
+// import DynaForm from '../DynaForm';
+// import DynaText from '../DynaForm/fields/DynaText';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -65,17 +68,48 @@ const useStyles = makeStyles(theme => ({
 
 function HelpContent(props) {
   const classes = useStyles();
-  const { children, title, caption, fieldId, resourceType } = props;
+  const { children, title, caption, fieldId, resourceType, onClose } = props;
   const dispatch = useDispatch();
+  const [feedbackText, setFeedbackText] = useState(false);
   const [enquesnackbar] = useEnqueueSnackbar();
   const handleUpdateFeedBack = useCallback(
     helpful => () => {
-      dispatch(actions.postFeedback(resourceType, fieldId, helpful));
+      if (helpful) {
+        dispatch(actions.postFeedback(resourceType, fieldId, helpful));
 
-      enquesnackbar({ message: 'Feedback noted.Thanks!' });
+        enquesnackbar({ message: 'Feedback noted.Thanks!' });
+      } else {
+        setFeedbackText(true);
+      }
     },
 
     [dispatch, enquesnackbar, fieldId, resourceType]
+  );
+  const feedBackFormMeta = {
+    fieldMap: {
+      feedbackTextField: {
+        id: 'feedbackTextField',
+        name: 'feedback',
+        type: 'text',
+        label: 'Feedback',
+        defaultValue: '',
+      },
+    },
+    layout: {
+      fields: ['feedbackTextField'],
+    },
+  };
+  const handleSendFeedbackText = useCallback(
+    values => {
+      dispatch(
+        actions.postFeedback(resourceType, fieldId, false, values.feedback)
+      );
+
+      enquesnackbar({ message: 'Feedback noted.Thanks!' });
+
+      onClose();
+    },
+    [dispatch, enquesnackbar, fieldId, onClose, resourceType]
   );
 
   return (
@@ -84,28 +118,43 @@ function HelpContent(props) {
         {title}
       </Typography>
       {caption && <Typography variant="caption">{caption}</Typography>}
-      <div className={classes.content}>{children}</div>
-      <div className={classes.action}>
-        <Typography className={classes.actionTitle}>
-          Was this helpful?
-        </Typography>
-        <div className={classes.actionButtons}>
-          <Button
-            data-test="yesContentHelpful"
-            variant="outlined"
-            onClick={handleUpdateFeedBack(true)}
-            color="secondary">
-            Yes
-          </Button>
-          <Button
-            data-test="noContentHelpful"
-            variant="outlined"
-            color="secondary"
-            onClick={handleUpdateFeedBack(false)}>
-            No
+      {feedbackText ? (
+        <div>
+          <Button type="submit" onClick={() => console.log('Hi')}>
+            Submit
           </Button>
         </div>
-      </div>
+      ) : (
+        <Fragment>
+          <div className={classes.content}>{children}</div>
+          <div className={classes.action}>
+            <Typography className={classes.actionTitle}>
+              Was this helpful?
+            </Typography>
+            <div className={classes.actionButtons}>
+              <TextField
+                id="standard-basic"
+                label="Standard"
+                variant="filled"
+              />
+              <Button
+                data-test="yesContentHelpful"
+                variant="outlined"
+                onClick={handleUpdateFeedBack(true)}
+                color="secondary">
+                Yes
+              </Button>
+              <Button
+                data-test="noContentHelpful"
+                variant="outlined"
+                color="secondary"
+                onClick={handleUpdateFeedBack(false)}>
+                No
+              </Button>
+            </div>
+          </div>
+        </Fragment>
+      )}
     </div>
   );
 }

@@ -3,7 +3,7 @@ import { apiCallWithRetry } from '../..';
 import actionTypes from '../../../actions/types';
 import { RESOURCE_TYPE_PLURAL_TO_SINGULAR } from '../../../constants/resource';
 
-function* postFeedback({ resourceType, fieldId, helpful }) {
+function* postFeedback({ resourceType, fieldId, helpful, feedback }) {
   try {
     yield call(
       apiCallWithRetry,
@@ -16,6 +16,7 @@ function* postFeedback({ resourceType, fieldId, helpful }) {
             resource: RESOURCE_TYPE_PLURAL_TO_SINGULAR[resourceType],
             field: fieldId,
             helpful,
+            feedback,
           },
         },
         message: 'Sending feedback',
