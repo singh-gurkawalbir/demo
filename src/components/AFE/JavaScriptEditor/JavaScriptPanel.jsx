@@ -68,9 +68,10 @@ export default function JavaScriptPanel(props) {
   const handleInsertStubClick = useCallback(() => {
     // Fetches stub and appends it to current script content
     const updatedScriptContent = code + getScriptHookStub(insertStubKey);
+
     // Updated this new script content on editor
     patchEditor('code', updatedScriptContent);
-  });
+  }, [code, insertStubKey, patchEditor]);
 
   useEffect(() => {
     // TODO: What if for the requested script is non existent...
