@@ -4,6 +4,7 @@
  * preSavePage,
  * preMap,
  * postMap,
+ * postResponseMap,
  * postSubmit,
  * postAggregate,
  * contentBasedFlowRouter
