@@ -5,7 +5,9 @@ export default {
     const lookup =
       lookups &&
       lookups.find(
-        l => `{{{${l.name}}}}` === retValues['/rdbms/ignoreExtract']
+        l =>
+          `{{{${l.name}}}}` === retValues['/rdbms/ignoreExtract'] ||
+          `{{{${l.name}}}}` === retValues['/rdbms/updateExtract']
       );
 
     if (retValues['/rdbms/queryType'] === 'COMPOSITE') {
@@ -30,6 +32,8 @@ export default {
       retValues['/rdbms/query'] = [retValues['/rdbms/query']];
       retValues['/rdbms/queryType'] = [retValues['/rdbms/queryType']];
       retValues['/ignoreMissing'] = false;
+      retValues['/rdbms/updateLookupName'] = undefined;
+      retValues['/rdbms/updateExtract'] = undefined;
 
       if (lookup) {
         retValues['/rdbms/ignoreLookupName'] =
@@ -42,6 +46,8 @@ export default {
       retValues['/rdbms/query'] = [retValues['/rdbms/query']];
       retValues['/rdbms/queryType'] = [retValues['/rdbms/queryType']];
       retValues['/ignoreExisting'] = false;
+      retValues['/rdbms/updateLookupName'] = undefined;
+      retValues['/rdbms/updateExtract'] = undefined;
 
       if (lookup) {
         retValues['/rdbms/ignoreLookupName'] =

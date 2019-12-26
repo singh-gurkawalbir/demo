@@ -44,6 +44,9 @@ export default {
 
     if (!retValues['/http/response/successValues'].length) {
       retValues['/http/response/successValues'] = undefined;
+    }
+
+    if (retValues['/http/response/successPath'] === '') {
       retValues['/http/response/successPath'] = undefined;
     }
 

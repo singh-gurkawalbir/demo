@@ -1,11 +1,26 @@
 import deepClone from 'lodash/cloneDeep';
 import { adaptorTypeMap } from '../resource';
 import mappingUtil from '.';
-import NetsuiteMapping from './application/netsuite';
+import netsuiteMappingUtil from './application/netsuite';
 import getJSONPaths from '../jsonPaths';
 import { isJsonString } from '../../utils/string';
 import connectors from '../../constants/applications';
 
+const isCsvOrXlsxResource = resource => {
+  const { adaptorType: resourceAdapterType, file } = resource;
+  const resourceFileType = file && file.type;
+
+  if (
+    (adaptorTypeMap[resourceAdapterType] === adaptorTypeMap.FTPImport ||
+      adaptorTypeMap[resourceAdapterType] === adaptorTypeMap.S3Import) &&
+    (resourceFileType === 'xlsx' || resourceFileType === 'csv')
+  )
+    return true;
+
+  return false;
+};
+
+const handlebarRegex = /(\{\{[\s]*.*?[\s]*\}\})/i;
 const LookupResponseMappingExtracts = [
   'data',
   'errors',
@@ -141,7 +156,13 @@ export default {
       default:
     }
   },
-  getMappingFromResource: (resourceObj, appType, getRawMappings, options) => {
+  getMappingFromResource: (
+    resourceObj,
+    appType,
+    getRawMappings,
+    isGroupedSampleData,
+    options
+  ) => {
     if (!resourceObj) {
       return;
     }
@@ -186,10 +207,18 @@ export default {
     return mappingUtil.getMappingsForApp({
       mappings: mappingCopy,
       appType,
+      isGroupedSampleData,
+      resource: resourceObj,
       options,
     });
   },
-  getMappingsForApp: ({ mappings, appType, options = {} }) => {
+  getMappingsForApp: ({
+    mappings,
+    appType,
+    resource,
+    isGroupedSampleData,
+    options = {},
+  }) => {
     let _mappings = mappings;
 
     if (options.integrationApp) {
@@ -213,20 +242,32 @@ export default {
 
     switch (appType) {
       case adaptorTypeMap.NetSuiteDistributedImport:
-        return NetsuiteMapping.getFieldsAndListMappings({
+        return netsuiteMappingUtil.getFieldsAndListMappings({
           mappings: _mappings,
         });
+      case adaptorTypeMap.FTPImport:
+      case adaptorTypeMap.HTTPImport:
       case adaptorTypeMap.RESTImport:
       case adaptorTypeMap.AS2Import:
-      case adaptorTypeMap.FTPImport:
       case adaptorTypeMap.S3Import:
       case adaptorTypeMap.XMLImport:
-      case adaptorTypeMap.HTTPImport:
       case adaptorTypeMap.MongodbImport:
       case adaptorTypeMap.WrapperImport:
       case adaptorTypeMap.RDBMSImport:
+        return mappingUtil.getFieldsAndListMappings({
+          mappings: _mappings,
+          isGroupedSampleData,
+          useFirstRowSupported: true,
+          resource,
+          appType,
+        });
       case adaptorTypeMap.SalesforceImport:
-        return mappingUtil.getFieldsAndListMappings({ mappings: _mappings });
+        return mappingUtil.getFieldsAndListMappings({
+          mappings: _mappings,
+          useFirstRowSupported: false,
+          resource,
+          appType,
+        });
       default:
     }
   },
@@ -235,49 +276,91 @@ export default {
     generateFields,
     recordType,
     appType,
+    isGroupedSampleData,
+    resource,
   }) => {
     switch (appType) {
       case adaptorTypeMap.NetSuiteDistributedImport:
-        return NetsuiteMapping.generateMappingFieldsAndList({
+        return netsuiteMappingUtil.generateMappingFieldsAndList({
           mappings,
           generateFields,
           recordType,
         });
+      case adaptorTypeMap.FTPImport:
+      case adaptorTypeMap.HTTPImport:
       case adaptorTypeMap.RESTImport:
       case adaptorTypeMap.AS2Import:
-      case adaptorTypeMap.FTPImport:
       case adaptorTypeMap.S3Import:
       case adaptorTypeMap.XMLImport:
-      case adaptorTypeMap.HTTPImport:
       case adaptorTypeMap.MongodbImport:
       case adaptorTypeMap.WrapperImport:
-      case adaptorTypeMap.SalesforceImport:
       case adaptorTypeMap.RDBMSImport:
-        return mappingUtil.generateMappingFieldsAndList({ mappings });
+        return mappingUtil.generateMappingFieldsAndList({
+          mappings,
+          isGroupedSampleData,
+          useFirstRowSupported: true,
+          resource,
+        });
+      case adaptorTypeMap.SalesforceImport:
+        return mappingUtil.generateMappingFieldsAndList({
+          mappings,
+          isGroupedSampleData,
+          useFirstRowSupported: false,
+          resource,
+        });
 
       default:
     }
   },
-  getFieldsAndListMappings: ({ mappings = {} }) => {
+  getFieldsAndListMappings: ({
+    mappings = {},
+    isGroupedSampleData,
+    useFirstRowSupported = false,
+    resource = {},
+  }) => {
     let tempFm;
     const toReturn = [];
 
     mappings.fields &&
       mappings.fields.forEach(fm => {
-        toReturn.push(fm);
+        const _fm = { ...fm };
+
+        if (isGroupedSampleData && isCsvOrXlsxResource(resource))
+          _fm.useFirstRow = true;
+        toReturn.push(_fm);
       });
     mappings.lists &&
       mappings.lists.forEach(lm => {
         lm.fields.forEach(fm => {
           tempFm = { ...fm };
-          tempFm.generate = [lm.generate, tempFm.generate].join('[*].');
+          tempFm.generate = lm.generate
+            ? [lm.generate, tempFm.generate].join('[*].')
+            : tempFm.generate;
+
+          if (useFirstRowSupported && isGroupedSampleData) {
+            if (tempFm.extract && tempFm.extract.indexOf('*.') === 0) {
+              tempFm.extract = tempFm.extract.substr('*.'.length);
+            } else {
+              tempFm.useFirstRow = true;
+            }
+
+            if (isCsvOrXlsxResource(resource)) {
+              tempFm.generate = fm.generate;
+            }
+          }
+
           toReturn.push(tempFm);
         });
       });
 
     return toReturn;
   },
-  generateMappingFieldsAndList: ({ mappings = {} }) => {
+  generateMappingFieldsAndList: ({
+    mappings = {},
+    isGroupedSampleData,
+    useFirstRowSupported = false,
+    resource = {},
+  }) => {
     let generateParts;
     const lists = [];
     const fields = [];
@@ -304,11 +387,49 @@ export default {
             generate: generateListPath,
             fields: [],
           };
+
+          if (
+            useFirstRowSupported &&
+            isGroupedSampleData &&
+            !mapping.useFirstRow &&
+            mapping.extract &&
+            mapping.extract.indexOf('[*].') === -1 &&
+            !handlebarRegex.test(mapping.extract)
+          ) {
+            mapping.extract = `*.${mapping.extract}`;
+          }
+
+          delete mapping.useFirstRow;
+
           lists.push(list);
 
           // if (existingListsData[generateListPath]) {
           //   list.jsonPath = existingListsData[generateListPath].jsonPath;
           // }
+        }
+      } else if (isCsvOrXlsxResource(resource) && isGroupedSampleData) {
+        if (
+          !mapping.useFirstRow &&
+          mapping.extract &&
+          mapping.extract.indexOf('[*].') === -1 &&
+          !handlebarRegex.test(mapping.extract)
+        ) {
+          mapping.extract = `*.${mapping.extract}`;
+        }
+
+        if (!mapping.useFirstRow) {
+          const listWithEmptyGenerate = lists.find(l => l.generate === '');
+
+          if (!listWithEmptyGenerate)
+            list = {
+              generate: '',
+              fields: [],
+            };
+          else {
+            list = listWithEmptyGenerate;
+          }
+
+          lists.push(list);
         }
       }
 
