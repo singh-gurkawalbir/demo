@@ -31,7 +31,7 @@ function PostResponseMapHookDialog({
       flowId,
       resourceId,
       resourceType,
-      stage: 'responseMappingExtract',
+      stage: hookStage,
     })
   );
   const saveScript = values => {
@@ -76,6 +76,7 @@ function PostResponseMapHookDialog({
     if (shouldCommit) {
       if (!editorValues || !editorValues.scriptId) {
         // Should not save hooks without script Id
+        // TODO: @Aditya Need to move this logic into JS Editor , disabling save if there is no script selected
         return enqueueSnackbar({
           message: 'Please select Script ID',
           variant: 'error',
@@ -98,11 +99,18 @@ function PostResponseMapHookDialog({
           flowId,
           resourceId,
           resourceType,
-          'responseMappingExtract'
+          hookStage
         )
       );
     }
   }, [dispatch, flowId, resourceId, resourceType, sampleData]);
+  // If there is sampleData wraps inside data { errors: [], data: [sampleData] } , else shows default {}
+  // And stringified as the way Editor expects
+  const preHookData = JSON.stringify(
+    sampleData ? { errors: [], data: [sampleData] } : {},
+    null,
+    2
+  );
 
   return (
     <JavaScriptEditorDialog
@@ -110,10 +118,7 @@ function PostResponseMapHookDialog({
       id={resourceId + flowId}
       key={resourceId + flowId}
       disabled={isViewMode}
-      data={
-        sampleData &&
-        JSON.stringify({ errors: [], data: [sampleData] }, null, 2)
-      }
+      data={preHookData}
       scriptId={postResponseMapHook._scriptId}
       entryFunction={
         postResponseMapHook.function || hooksToFunctionNamesMap[hookStage]
