@@ -72,7 +72,7 @@ const useStyles = makeStyles(theme => ({
 export default function IntegrationApp({ match, history }) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const { integrationId, storeId, tab } = match.params;
+  const { integrationAppName, integrationId, storeId, tab } = match.params;
   // TODO: Note this selector should return undefined/null if no
   // integration exists. not a stubbed out complex object.
   const integration = useSelector(state =>
@@ -124,6 +124,19 @@ export default function IntegrationApp({ match, history }) {
     }
   }, [addOnState, dispatch, integrationId, requestMappingMetadata]);
 
+  useEffect(() => {
+    if (redirectTo) {
+      const path = generatePath(match.path, {
+        integrationId,
+        storeId,
+        tab: redirectTo,
+      });
+
+      dispatch(actions.integrationApp.settings.clearRedirect(integrationId));
+      history.push(path);
+    }
+  }, [dispatch, history, integrationId, match.path, redirectTo, storeId]);
+
   const hasAddOns =
     addOnState &&
     addOnState.addOns &&
@@ -159,36 +172,23 @@ export default function IntegrationApp({ match, history }) {
       // Redirect to current tab of new store
       history.push(
         getRoutePath(
-          `integrationApp/${integrationId}/child/${newStoreId}/${tab}`
+          `integrationapps/${integrationAppName}/${integrationId}/child/${newStoreId}/${tab}`
         )
       );
     },
-    [history, integrationId, tab]
+    [history, integrationAppName, integrationId, tab]
   );
   const handleAddNewStoreClick = useCallback(() => {
-    history.push(`/pg/connectors/${integrationId}/install/addNewStore`);
-  }, [history, integrationId]);
+    history.push(
+      `/pg/integrationapps/${integrationAppName}/${integrationId}/install/addNewStore`
+    );
+  }, [history, integrationAppName, integrationId]);
 
   // There is no need for further processing if no integration
   // is returned. Most likely case is that there is a pending IO
   // call for integrations.
   if (!integration || !integration._id) {
     return <LoadResources required resources="integrations" />;
-  }
-
-  if (redirectTo) {
-    const path = generatePath(match.path, {
-      integrationId,
-      storeId,
-      tab: redirectTo,
-    });
-
-    dispatch(actions.integrationApp.settings.clearRedirect(integrationId));
-    history.push(path);
-
-    return null;
-    // TODO: This approach navigating to the url but not rendering the component.
-    // return <Redirect push={false} to={path} />;
   }
 
   const { supportsMultiStore, storeLabel } = integration.settings || {};
@@ -203,7 +203,7 @@ export default function IntegrationApp({ match, history }) {
       return (
         <Redirect
           push={false}
-          to={`/pg/integrationApp/${integrationId}/child/${defaultStoreId}/${tab ||
+          to={`/pg/integrationapps/${integrationAppName}/${integrationId}/child/${defaultStoreId}/${tab ||
             'flows'}`}
         />
       );
@@ -218,8 +218,8 @@ export default function IntegrationApp({ match, history }) {
         push={false}
         to={
           supportsMultiStore
-            ? `/pg/integrationApp/${integrationId}/child/${storeId}/flows`
-            : `/pg/integrationApp/${integrationId}/flows`
+            ? `/pg/integrationapps/${integrationAppName}/${integrationId}/child/${storeId}/flows`
+            : `/pg/integrationapps/${integrationAppName}/${integrationId}/flows`
         }
       />
     );
@@ -229,17 +229,21 @@ export default function IntegrationApp({ match, history }) {
 
   if (currentStore.mode === 'install') {
     redirectToPage = getRoutePath(
-      `connectors/${integrationId}/install/addNewStore`
+      `integrationapps/${integrationAppName}/${integrationId}/install/addNewStore`
     );
   } else if (currentStore.mode === 'uninstall') {
     redirectToPage = getRoutePath(
-      `connectors/${integrationId}/uninstall/${storeId}`
+      `integrationapps/${integrationAppName}/${integrationId}/uninstall/${storeId}`
     );
   } else if (integration.mode === 'install') {
-    redirectToPage = getRoutePath(`connectors/${integrationId}/setup`);
+    redirectToPage = getRoutePath(
+      `integrationapps/${integrationAppName}/${integrationId}/setup`
+    );
   } else if (integration.mode === 'uninstall') {
     redirectToPage = getRoutePath(
-      `connectors/${integrationId}/uninstall${storeId ? `/${storeId}` : ''}`
+      `integrationapps/${integrationAppName}/${integrationId}/uninstall${
+        storeId ? `/${storeId}` : ''
+      }`
     );
   }
 
