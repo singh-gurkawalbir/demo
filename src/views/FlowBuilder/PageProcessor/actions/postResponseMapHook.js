@@ -119,6 +119,7 @@ function PostResponseMapHookDialog({
       key={resourceId + flowId}
       disabled={isViewMode}
       data={preHookData}
+      insertStubKey={hookStage}
       scriptId={postResponseMapHook._scriptId}
       entryFunction={
         postResponseMapHook.function || hooksToFunctionNamesMap[hookStage]

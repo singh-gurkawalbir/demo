@@ -143,6 +143,7 @@ export default function DynaHook(props) {
           disabled={disabled}
           data={JSON.stringify(preHookData, null, 2)}
           scriptId={value._scriptId}
+          insertStubKey={hookStage}
           entryFunction={value.function || hooksToFunctionNamesMap[hookStage]}
           onClose={handleClose}
         />

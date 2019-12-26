@@ -4,6 +4,7 @@ import {
   isRealTimeOrDistributedResource,
   adaptorTypeMap,
 } from './resource';
+import scriptHookStubs from './scriptHookStubs';
 
 export const importHooksList = [
   'preMap',
@@ -32,6 +33,8 @@ export const hooksToFunctionNamesMap = {
   postResponseMap: 'postResponseMapFunction',
   contentBasedFlowRouter: 'contentBasedFlowRouterFunction',
 };
+
+export const getScriptHookStub = hook => scriptHookStubs[hook];
 
 export const hooksLabelMap = {
   preSavePage: 'Pre Save Page',

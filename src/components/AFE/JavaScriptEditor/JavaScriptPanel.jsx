@@ -7,11 +7,13 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
+import Button from '@material-ui/core/Button';
 import LoadResources from '../../../components/LoadResources';
 import CodePanel from '../GenericEditor/CodePanel';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
 import Spinner from '../../Spinner';
+import { hooksLabelMap, getScriptHookStub } from '../../../utils/hooks';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -21,7 +23,9 @@ const useStyles = makeStyles(theme => ({
   textField: {
     marginTop: theme.spacing(1),
     marginBottom: theme.spacing(1),
-    width: '50%',
+    // Changing this from 50% to 33% to accomodate 3 elements
+    // TODO:@Azhar Make this flexible layout to fix  multiple elements instead of having width
+    width: '33%',
     paddingLeft: theme.spacing(1),
     paddingRight: theme.spacing(1),
   },
@@ -31,7 +35,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function JavaScriptPanel(props) {
-  const { editorId, disabled } = props;
+  const { editorId, disabled, insertStubKey } = props;
   const classes = useStyles(props);
   const { code = '', entryFunction = '', scriptId = '' } = useSelector(state =>
     selectors.editor(state, editorId)
@@ -61,6 +65,12 @@ export default function JavaScriptPanel(props) {
     event => patchEditor('scriptId', event.target.value),
     [patchEditor]
   );
+  const handleInsertStubClick = useCallback(() => {
+    // Fetches stub and appends it to current script content
+    const updatedScriptContent = code + getScriptHookStub(insertStubKey);
+    // Updated this new script content on editor
+    patchEditor('code', updatedScriptContent);
+  });
 
   useEffect(() => {
     // TODO: What if for the requested script is non existent...
@@ -103,6 +113,17 @@ export default function JavaScriptPanel(props) {
           label="Entry Function"
           margin="dense"
         />
+        {scriptId && insertStubKey && (
+          <Button
+            variant="contained"
+            color="primary"
+            className={classes.textField}
+            onClick={handleInsertStubClick}
+            disabled={disabled}
+            data-test={insertStubKey}>
+            {`Insert ${hooksLabelMap[insertStubKey]} Stub`}
+          </Button>
+        )}
         {scriptContent === undefined && scriptId ? (
           <Fragment>
             <Typography>Retrieving your script</Typography>
