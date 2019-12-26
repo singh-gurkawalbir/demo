@@ -1,16 +1,39 @@
 import React from 'react';
 import Button from '@material-ui/core/Button';
+import { Drawer } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import DynaForm from '../../DynaForm';
 import DynaSubmit from '../../DynaForm/DynaSubmit';
 import ApplicationMappingSettings from './application';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
-import ModalDialog from '../../ModalDialog';
+import DrawerTitleBar from '../../drawer/TitleBar';
+
+const useStyles = makeStyles(theme => ({
+  drawerPaper: {
+    marginTop: theme.appBarHeight,
+    width: 824,
+    border: 'solid 1px',
+    borderColor: theme.palette.secondary.lightest,
+    boxShadow: `-4px 4px 8px rgba(0,0,0,0.15)`,
+    backgroundColor: theme.palette.background.white,
+    zIndex: theme.zIndex.drawer + 1,
+  },
+  content: {
+    borderTop: `solid 1px ${theme.palette.secondary.lightest}`,
+    overflow: 'auto',
+    maxHeight: `calc(100vh - 180px)`,
+    padding: theme.spacing(3),
+    paddingTop: theme.spacing(1),
+    marginBottom: theme.spacing(1),
+  },
+}));
 
 export default function ImportMappingSettings(props) {
   const {
     title,
     value,
     onClose,
+    open,
     extractFields,
     generateFields,
     lookup,
@@ -19,6 +42,7 @@ export default function ImportMappingSettings(props) {
     options,
     disabled,
   } = props;
+  const classes = useStyles();
   const { generate, extract, index } = value;
   const [enquesnackbar] = useEnqueueSnackbar();
   const fieldMeta = ApplicationMappingSettings.getMetaData({
@@ -66,13 +90,14 @@ export default function ImportMappingSettings(props) {
   };
 
   return (
-    <ModalDialog
-      onClose={() => onClose(false)}
-      show
-      minWidth="md"
-      maxWidth="lg">
-      <div>{title}</div>
-      <div>
+    <Drawer
+      anchor="right"
+      open={open}
+      classes={{
+        paper: classes.drawerPaper,
+      }}>
+      <DrawerTitleBar onClose={() => onClose(false)} title={title} />
+      <div className={classes.content}>
         <DynaForm
           disabled={disabled}
           fieldMeta={fieldMeta}
@@ -94,6 +119,6 @@ export default function ImportMappingSettings(props) {
           </Button>
         </DynaForm>
       </div>
-    </ModalDialog>
+    </Drawer>
   );
 }

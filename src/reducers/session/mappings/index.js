@@ -61,10 +61,19 @@ export default function reducer(state = {}, action) {
         }
 
         break;
-      case actionTypes.MAPPING.DELETE:
+      case actionTypes.MAPPING.DELETE: {
         draft[id].initChangeIdentifier += 1;
         draft[id].mappings.splice(index, 1);
+        const {
+          isSuccess,
+          errMessage: validationErrMsg,
+        } = mappingUtil.validateMappings(draft[id].mappings);
+
+        draft[id].validationErrMsg = isSuccess ? undefined : validationErrMsg;
+
         break;
+      }
+
       case actionTypes.MAPPING.UPDATE_GENERATES: {
         draft[id].generateFields = generateFields;
         const { incompleteGenerates } = draft[id];
