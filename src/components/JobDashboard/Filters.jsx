@@ -116,6 +116,10 @@ function Filters({
   const handleRefreshClick = useCallback(() => {
     dispatch(actions.job.clear());
     patchFilter('currentPage', 0);
+    patchFilter(
+      'refreshAt',
+      new Date().getTime()
+    ); /** We are setting the refreshAt (not sending to api) to make sure the filter changes when user clicks refresh.  */
   }, [dispatch, patchFilter]);
 
   return (

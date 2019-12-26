@@ -94,9 +94,9 @@ import github from './github';
 import tableau from './tableau';
 import tesco from './tesco';
 import fieldaware from './fieldaware';
-// import googlesheets from './googlesheets';
+import googlesheets from './googlesheets';
 // import googlemail from './googlemail';
-// import googlecontacts from './googlecontacts';
+import googlecontacts from './googlecontacts';
 import googleshopping from './googleshopping';
 import googleanalytics from './googleanalytics';
 import taxjar from './taxjar';
@@ -265,9 +265,9 @@ export default {
   tableau,
   tesco,
   fieldaware,
-  // googlesheets,
+  googlesheets,
   // googlemail,
-  // googlecontacts,
+  googlecontacts,
   googleshopping,
   googleanalytics,
   chargebee,
