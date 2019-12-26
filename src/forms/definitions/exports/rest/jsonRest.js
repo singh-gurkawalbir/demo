@@ -32,7 +32,6 @@ export default {
 
     if (!retValues['/rest/successValues'].length) {
       retValues['/rest/successValues'] = undefined;
-      retValues['/rest/successPath'] = undefined;
     }
 
     if (retValues['/outputMode'] === 'blob') {
