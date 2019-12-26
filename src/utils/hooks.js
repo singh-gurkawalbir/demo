@@ -25,10 +25,11 @@ export const importSuiteScriptHooksList = ['preMap', 'postMap', 'postSubmit'];
 
 export const hooksToFunctionNamesMap = {
   preSavePage: 'preSavePageFunction',
-  preMap: 'preMapFuncton',
+  preMap: 'preMapFunction',
   postMap: 'postMapFunction',
   postSubmit: 'postSubmitFunction',
   postAggregate: 'postAggregateFunction',
+  postResponseMap: 'postResponseMapFunction',
   contentBasedFlowRouter: 'contentBasedFlowRouterFunction',
 };
 
@@ -39,6 +40,7 @@ export const hooksLabelMap = {
   postMap: 'Post Map',
   postSubmit: 'Post Submit',
   postAggregate: 'Post Aggregate',
+  postResponseMap: 'Post Response Map',
   contentBasedFlowRouter: 'Content Based Flow Router',
 };
 export function getSupportedHooksForResource(resource) {
