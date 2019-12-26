@@ -32,7 +32,6 @@ export function* saveMappings({ id }) {
   const { _id: resourceId } = resource;
   const mappingPath = mappingUtil.getMappingPath(adaptorType);
 
-  // _mappings[0].generate = undefined;
   patch.push({
     op: _mappings ? 'replace' : 'add',
     path: mappingPath,
@@ -60,25 +59,6 @@ export function* saveMappings({ id }) {
   if (error) return yield put(actions.mapping.saveFailed(id));
 
   yield put(actions.mapping.saveComplete(id));
-  // yield put(actions.resource.patchStaged(resourceId, patchSet, SCOPES.VALUE));
-  // yield put(actions.resource.commitStaged(resourceType, resourceId, 'value'));
-  // const mappingPath = mappingUtil.getMappingPath(adaptorType);
-  // patchSet.push({
-  //   op: mappings ? 'replace' : 'add',
-  //   path: mappingPath,
-  //   value: mappings,
-  // });
-  // // update _lookup only if its being passed as param to function
-  // if (lookups) {
-  //   const lookupPath = lookupUtil.getLookupPath(adaptorType);
-  //   patchSet.push({
-  //     op: lookups ? 'replace' : 'add',
-  //     path: lookupPath,
-  //     value: lookups,
-  //   });
-  // }
-  // dispatch(actions.resource.patchStaged(resourceId, patchSet, 'value'));
-  // dispatch(actions.resource.commitStaged('imports', resourceId, 'value'));
 }
 
 export const mappingSagas = [takeEvery(actionTypes.MAPPING.SAVE, saveMappings)];
