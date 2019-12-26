@@ -1,5 +1,5 @@
-import { withRouter } from 'react-router-dom';
-import Typography from '@material-ui/core/Typography';
+import { withRouter, Link } from 'react-router-dom';
+import { Typography, Tooltip } from '@material-ui/core';
 import HomePageCardContainer from '../../components/HomePageCard/HomePageCardContainer';
 import Header from '../../components/HomePageCard/Header';
 import Status from '../../components/Status';
@@ -28,33 +28,14 @@ function SuiteScriptTile({ tile, history }) {
     tile.integration.permissions.accessLevel;
   const integrationAppName = getIntegrationAppUrlName(tile.name, true);
   const status = tileStatus(tile);
+  let urlToIntegrationSettings = `/suiteScript/${tile._ioConnectionId}/integrations/${tile._integrationId}/settings`;
 
-  function handleClick() {
-    if (tile.status === TILE_STATUS.IS_PENDING_SETUP) {
-      history.push(
-        getRoutePath(
-          `/suiteScript/${tile._ioConnectionId}/integrationapps/${integrationAppName}/${tile._integrationId}/setup`
-        )
-      );
-    } else if (tile.status === TILE_STATUS.UNINSTALL) {
-      history.push(
-        getRoutePath(
-          `/suiteScript/${tile._ioConnectionId}/integrationapps/${integrationAppName}/${tile._integrationId}/uninstall`
-        )
-      );
-    } else if (tile._connectorId) {
-      history.push(
-        getRoutePath(
-          `/suiteScript/${tile._ioConnectionId}/integrationapps/${integrationAppName}/${tile._integrationId}/settings`
-        )
-      );
-    } else {
-      history.push(
-        getRoutePath(
-          `/suiteScript/${tile._ioConnectionId}/integrations/${tile._integrationId}/settings`
-        )
-      );
-    }
+  if (tile.status === TILE_STATUS.IS_PENDING_SETUP) {
+    urlToIntegrationSettings = `/suiteScript/${tile._ioConnectionId}/integrationapps/${integrationAppName}/${tile._integrationId}/setup`;
+  } else if (tile.status === TILE_STATUS.UNINSTALL) {
+    urlToIntegrationSettings = `/suiteScript/${tile._ioConnectionId}/integrationapps/${integrationAppName}/${tile._integrationId}/uninstall`;
+  } else if (tile._connectorId) {
+    urlToIntegrationSettings = `/suiteScript/${tile._ioConnectionId}/integrationapps/${integrationAppName}/${tile._integrationId}/settings`;
   }
 
   function handleStatusClick(event) {
@@ -78,7 +59,7 @@ function SuiteScriptTile({ tile, history }) {
   }
 
   return (
-    <HomePageCardContainer onClick={handleClick}>
+    <HomePageCardContainer>
       <Header>
         <Status label={status.label} onClick={handleStatusClick}>
           <StatusCircle variant={status.variant} />
@@ -86,7 +67,11 @@ function SuiteScriptTile({ tile, history }) {
       </Header>
       <Content>
         <CardTitle>
-          <Typography variant="h3">{tile.name}</Typography>
+          <Typography variant="h3">
+            <Link color="inherit" to={getRoutePath(urlToIntegrationSettings)}>
+              {tile.name}
+            </Link>
+          </Typography>
         </CardTitle>
         {tile.connector &&
           tile.connector.applications &&
@@ -105,9 +90,23 @@ function SuiteScriptTile({ tile, history }) {
           {accessLevel && (
             <Manage>
               {accessLevel === INTEGRATION_ACCESS_LEVELS.MONITOR ? (
-                <PermissionsMonitorIcon />
+                <Tooltip
+                  title="You have monitor permissions"
+                  placement="bottom">
+                  <Link
+                    color="inherit"
+                    to={getRoutePath(urlToIntegrationSettings)}>
+                    <PermissionsMonitorIcon />
+                  </Link>
+                </Tooltip>
               ) : (
-                <PermissionsManageIcon />
+                <Tooltip title="You have manage permissions" placement="bottom">
+                  <Link
+                    color="inherit"
+                    to={getRoutePath(urlToIntegrationSettings)}>
+                    <PermissionsManageIcon />
+                  </Link>
+                </Tooltip>
               )}
             </Manage>
           )}
