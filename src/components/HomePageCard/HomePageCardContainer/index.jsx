@@ -10,7 +10,6 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     boxSizing: 'border-box',
     border: '1px solid',
-    cursor: 'pointer',
     borderColor: fade(theme.palette.common.black, 0.1),
     transitionProperty: 'all',
     transitionDuration: theme.transitions.duration.short,
