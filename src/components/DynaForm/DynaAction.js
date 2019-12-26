@@ -62,6 +62,7 @@ const DynaActionWrapped = props => (
         {...form}
         {...props}
         disabled={!!(form.disabled || props.disabled)}
+        isValid={props.isValid === undefined ? form.isValid : props.isValid}
       />
     )}
   </FormContext.Consumer>
