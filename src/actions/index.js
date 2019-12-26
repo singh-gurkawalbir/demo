@@ -841,6 +841,9 @@ const mapping = {
       value,
     }),
   delete: (id, index) => action(actionTypes.MAPPING.DELETE, { id, index }),
+  save: id => action(actionTypes.MAPPING.SAVE, { id }),
+  saveFailed: id => action(actionTypes.MAPPING.SAVE_FAILED, { id }),
+  saveComplete: id => action(actionTypes.MAPPING.SAVE_COMPLETE, { id }),
 };
 // #region DynaForm Actions
 const resourceForm = {

@@ -91,7 +91,7 @@ export default function reducer(state = {}, action) {
         break;
       }
 
-      case actionTypes.MAPPING.PATCH_FIELD:
+      case actionTypes.MAPPING.PATCH_FIELD: {
         if (draft[id].mappings[index]) {
           const objCopy = { ...draft[id].mappings[index] };
 
@@ -143,7 +143,16 @@ export default function reducer(state = {}, action) {
           });
         }
 
+        const {
+          isSuccess,
+          errMessage: validationErrMsg,
+        } = mappingUtil.validateMappings(draft[id].mappings);
+
+        draft[id].validationErrMsg = isSuccess ? undefined : validationErrMsg;
+
         break;
+      }
+
       case actionTypes.MAPPING.PATCH_INCOMPLETE_GENERATES: {
         const incompleteGeneObj = draft[id].incompleteGenerates.find(
           gen => gen.index === index
@@ -192,6 +201,12 @@ export default function reducer(state = {}, action) {
           }
 
           draft[id].mappings[index] = { ...valueTmp };
+          const {
+            isSuccess,
+            errMessage: validationErrMsg,
+          } = mappingUtil.validateMappings(draft[id].mappings);
+
+          draft[id].validationErrMsg = isSuccess ? undefined : validationErrMsg;
         }
 
         break;
@@ -201,9 +216,35 @@ export default function reducer(state = {}, action) {
       case actionTypes.MAPPING.SET_VISIBILITY:
         if (draft[id]) draft[id].visible = value;
         break;
+      case actionTypes.MAPPING.SAVE:
+        draft[id].submitCompleted = false;
+        draft[id].submitFailed = false;
+        break;
+      case actionTypes.MAPPING.SAVE_COMPLETE:
+        draft[id].submitCompleted = true;
+        draft[id].validationErrMsg = undefined;
+
+        break;
+      case actionTypes.MAPPING.SAVE_FAILED:
+        draft[id].submitFailed = true;
+        draft[id].validationErrMsg = undefined;
+
+        break;
       default:
     }
   });
+}
+
+// #region PUBLIC SELECTORS
+export function mappingSaveProcessTerminate(state, id) {
+  if (!state) {
+    return emptySet;
+  }
+
+  if (!state[id]) return false;
+  const { submitFailed, submitCompleted } = state[id];
+
+  return !!(submitFailed || submitCompleted);
 }
 
 // #region PUBLIC SELECTORS

@@ -378,6 +378,10 @@ export function mapping(state, id) {
   return fromSession.mapping(state && state.session, id);
 }
 
+export function mappingSaveProcessTerminate(state, id) {
+  return fromSession.mappingSaveProcessTerminate(state && state.session, id);
+}
+
 export function editorHelperFunctions(state) {
   return (
     (state &&
