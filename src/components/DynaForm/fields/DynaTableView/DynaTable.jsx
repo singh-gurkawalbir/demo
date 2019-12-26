@@ -16,7 +16,6 @@ import DynaSelect from '../DynaSelect';
 import DeleteIcon from '../../../icons/TrashIcon';
 import DynaTypeableSelect from '../DynaTypeableSelect';
 import ActionButton from '../../../ActionButton';
-import IconTextButton from '../../../IconTextButton';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -38,7 +37,8 @@ const useStyles = makeStyles(theme => ({
     position: 'relative',
   },
   tableBody: {
-    paddingLeft: '7px',
+    paddingLeft: 7,
+    marginBottom: 6,
   },
   root: {
     flexGrow: 1,
@@ -275,12 +275,7 @@ export const DynaTable = props => {
                 <Grid key={r.id} item xs={r.space || true}>
                   <span>{r.label || r.name}</span>
                   {r.supportsRefresh && !isLoading && (
-                    <IconTextButton
-                      variant="contained"
-                      color="secondary"
-                      onClick={onFetchResource(r.id)}>
-                      Refresh <RefreshIcon />
-                    </IconTextButton>
+                    <RefreshIcon onClick={onFetchResource(r.id)} />
                   )}
                   {r.supportsRefresh && isLoading === r.id && (
                     <Spinner size={24} />
