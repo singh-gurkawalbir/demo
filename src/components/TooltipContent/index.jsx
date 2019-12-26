@@ -6,7 +6,6 @@ const useStyles = makeStyles({
     padding: '3px 10px',
     textAlign: 'center',
     maxWidth: '240px',
-    wordBreak: 'break-word',
   },
   content: {
     textTransform: 'capitalize',

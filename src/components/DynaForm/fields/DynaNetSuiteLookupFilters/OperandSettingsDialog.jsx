@@ -51,16 +51,12 @@ export default function OperandSettingsDialog({
       <span>Operand Settings</span>
       <Fragment>
         <DynaForm disabled={disabled} fieldMeta={fieldMeta}>
+          <Button data-test="cancelOperandSettings" onClick={onClose}>
+            Cancel
+          </Button>
           <DynaSubmit data-test="saveOperandSettings" onClick={handleSubmit}>
             Save
           </DynaSubmit>
-          <Button
-            data-test="cancelOperandSettings"
-            variant="text"
-            color="primary"
-            onClick={onClose}>
-            Cancel
-          </Button>
         </DynaForm>
       </Fragment>
     </ModalDialog>

@@ -1,8 +1,12 @@
 import { Component } from 'react';
-import { withStyles, Typography } from '@material-ui/core';
+import Dialog from '@material-ui/core/Dialog';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import { Typography, withStyles } from '@material-ui/core';
+import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
 import ReactDiffViewer from 'react-diff-viewer';
 import { RESOURCE_TYPE_SINGULAR_TO_LABEL } from '../../constants/resource';
-import ModalDialog from '../ModalDialog';
 
 @withStyles(theme => ({
   root: {
@@ -18,25 +22,33 @@ import ModalDialog from '../ModalDialog';
 }))
 export default class DiffDialog extends Component {
   render() {
-    const { auditLog, onCancelClick } = this.props;
+    const { classes, auditLog, onCancelClick } = this.props;
 
     return (
-      <ModalDialog show maxWidth={false} onClose={onCancelClick}>
-        <div>
-          {`${
-            RESOURCE_TYPE_SINGULAR_TO_LABEL[auditLog.resourceType]
-          } Audit Log`}
+      <Dialog open maxWidth={false}>
+        <DialogTitle disableTypography className={classes.root}>
+          <Typography variant="h6">
+            {`${
+              RESOURCE_TYPE_SINGULAR_TO_LABEL[auditLog.resourceType]
+            } Audit Log`}
+          </Typography>
           <Typography>{`Field: ${auditLog.fieldChange.fieldPath}`}</Typography>
-        </div>
-
-        <div>
+          <IconButton
+            aria-label="Close"
+            data-test="closeDiffDialog"
+            className={classes.closeButton}
+            onClick={onCancelClick}>
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent>
           <ReactDiffViewer
             hideLineNumbers
             oldValue={JSON.stringify(auditLog.fieldChange.oldValue, null, '  ')}
             newValue={JSON.stringify(auditLog.fieldChange.newValue, null, '  ')}
           />
-        </div>
-      </ModalDialog>
+        </DialogContent>
+      </Dialog>
     );
   }
 }

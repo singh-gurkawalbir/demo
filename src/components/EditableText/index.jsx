@@ -7,7 +7,7 @@ const useStyles = makeStyles(theme => ({
   text: {
     borderColor: 'transparent',
     transition: theme.transitions.create(['border', 'background-color']),
-    maxWidth: 680,
+    maxWidth: 650,
     maxHeight: 60,
     overflow: 'hidden',
     float: 'left',

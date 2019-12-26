@@ -36,7 +36,6 @@ const useStyles = makeStyles(theme => ({
     borderLeft: 0,
     borderTopRightRadius: 4,
     borderBottomRightRadius: 4,
-    wordBreak: 'break-word',
   },
   details: {
     flexGrow: 1,

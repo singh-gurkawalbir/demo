@@ -1,22 +1,12 @@
 import React from 'react';
 import Button from '@material-ui/core/Button';
-import { makeStyles } from '@material-ui/core/styles';
 import DynaForm from '../../DynaForm';
 import DynaSubmit from '../../DynaForm/DynaSubmit';
 import ApplicationMappingSettings from './application';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import ModalDialog from '../../ModalDialog';
 
-const useStyles = makeStyles({
-  contentWrapper: {
-    '& > div:first-child': {
-      overflowX: 'hidden',
-    },
-  },
-});
-
 export default function ImportMappingSettings(props) {
-  const classes = useStyles();
   const {
     title,
     value,
@@ -82,7 +72,7 @@ export default function ImportMappingSettings(props) {
       minWidth="md"
       maxWidth="lg">
       <div>{title}</div>
-      <div className={classes.contentWrapper}>
+      <div>
         <DynaForm
           disabled={disabled}
           fieldMeta={fieldMeta}

@@ -173,20 +173,21 @@ class UserForm extends Component {
       <LoadResources required resources="integrations">
         <DynaForm fieldMeta={fieldMeta}>
           <div className={classes.actions}>
+            <Button
+              data-test="cancelUserForm"
+              onClick={onCancelClick}
+              className={classes.actionButton}
+              size="small"
+              variant="contained"
+              color="secondary">
+              Cancel
+            </Button>
             <DynaSubmit
               data-test="submitUserForm"
               className={classes.actionButton}
               onClick={onSaveClick}>
               Save
             </DynaSubmit>
-            <Button
-              data-test="cancelUserForm"
-              onClick={onCancelClick}
-              className={classes.actionButton}
-              variant="text"
-              color="primary">
-              Cancel
-            </Button>
           </div>
         </DynaForm>
       </LoadResources>
