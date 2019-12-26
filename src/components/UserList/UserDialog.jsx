@@ -1,8 +1,5 @@
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import Dialog from '@material-ui/core/Dialog';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
 import { Typography } from '@material-ui/core';
 import {
   USER_ACCESS_LEVELS,
@@ -13,6 +10,7 @@ import actionTypes from '../../actions/types';
 import UserForm from './UserForm';
 import { COMM_STATES } from '../../reducers/comms/networkComms';
 import CommStatus from '../CommStatus';
+import ModalDialog from '../ModalDialog';
 
 const mapDispatchToProps = dispatch => ({
   saveUser: data => {
@@ -99,14 +97,10 @@ class UserDialog extends Component {
           }}
         />
 
-        <Dialog open maxWidth={false}>
-          <DialogTitle disableTypography>
-            <Typography variant="h6">
-              {id ? 'Change User Permissions' : 'Invite User'}
-            </Typography>
-          </DialogTitle>
-          <DialogContent style={{ width: '30vw' }}>
-            <Typography>{errorMessage}</Typography>
+        <ModalDialog show onClose={onCancelClick}>
+          <div>{id ? 'Change User Permissions' : 'Invite User'}</div>
+          <div>
+            <Typography variant="body2">{errorMessage}</Typography>
             <UserForm
               id={id}
               onSaveClick={data => {
@@ -116,8 +110,8 @@ class UserDialog extends Component {
                 onCancelClick();
               }}
             />
-          </DialogContent>
-        </Dialog>
+          </div>
+        </ModalDialog>
       </Fragment>
     );
   }

@@ -3,8 +3,8 @@ import csvOptions from '../../../../components/AFE/CsvConfigEditor/options';
 const requestBody = editor => {
   const rules = {
     columnDelimiter: csvOptions.ColumnDelimiterMap[editor.columnDelimiter],
+    rowDelimiter: csvOptions.RowDelimiterMap[editor.rowDelimiter],
     hasHeaderRow: editor.hasHeaderRow,
-
     trimSpaces: editor.trimSpaces,
   };
 

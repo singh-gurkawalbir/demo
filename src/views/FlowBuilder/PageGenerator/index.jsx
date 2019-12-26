@@ -256,6 +256,7 @@ const PageGenerator = ({
         resource={resource}
         index={index}
         schedule={schedule}
+        isPageGenerator
       />
       <div
         /* -- connecting line */

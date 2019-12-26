@@ -240,14 +240,14 @@ describe('integrationApps reducer test cases', () => {
 
         expect(state).toEqual({
           installer: {},
-          uninstaller: { integrationId: [] },
+          uninstaller: { integrationId: {} },
           addStore: {},
           settings: {},
         });
       });
       test('should try to find the integrationId reference inside uninstaller reducer state and reset it if any data present', () => {
         const state = reducer(
-          { uninstaller: { integrationId: uninstallSteps } },
+          { uninstaller: { integrationId: { steps: uninstallSteps } } },
           actions.integrationApp.uninstaller.preUninstall(
             'storeId',
             'integrationId'
@@ -256,7 +256,7 @@ describe('integrationApps reducer test cases', () => {
 
         expect(state).toEqual({
           installer: {},
-          uninstaller: { integrationId: [] },
+          uninstaller: { integrationId: {} },
           addStore: {},
           settings: {},
         });
@@ -265,7 +265,7 @@ describe('integrationApps reducer test cases', () => {
     describe(`integrationApps uninstaller install_inProgress action`, () => {
       test('should not affect the existing state when incorrect function name is passed', () => {
         const state = reducer(
-          { uninstaller: { 1: uninstallSteps } },
+          { uninstaller: { 1: { steps: uninstallSteps } } },
           actions.integrationApp.uninstaller.updateStep(
             1,
             'INCORRECT_FUNCTION_NAME',
@@ -277,22 +277,24 @@ describe('integrationApps reducer test cases', () => {
           settings: {},
           installer: {},
           uninstaller: {
-            '1': [
-              {
-                completed: false,
-                description: 'Delete the bank in CAM',
-                imageURL: '/images/company-logos/cashapp.png',
-                name: 'Uninstall Bank',
-                uninstallerFunction: 'uninstallConnectorComponents',
-              },
-              {
-                completed: false,
-                description: 'Delete the bundle in NetSuite',
-                imageURL: '/images/company-logos/netsuite.png',
-                name: 'Uninstall Bundle in NetSuite',
-                uninstallerFunction: 'uninstallConnectorComponents',
-              },
-            ],
+            '1': {
+              steps: [
+                {
+                  completed: false,
+                  description: 'Delete the bank in CAM',
+                  imageURL: '/images/company-logos/cashapp.png',
+                  name: 'Uninstall Bank',
+                  uninstallerFunction: 'uninstallConnectorComponents',
+                },
+                {
+                  completed: false,
+                  description: 'Delete the bundle in NetSuite',
+                  imageURL: '/images/company-logos/netsuite.png',
+                  name: 'Uninstall Bundle in NetSuite',
+                  uninstallerFunction: 'uninstallConnectorComponents',
+                },
+              ],
+            },
           },
         };
 
@@ -300,7 +302,7 @@ describe('integrationApps reducer test cases', () => {
       });
       test('should find the integration with id and set isTriggered flag to true', () => {
         const state = reducer(
-          { uninstaller: { 1: uninstallSteps } },
+          { uninstaller: { 1: { steps: uninstallSteps } } },
           actions.integrationApp.uninstaller.updateStep(
             1,
             'uninstallConnectorComponents',
@@ -312,23 +314,25 @@ describe('integrationApps reducer test cases', () => {
           settings: {},
           installer: {},
           uninstaller: {
-            '1': [
-              {
-                completed: false,
-                description: 'Delete the bank in CAM',
-                imageURL: '/images/company-logos/cashapp.png',
-                isTriggered: true,
-                name: 'Uninstall Bank',
-                uninstallerFunction: 'uninstallConnectorComponents',
-              },
-              {
-                completed: false,
-                description: 'Delete the bundle in NetSuite',
-                imageURL: '/images/company-logos/netsuite.png',
-                name: 'Uninstall Bundle in NetSuite',
-                uninstallerFunction: 'uninstallConnectorComponents',
-              },
-            ],
+            '1': {
+              steps: [
+                {
+                  completed: false,
+                  description: 'Delete the bank in CAM',
+                  imageURL: '/images/company-logos/cashapp.png',
+                  isTriggered: true,
+                  name: 'Uninstall Bank',
+                  uninstallerFunction: 'uninstallConnectorComponents',
+                },
+                {
+                  completed: false,
+                  description: 'Delete the bundle in NetSuite',
+                  imageURL: '/images/company-logos/netsuite.png',
+                  name: 'Uninstall Bundle in NetSuite',
+                  uninstallerFunction: 'uninstallConnectorComponents',
+                },
+              ],
+            },
           },
         };
 
@@ -339,8 +343,8 @@ describe('integrationApps reducer test cases', () => {
         const integrationId = 1;
         const initialState = {
           uninstaller: {
-            1: uninstallSteps,
-            2: uninstallSteps,
+            1: { steps: uninstallSteps },
+            2: { steps: uninstallSteps },
           },
         };
         const state = reducer(
@@ -356,39 +360,43 @@ describe('integrationApps reducer test cases', () => {
           installer: {},
           settings: {},
           uninstaller: {
-            '1': [
-              {
-                completed: false,
-                description: 'Delete the bank in CAM',
-                imageURL: '/images/company-logos/cashapp.png',
-                isTriggered: true,
-                name: 'Uninstall Bank',
-                uninstallerFunction: 'uninstallConnectorComponents',
-              },
-              {
-                completed: false,
-                description: 'Delete the bundle in NetSuite',
-                imageURL: '/images/company-logos/netsuite.png',
-                name: 'Uninstall Bundle in NetSuite',
-                uninstallerFunction: 'uninstallConnectorComponents',
-              },
-            ],
-            '2': [
-              {
-                completed: false,
-                description: 'Delete the bank in CAM',
-                imageURL: '/images/company-logos/cashapp.png',
-                name: 'Uninstall Bank',
-                uninstallerFunction: 'uninstallConnectorComponents',
-              },
-              {
-                completed: false,
-                description: 'Delete the bundle in NetSuite',
-                imageURL: '/images/company-logos/netsuite.png',
-                name: 'Uninstall Bundle in NetSuite',
-                uninstallerFunction: 'uninstallConnectorComponents',
-              },
-            ],
+            '1': {
+              steps: [
+                {
+                  completed: false,
+                  description: 'Delete the bank in CAM',
+                  imageURL: '/images/company-logos/cashapp.png',
+                  isTriggered: true,
+                  name: 'Uninstall Bank',
+                  uninstallerFunction: 'uninstallConnectorComponents',
+                },
+                {
+                  completed: false,
+                  description: 'Delete the bundle in NetSuite',
+                  imageURL: '/images/company-logos/netsuite.png',
+                  name: 'Uninstall Bundle in NetSuite',
+                  uninstallerFunction: 'uninstallConnectorComponents',
+                },
+              ],
+            },
+            '2': {
+              steps: [
+                {
+                  completed: false,
+                  description: 'Delete the bank in CAM',
+                  imageURL: '/images/company-logos/cashapp.png',
+                  name: 'Uninstall Bank',
+                  uninstallerFunction: 'uninstallConnectorComponents',
+                },
+                {
+                  completed: false,
+                  description: 'Delete the bundle in NetSuite',
+                  imageURL: '/images/company-logos/netsuite.png',
+                  name: 'Uninstall Bundle in NetSuite',
+                  uninstallerFunction: 'uninstallConnectorComponents',
+                },
+              ],
+            },
           },
         };
 
@@ -399,7 +407,7 @@ describe('integrationApps reducer test cases', () => {
     describe(`integrationApps uninstaller uninstall step verify action`, () => {
       test('should not affect the existing state when incorrect function name is passed', () => {
         const state = reducer(
-          { uninstaller: { 1: uninstallSteps } },
+          { uninstaller: { 1: { steps: uninstallSteps } } },
           actions.integrationApp.uninstaller.updateStep(
             1,
             'INCORRECT_FUNCTION_NAME',
@@ -411,22 +419,24 @@ describe('integrationApps reducer test cases', () => {
           installer: {},
           settings: {},
           uninstaller: {
-            '1': [
-              {
-                completed: false,
-                description: 'Delete the bank in CAM',
-                imageURL: '/images/company-logos/cashapp.png',
-                name: 'Uninstall Bank',
-                uninstallerFunction: 'uninstallConnectorComponents',
-              },
-              {
-                completed: false,
-                description: 'Delete the bundle in NetSuite',
-                imageURL: '/images/company-logos/netsuite.png',
-                name: 'Uninstall Bundle in NetSuite',
-                uninstallerFunction: 'uninstallConnectorComponents',
-              },
-            ],
+            '1': {
+              steps: [
+                {
+                  completed: false,
+                  description: 'Delete the bank in CAM',
+                  imageURL: '/images/company-logos/cashapp.png',
+                  name: 'Uninstall Bank',
+                  uninstallerFunction: 'uninstallConnectorComponents',
+                },
+                {
+                  completed: false,
+                  description: 'Delete the bundle in NetSuite',
+                  imageURL: '/images/company-logos/netsuite.png',
+                  name: 'Uninstall Bundle in NetSuite',
+                  uninstallerFunction: 'uninstallConnectorComponents',
+                },
+              ],
+            },
           },
         };
 
@@ -434,7 +444,7 @@ describe('integrationApps reducer test cases', () => {
       });
       test('should find the integration with id and set verifying flag to true', () => {
         const state = reducer(
-          { uninstaller: { 1: uninstallSteps } },
+          { uninstaller: { 1: { steps: uninstallSteps } } },
           actions.integrationApp.uninstaller.updateStep(
             1,
             'uninstallConnectorComponents',
@@ -446,24 +456,26 @@ describe('integrationApps reducer test cases', () => {
           installer: {},
           settings: {},
           uninstaller: {
-            '1': [
-              {
-                completed: false,
-                description: 'Delete the bank in CAM',
-                imageURL: '/images/company-logos/cashapp.png',
-                verifying: true,
-                isTriggered: true,
-                name: 'Uninstall Bank',
-                uninstallerFunction: 'uninstallConnectorComponents',
-              },
-              {
-                completed: false,
-                description: 'Delete the bundle in NetSuite',
-                imageURL: '/images/company-logos/netsuite.png',
-                name: 'Uninstall Bundle in NetSuite',
-                uninstallerFunction: 'uninstallConnectorComponents',
-              },
-            ],
+            '1': {
+              steps: [
+                {
+                  completed: false,
+                  description: 'Delete the bank in CAM',
+                  imageURL: '/images/company-logos/cashapp.png',
+                  verifying: true,
+                  isTriggered: true,
+                  name: 'Uninstall Bank',
+                  uninstallerFunction: 'uninstallConnectorComponents',
+                },
+                {
+                  completed: false,
+                  description: 'Delete the bundle in NetSuite',
+                  imageURL: '/images/company-logos/netsuite.png',
+                  name: 'Uninstall Bundle in NetSuite',
+                  uninstallerFunction: 'uninstallConnectorComponents',
+                },
+              ],
+            },
           },
         };
 
@@ -474,8 +486,8 @@ describe('integrationApps reducer test cases', () => {
         const integrationId = 1;
         const initialState = {
           uninstaller: {
-            1: uninstallSteps,
-            2: uninstallSteps,
+            1: { steps: uninstallSteps },
+            2: { steps: uninstallSteps },
           },
         };
         const state = reducer(
@@ -491,40 +503,44 @@ describe('integrationApps reducer test cases', () => {
           installer: {},
           settings: {},
           uninstaller: {
-            '1': [
-              {
-                completed: false,
-                description: 'Delete the bank in CAM',
-                imageURL: '/images/company-logos/cashapp.png',
-                verifying: true,
-                isTriggered: true,
-                name: 'Uninstall Bank',
-                uninstallerFunction: 'uninstallConnectorComponents',
-              },
-              {
-                completed: false,
-                description: 'Delete the bundle in NetSuite',
-                imageURL: '/images/company-logos/netsuite.png',
-                name: 'Uninstall Bundle in NetSuite',
-                uninstallerFunction: 'uninstallConnectorComponents',
-              },
-            ],
-            '2': [
-              {
-                completed: false,
-                description: 'Delete the bank in CAM',
-                imageURL: '/images/company-logos/cashapp.png',
-                name: 'Uninstall Bank',
-                uninstallerFunction: 'uninstallConnectorComponents',
-              },
-              {
-                completed: false,
-                description: 'Delete the bundle in NetSuite',
-                imageURL: '/images/company-logos/netsuite.png',
-                name: 'Uninstall Bundle in NetSuite',
-                uninstallerFunction: 'uninstallConnectorComponents',
-              },
-            ],
+            '1': {
+              steps: [
+                {
+                  completed: false,
+                  description: 'Delete the bank in CAM',
+                  imageURL: '/images/company-logos/cashapp.png',
+                  verifying: true,
+                  isTriggered: true,
+                  name: 'Uninstall Bank',
+                  uninstallerFunction: 'uninstallConnectorComponents',
+                },
+                {
+                  completed: false,
+                  description: 'Delete the bundle in NetSuite',
+                  imageURL: '/images/company-logos/netsuite.png',
+                  name: 'Uninstall Bundle in NetSuite',
+                  uninstallerFunction: 'uninstallConnectorComponents',
+                },
+              ],
+            },
+            '2': {
+              steps: [
+                {
+                  completed: false,
+                  description: 'Delete the bank in CAM',
+                  imageURL: '/images/company-logos/cashapp.png',
+                  name: 'Uninstall Bank',
+                  uninstallerFunction: 'uninstallConnectorComponents',
+                },
+                {
+                  completed: false,
+                  description: 'Delete the bundle in NetSuite',
+                  imageURL: '/images/company-logos/netsuite.png',
+                  name: 'Uninstall Bundle in NetSuite',
+                  uninstallerFunction: 'uninstallConnectorComponents',
+                },
+              ],
+            },
           },
         };
 
@@ -535,7 +551,7 @@ describe('integrationApps reducer test cases', () => {
     describe(`integrationApps uninstaller uninstall_step failed action`, () => {
       test('should not affect the existing state when incorrect function name is passed', () => {
         const state = reducer(
-          { uninstaller: { 1: uninstallSteps } },
+          { uninstaller: { 1: { steps: uninstallSteps } } },
           actions.integrationApp.uninstaller.updateStep(
             1,
             'INCORRECT_FUNCTION_NAME',
@@ -547,22 +563,24 @@ describe('integrationApps reducer test cases', () => {
           installer: {},
           settings: {},
           uninstaller: {
-            '1': [
-              {
-                completed: false,
-                description: 'Delete the bank in CAM',
-                imageURL: '/images/company-logos/cashapp.png',
-                name: 'Uninstall Bank',
-                uninstallerFunction: 'uninstallConnectorComponents',
-              },
-              {
-                completed: false,
-                description: 'Delete the bundle in NetSuite',
-                imageURL: '/images/company-logos/netsuite.png',
-                name: 'Uninstall Bundle in NetSuite',
-                uninstallerFunction: 'uninstallConnectorComponents',
-              },
-            ],
+            '1': {
+              steps: [
+                {
+                  completed: false,
+                  description: 'Delete the bank in CAM',
+                  imageURL: '/images/company-logos/cashapp.png',
+                  name: 'Uninstall Bank',
+                  uninstallerFunction: 'uninstallConnectorComponents',
+                },
+                {
+                  completed: false,
+                  description: 'Delete the bundle in NetSuite',
+                  imageURL: '/images/company-logos/netsuite.png',
+                  name: 'Uninstall Bundle in NetSuite',
+                  uninstallerFunction: 'uninstallConnectorComponents',
+                },
+              ],
+            },
           },
         };
 
@@ -570,7 +588,7 @@ describe('integrationApps reducer test cases', () => {
       });
       test('should find the integration with id and reset all flags', () => {
         const state = reducer(
-          { uninstaller: { 1: uninstallSteps } },
+          { uninstaller: { 1: { steps: uninstallSteps } } },
           actions.integrationApp.uninstaller.updateStep(
             1,
             'uninstallConnectorComponents',
@@ -582,24 +600,26 @@ describe('integrationApps reducer test cases', () => {
           installer: {},
           settings: {},
           uninstaller: {
-            '1': [
-              {
-                completed: false,
-                description: 'Delete the bank in CAM',
-                imageURL: '/images/company-logos/cashapp.png',
-                verifying: false,
-                isTriggered: false,
-                name: 'Uninstall Bank',
-                uninstallerFunction: 'uninstallConnectorComponents',
-              },
-              {
-                completed: false,
-                description: 'Delete the bundle in NetSuite',
-                imageURL: '/images/company-logos/netsuite.png',
-                name: 'Uninstall Bundle in NetSuite',
-                uninstallerFunction: 'uninstallConnectorComponents',
-              },
-            ],
+            '1': {
+              steps: [
+                {
+                  completed: false,
+                  description: 'Delete the bank in CAM',
+                  imageURL: '/images/company-logos/cashapp.png',
+                  verifying: false,
+                  isTriggered: false,
+                  name: 'Uninstall Bank',
+                  uninstallerFunction: 'uninstallConnectorComponents',
+                },
+                {
+                  completed: false,
+                  description: 'Delete the bundle in NetSuite',
+                  imageURL: '/images/company-logos/netsuite.png',
+                  name: 'Uninstall Bundle in NetSuite',
+                  uninstallerFunction: 'uninstallConnectorComponents',
+                },
+              ],
+            },
           },
         };
 
@@ -610,8 +630,8 @@ describe('integrationApps reducer test cases', () => {
         const integrationId = 1;
         const initialState = {
           uninstaller: {
-            1: uninstallSteps,
-            2: uninstallSteps,
+            1: { steps: uninstallSteps },
+            2: { steps: uninstallSteps },
           },
         };
         const state = reducer(
@@ -627,40 +647,44 @@ describe('integrationApps reducer test cases', () => {
           installer: {},
           settings: {},
           uninstaller: {
-            '1': [
-              {
-                completed: false,
-                description: 'Delete the bank in CAM',
-                imageURL: '/images/company-logos/cashapp.png',
-                verifying: false,
-                isTriggered: false,
-                name: 'Uninstall Bank',
-                uninstallerFunction: 'uninstallConnectorComponents',
-              },
-              {
-                completed: false,
-                description: 'Delete the bundle in NetSuite',
-                imageURL: '/images/company-logos/netsuite.png',
-                name: 'Uninstall Bundle in NetSuite',
-                uninstallerFunction: 'uninstallConnectorComponents',
-              },
-            ],
-            '2': [
-              {
-                completed: false,
-                description: 'Delete the bank in CAM',
-                imageURL: '/images/company-logos/cashapp.png',
-                name: 'Uninstall Bank',
-                uninstallerFunction: 'uninstallConnectorComponents',
-              },
-              {
-                completed: false,
-                description: 'Delete the bundle in NetSuite',
-                imageURL: '/images/company-logos/netsuite.png',
-                name: 'Uninstall Bundle in NetSuite',
-                uninstallerFunction: 'uninstallConnectorComponents',
-              },
-            ],
+            '1': {
+              steps: [
+                {
+                  completed: false,
+                  description: 'Delete the bank in CAM',
+                  imageURL: '/images/company-logos/cashapp.png',
+                  verifying: false,
+                  isTriggered: false,
+                  name: 'Uninstall Bank',
+                  uninstallerFunction: 'uninstallConnectorComponents',
+                },
+                {
+                  completed: false,
+                  description: 'Delete the bundle in NetSuite',
+                  imageURL: '/images/company-logos/netsuite.png',
+                  name: 'Uninstall Bundle in NetSuite',
+                  uninstallerFunction: 'uninstallConnectorComponents',
+                },
+              ],
+            },
+            '2': {
+              steps: [
+                {
+                  completed: false,
+                  description: 'Delete the bank in CAM',
+                  imageURL: '/images/company-logos/cashapp.png',
+                  name: 'Uninstall Bank',
+                  uninstallerFunction: 'uninstallConnectorComponents',
+                },
+                {
+                  completed: false,
+                  description: 'Delete the bundle in NetSuite',
+                  imageURL: '/images/company-logos/netsuite.png',
+                  name: 'Uninstall Bundle in NetSuite',
+                  uninstallerFunction: 'uninstallConnectorComponents',
+                },
+              ],
+            },
           },
         };
 
@@ -671,7 +695,7 @@ describe('integrationApps reducer test cases', () => {
     describe(`integrationApps uninstaller uninstall_step completed action`, () => {
       test('should not affect the existing state when incorrect function name is passed', () => {
         const state = reducer(
-          { uninstaller: { 1: uninstallSteps } },
+          { uninstaller: { 1: { steps: uninstallSteps } } },
           actions.integrationApp.uninstaller.updateStep(
             1,
             'INCORRECT_FUNCTION_NAME',
@@ -683,22 +707,24 @@ describe('integrationApps reducer test cases', () => {
           installer: {},
           settings: {},
           uninstaller: {
-            '1': [
-              {
-                completed: false,
-                description: 'Delete the bank in CAM',
-                imageURL: '/images/company-logos/cashapp.png',
-                name: 'Uninstall Bank',
-                uninstallerFunction: 'uninstallConnectorComponents',
-              },
-              {
-                completed: false,
-                description: 'Delete the bundle in NetSuite',
-                imageURL: '/images/company-logos/netsuite.png',
-                name: 'Uninstall Bundle in NetSuite',
-                uninstallerFunction: 'uninstallConnectorComponents',
-              },
-            ],
+            '1': {
+              steps: [
+                {
+                  completed: false,
+                  description: 'Delete the bank in CAM',
+                  imageURL: '/images/company-logos/cashapp.png',
+                  name: 'Uninstall Bank',
+                  uninstallerFunction: 'uninstallConnectorComponents',
+                },
+                {
+                  completed: false,
+                  description: 'Delete the bundle in NetSuite',
+                  imageURL: '/images/company-logos/netsuite.png',
+                  name: 'Uninstall Bundle in NetSuite',
+                  uninstallerFunction: 'uninstallConnectorComponents',
+                },
+              ],
+            },
           },
         };
 
@@ -706,7 +732,7 @@ describe('integrationApps reducer test cases', () => {
       });
       test('should find the integration with id and reset all flags', () => {
         const state = reducer(
-          { uninstaller: { 1: uninstallSteps } },
+          { uninstaller: { 1: { steps: uninstallSteps } } },
           actions.integrationApp.uninstaller.updateStep(
             1,
             'uninstallConnectorComponents',
@@ -718,24 +744,26 @@ describe('integrationApps reducer test cases', () => {
           installer: {},
           settings: {},
           uninstaller: {
-            '1': [
-              {
-                completed: true,
-                isTriggered: false,
-                verifying: false,
-                description: 'Delete the bank in CAM',
-                imageURL: '/images/company-logos/cashapp.png',
-                name: 'Uninstall Bank',
-                uninstallerFunction: 'uninstallConnectorComponents',
-              },
-              {
-                completed: false,
-                description: 'Delete the bundle in NetSuite',
-                imageURL: '/images/company-logos/netsuite.png',
-                name: 'Uninstall Bundle in NetSuite',
-                uninstallerFunction: 'uninstallConnectorComponents',
-              },
-            ],
+            '1': {
+              steps: [
+                {
+                  completed: true,
+                  isTriggered: false,
+                  verifying: false,
+                  description: 'Delete the bank in CAM',
+                  imageURL: '/images/company-logos/cashapp.png',
+                  name: 'Uninstall Bank',
+                  uninstallerFunction: 'uninstallConnectorComponents',
+                },
+                {
+                  completed: false,
+                  description: 'Delete the bundle in NetSuite',
+                  imageURL: '/images/company-logos/netsuite.png',
+                  name: 'Uninstall Bundle in NetSuite',
+                  uninstallerFunction: 'uninstallConnectorComponents',
+                },
+              ],
+            },
           },
         };
 
@@ -746,8 +774,8 @@ describe('integrationApps reducer test cases', () => {
         const integrationId = 1;
         const initialState = {
           uninstaller: {
-            1: uninstallSteps,
-            2: uninstallSteps,
+            1: { steps: uninstallSteps },
+            2: { steps: uninstallSteps },
           },
         };
         const state = reducer(
@@ -763,40 +791,44 @@ describe('integrationApps reducer test cases', () => {
           installer: {},
           settings: {},
           uninstaller: {
-            '1': [
-              {
-                completed: true,
-                description: 'Delete the bank in CAM',
-                isTriggered: false,
-                verifying: false,
-                imageURL: '/images/company-logos/cashapp.png',
-                name: 'Uninstall Bank',
-                uninstallerFunction: 'uninstallConnectorComponents',
-              },
-              {
-                completed: false,
-                description: 'Delete the bundle in NetSuite',
-                imageURL: '/images/company-logos/netsuite.png',
-                name: 'Uninstall Bundle in NetSuite',
-                uninstallerFunction: 'uninstallConnectorComponents',
-              },
-            ],
-            '2': [
-              {
-                completed: false,
-                description: 'Delete the bank in CAM',
-                imageURL: '/images/company-logos/cashapp.png',
-                name: 'Uninstall Bank',
-                uninstallerFunction: 'uninstallConnectorComponents',
-              },
-              {
-                completed: false,
-                description: 'Delete the bundle in NetSuite',
-                imageURL: '/images/company-logos/netsuite.png',
-                name: 'Uninstall Bundle in NetSuite',
-                uninstallerFunction: 'uninstallConnectorComponents',
-              },
-            ],
+            '1': {
+              steps: [
+                {
+                  completed: true,
+                  description: 'Delete the bank in CAM',
+                  isTriggered: false,
+                  verifying: false,
+                  imageURL: '/images/company-logos/cashapp.png',
+                  name: 'Uninstall Bank',
+                  uninstallerFunction: 'uninstallConnectorComponents',
+                },
+                {
+                  completed: false,
+                  description: 'Delete the bundle in NetSuite',
+                  imageURL: '/images/company-logos/netsuite.png',
+                  name: 'Uninstall Bundle in NetSuite',
+                  uninstallerFunction: 'uninstallConnectorComponents',
+                },
+              ],
+            },
+            '2': {
+              steps: [
+                {
+                  completed: false,
+                  description: 'Delete the bank in CAM',
+                  imageURL: '/images/company-logos/cashapp.png',
+                  name: 'Uninstall Bank',
+                  uninstallerFunction: 'uninstallConnectorComponents',
+                },
+                {
+                  completed: false,
+                  description: 'Delete the bundle in NetSuite',
+                  imageURL: '/images/company-logos/netsuite.png',
+                  name: 'Uninstall Bundle in NetSuite',
+                  uninstallerFunction: 'uninstallConnectorComponents',
+                },
+              ],
+            },
           },
         };
 
@@ -819,22 +851,24 @@ describe('integrationApps reducer test cases', () => {
           installer: {},
           settings: {},
           uninstaller: {
-            '2': [
-              {
-                completed: false,
-                description: 'Delete the bank in CAM',
-                imageURL: '/images/company-logos/cashapp.png',
-                name: 'Uninstall Bank',
-                uninstallerFunction: 'uninstallConnectorComponents',
-              },
-              {
-                completed: false,
-                description: 'Delete the bundle in NetSuite',
-                imageURL: '/images/company-logos/netsuite.png',
-                name: 'Uninstall Bundle in NetSuite',
-                uninstallerFunction: 'uninstallConnectorComponents',
-              },
-            ],
+            '2': {
+              steps: [
+                {
+                  completed: false,
+                  description: 'Delete the bank in CAM',
+                  imageURL: '/images/company-logos/cashapp.png',
+                  name: 'Uninstall Bank',
+                  uninstallerFunction: 'uninstallConnectorComponents',
+                },
+                {
+                  completed: false,
+                  description: 'Delete the bundle in NetSuite',
+                  imageURL: '/images/company-logos/netsuite.png',
+                  name: 'Uninstall Bundle in NetSuite',
+                  uninstallerFunction: 'uninstallConnectorComponents',
+                },
+              ],
+            },
           },
         };
 
@@ -842,7 +876,7 @@ describe('integrationApps reducer test cases', () => {
       });
       test('should not affect other integrations when new integration uninstall steps are received', () => {
         const state = reducer(
-          { uninstaller: { 1: uninstallSteps } },
+          { uninstaller: { 1: { steps: uninstallSteps } } },
           actions.integrationApp.uninstaller.receivedUninstallSteps(
             uninstallSteps,
             'STOREID',
@@ -854,38 +888,42 @@ describe('integrationApps reducer test cases', () => {
           installer: {},
           settings: {},
           uninstaller: {
-            '1': [
-              {
-                completed: false,
-                description: 'Delete the bank in CAM',
-                imageURL: '/images/company-logos/cashapp.png',
-                name: 'Uninstall Bank',
-                uninstallerFunction: 'uninstallConnectorComponents',
-              },
-              {
-                completed: false,
-                description: 'Delete the bundle in NetSuite',
-                imageURL: '/images/company-logos/netsuite.png',
-                name: 'Uninstall Bundle in NetSuite',
-                uninstallerFunction: 'uninstallConnectorComponents',
-              },
-            ],
-            '2': [
-              {
-                completed: false,
-                description: 'Delete the bank in CAM',
-                imageURL: '/images/company-logos/cashapp.png',
-                name: 'Uninstall Bank',
-                uninstallerFunction: 'uninstallConnectorComponents',
-              },
-              {
-                completed: false,
-                description: 'Delete the bundle in NetSuite',
-                imageURL: '/images/company-logos/netsuite.png',
-                name: 'Uninstall Bundle in NetSuite',
-                uninstallerFunction: 'uninstallConnectorComponents',
-              },
-            ],
+            '1': {
+              steps: [
+                {
+                  completed: false,
+                  description: 'Delete the bank in CAM',
+                  imageURL: '/images/company-logos/cashapp.png',
+                  name: 'Uninstall Bank',
+                  uninstallerFunction: 'uninstallConnectorComponents',
+                },
+                {
+                  completed: false,
+                  description: 'Delete the bundle in NetSuite',
+                  imageURL: '/images/company-logos/netsuite.png',
+                  name: 'Uninstall Bundle in NetSuite',
+                  uninstallerFunction: 'uninstallConnectorComponents',
+                },
+              ],
+            },
+            '2': {
+              steps: [
+                {
+                  completed: false,
+                  description: 'Delete the bank in CAM',
+                  imageURL: '/images/company-logos/cashapp.png',
+                  name: 'Uninstall Bank',
+                  uninstallerFunction: 'uninstallConnectorComponents',
+                },
+                {
+                  completed: false,
+                  description: 'Delete the bundle in NetSuite',
+                  imageURL: '/images/company-logos/netsuite.png',
+                  name: 'Uninstall Bundle in NetSuite',
+                  uninstallerFunction: 'uninstallConnectorComponents',
+                },
+              ],
+            },
           },
         };
 
@@ -893,7 +931,7 @@ describe('integrationApps reducer test cases', () => {
       });
       test('should not affect the state new integration uninstall steps are received and no integrationId is passed', () => {
         const state = reducer(
-          { uninstaller: { 1: uninstallSteps } },
+          { uninstaller: { 1: { steps: uninstallSteps } } },
           actions.integrationApp.uninstaller.receivedUninstallSteps(
             uninstallSteps,
             'STOREID',
@@ -905,22 +943,24 @@ describe('integrationApps reducer test cases', () => {
           installer: {},
           settings: {},
           uninstaller: {
-            '1': [
-              {
-                completed: false,
-                description: 'Delete the bank in CAM',
-                imageURL: '/images/company-logos/cashapp.png',
-                name: 'Uninstall Bank',
-                uninstallerFunction: 'uninstallConnectorComponents',
-              },
-              {
-                completed: false,
-                description: 'Delete the bundle in NetSuite',
-                imageURL: '/images/company-logos/netsuite.png',
-                name: 'Uninstall Bundle in NetSuite',
-                uninstallerFunction: 'uninstallConnectorComponents',
-              },
-            ],
+            '1': {
+              steps: [
+                {
+                  completed: false,
+                  description: 'Delete the bank in CAM',
+                  imageURL: '/images/company-logos/cashapp.png',
+                  name: 'Uninstall Bank',
+                  uninstallerFunction: 'uninstallConnectorComponents',
+                },
+                {
+                  completed: false,
+                  description: 'Delete the bundle in NetSuite',
+                  imageURL: '/images/company-logos/netsuite.png',
+                  name: 'Uninstall Bundle in NetSuite',
+                  uninstallerFunction: 'uninstallConnectorComponents',
+                },
+              ],
+            },
           },
         };
 
@@ -928,7 +968,7 @@ describe('integrationApps reducer test cases', () => {
       });
       test('should not affect the state new integration uninstall steps are received and no integrationId is passed', () => {
         const state = reducer(
-          { uninstaller: { 1: uninstallSteps } },
+          { uninstaller: { 1: { steps: uninstallSteps } } },
           actions.integrationApp.uninstaller.receivedUninstallSteps(
             undefined,
             'STOREID',
@@ -940,22 +980,27 @@ describe('integrationApps reducer test cases', () => {
           installer: {},
           settings: {},
           uninstaller: {
-            '1': [
-              {
-                completed: false,
-                description: 'Delete the bank in CAM',
-                imageURL: '/images/company-logos/cashapp.png',
-                name: 'Uninstall Bank',
-                uninstallerFunction: 'uninstallConnectorComponents',
-              },
-              {
-                completed: false,
-                description: 'Delete the bundle in NetSuite',
-                imageURL: '/images/company-logos/netsuite.png',
-                name: 'Uninstall Bundle in NetSuite',
-                uninstallerFunction: 'uninstallConnectorComponents',
-              },
-            ],
+            '1': {
+              steps: [
+                {
+                  completed: false,
+                  description: 'Delete the bank in CAM',
+                  imageURL: '/images/company-logos/cashapp.png',
+                  name: 'Uninstall Bank',
+                  uninstallerFunction: 'uninstallConnectorComponents',
+                },
+                {
+                  completed: false,
+                  description: 'Delete the bundle in NetSuite',
+                  imageURL: '/images/company-logos/netsuite.png',
+                  name: 'Uninstall Bundle in NetSuite',
+                  uninstallerFunction: 'uninstallConnectorComponents',
+                },
+              ],
+            },
+            2: {
+              steps: undefined,
+            },
           },
         };
 
@@ -980,7 +1025,7 @@ describe('integrationApps reducer test cases', () => {
 
       test('should update the uninstaller state and remove the integrationId if found', () => {
         const state = reducer(
-          { uninstaller: { 1: uninstallSteps } },
+          { uninstaller: { 1: { steps: uninstallSteps } } },
           actions.integrationApp.uninstaller.clearSteps(1)
         );
         const expectedValue = {
@@ -994,7 +1039,12 @@ describe('integrationApps reducer test cases', () => {
       });
       test('should not affect other integrations when clearSteps is called on one integration', () => {
         const state = reducer(
-          { uninstaller: { 1: uninstallSteps, 2: uninstallSteps } },
+          {
+            uninstaller: {
+              1: { steps: uninstallSteps },
+              2: { steps: uninstallSteps },
+            },
+          },
           actions.integrationApp.uninstaller.clearSteps(2)
         );
         const expectedValue = {
@@ -1002,22 +1052,24 @@ describe('integrationApps reducer test cases', () => {
           installer: {},
           settings: {},
           uninstaller: {
-            '1': [
-              {
-                completed: false,
-                description: 'Delete the bank in CAM',
-                imageURL: '/images/company-logos/cashapp.png',
-                name: 'Uninstall Bank',
-                uninstallerFunction: 'uninstallConnectorComponents',
-              },
-              {
-                completed: false,
-                description: 'Delete the bundle in NetSuite',
-                imageURL: '/images/company-logos/netsuite.png',
-                name: 'Uninstall Bundle in NetSuite',
-                uninstallerFunction: 'uninstallConnectorComponents',
-              },
-            ],
+            '1': {
+              steps: [
+                {
+                  completed: false,
+                  description: 'Delete the bank in CAM',
+                  imageURL: '/images/company-logos/cashapp.png',
+                  name: 'Uninstall Bank',
+                  uninstallerFunction: 'uninstallConnectorComponents',
+                },
+                {
+                  completed: false,
+                  description: 'Delete the bundle in NetSuite',
+                  imageURL: '/images/company-logos/netsuite.png',
+                  name: 'Uninstall Bundle in NetSuite',
+                  uninstallerFunction: 'uninstallConnectorComponents',
+                },
+              ],
+            },
           },
         };
 
@@ -1025,7 +1077,7 @@ describe('integrationApps reducer test cases', () => {
       });
       test('should not affect the state when clearSteps is called and no integrationId is passed', () => {
         const state = reducer(
-          { uninstaller: { 1: uninstallSteps } },
+          { uninstaller: { 1: { steps: uninstallSteps } } },
           actions.integrationApp.uninstaller.clearSteps()
         );
         const expectedValue = {
@@ -1033,22 +1085,24 @@ describe('integrationApps reducer test cases', () => {
           settings: {},
           installer: {},
           uninstaller: {
-            '1': [
-              {
-                completed: false,
-                description: 'Delete the bank in CAM',
-                imageURL: '/images/company-logos/cashapp.png',
-                name: 'Uninstall Bank',
-                uninstallerFunction: 'uninstallConnectorComponents',
-              },
-              {
-                completed: false,
-                description: 'Delete the bundle in NetSuite',
-                imageURL: '/images/company-logos/netsuite.png',
-                name: 'Uninstall Bundle in NetSuite',
-                uninstallerFunction: 'uninstallConnectorComponents',
-              },
-            ],
+            '1': {
+              steps: [
+                {
+                  completed: false,
+                  description: 'Delete the bank in CAM',
+                  imageURL: '/images/company-logos/cashapp.png',
+                  name: 'Uninstall Bank',
+                  uninstallerFunction: 'uninstallConnectorComponents',
+                },
+                {
+                  completed: false,
+                  description: 'Delete the bundle in NetSuite',
+                  imageURL: '/images/company-logos/netsuite.png',
+                  name: 'Uninstall Bundle in NetSuite',
+                  uninstallerFunction: 'uninstallConnectorComponents',
+                },
+              ],
+            },
           },
         };
 

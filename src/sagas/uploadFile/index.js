@@ -1,8 +1,7 @@
-import { call, takeEvery, select, put } from 'redux-saga/effects';
+import { call, takeEvery, put } from 'redux-saga/effects';
 import actionTypes from '../../actions/types';
 import actions from '../../actions';
 import { apiCallWithRetry } from '../index';
-import { userProfile } from '../../reducers';
 
 export function* uploadFile({
   resourceType,
@@ -14,10 +13,9 @@ export function* uploadFile({
   const path =
     uploadPath ||
     `/${resourceType}/${resourceId}/upload/signedURL?file_type=${fileType}`;
-  let response;
 
   try {
-    response = yield call(apiCallWithRetry, {
+    const response = yield call(apiCallWithRetry, {
       path,
       message: 'Getting signed URL for file upload',
     });
@@ -46,9 +44,8 @@ export function* uploadRawData({
 
   try {
     const runKey = yield call(uploadFile, { file, fileType, uploadPath });
-    const profile = yield select(userProfile);
 
-    return profile._id + runKey;
+    return runKey;
   } catch (e) {
     // @TODO handle error
   }

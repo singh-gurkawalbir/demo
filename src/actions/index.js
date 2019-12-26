@@ -526,6 +526,12 @@ const integrationApp = {
         id,
         storeId,
       }),
+    failedUninstallSteps: (id, error, storeId) =>
+      action(actionTypes.INTEGRATION_APPS.UNINSTALLER.FAILED_UNINSTALL_STEPS, {
+        id,
+        error,
+        storeId,
+      }),
     uninstallIntegration: integrationId =>
       action(actionTypes.INTEGRATION_APPS.UNINSTALLER.DELETE_INTEGRATION, {
         integrationId,
@@ -813,14 +819,10 @@ const editor = {
 // #endregion
 // #region Mapping actions
 const mapping = {
-  init: (id, mappings, lookups, adaptorType, application, generateFields) =>
+  init: ({ id, options }) =>
     action(actionTypes.MAPPING.INIT, {
       id,
-      mappings,
-      lookups,
-      adaptorType,
-      application,
-      generateFields,
+      options,
     }),
   patchField: (id, field, index, value) =>
     action(actionTypes.MAPPING.PATCH_FIELD, { id, field, index, value }),

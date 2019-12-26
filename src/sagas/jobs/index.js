@@ -123,6 +123,7 @@ export function* requestJobCollection({ integrationId, flowId, filters = {} }) {
   }
 
   delete jobFilters.storeId;
+  delete jobFilters.refreshAt;
 
   switch (jobFilters.status) {
     case 'all':

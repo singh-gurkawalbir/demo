@@ -52,6 +52,8 @@ function MappingDrawer() {
     application,
     generateFields,
     visible: showMappings,
+    resource,
+    isGroupedSampleData,
   } = useSelector(state => selectors.mapping(state, mappingEditorId));
   const [enqueueSnackbar] = useEnqueueSnackbar();
   const handleClose = useCallback(() => {
@@ -90,6 +92,8 @@ function MappingDrawer() {
         mappings: mappingConfig,
         generateFields,
         appType: application,
+        isGroupedSampleData,
+        resource,
       });
 
       if (!mappingConfig) return;
@@ -122,8 +126,10 @@ function MappingDrawer() {
       generateFields,
       handleClose,
       importId,
+      isGroupedSampleData,
       lookups,
       mappings,
+      resource,
     ]
   );
 

@@ -15,7 +15,6 @@ import { getResource, commitStagedChanges } from '../resources';
 import connectionSagas from '../resourceForm/connections';
 import { requestAssistantMetadata } from '../resources/meta';
 import { isNewId } from '../../utils/resource';
-import { uploadRawData } from '../uploadFile';
 import patchTransformationRulesForXMLResource from '../sampleData/utils/xmlTransformationRulesGenerator';
 
 export const SCOPES = {
@@ -170,18 +169,6 @@ export function* createFormValuesPatchSet({
   // console.log('patch set', patchSet);
 
   return { patchSet, finalValues };
-}
-
-export function* saveRawData({ values }) {
-  const rawData = values['/rawData'];
-
-  if (!rawData) return values;
-
-  const rawDataKey = yield call(uploadRawData, {
-    file: JSON.stringify(rawData),
-  });
-
-  return { ...values, '/rawData': rawDataKey };
 }
 
 export function* submitFormValues({ resourceType, resourceId, values, match }) {

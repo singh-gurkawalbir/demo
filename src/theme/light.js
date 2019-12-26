@@ -373,6 +373,9 @@ export default {
     MuiFormLabel: {
       root: {
         fontFamily: 'source sans pro',
+        '&$disabled': {
+          color: colors.celigoNeutral6,
+        },
       },
     },
     MuiFilledInput: {
@@ -439,6 +442,7 @@ export default {
         fontSize: '15px',
         '&$disabled': {
           background: colors.celigoNeutral3,
+          color: colors.celigoNeutral6,
         },
       },
       input: {
@@ -506,6 +510,11 @@ export default {
     MuiTabs: {
       root: {
         minHeight: 36,
+      },
+    },
+    MuiListSubheader: {
+      gutters: {
+        fontFamily: 'Roboto500',
       },
     },
     MuiTab: {

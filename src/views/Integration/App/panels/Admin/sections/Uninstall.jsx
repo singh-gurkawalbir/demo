@@ -40,14 +40,12 @@ export default function UninstallSection({ storeId, integrationId }) {
     useSelector(state =>
       selectors.integrationAppSettings(state, integrationId)
     ) || {};
-  const uninstallSteps = useSelector(state =>
+  const { steps: uninstallSteps } = useSelector(state =>
     selectors.integrationUninstallSteps(state, integrationId)
   );
 
   useEffect(() => {
     if (uninstallSteps && uninstallSteps.length) {
-      dispatch(actions.resource.request('integrations', integrationId));
-
       if (integration.settings && integration.settings.supportsMultiStore) {
         history.push(`/pg/connectors/${integrationId}/uninstall/${storeId}`);
       } else {
