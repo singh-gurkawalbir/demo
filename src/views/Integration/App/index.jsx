@@ -128,6 +128,7 @@ export default function IntegrationApp({ match, history }) {
     if (redirectTo) {
       const path = generatePath(match.path, {
         integrationId,
+        integrationAppName,
         storeId,
         tab: redirectTo,
       });
@@ -135,7 +136,15 @@ export default function IntegrationApp({ match, history }) {
       dispatch(actions.integrationApp.settings.clearRedirect(integrationId));
       history.push(path);
     }
-  }, [dispatch, history, integrationId, match.path, redirectTo, storeId]);
+  }, [
+    dispatch,
+    history,
+    integrationAppName,
+    integrationId,
+    match.path,
+    redirectTo,
+    storeId,
+  ]);
 
   const hasAddOns =
     addOnState &&
