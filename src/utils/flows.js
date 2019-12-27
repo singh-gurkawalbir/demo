@@ -10,6 +10,7 @@ export const actionsMap = {
   responseTransformation: 'responseTransformation',
   hooks: 'hooks',
   responseMapping: 'responseMapping',
+  postResponseMap: 'postResponseMap',
   outputFilter: 'outputFilter',
   proceedOnFailure: 'proceedOnFailure',
   schedule: 'schedule',
@@ -20,6 +21,7 @@ const exportActions = [
   actionsMap.hooks,
   actionsMap.outputFilter,
   actionsMap.responseMapping,
+  actionsMap.postResponseMap,
   actionsMap.proceedOnFailure,
   actionsMap.schedule,
 ];
@@ -31,6 +33,7 @@ const importActions = [
   actionsMap.hooks,
   actionsMap.outputFilter,
   actionsMap.responseMapping,
+  actionsMap.postResponseMap,
   actionsMap.proceedOnFailure,
 ];
 const isActionUsed = (resource, flowNode, action) => {
@@ -44,6 +47,7 @@ const isActionUsed = (resource, flowNode, action) => {
   } = resource;
   const {
     responseMapping = {},
+    hooks: pageProcessorHooks = {},
     proceedOnFailure,
     schedule,
     _keepDeltaBehindFlowId,
@@ -98,6 +102,12 @@ const isActionUsed = (resource, flowNode, action) => {
 
       return !!(fields.length || lists.length);
     }
+
+    case actionsMap.postResponseMap:
+      return !!(
+        pageProcessorHooks.postResponseMap &&
+        pageProcessorHooks.postResponseMap._scriptId
+      );
 
     case actionsMap.outputFilter:
       return !!(filter.rules && filter.rules.length);
