@@ -21,10 +21,13 @@ const useStyles = makeStyles(theme => ({
   content: {
     borderTop: `solid 1px ${theme.palette.secondary.lightest}`,
     overflow: 'auto',
-    maxHeight: `calc(100vh - 180px)`,
+
     padding: theme.spacing(3),
     paddingTop: theme.spacing(1),
     marginBottom: theme.spacing(1),
+    '& > div:first-child': {
+      height: `calc(100vh - 180px)`,
+    },
   },
 }));
 

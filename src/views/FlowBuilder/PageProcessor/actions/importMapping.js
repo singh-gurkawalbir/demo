@@ -26,7 +26,7 @@ const useStyles = makeStyles(theme => ({
   },
   mappingContainer: {
     overflow: 'auto',
-    maxHeight: `calc(100vh - 180px)`,
+    height: `calc(100vh - 180px)`,
     padding: theme.spacing(3),
     paddingTop: theme.spacing(1),
     marginBottom: theme.spacing(1),
