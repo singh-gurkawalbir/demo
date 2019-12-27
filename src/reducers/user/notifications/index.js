@@ -39,24 +39,30 @@ export default (state = defaultState, action) => {
 export function userNotifications(state) {
   const notifications = [];
 
-  state.accounts.forEach(s => {
-    notifications.push({
-      id: s._id,
-      type: 'account',
-      primaryMessage: s.ownerUser.name || s.ownerUser.company,
-      secondaryMessage: `${s.ownerUser.email} is inviting you to join their account. Please accept or decline this invitation.`,
-    });
-  });
+  if (!state) {
+    return notifications;
+  }
 
-  state.stacks.forEach(s => {
-    notifications.push({
-      id: s._id,
-      type: 'stack',
-      primaryMessage: s.ownerUser.name || s.ownerUser.company,
-      secondaryMessage: `${s.ownerUser.email} is shared a stack "${s.stack
-        .name || s.stack._id}" with you. Please accept or decline this.`,
+  state.accounts &&
+    state.accounts.forEach(s => {
+      notifications.push({
+        id: s._id,
+        type: 'account',
+        primaryMessage: s.ownerUser.name || s.ownerUser.company,
+        secondaryMessage: `${s.ownerUser.email} is inviting you to join their account. Please accept or decline this invitation.`,
+      });
     });
-  });
+
+  state.stacks &&
+    state.stacks.forEach(s => {
+      notifications.push({
+        id: s._id,
+        type: 'stack',
+        primaryMessage: s.ownerUser.name || s.ownerUser.company,
+        secondaryMessage: `${s.ownerUser.email} is shared a stack "${s.stack
+          .name || s.stack._id}" with you. Please accept or decline this.`,
+      });
+    });
 
   return notifications;
 }
