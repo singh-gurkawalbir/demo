@@ -1,4 +1,4 @@
-import { isNewId } from '../../../utils/resource';
+import { isNewId } from '../../../../utils/resource';
 
 export default {
   preSave: formValues => {
@@ -44,7 +44,6 @@ export default {
 
     if (!retValues['/rest/successValues'].length) {
       retValues['/rest/successValues'] = undefined;
-      retValues['/rest/successPath'] = undefined;
     }
 
     if (retValues['/outputMode'] === 'blob') {

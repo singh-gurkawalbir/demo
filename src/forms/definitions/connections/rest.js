@@ -116,6 +116,7 @@ export default {
       formId: 'restBasic',
       visibleWhenAll: [{ field: 'rest.authType', is: ['basic'] }],
     },
+    'rest.disableStrictSSL': { fieldId: 'rest.disableStrictSSL' },
     restToken: {
       formId: 'restToken',
       visibleWhenAll: [{ field: 'rest.authType', is: ['token'] }],
@@ -162,7 +163,11 @@ export default {
           'rest.pingSuccessValues',
         ],
       },
-      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+      {
+        collapsed: true,
+        label: 'Advanced Settings',
+        fields: ['rest.disableStrictSSL', 'restAdvanced'],
+      },
     ],
   },
 };
