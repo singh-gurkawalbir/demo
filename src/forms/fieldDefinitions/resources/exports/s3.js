@@ -36,6 +36,7 @@ export default {
           { label: 'Canada (Central) [ca-central-1]', value: 'ca-central-1' },
           { label: 'Asia Pacific (Mumbai) [ap-south-1]', value: 'ap-south-1' },
           { label: 'EU (London) [eu-west-2]', value: 'eu-west-2' },
+          { label: 'EU (Stockholm) [eu-north-1]', value: 'eu-north-1' },
         ],
       },
     ],

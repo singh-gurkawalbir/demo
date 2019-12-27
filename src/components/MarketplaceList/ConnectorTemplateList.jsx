@@ -136,7 +136,7 @@ export default function ConnectorTemplateList(props) {
           <Card key={connector._id} className={classes.card} elevation={0}>
             <ConnectorTemplateContent
               resource={connector}
-              title="SmartConnector"
+              title="Integration App"
               application={application}
               type="connector"
             />
@@ -165,7 +165,7 @@ export default function ConnectorTemplateList(props) {
           <Card key={template._id} className={classes.card} elevation={0}>
             <ConnectorTemplateContent
               resource={template}
-              title="Template"
+              title="QuickStart Templates"
               application={application}
               type="template"
             />
