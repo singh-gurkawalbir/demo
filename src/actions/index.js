@@ -685,9 +685,6 @@ const user = {
         action(actionTypes.LICENSE_UPGRADE_REQUEST, {}),
       licenseUpgradeRequestSubmitted: message =>
         action(actionTypes.LICENSE_UPGRADE_REQUEST_SUBMITTED, { message }),
-      acceptInvite: id => action(actionTypes.ACCOUNT_INVITE_ACCEPT, { id }),
-      acceptedInvite: id => action(actionTypes.ACCOUNT_INVITE_ACCEPTED, { id }),
-      rejectInvite: id => action(actionTypes.ACCOUNT_INVITE_REJECT, { id }),
       leave: id => action(actionTypes.ACCOUNT_LEAVE_REQUEST, { id }),
       switchTo: ({ id }) => action(actionTypes.ACCOUNT_SWITCH, { id }),
     },
@@ -696,6 +693,14 @@ const user = {
     request: message => resource.request('preferences', undefined, message),
     update: preferences =>
       action(actionTypes.UPDATE_PREFERENCES, { preferences }),
+  },
+  sharedNotifications: {
+    acceptInvite: (resourceType, id) =>
+      action(actionTypes.SHARED_NOTIFICATION_ACCEPT, { resourceType, id }),
+    acceptedInvite: id =>
+      action(actionTypes.SHARED_NOTIFICATION_ACCEPTED, { id }),
+    rejectInvite: (resourceType, id) =>
+      action(actionTypes.SHARED_NOTIFICATION_REJECT, { resourceType, id }),
   },
 };
 const sampleData = {
