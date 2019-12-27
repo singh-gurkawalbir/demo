@@ -65,9 +65,7 @@ export default function DynaTable(props) {
       )}
       {tableType === 'staticMap' && <DynaStaticMap {...props} />}
       {tableType === 'staticMapWidget' && <DynaStaticMapWidget {...props} />}
-      {tableType === 'generic' && (
-        <DynaTableView collapsable {...updatedProps} />
-      )}
+      {tableType === 'generic' && <DynaTableView {...updatedProps} />}
     </LoadResources>
   );
 }
