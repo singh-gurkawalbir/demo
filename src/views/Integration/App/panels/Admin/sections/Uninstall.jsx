@@ -101,8 +101,8 @@ export default function UninstallSection({ storeId, integrationId }) {
         </Typography>
         <Divider className={classes.divider} />
         <Typography variant="h5">
-          Once you uninstall this connector there is no going back. Please be
-          certain.
+          Once you uninstall this Integration App there is no going back. Please
+          be certain.
         </Typography>
         <Button
           data-test="uninstallConnector"
