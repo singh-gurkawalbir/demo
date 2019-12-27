@@ -10,6 +10,18 @@ export default {
       retValues['/delta'] = undefined;
       retValues['/once'] = undefined;
       delete retValues['/test/limit'];
+      delete retValues['/delta/dateFormat'];
+      delete retValues['/delta/lagOffset'];
+      delete retValues['/once/booleanField'];
+      delete retValues['/rest/once/relativeURI'];
+      delete retValues['/rest/once/postBody'];
+      delete retValues['/rest/once/method'];
+    } else if (retValues['/type'] === 'test') {
+      retValues['/test/limit'] = 1;
+      retValues['/delta'] = undefined;
+      retValues['/once'] = undefined;
+      delete retValues['/delta/dateFormat'];
+      delete retValues['/delta/lagOffset'];
       delete retValues['/once/booleanField'];
       delete retValues['/rest/once/relativeURI'];
       delete retValues['/rest/once/postBody'];
