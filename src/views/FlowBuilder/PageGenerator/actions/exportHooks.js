@@ -1,23 +1,41 @@
 import { useCallback, Fragment } from 'react';
 import { useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
+import Drawer from '@material-ui/core/Drawer';
 import Icon from '../../../../components/icons/HookIcon';
 import actions from '../../../../actions';
+import DrawerTitleBar from '../../../../components/drawer/TitleBar';
 import Hooks from '../../../../components/Hooks';
 import helpTextMap from '../../../../components/Help/helpTextMap';
-import ModalDialog from '../../../../components/ModalDialog';
 import {
   getSelectedHooksPatchSet,
   getDefaultValuesForHooks,
 } from '../../../../utils/hooks';
 
-const useStyles = makeStyles(() => ({
-  wrapper: {
-    minWidth: 580,
+const useStyles = makeStyles(theme => ({
+  drawerPaper: {
+    marginTop: theme.appBarHeight,
+    width: 600,
+    border: 'solid 1px',
+    borderColor: theme.palette.secondary.lightest,
+    boxShadow: `-4px 4px 8px rgba(0,0,0,0.15)`,
+    backgroundColor: theme.palette.background.white,
+    zIndex: theme.zIndex.drawer + 1,
+  },
+  content: {
+    borderTop: `solid 1px ${theme.palette.secondary.lightest}`,
+    overflow: 'auto',
+
+    padding: theme.spacing(3),
+    paddingTop: theme.spacing(1),
+    marginBottom: theme.spacing(1),
+    '& > div:first-child': {
+      height: `calc(100vh - 180px)`,
+    },
   },
 }));
 
-function HooksDialog({ flowId, isViewMode, resource, open, onClose }) {
+function HooksDialog({ flowId, isViewMode, resource, onClose }) {
   const dispatch = useDispatch();
   const classes = useStyles();
   const resourceId = resource._id;
@@ -37,8 +55,13 @@ function HooksDialog({ flowId, isViewMode, resource, open, onClose }) {
   );
 
   return (
-    <ModalDialog show={open} onClose={onClose} disabled={isViewMode}>
-      <div className={classes.wrapper}>Hooks</div>
+    <Drawer
+      anchor="right"
+      classes={{
+        paper: classes.drawerPaper,
+      }}
+      open>
+      <DrawerTitleBar onClose={() => onClose(false)} title="Hooks" />
       <Hooks
         onSave={handleSave}
         onCancel={onClose}
@@ -48,7 +71,7 @@ function HooksDialog({ flowId, isViewMode, resource, open, onClose }) {
         resourceId={resourceId}
         resourceType={resourceType}
       />
-    </ModalDialog>
+    </Drawer>
   );
 }
 
