@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import Typography from '@material-ui/core/Typography';
+import { Typography, Tooltip } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import actions from '../../../actions';
@@ -282,9 +282,13 @@ export default function ImportMapping(props) {
                   onBlur={handleGenerateUpdate(mapping)}
                 />
                 {mapping.isRequired && (
-                  <span className={classes.lockIcon}>
-                    <LockIcon />
-                  </span>
+                  <Tooltip
+                    title="This field is required by the application you are importing to"
+                    placement="top">
+                    <span className={classes.lockIcon}>
+                      <LockIcon />
+                    </span>
+                  </Tooltip>
                 )}
               </div>
               <div>
