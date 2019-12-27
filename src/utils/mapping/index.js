@@ -576,7 +576,7 @@ export default {
     return mappings;
   },
 
-  validateMappings: mappings => {
+  validateMappings: (mappings, lookups) => {
     const duplicateMappings = mappings
       .map(e => e.generate)
       .map((e, i, final) => final.indexOf(e) !== i && i)
@@ -592,18 +592,33 @@ export default {
       };
     }
 
-    const mappingsWithoutExtract = mappings
-      .filter(mapping => {
-        if (!('hardCodedValue' in mapping || mapping.extract)) return true;
+    const mappingsWithoutExtract = mappings.filter(mapping => {
+      if (!('hardCodedValue' in mapping || mapping.extract)) return true;
 
-        return false;
-      })
-      .map(mapping => mapping.generate);
+      return false;
+    });
+    const missingGenerates = [];
 
-    if (mappingsWithoutExtract.length) {
+    mappingsWithoutExtract.forEach(mapping => {
+      if (mapping.lookupName) {
+        const lookup = lookups.find(l => l.name === mapping.lookupName);
+
+        // check if mapping has dynamic lookup
+        if (!lookup || lookup.map) {
+          missingGenerates.push(mapping);
+        }
+      } else {
+        missingGenerates.push(mapping);
+      }
+    });
+    const missingGeneratesNames = missingGenerates.map(
+      mapping => mapping.generate
+    );
+
+    if (missingGeneratesNames.length) {
       return {
         isSuccess: false,
-        errMessage: `Extract Fields missing for field(s): ${mappingsWithoutExtract.join(
+        errMessage: `Extract Fields missing for field(s): ${missingGeneratesNames.join(
           ','
         )}`,
       };

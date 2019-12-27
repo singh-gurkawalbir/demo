@@ -67,7 +67,7 @@ export default function reducer(state = {}, action) {
         const {
           isSuccess,
           errMessage: validationErrMsg,
-        } = mappingUtil.validateMappings(draft[id].mappings);
+        } = mappingUtil.validateMappings(draft[id].mappings, draft[id].lookups);
 
         draft[id].validationErrMsg = isSuccess ? undefined : validationErrMsg;
 
@@ -155,7 +155,7 @@ export default function reducer(state = {}, action) {
         const {
           isSuccess,
           errMessage: validationErrMsg,
-        } = mappingUtil.validateMappings(draft[id].mappings);
+        } = mappingUtil.validateMappings(draft[id].mappings, draft[id].lookups);
 
         draft[id].validationErrMsg = isSuccess ? undefined : validationErrMsg;
 
@@ -213,15 +213,26 @@ export default function reducer(state = {}, action) {
           const {
             isSuccess,
             errMessage: validationErrMsg,
-          } = mappingUtil.validateMappings(draft[id].mappings);
+          } = mappingUtil.validateMappings(
+            draft[id].mappings,
+            draft[id].lookups
+          );
 
           draft[id].validationErrMsg = isSuccess ? undefined : validationErrMsg;
         }
 
         break;
-      case actionTypes.MAPPING.UPDATE_LOOKUP:
+      case actionTypes.MAPPING.UPDATE_LOOKUP: {
         draft[id].lookups = lookups;
+        const {
+          isSuccess,
+          errMessage: validationErrMsg,
+        } = mappingUtil.validateMappings(draft[id].mappings, draft[id].lookups);
+
+        draft[id].validationErrMsg = isSuccess ? undefined : validationErrMsg;
         break;
+      }
+
       case actionTypes.MAPPING.SET_VISIBILITY:
         if (draft[id]) draft[id].visible = value;
         break;
