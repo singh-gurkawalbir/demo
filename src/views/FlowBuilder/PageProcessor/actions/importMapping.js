@@ -25,11 +25,14 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(0, 0, 0, 3),
   },
   mappingContainer: {
-    overflow: 'auto',
+    // overflow: 'auto',
     height: `calc(100vh - 180px)`,
-    padding: theme.spacing(3),
-    paddingTop: theme.spacing(1),
+    padding: theme.spacing(1),
+    paddingBottom: theme.spacing(3),
     marginBottom: theme.spacing(1),
+  },
+  buttonGroup: {
+    '& button': { marginRight: theme.spacing(1) },
   },
 }));
 
@@ -68,7 +71,7 @@ function ImportMapping({
               />
             </div>
             {showMappings && (
-              <ButtonGroup>
+              <ButtonGroup className={classes.buttonGroup}>
                 <MappingSaveButton
                   disabled={isMonitorLevelAccess}
                   id={mappingEditorId}

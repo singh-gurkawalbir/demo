@@ -21,6 +21,7 @@ import LockIcon from '../../icons/LockIcon';
 const useStyles = makeStyles(theme => ({
   root: {
     overflowY: 'off',
+    height: '100%',
   },
   header: {
     display: 'grid',
@@ -46,9 +47,13 @@ const useStyles = makeStyles(theme => ({
   innerRow: {
     display: 'grid',
     width: '100%',
-    gridTemplateColumns: '45% 45% 50px 50px',
+    gridTemplateColumns: '40% 40% 50px 50px',
     marginBottom: theme.spacing(1),
     gridColumnGap: '1%',
+  },
+  mappingsBody: {
+    height: `calc(100% - 32px)`,
+    overflow: 'auto',
   },
   childRow: {
     display: 'flex',
@@ -198,131 +203,128 @@ export default function ImportMapping(props) {
     <div
       className={classes.root}
       key={`mapping-${editorId}-${initChangeIdentifier}`}>
-      <div>
-        <div className={classes.header}>
-          <Typography variant="h5" className={classes.childHeader}>
-            Source Record Field
-            {!isExtractsLoading && (
-              <RefreshButton
-                disabled={disabled}
-                onClick={refreshExtractFields}
-                data-test="refreshExtracts"
-              />
-            )}
-            {isExtractsLoading && (
-              <span className={classes.spinner}>
-                <Spinner size={24} color="primary" />
-              </span>
-            )}
-          </Typography>
+      <div className={classes.header}>
+        <Typography variant="h5" className={classes.childHeader}>
+          Source Record Field
+          {!isExtractsLoading && (
+            <RefreshButton
+              disabled={disabled}
+              onClick={refreshExtractFields}
+              data-test="refreshExtracts"
+            />
+          )}
+          {isExtractsLoading && (
+            <span className={classes.spinner}>
+              <Spinner size={24} color="primary" />
+            </span>
+          )}
+        </Typography>
 
-          <Typography variant="h5" className={classes.childHeader}>
-            {generateLabel}
-            {isGenerateRefreshSupported && !isGeneratesLoading && (
-              <RefreshButton
-                disabled={disabled}
-                onClick={refreshGenerateFields}
-                data-test="refreshGenerates"
-              />
-            )}
-            {isGeneratesLoading && (
-              <span className={classes.spinner}>
-                <Spinner size={24} color="primary" />
-              </span>
-            )}
-          </Typography>
-        </div>
-        <div>
-          {tableData.map(mapping => (
-            <div className={classes.rowContainer} key={mapping.index}>
-              <div className={classes.innerRow}>
-                <div
-                  className={clsx(classes.childHeader, classes.childRow, {
-                    [classes.disableChildRow]:
-                      mapping.isNotEditable || disabled,
-                  })}>
-                  <DynaTypeableSelect
-                    key={`extract-${editorId}-${initChangeIdentifier}-${mapping.rowIdentifier}`}
-                    id={`fieldMappingExtract-${mapping.index}`}
-                    labelName="name"
-                    valueName="id"
-                    value={mapping.extract || mapping.hardCodedValueTmp}
-                    options={extractFields}
-                    disabled={mapping.isNotEditable || disabled}
-                    onBlur={(id, evt) => {
-                      handleFieldUpdate(
-                        mapping.index,
-                        { target: { value: evt } },
-                        'extract'
-                      );
-                    }}
-                  />
+        <Typography variant="h5" className={classes.childHeader}>
+          {generateLabel}
+          {isGenerateRefreshSupported && !isGeneratesLoading && (
+            <RefreshButton
+              disabled={disabled}
+              onClick={refreshGenerateFields}
+              data-test="refreshGenerates"
+            />
+          )}
+          {isGeneratesLoading && (
+            <span className={classes.spinner}>
+              <Spinner size={24} color="primary" />
+            </span>
+          )}
+        </Typography>
+      </div>
+      <div className={classes.mappingsBody}>
+        {tableData.map(mapping => (
+          <div className={classes.rowContainer} key={mapping.index}>
+            <div className={classes.innerRow}>
+              <div
+                className={clsx(classes.childHeader, classes.childRow, {
+                  [classes.disableChildRow]: mapping.isNotEditable || disabled,
+                })}>
+                <DynaTypeableSelect
+                  key={`extract-${editorId}-${initChangeIdentifier}-${mapping.rowIdentifier}`}
+                  id={`fieldMappingExtract-${mapping.index}`}
+                  labelName="name"
+                  valueName="id"
+                  value={mapping.extract || mapping.hardCodedValueTmp}
+                  options={extractFields}
+                  disabled={mapping.isNotEditable || disabled}
+                  onBlur={(id, evt) => {
+                    handleFieldUpdate(
+                      mapping.index,
+                      { target: { value: evt } },
+                      'extract'
+                    );
+                  }}
+                />
 
-                  {mapping.isNotEditable && (
-                    <span className={classes.lockIcon}>
-                      <LockIcon />
-                    </span>
-                  )}
-                </div>
-                <div
-                  className={clsx(classes.childHeader, classes.childRow, {
-                    [classes.disableChildRow]: mapping.isRequired || disabled,
-                  })}>
-                  <DynaTypeableSelect
-                    key={`generate-${editorId}-${initChangeIdentifier}-${mapping.rowIdentifier}`}
-                    id={`fieldMappingGenerate-${mapping.index}`}
-                    value={mapping.generate}
-                    labelName="name"
-                    valueName="id"
-                    options={generateFields}
-                    disabled={mapping.isRequired || disabled}
-                    onBlur={handleGenerateUpdate(mapping)}
-                  />
-                  {mapping.isRequired && (
-                    <span className={classes.lockIcon}>
-                      <LockIcon />
-                    </span>
-                  )}
-                </div>
-                <div>
-                  <MappingSettings
-                    id={`fieldMappingSettings-${mapping.index}`}
-                    onSave={(id, evt) => {
-                      patchSettings(mapping.index, evt);
-                    }}
-                    value={mapping}
-                    options={options}
-                    generate={mapping.generate}
-                    application={application}
-                    updateLookup={updateLookupHandler}
-                    disabled={mapping.isNotEditable || disabled}
-                    lookup={
-                      mapping &&
-                      mapping.lookupName &&
-                      getLookup(mapping.lookupName)
-                    }
-                    extractFields={extractFields}
-                    generateFields={generateFields}
-                  />
-                </div>
-                <div key="delete_button">
-                  <ActionButton
-                    data-test={`fieldMappingRemove-${mapping.index}`}
-                    aria-label="delete"
-                    disabled={
-                      mapping.isRequired || mapping.isNotEditable || disabled
-                    }
-                    onClick={() => {
-                      handleDelete(mapping.index);
-                    }}
-                    className={classes.margin}>
-                    <TrashIcon />
-                  </ActionButton>
-                </div>
+                {mapping.isNotEditable && (
+                  <span className={classes.lockIcon}>
+                    <LockIcon />
+                  </span>
+                )}
+              </div>
+              <div
+                className={clsx(classes.childHeader, classes.childRow, {
+                  [classes.disableChildRow]: mapping.isRequired || disabled,
+                })}>
+                <DynaTypeableSelect
+                  key={`generate-${editorId}-${initChangeIdentifier}-${mapping.rowIdentifier}`}
+                  id={`fieldMappingGenerate-${mapping.index}`}
+                  value={mapping.generate}
+                  labelName="name"
+                  valueName="id"
+                  options={generateFields}
+                  disabled={mapping.isRequired || disabled}
+                  onBlur={handleGenerateUpdate(mapping)}
+                />
+                {mapping.isRequired && (
+                  <span className={classes.lockIcon}>
+                    <LockIcon />
+                  </span>
+                )}
+              </div>
+              <div>
+                <MappingSettings
+                  id={`fieldMappingSettings-${mapping.index}`}
+                  onSave={(id, evt) => {
+                    patchSettings(mapping.index, evt);
+                  }}
+                  value={mapping}
+                  options={options}
+                  generate={mapping.generate}
+                  application={application}
+                  updateLookup={updateLookupHandler}
+                  disabled={mapping.isNotEditable || disabled}
+                  lookup={
+                    mapping &&
+                    mapping.lookupName &&
+                    getLookup(mapping.lookupName)
+                  }
+                  extractFields={extractFields}
+                  generateFields={generateFields}
+                />
+              </div>
+              <div key="delete_button">
+                <ActionButton
+                  data-test={`fieldMappingRemove-${mapping.index}`}
+                  aria-label="delete"
+                  disabled={
+                    mapping.isRequired || mapping.isNotEditable || disabled
+                  }
+                  onClick={() => {
+                    handleDelete(mapping.index);
+                  }}
+                  className={classes.margin}>
+                  <TrashIcon />
+                </ActionButton>
               </div>
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
     </div>
   );

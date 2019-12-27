@@ -26,10 +26,14 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(0, 0, 0, 3),
   },
   mappingContainer: {
-    overflow: 'auto',
-    maxHeight: `calc(100vh - 180px)`,
-    padding: theme.spacing(3, 0),
+    // overflow: 'auto',
+    height: `calc(100vh - 180px)`,
+    padding: theme.spacing(1),
+    paddingBottom: theme.spacing(3),
     marginBottom: theme.spacing(1),
+  },
+  buttonGroup: {
+    '& button': { marginRight: theme.spacing(1) },
   },
 }));
 
@@ -73,7 +77,7 @@ function MappingDrawer() {
                 />
               </div>
               {showMappings && (
-                <ButtonGroup>
+                <ButtonGroup className={classes.buttonGroup}>
                   <MappingSaveButton
                     id={mappingEditorId}
                     color="primary"
