@@ -17,8 +17,6 @@ export default function DynaFileKeyColumn(props) {
     isValid,
     options = {},
   } = props;
-
-  console.log('options', options);
   const [sampleData, setSampleData] = useState(props.sampleData || '');
   const { data: fileData } = useSelector(state => {
     const rawData = selectors.getResourceSampleDataWithStatus(
