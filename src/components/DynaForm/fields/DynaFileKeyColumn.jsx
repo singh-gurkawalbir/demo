@@ -15,7 +15,10 @@ export default function DynaFileKeyColumn(props) {
     required,
     resourceId,
     isValid,
+    options = {},
   } = props;
+
+  console.log('options', options);
   const [sampleData, setSampleData] = useState(props.sampleData || '');
   const { data: fileData } = useSelector(state => {
     const rawData = selectors.getResourceSampleDataWithStatus(
@@ -35,12 +38,14 @@ export default function DynaFileKeyColumn(props) {
   }
 
   const getFileHeaderOptions = (fileData = '') => {
-    const headers = extractFieldsFromCsv(fileData) || [];
+    const headers = extractFieldsFromCsv(fileData, options) || [];
 
     return headers.map(header => ({ label: header.id, value: header.id }));
   };
 
-  const options = [{ items: getFileHeaderOptions(fileData || sampleData) }];
+  const multiSelectOptions = [
+    { items: getFileHeaderOptions(fileData || sampleData) },
+  ];
 
   return (
     <DynaMultiSelect
@@ -49,7 +54,7 @@ export default function DynaFileKeyColumn(props) {
       value={value}
       isValid={isValid}
       name={name}
-      options={options}
+      options={multiSelectOptions}
       required={required}
       label={label}
       onFieldChange={onFieldChange}
