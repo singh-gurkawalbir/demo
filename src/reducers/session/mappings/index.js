@@ -264,7 +264,10 @@ export function mappingSaveProcessTerminate(state, id) {
   if (!state[id]) return false;
   const { submitFailed, submitCompleted } = state[id];
 
-  return !!(submitFailed || submitCompleted);
+  return {
+    saveTerminated: !!(submitFailed || submitCompleted),
+    saveCompleted: !!submitCompleted,
+  };
 }
 
 // #region PUBLIC SELECTORS

@@ -85,6 +85,7 @@ function ImportMapping({
                   variant="outlined"
                   color="secondary"
                   dataTest="saveAndCloseImportMapping"
+                  onClose={onClose}
                   submitButtonLabel="Save & Close"
                 />
 
