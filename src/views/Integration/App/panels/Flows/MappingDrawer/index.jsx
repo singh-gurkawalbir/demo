@@ -89,6 +89,7 @@ function MappingDrawer() {
                     variant="outlined"
                     color="secondary"
                     dataTest="saveAndCloseImportMapping"
+                    onClose={handleClose}
                     submitButtonLabel="Save & Close"
                   />
                   <Button
