@@ -1,75 +1,103 @@
-import { Fragment, useCallback } from 'react';
-import { useDispatch } from 'react-redux';
+import { Fragment } from 'react';
+import { makeStyles } from '@material-ui/core/styles';
+import { useSelector } from 'react-redux';
+import { Drawer, Button, ButtonGroup } from '@material-ui/core';
+import * as selectors from '../../../../reducers';
 import Icon from '../../../../components/icons/MapDataIcon';
-import actions from '../../../../actions';
 import helpTextMap from '../../../../components/Help/helpTextMap';
-import mappingUtil from '../../../../utils/mapping';
-import lookupUtil from '../../../../utils/lookup';
-import MappingDialog from '../../../../components/AFE/ImportMapping/Dialog';
+import LoadResources from '../../../../components/LoadResources';
+import DrawerTitleBar from '../../../../components/drawer/TitleBar';
+import StandaloneMapping from '../../../../components/AFE/ImportMapping/StandaloneMapping';
+import MappingSaveButton from '../../../../components/ResourceFormFactory/Actions/MappingSaveButton';
 
-function ImportMappingDialog({
+const useStyles = makeStyles(theme => ({
+  drawerPaper: {
+    marginTop: theme.appBarHeight,
+    width: 824,
+    border: 'solid 1px',
+    borderColor: theme.palette.secondary.lightest,
+    boxShadow: `-4px 4px 8px rgba(0,0,0,0.15)`,
+    backgroundColor: theme.palette.background.white,
+    zIndex: theme.zIndex.drawer + 1,
+  },
+  content: {
+    borderTop: `solid 1px ${theme.palette.secondary.lightest}`,
+    padding: theme.spacing(0, 0, 0, 3),
+  },
+  mappingContainer: {
+    // overflow: 'auto',
+    height: `calc(100vh - 180px)`,
+    padding: theme.spacing(1),
+    paddingBottom: theme.spacing(3),
+    marginBottom: theme.spacing(1),
+  },
+  buttonGroup: {
+    '& button': { marginRight: theme.spacing(1) },
+  },
+}));
+
+// mappings are only disabled in case of monitor level access
+function ImportMapping({
   flowId,
   isMonitorLevelAccess,
   resource,
   onClose,
+  open,
 }) {
-  // mappings are only disabled in case of monitor level access
+  const classes = useStyles();
   const resourceId = resource._id;
-  const dispatch = useDispatch();
-  const handleSave = useCallback(
-    ({ mappings, lookups, adaptorType }) => {
-      if (mappings) {
-        const patchSet = [];
-        const mappingPath = mappingUtil.getMappingPath(adaptorType);
-
-        // TODO: Below is cut and paste code. This should not have passed review.
-        // this code block is wrapped in a "if (mappings) {}" block, so both ternary operators
-        // below are unnecessary (the operation is always a replace)
-
-        // if mapping doesn't exist in resource object, perform add patch else replace patch
-        patchSet.push({
-          op: mappings ? 'replace' : 'add',
-          path: mappingPath,
-          value: mappings,
-        });
-
-        // update _lookup only if its being passed as param to function
-        if (lookups) {
-          const lookupPath = lookupUtil.getLookupPath(adaptorType);
-
-          patchSet.push({
-            op: lookups ? 'replace' : 'add',
-            path: lookupPath,
-            value: lookups,
-          });
-        }
-
-        dispatch(actions.resource.patchStaged(resourceId, patchSet, 'value'));
-        dispatch(actions.resource.commitStaged('imports', resourceId, 'value'));
-      }
-    },
-    [dispatch, resourceId]
+  const mappingEditorId = `${resourceId}-${flowId}`;
+  const { visible: showMappings } = useSelector(state =>
+    selectors.mapping(state, mappingEditorId)
   );
 
   return (
-    <Fragment>
-      <MappingDialog
-        id={`${resourceId}-${flowId}`}
-        title="Define Import Mapping"
-        disabled={isMonitorLevelAccess}
-        flowId={flowId}
-        resourceId={resourceId}
-        onClose={onClose}
-        onSave={handleSave}
-      />
-    </Fragment>
+    <Drawer
+      anchor="right"
+      open={open}
+      classes={{
+        paper: classes.drawerPaper,
+      }}>
+      <DrawerTitleBar onClose={onClose} title="Define Import Mapping" />
+      <div className={classes.content}>
+        <LoadResources required="true" resources="imports, exports">
+          <Fragment>
+            <div className={classes.mappingContainer}>
+              <StandaloneMapping
+                id={mappingEditorId}
+                disabled={isMonitorLevelAccess}
+                resourceId={resourceId}
+                flowId={flowId}
+              />
+            </div>
+            {showMappings && (
+              <ButtonGroup className={classes.buttonGroup}>
+                <MappingSaveButton
+                  disabled={isMonitorLevelAccess}
+                  id={mappingEditorId}
+                  color="primary"
+                  dataTest="saveImportMapping"
+                  submitButtonLabel="Save"
+                />
+                <MappingSaveButton
+                  id={mappingEditorId}
+                  disabled={isMonitorLevelAccess}
+                  variant="outlined"
+                  color="secondary"
+                  dataTest="saveAndCloseImportMapping"
+                  submitButtonLabel="Save & Close"
+                />
+
+                <Button variant="text" data-test="cancel" onClick={onClose}>
+                  Cancel
+                </Button>
+              </ButtonGroup>
+            )}
+          </Fragment>
+        </LoadResources>
+      </div>
+    </Drawer>
   );
-}
-
-function ImportMapping(props) {
-  const { open } = props;
-
-  return <Fragment>{open && <ImportMappingDialog {...props} />}</Fragment>;
 }
 
 export default {
