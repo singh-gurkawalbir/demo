@@ -33,7 +33,7 @@ export function Suggestions(props) {
     lookups = [],
     extractFields = [],
     matchedVal = '',
-    handleUpdate,
+    onUpdate,
     showLookup,
     onSuggestionClick,
     onLookupClick,
@@ -58,7 +58,7 @@ export function Suggestions(props) {
           id="add-lookup"
           label="New Lookup"
           onClick={onLookupClick}
-          onSave={handleUpdate(LOOKUP_ACTION.LOOKUP_ADD)}
+          onSave={onUpdate(LOOKUP_ACTION.LOOKUP_ADD)}
           onSavelabel="Add New Lookup"
           options={options}
         />
@@ -71,8 +71,8 @@ export function Suggestions(props) {
               label="Edit"
               onClick={onLookupClick}
               isEdit
-              onSelect={handleUpdate(LOOKUP_ACTION.LOOKUP_SELECT, lookup)}
-              onSave={handleUpdate(LOOKUP_ACTION.LOOKUP_EDIT, lookup)}
+              onSelect={onUpdate(LOOKUP_ACTION.LOOKUP_SELECT, lookup)}
+              onSave={onUpdate(LOOKUP_ACTION.LOOKUP_EDIT, lookup)}
               showDynamicLookupOnly
               value={lookup}
               options={options}
@@ -275,8 +275,7 @@ export default function InputWithLookupHandlebars(props) {
           lookups={lookups}
           extractFields={extractFields}
           matchedVal={matchedVal}
-          handleLookupClick={handleLookupClick}
-          handleUpdate={handleUpdate}
+          onUpdate={handleUpdate}
           showLookup={showLookup}
           options={options}
           onSuggestionClick={handleSuggestionClick}
