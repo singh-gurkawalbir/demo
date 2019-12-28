@@ -27,66 +27,66 @@ const LOOKUP_ACTION = {
   LOOKUP_ADD: 'LOOKUP_ADD',
   LOOKUP_SELECT: 'LOOKUP_SELECT',
 };
-const getSuggestions = (
-  lookups = [],
-  extractFields = [],
-  handleUpdate,
-  showLookup,
-  handleLookupClick,
-  options
-) => {
-  const suggestions = [];
 
-  if (showLookup) {
-    suggestions.push({
-      fixed: true,
-      label: 'New Lookup',
-      type: 'lookup',
-      component: (
+export function Suggestions(props) {
+  const {
+    lookups = [],
+    extractFields = [],
+    matchedVal = '',
+    handleUpdate,
+    showLookup,
+    onSuggestionClick,
+    onLookupClick,
+    options,
+  } = props;
+  const classes = useStyles();
+  const filteredLookup = lookups.filter(
+    l => l.name.toLowerCase().indexOf(matchedVal.toLowerCase()) > -1
+  );
+  const filteredExtracts = extractFields
+    .map(field => ({
+      label: field.name,
+      value: field.id.indexOf(' ') > -1 ? `[${field.id}]` : field.id,
+    }))
+    .filter(e => e.label.toLowerCase().indexOf(matchedVal.toLowerCase()) > -1);
+
+  return (
+    <ul className={classes.suggestions}>
+      {showLookup && (
         <DynaAddEditLookup
           showDynamicLookupOnly
           id="add-lookup"
           label="New Lookup"
-          onClick={handleLookupClick}
+          onClick={onLookupClick}
           onSave={handleUpdate(LOOKUP_ACTION.LOOKUP_ADD)}
           onSavelabel="Add New Lookup"
           options={options}
         />
-      ),
-    });
-    lookups.forEach(lookup => {
-      if (!lookup.map) {
-        suggestions.push({
-          label: lookup.name,
-          type: 'lookup',
-          component: (
+      )}
+      {showLookup &&
+        filteredLookup.map(lookup => (
+          <li key={lookup.name}>
             <DynaAddEditLookup
               id={lookup.name}
               label="Edit"
+              onClick={onLookupClick}
               isEdit
-              onClick={handleLookupClick}
               onSelect={handleUpdate(LOOKUP_ACTION.LOOKUP_SELECT, lookup)}
               onSave={handleUpdate(LOOKUP_ACTION.LOOKUP_EDIT, lookup)}
               showDynamicLookupOnly
               value={lookup}
               options={options}
             />
-          ),
-        });
-      }
-    });
-  }
-
-  extractFields.forEach(field => {
-    suggestions.push({
-      label: field.name,
-      type: 'extract',
-      value: field.id.indexOf(' ') > -1 ? `[${field.id}]` : field.id,
-    });
-  });
-
-  return suggestions;
-};
+          </li>
+        ))}
+      {filteredExtracts.map(e => (
+        <li key={e.label} onClick={() => onSuggestionClick(e.value, false)}>
+          {e.label}
+        </li>
+      ))}
+    </ul>
+  );
+}
 
 export default function InputWithLookupHandlebars(props) {
   const {
@@ -117,7 +117,6 @@ export default function InputWithLookupHandlebars(props) {
     getMatchedValueforSuggestion,
     showLookup,
   } = props;
-  const classes = useStyles();
   const ref = useRef(null);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [lookupShown, setLookupShown] = useState(false);
@@ -125,9 +124,9 @@ export default function InputWithLookupHandlebars(props) {
     cursorPosition: 0,
     userInput: value || '',
     isFocus: false,
-    filteredSuggestions: [],
+    matchedVal: '',
   });
-  const { userInput, cursorPosition, filteredSuggestions } = state;
+  const { userInput, cursorPosition, matchedVal } = state;
 
   useEffect(() => {
     if (value !== userInput) setState({ ...state, userInput: value });
@@ -222,63 +221,33 @@ export default function InputWithLookupHandlebars(props) {
     setLookupShown(_showLookup);
   };
 
-  const suggestions = getSuggestions(
-    lookups,
-    extractFields,
-    handleUpdate,
-    showLookup,
-    handleLookupClick,
-    options
-  );
   const handleSuggestions = e => {
     const pointerIndex = e.target.selectionStart;
     const _val = e.target.value;
     const _showSuggestion = !!_val
       .substring(0, pointerIndex)
       .match(prefixRegexp);
-    let _filteredSuggestions = [];
+    const _filteredSuggestions = [];
 
     if (_showSuggestion) {
       const matchedVal = getMatchedValueforSuggestion(_val, pointerIndex);
 
-      _filteredSuggestions = suggestions.filter(
-        suggestion =>
-          suggestion.fixed ||
-          suggestion.label.toLowerCase().indexOf(matchedVal.toLowerCase()) > -1
-      );
       setState({
         ...state,
         cursorPosition: pointerIndex,
+        matchedVal,
         filteredSuggestions: _filteredSuggestions,
       });
     } else {
-      setState({ ...state, cursorPosition: pointerIndex });
+      setState({
+        ...state,
+        matchedVal: '',
+        cursorPosition: pointerIndex,
+      });
     }
 
     setShowSuggestions(_showSuggestion);
   };
-
-  let suggestionsListComponent;
-
-  if (showSuggestions && filteredSuggestions.length) {
-    suggestionsListComponent = (
-      <ul className={classes.suggestions}>
-        {filteredSuggestions.map(suggestion => {
-          if (suggestion.type === 'lookup') {
-            return <li key={suggestion.label}>{suggestion.component}</li>;
-          }
-
-          return (
-            <li
-              key={suggestion.value}
-              onClick={() => handleSuggestionClick(suggestion.value)}>
-              {suggestion.label}
-            </li>
-          );
-        })}
-      </ul>
-    );
-  }
 
   return (
     <div ref={ref}>
@@ -301,7 +270,19 @@ export default function InputWithLookupHandlebars(props) {
         value={userInput}
         variant="filled"
       />
-      {suggestionsListComponent}
+      {showSuggestions && (
+        <Suggestions
+          lookups={lookups}
+          extractFields={extractFields}
+          matchedVal={matchedVal}
+          handleLookupClick={handleLookupClick}
+          handleUpdate={handleUpdate}
+          showLookup={showLookup}
+          options={options}
+          onSuggestionClick={handleSuggestionClick}
+          onLookupClick={handleLookupClick}
+        />
+      )}
     </div>
   );
 }
