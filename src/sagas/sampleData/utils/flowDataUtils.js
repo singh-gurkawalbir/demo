@@ -11,6 +11,37 @@ import {
 import getPreviewOptionsForResource from '../flows/pageProcessorPreviewOptions';
 
 /*
+ * Returns PG/PP Document saved on Flow Doc.
+ * Example Flow: Given flowId: 111 and resourceId: 123 with resourceType: 'exports', returns the below node from pageGenerators
+ * {_id: 111,  pageGenerators: [{_exportId : 123, responseMapping: {}, hooks: {}}], pageProcessors: [{_importId : 453, responseMapping: {}, hooks: {}}]}
+ */
+export function* getFlowResourceNode({ flowId, resourceId, resourceType }) {
+  // get flow on flowId base
+  const { merged: flow = {} } = yield select(
+    resourceData,
+    'flows',
+    flowId,
+    SCOPES.VALUE
+  );
+  // check if resource is a pg/pp
+  const isPageGeneratorExport = yield select(
+    isPageGenerator,
+    flowId,
+    resourceId,
+    resourceType
+  );
+  const flowResourceList =
+    flow[isPageGeneratorExport ? 'pageGenerators' : 'pageProcessors'] || [];
+
+  // returns specific resource based on resource id match
+  return flowResourceList.find(
+    resource =>
+      resource[resourceType === 'exports' ? '_exportId' : '_importId'] ===
+      resourceId
+  );
+}
+
+/*
  * Given a flow, filters out all the pending PGs and PPs without resourceId
  */
 export function filterPendingResources({ flow = {} }) {
@@ -178,34 +209,17 @@ export function* requestSampleDataForImports({
         break;
       }
 
-      case 'responseTransform': {
-        yield call(requestProcessorData, {
-          flowId,
-          resourceId,
-          resourceType: 'imports',
-          processor: 'responseTransform',
-        });
-        break;
-      }
-
-      case 'importMappingExtract': {
-        yield call(requestProcessorData, {
-          flowId,
-          resourceId,
-          resourceType: 'imports',
-          processor: 'mapperProcessor',
-          processorStage: 'importMappingExtract',
-        });
-        break;
-      }
-
+      case 'responseTransform':
+      case 'importMappingExtract':
+      case 'importMapping':
+      case 'responseMappingExtract':
+      case 'responseMapping':
       case 'preMap': {
         yield call(requestProcessorData, {
           flowId,
           resourceId,
           resourceType: 'imports',
-          processor: 'javascript',
-          processorStage: 'preMap',
+          processor: sampleDataStage,
         });
         break;
       }

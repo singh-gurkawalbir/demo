@@ -2,7 +2,16 @@ import EditorDialog from '../EditorDialog';
 import JavaScriptEditor from './';
 
 export default function JavaScriptEditorDialog(props) {
-  const { id, rule, data, scriptId, disabled, entryFunction, ...rest } = props;
+  const {
+    id,
+    rule,
+    data,
+    scriptId,
+    disabled,
+    entryFunction,
+    insertStubKey,
+    ...rest
+  } = props;
   const defaults = {
     width: '80vw',
     height: '50vh',
@@ -20,6 +29,7 @@ export default function JavaScriptEditorDialog(props) {
         editorId={id}
         scriptId={scriptId}
         entryFunction={entryFunction}
+        insertStubKey={insertStubKey}
         data={data}
         disabled={disabled}
       />

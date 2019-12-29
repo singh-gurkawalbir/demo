@@ -137,7 +137,7 @@ function* requestSampleData({ resourceId }) {
     switch (adaptorType) {
       case 'NetSuiteDistributedImport': {
         // eslint-disable-next-line camelcase
-        const { _connectionId: connectionId, netsuite_da } = resource;
+        const { _connectionId: connectionId, netsuite_da = {} } = resource;
 
         yield put(
           actions.metadata.request(

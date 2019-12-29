@@ -1,18 +1,11 @@
 import { useReducer, useEffect, useState, useCallback } from 'react';
 import produce from 'immer';
+import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
-import {
-  ExpansionPanelSummary,
-  Typography,
-  Grid,
-  ExpansionPanelDetails,
-  ExpansionPanel,
-} from '@material-ui/core';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import { Typography, Grid } from '@material-ui/core';
 import Spinner from '../../../Spinner';
 import RefreshIcon from '../../../icons/RefreshIcon';
 import DynaSelect from '../DynaSelect';
-import Input from '../DynaText';
 import DeleteIcon from '../../../icons/TrashIcon';
 import DynaTypeableSelect from '../DynaTypeableSelect';
 import ActionButton from '../../../ActionButton';
@@ -22,6 +15,20 @@ const useStyles = makeStyles(theme => ({
   container: {
     marginTop: theme.spacing(1),
     overflowY: 'off',
+  },
+  child: {
+    '& + div': {
+      width: '100%',
+    },
+  },
+  childHeader: {
+    '& > div': {
+      width: '100%',
+    },
+  },
+  childRow: {
+    display: 'flex',
+    position: 'relative',
   },
   tableBody: {
     paddingLeft: '7px',
@@ -98,17 +105,20 @@ export const DynaTable = props => {
   const [optionsMap, setOptionsMap] = useState(optionsMapInit);
   const requiredFields = (optionsMap || []).filter(option => !!option.required);
   const lastRow = {};
-  const preSubmit = (stateValue = []) =>
-    stateValue.filter(val => {
-      let allRequiredFieldsPresent = true;
+  const preSubmit = useCallback(
+    (stateValue = []) =>
+      stateValue.filter(val => {
+        let allRequiredFieldsPresent = true;
 
-      optionsMap.forEach(op => {
-        if (op.required)
-          allRequiredFieldsPresent = allRequiredFieldsPresent && !!val[op.id];
-      });
+        optionsMap.forEach(op => {
+          if (op.required)
+            allRequiredFieldsPresent = allRequiredFieldsPresent && !!val[op.id];
+        });
 
-      return allRequiredFieldsPresent;
-    });
+        return allRequiredFieldsPresent;
+      }),
+    [optionsMap]
+  );
   let requiredFieldsMissing = false;
 
   if (!requiredFields.length) {
@@ -198,31 +208,34 @@ export const DynaTable = props => {
     return { values: arr, row: index };
   });
   // Update handler. Listens to change in any field and dispatches action to update state
-  const handleUpdate = (row, value, field) => {
-    const { id, onFieldChange, onRowChange } = props;
+  const handleUpdate = useCallback(
+    (row, value, field) => {
+      const { id, onFieldChange, onRowChange } = props;
 
-    dispatchLocalAction({
-      type: 'updateField',
-      index: row,
-      field,
-      value,
-      setChangeIdentifier,
-      lastRowData: (value || []).length ? value[value.length - 1] : {},
-      onRowChange,
-    });
+      dispatchLocalAction({
+        type: 'updateField',
+        index: row,
+        field,
+        value,
+        setChangeIdentifier,
+        lastRowData: (value || []).length ? value[value.length - 1] : {},
+        onRowChange,
+      });
 
-    if (state[row]) {
-      const fieldValueToSet = preSubmit([
-        ...state.slice(0, row),
-        onRowChange
-          ? onRowChange(state[row], field, value)
-          : { ...state[row], ...{ [field]: value } },
-        ...state.slice(row + 1, state.length),
-      ]);
+      if (state[row]) {
+        const fieldValueToSet = preSubmit([
+          ...state.slice(0, row),
+          onRowChange
+            ? onRowChange(state[row], field, value)
+            : { ...state[row], ...{ [field]: value } },
+          ...state.slice(row + 1, state.length),
+        ]);
 
-      onFieldChange(id, fieldValueToSet);
-    }
-  };
+        onFieldChange(id, fieldValueToSet);
+      }
+    },
+    [preSubmit, props, state]
+  );
 
   function handleRefreshClick(e, fieldId) {
     if (handleRefreshClickHandler) {
@@ -241,7 +254,6 @@ export const DynaTable = props => {
     onFieldChange(id, preSubmit(stateCopy));
   }
 
-  // const handleAllUpdate = (row, id) => event => handleUpdate(row, event, id);
   const onFetchResource = id => e => handleRefreshClick(e, id);
   const handleRemoveRow = row => e => dispatchActionToDelete(e, row);
 
@@ -286,21 +298,6 @@ export const DynaTable = props => {
                     item
                     key={`${r.readOnly ? r.value || r.id : r.id}`}
                     xs={r.space || true}>
-                    {['input', 'text', 'number'].includes(r.type) && (
-                      <Input
-                        id={`input-${r.id}-${arr.row}`}
-                        value={r.value}
-                        inputType={r.type}
-                        placeholder={r.id}
-                        disabled={!!r.readOnly}
-                        readOnly={!!r.readOnly}
-                        type={r.type === 'input' ? 'text' : r.type}
-                        className={classes.input}
-                        onFieldChange={(id, value) => {
-                          handleUpdate(arr.row, value, r.id);
-                        }}
-                      />
-                    )}
                     {r.type === 'select' && (
                       <DynaSelect
                         id={`suggest-${r.id}-${arr.row}`}
@@ -313,18 +310,26 @@ export const DynaTable = props => {
                         className={classes.root}
                       />
                     )}
-                    {r.type === 'autosuggest' && (
-                      <DynaTypeableSelect
-                        id={`suggest-${r.id}-${arr.row}`}
-                        key={`suggest-${r.id}-${arr.row}-${r.value}-${r.optionChangeIdentifer}`}
-                        value={r.value}
-                        labelName="label"
-                        valueName="value"
-                        options={r.options}
-                        onBlur={(id, evt) => {
-                          handleUpdate(arr.row, evt, r.id);
-                        }}
-                      />
+                    {['input', 'number', 'text', 'autosuggest'].includes(
+                      r.type
+                    ) && (
+                      <div
+                        className={clsx(classes.childHeader, classes.childRow)}>
+                        <DynaTypeableSelect
+                          id={`suggest-${r.id}-${arr.row}`}
+                          key={`suggest-${r.id}-${arr.row}-${r.value}-${r.optionChangeIdentifer}`}
+                          value={r.value}
+                          labelName="label"
+                          disabled={r.readOnly}
+                          placeholder={r.id}
+                          inputType={r.type}
+                          valueName="value"
+                          options={r.options}
+                          onBlur={(id, evt) => {
+                            handleUpdate(arr.row, evt, r.id);
+                          }}
+                        />
+                      </div>
                     )}
                   </Grid>
                 ))}
@@ -346,26 +351,4 @@ export const DynaTable = props => {
   );
 };
 
-export default function CollapsableTable(props) {
-  const { title, collapsable = false } = props;
-  const [shouldExpand, setShouldExpand] = useState(false);
-  const handleClick = useCallback(() => setShouldExpand(expand => !expand), []);
-
-  return collapsable ? (
-    <ExpansionPanel
-      // eslint-disable-next-line react/no-array-index-key
-      expanded={shouldExpand}>
-      <ExpansionPanelSummary
-        data-test={title}
-        onClick={handleClick}
-        expandIcon={<ExpandMoreIcon />}>
-        <Typography>{title}</Typography>
-      </ExpansionPanelSummary>
-      <ExpansionPanelDetails>
-        <DynaTable {...props} />
-      </ExpansionPanelDetails>
-    </ExpansionPanel>
-  ) : (
-    <DynaTable {...props} />
-  );
-}
+export default DynaTable;

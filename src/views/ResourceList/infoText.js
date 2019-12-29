@@ -56,9 +56,9 @@ export default {
     You can also use this page to do all the standard template functionality 
     (i.e. install new integration, generate template zip file, etc...).`,
   connectors: `
-    Connectors represent fully functional pre-built integrations that any 
+    Integration Apps represent fully functional pre-built integrations that any 
     user can install into their Integrator account, directly from the 
-    Integrator Marketplace. Connectors include an installer, uninstaller, 
+    Integrator Marketplace. Integration Apps include an installer, uninstaller, 
     and a settings interface. Connector developers can push updates 
     at any time for their Connector to their entire install base. 
     A Connector can create any number of components in a user's account.`,

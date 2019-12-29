@@ -37,7 +37,7 @@ function GenerateTokenButton(props) {
       disabled={disabled || tokenRequestLoading}
       isValid
       onClick={handleRequestToken(resourceId, id)}>
-      {tokenRequestLoading ? 'Generating Token' : label}
+      {tokenRequestLoading ? 'Generating Token...' : label}
     </DynaSubmit>
   );
 }

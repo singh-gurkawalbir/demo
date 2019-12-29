@@ -378,6 +378,10 @@ export function mapping(state, id) {
   return fromSession.mapping(state && state.session, id);
 }
 
+export function mappingSaveProcessTerminate(state, id) {
+  return fromSession.mappingSaveProcessTerminate(state && state.session, id);
+}
+
 export function editorHelperFunctions(state) {
   return (
     (state &&
@@ -2685,7 +2689,7 @@ export function getImportSampleData(state, resourceId) {
     };
   } else if (adaptorType === 'NetSuiteDistributedImport') {
     // eslint-disable-next-line camelcase
-    const { _connectionId: connectionId, netsuite_da } = resource;
+    const { _connectionId: connectionId, netsuite_da = {} } = resource;
     const commMetaPath = `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${netsuite_da.recordType}`;
     const { data, status } = metadataOptionsAndResources({
       state,

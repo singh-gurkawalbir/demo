@@ -795,6 +795,8 @@ const app = {
   errored: () => action(actionTypes.APP_ERRORED),
   clearError: () => action(actionTypes.APP_CLEAR_ERROR),
 };
+const postFeedback = (resourceType, fieldId, helpful) =>
+  action(actionTypes.POST_FEEDBACK, { resourceType, fieldId, helpful });
 const toggleBanner = () => action(actionTypes.APP_TOGGLE_BANNER);
 const toggleDrawer = () => action(actionTypes.APP_TOGGLE_DRAWER);
 const patchFilter = (name, filter) =>
@@ -825,14 +827,10 @@ const editor = {
 // #endregion
 // #region Mapping actions
 const mapping = {
-  init: (id, mappings, lookups, adaptorType, application, generateFields) =>
+  init: ({ id, options }) =>
     action(actionTypes.MAPPING.INIT, {
       id,
-      mappings,
-      lookups,
-      adaptorType,
-      application,
-      generateFields,
+      options,
     }),
   patchField: (id, field, index, value) =>
     action(actionTypes.MAPPING.PATCH_FIELD, { id, field, index, value }),
@@ -851,6 +849,9 @@ const mapping = {
       value,
     }),
   delete: (id, index) => action(actionTypes.MAPPING.DELETE, { id, index }),
+  save: id => action(actionTypes.MAPPING.SAVE, { id }),
+  saveFailed: id => action(actionTypes.MAPPING.SAVE_FAILED, { id }),
+  saveComplete: id => action(actionTypes.MAPPING.SAVE_COMPLETE, { id }),
 };
 // #region DynaForm Actions
 const resourceForm = {
@@ -1049,6 +1050,7 @@ const analytics = {
 // #endregion
 
 export default {
+  postFeedback,
   app,
   toggleBanner,
   toggleDrawer,

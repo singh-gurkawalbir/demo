@@ -7,7 +7,7 @@ import DynaSelectResource from './DynaSelectResource';
 import DynaSelectApplication from './DynaSelectApplication';
 import DynaFileTypeSelect from './select/DynaFileTypeSelect';
 import DynaText from './DynaText';
-import DynaCheckbox from './DynaCheckbox';
+import DynaCheckbox from './checkbox/DynaCheckbox';
 import DynaRelativeUri from './DynaRelativeUri';
 import DynaKeyValue from './DynaKeyValue';
 import DynaToggleSelectToText from './select/DynaToggleSelectToText';
@@ -77,6 +77,7 @@ import DynaCsvGenerate from './editors/DynaCsvGenerate';
 import DynaFileKeyColumn from './DynaFileKeyColumn';
 import DynaRadioGroupForResetFields from './radiogroup/DynaRadioGroupForResetFields';
 import DynaTextWithFlowContext from './text/DynaTextWithFlowContext';
+import DynaCheckboxForResetFields from './checkbox/DynaCheckboxForResetFields';
 
 export default {
   mode: DynaMode,
@@ -166,4 +167,5 @@ export default {
   filekeycolumn: DynaFileKeyColumn,
   radiogroupforresetfields: DynaRadioGroupForResetFields,
   textwithflowcontext: DynaTextWithFlowContext,
+  checkboxforresetfields: DynaCheckboxForResetFields,
 };

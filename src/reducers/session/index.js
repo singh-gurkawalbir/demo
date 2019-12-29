@@ -92,6 +92,10 @@ export function mapping(state, id) {
   return fromMappings.mapping(state && state.mappings, id);
 }
 
+export function mappingSaveProcessTerminate(state, id) {
+  return fromMappings.mappingSaveProcessTerminate(state && state.mappings, id);
+}
+
 export function processorRequestOptions(state, id) {
   return fromEditors.processorRequestOptions(state && state.editors, id);
 }
