@@ -2833,3 +2833,7 @@ export function resourceNamesByIds(state, type) {
 
   return resourceIdNameMap;
 }
+
+export function getPreviewData(state) {
+  return fromSession.getPreviewData(state && state.session);
+}

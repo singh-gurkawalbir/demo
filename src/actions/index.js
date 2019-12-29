@@ -639,6 +639,14 @@ const file = {
       file,
     }),
 };
+const transfer = {
+  cancel: id => action(actionTypes.TRANSFER.CANCEL, { id }),
+  preview: data => action(actionTypes.TRANSFER.PREVIEW, { data }),
+  updatePreview: ({ response, error }) =>
+    action(actionTypes.TRANSFER.UPDATE_PREVIEW, { response, error }),
+  clearPreview: () => action(actionTypes.TRANSFER.CLEAR_PREVIEW),
+  create: data => action(actionTypes.TRANSFER.CREATE, { data }),
+};
 const stack = {
   displayToken: id => action(actionTypes.STACK.TOKEN_DISPLAY, { id }),
   generateToken: id => action(actionTypes.STACK.TOKEN_GENERATE, { id }),
@@ -1078,4 +1086,5 @@ export default {
   recycleBin,
   mapping,
   analytics,
+  transfer,
 };

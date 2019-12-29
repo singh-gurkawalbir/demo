@@ -19,6 +19,7 @@ import oAuthAuthorize, * as fromOAuthAuthorize from './oAuthAuthorize';
 import resource, * as fromResource from './resource';
 import mappings, * as fromMappings from './mappings';
 import flows, * as fromFlows from './flows';
+import transfers, * as fromTransfers from './transfers';
 
 export default combineReducers({
   stage,
@@ -41,6 +42,7 @@ export default combineReducers({
   oAuthAuthorize,
   mappings,
   flows,
+  transfers,
 });
 
 // #region PUBLIC SELECTORS
@@ -344,4 +346,9 @@ export function getLastExportDateTime(state, flowId) {
     lastExportDateTime
   );
 }
+
+export function getPreviewData(state) {
+  return fromTransfers.getPreviewData(state && state.transfers);
+}
+
 // #endregion
