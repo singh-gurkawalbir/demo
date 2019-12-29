@@ -36,6 +36,8 @@ export default function Invite(props) {
         type: 'text',
         label: "New Owner's Email:",
         required: true,
+        helpText:
+          'Email address of the person who the integration is transferred to. The receiver needs to be a user with their own integrator.io account and can’t be part of your organization',
       },
       _integrationIds: {
         id: '_integrationIds',
@@ -73,6 +75,18 @@ export default function Invite(props) {
       <IconTextButton onClick={backToTransferClick}>
         Back to Transfers
       </IconTextButton>
+      <div>
+        Important! As part of the transfer process, all your currently
+        in-progress flows will be allowed to complete, and new flows will not be
+        started. If there are any webhook based flows, then they will stop
+        accepting new data until the transfer is complete. Once the in-progress
+        flows have finished processing, all the flows will be transferred to the
+        new user. Jobs and related retry data will not be transferred, and this
+        information will be lost for any in-progress jobs that have errors. If
+        you are concerned about this data loss then please first disable the
+        flows manually, and then retry/resolve all open errors, and then
+        initiate the transfer process again.
+      </div>
       <DynaForm fieldMeta={fieldMeta} render>
         <DynaSubmit onClick={handleSubmit}>Next</DynaSubmit>
       </DynaForm>
