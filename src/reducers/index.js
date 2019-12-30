@@ -1565,8 +1565,8 @@ export function accountSummary(state) {
   return fromUser.accountSummary(state.user);
 }
 
-export function notifications(state) {
-  return fromUser.notifications(state.user);
+export function userNotifications(state) {
+  return fromUser.userNotifications(state.user);
 }
 
 export function hasAccounts(state) {
