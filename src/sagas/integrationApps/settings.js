@@ -89,6 +89,58 @@ export function* getAddOnLicenseMetadata({ integrationId }) {
   }
 }
 
+export function* getCategoryMappingMetadata({ integrationId, flowId }) {
+  const path = `/integrations/${integrationId}/utilities/loadMarketplaceCategoryMapping`;
+  let response;
+  const payload = {
+    utilities: {
+      options: {
+        _flowId: flowId,
+        requestOptions: [
+          { operation: 'mappingData', params: {} },
+          {
+            operation: 'extractsMetaData',
+            params: {
+              type: 'searchColumns',
+              searchColumns: { recordType: 'item' },
+            },
+          },
+          {
+            operation: 'generatesMetaData',
+            params: {
+              categoryId: 'commonAttributes',
+              categoryRelationshipData: true,
+            },
+          },
+        ],
+      },
+    },
+  };
+
+  try {
+    response = yield call(apiCallWithRetry, {
+      path,
+      opts: {
+        method: 'PUT',
+        body: payload,
+      },
+      hidden: false,
+    });
+  } catch (error) {
+    return undefined;
+  }
+
+  if (response) {
+    yield put(
+      actions.integrationApp.settings.receivedCategoryMappingMetadata(
+        integrationId,
+        flowId,
+        response
+      )
+    );
+  }
+}
+
 export function* upgrade({ integration, license }) {
   const path = `/integrations/${integration._id}/settings/changeEdition`;
   let upgradeResponse;
@@ -123,6 +175,10 @@ export default [
   takeLatest(
     actionTypes.INTEGRATION_APPS.SETTINGS.ADDON_LICENSES_METADATA,
     getAddOnLicenseMetadata
+  ),
+  takeLatest(
+    actionTypes.INTEGRATION_APPS.SETTINGS.REQUEST_CATEGORY_MAPPING_METADATA,
+    getCategoryMappingMetadata
   ),
   takeLatest(
     actionTypes.INTEGRATION_APPS.SETTINGS.MAPPING_METADATA_REQUEST,

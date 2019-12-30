@@ -12,6 +12,7 @@ import IntegrationAppInstallation from '../../views/IntegrationApps/Installer';
 import IntegrationAppAddNewStore from '../../views/IntegrationApps/AddNewStore';
 import IntegrationAppUninstallation from '../../views/IntegrationApps/Uninstaller';
 import CloneSetup from '../../views/Clone/Setup';
+import CategoryMapping from '../../views/CategoryMapping';
 
 const RecycleBin = loadable(() =>
   import(/* webpackChunkName: 'RecycleBin' */ '../../views/RecycleBin')
@@ -127,6 +128,10 @@ export default class AppRouting extends Component {
         <Route
           path="/pg/integrationapps/:integrationAppName/:integrationId/install/addNewStore"
           component={IntegrationAppAddNewStore}
+        />
+        <Route
+          path="/pg/integrationapps/:integrationAppName/:integrationId/flows/:flowId/mapping"
+          component={CategoryMapping}
         />
         <Route
           path={[

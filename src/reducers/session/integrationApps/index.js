@@ -15,6 +15,14 @@ export function integrationAppsInstaller(state, id) {
   return fromInstaller.integrationAppsInstaller(state && state.installer, id);
 }
 
+export function categoryMapping(state, integrationId, flowId) {
+  return fromSettings.categoryMapping(
+    state && state.settings,
+    integrationId,
+    flowId
+  );
+}
+
 export function integrationAppSettingsFormState(state, integrationId, flowId) {
   return fromSettings.integrationAppSettingsFormState(
     state && state.settings,

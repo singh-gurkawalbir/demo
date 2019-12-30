@@ -286,6 +286,14 @@ export function integrationAppsInstaller(state, id) {
   );
 }
 
+export function categoryMapping(state, integrationId, flowId) {
+  return fromIntegrationApps.categoryMapping(
+    state && state.integrationApps,
+    integrationId,
+    flowId
+  );
+}
+
 export function uninstallSteps(state, id, storeId) {
   return fromIntegrationApps.uninstallSteps(
     state && state.integrationApps,

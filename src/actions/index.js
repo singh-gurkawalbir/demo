@@ -416,6 +416,17 @@ const integrationApp = {
         integrationId,
         redirectTo,
       }),
+    requestCategoryMappingMetadata: (integrationId, flowId) =>
+      action(
+        actionTypes.INTEGRATION_APPS.SETTINGS.REQUEST_CATEGORY_MAPPING_METADATA,
+        { integrationId, flowId }
+      ),
+    receivedCategoryMappingMetadata: (integrationId, flowId, metadata) =>
+      action(
+        actionTypes.INTEGRATION_APPS.SETTINGS
+          .RECEIVED_CATEGORY_MAPPING_METADATA,
+        { integrationId, flowId, metadata }
+      ),
     clearRedirect: integrationId =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.CLEAR_REDIRECT, {
         integrationId,

@@ -16,6 +16,7 @@ export default (state = {}, action) => {
     licenseId,
     response,
     redirectTo,
+    metadata,
     error,
   } = action;
   const key = getStateKey(integrationId, flowId);
@@ -84,6 +85,10 @@ export default (state = {}, action) => {
       case actionTypes.INTEGRATION_APPS.SETTINGS.UPGRADE_REQUESTED:
         draft[licenseId] = true;
         break;
+      case actionTypes.INTEGRATION_APPS.SETTINGS
+        .RECEIVED_CATEGORY_MAPPING_METADATA:
+        draft[`${flowId}-${integrationId}`] = metadata;
+        break;
     }
   });
 };
@@ -97,6 +102,14 @@ export function integrationAppSettingsFormState(state, integrationId, flowId) {
   const key = getStateKey(integrationId, flowId);
 
   return state[key] || emptyObj;
+}
+
+export function categoryMapping(state, integrationId, flowId) {
+  if (!state) {
+    return null;
+  }
+
+  return state[`${flowId}-${integrationId}`];
 }
 
 export function integrationAppAddOnState(state, integrationId) {

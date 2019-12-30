@@ -1135,6 +1135,14 @@ export function integrationAppConnectionList(state, integrationId, storeId) {
   return integrationAppResourceList(state, integrationId, storeId).connections;
 }
 
+export function categoryMapping(state, integrationId, flowId) {
+  return fromSession.categoryMapping(
+    state && state.session,
+    integrationId,
+    flowId
+  );
+}
+
 export function integrationAppSettings(state, id) {
   if (!state) return null;
 
