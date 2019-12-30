@@ -97,6 +97,7 @@ export default {
         },
         'lookup.relativeURI': {
           id: 'lookup.relativeURI',
+          name: '_relativeURI',
           type: 'textwithlookupextract',
           fieldType: 'relativeUri',
           hideLookups: true,
@@ -475,7 +476,7 @@ export default {
 
     if (!isGroupedSampleData || generate.indexOf('[*].') === -1) {
       delete fieldMeta.fieldMap.useFirstRow;
-      fields = fields.filter(el => el !== 'isKey');
+      fields = fields.filter(el => el !== 'useFirstRow');
     }
 
     fieldMeta.layout.fields = fields;

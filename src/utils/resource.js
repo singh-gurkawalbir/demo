@@ -8,7 +8,7 @@ export const MODEL_PLURAL_TO_LABEL = Object.freeze({
   accesstokens: 'API Token',
   asynchelpers: 'Async Helper',
   connections: 'Connection',
-  connectors: 'Connector',
+  connectors: 'Integration App',
   exports: 'Export',
   filedefinitions: 'File Definition',
   flows: 'Flow',
@@ -86,6 +86,7 @@ export const appTypeToAdaptorType = {
   wrapper: 'Wrapper',
   as2: 'AS2',
   webhook: 'Webhook',
+  dynamodb: 'Dynamodb',
 };
 
 export const adaptorTypeMap = {
@@ -113,6 +114,8 @@ export const adaptorTypeMap = {
   SalesforceImport: 'salesforce',
   SalesforceExport: 'salesforce',
   WebhookExport: 'webhook',
+  DynamodbImport: 'dynamodb',
+  DynamodbExport: 'dynamodb',
 };
 
 const inferResourceType = adaptorType => {

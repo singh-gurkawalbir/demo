@@ -1,18 +1,15 @@
 import { Fragment, useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Route, useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Drawer, Button } from '@material-ui/core';
-import mappingUtil from '../../../../../../utils/mapping';
-import lookupUtil from '../../../../../../utils/lookup';
-import useEnqueueSnackbar from '../../../../../../hooks/enqueueSnackbar';
 import * as selectors from '../../../../../../reducers';
-import actions from '../../../../../../actions';
 import DrawerTitleBar from '../../../../../../components/drawer/TitleBar';
 import LoadResources from '../../../../../../components/LoadResources';
 import ButtonGroup from '../../../../../../components/ButtonGroup';
 import StandaloneMapping from '../../../../../../components/AFE/ImportMapping/StandaloneMapping';
 import SelectImport from './SelectImport';
+import MappingSaveButton from '../../../../../../components/ResourceFormFactory/Actions/MappingSaveButton';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -29,109 +26,31 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(0, 0, 0, 3),
   },
   mappingContainer: {
-    overflow: 'auto',
-    maxHeight: `calc(100vh - 180px)`,
-    padding: theme.spacing(3, 0),
+    // overflow: 'auto',
+    height: `calc(100vh - 180px)`,
+    padding: theme.spacing(1),
+    paddingBottom: theme.spacing(3),
     marginBottom: theme.spacing(1),
+  },
+  buttonGroup: {
+    '& button': { marginRight: theme.spacing(1) },
   },
 }));
 
 function MappingDrawer() {
   const classes = useStyles();
   const history = useHistory();
-  const dispatch = useDispatch();
   const match = useRouteMatch();
   const { flowId, importId } = match.params;
   const flow = useSelector(state => selectors.resource(state, 'flows', flowId));
   const flowName = flow.name || flow._id;
   const mappingEditorId = `${importId}-${flowId}`;
-  const {
-    mappings,
-    lookups,
-    adaptorType,
-    application,
-    generateFields,
-    visible: showMappings,
-    resource,
-    isGroupedSampleData,
-  } = useSelector(state => selectors.mapping(state, mappingEditorId));
-  const [enqueueSnackbar] = useEnqueueSnackbar();
+  const { visible: showMappings } = useSelector(state =>
+    selectors.mapping(state, mappingEditorId)
+  );
   const handleClose = useCallback(() => {
     history.goBack();
   }, [history]);
-  // TODO: This handler is a direct copy of /components/AFE/MappingDialog
-  // save handler. We need to consolidate this code. It is also not very efficient
-  // as logic and data is mixed in the data layer and component logic.
-  // instead of us having to know that we need to validate the data by using the
-  // mappingUtil.validateMappings, this could be done within the mapping selector.
-  // Also note that we already have an editor interface and all efforts should be
-  // to have the same interface across all AFEs. Currently mapping config is an outlier.
-  const handleSave = useCallback(
-    close => () => {
-      const {
-        isSuccess,
-        errMessage: validationErrMsg,
-      } = mappingUtil.validateMappings(mappings);
-
-      if (!isSuccess) {
-        enqueueSnackbar({
-          message: validationErrMsg,
-          variant: 'error',
-        });
-
-        if (close) handleClose();
-
-        return;
-      }
-
-      let mappingConfig = mappings.map(
-        ({ index, hardCodedValueTmp, rowIdentifier, ...others }) => others
-      );
-
-      mappingConfig = mappingUtil.generateMappingsForApp({
-        mappings: mappingConfig,
-        generateFields,
-        appType: application,
-        isGroupedSampleData,
-        resource,
-      });
-
-      if (!mappingConfig) return;
-
-      const patchSet = [
-        {
-          op: 'replace',
-          path: mappingUtil.getMappingPath(adaptorType),
-          value: mappingConfig,
-        },
-      ];
-
-      // update _lookup only if its being passed as param to function
-      if (lookups) {
-        patchSet.push({
-          op: 'replace',
-          path: lookupUtil.getLookupPath(adaptorType),
-          value: lookups,
-        });
-      }
-
-      dispatch(actions.resource.patchStaged(importId, patchSet, 'value'));
-      dispatch(actions.resource.commitStaged('imports', importId, 'value'));
-    },
-    [
-      adaptorType,
-      application,
-      dispatch,
-      enqueueSnackbar,
-      generateFields,
-      handleClose,
-      importId,
-      isGroupedSampleData,
-      lookups,
-      mappings,
-      resource,
-    ]
-  );
 
   return (
     <Drawer
@@ -158,21 +77,21 @@ function MappingDrawer() {
                 />
               </div>
               {showMappings && (
-                <ButtonGroup>
-                  <Button
+                <ButtonGroup className={classes.buttonGroup}>
+                  <MappingSaveButton
+                    id={mappingEditorId}
+                    color="primary"
+                    dataTest="saveImportMapping"
+                    submitButtonLabel="Save"
+                  />
+                  <MappingSaveButton
+                    id={mappingEditorId}
                     variant="outlined"
                     color="secondary"
-                    data-test="saveImportMapping"
-                    onClick={handleSave()}>
-                    Save
-                  </Button>
-                  <Button
-                    variant="outlined"
-                    color="primary"
-                    data-test="saveImportMapping"
-                    onClick={handleSave(true)}>
-                    Save & Close
-                  </Button>
+                    dataTest="saveAndCloseImportMapping"
+                    onClose={handleClose}
+                    submitButtonLabel="Save & Close"
+                  />
                   <Button
                     variant="text"
                     data-test="saveImportMapping"
