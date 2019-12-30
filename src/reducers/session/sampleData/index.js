@@ -125,9 +125,14 @@ function getResourceSampleDataStatus(state, resourceId) {
   return state[resourceId] && state[resourceId].status;
 }
 
+function getResourceSampleDataError(state, resourceId) {
+  return state[resourceId] && state[resourceId].error;
+}
+
 export function getResourceSampleDataWithStatus(state, resourceId, stage) {
   return {
     data: getResourceSampleData(state, resourceId, stage),
     status: getResourceSampleDataStatus(state, resourceId),
+    error: getResourceSampleDataError(state, resourceId),
   };
 }

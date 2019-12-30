@@ -556,6 +556,9 @@ export default {
     type: 'sampledata',
     label: 'Sample Data',
   },
+  exportPanel: {
+    type: 'exportpanel',
+  },
   skipRetries: {
     type: 'checkbox',
     label: 'Skip Retries',

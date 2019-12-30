@@ -41,6 +41,7 @@ import {
   getDomain,
 } from '../utils/resource';
 import { processSampleData } from '../utils/sampleData';
+import { getAvailablePreviewStages } from '../utils/exportPanel';
 import inferErrorMessage from '../utils/inferErrorMessage';
 import getRoutePath from '../utils/routePaths';
 import { COMM_STATES } from './comms/networkComms';
@@ -2836,4 +2837,20 @@ export function resourceNamesByIds(state, type) {
   resources.forEach(r => (resourceIdNameMap[r._id] = r.name || r._id));
 
   return resourceIdNameMap;
+}
+
+// Gives back supported stages of data flow based on resource type
+export function getAvailableResourcePreviewStages(
+  state,
+  resourceId,
+  resourceType
+) {
+  const { merged: resourceObj } = resourceData(
+    state,
+    resourceType,
+    resourceId,
+    'value'
+  );
+
+  return getAvailablePreviewStages(resourceObj);
 }

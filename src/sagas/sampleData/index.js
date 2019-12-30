@@ -70,11 +70,16 @@ function* getPreviewData({ resourceId, resourceType, values, runOffline }) {
       path,
       opts: { method: 'POST', body },
       message: `Fetching ${resourceType} Preview`,
+      hidden: true,
     });
 
     yield put(actions.sampleData.received(resourceId, previewData));
   } catch (e) {
     // Handling Errors with status code between 400 and 500
+    if (e.status === 403 || e.status === 401) {
+      return;
+    }
+
     if (e.status >= 400 && e.status < 500) {
       const parsedError = JSON.parse(e.message);
 

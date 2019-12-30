@@ -10,6 +10,9 @@ import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import Close from '../../../components/icons/CloseIcon';
 
+// Just a temporary variable to increase width
+// TODO @Raghu: Discuss with Azhar and do this UI Fix
+const containerWidth = 1200;
 const useStyles = makeStyles(theme => ({
   root: {
     zIndex: props => props.zIndex,
@@ -17,7 +20,7 @@ const useStyles = makeStyles(theme => ({
     borderColor: 'rgb(0,0,0,0.2)',
     borderLeft: 0,
     height: '100vh',
-    width: props => (props.match.isExact ? 660 : 150),
+    width: props => (props.match.isExact ? containerWidth : 150),
     overflowX: 'hidden',
     overflowY: props => (props.match.isExact ? 'auto' : 'hidden'),
     boxShadow: `-5px 0 8px rgba(0,0,0,0.2)`,
@@ -25,7 +28,7 @@ const useStyles = makeStyles(theme => ({
   },
   form: {
     height: `calc(100vh - 136px)`,
-    width: props => (props.match.isExact ? undefined : 660),
+    width: props => (props.match.isExact ? undefined : containerWidth),
     maxHeight: 'unset',
     padding: '14px 24px',
   },
