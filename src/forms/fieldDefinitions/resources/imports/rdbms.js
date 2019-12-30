@@ -2,7 +2,11 @@ export default {
   'rdbms.queryType': {
     type: 'radiogroupforresetfields',
     label: 'Query Type',
-    fieldsToReset: ['ignoreExisting', 'ignoreMissing', 'rdbms.ignoreExtract'],
+    fieldsToReset: [
+      { id: 'ignoreExisting', type: 'checkbox' },
+      { id: 'ignoreMissing', type: 'checkbox' },
+      { id: 'rdbms.ignoreExtract', type: 'textwithlookupextract' },
+    ],
     required: true,
     helpText: `Please select 'Insert' if you are only importing new records into the Database. Please select 'Update' if you are only importing changes to existing records in the Database. Please select 'Insert or Update' if you want your import to be more dynamic such that (1) if an existing record exists in the Database then that record will be updated, or (2) if an existing record does not exist then a new record will be created.`,
     options: [
