@@ -41,7 +41,7 @@ export default function Notifications() {
   // remains the same and the notifications themselves change. usually new ones get
   // added or removed (if rejected/accepted).
   const notifications = useSelector(
-    state => selectors.notifications(state),
+    state => selectors.userNotifications(state),
     // if the following expression is 'true', no re-render is performed
     (left, right) => left.length === right.length
   );
@@ -55,12 +55,16 @@ export default function Notifications() {
     setAnchorEl(null);
   }, []);
   const handleAction = useCallback(
-    (action, id) => () => {
+    (resourceType, action, id) => () => {
       switch (action) {
         case 'accept':
-          return dispatch(actions.user.org.accounts.acceptInvite(id));
+          return dispatch(
+            actions.user.sharedNotifications.acceptInvite(resourceType, id)
+          );
         case 'reject':
-          return dispatch(actions.user.org.accounts.rejectInvite(id));
+          return dispatch(
+            actions.user.sharedNotifications.rejectInvite(resourceType, id)
+          );
         default:
           return null;
       }
@@ -104,32 +108,23 @@ export default function Notifications() {
               key={`${a.id}`}>
               <ListItemText
                 primary={
-                  <Typography component="span">
-                    {a.ownerUser.name || a.ownerUser.company}
-                  </Typography>
+                  <Typography component="span">{a.primaryMessage}</Typography>
                 }
-                secondary={
-                  <Typography>
-                    {a.ownerUser.email} is inviting you to join their account.
-                    Please accept or decline this invitation.
-                  </Typography>
-                }
+                secondary={<Typography>{a.secondaryMessage}</Typography>}
               />
               <ListItemSecondaryAction>
                 <IconButton
                   className={classes.button}
-                  data-test={`accept ${a.ownerUser.name ||
-                    a.ownerUser.company}`}
+                  data-test={`accept ${a.type} share`}
                   aria-label="Accept"
-                  onClick={handleAction('accept', a.id)}>
+                  onClick={handleAction(a.type, 'accept', a.id)}>
                   <AcceptIcon />
                 </IconButton>
                 <IconButton
                   className={classes.button}
-                  data-test={`dismiss ${a.ownerUser.name ||
-                    a.ownerUser.company}`}
+                  data-test={`dismiss ${a.type} share`}
                   aria-label="Dismiss"
-                  onClick={handleAction('reject', a.id)}>
+                  onClick={handleAction(a.type, 'reject', a.id)}>
                   <DismissIcon />
                 </IconButton>
               </ListItemSecondaryAction>

@@ -106,6 +106,7 @@ export default {
         (r && r.http && r.http.encrypted && JSON.stringify(r.http.encrypted)) ||
         '{"field": "value"}',
     },
+    'http.disableStrictSSL': { fieldId: 'http.disableStrictSSL' },
     'http.unencrypted': {
       fieldId: 'http.unencrypted',
       visibleWhenAll: [{ field: 'http.auth.type', is: ['token', 'custom'] }],
@@ -198,6 +199,7 @@ export default {
         collapsed: true,
         label: 'Advanced Settings',
         fields: [
+          'http.disableStrictSSL',
           'httpAdvanced',
           'http.clientCertificates.key',
           'http.clientCertificates.cert',

@@ -1,6 +1,6 @@
 import { useDispatch } from 'react-redux';
 import { withRouter, Link } from 'react-router-dom';
-import { Typography, Tooltip } from '@material-ui/core';
+import { Typography, Tooltip, makeStyles } from '@material-ui/core';
 import HomePageCardContainer from '../../components/HomePageCard/HomePageCardContainer';
 import Header from '../../components/HomePageCard/Header';
 import Status from '../../components/Status';
@@ -21,8 +21,32 @@ import { INTEGRATION_ACCESS_LEVELS, TILE_STATUS } from '../../utils/constants';
 import { tileStatus } from './util';
 import getRoutePath from '../../utils/routePaths';
 import actions from '../../actions';
+import { getIntegrationAppUrlName } from '../../utils/integrationApps';
+
+const useStyles = makeStyles(theme => ({
+  tileName: {
+    color: theme.palette.secondary.light,
+    '&:hover': {
+      color: theme.palette.primary.main,
+    },
+  },
+  action: {
+    width: theme.spacing(3),
+    height: theme.spacing(3),
+    color: theme.palette.secondary.light,
+    '&:hover': {
+      color: theme.palette.primary.main,
+    },
+  },
+  status: {
+    '& > * :hover': {
+      color: theme.palette.primary.main,
+    },
+  },
+}));
 
 function Tile({ tile, history }) {
+  const classes = useStyles();
   const dispatch = useDispatch();
   const numFlowsText = `${tile.numFlows} Flow${tile.numFlows === 1 ? '' : 's'}`;
   const accessLevel =
@@ -30,18 +54,20 @@ function Tile({ tile, history }) {
     tile.integration.permissions &&
     tile.integration.permissions.accessLevel;
   const status = tileStatus(tile);
+  const integrationAppTileName =
+    tile._connectorId && tile.name ? getIntegrationAppUrlName(tile.name) : '';
   let urlToIntegrationSettings = `/integrations/${tile._integrationId}`;
   let urlToIntegrationUsers = `/integrations/${tile._integrationId}/admin/users`;
 
   if (tile.status === TILE_STATUS.IS_PENDING_SETUP) {
-    urlToIntegrationSettings = `/connectors/${tile._integrationId}/setup`;
+    urlToIntegrationSettings = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/setup`;
     urlToIntegrationUsers = urlToIntegrationSettings;
   } else if (tile.status === TILE_STATUS.UNINSTALL) {
-    urlToIntegrationSettings = `/connectors/${tile._integrationId}/uninstall`;
+    urlToIntegrationSettings = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/uninstall`;
     urlToIntegrationUsers = urlToIntegrationSettings;
   } else if (tile._connectorId) {
-    urlToIntegrationSettings = `/integrationApp/${tile._integrationId}`;
-    urlToIntegrationUsers = `/integrationApp/${tile._integrationId}/admin/users`;
+    urlToIntegrationSettings = `/integrationapps/${integrationAppTileName}/${tile._integrationId}`;
+    urlToIntegrationUsers = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/admin/users`;
   }
 
   function handleStatusClick(event) {
@@ -50,7 +76,11 @@ function Tile({ tile, history }) {
     if (tile.status === TILE_STATUS.HAS_OFFLINE_CONNECTIONS) {
       // TODO - open connection edit
     } else if (tile.status === TILE_STATUS.IS_PENDING_SETUP) {
-      history.push(getRoutePath(`/connectors/${tile._integrationId}/setup`));
+      history.push(
+        getRoutePath(
+          `/integrationapps/${integrationAppTileName}/${tile._integrationId}/setup`
+        )
+      );
     } else {
       if (status.variant === 'error') {
         /**
@@ -61,7 +91,9 @@ function Tile({ tile, history }) {
 
       if (tile._connectorId) {
         history.push(
-          getRoutePath(`/integrationApp/${tile._integrationId}/dashboard`)
+          getRoutePath(
+            `/integrationapps/${integrationAppTileName}/${tile._integrationId}/dashboard`
+          )
         );
       } else {
         history.push(
@@ -74,14 +106,20 @@ function Tile({ tile, history }) {
   return (
     <HomePageCardContainer>
       <Header>
-        <Status label={status.label} onClick={handleStatusClick}>
+        <Status
+          label={status.label}
+          onClick={handleStatusClick}
+          className={classes.status}>
           <StatusCircle variant={status.variant} />
         </Status>
       </Header>
       <Content>
         <CardTitle>
           <Typography variant="h3">
-            <Link color="inherit" to={getRoutePath(urlToIntegrationSettings)}>
+            <Link
+              color="inherit"
+              to={getRoutePath(urlToIntegrationSettings)}
+              className={classes.tileName}>
               {tile.name}
             </Link>
           </Typography>
@@ -108,6 +146,7 @@ function Tile({ tile, history }) {
                   placement="bottom">
                   <Link
                     color="inherit"
+                    className={classes.action}
                     to={getRoutePath(urlToIntegrationUsers)}>
                     <PermissionsMonitorIcon />
                   </Link>
