@@ -16,6 +16,7 @@ import AuditIcon from '../icons/AuditLogIcon';
 import RefIcon from '../icons/ViewReferencesIcon';
 import DetachIcon from '../icons/unLinkedIcon';
 import CalendarIcon from '../icons/CalendarIcon';
+import { getIntegrationAppUrlName } from '../../utils/integrationApps';
 
 const allActions = {
   detach: { action: 'detach', label: 'Detach flow', Icon: DetachIcon },
@@ -43,6 +44,19 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
     [dispatch, flowId]
   );
   const integrationId = flowDetails._integrationId;
+  const integrationAppName = useSelector(state => {
+    const integration = selectors.resource(
+      state,
+      'integrations',
+      integrationId
+    );
+
+    if (integration && integration._connectorId && integration.name) {
+      return getIntegrationAppUrlName(integration.name);
+    }
+
+    return null;
+  });
   const [showAudit, setShowAudit] = useState(false);
   const [showReferences, setShowReferences] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -66,7 +80,7 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
         case 'schedule':
           flowDetails._connectorId
             ? history.push(
-                `/pg/integrationApp/${integrationId}/flowBuilder/${flowId}/schedule`
+                `/pg/integrationapps/${integrationAppName}/${integrationId}/flowBuilder/${flowId}/schedule`
               )
             : history.push(
                 `/pg/integrations/${integrationId}/flowBuilder/${flowId}/schedule`
@@ -119,6 +133,7 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
       flowName,
       flowDetails._connectorId,
       history,
+      integrationAppName,
       integrationId,
       flowId,
       dispatch,

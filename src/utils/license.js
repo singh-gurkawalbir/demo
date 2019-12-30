@@ -20,7 +20,13 @@ export function upgradeStatus(license, integration = {}) {
   const highestEditionForConnector = integrationAppUtil.getHighestEditionForIntegrationApp(
     integration
   );
-  const editionArray = ['standard', 'premium', 'enterprise', 'custom fba'];
+  const editionArray = [
+    'starter',
+    'standard',
+    'premium',
+    'enterprise',
+    'custom fba',
+  ];
   const connectorEdition = editionArray.indexOf(
     license.opts &&
       license.opts.connectorEdition &&
