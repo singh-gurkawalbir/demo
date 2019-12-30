@@ -15,11 +15,17 @@ export function integrationAppsInstaller(state, id) {
   return fromInstaller.integrationAppsInstaller(state && state.installer, id);
 }
 
-export function integrationAppSettingsFormState(state, integrationId, flowId) {
+export function integrationAppSettingsFormState(
+  state,
+  integrationId,
+  flowId,
+  sectionId
+) {
   return fromSettings.integrationAppSettingsFormState(
     state && state.settings,
     integrationId,
-    flowId
+    flowId,
+    sectionId
   );
 }
 

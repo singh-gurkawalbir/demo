@@ -455,18 +455,20 @@ const integrationApp = {
         integration,
         license,
       }),
-    update: (integrationId, flowId, storeId, values, options) =>
+    update: (integrationId, flowId, storeId, sectionId, values, options) =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.UPDATE, {
         integrationId,
         flowId,
         storeId,
+        sectionId,
         values,
         options,
       }),
-    clear: (integrationId, flowId) =>
+    clear: (integrationId, flowId, sectionId) =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.FORM.CLEAR, {
         integrationId,
         flowId,
+        sectionId,
       }),
     submitComplete: params =>
       action(

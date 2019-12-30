@@ -46,22 +46,29 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export const useIASettingsStateWithHandleClose = (integrationId, flowId) => {
+export const useIASettingsStateWithHandleClose = (
+  integrationId,
+  flowId,
+  sectionId
+) => {
   const dispatch = useDispatch();
   const history = useHistory();
   const formState = useSelector(state => {
     const formState = selectors.integrationAppSettingsFormState(
       state,
       integrationId,
-      flowId
+      flowId,
+      sectionId
     );
 
     return { ...formState, initComplete: true };
   }, shallowEqual);
   const IASettingsHandleClose = useCallback(() => {
-    dispatch(actions.integrationApp.settings.clear(integrationId, flowId));
+    dispatch(
+      actions.integrationApp.settings.clear(integrationId, flowId, sectionId)
+    );
     history.goBack();
-  }, [dispatch, flowId, history, integrationId]);
+  }, [dispatch, flowId, history, integrationId, sectionId]);
 
   return {
     handleClose: IASettingsHandleClose,

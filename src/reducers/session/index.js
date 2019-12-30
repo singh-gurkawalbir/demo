@@ -254,11 +254,17 @@ export function apiAccessToken(state, resourceId) {
   );
 }
 
-export function integrationAppSettingsFormState(state, integrationId, flowId) {
+export function integrationAppSettingsFormState(
+  state,
+  integrationId,
+  flowId,
+  sectionId
+) {
   return fromIntegrationApps.integrationAppSettingsFormState(
     state && state.integrationApps,
     integrationId,
-    flowId
+    flowId,
+    sectionId
   );
 }
 

@@ -1034,11 +1034,17 @@ export function getFlowsAssociatedExportFromIAMetadata(state, fieldMeta) {
 }
 // #begin integrationApps Region
 
-export function integrationAppSettingsFormState(state, integrationId, flowId) {
+export function integrationAppSettingsFormState(
+  state,
+  integrationId,
+  flowId,
+  sectionId
+) {
   return fromSession.integrationAppSettingsFormState(
     state && state.session,
     integrationId,
-    flowId
+    flowId,
+    sectionId
   );
 }
 

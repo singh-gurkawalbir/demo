@@ -60,7 +60,8 @@ function ConfigureDrawer({ integrationId, storeId, sectionId }) {
   );
   const { formState, handleClose } = useIASettingsStateWithHandleClose(
     integrationId,
-    null
+    null,
+    sectionId
   );
 
   return (
@@ -83,6 +84,7 @@ function ConfigureDrawer({ integrationId, storeId, sectionId }) {
           className={classes.form}
           integrationId={integrationId}
           storeId={storeId}
+          sectionId={sectionId}
           fieldMeta={translatedMeta}
         />
       </Drawer>
