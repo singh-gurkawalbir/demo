@@ -4,13 +4,17 @@ const useStyles = makeStyles(theme => ({
   wrapper: {
     color: theme.palette.text.primary,
     marginRight: 10,
-    padding: 7,
     borderRadius: '50%',
     display: 'inline-flex',
     justifyContent: 'center',
     alignItems: 'center',
+    width: 30,
+    height: 30,
     '&:hover': {
       background: theme.palette.background.default,
+    },
+    '& > a': {
+      color: theme.palette.secondary.main,
     },
   },
 }));

@@ -104,7 +104,7 @@ const routes = [
   },
   { path: '/pg/dashboard' }, // exclusion of breadcrumb prop will skip this segment.
   {
-    path: '/pg/integrationApp/:integrationId',
+    path: '/pg/integrationapps/:integrationAppName/:integrationId',
     breadcrumb: IntegrationAppCrumb,
     childRoutes: [
       ...integrationAppRoutes,

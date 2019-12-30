@@ -1,10 +1,11 @@
 import { useEffect, useCallback, Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
+import { Typography, Button } from '@material-ui/core';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import FilterPanel from './FilterPanel';
+import Spinner from '../../../Spinner';
 
 /**
  * TODO: Azhar to check and update the button styles
@@ -81,7 +82,12 @@ export default function DynaNetSuiteQualificationCriteria(props) {
   }, [commMetaPath, connectionId, disableFetch, dispatch]);
 
   if (!filters) {
-    return null;
+    return (
+      <Typography>
+        Loading record metadata.
+        <Spinner />
+      </Typography>
+    );
   }
 
   return (

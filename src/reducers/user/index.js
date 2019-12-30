@@ -2,12 +2,14 @@ import { combineReducers } from 'redux';
 import users, * as fromUsers from './org/users';
 import accounts, * as fromAccounts from './org/accounts';
 import preferences, * as fromPreferences from './preferences';
+import notifications, * as fromNotifications from './notifications';
 import profile, * as fromProfile from './profile';
 import { ACCOUNT_IDS, USER_ACCESS_LEVELS } from '../../utils/constants';
 
 export default combineReducers({
   preferences,
   profile,
+  notifications,
   org: combineReducers({
     // licenses,
     users,
@@ -27,12 +29,8 @@ export function integratorLicense(state, accountId) {
 // #endregion LICENSE
 
 // #region NOTIFICATIONS
-export function notifications(state) {
-  const summary = fromAccounts.notifications(
-    state && state.org && state.org.accounts
-  );
-
-  return summary;
+export function userNotifications(state) {
+  return fromNotifications.userNotifications(state && state.notifications);
 }
 // #endregion NOTIFICATIONS
 
