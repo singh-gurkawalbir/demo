@@ -8,6 +8,9 @@ import TemplatePreview from '../../views/Templates/InstallIntegrationPreview';
 import TemplateInstall from '../../views/Templates/Install';
 import GenerateOrInstall from '../../views/Templates/GenerateOrInstall';
 import ClonePreview from '../../views/Clone/Preview';
+import IntegrationAppInstallation from '../../views/IntegrationApps/Installer';
+import IntegrationAppAddNewStore from '../../views/IntegrationApps/AddNewStore';
+import IntegrationAppUninstallation from '../../views/IntegrationApps/Uninstaller';
 import CloneSetup from '../../views/Clone/Setup';
 
 const RecycleBin = loadable(() =>
@@ -108,7 +111,7 @@ export default class AppRouting extends Component {
         />
         <Route
           path={[
-            '/pg/integrationApp/:integrationId/flowBuilder/:flowId',
+            '/pg/integrationapps/:integrationAppName/:integrationId/flowBuilder/:flowId',
             '/pg/integrations/:integrationId/flowBuilder/:flowId',
           ]}>
           <FlowBuilder />
@@ -118,13 +121,29 @@ export default class AppRouting extends Component {
           component={Integration}
         />
         <Route
+          path="/pg/integrationapps/:integrationAppName/:integrationId/setup"
+          component={IntegrationAppInstallation}
+        />
+        <Route
+          path="/pg/integrationapps/:integrationAppName/:integrationId/install/addNewStore"
+          component={IntegrationAppAddNewStore}
+        />
+        <Route
           path={[
-            '/pg/integrationApp/:integrationId/child/:storeId/:tab',
-            '/pg/integrationApp/:integrationId/:tab',
-            '/pg/integrationApp/:integrationId',
+            `/pg/integrationapps/:integrationAppName/:integrationId/uninstall/:storeId`,
+            `/pg/integrationapps/:integrationAppName/:integrationId/uninstall`,
+          ]}
+          component={IntegrationAppUninstallation}
+        />
+        <Route
+          path={[
+            '/pg/integrationapps/:integrationAppName/:integrationId/child/:storeId/:tab',
+            '/pg/integrationapps/:integrationAppName/:integrationId/:tab',
+            '/pg/integrationapps/:integrationAppName/:integrationId',
           ]}
           component={IntegrationApp}
         />
+
         <Route
           path="/pg/connectors/:connectorId/connectorLicenses"
           component={ConnectorLicenses}

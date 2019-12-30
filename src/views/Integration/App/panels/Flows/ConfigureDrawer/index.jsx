@@ -27,7 +27,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function ConfigureDrawer({ integrationId, storeId, sectionId }) {
+function ConfigureDrawer({ integrationId, storeId, sectionId, parentUrl }) {
   const classes = useStyles();
   const match = useRouteMatch();
   const section = useSelector(state => {
@@ -60,7 +60,8 @@ function ConfigureDrawer({ integrationId, storeId, sectionId }) {
   );
   const { formState, handleClose } = useIASettingsStateWithHandleClose(
     integrationId,
-    null
+    null,
+    parentUrl
   );
 
   return (
@@ -95,7 +96,7 @@ export default function ConfigureDrawerRoute(props) {
 
   return (
     <Route exact path={`${match.url}/configure`}>
-      <ConfigureDrawer {...props} />
+      <ConfigureDrawer {...props} parentUrl={match.url} />
     </Route>
   );
 }

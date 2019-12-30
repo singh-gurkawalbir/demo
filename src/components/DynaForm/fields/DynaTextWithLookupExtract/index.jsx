@@ -19,6 +19,9 @@ export default function DynaTextWithLookupExtract(props) {
   } = props;
   const { resourceName } = options;
   const isExport = resourceType === 'exports';
+  const isPageGenerator = useSelector(state =>
+    selectors.isPageGenerator(state, flowId, resourceId, resourceType)
+  );
   const connection = useSelector(state =>
     selectors.resource(state, 'connections', connectionId)
   );
@@ -36,7 +39,7 @@ export default function DynaTextWithLookupExtract(props) {
     // Request for sample data only incase of flow context
     // TODO : @Raghu Do we show default data in stand alone context?
     // What type of sample data is expected in case of Page generators
-    if (flowId && !sampleData) {
+    if (flowId && !sampleData && !isPageGenerator) {
       dispatch(
         actions.flowData.requestSampleData(
           flowId,
@@ -46,7 +49,7 @@ export default function DynaTextWithLookupExtract(props) {
         )
       );
     }
-  }, [dispatch, flowId, resourceId, resourceType, sampleData]);
+  }, [dispatch, flowId, isPageGenerator, resourceId, resourceType, sampleData]);
 
   const formattedSampleData = useMemo(
     () =>
@@ -79,22 +82,6 @@ export default function DynaTextWithLookupExtract(props) {
       id: 'lastExportDateTime',
     });
   }
-
-  useEffect(() => {
-    // Request for sample data only incase of flow context
-    // TODO : @Raghu Do we show default data in stand alone context?
-    // What type of sample data is expected in case of Page generators
-    if (flowId && !sampleData) {
-      dispatch(
-        actions.flowData.requestSampleData(
-          flowId,
-          resourceId,
-          resourceType,
-          'flowInput'
-        )
-      );
-    }
-  }, [dispatch, flowId, resourceId, resourceType, sampleData]);
 
   const showLookups = !isExport && !hideLookups;
 

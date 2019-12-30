@@ -20,6 +20,7 @@ import ArrowRightIcon from '../../components/icons/ArrowRightIcon';
 import ConnectionSetupDialog from '../../components/ResourceSetupDialog';
 import InstallationStep from '../../components/InstallStep';
 import { confirmDialog } from '../../components/ConfirmDialog';
+import { getIntegrationAppUrlName } from '../../utils/integrationApps';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -68,6 +69,9 @@ export default function ConnectorInstallation(props) {
   const selectedConnection = useSelector(state =>
     selectors.resource(state, 'connections', selectedConnectionId)
   );
+  const integrationAppName = getIntegrationAppUrlName(
+    integration && integration.name
+  );
 
   useEffect(() => {
     if (
@@ -85,12 +89,15 @@ export default function ConnectorInstallation(props) {
       dispatch(actions.resource.request('integrations', integrationId));
 
       if (integration.mode === 'settings') {
-        props.history.push(`/pg/integrationApp/${integrationId}/flows`);
+        props.history.push(
+          `/pg/integrationapps/${integrationAppName}/${integrationId}/flows`
+        );
       }
     }
   }, [
     dispatch,
     integration.mode,
+    integrationAppName,
     integrationId,
     isSetupComplete,
     props.history,

@@ -2,14 +2,7 @@ import { useReducer, useEffect, useState, useCallback } from 'react';
 import produce from 'immer';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
-import {
-  ExpansionPanelSummary,
-  Typography,
-  Grid,
-  ExpansionPanelDetails,
-  ExpansionPanel,
-} from '@material-ui/core';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import { Typography, Grid } from '@material-ui/core';
 import Spinner from '../../../Spinner';
 import RefreshIcon from '../../../icons/RefreshIcon';
 import DynaSelect from '../DynaSelect';
@@ -353,26 +346,4 @@ export const DynaTable = props => {
   );
 };
 
-export default function CollapsableTable(props) {
-  const { title, collapsable = false } = props;
-  const [shouldExpand, setShouldExpand] = useState(false);
-  const handleClick = useCallback(() => setShouldExpand(expand => !expand), []);
-
-  return collapsable ? (
-    <ExpansionPanel
-      // eslint-disable-next-line react/no-array-index-key
-      expanded={shouldExpand}>
-      <ExpansionPanelSummary
-        data-test={title}
-        onClick={handleClick}
-        expandIcon={<ExpandMoreIcon />}>
-        <Typography>{title}</Typography>
-      </ExpansionPanelSummary>
-      <ExpansionPanelDetails>
-        <DynaTable {...props} />
-      </ExpansionPanelDetails>
-    </ExpansionPanel>
-  ) : (
-    <DynaTable {...props} />
-  );
-}
+export default DynaTable;

@@ -15,6 +15,7 @@ import SettingsIcon from '../../../../components/icons/SettingsIcon';
 import OnOffSwitch from '../../../../components/SwitchToggle';
 import InfoIconButton from '../InfoIconButton';
 import FlowStartDateDialog from '../../../../components/DeltaFlowStartDate/Dialog';
+import { getIntegrationAppUrlName } from '../../../../utils/integrationApps';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -63,6 +64,19 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
   const dispatch = useDispatch();
   const flowDetails =
     useSelector(state => selectors.flowDetails(state, flowId)) || {};
+  const integrationAppName = useSelector(state => {
+    const integrationApp = selectors.resource(
+      state,
+      'integrations',
+      flowDetails._integrationId
+    );
+
+    if (integrationApp && integrationApp._connectorId && integrationApp.name) {
+      return getIntegrationAppUrlName(integrationApp.name);
+    }
+
+    return '';
+  });
   const [showDilaog, setShowDilaog] = useState(false);
   const patchFlow = useCallback(
     (path, value) => {
@@ -81,11 +95,11 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
       if (flowDetails._connectorId) {
         if (storeId) {
           history.push(
-            `/pg/integrationApp/${flowDetails._integrationId}/child/${storeId}/dashboard`
+            `/pg/integrationapps/${integrationAppName}/${flowDetails._integrationId}/child/${storeId}/dashboard`
           );
         } else {
           history.push(
-            `/pg/integrationApp/${flowDetails._integrationId}/dashboard`
+            `/pg/integrationapps/${integrationAppName}/${flowDetails._integrationId}/dashboard`
           );
         }
       } else {
@@ -100,6 +114,7 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
       flowDetails._integrationId,
       flowId,
       history,
+      integrationAppName,
       storeId,
     ]
   );
@@ -183,7 +198,7 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
 
   const isIntegrationApp = !!flowDetails._connectorId;
   const flowBuilderTo = isIntegrationApp
-    ? `/pg/integrationApp/${flowDetails._integrationId}/flowBuilder/${flowId}`
+    ? `/pg/integrationapps/${integrationAppName}/${flowDetails._integrationId}/flowBuilder/${flowId}`
     : `flowBuilder/${flowId}`;
   const closeDeltaDialog = () => {
     setShowDilaog(false);

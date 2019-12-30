@@ -44,6 +44,7 @@ import { processSampleData } from '../utils/sampleData';
 import inferErrorMessage from '../utils/inferErrorMessage';
 import getRoutePath from '../utils/routePaths';
 import { COMM_STATES } from './comms/networkComms';
+import { getIntegrationAppUrlName } from '../utils/integrationApps';
 
 const emptySet = [];
 const emptyObject = {};
@@ -376,6 +377,10 @@ export function editorViolations(state, id) {
 
 export function mapping(state, id) {
   return fromSession.mapping(state && state.session, id);
+}
+
+export function mappingSaveProcessTerminate(state, id) {
+  return fromSession.mappingSaveProcessTerminate(state && state.session, id);
 }
 
 export function editorHelperFunctions(state) {
@@ -1560,8 +1565,8 @@ export function accountSummary(state) {
   return fromUser.accountSummary(state.user);
 }
 
-export function notifications(state) {
-  return fromUser.notifications(state.user);
+export function userNotifications(state) {
+  return fromUser.userNotifications(state.user);
 }
 
 export function hasAccounts(state) {
@@ -1647,12 +1652,15 @@ const getParentsResourceId = (state, resourceType, resourceId) => {
 export const getResourceEditUrl = (state, resourceType, resourceId) => {
   if (resourceType === 'flows') {
     const integrationId = getParentsResourceId(state, resourceType, resourceId);
-    const { _connectorId } = resource(state, resourceType, resourceId) || {};
+    const { _connectorId, name } =
+      resource(state, resourceType, resourceId) || {};
 
     // if _connectorId its an integrationApp
     if (_connectorId) {
       return getRoutePath(
-        `/integrationApp/${integrationId}/flowBuilder/${resourceId}`
+        `/integrationapps/${getIntegrationAppUrlName(
+          name
+        )}/${integrationId}/flowBuilder/${resourceId}`
       );
     }
 

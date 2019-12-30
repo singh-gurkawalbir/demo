@@ -7,7 +7,7 @@ import OldValue from './OldValue';
 export const AUDIT_LOG_SOURCE_LABELS = {
   ui: 'UI',
   api: 'API',
-  connector: 'Connector',
+  connector: 'Integration App',
   stack: 'Stack',
   system: 'System',
 };

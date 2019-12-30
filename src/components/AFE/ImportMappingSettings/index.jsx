@@ -1,19 +1,35 @@
 import React from 'react';
 import Button from '@material-ui/core/Button';
+import { Drawer } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import DynaForm from '../../DynaForm';
 import DynaSubmit from '../../DynaForm/DynaSubmit';
 import ApplicationMappingSettings from './application';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
-import ModalDialog from '../../ModalDialog';
+import DrawerTitleBar from '../../drawer/TitleBar';
 
-const useStyles = makeStyles({
-  contentWrapper: {
+const useStyles = makeStyles(theme => ({
+  drawerPaper: {
+    marginTop: theme.appBarHeight,
+    width: 824,
+    border: 'solid 1px',
+    borderColor: theme.palette.secondary.lightest,
+    boxShadow: `-4px 4px 8px rgba(0,0,0,0.15)`,
+    backgroundColor: theme.palette.background.white,
+    zIndex: theme.zIndex.drawer + 1,
+  },
+  content: {
+    borderTop: `solid 1px ${theme.palette.secondary.lightest}`,
+    overflow: 'auto',
+
+    padding: theme.spacing(3),
+    paddingTop: theme.spacing(1),
+    marginBottom: theme.spacing(1),
     '& > div:first-child': {
-      overflowX: 'hidden',
+      height: `calc(100vh - 180px)`,
     },
   },
-});
+}));
 
 export default function ImportMappingSettings(props) {
   const classes = useStyles();
@@ -21,6 +37,7 @@ export default function ImportMappingSettings(props) {
     title,
     value,
     onClose,
+    open,
     extractFields,
     generateFields,
     lookup,
@@ -76,13 +93,14 @@ export default function ImportMappingSettings(props) {
   };
 
   return (
-    <ModalDialog
-      onClose={() => onClose(false)}
-      show
-      minWidth="md"
-      maxWidth="lg">
-      <div>{title}</div>
-      <div className={classes.contentWrapper}>
+    <Drawer
+      anchor="right"
+      open={open}
+      classes={{
+        paper: classes.drawerPaper,
+      }}>
+      <DrawerTitleBar onClose={() => onClose(false)} title={title} />
+      <div className={classes.content}>
         <DynaForm
           disabled={disabled}
           fieldMeta={fieldMeta}
@@ -104,6 +122,6 @@ export default function ImportMappingSettings(props) {
           </Button>
         </DynaForm>
       </div>
-    </ModalDialog>
+    </Drawer>
   );
 }

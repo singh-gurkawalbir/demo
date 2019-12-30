@@ -102,8 +102,8 @@ export default function Uninstall(props) {
       </Typography>
       <Divider className={classes.margin} />
       <Typography variant="h4">
-        Once you uninstall this connector there is no going back. Please be
-        certain.
+        Once you uninstall this Integration App there is no going back. Please
+        be certain.
       </Typography>
       <Button
         data-test="uninstallConnector"
