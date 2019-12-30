@@ -1,4 +1,5 @@
-import { call, takeEvery, put } from 'redux-saga/effects';
+import { call, takeEvery, put, select } from 'redux-saga/effects';
+import * as selectors from '../../reducers';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
@@ -13,31 +14,33 @@ export function* cancel({ id }) {
       opts,
     });
   } catch (e) {
-    return true;
+    return yield put(actions.api.failure(path, 'PUT', e, false));
   }
 
-  yield put(actions.resource.requestCollection('transfers'));
+  const transfer = yield select(selectors.resource, 'transfers', id);
+
+  transfer.status = 'canceled';
+  yield put(actions.resource.received('transfers', transfer));
 }
 
 export function* create({ data }) {
   const path = `/transfers/invite`;
+  let response;
   const opts = {
     method: 'POST',
     body: data,
   };
 
   try {
-    yield call(apiCallWithRetry, {
+    response = yield call(apiCallWithRetry, {
       path,
       opts,
     });
   } catch (e) {
-    yield put(actions.api.failure(path, 'POST', e, false));
-
-    return true;
+    return yield put(actions.api.failure(path, 'POST', e, false));
   }
 
-  yield put(actions.resource.requestCollection('transfers'));
+  yield put(actions.resource.received('transfers', response));
 }
 
 export function* preview({ data }) {
@@ -65,9 +68,9 @@ export function* preview({ data }) {
       hidden: true,
     });
 
-    yield put(actions.transfer.updatePreview({ response }));
+    yield put(actions.transfer.receivedPreview({ response }));
   } catch (error) {
-    yield put(actions.transfer.updatePreview({ error }));
+    yield put(actions.transfer.receivedPreview({ error }));
 
     return true;
   }

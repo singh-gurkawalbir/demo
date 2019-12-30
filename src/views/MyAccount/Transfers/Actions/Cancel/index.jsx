@@ -10,11 +10,7 @@ export default {
   component: function Cancel({ resource: transfer }) {
     const dispatch = useDispatch();
     const cancelTranfer = useCallback(() => {
-      const patchSet = [{ op: 'replace', path: '/status', value: 'canceled' }];
-
       dispatch(actions.transfer.cancel(transfer._id));
-
-      dispatch(actions.resource.patchStaged(transfer._id, patchSet));
     }, [dispatch, transfer._id]);
     const handleClick = () => {
       const message = 'Are you sure you want to cancel this transfer?';

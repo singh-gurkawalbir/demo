@@ -1,4 +1,5 @@
 import { useDispatch } from 'react-redux';
+import { useCallback } from 'react';
 import { IconButton } from '@material-ui/core';
 import actions from '../../../../../actions';
 import CloseIcon from '../../../../../components/icons/TrashIcon';
@@ -8,6 +9,9 @@ export default {
   label: 'Delete transfer',
   component: function Delete({ resource: transfer }) {
     const dispatch = useDispatch();
+    const deleteTranfer = useCallback(() => {
+      dispatch(actions.resource.delete('transfers', transfer._id));
+    }, [dispatch, transfer._id]);
     const handleClick = () => {
       const message = 'Are you sure you want to delete this transfer?';
 
@@ -21,7 +25,7 @@ export default {
           {
             label: 'Yes',
             onClick: () => {
-              dispatch(actions.resource.delete('transfers', transfer._id));
+              deleteTranfer();
             },
           },
         ],

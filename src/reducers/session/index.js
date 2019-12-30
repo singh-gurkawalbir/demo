@@ -351,7 +351,7 @@ export function getLastExportDateTime(state, flowId) {
   );
 }
 
-export function getPreviewData(state) {
+export function getTransferPreviewData(state) {
   return fromTransfers.getPreviewData(state && state.transfers);
 }
 

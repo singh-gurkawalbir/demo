@@ -23,12 +23,10 @@ const useStyles = makeStyles(theme => ({
 export default function Transfers() {
   const classes = useStyles();
   const transfers = useSelector(
-    state => selectors.resourceList(state, { type: 'transfers' }).resources
+    state =>
+      selectors.transferListWithMetadata(state, { type: 'transfers' }).resources
   );
   const [showInviteView, setShowInviteView] = useState(false);
-  const preferences = useSelector(state =>
-    selectors.userProfilePreferencesProps(state)
-  );
   const handleNewTransferClick = () => {
     setShowInviteView(true);
   };
@@ -65,7 +63,6 @@ export default function Transfers() {
               resourceType="transfers"
               data={transfers}
               {...metadata}
-              actionProps={{ preferences }}
             />
           </Fragment>
         )}

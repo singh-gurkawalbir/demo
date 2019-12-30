@@ -25,7 +25,7 @@ export default function Invite(props) {
   useEffect(() => {
     clearPreview();
   }, [clearPreview]);
-  const data = useSelector(state => selectors.getPreviewData(state));
+  const data = useSelector(state => selectors.getTransferPreviewData(state));
   const response = data && data.response;
   const error = data && data.error;
   const fieldMeta = {
@@ -34,7 +34,7 @@ export default function Invite(props) {
         id: 'email',
         name: 'email',
         type: 'text',
-        label: "New Owner's Email:",
+        label: "New Owner's Email",
         required: true,
         helpText:
           'Email address of the person who the integration is transferred to. The receiver needs to be a user with their own integrator.io account and can’t be part of your organization',
@@ -43,7 +43,7 @@ export default function Invite(props) {
         id: '_integrationIds',
         name: '_integrationIds',
         type: 'multiselect',
-        label: 'Next Data Flow:',
+        label: 'Next Data Flow',
         required: true,
         options: [
           {

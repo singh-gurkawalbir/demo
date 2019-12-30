@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { each } from 'lodash';
 import actionTypes from '../../../actions/types';
 
 export default function reducer(state = {}, action) {
@@ -6,7 +6,7 @@ export default function reducer(state = {}, action) {
   let newState;
 
   switch (type) {
-    case actionTypes.TRANSFER.UPDATE_PREVIEW:
+    case actionTypes.TRANSFER.RECEIVED_PREVIEW:
       newState = {
         ...state,
         transfer: {
@@ -32,8 +32,8 @@ export default function reducer(state = {}, action) {
 function parsePreviewResponse(res) {
   const toReturn = [];
 
-  _.each(res, (v, t) => {
-    _.each(res[t], d => {
+  each(res, (v, t) => {
+    each(res[t], d => {
       if (d && d._id) {
         toReturn.push({
           type: t,
