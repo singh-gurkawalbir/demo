@@ -1,9 +1,11 @@
-import { useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/styles';
 import * as selectors from '../../../../../reducers';
 import { ActionsFactory as DynaFormWithDynamicActions } from '../../../../../components/ResourceFormFactory';
 import { integrationSettingsToDynaFormMetadata } from '../../../../../forms/utils';
 import PanelHeader from '../../../common/PanelHeader';
+import actions from '../../../../../actions';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -31,6 +33,13 @@ export default function GeneralPanel({ integrationId, storeId }) {
     generalSectionMetadata,
     integrationId,
     true
+  );
+  const dispatch = useDispatch();
+
+  // perform cleanup
+  useEffect(
+    () => () => dispatch(actions.integrationApp.settings.clear(integrationId)),
+    [dispatch, integrationId]
   );
 
   return (
