@@ -1,10 +1,12 @@
 import React, { useState, Fragment } from 'react';
+import { TextField } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import UrlEditorDialog from '../../../../components/AFE/UrlEditor/Dialog';
 import InputWithLookupHandlebars from './InputWithLookupHandlebars';
 import ActionButton from '../../../ActionButton';
 import ExitIcon from '../../../icons/ExitIcon';
 import { adaptorTypeMap } from '../../../../utils/resource';
+import sampleTemplateUtil from '../../../../utils/sampleTemplate';
 
 const useStyles = makeStyles(theme => ({
   textField: {
@@ -17,7 +19,7 @@ const useStyles = makeStyles(theme => ({
 }));
 const prefixRegexp = '.*{{((?!(}|{)).)*$';
 
-export default function RelativeURI(props) {
+export default function TemplateEditor(props) {
   const [showEditor, setShowEditor] = useState(false);
   const classes = useStyles();
   const {
@@ -39,12 +41,15 @@ export default function RelativeURI(props) {
     flowId,
     arrayIndex,
     adaptorType,
+    resourceName,
     sampleData,
     extractFields,
     connection,
     showLookup,
+    fieldType,
+    lookups,
+    editorTitle = 'Relative URI Editor',
   } = props;
-  const { resourceName, lookups } = options;
   const { fieldId: lookupFieldId, data: lookupData } = lookups || {};
   const handleEditorClick = () => {
     setShowEditor(!showEditor);
@@ -147,14 +152,17 @@ export default function RelativeURI(props) {
     return newValue;
   };
 
+  const editorRule =
+    extactedVal || sampleTemplateUtil.getSampleRuleTemplate(adaptorType);
+
   return (
     <Fragment>
       {showEditor && (
         <UrlEditorDialog
-          title="Relative URI Editor"
+          title={editorTitle}
           id={id}
           data={sampleData}
-          rule={extactedVal}
+          rule={editorRule}
           lookups={lookupData}
           onClose={handleClose}
         />
@@ -165,36 +173,59 @@ export default function RelativeURI(props) {
         className={classes.exitButton}>
         <ExitIcon />
       </ActionButton>
-      <InputWithLookupHandlebars
-        id={id}
-        showLookup={showLookup}
-        key={id}
-        name={name}
-        label={label}
-        placeholder={placeholder}
-        isValid={isValid}
-        sampleData={sampleData}
-        description={description}
-        errorMessages={errorMessages}
-        isSqlImport={isSqlImport}
-        disabled={disabled}
-        multiline={multiline}
-        onFieldChange={handleFieldChange}
-        extractFields={extractFields}
-        lookups={lookupData}
-        onLookupUpdate={handleLookupUpdate}
-        required={required}
-        connectionId={connectionId}
-        value={extactedVal}
-        connectionType={connection.type}
-        resourceId={resourceId}
-        resourceName={resourceName}
-        resourceType={resourceType}
-        flowId={flowId}
-        getUpdatedFieldValue={getUpdatedFieldValue}
-        prefixRegexp={prefixRegexp}
-        getMatchedValueforSuggestion={getMatchedValueforSuggestion}
-      />
+      {fieldType === 'relativeUri' && (
+        <InputWithLookupHandlebars
+          id={id}
+          showLookup={showLookup}
+          key={id}
+          name={name}
+          label={label}
+          placeholder={placeholder}
+          isValid={isValid}
+          sampleData={sampleData}
+          description={description}
+          errorMessages={errorMessages}
+          isSqlImport={isSqlImport}
+          disabled={disabled}
+          multiline={multiline}
+          onFieldChange={handleFieldChange}
+          extractFields={extractFields}
+          lookups={lookupData}
+          onLookupUpdate={handleLookupUpdate}
+          required={required}
+          connectionId={connectionId}
+          value={extactedVal}
+          connectionType={connection.type}
+          resourceId={resourceId}
+          resourceName={resourceName}
+          resourceType={resourceType}
+          flowId={flowId}
+          getUpdatedFieldValue={getUpdatedFieldValue}
+          prefixRegexp={prefixRegexp}
+          getMatchedValueforSuggestion={getMatchedValueforSuggestion}
+        />
+      )}
+      {fieldType === 'templateeditor' && (
+        <TextField
+          id={id}
+          key={id}
+          name={name}
+          label={label}
+          className={classes.textField}
+          placeholder={placeholder}
+          helperText={isValid ? description : errorMessages}
+          disabled={disabled}
+          required={required}
+          error={!isValid}
+          value={value}
+          variant="filled"
+          onChange={e => {
+            const inpValue = e.target.value;
+
+            handleFieldChange(id, inpValue);
+          }}
+        />
+      )}
     </Fragment>
   );
 }

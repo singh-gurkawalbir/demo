@@ -128,7 +128,9 @@ export default {
     } else {
       retValues['/ignoreExisting'] = false;
       retValues['/ignoreMissing'] = false;
-      retValues['/http/body'] = [retValues['/http/body']];
+      retValues['/http/body'] = retValues['/http/body']
+        ? [retValues['/http/body']]
+        : [];
     }
 
     delete retValues['/inputMode'];
@@ -143,11 +145,44 @@ export default {
       fieldId === 'http.bodyCreate' ||
       fieldId === 'http.bodyUpdate'
     ) {
-      const lookupField = fields.find(
-        field => field.fieldId === 'http.lookups'
+      const httpBodyField = fields.find(field => field.fieldId === 'http.body');
+      const httpBodyCreateField = fields.find(
+        field => field.fieldId === 'http.bodyCreate'
+      );
+      const httpBodyUpdateField = fields.find(
+        field => field.fieldId === 'http.bodyUpdate'
       );
       const requestMediaTypeField = fields.find(
         field => field.fieldId === 'http.requestMediaType'
+      );
+
+      // checking if requestMediaType value changed. Reset body value when requestMediaType changes. Also, store requestMediaType value to check for change
+      if (
+        httpBodyField &&
+        httpBodyField.requestMediaType !== requestMediaTypeField.value
+      ) {
+        httpBodyField.value = '';
+        httpBodyField.requestMediaType = requestMediaTypeField.value;
+      }
+
+      if (
+        httpBodyCreateField &&
+        httpBodyCreateField.requestMediaType !== requestMediaTypeField.value
+      ) {
+        httpBodyCreateField.value = '';
+        httpBodyCreateField.requestMediaType = requestMediaTypeField.value;
+      }
+
+      if (
+        httpBodyUpdateField &&
+        httpBodyUpdateField.requestMediaType !== requestMediaTypeField.value
+      ) {
+        httpBodyUpdateField.value = '';
+        httpBodyUpdateField.requestMediaType = requestMediaTypeField.value;
+      }
+
+      const lookupField = fields.find(
+        field => field.fieldId === 'http.lookups'
       );
       const nameField = fields.find(field => field.fieldId === 'name');
 
@@ -343,6 +378,8 @@ export default {
       connectionId: r => r && r._connectionId,
       label: 'Build HTTP Request Body For Create',
       arrayIndex: 1,
+      requestMediaType: r =>
+        r && r.http ? r && r.http.requestMediaType : 'json',
       refreshOptionsOnChangesTo: [
         'http.lookups',
         'http.requestMediaType',
@@ -562,6 +599,8 @@ export default {
       connectionId: r => r && r._connectionId,
       label: 'Build HTTP Request Body For Update',
       arrayIndex: 0,
+      requestMediaType: r =>
+        r && r.http ? r && r.http.requestMediaType : 'json',
       refreshOptionsOnChangesTo: [
         'http.lookups',
         'http.requestMediaType',
