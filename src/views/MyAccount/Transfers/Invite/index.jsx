@@ -13,10 +13,13 @@ export default function Invite(props) {
   const { setShowInviteView } = props;
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({});
-  const integrations = useSelector(state =>
-    selectors.resourceList(state, {
-      type: 'integrations',
-    })
+  const integrations = useSelector(
+    state =>
+      selectors.resourceList(state, {
+        type: 'integrations',
+        ignoreEnvironmentFilter: true,
+      }),
+    (left, right) => left.length === right.length
   ).resources;
   const clearPreview = useCallback(() => {
     dispatch(actions.transfer.clearPreview());
@@ -25,7 +28,16 @@ export default function Invite(props) {
   useEffect(() => {
     clearPreview();
   }, [clearPreview]);
-  const data = useSelector(state => selectors.getTransferPreviewData(state));
+  const data = useSelector(
+    state => selectors.getTransferPreviewData(state),
+    (left, right) =>
+      (left &&
+        right &&
+        (left.response &&
+          right.response &&
+          left.response.length === right.response.length)) ||
+      (left.error && right.error && left.error.length === right.error.length)
+  );
   const response = data && data.response;
   const error = data && data.error;
   const fieldMeta = {
