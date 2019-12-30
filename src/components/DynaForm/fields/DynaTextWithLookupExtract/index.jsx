@@ -7,6 +7,7 @@ import getJSONPaths from '../../../../utils/jsonPaths';
 import IgnoreExistingData from './IgnoreExistingData';
 import TemplateEditor from './TemplateEditor';
 
+// fieldType values = ['relativeUri','templateeditor','ignoreExistingData']
 export default function DynaTextWithLookupExtract(props) {
   const {
     fieldType,
