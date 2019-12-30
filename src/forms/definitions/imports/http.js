@@ -155,31 +155,21 @@ export default {
       const requestMediaTypeField = fields.find(
         field => field.fieldId === 'http.requestMediaType'
       );
+      const bodyFields = [
+        httpBodyField,
+        httpBodyCreateField,
+        httpBodyUpdateField,
+      ];
 
       // checking if requestMediaType value changed. Reset body value when requestMediaType changes. Also, store requestMediaType value to check for change
-      if (
-        httpBodyField &&
-        httpBodyField.requestMediaType !== requestMediaTypeField.value
-      ) {
-        httpBodyField.value = '';
-        httpBodyField.requestMediaType = requestMediaTypeField.value;
-      }
+      bodyFields.forEach(field => {
+        const f = field;
 
-      if (
-        httpBodyCreateField &&
-        httpBodyCreateField.requestMediaType !== requestMediaTypeField.value
-      ) {
-        httpBodyCreateField.value = '';
-        httpBodyCreateField.requestMediaType = requestMediaTypeField.value;
-      }
-
-      if (
-        httpBodyUpdateField &&
-        httpBodyUpdateField.requestMediaType !== requestMediaTypeField.value
-      ) {
-        httpBodyUpdateField.value = '';
-        httpBodyUpdateField.requestMediaType = requestMediaTypeField.value;
-      }
+        if (f && f.requestMediaType !== requestMediaTypeField.value) {
+          f.value = '';
+          f.requestMediaType = requestMediaTypeField.value;
+        }
+      });
 
       const lookupField = fields.find(
         field => field.fieldId === 'http.lookups'
