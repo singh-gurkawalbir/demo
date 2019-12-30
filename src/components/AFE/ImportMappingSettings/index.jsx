@@ -32,6 +32,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function ImportMappingSettings(props) {
+  const classes = useStyles();
   const {
     title,
     value,
@@ -45,7 +46,6 @@ export default function ImportMappingSettings(props) {
     options,
     disabled,
   } = props;
-  const classes = useStyles();
   const { generate, extract, index } = value;
   const [enquesnackbar] = useEnqueueSnackbar();
   const fieldMeta = ApplicationMappingSettings.getMetaData({
