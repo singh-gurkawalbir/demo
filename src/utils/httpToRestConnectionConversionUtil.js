@@ -154,7 +154,7 @@ function extractAndSet(source, sPath, target, tPath, ...prcs) {
 
 function replaceHTTPPlaceholdersinHandlebarstoREST(string) {
   if (!string) {
-    return;
+    return string;
   }
 
   // search for indices at which this regex found and replace them accordingly
@@ -219,6 +219,8 @@ function replaceHTTPrefWithCorrespondingREST(str) {
       'connection.http.auth.token.token',
       'connection.rest.bearerToken'
     );
+  } else {
+    return str;
   }
 }
 
