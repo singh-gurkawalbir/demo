@@ -19,21 +19,23 @@ import PermissionsMonitorIcon from '../../components/icons/PermissionsMonitorIco
 import { INTEGRATION_ACCESS_LEVELS, TILE_STATUS } from '../../utils/constants';
 import { tileStatus } from './util';
 import getRoutePath from '../../utils/routePaths';
+import { getIntegrationAppUrlName } from '../../utils/integrationApps';
 
 function SuiteScriptTile({ tile, history }) {
   const accessLevel =
     tile.integration &&
     tile.integration.permissions &&
     tile.integration.permissions.accessLevel;
+  const integrationAppName = getIntegrationAppUrlName(tile.name, true);
   const status = tileStatus(tile);
   let urlToIntegrationSettings = `/suiteScript/${tile._ioConnectionId}/integrations/${tile._integrationId}/settings`;
 
   if (tile.status === TILE_STATUS.IS_PENDING_SETUP) {
-    urlToIntegrationSettings = `/suiteScript/${tile._ioConnectionId}/connectors/${tile._integrationId}/setup`;
+    urlToIntegrationSettings = `/suiteScript/${tile._ioConnectionId}/integrationapps/${integrationAppName}/${tile._integrationId}/setup`;
   } else if (tile.status === TILE_STATUS.UNINSTALL) {
-    urlToIntegrationSettings = `/suiteScript/${tile._ioConnectionId}/connectors/${tile._integrationId}/uninstall`;
+    urlToIntegrationSettings = `/suiteScript/${tile._ioConnectionId}/integrationapps/${integrationAppName}/${tile._integrationId}/uninstall`;
   } else if (tile._connectorId) {
-    urlToIntegrationSettings = `/suiteScript/${tile._ioConnectionId}/connectors/${tile._integrationId}/settings`;
+    urlToIntegrationSettings = `/suiteScript/${tile._ioConnectionId}/integrationapps/${integrationAppName}/${tile._integrationId}/settings`;
   }
 
   function handleStatusClick(event) {
@@ -44,7 +46,7 @@ function SuiteScriptTile({ tile, history }) {
     } else if (tile.status === TILE_STATUS.IS_PENDING_SETUP) {
       history.push(
         getRoutePath(
-          `/suiteScript/${tile._ioConnectionId}/connectors/${tile._integrationId}/setup`
+          `/suiteScript/${tile._ioConnectionId}/integrationapps/${integrationAppName}/${tile._integrationId}/setup`
         )
       );
     } else {

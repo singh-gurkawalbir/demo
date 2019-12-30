@@ -44,6 +44,7 @@ import { processSampleData } from '../utils/sampleData';
 import inferErrorMessage from '../utils/inferErrorMessage';
 import getRoutePath from '../utils/routePaths';
 import { COMM_STATES } from './comms/networkComms';
+import { getIntegrationAppUrlName } from '../utils/integrationApps';
 
 const emptySet = [];
 const emptyObject = {};
@@ -1651,12 +1652,15 @@ const getParentsResourceId = (state, resourceType, resourceId) => {
 export const getResourceEditUrl = (state, resourceType, resourceId) => {
   if (resourceType === 'flows') {
     const integrationId = getParentsResourceId(state, resourceType, resourceId);
-    const { _connectorId } = resource(state, resourceType, resourceId) || {};
+    const { _connectorId, name } =
+      resource(state, resourceType, resourceId) || {};
 
     // if _connectorId its an integrationApp
     if (_connectorId) {
       return getRoutePath(
-        `/integrationApp/${integrationId}/flowBuilder/${resourceId}`
+        `/integrationapps/${getIntegrationAppUrlName(
+          name
+        )}/${integrationId}/flowBuilder/${resourceId}`
       );
     }
 

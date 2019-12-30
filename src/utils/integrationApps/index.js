@@ -1,5 +1,19 @@
 import { INSTALL_STEP_TYPES } from '../constants';
 
+export const getIntegrationAppUrlName = (
+  integrationAppName,
+  isV2Integration
+) => {
+  if (!integrationAppName || typeof integrationAppName !== 'string') {
+    return 'integrationApp';
+  }
+
+  return (
+    integrationAppName.replace(/\W/g, '').replace(/Connector/gi, '') +
+    (isV2Integration ? 'V2' : '')
+  );
+};
+
 export default {
   getStepText: (step = {}, mode) => {
     let stepText = '';
