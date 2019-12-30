@@ -1,7 +1,12 @@
 export default {
   'mongodb.method': {
     type: 'radiogroupforresetfields',
-    fieldsToReset: ['ignoreExisting', 'ignoreMissing'],
+    fieldsToReset: [
+      { id: 'ignoreExisting', type: 'checkbox' },
+      { id: 'ignoreMissing', type: 'checkbox' },
+      { id: 'mongodb.update', type: 'sqlquerybuilder' },
+      { id: 'mongodb.document', type: 'sqlquerybuilder' },
+    ],
     label: 'Method',
     options: [
       {
