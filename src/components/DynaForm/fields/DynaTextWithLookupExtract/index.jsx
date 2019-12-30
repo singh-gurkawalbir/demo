@@ -24,9 +24,10 @@ export default function DynaTextWithLookupExtract(props) {
   const isPageGenerator = useSelector(state =>
     selectors.isPageGenerator(state, flowId, resourceId, resourceType)
   );
-  const { name: resourceName, adaptorType } = useSelector(state =>
+  const resourceObj = useSelector(state =>
     selectors.resource(state, resourceType, resourceId)
   );
+  const { name: resourceName, adaptorType } = resourceObj || {};
   const connection = useSelector(state =>
     selectors.resource(state, 'connections', connectionId)
   );
@@ -41,9 +42,6 @@ export default function DynaTextWithLookupExtract(props) {
   );
 
   useEffect(() => {
-    // Request for sample data only incase of flow context
-    // TODO : @Raghu Do we show default data in stand alone context?
-    // What type of sample data is expected in case of Page generators
     if (flowId && !sampleData && !isPageGenerator) {
       dispatch(
         actions.flowData.requestSampleData(
