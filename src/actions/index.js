@@ -646,6 +646,8 @@ const transfer = {
     action(actionTypes.TRANSFER.RECEIVED_PREVIEW, { response, error }),
   clearPreview: () => action(actionTypes.TRANSFER.CLEAR_PREVIEW),
   create: data => action(actionTypes.TRANSFER.CREATE, { data }),
+  canceledTransfer: id =>
+    action(actionTypes.RESOURCE.CANCELLED_TRANSFER, { id }),
 };
 const stack = {
   displayToken: id => action(actionTypes.STACK.TOKEN_DISPLAY, { id }),

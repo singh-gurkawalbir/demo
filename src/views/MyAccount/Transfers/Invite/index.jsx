@@ -36,7 +36,7 @@ export default function Invite(props) {
         (left.response &&
           right.response &&
           left.response.length === right.response.length)) ||
-      (left.error && right.error && left.error.length === right.error.length)
+      (left.error && right.error && left.error === right.error)
   );
   const response = data && data.response;
   const error = data && data.error;

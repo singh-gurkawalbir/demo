@@ -267,6 +267,13 @@ export default (state = {}, action) => {
       return produce(state, draft => {
         draft[resourceType] = [];
       });
+    case actionTypes.RESOURCE.CANCELLED_TRANSFER:
+      resourceIndex = state.transfers.findIndex(r => r._id === id);
+
+      newState.transfers[resourceIndex].status = 'canceled';
+
+      return newState;
+
     default:
       return state;
   }

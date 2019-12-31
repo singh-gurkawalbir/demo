@@ -1,5 +1,4 @@
-import { call, takeEvery, put, select } from 'redux-saga/effects';
-import * as selectors from '../../reducers';
+import { call, takeEvery, put } from 'redux-saga/effects';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
@@ -17,10 +16,7 @@ export function* cancel({ id }) {
     return yield put(actions.api.failure(path, 'PUT', e, false));
   }
 
-  const transfer = yield select(selectors.resource, 'transfers', id);
-
-  transfer.status = 'canceled';
-  yield put(actions.resource.received('transfers', transfer));
+  yield put(actions.transfer.canceledTransfer(id));
 }
 
 export function* create({ data }) {

@@ -9,7 +9,7 @@ export default {
   label: 'Cancel transfer',
   component: function Cancel({ resource: transfer }) {
     const dispatch = useDispatch();
-    const cancelTranfer = useCallback(() => {
+    const cancelTransfer = useCallback(() => {
       dispatch(actions.transfer.cancel(transfer._id));
     }, [dispatch, transfer._id]);
     const handleClick = () => {
@@ -25,7 +25,7 @@ export default {
           {
             label: 'Yes',
             onClick: () => {
-              cancelTranfer();
+              cancelTransfer();
             },
           },
         ],

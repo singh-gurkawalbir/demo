@@ -1,28 +1,26 @@
 import { each } from 'lodash';
+import produce from 'immer';
 import actionTypes from '../../../actions/types';
+
+let emptyArray = [];
 
 export default function reducer(state = {}, action) {
   const { response, error, type } = action;
-  let newState;
 
   switch (type) {
     case actionTypes.TRANSFER.RECEIVED_PREVIEW:
-      newState = {
-        ...state,
-        transfer: {
+      return produce(state, draft => {
+        draft.transfer = {
           response,
           error,
-        },
-      };
+        };
+      });
 
-      return newState;
     case actionTypes.TRANSFER.CLEAR_PREVIEW:
-      newState = {
-        ...state,
-        transfer: undefined,
-      };
+      return produce(state, draft => {
+        draft.transfer = undefined;
+      });
 
-      return newState;
     default:
       return state;
   }
@@ -30,12 +28,11 @@ export default function reducer(state = {}, action) {
 
 // #region PUBLIC SELECTORS
 function parsePreviewResponse(res) {
-  const toReturn = [];
-
+  emptyArray = [];
   each(res, (v, t) => {
     each(res[t], d => {
       if (d && d._id) {
-        toReturn.push({
+        emptyArray.push({
           type: t,
           _id: d._id,
           name: d.name,
@@ -44,7 +41,7 @@ function parsePreviewResponse(res) {
     });
   });
 
-  return toReturn;
+  return emptyArray;
 }
 
 let error;

@@ -9,7 +9,7 @@ export default {
   label: 'Delete transfer',
   component: function Delete({ resource: transfer }) {
     const dispatch = useDispatch();
-    const deleteTranfer = useCallback(() => {
+    const deleteTransfer = useCallback(() => {
       dispatch(actions.resource.delete('transfers', transfer._id));
     }, [dispatch, transfer._id]);
     const handleClick = () => {
@@ -25,7 +25,7 @@ export default {
           {
             label: 'Yes',
             onClick: () => {
-              deleteTranfer();
+              deleteTransfer();
             },
           },
         ],
