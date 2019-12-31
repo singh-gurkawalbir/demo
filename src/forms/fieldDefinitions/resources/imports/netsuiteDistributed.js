@@ -22,7 +22,11 @@ export default {
     label: 'Manage Import Mapping',
   },
   'netsuite_da.operation': {
-    type: 'radiogroup',
+    type: 'radiogroupforresetfields',
+    fieldsToReset: [
+      { id: 'ignoreExisting', type: 'checkbox' },
+      { id: 'ignoreMissing', type: 'checkbox' },
+    ],
     label: 'Operation',
     required: true,
     visibleWhen: [
