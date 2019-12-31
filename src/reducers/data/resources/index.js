@@ -267,12 +267,22 @@ export default (state = {}, action) => {
       return produce(state, draft => {
         draft[resourceType] = [];
       });
-    case actionTypes.RESOURCE.CANCELLED_TRANSFER:
+    case actionTypes.TRANSFER.CANCELLED:
       resourceIndex = state.transfers.findIndex(r => r._id === id);
 
-      newState.transfers[resourceIndex].status = 'canceled';
+      // Need to verify why below code is not working
+      // if (resourceIndex > -1) {
+      //   return produce(state, draft => {
+      //     draft.transfers[resourceIndex].status = 'canceled';
+      //   });
+      // }
+      if (resourceIndex > -1) {
+        newState.transfers[resourceIndex].status = 'canceled';
 
-      return newState;
+        return newState;
+      }
+
+      return state;
 
     default:
       return state;

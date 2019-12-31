@@ -2,7 +2,7 @@ import { each } from 'lodash';
 import produce from 'immer';
 import actionTypes from '../../../actions/types';
 
-let emptyArray = [];
+const emptyArray = [];
 
 export default function reducer(state = {}, action) {
   const { response, error, type } = action;
@@ -28,11 +28,12 @@ export default function reducer(state = {}, action) {
 
 // #region PUBLIC SELECTORS
 function parsePreviewResponse(res) {
-  emptyArray = [];
+  const response = Array.from(emptyArray);
+
   each(res, (v, t) => {
     each(res[t], d => {
       if (d && d._id) {
-        emptyArray.push({
+        response.push({
           type: t,
           _id: d._id,
           name: d.name,
@@ -41,7 +42,7 @@ function parsePreviewResponse(res) {
     });
   });
 
-  return emptyArray;
+  return response.length > 0 ? response : emptyArray;
 }
 
 let error;
