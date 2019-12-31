@@ -510,7 +510,7 @@ export const integrationSettingsToDynaFormMetadata = (
   options = {}
 ) => {
   const finalData = {};
-  const { resource } = options;
+  const { resource, isFlow = false } = options;
 
   if (!meta || (!meta.fields && !meta.sections)) return null;
   const { fields, sections } = meta;
@@ -544,7 +544,11 @@ export const integrationSettingsToDynaFormMetadata = (
       finalData.layout = {};
     }
 
-    finalData.layout.type = 'tabIA';
+    // type tab sends the entire form values
+    // type tabIA sends per tab
+    // for flow settings we send everything for advancedSettings we send per tab
+    finalData.layout.type = isFlow ? 'tab' : 'tabIA';
+
     finalData.layout.containers = sections.map(section => ({
       collapsed: section.collapsed || true,
       label: section.title,

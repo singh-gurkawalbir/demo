@@ -55,6 +55,7 @@ function SettingsDrawer({ integrationId, storeId }) {
         true,
         {
           resource: flow,
+          isFlow: true,
         }
       ),
     [fields, flow, integrationId, sections]
