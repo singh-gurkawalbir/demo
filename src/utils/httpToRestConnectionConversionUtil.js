@@ -219,9 +219,9 @@ function replaceHTTPrefWithCorrespondingREST(str) {
       'connection.http.auth.token.token',
       'connection.rest.bearerToken'
     );
-  } else {
-    return str;
   }
+
+  return str;
 }
 
 exports.convertConnJSONObjHTTPtoREST = convertConnJSONObjHTTPtoREST;
