@@ -41,7 +41,10 @@ import {
   getDomain,
 } from '../utils/resource';
 import { processSampleData } from '../utils/sampleData';
-import { getAvailablePreviewStages } from '../utils/exportPanel';
+import {
+  getAvailablePreviewStages,
+  isPreviewPanelAvailable,
+} from '../utils/exportPanel';
 import inferErrorMessage from '../utils/inferErrorMessage';
 import getRoutePath from '../utils/routePaths';
 import { COMM_STATES } from './comms/networkComms';
@@ -2857,4 +2860,22 @@ export function getAvailableResourcePreviewStages(
   );
 
   return getAvailablePreviewStages(resourceObj);
+}
+
+/*
+ * This selector used to differentiate drawers with/without Preview Panel
+ */
+export function isPreviewPanelAvailableForResource(
+  state,
+  resourceId,
+  resourceType
+) {
+  const { merged: resourceObj } = resourceData(
+    state,
+    resourceType,
+    resourceId,
+    'value'
+  );
+
+  return isPreviewPanelAvailable(resourceObj, resourceType);
 }

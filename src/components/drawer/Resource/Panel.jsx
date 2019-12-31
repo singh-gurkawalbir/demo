@@ -12,8 +12,7 @@ import Close from '../../../components/icons/CloseIcon';
 
 // Just a temporary variable to increase width
 // TODO @Raghu: Discuss with Azhar and do this UI Fix
-const containerWidth = 1200;
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme, containerWidth) => ({
   root: {
     zIndex: props => props.zIndex,
     border: 'solid 1px',
@@ -68,7 +67,6 @@ const determineRequiredResources = type => {
 };
 
 export default function Panel(props) {
-  const classes = useStyles(props);
   const { match, onClose, zIndex } = props;
   const { id, resourceType, operation } = match.params;
   const isNew = operation === 'add';
@@ -140,6 +138,24 @@ export default function Panel(props) {
 
     return adaptorType.value.includes('Export') ? 'exports' : 'imports';
   }
+
+  const isPreviewPanelAvailableForResource = useSelector(state => {
+    // Incase of a new resource first step for flows , resourceType would be pg/pp in which case we don't show previewPanel
+    if (['pageGenerator', 'pageProcessor'].includes(resourceType)) return false;
+
+    // Returns a bool whether the resource has a preview panel or not
+    return selectors.isPreviewPanelAvailableForResource(
+      state,
+      id,
+      resourceType
+    );
+  });
+  // Altering drawer style based on the resource type and whether it has preview panel or not
+  // TODO : @Azhar Make the drawer with preview panel to occupy whole screen collapsing left panel
+  const classes = useStyles(
+    props,
+    isPreviewPanelAvailableForResource ? 1200 : 660
+  );
 
   function getEditUrl(id) {
     // console.log(location);
