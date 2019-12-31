@@ -8,7 +8,7 @@ import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import { getImportOperationDetails } from '../../../utils/assistant';
 import mappingUtil from '../../../utils/mapping';
-import getJSONPaths from '../../../utils/jsonPaths';
+import getJSONPaths, { pickFirstObject } from '../../../utils/jsonPaths';
 import Spinner from '../../Spinner';
 
 // TODO: Azhar to review
@@ -234,7 +234,7 @@ export default function StandaloneMapping(props) {
   let formattedExtractFields = [];
 
   if (extractFields) {
-    const extractPaths = getJSONPaths(extractFields);
+    const extractPaths = getJSONPaths(pickFirstObject(extractFields));
 
     formattedExtractFields =
       (extractPaths &&

@@ -214,3 +214,17 @@ export const getTransformPaths = (dataIn, prefix) => {
 
   return paths.sort();
 };
+
+export function pickFirstObject(param) {
+  if (Object.prototype.toString.call(param) === '[object Object]') {
+    return param;
+  } else if (_.isArray(param)) {
+    if (!!param.length && Array.isArray(param[0])) {
+      if (param[0].length) {
+        return getUnionObject(param[0]);
+      }
+    } else {
+      return getUnionObject(param);
+    }
+  }
+}
