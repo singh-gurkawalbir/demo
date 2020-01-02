@@ -8,6 +8,7 @@ import { createFormValuesPatchSet, SCOPES } from '../resourceForm';
 import { evaluateExternalProcessor } from '../../sagas/editor';
 import { getCsvFromXlsx } from '../../utils/file';
 import { processJsonSampleData } from '../../utils/sampleData';
+import { pageProcessorPreview } from './utils/previewCalls';
 
 /*
  * Parsers for different file types used for converting into JSON format
@@ -23,18 +24,15 @@ const PARSERS = {
   fileDefinitionGenerator: 'structuredFileGenerator',
 };
 
-function getRulesFromResourceFormValues(formValues = {}) {
-  if (!formValues['/transform']) return [];
-  const transformRules = formValues['/transform'].rules;
-
-  return transformRules && transformRules.length ? transformRules : [];
-}
-
-function* getPreviewData({ resourceId, resourceType, values, runOffline }) {
+function* constructResourceFromFormValues({
+  formValues = {},
+  resourceId,
+  resourceType,
+}) {
   const { patchSet } = yield call(createFormValuesPatchSet, {
     resourceType,
     resourceId,
-    values,
+    values: formValues,
     scope: SCOPES.VALUE,
   });
   const { merged } = yield select(
@@ -43,12 +41,26 @@ function* getPreviewData({ resourceId, resourceType, values, runOffline }) {
     resourceId,
     SCOPES.VALUE
   );
-  const patchResult = jsonPatch.applyPatch(
+
+  return jsonPatch.applyPatch(
     merged ? jsonPatch.deepClone(merged) : {},
     jsonPatch.deepClone(patchSet)
-  );
-  const newBody = patchResult.newDocument;
-  let body = { ...newBody };
+  ).newDocument;
+}
+
+function getRulesFromResourceFormValues(formValues = {}) {
+  if (!formValues['/transform']) return [];
+  const transformRules = formValues['/transform'].rules;
+
+  return transformRules && transformRules.length ? transformRules : [];
+}
+
+function* getPreviewData({ resourceId, resourceType, values, runOffline }) {
+  let body = yield call(constructResourceFromFormValues, {
+    formValues: values,
+    resourceId,
+    resourceType,
+  });
 
   if (runOffline && body.rawData) {
     body = {
@@ -201,4 +213,44 @@ function* requestSampleData({
   }
 }
 
-export default [takeLatest(actionTypes.SAMPLEDATA.REQUEST, requestSampleData)];
+function* requestLookupSampleData({ resourceId, flowId, formValues }) {
+  const resourceType = 'exports';
+  const _pageProcessorDoc = yield call(constructResourceFromFormValues, {
+    formValues,
+    resourceId,
+    resourceType,
+  });
+
+  try {
+    const pageProcessorPreviewData = yield call(pageProcessorPreview, {
+      flowId,
+      _pageProcessorId: resourceId,
+      resourceType,
+      hidden: true,
+      _pageProcessorDoc,
+      throwOnError: true,
+    });
+
+    yield put(
+      actions.sampleData.received(resourceId, pageProcessorPreviewData)
+    );
+  } catch (e) {
+    // Handling Errors with status code between 400 and 500
+    if (e.status === 403 || e.status === 401) {
+      return;
+    }
+
+    if (e.status >= 400 && e.status < 500) {
+      const parsedError = JSON.parse(e.message);
+
+      return yield put(
+        actions.sampleData.receivedError(resourceId, parsedError)
+      );
+    }
+  }
+}
+
+export default [
+  takeLatest(actionTypes.SAMPLEDATA.REQUEST, requestSampleData),
+  takeLatest(actionTypes.SAMPLEDATA.LOOKUP_REQUEST, requestLookupSampleData),
+];

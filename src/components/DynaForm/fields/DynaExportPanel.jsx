@@ -8,6 +8,7 @@ import actions from '../../../actions';
 import {
   getResourceSampleDataWithStatus,
   getAvailableResourcePreviewStages,
+  isPageGenerator,
 } from '../../../reducers';
 import { isNewId } from '../../../utils/resource';
 import TextToggle from '../../../components/TextToggle';
@@ -67,37 +68,62 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function DynaExportPanel(props) {
-  const { resourceId, formContext, resourceType } = props;
+  const { resourceId, formContext, resourceType, flowId } = props;
   const [isPreviewDataFetched, setIsPreviewDataFetched] = useState(false);
   const classes = useStyles();
   const dispatch = useDispatch();
   const [enqueueSnackbar] = useEnqueueSnackbar();
+  const isPageGeneratorExport = useSelector(state =>
+    isPageGenerator(state, flowId, resourceId)
+  );
   const availablePreviewStages = useSelector(state =>
     getAvailableResourcePreviewStages(state, resourceId, resourceType)
+  );
+  const [panelType, setPanelType] = useState(
+    availablePreviewStages.length && availablePreviewStages[0].value
   );
   const previewStageDataList = useSelector(state => {
     const stageData = [];
 
-    // Expected to have at least one preview stage 'Default Stage is 'Output: parse'
-    availablePreviewStages.forEach(({ value }) => {
-      stageData[value] = getResourceSampleDataWithStatus(
-        state,
-        resourceId,
-        value
-      );
-    });
+    availablePreviewStages.length &&
+      availablePreviewStages.forEach(({ value }) => {
+        stageData[value] = getResourceSampleDataWithStatus(
+          state,
+          resourceId,
+          value
+        );
+      });
 
     return stageData;
   });
   const resourceSampleData = useSelector(state =>
     getResourceSampleDataWithStatus(state, resourceId, 'raw')
   );
-  const [panelType, setPanelType] = useState(availablePreviewStages[0].value);
   const fetchExportPreviewData = useCallback(() => {
-    dispatch(
-      actions.sampleData.request(resourceId, resourceType, formContext.value)
-    );
-  }, [dispatch, resourceId, resourceType, formContext]);
+    // Just a fail safe condition not to request for sample data incase of not exports
+    if (resourceType !== 'exports') return;
+
+    if (isPageGeneratorExport) {
+      dispatch(
+        actions.sampleData.request(resourceId, resourceType, formContext.value)
+      );
+    } else {
+      dispatch(
+        actions.sampleData.requestLookupPreview(
+          resourceId,
+          flowId,
+          formContext.value
+        )
+      );
+    }
+  }, [
+    isPageGeneratorExport,
+    dispatch,
+    resourceId,
+    resourceType,
+    formContext.value,
+    flowId,
+  ]);
 
   useEffect(() => {
     // Fetches preview data incase of initial load of an edit export mode

@@ -721,6 +721,12 @@ const sampleData = {
       stage,
       runOffline,
     }),
+  requestLookupPreview: (resourceId, flowId, formValues) =>
+    action(actionTypes.SAMPLEDATA.LOOKUP_REQUEST, {
+      resourceId,
+      flowId,
+      formValues,
+    }),
   received: (resourceId, previewData) =>
     action(actionTypes.SAMPLEDATA.RECEIVED, { resourceId, previewData }),
   update: (resourceId, processedData, stage) =>

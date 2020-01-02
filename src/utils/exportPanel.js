@@ -24,10 +24,7 @@ export const getAvailablePreviewStages = resource => {
     case 'netsuite':
       return [{ label: 'Parsed Output', value: 'parse' }];
     case 'rest':
-      return [
-        { label: 'Raw', value: 'raw' },
-        { label: 'Parsed Output', value: 'parse' },
-      ];
+      return [{ label: 'Parsed Output', value: 'parse' }];
     case 'ftp':
       return [
         { label: 'Raw', value: 'raw' },

@@ -2806,7 +2806,11 @@ export function isPageGenerator(state, flowId, resourceId, resourceType) {
   // Incase of new resource (export/lookup), flow doc does not have this resource yet
   // So, get staged resource and determine export/lookup based on isLookup flag
   if (isNewId(resourceId)) {
-    const { merged: resource } = resourceData(state, 'exports', resourceId);
+    const { merged: resource = {} } = resourceData(
+      state,
+      'exports',
+      resourceId
+    );
 
     return !resource.isLookup;
   }
