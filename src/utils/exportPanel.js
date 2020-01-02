@@ -1,11 +1,11 @@
-import { adaptorTypeMap } from './resource';
-
 /*
- * All utility functions related to Exports panel
+ * All utility functions related to Exports Preview Panel
  */
 
+import { adaptorTypeMap } from './resource';
+
 // Applications list which include Preview panel as part of the resource drawer
-const applicationsWithPreviewPanel = ['http'];
+const applicationsWithPreviewPanel = ['http', 'rest'];
 const emptyList = [];
 
 export const getAvailablePreviewStages = resource => {
@@ -22,10 +22,19 @@ export const getAvailablePreviewStages = resource => {
         { label: 'Output', value: 'parse' },
       ];
     case 'netsuite':
+      return [{ label: 'Parsed Output', value: 'parse' }];
+    case 'rest':
       return [
-        { label: 'HTTP response', value: 'raw' },
-        { label: 'Parsed', value: 'parse' },
+        { label: 'Raw', value: 'raw' },
+        { label: 'Parsed Output', value: 'parse' },
       ];
+    case 'ftp':
+      return [
+        { label: 'Raw', value: 'raw' },
+        { label: 'Parsed Output', value: 'parse' },
+      ];
+    case 'Mongodb':
+      return [{ label: 'Parsed Output', value: 'parse' }];
     default:
       return emptyList;
   }
@@ -41,5 +50,5 @@ export const isPreviewPanelAvailable = (resource, resourceType) => {
   const { adaptorType } = resource || {};
   const appType = adaptorTypeMap[adaptorType];
 
-  return applicationsWithPreviewPanel.indexOf(appType) !== -1;
+  return applicationsWithPreviewPanel.includes(appType);
 };
