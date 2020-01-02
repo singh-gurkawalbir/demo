@@ -1,14 +1,12 @@
 import { isNewId } from '../../../utils/resource';
 
 export default {
-  preSave: (formValues, resource) => {
+  preSave: formValues => {
     const retValues = { ...formValues };
+    const lookups = retValues['/http/lookups'];
     const lookup =
-      resource.http &&
-      resource.http.lookups &&
-      resource.http.lookups.find(
-        l => l.name === retValues['/http/existingDataId']
-      );
+      lookups &&
+      lookups.find(l => l.name === retValues['/http/existingDataId']);
 
     if (retValues['/inputMode'] === 'blob') {
       retValues['/http/method'] = retValues['/http/blobMethod'];
