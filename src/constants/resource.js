@@ -15,6 +15,7 @@ export const RESOURCE_TYPE_SINGULAR_TO_PLURAL = Object.freeze({
   script: 'scripts',
   stack: 'stacks',
   template: 'templates',
+  license: 'licenses',
 });
 export const RESOURCE_TYPE_PLURAL_TO_SINGULAR = Object.freeze(
   invert(RESOURCE_TYPE_SINGULAR_TO_PLURAL)
@@ -33,6 +34,7 @@ export const RESOURCE_TYPE_SINGULAR_TO_LABEL = Object.freeze({
   script: 'Script',
   stack: 'Stack',
   template: 'Template',
+  license: 'License',
 });
 export const RESOURCE_TYPE_LABEL_TO_SINGULAR = Object.freeze(
   invert(RESOURCE_TYPE_SINGULAR_TO_LABEL)
