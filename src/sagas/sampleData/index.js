@@ -75,6 +75,11 @@ function* getPreviewData({ resourceId, resourceType, values, runOffline }) {
     delete body.rawData;
   }
 
+  // eslint-disable-next-line no-restricted-globals
+  if (body.pageSize && !isNaN(body.pageSize)) {
+    body.test = { limit: parseInt(body.pageSize, 10) };
+  }
+
   const path = `/${resourceType}/preview`;
 
   try {
