@@ -166,7 +166,7 @@ function DynaExportPanel(props) {
                 readOnly
               />
               <CopyToClipboard
-                text={previewStageDataList[panelType].data}
+                text={JSON.stringify(previewStageDataList[panelType].data)}
                 onCopy={handleOnCopy}>
                 <IconButton
                   data-test="copyToClipboard"
