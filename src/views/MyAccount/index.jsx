@@ -32,6 +32,9 @@ const Subscription = loadable(() =>
 const Audit = loadable(() =>
   import(/* webpackChunkName: 'MyAccount.Audit' */ './Audit')
 );
+const Transfers = loadable(() =>
+  import(/* webpackChunkName: 'MyAccount.Audit' */ './Transfers/index')
+);
 
 @hot(module)
 @withStyles(theme => ({
@@ -127,6 +130,14 @@ class MyAccount extends Component {
                         Audit Log
                       </NavLink>
                     </ListItem>
+                    <ListItem>
+                      <NavLink
+                        activeClassName={classes.activeLink}
+                        className={classes.link}
+                        to="transfers">
+                        Transfers
+                      </NavLink>
+                    </ListItem>
                   </List>
                 </Drawer>
               )}
@@ -148,6 +159,10 @@ class MyAccount extends Component {
                 <Route
                   path={getRoutePath('/myAccount/audit')}
                   component={Audit}
+                />
+                <Route
+                  path={getRoutePath('/myAccount/transfers')}
+                  component={Transfers}
                 />
               </Switch>
             </div>

@@ -1,3 +1,5 @@
+import { isProduction } from '../../../../utils';
+
 export default {
   preSave: formValues => {
     const retValues = { ...formValues };
@@ -38,6 +40,14 @@ export default {
       type: 'select',
       label: 'Authentication Type',
       helpText: 'Please select Authentication Type',
+      visible: !isProduction(),
+      defaultValue: r => {
+        if (isProduction()) {
+          return 'token';
+        }
+
+        return (((r || {}).http || {}).auth || {}).type;
+      },
       options: [
         {
           items: [
