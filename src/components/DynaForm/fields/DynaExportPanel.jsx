@@ -20,6 +20,9 @@ import ArrowRightIcon from '../../icons/ArrowRightIcon';
 
 const useStyles = makeStyles(theme => ({
   container: {
+    paddingLeft: theme.spacing(1),
+  },
+  sampleDataContainer: {
     height: '25vh',
   },
   previewContainer: {
@@ -123,7 +126,7 @@ function DynaExportPanel(props) {
   };
 
   return (
-    <div>
+    <div className={classes.container}>
       <Typography> Preview Data </Typography>
       <div className={classes.previewContainer}>
         <div className={classes.previewData}>
@@ -154,7 +157,7 @@ function DynaExportPanel(props) {
             exclusive
             options={availablePreviewStages}
           />
-          <div className={classes.container}>
+          <div className={classes.sampleDataContainer}>
             <Fragment>
               <CodeEditor
                 name="sampleData"
@@ -177,7 +180,7 @@ function DynaExportPanel(props) {
         </div>
       )}
       {resourceSampleData.status === 'error' && (
-        <div className={classes.container}>
+        <div className={classes.sampleDataContainer}>
           <CodeEditor
             name="sampleData"
             value={resourceSampleData.error}
