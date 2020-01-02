@@ -10,6 +10,7 @@ import {
 } from '../../AFE/HttpRequestBodyEditor/templateMapping';
 import actions from '../../../actions';
 import getFormattedSampleData from '../../../utils/sampleData';
+import ErroredMessageComponent from './ErroredMessageComponent';
 
 export default function DynaHttpRequestBody(props) {
   const {
@@ -168,6 +169,7 @@ export default function DynaHttpRequestBody(props) {
         onClick={handleEditorClick}>
         {label}
       </Button>
+      <ErroredMessageComponent {...props} />
     </Fragment>
   );
 }

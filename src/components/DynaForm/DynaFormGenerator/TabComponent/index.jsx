@@ -103,10 +103,19 @@ export function TabIAComponent(props) {
   );
 }
 
+function TabWithCompleteSave(props) {
+  return (
+    <Fragment>
+      <FormGenerator {...props} />
+      <IntegrationSettingsSaveButton {...props} />
+    </Fragment>
+  );
+}
+
 export function TabComponentSimple(props) {
   return (
     <TabComponent {...props}>
-      <FormGenerator />
+      <TabWithCompleteSave />
     </TabComponent>
   );
 }
