@@ -1,5 +1,6 @@
 import { Typography, IconButton } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import Button from '@material-ui/core/Button';
 import { FormContext } from 'react-forms-processor/dist';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { useSelector, useDispatch } from 'react-redux';
@@ -16,9 +17,14 @@ import CopyIcon from '../../icons/CopyIcon';
 import CodeEditor from '../../CodeEditor';
 import Spinner from '../../Spinner';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
   container: {
     height: '25vh',
+  },
+  previewContainer: {
+    display: 'flex',
+    height: '100',
+    border: `1px solid ${theme.palette.secondary.lightest}`,
   },
 }));
 
@@ -71,10 +77,31 @@ function DynaExportPanel(props) {
       message: 'Data copied to clipboard.',
       variant: 'success',
     });
+  const ShowSampleDataStatus = () => {
+    const { status } = resourceSampleData;
+
+    if (status === 'requested') return 'Testing';
+
+    if (status === 'received') return 'Success';
+
+    if (status === 'error') return 'Error';
+  };
 
   return (
     <div>
       <Typography> Preview Data </Typography>
+      <div className={classes.previewContainer}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={fetchExportPreviewData}
+          disabled={resourceSampleData.status === 'requested'}
+          data-test="fetch-preview">
+          Preview
+        </Button>
+        <Typography> {ShowSampleDataStatus()} </Typography>
+        <Typography> 1 Page , 20 Records </Typography>
+      </div>
       {resourceSampleData.status === 'requested' && <Spinner />}
       {resourceSampleData.status === 'received' && (
         <div>
