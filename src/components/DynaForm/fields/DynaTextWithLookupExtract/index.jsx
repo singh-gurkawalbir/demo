@@ -25,9 +25,9 @@ export default function DynaTextWithLookupExtract(props) {
     selectors.isPageGenerator(state, flowId, resourceId, resourceType)
   );
   const resourceObj = useSelector(state =>
-    selectors.resource(state, resourceType, resourceId)
+    selectors.resourceData(state, resourceType, resourceId)
   );
-  const { name: resourceName, adaptorType } = resourceObj || {};
+  const { name: resourceName, adaptorType } = resourceObj.merged || {};
   const connection = useSelector(state =>
     selectors.resource(state, 'connections', connectionId)
   );
