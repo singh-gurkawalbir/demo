@@ -287,6 +287,7 @@ export default {
           { label: 'Acton', value: 'acton' },
           { label: 'Acumatica', value: 'acumatica' },
           { label: 'Mongodb', value: 'mongodb' },
+          { label: 'Dynamodb', value: 'dynamodb' },
           { label: 'Zohomail', value: 'zohomail' },
           { label: 'Zoom', value: 'zoom' },
           { label: 'Myobessentials', value: 'myobessentials' },
