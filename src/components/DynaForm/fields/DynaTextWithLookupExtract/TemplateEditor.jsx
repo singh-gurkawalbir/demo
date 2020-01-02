@@ -19,6 +19,7 @@ const useStyles = makeStyles(theme => ({
 }));
 const prefixRegexp = '.*{{((?!(}|{)).)*$';
 
+// TODO: templateeditor name to be renamed.
 export default function TemplateEditor(props) {
   const [showEditor, setShowEditor] = useState(false);
   const classes = useStyles();
