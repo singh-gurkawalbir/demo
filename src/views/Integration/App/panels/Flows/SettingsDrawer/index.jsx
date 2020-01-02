@@ -28,7 +28,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function SettingsDrawer({ integrationId, storeId }) {
+function SettingsDrawer({ integrationId, storeId, parentUrl }) {
   const classes = useStyles();
   const match = useRouteMatch();
   const { flowId } = match.params;
@@ -62,7 +62,9 @@ function SettingsDrawer({ integrationId, storeId }) {
   );
   const { formState, handleClose } = useIASettingsStateWithHandleClose(
     integrationId,
-    flowId
+    flowId,
+    null,
+    parentUrl
   );
 
   return (
@@ -95,7 +97,7 @@ export default function SettingsDrawerRoute(props) {
   return (
     <Route exact path={`${match.url}/:flowId/settings`}>
       <LoadResources required resources="exports,imports,flows,connections">
-        <SettingsDrawer {...props} />
+        <SettingsDrawer {...props} parentUrl={match.url} />
       </LoadResources>
     </Route>
   );

@@ -49,7 +49,8 @@ const useStyles = makeStyles(theme => ({
 export const useIASettingsStateWithHandleClose = (
   integrationId,
   flowId,
-  sectionId
+  sectionId,
+  parentUrl
 ) => {
   const dispatch = useDispatch();
   const history = useHistory();
@@ -67,8 +68,8 @@ export const useIASettingsStateWithHandleClose = (
     dispatch(
       actions.integrationApp.settings.clear(integrationId, flowId, sectionId)
     );
-    history.goBack();
-  }, [dispatch, flowId, history, integrationId, sectionId]);
+    history.push(parentUrl);
+  }, [dispatch, flowId, history, integrationId, parentUrl, sectionId]);
 
   return {
     handleClose: IASettingsHandleClose,

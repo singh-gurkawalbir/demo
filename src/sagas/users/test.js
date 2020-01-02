@@ -16,8 +16,8 @@ import {
   changeEmail,
   updatePreferences,
   updateProfile,
-  acceptAccountInvite,
-  rejectAccountInvite,
+  acceptSharedInvite,
+  rejectSharedInvite,
   switchAccount,
   leaveAccount,
   createUser,
@@ -273,9 +273,10 @@ describe('all modal sagas', () => {
     describe('accepting account share invite', () => {
       test('should update aShare successfuly and reload shared/ashares when the default account is some shared account', () => {
         const aShare = {
+          resourceType: 'account',
           id: 'something',
         };
-        const saga = acceptAccountInvite(aShare);
+        const saga = acceptSharedInvite(aShare);
 
         expect(saga.next().value).toEqual(
           call(apiCallWithRetry, {
@@ -292,9 +293,10 @@ describe('all modal sagas', () => {
       });
       test('should update aShare successfuly and clear store and re-init session when the default account is own', () => {
         const aShare = {
+          resourceType: 'account',
           id: 'something',
         };
-        const saga = acceptAccountInvite(aShare);
+        const saga = acceptSharedInvite(aShare);
 
         expect(saga.next().value).toEqual(
           call(apiCallWithRetry, {
@@ -311,8 +313,8 @@ describe('all modal sagas', () => {
         expect(saga.next().done).toEqual(true);
       });
       test('should generate appropriate error message in case of api failure', () => {
-        const aShare = { id: 'something' };
-        const saga = acceptAccountInvite(aShare);
+        const aShare = { resourceType: 'account', id: 'something' };
+        const saga = acceptSharedInvite(aShare);
         const path = `/ashares/${aShare.id}/accept`;
         const opts = { method: 'PUT', body: {} };
 
@@ -338,9 +340,10 @@ describe('all modal sagas', () => {
     describe('rejecting account share invite', () => {
       test('should update aShare successfuly', () => {
         const aShare = {
+          resourceType: 'account',
           id: 'something',
         };
-        const saga = rejectAccountInvite(aShare);
+        const saga = rejectSharedInvite(aShare);
 
         expect(saga.next().value).toEqual(
           call(apiCallWithRetry, {
@@ -355,8 +358,8 @@ describe('all modal sagas', () => {
         expect(saga.next().done).toEqual(true);
       });
       test('should generate appropriate error message in case of api failure', () => {
-        const aShare = { id: 'something' };
-        const saga = rejectAccountInvite(aShare);
+        const aShare = { resourceType: 'account', id: 'something' };
+        const saga = rejectSharedInvite(aShare);
         const path = `/ashares/${aShare.id}/dismiss`;
         const opts = { method: 'PUT', body: {} };
 

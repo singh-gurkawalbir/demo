@@ -336,7 +336,10 @@ export function* deleteResource({ resourceType, id }) {
   const path = `/${resourceType}/${id}`;
 
   try {
-    if (resourceType.indexOf('/licenses') === -1) {
+    if (
+      resourceType.indexOf('/licenses') === -1 &&
+      resourceType.indexOf('transfers') === -1
+    ) {
       const resourceReferences = yield call(requestReferences, {
         resourceType,
         id,

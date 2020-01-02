@@ -9,6 +9,7 @@ export default {
       retValues['/test'] = undefined;
       retValues['/delta'] = undefined;
       retValues['/once'] = undefined;
+      retValues['/rest/once'] = undefined;
       delete retValues['/test/limit'];
       delete retValues['/delta/dateFormat'];
       delete retValues['/delta/lagOffset'];
@@ -20,6 +21,7 @@ export default {
       retValues['/test/limit'] = 1;
       retValues['/delta'] = undefined;
       retValues['/once'] = undefined;
+      retValues['/rest/once'] = undefined;
       delete retValues['/delta/dateFormat'];
       delete retValues['/delta/lagOffset'];
       delete retValues['/once/booleanField'];
@@ -28,6 +30,7 @@ export default {
       delete retValues['/rest/once/method'];
     } else if (retValues['/type'] === 'delta') {
       retValues['/once'] = undefined;
+      retValues['/rest/once'] = undefined;
       retValues['/test'] = undefined;
       delete retValues['/test/limit'];
       delete retValues['/once/booleanField'];
