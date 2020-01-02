@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { Button } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import DynaForm from '../DynaForm';
 import DynaSubmit from '../DynaForm/DynaSubmit';
@@ -14,6 +15,15 @@ import {
   importSuiteScriptHooksList,
 } from '../../utils/hooks';
 
+const useStyles = makeStyles(theme => ({
+  fbContDrawer: {
+    width: '100%',
+    overflowX: 'hidden',
+    marginTop: -1,
+    padding: theme.spacing(2),
+  },
+}));
+
 export default function Hooks(props) {
   const {
     onSave,
@@ -25,6 +35,7 @@ export default function Hooks(props) {
     flowId,
   } = props;
   const [enqueueSnackbar] = useEnqueueSnackbar();
+  const classes = useStyles();
   const { merged: resource } = useSelector(state =>
     resourceData(state, resourceType, resourceId, 'value')
   );
@@ -118,7 +129,7 @@ export default function Hooks(props) {
 
   return (
     <LoadResources resources="scripts, stacks">
-      <div>
+      <div className={classes.fbContDrawer}>
         <DynaForm fieldMeta={fieldMeta} disabled={disabled}>
           <DynaSubmit
             disabled={disabled}

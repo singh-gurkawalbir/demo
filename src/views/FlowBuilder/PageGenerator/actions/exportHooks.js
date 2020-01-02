@@ -19,8 +19,14 @@ const useStyles = makeStyles(theme => ({
     border: 'solid 1px',
     borderColor: theme.palette.secondary.lightest,
     boxShadow: `-4px 4px 8px rgba(0,0,0,0.15)`,
-    backgroundColor: theme.palette.background.white,
+    backgroundColor: theme.palette.background.paper2,
     zIndex: theme.zIndex.drawer + 1,
+  },
+  fbContDrawer: {
+    width: '100%',
+    overflowX: 'hidden',
+    marginTop: -1,
+    padding: theme.spacing(2),
   },
   content: {
     borderTop: `solid 1px ${theme.palette.secondary.lightest}`,
@@ -57,6 +63,7 @@ function HooksDialog({ flowId, isViewMode, resource, onClose }) {
   return (
     <Drawer
       anchor="right"
+      variant="persistent"
       classes={{
         paper: classes.drawerPaper,
       }}
