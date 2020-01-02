@@ -5,7 +5,7 @@
 import { adaptorTypeMap } from './resource';
 
 // Applications list which include Preview panel as part of the resource drawer
-const applicationsWithPreviewPanel = ['http', 'rest'];
+const applicationsWithPreviewPanel = ['http', 'rest', 'Mongodb', 'rdbms'];
 const emptyList = [];
 
 export const getAvailablePreviewStages = resource => {
@@ -30,7 +30,8 @@ export const getAvailablePreviewStages = resource => {
         { label: 'Raw', value: 'raw' },
         { label: 'Parsed Output', value: 'parse' },
       ];
-    case 'Mongodb':
+    case 'mongodb':
+    case 'rdbms':
       return [{ label: 'Parsed Output', value: 'parse' }];
     default:
       return emptyList;

@@ -220,11 +220,18 @@ function* requestSampleData({
 
 function* requestLookupSampleData({ resourceId, flowId, formValues }) {
   const resourceType = 'exports';
-  const _pageProcessorDoc = yield call(constructResourceFromFormValues, {
+  let _pageProcessorDoc = yield call(constructResourceFromFormValues, {
     formValues,
     resourceId,
     resourceType,
   });
+
+  // TODO @Raghu: Should handle in metadata to pass boolean instead of string
+  if (_pageProcessorDoc.oneToMany) {
+    const oneToMany = _pageProcessorDoc.oneToMany === 'true';
+
+    _pageProcessorDoc = { ..._pageProcessorDoc, oneToMany };
+  }
 
   try {
     const pageProcessorPreviewData = yield call(pageProcessorPreview, {
