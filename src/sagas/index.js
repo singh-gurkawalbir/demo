@@ -46,6 +46,7 @@ import { recycleBinSagas } from './recycleBin';
 import analyticsSagas from './analytics';
 import * as selectors from '../reducers';
 import { COMM_STATES } from '../reducers/comms/networkComms';
+import { transferSagas } from './transfer';
 
 export function* unauthenticateAndDeleteProfile() {
   yield put(actions.auth.failure('Authentication Failure'));
@@ -140,6 +141,7 @@ export default function* rootSaga() {
     ...accessTokenSagas,
     ...recycleBinSagas,
     ...analyticsSagas,
+    ...transferSagas,
     ...mappingSagas,
   ]);
 }
