@@ -5,7 +5,7 @@ import { adaptorTypeMap } from './resource';
  */
 
 // Applications list which include Preview panel as part of the resource drawer
-const applicationsWithPreviewPanel = ['http', 'netsuite'];
+const applicationsWithPreviewPanel = ['http'];
 const emptyList = [];
 
 export const getAvailablePreviewStages = resource => {
@@ -17,7 +17,7 @@ export const getAvailablePreviewStages = resource => {
   switch (appType) {
     case 'http':
       return [
-        { label: 'HTTP request', value: 'request' },
+        // { label: 'HTTP request', value: 'request' },
         { label: 'HTTP response', value: 'raw' },
         { label: 'Output', value: 'parse' },
       ];

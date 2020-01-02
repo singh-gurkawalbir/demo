@@ -34,6 +34,7 @@ function DynaExportPanel(props) {
   const previewStageDataList = useSelector(state => {
     const stageData = [];
 
+    // Expected to have at least one preview stage 'Default Stage is 'Output: parse'
     availablePreviewStages.forEach(({ value }) => {
       stageData[value] = getResourceSampleDataWithStatus(
         state,
@@ -44,6 +45,9 @@ function DynaExportPanel(props) {
 
     return stageData;
   });
+  const resourceSampleData = useSelector(state =>
+    getResourceSampleDataWithStatus(state, resourceId, 'raw')
+  );
   const [panelType, setPanelType] = useState(availablePreviewStages[0].value);
   const fetchExportPreviewData = useCallback(() => {
     dispatch(
@@ -71,51 +75,47 @@ function DynaExportPanel(props) {
   return (
     <div>
       <Typography> Preview Data </Typography>
-
-      <div>
-        <TextToggle
-          value={panelType}
-          onChange={handlePanelViewChange}
-          exclusive
-          options={availablePreviewStages}
-        />
-        <div className={classes.container}>
-          {previewStageDataList[panelType] &&
-            previewStageDataList[panelType].status === 'requested' && (
-              <Spinner />
-            )}
-          {previewStageDataList[panelType] &&
-            previewStageDataList[panelType].status === 'received' && (
-              <Fragment>
-                <CodeEditor
-                  name="sampleData"
-                  value={previewStageDataList[panelType].data}
-                  mode={panelType === 'parsed' ? 'json' : 'text'}
-                  readOnly
-                />
-                <CopyToClipboard
-                  text={previewStageDataList[panelType].data}
-                  onCopy={handleOnCopy}>
-                  <IconButton
-                    data-test="copyToClipboard"
-                    title="Copy to clipboard"
-                    size="small">
-                    <CopyIcon />
-                  </IconButton>
-                </CopyToClipboard>
-              </Fragment>
-            )}
-          {previewStageDataList[panelType] &&
-            previewStageDataList[panelType].status === 'error' && (
+      {resourceSampleData.status === 'requested' && <Spinner />}
+      {resourceSampleData.status === 'received' && (
+        <div>
+          <TextToggle
+            value={panelType}
+            onChange={handlePanelViewChange}
+            exclusive
+            options={availablePreviewStages}
+          />
+          <div className={classes.container}>
+            <Fragment>
               <CodeEditor
-                name="sampleDataError"
-                value={previewStageDataList[panelType].error}
-                mode="text"
+                name="sampleData"
+                value={previewStageDataList[panelType].data}
+                mode={panelType === 'parsed' ? 'json' : 'text'}
                 readOnly
               />
-            )}
+              <CopyToClipboard
+                text={previewStageDataList[panelType].data}
+                onCopy={handleOnCopy}>
+                <IconButton
+                  data-test="copyToClipboard"
+                  title="Copy to clipboard"
+                  size="small">
+                  <CopyIcon />
+                </IconButton>
+              </CopyToClipboard>
+            </Fragment>
+          </div>
         </div>
-      </div>
+      )}
+      {resourceSampleData.status === 'error' && (
+        <div className={classes.container}>
+          <CodeEditor
+            name="sampleData"
+            value={resourceSampleData.error}
+            mode="json"
+            readOnly
+          />
+        </div>
+      )}
     </div>
   );
 }
