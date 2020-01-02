@@ -2,8 +2,7 @@ import { Fragment } from 'react';
 import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { IconButton } from '@material-ui/core';
-// TODO Azhar
-import Icon from '../../../../icons/TrashIcon';
+import Icon from '../../../../icons/RestoreIcon';
 import actions from '../../../../../actions';
 import getRoutePath from '../../../../../utils/routePaths';
 import { RESOURCE_TYPE_LABEL_TO_SINGULAR } from '../../../../../constants/resource';

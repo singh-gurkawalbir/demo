@@ -18,6 +18,7 @@ export default function getFormattedSampleData({
   sampleData,
   resourceType,
   resourceName,
+  wrapInArray = false,
 }) {
   // create deep copy
   const _connection = deepClone(connection);
@@ -28,7 +29,7 @@ export default function getFormattedSampleData({
     myField: 'sample',
   };
 
-  data.data = [_sd];
+  data.data = wrapInArray ? [_sd] : _sd;
 
   if (_connection) {
     data.connection.name = _connection.name;

@@ -35,6 +35,7 @@ export default function MappingSettingsField(props) {
       {showSettings && (
         <ImportMappingSettings
           application={application}
+          open={showSettings}
           updateLookup={updateLookup}
           title="Settings"
           lookup={lookup}
@@ -46,6 +47,7 @@ export default function MappingSettingsField(props) {
           disabled={disabled}
         />
       )}
+
       <ActionButton
         data-test={id}
         disabled={isDisabled}

@@ -44,6 +44,7 @@ import { processSampleData } from '../utils/sampleData';
 import inferErrorMessage from '../utils/inferErrorMessage';
 import getRoutePath from '../utils/routePaths';
 import { COMM_STATES } from './comms/networkComms';
+import { getIntegrationAppUrlName } from '../utils/integrationApps';
 
 const emptySet = [];
 const emptyObject = {};
@@ -378,6 +379,10 @@ export function mapping(state, id) {
   return fromSession.mapping(state && state.session, id);
 }
 
+export function mappingSaveProcessTerminate(state, id) {
+  return fromSession.mappingSaveProcessTerminate(state && state.session, id);
+}
+
 export function editorHelperFunctions(state) {
   return (
     (state &&
@@ -664,6 +669,7 @@ export function resourceList(state, options = {}) {
       'stacks',
       'templates',
       'published',
+      'transfers',
     ].includes(
       /* These resources are common for both production & sandbox environments. */
       options.type
@@ -1560,8 +1566,8 @@ export function accountSummary(state) {
   return fromUser.accountSummary(state.user);
 }
 
-export function notifications(state) {
-  return fromUser.notifications(state.user);
+export function userNotifications(state) {
+  return fromUser.userNotifications(state.user);
 }
 
 export function hasAccounts(state) {
@@ -1647,12 +1653,15 @@ const getParentsResourceId = (state, resourceType, resourceId) => {
 export const getResourceEditUrl = (state, resourceType, resourceId) => {
   if (resourceType === 'flows') {
     const integrationId = getParentsResourceId(state, resourceType, resourceId);
-    const { _connectorId } = resource(state, resourceType, resourceId) || {};
+    const { _connectorId, name } =
+      resource(state, resourceType, resourceId) || {};
 
     // if _connectorId its an integrationApp
     if (_connectorId) {
       return getRoutePath(
-        `/integrationApp/${integrationId}/flowBuilder/${resourceId}`
+        `/integrationapps/${getIntegrationAppUrlName(
+          name
+        )}/${integrationId}/flowBuilder/${resourceId}`
       );
     }
 
@@ -2832,4 +2841,99 @@ export function resourceNamesByIds(state, type) {
   resources.forEach(r => (resourceIdNameMap[r._id] = r.name || r._id));
 
   return resourceIdNameMap;
+}
+
+export function getTransferPreviewData(state) {
+  return fromSession.getTransferPreviewData(state && state.session);
+}
+
+export function transferListWithMetadata(state) {
+  const transfers =
+    resourceList(state, {
+      type: 'transfers',
+    }).resources || [];
+  const preferences = userProfilePreferencesProps(state);
+
+  transfers.forEach((transfer, i) => {
+    let fromUser = '';
+    let toUser = '';
+    let integrations = [];
+    let transferDate = '';
+
+    if (transfer.transferToUser && transfer.transferToUser._id) {
+      transfers[i].ownerUser = {
+        _id: preferences._id,
+        email: preferences.email,
+        name: 'Me',
+      };
+    } else if (transfer.ownerUser && transfer.ownerUser._id) {
+      transfers[i].transferToUser = {
+        _id: preferences._id,
+        email: preferences.email,
+        name: 'Me',
+      };
+      transfers[i].isInvited = true;
+    }
+
+    if (transfers[i].ownerUser && transfers[i].ownerUser.name) {
+      fromUser = transfers[i].ownerUser.name;
+    }
+
+    if (
+      transfers[i].isInvited &&
+      transfers[i].ownerUser &&
+      transfers[i].ownerUser.email
+    ) {
+      fromUser = transfer[i].ownerUser.email;
+    }
+
+    if (transfers[i].transferToUser && transfers[i].transferToUser.name) {
+      toUser = transfers[i].transferToUser.name;
+    }
+
+    if (
+      !transfers[i].isInvited &&
+      transfers[i].transferToUser &&
+      transfers[i].transferToUser.email
+    ) {
+      toUser = transfers[i].transferToUser.email;
+    }
+
+    if (transfer.toTransfer && transfer.toTransfer.integrations) {
+      transfer.toTransfer.integrations.forEach(i => {
+        let { name } = i;
+
+        if (i._id === 'none') {
+          name = 'Standalone Flows';
+        }
+
+        name = name || i._id;
+
+        if (i.tag) {
+          name += ` (${i.tag})`;
+        }
+
+        integrations.push(name);
+      });
+    }
+
+    integrations = integrations.join('\n');
+
+    if (transfer.transferredAt) {
+      transferDate = moment(transfer.transferredAt).format(
+        `${preferences && preferences.dateFormat} ${preferences &&
+          preferences.timeFormat}`
+      );
+    }
+
+    transfers[i].fromUser = fromUser;
+
+    transfers[i].toUser = toUser;
+
+    transfers[i].integrations = integrations;
+
+    transfers[i].transferDate = transferDate;
+  });
+
+  return { resources: transfers };
 }

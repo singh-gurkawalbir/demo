@@ -162,65 +162,6 @@ export function* changeEmail({ updatedEmail }) {
   }
 }
 
-export function* acceptAccountInvite({ id }) {
-  const path = `/ashares/${id}/accept`;
-  const opts = {
-    method: 'PUT',
-    body: {},
-  };
-
-  try {
-    yield call(apiCallWithRetry, {
-      path,
-      opts,
-      message: 'Accepting account share invite',
-    });
-  } catch (e) {
-    return yield put(
-      actions.api.failure(
-        path,
-        opts.method,
-        'Could not accept account share invite'
-      )
-    );
-  }
-
-  const userPreferences = yield select(selectors.userPreferences);
-
-  if (userPreferences.defaultAShareId === ACCOUNT_IDS.OWN) {
-    yield put(actions.auth.clearStore());
-    yield put(actions.auth.initSession());
-  } else {
-    yield put(actions.resource.requestCollection('shared/ashares'));
-  }
-}
-
-export function* rejectAccountInvite({ id }) {
-  const path = `/ashares/${id}/dismiss`;
-  const opts = {
-    method: 'PUT',
-    body: {},
-  };
-
-  try {
-    yield call(apiCallWithRetry, {
-      path,
-      opts,
-      message: 'Rejecting account share invite',
-    });
-  } catch (e) {
-    return yield put(
-      actions.api.failure(
-        path,
-        opts.method,
-        'Could not reject account share invite'
-      )
-    );
-  }
-
-  yield put(actions.resource.requestCollection('shared/ashares'));
-}
-
 export function* switchAccount({ id }) {
   const userPreferences = yield select(selectors.userPreferences);
 
@@ -366,6 +307,92 @@ export function* makeOwner({ email }) {
   }
 }
 
+export function* requestSharedStackNotifications() {
+  const { defaultAShareId } = yield select(selectors.userPreferences);
+
+  if (defaultAShareId === ACCOUNT_IDS.OWN) {
+    yield put(actions.resource.requestCollection('shared/sshares'));
+  }
+}
+
+export function* acceptSharedInvite({ resourceType, id }) {
+  const sharedResourceTypeMap = {
+    account: 'ashares',
+    stack: 'sshares',
+  };
+  const path = `/${sharedResourceTypeMap[resourceType]}/${id}/accept`;
+  const opts = {
+    method: 'PUT',
+    body: {},
+  };
+
+  try {
+    yield call(apiCallWithRetry, {
+      path,
+      opts,
+      message: `Accepting ${resourceType} share invite`,
+    });
+  } catch (e) {
+    return yield put(
+      actions.api.failure(
+        path,
+        opts.method,
+        `Could not accept ${resourceType} share invite`
+      )
+    );
+  }
+
+  const userPreferences = yield select(selectors.userPreferences);
+
+  if (
+    resourceType === 'account' &&
+    userPreferences.defaultAShareId === ACCOUNT_IDS.OWN
+  ) {
+    yield put(actions.auth.clearStore());
+    yield put(actions.auth.initSession());
+  } else {
+    yield put(
+      actions.resource.requestCollection(
+        `shared/${sharedResourceTypeMap[resourceType]}`
+      )
+    );
+  }
+}
+
+export function* rejectSharedInvite({ resourceType, id }) {
+  const sharedResourceTypeMap = {
+    account: 'ashares',
+    stack: 'sshares',
+  };
+  const path = `/${sharedResourceTypeMap[resourceType]}/${id}/dismiss`;
+  const opts = {
+    method: 'PUT',
+    body: {},
+  };
+
+  try {
+    yield call(apiCallWithRetry, {
+      path,
+      opts,
+      message: `Rejecting ${resourceType} share invite`,
+    });
+  } catch (e) {
+    return yield put(
+      actions.api.failure(
+        path,
+        opts.method,
+        `Could not reject ${resourceType} share invite`
+      )
+    );
+  }
+
+  yield put(
+    actions.resource.requestCollection(
+      `shared/${sharedResourceTypeMap[resourceType]}`
+    )
+  );
+}
+
 export const userSagas = [
   takeLatest(actionTypes.UPDATE_PROFILE, updateProfile),
   takeLatest(actionTypes.UPDATE_PREFERENCES, updatePreferences),
@@ -373,8 +400,6 @@ export const userSagas = [
   takeEvery(actionTypes.LICENSE_UPGRADE_REQUEST, requestLicenseUpgrade),
   takeEvery(actionTypes.USER_CHANGE_EMAIL, changeEmail),
   takeEvery(actionTypes.USER_CHANGE_PASSWORD, changePassword),
-  takeEvery(actionTypes.ACCOUNT_INVITE_ACCEPT, acceptAccountInvite),
-  takeEvery(actionTypes.ACCOUNT_INVITE_REJECT, rejectAccountInvite),
   takeEvery(actionTypes.ACCOUNT_LEAVE_REQUEST, leaveAccount),
   takeEvery(actionTypes.ACCOUNT_SWITCH, switchAccount),
   takeEvery(actionTypes.USER_CREATE, createUser),
@@ -382,4 +407,7 @@ export const userSagas = [
   takeEvery(actionTypes.USER_DISABLE, disableUser),
   takeEvery(actionTypes.USER_DELETE, deleteUser),
   takeEvery(actionTypes.USER_MAKE_OWNER, makeOwner),
+  takeEvery(actionTypes.DEFAULT_ACCOUNT_SET, requestSharedStackNotifications),
+  takeEvery(actionTypes.SHARED_NOTIFICATION_ACCEPT, acceptSharedInvite),
+  takeEvery(actionTypes.SHARED_NOTIFICATION_REJECT, rejectSharedInvite),
 ];

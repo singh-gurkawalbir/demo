@@ -639,6 +639,15 @@ const file = {
       file,
     }),
 };
+const transfer = {
+  cancel: id => action(actionTypes.TRANSFER.CANCEL, { id }),
+  preview: data => action(actionTypes.TRANSFER.PREVIEW, { data }),
+  receivedPreview: ({ response, error }) =>
+    action(actionTypes.TRANSFER.RECEIVED_PREVIEW, { response, error }),
+  clearPreview: () => action(actionTypes.TRANSFER.CLEAR_PREVIEW),
+  create: data => action(actionTypes.TRANSFER.CREATE, { data }),
+  canceledTransfer: id => action(actionTypes.TRANSFER.CANCELLED, { id }),
+};
 const stack = {
   displayToken: id => action(actionTypes.STACK.TOKEN_DISPLAY, { id }),
   generateToken: id => action(actionTypes.STACK.TOKEN_GENERATE, { id }),
@@ -685,9 +694,6 @@ const user = {
         action(actionTypes.LICENSE_UPGRADE_REQUEST, {}),
       licenseUpgradeRequestSubmitted: message =>
         action(actionTypes.LICENSE_UPGRADE_REQUEST_SUBMITTED, { message }),
-      acceptInvite: id => action(actionTypes.ACCOUNT_INVITE_ACCEPT, { id }),
-      acceptedInvite: id => action(actionTypes.ACCOUNT_INVITE_ACCEPTED, { id }),
-      rejectInvite: id => action(actionTypes.ACCOUNT_INVITE_REJECT, { id }),
       leave: id => action(actionTypes.ACCOUNT_LEAVE_REQUEST, { id }),
       switchTo: ({ id }) => action(actionTypes.ACCOUNT_SWITCH, { id }),
     },
@@ -696,6 +702,14 @@ const user = {
     request: message => resource.request('preferences', undefined, message),
     update: preferences =>
       action(actionTypes.UPDATE_PREFERENCES, { preferences }),
+  },
+  sharedNotifications: {
+    acceptInvite: (resourceType, id) =>
+      action(actionTypes.SHARED_NOTIFICATION_ACCEPT, { resourceType, id }),
+    acceptedInvite: id =>
+      action(actionTypes.SHARED_NOTIFICATION_ACCEPTED, { id }),
+    rejectInvite: (resourceType, id) =>
+      action(actionTypes.SHARED_NOTIFICATION_REJECT, { resourceType, id }),
   },
 };
 const sampleData = {
@@ -841,6 +855,9 @@ const mapping = {
       value,
     }),
   delete: (id, index) => action(actionTypes.MAPPING.DELETE, { id, index }),
+  save: id => action(actionTypes.MAPPING.SAVE, { id }),
+  saveFailed: id => action(actionTypes.MAPPING.SAVE_FAILED, { id }),
+  saveComplete: id => action(actionTypes.MAPPING.SAVE_COMPLETE, { id }),
 };
 // #region DynaForm Actions
 const resourceForm = {
@@ -1077,4 +1094,5 @@ export default {
   recycleBin,
   mapping,
   analytics,
+  transfer,
 };

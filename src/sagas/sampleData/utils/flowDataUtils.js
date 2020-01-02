@@ -209,52 +209,17 @@ export function* requestSampleDataForImports({
         break;
       }
 
-      case 'responseTransform': {
-        yield call(requestProcessorData, {
-          flowId,
-          resourceId,
-          resourceType: 'imports',
-          processor: 'responseTransform',
-        });
-        break;
-      }
-
-      case 'importMappingExtract': {
-        yield call(requestProcessorData, {
-          flowId,
-          resourceId,
-          resourceType: 'imports',
-          processorStage: 'importMappingExtract',
-        });
-        break;
-      }
-
-      case 'responseMappingExtract': {
-        yield call(requestProcessorData, {
-          flowId,
-          resourceId,
-          resourceType: 'imports',
-          processorStage: 'responseMappingExtract',
-        });
-        break;
-      }
-
-      case 'responseMapping': {
-        yield call(requestProcessorData, {
-          flowId,
-          resourceId,
-          resourceType: 'imports',
-          processorStage: 'responseMapping',
-        });
-        break;
-      }
-
+      case 'responseTransform':
+      case 'importMappingExtract':
+      case 'importMapping':
+      case 'responseMappingExtract':
+      case 'responseMapping':
       case 'preMap': {
         yield call(requestProcessorData, {
           flowId,
           resourceId,
           resourceType: 'imports',
-          processorStage: 'preMap',
+          processor: sampleDataStage,
         });
         break;
       }

@@ -462,6 +462,10 @@ export function* requestProcessorData({
         hasNoRulesToProcess = true;
       }
     } else if (stage === 'importMappingExtract') {
+      // It does not have a processor, as it just copies its sampleData stage's data into its state, to enhance readability
+      // So making hasNoRulesToProcess to true
+      hasNoRulesToProcess = true;
+    } else if (stage === 'importMapping') {
       // mapping fields are processed here against raw data
       const appType =
         resource.adaptorType && adaptorTypeMap[resource.adaptorType];

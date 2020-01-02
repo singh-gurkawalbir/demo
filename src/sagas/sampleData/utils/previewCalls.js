@@ -101,7 +101,7 @@ export function* exportPreview({
     'exports',
     resourceId
   );
-  let body = { ...resource };
+  let body = deepClone(resource);
 
   if (body.type === 'delta') {
     body.postData = {

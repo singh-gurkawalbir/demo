@@ -46,7 +46,11 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export const useIASettingsStateWithHandleClose = (integrationId, flowId) => {
+export const useIASettingsStateWithHandleClose = (
+  integrationId,
+  flowId,
+  parentUrl
+) => {
   const dispatch = useDispatch();
   const history = useHistory();
   const formState = useSelector(state => {
@@ -60,8 +64,8 @@ export const useIASettingsStateWithHandleClose = (integrationId, flowId) => {
   }, shallowEqual);
   const IASettingsHandleClose = useCallback(() => {
     dispatch(actions.integrationApp.settings.clear(integrationId, flowId));
-    history.goBack();
-  }, [dispatch, flowId, history, integrationId]);
+    history.push(parentUrl);
+  }, [dispatch, flowId, history, integrationId, parentUrl]);
 
   return {
     handleClose: IASettingsHandleClose,

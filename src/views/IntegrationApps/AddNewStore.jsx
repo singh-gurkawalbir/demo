@@ -23,6 +23,7 @@ import resourceConstants from '../../forms/constants/connection';
 import Spinner from '../../components/Spinner';
 import Loader from '../../components/Loader';
 import getRoutePath from '../../utils/routePaths';
+import { getIntegrationAppUrlName } from '../../utils/integrationApps';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -63,14 +64,16 @@ export default function IntegrationAppAddNewStore(props) {
   const [isSetupComplete, setIsSetupComplete] = useState(false);
   const [requestedSteps, setRequestedSteps] = useState(false);
   const dispatch = useDispatch();
-  const integration = useSelector(state =>
-    selectors.integrationAppSettings(state, integrationId)
-  );
+  const integration =
+    useSelector(state =>
+      selectors.integrationAppSettings(state, integrationId)
+    ) || {};
   const showUninstall = !!(
     integration &&
     integration.settings &&
     integration.settings.defaultSectionId
   );
+  const integrationAppName = getIntegrationAppUrlName(integration.name);
   const { steps: addNewStoreSteps, error } = useSelector(state =>
     selectors.addNewStoreSteps(state, integrationId)
   );
@@ -106,12 +109,24 @@ export default function IntegrationAppAddNewStore(props) {
       dispatch(actions.resource.requestCollection('exports'));
       dispatch(actions.resource.requestCollection('imports'));
       dispatch(actions.resource.requestCollection('connections'));
-      props.history.push(`/pg/integrationApp/${integrationId}/flows`);
+      props.history.push(
+        `/pg/integrationapps/${integrationAppName}/${integrationId}/flows`
+      );
     }
-  }, [dispatch, integrationId, isSetupComplete, props.history]);
+  }, [
+    dispatch,
+    integrationAppName,
+    integrationId,
+    isSetupComplete,
+    props.history,
+  ]);
 
   if (error) {
-    history.push(getRoutePath(`integrationApp/${integrationId}/flows`));
+    history.push(
+      getRoutePath(
+        `integrationapps/${integrationAppName}/${integrationId}/flows`
+      )
+    );
 
     return null;
   }
@@ -218,7 +233,7 @@ export default function IntegrationAppAddNewStore(props) {
   const handleUninstall = () => {
     history.push(
       getRoutePath(
-        `connectors/${integrationId}/uninstall/${integration.settings.defaultSectionId}`
+        `integrationapps/${integrationAppName}/${integrationId}/uninstall/${integration.settings.defaultSectionId}`
       )
     );
   };

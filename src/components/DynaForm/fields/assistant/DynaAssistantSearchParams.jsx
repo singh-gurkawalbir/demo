@@ -41,15 +41,14 @@ const SearchParamsModal = props => {
             layout,
           }}>
           <div>
+            <DynaSubmit onClick={onSaveClick}>Save</DynaSubmit>
             <Button
               data-test="cancelSearchParams"
               onClick={onClose}
-              size="small"
-              variant="contained"
-              color="secondary">
+              variant="text"
+              color="primary">
               Cancel
             </Button>
-            <DynaSubmit onClick={onSaveClick}>Save</DynaSubmit>
           </div>
         </DynaForm>
       </Fragment>
