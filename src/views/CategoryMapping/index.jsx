@@ -1,5 +1,15 @@
-import { Fragment, useEffect, useState } from 'react';
-import { Typography, Divider, IconButton } from '@material-ui/core';
+import { useEffect, useState } from 'react';
+import {
+  Typography,
+  Divider,
+  IconButton,
+  Select,
+  makeStyles,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Grid,
+} from '@material-ui/core';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import ArrowBackIcon from '../../components/icons/ArrowLeftIcon';
@@ -7,10 +17,19 @@ import * as selectors from '../../reducers';
 import actions from '../../actions';
 import LoadResources from '../../components/LoadResources';
 
+const useStyles = makeStyles(() => ({
+  content: {
+    padding: '20px',
+  },
+}));
+
 export default function CategoryMapping() {
   const match = useRouteMatch();
   const history = useHistory();
   const dispatch = useDispatch();
+  const classes = useStyles();
+  const [amazonAttributeFilter, setAmazonAttributeFilter] = useState('all');
+  const [fieldMappingsFilter, setFieldMappingsFilter] = useState('mapped');
   const { integrationId, flowId } = match.params;
   const [requestedMetadata, setRequestedMetadata] = useState(false);
   const integrationName = useSelector(state => {
@@ -29,6 +48,13 @@ export default function CategoryMapping() {
   const metadata = useSelector(state =>
     selectors.categoryMapping(state, integrationId, flowId)
   );
+  const handleAmzonAttributeChange = val => {
+    setAmazonAttributeFilter(val);
+  };
+
+  const handleFieldMappingsFilterChange = val => {
+    setFieldMappingsFilter(val);
+  };
 
   useEffect(() => {
     if (!metadata && !requestedMetadata) {
@@ -47,7 +73,7 @@ export default function CategoryMapping() {
   }
 
   return (
-    <Fragment>
+    <div className={classes.content}>
       <Typography variant="h3">{integrationName}</Typography>
       <Divider />
       <div>
@@ -56,6 +82,37 @@ export default function CategoryMapping() {
         </IconButton>
         Go Back to Settings
       </div>
-    </Fragment>
+      <Grid container>
+        <Grid item xs>
+          <Typography variant="h4">Product Mappings</Typography>
+        </Grid>
+        <Grid item xs>
+          <FormControl className={classes.formControl}>
+            <InputLabel>Amazon Attributes</InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              label="Amazon Attributes"
+              value={amazonAttributeFilter || 'all'}
+              onChange={handleAmzonAttributeChange}>
+              <MenuItem value="all">All</MenuItem>
+              <MenuItem value="required">Required</MenuItem>
+              <MenuItem value="preferred">Preferred</MenuItem>
+              <MenuItem value="conditional">Conditional</MenuItem>
+            </Select>
+          </FormControl>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            label="sometext"
+            value={fieldMappingsFilter}
+            onChange={handleFieldMappingsFilterChange}>
+            <MenuItem value="all">All</MenuItem>
+            <MenuItem value="mapped">Mapped</MenuItem>
+            <MenuItem value="unmapped">Unmapped</MenuItem>
+          </Select>
+        </Grid>
+      </Grid>
+    </div>
   );
 }

@@ -18,6 +18,7 @@ import PanelHeader from '../../../common/PanelHeader';
 import FlowCard from '../../../common/FlowCard';
 import ConfigureDrawer from './ConfigureDrawer';
 import SettingsDrawer from './SettingsDrawer';
+import CategoryMappingDrawer from './CategoryMappingDrawer';
 import MappingDrawer from './MappingDrawer';
 import actions from '../../../../../actions';
 
@@ -108,6 +109,12 @@ function FlowList({ integrationId, storeId }) {
         integrationId={integrationId}
         storeId={storeId}
         sectionId={sectionId}
+      />
+      <CategoryMappingDrawer
+        integrationId={integrationId}
+        storeId={storeId}
+        sectionId={sectionId}
+        // flowId={flowId}
       />
 
       <PanelHeader title={`${section.title} flows`}>

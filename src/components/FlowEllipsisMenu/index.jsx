@@ -104,7 +104,12 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
           break;
 
         case 'mapping':
-          history.push(`${history.location.pathname}/${flowId}/mapping`);
+          if (flowDetails.showUtilityMapping)
+            history.push(
+              `${history.location.pathname}/${flowId}/utilitymapping/common`
+            );
+          else history.push(`${history.location.pathname}/${flowId}/mapping`);
+
           break;
 
         case 'audit':
@@ -132,6 +137,7 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
     [
       flowName,
       flowDetails._connectorId,
+      flowDetails.showUtilityMapping,
       history,
       integrationAppName,
       integrationId,
