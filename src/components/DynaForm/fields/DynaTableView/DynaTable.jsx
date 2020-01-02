@@ -293,7 +293,7 @@ export const DynaTable = props => {
           {tableData.map(arr => (
             <Grid item className={classes.rowContainer} key={arr.row}>
               <Grid container direction="row" spacing={2}>
-                {arr.values.map(r => (
+                {arr.values.map((r, index) => (
                   <Grid
                     item
                     key={`${r.readOnly ? r.value || r.id : r.id}`}
@@ -302,7 +302,8 @@ export const DynaTable = props => {
                       <DynaSelect
                         id={`suggest-${r.id}-${arr.row}`}
                         value={r.value}
-                        placeholder={r.id}
+                        isValid={!(optionsMap[index].required && !r.value)}
+                        errorMessages="Please select a value"
                         options={r.options || []}
                         onFieldChange={(id, value) => {
                           handleUpdate(arr.row, value, r.id);
@@ -321,7 +322,8 @@ export const DynaTable = props => {
                           value={r.value}
                           labelName="label"
                           disabled={r.readOnly}
-                          placeholder={r.id}
+                          isValid={!(optionsMap[index].required && !r.value)}
+                          errorMessages="Please select a value"
                           inputType={r.type}
                           valueName="value"
                           options={r.options}
