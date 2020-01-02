@@ -7,7 +7,7 @@ export default {
     '/http/mediaType': 'json',
     '/http/baseURI': 'https://direct.dnb.com/',
     '/http/auth/token/location': 'header',
-    '/http/auth/token/scheme': '',
+    '/http/auth/token/scheme': ' ',
     '/http/auth/token/headerName': 'Authorization',
     '/http/ping/method': 'GET',
     '/http/ping/relativeURI': '/V7.1/monitoring/changenotices',
