@@ -1,9 +1,8 @@
+/* eslint-disable jsx-a11y/label-has-for */
 import { Fragment } from 'react';
 import TextArea from './TextArea';
 
 export default function Field({ fieldMeta, onClick, value, isMapped }) {
-  console.log(`fieldMeta ${JSON.stringify(fieldMeta)}`);
-
   if (!fieldMeta || !fieldMeta.details) {
     return (
       <Fragment>

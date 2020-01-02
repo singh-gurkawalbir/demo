@@ -17,10 +17,10 @@ export default function Section({
     colLength = Math.max(col.length, colLength);
   });
 
-  console.log(`colLength ${colLength}`);
-
   const handleFieldClick = e => {
-    onFieldClick({ id: e.target.name });
+    const fieldMeta = { id: e.target.name };
+
+    onFieldClick && onFieldClick(fieldMeta);
   };
 
   return (

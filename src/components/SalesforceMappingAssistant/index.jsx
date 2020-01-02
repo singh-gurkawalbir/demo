@@ -5,6 +5,7 @@ import * as selectors from '../../reducers';
 import actions from '../../actions';
 import { generateLayoutColumns } from './util';
 import Section from './Section';
+import { getDomainUrl } from '../../utils/resource';
 
 export default function SalesforceMappingAssistant({
   style = {
@@ -12,24 +13,31 @@ export default function SalesforceMappingAssistant({
     height: '500px',
   },
   connectionId,
-  disableFetch,
-  commMetaPath,
+  sObjectType,
+  sObjectLabel,
+  layoutId,
   data,
   onFieldClick,
 }) {
   const dispatch = useDispatch();
   const [editLayoutSections, setEditLayoutSections] = useState();
   const layout = useSelector(
-    state =>
-      selectors.metadataOptionsAndResources({
-        state,
-        connectionId,
-        commMetaPath,
-        filterKey: 'salesforce-sObject-layout',
-      }).data,
+    state => {
+      if (connectionId && sObjectType && layoutId) {
+        return selectors.metadataOptionsAndResources({
+          state,
+          connectionId,
+          commMetaPath: `salesforce/metadata/connections/${connectionId}/sObjectTypes/${sObjectType}/layouts?recordTypeId=${layoutId}`,
+          filterKey: 'salesforce-sObject-layout',
+        }).data;
+      }
+    },
     (left, right) => {
       if (left.errors && right.errors) {
-        return left.errors.length === right.errors.length;
+        return (
+          left.errors.length === right.errors.length &&
+          left.errors[0].message === right.errors[0].message
+        );
       }
 
       return left.editLayoutSections.length === right.editLayoutSections.length;
@@ -37,23 +45,33 @@ export default function SalesforceMappingAssistant({
   );
 
   useEffect(() => {
-    if (!disableFetch && commMetaPath) {
-      dispatch(actions.metadata.request(connectionId, commMetaPath));
+    if (connectionId && sObjectType && layoutId) {
+      dispatch(
+        actions.metadata.request(
+          connectionId,
+          `salesforce/metadata/connections/${connectionId}/sObjectTypes/${sObjectType}/layouts?recordTypeId=${layoutId}`
+        )
+      );
     }
-  }, [commMetaPath, connectionId, disableFetch, dispatch]);
+  }, [dispatch, connectionId, sObjectType, layoutId]);
 
   useEffect(() => {
     if (layout && layout.editLayoutSections) {
-      console.log(
-        `${layout.editLayoutSections.length} @ ${new Date().toString()}`
-      );
       setEditLayoutSections(
         generateLayoutColumns([...layout.editLayoutSections])
       );
     }
   }, [layout]);
 
-  console.log(`layout ${JSON.stringify(editLayoutSections)}`);
+  if (!layoutId) {
+    return (
+      <div id="salesforceMappingFormMainDiv" className="salesforce-form">
+        <h2 className="pageDescription">
+          {sObjectType || sObjectType} is a non-layoutable entity.
+        </h2>
+      </div>
+    );
+  }
 
   return (
     <Frame
@@ -66,7 +84,7 @@ export default function SalesforceMappingAssistant({
             media="screen"
           />
           <link
-            href="https://staging.integrator.io/stylesheets/salesforceDA.css"
+            href={`${getDomainUrl()}/stylesheets/salesforceDA.css`}
             rel="stylesheet"
             type="text/css"
           />
@@ -74,7 +92,8 @@ export default function SalesforceMappingAssistant({
       }>
       <div id="salesforceMappingFormMainDiv" className="salesforce-form">
         <h2 className="pageDescription">
-          New TEST --- Click in a field below to select ---
+          New {sObjectLabel || sObjectType} --- Click in a field below to select
+          ---
         </h2>
         <div className="pbBody">
           <form>
