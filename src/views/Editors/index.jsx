@@ -17,6 +17,7 @@ import SqlQueryBuilderEditorDialog from '../../components/AFE/SqlQueryBuilderEdi
 import JsonEditorDialog from '../../components/JsonEditorDialog';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import FilterEditorDialog from '../../components/AFE/FilterEditor/Dialog';
+import SalesforceMappingAssistant from '../../components/SalesforceMappingAssistant';
 
 @hot(module)
 @withStyles(theme => ({
@@ -187,6 +188,16 @@ export default class Editors extends Component {
             onClose={this.handleClose}
           />
         );
+      case 'SalesforceMappingAssistant':
+        return (
+          <SalesforceMappingAssistant
+            height="500px"
+            connectionId="56aa08ffa68f14422ca31860"
+            commMetaPath="salesforce/metadata/connections/56aa08ffa68f14422ca31860/sObjectTypes/Account/layouts?recordTypeId=012000000000000AAA"
+            onFieldClick={meta => console.log(JSON.stringify(meta))}
+            data={{ Name: 'Test Name', Description: 'Xyz' }}
+          />
+        );
       default:
         return null;
     }
@@ -261,6 +272,11 @@ export default class Editors extends Component {
         name: 'FilterEditor',
         label: 'Filter Editor',
         description: 'Filter Editor',
+      },
+      {
+        name: 'SalesforceMappingAssistant',
+        label: 'Salesforce Mapping Assistant',
+        description: 'Salesforce Mapping Assistant',
       },
     ];
 
