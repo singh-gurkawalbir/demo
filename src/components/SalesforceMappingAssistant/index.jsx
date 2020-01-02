@@ -73,6 +73,12 @@ export default function SalesforceMappingAssistant({
     );
   }
 
+  let domainURL = getDomainUrl();
+
+  if (domainURL.includes('localhost')) {
+    domainURL = 'https://staging.integrator.io';
+  }
+
   return (
     <Frame
       style={style}
@@ -84,7 +90,7 @@ export default function SalesforceMappingAssistant({
             media="screen"
           />
           <link
-            href={`${getDomainUrl()}/stylesheets/salesforceDA.css`}
+            href={`${domainURL}/stylesheets/salesforceDA.css`}
             rel="stylesheet"
             type="text/css"
           />
