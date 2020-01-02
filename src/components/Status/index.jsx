@@ -15,6 +15,11 @@ const useStyles = makeStyles(theme => ({
   },
   label: {
     textTransform: 'initial',
+    display: 'flex',
+    alignItems: 'center',
+    '& svg': {
+      marginTop: -3,
+    },
   },
 }));
 
@@ -26,15 +31,13 @@ function Status({ children, label, className, onClick }) {
       <Button
         data-test="headerStatus"
         variant="text"
+        color="primary"
         className={classes.wrapper}
         onClick={onClick}>
         {children}
         <Typography variant="body2" component="span" className={classes.label}>
-          {label}
+          {label} <ArrowRightIcon />
         </Typography>
-        <span className={classes.icon}>
-          <ArrowRightIcon />
-        </span>
       </Button>
     </div>
   );

@@ -1,6 +1,6 @@
 import { useDispatch } from 'react-redux';
 import { withRouter, Link } from 'react-router-dom';
-import { Typography, Tooltip } from '@material-ui/core';
+import { Typography, Tooltip, makeStyles } from '@material-ui/core';
 import HomePageCardContainer from '../../components/HomePageCard/HomePageCardContainer';
 import Header from '../../components/HomePageCard/Header';
 import Status from '../../components/Status';
@@ -23,7 +23,30 @@ import getRoutePath from '../../utils/routePaths';
 import actions from '../../actions';
 import { getIntegrationAppUrlName } from '../../utils/integrationApps';
 
+const useStyles = makeStyles(theme => ({
+  tileName: {
+    color: theme.palette.secondary.light,
+    '&:hover': {
+      color: theme.palette.primary.main,
+    },
+  },
+  action: {
+    width: theme.spacing(3),
+    height: theme.spacing(3),
+    color: theme.palette.secondary.light,
+    '&:hover': {
+      color: theme.palette.primary.main,
+    },
+  },
+  status: {
+    '& > * :hover': {
+      color: theme.palette.primary.main,
+    },
+  },
+}));
+
 function Tile({ tile, history }) {
+  const classes = useStyles();
   const dispatch = useDispatch();
   const numFlowsText = `${tile.numFlows} Flow${tile.numFlows === 1 ? '' : 's'}`;
   const accessLevel =
@@ -83,14 +106,20 @@ function Tile({ tile, history }) {
   return (
     <HomePageCardContainer>
       <Header>
-        <Status label={status.label} onClick={handleStatusClick}>
+        <Status
+          label={status.label}
+          onClick={handleStatusClick}
+          className={classes.status}>
           <StatusCircle variant={status.variant} />
         </Status>
       </Header>
       <Content>
         <CardTitle>
           <Typography variant="h3">
-            <Link color="inherit" to={getRoutePath(urlToIntegrationSettings)}>
+            <Link
+              color="inherit"
+              to={getRoutePath(urlToIntegrationSettings)}
+              className={classes.tileName}>
               {tile.name}
             </Link>
           </Typography>
@@ -117,6 +146,7 @@ function Tile({ tile, history }) {
                   placement="bottom">
                   <Link
                     color="inherit"
+                    className={classes.action}
                     to={getRoutePath(urlToIntegrationUsers)}>
                     <PermissionsMonitorIcon />
                   </Link>
