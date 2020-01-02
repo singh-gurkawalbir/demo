@@ -11315,7 +11315,7 @@ react-fout-stager@3.0.0:
     fontfaceobserver "^2.0.13"
     prop-types "^15.6.0"
 
-react-frame-component@^4.1.1:
+react-frame-component@4.1.1:
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/react-frame-component/-/react-frame-component-4.1.1.tgz#ea8f7c518ef6b5ad72146dd1f648752369826894"
   integrity sha512-NfJp90AvYA1R6+uSYafQ+n+UM2HjHqi4WGHeprVXa6quU9d8o6ZFRzQ36uemY82dlkZFzf2jigFx6E4UzNFajA==
