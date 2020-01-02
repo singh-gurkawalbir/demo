@@ -3,14 +3,16 @@ export default {
     type: 'textwithlookupextract',
     fieldType: 'templateeditor',
     label: 'File Name',
-    title: 'Use this editor if your File Name should be dynamically generated',
+    editorTitle:
+      'Use this editor if your File Name should be dynamically generated',
     connectionId: r => r && r._connectionId,
   },
   'as2.messageIdTemplate': {
     type: 'textwithlookupextract',
     fieldType: 'templateeditor',
     label: 'Message Id',
-    title: 'Use this editor if your Message ID should be dynamically generated',
+    editorTitle:
+      'Use this editor if your Message ID should be dynamically generated',
     connectionId: r => r && r._connectionId,
   },
   'as2.headers': {
