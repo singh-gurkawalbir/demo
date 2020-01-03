@@ -152,6 +152,10 @@ export function resourceFormState(state, resourceType, resourceId) {
   );
 }
 
+export function getNumEnabledFlows(state) {
+  return fromSession.getNumEnabledFlows(state && state.session);
+}
+
 export function resourceFormSaveProcessTerminated(
   state,
   resourceType,
@@ -1558,6 +1562,233 @@ export function integratorLicenseActionDetails(state) {
   }
 
   licenseActionDetails.upgradeRequested = license.upgradeRequested;
+
+  return licenseActionDetails;
+}
+
+function getTierToFlowsMap(license) {
+  const flowsInTier = {
+    none: 0,
+    free: 0,
+    limited: 3,
+    standard: 8,
+    premium: 20,
+    enterprise: 50,
+  };
+  let flows = flowsInTier[license.tier] || 0;
+
+  if (self.tier === 'free' && !license.inTrial) {
+    if (
+      !license.numAddOnFlows &&
+      !license.sandbox &&
+      !license.numSandboxAddOnFlows
+    ) {
+      flows = 1;
+    }
+  }
+
+  return flows;
+}
+
+export function integratorLicenseWithMetadata(state) {
+  const license = integratorLicense(state);
+  const preferences = userPreferences(state);
+  const licenseActionDetails = { ...license };
+  const nameMap = {
+    none: 'None',
+    free: 'Free',
+    limited: 'Limited',
+    standard: 'Standard',
+    premium: 'Premium',
+    enterprise: 'Enterprise',
+  };
+
+  if (!licenseActionDetails) {
+    return licenseActionDetails;
+  }
+
+  licenseActionDetails.isNone = licenseActionDetails.tier === 'none';
+  licenseActionDetails.tierName = nameMap[licenseActionDetails.tier];
+  licenseActionDetails.inTrial = false;
+
+  if (licenseActionDetails.tier === 'free') {
+    if (licenseActionDetails.trialEndDate) {
+      licenseActionDetails.inTrial =
+        moment(licenseActionDetails.trialEndDate) - moment() >= 0;
+    }
+  }
+
+  licenseActionDetails.hasSubscription = false;
+
+  if (['none', 'free'].indexOf(licenseActionDetails.tier) === -1) {
+    licenseActionDetails.hasSubscription = true;
+  } else if (
+    licenseActionDetails.tier === 'free' &&
+    !licenseActionDetails.inTrial
+  ) {
+    if (
+      licenseActionDetails.numAddOnFlows > 0 ||
+      licenseActionDetails.sandbox ||
+      licenseActionDetails.numSandboxAddOnFlows > 0
+    ) {
+      licenseActionDetails.hasSubscription = true;
+    }
+  }
+
+  licenseActionDetails.isFreemium =
+    licenseActionDetails.tier === 'free' &&
+    !licenseActionDetails.hasSubscription &&
+    !licenseActionDetails.inTrial;
+  licenseActionDetails.hasExpired = false;
+
+  if (licenseActionDetails.hasSubscription && licenseActionDetails.expires) {
+    licenseActionDetails.hasExpired =
+      moment(licenseActionDetails.expires) - moment() < 0;
+  }
+
+  licenseActionDetails.isExpiringSoon = false;
+  let dateToCheck;
+
+  if (licenseActionDetails.hasSubscription) {
+    if (!licenseActionDetails.hasExpired && licenseActionDetails.expires) {
+      dateToCheck = licenseActionDetails.expires;
+    }
+  } else if (licenseActionDetails.inTrial) {
+    dateToCheck = licenseActionDetails.trialEndDate;
+  }
+
+  if (dateToCheck) {
+    licenseActionDetails.isExpiringSoon =
+      moment
+        .duration(window.moment(dateToCheck) - window.moment())
+        .as('days') <= 15; // 15 days
+  }
+
+  licenseActionDetails.subscriptionName = licenseActionDetails.tierName;
+
+  if (licenseActionDetails.inTrial) {
+    licenseActionDetails.subscriptionName = '30 day Free Trial';
+  }
+
+  licenseActionDetails.createdDate = '';
+
+  if (licenseActionDetails.created) {
+    licenseActionDetails.createdDate = moment(
+      licenseActionDetails.created
+    ).format(`${preferences.dateFormat} ${preferences.timeFormat}`);
+  }
+
+  licenseActionDetails.expirationDate = licenseActionDetails.expires;
+
+  if (licenseActionDetails.inTrial) {
+    licenseActionDetails.expirationDate = licenseActionDetails.trialEndDate;
+  } else if (licenseActionDetails.isFreemium) {
+    licenseActionDetails.expirationDate = '';
+  }
+
+  if (licenseActionDetails.expirationDate) {
+    licenseActionDetails.expirationDate = moment(
+      licenseActionDetails.expirationDate
+    ).format('MMM Do, YYYY');
+  }
+
+  const names = {
+    free: 'Free',
+    light: 'Starter',
+    moderate: 'Professional',
+    heavy: 'Enterprise',
+    custom: 'Custom',
+  };
+
+  licenseActionDetails.usageTierName =
+    names[licenseActionDetails.usageTier || 'free'];
+
+  const hours = {
+    free: 1,
+    light: 40,
+    moderate: 400,
+    heavy: 4000,
+    custom: 10000, // TODO - not sure how to get this
+  };
+
+  licenseActionDetails.usageTierHours =
+    hours[licenseActionDetails.usageTier || 'free'];
+  licenseActionDetails.status = '';
+
+  if (licenseActionDetails.hasSubscription) {
+    licenseActionDetails.status = licenseActionDetails.hasExpired
+      ? 'expired'
+      : 'active';
+  }
+
+  if (
+    licenseActionDetails.tier === 'free' &&
+    (licenseActionDetails.inTrial || licenseActionDetails.isFreemium)
+  ) {
+    licenseActionDetails.status = 'active';
+  }
+
+  licenseActionDetails.totalFlowsAvailable = getTierToFlowsMap(
+    licenseActionDetails
+  );
+
+  if (licenseActionDetails.numAddOnFlows > 0) {
+    licenseActionDetails.totalFlowsAvailable +=
+      licenseActionDetails.numAddOnFlows;
+  }
+
+  licenseActionDetails.totalSandboxFlowsAvailable = 0;
+
+  if (licenseActionDetails.sandbox) {
+    licenseActionDetails.totalSandboxFlowsAvailable = getTierToFlowsMap(
+      licenseActionDetails
+    );
+  }
+
+  if (licenseActionDetails.numSandboxAddOnFlows > 0) {
+    licenseActionDetails.totalSandboxFlowsAvailable +=
+      licenseActionDetails.numSandboxAddOnFlows;
+  }
+
+  licenseActionDetails.supportTier = '';
+
+  if (
+    (licenseActionDetails.status === 'active' ||
+      licenseActionDetails.isFreemium) &&
+    licenseActionDetails.supportTier
+  ) {
+    licenseActionDetails.supportTier = licenseActionDetails.supportTier;
+  }
+
+  const toReturn = {
+    actions: [],
+  };
+
+  toReturn.__trialExtensionRequested =
+    licenseActionDetails.__trialExtensionRequested;
+  toReturn.__upgradeRequested = licenseActionDetails.__upgradeRequested;
+
+  if (licenseActionDetails.tier === 'none') {
+    toReturn.actions = ['start-free-trial'];
+  } else if (licenseActionDetails.tier === 'free') {
+    if (licenseActionDetails.inTrial) {
+      toReturn.actions = ['request-subscrition'];
+    } else if (licenseActionDetails.hasSubscription) {
+      if (licenseActionDetails.hasExpired) {
+        toReturn.actions = ['request-upgrade'];
+      }
+    } else if (licenseActionDetails.trialEndDate) {
+      toReturn.actions = ['request-upgrade', 'request-trial-extension'];
+    } else {
+      toReturn.actions = ['start-free-trial'];
+    }
+  } else if (licenseActionDetails.hasExpired) {
+    toReturn.actions = ['request-upgrade'];
+  } else if (licenseActionDetails.tier !== 'enterprise') {
+    toReturn.actions = ['request-upgrade'];
+  }
+
+  licenseActionDetails.subscriptionActions = toReturn;
 
   return licenseActionDetails;
 }

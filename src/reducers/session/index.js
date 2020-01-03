@@ -327,6 +327,10 @@ export function resourceReferences(state) {
   return fromResource.resourceReferences(state && state.resource);
 }
 
+export function getNumEnabledFlows(state) {
+  return fromResource.getNumEnabledFlows(state && state.resource);
+}
+
 export function assistantData(state, { adaptorType, assistant }) {
   return fromMetadata.assistantData(state && state.metadata, {
     adaptorType,

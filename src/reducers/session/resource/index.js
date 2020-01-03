@@ -1,7 +1,7 @@
 import actionTypes from '../../../actions/types';
 
 export default function reducer(state = {}, action) {
-  const { type, tempId, id, resourceReferences } = action;
+  const { type, tempId, id, resourceReferences, response } = action;
   let newState;
 
   switch (type) {
@@ -34,6 +34,14 @@ export default function reducer(state = {}, action) {
       };
 
       return newState;
+    case actionTypes.LICENSE_NUM_ENABLED_FLOWS_RECEIVED:
+      newState = {
+        ...state,
+        NumEnabledFlows: response,
+      };
+
+      return newState;
+
     default:
       return state;
   }
@@ -75,5 +83,17 @@ export function integratorLicenseActionMessage(state) {
   }
 
   return state.integratorLicenseActionMessage;
+}
+
+export function getNumEnabledFlows(state) {
+  if (!state || !state.NumEnabledFlows) {
+    return { numEnabledPaidFlows: 0, numEnabledSandboxFlows: 0 };
+  }
+
+  return {
+    numEnabledPaidFlows: state.NumEnabledFlows.numEnabledPaidFlows || 0,
+    numEnabledSandboxFlows: state.NumEnabledFlows.numEnabledSandboxFlows || 0,
+    numEnabledFreeFlows: state.NumEnabledFlows.numEnabledFreeFlows || 0,
+  };
 }
 // #endregion

@@ -393,6 +393,24 @@ export function* rejectSharedInvite({ resourceType, id }) {
   );
 }
 
+export function* requestNumEnabledFlows() {
+  const { path, opts } = getRequestOptions(
+    actionTypes.LICENSE_NUM_ENABLED_FLOWS
+  );
+  let response;
+
+  try {
+    response = yield call(apiCallWithRetry, {
+      path,
+      opts,
+    });
+  } catch (e) {
+    return true;
+  }
+
+  yield put(actions.user.org.accounts.receivedNumEnabledFlows(response));
+}
+
 export const userSagas = [
   takeLatest(actionTypes.UPDATE_PROFILE, updateProfile),
   takeLatest(actionTypes.UPDATE_PREFERENCES, updatePreferences),
@@ -410,4 +428,5 @@ export const userSagas = [
   takeEvery(actionTypes.DEFAULT_ACCOUNT_SET, requestSharedStackNotifications),
   takeEvery(actionTypes.SHARED_NOTIFICATION_ACCEPT, acceptSharedInvite),
   takeEvery(actionTypes.SHARED_NOTIFICATION_REJECT, rejectSharedInvite),
+  takeEvery(actionTypes.LICENSE_NUM_ENABLED_FLOWS, requestNumEnabledFlows),
 ];
