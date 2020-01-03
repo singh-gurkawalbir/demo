@@ -1149,6 +1149,53 @@ export function categoryMapping(state, integrationId, flowId) {
   );
 }
 
+export function mappedCategories(state, integrationId, flowId) {
+  const categoryMappingData =
+    fromSession.categoryMapping(
+      state && state.session,
+      integrationId,
+      flowId
+    ) || {};
+  let mappedCategories = emptySet;
+  const { response } = categoryMappingData;
+
+  if (response) {
+    const mappingData = response.find(sec => sec.operation === 'mappingData');
+
+    if (mappingData) {
+      mappedCategories = mappingData.data.mappingData.basicMappings.recordMappings.map(
+        item => ({ id: item.id, name: item.name })
+      );
+    }
+  }
+
+  return mappedCategories;
+}
+
+export function mappingsForCategory(state, integrationId, flowId, filters) {
+  const { sectionId } = filters;
+  const categoryMappingData =
+    fromSession.categoryMapping(
+      state && state.session,
+      integrationId,
+      flowId
+    ) || {};
+  let mappings = emptySet;
+  const { response } = categoryMappingData;
+
+  if (response) {
+    const mappingData = response.find(sec => sec.operation === 'mappingData');
+
+    if (mappingData) {
+      mappings = mappingData.data.mappingData.basicMappings.recordMappings.find(
+        item => item.id === sectionId
+      );
+    }
+  }
+
+  return mappings;
+}
+
 export function integrationAppSettings(state, id) {
   if (!state) return null;
 

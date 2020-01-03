@@ -1,23 +1,18 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Route, useRouteMatch } from 'react-router-dom';
+import { Route, useRouteMatch, NavLink } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
-import {
-  Typography,
-  Grid,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-} from '@material-ui/core';
+import { Typography, List, ListItem, Grid } from '@material-ui/core';
 import * as selectors from '../../../../../../reducers';
 import DrawerTitleBar from './TitleBar';
 import LoadResources from '../../../../../../components/LoadResources';
 import actions from '../../../../../../actions';
 import Loader from '../../../../../../components/Loader';
 import Spinner from '../../../../../../components/Spinner';
+import Filters from './Filters';
 
+const drawerWidth = 200;
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
     marginTop: theme.appBarHeight,
@@ -28,21 +23,81 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.background.default,
     zIndex: theme.zIndex.drawer + 1,
   },
+  filter: {
+    float: 'right',
+  },
   settingsForm: {
     maxHeight: `calc(100vh - 120px)`,
   },
+  drawer: {
+    width: drawerWidth,
+    flexShrink: 0,
+  },
+  drawerPaperInner: {
+    width: drawerWidth,
+    position: 'relative',
+  },
+  toolbar: theme.mixins.toolbar,
+  root: {
+    backgroundColor: theme.palette.common.white,
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+  },
+  subNav: {
+    minWidth: 200,
+    borderRight: `solid 1px ${theme.palette.secondary.lightest}`,
+    paddingTop: theme.spacing(2),
+  },
+  content: {
+    width: '100%',
+    height: '100%',
+    padding: theme.spacing(0, 0, 3, 0),
+  },
+  listItem: {
+    color: theme.palette.text.primary,
+  },
+  activeListItem: {
+    color: theme.palette.primary.main,
+  },
 }));
+
+function CategoryMappings({ integrationId, flowId, sectionId }) {
+  const [amazonAttributeFilter, setAmazonAttributeFilter] = useState('all');
+  const [fieldMappingsFilter, setFieldMappingsFilter] = useState('mapped');
+  const handleAmzonAttributeChange = useCallback(val => {
+    setAmazonAttributeFilter(val);
+  }, []);
+  const handleFieldMappingsFilterChange = useCallback(val => {
+    setFieldMappingsFilter(val);
+  }, []);
+  const mappings = useSelector(state =>
+    selectors.mappingsForCategory(state, integrationId, flowId, {
+      sectionId,
+      amazonAttributeFilter,
+      fieldMappingsFilter,
+    })
+  );
+
+  return (
+    <div>
+      <Filters
+        handleAmzonAttributeChange={handleAmzonAttributeChange}
+        mappings={mappings}
+        handleFieldMappingsFilterChange={handleFieldMappingsFilterChange}
+      />
+      <Typography variant="body1">Category Mappings render here</Typography>
+    </div>
+  );
+}
 
 function CategoryMappingDrawer({ integrationId }) {
   const dispatch = useDispatch();
   const classes = useStyles();
   const match = useRouteMatch();
-  const { flowId } = match.params;
+  const { flowId, sectionId } = match.params;
   const flow =
     useSelector(state => selectors.resource(state, 'flows', flowId)) || {};
   const flowName = flow.name || flow._id;
-  const [amazonAttributeFilter, setAmazonAttributeFilter] = useState('all');
-  const [fieldMappingsFilter, setFieldMappingsFilter] = useState('mapped');
   const [requestedMetadata, setRequestedMetadata] = useState(false);
   const integrationName = useSelector(state => {
     const integration = selectors.resource(
@@ -56,14 +111,10 @@ function CategoryMappingDrawer({ integrationId }) {
   const metadata = useSelector(state =>
     selectors.categoryMapping(state, integrationId, flowId)
   );
-  const handleAmzonAttributeChange = val => {
-    setAmazonAttributeFilter(val);
-  };
-
-  const handleFieldMappingsFilterChange = val => {
-    setFieldMappingsFilter(val);
-  };
-
+  const mappedCategories =
+    useSelector(state =>
+      selectors.mappedCategories(state, integrationId, flowId)
+    ) || [];
   const handleClose = () => {};
 
   useEffect(() => {
@@ -93,34 +144,29 @@ function CategoryMappingDrawer({ integrationId }) {
       onClose={handleClose}>
       <DrawerTitleBar title={`Edit Mappings: ${flowName}`} />
       {metadata ? (
-        <div className={classes.content}>
-          <Grid container>
-            <Grid item xs>
-              <Typography variant="h4">Product Mappings</Typography>
+        <div className={classes.root}>
+          <Grid container wrap="nowrap">
+            <Grid item className={classes.subNav}>
+              <List>
+                {mappedCategories.map(({ name, id }) => (
+                  <ListItem key={id}>
+                    <NavLink
+                      className={classes.listItem}
+                      activeClassName={classes.activeListItem}
+                      to={id}
+                      data-test={id}>
+                      {name}
+                    </NavLink>
+                  </ListItem>
+                ))}
+              </List>
             </Grid>
-            <Grid item xs>
-              <FormControl className={classes.formControl}>
-                <InputLabel>Amazon Attributes</InputLabel>
-                <Select
-                  id="demo-simple-select"
-                  label="Amazon Attributes"
-                  value={amazonAttributeFilter || 'all'}
-                  onChange={handleAmzonAttributeChange}>
-                  <MenuItem value="all">All</MenuItem>
-                  <MenuItem value="required">Required</MenuItem>
-                  <MenuItem value="preferred">Preferred</MenuItem>
-                  <MenuItem value="conditional">Conditional</MenuItem>
-                </Select>
-              </FormControl>
-              <Select
-                id="demo-simple-select"
-                label="sometext"
-                value={fieldMappingsFilter}
-                onChange={handleFieldMappingsFilterChange}>
-                <MenuItem value="all">All</MenuItem>
-                <MenuItem value="mapped">Mapped</MenuItem>
-                <MenuItem value="unmapped">Unmapped</MenuItem>
-              </Select>
+            <Grid item className={classes.content}>
+              <CategoryMappings
+                integrationId={integrationId}
+                flowId={flowId}
+                sectionId={sectionId}
+              />
             </Grid>
           </Grid>
         </div>

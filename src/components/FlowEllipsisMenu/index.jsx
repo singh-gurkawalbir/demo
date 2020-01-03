@@ -106,7 +106,7 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
         case 'mapping':
           if (flowDetails.showUtilityMapping)
             history.push(
-              `${history.location.pathname}/${flowId}/utilitymapping/common`
+              `${history.location.pathname}/${flowId}/utilitymapping/commonAttributes`
             );
           else history.push(`${history.location.pathname}/${flowId}/mapping`);
 
