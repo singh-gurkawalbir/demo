@@ -26,6 +26,7 @@ const useStyles = makeStyles(theme => ({
     overflowY: 'off',
     height: '100%',
     display: 'flex',
+    width: '100%',
   },
   mappingContainer: {
     // overflow: 'auto',
