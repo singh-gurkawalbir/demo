@@ -19,7 +19,6 @@ import {
   MULTIPLE_INSTALLS,
 } from '../../utils/messageStore';
 import * as selectors from '../../reducers';
-import ArrowRightIcon from '../icons/ArrowRightIcon';
 import { prompt } from '../Prompt';
 
 const useStyles = makeStyles(theme => ({
@@ -53,8 +52,7 @@ const useStyles = makeStyles(theme => ({
     overflowY: 'auto',
   },
   cardAction: {
-    position: 'absolute',
-    bottom: 10,
+    padding: theme.spacing(0, 2),
   },
 }));
 
@@ -145,17 +143,17 @@ export default function ConnectorTemplateList(props) {
                 <Button
                   data-test="installConnector"
                   onClick={() => handleConnectorInstallClick(connector)}
-                  variant="text"
+                  variant="outlined"
                   color="primary">
-                  Install <ArrowRightIcon />
+                  Install
                 </Button>
               ) : (
                 <Button
                   data-test="contactSales"
                   onClick={() => handleContactSalesClick(connector)}
-                  variant="text"
+                  variant="outlined"
                   color="primary">
-                  Contact Sales
+                  Request a demo
                 </Button>
               )}
             </CardActions>
@@ -173,10 +171,10 @@ export default function ConnectorTemplateList(props) {
               <Button
                 data-test="installTemplate"
                 key={template._id}
-                variant="text"
+                variant="outlined"
                 color="primary"
                 onClick={() => handleTemplateInstallClick(template)}>
-                Install <ArrowRightIcon />
+                Install
               </Button>
             </CardActions>
           </Card>

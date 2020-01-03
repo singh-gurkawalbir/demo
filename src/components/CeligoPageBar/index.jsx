@@ -12,6 +12,7 @@ import ArrowLeftIcon from '../../components/icons/ArrowLeftIcon';
 import * as selectors from '../../reducers';
 import InfoIcon from '../icons/InfoIcon';
 import WelcomeBanner from './WelcomeBanner';
+import ArrowDownIcon from '../icons/ArrowDownIcon';
 
 const useStyles = makeStyles(theme => ({
   pageHeader: {
@@ -49,6 +50,28 @@ const useStyles = makeStyles(theme => ({
   bannerOffset: {
     height: theme.pageBarHeight + 66,
   },
+  bannerDropIcon: {
+    background: theme.palette.text.secondary,
+    color: theme.palette.background.paper,
+    padding: theme.spacing(1),
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 36,
+    height: 28,
+    position: 'absolute',
+    top: 0,
+    right: theme.spacing(4),
+    cursor: 'pointer',
+    borderRadius: 0,
+    '&:hover': {
+      background: theme.palette.secondary.light,
+      color: theme.palette.background.paper2,
+    },
+    '& > span': {
+      marginTop: -5,
+    },
+  },
 }));
 
 export default function CeligoPageBar({
@@ -85,6 +108,10 @@ export default function CeligoPageBar({
             elevation={0}
             square>
             {showBanner && <WelcomeBanner />}
+
+            <IconButton className={classes.bannerDropIcon}>
+              <ArrowDownIcon />
+            </IconButton>
 
             <Grid container justify="space-between">
               <Grid item>

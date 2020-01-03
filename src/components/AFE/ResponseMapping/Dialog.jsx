@@ -22,7 +22,6 @@ import ActionButton from '../../ActionButton';
 const useStyles = makeStyles(theme => ({
   container: {
     marginTop: theme.spacing(1),
-    overflowY: 'off',
     minHeight: 450,
   },
   header: {
