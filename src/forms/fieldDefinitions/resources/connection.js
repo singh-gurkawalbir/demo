@@ -714,6 +714,7 @@ export default {
           { label: 'Token', value: 'token' },
           { label: 'Custom', value: 'custom' },
           { label: 'Cookie', value: 'cookie' },
+          { label: 'Digest', value: 'digest' },
         ],
       },
     ],
