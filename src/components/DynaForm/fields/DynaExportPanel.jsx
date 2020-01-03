@@ -14,17 +14,49 @@ import { isNewId } from '../../../utils/resource';
 import TextToggle from '../../../components/TextToggle';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import CopyIcon from '../../icons/CopyIcon';
-import CodeEditor from '../../CodeEditor';
 import Spinner from '../../Spinner';
 import IconTextButton from '../../IconTextButton';
 import ArrowRightIcon from '../../icons/ArrowRightIcon';
+import ErrorIcon from '../../icons/ErrorIcon';
 
 const useStyles = makeStyles(theme => ({
   container: {
     paddingLeft: theme.spacing(1),
   },
-  sampleDataContainer: {
+  sampleDataWrapper: {
     height: '25vh',
+  },
+  error: {
+    color: 'red',
+  },
+  textToggleContainer: {
+    textAlign: 'center',
+  },
+  sampleDataContainer: {
+    width: '100%',
+    borderRadius: theme.spacing(0.5),
+    border: `1px solid ${theme.palette.secondary.lightest}`,
+    borderBottom: 'none',
+    minHeight: theme.spacing(20),
+    position: 'relative',
+    padding: theme.spacing(1),
+    backgroundColor: 'white',
+    maxHeight: 400,
+    maxWidth: 570,
+    overflow: 'scroll',
+  },
+  clipBoardContainer: {
+    borderRadius: theme.spacing(0.5),
+    border: `1px solid ${theme.palette.secondary.lightest}`,
+    borderTop: 'none',
+    minHeight: theme.spacing(6),
+    position: 'relative',
+    padding: theme.spacing(1),
+    backgroundColor: 'white',
+    alignItems: 'right',
+  },
+  clipBoard: {
+    float: 'right',
   },
   previewContainer: {
     minHeight: theme.spacing(10),
@@ -144,11 +176,33 @@ function DynaExportPanel(props) {
   const ShowSampleDataStatus = () => {
     const { status } = resourceSampleData;
 
-    if (status === 'requested') return 'Testing';
+    if (status === 'requested')
+      return <Typography variant="body2"> Testing </Typography>;
 
-    if (status === 'received') return 'Success';
+    if (status === 'received')
+      return <Typography variant="body2"> Success </Typography>;
+  };
 
-    if (status === 'error') return 'Error';
+  const showSampleDataOverview = () => {
+    const { status, error } = resourceSampleData;
+
+    if (status === 'error') {
+      const errorCount = error.errors && error.errors.length;
+
+      return (
+        <Fragment>
+          <Typography variant="body1">
+            <ErrorIcon className={classes.error} />
+            You have {errorCount} {errorCount > 1 ? 'errors' : 'error'}
+          </Typography>
+        </Fragment>
+      );
+    }
+
+    if (status === 'received') {
+      // TODO @Raghu:  Needs to be updated when number of records are handled
+      return <Typography variant="body2">1 Page 1 Record</Typography>;
+    }
   };
 
   return (
@@ -169,50 +223,58 @@ function DynaExportPanel(props) {
           </div>
 
           <div className={classes.previewDataRight}>
-            <Typography variant="body2"> {ShowSampleDataStatus()} </Typography>
-            <Typography variant="body2"> 1 Page , 20 Records </Typography>
+            <div> {ShowSampleDataStatus()}</div>
+            <div>{showSampleDataOverview()}</div>
           </div>
         </div>
       </div>
       {resourceSampleData.status === 'requested' && <Spinner />}
       {resourceSampleData.status === 'received' && (
         <div>
-          <TextToggle
-            value={panelType}
-            onChange={handlePanelViewChange}
-            exclusive
-            options={availablePreviewStages}
-          />
-          <div className={classes.sampleDataContainer}>
+          <div className={classes.textToggleContainer}>
+            <TextToggle
+              value={panelType}
+              onChange={handlePanelViewChange}
+              exclusive
+              options={availablePreviewStages}
+            />
+          </div>
+          <div className={classes.sampleDataWrapper}>
             <Fragment>
-              <CodeEditor
-                name="sampleData"
-                value={previewStageDataList[panelType].data}
-                mode={panelType === 'parsed' ? 'json' : 'text'}
-                readOnly
-              />
-              <CopyToClipboard
-                text={JSON.stringify(previewStageDataList[panelType].data)}
-                onCopy={handleOnCopy}>
-                <IconButton
-                  data-test="copyToClipboard"
-                  title="Copy to clipboard"
-                  size="small">
-                  <CopyIcon />
-                </IconButton>
-              </CopyToClipboard>
+              <div className={classes.sampleDataContainer}>
+                <pre>
+                  {JSON.stringify(
+                    previewStageDataList[panelType].data,
+                    null,
+                    2
+                  )}
+                </pre>
+              </div>
+              <div className={classes.clipBoardContainer}>
+                <CopyToClipboard
+                  text={JSON.stringify(previewStageDataList[panelType].data)}
+                  onCopy={handleOnCopy}
+                  className={classes.clipBoard}>
+                  <Typography variant="body3">
+                    <IconButton
+                      data-test="copyToClipboard"
+                      title="Copy to clipboard"
+                      size="small">
+                      <CopyIcon />
+                    </IconButton>
+                    Copy
+                  </Typography>
+                </CopyToClipboard>
+              </div>
             </Fragment>
           </div>
         </div>
       )}
       {resourceSampleData.status === 'error' && (
-        <div className={classes.sampleDataContainer}>
-          <CodeEditor
-            name="sampleData"
-            value={resourceSampleData.error}
-            mode="json"
-            readOnly
-          />
+        <div className={classes.sampleDataWrapper}>
+          <div className={classes.sampleDataContainer}>
+            <pre>{JSON.stringify(resourceSampleData.error, null, 2)}</pre>
+          </div>
         </div>
       )}
     </div>
