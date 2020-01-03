@@ -135,7 +135,8 @@ function DynaExportPanel(props) {
     // Just a fail safe condition not to request for sample data incase of not exports
     if (resourceType !== 'exports') return;
 
-    if (isPageGeneratorExport) {
+    // Note: If there is no flowId , it is a Standalone export as the resource type other than exports are restricted above
+    if (!flowId || isPageGeneratorExport) {
       dispatch(
         actions.sampleData.request(resourceId, resourceType, formContext.value)
       );
@@ -244,7 +245,8 @@ function DynaExportPanel(props) {
               <div className={classes.sampleDataContainer}>
                 <pre>
                   {JSON.stringify(
-                    previewStageDataList[panelType].data,
+                    previewStageDataList[panelType] &&
+                      previewStageDataList[panelType].data,
                     null,
                     2
                   )}
@@ -252,7 +254,10 @@ function DynaExportPanel(props) {
               </div>
               <div className={classes.clipBoardContainer}>
                 <CopyToClipboard
-                  text={JSON.stringify(previewStageDataList[panelType].data)}
+                  text={JSON.stringify(
+                    previewStageDataList[panelType] &&
+                      previewStageDataList[panelType].data
+                  )}
                   onCopy={handleOnCopy}
                   className={classes.clipBoard}>
                   <Typography variant="body3">
