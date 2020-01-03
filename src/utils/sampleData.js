@@ -57,6 +57,10 @@ export default function getFormattedSampleData({
     data.lastExportDateTime = new Date().toISOString();
   }
 
+  if (_connection && _connection.type === 'as2') {
+    data.uuid = 'uuid';
+  }
+
   return data;
 }
 

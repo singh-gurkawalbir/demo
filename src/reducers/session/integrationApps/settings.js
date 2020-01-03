@@ -2,11 +2,10 @@ import produce from 'immer';
 import actionTypes from '../../../actions/types';
 
 const emptyObj = {};
-const getStateKey = (integrationId, flowId) => {
-  if (flowId) return `${integrationId}-${flowId}`;
-
-  return integrationId;
-};
+const getStateKey = (integrationId, flowId, sectionId) =>
+  `${integrationId}${flowId ? `-${flowId}` : ''}${
+    sectionId ? `-${sectionId}` : ''
+  }`;
 
 export default (state = {}, action) => {
   const {
@@ -17,8 +16,9 @@ export default (state = {}, action) => {
     response,
     redirectTo,
     error,
+    sectionId,
   } = action;
-  const key = getStateKey(integrationId, flowId);
+  const key = getStateKey(integrationId, flowId, sectionId);
 
   return produce(state, draft => {
     // eslint-disable-next-line default-case
@@ -89,12 +89,17 @@ export default (state = {}, action) => {
 };
 
 // #region PUBLIC SELECTORS
-export function integrationAppSettingsFormState(state, integrationId, flowId) {
+export function integrationAppSettingsFormState(
+  state,
+  integrationId,
+  flowId,
+  sectionId
+) {
   if (!state) {
     return emptyObj;
   }
 
-  const key = getStateKey(integrationId, flowId);
+  const key = getStateKey(integrationId, flowId, sectionId);
 
   return state[key] || emptyObj;
 }

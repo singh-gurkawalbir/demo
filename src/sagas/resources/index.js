@@ -177,6 +177,7 @@ export function* updateIntegrationSettings({
   integrationId,
   values,
   flowId,
+  sectionId,
   options = {},
 }) {
   const path = `/integrations/${integrationId}/settings/persistSettings`;
@@ -211,6 +212,7 @@ export function* updateIntegrationSettings({
         integrationId,
         response,
         flowId,
+        sectionId,
       })
     );
   }
@@ -222,6 +224,7 @@ export function* updateIntegrationSettings({
         integrationId,
         response,
         flowId,
+        sectionId,
       })
     );
     // integration doc will be update by IA team, need to refetch to get latest copy from db.
