@@ -8,22 +8,26 @@ import actionTypes from '../../../actions/types';
 const DEFAULT_VALUE = undefined;
 
 function extractStages(sampleData) {
-  const stagesInSampleData = sampleData.stages || [];
+  const stagesInSampleData = sampleData.stages;
   const stageMap = {};
 
-  stagesInSampleData.forEach(stage => {
-    switch (stage.name) {
-      case 'parse':
-        stageMap[stage.name] = stage.data && stage.data[0];
-        break;
-      case 'transform':
-        stageMap[stage.name] =
-          stage.data && stage.data[0] && stage.data[0].data;
-        break;
-      default:
-        stageMap[stage.name] = stage.data;
-    }
-  });
+  if (!stagesInSampleData) {
+    stageMap.parse = sampleData;
+  } else {
+    stagesInSampleData.forEach(stage => {
+      switch (stage.name) {
+        case 'parse':
+          stageMap[stage.name] = stage.data && stage.data[0];
+          break;
+        case 'transform':
+          stageMap[stage.name] =
+            stage.data && stage.data[0] && stage.data[0].data;
+          break;
+        default:
+          stageMap[stage.name] = stage.data;
+      }
+    });
+  }
 
   return stageMap;
 }
@@ -36,6 +40,7 @@ export default function(state = {}, action) {
 
     switch (type) {
       case actionTypes.SAMPLEDATA.REQUEST:
+      case actionTypes.SAMPLEDATA.LOOKUP_REQUEST:
         draft[resourceId] = draft[resourceId] || {};
         draft[resourceId].status = 'requested';
         break;
@@ -44,6 +49,7 @@ export default function(state = {}, action) {
         draft[resourceId].status = 'received';
         draft[resourceId].data = extractStages(previewData);
         break;
+
       case actionTypes.SAMPLEDATA.UPDATE:
         draft[resourceId] = draft[resourceId] || {};
         draft[resourceId].status = 'updated';
@@ -125,9 +131,14 @@ function getResourceSampleDataStatus(state, resourceId) {
   return state[resourceId] && state[resourceId].status;
 }
 
+function getResourceSampleDataError(state, resourceId) {
+  return state[resourceId] && state[resourceId].error;
+}
+
 export function getResourceSampleDataWithStatus(state, resourceId, stage) {
   return {
     data: getResourceSampleData(state, resourceId, stage),
     status: getResourceSampleDataStatus(state, resourceId),
+    error: getResourceSampleDataError(state, resourceId),
   };
 }
