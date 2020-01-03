@@ -8,6 +8,7 @@ import { commitStagedChanges } from '../resources';
 import mappingUtil from '../../utils/mapping';
 import lookupUtil from '../../utils/lookup';
 import { apiCallWithRetry } from '../';
+import { adaptorTypeMap } from '../../utils/resource';
 
 export function* saveMappings({ id }) {
   const patch = [];
@@ -87,10 +88,12 @@ export function* mappingPreview({ id }) {
     resource,
   });
 
-  resourceCopy.mapping = _mappings;
+  if (application === adaptorTypeMap.SalesforceImport) {
+    resourceCopy.mapping = _mappings;
 
-  if (lookups) {
-    resourceCopy.salesforce.lookups = lookups;
+    if (lookups) {
+      resourceCopy.salesforce.lookups = lookups;
+    }
   }
 
   const { _connectionId } = resourceCopy;
