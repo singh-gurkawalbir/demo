@@ -91,6 +91,7 @@ export default {
           value: item.fieldId,
         }))) ||
     [],
+  'salesforce-sObject-layout': data => data,
   'salesforce-sObjects': data =>
     data.map(d => ({
       label: d.label,

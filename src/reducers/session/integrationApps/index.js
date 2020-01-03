@@ -23,11 +23,17 @@ export function categoryMapping(state, integrationId, flowId) {
   );
 }
 
-export function integrationAppSettingsFormState(state, integrationId, flowId) {
+export function integrationAppSettingsFormState(
+  state,
+  integrationId,
+  flowId,
+  sectionId
+) {
   return fromSettings.integrationAppSettingsFormState(
     state && state.settings,
     integrationId,
-    flowId
+    flowId,
+    sectionId
   );
 }
 

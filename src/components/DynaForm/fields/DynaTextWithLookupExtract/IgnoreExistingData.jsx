@@ -19,7 +19,6 @@ export default function IgnoreExistingData(props) {
     required,
     value,
     label,
-    options = {},
     resourceId,
     resourceType,
     flowId,
@@ -28,8 +27,9 @@ export default function IgnoreExistingData(props) {
     extractFields,
     connection,
     showLookup,
+    resourceName,
+    lookups,
   } = props;
-  const { resourceName, lookups } = options;
   const { fieldId: lookupFieldId, data: lookupData } = lookups || {};
   const handleLookupUpdate = lookups => {
     onFieldChange(lookupFieldId, lookups);

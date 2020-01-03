@@ -1,14 +1,12 @@
 import { isNewId } from '../../../utils/resource';
 
 export default {
-  preSave: (formValues, resource) => {
+  preSave: formValues => {
     const retValues = { ...formValues };
+    const lookups = retValues['/rest/lookups'];
     const lookup =
-      resource.rest &&
-      resource.rest.lookups &&
-      resource.rest.lookups.find(
-        lookup => lookup.name === retValues['/rest/existingDataId']
-      );
+      lookups &&
+      lookups.find(l => l.name === retValues['/rest/existingDataId']);
 
     if (retValues['/sampleData'] === '') {
       retValues['/sampleData'] = undefined;

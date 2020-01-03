@@ -22,6 +22,7 @@ export default function IntegrationSettingsSaveButton(props) {
     flowId,
     postProcessValuesFn,
     disabled,
+    sectionId,
   } = props;
   const dispatch = useDispatch();
   const onSave = useCallback(
@@ -44,17 +45,23 @@ export default function IntegrationSettingsSaveButton(props) {
           integrationId,
           flowId,
           storeId,
+          sectionId,
           allValuesWithFlowId
         )
       );
     },
-    [dispatch, flowId, integrationId, postProcessValuesFn, storeId]
+    [dispatch, flowId, integrationId, postProcessValuesFn, sectionId, storeId]
   );
   const submitCompleted = useSelector(state => {
     const {
       submitComplete,
       submitFailed,
-    } = selectors.integrationAppSettingsFormState(state, integrationId, flowId);
+    } = selectors.integrationAppSettingsFormState(
+      state,
+      integrationId,
+      flowId,
+      sectionId
+    );
 
     return submitComplete || submitFailed;
   });

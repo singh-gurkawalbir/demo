@@ -10,6 +10,9 @@ export default {
     }`,
     '/http/ping/method': 'GET',
     '/http/ping/relativeURI': '/Activities',
+    '/http/auth/token/location': 'header',
+    '/http/auth/token/scheme': ' ',
+    '/http/auth/token/headerName': 'OAuth-Token',
     '/http/auth/token/refreshMediaType': 'json',
     '/http/auth/token/refreshRelativeURI': `${
       formValues['/http/baseURI']

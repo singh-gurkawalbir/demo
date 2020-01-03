@@ -78,22 +78,33 @@ export default {
       fieldId: 'once.booleanField',
     },
     advancedSettings: { formId: 'advancedSettings' },
+    exportPanel: {
+      fieldId: 'exportPanel',
+    },
   },
   layout: {
-    fields: [
-      'common',
-      'exportOneToMany',
-      'exportData',
-      'mongodb.collection',
-      'mongodb.filter',
-      'mongodb.projection',
-      'type',
-      'delta.dateField',
-      'once.booleanField',
-    ],
-    type: 'collapse',
+    type: 'column',
     containers: [
-      { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },
+      {
+        fields: [
+          'common',
+          'exportOneToMany',
+          'exportData',
+          'mongodb.collection',
+          'mongodb.filter',
+          'mongodb.projection',
+          'type',
+          'delta.dateField',
+          'once.booleanField',
+        ],
+        type: 'collapse',
+        containers: [
+          { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },
+        ],
+      },
+      {
+        fields: ['exportPanel'],
+      },
     ],
   },
 };
