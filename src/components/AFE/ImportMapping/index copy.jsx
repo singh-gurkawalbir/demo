@@ -7,6 +7,7 @@ import clsx from 'clsx';
 import actions from '../../../actions';
 import MappingSettings from '../ImportMappingSettings/MappingSettingsField';
 import DynaTypeableSelect from '../../DynaForm/fields/DynaTypeableSelect';
+import ButtonGroup from '../../ButtonGroup';
 import mappingUtil from '../../../utils/mapping';
 import TrashIcon from '../../icons/TrashIcon';
 import * as selectors from '../../../reducers';
@@ -16,7 +17,6 @@ import { adaptorTypeMap } from '../../../utils/resource';
 import RefreshIcon from '../../icons/RefreshIcon';
 import Spinner from '../../Spinner';
 import LockIcon from '../../icons/LockIcon';
-import ButtonGroup from '../../ButtonGroup';
 import MappingSaveButton from '../../ResourceFormFactory/Actions/MappingSaveButton';
 import SalesforceMappingAssistant from '../../SalesforceMappingAssistant';
 
@@ -221,15 +221,6 @@ export default function ImportMapping(props) {
         )
       );
   });
-  const handleClose = () => {
-    if (onClose) {
-      onClose();
-    }
-  };
-
-  const handlePreviewClick = () => {
-    dispatch(actions.mapping.preview(editorId));
-  };
 
   function RefreshButton(props) {
     return (
@@ -242,6 +233,16 @@ export default function ImportMapping(props) {
       </IconTextButton>
     );
   }
+
+  const handleClose = () => {
+    if (onClose) {
+      onClose();
+    }
+  };
+
+  const handlePreviewClick = () => {
+    dispatch(actions.mapping.preview(editorId));
+  };
 
   return (
     <div className={classes.root}>
@@ -407,6 +408,7 @@ export default function ImportMapping(props) {
           </Button>
         </ButtonGroup>
       </div>
+
       {showSalesforceNetsuiteAssistant && (
         <div className={classes.assistantContainer}>
           <SalesforceMappingAssistant

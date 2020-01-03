@@ -30,6 +30,8 @@ export default function reducer(state = {}, action) {
             resourceData,
             application,
             isGroupedSampleData,
+            salesforceMasterRecordTypeId,
+            showSalesforceNetsuiteAssistant,
             ...additionalOptions
           } = options;
           const formattedMappings = mappingUtil.getMappingFromResource(
@@ -57,6 +59,11 @@ export default function reducer(state = {}, action) {
             generateFields,
             visible: true,
             isGroupedSampleData,
+            flowSampleData: undefined,
+            salesforceMasterRecordTypeId,
+            showSalesforceNetsuiteAssistant,
+            // lastModifiedRow helps to set generate field when any field in salesforce mapping assistant is clicked
+            lastModifiedRow: -1,
           };
         }
 
@@ -64,6 +71,8 @@ export default function reducer(state = {}, action) {
       case actionTypes.MAPPING.DELETE: {
         draft[id].initChangeIdentifier += 1;
         draft[id].mappings.splice(index, 1);
+
+        if (draft[id].lastModifiedRow === index) draft[id].lastModifiedRow = -1;
         const {
           isSuccess,
           errMessage: validationErrMsg,
@@ -152,6 +161,7 @@ export default function reducer(state = {}, action) {
           });
         }
 
+        draft[id].lastModifiedRow = index;
         const {
           isSuccess,
           errMessage: validationErrMsg,
@@ -210,6 +220,7 @@ export default function reducer(state = {}, action) {
           }
 
           draft[id].mappings[index] = { ...valueTmp };
+          draft[id].lastModifiedRow = index;
           const {
             isSuccess,
             errMessage: validationErrMsg,
@@ -250,6 +261,46 @@ export default function reducer(state = {}, action) {
         draft[id].validationErrMsg = undefined;
 
         break;
+      case actionTypes.MAPPING.UPDATE_FLOW_DATA:
+        draft[id].flowSampleData = value;
+
+        break;
+
+      case actionTypes.MAPPING.PREVIEW:
+        if (draft[id].previewData) {
+          draft[id].previewData.status = 'requested';
+        } else {
+          draft[id].previewData = { status: 'requested' };
+        }
+
+        break;
+      case actionTypes.MAPPING.RECEIVED_PREVIEW: {
+        let val;
+
+        if (value && Array.isArray(value) && value.length) {
+          const [_val] = value;
+
+          val = _val;
+        } else {
+          val = value;
+        }
+
+        const { previewData } = draft[id];
+
+        previewData.data = val;
+        previewData.status = 'received';
+
+        break;
+      }
+
+      case actionTypes.MAPPING.FAILED_PREVIEW: {
+        const { previewData } = draft[id];
+
+        delete previewData.data;
+        previewData.status = 'error';
+        break;
+      }
+
       default:
     }
   });

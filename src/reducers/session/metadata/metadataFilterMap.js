@@ -220,6 +220,19 @@ export default {
 
     return _data;
   },
+  'salesforce-masterRecordTypeInfo': data => {
+    const { searchLayoutable, recordTypeInfos } = data || {};
+    const returnVal = {};
+    const masterRecordTypeInfo = recordTypeInfos.find(
+      recordTypeInfo => recordTypeInfo.master === true
+    );
+
+    returnVal.recordTypeId =
+      masterRecordTypeInfo && masterRecordTypeInfo.recordTypeId;
+    returnVal.searchLayoutable = searchLayoutable;
+
+    return returnVal;
+  },
   default: data =>
     data.map(item => ({
       label: item.name,
