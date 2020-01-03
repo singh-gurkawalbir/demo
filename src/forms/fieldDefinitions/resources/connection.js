@@ -196,8 +196,8 @@ export default {
           { label: 'Signnow', value: 'signnow' },
           { label: 'Acton', value: 'acton' },
           { label: 'Acumatica', value: 'acumatica' },
-          { label: 'Mongodb', value: 'mongodb' },
-          { label: 'Dynamodb', value: 'dynamodb' },
+          { label: 'MongoDB', value: 'mongodb' },
+          { label: 'DynamoDB', value: 'dynamodb' },
           { label: 'Zohomail', value: 'zohomail' },
           { label: 'Zoom', value: 'zoom' },
           { label: 'Myobessentials', value: 'myobessentials' },
@@ -2408,7 +2408,7 @@ export default {
   },
   'dynamodb.aws.secretAccessKey': {
     type: 'text',
-    label: 'Access Key',
+    label: 'Secret Access Key',
   },
   // #endregion dynamodb
 

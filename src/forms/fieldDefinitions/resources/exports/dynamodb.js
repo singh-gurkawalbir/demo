@@ -5,8 +5,13 @@ export default {
     required: true,
   },
   'dynamodb.method': {
-    type: 'text',
+    type: 'select',
     label: 'Method',
+    options: [
+      {
+        items: [{ label: 'Query', value: 'query' }],
+      },
+    ],
     defaultValue: 'query',
     visible: false,
   },
@@ -42,10 +47,10 @@ export default {
   },
   'dynamodb.onceExportPartitionKey': {
     type: 'text',
-    label: 'Once Export PartitionKey',
+    label: 'Once Export Partition Key',
   },
   'dynamodb.onceExportSortKey': {
     type: 'text',
-    label: 'onceExportSortKey',
+    label: 'Once Export Sort Key',
   },
 };
