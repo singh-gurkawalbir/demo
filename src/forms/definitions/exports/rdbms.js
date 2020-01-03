@@ -58,19 +58,30 @@ export default {
     },
     advancedSettings: { formId: 'advancedSettings' },
     exportOneToMany: { formId: 'exportOneToMany' },
+    exportPanel: {
+      fieldId: 'exportPanel',
+    },
   },
   layout: {
-    fields: [
-      'common',
-      'exportOneToMany',
-      'exportRdbmsData',
-      'rdbms.query',
-      'type',
-      'rdbms.once.query',
-    ],
-    type: 'collapse',
+    type: 'column',
     containers: [
-      { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },
+      {
+        fields: [
+          'common',
+          'exportOneToMany',
+          'exportRdbmsData',
+          'rdbms.query',
+          'type',
+          'rdbms.once.query',
+        ],
+        type: 'collapse',
+        containers: [
+          { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },
+        ],
+      },
+      {
+        fields: ['exportPanel'],
+      },
     ],
   },
 };

@@ -55,6 +55,7 @@ function SettingsDrawer({ integrationId, storeId, parentUrl }) {
         true,
         {
           resource: flow,
+          isFlow: true,
         }
       ),
     [fields, flow, integrationId, sections]
@@ -62,6 +63,7 @@ function SettingsDrawer({ integrationId, storeId, parentUrl }) {
   const { formState, handleClose } = useIASettingsStateWithHandleClose(
     integrationId,
     flowId,
+    null,
     parentUrl
   );
 

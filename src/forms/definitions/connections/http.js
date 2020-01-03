@@ -34,7 +34,10 @@ export default {
       }
     }
 
-    if (newValues['/http/auth/type'] !== 'basic') {
+    if (
+      newValues['/http/auth/type'] !== 'basic' &&
+      newValues['/http/auth/type'] !== 'digest'
+    ) {
       newValues['/http/auth/basic/username'] = undefined;
       newValues['/http/auth/basic/password'] = undefined;
     }
@@ -119,7 +122,7 @@ export default {
     },
     httpBasic: {
       formId: 'httpBasic',
-      visibleWhenAll: [{ field: 'http.auth.type', is: ['basic'] }],
+      visibleWhen: [{ field: 'http.auth.type', is: ['basic', 'digest'] }],
     },
     httpToken: {
       formId: 'httpToken',
