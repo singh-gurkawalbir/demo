@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import sift from 'sift';
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector, useDispatch } from 'react-redux';
-import { useHistory, Link, useLocation } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import * as selectors from '../../../reducers';
 import AddIcon from '../../icons/AddIcon';
 import EditIcon from '../../icons/EditIcon';
@@ -26,6 +26,8 @@ const handleAddNewResource = args => {
     resourceType,
     options,
     newResourceId,
+    expConnId,
+    statusExport,
   } = args;
 
   if (
@@ -35,6 +37,7 @@ const handleAddNewResource = args => {
       'connections',
       'pageProcessor',
       'pageGenerator',
+      'asyncHelpers',
     ].includes(resourceType)
   ) {
     let values;
@@ -44,14 +47,29 @@ const handleAddNewResource = args => {
         application: options.appType,
         '/name': `New ${options.appType} resource`,
       });
-    else
+    else {
       values = resourceMeta[resourceType].new.preSave({
         application: options.appType,
         '/name': `New ${options.appType} resource`,
       });
+
+      if (resourceType === 'asyncHelpers' || statusExport) {
+        values = { ...values, '/_connectionId': expConnId };
+      }
+
+      if (resourceType === 'asyncHelpers') {
+        values = { ...values, '/http/_asyncHelperId': generateNewId() };
+      }
+
+      if (statusExport) {
+        values = { ...values, '/statusExport': true };
+      }
+    }
+
     const patchValues = defaultPatchSetConverter(values);
     const missingPatches = getMissingPatchSet(
-      patchValues.map(patch => patch.path)
+      patchValues.map(patch => patch.path),
+      {}
     );
 
     dispatch(
@@ -96,7 +114,10 @@ function DynaSelectResource(props) {
     allowEdit,
     options,
     filter,
+    appTypeIsStatic = false,
+    statusExport,
     ignoreEnvironmentFilter,
+    resourceContext,
   } = props;
   const classes = useStyles();
   const location = useLocation();
@@ -114,7 +135,7 @@ function DynaSelectResource(props) {
   );
 
   useEffect(() => {
-    if (options.appType) {
+    if (!appTypeIsStatic && options.appType) {
       onFieldChange(id, '');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -146,6 +167,16 @@ function DynaSelectResource(props) {
     label: conn.name,
     value: conn._id,
   }));
+  const expConnId = useSelector(state => {
+    const { merged } =
+      selectors.resourceData(
+        state,
+        resourceContext.resourceType,
+        resourceContext.resourceId
+      ) || {};
+
+    return merged && merged._connectionId;
+  });
   const handleAddNewResourceMemo = useCallback(
     () =>
       handleAddNewResource({
@@ -155,9 +186,47 @@ function DynaSelectResource(props) {
         resourceType,
         options,
         newResourceId,
+        statusExport,
+        expConnId,
       }),
-    [dispatch, history, location, newResourceId, options, resourceType]
+    [
+      expConnId,
+      dispatch,
+      history,
+      location,
+      newResourceId,
+      options,
+      resourceType,
+      statusExport,
+    ]
   );
+  const handleEditResource = useCallback(() => {
+    if (
+      resourceType === 'asyncHelpers' ||
+      (resourceType === 'exports' && statusExport)
+    ) {
+      const patchSet = [
+        {
+          op: 'add',
+          path: '/_connectionId',
+          value: expConnId,
+        },
+      ];
+
+      // this not an actual value we would like to commit...this is just to load the right form
+      dispatch(actions.resource.patchStaged(value, patchSet));
+    }
+
+    history.push(`${location.pathname}/edit/${resourceType}/${value}`);
+  }, [
+    dispatch,
+    expConnId,
+    history,
+    location.pathname,
+    resourceType,
+    statusExport,
+    value,
+  ]);
 
   return (
     <div className={classes.root}>
@@ -191,8 +260,7 @@ function DynaSelectResource(props) {
           <ActionButton
             disabled={!value}
             data-test="editNewResource"
-            component={Link}
-            to={`${location.pathname}/edit/${resourceType}/${value}`}>
+            onClick={handleEditResource}>
             <EditIcon />
           </ActionButton>
         )}
