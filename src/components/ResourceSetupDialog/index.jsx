@@ -1,29 +1,11 @@
-import {
-  IconButton,
-  Dialog,
-  makeStyles,
-  DialogContent,
-  DialogTitle,
-  Typography,
-} from '@material-ui/core';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import ResourceForm from '../../components/ResourceFormFactory';
 import LoadResources from '../LoadResources';
-import CloseIcon from '../icons/CloseIcon';
 import * as selectors from '../../reducers';
 import AddOrSelect from './AddOrSelect';
 import { RESOURCE_TYPE_PLURAL_TO_SINGULAR } from '../../constants/resource';
-
-// TODO: Azhar, can you use your generic modal here so we dont need custom styles?
-const useStyles = makeStyles(() => ({
-  iconButton: {
-    position: 'absolute',
-    top: 3,
-    right: 4,
-    padding: 10,
-  },
-}));
+import ModalDialog from '../ModalDialog';
 
 export default function ResourceModal(props) {
   const {
@@ -34,7 +16,6 @@ export default function ResourceModal(props) {
     connectionType,
     resourceType = 'connections',
   } = props;
-  const classes = useStyles();
   const isAuthorized = useSelector(state =>
     selectors.isAuthorized(state, resourceId)
   );
@@ -46,21 +27,9 @@ export default function ResourceModal(props) {
 
   return (
     <LoadResources required resources="connections">
-      <Dialog open maxWidth={false}>
-        <DialogTitle disableTypography>
-          <Typography variant="h6">
-            Setup {RESOURCE_TYPE_PLURAL_TO_SINGULAR[resourceType]}
-          </Typography>
-          {onClose && (
-            <IconButton
-              onClick={onClose}
-              className={classes.iconButton}
-              autoFocus>
-              <CloseIcon />
-            </IconButton>
-          )}
-        </DialogTitle>
-        <DialogContent style={{ width: '60vw' }}>
+      <ModalDialog show minWidth="md" maxWidth="xl">
+        <div> Setup {RESOURCE_TYPE_PLURAL_TO_SINGULAR[resourceType]}</div>
+        <div>
           {addOrSelect ? (
             <AddOrSelect {...props} />
           ) : (
@@ -73,8 +42,8 @@ export default function ResourceModal(props) {
               onCancel={onClose}
             />
           )}
-        </DialogContent>
-      </Dialog>
+        </div>
+      </ModalDialog>
     </LoadResources>
   );
 }

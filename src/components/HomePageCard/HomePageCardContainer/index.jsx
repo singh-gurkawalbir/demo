@@ -20,7 +20,6 @@ const useStyles = makeStyles(theme => ({
     '&:hover': {
       transform: `translateY(-5px)`,
       boxShadow: `0 0 7px rgba(0,0,0,0.1)`,
-      borderColor: theme.palette.primary.light,
     },
     [theme.breakpoints.between('sm', 'md')]: {
       minWidth: '100%',
