@@ -22,23 +22,6 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.background.paper2,
     zIndex: theme.zIndex.drawer + 1,
   },
-  fbContDrawer: {
-    width: '100%',
-    overflowX: 'hidden',
-    marginTop: -1,
-    padding: theme.spacing(2),
-  },
-  content: {
-    borderTop: `solid 1px ${theme.palette.secondary.lightest}`,
-    overflow: 'auto',
-
-    padding: theme.spacing(3),
-    paddingTop: theme.spacing(1),
-    marginBottom: theme.spacing(1),
-    '& > div:first-child': {
-      height: `calc(100vh - 180px)`,
-    },
-  },
 }));
 
 function HooksDialog({ flowId, isViewMode, resource, onClose }) {
@@ -59,6 +42,7 @@ function HooksDialog({ flowId, isViewMode, resource, onClose }) {
     },
     [dispatch, onClose, resource, resourceId]
   );
+  const handleDrawerClose = () => onClose(false);
 
   return (
     <Drawer
@@ -68,7 +52,7 @@ function HooksDialog({ flowId, isViewMode, resource, onClose }) {
         paper: classes.drawerPaper,
       }}
       open>
-      <DrawerTitleBar onClose={() => onClose(false)} title="Hooks" />
+      <DrawerTitleBar onClose={handleDrawerClose} title="Hooks" />
       <Hooks
         onSave={handleSave}
         onCancel={onClose}

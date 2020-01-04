@@ -1,26 +1,34 @@
 import { Fragment, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
+import { makeStyles } from '@material-ui/core/styles';
+import Drawer from '@material-ui/core/Drawer';
 import Icon from '../../../../components/icons/HookIcon';
 import actions from '../../../../actions';
 import Hooks from '../../../../components/Hooks';
-import ModalDialog from '../../../../components/ModalDialog';
+import DrawerTitleBar from '../../../../components/drawer/TitleBar';
 import {
   getSelectedHooksPatchSet,
   getDefaultValuesForHooks,
 } from '../../../../utils/hooks';
 
-function HooksDialog({
-  flowId,
-  resource,
-  resourceType,
-  isViewMode,
-  open,
-  onClose,
-}) {
+const useStyles = makeStyles(theme => ({
+  drawerPaper: {
+    marginTop: theme.appBarHeight,
+    width: 600,
+    border: 'solid 1px',
+    borderColor: theme.palette.secondary.lightest,
+    boxShadow: `-4px 4px 8px rgba(0,0,0,0.15)`,
+    backgroundColor: theme.palette.background.paper2,
+    zIndex: theme.zIndex.drawer + 1,
+  },
+}));
+
+function HooksDialog({ flowId, resource, resourceType, isViewMode, onClose }) {
   const dispatch = useDispatch();
+  const classes = useStyles();
   const resourceId = resource._id;
   const defaultValue = getDefaultValuesForHooks(resource);
-  const onSave = useCallback(
+  const handleSave = useCallback(
     selectedHooks => {
       const patchSet = getSelectedHooksPatchSet(selectedHooks, resource);
 
@@ -32,16 +40,19 @@ function HooksDialog({
     },
     [dispatch, onClose, resource, resourceId, resourceType]
   );
+  const handleDrawerClose = () => onClose(false);
 
   return (
-    <ModalDialog
-      show={open}
-      disabled={isViewMode}
-      onClose={onClose}
-      minWidth="sm">
-      <div>Hooks</div>
+    <Drawer
+      anchor="right"
+      variant="persistent"
+      classes={{
+        paper: classes.drawerPaper,
+      }}
+      open>
+      <DrawerTitleBar onClose={handleDrawerClose} title="Hooks" />
       <Hooks
-        onSave={onSave}
+        onSave={handleSave}
         disabled={isViewMode}
         onCancel={onClose}
         defaultValue={defaultValue}
@@ -49,7 +60,7 @@ function HooksDialog({
         resourceId={resourceId}
         flowId={flowId}
       />
-    </ModalDialog>
+    </Drawer>
   );
 }
 
