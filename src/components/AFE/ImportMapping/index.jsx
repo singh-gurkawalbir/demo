@@ -297,7 +297,7 @@ export default function ImportMapping(props) {
             <div className={classes.rowContainer} key={mapping.index}>
               <div className={classes.innerRow}>
                 <div
-                  className={clsx(classes.childHeader, classes.childRow, {
+                  className={clsx(classes.childHeader, classes.mapField, {
                     [classes.disableChildRow]:
                       mapping.isNotEditable || disabled,
                   })}>
@@ -326,7 +326,7 @@ export default function ImportMapping(props) {
                 </div>
                 <MappingConnectorIcon className={classes.mappingIcon} />
                 <div
-                  className={clsx(classes.childHeader, classes.childRow, {
+                  className={clsx(classes.childHeader, classes.mapField, {
                     [classes.disableChildRow]: mapping.isRequired || disabled,
                   })}>
                   <DynaTypeableSelect
@@ -380,7 +380,7 @@ export default function ImportMapping(props) {
                     onClick={() => {
                       handleDelete(mapping.index);
                     }}
-                    className={classes.margin}>
+                    className={classes.deleteBtn}>
                     <TrashIcon />
                   </ActionButton>
                 </div>
