@@ -12,6 +12,7 @@ import pageGenerator from './pageGenerator';
 import accesstokens from './accesstokens';
 import connectorLicenses from './connectorLicenses';
 import integrations from './integrations';
+import asyncHelpers from './asyncHelpers';
 
 export default {
   default: defaultMeta,
@@ -24,6 +25,7 @@ export default {
   templates,
   stacks,
   pageProcessor,
+  asyncHelpers,
   pageGenerator,
   accesstokens,
   connectorLicenses,
