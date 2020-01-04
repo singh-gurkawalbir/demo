@@ -41,6 +41,10 @@ import {
   getDomain,
 } from '../utils/resource';
 import { processSampleData } from '../utils/sampleData';
+import {
+  getAvailablePreviewStages,
+  isPreviewPanelAvailable,
+} from '../utils/exportPanel';
 import inferErrorMessage from '../utils/inferErrorMessage';
 import getRoutePath from '../utils/routePaths';
 import { COMM_STATES } from './comms/networkComms';
@@ -1036,11 +1040,17 @@ export function getFlowsAssociatedExportFromIAMetadata(state, fieldMeta) {
 }
 // #begin integrationApps Region
 
-export function integrationAppSettingsFormState(state, integrationId, flowId) {
+export function integrationAppSettingsFormState(
+  state,
+  integrationId,
+  flowId,
+  sectionId
+) {
   return fromSession.integrationAppSettingsFormState(
     state && state.session,
     integrationId,
-    flowId
+    flowId,
+    sectionId
   );
 }
 
@@ -2723,6 +2733,20 @@ export function getImportSampleData(state, resourceId) {
   return emptyObject;
 }
 
+export function getSalesforceMasterRecordTypeInfo(state, resourceId) {
+  const { merged: resource } = resourceData(state, 'imports', resourceId);
+  const { _connectionId: connectionId, salesforce } = resource;
+  const commMetaPath = `salesforce/metadata/connections/${connectionId}/sObjectTypes/${salesforce.sObjectType}`;
+  const { data, status } = metadataOptionsAndResources({
+    state,
+    connectionId,
+    commMetaPath,
+    filterKey: 'salesforce-masterRecordTypeInfo',
+  });
+
+  return { data, status };
+}
+
 export function isAnyFlowConnectionOffline(state, flowId) {
   const flow = resource(state, 'flows', flowId);
 
@@ -2802,7 +2826,11 @@ export function isPageGenerator(state, flowId, resourceId, resourceType) {
   // Incase of new resource (export/lookup), flow doc does not have this resource yet
   // So, get staged resource and determine export/lookup based on isLookup flag
   if (isNewId(resourceId)) {
-    const { merged: resource } = resourceData(state, 'exports', resourceId);
+    const { merged: resource = {} } = resourceData(
+      state,
+      'exports',
+      resourceId
+    );
 
     return !resource.isLookup;
   }
@@ -2936,4 +2964,38 @@ export function transferListWithMetadata(state) {
   });
 
   return { resources: transfers };
+}
+
+// Gives back supported stages of data flow based on resource type
+export function getAvailableResourcePreviewStages(
+  state,
+  resourceId,
+  resourceType
+) {
+  const { merged: resourceObj } = resourceData(
+    state,
+    resourceType,
+    resourceId,
+    'value'
+  );
+
+  return getAvailablePreviewStages(resourceObj);
+}
+
+/*
+ * This selector used to differentiate drawers with/without Preview Panel
+ */
+export function isPreviewPanelAvailableForResource(
+  state,
+  resourceId,
+  resourceType
+) {
+  const { merged: resourceObj } = resourceData(
+    state,
+    resourceType,
+    resourceId,
+    'value'
+  );
+
+  return isPreviewPanelAvailable(resourceObj, resourceType);
 }

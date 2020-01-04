@@ -28,13 +28,12 @@ export const useLoadingSnackbarOnSave = props => {
     [onSave, resourceType, snackbar]
   );
 
+  useEffect(() => closeSnackbar, [closeSnackbar]);
   useEffect(() => {
     if (saveTerminated) {
       setDisableSave(false);
       closeSnackbar();
     }
-
-    return closeSnackbar;
   }, [closeSnackbar, saveTerminated]);
 
   return { handleSubmitForm, disableSave };

@@ -455,18 +455,20 @@ const integrationApp = {
         integration,
         license,
       }),
-    update: (integrationId, flowId, storeId, values, options) =>
+    update: (integrationId, flowId, storeId, sectionId, values, options) =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.UPDATE, {
         integrationId,
         flowId,
         storeId,
+        sectionId,
         values,
         options,
       }),
-    clear: (integrationId, flowId) =>
+    clear: (integrationId, flowId, sectionId) =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.FORM.CLEAR, {
         integrationId,
         flowId,
+        sectionId,
       }),
     submitComplete: params =>
       action(
@@ -721,6 +723,12 @@ const sampleData = {
       stage,
       runOffline,
     }),
+  requestLookupPreview: (resourceId, flowId, formValues) =>
+    action(actionTypes.SAMPLEDATA.LOOKUP_REQUEST, {
+      resourceId,
+      flowId,
+      formValues,
+    }),
   received: (resourceId, previewData) =>
     action(actionTypes.SAMPLEDATA.RECEIVED, { resourceId, previewData }),
   update: (resourceId, processedData, stage) =>
@@ -858,6 +866,12 @@ const mapping = {
   save: id => action(actionTypes.MAPPING.SAVE, { id }),
   saveFailed: id => action(actionTypes.MAPPING.SAVE_FAILED, { id }),
   saveComplete: id => action(actionTypes.MAPPING.SAVE_COMPLETE, { id }),
+  updateFlowData: (id, value) =>
+    action(actionTypes.MAPPING.UPDATE_FLOW_DATA, { id, value }),
+  requestPreview: id => action(actionTypes.MAPPING.PREVIEW_REQUESTED, { id }),
+  previewReceived: (id, value) =>
+    action(actionTypes.MAPPING.PREVIEW_RECEIVED, { id, value }),
+  previewFailed: id => action(actionTypes.MAPPING.PREVIEW_FAILED, { id }),
 };
 // #region DynaForm Actions
 const resourceForm = {

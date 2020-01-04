@@ -21,7 +21,6 @@ const useStyles = makeStyles(theme => ({
   content: {
     borderTop: `solid 1px ${theme.palette.secondary.lightest}`,
     overflow: 'auto',
-
     padding: theme.spacing(3),
     paddingTop: theme.spacing(1),
     marginBottom: theme.spacing(1),
@@ -113,11 +112,11 @@ export default function ImportMappingSettings(props) {
           </DynaSubmit>
           <Button
             data-test={`fieldMappingSettingsCancel-${index}`}
-            variant="text"
-            color="primary"
             onClick={() => {
               onClose(false);
-            }}>
+            }}
+            variant="text"
+            color="primary">
             Cancel
           </Button>
         </DynaForm>

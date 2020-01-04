@@ -286,7 +286,8 @@ export default {
           { label: 'Signnow', value: 'signnow' },
           { label: 'Acton', value: 'acton' },
           { label: 'Acumatica', value: 'acumatica' },
-          { label: 'Mongodb', value: 'mongodb' },
+          { label: 'MongoDB', value: 'mongodb' },
+          { label: 'DynamoDB', value: 'dynamodb' },
           { label: 'Zohomail', value: 'zohomail' },
           { label: 'Zoom', value: 'zoom' },
           { label: 'Myobessentials', value: 'myobessentials' },
@@ -555,6 +556,9 @@ export default {
   sampleData: {
     type: 'sampledata',
     label: 'Sample Data',
+  },
+  exportPanel: {
+    type: 'exportpanel',
   },
   skipRetries: {
     type: 'checkbox',

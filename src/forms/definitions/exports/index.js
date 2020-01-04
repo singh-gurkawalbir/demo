@@ -21,6 +21,7 @@ import as2 from './as2';
 import common from './common';
 import newExport from './new';
 import custom from './custom';
+import dynamodb from './dynamodb';
 
 export default {
   new: newExport,
@@ -46,4 +47,5 @@ export default {
   mongodb,
   as2,
   custom,
+  dynamodb,
 };

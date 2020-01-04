@@ -8,6 +8,7 @@ import templates from './resources/template';
 import accesstokens from './resources/accesstoken';
 import connectorLicenses from './resources/connectorLicense';
 import integrations from './resources/integration';
+import asyncHelpers from './resources/asyncHelpers';
 
 export default {
   connections,
@@ -16,6 +17,7 @@ export default {
   connectors,
   scripts,
   templates,
+  asyncHelpers,
   stacks,
   accesstokens,
   connectorLicenses,

@@ -1,15 +1,14 @@
 import { Fragment, useCallback } from 'react';
+import clsx from 'clsx';
 import { useSelector } from 'react-redux';
 import { Route, useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
-import { Drawer, Button } from '@material-ui/core';
+import { Drawer } from '@material-ui/core';
 import * as selectors from '../../../../../../reducers';
 import DrawerTitleBar from '../../../../../../components/drawer/TitleBar';
 import LoadResources from '../../../../../../components/LoadResources';
-import ButtonGroup from '../../../../../../components/ButtonGroup';
 import StandaloneMapping from '../../../../../../components/AFE/ImportMapping/StandaloneMapping';
 import SelectImport from './SelectImport';
-import MappingSaveButton from '../../../../../../components/ResourceFormFactory/Actions/MappingSaveButton';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -24,16 +23,17 @@ const useStyles = makeStyles(theme => ({
   content: {
     borderTop: `solid 1px ${theme.palette.secondary.lightest}`,
     padding: theme.spacing(0, 0, 0, 3),
-  },
-  mappingContainer: {
-    // overflow: 'auto',
-    height: `calc(100vh - 180px)`,
-    padding: theme.spacing(1),
-    paddingBottom: theme.spacing(3),
-    marginBottom: theme.spacing(1),
+    display: 'flex',
   },
   buttonGroup: {
     '& button': { marginRight: theme.spacing(1) },
+  },
+  // TODO:check for better way to handle width when drawer open and closes
+  fullWidthDrawerClose: {
+    width: 'calc(100% - 60px)',
+  },
+  fullWidthDrawerOpen: {
+    width: `calc(100% - ${theme.drawerWidth}px)`,
   },
 }));
 
@@ -45,12 +45,13 @@ function MappingDrawer() {
   const flow = useSelector(state => selectors.resource(state, 'flows', flowId));
   const flowName = flow.name || flow._id;
   const mappingEditorId = `${importId}-${flowId}`;
-  const { visible: showMappings } = useSelector(state =>
-    selectors.mapping(state, mappingEditorId)
-  );
   const handleClose = useCallback(() => {
     history.goBack();
   }, [history]);
+  const { showSalesforceNetsuiteAssistant } = useSelector(state =>
+    selectors.mapping(state, mappingEditorId)
+  );
+  const drawerOpened = useSelector(state => selectors.drawerOpened(state));
 
   return (
     <Drawer
@@ -58,7 +59,12 @@ function MappingDrawer() {
       anchor="right"
       open={!!match}
       classes={{
-        paper: classes.drawerPaper,
+        paper: clsx(classes.drawerPaper, {
+          [classes.fullWidthDrawerClose]:
+            !drawerOpened && showSalesforceNetsuiteAssistant,
+          [classes.fullWidthDrawerOpen]:
+            drawerOpened && showSalesforceNetsuiteAssistant,
+        }),
       }}
       onClose={handleClose}>
       <DrawerTitleBar title={`Edit mapping for flow ${flowName}`} />
@@ -66,40 +72,15 @@ function MappingDrawer() {
         <LoadResources required="true" resources="imports, exports">
           {importId ? (
             <Fragment>
-              <div className={classes.mappingContainer}>
-                <StandaloneMapping
-                  id={mappingEditorId}
-                  // why is this prop called resourceId? Is it possible to pass in
-                  // any resourceID? I think now.. since it probably ONLY works with
-                  // am importId, this prop should be called as such.
-                  resourceId={importId}
-                  flowId={flowId}
-                />
-              </div>
-              {showMappings && (
-                <ButtonGroup className={classes.buttonGroup}>
-                  <MappingSaveButton
-                    id={mappingEditorId}
-                    color="primary"
-                    dataTest="saveImportMapping"
-                    submitButtonLabel="Save"
-                  />
-                  <MappingSaveButton
-                    id={mappingEditorId}
-                    variant="outlined"
-                    color="secondary"
-                    dataTest="saveAndCloseImportMapping"
-                    onClose={handleClose}
-                    submitButtonLabel="Save & Close"
-                  />
-                  <Button
-                    variant="text"
-                    data-test="saveImportMapping"
-                    onClick={handleClose}>
-                    Cancel
-                  </Button>
-                </ButtonGroup>
-              )}
+              <StandaloneMapping
+                id={mappingEditorId}
+                onClose={handleClose}
+                // why is this prop called resourceId? Is it possible to pass in
+                // any resourceID? I think now.. since it probably ONLY works with
+                // am importId, this prop should be called as such.
+                resourceId={importId}
+                flowId={flowId}
+              />
             </Fragment>
           ) : (
             <SelectImport flowId={flowId} />

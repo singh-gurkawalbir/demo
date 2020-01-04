@@ -130,6 +130,13 @@ const connectors = [
     keywords: 'database,rdbms,db',
     group: 'db',
   },
+  {
+    id: 'dynamodb',
+    name: 'DynamoDB',
+    type: 'dynamodb',
+    keywords: 'database,db',
+    group: 'db',
+  },
   // Application connectors
   { id: '3dcart', name: '3DCart', type: 'rest', assistant: '3dcart' },
   { id: 'accelo', name: 'Accelo', type: 'rest', assistant: 'accelo' },
