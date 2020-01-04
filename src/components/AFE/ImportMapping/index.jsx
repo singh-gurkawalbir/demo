@@ -392,7 +392,7 @@ export default function ImportMapping(props) {
           {showSalesforceNetsuiteAssistant && (
             <Button
               variant="text"
-              data-test="saveImportMapping"
+              data-test="preview"
               onClick={handlePreviewClick}>
               Preview
             </Button>
