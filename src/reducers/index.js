@@ -2733,6 +2733,20 @@ export function getImportSampleData(state, resourceId) {
   return emptyObject;
 }
 
+export function getSalesforceMasterRecordTypeInfo(state, resourceId) {
+  const { merged: resource } = resourceData(state, 'imports', resourceId);
+  const { _connectionId: connectionId, salesforce } = resource;
+  const commMetaPath = `salesforce/metadata/connections/${connectionId}/sObjectTypes/${salesforce.sObjectType}`;
+  const { data, status } = metadataOptionsAndResources({
+    state,
+    connectionId,
+    commMetaPath,
+    filterKey: 'salesforce-masterRecordTypeInfo',
+  });
+
+  return { data, status };
+}
+
 export function isAnyFlowConnectionOffline(state, flowId) {
   const flow = resource(state, 'flows', flowId);
 

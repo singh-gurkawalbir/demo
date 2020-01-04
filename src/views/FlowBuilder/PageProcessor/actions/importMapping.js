@@ -1,14 +1,14 @@
 import { Fragment } from 'react';
+import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
+import { Drawer } from '@material-ui/core';
 import { useSelector } from 'react-redux';
-import { Drawer, Button, ButtonGroup } from '@material-ui/core';
 import * as selectors from '../../../../reducers';
 import Icon from '../../../../components/icons/MapDataIcon';
 import helpTextMap from '../../../../components/Help/helpTextMap';
 import LoadResources from '../../../../components/LoadResources';
 import DrawerTitleBar from '../../../../components/drawer/TitleBar';
 import StandaloneMapping from '../../../../components/AFE/ImportMapping/StandaloneMapping';
-import MappingSaveButton from '../../../../components/ResourceFormFactory/Actions/MappingSaveButton';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -23,16 +23,15 @@ const useStyles = makeStyles(theme => ({
   content: {
     borderTop: `solid 1px ${theme.palette.secondary.lightest}`,
     padding: theme.spacing(0, 0, 0, 3),
+    width: '100%',
+    display: 'flex',
   },
-  mappingContainer: {
-    // overflow: 'auto',
-    height: `calc(100vh - 180px)`,
-    padding: theme.spacing(1),
-    paddingBottom: theme.spacing(3),
-    marginBottom: theme.spacing(1),
+  // TODO:check for better way to handle width when drawer open and closes
+  fullWidthDrawerClose: {
+    width: 'calc(100% - 60px)',
   },
-  buttonGroup: {
-    '& button': { marginRight: theme.spacing(1) },
+  fullWidthDrawerOpen: {
+    width: `calc(100% - ${theme.drawerWidth}px)`,
   },
 }));
 
@@ -47,53 +46,34 @@ function ImportMapping({
   const classes = useStyles();
   const resourceId = resource._id;
   const mappingEditorId = `${resourceId}-${flowId}`;
-  const { visible: showMappings } = useSelector(state =>
+  const { showSalesforceNetsuiteAssistant } = useSelector(state =>
     selectors.mapping(state, mappingEditorId)
   );
+  const drawerOpened = useSelector(state => selectors.drawerOpened(state));
 
   return (
     <Drawer
       anchor="right"
       open={open}
       classes={{
-        paper: classes.drawerPaper,
+        paper: clsx(classes.drawerPaper, {
+          [classes.fullWidthDrawerClose]:
+            !drawerOpened && showSalesforceNetsuiteAssistant,
+          [classes.fullWidthDrawerOpen]:
+            drawerOpened && showSalesforceNetsuiteAssistant,
+        }),
       }}>
       <DrawerTitleBar onClose={onClose} title="Define Import Mapping" />
       <div className={classes.content}>
         <LoadResources required="true" resources="imports, exports">
           <Fragment>
-            <div className={classes.mappingContainer}>
-              <StandaloneMapping
-                id={mappingEditorId}
-                disabled={isMonitorLevelAccess}
-                resourceId={resourceId}
-                flowId={flowId}
-              />
-            </div>
-            {showMappings && (
-              <ButtonGroup className={classes.buttonGroup}>
-                <MappingSaveButton
-                  disabled={isMonitorLevelAccess}
-                  id={mappingEditorId}
-                  color="primary"
-                  dataTest="saveImportMapping"
-                  submitButtonLabel="Save"
-                />
-                <MappingSaveButton
-                  id={mappingEditorId}
-                  disabled={isMonitorLevelAccess}
-                  variant="outlined"
-                  color="secondary"
-                  dataTest="saveAndCloseImportMapping"
-                  onClose={onClose}
-                  submitButtonLabel="Save & Close"
-                />
-
-                <Button variant="text" data-test="cancel" onClick={onClose}>
-                  Cancel
-                </Button>
-              </ButtonGroup>
-            )}
+            <StandaloneMapping
+              id={mappingEditorId}
+              disabled={isMonitorLevelAccess}
+              resourceId={resourceId}
+              flowId={flowId}
+              onClose={onClose}
+            />
           </Fragment>
         </LoadResources>
       </div>
