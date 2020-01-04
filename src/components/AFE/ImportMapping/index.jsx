@@ -16,6 +16,7 @@ import { adaptorTypeMap } from '../../../utils/resource';
 import RefreshIcon from '../../icons/RefreshIcon';
 import Spinner from '../../Spinner';
 import LockIcon from '../../icons/LockIcon';
+import MappingConnectorIcon from '../../icons/MappingConnectorIcon';
 import ButtonGroup from '../../ButtonGroup';
 import MappingSaveButton from '../../ResourceFormFactory/Actions/MappingSaveButton';
 import SalesforceMappingAssistant from '../../SalesforceMappingAssistant';
@@ -40,11 +41,10 @@ const useStyles = makeStyles(theme => ({
     flex: 1,
   },
   header: {
-    display: 'grid',
+    display: 'flex',
     width: '100%',
-    gridTemplateColumns: '45% 45% 50px 50px',
-    gridColumnGap: '1%',
     marginBottom: theme.spacing(2),
+    alignItems: 'center',
   },
   rowContainer: {
     display: 'block',
@@ -56,36 +56,38 @@ const useStyles = makeStyles(theme => ({
     },
   },
   childHeader: {
+    width: '46%',
     '& > div': {
       width: '100%',
     },
   },
   innerRow: {
-    display: 'grid',
+    display: 'flex',
     width: '100%',
-    gridTemplateColumns: '40% 40% 50px 50px',
     marginBottom: theme.spacing(1),
-    gridColumnGap: '1%',
+    alignItems: 'center',
   },
   mappingsBody: {
     height: `calc(100% - 32px)`,
     overflow: 'auto',
   },
-  childRow: {
+  mapField: {
     display: 'flex',
     position: 'relative',
+    width: '40%',
   },
   disableChildRow: {
     cursor: 'not-allowed',
     // TODO: (Aditya) Temp fix. To be removed on changing Import Mapping as Dyna Form
     '& > div > div > div': {
-      background: theme.palette.secondary.lightest,
+      background: theme.palette.background.paper2,
     },
   },
   lockIcon: {
     position: 'absolute',
     right: 10,
     top: 10,
+    color: theme.palette.text.hint,
   },
   refreshButton: {
     marginLeft: theme.spacing(1),
@@ -95,6 +97,14 @@ const useStyles = makeStyles(theme => ({
     marginLeft: 5,
     width: 50,
     height: 50,
+  },
+  deleteBtn: {
+    border: 'none',
+    width: 0,
+  },
+  mappingIcon: {
+    color: theme.palette.secondary.lightest,
+    fontSize: theme.spacing(6),
   },
 }));
 
@@ -314,6 +324,7 @@ export default function ImportMapping(props) {
                     </span>
                   )}
                 </div>
+                <MappingConnectorIcon className={classes.mappingIcon} />
                 <div
                   className={clsx(classes.childHeader, classes.childRow, {
                     [classes.disableChildRow]: mapping.isRequired || disabled,

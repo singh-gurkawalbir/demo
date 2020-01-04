@@ -14,7 +14,7 @@ const useStyles = makeStyles(theme => ({
       background: theme.palette.background.default,
     },
     '& > a': {
-      color: theme.palette.secondary.main,
+      color: theme.palette.secondary.light,
     },
   },
 }));
