@@ -96,6 +96,7 @@ export default {
     'okta',
     'easyship',
     'onelogin',
+    'dynamodb',
   ],
   OAUTH_APPLICATIONS: [
     'azureactivedirectory',
