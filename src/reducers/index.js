@@ -2990,12 +2990,17 @@ export function isPreviewPanelAvailableForResource(
   resourceId,
   resourceType
 ) {
-  const { merged: resourceObj } = resourceData(
+  const { merged: resourceObj = {} } = resourceData(
     state,
     resourceType,
     resourceId,
     'value'
   );
+  const connectionObj = resource(
+    state,
+    'connections',
+    resourceObj._connectionId
+  );
 
-  return isPreviewPanelAvailable(resourceObj, resourceType);
+  return isPreviewPanelAvailable(resourceObj, resourceType, connectionObj);
 }

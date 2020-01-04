@@ -330,3 +330,15 @@ export const isAS2Resource = resource => {
 
   return adaptorTypeMap[adaptorType] === 'as2';
 };
+
+export const isRestCsvMediaTypeExport = (resource, connection) => {
+  const { adaptorType } = resource || {};
+
+  // Returns false if it is not a rest export
+  if (adaptorTypeMap[adaptorType] !== 'rest') {
+    return false;
+  }
+
+  // Check for media type 'csv' from connection object
+  return connection && connection.rest && connection.rest.mediaType === 'csv';
+};
