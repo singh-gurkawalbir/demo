@@ -64,14 +64,13 @@ export function* saveMappings({ id }) {
   yield put(actions.mapping.saveComplete(id));
 }
 
-export function* mappingPreview({ id }) {
+export function* previewMappings({ id }) {
   const {
     mappings,
     generateFields,
     application,
     isGroupedSampleData,
     lookups,
-    // adaptorType,
     resource,
     flowSampleData,
   } = yield select(selectors.mapping, id);
@@ -113,13 +112,13 @@ export function* mappingPreview({ id }) {
       message: `Fetching Preview Data`,
     });
 
-    yield put(actions.mapping.receivedPreview(id, previewData));
+    yield put(actions.mapping.previewReceived(id, previewData));
   } catch (e) {
-    yield put(actions.mapping.failedPreview(id));
+    yield put(actions.mapping.previewFailed(id));
   }
 }
 
 export const mappingSagas = [
   takeEvery(actionTypes.MAPPING.SAVE, saveMappings),
-  takeEvery(actionTypes.MAPPING.PREVIEW, mappingPreview),
+  takeEvery(actionTypes.MAPPING.PREVIEW_REQUESTED, previewMappings),
 ];

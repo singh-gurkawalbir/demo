@@ -868,10 +868,10 @@ const mapping = {
   saveComplete: id => action(actionTypes.MAPPING.SAVE_COMPLETE, { id }),
   updateFlowData: (id, value) =>
     action(actionTypes.MAPPING.UPDATE_FLOW_DATA, { id, value }),
-  preview: id => action(actionTypes.MAPPING.PREVIEW, { id }),
-  receivedPreview: (id, value) =>
-    action(actionTypes.MAPPING.RECEIVED_PREVIEW, { id, value }),
-  failedPreview: id => action(actionTypes.MAPPING.FAILED_PREVIEW, { id }),
+  requestPreview: id => action(actionTypes.MAPPING.PREVIEW_REQUESTED, { id }),
+  previewReceived: (id, value) =>
+    action(actionTypes.MAPPING.PREVIEW_RECEIVED, { id, value }),
+  previewFailed: id => action(actionTypes.MAPPING.PREVIEW_FAILED, { id }),
 };
 // #region DynaForm Actions
 const resourceForm = {

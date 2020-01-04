@@ -266,7 +266,7 @@ export default function reducer(state = {}, action) {
 
         break;
 
-      case actionTypes.MAPPING.PREVIEW:
+      case actionTypes.MAPPING.PREVIEW_REQUESTED:
         if (draft[id].previewData) {
           draft[id].previewData.status = 'requested';
         } else {
@@ -274,7 +274,7 @@ export default function reducer(state = {}, action) {
         }
 
         break;
-      case actionTypes.MAPPING.RECEIVED_PREVIEW: {
+      case actionTypes.MAPPING.PREVIEW_RECEIVED: {
         let val;
 
         if (value && Array.isArray(value) && value.length) {
@@ -293,7 +293,7 @@ export default function reducer(state = {}, action) {
         break;
       }
 
-      case actionTypes.MAPPING.FAILED_PREVIEW: {
+      case actionTypes.MAPPING.PREVIEW_FAILED: {
         const { previewData } = draft[id];
 
         delete previewData.data;

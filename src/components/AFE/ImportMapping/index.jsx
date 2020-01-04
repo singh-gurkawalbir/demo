@@ -239,7 +239,7 @@ export default function ImportMapping(props) {
   };
 
   const handlePreviewClick = () => {
-    dispatch(actions.mapping.preview(editorId));
+    dispatch(actions.mapping.requestPreview(editorId));
   };
 
   function RefreshButton(props) {
