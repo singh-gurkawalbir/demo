@@ -872,6 +872,12 @@ const mapping = {
   save: id => action(actionTypes.MAPPING.SAVE, { id }),
   saveFailed: id => action(actionTypes.MAPPING.SAVE_FAILED, { id }),
   saveComplete: id => action(actionTypes.MAPPING.SAVE_COMPLETE, { id }),
+  updateFlowData: (id, value) =>
+    action(actionTypes.MAPPING.UPDATE_FLOW_DATA, { id, value }),
+  requestPreview: id => action(actionTypes.MAPPING.PREVIEW_REQUESTED, { id }),
+  previewReceived: (id, value) =>
+    action(actionTypes.MAPPING.PREVIEW_RECEIVED, { id, value }),
+  previewFailed: id => action(actionTypes.MAPPING.PREVIEW_FAILED, { id }),
 };
 // #region DynaForm Actions
 const resourceForm = {

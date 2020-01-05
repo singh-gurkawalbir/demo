@@ -12,12 +12,12 @@ import {
 } from '@material-ui/core';
 // TODO: Azhar, can you update these to Celigo icons? (if needed)
 import AcceptIcon from '@material-ui/icons/Check';
-import DismissIcon from '@material-ui/icons/Clear';
 import Badge from '@material-ui/core/Badge';
 import NotificationsIcon from '../../../components/icons/NotificationsIcon';
 import ArrowPopper from '../../../components/ArrowPopper';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
+import DismissIcon from '../../../components/icons/CloseIcon';
 
 const useStyles = makeStyles(() => ({
   itemContainer: {

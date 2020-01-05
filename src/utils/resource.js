@@ -6,7 +6,7 @@ import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../constants/resource';
 export const MODEL_PLURAL_TO_LABEL = Object.freeze({
   agents: 'Agent',
   accesstokens: 'API Token',
-  asynchelpers: 'Async Helper',
+  asyncHelpers: 'Async Helpers',
   connections: 'Connection',
   connectors: 'Integration App',
   exports: 'Export',
@@ -329,4 +329,16 @@ export const isAS2Resource = resource => {
   const { adaptorType } = resource || {};
 
   return adaptorTypeMap[adaptorType] === 'as2';
+};
+
+export const isRestCsvMediaTypeExport = (resource, connection) => {
+  const { adaptorType } = resource || {};
+
+  // Returns false if it is not a rest export
+  if (adaptorTypeMap[adaptorType] !== 'rest') {
+    return false;
+  }
+
+  // Check for media type 'csv' from connection object
+  return connection && connection.rest && connection.rest.mediaType === 'csv';
 };

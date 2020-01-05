@@ -361,8 +361,13 @@ export default {
     ],
   },
   'http._asyncHelperId': {
-    type: 'text',
-    label: 'Http _async Helper Id',
+    label: 'Async Helper',
+    type: 'selectresource',
+    resourceType: 'asyncHelpers',
+    appTypeIsStatic: true,
+    options: { appType: 'Async Helpers' },
+    allowNew: true,
+    allowEdit: true,
     visibleWhenAll: [
       {
         field: 'outputMode',

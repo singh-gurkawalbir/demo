@@ -25,6 +25,7 @@ const useStyles = makeStyles(theme => ({
     borderRadius: 2,
     '& > Label': {
       marginTop: theme.spacing(-1),
+      whiteSpace: 'nowrap',
       '&.MuiInputLabel-shrink': {
         paddingTop: theme.spacing(2),
       },
