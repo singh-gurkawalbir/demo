@@ -20,6 +20,16 @@ export default {
       };
     }
 
+    if (fieldId === 'netsuite.restlet.criteria') {
+      const recordTypeField = fields.find(
+        field => field.fieldId === 'netsuite.restlet.recordType'
+      );
+
+      return {
+        recordType: recordTypeField && recordTypeField.value,
+      };
+    }
+
     return null;
   },
   fieldMap: {
@@ -29,6 +39,9 @@ export default {
     },
     'netsuite.restlet.searchId': {
       fieldId: 'netsuite.restlet.searchId',
+    },
+    'netsuite.restlet.criteria': {
+      fieldId: 'netsuite.restlet.criteria',
     },
     'restlet.type': {
       id: 'restlet.type',
@@ -100,6 +113,7 @@ export default {
     fields: [
       'netsuite.restlet.recordType',
       'netsuite.restlet.searchId',
+      'netsuite.restlet.criteria',
       'restlet.type',
       'restlet.delta.dateField',
       'restlet.delta.lagOffset',

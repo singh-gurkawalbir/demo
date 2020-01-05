@@ -5,7 +5,7 @@ import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import SearchCriteriaDialog from '../../../AFE/SearchCriteria/Dialog';
 
-export default function DynaNetsuiteSearchCriteria(props) {
+export default function DynaNSSearchCriteria(props) {
   const {
     id,
     onFieldChange,
@@ -13,22 +13,18 @@ export default function DynaNetsuiteSearchCriteria(props) {
     label,
     resourceId,
     connectionId,
-    recordType,
     disabled,
     options = {},
   } = props;
+  const recordType = options.recordType || props.recordType;
   const dispatch = useDispatch();
   const commMetaPath = `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${recordType}/searchFilters?&includeJoinFilters=true`;
-  const { disableFetch: disableOptionsLoad } = options;
   const [showEditor, setShowEditor] = useState(false);
   const handleEditorClick = () => {
     setShowEditor(!showEditor);
   };
 
-  const {
-    // status,
-    data: savedSearches,
-  } = useSelector(state =>
+  const { data: savedSearches } = useSelector(state =>
     selectors.metadataOptionsAndResources({
       state,
       connectionId,
@@ -36,18 +32,16 @@ export default function DynaNetsuiteSearchCriteria(props) {
       filterKey: 'webservices-searchFilters',
     })
   );
-  // console.log('status', status);
   const handleFetchResource = useCallback(() => {
     dispatch(actions.metadata.request(connectionId, commMetaPath));
   }, [commMetaPath, connectionId, dispatch]);
 
   useEffect(() => {
-    if (!savedSearches && !disableOptionsLoad) handleFetchResource();
-  }, [disableOptionsLoad, handleFetchResource, savedSearches]);
+    if (recordType) handleFetchResource();
+  }, [handleFetchResource, recordType]);
 
   const handleClose = (shouldCommit, _value) => {
     if (shouldCommit) {
-      // console.log('_value', _value);
       onFieldChange(id, _value);
     }
 
@@ -61,6 +55,11 @@ export default function DynaNetsuiteSearchCriteria(props) {
           title="Search Criteria"
           id={`searchCriteria-${id}-${resourceId}`}
           value={value}
+          fieldOptions={{
+            fields: savedSearches,
+            valueName: 'value',
+            labelName: 'label',
+          }}
           onClose={handleClose}
           disabled={disabled}
         />

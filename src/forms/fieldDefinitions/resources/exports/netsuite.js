@@ -147,6 +147,18 @@ export default {
       `netsuite/metadata/suitescript/connections/${r._connectionId}/savedSearches`,
     connectionId: r => r && r._connectionId,
   },
+  // search id
+  'netsuite.restlet.criteria': {
+    type: 'nssearchcriteria',
+    label: 'Define Search Criteria',
+    refreshOptionsOnChangesTo: ['netsuite.restlet.recordType'],
+    // required: true,
+    visibleWhenAll: [
+      { field: 'netsuite.api.type', is: ['restlet'] },
+      { field: 'netsuite.execution.type', is: ['scheduled'] },
+    ],
+    connectionId: r => r && r._connectionId,
+  },
   'netsuite.webservices.searchId': {
     label: 'Saved searches',
     type: 'refreshableselect',

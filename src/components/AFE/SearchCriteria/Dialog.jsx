@@ -51,19 +51,31 @@ export default function SearchCriteriaDialog(props) {
   const {
     id,
     title = 'Search Criteria',
-    value,
+    value = [],
     onClose,
     disabled,
     width = '80vw',
     height = '50vh',
+    fieldOptions = {},
   } = props;
   const classes = useStyles();
   const [fullScreen, setFullScreeen] = useState(false);
-  const { searchCriteria } = useSelector(state =>
+  const { searchCriteria: searchCriteriaMp } = useSelector(state =>
     selectors.searchCriteria(state, id)
   );
   const handleClose = shouldCommit => {
     if (onClose) {
+      const {
+        rowIdentifier,
+        searchValue2Enabled,
+        ...searchCriteria
+      } = searchCriteriaMp;
+
+      // check why we are doing this in Ampersand
+      if (searchCriteria && searchCriteria.length) {
+        searchCriteria.map((s, index) => ({ ...s, index }));
+      }
+
       onClose(shouldCommit, searchCriteria);
     }
   };
@@ -97,7 +109,11 @@ export default function SearchCriteriaDialog(props) {
         style={size}
         className={classes.dialogContent}
         key={`${id}-${fullScreen ? 'lg' : 'sm'}`}>
-        <SearchCriteriaEditor editorId={id} value={value} />
+        <SearchCriteriaEditor
+          editorId={id}
+          value={value}
+          fieldOptions={fieldOptions}
+        />
       </DialogContent>
       <DialogActions className={classes.actions}>
         <Button

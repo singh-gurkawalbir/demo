@@ -21,12 +21,10 @@ export default function reducer(state = {}, action) {
       case actionTypes.SEARCH_CRITERIA.INIT: {
         const initChangeIdentifier =
           (draft[id] && draft[id].initChangeIdentifier) || 0;
-        const valueCopy = deepClone(value);
-
-        valueCopy.map;
+        const valueCopy = deepClone(value || []);
 
         draft[id] = {
-          searchCriteria: value.map(m => {
+          searchCriteria: valueCopy.map(m => {
             const searchValue2Enabled = !!(
               m.operator && enableSearchValue2(m.operator)
             );
@@ -48,7 +46,7 @@ export default function reducer(state = {}, action) {
             objCopy.searchValue2Enabled = searchValue2Enabled;
 
             if (!searchValue2Enabled) {
-              objCopy.searchValue2 = '';
+              delete objCopy.searchValue2;
             }
           }
 
@@ -68,7 +66,7 @@ export default function reducer(state = {}, action) {
             newObj.searchValue2Enabled = searchValue2Enabled;
 
             if (!searchValue2Enabled) {
-              newObj.searchValue2 = '';
+              delete newObj.searchValue2;
             }
           }
 
