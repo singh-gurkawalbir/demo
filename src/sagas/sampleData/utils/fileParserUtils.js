@@ -11,10 +11,24 @@ const PARSERS = {
   xml: 'xmlParser',
 };
 
+// Any customization on file options before passing to processor is done here
+export const generateFileParserOptions = (options = {}, type) => {
+  if (type === 'csv') {
+    return {
+      ...options,
+      multipleRowsPerRecord: !!(
+        options.keyColumns && options.keyColumns.length
+      ),
+    };
+  }
+
+  return options;
+};
+
 export function* parseFileData({ sampleData, resource }) {
   const { file } = resource;
   const { type } = file;
-  const options = file[type] || {};
+  const options = generateFileParserOptions(file[type], type);
   const processorData = {
     data: sampleData,
     processor: PARSERS[type],
