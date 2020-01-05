@@ -110,8 +110,8 @@ export function* requestLicenseUpdate({ actionType }) {
       path,
       opts,
     });
-  } catch (e) {
-    return true;
+  } catch (error) {
+    return yield put(actions.api.failure(path, 'POST', error, false));
   }
 
   yield put(actions.user.org.accounts.licenseUpgradeRequestSubmitted(response));
@@ -422,8 +422,8 @@ export function* requestNumEnabledFlows() {
       path,
       opts,
     });
-  } catch (e) {
-    return true;
+  } catch (error) {
+    return yield put(actions.api.failure(path, 'GET', error, false));
   }
 
   yield put(actions.user.org.accounts.receivedNumEnabledFlows(response));
