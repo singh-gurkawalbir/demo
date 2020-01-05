@@ -873,6 +873,22 @@ const mapping = {
     action(actionTypes.MAPPING.PREVIEW_RECEIVED, { id, value }),
   previewFailed: id => action(actionTypes.MAPPING.PREVIEW_FAILED, { id }),
 };
+const searchCriteria = {
+  init: (id, value) =>
+    action(actionTypes.SEARCH_CRITERIA.INIT, {
+      id,
+      value,
+    }),
+  patchField: (id, field, index, value) =>
+    action(actionTypes.SEARCH_CRITERIA.PATCH_FIELD, {
+      id,
+      field,
+      index,
+      value,
+    }),
+  delete: (id, index) =>
+    action(actionTypes.SEARCH_CRITERIA.DELETE, { id, index }),
+};
 // #region DynaForm Actions
 const resourceForm = {
   init: (resourceType, resourceId, isNew, skipCommit, flowId) =>
@@ -1107,6 +1123,7 @@ export default {
   marketplace,
   recycleBin,
   mapping,
+  searchCriteria,
   analytics,
   transfer,
 };

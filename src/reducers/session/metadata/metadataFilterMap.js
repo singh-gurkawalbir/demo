@@ -61,6 +61,11 @@ export default {
       label: item.label,
       value: getWSRecordId(item),
     })),
+  'webservices-searchFilters': data =>
+    data.map(item => ({
+      label: item.name,
+      value: item.id,
+    })),
   'webservices-savedSearches': data =>
     data.map(item => ({
       label: item.name,

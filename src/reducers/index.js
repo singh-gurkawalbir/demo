@@ -387,6 +387,10 @@ export function mappingSaveProcessTerminate(state, id) {
   return fromSession.mappingSaveProcessTerminate(state && state.session, id);
 }
 
+export function searchCriteria(state, id) {
+  return fromSession.getSearchCriteria(state && state.session, id);
+}
+
 export function editorHelperFunctions(state) {
   return (
     (state &&
