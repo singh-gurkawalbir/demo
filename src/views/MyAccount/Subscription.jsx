@@ -1,10 +1,11 @@
 import { Fragment, useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography, LinearProgress, Link } from '@material-ui/core';
+import { Typography, LinearProgress } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
+import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -80,6 +81,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function Transfers() {
   const dispatch = useDispatch();
+  const [enquesnackbar] = useEnqueueSnackbar();
   const licenseActionDetails = useSelector(state =>
     selectors.integratorLicenseWithMetadata(state)
   );
@@ -123,6 +125,44 @@ export default function Transfers() {
     );
   }
 
+  const onStartFreeTrialClick = useCallback(() => {
+    dispatch(
+      actions.analytics.gainsight.trackEvent('GO_UNLIMITED_BUTTON_CLICKED')
+    );
+
+    return dispatch(actions.user.org.accounts.requestTrialLicense());
+  }, [dispatch]);
+  const onRequestSubscriptionClick = useCallback(() => {
+    dispatch(
+      actions.analytics.gainsight.trackEvent('GO_UNLIMITED_BUTTON_CLICKED')
+    );
+
+    return dispatch(actions.user.org.accounts.requestUpdate('upgrade'));
+  }, [dispatch]);
+  const onRequestUpgradeClick = useCallback(() => {
+    dispatch(
+      actions.analytics.gainsight.trackEvent('GO_UNLIMITED_BUTTON_CLICKED')
+    );
+
+    return dispatch(actions.user.org.accounts.requestUpdate('upgrade'));
+  }, [dispatch]);
+  const onRequestTrialExtensionClick = useCallback(() => {
+    dispatch(
+      actions.analytics.gainsight.trackEvent('GO_UNLIMITED_BUTTON_CLICKED')
+    );
+
+    return dispatch(actions.user.org.accounts.requestUpdate('reTrial'));
+  }, [dispatch]);
+  const integratorLicenseActionMessage = useSelector(state =>
+    selectors.integratorLicenseActionMessage(state)
+  );
+
+  useEffect(() => {
+    if (integratorLicenseActionMessage) {
+      enquesnackbar({ message: integratorLicenseActionMessage });
+    }
+  }, [enquesnackbar, integratorLicenseActionMessage]);
+
   return (
     <Fragment>
       <div className={classes.root}>
@@ -135,7 +175,10 @@ export default function Transfers() {
               You currently dont have any subscription.
             </Typography>
             <div className={classes.wrapper}>
-              <Button variant="outlined" color="primary">
+              <Button
+                onClick={onStartFreeTrialClick}
+                variant="outlined"
+                color="primary">
                 Go Unlimited For 30 Days!
               </Button>
               <Typography varaint="body2" className={classes.description}>
@@ -175,7 +218,6 @@ export default function Transfers() {
                 </ul>
               </div>
             </div>
-
             <div className={classes.block}>
               <div>
                 <Typography variant="h5" className={classes.subHeading}>
@@ -202,8 +244,6 @@ export default function Transfers() {
                       | {productionRemainingFlows}{' '}
                     </span>
                     <span> remaining</span>
-                    {/* <div>consumed {numEnabledPaidFlows}</div>
-                <div>remaining {productionRemainingFlows}</div> */}
                   </div>
                   <div className={classes.linearProgressWrapper}>
                     <LinearProgress
@@ -243,21 +283,80 @@ export default function Transfers() {
                 </div>
               </div>
             </div>
-            <div className={classes.block}>
-              <Typography variant="h4" className={classes.subHeading}>
-                Want to upgrade ?
-              </Typography>
-              <div className={classes.wrapper}>
-                <Button color="primary" variant="outlined">
-                  Go Unlimited for 30days!
-                </Button>
-                <Link
-                  className={classes.linkCompare}
-                  to="https://www.celigo.com/ipaas-integration-platform/#Pricing">
-                  Compare Plans
-                </Link>
-              </div>
-            </div>
+            {licenseActionDetails &&
+              licenseActionDetails.subscriptionActions &&
+              licenseActionDetails.subscriptionActions.actions &&
+              licenseActionDetails.subscriptionActions.actions.length > 0 && (
+                <div className={classes.block}>
+                  <Typography variant="h4" className={classes.subHeading}>
+                    Want to upgrade ?
+                  </Typography>
+                  <div className={classes.wrapper}>
+                    {licenseActionDetails.subscriptionActions.actions.indexOf(
+                      'start-free-trial'
+                    ) > -1 && (
+                      <Button
+                        onClick={onStartFreeTrialClick}
+                        color="primary"
+                        variant="outlined">
+                        Go Unlimited for 30days!
+                      </Button>
+                    )}
+                    {licenseActionDetails.subscriptionActions.actions.indexOf(
+                      'request-subscrition'
+                    ) > -1 && (
+                      <Button
+                        onClick={onRequestSubscriptionClick}
+                        disabled={
+                          licenseActionDetails.subscriptionActions
+                            .__upgradeRequested
+                        }
+                        color="primary"
+                        variant="outlined">
+                        Request Subscription
+                      </Button>
+                    )}
+                    {licenseActionDetails.subscriptionActions.actions.indexOf(
+                      'request-upgrade'
+                    ) > -1 && (
+                      <Button
+                        onClick={onRequestUpgradeClick}
+                        disabled={
+                          licenseActionDetails.subscriptionActions
+                            .__upgradeRequested
+                        }
+                        color="primary"
+                        variant="outlined">
+                        Request Upgrade
+                      </Button>
+                    )}
+                    {licenseActionDetails.subscriptionActions.actions.indexOf(
+                      'request-trial-extension'
+                    ) > -1 && <span>-or-</span>}
+                    {licenseActionDetails.subscriptionActions.actions.indexOf(
+                      'request-trial-extension'
+                    ) > -1 && (
+                      <Button
+                        onClick={onRequestTrialExtensionClick}
+                        disabled={
+                          licenseActionDetails.subscriptionActions
+                            .__upgradeRequested
+                        }
+                        color="primary"
+                        variant="outlined">
+                        Request Trial Extension
+                      </Button>
+                    )}
+                    <a
+                      className={classes.linkCompare}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      href="https://www.celigo.com/ipaas-integration-platform/#Pricing">
+                      Compare Plans
+                    </a>
+                  </div>
+                </div>
+              )}
           </Fragment>
         )}
       </div>

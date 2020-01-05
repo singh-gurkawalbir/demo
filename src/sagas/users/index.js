@@ -99,6 +99,24 @@ export function* requestLicenseUpgrade() {
   yield put(actions.user.org.accounts.licenseUpgradeRequestSubmitted(response));
 }
 
+export function* requestLicenseUpdate({ actionType }) {
+  const { path, opts } = getRequestOptions(actionTypes.LICENSE_UPDATE_REQUEST, {
+    actionType,
+  });
+  let response;
+
+  try {
+    response = yield call(apiCallWithRetry, {
+      path,
+      opts,
+    });
+  } catch (e) {
+    return true;
+  }
+
+  yield put(actions.user.org.accounts.licenseUpgradeRequestSubmitted(response));
+}
+
 export function* updateProfile() {
   const updatedPayload = yield select(selectors.userProfile);
 
@@ -429,4 +447,5 @@ export const userSagas = [
   takeEvery(actionTypes.SHARED_NOTIFICATION_ACCEPT, acceptSharedInvite),
   takeEvery(actionTypes.SHARED_NOTIFICATION_REJECT, rejectSharedInvite),
   takeEvery(actionTypes.LICENSE_NUM_ENABLED_FLOWS, requestNumEnabledFlows),
+  takeEvery(actionTypes.LICENSE_UPDATE_REQUEST, requestLicenseUpdate),
 ];

@@ -1669,9 +1669,7 @@ export function integratorLicenseWithMetadata(state) {
 
   if (dateToCheck) {
     licenseActionDetails.isExpiringSoon =
-      moment
-        .duration(window.moment(dateToCheck) - window.moment())
-        .as('days') <= 15; // 15 days
+      moment.duration(moment(dateToCheck) - moment()).as('days') <= 15; // 15 days
   }
 
   licenseActionDetails.subscriptionName = licenseActionDetails.tierName;
