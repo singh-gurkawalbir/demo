@@ -113,11 +113,11 @@ export default {
     fields: [
       'netsuite.restlet.recordType',
       'netsuite.restlet.searchId',
-      'netsuite.restlet.criteria',
       'restlet.type',
       'restlet.delta.dateField',
       'restlet.delta.lagOffset',
       'restlet.once.booleanField',
+      'netsuite.restlet.criteria',
     ],
   },
 };
