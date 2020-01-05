@@ -24,9 +24,16 @@ export default {
       const recordTypeField = fields.find(
         field => field.fieldId === 'netsuite.restlet.recordType'
       );
+      const restletCriteria = fields.find(
+        field => field.fieldId === 'netsuite.restlet.criteria'
+      );
 
       return {
         recordType: recordTypeField && recordTypeField.value,
+        commMetaPath:
+          recordTypeField &&
+          recordTypeField.value &&
+          `netsuite/metadata/suitescript/connections/${restletCriteria.connectionId}/recordTypes/${recordTypeField.value}/searchFilters?&includeJoinFilters=true`,
       };
     }
 

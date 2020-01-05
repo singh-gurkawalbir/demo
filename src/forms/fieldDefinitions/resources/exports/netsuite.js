@@ -153,6 +153,7 @@ export default {
     refreshOptionsOnChangesTo: ['netsuite.restlet.recordType'],
     // required: true,
     visible: r => !!(r && r.isLookup),
+    filterKey: 'suitescript-searchFilters',
     visibleWhenAll: [
       { field: 'netsuite.api.type', is: ['restlet'] },
       { field: 'netsuite.execution.type', is: ['scheduled'] },

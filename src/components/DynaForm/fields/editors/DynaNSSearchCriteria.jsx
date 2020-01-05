@@ -16,9 +16,8 @@ export default function DynaNSSearchCriteria(props) {
     disabled,
     options = {},
   } = props;
-  const recordType = options.recordType || props.recordType;
+  const { recordType, commMetaPath } = options;
   const dispatch = useDispatch();
-  const commMetaPath = `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${recordType}/searchFilters?&includeJoinFilters=true`;
   const [showEditor, setShowEditor] = useState(false);
   const handleEditorClick = () => {
     setShowEditor(!showEditor);
