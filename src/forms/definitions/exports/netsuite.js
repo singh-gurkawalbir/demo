@@ -289,9 +289,11 @@ export default {
         { field: 'outputMode', is: ['records'] },
       ],
     },
+    common: { formId: 'common' },
   },
   layout: {
     fields: [
+      'common',
       'outputMode',
       'netsuite.execution.type',
       'netsuite.api.type',
