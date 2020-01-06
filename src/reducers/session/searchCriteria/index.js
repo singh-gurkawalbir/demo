@@ -64,10 +64,6 @@ export default function reducer(state = {}, action) {
             const searchValue2Enabled = !!enableSearchValue2(value);
 
             newObj.searchValue2Enabled = searchValue2Enabled;
-
-            if (!searchValue2Enabled) {
-              delete newObj.searchValue2;
-            }
           }
 
           draft[id].searchCriteria.push(newObj);
