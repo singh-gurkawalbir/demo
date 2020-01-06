@@ -60,20 +60,17 @@ export default function SearchCriteriaDialog(props) {
   } = props;
   const classes = useStyles();
   const [fullScreen, setFullScreeen] = useState(false);
-  const { searchCriteria: searchCriteriaMp } = useSelector(state =>
+  const { searchCriteria } = useSelector(state =>
     selectors.searchCriteria(state, id)
   );
   const handleClose = shouldCommit => {
     if (onClose) {
-      const {
-        rowIdentifier,
-        searchValue2Enabled,
-        ...searchCriteria
-      } = searchCriteriaMp;
-
-      // check why we are doing this in Ampersand
       if (searchCriteria && searchCriteria.length) {
-        searchCriteria.map((s, index) => ({ ...s, index }));
+        searchCriteria.map(s => {
+          const { searchValue2Enabled, rowIdentifier, ...sc } = s;
+
+          return { sc };
+        });
       }
 
       onClose(shouldCommit, searchCriteria);
