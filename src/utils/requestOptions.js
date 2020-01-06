@@ -245,7 +245,7 @@ export default function getRequestOptions(
             : `/ui/assistants/${resourceId}`,
         opts: { method: 'GET' },
       };
-    case actionTypes.LICENSE_NUM_ENABLED_FLOWS:
+    case actionTypes.LICENSE_NUM_ENABLED_FLOWS_REQUEST:
       return {
         path: `/numEnabledFlows`,
         opts: { method: 'GET' },

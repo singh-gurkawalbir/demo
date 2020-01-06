@@ -79,7 +79,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function Transfers() {
+export default function Subscription() {
   const dispatch = useDispatch();
   const [enquesnackbar] = useEnqueueSnackbar();
   const licenseActionDetails = useSelector(state =>
@@ -303,7 +303,7 @@ export default function Transfers() {
                       </Button>
                     )}
                     {licenseActionDetails.subscriptionActions.actions.indexOf(
-                      'request-subscrition'
+                      'request-subscription'
                     ) > -1 && (
                       <Button
                         onClick={onRequestSubscriptionClick}

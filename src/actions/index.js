@@ -701,7 +701,7 @@ const user = {
       leave: id => action(actionTypes.ACCOUNT_LEAVE_REQUEST, { id }),
       switchTo: ({ id }) => action(actionTypes.ACCOUNT_SWITCH, { id }),
       requestNumEnabledFlows: () =>
-        action(actionTypes.LICENSE_NUM_ENABLED_FLOWS, {}),
+        action(actionTypes.LICENSE_NUM_ENABLED_FLOWS_REQUEST, {}),
       receivedNumEnabledFlows: response =>
         action(actionTypes.LICENSE_NUM_ENABLED_FLOWS_RECEIVED, { response }),
     },
