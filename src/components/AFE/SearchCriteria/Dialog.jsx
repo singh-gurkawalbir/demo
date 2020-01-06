@@ -69,7 +69,7 @@ export default function SearchCriteriaDialog(props) {
         const _criteria = searchCriteria.map(s => {
           const { searchValue2Enabled, rowIdentifier, ...sc } = s;
 
-          return { sc };
+          return sc;
         });
 
         onClose(shouldCommit, _criteria);
