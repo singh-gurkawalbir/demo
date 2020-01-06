@@ -1780,7 +1780,7 @@ export function integratorLicenseWithMetadata(state) {
     toReturn.actions = ['start-free-trial'];
   } else if (licenseActionDetails.tier === 'free') {
     if (licenseActionDetails.inTrial) {
-      toReturn.actions = ['request-subscrition'];
+      toReturn.actions = ['request-subscription'];
     } else if (licenseActionDetails.hasSubscription) {
       if (licenseActionDetails.hasExpired) {
         toReturn.actions = ['request-upgrade'];
