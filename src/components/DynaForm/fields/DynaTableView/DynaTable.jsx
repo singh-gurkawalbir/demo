@@ -44,6 +44,13 @@ const useStyles = makeStyles(theme => ({
   rowContainer: {
     display: 'flex',
   },
+  header: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  label: {
+    paddingRight: theme.spacing(1),
+  },
 }));
 
 function reducer(state, action) {
@@ -266,13 +273,15 @@ export const DynaTable = props => {
             <Grid container spacing={2}>
               {optionsMap.map(r => (
                 <Grid key={r.id} item xs={r.space || true}>
-                  <span>{r.label || r.name}</span>
-                  {r.supportsRefresh && !isLoading && (
-                    <RefreshIcon onClick={onFetchResource(r.id)} />
-                  )}
-                  {r.supportsRefresh && isLoading === r.id && (
-                    <Spinner size={24} />
-                  )}
+                  <div className={classes.header}>
+                    <span className={classes.label}>{r.label || r.name}</span>
+                    {r.supportsRefresh && !isLoading && (
+                      <RefreshIcon onClick={onFetchResource(r.id)} />
+                    )}
+                    {r.supportsRefresh && isLoading === r.id && (
+                      <Spinner size={24} />
+                    )}
+                  </div>
                 </Grid>
               ))}
               <Grid key="delete_button_header" item />
