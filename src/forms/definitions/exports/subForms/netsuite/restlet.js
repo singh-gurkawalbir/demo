@@ -64,9 +64,6 @@ export default {
     'netsuite.restlet.searchId': {
       fieldId: 'netsuite.restlet.searchId',
     },
-    'netsuite.restlet.criteria': {
-      fieldId: 'netsuite.restlet.criteria',
-    },
     'restlet.type': {
       id: 'restlet.type',
       type: 'select',
@@ -141,7 +138,6 @@ export default {
       'restlet.delta.dateField',
       'restlet.delta.lagOffset',
       'restlet.once.booleanField',
-      'netsuite.restlet.criteria',
     ],
   },
 };

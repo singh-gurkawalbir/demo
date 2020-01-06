@@ -51,25 +51,6 @@ export default {
       r.netsuite.searches[0] &&
       r.netsuite.searches[0].recordType,
   },
-  'netsuite.webservices.criteria': {
-    label: 'Define Search Criteria',
-    type: 'nssearchcriteria',
-    refreshOptionsOnChangesTo: ['netsuite.webservices.recordType'],
-    filterKey: 'webservices-searchFilters',
-    connectionId: r => r && r._connectionId,
-    visible: r => !!(r && r.isLookup),
-    visibleWhenAll: [
-      { field: 'netsuite.api.type', is: ['search'] },
-      { field: 'netsuite.execution.type', is: ['scheduled'] },
-    ],
-    defaultValue: r =>
-      (r &&
-        r.netsuite &&
-        r.netsuite.searches &&
-        r.netsuite.searches[0] &&
-        r.netsuite.searches[0].criteria) ||
-      [],
-  },
   // execution context
   'netsuite.distributed.executionContext': {
     type: 'multiselect',
@@ -164,19 +145,6 @@ export default {
     commMetaPath: r =>
       r &&
       `netsuite/metadata/suitescript/connections/${r._connectionId}/savedSearches`,
-    connectionId: r => r && r._connectionId,
-  },
-  'netsuite.restlet.criteria': {
-    type: 'nssearchcriteria',
-    label: 'Define Search Criteria',
-    refreshOptionsOnChangesTo: ['netsuite.restlet.recordType'],
-    // required: true,
-    visible: r => !!(r && r.isLookup),
-    filterKey: 'suitescript-searchFilters',
-    visibleWhenAll: [
-      { field: 'netsuite.api.type', is: ['restlet'] },
-      { field: 'netsuite.execution.type', is: ['scheduled'] },
-    ],
     connectionId: r => r && r._connectionId,
   },
   // search id
@@ -297,6 +265,27 @@ export default {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
       },
     ],
+  },
+  'netsuite.restlet.criteria': {
+    type: 'nssearchcriteria',
+    label: 'Define Search Criteria',
+    refreshOptionsOnChangesTo: ['netsuite.restlet.recordType'],
+    filterKey: 'suitescript-searchFilters',
+    connectionId: r => r && r._connectionId,
+  },
+  'netsuite.webservices.criteria': {
+    type: 'nssearchcriteria',
+    label: 'Define Search Criteria',
+    refreshOptionsOnChangesTo: ['netsuite.webservices.recordType'],
+    filterKey: 'webservices-searchFilters',
+    connectionId: r => r && r._connectionId,
+    defaultValue: r =>
+      (r &&
+        r.netsuite &&
+        r.netsuite.searches &&
+        r.netsuite.searches[0] &&
+        r.netsuite.searches[0].criteria) ||
+      [],
   },
   'netsuite.restlet.hooks.batchSize': {
     type: 'text',
