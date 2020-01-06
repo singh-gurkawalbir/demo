@@ -1,8 +1,6 @@
 import produce from 'immer';
 import actionTypes from '../../../actions/types';
 
-const { deepClone } = require('fast-json-patch');
-
 const emptySet = [];
 
 function enableSearchValue2(val) {
@@ -21,10 +19,9 @@ export default function reducer(state = {}, action) {
       case actionTypes.SEARCH_CRITERIA.INIT: {
         const initChangeIdentifier =
           (draft[id] && draft[id].initChangeIdentifier) || 0;
-        const valueCopy = deepClone(value || []);
 
         draft[id] = {
-          searchCriteria: valueCopy.map(m => {
+          searchCriteria: (value || []).map(m => {
             const searchValue2Enabled = !!(
               m.operator && enableSearchValue2(m.operator)
             );
@@ -38,22 +35,20 @@ export default function reducer(state = {}, action) {
 
       case actionTypes.SEARCH_CRITERIA.PATCH_FIELD: {
         if (draft[id].searchCriteria[index]) {
-          const objCopy = { ...draft[id].searchCriteria[index] };
-
           if (field === 'operator') {
             const searchValue2Enabled = !!enableSearchValue2(value);
 
-            objCopy.searchValue2Enabled = searchValue2Enabled;
+            draft[id].searchCriteria[
+              index
+            ].searchValue2Enabled = searchValue2Enabled;
 
             if (!searchValue2Enabled) {
-              delete objCopy.searchValue2;
+              delete draft[id].searchCriteria[index].searchValue2;
             }
           }
 
-          objCopy.rowIdentifier += 1;
-          objCopy[field] = value;
-
-          draft[id].searchCriteria[index] = objCopy;
+          draft[id].searchCriteria[index].rowIdentifier += 1;
+          draft[id].searchCriteria[index][field] = value;
         } else if (value) {
           const newObj = {
             [field]: value,

@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
@@ -9,8 +9,6 @@ import TrashIcon from '../../icons/TrashIcon';
 import ActionButton from '../../ActionButton';
 import DynaTypeableSelect from '../../DynaForm/fields/DynaTypeableSelect';
 import operators from './operators';
-
-const { deepClone } = require('fast-json-patch');
 
 const useStyles = makeStyles(theme => ({
   header: {
@@ -75,16 +73,14 @@ export default function SearchCriteriaEditor(props) {
     dispatch(actions.searchCriteria.delete(editorId, row));
   };
 
-  const searchCriteriaCopy = deepClone(searchCriteria);
-
-  searchCriteriaCopy.push({});
-  const tableData = (searchCriteriaCopy || []).map((value, index) => {
-    const obj = value;
-
-    obj.index = index;
-
-    return obj;
-  });
+  const tableData = useMemo(
+    () =>
+      [...(searchCriteria || []), {}].map((obj, index) => ({
+        ...obj,
+        index,
+      })),
+    [searchCriteria]
+  );
   const headers = ['Field', 'Operator', 'Search Value', 'Search Value 2'];
 
   return (
