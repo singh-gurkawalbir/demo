@@ -63,11 +63,12 @@ export default {
       { field: 'netsuite.execution.type', is: ['scheduled'] },
     ],
     defaultValue: r =>
-      r &&
-      r.netsuite &&
-      r.netsuite.searches &&
-      r.netsuite.searches[0] &&
-      r.netsuite.searches[0].criteria,
+      (r &&
+        r.netsuite &&
+        r.netsuite.searches &&
+        r.netsuite.searches[0] &&
+        r.netsuite.searches[0].criteria) ||
+      [],
   },
   // execution context
   'netsuite.distributed.executionContext': {

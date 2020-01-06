@@ -60,7 +60,8 @@ export default function SearchCriteriaEditor(props) {
   );
   const handleInit = useCallback(() => {
     dispatch(actions.searchCriteria.init(editorId, value));
-  }, [dispatch, editorId, value]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     handleInit();
