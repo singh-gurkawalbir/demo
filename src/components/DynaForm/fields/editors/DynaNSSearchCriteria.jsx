@@ -9,7 +9,7 @@ export default function DynaNSSearchCriteria(props) {
   const {
     id,
     onFieldChange,
-    value = {},
+    value = [],
     label,
     resourceId,
     connectionId,

@@ -66,14 +66,16 @@ export default function SearchCriteriaDialog(props) {
   const handleClose = shouldCommit => {
     if (onClose) {
       if (searchCriteria && searchCriteria.length) {
-        searchCriteria.map(s => {
+        const _criteria = searchCriteria.map(s => {
           const { searchValue2Enabled, rowIdentifier, ...sc } = s;
 
           return { sc };
         });
+
+        onClose(shouldCommit, _criteria);
       }
 
-      onClose(shouldCommit, searchCriteria);
+      onClose(shouldCommit, []);
     }
   };
 
