@@ -51,6 +51,24 @@ export default {
       r.netsuite.searches[0] &&
       r.netsuite.searches[0].recordType,
   },
+  'netsuite.webservices.criteria': {
+    label: 'Define Search Criteria',
+    type: 'nssearchcriteria',
+    refreshOptionsOnChangesTo: ['netsuite.webservices.recordType'],
+    filterKey: 'webservices-searchFilters',
+    connectionId: r => r && r._connectionId,
+    visible: r => !!(r && r.isLookup),
+    visibleWhenAll: [
+      { field: 'netsuite.api.type', is: ['search'] },
+      { field: 'netsuite.execution.type', is: ['scheduled'] },
+    ],
+    defaultValue: r =>
+      r &&
+      r.netsuite &&
+      r.netsuite.searches &&
+      r.netsuite.searches[0] &&
+      r.netsuite.searches[0].criteria,
+  },
   // execution context
   'netsuite.distributed.executionContext': {
     type: 'multiselect',

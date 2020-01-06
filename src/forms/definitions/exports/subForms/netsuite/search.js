@@ -54,6 +54,9 @@ export default {
       fieldId: 'netsuite.webservices.searchId',
       refreshOptionsOnChangesTo: ['netsuite.webservices.recordType'],
     },
+    'netsuite.webservices.criteria': {
+      fieldId: 'netsuite.webservices.criteria',
+    },
     'delta.dateField': {
       id: 'delta.dateField',
       label: 'Date field',
@@ -132,6 +135,7 @@ export default {
       'delta.dateField',
       'delta.lagOffset',
       'once.booleanField',
+      'netsuite.webservices.criteria',
     ],
   },
 };

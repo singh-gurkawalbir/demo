@@ -14,6 +14,7 @@ export default function DynaNSSearchCriteria(props) {
     resourceId,
     connectionId,
     disabled,
+    filterKey,
     options = {},
   } = props;
   const { recordType, commMetaPath } = options;
@@ -28,7 +29,7 @@ export default function DynaNSSearchCriteria(props) {
       state,
       connectionId,
       commMetaPath,
-      filterKey: 'webservices-searchFilters',
+      filterKey,
     })
   );
   const handleFetchResource = useCallback(() => {

@@ -22,7 +22,7 @@ export default {
         {
           savedSearchId: newValues['/netsuite/webservices/searchId'],
           recordType: newValues['/netsuite/webservices/recordType'],
-          criteria: [],
+          criteria: newValues['/netsuite/webservices/criteria'],
         },
       ];
     }

@@ -24,7 +24,7 @@ export default {
       const recordTypeField = fields.find(
         field => field.fieldId === 'netsuite.restlet.recordType'
       );
-      const restletCriteria = fields.find(
+      const criteriaField = fields.find(
         field => field.fieldId === 'netsuite.restlet.criteria'
       );
 
@@ -33,7 +33,24 @@ export default {
         commMetaPath:
           recordTypeField &&
           recordTypeField.value &&
-          `netsuite/metadata/suitescript/connections/${restletCriteria.connectionId}/recordTypes/${recordTypeField.value}/searchFilters?&includeJoinFilters=true`,
+          `netsuite/metadata/suitescript/connections/${criteriaField.connectionId}/recordTypes/${recordTypeField.value}/searchFilters?&includeJoinFilters=true`,
+      };
+    }
+
+    if (fieldId === 'netsuite.webservices.criteria') {
+      const recordTypeField = fields.find(
+        field => field.fieldId === 'netsuite.webservices.recordType'
+      );
+      const criteriaField = fields.find(
+        field => field.fieldId === 'netsuite.webservices.criteria'
+      );
+
+      return {
+        recordType: recordTypeField && recordTypeField.value,
+        commMetaPath:
+          recordTypeField &&
+          recordTypeField.value &&
+          `netSuiteWS/recordMetadata/${criteriaField.connectionId}?type=export&recordType=${recordTypeField.value}`,
       };
     }
 
