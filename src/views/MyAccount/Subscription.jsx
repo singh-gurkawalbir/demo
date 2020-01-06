@@ -1,11 +1,12 @@
-import { Fragment, useCallback, useEffect } from 'react';
+import { Fragment, useCallback, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography, LinearProgress } from '@material-ui/core';
+import { Typography, LinearProgress, Drawer } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
+import DrawerTitleBar from '../../components/drawer/TitleBar';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -77,6 +78,27 @@ const useStyles = makeStyles(theme => ({
   description: {
     marginTop: theme.spacing(2),
   },
+
+  drawerPaper: {
+    width: 600,
+    padding: theme.spacing(1),
+  },
+
+  content: {
+    flexGrow: 1,
+    backgroundColor: theme.palette.background.default,
+    padding: theme.spacing(3),
+  },
+  link: {
+    marginTop: theme.spacing(2),
+    fontSize: theme.spacing(2),
+  },
+
+  footer: {
+    marginTop: theme.spacing(3),
+    display: 'flex',
+    flexDirection: 'column',
+  },
 }));
 
 export default function Subscription() {
@@ -88,6 +110,7 @@ export default function Subscription() {
   const integratorLicense = useSelector(state =>
     selectors.integratorLicense(state)
   );
+  const [showStartFreeDialog, setShowStartFreeDialog] = useState(false);
   const classes = useStyles();
   const getNumEnabledFlows = useCallback(() => {
     dispatch(actions.user.org.accounts.requestNumEnabledFlows());
@@ -130,13 +153,16 @@ export default function Subscription() {
     );
   }
 
-  const onStartFreeTrialClick = useCallback(() => {
+  const onStartFreeTrialInterestedClick = useCallback(() => {
     dispatch(
       actions.analytics.gainsight.trackEvent('GO_UNLIMITED_BUTTON_CLICKED')
     );
 
     return dispatch(actions.user.org.accounts.requestTrialLicense());
   }, [dispatch]);
+  const onStartFreeTrialClick = useCallback(() => {
+    setShowStartFreeDialog(true);
+  }, []);
   const onRequestSubscriptionClick = useCallback(() => {
     dispatch(
       actions.analytics.gainsight.trackEvent('GO_UNLIMITED_BUTTON_CLICKED')
@@ -167,9 +193,51 @@ export default function Subscription() {
       enquesnackbar({ message: integratorLicenseActionMessage });
     }
   }, [enquesnackbar, integratorLicenseActionMessage]);
+  const onDrawerClose = useCallback(() => {
+    setShowStartFreeDialog(false);
+  }, []);
 
   return (
     <Fragment>
+      <Drawer
+        anchor="right"
+        open={showStartFreeDialog}
+        classes={{
+          paper: classes.drawerPaper,
+        }}>
+        <DrawerTitleBar
+          onClose={onDrawerClose}
+          title="Upgrade your subscription"
+        />
+        <div className={classes.content}>
+          <Typography variant="body1" className={classes.block}>
+            You are currently on the Free Edition of integrator.io, which gives
+            you one active flow at any given time. Upgrade to one of our paid
+            subscriptions and unlock multiple flow activation to fulfill all
+            your integration needs.
+          </Typography>
+
+          <div className={classes.footer}>
+            <div>
+              <Button
+                variant="outlined"
+                color="primary"
+                onClick={onStartFreeTrialInterestedClick}>
+                YES, I &apos;M INTERESTED
+              </Button>
+            </div>
+            <a
+              className={classes.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              data-test="learnmore-link"
+              href="https://www.celigo.com/ipaas-integration-platform/#Pricing">
+              Learn more about our integrator.io premium packages
+              <span className="arrow-box arrow-right arrow-box-20" />
+            </a>
+          </div>
+        </div>
+      </Drawer>
       {integratorLicense && (
         <div className={classes.root}>
           {licenseActionDetails && licenseActionDetails.isNone && (
