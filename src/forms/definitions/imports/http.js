@@ -129,6 +129,9 @@ export default {
       retValues['/http/body'] = retValues['/http/body']
         ? [retValues['/http/body']]
         : [];
+      retValues['/http/ignoreLookupName'] = undefined;
+      retValues['/http/ignoreExtract'] = undefined;
+      retValues['/http/existingDataId'] = undefined;
     }
 
     delete retValues['/inputMode'];
