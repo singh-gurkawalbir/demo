@@ -73,9 +73,7 @@ export default function SearchCriteriaDialog(props) {
         });
 
         onClose(shouldCommit, _criteria);
-      }
-
-      onClose(shouldCommit, []);
+      } else onClose(shouldCommit, []);
     }
   };
 
