@@ -13,7 +13,7 @@ const PARSERS = {
 
 // Any customization on file options before passing to processor is done here
 export const generateFileParserOptions = (options = {}, type) => {
-  if (type === 'csv') {
+  if (type === 'csv' || type === 'xlsx') {
     return {
       ...options,
       multipleRowsPerRecord: !!(
