@@ -159,6 +159,9 @@ export default {
       retValues['/rest/body'] = retValues['/rest/body']
         ? [retValues['/rest/body']]
         : [];
+      retValues['/rest/ignoreLookupName'] = undefined;
+      retValues['/rest/ignoreExtract'] = undefined;
+      retValues['/rest/existingDataId'] = undefined;
     }
 
     delete retValues['/inputMode'];
@@ -716,6 +719,10 @@ export default {
           is: ['createandignore'],
         },
         {
+          field: 'rest.method',
+          is: ['COMPOSITE'],
+        },
+        {
           field: 'inputMode',
           is: ['records'],
         },
@@ -729,6 +736,10 @@ export default {
         {
           field: 'rest.compositeType',
           is: ['updateandignore'],
+        },
+        {
+          field: 'rest.method',
+          is: ['COMPOSITE'],
         },
         {
           field: 'inputMode',
