@@ -110,6 +110,7 @@ export default function Subscription() {
   const integratorLicense = useSelector(state =>
     selectors.integratorLicense(state)
   );
+  const diyLicense = useSelector(state => selectors.diyLicense(state));
   const [showStartFreeDialog, setShowStartFreeDialog] = useState(false);
   const classes = useStyles();
   const getNumEnabledFlows = useCallback(() => {
@@ -238,6 +239,46 @@ export default function Subscription() {
           </div>
         </div>
       </Drawer>
+      {diyLicense && (
+        <div className={classes.root}>
+          <div className={classes.block}>
+            <Typography variant="h5" className={classes.subHeading}>
+              Details:
+            </Typography>
+            <div className={classes.wrapper}>
+              <Typography variant="h3">
+                Edition: {diyLicense.usageTierName}
+              </Typography>
+              <ul className={classes.itemsList}>
+                <li>
+                  <span className={classes.bold}>Expiration Date:</span>{' '}
+                  {diyLicense.expirationDate}
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div className={classes.block}>
+            <Typography variant="h5" className={classes.subHeading}>
+              Current Usage:
+            </Typography>
+            <div className={classes.linearProgressWrapper}>
+              <LinearProgress
+                color="primary"
+                value={diyLicense.currentUsage.usagePercent}
+                variant="determinate"
+                thickness={10}
+                className={classes.progressBar}
+              />
+            </div>
+            <div>
+              <span className={classes.bold}>
+                {diyLicense.currentUsage.usedHours} Hour
+                {diyLicense.currentUsage.usedHours === 1 ? '' : 's'}
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
       {integratorLicense && (
         <div className={classes.root}>
           {licenseActionDetails && licenseActionDetails.isNone && (

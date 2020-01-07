@@ -1529,6 +1529,12 @@ export function integratorLicense(state) {
   return fromUser.integratorLicense(state.user, preferences.defaultAShareId);
 }
 
+export function diyLicense(state) {
+  const preferences = userPreferences(state);
+
+  return fromUser.diyLicense(state.user, preferences.defaultAShareId);
+}
+
 export function integratorLicenseActionDetails(state) {
   let licenseActionDetails = {};
   const license = integratorLicense(state);
