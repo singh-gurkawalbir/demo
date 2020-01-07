@@ -1,20 +1,23 @@
 import Iframe from 'react-iframe';
 import { useEffect, useCallback, useState, Fragment } from 'react';
+import { useSelector } from 'react-redux';
 import { Button, Typography } from '@material-ui/core';
 import { getDomain } from '../../utils/resource';
 import Spinner from '../Spinner';
+import * as selectors from '../../reducers';
 
 export default function NetSuiteMappingAssistant({
   width = '100%',
   height = '100%',
-  netSuiteAccountId = '',
-  netSuiteEnvironment = '',
-  netSuiteRecordLabel = '',
-  netSuiteRecordUrl = '',
-  netSuiteSystemDomain = '',
+  netSuiteConnectionId,
+  netSuiteRecordLabel,
+  netSuiteRecordUrl,
   data,
   onFieldClick,
 }) {
+  const connection = useSelector(state =>
+    selectors.resource(state, 'connections', netSuiteConnectionId)
+  );
   const [netSuiteFormIsLoading, setNetSuiteFormIsLoading] = useState(false);
   const [showNetSuiteForm, setShowNetSuiteForm] = useState(false);
   const [suiteletUrl, setSuiteletUrl] = useState();
@@ -36,14 +39,17 @@ export default function NetSuiteMappingAssistant({
         setShowNetSuiteForm(true);
         document
           .getElementById('netsuiteFormFrame')
-          .contentWindow.postMessage('okay!', netSuiteSystemDomain);
+          .contentWindow.postMessage(
+            'okay!',
+            connection.netsuite.dataCenterURLs.systemDomain
+          );
 
         if (data) {
           document
             .getElementById('netsuiteFormFrame')
             .contentWindow.postMessage(
               { op: 'populatePreviewData', data },
-              netSuiteSystemDomain
+              connection.netsuite.dataCenterURLs.systemDomain
             );
         }
       } else if (e.data.op === 'clicked') {
@@ -55,7 +61,7 @@ export default function NetSuiteMappingAssistant({
         onFieldClick && onFieldClick(e.data.field);
       }
     },
-    [data, netSuiteSystemDomain, onFieldClick]
+    [connection.netsuite.dataCenterURLs.systemDomain, data, onFieldClick]
   );
 
   useEffect(() => {
@@ -64,7 +70,7 @@ export default function NetSuiteMappingAssistant({
     return () => {
       window.removeEventListener('message', handleMessageReceived);
     };
-  }, [handleMessageReceived]);
+  }, [connection, handleMessageReceived]);
 
   const handleLaunchAssistantClick = () => {
     setNetSuiteFormIsLoading(true);
@@ -78,8 +84,8 @@ export default function NetSuiteMappingAssistant({
     }
 
     const config = {
-      a: netSuiteAccountId,
-      e: netSuiteEnvironment,
+      a: connection.netsuite.account,
+      e: connection.netsuite.environment,
       id: ioDomain,
       ie: ioEnvironment,
       u: encodeURIComponent(netSuiteRecordUrl),
@@ -90,11 +96,24 @@ export default function NetSuiteMappingAssistant({
     }
 
     setSuiteletUrl(
-      `${netSuiteSystemDomain}/app/site/hosting/scriptlet.nl?script=customscript_celigo_io_mapping_form&deploy=customdeploy_celigo_io_mapping_form&compid=${
+      `${
+        connection.netsuite.dataCenterURLs.systemDomain
+      }/app/site/hosting/scriptlet.nl?script=customscript_celigo_io_mapping_form&deploy=customdeploy_celigo_io_mapping_form&compid=${
         config.a
       }&config=${JSON.stringify(config)}&_dc=${new Date().getTime()}`
     );
   };
+
+  if (
+    !connection ||
+    !connection.netsuite ||
+    !connection.netsuite.account ||
+    !connection.netsuite.environment ||
+    !connection.netsuite.dataCenterURLs ||
+    !connection.netsuite.dataCenterURLs.systemDomain
+  ) {
+    return <Typography>Missing connection configuration.</Typography>;
+  }
 
   return (
     <Fragment>
@@ -133,11 +152,10 @@ export default function NetSuiteMappingAssistant({
                 Please click{' '}
                 <a
                   target="blank"
-                  href={`${netSuiteSystemDomain}/app/login/secure/enterpriselogin.nl?c=${netSuiteAccountId}&whence=`}>
+                  href={`${connection.netsuite.dataCenterURLs.systemDomain}/app/login/secure/enterpriselogin.nl?c=${connection.netsuite.account}&whence=`}>
                   here
                 </a>{' '}
-                to login to your NetSuite account
-                {netSuiteAccountId}.
+                to login to your NetSuite account {connection.netsuite.account}.
               </li>
               <li>
                 After login, please click the &quot;Launch NetSuite
