@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import Icon from '../../../../components/icons/TransformIcon';
-import TransformEditorDialog from '../../../../components/AFE/TransformEditor/Dialog';
+import TransformEditorDialog from '../../../../components/AFE/TransformEditor/TransformToggleEditorDialog';
 import helpTextMap from '../../../../components/Help/helpTextMap';
 
 function TransformationDialog({ flowId, resource, onClose, isViewMode }) {

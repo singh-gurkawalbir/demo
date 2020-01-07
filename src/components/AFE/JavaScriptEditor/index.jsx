@@ -9,6 +9,7 @@ import PanelTitle from '../PanelTitle';
 import PanelGridItem from '../PanelGridItem';
 import ErrorGridItem from '../ErrorGridItem';
 import * as selectors from '../../../reducers';
+import layouts from '../layout/defaultDialogLayout';
 
 const useStyles = makeStyles({
   template: {
@@ -16,10 +17,18 @@ const useStyles = makeStyles({
     gridTemplateRows: '1fr 1fr 0fr',
     gridTemplateAreas: '"rule data" "rule result" "error error"',
   },
+  ...layouts,
 });
 
 export default function JavaScriptEditor(props) {
-  const { editorId, entryFunction, scriptId, insertStubKey, disabled } = props;
+  const {
+    editorId,
+    entryFunction,
+    scriptId,
+    insertStubKey,
+    disabled,
+    layout,
+  } = props;
   const classes = useStyles(props);
   const { data, result, error, initChangeIdentifier } = useSelector(state =>
     selectors.editor(state, editorId)
@@ -57,7 +66,7 @@ export default function JavaScriptEditor(props) {
   return (
     <PanelGrid
       key={`${editorId}-${initChangeIdentifier}`}
-      className={classes.template}>
+      className={layout ? classes[`${layout}Template`] : classes.template}>
       <PanelGridItem gridArea="rule">
         <JavaScriptPanel
           disabled={disabled}
