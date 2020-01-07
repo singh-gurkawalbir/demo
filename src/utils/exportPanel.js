@@ -45,6 +45,9 @@ export const getAvailablePreviewStages = resource => {
  */
 export const isPreviewPanelAvailable = (resource, resourceType, connection) => {
   if (resourceType !== 'exports') return false;
+
+  // Panel is not shown for assistants
+  if (resource && resource.assistant) return false;
   const { adaptorType } = resource || {};
   const appType = adaptorTypeMap[adaptorType];
 
