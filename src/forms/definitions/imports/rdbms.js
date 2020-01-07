@@ -175,6 +175,7 @@ export default {
     'rdbms.ignoreExtract': {
       fieldId: 'rdbms.ignoreExtract',
       type: 'textwithlookupextract',
+      fieldType: 'ignoreExistingData',
       adaptorType: r => r && r.adaptorType,
       connectionId: r => r && r._connectionId,
       refreshOptionsOnChangesTo: ['rdbms.lookups', 'name'],
@@ -182,6 +183,7 @@ export default {
     'rdbms.updateExtract': {
       fieldId: 'rdbms.updateExtract',
       type: 'textwithlookupextract',
+      fieldType: 'ignoreExistingData',
       adaptorType: r => r && r.adaptorType,
       connectionId: r => r && r._connectionId,
       refreshOptionsOnChangesTo: ['rdbms.lookups', 'name'],
