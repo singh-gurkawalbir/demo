@@ -1,4 +1,4 @@
-import ToggleEditorDialog from '../ToggleEditorDialog';
+import ToggleEditorDialog from '../EditorDialog/toggleEditorDialog';
 import TransformEditor from '.';
 import JavaScriptEditor from '../JavaScriptEditor';
 
@@ -11,21 +11,31 @@ const defaults = {
 
 export default function TransformToggleEditorDialog({
   id,
+  type,
   rule,
+  scriptId,
   data,
   disabled,
+  entryFunction,
+  insertStubKey,
   ...rest
 }) {
-  // console.log('render <TransformEditorDialog>');
   return (
     <ToggleEditorDialog
       id={id}
+      type={type}
       {...defaults}
       {...rest}
       disabled={disabled}
       showLayoutOptions>
       <TransformEditor rule={rule} data={data} disabled={disabled} />
-      <JavaScriptEditor data={data} disabled={disabled} />
+      <JavaScriptEditor
+        data={data}
+        disabled={disabled}
+        scriptId={scriptId}
+        entryFunction={entryFunction}
+        insertStubKey={insertStubKey}
+      />
     </ToggleEditorDialog>
   );
 }

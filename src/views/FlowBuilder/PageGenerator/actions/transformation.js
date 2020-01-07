@@ -17,19 +17,33 @@ function TransformationDialog({ flowId, resource, onClose, isViewMode }) {
       stage: 'transform',
     })
   );
-  const rules = useMemo(
-    () => resource && resource.transform && resource.transform.rules,
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
-  );
+  const { type, rule, scriptId, entryFunction } = useMemo(() => {
+    const transformObj = (resource && resource.transform) || {};
+    const { type, script = {}, expression = {} } = transformObj;
+
+    return {
+      type,
+      rule: expression.rules && expression.rules[0],
+      scriptId: script._scriptId,
+      entryFunction: script.function,
+    };
+  }, [resource]);
   const handleClose = useCallback(
     (shouldCommit, editorValues) => {
       if (shouldCommit) {
-        const { rule } = editorValues;
+        const { processor, rule, scriptId, entryFunction } = editorValues;
+        const type = processor === 'transform' ? 'expression' : 'script';
         const path = '/transform';
         const value = {
-          rules: rule ? [rule] : [[]],
-          version: '1',
+          type,
+          expression: {
+            version: 1,
+            rules: rule ? [rule] : [[]],
+          },
+          script: {
+            _scriptId: scriptId,
+            function: entryFunction,
+          },
         };
         const patchSet = [{ op: 'replace', path, value }];
 
@@ -40,7 +54,7 @@ function TransformationDialog({ flowId, resource, onClose, isViewMode }) {
 
       onClose();
     },
-    [dispatch, onClose, exportId]
+    [dispatch, exportId, onClose]
   );
 
   useEffect(() => {
@@ -62,7 +76,11 @@ function TransformationDialog({ flowId, resource, onClose, isViewMode }) {
       id={exportId}
       disabled={isViewMode}
       data={sampleData}
-      rule={rules && rules[0]}
+      type={type}
+      scriptId={scriptId}
+      rule={rule}
+      entryFunction={entryFunction}
+      insertStubKey={undefined}
       onClose={handleClose}
     />
   );

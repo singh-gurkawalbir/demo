@@ -1,4 +1,4 @@
-import { useState, cloneElement, useCallback } from 'react';
+import { useState, cloneElement, useCallback, useMemo, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import {
@@ -14,7 +14,9 @@ import ViewCompactIcon from '@material-ui/icons/ViewCompact';
 import ViewRowIcon from '@material-ui/icons/HorizontalSplit';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
+import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import actions from '../../../actions';
+import { preSaveValidate } from './util';
 import * as selectors from '../../../reducers';
 import FullScreenOpenIcon from '../../icons/FullScreenOpenIcon';
 import FullScreenCloseIcon from '../../icons/FullScreenCloseIcon';
@@ -74,44 +76,66 @@ export default function ToggleEditorDialog(props) {
   } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
+  const [enquesnackbar] = useEnqueueSnackbar();
   const [state, setState] = useState({
     layout: props.layout || 'compact',
     fullScreen: props.fullScreen || false,
+    activeEditorIndex: 0,
   });
-  const [activeEditorIndex, setActiveEditorIndex] = useState(0);
-  const handleEditorToggle = value => setActiveEditorIndex(parseInt(value, 10));
+
+  useEffect(() => {
+    if (props.type) {
+      setState({
+        ...state,
+        activeEditorIndex: props.type === 'expression' ? 0 : 1,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.type]);
   const { layout, fullScreen } = state;
-  const editor = useSelector(state =>
-    selectors.editor(state, id + activeEditorIndex)
+  const size = fullScreen ? { height } : { height, width };
+  const activeEditorId = useMemo(() => `${id}-${state.activeEditorIndex}`, [
+    id,
+    state.activeEditorIndex,
+  ]);
+  const toggleEditorOptions = useMemo(
+    () => [
+      { label: 'Mapping', value: 'expression' },
+      { label: 'Javascript', value: 'script' },
+    ],
+    []
   );
+  const editor = useSelector(state => selectors.editor(state, activeEditorId));
   const editorViolations = useSelector(state =>
-    selectors.editorViolations(state, id + activeEditorIndex)
+    selectors.editorViolations(state, activeEditorId)
   );
   const handlePreview = useCallback(
-    () => dispatch(actions.editor.evaluateRequest(id + activeEditorIndex)),
-    [activeEditorIndex, dispatch, id]
+    () => dispatch(actions.editor.evaluateRequest(activeEditorId)),
+    [activeEditorId, dispatch]
   );
-  const handleClose = shouldCommit => {
-    if (onClose) {
-      onClose(shouldCommit, editor);
-    }
-  };
+  const handleClose = useCallback(
+    shouldCommit => {
+      if (shouldCommit && !preSaveValidate({ editor, enquesnackbar })) {
+        return;
+      }
 
+      if (onClose) {
+        onClose(shouldCommit, editor);
+      }
+    },
+    [editor, enquesnackbar, onClose]
+  );
   const handleLayoutChange = (event, _layout) =>
     _layout && setState({ ...state, layout: _layout });
   const handleFullScreenClick = () =>
     setState({ ...state, fullScreen: !fullScreen });
-  const size = fullScreen ? { height } : { height, width };
+  const handleEditorToggle = value =>
+    setState({ ...state, activeEditorIndex: value === 'expression' ? 0 : 1 });
   const showPreviewAction =
     !hidePreviewAction && editor && !editorViolations && !editor.autoEvaluate;
   const disableSave = !editor || editorViolations || disabled;
-  /*
-   * toggle editors logic
-   */
-  const toggleOptions = [
-    { label: 'Mapping', value: '0' },
-    { label: 'Javascript', value: '1' },
-  ];
+  const handleCancel = useCallback(() => handleClose(), [handleClose]);
+  const handleSave = useCallback(() => handleClose(true), [handleClose]);
 
   return (
     <Dialog
@@ -126,10 +150,11 @@ export default function ToggleEditorDialog(props) {
             {title}
           </Typography>
           <TextToggle
-            value={`${activeEditorIndex}`}
+            disabled={disabled}
+            value={state.activeEditorIndex === 0 ? 'expression' : 'script'}
             onChange={handleEditorToggle}
             exclusive
-            options={toggleOptions}
+            options={toggleEditorOptions}
           />
         </div>
         <div className={classes.actionContainer}>
@@ -172,10 +197,10 @@ export default function ToggleEditorDialog(props) {
         // key to be dependent on layout and fullscreen for content to re-render to fit in properly.
         key={`${id}-${layout}-${fullScreen ? 'lg' : 'sm'}`}>
         {// Is there a better way to do this?
-        children[activeEditorIndex] &&
-          cloneElement(children[activeEditorIndex], {
+        children[state.activeEditorIndex] &&
+          cloneElement(children[state.activeEditorIndex], {
             layout,
-            editorId: `${id}-${activeEditorIndex}`,
+            editorId: `${id}-${state.activeEditorIndex}`,
           })}
       </DialogContent>
       <DialogActions className={classes.actions}>
@@ -188,7 +213,7 @@ export default function ToggleEditorDialog(props) {
           variant="text"
           color="primary"
           data-test="closeEditor"
-          onClick={() => handleClose()}>
+          onClick={handleCancel}>
           Cancel
         </Button>
         <Button
@@ -196,7 +221,7 @@ export default function ToggleEditorDialog(props) {
           data-test="saveEditor"
           disabled={!!disableSave}
           color="primary"
-          onClick={() => handleClose(true)}>
+          onClick={handleSave}>
           Save
         </Button>
       </DialogActions>

@@ -79,14 +79,22 @@ const isActionUsed = (resource, flowNode, action) => {
         (typeof http.body === 'string' ||
           (Array.isArray(http.body) && http.body.length))
       );
-    case actionsMap.transformation:
-      // Infers based on the first ruleset { rules: [rule]}
-      // @TODO: Raghu Change it if we support multiple transformation rules
-      return !!(
-        transform.rules &&
-        transform.rules[0] &&
-        transform.rules[0].length
-      );
+    case actionsMap.transformation: {
+      const { type, expression = {}, script = {} } = transform;
+
+      if (type === 'expression') {
+        // Infers based on the first ruleset { rules: [rule]}
+        // @TODO: Raghu Change it if we support multiple transformation rules
+        return !!(
+          expression.rules &&
+          expression.rules[0] &&
+          expression.rules[0].length
+        );
+      }
+
+      // when transformation is of type 'script', check for scriptId
+      return !!script._scriptId;
+    }
 
     case actionsMap.responseTransformation:
       return !!(
