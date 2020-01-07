@@ -1,22 +1,18 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Typography, Tooltip } from '@material-ui/core';
+import { components } from 'react-select';
+import { Tooltip } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import MappingSettings from '../../../../../../components/AFE/ImportMappingSettings/MappingSettingsField';
-import mappingUtil from '../../../../../../utils/mapping';
 import TrashIcon from '../../../../../../components/icons/TrashIcon';
 import * as selectors from '../../../../../../reducers';
-import IconTextButton from '../../../../../../components/IconTextButton';
 import ActionButton from '../../../../../../components/ActionButton';
-import RefreshIcon from '../../../../../../components/icons/RefreshIcon';
-import Spinner from '../../../../../../components/Spinner';
 import LockIcon from '../../../../../../components/icons/LockIcon';
 import actions from '../../../../../../actions';
 import DynaTypeableSelect from '../../../../../../components/DynaForm/fields/DynaTypeableSelect';
 import AddIcon from '../../../../../../components/icons/AddIcon';
-import ApplicationImg from '../../../../../../components/icons/ApplicationImg';
 
 // TODO Azhar style header
 const useStyles = makeStyles(theme => ({
@@ -90,16 +86,11 @@ export default function ImportMapping(props) {
     application,
     generateFields = [],
     extractFields = [],
-    resource = {},
     disabled,
-    optionalHanlder,
-    isGeneratesLoading,
-    isGenerateRefreshSupported,
     options = {},
   } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
-  const { refreshGenerateFields } = optionalHanlder;
   const { mappings, lookups, initChangeIdentifier } = useSelector(state =>
     selectors.mapping(state, editorId)
   );
@@ -133,10 +124,6 @@ export default function ImportMapping(props) {
     dispatch(actions.mapping.delete(editorId, row));
   };
 
-  const generateLabel = mappingUtil.getGenerateLabelForMapping(
-    application,
-    resource
-  );
   const getLookup = name => lookups.find(lookup => lookup.name === name);
   const updateLookupHandler = (isDelete, obj) => {
     let lookupsTmp = [...lookups];
@@ -160,43 +147,16 @@ export default function ImportMapping(props) {
     handleFieldUpdate(mapping.index, { target: { value: val } }, 'generate');
   };
 
-  function RefreshButton(props) {
-    return (
-      <IconTextButton
-        variant="contained"
-        color="secondary"
-        className={classes.refreshButton}
-        {...props}>
-        Refresh <RefreshIcon />
-      </IconTextButton>
-    );
-  }
+  const ValueContainer = ({ children, ...props }) => (
+    <components.ValueContainer {...props}>
+      <AddIcon /> {children}
+    </components.ValueContainer>
+  );
 
   return (
     <div
       className={classes.root}
       key={`mapping-${editorId}-${initChangeIdentifier}`}>
-      <div className={classes.header}>
-        <Typography variant="h5" className={classes.childHeader}>
-          Amazon <ApplicationImg assistant="amazon" size="small" />
-        </Typography>
-
-        <Typography variant="h5" className={classes.childHeader}>
-          {generateLabel}
-          {isGenerateRefreshSupported && !isGeneratesLoading && (
-            <RefreshButton
-              disabled={disabled}
-              onClick={refreshGenerateFields}
-              data-test="refreshGenerates"
-            />
-          )}
-          {isGeneratesLoading && (
-            <span className={classes.spinner}>
-              <Spinner size={24} color="primary" />
-            </span>
-          )}
-        </Typography>
-      </div>
       <div className={classes.mappingsBody}>
         {tableData.map(mapping => (
           <div className={classes.rowContainer} key={mapping.index}>
@@ -208,7 +168,6 @@ export default function ImportMapping(props) {
                 {
                   // TODO: Azhar change this icon to one of preferred, conditional, optional, required
                 }
-                <AddIcon />
                 <DynaTypeableSelect
                   key={`extract-${editorId}-${initChangeIdentifier}-${mapping.rowIdentifier}`}
                   id={`fieldMappingExtract-${mapping.index}`}
@@ -217,6 +176,9 @@ export default function ImportMapping(props) {
                   value={mapping.extract || mapping.hardCodedValueTmp}
                   options={extractFields}
                   disabled={mapping.isNotEditable || disabled}
+                  components={{
+                    ValueContainer,
+                  }}
                   onBlur={(id, evt) => {
                     handleFieldUpdate(
                       mapping.index,
@@ -242,6 +204,7 @@ export default function ImportMapping(props) {
                   value={mapping.generate}
                   labelName="name"
                   valueName="id"
+                  components={{ ItemSeperator: () => null }}
                   options={generateFields}
                   disabled={mapping.isRequired || disabled}
                   onBlur={handleGenerateUpdate(mapping)}

@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Route, useRouteMatch, NavLink } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
-import { List, ListItem, Grid, Link } from '@material-ui/core';
+import { List, ListItem, Grid, Link, Typography } from '@material-ui/core';
 import * as selectors from '../../../../../../reducers';
 import DrawerTitleBar from './TitleBar';
 import LoadResources from '../../../../../../components/LoadResources';
@@ -15,6 +15,8 @@ import PanelHeader from '../../../../common/PanelHeader';
 import AddIcon from '../../../../../../components/icons/TrashIcon';
 import Mappings from './MappingsWrapper';
 import IconTextButton from '../../../../../../components/IconTextButton';
+import ApplicationImg from '../../../../../../components/icons/ApplicationImg';
+import RefreshIcon from '../../../../../../components/icons/RefreshIcon';
 
 const drawerWidth = 200;
 const useStyles = makeStyles(theme => ({
@@ -26,6 +28,10 @@ const useStyles = makeStyles(theme => ({
     boxShadow: `-4px 4px 8px rgba(0,0,0,0.15)`,
     backgroundColor: theme.palette.background.default,
     zIndex: theme.zIndex.drawer + 1,
+  },
+  refreshButton: {
+    marginLeft: theme.spacing(1),
+    marginRight: 0,
   },
   filter: {
     float: 'right',
@@ -40,6 +46,10 @@ const useStyles = makeStyles(theme => ({
   drawerPaperInner: {
     width: drawerWidth,
     position: 'relative',
+  },
+  mappingHeader: {
+    margin: theme.spacing(2),
+    background: theme.palette.secondary.lightest,
   },
   toolbar: theme.mixins.toolbar,
   root: {
@@ -97,6 +107,20 @@ function CategoryMappings({
       });
     }) || {};
   const { fieldMappings = [], children = [] } = mappings;
+  const isGeneratesLoading = false;
+  const refreshGenerateFields = () => {};
+
+  function RefreshButton(props) {
+    return (
+      <IconTextButton
+        variant="contained"
+        color="secondary"
+        className={classes.refreshButton}
+        {...props}>
+        Refresh <RefreshIcon />
+      </IconTextButton>
+    );
+  }
 
   return (
     <div>
@@ -116,6 +140,32 @@ function CategoryMappings({
           <AddIcon /> Delete
         </IconTextButton>
       </PanelHeader>
+      {!metadata && (
+        <Grid container className={classes.mappingHeader}>
+          <Grid item xs={6}>
+            <Typography variant="h5" className={classes.childHeader}>
+              Amazon <ApplicationImg assistant="amazonmws" size="small" />
+            </Typography>
+          </Grid>
+          <Grid item xs={6}>
+            <Typography variant="h5" className={classes.childHeader}>
+              NetSuite
+              {!isGeneratesLoading && (
+                <RefreshButton
+                  onClick={refreshGenerateFields}
+                  data-test="refreshGenerates"
+                />
+              )}
+              {isGeneratesLoading && (
+                <span className={classes.spinner}>
+                  <Spinner size={24} color="primary" />
+                </span>
+              )}
+              <ApplicationImg assistant="netsuite" />
+            </Typography>
+          </Grid>
+        </Grid>
+      )}
       <Mappings
         id={`${flowId}-${sectionId}`}
         flowId={flowId}
