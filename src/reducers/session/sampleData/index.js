@@ -8,7 +8,7 @@ import actionTypes from '../../../actions/types';
 const DEFAULT_VALUE = undefined;
 
 function extractStages(sampleData) {
-  const stagesInSampleData = sampleData.stages;
+  const stagesInSampleData = sampleData && sampleData.stages;
   const stageMap = {};
 
   if (!stagesInSampleData) {

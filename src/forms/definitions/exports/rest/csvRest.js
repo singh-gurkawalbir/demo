@@ -84,7 +84,7 @@ export default {
     uploadFile: {
       id: 'uploadFile',
       type: 'uploadfile',
-      label: 'Sample File (that would be imported)',
+      label: 'Sample File (that would be exported)',
       mode: r => r && r.file && r.file.type,
       visibleWhen: [
         {

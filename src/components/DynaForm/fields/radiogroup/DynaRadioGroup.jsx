@@ -10,7 +10,7 @@ import {
 import clsx from 'clsx';
 import ErroredMessageComponent from '../ErroredMessageComponent';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   rowFlexWrapper: {
     flexDirection: 'row',
     paddingLeft: 5,
@@ -26,7 +26,10 @@ const useStyles = makeStyles({
   fullWidth: {
     width: '100%',
   },
-});
+  block: {
+    marginTop: theme.spacing(1),
+  },
+}));
 
 export default function DynaRadio(props) {
   const {
@@ -80,7 +83,7 @@ export default function DynaRadio(props) {
       component="fieldset"
       required={required}
       disabled={disabled}
-      className={fullWidth ? classes.fullWidth : ''}>
+      className={clsx(classes.block, fullWidth ? classes.fullWidth : '')}>
       <FormLabel component="legend">{label}</FormLabel>
       <RadioGroup
         data-test={id}

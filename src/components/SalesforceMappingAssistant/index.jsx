@@ -81,6 +81,7 @@ export default function SalesforceMappingAssistant({
 
   return (
     <Frame
+      data-test="salesforceMappingAssistant"
       style={style}
       head={
         <Fragment>

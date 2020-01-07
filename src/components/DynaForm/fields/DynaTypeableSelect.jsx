@@ -121,7 +121,7 @@ export default function DynaTypeableSelect(props) {
       width: '100%',
       height: 50,
       border: '1px solid',
-      borderColor: theme.palette.divider,
+      borderColor: theme.palette.secondary.lightest,
       borderRadius: '2px',
       backgroundColor: theme.palette.background.paper,
       alignItems: 'center',

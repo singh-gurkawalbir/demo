@@ -705,10 +705,16 @@ const user = {
         action(actionTypes.LICENSE_TRIAL_ISSUED, message),
       requestLicenseUpgrade: () =>
         action(actionTypes.LICENSE_UPGRADE_REQUEST, {}),
+      requestUpdate: actionType =>
+        action(actionTypes.LICENSE_UPDATE_REQUEST, { actionType }),
       licenseUpgradeRequestSubmitted: message =>
         action(actionTypes.LICENSE_UPGRADE_REQUEST_SUBMITTED, { message }),
       leave: id => action(actionTypes.ACCOUNT_LEAVE_REQUEST, { id }),
       switchTo: ({ id }) => action(actionTypes.ACCOUNT_SWITCH, { id }),
+      requestNumEnabledFlows: () =>
+        action(actionTypes.LICENSE_NUM_ENABLED_FLOWS_REQUEST, {}),
+      receivedNumEnabledFlows: response =>
+        action(actionTypes.LICENSE_NUM_ENABLED_FLOWS_RECEIVED, { response }),
     },
   },
   preferences: {
@@ -877,6 +883,28 @@ const mapping = {
   save: id => action(actionTypes.MAPPING.SAVE, { id }),
   saveFailed: id => action(actionTypes.MAPPING.SAVE_FAILED, { id }),
   saveComplete: id => action(actionTypes.MAPPING.SAVE_COMPLETE, { id }),
+  updateFlowData: (id, value) =>
+    action(actionTypes.MAPPING.UPDATE_FLOW_DATA, { id, value }),
+  requestPreview: id => action(actionTypes.MAPPING.PREVIEW_REQUESTED, { id }),
+  previewReceived: (id, value) =>
+    action(actionTypes.MAPPING.PREVIEW_RECEIVED, { id, value }),
+  previewFailed: id => action(actionTypes.MAPPING.PREVIEW_FAILED, { id }),
+};
+const searchCriteria = {
+  init: (id, value) =>
+    action(actionTypes.SEARCH_CRITERIA.INIT, {
+      id,
+      value,
+    }),
+  patchField: (id, field, index, value) =>
+    action(actionTypes.SEARCH_CRITERIA.PATCH_FIELD, {
+      id,
+      field,
+      index,
+      value,
+    }),
+  delete: (id, index) =>
+    action(actionTypes.SEARCH_CRITERIA.DELETE, { id, index }),
 };
 // #region DynaForm Actions
 const resourceForm = {
@@ -1112,6 +1140,7 @@ export default {
   marketplace,
   recycleBin,
   mapping,
+  searchCriteria,
   analytics,
   transfer,
 };

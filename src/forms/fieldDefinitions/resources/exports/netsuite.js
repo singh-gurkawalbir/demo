@@ -147,6 +147,7 @@ export default {
       `netsuite/metadata/suitescript/connections/${r._connectionId}/savedSearches`,
     connectionId: r => r && r._connectionId,
   },
+  // search id
   'netsuite.webservices.searchId': {
     label: 'Saved searches',
     type: 'refreshableselect',
@@ -264,6 +265,27 @@ export default {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
       },
     ],
+  },
+  'netsuite.restlet.criteria': {
+    type: 'nssearchcriteria',
+    label: 'Define Search Criteria',
+    refreshOptionsOnChangesTo: ['netsuite.restlet.recordType'],
+    filterKey: 'suitescript-searchFilters',
+    connectionId: r => r && r._connectionId,
+  },
+  'netsuite.webservices.criteria': {
+    type: 'nssearchcriteria',
+    label: 'Define Search Criteria',
+    refreshOptionsOnChangesTo: ['netsuite.webservices.recordType'],
+    filterKey: 'webservices-searchFilters',
+    connectionId: r => r && r._connectionId,
+    defaultValue: r =>
+      (r &&
+        r.netsuite &&
+        r.netsuite.searches &&
+        r.netsuite.searches[0] &&
+        r.netsuite.searches[0].criteria) ||
+      [],
   },
   'netsuite.restlet.hooks.batchSize': {
     type: 'text',

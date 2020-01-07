@@ -22,10 +22,11 @@ const useStyles = makeStyles({
 });
 
 export default function StandaloneMapping(props) {
-  const { id, flowId, resourceId, disabled } = props;
+  const { id, flowId, resourceId, disabled, onClose } = props;
   const classes = useStyles();
   const [flowSampleDataLoaded, setFlowSampleDataLoaded] = useState(false);
   const [importSampleDataLoaded, setImportSampleDataLoaded] = useState(false);
+  const [flowSampleDataState, setFlowSampleDataState] = useState(undefined);
   const [assistantLoaded, setAssistantLoaded] = useState(false);
   const [
     integrationAppMetadataLoaded,
@@ -85,11 +86,20 @@ export default function StandaloneMapping(props) {
     }
   }, [dispatch, extractFields, flowId, requestSampleData, resourceId]);
 
+  if (initTriggered && !isEqual(flowSampleDataState, extractFields)) {
+    dispatch(actions.mapping.updateFlowData(id, extractFields));
+    setFlowSampleDataState(extractFields);
+  }
+
   const importSampleDataObj = useSelector(state =>
     selectors.getImportSampleData(state, resourceId)
   );
   const { data: importSampleData, status: generateStatus } =
     importSampleDataObj || {};
+  const salesforceMasterRecordTypeInfo = useSelector(state => {
+    if (isSalesforce)
+      return selectors.getSalesforceMasterRecordTypeInfo(state, resourceId);
+  });
   const requestImportSampleData = useCallback(() => {
     dispatch(actions.importSampleData.request(resourceId));
   }, [dispatch, resourceId]);
@@ -196,6 +206,17 @@ export default function StandaloneMapping(props) {
     isGroupedSampleData,
     application,
   };
+
+  if (isSalesforce) {
+    const { recordTypeId: salesforceMasterRecordTypeId, searchLayoutable } =
+      (salesforceMasterRecordTypeInfo && salesforceMasterRecordTypeInfo.data) ||
+      {};
+
+    if (searchLayoutable) {
+      mappingOptions.salesforceMasterRecordTypeId = salesforceMasterRecordTypeId;
+      mappingOptions.showSalesforceNetsuiteAssistant = true;
+    }
+  }
 
   if (isAssistant && assistantData) {
     if (!assistantLoaded) {
@@ -316,6 +337,7 @@ export default function StandaloneMapping(props) {
     <ImportMapping
       key={changeIdentifier}
       editorId={id}
+      onClose={onClose}
       disabled={disabled}
       extractFields={formattedExtractFields}
       generateFields={formattedGenerateFields}

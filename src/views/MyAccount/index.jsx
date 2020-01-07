@@ -61,9 +61,10 @@ const Transfers = loadable(() =>
     zIndex: 0,
   },
   rightElement: {
+    background: theme.palette.background.paper,
     flex: 4,
     textAlign: 'center',
-    padding: theme.spacing(1),
+    padding: theme.spacing(3),
   },
   activeLink: {
     fontWeight: 'bold',
