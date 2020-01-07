@@ -80,7 +80,7 @@ function TransformationDialog({ flowId, resource, onClose, isViewMode }) {
       scriptId={scriptId}
       rule={rule}
       entryFunction={entryFunction}
-      insertStubKey={undefined}
+      insertStubKey="transform"
       onClose={handleClose}
     />
   );

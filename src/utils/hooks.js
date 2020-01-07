@@ -13,6 +13,7 @@ export const importHooksList = [
   'postAggregate',
 ];
 
+export const externalScripts = ['transform', 'filter'];
 /*
  * Used for showing suggestions to select hook type in the application
  */
@@ -20,6 +21,7 @@ export const hooksList = [
   'preSavePage' /* Used for Exports */,
   ...importHooksList,
   'contentBasedFlowRouter' /* Used in AS2 Connection */,
+  ...externalScripts /* Used in transformation and filters Scripts */,
 ];
 
 export const importSuiteScriptHooksList = ['preMap', 'postMap', 'postSubmit'];
@@ -45,6 +47,8 @@ export const hooksLabelMap = {
   postAggregate: 'Post Aggregate',
   postResponseMap: 'Post Response Map',
   contentBasedFlowRouter: 'Content Based Flow Router',
+  transform: 'Transform',
+  filter: 'Filter',
 };
 export function getSupportedHooksForResource(resource) {
   let unSupportedHooks = [];
