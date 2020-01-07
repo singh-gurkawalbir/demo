@@ -416,10 +416,10 @@ const integrationApp = {
         integrationId,
         redirectTo,
       }),
-    requestCategoryMappingMetadata: (integrationId, flowId) =>
+    requestCategoryMappingMetadata: (integrationId, flowId, categoryId) =>
       action(
         actionTypes.INTEGRATION_APPS.SETTINGS.REQUEST_CATEGORY_MAPPING_METADATA,
-        { integrationId, flowId }
+        { integrationId, flowId, categoryId }
       ),
     receivedCategoryMappingMetadata: (integrationId, flowId, metadata) =>
       action(

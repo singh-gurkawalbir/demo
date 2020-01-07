@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Route, useRouteMatch, NavLink } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
-import { Typography, List, ListItem, Grid } from '@material-ui/core';
+import { List, ListItem, Grid, Link } from '@material-ui/core';
 import * as selectors from '../../../../../../reducers';
 import DrawerTitleBar from './TitleBar';
 import LoadResources from '../../../../../../components/LoadResources';
@@ -11,6 +11,10 @@ import actions from '../../../../../../actions';
 import Loader from '../../../../../../components/Loader';
 import Spinner from '../../../../../../components/Spinner';
 import Filters from './Filters';
+import PanelHeader from '../../../../common/PanelHeader';
+import AddIcon from '../../../../../../components/icons/TrashIcon';
+import Mappings from './MappingsWrapper';
+import IconTextButton from '../../../../../../components/IconTextButton';
 
 const drawerWidth = 200;
 const useStyles = makeStyles(theme => ({
@@ -53,6 +57,9 @@ const useStyles = makeStyles(theme => ({
     height: '100%',
     padding: theme.spacing(0, 0, 3, 0),
   },
+  header: {
+    background: 'blue',
+  },
   listItem: {
     color: theme.palette.text.primary,
   },
@@ -61,31 +68,75 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function CategoryMappings({ integrationId, flowId, sectionId }) {
+function CategoryMappings({
+  integrationId,
+  flowId,
+  sectionId,
+  extractFields,
+  generateFields,
+  metadata,
+}) {
   const [amazonAttributeFilter, setAmazonAttributeFilter] = useState('all');
   const [fieldMappingsFilter, setFieldMappingsFilter] = useState('mapped');
+  const classes = useStyles();
   const handleAmzonAttributeChange = useCallback(val => {
     setAmazonAttributeFilter(val);
   }, []);
   const handleFieldMappingsFilterChange = useCallback(val => {
     setFieldMappingsFilter(val);
   }, []);
-  const mappings = useSelector(state =>
-    selectors.mappingsForCategory(state, integrationId, flowId, {
-      sectionId,
-      amazonAttributeFilter,
-      fieldMappingsFilter,
-    })
-  );
+  const handleDelete = () => {};
+  const mappings =
+    useSelector(state => {
+      if (metadata) return metadata;
+
+      return selectors.mappingsForCategory(state, integrationId, flowId, {
+        sectionId,
+        amazonAttributeFilter,
+        fieldMappingsFilter,
+      });
+    }) || {};
+  const { fieldMappings = [], children = [] } = mappings;
 
   return (
     <div>
-      <Filters
-        handleAmzonAttributeChange={handleAmzonAttributeChange}
-        mappings={mappings}
-        handleFieldMappingsFilterChange={handleFieldMappingsFilterChange}
+      {!metadata && (
+        <Filters
+          handleAmzonAttributeChange={handleAmzonAttributeChange}
+          mappings={mappings}
+          handleFieldMappingsFilterChange={handleFieldMappingsFilterChange}
+        />
+      )}
+
+      <PanelHeader className={classes.header} title={mappings.name}>
+        <IconTextButton
+          data-test={`configure${mappings.id}`}
+          component={Link}
+          onClick={handleDelete}>
+          <AddIcon /> Delete
+        </IconTextButton>
+      </PanelHeader>
+      <Mappings
+        id={`${flowId}-${sectionId}`}
+        flowId={flowId}
+        integrationId={integrationId}
+        sectionId={sectionId}
+        extractFields={generateFields}
+        generateFields={extractFields}
+        mappings={{ fields: fieldMappings }}
       />
-      <Typography variant="body1">Category Mappings render here</Typography>
+      {children.length > 0 &&
+        children.map(child => (
+          <CategoryMappings
+            integrationId={integrationId}
+            flowId={flowId}
+            extractFields={extractFields}
+            generateFields={generateFields}
+            key={child.id}
+            metadata={child}
+            sectionId={child.id}
+          />
+        ))}
     </div>
   );
 }
@@ -94,7 +145,7 @@ function CategoryMappingDrawer({ integrationId }) {
   const dispatch = useDispatch();
   const classes = useStyles();
   const match = useRouteMatch();
-  const { flowId, sectionId } = match.params;
+  const { flowId, categoryId } = match.params;
   const flow =
     useSelector(state => selectors.resource(state, 'flows', flowId)) || {};
   const flowName = flow.name || flow._id;
@@ -111,6 +162,9 @@ function CategoryMappingDrawer({ integrationId }) {
   const metadata = useSelector(state =>
     selectors.categoryMapping(state, integrationId, flowId)
   );
+  const { extractsMetadata, generatesMetadata } = useSelector(state =>
+    selectors.categoryMappingMetadata(state, integrationId, flowId)
+  );
   const mappedCategories =
     useSelector(state =>
       selectors.mappedCategories(state, integrationId, flowId)
@@ -122,12 +176,20 @@ function CategoryMappingDrawer({ integrationId }) {
       dispatch(
         actions.integrationApp.settings.requestCategoryMappingMetadata(
           integrationId,
-          flowId
+          flowId,
+          categoryId
         )
       );
       setRequestedMetadata(true);
     }
-  }, [dispatch, flowId, integrationId, metadata, requestedMetadata]);
+  }, [
+    dispatch,
+    flowId,
+    integrationId,
+    metadata,
+    requestedMetadata,
+    categoryId,
+  ]);
 
   if (!integrationName) {
     return <LoadResources required resources="integrations" />;
@@ -164,8 +226,10 @@ function CategoryMappingDrawer({ integrationId }) {
             <Grid item className={classes.content}>
               <CategoryMappings
                 integrationId={integrationId}
+                extractFields={extractsMetadata}
+                generateFields={generatesMetadata}
                 flowId={flowId}
-                sectionId={sectionId}
+                sectionId={categoryId}
               />
             </Grid>
           </Grid>
@@ -184,7 +248,7 @@ export default function CategoryMappingDrawerRoute(props) {
   const match = useRouteMatch();
 
   return (
-    <Route exact path={`${match.url}/:flowId/utilitymapping/:sectionId`}>
+    <Route exact path={`${match.url}/:flowId/utilitymapping/:categoryId`}>
       <LoadResources required resources="exports,imports,flows,connections">
         <CategoryMappingDrawer {...props} parentUrl={match.url} />
       </LoadResources>

@@ -1159,6 +1159,43 @@ export function categoryMapping(state, integrationId, flowId) {
   );
 }
 
+export function categoryMappingMetadata(state, integrationId, flowId) {
+  const categoryMappingData =
+    fromSession.categoryMapping(
+      state && state.session,
+      integrationId,
+      flowId
+    ) || {};
+  const categoryMappingMetadata = {};
+  const { response } = categoryMappingData;
+
+  if (!response) {
+    return categoryMappingMetadata;
+  }
+
+  const extractsMetadata = response.find(
+    sec => sec.operation === 'extractsMetaData'
+  );
+  const generatesMetadata = response.find(
+    sec => sec.operation === 'generatesMetaData'
+  );
+
+  if (extractsMetadata) {
+    categoryMappingMetadata.extractsMetadata = extractsMetadata.data;
+  }
+
+  if (generatesMetadata) {
+    categoryMappingMetadata.generatesMetadata =
+      generatesMetadata.data &&
+      generatesMetadata.data.generatesMetaData &&
+      generatesMetadata.data.generatesMetaData.fields;
+    categoryMappingMetadata.relationshipData =
+      generatesMetadata.data && generatesMetadata.data.categoryRelationshipData;
+  }
+
+  return categoryMappingMetadata;
+}
+
 export function mappedCategories(state, integrationId, flowId) {
   const categoryMappingData =
     fromSession.categoryMapping(
@@ -1195,11 +1232,11 @@ export function mappingsForCategory(state, integrationId, flowId, filters) {
 
   if (response) {
     const mappingData = response.find(sec => sec.operation === 'mappingData');
+    const { recordMappings } =
+      mappingData && mappingData.data.mappingData.basicMappings;
 
-    if (mappingData) {
-      mappings = mappingData.data.mappingData.basicMappings.recordMappings.find(
-        item => item.id === sectionId
-      );
+    if (recordMappings) {
+      mappings = recordMappings.find(item => item.id === sectionId);
     }
   }
 

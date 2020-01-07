@@ -89,7 +89,11 @@ export function* getAddOnLicenseMetadata({ integrationId }) {
   }
 }
 
-export function* getCategoryMappingMetadata({ integrationId, flowId }) {
+export function* getCategoryMappingMetadata({
+  integrationId,
+  flowId,
+  categoryId,
+}) {
   const path = `/integrations/${integrationId}/utilities/loadMarketplaceCategoryMapping`;
   let response;
   const payload = {
@@ -108,7 +112,7 @@ export function* getCategoryMappingMetadata({ integrationId, flowId }) {
           {
             operation: 'generatesMetaData',
             params: {
-              categoryId: 'commonAttributes',
+              categoryId,
               categoryRelationshipData: true,
             },
           },
