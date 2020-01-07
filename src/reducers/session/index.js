@@ -18,6 +18,7 @@ import templates, * as fromTemplates from './templates';
 import oAuthAuthorize, * as fromOAuthAuthorize from './oAuthAuthorize';
 import resource, * as fromResource from './resource';
 import mappings, * as fromMappings from './mappings';
+import searchCriteria, * as fromSearchCriteria from './searchCriteria';
 import flows, * as fromFlows from './flows';
 import transfers, * as fromTransfers from './transfers';
 
@@ -41,6 +42,7 @@ export default combineReducers({
   templates,
   oAuthAuthorize,
   mappings,
+  searchCriteria,
   flows,
   transfers,
 });
@@ -94,6 +96,13 @@ export function mapping(state, id) {
 
 export function mappingSaveProcessTerminate(state, id) {
   return fromMappings.mappingSaveProcessTerminate(state && state.mappings, id);
+}
+
+export function getSearchCriteria(state, id) {
+  return fromSearchCriteria.getSearchCriteria(
+    state && state.searchCriteria,
+    id
+  );
 }
 
 export function processorRequestOptions(state, id) {
@@ -256,11 +265,17 @@ export function apiAccessToken(state, resourceId) {
   );
 }
 
-export function integrationAppSettingsFormState(state, integrationId, flowId) {
+export function integrationAppSettingsFormState(
+  state,
+  integrationId,
+  flowId,
+  sectionId
+) {
   return fromIntegrationApps.integrationAppSettingsFormState(
     state && state.integrationApps,
     integrationId,
-    flowId
+    flowId,
+    sectionId
   );
 }
 
@@ -325,6 +340,10 @@ export function integratorLicenseActionMessage(state) {
 
 export function resourceReferences(state) {
   return fromResource.resourceReferences(state && state.resource);
+}
+
+export function getNumEnabledFlows(state) {
+  return fromResource.getNumEnabledFlows(state && state.resource);
 }
 
 export function assistantData(state, { adaptorType, assistant }) {

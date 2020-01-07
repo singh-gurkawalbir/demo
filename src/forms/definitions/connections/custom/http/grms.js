@@ -7,7 +7,7 @@ export default {
     '/http/mediaType': 'json',
     '/http/baseURI': 'https://sandbox-api.globalrms.com/api/',
     '/http/auth/token/location': 'header',
-    '/http/auth/token/scheme': '',
+    '/http/auth/token/scheme': ' ',
     '/http/auth/token/headerName': 'AccessToken',
     '/http/ping/method': 'GET',
     '/http/ping/relativeURI': '/ratings',

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Select from 'react-select';
 import { makeStyles, useTheme, fade } from '@material-ui/core/styles';
 import { FormControl } from '@material-ui/core';
+import ErroredMessageComponent from './ErroredMessageComponent';
 
 // TODO: Aditya Replace the component with DynaSelectApplication
 const useStyles = makeStyles(theme => ({
@@ -48,6 +49,7 @@ export default function DynaTypeableSelect(props) {
     placeholder,
     onBlur,
     labelName,
+    removeHelperText = false,
     valueName,
     options = [],
   } = props;
@@ -119,7 +121,7 @@ export default function DynaTypeableSelect(props) {
       width: '100%',
       height: 50,
       border: '1px solid',
-      borderColor: theme.palette.divider,
+      borderColor: theme.palette.secondary.lightest,
       borderRadius: '2px',
       backgroundColor: theme.palette.background.paper,
       alignItems: 'center',
@@ -218,6 +220,7 @@ export default function DynaTypeableSelect(props) {
         options={suggestions}
         filterOption={filterOption}
       />
+      {!removeHelperText && <ErroredMessageComponent {...props} />}
     </FormControl>
   );
 }

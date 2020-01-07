@@ -1,14 +1,12 @@
 import { isNewId } from '../../../utils/resource';
 
 export default {
-  preSave: (formValues, resource) => {
+  preSave: formValues => {
     const retValues = { ...formValues };
+    const lookups = retValues['/rest/lookups'];
     const lookup =
-      resource.rest &&
-      resource.rest.lookups &&
-      resource.rest.lookups.find(
-        lookup => lookup.name === retValues['/rest/existingDataId']
-      );
+      lookups &&
+      lookups.find(l => l.name === retValues['/rest/existingDataId']);
 
     if (retValues['/sampleData'] === '') {
       retValues['/sampleData'] = undefined;
@@ -161,6 +159,9 @@ export default {
       retValues['/rest/body'] = retValues['/rest/body']
         ? [retValues['/rest/body']]
         : [];
+      retValues['/rest/ignoreLookupName'] = undefined;
+      retValues['/rest/ignoreExtract'] = undefined;
+      retValues['/rest/existingDataId'] = undefined;
     }
 
     delete retValues['/inputMode'];
@@ -718,6 +719,10 @@ export default {
           is: ['createandignore'],
         },
         {
+          field: 'rest.method',
+          is: ['COMPOSITE'],
+        },
+        {
           field: 'inputMode',
           is: ['records'],
         },
@@ -731,6 +736,10 @@ export default {
         {
           field: 'rest.compositeType',
           is: ['updateandignore'],
+        },
+        {
+          field: 'rest.method',
+          is: ['COMPOSITE'],
         },
         {
           field: 'inputMode',

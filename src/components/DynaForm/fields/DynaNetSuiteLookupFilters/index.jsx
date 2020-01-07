@@ -20,6 +20,14 @@ const useStyles = makeStyles(theme => ({
     minWidth: 0,
     padding: 0,
   },
+  loading: {
+    flexDirection: `row !important`,
+    alignItems: 'center',
+    padding: theme.spacing(1, 0),
+  },
+  heading: {
+    paddingRight: theme.spacing(1),
+  },
 }));
 
 export default function DynaNetSuiteLookupFilters(props) {
@@ -96,10 +104,12 @@ export default function DynaNetSuiteLookupFilters(props) {
 
   if (!filters) {
     return (
-      <Typography>
-        Loading Search Filters.
-        <Spinner />
-      </Typography>
+      <div className={classes.loading}>
+        <Typography className={classes.heading}>
+          Loading Search Filters.
+        </Typography>
+        <Spinner size={24} color="primary" />
+      </div>
     );
   }
 

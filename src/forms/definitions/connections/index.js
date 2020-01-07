@@ -12,6 +12,7 @@ import mongodb from './mongodb';
 import custom from './custom';
 import newImport from './new';
 import subForms from './subForms';
+import dynamodb from './dynamodb';
 
 export default {
   new: newImport,
@@ -28,4 +29,5 @@ export default {
   mongodb,
   custom,
   subForms,
+  dynamodb,
 };

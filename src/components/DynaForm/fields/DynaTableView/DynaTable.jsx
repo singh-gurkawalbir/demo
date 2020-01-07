@@ -44,6 +44,13 @@ const useStyles = makeStyles(theme => ({
   rowContainer: {
     display: 'flex',
   },
+  header: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  label: {
+    paddingRight: theme.spacing(1),
+  },
 }));
 
 function reducer(state, action) {
@@ -266,13 +273,15 @@ export const DynaTable = props => {
             <Grid container spacing={2}>
               {optionsMap.map(r => (
                 <Grid key={r.id} item xs={r.space || true}>
-                  <span>{r.label || r.name}</span>
-                  {r.supportsRefresh && !isLoading && (
-                    <RefreshIcon onClick={onFetchResource(r.id)} />
-                  )}
-                  {r.supportsRefresh && isLoading === r.id && (
-                    <Spinner size={24} />
-                  )}
+                  <div className={classes.header}>
+                    <span className={classes.label}>{r.label || r.name}</span>
+                    {r.supportsRefresh && !isLoading && (
+                      <RefreshIcon onClick={onFetchResource(r.id)} />
+                    )}
+                    {r.supportsRefresh && isLoading === r.id && (
+                      <Spinner size={24} />
+                    )}
+                  </div>
                 </Grid>
               ))}
               <Grid key="delete_button_header" item />
@@ -288,7 +297,7 @@ export const DynaTable = props => {
           {tableData.map(arr => (
             <Grid item className={classes.rowContainer} key={arr.row}>
               <Grid container direction="row" spacing={2}>
-                {arr.values.map(r => (
+                {arr.values.map((r, index) => (
                   <Grid
                     item
                     key={`${r.readOnly ? r.value || r.id : r.id}`}
@@ -297,7 +306,8 @@ export const DynaTable = props => {
                       <DynaSelect
                         id={`suggest-${r.id}-${arr.row}`}
                         value={r.value}
-                        placeholder={r.id}
+                        isValid={!(optionsMap[index].required && !r.value)}
+                        errorMessages="Please select a value"
                         options={r.options || []}
                         onFieldChange={(id, value) => {
                           handleUpdate(arr.row, value, r.id);
@@ -316,7 +326,8 @@ export const DynaTable = props => {
                           value={r.value}
                           labelName="label"
                           disabled={r.readOnly}
-                          placeholder={r.id}
+                          isValid={!(optionsMap[index].required && !r.value)}
+                          errorMessages="Please select a value"
                           inputType={r.type}
                           valueName="value"
                           options={r.options}
