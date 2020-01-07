@@ -13,6 +13,9 @@ import LockIcon from '../../../../../../components/icons/LockIcon';
 import actions from '../../../../../../actions';
 import DynaTypeableSelect from '../../../../../../components/DynaForm/fields/DynaTypeableSelect';
 import AddIcon from '../../../../../../components/icons/AddIcon';
+import ArrowRightIcon from '../../../../../../components/icons/ArrowRightIcon';
+import ArrowLeftIcon from '../../../../../../components/icons/ArrowLeftIcon';
+import ArrowDownIcon from '../../../../../../components/icons/ArrowDownIcon';
 
 // TODO Azhar style header
 const useStyles = makeStyles(theme => ({
@@ -147,11 +150,32 @@ export default function ImportMapping(props) {
     handleFieldUpdate(mapping.index, { target: { value: val } }, 'generate');
   };
 
-  const ValueContainer = ({ children, ...props }) => (
-    <components.ValueContainer {...props}>
-      <AddIcon /> {children}
-    </components.ValueContainer>
-  );
+  const ValueContainer = ({ children, ...props }) => {
+    const value = props.selectProps.inputValue;
+    const { filterType } =
+      props.options.find(option => option.label === value) || {};
+
+    return (
+      <components.ValueContainer {...props}>
+        {(() => {
+          // TODO: Azhar Replace these arrow icons with new icons for ["Preferred", "optional", "conditional", "required"]
+          switch (filterType) {
+            case 'preferred':
+              return <ArrowDownIcon />;
+            case 'optional':
+              return <ArrowLeftIcon />;
+            case 'conditional':
+              return <ArrowRightIcon />;
+            case 'required':
+              return <AddIcon />;
+            default:
+              return null;
+          }
+        })()}
+        {children}
+      </components.ValueContainer>
+    );
+  };
 
   return (
     <div
@@ -163,11 +187,35 @@ export default function ImportMapping(props) {
             <div className={classes.innerRow}>
               <div
                 className={clsx(classes.childHeader, classes.childRow, {
+                  [classes.disableChildRow]: mapping.isRequired || disabled,
+                })}>
+                <DynaTypeableSelect
+                  key={`generate-${editorId}-${initChangeIdentifier}-${mapping.rowIdentifier}`}
+                  id={`fieldMappingGenerate-${mapping.index}`}
+                  value={mapping.generate}
+                  labelName="name"
+                  valueName="id"
+                  components={{
+                    ValueContainer,
+                  }}
+                  options={generateFields}
+                  disabled={mapping.isRequired || disabled}
+                  onBlur={handleGenerateUpdate(mapping)}
+                />
+                {mapping.isRequired && (
+                  <Tooltip
+                    title="This field is required by the application you are importing to"
+                    placement="top">
+                    <span className={classes.lockIcon}>
+                      <LockIcon />
+                    </span>
+                  </Tooltip>
+                )}
+              </div>
+              <div
+                className={clsx(classes.childHeader, classes.childRow, {
                   [classes.disableChildRow]: mapping.isNotEditable || disabled,
                 })}>
-                {
-                  // TODO: Azhar change this icon to one of preferred, conditional, optional, required
-                }
                 <DynaTypeableSelect
                   key={`extract-${editorId}-${initChangeIdentifier}-${mapping.rowIdentifier}`}
                   id={`fieldMappingExtract-${mapping.index}`}
@@ -176,9 +224,7 @@ export default function ImportMapping(props) {
                   value={mapping.extract || mapping.hardCodedValueTmp}
                   options={extractFields}
                   disabled={mapping.isNotEditable || disabled}
-                  components={{
-                    ValueContainer,
-                  }}
+                  components={{ ItemSeperator: () => null }}
                   onBlur={(id, evt) => {
                     handleFieldUpdate(
                       mapping.index,
@@ -192,31 +238,6 @@ export default function ImportMapping(props) {
                   <span className={classes.lockIcon}>
                     <LockIcon />
                   </span>
-                )}
-              </div>
-              <div
-                className={clsx(classes.childHeader, classes.childRow, {
-                  [classes.disableChildRow]: mapping.isRequired || disabled,
-                })}>
-                <DynaTypeableSelect
-                  key={`generate-${editorId}-${initChangeIdentifier}-${mapping.rowIdentifier}`}
-                  id={`fieldMappingGenerate-${mapping.index}`}
-                  value={mapping.generate}
-                  labelName="name"
-                  valueName="id"
-                  components={{ ItemSeperator: () => null }}
-                  options={generateFields}
-                  disabled={mapping.isRequired || disabled}
-                  onBlur={handleGenerateUpdate(mapping)}
-                />
-                {mapping.isRequired && (
-                  <Tooltip
-                    title="This field is required by the application you are importing to"
-                    placement="top">
-                    <span className={classes.lockIcon}>
-                      <LockIcon />
-                    </span>
-                  </Tooltip>
                 )}
               </div>
               <div>

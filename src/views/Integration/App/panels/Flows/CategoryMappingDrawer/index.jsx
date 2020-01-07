@@ -171,8 +171,8 @@ function CategoryMappings({
         flowId={flowId}
         integrationId={integrationId}
         sectionId={sectionId}
-        extractFields={generateFields}
-        generateFields={extractFields}
+        extractFields={extractFields}
+        generateFields={generateFields}
         mappings={{ fields: fieldMappings }}
       />
       {children.length > 0 &&
@@ -180,8 +180,6 @@ function CategoryMappings({
           <CategoryMappings
             integrationId={integrationId}
             flowId={flowId}
-            extractFields={extractFields}
-            generateFields={generateFields}
             key={child.id}
             metadata={child}
             sectionId={child.id}

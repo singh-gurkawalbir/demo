@@ -60,6 +60,7 @@ export default function DynaTypeableSelect(props) {
   const suggestions = options.map(option => ({
     label: option[labelName],
     value: option[valueName],
+    filterType: option.filterType,
   }));
   const [inputState, setInputState] = useState({
     inputValue: value || '',
