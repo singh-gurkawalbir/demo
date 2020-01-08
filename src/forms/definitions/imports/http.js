@@ -8,9 +8,11 @@ export default {
       lookups &&
       lookups.find(l => l.name === retValues['/http/existingDataId']);
 
-    retValues['/http/response/failValues'] = [
-      retValues['/http/response/failValues'],
-    ];
+    if (retValues['/http/response/failValues']) {
+      retValues['/http/response/failValues'] = [
+        retValues['/http/response/failValues'],
+      ];
+    }
 
     if (retValues['/inputMode'] === 'blob') {
       retValues['/http/method'] = retValues['/http/blobMethod'];
