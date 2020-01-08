@@ -2,7 +2,11 @@ import { FormFragment } from 'react-forms-processor/dist';
 import { makeStyles } from '@material-ui/core/styles';
 import CollapsedComponents from './CollapsedComponents';
 import ColumnComponents from './ColumnComponents';
-import { TabIAComponent, TabComponentSimple } from './TabComponent';
+import {
+  TabIAComponent,
+  TabComponentSimple,
+  TabComponentWithoutSave,
+} from './TabComponent';
 
 // TODO: Checked with little change
 const useStyles = makeStyles({
@@ -61,6 +65,8 @@ export default function FormGenerator(props) {
     ConvertedContainer = TabIAComponent;
   } else if (type === 'tab') {
     ConvertedContainer = TabComponentSimple;
+  } else if (type === 'tabWithoutSave') {
+    ConvertedContainer = TabComponentWithoutSave;
   } else {
     return (
       <div className={classes.fieldsContainer}>

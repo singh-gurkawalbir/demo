@@ -119,3 +119,11 @@ export function TabComponentSimple(props) {
     </TabComponent>
   );
 }
+
+export function TabComponentWithoutSave(props) {
+  return (
+    <TabComponent {...props}>
+      <FormGenerator />
+    </TabComponent>
+  );
+}

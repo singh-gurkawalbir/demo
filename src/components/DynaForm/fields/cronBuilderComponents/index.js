@@ -1,7 +1,7 @@
-import GroupedButton from './GroupedButton';
-import Slider from './Slider';
+import groupedButton from './DynaGroupedButton';
+import slider from './DynaSlider';
 
 export default {
-  groupedButton: GroupedButton,
-  slider: Slider,
+  groupedButton,
+  slider,
 };
