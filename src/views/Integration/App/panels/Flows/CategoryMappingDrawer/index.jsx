@@ -7,7 +7,6 @@ import { List, ListItem, Grid, Typography } from '@material-ui/core';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import * as selectors from '../../../../../../reducers';
 import DrawerTitleBar from './TitleBar';
 import LoadResources from '../../../../../../components/LoadResources';
@@ -21,6 +20,8 @@ import Mappings from './MappingsWrapper';
 import IconTextButton from '../../../../../../components/IconTextButton';
 import ApplicationImg from '../../../../../../components/icons/ApplicationImg';
 import RefreshIcon from '../../../../../../components/icons/RefreshIcon';
+import ArrowUpIcon from '../../../../../../components/icons/ArrowUpIcon';
+import ArrowDownIcon from '../../../../../../components/icons/ArrowDownIcon';
 
 const emptySet = [];
 const drawerWidth = 200;
@@ -79,6 +80,10 @@ const useStyles = makeStyles(theme => ({
     background: theme.palette.background.paper2,
     borderRight: `solid 1px ${theme.palette.secondary.lightest}`,
     paddingTop: theme.spacing(2),
+  },
+  deleteIcon: {
+    position: 'absolute',
+    right: '20px',
   },
   content: {
     width: '100%',
@@ -162,13 +167,13 @@ function CategoryMappings({
         onChange={handleChange}
         className={isRoot ? '' : classes.childExpansionPanel}>
         <ExpansionPanelSummary
-          expandIcon={<ExpandMoreIcon />}
           aria-controls="panel1bh-content"
           id="panel1bh-header">
+          {expanded ? <ArrowUpIcon /> : <ArrowDownIcon />}
           <Typography className={classes.secondaryHeading}>
             {name || mappings.name}
           </Typography>
-          <TrashIcon className={classes.filter} onClick={handleDelete} />
+          <TrashIcon className={classes.deleteIcon} onClick={handleDelete} />
         </ExpansionPanelSummary>
         <ExpansionPanelDetails>
           <div className={classes.fullWidth}>
