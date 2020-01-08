@@ -259,7 +259,7 @@ function DynaExportPanel(props) {
         </div>
       </div>
       {resourceSampleData.status === 'requested' && <Spinner />}
-      {resourceSampleData.status === 'error' && (
+      {resourceSampleData.status === 'received' && (
         <div>
           <div className={classes.textToggleContainer}>
             <TextToggle
@@ -310,7 +310,7 @@ function DynaExportPanel(props) {
           </div>
         </div>
       )}
-      {resourceSampleData.status === 'received' && (
+      {resourceSampleData.status === 'error' && (
         <div className={classes.sampleDataWrapper}>
           <div className={classes.sampleDataContainer}>
             <pre>{JSON.stringify(resourceSampleData.error, null, 2)}</pre>
