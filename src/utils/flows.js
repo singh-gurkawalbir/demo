@@ -117,8 +117,16 @@ const isActionUsed = (resource, flowNode, action) => {
         pageProcessorHooks.postResponseMap._scriptId
       );
 
-    case actionsMap.outputFilter:
-      return !!(filter.rules && filter.rules.length);
+    case actionsMap.outputFilter: {
+      const { type, expression = {}, script = {} } = filter;
+
+      if (type === 'expression') {
+        return !!(expression.rules && expression.rules.length);
+      }
+
+      // when filter is of type 'script', check for scriptId
+      return !!script._scriptId;
+    }
 
     case actionsMap.proceedOnFailure:
       return !!proceedOnFailure;
