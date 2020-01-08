@@ -335,24 +335,21 @@ export default {
       },
     ],
   },
+
   'http._asyncHelperId': {
-    type: 'select',
     label: 'Async Helper',
-    options: [
-      {
-        // To Do statistically instead of dynamic
-        items: [{ label: 'NewAsynchHelper', value: 'newasynchhelper' }],
-      },
-    ],
+    type: 'selectresource',
+    resourceType: 'asyncHelpers',
+    appTypeIsStatic: true,
+    options: { appType: 'Async Helpers' },
+    allowNew: true,
+    allowEdit: true,
     visibleWhenAll: [
-      {
-        field: 'http.configureAsyncHelper',
-        is: [true],
-      },
       {
         field: 'inputMode',
         is: ['records'],
       },
+      { field: 'configureAsyncHelper', is: [true] },
     ],
   },
 };
