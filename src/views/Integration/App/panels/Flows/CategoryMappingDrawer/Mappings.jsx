@@ -21,7 +21,6 @@ import ArrowDownIcon from '../../../../../../components/icons/ArrowDownIcon';
 const useStyles = makeStyles(theme => ({
   root: {
     overflowY: 'off',
-    height: '100%',
   },
   header: {
     display: 'grid',

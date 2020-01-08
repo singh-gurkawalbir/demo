@@ -3,7 +3,11 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Route, useRouteMatch, NavLink } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
-import { List, ListItem, Grid, Link, Typography } from '@material-ui/core';
+import { List, ListItem, Grid, Typography } from '@material-ui/core';
+import ExpansionPanel from '@material-ui/core/ExpansionPanel';
+import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
+import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import * as selectors from '../../../../../../reducers';
 import DrawerTitleBar from './TitleBar';
 import LoadResources from '../../../../../../components/LoadResources';
@@ -12,7 +16,7 @@ import Loader from '../../../../../../components/Loader';
 import Spinner from '../../../../../../components/Spinner';
 import Filters from './Filters';
 import PanelHeader from '../../../../common/PanelHeader';
-import AddIcon from '../../../../../../components/icons/TrashIcon';
+import TrashIcon from '../../../../../../components/icons/TrashIcon';
 import Mappings from './MappingsWrapper';
 import IconTextButton from '../../../../../../components/IconTextButton';
 import ApplicationImg from '../../../../../../components/icons/ApplicationImg';
@@ -30,12 +34,20 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.background.default,
     zIndex: theme.zIndex.drawer + 1,
   },
+  mappingContainer: {
+    padding: '0 0 10px 20px',
+    border: 'solid 1px',
+    borderColor: theme.palette.background.default,
+  },
   refreshButton: {
     marginLeft: theme.spacing(1),
     marginRight: 0,
   },
   filter: {
     float: 'right',
+  },
+  fullWidth: {
+    width: '100%',
   },
   settingsForm: {
     maxHeight: `calc(100vh - 120px)`,
@@ -49,8 +61,9 @@ const useStyles = makeStyles(theme => ({
     position: 'relative',
   },
   mappingHeader: {
-    margin: theme.spacing(2),
-    background: theme.palette.secondary.lightest,
+    padding: theme.spacing(1),
+    marginLeft: '20px',
+    background: theme.palette.background.default,
   },
   toolbar: theme.mixins.toolbar,
   root: {
@@ -58,8 +71,12 @@ const useStyles = makeStyles(theme => ({
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
   },
+  childExpansionPanel: {
+    background: theme.palette.background.default,
+  },
   subNav: {
     minWidth: 200,
+    background: theme.palette.background.paper2,
     borderRight: `solid 1px ${theme.palette.secondary.lightest}`,
     paddingTop: theme.spacing(2),
   },
@@ -90,6 +107,7 @@ function CategoryMappings({
   const [requestedGenerateFields, setRequestedGenerateFields] = useState(false);
   const dispatch = useDispatch();
   const classes = useStyles();
+  const [expanded, setExpanded] = useState(isRoot);
   const handleDelete = () => {};
   const { fields: generateFields, name } =
     useSelector(state =>
@@ -106,8 +124,6 @@ function CategoryMappings({
       });
     }) || {};
   const { fieldMappings = [], children = [] } = mappings;
-  const isGeneratesLoading = false;
-  const refreshGenerateFields = () => {};
 
   useEffect(() => {
     setRequestedGenerateFields(false);
@@ -135,75 +151,51 @@ function CategoryMappings({
     isRoot,
   ]);
 
-  return (
-    <div>
-      {/* {isRoot && (
-        <Filters
-          handleAmzonAttributeChange={handleAmzonAttributeChange}
-          mappings={mappings}
-          handleFieldMappingsFilterChange={handleFieldMappingsFilterChange}
-        />
-      )} */}
+  const handleChange = () => {
+    setExpanded(!expanded);
+  };
 
-      <PanelHeader className={classes.header} title={name || mappings.name}>
-        <IconTextButton
-          data-test={`configure${mappings.id}`}
-          component={Link}
-          onClick={handleDelete}>
-          <AddIcon /> Delete
-        </IconTextButton>
-      </PanelHeader>
-      {isRoot && (
-        <Grid container className={classes.mappingHeader}>
-          <Grid item xs={6}>
-            <Typography variant="h5" className={classes.childHeader}>
-              Amazon <ApplicationImg assistant="amazonmws" size="small" />
-            </Typography>
-          </Grid>
-          <Grid item xs={6}>
-            <Typography variant="h5" className={classes.childHeader}>
-              NetSuite
-              {!isGeneratesLoading && (
-                <IconTextButton
-                  variant="contained"
-                  color="secondary"
-                  className={classes.refreshButton}
-                  onClick={refreshGenerateFields}
-                  data-test="refreshGenerates">
-                  Refresh <RefreshIcon />
-                </IconTextButton>
-              )}
-              {isGeneratesLoading && (
-                <span className={classes.spinner}>
-                  <Spinner size={24} color="primary" />
-                </span>
-              )}
-              <ApplicationImg assistant="netsuite" />
-            </Typography>
-          </Grid>
-        </Grid>
-      )}
-      <Mappings
-        id={`${flowId}-${sectionId}`}
-        flowId={flowId}
-        integrationId={integrationId}
-        sectionId={sectionId}
-        extractFields={extractFields}
-        generateFields={generateFields || emptySet}
-        mappings={{ fields: fieldMappings }}
-      />
-      {children.length > 0 &&
-        children.map(child => (
-          <CategoryMappings
-            integrationId={integrationId}
-            flowId={flowId}
-            key={child.id}
-            isRoot={false}
-            generateFields={generateFields || emptySet}
-            metadata={child}
-            sectionId={child.id}
-          />
-        ))}
+  return (
+    <div className={isRoot ? classes.mappingContainer : ''}>
+      <ExpansionPanel
+        expanded={expanded}
+        onChange={handleChange}
+        className={isRoot ? '' : classes.childExpansionPanel}>
+        <ExpansionPanelSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="panel1bh-content"
+          id="panel1bh-header">
+          <Typography className={classes.secondaryHeading}>
+            {name || mappings.name}
+          </Typography>
+          <TrashIcon className={classes.filter} onClick={handleDelete} />
+        </ExpansionPanelSummary>
+        <ExpansionPanelDetails>
+          <div className={classes.fullWidth}>
+            <Mappings
+              id={`${flowId}-${sectionId}`}
+              flowId={flowId}
+              integrationId={integrationId}
+              sectionId={sectionId}
+              extractFields={extractFields}
+              generateFields={generateFields || emptySet}
+              mappings={{ fields: fieldMappings }}
+            />
+            {children.length > 0 &&
+              children.map(child => (
+                <CategoryMappings
+                  integrationId={integrationId}
+                  flowId={flowId}
+                  key={child.id}
+                  isRoot={false}
+                  generateFields={generateFields || emptySet}
+                  metadata={child}
+                  sectionId={child.id}
+                />
+              ))}
+          </div>
+        </ExpansionPanelDetails>
+      </ExpansionPanel>
     </div>
   );
 }
@@ -244,7 +236,12 @@ function CategoryMappingDrawer({ integrationId }) {
   const handleFieldMappingsFilterChange = useCallback(val => {
     setFieldMappingsFilter(val);
   }, []);
+  const currentSectionLabel =
+    (mappedCategories.find(category => category.id === categoryId) || {})
+      .name || categoryId;
+  const isGeneratesLoading = false;
   const handleClose = () => {};
+  const refreshGenerateFields = () => {};
 
   useEffect(() => {
     if (!metadata && !requestedMetadata) {
@@ -298,12 +295,45 @@ function CategoryMappingDrawer({ integrationId }) {
               </List>
             </Grid>
             <Grid item className={classes.content}>
-              <Filters
-                handleAmzonAttributeChange={handleAmzonAttributeChange}
-                handleFieldMappingsFilterChange={
-                  handleFieldMappingsFilterChange
-                }
-              />
+              <PanelHeader
+                className={classes.header}
+                title={currentSectionLabel}>
+                <Filters
+                  handleAmzonAttributeChange={handleAmzonAttributeChange}
+                  handleFieldMappingsFilterChange={
+                    handleFieldMappingsFilterChange
+                  }
+                />
+              </PanelHeader>
+
+              <Grid container className={classes.mappingHeader}>
+                <Grid item xs={6}>
+                  <Typography variant="h5" className={classes.childHeader}>
+                    Amazon <ApplicationImg assistant="amazonmws" size="small" />
+                  </Typography>
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography variant="h5" className={classes.childHeader}>
+                    NetSuite
+                    {!isGeneratesLoading && (
+                      <IconTextButton
+                        variant="contained"
+                        color="secondary"
+                        className={classes.refreshButton}
+                        onClick={refreshGenerateFields}
+                        data-test="refreshGenerates">
+                        Refresh <RefreshIcon />
+                      </IconTextButton>
+                    )}
+                    {isGeneratesLoading && (
+                      <span className={classes.spinner}>
+                        <Spinner size={24} color="primary" />
+                      </span>
+                    )}
+                    <ApplicationImg assistant="netsuite" />
+                  </Typography>
+                </Grid>
+              </Grid>
               <CategoryMappings
                 integrationId={integrationId}
                 extractFields={extractsMetadata}
