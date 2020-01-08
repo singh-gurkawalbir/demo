@@ -450,5 +450,5 @@ export const userSagas = [
     actionTypes.LICENSE_NUM_ENABLED_FLOWS_REQUEST,
     requestNumEnabledFlows
   ),
-  takeEvery(actionTypes.LICENSE_UPDATE_REQUEST, requestLicenseUpdate),
+  takeLatest(actionTypes.LICENSE_UPDATE_REQUEST, requestLicenseUpdate),
 ];

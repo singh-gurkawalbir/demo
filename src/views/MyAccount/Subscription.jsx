@@ -1,11 +1,12 @@
-import { Fragment, useCallback, useEffect } from 'react';
+import { Fragment, useCallback, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography, LinearProgress } from '@material-ui/core';
+import { Typography, LinearProgress, Drawer } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
+import DrawerTitleBar from '../../components/drawer/TitleBar';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -77,6 +78,27 @@ const useStyles = makeStyles(theme => ({
   description: {
     marginTop: theme.spacing(2),
   },
+
+  drawerPaper: {
+    width: 600,
+    padding: theme.spacing(1),
+  },
+
+  content: {
+    flexGrow: 1,
+    backgroundColor: theme.palette.background.default,
+    padding: theme.spacing(3),
+  },
+  link: {
+    marginTop: theme.spacing(2),
+    fontSize: theme.spacing(2),
+  },
+
+  footer: {
+    marginTop: theme.spacing(3),
+    display: 'flex',
+    flexDirection: 'column',
+  },
 }));
 
 export default function Subscription() {
@@ -85,14 +107,21 @@ export default function Subscription() {
   const licenseActionDetails = useSelector(state =>
     selectors.integratorLicenseWithMetadata(state)
   );
+  const integratorLicense = useSelector(state =>
+    selectors.integratorLicense(state)
+  );
+  const diyLicense = useSelector(state => selectors.diyLicense(state));
+  const [showStartFreeDialog, setShowStartFreeDialog] = useState(false);
   const classes = useStyles();
   const getNumEnabledFlows = useCallback(() => {
     dispatch(actions.user.org.accounts.requestNumEnabledFlows());
   }, [dispatch]);
 
   useEffect(() => {
-    getNumEnabledFlows();
-  }, [getNumEnabledFlows]);
+    if (integratorLicense) {
+      getNumEnabledFlows();
+    }
+  }, [getNumEnabledFlows, integratorLicense]);
   const { numEnabledPaidFlows, numEnabledSandboxFlows } = useSelector(
     state => selectors.getNumEnabledFlows(state),
     (left, right) =>
@@ -125,13 +154,16 @@ export default function Subscription() {
     );
   }
 
-  const onStartFreeTrialClick = useCallback(() => {
+  const onStartFreeTrialInterestedClick = useCallback(() => {
     dispatch(
       actions.analytics.gainsight.trackEvent('GO_UNLIMITED_BUTTON_CLICKED')
     );
 
     return dispatch(actions.user.org.accounts.requestTrialLicense());
   }, [dispatch]);
+  const onStartFreeTrialClick = useCallback(() => {
+    setShowStartFreeDialog(true);
+  }, []);
   const onRequestSubscriptionClick = useCallback(() => {
     dispatch(
       actions.analytics.gainsight.trackEvent('GO_UNLIMITED_BUTTON_CLICKED')
@@ -162,204 +194,290 @@ export default function Subscription() {
       enquesnackbar({ message: integratorLicenseActionMessage });
     }
   }, [enquesnackbar, integratorLicenseActionMessage]);
+  const onDrawerClose = useCallback(() => {
+    setShowStartFreeDialog(false);
+  }, []);
 
   return (
     <Fragment>
-      <div className={classes.root}>
-        {licenseActionDetails && licenseActionDetails.isNone && (
+      <Drawer
+        anchor="right"
+        open={showStartFreeDialog}
+        classes={{
+          paper: classes.drawerPaper,
+        }}>
+        <DrawerTitleBar
+          onClose={onDrawerClose}
+          title="Upgrade your subscription"
+        />
+        <div className={classes.content}>
+          <Typography variant="body1" className={classes.block}>
+            You are currently on the Free Edition of integrator.io, which gives
+            you one active flow at any given time. Upgrade to one of our paid
+            subscriptions and unlock multiple flow activation to fulfill all
+            your integration needs.
+          </Typography>
+
+          <div className={classes.footer}>
+            <div>
+              <Button
+                variant="outlined"
+                color="primary"
+                onClick={onStartFreeTrialInterestedClick}>
+                YES, I &apos;M INTERESTED
+              </Button>
+            </div>
+            <a
+              className={classes.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              data-test="learnmore-link"
+              href="https://www.celigo.com/ipaas-integration-platform/#Pricing">
+              Learn more about our integrator.io premium packages
+              <span className="arrow-box arrow-right arrow-box-20" />
+            </a>
+          </div>
+        </div>
+      </Drawer>
+      {diyLicense && (
+        <div className={classes.root}>
           <div className={classes.block}>
-            <Typography
-              varaint="h2"
-              color="primary"
-              className={classes.headingMaster}>
-              You currently dont have any subscription.
+            <Typography variant="h5" className={classes.subHeading}>
+              Details:
             </Typography>
             <div className={classes.wrapper}>
-              <Button
-                onClick={onStartFreeTrialClick}
-                variant="outlined"
-                color="primary">
-                Go Unlimited For 30 Days!
-              </Button>
-              <Typography varaint="body2" className={classes.description}>
-                Start a 30 day free trial to explore the full capabilities of
-                integrator.io. At the end of the trial, you get to keep one
-                active flow forever.
+              <Typography variant="h3">
+                Edition: {diyLicense.usageTierName}
               </Typography>
+              <ul className={classes.itemsList}>
+                <li>
+                  <span className={classes.bold}>Expiration Date:</span>{' '}
+                  {diyLicense.expirationDate}
+                </li>
+              </ul>
             </div>
           </div>
-        )}
-        {licenseActionDetails && (
-          <Fragment>
-            <Typography variant="h4" className={classes.heading}>
-              Subscription
+          <div className={classes.block}>
+            <Typography variant="h5" className={classes.subHeading}>
+              Current Usage:
             </Typography>
+            <div className={classes.linearProgressWrapper}>
+              <LinearProgress
+                color="primary"
+                value={diyLicense.currentUsage.usagePercent}
+                variant="determinate"
+                thickness={10}
+                className={classes.progressBar}
+              />
+            </div>
+            <div>
+              <span className={classes.bold}>
+                {diyLicense.currentUsage.usedHours} Hour
+                {diyLicense.currentUsage.usedHours === 1 ? '' : 's'}
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
+      {integratorLicense && (
+        <div className={classes.root}>
+          {licenseActionDetails && licenseActionDetails.isNone && (
             <div className={classes.block}>
-              <Typography variant="h5" className={classes.subHeading}>
-                Details
+              <Typography
+                varaint="h2"
+                color="primary"
+                className={classes.headingMaster}>
+                You currently dont have any subscription.
               </Typography>
               <div className={classes.wrapper}>
-                <Typography variant="h3">
-                  {licenseActionDetails.subscriptionName} Plan
+                <Button
+                  onClick={onStartFreeTrialClick}
+                  variant="outlined"
+                  color="primary">
+                  Go Unlimited For 30 Days!
+                </Button>
+                <Typography varaint="body2" className={classes.description}>
+                  Start a 30 day free trial to explore the full capabilities of
+                  integrator.io. At the end of the trial, you get to keep one
+                  active flow forever.
                 </Typography>
-                <ul className={classes.itemsList}>
-                  <li className={classes.bold}>
-                    Status: {licenseActionDetails.status}
-                  </li>
-                  <li>
-                    <span className={classes.bold}>Expires:</span>
-
-                    {licenseActionDetails.expirationDate}
-                  </li>
-                  <li>
-                    <span className={classes.bold}>Customer Success Plan:</span>
-                    {licenseActionDetails.supportTier || 'N/A'}
-                  </li>
-                </ul>
               </div>
             </div>
-            <div className={classes.block}>
-              <div>
+          )}
+          {licenseActionDetails && (
+            <Fragment>
+              <Typography variant="h4" className={classes.heading}>
+                Subscription
+              </Typography>
+              <div className={classes.block}>
                 <Typography variant="h5" className={classes.subHeading}>
-                  Flows
+                  Details
                 </Typography>
                 <div className={classes.wrapper}>
                   <Typography variant="h3">
-                    Production Integration Flows
+                    {licenseActionDetails.subscriptionName} Plan
                   </Typography>
-                  <div className={classes.itemsList}>
-                    <div>
+                  <ul className={classes.itemsList}>
+                    <li className={classes.bold}>
+                      Status: {licenseActionDetails.status}
+                    </li>
+                    <li>
+                      <span className={classes.bold}>Expires:</span>
+
+                      {licenseActionDetails.expirationDate}
+                    </li>
+                    <li>
                       <span className={classes.bold}>
-                        {numEnabledPaidFlows} of{' '}
-                        {licenseActionDetails.totalFlowsAvailable}
+                        Customer Success Plan:
                       </span>
-                      {!licenseActionDetails.totalFlowsAvailable
-                        ? 'Unlimited'
-                        : ` (${licenseActionDetails.totalFlowsAvailable -
-                            licenseActionDetails.numAddOnFlows} from subscription + ${
-                            licenseActionDetails.numAddOnFlows
-                          } Add-on flows)`}
-                    </div>
-                    <span className={classes.bold}>
-                      | {productionRemainingFlows}{' '}
-                    </span>
-                    <span> remaining</span>
-                  </div>
-                  <div className={classes.linearProgressWrapper}>
-                    <LinearProgress
-                      color="primary"
-                      value={productionConsumedFlowsPercentage}
-                      variant="determinate"
-                      thickness={10}
-                      className={classes.progressBar}
-                    />
-                  </div>
-                </div>
-                <div className={classes.wrapper}>
-                  <Typography variant="h3">
-                    Sandbox Integration Flows:{' '}
-                  </Typography>
-                  <div className={classes.itemsList}>
-                    <div>
-                      <span className={classes.bold}>
-                        {numEnabledSandboxFlows} of{' '}
-                        {licenseActionDetails.totalSandboxFlowsAvailable}
-                      </span>
-                    </div>
-                    <span className={classes.bold}>
-                      | {sandboxRemainingFlows}
-                    </span>
-                    <span> remaining</span>
-                  </div>
-                  <div className={classes.linearProgressWrapper}>
-                    <LinearProgress
-                      color="primary"
-                      value={sandboxConsumedFlowsPercentage}
-                      variant="determinate"
-                      thickness={10}
-                      className={classes.progressBar}
-                    />
-                  </div>
+                      {licenseActionDetails.supportTier || 'N/A'}
+                    </li>
+                  </ul>
                 </div>
               </div>
-            </div>
-            {licenseActionDetails &&
-              licenseActionDetails.subscriptionActions &&
-              licenseActionDetails.subscriptionActions.actions &&
-              licenseActionDetails.subscriptionActions.actions.length > 0 && (
-                <div className={classes.block}>
-                  <Typography variant="h4" className={classes.subHeading}>
-                    Want to upgrade ?
+              <div className={classes.block}>
+                <div>
+                  <Typography variant="h5" className={classes.subHeading}>
+                    Flows
                   </Typography>
                   <div className={classes.wrapper}>
-                    {licenseActionDetails.subscriptionActions.actions.indexOf(
-                      'start-free-trial'
-                    ) > -1 && (
-                      <Button
-                        onClick={onStartFreeTrialClick}
+                    <Typography variant="h3">
+                      Production Integration Flows
+                    </Typography>
+                    <div className={classes.itemsList}>
+                      <div>
+                        <span className={classes.bold}>
+                          {numEnabledPaidFlows} of{' '}
+                          {licenseActionDetails.totalFlowsAvailable}
+                        </span>
+                        {!licenseActionDetails.totalFlowsAvailable
+                          ? 'Unlimited'
+                          : ` (${licenseActionDetails.totalFlowsAvailable -
+                              licenseActionDetails.numAddOnFlows} from subscription + ${
+                              licenseActionDetails.numAddOnFlows
+                            } Add-on flows)`}
+                      </div>
+                      <span className={classes.bold}>
+                        | {productionRemainingFlows}{' '}
+                      </span>
+                      <span> remaining</span>
+                    </div>
+                    <div className={classes.linearProgressWrapper}>
+                      <LinearProgress
                         color="primary"
-                        variant="outlined">
-                        Go Unlimited for 30days!
-                      </Button>
-                    )}
-                    {licenseActionDetails.subscriptionActions.actions.indexOf(
-                      'request-subscription'
-                    ) > -1 && (
-                      <Button
-                        onClick={onRequestSubscriptionClick}
-                        disabled={
-                          licenseActionDetails.subscriptionActions
-                            .__upgradeRequested
-                        }
+                        value={productionConsumedFlowsPercentage}
+                        variant="determinate"
+                        thickness={10}
+                        className={classes.progressBar}
+                      />
+                    </div>
+                  </div>
+                  <div className={classes.wrapper}>
+                    <Typography variant="h3">
+                      Sandbox Integration Flows:{' '}
+                    </Typography>
+                    <div className={classes.itemsList}>
+                      <div>
+                        <span className={classes.bold}>
+                          {numEnabledSandboxFlows} of{' '}
+                          {licenseActionDetails.totalSandboxFlowsAvailable}
+                        </span>
+                      </div>
+                      <span className={classes.bold}>
+                        | {sandboxRemainingFlows}
+                      </span>
+                      <span> remaining</span>
+                    </div>
+                    <div className={classes.linearProgressWrapper}>
+                      <LinearProgress
                         color="primary"
-                        variant="outlined">
-                        Request Subscription
-                      </Button>
-                    )}
-                    {licenseActionDetails.subscriptionActions.actions.indexOf(
-                      'request-upgrade'
-                    ) > -1 && (
-                      <Button
-                        onClick={onRequestUpgradeClick}
-                        disabled={
-                          licenseActionDetails.subscriptionActions
-                            .__upgradeRequested
-                        }
-                        color="primary"
-                        variant="outlined">
-                        Request Upgrade
-                      </Button>
-                    )}
-                    {licenseActionDetails.subscriptionActions.actions.indexOf(
-                      'request-trial-extension'
-                    ) > -1 && <span>-or-</span>}
-                    {licenseActionDetails.subscriptionActions.actions.indexOf(
-                      'request-trial-extension'
-                    ) > -1 && (
-                      <Button
-                        onClick={onRequestTrialExtensionClick}
-                        disabled={
-                          licenseActionDetails.subscriptionActions
-                            .__upgradeRequested
-                        }
-                        color="primary"
-                        variant="outlined">
-                        Request Trial Extension
-                      </Button>
-                    )}
-                    <a
-                      className={classes.linkCompare}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      href="https://www.celigo.com/ipaas-integration-platform/#Pricing">
-                      Compare Plans
-                    </a>
+                        value={sandboxConsumedFlowsPercentage}
+                        variant="determinate"
+                        thickness={10}
+                        className={classes.progressBar}
+                      />
+                    </div>
                   </div>
                 </div>
-              )}
-          </Fragment>
-        )}
-      </div>
+              </div>
+              {licenseActionDetails &&
+                licenseActionDetails.subscriptionActions &&
+                licenseActionDetails.subscriptionActions.actions &&
+                licenseActionDetails.subscriptionActions.actions.length > 0 && (
+                  <div className={classes.block}>
+                    <Typography variant="h4" className={classes.subHeading}>
+                      Want to upgrade ?
+                    </Typography>
+                    <div className={classes.wrapper}>
+                      {licenseActionDetails.subscriptionActions.actions.indexOf(
+                        'start-free-trial'
+                      ) > -1 && (
+                        <Button
+                          onClick={onStartFreeTrialClick}
+                          color="primary"
+                          variant="outlined">
+                          Go Unlimited for 30days!
+                        </Button>
+                      )}
+                      {licenseActionDetails.subscriptionActions.actions.indexOf(
+                        'request-subscription'
+                      ) > -1 && (
+                        <Button
+                          onClick={onRequestSubscriptionClick}
+                          disabled={
+                            licenseActionDetails.subscriptionActions
+                              .__upgradeRequested
+                          }
+                          color="primary"
+                          variant="outlined">
+                          Request Subscription
+                        </Button>
+                      )}
+                      {licenseActionDetails.subscriptionActions.actions.indexOf(
+                        'request-upgrade'
+                      ) > -1 && (
+                        <Button
+                          onClick={onRequestUpgradeClick}
+                          disabled={
+                            licenseActionDetails.subscriptionActions
+                              .__upgradeRequested
+                          }
+                          color="primary"
+                          variant="outlined">
+                          Request Upgrade
+                        </Button>
+                      )}
+                      {licenseActionDetails.subscriptionActions.actions.indexOf(
+                        'request-trial-extension'
+                      ) > -1 && <span>-or-</span>}
+                      {licenseActionDetails.subscriptionActions.actions.indexOf(
+                        'request-trial-extension'
+                      ) > -1 && (
+                        <Button
+                          onClick={onRequestTrialExtensionClick}
+                          disabled={
+                            licenseActionDetails.subscriptionActions
+                              .__upgradeRequested
+                          }
+                          color="primary"
+                          variant="outlined">
+                          Request Trial Extension
+                        </Button>
+                      )}
+                      <a
+                        className={classes.linkCompare}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        href="https://www.celigo.com/ipaas-integration-platform/#Pricing">
+                        Compare Plans
+                      </a>
+                    </div>
+                  </div>
+                )}
+            </Fragment>
+          )}
+        </div>
+      )}
     </Fragment>
   );
 }
