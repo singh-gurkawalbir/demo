@@ -93,30 +93,44 @@ export function* getCategoryMappingMetadata({
   integrationId,
   flowId,
   categoryId,
+  options = {},
 }) {
   const path = `/integrations/${integrationId}/utilities/loadMarketplaceCategoryMapping`;
   let response;
+  let requestOptions = [
+    { operation: 'mappingData', params: {} },
+    {
+      operation: 'extractsMetaData',
+      params: {
+        type: 'searchColumns',
+        searchColumns: { recordType: 'item' },
+      },
+    },
+    {
+      operation: 'generatesMetaData',
+      params: {
+        categoryId,
+        categoryRelationshipData: true,
+      },
+    },
+  ];
+
+  if (options.generatesMetadata) {
+    requestOptions = [
+      {
+        operation: 'generatesMetaData',
+        params: {
+          categoryId,
+        },
+      },
+    ];
+  }
+
   const payload = {
     utilities: {
       options: {
         _flowId: flowId,
-        requestOptions: [
-          { operation: 'mappingData', params: {} },
-          {
-            operation: 'extractsMetaData',
-            params: {
-              type: 'searchColumns',
-              searchColumns: { recordType: 'item' },
-            },
-          },
-          {
-            operation: 'generatesMetaData',
-            params: {
-              categoryId,
-              categoryRelationshipData: true,
-            },
-          },
-        ],
+        requestOptions,
       },
     },
   };
@@ -135,13 +149,23 @@ export function* getCategoryMappingMetadata({
   }
 
   if (response) {
-    yield put(
-      actions.integrationApp.settings.receivedCategoryMappingMetadata(
-        integrationId,
-        flowId,
-        response
-      )
-    );
+    if (options.generatesMetadata) {
+      yield put(
+        actions.integrationApp.settings.receivedCategoryMappingGeneratesMetadata(
+          integrationId,
+          flowId,
+          response
+        )
+      );
+    } else {
+      yield put(
+        actions.integrationApp.settings.receivedCategoryMappingMetadata(
+          integrationId,
+          flowId,
+          response
+        )
+      );
+    }
   }
 }
 

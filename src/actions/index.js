@@ -416,15 +416,30 @@ const integrationApp = {
         integrationId,
         redirectTo,
       }),
-    requestCategoryMappingMetadata: (integrationId, flowId, categoryId) =>
+    requestCategoryMappingMetadata: (
+      integrationId,
+      flowId,
+      categoryId,
+      options
+    ) =>
       action(
         actionTypes.INTEGRATION_APPS.SETTINGS.REQUEST_CATEGORY_MAPPING_METADATA,
-        { integrationId, flowId, categoryId }
+        { integrationId, flowId, categoryId, options }
       ),
     receivedCategoryMappingMetadata: (integrationId, flowId, metadata) =>
       action(
         actionTypes.INTEGRATION_APPS.SETTINGS
           .RECEIVED_CATEGORY_MAPPING_METADATA,
+        { integrationId, flowId, metadata }
+      ),
+    receivedCategoryMappingGeneratesMetadata: (
+      integrationId,
+      flowId,
+      metadata
+    ) =>
+      action(
+        actionTypes.INTEGRATION_APPS.SETTINGS
+          .RECEIVED_CATEGORY_MAPPING_GENERATES_METADATA,
         { integrationId, flowId, metadata }
       ),
     clearRedirect: integrationId =>

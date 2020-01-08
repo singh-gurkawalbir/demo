@@ -23,6 +23,14 @@ export function categoryMapping(state, integrationId, flowId) {
   );
 }
 
+export function categoryMappingGeneratesMetadata(state, integrationId, flowId) {
+  return fromSettings.categoryMappingGeneratesMetadata(
+    state && state.settings,
+    integrationId,
+    flowId
+  );
+}
+
 export function integrationAppSettingsFormState(
   state,
   integrationId,

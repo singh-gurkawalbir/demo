@@ -18,6 +18,7 @@ import IconTextButton from '../../../../../../components/IconTextButton';
 import ApplicationImg from '../../../../../../components/icons/ApplicationImg';
 import RefreshIcon from '../../../../../../components/icons/RefreshIcon';
 
+const emptySet = [];
 const drawerWidth = 200;
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -82,57 +83,69 @@ function CategoryMappings({
   integrationId,
   flowId,
   sectionId,
+  isRoot = true,
   extractFields,
-  generateFields,
   metadata,
 }) {
-  const [amazonAttributeFilter, setAmazonAttributeFilter] = useState('all');
-  const [fieldMappingsFilter, setFieldMappingsFilter] = useState('mapped');
+  const [requestedGenerateFields, setRequestedGenerateFields] = useState(false);
+  const dispatch = useDispatch();
   const classes = useStyles();
-  const handleAmzonAttributeChange = useCallback(val => {
-    setAmazonAttributeFilter(val);
-  }, []);
-  const handleFieldMappingsFilterChange = useCallback(val => {
-    setFieldMappingsFilter(val);
-  }, []);
   const handleDelete = () => {};
+  const { fields: generateFields, name } =
+    useSelector(state =>
+      selectors.categoryMappingGenerateFields(state, integrationId, flowId, {
+        sectionId,
+      })
+    ) || {};
   const mappings =
     useSelector(state => {
       if (metadata) return metadata;
 
       return selectors.mappingsForCategory(state, integrationId, flowId, {
         sectionId,
-        amazonAttributeFilter,
-        fieldMappingsFilter,
       });
     }) || {};
   const { fieldMappings = [], children = [] } = mappings;
   const isGeneratesLoading = false;
   const refreshGenerateFields = () => {};
 
-  function RefreshButton(props) {
-    return (
-      <IconTextButton
-        variant="contained"
-        color="secondary"
-        className={classes.refreshButton}
-        {...props}>
-        Refresh <RefreshIcon />
-      </IconTextButton>
-    );
-  }
+  useEffect(() => {
+    setRequestedGenerateFields(false);
+  }, [sectionId]);
+
+  useEffect(() => {
+    if (!generateFields && !requestedGenerateFields && isRoot) {
+      dispatch(
+        actions.integrationApp.settings.requestCategoryMappingMetadata(
+          integrationId,
+          flowId,
+          sectionId,
+          { generatesMetadata: true }
+        )
+      );
+      setRequestedGenerateFields(true);
+    }
+  }, [
+    generateFields,
+    requestedGenerateFields,
+    dispatch,
+    integrationId,
+    flowId,
+    sectionId,
+    isRoot,
+  ]);
 
   return (
     <div>
-      {!metadata && (
+      {/* {isRoot && (
         <Filters
           handleAmzonAttributeChange={handleAmzonAttributeChange}
           mappings={mappings}
           handleFieldMappingsFilterChange={handleFieldMappingsFilterChange}
         />
-      )}
+      )} */}
 
-      <PanelHeader className={classes.header} title={mappings.name}>
+      <PanelHeader className={classes.header} title={name || mappings.name}>
         <IconTextButton
           data-test={`configure${mappings.id}`}
           component={Link}
@@ -140,7 +153,7 @@ function CategoryMappings({
           <AddIcon /> Delete
         </IconTextButton>
       </PanelHeader>
-      {!metadata && (
+      {isRoot && (
         <Grid container className={classes.mappingHeader}>
           <Grid item xs={6}>
             <Typography variant="h5" className={classes.childHeader}>
@@ -151,10 +164,14 @@ function CategoryMappings({
             <Typography variant="h5" className={classes.childHeader}>
               NetSuite
               {!isGeneratesLoading && (
-                <RefreshButton
+                <IconTextButton
+                  variant="contained"
+                  color="secondary"
+                  className={classes.refreshButton}
                   onClick={refreshGenerateFields}
-                  data-test="refreshGenerates"
-                />
+                  data-test="refreshGenerates">
+                  Refresh <RefreshIcon />
+                </IconTextButton>
               )}
               {isGeneratesLoading && (
                 <span className={classes.spinner}>
@@ -172,7 +189,7 @@ function CategoryMappings({
         integrationId={integrationId}
         sectionId={sectionId}
         extractFields={extractFields}
-        generateFields={generateFields}
+        generateFields={generateFields || emptySet}
         mappings={{ fields: fieldMappings }}
       />
       {children.length > 0 &&
@@ -181,6 +198,8 @@ function CategoryMappings({
             integrationId={integrationId}
             flowId={flowId}
             key={child.id}
+            isRoot={false}
+            generateFields={generateFields || emptySet}
             metadata={child}
             sectionId={child.id}
           />
@@ -193,6 +212,8 @@ function CategoryMappingDrawer({ integrationId }) {
   const dispatch = useDispatch();
   const classes = useStyles();
   const match = useRouteMatch();
+  const [amazonAttributeFilter, setAmazonAttributeFilter] = useState('all');
+  const [fieldMappingsFilter, setFieldMappingsFilter] = useState('mapped');
   const { flowId, categoryId } = match.params;
   const flow =
     useSelector(state => selectors.resource(state, 'flows', flowId)) || {};
@@ -217,6 +238,12 @@ function CategoryMappingDrawer({ integrationId }) {
     useSelector(state =>
       selectors.mappedCategories(state, integrationId, flowId)
     ) || [];
+  const handleAmzonAttributeChange = useCallback(val => {
+    setAmazonAttributeFilter(val);
+  }, []);
+  const handleFieldMappingsFilterChange = useCallback(val => {
+    setFieldMappingsFilter(val);
+  }, []);
   const handleClose = () => {};
 
   useEffect(() => {
@@ -245,7 +272,6 @@ function CategoryMappingDrawer({ integrationId }) {
 
   return (
     <Drawer
-      // variant="persistent"
       anchor="right"
       open={!!match}
       classes={{
@@ -272,10 +298,18 @@ function CategoryMappingDrawer({ integrationId }) {
               </List>
             </Grid>
             <Grid item className={classes.content}>
+              <Filters
+                handleAmzonAttributeChange={handleAmzonAttributeChange}
+                handleFieldMappingsFilterChange={
+                  handleFieldMappingsFilterChange
+                }
+              />
               <CategoryMappings
                 integrationId={integrationId}
                 extractFields={extractsMetadata}
                 generateFields={generatesMetadata}
+                amazonAttributeFilter={amazonAttributeFilter}
+                fieldMappingsFilter={fieldMappingsFilter}
                 flowId={flowId}
                 sectionId={categoryId}
               />

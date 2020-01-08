@@ -1,4 +1,5 @@
 import produce from 'immer';
+import { uniqBy } from 'lodash';
 import actionTypes from '../../../actions/types';
 
 const emptyObj = {};
@@ -20,6 +21,8 @@ export default (state = {}, action) => {
     sectionId,
   } = action;
   const key = getStateKey(integrationId, flowId, sectionId);
+  let categoryMappingData;
+  let generatesMetadata;
 
   return produce(state, draft => {
     // eslint-disable-next-line default-case
@@ -86,8 +89,34 @@ export default (state = {}, action) => {
         draft[licenseId] = true;
         break;
       case actionTypes.INTEGRATION_APPS.SETTINGS
+        .RECEIVED_CATEGORY_MAPPING_GENERATES_METADATA:
+        ({ response: categoryMappingData } = metadata);
+        generatesMetadata = categoryMappingData.find(
+          data => data.operation === 'generatesMetaData'
+        );
+
+        if (draft[`${flowId}-${integrationId}`]) {
+          draft[`${flowId}-${integrationId}`].generatesMetadata = uniqBy(
+            [
+              ...draft[`${flowId}-${integrationId}`].generatesMetadata,
+              generatesMetadata.data.generatesMetaData,
+            ],
+            'id'
+          );
+        }
+
+        break;
+      case actionTypes.INTEGRATION_APPS.SETTINGS
         .RECEIVED_CATEGORY_MAPPING_METADATA:
-        draft[`${flowId}-${integrationId}`] = metadata;
+        ({ response: categoryMappingData } = metadata);
+        generatesMetadata = categoryMappingData.find(
+          data => data.operation === 'generatesMetaData'
+        );
+        draft[`${flowId}-${integrationId}`] = {
+          uiAssistant: metadata.uiAssistant,
+          response: categoryMappingData,
+          generatesMetadata: [generatesMetadata.data.generatesMetaData],
+        };
         break;
     }
   });
@@ -115,6 +144,32 @@ export function categoryMapping(state, integrationId, flowId) {
   }
 
   return state[`${flowId}-${integrationId}`];
+}
+
+export function categoryMappingGeneratesMetadata(state, integrationId, flowId) {
+  if (!state) {
+    return null;
+  }
+
+  const { generatesMetadata = [] } =
+    state[`${flowId}-${integrationId}`] || emptyObj;
+  const generates = [];
+
+  function collect(result = [], meta, isRoot = true) {
+    if (meta) {
+      result.push({ ...meta, isRoot });
+
+      if (meta.children) {
+        meta.children.forEach(child => collect(result, child, false));
+      }
+    }
+  }
+
+  generatesMetadata.forEach(meta => {
+    collect(generates, meta);
+  });
+
+  return generates;
 }
 
 export function integrationAppAddOnState(state, integrationId) {

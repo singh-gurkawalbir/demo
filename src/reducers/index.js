@@ -1219,12 +1219,36 @@ export function mappedCategories(state, integrationId, flowId) {
 
     if (mappingData) {
       mappedCategories = mappingData.data.mappingData.basicMappings.recordMappings.map(
-        item => ({ id: item.id, name: item.name })
+        item => ({
+          id: item.id,
+          name: item.name === 'commonAttributes' ? 'Common' : item.name,
+        })
       );
     }
   }
 
   return mappedCategories;
+}
+
+export function categoryMappingGenerateFields(
+  state,
+  integrationId,
+  flowId,
+  options
+) {
+  const { sectionId } = options;
+  const generatesMetadata =
+    fromSession.categoryMappingGeneratesMetadata(
+      state && state.session,
+      integrationId,
+      flowId
+    ) || {};
+
+  if (generatesMetadata) {
+    return generatesMetadata.find(sec => sec.id === sectionId);
+  }
+
+  return null;
 }
 
 export function mappingsForCategory(state, integrationId, flowId, filters) {
