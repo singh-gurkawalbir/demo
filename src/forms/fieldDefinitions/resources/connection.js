@@ -842,6 +842,27 @@ export default {
     label: 'Ping Success Values',
     delimiter: ',',
   },
+  'http.ping.failPath': {
+    type: 'text',
+    label: 'Ping Fail Path',
+    visibleWhen: [
+      {
+        field: 'outputMode',
+        is: ['records'],
+      },
+    ],
+  },
+  'http.ping.failValues': {
+    type: 'text',
+    delimiter: ',',
+    label: 'Ping Fail Values',
+    visibleWhen: [
+      {
+        field: 'outputMode',
+        is: ['records'],
+      },
+    ],
+  },
   'http.ping.errorPath': {
     type: 'text',
     label: 'Ping Error Path',
