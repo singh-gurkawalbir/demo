@@ -808,6 +808,18 @@ export default {
         },
       ],
     },
+    'file.csv.customHeaderRows': {
+      id: 'file.csv.customHeaderRows',
+      label: 'Custom Header Rows',
+      type: 'textarea',
+      visibleWhenAll: [
+        { field: 'http.requestMediaType', is: ['csv'] },
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
+      ],
+    },
     'http.body': {
       fieldId: 'http.body',
       refreshOptionsOnChangesTo: [
@@ -880,6 +892,7 @@ export default {
       'http.errorMediaType',
       'uploadFile',
       'file.csv',
+      'file.csv.customHeaderRows',
     ],
     type: 'collapse',
     containers: [
