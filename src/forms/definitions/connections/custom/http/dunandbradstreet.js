@@ -7,14 +7,12 @@ export default {
     '/http/mediaType': 'json',
     '/http/baseURI': 'https://direct.dnb.com/',
     '/http/auth/token/location': 'header',
-    '/http/auth/token/scheme': '',
+    '/http/auth/token/scheme': ' ',
     '/http/auth/token/headerName': 'Authorization',
     '/http/ping/method': 'GET',
     '/http/ping/relativeURI': '/V7.1/monitoring/changenotices',
     '/http/auth/token/refreshRelativeURI':
       'https://direct.dnb.com/Authentication/V2.0',
-    '/http/auth/token/refreshBody':
-      'x-dnb-user: {{{connection.http.unencrypted.username}}}\r\nx-dnb-pwd: {{{connection.http.encrypted.password}}}',
     '/http/auth/token/refreshMethod': 'POST',
     '/http/auth/token/refreshTokenPath': 'AuthenticationDetail.Token',
     '/http/auth/token/refreshMediaType': 'json',

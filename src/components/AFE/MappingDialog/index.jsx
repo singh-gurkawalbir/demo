@@ -72,9 +72,11 @@ export default function MappingDialog(props) {
     mappings,
     lookups,
     adaptorType,
+    resource,
     application,
     generateFields,
     visible: showMappings,
+    isGroupedSampleData,
   } = useSelector(state => selectors.mapping(state, id));
   const [enquesnackbar] = useEnqueueSnackbar();
   const handleSave = shouldClose => {
@@ -90,6 +92,8 @@ export default function MappingDialog(props) {
       mappings: _mappings,
       generateFields,
       appType: application,
+      isGroupedSampleData,
+      resource,
     });
 
     onSave({

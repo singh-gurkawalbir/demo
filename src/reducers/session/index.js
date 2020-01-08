@@ -18,7 +18,9 @@ import templates, * as fromTemplates from './templates';
 import oAuthAuthorize, * as fromOAuthAuthorize from './oAuthAuthorize';
 import resource, * as fromResource from './resource';
 import mappings, * as fromMappings from './mappings';
+import searchCriteria, * as fromSearchCriteria from './searchCriteria';
 import flows, * as fromFlows from './flows';
+import transfers, * as fromTransfers from './transfers';
 
 export default combineReducers({
   stage,
@@ -40,7 +42,9 @@ export default combineReducers({
   templates,
   oAuthAuthorize,
   mappings,
+  searchCriteria,
   flows,
+  transfers,
 });
 
 // #region PUBLIC SELECTORS
@@ -67,6 +71,13 @@ export function connectionTokens(state, resourceId) {
   );
 }
 
+export function tokenRequestLoading(state, resourceId) {
+  return fromConnectionToken.tokenRequestLoading(
+    state && state.connectionToken,
+    resourceId
+  );
+}
+
 export function filter(state, name) {
   return fromFilters.filter(state && state.filters, name);
 }
@@ -81,6 +92,17 @@ export function editorViolations(state, id) {
 
 export function mapping(state, id) {
   return fromMappings.mapping(state && state.mappings, id);
+}
+
+export function mappingSaveProcessTerminate(state, id) {
+  return fromMappings.mappingSaveProcessTerminate(state && state.mappings, id);
+}
+
+export function getSearchCriteria(state, id) {
+  return fromSearchCriteria.getSearchCriteria(
+    state && state.searchCriteria,
+    id
+  );
 }
 
 export function processorRequestOptions(state, id) {
@@ -243,11 +265,17 @@ export function apiAccessToken(state, resourceId) {
   );
 }
 
-export function integrationAppSettingsFormState(state, integrationId, flowId) {
+export function integrationAppSettingsFormState(
+  state,
+  integrationId,
+  flowId,
+  sectionId
+) {
   return fromIntegrationApps.integrationAppSettingsFormState(
     state && state.integrationApps,
     integrationId,
-    flowId
+    flowId,
+    sectionId
   );
 }
 
@@ -287,6 +315,14 @@ export function uninstallSteps(state, id, storeId) {
   );
 }
 
+export function uninstallData(state, id, storeId) {
+  return fromIntegrationApps.uninstallData(
+    state && state.integrationApps,
+    id,
+    storeId
+  );
+}
+
 export function addNewStoreSteps(state, id) {
   return fromIntegrationApps.addNewStoreSteps(
     state && state.integrationApps,
@@ -304,6 +340,10 @@ export function integratorLicenseActionMessage(state) {
 
 export function resourceReferences(state) {
   return fromResource.resourceReferences(state && state.resource);
+}
+
+export function getNumEnabledFlows(state) {
+  return fromResource.getNumEnabledFlows(state && state.resource);
 }
 
 export function assistantData(state, { adaptorType, assistant }) {
@@ -329,4 +369,9 @@ export function getLastExportDateTime(state, flowId) {
     lastExportDateTime
   );
 }
+
+export function getTransferPreviewData(state) {
+  return fromTransfers.getPreviewData(state && state.transfers);
+}
+
 // #endregion

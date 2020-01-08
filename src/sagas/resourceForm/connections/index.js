@@ -178,13 +178,10 @@ export function* requestToken({ resourceId, fieldId, values }) {
       hidden: true,
     });
   } catch (e) {
-    const errorsJSON = JSON.parse(e.message);
-    const { errors } = errorsJSON;
-
     yield put(
       actions.resource.connections.requestTokenFailed(
         resourceId,
-        errors && errors[0] && errors[0].message ? errors[0].message : errors
+        inferErrorMessage(e.message)
       )
     );
 
@@ -256,14 +253,25 @@ function* pingConnection({ resourceId, values }) {
     resourceType: 'connections',
     resourceId,
   });
-  const resp = yield call(apiCallWithRetry, {
-    path: pingConnectionParams.path,
-    opts: {
-      body: connectionPayload,
-      ...pingConnectionParams.opts,
-    },
-    hidden: true,
-  });
+  let resp;
+
+  try {
+    resp = yield call(apiCallWithRetry, {
+      path: pingConnectionParams.path,
+      opts: {
+        body: connectionPayload,
+        ...pingConnectionParams.opts,
+      },
+      hidden: true,
+    });
+  } catch (e) {
+    return yield put(
+      actions.resource.connections.testErrored(
+        resourceId,
+        inferErrorMessage(e.message)
+      )
+    );
+  }
 
   if (resp && resp.errors) {
     return yield put(

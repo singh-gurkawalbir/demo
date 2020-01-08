@@ -4,12 +4,11 @@ import { makeStyles } from '@material-ui/core/styles';
 import { isEqual } from 'lodash';
 import ImportMapping from './index';
 import * as ResourceUtil from '../../../utils/resource';
-import lookupUtil from '../../../utils/lookup';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import { getImportOperationDetails } from '../../../utils/assistant';
 import mappingUtil from '../../../utils/mapping';
-import getJSONPaths from '../../../utils/jsonPaths';
+import getJSONPaths, { pickFirstObject } from '../../../utils/jsonPaths';
 import Spinner from '../../Spinner';
 
 // TODO: Azhar to review
@@ -23,10 +22,11 @@ const useStyles = makeStyles({
 });
 
 export default function StandaloneMapping(props) {
-  const { id, flowId, resourceId, disabled } = props;
+  const { id, flowId, resourceId, disabled, onClose } = props;
   const classes = useStyles();
   const [flowSampleDataLoaded, setFlowSampleDataLoaded] = useState(false);
   const [importSampleDataLoaded, setImportSampleDataLoaded] = useState(false);
+  const [flowSampleDataState, setFlowSampleDataState] = useState(undefined);
   const [assistantLoaded, setAssistantLoaded] = useState(false);
   const [
     integrationAppMetadataLoaded,
@@ -86,11 +86,20 @@ export default function StandaloneMapping(props) {
     }
   }, [dispatch, extractFields, flowId, requestSampleData, resourceId]);
 
+  if (initTriggered && !isEqual(flowSampleDataState, extractFields)) {
+    dispatch(actions.mapping.updateFlowData(id, extractFields));
+    setFlowSampleDataState(extractFields);
+  }
+
   const importSampleDataObj = useSelector(state =>
     selectors.getImportSampleData(state, resourceId)
   );
   const { data: importSampleData, status: generateStatus } =
     importSampleDataObj || {};
+  const salesforceMasterRecordTypeInfo = useSelector(state => {
+    if (isSalesforce)
+      return selectors.getSalesforceMasterRecordTypeInfo(state, resourceId);
+  });
   const requestImportSampleData = useCallback(() => {
     dispatch(actions.importSampleData.request(resourceId));
   }, [dispatch, resourceId]);
@@ -173,11 +182,13 @@ export default function StandaloneMapping(props) {
   ]);
 
   const application = resourceType.type;
+  const isGroupedSampleData = !!(extractFields && Array.isArray(extractFields));
   const options = {
     flowId,
     connectionId,
     resourceId,
     resourceName,
+    isGroupedSampleData,
   };
 
   if (isSalesforce) {
@@ -189,7 +200,23 @@ export default function StandaloneMapping(props) {
       resourceData.netsuite_da && resourceData.netsuite_da.recordType;
   }
 
-  const mappingOptions = {};
+  const mappingOptions = {
+    resourceData,
+    adaptorType: resourceType.type,
+    isGroupedSampleData,
+    application,
+  };
+
+  if (isSalesforce) {
+    const { recordTypeId: salesforceMasterRecordTypeId, searchLayoutable } =
+      (salesforceMasterRecordTypeInfo && salesforceMasterRecordTypeInfo.data) ||
+      {};
+
+    if (searchLayoutable) {
+      mappingOptions.salesforceMasterRecordTypeId = salesforceMasterRecordTypeId;
+      mappingOptions.showSalesforceNetsuiteAssistant = true;
+    }
+  }
 
   if (isAssistant && assistantData) {
     if (!assistantLoaded) {
@@ -225,20 +252,10 @@ export default function StandaloneMapping(props) {
     };
   }
 
-  const mappings = mappingUtil.getMappingFromResource(
-    resourceData,
-    resourceType.type,
-    false,
-    mappingOptions
-  );
-  const lookups = lookupUtil.getLookupFromResource(
-    resourceData,
-    resourceType.type
-  );
   let formattedExtractFields = [];
 
   if (extractFields) {
-    const extractPaths = getJSONPaths(extractFields);
+    const extractPaths = getJSONPaths(pickFirstObject(extractFields));
 
     formattedExtractFields =
       (extractPaths &&
@@ -253,49 +270,44 @@ export default function StandaloneMapping(props) {
   const [importSampleDataState, setImportSampleDataState] = useState([]);
   const handleInit = useCallback(() => {
     dispatch(
-      actions.mapping.init(
+      actions.mapping.init({
         id,
-        mappings,
-        lookups || [],
-        resourceType.type,
-        application
-      )
+        options: mappingOptions,
+      })
     );
-  }, [application, dispatch, id, lookups, mappings, resourceType.type]);
+  }, [dispatch, id, mappingOptions]);
+  const isFetchingDuringInit =
+    (isIntegrationApp && !integrationAppMetadataLoaded) ||
+    (isAssistant && !assistantLoaded) ||
+    !flowSampleDataLoaded ||
+    ((isNetsuite || isSalesforce || isAssistant) && !importSampleDataLoaded);
 
   useEffect(() => {
-    if (
-      (isIntegrationApp && integrationAppMetadataLoaded) ||
-      (isAssistant && assistantLoaded) ||
-      (!isAssistant && !isIntegrationApp)
-    ) {
+    if (!isFetchingDuringInit && !initTriggered) {
       handleInit();
       setInitTriggered(true);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    isIntegrationApp,
-    integrationAppMetadataLoaded,
-    isAssistant,
-    assistantLoaded,
-  ]);
+  }, [dispatch, handleInit, id, initTriggered, isFetchingDuringInit]);
 
-  if (!showMappings) {
-    if (
-      (isIntegrationApp && !integrationAppMetadataLoaded) ||
-      (isAssistant && !assistantLoaded) ||
-      !flowSampleDataLoaded ||
-      ((isNetsuite || isSalesforce || isAssistant) && !importSampleDataLoaded)
-    ) {
-      return (
-        <div className={classes.spinnerWrapper}>
-          <Spinner />
-        </div>
-      );
+  const setMappingVisibility = useCallback(
+    val => {
+      dispatch(actions.mapping.setVisibility(id, val));
+    },
+    [dispatch, id]
+  );
+
+  useEffect(() => {
+    if (!initTriggered && isFetchingDuringInit) {
+      setMappingVisibility(false);
     }
+  }, [dispatch, id, initTriggered, isFetchingDuringInit, setMappingVisibility]);
 
-    // dispatch an action to show mappings
-    dispatch(actions.mapping.setVisibility(id, true));
+  if (!showMappings || isFetchingDuringInit) {
+    return (
+      <div className={classes.spinnerWrapper}>
+        <Spinner />
+      </div>
+    );
   }
 
   if (initTriggered && !isEqual(importSampleDataState, importSampleData)) {
@@ -325,16 +337,15 @@ export default function StandaloneMapping(props) {
     <ImportMapping
       key={changeIdentifier}
       editorId={id}
+      onClose={onClose}
       disabled={disabled}
       extractFields={formattedExtractFields}
       generateFields={formattedGenerateFields}
-      value={mappings}
       resource={resourceData}
       isExtractsLoading={extractStatus === 'requested'}
       isGeneratesLoading={generateStatus === 'requested'}
       isGenerateRefreshSupported={isGenerateRefreshSupported}
       application={application}
-      lookups={lookups}
       options={options}
       optionalHanlder={optionalHandler}
     />

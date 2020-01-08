@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/styles';
 import useEnqueueSnackbar from '../../../../hooks/enqueueSnackbar';
 import * as selectors from '../../../../reducers';
@@ -27,14 +27,17 @@ const useStyles = makeStyles(() => ({
 
 function GenerateTokenButton(props) {
   const { handleRequestToken, disabled, label, id, resourceId } = props;
+  const tokenRequestLoading = useSelector(state =>
+    selectors.tokenRequestLoading(state, resourceId)
+  );
 
   return (
     <DynaSubmit
       data-test={id}
-      disabled={disabled}
+      disabled={disabled || tokenRequestLoading}
       isValid
       onClick={handleRequestToken(resourceId, id)}>
-      {label}
+      {tokenRequestLoading ? 'Generating Token...' : label}
     </DynaSubmit>
   );
 }

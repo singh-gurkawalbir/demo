@@ -893,6 +893,9 @@ export function convertToExport({ assistantConfig, assistantData }) {
 
   return {
     [`/${adaptorType}`]: exportDoc,
+    '/file':
+      operationDetails.file ||
+      undefined /* populate file subschema if it is in metadata (ex: concurexpense assistant) */,
     '/type': exportType || undefined,
     '/delta': !isEmpty(deltaConfig) ? deltaConfig : undefined,
     '/test': !isEmpty(testConfig) ? testConfig : undefined,
@@ -1834,6 +1837,9 @@ export function convertToImport({ assistantConfig, assistantData }) {
 
   return {
     [`/${adaptorType}`]: importDoc,
+    '/file':
+      operationDetails.file ||
+      undefined /* populate file subschema if it is in metadata (ex: concurexpense assistant) */,
     '/assistant': assistant,
     '/assistantMetadata': assistantMetadata,
     '/ignoreExisting': !!ignoreExisting,

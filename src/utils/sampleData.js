@@ -18,6 +18,7 @@ export default function getFormattedSampleData({
   sampleData,
   resourceType,
   resourceName,
+  wrapInArray = false,
 }) {
   // create deep copy
   const _connection = deepClone(connection);
@@ -28,7 +29,7 @@ export default function getFormattedSampleData({
     myField: 'sample',
   };
 
-  data.data = [_sd];
+  data.data = wrapInArray ? [_sd] : _sd;
 
   if (_connection) {
     data.connection.name = _connection.name;
@@ -54,6 +55,10 @@ export default function getFormattedSampleData({
 
   if (resourceType === 'exports') {
     data.lastExportDateTime = new Date().toISOString();
+  }
+
+  if (_connection && _connection.type === 'as2') {
+    data.uuid = 'uuid';
   }
 
   return data;
@@ -383,7 +388,7 @@ export const extractSampleDataAtResourcePath = (sampleData, resourcePath) => {
 /*
  * Handles Sample data of JSON file type
  * Incase of Array content, we merge all objects properties and have a combined object
- * Ex: [{a: 5, b: 6}, {c: 7}, {a: 6, d: 11}] gets converted to [{a: 6, b: 6, c: 7, d: 11}]
+ * Ex: [{a: 5, b: 6}, {c: 7}, {a: 6, d: 11}] gets converted to {a: 6, b: 6, c: 7, d: 11}
  */
 export const processJsonSampleData = (sampleData, options = {}) => {
   if (!sampleData) return sampleData;

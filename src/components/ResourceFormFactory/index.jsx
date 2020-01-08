@@ -20,6 +20,11 @@ const mapStateToProps = (state, { resourceType, resourceId }) => {
     resourceType,
     resourceId
   );
+  const connection = selectors.resource(
+    state,
+    'connections',
+    resource && resource._connectionId
+  );
   const { patch: allPatches } = selectors.stagedResource(
     state,
     resourceId,
@@ -34,6 +39,7 @@ const mapStateToProps = (state, { resourceType, resourceId }) => {
     formState,
     resource,
     lastPatchtimestamp,
+    connection,
     /* If we return the assistantMetadata as object, it is causing infinite loop when used as a dependency in useEffect */
   };
 };
@@ -171,6 +177,7 @@ export const ResourceFormFactory = props => {
     isNew,
     lastPatchtimestamp,
     flowId,
+    connection,
   } = props;
 
   useEffect(() => {
@@ -193,8 +200,9 @@ export const ResourceFormFactory = props => {
         resourceType,
         resource,
         isNew,
+        connection,
       }).optionsHandler,
-    [isNew, resource, resourceType]
+    [connection, isNew, resource, resourceType]
   );
   const { fieldMeta } = formState;
 

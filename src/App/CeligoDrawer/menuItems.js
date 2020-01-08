@@ -55,7 +55,11 @@ export default function menuItems(userProfile, userPermissions = {}) {
         { label: 'Agents', path: '/agents', Icon: AgentsIcon },
         { label: 'Stacks', path: '/stacks', Icon: StacksIcon },
         { label: 'Templates', path: '/templates', Icon: DataLoaderIcon },
-        { label: 'Connectors', path: '/connectors', Icon: ConnectionsIcon },
+        {
+          label: 'Integration App',
+          path: '/connectors',
+          Icon: ConnectionsIcon,
+        },
         { label: 'API Tokens', path: '/accesstokens', Icon: TokensApiIcon },
         { label: 'Recycle bin', path: '/recycleBin', Icon: RecycleBinIcon },
       ],
@@ -114,7 +118,7 @@ export default function menuItems(userProfile, userPermissions = {}) {
 
     if (!canPublish) {
       resourceItems.children = resourceItems.children.filter(
-        i => !(i.label === 'Templates' || i.label === 'Connectors')
+        i => !(i.label === 'Templates' || i.label === 'Integration App')
       );
     }
 

@@ -6,9 +6,9 @@ import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../constants/resource';
 export const MODEL_PLURAL_TO_LABEL = Object.freeze({
   agents: 'Agent',
   accesstokens: 'API Token',
-  asynchelpers: 'Async Helper',
+  asyncHelpers: 'Async Helpers',
   connections: 'Connection',
-  connectors: 'Connector',
+  connectors: 'Integration App',
   exports: 'Export',
   filedefinitions: 'File Definition',
   flows: 'Flow',
@@ -86,6 +86,7 @@ export const appTypeToAdaptorType = {
   wrapper: 'Wrapper',
   as2: 'AS2',
   webhook: 'Webhook',
+  dynamodb: 'Dynamodb',
 };
 
 export const adaptorTypeMap = {
@@ -113,6 +114,8 @@ export const adaptorTypeMap = {
   SalesforceImport: 'salesforce',
   SalesforceExport: 'salesforce',
   WebhookExport: 'webhook',
+  DynamodbImport: 'dynamodb',
+  DynamodbExport: 'dynamodb',
 };
 
 const inferResourceType = adaptorType => {
@@ -328,4 +331,16 @@ export const isAS2Resource = resource => {
   const { adaptorType } = resource || {};
 
   return adaptorTypeMap[adaptorType] === 'as2';
+};
+
+export const isRestCsvMediaTypeExport = (resource, connection) => {
+  const { adaptorType } = resource || {};
+
+  // Returns false if it is not a rest export
+  if (adaptorTypeMap[adaptorType] !== 'rest') {
+    return false;
+  }
+
+  // Check for media type 'csv' from connection object
+  return connection && connection.rest && connection.rest.mediaType === 'csv';
 };

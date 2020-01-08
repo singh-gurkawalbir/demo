@@ -20,6 +20,40 @@ export default {
       };
     }
 
+    if (fieldId === 'netsuite.restlet.criteria') {
+      const recordTypeField = fields.find(
+        field => field.fieldId === 'netsuite.restlet.recordType'
+      );
+      const criteriaField = fields.find(
+        field => field.fieldId === 'netsuite.restlet.criteria'
+      );
+
+      return {
+        recordType: recordTypeField && recordTypeField.value,
+        commMetaPath:
+          recordTypeField &&
+          recordTypeField.value &&
+          `netsuite/metadata/suitescript/connections/${criteriaField.connectionId}/recordTypes/${recordTypeField.value}/searchFilters?&includeJoinFilters=true`,
+      };
+    }
+
+    if (fieldId === 'netsuite.webservices.criteria') {
+      const recordTypeField = fields.find(
+        field => field.fieldId === 'netsuite.webservices.recordType'
+      );
+      const criteriaField = fields.find(
+        field => field.fieldId === 'netsuite.webservices.criteria'
+      );
+
+      return {
+        recordType: recordTypeField && recordTypeField.value,
+        commMetaPath:
+          recordTypeField &&
+          recordTypeField.value &&
+          `netSuiteWS/recordMetadata/${criteriaField.connectionId}?type=export&recordType=${recordTypeField.value}`,
+      };
+    }
+
     return null;
   },
   fieldMap: {

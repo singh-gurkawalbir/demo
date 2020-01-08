@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
 import actions from '../../actions';
@@ -6,8 +6,21 @@ import * as selectors from '../../reducers';
 import JobErrorTable from './JobErrorTable';
 import Spinner from '../Spinner';
 import ModalDialog from '../ModalDialog';
+import Help from '../Help';
 
 const useStyles = makeStyles(theme => ({
+  /**
+   * TODO Azhar needs to fix the styles so that the help icon shows on the left side of the close icon.
+   */
+  iconButton: {
+    color: theme.palette.text.hint,
+    '&:hover': {
+      background: theme.palette.background.paper,
+      '& > span': {
+        color: theme.palette.primary.main,
+      },
+    },
+  },
   spinner: {
     left: '0px',
     right: '0px',
@@ -104,7 +117,19 @@ function JobErrorDialog({
 
   return (
     <ModalDialog show minWidth="md" maxWidth="xl" onClose={handleCloseClick}>
-      <div>{`${integrationName} > ${flowJob && flowJob.name}`}</div>
+      <Fragment>
+        <div>{`${integrationName} > ${flowJob && flowJob.name}`}</div>
+
+        <Help
+          key="help-helpSummary"
+          data-test="help-helpSummary"
+          title="Job Errors"
+          className={classes.iconButton}
+          helpKey="jobErrors.helpSummary"
+          fieldId="helpSummary"
+          resourceType="jobErrors"
+        />
+      </Fragment>
 
       <div>
         {!job ? (

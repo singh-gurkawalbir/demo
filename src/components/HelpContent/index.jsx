@@ -1,6 +1,10 @@
+import { useCallback } from 'react';
 import { makeStyles, fade } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import { Button } from '@material-ui/core';
+import { useDispatch } from 'react-redux';
+import actions from '../../actions';
+import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -61,7 +65,18 @@ const useStyles = makeStyles(theme => ({
 
 function HelpContent(props) {
   const classes = useStyles();
-  const { children, title, caption } = props;
+  const { children, title, caption, fieldId, resourceType } = props;
+  const dispatch = useDispatch();
+  const [enquesnackbar] = useEnqueueSnackbar();
+  const handleUpdateFeedBack = useCallback(
+    helpful => () => {
+      dispatch(actions.postFeedback(resourceType, fieldId, helpful));
+
+      enquesnackbar({ message: 'Feedback noted.Thanks!' });
+    },
+
+    [dispatch, enquesnackbar, fieldId, resourceType]
+  );
 
   return (
     <div className={classes.wrapper}>
@@ -78,13 +93,15 @@ function HelpContent(props) {
           <Button
             data-test="yesContentHelpful"
             variant="outlined"
+            onClick={handleUpdateFeedBack(true)}
             color="secondary">
             Yes
           </Button>
           <Button
             data-test="noContentHelpful"
             variant="outlined"
-            color="secondary">
+            color="secondary"
+            onClick={handleUpdateFeedBack(false)}>
             No
           </Button>
         </div>

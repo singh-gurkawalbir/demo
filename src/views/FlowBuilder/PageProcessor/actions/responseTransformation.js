@@ -51,19 +51,18 @@ function ResponseTransformationDialog(props) {
     const { sampleResponseData, responseTransform } = formValues;
     const patchSet = [];
 
-    if (sampleResponseData) {
-      patchSet.push({
+    patchSet.push(
+      {
         op: 'replace',
         path: '/sampleResponseData',
         value: sampleResponseData,
-      });
-    }
-
-    patchSet.push({
-      op: 'replace',
-      path: '/responseTransform',
-      value: responseTransform,
-    });
+      },
+      {
+        op: 'replace',
+        path: '/responseTransform',
+        value: responseTransform,
+      }
+    );
     // Save the resource
     dispatch(actions.resource.patchStaged(resourceId, patchSet, 'value'));
     dispatch(actions.resource.commitStaged('imports', resourceId, 'value'));

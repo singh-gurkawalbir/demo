@@ -21,7 +21,10 @@ function* updateResponseMapping({ flowId, resourceIndex }) {
       updatedResource.responseMapping
     )
   );
-  const resourceToReset = pageProcessors[resourceIndex + 1];
+  // Previously this used to be pageProcessors[resourceIndex+1] as we need all subsequent resources to be reset , assuming this is the last action on this resource
+  // But, as we got postResponseMapHook action after responseMapping , we need to reset from current resourceIndex
+  // @TODO: Raghu Add a new action that resets specific stage on a resource for a flowId, then we can just reset responseMapping state instead of resetting entire resource state
+  const resourceToReset = pageProcessors[resourceIndex];
 
   if (resourceToReset) {
     yield put(

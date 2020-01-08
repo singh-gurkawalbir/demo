@@ -7,6 +7,7 @@ import {
   isRealTimeOrDistributedResource,
   isFileAdaptor,
   isBlobTypeResource,
+  isRestCsvMediaTypeExport,
 } from './resource';
 
 const sampleDataStage = {
@@ -15,6 +16,8 @@ const sampleDataStage = {
     transform: 'raw',
     hooks: 'transform',
     responseMappingExtract: 'hooks',
+    responseMapping: 'responseMappingExtract',
+    postResponseMap: 'responseMapping',
     outputFilter: 'hooksWithContext',
     hooksWithContext: 'hooks',
     flowInputWithContext: 'flowInput',
@@ -24,8 +27,11 @@ const sampleDataStage = {
     inputFilter: 'flowInputWithContext',
     preMap: 'flowInput',
     importMappingExtract: 'preMap',
+    importMapping: 'importMappingExtract',
     responseMappingExtract: 'responseTransform',
-    postMap: 'preMap',
+    responseMapping: 'responseMappingExtract',
+    postResponseMap: 'responseMapping',
+    postMap: 'importMapping',
     postSubmit: 'responseTransform',
     responseTransform: 'sampleResponse',
   },
@@ -156,11 +162,12 @@ export const isRawDataPatchSet = (patchSet = []) =>
   patchSet[0] && ['/rawData', '/sampleData'].includes(patchSet[0].path);
 
 /*
- * File adaptor / Real time( NS/ SF/ Webhooks)/ Blob type resources need UI Data to be passed in Page processor preview
+ * File adaptor / Real time( NS/ SF/ Webhooks)/ Blob type/ Rest CSV resources need UI Data to be passed in Page processor preview
  */
-export const isUIDataExpectedForResource = resource =>
+export const isUIDataExpectedForResource = (resource, connection) =>
   isRealTimeOrDistributedResource(resource) ||
   isFileAdaptor(resource) ||
+  isRestCsvMediaTypeExport(resource, connection) ||
   isBlobTypeResource(resource);
 
 // A dummy _Context field to expose on each preview data on flows

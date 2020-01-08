@@ -68,6 +68,7 @@ export default function CsvParsePanel(props) {
   const classes = useStyles(props);
   const {
     columnDelimiter = '',
+    rowDelimiter = '',
     keyColumns = [],
     hasHeaderRow = false,
     multipleRowsPerRecord = false,
@@ -100,6 +101,24 @@ export default function CsvParsePanel(props) {
             inputProps={{ id: 'columnDelimiter' }}>
             {options.ColumnDelimiterOptions.map(opt => (
               <option key={opt.type} value={opt.value} data-test={opt.type}>
+                {opt.label}
+              </option>
+            ))}
+          </CeligoSelect>
+        </FormControl>
+        <FormControl disabled={disabled} className={classes.formControl}>
+          <InputLabel shrink htmlFor="rowDelimiter">
+            Row Delimiter
+          </InputLabel>
+          <CeligoSelect
+            native
+            value={rowDelimiter}
+            className={classes.select}
+            onChange={event => patchEditor('rowDelimiter', event.target.value)}
+            placeholder="Please Select"
+            inputProps={{ id: 'rowDelimiter' }}>
+            {options.RowDelimiterOptions.map(opt => (
+              <option key={opt.value} value={opt.value} data-test={opt.value}>
                 {opt.label}
               </option>
             ))}

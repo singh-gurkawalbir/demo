@@ -5,7 +5,9 @@ export default {
     const lookup =
       lookups &&
       lookups.find(
-        l => `{{{${l.name}}}}` === retValues['/rdbms/ignoreExtract']
+        l =>
+          `${l.name}` === retValues['/rdbms/ignoreExtract'] ||
+          `${l.name}` === retValues['/rdbms/updateExtract']
       );
 
     if (retValues['/rdbms/queryType'] === 'COMPOSITE') {
@@ -30,6 +32,8 @@ export default {
       retValues['/rdbms/query'] = [retValues['/rdbms/query']];
       retValues['/rdbms/queryType'] = [retValues['/rdbms/queryType']];
       retValues['/ignoreMissing'] = false;
+      retValues['/rdbms/updateLookupName'] = undefined;
+      retValues['/rdbms/updateExtract'] = undefined;
 
       if (lookup) {
         retValues['/rdbms/ignoreLookupName'] =
@@ -42,6 +46,8 @@ export default {
       retValues['/rdbms/query'] = [retValues['/rdbms/query']];
       retValues['/rdbms/queryType'] = [retValues['/rdbms/queryType']];
       retValues['/ignoreExisting'] = false;
+      retValues['/rdbms/updateLookupName'] = undefined;
+      retValues['/rdbms/updateExtract'] = undefined;
 
       if (lookup) {
         retValues['/rdbms/ignoreLookupName'] =
@@ -169,7 +175,7 @@ export default {
     'rdbms.ignoreExtract': {
       fieldId: 'rdbms.ignoreExtract',
       type: 'textwithlookupextract',
-      fieldType: 'relativeUri',
+      fieldType: 'ignoreExistingData',
       adaptorType: r => r && r.adaptorType,
       connectionId: r => r && r._connectionId,
       refreshOptionsOnChangesTo: ['rdbms.lookups', 'name'],
@@ -177,7 +183,7 @@ export default {
     'rdbms.updateExtract': {
       fieldId: 'rdbms.updateExtract',
       type: 'textwithlookupextract',
-      fieldType: 'relativeUri',
+      fieldType: 'ignoreExistingData',
       adaptorType: r => r && r.adaptorType,
       connectionId: r => r && r._connectionId,
       refreshOptionsOnChangesTo: ['rdbms.lookups', 'name'],

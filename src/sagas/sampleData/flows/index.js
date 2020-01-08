@@ -13,6 +13,7 @@ import {
   requestSampleDataForImports,
   updateStateForProcessorData,
   handleFlowDataStageErrors,
+  getFlowResourceNode,
 } from '../utils/flowDataUtils';
 import {
   updateFlowsDataForResource,
@@ -38,6 +39,7 @@ import {
   isFileAdaptor,
   isBlobTypeResource,
   isAS2Resource,
+  isRestCsvMediaTypeExport,
 } from '../../../utils/resource';
 
 function* initFlowData({ flowId, resourceId, resourceType }) {
@@ -191,6 +193,11 @@ export function* fetchPageGeneratorPreview({ flowId, _pageGeneratorId }) {
     'exports',
     _pageGeneratorId
   );
+  const { merged: connection } = yield select(
+    resourceData,
+    'connections',
+    resource._connectionId
+  );
 
   try {
     let previewData;
@@ -199,8 +206,12 @@ export function* fetchPageGeneratorPreview({ flowId, _pageGeneratorId }) {
       // Incase of Blob resource, sample data ( Blob type ) is uploaded to S3 in real time
       // So, its key (blobKey) is the sample data
       previewData = getBlobResourceSampleData();
-    } else if (isFileAdaptor(resource) || isAS2Resource(resource)) {
-      // fetch data for file adaptors and AS2 resource and get parsed based on file type to JSON
+    } else if (
+      isFileAdaptor(resource) ||
+      isAS2Resource(resource) ||
+      isRestCsvMediaTypeExport(resource, connection)
+    ) {
+      // fetch data for file adaptors , AS2 and Rest CSV Media type resource and get parsed based on file type to JSON
       previewData = yield call(requestFileAdaptorSampleData, { resource });
     } else if (isRealTimeOrDistributedResource(resource)) {
       // fetch data from real time sample data
@@ -252,7 +263,7 @@ function* processMappingData({
   flowId,
   resourceId,
   mappings,
-  processor,
+  stage,
   preProcessedData,
 }) {
   const body = {
@@ -262,7 +273,7 @@ function* processMappingData({
     data: [preProcessedData],
   };
   // call processor data specific to mapper as it is not part of editors saga
-  const path = `/processors/${processor}`;
+  const path = `/processors/mapperProcessor`;
   const opts = {
     method: 'POST',
     body,
@@ -287,7 +298,7 @@ function* processMappingData({
       actions.flowData.receivedProcessorData(
         flowId,
         resourceId,
-        'importMappingExtract',
+        stage,
         processedData
       )
     );
@@ -461,6 +472,10 @@ export function* requestProcessorData({
         hasNoRulesToProcess = true;
       }
     } else if (stage === 'importMappingExtract') {
+      // It does not have a processor, as it just copies its sampleData stage's data into its state, to enhance readability
+      // So making hasNoRulesToProcess to true
+      hasNoRulesToProcess = true;
+    } else if (stage === 'importMapping') {
       // mapping fields are processed here against raw data
       const appType =
         resource.adaptorType && adaptorTypeMap[resource.adaptorType];
@@ -475,7 +490,32 @@ export function* requestProcessorData({
           flowId,
           resourceId,
           mappings,
-          processor,
+          stage,
+          preProcessedData,
+        });
+      hasNoRulesToProcess = true;
+    } else if (stage === 'responseMappingExtract') {
+      // It does not have a processor, as it just copies its sampleData stage's data into its state, to enhance readability
+      // So making hasNoRulesToProcess to true
+      hasNoRulesToProcess = true;
+    } else if (stage === 'responseMapping') {
+      const flowNode = yield call(getFlowResourceNode, {
+        flowId,
+        resourceId,
+        resourceType,
+      });
+      const mappings = (flowNode && flowNode.responseMapping) || {};
+
+      if (
+        preProcessedData &&
+        mappings &&
+        (mappings.fields.length || mappings.lists.length)
+      )
+        return yield call(processMappingData, {
+          flowId,
+          resourceId,
+          mappings,
+          stage,
           preProcessedData,
         });
       hasNoRulesToProcess = true;

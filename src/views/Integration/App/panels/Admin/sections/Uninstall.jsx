@@ -8,6 +8,7 @@ import { confirmDialog } from '../../../../../../components/ConfirmDialog';
 import actions from '../../../../../../actions';
 import * as selectors from '../../../../../../reducers';
 import DeleteIcon from '../../../../../../components/icons/TrashIcon';
+import { getIntegrationAppUrlName } from '../../../../../../utils/integrationApps';
 
 const useStyles = makeStyles(theme => ({
   content: {
@@ -40,24 +41,28 @@ export default function UninstallSection({ storeId, integrationId }) {
     useSelector(state =>
       selectors.integrationAppSettings(state, integrationId)
     ) || {};
-  const uninstallSteps = useSelector(state =>
+  const integrationAppName = getIntegrationAppUrlName(integration.name);
+  const { steps: uninstallSteps } = useSelector(state =>
     selectors.integrationUninstallSteps(state, integrationId)
   );
 
   useEffect(() => {
     if (uninstallSteps && uninstallSteps.length) {
-      dispatch(actions.resource.request('integrations', integrationId));
-
       if (integration.settings && integration.settings.supportsMultiStore) {
-        history.push(`/pg/connectors/${integrationId}/uninstall/${storeId}`);
+        history.push(
+          `/pg/integrationapps/${integrationAppName}/${integrationId}/uninstall/${storeId}`
+        );
       } else {
-        history.push(`/pg/connectors/${integrationId}/uninstall`);
+        history.push(
+          `/pg/integrationapps/${integrationAppName}/${integrationId}/uninstall`
+        );
       }
     }
   }, [
     dispatch,
     history,
     integration.settings,
+    integrationAppName,
     integrationId,
     match.url,
     storeId,
@@ -103,8 +108,8 @@ export default function UninstallSection({ storeId, integrationId }) {
         </Typography>
         <Divider className={classes.divider} />
         <Typography variant="h5">
-          Once you uninstall this connector there is no going back. Please be
-          certain.
+          Once you uninstall this Integration App there is no going back. Please
+          be certain.
         </Typography>
         <Button
           data-test="uninstallConnector"

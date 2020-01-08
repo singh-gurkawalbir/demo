@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useHistory, Redirect } from 'react-router-dom';
+import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import {
@@ -15,6 +16,8 @@ import LoadResources from '../../components/LoadResources';
 import openExternalUrl from '../../utils/window';
 import ArrowRightIcon from '../../components/icons/ArrowRightIcon';
 import InstallationStep from '../../components/InstallStep';
+import getRoutePath from '../../utils/routePaths';
+import { getIntegrationAppUrlName } from '../../utils/integrationApps';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -41,77 +44,81 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function IntegratorAppUninstalleer(props) {
+export default function IntegrationAppUninstaller({ match }) {
   const classes = useStyles();
-  const { integrationId } = props.match.params;
-  let { storeId } = props.match.params;
-  const [requestPreUninstall, setRequestedPreUninstall] = useState(false);
-  const [isSetupComplete, setIsSetupComplete] = useState(false);
+  const history = useHistory();
+  const { integrationId, storeId } = match.params;
   const dispatch = useDispatch();
-  const integration = useSelector(state =>
-    selectors.integrationAppSettings(state, integrationId)
+  const integration =
+    useSelector(state =>
+      selectors.integrationAppSettings(state, integrationId)
+    ) || {};
+  const integrationAppName = getIntegrationAppUrlName(integration.name);
+  const isUninstallComplete = useSelector(state =>
+    selectors.isUninstallComplete(state, { integrationId, storeId })
   );
-  const uninstallSteps = useSelector(state =>
+  const { steps: uninstallSteps, error } = useSelector(state =>
     selectors.integrationUninstallSteps(state, integrationId)
   );
 
-  if (
-    !storeId &&
-    integration.settings.supportsMultiStore &&
-    (integration.stores || {}).length
-  ) {
-    storeId = integration.stores[0].value;
-  }
-
   useEffect(() => {
-    if ((!uninstallSteps || !uninstallSteps.length) && !requestPreUninstall) {
+    if (!error && !uninstallSteps)
       dispatch(
         actions.integrationApp.uninstaller.preUninstall(storeId, integrationId)
       );
-      setRequestedPreUninstall(true);
-    }
-  }, [uninstallSteps, requestPreUninstall, dispatch, storeId, integrationId]);
+  }, [dispatch, error, integrationId, storeId, uninstallSteps]);
 
   useEffect(() => {
     if (
-      uninstallSteps.length &&
-      !uninstallSteps.reduce((result, step) => result || !step.completed, false)
+      uninstallSteps &&
+      uninstallSteps.removeIntegration &&
+      integration &&
+      integration.mode === 'uninstall'
     ) {
-      setIsSetupComplete(true);
+      dispatch(
+        actions.integrationApp.uninstaller.uninstallIntegration(integrationId)
+      );
+      history.push(getRoutePath('dashboard'));
     }
-  }, [dispatch, integrationId, uninstallSteps]);
+  }, [dispatch, history, integration, integrationId, uninstallSteps]);
 
   useEffect(() => {
-    if (isSetupComplete) {
+    if (isUninstallComplete) {
       // redirect to integration Settings
       if (integration.mode !== 'uninstall') {
         dispatch(actions.integrationApp.uninstaller.clearSteps(integrationId));
-        props.history.push(`/pg/integrationApp/${integrationId}/flows`);
+        history.push(
+          `/pg/integrationapps/${integrationAppName}/${integrationId}/flows`
+        );
       } else {
         dispatch(
           actions.integrationApp.uninstaller.uninstallIntegration(integrationId)
         );
-        props.history.push('/pg');
+        history.push(getRoutePath('dashboard'));
       }
     }
   }, [
     dispatch,
-    integration,
+    history,
     integration.mode,
+    integrationAppName,
     integrationId,
-    isSetupComplete,
-    props.history,
+    isUninstallComplete,
   ]);
 
-  if (!uninstallSteps || !integration || !integration._connectorId) {
-    return <Typography>No Integration Found</Typography>;
+  if (!integration || !integration._id) {
+    return <LoadResources required resources="integrations" />;
+  }
+
+  if (error) {
+    return <Redirect push={false} to={getRoutePath('dashboard')} />;
   }
 
   const storeName = integration.stores
     ? (integration.stores.find(s => s.value === storeId) || {}).label
     : undefined;
   const handleStepClick = step => {
-    // TODO: installURL should eventually changed to uninstallURL. Currently it is left as installURL to support shopify uninstallation.
+    // TODO: installURL should eventually changed to uninstallURL. Currently it is left as installURL to support shopify uninstall.
     const { installURL, uninstallerFunction } = step;
 
     // handle connection step click
@@ -165,49 +172,45 @@ export default function IntegratorAppUninstalleer(props) {
 
   const handleBackClick = () => {
     dispatch(actions.integrationApp.uninstaller.clearSteps(integrationId));
-    props.history.goBack();
+    history.goBack();
   };
 
   return (
-    <LoadResources required resources="connections,integrations">
-      <div className={classes.root}>
-        <div className={classes.innerContent}>
-          <Grid container className={classes.formHead}>
-            <Grid item xs={1}>
-              <IconButton
-                data-test="back"
-                onClick={handleBackClick}
-                size="medium">
-                <ArrowBackIcon fontSize="inherit" />
-              </IconButton>
-            </Grid>
-            <Grid item>
-              <Paper elevation={0} className={classes.paper}>
-                <Breadcrumbs
-                  separator={<ArrowRightIcon />}
-                  aria-label="breadcrumb">
-                  <Typography color="textPrimary">Setup</Typography>
-                  <Typography color="textPrimary">
-                    {integration.name}
-                  </Typography>
-                  <Typography color="textPrimary">{storeName}</Typography>
-                </Breadcrumbs>
-              </Paper>
-            </Grid>
+    <div className={classes.root}>
+      <div className={classes.innerContent}>
+        <Grid container className={classes.formHead}>
+          <Grid item xs={1}>
+            <IconButton
+              data-test="back"
+              onClick={handleBackClick}
+              size="medium">
+              <ArrowBackIcon fontSize="inherit" />
+            </IconButton>
           </Grid>
-          <Grid container spacing={3} className={classes.stepTable}>
-            {uninstallSteps.map((step, index) => (
-              <InstallationStep
-                key={step.name}
-                mode="uninstall"
-                handleStepClick={handleStepClick}
-                index={index + 1}
-                step={step}
-              />
-            ))}
+          <Grid item>
+            <Paper elevation={0} className={classes.paper}>
+              <Breadcrumbs
+                separator={<ArrowRightIcon />}
+                aria-label="breadcrumb">
+                <Typography color="textPrimary">Setup</Typography>
+                <Typography color="textPrimary">{integration.name}</Typography>
+                <Typography color="textPrimary">{storeName}</Typography>
+              </Breadcrumbs>
+            </Paper>
           </Grid>
-        </div>
+        </Grid>
+        <Grid container spacing={3} className={classes.stepTable}>
+          {(uninstallSteps || []).map((step, index) => (
+            <InstallationStep
+              key={step.name}
+              mode="uninstall"
+              handleStepClick={handleStepClick}
+              index={index + 1}
+              step={step}
+            />
+          ))}
+        </Grid>
       </div>
-    </LoadResources>
+    </div>
   );
 }

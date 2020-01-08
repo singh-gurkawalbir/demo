@@ -18,6 +18,7 @@ export default (state = {}, action) => {
         isLoading: false,
         fieldType,
         data: metadata,
+        shouldReset: true,
       };
 
       return newState;

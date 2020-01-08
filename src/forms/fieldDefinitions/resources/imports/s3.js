@@ -66,6 +66,10 @@ export default {
             label: 'EU (London) [eu-west-2]',
             value: 'eu-west-2',
           },
+          {
+            label: 'EU (Stockholm) [eu-north-1]',
+            value: 'eu-north-1',
+          },
         ],
       },
     ],

@@ -1,14 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { useCallback, useState, useEffect, Fragment } from 'react';
-import {
-  ExpansionPanelSummary,
-  Typography,
-  ExpansionPanelDetails,
-  ExpansionPanel,
-  Divider,
-  makeStyles,
-} from '@material-ui/core';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import { Divider, makeStyles } from '@material-ui/core';
 import actions from '../../../../actions';
 import RadioGroup from '../../../../components/DynaForm/fields/radiogroup/DynaRadioGroup';
 import DynaSelect from '../../../../components/DynaForm/fields/DynaSelect';
@@ -29,7 +21,6 @@ export default function DynaStaticMapWidget(props) {
   const {
     id,
     _integrationId,
-    title,
     extracts = [],
     map = {},
     defaultValue,
@@ -45,7 +36,6 @@ export default function DynaStaticMapWidget(props) {
   const [allowFailures, setAllowFailures] = useState(props.allowFailures);
   const [defaultVal, setDefaultVal] = useState(defaultValue);
   const [initComplete, setInitComplete] = useState(false);
-  const [shouldExpand, setShouldExpand] = useState(false);
   const [showDefault, setShowDefault] = useState(false);
   const getRadioValue = ({ allowFailures, defaultValue }) => {
     if (allowFailures) {
@@ -171,67 +161,57 @@ export default function DynaStaticMapWidget(props) {
   };
 
   return (
-    <ExpansionPanel
-      // eslint-disable-next-line react/no-array-index-key
-      expanded={shouldExpand}>
-      <ExpansionPanelSummary
-        data-test={title}
-        onClick={() => setShouldExpand(expand => !expand)}
-        expandIcon={<ExpandMoreIcon />}>
-        <Typography>{title}</Typography>
-      </ExpansionPanelSummary>
-      <ExpansionPanelDetails className={classes.flexColumn}>
-        <DynaTableView
-          {...props}
-          optionsMap={optionsMap}
-          isLoading={isLoading ? fieldType : false}
-          hideLabel
-          shouldReset={shouldReset}
-          metadata={metadata}
-          value={computedValue}
-          onFieldChange={handleMapChange}
-          handleRefreshClickHandler={handleRefreshClick}
-          handleCleanupHandler={handleCleanup}
-        />
-        <Divider className={classes.margin} />
-        {!hideLookupAllowFailures && (
-          <Fragment>
-            <RadioGroup
-              {...props}
-              value={radioState}
-              id="allowFailures"
-              label="Action to take if unique match not found"
-              onFieldChange={handleAllowFailuresClick}
-              showOptionsVertically
-              options={[
-                {
-                  items: [
-                    { label: `Fail Record`, value: 'allowFailures' },
-                    {
-                      label: `Use Empty String as Default Value`,
-                      value: 'useEmptyString',
-                    },
-                    { label: `Use Null as Default Value`, value: 'useNull' },
-                    {
-                      label: `Use Custom Default Value`,
-                      value: 'defaultLookup',
-                    },
-                  ],
-                },
-              ]}
+    <Fragment>
+      <DynaTableView
+        {...props}
+        optionsMap={optionsMap}
+        isLoading={isLoading ? fieldType : false}
+        hideLabel
+        shouldReset={shouldReset}
+        metadata={metadata}
+        value={computedValue}
+        onFieldChange={handleMapChange}
+        handleRefreshClickHandler={handleRefreshClick}
+        handleCleanupHandler={handleCleanup}
+      />
+      <Divider className={classes.margin} />
+      {!hideLookupAllowFailures && (
+        <Fragment>
+          <RadioGroup
+            {...props}
+            value={radioState}
+            id="allowFailures"
+            label="Action to take if unique match not found"
+            onFieldChange={handleAllowFailuresClick}
+            showOptionsVertically
+            options={[
+              {
+                items: [
+                  { label: `Fail Record`, value: 'allowFailures' },
+                  {
+                    label: `Use Empty String as Default Value`,
+                    value: 'useEmptyString',
+                  },
+                  { label: `Use Null as Default Value`, value: 'useNull' },
+                  {
+                    label: `Use Custom Default Value`,
+                    value: 'defaultLookup',
+                  },
+                ],
+              },
+            ]}
+          />
+          {showDefault && (
+            <DynaSelect
+              label="Default Lookup Value"
+              name="defaultValue"
+              onFieldChange={handleDefaultValueChange}
+              value={defaultVal}
+              options={[{ items: defaultOptions }]}
             />
-            {showDefault && (
-              <DynaSelect
-                label="Default Lookup Value"
-                name="defaultValue"
-                onFieldChange={handleDefaultValueChange}
-                value={defaultVal}
-                options={[{ items: defaultOptions }]}
-              />
-            )}
-          </Fragment>
-        )}
-      </ExpansionPanelDetails>
-    </ExpansionPanel>
+          )}
+        </Fragment>
+      )}
+    </Fragment>
   );
 }

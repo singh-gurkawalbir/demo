@@ -15,8 +15,8 @@ import { getResource, commitStagedChanges } from '../resources';
 import connectionSagas from '../resourceForm/connections';
 import { requestAssistantMetadata } from '../resources/meta';
 import { isNewId } from '../../utils/resource';
-import { uploadRawData } from '../uploadFile';
 import patchTransformationRulesForXMLResource from '../sampleData/utils/xmlTransformationRulesGenerator';
+import { uploadRawData } from '../uploadFile';
 
 export const SCOPES = {
   META: 'meta',
@@ -148,9 +148,20 @@ export function* createFormValuesPatchSet({
       data: values,
     });
   } else {
+    let connection;
+
+    if (resource && resource._connectionId) {
+      connection = yield select(
+        selectors.resource,
+        'connections',
+        resource._connectionId
+      );
+    }
+
     const { preSave } = factory.getResourceFormAssets({
       resourceType,
       resource,
+      connection,
       isNew: formState.isNew,
     });
 
@@ -372,11 +383,22 @@ export function* initFormValues({
     }
   }
 
+  let connection;
+
+  if (resource && resource._connectionId) {
+    connection = yield select(
+      selectors.resource,
+      'connections',
+      resource._connectionId
+    );
+  }
+
   const defaultFormAssets = factory.getResourceFormAssets({
     resourceType,
     resource,
     isNew,
     assistantData,
+    connection,
   });
   const { customForm } = resource;
   const form =

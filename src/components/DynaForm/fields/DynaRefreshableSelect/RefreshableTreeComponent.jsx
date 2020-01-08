@@ -7,7 +7,7 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import RefreshIcon from '../../../icons/RefreshIcon';
-import DynaCheckbox from '../DynaCheckbox';
+import DynaCheckbox from '../checkbox/DynaCheckbox';
 import Spinner from '../../../Spinner';
 
 const fieldToOption = field => ({

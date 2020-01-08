@@ -48,6 +48,7 @@ export default function DynaCsvParse(props) {
     if (shouldCommit) {
       const {
         columnDelimiter,
+        rowDelimiter,
         hasHeaderRow,
         keyColumns,
         rowsToSkip,
@@ -55,6 +56,7 @@ export default function DynaCsvParse(props) {
       } = editorValues;
       const savedVal = {
         columnDelimiter: csvOptions.ColumnDelimiterMap[columnDelimiter],
+        rowDelimiter: csvOptions.RowDelimiterMap[rowDelimiter],
         hasHeaderRow,
         keyColumns,
         trimSpaces,

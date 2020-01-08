@@ -14,6 +14,7 @@ import { isNewId, adaptorTypeMap } from '../../../utils/resource';
 export function* pageProcessorPreview({
   flowId,
   _pageProcessorId,
+  _pageProcessorDoc,
   previewType,
   resourceType = 'exports',
   hidden = false,
@@ -37,6 +38,13 @@ export function* pageProcessorPreview({
     eliminateDataProcessors: true,
   });
 
+  // Override the map with provided document for this _pageProcessorId
+  if (_pageProcessorDoc) {
+    pageProcessorMap[_pageProcessorId] = {
+      doc: _pageProcessorDoc,
+    };
+  }
+
   // Incase of a new Lookup / Import add that doc to flow explicitly as it is not yet saved
   if (isNewId(_pageProcessorId)) {
     const newResourceDoc =
@@ -46,12 +54,15 @@ export function* pageProcessorPreview({
 
     flow.pageProcessors.push(newResourceDoc);
 
-    pageProcessorMap[_pageProcessorId] = {
-      doc: yield call(fetchResourceDataForNewFlowResource, {
-        resourceId: _pageProcessorId,
-        resourceType,
-      }),
-    };
+    // If page processor Doc is supplied , no need of fetching it from the state
+    if (!_pageProcessorDoc) {
+      pageProcessorMap[_pageProcessorId] = {
+        doc: yield call(fetchResourceDataForNewFlowResource, {
+          resourceId: _pageProcessorId,
+          resourceType,
+        }),
+      };
+    }
   }
 
   if (previewType === 'flowInput') {
@@ -101,7 +112,7 @@ export function* exportPreview({
     'exports',
     resourceId
   );
-  let body = { ...resource };
+  let body = deepClone(resource);
 
   if (body.type === 'delta') {
     body.postData = {

@@ -35,15 +35,16 @@ import {
   getUsedActionsMapForResource,
   isPageGeneratorResource,
 } from '../utils/flows';
-import {
-  isValidResourceReference,
-  isNewId,
-  getDomain,
-} from '../utils/resource';
+import { isValidResourceReference, isNewId } from '../utils/resource';
 import { processSampleData } from '../utils/sampleData';
+import {
+  getAvailablePreviewStages,
+  isPreviewPanelAvailable,
+} from '../utils/exportPanel';
 import inferErrorMessage from '../utils/inferErrorMessage';
 import getRoutePath from '../utils/routePaths';
 import { COMM_STATES } from './comms/networkComms';
+import { getIntegrationAppUrlName } from '../utils/integrationApps';
 
 const emptySet = [];
 const emptyObject = {};
@@ -151,6 +152,10 @@ export function resourceFormState(state, resourceType, resourceId) {
   );
 }
 
+export function getNumEnabledFlows(state) {
+  return fromSession.getNumEnabledFlows(state && state.session);
+}
+
 export function resourceFormSaveProcessTerminated(
   state,
   resourceType,
@@ -191,6 +196,22 @@ export function isSetupComplete(
   isSetupComplete =
     installSteps.length &&
     !installSteps.reduce((result, step) => result || !step.completed, false);
+
+  return isSetupComplete;
+}
+
+export function isUninstallComplete(state, { integrationId, storeId }) {
+  let isSetupComplete = false;
+  const uninstallSteps =
+    fromSession.uninstallSteps(
+      state && state.session,
+      integrationId,
+      storeId
+    ) || [];
+
+  isSetupComplete =
+    uninstallSteps.length &&
+    !uninstallSteps.reduce((result, step) => result || !step.completed, false);
 
   return isSetupComplete;
 }
@@ -317,6 +338,7 @@ export function connectorFieldOptions(
     isLoading,
     options:
       (data &&
+        data.options &&
         data.options.map(option => ({
           value: option[0],
           label: option[1],
@@ -359,6 +381,14 @@ export function editorViolations(state, id) {
 
 export function mapping(state, id) {
   return fromSession.mapping(state && state.session, id);
+}
+
+export function mappingSaveProcessTerminate(state, id) {
+  return fromSession.mappingSaveProcessTerminate(state && state.session, id);
+}
+
+export function searchCriteria(state, id) {
+  return fromSession.getSearchCriteria(state && state.session, id);
 }
 
 export function editorHelperFunctions(state) {
@@ -647,6 +677,7 @@ export function resourceList(state, options = {}) {
       'stacks',
       'templates',
       'published',
+      'transfers',
     ].includes(
       /* These resources are common for both production & sandbox environments. */
       options.type
@@ -1013,11 +1044,17 @@ export function getFlowsAssociatedExportFromIAMetadata(state, fieldMeta) {
 }
 // #begin integrationApps Region
 
-export function integrationAppSettingsFormState(state, integrationId, flowId) {
+export function integrationAppSettingsFormState(
+  state,
+  integrationId,
+  flowId,
+  sectionId
+) {
   return fromSession.integrationAppSettingsFormState(
     state && state.session,
     integrationId,
-    flowId
+    flowId,
+    sectionId
   );
 }
 
@@ -1055,10 +1092,8 @@ export function integrationConnectionList(state, integrationId) {
 export function integrationAppResourceList(state, integrationId, storeId) {
   if (!state) return { connections: emptySet, flows: emptySet };
 
-  const integrationResource = fromData.integrationAppSettings(
-    state.data,
-    integrationId
-  );
+  const integrationResource =
+    fromData.integrationAppSettings(state.data, integrationId) || {};
   const { supportsMultiStore, sections } = integrationResource.settings || {};
   const { resources: integrationConnections } = resourceListWithPermissions(
     state,
@@ -1119,16 +1154,10 @@ export function integrationAppConnectionList(state, integrationId, storeId) {
   return integrationAppResourceList(state, integrationId, storeId).connections;
 }
 
-export function integrationAppSettings(state, id, storeId) {
-  if (!state) return { settings: {} };
-  const integrationResource = fromData.integrationAppSettings(state.data, id);
-  const uninstallSteps = fromSession.uninstallSteps(
-    state.resource,
-    id,
-    storeId
-  );
+export function integrationAppSettings(state, id) {
+  if (!state) return null;
 
-  return { ...integrationResource, ...uninstallSteps };
+  return fromData.integrationAppSettings(state.data, id);
 }
 
 export function integrationAppLicense(state, id) {
@@ -1167,9 +1196,10 @@ export function integrationAppLicense(state, id) {
 }
 
 export function integrationAppFlowSections(state, id, store) {
-  if (!state) return [];
+  if (!state) return emptySet;
   let flowSections = [];
-  const integrationResource = fromData.integrationAppSettings(state.data, id);
+  const integrationResource =
+    fromData.integrationAppSettings(state.data, id) || emptyObject;
   const { sections = [], supportsMultiStore } =
     integrationResource.settings || {};
 
@@ -1194,10 +1224,11 @@ export function integrationAppFlowSections(state, id, store) {
 }
 
 export function integrationAppGeneralSettings(state, id, storeId) {
-  if (!state) return {};
+  if (!state) return emptyObject;
   let fields;
   let subSections;
-  const integrationResource = fromData.integrationAppSettings(state.data, id);
+  const integrationResource =
+    fromData.integrationAppSettings(state.data, id) || emptyObject;
   const { supportsMultiStore, general } = integrationResource.settings || {};
 
   if (supportsMultiStore) {
@@ -1219,10 +1250,8 @@ export function integrationAppGeneralSettings(state, id, storeId) {
 
 export function hasGeneralSettings(state, integrationId, storeId) {
   if (!state) return false;
-  const integrationResource = fromData.integrationAppSettings(
-    state.data,
-    integrationId
-  );
+  const integrationResource =
+    fromData.integrationAppSettings(state.data, integrationId) || {};
   const { supportsMultiStore, general } = integrationResource.settings || {};
 
   if (supportsMultiStore) {
@@ -1272,8 +1301,9 @@ export function integrationAppSectionMetadata(
 }
 
 export function integrationAppFlowSettings(state, id, section, storeId) {
-  if (!state) return {};
-  const integrationResource = fromData.integrationAppSettings(state.data, id);
+  if (!state) return emptyObject;
+  const integrationResource =
+    fromData.integrationAppSettings(state.data, id) || emptyObject;
   const {
     supportsMultiStore,
     supportsMatchRuleEngine: showMatchRuleEngine,
@@ -1422,22 +1452,25 @@ export function integrationInstallSteps(state, integrationId) {
 }
 
 export function integrationUninstallSteps(state, integrationId) {
-  const uninstallSteps = fromSession.uninstallSteps(
+  const uninstallData = fromSession.uninstallData(
     state && state.session,
     integrationId
   );
+  const { steps: uninstallSteps, error } = uninstallData;
 
   if (!uninstallSteps || !Array.isArray(uninstallSteps)) {
-    return [];
+    return uninstallData;
   }
 
-  return produce(uninstallSteps, draft => {
+  const modifiedSteps = produce(uninstallSteps, draft => {
     const unCompletedStep = draft.find(s => !s.completed);
 
     if (unCompletedStep) {
       unCompletedStep.isCurrentStep = true;
     }
   });
+
+  return { steps: modifiedSteps, error };
 }
 
 export function addNewStoreSteps(state, integrationId) {
@@ -1496,6 +1529,12 @@ export function integratorLicense(state) {
   return fromUser.integratorLicense(state.user, preferences.defaultAShareId);
 }
 
+export function diyLicense(state) {
+  const preferences = userPreferences(state);
+
+  return fromUser.diyLicense(state.user, preferences.defaultAShareId);
+}
+
 export function integratorLicenseActionDetails(state) {
   let licenseActionDetails = {};
   const license = integratorLicense(state);
@@ -1543,12 +1582,237 @@ export function integratorLicenseActionDetails(state) {
   return licenseActionDetails;
 }
 
+function getTierToFlowsMap(license) {
+  const flowsInTier = {
+    none: 0,
+    free: 0,
+    limited: 3,
+    standard: 8,
+    premium: 20,
+    enterprise: 50,
+  };
+  let flows = flowsInTier[license.tier] || 0;
+
+  if (self.tier === 'free' && !license.inTrial) {
+    if (
+      !license.numAddOnFlows &&
+      !license.sandbox &&
+      !license.numSandboxAddOnFlows
+    ) {
+      flows = 1;
+    }
+  }
+
+  return flows;
+}
+
+export function integratorLicenseWithMetadata(state) {
+  const license = integratorLicense(state);
+  const preferences = userPreferences(state);
+  const licenseActionDetails = { ...license };
+  const nameMap = {
+    none: 'None',
+    free: 'Free',
+    limited: 'Limited',
+    standard: 'Standard',
+    premium: 'Premium',
+    enterprise: 'Enterprise',
+  };
+
+  if (!licenseActionDetails) {
+    return licenseActionDetails;
+  }
+
+  licenseActionDetails.isNone = licenseActionDetails.tier === 'none';
+  licenseActionDetails.tierName = nameMap[licenseActionDetails.tier];
+  licenseActionDetails.inTrial = false;
+
+  if (licenseActionDetails.tier === 'free') {
+    if (licenseActionDetails.trialEndDate) {
+      licenseActionDetails.inTrial =
+        moment(licenseActionDetails.trialEndDate) - moment() >= 0;
+    }
+  }
+
+  licenseActionDetails.hasSubscription = false;
+
+  if (['none', 'free'].indexOf(licenseActionDetails.tier) === -1) {
+    licenseActionDetails.hasSubscription = true;
+  } else if (
+    licenseActionDetails.tier === 'free' &&
+    !licenseActionDetails.inTrial
+  ) {
+    if (
+      licenseActionDetails.numAddOnFlows > 0 ||
+      licenseActionDetails.sandbox ||
+      licenseActionDetails.numSandboxAddOnFlows > 0
+    ) {
+      licenseActionDetails.hasSubscription = true;
+    }
+  }
+
+  licenseActionDetails.isFreemium =
+    licenseActionDetails.tier === 'free' &&
+    !licenseActionDetails.hasSubscription &&
+    !licenseActionDetails.inTrial;
+  licenseActionDetails.hasExpired = false;
+
+  if (licenseActionDetails.hasSubscription && licenseActionDetails.expires) {
+    licenseActionDetails.hasExpired =
+      moment(licenseActionDetails.expires) - moment() < 0;
+  }
+
+  licenseActionDetails.isExpiringSoon = false;
+  let dateToCheck;
+
+  if (licenseActionDetails.hasSubscription) {
+    if (!licenseActionDetails.hasExpired && licenseActionDetails.expires) {
+      dateToCheck = licenseActionDetails.expires;
+    }
+  } else if (licenseActionDetails.inTrial) {
+    dateToCheck = licenseActionDetails.trialEndDate;
+  }
+
+  if (dateToCheck) {
+    licenseActionDetails.isExpiringSoon =
+      moment.duration(moment(dateToCheck) - moment()).as('days') <= 15; // 15 days
+  }
+
+  licenseActionDetails.subscriptionName = licenseActionDetails.tierName;
+
+  if (licenseActionDetails.inTrial) {
+    licenseActionDetails.subscriptionName = '30 day Free Trial';
+  }
+
+  licenseActionDetails.createdDate = '';
+
+  if (licenseActionDetails.created) {
+    licenseActionDetails.createdDate = moment(
+      licenseActionDetails.created
+    ).format(`${preferences.dateFormat} ${preferences.timeFormat}`);
+  }
+
+  licenseActionDetails.expirationDate = licenseActionDetails.expires;
+
+  if (licenseActionDetails.inTrial) {
+    licenseActionDetails.expirationDate = licenseActionDetails.trialEndDate;
+  } else if (licenseActionDetails.isFreemium) {
+    licenseActionDetails.expirationDate = '';
+  }
+
+  if (licenseActionDetails.expirationDate) {
+    licenseActionDetails.expirationDate = moment(
+      licenseActionDetails.expirationDate
+    ).format('MMM Do, YYYY');
+  }
+
+  const names = {
+    free: 'Free',
+    light: 'Starter',
+    moderate: 'Professional',
+    heavy: 'Enterprise',
+    custom: 'Custom',
+  };
+
+  licenseActionDetails.usageTierName =
+    names[licenseActionDetails.usageTier || 'free'];
+
+  const hours = {
+    free: 1,
+    light: 40,
+    moderate: 400,
+    heavy: 4000,
+    custom: 10000, // TODO - not sure how to get this
+  };
+
+  licenseActionDetails.usageTierHours =
+    hours[licenseActionDetails.usageTier || 'free'];
+  licenseActionDetails.status = '';
+
+  if (licenseActionDetails.hasSubscription) {
+    licenseActionDetails.status = licenseActionDetails.hasExpired
+      ? 'expired'
+      : 'active';
+  }
+
+  if (
+    licenseActionDetails.tier === 'free' &&
+    (licenseActionDetails.inTrial || licenseActionDetails.isFreemium)
+  ) {
+    licenseActionDetails.status = 'active';
+  }
+
+  licenseActionDetails.totalFlowsAvailable = getTierToFlowsMap(
+    licenseActionDetails
+  );
+
+  if (licenseActionDetails.numAddOnFlows > 0) {
+    licenseActionDetails.totalFlowsAvailable +=
+      licenseActionDetails.numAddOnFlows;
+  }
+
+  licenseActionDetails.totalSandboxFlowsAvailable = 0;
+
+  if (licenseActionDetails.sandbox) {
+    licenseActionDetails.totalSandboxFlowsAvailable = getTierToFlowsMap(
+      licenseActionDetails
+    );
+  }
+
+  if (licenseActionDetails.numSandboxAddOnFlows > 0) {
+    licenseActionDetails.totalSandboxFlowsAvailable +=
+      licenseActionDetails.numSandboxAddOnFlows;
+  }
+
+  licenseActionDetails.supportTier = '';
+
+  if (
+    (licenseActionDetails.status === 'active' ||
+      licenseActionDetails.isFreemium) &&
+    licenseActionDetails.supportTier
+  ) {
+    licenseActionDetails.supportTier = licenseActionDetails.supportTier;
+  }
+
+  const toReturn = {
+    actions: [],
+  };
+
+  toReturn.__trialExtensionRequested =
+    licenseActionDetails.__trialExtensionRequested;
+  toReturn.__upgradeRequested = licenseActionDetails.__upgradeRequested;
+
+  if (licenseActionDetails.tier === 'none') {
+    toReturn.actions = ['start-free-trial'];
+  } else if (licenseActionDetails.tier === 'free') {
+    if (licenseActionDetails.inTrial) {
+      toReturn.actions = ['request-subscription'];
+    } else if (licenseActionDetails.hasSubscription) {
+      if (licenseActionDetails.hasExpired) {
+        toReturn.actions = ['request-upgrade'];
+      }
+    } else if (licenseActionDetails.trialEndDate) {
+      toReturn.actions = ['request-upgrade', 'request-trial-extension'];
+    } else {
+      toReturn.actions = ['start-free-trial'];
+    }
+  } else if (licenseActionDetails.hasExpired) {
+    toReturn.actions = ['request-upgrade'];
+  } else if (licenseActionDetails.tier !== 'enterprise') {
+    toReturn.actions = ['request-upgrade'];
+  }
+
+  licenseActionDetails.subscriptionActions = toReturn;
+
+  return licenseActionDetails;
+}
+
 export function accountSummary(state) {
   return fromUser.accountSummary(state.user);
 }
 
-export function notifications(state) {
-  return fromUser.notifications(state.user);
+export function userNotifications(state) {
+  return fromUser.userNotifications(state.user);
 }
 
 export function hasAccounts(state) {
@@ -1634,12 +1898,15 @@ const getParentsResourceId = (state, resourceType, resourceId) => {
 export const getResourceEditUrl = (state, resourceType, resourceId) => {
   if (resourceType === 'flows') {
     const integrationId = getParentsResourceId(state, resourceType, resourceId);
-    const { _connectorId } = resource(state, resourceType, resourceId) || {};
+    const { _connectorId, name } =
+      resource(state, resourceType, resourceId) || {};
 
     // if _connectorId its an integrationApp
     if (_connectorId) {
       return getRoutePath(
-        `/integrationApp/${integrationId}/flowBuilder/${resourceId}`
+        `/integrationapps/${getIntegrationAppUrlName(
+          name
+        )}/${integrationId}/flowBuilder/${resourceId}`
       );
     }
 
@@ -1956,67 +2223,52 @@ export function tiles(state) {
   let integration;
   let connector;
   let status;
-  const domain = getDomain();
 
-  return tiles
-    .filter(t => {
-      /**
-       * IA QA certified only "Shopify - NetSuite" and "Salesforce - NetSuite (IO)" connectors on React.
-       * So, hide all other connector tiles on production until QA certifies.
-       */
-      if (!t._connectorId || domain !== 'integrator.io') {
-        return true;
-      }
+  return tiles.map(t => {
+    integration = integrations.find(i => i._id === t._integrationId) || {};
 
-      return ['54fa0b38a7044f9252000036', '5c8f30229f701b3e9a0aa817'].includes(
-        t._connectorId
-      );
-    })
-    .map(t => {
-      integration = integrations.find(i => i._id === t._integrationId) || {};
+    if (t._connectorId && integration.mode === INTEGRATION_MODES.UNINSTALL) {
+      status = TILE_STATUS.UNINSTALL;
+    } else if (
+      t._connectorId &&
+      integration.mode !== INTEGRATION_MODES.SETTINGS
+    ) {
+      status = TILE_STATUS.IS_PENDING_SETUP;
+    } else if (t.offlineConnections && t.offlineConnections.length > 0) {
+      status = TILE_STATUS.HAS_OFFLINE_CONNECTIONS;
+    } else if (t.numError && t.numError > 0) {
+      status = TILE_STATUS.HAS_ERRORS;
+    } else {
+      status = TILE_STATUS.SUCCESS;
+    }
 
-      if (t._connectorId && integration.mode === INTEGRATION_MODES.UNINSTALL) {
-        status = TILE_STATUS.UNINSTALL;
-      } else if (
-        t._connectorId &&
-        integration.mode !== INTEGRATION_MODES.SETTINGS
-      ) {
-        status = TILE_STATUS.IS_PENDING_SETUP;
-      } else if (t.offlineConnections && t.offlineConnections.length > 0) {
-        status = TILE_STATUS.HAS_OFFLINE_CONNECTIONS;
-      } else if (t.numError && t.numError > 0) {
-        status = TILE_STATUS.HAS_ERRORS;
-      } else {
-        status = TILE_STATUS.SUCCESS;
-      }
-
-      if (t._connectorId) {
-        connector = published.find(i => i._id === t._connectorId) || {
-          user: {},
-        };
-
-        return {
-          ...t,
-          status,
-          integration: {
-            mode: integration.mode,
-            permissions: integration.permissions,
-          },
-          connector: {
-            owner: connector.user.company || connector.user.name,
-            applications: connector.applications || [],
-          },
-        };
-      }
+    if (t._connectorId) {
+      connector = published.find(i => i._id === t._connectorId) || {
+        user: {},
+      };
 
       return {
         ...t,
         status,
         integration: {
+          mode: integration.mode,
           permissions: integration.permissions,
         },
+        connector: {
+          owner: connector.user.company || connector.user.name,
+          applications: connector.applications || [],
+        },
       };
-    });
+    }
+
+    return {
+      ...t,
+      status,
+      integration: {
+        permissions: integration.permissions,
+      },
+    };
+  });
 }
 // #endregion
 
@@ -2351,6 +2603,10 @@ export function connectionTokens(state, resourceId) {
   return fromSession.connectionTokens(state && state.session, resourceId);
 }
 
+export function tokenRequestLoading(state, resourceId) {
+  return fromSession.tokenRequestLoading(state && state.session, resourceId);
+}
+
 // #endregion
 
 export function commStatusByKey(state, key) {
@@ -2668,7 +2924,7 @@ export function getImportSampleData(state, resourceId) {
     };
   } else if (adaptorType === 'NetSuiteDistributedImport') {
     // eslint-disable-next-line camelcase
-    const { _connectionId: connectionId, netsuite_da } = resource;
+    const { _connectionId: connectionId, netsuite_da = {} } = resource;
     const commMetaPath = `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${netsuite_da.recordType}`;
     const { data, status } = metadataOptionsAndResources({
       state,
@@ -2695,6 +2951,20 @@ export function getImportSampleData(state, resourceId) {
   }
 
   return emptyObject;
+}
+
+export function getSalesforceMasterRecordTypeInfo(state, resourceId) {
+  const { merged: resource } = resourceData(state, 'imports', resourceId);
+  const { _connectionId: connectionId, salesforce } = resource;
+  const commMetaPath = `salesforce/metadata/connections/${connectionId}/sObjectTypes/${salesforce.sObjectType}`;
+  const { data, status } = metadataOptionsAndResources({
+    state,
+    connectionId,
+    commMetaPath,
+    filterKey: 'salesforce-masterRecordTypeInfo',
+  });
+
+  return { data, status };
 }
 
 export function isAnyFlowConnectionOffline(state, flowId) {
@@ -2776,7 +3046,11 @@ export function isPageGenerator(state, flowId, resourceId, resourceType) {
   // Incase of new resource (export/lookup), flow doc does not have this resource yet
   // So, get staged resource and determine export/lookup based on isLookup flag
   if (isNewId(resourceId)) {
-    const { merged: resource } = resourceData(state, 'exports', resourceId);
+    const { merged: resource = {} } = resourceData(
+      state,
+      'exports',
+      resourceId
+    );
 
     return !resource.isLookup;
   }
@@ -2815,4 +3089,138 @@ export function resourceNamesByIds(state, type) {
   resources.forEach(r => (resourceIdNameMap[r._id] = r.name || r._id));
 
   return resourceIdNameMap;
+}
+
+export function getTransferPreviewData(state) {
+  return fromSession.getTransferPreviewData(state && state.session);
+}
+
+export function transferListWithMetadata(state) {
+  const transfers =
+    resourceList(state, {
+      type: 'transfers',
+    }).resources || [];
+  const preferences = userProfilePreferencesProps(state);
+
+  transfers.forEach((transfer, i) => {
+    let fromUser = '';
+    let toUser = '';
+    let integrations = [];
+    let transferDate = '';
+
+    if (transfer.transferToUser && transfer.transferToUser._id) {
+      transfers[i].ownerUser = {
+        _id: preferences._id,
+        email: preferences.email,
+        name: 'Me',
+      };
+    } else if (transfer.ownerUser && transfer.ownerUser._id) {
+      transfers[i].transferToUser = {
+        _id: preferences._id,
+        email: preferences.email,
+        name: 'Me',
+      };
+      transfers[i].isInvited = true;
+    }
+
+    if (transfers[i].ownerUser && transfers[i].ownerUser.name) {
+      fromUser = transfers[i].ownerUser.name;
+    }
+
+    if (
+      transfers[i].isInvited &&
+      transfers[i].ownerUser &&
+      transfers[i].ownerUser.email
+    ) {
+      fromUser = transfer[i].ownerUser.email;
+    }
+
+    if (transfers[i].transferToUser && transfers[i].transferToUser.name) {
+      toUser = transfers[i].transferToUser.name;
+    }
+
+    if (
+      !transfers[i].isInvited &&
+      transfers[i].transferToUser &&
+      transfers[i].transferToUser.email
+    ) {
+      toUser = transfers[i].transferToUser.email;
+    }
+
+    if (transfer.toTransfer && transfer.toTransfer.integrations) {
+      transfer.toTransfer.integrations.forEach(i => {
+        let { name } = i;
+
+        if (i._id === 'none') {
+          name = 'Standalone Flows';
+        }
+
+        name = name || i._id;
+
+        if (i.tag) {
+          name += ` (${i.tag})`;
+        }
+
+        integrations.push(name);
+      });
+    }
+
+    integrations = integrations.join('\n');
+
+    if (transfer.transferredAt) {
+      transferDate = moment(transfer.transferredAt).format(
+        `${preferences && preferences.dateFormat} ${preferences &&
+          preferences.timeFormat}`
+      );
+    }
+
+    transfers[i].fromUser = fromUser;
+
+    transfers[i].toUser = toUser;
+
+    transfers[i].integrations = integrations;
+
+    transfers[i].transferDate = transferDate;
+  });
+
+  return { resources: transfers };
+}
+
+// Gives back supported stages of data flow based on resource type
+export function getAvailableResourcePreviewStages(
+  state,
+  resourceId,
+  resourceType
+) {
+  const { merged: resourceObj } = resourceData(
+    state,
+    resourceType,
+    resourceId,
+    'value'
+  );
+
+  return getAvailablePreviewStages(resourceObj);
+}
+
+/*
+ * This selector used to differentiate drawers with/without Preview Panel
+ */
+export function isPreviewPanelAvailableForResource(
+  state,
+  resourceId,
+  resourceType
+) {
+  const { merged: resourceObj = {} } = resourceData(
+    state,
+    resourceType,
+    resourceId,
+    'value'
+  );
+  const connectionObj = resource(
+    state,
+    'connections',
+    resourceObj._connectionId
+  );
+
+  return isPreviewPanelAvailable(resourceObj, resourceType, connectionObj);
 }

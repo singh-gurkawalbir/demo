@@ -4,6 +4,7 @@ import {
   isRealTimeOrDistributedResource,
   adaptorTypeMap,
 } from './resource';
+import scriptHookStubs from './scriptHookStubs';
 
 export const importHooksList = [
   'preMap',
@@ -11,22 +12,39 @@ export const importHooksList = [
   'postSubmit',
   'postAggregate',
 ];
+
+/*
+ * Used for showing suggestions to select hook type in the application
+ */
+export const hooksList = [
+  'preSavePage' /* Used for Exports */,
+  ...importHooksList,
+  'contentBasedFlowRouter' /* Used in AS2 Connection */,
+];
+
 export const importSuiteScriptHooksList = ['preMap', 'postMap', 'postSubmit'];
 
 export const hooksToFunctionNamesMap = {
   preSavePage: 'preSavePageFunction',
-  preMap: 'preMapFuncton',
+  preMap: 'preMapFunction',
   postMap: 'postMapFunction',
   postSubmit: 'postSubmitFunction',
   postAggregate: 'postAggregateFunction',
+  postResponseMap: 'postResponseMapFunction',
+  contentBasedFlowRouter: 'contentBasedFlowRouterFunction',
 };
 
+export const getScriptHookStub = hook => scriptHookStubs[hook];
+
 export const hooksLabelMap = {
+  preSavePage: 'Pre Save Page',
   preSend: 'Pre Send',
   preMap: 'Pre Map',
   postMap: 'Post Map',
   postSubmit: 'Post Submit',
   postAggregate: 'Post Aggregate',
+  postResponseMap: 'Post Response Map',
+  contentBasedFlowRouter: 'Content Based Flow Router',
 };
 export function getSupportedHooksForResource(resource) {
   let unSupportedHooks = [];

@@ -24,7 +24,10 @@ const useStyles = makeStyles(theme => ({
 
 export default function DynaTimestampFileName(props) {
   const {
+    description,
+    errorMessages,
     id,
+    isValid,
     disabled,
     value = '',
     placeholder,
@@ -164,6 +167,8 @@ export default function DynaTimestampFileName(props) {
         onKeyUp={handleSuggestions}
         value={value}
         variant="filled"
+        helperText={isValid ? description : errorMessages}
+        error={!isValid}
       />
       {suggestionsListComponent}
     </Fragment>

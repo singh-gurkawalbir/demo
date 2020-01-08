@@ -15,11 +15,17 @@ export function integrationAppsInstaller(state, id) {
   return fromInstaller.integrationAppsInstaller(state && state.installer, id);
 }
 
-export function integrationAppSettingsFormState(state, integrationId, flowId) {
+export function integrationAppSettingsFormState(
+  state,
+  integrationId,
+  flowId,
+  sectionId
+) {
   return fromSettings.integrationAppSettingsFormState(
     state && state.settings,
     integrationId,
-    flowId
+    flowId,
+    sectionId
   );
 }
 
@@ -44,6 +50,10 @@ export function uninstallSteps(state, id, storeId) {
     id,
     storeId
   );
+}
+
+export function uninstallData(state, id, storeId) {
+  return fromUninstaller.uninstallData(state && state.uninstaller, id, storeId);
 }
 
 export function addNewStoreSteps(state, id) {

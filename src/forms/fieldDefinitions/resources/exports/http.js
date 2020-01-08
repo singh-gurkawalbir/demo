@@ -361,8 +361,13 @@ export default {
     ],
   },
   'http._asyncHelperId': {
-    type: 'text',
-    label: 'Http _async Helper Id',
+    label: 'Async Helper',
+    type: 'selectresource',
+    resourceType: 'asyncHelpers',
+    appTypeIsStatic: true,
+    options: { appType: 'Async Helpers' },
+    allowNew: true,
+    allowEdit: true,
     visibleWhenAll: [
       {
         field: 'outputMode',
@@ -374,6 +379,12 @@ export default {
   'http.response.resourcePath': {
     type: 'text',
     label: 'Resource Path',
+    requiredWhen: [
+      {
+        field: 'http.successMediaType',
+        is: ['xml'],
+      },
+    ],
   },
   'http.response.resourceIdPath': {
     type: 'text',
@@ -382,6 +393,12 @@ export default {
   'http.response.successPath': {
     type: 'text',
     label: 'Success Path',
+    requiredWhen: [
+      {
+        field: 'http.response.successValues',
+        isNot: [''],
+      },
+    ],
     visibleWhen: [
       {
         field: 'outputMode',

@@ -9,6 +9,7 @@ export default {
       retValues['/test'] = undefined;
       retValues['/delta'] = undefined;
       retValues['/once'] = undefined;
+      retValues['/http/once'] = undefined;
       delete retValues['/test/limit'];
       delete retValues['/delta/dateFormat'];
       delete retValues['/delta/lagOffset'];
@@ -20,6 +21,7 @@ export default {
       retValues['/test/limit'] = 1;
       retValues['/delta'] = undefined;
       retValues['/once'] = undefined;
+      retValues['/http/once'] = undefined;
       delete retValues['/delta/dateFormat'];
       delete retValues['/delta/lagOffset'];
       delete retValues['/once/booleanField'];
@@ -29,6 +31,7 @@ export default {
     } else if (retValues['/type'] === 'delta') {
       retValues['/once'] = undefined;
       retValues['/test'] = undefined;
+      retValues['/http/once'] = undefined;
       delete retValues['/test/limit'];
       delete retValues['/once/booleanField'];
       delete retValues['/http/once/relativeURI'];
@@ -44,6 +47,9 @@ export default {
 
     if (!retValues['/http/response/successValues'].length) {
       retValues['/http/response/successValues'] = undefined;
+    }
+
+    if (retValues['/http/response/successPath'] === '') {
       retValues['/http/response/successPath'] = undefined;
     }
 
@@ -288,75 +294,93 @@ export default {
     exportOneToMany: { formId: 'exportOneToMany' },
     configureAsyncHelper: {
       fieldId: 'configureAsyncHelper',
-      visibleWhen: [
-        {
-          field: 'outputMode',
-          is: ['records'],
-        },
-      ],
+      defaultValue: r => !!(r && r.http && r.http._asyncHelperId),
+      visible: r => !(r && r.statusExport),
+      visibleWhen: r => {
+        if (r && r.statusExport) return [];
+
+        return [
+          {
+            field: 'outputMode',
+            is: ['records'],
+          },
+        ];
+      },
     },
     'http._asyncHelperId': {
       fieldId: 'http._asyncHelperId',
     },
+    exportPanel: {
+      fieldId: 'exportPanel',
+    },
   },
+
   layout: {
-    fields: [
-      'common',
-      'outputMode',
-      'exportOneToMany',
-      'exportData',
-      'http.method',
-      'http.blobMethod',
-      'http.headers',
-      'http.relativeURI',
-      'http.body',
-      'http.successMediaType',
-      'http.errorMediaType',
-      'http.response.resourcePath',
-      'http.response.successPath',
-      'http.response.successValues',
-      'http.response.errorPath',
-      'type',
-      'delta.dateFormat',
-      'delta.lagOffset',
-      'once.booleanField',
-      'http.once.relativeURI',
-      'http.once.method',
-      'http.once.body',
-      'http.response.blobFormat',
-    ],
-    type: 'collapse',
+    type: 'column',
     containers: [
       {
-        collapsed: true,
-        label: 'Does this API support paging?',
         fields: [
-          'http.paging.method',
-          'http.paging.skip',
-          'http.paging.page',
-          'http.paging.token',
-          'http.paging.path',
-          'http.paging.relativeURI',
-          'http.paging.linkHeaderRelation',
-          'http.paging.pathAfterFirstRequest',
-          'http.paging.body',
-          'http.paging.resourcePath',
-          'http.paging.maxPagePath',
-          'http.paging.maxCountPath',
-          'http.paging.lastPageStatusCode',
-          'http.paging.lastPagePath',
-          'http.paging.lastPageValues',
+          'common',
+          'outputMode',
+          'exportOneToMany',
+          'exportData',
+          'http.method',
+          'http.blobMethod',
+          'http.headers',
+          'http.relativeURI',
+          'http.body',
+          'http.successMediaType',
+          'http.errorMediaType',
+          'http.response.resourcePath',
+          'http.response.successPath',
+          'http.response.successValues',
+          'http.response.errorPath',
+          'type',
+          'delta.dateFormat',
+          'delta.lagOffset',
+          'once.booleanField',
+          'http.once.relativeURI',
+          'http.once.method',
+          'http.once.body',
+          'http.response.blobFormat',
+        ],
+        type: 'collapse',
+        containers: [
+          {
+            collapsed: true,
+            label: 'Does this API support paging?',
+            fields: [
+              'http.paging.method',
+              'http.paging.skip',
+              'http.paging.page',
+              'http.paging.token',
+              'http.paging.path',
+              'http.paging.relativeURI',
+              'http.paging.linkHeaderRelation',
+              'http.paging.pathAfterFirstRequest',
+              'http.paging.body',
+              'http.paging.resourcePath',
+              'http.paging.maxPagePath',
+              'http.paging.maxCountPath',
+              'http.paging.lastPageStatusCode',
+              'http.paging.lastPagePath',
+              'http.paging.lastPageValues',
+            ],
+          },
+          {
+            collapsed: true,
+            label: 'Advanced',
+            fields: [
+              'advancedSettings',
+              'skipRetries',
+              'configureAsyncHelper',
+              'http._asyncHelperId',
+            ],
+          },
         ],
       },
       {
-        collapsed: true,
-        label: 'Advanced',
-        fields: [
-          'advancedSettings',
-          'skipRetries',
-          'configureAsyncHelper',
-          'http._asyncHelperId',
-        ],
+        fields: ['exportPanel'],
       },
     ],
   },

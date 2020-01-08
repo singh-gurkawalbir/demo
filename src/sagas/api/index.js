@@ -38,7 +38,8 @@ export function normalizeUrlAndOptions(path, opts) {
   } else {
     if (
       path.includes('/netSuiteWS') ||
-      /^\/connections.*distributed$/.test(path)
+      /^\/connections.*distributed$/.test(path) ||
+      path.includes('/mappingPreview')
     ) {
       url = path;
     } else {
@@ -103,9 +104,11 @@ export function isCsrfExpired(error) {
 }
 
 // we are skipping 401 checks for /change-email and /change-password
+/*
 export function isUnauthorized({ error, path }) {
   return (
     error.status === 401 &&
     !['/change-email', '/change-password'].includes(path)
   );
 }
+*/

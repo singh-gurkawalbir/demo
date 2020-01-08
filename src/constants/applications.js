@@ -130,6 +130,13 @@ const connectors = [
     keywords: 'database,rdbms,db',
     group: 'db',
   },
+  {
+    id: 'dynamodb',
+    name: 'DynamoDB',
+    type: 'dynamodb',
+    keywords: 'database,db',
+    group: 'db',
+  },
   // Application connectors
   { id: '3dcart', name: '3DCart', type: 'rest', assistant: '3dcart' },
   { id: 'accelo', name: 'Accelo', type: 'rest', assistant: 'accelo' },
@@ -301,12 +308,12 @@ const connectors = [
     type: 'rest',
     assistant: 'googleanalytics',
   },
-  // {
-  //   id: 'googlecontacts',
-  //  name: 'Google Contacts',
-  //  type: 'rest',
-  //  assistant: 'googlecontacts',
-  // },
+  {
+    id: 'googlecontacts',
+    name: 'Google Contacts',
+    type: 'rest',
+    assistant: 'googlecontacts',
+  },
   // {
   //   id: 'googledrive',
   //   name: 'googledrive',
@@ -319,12 +326,12 @@ const connectors = [
   // type: 'rest',
   // assistant: 'googlemail',
   // },
-  // {
-  //  id: 'googlesheets',
-  //  name: 'Google Sheets',
-  //  type: 'rest',
-  //   assistant: 'googlesheets',
-  // },
+  {
+    id: 'googlesheets',
+    name: 'Google Sheets',
+    type: 'rest',
+    assistant: 'googlesheets',
+  },
   {
     id: 'googleshopping',
     name: 'Google Shopping',

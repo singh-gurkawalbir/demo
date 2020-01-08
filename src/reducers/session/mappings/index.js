@@ -1,5 +1,7 @@
 import produce from 'immer';
 import actionTypes from '../../../actions/types';
+import mappingUtil from '../../../utils/mapping';
+import lookupUtil from '../../../utils/lookup';
 
 const emptySet = [];
 
@@ -7,14 +9,12 @@ export default function reducer(state = {}, action) {
   const {
     id,
     type,
-    mappings,
-    adaptorType,
-    application,
     generateFields,
     lookups,
     value,
     index,
     field,
+    options = {},
   } = action;
 
   return produce(state, draft => {
@@ -25,26 +25,64 @@ export default function reducer(state = {}, action) {
     switch (type) {
       case actionTypes.MAPPING.INIT:
         {
+          const {
+            adaptorType,
+            resourceData,
+            application,
+            isGroupedSampleData,
+            salesforceMasterRecordTypeId,
+            showSalesforceNetsuiteAssistant,
+            ...additionalOptions
+          } = options;
+          const formattedMappings = mappingUtil.getMappingFromResource(
+            resourceData,
+            adaptorType,
+            false,
+            isGroupedSampleData,
+            additionalOptions
+          );
+          const lookups = lookupUtil.getLookupFromResource(
+            resourceData,
+            adaptorType
+          );
           const initChangeIdentifier =
             (draft[id] && draft[id].initChangeIdentifier) || 0;
 
           draft[id] = {
-            mappings: mappings.map(m => ({ ...m, rowIdentifier: 0 })),
+            mappings: formattedMappings.map(m => ({ ...m, rowIdentifier: 0 })),
             incompleteGenerates: [],
-            lookups,
+            lookups: lookups || [],
             initChangeIdentifier: initChangeIdentifier + 1,
             application,
+            resource: resourceData,
             adaptorType,
             generateFields,
-            visible: false,
+            visible: true,
+            isGroupedSampleData,
+            flowSampleData: undefined,
+            salesforceMasterRecordTypeId,
+            showSalesforceNetsuiteAssistant,
+            // lastModifiedRow helps to set generate field when any field in salesforce mapping assistant is clicked
+            lastModifiedRow: -1,
           };
         }
 
         break;
-      case actionTypes.MAPPING.DELETE:
+      case actionTypes.MAPPING.DELETE: {
         draft[id].initChangeIdentifier += 1;
         draft[id].mappings.splice(index, 1);
+
+        if (draft[id].lastModifiedRow === index) draft[id].lastModifiedRow = -1;
+        const {
+          isSuccess,
+          errMessage: validationErrMsg,
+        } = mappingUtil.validateMappings(draft[id].mappings, draft[id].lookups);
+
+        draft[id].validationErrMsg = isSuccess ? undefined : validationErrMsg;
+
         break;
+      }
+
       case actionTypes.MAPPING.UPDATE_GENERATES: {
         draft[id].generateFields = generateFields;
         const { incompleteGenerates } = draft[id];
@@ -71,7 +109,7 @@ export default function reducer(state = {}, action) {
         break;
       }
 
-      case actionTypes.MAPPING.PATCH_FIELD:
+      case actionTypes.MAPPING.PATCH_FIELD: {
         if (draft[id].mappings[index]) {
           const objCopy = { ...draft[id].mappings[index] };
 
@@ -102,6 +140,17 @@ export default function reducer(state = {}, action) {
             }
           } else {
             objCopy[field] = inputValue;
+
+            // remove isKey and useFirstRow if present when generate doesn't contain '[*].'
+            if (inputValue.indexOf('[*].') === -1) {
+              if ('isKey' in objCopy) {
+                delete objCopy.isKey;
+              }
+
+              if ('useFirstRow' in objCopy) {
+                delete objCopy.useFirstRow;
+              }
+            }
           }
 
           draft[id].mappings[index] = objCopy;
@@ -112,7 +161,17 @@ export default function reducer(state = {}, action) {
           });
         }
 
+        draft[id].lastModifiedRow = index;
+        const {
+          isSuccess,
+          errMessage: validationErrMsg,
+        } = mappingUtil.validateMappings(draft[id].mappings, draft[id].lookups);
+
+        draft[id].validationErrMsg = isSuccess ? undefined : validationErrMsg;
+
         break;
+      }
+
       case actionTypes.MAPPING.PATCH_INCOMPLETE_GENERATES: {
         const incompleteGeneObj = draft[id].incompleteGenerates.find(
           gen => gen.index === index
@@ -161,18 +220,105 @@ export default function reducer(state = {}, action) {
           }
 
           draft[id].mappings[index] = { ...valueTmp };
+          draft[id].lastModifiedRow = index;
+          const {
+            isSuccess,
+            errMessage: validationErrMsg,
+          } = mappingUtil.validateMappings(
+            draft[id].mappings,
+            draft[id].lookups
+          );
+
+          draft[id].validationErrMsg = isSuccess ? undefined : validationErrMsg;
         }
 
         break;
-      case actionTypes.MAPPING.UPDATE_LOOKUP:
+      case actionTypes.MAPPING.UPDATE_LOOKUP: {
         draft[id].lookups = lookups;
+        const {
+          isSuccess,
+          errMessage: validationErrMsg,
+        } = mappingUtil.validateMappings(draft[id].mappings, draft[id].lookups);
+
+        draft[id].validationErrMsg = isSuccess ? undefined : validationErrMsg;
         break;
+      }
+
       case actionTypes.MAPPING.SET_VISIBILITY:
-        draft[id].visible = value;
+        if (draft[id]) draft[id].visible = value;
         break;
+      case actionTypes.MAPPING.SAVE:
+        draft[id].submitCompleted = false;
+        draft[id].submitFailed = false;
+        break;
+      case actionTypes.MAPPING.SAVE_COMPLETE:
+        draft[id].submitCompleted = true;
+        draft[id].validationErrMsg = undefined;
+
+        break;
+      case actionTypes.MAPPING.SAVE_FAILED:
+        draft[id].submitFailed = true;
+        draft[id].validationErrMsg = undefined;
+
+        break;
+      case actionTypes.MAPPING.UPDATE_FLOW_DATA:
+        draft[id].flowSampleData = value;
+
+        break;
+
+      case actionTypes.MAPPING.PREVIEW_REQUESTED:
+        if (draft[id].previewData) {
+          draft[id].previewData.status = 'requested';
+        } else {
+          draft[id].previewData = { status: 'requested' };
+        }
+
+        break;
+      case actionTypes.MAPPING.PREVIEW_RECEIVED: {
+        let val;
+
+        if (value && Array.isArray(value) && value.length) {
+          const [_val] = value;
+
+          val = _val;
+        } else {
+          val = value;
+        }
+
+        const { previewData } = draft[id];
+
+        previewData.data = val;
+        previewData.status = 'received';
+
+        break;
+      }
+
+      case actionTypes.MAPPING.PREVIEW_FAILED: {
+        const { previewData } = draft[id];
+
+        delete previewData.data;
+        previewData.status = 'error';
+        break;
+      }
+
       default:
     }
   });
+}
+
+// #region PUBLIC SELECTORS
+export function mappingSaveProcessTerminate(state, id) {
+  if (!state) {
+    return emptySet;
+  }
+
+  if (!state[id]) return false;
+  const { submitFailed, submitCompleted } = state[id];
+
+  return {
+    saveTerminated: !!(submitFailed || submitCompleted),
+    saveCompleted: !!submitCompleted,
+  };
 }
 
 // #region PUBLIC SELECTORS

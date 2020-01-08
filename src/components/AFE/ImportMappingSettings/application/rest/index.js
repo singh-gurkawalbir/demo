@@ -4,8 +4,20 @@ import dateFormats from '../../../../../utils/dateFormats';
 
 export default {
   getMetaData: (params = {}) => {
-    const { value, lookup = {}, extractFields, options } = params;
-    const { connectionId, resourceId, resourceName, flowId } = options;
+    const {
+      value,
+      lookup = {},
+      extractFields,
+      generate,
+      options = {},
+    } = params;
+    const {
+      isGroupedSampleData = false,
+      connectionId,
+      resourceId,
+      resourceName,
+      flowId,
+    } = options;
     const fieldMeta = {
       fieldMap: {
         dataType: {
@@ -40,6 +52,13 @@ export default {
           type: 'checkbox',
           defaultValue: value.immutable || false,
           label: 'Immutable (Advanced)',
+        },
+        useFirstRow: {
+          id: 'useFirstRow',
+          name: 'useFirstRow',
+          type: 'checkbox',
+          defaultValue: value.useFirstRow || false,
+          label: 'Use First Row',
         },
         fieldMappingType: {
           id: 'fieldMappingType',
@@ -78,6 +97,7 @@ export default {
         },
         'lookup.relativeURI': {
           id: 'lookup.relativeURI',
+          name: '_relativeURI',
           type: 'textwithlookupextract',
           fieldType: 'relativeUri',
           hideLookups: true,
@@ -395,6 +415,7 @@ export default {
           'dataType',
           'discardIfEmpty',
           'immutable',
+          'useFirstRow',
           'fieldMappingType',
           'lookup.mode',
           'lookup.relativeURI',
@@ -451,6 +472,14 @@ export default {
         return null;
       },
     };
+    let { fields } = fieldMeta.layout;
+
+    if (!isGroupedSampleData || generate.indexOf('[*].') === -1) {
+      delete fieldMeta.fieldMap.useFirstRow;
+      fields = fields.filter(el => el !== 'useFirstRow');
+    }
+
+    fieldMeta.layout.fields = fields;
 
     return fieldMeta;
   },

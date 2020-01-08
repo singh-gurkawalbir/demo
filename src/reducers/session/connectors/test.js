@@ -50,6 +50,7 @@ describe('Connector metadata', () => {
           data: { id: 'account', name: 'Account' },
           fieldType: 'id',
           isLoading: false,
+          shouldReset: true,
         },
       },
     });
@@ -79,6 +80,7 @@ describe('Connector metadata', () => {
           data: { dummy: 'data' },
           fieldType: 'id',
           isLoading: false,
+          shouldReset: true,
         },
       },
     });
@@ -106,11 +108,13 @@ describe('Connector metadata', () => {
           data: { dummy: 'data' },
           fieldType: 'id',
           isLoading: false,
+          shouldReset: true,
         },
         'rest.secondField': {
           data: { dummy: 'data' },
           fieldType: 'id',
           isLoading: false,
+          shouldReset: true,
         },
       },
     });
@@ -174,6 +178,7 @@ describe('Connector metadata', () => {
             data: { dummy: 'data' },
             fieldType: 'id',
             isLoading: false,
+            shouldReset: true,
           },
         },
       });
@@ -201,11 +206,13 @@ describe('Connector metadata', () => {
             data: { dummy: 'data' },
             fieldType: 'id',
             isLoading: false,
+            shouldReset: true,
           },
           'rest.secondField': {
             data: { dummy: 'data' },
             fieldType: 'id',
             isLoading: false,
+            shouldReset: true,
           },
         },
       });
@@ -221,6 +228,7 @@ describe('Connector metadata', () => {
             data: { dummy: 'data' },
             fieldType: 'id',
             isLoading: false,
+            shouldReset: true,
           },
         },
       });

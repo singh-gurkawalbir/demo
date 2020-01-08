@@ -1,3 +1,4 @@
 import { gainsightSagas } from './gainsight';
+import feedbackSagas from './feedback';
 
-export default [...gainsightSagas];
+export default [...gainsightSagas, ...feedbackSagas];
