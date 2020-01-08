@@ -16,7 +16,7 @@ import AddIcon from '../../components/icons/AddIcon';
 // TODO Azhar
 import DataLoaderIcon from '../../components/icons/DataLoaderIcon';
 import getRoutePath from '../../utils/routePaths';
-import { generateNewId, getDomain } from '../../utils/resource';
+import { generateNewId } from '../../utils/resource';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -67,19 +67,13 @@ function Dashboard(props) {
   }, [dispatch]);
 
   useEffect(() => {
-    /**
-     * TODO Shiva - Hiding SuiteScript tiles in production as the settings pages are not implemented.
-     * Remove this check once the settings pages are implemented and verified by QA.
-     */
-    if (getDomain() !== 'integrator.io') {
-      suiteScriptResourcesToLoad.forEach(connectionId =>
-        dispatch(
-          actions.resource.requestCollection(
-            `suitescript/connections/${connectionId}/tiles`
-          )
+    suiteScriptResourcesToLoad.forEach(connectionId =>
+      dispatch(
+        actions.resource.requestCollection(
+          `suitescript/connections/${connectionId}/tiles`
         )
-      );
-    }
+      )
+    );
   }, [dispatch, suiteScriptResourcesToLoad]);
 
   const tiles = useSelector(state => selectors.tiles(state));
