@@ -69,3 +69,38 @@ export const isPreviewPanelAvailable = (resource, resourceType, connection) => {
   // Other than rest 'csv' type all are supported , so return true
   return true;
 };
+
+const formatPreviewData = records => {
+  // eslint-disable-next-line camelcase
+  const page_of_records = [];
+
+  if (!records) return { page_of_records };
+
+  if (Array.isArray(records)) {
+    records.forEach(record => page_of_records.push({ record }));
+  } else {
+    page_of_records.push({ record: records });
+  }
+
+  return { page_of_records };
+};
+
+export const getStringifiedPreviewData = previewData => {
+  const formattedPreviewData = formatPreviewData(
+    previewData && previewData.data
+  );
+
+  return JSON.stringify(formattedPreviewData, null, 2);
+};
+
+export const getPreviewDataPageSizeInfo = previewData => {
+  if (!previewData || !previewData.data) return '1 Page 0 Records';
+  const records = previewData.data;
+  const pageSize = Array.isArray(records) ? records.length : 1;
+
+  if (pageSize === 1) {
+    return '1 Page 1 Record';
+  }
+
+  return `1 Page ${pageSize} Records`;
+};

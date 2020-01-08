@@ -11,6 +11,10 @@ import {
   isPageGenerator,
 } from '../../../reducers';
 import { isNewId } from '../../../utils/resource';
+import {
+  getStringifiedPreviewData,
+  getPreviewDataPageSizeInfo,
+} from '../../../utils/exportPanel';
 import TextToggle from '../../../components/TextToggle';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import CopyIcon from '../../icons/CopyIcon';
@@ -202,7 +206,11 @@ function DynaExportPanel(props) {
 
     if (status === 'received') {
       // TODO @Raghu:  Needs to be updated when number of records are handled
-      return <Typography variant="body2">1 Page 1 Record</Typography>;
+      return (
+        <Typography variant="body2">
+          {getPreviewDataPageSizeInfo(previewStageDataList[panelType])}
+        </Typography>
+      );
     }
   };
 
@@ -244,19 +252,13 @@ function DynaExportPanel(props) {
             <Fragment>
               <div className={classes.sampleDataContainer}>
                 <pre>
-                  {JSON.stringify(
-                    previewStageDataList[panelType] &&
-                      previewStageDataList[panelType].data,
-                    null,
-                    2
-                  )}
+                  {getStringifiedPreviewData(previewStageDataList[panelType])}
                 </pre>
               </div>
               <div className={classes.clipBoardContainer}>
                 <CopyToClipboard
-                  text={JSON.stringify(
-                    previewStageDataList[panelType] &&
-                      previewStageDataList[panelType].data
+                  text={getStringifiedPreviewData(
+                    previewStageDataList[panelType]
                   )}
                   onCopy={handleOnCopy}
                   className={classes.clipBoard}>
