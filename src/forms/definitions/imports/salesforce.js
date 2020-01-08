@@ -12,6 +12,40 @@ export default {
     } else if (newValues['/salesforce/api'] === 'compositerecord') {
       newValues['/salesforce/operation'] =
         newValues['/salesforce/compositeOperation'];
+      newValues['/salesforce/blobOperation'] = undefined;
+      newValues['/salesforce/blobsObjectType'] = undefined;
+
+      if (newValues['/salesforce/compositeOperation'] === 'insert') {
+        newValues['/ignoreMissing'] = false;
+
+        if (newValues['/ignoreExisting'] === false) {
+          delete newValues['/salesforce/idLookup/whereClause'];
+        }
+      } else if (newValues['/salesforce/compositeOperation'] === 'update') {
+        newValues['/ignoreExisting'] = false;
+      } else {
+        newValues['/ignoreMissing'] = false;
+        newValues['/ignoreExisting'] = false;
+      }
+    } else if (
+      newValues['/salesforce/api'] === 'soap' ||
+      newValues['/salesforce/api'] === 'rest'
+    ) {
+      if (newValues['/salesforce/operation'] === 'insert') {
+        newValues['/ignoreMissing'] = false;
+
+        if (newValues['/ignoreExisting'] === false) {
+          delete newValues['/salesforce/idLookup/whereClause'];
+        }
+      } else if (newValues['/salesforce/operation'] === 'update') {
+        newValues['/ignoreExisting'] = false;
+      } else if (newValues['/salesforce/operation'] === 'addupdate') {
+        newValues['/ignoreMissing'] = false;
+        newValues['/ignoreExisting'] = false;
+      } else {
+        newValues['/ignoreMissing'] = false;
+        newValues['/ignoreExisting'] = false;
+      }
     }
 
     delete newValues['/inputMode'];
