@@ -349,7 +349,7 @@ export default {
         field: 'inputMode',
         is: ['records'],
       },
-      { field: 'configureAsyncHelper', is: [true] },
+      { field: 'http.configureAsyncHelper', is: [true] },
     ],
   },
 };
