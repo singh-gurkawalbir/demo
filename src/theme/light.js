@@ -370,6 +370,14 @@ export default {
         },
       },
     },
+    MuiOutlinedInput: {
+      root: {
+        backgroundColor: colors.celigoWhite,
+        '&$focused': {
+          borderColor: colors.celigoAccent2,
+        },
+      },
+    },
     MuiFormLabel: {
       root: {
         fontFamily: 'source sans pro',

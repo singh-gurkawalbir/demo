@@ -1,9 +1,10 @@
-import { Typography, IconButton } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import clsx from 'clsx';
 import { FormContext } from 'react-forms-processor/dist';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { useSelector, useDispatch } from 'react-redux';
-import { useState, useEffect, useCallback, Fragment } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import actions from '../../../actions';
 import {
   getResourceSampleDataWithStatus,
@@ -21,42 +22,54 @@ import ErrorIcon from '../../icons/ErrorIcon';
 
 const useStyles = makeStyles(theme => ({
   container: {
-    paddingLeft: theme.spacing(1),
+    paddingLeft: theme.spacing(3),
   },
   sampleDataWrapper: {
-    height: '25vh',
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+    background: theme.palette.background.paper,
+    padding: theme.spacing(1),
+  },
+  sampleDataWrapperAlign: {
+    marginTop: -18,
   },
   error: {
     color: 'red',
+    marginRight: theme.spacing(0.5),
   },
   textToggleContainer: {
     textAlign: 'center',
+    position: 'relative',
+    zIndex: 2,
   },
   sampleDataContainer: {
     width: '100%',
-    borderRadius: theme.spacing(0.5),
-    border: `1px solid ${theme.palette.secondary.lightest}`,
-    borderBottom: 'none',
     minHeight: theme.spacing(20),
     position: 'relative',
-    padding: theme.spacing(1),
     backgroundColor: 'white',
     maxHeight: 400,
     maxWidth: 570,
     overflow: 'scroll',
+    color: theme.palette.text.hint,
+  },
+  sampleDataContainerAlign: {
+    marginTop: theme.spacing(2),
   },
   clipBoardContainer: {
-    borderRadius: theme.spacing(0.5),
-    border: `1px solid ${theme.palette.secondary.lightest}`,
-    borderTop: 'none',
+    borderTop: `1px solid ${theme.palette.background.paper2}`,
     minHeight: theme.spacing(6),
     position: 'relative',
     padding: theme.spacing(1),
     backgroundColor: 'white',
-    alignItems: 'right',
+    display: 'flex',
+    justifyContent: 'flex-end',
   },
   clipBoard: {
     float: 'right',
+  },
+  errorMessage: {
+    display: 'flex',
+    alignItems: 'center',
   },
   previewContainer: {
     minHeight: theme.spacing(10),
@@ -93,9 +106,25 @@ const useStyles = makeStyles(theme => ({
     paddingLeft: theme.spacing(1),
     justifyContent: 'space-between',
   },
+
   previewBtn: {
     minHeight: theme.spacing(5),
     color: theme.palette.primary.main,
+  },
+  textToggle: {
+    backgroundColor: theme.palette.background.paper,
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+    '& > button': {
+      height: 30,
+      minWidth: 150,
+      '&.Mui-selected': {
+        backgroundColor: theme.palette.primary.main,
+        '&:hover': {
+          backgroundColor: theme.palette.primary.light,
+        },
+      },
+    },
   },
 }));
 
@@ -191,12 +220,12 @@ function DynaExportPanel(props) {
       const errorCount = error.errors && error.errors.length;
 
       return (
-        <Fragment>
+        <div className={classes.errorMessage}>
+          <ErrorIcon className={classes.error} />
           <Typography variant="body1">
-            <ErrorIcon className={classes.error} />
             You have {errorCount} {errorCount > 1 ? 'errors' : 'error'}
           </Typography>
-        </Fragment>
+        </div>
       );
     }
 
@@ -230,52 +259,58 @@ function DynaExportPanel(props) {
         </div>
       </div>
       {resourceSampleData.status === 'requested' && <Spinner />}
-      {resourceSampleData.status === 'received' && (
+      {resourceSampleData.status === 'error' && (
         <div>
           <div className={classes.textToggleContainer}>
             <TextToggle
               value={panelType}
+              className={classes.textToggle}
               onChange={handlePanelViewChange}
               exclusive
               options={availablePreviewStages}
             />
           </div>
-          <div className={classes.sampleDataWrapper}>
-            <Fragment>
-              <div className={classes.sampleDataContainer}>
-                <pre>
-                  {JSON.stringify(
-                    previewStageDataList[panelType] &&
-                      previewStageDataList[panelType].data,
-                    null,
-                    2
-                  )}
-                </pre>
-              </div>
-              <div className={classes.clipBoardContainer}>
-                <CopyToClipboard
-                  text={JSON.stringify(
-                    previewStageDataList[panelType] &&
-                      previewStageDataList[panelType].data
-                  )}
-                  onCopy={handleOnCopy}
-                  className={classes.clipBoard}>
-                  <Typography variant="body3">
-                    <IconButton
-                      data-test="copyToClipboard"
-                      title="Copy to clipboard"
-                      size="small">
-                      <CopyIcon />
-                    </IconButton>
-                    Copy
-                  </Typography>
-                </CopyToClipboard>
-              </div>
-            </Fragment>
+          <div
+            className={clsx(
+              classes.sampleDataWrapper,
+              classes.sampleDataWrapperAlign
+            )}>
+            <div
+              className={clsx(
+                classes.sampleDataContainer,
+                classes.sampleDataContainerAlign
+              )}>
+              <pre>
+                {JSON.stringify(
+                  previewStageDataList[panelType] &&
+                    previewStageDataList[panelType].data,
+                  null,
+                  2
+                )}
+              </pre>
+            </div>
+            <div className={classes.clipBoardContainer}>
+              <CopyToClipboard
+                text={JSON.stringify(
+                  previewStageDataList[panelType] &&
+                    previewStageDataList[panelType].data
+                )}
+                onCopy={handleOnCopy}
+                className={classes.clipBoard}>
+                <IconTextButton
+                  data-test="copyToClipboard"
+                  title="Copy to clipboard"
+                  variant="text"
+                  color="primary">
+                  <CopyIcon />
+                  Copy
+                </IconTextButton>
+              </CopyToClipboard>
+            </div>
           </div>
         </div>
       )}
-      {resourceSampleData.status === 'error' && (
+      {resourceSampleData.status === 'received' && (
         <div className={classes.sampleDataWrapper}>
           <div className={classes.sampleDataContainer}>
             <pre>{JSON.stringify(resourceSampleData.error, null, 2)}</pre>

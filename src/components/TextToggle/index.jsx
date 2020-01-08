@@ -1,4 +1,5 @@
 import { makeStyles } from '@material-ui/core/styles';
+import clsx from 'clsx';
 import Typography from '@material-ui/core/Typography';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
@@ -58,6 +59,7 @@ export default function TextToggle({
   minWidth,
   variant,
   onChange,
+  className,
   ...rest
 }) {
   const classes = useStyles({ minWidth });
@@ -73,7 +75,7 @@ export default function TextToggle({
   return (
     <ToggleButtonGroup
       {...rest}
-      className={classes.root}
+      className={clsx(classes.root, className)}
       value={value}
       onChange={handleChange}>
       {options.map(item => (
