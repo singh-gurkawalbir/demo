@@ -145,7 +145,6 @@ export default {
       return type;
     },
   },
-
   'http.relativeURI': {
     type: 'textwithlookupextract',
     fieldType: 'relativeUri',
@@ -192,6 +191,7 @@ export default {
   'http.response.successPath': {
     type: 'text',
     label: 'Success Path',
+    delimiter: ',',
     placeholder: 'Optional',
     visibleWhenAll: [
       {
@@ -209,6 +209,8 @@ export default {
     label: 'Success Values',
     delimiter: ',',
     placeholder: 'Optional',
+    // defaultValue: r =>
+    //   r && r.http && r.http.response && r.http.response.successValues[0],
     visibleWhenAll: [
       {
         field: 'http.method',
@@ -223,6 +225,7 @@ export default {
   'http.response.resourceIdPath': {
     type: 'text',
     label: 'Resource Id Path',
+    delimiter: ',',
     placeholder: 'Optional',
     visibleWhen: [
       {
@@ -237,6 +240,7 @@ export default {
   },
   'http.response.resourcePath': {
     type: 'text',
+    delimiter: ',',
     label: 'Response Path',
     visibleWhenAll: [
       {

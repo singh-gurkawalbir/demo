@@ -28,6 +28,7 @@ import anaplan from './anaplan';
 import atera from './atera';
 import chargebee from './chargebee';
 import avalara from './avalara';
+import vroozi from './vroozi';
 // import desk from './desk';
 import easypost from './easypost';
 import freshdesk from './freshdesk';
@@ -180,6 +181,7 @@ export default {
   azureactivedirectory,
   parseur,
   returnly,
+  vroozi,
   myobessentials,
   expensify,
   wish,

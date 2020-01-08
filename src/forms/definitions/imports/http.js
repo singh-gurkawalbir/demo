@@ -8,6 +8,10 @@ export default {
       lookups &&
       lookups.find(l => l.name === retValues['/http/existingDataId']);
 
+    retValues['/http/response/successValues'] = [
+      retValues['/http/response/successValues'],
+    ];
+
     if (retValues['/inputMode'] === 'blob') {
       retValues['/http/method'] = retValues['/http/blobMethod'];
     } else if (retValues['/http/method'] === 'COMPOSITE') {
@@ -42,6 +46,26 @@ export default {
           retValues['/http/response/resourcePath'] = [
             retValues['/http/resourcePathUpdate'],
             retValues['/http/resourcePathCreate'],
+          ];
+        }
+
+        if (
+          retValues['/http/successPathCreate'] ||
+          retValues['/http/successPathUpdate']
+        ) {
+          retValues['/http/response/successPath'] = [
+            retValues['/http/successPathUpdate'],
+            retValues['/http/successPathCreate'],
+          ];
+        }
+
+        if (
+          retValues['/http/successValuesCreate'] ||
+          retValues['/http/successValuesUpdate']
+        ) {
+          retValues['/http/response/successValues'] = [
+            retValues['/http/successValuesUpdate'],
+            retValues['/http/successValuesCreate'],
           ];
         }
 
@@ -488,6 +512,92 @@ export default {
         return '';
       },
     },
+    'http.successPathCreate': {
+      id: 'http.successPathCreate',
+      type: 'text',
+      label: 'Success Path',
+      placeholder: 'Optional',
+      visibleWhenAll: [
+        {
+          field: 'http.compositeType',
+          is: ['createandupdate', 'createandignore'],
+        },
+        {
+          field: 'http.method',
+          is: ['COMPOSITE'],
+        },
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
+      ],
+      defaultValue: r => {
+        if (!r || !r.http || !r.http.method) {
+          return '';
+        }
+
+        if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
+          if (r.http.method.length > 1) {
+            return (
+              r.http.response &&
+              r.http.response.successPath &&
+              r.http.response.successPath[1]
+            );
+          }
+
+          return (
+            r.http.response &&
+            r.http.response.successPath &&
+            r.http.response.successPath[0]
+          );
+        }
+
+        return '';
+      },
+    },
+    'http.successValuesCreate': {
+      id: 'http.successValuesCreate',
+      type: 'text',
+      label: 'Success Values',
+      delimiter: ',',
+      visibleWhenAll: [
+        {
+          field: 'http.compositeType',
+          is: ['createandupdate', 'createandignore'],
+        },
+        {
+          field: 'http.method',
+          is: ['COMPOSITE'],
+        },
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
+      ],
+      defaultValue: r => {
+        if (!r || !r.http || !r.http.method) {
+          return '';
+        }
+
+        if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
+          if (r.http.method.length > 1) {
+            return (
+              r.http.response &&
+              r.http.response.successValues &&
+              r.http.response.successValues[1]
+            );
+          }
+
+          return (
+            r.http.response &&
+            r.http.response.successValues &&
+            r.http.response.successValues[0]
+          );
+        }
+
+        return '';
+      },
+    },
     upateExistingData: {
       id: 'upateExistingData',
       type: 'labeltitle',
@@ -689,6 +799,76 @@ export default {
         return '';
       },
     },
+    'http.successPathUpdate': {
+      id: 'http.successPathUpdate',
+      type: 'text',
+      label: 'Success Path',
+      placeholder: 'Optional',
+      visibleWhenAll: [
+        {
+          field: 'http.compositeType',
+          is: ['createandupdate', 'createandignore'],
+        },
+        {
+          field: 'http.method',
+          is: ['COMPOSITE'],
+        },
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
+      ],
+      defaultValue: r => {
+        if (!r || !r.http || !r.http.method) {
+          return '';
+        }
+
+        if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
+          return (
+            r.http.response &&
+            r.http.response.successPath &&
+            r.http.response.successPath[0]
+          );
+        }
+
+        return '';
+      },
+    },
+    'http.successValuesUpdate': {
+      id: 'http.successValuesUpdate',
+      type: 'text',
+      label: 'Success Values',
+      delimiter: ',',
+      visibleWhenAll: [
+        {
+          field: 'http.compositeType',
+          is: ['createandupdate', 'createandignore'],
+        },
+        {
+          field: 'http.method',
+          is: ['COMPOSITE'],
+        },
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
+      ],
+      defaultValue: r => {
+        if (!r || !r.http || !r.http.method) {
+          return '';
+        }
+
+        if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
+          return (
+            r.http.response &&
+            r.http.response.successValues &&
+            r.http.response.successValues[0]
+          );
+        }
+
+        return '';
+      },
+    },
     ignoreExistingData: {
       id: 'ignoreExistingData',
       type: 'labeltitle',
@@ -861,12 +1041,16 @@ export default {
       'http.compositeMethodCreate',
       'http.relativeURICreate',
       'http.bodyCreate',
+      'http.successPathCreate',
+      'http.successValuesCreate',
       'http.resourceIdPathCreate',
       'http.resourcePathCreate',
       'upateExistingData',
       'http.compositeMethodUpdate',
       'http.relativeURIUpdate',
       'http.bodyUpdate',
+      'http.successPathUpdate',
+      'http.successValuesUpdate',
       'http.resourceIdPathUpdate',
       'http.resourcePathUpdate',
       'ignoreExistingData',
