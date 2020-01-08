@@ -34,6 +34,8 @@ export const hooksToFunctionNamesMap = {
   postAggregate: 'postAggregateFunction',
   postResponseMap: 'postResponseMapFunction',
   contentBasedFlowRouter: 'contentBasedFlowRouterFunction',
+  transform: 'transformFunction',
+  filter: 'filterFunction',
 };
 
 export const getScriptHookStub = hook => scriptHookStubs[hook];

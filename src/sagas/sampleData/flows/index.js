@@ -241,6 +241,7 @@ export function* fetchPageGeneratorPreview({ flowId, _pageGeneratorId }) {
 
 function* processData({ flowId, resourceId, processorData, stage }) {
   try {
+    const { wrapInArrayProcessedData } = processorData || {};
     const processedData = yield call(evaluateExternalProcessor, {
       processorData,
     });
@@ -250,6 +251,7 @@ function* processData({ flowId, resourceId, processorData, stage }) {
       resourceId,
       stage,
       processedData,
+      wrapInArrayProcessedData,
     });
   } catch (e) {
     // Handle errors
@@ -433,13 +435,41 @@ export function* requestProcessorData({
 
     if (stage === 'transform' || stage === 'responseTransform') {
       const transform = { ...resource[processor] };
-      const [rule] = transform.rules || [];
 
-      if (!(rule && rule.length)) {
+      if (transform.type === 'expression') {
+        const [rule] = transform.expression.rules || [];
+
+        if (!(rule && rule.length)) {
+          hasNoRulesToProcess = true;
+        } else {
+          processorData = {
+            data: preProcessedData,
+            rule,
+            processor: 'transform',
+          };
+        }
+      } else if (transform.type === 'script') {
+        const { _scriptId, function: entryFunction } = transform.script || {};
+
+        if (_scriptId) {
+          const script = yield call(getResource, {
+            resourceType: 'scripts',
+            id: _scriptId,
+          });
+
+          processorData = {
+            data: preProcessedData,
+            code: script && script.content,
+            entryFunction,
+            processor: 'javascript',
+            wrapInArrayProcessedData: true,
+          };
+        } else {
+          hasNoRulesToProcess = true;
+        }
+      } else {
         hasNoRulesToProcess = true;
       }
-
-      processorData = { data: preProcessedData, rule, processor: 'transform' };
     }
     // Below list are all Possible hook types
     else if (

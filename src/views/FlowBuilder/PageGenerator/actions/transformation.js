@@ -5,6 +5,7 @@ import actions from '../../../../actions';
 import Icon from '../../../../components/icons/TransformIcon';
 import TransformEditorDialog from '../../../../components/AFE/TransformEditor/TransformToggleEditorDialog';
 import helpTextMap from '../../../../components/Help/helpTextMap';
+import { hooksToFunctionNamesMap } from '../../../../utils/hooks';
 
 function TransformationDialog({ flowId, resource, onClose, isViewMode }) {
   const dispatch = useDispatch();
@@ -28,33 +29,64 @@ function TransformationDialog({ flowId, resource, onClose, isViewMode }) {
       entryFunction: script.function,
     };
   }, [resource]);
+  const saveScript = useCallback(
+    values => {
+      const { code, scriptId } = values;
+      const patchSet = [
+        {
+          op: 'replace',
+          path: '/content',
+          value: code,
+        },
+      ];
+
+      dispatch(actions.resource.patchStaged(scriptId, patchSet, 'value'));
+      dispatch(actions.resource.commitStaged('scripts', scriptId, 'value'));
+    },
+    [dispatch]
+  );
+  const saveTransformRules = useCallback(
+    values => {
+      const { processor, rule, scriptId, entryFunction } = values;
+      const type = processor === 'transform' ? 'expression' : 'script';
+      const path = '/transform';
+      const value = {
+        type,
+        expression: {
+          version: 1,
+          rules: rule ? [rule] : [[]],
+        },
+        script: {
+          _scriptId: scriptId,
+          function: entryFunction,
+        },
+      };
+      const patchSet = [{ op: 'replace', path, value }];
+
+      // Save the resource
+      dispatch(actions.resource.patchStaged(exportId, patchSet, 'value'));
+      dispatch(actions.resource.commitStaged('exports', exportId, 'value'));
+    },
+    [dispatch, exportId]
+  );
   const handleClose = useCallback(
     (shouldCommit, editorValues) => {
       if (shouldCommit) {
-        const { processor, rule, scriptId, entryFunction } = editorValues;
-        const type = processor === 'transform' ? 'expression' : 'script';
-        const path = '/transform';
-        const value = {
-          type,
-          expression: {
-            version: 1,
-            rules: rule ? [rule] : [[]],
-          },
-          script: {
-            _scriptId: scriptId,
-            function: entryFunction,
-          },
-        };
-        const patchSet = [{ op: 'replace', path, value }];
+        const transformType =
+          editorValues.processor === 'transform' ? 'expression' : 'script';
 
-        // Save the resource
-        dispatch(actions.resource.patchStaged(exportId, patchSet, 'value'));
-        dispatch(actions.resource.commitStaged('exports', exportId, 'value'));
+        if (transformType === 'script') {
+          // Incase of script type, save script changes
+          saveScript(editorValues);
+        }
+
+        // save transform rules
+        saveTransformRules(editorValues);
       }
 
       onClose();
     },
-    [dispatch, exportId, onClose]
+    [onClose, saveScript, saveTransformRules]
   );
 
   useEffect(() => {
@@ -79,7 +111,7 @@ function TransformationDialog({ flowId, resource, onClose, isViewMode }) {
       type={type}
       scriptId={scriptId}
       rule={rule}
-      entryFunction={entryFunction}
+      entryFunction={entryFunction || hooksToFunctionNamesMap.transform}
       insertStubKey="transform"
       onClose={handleClose}
     />
