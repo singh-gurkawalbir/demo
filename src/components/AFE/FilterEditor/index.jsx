@@ -9,9 +9,11 @@ import PanelGridItem from '../PanelGridItem';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
 import ErrorGridItem from '../ErrorGridItem';
+import layouts from '../layout/defaultDialogLayout';
 
 const useStyles = makeStyles({
-  template: {
+  ...layouts,
+  columnTemplate: {
     gridTemplateColumns: '2fr 3fr 2fr',
     gridTemplateRows: '1fr 0fr',
     gridTemplateAreas: '"data rule result" "error error error"',
@@ -19,7 +21,7 @@ const useStyles = makeStyles({
 });
 
 export default function FilterEditor(props) {
-  const { editorId, disabled } = props;
+  const { editorId, disabled, layout = 'column' } = props;
   const classes = useStyles(props);
   const { data, result, error, initChangeIdentifier } = useSelector(state =>
     selectors.editor(state, editorId)
@@ -48,7 +50,7 @@ export default function FilterEditor(props) {
   const parsedData = result && result.data && result.data[0];
 
   return (
-    <PanelGrid className={classes.template}>
+    <PanelGrid className={classes[`${layout}Template`]}>
       <PanelGridItem gridArea="rule">
         <PanelTitle title="Filter Rules" />
         <FilterPanel
