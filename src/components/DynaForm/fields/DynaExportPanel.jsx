@@ -12,6 +12,10 @@ import {
   isPageGenerator,
 } from '../../../reducers';
 import { isNewId } from '../../../utils/resource';
+import {
+  getStringifiedPreviewData,
+  getPreviewDataPageSizeInfo,
+} from '../../../utils/exportPanel';
 import TextToggle from '../../../components/TextToggle';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import CopyIcon from '../../icons/CopyIcon';
@@ -48,7 +52,7 @@ const useStyles = makeStyles(theme => ({
     position: 'relative',
     backgroundColor: 'white',
     maxHeight: 400,
-    maxWidth: 570,
+    maxWidth: 680,
     overflow: 'scroll',
     color: theme.palette.text.hint,
   },
@@ -58,6 +62,7 @@ const useStyles = makeStyles(theme => ({
   clipBoardContainer: {
     borderTop: `1px solid ${theme.palette.background.paper2}`,
     minHeight: theme.spacing(6),
+    maxWidth: 680,
     position: 'relative',
     padding: theme.spacing(1),
     backgroundColor: 'white',
@@ -231,7 +236,11 @@ function DynaExportPanel(props) {
 
     if (status === 'received') {
       // TODO @Raghu:  Needs to be updated when number of records are handled
-      return <Typography variant="body2">1 Page 1 Record</Typography>;
+      return (
+        <Typography variant="body2">
+          {getPreviewDataPageSizeInfo(previewStageDataList[panelType])}
+        </Typography>
+      );
     }
   };
 
@@ -281,19 +290,13 @@ function DynaExportPanel(props) {
                 classes.sampleDataContainerAlign
               )}>
               <pre>
-                {JSON.stringify(
-                  previewStageDataList[panelType] &&
-                    previewStageDataList[panelType].data,
-                  null,
-                  2
-                )}
+                {getStringifiedPreviewData(previewStageDataList[panelType])}
               </pre>
             </div>
             <div className={classes.clipBoardContainer}>
               <CopyToClipboard
-                text={JSON.stringify(
-                  previewStageDataList[panelType] &&
-                    previewStageDataList[panelType].data
+                text={getStringifiedPreviewData(
+                  previewStageDataList[panelType]
                 )}
                 onCopy={handleOnCopy}
                 className={classes.clipBoard}>

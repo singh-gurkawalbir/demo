@@ -1,8 +1,11 @@
 import { useCallback } from 'react';
+import { useSelector } from 'react-redux';
 import { Route, useHistory, useRouteMatch } from 'react-router-dom';
+import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import Panel from './Panel';
+import * as selectors from '../../../reducers';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -14,6 +17,12 @@ const useStyles = makeStyles(theme => ({
   panelContainer: {
     display: 'flex',
   },
+  fullWidthDrawerClose: {
+    width: 'calc(100% - 60px)',
+  },
+  fullWidthDrawerOpen: {
+    width: `calc(100% - ${theme.drawerWidth}px)`,
+  },
 }));
 
 function ResourceDrawer(props) {
@@ -24,6 +33,17 @@ function ResourceDrawer(props) {
   const handleClose = useCallback(() => {
     history.goBack();
   }, [history]);
+  const isPreviewPanelAvailableForResource = useSelector(state => {
+    const { id, resourceType } = (props.match && props.match.params) || {};
+
+    // Returns a bool whether the resource has a preview panel or not
+    return selectors.isPreviewPanelAvailableForResource(
+      state,
+      id,
+      resourceType
+    );
+  });
+  const drawerOpened = useSelector(state => selectors.drawerOpened(state));
 
   return (
     <Drawer
@@ -32,12 +52,23 @@ function ResourceDrawer(props) {
       elevation={3}
       open={open}
       classes={{
-        paper: classes.drawerPaper,
+        paper: clsx(classes.drawerPaper, {
+          [classes.fullWidthDrawerClose]:
+            !drawerOpened && isPreviewPanelAvailableForResource,
+          [classes.fullWidthDrawerOpen]:
+            drawerOpened && isPreviewPanelAvailableForResource,
+        }),
       }}
       onClose={handleClose}>
       <div className={classes.panelContainer}>
         {open && (
-          <Panel {...props} match={match} zIndex={1} onClose={handleClose} />
+          <Panel
+            {...props}
+            occupyFullWidth={isPreviewPanelAvailableForResource}
+            match={match}
+            zIndex={1}
+            onClose={handleClose}
+          />
         )}
       </div>
     </Drawer>
