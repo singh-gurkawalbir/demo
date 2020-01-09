@@ -17,12 +17,10 @@ import Filters from './Filters';
 import PanelHeader from '../../../../common/PanelHeader';
 import TrashIcon from '../../../../../../components/icons/TrashIcon';
 import Mappings from './MappingsWrapper';
-import IconTextButton from '../../../../../../components/IconTextButton';
 import ApplicationImg from '../../../../../../components/icons/ApplicationImg';
-import RefreshIcon from '../../../../../../components/icons/RefreshIcon';
 import ArrowUpIcon from '../../../../../../components/icons/ArrowUpIcon';
 import ArrowDownIcon from '../../../../../../components/icons/ArrowDownIcon';
-import AddIcon from '../../../../../../components/icons/AddIcon';
+import VariationIcon from '../../../../../../components/icons/AdjustInventoryIcon';
 
 const emptySet = [];
 const drawerWidth = 200;
@@ -115,8 +113,16 @@ function CategoryMappings({
   const dispatch = useDispatch();
   const classes = useStyles();
   const [expanded, setExpanded] = useState(isRoot);
-  const handleDelete = () => {};
-  const handleVariation = () => {};
+  const handleDelete = e => {
+    // Clicking of this icon should avoid collapsing this category section
+    e.stopPropagation();
+  };
+
+  const handleVariation = e => {
+    // Clicking of this icon should avoid collapsing this category section
+    e.stopPropagation();
+  };
+
   const { fields: generateFields, name, variation_themes: variationThemes } =
     useSelector(state =>
       selectors.categoryMappingGenerateFields(state, integrationId, flowId, {
@@ -177,7 +183,7 @@ function CategoryMappings({
             {name || mappings.name}
           </Typography>
           {!!variationThemes && !!variationThemes.length && (
-            <AddIcon
+            <VariationIcon
               className={classes.variationIcon}
               onClick={handleVariation}
             />
@@ -253,9 +259,7 @@ function CategoryMappingDrawer({ integrationId }) {
   const currentSectionLabel =
     (mappedCategories.find(category => category.id === categoryId) || {})
       .name || categoryId;
-  const isGeneratesLoading = false;
   const handleClose = () => {};
-  const refreshGenerateFields = () => {};
 
   useEffect(() => {
     if (!metadata && !requestedMetadata) {
@@ -329,21 +333,6 @@ function CategoryMappingDrawer({ integrationId }) {
                 <Grid item xs={6}>
                   <Typography variant="h5" className={classes.childHeader}>
                     NetSuite
-                    {!isGeneratesLoading && (
-                      <IconTextButton
-                        variant="contained"
-                        color="secondary"
-                        className={classes.refreshButton}
-                        onClick={refreshGenerateFields}
-                        data-test="refreshGenerates">
-                        Refresh <RefreshIcon />
-                      </IconTextButton>
-                    )}
-                    {isGeneratesLoading && (
-                      <span className={classes.spinner}>
-                        <Spinner size={24} color="primary" />
-                      </span>
-                    )}
                     <ApplicationImg assistant="netsuite" />
                   </Typography>
                 </Grid>
