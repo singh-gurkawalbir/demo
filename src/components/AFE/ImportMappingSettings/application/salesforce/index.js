@@ -323,6 +323,23 @@ export default {
           ],
           defaultValue: value.hardCodedValue,
         },
+        hardcodedCheckbox: {
+          id: 'hardcodedCheckbox',
+          name: 'hardcodedCheckbox',
+          type: 'radiogroup',
+          label: 'Value',
+          defaultValue: value.hardCodedValue,
+          fullWidth: true,
+          options: [
+            {
+              items: [
+                { label: 'True', value: 'true' },
+                { label: 'False', value: 'false' },
+              ],
+            },
+          ],
+          visibleWhenAll: [{ field: 'fieldMappingType', is: ['hardCoded'] }],
+        },
         lookupDefault: {
           id: 'lookupDefault',
           name: 'lookupDefault',
@@ -404,6 +421,7 @@ export default {
           'lookupAction',
           'hardcodedDefault',
           'hardcodedSFSelect',
+          'hardcodedCheckbox',
           'lookupDefault',
           'lookupSFSelect',
           'extractDateFormat',
@@ -493,12 +511,32 @@ export default {
       );
     }
 
-    if (selectedGenerateObj && selectedGenerateObj.type !== 'picklist') {
+    if (selectedGenerateObj && selectedGenerateObj.type === 'boolean') {
+      delete fieldMeta.fieldMap.hardcodedDefault;
       delete fieldMeta.fieldMap.hardcodedSFSelect;
       delete fieldMeta.fieldMap.lookupSFSelect;
       delete fieldMeta.fieldMap.defaultSFSelect;
+      delete fieldMeta.fieldMap.default;
+      delete fieldMeta.fieldMap.hardcodedAction;
+
       fields = fields.filter(
         el =>
+          el !== 'hardcodedDefault' &&
+          el !== 'hardcodedSFSelect' &&
+          el !== 'lookupSFSelect' &&
+          el !== 'defaultSFSelect' &&
+          el !== 'default' &&
+          el !== 'hardcodedAction'
+      );
+    } else if (selectedGenerateObj && selectedGenerateObj.type !== 'picklist') {
+      delete fieldMeta.fieldMap.hardcodedSFSelect;
+      delete fieldMeta.fieldMap.lookupSFSelect;
+      delete fieldMeta.fieldMap.defaultSFSelect;
+      delete fieldMeta.fieldMap.hardcodedCheckbox;
+
+      fields = fields.filter(
+        el =>
+          el !== 'hardcodedCheckbox' &&
           el !== 'hardcodedSFSelect' &&
           el !== 'lookupSFSelect' &&
           el !== 'defaultSFSelect'
@@ -507,8 +545,11 @@ export default {
       delete fieldMeta.fieldMap.hardcodedDefault;
       delete fieldMeta.fieldMap.lookupDefault;
       delete fieldMeta.fieldMap.default;
+      delete fieldMeta.fieldMap.hardcodedCheckbox;
+
       fields = fields.filter(
         el =>
+          el !== 'hardcodedCheckbox' &&
           el !== 'hardcodedDefault' &&
           el !== 'lookupDefault' &&
           el !== 'default'
