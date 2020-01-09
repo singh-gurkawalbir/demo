@@ -178,7 +178,10 @@ function DynaFileDefinitionEditor(props) {
             disabled={disabled}
           />
         )}
-        <Button variant="contained" onClick={handleEditorClick}>
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={handleEditorClick}>
           {label}
         </Button>
       </LoadResources>
