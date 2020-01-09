@@ -9,21 +9,21 @@ export default {
     '/http/auth/token/scheme': ' ',
     '/http/mediaType': 'json',
     '/http/baseURI': `https://${
-      formValues['/http/accountType'] === 'sandbox' ? 'sandbox-' : ''
+      formValues['/accountType'] === 'sandbox' ? 'sandbox-' : ''
     }api.vroozi.com/v1`,
     '/http/ping/relativeURI': '/company-codes',
     '/http/ping/method': 'GET',
     '/http/headers': [
       {
         name: 'x-api-key',
-        value: '{{{connection.http.apiKey}}}',
+        value: '{{{connection.http.unencrypted.apiKey}}}',
       },
     ],
   }),
   fieldMap: {
     name: { fieldId: 'name' },
-    'http.accountType': {
-      id: 'http.accountType',
+    accountType: {
+      id: 'accountType',
       type: 'select',
       label: 'Account Type',
       required: true,
@@ -42,15 +42,15 @@ export default {
 
         if (baseUri) {
           if (baseUri.indexOf('sandbox') === -1) {
-            return 'sandbox';
+            return 'production';
           }
         }
 
-        return 'production';
+        return 'sandbox';
       },
     },
-    'http.apiKey': {
-      id: 'http.apiKey',
+    'http.unencrypted.apiKey': {
+      id: 'http.unencrypted.apiKey',
       type: 'text',
       label: 'API Key',
       required: true,
@@ -69,8 +69,8 @@ export default {
   layout: {
     fields: [
       'name',
-      'http.accountType',
-      'http.apiKey',
+      'accountType',
+      'http.unencrypted.apiKey',
       'http.auth.token.token',
     ],
     type: 'collapse',
