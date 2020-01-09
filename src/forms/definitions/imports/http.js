@@ -304,14 +304,66 @@ export default {
     'http.method': { fieldId: 'http.method' },
     'http.blobMethod': { fieldId: 'http.blobMethod' },
     'http.headers': { fieldId: 'http.headers' },
-    'http.response.failPath': { fieldId: 'http.response.failPath' },
-    'http.response.failValues': { fieldId: 'http.response.failValues' },
+    'http.response.failPath': {
+      fieldId: 'http.response.failPath',
+      defaultValue: r => {
+        if (
+          Array.isArray(
+            r && r.http && r.http.response && r.http.response.failPath
+          )
+        ) {
+          return r.http.response.failPath[0];
+        }
+
+        return r && r.http && r.http.response && r.http.response.failPath;
+      },
+    },
+    'http.response.failValues': {
+      fieldId: 'http.response.failValues',
+      defaultValue: r => {
+        if (
+          Array.isArray(
+            r && r.http && r.http.response && r.http.response.failValues
+          )
+        ) {
+          return r.http.response.failValues[0];
+        }
+
+        return r && r.http && r.http.response && r.http.response.failValues;
+      },
+    },
     'http.requestMediaType': { fieldId: 'http.requestMediaType' },
     'http.compositeType': { fieldId: 'http.compositeType' },
     'http.lookups': { fieldId: 'http.lookups', visible: false },
     'http.relativeURI': { fieldId: 'http.relativeURI' },
-    'http.response.successPath': { fieldId: 'http.response.successPath' },
-    'http.response.successValues': { fieldId: 'http.response.successValues' },
+    'http.response.successPath': {
+      fieldId: 'http.response.successPath',
+      defaultValue: r => {
+        if (
+          Array.isArray(
+            r && r.http && r.http.response && r.http.response.successPath
+          )
+        ) {
+          return r.http.response.successPath[0];
+        }
+
+        return r && r.http && r.http.response && r.http.response.successPath;
+      },
+    },
+    'http.response.successValues': {
+      fieldId: 'http.response.successValues',
+      defaultValue: r => {
+        if (
+          Array.isArray(
+            r && r.http && r.http.response && r.http.response.successValues
+          )
+        ) {
+          return r.http.response.successValues[0];
+        }
+
+        return r && r.http && r.http.response && r.http.response.successValues;
+      },
+    },
     'http.response.resourceIdPath': { fieldId: 'http.response.resourceIdPath' },
     'http.response.resourcePath': { fieldId: 'http.response.resourcePath' },
     'http.response.errorPath': { fieldId: 'http.response.errorPath' },
