@@ -2,15 +2,7 @@ import { Fragment, useState, useEffect } from 'react';
 import clsx from 'clsx';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import {
-  Link,
-  Card,
-  CardActions,
-  Button,
-  Dialog,
-  DialogContent,
-  Typography,
-} from '@material-ui/core';
+import { Link, Card, CardActions, Button, Typography } from '@material-ui/core';
 import applications from '../../constants/applications';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import ConnectorTemplateContent from './ConnectorTemplateContent';
@@ -22,6 +14,7 @@ import {
 } from '../../utils/messageStore';
 import * as selectors from '../../reducers';
 import { prompt } from '../Prompt';
+import ModalDialog from '../ModalDialog';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -99,6 +92,9 @@ const useStyles = makeStyles(theme => ({
     padding: 0,
     position: 'absolute',
     bottom: theme.spacing(5),
+  },
+  link: {
+    paddingLeft: theme.spacing(1),
   },
 }));
 
@@ -253,16 +249,18 @@ export default function ConnectorTemplateList(props) {
         ))}
       </div>
       {showMessage && (
-        <Dialog open onClose={() => setShowMessage(false)}>
-          <DialogContent>
+        <ModalDialog show onClose={() => setShowMessage(false)}>
+          <div>Thank you!</div>
+          <div>
             {CONTACT_SALES_MESSAGE}
             <Link
               href="http://www.celigo.com/integration-marketplace"
-              target="_blank">
+              target="_blank"
+              className={classes.link}>
               http://www.celigo.com/integration-marketplace
             </Link>
-          </DialogContent>
-        </Dialog>
+          </div>
+        </ModalDialog>
       )}
     </Fragment>
   );
