@@ -130,6 +130,7 @@ export function* createFormValuesPatchSet({
   );
 
   if (!resource) return { patchSet: [], finalValues: null }; // nothing to do.
+
   // This has the fieldMeta
   const formState = yield select(
     selectors.resourceFormState,
@@ -190,7 +191,7 @@ export function* saveDataLoaderRawData({ resourceId, resourceType, values }) {
     resourceId
   );
 
-  // dont do anything if this is not a simple (data loader) export.
+  // Don't do anything if this is not a simple (data loader) export.
   if (!resource || resource.type !== 'simple') {
     return values;
   }
@@ -223,14 +224,14 @@ export function* submitFormValues({ resourceType, resourceId, values, match }) {
     formValues = yield call(saveDataLoaderRawData, {
       resourceType,
       resourceId,
-      values,
+      values: formValues,
     });
   }
 
   const { patchSet, finalValues } = yield call(createFormValuesPatchSet, {
     resourceType,
     resourceId,
-    values,
+    values: formValues,
     scope: SCOPES.VALUE,
   });
 
@@ -296,10 +297,11 @@ export function* submitFormValues({ resourceType, resourceId, values, match }) {
         scope: SCOPES.VALUE,
       });
 
-      if (error)
+      if (error) {
         return yield put(
           actions.resourceForm.submitFailed(resourceType, resourceId)
         );
+      }
     }
   }
 
