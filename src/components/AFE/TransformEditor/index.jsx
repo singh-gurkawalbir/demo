@@ -12,16 +12,16 @@ import ErrorGridItem from '../ErrorGridItem';
 import layouts from '../layout/defaultDialogLayout';
 
 const useStyles = makeStyles({
-  template: {
+  ...layouts,
+  columnTemplate: {
     gridTemplateColumns: '2fr 3fr 2fr',
     gridTemplateRows: '1fr 0fr',
     gridTemplateAreas: '"data rule result" "error error error"',
   },
-  ...layouts,
 });
 
 export default function TransformEditor(props) {
-  const { editorId, disabled, layout } = props;
+  const { editorId, disabled, layout = 'column' } = props;
   const classes = useStyles();
   const { data, result, error, initChangeIdentifier } = useSelector(state =>
     selectors.editor(state, editorId)
@@ -58,7 +58,7 @@ export default function TransformEditor(props) {
   return (
     <PanelGrid
       key={`${editorId}-${initChangeIdentifier}`}
-      className={layout ? classes[`${layout}Template`] : classes.template}>
+      className={classes[`${layout}Template`]}>
       <PanelGridItem gridArea="rule">
         <PanelTitle title="Transform Rules" />
         <TransformPanel

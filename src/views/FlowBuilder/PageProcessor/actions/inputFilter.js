@@ -24,7 +24,6 @@ function InputFilterDialog({
       stage: 'inputFilter',
     })
   );
-  // New
   const { type, rules, scriptId, entryFunction } = useMemo(() => {
     const filterObj =
       resource &&
@@ -117,7 +116,6 @@ function InputFilterDialog({
 
     onClose();
   };
-  // End of New
 
   useEffect(() => {
     if (!sampleData) {

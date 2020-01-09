@@ -141,7 +141,7 @@ export default function ToggleEditorDialog(props) {
     <Dialog
       fullScreen={fullScreen}
       open={open}
-      onClose={() => handleClose()}
+      onClose={handleCancel}
       scroll="paper"
       maxWidth={false}>
       <div className={classes.toolbarContainer}>
