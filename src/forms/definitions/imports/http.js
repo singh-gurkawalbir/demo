@@ -181,6 +181,9 @@ export default {
       retValues['/http/body'] = retValues['/http/body']
         ? [retValues['/http/body']]
         : [];
+      retValues['/http/ignoreLookupName'] = undefined;
+      retValues['/http/ignoreExtract'] = undefined;
+      retValues['/http/existingDataId'] = undefined;
     }
 
     delete retValues['/inputMode'];
@@ -301,6 +304,8 @@ export default {
     'http.method': { fieldId: 'http.method' },
     'http.blobMethod': { fieldId: 'http.blobMethod' },
     'http.headers': { fieldId: 'http.headers' },
+    'http.response.failPath': { fieldId: 'http.response.failPath' },
+    'http.response.failValues': { fieldId: 'http.response.failValues' },
     'http.requestMediaType': { fieldId: 'http.requestMediaType' },
     'http.compositeType': { fieldId: 'http.compositeType' },
     'http.lookups': { fieldId: 'http.lookups', visible: false },
@@ -450,6 +455,162 @@ export default {
           }
 
           return r.http.body[0];
+        }
+
+        return '';
+      },
+    },
+    'http.failPathCreate': {
+      id: 'http.failPathCreate',
+      type: 'text',
+      label: 'Fail Path',
+      placeholder: 'Optional',
+      visibleWhenAll: [
+        {
+          field: 'http.compositeType',
+          is: ['createandupdate', 'createandignore'],
+        },
+        {
+          field: 'http.method',
+          is: ['COMPOSITE'],
+        },
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
+      ],
+      defaultValue: r => {
+        if (!r || !r.http || !r.http.method) {
+          return '';
+        }
+
+        if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
+          if (r.http.method.length > 1) {
+            return (
+              r.http.response &&
+              r.http.response.failPath &&
+              r.http.response.failPath[1]
+            );
+          }
+
+          return (
+            r.http.response &&
+            r.http.response.failPath &&
+            r.http.response.failPath[0]
+          );
+        }
+
+        return '';
+      },
+    },
+    'http.failValuesCreate': {
+      id: 'http.failValuesCreate',
+      type: 'text',
+      label: 'Fail Values',
+      delimiter: ',',
+      visibleWhenAll: [
+        {
+          field: 'http.compositeType',
+          is: ['createandupdate', 'createandignore'],
+        },
+        {
+          field: 'http.method',
+          is: ['COMPOSITE'],
+        },
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
+      ],
+      defaultValue: r => {
+        if (!r || !r.http || !r.http.method) {
+          return '';
+        }
+
+        if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
+          if (r.http.method.length > 1) {
+            return (
+              r.http.response &&
+              r.http.response.failValues &&
+              r.http.response.failValues[1]
+            );
+          }
+
+          return (
+            r.http.response &&
+            r.http.response.failValues &&
+            r.http.response.failValues[0]
+          );
+        }
+
+        return '';
+      },
+    },
+    'http.failPathUpdate': {
+      id: 'http.failPathUpdate',
+      type: 'text',
+      label: 'Fail Path',
+      placeholder: 'Optional',
+      visibleWhenAll: [
+        {
+          field: 'http.compositeType',
+          is: ['createandupdate', 'createandignore'],
+        },
+        {
+          field: 'http.method',
+          is: ['COMPOSITE'],
+        },
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
+      ],
+      defaultValue: r => {
+        if (!r || !r.http || !r.http.method) {
+          return '';
+        }
+
+        if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
+          return (
+            r.http.response &&
+            r.http.response.failPath &&
+            r.http.response.failPath[0]
+          );
+        }
+
+        return '';
+      },
+    },
+    'http.failValuesUpdate': {
+      id: 'http.failValuesUpdate',
+      type: 'text',
+      label: 'Fail Values',
+      delimiter: ',',
+      visibleWhenAll: [
+        {
+          field: 'http.compositeType',
+          is: ['createandupdate', 'createandignore'],
+        },
+        {
+          field: 'http.method',
+          is: ['COMPOSITE'],
+        },
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
+      ],
+      defaultValue: r => {
+        if (!r || !r.http || !r.http.method) {
+          return '';
+        }
+
+        if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
+          return (
+            r.http.response &&
+            r.http.response.failValues &&
+            r.http.response.failValues[0]
+          );
         }
 
         return '';
@@ -1013,6 +1174,18 @@ export default {
         },
       ],
     },
+    'file.csv.customHeaderRows': {
+      id: 'file.csv.customHeaderRows',
+      label: 'Custom Header Rows',
+      type: 'textarea',
+      visibleWhenAll: [
+        { field: 'http.requestMediaType', is: ['csv'] },
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
+      ],
+    },
     'http.body': {
       fieldId: 'http.body',
       refreshOptionsOnChangesTo: [
@@ -1061,6 +1234,8 @@ export default {
       'http.body',
       'http.response.successPath',
       'http.response.successValues',
+      'http.response.failPath',
+      'http.response.failValues',
       'http.response.resourceIdPath',
       'http.response.resourcePath',
       'http.response.errorPath',
@@ -1093,6 +1268,7 @@ export default {
       'http.errorMediaType',
       'uploadFile',
       'file.csv',
+      'file.csv.customHeaderRows',
     ],
     type: 'collapse',
     containers: [
