@@ -1,9 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Route, useRouteMatch, NavLink } from 'react-router-dom';
+import { Route, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
-import { List, ListItem, Grid, Typography } from '@material-ui/core';
+import { Grid, Typography } from '@material-ui/core';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
@@ -17,6 +17,7 @@ import Filters from './Filters';
 import PanelHeader from '../../../../common/PanelHeader';
 import TrashIcon from '../../../../../../components/icons/TrashIcon';
 import Mappings from './MappingsWrapper';
+import CategoryList from './CategoryList';
 import ApplicationImg from '../../../../../../components/icons/ApplicationImg';
 import ArrowUpIcon from '../../../../../../components/icons/ArrowUpIcon';
 import ArrowDownIcon from '../../../../../../components/icons/ArrowDownIcon';
@@ -52,6 +53,9 @@ const useStyles = makeStyles(theme => ({
   drawer: {
     width: drawerWidth,
     flexShrink: 0,
+  },
+  nested: {
+    paddingLeft: theme.spacing(4),
   },
   drawerPaperInner: {
     width: drawerWidth,
@@ -227,9 +231,6 @@ function CategoryMappingDrawer({ integrationId }) {
   const [amazonAttributeFilter, setAmazonAttributeFilter] = useState('all');
   const [fieldMappingsFilter, setFieldMappingsFilter] = useState('mapped');
   const { flowId, categoryId } = match.params;
-  const flow =
-    useSelector(state => selectors.resource(state, 'flows', flowId)) || {};
-  const flowName = flow.name || flow._id;
   const [requestedMetadata, setRequestedMetadata] = useState(false);
   const integrationName = useSelector(state => {
     const integration = selectors.resource(
@@ -240,29 +241,29 @@ function CategoryMappingDrawer({ integrationId }) {
 
     return integration ? integration.name : null;
   });
-  const metadata = useSelector(state =>
-    selectors.categoryMapping(state, integrationId, flowId)
+  const metadataLoaded = useSelector(
+    state => !!selectors.categoryMapping(state, integrationId, flowId)
   );
   const { extractsMetadata, generatesMetadata } = useSelector(state =>
     selectors.categoryMappingMetadata(state, integrationId, flowId)
   );
-  const mappedCategories =
-    useSelector(state =>
-      selectors.mappedCategories(state, integrationId, flowId)
-    ) || [];
   const handleAmzonAttributeChange = useCallback(val => {
     setAmazonAttributeFilter(val);
   }, []);
   const handleFieldMappingsFilterChange = useCallback(val => {
     setFieldMappingsFilter(val);
   }, []);
+  const mappedCategories =
+    useSelector(state =>
+      selectors.mappedCategories(state, integrationId, flowId)
+    ) || [];
   const currentSectionLabel =
     (mappedCategories.find(category => category.id === categoryId) || {})
       .name || categoryId;
   const handleClose = () => {};
 
   useEffect(() => {
-    if (!metadata && !requestedMetadata) {
+    if (!metadataLoaded && !requestedMetadata) {
       dispatch(
         actions.integrationApp.settings.requestCategoryMappingMetadata(
           integrationId,
@@ -276,7 +277,7 @@ function CategoryMappingDrawer({ integrationId }) {
     dispatch,
     flowId,
     integrationId,
-    metadata,
+    metadataLoaded,
     requestedMetadata,
     categoryId,
   ]);
@@ -293,24 +294,12 @@ function CategoryMappingDrawer({ integrationId }) {
         paper: classes.drawerPaper,
       }}
       onClose={handleClose}>
-      <DrawerTitleBar title={`Edit Mappings: ${flowName}`} />
-      {metadata ? (
+      <DrawerTitleBar flowId={flowId} />
+      {metadataLoaded ? (
         <div className={classes.root}>
           <Grid container wrap="nowrap">
             <Grid item className={classes.subNav}>
-              <List>
-                {mappedCategories.map(({ name, id }) => (
-                  <ListItem key={id}>
-                    <NavLink
-                      className={classes.listItem}
-                      activeClassName={classes.activeListItem}
-                      to={id}
-                      data-test={id}>
-                      {name}
-                    </NavLink>
-                  </ListItem>
-                ))}
-              </List>
+              <CategoryList integrationId={integrationId} flowId={flowId} />
             </Grid>
             <Grid item className={classes.content}>
               <PanelHeader

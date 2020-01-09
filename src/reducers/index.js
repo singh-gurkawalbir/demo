@@ -1218,6 +1218,7 @@ export function mappedCategories(state, integrationId, flowId) {
         item => ({
           id: item.id,
           name: item.name === 'commonAttributes' ? 'Common' : item.name,
+          children: item.children,
         })
       );
     }
