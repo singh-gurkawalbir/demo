@@ -86,12 +86,6 @@ export function* onSuccessSaga(response, action) {
     ? JSON.parse(response.data)
     : response.data;
 
-  // This is just to support ping calls...
-  // if it succeeds or fails it would give back a 200
-  // status code...so for these failed ping calls
-  // we have the following code to support it
-  // which essentially throws an exception to the parent
-
   yield put(actions.api.complete(path, method));
   yield put(actions.auth.sessionTimestamp());
 

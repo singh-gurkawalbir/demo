@@ -41,8 +41,15 @@ if (process.env.NODE_ENV === 'development') {
 
 // trace true allows us to determine the origin of dispatched actions
 // using the redux dev tools plugin we can see the stack trace of where the request is originated from.
+
 const composeEnhancers =
-  window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({ trace: true }) || compose;
+  (window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ &&
+  process.env.NODE_ENV === 'development'
+    ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
+        trace: true,
+        traceLimit: 25,
+      })
+    : window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) || compose;
 
 store = createStore(
   rootReducer,

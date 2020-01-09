@@ -29,10 +29,12 @@ export default {
   ignoreExisting: {
     type: 'checkbox',
     label: 'Ignore Existing',
+    defaultValue: r => !!(r && r.ignoreExisting),
   },
   ignoreMissing: {
     type: 'checkbox',
     label: 'Ignore Missing',
+    defaultValue: r => !!(r && r.ignoreMissing),
   },
   idLockTemplate: {
     type: 'relativeuri',

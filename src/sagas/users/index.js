@@ -413,7 +413,7 @@ export function* rejectSharedInvite({ resourceType, id }) {
 
 export function* requestNumEnabledFlows() {
   const { path, opts } = getRequestOptions(
-    actionTypes.LICENSE_NUM_ENABLED_FLOWS
+    actionTypes.LICENSE_NUM_ENABLED_FLOWS_REQUEST
   );
   let response;
 
@@ -446,6 +446,9 @@ export const userSagas = [
   takeEvery(actionTypes.DEFAULT_ACCOUNT_SET, requestSharedStackNotifications),
   takeEvery(actionTypes.SHARED_NOTIFICATION_ACCEPT, acceptSharedInvite),
   takeEvery(actionTypes.SHARED_NOTIFICATION_REJECT, rejectSharedInvite),
-  takeEvery(actionTypes.LICENSE_NUM_ENABLED_FLOWS, requestNumEnabledFlows),
+  takeEvery(
+    actionTypes.LICENSE_NUM_ENABLED_FLOWS_REQUEST,
+    requestNumEnabledFlows
+  ),
   takeEvery(actionTypes.LICENSE_UPDATE_REQUEST, requestLicenseUpdate),
 ];

@@ -701,7 +701,7 @@ const user = {
       leave: id => action(actionTypes.ACCOUNT_LEAVE_REQUEST, { id }),
       switchTo: ({ id }) => action(actionTypes.ACCOUNT_SWITCH, { id }),
       requestNumEnabledFlows: () =>
-        action(actionTypes.LICENSE_NUM_ENABLED_FLOWS, {}),
+        action(actionTypes.LICENSE_NUM_ENABLED_FLOWS_REQUEST, {}),
       receivedNumEnabledFlows: response =>
         action(actionTypes.LICENSE_NUM_ENABLED_FLOWS_RECEIVED, { response }),
     },
@@ -878,6 +878,22 @@ const mapping = {
   previewReceived: (id, value) =>
     action(actionTypes.MAPPING.PREVIEW_RECEIVED, { id, value }),
   previewFailed: id => action(actionTypes.MAPPING.PREVIEW_FAILED, { id }),
+};
+const searchCriteria = {
+  init: (id, value) =>
+    action(actionTypes.SEARCH_CRITERIA.INIT, {
+      id,
+      value,
+    }),
+  patchField: (id, field, index, value) =>
+    action(actionTypes.SEARCH_CRITERIA.PATCH_FIELD, {
+      id,
+      field,
+      index,
+      value,
+    }),
+  delete: (id, index) =>
+    action(actionTypes.SEARCH_CRITERIA.DELETE, { id, index }),
 };
 // #region DynaForm Actions
 const resourceForm = {
@@ -1113,6 +1129,7 @@ export default {
   marketplace,
   recycleBin,
   mapping,
+  searchCriteria,
   analytics,
   transfer,
 };

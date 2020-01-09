@@ -427,6 +427,28 @@ export default {
       },
     ],
   },
+  'http.response.failPath': {
+    type: 'text',
+    label: 'Fail Path',
+    visibleWhen: [
+      {
+        field: 'outputMode',
+        is: ['records'],
+      },
+    ],
+  },
+  'http.response.failValues': {
+    type: 'text',
+    delimiter: ',',
+    label: 'Fail Values',
+    visibleWhen: [
+      {
+        field: 'outputMode',
+        is: ['records'],
+      },
+    ],
+  },
+
   // #region transform
   'transform.expression.rules': {
     type: 'transformeditor',

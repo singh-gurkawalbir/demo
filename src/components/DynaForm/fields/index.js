@@ -79,6 +79,7 @@ import DynaRadioGroupForResetFields from './radiogroup/DynaRadioGroupForResetFie
 import DynaTextWithFlowContext from './text/DynaTextWithFlowContext';
 import DynaCheckboxForResetFields from './checkbox/DynaCheckboxForResetFields';
 import DynaExportPanel from './DynaExportPanel';
+import DynaNSSearchCriteria from './editors/DynaNSSearchCriteria';
 
 export default {
   mode: DynaMode,
@@ -170,4 +171,5 @@ export default {
   textwithflowcontext: DynaTextWithFlowContext,
   checkboxforresetfields: DynaCheckboxForResetFields,
   exportpanel: DynaExportPanel,
+  nssearchcriteria: DynaNSSearchCriteria,
 };

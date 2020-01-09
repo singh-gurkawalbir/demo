@@ -238,6 +238,36 @@ export default {
       },
     ],
   },
+  'http.response.failPath': {
+    type: 'text',
+    label: 'Fail Path',
+    delimiter: ',',
+    visibleWhenAll: [
+      {
+        field: 'http.method',
+        is: ['POST', 'PUT', 'DELETE', 'PATCH'],
+      },
+      {
+        field: 'inputMode',
+        is: ['records'],
+      },
+    ],
+  },
+  'http.response.failValues': {
+    type: 'text',
+    delimiter: ',',
+    label: 'Fail Values',
+    visibleWhenAll: [
+      {
+        field: 'http.method',
+        is: ['POST', 'PUT', 'DELETE', 'PATCH'],
+      },
+      {
+        field: 'inputMode',
+        is: ['records'],
+      },
+    ],
+  },
   'http.response.resourcePath': {
     type: 'text',
     delimiter: ',',
