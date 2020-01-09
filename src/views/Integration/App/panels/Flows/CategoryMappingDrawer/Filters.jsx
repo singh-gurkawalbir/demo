@@ -22,7 +22,6 @@ const useStyles = makeStyles(theme => ({
   },
   filter: {
     maxWidth: '400px',
-    float: 'right',
   },
 }));
 

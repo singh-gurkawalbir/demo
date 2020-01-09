@@ -45,9 +45,6 @@ const useStyles = makeStyles(theme => ({
     marginLeft: theme.spacing(1),
     marginRight: 0,
   },
-  filter: {
-    float: 'right',
-  },
   fullWidth: {
     width: '100%',
   },
@@ -179,7 +176,7 @@ function CategoryMappings({
           <Typography className={classes.secondaryHeading}>
             {name || mappings.name}
           </Typography>
-          {variationThemes && variationThemes.length && (
+          {!!variationThemes && !!variationThemes.length && (
             <AddIcon
               className={classes.variationIcon}
               onClick={handleVariation}
@@ -378,7 +375,7 @@ export default function CategoryMappingDrawerRoute(props) {
 
   return (
     <Route exact path={`${match.url}/:flowId/utilitymapping/:categoryId`}>
-      <LoadResources required resources="exports,imports,flows,connections">
+      <LoadResources required resources="flows,exports,imports,connections">
         <CategoryMappingDrawer {...props} parentUrl={match.url} />
       </LoadResources>
     </Route>

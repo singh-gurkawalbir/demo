@@ -12,10 +12,10 @@ import ActionButton from '../../../../../../components/ActionButton';
 import LockIcon from '../../../../../../components/icons/LockIcon';
 import actions from '../../../../../../actions';
 import DynaTypeableSelect from '../../../../../../components/DynaForm/fields/DynaTypeableSelect';
-import AddIcon from '../../../../../../components/icons/AddIcon';
-import ArrowRightIcon from '../../../../../../components/icons/ArrowRightIcon';
-import ArrowLeftIcon from '../../../../../../components/icons/ArrowLeftIcon';
-import ArrowDownIcon from '../../../../../../components/icons/ArrowDownIcon';
+import PreferredIcon from '../../../../../../components/icons/PreferredIcon';
+import ConditionalIcon from '../../../../../../components/icons/ConditionalIcon';
+import OptionalIcon from '../../../../../../components/icons/OptionalIcon';
+import RequiredIcon from '../../../../../../components/icons/RequiredIcon';
 
 // TODO Azhar style header
 const useStyles = makeStyles(theme => ({
@@ -160,13 +160,13 @@ export default function ImportMapping(props) {
           // TODO: Azhar Replace these arrow icons with new icons for ["Preferred", "optional", "conditional", "required"]
           switch (filterType) {
             case 'preferred':
-              return <ArrowDownIcon />;
+              return <PreferredIcon />;
             case 'optional':
-              return <ArrowLeftIcon />;
+              return <OptionalIcon />;
             case 'conditional':
-              return <ArrowRightIcon />;
+              return <ConditionalIcon />;
             case 'required':
-              return <AddIcon />;
+              return <RequiredIcon />;
             default:
               return null;
           }
