@@ -22,6 +22,7 @@ import ApplicationImg from '../../../../../../components/icons/ApplicationImg';
 import RefreshIcon from '../../../../../../components/icons/RefreshIcon';
 import ArrowUpIcon from '../../../../../../components/icons/ArrowUpIcon';
 import ArrowDownIcon from '../../../../../../components/icons/ArrowDownIcon';
+import AddIcon from '../../../../../../components/icons/AddIcon';
 
 const emptySet = [];
 const drawerWidth = 200;
@@ -85,6 +86,10 @@ const useStyles = makeStyles(theme => ({
     position: 'absolute',
     right: '20px',
   },
+  variationIcon: {
+    position: 'absolute',
+    right: '50px',
+  },
   content: {
     width: '100%',
     height: '100%',
@@ -114,7 +119,8 @@ function CategoryMappings({
   const classes = useStyles();
   const [expanded, setExpanded] = useState(isRoot);
   const handleDelete = () => {};
-  const { fields: generateFields, name } =
+  const handleVariation = () => {};
+  const { fields: generateFields, name, variation_themes: variationThemes } =
     useSelector(state =>
       selectors.categoryMappingGenerateFields(state, integrationId, flowId, {
         sectionId,
@@ -173,6 +179,12 @@ function CategoryMappings({
           <Typography className={classes.secondaryHeading}>
             {name || mappings.name}
           </Typography>
+          {variationThemes && variationThemes.length && (
+            <AddIcon
+              className={classes.variationIcon}
+              onClick={handleVariation}
+            />
+          )}
           <TrashIcon className={classes.deleteIcon} onClick={handleDelete} />
         </ExpansionPanelSummary>
         <ExpansionPanelDetails>
