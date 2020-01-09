@@ -14,6 +14,12 @@ export default {
       ];
     }
 
+    if (retValues['/http/response/failValues']) {
+      retValues['/http/response/failValues'] = [
+        retValues['/http/response/failValues'],
+      ];
+    }
+
     if (retValues['/inputMode'] === 'blob') {
       retValues['/http/method'] = retValues['/http/blobMethod'];
     } else if (retValues['/http/method'] === 'COMPOSITE') {
@@ -68,6 +74,26 @@ export default {
           retValues['/http/response/successValues'] = [
             retValues['/http/successValuesUpdate'],
             retValues['/http/successValuesCreate'],
+          ];
+        }
+
+        if (
+          retValues['/http/failPathCreate'] ||
+          retValues['/http/failPathUpdate']
+        ) {
+          retValues['/http/response/failPath'] = [
+            retValues['/http/failPathUpdate'],
+            retValues['/http/failPathCreate'],
+          ];
+        }
+
+        if (
+          retValues['/http/failValuesCreate'] ||
+          retValues['/http/failValuesUpdate']
+        ) {
+          retValues['/http/response/failValues'] = [
+            retValues['/http/failValuesUpdate'],
+            retValues['/http/failValuesCreate'],
           ];
         }
 
@@ -1045,6 +1071,8 @@ export default {
       'http.bodyCreate',
       'http.successPathCreate',
       'http.successValuesCreate',
+      'http.failPathCreate',
+      'http.failValuesCreate',
       'http.resourceIdPathCreate',
       'http.resourcePathCreate',
       'upateExistingData',
@@ -1053,6 +1081,8 @@ export default {
       'http.bodyUpdate',
       'http.successPathUpdate',
       'http.successValuesUpdate',
+      'http.failPathUpdate',
+      'http.failValuesUpdate',
       'http.resourceIdPathUpdate',
       'http.resourcePathUpdate',
       'ignoreExistingData',
