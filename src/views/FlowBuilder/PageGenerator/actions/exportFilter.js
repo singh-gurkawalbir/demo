@@ -24,7 +24,7 @@ function ExportFilterDialog({ flowId, resource, isViewMode, onClose }) {
 
     return {
       type,
-      rules: expression.rules,
+      rules: expression.rules || [],
       scriptId: script._scriptId,
       entryFunction: script.function,
     };
