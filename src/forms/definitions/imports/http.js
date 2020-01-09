@@ -134,6 +134,7 @@ export default {
       retValues['/http/existingDataId'] = undefined;
     }
 
+    retValues['/statusExport'] = undefined;
     delete retValues['/inputMode'];
 
     return {

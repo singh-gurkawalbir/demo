@@ -10,8 +10,6 @@ import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import Close from '../../../components/icons/CloseIcon';
 
-// Just a temporary variable to increase width
-// TODO @Raghu: Discuss with Azhar and do this UI Fix
 const useStyles = makeStyles(theme => ({
   root: {
     zIndex: props => props.zIndex,
