@@ -259,7 +259,7 @@ const PageGenerator = ({
       <AppBlock
         integrationId={integrationId}
         name={blockName}
-        onDelete={onDelete}
+        onDelete={!isDataLoader && onDelete}
         isViewMode={isViewMode}
         onBlockClick={handleBlockClick}
         connectorType={connectorType}

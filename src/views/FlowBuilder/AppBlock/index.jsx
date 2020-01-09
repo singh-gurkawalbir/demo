@@ -260,7 +260,7 @@ function AppBlock({
         className={clsx(classes.box, { [classes.draggable]: !isNew })}
         style={{ opacity }}>
         <div className={classes.bubbleContainer}>
-          {!isViewMode && (
+          {onDelete && !isViewMode && (
             <IconButton
               size="small"
               className={classes.deleteButton}

@@ -180,8 +180,13 @@ const useStyles = makeStyles(theme => ({
       duration: theme.transitions.duration.enteringScreen,
     }),
   },
+  title: {
+    display: 'flex',
+    minHeight: 48,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   sourceTitle: {
-    textAlign: 'center',
     marginBottom: theme.spacing(3),
   },
   destinationTitle: {
@@ -192,6 +197,7 @@ const useStyles = makeStyles(theme => ({
   generatorRoot: {
     backgroundColor: 'rgba(0,0,0,0.02)',
     padding: theme.spacing(0, 0, 3, 3),
+    minWidth: 429,
   },
   processorRoot: {
     padding: theme.spacing(0, 3, 3, 0),
@@ -232,6 +238,7 @@ function FlowBuilder() {
     state => selectors.flowDetails(state, flowId),
     shallowEqual
   );
+  const isDataLoaderFlow = flowDetails.isSimpleImport;
   const { pageProcessors = [], pageGenerators = [] } = flow;
   const createdGeneratorId = useSelector(state =>
     selectors.createdResourceId(state, newGeneratorId)
@@ -551,15 +558,17 @@ function FlowBuilder() {
           <div className={classes.generatorRoot}>
             <Typography
               component="div"
-              className={classes.sourceTitle}
+              className={clsx(classes.title, classes.sourceTitle)}
               variant="overline">
-              SOURCE APPLICATIONS
-              <IconButton
-                data-test="addGenerator"
-                disabled={isViewMode}
-                onClick={handleAddGenerator}>
-                <AddIcon />
-              </IconButton>
+              {isDataLoaderFlow ? 'SOURCE' : 'SOURCE APPLICATIONS'}
+              {!isDataLoaderFlow && (
+                <IconButton
+                  data-test="addGenerator"
+                  disabled={isViewMode}
+                  onClick={handleAddGenerator}>
+                  <AddIcon />
+                </IconButton>
+              )}
             </Typography>
 
             <div className={classes.generatorContainer}>
@@ -593,15 +602,20 @@ function FlowBuilder() {
           <div className={classes.processorRoot}>
             <Typography
               component="div"
-              className={classes.destinationTitle}
+              className={clsx(classes.title, classes.destinationTitle)}
               variant="overline">
-              DESTINATION &amp; LOOKUP APPLICATIONS
-              <IconButton
-                disabled={isViewMode}
-                data-test="addProcessor"
-                onClick={handleAddProcessor}>
-                <AddIcon />
-              </IconButton>
+              {isDataLoaderFlow
+                ? 'DESTINATION'
+                : 'DESTINATION & LOOKUP APPLICATIONS'}
+
+              {(!isDataLoaderFlow || pageProcessors.length === 0) && (
+                <IconButton
+                  disabled={isViewMode}
+                  data-test="addProcessor"
+                  onClick={handleAddProcessor}>
+                  <AddIcon />
+                </IconButton>
+              )}
             </Typography>
             <div className={classes.processorContainer}>
               {pageProcessors.map((pp, i) => (
