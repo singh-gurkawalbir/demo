@@ -1,16 +1,15 @@
 import { hot } from 'react-hot-loader';
 import { Component, Fragment } from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import Drawer from '@material-ui/core/Drawer';
-import { Divider, ListItem } from '@material-ui/core';
-import List from '@material-ui/core/List';
-import { Switch, Route, NavLink } from 'react-router-dom';
+import { Divider } from '@material-ui/core';
 import { connect } from 'react-redux';
 import loadable from '../../utils/loadable';
 import * as selectors from '../../reducers';
 import { USER_ACCESS_LEVELS } from '../../utils/constants';
-import getRoutePath from '../../utils/routePaths';
 import CeligoPageBar from '../../components/CeligoPageBar';
+import FlowsIcon from '../../components/icons/FlowsIcon';
+import ResourceDrawer from '../../components/drawer/Resource';
+import Tabs from '../Integration/common/Tabs';
 
 const mapStateToProps = state => {
   const permissions = selectors.userPermissions(state);
@@ -35,6 +34,33 @@ const Audit = loadable(() =>
 const Transfers = loadable(() =>
   import(/* webpackChunkName: 'MyAccount.Audit' */ './Transfers/index')
 );
+const tabs = [
+  {
+    path: 'subscription',
+    label: 'Subscription',
+    Icon: FlowsIcon,
+    Panel: Subscription,
+  },
+  {
+    path: 'profile',
+    label: 'Profile',
+    Icon: FlowsIcon,
+    Panel: Profile,
+  },
+  { path: 'users', label: 'Users', Icon: FlowsIcon, Panel: Users },
+  {
+    path: 'audit',
+    label: 'Audit',
+    Icon: FlowsIcon,
+    Panel: Audit,
+  },
+  {
+    path: 'transfers',
+    label: 'Transfers',
+    Icon: FlowsIcon,
+    Panel: Transfers,
+  },
+];
 
 @hot(module)
 @withStyles(theme => ({
@@ -76,99 +102,26 @@ const Transfers = loadable(() =>
 }))
 class MyAccount extends Component {
   render() {
-    const { classes, permissions } = this.props;
+    const { match, permissions } = this.props;
 
     return (
       <Fragment>
-        <div>
-          <CeligoPageBar
-            title={
-              permissions.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER
-                ? 'My Account'
-                : 'My Profile'
-            }
-          />
-          <Divider />
-          <div className={classes.root}>
-            <div className={classes.flex}>
-              {permissions.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER && (
-                <Drawer
-                  variant="permanent"
-                  anchor="left"
-                  classes={{
-                    paper: classes.leftElement,
-                  }}>
-                  <List>
-                    <ListItem>
-                      <NavLink
-                        activeClassName={classes.activeLink}
-                        className={classes.link}
-                        to="users">
-                        Users
-                      </NavLink>
-                    </ListItem>
-                    <ListItem>
-                      <NavLink
-                        activeClassName={classes.activeLink}
-                        className={classes.link}
-                        to="profile">
-                        Profile
-                      </NavLink>
-                    </ListItem>
-                    <ListItem>
-                      <NavLink
-                        activeClassName={classes.activeLink}
-                        className={classes.link}
-                        to="subscription">
-                        Subscription
-                      </NavLink>
-                    </ListItem>
-                    <ListItem>
-                      <NavLink
-                        activeClassName={classes.activeLink}
-                        className={classes.link}
-                        to="audit">
-                        Audit Log
-                      </NavLink>
-                    </ListItem>
-                    <ListItem>
-                      <NavLink
-                        activeClassName={classes.activeLink}
-                        className={classes.link}
-                        to="transfers">
-                        Transfers
-                      </NavLink>
-                    </ListItem>
-                  </List>
-                </Drawer>
-              )}
-            </div>
-            <div className={classes.rightElement}>
-              <Switch>
-                <Route
-                  path={getRoutePath('/myAccount/profile')}
-                  component={Profile}
-                />
-                <Route
-                  path={getRoutePath('/myAccount/users')}
-                  component={Users}
-                />
-                <Route
-                  path={getRoutePath('/myAccount/subscription')}
-                  component={Subscription}
-                />
-                <Route
-                  path={getRoutePath('/myAccount/audit')}
-                  component={Audit}
-                />
-                <Route
-                  path={getRoutePath('/myAccount/transfers')}
-                  component={Transfers}
-                />
-              </Switch>
-            </div>
-          </div>
-        </div>
+        <CeligoPageBar
+          title={
+            permissions.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER
+              ? 'My Account'
+              : 'My Profile'
+          }
+        />
+        <Divider />
+        {permissions.accessLevel !== USER_ACCESS_LEVELS.ACCOUNT_OWNER ? (
+          <Profile />
+        ) : (
+          <Fragment>
+            <ResourceDrawer match={match} />
+            <Tabs tabs={tabs} match={match} />
+          </Fragment>
+        )}
       </Fragment>
     );
   }

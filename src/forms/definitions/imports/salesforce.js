@@ -12,6 +12,8 @@ export default {
     } else if (newValues['/salesforce/api'] === 'compositerecord') {
       newValues['/salesforce/operation'] =
         newValues['/salesforce/compositeOperation'];
+      newValues['/salesforce/blobOperation'] = undefined;
+      newValues['/salesforce/blobsObjectType'] = undefined;
     }
 
     delete newValues['/inputMode'];
@@ -123,6 +125,7 @@ export default {
     },
     ignoreExisting: {
       fieldId: 'ignoreExisting',
+      label: 'Ignore Existing Records',
       visibleWhen: [
         { field: 'salesforce.operation', is: ['insert'] },
         { field: 'salesforce.compositeOperation', is: ['insert'] },
@@ -130,6 +133,7 @@ export default {
     },
     ignoreMissing: {
       fieldId: 'ignoreMissing',
+      label: 'Ignore Missing Records',
       visibleWhen: [
         { field: 'salesforce.operation', is: ['update'] },
         { field: 'salesforce.compositeOperation', is: ['update'] },

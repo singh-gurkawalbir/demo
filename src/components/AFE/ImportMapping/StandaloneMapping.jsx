@@ -218,6 +218,10 @@ export default function StandaloneMapping(props) {
     }
   }
 
+  if (isNetsuite) {
+    mappingOptions.showSalesforceNetsuiteAssistant = true;
+  }
+
   if (isAssistant && assistantData) {
     if (!assistantLoaded) {
       setAssistantLoaded(true);

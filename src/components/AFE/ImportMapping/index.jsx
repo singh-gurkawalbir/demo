@@ -20,6 +20,7 @@ import MappingConnectorIcon from '../../icons/MappingConnectorIcon';
 import ButtonGroup from '../../ButtonGroup';
 import MappingSaveButton from '../../ResourceFormFactory/Actions/MappingSaveButton';
 import SalesforceMappingAssistant from '../../SalesforceMappingAssistant';
+import NetSuiteMappingAssistant from '../../NetSuiteMappingAssistant';
 
 // TODO Azhar style header
 const useStyles = makeStyles(theme => ({
@@ -124,7 +125,7 @@ export default function ImportMapping(props) {
     onClose,
     options = {},
   } = props;
-  const { sObjectType, connectionId } = options;
+  const { sObjectType, connectionId, recordType } = options;
   const classes = useStyles();
   const dispatch = useDispatch();
   const {
@@ -229,6 +230,17 @@ export default function ImportMapping(props) {
           'generate',
           lastModifiedRow,
           meta.id
+        )
+      );
+  });
+  const handleNetSuiteAssistantFieldClick = useCallback(meta => {
+    if (lastModifiedRow > -1)
+      dispatch(
+        actions.mapping.patchField(
+          editorId,
+          'generate',
+          lastModifiedRow,
+          meta.sublistName ? `${meta.sublistName}[*].${meta.id}` : meta.id
         )
       );
   });
@@ -421,18 +433,32 @@ export default function ImportMapping(props) {
       </div>
       {showSalesforceNetsuiteAssistant && (
         <div className={classes.assistantContainer}>
-          <SalesforceMappingAssistant
-            style={{
-              width: '100%',
-              height: '100%',
-            }}
-            connectionId={connectionId}
-            sObjectType={sObjectType}
-            sObjectLabel={sObjectType}
-            layoutId={salesforceMasterRecordTypeId}
-            onFieldClick={handleSalesforceAssistantFieldClick}
-            data={previewData && previewData.data}
-          />
+          {sObjectType && (
+            <SalesforceMappingAssistant
+              style={{
+                width: '100%',
+                height: '100%',
+              }}
+              connectionId={connectionId}
+              sObjectType={sObjectType}
+              sObjectLabel={sObjectType}
+              layoutId={salesforceMasterRecordTypeId}
+              onFieldClick={handleSalesforceAssistantFieldClick}
+              data={previewData && previewData.data}
+            />
+          )}
+          {recordType && (
+            <NetSuiteMappingAssistant
+              style={{
+                width: '100%',
+                height: '100%',
+              }}
+              netSuiteConnectionId={connectionId}
+              netSuiteRecordType={recordType}
+              onFieldClick={handleNetSuiteAssistantFieldClick}
+              data={previewData && previewData.data}
+            />
+          )}
         </div>
       )}
     </div>

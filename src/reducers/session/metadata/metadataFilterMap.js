@@ -12,6 +12,7 @@ export default {
     data.map(item => ({
       label: item.name,
       value: item.scriptId && item.scriptId.toLowerCase(),
+      url: item.url,
     })),
   'suitescript-recordTypeDetail': data =>
     data.map(item => ({
