@@ -8,6 +8,12 @@ export default {
       lookups &&
       lookups.find(l => l.name === retValues['/http/existingDataId']);
 
+    if (retValues['/http/response/failValues']) {
+      retValues['/http/response/failValues'] = [
+        retValues['/http/response/failValues'],
+      ];
+    }
+
     if (retValues['/inputMode'] === 'blob') {
       retValues['/http/method'] = retValues['/http/blobMethod'];
     } else if (retValues['/http/method'] === 'COMPOSITE') {
@@ -42,6 +48,26 @@ export default {
           retValues['/http/response/resourcePath'] = [
             retValues['/http/resourcePathUpdate'],
             retValues['/http/resourcePathCreate'],
+          ];
+        }
+
+        if (
+          retValues['/http/failPathCreate'] ||
+          retValues['/http/failPathUpdate']
+        ) {
+          retValues['/http/response/failPath'] = [
+            retValues['/http/failPathUpdate'],
+            retValues['/http/failPathCreate'],
+          ];
+        }
+
+        if (
+          retValues['/http/failValuesCreate'] ||
+          retValues['/http/failValuesUpdate']
+        ) {
+          retValues['/http/response/failValues'] = [
+            retValues['/http/failValuesUpdate'],
+            retValues['/http/failValuesCreate'],
           ];
         }
 
@@ -258,6 +284,8 @@ export default {
     'http.relativeURI': { fieldId: 'http.relativeURI' },
     'http.response.successPath': { fieldId: 'http.response.successPath' },
     'http.response.successValues': { fieldId: 'http.response.successValues' },
+    'http.response.failPath': { fieldId: 'http.response.failPath' },
+    'http.response.failValues': { fieldId: 'http.response.failValues' },
     'http.response.resourceIdPath': { fieldId: 'http.response.resourceIdPath' },
     'http.response.resourcePath': { fieldId: 'http.response.resourcePath' },
     'http.response.errorPath': { fieldId: 'http.response.errorPath' },
@@ -401,6 +429,162 @@ export default {
           }
 
           return r.http.body[0];
+        }
+
+        return '';
+      },
+    },
+    'http.failPathCreate': {
+      id: 'http.failPathCreate',
+      type: 'text',
+      label: 'Fail Path',
+      placeholder: 'Optional',
+      visibleWhenAll: [
+        {
+          field: 'http.compositeType',
+          is: ['createandupdate', 'createandignore'],
+        },
+        {
+          field: 'http.method',
+          is: ['COMPOSITE'],
+        },
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
+      ],
+      defaultValue: r => {
+        if (!r || !r.http || !r.http.method) {
+          return '';
+        }
+
+        if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
+          if (r.http.method.length > 1) {
+            return (
+              r.http.response &&
+              r.http.response.failPath &&
+              r.http.response.failPath[1]
+            );
+          }
+
+          return (
+            r.http.response &&
+            r.http.response.failPath &&
+            r.http.response.failPath[0]
+          );
+        }
+
+        return '';
+      },
+    },
+    'http.failValuesCreate': {
+      id: 'http.failValuesCreate',
+      type: 'text',
+      label: 'Fail Values',
+      delimiter: ',',
+      visibleWhenAll: [
+        {
+          field: 'http.compositeType',
+          is: ['createandupdate', 'createandignore'],
+        },
+        {
+          field: 'http.method',
+          is: ['COMPOSITE'],
+        },
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
+      ],
+      defaultValue: r => {
+        if (!r || !r.http || !r.http.method) {
+          return '';
+        }
+
+        if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
+          if (r.http.method.length > 1) {
+            return (
+              r.http.response &&
+              r.http.response.failValues &&
+              r.http.response.failValues[1]
+            );
+          }
+
+          return (
+            r.http.response &&
+            r.http.response.failValues &&
+            r.http.response.failValues[0]
+          );
+        }
+
+        return '';
+      },
+    },
+    'http.failPathUpdate': {
+      id: 'http.failPathUpdate',
+      type: 'text',
+      label: 'Fail Path',
+      placeholder: 'Optional',
+      visibleWhenAll: [
+        {
+          field: 'http.compositeType',
+          is: ['createandupdate', 'createandignore'],
+        },
+        {
+          field: 'http.method',
+          is: ['COMPOSITE'],
+        },
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
+      ],
+      defaultValue: r => {
+        if (!r || !r.http || !r.http.method) {
+          return '';
+        }
+
+        if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
+          return (
+            r.http.response &&
+            r.http.response.failPath &&
+            r.http.response.failPath[0]
+          );
+        }
+
+        return '';
+      },
+    },
+    'http.failValuesUpdate': {
+      id: 'http.failValuesUpdate',
+      type: 'text',
+      label: 'Fail Values',
+      delimiter: ',',
+      visibleWhenAll: [
+        {
+          field: 'http.compositeType',
+          is: ['createandupdate', 'createandignore'],
+        },
+        {
+          field: 'http.method',
+          is: ['COMPOSITE'],
+        },
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
+      ],
+      defaultValue: r => {
+        if (!r || !r.http || !r.http.method) {
+          return '';
+        }
+
+        if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
+          return (
+            r.http.response &&
+            r.http.response.failValues &&
+            r.http.response.failValues[0]
+          );
         }
 
         return '';
@@ -868,6 +1052,8 @@ export default {
       'http.body',
       'http.response.successPath',
       'http.response.successValues',
+      'http.response.failPath',
+      'http.response.failValues',
       'http.response.resourceIdPath',
       'http.response.resourcePath',
       'http.response.errorPath',
@@ -876,12 +1062,16 @@ export default {
       'http.compositeMethodCreate',
       'http.relativeURICreate',
       'http.bodyCreate',
+      'http.failPathCreate',
+      'http.failValuesCreate',
       'http.resourceIdPathCreate',
       'http.resourcePathCreate',
       'upateExistingData',
       'http.compositeMethodUpdate',
       'http.relativeURIUpdate',
       'http.bodyUpdate',
+      'http.failPathUpdate',
+      'http.failValuesUpdate',
       'http.resourceIdPathUpdate',
       'http.resourcePathUpdate',
       'ignoreExistingData',
