@@ -8,8 +8,6 @@ export default function DynaCronGenerator(props) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const onChange = useCallback(value => onFieldChange(id, value), [id]);
 
-  console.log('check val ', value);
-
   return (
     <Fragment>
       <div>

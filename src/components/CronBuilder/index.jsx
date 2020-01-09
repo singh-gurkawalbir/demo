@@ -1,7 +1,5 @@
-// import FormContext from 'react-forms-processor/dist/components/FormContext';
 import { useMemo } from 'react';
 import DynaForm from '../DynaForm';
-// import formFactory from '../../forms/formFactory';
 
 export default function CronBuilder(props) {
   const { value, onChange } = props;
@@ -21,13 +19,18 @@ export default function CronBuilder(props) {
       eachWeek,
       everyWeek,
     } = formValue;
+
+    if (!value) {
+      return onChange('? * * * * *');
+    }
+
     const val = [
-      splitVal[0] || '',
-      everyNMinutes || everySelectedMinute || splitVal[1] || '',
-      everyHour || everyNHours || eachSelectedHour || splitVal[2] || '',
-      everyDay || eachDay || splitVal[3] || '',
-      eachWeek || everyWeek || splitVal[4] || '',
-      everyMonth || eachMonth || splitVal[5] || '',
+      splitVal[0] || '?',
+      everyNMinutes || everySelectedMinute || splitVal[1] || '*',
+      everyHour || everyNHours || eachSelectedHour || splitVal[2] || '*',
+      everyDay || eachDay || splitVal[3] || '*',
+      eachWeek || everyWeek || splitVal[4] || '*',
+      everyMonth || eachMonth || splitVal[5] || '*',
     ].join(' ');
 
     onChange(val);
@@ -41,9 +44,9 @@ export default function CronBuilder(props) {
           id: 'everyNMinutes',
           label: 'Every n Minutes',
           type: 'slider',
-          min: 0,
-          max: 59,
-          step: 1,
+          min: 5,
+          max: 55,
+          step: 5,
           unit: 'minute',
           clearFields: ['everySelectedMinute'],
           defaultValue: splitVal[1] || '',
@@ -54,7 +57,7 @@ export default function CronBuilder(props) {
           label: ' Each selected minute',
           type: 'groupedButton',
           clearFields: ['everyNMinutes'],
-
+          unit: 'minute',
           defaultValue: splitVal[1] || '',
           options: [
             {
@@ -70,8 +73,8 @@ export default function CronBuilder(props) {
         everyHour: {
           id: 'everyHour',
           name: 'everyHour',
-          label: '*Every Hour',
-          type: 'labeltitle',
+          unit: 'hour',
+          type: 'cronlabel',
           clearFields: ['everyNHours', 'eachSelectedHour'],
           defaultValue: splitVal[2] || '',
         },
@@ -81,7 +84,7 @@ export default function CronBuilder(props) {
           label: 'Every n Hours',
           type: 'slider',
           unit: 'hour',
-          min: 0,
+          min: 1,
           max: 23,
           step: 1,
           defaultValue: splitVal[2] || '',
@@ -128,8 +131,8 @@ export default function CronBuilder(props) {
         everyDay: {
           id: 'everyDay',
           name: 'everyDay',
-          label: '*Every Day',
-          type: 'labeltitle',
+          unit: 'day',
+          type: 'cronlabel',
           clearFields: ['eachDay'],
           defaultValue: splitVal[3] || '',
         },
@@ -180,12 +183,13 @@ export default function CronBuilder(props) {
             },
           ],
         },
+
         everyMonth: {
           id: 'everyMonth',
           name: 'everyMonth',
-          label: '*Every Month',
-          type: 'labeltitle',
-          defaultValue: splitVal[5] || '',
+          unit: 'month',
+          type: 'cronlabel',
+          defaultValue: splitVal[4] || '',
           clearFields: ['eachMonth'],
         },
         eachMonth: {
@@ -194,7 +198,7 @@ export default function CronBuilder(props) {
           name: 'eachMonth',
           label: 'Each selected month',
           type: 'groupedButton',
-          defaultValue: splitVal[5] || '',
+          defaultValue: splitVal[4] || '',
           options: [
             {
               items: [
@@ -214,13 +218,14 @@ export default function CronBuilder(props) {
             },
           ],
         },
+
         everyWeek: {
           id: 'everyWeek',
           name: 'everyWeek',
-          label: '*Every Week',
-          type: 'labeltitle',
+          unit: 'week',
+          type: 'cronlabel',
           clearFields: ['eachWeek'],
-          defaultValue: splitVal[4] || '',
+          defaultValue: splitVal[5] || '',
         },
         eachWeek: {
           id: 'eachWeek',
@@ -228,7 +233,7 @@ export default function CronBuilder(props) {
           name: 'eachWeek',
           label: 'Each selected Day',
           type: 'groupedButton',
-          defaultValue: splitVal[4] || '',
+          defaultValue: splitVal[5] || '',
           options: [
             {
               items: [
@@ -251,11 +256,11 @@ export default function CronBuilder(props) {
             label: 'Minute',
             type: 'tabWithoutSave',
             containers: [
-              { label: 'Every n Minutes', fields: ['everyNMinutes'] },
               {
                 label: 'Every selected minute',
                 fields: ['everySelectedMinute'],
               },
+              { label: 'Every n Minutes', fields: ['everyNMinutes'] },
             ],
           },
           {

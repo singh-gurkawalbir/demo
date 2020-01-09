@@ -1,8 +1,46 @@
 import { ButtonGroup, Button } from '@material-ui/core';
+import FormContext from 'react-forms-processor/dist/components/FormContext';
+import { useEffect, useCallback } from 'react';
 
-export default function DynaGroupedButton(props) {
-  const { id, value, onFieldChange, clearFields, options } = props;
-  const finalValues = value.includes('*') ? [] : value && value.split(',');
+function GroupedButton(props) {
+  const {
+    id,
+    value,
+    onFieldChange,
+    clearFields,
+    fields,
+    options,
+    unit,
+  } = props;
+  const finalValues =
+    value.includes('/') || value.includes('*') ? [] : value && value.split(',');
+  const handleChange = useCallback(
+    item => () => {
+      let res;
+
+      if (finalValues.includes(item.value)) {
+        res = finalValues.filter(val => val !== item.value);
+      } else {
+        res = [...finalValues, item.value];
+      }
+
+      onFieldChange(id, !res.length ? '*' : res.sort().join(','));
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    },
+    [finalValues, id, onFieldChange]
+  );
+
+  useEffect(() => {
+    clearFields.forEach(id => {
+      fields.some(field => field.id === id) && onFieldChange(id, '');
+    });
+
+    if (!finalValues.length) {
+      if (unit === 'minute') onFieldChange(id, options[0].items[0].value);
+      else onFieldChange(id, '*');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
 
   return (
     <ButtonGroup color="primary">
@@ -12,24 +50,19 @@ export default function DynaGroupedButton(props) {
           <Button
             key={item.label}
             color="primary"
-            onClick={() => {
-              let res;
-
-              if (finalValues.includes(item.value)) {
-                res = finalValues.filter(it => it.value !== item.value);
-              } else {
-                res = [...finalValues, item.value];
-              }
-
-              clearFields.forEach(id => {
-                onFieldChange(id, '');
-              });
-              onFieldChange(id, res.sort().join(','));
-            }}
+            onClick={handleChange(item)}
             variant={finalValues.includes(item.value) ? 'contained' : 'text'}>
             {item.label}
           </Button>
         ))}
     </ButtonGroup>
+  );
+}
+
+export default function DynaGroupedButton(props) {
+  return (
+    <FormContext.Consumer>
+      {form => <GroupedButton {...props} fields={form.fields} />}
+    </FormContext.Consumer>
   );
 }

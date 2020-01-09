@@ -175,4 +175,5 @@ export default {
   crongenerator: DynaCronGenerator,
   slider: cronBuilderComponents.slider,
   groupedButton: cronBuilderComponents.groupedButton,
+  cronlabel: cronBuilderComponents.cronlabel,
 };

@@ -1,19 +1,36 @@
-import { useCallback, Fragment } from 'react';
+import FormContext from 'react-forms-processor/dist/components/FormContext';
+import { useCallback, Fragment, useEffect } from 'react';
 import { Typography, Slider } from '@material-ui/core';
 
-export default function DynaSlider(props) {
-  console.log('check ', props);
-  const { id, value, onFieldChange, clearFields, unit, step, max, min } = props;
+function DynaSlider(props) {
+  const {
+    id,
+    value,
+    onFieldChange,
+    clearFields,
+    fields,
+    unit,
+    step,
+    max,
+    min,
+  } = props;
   const handleChange = useCallback(
     (evt, slidervalue) => {
-      clearFields.forEach(id => {
-        onFieldChange(id, '');
-      });
-      onFieldChange(id, `*/${slidervalue.toString()}`);
+      if (unit === 'minute' && slidervalue > 9) {
+        onFieldChange(id, `10-59/${slidervalue.toString()}`);
+      } else onFieldChange(id, `*/${slidervalue.toString()}`);
     },
-    [clearFields, id, onFieldChange]
+    [id, onFieldChange, unit]
   );
-  const sliderVal = (value.split('/') && value.split('/')[1]) || min.toString();
+  const sliderVal = value.split('/') && value.split('/')[1];
+
+  useEffect(() => {
+    !sliderVal && onFieldChange(id, `*/${min.toString()}`);
+    clearFields.forEach(id => {
+      fields.some(field => field.id === id) && onFieldChange(id, '');
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
 
   return (
     <Fragment>
@@ -26,5 +43,13 @@ export default function DynaSlider(props) {
         max={max}
       />
     </Fragment>
+  );
+}
+
+export default function DynaGroupedButton(props) {
+  return (
+    <FormContext.Consumer>
+      {form => <DynaSlider {...props} fields={form.fields} />}
+    </FormContext.Consumer>
   );
 }
