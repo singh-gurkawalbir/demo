@@ -31,6 +31,7 @@ export default {
     data
       .filter(item => item.type === 'datetime' || item.type === 'datetimetz')
       .map(item => ({ label: item.name, value: item.id })),
+
   'suitescript-booleanField': data =>
     data
       .filter(
@@ -56,6 +57,18 @@ export default {
         type: item.type,
         options: item.options,
       })),
+  'suitescript-searchFilters': data =>
+    data.map(item => ({
+      label: item.name,
+      value: item.id,
+    })),
+  'webservices-searchFilters': data =>
+    data.fields &&
+    data.fields.map(item => ({
+      label: item.fieldId,
+      value: item.fieldId,
+    })),
+
   'webservices-recordTypes': data =>
     data.map(item => ({
       label: item.label,

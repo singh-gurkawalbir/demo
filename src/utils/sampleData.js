@@ -388,7 +388,7 @@ export const extractSampleDataAtResourcePath = (sampleData, resourcePath) => {
 /*
  * Handles Sample data of JSON file type
  * Incase of Array content, we merge all objects properties and have a combined object
- * Ex: [{a: 5, b: 6}, {c: 7}, {a: 6, d: 11}] gets converted to [{a: 6, b: 6, c: 7, d: 11}]
+ * Ex: [{a: 5, b: 6}, {c: 7}, {a: 6, d: 11}] gets converted to {a: 6, b: 6, c: 7, d: 11}
  */
 export const processJsonSampleData = (sampleData, options = {}) => {
   if (!sampleData) return sampleData;

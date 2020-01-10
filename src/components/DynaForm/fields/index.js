@@ -81,6 +81,7 @@ import DynaCheckboxForResetFields from './checkbox/DynaCheckboxForResetFields';
 import DynaExportPanel from './DynaExportPanel';
 import cronBuilderComponents from './cronBuilderComponents';
 import DynaCronGenerator from './DynaCronGenerator';
+import DynaNSSearchCriteria from './editors/DynaNSSearchCriteria';
 
 export default {
   mode: DynaMode,
@@ -176,4 +177,5 @@ export default {
   slider: cronBuilderComponents.slider,
   groupedButton: cronBuilderComponents.groupedButton,
   cronlabel: cronBuilderComponents.cronlabel,
+  nssearchcriteria: DynaNSSearchCriteria,
 };
