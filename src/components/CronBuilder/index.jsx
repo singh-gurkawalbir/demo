@@ -1,4 +1,4 @@
-import { useMemo, useState, useCallback } from 'react';
+import { useMemo, useState, useCallback, useEffect } from 'react';
 import DynaForm from '../DynaForm';
 
 export default function CronBuilder(props) {
@@ -343,10 +343,15 @@ export default function CronBuilder(props) {
     },
     [externalTabState, meta.layout.containers, onChange, reset, splitVal]
   );
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    if (reset) setCount(count => count + 1);
+  }, [reset, setCount]);
 
   return (
     <DynaForm
-      key={reset ? 0 : 1}
+      key={count}
       fieldMeta={meta}
       externalTabState={externalTabState}
       setExternalTabState={setExternalTabState}
