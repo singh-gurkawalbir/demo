@@ -158,6 +158,7 @@ export default function Subscription() {
     dispatch(
       actions.analytics.gainsight.trackEvent('GO_UNLIMITED_BUTTON_CLICKED')
     );
+    setShowStartFreeDialog(false);
 
     return dispatch(actions.user.org.accounts.requestTrialLicense());
   }, [dispatch]);
@@ -344,35 +345,38 @@ export default function Subscription() {
                     <Typography variant="h3">
                       Production Integration Flows
                     </Typography>
-                    <div className={classes.itemsList}>
+                    {licenseActionDetails.totalFlowsAvailable ===
+                    Number.MAX_SAFE_INTEGER ? (
+                      <div className={classes.bold}>Unlimited</div>
+                    ) : (
                       <div>
-                        <span className={classes.bold}>
-                          {numEnabledPaidFlows} of{' '}
-                          {licenseActionDetails.totalFlowsAvailable}
-                        </span>
-                        {licenseActionDetails.totalFlowsAvailable ===
-                          Number.MAX_SAFE_INTEGER && 'Unlimited'}
-                        {licenseActionDetails.totalFlowsAvailable !==
-                          Number.MAX_SAFE_INTEGER &&
-                          ` (${licenseActionDetails.totalFlowsAvailable -
-                            licenseActionDetails.numAddOnFlows} from subscription + ${
-                            licenseActionDetails.numAddOnFlows
-                          } Add-on flows)`}
+                        <div className={classes.itemsList}>
+                          <div>
+                            <span className={classes.bold}>
+                              {numEnabledPaidFlows} of{' '}
+                              {licenseActionDetails.totalFlowsAvailable} (
+                              {licenseActionDetails.totalFlowsAvailable -
+                                licenseActionDetails.numAddOnFlows}{' '}
+                              from subscription +{' '}
+                              {licenseActionDetails.numAddOnFlows} Add-on flows)
+                            </span>
+                          </div>
+                          <span className={classes.bold}>
+                            &nbsp;| {productionRemainingFlows}
+                          </span>
+                          <span> &nbsp;remaining</span>
+                        </div>
+                        <div className={classes.linearProgressWrapper}>
+                          <LinearProgress
+                            color="primary"
+                            value={productionConsumedFlowsPercentage}
+                            variant="determinate"
+                            thickness={10}
+                            className={classes.progressBar}
+                          />
+                        </div>
                       </div>
-                      <span className={classes.bold}>
-                        &nbsp;| {productionRemainingFlows}
-                      </span>
-                      <span> &nbsp;remaining</span>
-                    </div>
-                    <div className={classes.linearProgressWrapper}>
-                      <LinearProgress
-                        color="primary"
-                        value={productionConsumedFlowsPercentage}
-                        variant="determinate"
-                        thickness={10}
-                        className={classes.progressBar}
-                      />
-                    </div>
+                    )}
                   </div>
                   <div className={classes.wrapper}>
                     <Typography variant="h3">

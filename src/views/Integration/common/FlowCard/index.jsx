@@ -131,6 +131,7 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
                     flowDetails._integrationId,
                     flowDetails._id,
                     storeId,
+                    null,
                     {
                       '/flowId': flowDetails._id,
                       '/disabled': !flowDetails.disabled,
