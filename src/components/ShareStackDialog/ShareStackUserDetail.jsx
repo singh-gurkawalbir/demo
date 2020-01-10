@@ -1,5 +1,6 @@
 import { Fragment } from 'react';
 import { useDispatch } from 'react-redux';
+import { Button } from '@material-ui/core';
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
 import DeleteIcon from '@material-ui/icons/Delete';
@@ -50,6 +51,17 @@ export default function ShareStackUserDetail(props) {
     });
   };
 
+  const handleReinviteClick = () => {
+    const userInfo = {
+      ...user,
+      dismissed: false,
+      disabled: false,
+      _sharedWithUserId: user.sharedWithUser && user.sharedWithUser._id,
+    };
+
+    dispatch(actions.stack.reInviteStackUser(userInfo, userInfo._id));
+  };
+
   return (
     <TableRow>
       <TableCell>
@@ -60,13 +72,20 @@ export default function ShareStackUserDetail(props) {
           </Fragment>
         )}
       </TableCell>
-      <TableCell>{user.accepted ? 'Accepted' : 'Pending'}</TableCell>
+      <TableCell>
+        {user.accepted && 'Accepted'}
+        {user.dismissed && 'Dismissed'}
+        {!user.accepted && !user.dismissed && 'Pending'}
+      </TableCell>
       <TableCell>
         {user.accepted && (
           <Switch
             checked={!user.disabled}
             onChange={handleToggleSharingClick}
           />
+        )}
+        {user.dismissed && (
+          <Button onClick={handleReinviteClick}>Reinvite</Button>
         )}
       </TableCell>
       <TableCell>
