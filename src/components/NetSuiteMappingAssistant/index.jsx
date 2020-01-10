@@ -65,17 +65,11 @@ export default function NetSuiteMappingAssistant({
           .getElementById('netsuiteFormFrame')
           .contentWindow.postMessage(
             'okay!',
-            connection.netsuite.dataCenterURLs.systemDomain
-          );
-
-        if (data) {
-          document
-            .getElementById('netsuiteFormFrame')
-            .contentWindow.postMessage(
-              { op: 'populatePreviewData', data },
+            connection &&
+              connection.netsuite &&
+              connection.netsuite.dataCenterURLs &&
               connection.netsuite.dataCenterURLs.systemDomain
-            );
-        }
+          );
       } else if (e.data.op === 'clicked') {
         if (!e.data.field.sublistName && e.data.sublistId) {
           // eslint-disable-next-line no-param-reassign
@@ -85,7 +79,7 @@ export default function NetSuiteMappingAssistant({
         onFieldClick && onFieldClick(e.data.field);
       }
     },
-    [connection.netsuite.dataCenterURLs.systemDomain, data, onFieldClick]
+    [connection, onFieldClick]
   );
 
   useEffect(() => {
@@ -95,6 +89,31 @@ export default function NetSuiteMappingAssistant({
       window.removeEventListener('message', handleMessageReceived);
     };
   }, [connection, handleMessageReceived]);
+
+  useEffect(() => {
+    if (showNetSuiteForm) {
+      if (
+        data &&
+        data.data &&
+        data.data.returnedObjects &&
+        data.data.returnedObjects.jsObjects &&
+        data.data.returnedObjects.jsObjects.data &&
+        data.data.returnedObjects.jsObjects.data[0] &&
+        data.data.returnedObjects.jsObjects.data[0].data
+      ) {
+        document.getElementById('netsuiteFormFrame').contentWindow.postMessage(
+          {
+            op: 'populatePreviewData',
+            data: data.data.returnedObjects.jsObjects.data[0].data,
+          },
+          connection &&
+            connection.netsuite &&
+            connection.netsuite.dataCenterURLs &&
+            connection.netsuite.dataCenterURLs.systemDomain
+        );
+      }
+    }
+  }, [connection, data, showNetSuiteForm]);
 
   const handleLaunchAssistantClick = () => {
     setNetSuiteFormIsLoading(true);
