@@ -323,7 +323,11 @@ export default {
       defaultValue: r => {
         if (
           Array.isArray(
-            r && r.http && r.http.response && r.http.response.failValues
+            r &&
+              r.http &&
+              r.http.response &&
+              r.http.response.failValues &&
+              r.http.response.failValues[0]
           )
         ) {
           return r.http.response.failValues[0];
@@ -355,7 +359,11 @@ export default {
       defaultValue: r => {
         if (
           Array.isArray(
-            r && r.http && r.http.response && r.http.response.successValues
+            r &&
+              r.http &&
+              r.http.response &&
+              r.http.response.successValues &&
+              r.http.response.successValues[0]
           )
         ) {
           return r.http.response.successValues[0];
