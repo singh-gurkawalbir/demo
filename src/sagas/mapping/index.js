@@ -74,7 +74,7 @@ export function* previewMappings({ id }) {
     resource,
     flowSampleData,
   } = yield select(selectors.mapping, id);
-  const resourceCopy = deepClone(resource);
+  let resourceCopy = deepClone(resource);
   let _mappings = mappings.map(
     ({ index, hardCodedValueTmp, rowIdentifier, ...others }) => others
   );
@@ -87,22 +87,36 @@ export function* previewMappings({ id }) {
     resource,
   });
 
+  const { _connectionId } = resourceCopy;
+  let path = `/connections/${_connectionId}/mappingPreview`;
+  const requestBody = {
+    data: flowSampleData,
+  };
+
   if (application === adaptorTypeMap.SalesforceImport) {
     resourceCopy.mapping = _mappings;
 
     if (lookups) {
       resourceCopy.salesforce.lookups = lookups;
     }
+  } else if (application === adaptorTypeMap.NetSuiteDistributedImport) {
+    path = `/netsuiteDA/previewImportMappingFields?_connectionId=${_connectionId}`;
+    resourceCopy = resourceCopy.netsuite_da;
+    resourceCopy.mapping = _mappings;
+
+    if (lookups) {
+      resourceCopy.lookups = lookups;
+    }
+
+    requestBody.data = [requestBody.data];
+    requestBody.celigo_resource = 'previewImportMappingFields';
   }
 
-  const { _connectionId } = resourceCopy;
-  const path = `/connections/${_connectionId}/mappingPreview`;
+  requestBody.importConfig = resourceCopy;
+
   const opts = {
     method: 'PUT',
-    body: {
-      data: flowSampleData,
-      importConfig: resourceCopy,
-    },
+    body: requestBody,
   };
 
   try {
@@ -111,6 +125,19 @@ export function* previewMappings({ id }) {
       opts,
       message: `Fetching Preview Data`,
     });
+
+    if (application === adaptorTypeMap.NetSuiteDistributedImport) {
+      if (
+        previewData &&
+        previewData.data &&
+        previewData.data.returnedObjects &&
+        previewData.data.returnedObjects.mappingErrors &&
+        previewData.data.returnedObjects.mappingErrors[0] &&
+        previewData.data.returnedObjects.mappingErrors[0].error
+      ) {
+        return yield put(actions.mapping.previewFailed(id));
+      }
+    }
 
     yield put(actions.mapping.previewReceived(id, previewData));
   } catch (e) {
