@@ -322,13 +322,13 @@ export default function Subscription() {
                       Status: {licenseActionDetails.status}
                     </li>
                     <li>
-                      <span className={classes.bold}>Expires:</span>
+                      <span className={classes.bold}>Expires:&nbsp;</span>
 
-                      {licenseActionDetails.expirationDate}
+                      {licenseActionDetails.expirationDate || 'N/A'}
                     </li>
                     <li>
                       <span className={classes.bold}>
-                        Customer Success Plan:
+                        Customer Success Plan:&nbsp;
                       </span>
                       {licenseActionDetails.supportTier || 'N/A'}
                     </li>
@@ -350,17 +350,19 @@ export default function Subscription() {
                           {numEnabledPaidFlows} of{' '}
                           {licenseActionDetails.totalFlowsAvailable}
                         </span>
-                        {!licenseActionDetails.totalFlowsAvailable
-                          ? 'Unlimited'
-                          : ` (${licenseActionDetails.totalFlowsAvailable -
-                              licenseActionDetails.numAddOnFlows} from subscription + ${
-                              licenseActionDetails.numAddOnFlows
-                            } Add-on flows)`}
+                        {licenseActionDetails.totalFlowsAvailable ===
+                          Number.MAX_SAFE_INTEGER && 'Unlimited'}
+                        {licenseActionDetails.totalFlowsAvailable !==
+                          Number.MAX_SAFE_INTEGER &&
+                          ` (${licenseActionDetails.totalFlowsAvailable -
+                            licenseActionDetails.numAddOnFlows} from subscription + ${
+                            licenseActionDetails.numAddOnFlows
+                          } Add-on flows)`}
                       </div>
                       <span className={classes.bold}>
-                        | {productionRemainingFlows}{' '}
+                        &nbsp;| {productionRemainingFlows}
                       </span>
-                      <span> remaining</span>
+                      <span> &nbsp;remaining</span>
                     </div>
                     <div className={classes.linearProgressWrapper}>
                       <LinearProgress
@@ -380,13 +382,16 @@ export default function Subscription() {
                       <div>
                         <span className={classes.bold}>
                           {numEnabledSandboxFlows} of{' '}
-                          {licenseActionDetails.totalSandboxFlowsAvailable}
+                          {licenseActionDetails.totalSandboxFlowsAvailable ===
+                          Number.MAX_SAFE_INTEGER
+                            ? 'Unlimited'
+                            : licenseActionDetails.totalSandboxFlowsAvailable}
                         </span>
                       </div>
                       <span className={classes.bold}>
-                        | {sandboxRemainingFlows}
+                        &nbsp;| {sandboxRemainingFlows}
                       </span>
-                      <span> remaining</span>
+                      <span>&nbsp;remaining</span>
                     </div>
                     <div className={classes.linearProgressWrapper}>
                       <LinearProgress
