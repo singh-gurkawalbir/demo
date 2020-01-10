@@ -1,41 +1,10 @@
-import { useMemo } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 import DynaForm from '../DynaForm';
 
 export default function CronBuilder(props) {
-  const { value, onChange } = props;
+  const { value, onChange, reset, setReset } = props;
   //* (sec) *(min) *(hour) *(week) *(day) *(month)
   const splitVal = value && value.split(' ');
-  const onFormChange = formValue => {
-    const {
-      everyNMinutes,
-      everySelectedMinute,
-      everyHour,
-      everyNHours,
-      eachSelectedHour,
-      everyDay,
-      eachDay,
-      everyMonth,
-      eachMonth,
-      eachWeek,
-      everyWeek,
-    } = formValue;
-
-    if (!value) {
-      return onChange('? * * * * *');
-    }
-
-    const val = [
-      splitVal[0] || '?',
-      everyNMinutes || everySelectedMinute || splitVal[1] || '*',
-      everyHour || everyNHours || eachSelectedHour || splitVal[2] || '*',
-      everyDay || eachDay || splitVal[3] || '*',
-      eachWeek || everyWeek || splitVal[4] || '*',
-      everyMonth || eachMonth || splitVal[5] || '*',
-    ].join(' ');
-
-    onChange(val);
-  };
-
   const meta = useMemo(
     () => ({
       fieldMap: {
@@ -48,6 +17,7 @@ export default function CronBuilder(props) {
           max: 55,
           step: 5,
           unit: 'minute',
+          setReset,
           clearFields: ['everySelectedMinute'],
           defaultValue: splitVal[1] || '',
         },
@@ -58,6 +28,7 @@ export default function CronBuilder(props) {
           type: 'groupedButton',
           clearFields: ['everyNMinutes'],
           unit: 'minute',
+          setReset,
           defaultValue: splitVal[1] || '',
           options: [
             {
@@ -75,6 +46,8 @@ export default function CronBuilder(props) {
           name: 'everyHour',
           unit: 'hour',
           type: 'cronlabel',
+          setReset,
+
           clearFields: ['everyNHours', 'eachSelectedHour'],
           defaultValue: splitVal[2] || '',
         },
@@ -83,6 +56,8 @@ export default function CronBuilder(props) {
           name: 'everyNHours',
           label: 'Every n Hours',
           type: 'slider',
+          setReset,
+
           unit: 'hour',
           min: 1,
           max: 23,
@@ -96,6 +71,7 @@ export default function CronBuilder(props) {
           label: 'Each selected',
           type: 'groupedButton',
           clearFields: ['everyNHours', 'everyHour'],
+          setReset,
           defaultValue: splitVal[2] || '',
           options: [
             {
@@ -133,6 +109,8 @@ export default function CronBuilder(props) {
           name: 'everyDay',
           unit: 'day',
           type: 'cronlabel',
+          setReset,
+
           clearFields: ['eachDay'],
           defaultValue: splitVal[3] || '',
         },
@@ -141,6 +119,8 @@ export default function CronBuilder(props) {
           clearFields: ['everyDay'],
           name: 'eachDay',
           label: 'Each Selected Day',
+          setReset,
+
           type: 'groupedButton',
           defaultValue: splitVal[3] || '',
 
@@ -189,6 +169,8 @@ export default function CronBuilder(props) {
           name: 'everyMonth',
           unit: 'month',
           type: 'cronlabel',
+          setReset,
+
           defaultValue: splitVal[4] || '',
           clearFields: ['eachMonth'],
         },
@@ -198,6 +180,8 @@ export default function CronBuilder(props) {
           name: 'eachMonth',
           label: 'Each selected month',
           type: 'groupedButton',
+          setReset,
+
           defaultValue: splitVal[4] || '',
           options: [
             {
@@ -225,6 +209,8 @@ export default function CronBuilder(props) {
           unit: 'week',
           type: 'cronlabel',
           clearFields: ['eachWeek'],
+          setReset,
+
           defaultValue: splitVal[5] || '',
         },
         eachWeek: {
@@ -233,6 +219,8 @@ export default function CronBuilder(props) {
           name: 'eachWeek',
           label: 'Each selected Day',
           type: 'groupedButton',
+          setReset,
+
           defaultValue: splitVal[5] || '',
           options: [
             {
@@ -299,11 +287,70 @@ export default function CronBuilder(props) {
         ],
       },
     }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
+    [setReset, splitVal]
+  );
+  const [externalTabState, setExternalTabStateFn] = useState({
+    activeTab: 0,
+    tabHistory: {
+      0: 0,
+      1: 0,
+      2: 0,
+      3: 0,
+      4: 0,
+    },
+  });
+  const setExternalTabState = useCallback(
+    (index, val) => {
+      setReset(false);
+      setExternalTabStateFn(state => {
+        const stateCopy = { ...state };
+
+        if (index === 0) {
+          stateCopy.activeTab = val;
+        }
+
+        if (index === 1) {
+          stateCopy.tabHistory = { ...stateCopy.tabHistory };
+          stateCopy.tabHistory[stateCopy.activeTab] = val;
+        }
+
+        return stateCopy;
+      });
+    },
+    [setReset]
+  );
+  const onFormChange = useCallback(
+    formValue => {
+      if (reset) return;
+      const { tabHistory } = externalTabState;
+      const finalResult = Object.keys(tabHistory)
+        .map(key => {
+          const fieldId =
+            meta.layout.containers[key].containers[tabHistory[key]].fields[0];
+
+          return { key, value: formValue[fieldId] || splitVal[key + 1] || '*' };
+        })
+        .sort((first, second) => first.key - second.key)
+        .reduce((finalRes, curr) => {
+          let acc = finalRes;
+
+          acc += ` ${curr.value} `;
+
+          return acc;
+        }, '?');
+
+      onChange(finalResult);
+    },
+    [externalTabState, meta.layout.containers, onChange, reset, splitVal]
   );
 
-  //   console.log('compFieldMeta', compFieldMeta, meta);
-
-  return <DynaForm fieldMeta={meta} onChange={onFormChange} />;
+  return (
+    <DynaForm
+      key={reset ? 0 : 1}
+      fieldMeta={meta}
+      externalTabState={externalTabState}
+      setExternalTabState={setExternalTabState}
+      onChange={onFormChange}
+    />
+  );
 }

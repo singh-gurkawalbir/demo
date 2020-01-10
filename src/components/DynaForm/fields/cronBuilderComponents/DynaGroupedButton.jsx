@@ -11,6 +11,7 @@ function GroupedButton(props) {
     fields,
     options,
     unit,
+    setReset,
   } = props;
   const finalValues =
     value.includes('/') || value.includes('*') ? [] : value && value.split(',');
@@ -24,10 +25,12 @@ function GroupedButton(props) {
         res = [...finalValues, item.value];
       }
 
+      setReset && setReset(false);
+
       onFieldChange(id, !res.length ? '*' : res.sort().join(','));
       // eslint-disable-next-line react-hooks/exhaustive-deps
     },
-    [finalValues, id, onFieldChange]
+    [finalValues, id, onFieldChange, setReset]
   );
 
   useEffect(() => {

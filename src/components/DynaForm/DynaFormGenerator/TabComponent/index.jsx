@@ -31,13 +31,18 @@ const useStyle = makeStyles(theme => ({
 
 function TabComponent(props) {
   const { containers, fieldMap, children, ...rest } = props;
+  const { externalTabState, setExternalTabState, index } = rest;
   const classes = useStyle();
   const [selectedTab, setSelectedTab] = useState(0);
+  const selectedTabIndex =
+    (externalTabState && (index === 0 && externalTabState.activeTab)) ||
+    (index === 1 && externalTabState.tabHistory[externalTabState.activeTab]) ||
+    selectedTab;
 
   return (
     <div className={classes.root}>
       <Tabs
-        value={selectedTab}
+        value={selectedTabIndex}
         classes={{ indicator: classes.MuiTabsIndicator }}
         className={classes.tabsContainer}
         variant="scrollable"
@@ -47,6 +52,10 @@ function TabComponent(props) {
         scrollButtons="auto"
         aria-label="Settings Actions"
         onChange={(evt, value) => {
+          if (setExternalTabState) {
+            return setExternalTabState(index, value);
+          }
+
           setSelectedTab(value);
         }}>
         {containers.map(({ label }) => (
@@ -61,7 +70,7 @@ function TabComponent(props) {
       <div className={classes.panelContainer}>
         {containers.map(({ label, ...layout }, index) => (
           <div key={label}>
-            {selectedTab === index &&
+            {selectedTabIndex === index &&
               React.cloneElement(children, { ...rest, layout, fieldMap })}
           </div>
         ))}
@@ -120,9 +129,9 @@ export function TabComponentSimple(props) {
   );
 }
 
-export function TabComponentWithoutSave(props) {
+export function TabComponentWithoutSave({ index, ...rest }) {
   return (
-    <TabComponent {...props}>
+    <TabComponent {...rest} index={index === undefined ? 0 : index + 1}>
       <FormGenerator />
     </TabComponent>
   );
