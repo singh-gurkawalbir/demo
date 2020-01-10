@@ -13,6 +13,8 @@ import layouts from '../layout/defaultDialogLayout';
 
 const useStyles = makeStyles({
   ...layouts,
+  // Overriding default columnTemplate to suite our layout
+  // TODO: @Azhar If this is the default layout we are following across all editors Can we replace in default layouts?
   columnTemplate: {
     gridTemplateColumns: '2fr 3fr 2fr',
     gridTemplateRows: '1fr 0fr',
