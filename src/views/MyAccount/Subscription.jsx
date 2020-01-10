@@ -354,12 +354,11 @@ export default function Subscription() {
                           <div>
                             <span className={classes.bold}>
                               {numEnabledPaidFlows} of{' '}
-                              {licenseActionDetails.totalFlowsAvailable}` ($
+                              {licenseActionDetails.totalFlowsAvailable} (
                               {licenseActionDetails.totalFlowsAvailable -
                                 licenseActionDetails.numAddOnFlows}{' '}
-                              from subscription + $
-                              {licenseActionDetails.numAddOnFlows} Add-on
-                              flows)`
+                              from subscription +{' '}
+                              {licenseActionDetails.numAddOnFlows} Add-on flows)
                             </span>
                           </div>
                           <span className={classes.bold}>
