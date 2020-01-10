@@ -1249,27 +1249,51 @@ export function categoryMappingGenerateFields(
 }
 
 export function mappingsForCategory(state, integrationId, flowId, filters) {
-  const { sectionId } = filters;
+  const { sectionId, amazonAttributes, fieldMappingsFilter } = filters;
   const categoryMappingData =
-    fromSession.categoryMapping(
+    fromSession.categoryMappingData(
       state && state.session,
       integrationId,
       flowId
     ) || {};
   let mappings = emptySet;
-  const { response } = categoryMappingData;
+  const recordMappings = categoryMappingData;
 
-  if (response) {
-    const mappingData = response.find(sec => sec.operation === 'mappingData');
-    const { recordMappings } =
-      mappingData && mappingData.data.mappingData.basicMappings;
-
-    if (recordMappings) {
-      mappings = recordMappings.find(item => item.id === sectionId);
-    }
+  if (recordMappings) {
+    mappings = recordMappings.find(item => item.id === sectionId);
   }
 
-  return mappings;
+  const generateFields =
+    categoryMappingGenerateFields(state, integrationId, flowId, {
+      sectionId,
+    }) || {};
+  const { fields = [] } = generateFields;
+
+  if (!amazonAttributes || !fieldMappingsFilter) {
+    return mappings;
+  }
+
+  const mappedFields = map(mappings.fieldMappings, 'generate');
+  const filteredFields = fields
+    .filter(
+      field =>
+        amazonAttributes[field.filterType] && !mappedFields.includes(field.id)
+    )
+    .map(field => ({ generate: field.id, extract: '' }));
+  const filteredMappings = [
+    ...mappings.fieldMappings,
+    ...filteredFields,
+  ].filter(field => {
+    if (fieldMappingsFilter === 'all') return true;
+    else if (fieldMappingsFilter === 'mapped') return !!field.extract;
+
+    return !field.extract;
+  });
+
+  return {
+    ...mappings,
+    fieldMappings: filteredMappings,
+  };
 }
 
 export function integrationAppSettings(state, id) {

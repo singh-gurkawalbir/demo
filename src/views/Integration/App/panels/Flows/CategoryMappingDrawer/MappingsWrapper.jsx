@@ -8,12 +8,14 @@ export default function MappingWrapper(props) {
   const {
     id,
     flowId,
-    extractFields,
     generateFields,
-    mappings,
     sectionId,
+    integrationId,
+    amazonAttributes,
+    fieldMappingsFilter,
   } = props;
   const [initTriggered, setInitTriggered] = useState(false);
+  const [resetMappings, setResetMappings] = useState(false);
   const resourceId = useSelector(state => {
     const flowDetails = selectors.resource(state, 'flows', flowId);
 
@@ -27,6 +29,14 @@ export default function MappingWrapper(props) {
 
     return null;
   });
+  const { fieldMappings } =
+    useSelector(state =>
+      selectors.mappingsForCategory(state, integrationId, flowId, {
+        sectionId,
+        amazonAttributes,
+        fieldMappingsFilter,
+      })
+    ) || {};
   const resourceData = useSelector(state =>
     selectors.resource(state, 'imports', resourceId)
   );
@@ -47,7 +57,7 @@ export default function MappingWrapper(props) {
     adaptorType: 'netsuite',
     application,
     isCategoryMapping: true,
-    mappings,
+    mappings: { fields: fieldMappings },
   };
   const handleInit = useCallback(() => {
     dispatch(
@@ -59,15 +69,20 @@ export default function MappingWrapper(props) {
   }, [dispatch, id, mappingOptions]);
 
   useEffect(() => {
-    if (!initTriggered) {
+    if (!initTriggered || resetMappings) {
       handleInit();
       setInitTriggered(true);
+      setResetMappings(false);
     }
-  }, [dispatch, handleInit, id, initTriggered]);
+  }, [dispatch, handleInit, id, initTriggered, resetMappings]);
 
   useEffect(() => {
     setInitTriggered(false);
-  }, [dispatch, id, sectionId]);
+  }, [dispatch, id]);
+
+  useEffect(() => {
+    if (initTriggered) setResetMappings(true);
+  }, [sectionId, amazonAttributes, fieldMappingsFilter, initTriggered]);
 
   useEffect(() => {
     if (initTriggered && mappingInitialized) {
@@ -75,22 +90,18 @@ export default function MappingWrapper(props) {
     }
   }, [dispatch, generateFields, id, initTriggered, mappingInitialized]);
 
-  const optionalHandler = {
-    // refreshGenerateFields: requestImportSampleData,
-    // refreshExtractFields: requestSampleData,
-  };
   const isGenerateRefreshSupported = true;
 
   return (
     <ImportMapping
       editorId={id}
-      extractFields={extractFields}
       generateFields={generateFields}
       resource={resourceData}
+      integrationId={integrationId}
+      flowId={flowId}
       isGenerateRefreshSupported={isGenerateRefreshSupported}
       application={application}
       options={options}
-      optionalHanlder={optionalHandler}
     />
   );
 }

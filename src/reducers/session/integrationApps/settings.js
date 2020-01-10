@@ -146,6 +146,42 @@ export function categoryMapping(state, integrationId, flowId) {
   return state[`${flowId}-${integrationId}`];
 }
 
+function flattenChildrenStructrue(result = [], meta, isRoot = true) {
+  if (meta) {
+    result.push({ ...meta, isRoot });
+
+    if (meta.children) {
+      meta.children.forEach(child =>
+        flattenChildrenStructrue(result, child, false)
+      );
+    }
+  }
+}
+
+export function categoryMappingData(state, integrationId, flowId) {
+  if (!state) {
+    return null;
+  }
+
+  const { response = [] } = state[`${flowId}-${integrationId}`] || emptyObj;
+  const mappings = [];
+  let mappingMetadata = [];
+  const basicMappingData = response.find(
+    sec => sec.operation === 'mappingData'
+  );
+
+  if (basicMappingData) {
+    mappingMetadata =
+      basicMappingData.data.mappingData.basicMappings.recordMappings;
+  }
+
+  mappingMetadata.forEach(meta => {
+    flattenChildrenStructrue(mappings, meta);
+  });
+
+  return mappings;
+}
+
 export function categoryMappingGeneratesMetadata(state, integrationId, flowId) {
   if (!state) {
     return null;
@@ -155,18 +191,8 @@ export function categoryMappingGeneratesMetadata(state, integrationId, flowId) {
     state[`${flowId}-${integrationId}`] || emptyObj;
   const generates = [];
 
-  function collect(result = [], meta, isRoot = true) {
-    if (meta) {
-      result.push({ ...meta, isRoot });
-
-      if (meta.children) {
-        meta.children.forEach(child => collect(result, child, false));
-      }
-    }
-  }
-
   generatesMetadata.forEach(meta => {
-    collect(generates, meta);
+    flattenChildrenStructrue(generates, meta);
   });
 
   return generates;

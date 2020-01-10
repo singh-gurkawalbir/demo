@@ -110,8 +110,8 @@ function CategoryMappings({
   flowId,
   sectionId,
   isRoot = true,
-  extractFields,
-  metadata,
+  amazonAttributeFilter,
+  fieldMappingsFilter,
 }) {
   const [requestedGenerateFields, setRequestedGenerateFields] = useState(false);
   const dispatch = useDispatch();
@@ -133,15 +133,12 @@ function CategoryMappings({
         sectionId,
       })
     ) || {};
-  const mappings =
-    useSelector(state => {
-      if (metadata) return metadata;
-
-      return selectors.mappingsForCategory(state, integrationId, flowId, {
+  const { children = [] } =
+    useSelector(state =>
+      selectors.mappingsForCategory(state, integrationId, flowId, {
         sectionId,
-      });
-    }) || {};
-  const { fieldMappings = [], children = [] } = mappings;
+      })
+    ) || {};
 
   useEffect(() => {
     setRequestedGenerateFields(false);
@@ -183,9 +180,7 @@ function CategoryMappings({
           aria-controls="panel1bh-content"
           id="panel1bh-header">
           {expanded ? <ArrowUpIcon /> : <ArrowDownIcon />}
-          <Typography className={classes.secondaryHeading}>
-            {name || mappings.name}
-          </Typography>
+          <Typography className={classes.secondaryHeading}>{name}</Typography>
           {!!variationThemes && !!variationThemes.length && (
             <VariationIcon
               className={classes.variationIcon}
@@ -201,9 +196,9 @@ function CategoryMappings({
               flowId={flowId}
               integrationId={integrationId}
               sectionId={sectionId}
-              extractFields={extractFields}
+              amazonAttributes={amazonAttributeFilter}
+              fieldMappingsFilter={fieldMappingsFilter}
               generateFields={generateFields || emptySet}
-              mappings={{ fields: fieldMappings }}
             />
             {children.length > 0 &&
               children.map(child => (
@@ -213,8 +208,9 @@ function CategoryMappings({
                   key={child.id}
                   isRoot={false}
                   generateFields={generateFields || emptySet}
-                  metadata={child}
                   sectionId={child.id}
+                  amazonAttributes={amazonAttributeFilter}
+                  fieldMappingsFilter={fieldMappingsFilter}
                 />
               ))}
           </div>
@@ -228,7 +224,12 @@ function CategoryMappingDrawer({ integrationId }) {
   const dispatch = useDispatch();
   const classes = useStyles();
   const match = useRouteMatch();
-  const [amazonAttributeFilter, setAmazonAttributeFilter] = useState('all');
+  const [amazonAttributeFilter, setAmazonAttributeFilter] = useState({
+    conditional: true,
+    preferred: true,
+    optional: true,
+    required: true,
+  });
   const [fieldMappingsFilter, setFieldMappingsFilter] = useState('mapped');
   const { flowId, categoryId } = match.params;
   const [requestedMetadata, setRequestedMetadata] = useState(false);
@@ -244,10 +245,7 @@ function CategoryMappingDrawer({ integrationId }) {
   const metadataLoaded = useSelector(
     state => !!selectors.categoryMapping(state, integrationId, flowId)
   );
-  const { extractsMetadata, generatesMetadata } = useSelector(state =>
-    selectors.categoryMappingMetadata(state, integrationId, flowId)
-  );
-  const handleAmzonAttributeChange = useCallback(val => {
+  const handleAmazonAttributeChange = useCallback(val => {
     setAmazonAttributeFilter(val);
   }, []);
   const handleFieldMappingsFilterChange = useCallback(val => {
@@ -306,13 +304,14 @@ function CategoryMappingDrawer({ integrationId }) {
                 className={classes.header}
                 title={currentSectionLabel}>
                 <Filters
-                  handleAmzonAttributeChange={handleAmzonAttributeChange}
+                  amazonAttributes={amazonAttributeFilter}
+                  fieldMappingFilter={fieldMappingsFilter}
+                  handleAmazonAttributeChange={handleAmazonAttributeChange}
                   handleFieldMappingsFilterChange={
                     handleFieldMappingsFilterChange
                   }
                 />
               </PanelHeader>
-
               <Grid container className={classes.mappingHeader}>
                 <Grid item xs={6}>
                   <Typography variant="h5" className={classes.childHeader}>
@@ -328,8 +327,6 @@ function CategoryMappingDrawer({ integrationId }) {
               </Grid>
               <CategoryMappings
                 integrationId={integrationId}
-                extractFields={extractsMetadata}
-                generateFields={generatesMetadata}
                 amazonAttributeFilter={amazonAttributeFilter}
                 fieldMappingsFilter={fieldMappingsFilter}
                 flowId={flowId}

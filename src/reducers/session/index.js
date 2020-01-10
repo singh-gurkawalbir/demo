@@ -315,6 +315,14 @@ export function categoryMapping(state, integrationId, flowId) {
   );
 }
 
+export function categoryMappingData(state, integrationId, flowId) {
+  return fromIntegrationApps.categoryMappingData(
+    state && state.integrationApps,
+    integrationId,
+    flowId
+  );
+}
+
 export function categoryMappingGeneratesMetadata(state, integrationId, flowId) {
   return fromIntegrationApps.categoryMappingGeneratesMetadata(
     state && state.integrationApps,

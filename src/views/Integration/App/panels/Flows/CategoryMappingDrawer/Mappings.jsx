@@ -86,8 +86,9 @@ export default function ImportMapping(props) {
   const {
     editorId,
     application,
+    integrationId,
+    flowId,
     generateFields = [],
-    extractFields = [],
     disabled,
     options = {},
   } = props;
@@ -95,6 +96,9 @@ export default function ImportMapping(props) {
   const dispatch = useDispatch();
   const { mappings, lookups, initChangeIdentifier } = useSelector(state =>
     selectors.mapping(state, editorId)
+  );
+  const { extractsMetadata: extractFields } = useSelector(state =>
+    selectors.categoryMappingMetadata(state, integrationId, flowId)
   );
   const mappingsCopy = mappings ? [...mappings] : [];
 
