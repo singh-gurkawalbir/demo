@@ -22,9 +22,6 @@ export default function DynaCronGenerator(props) {
         </Button>
       </div>
       <CronBuilder
-        onClick={() => {
-          setReset(false);
-        }}
         reset={reset}
         setReset={setReset}
         value={value}
