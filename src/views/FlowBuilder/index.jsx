@@ -19,7 +19,7 @@ import PageProcessor from './PageProcessor';
 import PageGenerator from './PageGenerator';
 import AppBlock from './AppBlock';
 import itemTypes from './itemTypes';
-import RunFlowIconButton from '../../components/RunFlowIconButton';
+import RunFlowButton from '../../components/RunFlowButton';
 import SettingsIcon from '../../components/icons/SettingsIcon';
 import CalendarIcon from '../../components/icons/CalendarIcon';
 import EditableText from '../../components/EditableText';
@@ -483,7 +483,7 @@ function FlowBuilder() {
             />
           )}
 
-          <RunFlowIconButton flowId={flowId} onRunStart={handleRunStart} />
+          <RunFlowButton flowId={flowId} onRunStart={handleRunStart} />
 
           {flowDetails && flowDetails.showScheduleIcon && (
             <IconButton

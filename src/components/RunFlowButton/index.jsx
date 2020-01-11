@@ -17,7 +17,11 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function RunFlowIconButton({ flowId, onRunStart }) {
+export default function RunFlowButton({
+  flowId,
+  onRunStart,
+  variant = 'icon',
+}) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const fileInput = useRef(null);
@@ -104,9 +108,19 @@ export default function RunFlowIconButton({ flowId, onRunStart }) {
         />
       )}
 
-      <IconButton disabled={disabled} data-test="runFlow" onClick={handleClick}>
-        <RunIcon />
-      </IconButton>
+      {variant === 'icon' ? (
+        <IconButton
+          disabled={disabled}
+          data-test={`runFlow-${flowDetails.name}`}
+          onClick={handleClick}>
+          <RunIcon />
+        </IconButton>
+      ) : (
+        <span onClick={handleClick} data-test={`runFlow-${flowDetails.name}`}>
+          Run flow
+        </span>
+      )}
+
       {isDataLoaderFlow && !hasRunKey && (
         <input
           data-test="uploadFile"
