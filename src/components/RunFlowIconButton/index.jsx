@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useState } from 'react';
+import { Fragment, useCallback, useState, useRef } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 // import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
@@ -9,10 +9,8 @@ import actions from '../../actions';
 import FlowStartDateDialog from './FlowStartDateDialog';
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    display: 'flex',
-    flexDirection: 'column',
-    position: 'relative',
+  fileInput: {
+    display: 'none',
   },
   blockButton: {
     marginRight: theme.spacing(2),
@@ -20,9 +18,9 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function RunFlowIconButton({ flowId, onRunStart }) {
-  // eslint-disable-next-line no-unused-vars
   const classes = useStyles();
   const dispatch = useDispatch();
+  const fileInput = useRef(null);
   const [showDeltaStartDateDialog, setShowDeltaStartDateDialog] = useState(
     false
   );
@@ -31,7 +29,25 @@ export default function RunFlowIconButton({ flowId, onRunStart }) {
     shallowEqual
   );
   const isNewFlow = !flowId || flowId.startsWith('new');
-  // const isDataLoaderFlow = flowDetails.isSimpleImport;
+  const isDataLoaderFlow = flowDetails.isSimpleImport;
+  const hasRunKey = useSelector(state => {
+    if (!isDataLoaderFlow) return false;
+
+    if (
+      !flowDetails.pageGenerators ||
+      flowDetails.pageGenerators.length === 0
+    ) {
+      return false;
+    }
+
+    const exportId = flowDetails.pageGenerators[0]._exportId;
+    const exp = selectors.resource(state, 'exports', exportId);
+
+    return exp && !!exp.rawData && false;
+  });
+
+  console.log('DL export has run key:', hasRunKey);
+
   const isMonitorLevelAccess = useSelector(state =>
     selectors.isFormAMonitorLevelAccess(state, flowDetails.integrationId)
   );
@@ -44,6 +60,12 @@ export default function RunFlowIconButton({ flowId, onRunStart }) {
     [dispatch, flowId, onRunStart]
   );
   const handleClick = useCallback(() => {
+    if (isDataLoaderFlow && !hasRunKey) {
+      fileInput.current.click();
+
+      return;
+    }
+
     if (
       flowDetails.isDeltaFlow &&
       (!flowDetails._connectorId || !!flowDetails.showStartDateDialog)
@@ -57,10 +79,20 @@ export default function RunFlowIconButton({ flowId, onRunStart }) {
     flowDetails.isDeltaFlow,
     flowDetails.showStartDateDialog,
     handleRunFlow,
+    hasRunKey,
+    isDataLoaderFlow,
   ]);
+  const handleFileChange = useCallback(e => {
+    console.log('user selected a file');
+    console.log(e.target.files[0]);
+  }, []);
   const handleCloseDeltaDialog = useCallback(() => {
     setShowDeltaStartDateDialog(false);
   }, []);
+  const disabled =
+    isNewFlow ||
+    !(flowDetails && flowDetails.isRunnable) ||
+    isMonitorLevelAccess;
 
   return (
     <Fragment>
@@ -71,16 +103,21 @@ export default function RunFlowIconButton({ flowId, onRunStart }) {
           onRun={handleRunFlow}
         />
       )}
-      <IconButton
-        disabled={
-          isNewFlow ||
-          !(flowDetails && flowDetails.isRunnable) ||
-          isMonitorLevelAccess
-        }
-        data-test="runFlow"
-        onClick={handleClick}>
+
+      <IconButton disabled={disabled} data-test="runFlow" onClick={handleClick}>
         <RunIcon />
       </IconButton>
+      {isDataLoaderFlow && !hasRunKey && (
+        <input
+          data-test="uploadFile"
+          id="fileUpload"
+          type="file"
+          ref={fileInput}
+          accept="txt/csv"
+          className={classes.fileInput}
+          onChange={handleFileChange}
+        />
+      )}
     </Fragment>
   );
 }
