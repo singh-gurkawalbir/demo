@@ -12,14 +12,14 @@ import ResourceDrawer from '../../components/drawer/Resource';
 import AddIcon from '../../components/icons/AddIcon';
 import BottomDrawer from './drawers/BottomDrawer';
 // import WizardDrawer from './drawers/Wizard';
-import RunDrawer from './drawers/Run';
+// import RunDrawer from './drawers/Run';
 import ScheduleDrawer from './drawers/Schedule';
 import SettingsDrawer from './drawers/Settings';
 import PageProcessor from './PageProcessor';
 import PageGenerator from './PageGenerator';
 import AppBlock from './AppBlock';
 import itemTypes from './itemTypes';
-import RunIcon from '../../components/icons/RunIcon';
+import RunFlowIconButton from '../../components/RunFlowIconButton';
 import SettingsIcon from '../../components/icons/SettingsIcon';
 import CalendarIcon from '../../components/icons/CalendarIcon';
 import EditableText from '../../components/EditableText';
@@ -27,7 +27,6 @@ import SwitchOnOff from '../../components/OnOff';
 import { generateNewId } from '../../utils/resource';
 import { isConnector } from '../../utils/flows';
 import FlowEllipsisMenu from '../../components/FlowEllipsisMenu';
-import FlowStartDateDialog from '../../components/DeltaFlowStartDate/Dialog';
 
 // #region FLOW SCHEMA: FOR REFERENCE DELETE ONCE FB IS COMPLETE
 /* 
@@ -218,9 +217,8 @@ function FlowBuilder() {
   const classes = useStyles();
   const theme = useTheme();
   const dispatch = useDispatch();
-  const [showDialog, setShowDialog] = useState(false);
   // Bottom drawer is shown for existing flows and docked for new flow
-  const [size, setSize] = useState(isNewFlow ? 0 : 1);
+  const [bottonDrawerSize, setBottomDrawerSize] = useState(isNewFlow ? 0 : 1);
   const [tabValue, setTabValue] = useState(0);
   const [newGeneratorId, setNewGeneratorId] = useState(generateNewId());
   const [newProcessorId, setNewProcessorId] = useState(generateNewId());
@@ -368,32 +366,13 @@ function FlowBuilder() {
     patchFlow('/name', title);
   }
 
-  const handleRunDeltaFlow = useCallback(
-    customStartDate => {
-      dispatch(actions.flow.run({ flowId, customStartDate }));
-    },
-    [dispatch, flowId]
-  );
-  const handleFlowRun = useCallback(() => {
-    if (
-      flowDetails.isDeltaFlow &&
-      (!flowDetails._connectorId || !!flowDetails.showStartDateDialog)
-    ) {
-      setShowDialog(true);
-    } else {
-      handleRunDeltaFlow();
-    }
-
+  const handleRunStart = useCallback(() => {
     // Highlights Run Dashboard in the bottom drawer
     setTabValue(1);
-    // Raises Bottom Drawer size
-    setSize(2);
-  }, [
-    flowDetails._connectorId,
-    flowDetails.isDeltaFlow,
-    flowDetails.showStartDateDialog,
-    handleRunDeltaFlow,
-  ]);
+
+    // Raise Bottom Drawer height
+    setBottomDrawerSize(2);
+  }, []);
 
   // #region New Flow Creation logic
   function rewriteUrl(id) {
@@ -467,25 +446,15 @@ function FlowBuilder() {
 
   // eslint-disable-next-line
   // console.log('render: <FlowBuilder>');
-  const closeDeltaDialog = () => {
-    setShowDialog(false);
-  };
 
   return (
     <LoadResources required resources="flows, imports, exports">
-      {showDialog && flowDetails.isDeltaFlow && (
-        <FlowStartDateDialog
-          flowId={flow._id}
-          onClose={closeDeltaDialog}
-          runDeltaFlow={handleRunDeltaFlow}
-        />
-      )}
       <ResourceDrawer
         flowId={flowId}
         disabled={isViewMode}
         integrationId={integrationId}
       />
-      <RunDrawer flowId={flowId} />
+
       <ScheduleDrawer
         isViewMode={isMonitorLevelAccess}
         isConnector={isConnectorType}
@@ -505,22 +474,17 @@ function FlowBuilder() {
         subtitle={`Last saved: ${isNewFlow ? 'Never' : flow.lastModified}`}
         infoText={flow.description}>
         <div className={classes.actions}>
-          <SwitchOnOff.component
-            resource={flowDetails}
-            disabled={isNewFlow || isMonitorLevelAccess}
-            isConnector={isConnectorType}
-            data-test="switchFlowOnOff"
-          />
-          <IconButton
-            disabled={
-              isNewFlow ||
-              !(flowDetails && flowDetails.isRunnable) ||
-              isMonitorLevelAccess
-            }
-            data-test="runFlow"
-            onClick={handleFlowRun}>
-            <RunIcon />
-          </IconButton>
+          {!isDataLoaderFlow && (
+            <SwitchOnOff.component
+              resource={flowDetails}
+              disabled={isNewFlow || isMonitorLevelAccess}
+              isConnector={isConnectorType}
+              data-test="switchFlowOnOff"
+            />
+          )}
+
+          <RunFlowIconButton flowId={flowId} onRunStart={handleRunStart} />
+
           {flowDetails && flowDetails.showScheduleIcon && (
             <IconButton
               disabled={isNewFlow}
@@ -549,9 +513,10 @@ function FlowBuilder() {
           [classes.canvasShift]: drawerOpened,
         })}
         style={{
-          height: `calc(${(4 - size) * 25}vh - ${theme.appBarHeight +
+          height: `calc(${(4 - bottonDrawerSize) *
+            25}vh - ${theme.appBarHeight +
             theme.pageBarHeight +
-            (size ? 0 : bottomDrawerMin)}px)`,
+            (bottonDrawerSize ? 0 : bottomDrawerMin)}px)`,
         }}>
         <div className={classes.canvas}>
           {/* CANVAS START */}
@@ -649,12 +614,12 @@ function FlowBuilder() {
             </div>
           </div>
         </div>
-        {size < 3 && (
+        {bottonDrawerSize < 3 && (
           <div
             className={classes.fabContainer}
             style={{
-              bottom: size
-                ? `calc(${size * 25}vh + ${theme.spacing(3)}px)`
+              bottom: bottonDrawerSize
+                ? `calc(${bottonDrawerSize * 25}vh + ${theme.spacing(3)}px)`
                 : bottomDrawerMin + theme.spacing(3),
             }}
           />
@@ -664,8 +629,8 @@ function FlowBuilder() {
       </div>
       <BottomDrawer
         flow={flow}
-        size={size}
-        setSize={setSize}
+        size={bottonDrawerSize}
+        setSize={setBottomDrawerSize}
         tabValue={tabValue}
         setTabValue={setTabValue}
       />
