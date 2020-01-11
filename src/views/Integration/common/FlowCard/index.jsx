@@ -119,6 +119,7 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
               flowDetails._integrationId,
               flowDetails._id,
               storeId,
+              null,
               {
                 '/flowId': flowDetails._id,
                 '/disabled': !flowDetails.disabled,
@@ -144,7 +145,7 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
   const { name, description, lastModified, disabled } = flowDetails;
   // TODO: set status based on flow criteria...
   const status = 'success';
-  // TODO: this property was copied from the old flow list page... i dont know what its for...
+  // TODO: this property was copied from the old flow list page... i don't know what its for...
   const disableCard = false;
 
   // TODO: This function needs to be enhanced to handle all
@@ -164,7 +165,7 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
 
   const isIntegrationApp = !!flowDetails._connectorId;
   const flowBuilderTo = isIntegrationApp
-    ? `/pg/integrationapps/${integrationAppName}/${flowDetails._integrationId}/flowBuilder/${flowId}`
+    ? `/pg/integrationApps/${integrationAppName}/${flowDetails._integrationId}/flowBuilder/${flowId}`
     : `flowBuilder/${flowId}`;
 
   return (

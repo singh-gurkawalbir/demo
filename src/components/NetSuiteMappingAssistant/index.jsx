@@ -1,23 +1,47 @@
 import Iframe from 'react-iframe';
 import { useEffect, useCallback, useState, Fragment } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { Button, Typography } from '@material-ui/core';
 import { getDomain } from '../../utils/resource';
 import Spinner from '../Spinner';
 import * as selectors from '../../reducers';
+import actions from '../../actions';
 
 export default function NetSuiteMappingAssistant({
   width = '100%',
   height = '100%',
   netSuiteConnectionId,
-  netSuiteRecordLabel,
-  netSuiteRecordUrl,
+  netSuiteRecordType,
   data,
   onFieldClick,
 }) {
+  const dispatch = useDispatch();
   const connection = useSelector(state =>
     selectors.resource(state, 'connections', netSuiteConnectionId)
   );
+  const netSuiteRecordMetadata = useSelector(state => {
+    const recordTypes = selectors.metadataOptionsAndResources({
+      state,
+      connectionId: netSuiteConnectionId,
+      commMetaPath: `netsuite/metadata/suitescript/connections/${netSuiteConnectionId}/recordTypes`,
+      filterKey: 'suitescript-recordTypes',
+    }).data;
+
+    if (recordTypes) {
+      return recordTypes.find(r => r.value === netSuiteRecordType);
+    }
+  });
+
+  useEffect(() => {
+    if (!netSuiteRecordMetadata) {
+      dispatch(
+        actions.metadata.request(
+          netSuiteConnectionId,
+          `netsuite/metadata/suitescript/connections/${netSuiteConnectionId}/recordTypes`
+        )
+      );
+    }
+  }, [dispatch, netSuiteConnectionId, netSuiteRecordMetadata]);
   const [netSuiteFormIsLoading, setNetSuiteFormIsLoading] = useState(false);
   const [showNetSuiteForm, setShowNetSuiteForm] = useState(false);
   const [suiteletUrl, setSuiteletUrl] = useState();
@@ -41,17 +65,11 @@ export default function NetSuiteMappingAssistant({
           .getElementById('netsuiteFormFrame')
           .contentWindow.postMessage(
             'okay!',
-            connection.netsuite.dataCenterURLs.systemDomain
-          );
-
-        if (data) {
-          document
-            .getElementById('netsuiteFormFrame')
-            .contentWindow.postMessage(
-              { op: 'populatePreviewData', data },
+            connection &&
+              connection.netsuite &&
+              connection.netsuite.dataCenterURLs &&
               connection.netsuite.dataCenterURLs.systemDomain
-            );
-        }
+          );
       } else if (e.data.op === 'clicked') {
         if (!e.data.field.sublistName && e.data.sublistId) {
           // eslint-disable-next-line no-param-reassign
@@ -61,7 +79,7 @@ export default function NetSuiteMappingAssistant({
         onFieldClick && onFieldClick(e.data.field);
       }
     },
-    [connection.netsuite.dataCenterURLs.systemDomain, data, onFieldClick]
+    [connection, onFieldClick]
   );
 
   useEffect(() => {
@@ -71,6 +89,31 @@ export default function NetSuiteMappingAssistant({
       window.removeEventListener('message', handleMessageReceived);
     };
   }, [connection, handleMessageReceived]);
+
+  useEffect(() => {
+    if (showNetSuiteForm) {
+      if (
+        data &&
+        data.data &&
+        data.data.returnedObjects &&
+        data.data.returnedObjects.jsObjects &&
+        data.data.returnedObjects.jsObjects.data &&
+        data.data.returnedObjects.jsObjects.data[0] &&
+        data.data.returnedObjects.jsObjects.data[0].data
+      ) {
+        document.getElementById('netsuiteFormFrame').contentWindow.postMessage(
+          {
+            op: 'populatePreviewData',
+            data: data.data.returnedObjects.jsObjects.data[0].data,
+          },
+          connection &&
+            connection.netsuite &&
+            connection.netsuite.dataCenterURLs &&
+            connection.netsuite.dataCenterURLs.systemDomain
+        );
+      }
+    }
+  }, [connection, data, showNetSuiteForm]);
 
   const handleLaunchAssistantClick = () => {
     setNetSuiteFormIsLoading(true);
@@ -88,7 +131,7 @@ export default function NetSuiteMappingAssistant({
       e: connection.netsuite.environment,
       id: ioDomain,
       ie: ioEnvironment,
-      u: encodeURIComponent(netSuiteRecordUrl),
+      u: encodeURIComponent(netSuiteRecordMetadata.url),
     };
 
     if (config.u.indexOf('?url=') > -1) {
@@ -115,11 +158,20 @@ export default function NetSuiteMappingAssistant({
     return <Typography>Missing connection configuration.</Typography>;
   }
 
+  if (!netSuiteRecordMetadata) {
+    return (
+      <Typography>
+        Loading record metadata...
+        <Spinner />
+      </Typography>
+    );
+  }
+
   return (
     <Fragment>
       {netSuiteFormIsLoading && (
         <Typography>
-          Loading {netSuiteRecordLabel} form...
+          Loading {netSuiteRecordMetadata.label} form...
           {/** TODO Azhar to fix the Spinner to show as an overlay/mask. */}
           <Spinner />
         </Typography>

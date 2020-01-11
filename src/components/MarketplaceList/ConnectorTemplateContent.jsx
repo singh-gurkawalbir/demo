@@ -12,61 +12,19 @@ const useStyles = makeStyles(theme => ({
   name: {
     marginTop: theme.spacing(2),
   },
-  cardHeader: {
-    marginBottom: theme.spacing(2),
-    display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
-    padding: '12px',
-    background: props =>
-      props.type === 'connector'
-        ? theme.palette.primary.dark
-        : theme.palette.secondary.light,
-  },
-  user: {
-    color: theme.palette.background.paper,
-    textAlign: 'right',
-    overflow: 'hidden',
-    whiteSpace: 'nowrap',
-    maxWidth: '88%',
-    textOverflow: 'ellipsis',
-  },
   floatRight: {
     position: 'absolute',
-    right: '5px',
-    top: '50px',
-  },
-  title: {
-    color: theme.palette.background.paper,
-    overflow: 'hidden',
-    whiteSpace: 'nowrap',
-    maxWidth: '88%',
-    textOverflow: 'ellipsis',
-  },
-  content: {
-    padding: theme.spacing(0, 2),
+    right: theme.spacing(1),
+    top: theme.spacing(3),
   },
 }));
 
-export default function ConnectorTemplateContent({
-  resource,
-  title,
-  application,
-}) {
-  const { name, description, free, user, applications } = resource;
+export default function ConnectorTemplateContent({ resource, application }) {
+  const { name, description, free, applications } = resource;
   const classes = useStyles();
 
   return (
     <Fragment>
-      <div className={classes.cardHeader}>
-        <Typography className={classes.title} title={title}>
-          {title}
-        </Typography>
-        <Typography
-          className={classes.user}
-          title={user.company || user.name || user.email}>
-          {user && (user.company || user.name || user.email)}
-        </Typography>
-      </div>
       <div className={classes.content}>
         <ApplicationImg
           assistant={

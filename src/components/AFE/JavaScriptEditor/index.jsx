@@ -9,17 +9,19 @@ import PanelTitle from '../PanelTitle';
 import PanelGridItem from '../PanelGridItem';
 import ErrorGridItem from '../ErrorGridItem';
 import * as selectors from '../../../reducers';
+import layouts from '../layout/defaultDialogLayout';
 
-const useStyles = makeStyles({
-  template: {
-    gridTemplateColumns: '1fr 1fr',
-    gridTemplateRows: '1fr 1fr 0fr',
-    gridTemplateAreas: '"rule data" "rule result" "error error"',
-  },
-});
+const useStyles = makeStyles(layouts);
 
 export default function JavaScriptEditor(props) {
-  const { editorId, entryFunction, scriptId, insertStubKey, disabled } = props;
+  const {
+    editorId,
+    entryFunction,
+    scriptId,
+    insertStubKey,
+    disabled,
+    layout = 'compact',
+  } = props;
   const classes = useStyles(props);
   const { data, result, error, initChangeIdentifier } = useSelector(state =>
     selectors.editor(state, editorId)
@@ -34,9 +36,6 @@ export default function JavaScriptEditor(props) {
     },
     [dispatch, editorId]
   );
-  // TODO : props.data is causing a recursive call ..its because of a selector merging patches and creating
-  // new instances ?
-  // TODO: @Aditya Scripts is not loading when props.data gets refreshed
   const handleInit = useCallback(() => {
     dispatch(
       actions.editor.init(editorId, 'javascript', {
@@ -57,7 +56,7 @@ export default function JavaScriptEditor(props) {
   return (
     <PanelGrid
       key={`${editorId}-${initChangeIdentifier}`}
-      className={classes.template}>
+      className={classes[`${layout}Template`]}>
       <PanelGridItem gridArea="rule">
         <JavaScriptPanel
           disabled={disabled}

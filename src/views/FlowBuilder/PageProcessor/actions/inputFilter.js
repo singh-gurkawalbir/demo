@@ -1,10 +1,11 @@
-import { useEffect, Fragment, useMemo } from 'react';
+import { useEffect, Fragment, useMemo, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import Icon from '../../../../components/icons/InputFilterIcon';
-import InputFilterEditorDialog from '../../../../components/AFE/FilterEditor/Dialog';
+import InputFilterToggleEditorDialog from '../../../../components/AFE/FilterEditor/FilterToggleEditorDialog';
 import { RESOURCE_TYPE_PLURAL_TO_SINGULAR } from '../../../../constants/resource';
+import { hooksToFunctionNamesMap } from '../../../../utils/hooks';
 
 function InputFilterDialog({
   flowId,
@@ -23,22 +24,50 @@ function InputFilterDialog({
       stage: 'inputFilter',
     })
   );
-  const rules = useMemo(
-    () =>
+  const { type, rules, scriptId, entryFunction } = useMemo(() => {
+    const filterObj =
       resource &&
-      (resourceType === 'imports'
-        ? resource.filter && resource.filter.rules
-        : resource.inputFilter && resource.inputFilter.rules),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
+      (resourceType === 'imports' ? resource.filter : resource.inputFilter);
+    const { type, script = {}, expression = {} } = filterObj || {};
+
+    return {
+      type,
+      rules: expression.rules || [],
+      scriptId: script._scriptId,
+      entryFunction: script.function,
+    };
+  }, [resource, resourceType]);
+  const saveScript = useCallback(
+    values => {
+      const { code, scriptId } = values;
+      const patchSet = [
+        {
+          op: 'replace',
+          path: '/content',
+          value: code,
+        },
+      ];
+
+      dispatch(actions.resource.patchStaged(scriptId, patchSet, 'value'));
+      dispatch(actions.resource.commitStaged('scripts', scriptId, 'value'));
+    },
+    [dispatch]
   );
-  const handleClose = (shouldCommit, editorValues) => {
-    if (shouldCommit) {
-      const { rule } = editorValues;
+  const saveInputFilter = useCallback(
+    values => {
+      const { processor, rule, scriptId, entryFunction } = values;
+      const filterType = processor === 'filter' ? 'expression' : 'script';
       const path = resourceType === 'imports' ? '/filter' : '/inputFilter';
       const value = {
-        rules: rule || [],
-        version: '1',
+        type: filterType,
+        expression: {
+          version: 1,
+          rules: rule || [],
+        },
+        script: {
+          _scriptId: scriptId,
+          function: entryFunction,
+        },
       };
       const patchSet = [{ op: 'replace', path, value }];
 
@@ -47,9 +76,33 @@ function InputFilterDialog({
       dispatch(
         actions.resource.commitStaged(resourceType, resourceId, 'value')
       );
+    },
+    [dispatch, resourceId, resourceType]
+  );
+  const handleClose = (shouldCommit, editorValues) => {
+    if (shouldCommit) {
+      const {
+        processor,
+        rule: filterRules = [],
+        scriptId: filterScript,
+      } = editorValues;
+      const filterType = processor === 'filter' ? 'expression' : 'script';
 
-      if (!rules || rules.length === 0) {
-        if (value.rules.length > 0) {
+      if (filterType === 'script') {
+        // Incase of script type, save script changes
+        saveScript(editorValues);
+      }
+
+      // Save Filter rules
+      saveInputFilter(editorValues);
+
+      // If there are no filters ( no mapping rules / no script configured ) before
+      if ((filterType === 'expression' && !rules.length) || !scriptId) {
+        // If user configures filters first time
+        if (
+          (filterType === 'expression' && filterRules.length) ||
+          filterScript
+        ) {
           dispatch(
             actions.analytics.gainsight.trackEvent(
               `${RESOURCE_TYPE_PLURAL_TO_SINGULAR[
@@ -78,12 +131,16 @@ function InputFilterDialog({
   }, [dispatch, flowId, resourceId, resourceType, sampleData]);
 
   return (
-    <InputFilterEditorDialog
+    <InputFilterToggleEditorDialog
       title="Define Input Filter"
-      id={resourceId + flowId}
       disabled={isViewMode}
+      id={resourceId + flowId}
       data={sampleData}
+      type={type}
       rule={rules}
+      scriptId={scriptId}
+      entryFunction={entryFunction || hooksToFunctionNamesMap.filter}
+      insertStubKey="filter"
       onClose={handleClose}
     />
   );

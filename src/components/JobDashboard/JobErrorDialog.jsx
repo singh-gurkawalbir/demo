@@ -9,10 +9,10 @@ import ModalDialog from '../ModalDialog';
 import Help from '../Help';
 
 const useStyles = makeStyles(theme => ({
-  /**
-   * TODO Azhar needs to fix the styles so that the help icon shows on the left side of the close icon.
-   */
   iconButton: {
+    position: 'absolute',
+    top: 5,
+    right: 45,
     color: theme.palette.text.hint,
     '&:hover': {
       background: theme.palette.background.paper,
