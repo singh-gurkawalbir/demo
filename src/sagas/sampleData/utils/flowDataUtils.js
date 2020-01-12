@@ -287,7 +287,15 @@ export function* updateStateForProcessorData({
   resourceId,
   stage,
   processedData,
+  wrapInArrayProcessedData,
 }) {
+  // wrapInArrayProcessedData: Incase of Transform scripts , data is not inside an array as in other stages
+  // So this prop wraps data to extract the same in the reducer
+  if (wrapInArrayProcessedData && processedData && processedData.data) {
+    // eslint-disable-next-line no-param-reassign
+    processedData.data = [processedData.data];
+  }
+
   yield put(
     actions.flowData.receivedProcessorData(
       flowId,

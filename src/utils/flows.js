@@ -36,7 +36,7 @@ const importActions = [
   actionsMap.postResponseMap,
   actionsMap.proceedOnFailure,
 ];
-const isActionUsed = (resource, flowNode, action) => {
+const isActionUsed = (resource, resourceType, flowNode, action) => {
   const {
     inputFilter = {},
     filter = {},
@@ -56,8 +56,17 @@ const isActionUsed = (resource, flowNode, action) => {
   switch (action) {
     case actionsMap.schedule:
       return !!(schedule || _keepDeltaBehindFlowId);
-    case actionsMap.inputFilter:
-      return !!(inputFilter.rules && inputFilter.rules.length);
+    case actionsMap.inputFilter: {
+      const { type, expression = {}, script = {} } =
+        resourceType === 'imports' ? filter : inputFilter;
+
+      if (type === 'expression') {
+        return !!(expression.rules && expression.rules.length);
+      }
+
+      // when filter is of type 'script', check for scriptId
+      return !!script._scriptId;
+    }
 
     case actionsMap.importMapping: {
       const appType =
@@ -79,21 +88,39 @@ const isActionUsed = (resource, flowNode, action) => {
         (typeof http.body === 'string' ||
           (Array.isArray(http.body) && http.body.length))
       );
-    case actionsMap.transformation:
-      // Infers based on the first ruleset { rules: [rule]}
-      // @TODO: Raghu Change it if we support multiple transformation rules
-      return !!(
-        transform.rules &&
-        transform.rules[0] &&
-        transform.rules[0].length
-      );
+    case actionsMap.transformation: {
+      const { type, expression = {}, script = {} } = transform;
 
-    case actionsMap.responseTransformation:
-      return !!(
-        responseTransform.rules &&
-        responseTransform.rules[0] &&
-        responseTransform.rules[0].length
-      );
+      if (type === 'expression') {
+        // Infers based on the first ruleset { rules: [rule]}
+        // @TODO: Raghu Change it if we support multiple transformation rules
+        return !!(
+          expression.rules &&
+          expression.rules[0] &&
+          expression.rules[0].length
+        );
+      }
+
+      // when transformation is of type 'script', check for scriptId
+      return !!script._scriptId;
+    }
+
+    case actionsMap.responseTransformation: {
+      const { type, expression = {}, script = {} } = responseTransform;
+
+      if (type === 'expression') {
+        // Infers based on the first ruleset { rules: [rule]}
+        // @TODO: Raghu Change it if we support multiple transformation rules
+        return !!(
+          expression.rules &&
+          expression.rules[0] &&
+          expression.rules[0].length
+        );
+      }
+
+      // when transformation is of type 'script', check for scriptId
+      return !!script._scriptId;
+    }
 
     case actionsMap.hooks:
       return !!hooks;
@@ -109,8 +136,16 @@ const isActionUsed = (resource, flowNode, action) => {
         pageProcessorHooks.postResponseMap._scriptId
       );
 
-    case actionsMap.outputFilter:
-      return !!(filter.rules && filter.rules.length);
+    case actionsMap.outputFilter: {
+      const { type, expression = {}, script = {} } = filter;
+
+      if (type === 'expression') {
+        return !!(expression.rules && expression.rules.length);
+      }
+
+      // when filter is of type 'script', check for scriptId
+      return !!script._scriptId;
+    }
 
     case actionsMap.proceedOnFailure:
       return !!proceedOnFailure;
@@ -128,7 +163,12 @@ export const getUsedActionsMapForResource = (
   const usedActions = {};
 
   actions.forEach(action => {
-    usedActions[action] = isActionUsed(resource, flowNode, action);
+    usedActions[action] = isActionUsed(
+      resource,
+      resourceType,
+      flowNode,
+      action
+    );
   });
 
   return usedActions;

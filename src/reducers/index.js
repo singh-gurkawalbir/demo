@@ -1750,7 +1750,9 @@ function getTierToFlowsMap(license) {
   };
   let flows = flowsInTier[license.tier] || 0;
 
-  if (self.tier === 'free' && !license.inTrial) {
+  if (license.inTrial) flows = Number.MAX_SAFE_INTEGER;
+
+  if (license.tier === 'free' && !license.inTrial) {
     if (
       !license.numAddOnFlows &&
       !license.sandbox &&
@@ -1921,14 +1923,14 @@ export function integratorLicenseWithMetadata(state) {
       licenseActionDetails.numSandboxAddOnFlows;
   }
 
-  licenseActionDetails.supportTier = '';
-
   if (
-    (licenseActionDetails.status === 'active' ||
-      licenseActionDetails.isFreemium) &&
-    licenseActionDetails.supportTier
+    !(
+      (licenseActionDetails.status === 'active' ||
+        licenseActionDetails.isFreemium) &&
+      licenseActionDetails.supportTier
+    )
   ) {
-    licenseActionDetails.supportTier = licenseActionDetails.supportTier;
+    licenseActionDetails.supportTier = '';
   }
 
   const toReturn = {
