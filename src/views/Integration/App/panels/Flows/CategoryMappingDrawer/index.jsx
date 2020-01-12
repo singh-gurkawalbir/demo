@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Route, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -105,14 +105,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function CategoryMappings({
-  integrationId,
-  flowId,
-  sectionId,
-  isRoot = true,
-  amazonAttributeFilter,
-  fieldMappingsFilter,
-}) {
+function CategoryMappings({ integrationId, flowId, sectionId, isRoot = true }) {
   const [requestedGenerateFields, setRequestedGenerateFields] = useState(false);
   const dispatch = useDispatch();
   const classes = useStyles();
@@ -196,8 +189,6 @@ function CategoryMappings({
               flowId={flowId}
               integrationId={integrationId}
               sectionId={sectionId}
-              amazonAttributes={amazonAttributeFilter}
-              fieldMappingsFilter={fieldMappingsFilter}
               generateFields={generateFields || emptySet}
             />
             {children.length > 0 &&
@@ -209,8 +200,6 @@ function CategoryMappings({
                   isRoot={false}
                   generateFields={generateFields || emptySet}
                   sectionId={child.id}
-                  amazonAttributes={amazonAttributeFilter}
-                  fieldMappingsFilter={fieldMappingsFilter}
                 />
               ))}
           </div>
@@ -224,13 +213,6 @@ function CategoryMappingDrawer({ integrationId }) {
   const dispatch = useDispatch();
   const classes = useStyles();
   const match = useRouteMatch();
-  const [amazonAttributeFilter, setAmazonAttributeFilter] = useState({
-    conditional: true,
-    preferred: true,
-    optional: true,
-    required: true,
-  });
-  const [fieldMappingsFilter, setFieldMappingsFilter] = useState('mapped');
   const { flowId, categoryId } = match.params;
   const [requestedMetadata, setRequestedMetadata] = useState(false);
   const integrationName = useSelector(state => {
@@ -245,12 +227,6 @@ function CategoryMappingDrawer({ integrationId }) {
   const metadataLoaded = useSelector(
     state => !!selectors.categoryMapping(state, integrationId, flowId)
   );
-  const handleAmazonAttributeChange = useCallback(val => {
-    setAmazonAttributeFilter(val);
-  }, []);
-  const handleFieldMappingsFilterChange = useCallback(val => {
-    setFieldMappingsFilter(val);
-  }, []);
   const mappedCategories =
     useSelector(state =>
       selectors.mappedCategories(state, integrationId, flowId)
@@ -303,14 +279,7 @@ function CategoryMappingDrawer({ integrationId }) {
               <PanelHeader
                 className={classes.header}
                 title={currentSectionLabel}>
-                <Filters
-                  amazonAttributes={amazonAttributeFilter}
-                  fieldMappingFilter={fieldMappingsFilter}
-                  handleAmazonAttributeChange={handleAmazonAttributeChange}
-                  handleFieldMappingsFilterChange={
-                    handleFieldMappingsFilterChange
-                  }
-                />
+                <Filters integrationId={integrationId} flowId={flowId} />
               </PanelHeader>
               <Grid container className={classes.mappingHeader}>
                 <Grid item xs={6}>
@@ -327,8 +296,6 @@ function CategoryMappingDrawer({ integrationId }) {
               </Grid>
               <CategoryMappings
                 integrationId={integrationId}
-                amazonAttributeFilter={amazonAttributeFilter}
-                fieldMappingsFilter={fieldMappingsFilter}
                 flowId={flowId}
                 sectionId={categoryId}
               />

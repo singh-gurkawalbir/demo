@@ -1248,16 +1248,25 @@ export function categoryMappingGenerateFields(
   return null;
 }
 
+export function categoryMappingFilters(state, integrationId, flowId) {
+  return fromSession.categoryMappingFilters(
+    state && state.session,
+    integrationId,
+    flowId
+  );
+}
+
 export function mappingsForCategory(state, integrationId, flowId, filters) {
-  const { sectionId, amazonAttributes, fieldMappingsFilter } = filters;
-  const categoryMappingData =
+  const { sectionId } = filters;
+  const { attributes = {}, mappingFilter = 'mapped' } =
+    categoryMappingFilters(state, integrationId, flowId) || {};
+  const recordMappings =
     fromSession.categoryMappingData(
       state && state.session,
       integrationId,
       flowId
     ) || {};
   let mappings = emptySet;
-  const recordMappings = categoryMappingData;
 
   if (recordMappings) {
     mappings = recordMappings.find(item => item.id === sectionId);
@@ -1269,26 +1278,29 @@ export function mappingsForCategory(state, integrationId, flowId, filters) {
     }) || {};
   const { fields = [] } = generateFields;
 
-  if (!amazonAttributes || !fieldMappingsFilter) {
+  if (!attributes || !mappingFilter) {
     return mappings;
   }
 
   const mappedFields = map(mappings.fieldMappings, 'generate');
+  const filteredMappedFields = mappings.fieldMappings.filter(field => {
+    const generateField = fields.find(f => f.id === field.generate);
+
+    return generateField && attributes[generateField.filterType];
+  });
   const filteredFields = fields
     .filter(
-      field =>
-        amazonAttributes[field.filterType] && !mappedFields.includes(field.id)
+      field => attributes[field.filterType] && !mappedFields.includes(field.id)
     )
     .map(field => ({ generate: field.id, extract: '' }));
-  const filteredMappings = [
-    ...mappings.fieldMappings,
-    ...filteredFields,
-  ].filter(field => {
-    if (fieldMappingsFilter === 'all') return true;
-    else if (fieldMappingsFilter === 'mapped') return !!field.extract;
+  const filteredMappings = [...filteredMappedFields, ...filteredFields].filter(
+    field => {
+      if (mappingFilter === 'all') return true;
+      else if (mappingFilter === 'mapped') return !!field.extract;
 
-    return !field.extract;
-  });
+      return !field.extract && !field.hardCodedValue;
+    }
+  );
 
   return {
     ...mappings,

@@ -23,6 +23,14 @@ export function categoryMapping(state, integrationId, flowId) {
   );
 }
 
+export function categoryMappingFilters(state, integrationId, flowId) {
+  return fromSettings.categoryMappingFilters(
+    state && state.settings,
+    integrationId,
+    flowId
+  );
+}
+
 export function categoryMappingData(state, integrationId, flowId) {
   return fromSettings.categoryMappingData(
     state && state.settings,

@@ -18,6 +18,7 @@ export default (state = {}, action) => {
     redirectTo,
     metadata,
     error,
+    filters,
     sectionId,
   } = action;
   const key = getStateKey(integrationId, flowId, sectionId);
@@ -106,6 +107,15 @@ export default (state = {}, action) => {
         }
 
         break;
+      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPING_FILTERS:
+        if (draft[`${flowId}-${integrationId}`]) {
+          draft[`${flowId}-${integrationId}`].filters = {
+            ...draft[`${flowId}-${integrationId}`].filters,
+            ...filters,
+          };
+        }
+
+        break;
       case actionTypes.INTEGRATION_APPS.SETTINGS
         .RECEIVED_CATEGORY_MAPPING_METADATA:
         ({ response: categoryMappingData } = metadata);
@@ -115,6 +125,15 @@ export default (state = {}, action) => {
         draft[`${flowId}-${integrationId}`] = {
           uiAssistant: metadata.uiAssistant,
           response: categoryMappingData,
+          filters: {
+            attributes: {
+              required: true,
+              optional: true,
+              conditional: true,
+              preferred: true,
+            },
+            mappingFilter: 'mapped',
+          },
           generatesMetadata: [generatesMetadata.data.generatesMetaData],
         };
         break;
@@ -136,6 +155,14 @@ export function integrationAppSettingsFormState(
   const key = getStateKey(integrationId, flowId, sectionId);
 
   return state[key] || emptyObj;
+}
+
+export function categoryMappingFilters(state, integrationId, flowId) {
+  if (!state || !state[`${flowId}-${integrationId}`]) {
+    return null;
+  }
+
+  return state[`${flowId}-${integrationId}`].filters;
 }
 
 export function categoryMapping(state, integrationId, flowId) {

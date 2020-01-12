@@ -1,20 +1,23 @@
 import { useState, Fragment, useCallback } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import {
   ClickAwayListener,
   makeStyles,
   Checkbox,
   Button,
   Grid,
+  FormGroup,
+  FormLabel,
+  FormControl,
+  FormControlLabel,
+  Radio,
+  RadioGroup,
 } from '@material-ui/core';
-import Radio from '@material-ui/core/Radio';
-import RadioGroup from '@material-ui/core/RadioGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormControl from '@material-ui/core/FormControl';
-import FormLabel from '@material-ui/core/FormLabel';
-import FormGroup from '@material-ui/core/FormGroup';
-import ExpandLess from '@material-ui/icons/ExpandLess';
-import ExpandMore from '@material-ui/icons/ExpandMore';
+import actions from '../../../../../../actions';
+import * as selectors from '../../../../../../reducers';
 import ArrowPopper from '../../../../../../components/ArrowPopper';
+import ArrowUpIcon from '../../../../../../components/icons/ArrowUpIcon';
+import ArrowDownIcon from '../../../../../../components/icons/ArrowDownIcon';
 
 const useStyles = makeStyles(theme => ({
   formControl: {
@@ -25,16 +28,14 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function Filters({
-  amazonAttributes,
-  fieldMappingFilter,
-  handleAmazonAttributeChange,
-  handleFieldMappingsFilterChange,
-}) {
+function Filters({ integrationId, flowId }) {
   const classes = useStyles();
+  const dispatch = useDispatch();
   const [anchorEl, setAnchorEl] = useState(null);
-  const [mappingFilter, setMappingFilter] = useState(fieldMappingFilter);
-  const [attributes, setAttributes] = useState(amazonAttributes);
+  const { attributes = {}, mappingFilter = 'mapped' } =
+    useSelector(state =>
+      selectors.categoryMappingFilters(state, integrationId, flowId)
+    ) || {};
   const handleMenu = useCallback(
     event => {
       if (anchorEl) {
@@ -46,16 +47,28 @@ function Filters({
     [anchorEl]
   );
   const handleChange = e => {
-    if (mappingFilter !== e.target.value) setMappingFilter(e.target.value);
-    handleFieldMappingsFilterChange(e.target.value);
+    dispatch(
+      actions.integrationApp.settings.setCategoryMappingFilters(
+        integrationId,
+        flowId,
+        { mappingFilter: e.target.value }
+      )
+    );
   };
 
   const handleAttributeChange = name => event => {
-    setAttributes({ ...attributes, [name]: event.target.checked });
-    handleAmazonAttributeChange({
-      ...attributes,
-      [name]: event.target.checked,
-    });
+    dispatch(
+      actions.integrationApp.settings.setCategoryMappingFilters(
+        integrationId,
+        flowId,
+        {
+          attributes: {
+            ...attributes,
+            [name]: event.target.checked,
+          },
+        }
+      )
+    );
   };
 
   const handleClose = useCallback(() => {
@@ -68,7 +81,7 @@ function Filters({
       <Fragment>
         <Button variant="text" onClick={handleMenu} className={classes.filter}>
           Filters
-          {open ? <ExpandLess /> : <ExpandMore />}
+          {open ? <ArrowUpIcon /> : <ArrowDownIcon />}
         </Button>
         <ArrowPopper
           placement="bottom"
@@ -86,7 +99,7 @@ function Filters({
                     <FormControlLabel
                       control={
                         <Checkbox
-                          checked={attributes.required}
+                          checked={!!attributes.required}
                           onChange={handleAttributeChange('required')}
                           value="required"
                         />
@@ -96,7 +109,7 @@ function Filters({
                     <FormControlLabel
                       control={
                         <Checkbox
-                          checked={attributes.preferred}
+                          checked={!!attributes.preferred}
                           onChange={handleAttributeChange('preferred')}
                           value="preferred"
                         />
@@ -106,7 +119,7 @@ function Filters({
                     <FormControlLabel
                       control={
                         <Checkbox
-                          checked={attributes.conditional}
+                          checked={!!attributes.conditional}
                           onChange={handleAttributeChange('conditional')}
                           value="conditional"
                         />
@@ -116,7 +129,7 @@ function Filters({
                     <FormControlLabel
                       control={
                         <Checkbox
-                          checked={attributes.optional}
+                          checked={!!attributes.optional}
                           onChange={handleAttributeChange('optional')}
                           value="optional"
                         />

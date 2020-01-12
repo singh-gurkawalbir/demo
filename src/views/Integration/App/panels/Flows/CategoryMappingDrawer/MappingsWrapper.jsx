@@ -5,17 +5,13 @@ import * as selectors from '../../../../../../reducers';
 import actions from '../../../../../../actions';
 
 export default function MappingWrapper(props) {
-  const {
-    id,
-    flowId,
-    generateFields,
-    sectionId,
-    integrationId,
-    amazonAttributes,
-    fieldMappingsFilter,
-  } = props;
+  const { id, flowId, generateFields, sectionId, integrationId } = props;
   const [initTriggered, setInitTriggered] = useState(false);
   const [resetMappings, setResetMappings] = useState(false);
+  const { attributes = {}, mappingFilter = 'mapped' } =
+    useSelector(state =>
+      selectors.categoryMappingFilters(state, integrationId, flowId)
+    ) || {};
   const resourceId = useSelector(state => {
     const flowDetails = selectors.resource(state, 'flows', flowId);
 
@@ -33,8 +29,6 @@ export default function MappingWrapper(props) {
     useSelector(state =>
       selectors.mappingsForCategory(state, integrationId, flowId, {
         sectionId,
-        amazonAttributes,
-        fieldMappingsFilter,
       })
     ) || {};
   const resourceData = useSelector(state =>
@@ -82,7 +76,7 @@ export default function MappingWrapper(props) {
 
   useEffect(() => {
     if (initTriggered) setResetMappings(true);
-  }, [sectionId, amazonAttributes, fieldMappingsFilter, initTriggered]);
+  }, [sectionId, initTriggered, attributes, mappingFilter]);
 
   useEffect(() => {
     if (initTriggered && mappingInitialized) {
