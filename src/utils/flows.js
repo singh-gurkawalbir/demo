@@ -105,12 +105,22 @@ const isActionUsed = (resource, resourceType, flowNode, action) => {
       return !!script._scriptId;
     }
 
-    case actionsMap.responseTransformation:
-      return !!(
-        responseTransform.rules &&
-        responseTransform.rules[0] &&
-        responseTransform.rules[0].length
-      );
+    case actionsMap.responseTransformation: {
+      const { type, expression = {}, script = {} } = responseTransform;
+
+      if (type === 'expression') {
+        // Infers based on the first ruleset { rules: [rule]}
+        // @TODO: Raghu Change it if we support multiple transformation rules
+        return !!(
+          expression.rules &&
+          expression.rules[0] &&
+          expression.rules[0].length
+        );
+      }
+
+      // when transformation is of type 'script', check for scriptId
+      return !!script._scriptId;
+    }
 
     case actionsMap.hooks:
       return !!hooks;

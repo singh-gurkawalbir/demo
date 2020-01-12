@@ -15,6 +15,11 @@ export default {
 
     if (newValues['/netsuite/type'] === 'distributed') {
       newValues['/type'] = 'distributed';
+      // removing other netsuiteType's Sub Doc @BugFix IO-12678
+      newValues['/netsuite/restlet/criteria'] = undefined;
+      newValues['/netsuite/restlet'] = undefined;
+      newValues['/netsuite/searches/criteria'] = undefined;
+      newValues['/netsuite/searches'] = undefined;
     }
 
     if (netsuiteType === 'search') {
