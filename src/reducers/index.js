@@ -1258,6 +1258,7 @@ export function categoryMappingFilters(state, integrationId, flowId) {
 
 export function mappingsForCategory(state, integrationId, flowId, filters) {
   const { sectionId } = filters;
+  let mappings = emptySet;
   const { attributes = {}, mappingFilter = 'mapped' } =
     categoryMappingFilters(state, integrationId, flowId) || {};
   const recordMappings =
@@ -1266,33 +1267,34 @@ export function mappingsForCategory(state, integrationId, flowId, filters) {
       integrationId,
       flowId
     ) || {};
-  let mappings = emptySet;
+  const { fields = [] } =
+    categoryMappingGenerateFields(state, integrationId, flowId, {
+      sectionId,
+    }) || {};
 
   if (recordMappings) {
     mappings = recordMappings.find(item => item.id === sectionId);
   }
 
-  const generateFields =
-    categoryMappingGenerateFields(state, integrationId, flowId, {
-      sectionId,
-    }) || {};
-  const { fields = [] } = generateFields;
-
+  // If no filters are passed, return all mapppings
   if (!attributes || !mappingFilter) {
     return mappings;
   }
 
   const mappedFields = map(mappings.fieldMappings, 'generate');
+  // Filter all mapped fields
   const filteredMappedFields = mappings.fieldMappings.filter(field => {
     const generateField = fields.find(f => f.id === field.generate);
 
     return generateField && attributes[generateField.filterType];
   });
+  // Filter all generateFields with filter which are not yet mapped
   const filteredFields = fields
     .filter(
       field => attributes[field.filterType] && !mappedFields.includes(field.id)
     )
     .map(field => ({ generate: field.id, extract: '' }));
+  // Combine filtered mappings and unmapped fields and generate unmapped fields
   const filteredMappings = [...filteredMappedFields, ...filteredFields].filter(
     field => {
       if (mappingFilter === 'all') return true;
@@ -1302,6 +1304,7 @@ export function mappingsForCategory(state, integrationId, flowId, filters) {
     }
   );
 
+  // return mappings object by overriding field mappings with filtered mappings
   return {
     ...mappings,
     fieldMappings: filteredMappings,
