@@ -13,7 +13,8 @@ import { useIASettingsStateWithHandleClose } from '..';
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
     marginTop: theme.appBarHeight,
-    width: 660,
+    minWidth: 824,
+    maxWidth: 1300,
     border: 'solid 1px',
     borderColor: theme.palette.secondary.lightest,
     boxShadow: `-4px 4px 8px rgba(0,0,0,0.15)`,

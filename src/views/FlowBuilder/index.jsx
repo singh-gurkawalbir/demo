@@ -12,14 +12,14 @@ import ResourceDrawer from '../../components/drawer/Resource';
 import AddIcon from '../../components/icons/AddIcon';
 import BottomDrawer from './drawers/BottomDrawer';
 // import WizardDrawer from './drawers/Wizard';
-import RunDrawer from './drawers/Run';
+// import RunDrawer from './drawers/Run';
 import ScheduleDrawer from './drawers/Schedule';
 import SettingsDrawer from './drawers/Settings';
 import PageProcessor from './PageProcessor';
 import PageGenerator from './PageGenerator';
 import AppBlock from './AppBlock';
 import itemTypes from './itemTypes';
-import RunIcon from '../../components/icons/RunIcon';
+import RunFlowButton from '../../components/RunFlowButton';
 import SettingsIcon from '../../components/icons/SettingsIcon';
 import CalendarIcon from '../../components/icons/CalendarIcon';
 import EditableText from '../../components/EditableText';
@@ -27,7 +27,6 @@ import SwitchOnOff from '../../components/OnOff';
 import { generateNewId } from '../../utils/resource';
 import { isConnector } from '../../utils/flows';
 import FlowEllipsisMenu from '../../components/FlowEllipsisMenu';
-import FlowStartDateDialog from '../../components/DeltaFlowStartDate/Dialog';
 
 // #region FLOW SCHEMA: FOR REFERENCE DELETE ONCE FB IS COMPLETE
 /* 
@@ -180,8 +179,13 @@ const useStyles = makeStyles(theme => ({
       duration: theme.transitions.duration.enteringScreen,
     }),
   },
+  title: {
+    display: 'flex',
+    minHeight: 48,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   sourceTitle: {
-    textAlign: 'center',
     marginBottom: theme.spacing(3),
   },
   destinationTitle: {
@@ -192,6 +196,7 @@ const useStyles = makeStyles(theme => ({
   generatorRoot: {
     backgroundColor: 'rgba(0,0,0,0.02)',
     padding: theme.spacing(0, 0, 3, 3),
+    minWidth: 429,
   },
   processorRoot: {
     padding: theme.spacing(0, 3, 3, 0),
@@ -212,9 +217,8 @@ function FlowBuilder() {
   const classes = useStyles();
   const theme = useTheme();
   const dispatch = useDispatch();
-  const [showDilaog, setShowDilaog] = useState(false);
   // Bottom drawer is shown for existing flows and docked for new flow
-  const [size, setSize] = useState(isNewFlow ? 0 : 1);
+  const [bottonDrawerSize, setBottomDrawerSize] = useState(isNewFlow ? 0 : 1);
   const [tabValue, setTabValue] = useState(0);
   const [newGeneratorId, setNewGeneratorId] = useState(generateNewId());
   const [newProcessorId, setNewProcessorId] = useState(generateNewId());
@@ -225,9 +229,14 @@ function FlowBuilder() {
   );
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
   const flow = useSelector(
+    state => selectors.resourceData(state, 'flows', flowId).merged,
+    shallowEqual
+  );
+  const flowDetails = useSelector(
     state => selectors.flowDetails(state, flowId),
     shallowEqual
   );
+  const isDataLoaderFlow = flowDetails.isSimpleImport;
   const { pageProcessors = [], pageGenerators = [] } = flow;
   const createdGeneratorId = useSelector(state =>
     selectors.createdResourceId(state, newGeneratorId)
@@ -357,48 +366,28 @@ function FlowBuilder() {
     patchFlow('/name', title);
   }
 
-  const handleRunDeltaFlow = useCallback(
-    customStartDate => {
-      dispatch(actions.flow.run({ flowId, customStartDate }));
-    },
-    [dispatch, flowId]
-  );
-  const handleFlowRun = useCallback(() => {
-    if (
-      flow.isDeltaFlow &&
-      (!flow._connectorId || !!flow.showStartDateDialog)
-    ) {
-      setShowDilaog('true');
-    } else {
-      handleRunDeltaFlow();
-    }
-
+  const handleRunStart = useCallback(() => {
     // Highlights Run Dashboard in the bottom drawer
     setTabValue(1);
-    // Raises Bottom Drawer size
-    setSize(2);
-  }, [
-    flow._connectorId,
-    flow.isDeltaFlow,
-    flow.showStartDateDialog,
-    handleRunDeltaFlow,
-  ]);
+
+    // Raise Bottom Drawer height
+    setBottomDrawerSize(2);
+  }, []);
+
   // #region New Flow Creation logic
-  const rewriteUrl = id => {
+  function rewriteUrl(id) {
     const parts = match.url.split('/');
 
     parts[parts.length - 1] = id;
 
     return parts.join('/');
-  };
+  }
 
-  // This block initializes a new flow (patch, no commit)
-  // and replaces the url to reflect the new temp id.
-  if (flowId === 'new') {
-    const newId = generateNewId();
-    const newUrl = rewriteUrl(newId);
+  // Initializes a new flow (patch, no commit)
+  // and replaces the url to reflect the new temp flow id.
+  function patchNewFlow(newFlowId, newName, newPG) {
     const patchSet = [
-      { op: 'add', path: '/name', value: 'New flow' },
+      { op: 'add', path: '/name', value: newName || 'New flow' },
 
       // TODO: The message below gets hidden from the end-user.
       // we need to trace the sagas and figure out how to present this
@@ -410,7 +399,7 @@ function FlowBuilder() {
 
       // not sure we even need to init these arrays...
       // leave in for now to prevent downstream undefined reference errors.
-      { op: 'add', path: '/pageGenerators', value: [] },
+      { op: 'add', path: '/pageGenerators', value: newPG ? [newPG] : [] },
       { op: 'add', path: '/pageProcessors', value: [] },
     ];
 
@@ -422,8 +411,26 @@ function FlowBuilder() {
       });
     }
 
-    dispatch(actions.resource.patchStaged(newId, patchSet, 'value'));
-    history.replace(newUrl);
+    dispatch(actions.resource.patchStaged(newFlowId, patchSet, 'value'));
+  }
+
+  // NEW FLOW REDIRECTION
+  if (flowId === 'new') {
+    const tempId = generateNewId();
+
+    patchNewFlow(tempId);
+    history.replace(rewriteUrl(tempId));
+
+    return null;
+  }
+
+  // NEW DATA LOADER REDIRECTION
+  if (flowId && flowId.toLowerCase() === 'dataloader') {
+    const tempId = generateNewId();
+
+    patchNewFlow(tempId, 'New data loader flow', { application: 'dataLoader' });
+
+    history.replace(rewriteUrl(tempId));
 
     return null;
   }
@@ -439,25 +446,15 @@ function FlowBuilder() {
 
   // eslint-disable-next-line
   // console.log('render: <FlowBuilder>');
-  const closeDeltaDialog = () => {
-    setShowDilaog(false);
-  };
 
   return (
     <LoadResources required resources="flows, imports, exports">
-      {showDilaog && flow.isDeltaFlow && (
-        <FlowStartDateDialog
-          flowId={flow._id}
-          onClose={closeDeltaDialog}
-          runDeltaFlow={handleRunDeltaFlow}
-        />
-      )}
       <ResourceDrawer
         flowId={flowId}
         disabled={isViewMode}
         integrationId={integrationId}
       />
-      <RunDrawer flowId={flowId} />
+
       <ScheduleDrawer
         isViewMode={isMonitorLevelAccess}
         isConnector={isConnectorType}
@@ -477,21 +474,18 @@ function FlowBuilder() {
         subtitle={`Last saved: ${isNewFlow ? 'Never' : flow.lastModified}`}
         infoText={flow.description}>
         <div className={classes.actions}>
-          <SwitchOnOff.component
-            resource={flow}
-            disabled={isNewFlow || isMonitorLevelAccess}
-            isConnector={isConnectorType}
-            data-test="switchFlowOnOff"
-          />
-          <IconButton
-            disabled={
-              isNewFlow || !(flow && flow.isRunnable) || isMonitorLevelAccess
-            }
-            data-test="runFlow"
-            onClick={handleFlowRun}>
-            <RunIcon />
-          </IconButton>
-          {flow && flow.showScheduleIcon && (
+          {!isDataLoaderFlow && (
+            <SwitchOnOff.component
+              resource={flowDetails}
+              disabled={isNewFlow || isMonitorLevelAccess}
+              isConnector={isConnectorType}
+              data-test="switchFlowOnOff"
+            />
+          )}
+
+          <RunFlowButton flowId={flowId} onRunStart={handleRunStart} />
+
+          {flowDetails && flowDetails.showScheduleIcon && (
             <IconButton
               disabled={isNewFlow}
               data-test="scheduleFlow"
@@ -519,24 +513,27 @@ function FlowBuilder() {
           [classes.canvasShift]: drawerOpened,
         })}
         style={{
-          height: `calc(${(4 - size) * 25}vh - ${theme.appBarHeight +
+          height: `calc(${(4 - bottonDrawerSize) *
+            25}vh - ${theme.appBarHeight +
             theme.pageBarHeight +
-            (size ? 0 : bottomDrawerMin)}px)`,
+            (bottonDrawerSize ? 0 : bottomDrawerMin)}px)`,
         }}>
         <div className={classes.canvas}>
           {/* CANVAS START */}
           <div className={classes.generatorRoot}>
             <Typography
               component="div"
-              className={classes.sourceTitle}
+              className={clsx(classes.title, classes.sourceTitle)}
               variant="overline">
-              SOURCE APPLICATIONS
-              <IconButton
-                data-test="addGenerator"
-                disabled={isViewMode}
-                onClick={handleAddGenerator}>
-                <AddIcon />
-              </IconButton>
+              {isDataLoaderFlow ? 'SOURCE' : 'SOURCE APPLICATIONS'}
+              {!isDataLoaderFlow && (
+                <IconButton
+                  data-test="addGenerator"
+                  disabled={isViewMode}
+                  onClick={handleAddGenerator}>
+                  <AddIcon />
+                </IconButton>
+              )}
             </Typography>
 
             <div className={classes.generatorContainer}>
@@ -570,15 +567,20 @@ function FlowBuilder() {
           <div className={classes.processorRoot}>
             <Typography
               component="div"
-              className={classes.destinationTitle}
+              className={clsx(classes.title, classes.destinationTitle)}
               variant="overline">
-              DESTINATION &amp; LOOKUP APPLICATIONS
-              <IconButton
-                disabled={isViewMode}
-                data-test="addProcessor"
-                onClick={handleAddProcessor}>
-                <AddIcon />
-              </IconButton>
+              {isDataLoaderFlow
+                ? 'DESTINATION'
+                : 'DESTINATION & LOOKUP APPLICATIONS'}
+
+              {(!isDataLoaderFlow || pageProcessors.length === 0) && (
+                <IconButton
+                  disabled={isViewMode}
+                  data-test="addProcessor"
+                  onClick={handleAddProcessor}>
+                  <AddIcon />
+                </IconButton>
+              )}
             </Typography>
             <div className={classes.processorContainer}>
               {pageProcessors.map((pp, i) => (
@@ -612,12 +614,12 @@ function FlowBuilder() {
             </div>
           </div>
         </div>
-        {size < 3 && (
+        {bottonDrawerSize < 3 && (
           <div
             className={classes.fabContainer}
             style={{
-              bottom: size
-                ? `calc(${size * 25}vh + ${theme.spacing(3)}px)`
+              bottom: bottonDrawerSize
+                ? `calc(${bottonDrawerSize * 25}vh + ${theme.spacing(3)}px)`
                 : bottomDrawerMin + theme.spacing(3),
             }}
           />
@@ -627,8 +629,8 @@ function FlowBuilder() {
       </div>
       <BottomDrawer
         flow={flow}
-        size={size}
-        setSize={setSize}
+        size={bottonDrawerSize}
+        setSize={setBottomDrawerSize}
         tabValue={tabValue}
         setTabValue={setTabValue}
       />
