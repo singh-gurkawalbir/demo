@@ -14,6 +14,7 @@ import {
   getCsvFromXlsx,
   getJSONContent,
 } from '../../utils/file';
+import { EMPTY_RAW_DATA } from '../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   fileInput: {
@@ -60,8 +61,6 @@ export default function RunFlowButton({
   const hasRunKey = useSelector(state => {
     if (!isDataLoaderFlow) return false;
 
-    if (isDataLoaderFlow) return false;
-
     if (
       !flowDetails.pageGenerators ||
       flowDetails.pageGenerators.length === 0
@@ -72,7 +71,8 @@ export default function RunFlowButton({
     const exportId = flowDetails.pageGenerators[0]._exportId;
     const exp = selectors.resource(state, 'exports', exportId);
 
-    return exp && !!exp.rawData;
+    // TODO @Raghu Change it to !!(exp && exp.rawData) once BE fix is done
+    return !!(exp && exp.rawData && exp.rawData !== EMPTY_RAW_DATA);
   });
   // console.log('Does DL export have run key?', hasRunKey);
   const isMonitorLevelAccess = useSelector(state =>

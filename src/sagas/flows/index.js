@@ -4,7 +4,7 @@ import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
 import getRequestOptions from '../../utils/requestOptions';
 import * as selectors from '../../reducers';
-import { JOB_STATUS, JOB_TYPES } from '../../utils/constants';
+import { JOB_STATUS, JOB_TYPES, EMPTY_RAW_DATA } from '../../utils/constants';
 import { uploadRawData } from '../uploadFile';
 
 export function* run({ flowId, customStartDate, options = {} }) {
@@ -69,7 +69,7 @@ export function* runDataLoader({ flowId, fileContent }) {
         };
 
         yield put(actions.flow.run({ flowId, options }));
-      } else if (exp && exp.rawData) {
+      } else if (exp && exp.rawData && exp.rawData !== EMPTY_RAW_DATA) {
         const options = {
           isDataLoader: true,
           runKey: exp.rawData,
@@ -77,10 +77,13 @@ export function* runDataLoader({ flowId, fileContent }) {
 
         yield call(run, { flowId, options });
         // Removes rawData field from the Data loader export, once the flow is run
+        // TODO @Raghu Remove this EMPTY_RAW_DATA and remove rawData prop once BE Fix is done
+        // As currently, we are not able to remove this prop once set. We assign EMPTY_RAW_DATA to handle that case
         const patchSet = [
           {
-            op: 'remove',
+            op: 'replace',
             path: '/rawData',
+            value: EMPTY_RAW_DATA,
           },
         ];
 
