@@ -64,6 +64,16 @@ const useStyles = makeStyles(theme => ({
       marginRight: '0px',
     },
   },
+  feedbackTextField: {
+    margin: theme.spacing(1, 0),
+    width: '100%',
+    '& > div': {
+      padding: 0,
+      '& > textarea': {
+        padding: 12,
+      },
+    },
+  },
 }));
 
 function HelpContent(props) {
@@ -105,15 +115,17 @@ function HelpContent(props) {
       {caption && <Typography variant="caption">{caption}</Typography>}
       {feedbackText ? (
         <Fragment>
+          {/* TODO:Azhar some styling required */}
           <TextField
             name="feedbackText"
-            label="Feedback"
+            placeholder="Please let us know how we can improve the text area."
             multiline
             onChange={onChange}
-            variant="filled"
+            variant="outlined"
+            className={classes.feedbackTextField}
           />
           <Button
-            variant="contained"
+            variant="outlined"
             color="primary"
             onClick={handleSendFeedbackText}>
             Submit
