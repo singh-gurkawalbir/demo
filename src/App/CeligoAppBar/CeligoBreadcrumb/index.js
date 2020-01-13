@@ -17,6 +17,7 @@ const useStyles = makeStyles(theme => ({
     '& li': {
       fontSize: 13,
       '& a': {
+        color: theme.palette.secondary.light,
         '&:hover': {
           textDecoration: 'none',
           color: theme.palette.primary.main,

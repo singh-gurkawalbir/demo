@@ -11,7 +11,6 @@ const useStyles = makeStyles(theme => ({
     border: 'solid 1px',
     borderColor: theme.palette.secondary.lightest,
     boxShadow: `-4px 4px 8px rgba(0,0,0,0.15)`,
-    backgroundColor: theme.palette.background.default,
     zIndex: theme.zIndex.drawer + 1,
   },
 }));

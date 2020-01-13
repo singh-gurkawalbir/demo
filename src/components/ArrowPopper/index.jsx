@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { makeStyles, fade } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import { ClickAwayListener, Popper, Paper } from '@material-ui/core';
 
@@ -29,7 +29,7 @@ const useStyles = makeStyles(theme => ({
   popper: {
     zIndex: theme.zIndex.modal + 1,
     border: '1px solid',
-    borderColor: fade(theme.palette.common.black, 0.1),
+    borderColor: theme.palette.secondary.lightest,
     borderRadius: '4px',
     '&[x-placement*="bottom"] $arrow': {
       top: 0,
@@ -45,7 +45,7 @@ const useStyles = makeStyles(theme => ({
       '&::after': {
         borderWidth: '0 1.3em 1.3em 1.3em',
         // eslint-disable-next-line prettier/prettier
-        borderColor: `transparent transparent rgb(0,0,0,0.2) transparent`,
+        borderColor: `transparent transparent ${theme.palette.secondary.lightest} transparent`,
         position: 'absolute',
         top: '-2px',
         left: '2px',

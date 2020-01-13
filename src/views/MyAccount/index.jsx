@@ -109,8 +109,8 @@ class MyAccount extends Component {
         <CeligoPageBar
           title={
             permissions.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER
-              ? 'My Account'
-              : 'My Profile'
+              ? 'My account'
+              : 'My profile'
           }
         />
         <Divider />
