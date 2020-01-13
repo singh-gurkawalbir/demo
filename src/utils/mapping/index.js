@@ -161,7 +161,7 @@ export default {
     appType,
     getRawMappings,
     isGroupedSampleData,
-    options
+    options = {}
   ) => {
     if (!resourceObj) {
       return;
