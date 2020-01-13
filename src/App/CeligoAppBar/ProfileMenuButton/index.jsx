@@ -50,6 +50,13 @@ export default function ProfileMenuButton() {
   const profile = useSelector(state => selectors.userProfile(state)) || {};
   const avatarUrl = useSelector(state => selectors.avatarUrl(state));
   const permissions = useSelector(state => selectors.userPermissions(state));
+  const accountOwnerEmail = useSelector(state => {
+    const owner = selectors.accountOwner(state);
+
+    if (owner) {
+      return owner.email;
+    }
+  });
   const dispatch = useDispatch();
   const open = !!anchorEl;
   const { name, email } = profile;
@@ -99,6 +106,17 @@ export default function ProfileMenuButton() {
             <Typography variant="body1">{name}</Typography>
             <Typography className={classes.email} variant="h3">
               {email}
+            </Typography>
+            <Typography className={classes.email}>
+              {accountOwnerEmail && (
+                <Fragment>
+                  Account owner
+                  {permissions.accessLevel &&
+                    permissions.accessLevel !==
+                      USER_ACCESS_LEVELS.ACCOUNT_OWNER &&
+                    `: ${accountOwnerEmail}`}
+                </Fragment>
+              )}
             </Typography>
           </Grid>
         </Grid>
