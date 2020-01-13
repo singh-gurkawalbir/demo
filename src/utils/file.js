@@ -37,6 +37,7 @@ export const isValidFileSize = file => file.size <= MAX_FILE_SIZE;
 
 // TODO: @Raghu Move these error messages to constants
 export const getUploadedFileStatus = (file, fileType) => {
+  // TODO: @Raghu Add MAX FILE SIZE for Data loader
   if (!isValidFileSize(file))
     return { success: false, error: 'File exceeds max file size' };
 
