@@ -31,7 +31,12 @@ const useStyle = makeStyles(theme => ({
 
 function TabComponent(props) {
   const { containers, fieldMap, children, ...rest } = props;
-  const { externalTabState, setExternalTabState, index } = rest;
+  const {
+    externalTabState,
+    setExternalTabState,
+    index,
+    orientation = 'vertical',
+  } = rest;
   const classes = useStyle();
   const [selectedTab, setSelectedTab] = useState(0);
   const selectedTabIndex =
@@ -40,13 +45,13 @@ function TabComponent(props) {
     selectedTab;
 
   return (
-    <div className={classes.root}>
+    <div className={orientation === 'vertical' ? classes.root : null}>
       <Tabs
         value={selectedTabIndex}
         classes={{ indicator: classes.MuiTabsIndicator }}
         className={classes.tabsContainer}
         variant="scrollable"
-        orientation="vertical"
+        orientation={orientation}
         indicatorColor="primary"
         textColor="primary"
         scrollButtons="auto"
@@ -131,7 +136,10 @@ export function TabComponentSimple(props) {
 
 export function TabComponentWithoutSave({ index, ...rest }) {
   return (
-    <TabComponent {...rest} index={index === undefined ? 0 : index + 1}>
+    <TabComponent
+      {...rest}
+      orientation="horizontal"
+      index={index === undefined ? 0 : index + 1}>
       <FormGenerator />
     </TabComponent>
   );
