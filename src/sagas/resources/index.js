@@ -470,16 +470,6 @@ export function* getResourceCollection({ resourceType }) {
       collection = [...collection, ...sharedStacks];
     }
 
-    if (resourceType === 'flows' && collection) {
-      const flows = [];
-
-      for (let i = 0; i < collection.length; i += 1) {
-        flows.push(yield call(normalizeFlow, collection[i]));
-      }
-
-      collection = flows;
-    }
-
     yield put(actions.resource.receivedCollection(resourceType, collection));
 
     return collection;

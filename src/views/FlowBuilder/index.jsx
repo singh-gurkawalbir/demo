@@ -236,7 +236,16 @@ function FlowBuilder() {
     state => selectors.flowDetails(state, flowId),
     shallowEqual
   );
-  const isDataLoaderFlow = flowDetails.isSimpleImport;
+  // There are 2 conditions to identify this flow as a Data loader.
+  // if it is an existing flow, then we can use the existence of a simple export,
+  // else for staged flows, we can test to see if the pending export
+  // has an application type matching data loader.
+  const isDataLoaderFlow =
+    flowDetails.isSimpleImport ||
+    (flow &&
+      flow.pageGenerators &&
+      flow.pageGenerators.length &&
+      flow.pageGenerators[0].application === 'dataLoader');
   const { pageProcessors = [], pageGenerators = [] } = flow;
   const createdGeneratorId = useSelector(state =>
     selectors.createdResourceId(state, newGeneratorId)
@@ -439,7 +448,7 @@ function FlowBuilder() {
   // console.log('render: <FlowBuilder>');
 
   return (
-    <LoadResources required resources="flows, imports, exports">
+    <LoadResources required resources="imports, exports, flows">
       <ResourceDrawer
         flowId={flowId}
         disabled={isViewMode}
