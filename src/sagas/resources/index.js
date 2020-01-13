@@ -468,11 +468,8 @@ export function* getResourceCollection({ resourceType }) {
     if (resourceType === 'flows' && collection) {
       const flows = [];
 
-      console.log(collection);
-
       for (let i = 0; i < collection.length; i += 1) {
         flows.push(yield call(normalizeFlow, collection[i]));
-        console.log(flows);
       }
 
       collection = flows;
