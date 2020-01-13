@@ -25,7 +25,6 @@ const useStyles = makeStyles(theme => ({
     overflowX: 'hidden',
     overflowY: props => (props.match.isExact ? 'auto' : 'hidden'),
     boxShadow: `-5px 0 8px rgba(0,0,0,0.2)`,
-    backgroundColor: theme.palette.background.default,
   },
   form: {
     height: `calc(100vh - 136px)`,
@@ -35,7 +34,7 @@ const useStyles = makeStyles(theme => ({
       return props.match.isExact ? undefined : 660;
     },
     maxHeight: 'unset',
-    padding: '14px 24px',
+    padding: theme.spacing(3),
   },
   title: {
     display: 'flex',
