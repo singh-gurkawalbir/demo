@@ -22,16 +22,13 @@ export function* run({ flowId, customStartDate }) {
   if (!flow) return true;
 
   // Handle Data loader flows...
-  if (flow && flow.pageGenerators && flow.pageGenerators.length) {
+  if (flow.pageGenerators && flow.pageGenerators.length) {
     const exportId = flow.pageGenerators[0]._exportId;
     const exp = yield select(selectors.resource, 'exports', exportId);
 
     if (exp && exp.type === 'simple') {
       if (!exp.rawData) {
-        console.log(
-          'We have a data loader flow, but no runKey. Prompt user to upload a file.'
-        );
-
+        // no data in export to load... cant run DL flow.
         return true;
       }
 

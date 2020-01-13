@@ -47,11 +47,9 @@ export default function RunFlowButton({
     const exportId = flowDetails.pageGenerators[0]._exportId;
     const exp = selectors.resource(state, 'exports', exportId);
 
-    return exp && !!exp.rawData && false;
+    return exp && !!exp.rawData;
   });
-
-  console.log('DL export has run key:', hasRunKey);
-
+  // console.log('Does DL export have run key?', hasRunKey);
   const isMonitorLevelAccess = useSelector(state =>
     selectors.isFormAMonitorLevelAccess(state, flowDetails.integrationId)
   );
@@ -87,8 +85,12 @@ export default function RunFlowButton({
     isDataLoaderFlow,
   ]);
   const handleFileChange = useCallback(e => {
-    console.log('user selected a file');
-    console.log(e.target.files[0]);
+    // eslint-disable-next-line
+    console.log('user selected a file', e.target.files[0]);
+
+    // TODO: Raghu: We need to save this file, get a runKey and set the
+    // export.rawData value to equal the runKey value. What is the best way
+    // to do this?
   }, []);
   const handleCloseDeltaDialog = useCallback(() => {
     setShowDeltaStartDateDialog(false);

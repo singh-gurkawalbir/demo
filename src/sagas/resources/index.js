@@ -61,18 +61,20 @@ export function* commitStagedChanges({ resourceType, id, scope }) {
   // in favor of the old _exportId and _importId fields.  The Data loader (export type = simple) flows
   // only support the older interface, so we need to convert back before we make the PUT/POST API call.
   // this complete code block can be removed once the BE DL code uses the new flow interface fields.
-  const resourceIsDataLoaderFlow = yield call(isDataLoaderFlow, merged);
+  if (resourceType === 'flows') {
+    const resourceIsDataLoaderFlow = yield call(isDataLoaderFlow, merged);
 
-  if (resourceIsDataLoaderFlow) {
-    merged._exportId = merged.pageGenerators[0]._exportId;
-    delete merged.pageGenerators;
+    if (resourceIsDataLoaderFlow) {
+      merged._exportId = merged.pageGenerators[0]._exportId;
+      delete merged.pageGenerators;
 
-    if (merged.pageProcessors && merged.pageProcessors.length > 0) {
-      const importId = merged.pageProcessors[0]._importId;
+      if (merged.pageProcessors && merged.pageProcessors.length > 0) {
+        const importId = merged.pageProcessors[0]._importId;
 
-      if (importId) {
-        merged._importId = importId;
-        delete merged.pageProcessors;
+        if (importId) {
+          merged._importId = importId;
+          delete merged.pageProcessors;
+        }
       }
     }
   }
@@ -463,11 +465,14 @@ export function* getResourceCollection({ resourceType }) {
       collection = [...collection, ...sharedStacks];
     }
 
-    if (resourceType === 'flows') {
+    if (resourceType === 'flows' && collection) {
       const flows = [];
+
+      console.log(collection);
 
       for (let i = 0; i < collection.length; i += 1) {
         flows.push(yield call(normalizeFlow, collection[i]));
+        console.log(flows);
       }
 
       collection = flows;
