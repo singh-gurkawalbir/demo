@@ -375,12 +375,14 @@ export function* normalizeFlow(flow) {
 
   const newFlow = flow;
 
-  newFlow.pageProcessors = [{ _importId: flow._importId, type: 'import' }];
-  delete newFlow._exportId;
-
   if (newFlow._importId) {
-    newFlow.pageGenerators = [{ _exportId: flow._exportId }];
+    newFlow.pageProcessors = [{ _importId: flow._importId, type: 'import' }];
     delete newFlow._importId;
+  }
+
+  if (newFlow._exportId) {
+    newFlow.pageGenerators = [{ _exportId: flow._exportId }];
+    delete newFlow._exportId;
   }
 
   return newFlow;
