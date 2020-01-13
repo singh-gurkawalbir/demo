@@ -1,7 +1,7 @@
 import { isNewId } from '../../../../utils/resource';
 
 export default {
-  // Todo why helpKey is it named csv file id like to change it to
+  // TODO: why helpKey is it named csv file id like to change it to
   // something meaningful
   uploadFile: {
     type: 'uploadfile',
@@ -287,6 +287,9 @@ export default {
   'file.xlsx.keyColumns': {
     type: 'filekeycolumn',
     label: 'Key Columns',
+    hasHeaderRow: r =>
+      !!(r && r.file && r.file.xlsx && r.file.xlsx.hasHeaderRow),
+    refreshOptionsOnChangesTo: ['file.xlsx.hasHeaderRow'],
     sampleData: r => r && r.sampleData,
     visibleWhenAll: [
       {

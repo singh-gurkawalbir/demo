@@ -2,9 +2,15 @@ import { isNewId } from '../../../../utils/resource';
 
 export default {
   'salesforce.api': {
-    type: 'radiogroup',
+    type: 'radiogroupforresetfields',
     label: 'API Type',
     required: true,
+    fieldsToReset: [
+      { id: 'salesforce.operation', type: 'radiogroupforresetfields' },
+      { id: 'salesforce.compositeOperation', type: 'radiogroupforresetfields' },
+      { id: 'ignoreExisting', type: 'checkbox' },
+      { id: 'ignoreMissing', type: 'checkbox' },
+    ],
     visibleWhen: [
       {
         field: 'inputMode',
@@ -427,9 +433,13 @@ export default {
     ],
   },
   'salesforce.operation': {
-    type: 'radiogroup',
+    type: 'radiogroupforresetfields',
     label: 'Operation',
     required: true,
+    fieldsToReset: [
+      { id: 'ignoreExisting', type: 'checkbox' },
+      { id: 'ignoreMissing', type: 'checkbox' },
+    ],
     options: [
       {
         items: [
@@ -450,10 +460,22 @@ export default {
         is: ['records'],
       },
     ],
+    defaultValue: r => {
+      if (r && r.salesforce && r.salesforce.api !== 'compositerecord') {
+        return r.salesforce.operation;
+      }
+
+      return '';
+    },
   },
   'salesforce.compositeOperation': {
-    type: 'radiogroup',
+    type: 'radiogroupforresetfields',
     label: 'Operation',
+    required: true,
+    fieldsToReset: [
+      { id: 'ignoreExisting', type: 'checkbox' },
+      { id: 'ignoreMissing', type: 'checkbox' },
+    ],
     options: [
       {
         items: [
@@ -473,7 +495,13 @@ export default {
         is: ['records'],
       },
     ],
-    defaultValue: r => r && r.salesforce && r.salesforce.operation,
+    defaultValue: r => {
+      if (r && r.salesforce && r.salesforce.api === 'compositerecord') {
+        return r.salesforce.operation;
+      }
+
+      return '';
+    },
   },
   'salesforce.idLookup.whereClause': {
     type: 'salesforcelookup',

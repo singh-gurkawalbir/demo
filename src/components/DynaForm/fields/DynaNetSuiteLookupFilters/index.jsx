@@ -2,10 +2,11 @@ import { useEffect, useCallback, Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { isString } from 'lodash';
 import { makeStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
+import { Typography, Button } from '@material-ui/core';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import FilterPanel from './FilterPanel';
+import Spinner from '../../../Spinner';
 
 /**
  * TODO: Azhar to check and update the button styles
@@ -18,6 +19,14 @@ const useStyles = makeStyles(theme => ({
   refreshFiltersButton: {
     minWidth: 0,
     padding: 0,
+  },
+  loading: {
+    flexDirection: `row !important`,
+    alignItems: 'center',
+    padding: theme.spacing(1, 0),
+  },
+  heading: {
+    paddingRight: theme.spacing(1),
   },
 }));
 
@@ -94,7 +103,14 @@ export default function DynaNetSuiteLookupFilters(props) {
   }, [commMetaPath, connectionId, disableFetch, dispatch]);
 
   if (!filters) {
-    return null;
+    return (
+      <div className={classes.loading}>
+        <Typography className={classes.heading}>
+          Loading Search Filters.
+        </Typography>
+        <Spinner size={24} color="primary" />
+      </div>
+    );
   }
 
   return (

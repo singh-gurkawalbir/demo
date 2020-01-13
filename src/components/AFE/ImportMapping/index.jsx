@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import Typography from '@material-ui/core/Typography';
+import { Typography, Tooltip, Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import actions from '../../../actions';
@@ -16,18 +16,36 @@ import { adaptorTypeMap } from '../../../utils/resource';
 import RefreshIcon from '../../icons/RefreshIcon';
 import Spinner from '../../Spinner';
 import LockIcon from '../../icons/LockIcon';
+import MappingConnectorIcon from '../../icons/MappingConnectorIcon';
+import ButtonGroup from '../../ButtonGroup';
+import MappingSaveButton from '../../ResourceFormFactory/Actions/MappingSaveButton';
+import SalesforceMappingAssistant from '../../SalesforceMappingAssistant';
+import NetSuiteMappingAssistant from '../../NetSuiteMappingAssistant';
 
 // TODO Azhar style header
 const useStyles = makeStyles(theme => ({
   root: {
     overflowY: 'off',
+    height: '100%',
+    display: 'flex',
+    width: '100%',
+  },
+  mappingContainer: {
+    // overflow: 'auto',
+    height: `calc(100vh - 180px)`,
+    padding: theme.spacing(1),
+    paddingBottom: theme.spacing(3),
+    marginBottom: theme.spacing(1),
+    flex: 1,
+  },
+  assistantContainer: {
+    flex: 1,
   },
   header: {
-    display: 'grid',
+    display: 'flex',
     width: '100%',
-    gridTemplateColumns: '45% 45% 50px 50px',
-    gridColumnGap: '1%',
     marginBottom: theme.spacing(2),
+    alignItems: 'center',
   },
   rowContainer: {
     display: 'block',
@@ -39,32 +57,38 @@ const useStyles = makeStyles(theme => ({
     },
   },
   childHeader: {
+    width: '46%',
     '& > div': {
       width: '100%',
     },
   },
   innerRow: {
-    display: 'grid',
+    display: 'flex',
     width: '100%',
-    gridTemplateColumns: '45% 45% 50px 50px',
     marginBottom: theme.spacing(1),
-    gridColumnGap: '1%',
+    alignItems: 'center',
   },
-  childRow: {
+  mappingsBody: {
+    height: `calc(100% - 32px)`,
+    overflow: 'auto',
+  },
+  mapField: {
     display: 'flex',
     position: 'relative',
+    width: '40%',
   },
   disableChildRow: {
     cursor: 'not-allowed',
     // TODO: (Aditya) Temp fix. To be removed on changing Import Mapping as Dyna Form
     '& > div > div > div': {
-      background: theme.palette.secondary.lightest,
+      background: theme.palette.background.paper2,
     },
   },
   lockIcon: {
     position: 'absolute',
     right: 10,
     top: 10,
+    color: theme.palette.text.hint,
   },
   refreshButton: {
     marginLeft: theme.spacing(1),
@@ -74,6 +98,14 @@ const useStyles = makeStyles(theme => ({
     marginLeft: 5,
     width: 50,
     height: 50,
+  },
+  deleteBtn: {
+    border: 'none',
+    width: 0,
+  },
+  mappingIcon: {
+    color: theme.palette.secondary.lightest,
+    fontSize: theme.spacing(6),
   },
 }));
 
@@ -90,8 +122,10 @@ export default function ImportMapping(props) {
     isExtractsLoading,
     isGeneratesLoading,
     isGenerateRefreshSupported,
+    onClose,
     options = {},
   } = props;
+  const { sObjectType, connectionId, recordType } = options;
   const classes = useStyles();
   const dispatch = useDispatch();
   const {
@@ -99,9 +133,15 @@ export default function ImportMapping(props) {
     refreshGenerateFields,
     refreshExtractFields,
   } = optionalHanlder;
-  const { mappings, lookups, initChangeIdentifier } = useSelector(state =>
-    selectors.mapping(state, editorId)
-  );
+  const {
+    mappings,
+    lookups,
+    initChangeIdentifier,
+    previewData,
+    lastModifiedRow,
+    salesforceMasterRecordTypeId,
+    showSalesforceNetsuiteAssistant,
+  } = useSelector(state => selectors.mapping(state, editorId));
   const mappingsCopy = mappings ? [...mappings] : [];
 
   mappingsCopy.push({});
@@ -182,6 +222,38 @@ export default function ImportMapping(props) {
     handleFieldUpdate(mapping.index, { target: { value: val } }, 'generate');
   };
 
+  const handleSalesforceAssistantFieldClick = useCallback(meta => {
+    if (lastModifiedRow > -1)
+      dispatch(
+        actions.mapping.patchField(
+          editorId,
+          'generate',
+          lastModifiedRow,
+          meta.id
+        )
+      );
+  });
+  const handleNetSuiteAssistantFieldClick = useCallback(meta => {
+    if (lastModifiedRow > -1)
+      dispatch(
+        actions.mapping.patchField(
+          editorId,
+          'generate',
+          lastModifiedRow,
+          meta.sublistName ? `${meta.sublistName}[*].${meta.id}` : meta.id
+        )
+      );
+  });
+  const handleClose = () => {
+    if (onClose) {
+      onClose();
+    }
+  };
+
+  const handlePreviewClick = () => {
+    dispatch(actions.mapping.requestPreview(editorId));
+  };
+
   function RefreshButton(props) {
     return (
       <IconTextButton
@@ -195,10 +267,10 @@ export default function ImportMapping(props) {
   }
 
   return (
-    <div
-      className={classes.root}
-      key={`mapping-${editorId}-${initChangeIdentifier}`}>
-      <div>
+    <div className={classes.root}>
+      <div
+        className={classes.mappingContainer}
+        key={`mapping-${editorId}-${initChangeIdentifier}`}>
         <div className={classes.header}>
           <Typography variant="h5" className={classes.childHeader}>
             Source Record Field
@@ -232,12 +304,12 @@ export default function ImportMapping(props) {
             )}
           </Typography>
         </div>
-        <div>
+        <div className={classes.mappingsBody}>
           {tableData.map(mapping => (
             <div className={classes.rowContainer} key={mapping.index}>
               <div className={classes.innerRow}>
                 <div
-                  className={clsx(classes.childHeader, classes.childRow, {
+                  className={clsx(classes.childHeader, classes.mapField, {
                     [classes.disableChildRow]:
                       mapping.isNotEditable || disabled,
                   })}>
@@ -264,8 +336,9 @@ export default function ImportMapping(props) {
                     </span>
                   )}
                 </div>
+                <MappingConnectorIcon className={classes.mappingIcon} />
                 <div
-                  className={clsx(classes.childHeader, classes.childRow, {
+                  className={clsx(classes.childHeader, classes.mapField, {
                     [classes.disableChildRow]: mapping.isRequired || disabled,
                   })}>
                   <DynaTypeableSelect
@@ -279,9 +352,13 @@ export default function ImportMapping(props) {
                     onBlur={handleGenerateUpdate(mapping)}
                   />
                   {mapping.isRequired && (
-                    <span className={classes.lockIcon}>
-                      <LockIcon />
-                    </span>
+                    <Tooltip
+                      title="This field is required by the application you are importing to"
+                      placement="top">
+                      <span className={classes.lockIcon}>
+                        <LockIcon />
+                      </span>
+                    </Tooltip>
                   )}
                 </div>
                 <div>
@@ -315,7 +392,7 @@ export default function ImportMapping(props) {
                     onClick={() => {
                       handleDelete(mapping.index);
                     }}
-                    className={classes.margin}>
+                    className={classes.deleteBtn}>
                     <TrashIcon />
                   </ActionButton>
                 </div>
@@ -323,7 +400,67 @@ export default function ImportMapping(props) {
             </div>
           ))}
         </div>
+        <ButtonGroup>
+          {showSalesforceNetsuiteAssistant && (
+            <Button
+              variant="text"
+              data-test="preview"
+              onClick={handlePreviewClick}>
+              Preview
+            </Button>
+          )}
+          <MappingSaveButton
+            id={editorId}
+            color="primary"
+            dataTest="saveImportMapping"
+            submitButtonLabel="Save"
+          />
+          <MappingSaveButton
+            id={editorId}
+            variant="outlined"
+            color="secondary"
+            dataTest="saveAndCloseImportMapping"
+            onClose={handleClose}
+            submitButtonLabel="Save & Close"
+          />
+          <Button
+            variant="text"
+            data-test="saveImportMapping"
+            onClick={handleClose}>
+            Cancel
+          </Button>
+        </ButtonGroup>
       </div>
+      {showSalesforceNetsuiteAssistant && (
+        <div className={classes.assistantContainer}>
+          {sObjectType && (
+            <SalesforceMappingAssistant
+              style={{
+                width: '100%',
+                height: '100%',
+              }}
+              connectionId={connectionId}
+              sObjectType={sObjectType}
+              sObjectLabel={sObjectType}
+              layoutId={salesforceMasterRecordTypeId}
+              onFieldClick={handleSalesforceAssistantFieldClick}
+              data={previewData && previewData.data}
+            />
+          )}
+          {recordType && (
+            <NetSuiteMappingAssistant
+              style={{
+                width: '100%',
+                height: '100%',
+              }}
+              netSuiteConnectionId={connectionId}
+              netSuiteRecordType={recordType}
+              onFieldClick={handleNetSuiteAssistantFieldClick}
+              data={previewData && previewData.data}
+            />
+          )}
+        </div>
+      )}
     </div>
   );
 }

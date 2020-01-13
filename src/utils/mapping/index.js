@@ -161,7 +161,7 @@ export default {
     appType,
     getRawMappings,
     isGroupedSampleData,
-    options
+    options = {}
   ) => {
     if (!resourceObj) {
       return;
@@ -189,6 +189,10 @@ export default {
       case adaptorTypeMap.MongodbImport:
       case adaptorTypeMap.RDBMSImport:
       default:
+    }
+
+    if (options.isCategoryMapping) {
+      ({ mappings } = options);
     }
 
     // creating deep copy of mapping object to avoid alteration to resource mapping object
@@ -380,33 +384,29 @@ export default {
         mapping.generate = generateParts.pop();
         generateListPath = generateParts.join('.');
 
-        list = lists.find(l => l.generate === generateListPath);
+        list = {
+          generate: generateListPath,
+          fields: [],
+        };
 
-        if (!list) {
-          list = {
-            generate: generateListPath,
-            fields: [],
-          };
-
-          if (
-            useFirstRowSupported &&
-            isGroupedSampleData &&
-            !mapping.useFirstRow &&
-            mapping.extract &&
-            mapping.extract.indexOf('[*].') === -1 &&
-            !handlebarRegex.test(mapping.extract)
-          ) {
-            mapping.extract = `*.${mapping.extract}`;
-          }
-
-          delete mapping.useFirstRow;
-
-          lists.push(list);
-
-          // if (existingListsData[generateListPath]) {
-          //   list.jsonPath = existingListsData[generateListPath].jsonPath;
-          // }
+        if (
+          useFirstRowSupported &&
+          isGroupedSampleData &&
+          !mapping.useFirstRow &&
+          mapping.extract &&
+          mapping.extract.indexOf('[*].') === -1 &&
+          !handlebarRegex.test(mapping.extract)
+        ) {
+          mapping.extract = `*.${mapping.extract}`;
         }
+
+        delete mapping.useFirstRow;
+
+        lists.push(list);
+
+        // if (existingListsData[generateListPath]) {
+        //   list.jsonPath = existingListsData[generateListPath].jsonPath;
+        // }
       } else if (isCsvOrXlsxResource(resource) && isGroupedSampleData) {
         if (
           !mapping.useFirstRow &&
@@ -576,7 +576,7 @@ export default {
     return mappings;
   },
 
-  validateMappings: mappings => {
+  validateMappings: (mappings, lookups) => {
     const duplicateMappings = mappings
       .map(e => e.generate)
       .map((e, i, final) => final.indexOf(e) !== i && i)
@@ -592,18 +592,33 @@ export default {
       };
     }
 
-    const mappingsWithoutExtract = mappings
-      .filter(mapping => {
-        if (!('hardCodedValue' in mapping || mapping.extract)) return true;
+    const mappingsWithoutExtract = mappings.filter(mapping => {
+      if (!('hardCodedValue' in mapping || mapping.extract)) return true;
 
-        return false;
-      })
-      .map(mapping => mapping.generate);
+      return false;
+    });
+    const missingGenerates = [];
 
-    if (mappingsWithoutExtract.length) {
+    mappingsWithoutExtract.forEach(mapping => {
+      if (mapping.lookupName) {
+        const lookup = lookups.find(l => l.name === mapping.lookupName);
+
+        // check if mapping has dynamic lookup
+        if (!lookup || lookup.map) {
+          missingGenerates.push(mapping);
+        }
+      } else {
+        missingGenerates.push(mapping);
+      }
+    });
+    const missingGeneratesNames = missingGenerates.map(
+      mapping => mapping.generate
+    );
+
+    if (missingGeneratesNames.length) {
       return {
         isSuccess: false,
-        errMessage: `Extract Fields missing for field(s): ${mappingsWithoutExtract.join(
+        errMessage: `Extract Fields missing for field(s): ${missingGeneratesNames.join(
           ','
         )}`,
       };

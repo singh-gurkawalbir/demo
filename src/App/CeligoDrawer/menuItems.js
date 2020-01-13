@@ -7,7 +7,7 @@ import ExportsIcon from '../../components/icons/ExportsIcon';
 import FlowBuilderIcon from '../../components/icons/FlowBuilderIcon';
 import DataLoaderIcon from '../../components/icons/DataLoaderIcon';
 // import AppBuilderIcon from '../../components/icons/AppBuilderIcon';
-import PermissionExplorerIcon from '../../components/icons/PermissionExplorerIcon';
+// import PermissionExplorerIcon from '../../components/icons/PermissionExplorerIcon';
 import EditorsPlaygroundIcon from '../../components/icons/EditorsPlaygroundIcon';
 import ConnectionsIcon from '../../components/icons/ConnectionsIcon';
 import AgentsIcon from '../../components/icons/AgentsIcon';
@@ -19,7 +19,9 @@ import TicketTagIcon from '../../components/icons/TicketTagIcon';
 import RecycleBinIcon from '../../components/icons/RecycleBinIcon';
 import TokensApiIcon from '../../components/icons/TokensApiIcon';
 
-export default function menuItems(userProfile, userPermissions) {
+export default function menuItems(userProfile, userPermissions = {}) {
+  const isDeveloper = userProfile && userProfile.developer;
+  const canPublish = userProfile && userProfile.allowedToPublish;
   let items = [
     {
       label: 'Home',
@@ -27,21 +29,21 @@ export default function menuItems(userProfile, userPermissions) {
       Icon: HomeIcon,
     },
     {
-      label: 'Flow builder',
-      path: '/integrations/none/flowBuilder/new',
-      Icon: FlowBuilderIcon,
+      label: 'Tools',
+      Icon: ToolsIcon,
+      children: [
+        {
+          label: 'Flow builder',
+          path: '/integrations/none/flowBuilder/new',
+          Icon: FlowBuilderIcon,
+        },
+        {
+          label: 'Data loader',
+          path: '/integrations/none/flowBuilder/dataLoader',
+          Icon: DataLoaderIcon,
+        },
+      ],
     },
-    // Hiding Tools menu since only flow builder was present.
-    // once we have multiple items under tools, we can restore
-    // this parent menu node.
-    // {
-    //   label: 'Tools',
-    //   Icon: ToolsIcon,
-    //   children: [
-    //     // hiding the data loader menu item until we build it.
-    //     // { label: 'Data loader', path: '/dataLoader', Icon: DataLoaderIcon },
-    //   ],
-    // },
     {
       label: 'Resources',
       Icon: ResourcesIcon,
@@ -53,7 +55,11 @@ export default function menuItems(userProfile, userPermissions) {
         { label: 'Agents', path: '/agents', Icon: AgentsIcon },
         { label: 'Stacks', path: '/stacks', Icon: StacksIcon },
         { label: 'Templates', path: '/templates', Icon: DataLoaderIcon },
-        { label: 'Connectors', path: '/connectors', Icon: ConnectionsIcon },
+        {
+          label: 'Integration App',
+          path: '/connectors',
+          Icon: ConnectionsIcon,
+        },
         { label: 'API Tokens', path: '/accesstokens', Icon: TokensApiIcon },
         { label: 'Recycle bin', path: '/recycleBin', Icon: RecycleBinIcon },
       ],
@@ -87,37 +93,36 @@ export default function menuItems(userProfile, userPermissions) {
           path: '/editors',
           Icon: EditorsPlaygroundIcon,
         },
-        {
-          label: 'Permission explorer',
-          path: '/permissions',
-          Icon: PermissionExplorerIcon,
-        },
+        // {
+        //   label: 'Permission explorer',
+        //   path: '/permissions',
+        //   Icon: PermissionExplorerIcon,
+        // },
       ],
     },
   ];
 
   if (
-    userPermissions &&
-    (userPermissions.accessLevel === 'monitor' ||
-      userPermissions.accessLevel === 'tile')
+    userPermissions.accessLevel === 'monitor' ||
+    userPermissions.accessLevel === 'tile'
   ) {
     items = items.filter(i => i.label !== 'Resources');
   } else {
     const resourceItems = items.find(i => i.label === 'Resources');
 
-    if (userProfile && !userProfile.developer) {
+    if (!isDeveloper) {
       resourceItems.children = resourceItems.children.filter(
         i => !(i.label === 'Scripts' || i.label === 'Stacks')
       );
     }
 
-    if (userProfile && !userProfile.allowedToPublish) {
+    if (!canPublish) {
       resourceItems.children = resourceItems.children.filter(
-        i => !(i.label === 'Templates' || i.label === 'Connectors')
+        i => !(i.label === 'Templates' || i.label === 'Integration App')
       );
     }
 
-    if (userPermissions && userPermissions.accessLevel !== 'owner') {
+    if (userPermissions.accessLevel !== 'owner') {
       resourceItems.children = resourceItems.children.filter(
         i => i.label !== 'API Tokens'
       );

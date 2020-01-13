@@ -17,6 +17,7 @@ import openExternalUrl from '../../utils/window';
 import ArrowRightIcon from '../../components/icons/ArrowRightIcon';
 import InstallationStep from '../../components/InstallStep';
 import getRoutePath from '../../utils/routePaths';
+import { getIntegrationAppUrlName } from '../../utils/integrationApps';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -52,6 +53,7 @@ export default function IntegrationAppUninstaller({ match }) {
     useSelector(state =>
       selectors.integrationAppSettings(state, integrationId)
     ) || {};
+  const integrationAppName = getIntegrationAppUrlName(integration.name);
   const isUninstallComplete = useSelector(state =>
     selectors.isUninstallComplete(state, { integrationId, storeId })
   );
@@ -85,7 +87,9 @@ export default function IntegrationAppUninstaller({ match }) {
       // redirect to integration Settings
       if (integration.mode !== 'uninstall') {
         dispatch(actions.integrationApp.uninstaller.clearSteps(integrationId));
-        history.push(`/pg/integrationApp/${integrationId}/flows`);
+        history.push(
+          `/pg/integrationapps/${integrationAppName}/${integrationId}/flows`
+        );
       } else {
         dispatch(
           actions.integrationApp.uninstaller.uninstallIntegration(integrationId)
@@ -93,7 +97,14 @@ export default function IntegrationAppUninstaller({ match }) {
         history.push(getRoutePath('dashboard'));
       }
     }
-  }, [dispatch, history, integration.mode, integrationId, isUninstallComplete]);
+  }, [
+    dispatch,
+    history,
+    integration.mode,
+    integrationAppName,
+    integrationId,
+    isUninstallComplete,
+  ]);
 
   if (!integration || !integration._id) {
     return <LoadResources required resources="integrations" />;
@@ -165,45 +176,41 @@ export default function IntegrationAppUninstaller({ match }) {
   };
 
   return (
-    <LoadResources required resources="connections,integrations">
-      <div className={classes.root}>
-        <div className={classes.innerContent}>
-          <Grid container className={classes.formHead}>
-            <Grid item xs={1}>
-              <IconButton
-                data-test="back"
-                onClick={handleBackClick}
-                size="medium">
-                <ArrowBackIcon fontSize="inherit" />
-              </IconButton>
-            </Grid>
-            <Grid item>
-              <Paper elevation={0} className={classes.paper}>
-                <Breadcrumbs
-                  separator={<ArrowRightIcon />}
-                  aria-label="breadcrumb">
-                  <Typography color="textPrimary">Setup</Typography>
-                  <Typography color="textPrimary">
-                    {integration.name}
-                  </Typography>
-                  <Typography color="textPrimary">{storeName}</Typography>
-                </Breadcrumbs>
-              </Paper>
-            </Grid>
+    <div className={classes.root}>
+      <div className={classes.innerContent}>
+        <Grid container className={classes.formHead}>
+          <Grid item xs={1}>
+            <IconButton
+              data-test="back"
+              onClick={handleBackClick}
+              size="medium">
+              <ArrowBackIcon fontSize="inherit" />
+            </IconButton>
           </Grid>
-          <Grid container spacing={3} className={classes.stepTable}>
-            {(uninstallSteps || []).map((step, index) => (
-              <InstallationStep
-                key={step.name}
-                mode="uninstall"
-                handleStepClick={handleStepClick}
-                index={index + 1}
-                step={step}
-              />
-            ))}
+          <Grid item>
+            <Paper elevation={0} className={classes.paper}>
+              <Breadcrumbs
+                separator={<ArrowRightIcon />}
+                aria-label="breadcrumb">
+                <Typography color="textPrimary">Setup</Typography>
+                <Typography color="textPrimary">{integration.name}</Typography>
+                <Typography color="textPrimary">{storeName}</Typography>
+              </Breadcrumbs>
+            </Paper>
           </Grid>
-        </div>
+        </Grid>
+        <Grid container spacing={3} className={classes.stepTable}>
+          {(uninstallSteps || []).map((step, index) => (
+            <InstallationStep
+              key={step.name}
+              mode="uninstall"
+              handleStepClick={handleStepClick}
+              index={index + 1}
+              step={step}
+            />
+          ))}
+        </Grid>
       </div>
-    </LoadResources>
+    </div>
   );
 }

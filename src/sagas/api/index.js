@@ -38,7 +38,9 @@ export function normalizeUrlAndOptions(path, opts) {
   } else {
     if (
       path.includes('/netSuiteWS') ||
-      /^\/connections.*distributed$/.test(path)
+      path.includes('/netsuiteDA') ||
+      /^\/connections.*distributed$/.test(path) ||
+      path.includes('/mappingPreview')
     ) {
       url = path;
     } else {

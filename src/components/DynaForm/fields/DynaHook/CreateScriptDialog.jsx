@@ -5,14 +5,14 @@ import { getCreateScriptMetadata } from './utils';
 import ModalDialog from '../../../ModalDialog';
 
 export default function CreateScriptDialog({ onClose, scriptId }) {
-  const metadata = getCreateScriptMetadata(scriptId);
+  const { optionsHandler, ...rest } = getCreateScriptMetadata(scriptId);
   const handleSubmit = values => onClose(true, values);
 
   return (
     <ModalDialog show onClose={onClose}>
       <div>Create Script</div>
       <div>
-        <DynaForm fieldMeta={metadata}>
+        <DynaForm fieldMeta={rest} optionsHandler={optionsHandler}>
           <DynaSubmit data-test="saveScript" onClick={handleSubmit}>
             Save
           </DynaSubmit>

@@ -15,6 +15,7 @@ const CalendarIcon = require('../../src/components/icons/CalendarIcon').default;
 const CancelIcon = require('../../src/components/icons/CancelIcon').default;
 const CheckboxUnselectedIcon = require('../../src/components/icons/CheckboxUnselectedIcon').default;
 const CheckboxSelectedIcon = require('../../src/components/icons/CheckboxSelectedIcon').default;
+const ConditionalIcon = require('../../src/components/icons/ConditionalIcon').default;
 const CloseIcon = require('../../src/components/icons/CloseIcon').default;
 const CopyIcon = require('../../src/components/icons/CopyIcon').default;
 const ConnectorIcon = require('../../src/components/icons/ConnectorIcon').default;
@@ -66,10 +67,12 @@ const MappingConnectorIcon = require('../../src/components/icons/MappingConnecto
 const MarketplaceIcon = require('../../src/components/icons/MarketplaceIcon').default;
 const NotificationsIcon = require('../../src/components/icons/NotificationsIcon').default;
 const OutputFilterIcon = require('../../src/components/icons/OutputFilterIcon').default;
+const OptionalIcon = require('../../src/components/icons/OptionalIcon').default;
 const PublishIcon = require('../../src/components/icons/PublishIcon').default;
 const PublishedIcon = require('../../src/components/icons/PublishedIcon').default;
 const PermissionsManageIcon = require('../../src/components/icons/PermissionsManageIcon').default;
 const PurgeIcon = require('../../src/components/icons/PurgeIcon').default;
+const PreferredIcon = require('../../src/components/icons/PreferredIcon').default;
 const PermissionsMonitorIcon = require('../../src/components/icons/PermissionsMonitorIcon').default;
 const PermissionExplorerIcon = require('../../src/components/icons/PermissionExplorerIcon').default;
 const RadioBtnSelectedIcon = require('../../src/components/icons/RadioBtnSelectedIcon').default;
@@ -79,6 +82,9 @@ const RegenerateTokenIcon = require('../../src/components/icons/RegenerateTokenI
 const RegisterConnectionIcon = require('../../src/components/icons/RegisterConnectionIcon').default;
 const RefreshIcon = require('../../src/components/icons/RefreshIcon').default;
 const RestoreIcon = require('../../src/components/icons/RestoreIcon').default;
+const RevokeTokenIcon = require('../../src/components/icons/RevokeTokenIcon').default;
+const ReactivateTokenIcon = require('../../src/components/icons/ReactivateTokenIcon').default;
+const RequiredIcon = require('../../src/components/icons/RequiredIcon').default;
 const RunIcon = require('../../src/components/icons/RunIcon').default;
 const RecycleBinIcon = require('../../src/components/icons/RecycleBinIcon').default;
 const StacksIcon = require('../../src/components/icons/StacksIcon').default;
@@ -180,8 +186,12 @@ const icon = {
       <p>CheckboxUnselected</p>
     </div>
     <div style={wrapper}>
-      <  CheckboxSelectedIcon style={icon} />
+      <CheckboxSelectedIcon style={icon} />
       <p>CheckboxSelected</p>
+    </div>
+    <div style={wrapper}>
+      <ConditionalIcon style={icon} />
+      <p>Conditional</p>
     </div>
     <div style={wrapper}>
       <CloseIcon style={icon}/>
@@ -385,6 +395,10 @@ const icon = {
       <p>OutputFilter</p>
     </div>
     <div style={wrapper}>
+      <OptionalIcon style={icon} />
+      <p>Optional</p>
+    </div>
+    <div style={wrapper}>
       <PublishIcon style={icon} />
       <p>Publish</p>
     </div>
@@ -398,6 +412,10 @@ const icon = {
     </div>
     <div style={wrapper}>
       <PurgeIcon style={icon} />
+      <p>Purge</p>
+    </div>
+    <div style={wrapper}>
+      <PreferredIcon style={icon} />
       <p>Purge</p>
     </div>
      <div style={wrapper}>
@@ -427,6 +445,18 @@ const icon = {
     <div style={wrapper}>
       <RestoreIcon style={icon} />
       <p>Restore</p>
+    </div>
+    <div style={wrapper}>
+      <RevokeTokenIcon style={icon} />
+      <p>RevokeToken</p>
+    </div>
+    <div style={wrapper}>
+      <ReactivateTokenIcon style={icon} />
+      <p>ReactivateToken</p>
+    </div>
+    <div style={wrapper}>
+      <RequiredIcon style={icon} />
+      <p> RequiredIcon</p>
     </div>
     <div style={wrapper}>
       <RefreshIcon style={icon} />

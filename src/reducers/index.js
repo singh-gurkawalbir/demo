@@ -35,15 +35,16 @@ import {
   getUsedActionsMapForResource,
   isPageGeneratorResource,
 } from '../utils/flows';
-import {
-  isValidResourceReference,
-  isNewId,
-  getDomain,
-} from '../utils/resource';
+import { isValidResourceReference, isNewId } from '../utils/resource';
 import { processSampleData } from '../utils/sampleData';
+import {
+  getAvailablePreviewStages,
+  isPreviewPanelAvailable,
+} from '../utils/exportPanel';
 import inferErrorMessage from '../utils/inferErrorMessage';
 import getRoutePath from '../utils/routePaths';
 import { COMM_STATES } from './comms/networkComms';
+import { getIntegrationAppUrlName } from '../utils/integrationApps';
 
 const emptySet = [];
 const emptyObject = {};
@@ -149,6 +150,10 @@ export function resourceFormState(state, resourceType, resourceId) {
     resourceType,
     resourceId
   );
+}
+
+export function getNumEnabledFlows(state) {
+  return fromSession.getNumEnabledFlows(state && state.session);
 }
 
 export function resourceFormSaveProcessTerminated(
@@ -376,6 +381,14 @@ export function editorViolations(state, id) {
 
 export function mapping(state, id) {
   return fromSession.mapping(state && state.session, id);
+}
+
+export function mappingSaveProcessTerminate(state, id) {
+  return fromSession.mappingSaveProcessTerminate(state && state.session, id);
+}
+
+export function searchCriteria(state, id) {
+  return fromSession.getSearchCriteria(state && state.session, id);
 }
 
 export function editorHelperFunctions(state) {
@@ -664,6 +677,7 @@ export function resourceList(state, options = {}) {
       'stacks',
       'templates',
       'published',
+      'transfers',
     ].includes(
       /* These resources are common for both production & sandbox environments. */
       options.type
@@ -767,6 +781,7 @@ export function flowDetails(state, id) {
       : draft.canSchedule;
     draft.showStartDateDialog = flowSettings.showStartDateDialog;
     draft.disableSlider = flowSettings.disableSlider;
+    draft.showUtilityMapping = flowSettings.showUtilityMapping;
   });
 }
 
@@ -1030,11 +1045,17 @@ export function getFlowsAssociatedExportFromIAMetadata(state, fieldMeta) {
 }
 // #begin integrationApps Region
 
-export function integrationAppSettingsFormState(state, integrationId, flowId) {
+export function integrationAppSettingsFormState(
+  state,
+  integrationId,
+  flowId,
+  sectionId
+) {
   return fromSession.integrationAppSettingsFormState(
     state && state.session,
     integrationId,
-    flowId
+    flowId,
+    sectionId
   );
 }
 
@@ -1132,6 +1153,162 @@ export function integrationAppStore(state, integrationId, storeId) {
 
 export function integrationAppConnectionList(state, integrationId, storeId) {
   return integrationAppResourceList(state, integrationId, storeId).connections;
+}
+
+export function categoryMapping(state, integrationId, flowId) {
+  return fromSession.categoryMapping(
+    state && state.session,
+    integrationId,
+    flowId
+  );
+}
+
+export function categoryMappingMetadata(state, integrationId, flowId) {
+  const categoryMappingData =
+    fromSession.categoryMapping(
+      state && state.session,
+      integrationId,
+      flowId
+    ) || {};
+  const categoryMappingMetadata = {};
+  const { response } = categoryMappingData;
+
+  if (!response) {
+    return categoryMappingMetadata;
+  }
+
+  const extractsMetadata = response.find(
+    sec => sec.operation === 'extractsMetaData'
+  );
+  const generatesMetadata = response.find(
+    sec => sec.operation === 'generatesMetaData'
+  );
+
+  if (extractsMetadata) {
+    categoryMappingMetadata.extractsMetadata = extractsMetadata.data;
+  }
+
+  if (generatesMetadata) {
+    categoryMappingMetadata.generatesMetadata =
+      generatesMetadata.data &&
+      generatesMetadata.data.generatesMetaData &&
+      generatesMetadata.data.generatesMetaData.fields;
+    categoryMappingMetadata.relationshipData =
+      generatesMetadata.data && generatesMetadata.data.categoryRelationshipData;
+  }
+
+  return categoryMappingMetadata;
+}
+
+export function mappedCategories(state, integrationId, flowId) {
+  const categoryMappingData =
+    fromSession.categoryMapping(
+      state && state.session,
+      integrationId,
+      flowId
+    ) || {};
+  let mappedCategories = emptySet;
+  const { response } = categoryMappingData;
+
+  if (response) {
+    const mappingData = response.find(sec => sec.operation === 'mappingData');
+
+    if (mappingData) {
+      mappedCategories = mappingData.data.mappingData.basicMappings.recordMappings.map(
+        item => ({
+          id: item.id,
+          name: item.name === 'commonAttributes' ? 'Common' : item.name,
+          children: item.children,
+        })
+      );
+    }
+  }
+
+  return mappedCategories;
+}
+
+export function categoryMappingGenerateFields(
+  state,
+  integrationId,
+  flowId,
+  options
+) {
+  const { sectionId } = options;
+  const generatesMetadata =
+    fromSession.categoryMappingGeneratesMetadata(
+      state && state.session,
+      integrationId,
+      flowId
+    ) || {};
+
+  if (generatesMetadata) {
+    return generatesMetadata.find(sec => sec.id === sectionId);
+  }
+
+  return null;
+}
+
+export function categoryMappingFilters(state, integrationId, flowId) {
+  return fromSession.categoryMappingFilters(
+    state && state.session,
+    integrationId,
+    flowId
+  );
+}
+
+export function mappingsForCategory(state, integrationId, flowId, filters) {
+  const { sectionId } = filters;
+  let mappings = emptySet;
+  const { attributes = {}, mappingFilter = 'mapped' } =
+    categoryMappingFilters(state, integrationId, flowId) || {};
+  const recordMappings =
+    fromSession.categoryMappingData(
+      state && state.session,
+      integrationId,
+      flowId
+    ) || {};
+  const { fields = [] } =
+    categoryMappingGenerateFields(state, integrationId, flowId, {
+      sectionId,
+    }) || {};
+
+  if (recordMappings) {
+    mappings = recordMappings.find(item => item.id === sectionId);
+  }
+
+  // If no filters are passed, return all mapppings
+  if (!attributes || !mappingFilter) {
+    return mappings;
+  }
+
+  const mappedFields = map(mappings.fieldMappings, 'generate');
+  // Filter all mapped fields
+  const filteredMappedFields = mappings.fieldMappings.filter(field => {
+    const generateField = fields.find(f => f.id === field.generate);
+
+    return generateField && attributes[generateField.filterType];
+  });
+  // Filter all generateFields with filter which are not yet mapped
+  const filteredFields = fields
+    .filter(
+      field => attributes[field.filterType] && !mappedFields.includes(field.id)
+    )
+    .map(field => ({ generate: field.id, extract: '' }));
+  // Combine filtered mappings and unmapped fields and generate unmapped fields
+  const filteredMappings = [...filteredMappedFields, ...filteredFields].filter(
+    field => {
+      if (mappingFilter === 'all') return true;
+      else if (mappingFilter === 'mapped') return !!field.extract;
+
+      return !field.extract && !field.hardCodedValue;
+    }
+  );
+
+  // return mappings object by overriding field mappings with filtered mappings
+  return {
+    ...mappings,
+    fieldMappings: filteredMappings,
+  };
 }
 
 export function integrationAppSettings(state, id) {
@@ -1509,6 +1686,12 @@ export function integratorLicense(state) {
   return fromUser.integratorLicense(state.user, preferences.defaultAShareId);
 }
 
+export function diyLicense(state) {
+  const preferences = userPreferences(state);
+
+  return fromUser.diyLicense(state.user, preferences.defaultAShareId);
+}
+
 export function integratorLicenseActionDetails(state) {
   let licenseActionDetails = {};
   const license = integratorLicense(state);
@@ -1556,12 +1739,239 @@ export function integratorLicenseActionDetails(state) {
   return licenseActionDetails;
 }
 
+function getTierToFlowsMap(license) {
+  const flowsInTier = {
+    none: 0,
+    free: 0,
+    limited: 3,
+    standard: 8,
+    premium: 20,
+    enterprise: 50,
+  };
+  let flows = flowsInTier[license.tier] || 0;
+
+  if (license.inTrial) flows = Number.MAX_SAFE_INTEGER;
+
+  if (license.tier === 'free' && !license.inTrial) {
+    if (
+      !license.numAddOnFlows &&
+      !license.sandbox &&
+      !license.numSandboxAddOnFlows
+    ) {
+      flows = 1;
+    }
+  }
+
+  return flows;
+}
+
+export function integratorLicenseWithMetadata(state) {
+  const license = integratorLicense(state);
+  const preferences = userPreferences(state);
+  const licenseActionDetails = { ...license };
+  const nameMap = {
+    none: 'None',
+    free: 'Free',
+    limited: 'Limited',
+    standard: 'Standard',
+    premium: 'Premium',
+    enterprise: 'Enterprise',
+  };
+
+  if (!licenseActionDetails) {
+    return licenseActionDetails;
+  }
+
+  licenseActionDetails.isNone = licenseActionDetails.tier === 'none';
+  licenseActionDetails.tierName = nameMap[licenseActionDetails.tier];
+  licenseActionDetails.inTrial = false;
+
+  if (licenseActionDetails.tier === 'free') {
+    if (licenseActionDetails.trialEndDate) {
+      licenseActionDetails.inTrial =
+        moment(licenseActionDetails.trialEndDate) - moment() >= 0;
+    }
+  }
+
+  licenseActionDetails.hasSubscription = false;
+
+  if (['none', 'free'].indexOf(licenseActionDetails.tier) === -1) {
+    licenseActionDetails.hasSubscription = true;
+  } else if (
+    licenseActionDetails.tier === 'free' &&
+    !licenseActionDetails.inTrial
+  ) {
+    if (
+      licenseActionDetails.numAddOnFlows > 0 ||
+      licenseActionDetails.sandbox ||
+      licenseActionDetails.numSandboxAddOnFlows > 0
+    ) {
+      licenseActionDetails.hasSubscription = true;
+    }
+  }
+
+  licenseActionDetails.isFreemium =
+    licenseActionDetails.tier === 'free' &&
+    !licenseActionDetails.hasSubscription &&
+    !licenseActionDetails.inTrial;
+  licenseActionDetails.hasExpired = false;
+
+  if (licenseActionDetails.hasSubscription && licenseActionDetails.expires) {
+    licenseActionDetails.hasExpired =
+      moment(licenseActionDetails.expires) - moment() < 0;
+  }
+
+  licenseActionDetails.isExpiringSoon = false;
+  let dateToCheck;
+
+  if (licenseActionDetails.hasSubscription) {
+    if (!licenseActionDetails.hasExpired && licenseActionDetails.expires) {
+      dateToCheck = licenseActionDetails.expires;
+    }
+  } else if (licenseActionDetails.inTrial) {
+    dateToCheck = licenseActionDetails.trialEndDate;
+  }
+
+  if (dateToCheck) {
+    licenseActionDetails.isExpiringSoon =
+      moment.duration(moment(dateToCheck) - moment()).as('days') <= 15; // 15 days
+  }
+
+  licenseActionDetails.subscriptionName = licenseActionDetails.tierName;
+
+  if (licenseActionDetails.inTrial) {
+    licenseActionDetails.subscriptionName = '30 day Free Trial';
+  }
+
+  licenseActionDetails.createdDate = '';
+
+  if (licenseActionDetails.created) {
+    licenseActionDetails.createdDate = moment(
+      licenseActionDetails.created
+    ).format(`${preferences.dateFormat} ${preferences.timeFormat}`);
+  }
+
+  licenseActionDetails.expirationDate = licenseActionDetails.expires;
+
+  if (licenseActionDetails.inTrial) {
+    licenseActionDetails.expirationDate = licenseActionDetails.trialEndDate;
+  } else if (licenseActionDetails.isFreemium) {
+    licenseActionDetails.expirationDate = '';
+  }
+
+  if (licenseActionDetails.expirationDate) {
+    licenseActionDetails.expirationDate = moment(
+      licenseActionDetails.expirationDate
+    ).format('MMM Do, YYYY');
+  }
+
+  const names = {
+    free: 'Free',
+    light: 'Starter',
+    moderate: 'Professional',
+    heavy: 'Enterprise',
+    custom: 'Custom',
+  };
+
+  licenseActionDetails.usageTierName =
+    names[licenseActionDetails.usageTier || 'free'];
+
+  const hours = {
+    free: 1,
+    light: 40,
+    moderate: 400,
+    heavy: 4000,
+    custom: 10000, // TODO - not sure how to get this
+  };
+
+  licenseActionDetails.usageTierHours =
+    hours[licenseActionDetails.usageTier || 'free'];
+  licenseActionDetails.status = '';
+
+  if (licenseActionDetails.hasSubscription) {
+    licenseActionDetails.status = licenseActionDetails.hasExpired
+      ? 'expired'
+      : 'active';
+  }
+
+  if (
+    licenseActionDetails.tier === 'free' &&
+    (licenseActionDetails.inTrial || licenseActionDetails.isFreemium)
+  ) {
+    licenseActionDetails.status = 'active';
+  }
+
+  licenseActionDetails.totalFlowsAvailable = getTierToFlowsMap(
+    licenseActionDetails
+  );
+
+  if (licenseActionDetails.numAddOnFlows > 0) {
+    licenseActionDetails.totalFlowsAvailable +=
+      licenseActionDetails.numAddOnFlows;
+  }
+
+  licenseActionDetails.totalSandboxFlowsAvailable = 0;
+
+  if (licenseActionDetails.sandbox) {
+    licenseActionDetails.totalSandboxFlowsAvailable = getTierToFlowsMap(
+      licenseActionDetails
+    );
+  }
+
+  if (licenseActionDetails.numSandboxAddOnFlows > 0) {
+    licenseActionDetails.totalSandboxFlowsAvailable +=
+      licenseActionDetails.numSandboxAddOnFlows;
+  }
+
+  if (
+    !(
+      (licenseActionDetails.status === 'active' ||
+        licenseActionDetails.isFreemium) &&
+      licenseActionDetails.supportTier
+    )
+  ) {
+    licenseActionDetails.supportTier = '';
+  }
+
+  const toReturn = {
+    actions: [],
+  };
+
+  toReturn.__trialExtensionRequested =
+    licenseActionDetails.__trialExtensionRequested;
+  toReturn.__upgradeRequested = licenseActionDetails.__upgradeRequested;
+
+  if (licenseActionDetails.tier === 'none') {
+    toReturn.actions = ['start-free-trial'];
+  } else if (licenseActionDetails.tier === 'free') {
+    if (licenseActionDetails.inTrial) {
+      toReturn.actions = ['request-subscription'];
+    } else if (licenseActionDetails.hasSubscription) {
+      if (licenseActionDetails.hasExpired) {
+        toReturn.actions = ['request-upgrade'];
+      }
+    } else if (licenseActionDetails.trialEndDate) {
+      toReturn.actions = ['request-upgrade', 'request-trial-extension'];
+    } else {
+      toReturn.actions = ['start-free-trial'];
+    }
+  } else if (licenseActionDetails.hasExpired) {
+    toReturn.actions = ['request-upgrade'];
+  } else if (licenseActionDetails.tier !== 'enterprise') {
+    toReturn.actions = ['request-upgrade'];
+  }
+
+  licenseActionDetails.subscriptionActions = toReturn;
+
+  return licenseActionDetails;
+}
+
 export function accountSummary(state) {
   return fromUser.accountSummary(state.user);
 }
 
-export function notifications(state) {
-  return fromUser.notifications(state.user);
+export function userNotifications(state) {
+  return fromUser.userNotifications(state.user);
 }
 
 export function hasAccounts(state) {
@@ -1647,12 +2057,15 @@ const getParentsResourceId = (state, resourceType, resourceId) => {
 export const getResourceEditUrl = (state, resourceType, resourceId) => {
   if (resourceType === 'flows') {
     const integrationId = getParentsResourceId(state, resourceType, resourceId);
-    const { _connectorId } = resource(state, resourceType, resourceId) || {};
+    const { _connectorId, name } =
+      resource(state, resourceType, resourceId) || {};
 
     // if _connectorId its an integrationApp
     if (_connectorId) {
       return getRoutePath(
-        `/integrationApp/${integrationId}/flowBuilder/${resourceId}`
+        `/integrationapps/${getIntegrationAppUrlName(
+          name
+        )}/${integrationId}/flowBuilder/${resourceId}`
       );
     }
 
@@ -1969,67 +2382,52 @@ export function tiles(state) {
   let integration;
   let connector;
   let status;
-  const domain = getDomain();
 
-  return tiles
-    .filter(t => {
-      /**
-       * IA QA certified only "Shopify - NetSuite" and "Salesforce - NetSuite (IO)" connectors on React.
-       * So, hide all other connector tiles on production until QA certifies.
-       */
-      if (!t._connectorId || domain !== 'integrator.io') {
-        return true;
-      }
+  return tiles.map(t => {
+    integration = integrations.find(i => i._id === t._integrationId) || {};
 
-      return ['54fa0b38a7044f9252000036', '5c8f30229f701b3e9a0aa817'].includes(
-        t._connectorId
-      );
-    })
-    .map(t => {
-      integration = integrations.find(i => i._id === t._integrationId) || {};
+    if (t._connectorId && integration.mode === INTEGRATION_MODES.UNINSTALL) {
+      status = TILE_STATUS.UNINSTALL;
+    } else if (
+      t._connectorId &&
+      integration.mode !== INTEGRATION_MODES.SETTINGS
+    ) {
+      status = TILE_STATUS.IS_PENDING_SETUP;
+    } else if (t.offlineConnections && t.offlineConnections.length > 0) {
+      status = TILE_STATUS.HAS_OFFLINE_CONNECTIONS;
+    } else if (t.numError && t.numError > 0) {
+      status = TILE_STATUS.HAS_ERRORS;
+    } else {
+      status = TILE_STATUS.SUCCESS;
+    }
 
-      if (t._connectorId && integration.mode === INTEGRATION_MODES.UNINSTALL) {
-        status = TILE_STATUS.UNINSTALL;
-      } else if (
-        t._connectorId &&
-        integration.mode !== INTEGRATION_MODES.SETTINGS
-      ) {
-        status = TILE_STATUS.IS_PENDING_SETUP;
-      } else if (t.offlineConnections && t.offlineConnections.length > 0) {
-        status = TILE_STATUS.HAS_OFFLINE_CONNECTIONS;
-      } else if (t.numError && t.numError > 0) {
-        status = TILE_STATUS.HAS_ERRORS;
-      } else {
-        status = TILE_STATUS.SUCCESS;
-      }
-
-      if (t._connectorId) {
-        connector = published.find(i => i._id === t._connectorId) || {
-          user: {},
-        };
-
-        return {
-          ...t,
-          status,
-          integration: {
-            mode: integration.mode,
-            permissions: integration.permissions,
-          },
-          connector: {
-            owner: connector.user.company || connector.user.name,
-            applications: connector.applications || [],
-          },
-        };
-      }
+    if (t._connectorId) {
+      connector = published.find(i => i._id === t._connectorId) || {
+        user: {},
+      };
 
       return {
         ...t,
         status,
         integration: {
+          mode: integration.mode,
           permissions: integration.permissions,
         },
+        connector: {
+          owner: connector.user.company || connector.user.name,
+          applications: connector.applications || [],
+        },
       };
-    });
+    }
+
+    return {
+      ...t,
+      status,
+      integration: {
+        permissions: integration.permissions,
+      },
+    };
+  });
 }
 // #endregion
 
@@ -2714,6 +3112,20 @@ export function getImportSampleData(state, resourceId) {
   return emptyObject;
 }
 
+export function getSalesforceMasterRecordTypeInfo(state, resourceId) {
+  const { merged: resource } = resourceData(state, 'imports', resourceId);
+  const { _connectionId: connectionId, salesforce } = resource;
+  const commMetaPath = `salesforce/metadata/connections/${connectionId}/sObjectTypes/${salesforce.sObjectType}`;
+  const { data, status } = metadataOptionsAndResources({
+    state,
+    connectionId,
+    commMetaPath,
+    filterKey: 'salesforce-masterRecordTypeInfo',
+  });
+
+  return { data, status };
+}
+
 export function isAnyFlowConnectionOffline(state, flowId) {
   const flow = resource(state, 'flows', flowId);
 
@@ -2793,7 +3205,11 @@ export function isPageGenerator(state, flowId, resourceId, resourceType) {
   // Incase of new resource (export/lookup), flow doc does not have this resource yet
   // So, get staged resource and determine export/lookup based on isLookup flag
   if (isNewId(resourceId)) {
-    const { merged: resource } = resourceData(state, 'exports', resourceId);
+    const { merged: resource = {} } = resourceData(
+      state,
+      'exports',
+      resourceId
+    );
 
     return !resource.isLookup;
   }
@@ -2832,4 +3248,138 @@ export function resourceNamesByIds(state, type) {
   resources.forEach(r => (resourceIdNameMap[r._id] = r.name || r._id));
 
   return resourceIdNameMap;
+}
+
+export function getTransferPreviewData(state) {
+  return fromSession.getTransferPreviewData(state && state.session);
+}
+
+export function transferListWithMetadata(state) {
+  const transfers =
+    resourceList(state, {
+      type: 'transfers',
+    }).resources || [];
+  const preferences = userProfilePreferencesProps(state);
+
+  transfers.forEach((transfer, i) => {
+    let fromUser = '';
+    let toUser = '';
+    let integrations = [];
+    let transferDate = '';
+
+    if (transfer.transferToUser && transfer.transferToUser._id) {
+      transfers[i].ownerUser = {
+        _id: preferences._id,
+        email: preferences.email,
+        name: 'Me',
+      };
+    } else if (transfer.ownerUser && transfer.ownerUser._id) {
+      transfers[i].transferToUser = {
+        _id: preferences._id,
+        email: preferences.email,
+        name: 'Me',
+      };
+      transfers[i].isInvited = true;
+    }
+
+    if (transfers[i].ownerUser && transfers[i].ownerUser.name) {
+      fromUser = transfers[i].ownerUser.name;
+    }
+
+    if (
+      transfers[i].isInvited &&
+      transfers[i].ownerUser &&
+      transfers[i].ownerUser.email
+    ) {
+      fromUser = transfer[i].ownerUser.email;
+    }
+
+    if (transfers[i].transferToUser && transfers[i].transferToUser.name) {
+      toUser = transfers[i].transferToUser.name;
+    }
+
+    if (
+      !transfers[i].isInvited &&
+      transfers[i].transferToUser &&
+      transfers[i].transferToUser.email
+    ) {
+      toUser = transfers[i].transferToUser.email;
+    }
+
+    if (transfer.toTransfer && transfer.toTransfer.integrations) {
+      transfer.toTransfer.integrations.forEach(i => {
+        let { name } = i;
+
+        if (i._id === 'none') {
+          name = 'Standalone Flows';
+        }
+
+        name = name || i._id;
+
+        if (i.tag) {
+          name += ` (${i.tag})`;
+        }
+
+        integrations.push(name);
+      });
+    }
+
+    integrations = integrations.join('\n');
+
+    if (transfer.transferredAt) {
+      transferDate = moment(transfer.transferredAt).format(
+        `${preferences && preferences.dateFormat} ${preferences &&
+          preferences.timeFormat}`
+      );
+    }
+
+    transfers[i].fromUser = fromUser;
+
+    transfers[i].toUser = toUser;
+
+    transfers[i].integrations = integrations;
+
+    transfers[i].transferDate = transferDate;
+  });
+
+  return { resources: transfers };
+}
+
+// Gives back supported stages of data flow based on resource type
+export function getAvailableResourcePreviewStages(
+  state,
+  resourceId,
+  resourceType
+) {
+  const { merged: resourceObj } = resourceData(
+    state,
+    resourceType,
+    resourceId,
+    'value'
+  );
+
+  return getAvailablePreviewStages(resourceObj);
+}
+
+/*
+ * This selector used to differentiate drawers with/without Preview Panel
+ */
+export function isPreviewPanelAvailableForResource(
+  state,
+  resourceId,
+  resourceType
+) {
+  const { merged: resourceObj = {} } = resourceData(
+    state,
+    resourceType,
+    resourceId,
+    'value'
+  );
+  const connectionObj = resource(
+    state,
+    'connections',
+    resourceObj._connectionId
+  );
+
+  return isPreviewPanelAvailable(resourceObj, resourceType, connectionObj);
 }

@@ -1,75 +1,84 @@
-import { Fragment, useCallback } from 'react';
-import { useDispatch } from 'react-redux';
+import { Fragment } from 'react';
+import clsx from 'clsx';
+import { makeStyles } from '@material-ui/core/styles';
+import { Drawer } from '@material-ui/core';
+import { useSelector } from 'react-redux';
+import * as selectors from '../../../../reducers';
 import Icon from '../../../../components/icons/MapDataIcon';
-import actions from '../../../../actions';
 import helpTextMap from '../../../../components/Help/helpTextMap';
-import mappingUtil from '../../../../utils/mapping';
-import lookupUtil from '../../../../utils/lookup';
-import MappingDialog from '../../../../components/AFE/ImportMapping/Dialog';
+import LoadResources from '../../../../components/LoadResources';
+import DrawerTitleBar from '../../../../components/drawer/TitleBar';
+import StandaloneMapping from '../../../../components/AFE/ImportMapping/StandaloneMapping';
 
-function ImportMappingDialog({
+const useStyles = makeStyles(theme => ({
+  drawerPaper: {
+    marginTop: theme.appBarHeight,
+    width: 824,
+    border: 'solid 1px',
+    borderColor: theme.palette.secondary.lightest,
+    boxShadow: `-4px 4px 8px rgba(0,0,0,0.15)`,
+    backgroundColor: theme.palette.background.white,
+    zIndex: theme.zIndex.drawer + 1,
+  },
+  content: {
+    borderTop: `solid 1px ${theme.palette.secondary.lightest}`,
+    padding: theme.spacing(0, 0, 0, 3),
+    width: '100%',
+    display: 'flex',
+  },
+  // TODO:check for better way to handle width when drawer open and closes
+  fullWidthDrawerClose: {
+    width: 'calc(100% - 60px)',
+  },
+  fullWidthDrawerOpen: {
+    width: `calc(100% - ${theme.drawerWidth}px)`,
+  },
+}));
+
+// mappings are only disabled in case of monitor level access
+function ImportMapping({
   flowId,
   isMonitorLevelAccess,
   resource,
   onClose,
+  open,
 }) {
-  // mappings are only disabled in case of monitor level access
+  const classes = useStyles();
   const resourceId = resource._id;
-  const dispatch = useDispatch();
-  const handleSave = useCallback(
-    ({ mappings, lookups, adaptorType }) => {
-      if (mappings) {
-        const patchSet = [];
-        const mappingPath = mappingUtil.getMappingPath(adaptorType);
-
-        // TODO: Below is cut and paste code. This should not have passed review.
-        // this code block is wrapped in a "if (mappings) {}" block, so both ternary operators
-        // below are unnecessary (the operation is always a replace)
-
-        // if mapping doesn't exist in resource object, perform add patch else replace patch
-        patchSet.push({
-          op: mappings ? 'replace' : 'add',
-          path: mappingPath,
-          value: mappings,
-        });
-
-        // update _lookup only if its being passed as param to function
-        if (lookups) {
-          const lookupPath = lookupUtil.getLookupPath(adaptorType);
-
-          patchSet.push({
-            op: lookups ? 'replace' : 'add',
-            path: lookupPath,
-            value: lookups,
-          });
-        }
-
-        dispatch(actions.resource.patchStaged(resourceId, patchSet, 'value'));
-        dispatch(actions.resource.commitStaged('imports', resourceId, 'value'));
-      }
-    },
-    [dispatch, resourceId]
+  const mappingEditorId = `${resourceId}-${flowId}`;
+  const { showSalesforceNetsuiteAssistant } = useSelector(state =>
+    selectors.mapping(state, mappingEditorId)
   );
+  const drawerOpened = useSelector(state => selectors.drawerOpened(state));
 
   return (
-    <Fragment>
-      <MappingDialog
-        id={`${resourceId}-${flowId}`}
-        title="Define Import Mapping"
-        disabled={isMonitorLevelAccess}
-        flowId={flowId}
-        resourceId={resourceId}
-        onClose={onClose}
-        onSave={handleSave}
-      />
-    </Fragment>
+    <Drawer
+      anchor="right"
+      open={open}
+      classes={{
+        paper: clsx(classes.drawerPaper, {
+          [classes.fullWidthDrawerClose]:
+            !drawerOpened && showSalesforceNetsuiteAssistant,
+          [classes.fullWidthDrawerOpen]:
+            drawerOpened && showSalesforceNetsuiteAssistant,
+        }),
+      }}>
+      <DrawerTitleBar onClose={onClose} title="Define Import Mapping" />
+      <div className={classes.content}>
+        <LoadResources required="true" resources="imports, exports">
+          <Fragment>
+            <StandaloneMapping
+              id={mappingEditorId}
+              disabled={isMonitorLevelAccess}
+              resourceId={resourceId}
+              flowId={flowId}
+              onClose={onClose}
+            />
+          </Fragment>
+        </LoadResources>
+      </div>
+    </Drawer>
   );
-}
-
-function ImportMapping(props) {
-  const { open } = props;
-
-  return <Fragment>{open && <ImportMappingDialog {...props} />}</Fragment>;
 }
 
 export default {

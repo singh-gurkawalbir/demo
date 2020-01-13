@@ -13,7 +13,8 @@ import { useIASettingsStateWithHandleClose } from '..';
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
     marginTop: theme.appBarHeight,
-    width: 660,
+    minWidth: 824,
+    maxWidth: 1300,
     border: 'solid 1px',
     borderColor: theme.palette.secondary.lightest,
     boxShadow: `-4px 4px 8px rgba(0,0,0,0.15)`,
@@ -27,7 +28,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function ConfigureDrawer({ integrationId, storeId, sectionId }) {
+function ConfigureDrawer({ integrationId, storeId, sectionId, parentUrl }) {
   const classes = useStyles();
   const match = useRouteMatch();
   const section = useSelector(state => {
@@ -60,7 +61,9 @@ function ConfigureDrawer({ integrationId, storeId, sectionId }) {
   );
   const { formState, handleClose } = useIASettingsStateWithHandleClose(
     integrationId,
-    null
+    null,
+    sectionId,
+    parentUrl
   );
 
   return (
@@ -83,6 +86,7 @@ function ConfigureDrawer({ integrationId, storeId, sectionId }) {
           className={classes.form}
           integrationId={integrationId}
           storeId={storeId}
+          sectionId={sectionId}
           fieldMeta={translatedMeta}
         />
       </Drawer>
@@ -95,7 +99,7 @@ export default function ConfigureDrawerRoute(props) {
 
   return (
     <Route exact path={`${match.url}/configure`}>
-      <ConfigureDrawer {...props} />
+      <ConfigureDrawer {...props} parentUrl={match.url} />
     </Route>
   );
 }

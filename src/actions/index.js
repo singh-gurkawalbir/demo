@@ -416,6 +416,38 @@ const integrationApp = {
         integrationId,
         redirectTo,
       }),
+    requestCategoryMappingMetadata: (
+      integrationId,
+      flowId,
+      categoryId,
+      options
+    ) =>
+      action(
+        actionTypes.INTEGRATION_APPS.SETTINGS.REQUEST_CATEGORY_MAPPING_METADATA,
+        { integrationId, flowId, categoryId, options }
+      ),
+    receivedCategoryMappingMetadata: (integrationId, flowId, metadata) =>
+      action(
+        actionTypes.INTEGRATION_APPS.SETTINGS
+          .RECEIVED_CATEGORY_MAPPING_METADATA,
+        { integrationId, flowId, metadata }
+      ),
+    receivedCategoryMappingGeneratesMetadata: (
+      integrationId,
+      flowId,
+      metadata
+    ) =>
+      action(
+        actionTypes.INTEGRATION_APPS.SETTINGS
+          .RECEIVED_CATEGORY_MAPPING_GENERATES_METADATA,
+        { integrationId, flowId, metadata }
+      ),
+    setCategoryMappingFilters: (integrationId, flowId, filters) =>
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPING_FILTERS, {
+        integrationId,
+        flowId,
+        filters,
+      }),
     clearRedirect: integrationId =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.CLEAR_REDIRECT, {
         integrationId,
@@ -455,18 +487,20 @@ const integrationApp = {
         integration,
         license,
       }),
-    update: (integrationId, flowId, storeId, values, options) =>
+    update: (integrationId, flowId, storeId, sectionId, values, options) =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.UPDATE, {
         integrationId,
         flowId,
         storeId,
+        sectionId,
         values,
         options,
       }),
-    clear: (integrationId, flowId) =>
+    clear: (integrationId, flowId, sectionId) =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.FORM.CLEAR, {
         integrationId,
         flowId,
+        sectionId,
       }),
     submitComplete: params =>
       action(
@@ -639,6 +673,15 @@ const file = {
       file,
     }),
 };
+const transfer = {
+  cancel: id => action(actionTypes.TRANSFER.CANCEL, { id }),
+  preview: data => action(actionTypes.TRANSFER.PREVIEW, { data }),
+  receivedPreview: ({ response, error }) =>
+    action(actionTypes.TRANSFER.RECEIVED_PREVIEW, { response, error }),
+  clearPreview: () => action(actionTypes.TRANSFER.CLEAR_PREVIEW),
+  create: data => action(actionTypes.TRANSFER.CREATE, { data }),
+  canceledTransfer: id => action(actionTypes.TRANSFER.CANCELLED, { id }),
+};
 const stack = {
   displayToken: id => action(actionTypes.STACK.TOKEN_DISPLAY, { id }),
   generateToken: id => action(actionTypes.STACK.TOKEN_GENERATE, { id }),
@@ -683,19 +726,30 @@ const user = {
         action(actionTypes.LICENSE_TRIAL_ISSUED, message),
       requestLicenseUpgrade: () =>
         action(actionTypes.LICENSE_UPGRADE_REQUEST, {}),
+      requestUpdate: actionType =>
+        action(actionTypes.LICENSE_UPDATE_REQUEST, { actionType }),
       licenseUpgradeRequestSubmitted: message =>
         action(actionTypes.LICENSE_UPGRADE_REQUEST_SUBMITTED, { message }),
-      acceptInvite: id => action(actionTypes.ACCOUNT_INVITE_ACCEPT, { id }),
-      acceptedInvite: id => action(actionTypes.ACCOUNT_INVITE_ACCEPTED, { id }),
-      rejectInvite: id => action(actionTypes.ACCOUNT_INVITE_REJECT, { id }),
       leave: id => action(actionTypes.ACCOUNT_LEAVE_REQUEST, { id }),
       switchTo: ({ id }) => action(actionTypes.ACCOUNT_SWITCH, { id }),
+      requestNumEnabledFlows: () =>
+        action(actionTypes.LICENSE_NUM_ENABLED_FLOWS_REQUEST, {}),
+      receivedNumEnabledFlows: response =>
+        action(actionTypes.LICENSE_NUM_ENABLED_FLOWS_RECEIVED, { response }),
     },
   },
   preferences: {
     request: message => resource.request('preferences', undefined, message),
     update: preferences =>
       action(actionTypes.UPDATE_PREFERENCES, { preferences }),
+  },
+  sharedNotifications: {
+    acceptInvite: (resourceType, id) =>
+      action(actionTypes.SHARED_NOTIFICATION_ACCEPT, { resourceType, id }),
+    acceptedInvite: id =>
+      action(actionTypes.SHARED_NOTIFICATION_ACCEPTED, { id }),
+    rejectInvite: (resourceType, id) =>
+      action(actionTypes.SHARED_NOTIFICATION_REJECT, { resourceType, id }),
   },
 };
 const sampleData = {
@@ -706,6 +760,12 @@ const sampleData = {
       values,
       stage,
       runOffline,
+    }),
+  requestLookupPreview: (resourceId, flowId, formValues) =>
+    action(actionTypes.SAMPLEDATA.LOOKUP_REQUEST, {
+      resourceId,
+      flowId,
+      formValues,
     }),
   received: (resourceId, previewData) =>
     action(actionTypes.SAMPLEDATA.RECEIVED, { resourceId, previewData }),
@@ -846,6 +906,31 @@ const mapping = {
       value,
     }),
   delete: (id, index) => action(actionTypes.MAPPING.DELETE, { id, index }),
+  save: id => action(actionTypes.MAPPING.SAVE, { id }),
+  saveFailed: id => action(actionTypes.MAPPING.SAVE_FAILED, { id }),
+  saveComplete: id => action(actionTypes.MAPPING.SAVE_COMPLETE, { id }),
+  updateFlowData: (id, value) =>
+    action(actionTypes.MAPPING.UPDATE_FLOW_DATA, { id, value }),
+  requestPreview: id => action(actionTypes.MAPPING.PREVIEW_REQUESTED, { id }),
+  previewReceived: (id, value) =>
+    action(actionTypes.MAPPING.PREVIEW_RECEIVED, { id, value }),
+  previewFailed: id => action(actionTypes.MAPPING.PREVIEW_FAILED, { id }),
+};
+const searchCriteria = {
+  init: (id, value) =>
+    action(actionTypes.SEARCH_CRITERIA.INIT, {
+      id,
+      value,
+    }),
+  patchField: (id, field, index, value) =>
+    action(actionTypes.SEARCH_CRITERIA.PATCH_FIELD, {
+      id,
+      field,
+      index,
+      value,
+    }),
+  delete: (id, index) =>
+    action(actionTypes.SEARCH_CRITERIA.DELETE, { id, index }),
 };
 // #region DynaForm Actions
 const resourceForm = {
@@ -1081,5 +1166,7 @@ export default {
   marketplace,
   recycleBin,
   mapping,
+  searchCriteria,
   analytics,
+  transfer,
 };

@@ -34,7 +34,7 @@ export default function OldValue(props) {
               selectedLog: al,
             })
           }>
-          Click to see the changes
+          Click to view
         </Button>
       ) : (
         <Fragment>

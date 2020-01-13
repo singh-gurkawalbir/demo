@@ -10,6 +10,7 @@ import {
 } from '../../AFE/HttpRequestBodyEditor/templateMapping';
 import actions from '../../../actions';
 import getFormattedSampleData from '../../../utils/sampleData';
+import ErroredMessageComponent from './ErroredMessageComponent';
 
 export default function DynaHttpRequestBody(props) {
   const {
@@ -45,6 +46,10 @@ export default function DynaHttpRequestBody(props) {
   const connection = useSelector(state =>
     selectors.resource(state, 'connections', connectionId)
   );
+  const resource = useSelector(state =>
+    selectors.resourceData(state, resourceType, resourceId)
+  );
+  const { adaptorType } = resource.merged || {};
   const isPageGenerator = useSelector(state =>
     selectors.isPageGenerator(state, flowId, resourceId, resourceType)
   );
@@ -57,6 +62,8 @@ export default function DynaHttpRequestBody(props) {
     })
   );
   // constructing data
+  const wrapSampleDataInArray =
+    adaptorType === 'HTTPImport' || adaptorType === 'HTTPExport';
   const formattedSampleData = useMemo(
     () =>
       getFormattedSampleData({
@@ -64,8 +71,9 @@ export default function DynaHttpRequestBody(props) {
         sampleData,
         resourceType,
         resourceName,
+        wrapInArray: wrapSampleDataInArray,
       }),
-    [connection, resourceName, resourceType, sampleData]
+    [connection, resourceName, resourceType, sampleData, wrapSampleDataInArray]
   );
   const stringifiedSampleData = useMemo(
     () => JSON.stringify(formattedSampleData, null, 2),
@@ -161,6 +169,7 @@ export default function DynaHttpRequestBody(props) {
         onClick={handleEditorClick}>
         {label}
       </Button>
+      <ErroredMessageComponent {...props} />
     </Fragment>
   );
 }

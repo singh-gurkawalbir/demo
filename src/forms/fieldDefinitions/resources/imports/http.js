@@ -172,8 +172,11 @@ export default {
     connectionId: r => r && r._connectionId,
     arrayIndex: 0,
     defaultValue: r =>
-      Array.isArray(((r || {}).http || {}).body) ? r.http.body[0] : undefined,
+      Array.isArray(((r || {}).http || {}).body) ? r.http.body[0] : '',
     label: 'Build HTTP Request Body',
+    required: true,
+    requestMediaType: r =>
+      r && r.http ? r && r.http.requestMediaType : 'json',
     refreshOptionsOnChangesTo: ['http.lookups'],
     visibleWhen: [
       {
@@ -332,24 +335,21 @@ export default {
       },
     ],
   },
+
   'http._asyncHelperId': {
-    type: 'select',
     label: 'Async Helper',
-    options: [
-      {
-        // To Do statistically instead of dynamic
-        items: [{ label: 'NewAsynchHelper', value: 'newasynchhelper' }],
-      },
-    ],
+    type: 'selectresource',
+    resourceType: 'asyncHelpers',
+    appTypeIsStatic: true,
+    options: { appType: 'Async Helpers' },
+    allowNew: true,
+    allowEdit: true,
     visibleWhenAll: [
-      {
-        field: 'http.configureAsyncHelper',
-        is: [true],
-      },
       {
         field: 'inputMode',
         is: ['records'],
       },
+      { field: 'http.configureAsyncHelper', is: [true] },
     ],
   },
 };

@@ -17,7 +17,11 @@ const useStyles = makeStyles(theme => ({
     borderColor: 'rgb(0,0,0,0.2)',
     borderLeft: 0,
     height: '100vh',
-    width: props => (props.match.isExact ? 660 : 150),
+    width: props => {
+      if (props.occupyFullWidth) return '100%';
+
+      return props.match.isExact ? 660 : 150;
+    },
     overflowX: 'hidden',
     overflowY: props => (props.match.isExact ? 'auto' : 'hidden'),
     boxShadow: `-5px 0 8px rgba(0,0,0,0.2)`,
@@ -25,7 +29,11 @@ const useStyles = makeStyles(theme => ({
   },
   form: {
     height: `calc(100vh - 136px)`,
-    width: props => (props.match.isExact ? undefined : 660),
+    width: props => {
+      if (props.occupyFullWidth) return '100%';
+
+      return props.match.isExact ? undefined : 660;
+    },
     maxHeight: 'unset',
     padding: '14px 24px',
   },
@@ -65,10 +73,10 @@ const determineRequiredResources = type => {
 };
 
 export default function Panel(props) {
-  const classes = useStyles(props);
-  const { match, onClose, zIndex } = props;
+  const { match, onClose, zIndex, occupyFullWidth } = props;
   const { id, resourceType, operation } = match.params;
   const isNew = operation === 'add';
+  const classes = useStyles({ ...props, occupyFullWidth });
   const location = useLocation();
   const dispatch = useDispatch();
   const [enqueueSnackbar] = useEnqueueSnackbar();

@@ -22,6 +22,30 @@ export default {
       ...newValues,
     };
   },
+  optionsHandler: (fieldId, fields) => {
+    if (fieldId === 'file.xlsx.keyColumns') {
+      const keyColoumnField = fields.find(
+        field => field.id === 'file.xlsx.keyColumns'
+      );
+      const hasHeaderRowField = fields.find(
+        field => field.id === 'file.xlsx.hasHeaderRow'
+      );
+
+      // resetting key coloums when hasHeaderRow changes
+      if (
+        keyColoumnField &&
+        keyColoumnField &&
+        keyColoumnField.hasHeaderRow !== hasHeaderRowField.value
+      ) {
+        keyColoumnField.value = [];
+        keyColoumnField.hasHeaderRow = hasHeaderRowField.value;
+      }
+
+      return {
+        includeHeader: hasHeaderRowField.value,
+      };
+    }
+  },
   fieldMap: {
     common: { formId: 'common' },
     exportData: {

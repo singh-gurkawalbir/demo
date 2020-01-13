@@ -4,7 +4,7 @@
  * 2.Real time Exports as PG in the new Flows
  * 3. FTP, NS, SF, AS2, Web hook
  */
-import { call } from 'redux-saga/effects';
+import { call, select } from 'redux-saga/effects';
 import {
   getLastExportDateTime,
   isUIDataExpectedForResource,
@@ -12,12 +12,19 @@ import {
 } from '../../../utils/flowData';
 import requestRealTimeMetadata from '../sampleDataGenerator/realTimeSampleData';
 import requestFileAdaptorSampleData from '../sampleDataGenerator/fileAdaptorSampleData';
-import { isBlobTypeResource } from '../../../utils/resource';
+import {
+  isBlobTypeResource,
+  isRestCsvMediaTypeExport,
+} from '../../../utils/resource';
+import * as selectors from '../../../reducers';
 
-function* getUIDataForResource({ resource }) {
+function* getUIDataForResource({ resource, connection }) {
   const { adaptorType, sampleData } = resource;
 
   if (isBlobTypeResource(resource)) return getBlobResourceSampleData();
+
+  if (isRestCsvMediaTypeExport(resource, connection))
+    return yield call(requestFileAdaptorSampleData, { resource });
 
   if (adaptorType) {
     switch (adaptorType) {
@@ -42,8 +49,13 @@ function* getUIDataForResource({ resource }) {
 }
 
 export default function* getPreviewOptionsForResource({ resource }) {
-  const uiData = isUIDataExpectedForResource(resource)
-    ? yield call(getUIDataForResource, { resource })
+  const connection = yield select(
+    selectors.resource,
+    'connections',
+    resource && resource._connectionId
+  );
+  const uiData = isUIDataExpectedForResource(resource, connection)
+    ? yield call(getUIDataForResource, { resource, connection })
     : undefined;
   const postData = {
     lastExportDateTime: getLastExportDateTime(),

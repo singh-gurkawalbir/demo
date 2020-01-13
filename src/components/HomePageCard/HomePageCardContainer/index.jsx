@@ -10,7 +10,6 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     boxSizing: 'border-box',
     border: '1px solid',
-    cursor: 'pointer',
     borderColor: fade(theme.palette.common.black, 0.1),
     transitionProperty: 'all',
     transitionDuration: theme.transitions.duration.short,
@@ -21,7 +20,6 @@ const useStyles = makeStyles(theme => ({
     '&:hover': {
       transform: `translateY(-5px)`,
       boxShadow: `0 0 7px rgba(0,0,0,0.1)`,
-      borderColor: theme.palette.primary.light,
     },
     [theme.breakpoints.between('sm', 'md')]: {
       minWidth: '100%',

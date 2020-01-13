@@ -12,6 +12,7 @@ import {
   isRealTimeOrDistributedResource,
   isBlobTypeResource,
   isAS2Resource,
+  isRestCsvMediaTypeExport,
 } from '../../../utils/resource';
 import { exportPreview } from '../utils/previewCalls';
 import { saveRawDataOnResource } from './utils';
@@ -22,6 +23,11 @@ function* fetchAndSaveRawDataForResource({ type, resourceId, tempResourceId }) {
     resource,
     type === 'imports' ? 'imports' : 'exports',
     resourceId
+  );
+  const connectionObj = yield select(
+    resource,
+    'connections',
+    resourceObj && resourceObj._connectionId
   );
 
   // Raw data need not be updated on save for real time resources
@@ -35,7 +41,12 @@ function* fetchAndSaveRawDataForResource({ type, resourceId, tempResourceId }) {
     return;
 
   // For file adaptors and AS2 resource , raw data is fetched from uploaded file stored in state
-  if (isFileAdaptor(resourceObj) || isAS2Resource(resourceObj)) {
+  // Same applies for Rest Export incase of CSV as media type
+  if (
+    isFileAdaptor(resourceObj) ||
+    isAS2Resource(resourceObj) ||
+    (type === 'exports' && isRestCsvMediaTypeExport(resourceObj, connectionObj))
+  ) {
     return yield call(saveRawDataForFileAdaptors, {
       resourceId,
       tempResourceId,

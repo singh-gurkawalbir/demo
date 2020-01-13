@@ -1,6 +1,8 @@
 import actionTypes from '../actions/types';
 import { JOB_TYPES } from './constants';
 
+let path;
+
 export default function getRequestOptions(
   action,
   {
@@ -10,6 +12,7 @@ export default function getRequestOptions(
     osType,
     filters = {},
     adaptorType,
+    actionType,
   } = {}
 ) {
   switch (action) {
@@ -49,6 +52,19 @@ export default function getRequestOptions(
     case actionTypes.LICENSE_UPGRADE_REQUEST:
       return {
         path: '/licenses/upgradeRequest',
+        opts: { method: 'POST' },
+      };
+    case actionTypes.LICENSE_UPDATE_REQUEST:
+      if (actionType === 'trial') {
+        path = '/licenses/startTrial';
+      } else if (actionType === 'reTrial') {
+        path = '/licenses/retrialRequest';
+      } else if (actionType === 'upgrade') {
+        path = '/licenses/upgradeRequest';
+      }
+
+      return {
+        path,
         opts: { method: 'POST' },
       };
     case actionTypes.ACCESSTOKEN_CREATE:
@@ -229,6 +245,12 @@ export default function getRequestOptions(
             : `/ui/assistants/${resourceId}`,
         opts: { method: 'GET' },
       };
+    case actionTypes.LICENSE_NUM_ENABLED_FLOWS_REQUEST:
+      return {
+        path: `/numEnabledFlows`,
+        opts: { method: 'GET' },
+      };
+
     default:
       return {};
   }

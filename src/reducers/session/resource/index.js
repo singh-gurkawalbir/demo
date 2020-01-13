@@ -1,7 +1,10 @@
+import produce from 'immer';
 import actionTypes from '../../../actions/types';
 
+const defaultObject = { numEnabledPaidFlows: 0, numEnabledSandboxFlows: 0 };
+
 export default function reducer(state = {}, action) {
-  const { type, tempId, id, resourceReferences } = action;
+  const { type, tempId, id, resourceReferences, response } = action;
   let newState;
 
   switch (type) {
@@ -34,6 +37,11 @@ export default function reducer(state = {}, action) {
       };
 
       return newState;
+    case actionTypes.LICENSE_NUM_ENABLED_FLOWS_RECEIVED:
+      return produce(state, draft => {
+        draft.numEnabledFlows = response;
+      });
+
     default:
       return state;
   }
@@ -75,5 +83,17 @@ export function integratorLicenseActionMessage(state) {
   }
 
   return state.integratorLicenseActionMessage;
+}
+
+export function getNumEnabledFlows(state) {
+  if (!state || !state.numEnabledFlows) {
+    return defaultObject;
+  }
+
+  return {
+    numEnabledPaidFlows: state.numEnabledFlows.numEnabledPaidFlows || 0,
+    numEnabledSandboxFlows: state.numEnabledFlows.numEnabledSandboxFlows || 0,
+    numEnabledFreeFlows: state.numEnabledFlows.numEnabledFreeFlows || 0,
+  };
 }
 // #endregion

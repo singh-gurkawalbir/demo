@@ -15,6 +15,11 @@ export default {
 
     if (newValues['/netsuite/type'] === 'distributed') {
       newValues['/type'] = 'distributed';
+      // removing other netsuiteType's Sub Doc @BugFix IO-12678
+      newValues['/netsuite/restlet/criteria'] = undefined;
+      newValues['/netsuite/restlet'] = undefined;
+      newValues['/netsuite/searches/criteria'] = undefined;
+      newValues['/netsuite/searches'] = undefined;
     }
 
     if (netsuiteType === 'search') {
@@ -22,7 +27,7 @@ export default {
         {
           savedSearchId: newValues['/netsuite/webservices/searchId'],
           recordType: newValues['/netsuite/webservices/recordType'],
-          criteria: [],
+          criteria: newValues['/netsuite/webservices/criteria'],
         },
       ];
     }
@@ -281,6 +286,30 @@ export default {
         { field: 'outputMode', is: ['records'] },
       ],
     },
+    'netsuite.restlet.criteria': {
+      fieldId: 'netsuite.restlet.criteria',
+      visible: r => !!(r && r.isLookup),
+      visibleWhenAll: r => {
+        if (!(r && r.isLookup)) return [];
+
+        return [
+          { field: 'netsuite.api.type', is: ['restlet'] },
+          { field: 'netsuite.execution.type', is: ['scheduled'] },
+        ];
+      },
+    },
+    'netsuite.webservices.criteria': {
+      fieldId: 'netsuite.webservices.criteria',
+      visible: r => !!(r && r.isLookup),
+      visibleWhenAll: r => {
+        if (!(r && r.isLookup)) return [];
+
+        return [
+          { field: 'netsuite.api.type', is: ['search'] },
+          { field: 'netsuite.execution.type', is: ['scheduled'] },
+        ];
+      },
+    },
     pageSize: {
       fieldId: 'pageSize',
       visibleWhenAll: [
@@ -289,9 +318,11 @@ export default {
         { field: 'outputMode', is: ['records'] },
       ],
     },
+    common: { formId: 'common' },
   },
   layout: {
     fields: [
+      'common',
       'outputMode',
       'netsuite.execution.type',
       'netsuite.api.type',
@@ -302,6 +333,8 @@ export default {
       'search',
       'netsuite.skipGrouping',
       'blob',
+      'netsuite.restlet.criteria',
+      'netsuite.webservices.criteria',
     ],
     type: 'collapse',
     containers: [

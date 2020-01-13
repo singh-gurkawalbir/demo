@@ -18,7 +18,9 @@ import templates, * as fromTemplates from './templates';
 import oAuthAuthorize, * as fromOAuthAuthorize from './oAuthAuthorize';
 import resource, * as fromResource from './resource';
 import mappings, * as fromMappings from './mappings';
+import searchCriteria, * as fromSearchCriteria from './searchCriteria';
 import flows, * as fromFlows from './flows';
+import transfers, * as fromTransfers from './transfers';
 
 export default combineReducers({
   stage,
@@ -40,7 +42,9 @@ export default combineReducers({
   templates,
   oAuthAuthorize,
   mappings,
+  searchCriteria,
   flows,
+  transfers,
 });
 
 // #region PUBLIC SELECTORS
@@ -88,6 +92,17 @@ export function editorViolations(state, id) {
 
 export function mapping(state, id) {
   return fromMappings.mapping(state && state.mappings, id);
+}
+
+export function mappingSaveProcessTerminate(state, id) {
+  return fromMappings.mappingSaveProcessTerminate(state && state.mappings, id);
+}
+
+export function getSearchCriteria(state, id) {
+  return fromSearchCriteria.getSearchCriteria(
+    state && state.searchCriteria,
+    id
+  );
 }
 
 export function processorRequestOptions(state, id) {
@@ -250,11 +265,17 @@ export function apiAccessToken(state, resourceId) {
   );
 }
 
-export function integrationAppSettingsFormState(state, integrationId, flowId) {
+export function integrationAppSettingsFormState(
+  state,
+  integrationId,
+  flowId,
+  sectionId
+) {
   return fromIntegrationApps.integrationAppSettingsFormState(
     state && state.integrationApps,
     integrationId,
-    flowId
+    flowId,
+    sectionId
   );
 }
 
@@ -283,6 +304,38 @@ export function integrationAppsInstaller(state, id) {
   return fromIntegrationApps.integrationAppsInstaller(
     state && state.integrationApps,
     id
+  );
+}
+
+export function categoryMapping(state, integrationId, flowId) {
+  return fromIntegrationApps.categoryMapping(
+    state && state.integrationApps,
+    integrationId,
+    flowId
+  );
+}
+
+export function categoryMappingFilters(state, integrationId, flowId) {
+  return fromIntegrationApps.categoryMappingFilters(
+    state && state.integrationApps,
+    integrationId,
+    flowId
+  );
+}
+
+export function categoryMappingData(state, integrationId, flowId) {
+  return fromIntegrationApps.categoryMappingData(
+    state && state.integrationApps,
+    integrationId,
+    flowId
+  );
+}
+
+export function categoryMappingGeneratesMetadata(state, integrationId, flowId) {
+  return fromIntegrationApps.categoryMappingGeneratesMetadata(
+    state && state.integrationApps,
+    integrationId,
+    flowId
   );
 }
 
@@ -321,6 +374,10 @@ export function resourceReferences(state) {
   return fromResource.resourceReferences(state && state.resource);
 }
 
+export function getNumEnabledFlows(state) {
+  return fromResource.getNumEnabledFlows(state && state.resource);
+}
+
 export function assistantData(state, { adaptorType, assistant }) {
   return fromMetadata.assistantData(state && state.metadata, {
     adaptorType,
@@ -344,4 +401,9 @@ export function getLastExportDateTime(state, flowId) {
     lastExportDateTime
   );
 }
+
+export function getTransferPreviewData(state) {
+  return fromTransfers.getPreviewData(state && state.transfers);
+}
+
 // #endregion

@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import cronstrue from 'cronstrue';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useHistory } from 'react-router-dom';
@@ -10,11 +10,11 @@ import actions from '../../../../actions';
 import * as selectors from '../../../../reducers';
 import { defaultConfirmDialog } from '../../../../components/ConfirmDialog';
 import FlowEllipsisMenu from '../../../../components/FlowEllipsisMenu';
-import RunIcon from '../../../../components/icons/RunIcon';
+import RunFlowButton from '../../../../components/RunFlowButton';
 import SettingsIcon from '../../../../components/icons/SettingsIcon';
 import OnOffSwitch from '../../../../components/SwitchToggle';
 import InfoIconButton from '../InfoIconButton';
-import FlowStartDateDialog from '../../../../components/DeltaFlowStartDate/Dialog';
+import { getIntegrationAppUrlName } from '../../../../utils/integrationApps';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -36,6 +36,7 @@ const useStyles = makeStyles(theme => ({
     borderLeft: 0,
     borderTopRightRadius: 4,
     borderBottomRightRadius: 4,
+    wordBreak: 'break-word',
   },
   details: {
     flexGrow: 1,
@@ -62,7 +63,19 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
   const dispatch = useDispatch();
   const flowDetails =
     useSelector(state => selectors.flowDetails(state, flowId)) || {};
-  const [showDilaog, setShowDilaog] = useState(false);
+  const integrationAppName = useSelector(state => {
+    const integrationApp = selectors.resource(
+      state,
+      'integrations',
+      flowDetails._integrationId
+    );
+
+    if (integrationApp && integrationApp._connectorId && integrationApp.name) {
+      return getIntegrationAppUrlName(integrationApp.name);
+    }
+
+    return '';
+  });
   const patchFlow = useCallback(
     (path, value) => {
       const patchSet = [{ op: 'replace', path, value }];
@@ -73,96 +86,66 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
     [dispatch, flowId]
   );
   const flowName = flowDetails.name || flowDetails._id;
-  const handleRunDeltaFlow = useCallback(
-    customStartDate => {
-      dispatch(actions.flow.run({ flowId, customStartDate }));
-
-      if (flowDetails._connectorId) {
-        if (storeId) {
-          history.push(
-            `/pg/integrationApp/${flowDetails._integrationId}/child/${storeId}/dashboard`
-          );
-        } else {
-          history.push(
-            `/pg/integrationApp/${flowDetails._integrationId}/dashboard`
-          );
-        }
+  const handleOnRunStart = useCallback(() => {
+    if (flowDetails._connectorId) {
+      if (storeId) {
+        history.push(
+          `/pg/integrationapps/${integrationAppName}/${flowDetails._integrationId}/child/${storeId}/dashboard`
+        );
       } else {
         history.push(
-          `/pg/integrations/${flowDetails._integrationId || 'none'}/dashboard`
+          `/pg/integrationapps/${integrationAppName}/${flowDetails._integrationId}/dashboard`
         );
       }
-    },
-    [
-      dispatch,
-      flowDetails._connectorId,
-      flowDetails._integrationId,
-      flowId,
-      history,
-      storeId,
-    ]
-  );
-  const handleActionClick = useCallback(
-    action => () => {
-      switch (action) {
-        case 'disable':
-          defaultConfirmDialog(
-            `${flowDetails.disabled ? 'enable' : 'disable'} ${flowName}?`,
-            () => {
-              if (flowDetails._connectorId) {
-                dispatch(
-                  actions.integrationApp.settings.update(
-                    flowDetails._integrationId,
-                    flowDetails._id,
-                    storeId,
-                    {
-                      '/flowId': flowDetails._id,
-                      '/disabled': !flowDetails.disabled,
-                    },
-                    { action: 'flowEnableDisable' }
-                  )
-                );
-              } else {
-                patchFlow('/disabled', !flowDetails.disabled);
-              }
-            }
+    } else {
+      history.push(
+        `/pg/integrations/${flowDetails._integrationId || 'none'}/dashboard`
+      );
+    }
+  }, [
+    flowDetails._connectorId,
+    flowDetails._integrationId,
+    history,
+    integrationAppName,
+    storeId,
+  ]);
+  const handleDisableClick = useCallback(() => {
+    defaultConfirmDialog(
+      `${flowDetails.disabled ? 'enable' : 'disable'} ${flowName}?`,
+      () => {
+        if (flowDetails._connectorId) {
+          dispatch(
+            actions.integrationApp.settings.update(
+              flowDetails._integrationId,
+              flowDetails._id,
+              storeId,
+              null,
+              {
+                '/flowId': flowDetails._id,
+                '/disabled': !flowDetails.disabled,
+              },
+              { action: 'flowEnableDisable' }
+            )
           );
-
-          break;
-
-        case 'run':
-          if (
-            flowDetails.isDeltaFlow &&
-            (!flowDetails._connectorId || !!flowDetails.showStartDateDialog)
-          ) {
-            setShowDilaog('true');
-          } else {
-            handleRunDeltaFlow();
-          }
-
-          break;
-
-        default:
+        } else {
+          patchFlow('/disabled', !flowDetails.disabled);
+        }
       }
-    },
-    [
-      dispatch,
-      flowDetails._connectorId,
-      flowDetails._id,
-      flowDetails._integrationId,
-      flowDetails.disabled,
-      flowDetails.isDeltaFlow,
-      flowDetails.showStartDateDialog,
-      flowName,
-      handleRunDeltaFlow,
-      patchFlow,
-      storeId,
-    ]
-  );
+    );
+  }, [
+    dispatch,
+    flowDetails._connectorId,
+    flowDetails._id,
+    flowDetails._integrationId,
+    flowDetails.disabled,
+    flowName,
+    patchFlow,
+    storeId,
+  ]);
   const { name, description, lastModified, disabled } = flowDetails;
   // TODO: set status based on flow criteria...
   const status = 'success';
-  // TODO: this property was copied from the old flow list page... i dont know what its for...
+  // TODO: this property was copied from the old flow list page... i don't know what its for...
   const disableCard = false;
 
   // TODO: This function needs to be enhanced to handle all
@@ -182,22 +165,12 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
 
   const isIntegrationApp = !!flowDetails._connectorId;
   const flowBuilderTo = isIntegrationApp
-    ? `/pg/integrationApp/${flowDetails._integrationId}/flowBuilder/${flowId}`
+    ? `/pg/integrationApps/${integrationAppName}/${flowDetails._integrationId}/flowBuilder/${flowId}`
     : `flowBuilder/${flowId}`;
-  const closeDeltaDialog = () => {
-    setShowDilaog(false);
-  };
 
   return (
     <div className={classes.root}>
       <div className={clsx(classes.statusBar, classes[status])} />
-      {showDilaog && flowDetails.isDeltaFlow && (
-        <FlowStartDateDialog
-          flowId={flowDetails._id}
-          onClose={closeDeltaDialog}
-          runDeltaFlow={handleRunDeltaFlow}
-        />
-      )}
       <div className={classes.cardContent}>
         <Grid item xs={9}>
           <div>
@@ -222,17 +195,11 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
               data-test={`toggleOnAndOffFlow${flowName}`}
               disabled={disableCard}
               on={!disableCard && !disabled}
-              onClick={handleActionClick('disable')}
+              onClick={handleDisableClick}
             />
           )}
 
-          <IconButton
-            disabled={!flowDetails.isRunnable}
-            size="small"
-            data-test={`runFlow${flowName}`}
-            onClick={handleActionClick('run')}>
-            <RunIcon />
-          </IconButton>
+          <RunFlowButton flowId={flowId} onRunStart={handleOnRunStart} />
 
           {flowDetails._connectorId && (
             <IconButton

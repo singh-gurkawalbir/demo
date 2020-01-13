@@ -12,6 +12,7 @@ export default {
     data.map(item => ({
       label: item.name,
       value: item.scriptId && item.scriptId.toLowerCase(),
+      url: item.url,
     })),
   'suitescript-recordTypeDetail': data =>
     data.map(item => ({
@@ -31,6 +32,7 @@ export default {
     data
       .filter(item => item.type === 'datetime' || item.type === 'datetimetz')
       .map(item => ({ label: item.name, value: item.id })),
+
   'suitescript-booleanField': data =>
     data
       .filter(
@@ -56,6 +58,18 @@ export default {
         type: item.type,
         options: item.options,
       })),
+  'suitescript-searchFilters': data =>
+    data.map(item => ({
+      label: item.name,
+      value: item.id,
+    })),
+  'webservices-searchFilters': data =>
+    data.fields &&
+    data.fields.map(item => ({
+      label: item.fieldId,
+      value: item.fieldId,
+    })),
+
   'webservices-recordTypes': data =>
     data.map(item => ({
       label: item.label,
@@ -91,6 +105,7 @@ export default {
           value: item.fieldId,
         }))) ||
     [],
+  'salesforce-sObject-layout': data => data,
   'salesforce-sObjects': data =>
     data.map(d => ({
       label: d.label,
@@ -218,6 +233,19 @@ export default {
     }
 
     return _data;
+  },
+  'salesforce-masterRecordTypeInfo': data => {
+    const { searchLayoutable, recordTypeInfos } = data || {};
+    const returnVal = {};
+    const masterRecordTypeInfo = recordTypeInfos.find(
+      recordTypeInfo => recordTypeInfo.master === true
+    );
+
+    returnVal.recordTypeId =
+      masterRecordTypeInfo && masterRecordTypeInfo.recordTypeId;
+    returnVal.searchLayoutable = searchLayoutable;
+
+    return returnVal;
   },
   default: data =>
     data.map(item => ({

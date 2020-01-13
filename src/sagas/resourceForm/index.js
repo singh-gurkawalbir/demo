@@ -16,6 +16,7 @@ import connectionSagas from '../resourceForm/connections';
 import { requestAssistantMetadata } from '../resources/meta';
 import { isNewId } from '../../utils/resource';
 import patchTransformationRulesForXMLResource from '../sampleData/utils/xmlTransformationRulesGenerator';
+import { uploadRawData } from '../uploadFile';
 
 export const SCOPES = {
   META: 'meta',
@@ -129,6 +130,7 @@ export function* createFormValuesPatchSet({
   );
 
   if (!resource) return { patchSet: [], finalValues: null }; // nothing to do.
+
   // This has the fieldMeta
   const formState = yield select(
     selectors.resourceFormState,
@@ -147,9 +149,20 @@ export function* createFormValuesPatchSet({
       data: values,
     });
   } else {
+    let connection;
+
+    if (resource && resource._connectionId) {
+      connection = yield select(
+        selectors.resource,
+        'connections',
+        resource._connectionId
+      );
+    }
+
     const { preSave } = factory.getResourceFormAssets({
       resourceType,
       resource,
+      connection,
       isNew: formState.isNew,
     });
 
@@ -171,11 +184,54 @@ export function* createFormValuesPatchSet({
   return { patchSet, finalValues };
 }
 
+export function* saveDataLoaderRawData({ resourceId, resourceType, values }) {
+  const { merged: resource } = yield select(
+    selectors.resourceData,
+    resourceType,
+    resourceId
+  );
+
+  // Don't do anything if this is not a simple (data loader) export.
+  if (!resource || resource.type !== 'simple') {
+    return values;
+  }
+
+  const rawData = yield select(
+    selectors.getResourceSampleDataWithStatus,
+    resourceId,
+    'raw'
+  );
+
+  if (!rawData) values;
+
+  const rawDataKey = yield call(uploadRawData, {
+    file: JSON.stringify(rawData),
+  });
+
+  return { ...values, '/rawData': rawDataKey };
+}
+
 export function* submitFormValues({ resourceType, resourceId, values, match }) {
+  let formValues = { ...values };
+
+  if (resourceType === 'exports') {
+    delete formValues['/rawData'];
+
+    // We have a special case for exports that define a "Data loader" flow.
+    // We need to store the raw data s3 key so that when a user 'runs' the flow,
+    // we can post the runKey to the api. For file connectors, we do not use rawData
+    // so this is a safe export field to use for this sub-type of export.
+    formValues = yield call(saveDataLoaderRawData, {
+      resourceType,
+      resourceId,
+      values: formValues,
+    });
+  }
+
   const { patchSet, finalValues } = yield call(createFormValuesPatchSet, {
     resourceType,
     resourceId,
-    values,
+    values: formValues,
     scope: SCOPES.VALUE,
   });
 
@@ -241,10 +297,11 @@ export function* submitFormValues({ resourceType, resourceId, values, match }) {
         scope: SCOPES.VALUE,
       });
 
-      if (error)
+      if (error) {
         return yield put(
           actions.resourceForm.submitFailed(resourceType, resourceId)
         );
+      }
     }
   }
 
@@ -328,11 +385,22 @@ export function* initFormValues({
     }
   }
 
+  let connection;
+
+  if (resource && resource._connectionId) {
+    connection = yield select(
+      selectors.resource,
+      'connections',
+      resource._connectionId
+    );
+  }
+
   const defaultFormAssets = factory.getResourceFormAssets({
     resourceType,
     resource,
     isNew,
     assistantData,
+    connection,
   });
   const { customForm } = resource;
   const form =

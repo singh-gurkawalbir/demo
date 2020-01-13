@@ -15,11 +15,49 @@ export function integrationAppsInstaller(state, id) {
   return fromInstaller.integrationAppsInstaller(state && state.installer, id);
 }
 
-export function integrationAppSettingsFormState(state, integrationId, flowId) {
-  return fromSettings.integrationAppSettingsFormState(
+export function categoryMapping(state, integrationId, flowId) {
+  return fromSettings.categoryMapping(
     state && state.settings,
     integrationId,
     flowId
+  );
+}
+
+export function categoryMappingFilters(state, integrationId, flowId) {
+  return fromSettings.categoryMappingFilters(
+    state && state.settings,
+    integrationId,
+    flowId
+  );
+}
+
+export function categoryMappingData(state, integrationId, flowId) {
+  return fromSettings.categoryMappingData(
+    state && state.settings,
+    integrationId,
+    flowId
+  );
+}
+
+export function categoryMappingGeneratesMetadata(state, integrationId, flowId) {
+  return fromSettings.categoryMappingGeneratesMetadata(
+    state && state.settings,
+    integrationId,
+    flowId
+  );
+}
+
+export function integrationAppSettingsFormState(
+  state,
+  integrationId,
+  flowId,
+  sectionId
+) {
+  return fromSettings.integrationAppSettingsFormState(
+    state && state.settings,
+    integrationId,
+    flowId,
+    sectionId
   );
 }
 

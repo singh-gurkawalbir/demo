@@ -15,6 +15,7 @@ import pageProcessorHooksAction from './actions/pageProcessorHooks';
 import outputFilterAction from './actions/outputFilter';
 import transformationAction from './actions/transformation';
 import responseMapping from './actions/responseMapping';
+import postResponseMapHook from './actions/postResponseMapHook';
 import responseTransformationAction from './actions/responseTransformation';
 import proceedOnFailureAction from './actions/proceedOnFailure';
 import { actionsMap, isImportMappingAvailable } from '../../../utils/flows';
@@ -271,6 +272,11 @@ const PageProcessor = ({
           ...responseMapping,
           isUsed: usedActions[actionsMap.responseMapping],
           helpText: helpTextMap[`fb.pp.${resourceType}.responseMapping`],
+        },
+        {
+          ...postResponseMapHook,
+          isUsed: usedActions[actionsMap.postResponseMap],
+          helpText: helpTextMap[`fb.pp.${resourceType}.postResponseMap`],
         },
         {
           ...proceedOnFailureAction,

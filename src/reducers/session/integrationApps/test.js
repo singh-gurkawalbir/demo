@@ -1970,6 +1970,7 @@ describe('integrationApps reducer test cases', () => {
             'integrationId',
             'flowId',
             'storeId',
+            null,
             'INCORRECT_FUNCTION_NAME'
           )
         );
@@ -1992,6 +1993,7 @@ describe('integrationApps reducer test cases', () => {
             'integrationId',
             'flowId',
             'storeId',
+            null,
             'INCORRECT_FUNCTION_NAME'
           )
         );

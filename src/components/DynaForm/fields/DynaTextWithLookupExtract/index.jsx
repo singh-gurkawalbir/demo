@@ -5,20 +5,29 @@ import getFormattedSampleData from '../../../../utils/sampleData';
 import actions from '../../../../actions';
 import getJSONPaths from '../../../../utils/jsonPaths';
 import IgnoreExistingData from './IgnoreExistingData';
-import RelativeUri from './RelativeUri';
+import TemplateEditor from './TemplateEditor';
 
+// fieldType values = ['relativeUri','templateeditor','ignoreExistingData']
 export default function DynaTextWithLookupExtract(props) {
   const {
     fieldType,
     connectionId,
-    options = {},
     resourceId,
     resourceType,
     flowId,
+    editorTitle,
     hideLookups = false,
+    options = {},
   } = props;
-  const { resourceName } = options;
+  const { lookups } = options;
   const isExport = resourceType === 'exports';
+  const isPageGenerator = useSelector(state =>
+    selectors.isPageGenerator(state, flowId, resourceId, resourceType)
+  );
+  const resourceObj = useSelector(state =>
+    selectors.resourceData(state, resourceType, resourceId)
+  );
+  const { name: resourceName, adaptorType } = resourceObj.merged || {};
   const connection = useSelector(state =>
     selectors.resource(state, 'connections', connectionId)
   );
@@ -33,10 +42,7 @@ export default function DynaTextWithLookupExtract(props) {
   );
 
   useEffect(() => {
-    // Request for sample data only incase of flow context
-    // TODO : @Raghu Do we show default data in stand alone context?
-    // What type of sample data is expected in case of Page generators
-    if (flowId && !sampleData) {
+    if (flowId && !sampleData && !isPageGenerator) {
       dispatch(
         actions.flowData.requestSampleData(
           flowId,
@@ -46,7 +52,7 @@ export default function DynaTextWithLookupExtract(props) {
         )
       );
     }
-  }, [dispatch, flowId, resourceId, resourceType, sampleData]);
+  }, [dispatch, flowId, isPageGenerator, resourceId, resourceType, sampleData]);
 
   const formattedSampleData = useMemo(
     () =>
@@ -80,33 +86,21 @@ export default function DynaTextWithLookupExtract(props) {
     });
   }
 
-  useEffect(() => {
-    // Request for sample data only incase of flow context
-    // TODO : @Raghu Do we show default data in stand alone context?
-    // What type of sample data is expected in case of Page generators
-    if (flowId && !sampleData) {
-      dispatch(
-        actions.flowData.requestSampleData(
-          flowId,
-          resourceId,
-          resourceType,
-          'flowInput'
-        )
-      );
-    }
-  }, [dispatch, flowId, resourceId, resourceType, sampleData]);
-
   const showLookups = !isExport && !hideLookups;
 
   return (
     <Fragment>
-      {fieldType === 'relativeUri' && (
-        <RelativeUri
+      {(fieldType === 'relativeUri' || fieldType === 'templateeditor') && (
+        <TemplateEditor
+          editorTitle={editorTitle}
           showLookup={showLookups}
           sampleData={formattedSampleData}
           showExtractsOnly
           connection={connection}
           extractFields={formattedExtractFields}
+          adaptorType={adaptorType}
+          resourceName={resourceName}
+          lookups={lookups}
           {...props}
         />
       )}
@@ -116,6 +110,8 @@ export default function DynaTextWithLookupExtract(props) {
           sampleData={formattedSampleData}
           connection={connection}
           extractFields={formattedExtractFields}
+          resourceName={resourceName}
+          lookups={lookups}
           {...props}
         />
       )}

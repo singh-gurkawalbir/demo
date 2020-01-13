@@ -12,6 +12,7 @@ import salesforce from './salesforce';
 import wrapper from './wrapper';
 import webhook from './webhook';
 import custom from './custom';
+import dynamodb from './dynamodb';
 
 const allFieldDefinitions = {
   ...as2,
@@ -28,6 +29,7 @@ const allFieldDefinitions = {
   ...wrapper,
   ...abstractExport,
   ...custom,
+  ...dynamodb,
 };
 
 export default allFieldDefinitions;
