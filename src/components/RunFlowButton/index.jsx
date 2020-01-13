@@ -148,8 +148,10 @@ export default function RunFlowButton({
       }
 
       dispatch(actions.flow.runDataLoader({ flowId, fileContent }));
+
+      if (onRunStart) onRunStart();
     },
-    [dataLoaderFileType, dispatch, enqueueSnackbar, flowId]
+    [dataLoaderFileType, dispatch, enqueueSnackbar, flowId, onRunStart]
   );
   const handleFileChange = useCallback(
     e => {
