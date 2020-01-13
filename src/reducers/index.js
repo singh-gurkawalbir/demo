@@ -781,6 +781,7 @@ export function flowDetails(state, id) {
       : draft.canSchedule;
     draft.showStartDateDialog = flowSettings.showStartDateDialog;
     draft.disableSlider = flowSettings.disableSlider;
+    draft.showUtilityMapping = flowSettings.showUtilityMapping;
   });
 }
 
@@ -1152,6 +1153,162 @@ export function integrationAppStore(state, integrationId, storeId) {
 
 export function integrationAppConnectionList(state, integrationId, storeId) {
   return integrationAppResourceList(state, integrationId, storeId).connections;
+}
+
+export function categoryMapping(state, integrationId, flowId) {
+  return fromSession.categoryMapping(
+    state && state.session,
+    integrationId,
+    flowId
+  );
+}
+
+export function categoryMappingMetadata(state, integrationId, flowId) {
+  const categoryMappingData =
+    fromSession.categoryMapping(
+      state && state.session,
+      integrationId,
+      flowId
+    ) || {};
+  const categoryMappingMetadata = {};
+  const { response } = categoryMappingData;
+
+  if (!response) {
+    return categoryMappingMetadata;
+  }
+
+  const extractsMetadata = response.find(
+    sec => sec.operation === 'extractsMetaData'
+  );
+  const generatesMetadata = response.find(
+    sec => sec.operation === 'generatesMetaData'
+  );
+
+  if (extractsMetadata) {
+    categoryMappingMetadata.extractsMetadata = extractsMetadata.data;
+  }
+
+  if (generatesMetadata) {
+    categoryMappingMetadata.generatesMetadata =
+      generatesMetadata.data &&
+      generatesMetadata.data.generatesMetaData &&
+      generatesMetadata.data.generatesMetaData.fields;
+    categoryMappingMetadata.relationshipData =
+      generatesMetadata.data && generatesMetadata.data.categoryRelationshipData;
+  }
+
+  return categoryMappingMetadata;
+}
+
+export function mappedCategories(state, integrationId, flowId) {
+  const categoryMappingData =
+    fromSession.categoryMapping(
+      state && state.session,
+      integrationId,
+      flowId
+    ) || {};
+  let mappedCategories = emptySet;
+  const { response } = categoryMappingData;
+
+  if (response) {
+    const mappingData = response.find(sec => sec.operation === 'mappingData');
+
+    if (mappingData) {
+      mappedCategories = mappingData.data.mappingData.basicMappings.recordMappings.map(
+        item => ({
+          id: item.id,
+          name: item.name === 'commonAttributes' ? 'Common' : item.name,
+          children: item.children,
+        })
+      );
+    }
+  }
+
+  return mappedCategories;
+}
+
+export function categoryMappingGenerateFields(
+  state,
+  integrationId,
+  flowId,
+  options
+) {
+  const { sectionId } = options;
+  const generatesMetadata =
+    fromSession.categoryMappingGeneratesMetadata(
+      state && state.session,
+      integrationId,
+      flowId
+    ) || {};
+
+  if (generatesMetadata) {
+    return generatesMetadata.find(sec => sec.id === sectionId);
+  }
+
+  return null;
+}
+
+export function categoryMappingFilters(state, integrationId, flowId) {
+  return fromSession.categoryMappingFilters(
+    state && state.session,
+    integrationId,
+    flowId
+  );
+}
+
+export function mappingsForCategory(state, integrationId, flowId, filters) {
+  const { sectionId } = filters;
+  let mappings = emptySet;
+  const { attributes = {}, mappingFilter = 'mapped' } =
+    categoryMappingFilters(state, integrationId, flowId) || {};
+  const recordMappings =
+    fromSession.categoryMappingData(
+      state && state.session,
+      integrationId,
+      flowId
+    ) || {};
+  const { fields = [] } =
+    categoryMappingGenerateFields(state, integrationId, flowId, {
+      sectionId,
+    }) || {};
+
+  if (recordMappings) {
+    mappings = recordMappings.find(item => item.id === sectionId);
+  }
+
+  // If no filters are passed, return all mapppings
+  if (!attributes || !mappingFilter) {
+    return mappings;
+  }
+
+  const mappedFields = map(mappings.fieldMappings, 'generate');
+  // Filter all mapped fields
+  const filteredMappedFields = mappings.fieldMappings.filter(field => {
+    const generateField = fields.find(f => f.id === field.generate);
+
+    return generateField && attributes[generateField.filterType];
+  });
+  // Filter all generateFields with filter which are not yet mapped
+  const filteredFields = fields
+    .filter(
+      field => attributes[field.filterType] && !mappedFields.includes(field.id)
+    )
+    .map(field => ({ generate: field.id, extract: '' }));
+  // Combine filtered mappings and unmapped fields and generate unmapped fields
+  const filteredMappings = [...filteredMappedFields, ...filteredFields].filter(
+    field => {
+      if (mappingFilter === 'all') return true;
+      else if (mappingFilter === 'mapped') return !!field.extract;
+
+      return !field.extract && !field.hardCodedValue;
+    }
+  );
+
+  // return mappings object by overriding field mappings with filtered mappings
+  return {
+    ...mappings,
+    fieldMappings: filteredMappings,
+  };
 }
 
 export function integrationAppSettings(state, id) {

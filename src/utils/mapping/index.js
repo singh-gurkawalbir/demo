@@ -191,6 +191,10 @@ export default {
       default:
     }
 
+    if (options.isCategoryMapping) {
+      ({ mappings } = options);
+    }
+
     // creating deep copy of mapping object to avoid alteration to resource mapping object
     const mappingCopy = deepClone(mappings);
 
