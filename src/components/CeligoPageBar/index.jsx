@@ -37,6 +37,7 @@ const useStyles = makeStyles(theme => ({
     // by the value override below...
     '& > div': {
       maxWidth: 350,
+      overflow: 'hidden',
       textAlign: 'left',
       ' & > p': {
         textTransform: 'none',

@@ -55,6 +55,7 @@ const useStyles = makeStyles(theme => ({
     '& li': {
       fontSize: 13,
       '& a': {
+        color: theme.palette.secondary.light,
         '&:hover': {
           textDecoration: 'none',
           color: theme.palette.primary.main,
@@ -69,7 +70,7 @@ const useStyles = makeStyles(theme => ({
   },
   topBarActions: {
     listStyle: 'none',
-    margin: [[5, 0, 0, 0]],
+    margin: 0,
     display: 'flex',
     alignItems: 'center',
     '& li': {
