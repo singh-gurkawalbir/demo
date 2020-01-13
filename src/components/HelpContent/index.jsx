@@ -6,8 +6,6 @@ import { Button } from '@material-ui/core';
 import { useDispatch } from 'react-redux';
 import actions from '../../actions';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
-// import DynaForm from '../DynaForm';
-// import DynaText from '../DynaForm/fields/DynaText';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
