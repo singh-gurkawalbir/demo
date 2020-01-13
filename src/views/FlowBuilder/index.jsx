@@ -218,7 +218,7 @@ function FlowBuilder() {
   const theme = useTheme();
   const dispatch = useDispatch();
   // Bottom drawer is shown for existing flows and docked for new flow
-  const [bottonDrawerSize, setBottomDrawerSize] = useState(isNewFlow ? 0 : 1);
+  const [bottomDrawerSize, setBottomDrawerSize] = useState(isNewFlow ? 0 : 1);
   const [tabValue, setTabValue] = useState(0);
   const [newGeneratorId, setNewGeneratorId] = useState(generateNewId());
   const [newProcessorId, setNewProcessorId] = useState(generateNewId());
@@ -386,21 +386,12 @@ function FlowBuilder() {
   // Initializes a new flow (patch, no commit)
   // and replaces the url to reflect the new temp flow id.
   function patchNewFlow(newFlowId, newName, newPG) {
+    const startDisabled = !newPG || newPG.application !== 'dataLoader';
     const patchSet = [
       { op: 'add', path: '/name', value: newName || 'New flow' },
-
-      // TODO: The message below gets hidden from the end-user.
-      // we need to trace the sagas and figure out how to present this
-      // and other errors like this, to the user. Is this because
-      // the status code is 403 possibly? Should we treat all 400s as
-      // informational and proxy them through to the user as notifications?
-      // {"errors":[{"code":"subscription_required","message":"Enabling this flow requires a product subscription, or that you register for a free trial.  Please navigate to My Account -> Subscription to start a new trial, extend an existing trial, or to request a product subscription."}]}
-      { op: 'add', path: '/disabled', value: true },
-
-      // not sure we even need to init these arrays...
-      // leave in for now to prevent downstream undefined reference errors.
       { op: 'add', path: '/pageGenerators', value: newPG ? [newPG] : [] },
       { op: 'add', path: '/pageProcessors', value: [] },
+      { op: 'add', path: '/disabled', value: startDisabled },
     ];
 
     if (integrationId && integrationId !== 'none') {
@@ -513,10 +504,10 @@ function FlowBuilder() {
           [classes.canvasShift]: drawerOpened,
         })}
         style={{
-          height: `calc(${(4 - bottonDrawerSize) *
+          height: `calc(${(4 - bottomDrawerSize) *
             25}vh - ${theme.appBarHeight +
             theme.pageBarHeight +
-            (bottonDrawerSize ? 0 : bottomDrawerMin)}px)`,
+            (bottomDrawerSize ? 0 : bottomDrawerMin)}px)`,
         }}>
         <div className={classes.canvas}>
           {/* CANVAS START */}
@@ -614,12 +605,12 @@ function FlowBuilder() {
             </div>
           </div>
         </div>
-        {bottonDrawerSize < 3 && (
+        {bottomDrawerSize < 3 && (
           <div
             className={classes.fabContainer}
             style={{
-              bottom: bottonDrawerSize
-                ? `calc(${bottonDrawerSize * 25}vh + ${theme.spacing(3)}px)`
+              bottom: bottomDrawerSize
+                ? `calc(${bottomDrawerSize * 25}vh + ${theme.spacing(3)}px)`
                 : bottomDrawerMin + theme.spacing(3),
             }}
           />
@@ -629,7 +620,7 @@ function FlowBuilder() {
       </div>
       <BottomDrawer
         flow={flow}
-        size={bottonDrawerSize}
+        size={bottomDrawerSize}
         setSize={setBottomDrawerSize}
         tabValue={tabValue}
         setTabValue={setTabValue}
