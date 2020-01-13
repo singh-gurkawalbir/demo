@@ -58,30 +58,34 @@ function GroupedButton(props) {
       {options &&
         options[0] &&
         options[0].items &&
-        [...Array(options[0].items.length - 1).keys()].map(groupIndex => (
-          <div key={groupIndex} className={classes.buttonGroup}>
-            <ButtonGroup color="primary">
-              {options &&
-                options[0].items
-                  .filter(
-                    (val, index) =>
-                      index >= groupIndex * wrapIndex &&
-                      index < (groupIndex + 1) * wrapIndex
-                  )
-                  .map(item => (
-                    <Button
-                      key={item.label}
-                      color="primary"
-                      onClick={handleChange(item)}
-                      variant={
-                        finalValues.includes(item.value) ? 'contained' : 'text'
-                      }>
-                      {item.label}
-                    </Button>
-                  ))}
-            </ButtonGroup>
-          </div>
-        ))}
+        [...Array(parseInt(options[0].items.length / 5, 10) + 1).keys()].map(
+          groupIndex => (
+            <div key={groupIndex} className={classes.buttonGroup}>
+              <ButtonGroup color="primary">
+                {options &&
+                  options[0].items
+                    .filter(
+                      (val, index) =>
+                        index >= groupIndex * wrapIndex &&
+                        index < (groupIndex + 1) * wrapIndex
+                    )
+                    .map(item => (
+                      <Button
+                        key={item.label}
+                        color="primary"
+                        onClick={handleChange(item)}
+                        variant={
+                          finalValues.includes(item.value)
+                            ? 'contained'
+                            : 'text'
+                        }>
+                        {item.label}
+                      </Button>
+                    ))}
+              </ButtonGroup>
+            </div>
+          )
+        )}
     </Fragment>
   );
 }
