@@ -3,10 +3,17 @@ import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 // import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import { IconButton } from '@material-ui/core';
+import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import RunIcon from '../icons/RunIcon';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
 import FlowStartDateDialog from './FlowStartDateDialog';
+import {
+  getUploadedFileStatus,
+  getFileReaderOptions,
+  getCsvFromXlsx,
+  getJSONContent,
+} from '../../utils/file';
 
 const useStyles = makeStyles(theme => ({
   fileInput: {
@@ -24,6 +31,7 @@ export default function RunFlowButton({
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const [enqueueSnackbar] = useEnqueueSnackbar();
   const fileInput = useRef(null);
   const [showDeltaStartDateDialog, setShowDeltaStartDateDialog] = useState(
     false
@@ -34,8 +42,25 @@ export default function RunFlowButton({
   );
   const isNewFlow = !flowId || flowId.startsWith('new');
   const isDataLoaderFlow = flowDetails.isSimpleImport;
+  const dataLoaderFileType = useSelector(state => {
+    if (!isDataLoaderFlow) return;
+
+    if (
+      !flowDetails.pageGenerators ||
+      flowDetails.pageGenerators.length === 0
+    ) {
+      return;
+    }
+
+    const exportId = flowDetails.pageGenerators[0]._exportId;
+    const exp = selectors.resource(state, 'exports', exportId);
+
+    return exp && exp.file && exp.file.type;
+  });
   const hasRunKey = useSelector(state => {
     if (!isDataLoaderFlow) return false;
+
+    if (isDataLoaderFlow) return false;
 
     if (
       !flowDetails.pageGenerators ||
@@ -55,11 +80,15 @@ export default function RunFlowButton({
   );
   const handleRunFlow = useCallback(
     customStartDate => {
-      dispatch(actions.flow.run({ flowId, customStartDate }));
+      if (isDataLoaderFlow) {
+        dispatch(actions.flow.runDataLoader({ flowId }));
+      } else {
+        dispatch(actions.flow.run({ flowId, customStartDate }));
+      }
 
       if (onRunStart) onRunStart();
     },
-    [dispatch, flowId, onRunStart]
+    [dispatch, flowId, isDataLoaderFlow, onRunStart]
   );
   const handleClick = useCallback(() => {
     if (isDataLoaderFlow && !hasRunKey) {
@@ -84,14 +113,74 @@ export default function RunFlowButton({
     hasRunKey,
     isDataLoaderFlow,
   ]);
-  const handleFileChange = useCallback(e => {
-    // eslint-disable-next-line
-    console.log('user selected a file', e.target.files[0]);
+  /*
+   * File types supported for upload are CSV, XML, XLSX and JSON
+   */
+  const handleFileRead = useCallback(
+    event => {
+      const { result } = event.target;
+      let fileContent = result;
 
-    // TODO: Raghu: We need to save this file, get a runKey and set the
-    // export.rawData value to equal the runKey value. What is the best way
-    // to do this?
-  }, []);
+      // For xlsx file , content gets converted to 'csv' before parsing to verify valid xlsx file
+      if (dataLoaderFileType === 'xlsx') {
+        const { success, error } = getCsvFromXlsx(fileContent);
+
+        if (!success) {
+          return enqueueSnackbar({
+            message: error,
+            variant: 'error',
+          });
+        }
+      }
+
+      // For JSON file, content should be parsed from String to JSON
+      if (dataLoaderFileType === 'json') {
+        const { success, error, data } = getJSONContent(fileContent);
+
+        if (!success) {
+          return enqueueSnackbar({
+            message: error,
+            variant: 'error',
+          });
+        }
+
+        fileContent = data;
+      }
+
+      dispatch(actions.flow.runDataLoader({ flowId, fileContent }));
+    },
+    [dataLoaderFileType, dispatch, enqueueSnackbar, flowId]
+  );
+  const handleFileChange = useCallback(
+    e => {
+      const file = e.target.files[0];
+
+      if (!file) return;
+
+      // Checks for file size and file types
+      const fileStatus = getUploadedFileStatus(file, dataLoaderFileType);
+
+      if (!fileStatus.success) {
+        return enqueueSnackbar({
+          message: fileStatus.error,
+          variant: 'error',
+        });
+      }
+
+      const fileReaderOptions = getFileReaderOptions(dataLoaderFileType);
+      const fileReader = new FileReader();
+
+      fileReader.onload = handleFileRead;
+
+      if (fileReaderOptions.readAsArrayBuffer) {
+        // Incase of XLSX file
+        fileReader.readAsArrayBuffer(file);
+      } else {
+        fileReader.readAsText(file);
+      }
+    },
+    [dataLoaderFileType, enqueueSnackbar, handleFileRead]
+  );
   const handleCloseDeltaDialog = useCallback(() => {
     setShowDeltaStartDateDialog(false);
   }, []);
@@ -129,7 +218,6 @@ export default function RunFlowButton({
           id="fileUpload"
           type="file"
           ref={fileInput}
-          accept="txt/csv"
           className={classes.fileInput}
           onChange={handleFileChange}
         />
