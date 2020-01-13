@@ -11,7 +11,7 @@ import flowStartDateMetadata from './metadata';
 import Spinner from '../../Spinner';
 
 export default function FlowStartDateDialog(props) {
-  const { flowId, onClose, disabled, runDeltaFlow } = props;
+  const { flowId, onClose, disabled, onRun } = props;
   const dispatch = useDispatch();
   const [state, setState] = useState({
     changeIdentifier: 0,
@@ -72,7 +72,7 @@ export default function FlowStartDateDialog(props) {
       customStartDate = customStartDate ? customStartDate.toISOString() : null;
     }
 
-    runDeltaFlow(customStartDate);
+    onRun(customStartDate);
 
     onClose();
   };
