@@ -17,7 +17,7 @@ const useStyles = makeStyles(theme => ({
   popperContent: {
     padding: 12,
     zIndex: theme.zIndex.drawer + 1,
-    width: 292,
+    minWidth: 292,
     wordBreak: 'break-word',
   },
   avatarButton: {

@@ -1,13 +1,16 @@
 import { hot } from 'react-hot-loader';
 import { Component, Fragment } from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import { Divider } from '@material-ui/core';
 import { connect } from 'react-redux';
 import loadable from '../../utils/loadable';
 import * as selectors from '../../reducers';
 import { USER_ACCESS_LEVELS } from '../../utils/constants';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import FlowsIcon from '../../components/icons/FlowsIcon';
+import SingleUserIcon from '../../components/icons/SingleUserIcon';
+import UsersIcon from '../../components/icons/GroupOfUsersIcon';
+import KnowledgeBaseIcon from '../../components/icons/KnowledgeBaseIcon';
+import AuditLogIcon from '../../components/icons/AuditLogIcon';
 import ResourceDrawer from '../../components/drawer/Resource';
 import Tabs from '../Integration/common/Tabs';
 
@@ -38,22 +41,23 @@ const tabs = [
   {
     path: 'subscription',
     label: 'Subscription',
-    Icon: FlowsIcon,
+    Icon: KnowledgeBaseIcon,
     Panel: Subscription,
   },
   {
     path: 'profile',
     label: 'Profile',
-    Icon: FlowsIcon,
+    Icon: SingleUserIcon,
     Panel: Profile,
   },
-  { path: 'users', label: 'Users', Icon: FlowsIcon, Panel: Users },
+  { path: 'users', label: 'Users', Icon: UsersIcon, Panel: Users },
   {
     path: 'audit',
-    label: 'Audit',
-    Icon: FlowsIcon,
+    label: 'Audit log',
+    Icon: AuditLogIcon,
     Panel: Audit,
   },
+  // TODO: Azhar, Transfers Icon should be there
   {
     path: 'transfers',
     label: 'Transfers',
@@ -62,6 +66,7 @@ const tabs = [
   },
 ];
 
+// TODO: Ashok if these CSS are not being used then we can remove it.
 @hot(module)
 @withStyles(theme => ({
   link: {
@@ -99,10 +104,17 @@ const tabs = [
     flex: 1,
     zIndex: 1,
   },
+  wrapperProfile: {
+    padding: theme.spacing(3),
+    background: theme.palette.background.paper,
+    margin: theme.spacing(3),
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+  },
 }))
 class MyAccount extends Component {
   render() {
-    const { match, permissions } = this.props;
+    const { match, permissions, classes } = this.props;
 
     return (
       <Fragment>
@@ -113,9 +125,10 @@ class MyAccount extends Component {
               : 'My profile'
           }
         />
-        <Divider />
         {permissions.accessLevel !== USER_ACCESS_LEVELS.ACCOUNT_OWNER ? (
-          <Profile />
+          <div className={classes.wrapperProfile}>
+            <Profile />
+          </div>
         ) : (
           <Fragment>
             <ResourceDrawer match={match} />
