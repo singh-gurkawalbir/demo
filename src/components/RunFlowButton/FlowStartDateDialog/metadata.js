@@ -1,4 +1,4 @@
-import dateTimezones from '../../utils/dateTimezones';
+import dateTimezones from '../../../utils/dateTimezones';
 
 export default {
   getMetadata: options => {

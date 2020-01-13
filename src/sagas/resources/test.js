@@ -8,6 +8,7 @@ import {
   deleteResource,
   requestReferences,
   requestDeregister,
+  normalizeFlow,
 } from './';
 import { apiCallWithRetry } from '../';
 import { status500 } from '../test';
@@ -202,6 +203,12 @@ availableResources.forEach(type => {
 
       expect(callEffect).toEqual(call(apiCallWithRetry, { path }));
 
+      if (type === 'flows') {
+        expect(saga.next(mockResource).value).toEqual(
+          call(normalizeFlow, mockResource)
+        );
+      }
+
       const effect = saga.next(mockResource).value;
 
       expect(effect).toEqual(
@@ -255,6 +262,14 @@ availableResources.forEach(type => {
         }));
         mockCollection = [...mockCollection, ...mockSharedStacks];
         effect = saga.next(mockSharedStacks).value;
+      } else if (type === 'flows') {
+        expect(saga.next(mockCollection).value).toEqual(
+          call(normalizeFlow, mockCollection[0])
+        );
+        expect(saga.next(mockCollection[0]).value).toEqual(
+          call(normalizeFlow, mockCollection[1])
+        );
+        effect = saga.next(mockCollection[1]).value;
       } else {
         effect = saga.next(mockCollection).value;
       }

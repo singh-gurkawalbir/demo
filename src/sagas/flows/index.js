@@ -9,15 +9,38 @@ import { JOB_STATUS, JOB_TYPES } from '../../utils/constants';
 export function* run({ flowId, customStartDate }) {
   const { path, opts } = getRequestOptions(actionTypes.FLOW.RUN, {
     resourceId: flowId,
-    customStartDate,
   });
-  let job;
 
   if (customStartDate) {
     opts.body = {
       export: { startDate: customStartDate },
     };
   }
+
+  const flow = yield select(selectors.resource, 'flows', flowId);
+
+  if (!flow) return true;
+
+  // Handle Data loader flows...
+  if (flow.pageGenerators && flow.pageGenerators.length) {
+    const exportId = flow.pageGenerators[0]._exportId;
+    const exp = yield select(selectors.resource, 'exports', exportId);
+
+    if (exp && exp.type === 'simple') {
+      if (!exp.rawData) {
+        // no data in export to load... cant run DL flow.
+        return true;
+      }
+
+      opts.body = {
+        // for now we store the runKey associated with the initial uploaded file
+        // in the rawData field of DL (simple) exports.
+        runKey: exp.rawData,
+      };
+    }
+  }
+
+  let job;
 
   try {
     job = yield call(apiCallWithRetry, { path, opts });
@@ -31,11 +54,8 @@ export function* run({ flowId, customStartDate }) {
     type: JOB_TYPES.FLOW,
     status: JOB_STATUS.QUEUED,
   };
-  const flow = yield select(selectors.resource, 'flows', flowId);
 
-  if (flow) {
-    additionalProps._integrationId = flow._integrationId;
-  }
+  additionalProps._integrationId = flow._integrationId;
 
   yield put(
     actions.job.receivedFamily({ job: { ...job, ...additionalProps } })

@@ -1,5 +1,5 @@
 import { Fragment, useState, useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import Menu from '@material-ui/core/Menu';
 import { makeStyles } from '@material-ui/core';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -17,8 +17,7 @@ import JobRetriesDialog from './JobRetriesDialog';
 import JobFilesDownloadDialog from './JobFilesDownloadDialog';
 import MoreVertIcon from '../icons/EllipsisVerticalIcon';
 import getRoutePath from '../../utils/routePaths';
-import * as selectors from '../../reducers';
-import FlowStartDateDialog from '../DeltaFlowStartDate/Dialog';
+import RunFlowButton from '../RunFlowButton';
 
 const useStyle = makeStyles({
   iconBtn: {
@@ -55,10 +54,6 @@ export default function JobActionsMenu({
   if (isJobInProgress || job.status === JOB_STATUS.RETRYING) {
     menuOptions.push({ label: 'Cancel', action: 'cancelJob' });
   }
-
-  const [showDilaog, setShowDilaog] = useState(false);
-  const flowDetails =
-    useSelector(state => selectors.flowDetails(state, job._flowId)) || {};
 
   if (isJobCompleted) {
     if (job.retries && job.retries.length > 0) {
@@ -148,8 +143,15 @@ export default function JobActionsMenu({
     setAnchorEl(event.currentTarget);
   }
 
-  const handleRunDeltaFlow = customStartDate => {
-    dispatch(actions.flow.run({ flowId: job._flowId, customStartDate }));
+  const handleRunStart = () => {
+    setActionsToMonitor({
+      ...actionsToMonitor,
+      runFlow: {
+        action: actionTypes.FLOW.RUN,
+        resourceId: job._flowId,
+      },
+    });
+    dispatch(actions.job.paging.setCurrentPage(0));
   };
 
   function handleActionClick(action) {
@@ -164,23 +166,6 @@ export default function JobActionsMenu({
         dispatch(actions.job.downloadFiles({ jobId: job._id }));
       } else if (job.files.length > 1) {
         setShowFilesDownloadDialog(true);
-      }
-    } else if (action === 'runFlow') {
-      if (
-        flowDetails.isDeltaFlow &&
-        (!flowDetails._connectorId || !!flowDetails.showStartDateDialog)
-      ) {
-        setShowDilaog('true');
-      } else {
-        handleRunDeltaFlow();
-        setActionsToMonitor({
-          ...actionsToMonitor,
-          [action]: {
-            action: actionTypes.FLOW.RUN,
-            resourceId: job._flowId,
-          },
-        });
-        dispatch(actions.job.paging.setCurrentPage(0));
       }
     } else if (action === 'cancelJob') {
       confirmDialog({
@@ -337,19 +322,8 @@ export default function JobActionsMenu({
     setShowFilesDownloadDialog(false);
   }
 
-  const closeDeltaDialog = () => {
-    setShowDilaog(false);
-  };
-
   return (
     <Fragment>
-      {showDilaog && flowDetails.isDeltaFlow && (
-        <FlowStartDateDialog
-          flowId={job._flowId}
-          onClose={closeDeltaDialog}
-          runDeltaFlow={handleRunDeltaFlow}
-        />
-      )}
       {showRetriesDialog && (
         <JobRetriesDialog
           job={job}
@@ -373,15 +347,29 @@ export default function JobActionsMenu({
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
         onClose={handleMenuClose}>
-        {menuOptions.map(opt => (
-          <MenuItem
-            key={opt.action}
-            onClick={() => {
-              handleActionClick(opt.action);
-            }}>
-            {opt.label}
-          </MenuItem>
-        ))}
+        {menuOptions.map(opt => {
+          if (opt.action === 'runFlow') {
+            return (
+              <MenuItem key="runFlow">
+                <RunFlowButton
+                  variant="text"
+                  flowId={job._flowId}
+                  onRunStart={handleRunStart}
+                />
+              </MenuItem>
+            );
+          }
+
+          return (
+            <MenuItem
+              key={opt.action}
+              onClick={() => {
+                handleActionClick(opt.action);
+              }}>
+              {opt.label}
+            </MenuItem>
+          );
+        })}
       </Menu>
       <IconButton
         data-test="moreJobActionsMenu"
