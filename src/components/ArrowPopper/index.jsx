@@ -66,7 +66,7 @@ const useStyles = makeStyles(theme => ({
       '&::after': {
         borderWidth: '1.3em 1.3em 0 1.3em',
         // eslint-disable-next-line prettier/prettier
-        borderColor: `rgb(0,0,0,0.2) transparent transparent  transparent`,
+        borderColor: `${theme.palette.secondary.lightest} transparent transparent  transparent`,
         position: 'absolute',
         top: '0px',
         left: '2px',
@@ -87,7 +87,7 @@ const useStyles = makeStyles(theme => ({
       '&::after': {
         borderWidth: '1.3em 1.3em 1.3em 0',
         // eslint-disable-next-line prettier/prettier
-        borderColor: `transparent rgb(0,0,0,0.2) transparent transparent`,
+        borderColor: `transparent ${theme.palette.secondary.lightest} transparent transparent`,
         position: 'absolute',
         top: '1px',
         left: '-2px',
@@ -108,7 +108,7 @@ const useStyles = makeStyles(theme => ({
       '&::after': {
         borderWidth: '1.3em 0 1.3em 1.3em',
         // eslint-disable-next-line prettier/prettier
-        borderColor: `transparent transparent transparent rgb(0,0,0,0.2)`,
+        borderColor: `transparent transparent transparent ${theme.palette.secondary.lightest}`,
         position: 'absolute',
         top: '2px',
         left: '0px',

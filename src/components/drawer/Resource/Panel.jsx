@@ -101,9 +101,9 @@ export default function Panel(props) {
   let resourceLabel;
 
   if (resourceType === 'pageProcessor') {
-    resourceLabel = 'Page Processor';
+    resourceLabel = 'Page processor';
   } else if (resourceType === 'pageGenerator') {
-    resourceLabel = 'Page Generator';
+    resourceLabel = 'Page generator';
   } else {
     resourceLabel = MODEL_PLURAL_TO_LABEL[resourceType];
   }

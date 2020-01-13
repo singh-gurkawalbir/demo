@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { makeStyles, fade } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import { Button } from '@material-ui/core';
 import { useDispatch } from 'react-redux';
@@ -11,8 +11,6 @@ const useStyles = makeStyles(theme => ({
     padding: '12px',
     minWidth: '212px',
     maxWidth: '270px',
-    border: '1px solid',
-    borderColor: fade(theme.palette.common.black, 0.1),
     borderRadius: '4px',
     textAlign: 'left',
     overflow: 'hidden',
@@ -40,6 +38,9 @@ const useStyles = makeStyles(theme => ({
   actionTitle: {
     float: 'left',
     width: '60%',
+  },
+  caption: {
+    wordBreak: 'break-word',
   },
   actionButtons: {
     float: 'right',
@@ -83,7 +84,11 @@ function HelpContent(props) {
       <Typography className={classes.title} variant="h6">
         {title}
       </Typography>
-      {caption && <Typography variant="caption">{caption}</Typography>}
+      {caption && (
+        <Typography variant="caption" className={classes.caption}>
+          {caption}
+        </Typography>
+      )}
       <div className={classes.content}>{children}</div>
       <div className={classes.action}>
         <Typography className={classes.actionTitle}>
