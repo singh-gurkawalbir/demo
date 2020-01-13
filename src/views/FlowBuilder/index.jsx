@@ -207,6 +207,9 @@ const useStyles = makeStyles(theme => ({
   newPG: {
     marginRight: 50,
   },
+  dataLoaderHelp: {
+    margin: theme.spacing(5),
+  },
 }));
 
 function FlowBuilder() {
@@ -232,6 +235,7 @@ function FlowBuilder() {
     state => selectors.resourceData(state, 'flows', flowId).merged,
     shallowEqual
   );
+  const { pageProcessors = [], pageGenerators = [] } = flow;
   const flowDetails = useSelector(
     state => selectors.flowDetails(state, flowId),
     shallowEqual
@@ -242,11 +246,12 @@ function FlowBuilder() {
   // has an application type matching data loader.
   const isDataLoaderFlow =
     flowDetails.isSimpleImport ||
-    (flow &&
-      flow.pageGenerators &&
-      flow.pageGenerators.length &&
-      flow.pageGenerators[0].application === 'dataLoader');
-  const { pageProcessors = [], pageGenerators = [] } = flow;
+    (pageGenerators.length && pageGenerators[0].application === 'dataLoader');
+  const showAddPageProcessor =
+    !isDataLoaderFlow ||
+    (pageProcessors.length === 0 &&
+      pageGenerators.length &&
+      pageGenerators[0]._exportId);
   const createdGeneratorId = useSelector(state =>
     selectors.createdResourceId(state, newGeneratorId)
   );
@@ -573,7 +578,7 @@ function FlowBuilder() {
                 ? 'DESTINATION'
                 : 'DESTINATION & LOOKUP APPLICATIONS'}
 
-              {(!isDataLoaderFlow || pageProcessors.length === 0) && (
+              {showAddPageProcessor && (
                 <IconButton
                   disabled={isViewMode}
                   data-test="addProcessor"
@@ -602,7 +607,7 @@ function FlowBuilder() {
                   onMove={handleMove}
                 />
               ))}
-              {!pageProcessors.length && (
+              {!pageProcessors.length && showAddPageProcessor && (
                 <AppBlock
                   className={classes.newPP}
                   integrationId={integrationId}
@@ -611,6 +616,14 @@ function FlowBuilder() {
                   blockType="newPP"
                 />
               )}
+              {!showAddPageProcessor &&
+                isDataLoaderFlow &&
+                pageProcessors.length === 0 && (
+                  <Typography variant="h5" className={classes.dataLoaderHelp}>
+                    You can add a destination application once you complete the
+                    configuration of your data loader
+                  </Typography>
+                )}
             </div>
           </div>
         </div>
