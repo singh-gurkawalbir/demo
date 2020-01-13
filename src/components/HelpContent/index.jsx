@@ -68,9 +68,10 @@ const useStyles = makeStyles(theme => ({
 
 function HelpContent(props) {
   const classes = useStyles();
-  const { children, title, caption, fieldId, resourceType, onClose } = props;
+  const { children, title, caption, fieldId, resourceType } = props;
   const dispatch = useDispatch();
   const [feedbackText, setFeedbackText] = useState(false);
+  const [feedbackTextValue, setFeedbackTextValue] = useState('');
   const [enquesnackbar] = useEnqueueSnackbar();
   const handleUpdateFeedBack = useCallback(
     helpful => () => {
@@ -85,32 +86,16 @@ function HelpContent(props) {
 
     [dispatch, enquesnackbar, fieldId, resourceType]
   );
-  const feedBackFormMeta = {
-    fieldMap: {
-      feedbackTextField: {
-        id: 'feedbackTextField',
-        name: 'feedback',
-        type: 'text',
-        label: 'Feedback',
-        defaultValue: '',
-      },
-    },
-    layout: {
-      fields: ['feedbackTextField'],
-    },
-  };
-  const handleSendFeedbackText = useCallback(
-    values => {
-      dispatch(
-        actions.postFeedback(resourceType, fieldId, false, values.feedback)
-      );
+  const handleSendFeedbackText = useCallback(() => {
+    dispatch(
+      actions.postFeedback(resourceType, fieldId, false, feedbackTextValue)
+    );
 
-      enquesnackbar({ message: 'Feedback noted.Thanks!' });
-
-      onClose();
-    },
-    [dispatch, enquesnackbar, fieldId, onClose, resourceType]
-  );
+    enquesnackbar({ message: 'Feedback noted.Thanks!' });
+  }, [dispatch, enquesnackbar, feedbackTextValue, fieldId, resourceType]);
+  const onChange = useCallback(e => {
+    setFeedbackTextValue(e.target.value);
+  }, []);
 
   return (
     <div className={classes.wrapper}>
@@ -119,11 +104,21 @@ function HelpContent(props) {
       </Typography>
       {caption && <Typography variant="caption">{caption}</Typography>}
       {feedbackText ? (
-        <div>
-          <Button type="submit" onClick={() => console.log('Hi')}>
+        <Fragment>
+          <TextField
+            name="feedbackText"
+            label="Feedback"
+            multiline
+            onChange={onChange}
+            variant="filled"
+          />
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleSendFeedbackText}>
             Submit
           </Button>
-        </div>
+        </Fragment>
       ) : (
         <Fragment>
           <div className={classes.content}>{children}</div>
@@ -132,11 +127,6 @@ function HelpContent(props) {
               Was this helpful?
             </Typography>
             <div className={classes.actionButtons}>
-              <TextField
-                id="standard-basic"
-                label="Standard"
-                variant="filled"
-              />
               <Button
                 data-test="yesContentHelpful"
                 variant="outlined"
