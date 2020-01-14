@@ -79,6 +79,8 @@ import DynaRadioGroupForResetFields from './radiogroup/DynaRadioGroupForResetFie
 import DynaTextWithFlowContext from './text/DynaTextWithFlowContext';
 import DynaCheckboxForResetFields from './checkbox/DynaCheckboxForResetFields';
 import DynaExportPanel from './DynaExportPanel';
+import cronBuilderComponents from './cronBuilderComponents';
+import DynaCronGenerator from './DynaCronGenerator';
 import DynaNSSearchCriteria from './editors/DynaNSSearchCriteria';
 
 export default {
@@ -171,5 +173,9 @@ export default {
   textwithflowcontext: DynaTextWithFlowContext,
   checkboxforresetfields: DynaCheckboxForResetFields,
   exportpanel: DynaExportPanel,
+  crongenerator: DynaCronGenerator,
+  slider: cronBuilderComponents.slider,
+  groupedButton: cronBuilderComponents.groupedButton,
+  cronlabel: cronBuilderComponents.cronlabel,
   nssearchcriteria: DynaNSSearchCriteria,
 };
