@@ -57,7 +57,10 @@ export default function Transfers() {
                 </IconTextButton>
               </div>
             </div>
-            {/* <div>
+
+            {
+              // TODO: Ashok we don't have description in the mock. Please verify
+              /* <div>
               Transfer individual integrations between integrator.io accounts.
               accounts. Send integrations by specifying the email of the owner
               of the integrator.io account you want to send the integration to.
@@ -66,7 +69,8 @@ export default function Transfers() {
               instead reside in the receiver’s account. Note: the receiver needs
               to be an account owner and cannot be part of the same organization
               as the sender.
-            </div> */}
+            </div> */
+            }
 
             <CeligoTable
               resourceType="transfers"

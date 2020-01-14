@@ -102,6 +102,7 @@ const ToolsIcon = require('../../src/components/icons/ToolsIcon').default;
 const TokensApiIcon = require('../../src/components/icons/TokensApiIcon').default;
 const TransferIcon = require('../../src/components/icons/TransferIcon').default;
 const TrashIcon = require('../../src/components/icons/TrashIcon').default;
+const TransfersIcon = require('../../src/components/icons/TransfersIcon').default;
 const UnlockIcon = require('../../src/components/icons/UnlockIcon').default;
 const UnlinkedIcon = require('../../src/components/icons/UnlinkedIcon').default;
 const UploadIcon = require('../../src/components/icons/UploadIcon').default;
@@ -474,7 +475,6 @@ const icon = {
       <RegisterConnectionIcon style={icon} />
       <p>  RegisterConnection</p>
     </div>
-  
     <div style={wrapper}>
       <StacksIcon style={icon} />
       <p>Stacks</p>
@@ -538,6 +538,10 @@ const icon = {
     <div style={wrapper}>
       <TrashIcon style={icon} />
       <p>Trash</p>
+    </div>
+    <div style={wrapper}>
+      <TransfersIcon style={icon} />
+      <p>Transfers</p>
     </div>
     <div style={wrapper}>
       <UploadIcon style={icon} />
