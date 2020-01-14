@@ -418,16 +418,10 @@ export default {
         }
 
         if (!mapping.useFirstRow) {
-          const listWithEmptyGenerate = lists.find(l => l.generate === '');
-
-          if (!listWithEmptyGenerate)
-            list = {
-              generate: '',
-              fields: [],
-            };
-          else {
-            list = listWithEmptyGenerate;
-          }
+          list = {
+            generate: '',
+            fields: [],
+          };
 
           lists.push(list);
         }
