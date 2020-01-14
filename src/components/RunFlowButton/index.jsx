@@ -113,12 +113,12 @@ export default function RunFlowButton({
       {variant === 'icon' ? (
         <IconButton
           disabled={disabled}
-          data-test={`runFlow-${flowDetails.name}`}
+          data-test="runFlow"
           onClick={handleClick}>
           <RunIcon />
         </IconButton>
       ) : (
-        <span onClick={handleClick} data-test={`runFlow-${flowDetails.name}`}>
+        <span onClick={handleClick} data-test="runFlow">
           Run flow
         </span>
       )}
