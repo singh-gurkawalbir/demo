@@ -1,5 +1,5 @@
 import { useCallback, useState, Fragment } from 'react';
-import { makeStyles, fade } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import { Button } from '@material-ui/core';
@@ -12,8 +12,6 @@ const useStyles = makeStyles(theme => ({
     padding: '12px',
     minWidth: '212px',
     maxWidth: '270px',
-    border: '1px solid',
-    borderColor: fade(theme.palette.common.black, 0.1),
     borderRadius: '4px',
     textAlign: 'left',
     overflow: 'hidden',
@@ -41,6 +39,9 @@ const useStyles = makeStyles(theme => ({
   actionTitle: {
     float: 'left',
     width: '60%',
+  },
+  caption: {
+    wordBreak: 'break-word',
   },
   actionButtons: {
     float: 'right',
@@ -110,7 +111,11 @@ function HelpContent(props) {
       <Typography className={classes.title} variant="h6">
         {title}
       </Typography>
-      {caption && <Typography variant="caption">{caption}</Typography>}
+      {caption && (
+        <Typography variant="caption" className={classes.caption}>
+          {caption}
+        </Typography>
+      )}
       {feedbackText ? (
         <Fragment>
           {/* TODO:Azhar some styling required */}

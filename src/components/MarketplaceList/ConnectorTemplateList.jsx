@@ -250,7 +250,7 @@ export default function ConnectorTemplateList(props) {
       </div>
       {showMessage && (
         <ModalDialog show onClose={() => setShowMessage(false)}>
-          <div>Thank you!</div>
+          <div>Thank you! Your request has been received.</div>
           <div>
             {CONTACT_SALES_MESSAGE}
             <Link

@@ -19,7 +19,7 @@ import actions from '../../../actions';
 import * as selectors from '../../../reducers';
 import DismissIcon from '../../../components/icons/CloseIcon';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
   itemContainer: {
     '& button': { display: 'none' },
     '&:hover button': {
@@ -27,7 +27,12 @@ const useStyles = makeStyles(() => ({
     },
   },
   itemRoot: {
-    paddingRight: 90,
+    paddingRight: 110,
+  },
+  badgeText: {
+    '& > span': {
+      color: theme.palette.background.paper,
+    },
   },
 }));
 
@@ -86,7 +91,10 @@ export default function Notifications() {
   return (
     <Fragment>
       <IconButton size="small" color="inherit" onClick={handleClick}>
-        <Badge badgeContent={notifications.length} color="primary">
+        <Badge
+          badgeContent={notifications.length}
+          color="primary"
+          className={classes.badgeText}>
           <NotificationsIcon />
         </Badge>
       </IconButton>

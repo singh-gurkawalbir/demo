@@ -148,6 +148,8 @@ export default (state = {}, action) => {
         });
       }
 
+      // TODO: Raghu, we should move all this code into the "produce" function. Lets talk
+      // about it when you have time to refactor.
       if (resourceType === 'flows') {
         const newCollection =
           collection &&

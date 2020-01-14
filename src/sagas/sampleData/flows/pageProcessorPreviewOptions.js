@@ -19,11 +19,13 @@ import {
 import * as selectors from '../../../reducers';
 
 function* getUIDataForResource({ resource, connection }) {
-  const { adaptorType, sampleData } = resource;
+  const { adaptorType, type, sampleData } = resource;
+  const isDataLoader = type === 'simple';
 
   if (isBlobTypeResource(resource)) return getBlobResourceSampleData();
 
-  if (isRestCsvMediaTypeExport(resource, connection))
+  // Incase of Data Loader/ Rest CSV Exports, flow is same as File Adaptors
+  if (isRestCsvMediaTypeExport(resource, connection) || isDataLoader)
     return yield call(requestFileAdaptorSampleData, { resource });
 
   if (adaptorType) {

@@ -525,6 +525,11 @@ export default {
         fontFamily: 'Roboto500',
       },
     },
+    MuiDrawer: {
+      paper: {
+        background: colors.celigoWhite,
+      },
+    },
     MuiTab: {
       root: {
         minHeight: 36,

@@ -17,7 +17,7 @@ const useStyles = makeStyles(theme => ({
   popperContent: {
     padding: 12,
     zIndex: theme.zIndex.drawer + 1,
-    width: 292,
+    minWidth: 292,
     wordBreak: 'break-word',
   },
   avatarButton: {
@@ -31,6 +31,7 @@ const useStyles = makeStyles(theme => ({
   bigAvatar: {
     width: 62,
     height: 62,
+    marginRight: theme.spacing(2),
   },
   actions: {
     display: 'flex',
@@ -50,6 +51,13 @@ export default function ProfileMenuButton() {
   const profile = useSelector(state => selectors.userProfile(state)) || {};
   const avatarUrl = useSelector(state => selectors.avatarUrl(state));
   const permissions = useSelector(state => selectors.userPermissions(state));
+  const accountOwnerEmail = useSelector(state => {
+    const owner = selectors.accountOwner(state);
+
+    if (owner) {
+      return owner.email;
+    }
+  });
   const dispatch = useDispatch();
   const open = !!anchorEl;
   const { name, email } = profile;
@@ -87,18 +95,25 @@ export default function ProfileMenuButton() {
         placement="bottom-end"
         open={open}
         onClose={handleClose}>
-        <Grid
-          container
-          direction="row"
-          justify="space-between"
-          alignItems="flex-start">
+        <Grid container direction="row" alignItems="flex-start">
           <Grid item>
             <Avatar alt={name} src={avatarUrl} className={classes.bigAvatar} />
           </Grid>
           <Grid item>
             <Typography variant="body1">{name}</Typography>
-            <Typography className={classes.email} variant="h3">
+            <Typography className={classes.email} variant="body2">
               {email}
+            </Typography>
+            <Typography className={classes.email}>
+              {accountOwnerEmail && (
+                <Fragment>
+                  Account owner
+                  {permissions.accessLevel &&
+                    permissions.accessLevel !==
+                      USER_ACCESS_LEVELS.ACCOUNT_OWNER &&
+                    `: ${accountOwnerEmail}`}
+                </Fragment>
+              )}
             </Typography>
           </Grid>
         </Grid>
@@ -106,7 +121,7 @@ export default function ProfileMenuButton() {
           <Button
             data-test="myAccountOrMyProfile"
             onClick={handleClose}
-            variant="contained"
+            variant="outlined"
             color="secondary"
             component={Link}
             to={getRoutePath(
@@ -115,15 +130,15 @@ export default function ProfileMenuButton() {
                 : '/myAccount/profile'
             )}>
             {permissions.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER
-              ? 'My Account'
-              : 'My Profile'}
+              ? 'My account'
+              : 'My profile'}
           </Button>
           <Button
             data-test="signOut"
             onClick={handleUserLogout}
             variant="text"
             color="primary">
-            Sign Out
+            Sign out
           </Button>
         </div>
       </ArrowPopper>

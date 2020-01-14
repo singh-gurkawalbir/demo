@@ -262,14 +262,6 @@ availableResources.forEach(type => {
         }));
         mockCollection = [...mockCollection, ...mockSharedStacks];
         effect = saga.next(mockSharedStacks).value;
-      } else if (type === 'flows') {
-        expect(saga.next(mockCollection).value).toEqual(
-          call(normalizeFlow, mockCollection[0])
-        );
-        expect(saga.next(mockCollection[0]).value).toEqual(
-          call(normalizeFlow, mockCollection[1])
-        );
-        effect = saga.next(mockCollection[1]).value;
       } else {
         effect = saga.next(mockCollection).value;
       }
