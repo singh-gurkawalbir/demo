@@ -240,15 +240,22 @@ const PageGenerator = ({
       });
     }
 
-    generatorActions = [
-      ...generatorActions,
-      {
-        ...transformationAction,
-        isUsed: usedActions[actionsMap.transformation],
-      },
-      { ...exportHooksAction, isUsed: usedActions[actionsMap.hooks] },
-      { ...exportFilterAction, isUsed: usedActions[actionsMap.outputFilter] },
-    ];
+    if (isDataLoader) {
+      generatorActions = [
+        { ...exportHooksAction, isUsed: usedActions[actionsMap.hooks] },
+        { ...exportFilterAction, isUsed: usedActions[actionsMap.outputFilter] },
+      ];
+    } else {
+      generatorActions = [
+        ...generatorActions,
+        {
+          ...transformationAction,
+          isUsed: usedActions[actionsMap.transformation],
+        },
+        { ...exportHooksAction, isUsed: usedActions[actionsMap.hooks] },
+        { ...exportFilterAction, isUsed: usedActions[actionsMap.outputFilter] },
+      ];
+    }
   }
   // #endregion
 
