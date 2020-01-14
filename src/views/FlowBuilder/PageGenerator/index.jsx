@@ -17,8 +17,8 @@ import scheduleAction from './actions/schedule';
 import exportFilterAction from './actions/exportFilter';
 import { actionsMap } from '../../../utils/flows';
 
-/* the 'block' consts in this file and <AppBlock> should eventually go in the theme. 
-   We the block consts across several components and thus is a maintenance issue to 
+/* TODO: the 'block' const in this file and <AppBlock> should eventually go in the theme. 
+   We use the block const across several components and thus is a maintenance issue to 
    manage as we enhance the FB layout. */
 const blockHeight = 170;
 const lineHeightOffset = 63;
