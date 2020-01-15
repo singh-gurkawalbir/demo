@@ -1,5 +1,6 @@
 import { Fragment, useCallback, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { makeStyles } from '@material-ui/core/styles';
 import { Link } from 'react-router-dom';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
@@ -25,6 +26,16 @@ import { STANDALONE_INTEGRATION } from '../../../utils/constants';
 import { confirmDialog } from '../../../components/ConfirmDialog';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 
+const useStyles = makeStyles(theme => ({
+  PageWrapper: {
+    padding: theme.spacing(3),
+    '& > [role = tabpanel]': {
+      background: 'none',
+      padding: 0,
+      border: 'none',
+    },
+  },
+}));
 const tabs = [
   { path: 'flows', label: 'Flows', Icon: FlowsIcon, Panel: FlowsPanel },
   {
@@ -43,6 +54,7 @@ const tabs = [
 ];
 
 export default function Integration({ history, match }) {
+  const classes = useStyles();
   const { integrationId } = match.params;
   const dispatch = useDispatch();
   const [enqueueSnackbar] = useEnqueueSnackbar();
@@ -186,7 +198,11 @@ export default function Integration({ history, match }) {
           </IconTextButton>
         </CeligoPageBar>
 
-        <IntegrationTabs tabs={tabs} match={match} />
+        <IntegrationTabs
+          tabs={tabs}
+          match={match}
+          className={classes.PageWrapper}
+        />
       </LoadResources>
     </Fragment>
   );

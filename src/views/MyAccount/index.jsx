@@ -6,7 +6,7 @@ import loadable from '../../utils/loadable';
 import * as selectors from '../../reducers';
 import { USER_ACCESS_LEVELS } from '../../utils/constants';
 import CeligoPageBar from '../../components/CeligoPageBar';
-import FlowsIcon from '../../components/icons/FlowsIcon';
+import TransfersIcon from '../../components/icons/TransfersIcon';
 import SingleUserIcon from '../../components/icons/SingleUserIcon';
 import UsersIcon from '../../components/icons/GroupOfUsersIcon';
 import KnowledgeBaseIcon from '../../components/icons/KnowledgeBaseIcon';
@@ -57,11 +57,10 @@ const tabs = [
     Icon: AuditLogIcon,
     Panel: Audit,
   },
-  // TODO: Azhar, Transfers Icon should be there
   {
     path: 'transfers',
     label: 'Transfers',
-    Icon: FlowsIcon,
+    Icon: TransfersIcon,
     Panel: Transfers,
   },
 ];
@@ -111,6 +110,9 @@ const tabs = [
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
   },
+  tabsAccount: {
+    padding: theme.spacing(3),
+  },
 }))
 class MyAccount extends Component {
   render() {
@@ -132,7 +134,7 @@ class MyAccount extends Component {
         ) : (
           <Fragment>
             <ResourceDrawer match={match} />
-            <Tabs tabs={tabs} match={match} />
+            <Tabs tabs={tabs} match={match} className={classes.tabsAccount} />
           </Fragment>
         )}
       </Fragment>
