@@ -110,7 +110,6 @@ export default function JobActionsMenu({
     objStatus => {
       const messages = {
         runFlow: {
-          [COMM_STATES.SUCCESS]: `${job.name} flow has been queued successfully`,
           [COMM_STATES.ERROR]: `${objStatus.runFlow &&
             objStatus.runFlow.message}`,
         },
@@ -132,7 +131,7 @@ export default function JobActionsMenu({
         }
       });
     },
-    [enqueueSnackbar, job.name]
+    [enqueueSnackbar]
   );
 
   function handleMenuClose() {
