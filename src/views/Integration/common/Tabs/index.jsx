@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles, Tabs, Tab } from '@material-ui/core';
 
+// TODO: Azhar check tab panels are working fine or not without these styles everywhere
 const useStyles = makeStyles(theme => ({
   tabContainer: {
     padding: theme.spacing(0, 3),
@@ -14,7 +15,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function IntegrationTabs({ tabs }) {
+export default function IntegrationTabs({ tabs, className }) {
   const classes = useStyles();
   const history = useHistory();
   const match = useRouteMatch();
@@ -38,7 +39,7 @@ export default function IntegrationTabs({ tabs }) {
   );
 
   return (
-    <div className={classes.tabContainer}>
+    <div className={(classes.tabContainer, className)}>
       <Tabs
         value={currentTabIndex}
         onChange={handleTabChange}

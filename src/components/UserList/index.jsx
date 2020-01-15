@@ -1,12 +1,12 @@
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import Table from '@material-ui/core/Table';
+import { Typography } from '@material-ui/core';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import { withStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import { withSnackbar } from 'notistack';
@@ -20,6 +20,8 @@ import {
 } from '../../utils/constants';
 import UserDetail from './UserDetail';
 import { COMM_STATES } from '../../reducers/comms/networkComms';
+import UsersIcon from '../../components/icons/GroupOfUsersIcon';
+import IconTextButton from '../../components/IconTextButton';
 
 const mapStateToProps = (state, { integrationId }) => {
   const permissions = selectors.userPermissions(state);
@@ -74,13 +76,14 @@ const mapDispatchToProps = dispatch => ({
     float: 'left',
     margin: theme.spacing(0, 0, 1, 1),
   },
-  inviteUserButton: {
-    margin: theme.spacing(1),
-    textAlign: 'center',
-    float: 'right',
-  },
   table: {
     minWidth: 700,
+  },
+  topHeading: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    paddingBottom: theme.spacing(1),
+    borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
   },
 }))
 class UserList extends Component {
@@ -161,18 +164,20 @@ class UserList extends Component {
           />
         )}
         <div className={classes.root}>
-          <div>
+          <div className={classes.topHeading}>
+            <Typography variant="h4" className={classes.heading}>
+              Users
+            </Typography>
             {isAccountOwner && (
-              <Button
+              <IconTextButton
                 data-test="inviteUser"
-                className={classes.inviteUserButton}
-                variant="contained"
-                color="secondary"
+                variant="text"
+                color="primary"
                 onClick={() => {
                   this.handleActionClick('create');
                 }}>
-                Invite User
-              </Button>
+                <UsersIcon /> Invite Users
+              </IconTextButton>
             )}
           </div>
           <Table className={classes.table}>
