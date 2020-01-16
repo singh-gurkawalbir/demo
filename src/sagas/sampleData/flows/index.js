@@ -14,6 +14,7 @@ import {
   updateStateForProcessorData,
   handleFlowDataStageErrors,
   getFlowResourceNode,
+  getPreProcessedResponseMappingData,
 } from '../utils/flowDataUtils';
 import {
   updateFlowsDataForResource,
@@ -535,19 +536,18 @@ export function* requestProcessorData({
         resourceType,
       });
       const mappings = (flowNode && flowNode.responseMapping) || {};
+      const preProcessedResponseMappingData = yield call(
+        getPreProcessedResponseMappingData,
+        { resourceType, preProcessedData }
+      );
 
-      if (
-        preProcessedData &&
-        mappings &&
-        (mappings.fields.length || mappings.lists.length)
-      ) {
-        // WRAP preprocessed data inside data field of defaultFormat
+      if (mappings && (mappings.fields.length || mappings.lists.length)) {
         return yield call(processMappingData, {
           flowId,
           resourceId,
           mappings,
           stage,
-          preProcessedData,
+          preProcessedData: preProcessedResponseMappingData,
         });
       }
 
@@ -555,7 +555,7 @@ export function* requestProcessorData({
     }
 
     if (hasNoRulesToProcess) {
-      // update processorStage with preprocessed data if there are no rules to process
+      // update processorStage with pre processed data if there are no rules to process
       return yield call(updateStateForProcessorData, {
         flowId,
         resourceId,
