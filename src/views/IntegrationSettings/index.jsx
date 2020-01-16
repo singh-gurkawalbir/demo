@@ -151,21 +151,9 @@ export default function IntegrationSettings(props) {
             <Switch>
               <Route
                 path={getRoutePath(
-                  `/integrations/:integrationId/settings/flows`
-                )}
-                component={Flows}
-              />
-              <Route
-                path={getRoutePath(
                   `/integrations/:integrationId/settings/connections`
                 )}
                 component={Connections}
-              />
-              <Route
-                path={getRoutePath(
-                  `/integrations/:integrationId/settings/users`
-                )}
-                component={Users}
               />
               <Route
                 path={getRoutePath(
