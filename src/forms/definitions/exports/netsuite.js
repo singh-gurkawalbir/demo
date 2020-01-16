@@ -290,27 +290,17 @@ export default {
     },
     'netsuite.restlet.criteria': {
       fieldId: 'netsuite.restlet.criteria',
-      visible: r => !!(r && r.isLookup),
-      visibleWhenAll: r => {
-        if (!(r && r.isLookup)) return [];
-
-        return [
-          { field: 'netsuite.api.type', is: ['restlet'] },
-          { field: 'netsuite.execution.type', is: ['scheduled'] },
-        ];
-      },
+      visibleWhenAll: [
+        { field: 'netsuite.api.type', is: ['restlet'] },
+        { field: 'netsuite.execution.type', is: ['scheduled'] },
+      ],
     },
     'netsuite.webservices.criteria': {
       fieldId: 'netsuite.webservices.criteria',
-      visible: r => !!(r && r.isLookup),
-      visibleWhenAll: r => {
-        if (!(r && r.isLookup)) return [];
-
-        return [
-          { field: 'netsuite.api.type', is: ['search'] },
-          { field: 'netsuite.execution.type', is: ['scheduled'] },
-        ];
-      },
+      visibleWhenAll: [
+        { field: 'netsuite.api.type', is: ['search'] },
+        { field: 'netsuite.execution.type', is: ['scheduled'] },
+      ],
     },
     pageSize: {
       fieldId: 'pageSize',
