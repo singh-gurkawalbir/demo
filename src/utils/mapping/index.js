@@ -384,10 +384,15 @@ export default {
         mapping.generate = generateParts.pop();
         generateListPath = generateParts.join('.');
 
-        list = {
-          generate: generateListPath,
-          fields: [],
-        };
+        list = lists.find(l => l.generate === generateListPath);
+
+        if (!list) {
+          list = {
+            generate: generateListPath,
+            fields: [],
+          };
+          lists.push(list);
+        }
 
         if (
           useFirstRowSupported &&
@@ -401,8 +406,6 @@ export default {
         }
 
         delete mapping.useFirstRow;
-
-        lists.push(list);
 
         // if (existingListsData[generateListPath]) {
         //   list.jsonPath = existingListsData[generateListPath].jsonPath;
