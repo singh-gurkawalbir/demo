@@ -1,17 +1,15 @@
-import { useReducer, useState, useEffect } from 'react';
+import { useReducer, useState } from 'react';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector, useDispatch } from 'react-redux';
 import produce from 'immer';
 import Button from '@material-ui/core/Button';
 import deepClone from 'lodash/cloneDeep';
-import { isEmpty } from 'lodash';
 import DynaTypeableSelect from '../../DynaForm/fields/DynaTypeableSelect';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import TrashIcon from '../../icons/TrashIcon';
 import mappingUtil from '../../../utils/mapping';
-import getJSONPaths from '../../../utils/jsonPaths';
 import * as resourceUtil from '../../../utils/resource';
 import ModalDialog from '../../ModalDialog';
 import ButtonGroup from '../../ButtonGroup';
@@ -114,30 +112,7 @@ export default function ResponseMappingDialog(props) {
   const valueName = 'generate';
   const classes = useStyles();
   const dispatch = useDispatch();
-  const resourceId = resource._id;
-  const extractFields = useSelector(state =>
-    selectors.getSampleData(state, {
-      flowId,
-      resourceId,
-      stage: 'responseMappingExtract',
-      resourceType,
-    })
-  );
-
-  useEffect(() => {
-    if (!extractFields) {
-      dispatch(
-        actions.flowData.requestSampleData(
-          flowId,
-          resourceId,
-          resourceType,
-          'responseMappingExtract'
-        )
-      );
-    }
-  }, [dispatch, extractFields, flowId, resourceId, resourceType]);
-
-  const defaultExtractFields = mappingUtil.getResponseMappingDefaultExtracts(
+  const extractFields = mappingUtil.getResponseMappingDefaultExtracts(
     resourceType
   );
   const responseMappings =
@@ -221,17 +196,6 @@ export default function ResponseMappingDialog(props) {
     }
   };
 
-  let formattedExtractFields = defaultExtractFields;
-
-  if (!isEmpty(extractFields)) {
-    const extractPaths = getJSONPaths(extractFields);
-
-    formattedExtractFields =
-      (extractPaths &&
-        extractPaths.map(obj => ({ name: obj.id, id: obj.id }))) ||
-      [];
-  }
-
   return (
     <ModalDialog onClose={onClose} show minWidth="md" maxWidth="md">
       <div>Define Response Mapping</div>
@@ -263,7 +227,7 @@ export default function ResponseMappingDialog(props) {
                       labelName="name"
                       valueName="id"
                       value={r[keyName]}
-                      options={formattedExtractFields || []}
+                      options={extractFields || []}
                       onBlur={(id, evt) => {
                         handleFieldUpdate(
                           r.index,
