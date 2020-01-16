@@ -1,15 +1,17 @@
-import { useReducer, useState } from 'react';
+import { useReducer, useState, useEffect } from 'react';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector, useDispatch } from 'react-redux';
 import produce from 'immer';
 import Button from '@material-ui/core/Button';
 import deepClone from 'lodash/cloneDeep';
+import { isEmpty } from 'lodash';
 import DynaTypeableSelect from '../../DynaForm/fields/DynaTypeableSelect';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import TrashIcon from '../../icons/TrashIcon';
 import mappingUtil from '../../../utils/mapping';
+import getJSONPaths from '../../../utils/jsonPaths';
 import * as resourceUtil from '../../../utils/resource';
 import ModalDialog from '../../ModalDialog';
 import ButtonGroup from '../../ButtonGroup';
@@ -112,7 +114,31 @@ export default function ResponseMappingDialog(props) {
   const valueName = 'generate';
   const classes = useStyles();
   const dispatch = useDispatch();
-  const extractFields = mappingUtil.getResponseMappingDefaultExtracts(
+  const resourceId = resource._id;
+  const isImport = resourceType === 'imports';
+  const extractFields = useSelector(state =>
+    selectors.getSampleData(state, {
+      flowId,
+      resourceId,
+      stage: 'responseMappingExtract',
+      resourceType: 'imports',
+    })
+  );
+
+  useEffect(() => {
+    if (!extractFields && isImport) {
+      dispatch(
+        actions.flowData.requestSampleData(
+          flowId,
+          resourceId,
+          'imports',
+          'responseMappingExtract'
+        )
+      );
+    }
+  }, [dispatch, extractFields, flowId, isImport, resourceId]);
+
+  const defaultExtractFields = mappingUtil.getResponseMappingDefaultExtracts(
     resourceType
   );
   const responseMappings =
@@ -196,6 +222,19 @@ export default function ResponseMappingDialog(props) {
     }
   };
 
+  let formattedExtractFields = defaultExtractFields;
+
+  // Incase of imports , If there is sampledata we show them as suggestions else the default extractFields
+  // Incase of Exports ( Lookups ), We always show the default extractFields
+  if (isImport && !isEmpty(extractFields)) {
+    const extractPaths = getJSONPaths(extractFields);
+
+    formattedExtractFields =
+      (extractPaths &&
+        extractPaths.map(obj => ({ name: obj.id, id: obj.id }))) ||
+      [];
+  }
+
   return (
     <ModalDialog onClose={onClose} show minWidth="md" maxWidth="md">
       <div>Define Response Mapping</div>
@@ -227,7 +266,7 @@ export default function ResponseMappingDialog(props) {
                       labelName="name"
                       valueName="id"
                       value={r[keyName]}
-                      options={extractFields || []}
+                      options={formattedExtractFields || []}
                       onBlur={(id, evt) => {
                         handleFieldUpdate(
                           r.index,

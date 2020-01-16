@@ -540,7 +540,8 @@ export function* requestProcessorData({
         preProcessedData &&
         mappings &&
         (mappings.fields.length || mappings.lists.length)
-      )
+      ) {
+        // WRAP preprocessed data inside data field of defaultFormat
         return yield call(processMappingData, {
           flowId,
           resourceId,
@@ -548,6 +549,8 @@ export function* requestProcessorData({
           stage,
           preProcessedData,
         });
+      }
+
       hasNoRulesToProcess = true;
     }
 
