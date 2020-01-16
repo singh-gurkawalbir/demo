@@ -88,7 +88,7 @@ export default function ConnectorInstallation(props) {
       // redirect to integration Settings
       dispatch(actions.resource.request('integrations', integrationId));
 
-      if (integration.mode === 'settings') {
+      if (integration && integration.mode === 'settings') {
         props.history.push(
           `/pg/integrationapps/${integrationAppName}/${integrationId}/flows`
         );
@@ -96,7 +96,7 @@ export default function ConnectorInstallation(props) {
     }
   }, [
     dispatch,
-    integration.mode,
+    integration,
     integrationAppName,
     integrationId,
     isSetupComplete,
