@@ -260,6 +260,7 @@ export default {
       id: 'rest.compositeMethodCreate',
       type: 'select',
       label: 'HTTP Method',
+      required: true,
       options: [
         {
           items: [
@@ -511,6 +512,7 @@ export default {
       id: 'rest.compositeMethodUpdate',
       type: 'select',
       label: 'HTTP Method',
+      required: true,
       options: [
         {
           items: [
