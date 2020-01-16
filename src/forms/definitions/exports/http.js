@@ -305,6 +305,19 @@ export default {
         },
       ],
     },
+    'file.csv': {
+      fieldId: 'file.csv',
+      visibleWhenAll: [
+        {
+          field: 'outputMode',
+          is: ['records'],
+        },
+        {
+          field: 'http.successMediaType',
+          is: ['csv'],
+        },
+      ],
+    },
     exportOneToMany: { formId: 'exportOneToMany' },
     configureAsyncHelper: {
       fieldId: 'configureAsyncHelper',
@@ -351,6 +364,7 @@ export default {
           'http.response.failPath',
           'http.response.failValues',
           'http.response.errorPath',
+          'file.csv',
           'type',
           'delta.dateFormat',
           'delta.lagOffset',

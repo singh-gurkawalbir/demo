@@ -385,6 +385,12 @@ export default {
         is: ['xml'],
       },
     ],
+    visibleWhen: [
+      {
+        field: 'http.successMediaType',
+        isNot: ['csv'],
+      },
+    ],
   },
   'http.response.resourceIdPath': {
     type: 'text',
@@ -399,10 +405,14 @@ export default {
         isNot: [''],
       },
     ],
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'outputMode',
         is: ['records'],
+      },
+      {
+        field: 'http.successMediaType',
+        isNot: ['csv'],
       },
     ],
   },
@@ -410,30 +420,42 @@ export default {
     type: 'text',
     delimiter: ',',
     label: 'Success Values',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'outputMode',
         is: ['records'],
+      },
+      {
+        field: 'http.successMediaType',
+        isNot: ['csv'],
       },
     ],
   },
   'http.response.errorPath': {
     type: 'text',
     label: 'Error Path',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'outputMode',
         is: ['records'],
+      },
+      {
+        field: 'http.successMediaType',
+        isNot: ['csv'],
       },
     ],
   },
   'http.response.failPath': {
     type: 'text',
     label: 'Fail Path',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'outputMode',
         is: ['records'],
+      },
+      {
+        field: 'http.successMediaType',
+        isNot: ['csv'],
       },
     ],
   },
@@ -441,10 +463,14 @@ export default {
     type: 'text',
     delimiter: ',',
     label: 'Fail Values',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'outputMode',
         is: ['records'],
+      },
+      {
+        field: 'http.successMediaType',
+        isNot: ['csv'],
       },
     ],
   },
