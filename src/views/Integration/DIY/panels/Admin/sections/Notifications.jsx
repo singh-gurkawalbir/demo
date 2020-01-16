@@ -6,7 +6,7 @@ import actions from '../../../../../../actions';
 import DynaForm from '../../../../../../components/DynaForm';
 import DynaSubmit from '../../../../../../components/DynaForm/DynaSubmit';
 import LoadResources from '../../../../../../components/LoadResources';
-import PanelHeader from '../../../../common/PanelHeader';
+import PanelHeader from '../../../../../../components/PanelHeader';
 
 export default function NotificationsSection({ integrationId }) {
   const dispatch = useDispatch();

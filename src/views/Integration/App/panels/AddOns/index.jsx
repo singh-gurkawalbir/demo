@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Button, Card, CardActions, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
-import PanelHeader from '../../../common/PanelHeader';
+import PanelHeader from '../../../../../components/PanelHeader';
 import { LICENSE_UPGRADE_REQUEST_RECEIVED } from '../../../../../utils/messageStore';
 import * as selectors from '../../../../../reducers';
 import actions from '../../../../../actions';

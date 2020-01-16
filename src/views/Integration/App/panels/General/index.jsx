@@ -4,7 +4,7 @@ import { makeStyles } from '@material-ui/styles';
 import * as selectors from '../../../../../reducers';
 import { ActionsFactory as DynaFormWithDynamicActions } from '../../../../../components/ResourceFormFactory';
 import { integrationSettingsToDynaFormMetadata } from '../../../../../forms/utils';
-import PanelHeader from '../../../common/PanelHeader';
+import PanelHeader from '../../../../../components/PanelHeader';
 import actions from '../../../../../actions';
 
 const useStyles = makeStyles(theme => ({
