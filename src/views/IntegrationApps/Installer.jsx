@@ -87,6 +87,9 @@ export default function ConnectorInstallation(props) {
     if (isSetupComplete) {
       // redirect to integration Settings
       dispatch(actions.resource.request('integrations', integrationId));
+      dispatch(actions.resource.requestCollection('flows'));
+      dispatch(actions.resource.requestCollection('exports'));
+      dispatch(actions.resource.requestCollection('imports'));
 
       if (integration && integration.mode === 'settings') {
         props.history.push(
