@@ -345,7 +345,7 @@ export function getPreProcessedResponseMappingData({
 
   // Incase of lookups , add preProcessedData as part of data
   if (resourceType === 'exports') {
-    extractsObj.data = preProcessedData || '';
+    extractsObj.data = [preProcessedData] || '';
 
     return extractsObj;
   }
