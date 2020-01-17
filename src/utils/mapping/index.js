@@ -21,13 +21,19 @@ const isCsvOrXlsxResource = resource => {
 };
 
 const handlebarRegex = /(\{\{[\s]*.*?[\s]*\}\})/i;
-const LookupResponseMappingExtracts = [
+
+export const LookupResponseMappingExtracts = [
   'data',
   'errors',
   'ignored',
   'statusCode',
 ];
-const ImportResponseMappingExtracts = ['id', 'errors', 'ignored', 'statusCode'];
+export const ImportResponseMappingExtracts = [
+  'id',
+  'errors',
+  'ignored',
+  'statusCode',
+];
 
 export default {
   getDefaultDataType: value => {
