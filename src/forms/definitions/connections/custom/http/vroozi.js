@@ -28,7 +28,7 @@ export default {
       label: 'Account Type',
       required: true,
       helpText:
-        'Please select your account type here. Select Sandbox if your API Endpoint starts with https://staging-api.target.com. Select Production if your API Endpoint starts with https://api.target.com',
+        'Please select your account type here. Select Sandbox if your API Endpoint starts with https://sandbox-api.vroozi.com. Select Production if your API Endpoint starts with https://api.vroozi.com',
       options: [
         {
           items: [
@@ -55,7 +55,7 @@ export default {
       label: 'API Key',
       required: true,
       helpText:
-        'Please enter your API Key here.API key is generated after creating your application',
+        'Please enter your API Key here.API key is generated after creating your application.',
     },
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
