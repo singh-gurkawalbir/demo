@@ -28,6 +28,7 @@ export default function NotificationsSection({ integrationId }) {
     fieldMap: {
       connections: {
         id: 'connections',
+        helpKey: 'notifications.connections',
         name: 'connections',
         type: 'multiselect',
         valueDelimiter: ',',
@@ -37,6 +38,7 @@ export default function NotificationsSection({ integrationId }) {
       },
       flows: {
         id: 'flows',
+        helpKey: 'notifications.jobErrors',
         name: 'flows',
         type: 'multiselect',
         valueDelimiter: ',',
