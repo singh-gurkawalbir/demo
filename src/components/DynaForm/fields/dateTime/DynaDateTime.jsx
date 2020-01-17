@@ -16,9 +16,10 @@ export default function DateTimePicker(props) {
     onFieldChange(id, moment(dateValue).format(format) || '');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dateValue]);
-  const finalFormat = format.includes('H:mm')
-    ? 'MM/DD/YYYY HH:mm'
-    : 'MM/DD/YYYY hh:mm a';
+  const finalFormat =
+    format && format.includes('H:mm')
+      ? 'MM/DD/YYYY HH:mm'
+      : 'MM/DD/YYYY hh:mm a';
 
   return (
     <MuiPickersUtilsProvider utils={MomentDateFnsUtils}>
