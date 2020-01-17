@@ -2434,10 +2434,14 @@ export default {
   'dynamodb.aws.accessKeyId': {
     type: 'text',
     label: 'Access Key Id',
+    required: true,
   },
   'dynamodb.aws.secretAccessKey': {
     type: 'text',
     label: 'Secret Access Key',
+    inputType: 'password',
+    defaultValue: '',
+    required: true,
   },
   // #endregion dynamodb
 
