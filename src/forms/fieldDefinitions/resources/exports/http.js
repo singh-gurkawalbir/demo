@@ -385,10 +385,22 @@ export default {
         is: ['xml'],
       },
     ],
+    visibleWhen: [
+      {
+        field: 'http.successMediaType',
+        isNot: ['csv'],
+      },
+    ],
   },
   'http.response.resourceIdPath': {
     type: 'text',
     label: 'Http response resource Id Path',
+    visibleWhen: [
+      {
+        field: 'http.successMediaType',
+        isNot: ['csv'],
+      },
+    ],
   },
   'http.response.successPath': {
     type: 'text',
@@ -399,10 +411,14 @@ export default {
         isNot: [''],
       },
     ],
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'outputMode',
         is: ['records'],
+      },
+      {
+        field: 'http.successMediaType',
+        isNot: ['csv'],
       },
     ],
   },
@@ -410,7 +426,11 @@ export default {
     type: 'text',
     delimiter: ',',
     label: 'Success Values',
-    visibleWhen: [
+    visibleWhenAll: [
+      {
+        field: 'http.successMediaType',
+        isNot: ['csv'],
+      },
       {
         field: 'outputMode',
         is: ['records'],
@@ -420,7 +440,11 @@ export default {
   'http.response.errorPath': {
     type: 'text',
     label: 'Error Path',
-    visibleWhen: [
+    visibleWhenAll: [
+      {
+        field: 'http.successMediaType',
+        isNot: ['csv'],
+      },
       {
         field: 'outputMode',
         is: ['records'],
@@ -530,6 +554,28 @@ export default {
       {
         field: 'outputMode',
         is: ['blob'],
+      },
+    ],
+  },
+  'file.csv': {
+    type: 'csvparse',
+    label: 'Configure CSV Parse Options',
+    defaultValue: r =>
+      (r.file && r.file.csv) || {
+        rowsToSkip: 0,
+        trimSpaces: false,
+        columnDelimiter: ',',
+        hasHeaderRow: false,
+        rowDelimiter: '\n',
+      },
+    visibleWhenAll: [
+      {
+        field: 'http.successMediaType',
+        is: ['csv'],
+      },
+      {
+        field: 'outputMode',
+        is: ['records'],
       },
     ],
   },

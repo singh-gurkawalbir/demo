@@ -224,6 +224,7 @@ export default {
     'http.response.errorPath': { fieldId: 'http.response.errorPath' },
     'http.response.failPath': { fieldId: 'http.response.failPath' },
     'http.response.failValues': { fieldId: 'http.response.failValues' },
+    'file.csv': { fieldId: 'file.csv' },
     type: {
       id: 'type',
       type: 'select',
@@ -351,6 +352,7 @@ export default {
           'http.response.failPath',
           'http.response.failValues',
           'http.response.errorPath',
+          'file.csv',
           'type',
           'delta.dateFormat',
           'delta.lagOffset',
