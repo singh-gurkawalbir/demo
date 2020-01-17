@@ -21,13 +21,19 @@ const isCsvOrXlsxResource = resource => {
 };
 
 const handlebarRegex = /(\{\{[\s]*.*?[\s]*\}\})/i;
-const LookupResponseMappingExtracts = [
+
+export const LookupResponseMappingExtracts = [
   'data',
   'errors',
   'ignored',
   'statusCode',
 ];
-const ImportResponseMappingExtracts = ['id', 'errors', 'ignored', 'statusCode'];
+export const ImportResponseMappingExtracts = [
+  'id',
+  'errors',
+  'ignored',
+  'statusCode',
+];
 
 export default {
   getDefaultDataType: value => {
@@ -384,10 +390,15 @@ export default {
         mapping.generate = generateParts.pop();
         generateListPath = generateParts.join('.');
 
-        list = {
-          generate: generateListPath,
-          fields: [],
-        };
+        list = lists.find(l => l.generate === generateListPath);
+
+        if (!list) {
+          list = {
+            generate: generateListPath,
+            fields: [],
+          };
+          lists.push(list);
+        }
 
         if (
           useFirstRowSupported &&
@@ -401,8 +412,6 @@ export default {
         }
 
         delete mapping.useFirstRow;
-
-        lists.push(list);
 
         // if (existingListsData[generateListPath]) {
         //   list.jsonPath = existingListsData[generateListPath].jsonPath;
@@ -418,12 +427,17 @@ export default {
         }
 
         if (!mapping.useFirstRow) {
-          list = {
-            generate: '',
-            fields: [],
-          };
+          const listWithEmptyGenerate = lists.find(l => l.generate === '');
 
-          lists.push(list);
+          if (!listWithEmptyGenerate) {
+            list = {
+              generate: '',
+              fields: [],
+            };
+            lists.push(list);
+          } else {
+            list = listWithEmptyGenerate;
+          }
         }
       }
 

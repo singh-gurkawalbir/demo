@@ -1,4 +1,4 @@
-import { call, put, takeLatest, takeEvery } from 'redux-saga/effects';
+import { call, put, takeEvery } from 'redux-saga/effects';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
@@ -58,6 +58,6 @@ export function* updateInstallBase({ _integrationIds, connectorId }) {
 }
 
 export default [
-  takeLatest(actionTypes.CONNECTORS.METADATA_REQUEST, fetchMetadata),
+  takeEvery(actionTypes.CONNECTORS.METADATA_REQUEST, fetchMetadata),
   takeEvery(actionTypes.CONNECTORS.INSTALLBASE.UPDATE, updateInstallBase),
 ];

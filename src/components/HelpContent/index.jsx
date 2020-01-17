@@ -1,5 +1,6 @@
-import { useCallback } from 'react';
+import { useCallback, useState, Fragment } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
+import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import { Button } from '@material-ui/core';
 import { useDispatch } from 'react-redux';
@@ -62,22 +63,48 @@ const useStyles = makeStyles(theme => ({
       marginRight: '0px',
     },
   },
+  feedbackTextField: {
+    margin: theme.spacing(1, 0),
+    width: '100%',
+    '& > div': {
+      padding: 0,
+      '& > textarea': {
+        padding: 12,
+      },
+    },
+  },
 }));
 
 function HelpContent(props) {
   const classes = useStyles();
   const { children, title, caption, fieldId, resourceType } = props;
   const dispatch = useDispatch();
+  const [feedbackText, setFeedbackText] = useState(false);
+  const [feedbackTextValue, setFeedbackTextValue] = useState('');
   const [enquesnackbar] = useEnqueueSnackbar();
   const handleUpdateFeedBack = useCallback(
     helpful => () => {
-      dispatch(actions.postFeedback(resourceType, fieldId, helpful));
+      if (helpful) {
+        dispatch(actions.postFeedback(resourceType, fieldId, helpful));
 
-      enquesnackbar({ message: 'Feedback noted.Thanks!' });
+        enquesnackbar({ message: 'Feedback noted.Thanks!' });
+      } else {
+        setFeedbackText(true);
+      }
     },
 
     [dispatch, enquesnackbar, fieldId, resourceType]
   );
+  const handleSendFeedbackText = useCallback(() => {
+    dispatch(
+      actions.postFeedback(resourceType, fieldId, false, feedbackTextValue)
+    );
+
+    enquesnackbar({ message: 'Feedback noted.Thanks!' });
+  }, [dispatch, enquesnackbar, feedbackTextValue, fieldId, resourceType]);
+  const onChange = useCallback(e => {
+    setFeedbackTextValue(e.target.value);
+  }, []);
 
   return (
     <div className={classes.wrapper}>
@@ -89,28 +116,50 @@ function HelpContent(props) {
           {caption}
         </Typography>
       )}
-      <div className={classes.content}>{children}</div>
-      <div className={classes.action}>
-        <Typography className={classes.actionTitle}>
-          Was this helpful?
-        </Typography>
-        <div className={classes.actionButtons}>
-          <Button
-            data-test="yesContentHelpful"
+      {feedbackText ? (
+        <Fragment>
+          {/* TODO:Azhar some styling required */}
+          <TextField
+            name="feedbackText"
+            placeholder="Please let us know how we can improve the text area."
+            multiline
+            onChange={onChange}
             variant="outlined"
-            onClick={handleUpdateFeedBack(true)}
-            color="secondary">
-            Yes
-          </Button>
+            className={classes.feedbackTextField}
+          />
           <Button
-            data-test="noContentHelpful"
             variant="outlined"
-            color="secondary"
-            onClick={handleUpdateFeedBack(false)}>
-            No
+            color="primary"
+            onClick={handleSendFeedbackText}>
+            Submit
           </Button>
-        </div>
-      </div>
+        </Fragment>
+      ) : (
+        <Fragment>
+          <div className={classes.content}>{children}</div>
+          <div className={classes.action}>
+            <Typography className={classes.actionTitle}>
+              Was this helpful?
+            </Typography>
+            <div className={classes.actionButtons}>
+              <Button
+                data-test="yesContentHelpful"
+                variant="outlined"
+                onClick={handleUpdateFeedBack(true)}
+                color="secondary">
+                Yes
+              </Button>
+              <Button
+                data-test="noContentHelpful"
+                variant="outlined"
+                color="secondary"
+                onClick={handleUpdateFeedBack(false)}>
+                No
+              </Button>
+            </div>
+          </div>
+        </Fragment>
+      )}
     </div>
   );
 }

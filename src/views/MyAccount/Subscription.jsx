@@ -31,6 +31,7 @@ const useStyles = makeStyles(theme => ({
     height: 10,
     borderRadius: 10,
     maxWidth: '75%',
+    backgroundColor: theme.palette.secondary.lightest,
   },
   linearProgressWrapper: {
     marginTop: theme.spacing(1),
@@ -62,6 +63,9 @@ const useStyles = makeStyles(theme => ({
   },
   bold: {
     fontWeight: 'bold',
+  },
+  normal: {
+    fontWeight: 'normal',
   },
   block: {
     marginBottom: theme.spacing(3),
@@ -252,7 +256,7 @@ export default function Subscription() {
               </Typography>
               <ul className={classes.itemsList}>
                 <li>
-                  <span className={classes.bold}>Expiration Date:</span>{' '}
+                  <span className={classes.bold}>Expiration date:</span>{' '}
                   {diyLicense.expirationDate}
                 </li>
               </ul>
@@ -260,7 +264,7 @@ export default function Subscription() {
           </div>
           <div className={classes.block}>
             <Typography variant="h5" className={classes.subHeading}>
-              Current Usage:
+              Current usage:
             </Typography>
             <div className={classes.linearProgressWrapper}>
               <LinearProgress
@@ -329,7 +333,7 @@ export default function Subscription() {
                     </li>
                     <li>
                       <span className={classes.bold}>
-                        Customer Success Plan:&nbsp;
+                        Customer success plan:&nbsp;
                       </span>
                       {licenseActionDetails.supportTier || 'N/A'}
                     </li>
@@ -343,7 +347,7 @@ export default function Subscription() {
                   </Typography>
                   <div className={classes.wrapper}>
                     <Typography variant="h3">
-                      Production Integration Flows
+                      Production integration flows
                     </Typography>
                     {licenseActionDetails.totalFlowsAvailable ===
                     Number.MAX_SAFE_INTEGER ? (
@@ -355,10 +359,13 @@ export default function Subscription() {
                             <span className={classes.bold}>
                               {numEnabledPaidFlows} of{' '}
                               {licenseActionDetails.totalFlowsAvailable} (
-                              {licenseActionDetails.totalFlowsAvailable -
-                                licenseActionDetails.numAddOnFlows}{' '}
-                              from subscription +{' '}
-                              {licenseActionDetails.numAddOnFlows} Add-on flows)
+                              <span className={classes.normal}>
+                                {licenseActionDetails.totalFlowsAvailable -
+                                  licenseActionDetails.numAddOnFlows}{' '}
+                                from subscription +{' '}
+                                {licenseActionDetails.numAddOnFlows} Add-on
+                                flows)
+                              </span>
                             </span>
                           </div>
                           <span className={classes.bold}>
@@ -380,7 +387,7 @@ export default function Subscription() {
                   </div>
                   <div className={classes.wrapper}>
                     <Typography variant="h3">
-                      Sandbox Integration Flows:{' '}
+                      Sandbox integration flows:{' '}
                     </Typography>
                     <div className={classes.itemsList}>
                       <div>
@@ -425,7 +432,7 @@ export default function Subscription() {
                           onClick={onStartFreeTrialClick}
                           color="primary"
                           variant="outlined">
-                          Go Unlimited for 30days!
+                          Go unlimited for 30days!
                         </Button>
                       )}
                       {licenseActionDetails.subscriptionActions.actions.indexOf(
@@ -439,7 +446,7 @@ export default function Subscription() {
                           }
                           color="primary"
                           variant="outlined">
-                          Request Subscription
+                          Request subscription
                         </Button>
                       )}
                       {licenseActionDetails.subscriptionActions.actions.indexOf(
@@ -453,7 +460,7 @@ export default function Subscription() {
                           }
                           color="primary"
                           variant="outlined">
-                          Request Upgrade
+                          Request upgrade
                         </Button>
                       )}
                       {licenseActionDetails.subscriptionActions.actions.indexOf(
@@ -470,7 +477,7 @@ export default function Subscription() {
                           }
                           color="primary"
                           variant="outlined">
-                          Request Trial Extension
+                          Request trial extension
                         </Button>
                       )}
                       <a
@@ -478,7 +485,7 @@ export default function Subscription() {
                         target="_blank"
                         rel="noopener noreferrer"
                         href="https://www.celigo.com/ipaas-integration-platform/#Pricing">
-                        Compare Plans
+                        Compare plans
                       </a>
                     </div>
                   </div>
