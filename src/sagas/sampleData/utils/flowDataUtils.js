@@ -1,4 +1,5 @@
 import { put, select, call } from 'redux-saga/effects';
+import { isEmpty } from 'lodash';
 import { resourceData, isPageGenerator } from '../../../reducers';
 import { SCOPES } from '../../resourceForm';
 import actions from '../../../actions';
@@ -9,6 +10,7 @@ import {
   requestSampleDataWithContext,
 } from '../flows';
 import getPreviewOptionsForResource from '../flows/pageProcessorPreviewOptions';
+import { generateDefaultExtractsObject } from '../../../utils/flowData';
 
 /*
  * Returns PG/PP Document saved on Flow Doc.
@@ -147,6 +149,7 @@ export function* requestSampleDataForImports({
   flowId,
   resourceId,
   resourceType,
+  hidden = true,
   sampleDataStage,
 }) {
   try {
@@ -156,6 +159,7 @@ export function* requestSampleDataForImports({
           flowId,
           _pageProcessorId: resourceId,
           resourceType,
+          hidden,
           previewType: sampleDataStage,
         });
         break;
@@ -333,4 +337,21 @@ export function* handleFlowDataStageErrors({
       )
     );
   }
+}
+
+export function getPreProcessedResponseMappingData({
+  resourceType,
+  preProcessedData,
+}) {
+  const extractsObj = generateDefaultExtractsObject(resourceType);
+
+  // Incase of lookups , add preProcessedData as part of data
+  if (resourceType === 'exports') {
+    extractsObj.data = [preProcessedData] || '';
+
+    return extractsObj;
+  }
+
+  // Incase of imports, send preProcessedData if present else default fields
+  return isEmpty(preProcessedData) ? extractsObj : preProcessedData;
 }

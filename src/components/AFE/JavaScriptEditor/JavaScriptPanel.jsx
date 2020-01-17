@@ -19,6 +19,8 @@ const useStyles = makeStyles(theme => ({
   container: {
     backgroundColor: theme.palette.background.default,
     height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
   },
   textField: {
     marginTop: theme.spacing(1),
@@ -32,13 +34,20 @@ const useStyles = makeStyles(theme => ({
   label: {
     paddingLeft: theme.spacing(1),
   },
+  scriptPanel: {
+    width: '100%',
+    height: '100%',
+  },
 }));
 
 export default function JavaScriptPanel(props) {
   const { editorId, disabled, insertStubKey } = props;
   const classes = useStyles(props);
-  const { code = '', entryFunction = '', scriptId = '' } = useSelector(state =>
-    selectors.editor(state, editorId)
+  const { code = '', error, entryFunction = '', scriptId = '' } = useSelector(
+    state => selectors.editor(state, editorId)
+  );
+  const violations = useSelector(state =>
+    selectors.editorViolations(state, editorId)
   );
   const scriptContent = useSelector(state => {
     const data = selectors.resourceData(state, 'scripts', scriptId);
@@ -87,58 +96,64 @@ export default function JavaScriptPanel(props) {
   return (
     <LoadResources required resources={['scripts']}>
       <div className={classes.container}>
-        <FormControl className={classes.textField}>
-          <InputLabel className={classes.label} htmlFor="scriptId">
-            Script
-          </InputLabel>
-          <Select
-            id="scriptId"
-            margin="dense"
-            value={scriptId}
+        <div>
+          <FormControl className={classes.textField}>
+            <InputLabel className={classes.label} htmlFor="scriptId">
+              Script
+            </InputLabel>
+            <Select
+              id="scriptId"
+              margin="dense"
+              value={scriptId}
+              disabled={disabled}
+              onChange={handleScriptChange}>
+              {allScripts.map(s => (
+                <MenuItem key={s._id} value={s._id}>
+                  {s.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <TextField
+            id="entryFunction"
             disabled={disabled}
-            onChange={handleScriptChange}>
-            {allScripts.map(s => (
-              <MenuItem key={s._id} value={s._id}>
-                {s.name}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <TextField
-          id="entryFunction"
-          disabled={disabled}
-          InputLabelProps={{ className: classes.label }}
-          className={classes.textField}
-          value={entryFunction}
-          onChange={event => patchEditor('entryFunction', event.target.value)}
-          label="Entry Function"
-          margin="dense"
-        />
-        {scriptId && insertStubKey && (
-          <Button
-            variant="contained"
-            color="primary"
+            InputLabelProps={{ className: classes.label }}
             className={classes.textField}
-            onClick={handleInsertStubClick}
-            disabled={disabled}
-            data-test={insertStubKey}>
-            {`Insert ${hooksLabelMap[insertStubKey]} Stub`}
-          </Button>
-        )}
-        {scriptContent === undefined && scriptId ? (
-          <Fragment>
-            <Typography>Retrieving your script</Typography>
-            <Spinner />
-          </Fragment>
-        ) : (
-          <CodePanel
-            name="code"
-            readOnly={disabled}
-            value={code}
-            mode="javascript"
-            onChange={handleCodeChange}
+            value={entryFunction}
+            onChange={event => patchEditor('entryFunction', event.target.value)}
+            label="Entry Function"
+            margin="dense"
           />
-        )}
+          {scriptId && insertStubKey && (
+            <Button
+              variant="contained"
+              color="primary"
+              className={classes.textField}
+              onClick={handleInsertStubClick}
+              disabled={disabled}
+              data-test={insertStubKey}>
+              {`Insert ${hooksLabelMap[insertStubKey]} Stub`}
+            </Button>
+          )}
+        </div>
+        <div
+          className={classes.scriptPanel}
+          key={error || violations ? 'sm' : 'md'}>
+          {scriptContent === undefined && scriptId ? (
+            <Fragment>
+              <Typography>Retrieving your script</Typography>
+              <Spinner />
+            </Fragment>
+          ) : (
+            <CodePanel
+              name="code"
+              readOnly={disabled}
+              value={code}
+              mode="javascript"
+              onChange={handleCodeChange}
+            />
+          )}
+        </div>
       </div>
     </LoadResources>
   );
