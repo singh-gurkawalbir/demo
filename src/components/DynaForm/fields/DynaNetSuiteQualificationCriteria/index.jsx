@@ -90,6 +90,10 @@ export default function DynaNetSuiteQualificationCriteria(props) {
     );
   }
 
+  if (Array.isArray(filters) && !filters.length) {
+    return <Typography>Failed to load record metadata</Typography>;
+  }
+
   return (
     <Fragment>
       <div className={classes.refreshFilters}>
