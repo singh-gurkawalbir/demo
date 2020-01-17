@@ -58,7 +58,6 @@ export default {
       }
     }
 
-    delete retValues['/inputMode'];
     delete retValues['/rdbms/queryUpdate'];
     delete retValues['/rdbms/queryInsert'];
 

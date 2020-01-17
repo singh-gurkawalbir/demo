@@ -158,7 +158,7 @@ export default {
   },
   'dynamodb.expressionAttributeValues': {
     type: 'editor',
-    label: 'Expression Attribute Names',
+    label: 'Expression Attribute Values',
     mode: 'json',
     required: true,
     visibleWhen: [

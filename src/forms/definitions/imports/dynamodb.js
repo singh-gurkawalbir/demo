@@ -11,8 +11,6 @@ export default {
       retValues['/dynamodb/itemDocument'] = undefined;
     }
 
-    delete retValues['/inputMode'];
-
     return {
       ...retValues,
     };
