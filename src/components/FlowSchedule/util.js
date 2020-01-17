@@ -591,9 +591,9 @@ export const getMetadata = ({
       schedule: {
         id: 'schedule',
         name: 'schedule',
-        type: 'text',
+        type: 'crongenerator',
         label: 'Schedule',
-        defaultValue: schedule,
+        defaultValue: schedule || '? * * * * *',
         visibleWhenAll: [
           {
             field: 'activeTab',
