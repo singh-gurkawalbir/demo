@@ -77,7 +77,7 @@ export default function FlowStartDateDialog(props) {
     onClose();
   };
 
-  if (!timeZone || !selectorStatus) {
+  if (!selectorStatus) {
     return <Spinner />;
   }
 
