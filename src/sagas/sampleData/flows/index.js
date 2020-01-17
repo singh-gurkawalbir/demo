@@ -120,6 +120,7 @@ function* requestSampleData({
         flowId,
         resourceId,
         resourceType,
+        hidden: true,
         sampleDataStage,
       });
     } else {
@@ -149,6 +150,7 @@ export function* fetchPageProcessorPreview({
   flowId,
   _pageProcessorId,
   previewType,
+  hidden,
   resourceType = 'exports',
 }) {
   if (!flowId || !_pageProcessorId) return;
@@ -159,6 +161,7 @@ export function* fetchPageProcessorPreview({
       _pageProcessorId,
       previewType,
       resourceType,
+      hidden,
       throwOnError: true,
     });
     const { merged: resource = {} } = yield select(

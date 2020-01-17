@@ -147,6 +147,7 @@ export function* requestSampleDataForImports({
   flowId,
   resourceId,
   resourceType,
+  hidden = true,
   sampleDataStage,
 }) {
   try {
@@ -156,6 +157,7 @@ export function* requestSampleDataForImports({
           flowId,
           _pageProcessorId: resourceId,
           resourceType,
+          hidden,
           previewType: sampleDataStage,
         });
         break;
