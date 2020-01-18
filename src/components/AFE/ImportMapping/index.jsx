@@ -141,6 +141,9 @@ export default function ImportMapping(props) {
     salesforceMasterRecordTypeId,
     showSalesforceNetsuiteAssistant,
   } = useSelector(state => selectors.mapping(state, editorId));
+  const { saveCompleted } = useSelector(state =>
+    selectors.mappingSaveProcessTerminate(state, editorId)
+  );
   const mappingsCopy = mappings ? [...mappings] : [];
 
   mappingsCopy.push({});
@@ -409,13 +412,14 @@ export default function ImportMapping(props) {
             color="secondary"
             dataTest="saveAndCloseImportMapping"
             onClose={handleClose}
+            showOnlyOnChanges
             submitButtonLabel="Save & Close"
           />
           <Button
             variant="text"
             data-test="saveImportMapping"
             onClick={handleClose}>
-            Cancel
+            {saveCompleted ? 'Close' : 'Cancel'}
           </Button>
         </ButtonGroup>
       </div>

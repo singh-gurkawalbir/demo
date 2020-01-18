@@ -387,6 +387,10 @@ export function mapping(state, id) {
   return fromSession.mapping(state && state.session, id);
 }
 
+export function mappingsChanged(state, id) {
+  return fromSession.mappingsChanged(state && state.session, id);
+}
+
 export function mappingSaveProcessTerminate(state, id) {
   return fromSession.mappingSaveProcessTerminate(state && state.session, id);
 }
