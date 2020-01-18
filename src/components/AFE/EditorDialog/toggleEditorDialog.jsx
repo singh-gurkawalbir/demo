@@ -125,10 +125,20 @@ export default function ToggleEditorDialog(props) {
     },
     [editor, enquesnackbar, onClose]
   );
-  const handleLayoutChange = (event, _layout) =>
+  const patchEditorLayoutChange = () => {
+    dispatch(actions.editor.changeLayout(activeEditorId));
+  };
+
+  const handleLayoutChange = (event, _layout) => {
+    patchEditorLayoutChange();
     _layout && setState({ ...state, layout: _layout });
-  const handleFullScreenClick = () =>
+  };
+
+  const handleFullScreenClick = () => {
+    patchEditorLayoutChange();
     setState({ ...state, fullScreen: !fullScreen });
+  };
+
   const handleEditorToggle = value =>
     setState({ ...state, activeEditorIndex: value === 'expression' ? 0 : 1 });
   const showPreviewAction =
@@ -191,11 +201,7 @@ export default function ToggleEditorDialog(props) {
           )}
         </div>
       </div>
-      <DialogContent
-        style={size}
-        className={classes.dialogContent}
-        // key to be dependent on layout and fullscreen for content to re-render to fit in properly.
-        key={`${id}-${layout}-${fullScreen ? 'lg' : 'sm'}`}>
+      <DialogContent style={size} className={classes.dialogContent}>
         {// Is there a better way to do this?
         children[state.activeEditorIndex] &&
           cloneElement(children[state.activeEditorIndex], {
