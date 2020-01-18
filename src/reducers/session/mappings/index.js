@@ -331,8 +331,20 @@ export function mappingSaveProcessTerminate(state, id) {
 }
 
 const isMappingObjEqual = (mapping1, mapping2) => {
-  const { rowIdentifier: r1, index: i1, ...formattedMapping1 } = mapping1;
-  const { rowIdentifier: r2, index: i2, ...formattedMapping2 } = mapping2;
+  const {
+    rowIdentifier: r1,
+    index: i1,
+    isNotEditable: e1,
+    isRequired: req1,
+    ...formattedMapping1
+  } = mapping1;
+  const {
+    rowIdentifier: r2,
+    index: i2,
+    isNotEditable: e2,
+    isRequired: req2,
+    ...formattedMapping2
+  } = mapping2;
 
   return isEqual(formattedMapping1, formattedMapping2);
 };
@@ -357,12 +369,19 @@ export function mappingsChanged(state, id) {
   }
 
   const { mappings, mappingsCopy, lookups, lookupsCopy } = state[id];
-  const differences = differenceWith(mappingsCopy, mappings, isMappingObjEqual);
+  const mappingsDiff = differenceWith(
+    mappingsCopy,
+    mappings,
+    isMappingObjEqual
+  );
   let isMappingsEqual =
-    mappings.length === mappingsCopy.length && !differences.length;
+    mappings.length === mappingsCopy.length && !mappingsDiff.length;
 
   if (isMappingsEqual) {
-    isMappingsEqual = isEqual(lookups, lookupsCopy);
+    const lookupsDiff = differenceWith(lookupsCopy, lookups, isEqual);
+
+    isMappingsEqual =
+      lookupsCopy.length === lookups.length && !lookupsDiff.length;
   }
 
   return !isMappingsEqual;
