@@ -33,6 +33,11 @@ export function* saveMappings({ id }) {
     resource,
   });
   const { _id: resourceId } = resource;
+  const updatedResourceObj = yield select(
+    selectors.resource,
+    'imports',
+    resourceId
+  );
   const mappingPath = mappingUtil.getMappingPath(adaptorType);
 
   patch.push({
@@ -48,6 +53,40 @@ export function* saveMappings({ id }) {
       op: lookups ? 'replace' : 'add',
       path: lookupPath,
       value: lookups,
+    });
+  }
+
+  // delete file/csv/headerRow if present
+  if (
+    updatedResourceObj &&
+    updatedResourceObj.file &&
+    updatedResourceObj.file.csv &&
+    updatedResourceObj.file.csv.headerRow
+  ) {
+    const fileCsvObj = updatedResourceObj.file.csv;
+
+    delete fileCsvObj.headerRow;
+    patch.push({
+      op: 'replace',
+      path: '/file/csv',
+      value: fileCsvObj,
+    });
+  }
+
+  // delete file/xlsx/headerRow if present
+  if (
+    updatedResourceObj &&
+    updatedResourceObj.file &&
+    updatedResourceObj.file.xlsx &&
+    updatedResourceObj.file.xlsx.headerRow
+  ) {
+    const fileXlsxObj = updatedResourceObj.file.xlsx;
+
+    delete fileXlsxObj.headerRow;
+    patch.push({
+      op: 'replace',
+      path: '/file/xlsx',
+      value: fileXlsxObj,
     });
   }
 
