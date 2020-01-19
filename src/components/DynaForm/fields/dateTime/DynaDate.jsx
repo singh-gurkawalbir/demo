@@ -5,6 +5,7 @@ import {
   KeyboardDatePicker,
 } from '@material-ui/pickers';
 import ErroredMessageComponent from '../ErroredMessageComponent';
+import CalendarIcon from '../../../icons/CalendarIcon';
 
 export default function DatePicker(props) {
   const { id, label, onFieldChange, value, disabled } = props;
@@ -21,10 +22,12 @@ export default function DatePicker(props) {
         label={label}
         format="MM/DD/YYYY"
         value={dateValue}
+        variant="inline"
         inputVariant="outlined"
         InputLabelProps={{ shrink: true }}
         onChange={value => setDateValue(value)}
         disabled={disabled}
+        keyboardIcon={<CalendarIcon />}
       />
       <ErroredMessageComponent {...props} />
     </MuiPickersUtilsProvider>

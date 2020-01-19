@@ -8,8 +8,6 @@ import {
   DialogContent,
   Typography,
 } from '@material-ui/core';
-import ViewColumnIcon from '@material-ui/icons/ViewColumn';
-import ViewCompactIcon from '@material-ui/icons/ViewCompact';
 // TODO: Azhar, please fix these icons message.
 import ViewRowIcon from '@material-ui/icons/HorizontalSplit';
 import ToggleButton from '@material-ui/lab/ToggleButton';
@@ -20,6 +18,8 @@ import { preSaveValidate } from './util';
 import * as selectors from '../../../reducers';
 import FullScreenOpenIcon from '../../icons/FullScreenOpenIcon';
 import FullScreenCloseIcon from '../../icons/FullScreenCloseIcon';
+import ViewColumnIcon from '../../icons/LayoutTriVerticalIcon';
+import ViewCompactIcon from '../../icons/LayoutLgLeftSmrightIcon';
 
 const useStyles = makeStyles(theme => ({
   dialogContent: {

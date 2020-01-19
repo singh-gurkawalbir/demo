@@ -27,7 +27,7 @@ export default function ResourceModal(props) {
 
   return (
     <LoadResources required resources="connections">
-      <ModalDialog show minWidth="md" maxWidth="xl">
+      <ModalDialog show minWidth="md" maxWidth="xl" onClose={onClose}>
         <div> Setup {RESOURCE_TYPE_PLURAL_TO_SINGULAR[resourceType]}</div>
         <div>
           {addOrSelect ? (

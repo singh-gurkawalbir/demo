@@ -13,7 +13,7 @@ import ActionButton from '../../../ActionButton';
 const useStyles = makeStyles(theme => ({
   container: {
     marginTop: theme.spacing(1),
-    overflowY: 'off',
+    marginRight: theme.spacing(2),
   },
   child: {
     '& + div': {
