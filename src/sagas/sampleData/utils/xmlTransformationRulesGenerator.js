@@ -80,8 +80,11 @@ export default function* patchTransformationRulesForXMLResource({
   const isXmlHttpAdaptor =
     adaptorTypeMap[resource.adaptorType] === 'http' &&
     resource.http.successMediaType === 'xml';
+  const isDataLoader = resource && resource.type === 'simple';
 
-  if (!isXmlFileAdaptor && !isXmlHttpAdaptor) {
+  // Other than XML File Adaptor / XML Http Adaptor , we don't need to patch
+  // Also for Data loader flows no need to patch though XML file is uploaded
+  if (isDataLoader || (!isXmlFileAdaptor && !isXmlHttpAdaptor)) {
     return;
   }
 
