@@ -3,6 +3,14 @@ import { each } from 'lodash';
 import { MAX_FILE_SIZE } from './constants';
 import { isJsonString } from './string';
 
+// A map that returns corresponding application file types used for file uploading
+export const fileTypeToApplicationTypeMap = {
+  csv: 'text/csv',
+  json: 'application/json',
+  xml: 'application/xml',
+  xlsx: 'application/vnd.ms-excel',
+};
+
 /*
  * Validates file type against all possible file types when user uploads a file
  * validFileTypes - Took reference from 'integrator' Repository

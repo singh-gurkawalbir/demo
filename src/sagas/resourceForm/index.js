@@ -15,6 +15,7 @@ import { getResource, commitStagedChanges } from '../resources';
 import connectionSagas from '../resourceForm/connections';
 import { requestAssistantMetadata } from '../resources/meta';
 import { isNewId } from '../../utils/resource';
+import { fileTypeToApplicationTypeMap } from '../../utils/file';
 import patchTransformationRulesForXMLResource from '../sampleData/utils/xmlTransformationRulesGenerator';
 import { uploadRawData } from '../uploadFile';
 
@@ -196,16 +197,20 @@ export function* saveDataLoaderRawData({ resourceId, resourceType, values }) {
     return values;
   }
 
-  const rawData = yield select(
+  // 'rawFile' stage gives back the file content as well as file type
+  const { data: rawData } = yield select(
     selectors.getResourceSampleDataWithStatus,
     resourceId,
-    'raw'
+    'rawFile'
   );
+  // Gets application file type to be passed on file upload
+  const fileType = fileTypeToApplicationTypeMap[rawData.type];
 
-  if (!rawData) values;
-
+  if (!rawData) return values;
   const rawDataKey = yield call(uploadRawData, {
-    file: JSON.stringify(rawData),
+    file: rawData.body,
+    fileName: `file.${rawData.type}`,
+    fileType,
   });
 
   return { ...values, '/rawData': rawDataKey };
