@@ -1099,11 +1099,12 @@ const job = {
 const flow = {
   run: ({ flowId, customStartDate, options }) =>
     action(actionTypes.FLOW.RUN, { flowId, customStartDate, options }),
-  runDataLoader: ({ flowId, customStartDate, fileContent }) =>
+  runDataLoader: ({ flowId, customStartDate, fileContent, fileType }) =>
     action(actionTypes.FLOW.RUN_DATA_LOADER, {
       flowId,
       customStartDate,
       fileContent,
+      fileType,
     }),
   requestLastExportDateTime: ({ flowId }) =>
     action(actionTypes.FLOW.REQUEST_LAST_EXPORT_DATE_TIME, { flowId }),

@@ -5,6 +5,7 @@ import { apiCallWithRetry } from '../index';
 import getRequestOptions from '../../utils/requestOptions';
 import * as selectors from '../../reducers';
 import { JOB_STATUS, JOB_TYPES, EMPTY_RAW_DATA } from '../../utils/constants';
+import { fileTypeToApplicationTypeMap } from '../../utils/file';
 import { uploadRawData } from '../uploadFile';
 
 export function* run({ flowId, customStartDate, options = {} }) {
@@ -51,7 +52,7 @@ export function* run({ flowId, customStartDate, options = {} }) {
   yield put(actions.job.requestInProgressJobStatus());
 }
 
-export function* runDataLoader({ flowId, fileContent }) {
+export function* runDataLoader({ flowId, fileContent, fileType }) {
   const flow = yield select(selectors.resource, 'flows', flowId);
 
   if (flow && flow.pageGenerators && flow.pageGenerators.length) {
@@ -60,8 +61,12 @@ export function* runDataLoader({ flowId, fileContent }) {
 
     if (exp && exp.type === 'simple') {
       if (fileContent) {
+        const dataLoaderFileType = fileTypeToApplicationTypeMap[fileType];
+        // Incase of JSON, we need to stringify the content to pass while uploading
         const rawDataKey = yield call(uploadRawData, {
-          file: JSON.stringify(fileContent),
+          file: fileType === 'json' ? JSON.stringify(fileContent) : fileContent,
+          fileName: `file.${fileType}`,
+          fileType: dataLoaderFileType,
         });
         const options = {
           isDataLoader: true,
