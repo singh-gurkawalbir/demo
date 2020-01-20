@@ -9,6 +9,7 @@ import CeligoPageBar from '../../components/CeligoPageBar';
 import TransfersIcon from '../../components/icons/TransfersIcon';
 import SingleUserIcon from '../../components/icons/SingleUserIcon';
 import UsersIcon from '../../components/icons/GroupOfUsersIcon';
+import UsersPanel from '../../components/ManageUsersPanel';
 import KnowledgeBaseIcon from '../../components/icons/KnowledgeBaseIcon';
 import AuditLogIcon from '../../components/icons/AuditLogIcon';
 import ResourceDrawer from '../../components/drawer/Resource';
@@ -22,9 +23,6 @@ const mapStateToProps = state => {
   };
 };
 
-const Users = loadable(() =>
-  import(/* webpackChunkName: 'MyAccount.Users' */ './Users')
-);
 const Profile = loadable(() =>
   import(/* webpackChunkName: 'MyAccount.Profile' */ './Profile')
 );
@@ -35,7 +33,7 @@ const Audit = loadable(() =>
   import(/* webpackChunkName: 'MyAccount.Audit' */ './Audit')
 );
 const Transfers = loadable(() =>
-  import(/* webpackChunkName: 'MyAccount.Audit' */ './Transfers/index')
+  import(/* webpackChunkName: 'MyAccount.Transfers' */ './Transfers/index')
 );
 const tabs = [
   {
@@ -50,7 +48,7 @@ const tabs = [
     Icon: SingleUserIcon,
     Panel: Profile,
   },
-  { path: 'users', label: 'Users', Icon: UsersIcon, Panel: Users },
+  { path: 'users', label: 'Users', Icon: UsersIcon, Panel: UsersPanel },
   {
     path: 'audit',
     label: 'Audit log',

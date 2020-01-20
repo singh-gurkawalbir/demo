@@ -575,7 +575,7 @@ function FlowBuilder() {
               className={clsx(classes.title, classes.destinationTitle)}
               variant="overline">
               {isDataLoaderFlow
-                ? 'DESTINATION'
+                ? 'DESTINATION APPLICATION'
                 : 'DESTINATION & LOOKUP APPLICATIONS'}
 
               {showAddPageProcessor && (
@@ -613,7 +613,7 @@ function FlowBuilder() {
                   integrationId={integrationId}
                   isViewMode={isViewMode}
                   onBlockClick={handleAddProcessor}
-                  blockType="newPP"
+                  blockType={isDataLoaderFlow ? 'newImport' : 'newPP'}
                 />
               )}
               {!showAddPageProcessor &&

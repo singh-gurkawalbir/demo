@@ -14,7 +14,7 @@ import * as selectors from '../../../../../reducers';
 import LoadResources from '../../../../../components/LoadResources';
 import IconTextButton from '../../../../../components/IconTextButton';
 import SettingsIcon from '../../../../../components/icons/SettingsIcon';
-import PanelHeader from '../../../common/PanelHeader';
+import PanelHeader from '../../../../../components/PanelHeader';
 import FlowCard from '../../../common/FlowCard';
 import ConfigureDrawer from './ConfigureDrawer';
 import SettingsDrawer from './SettingsDrawer';

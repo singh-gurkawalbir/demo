@@ -13,7 +13,7 @@ import * as selectors from '../../../../../reducers';
 import AuditLogSection from './sections/AuditLog';
 import SubscriptionSection from './sections/Subscription';
 import NotificationsSection from './sections/Notifications';
-import UsersSection from './sections/Users';
+import UsersSection from '../../../../../components/ManageUsersPanel';
 import UninstallSection from './sections/Uninstall';
 import ApiTokensSection from './sections/ApiTokens';
 

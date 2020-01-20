@@ -78,28 +78,32 @@ export default function menuItems(userProfile, userPermissions = {}) {
       ],
     },
     {
-      label: 'Dev Tools',
-      Icon: ToolsIcon,
-      children: [
-        // We can add this back once we move back to custom forms
-        // and IA feature development.
-        // {
-        //   label: 'App builder',
-        //   path: '/resources',
-        //   Icon: AppBuilderIcon,
-        // },
-        {
-          label: 'Editor playground',
-          path: '/editors',
-          Icon: EditorsPlaygroundIcon,
-        },
-        // {
-        //   label: 'Permission explorer',
-        //   path: '/permissions',
-        //   Icon: PermissionExplorerIcon,
-        // },
-      ],
+      label: 'Editor playground (Beta)',
+      path: '/editors',
+      Icon: EditorsPlaygroundIcon,
     },
+
+    // {
+    //   label: 'Dev Tools',
+    //   Icon: ToolsIcon,
+    //   children: [
+    // {
+    //   label: 'App builder',
+    //   path: '/resources',
+    //   Icon: AppBuilderIcon,
+    // },
+    // {
+    //   label: 'Editor playground',
+    //   path: '/editors',
+    //   Icon: EditorsPlaygroundIcon,
+    // },
+    // {
+    //   label: 'Permission explorer',
+    //   path: '/permissions',
+    //   Icon: PermissionExplorerIcon,
+    // },
+    //   ],
+    // },
   ];
 
   if (
@@ -111,6 +115,8 @@ export default function menuItems(userProfile, userPermissions = {}) {
     const resourceItems = items.find(i => i.label === 'Resources');
 
     if (!isDeveloper) {
+      items = items.filter(i => !i.label.startsWith('Editor play'));
+
       resourceItems.children = resourceItems.children.filter(
         i => !(i.label === 'Scripts' || i.label === 'Stacks')
       );

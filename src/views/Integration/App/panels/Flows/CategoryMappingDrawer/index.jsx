@@ -14,7 +14,7 @@ import actions from '../../../../../../actions';
 import Loader from '../../../../../../components/Loader';
 import Spinner from '../../../../../../components/Spinner';
 import Filters from './Filters';
-import PanelHeader from '../../../../common/PanelHeader';
+import PanelHeader from '../../../../../../components/PanelHeader';
 import TrashIcon from '../../../../../../components/icons/TrashIcon';
 import Mappings from './MappingsWrapper';
 import CategoryList from './CategoryList';

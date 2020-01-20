@@ -101,9 +101,9 @@ export default function Panel(props) {
   let resourceLabel;
 
   if (resourceType === 'pageProcessor') {
-    resourceLabel = 'Page processor';
+    resourceLabel = 'Destination / Lookup app';
   } else if (resourceType === 'pageGenerator') {
-    resourceLabel = 'Page generator';
+    resourceLabel = 'Source app';
   } else {
     resourceLabel = MODEL_PLURAL_TO_LABEL[resourceType];
   }
@@ -225,7 +225,7 @@ export default function Panel(props) {
       <div className={classes.root}>
         <div className={classes.title}>
           <Typography variant="h3">
-            {isNew ? `Create` : 'Edit'} {resourceLabel}
+            {isNew ? `Create` : 'Edit'} {resourceLabel.toLowerCase()}
           </Typography>
           <IconButton
             data-test="closeFlowSchedule"

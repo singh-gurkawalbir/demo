@@ -12,7 +12,7 @@ import { STANDALONE_INTEGRATION } from '../../../../../utils/constants';
 import AuditLogSection from './sections/AuditLog';
 import ReadmeSection from './sections/Readme';
 import NotificationsSection from './sections/Notifications';
-import UsersSection from './sections/Users';
+import UsersSection from '../../../../../components/ManageUsersPanel';
 
 const useStyles = makeStyles(theme => ({
   root: {

@@ -5,12 +5,12 @@ import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../constants/resource';
 
 export const MODEL_PLURAL_TO_LABEL = Object.freeze({
   agents: 'Agent',
-  accesstokens: 'API Token',
-  asyncHelpers: 'Async Helpers',
+  accesstokens: 'API token',
+  asyncHelpers: 'Async helpers',
   connections: 'Connection',
-  connectors: 'Integration App',
+  connectors: 'Integration app',
   exports: 'Export',
-  filedefinitions: 'File Definition',
+  filedefinitions: 'File definition',
   flows: 'Flow',
   iclients: 'IClient',
   imports: 'Import',
@@ -19,8 +19,8 @@ export const MODEL_PLURAL_TO_LABEL = Object.freeze({
   stacks: 'Stack',
   templates: 'Template',
   connectorLicenses: 'License',
-  pageGenerator: 'Page generator',
-  pageProcessor: 'Page processor',
+  pageGenerator: 'Source app',
+  pageProcessor: 'Destination / lookup app',
 });
 
 /**

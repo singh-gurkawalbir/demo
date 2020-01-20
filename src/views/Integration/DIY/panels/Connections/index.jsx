@@ -11,7 +11,7 @@ import metadata from '../../../../../components/ResourceTable/metadata/connectio
 import IconTextButton from '../../../../../components/IconTextButton';
 import AddIcon from '../../../../../components/icons/AddIcon';
 import ConnectionsIcon from '../../../../../components/icons/ConnectionsIcon';
-import PanelHeader from '../../../common/PanelHeader';
+import PanelHeader from '../../../../../components/PanelHeader';
 import actions from '../../../../../actions';
 
 const useStyles = makeStyles(theme => ({
