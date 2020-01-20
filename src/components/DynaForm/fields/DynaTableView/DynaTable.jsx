@@ -2,13 +2,22 @@ import { useReducer, useEffect, useState, useCallback } from 'react';
 import produce from 'immer';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography, Grid } from '@material-ui/core';
+import { Typography, Grid, TextField } from '@material-ui/core';
 import Spinner from '../../../Spinner';
 import RefreshIcon from '../../../icons/RefreshIcon';
 import DynaSelect from '../DynaSelect';
 import DeleteIcon from '../../../icons/TrashIcon';
 import DynaTypeableSelect from '../DynaTypeableSelect';
 import ActionButton from '../../../ActionButton';
+
+const TYPE_TO_ERROR_MESSAGE = {
+  input: 'Please enter a value',
+  number: 'Please enter a number',
+  text: 'Please enter a value',
+  autosuggest: 'Please select a value',
+};
+
+Object.freeze(TYPE_TO_ERROR_MESSAGE);
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -320,21 +329,45 @@ export const DynaTable = props => {
                     ) && (
                       <div
                         className={clsx(classes.childHeader, classes.childRow)}>
-                        <DynaTypeableSelect
-                          id={`suggest-${r.id}-${arr.row}`}
-                          key={`suggest-${r.id}-${arr.row}-${r.value}-${r.optionChangeIdentifer}`}
-                          value={r.value}
-                          labelName="label"
-                          disabled={r.readOnly}
-                          isValid={!(optionsMap[index].required && !r.value)}
-                          errorMessages="Please select a value"
-                          inputType={r.type}
-                          valueName="value"
-                          options={r.options}
-                          onBlur={(id, evt) => {
-                            handleUpdate(arr.row, evt, r.id);
-                          }}
-                        />
+                        {r.type === 'number' ? (
+                          <TextField
+                            variant="filled"
+                            id={`suggest-${r.id}-${arr.row}`}
+                            key={`suggest-${r.id}-${arr.row}-${r.value}-${r.optionChangeIdentifer}`}
+                            defaultValue={r.value || 0}
+                            disabled={r.readOnly}
+                            helperText={
+                              r.value === '' && TYPE_TO_ERROR_MESSAGE[r.type]
+                            }
+                            error={r.value === ''}
+                            type={r.type}
+                            options={r.options}
+                            onBlur={evt => {
+                              handleUpdate(arr.row, evt.target.value, r.id);
+                            }}
+                          />
+                        ) : (
+                          <DynaTypeableSelect
+                            id={`suggest-${r.id}-${arr.row}`}
+                            key={`suggest-${r.id}-${arr.row}-${r.value}-${r.optionChangeIdentifer}`}
+                            value={r.value}
+                            labelName="label"
+                            disabled={r.readOnly}
+                            isValid={
+                              !optionsMap[index].required ||
+                              (optionsMap[index].required && r.value)
+                            }
+                            errorMessages={
+                              TYPE_TO_ERROR_MESSAGE[r.type] ||
+                              'Please enter a value'
+                            }
+                            valueName="value"
+                            options={r.options}
+                            onBlur={(id, evt) => {
+                              handleUpdate(arr.row, evt, r.id);
+                            }}
+                          />
+                        )}
                       </div>
                     )}
                   </Grid>
