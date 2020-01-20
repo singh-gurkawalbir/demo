@@ -16,6 +16,7 @@ import * as resourceUtil from '../../../utils/resource';
 import ModalDialog from '../../ModalDialog';
 import ButtonGroup from '../../ButtonGroup';
 import ActionButton from '../../ActionButton';
+import Help from '../../Help';
 
 // TODO Aditya: Convert Response Mapping and Import mapping to re-use same component
 // TODO: Azhar once Mapping dialog design is ready make a component
@@ -30,6 +31,16 @@ const useStyles = makeStyles(theme => ({
     gridTemplateColumns: '45% 45% 50px',
     gridColumnGap: '1%',
     marginBottom: theme.spacing(0.5),
+  },
+  titleSection: {
+    width: '100%',
+    '& > div': {
+      float: 'left',
+    },
+  },
+  iconButton: {
+    float: 'right',
+    padding: '1px',
   },
   rowContainer: {
     display: 'block',
@@ -234,7 +245,17 @@ export default function ResponseMappingDialog(props) {
 
   return (
     <ModalDialog onClose={onClose} show minWidth="md" maxWidth="md">
-      <div>Define Response Mapping</div>
+      <div className={classes.titleSection}>
+        <div>Define Response Mapping</div>
+        <Help
+          key="help-responseMapping"
+          data-test="help-responseMapping"
+          title="Response Mapping"
+          className={classes.iconButton}
+          helpKey="responseMapping"
+          fieldId="responseMappingHelp"
+        />
+      </div>
       <div className={classes.container}>
         <div className={classes.root}>
           <div className={classes.header}>
