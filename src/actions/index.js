@@ -959,6 +959,7 @@ const accessToken = {
     action(actionTypes.ACCESSTOKEN_TOKEN_MASK, { accessToken }),
   revoke: id => action(actionTypes.ACCESSTOKEN_REVOKE, { id }),
   activate: id => action(actionTypes.ACCESSTOKEN_ACTIVATE, { id }),
+  deletePurged: () => action(actionTypes.ACCESSTOKEN_DELETE_PURGED),
 };
 const job = {
   requestCollection: ({ integrationId, flowId, filters }) =>

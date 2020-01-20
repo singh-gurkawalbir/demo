@@ -284,6 +284,12 @@ export default (state = {}, action) => {
       }
 
       return state;
+    case actionTypes.ACCESSTOKEN_DELETE_PURGED:
+      return produce(state, draft => {
+        draft.accesstokens = draft.accesstokens.filter(token => {
+          return !token.autoPurgeAt || new Date(token.autoPurgeAt) > new Date();
+        });
+      });
 
     default:
       return state;
