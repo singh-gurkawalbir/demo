@@ -43,9 +43,14 @@ const useStyles = makeStyles(theme => ({
 export default function JavaScriptPanel(props) {
   const { editorId, disabled, insertStubKey } = props;
   const classes = useStyles(props);
-  const { code = '', error, entryFunction = '', scriptId = '' } = useSelector(
-    state => selectors.editor(state, editorId)
-  );
+  const {
+    code = '',
+    initChangeIdentifier,
+    error,
+    fetchScriptContent = false,
+    entryFunction = '',
+    scriptId = '',
+  } = useSelector(state => selectors.editor(state, editorId));
   const violations = useSelector(state =>
     selectors.editorViolations(state, editorId)
   );
@@ -59,19 +64,20 @@ export default function JavaScriptPanel(props) {
   );
   const dispatch = useDispatch();
   const patchEditor = useCallback(
-    (option, value) => {
-      dispatch(actions.editor.patch(editorId, { [option]: value }));
+    val => {
+      dispatch(actions.editor.patch(editorId, val));
     },
     [dispatch, editorId]
   );
   const requestScript = useCallback(() => {
     dispatch(actions.resource.request('scripts', scriptId));
   }, [dispatch, scriptId]);
-  const handleCodeChange = useCallback(code => patchEditor('code', code), [
+  const handleCodeChange = useCallback(code => patchEditor({ code }), [
     patchEditor,
   ]);
   const handleScriptChange = useCallback(
-    event => patchEditor('scriptId', event.target.value),
+    event =>
+      patchEditor({ scriptId: event.target.value, fetchScriptContent: true }),
     [patchEditor]
   );
   const handleInsertStubClick = useCallback(() => {
@@ -79,19 +85,28 @@ export default function JavaScriptPanel(props) {
     const updatedScriptContent = code + getScriptHookStub(insertStubKey);
 
     // Updated this new script content on editor
-    patchEditor('code', updatedScriptContent);
+    patchEditor({ code: updatedScriptContent });
   }, [code, insertStubKey, patchEditor]);
 
   useEffect(() => {
-    // TODO: What if for the requested script is non existent...
-    // do we have a timeout for the spinner
-    if (scriptContent !== undefined) {
-      patchEditor('code', scriptContent);
-    } else if (scriptId) {
+    if (fetchScriptContent && scriptContent !== undefined) {
+      patchEditor({
+        code: scriptContent,
+        fetchScriptContent: false,
+        initChangeIdentifier: initChangeIdentifier + 1,
+      });
+    } else if (scriptContent === undefined && scriptId) {
       requestScript();
-      // Shouldnt we update to the selected scriptId
     }
-  }, [editorId, patchEditor, requestScript, scriptContent, scriptId]);
+  }, [
+    editorId,
+    fetchScriptContent,
+    initChangeIdentifier,
+    patchEditor,
+    requestScript,
+    scriptContent,
+    scriptId,
+  ]);
 
   return (
     <LoadResources required resources={['scripts']}>
@@ -120,7 +135,9 @@ export default function JavaScriptPanel(props) {
             InputLabelProps={{ className: classes.label }}
             className={classes.textField}
             value={entryFunction}
-            onChange={event => patchEditor('entryFunction', event.target.value)}
+            onChange={event =>
+              patchEditor({ entryFunction: event.target.value })
+            }
             label="Entry Function"
             margin="dense"
           />

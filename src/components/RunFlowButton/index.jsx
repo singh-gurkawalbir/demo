@@ -147,7 +147,13 @@ export default function RunFlowButton({
         fileContent = data;
       }
 
-      dispatch(actions.flow.runDataLoader({ flowId, fileContent }));
+      dispatch(
+        actions.flow.runDataLoader({
+          flowId,
+          fileContent,
+          fileType: dataLoaderFileType,
+        })
+      );
       enqueueSnackbar({
         message: `${flowDetails.name} has been added to your queue.`,
       });

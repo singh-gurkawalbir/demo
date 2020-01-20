@@ -67,6 +67,14 @@ const useStyles = makeStyles(theme => ({
       paddingTop: theme.spacing(1),
     },
   },
+  PageWrapper: {
+    padding: theme.spacing(3),
+    '& > [role = tabpanel]': {
+      background: 'none',
+      padding: 0,
+      border: 'none',
+    },
+  },
 }));
 
 export default function IntegrationApp({ match, history }) {
@@ -305,7 +313,7 @@ export default function IntegrationApp({ match, history }) {
         )}
       </CeligoPageBar>
 
-      <IntegrationTabs tabs={availableTabs} />
+      <IntegrationTabs tabs={availableTabs} className={classes.PageWrapper} />
     </Fragment>
   );
 }

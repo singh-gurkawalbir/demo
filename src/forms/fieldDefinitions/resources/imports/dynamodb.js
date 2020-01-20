@@ -75,53 +75,102 @@ export default {
     ],
   },
   'dynamodb.method': {
-    type: 'select',
+    type: 'radiogroupforresetfields',
     label: 'Method',
+    required: true,
+    fieldsToReset: [
+      { id: 'ignoreExisting', type: 'checkbox' },
+      { id: 'ignoreMissing', type: 'checkbox' },
+      { id: 'dynamodb.ignoreExtract', type: 'textwithlookupextract' },
+    ],
     options: [
       {
-        items: [{ label: 'Query', value: 'query' }],
+        items: [
+          {
+            label: 'PutItem',
+            value: 'putItem',
+          },
+          {
+            label: 'UpdateItem',
+            value: 'updateItem',
+          },
+        ],
       },
     ],
-    defaultValue: 'query',
-    visible: false,
   },
   'dynamodb.tableName': {
     type: 'text',
     label: 'Table Name',
     required: true,
   },
-  'dynamodb.keyConditionExpression': {
+  'dynamodb.partitionKey': {
     type: 'text',
-    label: 'Key Condition Expression',
+    label: 'Partition Key',
+  },
+  'dynamodb.sortKey': {
+    type: 'text',
+    label: 'Sort Key',
+    requiredWhen: [
+      {
+        field: 'dynamodb.partitionKey',
+        isNot: [''],
+      },
+    ],
+  },
+  'dynamodb.itemDocument': {
+    type: 'editor',
+    hideDefaultData: true,
+    label: 'Item Document',
+    mode: 'json',
+    visibleWhen: [
+      {
+        field: 'dynamodb.method',
+        is: ['putItem'],
+      },
+    ],
+  },
+  'dynamodb.updateExpression': {
+    type: 'text',
+    label: 'Update Expression',
     required: true,
+    visibleWhen: [
+      {
+        field: 'dynamodb.method',
+        is: ['updateItem'],
+      },
+    ],
   },
-  'dynamodb.filterExpression': {
+  'dynamodb.conditionExpression': {
     type: 'text',
-    label: 'Filter Expression',
-  },
-  'dynamodb.projectionExpression': {
-    type: 'text',
-    label: 'Projections',
-    delimiter: ',',
+    label: 'Condition Expression',
   },
   'dynamodb.expressionAttributeNames': {
     type: 'editor',
     label: 'Expression Attribute Names',
     mode: 'json',
     required: true,
+    visibleWhen: [
+      {
+        field: 'dynamodb.method',
+        is: ['updateItem'],
+      },
+    ],
   },
   'dynamodb.expressionAttributeValues': {
     type: 'editor',
     label: 'Expression Attribute Values',
     mode: 'json',
     required: true,
+    visibleWhen: [
+      {
+        field: 'dynamodb.method',
+        is: ['updateItem'],
+      },
+    ],
   },
-  'dynamodb.onceExportPartitionKey': {
-    type: 'text',
-    label: 'Once Export Partition Key',
-  },
-  'dynamodb.onceExportSortKey': {
-    type: 'text',
-    label: 'Once Export Sort Key',
+  'dynamodb.ignoreExtract': {
+    type: 'textwithlookupextract',
+    label: 'Ignore Extract',
+    required: true,
   },
 };

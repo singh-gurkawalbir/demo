@@ -41,6 +41,15 @@ export default function reducer(state = {}, action) {
       return newState;
     }
 
+    case actionTypes.EDITOR_CHANGE_LAYOUT: {
+      const initChangeIdentifier =
+        (newState[id] && newState[id].initChangeIdentifier) || 0;
+
+      newState[id].initChangeIdentifier = initChangeIdentifier + 1;
+
+      return newState;
+    }
+
     case actionTypes.EDITOR_RESET:
       newState[id] = {
         ...newState[id],
@@ -59,19 +68,20 @@ export default function reducer(state = {}, action) {
         ...newState[id],
         ...deepClone(patch),
         lastChange: Date.now(),
+        status: 'requested',
       };
 
       return newState;
 
     case actionTypes.EDITOR_EVALUATE_RESPONSE:
-      newState[id] = { ...newState[id], result };
+      newState[id] = { ...newState[id], result, status: 'received' };
       delete newState[id].error;
       delete newState[id].violations;
 
       return newState;
 
     case actionTypes.EDITOR_VALIDATE_FAILURE:
-      newState[id] = { ...newState[id], violations };
+      newState[id] = { ...newState[id], violations, status: 'error' };
 
       // Maybe we dont delete the results on violations?
       // lets experiment with it and see how the UX is...
@@ -80,7 +90,7 @@ export default function reducer(state = {}, action) {
       return newState;
 
     case actionTypes.EDITOR_EVALUATE_FAILURE:
-      newState[id] = { ...newState[id], error };
+      newState[id] = { ...newState[id], error, status: 'error' };
       delete newState[id].result;
 
       return newState;

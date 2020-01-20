@@ -81,6 +81,8 @@ export default function* patchTransformationRulesForXMLResource({
     adaptorTypeMap[resource.adaptorType] === 'http' &&
     resource.http.successMediaType === 'xml';
 
+  // Other than XML File Adaptor / XML Http Adaptor , we don't need to patch
+  // Also for Data loader flows no need to patch though XML file is uploaded
   if (!isXmlFileAdaptor && !isXmlHttpAdaptor) {
     return;
   }

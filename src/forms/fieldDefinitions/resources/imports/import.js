@@ -29,10 +29,12 @@ export default {
   ignoreExisting: {
     type: 'checkbox',
     label: 'Ignore Existing',
+    defaultValue: r => !!(r && r.ignoreExisting),
   },
   ignoreMissing: {
     type: 'checkbox',
     label: 'Ignore Missing',
+    defaultValue: r => !!(r && r.ignoreMissing),
   },
   idLockTemplate: {
     type: 'relativeuri',
@@ -244,6 +246,7 @@ export default {
           { label: 'Acton', value: 'acton' },
           { label: 'Acumatica', value: 'acumatica' },
           { label: 'Mongodb', value: 'mongodb' },
+          { label: 'DynamoDB', value: 'dynamodb' },
           { label: 'Zohomail', value: 'zohomail' },
           { label: 'Zoom', value: 'zoom' },
           { label: 'Myobessentials', value: 'myobessentials' },

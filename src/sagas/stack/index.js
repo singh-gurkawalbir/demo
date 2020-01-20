@@ -81,9 +81,29 @@ export function* toggleUserStackSharing({ userId }) {
   yield put(actions.stack.toggledUserStackSharing({ userId }));
 }
 
+export function* reInviteStackUser({ userInfo, userId }) {
+  const path = `/sshares/${userId}`;
+
+  try {
+    yield call(apiCallWithRetry, {
+      path,
+      opts: {
+        method: 'PUT',
+        body: userInfo,
+      },
+      message: 'Re-inviting Stack User',
+    });
+  } catch (e) {
+    return;
+  }
+
+  yield call(getResourceCollection, { resourceType: 'sshares' });
+}
+
 export const stackSagas = [
   takeEvery(actionTypes.STACK.TOKEN_DISPLAY, displayToken),
   takeEvery(actionTypes.STACK.TOKEN_GENERATE, generateToken),
   takeEvery(actionTypes.STACK.SHARE_USER_INVITE, inviteStackShareUser),
   takeEvery(actionTypes.STACK.USER_SHARING_TOGGLE, toggleUserStackSharing),
+  takeEvery(actionTypes.STACK.USER_REINVITE, reInviteStackUser),
 ];

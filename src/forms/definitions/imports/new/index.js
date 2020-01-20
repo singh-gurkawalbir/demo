@@ -21,6 +21,7 @@ const appTypeToAdaptorType = {
   wrapper: 'Wrapper',
   as2: 'AS2',
   webhook: 'Webhook',
+  dynamodb: 'Dynamodb',
 };
 
 export default {

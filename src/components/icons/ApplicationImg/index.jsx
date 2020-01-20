@@ -29,6 +29,8 @@ const iconMap = (type = '') => {
 
   if (type.toLowerCase().includes('mongodb')) return 'mongodb';
 
+  if (type.toLowerCase().includes('dynamodb')) return 'dynamodb';
+
   if (type.toLowerCase().includes('as2')) return 'as2';
 
   return type;

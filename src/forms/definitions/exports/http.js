@@ -53,9 +53,19 @@ export default {
       retValues['/http/response/successPath'] = undefined;
     }
 
+    if (!retValues['/http/response/failValues'].length) {
+      retValues['/http/response/failValues'] = undefined;
+    }
+
+    if (retValues['/http/response/failPath'] === '') {
+      retValues['/http/response/failPath'] = undefined;
+    }
+
     if (
       retValues['/http/response/successValues'] === undefined &&
       retValues['/http/response/successPath'] === undefined &&
+      retValues['/http/response/failValues'] === undefined &&
+      retValues['/http/response/failPath'] === undefined &&
       retValues['/http/response/resourcePath'] === '' &&
       retValues['/http/response/errorPath'] === ''
     ) {
@@ -63,6 +73,8 @@ export default {
       delete retValues['/http/response/resourcePath'];
       delete retValues['/http/response/successValues'];
       delete retValues['/http/response/successPath'];
+      delete retValues['/http/response/failValues'];
+      delete retValues['/http/response/failPath'];
       delete retValues['/http/response/errorPath'];
     }
 
@@ -212,6 +224,9 @@ export default {
       fieldId: 'http.response.successValues',
     },
     'http.response.errorPath': { fieldId: 'http.response.errorPath' },
+    'http.response.failPath': { fieldId: 'http.response.failPath' },
+    'http.response.failValues': { fieldId: 'http.response.failValues' },
+    'file.csv': { fieldId: 'file.csv' },
     type: {
       id: 'type',
       type: 'select',
@@ -336,7 +351,10 @@ export default {
           'http.response.resourcePath',
           'http.response.successPath',
           'http.response.successValues',
+          'http.response.failPath',
+          'http.response.failValues',
           'http.response.errorPath',
+          'file.csv',
           'type',
           'delta.dateFormat',
           'delta.lagOffset',
