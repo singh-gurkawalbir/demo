@@ -1,76 +1,119 @@
-import { useEffect, Fragment, useMemo } from 'react';
+import { useEffect, Fragment, useMemo, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import Icon from '../../../../components/icons/TransformIcon';
-import TransformEditorDialog from '../../../../components/AFE/TransformEditor/Dialog';
+import TransformEditorDialog from '../../../../components/AFE/TransformEditor/TransformToggleEditorDialog';
 import helpTextMap from '../../../../components/Help/helpTextMap';
+import { hooksToFunctionNamesMap } from '../../../../utils/hooks';
 
-function TransformationDialog({
-  flowId,
-  resource,
-  isViewMode,
-  resourceType,
-  onClose,
-}) {
+function TransformationDialog({ flowId, resource, isViewMode, onClose }) {
   const dispatch = useDispatch();
-  const resourceId = resource._id;
+  const exportId = resource._id;
+  const resourceType = 'exports';
   const sampleData = useSelector(state =>
     selectors.getSampleData(state, {
       flowId,
-      resourceId,
+      resourceId: exportId,
       resourceType,
       stage: 'transform',
     })
   );
-  const transformLookup =
-    resourceType === 'exports' ? 'transform' : 'responseTransform';
-  const rules = useMemo(
-    () =>
-      resource && resource[transformLookup] && resource[transformLookup].rules,
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
+  const { type, rule, scriptId, entryFunction } = useMemo(() => {
+    const transformObj = (resource && resource.transform) || {};
+    const { type, script = {}, expression = {} } = transformObj;
+
+    return {
+      type,
+      rule: expression.rules && expression.rules[0],
+      scriptId: script._scriptId,
+      entryFunction: script.function,
+    };
+  }, [resource]);
+  const saveScript = useCallback(
+    values => {
+      const { code, scriptId } = values;
+      const patchSet = [
+        {
+          op: 'replace',
+          path: '/content',
+          value: code,
+        },
+      ];
+
+      dispatch(actions.resource.patchStaged(scriptId, patchSet, 'value'));
+      dispatch(actions.resource.commitStaged('scripts', scriptId, 'value'));
+    },
+    [dispatch]
   );
-  const handleClose = (shouldCommit, editorValues) => {
-    if (shouldCommit) {
-      const { rule } = editorValues;
-      const path = `/${transformLookup}`;
+  const saveTransformRules = useCallback(
+    values => {
+      const { processor, rule, scriptId, entryFunction } = values;
+      const type = processor === 'transform' ? 'expression' : 'script';
+      const path = '/transform';
       const value = {
-        rules: rule ? [rule] : [[]],
-        version: '1',
+        type,
+        expression: {
+          version: 1,
+          rules: rule ? [rule] : [[]],
+        },
+        script: {
+          _scriptId: scriptId,
+          function: entryFunction,
+        },
       };
       const patchSet = [{ op: 'replace', path, value }];
 
       // Save the resource
-      dispatch(actions.resource.patchStaged(resourceId, patchSet, 'value'));
-      dispatch(
-        actions.resource.commitStaged(resourceType, resourceId, 'value')
-      );
-    }
+      dispatch(actions.resource.patchStaged(exportId, patchSet, 'value'));
+      dispatch(actions.resource.commitStaged('exports', exportId, 'value'));
+    },
+    [dispatch, exportId]
+  );
+  const handleClose = useCallback(
+    (shouldCommit, editorValues) => {
+      if (shouldCommit) {
+        const transformType =
+          editorValues.processor === 'transform' ? 'expression' : 'script';
 
-    onClose();
-  };
+        if (transformType === 'script') {
+          // Incase of script type, save script changes
+          saveScript(editorValues);
+        }
+
+        // save transform rules
+        saveTransformRules(editorValues);
+      }
+
+      onClose();
+    },
+    [onClose, saveScript, saveTransformRules]
+  );
 
   useEffect(() => {
     if (!sampleData) {
       dispatch(
         actions.flowData.requestSampleData(
           flowId,
-          resourceId,
+          exportId,
           resourceType,
           'transform'
         )
       );
     }
-  }, [dispatch, flowId, resourceId, resourceType, sampleData]);
+  }, [dispatch, exportId, flowId, sampleData]);
 
   return (
     <TransformEditorDialog
       title="Transform Mapping"
+      id={exportId}
       disabled={isViewMode}
-      id={resourceId + flowId}
       data={sampleData}
-      rule={rules && rules[0]}
+      type={type}
+      scriptId={scriptId}
+      rule={rule}
+      entryFunction={entryFunction || hooksToFunctionNamesMap.transform}
+      insertStubKey="transform"
       onClose={handleClose}
     />
   );

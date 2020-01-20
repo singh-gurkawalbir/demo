@@ -2,17 +2,17 @@ import { Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link, withRouter } from 'react-router-dom';
 import { Typography, InputBase } from '@material-ui/core';
-import SearchIcon from '@material-ui/icons/Search';
 import { fade, makeStyles } from '@material-ui/core/styles';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
 import LoadResources from '../../components/LoadResources';
+import SearchIcon from '../../components/icons/SearchIcon';
 
 const useStyles = makeStyles(theme => ({
   search: {
     position: 'relative',
     borderRadius: theme.shape.borderRadius,
-    top: -3,
+
     width: '100%',
     [theme.breakpoints.up('sm')]: {
       marginLeft: theme.spacing(1),
@@ -172,7 +172,7 @@ function GlobalSearch({ location }) {
         </div>
         <InputBase
           onChange={e => handleChange(e.target.value)}
-          placeholder="Global search…"
+          placeholder="Search"
           classes={{
             root: classes.inputRoot,
             input: classes.inputInput,

@@ -15,6 +15,13 @@ export default {
 
     if (newValues['/netsuite/type'] === 'distributed') {
       newValues['/type'] = 'distributed';
+      // removing other netsuiteType's Sub Doc @BugFix IO-12678
+      newValues['/netsuite/restlet'] = undefined;
+      newValues['/netsuite/searches'] = undefined;
+      newValues['/netsuite/webservices'] = undefined;
+      delete newValues['/netsuite/restlet/criteria'];
+      delete newValues['/netsuite/webservices/criteria'];
+      delete newValues['/netsuite/searches/criteria'];
     }
 
     if (netsuiteType === 'search') {
@@ -283,27 +290,17 @@ export default {
     },
     'netsuite.restlet.criteria': {
       fieldId: 'netsuite.restlet.criteria',
-      visible: r => !!(r && r.isLookup),
-      visibleWhenAll: r => {
-        if (!(r && r.isLookup)) return [];
-
-        return [
-          { field: 'netsuite.api.type', is: ['restlet'] },
-          { field: 'netsuite.execution.type', is: ['scheduled'] },
-        ];
-      },
+      visibleWhenAll: [
+        { field: 'netsuite.api.type', is: ['restlet'] },
+        { field: 'netsuite.execution.type', is: ['scheduled'] },
+      ],
     },
     'netsuite.webservices.criteria': {
       fieldId: 'netsuite.webservices.criteria',
-      visible: r => !!(r && r.isLookup),
-      visibleWhenAll: r => {
-        if (!(r && r.isLookup)) return [];
-
-        return [
-          { field: 'netsuite.api.type', is: ['search'] },
-          { field: 'netsuite.execution.type', is: ['scheduled'] },
-        ];
-      },
+      visibleWhenAll: [
+        { field: 'netsuite.api.type', is: ['search'] },
+        { field: 'netsuite.execution.type', is: ['scheduled'] },
+      ],
     },
     pageSize: {
       fieldId: 'pageSize',

@@ -33,18 +33,17 @@ export function isSimpleImportFlow(exp) {
   return exp && exp.type === 'simple';
 }
 
-// TODO: what is the point of this function? it simply proxies
-// to another function. Also our data-layer should never have
-// symbols which refer to presentation components. If we want to
-// keep this function, then it should be renamed accordingly...
-// example rename: 'canSchedule'
 export function showScheduleIcon(exports, exp, flow) {
+  if (isSimpleImportFlow(exp)) return false;
+
   return hasBatchExport(exports, exp, flow);
 }
 
 export function isRunnable(exports, exp, flow) {
+  const isDataLoader = isSimpleImportFlow(exp);
+
   // invalid or disabled flows are not runnable.
-  if (!flow || flow.disabled) {
+  if (!flow || (flow.disabled && !isDataLoader)) {
     return false;
   }
 
@@ -60,6 +59,9 @@ export function isRunnable(exports, exp, flow) {
 
   // flows need at least one import to be runnable
   if (!flowHasImport) return false;
+
+  // as long as we have an imp and exp a data loader is runnable
+  if (isDataLoader) return true;
 
   // flows need at least one export which is not real-time to be runnable.
   if (!hasBatchExport(exports, exp, flow)) {

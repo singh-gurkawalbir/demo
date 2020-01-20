@@ -4,6 +4,9 @@ import { makeStyles } from '@material-ui/core/styles';
 const useStyles = makeStyles({
   error: {
     margin: [[5, 0, 8, 0]],
+    '&:empty': {
+      display: 'none',
+    },
   },
 });
 const ErroredMessageComponent = props => {

@@ -163,7 +163,7 @@ export default class AppRouting extends Component {
         <Route path="/pg/resources" component={Resources} />
         <Route path="/pg/editors" component={Editors} />
         <Route path="/pg/permissions" component={Permissions} />
-        <Route path="/pg/myAccount" component={MyAccount} />
+        <Route path="/pg/myAccount/:tab" component={MyAccount} />
         <Route path="/pg/templates" component={TemplateList} />
         <Route path="/pg/accesstokens" component={AccessTokenList} />
         <Route path="/pg/:resourceType" component={ResourceList} />

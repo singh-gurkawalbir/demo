@@ -262,8 +262,8 @@ function JobDetail({
             </li>
           </ul>
         </TableCell>
-        <TableCell className={classes.name} data-test={job.name}>
-          {job.name}
+        <TableCell className={classes.name} data-test={job.name || job._flowId}>
+          {job.name || job._flowId}
         </TableCell>
         <TableCell className={classes.status}>
           <span

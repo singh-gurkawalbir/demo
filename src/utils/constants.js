@@ -292,3 +292,19 @@ export const REST_ASSISTANTS = [
 ];
 
 export const MAX_FILE_SIZE = 10 * 1024 * 1024; /* 10 MB */
+export const MAX_DATA_LOADER_FILE_SIZE = 100 * 1024 * 1024; /* 100 MB */
+export const EMPTY_RAW_DATA = 'EMPTY RAW DATA';
+export const USAGE_TIER_NAMES = {
+  free: 'Free',
+  light: 'Starter',
+  moderate: 'Professional',
+  heavy: 'Enterprise',
+  custom: 'Custom',
+};
+export const USAGE_TIER_HOURS = {
+  free: 1,
+  light: 40,
+  moderate: 400,
+  heavy: 4000,
+  custom: 10000,
+};

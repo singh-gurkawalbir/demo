@@ -1,16 +1,17 @@
-import React, { Fragment, useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import moment from 'moment-timezone';
 import Button from '@material-ui/core/Button';
-import * as selectors from '../../reducers';
-import actions from '../../actions';
-import DynaForm from '../DynaForm';
-import DynaSubmit from '../DynaForm/DynaSubmit';
+import * as selectors from '../../../reducers';
+import actions from '../../../actions';
+import ModalDialog from '../../ModalDialog';
+import DynaForm from '../../DynaForm';
+import DynaSubmit from '../../DynaForm/DynaSubmit';
 import flowStartDateMetadata from './metadata';
-import Spinner from '../Spinner';
+import Spinner from '../../Spinner';
 
-export default function DeltaFlowStartDate(props) {
-  const { flowId, onClose, disabled, runDeltaFlow } = props;
+export default function FlowStartDateDialog(props) {
+  const { flowId, onClose, disabled, onRun } = props;
   const dispatch = useDispatch();
   const [state, setState] = useState({
     changeIdentifier: 0,
@@ -71,12 +72,12 @@ export default function DeltaFlowStartDate(props) {
       customStartDate = customStartDate ? customStartDate.toISOString() : null;
     }
 
-    runDeltaFlow(customStartDate);
+    onRun(customStartDate);
 
     onClose();
   };
 
-  if (!timeZone || !selectorStatus) {
+  if (!selectorStatus) {
     return <Spinner />;
   }
 
@@ -91,15 +92,18 @@ export default function DeltaFlowStartDate(props) {
   });
 
   return (
-    <Fragment>
-      <DynaForm disabled={disabled} fieldMeta={fieldMeta}>
-        <DynaSubmit data-test="submit" onClick={handleSubmit}>
-          Run
-        </DynaSubmit>
-        <Button data-test="close" onClick={cancelDialog}>
-          Cancel
-        </Button>
-      </DynaForm>
-    </Fragment>
+    <ModalDialog show minWidth="sm" onClose={onClose}>
+      <div>Delta Flow</div>
+      <div>
+        <DynaForm disabled={disabled} fieldMeta={fieldMeta}>
+          <DynaSubmit data-test="submit" onClick={handleSubmit}>
+            Run
+          </DynaSubmit>
+          <Button data-test="close" onClick={cancelDialog}>
+            Cancel
+          </Button>
+        </DynaForm>
+      </div>
+    </ModalDialog>
   );
 }

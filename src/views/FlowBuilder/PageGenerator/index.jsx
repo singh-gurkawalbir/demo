@@ -17,8 +17,8 @@ import scheduleAction from './actions/schedule';
 import exportFilterAction from './actions/exportFilter';
 import { actionsMap } from '../../../utils/flows';
 
-/* the 'block' consts in this file and <AppBlock> should eventually go in the theme. 
-   We the block consts across several components and thus is a maintenance issue to 
+/* TODO: the 'block' const in this file and <AppBlock> should eventually go in the theme. 
+   We use the block const across several components and thus is a maintenance issue to 
    manage as we enhance the FB layout. */
 const blockHeight = 170;
 const lineHeightOffset = 63;
@@ -67,6 +67,8 @@ const PageGenerator = ({
       ? emptyObj
       : selectors.resource(state, resourceType, resourceId) || emptyObj
   );
+  const isDataLoader =
+    pg.application === 'dataLoader' || resource.type === 'simple';
   const exportNeedsRouting = useSelector(state =>
     selectors.exportNeedsRouting(state, resourceId)
   );
@@ -129,25 +131,29 @@ const PageGenerator = ({
       setNewGeneratorId(newId);
       const { type, assistant } = getResourceSubType(resource);
       const application = pg.application || assistant || type;
-      const patchSet = [
-        {
+      const patchSet = [];
+
+      if (isDataLoader) {
+        patchSet.push({ op: 'add', path: '/type', value: 'simple' });
+        patchSet.push({ op: 'add', path: '/name', value: 'Data loader' });
+      } else {
+        patchSet.push({
           op: 'add',
           path: '/application',
           value: application,
-        },
-      ];
-
-      if (pg.webhookOnly && pg.application !== 'webhook') {
-        patchSet.push({ op: 'add', path: '/type', value: 'webhook' });
-      }
-
-      // patch it with the connectionId
-      if (pg._connectionId) {
-        patchSet.push({
-          op: 'add',
-          path: '/_connectionId',
-          value: pg._connectionId,
         });
+
+        if (pg.webhookOnly && pg.application !== 'webhook') {
+          patchSet.push({ op: 'add', path: '/type', value: 'webhook' });
+        }
+
+        if (pg._connectionId) {
+          patchSet.push({
+            op: 'add',
+            path: '/_connectionId',
+            value: pg._connectionId,
+          });
+        }
       }
 
       // console.log('patchSet: ', patchSet);
@@ -155,9 +161,11 @@ const PageGenerator = ({
       dispatch(actions.resource.patchStaged(newId, patchSet, 'value'));
     }
 
-    const to = pending
+    let to = pending
       ? `${match.url}/add/pageGenerator/${newId}`
       : `${match.url}/edit/exports/${pg._exportId}`;
+
+    if (pending && isDataLoader) to = `${match.url}/edit/exports/${newId}`;
 
     if (match.isExact) {
       history.push(to);
@@ -167,6 +175,7 @@ const PageGenerator = ({
   }, [
     dispatch,
     history,
+    isDataLoader,
     match.isExact,
     match.url,
     pending,
@@ -178,6 +187,13 @@ const PageGenerator = ({
   ]);
 
   function getApplication() {
+    if (isDataLoader) {
+      return {
+        connectorType: 'dataLoader',
+        blockType: 'dataLoader',
+      };
+    }
+
     if (!pending || resourceId) {
       // even if we have a pending PG, as ling as we have a
       // resource, then the below logic still applies.
@@ -224,15 +240,22 @@ const PageGenerator = ({
       });
     }
 
-    generatorActions = [
-      ...generatorActions,
-      {
-        ...transformationAction,
-        isUsed: usedActions[actionsMap.transformation],
-      },
-      { ...exportHooksAction, isUsed: usedActions[actionsMap.hooks] },
-      { ...exportFilterAction, isUsed: usedActions[actionsMap.outputFilter] },
-    ];
+    if (isDataLoader) {
+      generatorActions = [
+        { ...exportHooksAction, isUsed: usedActions[actionsMap.hooks] },
+        { ...exportFilterAction, isUsed: usedActions[actionsMap.outputFilter] },
+      ];
+    } else {
+      generatorActions = [
+        ...generatorActions,
+        {
+          ...transformationAction,
+          isUsed: usedActions[actionsMap.transformation],
+        },
+        { ...exportHooksAction, isUsed: usedActions[actionsMap.hooks] },
+        { ...exportFilterAction, isUsed: usedActions[actionsMap.outputFilter] },
+      ];
+    }
   }
   // #endregion
 
@@ -243,7 +266,7 @@ const PageGenerator = ({
       <AppBlock
         integrationId={integrationId}
         name={blockName}
-        onDelete={onDelete}
+        onDelete={!isDataLoader && onDelete}
         isViewMode={isViewMode}
         onBlockClick={handleBlockClick}
         connectorType={connectorType}

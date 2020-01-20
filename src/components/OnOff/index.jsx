@@ -38,6 +38,7 @@ export default {
                     flow._integrationId,
                     flow._id,
                     storeId,
+                    null,
                     { '/flowId': flow._id, '/disabled': !enable },
                     { action: 'flowEnableDisable' }
                   )

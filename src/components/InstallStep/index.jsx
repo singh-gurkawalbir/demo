@@ -1,5 +1,6 @@
 import { Fragment, useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Button, Grid } from '@material-ui/core';
 import integrationAppsUtil from '../../utils/integrationApps';
@@ -46,6 +47,12 @@ const useStyles = makeStyles(theme => ({
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
     marginTop: '10px',
     marginBottom: '10px',
+  },
+  imgBlock: {
+    '& > img': {
+      maxWidth: '100%',
+      maxHeight: '100%',
+    },
   },
 }));
 
@@ -113,7 +120,7 @@ export default function InstallationStep(props) {
         <Grid item xs className={classes.step}>
           <Typography>{step.description}</Typography>
         </Grid>
-        <Grid item xs={2} className={classes.step}>
+        <Grid item xs={2} className={clsx(classes.step, classes.imgBlock)}>
           {step.imageURL && (
             <img
               alt=""

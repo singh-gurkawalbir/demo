@@ -115,27 +115,28 @@ export default function ResponseMappingDialog(props) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const resourceId = resource._id;
+  const isImport = resourceType === 'imports';
   const extractFields = useSelector(state =>
     selectors.getSampleData(state, {
       flowId,
       resourceId,
       stage: 'responseMappingExtract',
-      resourceType,
+      resourceType: 'imports',
     })
   );
 
   useEffect(() => {
-    if (!extractFields) {
+    if (!extractFields && isImport) {
       dispatch(
         actions.flowData.requestSampleData(
           flowId,
           resourceId,
-          resourceType,
+          'imports',
           'responseMappingExtract'
         )
       );
     }
-  }, [dispatch, extractFields, flowId, resourceId, resourceType]);
+  }, [dispatch, extractFields, flowId, isImport, resourceId]);
 
   const defaultExtractFields = mappingUtil.getResponseMappingDefaultExtracts(
     resourceType
@@ -223,7 +224,9 @@ export default function ResponseMappingDialog(props) {
 
   let formattedExtractFields = defaultExtractFields;
 
-  if (!isEmpty(extractFields)) {
+  // Incase of imports , If there is sampledata we show them as suggestions else the default extractFields
+  // Incase of Exports ( Lookups ), We always show the default extractFields
+  if (isImport && !isEmpty(extractFields)) {
     const extractPaths = getJSONPaths(extractFields);
 
     formattedExtractFields =

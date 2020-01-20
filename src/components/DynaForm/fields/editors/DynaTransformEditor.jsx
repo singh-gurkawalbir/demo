@@ -1,7 +1,7 @@
 import { useState, Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Button from '@material-ui/core/Button';
-import TransformEditorDialog from '../../../AFE/TransformEditor/Dialog';
+import TransformEditorDialog from '../../../AFE/TransformEditor/TransformToggleEditorDialog';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 

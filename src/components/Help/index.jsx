@@ -19,7 +19,9 @@ function Help(props) {
     },
     [anchorEl]
   );
-  const handleClose = useCallback(() => {
+  const handleClose = useCallback(event => {
+    // if clicking interacting with feedback text field do not close popper
+    if (event.target.name === 'feedbackText') return;
     setAnchorEl(null);
   }, []);
   const { className, helpKey, helpText, ...rest } = props;
@@ -39,6 +41,7 @@ function Help(props) {
         placement="left"
         id="helpBubble"
         open={open}
+        disablePortal
         anchorEl={anchorEl}>
         <HelpContent {...rest}>
           {/<\/?[a-z][\s\S]*>/i.test(helpTextValue) ? (
