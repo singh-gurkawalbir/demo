@@ -867,6 +867,7 @@ const cancelTask = () => action(actionTypes.CANCEL_TASK, {});
 const editor = {
   init: (id, processor, options) =>
     action(actionTypes.EDITOR_INIT, { id, processor, options }),
+  changeLayout: id => action(actionTypes.EDITOR_CHANGE_LAYOUT, { id }),
   patch: (id, patch) => action(actionTypes.EDITOR_PATCH, { id, patch }),
   reset: id => action(actionTypes.EDITOR_RESET, { id }),
   updateHelperFunctions: helperFunctions =>
