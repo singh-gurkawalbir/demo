@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { Typography, Button, Divider } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import PanelHeader from '../../../../common/PanelHeader';
+import PanelHeader from '../../../../../../components/PanelHeader';
 import { confirmDialog } from '../../../../../../components/ConfirmDialog';
 import actions from '../../../../../../actions';
 import * as selectors from '../../../../../../reducers';

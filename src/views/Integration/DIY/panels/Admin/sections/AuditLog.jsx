@@ -1,7 +1,6 @@
 import { Fragment } from 'react';
-// import { Typography } from '@material-ui/core';
 import AuditLog from '../../../../../../components/AuditLog';
-import PanelHeader from '../../../../common/PanelHeader';
+import PanelHeader from '../../../../../../components/PanelHeader';
 
 export default function AuditLogSection({ integrationId }) {
   return (

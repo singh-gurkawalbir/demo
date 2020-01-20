@@ -89,6 +89,86 @@ export function* getAddOnLicenseMetadata({ integrationId }) {
   }
 }
 
+export function* getCategoryMappingMetadata({
+  integrationId,
+  flowId,
+  categoryId,
+  options = {},
+}) {
+  const path = `/integrations/${integrationId}/utilities/loadMarketplaceCategoryMapping`;
+  let response;
+  let requestOptions = [
+    { operation: 'mappingData', params: {} },
+    {
+      operation: 'extractsMetaData',
+      params: {
+        type: 'searchColumns',
+        searchColumns: { recordType: 'item' },
+      },
+    },
+    {
+      operation: 'generatesMetaData',
+      params: {
+        categoryId,
+        categoryRelationshipData: true,
+      },
+    },
+  ];
+
+  if (options.generatesMetadata) {
+    requestOptions = [
+      {
+        operation: 'generatesMetaData',
+        params: {
+          categoryId,
+        },
+      },
+    ];
+  }
+
+  const payload = {
+    utilities: {
+      options: {
+        _flowId: flowId,
+        requestOptions,
+      },
+    },
+  };
+
+  try {
+    response = yield call(apiCallWithRetry, {
+      path,
+      opts: {
+        method: 'PUT',
+        body: payload,
+      },
+      hidden: false,
+    });
+  } catch (error) {
+    return undefined;
+  }
+
+  if (response) {
+    if (options.generatesMetadata) {
+      yield put(
+        actions.integrationApp.settings.receivedCategoryMappingGeneratesMetadata(
+          integrationId,
+          flowId,
+          response
+        )
+      );
+    } else {
+      yield put(
+        actions.integrationApp.settings.receivedCategoryMappingMetadata(
+          integrationId,
+          flowId,
+          response
+        )
+      );
+    }
+  }
+}
+
 export function* upgrade({ integration, license }) {
   const path = `/integrations/${integration._id}/settings/changeEdition`;
   let upgradeResponse;
@@ -123,6 +203,10 @@ export default [
   takeLatest(
     actionTypes.INTEGRATION_APPS.SETTINGS.ADDON_LICENSES_METADATA,
     getAddOnLicenseMetadata
+  ),
+  takeLatest(
+    actionTypes.INTEGRATION_APPS.SETTINGS.REQUEST_CATEGORY_MAPPING_METADATA,
+    getCategoryMappingMetadata
   ),
   takeLatest(
     actionTypes.INTEGRATION_APPS.SETTINGS.MAPPING_METADATA_REQUEST,

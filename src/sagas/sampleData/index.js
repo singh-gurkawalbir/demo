@@ -148,6 +148,14 @@ function* processRawData({ resourceId, resourceType, values = {}, stage }) {
   const { type, formValues } = values;
   let { file } = values;
 
+  // Add file type and file body as part of the state with a 'rawFile'
+  yield put(
+    actions.sampleData.update(
+      resourceId,
+      { data: [{ body: file, type }] },
+      'rawFile'
+    )
+  );
   // Update Raw Data with the file uploaded before parsing
   yield put(
     actions.sampleData.update(resourceId, { data: [{ body: file }] }, 'raw')

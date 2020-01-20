@@ -4,7 +4,7 @@ import { InputAdornment } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import { isNaN } from 'lodash';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   dynaFieldWrapper: {
     width: '100%',
   },
@@ -13,8 +13,10 @@ const useStyles = makeStyles({
   },
   startAdornmentWrapper: {
     display: 'flex',
+    minWidth: theme.spacing(10),
+    wordBreak: 'break-word',
   },
-});
+}));
 
 export default function DynaText(props) {
   const {

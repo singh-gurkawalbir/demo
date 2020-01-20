@@ -2,6 +2,7 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Button } from '@material-ui/core';
 import ExportIcon from '../../../components/icons/ExportsIcon';
+import DataLoaderIcon from '../../../components/icons/DataLoaderIcon';
 import LookupIcon from '../../../components/icons/LookUpIcon';
 import ListenerIcon from '../../../components/icons/ListenerIcon';
 import ImportIcon from '../../../components/icons/ImportsIcon';
@@ -9,10 +10,12 @@ import ImportIcon from '../../../components/icons/ImportsIcon';
 const blockMap = {
   newPG: { label: 'Add source', Icon: ExportIcon },
   newPP: { label: 'Add destination / lookup', Icon: ImportIcon },
+  newImport: { label: 'Add destination', Icon: ImportIcon },
   export: { label: 'Export', Icon: ExportIcon },
   import: { label: 'Import', Icon: ImportIcon },
   lookup: { label: 'Lookup', Icon: LookupIcon },
   listener: { label: 'Listener', Icon: ListenerIcon },
+  dataLoader: { label: 'Data loader', Icon: DataLoaderIcon },
 };
 const useStyles = makeStyles(theme => ({
   root: {

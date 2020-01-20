@@ -1,5 +1,6 @@
 import { useEffect, Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { isEmpty } from 'lodash';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import Icon from '../../../../components/icons/HookIcon';
@@ -104,10 +105,11 @@ function PostResponseMapHookDialog({
       );
     }
   }, [dispatch, flowId, resourceId, resourceType, sampleData]);
-  // If there is sampleData wraps inside data { errors: [], data: [sampleData] } , else shows default {}
-  // And stringified as the way Editor expects
+  // stringified preHookData as the way Editor expects
   const preHookData = JSON.stringify(
-    sampleData ? { errors: [], data: [sampleData] } : {},
+    {
+      postResponseMapData: isEmpty(sampleData) ? {} : sampleData,
+    },
     null,
     2
   );

@@ -3,6 +3,14 @@ import { each } from 'lodash';
 import { MAX_FILE_SIZE } from './constants';
 import { isJsonString } from './string';
 
+// A map that returns corresponding application file types used for file uploading
+export const fileTypeToApplicationTypeMap = {
+  csv: 'text/csv',
+  json: 'application/json',
+  xml: 'application/xml',
+  xlsx: 'application/vnd.ms-excel',
+};
+
 /*
  * Validates file type against all possible file types when user uploads a file
  * validFileTypes - Took reference from 'integrator' Repository
@@ -37,6 +45,7 @@ export const isValidFileSize = file => file.size <= MAX_FILE_SIZE;
 
 // TODO: @Raghu Move these error messages to constants
 export const getUploadedFileStatus = (file, fileType) => {
+  // TODO: @Raghu Add MAX FILE SIZE for Data loader
   if (!isValidFileSize(file))
     return { success: false, error: 'File exceeds max file size' };
 

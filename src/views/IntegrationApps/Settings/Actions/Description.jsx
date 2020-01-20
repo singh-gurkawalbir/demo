@@ -24,6 +24,7 @@ const useStyles = makeStyles(theme => ({
   infoPopper: {
     '& > div': {
       maxWidth: 350,
+      overflow: 'hidden',
       textAlign: 'left',
       ' & > p': {
         textTransform: 'none',

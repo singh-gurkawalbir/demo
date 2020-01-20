@@ -21,13 +21,19 @@ const isCsvOrXlsxResource = resource => {
 };
 
 const handlebarRegex = /(\{\{[\s]*.*?[\s]*\}\})/i;
-const LookupResponseMappingExtracts = [
+
+export const LookupResponseMappingExtracts = [
   'data',
   'errors',
   'ignored',
   'statusCode',
 ];
-const ImportResponseMappingExtracts = ['id', 'errors', 'ignored', 'statusCode'];
+export const ImportResponseMappingExtracts = [
+  'id',
+  'errors',
+  'ignored',
+  'statusCode',
+];
 
 export default {
   getDefaultDataType: value => {
@@ -163,7 +169,7 @@ export default {
     appType,
     getRawMappings,
     isGroupedSampleData,
-    options
+    options = {}
   ) => {
     if (!resourceObj) {
       return;
@@ -192,6 +198,10 @@ export default {
       case adaptorTypeMap.DynamodbImport:
       case adaptorTypeMap.RDBMSImport:
       default:
+    }
+
+    if (options.isCategoryMapping) {
+      ({ mappings } = options);
     }
 
     // creating deep copy of mapping object to avoid alteration to resource mapping object
@@ -392,26 +402,25 @@ export default {
             generate: generateListPath,
             fields: [],
           };
-
-          if (
-            useFirstRowSupported &&
-            isGroupedSampleData &&
-            !mapping.useFirstRow &&
-            mapping.extract &&
-            mapping.extract.indexOf('[*].') === -1 &&
-            !handlebarRegex.test(mapping.extract)
-          ) {
-            mapping.extract = `*.${mapping.extract}`;
-          }
-
-          delete mapping.useFirstRow;
-
           lists.push(list);
-
-          // if (existingListsData[generateListPath]) {
-          //   list.jsonPath = existingListsData[generateListPath].jsonPath;
-          // }
         }
+
+        if (
+          useFirstRowSupported &&
+          isGroupedSampleData &&
+          !mapping.useFirstRow &&
+          mapping.extract &&
+          mapping.extract.indexOf('[*].') === -1 &&
+          !handlebarRegex.test(mapping.extract)
+        ) {
+          mapping.extract = `*.${mapping.extract}`;
+        }
+
+        delete mapping.useFirstRow;
+
+        // if (existingListsData[generateListPath]) {
+        //   list.jsonPath = existingListsData[generateListPath].jsonPath;
+        // }
       } else if (isCsvOrXlsxResource(resource) && isGroupedSampleData) {
         if (
           !mapping.useFirstRow &&
@@ -425,16 +434,15 @@ export default {
         if (!mapping.useFirstRow) {
           const listWithEmptyGenerate = lists.find(l => l.generate === '');
 
-          if (!listWithEmptyGenerate)
+          if (!listWithEmptyGenerate) {
             list = {
               generate: '',
               fields: [],
             };
-          else {
+            lists.push(list);
+          } else {
             list = listWithEmptyGenerate;
           }
-
-          lists.push(list);
         }
       }
 
@@ -583,6 +591,7 @@ export default {
 
   validateMappings: (mappings, lookups) => {
     const duplicateMappings = mappings
+      .filter(e => !!e.generate)
       .map(e => e.generate)
       .map((e, i, final) => final.indexOf(e) !== i && i)
       .filter(obj => mappings[obj])
@@ -626,19 +635,6 @@ export default {
         errMessage: `Extract Fields missing for field(s): ${missingGeneratesNames.join(
           ','
         )}`,
-      };
-    }
-
-    const mappingsWithoutGenerate = mappings.filter(mapping => {
-      if (!mapping.generate) return true;
-
-      return false;
-    });
-
-    if (mappingsWithoutGenerate.length) {
-      return {
-        isSuccess: false,
-        errMessage: 'Generate Fields missing for mapping(s)',
       };
     }
 

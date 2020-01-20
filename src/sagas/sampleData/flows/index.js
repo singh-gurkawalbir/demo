@@ -14,6 +14,7 @@ import {
   updateStateForProcessorData,
   handleFlowDataStageErrors,
   getFlowResourceNode,
+  getPreProcessedResponseMappingData,
 } from '../utils/flowDataUtils';
 import {
   updateFlowsDataForResource,
@@ -120,6 +121,7 @@ function* requestSampleData({
         flowId,
         resourceId,
         resourceType,
+        hidden: true,
         sampleDataStage,
       });
     } else {
@@ -149,6 +151,7 @@ export function* fetchPageProcessorPreview({
   flowId,
   _pageProcessorId,
   previewType,
+  hidden,
   resourceType = 'exports',
 }) {
   if (!flowId || !_pageProcessorId) return;
@@ -159,6 +162,7 @@ export function* fetchPageProcessorPreview({
       _pageProcessorId,
       previewType,
       resourceType,
+      hidden,
       throwOnError: true,
     });
     const { merged: resource = {} } = yield select(
@@ -241,6 +245,7 @@ export function* fetchPageGeneratorPreview({ flowId, _pageGeneratorId }) {
 
 function* processData({ flowId, resourceId, processorData, stage }) {
   try {
+    const { wrapInArrayProcessedData } = processorData || {};
     const processedData = yield call(evaluateExternalProcessor, {
       processorData,
     });
@@ -250,6 +255,7 @@ function* processData({ flowId, resourceId, processorData, stage }) {
       resourceId,
       stage,
       processedData,
+      wrapInArrayProcessedData,
     });
   } catch (e) {
     // Handle errors
@@ -433,13 +439,41 @@ export function* requestProcessorData({
 
     if (stage === 'transform' || stage === 'responseTransform') {
       const transform = { ...resource[processor] };
-      const [rule] = transform.rules || [];
 
-      if (!(rule && rule.length)) {
+      if (transform.type === 'expression') {
+        const [rule] = transform.expression.rules || [];
+
+        if (!(rule && rule.length)) {
+          hasNoRulesToProcess = true;
+        } else {
+          processorData = {
+            data: preProcessedData,
+            rule,
+            processor: 'transform',
+          };
+        }
+      } else if (transform.type === 'script') {
+        const { _scriptId, function: entryFunction } = transform.script || {};
+
+        if (_scriptId) {
+          const script = yield call(getResource, {
+            resourceType: 'scripts',
+            id: _scriptId,
+          });
+
+          processorData = {
+            data: preProcessedData,
+            code: script && script.content,
+            entryFunction,
+            processor: 'javascript',
+            wrapInArrayProcessedData: true,
+          };
+        } else {
+          hasNoRulesToProcess = true;
+        }
+      } else {
         hasNoRulesToProcess = true;
       }
-
-      processorData = { data: preProcessedData, rule, processor: 'transform' };
     }
     // Below list are all Possible hook types
     else if (
@@ -505,24 +539,26 @@ export function* requestProcessorData({
         resourceType,
       });
       const mappings = (flowNode && flowNode.responseMapping) || {};
+      const preProcessedResponseMappingData = yield call(
+        getPreProcessedResponseMappingData,
+        { resourceType, preProcessedData }
+      );
 
-      if (
-        preProcessedData &&
-        mappings &&
-        (mappings.fields.length || mappings.lists.length)
-      )
+      if (mappings && (mappings.fields.length || mappings.lists.length)) {
         return yield call(processMappingData, {
           flowId,
           resourceId,
           mappings,
           stage,
-          preProcessedData,
+          preProcessedData: preProcessedResponseMappingData,
         });
+      }
+
       hasNoRulesToProcess = true;
     }
 
     if (hasNoRulesToProcess) {
-      // update processorStage with preprocessed data if there are no rules to process
+      // update processorStage with pre processed data if there are no rules to process
       return yield call(updateStateForProcessorData, {
         flowId,
         resourceId,

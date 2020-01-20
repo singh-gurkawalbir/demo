@@ -17,6 +17,7 @@ const mapDispatchToProps = dispatch => ({
     dispatch(actions.auth.request(email, password));
   },
 });
+const path = `${process.env.CDN_BASE_URI}images/googlelogo.png`;
 
 @hot(module)
 @withStyles(theme => ({
@@ -86,7 +87,7 @@ const mapDispatchToProps = dispatch => ({
   googleBtn: {
     borderRadius: 4,
     width: '90%',
-    background: `url('../../static/images/googleLogo.svg') 20% center no-repeat`,
+    background: `url(${path}) 20% center no-repeat`,
     backgroundSize: theme.spacing(2),
     height: 48,
     fontSize: 16,

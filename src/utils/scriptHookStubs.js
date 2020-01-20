@@ -204,6 +204,29 @@ function contentBasedFlowRouter (options) {
   	let _id = null
 	return _id
 }`;
+const transformFunctionStub = `/*
+* transformFunction stub:
+*
+* The name of the function can be changed to anything you like.
+* 
+* The function will be passed a single record and simply needs to return a single record.
+* Throwing an exception will return an error for the record.
+*/
+function transformFunction(record) {
+ return record
+}`;
+const filterFunctionStub = `/*
+* filterFunction stub:
+*
+* The name of the function can be changed to anything you like.
+* 
+* The function will be passed a single record and simply needs to return truthy or falsy.
+* Truthy indicates the record should be processed, and falsy indicates the record should be ignored.
+* Throwing an exception will return an error for the record.
+*/
+function filterFunction(record) {
+ return true
+}`;
 
 export default {
   preSavePage: preSavePageFunctionStub,
@@ -213,4 +236,6 @@ export default {
   postAggregate: postAggregateFunctionStub,
   contentBasedFlowRouter: contentBasedFlowRouterFunctionStub,
   postResponseMap: postResponseMapFunctionStub,
+  transform: transformFunctionStub,
+  filter: filterFunctionStub,
 };

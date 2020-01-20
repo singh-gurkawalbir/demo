@@ -52,10 +52,15 @@ export default function DynaTypeableSelect(props) {
     removeHelperText = false,
     valueName,
     options = [],
+    components = {
+      DropdownIndicator: () => null,
+      IndicatorSeparator: () => null,
+    },
   } = props;
   const suggestions = options.map(option => ({
     label: option[labelName],
     value: option[valueName],
+    filterType: option.filterType,
   }));
   const [inputState, setInputState] = useState({
     inputValue: value || '',
@@ -213,10 +218,7 @@ export default function DynaTypeableSelect(props) {
         onBlur={handleBlur}
         styles={customStyles}
         onFocus={handleFocus}
-        components={{
-          DropdownIndicator: () => null,
-          IndicatorSeparator: () => null,
-        }}
+        components={components}
         options={suggestions}
         filterOption={filterOption}
       />

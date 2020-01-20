@@ -15,6 +15,7 @@ import { confirmDialog } from '../../../components/ConfirmDialog';
 import getRoutePath from '../../../utils/routePaths';
 import StatusCircle from '../../../components/StatusCircle';
 import IconTextButton from '../../../components/IconTextButton';
+import CloseIcon from '../../../components/icons/CloseIcon';
 
 const useStyles = makeStyles(theme => ({
   currentAccount: {
@@ -24,24 +25,38 @@ const useStyles = makeStyles(theme => ({
   currentContainer: {
     marginBottom: 5,
     fontSize: 15,
-    color: theme.palette.primary.main,
+    color: theme.palette.text.hint,
+    fontFamily: 'Roboto400',
+    padding: 0,
+    marginTop: 5,
   },
   popper: {
     maxWidth: '250px',
   },
   itemContainer: {
+    borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
     '& button': { display: 'none' },
     '&:hover button': {
       display: 'block',
     },
+    '&:last-child': {
+      border: 'none',
+    },
+  },
+  secondaryAction: {
+    right: 0,
   },
   itemRoot: {
     marginRight: 100,
     padding: '5px 10px',
+
     '&:hover': {
       border: [[1, 0]],
       borderColor: theme.palette.secondary.light,
     },
+  },
+  listWrapper: {
+    padding: theme.spacing(1),
   },
 }));
 
@@ -105,6 +120,8 @@ export default function AccountList() {
     <Fragment>
       <IconTextButton
         onClick={handleMenu}
+        variant="text"
+        color="secondary"
         className={classes.currentContainer}
         aria-owns={open ? 'accountList' : null}
         aria-haspopup="true">
@@ -119,7 +136,7 @@ export default function AccountList() {
         anchorEl={anchorEl}
         placement="bottom-end"
         onClose={handleClose}>
-        <List dense>
+        <List dense className={classes.listWrapper}>
           {accounts.map(a => (
             <ListItem
               button
@@ -137,7 +154,7 @@ export default function AccountList() {
                 {a.company}
               </ListItemText>
               {a.canLeave && (
-                <ListItemSecondaryAction>
+                <ListItemSecondaryAction className={classes.secondaryAction}>
                   <Button
                     data-test="leaveAccount"
                     className={classes.leave}
@@ -146,7 +163,7 @@ export default function AccountList() {
                     onClick={() => {
                       handleAccountLeaveClick(a);
                     }}>
-                    Leave
+                    <CloseIcon />
                   </Button>
                 </ListItemSecondaryAction>
               )}

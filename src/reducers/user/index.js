@@ -26,6 +26,13 @@ export function integratorLicense(state, accountId) {
   );
 }
 
+export function diyLicense(state, accountId) {
+  return fromAccounts.diyLicense(
+    state && state.org && state.org.accounts,
+    accountId
+  );
+}
+
 // #endregion LICENSE
 
 // #region NOTIFICATIONS

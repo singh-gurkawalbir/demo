@@ -307,6 +307,38 @@ export function integrationAppsInstaller(state, id) {
   );
 }
 
+export function categoryMapping(state, integrationId, flowId) {
+  return fromIntegrationApps.categoryMapping(
+    state && state.integrationApps,
+    integrationId,
+    flowId
+  );
+}
+
+export function categoryMappingFilters(state, integrationId, flowId) {
+  return fromIntegrationApps.categoryMappingFilters(
+    state && state.integrationApps,
+    integrationId,
+    flowId
+  );
+}
+
+export function categoryMappingData(state, integrationId, flowId) {
+  return fromIntegrationApps.categoryMappingData(
+    state && state.integrationApps,
+    integrationId,
+    flowId
+  );
+}
+
+export function categoryMappingGeneratesMetadata(state, integrationId, flowId) {
+  return fromIntegrationApps.categoryMappingGeneratesMetadata(
+    state && state.integrationApps,
+    integrationId,
+    flowId
+  );
+}
+
 export function uninstallSteps(state, id, storeId) {
   return fromIntegrationApps.uninstallSteps(
     state && state.integrationApps,

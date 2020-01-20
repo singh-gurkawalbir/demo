@@ -41,6 +41,15 @@ export default function reducer(state = {}, action) {
       return newState;
     }
 
+    case actionTypes.EDITOR_CHANGE_LAYOUT: {
+      const initChangeIdentifier =
+        (newState[id] && newState[id].initChangeIdentifier) || 0;
+
+      newState[id].initChangeIdentifier = initChangeIdentifier + 1;
+
+      return newState;
+    }
+
     case actionTypes.EDITOR_RESET:
       newState[id] = {
         ...newState[id],

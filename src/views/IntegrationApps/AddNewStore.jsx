@@ -269,7 +269,7 @@ export default function IntegrationAppAddNewStore(props) {
                 <Breadcrumbs
                   separator={<ArrowRightIcon />}
                   aria-label="breadcrumb">
-                  <Typography color="textPrimary">Add New Store</Typography>
+                  <Typography color="textPrimary">Add new store</Typography>
                   <Typography color="textPrimary">
                     {integration.name}
                   </Typography>

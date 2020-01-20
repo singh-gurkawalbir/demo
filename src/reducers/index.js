@@ -35,11 +35,7 @@ import {
   getUsedActionsMapForResource,
   isPageGeneratorResource,
 } from '../utils/flows';
-import {
-  isValidResourceReference,
-  isNewId,
-  getDomain,
-} from '../utils/resource';
+import { isValidResourceReference, isNewId } from '../utils/resource';
 import { processSampleData } from '../utils/sampleData';
 import {
   getAvailablePreviewStages,
@@ -785,6 +781,7 @@ export function flowDetails(state, id) {
       : draft.canSchedule;
     draft.showStartDateDialog = flowSettings.showStartDateDialog;
     draft.disableSlider = flowSettings.disableSlider;
+    draft.showUtilityMapping = flowSettings.showUtilityMapping;
   });
 }
 
@@ -1156,6 +1153,162 @@ export function integrationAppStore(state, integrationId, storeId) {
 
 export function integrationAppConnectionList(state, integrationId, storeId) {
   return integrationAppResourceList(state, integrationId, storeId).connections;
+}
+
+export function categoryMapping(state, integrationId, flowId) {
+  return fromSession.categoryMapping(
+    state && state.session,
+    integrationId,
+    flowId
+  );
+}
+
+export function categoryMappingMetadata(state, integrationId, flowId) {
+  const categoryMappingData =
+    fromSession.categoryMapping(
+      state && state.session,
+      integrationId,
+      flowId
+    ) || {};
+  const categoryMappingMetadata = {};
+  const { response } = categoryMappingData;
+
+  if (!response) {
+    return categoryMappingMetadata;
+  }
+
+  const extractsMetadata = response.find(
+    sec => sec.operation === 'extractsMetaData'
+  );
+  const generatesMetadata = response.find(
+    sec => sec.operation === 'generatesMetaData'
+  );
+
+  if (extractsMetadata) {
+    categoryMappingMetadata.extractsMetadata = extractsMetadata.data;
+  }
+
+  if (generatesMetadata) {
+    categoryMappingMetadata.generatesMetadata =
+      generatesMetadata.data &&
+      generatesMetadata.data.generatesMetaData &&
+      generatesMetadata.data.generatesMetaData.fields;
+    categoryMappingMetadata.relationshipData =
+      generatesMetadata.data && generatesMetadata.data.categoryRelationshipData;
+  }
+
+  return categoryMappingMetadata;
+}
+
+export function mappedCategories(state, integrationId, flowId) {
+  const categoryMappingData =
+    fromSession.categoryMapping(
+      state && state.session,
+      integrationId,
+      flowId
+    ) || {};
+  let mappedCategories = emptySet;
+  const { response } = categoryMappingData;
+
+  if (response) {
+    const mappingData = response.find(sec => sec.operation === 'mappingData');
+
+    if (mappingData) {
+      mappedCategories = mappingData.data.mappingData.basicMappings.recordMappings.map(
+        item => ({
+          id: item.id,
+          name: item.name === 'commonAttributes' ? 'Common' : item.name,
+          children: item.children,
+        })
+      );
+    }
+  }
+
+  return mappedCategories;
+}
+
+export function categoryMappingGenerateFields(
+  state,
+  integrationId,
+  flowId,
+  options
+) {
+  const { sectionId } = options;
+  const generatesMetadata =
+    fromSession.categoryMappingGeneratesMetadata(
+      state && state.session,
+      integrationId,
+      flowId
+    ) || {};
+
+  if (generatesMetadata) {
+    return generatesMetadata.find(sec => sec.id === sectionId);
+  }
+
+  return null;
+}
+
+export function categoryMappingFilters(state, integrationId, flowId) {
+  return fromSession.categoryMappingFilters(
+    state && state.session,
+    integrationId,
+    flowId
+  );
+}
+
+export function mappingsForCategory(state, integrationId, flowId, filters) {
+  const { sectionId } = filters;
+  let mappings = emptySet;
+  const { attributes = {}, mappingFilter = 'mapped' } =
+    categoryMappingFilters(state, integrationId, flowId) || {};
+  const recordMappings =
+    fromSession.categoryMappingData(
+      state && state.session,
+      integrationId,
+      flowId
+    ) || {};
+  const { fields = [] } =
+    categoryMappingGenerateFields(state, integrationId, flowId, {
+      sectionId,
+    }) || {};
+
+  if (recordMappings) {
+    mappings = recordMappings.find(item => item.id === sectionId);
+  }
+
+  // If no filters are passed, return all mapppings
+  if (!attributes || !mappingFilter) {
+    return mappings;
+  }
+
+  const mappedFields = map(mappings.fieldMappings, 'generate');
+  // Filter all mapped fields
+  const filteredMappedFields = mappings.fieldMappings.filter(field => {
+    const generateField = fields.find(f => f.id === field.generate);
+
+    return generateField && attributes[generateField.filterType];
+  });
+  // Filter all generateFields with filter which are not yet mapped
+  const filteredFields = fields
+    .filter(
+      field => attributes[field.filterType] && !mappedFields.includes(field.id)
+    )
+    .map(field => ({ generate: field.id, extract: '' }));
+  // Combine filtered mappings and unmapped fields and generate unmapped fields
+  const filteredMappings = [...filteredMappedFields, ...filteredFields].filter(
+    field => {
+      if (mappingFilter === 'all') return true;
+      else if (mappingFilter === 'mapped') return !!field.extract;
+
+      return !field.extract && !field.hardCodedValue;
+    }
+  );
+
+  // return mappings object by overriding field mappings with filtered mappings
+  return {
+    ...mappings,
+    fieldMappings: filteredMappings,
+  };
 }
 
 export function integrationAppSettings(state, id) {
@@ -1533,6 +1686,12 @@ export function integratorLicense(state) {
   return fromUser.integratorLicense(state.user, preferences.defaultAShareId);
 }
 
+export function diyLicense(state) {
+  const preferences = userPreferences(state);
+
+  return fromUser.diyLicense(state.user, preferences.defaultAShareId);
+}
+
 export function integratorLicenseActionDetails(state) {
   let licenseActionDetails = {};
   const license = integratorLicense(state);
@@ -1591,7 +1750,9 @@ function getTierToFlowsMap(license) {
   };
   let flows = flowsInTier[license.tier] || 0;
 
-  if (self.tier === 'free' && !license.inTrial) {
+  if (license.inTrial) flows = Number.MAX_SAFE_INTEGER;
+
+  if (license.tier === 'free' && !license.inTrial) {
     if (
       !license.numAddOnFlows &&
       !license.sandbox &&
@@ -1762,14 +1923,14 @@ export function integratorLicenseWithMetadata(state) {
       licenseActionDetails.numSandboxAddOnFlows;
   }
 
-  licenseActionDetails.supportTier = '';
-
   if (
-    (licenseActionDetails.status === 'active' ||
-      licenseActionDetails.isFreemium) &&
-    licenseActionDetails.supportTier
+    !(
+      (licenseActionDetails.status === 'active' ||
+        licenseActionDetails.isFreemium) &&
+      licenseActionDetails.supportTier
+    )
   ) {
-    licenseActionDetails.supportTier = licenseActionDetails.supportTier;
+    licenseActionDetails.supportTier = '';
   }
 
   const toReturn = {
@@ -2221,67 +2382,52 @@ export function tiles(state) {
   let integration;
   let connector;
   let status;
-  const domain = getDomain();
 
-  return tiles
-    .filter(t => {
-      /**
-       * IA QA certified only "Shopify - NetSuite" and "Salesforce - NetSuite (IO)" connectors on React.
-       * So, hide all other connector tiles on production until QA certifies.
-       */
-      if (!t._connectorId || domain !== 'integrator.io') {
-        return true;
-      }
+  return tiles.map(t => {
+    integration = integrations.find(i => i._id === t._integrationId) || {};
 
-      return ['54fa0b38a7044f9252000036', '5c8f30229f701b3e9a0aa817'].includes(
-        t._connectorId
-      );
-    })
-    .map(t => {
-      integration = integrations.find(i => i._id === t._integrationId) || {};
+    if (t._connectorId && integration.mode === INTEGRATION_MODES.UNINSTALL) {
+      status = TILE_STATUS.UNINSTALL;
+    } else if (
+      t._connectorId &&
+      integration.mode !== INTEGRATION_MODES.SETTINGS
+    ) {
+      status = TILE_STATUS.IS_PENDING_SETUP;
+    } else if (t.offlineConnections && t.offlineConnections.length > 0) {
+      status = TILE_STATUS.HAS_OFFLINE_CONNECTIONS;
+    } else if (t.numError && t.numError > 0) {
+      status = TILE_STATUS.HAS_ERRORS;
+    } else {
+      status = TILE_STATUS.SUCCESS;
+    }
 
-      if (t._connectorId && integration.mode === INTEGRATION_MODES.UNINSTALL) {
-        status = TILE_STATUS.UNINSTALL;
-      } else if (
-        t._connectorId &&
-        integration.mode !== INTEGRATION_MODES.SETTINGS
-      ) {
-        status = TILE_STATUS.IS_PENDING_SETUP;
-      } else if (t.offlineConnections && t.offlineConnections.length > 0) {
-        status = TILE_STATUS.HAS_OFFLINE_CONNECTIONS;
-      } else if (t.numError && t.numError > 0) {
-        status = TILE_STATUS.HAS_ERRORS;
-      } else {
-        status = TILE_STATUS.SUCCESS;
-      }
-
-      if (t._connectorId) {
-        connector = published.find(i => i._id === t._connectorId) || {
-          user: {},
-        };
-
-        return {
-          ...t,
-          status,
-          integration: {
-            mode: integration.mode,
-            permissions: integration.permissions,
-          },
-          connector: {
-            owner: connector.user.company || connector.user.name,
-            applications: connector.applications || [],
-          },
-        };
-      }
+    if (t._connectorId) {
+      connector = published.find(i => i._id === t._connectorId) || {
+        user: {},
+      };
 
       return {
         ...t,
         status,
         integration: {
+          mode: integration.mode,
           permissions: integration.permissions,
         },
+        connector: {
+          owner: connector.user.company || connector.user.name,
+          applications: connector.applications || [],
+        },
       };
-    });
+    }
+
+    return {
+      ...t,
+      status,
+      integration: {
+        permissions: integration.permissions,
+      },
+    };
+  });
 }
 // #endregion
 

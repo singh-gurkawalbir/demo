@@ -31,8 +31,6 @@ export default (state = {}, action) => {
             draft[id].steps[stepIndex] = {
               ...draft[id].steps[stepIndex],
               ...step,
-              isTriggered: true,
-              verifying: false,
             };
           }
         });
