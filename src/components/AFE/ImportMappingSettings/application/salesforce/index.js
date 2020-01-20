@@ -13,9 +13,8 @@ export default {
       options,
     } = params;
     const { connectionId } = options;
-    const selectedGenerateObj = generateFields.find(
-      field => field.id === generate
-    );
+    const selectedGenerateObj =
+      generateFields && generateFields.find(field => field.id === generate);
     const fieldMeta = {
       fieldMap: {
         immutable: {

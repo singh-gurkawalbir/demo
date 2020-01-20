@@ -200,9 +200,8 @@ export default function ImportMapping(props) {
       val &&
       val.indexOf('_child_') > -1
     ) {
-      const childRelationshipField = generateFields.find(
-        field => field.id === val
-      );
+      const childRelationshipField =
+        generateFields && generateFields.find(field => field.id === val);
 
       if (childRelationshipField) {
         const { childSObject, relationshipName } = childRelationshipField;
