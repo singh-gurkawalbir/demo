@@ -586,6 +586,7 @@ export default {
 
   validateMappings: (mappings, lookups) => {
     const duplicateMappings = mappings
+      .filter(e => !!e.generate)
       .map(e => e.generate)
       .map((e, i, final) => final.indexOf(e) !== i && i)
       .filter(obj => mappings[obj])
@@ -629,19 +630,6 @@ export default {
         errMessage: `Extract Fields missing for field(s): ${missingGeneratesNames.join(
           ','
         )}`,
-      };
-    }
-
-    const mappingsWithoutGenerate = mappings.filter(mapping => {
-      if (!mapping.generate) return true;
-
-      return false;
-    });
-
-    if (mappingsWithoutGenerate.length) {
-      return {
-        isSuccess: false,
-        errMessage: 'Generate Fields missing for mapping(s)',
       };
     }
 
