@@ -2,10 +2,17 @@ import Iframe from 'react-iframe';
 import { useEffect, useCallback, useState, Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Button, Typography } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import { getDomain } from '../../utils/resource';
 import Spinner from '../Spinner';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
+
+const useStyles = makeStyles({
+  NetsuiteRules: {
+    padding: 10,
+  },
+});
 
 export default function NetSuiteMappingAssistant({
   width = '100%',
@@ -16,6 +23,7 @@ export default function NetSuiteMappingAssistant({
   onFieldClick,
 }) {
   const dispatch = useDispatch();
+  const classes = useStyles();
   const connection = useSelector(state =>
     selectors.resource(state, 'connections', netSuiteConnectionId)
   );
@@ -191,8 +199,11 @@ export default function NetSuiteMappingAssistant({
 
       {!showNetSuiteForm && (
         <Fragment>
-          <div>
-            <Button onClick={handleLaunchAssistantClick}>
+          <div className={classes.NetsuiteRules}>
+            <Button
+              onClick={handleLaunchAssistantClick}
+              variant="outlined"
+              color="primary">
               Launch NetSuite Assistant
             </Button>
             <ol>

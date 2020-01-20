@@ -76,7 +76,7 @@ export default function DynaResponseTransformEditor(props) {
   // when we launch the editor we are only going to entertain the first
   // rule set
   const { type, rule, scriptId, entryFunction } = useMemo(() => {
-    const { type, script = {}, expression = {} } = value;
+    const { type, script = {}, expression = {} } = value || {};
 
     return {
       type,

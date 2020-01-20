@@ -21,13 +21,19 @@ const isCsvOrXlsxResource = resource => {
 };
 
 const handlebarRegex = /(\{\{[\s]*.*?[\s]*\}\})/i;
-const LookupResponseMappingExtracts = [
+
+export const LookupResponseMappingExtracts = [
   'data',
   'errors',
   'ignored',
   'statusCode',
 ];
-const ImportResponseMappingExtracts = ['id', 'errors', 'ignored', 'statusCode'];
+export const ImportResponseMappingExtracts = [
+  'id',
+  'errors',
+  'ignored',
+  'statusCode',
+];
 
 export default {
   getDefaultDataType: value => {
@@ -384,10 +390,15 @@ export default {
         mapping.generate = generateParts.pop();
         generateListPath = generateParts.join('.');
 
-        list = {
-          generate: generateListPath,
-          fields: [],
-        };
+        list = lists.find(l => l.generate === generateListPath);
+
+        if (!list) {
+          list = {
+            generate: generateListPath,
+            fields: [],
+          };
+          lists.push(list);
+        }
 
         if (
           useFirstRowSupported &&
@@ -401,8 +412,6 @@ export default {
         }
 
         delete mapping.useFirstRow;
-
-        lists.push(list);
 
         // if (existingListsData[generateListPath]) {
         //   list.jsonPath = existingListsData[generateListPath].jsonPath;
@@ -420,16 +429,15 @@ export default {
         if (!mapping.useFirstRow) {
           const listWithEmptyGenerate = lists.find(l => l.generate === '');
 
-          if (!listWithEmptyGenerate)
+          if (!listWithEmptyGenerate) {
             list = {
               generate: '',
               fields: [],
             };
-          else {
+            lists.push(list);
+          } else {
             list = listWithEmptyGenerate;
           }
-
-          lists.push(list);
         }
       }
 
@@ -578,6 +586,7 @@ export default {
 
   validateMappings: (mappings, lookups) => {
     const duplicateMappings = mappings
+      .filter(e => !!e.generate)
       .map(e => e.generate)
       .map((e, i, final) => final.indexOf(e) !== i && i)
       .filter(obj => mappings[obj])
@@ -621,19 +630,6 @@ export default {
         errMessage: `Extract Fields missing for field(s): ${missingGeneratesNames.join(
           ','
         )}`,
-      };
-    }
-
-    const mappingsWithoutGenerate = mappings.filter(mapping => {
-      if (!mapping.generate) return true;
-
-      return false;
-    });
-
-    if (mappingsWithoutGenerate.length) {
-      return {
-        isSuccess: false,
-        errMessage: 'Generate Fields missing for mapping(s)',
       };
     }
 

@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { isEmpty } from 'lodash';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import Hook from './Hook';
@@ -36,6 +37,7 @@ export default function DynaHook(props) {
     [hookStage]
   );
   // Selector to get sample data for different hook types
+  // TODO @Raghu: Move all this logic to a selector
   const getSampleDataSelector = ({ state, flowId, resourceId, stage }) => {
     // Show empty JSON incase of out of flow context
     if (!flowId) {
@@ -63,6 +65,20 @@ export default function DynaHook(props) {
       resourceType,
       stage: resourceType === 'exports' ? stage : hookStage,
     });
+
+    if (hookStage === 'postSubmit') {
+      return {
+        responseData: {
+          _json: isEmpty(sampleData) ? {} : sampleData,
+        },
+      };
+    }
+
+    if (hookStage === 'postMap') {
+      return {
+        postMapData: isEmpty(sampleData) ? {} : sampleData,
+      };
+    }
 
     if (sampleData) {
       return { errors: [], data: [sampleData] };

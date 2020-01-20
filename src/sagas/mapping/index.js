@@ -75,9 +75,9 @@ export function* previewMappings({ id }) {
     flowSampleData,
   } = yield select(selectors.mapping, id);
   let resourceCopy = deepClone(resource);
-  let _mappings = mappings.map(
-    ({ index, hardCodedValueTmp, rowIdentifier, ...others }) => others
-  );
+  let _mappings = mappings
+    .filter(mapping => !!mapping.generate)
+    .map(({ index, hardCodedValueTmp, rowIdentifier, ...others }) => others);
 
   _mappings = mappingUtil.generateMappingsForApp({
     mappings: _mappings,
