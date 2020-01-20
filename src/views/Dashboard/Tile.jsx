@@ -79,9 +79,16 @@ function Tile({ tile, history }) {
   const isNotYetSupported =
     tile._connectorId &&
     getDomain() === 'integrator.io' &&
-    !['54fa0b38a7044f9252000036', '5c8f30229f701b3e9a0aa817'].includes(
-      tile._connectorId
-    );
+    ![
+      '5c8f30229f701b3e9a0aa817', // SFNSIO
+      '56cc2a64a42f08124832753a', // JIRA
+      '57a82017810491d30e1c9760', // OpenAir
+      '55022fc3285348c76a000005', // Zendesk
+      '54fa0b38a7044f9252000036', // Shopify
+      '5717912fbc5a8ca446571f1e', // Magento2
+      '57179182e0a908200c2781d9', // BigCommerce
+      '5db8164d9df868329731fca0', // Square POS
+    ].includes(tile._connectorId);
   const handleStatusClick = useCallback(
     event => {
       event.stopPropagation();
