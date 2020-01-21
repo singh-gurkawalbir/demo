@@ -17,7 +17,6 @@ import MaterialUiSelect from '../../../components/DynaForm/fields/DynaSelect';
 import LoadResources from '../../../components/LoadResources';
 import ChipInput from '../../../components/ChipInput';
 import Flows from './Flows';
-import Users from '../../IntegrationSettings/Users';
 import GeneralSection from './GeneralSection';
 import Subscription from './Subscription';
 import AuditLog from '../../IntegrationSettings/AuditLog';
@@ -434,7 +433,6 @@ export default function IntegrationAppSettings(props) {
                 path={`${urlRegexPrefix}/notifications`}
                 component={Notifications}
               />
-              <Route path={`${urlRegexPrefix}/users`} component={Users} />
               <Route path={`${urlRegexPrefix}/audit`} component={AuditLog} />
               <Route path={`${urlRegexPrefix}/:section`} component={Flows} />
             </Switch>

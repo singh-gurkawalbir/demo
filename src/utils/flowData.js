@@ -9,6 +9,10 @@ import {
   isBlobTypeResource,
   isRestCsvMediaTypeExport,
 } from './resource';
+import {
+  LookupResponseMappingExtracts,
+  ImportResponseMappingExtracts,
+} from './mapping';
 
 const sampleDataStage = {
   exports: {
@@ -183,3 +187,22 @@ export const getBlobResourceSampleData = () => ({
 
 export const isOneToManyResource = resource =>
   !!(resource && resource.oneToMany && resource.pathToMany);
+
+/*
+ * Based on resource type fetch the default extracts list
+ * Ex: For Lookups: [ 'data','errors','ignored','statusCode']
+ * This fn returns { data:'', errors: '', ignored: '', statusCode: ''}
+ */
+export const generateDefaultExtractsObject = resourceType => {
+  const defaultExtractsList =
+    resourceType === 'imports'
+      ? ImportResponseMappingExtracts
+      : LookupResponseMappingExtracts;
+
+  return defaultExtractsList.reduce((extractsObj, extractItem) => {
+    // eslint-disable-next-line no-param-reassign
+    extractsObj[extractItem] = '';
+
+    return extractsObj;
+  }, {});
+};

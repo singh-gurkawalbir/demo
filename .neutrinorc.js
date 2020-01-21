@@ -1,6 +1,6 @@
 const { join } = require('path');
 const { sections } = require('./docs/sections');
-const {deepClone} =require('fast-json-patch');
+const { deepClone } = require('fast-json-patch');
 require('babel-register')({
   plugins: [
     [
@@ -167,39 +167,40 @@ module.exports = {
     [
       '@neutrinojs/env',
       [
-        "API_ENDPOINT",
-        "API_EMAIL",
-        "API_PASSWORD",
-        "AUTO_LOGIN",
-        "NETWORK_THRESHOLD",
-        "CDN_BASE_URI",
-        "ADD_NETWORK_LATENCY",
-        "HELPER_FUNCTIONS_INTERVAL_UPDATE",
-        "USE_NEW_APP",
-        "AGENT_STATUS_INTERVAL",
-        "MASK_SENSITIVE_INFO_DELAY",
-        "SESSION_WARNING_INTERVAL_PRIOR_TO_EXPIRATION",
-        "SESSION_EXPIRATION_INTERVAL",
-        "WHY_RERENDER"
-      ]
+        'API_ENDPOINT',
+        'API_EMAIL',
+        'API_PASSWORD',
+        'AUTO_LOGIN',
+        'NETWORK_THRESHOLD',
+        'CDN_BASE_URI',
+        'ADD_NETWORK_LATENCY',
+        'HELPER_FUNCTIONS_INTERVAL_UPDATE',
+        'AGENT_STATUS_INTERVAL',
+        'MASK_SENSITIVE_INFO_DELAY',
+        'SESSION_WARNING_INTERVAL_PRIOR_TO_EXPIRATION',
+        'SESSION_EXPIRATION_INTERVAL',
+        'WHY_RERENDER',
+      ],
     ],
     neutrino => {
       const proxyOpts = getProxyOpts();
       //needed for our test cases....
-      neutrino.config.when (process.env.NODE_ENV === 'test',config=>{
-        config.module.rule('compile').use('babel').tap(
-          origOptions => { 
+      neutrino.config.when(process.env.NODE_ENV === 'test', config => {
+        config.module
+          .rule('compile')
+          .use('babel')
+          .tap(origOptions => {
             const options = deepClone(origOptions);
             //if the dependency isn't there then that could be a problem
             options.plugins.push('babel-plugin-dynamic-import-node');
-        
-            const babelEnvPreset = options.presets.find(preset => Array.isArray(preset) && preset[0].includes('babel-preset-env'));
-            if(babelEnvPreset)
-              delete babelEnvPreset[1].exclude;
+
+            const babelEnvPreset = options.presets.find(
+              preset =>
+                Array.isArray(preset) && preset[0].includes('babel-preset-env')
+            );
+            if (babelEnvPreset) delete babelEnvPreset[1].exclude;
             return options;
-          
-          }
-        )
+          });
       });
 
       neutrino.config.devServer.proxy({
@@ -208,9 +209,10 @@ module.exports = {
         '/csrf': proxyOpts,
         '/api': proxyOpts,
         '/netSuiteWS': proxyOpts,
+        '/netsuiteDA': proxyOpts,
         '/connection': proxyOpts,
       });
-      
+
       neutrino.config.output.publicPath('/pg/');
     },
   ],

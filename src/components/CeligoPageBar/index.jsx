@@ -37,6 +37,7 @@ const useStyles = makeStyles(theme => ({
     // by the value override below...
     '& > div': {
       maxWidth: 350,
+      overflow: 'hidden',
       textAlign: 'left',
       ' & > p': {
         textTransform: 'none',
@@ -71,7 +72,7 @@ export default function CeligoPageBar({
   const handleInfoClose = useCallback(() => {
     setAnchorEl(null);
   }, []);
-  const showBanner = location.pathname.endsWith('/dashboard') && bannerOpened;
+  const showBanner = location.pathname.endsWith('pg/dashboard') && bannerOpened;
 
   return (
     <Fragment>

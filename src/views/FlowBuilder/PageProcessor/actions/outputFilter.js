@@ -1,11 +1,12 @@
-import { useEffect, Fragment, useMemo } from 'react';
+import { useEffect, Fragment, useMemo, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import Icon from '../../../../components/icons/OutputFilterIcon';
 import helpTextMap from '../../../../components/Help/helpTextMap';
-import OutputFilterEditorDialog from '../../../../components/AFE/FilterEditor/Dialog';
+import OutputFilterToggleEditorDialog from '../../../../components/AFE/FilterEditor/FilterToggleEditorDialog';
 import { RESOURCE_TYPE_PLURAL_TO_SINGULAR } from '../../../../constants/resource';
+import { hooksToFunctionNamesMap } from '../../../../utils/hooks';
 
 function OutputFilterDialog({
   flowId,
@@ -24,18 +25,48 @@ function OutputFilterDialog({
       stage: 'outputFilter',
     })
   );
-  const rules = useMemo(
-    () => resource && resource.filter && resource.filter.rules,
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
+  const { type, rules, scriptId, entryFunction } = useMemo(() => {
+    const filterObj = (resource && resource.filter) || {};
+    const { type, script = {}, expression = {} } = filterObj;
+
+    return {
+      type,
+      rules: expression.rules || [],
+      scriptId: script._scriptId,
+      entryFunction: script.function,
+    };
+  }, [resource]);
+  const saveScript = useCallback(
+    values => {
+      const { code, scriptId } = values;
+      const patchSet = [
+        {
+          op: 'replace',
+          path: '/content',
+          value: code,
+        },
+      ];
+
+      dispatch(actions.resource.patchStaged(scriptId, patchSet, 'value'));
+      dispatch(actions.resource.commitStaged('scripts', scriptId, 'value'));
+    },
+    [dispatch]
   );
-  const handleClose = (shouldCommit, editorValues) => {
-    if (shouldCommit) {
-      const { rule } = editorValues;
+  const saveOutputFilter = useCallback(
+    values => {
+      const { processor, rule, scriptId, entryFunction } = values;
+      const filterType = processor === 'filter' ? 'expression' : 'script';
       const path = '/filter';
       const value = {
-        rules: rule || [],
-        version: '1',
+        type: filterType,
+        expression: {
+          version: 1,
+          rules: rule || [],
+        },
+        script: {
+          _scriptId: scriptId,
+          function: entryFunction,
+        },
       };
       const patchSet = [{ op: 'replace', path, value }];
 
@@ -44,9 +75,33 @@ function OutputFilterDialog({
       dispatch(
         actions.resource.commitStaged(resourceType, resourceId, 'value')
       );
+    },
+    [dispatch, resourceId, resourceType]
+  );
+  const handleClose = (shouldCommit, editorValues) => {
+    if (shouldCommit) {
+      const {
+        processor,
+        rule: filterRules = [],
+        scriptId: filterScript,
+      } = editorValues;
+      const filterType = processor === 'filter' ? 'expression' : 'script';
 
-      if (!rules || rules.length === 0) {
-        if (value.rules.length > 0) {
+      if (filterType === 'script') {
+        // Incase of script type, save script changes
+        saveScript(editorValues);
+      }
+
+      // Save Filter rules
+      saveOutputFilter(editorValues);
+
+      // If there are no filters ( no mapping rules / no script configured ) before
+      if ((filterType === 'expression' && !rules.length) || !scriptId) {
+        // If user configures filters first time
+        if (
+          (filterType === 'expression' && filterRules.length) ||
+          filterScript
+        ) {
           dispatch(
             actions.analytics.gainsight.trackEvent(
               `${RESOURCE_TYPE_PLURAL_TO_SINGULAR[
@@ -75,12 +130,16 @@ function OutputFilterDialog({
   }, [dispatch, flowId, resourceId, resourceType, sampleData]);
 
   return (
-    <OutputFilterEditorDialog
+    <OutputFilterToggleEditorDialog
       title="Define Output Filter"
-      id={resourceId + flowId}
       disabled={isViewMode}
+      id={resourceId + flowId}
       data={sampleData}
+      type={type}
       rule={rules}
+      scriptId={scriptId}
+      entryFunction={entryFunction || hooksToFunctionNamesMap.filter}
+      insertStubKey="filter"
       onClose={handleClose}
     />
   );

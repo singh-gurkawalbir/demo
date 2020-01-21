@@ -13,6 +13,30 @@ import { defaultPatchSetConverter } from '../../forms/utils';
 import conversionUtil from '../../utils/httpToRestConnectionConversionUtil';
 import { REST_ASSISTANTS } from '../../utils/constants';
 
+function* isDataLoaderFlow(flow) {
+  if (!flow) return false;
+
+  // assume old DL interface
+  let exportId = flow._exportId;
+
+  // override if new interface present.
+  if (flow.pageGenerators && flow.pageGenerators.length > 0) {
+    exportId = flow.pageGenerators[0]._exportId;
+  }
+
+  if (!exportId) return false;
+
+  // we have a flow with an export. Is this export a data loader? (type=simple)
+  const data = yield select(selectors.resourceData, 'exports', exportId);
+  const exp = data.merged;
+
+  if (exp && exp.type === 'simple') {
+    // console.log('we have a data loader flow!');
+
+    return true;
+  }
+}
+
 export function* commitStagedChanges({ resourceType, id, scope }) {
   const userPreferences = yield select(selectors.userPreferences);
   const isSandbox = userPreferences
@@ -27,10 +51,37 @@ export function* commitStagedChanges({ resourceType, id, scope }) {
 
   if (!patch) return; // nothing to do.
 
+  // For accesstokens and connections within an integration for edit case
   if (!isNew && resourceType.indexOf('integrations/') >= 0) {
     // eslint-disable-next-line no-param-reassign
     resourceType = resourceType.split('/').pop();
   }
+
+  // #region Temp Data loader code
+  // For consistency, we normalize the client code to use the new pageProcessor and pageGenerator fields
+  // in favor of the old _exportId and _importId fields.  The Data loader (export type = simple) flows
+  // only support the older interface, so we need to convert back before we make the PUT/POST API call.
+  // this complete code block can be removed once the BE DL code uses the new flow interface fields.
+  let resourceIsDataLoaderFlow = false;
+
+  if (resourceType === 'flows') {
+    resourceIsDataLoaderFlow = yield call(isDataLoaderFlow, merged);
+
+    if (resourceIsDataLoaderFlow) {
+      merged._exportId = merged.pageGenerators[0]._exportId;
+      delete merged.pageGenerators;
+
+      if (merged.pageProcessors && merged.pageProcessors.length > 0) {
+        const importId = merged.pageProcessors[0]._importId;
+
+        if (importId) {
+          merged._importId = importId;
+          delete merged.pageProcessors;
+        }
+      }
+    }
+  }
+  // #endregion
 
   const path = isNew ? `/${resourceType}` : `/${resourceType}/${id}`;
 
@@ -65,7 +116,7 @@ export function* commitStagedChanges({ resourceType, id, scope }) {
   let updated;
 
   // We built all connection assistants on HTTP adaptor on React. With recent changes to decouple REST deprecation
-  // and React we are forced to convert HTTP to REST doc for existing REST assistants since we dont want to build
+  // and React we are forced to convert HTTP to REST doc for existing REST assistants since we don't want to build
   // 150 odd connection assistants again. Once React becomes the only app and when assistants are migrated we would
   // remove this code and let all docs be built on HTTP adaptor.
   if (
@@ -100,6 +151,23 @@ export function* commitStagedChanges({ resourceType, id, scope }) {
   ) {
     updated.content = merged.content;
   }
+
+  // #region Data loader transform
+  // This code can be removed (with above DL code) once the BE DL code supports
+  // the new flow interface. For now we "fake" compatibility and convert on load/save
+  if (resourceIsDataLoaderFlow) {
+    // console.log('commit DL convert to old interface on api');
+    updated.pageGenerators = [{ _exportId: updated._exportId }];
+    delete updated._exportId;
+
+    if (updated._importId) {
+      updated.pageProcessors = [
+        { _importId: updated._importId, type: 'import' },
+      ];
+      delete updated._importId;
+    }
+  }
+  // #endregion
 
   if (['exports', 'imports'].includes(resourceType)) {
     if (
@@ -304,11 +372,35 @@ export function* patchResource({ resourceType, id, patchSet, options = {} }) {
   }
 }
 
+export function* normalizeFlow(flow) {
+  const isDataLoader = yield call(isDataLoaderFlow, flow);
+
+  if (!isDataLoader) return flow;
+
+  const newFlow = flow;
+
+  if (newFlow._importId) {
+    newFlow.pageProcessors = [{ _importId: flow._importId, type: 'import' }];
+    delete newFlow._importId;
+  }
+
+  if (newFlow._exportId) {
+    newFlow.pageGenerators = [{ _exportId: flow._exportId }];
+    delete newFlow._exportId;
+  }
+
+  return newFlow;
+}
+
 export function* getResource({ resourceType, id, message }) {
   const path = id ? `/${resourceType}/${id}` : `/${resourceType}`;
 
   try {
-    const resource = yield call(apiCallWithRetry, { path, message });
+    let resource = yield call(apiCallWithRetry, { path, message });
+
+    if (resourceType === 'flows') {
+      resource = yield call(normalizeFlow, resource);
+    }
 
     yield put(actions.resource.received(resourceType, resource));
 

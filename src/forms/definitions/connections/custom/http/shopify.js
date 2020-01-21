@@ -16,6 +16,8 @@ export default {
       retValues['/http/auth/token/scheme'] = ' ';
       retValues['/http/auth/token/token'] = undefined;
       retValues['/http/auth/oauth/scopeDelimiter'] = ',';
+      retValues['/http/auth/basic/username'] = undefined;
+      retValues['/http/auth/basic/password'] = undefined;
 
       if (
         retValues['/http/auth/oauth/scope'] &&
@@ -68,7 +70,6 @@ export default {
       id: 'http.auth.type',
       type: 'select',
       label: 'Authentication Type',
-      defaultValue: 'oauth',
       options: [
         {
           items: [
@@ -77,6 +78,15 @@ export default {
           ],
         },
       ],
+      defaultValue: r => {
+        const authType = r && r.http && r.http.auth && r.http.auth.type;
+
+        if (authType === 'oauth') {
+          return 'oauth';
+        }
+
+        return 'basic';
+      },
       helpText:
         'Integrator.io supports the following authentication types: Basic: Select Basic if your service implements the HTTP basic authentication strategy. This authentication method adds a Base64 encoded username and password values in the "authentication" HTTP request header.Cookie: Select Cookie if your service relies on session-based authentication. Session based authentication is typically implemented by including a unique cookie into the HTTP request header. By selecting this option, the platform will automatically create and insert this cookie into every HTTP request it sends to your application.Custom: Select Custom for all other types. If you select the Custom authentication method, integrator.io will not perform any special authentication. It is up to the user to configure the HTTP request fields (method, relativeUri, headers, and body) of the import and export models to include {{placeholders}} for any authentication related values. These values can be stored in Encrypted and Unencrypted fields of this connection.Token: Select Token if your service relies on token-based authentication. The token may exist in the header, URL, or body of the HTTP request. This method also supports refreshing tokens if the service being called supports it. OAuth 2.0: Select this value if your application supports the OAuth 2.0 authentication.',
     },

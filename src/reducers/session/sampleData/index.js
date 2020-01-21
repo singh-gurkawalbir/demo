@@ -85,6 +85,13 @@ function getRawData(resourceData) {
   return DEFAULT_VALUE;
 }
 
+// It returns file's raw data stage with the associated file type
+function getRawFileData(resourceData) {
+  if (resourceData.rawFile) return resourceData.rawFile;
+
+  return getRawData(resourceData);
+}
+
 function getParsedData(resourceData) {
   return resourceData.parse || resourceData.raw || DEFAULT_VALUE;
 }
@@ -114,6 +121,8 @@ export function getResourceSampleData(state, resourceId, stage) {
   switch (stage) {
     case 'raw':
       return getRawData(resourceData);
+    case 'rawFile':
+      return getRawFileData(resourceData);
     case 'parse':
       return getParsedData(resourceData);
     case 'csv':

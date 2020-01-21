@@ -1,6 +1,6 @@
 import { makeStyles } from '@material-ui/styles';
 import JobDashboard from '../../../../../components/JobDashboard';
-import PanelHeader from '../../../common/PanelHeader';
+import PanelHeader from '../../../../../components/PanelHeader';
 
 const useStyles = makeStyles(theme => ({
   root: {

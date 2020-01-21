@@ -4,7 +4,7 @@ import { makeStyles } from '@material-ui/styles';
 import { Button, Typography } from '@material-ui/core';
 import * as selectors from '../../../../../../reducers';
 import actions from '../../../../../../actions';
-import PanelHeader from '../../../../common/PanelHeader';
+import PanelHeader from '../../../../../../components/PanelHeader';
 import CodeEditor from '../../../../../../components/CodeEditor';
 import RawHtml from '../../../../../../components/RawHtml';
 

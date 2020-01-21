@@ -370,6 +370,14 @@ export default {
         },
       },
     },
+    MuiOutlinedInput: {
+      root: {
+        backgroundColor: colors.celigoWhite,
+        '&$focused': {
+          borderColor: colors.celigoAccent2,
+        },
+      },
+    },
     MuiFormLabel: {
       root: {
         fontFamily: 'source sans pro',
@@ -515,6 +523,11 @@ export default {
     MuiListSubheader: {
       gutters: {
         fontFamily: 'Roboto500',
+      },
+    },
+    MuiDrawer: {
+      paper: {
+        background: colors.celigoWhite,
       },
     },
     MuiTab: {

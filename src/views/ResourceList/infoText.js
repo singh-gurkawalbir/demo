@@ -45,7 +45,7 @@ export default {
     with caution. Enjoy! `,
   stacks: `
     Stacks are simple server environments used to host code for hooks, 
-    wrappers, connector installers and settings pages. Stacks can be 
+    wrappers, Integration App installers and settings pages. Stacks can be 
     implemented in any programming language and are always invoked via HTTP. 
     Every stack is assigned a system token that should be used to 
     authenticate HTTP requests. You own the IP for all your stacks, 
@@ -59,13 +59,13 @@ export default {
     Integration Apps represent fully functional pre-built integrations that any 
     user can install into their Integrator account, directly from the 
     Integrator Marketplace. Integration Apps include an installer, uninstaller, 
-    and a settings interface. Connector developers can push updates 
-    at any time for their Connector to their entire install base. 
-    A Connector can create any number of components in a user's account.`,
+    and a settings interface. Integration App developers can push updates 
+    at any time for their Integration App to their entire install base. 
+    A Integration App can create any number of components in a user's account.`,
   licenses: `
     From this page you can provision and also manage license records 
-    for your connector product. License records control who can install 
-    a new instance of your connector, and also when that instance should expire. 
+    for your Integration App product. License records control who can install 
+    a new instance of your Integration App, and also when that instance should expire. 
     You can also create multiple license records for the same user to enable 
     multiple installs in their account (i.e. for parallel environments like 
     sandbox and production). The license data here is also available 

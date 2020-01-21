@@ -19,6 +19,8 @@ const useStyles = makeStyles(theme => ({
   container: {
     backgroundColor: theme.palette.background.default,
     height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
   },
   textField: {
     marginTop: theme.spacing(1),
@@ -32,13 +34,25 @@ const useStyles = makeStyles(theme => ({
   label: {
     paddingLeft: theme.spacing(1),
   },
+  scriptPanel: {
+    width: '100%',
+    height: '100%',
+  },
 }));
 
 export default function JavaScriptPanel(props) {
   const { editorId, disabled, insertStubKey } = props;
   const classes = useStyles(props);
-  const { code = '', entryFunction = '', scriptId = '' } = useSelector(state =>
-    selectors.editor(state, editorId)
+  const {
+    code = '',
+    initChangeIdentifier,
+    error,
+    fetchScriptContent = false,
+    entryFunction = '',
+    scriptId = '',
+  } = useSelector(state => selectors.editor(state, editorId));
+  const violations = useSelector(state =>
+    selectors.editorViolations(state, editorId)
   );
   const scriptContent = useSelector(state => {
     const data = selectors.resourceData(state, 'scripts', scriptId);
@@ -50,19 +64,20 @@ export default function JavaScriptPanel(props) {
   );
   const dispatch = useDispatch();
   const patchEditor = useCallback(
-    (option, value) => {
-      dispatch(actions.editor.patch(editorId, { [option]: value }));
+    val => {
+      dispatch(actions.editor.patch(editorId, val));
     },
     [dispatch, editorId]
   );
   const requestScript = useCallback(() => {
     dispatch(actions.resource.request('scripts', scriptId));
   }, [dispatch, scriptId]);
-  const handleCodeChange = useCallback(code => patchEditor('code', code), [
+  const handleCodeChange = useCallback(code => patchEditor({ code }), [
     patchEditor,
   ]);
   const handleScriptChange = useCallback(
-    event => patchEditor('scriptId', event.target.value),
+    event =>
+      patchEditor({ scriptId: event.target.value, fetchScriptContent: true }),
     [patchEditor]
   );
   const handleInsertStubClick = useCallback(() => {
@@ -70,75 +85,92 @@ export default function JavaScriptPanel(props) {
     const updatedScriptContent = code + getScriptHookStub(insertStubKey);
 
     // Updated this new script content on editor
-    patchEditor('code', updatedScriptContent);
+    patchEditor({ code: updatedScriptContent });
   }, [code, insertStubKey, patchEditor]);
 
   useEffect(() => {
-    // TODO: What if for the requested script is non existent...
-    // do we have a timeout for the spinner
-    if (scriptContent !== undefined) {
-      patchEditor('code', scriptContent);
-    } else if (scriptId) {
+    if (fetchScriptContent && scriptContent !== undefined) {
+      patchEditor({
+        code: scriptContent,
+        fetchScriptContent: false,
+        initChangeIdentifier: initChangeIdentifier + 1,
+      });
+    } else if (scriptContent === undefined && scriptId) {
       requestScript();
-      // Shouldnt we update to the selected scriptId
     }
-  }, [editorId, patchEditor, requestScript, scriptContent, scriptId]);
+  }, [
+    editorId,
+    fetchScriptContent,
+    initChangeIdentifier,
+    patchEditor,
+    requestScript,
+    scriptContent,
+    scriptId,
+  ]);
 
   return (
     <LoadResources required resources={['scripts']}>
       <div className={classes.container}>
-        <FormControl className={classes.textField}>
-          <InputLabel className={classes.label} htmlFor="scriptId">
-            Script
-          </InputLabel>
-          <Select
-            id="scriptId"
-            margin="dense"
-            value={scriptId}
+        <div>
+          <FormControl className={classes.textField}>
+            <InputLabel className={classes.label} htmlFor="scriptId">
+              Script
+            </InputLabel>
+            <Select
+              id="scriptId"
+              margin="dense"
+              value={scriptId}
+              disabled={disabled}
+              onChange={handleScriptChange}>
+              {allScripts.map(s => (
+                <MenuItem key={s._id} value={s._id}>
+                  {s.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <TextField
+            id="entryFunction"
             disabled={disabled}
-            onChange={handleScriptChange}>
-            {allScripts.map(s => (
-              <MenuItem key={s._id} value={s._id}>
-                {s.name}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <TextField
-          id="entryFunction"
-          disabled={disabled}
-          InputLabelProps={{ className: classes.label }}
-          className={classes.textField}
-          value={entryFunction}
-          onChange={event => patchEditor('entryFunction', event.target.value)}
-          label="Entry Function"
-          margin="dense"
-        />
-        {scriptId && insertStubKey && (
-          <Button
-            variant="contained"
-            color="primary"
+            InputLabelProps={{ className: classes.label }}
             className={classes.textField}
-            onClick={handleInsertStubClick}
-            disabled={disabled}
-            data-test={insertStubKey}>
-            {`Insert ${hooksLabelMap[insertStubKey]} Stub`}
-          </Button>
-        )}
-        {scriptContent === undefined && scriptId ? (
-          <Fragment>
-            <Typography>Retrieving your script</Typography>
-            <Spinner />
-          </Fragment>
-        ) : (
-          <CodePanel
-            name="code"
-            readOnly={disabled}
-            value={code}
-            mode="javascript"
-            onChange={handleCodeChange}
+            value={entryFunction}
+            onChange={event =>
+              patchEditor({ entryFunction: event.target.value })
+            }
+            label="Entry Function"
+            margin="dense"
           />
-        )}
+          {scriptId && insertStubKey && (
+            <Button
+              variant="contained"
+              color="primary"
+              className={classes.textField}
+              onClick={handleInsertStubClick}
+              disabled={disabled}
+              data-test={insertStubKey}>
+              {`Insert ${hooksLabelMap[insertStubKey]} Stub`}
+            </Button>
+          )}
+        </div>
+        <div
+          className={classes.scriptPanel}
+          key={error || violations ? 'sm' : 'md'}>
+          {scriptContent === undefined && scriptId ? (
+            <Fragment>
+              <Typography>Retrieving your script</Typography>
+              <Spinner />
+            </Fragment>
+          ) : (
+            <CodePanel
+              name="code"
+              readOnly={disabled}
+              value={code}
+              mode="javascript"
+              onChange={handleCodeChange}
+            />
+          )}
+        </div>
       </div>
     </LoadResources>
   );

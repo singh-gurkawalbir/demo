@@ -4,6 +4,8 @@ import {
   ACCOUNT_IDS,
   USER_ACCESS_LEVELS,
   INTEGRATION_ACCESS_LEVELS,
+  USAGE_TIER_NAMES,
+  USAGE_TIER_HOURS,
 } from '../../../../utils/constants';
 
 export default (state = [], action) => {
@@ -178,6 +180,87 @@ export function integratorLicense(state, accountId) {
   }
 
   return ioLicense;
+}
+
+export function diyLicense(state, accountId) {
+  if (!state) {
+    return null;
+  }
+
+  const account = state.find(a => a._id === accountId);
+
+  if (!account || !account.ownerUser || !account.ownerUser.licenses) {
+    return null;
+  }
+
+  const diyLicense = account.ownerUser.licenses.find(l => l.type === 'diy');
+
+  if (!diyLicense) {
+    return null;
+  }
+
+  diyLicense.usageTierName = USAGE_TIER_NAMES[diyLicense.usageTier || 'free'];
+
+  diyLicense.inTrial = false;
+
+  if (diyLicense.tier === 'free') {
+    if (diyLicense.trialEndDate) {
+      diyLicense.inTrial = moment(diyLicense.trialEndDate) - moment() >= 0;
+    }
+  }
+
+  diyLicense.hasSubscription = false;
+
+  if (['none', 'free'].indexOf(diyLicense.tier) === -1) {
+    diyLicense.hasSubscription = true;
+  } else if (diyLicense.tier === 'free' && !diyLicense.inTrial) {
+    if (
+      diyLicense.numAddOnFlows > 0 ||
+      diyLicense.sandbox ||
+      diyLicense.numSandboxAddOnFlows > 0
+    ) {
+      diyLicense.hasSubscription = true;
+    }
+  }
+
+  diyLicense.isFreemium =
+    diyLicense.tier === 'free' &&
+    !diyLicense.hasSubscription &&
+    !diyLicense.inTrial;
+  diyLicense.expirationDate = diyLicense.expires;
+
+  if (diyLicense.inTrial) {
+    diyLicense.expirationDate = diyLicense.trialEndDate;
+  } else if (diyLicense.isFreemium) {
+    diyLicense.expirationDate = '';
+  }
+
+  if (diyLicense.expirationDate) {
+    diyLicense.expirationDate = moment(diyLicense.expirationDate).format(
+      'MMM Do, YYYY'
+    );
+  }
+
+  if (!diyLicense.currentUsage) {
+    diyLicense.currentUsage = {};
+  }
+
+  diyLicense.usageTierHours = USAGE_TIER_HOURS[diyLicense.usageTier || 'free'];
+
+  if (!diyLicense.currentUsage.milliseconds) {
+    diyLicense.currentUsage.milliseconds = 0;
+  }
+
+  diyLicense.currentUsage.usagePercent = Math.round(
+    (diyLicense.currentUsage.milliseconds /
+      (diyLicense.usageTierHours * 60 * 60 * 1000)) *
+      100
+  );
+  diyLicense.currentUsage.usedHours = Math.round(
+    diyLicense.currentUsage.milliseconds / 1000 / 60 / 60
+  );
+
+  return diyLicense;
 }
 // #endregion INTEGRATOR LICENSE
 

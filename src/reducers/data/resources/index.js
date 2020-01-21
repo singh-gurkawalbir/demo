@@ -26,6 +26,7 @@ function replaceOrInsertResource(state, resourceType, resourceValue) {
     type = 'connectorLicenses';
   }
 
+  // For accesstokens and connections within an integration
   if (type.indexOf('integrations/') >= 0) {
     type = type.split('/').pop();
   }
@@ -148,6 +149,8 @@ export default (state = {}, action) => {
         });
       }
 
+      // TODO: Raghu, we should move all this code into the "produce" function. Lets talk
+      // about it when you have time to refactor.
       if (resourceType === 'flows') {
         const newCollection =
           collection &&

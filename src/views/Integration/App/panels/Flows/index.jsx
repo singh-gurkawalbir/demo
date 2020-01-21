@@ -14,10 +14,11 @@ import * as selectors from '../../../../../reducers';
 import LoadResources from '../../../../../components/LoadResources';
 import IconTextButton from '../../../../../components/IconTextButton';
 import SettingsIcon from '../../../../../components/icons/SettingsIcon';
-import PanelHeader from '../../../common/PanelHeader';
+import PanelHeader from '../../../../../components/PanelHeader';
 import FlowCard from '../../../common/FlowCard';
 import ConfigureDrawer from './ConfigureDrawer';
 import SettingsDrawer from './SettingsDrawer';
+import CategoryMappingDrawer from './CategoryMappingDrawer';
 import MappingDrawer from './MappingDrawer';
 import actions from '../../../../../actions';
 
@@ -112,6 +113,12 @@ function FlowList({ integrationId, storeId }) {
         integrationId={integrationId}
         storeId={storeId}
         sectionId={sectionId}
+      />
+      <CategoryMappingDrawer
+        integrationId={integrationId}
+        storeId={storeId}
+        sectionId={sectionId}
+        // flowId={flowId}
       />
 
       <PanelHeader title={`${section.title} flows`}>

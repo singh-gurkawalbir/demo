@@ -4,7 +4,7 @@ import { useRouteMatch, Link } from 'react-router-dom';
 import moment from 'moment';
 import { makeStyles } from '@material-ui/styles';
 import { Button, Grid, Divider, Typography } from '@material-ui/core';
-import PanelHeader from '../../../../../common/PanelHeader';
+import PanelHeader from '../../../../../../../components/PanelHeader';
 import actions from '../../../../../../../actions';
 import * as selectors from '../../../../../../../reducers';
 import CeligoTable from '../../../../../../../components/CeligoTable';

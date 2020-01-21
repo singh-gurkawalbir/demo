@@ -8,6 +8,7 @@ import {
   deleteResource,
   requestReferences,
   requestDeregister,
+  normalizeFlow,
 } from './';
 import { apiCallWithRetry } from '../';
 import { status500 } from '../test';
@@ -201,6 +202,12 @@ availableResources.forEach(type => {
       const callEffect = saga.next().value;
 
       expect(callEffect).toEqual(call(apiCallWithRetry, { path }));
+
+      if (type === 'flows') {
+        expect(saga.next(mockResource).value).toEqual(
+          call(normalizeFlow, mockResource)
+        );
+      }
 
       const effect = saga.next(mockResource).value;
 

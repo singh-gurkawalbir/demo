@@ -395,6 +395,12 @@ export default {
   'http.response.resourceIdPath': {
     type: 'text',
     label: 'Http response resource Id Path',
+    visibleWhen: [
+      {
+        field: 'http.successMediaType',
+        isNot: ['csv'],
+      },
+    ],
   },
   'http.response.successPath': {
     type: 'text',
@@ -556,6 +562,28 @@ export default {
       {
         field: 'outputMode',
         is: ['blob'],
+      },
+    ],
+  },
+  'file.csv': {
+    type: 'csvparse',
+    label: 'Configure CSV Parse Options',
+    defaultValue: r =>
+      (r.file && r.file.csv) || {
+        rowsToSkip: 0,
+        trimSpaces: false,
+        columnDelimiter: ',',
+        hasHeaderRow: false,
+        rowDelimiter: '\n',
+      },
+    visibleWhenAll: [
+      {
+        field: 'http.successMediaType',
+        is: ['csv'],
+      },
+      {
+        field: 'outputMode',
+        is: ['records'],
       },
     ],
   },
