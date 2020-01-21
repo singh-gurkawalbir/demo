@@ -135,7 +135,7 @@ function DynaSelectResource(props) {
   );
 
   useEffect(() => {
-    if (!appTypeIsStatic && options.appType) {
+    if (!appTypeIsStatic && options.appType && !!value) {
       onFieldChange(id, '');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
