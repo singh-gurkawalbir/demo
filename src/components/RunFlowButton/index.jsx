@@ -147,11 +147,27 @@ export default function RunFlowButton({
         fileContent = data;
       }
 
-      dispatch(actions.flow.runDataLoader({ flowId, fileContent }));
+      dispatch(
+        actions.flow.runDataLoader({
+          flowId,
+          fileContent,
+          fileType: dataLoaderFileType,
+        })
+      );
+      enqueueSnackbar({
+        message: `${flowDetails.name} has been added to your queue.`,
+      });
 
       if (onRunStart) onRunStart();
     },
-    [dataLoaderFileType, dispatch, enqueueSnackbar, flowId, onRunStart]
+    [
+      dataLoaderFileType,
+      dispatch,
+      enqueueSnackbar,
+      flowDetails.name,
+      flowId,
+      onRunStart,
+    ]
   );
   const handleFileChange = useCallback(
     e => {

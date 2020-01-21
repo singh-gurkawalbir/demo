@@ -45,10 +45,15 @@ const styles1 = theme => ({
   message: {
     display: 'flex',
     alignItems: 'center',
+    // TODO: Dave network snackbar variant is error typography and background both are in red color, temp fix.
+    '& > [class*="Error"]': {
+      color: '#fff',
+    },
   },
   snackbarContentWrapper: {
     '& > div:first-child': {
       maxWidth: '90%',
+      wordBreak: 'break-word',
     },
   },
   flexGrow: 0,

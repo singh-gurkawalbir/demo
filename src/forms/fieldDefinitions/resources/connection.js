@@ -750,6 +750,7 @@ export default {
   'http.baseURI': {
     type: 'text',
     label: 'Base URI',
+    required: true,
     requiredWhen: [
       {
         field: 'http.auth.type',
@@ -841,6 +842,27 @@ export default {
     type: 'text',
     label: 'Ping Success Values',
     delimiter: ',',
+  },
+  'http.ping.failPath': {
+    type: 'text',
+    label: 'Ping Fail Path',
+    visibleWhen: [
+      {
+        field: 'outputMode',
+        is: ['records'],
+      },
+    ],
+  },
+  'http.ping.failValues': {
+    type: 'text',
+    delimiter: ',',
+    label: 'Ping Fail Values',
+    visibleWhen: [
+      {
+        field: 'outputMode',
+        is: ['records'],
+      },
+    ],
   },
   'http.ping.errorPath': {
     type: 'text',
@@ -947,6 +969,7 @@ export default {
     type: 'text',
     label: 'Token',
     inputType: 'password',
+    required: true,
     defaultValue: '',
     description:
       'Note: for security reasons this field must always be re-entered.',
@@ -954,6 +977,7 @@ export default {
   'http.auth.token.location': {
     type: 'select',
     label: 'Location',
+    required: true,
     defaultValue: r =>
       r &&
       r.http &&
@@ -984,6 +1008,7 @@ export default {
   'http.auth.token.scheme': {
     type: 'select',
     label: 'Scheme',
+    required: true,
     defaultValue: r =>
       (r &&
         r.http &&
@@ -1005,6 +1030,7 @@ export default {
   'http.auth.token.paramName': {
     type: 'text',
     label: 'Parameter Name',
+    required: true,
   },
   'http.auth.token.refreshMethod': {
     type: 'select',
@@ -1041,6 +1067,7 @@ export default {
   'http.auth.token.refreshMediaType': {
     type: 'select',
     label: 'Refresh Media Type',
+    required: true,
     options: [
       {
         items: [
@@ -1061,6 +1088,7 @@ export default {
   'http.auth.token.refreshToken': {
     type: 'text',
     inputType: 'password',
+    required: true,
     defaultValue: '',
     description:
       'Note: for security reasons this field must always be re-entered.',
@@ -1137,6 +1165,7 @@ export default {
   'http.unencrypted': {
     type: 'editor',
     mode: 'json',
+    required: true,
     label: 'Unencrypted',
   },
   'http.encrypted': {
@@ -2405,10 +2434,14 @@ export default {
   'dynamodb.aws.accessKeyId': {
     type: 'text',
     label: 'Access Key Id',
+    required: true,
   },
   'dynamodb.aws.secretAccessKey': {
     type: 'text',
     label: 'Secret Access Key',
+    inputType: 'password',
+    defaultValue: '',
+    required: true,
   },
   // #endregion dynamodb
 

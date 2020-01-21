@@ -8,6 +8,7 @@ import { createFormValuesPatchSet, SCOPES } from '../resourceForm';
 import { evaluateExternalProcessor } from '../../sagas/editor';
 import { getCsvFromXlsx } from '../../utils/file';
 import { processJsonSampleData } from '../../utils/sampleData';
+import { getFormattedResourceForPreview } from '../../utils/flowData';
 import { pageProcessorPreview } from './utils/previewCalls';
 
 /*
@@ -61,6 +62,10 @@ function* getPreviewData({ resourceId, resourceType, values, runOffline }) {
     resourceId,
     resourceType,
   });
+
+  // 'getFormattedResourceForPreview' util removes unnecessary props of resource that should not be sent in preview calls
+  // Example: "type": "once" should not be sent while previewing
+  body = getFormattedResourceForPreview(body);
 
   if (runOffline && body.rawData) {
     body = {
@@ -148,6 +153,14 @@ function* processRawData({ resourceId, resourceType, values = {}, stage }) {
   const { type, formValues } = values;
   let { file } = values;
 
+  // Add file type and file body as part of the state with a 'rawFile'
+  yield put(
+    actions.sampleData.update(
+      resourceId,
+      { data: [{ body: file, type }] },
+      'rawFile'
+    )
+  );
   // Update Raw Data with the file uploaded before parsing
   yield put(
     actions.sampleData.update(resourceId, { data: [{ body: file }] }, 'raw')

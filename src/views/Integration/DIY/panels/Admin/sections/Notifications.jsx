@@ -6,7 +6,7 @@ import actions from '../../../../../../actions';
 import DynaForm from '../../../../../../components/DynaForm';
 import DynaSubmit from '../../../../../../components/DynaForm/DynaSubmit';
 import LoadResources from '../../../../../../components/LoadResources';
-import PanelHeader from '../../../../common/PanelHeader';
+import PanelHeader from '../../../../../../components/PanelHeader';
 
 export default function NotificationsSection({ integrationId }) {
   const dispatch = useDispatch();
@@ -28,6 +28,7 @@ export default function NotificationsSection({ integrationId }) {
     fieldMap: {
       connections: {
         id: 'connections',
+        helpKey: 'notifications.connections',
         name: 'connections',
         type: 'multiselect',
         valueDelimiter: ',',
@@ -37,6 +38,7 @@ export default function NotificationsSection({ integrationId }) {
       },
       flows: {
         id: 'flows',
+        helpKey: 'notifications.jobErrors',
         name: 'flows',
         type: 'multiselect',
         valueDelimiter: ',',

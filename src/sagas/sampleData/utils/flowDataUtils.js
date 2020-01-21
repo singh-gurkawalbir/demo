@@ -10,7 +10,10 @@ import {
   requestSampleDataWithContext,
 } from '../flows';
 import getPreviewOptionsForResource from '../flows/pageProcessorPreviewOptions';
-import { generateDefaultExtractsObject } from '../../../utils/flowData';
+import {
+  generateDefaultExtractsObject,
+  getFormattedResourceForPreview,
+} from '../../../utils/flowData';
 
 /*
  * Returns PG/PP Document saved on Flow Doc.
@@ -83,7 +86,7 @@ export function* fetchResourceDataForNewFlowResource({
     return { ...newResource, oneToMany };
   }
 
-  return newResource;
+  return getFormattedResourceForPreview(newResource);
 }
 
 export function* fetchFlowResources({ flow, type, eliminateDataProcessors }) {
@@ -107,10 +110,16 @@ export function* fetchFlowResources({ flow, type, eliminateDataProcessors }) {
       if (resource) {
         const { transform, filter, hooks, ...rest } = resource;
 
+        // getFormattedResourceForPreview util removes unnecessary props of resource that should not be sent in preview calls
+        // Example: type: once should not be sent while previewing
         if (eliminateDataProcessors) {
-          resourceMap[resourceId] = { doc: rest };
+          resourceMap[resourceId] = {
+            doc: getFormattedResourceForPreview(rest),
+          };
         } else {
-          resourceMap[resourceId] = { doc: resource };
+          resourceMap[resourceId] = {
+            doc: getFormattedResourceForPreview(resource),
+          };
         }
 
         resourceMap[resourceId].options = {};
@@ -149,6 +158,7 @@ export function* requestSampleDataForImports({
   flowId,
   resourceId,
   resourceType,
+  hidden = true,
   sampleDataStage,
 }) {
   try {
@@ -158,6 +168,7 @@ export function* requestSampleDataForImports({
           flowId,
           _pageProcessorId: resourceId,
           resourceType,
+          hidden,
           previewType: sampleDataStage,
         });
         break;
@@ -345,7 +356,7 @@ export function getPreProcessedResponseMappingData({
 
   // Incase of lookups , add preProcessedData as part of data
   if (resourceType === 'exports') {
-    extractsObj.data = preProcessedData || '';
+    extractsObj.data = [preProcessedData] || '';
 
     return extractsObj;
   }

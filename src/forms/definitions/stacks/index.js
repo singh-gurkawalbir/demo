@@ -21,4 +21,19 @@ export default {
       'lambda.language',
     ],
   },
+  preSave: formValues => {
+    const newValues = { ...formValues };
+
+    if (newValues['/type'] === 'server') {
+      delete newValues['/lambda/accessKeyId'];
+      delete newValues['/lambda/secretAccessKey'];
+      delete newValues['/lambda/awsRegion'];
+      delete newValues['/lambda/functionName'];
+      delete newValues['/lambda/language'];
+    } else {
+      delete newValues['/server/hostURI'];
+    }
+
+    return newValues;
+  },
 };

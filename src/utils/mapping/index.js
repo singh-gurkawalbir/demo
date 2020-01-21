@@ -126,6 +126,7 @@ export default {
         return '/mapping';
       case adaptorTypeMap.XMLImport:
       case adaptorTypeMap.MongodbImport:
+      case adaptorTypeMap.DynamodbImport:
       case adaptorTypeMap.RDBMSImport:
       default:
     }
@@ -158,6 +159,7 @@ export default {
         return 'Wrapper Field';
       case adaptorTypeMap.XMLImport:
       case adaptorTypeMap.MongodbImport:
+      case adaptorTypeMap.DynamodbImport:
       case adaptorTypeMap.RDBMSImport:
       default:
     }
@@ -193,6 +195,7 @@ export default {
         break;
       case adaptorTypeMap.XMLImport:
       case adaptorTypeMap.MongodbImport:
+      case adaptorTypeMap.DynamodbImport:
       case adaptorTypeMap.RDBMSImport:
       default:
     }
@@ -262,6 +265,7 @@ export default {
       case adaptorTypeMap.S3Import:
       case adaptorTypeMap.XMLImport:
       case adaptorTypeMap.MongodbImport:
+      case adaptorTypeMap.DynamodbImport:
       case adaptorTypeMap.WrapperImport:
       case adaptorTypeMap.RDBMSImport:
         return mappingUtil.getFieldsAndListMappings({
@@ -303,6 +307,7 @@ export default {
       case adaptorTypeMap.S3Import:
       case adaptorTypeMap.XMLImport:
       case adaptorTypeMap.MongodbImport:
+      case adaptorTypeMap.DynamodbImport:
       case adaptorTypeMap.WrapperImport:
       case adaptorTypeMap.RDBMSImport:
         return mappingUtil.generateMappingFieldsAndList({
@@ -586,6 +591,7 @@ export default {
 
   validateMappings: (mappings, lookups) => {
     const duplicateMappings = mappings
+      .filter(e => !!e.generate)
       .map(e => e.generate)
       .map((e, i, final) => final.indexOf(e) !== i && i)
       .filter(obj => mappings[obj])
@@ -629,19 +635,6 @@ export default {
         errMessage: `Extract Fields missing for field(s): ${missingGeneratesNames.join(
           ','
         )}`,
-      };
-    }
-
-    const mappingsWithoutGenerate = mappings.filter(mapping => {
-      if (!mapping.generate) return true;
-
-      return false;
-    });
-
-    if (mappingsWithoutGenerate.length) {
-      return {
-        isSuccess: false,
-        errMessage: 'Generate Fields missing for mapping(s)',
       };
     }
 

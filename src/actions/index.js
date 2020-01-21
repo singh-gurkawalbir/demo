@@ -694,6 +694,8 @@ const stack = {
     action(actionTypes.STACK.USER_SHARING_TOGGLE, { userId }),
   toggledUserStackSharing: ({ userId }) =>
     action(actionTypes.STACK.USER_SHARING_TOGGLED, { id: userId }),
+  reInviteStackUser: (userInfo, userId) =>
+    action(actionTypes.STACK.USER_REINVITE, { userInfo, userId }),
 };
 const user = {
   profile: {
@@ -867,6 +869,7 @@ const cancelTask = () => action(actionTypes.CANCEL_TASK, {});
 const editor = {
   init: (id, processor, options) =>
     action(actionTypes.EDITOR_INIT, { id, processor, options }),
+  changeLayout: id => action(actionTypes.EDITOR_CHANGE_LAYOUT, { id }),
   patch: (id, patch) => action(actionTypes.EDITOR_PATCH, { id, patch }),
   reset: id => action(actionTypes.EDITOR_RESET, { id }),
   updateHelperFunctions: helperFunctions =>
@@ -1099,11 +1102,12 @@ const job = {
 const flow = {
   run: ({ flowId, customStartDate, options }) =>
     action(actionTypes.FLOW.RUN, { flowId, customStartDate, options }),
-  runDataLoader: ({ flowId, customStartDate, fileContent }) =>
+  runDataLoader: ({ flowId, customStartDate, fileContent, fileType }) =>
     action(actionTypes.FLOW.RUN_DATA_LOADER, {
       flowId,
       customStartDate,
       fileContent,
+      fileType,
     }),
   requestLastExportDateTime: ({ flowId }) =>
     action(actionTypes.FLOW.REQUEST_LAST_EXPORT_DATE_TIME, { flowId }),
