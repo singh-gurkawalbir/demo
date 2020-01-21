@@ -5,7 +5,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import * as selectors from '../../../../../../reducers';
 import { integrationSettingsToDynaFormMetadata } from '../../../../../../forms/utils';
-import { FormStateManager } from '../../../../../../components/ResourceFormFactory';
 import DrawerTitleBar from '../../../../../../components/drawer/TitleBar';
 import LoadResources from '../../../../../../components/LoadResources';
 import { useIASettingsStateWithHandleClose, IAFormStateManager } from '..';

@@ -15,9 +15,16 @@ export const useEnableButtonOnTouchedForm = ({
   integrationId,
   flowId,
   sectionId,
+  isFormTouchedForMeta,
 }) => {
   const dispatch = useDispatch();
-  const formTouched = useMemo(() => isFormTouched(fields), [fields]);
+  const formTouched = useMemo(
+    () =>
+      isFormTouchedForMeta === undefined
+        ? isFormTouched(fields)
+        : isFormTouchedForMeta,
+    [fields, isFormTouchedForMeta]
+  );
   const onClickWhenValid = useCallback(
     value => {
       if (IAForm)
