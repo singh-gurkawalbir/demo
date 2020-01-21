@@ -1,5 +1,5 @@
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import {
   Route,
   Link,
@@ -21,6 +21,7 @@ import SettingsDrawer from './SettingsDrawer';
 import CategoryMappingDrawer from './CategoryMappingDrawer';
 import MappingDrawer from './MappingDrawer';
 import actions from '../../../../../actions';
+import { FormStateManager } from '../../../../../components/ResourceFormFactory';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -47,6 +48,34 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+export const IAFormStateManager = props => {
+  const dispatch = useDispatch();
+  const { integrationId, flowId, sectionId } = props;
+  const allProps = {
+    ...props,
+    resourceType: 'integrations',
+    resourceId: integrationId,
+  };
+
+  useEffect(() => {
+    dispatch(
+      actions.integrationApp.settings.initComplete(
+        integrationId,
+        flowId,
+        sectionId
+      )
+    );
+
+    return () => {
+      dispatch(
+        actions.integrationApp.settings.clear(integrationId, flowId, sectionId)
+      );
+    };
+  }, [dispatch, flowId, integrationId, sectionId]);
+
+  return <FormStateManager {...allProps} IAForm />;
+};
+
 export const useIASettingsStateWithHandleClose = (
   integrationId,
   flowId,
@@ -55,16 +84,16 @@ export const useIASettingsStateWithHandleClose = (
 ) => {
   const dispatch = useDispatch();
   const history = useHistory();
-  const formState = useSelector(state => {
-    const formState = selectors.integrationAppSettingsFormState(
-      state,
-      integrationId,
-      flowId,
-      sectionId
-    );
-
-    return { ...formState, initComplete: true };
-  }, shallowEqual);
+  const formState = useSelector(
+    state =>
+      selectors.integrationAppSettingsFormState(
+        state,
+        integrationId,
+        flowId,
+        sectionId
+      ),
+    shallowEqual
+  );
   const IASettingsHandleClose = useCallback(() => {
     dispatch(
       actions.integrationApp.settings.clear(integrationId, flowId, sectionId)

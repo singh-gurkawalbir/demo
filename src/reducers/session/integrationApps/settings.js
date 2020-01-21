@@ -28,8 +28,23 @@ export default (state = {}, action) => {
   return produce(state, draft => {
     // eslint-disable-next-line default-case
     switch (type) {
+      case actionTypes.INTEGRATION_APPS.SETTINGS.FORM.INIT_COMPLETE:
+        draft[key] = {
+          initComplete: true,
+          showFormValidationsBeforeTouch: false,
+        };
+        break;
+      case actionTypes.INTEGRATION_APPS.SETTINGS.FORM
+        .SHOW_FORM_VALIDATION_ERRORS:
+        if (!draft[key]) draft[key] = {};
+        draft[key].showFormValidationsBeforeTouch = true;
+        break;
+
       case actionTypes.INTEGRATION_APPS.SETTINGS.UPDATE:
-        draft[key] = { submitComplete: false };
+        if (!draft[key]) draft[key] = {};
+        delete draft[key].submitFailed;
+
+        draft[key].submitComplete = false;
         break;
       case actionTypes.INTEGRATION_APPS.SETTINGS.ADDON_LICENSES_METADATA_UPDATE:
         if (response && response.addOns) {
@@ -68,10 +83,16 @@ export default (state = {}, action) => {
         break;
 
       case actionTypes.INTEGRATION_APPS.SETTINGS.FORM.SUBMIT_COMPLETE:
-        draft[key] = { submitComplete: true };
+        if (!draft[key]) draft[key] = {};
+        delete draft[key].submitFailed;
+
+        draft[key].submitComplete = true;
         break;
       case actionTypes.INTEGRATION_APPS.SETTINGS.FORM.SUBMIT_FAILED:
-        draft[key] = { submitFailed: true };
+        if (!draft[key]) draft[key] = {};
+        delete draft[key].submitComplete;
+
+        draft[key].submitFailed = true;
         break;
       case actionTypes.INTEGRATION_APPS.SETTINGS.FORM.CLEAR:
         delete draft[key];

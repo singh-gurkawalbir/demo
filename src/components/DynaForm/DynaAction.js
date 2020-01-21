@@ -11,19 +11,42 @@ export const useEnableButtonOnTouchedForm = ({
   formIsValid,
   resourceId,
   resourceType,
+  IAForm,
+  integrationId,
+  flowId,
+  sectionId,
 }) => {
   const dispatch = useDispatch();
   const formTouched = useMemo(() => isFormTouched(fields), [fields]);
   const onClickWhenValid = useCallback(
     value => {
-      dispatch(
-        actions.resourceForm.showFormValidations(resourceType, resourceId)
-      );
+      if (IAForm)
+        dispatch(
+          actions.integrationApp.settings.showFormValidations(
+            integrationId,
+            flowId,
+            sectionId
+          )
+        );
+      else
+        dispatch(
+          actions.resourceForm.showFormValidations(resourceType, resourceId)
+        );
 
       // Util user resolves form validation do we allow the onClick to take place ...
       if (formIsValid) onClick(value);
     },
-    [dispatch, formIsValid, onClick, resourceId, resourceType]
+    [
+      IAForm,
+      dispatch,
+      flowId,
+      formIsValid,
+      integrationId,
+      onClick,
+      resourceId,
+      resourceType,
+      sectionId,
+    ]
   );
 
   return { formTouched, onClickWhenValid };
@@ -32,7 +55,6 @@ export const useEnableButtonOnTouchedForm = ({
 function DynaAction(props) {
   const {
     disabled,
-    onClick,
     children,
     className,
     value,
@@ -42,16 +64,11 @@ function DynaAction(props) {
     fields,
     visibleWhen,
     visibleWhenAll,
-    resourceType,
-    resourceId,
     isValid,
   } = props;
   const { formTouched, onClickWhenValid } = useEnableButtonOnTouchedForm({
-    onClick,
-    fields,
+    ...props,
     formIsValid: isValid,
-    resourceId,
-    resourceType,
   });
 
   useEffect(() => {

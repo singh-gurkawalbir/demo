@@ -8,7 +8,7 @@ import { integrationSettingsToDynaFormMetadata } from '../../../../../../forms/u
 import { FormStateManager } from '../../../../../../components/ResourceFormFactory';
 import DrawerTitleBar from '../../../../../../components/drawer/TitleBar';
 import LoadResources from '../../../../../../components/LoadResources';
-import { useIASettingsStateWithHandleClose } from '..';
+import { useIASettingsStateWithHandleClose, IAFormStateManager } from '..';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -77,7 +77,7 @@ function SettingsDrawer({ integrationId, storeId, parentUrl }) {
       onClose={handleClose}>
       <DrawerTitleBar title={`Settings: ${flowName}`} />
 
-      <FormStateManager
+      <IAFormStateManager
         className={classes.settingsForm}
         integrationId={integrationId}
         flowId={flowId}
