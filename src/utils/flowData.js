@@ -3,11 +3,13 @@
  */
 import { keys } from 'lodash';
 import moment from 'moment';
+import { deepClone } from 'fast-json-patch';
 import {
   isRealTimeOrDistributedResource,
   isFileAdaptor,
   isBlobTypeResource,
   isRestCsvMediaTypeExport,
+  adaptorTypeMap,
 } from './resource';
 import {
   LookupResponseMappingExtracts,
@@ -116,6 +118,25 @@ export const getLastExportDateTime = () =>
   moment()
     .add(-1, 'y')
     .toISOString();
+
+export const getFormattedResourceForPreview = resourceObj => {
+  const resource = deepClone(resourceObj);
+
+  // type Once need not be passed in preview as it gets executed in preview call
+  // so remove type once
+  if (resource && resource.type === 'once') {
+    delete resource.type;
+    const { adaptorType } = resource;
+    const appType = adaptorType && adaptorTypeMap[adaptorType];
+
+    // Manually removing once doc incase of preview to restrict execution on once query - Bug fix IO-11988
+    if (appType && resource[appType] && resource[appType].once) {
+      delete resource[appType].once;
+    }
+  }
+
+  return resource;
+};
 
 export const getAddedLookupInFlow = (oldFlow = {}, patchSet = []) => {
   const { pageProcessors = [] } = oldFlow;

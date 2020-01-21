@@ -1,10 +1,11 @@
 import { withStyles } from '@material-ui/core/styles';
-import { useCallback, useState, useEffect } from 'react';
+import { useCallback, useState, useEffect, Fragment } from 'react';
 import { Button } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
+import Spinner from '../../Spinner';
 import { useLoadingSnackbarOnSave } from '.';
 
 const styles = theme => ({
@@ -21,12 +22,16 @@ const MappingSaveButton = props => {
     color = 'secondary',
     disabled = false,
     dataTest,
+    showOnlyOnChanges,
     onClose,
   } = props;
   const [saveTrigerred, setSaveTriggered] = useState(false);
   const [enquesnackbar] = useEnqueueSnackbar();
   const { validationErrMsg } = useSelector(state =>
     selectors.mapping(state, id)
+  );
+  const mappingsChanged = useSelector(state =>
+    selectors.mappingsChanged(state, id)
   );
   const dispatch = useDispatch();
   const { saveTerminated, saveCompleted } = useSelector(state =>
@@ -61,16 +66,25 @@ const MappingSaveButton = props => {
     handleSubmitForm();
   };
 
+  if (showOnlyOnChanges && !mappingsChanged) {
+    return <div />;
+  }
+
   return (
     <Button
       data-test={dataTest}
       variant={variant}
       color={color}
-      // className={className}
-      disabled={disabled}
-      // onClick={handleSubmitForm}
+      disabled={disabled || !mappingsChanged}
       onClick={handleButtonClick}>
-      {disableSave ? 'Saving' : submitButtonLabel}
+      {disableSave ? (
+        <Fragment>
+          <Spinner size={16} />
+          Saving
+        </Fragment>
+      ) : (
+        <Fragment>{submitButtonLabel}</Fragment>
+      )}
     </Button>
   );
 };
