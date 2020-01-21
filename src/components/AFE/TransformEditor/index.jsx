@@ -9,9 +9,13 @@ import PanelGridItem from '../PanelGridItem';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
 import ErrorGridItem from '../ErrorGridItem';
+import layouts from '../layout/defaultDialogLayout';
 
 const useStyles = makeStyles({
-  template: {
+  ...layouts,
+  // Overriding default columnTemplate to suite our layout
+  // TODO: @Azhar If this is the default layout we are following across all editors Can we replace in default layouts?
+  columnTemplate: {
     gridTemplateColumns: '2fr 3fr 2fr',
     gridTemplateRows: '1fr 0fr',
     gridTemplateAreas: '"data rule result" "error error error"',
@@ -19,7 +23,7 @@ const useStyles = makeStyles({
 });
 
 export default function TransformEditor(props) {
-  const { editorId, disabled } = props;
+  const { editorId, disabled, layout = 'column' } = props;
   const classes = useStyles();
   const { data, result, error, initChangeIdentifier } = useSelector(state =>
     selectors.editor(state, editorId)
@@ -56,7 +60,7 @@ export default function TransformEditor(props) {
   return (
     <PanelGrid
       key={`${editorId}-${initChangeIdentifier}`}
-      className={classes.template}>
+      className={classes[`${layout}Template`]}>
       <PanelGridItem gridArea="rule">
         <PanelTitle title="Transform Rules" />
         <TransformPanel

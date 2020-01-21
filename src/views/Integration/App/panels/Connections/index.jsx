@@ -11,7 +11,7 @@ import * as selectors from '../../../../../reducers';
 import IconTextButton from '../../../../../components/IconTextButton';
 import AddIcon from '../../../../../components/icons/AddIcon';
 import ConnectionsIcon from '../../../../../components/icons/ConnectionsIcon';
-import PanelHeader from '../../../common/PanelHeader';
+import PanelHeader from '../../../../../components/PanelHeader';
 
 const useStyles = makeStyles(theme => ({
   root: {

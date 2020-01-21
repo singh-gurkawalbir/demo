@@ -1,4 +1,5 @@
 import { makeStyles } from '@material-ui/core/styles';
+import clsx from 'clsx';
 import Typography from '@material-ui/core/Typography';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
@@ -20,7 +21,7 @@ const useStyles = makeStyles(theme => ({
     },
     '& button.Mui-selected': {
       borderRadius: 24,
-      backgroundColor: theme.palette.secondary.dark,
+      backgroundColor: theme.palette.primary.main,
       '& p': {
         color: theme.palette.common.white,
       },
@@ -31,7 +32,7 @@ const useStyles = makeStyles(theme => ({
       borderRadius: 24,
     },
     '& button.Mui-selected:hover': {
-      backgroundColor: theme.palette.secondary.main,
+      backgroundColor: theme.palette.primary.light,
     },
     '& button:first-child': {
       borderTopLeftRadius: 24,
@@ -58,6 +59,7 @@ export default function TextToggle({
   minWidth,
   variant,
   onChange,
+  className,
   ...rest
 }) {
   const classes = useStyles({ minWidth });
@@ -73,7 +75,7 @@ export default function TextToggle({
   return (
     <ToggleButtonGroup
       {...rest}
-      className={classes.root}
+      className={clsx(classes.root, className)}
       value={value}
       onChange={handleChange}>
       {options.map(item => (

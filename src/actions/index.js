@@ -416,6 +416,38 @@ const integrationApp = {
         integrationId,
         redirectTo,
       }),
+    requestCategoryMappingMetadata: (
+      integrationId,
+      flowId,
+      categoryId,
+      options
+    ) =>
+      action(
+        actionTypes.INTEGRATION_APPS.SETTINGS.REQUEST_CATEGORY_MAPPING_METADATA,
+        { integrationId, flowId, categoryId, options }
+      ),
+    receivedCategoryMappingMetadata: (integrationId, flowId, metadata) =>
+      action(
+        actionTypes.INTEGRATION_APPS.SETTINGS
+          .RECEIVED_CATEGORY_MAPPING_METADATA,
+        { integrationId, flowId, metadata }
+      ),
+    receivedCategoryMappingGeneratesMetadata: (
+      integrationId,
+      flowId,
+      metadata
+    ) =>
+      action(
+        actionTypes.INTEGRATION_APPS.SETTINGS
+          .RECEIVED_CATEGORY_MAPPING_GENERATES_METADATA,
+        { integrationId, flowId, metadata }
+      ),
+    setCategoryMappingFilters: (integrationId, flowId, filters) =>
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPING_FILTERS, {
+        integrationId,
+        flowId,
+        filters,
+      }),
     clearRedirect: integrationId =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.CLEAR_REDIRECT, {
         integrationId,
@@ -817,8 +849,13 @@ const app = {
   errored: () => action(actionTypes.APP_ERRORED),
   clearError: () => action(actionTypes.APP_CLEAR_ERROR),
 };
-const postFeedback = (resourceType, fieldId, helpful) =>
-  action(actionTypes.POST_FEEDBACK, { resourceType, fieldId, helpful });
+const postFeedback = (resourceType, fieldId, helpful, feedback) =>
+  action(actionTypes.POST_FEEDBACK, {
+    resourceType,
+    fieldId,
+    helpful,
+    feedback,
+  });
 const toggleBanner = () => action(actionTypes.APP_TOGGLE_BANNER);
 const toggleDrawer = () => action(actionTypes.APP_TOGGLE_DRAWER);
 const patchFilter = (name, filter) =>
@@ -832,6 +869,7 @@ const cancelTask = () => action(actionTypes.CANCEL_TASK, {});
 const editor = {
   init: (id, processor, options) =>
     action(actionTypes.EDITOR_INIT, { id, processor, options }),
+  changeLayout: id => action(actionTypes.EDITOR_CHANGE_LAYOUT, { id }),
   patch: (id, patch) => action(actionTypes.EDITOR_PATCH, { id, patch }),
   reset: id => action(actionTypes.EDITOR_RESET, { id }),
   updateHelperFunctions: helperFunctions =>
@@ -1063,8 +1101,15 @@ const job = {
   },
 };
 const flow = {
-  run: ({ flowId, customStartDate }) =>
-    action(actionTypes.FLOW.RUN, { flowId, customStartDate }),
+  run: ({ flowId, customStartDate, options }) =>
+    action(actionTypes.FLOW.RUN, { flowId, customStartDate, options }),
+  runDataLoader: ({ flowId, customStartDate, fileContent, fileType }) =>
+    action(actionTypes.FLOW.RUN_DATA_LOADER, {
+      flowId,
+      customStartDate,
+      fileContent,
+      fileType,
+    }),
   requestLastExportDateTime: ({ flowId }) =>
     action(actionTypes.FLOW.REQUEST_LAST_EXPORT_DATE_TIME, { flowId }),
   receivedLastExportDateTime: (flowId, response) =>

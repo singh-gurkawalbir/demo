@@ -1,6 +1,9 @@
-import { useState, Fragment } from 'react';
+import { useState, Fragment, useMemo, useCallback } from 'react';
+import { useDispatch } from 'react-redux';
 import Button from '@material-ui/core/Button';
-import TransformEditorDialog from '../../../AFE/TransformEditor/Dialog';
+import actions from '../../../../actions';
+import TransformToggleEditorDialog from '../../../AFE/TransformEditor/TransformToggleEditorDialog';
+import { hooksToFunctionNamesMap } from '../../../../utils/hooks';
 
 export default function DynaResponseTransformEditor(props) {
   const {
@@ -13,6 +16,7 @@ export default function DynaResponseTransformEditor(props) {
     options = {},
   } = props;
   const [showEditor, setShowEditor] = useState(false);
+  const dispatch = useDispatch();
   const handleEditorClick = () => {
     setShowEditor(!showEditor);
   };
@@ -20,24 +24,67 @@ export default function DynaResponseTransformEditor(props) {
   /*
    * Creates transform rules as per required format to be saved
    */
-  const constructTransformData = rule => ({
-    version: 1,
-    rules: rule ? [rule] : [[]],
-    rulesCollection: { mappings: [rule] },
-  });
-  const handleClose = (shouldCommit, editorValues) => {
-    if (shouldCommit) {
-      const { rule } = editorValues;
+  const constructTransformData = values => {
+    const { processor, rule, scriptId, entryFunction } = values;
+    const type = processor === 'transform' ? 'expression' : 'script';
 
-      onFieldChange(id, constructTransformData(rule));
-    }
-
-    setShowEditor(false);
+    return {
+      type,
+      expression: {
+        version: 1,
+        rules: rule ? [rule] : [[]],
+      },
+      script: {
+        _scriptId: scriptId,
+        function: entryFunction,
+      },
+    };
   };
 
+  const saveScript = useCallback(
+    values => {
+      const { code, scriptId } = values;
+      const patchSet = [
+        {
+          op: 'replace',
+          path: '/content',
+          value: code,
+        },
+      ];
+
+      dispatch(actions.resource.patchStaged(scriptId, patchSet, 'value'));
+      dispatch(actions.resource.commitStaged('scripts', scriptId, 'value'));
+    },
+    [dispatch]
+  );
+  const handleClose = useCallback(
+    (shouldCommit, editorValues) => {
+      if (shouldCommit) {
+        const responseTransformData = constructTransformData(editorValues);
+
+        if (responseTransformData.type === 'script') {
+          saveScript(editorValues);
+        }
+
+        onFieldChange(id, responseTransformData);
+      }
+
+      setShowEditor(false);
+    },
+    [id, onFieldChange, saveScript]
+  );
   // when we launch the editor we are only going to entertain the first
   // rule set
-  const firstRuleSet = value && value.rules && value.rules[0];
+  const { type, rule, scriptId, entryFunction } = useMemo(() => {
+    const { type, script = {}, expression = {} } = value || {};
+
+    return {
+      type,
+      rule: expression.rules && expression.rules[0],
+      scriptId: script._scriptId,
+      entryFunction: script.function,
+    };
+  }, [value]);
 
   // We are deliberately concat the id and resourceId, in order to create
   // a more unique key for the transform editor launch per resource. This will
@@ -46,13 +93,17 @@ export default function DynaResponseTransformEditor(props) {
   return (
     <Fragment>
       {showEditor && (
-        <TransformEditorDialog
+        <TransformToggleEditorDialog
           title="Transform Mapping"
           id={id + resourceId}
-          data={options.sampleResponseData}
-          rule={firstRuleSet}
-          onClose={handleClose}
           disabled={disabled}
+          data={options.sampleResponseData}
+          type={type}
+          scriptId={scriptId}
+          rule={rule}
+          entryFunction={entryFunction || hooksToFunctionNamesMap.transform}
+          insertStubKey="transform"
+          onClose={handleClose}
         />
       )}
       <Button

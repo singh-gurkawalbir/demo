@@ -10,8 +10,6 @@ import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import Close from '../../../components/icons/CloseIcon';
 
-// Just a temporary variable to increase width
-// TODO @Raghu: Discuss with Azhar and do this UI Fix
 const useStyles = makeStyles(theme => ({
   root: {
     zIndex: props => props.zIndex,
@@ -19,17 +17,24 @@ const useStyles = makeStyles(theme => ({
     borderColor: 'rgb(0,0,0,0.2)',
     borderLeft: 0,
     height: '100vh',
-    width: props => (props.match.isExact ? props.containerWidth : 150),
+    width: props => {
+      if (props.occupyFullWidth) return '100%';
+
+      return props.match.isExact ? 660 : 150;
+    },
     overflowX: 'hidden',
     overflowY: props => (props.match.isExact ? 'auto' : 'hidden'),
     boxShadow: `-5px 0 8px rgba(0,0,0,0.2)`,
-    backgroundColor: theme.palette.background.default,
   },
   form: {
     height: `calc(100vh - 136px)`,
-    width: props => (props.match.isExact ? undefined : props.containerWidth),
+    width: props => {
+      if (props.occupyFullWidth) return '100%';
+
+      return props.match.isExact ? undefined : 660;
+    },
     maxHeight: 'unset',
-    padding: '14px 24px',
+    padding: theme.spacing(3),
   },
   title: {
     display: 'flex',
@@ -67,9 +72,10 @@ const determineRequiredResources = type => {
 };
 
 export default function Panel(props) {
-  const { match, onClose, zIndex } = props;
+  const { match, onClose, zIndex, occupyFullWidth } = props;
   const { id, resourceType, operation } = match.params;
   const isNew = operation === 'add';
+  const classes = useStyles({ ...props, occupyFullWidth });
   const location = useLocation();
   const dispatch = useDispatch();
   const [enqueueSnackbar] = useEnqueueSnackbar();
@@ -95,9 +101,9 @@ export default function Panel(props) {
   let resourceLabel;
 
   if (resourceType === 'pageProcessor') {
-    resourceLabel = 'Page Processor';
+    resourceLabel = 'Destination / Lookup app';
   } else if (resourceType === 'pageGenerator') {
-    resourceLabel = 'Page Generator';
+    resourceLabel = 'Source app';
   } else {
     resourceLabel = MODEL_PLURAL_TO_LABEL[resourceType];
   }
@@ -138,24 +144,6 @@ export default function Panel(props) {
 
     return adaptorType.value.includes('Export') ? 'exports' : 'imports';
   }
-
-  const isPreviewPanelAvailableForResource = useSelector(state => {
-    // Incase of a new resource first step for flows , resourceType would be pg/pp in which case we don't show previewPanel
-    if (['pageGenerator', 'pageProcessor'].includes(resourceType)) return false;
-
-    // Returns a bool whether the resource has a preview panel or not
-    return selectors.isPreviewPanelAvailableForResource(
-      state,
-      id,
-      resourceType
-    );
-  });
-  // Altering drawer style based on the resource type and whether it has preview panel or not
-  // TODO : @Azhar Make the drawer with preview panel to occupy whole screen collapsing left panel
-  const classes = useStyles({
-    ...props,
-    containerWidth: isPreviewPanelAvailableForResource ? 1200 : 660,
-  });
 
   function getEditUrl(id) {
     // console.log(location);
@@ -237,7 +225,7 @@ export default function Panel(props) {
       <div className={classes.root}>
         <div className={classes.title}>
           <Typography variant="h3">
-            {isNew ? `Create` : 'Edit'} {resourceLabel}
+            {isNew ? `Create` : 'Edit'} {resourceLabel.toLowerCase()}
           </Typography>
           <IconButton
             data-test="closeFlowSchedule"

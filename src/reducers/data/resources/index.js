@@ -149,6 +149,8 @@ export default (state = {}, action) => {
         });
       }
 
+      // TODO: Raghu, we should move all this code into the "produce" function. Lets talk
+      // about it when you have time to refactor.
       if (resourceType === 'flows') {
         const newCollection =
           collection &&
@@ -286,9 +288,10 @@ export default (state = {}, action) => {
       return state;
     case actionTypes.ACCESSTOKEN_DELETE_PURGED:
       return produce(state, draft => {
-        draft.accesstokens = draft.accesstokens.filter(token => {
-          return !token.autoPurgeAt || new Date(token.autoPurgeAt) > new Date();
-        });
+        draft.accesstokens = draft.accesstokens.filter(
+          token =>
+            !token.autoPurgeAt || new Date(token.autoPurgeAt) > new Date()
+        );
       });
 
     default:

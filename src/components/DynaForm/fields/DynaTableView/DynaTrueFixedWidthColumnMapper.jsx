@@ -63,7 +63,13 @@ export default function DynaTrueFixedWidthColmnMapper({
 
   const onRowChange = (state, field, newValue) =>
     produce(state, draft => {
-      draft[field] = newValue;
+      if (
+        optionsMap.find(f => f.id === field && f.type === 'number') &&
+        // eslint-disable-next-line no-restricted-globals
+        !isNaN(newValue)
+      ) {
+        draft[field] = parseInt(newValue, 10);
+      } else draft[field] = newValue;
 
       if (['startPosition', 'endPosition'].includes(field)) {
         draft.length = draft.endPosition - draft.startPosition + 1;

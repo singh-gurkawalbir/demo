@@ -17,6 +17,7 @@ const useStyles = makeStyles(theme => ({
     '& li': {
       fontSize: 13,
       '& a': {
+        color: theme.palette.secondary.light,
         '&:hover': {
           textDecoration: 'none',
           color: theme.palette.primary.main,
@@ -122,9 +123,9 @@ const routes = [
       { path: '/users', breadcrumb: () => 'Users' },
       { path: '/uninstall', breadcrumb: () => 'Uninstall' },
       { path: '/connections', breadcrumb: () => 'Connections' },
-      { path: '/tokens', breadcrumb: () => 'API Tokens' },
+      { path: '/tokens', breadcrumb: () => 'API tokens' },
       { path: '/general', breadcrumb: () => 'General' },
-      { path: '/audit', breadcrumb: () => 'Audit Log' },
+      { path: '/audit', breadcrumb: () => 'Audit log' },
       { path: '/subscription', breadcrumb: () => 'Subscription' },
       { path: '/notifications', breadcrumb: () => 'Notifications' },
       { path: '/addons', breadcrumb: () => 'Add-ons' },
@@ -135,9 +136,9 @@ const routes = [
           { path: '/users', breadcrumb: () => 'Users' },
           { path: '/uninstall', breadcrumb: () => 'Uninstall' },
           { path: '/connections', breadcrumb: () => 'Connections' },
-          { path: '/tokens', breadcrumb: () => 'API Tokens' },
+          { path: '/tokens', breadcrumb: () => 'API tokens' },
           { path: '/general', breadcrumb: () => 'General' },
-          { path: '/audit', breadcrumb: () => 'Audit Log' },
+          { path: '/audit', breadcrumb: () => 'Audit log' },
           { path: '/subscription', breadcrumb: () => 'Subscription' },
           { path: '/addons', breadcrumb: () => 'Add-ons' },
           { path: '/notifications', breadcrumb: () => 'Notifications' },
@@ -184,7 +185,7 @@ const routes = [
       { path: '/users', breadcrumb: () => 'Users' },
       { path: '/profile', breadcrumb: () => 'Profile' },
       { path: '/subscription', breadcrumb: () => 'Subscription' },
-      { path: '/audit', breadcrumb: () => 'Audit Log' },
+      { path: '/audit', breadcrumb: () => 'Audit log' },
       { path: '/transfers', breadcrumb: () => 'Transfers' },
     ],
   },
@@ -193,7 +194,7 @@ const routes = [
   // Dev tools
   { path: '/pg/resources', breadcrumb: () => 'Resources' },
   { path: '/pg/editors', breadcrumb: () => 'Editor playground' },
-  { path: '/pg/permissions', breadcrumb: () => 'Permission Explorer' },
+  { path: '/pg/permissions', breadcrumb: () => 'Permission explorer' },
   {
     path: '/pg/:resourceType',
     breadcrumb: ({ resourceType }) => `${MODEL_PLURAL_TO_LABEL[resourceType]}s`,

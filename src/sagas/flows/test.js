@@ -15,18 +15,21 @@ describe('run saga', () => {
 
   test('should succeed on successful api call', () => {
     const saga = run({ flowId });
+
+    expect(saga.next(flowResource).value).toEqual(
+      select(selectors.resource, 'flows', flowId)
+    );
+
     const { path, opts } = getRequestOptions(actionTypes.FLOW.RUN, {
       resourceId: flowId,
     });
 
-    expect(saga.next().value).toEqual(call(apiCallWithRetry, { path, opts }));
+    expect(saga.next(flowResource).value).toEqual(
+      call(apiCallWithRetry, { path, opts })
+    );
     const response = { _jobId: 'j1', something: 'some thing' };
 
     expect(saga.next(response).value).toEqual(
-      select(selectors.resource, 'flows', flowId)
-    );
-
-    expect(saga.next(flowResource).value).toEqual(
       put(
         actions.job.receivedFamily({
           job: {
@@ -48,11 +51,18 @@ describe('run saga', () => {
 
   test('should handle api error properly', () => {
     const saga = run({ flowId });
+
+    expect(saga.next(flowResource).value).toEqual(
+      select(selectors.resource, 'flows', flowId)
+    );
+
     const { path, opts } = getRequestOptions(actionTypes.FLOW.RUN, {
       resourceId: flowId,
     });
 
-    expect(saga.next().value).toEqual(call(apiCallWithRetry, { path, opts }));
+    expect(saga.next(flowResource).value).toEqual(
+      call(apiCallWithRetry, { path, opts })
+    );
     expect(saga.throw(new Error()).value).toEqual(true);
     expect(saga.next().done).toEqual(true);
   });

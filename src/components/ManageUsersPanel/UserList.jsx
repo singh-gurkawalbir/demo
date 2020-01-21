@@ -1,16 +1,16 @@
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
+import {
+  Table,
+  TableBody,
+  TableHead,
+  TableRow,
+  TableCell,
+  IconButton,
+} from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
-import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import { withSnackbar } from 'notistack';
-import UserDialog from './UserDialog';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
 import {
@@ -19,7 +19,6 @@ import {
   ACCOUNT_IDS,
 } from '../../utils/constants';
 import UserDetail from './UserDetail';
-import { COMM_STATES } from '../../reducers/comms/networkComms';
 
 const mapStateToProps = (state, { integrationId }) => {
   const permissions = selectors.userPermissions(state);
@@ -70,25 +69,11 @@ const mapDispatchToProps = dispatch => ({
     marginTop: theme.spacing(3),
     overflowX: 'auto',
   },
-  title: {
-    float: 'left',
-    margin: theme.spacing(0, 0, 1, 1),
-  },
-  inviteUserButton: {
-    margin: theme.spacing(1),
-    textAlign: 'center',
-    float: 'right',
-  },
   table: {
     minWidth: 700,
   },
 }))
 class UserList extends Component {
-  state = {
-    selectedUserId: undefined,
-    showUserDialog: false,
-  };
-
   componentDidMount() {
     const { integrationId, requestIntegrationAShares, users } = this.props;
 
@@ -121,60 +106,22 @@ class UserList extends Component {
         </IconButton>
       ),
     });
-    this.setState({ showUserDialog: false });
-  }
-  handleActionClick(action, userId) {
-    switch (action) {
-      case 'create':
-        this.setState({
-          showUserDialog: true,
-          selectedUserId: undefined,
-        });
-        break;
-      case 'edit':
-        this.setState({
-          showUserDialog: true,
-          selectedUserId: userId,
-        });
-        break;
-      default:
-    }
   }
 
   render() {
-    const { showUserDialog, selectedUserId } = this.state;
-    const { classes, users, integrationId, permissions } = this.props;
+    const {
+      classes,
+      users,
+      integrationId,
+      permissions,
+      onEditUserClick,
+    } = this.props;
     const isAccountOwner =
       permissions.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER;
 
     return (
       <Fragment>
-        {showUserDialog && (
-          <UserDialog
-            id={selectedUserId}
-            onCancelClick={() => {
-              this.setState({ showUserDialog: false });
-            }}
-            successHandler={message => {
-              this.statusHandler({ status: COMM_STATES.SUCCESS, message });
-            }}
-          />
-        )}
         <div className={classes.root}>
-          <div>
-            {isAccountOwner && (
-              <Button
-                data-test="inviteUser"
-                className={classes.inviteUserButton}
-                variant="contained"
-                color="secondary"
-                onClick={() => {
-                  this.handleActionClick('create');
-                }}>
-                Invite User
-              </Button>
-            )}
-          </div>
           <Table className={classes.table}>
             <TableHead>
               <TableRow>
@@ -197,9 +144,7 @@ class UserList extends Component {
                     user={user}
                     integrationId={integrationId}
                     isAccountOwner={isAccountOwner}
-                    editClickHandler={userId => {
-                      this.handleActionClick('edit', userId);
-                    }}
+                    editClickHandler={onEditUserClick}
                     statusHandler={({ status, message }) => {
                       this.statusHandler({ status, message });
                     }}

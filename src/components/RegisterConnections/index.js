@@ -32,7 +32,7 @@ export default function RegisterConnections({ onClose, integrationId }) {
       show
       onClose={onClose}
       data-test="closeRegisterConnectionsDialog"
-      maxWidth="lg">
+      maxWidth="xl">
       <div>Register Connections</div>
       <div>
         <LoadResources required resources="connections">

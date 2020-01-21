@@ -1,6 +1,7 @@
+import { Fragment, useState, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { withRouter, Link } from 'react-router-dom';
-import { Typography, Tooltip, makeStyles } from '@material-ui/core';
+import { Typography, Tooltip, makeStyles, Button } from '@material-ui/core';
 import HomePageCardContainer from '../../components/HomePageCard/HomePageCardContainer';
 import Header from '../../components/HomePageCard/Header';
 import Status from '../../components/Status';
@@ -22,6 +23,8 @@ import { tileStatus } from './util';
 import getRoutePath from '../../utils/routePaths';
 import actions from '../../actions';
 import { getIntegrationAppUrlName } from '../../utils/integrationApps';
+import { getDomain } from '../../utils/resource';
+import ModalDialog from '../../components/ModalDialog';
 
 const useStyles = makeStyles(theme => ({
   tileName: {
@@ -48,6 +51,9 @@ const useStyles = makeStyles(theme => ({
 function Tile({ tile, history }) {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const [showNotYetSupportedDialog, setShowNotYetSupportedDialog] = useState(
+    false
+  );
   const numFlowsText = `${tile.numFlows} Flow${tile.numFlows === 1 ? '' : 's'}`;
   const accessLevel =
     tile.integration &&
@@ -70,106 +76,172 @@ function Tile({ tile, history }) {
     urlToIntegrationUsers = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/admin/users`;
   }
 
-  function handleStatusClick(event) {
-    event.stopPropagation();
+  const isNotYetSupported =
+    tile._connectorId &&
+    getDomain() === 'integrator.io' &&
+    ![
+      '5c8f30229f701b3e9a0aa817', // SFNSIO
+      '56cc2a64a42f08124832753a', // JIRA
+      '57a82017810491d30e1c9760', // OpenAir
+      '55022fc3285348c76a000005', // Zendesk
+      '54fa0b38a7044f9252000036', // Shopify
+      '5717912fbc5a8ca446571f1e', // Magento2
+      '57179182e0a908200c2781d9', // BigCommerce
+      '5db8164d9df868329731fca0', // Square POS
+    ].includes(tile._connectorId);
+  const handleStatusClick = useCallback(
+    event => {
+      event.stopPropagation();
 
-    if (tile.status === TILE_STATUS.HAS_OFFLINE_CONNECTIONS) {
-      // TODO - open connection edit
-    } else if (tile.status === TILE_STATUS.IS_PENDING_SETUP) {
-      history.push(
-        getRoutePath(
-          `/integrationapps/${integrationAppTileName}/${tile._integrationId}/setup`
-        )
-      );
-    } else {
-      if (status.variant === 'error') {
-        /**
-         * TODO Check if there is a better way to set the status filter on the Job Dashboard.
-         */
-        dispatch(actions.patchFilter('jobs', { status: 'error' }));
+      if (isNotYetSupported) {
+        setShowNotYetSupportedDialog(true);
+
+        return false;
       }
 
-      if (tile._connectorId) {
+      if (tile.status === TILE_STATUS.HAS_OFFLINE_CONNECTIONS) {
+        // TODO - open connection edit
+      } else if (tile.status === TILE_STATUS.IS_PENDING_SETUP) {
         history.push(
           getRoutePath(
-            `/integrationapps/${integrationAppTileName}/${tile._integrationId}/dashboard`
+            `/integrationapps/${integrationAppTileName}/${tile._integrationId}/setup`
           )
         );
       } else {
-        history.push(
-          getRoutePath(`/integrations/${tile._integrationId}/dashboard`)
-        );
+        if (status.variant === 'error') {
+          /**
+           * TODO Check if there is a better way to set the status filter on the Job Dashboard.
+           */
+          dispatch(actions.patchFilter('jobs', { status: 'error' }));
+        }
+
+        if (tile._connectorId) {
+          history.push(
+            getRoutePath(
+              `/integrationapps/${integrationAppTileName}/${tile._integrationId}/dashboard`
+            )
+          );
+        } else {
+          history.push(
+            getRoutePath(`/integrations/${tile._integrationId}/dashboard`)
+          );
+        }
       }
-    }
-  }
+    },
+    [
+      dispatch,
+      history,
+      integrationAppTileName,
+      isNotYetSupported,
+      status.variant,
+      tile._connectorId,
+      tile._integrationId,
+      tile.status,
+    ]
+  );
+  const handleLinkClick = useCallback(
+    event => {
+      if (isNotYetSupported) {
+        event.preventDefault();
+        setShowNotYetSupportedDialog(true);
+      }
+    },
+    [isNotYetSupported]
+  );
+  const handleNotYetSupportedDialogCloseClick = useCallback(
+    () => setShowNotYetSupportedDialog(false),
+    []
+  );
 
   return (
-    <HomePageCardContainer>
-      <Header>
-        <Status
-          label={status.label}
-          onClick={handleStatusClick}
-          className={classes.status}>
-          <StatusCircle variant={status.variant} />
-        </Status>
-      </Header>
-      <Content>
-        <CardTitle>
-          <Typography variant="h3">
-            <Link
-              color="inherit"
-              to={getRoutePath(urlToIntegrationSettings)}
-              className={classes.tileName}>
-              {tile.name}
-            </Link>
+    <Fragment>
+      {showNotYetSupportedDialog && (
+        <ModalDialog show onClose={handleNotYetSupportedDialogCloseClick}>
+          <Fragment>Not Yet Available</Fragment>
+          <Typography>
+            This Integration App is not yet available from this UI. To access
+            your Integration App, switch back to the <a href="/">legacy UI</a>.
           </Typography>
-        </CardTitle>
-        {tile.connector &&
-          tile.connector.applications &&
-          tile.connector.applications.length > 1 && (
-            <ApplicationImages>
-              <ApplicationImg type={tile.connector.applications[0]} />
-              <span>
-                <AddIcon />
-              </span>
-              <ApplicationImg type={tile.connector.applications[1]} />
-            </ApplicationImages>
-          )}
-      </Content>
-      <Footer>
-        <FooterActions>
-          {accessLevel && (
-            <Manage>
-              {accessLevel === INTEGRATION_ACCESS_LEVELS.MONITOR ? (
-                <Tooltip
-                  title="You have monitor permissions"
-                  placement="bottom">
-                  <Link
-                    color="inherit"
-                    className={classes.action}
-                    to={getRoutePath(urlToIntegrationUsers)}>
-                    <PermissionsMonitorIcon />
-                  </Link>
-                </Tooltip>
-              ) : (
-                <Tooltip title="You have manage permissions" placement="bottom">
-                  <Link
-                    color="inherit"
-                    to={getRoutePath(urlToIntegrationUsers)}>
-                    <PermissionsManageIcon />
-                  </Link>
-                </Tooltip>
-              )}
-            </Manage>
-          )}
-          {tile.tag && <Tag variant={tile.tag} />}
-        </FooterActions>
-        <Info
-          variant={tile._connectorId ? 'Integration app' : numFlowsText}
-          label={tile.connector && tile.connector.owner}
-        />
-      </Footer>
-    </HomePageCardContainer>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleNotYetSupportedDialogCloseClick}>
+            Close
+          </Button>
+        </ModalDialog>
+      )}
+      <HomePageCardContainer>
+        <Header>
+          <Status
+            label={status.label}
+            onClick={handleStatusClick}
+            className={classes.status}>
+            <StatusCircle variant={status.variant} />
+          </Status>
+        </Header>
+        <Content>
+          <CardTitle>
+            <Typography variant="h3">
+              <Link
+                color="inherit"
+                to={getRoutePath(urlToIntegrationSettings)}
+                className={classes.tileName}
+                onClick={handleLinkClick}>
+                {tile.name}
+              </Link>
+            </Typography>
+          </CardTitle>
+          {tile.connector &&
+            tile.connector.applications &&
+            tile.connector.applications.length > 1 && (
+              <ApplicationImages>
+                <ApplicationImg type={tile.connector.applications[0]} />
+                <span>
+                  <AddIcon />
+                </span>
+                <ApplicationImg type={tile.connector.applications[1]} />
+              </ApplicationImages>
+            )}
+        </Content>
+        <Footer>
+          <FooterActions>
+            {accessLevel && (
+              <Manage>
+                {accessLevel === INTEGRATION_ACCESS_LEVELS.MONITOR ? (
+                  <Tooltip
+                    title="You have monitor permissions"
+                    placement="bottom">
+                    <Link
+                      color="inherit"
+                      className={classes.action}
+                      to={getRoutePath(urlToIntegrationUsers)}
+                      onClick={handleLinkClick}>
+                      <PermissionsMonitorIcon />
+                    </Link>
+                  </Tooltip>
+                ) : (
+                  <Tooltip
+                    title="You have manage permissions"
+                    placement="bottom">
+                    <Link
+                      color="inherit"
+                      to={getRoutePath(urlToIntegrationUsers)}
+                      onClick={handleLinkClick}>
+                      <PermissionsManageIcon />
+                    </Link>
+                  </Tooltip>
+                )}
+              </Manage>
+            )}
+            {tile.tag && <Tag variant={tile.tag} />}
+          </FooterActions>
+          <Info
+            variant={tile._connectorId ? 'Integration app' : numFlowsText}
+            label={tile.connector && tile.connector.owner}
+          />
+        </Footer>
+      </HomePageCardContainer>
+    </Fragment>
   );
 }
 

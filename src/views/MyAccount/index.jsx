@@ -1,16 +1,19 @@
 import { hot } from 'react-hot-loader';
 import { Component, Fragment } from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import Drawer from '@material-ui/core/Drawer';
-import { Divider, ListItem } from '@material-ui/core';
-import List from '@material-ui/core/List';
-import { Switch, Route, NavLink } from 'react-router-dom';
 import { connect } from 'react-redux';
 import loadable from '../../utils/loadable';
 import * as selectors from '../../reducers';
 import { USER_ACCESS_LEVELS } from '../../utils/constants';
-import getRoutePath from '../../utils/routePaths';
 import CeligoPageBar from '../../components/CeligoPageBar';
+import TransfersIcon from '../../components/icons/TransfersIcon';
+import SingleUserIcon from '../../components/icons/SingleUserIcon';
+import UsersIcon from '../../components/icons/GroupOfUsersIcon';
+import UsersPanel from '../../components/ManageUsersPanel';
+import KnowledgeBaseIcon from '../../components/icons/KnowledgeBaseIcon';
+import AuditLogIcon from '../../components/icons/AuditLogIcon';
+import ResourceDrawer from '../../components/drawer/Resource';
+import Tabs from '../Integration/common/Tabs';
 
 const mapStateToProps = state => {
   const permissions = selectors.userPermissions(state);
@@ -20,9 +23,6 @@ const mapStateToProps = state => {
   };
 };
 
-const Users = loadable(() =>
-  import(/* webpackChunkName: 'MyAccount.Users' */ './Users')
-);
 const Profile = loadable(() =>
   import(/* webpackChunkName: 'MyAccount.Profile' */ './Profile')
 );
@@ -33,9 +33,37 @@ const Audit = loadable(() =>
   import(/* webpackChunkName: 'MyAccount.Audit' */ './Audit')
 );
 const Transfers = loadable(() =>
-  import(/* webpackChunkName: 'MyAccount.Audit' */ './Transfers/index')
+  import(/* webpackChunkName: 'MyAccount.Transfers' */ './Transfers/index')
 );
+const tabs = [
+  {
+    path: 'subscription',
+    label: 'Subscription',
+    Icon: KnowledgeBaseIcon,
+    Panel: Subscription,
+  },
+  {
+    path: 'profile',
+    label: 'Profile',
+    Icon: SingleUserIcon,
+    Panel: Profile,
+  },
+  { path: 'users', label: 'Users', Icon: UsersIcon, Panel: UsersPanel },
+  {
+    path: 'audit',
+    label: 'Audit log',
+    Icon: AuditLogIcon,
+    Panel: Audit,
+  },
+  {
+    path: 'transfers',
+    label: 'Transfers',
+    Icon: TransfersIcon,
+    Panel: Transfers,
+  },
+];
 
+// TODO: Ashok if these CSS are not being used then we can remove it.
 @hot(module)
 @withStyles(theme => ({
   link: {
@@ -73,102 +101,40 @@ const Transfers = loadable(() =>
     flex: 1,
     zIndex: 1,
   },
+  wrapperProfile: {
+    padding: theme.spacing(3),
+    background: theme.palette.background.paper,
+    margin: theme.spacing(3),
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+  },
+  tabsAccount: {
+    padding: theme.spacing(3),
+  },
 }))
 class MyAccount extends Component {
   render() {
-    const { classes, permissions } = this.props;
+    const { match, permissions, classes } = this.props;
 
     return (
       <Fragment>
-        <div>
-          <CeligoPageBar
-            title={
-              permissions.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER
-                ? 'My Account'
-                : 'My Profile'
-            }
-          />
-          <Divider />
-          <div className={classes.root}>
-            <div className={classes.flex}>
-              {permissions.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER && (
-                <Drawer
-                  variant="permanent"
-                  anchor="left"
-                  classes={{
-                    paper: classes.leftElement,
-                  }}>
-                  <List>
-                    <ListItem>
-                      <NavLink
-                        activeClassName={classes.activeLink}
-                        className={classes.link}
-                        to="users">
-                        Users
-                      </NavLink>
-                    </ListItem>
-                    <ListItem>
-                      <NavLink
-                        activeClassName={classes.activeLink}
-                        className={classes.link}
-                        to="profile">
-                        Profile
-                      </NavLink>
-                    </ListItem>
-                    <ListItem>
-                      <NavLink
-                        activeClassName={classes.activeLink}
-                        className={classes.link}
-                        to="subscription">
-                        Subscription
-                      </NavLink>
-                    </ListItem>
-                    <ListItem>
-                      <NavLink
-                        activeClassName={classes.activeLink}
-                        className={classes.link}
-                        to="audit">
-                        Audit Log
-                      </NavLink>
-                    </ListItem>
-                    <ListItem>
-                      <NavLink
-                        activeClassName={classes.activeLink}
-                        className={classes.link}
-                        to="transfers">
-                        Transfers
-                      </NavLink>
-                    </ListItem>
-                  </List>
-                </Drawer>
-              )}
-            </div>
-            <div className={classes.rightElement}>
-              <Switch>
-                <Route
-                  path={getRoutePath('/myAccount/profile')}
-                  component={Profile}
-                />
-                <Route
-                  path={getRoutePath('/myAccount/users')}
-                  component={Users}
-                />
-                <Route
-                  path={getRoutePath('/myAccount/subscription')}
-                  component={Subscription}
-                />
-                <Route
-                  path={getRoutePath('/myAccount/audit')}
-                  component={Audit}
-                />
-                <Route
-                  path={getRoutePath('/myAccount/transfers')}
-                  component={Transfers}
-                />
-              </Switch>
-            </div>
+        <CeligoPageBar
+          title={
+            permissions.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER
+              ? 'My account'
+              : 'My profile'
+          }
+        />
+        {permissions.accessLevel !== USER_ACCESS_LEVELS.ACCOUNT_OWNER ? (
+          <div className={classes.wrapperProfile}>
+            <Profile />
           </div>
-        </div>
+        ) : (
+          <Fragment>
+            <ResourceDrawer match={match} />
+            <Tabs tabs={tabs} match={match} className={classes.tabsAccount} />
+          </Fragment>
+        )}
       </Fragment>
     );
   }

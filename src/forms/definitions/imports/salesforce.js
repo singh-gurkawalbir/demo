@@ -157,6 +157,7 @@ export default {
     },
     ignoreExisting: {
       fieldId: 'ignoreExisting',
+      label: 'Ignore Existing Records',
       visibleWhen: [
         { field: 'salesforce.operation', is: ['insert'] },
         { field: 'salesforce.compositeOperation', is: ['insert'] },
@@ -164,6 +165,7 @@ export default {
     },
     ignoreMissing: {
       fieldId: 'ignoreMissing',
+      label: 'Ignore Missing Records',
       visibleWhen: [
         { field: 'salesforce.operation', is: ['update'] },
         { field: 'salesforce.compositeOperation', is: ['update'] },

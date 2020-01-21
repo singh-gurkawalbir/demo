@@ -161,6 +161,8 @@ function AppBlock({
   const [activeAction, setActiveAction] = useState(null);
   const isNew = blockType.startsWith('new');
   const iconType = useSelector(state => {
+    if (blockType === 'dataLoader') return;
+
     if (!connectorType || !connectorType.startsWith('RDBMS')) {
       return connectorType;
     }
@@ -258,7 +260,7 @@ function AppBlock({
         className={clsx(classes.box, { [classes.draggable]: !isNew })}
         style={{ opacity }}>
         <div className={classes.bubbleContainer}>
-          {!isViewMode && (
+          {onDelete && !isViewMode && (
             <IconButton
               size="small"
               className={classes.deleteButton}
@@ -297,7 +299,7 @@ function AppBlock({
           <ResourceButton onClick={onBlockClick} variant={blockType} />
           <div className={classes.middleActionContainer}>
             {renderActions(middleActions)}
-            {!expanded && hasActions && (
+            {!expanded && hasActions ? (
               <ActionIconButton
                 className={classes.addButton}
                 onClick={handleExpandClick}
@@ -305,7 +307,7 @@ function AppBlock({
                 helpText="Add data processor">
                 <AddIcon />
               </ActionIconButton>
-            )}
+            ) : null}
           </div>
         </div>
         {/* connectorType && (

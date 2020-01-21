@@ -8,8 +8,6 @@ import * as selectors from '../../reducers';
 import LoadResources from '../../components/LoadResources';
 import getRoutePath from '../../utils/routePaths';
 import { STANDALONE_INTEGRATION } from '../../utils/constants';
-import Flows from './Flows';
-import Users from './Users';
 import AuditLog from './AuditLog';
 import Connections from './Connections';
 import Notifications from './Notifications';
@@ -153,21 +151,9 @@ export default function IntegrationSettings(props) {
             <Switch>
               <Route
                 path={getRoutePath(
-                  `/integrations/:integrationId/settings/flows`
-                )}
-                component={Flows}
-              />
-              <Route
-                path={getRoutePath(
                   `/integrations/:integrationId/settings/connections`
                 )}
                 component={Connections}
-              />
-              <Route
-                path={getRoutePath(
-                  `/integrations/:integrationId/settings/users`
-                )}
-                component={Users}
               />
               <Route
                 path={getRoutePath(

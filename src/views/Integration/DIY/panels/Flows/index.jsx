@@ -9,7 +9,7 @@ import LoadResources from '../../../../../components/LoadResources';
 import IconTextButton from '../../../../../components/IconTextButton';
 import AddIcon from '../../../../../components/icons/AddIcon';
 import AttachIcon from '../../../../../components/icons/ConnectionsIcon';
-import PanelHeader from '../../../common/PanelHeader';
+import PanelHeader from '../../../../../components/PanelHeader';
 import FlowCard from '../../../common/FlowCard';
 
 const useStyles = makeStyles(theme => ({

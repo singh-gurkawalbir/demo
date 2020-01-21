@@ -8,6 +8,7 @@ import DynaForm from '../../../../components/DynaForm';
 import DynaSubmit from '../../../../components/DynaForm/DynaSubmit';
 import IconTextButton from '../../../../components/IconTextButton';
 import metadata from './metadata';
+import ArrowLeftIcon from '../../../../components/icons/ArrowLeftIcon';
 
 export default function Invite(props) {
   const { setShowInviteView } = props;
@@ -55,7 +56,7 @@ export default function Invite(props) {
         id: '_integrationIds',
         name: '_integrationIds',
         type: 'multiselect',
-        label: 'Next Data Flow',
+        label: 'Integrations to transfer',
         required: true,
         options: [
           {
@@ -82,10 +83,14 @@ export default function Invite(props) {
     setShowInviteView(false);
   };
 
+  // TODO: Ashok, There is  no description in the new mock please check.
   return (
     <Fragment>
-      <IconTextButton onClick={backToTransferClick}>
-        Back to Transfers
+      <IconTextButton
+        onClick={backToTransferClick}
+        variant="outlined"
+        color="secondary">
+        <ArrowLeftIcon /> Back to transfers
       </IconTextButton>
       <div>
         Important! As part of the transfer process, all your currently
