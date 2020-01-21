@@ -28,6 +28,7 @@ export default function Notifications(props) {
     fieldMap: {
       connections: {
         id: 'connections',
+        helpKey: 'notifications.connections',
         name: 'connections',
         type: 'multiselect',
         valueDelimiter: ',',
@@ -37,6 +38,7 @@ export default function Notifications(props) {
       },
       flows: {
         id: 'flows',
+        helpKey: 'notifications.jobErrors',
         name: 'flows',
         type: 'multiselect',
         valueDelimiter: ',',

@@ -383,6 +383,10 @@ export function mapping(state, id) {
   return fromSession.mapping(state && state.session, id);
 }
 
+export function mappingsChanged(state, id) {
+  return fromSession.mappingsChanged(state && state.session, id);
+}
+
 export function mappingSaveProcessTerminate(state, id) {
   return fromSession.mappingSaveProcessTerminate(state && state.session, id);
 }
@@ -2492,6 +2496,7 @@ export function resourceData(state, resourceType, id, scope) {
     type = 'connectorLicenses';
   }
 
+  // For accesstokens and connections within an integration
   if (resourceType.indexOf('integrations/') >= 0) {
     type = resourceType.split('/').pop();
   }

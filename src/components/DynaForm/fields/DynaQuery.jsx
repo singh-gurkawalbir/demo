@@ -8,6 +8,8 @@ import DynaText from './DynaText';
  *
  * DynaQuery is being used to Define Query under Database Lookup
  */
+const defaultQueryValue = 'select * from locations where id={{data.id}}';
+
 export default function DynaQuery(props) {
   const { id, onFieldChange, sampleData = {}, disabled, value, label } = props;
   const [showEditor, setShowEditor] = useState(false);
@@ -32,7 +34,7 @@ export default function DynaQuery(props) {
         <SqlQueryBuilderEditorDialog
           title="Lookups"
           id={`lookupQueryBuilder-${id}`}
-          rule={value}
+          rule={value || defaultQueryValue}
           sampleData={sampleData}
           onClose={handleClose}
           disabled={disabled}

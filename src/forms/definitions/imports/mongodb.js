@@ -16,8 +16,6 @@ export default {
       retValues['/mongodb/ignoreExtract'] = undefined;
     }
 
-    delete retValues['/inputMode'];
-
     return {
       ...retValues,
     };

@@ -56,7 +56,7 @@ export default function menuItems(userProfile, userPermissions = {}) {
         { label: 'Stacks', path: '/stacks', Icon: StacksIcon },
         { label: 'Templates', path: '/templates', Icon: DataLoaderIcon },
         {
-          label: 'Integration App',
+          label: 'Integration Apps',
           path: '/connectors',
           Icon: ConnectionsIcon,
         },
@@ -124,7 +124,7 @@ export default function menuItems(userProfile, userPermissions = {}) {
 
     if (!canPublish) {
       resourceItems.children = resourceItems.children.filter(
-        i => !(i.label === 'Templates' || i.label === 'Integration App')
+        i => !(i.label === 'Templates' || i.label === 'Integration Apps')
       );
     }
 

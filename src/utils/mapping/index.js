@@ -126,6 +126,7 @@ export default {
         return '/mapping';
       case adaptorTypeMap.XMLImport:
       case adaptorTypeMap.MongodbImport:
+      case adaptorTypeMap.DynamodbImport:
       case adaptorTypeMap.RDBMSImport:
       default:
     }
@@ -158,6 +159,7 @@ export default {
         return 'Wrapper Field';
       case adaptorTypeMap.XMLImport:
       case adaptorTypeMap.MongodbImport:
+      case adaptorTypeMap.DynamodbImport:
       case adaptorTypeMap.RDBMSImport:
       default:
     }
@@ -193,6 +195,7 @@ export default {
         break;
       case adaptorTypeMap.XMLImport:
       case adaptorTypeMap.MongodbImport:
+      case adaptorTypeMap.DynamodbImport:
       case adaptorTypeMap.RDBMSImport:
       default:
     }
@@ -262,6 +265,7 @@ export default {
       case adaptorTypeMap.S3Import:
       case adaptorTypeMap.XMLImport:
       case adaptorTypeMap.MongodbImport:
+      case adaptorTypeMap.DynamodbImport:
       case adaptorTypeMap.WrapperImport:
       case adaptorTypeMap.RDBMSImport:
         return mappingUtil.getFieldsAndListMappings({
@@ -303,6 +307,7 @@ export default {
       case adaptorTypeMap.S3Import:
       case adaptorTypeMap.XMLImport:
       case adaptorTypeMap.MongodbImport:
+      case adaptorTypeMap.DynamodbImport:
       case adaptorTypeMap.WrapperImport:
       case adaptorTypeMap.RDBMSImport:
         return mappingUtil.generateMappingFieldsAndList({
