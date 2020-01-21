@@ -77,7 +77,7 @@ export default function DynaKeyWithAction(props) {
         </div>
       ))}
 
-      <ErroredMessageComponent {...props}> </ErroredMessageComponent>
+      <ErroredMessageComponent {...props} />
     </div>
   );
 }
