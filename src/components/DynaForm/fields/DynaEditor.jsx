@@ -1,13 +1,13 @@
 import { useState, Fragment } from 'react';
 import classNames from 'classnames';
 import { makeStyles } from '@material-ui/core/styles';
-import FormHelperText from '@material-ui/core/FormHelperText';
 import FormLabel from '@material-ui/core/FormLabel';
 import Button from '@material-ui/core/Button';
 import CodeEditor from '../../../components/CodeEditor';
 import ActionButton from '../../ActionButton';
 import ExitIcon from '../../icons/ExitIcon';
 import ModalDialog from '../../ModalDialog';
+import ErroredMessageComponent from './ErroredMessageComponent';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -43,9 +43,6 @@ export default function DynaEditor(props) {
     onFieldChange,
     value,
     label,
-    description,
-    errorMessages,
-    isValid,
     editorClassName,
     disabled,
     saveMode,
@@ -132,9 +129,7 @@ export default function DynaEditor(props) {
       </ActionButton>
       <div className={classes.container}>
         {showEditor && editorDialog}
-
         <FormLabel className={classes.label}>{label}</FormLabel>
-
         <div
           className={classNames(
             classes.inlineEditorContainer,
@@ -148,9 +143,7 @@ export default function DynaEditor(props) {
             onChange={value => handleUpdate(value)}
           />
         </div>
-        <FormHelperText className={classes.helpText}>
-          {isValid ? description : errorMessages}
-        </FormHelperText>
+        <ErroredMessageComponent {...props} />
       </div>
     </Fragment>
   );

@@ -1,11 +1,37 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo, useCallback } from 'react';
 import { FormContext } from 'react-forms-processor/dist';
+import { useDispatch } from 'react-redux';
 import Button from '@material-ui/core/Button';
+import { isFormTouched } from '../../forms/utils';
+import actions from '../../actions';
+
+export const useEnableButtonOnTouchedForm = ({
+  onClick,
+  fields,
+  formIsValid,
+  resourceId,
+  resourceType,
+}) => {
+  const dispatch = useDispatch();
+  const formTouched = useMemo(() => isFormTouched(fields), [fields]);
+  const onClickWhenValid = useCallback(
+    value => {
+      dispatch(
+        actions.resourceForm.showFormValidations(resourceType, resourceId)
+      );
+
+      // Util user resolves form validation do we allow the onClick to take place ...
+      if (formIsValid) onClick(value);
+    },
+    [dispatch, formIsValid, onClick, resourceId, resourceType]
+  );
+
+  return { formTouched, onClickWhenValid };
+};
 
 function DynaAction(props) {
   const {
     disabled,
-    isValid,
     onClick,
     children,
     className,
@@ -16,7 +42,17 @@ function DynaAction(props) {
     fields,
     visibleWhen,
     visibleWhenAll,
+    resourceType,
+    resourceId,
+    isValid,
   } = props;
+  const { formTouched, onClickWhenValid } = useEnableButtonOnTouchedForm({
+    onClick,
+    fields,
+    formIsValid: isValid,
+    resourceId,
+    resourceType,
+  });
 
   useEffect(() => {
     const matchingActionField = fields.find(field => field.id === id);
@@ -47,8 +83,10 @@ function DynaAction(props) {
       variant="outlined"
       color="primary"
       className={className}
-      disabled={disabled || !isValid}
-      onClick={() => onClick(value)}>
+      disabled={disabled || !formTouched}
+      onClick={() => {
+        onClickWhenValid(value);
+      }}>
       {children}
     </Button>
   );
