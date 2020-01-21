@@ -16,7 +16,6 @@ import * as selectors from '../../../reducers';
 import MaterialUiSelect from '../../../components/DynaForm/fields/DynaSelect';
 import LoadResources from '../../../components/LoadResources';
 import ChipInput from '../../../components/ChipInput';
-import Flows from './Flows';
 import GeneralSection from './GeneralSection';
 import Subscription from './Subscription';
 import AuditLog from '../../IntegrationSettings/AuditLog';
@@ -26,7 +25,6 @@ import Notifications from '../../IntegrationSettings/Notifications';
 import AccessTokens from './AccessTokens';
 import getRoutePath from '../../../utils/routePaths';
 import CeligoPageBar from '../../../components/CeligoPageBar';
-import Addons from './Addons';
 
 const useStyles = makeStyles(theme => ({
   link: {
@@ -175,11 +173,6 @@ export default function IntegrationAppSettings(props) {
   ]);
 
   const showAPITokens = permissions.accesstokens.view;
-  const hasAddOns =
-    addOnState &&
-    addOnState.addOns &&
-    addOnState.addOns.addOnMetaData &&
-    addOnState.addOns.addOnMetaData.length > 0;
 
   useEffect(() => {
     if (!isEmpty(integration)) {
@@ -389,9 +382,6 @@ export default function IntegrationAppSettings(props) {
                   to={`${urlPrefix}/subscription`}
                   label="Subscription"
                 />
-                {hasAddOns && (
-                  <LHSItem to={`${urlPrefix}/addons`} label="Add-ons" />
-                )}
                 <LHSItem to={`${urlPrefix}/uninstall`} label="Uninstall" />
                 <Divider className={classes.notificationsLink} />
                 <LHSItem
@@ -424,7 +414,6 @@ export default function IntegrationAppSettings(props) {
                 path={`${urlRegexPrefix}/subscription`}
                 component={Subscription}
               />
-              <Route path={`${urlRegexPrefix}/addons`} component={Addons} />
               <Route
                 path={`${urlRegexPrefix}/uninstall`}
                 component={Uninstall}
@@ -434,7 +423,6 @@ export default function IntegrationAppSettings(props) {
                 component={Notifications}
               />
               <Route path={`${urlRegexPrefix}/audit`} component={AuditLog} />
-              <Route path={`${urlRegexPrefix}/:section`} component={Flows} />
             </Switch>
           </div>
         </div>

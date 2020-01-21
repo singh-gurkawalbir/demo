@@ -4,8 +4,6 @@ import { Fragment } from 'react';
 import { Typography, Grid, Button, Divider } from '@material-ui/core';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
-import CeligoTable from '../../../components/CeligoTable';
-import metadata from './AddonsMetadata';
 
 const useStyles = makeStyles(theme => ({
   header: {
@@ -205,8 +203,6 @@ export default function Subscription(props) {
                 Integration App subscription expires.
               </Typography>
             </div>
-
-            <CeligoTable data={subscribedAddOns} {...metadata} />
           </Fragment>
         )}
       </div>

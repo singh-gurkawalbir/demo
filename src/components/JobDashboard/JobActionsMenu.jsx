@@ -301,6 +301,7 @@ export default function JobActionsMenu({
     } else if (action === 'viewRetries') {
       setShowRetriesDialog(true);
     } else if (['editFlow', 'viewFlow'].includes(action)) {
+      // TODO: branch for dataloader flows. The url should use the segment /dataLoader/ if flow is DL.
       history.push(
         getRoutePath(
           `/integrations/${job._integrationId || 'none'}/flowBuilder/${

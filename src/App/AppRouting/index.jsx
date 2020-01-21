@@ -113,6 +113,8 @@ export default class AppRouting extends Component {
           path={[
             '/pg/integrationapps/:integrationAppName/:integrationId/flowBuilder/:flowId',
             '/pg/integrations/:integrationId/flowBuilder/:flowId',
+            '/pg/integrationapps/:integrationAppName/:integrationId/dataLoader/:flowId',
+            '/pg/integrations/:integrationId/dataLoader/:flowId',
           ]}>
           <FlowBuilder />
         </Route>

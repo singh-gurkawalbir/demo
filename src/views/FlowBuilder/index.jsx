@@ -423,17 +423,14 @@ function FlowBuilder() {
   if (flowId === 'new') {
     const tempId = generateNewId();
 
-    patchNewFlow(tempId);
-    history.replace(rewriteUrl(tempId));
-
-    return null;
-  }
-
-  // NEW DATA LOADER REDIRECTION
-  if (flowId && flowId.toLowerCase() === 'dataloader') {
-    const tempId = generateNewId();
-
-    patchNewFlow(tempId, 'New data loader flow', { application: 'dataLoader' });
+    // NEW DATA LOADER REDIRECTION
+    if (match.url.toLowerCase().includes('dataloader')) {
+      patchNewFlow(tempId, 'New data loader flow', {
+        application: 'dataLoader',
+      });
+    } else {
+      patchNewFlow(tempId);
+    }
 
     history.replace(rewriteUrl(tempId));
 
