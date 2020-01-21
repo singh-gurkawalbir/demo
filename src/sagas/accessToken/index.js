@@ -3,10 +3,10 @@ import {
   put,
   takeEvery,
   delay,
-  fork,
-  take,
-  cancel,
   select,
+  take,
+  fork,
+  cancel,
 } from 'redux-saga/effects';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
@@ -76,43 +76,45 @@ export function* checkAndRemovePurgedTokens() {
   const { resources = [] } = yield select(selectors.resourceList, {
     type: 'accesstokens',
   });
-  let delayUntil;
+  let minAutoPurgeAt;
 
   resources.forEach(r => {
     if (r.autoPurgeAt) {
-      if (!delayUntil) {
-        delayUntil = r.autoPurgeAt;
-      } else if (new Date(delayUntil) > new Date(r.autoPurgeAt)) {
-        delayUntil = r.autoPurgeAt;
+      if (!minAutoPurgeAt) {
+        minAutoPurgeAt = r.autoPurgeAt;
+      } else if (minAutoPurgeAt > r.autoPurgeAt) {
+        minAutoPurgeAt = r.autoPurgeAt;
       }
     }
   });
 
-  if (delayUntil) {
-    yield delay(Math.max(new Date(delayUntil) - new Date(), 1000));
-    yield call(actions.accessToken.deletePurged());
-  }
-}
-
-export function* receivedCollection({ resourceType }) {
-  console.log(`***** in receivedCollection resourceType ${resourceType}`);
-
-  if (resourceType !== 'accesstokens') {
+  if (!minAutoPurgeAt) {
     return false;
   }
 
+  /** Wait until one second before the autoPureAt */
+  yield delay(Math.max(new Date(minAutoPurgeAt) - new Date() - 1000, 0));
+  yield put(actions.accessToken.deletePurged());
+  yield put(actions.accessToken.updatedCollection());
+}
+
+export function* accessTokensUpdated() {
   const watcher = yield fork(checkAndRemovePurgedTokens);
 
-  yield take([
-    actionTypes.RESOURCE.RECEIVED_COLLECTION,
-    actionTypes.RESOURCE.RECEIVED,
-  ]);
+  yield take(actionTypes.ACCESSTOKEN_UPDATED_COLLECTION);
   yield cancel(watcher);
+}
+
+export function* resourcesReceived({ resourceType }) {
+  if (resourceType === 'accesstokens') {
+    yield put(actions.accessToken.updatedCollection());
+  }
 }
 
 export const accessTokenSagas = [
   takeEvery(actionTypes.ACCESSTOKEN_TOKEN_GENERATE, generateToken),
   takeEvery(actionTypes.ACCESSTOKEN_TOKEN_DISPLAY, displayToken),
-  takeEvery(actionTypes.RESOURCE.RECEIVED_COLLECTION, receivedCollection),
-  takeEvery(actionTypes.RESOURCE.RECEIVED, receivedCollection),
+  takeEvery(actionTypes.RESOURCE.RECEIVED_COLLECTION, resourcesReceived),
+  takeEvery(actionTypes.RESOURCE.RECEIVED, resourcesReceived),
+  takeEvery(actionTypes.ACCESSTOKEN_UPDATED_COLLECTION, accessTokensUpdated),
 ];
