@@ -2225,7 +2225,7 @@ export default {
   },
   'salesforce.oauth2FlowType': {
     type: 'select',
-    label: 'Oauth2 Flow Type',
+    label: 'Oauth2.0 Flow Type',
     required: true,
     options: [
       {
