@@ -558,6 +558,27 @@ export function* requestDebugLogs({ url, connectionId }) {
   }
 }
 
+export function* refreshConnectionStatus({ integrationId }) {
+  const url = integrationId
+    ? `/integrations/${integrationId}/connections?fetchQueueSize=true`
+    : '/connections?fetchQueueSize=true';
+  const response = yield call(apiCallWithRetry, {
+    path: url,
+    options: { hidden: true },
+  });
+  const finalResponse = Array.isArray(response)
+    ? response.map(({ _id, offline, queues }) => ({
+        _id,
+        offline: !!offline,
+        queueSize: queues[0].size,
+      }))
+    : [];
+
+  yield put(
+    actions.resource.connections.receivedConnectionStatus(finalResponse)
+  );
+}
+
 export const resourceSagas = [
   takeEvery(actionTypes.RESOURCE.REQUEST, getResource),
   takeEvery(
@@ -571,6 +592,7 @@ export const resourceSagas = [
   takeEvery(actionTypes.RESOURCE.REFERENCES_REQUEST, requestReferences),
   takeEvery(actionTypes.RESOURCE.DOWNLOAD_FILE, downloadFile),
   takeEvery(actionTypes.CONNECTION.REGISTER_REQUEST, requestRegister),
+  takeEvery(actionTypes.CONNECTION.REFRESH_STATUS, refreshConnectionStatus),
   takeEvery(actionTypes.RESOURCE.UPDATE_NOTIFICATIONS, updateNotifications),
   takeEvery(actionTypes.CONNECTION.DEREGISTER_REQUEST, requestDeregister),
   takeEvery(actionTypes.CONNECTION.DEBUG_LOGS_REQUEST, requestDebugLogs),

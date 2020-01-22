@@ -200,6 +200,10 @@ const resource = {
       offset,
     }),
   connections: {
+    refreshStatus: integrationId =>
+      action(actionTypes.CONNECTION.REFRESH_STATUS, { integrationId }),
+    receivedConnectionStatus: response =>
+      action(actionTypes.CONNECTION.RECEIVED_STATUS, { response }),
     test: (resourceId, values) =>
       action(actionTypes.CONNECTION.TEST, {
         resourceId,

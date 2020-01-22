@@ -1735,12 +1735,16 @@ describe('integrationAppConnectionList reducer', () => {
         _integrationId: 'integrationId',
         rest: {},
         type: 'rest',
+        offline: false,
+        queueSize: 0,
       },
       {
         _id: 'connection2',
         _integrationId: 'integrationId',
         netsuite: {},
         type: 'netsuite',
+        offline: false,
+        queueSize: 0,
       },
     ]);
   });
@@ -1778,12 +1782,16 @@ describe('integrationAppConnectionList reducer', () => {
         _integrationId: 'integrationId2',
         type: 'rest',
         rest: {},
+        offline: false,
+        queueSize: 0,
       },
       {
         _id: 'connection4',
         _integrationId: 'integrationId2',
         type: 'rest',
         rest: {},
+        offline: false,
+        queueSize: 0,
       },
     ]);
   });
