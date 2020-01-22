@@ -103,10 +103,6 @@ export default {
               label: 'A21TJRUUN4KGV (IN)',
             },
             {
-              value: 'A39IBJ37TRP1C6',
-              label: 'A39IBJ37TRP1C6 (AU)',
-            },
-            {
               value: 'A1VC38T7YXB528',
               label: 'A1VC38T7YXB528 (JP)',
             },
