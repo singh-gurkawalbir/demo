@@ -92,8 +92,7 @@ export function* checkAndRemovePurgedTokens() {
     return false;
   }
 
-  /** Wait until one second before the autoPureAt */
-  yield delay(Math.max(new Date(minAutoPurgeAt) - new Date() - 1000, 0));
+  yield delay(Math.max(new Date(minAutoPurgeAt) - new Date(), 0));
   yield put(actions.accessToken.deletePurged());
   yield put(actions.accessToken.updatedCollection());
 }
