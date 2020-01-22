@@ -29,7 +29,8 @@ export default {
       generate && generate.indexOf('[*].') !== -1
         ? generate.split('[*].')[1]
         : generate;
-    const fieldMetadata = generateFields.find(gen => gen.id === generate);
+    const fieldMetadata =
+      generateFields && generateFields.find(gen => gen.id === generate);
     let generateFieldType;
 
     if (
