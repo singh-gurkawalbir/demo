@@ -28,7 +28,8 @@ import anaplan from './anaplan';
 import atera from './atera';
 import chargebee from './chargebee';
 import avalara from './avalara';
-import vroozi from './vroozi';
+import shipbob from './shipbob';
+import paypal from './paypal';
 // import desk from './desk';
 import easypost from './easypost';
 import freshdesk from './freshdesk';
@@ -173,6 +174,7 @@ export default {
   intercom,
   recharge,
   bamboohr,
+  shipbob,
   okta,
   easyship,
   myobaccountright,
@@ -180,8 +182,8 @@ export default {
   solidcommerce,
   azureactivedirectory,
   parseur,
+  paypal,
   returnly,
-  vroozi,
   myobessentials,
   expensify,
   wish,
