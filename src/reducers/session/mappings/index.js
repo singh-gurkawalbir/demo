@@ -148,10 +148,8 @@ export default function reducer(state = {}, action) {
           } else {
             objCopy[field] = inputValue;
 
-            // for netsuite, remove isKey and useFirstRow if present when generate doesn't contain '[*].'
-
             if (
-              draft[id].adaptorType === 'netsuite' &&
+              !mappingUtil.isCsvOrXlsxResource(draft[id].resource) &&
               inputValue.indexOf('[*].') === -1
             ) {
               if ('isKey' in objCopy) {

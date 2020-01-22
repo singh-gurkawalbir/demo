@@ -640,4 +640,5 @@ export default {
 
     return { isSuccess: true };
   },
+  isCsvOrXlsxResource,
 };
