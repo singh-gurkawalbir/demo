@@ -28,10 +28,12 @@ const useStyles = makeStyles(theme => ({
 
 export default function Transfers() {
   const classes = useStyles();
-  const transfers = useSelector(
+  let transfers = useSelector(
     state =>
       selectors.transferListWithMetadata(state, { type: 'transfers' }).resources
   );
+
+  transfers = transfers.filter(t => !t.isInvited || t.status !== 'unapproved');
   const [showInviteView, setShowInviteView] = useState(false);
   const handleNewTransferClick = () => {
     setShowInviteView(true);
