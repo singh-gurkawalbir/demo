@@ -67,6 +67,7 @@ export default function EditorDialog(props) {
     height = '50vh',
     onClose,
     disabled,
+    dataTest = 'editor',
     hidePreviewAction = false,
   } = props;
   const classes = useStyles();
@@ -117,6 +118,7 @@ export default function EditorDialog(props) {
       open={open}
       onClose={() => handleClose()}
       scroll="paper"
+      data-key={dataTest}
       maxWidth={false}>
       <div className={classes.toolbarContainer}>
         <div className={classes.toolbarItem}>
