@@ -13,6 +13,7 @@ export default {
     }api.vroozi.com/v1`,
     '/http/ping/relativeURI': '/company-codes',
     '/http/ping/method': 'GET',
+    '/http/concurrencyLevel': `${formValues['/http/concurrencyLevel']}` || 10,
     '/http/headers': [
       {
         name: 'x-api-key',

@@ -11,6 +11,7 @@ export default {
     '/http/auth/oauth/scopeDelimiter': ' ',
     '/http/auth/token/refreshMethod': 'POST',
     '/http/auth/token/refreshMediaType': 'urlencoded',
+    '/http/concurrencyLevel': `${formValues['/http/concurrencyLevel']}` || 2,
   }),
   fieldMap: {
     name: { fieldId: 'name' },
