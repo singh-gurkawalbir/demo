@@ -50,7 +50,6 @@ function JobErrorDialog({
   numError = 0,
   numResolved = 0,
   onCloseClick,
-  integrationName,
 }) {
   const dispatch = useDispatch();
   const [childJobId, setChildJobId] = useState(parentJobId ? jobId : undefined);
