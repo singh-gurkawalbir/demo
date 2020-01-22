@@ -118,7 +118,7 @@ function JobErrorDialog({
   return (
     <ModalDialog show minWidth="md" maxWidth="xl" onClose={handleCloseClick}>
       <Fragment>
-        <div>{`${integrationName} > ${flowJob && flowJob.name}`}</div>
+        <div>{`${flowJob && flowJob.name}`}</div>
 
         <Help
           key="help-helpSummary"
