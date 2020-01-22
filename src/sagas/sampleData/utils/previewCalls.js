@@ -8,8 +8,11 @@ import {
   fetchResourceDataForNewFlowResource,
   filterPendingResources,
 } from './flowDataUtils';
-import { getLastExportDateTime } from '../../../utils/flowData';
-import { isNewId, adaptorTypeMap } from '../../../utils/resource';
+import {
+  getLastExportDateTime,
+  getFormattedResourceForPreview,
+} from '../../../utils/flowData';
+import { isNewId } from '../../../utils/resource';
 
 export function* pageProcessorPreview({
   flowId,
@@ -120,18 +123,9 @@ export function* exportPreview({
     };
   }
 
-  // type Once need not be passed in preview as it gets executed in preview call
-  // so remove type once
-  if (body.type === 'once') {
-    delete body.type;
-    const { adaptorType } = body;
-    const appType = adaptorType && adaptorTypeMap[adaptorType];
-
-    // Manually removing once doc incase of preview to restrict execution on once query - Bug fix IO-11988
-    if (appType && body[appType] && body[appType].once) {
-      delete body[appType].once;
-    }
-  }
+  // getFormattedResourceForPreview util removes unnecessary props of resource that should not be sent in preview calls
+  // Example: type: once should not be sent while previewing
+  body = getFormattedResourceForPreview(body);
 
   if (runOffline && body.rawData) {
     body = {

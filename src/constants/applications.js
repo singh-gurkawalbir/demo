@@ -139,6 +139,7 @@ const connectors = [
   },
   // Application connectors
   { id: '3dcart', name: '3DCart', type: 'rest', assistant: '3dcart' },
+  { id: 'vroozi', name: 'Vroozi', type: 'http', assistant: 'vroozi' },
   { id: 'accelo', name: 'Accelo', type: 'rest', assistant: 'accelo' },
   {
     id: 'activecampaign',
