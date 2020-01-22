@@ -8,9 +8,9 @@ import TemplatePreview from '../../views/Templates/InstallIntegrationPreview';
 import TemplateInstall from '../../views/Templates/Install';
 import GenerateOrInstall from '../../views/Templates/GenerateOrInstall';
 import ClonePreview from '../../views/Clone/Preview';
-import IntegrationAppInstallation from '../../views/IntegrationApps/Installer';
-import IntegrationAppAddNewStore from '../../views/IntegrationApps/AddNewStore';
-import IntegrationAppUninstallation from '../../views/IntegrationApps/Uninstaller';
+import IntegrationAppInstallation from '../../views/Integration/App/drawers/Install';
+import IntegrationAppAddNewStore from '../../views/Integration/App/drawers/AddStore';
+import IntegrationAppUninstallation from '../../views/Integration/App/panels/Admin/drawers/Uninstall';
 import CloneSetup from '../../views/Clone/Setup';
 
 const RecycleBin = loadable(() =>

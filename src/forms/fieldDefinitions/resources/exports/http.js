@@ -428,12 +428,12 @@ export default {
     label: 'Success Values',
     visibleWhenAll: [
       {
-        field: 'http.successMediaType',
-        isNot: ['csv'],
-      },
-      {
         field: 'outputMode',
         is: ['records'],
+      },
+      {
+        field: 'http.successMediaType',
+        isNot: ['csv'],
       },
     ],
   },
@@ -442,22 +442,26 @@ export default {
     label: 'Error Path',
     visibleWhenAll: [
       {
-        field: 'http.successMediaType',
-        isNot: ['csv'],
-      },
-      {
         field: 'outputMode',
         is: ['records'],
+      },
+      {
+        field: 'http.successMediaType',
+        isNot: ['csv'],
       },
     ],
   },
   'http.response.failPath': {
     type: 'text',
     label: 'Fail Path',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'outputMode',
         is: ['records'],
+      },
+      {
+        field: 'http.successMediaType',
+        isNot: ['csv'],
       },
     ],
   },
@@ -465,10 +469,14 @@ export default {
     type: 'text',
     delimiter: ',',
     label: 'Fail Values',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'outputMode',
         is: ['records'],
+      },
+      {
+        field: 'http.successMediaType',
+        isNot: ['csv'],
       },
     ],
   },

@@ -226,7 +226,6 @@ export default {
     'http.response.errorPath': { fieldId: 'http.response.errorPath' },
     'http.response.failPath': { fieldId: 'http.response.failPath' },
     'http.response.failValues': { fieldId: 'http.response.failValues' },
-    'file.csv': { fieldId: 'file.csv' },
     type: {
       id: 'type',
       type: 'select',
@@ -305,6 +304,19 @@ export default {
         {
           field: 'outputMode',
           is: ['records'],
+        },
+      ],
+    },
+    'file.csv': {
+      fieldId: 'file.csv',
+      visibleWhenAll: [
+        {
+          field: 'outputMode',
+          is: ['records'],
+        },
+        {
+          field: 'http.successMediaType',
+          is: ['csv'],
         },
       ],
     },
