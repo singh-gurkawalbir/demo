@@ -148,8 +148,12 @@ export default function reducer(state = {}, action) {
           } else {
             objCopy[field] = inputValue;
 
-            // remove isKey and useFirstRow if present when generate doesn't contain '[*].'
-            if (inputValue.indexOf('[*].') === -1) {
+            // for netsuite, remove isKey and useFirstRow if present when generate doesn't contain '[*].'
+
+            if (
+              draft[id].adaptorType === 'netsuite' &&
+              inputValue.indexOf('[*].') === -1
+            ) {
               if ('isKey' in objCopy) {
                 delete objCopy.isKey;
               }
