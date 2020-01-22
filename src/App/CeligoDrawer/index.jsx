@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, matchPath } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import { List, Collapse, ButtonBase } from '@material-ui/core';
@@ -73,14 +73,14 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.sandbox.dark,
     color: theme.palette.sandbox.contrastText,
   },
-  menuItem: {
+  toggleContainer: {
     marginTop: theme.spacing(1),
     textAlign: 'center',
     '& svg': {
       color: theme.palette.text.hint,
     },
   },
-  sandboxMenuItem: {
+  sandboxToggleContainer: {
     borderColor: theme.palette.secondary.light,
     '& svg': {
       color: theme.palette.secondary.light,
@@ -130,6 +130,10 @@ const useStyles = makeStyles(theme => ({
       background: 'transparent',
       left: 0,
     },
+  },
+  activeItem: {
+    backgroundColor: theme.palette.info.main,
+    color: 'red',
   },
   listItemSandbox: {
     backgroundColor: theme.palette.sandbox.light,
@@ -207,6 +211,7 @@ const useStyles = makeStyles(theme => ({
 export default function CeligoDrawer() {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const location = useLocation();
   const userProfile = useSelector(state => selectors.userProfile(state));
   const userPermissions = useSelector(state =>
     selectors.userPermissions(state)
@@ -227,6 +232,10 @@ export default function CeligoDrawer() {
     if (!drawerOpened) handleDrawerToggle();
   };
 
+  console.log(location.pathname);
+
+  // what is the active item? does it have a parent
+  // that needs an active state as well?
   return (
     <Drawer
       variant="permanent"
@@ -272,12 +281,16 @@ export default function CeligoDrawer() {
               [classes.sandboxList]: isSandbox,
             })}>
             {menuItems(userProfile, userPermissions).map(
-              ({ label, Icon, path, children }) => (
+              ({ label, Icon, path, routeProps, children }) => (
                 <Fragment key={label}>
                   <ListItem
                     button
                     className={clsx(classes.listItem, {
                       [classes.listItemSandbox]: isSandbox,
+                      [classes.activeItem]: matchPath(
+                        location.pathname,
+                        routeProps || `/pg${path}`
+                      ),
                     })}
                     component={children ? undefined : Link}
                     to={getRoutePath(path)}
@@ -305,7 +318,7 @@ export default function CeligoDrawer() {
                           [classes.sandboxList]: isSandbox,
                         })}
                         disablePadding>
-                        {children.map(({ label, Icon, path }) => (
+                        {children.map(({ label, Icon, path, routeProps }) => (
                           <ListItem
                             className={clsx(
                               classes.listItem,
@@ -313,6 +326,10 @@ export default function CeligoDrawer() {
                               {
                                 [classes.listItemSandbox]: isSandbox,
                                 [classes.sandboxInnerListItems]: isSandbox,
+                                [classes.activeItem]: matchPath(
+                                  location.pathname,
+                                  routeProps || `/pg${path}`
+                                ),
                               }
                             )}
                             data-test={label}
@@ -342,8 +359,8 @@ export default function CeligoDrawer() {
         </div>
         <div>
           <div
-            className={clsx(classes.toolbar, classes.menuItem, {
-              [classes.sandboxMenuItem]: isSandbox,
+            className={clsx(classes.toolbar, classes.toggleContainer, {
+              [classes.sandboxToggleContainer]: isSandbox,
             })}>
             <IconButton
               data-test="celigoDrawerToggle"
