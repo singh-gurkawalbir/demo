@@ -158,15 +158,18 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
         flowDetails.schedule.replace(/^\?/g, '0')
       )}`;
 
-    if (flowDetails.isSimpleExport) return 'Never runs';
+    if (flowDetails.isSimpleImport) return 'Manual Run';
 
     return 'Never Runs';
   }
 
   const isIntegrationApp = !!flowDetails._connectorId;
+  const flowBuilderPathName = flowDetails.isSimpleImport
+    ? 'dataLoader'
+    : 'flowBuilder';
   const flowBuilderTo = isIntegrationApp
-    ? `/pg/integrationApps/${integrationAppName}/${flowDetails._integrationId}/flowBuilder/${flowId}`
-    : `flowBuilder/${flowId}`;
+    ? `/pg/integrationApps/${integrationAppName}/${flowDetails._integrationId}/${flowBuilderPathName}/${flowId}`
+    : `${flowBuilderPathName}/${flowId}`;
 
   return (
     <div className={classes.root}>

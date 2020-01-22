@@ -39,7 +39,7 @@ export default function menuItems(userProfile, userPermissions = {}) {
         },
         {
           label: 'Data loader',
-          path: '/integrations/none/flowBuilder/dataLoader',
+          path: '/integrations/none/dataLoader/new',
           Icon: DataLoaderIcon,
         },
       ],

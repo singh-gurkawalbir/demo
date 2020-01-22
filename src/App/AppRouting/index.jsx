@@ -2,7 +2,6 @@ import { Component } from 'react';
 import { hot } from 'react-hot-loader';
 import { Switch, Route } from 'react-router-dom';
 import loadable from '../../utils/loadable';
-import IntegrationAppsRouter from '../../views/IntegrationApps/Router';
 import MarketplaceRouter from '../../views/MarketPlace/Router';
 import TemplatePreview from '../../views/Templates/InstallIntegrationPreview';
 import TemplateInstall from '../../views/Templates/Install';
@@ -113,6 +112,8 @@ export default class AppRouting extends Component {
           path={[
             '/pg/integrationapps/:integrationAppName/:integrationId/flowBuilder/:flowId',
             '/pg/integrations/:integrationId/flowBuilder/:flowId',
+            '/pg/integrationapps/:integrationAppName/:integrationId/dataLoader/:flowId',
+            '/pg/integrations/:integrationId/dataLoader/:flowId',
           ]}>
           <FlowBuilder />
         </Route>
@@ -156,7 +157,6 @@ export default class AppRouting extends Component {
           path="/pg/templates/generate-or-install"
           component={GenerateOrInstall}
         />
-        <Route path="/pg/connectors" component={IntegrationAppsRouter} />
         <Route path="/pg/marketplace" component={MarketplaceRouter} />
         <Route path="/pg/dashboard" component={Dashboard} />
         <Route path="/pg/recycleBin" component={RecycleBin} />
