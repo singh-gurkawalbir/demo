@@ -21,7 +21,12 @@ function SqlQueryBuilderEditorDialog(props) {
   } = props;
 
   return (
-    <EditorDialog id={id} {...defaults} {...rest} disabled={disabled}>
+    <EditorDialog
+      dataTest="sqlQueryBuilder"
+      id={id}
+      {...defaults}
+      {...rest}
+      disabled={disabled}>
       <SQLQueryBuilderEditor
         disabled={disabled}
         lookups={lookups}
