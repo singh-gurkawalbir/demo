@@ -166,6 +166,11 @@ export default class AppRouting extends Component {
         <Route path="/pg/myAccount/:tab" component={MyAccount} />
         <Route path="/pg/templates" component={TemplateList} />
         <Route path="/pg/accesstokens" component={AccessTokenList} />
+        <Route
+          path="/pg/tokens"
+          exact
+          render={({ history }) => history.replace('/pg/accesstokens')}
+        />
         <Route path="/pg/:resourceType" component={ResourceList} />
         <Route component={NotFound} />
       </Switch>
