@@ -25,28 +25,48 @@ export default function menuItems(userProfile, userPermissions = {}) {
   let items = [
     {
       label: 'Home',
-      path: '/',
       Icon: HomeIcon,
+      path: '/',
+      routeProps: {
+        path: ['/pg', '/pg/dashboard'],
+        exact: true,
+      },
     },
     {
       label: 'Tools',
+      routeProps: [
+        '/pg/integrations/:integrationId/flowBuilder',
+        '/pg/integrations/:integrationId/dataLoader',
+      ],
       Icon: ToolsIcon,
       children: [
         {
           label: 'Flow builder',
-          path: '/integrations/none/flowBuilder/new',
           Icon: FlowBuilderIcon,
+          path: '/integrations/none/flowBuilder/new',
+          routeProps: '/pg/integrations/:integrationId/flowBuilder',
         },
         {
           label: 'Data loader',
-          path: '/integrations/none/dataLoader/new',
           Icon: DataLoaderIcon,
+          path: '/integrations/none/dataLoader/new',
+          routeProps: '/pg/integrations/:integrationId/dataloader',
         },
       ],
     },
     {
       label: 'Resources',
       Icon: ResourcesIcon,
+      routeProps: [
+        '/pg/exports',
+        '/pg/imports',
+        '/pg/connections',
+        '/pg/scripts',
+        '/pg/agents',
+        '/pg/stacks',
+        '/pg/templates',
+        '/pg/connectors',
+      ],
       children: [
         { label: 'Exports', path: '/exports', Icon: ExportsIcon },
         { label: 'Imports', path: '/imports', Icon: ImportsIcon },
@@ -57,8 +77,8 @@ export default function menuItems(userProfile, userPermissions = {}) {
         { label: 'Templates', path: '/templates', Icon: DataLoaderIcon },
         {
           label: 'Integration Apps',
-          path: '/connectors',
           Icon: ConnectionsIcon,
+          path: '/connectors',
         },
         { label: 'API Tokens', path: '/accesstokens', Icon: TokensApiIcon },
         { label: 'Recycle bin', path: '/recycleBin', Icon: RecycleBinIcon },
@@ -66,8 +86,8 @@ export default function menuItems(userProfile, userPermissions = {}) {
     },
     {
       label: 'Marketplace',
-      path: '/marketplace',
       Icon: MarketplaceIcon,
+      path: '/marketplace',
     },
     {
       label: 'Support',
@@ -79,8 +99,8 @@ export default function menuItems(userProfile, userPermissions = {}) {
     },
     {
       label: 'Editor playground (Beta)',
-      path: '/editors',
       Icon: EditorsPlaygroundIcon,
+      path: '/editors',
     },
 
     // {
