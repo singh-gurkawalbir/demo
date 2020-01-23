@@ -572,7 +572,7 @@ export function* refreshConnectionStatus({ integrationId }) {
     : '/connections?fetchQueueSize=true';
   const response = yield call(apiCallWithRetry, {
     path: url,
-    options: { hidden: true },
+    hidden: true,
   });
   const finalResponse = Array.isArray(response)
     ? response.map(({ _id, offline, queues }) => ({
