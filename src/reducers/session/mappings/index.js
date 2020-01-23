@@ -98,9 +98,11 @@ export default function reducer(state = {}, action) {
             value: incompleteGenValue,
             index: incompleteGenIndex,
           } = generateObj;
-          const childSObject = generateFields.find(
-            field => field.id.indexOf(`${incompleteGenValue}[*].`) > -1
-          );
+          const childSObject =
+            generateFields &&
+            generateFields.find(
+              field => field.id.indexOf(`${incompleteGenValue}[*].`) > -1
+            );
 
           if (childSObject) {
             const objCopy = { ...draft[id].mappings[incompleteGenIndex] };
@@ -148,8 +150,10 @@ export default function reducer(state = {}, action) {
           } else {
             objCopy[field] = inputValue;
 
-            // remove isKey and useFirstRow if present when generate doesn't contain '[*].'
-            if (inputValue.indexOf('[*].') === -1) {
+            if (
+              !mappingUtil.isCsvOrXlsxResource(draft[id].resource) &&
+              inputValue.indexOf('[*].') === -1
+            ) {
               if ('isKey' in objCopy) {
                 delete objCopy.isKey;
               }
