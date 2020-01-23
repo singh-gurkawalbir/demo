@@ -46,7 +46,6 @@ export default {
       },
     ],
   },
-
   'file.type': {
     type: 'filetypeselect',
     label: 'File type',
@@ -65,7 +64,11 @@ export default {
         ],
       },
     ],
-    visibleWhen: [
+    visibleWhenAll: [
+      {
+        field: 'outputMode',
+        is: ['records'],
+      },
       {
         field: 'file.output',
         is: ['records'],
@@ -156,7 +159,7 @@ export default {
   'file.fileDefinition.resourcePath': {
     label: 'Resource Path',
     type: 'text',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'file.type',
         is: ['filedefinition', 'fixed', 'delimited/edifact'],
@@ -173,10 +176,6 @@ export default {
         field: 'file.type',
         is: ['filedefinition'],
       },
-      {
-        field: 'outputMode',
-        is: ['records'],
-      },
     ],
   },
   'fixed.format': {
@@ -188,10 +187,6 @@ export default {
       {
         field: 'file.type',
         is: ['fixed'],
-      },
-      {
-        field: 'outputMode',
-        is: ['records'],
       },
     ],
   },
@@ -205,10 +200,6 @@ export default {
         field: 'file.type',
         is: ['delimited/edifact'],
       },
-      {
-        field: 'outputMode',
-        is: ['records'],
-      },
     ],
   },
   'file.filedefinition.rules': {
@@ -218,10 +209,6 @@ export default {
       {
         field: 'file.type',
         is: ['filedefinition', 'fixed', 'delimited/edifact'],
-      },
-      {
-        field: 'outputMode',
-        is: ['records'],
       },
     ],
     refreshOptionsOnChangesTo: [
@@ -252,14 +239,6 @@ export default {
       {
         field: 'file.type',
         is: ['csv'],
-      },
-      {
-        field: 'outputMode',
-        is: ['records'],
-      },
-      {
-        field: 'file.output',
-        is: ['records'],
       },
     ],
   },

@@ -308,7 +308,17 @@ export default {
       ],
     },
     'file.csv': {
-      fieldId: 'file.csv',
+      id: 'file.csv',
+      type: 'csvparse',
+      label: 'Configure CSV Parse Options',
+      defaultValue: r =>
+        (r.file && r.file.csv) || {
+          rowsToSkip: 0,
+          trimSpaces: false,
+          columnDelimiter: ',',
+          hasHeaderRow: false,
+          rowDelimiter: '\n',
+        },
       visibleWhenAll: [
         {
           field: 'outputMode',
