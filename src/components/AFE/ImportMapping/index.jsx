@@ -148,6 +148,7 @@ export default function ImportMapping(props) {
   const mappingsCopy = mappings ? [...mappings] : [];
 
   mappingsCopy.push({});
+  console.log('mappings', mappings);
   const tableData = (mappingsCopy || []).map((value, index) => {
     const obj = value;
 
@@ -160,8 +161,45 @@ export default function ImportMapping(props) {
     return obj;
   });
   const handleFieldUpdate = useCallback(
-    (rowIndex, event, field) => {
-      const { value } = event.target;
+    (_mapping, field, value) => {
+      const { index: rowIndex, generate = '', extract = '' } = _mapping;
+
+      if (value === '') {
+        if (
+          (field === 'extract' && generate === '') ||
+          (field === 'generate' &&
+            extract === '' &&
+            !('hardCodedValue' in _mapping))
+        ) {
+          dispatch(actions.mapping.delete(editorId, rowIndex));
+
+          return;
+        }
+      }
+
+      if (
+        field === 'generate' &&
+        application === adaptorTypeMap.SalesforceImport &&
+        value &&
+        value.indexOf('_child_') > -1
+      ) {
+        const childRelationshipField = generateFields.find(
+          field => field.id === value
+        );
+
+        if (childRelationshipField) {
+          const { childSObject, relationshipName } = childRelationshipField;
+
+          dispatch(
+            actions.mapping.patchIncompleteGenerates(
+              editorId,
+              rowIndex,
+              relationshipName
+            )
+          );
+          fetchSalesforceSObjectMetadata(childSObject);
+        }
+      }
 
       dispatch(actions.mapping.patchField(editorId, field, rowIndex, value));
     },
@@ -196,33 +234,6 @@ export default function ImportMapping(props) {
     }
 
     dispatch(actions.mapping.updateLookup(editorId, lookupsTmp));
-  };
-
-  const handleGenerateUpdate = mapping => (id, val) => {
-    if (
-      application === adaptorTypeMap.SalesforceImport &&
-      val &&
-      val.indexOf('_child_') > -1
-    ) {
-      const childRelationshipField = generateFields.find(
-        field => field.id === val
-      );
-
-      if (childRelationshipField) {
-        const { childSObject, relationshipName } = childRelationshipField;
-
-        dispatch(
-          actions.mapping.patchIncompleteGenerates(
-            editorId,
-            mapping.index,
-            relationshipName
-          )
-        );
-        fetchSalesforceSObjectMetadata(childSObject);
-      }
-    }
-
-    handleFieldUpdate(mapping.index, { target: { value: val } }, 'generate');
   };
 
   const handleSalesforceAssistantFieldClick = useCallback(meta => {
@@ -324,12 +335,13 @@ export default function ImportMapping(props) {
                     value={mapping.extract || mapping.hardCodedValueTmp}
                     options={extractFields}
                     disabled={mapping.isNotEditable || disabled}
-                    onBlur={(id, evt) => {
-                      handleFieldUpdate(
-                        mapping.index,
-                        { target: { value: evt } },
-                        'extract'
-                      );
+                    onBlur={(id, value) => {
+                      handleFieldUpdate(mapping, 'extract', value);
+                      // handleFieldUpdate(
+                      //   mapping.index,
+                      //   { target: { value: evt } },
+                      //   'extract'
+                      // );
                     }}
                   />
 
@@ -352,7 +364,12 @@ export default function ImportMapping(props) {
                     valueName="id"
                     options={generateFields}
                     disabled={mapping.isRequired || disabled}
-                    onBlur={handleGenerateUpdate(mapping)}
+                    onBlur={
+                      (id, value) => {
+                        handleFieldUpdate(mapping, 'generate', value);
+                      }
+                      // handleGenerateUpdate(mapping)
+                    }
                   />
                   {mapping.isRequired && (
                     <Tooltip
