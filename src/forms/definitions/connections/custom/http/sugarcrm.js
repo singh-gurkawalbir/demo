@@ -50,22 +50,6 @@ export default {
         return subdomain;
       },
     },
-    'http.unencrypted.grantType': {
-      id: 'http.unencrypted.grantType',
-      required: true,
-      type: 'select',
-      label: 'Grant Type',
-      options: [
-        {
-          items: [
-            { label: 'Password', value: 'password' },
-            { label: 'Refresh Token', value: 'refresh_token' },
-          ],
-        },
-      ],
-      helpText:
-        'Please select type of request. Available grant types are "password" and "refresh_token".',
-    },
     'http.unencrypted.version': {
       id: 'http.unencrypted.version',
       required: true,
@@ -135,7 +119,6 @@ export default {
     fields: [
       'name',
       'sugarcrmSubdomain',
-      'http.unencrypted.grantType',
       'http.unencrypted.version',
       'http.unencrypted.clientID',
       'http.unencrypted.platform',

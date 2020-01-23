@@ -14,12 +14,13 @@ function ResponseTransformationDialog(props) {
   const resourceId = resource._id;
   const { sampleResponseData, responseTransform } = resource;
   const fieldMeta = {
+    // TODO : @Raghu Make this field JSON editor instead of textarea
     fieldMap: {
       sampleResponseData: {
         id: 'sampleResponseData',
         name: 'sampleResponseData',
         type: 'textarea',
-        defaultValue: sampleResponseData,
+        defaultValue: JSON.stringify(sampleResponseData),
       },
       responseTransform: {
         id: 'responseTransform',

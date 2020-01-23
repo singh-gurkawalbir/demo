@@ -98,9 +98,11 @@ export default function reducer(state = {}, action) {
             value: incompleteGenValue,
             index: incompleteGenIndex,
           } = generateObj;
-          const childSObject = generateFields.find(
-            field => field.id.indexOf(`${incompleteGenValue}[*].`) > -1
-          );
+          const childSObject =
+            generateFields &&
+            generateFields.find(
+              field => field.id.indexOf(`${incompleteGenValue}[*].`) > -1
+            );
 
           if (childSObject) {
             const objCopy = { ...draft[id].mappings[incompleteGenIndex] };

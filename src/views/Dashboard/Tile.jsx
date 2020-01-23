@@ -88,6 +88,11 @@ function Tile({ tile, history }) {
       '5717912fbc5a8ca446571f1e', // Magento2
       '57179182e0a908200c2781d9', // BigCommerce
       '5db8164d9df868329731fca0', // Square POS
+      '58d94e6b2e4b300dbf6b01bc', // eBay
+      '5b754a8fddbb3b71d6046c87', // Amazon MCF
+      '5a546b705556c2539f4a8dba', // Shipwire
+      '5bfe38e363afaf4b872b4ee0', // Returnly
+      '58859b520b11ee387108165a', // ShipStation
     ].includes(tile._connectorId);
   const handleStatusClick = useCallback(
     event => {

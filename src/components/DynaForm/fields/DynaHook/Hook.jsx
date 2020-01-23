@@ -212,10 +212,10 @@ export default function DynaHook(props) {
               </ActionButton>
             </Fragment>
           )}
-          {hookType === 'script' && value._scriptId && (
+          {hookType === 'script' && (
             <ActionButton
               onClick={handleEditorClick}
-              disabled={disabled}
+              disabled={disabled || !value._scriptId}
               data-test={id}>
               <EditIcon />
             </ActionButton>
