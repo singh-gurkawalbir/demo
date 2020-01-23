@@ -74,6 +74,7 @@
     "redux-saga": "1.0.5",
     "redux-saga-requests": "0.25.0",
     "redux-saga-requests-fetch": "0.9.6",
+    "reselect": "^4.0.0",
     "shortid": "2.2.14",
     "sift": "^8.5.0",
     "sql-parser-mistic": "^1.2.3",
