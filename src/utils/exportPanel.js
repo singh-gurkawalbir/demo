@@ -9,7 +9,7 @@ import { adaptorTypeMap } from './resource';
 const applicationsWithPreviewPanel = [
   'http',
   'rest',
-  'Mongodb',
+  'mongodb',
   'rdbms',
   'dynamodb',
 ];
