@@ -5,7 +5,14 @@
 import { adaptorTypeMap } from './resource';
 
 // Applications list which include Preview panel as part of the resource drawer
-const applicationsWithPreviewPanel = ['http', 'rest', 'mongodb', 'rdbms'];
+
+const applicationsWithPreviewPanel = [
+  'http',
+  'rest',
+  'Mongodb',
+  'rdbms',
+  'dynamodb',
+];
 const emptyList = [];
 
 export const getAvailablePreviewStages = resource => {
@@ -31,6 +38,7 @@ export const getAvailablePreviewStages = resource => {
         { label: 'Parsed Output', value: 'parse' },
       ];
     case 'mongodb':
+    case 'dynamodb':
     case 'rdbms':
       return [{ label: 'Parsed Output', value: 'parse' }];
     default:
