@@ -3296,7 +3296,7 @@ export function transferListWithMetadata(state) {
       transfers[i].ownerUser &&
       transfers[i].ownerUser.email
     ) {
-      fromUser = transfer[i].ownerUser.email;
+      fromUser = transfers[i].ownerUser.email;
     }
 
     if (transfers[i].transferToUser && transfers[i].transferToUser.name) {

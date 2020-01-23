@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import { Fragment, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link, withRouter } from 'react-router-dom';
 import { Typography, InputBase } from '@material-ui/core';
@@ -102,6 +102,7 @@ function GlobalSearch({ location }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const filter = useSelector(state => selectors.filter(state, 'global'));
+  const [showSearchResults, setShowSearchResults] = useState(true);
   //
   // TECH DEBT: This resource merge and sort code below should be move to
   // a custom global search selector and tests added to ensure below
@@ -140,31 +141,41 @@ function GlobalSearch({ location }) {
     dispatch(actions.patchFilter('global', { keyword }));
   };
 
+  const handleBlur = () => {
+    setShowSearchResults(false);
+  };
+
+  const handleFocus = () => {
+    setShowSearchResults(true);
+  };
+
   return (
     <Fragment>
       <div className={classes.search}>
         {filter.keyword && (
           <LoadResources resources={resourceTypes}>
-            <div className={classes.searchResults}>
-              {searchResults.length ? (
-                searchResults.map(r => (
-                  <div className={classes.searchItem} key={r.id}>
-                    <Typography
-                      color="inherit"
-                      component={Link}
-                      onClick={() => handleChange('')}
-                      to={`${location.pathname}/edit/${r.type}/${r.id}`}>
-                      {r.name}
-                    </Typography>
-                    <Typography variant="body2" color="textSecondary">
-                      [{r.type}]
-                    </Typography>
-                  </div>
-                ))
-              ) : (
-                <Typography className={classes.noResult}>No Match</Typography>
-              )}
-            </div>
+            {showSearchResults && (
+              <div className={classes.searchResults}>
+                {searchResults.length ? (
+                  searchResults.map(r => (
+                    <div className={classes.searchItem} key={r.id}>
+                      <Typography
+                        color="inherit"
+                        component={Link}
+                        onClick={() => handleChange('')}
+                        to={`${location.pathname}/edit/${r.type}/${r.id}`}>
+                        {r.name}
+                      </Typography>
+                      <Typography variant="body2" color="textSecondary">
+                        [{r.type}]
+                      </Typography>
+                    </div>
+                  ))
+                ) : (
+                  <Typography className={classes.noResult}>No Match</Typography>
+                )}
+              </div>
+            )}
           </LoadResources>
         )}
         <div className={classes.searchIcon}>
@@ -172,6 +183,8 @@ function GlobalSearch({ location }) {
         </div>
         <InputBase
           onChange={e => handleChange(e.target.value)}
+          onBlur={handleBlur}
+          onFocus={handleFocus}
           placeholder="Search"
           classes={{
             root: classes.inputRoot,
