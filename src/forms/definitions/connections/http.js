@@ -221,7 +221,7 @@ export default {
     },
     'http.auth.oauth.callbackURL': {
       fieldId: 'http.auth.oauth.callbackURL',
-      visibleWhen: [
+      visibleWhenAll: [
         { field: 'http.auth.type', is: ['oauth'] },
         { field: 'http.auth.oauth.grantType', is: ['authorizecode'] },
       ],
@@ -270,7 +270,7 @@ export default {
     'http.auth.oauth.authURI': {
       fieldId: 'http.auth.oauth.authURI',
       required: true,
-      visibleWhen: [
+      visibleWhenAll: [
         { field: 'http.auth.type', is: ['oauth'] },
         { field: 'http.auth.oauth.grantType', is: ['authorizecode'] },
       ],
