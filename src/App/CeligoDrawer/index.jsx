@@ -132,8 +132,11 @@ const useStyles = makeStyles(theme => ({
     },
   },
   activeItem: {
-    backgroundColor: theme.palette.info.main,
-    color: 'red',
+    backgroundColor: `${theme.palette.primary.main} !important`,
+    color: theme.palette.common.white,
+    '& svg > *': {
+      color: theme.palette.background.paper,
+    },
   },
   listItemSandbox: {
     backgroundColor: theme.palette.sandbox.light,
@@ -150,7 +153,13 @@ const useStyles = makeStyles(theme => ({
       borderColor: theme.palette.sandbox.dark,
     },
   },
-
+  activeItemSandbox: {
+    backgroundColor: `${darken(theme.palette.sandbox.dark, 0.4)} !important`,
+    color: theme.palette.common.white,
+    '& svg > *': {
+      color: theme.palette.background.paper,
+    },
+  },
   itemIconRoot: {
     minWidth: 45,
   },
@@ -232,8 +241,6 @@ export default function CeligoDrawer() {
     if (!drawerOpened) handleDrawerToggle();
   };
 
-  console.log(location.pathname);
-
   // what is the active item? does it have a parent
   // that needs an active state as well?
   return (
@@ -287,10 +294,20 @@ export default function CeligoDrawer() {
                     button
                     className={clsx(classes.listItem, {
                       [classes.listItemSandbox]: isSandbox,
-                      [classes.activeItem]: matchPath(
-                        location.pathname,
-                        routeProps || `/pg${path}`
-                      ),
+                      [classes.activeItem]:
+                        !isSandbox &&
+                        expand !== label &&
+                        matchPath(
+                          location.pathname,
+                          routeProps || `/pg${path}`
+                        ),
+                      [classes.activeItemSandbox]:
+                        isSandbox &&
+                        expand !== label &&
+                        matchPath(
+                          location.pathname,
+                          routeProps || `/pg${path}`
+                        ),
                     })}
                     component={children ? undefined : Link}
                     to={getRoutePath(path)}
@@ -326,10 +343,18 @@ export default function CeligoDrawer() {
                               {
                                 [classes.listItemSandbox]: isSandbox,
                                 [classes.sandboxInnerListItems]: isSandbox,
-                                [classes.activeItem]: matchPath(
-                                  location.pathname,
-                                  routeProps || `/pg${path}`
-                                ),
+                                [classes.activeItem]:
+                                  !isSandbox &&
+                                  matchPath(
+                                    location.pathname,
+                                    routeProps || `/pg${path}`
+                                  ),
+                                [classes.activeItemSandbox]:
+                                  isSandbox &&
+                                  matchPath(
+                                    location.pathname,
+                                    routeProps || `/pg${path}`
+                                  ),
                               }
                             )}
                             data-test={label}
