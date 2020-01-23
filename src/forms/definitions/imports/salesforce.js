@@ -20,6 +20,7 @@ export default {
 
         if (newValues['/ignoreExisting'] === false) {
           delete newValues['/salesforce/idLookup/whereClause'];
+          newValues['/salesforce/idLookup'] = undefined;
         }
       } else if (newValues['/salesforce/compositeOperation'] === 'update') {
         newValues['/ignoreExisting'] = false;
@@ -36,6 +37,7 @@ export default {
 
         if (newValues['/ignoreExisting'] === false) {
           delete newValues['/salesforce/idLookup/whereClause'];
+          newValues['/salesforce/idLookup'] = undefined;
         }
       } else if (newValues['/salesforce/operation'] === 'update') {
         newValues['/ignoreExisting'] = false;
