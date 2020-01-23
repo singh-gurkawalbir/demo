@@ -101,22 +101,33 @@ export default {
         },
       ],
     },
+    exportPanel: {
+      fieldId: 'exportPanel',
+    },
   },
   layout: {
-    fields: [
-      'common',
-      'exportData',
-      'dynamodb.region',
-      'dynamodb.method',
-      'dynamodb.tableName',
-      'dynamodb.keyConditionExpression',
-      'dynamodb.filterExpression',
-      'dynamodb.projectionExpression',
-      'dynamodb.expressionAttributeNames',
-      'dynamodb.expressionAttributeValues',
-      'type',
-      'dynamodb.onceExportPartitionKey',
-      'dynamodb.onceExportSortKey',
+    type: 'column',
+    containers: [
+      {
+        fields: [
+          'common',
+          'exportData',
+          'dynamodb.region',
+          'dynamodb.method',
+          'dynamodb.tableName',
+          'dynamodb.keyConditionExpression',
+          'dynamodb.filterExpression',
+          'dynamodb.projectionExpression',
+          'dynamodb.expressionAttributeNames',
+          'dynamodb.expressionAttributeValues',
+          'type',
+          'dynamodb.onceExportPartitionKey',
+          'dynamodb.onceExportSortKey',
+        ],
+      },
+      {
+        fields: ['exportPanel'],
+      },
     ],
   },
 };
