@@ -1,8 +1,18 @@
-import { call, put, takeEvery, delay } from 'redux-saga/effects';
+import {
+  call,
+  put,
+  takeEvery,
+  delay,
+  select,
+  take,
+  fork,
+  cancel,
+} from 'redux-saga/effects';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
 import getRequestOptions from '../../utils/requestOptions';
+import * as selectors from '../../reducers';
 
 export function* generateToken({ id }) {
   const requestOptions = getRequestOptions(
@@ -62,7 +72,48 @@ export function* displayToken({ id }) {
   );
 }
 
+export function* checkAndRemovePurgedTokens() {
+  const { resources = [] } = yield select(selectors.resourceList, {
+    type: 'accesstokens',
+  });
+  let minAutoPurgeAt;
+
+  resources.forEach(r => {
+    if (r.autoPurgeAt) {
+      if (!minAutoPurgeAt) {
+        minAutoPurgeAt = r.autoPurgeAt;
+      } else if (minAutoPurgeAt > r.autoPurgeAt) {
+        minAutoPurgeAt = r.autoPurgeAt;
+      }
+    }
+  });
+
+  if (!minAutoPurgeAt) {
+    return false;
+  }
+
+  yield delay(Math.max(new Date(minAutoPurgeAt) - new Date(), 0));
+  yield put(actions.accessToken.deletePurged());
+  yield put(actions.accessToken.updatedCollection());
+}
+
+export function* accessTokensUpdated() {
+  const watcher = yield fork(checkAndRemovePurgedTokens);
+
+  yield take(actionTypes.ACCESSTOKEN_UPDATED_COLLECTION);
+  yield cancel(watcher);
+}
+
+export function* resourcesReceived({ resourceType }) {
+  if (resourceType === 'accesstokens') {
+    yield put(actions.accessToken.updatedCollection());
+  }
+}
+
 export const accessTokenSagas = [
   takeEvery(actionTypes.ACCESSTOKEN_TOKEN_GENERATE, generateToken),
   takeEvery(actionTypes.ACCESSTOKEN_TOKEN_DISPLAY, displayToken),
+  takeEvery(actionTypes.RESOURCE.RECEIVED_COLLECTION, resourcesReceived),
+  takeEvery(actionTypes.RESOURCE.RECEIVED, resourcesReceived),
+  takeEvery(actionTypes.ACCESSTOKEN_UPDATED_COLLECTION, accessTokensUpdated),
 ];

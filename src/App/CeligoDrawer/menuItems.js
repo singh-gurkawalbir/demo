@@ -45,7 +45,7 @@ export default function menuItems(
         },
         {
           label: 'Data loader',
-          path: '/integrations/none/flowBuilder/dataLoader',
+          path: '/integrations/none/dataLoader/new',
           Icon: DataLoaderIcon,
         },
       ],

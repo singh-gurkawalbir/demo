@@ -168,6 +168,7 @@ const connectors = [
   },
   { id: 'autopilot', name: 'Autopilot', type: 'http', assistant: 'autopilot' },
   { id: 'avalara', name: 'Avalara', type: 'rest', assistant: 'avalara' },
+  { id: 'shipbob', name: 'ShipBob', type: 'http', assistant: 'shipbob' },
   {
     id: 'azureactivedirectory',
     name: 'Azure Active Directory',

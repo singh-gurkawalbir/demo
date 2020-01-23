@@ -95,6 +95,10 @@ export default {
               label: 'A1F83G8C2ARO7P (UK)',
             },
             {
+              value: 'A2VIGQ35RCS4UG',
+              label: 'A2VIGQ35RCS4UG (AE)',
+            },
+            {
               value: 'A21TJRUUN4KGV',
               label: 'A21TJRUUN4KGV (IN)',
             },

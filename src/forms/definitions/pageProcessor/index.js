@@ -55,6 +55,7 @@ export default {
       name: 'resourceType',
       type: 'select',
       label: 'What would you like to do?',
+      required: true,
       defaultValue: r => (r && r.resourceType) || 'imports',
       options: [
         {

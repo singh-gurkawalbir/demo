@@ -84,6 +84,8 @@ export default {
         'TIMECARDS_WRITE',
         'TIMECARDS_SETTINGS_READ',
         'TIMECARDS_SETTINGS_WRITE',
+        'MERCHANT_PROFILE_WRITE',
+        'CASH_DRAWER_READ',
       ],
       visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
     },
