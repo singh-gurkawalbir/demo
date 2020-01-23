@@ -148,15 +148,10 @@ export default function ImportMapping(props) {
   const mappingsCopy = mappings ? [...mappings] : [];
 
   mappingsCopy.push({});
-  console.log('mappings', mappings);
   const tableData = (mappingsCopy || []).map((value, index) => {
     const obj = value;
 
     obj.index = index;
-
-    if (obj.hardCodedValue) {
-      obj.hardCodedValueTmp = `"${obj.hardCodedValue}"`;
-    }
 
     return obj;
   });
