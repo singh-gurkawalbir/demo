@@ -211,12 +211,23 @@ export default function CeligoDrawer() {
   const userPermissions = useSelector(state =>
     selectors.userPermissions(state)
   );
+  const integrations = useSelector(
+    state =>
+      selectors.resourceList(state, {
+        type: 'integrations',
+        ignoreEnvironmentFilter: true,
+      }),
+    (left, right) => left.length === right.length
+  ).resources;
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
   const environment = useSelector(
     state => selectors.userPreferences(state).environment
   );
   const [expand, setExpand] = React.useState(null);
   const isSandbox = environment === 'sandbox';
+  const marketplaceConnectors = useSelector(state =>
+    selectors.marketplaceConnectors(state, undefined, isSandbox)
+  );
   const handleDrawerToggle = () => {
     dispatch(actions.toggleDrawer());
   };
@@ -271,41 +282,43 @@ export default function CeligoDrawer() {
             className={clsx(classes.list, {
               [classes.sandboxList]: isSandbox,
             })}>
-            {menuItems(userProfile, userPermissions).map(
-              ({ label, Icon, path, children }) => (
-                <Fragment key={label}>
-                  <ListItem
-                    button
-                    className={clsx(classes.listItem, {
-                      [classes.listItemSandbox]: isSandbox,
-                    })}
-                    component={children ? undefined : Link}
-                    to={getRoutePath(path)}
-                    data-test={label}
-                    onClick={children ? handleExpandClick(label) : null}>
-                    <ListItemIcon classes={{ root: classes.itemIconRoot }}>
-                      {<Icon />}
-                    </ListItemIcon>
-                    <ListItemText
-                      primaryTypographyProps={{
-                        className: classes.itemText,
-                      }}
-                      primary={label}
-                    />
-                    {children &&
-                      (expand === label ? <ArrowUpIcon /> : <ArrowDownIcon />)}
-                  </ListItem>
-                  {children && (
-                    <Collapse
-                      in={expand === label}
-                      unmountOnExit
-                      timeout="auto">
-                      <List
-                        className={clsx(classes.list, {
-                          [classes.sandboxList]: isSandbox,
-                        })}
-                        disablePadding>
-                        {children.map(({ label, Icon, path }) => (
+            {menuItems(
+              userProfile,
+              userPermissions,
+              integrations,
+              marketplaceConnectors
+            ).map(({ label, Icon, path, children }) => (
+              <Fragment key={label}>
+                <ListItem
+                  button
+                  className={clsx(classes.listItem, {
+                    [classes.listItemSandbox]: isSandbox,
+                  })}
+                  component={children ? undefined : Link}
+                  to={getRoutePath(path)}
+                  data-test={label}
+                  onClick={children ? handleExpandClick(label) : null}>
+                  <ListItemIcon classes={{ root: classes.itemIconRoot }}>
+                    {<Icon />}
+                  </ListItemIcon>
+                  <ListItemText
+                    primaryTypographyProps={{
+                      className: classes.itemText,
+                    }}
+                    primary={label}
+                  />
+                  {children &&
+                    (expand === label ? <ArrowUpIcon /> : <ArrowDownIcon />)}
+                </ListItem>
+                {children && (
+                  <Collapse in={expand === label} unmountOnExit timeout="auto">
+                    <List
+                      className={clsx(classes.list, {
+                        [classes.sandboxList]: isSandbox,
+                      })}
+                      disablePadding>
+                      {children.map(
+                        ({ label, Icon, path, href, component }) => (
                           <ListItem
                             className={clsx(
                               classes.listItem,
@@ -317,8 +330,10 @@ export default function CeligoDrawer() {
                             )}
                             data-test={label}
                             key={label}
-                            component={Link}
-                            to={getRoutePath(path)}
+                            component={component || Link}
+                            target={href && '_blank'}
+                            href={href}
+                            to={!href && getRoutePath(path)}
                             button>
                             <ListItemIcon
                               classes={{ root: classes.itemIconRoot }}>
@@ -331,13 +346,13 @@ export default function CeligoDrawer() {
                               }}
                             />
                           </ListItem>
-                        ))}
-                      </List>
-                    </Collapse>
-                  )}
-                </Fragment>
-              )
-            )}
+                        )
+                      )}
+                    </List>
+                  </Collapse>
+                )}
+              </Fragment>
+            ))}
           </List>
         </div>
         <div>
