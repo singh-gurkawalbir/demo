@@ -45,7 +45,7 @@ export default {
         },
       },
       {
-        heading: 'Updated on',
+        heading: 'Last updated',
         value: r => formatLastModified(r.lastModified),
         orderBy: 'lastModified',
       },
@@ -57,7 +57,7 @@ export default {
     ];
 
     if (actionProps.type === 'flowBuilder') {
-      columns = columns.filter(col => col.heading !== 'Updated on');
+      columns = columns.filter(col => col.heading !== 'Last updated');
     }
 
     return columns;

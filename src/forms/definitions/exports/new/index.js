@@ -112,10 +112,6 @@ export default {
     const appField = fields.find(field => field.id === 'application');
     const app = applications.find(a => a.id === appField.value) || {};
 
-    if (fieldId === 'name') {
-      return `New ${app.name} Export`;
-    }
-
     if (fieldId === 'connection') {
       const expression = [];
 

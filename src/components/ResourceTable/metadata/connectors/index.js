@@ -20,7 +20,7 @@ export default {
       value: r => r.description,
     },
     {
-      heading: 'Updated on',
+      heading: 'Last updated',
       value: r => formatLastModified(r.lastModified),
       orderBy: 'lastModified',
     },

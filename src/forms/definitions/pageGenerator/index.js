@@ -46,9 +46,29 @@ export default {
     return newValues;
   },
   fieldMap: {
+    isNew: {
+      id: 'isNew',
+      name: 'isNew',
+      type: 'radiogroup',
+      // label: 'Build new or use existing?',
+      defaultValue: 'true',
+      options: [
+        {
+          items: [
+            { label: 'New', value: 'true' },
+            {
+              label: 'Existing',
+              value: 'false',
+            },
+          ],
+        },
+      ],
+      // visibleWhenAll: [{ field: 'application', isNot: [''] }],
+    },
     application: {
       id: 'application',
       name: 'application',
+      label: 'Select Application',
       type: 'selectapplication',
       placeholder: 'Select application',
       defaultValue: r => (r && r.application) || '',
@@ -76,25 +96,6 @@ export default {
         },
       ],
     },
-    isNew: {
-      id: 'isNew',
-      name: 'isNew',
-      type: 'radiogroup',
-      // label: 'Build new or use existing?',
-      defaultValue: 'true',
-      options: [
-        {
-          items: [
-            { label: 'New', value: 'true' },
-            {
-              label: 'Existing',
-              value: 'false',
-            },
-          ],
-        },
-      ],
-      visibleWhenAll: [{ field: 'application', isNot: [''] }],
-    },
 
     existingExport: {
       id: 'exportId',
@@ -106,7 +107,10 @@ export default {
       required: true,
       allowEdit: true,
       refreshOptionsOnChangesTo: ['application'],
-      visibleWhen: [{ field: 'isNew', is: ['false'] }],
+      visibleWhenAll: [
+        { field: 'application', isNot: [''] },
+        { field: 'isNew', is: ['false'] },
+      ],
     },
 
     connection: {
@@ -155,9 +159,9 @@ export default {
   },
   layout: {
     fields: [
+      'isNew',
       'application',
       'type',
-      'isNew',
       'existingExport',
       'connection',
       'name',
@@ -168,10 +172,6 @@ export default {
   optionsHandler: (fieldId, fields) => {
     const appField = fields.find(field => field.id === 'application');
     const app = applications.find(a => a.id === appField.value) || {};
-
-    if (fieldId === 'name') {
-      return `New ${app.name} Export`;
-    }
 
     if (fieldId === 'connection') {
       const expression = [];

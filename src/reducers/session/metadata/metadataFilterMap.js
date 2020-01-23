@@ -162,7 +162,7 @@ export default {
       }))
       .sort(sortElements),
   'salesforce-recordType': data =>
-    data.fields.map(d => ({
+    (data.fields || []).map(d => ({
       label: d.label,
       value: d.name,
       custom: d.custom,
@@ -235,7 +235,7 @@ export default {
     return _data;
   },
   'salesforce-masterRecordTypeInfo': data => {
-    const { searchLayoutable, recordTypeInfos } = data || {};
+    const { searchLayoutable, recordTypeInfos = [] } = data || {};
     const returnVal = {};
     const masterRecordTypeInfo = recordTypeInfos.find(
       recordTypeInfo => recordTypeInfo.master === true
