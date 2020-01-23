@@ -189,7 +189,6 @@ function JobTable({
           numError={showErrorDialogFor.numError}
           numResolved={showErrorDialogFor.numResolved}
           onCloseClick={handleJobErrorDialogCloseClick}
-          integrationName={integrationName}
         />
       )}
     </Fragment>

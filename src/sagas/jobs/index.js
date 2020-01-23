@@ -204,6 +204,14 @@ export function* downloadFiles({ jobId, fileType, fileIds = [] }) {
     return true;
   }
 
+  /**
+   * Backend is returning 204 some times, one usecase is downloading error file when
+   * the parent job is cancelled (by user) and children are yet to cancel (by the backend).
+   */
+  if (!response) {
+    return true;
+  }
+
   let signedURLs = [];
 
   if (response.signedURL) {

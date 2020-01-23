@@ -124,9 +124,9 @@ export default {
         mapping.internalId = false;
       }
 
-      const fieldMetadata = generateFields.find(
-        generate => generate.id === mappingTmp.generate
-      );
+      const fieldMetadata =
+        generateFields &&
+        generateFields.find(generate => generate.id === mappingTmp.generate);
 
       // TODO (Aditya): Check for below object type comparison
       if (

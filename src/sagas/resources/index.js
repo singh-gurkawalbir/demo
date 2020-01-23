@@ -471,6 +471,14 @@ export function* getResourceCollection({ resourceType }) {
       collection = [...collection, ...sharedStacks];
     }
 
+    if (resourceType === 'transfers') {
+      const invitedTransfers = yield call(apiCallWithRetry, {
+        path: '/transfers/invited',
+      });
+
+      collection = [...collection, ...invitedTransfers];
+    }
+
     yield put(actions.resource.receivedCollection(resourceType, collection));
 
     return collection;

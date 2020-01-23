@@ -32,18 +32,25 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 // These routes are shared for IA and DIY routes.
-const flowBuilderRoutes = {
-  path: '/flowBuilder/:flowId',
-  breadcrumb: () => 'Flow builder',
-  childRoutes: [
-    { path: '/schedule', breadcrumb: () => 'Schedule' },
-    { path: '/settings', breadcrumb: () => 'Settings' },
-  ],
-};
+const flowBuilderRoutes = [
+  {
+    path: '/flowBuilder/:flowId',
+    breadcrumb: () => 'Flow builder',
+    childRoutes: [
+      { path: '/schedule', breadcrumb: () => 'Schedule' },
+      { path: '/settings', breadcrumb: () => 'Settings' },
+    ],
+  },
+  {
+    path: '/dataLoader/:flowId',
+    breadcrumb: () => 'Data loader',
+    childRoutes: [{ path: '/settings', breadcrumb: () => 'Settings' }],
+  },
+];
 // These routes are shared for IAs with and without /child/ url segment.
 // to keep the code DRY, lets extract the common sub-set of routes.
 const integrationAppRoutes = [
-  flowBuilderRoutes,
+  ...flowBuilderRoutes,
   { path: '/general', breadcrumb: () => 'General' },
   { path: '/addons', breadcrumb: () => 'Add-ons' },
   { path: '/dashboard', breadcrumb: () => 'Dashboard' },
@@ -92,7 +99,7 @@ const routes = [
           { path: '/notifications', breadcrumb: () => 'Notifications' },
         ],
       },
-      flowBuilderRoutes,
+      ...flowBuilderRoutes,
     ],
   },
   {
@@ -190,7 +197,7 @@ const routes = [
     ],
   },
   { path: '/pg/templates', breadcrumb: () => 'Templates' },
-  { path: '/pg/accesstokens', breadcrumb: () => 'Access tokens' },
+  { path: '/pg/accesstokens', breadcrumb: () => 'API Tokens' },
   // Dev tools
   { path: '/pg/resources', breadcrumb: () => 'Resources' },
   { path: '/pg/editors', breadcrumb: () => 'Editor playground' },
