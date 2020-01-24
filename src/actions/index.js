@@ -81,8 +81,8 @@ const connection = {
       iClients,
       connectionId,
     }),
-  requestDebugLogs: (url, connectionId) =>
-    action(actionTypes.CONNECTION.DEBUG_LOGS_REQUEST, { url, connectionId }),
+  requestDebugLogs: connectionId =>
+    action(actionTypes.CONNECTION.DEBUG_LOGS_REQUEST, { connectionId }),
   receivedDebugLogs: (debugLogs, connectionId) =>
     action(actionTypes.CONNECTION.DEBUG_LOGS_RECEIVED, {
       debugLogs,

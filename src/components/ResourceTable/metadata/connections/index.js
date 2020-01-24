@@ -4,6 +4,7 @@ import References from '../../actions/References';
 import ConfigureDebugger from '../../actions/Connections/ConfigDebugger';
 // eslint-disable-next-line import/no-unresolved
 import DownloadDebugLogs from '../../actions/Connections/DownloadDebugLogs';
+import OpenDebugger from '../../actions/Connections/OpenDebugger';
 import AuditLogs from '../../actions/AuditLogs';
 import RefreshMetadata from '../../actions/Connections/RefreshMetadata';
 import {
@@ -68,17 +69,21 @@ export default {
     return columns;
   },
   rowActions: (r, actionProps) => {
-    let actionsToReturn = [];
+    let actionsToReturn = [AuditLogs];
 
     if (isConnectionEditable(r, actionProps.integrationId)) {
-      actionsToReturn = [ConfigureDebugger, AuditLogs];
-
       if (!actionProps.integrationId) {
         actionsToReturn = [...actionsToReturn, References];
       }
 
-      if (showDownloadLogs(r)) {
-        actionsToReturn = [DownloadDebugLogs, ...actionsToReturn];
+      if (actionProps.type === 'flowBuilder') {
+        actionsToReturn = [OpenDebugger, ...actionsToReturn];
+      } else {
+        actionsToReturn = [ConfigureDebugger, ...actionsToReturn];
+
+        if (showDownloadLogs(r)) {
+          actionsToReturn = [DownloadDebugLogs, ...actionsToReturn];
+        }
       }
 
       if (actionProps.integrationId && !r._connectorId) {
@@ -86,8 +91,8 @@ export default {
       } else if (!r._connectorId && actionProps.type !== 'flowBuilder') {
         actionsToReturn = [...actionsToReturn, Delete];
       }
-    } else {
-      actionsToReturn = [DownloadDebugLogs, AuditLogs];
+    } else if (actionProps.type !== 'flowBuilder' && showDownloadLogs(r)) {
+      actionsToReturn = [DownloadDebugLogs, ...actionsToReturn];
     }
 
     if (r.type === 'netsuite' || r.type === 'salesforce') {

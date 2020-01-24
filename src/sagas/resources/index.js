@@ -552,8 +552,9 @@ export function* requestDeregister({ connectionId, integrationId }) {
   }
 }
 
-export function* requestDebugLogs({ url, connectionId }) {
+export function* requestDebugLogs({ connectionId }) {
   let response;
+  const url = `/connections/${connectionId}/debug`;
 
   try {
     response = yield call(apiCallWithRetry, { path: url });
