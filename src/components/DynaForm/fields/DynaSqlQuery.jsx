@@ -35,7 +35,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function DynaEditor(props) {
+export default function DynaSqlQuery(props) {
   const dispatch = useDispatch();
   const [showEditor, setShowEditor] = useState(false);
   const classes = useStyles();
