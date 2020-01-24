@@ -1337,5 +1337,35 @@ export default {
     'Define an ‘input filter’ here to specify which source records should get processed by the import. i.e. Records that evaluate to true are processed. Records that evaluate to false are ignored (but still passed along to downstream applications in the flow).',
   responseMapping:
     'The primary reason for defining a response mapping is to specify where fields returned by the destination application should be merged back into the source record. If you do not see a specific import response field in the dropdown below you can still map it regardless, and as long as the field is returned by the destination application when the flow is running the mapping will work. You can merge import response fields into any existing field in the source record, or you can specify a brand new field in which case integrator.io will create the field on the fly. You can also merge ‘errors’ back into the source record if you want to manually process errors downstream in your flow logic.',
+  'mapping.ftp.dataType':
+    'This field represents the respective datatype of the mapping field. Ex: string, boolean, number.',
+  'mapping.ftp.discardIfEmpty':
+    'Please check this checkbox if you would like to discard this mapping when the result of the mapping is empty. If you are mapping a list field and all the fields in the list are mapped to empty values then the whole list will be discarded.',
+  'mapping.ftp.fieldMappingType':
+    'The type of field mapping that you want to perform. For more information refer to, the <a href="https://celigosuccess.zendesk.com/hc/en-us/sections/205928707-Field-Mapping-options-in-integrator-io" target="_blank"/> Field Reference Guide.</a>',
+  'mapping.ftp.extract':
+    'This dropdown lists all the available fields from your export record that can be used in your expression. Either by themselves, or as argument value for any selected helper methods.',
+  'mapping.expression':
+    'This field represents your complete handlebar expression. You have the freedom to manually enter an expression, or use the function and field drop-downs above to help construct it.',
+  'mapping.ftp.standardAction':
+    '<b>Use Empty String as Default Value:</b> Please select this field if you want to use ‘’(i.e. the empty string) as the default lookup value. This value will be used if your lookup does not find anything. <br /><b>Use Null as Default Value:</b> Please select this field if you want to use ‘null’ as the default lookup value. This value will be used if your lookup does not find anything. <br /><b>Use Custom Default Value:</b> This holds the default value to be set for the extract field.',
+  'mapping.ftp.lookupAction':
+    '<b>Fail Record:</b> If no results are found or the dynamic lookup fails, the lookup will silently fail (return empty string). Similarly, if multiple results are found  (dynamic lookup) then the first value is chosen. In other words, if allowFailures is set to true, then no errors will be raised and the default lookup value will be used if the lookup fails. <br /><b>Use Empty String as Default Value:</b> Please select this field if you want to use ‘’(i.e. the empty string) as the default lookup value. This value will be used if your lookup does not find anything. <br /><b>Use Null as Default Value:</b> Please select this field if you want to use ‘null’ as the default lookup value. This value will be used if your lookup does not find anything. <br /><b>Use Custom Default Value:</b> This holds the default value to be set for the extract field.',
+  'mapping.default':
+    'This holds the default value to be set for the extract field.',
+  'mapping.hardcodedDefault':
+    'This field can be used when any field value on the import system has to be hardcoded with some value. Generate field combined with this field will make the generate field to be filled with this value.',
+  'mapping.lookupDefault':
+    'This holds the default value to be set for the extract field.',
+  'mapping.extractDateFormat':
+    'If the export field is of date, then this field represents the date format of the field being exported.',
+  'mapping.extractDateTimezone':
+    'If the export field is of date, then this field represents the time zone of the field being exported',
+  'mapping.generateDateFormat':
+    'If the import field is of type date, this field represents the date format supported on the import system.',
+  'mapping.generateDateTimezone':
+    'If the import field is of type date, this field represents the time zone of the field on the import system.',
+  'mapping.functions':
+    'This drop-down has all the available helper methods that let you transform your field values. Once you make a selection, the function and placeholder values will be added to the expression text box below. You can then make any necessary changes by editing the complete expression.For a complete list and extended help of all helper methods, please see this article: <a target="blank" href="https://celigosuccess.zendesk.com/hc/en-us/articles/115004695128-Handlebar-Helpers-Reference-Guide">Handlebar Helper Guide</a>',
   // #region UI help text
 };
