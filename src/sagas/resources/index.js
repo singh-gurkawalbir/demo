@@ -152,6 +152,18 @@ export function* commitStagedChanges({ resourceType, id, scope }) {
     updated.content = merged.content;
   }
 
+  /*
+     connections can be saved with valid or invalid credentials(i.e whether ping succeeded or failed) 
+     calling ping after connection save sets the offline flag appropriately in the backend.
+     UI shouldnt set offline flag. It should read status from db.
+  */
+  if (resourceType === 'connections' && updated._id) {
+    yield call(apiCallWithRetry, {
+      path: `/connections/${updated._id}/ping`,
+      hidden: true,
+    });
+  }
+
   // #region Data loader transform
   // This code can be removed (with above DL code) once the BE DL code supports
   // the new flow interface. For now we "fake" compatibility and convert on load/save
