@@ -39,9 +39,9 @@ export default {
   'connection.offline':
     "This flag identifies if your connection is currently offline.  When a connection is offline then no exports, imports, flows, etc... will be run, and all data currently in the queues (i.e. in progress) will also pause.  Connections are marked offline automatically anytime there is a failure to connect.  Connections can be brought back online manually by re-entering credentials and clicking the 'Save' button (assuming there are no new errors).  There is also an automated batch process that runs multiple times per hour to continually ping/test all offline connections for you, and bring those connection back online if the ping/test succeeds (and also resume any data flows that were paused as a result of the connection being offline).  Note that it is relatively common for a connection to go offline (and then back online via the automated ping/test batch process) if you are running data flows off hours at times when the applications being integrated go offline temporarily for their own maintenance.",
   'connection._connectorId':
-    'If this connection was installed as part of a SmartConnector app (i.e. from the integrator.io marketplace), then this field will hold the _id of the SmartConnector app that owns the connection.  Please note that for security reasons, connections owned by a SmartConnector cannot be referenced outside the context of the SmartConnector. This implies that you cannot use any of these connections in the data flows that you build yourself.',
+    'If this connection was installed as part of an Integration App app (i.e. from the integrator.io marketplace), then this field will hold the _id of the Integration App app that owns the connection.  Please note that for security reasons, connections owned by an Integration App cannot be referenced outside the context of the Integration App. This implies that you cannot use any of these connections in the data flows that you build yourself.',
   'connection._integrationId':
-    'If this connection was installed as part of a SmartConnector app (i.e. from the integrator.io marketplace), then this field will hold the _id of the specific integration instance (a.k.a. integration tile) that owns the connection.  Please note that for security reasons connections owned by a SmartConnector cannot be referenced outside the context of the specific integration tile that they belong to. This implies that you cannot use these connections in the data flows that you build yourself, nor can you use the same SmartConnector referenced connections across different integration tiles.',
+    'If this connection was installed as part of an Integration App app (i.e. from the integrator.io marketplace), then this field will hold the _id of the specific integration instance (a.k.a. integration tile) that owns the connection.  Please note that for security reasons connections owned by an Integration App cannot be referenced outside the context of the specific integration tile that they belong to. This implies that you cannot use these connections in the data flows that you build yourself, nor can you use the same Integration App referenced connections across different integration tiles.',
   'connection.debugDate':
     'Indicates for how long integrator.io should be recording both request and response traffic from this connection. You can later review this raw debug information directly from the download icon on the /connections page.',
   'connection._borrowConcurrencyFromConnectionId':
@@ -97,7 +97,7 @@ export default {
   'connection.rest.basicAuth.password':
     "The password associated with your service account. Sometimes service providers have other names for this field, such as 'secret key', or 'API key', and so on. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your password safe.",
   'connection.rest._iClientId':
-    'The iClient resource type is used to register OAuth 2.0 client credentials that can be used to authorize connections.  iClients are typically only needed by developers that wish to build their own SmartConnector product for the integrator.io marketplace, where the OAuth 2.0 credentials for their product will be owned by them, and the iClient will be bundled in their app, and only resources in their app will be able to reference it.',
+    'The iClient resource type is used to register OAuth 2.0 client credentials that can be used to authorize connections.  iClients are typically only needed by developers that wish to build their own Integration App product for the integrator.io marketplace, where the OAuth 2.0 credentials for their product will be owned by them, and the iClient will be bundled in their app, and only resources in their app will be able to reference it.',
   'connection.rest.info':
     'This read only field is used to store ad hoc profile type data returned by the OAuth 2.0 provider during the OAuth 2.0 authorization flow.',
   'connection.rest.pingRelativeURI':
@@ -138,8 +138,6 @@ export default {
     'This optional field can be used if the response from failed ping request is large and only part of the response should be returned as the reason for a failed ping response. If no value is given, then the full HTTP response is used as a description of the failure. If the media-type of the failed response is XML, this value should be an XPATH. Conversely, if the media-type is JSON, then use a JSON path. Note that if failed responses to ping requests have no body then a text version of the HTTP status code is used as the reason for failure.',
   'connection.http.auth.type':
     "The HTTP adaptors the following authentication types:\n\n<b>Basic:</b> Select Basic if your service implements the HTTP basic authentication strategy. This authentication method adds a Base64 encoded username and password values in the 'authentication' HTTP request header.\n\n<b>Cookie</b>: Select Cookie if your service relies on session-based authentication. Session based authentication is typically implemented by including a unique cookie into the HTTP request header. By selecting this option, the platform will automatically create and insert this cookie into every HTTP request it sends to your application. \n\n<b>Custom:</b> Select Custom for all other types. If you select the Custom authentication method, integrator.io will not perform any special authentication. It is up to the user to configure the HTTP request fields (method, relativeUri, headers, and body) of the import and export models to include {{placeholders}} for any authentication related values. These values can be stored in Encrypted and Unencrypted fields of this connection.\n\n<b>Token:</b>  Select Token if your service relies on token-based authentication. The token may exist in the header, URL, or body of the HTTP request. This method also supports refreshing tokens if the service being called supports it.\n\n<b>Digest:</b> Select Digest if your service relies on digest authentication.With “Digest” auth, the client sends a first request to the API, and the server responds with a few details, including a number that can be used only once (nonce), a realm value, and a 401 unauthorized response. An encrypted array of data including username and password combined with the data received from the server in the first request is then sent back. The server uses the passed data to generate an encrypted string and compares it against what is sent in the previous step to authenticate requests.'",
-  'connection.http.auth.revoke.uri':
-    'This is the URL that we will use to revoke this token’s access to this endpoint.',
   'connection.http.auth.failStatusCode':
     'The HTTP specification states that authentication errors should return a 401 status code.  Some services have custom authentication implementations that rely on other status codes, or return 200 and indicate auth errors within the HTTP body. Use this field if the service you are connecting to uses a status code other than 401.',
   'connection.http.auth.failPath':
@@ -174,21 +172,6 @@ export default {
     'This field is used if you have a refresh token that can be used in refresh expired auth tokens.  You can place this token in the body, headers or url simply by using referencing it with the placeholder: {{{connection.http.token.refreshToken}}}.  Please note also that there are multiple layers of protection in place (including AES 256 encryption) to keep your refresh token safe.',
   'connection.http.rateLimit.failStatusCode':
     'The HTTP specification states that rate-limit response errors should return a 429 status code.  Some services have custom rate limit implementations that rely on other status codes, or even throttle errors within the HTTP body. Use this field if the service you are connecting to uses a status code other than 429.',
-  'connection.http.auth.oauth.grantType':
-    'A dropdown list of options—this will depend on the API service provider requirements.',
-  'connection.http.auth.oauth.callbackURL':
-    'The client application callback URL redirected to after auth, and that should be registered with the API provider.',
-
-  'connection.http.auth.oauth.clientCredentialsLocation':
-    'Sends a Basic Auth request in the header or client credentials in the request body. When your config is complete, click Request Token. If you successfully receive a token from the API you will see its details, together with the expiry, and optionally a refresh token you can use to retrieve a new access token when your current one expires.',
-  'connection.http.auth.oauth.tokenURI':
-    'This is the URL that we will get the access token from.',
-  'connection.http.auth.oauth.scopeDelimiter':
-    "Use this field to override the default delimiter (' ') used to separate scope values sent to the HTTP API during the authorization process.",
-  'connection.http.auth.oauth.authURI':
-    'This is the endpoint for the API provider’s authorization server where the auth code is retrieved from.',
-  'connection.http.auth.oauth.scope':
-    ' This is the scope of access you are requesting. Use spaces to separate values. If your provider uses a custom delimiter, check the box to use an alternate scope delimiter.',
   'connection.http.rateLimit.failPath':
     'If the service you are connecting to embeds rate limit errors within the HTTP body, use this field to set the path within the response body where integrator.io should look to identify a throttled response. If there is a specific value (or set of values) that indicate rate-limit response at this path, use the failValues field to further instruct our platform on how to identify this type of error.',
   'connection.http.rateLimit.failValues':
@@ -399,9 +382,9 @@ export default {
   'export.apiIdentifier':
     "Every export that you create is assigned a unique handle that you can then use in your own application logic to invoke the export programmatically via the integrator.io API.  For example, your export identifier might be 'e762db96', and you could invoke this export with a simple HTTP POST to https://api.integrator.io/e762db96",
   'export._integrationId':
-    'If this export was installed as part of a SmartConnector app (i.e. from the integrator.io marketplace), then this value will be hold the _id value of the specific integration instance (a.k.a. integration tile) that owns the export.  Please note that for security reasons exports owned by a SmartConnector cannot be referenced outside the context of the specific integration tile that they belong to, meaning that you cannot use these exports in the data flows that you build yourself, nor can the same SmartConnector reference exports across different integration tiles.',
+    'If this export was installed as part of an Integration App app (i.e. from the integrator.io marketplace), then this value will be hold the _id value of the specific integration instance (a.k.a. integration tile) that owns the export.  Please note that for security reasons exports owned by an Integration App cannot be referenced outside the context of the specific integration tile that they belong to, meaning that you cannot use these exports in the data flows that you build yourself, nor can the same Integration App reference exports across different integration tiles.',
   'export._connectorId':
-    'If this export was installed as part of a SmartConnector app (i.e. from the integrator.io marketplace), then this value will hold the _id value of the SmartConnector app that owns the export.  Please note that for security reasons exports owned by a SmartConnector cannot be referenced outside the context of the SmartConnector, meaning that you cannot use any of these exports in the data flows that you build yourself.',
+    'If this export was installed as part of an Integration App app (i.e. from the integrator.io marketplace), then this value will hold the _id value of the Integration App app that owns the export.  Please note that for security reasons exports owned by an Integration App cannot be referenced outside the context of the Integration App, meaning that you cannot use any of these exports in the data flows that you build yourself.',
   'export.pageSize':
     "When an export runs in the context of a data flow (where the data from the export is sent right away to an import queue) integrator.io will break the data being exported into one or more smaller pages of records.  Saying this another way, integrator.io uses streaming to export data out of one app and import it into another app.  The 'Page Size' field can be used to specify how many records you want in each page of data.  The default system value (when you leave this field blank) is 20.  There is no max value, but a page of data will automatically get capped when it exceeds 5 MB.  Most of the time, the application that you are importing data into will bottleneck the page size value.  For example, if you are importing data into NetSuite or Salesforce they each specify (in their API guides) a maximum number of records that can be submitted in any single request.",
   'export.dataURITemplate':
@@ -675,7 +658,7 @@ export default {
   'flow._integrationId':
     "This field can only be set when a flow is first created, or when a flow belongs to the default system 'Standalone Flows' integration tile. To move a flow that already belongs to a specific integration tile please first 'Detach' it from that tile, and then this field can be set again to assign the flow to a new integration tile.",
   'flow._connectorId':
-    'If this connection was installed as part of a SmartConnector app (i.e. from the integrator.io marketplace), then this value will hold the _id value of the SmartConnector app that owns the connection.  Please note that for security reasons connections owned by a SmartConnector cannot be referenced outside the context of the SmartConnector, meaning that you cannot use any of these connections in the data flows that you build yourself.',
+    'If this connection was installed as part of an Integration App  (i.e. from the integrator.io marketplace), then this value will hold the _id value of the Integration App app that owns the connection.  Please note that for security reasons connections owned by an Integration App cannot be referenced outside the context of the Integration App, meaning that you cannot use any of these connections in the data flows that you build yourself.',
   'flow.disabled': 'Boolean value. If set, the flow will be in inactive state',
   'flow.timezone':
     'Use this field to configure the time zone that the integrator.io scheduler should use to run your integration flow.',
@@ -704,9 +687,9 @@ export default {
   'import.apiIdentifier':
     "Every import that you create is assigned a unique handle that you can then use in your own application logic to invoke the import programmatically via the integrator.io API.  For example, your import identifier might be 'i662cb46', and you could invoke this import with a simple HTTP POST (with the data to be imported as a JSON array in the post body) to https://api.integrator.io/i662cb46",
   'import._integrationId':
-    'If this import was installed as part of a SmartConnector app (i.e. from the integrator.io marketplace), then this value will be hold the _id value of the specific integration instance (a.k.a. integration tile) that owns the import.  Please note that for security reasons imports owned by a SmartConnector cannot be referenced outside the context of the specific integration tile that they belong to, meaning that you cannot use these imports in the data flows that you build yourself, nor can the same SmartConnector reference imports across different integration tiles.',
+    'If this import was installed as part of an Integration App (i.e. from the integrator.io marketplace), then this value will be hold the _id value of the specific integration instance (a.k.a. integration tile) that owns the import.  Please note that for security reasons imports owned by an Integration App cannot be referenced outside the context of the specific integration tile that they belong to, meaning that you cannot use these imports in the data flows that you build yourself, nor can the same Integration App reference imports across different integration tiles.',
   'import._connectorId':
-    'If this import was installed as part of a SmartConnector app (i.e. from the integrator.io marketplace), then this value will hold the _id value of the SmartConnector app that owns the import.  Please note that for security reasons imports owned by a SmartConnector cannot be referenced outside the context of the SmartConnector, meaning that you cannot use any of these imports in the data flows that you build yourself.',
+    'If this import was installed as part of an Integration App (i.e. from the integrator.io marketplace), then this value will hold the _id value of the Integration App that owns the import.  Please note that for security reasons imports owned by an Integration App cannot be referenced outside the context of the Integration App, meaning that you cannot use any of these imports in the data flows that you build yourself.',
   'import.sampleData': 'Used in UI, which helps in populating data for mapping',
   'import.distributed':
     'Boolean value, if set the resulting import would be NS Distributed Import and dependent fields to be set accordingly',
@@ -1190,6 +1173,23 @@ export default {
     "integrator.io supports the following authentication types:\n\n<b>Basic:</b> Select Basic if your service implements the HTTP basic authentication strategy. This authentication method adds a Base64 encoded username and password values in the 'authentication' HTTP request header.\n\n<b>Cookie</b>: Select Cookie if your service relies on session-based authentication. Session based authentication is typically implemented by including a unique cookie into the HTTP request header. By selecting this option, the platform will automatically create and insert this cookie into every HTTP request it sends to your application. \n\n<b>Custom:</b> Select Custom for all other types. If you select the Custom authentication method, integrator.io will not perform any special authentication. It is up to the user to configure the HTTP request fields (method, relativeUri, headers, and body) of the import and export models to include {{placeholders}} for any authentication related values. These values can be stored in Encrypted and Unencrypted fields of this connection.\n\n<b>Token:</b>  Select Token if your service relies on token-based authentication. The token may exist in the header, URL, or body of the HTTP request. This method also supports refreshing tokens if the service being called supports it.\n\n<b>OAuth 2.0:</b> Select this value if your application supports the OAuth 2.0 authentication.",
   // TODO:"Duplicated token"
   // 'connection.rest.bearerToken': "The 3dcart merchant's token.",
+  'connection.http.auth.revoke.uri':
+    'This is the URL that we will use to revoke this token’s access to this endpoint.',
+  'connection.http.auth.oauth.grantType':
+    'A dropdown list of options—this will depend on the API service provider requirements.',
+  'connection.http.auth.oauth.callbackURL':
+    'The client application callback URL redirected to after auth, and that should be registered with the API provider.',
+  'connection.http.auth.oauth.clientCredentialsLocation':
+    'Sends a Basic Auth request in the header or client credentials in the request body. When your config is complete, click Request Token. If you successfully receive a token from the API you will see its details, together with the expiry, and optionally a refresh token you can use to retrieve a new access token when your current one expires.',
+  'connection.http.auth.oauth.tokenURI':
+    'This is the URL that we will get the access token from.',
+  'connection.http.auth.oauth.scopeDelimiter':
+    "Use this field to override the default delimiter (' ') used to separate scope values sent to the HTTP API during the authorization process.",
+  'connection.http.auth.oauth.authURI':
+    'This is the endpoint for the API provider’s authorization server where the auth code is retrieved from.',
+  'connection.http.auth.oauth.scope':
+    ' This is the scope of access you are requesting. Use spaces to separate values. If your provider uses a custom delimiter, check the box to use an alternate scope delimiter.',
+
   'connection.rest.pingMethod':
     'The HTTP method (GET/PUT/POST/HEAD) to use when making the ping request.',
   'connection.rest.pingBody':
