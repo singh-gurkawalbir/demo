@@ -554,10 +554,10 @@ export function* requestDeregister({ connectionId, integrationId }) {
 
 export function* requestDebugLogs({ connectionId }) {
   let response;
-  const url = `/connections/${connectionId}/debug`;
+  const path = `/connections/${connectionId}/debug`;
 
   try {
-    response = yield call(apiCallWithRetry, { path: url });
+    response = yield call(apiCallWithRetry, { path });
     yield put(actions.connection.receivedDebugLogs(response, connectionId));
   } catch (error) {
     if (error.status === 404) {
