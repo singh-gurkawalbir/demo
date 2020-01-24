@@ -14,7 +14,7 @@ export default {
           type: 'select',
           label: 'Data Type',
           defaultValue: mappingUtil.getDefaultDataType(value),
-          helpKey: 'mapping.ftp.dataType',
+          helpKey: 'mapping.dataType',
           options: [
             {
               items: [
@@ -41,7 +41,7 @@ export default {
           name: 'discardIfEmpty',
           type: 'checkbox',
           defaultValue: value.discardIfEmpty || false,
-          helpKey: 'mapping.ftp.discardIfEmpty',
+          helpKey: 'mapping.discardIfEmpty',
           label: 'Discard If Empty',
         },
 
@@ -52,7 +52,7 @@ export default {
           label: 'Field Mapping Type',
           defaultValue: mappingUtil.getFieldMappingType(value),
           fullWidth: true,
-          helpKey: 'mapping.ftp.fieldMappingType',
+          helpKey: 'mapping.fieldMappingType',
           options: [
             {
               items: [
@@ -109,7 +109,7 @@ export default {
                 [],
             },
           ],
-          helpKey: 'mapping.ftp.extract',
+          helpKey: 'mapping.extract',
           visibleWhen: [{ field: 'fieldMappingType', is: ['multifield'] }],
         },
         expression: {
@@ -141,7 +141,7 @@ export default {
               ],
             },
           ],
-          helpKey: 'mapping.ftp.standardAction',
+          helpKey: 'mapping.standardAction',
           visibleWhen: [
             { field: 'fieldMappingType', is: ['standard'] },
             { field: 'fieldMappingType', is: ['multifield'] },
@@ -199,7 +199,7 @@ export default {
               ],
             },
           ],
-          helpKey: 'mapping.ftp.lookupAction',
+          helpKey: 'mapping.lookupAction',
           visibleWhen: [{ field: 'fieldMappingType', is: ['lookup'] }],
         },
         default: {
