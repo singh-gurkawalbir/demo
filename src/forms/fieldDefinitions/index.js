@@ -9,10 +9,12 @@ import accesstokens from './resources/accesstoken';
 import connectorLicenses from './resources/connectorLicense';
 import integrations from './resources/integration';
 import asyncHelpers from './resources/asyncHelpers';
+import iClients from './resources/iClient';
 
 export default {
   connections,
   exports,
+  iClients,
   imports,
   connectors,
   scripts,

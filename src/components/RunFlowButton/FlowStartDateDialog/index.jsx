@@ -19,9 +19,7 @@ export default function FlowStartDateDialog(props) {
   });
   const { changeIdentifier, lastExportDateTimeLoaded } = state;
   const flow = useSelector(state => selectors.resource(state, 'flows', flowId));
-  const preferences = useSelector(state =>
-    selectors.userProfilePreferencesProps(state)
-  );
+  const preferences = useSelector(state => selectors.userOwnPreferences(state));
   let lastExportDateTime = useSelector(state =>
     selectors.getLastExportDateTime(state, flow._id)
   ).data;

@@ -8,6 +8,7 @@ import { getPages, getSuccess } from './util';
 import JobStatus from './JobStatus';
 import JobActionsMenu from './JobActionsMenu';
 import { JOB_STATUS } from '../../utils/constants';
+import DateTimeDisplay from '../DateTimeDisplay';
 
 const useStyles = makeStyles(theme => ({
   checkAction: {
@@ -177,7 +178,9 @@ export default function ChildJobDetail({
         {getPages(job, parentJob)}
       </TableCell>
       <TableCell className={classes.duration}>{job.duration}</TableCell>
-      <TableCell className={classes.completed}>{job.endedAtAsString}</TableCell>
+      <TableCell className={classes.completed}>
+        <DateTimeDisplay dateTime={job.endedAt} />
+      </TableCell>
       <TableCell className={classes.actions}>
         <JobActionsMenu
           job={job}

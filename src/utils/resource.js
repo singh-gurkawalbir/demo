@@ -13,7 +13,9 @@ export const MODEL_PLURAL_TO_LABEL = Object.freeze({
   exports: 'Export',
   filedefinitions: 'File definition',
   flows: 'Flow',
-  iclients: 'IClient',
+  // todo - Why this is in lowercase
+  // iclients: 'IClient',
+  iClients: 'IClient',
   imports: 'Import',
   integrations: 'Integration',
   scripts: 'Script',

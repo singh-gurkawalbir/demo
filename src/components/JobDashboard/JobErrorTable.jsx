@@ -17,6 +17,7 @@ import Spinner from '../Spinner';
 import CeligoTable from '../../components/CeligoTable';
 import JobErrorMessage from './JobErrorMessage';
 import { JOB_STATUS } from '../../utils/constants';
+import DateTimeDisplay from '../DateTimeDisplay';
 
 const useStyles = makeStyles(theme => ({
   tablePaginationRoot: { float: 'left' },
@@ -274,7 +275,7 @@ function JobErrorTable({
       <Typography>
         Success: {job.numSuccess} Ignore: {job.numIgnore} Error: {job.numError}{' '}
         Resolved: {job.numResolved} Duration: {job.duration} Completed:{' '}
-        {job.endedAtAsString}
+        <DateTimeDisplay dateTime={job.endedAt} />
       </Typography>
       {errorCount < 1000 && jobErrorsInCurrentPage.length === 0 ? (
         <div className={classes.spinner}>
@@ -397,7 +398,8 @@ function JobErrorTable({
                   },
                   {
                     heading: 'Time',
-                    value: r => r.createdAtAsString,
+                    // eslint-disable-next-line react/display-name
+                    value: r => <DateTimeDisplay dateTime={r.createdAt} />,
                   },
                 ]}
                 rowActions={r => [

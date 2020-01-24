@@ -535,19 +535,13 @@ export function* resolveSelectedErrors({ jobId, flowJobId, selectedErrorIds }) {
   const updatedJobErrors = [];
 
   jobErrors.forEach(je => {
-    const { _id, createdAtAsString, retryObject, similarErrors, ...rest } = je;
+    const { _id, retryObject, similarErrors, ...rest } = je;
 
     updatedJobErrors.push({ ...rest });
 
     if (similarErrors && similarErrors.length > 0) {
       similarErrors.forEach(sje => {
-        const {
-          _id,
-          createdAtAsString,
-          retryObject,
-          similarErrors,
-          ...rest
-        } = sje;
+        const { _id, retryObject, similarErrors, ...rest } = sje;
 
         updatedJobErrors.push({ ...rest });
       });
