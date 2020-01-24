@@ -115,6 +115,7 @@ export default function SelectApplication(props) {
     }),
     placeholder: () => ({
       color: theme.palette.secondary.light,
+      position: 'absolute',
     }),
     indicatorSeparator: () => ({
       display: 'none',
