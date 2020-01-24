@@ -35,7 +35,11 @@ import {
   getUsedActionsMapForResource,
   isPageGeneratorResource,
 } from '../utils/flows';
-import { isValidResourceReference, isNewId } from '../utils/resource';
+import {
+  isValidResourceReference,
+  isNewId,
+  isFlowResource,
+} from '../utils/resource';
 import { processSampleData } from '../utils/sampleData';
 import {
   getAvailablePreviewStages,
@@ -691,6 +695,20 @@ export function resourceList(state, options = {}) {
 
     // eslint-disable-next-line no-param-reassign
     options.sandbox = preferences.environment === 'sandbox';
+  }
+
+  if (options.flowId && ['imports', 'exports'].includes(options.type)) {
+    // Filtered
+    const { resources, ...rest } = fromData.resourceList(
+      state && state.data,
+      options
+    );
+    const flow = resource(state, 'flows', options.flowId);
+    const filteredResources = resources.filter(
+      r => !isFlowResource(flow, r._id, options.type)
+    );
+
+    return { resources: filteredResources, ...rest };
   }
 
   return fromData.resourceList(state && state.data, options);

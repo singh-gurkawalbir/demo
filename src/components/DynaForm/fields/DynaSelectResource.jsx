@@ -106,6 +106,7 @@ function DynaSelectResource(props) {
   const {
     disabled,
     id,
+    flowId,
     onFieldChange,
     multiselect = false,
     value,
@@ -127,6 +128,7 @@ function DynaSelectResource(props) {
   const { resources = [] } = useSelector(state =>
     selectors.resourceList(state, {
       type: resourceType,
+      flowId,
       ignoreEnvironmentFilter,
     })
   );
