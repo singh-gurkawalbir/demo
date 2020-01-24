@@ -75,7 +75,7 @@ export default function SelectApplication(props) {
           ? theme.palette.background.paper2
           : theme.palette.background.paper,
       border: 'none',
-      minHeight: '48px',
+      minHeight: '38px',
       '&:active': {
         backgroundColor: theme.palette.background.paper,
         color: theme.palette.secondary.light,
@@ -121,7 +121,7 @@ export default function SelectApplication(props) {
     }),
     menuList: () => ({
       padding: '0px',
-      maxHeight: '300px',
+      maxHeight: 'calc(100vh - 320px)',
       overflowY: 'auto',
     }),
     group: () => ({
@@ -230,6 +230,7 @@ export default function SelectApplication(props) {
         closeMenuOnSelect
         components={{ Option }}
         defaultValue={defaultValue}
+        defaultMenuIsOpen={!value}
         options={options}
         onChange={handleChange}
         styles={customStyles}
