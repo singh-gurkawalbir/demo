@@ -17,6 +17,7 @@ import JobActionsMenu from './JobActionsMenu';
 import Spinner from '../Spinner';
 import ArrowDownIcon from '../icons/ArrowDownIcon';
 import ArrowUpIcon from '../icons/ArrowUpIcon';
+import DateTimeDisplay from '../DateTimeDisplay';
 
 const useStyles = makeStyles(theme => ({
   icon: {
@@ -325,7 +326,7 @@ function JobDetail({
         <TableCell className={classes.pages}>{getPages(job)}</TableCell>
         <TableCell className={classes.duration}>{job.duration}</TableCell>
         <TableCell className={classes.completed}>
-          {job.endedAtAsString}
+          <DateTimeDisplay dateTime={job.endedAt} />
         </TableCell>
         <TableCell className={classes.actions}>
           <JobActionsMenu
