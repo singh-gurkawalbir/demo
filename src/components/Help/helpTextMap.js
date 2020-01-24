@@ -1376,5 +1376,17 @@ export default {
   'mapping.lookup.method': 'Operation method to be performed. Ex: GET or POST',
   'mapping.lookup.extract':
     'Resource Identifier Path is the JSON path (in the JSON data received in the Lookup Response) that points to the location at which the expected \'value\' from lookup is available. This is the \'value\' that would be set on the import application. For example, Results[0].email. For more information, click  <a href="https://celigosuccess.zendesk.com/hc/en-us/articles/226810287-Field-Mapping-Options-in-integrator-io#h_8238065521401516195542221" target="_blank">here.</a>',
+  'mapping.netsuite.lookup.recordType':
+    'Record type on the Netsuite for which we are defining the import.',
+  'mapping.netsuite.lookup.expressionText':
+    'Expression can be provided in this field which will return the matching resultField after evaluating the expression. Ex: [["subsidiary", "anyOf", "{{subsidiary}}"], "AND", ["entityId", "is", "{{entityid}}"]]',
+  'mapping.netsuite.lookup.resultField':
+    'Field name that has to be extracted out using the lookups.searchField.',
+  'mapping.salesforce.lookup.sObjectType':
+    'Enter the SObject type in Salesforce that you would like to query. If the SObject type you are looking for is not displayed then please click the refresh icon.',
+  'mapping.salesforce.lookup.whereClauseText':
+    'The SOQL where clause expression that will be executed when this lookup is run.',
+  'mapping.salesforce.lookup.resultField':
+    'The value of this field will be used to populate your field mapping.',
   // #region UI help text
 };

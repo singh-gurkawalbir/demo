@@ -65,6 +65,7 @@ export default {
           type: 'select',
           label: 'Data Type',
           defaultValue: value.dataType,
+          helpKey: 'mapping.dataType',
           options: [
             {
               items: [
@@ -82,6 +83,7 @@ export default {
           name: 'discardIfEmpty',
           type: 'checkbox',
           defaultValue: value.discardIfEmpty || false,
+          helpKey: 'mapping.discardIfEmpty',
           label: 'Discard If Empty',
         },
         immutable: {
@@ -89,6 +91,7 @@ export default {
           name: 'immutable',
           type: 'checkbox',
           defaultValue: value.immutable || false,
+          helpKey: 'mapping.immutable',
           label: 'Immutable (Advanced)',
         },
         useFirstRow: {
@@ -96,6 +99,7 @@ export default {
           name: 'useFirstRow',
           type: 'checkbox',
           defaultValue: value.useFirstRow || false,
+          // helpText not present
           label: 'Use First Row',
         },
         useAsAnInitializeValue: {
@@ -103,6 +107,8 @@ export default {
           name: 'useAsAnInitializeValue',
           type: 'checkbox',
           defaultValue: value.useAsAnInitializeValue || false,
+          // helpText not present
+          // TODO check when this field is hidden
           label: 'Use This Field During Record Initialization',
         },
         fieldMappingType: {
@@ -112,6 +118,7 @@ export default {
           label: 'Field Mapping Type',
           defaultValue: mappingUtil.getFieldMappingType(value),
           fullWidth: true,
+          helpKey: 'mapping.fieldMappingType',
           options: [
             {
               items: [
@@ -133,6 +140,7 @@ export default {
             { field: 'fieldMappingType', is: ['multifield'] },
             { field: 'lookup.mode', is: ['static', 'dynamic'] },
           ],
+          // helpText not present
           defaultValue: value.isKey,
         },
         'lookup.mode': {
@@ -143,6 +151,7 @@ export default {
           fullWidth: true,
           visibleWhen: [{ field: 'fieldMappingType', is: ['lookup'] }],
           defaultValue: lookup.name && (lookup.map ? 'static' : 'dynamic'),
+          helpKey: 'mapping.lookup.mode',
           options: [
             {
               items: [
@@ -161,6 +170,7 @@ export default {
           type: 'refreshableselect',
           label: 'Search Record Type',
           connectionId,
+          helpKey: 'mapping.netsuite.lookup.recordType',
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
             { field: 'lookup.mode', is: ['dynamic'] },
@@ -192,6 +202,7 @@ export default {
             { field: 'fieldMappingType', is: ['lookup'] },
             { field: 'lookup.mode', is: ['dynamic'] },
           ],
+          helpKey: 'mapping.netsuite.lookup.expressionText',
           defaultValue: lookup.expression,
         },
         'lookup.resultField': {
@@ -210,6 +221,7 @@ export default {
           savedRecordType: lookup.recordType,
           connectionId,
           refreshOptionsOnChangesTo: ['lookup.recordType'],
+          helpKey: 'mapping.netsuite.lookup.resultField',
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
             { field: 'lookup.mode', is: ['dynamic'] },
@@ -250,6 +262,7 @@ export default {
           name: 'functions',
           type: 'fieldexpressionselect',
           label: 'Function',
+          helpKey: 'mapping.functions',
           visibleWhen: [{ field: 'fieldMappingType', is: ['multifield'] }],
         },
         extract: {
@@ -269,6 +282,7 @@ export default {
                 [],
             },
           ],
+          helpKey: 'mapping.extract',
         },
         expression: {
           id: 'expression',
@@ -277,6 +291,7 @@ export default {
           type: 'text',
           label: 'Expression',
           defaultValue: mappingUtil.getDefaultExpression(value),
+          helpKey: 'mapping.expression',
           visibleWhen: [{ field: 'fieldMappingType', is: ['multifield'] }],
         },
         hardcodedAction: {
@@ -303,6 +318,7 @@ export default {
               ],
             },
           ],
+
           visibleWhen: [{ field: 'fieldMappingType', is: ['hardCoded'] }],
         },
         lookupAction: {
@@ -319,6 +335,7 @@ export default {
             { field: 'lookup.mode', is: ['dynamic', 'static'] },
             { field: 'fieldMappingType', is: ['lookup'] },
           ],
+          helpKey: 'mapping.lookupAction',
         },
         hardcodedDefault: {
           id: 'hardcodedDefault',
@@ -330,6 +347,7 @@ export default {
             { field: 'hardcodedAction', is: ['default'] },
             { field: 'fieldMappingType', is: ['hardCoded'] },
           ],
+          helpKey: 'mapping.hardcodedDefault',
           defaultValue: value.hardCodedValue,
         },
         lookupDefault: {
@@ -345,6 +363,7 @@ export default {
             },
             { field: 'fieldMappingType', is: ['lookup'] },
           ],
+          helpKey: 'mapping.lookupDefault',
           defaultValue: lookup.default,
         },
         hardcodedSelect: {
@@ -411,6 +430,7 @@ export default {
               ],
             },
           ],
+          helpKey: 'mapping.hardcodedDefault',
           visibleWhenAll: [{ field: 'fieldMappingType', is: ['hardCoded'] }],
         },
 
@@ -429,6 +449,7 @@ export default {
               ],
             },
           ],
+          helpKey: 'mapping.lookupDefault',
           visibleWhenAll: [
             {
               field: 'lookupAction',
@@ -448,6 +469,7 @@ export default {
           valueName: 'value',
           label: 'Date format',
           defaultValue: value.extractDateFormat,
+          helpKey: 'mapping.extractDateFormat',
           visibleWhen: [{ field: 'fieldMappingType', is: ['standard'] }],
         },
         extractDateTimezone: {
@@ -467,6 +489,7 @@ export default {
                 [],
             },
           ],
+          helpKey: 'mapping.extractDateTimezone',
           visibleWhen: [{ field: 'fieldMappingType', is: ['standard'] }],
         },
       },
