@@ -154,7 +154,8 @@ import vroozi from './vroozi';
 // import signnow from './signnow';
 import adp from './adp';
 // import clio from './clio';
-// import constantcontact from './constantcontact';
+import constantcontactv3 from './constantcontactv3';
+import constantcontactv2 from './constantcontactv2';
 import faire from './faire';
 import ware2go from './ware2go';
 import messagemedia from './messagemedia';
@@ -318,7 +319,8 @@ export default {
   dunandbradstreet,
   adp,
   // clio,
-  // constantcontact
+  constantcontactv3,
+  constantcontactv2,
   faire,
   ware2go,
   messagemedia,
