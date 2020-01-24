@@ -1,5 +1,6 @@
 import Delete from './Actions/Delete';
 import Cancel from './Actions/Cancel';
+import DateTimeDisplay from '../../../components/DateTimeDisplay';
 
 export default {
   columns: () => {
@@ -20,7 +21,7 @@ export default {
       { heading: 'Status', value: r => r && r.status },
       {
         heading: 'Transfer Date',
-        value: r => r && r.transferDate,
+        value: r => r && <DateTimeDisplay dateTime={r.transferredAt} />,
       },
     ];
 

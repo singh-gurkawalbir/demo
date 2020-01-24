@@ -1,6 +1,6 @@
-import moment from 'moment';
 import Restore from '../../components/ResourceTable/actions/RecycleBin/Restore';
 import Purge from '../../components/ResourceTable/actions/RecycleBin/Purge';
+import DateTimeDiaply from '../../components/DateTimeDisplay';
 
 export default {
   columns: [
@@ -16,7 +16,7 @@ export default {
     },
     {
       heading: 'Deleted Date',
-      value: r => moment(r.doc && r.doc.lastModified).format('MMM Do, YYYY'),
+      value: r => r.doc && <DateTimeDiaply dateTime={r.doc.lastModified} />,
     },
     {
       heading: 'Auto Purge',
