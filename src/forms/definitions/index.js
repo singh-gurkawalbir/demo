@@ -13,10 +13,12 @@ import accesstokens from './accesstokens';
 import connectorLicenses from './connectorLicenses';
 import integrations from './integrations';
 import asyncHelpers from './asyncHelpers';
+import iClients from './iClients';
 
 export default {
   default: defaultMeta,
   connections,
+  iClients,
   exports,
   scripts,
   imports,

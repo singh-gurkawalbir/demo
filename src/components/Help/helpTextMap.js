@@ -1173,6 +1173,23 @@ export default {
     "integrator.io supports the following authentication types:\n\n<b>Basic:</b> Select Basic if your service implements the HTTP basic authentication strategy. This authentication method adds a Base64 encoded username and password values in the 'authentication' HTTP request header.\n\n<b>Cookie</b>: Select Cookie if your service relies on session-based authentication. Session based authentication is typically implemented by including a unique cookie into the HTTP request header. By selecting this option, the platform will automatically create and insert this cookie into every HTTP request it sends to your application. \n\n<b>Custom:</b> Select Custom for all other types. If you select the Custom authentication method, integrator.io will not perform any special authentication. It is up to the user to configure the HTTP request fields (method, relativeUri, headers, and body) of the import and export models to include {{placeholders}} for any authentication related values. These values can be stored in Encrypted and Unencrypted fields of this connection.\n\n<b>Token:</b>  Select Token if your service relies on token-based authentication. The token may exist in the header, URL, or body of the HTTP request. This method also supports refreshing tokens if the service being called supports it.\n\n<b>OAuth 2.0:</b> Select this value if your application supports the OAuth 2.0 authentication.",
   // TODO:"Duplicated token"
   // 'connection.rest.bearerToken': "The 3dcart merchant's token.",
+  'connection.http.auth.revoke.uri':
+    'This is the URL that we will use to revoke this token’s access to this endpoint.',
+  'connection.http.auth.oauth.grantType':
+    'A dropdown list of options—this will depend on the API service provider requirements.',
+  'connection.http.auth.oauth.callbackURL':
+    'The client application callback URL redirected to after auth, and that should be registered with the API provider.',
+  'connection.http.auth.oauth.clientCredentialsLocation':
+    'Sends a Basic Auth request in the header or client credentials in the request body. When your config is complete, click Request Token. If you successfully receive a token from the API you will see its details, together with the expiry, and optionally a refresh token you can use to retrieve a new access token when your current one expires.',
+  'connection.http.auth.oauth.tokenURI':
+    'This is the URL that we will get the access token from.',
+  'connection.http.auth.oauth.scopeDelimiter':
+    "Use this field to override the default delimiter (' ') used to separate scope values sent to the HTTP API during the authorization process.",
+  'connection.http.auth.oauth.authURI':
+    'This is the endpoint for the API provider’s authorization server where the auth code is retrieved from.',
+  'connection.http.auth.oauth.scope':
+    ' This is the scope of access you are requesting. Use spaces to separate values. If your provider uses a custom delimiter, check the box to use an alternate scope delimiter.',
+
   'connection.rest.pingMethod':
     'The HTTP method (GET/PUT/POST/HEAD) to use when making the ping request.',
   'connection.rest.pingBody':
