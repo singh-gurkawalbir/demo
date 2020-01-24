@@ -14,6 +14,7 @@ export default {
           type: 'select',
           label: 'Data Type',
           defaultValue: mappingUtil.getDefaultDataType(value),
+          helpKey: 'mapping.dataType',
           options: [
             {
               items: [
@@ -32,6 +33,7 @@ export default {
           name: 'useFirstRow',
           type: 'checkbox',
           defaultValue: value.useFirstRow || false,
+          // helpText not present
           label: 'Use First Row',
         },
         discardIfEmpty: {
@@ -39,6 +41,7 @@ export default {
           name: 'discardIfEmpty',
           type: 'checkbox',
           defaultValue: value.discardIfEmpty || false,
+          helpKey: 'mapping.discardIfEmpty',
           label: 'Discard If Empty',
         },
 
@@ -49,6 +52,7 @@ export default {
           label: 'Field Mapping Type',
           defaultValue: mappingUtil.getFieldMappingType(value),
           fullWidth: true,
+          helpKey: 'mapping.fieldMappingType',
           options: [
             {
               items: [
@@ -77,6 +81,7 @@ export default {
               import: lookup.map[key],
             })),
           map: lookup.map,
+          // helpText not present
           visibleWhenAll: [{ field: 'fieldMappingType', is: ['lookup'] }],
         },
         functions: {
@@ -84,6 +89,7 @@ export default {
           name: 'functions',
           type: 'fieldexpressionselect',
           label: 'Function',
+          helpKey: 'mapping.functions',
           visibleWhen: [{ field: 'fieldMappingType', is: ['multifield'] }],
         },
         // TODO (Aditya) : resetting Field after selection
@@ -103,6 +109,7 @@ export default {
                 [],
             },
           ],
+          helpKey: 'mapping.extract',
           visibleWhen: [{ field: 'fieldMappingType', is: ['multifield'] }],
         },
         expression: {
@@ -112,6 +119,7 @@ export default {
           type: 'text',
           label: 'Expression',
           defaultValue: mappingUtil.getDefaultExpression(value),
+          helpKey: 'mapping.expression',
           visibleWhen: [{ field: 'fieldMappingType', is: ['multifield'] }],
         },
         standardAction: {
@@ -133,6 +141,7 @@ export default {
               ],
             },
           ],
+          helpKey: 'mapping.standardAction',
           visibleWhen: [
             { field: 'fieldMappingType', is: ['standard'] },
             { field: 'fieldMappingType', is: ['multifield'] },
@@ -162,6 +171,7 @@ export default {
               ],
             },
           ],
+          // helpText not present
           visibleWhen: [{ field: 'fieldMappingType', is: ['hardCoded'] }],
         },
         lookupAction: {
@@ -189,6 +199,7 @@ export default {
               ],
             },
           ],
+          helpKey: 'mapping.lookupAction',
           visibleWhen: [{ field: 'fieldMappingType', is: ['lookup'] }],
         },
         default: {
@@ -202,6 +213,7 @@ export default {
             { field: 'fieldMappingType', isNot: ['hardCoded'] },
             { field: 'fieldMappingType', isNot: ['lookup'] },
           ],
+          helpKey: 'mapping.default',
           defaultValue: value.default,
         },
         hardcodedDefault: {
@@ -214,6 +226,7 @@ export default {
             { field: 'hardcodedAction', is: ['default'] },
             { field: 'fieldMappingType', is: ['hardCoded'] },
           ],
+          helpKey: 'mapping.hardcodedDefault',
           defaultValue: value.hardCodedValue,
         },
         lookupDefault: {
@@ -226,6 +239,7 @@ export default {
             { field: 'lookupAction', is: ['default'] },
             { field: 'fieldMappingType', is: ['lookup'] },
           ],
+          helpKey: 'mapping.lookupDefault',
           defaultValue: lookup.default,
         },
         extractDateFormat: {
@@ -240,6 +254,7 @@ export default {
           label: 'Export Date Format',
           defaultValue: value.extractDateFormat,
           placeholder: '',
+          helpKey: 'mapping.extractDateFormat',
           visibleWhenAll: [
             { field: 'dataType', is: ['date'] },
             { field: 'fieldMappingType', is: ['standard'] },
@@ -262,6 +277,7 @@ export default {
                 [],
             },
           ],
+          helpKey: 'mapping.extractDateTimezone',
           visibleWhenAll: [
             { field: 'dataType', is: ['date'] },
             { field: 'fieldMappingType', is: ['standard'] },
@@ -279,6 +295,7 @@ export default {
           label: 'Import Date Format',
           defaultValue: value.generateDateFormat,
           placeholder: '',
+          helpKey: 'mapping.generateDateFormat',
           visibleWhenAll: [
             { field: 'dataType', is: ['date'] },
             { field: 'fieldMappingType', is: ['standard'] },
@@ -301,6 +318,7 @@ export default {
                 [],
             },
           ],
+          helpKey: 'mapping.generateDateTimezone',
           visibleWhenAll: [
             { field: 'dataType', is: ['date'] },
             { field: 'fieldMappingType', is: ['standard'] },
