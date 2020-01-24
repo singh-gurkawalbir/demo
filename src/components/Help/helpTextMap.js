@@ -1339,7 +1339,7 @@ export default {
     'The primary reason for defining a response mapping is to specify where fields returned by the destination application should be merged back into the source record. If you do not see a specific import response field in the dropdown below you can still map it regardless, and as long as the field is returned by the destination application when the flow is running the mapping will work. You can merge import response fields into any existing field in the source record, or you can specify a brand new field in which case integrator.io will create the field on the fly. You can also merge ‘errors’ back into the source record if you want to manually process errors downstream in your flow logic.',
   'mapping.ftp.dataType':
     'This field represents the respective datatype of the mapping field. Ex: string, boolean, number.',
-  'mapping.ftp.discardIfEmpty':
+  'mapping.discardIfEmpty':
     'Please check this checkbox if you would like to discard this mapping when the result of the mapping is empty. If you are mapping a list field and all the fields in the list are mapped to empty values then the whole list will be discarded.',
   'mapping.ftp.fieldMappingType':
     'The type of field mapping that you want to perform. For more information refer to, the <a href="https://celigosuccess.zendesk.com/hc/en-us/sections/205928707-Field-Mapping-options-in-integrator-io" target="_blank"/> Field Reference Guide.</a>',
