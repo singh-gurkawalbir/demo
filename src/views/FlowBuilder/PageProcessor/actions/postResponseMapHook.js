@@ -32,7 +32,7 @@ function PostResponseMapHookDialog({
       flowId,
       resourceId,
       resourceType,
-      stage: hookStage,
+      stage: 'postResponseMapHook',
     })
   );
   const saveScript = values => {
@@ -100,7 +100,7 @@ function PostResponseMapHookDialog({
           flowId,
           resourceId,
           resourceType,
-          hookStage
+          'postResponseMapHook'
         )
       );
     }
