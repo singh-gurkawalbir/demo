@@ -6,14 +6,10 @@ export default {
 
     if (retValues['/http/successMediaType'] === 'csv') {
       retValues['/file/type'] = 'csv';
-    } else if (retValues['/http/successMediaType'] === 'json') {
-      retValues['/file/csv'] = undefined;
-      retValues['/file'] = undefined;
-      delete retValues['/file/type'];
-      delete retValues['/file/csv/rowsToSkip'];
-      delete retValues['/file/csv/trimSpaces'];
-      delete retValues['/file/csv/columnDelimiter'];
-    } else if (retValues['/http/successMediaType'] === 'xml') {
+    } else if (
+      retValues['/http/successMediaType'] === 'json' ||
+      retValues['/http/successMediaType'] === 'xml'
+    ) {
       retValues['/file/csv'] = undefined;
       retValues['/file'] = undefined;
       delete retValues['/file/type'];
