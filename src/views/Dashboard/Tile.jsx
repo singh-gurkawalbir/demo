@@ -163,6 +163,20 @@ function Tile({ tile, history }) {
     () => setShowNotYetSupportedDialog(false),
     []
   );
+  const handleTileClick = useCallback(
+    event => {
+      event.stopPropagation();
+
+      if (isNotYetSupported) {
+        setShowNotYetSupportedDialog(true);
+
+        return false;
+      }
+
+      history.push(getRoutePath(urlToIntegrationSettings));
+    },
+    [history, isNotYetSupported, urlToIntegrationSettings]
+  );
 
   return (
     <Fragment>
@@ -181,7 +195,7 @@ function Tile({ tile, history }) {
           </Button>
         </ModalDialog>
       )}
-      <HomePageCardContainer>
+      <HomePageCardContainer onClick={handleTileClick}>
         <Header>
           <Status
             label={status.label}
