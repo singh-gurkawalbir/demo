@@ -104,7 +104,7 @@ function TransformationDialog({ flowId, resource, onClose, isViewMode }) {
 
   return (
     <TransformToggleEditorDialog
-      title="Transform Mapping"
+      title="Transform Record"
       id={exportId}
       disabled={isViewMode}
       data={sampleData}
