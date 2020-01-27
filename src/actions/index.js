@@ -81,8 +81,8 @@ const connection = {
       iClients,
       connectionId,
     }),
-  requestDebugLogs: (url, connectionId) =>
-    action(actionTypes.CONNECTION.DEBUG_LOGS_REQUEST, { url, connectionId }),
+  requestDebugLogs: connectionId =>
+    action(actionTypes.CONNECTION.DEBUG_LOGS_REQUEST, { connectionId }),
   receivedDebugLogs: (debugLogs, connectionId) =>
     action(actionTypes.CONNECTION.DEBUG_LOGS_RECEIVED, {
       debugLogs,
@@ -200,6 +200,10 @@ const resource = {
       offset,
     }),
   connections: {
+    refreshStatus: integrationId =>
+      action(actionTypes.CONNECTION.REFRESH_STATUS, { integrationId }),
+    receivedConnectionStatus: response =>
+      action(actionTypes.CONNECTION.RECEIVED_STATUS, { response }),
     test: (resourceId, values) =>
       action(actionTypes.CONNECTION.TEST, {
         resourceId,
