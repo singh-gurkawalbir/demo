@@ -70,12 +70,14 @@ export default {
         '5773b7378910c875334053ba': 'openair',
         '57c8199e8489cc1a298cc6ea': 'cashapp',
         '57e10364a0047c23baeffa09': 'jet',
-        '5811aeea2095951e76c6ce64': 'salesforceCommerce',
         '58777a2b1008fb325e6c0953': 'amazon',
         '5829bce6069ccb4460cdb34e': 'eBay',
         '58ee6029319bd30cc2fee160': 'salesforceSubscription',
         '58d3b1b7822f16187f873177': 'vendorPaymentManager',
         '5b61ae4aeb538642c26bdbe6': 'sfnsio',
+        '5811aeea2095951e76c6ce64': 'salesforceCommerce',
+        '5d84891a2af6196b2e0be90c': 'square',
+        '5b4f5b8ab3122842c1be0314': 'amazonmcf',
       },
       'integrator.io': {
         '55022fc3285348c76a000005': 'zendesk',
@@ -93,6 +95,9 @@ export default {
         '5833ea9127b52153647f3b7e': 'magento1',
         '592e8679c95560380ff1325c': 'salesforceSubscription',
         '5c8f30229f701b3e9a0aa817': 'sfnsio',
+        '5db8164d9df868329731fca0': 'square',
+        '5b754a8fddbb3b71d6046c87': 'amazonmcf',
+        '5845210ebfa3ab6faced62fb': 'salesforceCommerce',
       },
       'eu.integrator.io': {
         '55022fc3285348c76a000005': 'zendesk',
@@ -110,6 +115,9 @@ export default {
         '5833ea9127b52153647f3b7e': 'magento1',
         '592e8679c95560380ff1325c': 'salesforceSubscription',
         '5c8f30229f701b3e9a0aa817': 'sfnsio',
+        '5db8164d9df868329731fca0': 'square',
+        '5b754a8fddbb3b71d6046c87': 'amazonmcf',
+        '5845210ebfa3ab6faced62fb': 'salesforceCommerce',
       },
       'localhost.io': {
         'Zendesk - NetSuite Connector': 'zendesk',
@@ -139,20 +147,25 @@ export default {
 
     if (!integrationApp) return highestEdition;
 
-    if (
-      ['shopify', 'jet', 'bigcommerce', 'magento2', 'amazon', 'sfnsio'].indexOf(
-        integrationApp
-      ) !== -1
-    ) {
+    if (['jet', 'salesforceCommerce'].indexOf(integrationApp) !== -1) {
       highestEdition = 'enterprise';
     } else if (
-      ['zendesk', 'jira', 'adp', 'cashapp', 'eBay', 'walmart'].indexOf(
-        integrationApp
-      ) !== -1
+      [
+        'shopify',
+        'bigcommerce',
+        'magento2',
+        'amazon',
+        'sfnsio',
+        'adp',
+        'jira',
+        'cashapp',
+      ].indexOf(integrationApp) !== -1
     ) {
       highestEdition = 'premium';
-    } else {
+    } else if (['zendesk', 'eBay', 'walmart'].includes(integrationApp)) {
       highestEdition = 'standard';
+    } else {
+      highestEdition = 'starter';
     }
 
     return highestEdition;

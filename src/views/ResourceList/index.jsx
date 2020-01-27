@@ -1,4 +1,5 @@
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { useEffect } from 'react';
 import { withRouter, Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import AddIcon from '../../components/icons/AddIcon';
@@ -15,6 +16,7 @@ import KeywordSearch from '../../components/KeywordSearch';
 import CheckPermissions from '../../components/CheckPermissions';
 import { PERMISSIONS } from '../../utils/constants';
 import { connectorFilter } from './util';
+import actions from '../../actions';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -29,6 +31,7 @@ const defaultFilter = { take: 10 };
 function ResourceList(props) {
   const { match, location } = props;
   const { resourceType } = match.params;
+  const dispatch = useDispatch();
   const classes = useStyles();
   const filter =
     useSelector(state => selectors.filter(state, resourceType)) ||
@@ -41,6 +44,23 @@ function ResourceList(props) {
     })
   );
   const resourceName = MODEL_PLURAL_TO_LABEL[resourceType];
+
+  useEffect(() => {
+    let int;
+
+    dispatch(actions.resource.connections.refreshStatus());
+
+    // For connections resource table, we need to poll the connection status and queueSize
+    if (resourceType === 'connections') {
+      int = setInterval(() => {
+        dispatch(actions.resource.connections.refreshStatus());
+      }, 10 * 1000);
+    }
+
+    return () => {
+      clearInterval(int);
+    };
+  }, [dispatch, resourceType]);
 
   return (
     <CheckPermissions
