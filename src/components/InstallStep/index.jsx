@@ -128,7 +128,14 @@ export default function InstallationStep(props) {
             />
           )}
           {step.type === INSTALL_STEP_TYPES.CONNECTION && (
-            <ApplicationImg size="large" type={step.options.connectionType} />
+            <ApplicationImg
+              size="small"
+              type={
+                step.options.connectionType
+                  ? step.options.connectionType.toLowerCase()
+                  : ''
+              }
+            />
           )}
         </Grid>
         <Grid item xs={2} className={classes.step}>
