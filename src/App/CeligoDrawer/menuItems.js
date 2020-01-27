@@ -19,6 +19,7 @@ import TicketTagIcon from '../../components/icons/TicketTagIcon';
 import RecycleBinIcon from '../../components/icons/RecycleBinIcon';
 import TokensApiIcon from '../../components/icons/TokensApiIcon';
 import { getHelpUrl } from '../../utils/resource';
+import { SUBMIT_TICKET_URL, WHAT_NEW_URL } from '../../utils/constants';
 
 export default function menuItems(
   userProfile,
@@ -109,15 +110,13 @@ export default function menuItems(
           label: 'Submit ticket',
           Icon: TicketTagIcon,
           component: 'a',
-          href:
-            'https://celigosuccess.zendesk.com/hc/en-us/requests/new?preview_as_role=end_user',
+          href: SUBMIT_TICKET_URL,
         },
         {
           label: `What's New`,
           Icon: TicketTagIcon,
           component: 'a',
-          href:
-            'https://celigosuccess.zendesk.com/hc/en-us/sections/115000074091-Release-Notes?latest=true',
+          href: WHAT_NEW_URL,
         },
       ],
     },
