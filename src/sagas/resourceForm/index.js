@@ -219,7 +219,13 @@ export function* saveDataLoaderRawData({ resourceId, resourceType, values }) {
   return { ...values, '/rawData': rawDataKey };
 }
 
-export function* submitFormValues({ resourceType, resourceId, values, match }) {
+export function* submitFormValues({
+  resourceType,
+  resourceId,
+  values,
+  match,
+  isGenerate,
+}) {
   let formValues = { ...values };
 
   if (resourceType === 'exports') {
@@ -303,6 +309,7 @@ export function* submitFormValues({ resourceType, resourceId, values, match }) {
         resourceType: type,
         id: resourceId,
         scope: SCOPES.VALUE,
+        isGenerate,
       });
 
       if (error) {

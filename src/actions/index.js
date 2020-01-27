@@ -965,13 +965,14 @@ const resourceForm = {
       skipCommit,
       flowId,
     }),
-  submit: (resourceType, resourceId, values, match, skipClose) =>
+  submit: (resourceType, resourceId, values, match, skipClose, isGenerate) =>
     action(actionTypes.RESOURCE_FORM.SUBMIT, {
       resourceType,
       resourceId,
       values,
       match,
       skipClose,
+      isGenerate,
     }),
   submitComplete: (resourceType, resourceId, formValues) =>
     action(actionTypes.RESOURCE_FORM.SUBMIT_COMPLETE, {

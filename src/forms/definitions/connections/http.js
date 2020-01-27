@@ -263,9 +263,6 @@ export default {
       id: 'http.auth.oauth.scope',
       type: 'textarea',
       label: 'Scopes',
-      requiredWhen: [
-        { field: 'http.auth.oauth.grantType', is: ['authorizecode'] },
-      ],
       visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
     },
     'http.auth.oauth.scopeDelimiter': {
@@ -658,13 +655,26 @@ export default {
       id: 'cancel',
     },
     {
-      id: 'oauth',
-      label: 'Save & Authorize',
-      visibleWhen: [
+      id: 'saveandgenerate',
+      submitButtonLabel: 'Save & Generate',
+      isGenerate: true,
+      visibleWhenAll: [
         {
           field: 'http.auth.type',
           is: ['oauth'],
         },
+        { field: 'http.auth.oauth.grantType', is: ['clientcredentials'] },
+      ],
+    },
+    {
+      id: 'oauth',
+      label: 'Save & Authorize',
+      visibleWhenAll: [
+        {
+          field: 'http.auth.type',
+          is: ['oauth'],
+        },
+        { field: 'http.auth.oauth.grantType', isNot: ['clientcredentials'] },
       ],
     },
     {

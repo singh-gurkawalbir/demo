@@ -48,4 +48,5 @@ export default {
   validate: NetsuiteValidateButton,
   savedefinition: SaveFileDefinitionButton,
   saveintegrationsettings: IntegrationSettingsSaveButton,
+  saveandgenerate: SaveButton,
 };

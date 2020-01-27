@@ -20,6 +20,7 @@ const SaveButton = props => {
     classes,
     match,
     disabled = false,
+    isGenerate = false,
   } = props;
   const dispatch = useDispatch();
   const saveTerminated = useSelector(state =>
@@ -28,10 +29,17 @@ const SaveButton = props => {
   const onSave = useCallback(
     values => {
       dispatch(
-        actions.resourceForm.submit(resourceType, resourceId, values, match)
+        actions.resourceForm.submit(
+          resourceType,
+          resourceId,
+          values,
+          match,
+          false,
+          isGenerate
+        )
       );
     },
-    [dispatch, match, resourceId, resourceType]
+    [dispatch, isGenerate, match, resourceId, resourceType]
   );
   const { handleSubmitForm, disableSave } = useLoadingSnackbarOnSave({
     saveTerminated,
