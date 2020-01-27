@@ -4,6 +4,7 @@ const defaults = {
   global: {
     showGutter: true,
     enableLiveAutocompletion: true,
+    useWorker: true,
   },
   handlebars: {
     showGutter: false,
@@ -54,6 +55,7 @@ export default function CodePanel(props) {
       width={width}
       showGutter={config.showGutter}
       showInvisibles={config.showInvisibles}
+      useWorker={config.useWorker}
       enableAutocomplete={enableAutocomplete}
       wrap={config.wrap}
       onChange={onChange}

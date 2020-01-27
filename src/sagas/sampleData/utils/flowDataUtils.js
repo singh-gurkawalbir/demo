@@ -1,12 +1,17 @@
 import { put, select, call } from 'redux-saga/effects';
 import { isEmpty } from 'lodash';
-import { resourceData, isPageGenerator } from '../../../reducers';
+import {
+  resourceData,
+  isPageGenerator,
+  getSampleData,
+} from '../../../reducers';
 import { SCOPES } from '../../resourceForm';
 import actions from '../../../actions';
 import {
   fetchPageProcessorPreview,
   fetchPageGeneratorPreview,
   requestProcessorData,
+  requestSampleData,
   requestSampleDataWithContext,
 } from '../flows';
 import getPreviewOptionsForResource from '../flows/pageProcessorPreviewOptions';
@@ -227,6 +232,7 @@ export function* requestSampleDataForImports({
       case 'importMapping':
       case 'responseMappingExtract':
       case 'responseMapping':
+      case 'postResponseMap':
       case 'preMap': {
         yield call(requestProcessorData, {
           flowId,
@@ -363,4 +369,41 @@ export function getPreProcessedResponseMappingData({
 
   // Incase of imports, send preProcessedData if present else default fields
   return isEmpty(preProcessedData) ? extractsObj : preProcessedData;
+}
+
+export function* getFlowStageData({
+  flowId,
+  resourceId,
+  resourceType,
+  stage,
+  isInitialized,
+}) {
+  let flowStageData = yield select(getSampleData, {
+    flowId,
+    resourceId,
+    resourceType,
+    stage,
+  });
+
+  try {
+    if (!flowStageData) {
+      yield call(requestSampleData, {
+        flowId,
+        resourceId,
+        resourceType,
+        stage,
+        isInitialized,
+      });
+      flowStageData = yield select(getSampleData, {
+        flowId,
+        resourceId,
+        resourceType,
+        stage,
+      });
+    }
+
+    return flowStageData;
+  } catch (e) {
+    throw e;
+  }
 }
