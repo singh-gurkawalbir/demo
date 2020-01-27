@@ -65,7 +65,7 @@ export default function TemplateList(props) {
             onClose={() => setShowUploadZipDialog(false)}
           />
         )}
-        <CeligoPageBar title="Templates" InfoText={InfoText.templates}>
+        <CeligoPageBar title="Templates" infoText={InfoText.templates}>
           <div className={classes.actions}>
             <IconTextButton
               data-test="uploadTemplateZip"

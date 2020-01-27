@@ -15,7 +15,7 @@ import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import { UNDO_TIME } from './util';
 import JobRetriesDialog from './JobRetriesDialog';
 import JobFilesDownloadDialog from './JobFilesDownloadDialog';
-import MoreVertIcon from '../icons/EllipsisVerticalIcon';
+import EllipsisHorizontallIcon from '../icons/EllipsisHorizontalIcon';
 import getRoutePath from '../../utils/routePaths';
 import RunFlowButton from '../RunFlowButton';
 
@@ -376,7 +376,7 @@ export default function JobActionsMenu({
         className={classes.iconBtn}
         onClick={handleMenuClick}
         disabled={menuOptions.length === 0}>
-        <MoreVertIcon />
+        <EllipsisHorizontallIcon />
       </IconButton>
     </Fragment>
   );

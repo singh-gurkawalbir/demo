@@ -30,19 +30,17 @@ const useStyles = makeStyles(theme => ({
     }),
   },
   pageBarOffset: { height: theme.pageBarHeight },
-  // TODO: Azhar, is there a cleaner way than for me to set the style of
-  // the child div? Maybe the paper container should set the maxWidth?
+
   infoPopper: {
-    // maxWidth: 320, // <- this only sets the container, but the child is constrained
-    // by the value override below...
-    '& > div': {
-      maxWidth: 350,
-      overflow: 'hidden',
-      textAlign: 'left',
-      ' & > p': {
-        textTransform: 'none',
-      },
+    maxWidth: 350,
+    textAlign: 'left',
+    overflow: 'hidden',
+    '& p': {
+      textTransform: 'none',
     },
+  },
+  infoPopperMaxWidthView: {
+    maxWidth: props => props.infoPopperMaxWidth,
   },
   subTitle: {
     float: 'left',
@@ -52,16 +50,18 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function CeligoPageBar({
-  history,
-  children,
-  title,
-  infoText,
-  subtitle,
-  titleTag,
-  className,
-}) {
-  const classes = useStyles();
+export default function CeligoPageBar(props) {
+  const {
+    history,
+    children,
+    title,
+    infoText,
+    subtitle,
+    titleTag,
+    className,
+    infoPopperMaxWidth,
+  } = props;
+  const classes = useStyles(props);
   const location = useLocation();
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
   const bannerOpened = useSelector(state => selectors.bannerOpened(state));
@@ -110,12 +110,16 @@ export default function CeligoPageBar({
                       </IconButton>
                       <ArrowPopper
                         id="pageInfo"
-                        className={classes.infoPopper}
                         open={!!anchorEl}
                         anchorEl={anchorEl}
                         placement="right-start"
                         onClose={handleInfoClose}>
-                        <TooltipContent>{infoText}</TooltipContent>
+                        <TooltipContent
+                          className={clsx(classes.infoPopper, {
+                            [classes.infoPopperMaxWidthView]: infoPopperMaxWidth,
+                          })}>
+                          {infoText}
+                        </TooltipContent>
                       </ArrowPopper>
                     </Fragment>
                   )}

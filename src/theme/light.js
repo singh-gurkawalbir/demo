@@ -330,6 +330,11 @@ export default {
         },
       },
     },
+    MuiTableBody: {
+      root: {
+        wordBreak: 'break-word',
+      },
+    },
     MuiTableCell: {
       root: {
         position: 'relative',
@@ -441,7 +446,8 @@ export default {
     MuiRadio: {
       root: {
         color: colors.celigoNeutral5,
-        padding: 5,
+        padding: 0,
+        marginRight: 4,
       },
     },
     MuiInputBase: {
@@ -513,6 +519,8 @@ export default {
     MuiCheckbox: {
       root: {
         color: colors.celigoNeutral5,
+        padding: 0,
+        marginRight: 4,
       },
     },
     MuiTabs: {
@@ -551,6 +559,7 @@ export default {
       },
     },
   },
+
   // TODO: Dave It is giving an error in console
 
   // props: {

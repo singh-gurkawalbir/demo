@@ -45,7 +45,10 @@ export default function RecycleBin(props) {
     <Fragment>
       <CheckPermissions permission={PERMISSIONS.recyclebin.view}>
         <ResourceDrawer {...props} />
-        <CeligoPageBar title="Recycle Bin" infoText={infoText.recycleBin}>
+        <CeligoPageBar
+          title="Recycle Bin"
+          infoText={infoText.recycleBin}
+          infoPopperMaxWidth={350}>
           <div className={classes.actions}>
             <KeywordSearch
               filterKey="recycleBinTTL"

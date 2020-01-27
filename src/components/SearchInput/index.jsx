@@ -1,7 +1,7 @@
 import { Fragment } from 'react';
 import InputBase from '@material-ui/core/InputBase';
-import SearchIcon from '@material-ui/icons/Search';
 import { fade, makeStyles } from '@material-ui/core/styles';
+import SearchIcon from '../icons/SearchIcon';
 
 const useStyles = makeStyles(theme => ({
   search: {
@@ -24,6 +24,8 @@ const useStyles = makeStyles(theme => ({
       marginLeft: theme.spacing(1),
       width: 'auto',
     },
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
   },
   searchIcon: {
     width: theme.spacing(7),
@@ -51,7 +53,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function SearchInput({ variant = 'light', ...rest }) {
+export default function SearchInput({ variant, ...rest }) {
   const classes = useStyles({ variant });
 
   return (

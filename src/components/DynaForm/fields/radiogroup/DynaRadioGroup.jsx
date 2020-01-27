@@ -84,7 +84,9 @@ export default function DynaRadio(props) {
       required={required}
       disabled={disabled}
       className={clsx(classes.block, fullWidth ? classes.fullWidth : '')}>
-      <FormLabel component="legend">{label}</FormLabel>
+      <div>
+        <FormLabel component="legend">{label}</FormLabel>
+      </div>
       <RadioGroup
         data-test={id}
         aria-label={label}

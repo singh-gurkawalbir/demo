@@ -11,7 +11,7 @@ export default function Marketplace() {
 
   return (
     <Fragment>
-      <CeligoPageBar title="App store" infoText={MARKETPLACE_HELPINFO}>
+      <CeligoPageBar title="Marketplace" infoText={MARKETPLACE_HELPINFO}>
         <KeywordSearch filterKey="marketplace" />
       </CeligoPageBar>
       <MarketplaceList filter={filter} />
