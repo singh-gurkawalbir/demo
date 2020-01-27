@@ -567,6 +567,16 @@ export function* requestDebugLogs({ connectionId }) {
   }
 }
 
+export function* receivedResource({ resourceType, resource }) {
+  if (resourceType === 'connections' && !resource.offline) {
+    yield put(actions.connection.madeOnline(resource._id));
+  }
+}
+
+export function* authorizedConnection({ connectionId }) {
+  yield put(actions.connection.madeOnline(connectionId));
+}
+
 export const resourceSagas = [
   takeEvery(actionTypes.RESOURCE.REQUEST, getResource),
   takeEvery(
@@ -583,5 +593,7 @@ export const resourceSagas = [
   takeEvery(actionTypes.RESOURCE.UPDATE_NOTIFICATIONS, updateNotifications),
   takeEvery(actionTypes.CONNECTION.DEREGISTER_REQUEST, requestDeregister),
   takeEvery(actionTypes.CONNECTION.DEBUG_LOGS_REQUEST, requestDebugLogs),
+  takeEvery(actionTypes.RESOURCE.RECEIVED, receivedResource),
+  takeEvery(actionTypes.CONNECTION.AUTHORIZED, authorizedConnection),
   ...metadataSagas,
 ];

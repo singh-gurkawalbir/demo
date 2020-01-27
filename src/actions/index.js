@@ -90,6 +90,8 @@ const connection = {
     }),
   clearDebugLogs: connectionId =>
     action(actionTypes.CONNECTION.DEBUG_LOGS_CLEAR, { connectionId }),
+  madeOnline: connectionId =>
+    action(actionTypes.CONNECTION.MADE_ONLINE, { connectionId }),
 };
 const marketplace = {
   requestConnectors: () =>
