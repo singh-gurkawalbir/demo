@@ -855,10 +855,22 @@ export function resourceListWithPermissions(state, options) {
   const permissions = userPermissions(state);
 
   list.resources = list.resources.map(r => {
-    // eslint-disable-next-line no-param-reassign
-    r.permissions = deepClone(permissions);
+    const additionalInfo = {};
 
-    return r;
+    additionalInfo.permissions = deepClone(permissions);
+
+    // For connections resource, add the status and queueSize info
+    if (options.type === 'connections') {
+      const status = fromSession.connectionStatus(
+        state && state.session,
+        r._id
+      );
+
+      additionalInfo.offline = status.offline;
+      additionalInfo.queueSize = status.queueSize;
+    }
+
+    return { ...r, ...additionalInfo };
   });
 
   return list;
@@ -3195,6 +3207,10 @@ export function getUsedActionsForResource(
 
 export function debugLogs(state) {
   return fromSession.debugLogs(state && state.session);
+}
+
+export function connectionStatus(state, id) {
+  return fromSession.connectionStatus(state && state.session, id);
 }
 
 export function getLastExportDateTime(state, flowId) {

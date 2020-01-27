@@ -8,6 +8,10 @@ export default {
       newValues['/http/ping/successValues'] = undefined;
     }
 
+    if (!newValues['/http/auth/oauth/failPath']) {
+      newValues['/http/auth/oauth/failValues'] = undefined;
+    }
+
     if (!newValues['/http/ratLimit/failPath']) {
       newValues['/http/rateLimit/failValues'] = undefined;
     }
@@ -38,21 +42,22 @@ export default {
       newValues['/http/auth/type'] !== 'basic' &&
       newValues['/http/auth/type'] !== 'digest'
     ) {
-      newValues['/http/auth/basic/username'] = undefined;
-      newValues['/http/auth/basic/password'] = undefined;
+      delete newValues['/http/auth/basic/username'];
+      delete newValues['/http/auth/basic/password'];
+      newValues['/http/auth/basic'] = undefined;
     }
 
     if (
       newValues['/http/auth/type'] !== 'token' ||
       !formValues['/configureTokenRefresh']
     ) {
-      newValues['/http/auth/token/refreshMethod'] = undefined;
-      newValues['/http/auth/token/refreshTokenPath'] = undefined;
-      newValues['/http/auth/token/refreshTokenHeaders'] = undefined;
-      newValues['/http/auth/token/refreshToken'] = undefined;
-      newValues['/http/auth/token/refreshBody'] = undefined;
-      newValues['/http/auth/token/refreshRelativeURI'] = undefined;
-      newValues['/http/auth/token/refreshMediaType'] = undefined;
+      delete newValues['/http/auth/token/refreshMethod'];
+      delete newValues['/http/auth/token/refreshTokenPath'];
+      delete newValues['/http/auth/token/refreshTokenHeaders'];
+      delete newValues['/http/auth/token/refreshToken'];
+      delete newValues['/http/auth/token/refreshBody'];
+      delete newValues['/http/auth/token/refreshRelativeURI'];
+      delete newValues['/http/auth/token/refreshMediaType'];
     }
 
     if (newValues['/http/auth/type'] === 'token') {
@@ -63,11 +68,20 @@ export default {
     }
 
     if (newValues['/http/auth/type'] !== 'token') {
-      newValues['/http/auth/token/token'] = undefined;
-      newValues['/http/auth/token/scheme'] = undefined;
-      newValues['/http/auth/token/headerName'] = undefined;
-      newValues['/http/auth/token/location'] = undefined;
-      newValues['/http/auth/token/paramName'] = undefined;
+      delete newValues['/http/auth/token/token'];
+      delete newValues['/http/auth/token/scheme'];
+      delete newValues['/http/auth/token/headerName'];
+      delete newValues['/http/auth/token/location'];
+      delete newValues['/http/auth/token/paramName'];
+    }
+
+    if (newValues['/http/auth/type'] !== 'cookie') {
+      if (newValues['/http/auth/cookie/method'] === 'GET') {
+        delete newValues['/http/auth/cookie/body'];
+      }
+
+      delete newValues['/http/auth/cookie/method'];
+      delete newValues['/http/auth/cookie/uri'];
     }
 
     if (newValues['/http/auth/type'] === 'oauth') {
@@ -91,21 +105,21 @@ export default {
         newValues['/http/auth/oauth/paramName'];
       newValues['/http/auth/customAuthScheme'] =
         newValues['/http/oauth/customAuthScheme'];
-
-      delete newValues['/http/oauth/headers'];
-      delete newValues['/http/oauth/baseURI'];
-      delete newValues['/http/oauth/mediaType'];
-      delete newValues['/http/oauth/encrypted'];
-      delete newValues['/http/oauth/unencrypted'];
-      delete newValues['/http/auth/oauth/failStatusCode'];
-      delete newValues['/http/auth/oauth/failPath'];
-      delete newValues['/http/auth/oauth/failValues'];
-      delete newValues['/http/auth/oauth/location'];
-      delete newValues['/http/auth/oauth/headerName'];
-      delete newValues['/http/auth/oauth/scheme'];
-      delete newValues['/http/auth/oauth/paramName'];
-      delete newValues['/http/oauth/customAuthScheme'];
     }
+
+    delete newValues['/http/oauth/headers'];
+    delete newValues['/http/oauth/baseURI'];
+    delete newValues['/http/oauth/mediaType'];
+    delete newValues['/http/oauth/encrypted'];
+    delete newValues['/http/oauth/unencrypted'];
+    delete newValues['/http/auth/oauth/failStatusCode'];
+    delete newValues['/http/auth/oauth/failPath'];
+    delete newValues['/http/auth/oauth/failValues'];
+    delete newValues['/http/auth/oauth/location'];
+    delete newValues['/http/auth/oauth/headerName'];
+    delete newValues['/http/auth/oauth/scheme'];
+    delete newValues['/http/auth/oauth/paramName'];
+    delete newValues['/http/oauth/customAuthScheme'];
 
     return newValues;
   },

@@ -347,7 +347,7 @@ function extractRules(fields, currFieldName, value) {
     const { name, hidden, required } = field;
     let rule = { ref: name };
 
-    if (!hidden) {
+    if (Object.prototype.hasOwnProperty.call(field, 'hidden') && !hidden) {
       rule = {
         ...rule,
         visibleRule: { field: currFieldName, is: [value] },
@@ -416,8 +416,8 @@ export const translateDependencyProps = fieldMap => {
             visibleRule
           );
         } else if (requiredRule) {
-          fieldMapCopy[ref].validWhenAll = pushRuleToMeta(
-            fieldMapCopy[ref].validWhenAll,
+          fieldMapCopy[ref].requiredWhenAll = pushRuleToMeta(
+            fieldMapCopy[ref].requiredWhenAll,
             requiredRule
           );
         }
