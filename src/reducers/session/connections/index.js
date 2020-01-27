@@ -2,7 +2,7 @@ import produce from 'immer';
 import actionTypes from '../../../actions/types';
 
 export default (state = {}, action) => {
-  const { type, debugLogs, connectionId } = action;
+  const { type, debugLogs, connectionId, response } = action;
 
   return produce(state, draft => {
     switch (type) {
@@ -15,6 +15,9 @@ export default (state = {}, action) => {
         }
 
         break;
+      case actionTypes.CONNECTION.RECEIVED_STATUS:
+        draft.status = response;
+        break;
       default:
     }
   });
@@ -26,4 +29,16 @@ export function debugLogs(state) {
   }
 
   return state.debugLogs;
+}
+
+export function connectionStatus(state, id) {
+  const defaultStatus = { id, queueSize: 0, offline: false };
+
+  if (!state || !state.status || !Array.isArray(state.status)) {
+    return defaultStatus;
+  }
+
+  const connection = state.status.find(connection => connection._id === id);
+
+  return connection || defaultStatus;
 }

@@ -26,6 +26,7 @@ export default {
           type: 'select',
           label: 'Data Type',
           defaultValue: mappingUtil.getDefaultDataType(value),
+          helpKey: 'mapping.dataType',
           options: [
             {
               items: [
@@ -44,6 +45,7 @@ export default {
           name: 'discardIfEmpty',
           type: 'checkbox',
           defaultValue: value.discardIfEmpty || false,
+          helpKey: 'mapping.discardIfEmpty',
           label: 'Discard If Empty',
         },
         immutable: {
@@ -51,6 +53,7 @@ export default {
           name: 'immutable',
           type: 'checkbox',
           defaultValue: value.immutable || false,
+          helpKey: 'mapping.immutable',
           label: 'Immutable (Advanced)',
         },
         useFirstRow: {
@@ -67,6 +70,7 @@ export default {
           label: 'Field Mapping Type',
           defaultValue: mappingUtil.getFieldMappingType(value),
           fullWidth: true,
+          helpKey: 'mapping.fieldMappingType',
           options: [
             {
               items: [
@@ -86,6 +90,7 @@ export default {
           fullWidth: true,
           defaultValue: lookup.name && (lookup.map ? 'static' : 'dynamic'),
           visibleWhen: [{ field: 'fieldMappingType', is: ['lookup'] }],
+          helpKey: 'mapping.lookup.mode',
           options: [
             {
               items: [
@@ -108,6 +113,7 @@ export default {
           label: 'Relative URI',
           placeholder: 'Relative URI',
           defaultValue: lookup.relativeURI,
+          helpKey: 'mapping.relativeURI',
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
             { field: 'lookup.mode', is: ['dynamic'] },
@@ -128,6 +134,7 @@ export default {
               ],
             },
           ],
+          helpKey: 'mapping.lookup.method',
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
             { field: 'lookup.mode', is: ['dynamic'] },
@@ -140,6 +147,7 @@ export default {
           connectionId: r => r && r._connectionId,
           label: 'Build HTTP Request Body',
           defaultValue: lookup.body || '',
+          // helpText not present
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
             { field: 'lookup.mode', is: ['dynamic'] },
@@ -153,6 +161,7 @@ export default {
           label: 'Resource Identifier Path',
           placeholder: 'Resource Identifier Path',
           defaultValue: lookup.extract,
+          helpKey: 'mapping.lookup.extract',
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
             { field: 'lookup.mode', is: ['dynamic'] },
@@ -174,6 +183,7 @@ export default {
               import: lookup.map[key],
             })),
           map: lookup.map,
+          // helpText not present
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
             { field: 'lookup.mode', is: ['static'] },
@@ -184,6 +194,7 @@ export default {
           name: 'functions',
           type: 'fieldexpressionselect',
           label: 'Function',
+          helpKey: 'mapping.functions',
           visibleWhen: [{ field: 'fieldMappingType', is: ['multifield'] }],
         },
         // TODO (Aditya) : resetting Field after selection
@@ -203,6 +214,7 @@ export default {
                 [],
             },
           ],
+          helpKey: 'mapping.extract',
           visibleWhen: [{ field: 'fieldMappingType', is: ['multifield'] }],
         },
         expression: {
@@ -212,6 +224,7 @@ export default {
           type: 'text',
           label: 'Expression',
           defaultValue: mappingUtil.getDefaultExpression(value),
+          helpKey: 'mapping.expression',
           visibleWhen: [{ field: 'fieldMappingType', is: ['multifield'] }],
         },
         standardAction: {
@@ -233,6 +246,7 @@ export default {
               ],
             },
           ],
+          helpKey: 'mapping.standardAction',
           visibleWhen: [
             { field: 'fieldMappingType', is: ['standard'] },
             { field: 'fieldMappingType', is: ['multifield'] },
@@ -262,6 +276,7 @@ export default {
               ],
             },
           ],
+          // helpText not present
           visibleWhen: [{ field: 'fieldMappingType', is: ['hardCoded'] }],
         },
         lookupAction: {
@@ -289,6 +304,7 @@ export default {
               ],
             },
           ],
+          helpKey: 'mapping.lookupAction',
           visibleWhenAll: [
             { field: 'lookup.mode', is: ['dynamic', 'static'] },
             { field: 'fieldMappingType', is: ['lookup'] },
@@ -305,6 +321,7 @@ export default {
             { field: 'fieldMappingType', isNot: ['hardCoded'] },
             { field: 'fieldMappingType', isNot: ['lookup'] },
           ],
+          helpKey: 'mapping.default',
           defaultValue: value.default,
         },
         hardcodedDefault: {
@@ -317,6 +334,7 @@ export default {
             { field: 'hardcodedAction', is: ['default'] },
             { field: 'fieldMappingType', is: ['hardCoded'] },
           ],
+          helpKey: 'mapping.hardcodedDefault',
           defaultValue: value.hardCodedValue,
         },
         lookupDefault: {
@@ -329,6 +347,7 @@ export default {
             { field: 'lookupAction', is: ['default'] },
             { field: 'fieldMappingType', is: ['lookup'] },
           ],
+          helpKey: 'mapping.lookupDefault',
           defaultValue: lookup.default,
         },
         extractDateFormat: {
@@ -343,6 +362,7 @@ export default {
           labelName: 'name',
           valueName: 'value',
           defaultValue: value.extractDateFormat,
+          helpKey: 'mapping.extractDateFormat',
           visibleWhenAll: [
             { field: 'dataType', is: ['date'] },
             { field: 'fieldMappingType', is: ['standard'] },
@@ -365,6 +385,7 @@ export default {
                 [],
             },
           ],
+          helpkey: 'mapping.extractDateTimezone',
           visibleWhenAll: [
             { field: 'dataType', is: ['date'] },
             { field: 'fieldMappingType', is: ['standard'] },
@@ -382,6 +403,7 @@ export default {
           },
           labelName: 'name',
           valueName: 'value',
+          helpKey: 'mapping.generateDateFormat',
           visibleWhenAll: [
             { field: 'dataType', is: ['date'] },
             { field: 'fieldMappingType', is: ['standard'] },
@@ -404,6 +426,7 @@ export default {
                 [],
             },
           ],
+          helpKey: 'mapping.generateDateTimezone',
           visibleWhenAll: [
             { field: 'dataType', is: ['date'] },
             { field: 'fieldMappingType', is: ['standard'] },

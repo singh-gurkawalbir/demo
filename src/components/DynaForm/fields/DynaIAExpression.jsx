@@ -7,7 +7,13 @@ import DynaSFQualifier from './DynaSalesforceQualifier';
 import DynaNSQualifier from './DynaNetSuiteQualifier';
 
 export default function DynaIAExpression(props) {
-  const { flowId, properties = {}, expressionType: type } = props;
+  const {
+    flowId,
+    properties = {},
+    expressionType: type,
+    recordType,
+    _integrationId,
+  } = props;
   let resourceId;
   let commMetaPath;
   let filterType;
@@ -43,11 +49,22 @@ export default function DynaIAExpression(props) {
       resourceId
     )
   );
-  const connection = useSelector(state =>
-    selectors.resource(state, 'connections', resource && resource._connectionId)
-  );
+  const connection = useSelector(state => {
+    if (resource) {
+      return selectors.resource(
+        state,
+        'connections',
+        resource && resource._connectionId
+      );
+    } else if (recordType) {
+      return selectors.resourceList(state, {
+        type: 'connections',
+        filter: { type: 'netsuite', _integrationId },
+      }).resources[0];
+    }
+  });
 
-  if (!resource) {
+  if (!connection) {
     return null;
   }
 
@@ -67,6 +84,9 @@ export default function DynaIAExpression(props) {
       filterType = 'netsuiteQualifier';
       commMetaPath = `netsuite/metadata/suitescript/connections/${connection._id}/recordTypes/${resource.netsuite.distributed.recordType}?includeSelectOptions=true`;
     }
+  } else if (recordType) {
+    filterType = 'netsuiteImportLookup';
+    commMetaPath = `netsuite/metadata/suitescript/connections/${connection._id}/recordTypes/${recordType}/searchFilters?includeJoinFilters=true`;
   }
 
   const options = { commMetaPath, disableFetch: false };
@@ -94,7 +114,7 @@ export default function DynaIAExpression(props) {
       {...props}
       flowId={flowId}
       options={options}
-      resourceId={resource._id}
+      resourceId={resource && resource._id}
     />
   );
 }
