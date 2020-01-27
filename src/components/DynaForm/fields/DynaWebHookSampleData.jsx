@@ -6,14 +6,16 @@ import CodeEditor from '../../CodeEditor';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import actions from '../../../actions';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
   container: {
-    height: '20vh',
-    width: '80%',
+    height: '15vh',
   },
   actions: {
-    height: '10vh',
-    width: '80%',
+    height: '6vh',
+    padding: theme.spacing(2),
+  },
+  inlineActions: {
+    display: 'inline',
   },
 }));
 
@@ -57,9 +59,13 @@ export default function DynaWebHookSampleData(props) {
         />
       </div>
       <div className={classes.actions}>
-        <Button onClick={generateSampleData}> Click to Show </Button>
-        <Typography> or </Typography>
-        <Button onClick={handleManualEnter}> Manually Enter </Button>
+        <Button className={classes.inlineActions} onClick={generateSampleData}>
+          Click to Show
+        </Button>
+        <Typography className={classes.inlineActions}> or </Typography>
+        <Button className={classes.inlineActions} onClick={handleManualEnter}>
+          Manually Enter
+        </Button>
       </div>
     </div>
   );
