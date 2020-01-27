@@ -69,6 +69,16 @@ export default {
         },
       ],
     },
+    application: {
+      id: 'application',
+      name: 'application',
+      type: 'selectapplication',
+      label: 'Application',
+      placeholder:
+        'Choose application or start typing to browse 150+ applications',
+      defaultValue: r => (r && r.application) || '',
+      required: true,
+    },
     isNew: {
       id: 'isNew',
       name: 'isNew',
@@ -87,15 +97,6 @@ export default {
         },
       ],
       // visibleWhenAll: [{ field: 'application', isNot: [''] }],
-    },
-    application: {
-      id: 'application',
-      name: 'application',
-      type: 'selectapplication',
-      label: 'Select Application',
-      placeholder: 'Select application',
-      defaultValue: r => (r && r.application) || '',
-      required: true,
     },
 
     existingImport: {

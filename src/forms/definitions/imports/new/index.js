@@ -43,7 +43,9 @@ export default {
       id: 'application',
       name: 'application',
       type: 'selectapplication',
-      placeholder: 'Select application',
+      label: 'Application',
+      placeholder:
+        'Choose application or start typing to browse 150+ applications',
       defaultValue: '',
       required: true,
       validWhen: {

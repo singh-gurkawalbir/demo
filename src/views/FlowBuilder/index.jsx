@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, Fragment } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { withRouter, useHistory, useRouteMatch } from 'react-router-dom';
 import clsx from 'clsx';
@@ -27,6 +27,7 @@ import SwitchOnOff from '../../components/OnOff';
 import { generateNewId } from '../../utils/resource';
 import { isConnector } from '../../utils/flows';
 import FlowEllipsisMenu from '../../components/FlowEllipsisMenu';
+import DateTimeDisplay from '../../components/DateTimeDisplay';
 
 // #region FLOW SCHEMA: FOR REFERENCE DELETE ONCE FB IS COMPLETE
 /* 
@@ -473,7 +474,16 @@ function FlowBuilder() {
             onChange={handleTitleChange}
           />
         }
-        subtitle={`Last saved: ${isNewFlow ? 'Never' : flow.lastModified}`}
+        subtitle={
+          <Fragment>
+            Last saved:{' '}
+            {isNewFlow ? (
+              'Never'
+            ) : (
+              <DateTimeDisplay dateTime={flow.lastModified} />
+            )}
+          </Fragment>
+        }
         infoText={flow.description}>
         <div className={classes.actions}>
           {!isDataLoaderFlow && (

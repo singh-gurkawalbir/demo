@@ -24,6 +24,7 @@ const sampleDataStage = {
     responseMappingExtract: 'hooks',
     responseMapping: 'responseMappingExtract',
     postResponseMap: 'responseMapping',
+    postResponseMapHook: 'postResponseMap',
     outputFilter: 'hooksWithContext',
     hooksWithContext: 'hooks',
     flowInputWithContext: 'flowInput',
@@ -37,6 +38,7 @@ const sampleDataStage = {
     responseMappingExtract: 'responseTransform',
     responseMapping: 'responseMappingExtract',
     postResponseMap: 'responseMapping',
+    postResponseMapHook: 'postResponseMap',
     postMap: 'importMapping',
     postSubmit: 'responseTransform',
     responseTransform: 'sampleResponse',
@@ -215,6 +217,7 @@ export const isOneToManyResource = resource =>
  * This fn returns { data:'', errors: '', ignored: '', statusCode: ''}
  */
 export const generateDefaultExtractsObject = resourceType => {
+  // TODO: @Raghu Confirm the below format to generate default objects
   const defaultExtractsList =
     resourceType === 'imports'
       ? ImportResponseMappingExtracts
@@ -226,4 +229,14 @@ export const generateDefaultExtractsObject = resourceType => {
 
     return extractsObj;
   }, {});
+};
+
+/*
+ * @Inputs: flowInputData and rawData for the pp
+ * This util merges both to generate actual format of Flow Record being passed at runtime
+ */
+export const generatePostResponseMapData = (flowData, rawData) => {
+  const flowDataArray = [flowData || {}];
+
+  return flowDataArray.map(fd => ({ ...fd, ...rawData }));
 };

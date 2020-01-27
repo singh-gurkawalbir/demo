@@ -1493,35 +1493,30 @@ describe('job sagas', () => {
     const jobErrors = [
       {
         _id: 'e1',
-        createdAtAsString: 'cas1',
         source: 's1',
         code: 'c1',
         some: 'thing',
       },
       {
         _id: 'e2',
-        createdAtAsString: 'cas2',
         source: 's1',
         code: 'c2',
         something: 'else',
       },
       {
         _id: 'e3',
-        createdAtAsString: 'cas3',
         source: 's2',
         code: 'c3',
         some: 'thing',
       },
       {
         _id: 'e4',
-        createdAtAsString: 'cas4',
         source: 's2',
         code: 'c3',
         something: 'something',
       },
       {
         _id: 'e5',
-        createdAtAsString: 'cas5',
         source: 's1',
         code: 'c1',
         some: 'thing',
@@ -1549,7 +1544,7 @@ describe('job sagas', () => {
       );
 
       opts.body = jobErrors.map(je => {
-        const { _id, createdAtAsString, ...rest } = je;
+        const { _id, ...rest } = je;
 
         return { ...rest };
       });
@@ -1583,7 +1578,7 @@ describe('job sagas', () => {
       );
 
       opts.body = jobErrors.map(je => {
-        const { _id, createdAtAsString, ...rest } = je;
+        const { _id, ...rest } = je;
 
         return { ...rest };
       });
