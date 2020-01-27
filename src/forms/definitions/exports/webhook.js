@@ -31,6 +31,7 @@ export default {
     'webhook.password': { fieldId: 'webhook.password' },
     'webhook.sampledata': {
       fieldId: 'webhook.sampledata',
+      sampleData: r => r && r.sampleData,
       refreshOptionsOnChangesTo: ['webhook.url'],
     },
     advancedSettings: { formId: 'advancedSettings' },

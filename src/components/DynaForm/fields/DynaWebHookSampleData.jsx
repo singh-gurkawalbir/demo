@@ -8,7 +8,7 @@ import actions from '../../../actions';
 
 const useStyles = makeStyles(() => ({
   container: {
-    height: '30vh',
+    height: '20vh',
     width: '80%',
   },
   actions: {
@@ -21,9 +21,8 @@ export default function DynaWebHookSampleData(props) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [enqueueSnackbar] = useEnqueueSnackbar();
-  const { label, id, onFieldChange, options, resourceId } = props;
+  const { label, id, onFieldChange, options, resourceId, sampleData } = props;
   const [manualEnter, setManualEnter] = useState(false);
-  // const [sampleDataReceived, setSampleDataReceived] = useState(false);
   const generateSampleData = useCallback(() => {
     if (!options.url || !options.provider) {
       return enqueueSnackbar({
@@ -41,7 +40,8 @@ export default function DynaWebHookSampleData(props) {
     value => {
       onFieldChange(id, value);
     },
-    [id, onFieldChange]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [id]
   );
 
   return (
@@ -50,7 +50,7 @@ export default function DynaWebHookSampleData(props) {
       <div className={classes.container}>
         <CodeEditor
           name="sampleData"
-          value={{ sampleData: 5 }}
+          value={sampleData}
           mode="json"
           readOnly={!manualEnter}
           onChange={handleSampleDataChange}
