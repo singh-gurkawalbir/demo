@@ -69,7 +69,6 @@ export default {
       id: 'application',
       label: 'Application',
       name: 'application',
-      label: 'Select Application',
       type: 'selectapplication',
       placeholder:
         'Choose application or start typing to browse 150+ applications',
