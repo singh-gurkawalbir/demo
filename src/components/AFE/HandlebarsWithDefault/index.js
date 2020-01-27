@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
@@ -55,7 +55,7 @@ export default function HandlebarsWithDefaults(props) {
     dispatch(actions.editor.patch(editorId, { [field]: value }));
   };
 
-  const handleInit = () => {
+  const handleInit = useCallback(() => {
     dispatch(
       actions.editor.init(editorId, 'sql', {
         props: props.strict,
@@ -68,7 +68,14 @@ export default function HandlebarsWithDefaults(props) {
     );
     // get Helper functions when the editor initializes
     dispatch(actions.editor.refreshHelperFunctions());
-  };
+  }, [
+    dispatch,
+    editorId,
+    props.defaultData,
+    props.rule,
+    props.sampleData,
+    props.strict,
+  ]);
 
   return (
     <Editor

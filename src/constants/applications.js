@@ -139,6 +139,7 @@ const connectors = [
   },
   // Application connectors
   { id: '3dcart', name: '3DCart', type: 'rest', assistant: '3dcart' },
+  { id: 'vroozi', name: 'Vroozi', type: 'http', assistant: 'vroozi' },
   { id: 'accelo', name: 'Accelo', type: 'rest', assistant: 'accelo' },
   {
     id: 'activecampaign',
@@ -167,6 +168,7 @@ const connectors = [
   },
   { id: 'autopilot', name: 'Autopilot', type: 'http', assistant: 'autopilot' },
   { id: 'avalara', name: 'Avalara', type: 'rest', assistant: 'avalara' },
+  { id: 'shipbob', name: 'ShipBob', type: 'http', assistant: 'shipbob' },
   {
     id: 'azureactivedirectory',
     name: 'Azure Active Directory',
@@ -215,15 +217,15 @@ const connectors = [
   },
   {
     id: 'constantcontactv2',
-    name: 'Constant Contact',
-    type: 'rest',
+    name: 'Constant Contact V2',
+    type: 'http',
     assistant: 'constantcontactv2',
     icon: 'constantcontactv3',
   },
   {
     id: 'constantcontactv3',
-    name: 'Constant Contact',
-    type: 'rest',
+    name: 'Constant Contact V3',
+    type: 'http',
     assistant: 'constantcontactv3',
     icon: 'constantcontactv3',
   },

@@ -16,8 +16,6 @@ export default {
       retValues['/mongodb/ignoreExtract'] = undefined;
     }
 
-    delete retValues['/inputMode'];
-
     return {
       ...retValues,
     };
@@ -80,7 +78,7 @@ export default {
     ignoreMissing: {
       fieldId: 'ignoreMissing',
       type: 'checkboxforresetfields',
-      fieldsToReset: ['mongodb.upsert'],
+      fieldsToReset: [{ id: 'mongodb.upsert', type: 'checkbox' }],
       visibleWhen: [
         {
           field: 'mongodb.method',

@@ -1,5 +1,5 @@
 import mappingUtil from './mapping';
-import { adaptorTypeMap } from './resource';
+import { adaptorTypeMap, isBlobTypeResource } from './resource';
 
 export const actionsMap = {
   as2Routing: 'as2Routing',
@@ -176,6 +176,11 @@ export const getUsedActionsMapForResource = (
 
 export const isImportMappingAvailable = resource => {
   if (!resource) return false;
+  // For Blob imports mapping shouldnot be shown.(IO-11865)
+
+  if (isBlobTypeResource(resource)) {
+    return false;
+  }
 
   const { adaptorType } = resource;
   const appType = adaptorTypeMap[adaptorType];

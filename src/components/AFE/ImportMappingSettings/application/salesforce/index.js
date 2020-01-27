@@ -13,9 +13,8 @@ export default {
       options,
     } = params;
     const { connectionId } = options;
-    const selectedGenerateObj = generateFields.find(
-      field => field.id === generate
-    );
+    const selectedGenerateObj =
+      generateFields && generateFields.find(field => field.id === generate);
     const fieldMeta = {
       fieldMap: {
         immutable: {
@@ -23,6 +22,7 @@ export default {
           name: 'immutable',
           type: 'checkbox',
           defaultValue: value.immutable || false,
+          helpKey: 'mapping.immutable',
           label: 'Immutable (Advanced)',
         },
         discardIfEmpty: {
@@ -30,6 +30,7 @@ export default {
           name: 'discardIfEmpty',
           type: 'checkbox',
           defaultValue: value.discardIfEmpty || false,
+          helpKey: 'mapping.discardIfEmpty',
           label: 'Discard If Empty',
         },
         fieldMappingType: {
@@ -39,6 +40,7 @@ export default {
           label: 'Field Mapping Type',
           defaultValue: mappingUtil.getFieldMappingType(value),
           fullWidth: true,
+          helpKey: 'mapping.fieldMappingType',
           options: [
             {
               items: [
@@ -58,6 +60,7 @@ export default {
           fullWidth: true,
           visibleWhen: [{ field: 'fieldMappingType', is: ['lookup'] }],
           defaultValue: lookup.name && lookup.map ? 'static' : 'dynamic',
+          helpKey: 'mapping.lookup.mode',
           options: [
             {
               items: [
@@ -76,6 +79,7 @@ export default {
           commMetaPath: `salesforce/metadata/connections/${connectionId}/sObjectTypes`,
           label: 'SObject Type',
           connectionId,
+          helpKey: 'mapping.salesforce.lookup.sObjectType',
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
             { field: 'lookup.mode', is: ['dynamic'] },
@@ -104,6 +108,7 @@ export default {
           multiline: true,
           disableText: true,
           refreshOptionsOnChangesTo: ['lookup.whereClause'],
+          helpKey: 'mapping.salesforce.lookup.whereClauseText',
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
             { field: 'lookup.mode', is: ['dynamic'] },
@@ -119,6 +124,7 @@ export default {
           defaultValue: lookup.resultField,
           connectionId,
           refreshOptionsOnChangesTo: ['lookup.sObjectType'],
+          helpKey: 'mapping.salesforce.lookup.resultField',
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
             { field: 'lookup.mode', is: ['dynamic'] },
@@ -150,6 +156,7 @@ export default {
           name: 'functions',
           type: 'fieldexpressionselect',
           label: 'Function',
+          helpKey: 'mapping.functions',
           visibleWhen: [{ field: 'fieldMappingType', is: ['multifield'] }],
         },
         extract: {
@@ -158,6 +165,7 @@ export default {
           type: 'select',
           label: 'Field',
           visibleWhen: [{ field: 'fieldMappingType', is: ['multifield'] }],
+          helpKey: 'mapping.extract',
           options: [
             {
               items:
@@ -177,6 +185,7 @@ export default {
           type: 'text',
           label: 'Expression',
           defaultValue: mappingUtil.getDefaultExpression(value),
+          helpKey: 'mapping.expression',
           visibleWhen: [{ field: 'fieldMappingType', is: ['multifield'] }],
         },
         standardAction: {
@@ -198,6 +207,7 @@ export default {
               ],
             },
           ],
+          helpKey: 'mapping.standardAction',
           visibleWhen: [
             { field: 'fieldMappingType', is: ['standard'] },
             { field: 'fieldMappingType', is: ['multifield'] },
@@ -213,6 +223,7 @@ export default {
             { field: 'fieldMappingType', isNot: ['hardCoded'] },
             { field: 'fieldMappingType', isNot: ['lookup'] },
           ],
+          helpKey: 'mapping.default',
           defaultValue: value.default,
         },
         defaultSFSelect: {
@@ -226,6 +237,7 @@ export default {
             { field: 'fieldMappingType', isNot: ['lookup'] },
           ],
           defaultValue: value.default,
+          helpKey: 'mapping.default',
           options: [
             {
               items: selectedGenerateObj && selectedGenerateObj.options,
@@ -289,6 +301,7 @@ export default {
               ],
             },
           ],
+          helpKey: 'mapping.lookupAction',
           visibleWhenAll: [
             { field: 'lookup.mode', is: ['dynamic', 'static'] },
             { field: 'fieldMappingType', is: ['lookup'] },
@@ -304,6 +317,7 @@ export default {
             { field: 'hardcodedAction', is: ['default'] },
             { field: 'fieldMappingType', is: ['hardCoded'] },
           ],
+          helpKey: 'mapping.hardcodedDefault',
           defaultValue: value.hardCodedValue,
         },
         hardcodedSFSelect: {
@@ -321,6 +335,7 @@ export default {
               items: selectedGenerateObj && selectedGenerateObj.options,
             },
           ],
+          helpKey: 'mapping.hardcodedDefault',
           defaultValue: value.hardCodedValue,
         },
         hardcodedCheckbox: {
@@ -338,6 +353,7 @@ export default {
               ],
             },
           ],
+          helpKey: 'mapping.hardcodedDefault',
           visibleWhenAll: [{ field: 'fieldMappingType', is: ['hardCoded'] }],
         },
         lookupDefault: {
@@ -349,6 +365,7 @@ export default {
             { field: 'lookupAction', is: ['default'] },
             { field: 'fieldMappingType', is: ['lookup'] },
           ],
+          helpKey: 'mapping.lookupDefault',
           defaultValue: lookup.default,
         },
         lookupSFSelect: {
@@ -365,6 +382,7 @@ export default {
               items: selectedGenerateObj && selectedGenerateObj.options,
             },
           ],
+          helpKey: 'mapping.lookupDefault',
           defaultValue: lookup.default,
         },
         extractDateFormat: {
@@ -378,6 +396,7 @@ export default {
           valueName: 'value',
           label: 'Date format',
           defaultValue: value.extractDateFormat,
+          helpKey: 'mapping.extractDateFormat',
           visibleWhen: [{ field: 'fieldMappingType', is: ['standard'] }],
         },
         extractDateTimezone: {
@@ -397,6 +416,7 @@ export default {
                 [],
             },
           ],
+          helpKey: 'mapping.extractDateTimezone',
           visibleWhen: [{ field: 'fieldMappingType', is: ['standard'] }],
         },
       },

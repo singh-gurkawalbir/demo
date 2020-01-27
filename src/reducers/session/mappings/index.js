@@ -1,7 +1,10 @@
 import produce from 'immer';
+import { differenceWith, isEqual } from 'lodash';
 import actionTypes from '../../../actions/types';
 import mappingUtil from '../../../utils/mapping';
 import lookupUtil from '../../../utils/lookup';
+
+const { deepClone } = require('fast-json-patch');
 
 const emptySet = [];
 
@@ -65,6 +68,8 @@ export default function reducer(state = {}, action) {
             // lastModifiedRow helps to set generate field when any field in salesforce mapping assistant is clicked
             lastModifiedRow: -1,
           };
+          draft[id].mappingsCopy = deepClone(draft[id].mappings);
+          draft[id].lookupsCopy = deepClone(draft[id].lookups);
         }
 
         break;
@@ -93,9 +98,11 @@ export default function reducer(state = {}, action) {
             value: incompleteGenValue,
             index: incompleteGenIndex,
           } = generateObj;
-          const childSObject = generateFields.find(
-            field => field.id.indexOf(`${incompleteGenValue}[*].`) > -1
-          );
+          const childSObject =
+            generateFields &&
+            generateFields.find(
+              field => field.id.indexOf(`${incompleteGenValue}[*].`) > -1
+            );
 
           if (childSObject) {
             const objCopy = { ...draft[id].mappings[incompleteGenIndex] };
@@ -106,6 +113,8 @@ export default function reducer(state = {}, action) {
           }
         });
 
+        draft[id].mappingsCopy = deepClone(draft[id].mappings);
+        draft[id].lookupsCopy = deepClone(draft[id].lookups);
         break;
       }
 
@@ -141,8 +150,10 @@ export default function reducer(state = {}, action) {
           } else {
             objCopy[field] = inputValue;
 
-            // remove isKey and useFirstRow if present when generate doesn't contain '[*].'
-            if (inputValue.indexOf('[*].') === -1) {
+            if (
+              !mappingUtil.isCsvOrXlsxResource(draft[id].resource) &&
+              inputValue.indexOf('[*].') === -1
+            ) {
               if ('isKey' in objCopy) {
                 delete objCopy.isKey;
               }
@@ -254,6 +265,8 @@ export default function reducer(state = {}, action) {
       case actionTypes.MAPPING.SAVE_COMPLETE:
         draft[id].submitCompleted = true;
         draft[id].validationErrMsg = undefined;
+        draft[id].mappingsCopy = deepClone(draft[id].mappings);
+        draft[id].lookupsCopy = deepClone(draft[id].lookups);
 
         break;
       case actionTypes.MAPPING.SAVE_FAILED:
@@ -321,6 +334,25 @@ export function mappingSaveProcessTerminate(state, id) {
   };
 }
 
+const isMappingObjEqual = (mapping1, mapping2) => {
+  const {
+    rowIdentifier: r1,
+    index: i1,
+    isNotEditable: e1,
+    isRequired: req1,
+    ...formattedMapping1
+  } = mapping1;
+  const {
+    rowIdentifier: r2,
+    index: i2,
+    isNotEditable: e2,
+    isRequired: req2,
+    ...formattedMapping2
+  } = mapping2;
+
+  return isEqual(formattedMapping1, formattedMapping2);
+};
+
 // #region PUBLIC SELECTORS
 export function mapping(state, id) {
   if (!state) {
@@ -332,4 +364,29 @@ export function mapping(state, id) {
   if (!mappings) return emptySet;
 
   return mappings;
+}
+
+// #region PUBLIC SELECTORS
+export function mappingsChanged(state, id) {
+  if (!state || !state[id]) {
+    return false;
+  }
+
+  const { mappings, mappingsCopy, lookups, lookupsCopy } = state[id];
+  const mappingsDiff = differenceWith(
+    mappingsCopy,
+    mappings,
+    isMappingObjEqual
+  );
+  let isMappingsEqual =
+    mappings.length === mappingsCopy.length && !mappingsDiff.length;
+
+  if (isMappingsEqual) {
+    const lookupsDiff = differenceWith(lookupsCopy, lookups, isEqual);
+
+    isMappingsEqual =
+      lookupsCopy.length === lookups.length && !lookupsDiff.length;
+  }
+
+  return !isMappingsEqual;
 }

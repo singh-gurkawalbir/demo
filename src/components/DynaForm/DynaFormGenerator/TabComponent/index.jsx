@@ -31,22 +31,36 @@ const useStyle = makeStyles(theme => ({
 
 function TabComponent(props) {
   const { containers, fieldMap, children, ...rest } = props;
+  const {
+    externalTabState,
+    setExternalTabState,
+    index,
+    orientation = 'vertical',
+  } = rest;
   const classes = useStyle();
   const [selectedTab, setSelectedTab] = useState(0);
+  const selectedTabIndex =
+    (externalTabState && (index === 0 && externalTabState.activeTab)) ||
+    (index === 1 && externalTabState.tabHistory[externalTabState.activeTab]) ||
+    selectedTab;
 
   return (
-    <div className={classes.root}>
+    <div className={orientation === 'vertical' ? classes.root : null}>
       <Tabs
-        value={selectedTab}
+        value={selectedTabIndex}
         classes={{ indicator: classes.MuiTabsIndicator }}
         className={classes.tabsContainer}
         variant="scrollable"
-        orientation="vertical"
+        orientation={orientation}
         indicatorColor="primary"
         textColor="primary"
         scrollButtons="auto"
         aria-label="Settings Actions"
         onChange={(evt, value) => {
+          if (setExternalTabState) {
+            return setExternalTabState(index, value);
+          }
+
           setSelectedTab(value);
         }}>
         {containers.map(({ label }) => (
@@ -61,7 +75,7 @@ function TabComponent(props) {
       <div className={classes.panelContainer}>
         {containers.map(({ label, ...layout }, index) => (
           <div key={label}>
-            {selectedTab === index &&
+            {selectedTabIndex === index &&
               React.cloneElement(children, { ...rest, layout, fieldMap })}
           </div>
         ))}
@@ -116,6 +130,17 @@ export function TabComponentSimple(props) {
   return (
     <TabComponent {...props}>
       <TabWithCompleteSave />
+    </TabComponent>
+  );
+}
+
+export function TabComponentWithoutSave({ index, ...rest }) {
+  return (
+    <TabComponent
+      {...rest}
+      orientation="horizontal"
+      index={index === undefined ? 0 : index + 1}>
+      <FormGenerator />
     </TabComponent>
   );
 }

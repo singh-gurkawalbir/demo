@@ -67,6 +67,7 @@ import DynaIclient from './DynaIclient';
 import DynaNetSuiteQualifier from './DynaNetSuiteQualifier';
 import DynaSalesforceQualifier from './DynaSalesforceQualifier';
 import DynaQuery from './DynaQuery';
+import DynaSqlQuery from './DynaSqlQuery';
 import DynaSalesforceLookupFilters from './DynaSalesforceLookupFilters';
 import DynaSalesforceLookup from './DynaSalesforceLookup';
 import DynaMultiSubsidiaryMapping from './DynaTableView/DynaMultiSubsidiaryMapping';
@@ -79,6 +80,8 @@ import DynaRadioGroupForResetFields from './radiogroup/DynaRadioGroupForResetFie
 import DynaTextWithFlowContext from './text/DynaTextWithFlowContext';
 import DynaCheckboxForResetFields from './checkbox/DynaCheckboxForResetFields';
 import DynaExportPanel from './DynaExportPanel';
+import cronBuilderComponents from './cronBuilderComponents';
+import DynaCronGenerator from './DynaCronGenerator';
 import DynaNSSearchCriteria from './editors/DynaNSSearchCriteria';
 
 export default {
@@ -162,6 +165,7 @@ export default {
   dynaiclient: DynaIclient,
   netsuitequalifier: DynaNetSuiteQualifier,
   query: DynaQuery,
+  sqlquery: DynaSqlQuery,
   salesforcelookupfilters: DynaSalesforceLookupFilters,
   salesforcelookup: DynaSalesforceLookup,
   timestampfilename: DynaTimestampFileName,
@@ -171,5 +175,9 @@ export default {
   textwithflowcontext: DynaTextWithFlowContext,
   checkboxforresetfields: DynaCheckboxForResetFields,
   exportpanel: DynaExportPanel,
+  crongenerator: DynaCronGenerator,
+  slider: cronBuilderComponents.slider,
+  groupedButton: cronBuilderComponents.groupedButton,
+  cronlabel: cronBuilderComponents.cronlabel,
   nssearchcriteria: DynaNSSearchCriteria,
 };

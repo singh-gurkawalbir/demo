@@ -1,4 +1,3 @@
-import moment from 'moment';
 import {
   AUDIT_LOG_SOURCE_LABELS,
   AUDIT_LOG_EVENT_LABELS,
@@ -7,17 +6,14 @@ import {
   getResourceLink,
 } from './util';
 import { RESOURCE_TYPE_SINGULAR_TO_LABEL } from '../../constants/resource';
+import DateTimeDisplay from '../DateTimeDisplay';
 
 export default {
   columns: [
     {
       heading: 'Time',
-      value: (al, actionProps) =>
-        `${moment(al.time).format(
-          (actionProps.preferences || {}).dateFormat
-        )} ${moment(al.time).format(
-          (actionProps.preferences || {}).timeFormat
-        )}`,
+      // eslint-disable-next-line react/display-name
+      value: al => <DateTimeDisplay dateTime={al.time} />,
     },
     {
       heading: 'Source',

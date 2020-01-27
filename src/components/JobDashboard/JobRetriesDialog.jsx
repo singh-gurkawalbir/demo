@@ -7,6 +7,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import { reverse } from 'lodash';
 import CeligoTable from '../../components/CeligoTable';
 import { JOB_STATUS } from '../../utils/constants';
+import DateTimeDisplay from '../DateTimeDisplay';
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -60,7 +61,11 @@ export default function JobRetriesDialog({
           columns={[
             { heading: 'Retry #', value: r => r.index + 1 },
             { heading: 'Duration', value: r => r.duration },
-            { heading: 'Completed', value: r => r.endedAtAsString },
+            {
+              heading: 'Completed',
+              // eslint-disable-next-line react/display-name
+              value: r => <DateTimeDisplay dateTime={r.endedAt} />,
+            },
           ]}
         />
       </DialogContent>

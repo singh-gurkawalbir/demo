@@ -2,15 +2,14 @@ import { Component } from 'react';
 import { hot } from 'react-hot-loader';
 import { Switch, Route } from 'react-router-dom';
 import loadable from '../../utils/loadable';
-import IntegrationAppsRouter from '../../views/IntegrationApps/Router';
 import MarketplaceRouter from '../../views/MarketPlace/Router';
 import TemplatePreview from '../../views/Templates/InstallIntegrationPreview';
 import TemplateInstall from '../../views/Templates/Install';
 import GenerateOrInstall from '../../views/Templates/GenerateOrInstall';
 import ClonePreview from '../../views/Clone/Preview';
-import IntegrationAppInstallation from '../../views/IntegrationApps/Installer';
-import IntegrationAppAddNewStore from '../../views/IntegrationApps/AddNewStore';
-import IntegrationAppUninstallation from '../../views/IntegrationApps/Uninstaller';
+import IntegrationAppInstallation from '../../views/Integration/App/drawers/Install';
+import IntegrationAppAddNewStore from '../../views/Integration/App/drawers/AddStore';
+import IntegrationAppUninstallation from '../../views/Integration/App/panels/Admin/drawers/Uninstall';
 import CloneSetup from '../../views/Clone/Setup';
 
 const RecycleBin = loadable(() =>
@@ -113,6 +112,8 @@ export default class AppRouting extends Component {
           path={[
             '/pg/integrationapps/:integrationAppName/:integrationId/flowBuilder/:flowId',
             '/pg/integrations/:integrationId/flowBuilder/:flowId',
+            '/pg/integrationapps/:integrationAppName/:integrationId/dataLoader/:flowId',
+            '/pg/integrations/:integrationId/dataLoader/:flowId',
           ]}>
           <FlowBuilder />
         </Route>
@@ -156,7 +157,6 @@ export default class AppRouting extends Component {
           path="/pg/templates/generate-or-install"
           component={GenerateOrInstall}
         />
-        <Route path="/pg/connectors" component={IntegrationAppsRouter} />
         <Route path="/pg/marketplace" component={MarketplaceRouter} />
         <Route path="/pg/dashboard" component={Dashboard} />
         <Route path="/pg/recycleBin" component={RecycleBin} />
@@ -166,6 +166,11 @@ export default class AppRouting extends Component {
         <Route path="/pg/myAccount/:tab" component={MyAccount} />
         <Route path="/pg/templates" component={TemplateList} />
         <Route path="/pg/accesstokens" component={AccessTokenList} />
+        <Route
+          path="/pg/tokens"
+          exact
+          render={({ history }) => history.replace('/pg/accesstokens')}
+        />
         <Route path="/pg/:resourceType" component={ResourceList} />
         <Route component={NotFound} />
       </Switch>

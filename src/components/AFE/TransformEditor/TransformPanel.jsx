@@ -59,7 +59,7 @@ export default function TransformPanel(props) {
     <KeyValueComponent
       {...props}
       suggestionConfig={suggestionConfig}
-      dataTest={editorId}
+      dataTest="transformRule"
       onUpdate={patchEditor}
       showDelete
       classes={classes}

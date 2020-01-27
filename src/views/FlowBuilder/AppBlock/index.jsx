@@ -163,23 +163,32 @@ function AppBlock({
   const iconType = useSelector(state => {
     if (blockType === 'dataLoader') return;
 
-    if (!connectorType || !connectorType.startsWith('RDBMS')) {
+    if (!connectorType || !connectorType.toUpperCase().startsWith('RDBMS')) {
       return connectorType;
     }
 
-    if (!resource || !resource._connectionId) {
-      return;
+    if (!resource) return;
+
+    /**
+     * resource can be an export or import or a connection based on the logic implemented
+     * in PageGenerator and PageProcessor components.
+     */
+
+    if (resource._connectionId) {
+      const connection = selectors.resource(
+        state,
+        'connections',
+        resource._connectionId
+      );
+
+      if (!connection || !connection.rdbms || !connection.rdbms.type) return;
+
+      return connection.rdbms.type;
     }
 
-    const connection = selectors.resource(
-      state,
-      'connections',
-      resource._connectionId
-    );
-
-    if (!connection || !connection.rdbms || !connection.rdbms.type) return;
-
-    return connection.rdbms.type;
+    if (resource.type && resource.type === 'rdbms' && resource.rdbms) {
+      return resource.rdbms.type;
+    }
   });
 
   useEffect(() => {

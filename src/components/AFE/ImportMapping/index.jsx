@@ -142,6 +142,9 @@ export default function ImportMapping(props) {
     salesforceMasterRecordTypeId,
     showSalesforceNetsuiteAssistant,
   } = useSelector(state => selectors.mapping(state, editorId));
+  const { saveCompleted } = useSelector(state =>
+    selectors.mappingSaveProcessTerminate(state, editorId)
+  );
   const mappingsCopy = mappings ? [...mappings] : [];
 
   mappingsCopy.push({});
@@ -201,9 +204,8 @@ export default function ImportMapping(props) {
       val &&
       val.indexOf('_child_') > -1
     ) {
-      const childRelationshipField = generateFields.find(
-        field => field.id === val
-      );
+      const childRelationshipField =
+        generateFields && generateFields.find(field => field.id === val);
 
       if (childRelationshipField) {
         const { childSObject, relationshipName } = childRelationshipField;
@@ -421,13 +423,14 @@ export default function ImportMapping(props) {
             color="secondary"
             dataTest="saveAndCloseImportMapping"
             onClose={handleClose}
+            showOnlyOnChanges
             submitButtonLabel="Save & Close"
           />
           <Button
             variant="text"
             data-test="saveImportMapping"
             onClick={handleClose}>
-            Cancel
+            {saveCompleted ? 'Close' : 'Cancel'}
           </Button>
         </ButtonGroup>
       </div>

@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
@@ -75,13 +76,21 @@ export default function CsvParsePanel(props) {
     trimSpaces = false,
     result,
     rowsToSkip,
+    status,
   } = useSelector(state => selectors.editor(state, editorId));
+  const [showKeyColumnsOptions, setShowKeyColumnsOptions] = useState(true);
   const dispatch = useDispatch();
-  const patchEditor = (option, value) => {
+  const patchEditor = (option, value, hasHeaderRowChanged) => {
     dispatch(actions.editor.patch(editorId, { [option]: value }));
+    setShowKeyColumnsOptions(!hasHeaderRowChanged);
   };
 
-  const allColumns = getColumns(result);
+  const allColumns = showKeyColumnsOptions ? getColumns(result) : [];
+
+  useEffect(() => {
+    if (showKeyColumnsOptions === false && status !== 'requested')
+      setShowKeyColumnsOptions(true);
+  }, [showKeyColumnsOptions, status]);
 
   // TODO: Refractor to use dyna form
   return (
@@ -144,7 +153,11 @@ export default function CsvParsePanel(props) {
               color="primary"
               checked={hasHeaderRow}
               data-test="hasHeaderRow"
-              onChange={() => patchEditor('hasHeaderRow', !hasHeaderRow)}
+              onChange={() => {
+                patchEditor('keyColumns', []);
+                // hasHeaderRow patch to be last patch made
+                patchEditor('hasHeaderRow', !hasHeaderRow, true);
+              }}
             />
           }
           label="File Has Header"

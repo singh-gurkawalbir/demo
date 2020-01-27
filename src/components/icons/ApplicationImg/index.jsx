@@ -29,7 +29,15 @@ const iconMap = (type = '') => {
 
   if (type.toLowerCase().includes('mongodb')) return 'mongodb';
 
+  if (type.toLowerCase().includes('dynamodb')) return 'dynamodb';
+
   if (type.toLowerCase().includes('as2')) return 'as2';
+
+  if (type.toLowerCase().includes('s3')) return 's3';
+
+  if (type.toLowerCase().includes('wrapper')) return 'wrapper';
+
+  if (type.toLowerCase().includes('rdbms')) return 'rdbms';
 
   return type;
 };
@@ -41,15 +49,10 @@ export default function ApplicationImg({
   className,
 }) {
   const classes = useStyles();
-  let path;
-
-  if (assistant) {
-    path = `${process.env.CDN_BASE_URI}images/marketplace/large/${assistant}.png`;
-  } else {
-    path = `${
-      process.env.CDN_BASE_URI
-    }images/flow-builder/company-logos/integration-icon-${iconMap(type)}.png`;
-  }
+  const path = `${
+    process.env.CDN_BASE_URI
+  }images/flow-builder/company-logos/integration-icon-${assistant ||
+    iconMap(type)}.png`;
 
   return (
     <img

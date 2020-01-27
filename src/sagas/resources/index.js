@@ -51,6 +51,7 @@ export function* commitStagedChanges({ resourceType, id, scope }) {
 
   if (!patch) return; // nothing to do.
 
+  // For accesstokens and connections within an integration for edit case
   if (!isNew && resourceType.indexOf('integrations/') >= 0) {
     // eslint-disable-next-line no-param-reassign
     resourceType = resourceType.split('/').pop();
@@ -468,6 +469,14 @@ export function* getResourceCollection({ resourceType }) {
 
       sharedStacks = sharedStacks.map(stack => ({ ...stack, shared: true }));
       collection = [...collection, ...sharedStacks];
+    }
+
+    if (resourceType === 'transfers') {
+      const invitedTransfers = yield call(apiCallWithRetry, {
+        path: '/transfers/invited',
+      });
+
+      collection = [...collection, ...invitedTransfers];
     }
 
     yield put(actions.resource.receivedCollection(resourceType, collection));

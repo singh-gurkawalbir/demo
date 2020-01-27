@@ -1,3 +1,8 @@
+/*
+ TODO: 
+ This file needs to be re-implemented as a stepper functionality drawer as per new mocks.
+ As of now this is not a drawer, but a standalone page.
+*/
 import { useHistory, Redirect } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
@@ -9,15 +14,15 @@ import {
   Paper,
   Breadcrumbs,
 } from '@material-ui/core';
-import ArrowBackIcon from '../../components/icons/ArrowLeftIcon';
-import * as selectors from '../../reducers';
-import actions from '../../actions';
-import LoadResources from '../../components/LoadResources';
-import openExternalUrl from '../../utils/window';
-import ArrowRightIcon from '../../components/icons/ArrowRightIcon';
-import InstallationStep from '../../components/InstallStep';
-import getRoutePath from '../../utils/routePaths';
-import { getIntegrationAppUrlName } from '../../utils/integrationApps';
+import ArrowBackIcon from '../../../../../../components/icons/ArrowLeftIcon';
+import * as selectors from '../../../../../../reducers';
+import actions from '../../../../../../actions';
+import LoadResources from '../../../../../../components/LoadResources';
+import openExternalUrl from '../../../../../../utils/window';
+import ArrowRightIcon from '../../../../../../components/icons/ArrowRightIcon';
+import InstallationStep from '../../../../../../components/InstallStep';
+import getRoutePath from '../../../../../../utils/routePaths';
+import { getIntegrationAppUrlName } from '../../../../../../utils/integrationApps';
 
 const useStyles = makeStyles(theme => ({
   root: {

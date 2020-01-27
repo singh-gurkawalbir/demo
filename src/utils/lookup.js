@@ -34,6 +34,7 @@ export default {
         break;
       case adaptorTypeMap.XMLImport:
       case adaptorTypeMap.MongodbImport:
+      case adaptorTypeMap.DynamodbImport:
       case adaptorTypeMap.RDBMSImport:
       default:
     }

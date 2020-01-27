@@ -8,6 +8,7 @@ import * as selectors from '../../reducers';
 import actions from '../../actions';
 import getRoutePath from '../../utils/routePaths';
 import ApplicationImg from '../icons/ApplicationImg';
+import connectorsMetadata from '../../constants/applications';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -75,7 +76,7 @@ export default function MarketplaceList({ filter }) {
               <ApplicationImg assistant={id} size="large" />
             </Card>
             <Typography variant="body2" className={classes.label}>
-              {id}
+              {(connectorsMetadata.find(a => a.id === id) || {}).name || id}
             </Typography>
           </NavLink>
         ))}

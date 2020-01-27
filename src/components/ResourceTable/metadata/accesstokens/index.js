@@ -5,9 +5,10 @@ import Reactivate from '../../actions/AccessTokens/Reactivate';
 import Revoke from '../../actions/AccessTokens/Revoke';
 import Regenerate from '../../actions/AccessTokens/Regenerate';
 import Display from '../../actions/AccessTokens/Display';
-import { getAutoPurgeAtAsString } from './util';
+import AutoPurgeAt from '../../actions/AccessTokens/AutoPurgeAt';
 
 const getDisplayToken = accessToken => <Display accessToken={accessToken} />;
+const getAutoPurgeAt = accessToken => <AutoPurgeAt accessToken={accessToken} />;
 
 export default {
   columns: [
@@ -45,9 +46,7 @@ export default {
     },
     {
       heading: 'Auto Purge',
-      value: r =>
-        // TODO logic to refresh this periodically
-        getAutoPurgeAtAsString(r),
+      value: r => getAutoPurgeAt(r),
     },
   ],
   rowActions: r => {

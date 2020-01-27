@@ -25,10 +25,32 @@ export default {
       const apiKey = form[`/http/unencrypted/apiKey`];
       const apiSecret = form[`/http/encrypted/apiSecret`];
       const base64EncodedToken = window.btoa(`${apiKey}:${apiSecret}`);
+      const baseURI = `https://api${
+        form['/http/sandbox'] === 'true' ? '-sandbox' : ''
+      }.pitneybowes.com/`;
 
       return {
         base64EncodedToken,
-        baseURI: 'https://api.pitneybowes.com/',
+        baseURI,
+      };
+    },
+  },
+  paypal: {
+    responseParser: resp => ({
+      'http.auth.token.token': resp && resp.access_token,
+    }),
+
+    payloadTransformer: form => {
+      const clientId = form[`/http/unencrypted/clientId`];
+      const clientSecret = form[`/http/encrypted/clientSecret`];
+      const base64EncodedToken = window.btoa(`${clientId}:${clientSecret}`);
+      const baseURI = `https://api${
+        form['/http/accountType'] === 'sandbox' ? '.sandbox' : ''
+      }.paypal.com`;
+
+      return {
+        base64EncodedToken,
+        baseURI,
       };
     },
   },
@@ -99,9 +121,9 @@ export default {
       baseURI: `https://${form['/sugarcrmSubdomain']}/rest/${
         form['/http/unencrypted/version']
       }`,
-      body: `{"grant_type":"${
-        form['/http/unencrypted/grantType']
-      }","client_id":"${form['/http/unencrypted/clientID']}","client_secret":"${
+      body: `{"grant_type":"password","client_id":"${
+        form['/http/unencrypted/clientID']
+      }","client_secret":"${
         form['/http/encrypted/clientSecret']
       }","username":"${form['/http/unencrypted/username']}","password":"${
         form['/http/encrypted/password']

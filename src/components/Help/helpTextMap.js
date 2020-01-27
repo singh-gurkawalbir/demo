@@ -39,9 +39,9 @@ export default {
   'connection.offline':
     "This flag identifies if your connection is currently offline.  When a connection is offline then no exports, imports, flows, etc... will be run, and all data currently in the queues (i.e. in progress) will also pause.  Connections are marked offline automatically anytime there is a failure to connect.  Connections can be brought back online manually by re-entering credentials and clicking the 'Save' button (assuming there are no new errors).  There is also an automated batch process that runs multiple times per hour to continually ping/test all offline connections for you, and bring those connection back online if the ping/test succeeds (and also resume any data flows that were paused as a result of the connection being offline).  Note that it is relatively common for a connection to go offline (and then back online via the automated ping/test batch process) if you are running data flows off hours at times when the applications being integrated go offline temporarily for their own maintenance.",
   'connection._connectorId':
-    'If this connection was installed as part of a SmartConnector app (i.e. from the integrator.io marketplace), then this field will hold the _id of the SmartConnector app that owns the connection.  Please note that for security reasons, connections owned by a SmartConnector cannot be referenced outside the context of the SmartConnector. This implies that you cannot use any of these connections in the data flows that you build yourself.',
+    'If this connection was installed as part of an Integration App app (i.e. from the integrator.io marketplace), then this field will hold the _id of the Integration App app that owns the connection.  Please note that for security reasons, connections owned by an Integration App cannot be referenced outside the context of the Integration App. This implies that you cannot use any of these connections in the data flows that you build yourself.',
   'connection._integrationId':
-    'If this connection was installed as part of a SmartConnector app (i.e. from the integrator.io marketplace), then this field will hold the _id of the specific integration instance (a.k.a. integration tile) that owns the connection.  Please note that for security reasons connections owned by a SmartConnector cannot be referenced outside the context of the specific integration tile that they belong to. This implies that you cannot use these connections in the data flows that you build yourself, nor can you use the same SmartConnector referenced connections across different integration tiles.',
+    'If this connection was installed as part of an Integration App app (i.e. from the integrator.io marketplace), then this field will hold the _id of the specific integration instance (a.k.a. integration tile) that owns the connection.  Please note that for security reasons connections owned by an Integration App cannot be referenced outside the context of the specific integration tile that they belong to. This implies that you cannot use these connections in the data flows that you build yourself, nor can you use the same Integration App referenced connections across different integration tiles.',
   'connection.debugDate':
     'Indicates for how long integrator.io should be recording both request and response traffic from this connection. You can later review this raw debug information directly from the download icon on the /connections page.',
   'connection._borrowConcurrencyFromConnectionId':
@@ -97,7 +97,7 @@ export default {
   'connection.rest.basicAuth.password':
     "The password associated with your service account. Sometimes service providers have other names for this field, such as 'secret key', or 'API key', and so on. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your password safe.",
   'connection.rest._iClientId':
-    'The iClient resource type is used to register OAuth 2.0 client credentials that can be used to authorize connections.  iClients are typically only needed by developers that wish to build their own SmartConnector product for the integrator.io marketplace, where the OAuth 2.0 credentials for their product will be owned by them, and the iClient will be bundled in their app, and only resources in their app will be able to reference it.',
+    'The iClient resource type is used to register OAuth 2.0 client credentials that can be used to authorize connections.  iClients are typically only needed by developers that wish to build their own Integration App product for the integrator.io marketplace, where the OAuth 2.0 credentials for their product will be owned by them, and the iClient will be bundled in their app, and only resources in their app will be able to reference it.',
   'connection.rest.info':
     'This read only field is used to store ad hoc profile type data returned by the OAuth 2.0 provider during the OAuth 2.0 authorization flow.',
   'connection.rest.pingRelativeURI':
@@ -128,6 +128,10 @@ export default {
     "Any relative URI (for an HTTP GET request) to an authenticated endpoint that can indicate if a connection is working properly.  For example: '/me', '/tokenInfo', '/currentTime', etc...  Whenever a connection is saved, integrator.io will invoke the Ping URI (if one is set), and only if the ping request is successful will the connection resource be saved.  There is also an automated batch process that runs multiple times per hour to continually ping all offline connections (i.e. connections that failed at one point) to bring those connection back online (and to resume any data flows that were paused as a result of the connections being offline).  It is definitely a best practice to set Ping URI on all your REST API connections so that integrator.io can do more to identify offline connections (before they are saved) and also bring them back online automatically wherever possible.",
   'connection.http.ping.successPath':
     "There are many non-REST based APIs that will return a 200 HTTP status code even if the ping HTTP request failed, and instead use a field in the response body to identify success vs fail. For these use cases, the 'Ping Success Path' field can be used to specify the path of a field in the response body that should instead be used to determine if a ping request was a success.",
+  'connection.http.ping.failPath':
+    'If the service you are connecting to embeds authentication errors within the HTTP body, use this field to set the path within the response body where integrator.io should look to identify a failed auth response. If there is a specific value (or set of values) that indicate a failed auth response at this path, use the failValues field to further instruct our platform on how to identify this type of error.',
+  'connection.http.ping.failValues':
+    'This field is used only if the failPath field is set. It indicates to integrator.io what specific values to test for when determining if the requests we made failed for authentication reasons.',
   'connection.http.ping.successValues':
     'This optional field is used in unison with the successPath field. The value found in the HTTP response at the path provided by successPath is compared against this list of success values. If there is an exact case-sensitive match of any of the values, then the request is considered successful.',
   'connection.http.ping.errorPath':
@@ -378,9 +382,9 @@ export default {
   'export.apiIdentifier':
     "Every export that you create is assigned a unique handle that you can then use in your own application logic to invoke the export programmatically via the integrator.io API.  For example, your export identifier might be 'e762db96', and you could invoke this export with a simple HTTP POST to https://api.integrator.io/e762db96",
   'export._integrationId':
-    'If this export was installed as part of a SmartConnector app (i.e. from the integrator.io marketplace), then this value will be hold the _id value of the specific integration instance (a.k.a. integration tile) that owns the export.  Please note that for security reasons exports owned by a SmartConnector cannot be referenced outside the context of the specific integration tile that they belong to, meaning that you cannot use these exports in the data flows that you build yourself, nor can the same SmartConnector reference exports across different integration tiles.',
+    'If this export was installed as part of an Integration App app (i.e. from the integrator.io marketplace), then this value will be hold the _id value of the specific integration instance (a.k.a. integration tile) that owns the export.  Please note that for security reasons exports owned by an Integration App cannot be referenced outside the context of the specific integration tile that they belong to, meaning that you cannot use these exports in the data flows that you build yourself, nor can the same Integration App reference exports across different integration tiles.',
   'export._connectorId':
-    'If this export was installed as part of a SmartConnector app (i.e. from the integrator.io marketplace), then this value will hold the _id value of the SmartConnector app that owns the export.  Please note that for security reasons exports owned by a SmartConnector cannot be referenced outside the context of the SmartConnector, meaning that you cannot use any of these exports in the data flows that you build yourself.',
+    'If this export was installed as part of an Integration App app (i.e. from the integrator.io marketplace), then this value will hold the _id value of the Integration App app that owns the export.  Please note that for security reasons exports owned by an Integration App cannot be referenced outside the context of the Integration App, meaning that you cannot use any of these exports in the data flows that you build yourself.',
   'export.pageSize':
     "When an export runs in the context of a data flow (where the data from the export is sent right away to an import queue) integrator.io will break the data being exported into one or more smaller pages of records.  Saying this another way, integrator.io uses streaming to export data out of one app and import it into another app.  The 'Page Size' field can be used to specify how many records you want in each page of data.  The default system value (when you leave this field blank) is 20.  There is no max value, but a page of data will automatically get capped when it exceeds 5 MB.  Most of the time, the application that you are importing data into will bottleneck the page size value.  For example, if you are importing data into NetSuite or Salesforce they each specify (in their API guides) a maximum number of records that can be submitted in any single request.",
   'export.dataURITemplate':
@@ -548,6 +552,10 @@ export default {
     'This optional field is used in unison with the successPath field. The value found in the HTTP response at the path provided by successPath is compared against the provided list of success values. If there is an exact case-sensitive match of any of the values, then the request is considered successful.',
   'export.http.response.blobFormat':
     'Please specify the encoding type of the file that needs to be exported. Supported encoding types are: utf8, ucs2 / utf16-le, ascii, binary, base64, hex. We need this encoding type to have the file content properly transmitted as data is transmitted in binary format.',
+  'export.http.response.failPath':
+    'If the service you are connecting to embeds authentication errors within the HTTP body, use this field to set the path within the response body where integrator.io should look to identify a failed auth response. If there is a specific value (or set of values) that indicate a failed auth response at this path, use the failValues field to further instruct our platform on how to identify this type of error.',
+  'export.http.response.failValues':
+    'This field is used only if the failPath field is set. It indicates to integrator.io what specific values to test for when determining if the requests we made failed for authentication reasons.',
   'export.http.response.errorPath':
     'This optional field is used to help identify where in the body of a failed HTTP response integrator.io can find the error message. If desired, provide the field path to the property/node containing the error message. If no value is given, then the full HTTP response body is used as the description of the failure in the dashboard. If the media-type of the failed response is XML, this value should be an XPATH. Conversely, if the media-type is JSON, then use a JSON path. Note that if failed responses for the application you are integrating with have no body, then a text version of the HTTP status code is used as the reason for failure. An Example of a JSON path would be: "result.error.message" while an XPATH for XML responses would be: "/result/error.message/text()"',
   'export.rdbms.query': 'The query that fetches records to be exported.',
@@ -650,7 +658,7 @@ export default {
   'flow._integrationId':
     "This field can only be set when a flow is first created, or when a flow belongs to the default system 'Standalone Flows' integration tile. To move a flow that already belongs to a specific integration tile please first 'Detach' it from that tile, and then this field can be set again to assign the flow to a new integration tile.",
   'flow._connectorId':
-    'If this connection was installed as part of a SmartConnector app (i.e. from the integrator.io marketplace), then this value will hold the _id value of the SmartConnector app that owns the connection.  Please note that for security reasons connections owned by a SmartConnector cannot be referenced outside the context of the SmartConnector, meaning that you cannot use any of these connections in the data flows that you build yourself.',
+    'If this connection was installed as part of an Integration App  (i.e. from the integrator.io marketplace), then this value will hold the _id value of the Integration App app that owns the connection.  Please note that for security reasons connections owned by an Integration App cannot be referenced outside the context of the Integration App, meaning that you cannot use any of these connections in the data flows that you build yourself.',
   'flow.disabled': 'Boolean value. If set, the flow will be in inactive state',
   'flow.timezone':
     'Use this field to configure the time zone that the integrator.io scheduler should use to run your integration flow.',
@@ -679,9 +687,9 @@ export default {
   'import.apiIdentifier':
     "Every import that you create is assigned a unique handle that you can then use in your own application logic to invoke the import programmatically via the integrator.io API.  For example, your import identifier might be 'i662cb46', and you could invoke this import with a simple HTTP POST (with the data to be imported as a JSON array in the post body) to https://api.integrator.io/i662cb46",
   'import._integrationId':
-    'If this import was installed as part of a SmartConnector app (i.e. from the integrator.io marketplace), then this value will be hold the _id value of the specific integration instance (a.k.a. integration tile) that owns the import.  Please note that for security reasons imports owned by a SmartConnector cannot be referenced outside the context of the specific integration tile that they belong to, meaning that you cannot use these imports in the data flows that you build yourself, nor can the same SmartConnector reference imports across different integration tiles.',
+    'If this import was installed as part of an Integration App (i.e. from the integrator.io marketplace), then this value will be hold the _id value of the specific integration instance (a.k.a. integration tile) that owns the import.  Please note that for security reasons imports owned by an Integration App cannot be referenced outside the context of the specific integration tile that they belong to, meaning that you cannot use these imports in the data flows that you build yourself, nor can the same Integration App reference imports across different integration tiles.',
   'import._connectorId':
-    'If this import was installed as part of a SmartConnector app (i.e. from the integrator.io marketplace), then this value will hold the _id value of the SmartConnector app that owns the import.  Please note that for security reasons imports owned by a SmartConnector cannot be referenced outside the context of the SmartConnector, meaning that you cannot use any of these imports in the data flows that you build yourself.',
+    'If this import was installed as part of an Integration App (i.e. from the integrator.io marketplace), then this value will hold the _id value of the Integration App that owns the import.  Please note that for security reasons imports owned by an Integration App cannot be referenced outside the context of the Integration App, meaning that you cannot use any of these imports in the data flows that you build yourself.',
   'import.sampleData': 'Used in UI, which helps in populating data for mapping',
   'import.distributed':
     'Boolean value, if set the resulting import would be NS Distributed Import and dependent fields to be set accordingly',
@@ -790,6 +798,10 @@ export default {
     'If this import has either the ignoreMissing (update) or ignoreExisting (create) flags set to true, this field is used to identify the lookup that will be used to test for the existence of a resource.',
   'import.http.ignoreExtract':
     'If this import has either the ignoreMissing (update) or ignoreExisting (create) flags set to true, this field is used to identify the extract path of a field within the exported resource to be used to test for the existence of a resource. In other words, this is the path to an identifier or some other field that would only be present if a resource already exists in the import system.',
+  'import.http.response.failPath':
+    'If the service you are connecting to embeds authentication errors within the HTTP body, use this field to set the path within the response body where integrator.io should look to identify a failed auth response. If there is a specific value (or set of values) that indicate a failed auth response at this path, use the failValues field to further instruct our platform on how to identify this type of error.',
+  'import.http.response.failValues':
+    'This field is used only if the failPath field is set. It indicates to integrator.io what specific values to test for when determining if the requests we made failed for authentication reasons.',
   'import.http.ignoreEmptyNodes':
     'IF this flag is set to true, then the XML or JSON that makes up the HTTP request body will be stripped of all nodes that do not have a value. For example, if the body template resolves to: <customer id="1"><phone></phone></customer> and this flag is set, then the actual XML that will be used in the HTTP request will be: <customer id="1"></customer>',
   'import.file.skipAggregation':
@@ -1161,6 +1173,23 @@ export default {
     "integrator.io supports the following authentication types:\n\n<b>Basic:</b> Select Basic if your service implements the HTTP basic authentication strategy. This authentication method adds a Base64 encoded username and password values in the 'authentication' HTTP request header.\n\n<b>Cookie</b>: Select Cookie if your service relies on session-based authentication. Session based authentication is typically implemented by including a unique cookie into the HTTP request header. By selecting this option, the platform will automatically create and insert this cookie into every HTTP request it sends to your application. \n\n<b>Custom:</b> Select Custom for all other types. If you select the Custom authentication method, integrator.io will not perform any special authentication. It is up to the user to configure the HTTP request fields (method, relativeUri, headers, and body) of the import and export models to include {{placeholders}} for any authentication related values. These values can be stored in Encrypted and Unencrypted fields of this connection.\n\n<b>Token:</b>  Select Token if your service relies on token-based authentication. The token may exist in the header, URL, or body of the HTTP request. This method also supports refreshing tokens if the service being called supports it.\n\n<b>OAuth 2.0:</b> Select this value if your application supports the OAuth 2.0 authentication.",
   // TODO:"Duplicated token"
   // 'connection.rest.bearerToken': "The 3dcart merchant's token.",
+  'connection.http.auth.revoke.uri':
+    'This is the URL that we will use to revoke this token’s access to this endpoint.',
+  'connection.http.auth.oauth.grantType':
+    'A dropdown list of options—this will depend on the API service provider requirements.',
+  'connection.http.auth.oauth.callbackURL':
+    'The client application callback URL redirected to after auth, and that should be registered with the API provider.',
+  'connection.http.auth.oauth.clientCredentialsLocation':
+    'Sends a Basic Auth request in the header or client credentials in the request body. When your config is complete, click Request Token. If you successfully receive a token from the API you will see its details, together with the expiry, and optionally a refresh token you can use to retrieve a new access token when your current one expires.',
+  'connection.http.auth.oauth.tokenURI':
+    'This is the URL that we will get the access token from.',
+  'connection.http.auth.oauth.scopeDelimiter':
+    "Use this field to override the default delimiter (' ') used to separate scope values sent to the HTTP API during the authorization process.",
+  'connection.http.auth.oauth.authURI':
+    'This is the endpoint for the API provider’s authorization server where the auth code is retrieved from.',
+  'connection.http.auth.oauth.scope':
+    ' This is the scope of access you are requesting. Use spaces to separate values. If your provider uses a custom delimiter, check the box to use an alternate scope delimiter.',
+
   'connection.rest.pingMethod':
     'The HTTP method (GET/PUT/POST/HEAD) to use when making the ping request.',
   'connection.rest.pingBody':
@@ -1323,5 +1352,58 @@ export default {
     'If the import fails for a specific record then what should happen to that record?  Should the failed record pause here until someone can analyze and fix the error (i.e. the default behavior), or should the failed record proceed to the next application in the flow regardless?',
   'fb.pp.imports.inputFilter':
     'Define an ‘input filter’ here to specify which source records should get processed by the import. i.e. Records that evaluate to true are processed. Records that evaluate to false are ignored (but still passed along to downstream applications in the flow).',
+  responseMapping:
+    'The primary reason for defining a response mapping is to specify where fields returned by the destination application should be merged back into the source record. If you do not see a specific import response field in the dropdown below you can still map it regardless, and as long as the field is returned by the destination application when the flow is running the mapping will work. You can merge import response fields into any existing field in the source record, or you can specify a brand new field in which case integrator.io will create the field on the fly. You can also merge ‘errors’ back into the source record if you want to manually process errors downstream in your flow logic.',
+  'mapping.dataType':
+    'This field represents the respective datatype of the mapping field. Ex: string, boolean, number.',
+  'mapping.discardIfEmpty':
+    'Please check this checkbox if you would like to discard this mapping when the result of the mapping is empty. If you are mapping a list field and all the fields in the list are mapped to empty values then the whole list will be discarded.',
+  'mapping.fieldMappingType':
+    'The type of field mapping that you want to perform. For more information refer to, the <a href="https://celigosuccess.zendesk.com/hc/en-us/sections/205928707-Field-Mapping-options-in-integrator-io" target="_blank"/> Field Reference Guide.</a>',
+  'mapping.extract':
+    'This dropdown lists all the available fields from your export record that can be used in your expression. Either by themselves, or as argument value for any selected helper methods.',
+  'mapping.expression':
+    'This field represents your complete handlebar expression. You have the freedom to manually enter an expression, or use the function and field drop-downs above to help construct it.',
+  'mapping.standardAction':
+    '<b>Use Empty String as Default Value:</b> Please select this field if you want to use ‘’(i.e. the empty string) as the default lookup value. This value will be used if your lookup does not find anything. <br /><b>Use Null as Default Value:</b> Please select this field if you want to use ‘null’ as the default lookup value. This value will be used if your lookup does not find anything. <br /><b>Use Custom Default Value:</b> This holds the default value to be set for the extract field.',
+  'mapping.lookupAction':
+    '<b>Fail Record:</b> If no results are found or the dynamic lookup fails, the lookup will silently fail (return empty string). Similarly, if multiple results are found  (dynamic lookup) then the first value is chosen. In other words, if allowFailures is set to true, then no errors will be raised and the default lookup value will be used if the lookup fails. <br /><b>Use Empty String as Default Value:</b> Please select this field if you want to use ‘’(i.e. the empty string) as the default lookup value. This value will be used if your lookup does not find anything. <br /><b>Use Null as Default Value:</b> Please select this field if you want to use ‘null’ as the default lookup value. This value will be used if your lookup does not find anything. <br /><b>Use Custom Default Value:</b> This holds the default value to be set for the extract field.',
+  'mapping.default':
+    'This holds the default value to be set for the extract field.',
+  'mapping.hardcodedDefault':
+    'This field can be used when any field value on the import system has to be hardcoded with some value. Generate field combined with this field will make the generate field to be filled with this value.',
+  'mapping.lookupDefault':
+    'This holds the default value to be set for the extract field.',
+  'mapping.extractDateFormat':
+    'If the export field is of date, then this field represents the date format of the field being exported.',
+  'mapping.extractDateTimezone':
+    'If the export field is of date, then this field represents the time zone of the field being exported',
+  'mapping.generateDateFormat':
+    'If the import field is of type date, this field represents the date format supported on the import system.',
+  'mapping.generateDateTimezone':
+    'If the import field is of type date, this field represents the time zone of the field on the import system.',
+  'mapping.functions':
+    'This drop-down has all the available helper methods that let you transform your field values. Once you make a selection, the function and placeholder values will be added to the expression text box below. You can then make any necessary changes by editing the complete expression.For a complete list and extended help of all helper methods, please see this article: <a target="blank" href="https://celigosuccess.zendesk.com/hc/en-us/articles/115004695128-Handlebar-Helpers-Reference-Guide">Handlebar Helper Guide</a>',
+  'mapping.immutable':
+    'By default, if a record fails to import into an application integrator.io will parse the error message from the import application, and if a specific field can be identified (in the error message) as the root cause for the import failing then that field will be removed, and the import will be retried again automatically. For most fields this is the desired behavior (i.e. so that single fields do not halt entire records from importing). However, there are some fields where it is mission critical that the field always get set, and for those fields you can use this Immutable setting to tell integrator.io never to remove the field for an automatic retry.',
+  'mapping.lookup.mode':
+    'Use a dynamic search if you need to lookup data directly in the import application, e.g. if you have an email address in your export data and you want to run a search on the fly to find a system id value in the import application. Use a static value to value mapping when you know in advance all the possible values and how they should be translated. For example, if you are mapping a handful of shipping methods between two applications you can define them here.',
+  'mapping.relativeURI':
+    'This json path used to set the lookup in the URI itself. Ex: search.json?query=type:organization name:{customer.name}',
+  'mapping.lookup.method': 'Operation method to be performed. Ex: GET or POST',
+  'mapping.lookup.extract':
+    'Resource Identifier Path is the JSON path (in the JSON data received in the Lookup Response) that points to the location at which the expected \'value\' from lookup is available. This is the \'value\' that would be set on the import application. For example, Results[0].email. For more information, click  <a href="https://celigosuccess.zendesk.com/hc/en-us/articles/226810287-Field-Mapping-Options-in-integrator-io#h_8238065521401516195542221" target="_blank">here.</a>',
+  'mapping.netsuite.lookup.recordType':
+    'Record type on the Netsuite for which we are defining the import.',
+  'mapping.netsuite.lookup.expressionText':
+    'Expression can be provided in this field which will return the matching resultField after evaluating the expression. Ex: [["subsidiary", "anyOf", "{{subsidiary}}"], "AND", ["entityId", "is", "{{entityid}}"]]',
+  'mapping.netsuite.lookup.resultField':
+    'Field name that has to be extracted out using the lookups.searchField.',
+  'mapping.salesforce.lookup.sObjectType':
+    'Enter the SObject type in Salesforce that you would like to query. If the SObject type you are looking for is not displayed then please click the refresh icon.',
+  'mapping.salesforce.lookup.whereClauseText':
+    'The SOQL where clause expression that will be executed when this lookup is run.',
+  'mapping.salesforce.lookup.resultField':
+    'The value of this field will be used to populate your field mapping.',
   // #region UI help text
 };

@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import * as selectors from '../../../../reducers';
 import getFormattedSampleData from '../../../../utils/sampleData';
 import actions from '../../../../actions';
-import getJSONPaths from '../../../../utils/jsonPaths';
+import getJSONPaths, { pickFirstObject } from '../../../../utils/jsonPaths';
 import IgnoreExistingData from './IgnoreExistingData';
 import TemplateEditor from './TemplateEditor';
 
@@ -71,7 +71,7 @@ export default function DynaTextWithLookupExtract(props) {
   let formattedExtractFields = [];
 
   if (sampleData) {
-    const extractPaths = getJSONPaths(sampleData);
+    const extractPaths = getJSONPaths(pickFirstObject(sampleData));
 
     formattedExtractFields =
       (extractPaths &&

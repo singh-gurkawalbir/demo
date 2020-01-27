@@ -11,6 +11,7 @@ import salesforce from './salesforce';
 import wrapper from './wrapper';
 import file from './file';
 import custom from './custom';
+import dynamodb from './dynamodb';
 
 const allFieldDefinitions = {
   ...as2,
@@ -26,6 +27,7 @@ const allFieldDefinitions = {
   ...wrapper,
   ...file,
   ...custom,
+  ...dynamodb,
 };
 
 export default allFieldDefinitions;

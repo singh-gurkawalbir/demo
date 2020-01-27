@@ -14,13 +14,15 @@ const getDefaultMetadata = ({
       relativeURI: {
         id: 'relativeURI',
         name: 'relativeURI',
-        type: 'relativeuri',
+        type: 'textwithlookupextract',
+        fieldType: 'relativeUri',
         label: 'Relative URI',
         connectionId,
         resourceName,
         resourceId,
         resourceType,
         flowId,
+        showLookup: false,
         placeholder: 'Relative URI',
         defaultValue: lookup.relativeURI,
         visibleWhen: [

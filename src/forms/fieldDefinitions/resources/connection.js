@@ -1,4 +1,5 @@
 import { URI_VALIDATION_PATTERN } from '../../../utils/constants';
+import { isProduction } from '../../utils';
 
 export default {
   // #region common
@@ -716,6 +717,7 @@ export default {
           { label: 'Custom', value: 'custom' },
           { label: 'Cookie', value: 'cookie' },
           { label: 'Digest', value: 'digest' },
+          { label: 'OAuth 2.0', value: 'oauth' },
         ],
       },
     ],
@@ -734,12 +736,6 @@ export default {
         ],
       },
     ],
-    visibleWhen: [
-      {
-        field: 'http.auth.type',
-        isNot: [''],
-      },
-    ],
   },
   configureApiRateLimits: {
     label: 'Configure API Rate Limits',
@@ -750,16 +746,11 @@ export default {
   'http.baseURI': {
     type: 'text',
     label: 'Base URI',
+    required: true,
     requiredWhen: [
       {
         field: 'http.auth.type',
         is: ['cookie'],
-      },
-    ],
-    visibleWhen: [
-      {
-        field: 'http.auth.type',
-        isNot: [''],
       },
     ],
   },
@@ -842,6 +833,27 @@ export default {
     label: 'Ping Success Values',
     delimiter: ',',
   },
+  'http.ping.failPath': {
+    type: 'text',
+    label: 'Ping Fail Path',
+    visibleWhen: [
+      {
+        field: 'outputMode',
+        is: ['records'],
+      },
+    ],
+  },
+  'http.ping.failValues': {
+    type: 'text',
+    delimiter: ',',
+    label: 'Ping Fail Values',
+    visibleWhen: [
+      {
+        field: 'outputMode',
+        is: ['records'],
+      },
+    ],
+  },
   'http.ping.errorPath': {
     type: 'text',
     label: 'Ping Error Path',
@@ -854,33 +866,15 @@ export default {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
       },
     ],
-    visibleWhen: [
-      {
-        field: 'http.auth.type',
-        isNot: [''],
-      },
-    ],
   },
   'http.auth.failPath': {
     type: 'text',
     label: 'Authentication Fail Path',
-    visibleWhen: [
-      {
-        field: 'http.auth.type',
-        isNot: [''],
-      },
-    ],
   },
   'http.auth.failValues': {
     type: 'text',
     delimiter: ',',
     label: 'Authentication Fail Values',
-    visibleWhen: [
-      {
-        field: 'http.auth.type',
-        isNot: [''],
-      },
-    ],
   },
   'http.auth.basic.username': {
     type: 'text',
@@ -896,37 +890,65 @@ export default {
       'Note: for security reasons this field must always be re-entered.',
     required: true,
   },
-  'http.auth.oauth.authURI': {
-    type: 'text',
-    label: 'Http auth oauth auth URI',
-  },
   'http.auth.oauth.tokenURI': {
     type: 'text',
-    label: 'Http auth oauth token URI',
+    label: 'Access token URL',
   },
-  'http.auth.oauth.scopes': {
-    type: 'text',
-    keyName: 'name',
-    valueName: 'value',
-    valueType: 'array',
-    label: 'Http auth oauth scope',
+  'http.auth.oauth.scope': {
+    type: 'selectscopes',
+    label: 'Scopes',
   },
   'http.auth.oauth.scopeDelimiter': {
     type: 'text',
-    label: 'Http auth oauth scope Delimiter',
+    label: 'Custom scope delimiter',
   },
   'http.auth.oauth.accessTokenPath': {
     type: 'text',
     label: 'Http auth oauth access Token Path',
   },
-  'http.auth.oauth.grantType': {
-    type: 'radiogroup',
-    label: 'Http auth oauth grant Type',
+  'http.auth.oauth.authURI': {
+    type: 'text',
+    label: 'Authentication URL',
+  },
+  'http.auth.oauth.clientCredentialsLocation': {
+    type: 'select',
+    label: 'Client authentication',
     options: [
       {
         items: [
-          { label: 'Authorizecode', value: 'authorizecode' },
-          { label: 'Password', value: 'password' },
+          { label: 'Send as basic auth header', value: 'basicauthheader' },
+          { label: 'Send client credentials in body', value: 'body' },
+        ],
+      },
+    ],
+  },
+  'http.auth.oauth.accessTokenHeaders': {
+    type: 'keyvalue',
+    keyName: 'name',
+    valueName: 'value',
+    valueType: 'keyvalue',
+    label: 'Access token headers',
+  },
+  'http.auth.oauth.accessTokenBody': {
+    type: 'text',
+    label: 'Access token body',
+  },
+  'http._iClientId': {
+    label: 'IClient',
+    type: 'selectresource',
+    resourceType: 'iClients',
+    allowNew: true,
+    allowEdit: true,
+  },
+  'http.auth.oauth.grantType': {
+    type: 'select',
+    label: 'Grant type',
+    options: [
+      {
+        items: [
+          { label: 'Authorization Code', value: 'authorizecode' },
+          // { label: 'Password', value: 'password' },
+          { label: 'Client Credentials', value: 'clientcredentials' },
         ],
       },
     ],
@@ -934,6 +956,47 @@ export default {
   'http.auth.oauth.username': {
     type: 'text',
     label: 'Http auth oauth username',
+  },
+  'http.auth.oauth.applicationType': {
+    type: 'select',
+    label: 'Provider',
+    defaultValue: r =>
+      r &&
+      r.http &&
+      r.http.auth &&
+      r.http.auth.oauth &&
+      r.http.auth.oauth.grantType
+        ? 'custom'
+        : r &&
+          r.http &&
+          r.http.auth &&
+          r.http.auth.oauth &&
+          r.http.auth.oauth.applicationType,
+    options: [
+      {
+        items: [{ label: 'Custom', value: 'custom' }],
+      },
+    ],
+  },
+  'http.auth.oauth.callbackURL': {
+    type: 'text',
+    label: 'Callback URL',
+    defaultDisabled: true,
+    visible: !isProduction(),
+    defaultValue: () => {
+      if (isProduction()) {
+        return 'https://integrator.io/connection/oauth2callback';
+      }
+
+      return 'https://staging.integrator.io/connection/oauth2callback';
+    },
+  },
+  'http.auth.oauth.type': {
+    defaultValue: 'custom',
+  },
+  'http.auth.revoke.uri': {
+    type: 'text',
+    label: 'Revoke URL',
   },
   'http.auth.oauth.password': {
     type: 'text',
@@ -947,6 +1010,7 @@ export default {
     type: 'text',
     label: 'Token',
     inputType: 'password',
+    required: true,
     defaultValue: '',
     description:
       'Note: for security reasons this field must always be re-entered.',
@@ -954,6 +1018,7 @@ export default {
   'http.auth.token.location': {
     type: 'select',
     label: 'Location',
+    required: true,
     defaultValue: r =>
       r &&
       r.http &&
@@ -984,6 +1049,7 @@ export default {
   'http.auth.token.scheme': {
     type: 'select',
     label: 'Scheme',
+    required: true,
     defaultValue: r =>
       (r &&
         r.http &&
@@ -1005,6 +1071,7 @@ export default {
   'http.auth.token.paramName': {
     type: 'text',
     label: 'Parameter Name',
+    required: true,
   },
   'http.auth.token.refreshMethod': {
     type: 'select',
@@ -1041,6 +1108,7 @@ export default {
   'http.auth.token.refreshMediaType': {
     type: 'select',
     label: 'Refresh Media Type',
+    required: true,
     options: [
       {
         items: [
@@ -1061,6 +1129,7 @@ export default {
   'http.auth.token.refreshToken': {
     type: 'text',
     inputType: 'password',
+    required: true,
     defaultValue: '',
     description:
       'Note: for security reasons this field must always be re-entered.',
@@ -1137,16 +1206,13 @@ export default {
   'http.unencrypted': {
     type: 'editor',
     mode: 'json',
+    required: true,
     label: 'Unencrypted',
   },
   'http.encrypted': {
     type: 'editor',
     mode: 'json',
     label: 'Encrypted',
-  },
-  'http.auth.oauth.scope': {
-    type: 'selectscopes',
-    label: 'Configure Scopes',
   },
   'http.clientCertificates.cert': {
     type: 'uploadfile',
@@ -2196,7 +2262,7 @@ export default {
   },
   'salesforce.oauth2FlowType': {
     type: 'select',
-    label: 'Oauth2 Flow Type',
+    label: 'OAuth 2.0 Flow Type',
     required: true,
     options: [
       {

@@ -55,6 +55,7 @@ export default {
       name: 'resourceType',
       type: 'select',
       label: 'What would you like to do?',
+      required: true,
       defaultValue: r => (r && r.resourceType) || 'imports',
       options: [
         {
@@ -72,7 +73,9 @@ export default {
       id: 'application',
       name: 'application',
       type: 'selectapplication',
-      placeholder: 'Select application',
+      label: 'Application',
+      placeholder:
+        'Choose application or start typing to browse 150+ applications',
       defaultValue: r => (r && r.application) || '',
       required: true,
     },

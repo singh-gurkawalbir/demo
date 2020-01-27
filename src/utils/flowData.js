@@ -3,11 +3,13 @@
  */
 import { keys } from 'lodash';
 import moment from 'moment';
+import { deepClone } from 'fast-json-patch';
 import {
   isRealTimeOrDistributedResource,
   isFileAdaptor,
   isBlobTypeResource,
   isRestCsvMediaTypeExport,
+  adaptorTypeMap,
 } from './resource';
 import {
   LookupResponseMappingExtracts,
@@ -22,6 +24,7 @@ const sampleDataStage = {
     responseMappingExtract: 'hooks',
     responseMapping: 'responseMappingExtract',
     postResponseMap: 'responseMapping',
+    postResponseMapHook: 'postResponseMap',
     outputFilter: 'hooksWithContext',
     hooksWithContext: 'hooks',
     flowInputWithContext: 'flowInput',
@@ -35,6 +38,7 @@ const sampleDataStage = {
     responseMappingExtract: 'responseTransform',
     responseMapping: 'responseMappingExtract',
     postResponseMap: 'responseMapping',
+    postResponseMapHook: 'postResponseMap',
     postMap: 'importMapping',
     postSubmit: 'responseTransform',
     responseTransform: 'sampleResponse',
@@ -117,6 +121,25 @@ export const getLastExportDateTime = () =>
     .add(-1, 'y')
     .toISOString();
 
+export const getFormattedResourceForPreview = resourceObj => {
+  const resource = deepClone(resourceObj);
+
+  // type Once need not be passed in preview as it gets executed in preview call
+  // so remove type once
+  if (resource && resource.type === 'once') {
+    delete resource.type;
+    const { adaptorType } = resource;
+    const appType = adaptorType && adaptorTypeMap[adaptorType];
+
+    // Manually removing once doc incase of preview to restrict execution on once query - Bug fix IO-11988
+    if (appType && resource[appType] && resource[appType].once) {
+      delete resource[appType].once;
+    }
+  }
+
+  return resource;
+};
+
 export const getAddedLookupInFlow = (oldFlow = {}, patchSet = []) => {
   const { pageProcessors = [] } = oldFlow;
   const pageProcessorsPatch = patchSet.find(
@@ -194,6 +217,7 @@ export const isOneToManyResource = resource =>
  * This fn returns { data:'', errors: '', ignored: '', statusCode: ''}
  */
 export const generateDefaultExtractsObject = resourceType => {
+  // TODO: @Raghu Confirm the below format to generate default objects
   const defaultExtractsList =
     resourceType === 'imports'
       ? ImportResponseMappingExtracts
@@ -205,4 +229,14 @@ export const generateDefaultExtractsObject = resourceType => {
 
     return extractsObj;
   }, {});
+};
+
+/*
+ * @Inputs: flowInputData and rawData for the pp
+ * This util merges both to generate actual format of Flow Record being passed at runtime
+ */
+export const generatePostResponseMapData = (flowData, rawData) => {
+  const flowDataArray = [flowData || {}];
+
+  return flowDataArray.map(fd => ({ ...fd, ...rawData }));
 };

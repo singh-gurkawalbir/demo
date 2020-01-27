@@ -204,6 +204,14 @@ export function* downloadFiles({ jobId, fileType, fileIds = [] }) {
     return true;
   }
 
+  /**
+   * Backend is returning 204 some times, one usecase is downloading error file when
+   * the parent job is cancelled (by user) and children are yet to cancel (by the backend).
+   */
+  if (!response) {
+    return true;
+  }
+
   let signedURLs = [];
 
   if (response.signedURL) {
@@ -527,19 +535,13 @@ export function* resolveSelectedErrors({ jobId, flowJobId, selectedErrorIds }) {
   const updatedJobErrors = [];
 
   jobErrors.forEach(je => {
-    const { _id, createdAtAsString, retryObject, similarErrors, ...rest } = je;
+    const { _id, retryObject, similarErrors, ...rest } = je;
 
     updatedJobErrors.push({ ...rest });
 
     if (similarErrors && similarErrors.length > 0) {
       similarErrors.forEach(sje => {
-        const {
-          _id,
-          createdAtAsString,
-          retryObject,
-          similarErrors,
-          ...rest
-        } = sje;
+        const { _id, retryObject, similarErrors, ...rest } = sje;
 
         updatedJobErrors.push({ ...rest });
       });

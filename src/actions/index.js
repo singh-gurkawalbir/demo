@@ -694,6 +694,8 @@ const stack = {
     action(actionTypes.STACK.USER_SHARING_TOGGLE, { userId }),
   toggledUserStackSharing: ({ userId }) =>
     action(actionTypes.STACK.USER_SHARING_TOGGLED, { id: userId }),
+  reInviteStackUser: (userInfo, userId) =>
+    action(actionTypes.STACK.USER_REINVITE, { userInfo, userId }),
 };
 const user = {
   profile: {
@@ -995,6 +997,8 @@ const accessToken = {
     action(actionTypes.ACCESSTOKEN_TOKEN_MASK, { accessToken }),
   revoke: id => action(actionTypes.ACCESSTOKEN_REVOKE, { id }),
   activate: id => action(actionTypes.ACCESSTOKEN_ACTIVATE, { id }),
+  deletePurged: () => action(actionTypes.ACCESSTOKEN_DELETE_PURGED),
+  updatedCollection: () => action(actionTypes.ACCESSTOKEN_UPDATED_COLLECTION),
 };
 const job = {
   requestCollection: ({ integrationId, flowId, filters }) =>
