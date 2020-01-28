@@ -144,6 +144,7 @@ const useStyles = makeStyles(theme => ({
   actions: {
     display: 'flex',
     alignItems: 'center',
+    margin: [[-7, 0]],
   },
   canvasContainer: {
     // border: 'solid 1px black',

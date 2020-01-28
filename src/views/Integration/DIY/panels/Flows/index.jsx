@@ -65,11 +65,7 @@ export default function FlowsPanel({ integrationId }) {
 
       <LoadResources required resources="flows,exports">
         {flows.map(f => (
-          <FlowCard
-            key={f._id}
-            flowId={f._id}
-            excludeActions={['mapping', 'schedule']}
-          />
+          <FlowCard key={f._id} flowId={f._id} excludeActions={['schedule']} />
         ))}
       </LoadResources>
     </div>

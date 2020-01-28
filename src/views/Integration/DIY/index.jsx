@@ -162,6 +162,7 @@ export default function Integration({ history, match }) {
             integration ? (
               <EditableText
                 text={integration.name}
+                defaultText={`Unnamed: (${integration}) Click to add name`}
                 onChange={handleTitleChange}
               />
             ) : (
@@ -171,7 +172,10 @@ export default function Integration({ history, match }) {
           infoText={
             integration ? (
               <EditableText
+                multiline
+                allowOverflow
                 text={integration.description}
+                defaultText="Click to add a description"
                 onChange={handleDescriptionChange}
               />
             ) : (
