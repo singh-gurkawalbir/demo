@@ -310,7 +310,7 @@ const refGeneration = field => {
   throw new Error('cant generate reference');
 };
 
-const getFieldConfig = (field = {}, resource) => {
+const getFieldConfig = (field = {}, resource = {}) => {
   const newField = { ...field };
 
   if (!newField.type || newField.type === 'input') {
