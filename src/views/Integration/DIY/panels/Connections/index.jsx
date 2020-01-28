@@ -69,6 +69,18 @@ export default function ConnectionsPanel({ integrationId }) {
     }
   }, [dispatch, integrationId, newResourceId]);
 
+  useEffect(() => {
+    dispatch(actions.resource.connections.refreshStatus(integrationId));
+    // For connections resource table, we need to poll the connection status and queueSize
+    const interval = setInterval(() => {
+      dispatch(actions.resource.connections.refreshStatus(integrationId));
+    }, 10 * 1000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [dispatch, integrationId]);
+
   return (
     <div className={classes.root}>
       {showRegister && (
