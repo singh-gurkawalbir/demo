@@ -8,8 +8,8 @@ export default {
       );
 
       return {
-        url: webHookUrlField.value,
-        provider: webHookProviderField.value,
+        webHookUrl: webHookUrlField.value,
+        webHookProvider: webHookProviderField.value,
       };
     }
 

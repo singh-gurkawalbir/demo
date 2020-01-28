@@ -1,10 +1,11 @@
-import { useCallback, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useCallback, useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Typography, Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import CodeEditor from '../../CodeEditor';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import actions from '../../../actions';
+import * as selectors from '../../../reducers';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -23,10 +24,23 @@ export default function DynaWebHookSampleData(props) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [enqueueSnackbar] = useEnqueueSnackbar();
-  const { label, id, onFieldChange, options, resourceId, sampleData } = props;
+  const { label, id, onFieldChange, options, resourceId } = props;
   const [manualEnter, setManualEnter] = useState(false);
+  const sampleData = useSelector(state => {
+    const resource = selectors.resource(state, 'exports', resourceId);
+
+    return resource && resource.sampleData;
+  });
+
+  // Updates field with latest sampleData requested whenever user clicks on generate sample data
+  useEffect(() => {
+    if (sampleData) {
+      onFieldChange(id, sampleData);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, sampleData]);
   const generateSampleData = useCallback(() => {
-    if (!options.url || !options.provider) {
+    if (!options.webHookUrl || !options.webHookProvider) {
       return enqueueSnackbar({
         message: 'Url and Provider are mandatory',
         variant: 'error',
@@ -34,7 +48,13 @@ export default function DynaWebHookSampleData(props) {
     }
 
     dispatch(actions.resource.request('exports', resourceId));
-  }, [dispatch, enqueueSnackbar, options.provider, options.url, resourceId]);
+  }, [
+    dispatch,
+    enqueueSnackbar,
+    options.webHookProvider,
+    options.webHookUrl,
+    resourceId,
+  ]);
   const handleManualEnter = useCallback(() => {
     setManualEnter(true);
   }, []);
