@@ -778,6 +778,11 @@ export function isDeltaFlow(state, id) {
   return isDeltaFlow;
 }
 
+// TODO: The object returned from this selector needs to be overhauled.
+// It is shared between IA and DIY flows,
+// yet its impossible to know which works for each flow type. For example,
+// showMapping is an IA only field, how do we determine if a DIY flow has mapping support?
+// Maybe its best to only hav common props here and remove all IA props to a separate selector.
 export function flowDetails(state, id) {
   const flow = resource(state, 'flows', id);
 
@@ -798,8 +803,6 @@ export function flowDetails(state, id) {
     draft.isRunnable = isRunnable(allExports, pg, draft);
     draft.canSchedule = showScheduleIcon(allExports, pg, draft);
     draft.isDeltaFlow = isDeltaFlow(state, id);
-    // TODO: add logic to properly determine if this flow should
-    // display mapping/settings. This would come from the IA metadata.
     const flowSettings = getIAFlowSettings(state, flow._integrationId, id);
 
     draft.showMapping = flowSettings.showMapping;
@@ -873,10 +876,22 @@ export function resourceListWithPermissions(state, options) {
   const permissions = userPermissions(state);
 
   list.resources = list.resources.map(r => {
-    // eslint-disable-next-line no-param-reassign
-    r.permissions = deepClone(permissions);
+    const additionalInfo = {};
 
-    return r;
+    additionalInfo.permissions = deepClone(permissions);
+
+    // For connections resource, add the status and queueSize info
+    if (options.type === 'connections') {
+      const status = fromSession.connectionStatus(
+        state && state.session,
+        r._id
+      );
+
+      additionalInfo.offline = status.offline;
+      additionalInfo.queueSize = status.queueSize;
+    }
+
+    return { ...r, ...additionalInfo };
   });
 
   return list;
@@ -3213,6 +3228,10 @@ export function getUsedActionsForResource(
 
 export function debugLogs(state) {
   return fromSession.debugLogs(state && state.session);
+}
+
+export function connectionStatus(state, id) {
+  return fromSession.connectionStatus(state && state.session, id);
 }
 
 export function getLastExportDateTime(state, flowId) {

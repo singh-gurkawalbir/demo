@@ -73,7 +73,9 @@ export default {
       id: 'application',
       name: 'application',
       type: 'selectapplication',
-      placeholder: 'Select application',
+      label: 'Application',
+      placeholder:
+        'Choose application or start typing to browse 150+ applications',
       defaultValue: r => (r && r.application) || '',
       required: true,
     },
@@ -94,7 +96,7 @@ export default {
           ],
         },
       ],
-      visibleWhenAll: [{ field: 'application', isNot: [''] }],
+      // visibleWhenAll: [{ field: 'application', isNot: [''] }],
     },
 
     existingImport: {
@@ -108,6 +110,7 @@ export default {
       allowEdit: true,
       refreshOptionsOnChangesTo: ['application'],
       visibleWhenAll: [
+        { field: 'application', isNot: [''] },
         { field: 'isNew', is: ['false'] },
         { field: 'resourceType', is: ['imports'] },
       ],
@@ -124,6 +127,7 @@ export default {
       allowEdit: true,
       refreshOptionsOnChangesTo: ['application'],
       visibleWhenAll: [
+        { field: 'application', isNot: [''] },
         { field: 'isNew', is: ['false'] },
         { field: 'resourceType', is: ['exports'] },
       ],
@@ -166,8 +170,8 @@ export default {
   layout: {
     fields: [
       'resourceType',
-      'application',
       'isNew',
+      'application',
       'existingImport',
       'existingExport',
       'connection',
@@ -177,20 +181,11 @@ export default {
   },
   optionsHandler: (fieldId, fields) => {
     const appField = fields.find(field => field.id === 'application');
-    const resourceTypeField = fields.find(field => field.id === 'resourceType');
-    let adaptorTypeSuffix = fieldId === 'importId' ? 'Import' : 'Export';
+    // const resourceTypeField = fields.find(field => field.id === 'resourceType');
+    const adaptorTypeSuffix = fieldId === 'importId' ? 'Import' : 'Export';
     const app = appField
       ? applications.find(a => a.id === appField.value) || {}
       : {};
-
-    if (fieldId === 'name') {
-      adaptorTypeSuffix =
-        resourceTypeField && resourceTypeField.value === 'imports'
-          ? 'Import'
-          : 'Export';
-
-      return `New ${app.name} ${adaptorTypeSuffix}`;
-    }
 
     if (fieldId === 'connection') {
       const expression = [];

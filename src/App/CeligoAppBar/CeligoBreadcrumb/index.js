@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import { useSelector } from 'react-redux';
 import { matchPath, Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -29,6 +30,12 @@ const useStyles = makeStyles(theme => ({
   activeCrumb: {
     textTransform: 'unset',
     fontSize: 13,
+  },
+  crumb: {
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    maxWidth: 200,
   },
 }));
 // These routes are shared for IA and DIY routes.
@@ -307,12 +314,17 @@ export default function CeligoBreadcrumb({ location }) {
       className={classes.breadCrumb}>
       {breadcrumbs.map(({ breadcrumb: Crumb, url, isExact, params }) =>
         isExact ? (
-          <Typography key={url} variant="body2" className={classes.activeCrumb}>
+          <Typography
+            key={url}
+            variant="body2"
+            className={clsx(classes.activeCrumb, classes.crumb)}>
             <Crumb {...params} />
           </Typography>
         ) : (
           <Link key={url} color="inherit" to={url}>
-            <Crumb {...params} />
+            <div className={classes.crumb}>
+              <Crumb {...params} />
+            </div>
           </Link>
         )
       )}

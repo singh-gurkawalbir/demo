@@ -176,7 +176,7 @@ export default function(state = {}, action) {
 
       case actionTypes.FLOW_DATA.FLOW_RESPONSE_MAPPING_UPDATE: {
         const flow = draft[flowId];
-        const resource = flow.pageProcessors[resourceIndex];
+        const resource = flow && flow.pageProcessors[resourceIndex];
 
         if (resource) {
           resource.responseMapping = responseMapping;
@@ -187,6 +187,8 @@ export default function(state = {}, action) {
 
       case actionTypes.FLOW_DATA.RESET: {
         const flow = draft[flowId];
+
+        if (!flow) break;
         // Fetch first occurence of resourceId usage in flow
         const pageGeneratorIndexToReset = flow.pageGenerators.findIndex(
           pg => pg._exportId === resourceId
