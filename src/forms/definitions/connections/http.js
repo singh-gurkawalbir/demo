@@ -32,6 +32,16 @@ export default {
       }
     }
 
+    if (newValues['/http/oauth/encrypted']) {
+      try {
+        newValues['/http/oauth/encrypted'] = JSON.parse(
+          newValues['/http/oauth/encrypted']
+        );
+      } catch (ex) {
+        newValues['/http/oauth/encrypted'] = undefined;
+      }
+    }
+
     if (newValues['/http/unencrypted']) {
       try {
         newValues['/http/unencrypted'] = JSON.parse(
@@ -39,6 +49,16 @@ export default {
         );
       } catch (ex) {
         newValues['/http/unencrypted'] = undefined;
+      }
+    }
+
+    if (newValues['/http/oauth/unencrypted']) {
+      try {
+        newValues['/http/oauth/unencrypted'] = JSON.parse(
+          newValues['/http/oauth/unencrypted']
+        );
+      } catch (ex) {
+        newValues['/http/oauth/unencrypted'] = undefined;
       }
     }
 
@@ -659,8 +679,18 @@ export default {
       id: 'cancel',
     },
     {
-      id: 'saveandgenerate',
-      submitButtonLabel: 'Save & Generate',
+      id: 'test',
+      label: 'Test',
+      visibleWhen: [
+        {
+          field: 'http.auth.type',
+          is: ['token', 'basic', 'custom', 'cookie', 'digest', 'oauth'],
+        },
+      ],
+    },
+    {
+      id: 'saveandcontinue',
+      submitButtonLabel: 'Save & Continue',
       isGenerate: true,
       visibleWhenAll: [
         {
@@ -679,16 +709,6 @@ export default {
           is: ['oauth'],
         },
         { field: 'http.auth.oauth.grantType', isNot: ['clientcredentials'] },
-      ],
-    },
-    {
-      id: 'test',
-      label: 'Test',
-      visibleWhen: [
-        {
-          field: 'http.auth.type',
-          is: ['token', 'basic', 'custom', 'cookie', 'digest'],
-        },
       ],
     },
     {
