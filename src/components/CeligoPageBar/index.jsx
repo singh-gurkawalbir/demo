@@ -44,11 +44,23 @@ const useStyles = makeStyles(theme => ({
       },
     },
   },
-  subTitle: {
-    float: 'left',
+  titleGridItem: {
+    maxWidth: `calc(56vw - ${theme.spacing(2 * 3) + 4}px)`,
+  },
+  titleGridItemShift: {
+    maxWidth: `calc(56vw - ${theme.drawerWidth}px)`,
+  },
+  title: {
+    // width: '100%',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
   },
   bannerOffset: {
     height: theme.pageBarHeight + 66,
+  },
+  subTitleShift: {
+    marginLeft: theme.spacing(4),
   },
 }));
 
@@ -88,44 +100,54 @@ export default function CeligoPageBar({
             {showBanner && <WelcomeBanner />}
 
             <Grid container justify="space-between">
-              <Grid item>
-                <Typography variant="h3">
-                  {history && (
-                    // eslint-disable-next-line react/jsx-handler-names
-                    <IconButton onClick={history.goBack}>
-                      <ArrowLeftIcon />
-                    </IconButton>
-                  )}
+              <Grid
+                item
+                container
+                wrap="nowrap"
+                alignItems="center"
+                className={clsx({
+                  [classes.titleGridItem]: !drawerOpened,
+                  [classes.titleGridItemShift]: drawerOpened,
+                })}>
+                {history && (
+                  // eslint-disable-next-line react/jsx-handler-names
+                  <IconButton size="small" onClick={history.goBack}>
+                    <ArrowLeftIcon />
+                  </IconButton>
+                )}
+                <Typography className={classes.title} variant="h3">
                   {title}
-                  {titleTag && <span>{titleTag}</span>}
-                  {infoText && (
-                    <Fragment>
-                      <IconButton
-                        data-test="openPageInfo"
-                        size="small"
-                        onClick={handleInfoOpen}
-                        aria-owns={!anchorEl ? null : 'pageInfo'}
-                        aria-haspopup="true">
-                        <InfoIcon />
-                      </IconButton>
-                      <ArrowPopper
-                        id="pageInfo"
-                        className={classes.infoPopper}
-                        open={!!anchorEl}
-                        anchorEl={anchorEl}
-                        placement="right-start"
-                        onClose={handleInfoClose}>
-                        <TooltipContent>{infoText}</TooltipContent>
-                      </ArrowPopper>
-                    </Fragment>
-                  )}
                 </Typography>
-                <Typography variant="caption" className={classes.subTitle}>
-                  {subtitle}
-                </Typography>
+                {titleTag && <span>{titleTag}</span>}
+                {infoText && (
+                  <Fragment>
+                    <IconButton
+                      data-test="openPageInfo"
+                      size="small"
+                      onClick={handleInfoOpen}
+                      aria-owns={!anchorEl ? null : 'pageInfo'}
+                      aria-haspopup="true">
+                      <InfoIcon />
+                    </IconButton>
+                    <ArrowPopper
+                      id="pageInfo"
+                      className={classes.infoPopper}
+                      open={!!anchorEl}
+                      anchorEl={anchorEl}
+                      placement="right-start"
+                      onClose={handleInfoClose}>
+                      <TooltipContent>{infoText}</TooltipContent>
+                    </ArrowPopper>
+                  </Fragment>
+                )}
               </Grid>
               <Grid item>{children}</Grid>
             </Grid>
+            <Typography
+              variant="caption"
+              className={clsx({ [classes.subTitleShift]: history })}>
+              {subtitle}
+            </Typography>
           </Paper>
         </ElevateOnScroll>
       </SlideOnScroll>
