@@ -66,6 +66,7 @@ export default function ToggleEditorDialog(props) {
     open = true,
     action,
     title,
+    labels = [],
     showLayoutOptions = true,
     showFullScreen = true,
     width = '70vw',
@@ -100,10 +101,10 @@ export default function ToggleEditorDialog(props) {
   ]);
   const toggleEditorOptions = useMemo(
     () => [
-      { label: 'Mapping', value: 'expression' },
-      { label: 'Javascript', value: 'script' },
+      { label: labels[0] || 'Rules', value: 'expression' },
+      { label: labels[1] || 'Javascript', value: 'script' },
     ],
-    []
+    [labels]
   );
   const editor = useSelector(state => selectors.editor(state, activeEditorId));
   const editorViolations = useSelector(state =>
