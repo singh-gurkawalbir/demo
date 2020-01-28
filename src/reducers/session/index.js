@@ -397,6 +397,10 @@ export function debugLogs(state) {
   return fromConnections.debugLogs(state && state.connections);
 }
 
+export function connectionStatus(state, id) {
+  return fromConnections.connectionStatus(state && state.connections, id);
+}
+
 const lastExportDateTime = {};
 
 export function getLastExportDateTime(state, flowId) {

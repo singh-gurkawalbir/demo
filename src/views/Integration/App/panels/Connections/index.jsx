@@ -1,5 +1,5 @@
-import { useState, Fragment } from 'react';
-import { useSelector } from 'react-redux';
+import { useState, Fragment, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom';
 import shortid from 'shortid';
 import { makeStyles } from '@material-ui/styles';
@@ -12,6 +12,7 @@ import IconTextButton from '../../../../../components/IconTextButton';
 import AddIcon from '../../../../../components/icons/AddIcon';
 import ConnectionsIcon from '../../../../../components/icons/ConnectionsIcon';
 import PanelHeader from '../../../../../components/PanelHeader';
+import actions from '../../../../../actions';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -25,6 +26,7 @@ export default function ConnectionsPanel({ integrationId, storeId }) {
   const classes = useStyles();
   const [showRegister, setShowRegister] = useState(false);
   const location = useLocation();
+  const dispatch = useDispatch();
   const connections = useSelector(state =>
     selectors.integrationAppConnectionList(state, integrationId, storeId)
   );
@@ -53,6 +55,18 @@ export default function ConnectionsPanel({ integrationId, storeId }) {
     !(integration && integration._connectorId) &&
     writePermissions;
   // all the above logic should be replaced by a single selector.
+
+  useEffect(() => {
+    dispatch(actions.resource.connections.refreshStatus(integrationId));
+    // For connections resource table, we need to poll the connection status and queueSize
+    const interval = setInterval(() => {
+      dispatch(actions.resource.connections.refreshStatus(integrationId));
+    }, 10 * 1000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [dispatch, integrationId]);
 
   return (
     <div className={classes.root}>

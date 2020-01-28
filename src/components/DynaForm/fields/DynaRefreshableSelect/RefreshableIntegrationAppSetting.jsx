@@ -32,7 +32,8 @@ export default function RefreshableIntegrationAppSetting(props) {
 
   useEffect(() => {
     if (valueAndLabel && value && (!value.id || !value.label)) {
-      const selectedOption = options.find(option => option.value === value);
+      const selectedOption =
+        options.find(option => option.value === value) || {};
       const { label } = selectedOption;
 
       // save it as a valueLabel

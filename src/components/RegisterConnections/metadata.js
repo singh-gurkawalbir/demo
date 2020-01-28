@@ -33,18 +33,13 @@ export default {
       },
     },
     {
-      heading: 'Updated on',
+      heading: 'Last updated',
       value: r => formatLastModified(r.lastModified),
       orderBy: 'lastModified',
     },
     {
       heading: 'Queue Size',
-      value: r => {
-        if (!r.queues) return 0;
-        const queue = r.queues.find(q => q.name === r._id);
-
-        return queue ? queue.size : 0;
-      },
+      value: r => r.queueSize || 0,
     },
   ],
 };
