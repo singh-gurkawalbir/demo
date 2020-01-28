@@ -1,5 +1,5 @@
+import { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useEffect } from 'react';
 import { withRouter, Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import AddIcon from '../../components/icons/AddIcon';
@@ -26,7 +26,7 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(3, 3, 12, 3),
   },
 }));
-const defaultFilter = { take: 10 };
+const defaultFilter = useMemo(() => ({ take: 3 }), []);
 
 function ResourceList(props) {
   const { match, location } = props;
@@ -84,7 +84,7 @@ function ResourceList(props) {
             to={`${location.pathname}/add/${resourceType}/${generateNewId()}`}
             variant="text"
             color="primary">
-            <AddIcon /> Create {resourceName}
+            <AddIcon /> Create {resourceName.toLowerCase()}
           </IconTextButton>
         </div>
       </CeligoPageBar>

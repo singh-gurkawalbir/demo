@@ -35,6 +35,8 @@ const useStyles = makeStyles(theme => ({
     whiteSpace: 'nowrap',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
+    // TODO: Azhar, at your convenience, this could be a media
+    // query where large screens have longer cut-off width.
     maxWidth: 200,
   },
 }));
@@ -111,11 +113,11 @@ const routes = [
   },
   {
     path: '/pg/connectors/:connectorId/connectorLicenses',
-    breadcrumb: () => 'licenses',
+    breadcrumb: () => 'Licenses',
   },
   {
     path: '/pg/connectors/:connectorId/installBase',
-    breadcrumb: () => 'installBase',
+    breadcrumb: () => 'Install base',
   },
   { path: '/pg/dashboard' }, // exclusion of breadcrumb prop will skip this segment.
   {

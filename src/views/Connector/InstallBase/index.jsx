@@ -21,7 +21,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function InstallBase(props) {
-  const defaultFilter = useMemo(() => ({ take: 5 }), []);
+  const defaultFilter = useMemo(() => ({ take: 10 }), []);
   const { match, history } = props;
   const { connectorId } = match.params;
   const classes = useStyles();
