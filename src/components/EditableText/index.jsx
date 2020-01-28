@@ -21,11 +21,15 @@ const useStyles = makeStyles(theme => ({
   },
   input: {
     font: 'inherit',
-    borderBottom: 'solid 1px',
-    borderColor: theme.palette.secondary.lightest,
+    borderBottom: `solid 1px ${theme.palette.secondary.lightest}`,
     width: '100%',
     maxWidth: 'unset',
     marginBottom: -1, // make up for the 1px border.
+  },
+  multiline: {
+    padding: [[4, 4, 0, 4]],
+    border: `solid 1px ${theme.palette.secondary.lightest}`,
+    margin: [[4, 0]],
   },
   muiInputBase: {
     height: 'unset',
@@ -84,7 +88,11 @@ export default function EditableText({
           onKeyDown={handleKeyDown}
           onBlur={handleChange}
           value={value}
-          className={clsx(classes.input, className)}
+          className={clsx(
+            classes.input,
+            { [classes.multiline]: multiline },
+            className
+          )}
           classes={{ input: classes.muiInputBase }}
         />
       ) : (
