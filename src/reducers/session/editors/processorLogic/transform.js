@@ -24,7 +24,7 @@ export default {
 
     return {
       dataError,
-      ruleError: isContainsAllKey !== null ? isContainsAllKey : undefined,
+      ruleError: isContainsAllKey !== null && isContainsAllKey,
     };
   },
 };

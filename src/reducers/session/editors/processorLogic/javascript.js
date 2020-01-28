@@ -15,6 +15,6 @@ export default {
     else if (typeof data === 'string')
       dataError = util.validateJsonString(data);
 
-    return { dataError: dataError !== null ? dataError : undefined };
+    return { dataError: dataError !== null && dataError };
   },
 };
