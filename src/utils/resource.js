@@ -178,13 +178,13 @@ export const getDomainUrl = () => {
 
 export const getApiUrl = () => getDomainUrl().replace('://', '://api.');
 
-export const getWebhookUrl = (formValues, resourceId) => {
+export const getWebhookUrl = (options = {}, resourceId) => {
   let whURL = '';
+  const { webHookProvider, webHookToken } = options;
 
   if (resourceId) {
     whURL = `${getApiUrl()}/v1/exports/`;
     whURL = whURL.concat(resourceId);
-    const provider = formValues['/webhook/provider'];
 
     if (
       [
@@ -203,9 +203,9 @@ export const getWebhookUrl = (formValues, resourceId) => {
         'parseur',
         'custom',
         'sapariba',
-      ].indexOf(provider) > -1
+      ].indexOf(webHookProvider) > -1
     ) {
-      whURL += `/${formValues['/webhook/token']}`;
+      if (webHookToken) whURL += `/${webHookToken}`;
     }
 
     whURL += '/data';

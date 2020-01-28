@@ -27,16 +27,15 @@ export default function DynaWebHookSampleData(props) {
   const { label, id, onFieldChange, options, resourceId } = props;
   const [manualEnter, setManualEnter] = useState(false);
   const sampleData = useSelector(state => {
-    const resource = selectors.resource(state, 'exports', resourceId);
+    const resource = selectors.resource(state, 'exports', resourceId) || {};
 
-    return resource && resource.sampleData;
+    return resource.sampleData;
   });
 
   // Updates field with latest sampleData requested whenever user clicks on generate sample data
   useEffect(() => {
-    if (sampleData) {
-      onFieldChange(id, sampleData);
-    }
+    onFieldChange(id, sampleData);
+    setManualEnter(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, sampleData]);
   const generateSampleData = useCallback(() => {

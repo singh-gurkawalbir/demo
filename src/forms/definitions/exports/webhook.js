@@ -1,16 +1,31 @@
 export default {
   preSave: formValues => ({ ...formValues, '/type': 'webhook' }),
   optionsHandler: (fieldId, fields) => {
+    const webHookProviderField =
+      fields.find(field => field.id === 'webhook.provider') || {};
+
     if (fieldId === 'sampleData') {
       const webHookUrlField = fields.find(field => field.id === 'webhook.url');
-      const webHookProviderField = fields.find(
-        field => field.id === 'webhook.provider'
-      );
 
       return {
         webHookUrl: webHookUrlField.value,
         webHookProvider: webHookProviderField.value,
       };
+    }
+
+    if (fieldId === 'webhook.url') {
+      const webHookTokenField = fields.find(
+        field => field.id === 'webhook.token'
+      );
+
+      return {
+        webHookToken: webHookTokenField.value,
+        webHookProvider: webHookProviderField.value,
+      };
+    }
+
+    if (fieldId === 'webhook.token') {
+      return { webHookProvider: webHookProviderField.value };
     }
 
     return null;
@@ -24,15 +39,21 @@ export default {
     'webhook.encoding': { fieldId: 'webhook.encoding' },
     'webhook.key': { fieldId: 'webhook.key' },
     'webhook.header': { fieldId: 'webhook.header' },
-    'webhook.token': { fieldId: 'webhook.token' },
-    'webhook.url': { fieldId: 'webhook.url' },
+    'webhook.token': {
+      fieldId: 'webhook.token',
+      refreshOptionsOnChangesTo: ['webhook.provider'],
+    },
+    'webhook.url': {
+      fieldId: 'webhook.url',
+      refreshOptionsOnChangesTo: ['webhook.provider', 'webhook.token'],
+    },
     'webhook.path': { fieldId: 'webhook.path' },
     'webhook.username': { fieldId: 'webhook.username' },
     'webhook.password': { fieldId: 'webhook.password' },
     'webhook.sampledata': {
       fieldId: 'webhook.sampledata',
       sampleData: r => r && r.sampleData,
-      refreshOptionsOnChangesTo: ['webhook.url'],
+      refreshOptionsOnChangesTo: ['webhook.url', 'webhook.provider'],
     },
     advancedSettings: { formId: 'advancedSettings' },
   },
