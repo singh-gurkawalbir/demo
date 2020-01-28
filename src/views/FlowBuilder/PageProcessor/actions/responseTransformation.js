@@ -1,92 +1,120 @@
-import { Fragment } from 'react';
+import { Fragment, useMemo, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
-import Button from '@material-ui/core/Button';
-import DynaForm from '../../../../components/DynaForm';
-import DynaSubmit from '../../../../components/DynaForm/DynaSubmit';
 import actions from '../../../../actions';
 import Icon from '../../../../components/icons/TransformIcon';
 import helpTextMap from '../../../../components/Help/helpTextMap';
-import ModalDialog from '../../../../components/ModalDialog';
+import TransformToggleEditorDialog from '../../../../components/AFE/TransformEditor/TransformToggleEditorDialog';
+import { hooksToFunctionNamesMap } from '../../../../utils/hooks';
 
 function ResponseTransformationDialog(props) {
   const dispatch = useDispatch();
-  const { open, onClose, resource, isViewMode } = props;
+  const { onClose, resource, isViewMode } = props;
   const resourceId = resource._id;
   const { sampleResponseData, responseTransform } = resource;
-  const fieldMeta = {
-    // TODO : @Raghu Make this field JSON editor instead of textarea
-    fieldMap: {
-      sampleResponseData: {
-        id: 'sampleResponseData',
-        name: 'sampleResponseData',
-        type: 'textarea',
-        defaultValue: JSON.stringify(sampleResponseData),
-      },
-      responseTransform: {
-        id: 'responseTransform',
-        name: 'responseTransform',
-        label: 'Response Transform',
-        type: 'responsetransformeditor',
-        defaultValue: responseTransform,
-        refreshOptionsOnChangesTo: ['sampleResponseData'],
-        resourceId,
-      },
-    },
-    layout: {
-      fields: ['sampleResponseData', 'responseTransform'],
-    },
-  };
-  const optionsHandler = (fieldId, fields) => {
-    if (fieldId === 'responseTransform') {
-      const sampleResponseData = fields.find(
-        field => field.id === 'sampleResponseData'
+  const { type, rule, scriptId, entryFunction } = useMemo(() => {
+    const { type, script = {}, expression = {} } = responseTransform || {};
+
+    return {
+      type,
+      rule: expression.rules && expression.rules[0],
+      scriptId: script._scriptId,
+      entryFunction: script.function,
+    };
+  }, [responseTransform]);
+  const saveResponseTransform = useCallback(
+    formValues => {
+      const { sampleResponseData, responseTransform } = formValues;
+      const patchSet = [];
+
+      patchSet.push(
+        {
+          op: 'replace',
+          path: '/sampleResponseData',
+          value: sampleResponseData,
+        },
+        {
+          op: 'replace',
+          path: '/responseTransform',
+          value: responseTransform,
+        }
       );
+      // Save the resource
+      dispatch(actions.resource.patchStaged(resourceId, patchSet, 'value'));
+      dispatch(actions.resource.commitStaged('imports', resourceId, 'value'));
+    },
+    [dispatch, resourceId]
+  );
+  /*
+   * Creates transform rules as per required format to be saved
+   */
+  const constructTransformData = values => {
+    const { processor, rule, scriptId, entryFunction } = values;
+    const type = processor === 'transform' ? 'expression' : 'script';
 
-      return {
-        sampleResponseData: sampleResponseData && sampleResponseData.value,
-      };
-    }
-  };
-
-  const handleSubmit = formValues => {
-    const { sampleResponseData, responseTransform } = formValues;
-    const patchSet = [];
-
-    patchSet.push(
-      {
-        op: 'replace',
-        path: '/sampleResponseData',
-        value: sampleResponseData,
+    return {
+      type,
+      expression: {
+        version: 1,
+        rules: rule ? [rule] : [[]],
       },
-      {
-        op: 'replace',
-        path: '/responseTransform',
-        value: responseTransform,
-      }
-    );
-    // Save the resource
-    dispatch(actions.resource.patchStaged(resourceId, patchSet, 'value'));
-    dispatch(actions.resource.commitStaged('imports', resourceId, 'value'));
-    onClose();
+      script: {
+        _scriptId: scriptId,
+        function: entryFunction,
+      },
+    };
   };
+
+  const saveScript = useCallback(
+    values => {
+      const { code, scriptId } = values;
+      const patchSet = [
+        {
+          op: 'replace',
+          path: '/content',
+          value: code,
+        },
+      ];
+
+      dispatch(actions.resource.patchStaged(scriptId, patchSet, 'value'));
+      dispatch(actions.resource.commitStaged('scripts', scriptId, 'value'));
+    },
+    [dispatch]
+  );
+  const handleClose = useCallback(
+    (shouldCommit, editorValues = {}) => {
+      if (shouldCommit) {
+        const responseTransformData = constructTransformData(editorValues);
+        const sampleResponseData = editorValues.data;
+
+        if (responseTransformData.type === 'script') {
+          saveScript(editorValues);
+        }
+
+        saveResponseTransform({
+          sampleResponseData,
+          responseTransform: responseTransformData,
+        });
+      }
+
+      // Closes Editor
+      onClose();
+    },
+    [onClose, saveResponseTransform, saveScript]
+  );
 
   return (
-    <ModalDialog onClose={onClose} show={open}>
-      <div>Response Transform</div>
-      <div>
-        <DynaForm
-          disabled={isViewMode}
-          fieldMeta={fieldMeta}
-          optionsHandler={optionsHandler}>
-          <DynaSubmit data-test="saveResponseTransform" onClick={handleSubmit}>
-            Save
-          </DynaSubmit>
-          <Button data-test="cancelResponseTransform" onClick={onClose}>
-            Cancel
-          </Button>
-        </DynaForm>
-      </div>
-    </ModalDialog>
+    <TransformToggleEditorDialog
+      title="Transform Record"
+      id={resourceId}
+      disabled={isViewMode}
+      data={sampleResponseData}
+      type={type}
+      scriptId={scriptId}
+      rule={rule}
+      entryFunction={entryFunction || hooksToFunctionNamesMap.transform}
+      insertStubKey="transform"
+      onClose={handleClose}
+    />
   );
 }
 
