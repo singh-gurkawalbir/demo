@@ -4,26 +4,19 @@ import Typography from '@material-ui/core/Typography';
 const useStyles = makeStyles({
   root: {
     padding: '3px 10px',
-    textAlign: 'center',
-    maxWidth: '240px',
+    width: 350,
     wordBreak: 'break-word',
-  },
-  content: {
-    textTransform: 'capitalize',
     lineHeight: 'inherit',
   },
 });
 
-function TooltipContent(props) {
+function TooltipContent({ children }) {
   const classes = useStyles();
-  const { children } = props;
 
   return (
-    <div className={classes.root}>
-      <Typography className={classes.content} variant="body2">
-        {children}
-      </Typography>
-    </div>
+    <Typography className={classes.root} component="div" variant="body2">
+      {children}
+    </Typography>
   );
 }
 

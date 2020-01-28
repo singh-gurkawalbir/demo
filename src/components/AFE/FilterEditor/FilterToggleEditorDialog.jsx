@@ -19,6 +19,7 @@ export default function FilterToggleEditorDialog(props) {
     height: '60vh',
     layout: 'column',
     open: true,
+    labels: ['Rules', 'Javascript'],
   };
 
   return (
