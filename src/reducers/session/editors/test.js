@@ -469,7 +469,7 @@ describe('editor selectors', () => {
           },
           violations: {
             dataError: 'Unexpected end of JSON input',
-            ruleError: null,
+            ruleError: undefined,
           },
         },
       },
