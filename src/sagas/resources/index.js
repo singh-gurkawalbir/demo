@@ -137,11 +137,9 @@ export function* commitStagedChanges({ resourceType, id, scope, isGenerate }) {
     });
 
     if (isGenerate && resourceType === 'connections') {
-      const path = `/connection/${updated._id}/generateoauth2token`;
-
       try {
         yield call(apiCallWithRetry, {
-          path,
+          path: `/connection/${updated._id}/generateoauth2token`,
           opts: {
             method: 'GET',
           },

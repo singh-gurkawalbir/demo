@@ -12,8 +12,12 @@ export default {
       newValues['/http/auth/oauth/failValues'] = undefined;
     }
 
-    if (!newValues['/http/ratLimit/failPath']) {
-      newValues['/http/rateLimit/failValues'] = undefined;
+    if (!newValues['/http/rateLimit/failPath']) {
+      newValues['/http/rateLimit/failValues'] = [];
+    }
+
+    if (!newValues['/http/ping/failPath']) {
+      newValues['/http/ping/failValues'] = undefined;
     }
 
     if (newValues['/http/ping/method'] === 'GET') {
@@ -342,7 +346,7 @@ export default {
       visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
     },
     'http.auth.oauth.failValues': {
-      id: 'http.oauth.auth.failValues',
+      id: 'http.auth.oauth.failValues',
       type: 'text',
       delimiter: ',',
       helpText:
