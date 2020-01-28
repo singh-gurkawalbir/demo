@@ -197,8 +197,16 @@ const PageGenerator = ({
     if (!pending || resourceId) {
       // even if we have a pending PG, as ling as we have a
       // resource, then the below logic still applies.
+      let connectorType = resource.adaptorType || resource.type;
+
+      if (connectorType === 'WebhookExport' || connectorType === 'webhook') {
+        if (resource.webhook && resource.webhook.provider) {
+          connectorType = resource.webhook.provider;
+        }
+      }
+
       return {
-        connectorType: resource.adaptorType || resource.type,
+        connectorType,
         assistant: resource.assistant,
         blockType:
           resource.adaptorType === 'WebhookExport' ? 'listener' : 'export',
