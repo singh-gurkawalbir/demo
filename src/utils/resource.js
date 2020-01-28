@@ -355,9 +355,9 @@ export const getHelpUrlForConnector = (_connectorId, marketplaceConnectors) => {
   let connectorToCategoryMap = {};
 
   if (domain === 'localhost.io') {
-    filteredConnectors = marketplaceConnectors.filter({
-      _id: _connectorId,
-    });
+    filteredConnectors = marketplaceConnectors.filter(
+      m => m._id === _connectorId
+    );
 
     if (filteredConnectors.length === 1) {
       connectorToCategoryMap = {
@@ -436,50 +436,17 @@ export const getHelpUrlForConnector = (_connectorId, marketplaceConnectors) => {
 export const getHelpUrl = (integrations, marketplaceConnectors) => {
   const domainUrl = getDomainUrl();
   const { href } = window.location;
-  let regex;
   let connectorId;
   let helpUrl = 'https://celigosuccess.zendesk.com/hc/en-us'; // platform help url
+  const newurl = href.replace(`${domainUrl}/`, '').split('/');
+  let integrationId;
 
-  if (
-    href.indexOf('/settings') > 0 &&
-    href.indexOf('/shared') > 0 &&
-    href.indexOf('/connectors') > 0
-  ) {
-    regex = new RegExp(
-      `(${domainUrl}/shared/connectors/)(.*)(/settings)`,
-      'gi'
-    );
-  } else if (
-    href.indexOf('/settings') > 0 &&
-    href.indexOf('/shared/integrations') > 0
-  ) {
-    regex = new RegExp(
-      `(${domainUrl}/shared/integrations/)(.*)(/settings)`,
-      'gi'
-    );
-  } else if (
-    href.indexOf('/settings') > 0 &&
-    href.indexOf('/shared') === -1 &&
-    href.indexOf('/connectors') > 0
-  ) {
-    regex = new RegExp(`(${domainUrl}/connectors/)(.*)(/settings)`, 'gi');
-  } else if (href.indexOf('/settings') === -1 && href.indexOf('/shared') > 0) {
-    regex = new RegExp(
-      `(${domainUrl}/shared/integrations/)(.*)(/dashboard)`,
-      'gi'
-    );
-  } else if (
-    href.indexOf('/settings') === -1 &&
-    href.indexOf('/shared') === -1
-  ) {
-    regex = new RegExp(`(${domainUrl}/integrations/)(.*)(/dashboard)`, 'gi');
-  } else if (href.indexOf('/settings') > 0 && href.indexOf('/shared') === -1) {
-    regex = new RegExp(`(${domainUrl}/integrations/)(.*)(/settings)`, 'gi');
-  } else if (href.indexOf('/setup') > 0 && href.indexOf('/shared') === -1) {
-    regex = new RegExp(`(${domainUrl}/connectors/)(.*)(/setup)`, 'gi');
+  if (href.indexOf('/integrationapps') > 0) {
+    [, , , integrationId] = newurl;
+  } else if (href.indexOf('/integrations') > 0) {
+    [, , integrationId] = newurl;
+    console.log('integrationId 2 ****', integrationId);
   }
-
-  const integrationId = href.replace(regex, '$2');
 
   if (integrationId && integrations.find(i => i._id === integrationId)) {
     connectorId = integrations.find(i => i._id === integrationId)._connectorId;
@@ -493,15 +460,6 @@ export const getHelpUrl = (integrations, marketplaceConnectors) => {
         'https://celigosuccess.zendesk.com/hc/en-us/categories/203820768';
     }
   }
-
-  // if (
-  //   app.currentPage &&
-  //   app.currentPage.model &&
-  //   app.currentPage.model.helpUrl
-  // ) {
-  //   // SS connectors
-  //   helpUrl = app.currentPage.model.helpUrl;
-  // }
 
   return helpUrl;
 };

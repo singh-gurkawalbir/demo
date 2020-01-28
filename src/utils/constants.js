@@ -310,5 +310,5 @@ export const USAGE_TIER_HOURS = {
 };
 export const SUBMIT_TICKET_URL =
   'https://celigosuccess.zendesk.com/hc/en-us/requests/new?preview_as_role=end_user';
-export const WHAT_NEW_URL =
+export const WHATS_NEW_URL =
   'https://celigosuccess.zendesk.com/hc/en-us/sections/115000074091-Release-Notes?latest=true';

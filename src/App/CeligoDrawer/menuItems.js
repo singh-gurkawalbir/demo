@@ -19,7 +19,7 @@ import TicketTagIcon from '../../components/icons/TicketTagIcon';
 import RecycleBinIcon from '../../components/icons/RecycleBinIcon';
 import TokensApiIcon from '../../components/icons/TokensApiIcon';
 import { getHelpUrl } from '../../utils/resource';
-import { SUBMIT_TICKET_URL, WHAT_NEW_URL } from '../../utils/constants';
+import { SUBMIT_TICKET_URL, WHATS_NEW_URL } from '../../utils/constants';
 
 export default function menuItems(
   userProfile,
@@ -116,7 +116,7 @@ export default function menuItems(
           label: `What's New`,
           Icon: TicketTagIcon,
           component: 'a',
-          href: WHAT_NEW_URL,
+          href: WHATS_NEW_URL,
         },
       ],
     },
