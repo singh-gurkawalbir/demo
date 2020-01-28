@@ -64,9 +64,12 @@ export function getPreviewStageData(previewData, previewStage = 'parse') {
   // Incase of raw preview stage, returns the first stage data is in
   // Incase of http/rest first stage is 'raw' but for NS/SF it is parse
   if (previewStage === 'raw') {
-    const initialStage = stages[0] || {};
+    // Fetches first of 'raw' or 'parse' stage from preview data
+    const stageData = stages.find(
+      stage => stage.name === 'raw' || stage.name === 'parse'
+    );
 
-    return initialStage.data;
+    return stageData && stageData.data;
   }
 
   const parseStage = stages.find(stage => stage.name === previewStage);

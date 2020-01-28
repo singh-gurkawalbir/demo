@@ -254,10 +254,14 @@ const PageProcessor = ({
               },
             ]
           : []),
-        {
-          ...responseTransformationAction,
-          isUsed: usedActions[actionsMap.responseTransformation],
-        },
+        ...(!isLast
+          ? [
+              {
+                ...responseTransformationAction,
+                isUsed: usedActions[actionsMap.responseTransformation],
+              },
+            ]
+          : []),
         {
           ...pageProcessorHooksAction,
           isUsed: usedActions[actionsMap.hooks],
