@@ -1,7 +1,7 @@
 import { useDispatch } from 'react-redux';
 import { IconButton } from '@material-ui/core';
 import actions from '../../../../../actions';
-import CloseIcon from '../../../../icons/CloseIcon';
+import Icon from '../../../../icons/RevokeTokenIcon';
 import { confirmDialog } from '../../../../ConfirmDialog';
 
 export default {
@@ -34,7 +34,7 @@ export default {
 
     return (
       <IconButton data-test="revoke" size="small" onClick={handleClick}>
-        <CloseIcon />
+        <Icon />
       </IconButton>
     );
   },
