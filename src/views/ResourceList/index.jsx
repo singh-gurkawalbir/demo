@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { withRouter, Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
