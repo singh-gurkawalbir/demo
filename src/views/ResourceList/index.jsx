@@ -26,7 +26,7 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(3, 3, 12, 3),
   },
 }));
-const defaultFilter = useMemo(() => ({ take: 3 }), []);
+const defaultFilter = { take: 10 };
 
 function ResourceList(props) {
   const { match, location } = props;
