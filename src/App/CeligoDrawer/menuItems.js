@@ -173,7 +173,7 @@ export default function menuItems(
 
     if (userPermissions.accessLevel !== 'owner') {
       resourceItems.children = resourceItems.children.filter(
-        i => i.label !== 'API Tokens'
+        i => i.label !== 'API tokens'
       );
     }
   }

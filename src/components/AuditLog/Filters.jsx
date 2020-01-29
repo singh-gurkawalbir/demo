@@ -1,8 +1,6 @@
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
-import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import { withStyles } from '@material-ui/core';
 import { sortBy } from 'lodash';
@@ -13,7 +11,7 @@ import {
 import { AUDIT_LOG_SOURCE_LABELS, OPTION_ALL } from './util';
 import * as selectors from '../../reducers';
 import { ResourceTypeFilter, ResourceIdFilter } from './ResourceFilters';
-import ArrowDownIcon from '../icons/ArrowDownIcon';
+import CeligoSelect from '../CeligoSelect';
 
 const mapStateToProps = (state, { resourceType, resourceId }) => {
   const {
@@ -37,43 +35,15 @@ const mapStateToProps = (state, { resourceType, resourceId }) => {
     flexWrap: 'wrap',
   },
   formControl: {
-    margin: theme.spacing(1),
-    minWidth: 200,
-    maxWidth: 300,
+    marginRight: theme.spacing(1),
+    minWidth: theme.spacing(20),
+    maxWidth: theme.spacing(30),
   },
   selectEmpty: {
     marginTop: theme.spacing(2),
   },
-  select: {
-    background: theme.palette.background.paper,
-    border: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
-    transitionProperty: 'border',
-    transitionDuration: theme.transitions.duration.short,
-    transitionTimingFunction: theme.transitions.easing.easeInOut,
-    overflow: 'hidden',
-    height: 42,
-    textAlign: 'left',
-    borderRadius: 2,
-    '& > div': {
-      maxWidth: '85%',
-    },
-    '& > Label': {
-      paddingTop: 10,
-    },
-    '&:hover': {
-      borderColor: theme.palette.primary.main,
-    },
-    '& > *': {
-      padding: [[0, 0, 0, 12]],
-    },
-    '& > div > div ': {
-      paddingBottom: 5,
-    },
-    '& svg': {
-      right: 8,
-      paddingLeft: 0,
-    },
+  filterWrapper: {
+    padding: theme.spacing(2, 1, 1, 1),
   },
 }))
 class Filters extends Component {
@@ -137,23 +107,21 @@ class Filters extends Component {
 
     return (
       <FormControl className={classes.formControl}>
-        <InputLabel htmlFor="_resourceId">
-          Select {RESOURCE_TYPE_SINGULAR_TO_LABEL[filters.resourceType]}
-        </InputLabel>
-        <Select
+        <CeligoSelect
           inputProps={{
             name: '_resourceId',
             id: '_resourceId',
           }}
-          className={classes.select}
-          IconComponent={ArrowDownIcon}
           value={filters._resourceId}
           onChange={this.handleChange}>
+          <MenuItem value="" disabled>
+            Select {RESOURCE_TYPE_SINGULAR_TO_LABEL[filters.resourceType]}
+          </MenuItem>
           <MenuItem key={OPTION_ALL.id} value={OPTION_ALL.id}>
             {OPTION_ALL.label}
           </MenuItem>
           {menuOptions}
-        </Select>
+        </CeligoSelect>
       </FormControl>
     );
   };
@@ -184,72 +152,74 @@ class Filters extends Component {
     const resource = this.getResource();
 
     return (
-      <form className={classes.root} autoComplete="off">
-        <ResourceTypeFilter
-          {...this.props}
-          filters={this.state.filters}
-          onChange={this.handleChange}
-        />
-        <ResourceIdFilter
-          {...this.props}
-          filters={this.state.filters}
-          onChange={this.handleChange}
-        />
-        <FormControl className={classes.formControl}>
-          <InputLabel htmlFor="byUser">Select User</InputLabel>
-          <Select
-            inputProps={{
-              name: 'byUser',
-              id: 'byUser',
-            }}
-            className={classes.select}
-            IconComponent={ArrowDownIcon}
+      <div className={classes.filterWrapper}>
+        <form className={classes.root} autoComplete="off">
+          <ResourceTypeFilter
+            {...this.props}
+            filters={this.state.filters}
             onChange={this.handleChange}
-            value={byUser}>
-            <MenuItem key={OPTION_ALL.id} value={OPTION_ALL.id}>
-              All
-            </MenuItem>
-            {users.map(opt => (
-              <MenuItem key={opt._id} value={opt._id}>
-                {opt.name || opt.email}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <FormControl className={classes.formControl}>
-          <InputLabel htmlFor="source">Select Source</InputLabel>
-          <Select
-            inputProps={{
-              name: 'source',
-              id: 'source',
-            }}
-            className={classes.select}
-            IconComponent={ArrowDownIcon}
+          />
+          <ResourceIdFilter
+            {...this.props}
+            filters={this.state.filters}
             onChange={this.handleChange}
-            value={source}>
-            {[
-              [OPTION_ALL.id, OPTION_ALL.label],
-              ...Object.keys(AUDIT_LOG_SOURCE_LABELS)
-                .filter(k => {
-                  if (!resource) {
-                    return true;
-                  }
-
-                  if (resource._connectorId) {
-                    return k !== 'stack';
-                  }
-
-                  return k !== 'connector';
-                })
-                .map(k => [k, AUDIT_LOG_SOURCE_LABELS[k]]),
-            ].map(opt => (
-              <MenuItem key={opt[0]} value={opt[0]}>
-                {opt[1]}
+          />
+          <FormControl className={classes.formControl}>
+            <CeligoSelect
+              inputProps={{
+                name: 'byUser',
+                id: 'byUser',
+              }}
+              onChange={this.handleChange}
+              value={byUser}>
+              <MenuItem value="select user" disabled>
+                Select user
               </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-      </form>
+              <MenuItem key={OPTION_ALL.id} value={OPTION_ALL.id}>
+                All
+              </MenuItem>
+              {users.map(opt => (
+                <MenuItem key={opt._id} value={opt._id}>
+                  {opt.name || opt.email}
+                </MenuItem>
+              ))}
+            </CeligoSelect>
+          </FormControl>
+          <FormControl className={classes.formControl}>
+            <CeligoSelect
+              inputProps={{
+                name: 'source',
+                id: 'source',
+              }}
+              onChange={this.handleChange}
+              value={source}>
+              <MenuItem value="" disabled>
+                Select source
+              </MenuItem>
+              {[
+                [OPTION_ALL.id, OPTION_ALL.label],
+                ...Object.keys(AUDIT_LOG_SOURCE_LABELS)
+                  .filter(k => {
+                    if (!resource) {
+                      return true;
+                    }
+
+                    if (resource._connectorId) {
+                      return k !== 'stack';
+                    }
+
+                    return k !== 'connector';
+                  })
+                  .map(k => [k, AUDIT_LOG_SOURCE_LABELS[k]]),
+              ].map(opt => (
+                <MenuItem key={opt[0]} value={opt[0]}>
+                  {opt[1]}
+                </MenuItem>
+              ))}
+            </CeligoSelect>
+          </FormControl>
+        </form>
+      </div>
     );
   }
 }

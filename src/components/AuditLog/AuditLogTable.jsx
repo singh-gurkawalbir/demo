@@ -24,23 +24,11 @@ const mapStateToProps = (state, { resourceType, resourceId, filters }) => {
 
 @withStyles(theme => ({
   root: {
-    width: '98%',
+    width: '100%',
     marginLeft: theme.spacing(1),
   },
-  table: {
-    minWidth: 700,
-  },
-  tablePaginationRoot: { float: 'left' },
-  columnTime: { minWidth: 230 },
-  columnSource: { minWidth: 125 },
-  columnUser: { minWidth: 200 },
-  columnResourceType: { minWidth: 220 },
-  columnResourceName: { minWidth: 240 },
-  columnAction: { minWidth: 100 },
-  columnField: { minWidth: 270 },
-  columnOldValue: { minWidth: 330 },
-  columnNewValue: { minWidth: 330 },
-  textAlignCenter: { textAlign: 'center' },
+
+  tablePaginationRoot: { float: 'right' },
 }))
 class AuditLogTable extends Component {
   state = {

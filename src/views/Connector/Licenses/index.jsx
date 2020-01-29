@@ -69,7 +69,7 @@ export default function Licenses(props) {
             to={`${location.pathname}/add/connectorLicenses/${generateNewId()}`}
             variant="text"
             color="primary">
-            <AddIcon /> New License
+            <AddIcon /> New license
           </IconTextButton>
         </div>
       </CeligoPageBar>

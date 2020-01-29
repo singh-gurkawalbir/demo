@@ -1,4 +1,4 @@
-import React from 'react';
+import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles({
@@ -16,9 +16,12 @@ const useStyles = makeStyles({
 });
 
 function ButtonGroup(props) {
+  const { className } = props;
   const classes = useStyles();
 
-  return <div className={classes.wrapper}>{props.children}</div>;
+  return (
+    <div className={clsx(classes.wrapper, className)}>{props.children}</div>
+  );
 }
 
 export default ButtonGroup;
