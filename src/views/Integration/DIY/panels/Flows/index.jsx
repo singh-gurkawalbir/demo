@@ -61,6 +61,12 @@ export default function FlowsPanel({ integrationId }) {
             <AttachIcon /> Attach flow
           </IconTextButton>
         )}
+        <IconTextButton
+          component={Link}
+          to="dataLoader/new"
+          data-test="loadData">
+          <AddIcon /> Load data
+        </IconTextButton>
       </PanelHeader>
 
       <LoadResources required resources="flows,exports">
