@@ -239,8 +239,6 @@ function FlowBuilder() {
   //
   // #region Selectors
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
-
-  console.log('opened', drawerOpened);
   const newFlowId = useSelector(state =>
     selectors.createdResourceId(state, flowId)
   );
