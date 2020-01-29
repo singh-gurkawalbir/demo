@@ -94,7 +94,7 @@ export default function DynaResponseTransformEditor(props) {
     <Fragment>
       {showEditor && (
         <TransformToggleEditorDialog
-          title="Transform Record"
+          title="Transform record"
           id={id + resourceId}
           disabled={disabled}
           data={options.sampleResponseData}
