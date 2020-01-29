@@ -29,6 +29,10 @@ const useStyles = makeStyles(theme => ({
   block: {
     marginTop: theme.spacing(1),
   },
+  radioGroup: {
+    marginLeft: theme.spacing(1),
+    marginTop: 6,
+  },
 }));
 
 export default function DynaRadio(props) {
@@ -90,7 +94,7 @@ export default function DynaRadio(props) {
       <RadioGroup
         data-test={id}
         aria-label={label}
-        className={clsx({
+        className={clsx(classes.radioGroup, {
           [classes.columnFlexWrapper]: showOptionsVertically,
         })}
         name={name}

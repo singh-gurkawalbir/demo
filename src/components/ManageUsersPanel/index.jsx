@@ -37,7 +37,7 @@ export default function ManageUsersPanel({ integrationId }) {
         onSuccess={handleCloseDialog}
       />
 
-      <PanelHeader title="Users" popperMaxWidth={350} infoText={infoTextUsers}>
+      <PanelHeader title="Users" infoText={infoTextUsers}>
         {isAccountOwner && (
           <IconTextButton onClick={handleInviteUserClick}>
             <UsersIcon /> Invite user

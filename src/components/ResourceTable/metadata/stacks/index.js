@@ -40,7 +40,7 @@ export default {
       value: r => r.lambda && r.lambda.accessKeyId,
     },
     {
-      heading: `Updated on`,
+      heading: `Last updated`,
       value: r => formatLastModified(r.lastModified),
       orderBy: 'lastModified',
     },

@@ -1,5 +1,4 @@
 import { Fragment, useState, useCallback } from 'react';
-import clsx from 'clsx';
 import { Typography, makeStyles, IconButton } from '@material-ui/core';
 import InfoIcon from '../icons/InfoIcon';
 import ArrowPopper from '../ArrowPopper';
@@ -16,7 +15,7 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.text.hint,
   },
   popperMaxWidthView: {
-    maxWidth: props => props.popperMaxWidth,
+    maxWidth: 350,
     textAlign: 'left',
     overflow: 'hidden',
     '& p': {
@@ -26,8 +25,8 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function PanelHeader(props) {
-  const { title, children, infoText, popperMaxWidth } = props;
-  const classes = useStyles({ popperMaxWidth });
+  const { title, children, infoText } = props;
+  const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
   const handleInfoOpen = useCallback(event => {
     setAnchorEl(event.currentTarget);
@@ -57,10 +56,7 @@ export default function PanelHeader(props) {
               anchorEl={anchorEl}
               placement="right-start"
               onClose={handleInfoClose}>
-              <TooltipContent
-                className={clsx({
-                  [classes.popperMaxWidthView]: popperMaxWidth,
-                })}>
+              <TooltipContent className={classes.popperMaxWidthView}>
                 {infoText}
               </TooltipContent>
             </ArrowPopper>

@@ -11,7 +11,7 @@ export default {
       ...rest,
     };
 
-    if (type === 'webhook') {
+    if (type === 'webhook' || (application !== 'webhook' && app.webhookOnly)) {
       newValues['/type'] = 'webhook';
       newValues['/adaptorType'] = 'WebhookExport';
       newValues['/webhook/provider'] = application;
@@ -113,10 +113,6 @@ export default {
   optionsHandler: (fieldId, fields) => {
     const appField = fields.find(field => field.id === 'application');
     const app = applications.find(a => a.id === appField.value) || {};
-
-    if (fieldId === 'name') {
-      return `New ${app.name} Export`;
-    }
 
     if (fieldId === 'connection') {
       const expression = [];

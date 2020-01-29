@@ -30,23 +30,21 @@ const useStyles = makeStyles(theme => ({
     }),
   },
   pageBarOffset: { height: theme.pageBarHeight },
-
-  infoPopper: {
-    maxWidth: 350,
-    textAlign: 'left',
+  emptySpace: {
+    flexGrow: 1,
+    minWidth: theme.spacing(10),
+  },
+  title: {
+    minWidth: 70,
+    whiteSpace: 'nowrap',
     overflow: 'hidden',
-    '& p': {
-      textTransform: 'none',
-    },
-  },
-  infoPopperMaxWidthView: {
-    maxWidth: props => props.infoPopperMaxWidth,
-  },
-  subTitle: {
-    float: 'left',
+    textOverflow: 'ellipsis',
   },
   bannerOffset: {
     height: theme.pageBarHeight + 66,
+  },
+  subTitleShift: {
+    marginLeft: theme.spacing(4),
   },
 }));
 
@@ -59,9 +57,8 @@ export default function CeligoPageBar(props) {
     subtitle,
     titleTag,
     className,
-    infoPopperMaxWidth,
   } = props;
-  const classes = useStyles(props);
+  const classes = useStyles();
   const location = useLocation();
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
   const bannerOpened = useSelector(state => selectors.bannerOpened(state));
@@ -87,49 +84,47 @@ export default function CeligoPageBar(props) {
             square>
             {showBanner && <WelcomeBanner />}
 
-            <Grid container justify="space-between">
-              <Grid item>
-                <Typography variant="h3">
-                  {history && (
-                    // eslint-disable-next-line react/jsx-handler-names
-                    <IconButton onClick={history.goBack}>
-                      <ArrowLeftIcon />
-                    </IconButton>
-                  )}
-                  {title}
-                  {titleTag && <span>{titleTag}</span>}
-                  {infoText && (
-                    <Fragment>
-                      <IconButton
-                        data-test="openPageInfo"
-                        size="small"
-                        onClick={handleInfoOpen}
-                        aria-owns={!anchorEl ? null : 'pageInfo'}
-                        aria-haspopup="true">
-                        <InfoIcon />
-                      </IconButton>
-                      <ArrowPopper
-                        id="pageInfo"
-                        open={!!anchorEl}
-                        anchorEl={anchorEl}
-                        placement="right-start"
-                        onClose={handleInfoClose}>
-                        <TooltipContent
-                          className={clsx(classes.infoPopper, {
-                            [classes.infoPopperMaxWidthView]: infoPopperMaxWidth,
-                          })}>
-                          {infoText}
-                        </TooltipContent>
-                      </ArrowPopper>
-                    </Fragment>
-                  )}
-                </Typography>
-                <Typography variant="caption" className={classes.subTitle}>
-                  {subtitle}
-                </Typography>
-              </Grid>
-              <Grid item>{children}</Grid>
+            <Grid item container wrap="nowrap" alignItems="center">
+              {history && (
+                // eslint-disable-next-line react/jsx-handler-names
+                <IconButton size="small" onClick={history.goBack}>
+                  <ArrowLeftIcon />
+                </IconButton>
+              )}
+              <Typography className={classes.title} variant="h3">
+                {title}
+              </Typography>
+              {titleTag && <span>{titleTag}</span>}
+              {infoText && (
+                <Fragment>
+                  <IconButton
+                    data-test="openPageInfo"
+                    size="small"
+                    onClick={handleInfoOpen}
+                    aria-owns={!anchorEl ? null : 'pageInfo'}
+                    aria-haspopup="true">
+                    <InfoIcon />
+                  </IconButton>
+                  <ArrowPopper
+                    id="pageInfo"
+                    open={!!anchorEl}
+                    anchorEl={anchorEl}
+                    placement="right-start"
+                    onClose={handleInfoClose}>
+                    <TooltipContent className={classes.infoText}>
+                      {infoText}
+                    </TooltipContent>
+                  </ArrowPopper>
+                </Fragment>
+              )}
+              <div className={classes.emptySpace} />
+              {children}
             </Grid>
+            <Typography
+              variant="caption"
+              className={clsx({ [classes.subTitleShift]: history })}>
+              {subtitle}
+            </Typography>
           </Paper>
         </ElevateOnScroll>
       </SlideOnScroll>

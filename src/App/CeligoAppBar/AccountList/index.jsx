@@ -45,7 +45,11 @@ const useStyles = makeStyles(theme => ({
   },
   itemContainer: {
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
-    '& button': { display: 'none' },
+    '& button': {
+      minWidth: 0,
+      display: 'none',
+      paddingRight: theme.spacing(1),
+    },
     '&:hover button': {
       display: 'block',
     },
@@ -60,9 +64,9 @@ const useStyles = makeStyles(theme => ({
     right: 0,
   },
   itemRoot: {
-    maxWidth: '80%',
     wordBreak: 'break-word',
     padding: theme.spacing(1),
+    paddingRight: '20%',
     '&:before': {
       content: '""',
       width: '3px',

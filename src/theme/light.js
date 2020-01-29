@@ -448,6 +448,7 @@ export default {
         color: colors.celigoNeutral5,
         padding: 0,
         marginRight: 4,
+        marginTop: -4,
       },
     },
     MuiInputBase: {
@@ -521,6 +522,8 @@ export default {
         color: colors.celigoNeutral5,
         padding: 0,
         marginRight: 4,
+        borderRadius: 0,
+        marginTop: -4,
       },
     },
     MuiTabs: {

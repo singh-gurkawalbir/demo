@@ -60,6 +60,7 @@ class CodeEditor extends Component {
       wrap,
       showGutter,
       showInvisibles,
+      useWorker,
       enableAutocomplete,
     } = this.props;
     const valueAsString =
@@ -84,6 +85,7 @@ class CodeEditor extends Component {
           this.aceEditor = c;
         }}
         setOptions={{
+          useWorker,
           showInvisibles,
           wrap,
           // showLineNumbers: true,

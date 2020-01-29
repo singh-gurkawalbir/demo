@@ -31,7 +31,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function TemplateList(props) {
   const { location, history } = props;
-  const defaultFilter = useMemo(() => ({ take: 3 }), []);
+  const defaultFilter = useMemo(() => ({ take: 10 }), []);
   const classes = useStyles();
   const filter =
     useSelector(state => selectors.filter(state, 'templates')) || defaultFilter;
@@ -67,34 +67,38 @@ export default function TemplateList(props) {
         )}
         <CeligoPageBar title="Templates" infoText={InfoText.templates}>
           <div className={classes.actions}>
+            <KeywordSearch
+              filterKey="templates"
+              defaultFilter={defaultFilter}
+            />
+
             <IconTextButton
               data-test="uploadTemplateZip"
               onClick={() => setShowUploadZipDialog(true)}
               variant="text">
               <InstallIcon />
-              Install Integration
+              Install integration
             </IconTextButton>
+
             <IconTextButton
               data-test="generateTemplateZip"
               onClick={() => setShowGenerateZipDialog(true)}
               variant="text">
               <AddIcon />
-              Generate Template Zip
+              Generate template zip
             </IconTextButton>
-            <KeywordSearch
-              filterKey="templates"
-              defaultFilter={defaultFilter}
-            />
+
             <IconTextButton
               data-test="addNewListing"
               component={Link}
               to={`${location.pathname}/add/templates/${generateNewId()}`}
               variant="text"
               color="primary">
-              <AddIcon /> New Listing
+              <AddIcon /> New listing
             </IconTextButton>
           </div>
         </CeligoPageBar>
+
         <div className={classes.resultContainer}>
           <LoadResources required resources={['templates', 'integrations']}>
             <CeligoTable

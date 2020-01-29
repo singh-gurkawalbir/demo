@@ -25,7 +25,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function Licenses(props) {
-  const defaultFilter = useMemo(() => ({ take: 5 }), []);
+  const defaultFilter = useMemo(() => ({ take: 10 }), []);
   const { match, location, history } = props;
   const { connectorId } = match.params;
   const classes = useStyles();
