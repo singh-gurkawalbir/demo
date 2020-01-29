@@ -40,7 +40,8 @@ export default {
 
     if (
       newValues['/http/auth/type'] !== 'basic' &&
-      newValues['/http/auth/type'] !== 'digest'
+      newValues['/http/auth/type'] !== 'digest' &&
+      newValues['/http/auth/type'] !== 'wsse'
     ) {
       delete newValues['/http/auth/basic/username'];
       delete newValues['/http/auth/basic/password'];
@@ -84,6 +85,11 @@ export default {
       delete newValues['/http/auth/cookie/uri'];
     }
 
+    if (newValues['/http/auth/type'] === 'wsse') {
+      newValues['/http/auth/token/headerName'] =
+        newValues['/http/auth/wsse/headerName'];
+    }
+
     if (newValues['/http/auth/type'] === 'oauth') {
       newValues['/http/headers'] = newValues['/http/oauth/headers'];
       newValues['/http/baseURI'] = newValues['/http/oauth/baseURI'];
@@ -120,6 +126,7 @@ export default {
     delete newValues['/http/auth/oauth/scheme'];
     delete newValues['/http/auth/oauth/paramName'];
     delete newValues['/http/oauth/customAuthScheme'];
+    delete newValues['/http/auth/wsse/headerName'];
 
     return newValues;
   },
@@ -170,10 +177,7 @@ export default {
     },
     'http.encrypted': {
       fieldId: 'http.encrypted',
-      visibleWhen: [
-        { field: 'http.auth.type', is: ['token', 'custom'] },
-        { field: 'http.auth.type', isNot: ['oauth'] },
-      ],
+      visibleWhen: [{ field: 'http.auth.type', isNot: ['oauth'] }],
       defaultValue: r =>
         (r && r.http && r.http.encrypted && JSON.stringify(r.http.encrypted)) ||
         '{"field": "value"}',
@@ -181,10 +185,7 @@ export default {
     'http.disableStrictSSL': { fieldId: 'http.disableStrictSSL' },
     'http.unencrypted': {
       fieldId: 'http.unencrypted',
-      visibleWhen: [
-        { field: 'http.auth.type', is: ['token', 'custom'] },
-        { field: 'http.auth.type', isNot: ['oauth'] },
-      ],
+      visibleWhen: [{ field: 'http.auth.type', isNot: ['oauth'] }],
       defaultValue: r =>
         (r &&
           r.http &&
@@ -194,7 +195,9 @@ export default {
     },
     httpBasic: {
       formId: 'httpBasic',
-      visibleWhen: [{ field: 'http.auth.type', is: ['basic', 'digest'] }],
+      visibleWhen: [
+        { field: 'http.auth.type', is: ['basic', 'digest', 'wsse'] },
+      ],
     },
     httpToken: {
       formId: 'httpToken',
@@ -203,6 +206,21 @@ export default {
     httpCookie: {
       formId: 'httpCookie',
       visibleWhenAll: [{ field: 'http.auth.type', is: ['cookie'] }],
+    },
+    'http.auth.wsse.headerName': {
+      id: 'http.auth.wsse.headerName',
+      type: 'text',
+      label: 'Header Name',
+      helpText:
+        "By default, integrator.io will send all authentication type info in the 'Authorization: HTTP header field.  If the API you are connecting to requires a different HTTP header, use this field to provide an override.",
+      defaultValue: r =>
+        (r &&
+          r.http &&
+          r.http.auth &&
+          r.http.auth.token &&
+          r.http.auth.token.headerName) ||
+        'X-WSSE',
+      visibleWhen: [{ field: 'http.auth.type', is: ['wsse'] }],
     },
     'http.rateLimit.limit': { fieldId: 'http.rateLimit.limit' },
     'http.rateLimit.failStatusCode': {
@@ -566,6 +584,7 @@ export default {
       'httpBasic',
       'httpToken',
       'httpCookie',
+      'http.auth.wsse.headerName',
       'http.auth.oauth.applicationType',
     ],
     type: 'collapse',
@@ -673,7 +692,7 @@ export default {
       visibleWhen: [
         {
           field: 'http.auth.type',
-          is: ['token', 'basic', 'custom', 'cookie', 'digest'],
+          is: ['token', 'basic', 'custom', 'cookie', 'digest', 'wsse'],
         },
       ],
     },
@@ -683,7 +702,7 @@ export default {
       visibleWhen: [
         {
           field: 'http.auth.type',
-          is: ['token', 'basic', 'custom', 'cookie', 'digest'],
+          is: ['token', 'basic', 'custom', 'cookie', 'digest', 'wsse'],
         },
       ],
     },
