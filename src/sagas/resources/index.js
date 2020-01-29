@@ -138,12 +138,25 @@ export function* commitStagedChanges({ resourceType, id, scope, isGenerate }) {
 
     if (isGenerate && resourceType === 'connections') {
       try {
-        yield call(apiCallWithRetry, {
+        const response = yield call(apiCallWithRetry, {
           path: `/connection/${updated._id}/generateoauth2token`,
           opts: {
             method: 'GET',
           },
         });
+
+        if (response && response.errors) {
+          yield put(
+            actions.api.failure(
+              path,
+              'GET',
+              JSON.stringify(response.errors),
+              false
+            )
+          );
+
+          return { error: response.errors };
+        }
       } catch (error) {
         return { error };
       }

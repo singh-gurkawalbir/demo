@@ -109,6 +109,7 @@ export default {
     }
 
     if (newValues['/http/auth/type'] === 'oauth') {
+      newValues['/http/auth/oauth/applicationType'] = 'custom';
       newValues['/http/headers'] = newValues['/http/oauth/headers'];
       newValues['/http/baseURI'] = newValues['/http/oauth/baseURI'];
       newValues['/http/mediaType'] = newValues['/http/oauth/mediaType'];
@@ -587,7 +588,6 @@ export default {
       'httpBasic',
       'httpToken',
       'httpCookie',
-      'http.auth.oauth.applicationType',
     ],
     type: 'collapse',
     containers: [
