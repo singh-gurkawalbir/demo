@@ -206,7 +206,7 @@ const routes = [
     ],
   },
   { path: '/pg/templates', breadcrumb: () => 'Templates' },
-  { path: '/pg/accesstokens', breadcrumb: () => 'API Tokens' },
+  { path: '/pg/accesstokens', breadcrumb: () => 'API tokens' },
   // Dev tools
   { path: '/pg/resources', breadcrumb: () => 'Resources' },
   { path: '/pg/editors', breadcrumb: () => 'Editor playground' },

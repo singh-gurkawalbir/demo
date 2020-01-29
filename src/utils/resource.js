@@ -2,6 +2,7 @@ import { values } from 'lodash';
 import shortid from 'shortid';
 import getRoutePath from './routePaths';
 import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../constants/resource';
+import { isPageGeneratorResource } from './flows';
 
 export const MODEL_PLURAL_TO_LABEL = Object.freeze({
   agents: 'Agent',
@@ -178,13 +179,13 @@ export const getDomainUrl = () => {
 
 export const getApiUrl = () => getDomainUrl().replace('://', '://api.');
 
-export const getWebhookUrl = (formValues, resourceId) => {
+export const getWebhookUrl = (options = {}, resourceId) => {
   let whURL = '';
+  const { webHookProvider, webHookToken } = options;
 
   if (resourceId) {
     whURL = `${getApiUrl()}/v1/exports/`;
     whURL = whURL.concat(resourceId);
-    const provider = formValues['/webhook/provider'];
 
     if (
       [
@@ -203,9 +204,9 @@ export const getWebhookUrl = (formValues, resourceId) => {
         'parseur',
         'custom',
         'sapariba',
-      ].indexOf(provider) > -1
+      ].indexOf(webHookProvider) > -1
     ) {
-      whURL += `/${formValues['/webhook/token']}`;
+      if (webHookToken) whURL += `/${webHookToken}`;
     }
 
     whURL += '/data';
@@ -345,6 +346,23 @@ export const isRestCsvMediaTypeExport = (resource, connection) => {
 
   // Check for media type 'csv' from connection object
   return connection && connection.rest && connection.rest.mediaType === 'csv';
+};
+
+export const isFlowResource = (flow, resourceId, resourceType) => {
+  const { pageProcessors = [] } = flow || {};
+
+  // If resource type is imports search in pps
+  if (resourceType === 'imports') {
+    return !!pageProcessors.find(pp => pp._importId === resourceId);
+  }
+
+  // isPageGeneratorResource checks for pgs when resource type is exports
+  if (isPageGeneratorResource(flow, resourceId)) {
+    return true;
+  }
+
+  // If resource type is exports and not part of pgs, search in pps
+  return !!pageProcessors.find(pp => pp._exportId === resourceId);
 };
 
 export const getHelpUrlForConnector = (_connectorId, marketplaceConnectors) => {

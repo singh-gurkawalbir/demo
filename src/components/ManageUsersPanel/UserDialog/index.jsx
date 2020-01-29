@@ -101,7 +101,7 @@ export default function UserDialog({ open, userId, onClose, onSuccess }) {
       />
 
       <ModalDialog show={open} onClose={handleClose}>
-        <div>{userId ? 'Change user permissions' : 'Invite users'}</div>
+        <div>{userId ? 'Change user permissions' : 'Invite user'}</div>
         <div>
           {errorMessage && (
             <Typography color="error" variant="body2">

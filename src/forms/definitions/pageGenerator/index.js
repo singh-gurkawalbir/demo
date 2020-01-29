@@ -101,7 +101,8 @@ export default {
     existingExport: {
       id: 'exportId',
       name: 'exportId',
-      type: 'selectresource',
+      type: 'selectflowresource',
+      flowResourceType: 'pg',
       resourceType: 'exports',
       label: 'Existing Export',
       defaultValue: '',

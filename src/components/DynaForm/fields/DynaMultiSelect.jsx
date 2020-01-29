@@ -57,8 +57,8 @@ const useStyles = makeStyles(theme => ({
     margin: theme.spacing(0.25),
   },
   menuItems: {
-    paddingRight: 0,
-    paddingLeft: 0,
+    paddingRight: theme.spacing(1),
+    paddingLeft: theme.spacing(1),
     '&:before': {
       display: 'none',
     },

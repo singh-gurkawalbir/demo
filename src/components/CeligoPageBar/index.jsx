@@ -35,7 +35,7 @@ const useStyles = makeStyles(theme => ({
     minWidth: theme.spacing(10),
   },
   title: {
-    minWidth: 100,
+    minWidth: 70,
     whiteSpace: 'nowrap',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
@@ -48,15 +48,16 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function CeligoPageBar({
-  history,
-  children,
-  title,
-  infoText,
-  subtitle,
-  titleTag,
-  className,
-}) {
+export default function CeligoPageBar(props) {
+  const {
+    history,
+    children,
+    title,
+    infoText,
+    subtitle,
+    titleTag,
+    className,
+  } = props;
   const classes = useStyles();
   const location = useLocation();
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));

@@ -14,6 +14,7 @@ const useStyles = makeStyles(theme => ({
   },
   titleText: {
     maxWidth: '95%',
+    wordBreak: 'break-word',
   },
   closeButton: {
     position: 'absolute',
