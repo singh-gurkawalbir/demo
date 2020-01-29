@@ -2054,6 +2054,7 @@ export default {
     type: 'text',
     defaultValue: r => r && r.netsuite && r.netsuite.account,
     label: 'Account ID',
+    uppercase: true,
   },
   'netsuite.tokenId': {
     type: 'text',

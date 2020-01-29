@@ -40,6 +40,7 @@ export default function DynaText(props) {
     inputType,
     options,
     disableText = false,
+    uppercase = false,
   } = props;
   const [valueChanged, setValueChanged] = useState(false);
 
@@ -61,6 +62,10 @@ export default function DynaText(props) {
       returnVal = isNaN(valueAsNumber) ? null : valueAsNumber;
     } else {
       returnVal = value;
+    }
+
+    if (uppercase) {
+      returnVal = returnVal.toUpperCase();
     }
 
     if (!delimiter) {

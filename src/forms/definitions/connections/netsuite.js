@@ -114,6 +114,7 @@ export default {
       id: 'netsuite.oauthAccount',
       type: 'text',
       label: 'Account ID',
+      uppercase: true,
       defaultValue: r => r && r.netsuite && r.netsuite.account,
       visibleWhen: [{ field: 'netsuite.authType', is: ['oauth'] }],
     },
@@ -128,12 +129,28 @@ export default {
       ],
       visibleWhen: [{ field: 'netsuite.authType', is: ['basic'] }],
     },
+    'netsuite.oauth': {
+      id: 'netsuite.oauth',
+      type: 'text',
+      visible: false,
+      defaultValue: r => {
+        if (!(r && r.netsuite && r.netsuite.account)) {
+          return 'false';
+        }
+
+        return 'true';
+      },
+    },
     'netsuite.oauth.roleId': {
       fieldId: 'netsuite.oauth.roleId',
       type: 'text',
       label: 'Role',
+      defaultDisabled: true,
       defaultValue: r => r && r.netsuite && r.netsuite.roleId,
-      visibleWhen: [{ field: 'netsuite.authType', is: ['oauth'] }],
+      visibleWhenAll: [
+        { field: 'netsuite.authType', is: ['oauth'] },
+        { field: 'netsuite.oauth', is: ['true'] },
+      ],
     },
     'netsuite.tokenId': {
       fieldId: 'netsuite.tokenId',
@@ -160,6 +177,7 @@ export default {
       'netsuite.environment',
       'netsuite.tokenEnvironment',
       'netsuite.account',
+      'netsuite.oauth',
       'netsuite.tokenAccount',
       'netsuite.oauthAccount',
       'netsuite.oauth.roleId',
