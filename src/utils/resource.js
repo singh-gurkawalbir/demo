@@ -2,6 +2,7 @@ import { values } from 'lodash';
 import shortid from 'shortid';
 import getRoutePath from './routePaths';
 import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../constants/resource';
+import { isPageGeneratorResource } from './flows';
 
 export const MODEL_PLURAL_TO_LABEL = Object.freeze({
   agents: 'Agent',
@@ -345,6 +346,23 @@ export const isRestCsvMediaTypeExport = (resource, connection) => {
 
   // Check for media type 'csv' from connection object
   return connection && connection.rest && connection.rest.mediaType === 'csv';
+};
+
+export const isFlowResource = (flow, resourceId, resourceType) => {
+  const { pageProcessors = [] } = flow || {};
+
+  // If resource type is imports search in pps
+  if (resourceType === 'imports') {
+    return !!pageProcessors.find(pp => pp._importId === resourceId);
+  }
+
+  // isPageGeneratorResource checks for pgs when resource type is exports
+  if (isPageGeneratorResource(flow, resourceId)) {
+    return true;
+  }
+
+  // If resource type is exports and not part of pgs, search in pps
+  return !!pageProcessors.find(pp => pp._exportId === resourceId);
 };
 
 export const getHelpUrlForConnector = (_connectorId, marketplaceConnectors) => {
