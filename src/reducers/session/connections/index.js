@@ -3,9 +3,21 @@ import actionTypes from '../../../actions/types';
 
 export default (state = {}, action) => {
   const { type, debugLogs, connectionId, response } = action;
+  let connection;
 
   return produce(state, draft => {
     switch (type) {
+      case actionTypes.CONNECTION.AUTHORIZED:
+        // On successful authorization of oauth connection, set the connection status to online.
+        if (draft.status && Array.isArray(draft.status)) {
+          connection = draft.status.find(c => c._id === connectionId);
+
+          if (connection) {
+            connection.offline = false;
+          }
+        }
+
+        break;
       case actionTypes.CONNECTION.DEBUG_LOGS_RECEIVED:
         draft.debugLogs = { ...draft.debugLogs, [connectionId]: debugLogs };
         break;

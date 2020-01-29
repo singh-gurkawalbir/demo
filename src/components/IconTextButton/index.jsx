@@ -8,6 +8,7 @@ const useStyles = makeStyles({
   right: { marginLeft: 8, marginRight: -8 },
   root: {
     padding: '2px 20px',
+    whiteSpace: 'nowrap',
   },
 });
 const styledChildren = (children, classes) => {

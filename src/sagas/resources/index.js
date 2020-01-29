@@ -183,7 +183,7 @@ export function* commitStagedChanges({ resourceType, id, scope, isGenerate }) {
      calling ping after connection save sets the offline flag appropriately in the backend.
      UI shouldnt set offline flag. It should read status from db.
   */
-  if (resourceType === 'connections' && updated._id) {
+  if (resourceType === 'connections' && updated._id && isNew) {
     yield call(apiCallWithRetry, {
       path: `/connections/${updated._id}/ping`,
       hidden: true,

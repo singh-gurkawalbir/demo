@@ -37,6 +37,7 @@ export default function SettingsDrawer({ flow, isViewMode, ...props }) {
         id: 'name',
         name: 'name',
         type: 'text',
+        helpKey: 'flow.name',
         label: 'Name',
         defaultValue: flow && flow.name,
       },
@@ -44,6 +45,7 @@ export default function SettingsDrawer({ flow, isViewMode, ...props }) {
         id: 'description',
         name: 'description',
         type: 'text',
+        helpKey: 'flow.description',
         label: 'Description',
         multiline: true,
         defaultValue: flow && flow.description,
@@ -52,6 +54,7 @@ export default function SettingsDrawer({ flow, isViewMode, ...props }) {
         id: '_integrationId',
         name: '_integrationId',
         type: 'select',
+        helpKey: 'flow._integrationId',
         label: 'Integration',
         defaultValue: flow && flow._integrationId,
         options: [
@@ -71,6 +74,7 @@ export default function SettingsDrawer({ flow, isViewMode, ...props }) {
         id: '_runNextFlowIds',
         name: '_runNextFlowIds',
         type: 'multiselect',
+        helpKey: 'flow._runNextFlowIds',
         label: 'Next Data Flow:',
         defaultValue: (flow && flow._runNextFlowIds) || [],
         options: [
