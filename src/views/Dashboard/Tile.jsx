@@ -106,6 +106,11 @@ function Tile({ tile, history }) {
 
       if (tile.status === TILE_STATUS.HAS_OFFLINE_CONNECTIONS) {
         // TODO - open connection edit
+        history.push(
+          getRoutePath(
+            `/dashboard/edit/connections/${tile.offlineConnections[0]}`
+          )
+        );
       } else if (tile.status === TILE_STATUS.IS_PENDING_SETUP) {
         history.push(
           getRoutePath(
@@ -141,6 +146,7 @@ function Tile({ tile, history }) {
       status.variant,
       tile._connectorId,
       tile._integrationId,
+      tile.offlineConnections,
       tile.status,
     ]
   );
@@ -156,6 +162,20 @@ function Tile({ tile, history }) {
   const handleNotYetSupportedDialogCloseClick = useCallback(
     () => setShowNotYetSupportedDialog(false),
     []
+  );
+  const handleTileClick = useCallback(
+    event => {
+      event.stopPropagation();
+
+      if (isNotYetSupported) {
+        setShowNotYetSupportedDialog(true);
+
+        return false;
+      }
+
+      history.push(getRoutePath(urlToIntegrationSettings));
+    },
+    [history, isNotYetSupported, urlToIntegrationSettings]
   );
 
   return (
@@ -175,7 +195,7 @@ function Tile({ tile, history }) {
           </Button>
         </ModalDialog>
       )}
-      <HomePageCardContainer>
+      <HomePageCardContainer onClick={handleTileClick}>
         <Header>
           <Status
             label={status.label}
