@@ -43,7 +43,7 @@ function ResourceList(props) {
       ...{ ...defaultFilter, ...filter },
     })
   );
-  const resourceName = MODEL_PLURAL_TO_LABEL[resourceType];
+  const resourceName = MODEL_PLURAL_TO_LABEL[resourceType] || '';
 
   useEffect(() => {
     let int;
