@@ -10,7 +10,11 @@ export function* requestConnectors() {
   try {
     response = yield call(apiCallWithRetry, {
       path,
+<<<<<<< HEAD
       message: 'Requesting Integration apps',
+=======
+      message: 'Requesting integration apps',
+>>>>>>> 5af31796b01e0655473a389e31819fa44f56bf03
     });
   } catch (e) {
     return;

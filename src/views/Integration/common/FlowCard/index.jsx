@@ -12,6 +12,7 @@ import { defaultConfirmDialog } from '../../../../components/ConfirmDialog';
 import FlowEllipsisMenu from '../../../../components/FlowEllipsisMenu';
 import RunFlowButton from '../../../../components/RunFlowButton';
 import SettingsIcon from '../../../../components/icons/SettingsIcon';
+// import DataloaderIcon from '../../../../components/icons/DataLoaderIcon';
 import OnOffSwitch from '../../../../components/SwitchToggle';
 import InfoIconButton from '../InfoIconButton';
 import { getIntegrationAppUrlName } from '../../../../utils/integrationApps';
@@ -43,6 +44,7 @@ const useStyles = makeStyles(theme => ({
   },
   statusBar: {
     width: 6,
+    minWidth: 6,
     borderTopLeftRadius: 4,
     borderBottomLeftRadius: 4,
   },
@@ -55,6 +57,14 @@ const useStyles = makeStyles(theme => ({
   warning: {
     backgroundColor: theme.palette.warning.main,
   },
+  dataloaderTag: {
+    border: 0,
+    backgroundColor: theme.palette.secondary.lightest,
+    color: theme.palette.secondary.light,
+    borderRadius: 5,
+    padding: [[1, 8, 0, 8]],
+    marginRight: theme.spacing(2),
+  },
 }));
 
 export default function FlowCard({ flowId, excludeActions, storeId }) {
@@ -63,6 +73,7 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
   const dispatch = useDispatch();
   const flowDetails =
     useSelector(state => selectors.flowDetails(state, flowId)) || {};
+  const isDataloader = flowDetails.isSimpleImport;
   const integrationAppName = useSelector(state => {
     const integrationApp = selectors.resource(
       state,
@@ -158,15 +169,13 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
         flowDetails.schedule.replace(/^\?/g, '0')
       )}`;
 
-    if (flowDetails.isSimpleImport) return 'Manual Run';
+    if (isDataloader) return 'Manual Run';
 
     return 'Never Runs';
   }
 
   const isIntegrationApp = !!flowDetails._connectorId;
-  const flowBuilderPathName = flowDetails.isSimpleImport
-    ? 'dataLoader'
-    : 'flowBuilder';
+  const flowBuilderPathName = isDataloader ? 'dataLoader' : 'flowBuilder';
   const flowBuilderTo = isIntegrationApp
     ? `/pg/integrationApps/${integrationAppName}/${flowDetails._integrationId}/${flowBuilderPathName}/${flowId}`
     : `${flowBuilderPathName}/${flowId}`;
@@ -175,7 +184,7 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
     <div className={classes.root}>
       <div className={clsx(classes.statusBar, classes[status])} />
       <div className={classes.cardContent}>
-        <Grid item xs={9}>
+        <Grid item xs={8}>
           <div>
             <Link to={flowBuilderTo}>
               <Typography
@@ -186,13 +195,22 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
                 {name || `Unnamed (id: ${flowId})`}
               </Typography>
             </Link>
+
             <InfoIconButton info={description} />
           </div>
           <Typography variant="caption" component="span">
             {getRunLabel()} | Last Modified <TimeAgo date={lastModified} />
           </Typography>
         </Grid>
-        <Grid container item xs={3} justify="flex-end" alignItems="center">
+        <Grid container item xs={4} justify="flex-end" alignItems="center">
+          {isDataloader && (
+            <Typography
+              className={classes.dataloaderTag}
+              component="div"
+              variant="caption">
+              Data loader
+            </Typography>
+          )}
           {!flowDetails.disableSlider && (
             <OnOffSwitch
               data-test={`toggleOnAndOffFlow${flowName}`}
@@ -201,9 +219,7 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
               onClick={handleDisableClick}
             />
           )}
-
           <RunFlowButton flowId={flowId} onRunStart={handleOnRunStart} />
-
           {flowDetails._connectorId && (
             <IconButton
               size="small"
@@ -214,7 +230,6 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
               <SettingsIcon />
             </IconButton>
           )}
-
           <FlowEllipsisMenu flowId={flowId} exclude={excludeActions} />
         </Grid>
       </div>

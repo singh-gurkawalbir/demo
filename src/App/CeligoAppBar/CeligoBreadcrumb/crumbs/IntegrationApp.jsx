@@ -10,7 +10,7 @@ export const IntegrationAppCrumb = ({ integrationId }) => {
 
   return (
     <LoadResources resources="integrations">
-      {integrationApp ? integrationApp.name : 'Integration App'}
+      {integrationApp ? integrationApp.name : 'Integration app'}
     </LoadResources>
   );
 };
