@@ -27,7 +27,7 @@ export default function DynaSelectFlowResource(props) {
         .map(pg => pg._exportId);
     }
 
-    return pageProcessors.filter(pg => !!pg._exportId).map(pg => pg._exportId);
+    return pageProcessors.filter(pp => !!pp._exportId).map(pp => pp._exportId);
   });
   const updatedFilter = {
     ...filter,
