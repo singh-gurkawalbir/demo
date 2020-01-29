@@ -717,6 +717,7 @@ export default {
           { label: 'Custom', value: 'custom' },
           { label: 'Cookie', value: 'cookie' },
           { label: 'Digest', value: 'digest' },
+          { label: 'WSSE', value: 'wsse' },
           { label: 'OAuth 2.0', value: 'oauth' },
         ],
       },
@@ -2039,19 +2040,20 @@ export default {
       {
         items: [
           { label: 'Basic', value: 'basic' },
-          { label: 'Token', value: 'token' },
+          { label: 'TBA (Manual)', value: 'token' },
+          { label: 'TBA (Automated)', value: 'oauth' },
         ],
       },
     ],
   },
   'netsuite.account': {
     type: 'netsuiteuserroles',
-    label: 'Account',
+    label: 'Account ID',
   },
   'netsuite.tokenAccount': {
     type: 'text',
     defaultValue: r => r && r.netsuite && r.netsuite.account,
-    label: 'Account',
+    label: 'Account ID',
   },
   'netsuite.tokenId': {
     type: 'text',

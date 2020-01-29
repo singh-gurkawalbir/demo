@@ -16,6 +16,10 @@ export default {
       newValues['/netsuite/tokenId'] = undefined;
       newValues['/netsuite/tokenSecret'] = undefined;
       newValues['/netsuite/_iClientId'] = undefined;
+    } else if (newValues['/netsuite/authType'] === 'oauth') {
+      newValues['/netsuite/account'] = newValues['/netsuite/oauthAccount'];
+      newValues['/netsuite/tokenId'] = undefined;
+      newValues['/netsuite/tokenSecret'] = undefined;
     }
 
     return newValues;
@@ -41,13 +45,7 @@ export default {
       defaultValue: r => {
         let aType = '';
 
-        if (
-          r &&
-          r.netsuite &&
-          (r.netsuite._iClientId ||
-            r.netsuite.tokenSecret ||
-            r.netsuite.tokenId)
-        ) {
+        if (r && r.netsuite && (r.netsuite.tokenSecret || r.netsuite.tokenId)) {
           aType = 'token';
         } else if (
           r &&
@@ -55,6 +53,8 @@ export default {
           (r.netsuite.email || r.netsuite.password)
         ) {
           aType = 'basic';
+        } else if (r && r.netsuite && r.netsuite.account) {
+          aType = 'oauth';
         }
 
         return aType;
@@ -82,7 +82,7 @@ export default {
     },
     'netsuite._iClientId': {
       fieldId: 'netsuite._iClientId',
-      visibleWhen: [{ field: 'netsuite.authType', is: ['token'] }],
+      visibleWhen: [{ field: 'netsuite.authType', is: ['token', 'oauth'] }],
       filter: { provider: 'netsuite' },
       type: 'dynaiclient',
       connectionId: r => r && r._id,
@@ -110,6 +110,13 @@ export default {
       ],
       visibleWhen: [{ field: 'netsuite.authType', is: ['token'] }],
     },
+    'netsuite.oauthAccount': {
+      id: 'netsuite.oauthAccount',
+      type: 'text',
+      label: 'Account ID',
+      defaultValue: r => r && r.netsuite && r.netsuite.account,
+      visibleWhen: [{ field: 'netsuite.authType', is: ['oauth'] }],
+    },
     'netsuite.roleId': {
       fieldId: 'netsuite.roleId',
       netsuiteResourceType: 'role',
@@ -120,6 +127,13 @@ export default {
         'netsuite.roleId',
       ],
       visibleWhen: [{ field: 'netsuite.authType', is: ['basic'] }],
+    },
+    'netsuite.oauth.roleId': {
+      fieldId: 'netsuite.oauth.roleId',
+      type: 'text',
+      label: 'Role',
+      defaultValue: r => r && r.netsuite && r.netsuite.roleId,
+      visibleWhen: [{ field: 'netsuite.authType', is: ['oauth'] }],
     },
     'netsuite.tokenId': {
       fieldId: 'netsuite.tokenId',
@@ -147,6 +161,8 @@ export default {
       'netsuite.tokenEnvironment',
       'netsuite.account',
       'netsuite.tokenAccount',
+      'netsuite.oauthAccount',
+      'netsuite.oauth.roleId',
       'netsuite.roleId',
       'netsuite.tokenId',
       'netsuite.tokenSecret',
@@ -195,6 +211,16 @@ export default {
         {
           field: 'netsuite.authType',
           is: ['token'],
+        },
+      ],
+    },
+    {
+      id: 'oauth',
+      label: 'Save & Authorize',
+      visibleWhen: [
+        {
+          field: 'netsuite.authType',
+          is: ['oauth'],
         },
       ],
     },
