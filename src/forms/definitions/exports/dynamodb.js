@@ -101,6 +101,17 @@ export default {
         },
       ],
     },
+    'once.booleanField': {
+      fieldId: 'once.booleanField',
+      type: 'text',
+      label: 'Once Boolean Field',
+      visibleWhen: [
+        {
+          field: 'type',
+          is: ['once'],
+        },
+      ],
+    },
     exportPanel: {
       fieldId: 'exportPanel',
     },
@@ -115,12 +126,13 @@ export default {
           'dynamodb.region',
           'dynamodb.method',
           'dynamodb.tableName',
+          'dynamodb.expressionAttributeNames',
+          'dynamodb.expressionAttributeValues',
           'dynamodb.keyConditionExpression',
           'dynamodb.filterExpression',
           'dynamodb.projectionExpression',
-          'dynamodb.expressionAttributeNames',
-          'dynamodb.expressionAttributeValues',
           'type',
+          'once.booleanField',
           'dynamodb.onceExportPartitionKey',
           'dynamodb.onceExportSortKey',
         ],
