@@ -179,7 +179,7 @@ export default function ConnectorTemplateList(props) {
             elevation={0}>
             <ConnectorTemplateContent
               resource={connector}
-              title="Integration App"
+              title="Integration app"
               application={application}
               type="connector"
             />

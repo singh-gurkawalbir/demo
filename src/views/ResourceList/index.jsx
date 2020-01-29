@@ -1,5 +1,5 @@
-import { useSelector, useDispatch } from 'react-redux';
 import { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { withRouter, Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import AddIcon from '../../components/icons/AddIcon';
@@ -43,7 +43,7 @@ function ResourceList(props) {
       ...{ ...defaultFilter, ...filter },
     })
   );
-  const resourceName = MODEL_PLURAL_TO_LABEL[resourceType];
+  const resourceName = MODEL_PLURAL_TO_LABEL[resourceType] || '';
 
   useEffect(() => {
     let int;
@@ -84,7 +84,7 @@ function ResourceList(props) {
             to={`${location.pathname}/add/${resourceType}/${generateNewId()}`}
             variant="text"
             color="primary">
-            <AddIcon /> Create {resourceName}
+            <AddIcon /> Create {resourceName.toLowerCase()}
           </IconTextButton>
         </div>
       </CeligoPageBar>

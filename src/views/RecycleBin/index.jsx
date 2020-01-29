@@ -24,7 +24,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function RecycleBin(props) {
-  const defaultFilter = useMemo(() => ({ take: 5 }), []);
+  const defaultFilter = useMemo(() => ({ take: 10 }), []);
   const classes = useStyles();
   const dispatch = useDispatch();
   const filter =

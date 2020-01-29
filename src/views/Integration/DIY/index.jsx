@@ -35,6 +35,12 @@ const useStyles = makeStyles(theme => ({
       border: 'none',
     },
   },
+  editableTextInput: {
+    width: `calc(60vw - ${52 + 24}px)`,
+  },
+  editableTextInputShift: {
+    width: `calc(60vw - ${theme.drawerWidth + 24}px)`,
+  },
 }));
 const tabs = [
   { path: 'flows', label: 'Flows', Icon: FlowsIcon, Panel: FlowsPanel },
@@ -61,6 +67,7 @@ export default function Integration({ history, match }) {
   const integration = useSelector(state =>
     selectors.resource(state, 'integrations', integrationId)
   );
+  const drawerOpened = useSelector(state => selectors.drawerOpened(state));
   const currentEnvironment = useSelector(state =>
     selectors.currentEnvironment(state)
   );
@@ -164,6 +171,11 @@ export default function Integration({ history, match }) {
                 text={integration.name}
                 defaultText={`Unnamed: (${integration}) Click to add name`}
                 onChange={handleTitleChange}
+                inputClassName={
+                  drawerOpened
+                    ? classes.editableTextInputShift
+                    : classes.editableTextInput
+                }
               />
             ) : (
               'Standalone integrations'
