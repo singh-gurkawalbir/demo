@@ -212,6 +212,15 @@ const useStyles = makeStyles(theme => ({
   dataLoaderHelp: {
     margin: theme.spacing(5),
   },
+  // NOTE: 52px is collapsed left side bar. 410px is right page header action buttons + padding
+  // we use these to force the input to be as large as possible in the pageBar
+  // without causing any weird wrapping.
+  editableTextInput: {
+    width: `calc(100vw - ${52 + 410}px)`,
+  },
+  editableTextInputShift: {
+    width: `calc(100vw - ${theme.drawerWidth + 410}px)`,
+  },
 }));
 
 function FlowBuilder() {
@@ -229,10 +238,12 @@ function FlowBuilder() {
   const [newProcessorId, setNewProcessorId] = useState(generateNewId());
   //
   // #region Selectors
+  const drawerOpened = useSelector(state => selectors.drawerOpened(state));
+
+  console.log('opened', drawerOpened);
   const newFlowId = useSelector(state =>
     selectors.createdResourceId(state, flowId)
   );
-  const drawerOpened = useSelector(state => selectors.drawerOpened(state));
   const flow = useSelector(
     state => selectors.resourceData(state, 'flows', flowId).merged,
     shallowEqual
@@ -471,8 +482,14 @@ function FlowBuilder() {
           <EditableText
             disabled={isViewMode}
             text={flow.name}
+            // multiline
             defaultText={isNewFlow ? 'New flow' : `Unnamed (id:${flowId})`}
             onChange={handleTitleChange}
+            inputClassName={
+              drawerOpened
+                ? classes.editableTextInputShift
+                : classes.editableTextInput
+            }
           />
         }
         subtitle={

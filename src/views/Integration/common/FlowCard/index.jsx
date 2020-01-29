@@ -44,6 +44,7 @@ const useStyles = makeStyles(theme => ({
   },
   statusBar: {
     width: 6,
+    minWidth: 6,
     borderTopLeftRadius: 4,
     borderBottomLeftRadius: 4,
   },
