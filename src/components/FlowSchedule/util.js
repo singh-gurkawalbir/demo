@@ -567,7 +567,7 @@ export const getMetadata = ({
       dayToRunOn: {
         id: 'dayToRunOn',
         name: 'dayToRunOn',
-        helpKey: 'flow.dayToRunOn',
+        helpKey: 'flow.daysToRunOn',
         type: 'select',
         label: 'Day To Run On',
         defaultValue: resource.dayToRunOn,
