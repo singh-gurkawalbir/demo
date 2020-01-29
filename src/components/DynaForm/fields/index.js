@@ -4,6 +4,7 @@ import DynaSelect from './DynaSelect';
 import DynaLabel from './DynaLabel';
 import DynaCeligoTable from './DynaCeligoTable';
 import DynaSelectResource from './DynaSelectResource';
+import DynaSelectFlowResource from './DynaSelectFlowResource';
 import DynaSelectApplication from './DynaSelectApplication';
 import DynaFileTypeSelect from './select/DynaFileTypeSelect';
 import DynaText from './DynaText';
@@ -98,6 +99,7 @@ export default {
   trueFixedWidthColumnMapper: DynaTrueFixedWidthColumnMapper,
   csvColumnMapper: DynaCSVColumnMapper,
   subsidiaryMapWidget: DynaMultiSubsidiaryMapping,
+  selectflowresource: DynaSelectFlowResource,
   selectresource: DynaSelectResource,
   selectapplication: DynaSelectApplication,
   filetypeselect: DynaFileTypeSelect,
