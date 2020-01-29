@@ -590,6 +590,28 @@ export function* requestDeregister({ connectionId, integrationId }) {
   }
 }
 
+export function* requestRevoke({ connectionId }) {
+  const path = `/connection/${connectionId}/revoke`;
+
+  try {
+    const response = yield call(apiCallWithRetry, {
+      path,
+      opts: {
+        method: 'GET',
+      },
+      message: `Revoking Connection`,
+    });
+
+    if (response && response.errors) {
+      yield put(
+        actions.api.failure(path, 'GET', JSON.stringify(response.errors), false)
+      );
+    }
+  } catch (error) {
+    return undefined;
+  }
+}
+
 export function* requestDebugLogs({ connectionId }) {
   let response;
   const path = `/connections/${connectionId}/debug`;
@@ -655,5 +677,7 @@ export const resourceSagas = [
   takeEvery(actionTypes.CONNECTION.DEBUG_LOGS_REQUEST, requestDebugLogs),
   takeEvery(actionTypes.RESOURCE.RECEIVED, receivedResource),
   takeEvery(actionTypes.CONNECTION.AUTHORIZED, authorizedConnection),
+  takeEvery(actionTypes.CONNECTION.REVOKE_REQUEST, requestRevoke),
+
   ...metadataSagas,
 ];

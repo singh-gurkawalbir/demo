@@ -71,6 +71,10 @@ const connection = {
       connectionId,
       integrationId,
     }),
+  requestRevoke: connectionId =>
+    action(actionTypes.CONNECTION.REVOKE_REQUEST, {
+      connectionId,
+    }),
   completeDeregister: (deregisteredId, integrationId) =>
     action(actionTypes.CONNECTION.DEREGISTER_COMPLETE, {
       deregisteredId,

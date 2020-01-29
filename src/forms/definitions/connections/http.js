@@ -132,6 +132,12 @@ export default {
         newValues['/http/oauth/customAuthScheme'];
     }
 
+    if (!newValues['/http/auth/token/revoke/uri'])
+      delete newValues['/http/auth/token/revoke/uri'];
+
+    if (!newValues['/http/auth/token/revoke/body'])
+      delete newValues['/http/auth/token/revoke/body'];
+
     delete newValues['/http/oauth/headers'];
     delete newValues['/http/oauth/baseURI'];
     delete newValues['/http/oauth/mediaType'];
@@ -273,10 +279,6 @@ export default {
     },
     'http.auth.oauth.type': {
       fieldId: 'http.auth.oauth.type',
-      visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
-    },
-    'http.auth.revoke.uri': {
-      fieldId: 'http.auth.revoke.uri',
       visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
     },
     'http.auth.oauth.grantType': {
@@ -570,6 +572,18 @@ export default {
         { field: 'http.auth.oauth.grantType', is: ['authorizecode'] },
       ],
     },
+    'http.auth.token.revoke.uri': {
+      fieldId: 'http.auth.token.revoke.uri',
+      visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
+    },
+    'http.auth.token.revoke.body': {
+      fieldId: 'http.auth.token.revoke.body',
+      visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
+    },
+    'http.auth.token.revoke.headers': {
+      fieldId: 'http.auth.token.revoke.headers',
+      visibleWhenAll: [{ field: 'http.auth.type', is: ['oauth'] }],
+    },
   },
   layout: {
     fields: [
@@ -608,7 +622,9 @@ export default {
           'http.auth.oauth.accessTokenBody',
           'http.auth.oauth.refreshHeaders',
           'http.auth.oauth.refreshBody',
-          'http.auth.revoke.uri',
+          'http.auth.token.revoke.uri',
+          'http.auth.token.revoke.body',
+          'http.auth.token.revoke.headers',
         ],
       },
       {
