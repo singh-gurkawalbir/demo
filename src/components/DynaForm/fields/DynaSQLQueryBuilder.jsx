@@ -32,6 +32,7 @@ export default function DynaSQLQueryBuilder(props) {
     modelMetadata,
     modelMetadataFieldId,
     queryType,
+    method,
   } = options;
   const lookupFieldId = lookupObj && lookupObj.fieldId;
   const lookups = (lookupObj && lookupObj.data) || [];
@@ -122,6 +123,14 @@ export default function DynaSQLQueryBuilder(props) {
         sampleData,
         extractPaths,
         queryType === 'insertMany'
+      );
+    } else if (
+      adaptorTypeMap[resourceAdapterType] === adaptorTypeMap.DynamodbImport
+    ) {
+      parsedRule = sqlUtil.getSampleDynamodbTemplate(
+        sampleData,
+        extractPaths,
+        method === 'putItem'
       );
     } else {
       parsedRule = sqlUtil.getSampleSQLTemplate(
