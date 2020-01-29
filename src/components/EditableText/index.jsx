@@ -21,10 +21,11 @@ const useStyles = makeStyles(theme => ({
   },
   input: {
     font: 'inherit',
-    borderBottom: `solid 1px ${theme.palette.secondary.lightest}`,
+    border: `solid 1px ${fade(theme.palette.primary.light, 0.5)}`,
     width: '100%',
     maxWidth: 'unset',
-    marginBottom: -1, // make up for the 1px border.
+    marginBottom: 0,
+    marginRight: 3,
   },
   multiline: {
     padding: [[4, 4, 0, 4]],
@@ -42,6 +43,7 @@ export default function EditableText({
   onChange,
   disabled,
   className,
+  inputClassName,
   multiline = false,
   text = '',
   defaultText,
@@ -91,7 +93,7 @@ export default function EditableText({
           className={clsx(
             classes.input,
             { [classes.multiline]: multiline },
-            className
+            inputClassName
           )}
           classes={{ input: classes.muiInputBase }}
         />
