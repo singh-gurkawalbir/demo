@@ -5,7 +5,7 @@ import DynaForm from '../../../../components/DynaForm';
 import DynaSubmit from '../../../../components/DynaForm/DynaSubmit';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
-import Icon from '../../../../components/icons/FilterIcon';
+import Icon from '../../../../components/icons/AgentsIcon';
 import ModalDialog from '../../../../components/ModalDialog';
 
 function ProceedOnFailureDialog(props) {
