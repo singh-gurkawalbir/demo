@@ -200,7 +200,11 @@ const PageGenerator = ({
       let connectorType = resource.adaptorType || resource.type;
 
       if (connectorType === 'WebhookExport' || connectorType === 'webhook') {
-        if (resource.webhook && resource.webhook.provider && resource.webhook.provider !== 'custom') {
+        if (
+          resource.webhook &&
+          resource.webhook.provider &&
+          resource.webhook.provider !== 'custom'
+        ) {
           connectorType = resource.webhook.provider;
         }
       }
