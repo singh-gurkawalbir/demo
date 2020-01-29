@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, matchPath } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import { List, Collapse, ButtonBase } from '@material-ui/core';
@@ -73,14 +73,14 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.sandbox.dark,
     color: theme.palette.sandbox.contrastText,
   },
-  menuItem: {
+  toggleContainer: {
     marginTop: theme.spacing(1),
     textAlign: 'center',
     '& svg': {
       color: theme.palette.text.hint,
     },
   },
-  sandboxMenuItem: {
+  sandboxToggleContainer: {
     borderColor: theme.palette.secondary.light,
     '& svg': {
       color: theme.palette.secondary.light,
@@ -131,6 +131,13 @@ const useStyles = makeStyles(theme => ({
       left: 0,
     },
   },
+  activeItem: {
+    backgroundColor: `${theme.palette.primary.main} !important`,
+    color: theme.palette.common.white,
+    '& svg > *': {
+      color: theme.palette.background.paper,
+    },
+  },
   listItemSandbox: {
     backgroundColor: theme.palette.sandbox.light,
     '& svg > *': {
@@ -146,7 +153,13 @@ const useStyles = makeStyles(theme => ({
       borderColor: theme.palette.sandbox.dark,
     },
   },
-
+  activeItemSandbox: {
+    backgroundColor: `${darken(theme.palette.sandbox.dark, 0.4)} !important`,
+    color: theme.palette.common.white,
+    '& svg > *': {
+      color: theme.palette.background.paper,
+    },
+  },
   itemIconRoot: {
     minWidth: 45,
   },
@@ -207,16 +220,28 @@ const useStyles = makeStyles(theme => ({
 export default function CeligoDrawer() {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const location = useLocation();
   const userProfile = useSelector(state => selectors.userProfile(state));
   const userPermissions = useSelector(state =>
     selectors.userPermissions(state)
   );
+  const integrations = useSelector(
+    state =>
+      selectors.resourceList(state, {
+        type: 'integrations',
+        ignoreEnvironmentFilter: true,
+      }),
+    (left, right) => left.length === right.length
+  ).resources;
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
   const environment = useSelector(
     state => selectors.userPreferences(state).environment
   );
   const [expand, setExpand] = React.useState(null);
   const isSandbox = environment === 'sandbox';
+  const marketplaceConnectors = useSelector(state =>
+    selectors.marketplaceConnectors(state, undefined, isSandbox)
+  );
   const handleDrawerToggle = () => {
     dispatch(actions.toggleDrawer());
   };
@@ -227,6 +252,8 @@ export default function CeligoDrawer() {
     if (!drawerOpened) handleDrawerToggle();
   };
 
+  // what is the active item? does it have a parent
+  // that needs an active state as well?
   return (
     <Drawer
       variant="permanent"
@@ -271,41 +298,58 @@ export default function CeligoDrawer() {
             className={clsx(classes.list, {
               [classes.sandboxList]: isSandbox,
             })}>
-            {menuItems(userProfile, userPermissions).map(
-              ({ label, Icon, path, children }) => (
-                <Fragment key={label}>
-                  <ListItem
-                    button
-                    className={clsx(classes.listItem, {
-                      [classes.listItemSandbox]: isSandbox,
-                    })}
-                    component={children ? undefined : Link}
-                    to={getRoutePath(path)}
-                    data-test={label}
-                    onClick={children ? handleExpandClick(label) : null}>
-                    <ListItemIcon classes={{ root: classes.itemIconRoot }}>
-                      {<Icon />}
-                    </ListItemIcon>
-                    <ListItemText
-                      primaryTypographyProps={{
-                        className: classes.itemText,
-                      }}
-                      primary={label}
-                    />
-                    {children &&
-                      (expand === label ? <ArrowUpIcon /> : <ArrowDownIcon />)}
-                  </ListItem>
-                  {children && (
-                    <Collapse
-                      in={expand === label}
-                      unmountOnExit
-                      timeout="auto">
-                      <List
-                        className={clsx(classes.list, {
-                          [classes.sandboxList]: isSandbox,
-                        })}
-                        disablePadding>
-                        {children.map(({ label, Icon, path }) => (
+            {menuItems(
+              userProfile,
+              userPermissions,
+              integrations,
+              marketplaceConnectors
+            ).map(({ label, Icon, path, routeProps, children }) => (
+              <Fragment key={label}>
+                <ListItem
+                  button
+                  className={clsx(classes.listItem, {
+                    [classes.listItemSandbox]: isSandbox,
+                    [classes.activeItem]:
+                      !isSandbox &&
+                      expand !== label &&
+                      matchPath(location.pathname, routeProps || `/pg${path}`),
+                    [classes.activeItemSandbox]:
+                      isSandbox &&
+                      expand !== label &&
+                      matchPath(location.pathname, routeProps || `/pg${path}`),
+                  })}
+                  component={children ? undefined : Link}
+                  to={getRoutePath(path)}
+                  data-test={label}
+                  onClick={children ? handleExpandClick(label) : null}>
+                  <ListItemIcon classes={{ root: classes.itemIconRoot }}>
+                    {<Icon />}
+                  </ListItemIcon>
+                  <ListItemText
+                    primaryTypographyProps={{
+                      className: classes.itemText,
+                    }}
+                    primary={label}
+                  />
+                  {children &&
+                    (expand === label ? <ArrowUpIcon /> : <ArrowDownIcon />)}
+                </ListItem>
+                {children && (
+                  <Collapse in={expand === label} unmountOnExit timeout="auto">
+                    <List
+                      className={clsx(classes.list, {
+                        [classes.sandboxList]: isSandbox,
+                      })}
+                      disablePadding>
+                      {children.map(
+                        ({
+                          label,
+                          Icon,
+                          path,
+                          routeProps,
+                          href,
+                          component,
+                        }) => (
                           <ListItem
                             className={clsx(
                               classes.listItem,
@@ -313,12 +357,26 @@ export default function CeligoDrawer() {
                               {
                                 [classes.listItemSandbox]: isSandbox,
                                 [classes.sandboxInnerListItems]: isSandbox,
+                                [classes.activeItem]:
+                                  !isSandbox &&
+                                  matchPath(
+                                    location.pathname,
+                                    routeProps || `/pg${path}`
+                                  ),
+                                [classes.activeItemSandbox]:
+                                  isSandbox &&
+                                  matchPath(
+                                    location.pathname,
+                                    routeProps || `/pg${path}`
+                                  ),
                               }
                             )}
                             data-test={label}
                             key={label}
-                            component={Link}
-                            to={getRoutePath(path)}
+                            component={component || Link}
+                            target={href && '_blank'}
+                            href={href}
+                            to={!href && getRoutePath(path)}
                             button>
                             <ListItemIcon
                               classes={{ root: classes.itemIconRoot }}>
@@ -331,19 +389,19 @@ export default function CeligoDrawer() {
                               }}
                             />
                           </ListItem>
-                        ))}
-                      </List>
-                    </Collapse>
-                  )}
-                </Fragment>
-              )
-            )}
+                        )
+                      )}
+                    </List>
+                  </Collapse>
+                )}
+              </Fragment>
+            ))}
           </List>
         </div>
         <div>
           <div
-            className={clsx(classes.toolbar, classes.menuItem, {
-              [classes.sandboxMenuItem]: isSandbox,
+            className={clsx(classes.toolbar, classes.toggleContainer, {
+              [classes.sandboxToggleContainer]: isSandbox,
             })}>
             <IconButton
               data-test="celigoDrawerToggle"

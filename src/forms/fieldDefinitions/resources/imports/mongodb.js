@@ -126,7 +126,7 @@ export default {
   'mongodb.upsert': {
     type: 'checkboxforresetfields',
     label: 'Upsert',
-    fieldsToReset: ['ignoreMissing'],
+    fieldsToReset: [{ id: 'ignoreMissing', type: 'checkbox' }],
     visibleWhen: [
       {
         field: 'mongodb.method',

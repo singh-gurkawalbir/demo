@@ -19,7 +19,7 @@ export default {
    *            ]
    * getDuplicateValues returns [2,4]
    */
-  getDuplicateValues: (arr, key) => {
+  getDuplicateValues: (arr = [], key) => {
     const duplicates = arr
       .map(e => e[key])
       .map((e, i, final) => final.indexOf(e) !== i && i)

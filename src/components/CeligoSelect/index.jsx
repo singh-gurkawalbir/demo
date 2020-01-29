@@ -16,7 +16,7 @@ const useStyles = makeStyles(theme => ({
     overflow: 'hidden',
     height: 42,
     justifyContent: 'flex-end',
-    borderRadius: 2,
+    borderRadius: theme.spacing(0.5),
     '& > Label': {
       marginTop: theme.spacing(-1),
       '&.MuiInputLabel-shrink': {
@@ -25,6 +25,7 @@ const useStyles = makeStyles(theme => ({
     },
     '& >.MuiSelect-selectMenu': {
       paddingLeft: theme.spacing(1),
+      paddingRight: theme.spacing(4),
     },
     '&:hover': {
       borderColor: theme.palette.primary.main,

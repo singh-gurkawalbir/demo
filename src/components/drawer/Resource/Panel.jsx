@@ -101,9 +101,9 @@ export default function Panel(props) {
   let resourceLabel;
 
   if (resourceType === 'pageProcessor') {
-    resourceLabel = 'Destination / Lookup app';
+    resourceLabel = 'Destination / Lookup';
   } else if (resourceType === 'pageGenerator') {
-    resourceLabel = 'Source app';
+    resourceLabel = 'Source';
   } else {
     resourceLabel = MODEL_PLURAL_TO_LABEL[resourceType];
   }

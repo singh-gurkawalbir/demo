@@ -127,25 +127,19 @@ export default function reducer(state = {}, action) {
           let inputValue = value;
 
           if (field === 'extract') {
-            if (inputValue !== '') {
-              /* User removes the extract completely and blurs out, 
-              extract field should be replaced back with last valid content
-              Change the extract value only when he has provided valid content
-            */
-
-              if (inputValue.indexOf('"') === 0) {
-                if (inputValue.charAt(inputValue.length - 1) !== '"')
-                  inputValue += '"';
-                delete objCopy.extract;
-                objCopy.hardCodedValue = inputValue.substr(
-                  1,
-                  inputValue.length - 2
-                );
-                objCopy.hardCodedValueTmp = inputValue;
-              } else {
-                delete objCopy.hardCodedValue;
-                objCopy.extract = inputValue;
-              }
+            if (inputValue.indexOf('"') === 0) {
+              if (inputValue.charAt(inputValue.length - 1) !== '"')
+                inputValue += '"';
+              delete objCopy.extract;
+              objCopy.hardCodedValue = inputValue.substr(
+                1,
+                inputValue.length - 2
+              );
+              objCopy.hardCodedValueTmp = inputValue;
+            } else {
+              delete objCopy.hardCodedValue;
+              delete objCopy.hardCodedValueTmp;
+              objCopy.extract = inputValue;
             }
           } else {
             objCopy[field] = inputValue;
@@ -225,8 +219,11 @@ export default function reducer(state = {}, action) {
 
           valueTmp.rowIdentifier += 1;
 
-          if (valueTmp.hardCodedValue) {
-            valueTmp.hardCodedValueTmp = `"${valueTmp.hardCodedValue}"`;
+          if ('hardCodedValue' in valueTmp) {
+            // wrap anything expect '' and null ,
+
+            if (valueTmp.hardCodedValue && valueTmp.hardCodedValue.length)
+              valueTmp.hardCodedValueTmp = `"${valueTmp.hardCodedValue}"`;
             delete valueTmp.extract;
           }
 

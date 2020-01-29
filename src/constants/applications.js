@@ -217,15 +217,15 @@ const connectors = [
   },
   {
     id: 'constantcontactv2',
-    name: 'Constant Contact',
-    type: 'rest',
+    name: 'Constant Contact V2',
+    type: 'http',
     assistant: 'constantcontactv2',
     icon: 'constantcontactv3',
   },
   {
     id: 'constantcontactv3',
-    name: 'Constant Contact',
-    type: 'rest',
+    name: 'Constant Contact V3',
+    type: 'http',
     assistant: 'constantcontactv3',
     icon: 'constantcontactv3',
   },
@@ -734,10 +734,9 @@ export const groupApplications = resourceType => {
 */
 
 export const getApplicationConnectors = () => connectors.filter(c => !c.group);
-export const getWebhookConnectors = () =>
-  connectors.filter(c => c.webhook || c.webhookOnly);
+export const getWebhookConnectors = () => connectors.filter(c => !!c.webhook);
 export const getWebhookOnlyConnectors = () =>
-  connectors.filter(c => c.webhookOnly);
+  connectors.filter(c => !!c.webhookOnly);
 
 export const getApp = (type, assistant) => {
   const id = assistant || type;

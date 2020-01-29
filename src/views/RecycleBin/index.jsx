@@ -24,7 +24,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function RecycleBin(props) {
-  const defaultFilter = useMemo(() => ({ take: 5 }), []);
+  const defaultFilter = useMemo(() => ({ take: 10 }), []);
   const classes = useStyles();
   const dispatch = useDispatch();
   const filter =
@@ -45,7 +45,7 @@ export default function RecycleBin(props) {
     <Fragment>
       <CheckPermissions permission={PERMISSIONS.recyclebin.view}>
         <ResourceDrawer {...props} />
-        <CeligoPageBar title="Recycle Bin" infoText={infoText.recycleBin}>
+        <CeligoPageBar title="Recycle bin" infoText={infoText.recycleBin}>
           <div className={classes.actions}>
             <KeywordSearch
               filterKey="recycleBinTTL"
