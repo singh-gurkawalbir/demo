@@ -164,13 +164,16 @@ export default function SelectApplication(props) {
     })),
   }));
   const Option = props => {
-    const { type, icon } = props.data;
+    const { type, icon, value } = props.data;
 
     return (
       <div data-test={props.label} className={classes.optionRoot}>
         <components.Option {...props}>
           <span className={classes.optionImg}>
-            <ApplicationImg type={type} assistant={icon} />
+            <ApplicationImg
+              type={type === 'webhook' ? value : type}
+              assistant={icon}
+            />
           </span>
           <span className={classes.optionLabel}>{props.label}</span>
         </components.Option>

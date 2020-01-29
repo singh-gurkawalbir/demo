@@ -81,6 +81,8 @@ function SuiteScriptTile({ tile, history }) {
   );
   const handleLinkClick = useCallback(
     event => {
+      event.stopPropagation();
+
       if (isNotYetSupported) {
         event.preventDefault();
         setShowNotYetSupportedDialog(true);
@@ -91,6 +93,16 @@ function SuiteScriptTile({ tile, history }) {
   const handleNotYetSupportedDialogCloseClick = useCallback(
     () => setShowNotYetSupportedDialog(false),
     []
+  );
+  const handleTileClick = useCallback(
+    event => {
+      event.stopPropagation();
+
+      if (isNotYetSupported) {
+        setShowNotYetSupportedDialog(true);
+      }
+    },
+    [isNotYetSupported]
   );
 
   return (
@@ -112,7 +124,7 @@ function SuiteScriptTile({ tile, history }) {
           </Button>
         </ModalDialog>
       )}
-      <HomePageCardContainer>
+      <HomePageCardContainer onClick={handleTileClick}>
         <Header>
           <Status label={status.label} onClick={handleStatusClick}>
             <StatusCircle variant={status.variant} />

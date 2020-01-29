@@ -30,7 +30,7 @@ export default {
       ...rest,
     };
 
-    if (type === 'webhook') {
+    if (type === 'webhook' || (application !== 'webhook' && app.webhookOnly)) {
       newValues['/type'] = 'webhook';
       newValues['/adaptorType'] = 'WebhookExport';
       newValues['/webhook/provider'] = application;
