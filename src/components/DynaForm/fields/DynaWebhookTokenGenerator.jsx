@@ -25,6 +25,7 @@ function DynaWebhookTokenGenerator(props) {
     resourceId,
     id,
     value,
+    options = {},
     buttonLabel,
     setFieldIds = [],
     formContext,
@@ -84,12 +85,16 @@ function DynaWebhookTokenGenerator(props) {
 
   useEffect(() => {
     if (url) {
-      const whURL = getWebhookUrl(formValues, resourceId);
+      const { webHookProvider } = options;
+      const whURL = getWebhookUrl(
+        { webHookProvider, webHookToken: value },
+        resourceId
+      );
 
       onFieldChange('webhook.url', whURL);
       setUrl(false);
     }
-  }, [finalResourceId, formValues, id, onFieldChange, resourceId, url]);
+  }, [finalResourceId, id, onFieldChange, options, resourceId, url, value]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'row' }}>
