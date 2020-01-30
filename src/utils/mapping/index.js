@@ -93,7 +93,11 @@ export function wrapTextForSpecialChars(extract, flowSampleData) {
     return toReturn;
   }
 
-  if (!flowSampleData) {
+  if (
+    !flowSampleData &&
+    extract.indexOf('[*].') === -1 &&
+    extract.indexOf('.') === -1
+  ) {
     return `[${extract.replace(/\]/g, '\\]')}]`;
   }
 
