@@ -2,7 +2,9 @@ import deepClone from 'lodash/cloneDeep';
 import { adaptorTypeMap } from '../resource';
 import mappingUtil from '.';
 import netsuiteMappingUtil from './application/netsuite';
-import getJSONPaths from '../jsonPaths';
+import getJSONPaths, {
+  getJSONPathArrayWithSpecialCharactersWrapped,
+} from '../jsonPaths';
 import { isJsonString } from '../../utils/string';
 import connectors from '../../constants/applications';
 
@@ -21,6 +23,111 @@ const isCsvOrXlsxResource = resource => {
 };
 
 const handlebarRegex = /(\{\{[\s]*.*?[\s]*\}\})/i;
+const checkExtractPathFoundInSampledata = (str, sampleData, wrapped) => {
+  if (wrapped) {
+    return (
+      getJSONPathArrayWithSpecialCharactersWrapped(
+        sampleData,
+        null,
+        true
+      ).indexOf(str) > -1
+    );
+  }
+
+  return (
+    getJSONPathArrayWithSpecialCharactersWrapped(sampleData).indexOf(str) > -1
+  );
+};
+
+export function unwrapTextForSpecialChars(extract, flowSampleData) {
+  let toReturn = extract;
+
+  if (!/\W/g.test(extract)) {
+    // if it does not contain a non-word character
+    return toReturn;
+  }
+
+  if (!flowSampleData && /^\[.*\]$/.test(extract)) {
+    // if extract starts with [ and ends with ]
+    // find all ']' in the extract and replace it with '\]' excluding first '[' and last ']'
+    return extract.replace(/^(\[)(.*)(\])$/, '$2').replace(/\\\]/g, ']');
+  }
+
+  if (
+    flowSampleData &&
+    checkExtractPathFoundInSampledata(extract, flowSampleData, true)
+  ) {
+    const index = getJSONPathArrayWithSpecialCharactersWrapped(
+      flowSampleData,
+      null,
+      true
+    ).indexOf(extract);
+
+    toReturn = getJSONPathArrayWithSpecialCharactersWrapped(flowSampleData)[
+      index
+    ];
+  } else if (!/\.|(\[\*\])/.test(extract)) {
+    /**
+     This extract is not found in sampledata. So UI doesnt know what a dot or sublist character represent.
+    * */
+    // So wrap the extract only if it doesnt have a dot or sublist character in it
+    if (
+      !(
+        /^\[.*\]$/.test(extract) &&
+        /\W/.test(extract.replace(/^\[|]$/g, '')) &&
+        !/\./.test(extract.replace(/^\[|]$/g, ''))
+      )
+    ) {
+      // if not already wrapped
+      toReturn = `[${extract.replace(/\]/g, '\\]')}]`;
+    }
+  }
+
+  return toReturn;
+}
+
+export function wrapTextForSpecialChars(extract, flowSampleData) {
+  let toReturn = extract;
+
+  if (!/\W/g.test(extract)) {
+    return toReturn;
+  }
+
+  if (!flowSampleData) {
+    return `[${extract.replace(/\]/g, '\\]')}]`;
+  }
+
+  if (
+    flowSampleData &&
+    checkExtractPathFoundInSampledata(extract, flowSampleData)
+  ) {
+    const index = getJSONPathArrayWithSpecialCharactersWrapped(
+      flowSampleData
+    ).indexOf(extract);
+
+    toReturn = getJSONPathArrayWithSpecialCharactersWrapped(
+      flowSampleData,
+      null,
+      true
+    )[index];
+  } else if (!/\.|(\[\*\])/.test(extract)) {
+    /**
+     This extract is not found in sampledata. So UI doesnt know what a dot or sublist character represent.
+    * */
+
+    // So wrap the extract only if it doesnt have a dot or sublist character in it
+    if (
+      !(
+        /^\[.*\]$/.test(extract) &&
+        /\W/.test(extract.replace(/^\[|]$/g, '')) &&
+        !/\./.test(extract.replace(/^\[|]$/g, ''))
+      )
+    ) {
+      // if not already wrapped
+      toReturn = `[${extract.replace(/\]/g, '\\]')}]`;
+    }
+  }
+}
 
 export const LookupResponseMappingExtracts = [
   'data',
@@ -257,6 +364,7 @@ export default {
       case adaptorTypeMap.NetSuiteDistributedImport:
         return netsuiteMappingUtil.getFieldsAndListMappings({
           mappings: _mappings,
+          isGroupedSampleData,
         });
       case adaptorTypeMap.FTPImport:
       case adaptorTypeMap.HTTPImport:
@@ -292,13 +400,16 @@ export default {
     appType,
     isGroupedSampleData,
     resource,
+    flowSampleData,
   }) => {
     switch (appType) {
       case adaptorTypeMap.NetSuiteDistributedImport:
         return netsuiteMappingUtil.generateMappingFieldsAndList({
           mappings,
+          isGroupedSampleData,
           generateFields,
           recordType,
+          flowSampleData,
         });
       case adaptorTypeMap.FTPImport:
       case adaptorTypeMap.HTTPImport:
@@ -315,6 +426,7 @@ export default {
           isGroupedSampleData,
           useFirstRowSupported: true,
           resource,
+          flowSampleData,
         });
       case adaptorTypeMap.SalesforceImport:
         return mappingUtil.generateMappingFieldsAndList({
@@ -322,6 +434,7 @@ export default {
           isGroupedSampleData,
           useFirstRowSupported: false,
           resource,
+          flowSampleData,
         });
 
       default:
@@ -342,6 +455,7 @@ export default {
 
         if (isGroupedSampleData && isCsvOrXlsxResource(resource))
           _fm.useFirstRow = true;
+        _fm.extract = unwrapTextForSpecialChars(_fm.extract);
         toReturn.push(_fm);
       });
     mappings.lists &&
@@ -364,6 +478,7 @@ export default {
             }
           }
 
+          tempFm.extract = unwrapTextForSpecialChars(tempFm.extract);
           toReturn.push(tempFm);
         });
       });
@@ -417,10 +532,6 @@ export default {
         }
 
         delete mapping.useFirstRow;
-
-        // if (existingListsData[generateListPath]) {
-        //   list.jsonPath = existingListsData[generateListPath].jsonPath;
-        // }
       } else if (isCsvOrXlsxResource(resource) && isGroupedSampleData) {
         if (
           !mapping.useFirstRow &&
@@ -444,6 +555,18 @@ export default {
             list = listWithEmptyGenerate;
           }
         }
+      }
+
+      if (
+        mapping.extract.indexOf('*.') === 0 &&
+        useFirstRowSupported &&
+        !mapping.useFirstRow
+      ) {
+        mapping.extract = `*.${wrapTextForSpecialChars(
+          mapping.extract.slice(2)
+        )}`;
+      } else {
+        mapping.extract = wrapTextForSpecialChars(mapping.extract);
       }
 
       list ? list.fields.push(mapping) : fields.push(mapping);

@@ -1,6 +1,25 @@
+const handlebarRegex = /(\{\{[\s]*.*?[\s]*\}\})/i;
+const wrapTextForSpecialCharsNetsuite = extract => {
+  let toReturn = extract;
+
+  if (
+    extract.indexOf('[*].') === -1 &&
+    extract.indexOf("'") === -1 &&
+    /\W/.test(extract)
+  ) {
+    toReturn = `['${extract}']`;
+  }
+
+  return toReturn;
+};
+
 export default {
   // TODO (Aditya): Pass recordType after exports are completed and test for it
-  getFieldsAndListMappings: ({ mappings = {}, recordType }) => {
+  getFieldsAndListMappings: ({
+    mappings = {},
+    recordType,
+    isGroupedSampleData,
+  }) => {
     const toReturn = [];
     let isItemSubtypeRecord = false;
 
@@ -37,7 +56,11 @@ export default {
             tempFm.generate += '.internalid';
           }
 
-          // TODO (Aditya): handling special characters in extracts of FTP Export
+          if (/^\['.*']$/.test(tempFm.extract)) {
+            // Remove [' in the start and  remove '] in the end
+            tempFm.extract = tempFm.extract.replace(/^(\[')(.*)('])$/, '$2');
+          }
+
           toReturn.push(tempFm);
         }
       });
@@ -53,8 +76,34 @@ export default {
               tempFm.generate += '.internalid';
             }
 
-            // TODO (Aditya): handling special characters in extracts of FTP Export
-            // TODO (Aditya): check for useFirstRowCheckBoxCheck after export is ready
+            if (/^\['.*']$/.test(tempFm.extract)) {
+              // if extract starts with [' and ends with ']
+              tempFm.extract = tempFm.extract.replace(/^(\[')(.*)('])$/, '$2'); // removing [' and '] at begining and end of extract that we added
+            } else if (
+              /^(\*|0)\.\['.*']$/.test(tempFm.extract) &&
+              isGroupedSampleData
+            ) {
+              // if it starts with *.[' and ends with '] or starts with 0.[' and ends with ']
+              // just remove [' and '] in extract *. will be removed in next step and will set useFirstRow accordingly
+              tempFm.extract = tempFm.extract.replace(
+                /^([*|0]\.)(\[')(.*)('])$/,
+                '$1$3'
+              );
+            }
+
+            if (isGroupedSampleData) {
+              if (tempFm.extract && tempFm.extract.indexOf('*.') === 0) {
+                tempFm.extract = tempFm.extract.substr('*.'.length);
+              } else {
+                // remove 0. in the begining of extract
+                if (tempFm.extract && /^0\./.test(tempFm.extract)) {
+                  tempFm.extract = tempFm.extract.substr('0.'.length);
+                }
+
+                tempFm.useFirstRow = true;
+              }
+            }
+
             toReturn.push(tempFm);
           }
         });
@@ -63,7 +112,13 @@ export default {
     return toReturn;
   },
 
-  generateMappingFieldsAndList: ({ mappings, generateFields, recordType }) => {
+  generateMappingFieldsAndList: ({
+    mappings,
+    isGroupedSampleData,
+    generateFields,
+    recordType,
+    flowSampleData,
+  }) => {
     const initializeValues = [];
     let generateParts;
     const lists = [];
@@ -97,12 +152,23 @@ export default {
             fields: [],
           };
           lists.push(list);
-
-          // if (existingListsData[generateListPath]) {
-          //   list.jsonPath = existingListsData[generateListPath].jsonPath;
-          // }
         }
-        // TODO (Aditya): Extract field
+
+        if (
+          flowSampleData &&
+          isGroupedSampleData &&
+          mapping.extract &&
+          mapping.extract.indexOf('[*].') === -1 &&
+          !handlebarRegex.test(mapping.extract)
+        ) {
+          if (!mapping.useFirstRow) {
+            // Adding *. prefix to extract
+            mapping.extract = `*.${mapping.extract}`;
+          } else {
+            // Adding *. prefix to extract when useFirstRow is checked
+            mapping.extract = `0.${mapping.extract}`;
+          }
+        }
       }
 
       generateParts = mapping.generate.split('.');
@@ -139,6 +205,32 @@ export default {
       ) {
         mapping.hardCodedValue = mapping.hardCodedValue.split(',');
       }
+
+      if (
+        mapping.extract &&
+        mapping.extract.indexOf('[*].') === -1 &&
+        mapping.extract.indexOf("'") === -1 &&
+        !handlebarRegex.test(mapping.extract)
+      ) {
+        if (/^(0|\*)\./.test(mapping.extract)) {
+          // extract is mapped to sublist
+          if (!mapping.useFirstRow) {
+            mapping.extract = `*.${wrapTextForSpecialCharsNetsuite(
+              mapping.extract.slice(2)
+            )}`;
+          } else {
+            mapping.extract = `0.${wrapTextForSpecialCharsNetsuite(
+              mapping.extract.slice(2)
+            )}`;
+          }
+        } else {
+          mapping.extract = `${wrapTextForSpecialCharsNetsuite(
+            mapping.extract
+          )}`;
+        }
+      }
+
+      delete mapping.useFirstRow;
 
       if (mapping.useAsAnInitializeValue) {
         initializeValues.push(mapping.generate);
