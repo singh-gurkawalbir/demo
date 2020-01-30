@@ -10,9 +10,21 @@ export default {
         : [JSON.parse(editor.data)],
   }),
   // No point performing parsing or validation when it is an object
-  validate: editor => ({
-    dataError:
-      typeof editor.data !== 'object' && util.validateJsonString(editor.data),
-    ruleError: util.containsAllKeys(editor.rule, ['generate', 'extract']),
-  }),
+  validate: editor => {
+    let dataError;
+
+    if (editor.data === undefined || editor.data === '')
+      dataError = 'Must provide some sample data.';
+    else if (typeof editor.data !== 'object')
+      dataError = util.validateJsonString(editor.data);
+    const isContainsAllKey = util.containsAllKeys(editor.rule, [
+      'generate',
+      'extract',
+    ]);
+
+    return {
+      dataError,
+      ruleError: isContainsAllKey !== null && isContainsAllKey,
+    };
+  },
 };
