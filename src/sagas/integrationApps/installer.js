@@ -40,6 +40,11 @@ export function* installStep({ id, installerFunction, storeId, addOnId }) {
       yield put(
         actions.integrationApp.settings.requestAddOnLicenseMetadata(id)
       );
+      yield put(actions.resource.request('integrations', id));
+      yield put(actions.resource.requestCollection('flows'));
+      yield put(actions.resource.requestCollection('exports'));
+      yield put(actions.resource.requestCollection('imports'));
+      yield put(actions.resource.requestCollection('connections'));
     }
   } else if (
     stepCompleteResponse &&
