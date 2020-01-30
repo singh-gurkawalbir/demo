@@ -74,7 +74,9 @@ export default function DynaMultiSelect(props) {
     value = [],
     label,
     onFieldChange,
+    placeholder,
     valueDelimiter,
+    displayEmpty,
     isValid,
     required,
   } = props;
@@ -109,11 +111,14 @@ export default function DynaMultiSelect(props) {
             <MenuItem
               key={item.value}
               value={item.value}
+              disabled={item.disabled}
               className={classes.menuItems}>
-              <Checkbox
-                checked={processedValue.indexOf(item.value) !== -1}
-                color="primary"
-              />
+              {!item.disabled && (
+                <Checkbox
+                  checked={processedValue.indexOf(item.value) !== -1}
+                  color="primary"
+                />
+              )}
               <ListItemText primary={item.label || item.value} />
             </MenuItem>
           );
@@ -141,24 +146,31 @@ export default function DynaMultiSelect(props) {
         error={!isValid}
         required={required}
         className={classes.root}>
-        <InputLabel htmlFor={id}>{label}</InputLabel>
+        <InputLabel shrink htmlFor={id}>
+          {label}
+        </InputLabel>
         <Select
           multiple
           data-test={id}
           disabled={disabled}
           value={processedValue}
+          displayEmpty={displayEmpty}
           IconComponent={ArrowDownIcon}
           onChange={evt => {
             onFieldChange(id, evt.target.value);
           }}
           input={<Input name={name} id={id} />}
-          renderValue={selected => (
-            <div className={classes.chips}>
-              {selected &&
-                typeof selected.map === 'function' &&
-                selected.map(createChip)}
-            </div>
-          )}>
+          renderValue={selected =>
+            !selected || !selected.length ? (
+              <div>{placeholder}</div>
+            ) : (
+              <div className={classes.chips}>
+                {selected &&
+                  typeof selected.map === 'function' &&
+                  selected.map(createChip)}
+              </div>
+            )
+          }>
           {items}
         </Select>
       </FormControl>

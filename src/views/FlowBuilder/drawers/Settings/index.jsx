@@ -68,18 +68,28 @@ export default function SettingsDrawer({ flow, isViewMode, ...props }) {
               [],
           },
         ],
-        disabled: flow && flow._integrationId,
+        defaultDisabled: flow && !!flow._integrationId,
       },
       _runNextFlowIds: {
         id: '_runNextFlowIds',
         name: '_runNextFlowIds',
         type: 'multiselect',
+        placeholder: 'Please select flow',
         helpKey: 'flow._runNextFlowIds',
         label: 'Next Data Flow:',
+        displayEmpty: true,
         defaultValue: (flow && flow._runNextFlowIds) || [],
         options: [
           {
-            items: nextDataFlows.map(i => ({ label: i.name, value: i._id })),
+            items: nextDataFlows.length
+              ? nextDataFlows.map(i => ({ label: i.name, value: i._id }))
+              : [
+                  {
+                    label: "You don't have any other active flows",
+                    disabled: true,
+                    value: '',
+                  },
+                ],
           },
         ],
       },
