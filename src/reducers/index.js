@@ -380,6 +380,14 @@ export function editorViolations(state, id) {
   return fromSession.editorViolations(state && state.session, id);
 }
 
+export function editorPatchSet(state, id) {
+  return fromSession.editorPatchSet(state && state.session, id);
+}
+
+export function editorSaveProcessTerminate(state, id) {
+  return fromSession.editorSaveProcessTerminate(state && state.session, id);
+}
+
 export function mapping(state, id) {
   return fromSession.mapping(state && state.session, id);
 }

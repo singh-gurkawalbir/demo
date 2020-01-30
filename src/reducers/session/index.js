@@ -90,6 +90,14 @@ export function editorViolations(state, id) {
   return fromEditors.editorViolations(state && state.editors, id);
 }
 
+export function editorPatchSet(state, id) {
+  return fromEditors.editorPatchSet(state && state.editors, id);
+}
+
+export function editorSaveProcessTerminate(state, id) {
+  return fromEditors.editorSaveProcessTerminate(state && state.editors, id);
+}
+
 export function mapping(state, id) {
   return fromMappings.mapping(state && state.mappings, id);
 }

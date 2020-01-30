@@ -29,6 +29,9 @@ export default function JavaScriptEditor(props) {
     scriptId,
     insertStubKey,
     disabled,
+    resourceType,
+    resourceId,
+    processorKey,
     layout = 'compact',
   } = props;
   const classes = useStyles(props);
@@ -54,9 +57,21 @@ export default function JavaScriptEditor(props) {
         data: props.data,
         autoEvaluate: true,
         autoEvaluateDelay: 1000,
+        resourceType,
+        resourceId,
+        processorKey,
       })
     );
-  }, [dispatch, editorId, scriptId, entryFunction, props.data]);
+  }, [
+    dispatch,
+    editorId,
+    scriptId,
+    entryFunction,
+    props.data,
+    resourceType,
+    resourceId,
+    processorKey,
+  ]);
 
   useEffect(() => {
     handleInit();

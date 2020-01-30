@@ -10,8 +10,9 @@ import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import * as selectors from '../../reducers';
 import { apiCallWithRetry } from '../index';
-import { getResource } from '../resources';
+import { getResource, commitStagedChanges } from '../resources';
 import processorLogic from '../../reducers/session/editors/processorLogic';
+import { SCOPES } from '../resourceForm';
 
 export function* invokeProcessor({ processor, body }) {
   const path = `/processors/${processor}`;
@@ -35,8 +36,6 @@ export function* evaluateProcessor({ id }) {
   if (violations) {
     return yield put(actions.editor.validateFailure(id, violations));
   }
-
-  // console.log(`editorProcessorOptions for ${id}`, processor, body);
 
   try {
     // we are hiding this comm activity from the network snackbar
@@ -71,6 +70,49 @@ export function* evaluateExternalProcessor({ processorData }) {
     return yield call(invokeProcessor, { processor, body });
   } catch (e) {
     return { error: e };
+  }
+}
+
+export function* saveProcessor({ id }) {
+  const patches = yield select(selectors.editorPatchSet, id);
+
+  if (!patches) {
+    yield put(actions.editor.saveFailed(id));
+  }
+
+  const { foregroundPatch, backgroundPatches } = patches || {};
+
+  if (foregroundPatch) {
+    const { patch, resourceType, resourceId } = foregroundPatch || {};
+
+    if (!!patch && !!resourceType && !!resourceId) {
+      yield put(actions.resource.patchStaged(resourceId, patch, SCOPES.VALUE));
+      const error = yield call(commitStagedChanges, {
+        resourceType,
+        id: resourceId,
+        scope: SCOPES.VALUE,
+      });
+
+      if (error) yield put(actions.editor.saveFailed(id));
+
+      yield put(actions.editor.saveComplete(id));
+    }
+  } else {
+    yield put(actions.editor.saveComplete(id));
+  }
+
+  if (backgroundPatches && Array.isArray(backgroundPatches)) {
+    for (let index = 0; index < backgroundPatches.length; index += 1) {
+      const { patch, resourceType, resourceId } =
+        backgroundPatches[index] || {};
+
+      if (!!patch && !!resourceType && !!resourceId) {
+        yield put(actions.resource.patchStaged(resourceId, patch, 'value'));
+        yield put(
+          actions.resource.commitStaged(resourceType, resourceId, 'value')
+        );
+      }
+    }
   }
 }
 
@@ -149,4 +191,5 @@ export default [
     autoEvaluateProcessor
   ),
   takeLatest(actionTypes.EDITOR_EVALUATE_REQUEST, evaluateProcessor),
+  takeLatest(actionTypes.EDITOR_SAVE, saveProcessor),
 ];

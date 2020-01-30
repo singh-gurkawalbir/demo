@@ -1,6 +1,7 @@
 import { deepClone } from 'fast-json-patch';
 import actionTypes from '../../../actions/types';
 import processorLogic from './processorLogic';
+import processorPatchSet from './processorPatchSet';
 
 const emptyObj = {};
 
@@ -36,6 +37,8 @@ export default function reducer(state = {}, action) {
         ...deepClone(options),
         lastChange: Date.now(),
         initChangeIdentifier: initChangeIdentifier + 1,
+        submitCompleted: false,
+        submitFailed: false,
       };
 
       return newState;
@@ -95,6 +98,29 @@ export default function reducer(state = {}, action) {
 
       return newState;
 
+    case actionTypes.EDITOR_SAVE:
+      newState[id] = {
+        ...newState[id],
+        submitCompleted: false,
+        submitFailed: false,
+      };
+
+      return newState;
+    case actionTypes.EDITOR_SAVE_FAILED:
+      newState[id] = {
+        ...newState[id],
+        submitFailed: true,
+      };
+
+      return newState;
+    case actionTypes.EDITOR_SAVE_COMPLETE:
+      newState[id] = {
+        ...newState[id],
+        submitCompleted: true,
+      };
+
+      return newState;
+
     default:
       return state;
   }
@@ -119,6 +145,32 @@ export function editorViolations(state, id) {
   if (!editor) return;
 
   return processorLogic.validate(editor);
+}
+
+export function editorPatchSet(state, id) {
+  if (!state) return;
+
+  const editor = state[id];
+
+  if (!editor) return;
+  const a = processorPatchSet.getPatchSet(editor);
+
+  return a;
+  // return processorPatchSet.getPatchSet(editor);
+}
+
+export function editorSaveProcessTerminate(state, id) {
+  if (!state) {
+    return emptyObj;
+  }
+
+  if (!state[id]) return false;
+  const { submitFailed, submitCompleted } = state[id];
+
+  return {
+    saveTerminated: !!(submitFailed || submitCompleted),
+    saveCompleted: !!submitCompleted,
+  };
 }
 
 export function processorRequestOptions(state, id) {
