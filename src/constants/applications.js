@@ -698,9 +698,48 @@ const connectors = [
   { id: 'zuora', name: 'Zuora', type: 'rest', assistant: 'zuora' },
 ];
 
-export const groupApplications = resourceType => {
+export const groupApplications = (resourceType, assistants, appType) => {
   const filteredConnectors = connectors.filter(connector => {
     // Webhooks are shown only for exports and for page generators in flow context
+
+    if (connector.assistant && assistants) {
+      if (
+        assistants.http.applications.find(
+          ass => ass._id === connector.assistant
+        )
+      ) {
+        const assistant = assistants.http.applications.find(
+          ass => ass._id === connector.assistant
+        );
+
+        if (appType === 'import') {
+          return assistant.import;
+        } else if (appType === 'export') {
+          return assistant.export;
+        }
+
+        return true;
+      } else if (
+        assistants.rest.applications.find(
+          ass => ass._id === connector.assistant
+        )
+      ) {
+        const assistant = assistants.rest.applications.find(
+          ass => ass._id === connector.assistant
+        );
+
+        if (appType === 'import') {
+          return assistant.import;
+        } else if (appType === 'export') {
+          return assistant.export;
+        }
+
+        return true;
+      }
+
+      return false;
+    }
+
     if (resourceType && !['exports', 'pageGenerator'].includes(resourceType))
       return !connector.webhookOnly;
 

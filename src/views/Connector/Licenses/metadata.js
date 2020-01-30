@@ -1,7 +1,7 @@
 import { Typography } from '@material-ui/core';
-import moment from 'moment';
 import Delete from '../../../components/ResourceTable/actions/Delete';
 import ResourceDrawerLink from '../../../components/ResourceDrawerLink';
+import { formatLastModified } from '../../../components/CeligoTable/util';
 
 export default {
   columns: [
@@ -19,24 +19,14 @@ export default {
     },
     {
       heading: 'Created on',
-      value: r => {
-        if (r.created) {
-          return moment(r.created).format('MMM Do, YYYY');
-        }
-
-        return '';
-      },
+      value: r => formatLastModified(r.created),
     },
     {
       heading: 'Expires on',
       value(r) {
-        let date = '';
-
-        if (r.expires) {
-          date = moment(r.expires).format('MMM Do, YYYY');
-        }
-
-        return <Typography color="error">{date}</Typography>;
+        return (
+          <Typography color="error">{formatLastModified(r.expires)}</Typography>
+        );
       },
     },
     {
