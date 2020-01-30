@@ -9,6 +9,7 @@ import OAuthButton from './OAuthButton';
 import NetsuiteValidateButton from './NetsuiteValidateButton';
 import SaveFileDefinitionButton from './SaveFileDefinitionButton';
 import IntegrationSettingsSaveButton from './IntegrationSettingsSaveButton';
+import SaveAndContinueButton from './SaveAndContinueButton';
 
 export const useLoadingSnackbarOnSave = props => {
   const { saveTerminated, onSave, resourceType } = props;
@@ -48,5 +49,5 @@ export default {
   validate: NetsuiteValidateButton,
   savedefinition: SaveFileDefinitionButton,
   saveintegrationsettings: IntegrationSettingsSaveButton,
-  saveandcontinue: SaveButton,
+  saveandcontinue: SaveAndContinueButton,
 };

@@ -341,6 +341,53 @@ export function* submitResourceForm(params) {
   if (cancelSave) yield put(actions.resource.clearStaged(resourceId));
 }
 
+export function* saveAndContinueResourceForm(params) {
+  const { resourceId } = params;
+
+  yield call(submitResourceForm, params);
+  const formState = yield select(
+    selectors.resourceFormState,
+    'connections',
+    resourceId
+  );
+  let id = resourceId;
+
+  if (isNewId(resourceId)) {
+    id = yield select(selectors.createdResourceId, resourceId);
+  }
+
+  if (formState.submitComplete) {
+    const path = `/connection/${id}/generateoauth2token`;
+
+    try {
+      const response = yield call(apiCallWithRetry, {
+        path,
+        opts: {
+          method: 'GET',
+        },
+      });
+
+      if (response && response.errors) {
+        return yield put(
+          actions.api.failure(
+            path,
+            'GET',
+            JSON.stringify(response.errors),
+            false
+          )
+        );
+      }
+
+      yield call(apiCallWithRetry, {
+        path: `/connections/${id}/ping`,
+        hidden: true,
+      });
+    } catch (error) {
+      return { error };
+    }
+  }
+}
+
 export function* saveResourceWithDefinitionID({ formValues, definitionId }) {
   const { resourceId, resourceType, values } = formValues;
   const newValues = { ...values };
@@ -515,5 +562,9 @@ export const resourceFormSagas = [
   takeEvery(actionTypes.RESOURCE.PATCH_FORM_FIELD, patchFormField),
   takeEvery(actionTypes.RESOURCE_FORM.INIT, initFormValues),
   takeEvery(actionTypes.RESOURCE_FORM.SUBMIT, submitResourceForm),
+  takeEvery(
+    actionTypes.RESOURCE_FORM.SAVE_AND_CONTINUE,
+    saveAndContinueResourceForm
+  ),
   ...connectionSagas,
 ];

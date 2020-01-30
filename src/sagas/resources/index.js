@@ -37,7 +37,7 @@ function* isDataLoaderFlow(flow) {
   }
 }
 
-export function* commitStagedChanges({ resourceType, id, scope, isGenerate }) {
+export function* commitStagedChanges({ resourceType, id, scope }) {
   const userPreferences = yield select(selectors.userPreferences);
   const isSandbox = userPreferences
     ? userPreferences.environment === 'sandbox'
@@ -135,32 +135,6 @@ export function* commitStagedChanges({ resourceType, id, scope, isGenerate }) {
         body: merged,
       },
     });
-
-    if (isGenerate && resourceType === 'connections') {
-      try {
-        const response = yield call(apiCallWithRetry, {
-          path: `/connection/${updated._id}/generateoauth2token`,
-          opts: {
-            method: 'GET',
-          },
-        });
-
-        if (response && response.errors) {
-          yield put(
-            actions.api.failure(
-              path,
-              'GET',
-              JSON.stringify(response.errors),
-              false
-            )
-          );
-
-          return { error: response.errors };
-        }
-      } catch (error) {
-        return { error };
-      }
-    }
   } catch (error) {
     // TODO: What should we do for 4xx errors? where the resource to put/post
     // violates some API business rules?

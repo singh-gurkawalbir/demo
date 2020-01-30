@@ -980,6 +980,14 @@ const resourceForm = {
       skipClose,
       isGenerate,
     }),
+  saveAndContinue: (resourceType, resourceId, values, match, skipClose) =>
+    action(actionTypes.RESOURCE_FORM.SAVE_AND_CONTINUE, {
+      resourceType,
+      resourceId,
+      values,
+      match,
+      skipClose,
+    }),
   submitComplete: (resourceType, resourceId, formValues) =>
     action(actionTypes.RESOURCE_FORM.SUBMIT_COMPLETE, {
       resourceType,

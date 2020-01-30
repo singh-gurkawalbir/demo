@@ -621,7 +621,6 @@ export default {
       'httpToken',
       'httpCookie',
       'http.auth.wsse.headerName',
-      'http.auth.oauth.applicationType',
     ],
     type: 'collapse',
     containers: [
@@ -726,8 +725,7 @@ export default {
     },
     {
       id: 'saveandcontinue',
-      submitButtonLabel: 'Save & Continue',
-      isGenerate: true,
+      label: 'Save & Continue',
       visibleWhenAll: [
         {
           field: 'http.auth.type',
