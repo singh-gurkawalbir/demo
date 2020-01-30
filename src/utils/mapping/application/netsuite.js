@@ -5,6 +5,7 @@ const wrapTextForSpecialCharsNetsuite = extract => {
   if (
     extract.indexOf('[*].') === -1 &&
     extract.indexOf("'") === -1 &&
+    extract.indexOf('.') === -1 &&
     /\W/.test(extract)
   ) {
     toReturn = `['${extract}']`;
