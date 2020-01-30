@@ -20,6 +20,7 @@ import FullScreenOpenIcon from '../../icons/FullScreenOpenIcon';
 import FullScreenCloseIcon from '../../icons/FullScreenCloseIcon';
 import ViewColumnIcon from '../../icons/LayoutTriVerticalIcon';
 import ViewCompactIcon from '../../icons/LayoutLgLeftSmrightIcon';
+import EditorSaveButton from '../../ResourceFormFactory/Actions/EditorSaveButton';
 
 const useStyles = makeStyles(theme => ({
   dialogContent: {
@@ -69,6 +70,7 @@ export default function EditorDialog(props) {
     disabled,
     dataTest = 'editor',
     hidePreviewAction = false,
+    patchOnSave = false,
   } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -175,14 +177,26 @@ export default function EditorDialog(props) {
           onClick={() => handleClose()}>
           Cancel
         </Button>
-        <Button
-          variant="outlined"
-          data-test="saveEditor"
-          disabled={!!disableSave}
-          color="primary"
-          onClick={() => handleClose(true)}>
-          Save
-        </Button>
+        {patchOnSave ? (
+          <EditorSaveButton
+            id={id}
+            variant="outlined"
+            color="primary"
+            data-test="saveEditor"
+            disabled={disabled}
+            onClose={handleClose}
+            submitButtonLabel="Save"
+          />
+        ) : (
+          <Button
+            variant="outlined"
+            data-test="saveEditor"
+            disabled={!!disableSave}
+            color="primary"
+            onClick={() => handleClose(true)}>
+            Save
+          </Button>
+        )}
       </DialogActions>
     </Dialog>
   );

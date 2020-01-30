@@ -17,11 +17,11 @@ export default function TransformToggleEditorDialog({
   scriptId,
   data,
   disabled,
-  processorKey,
   entryFunction,
   insertStubKey,
   resourceType,
   resourceId,
+  optionalSaveParams,
   ...rest
 }) {
   return (
@@ -35,20 +35,16 @@ export default function TransformToggleEditorDialog({
       <TransformEditor
         rule={rule}
         data={data}
-        processorKey={processorKey}
         disabled={disabled}
-        resourceType={resourceType}
-        resourceId={resourceId}
+        optionalSaveParams={optionalSaveParams}
       />
       <JavaScriptEditor
         data={data}
         disabled={disabled}
         scriptId={scriptId}
-        processorKey={processorKey}
-        resourceType={resourceType}
-        resourceId={resourceId}
         entryFunction={entryFunction}
         insertStubKey={insertStubKey}
+        optionalSaveParams={optionalSaveParams}
       />
     </ToggleEditorDialog>
   );

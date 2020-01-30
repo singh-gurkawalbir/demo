@@ -1,4 +1,4 @@
-import { useEffect, Fragment } from 'react';
+import { useMemo, useEffect, Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { isEmpty } from 'lodash';
 import * as selectors from '../../../../reducers';
@@ -35,45 +35,9 @@ function PostResponseMapHookDialog({
       stage: 'postResponseMapHook',
     })
   );
-  const saveScript = values => {
-    const { code, scriptId } = values;
-    const patchSet = [
-      {
-        op: 'replace',
-        path: '/content',
-        value: code,
-      },
-    ];
-
-    dispatch(actions.resource.patchStaged(scriptId, patchSet, 'value'));
-    dispatch(actions.resource.commitStaged('scripts', scriptId, 'value'));
-  };
-
-  const savePostResponseMapHook = values => {
-    const patchSet = [];
-    const { scriptId: _scriptId, entryFunction } = values;
-
-    if (!pageProcessorsObject.hooks) {
-      patchSet.push({
-        op: 'add',
-        path: `/pageProcessors/${resourceIndex}/hooks`,
-        value: {},
-      });
-    }
-
-    patchSet.push({
-      op:
-        pageProcessorsObject.hooks && pageProcessorsObject.hooks.postResponseMap
-          ? 'replace'
-          : 'add',
-      path: `/pageProcessors/${resourceIndex}/hooks/postResponseMap`,
-      value: { _scriptId, function: entryFunction },
-    });
-    dispatch(actions.resource.patchStaged(flowId, patchSet, 'value'));
-    dispatch(actions.resource.commitStaged('flows', flowId, 'value'));
-  };
-
   const handleClose = (shouldCommit, editorValues) => {
+    // script gets saved automatically on click of save
+    // TODO: work on this Aditya
     if (shouldCommit) {
       if (!editorValues || !editorValues.scriptId) {
         // Should not save hooks without script Id
@@ -83,11 +47,6 @@ function PostResponseMapHookDialog({
           variant: 'error',
         });
       }
-
-      // Saves the script first with updated content against scriptId
-      saveScript(editorValues);
-      // Saves postResponseMap Hook on pageProcessor based on resourceIndex
-      savePostResponseMapHook(editorValues);
     }
 
     onClose();
@@ -113,6 +72,15 @@ function PostResponseMapHookDialog({
     null,
     2
   );
+  const optionalSaveParams = useMemo(
+    () => ({
+      pageProcessorsObject,
+      processorKey: 'postResponseMapHook',
+      resourceIndex,
+      flowId,
+    }),
+    [flowId, pageProcessorsObject, resourceIndex]
+  );
 
   return (
     <JavaScriptEditorDialog
@@ -126,7 +94,9 @@ function PostResponseMapHookDialog({
       entryFunction={
         postResponseMapHook.function || hooksToFunctionNamesMap[hookStage]
       }
+      patchOnSave
       onClose={handleClose}
+      optionalSaveParams={optionalSaveParams}
     />
   );
 }

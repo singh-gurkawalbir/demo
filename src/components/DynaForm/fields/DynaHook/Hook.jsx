@@ -35,13 +35,16 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+/*
+ * pass patchOnSave = true along with processorKey, if network save is required on click of Save button
+ */
 export default function DynaHook(props) {
   const [showEditor, setShowEditor] = useState(false);
   const [showCreateScriptDialog, setShowCreateScriptDialog] = useState(false);
   const [tempScriptId, setTempScriptId] = useState(generateNewId());
+  const dispatch = useDispatch();
   const [isNewScriptIdAssigned, setIsNewScriptIdAssigned] = useState(false);
   const classes = useStyles();
-  const dispatch = useDispatch();
   const createdScriptId = useSelector(state =>
     selectors.createdResourceId(state, tempScriptId)
   );
@@ -74,12 +77,9 @@ export default function DynaHook(props) {
     setShowEditor(!showEditor);
   }, [requestForPreHookData, showEditor]);
   const handleClose = (shouldCommit, editorValues) => {
-    const { scriptId, entryFunction, code: content } = editorValues;
-
     if (shouldCommit) {
-      const values = { content, scriptId };
+      const { scriptId, entryFunction } = editorValues;
 
-      saveScript(values, { dispatch });
       onFieldChange(id, {
         ...value,
         _scriptId: scriptId,
@@ -146,6 +146,10 @@ export default function DynaHook(props) {
           insertStubKey={hookStage}
           entryFunction={value.function || hooksToFunctionNamesMap[hookStage]}
           onClose={handleClose}
+          optionalSaveParams={{
+            processorKey: 'scriptEdit',
+          }}
+          patchOnSave
         />
       )}
       {showCreateScriptDialog && (

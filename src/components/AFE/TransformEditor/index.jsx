@@ -26,9 +26,8 @@ export default function TransformEditor(props) {
   const {
     editorId,
     disabled,
-    resourceType,
+    optionalSaveParams,
     resourceId,
-    processorKey,
     layout = 'column',
   } = props;
   const classes = useStyles();
@@ -47,20 +46,18 @@ export default function TransformEditor(props) {
         data: props.data,
         autoEvaluate: true,
         rule: props.rule,
-        resourceType,
         resourceId,
-        processorKey,
         duplicateKeyToValidate: [valueName],
+        optionalSaveParams,
       })
     );
   }, [
     dispatch,
     editorId,
-    processorKey,
+    optionalSaveParams,
     props.data,
     props.rule,
     resourceId,
-    resourceType,
   ]);
   const handleDataChange = useCallback(
     data => {

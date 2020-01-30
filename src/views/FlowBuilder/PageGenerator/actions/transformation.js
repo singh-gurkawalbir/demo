@@ -46,6 +46,15 @@ function TransformationDialog({ flowId, resource, onClose, isViewMode }) {
     }
   }, [dispatch, flowId, exportId, sampleData]);
 
+  const optionalSaveParams = useMemo(
+    () => ({
+      processorKey: 'transform',
+      resourceId: exportId,
+      resourceType: 'exports',
+    }),
+    [exportId]
+  );
+
   return (
     <TransformToggleEditorDialog
       title="Transform record"
@@ -54,13 +63,11 @@ function TransformationDialog({ flowId, resource, onClose, isViewMode }) {
       data={sampleData}
       type={type}
       scriptId={scriptId}
-      resourceType="exports"
-      resourceId={exportId}
       rule={rule}
-      processorKey="transform"
       entryFunction={entryFunction || hooksToFunctionNamesMap.transform}
       insertStubKey="transform"
       onClose={handleClose}
+      optionalSaveParams={optionalSaveParams}
     />
   );
 }

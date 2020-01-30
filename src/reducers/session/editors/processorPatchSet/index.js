@@ -1,14 +1,24 @@
 import transform from './transform';
+import scriptEdit from './scriptEdit';
+import postResponseMapHook from './postResponseMapHook';
 
 const logicMap = {
   transform,
+  scriptEdit,
+  postResponseMapHook,
 };
 
 function getLogic(editor) {
-  const logic = logicMap[editor.processorKey];
+  const { processorKey } = (editor && editor.optionalSaveParams) || {};
+
+  if (!processorKey) {
+    throw new Error(`Not supported.`);
+  }
+
+  const logic = logicMap[processorKey];
 
   if (!logic) {
-    throw new Error(`Processor [${editor.processor}] not supported.`);
+    throw new Error(`Processor [${processorKey}] not supported.`);
   }
 
   return logic;

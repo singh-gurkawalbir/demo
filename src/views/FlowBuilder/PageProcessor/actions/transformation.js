@@ -7,7 +7,13 @@ import TransformEditorDialog from '../../../../components/AFE/TransformEditor/Tr
 import helpTextMap from '../../../../components/Help/helpTextMap';
 import { hooksToFunctionNamesMap } from '../../../../utils/hooks';
 
-function TransformationDialog({ flowId, resource, isViewMode, onClose }) {
+function TransformationDialog({
+  flowId,
+  resource,
+  isViewMode,
+  onClose,
+  optionalSaveParams,
+}) {
   const dispatch = useDispatch();
   const exportId = resource._id;
   const resourceType = 'exports';
@@ -58,10 +64,10 @@ function TransformationDialog({ flowId, resource, isViewMode, onClose }) {
       resourceType="exports"
       resourceId={exportId}
       rule={rule}
-      processorKey="transform"
       entryFunction={entryFunction || hooksToFunctionNamesMap.transform}
       insertStubKey="transform"
       onClose={handleClose}
+      optionalSaveParams={optionalSaveParams}
     />
   );
 }
