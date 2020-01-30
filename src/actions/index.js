@@ -71,6 +71,10 @@ const connection = {
       connectionId,
       integrationId,
     }),
+  requestRevoke: connectionId =>
+    action(actionTypes.CONNECTION.REVOKE_REQUEST, {
+      connectionId,
+    }),
   completeDeregister: (deregisteredId, integrationId) =>
     action(actionTypes.CONNECTION.DEREGISTER_COMPLETE, {
       deregisteredId,
@@ -967,8 +971,17 @@ const resourceForm = {
       skipCommit,
       flowId,
     }),
-  submit: (resourceType, resourceId, values, match, skipClose) =>
+  submit: (resourceType, resourceId, values, match, skipClose, isGenerate) =>
     action(actionTypes.RESOURCE_FORM.SUBMIT, {
+      resourceType,
+      resourceId,
+      values,
+      match,
+      skipClose,
+      isGenerate,
+    }),
+  saveAndContinue: (resourceType, resourceId, values, match, skipClose) =>
+    action(actionTypes.RESOURCE_FORM.SAVE_AND_CONTINUE, {
       resourceType,
       resourceId,
       values,
