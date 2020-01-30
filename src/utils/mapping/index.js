@@ -486,7 +486,7 @@ export default {
     return toReturn;
   },
   generateMappingFieldsAndList: ({
-    mappings = {},
+    mappings = [],
     isGroupedSampleData,
     useFirstRowSupported = false,
     resource = {},
@@ -558,6 +558,7 @@ export default {
       }
 
       if (
+        mapping.extract &&
         mapping.extract.indexOf('*.') === 0 &&
         useFirstRowSupported &&
         !mapping.useFirstRow
