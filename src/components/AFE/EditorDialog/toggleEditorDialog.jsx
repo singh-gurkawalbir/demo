@@ -102,7 +102,7 @@ export default function ToggleEditorDialog(props) {
   const toggleEditorOptions = useMemo(
     () => [
       { label: labels[0] || 'Rules', value: 'expression' },
-      { label: labels[1] || 'Javascript', value: 'script' },
+      { label: labels[1] || 'JavaScript', value: 'script' },
     ],
     [labels]
   );

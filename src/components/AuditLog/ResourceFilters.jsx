@@ -1,6 +1,4 @@
 import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
-import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import { makeStyles } from '@material-ui/core/styles';
 import { sortBy } from 'lodash';
@@ -9,43 +7,15 @@ import {
   RESOURCE_TYPE_SINGULAR_TO_PLURAL,
 } from '../../constants/resource';
 import { OPTION_ALL } from './util';
-import ArrowDownIcon from '../icons/ArrowDownIcon';
+import CeligoSelect from '../CeligoSelect';
 
 const useStyles = makeStyles(theme => ({
   formControl: {
-    margin: theme.spacing(1),
-    minWidth: 200,
-    maxWidth: 300,
-  },
-  select: {
-    background: theme.palette.background.paper,
-    border: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
-    transitionProperty: 'border',
-    transitionDuration: theme.transitions.duration.short,
-    transitionTimingFunction: theme.transitions.easing.easeInOut,
-    overflow: 'hidden',
-    height: 42,
-    textAlign: 'left',
-    borderRadius: 2,
-    '& > div': {
-      maxWidth: '85%',
-    },
-    '& > Label': {
-      paddingTop: 10,
-    },
-    '&:hover': {
-      borderColor: theme.palette.primary.main,
-    },
-    '& > *': {
-      padding: [[0, 0, 0, 12]],
-    },
-    '& > div > div ': {
-      paddingBottom: 5,
-    },
-    '& svg': {
-      right: 8,
-      paddingLeft: 0,
+    marginRight: theme.spacing(1),
+    minWidth: theme.spacing(20),
+    maxWidth: theme.spacing(30),
+    '&:first-child': {
+      marginLeft: theme.spacing(1),
     },
   },
 }));
@@ -110,16 +80,16 @@ export function ResourceTypeFilter(props) {
 
   return (
     <FormControl className={classes.formControl}>
-      <InputLabel htmlFor="resourceType">Select Resource Type</InputLabel>
-      <Select
+      <CeligoSelect
         value={filters.resourceType}
         onChange={onChange}
-        className={classes.select}
-        IconComponent={ArrowDownIcon}
         inputProps={{
           name: 'resourceType',
           id: 'resourceType',
         }}>
+        <MenuItem value="" disabled>
+          Select resource type
+        </MenuItem>
         {[
           [OPTION_ALL.id, OPTION_ALL.label],
           ...resourceTypeFilterOptionsByResourceType[resourceType || 'all'].map(
@@ -130,7 +100,7 @@ export function ResourceTypeFilter(props) {
             {opt[1]}
           </MenuItem>
         ))}
-      </Select>
+      </CeligoSelect>
     </FormControl>
   );
 }
@@ -178,24 +148,23 @@ export function ResourceIdFilter(props) {
 
   return (
     <FormControl className={classes.formControl}>
-      <InputLabel htmlFor="_resourceId">
-        Select {RESOURCE_TYPE_SINGULAR_TO_LABEL[filters.resourceType]}
-      </InputLabel>
-      <Select
+      <CeligoSelect
         inputProps={{
           name: '_resourceId',
           id: '_resourceId',
         }}
         variant="filled"
         className={classes.select}
-        IconComponent={ArrowDownIcon}
         value={filters._resourceId}
         onChange={onChange}>
+        <MenuItem value="" disabled>
+          Select {RESOURCE_TYPE_SINGULAR_TO_LABEL[filters.resourceType]}
+        </MenuItem>
         <MenuItem key={OPTION_ALL.id} value={OPTION_ALL.id}>
           {OPTION_ALL.label}
         </MenuItem>
         {menuOptions}
-      </Select>
+      </CeligoSelect>
     </FormControl>
   );
 }

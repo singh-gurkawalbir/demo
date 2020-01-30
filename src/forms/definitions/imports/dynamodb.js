@@ -5,8 +5,10 @@ export default {
     };
 
     if (retValues['/dynamodb/method'] === 'putItem') {
-      retValues['/dynamodb/expressionAttributeValues'] = undefined;
-      retValues['/dynamodb/expressionAttributeNames'] = undefined;
+      if (retValues['/dynamodb/conditionExpression'] === '') {
+        retValues['/dynamodb/expressionAttributeValues'] = undefined;
+        retValues['/dynamodb/expressionAttributeNames'] = undefined;
+      }
     } else {
       retValues['/dynamodb/itemDocument'] = undefined;
     }
@@ -38,6 +40,8 @@ export default {
     },
     ignoreExisting: {
       fieldId: 'ignoreExisting',
+      type: 'checkboxforresetfields',
+      fieldsToReset: [{ id: 'ignoreMissing', type: 'checkbox' }],
       visibleWhen: [
         {
           field: 'dynamodb.method',
@@ -63,6 +67,8 @@ export default {
     },
     ignoreMissing: {
       fieldId: 'ignoreMissing',
+      type: 'checkboxforresetfields',
+      fieldsToReset: [{ id: 'ignoreExisting', type: 'checkbox' }],
       visibleWhen: [
         {
           field: 'dynamodb.method',
@@ -108,13 +114,12 @@ export default {
       'dynamodb.expressionAttributeValues',
       'dynamodb.partitionKey',
       'dynamodb.sortKey',
-      'dynamodb.itemDocument',
-      'dynamodb.updateExpression',
       'dynamodb.conditionExpression',
       'ignoreExisting',
       'ignoreMissing',
       'dynamodb.ignoreExtract',
-      'dataMappings',
+      'dynamodb.itemDocument',
+      'dynamodb.updateExpression',
     ],
     type: 'collapse',
     containers: [],

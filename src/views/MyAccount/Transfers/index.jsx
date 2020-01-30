@@ -9,6 +9,7 @@ import metadata from './metadata';
 import Invite from './Invite';
 import IconTextButton from '../../../components/IconTextButton';
 import AddIcon from '../../../components/icons/AddIcon';
+import PanelHeader from '../../../components/PanelHeader';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -41,6 +42,7 @@ export default function Transfers() {
 
   return (
     <Fragment>
+      <PanelHeader title="Transfers" />
       <LoadResources required resources="transfers,integrations">
         {!showInviteView && (
           <Fragment>

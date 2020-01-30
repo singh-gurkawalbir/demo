@@ -18,8 +18,15 @@ import KnowledgeBaseIcon from '../../components/icons/KnowledgeBaseIcon';
 import TicketTagIcon from '../../components/icons/TicketTagIcon';
 import RecycleBinIcon from '../../components/icons/RecycleBinIcon';
 import TokensApiIcon from '../../components/icons/TokensApiIcon';
+import { getHelpUrl } from '../../utils/resource';
+import { SUBMIT_TICKET_URL, WHATS_NEW_URL } from '../../utils/constants';
 
-export default function menuItems(userProfile, userPermissions = {}) {
+export default function menuItems(
+  userProfile,
+  userPermissions = {},
+  integrations,
+  marketplaceConnectors
+) {
   const isDeveloper = userProfile && userProfile.developer;
   const canPublish = userProfile && userProfile.allowedToPublish;
   let items = [
@@ -93,8 +100,24 @@ export default function menuItems(userProfile, userPermissions = {}) {
       label: 'Support',
       Icon: SupportIcon,
       children: [
-        { label: 'Knowledge base', Icon: KnowledgeBaseIcon },
-        { label: 'Submit ticket', Icon: TicketTagIcon },
+        {
+          label: 'Knowledge base',
+          Icon: KnowledgeBaseIcon,
+          component: 'a',
+          href: getHelpUrl(integrations, marketplaceConnectors),
+        },
+        {
+          label: 'Submit ticket',
+          Icon: TicketTagIcon,
+          component: 'a',
+          href: SUBMIT_TICKET_URL,
+        },
+        {
+          label: `What's New`,
+          Icon: TicketTagIcon,
+          component: 'a',
+          href: WHATS_NEW_URL,
+        },
       ],
     },
     {
@@ -150,7 +173,7 @@ export default function menuItems(userProfile, userPermissions = {}) {
 
     if (userPermissions.accessLevel !== 'owner') {
       resourceItems.children = resourceItems.children.filter(
-        i => i.label !== 'API Tokens'
+        i => i.label !== 'API tokens'
       );
     }
   }

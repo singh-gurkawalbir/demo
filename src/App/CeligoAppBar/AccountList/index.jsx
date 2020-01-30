@@ -1,5 +1,6 @@
 import { Fragment, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import List from '@material-ui/core/List';
@@ -13,9 +14,8 @@ import * as selectors from '../../../reducers';
 import ArrowDownIcon from '../../../components/icons/ArrowDownIcon';
 import { confirmDialog } from '../../../components/ConfirmDialog';
 import getRoutePath from '../../../utils/routePaths';
-import StatusCircle from '../../../components/StatusCircle';
 import IconTextButton from '../../../components/IconTextButton';
-import CloseIcon from '../../../components/icons/CloseIcon';
+import TrashIcon from '../../../components/icons/TrashIcon';
 
 const useStyles = makeStyles(theme => ({
   currentAccount: {
@@ -29,15 +29,32 @@ const useStyles = makeStyles(theme => ({
     fontFamily: 'Roboto400',
     padding: 0,
     marginTop: 5,
+    '& svg': {
+      color: theme.palette.secondary.light,
+    },
+    '&:hover': {
+      background: 'none',
+      color: theme.palette.text.secondary,
+      '& svg': {
+        color: theme.palette.text.secondary,
+      },
+    },
   },
   popper: {
     maxWidth: '250px',
   },
   itemContainer: {
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
-    '& button': { display: 'none' },
+    '& button': {
+      minWidth: 0,
+      display: 'none',
+      paddingRight: theme.spacing(1),
+    },
     '&:hover button': {
       display: 'block',
+    },
+    '&:hover': {
+      background: theme.palette.background.paper2,
     },
     '&:last-child': {
       border: 'none',
@@ -47,16 +64,37 @@ const useStyles = makeStyles(theme => ({
     right: 0,
   },
   itemRoot: {
-    marginRight: 100,
-    padding: '5px 10px',
-
+    wordBreak: 'break-word',
+    padding: theme.spacing(1),
+    paddingRight: '20%',
+    '&:before': {
+      content: '""',
+      width: '3px',
+      height: '100%',
+      position: 'absolute',
+      background: 'transparent',
+      left: '0px',
+    },
     '&:hover': {
-      border: [[1, 0]],
-      borderColor: theme.palette.secondary.light,
+      background: 'none',
+      '&:before': {
+        background: theme.palette.primary.main,
+      },
+    },
+  },
+  itemSelected: {
+    position: 'relative',
+    '&:before': {
+      content: '""',
+      width: '3px',
+      height: '100%',
+      position: 'absolute',
+      background: theme.palette.primary.main,
+      left: '0px',
     },
   },
   listWrapper: {
-    padding: theme.spacing(1),
+    minWidth: 250,
   },
 }));
 
@@ -143,16 +181,15 @@ export default function AccountList() {
               onClick={() => {
                 !a.selected && handleAccountChange(a.id);
               }}
+              className={clsx(classes.itemRoot, {
+                [classes.itemSelected]: a.selected,
+              })}
               classes={{
                 root: classes.itemRoot,
                 container: classes.itemContainer,
               }}
               key={a.id}>
-              <ListItemText>
-                {a.selected && <StatusCircle size="small" variant="success" />}
-
-                {a.company}
-              </ListItemText>
+              <ListItemText>{a.company}</ListItemText>
               {a.canLeave && (
                 <ListItemSecondaryAction className={classes.secondaryAction}>
                   <Button
@@ -163,7 +200,7 @@ export default function AccountList() {
                     onClick={() => {
                       handleAccountLeaveClick(a);
                     }}>
-                    <CloseIcon />
+                    <TrashIcon />
                   </Button>
                 </ListItemSecondaryAction>
               )}

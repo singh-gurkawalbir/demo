@@ -1,7 +1,6 @@
 import { useState, useEffect, Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography } from '@material-ui/core';
 import TablePagination from '@material-ui/core/TablePagination';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
@@ -18,9 +17,10 @@ import CeligoTable from '../../components/CeligoTable';
 import JobErrorMessage from './JobErrorMessage';
 import { JOB_STATUS } from '../../utils/constants';
 import DateTimeDisplay from '../DateTimeDisplay';
+import ButtonsGroup from '../ButtonGroup';
 
 const useStyles = makeStyles(theme => ({
-  tablePaginationRoot: { float: 'left' },
+  tablePaginationRoot: { float: 'right' },
   spinner: {
     left: '0px',
     right: '0px',
@@ -42,6 +42,34 @@ const useStyles = makeStyles(theme => ({
       marginLeft: '10px',
       color: '#fff',
     },
+  },
+  btnsWrappper: {
+    marginTop: theme.spacing(1),
+    '& button': {
+      marginRight: theme.spacing(2),
+    },
+  },
+  statusWrapper: {
+    display: 'flex',
+    marginRight: theme.spacing(1),
+    listStyle: 'none',
+    padding: 0,
+    margin: 0,
+    '& li': {
+      marginRight: theme.spacing(1),
+    },
+  },
+  success: {
+    color: theme.palette.success.main,
+  },
+  error: {
+    color: theme.palette.error.main,
+  },
+  info: {
+    color: theme.palette.info.main,
+  },
+  darkGray: {
+    color: theme.palette.text.secondary,
   },
 }));
 
@@ -272,52 +300,72 @@ function JobErrorTable({
             <Spinner size={20} /> <span>Loading retry data...</span>
           </div>
         ))}
-      <Typography>
-        Success: {job.numSuccess} Ignore: {job.numIgnore} Error: {job.numError}{' '}
-        Resolved: {job.numResolved} Duration: {job.duration} Completed:{' '}
-        <DateTimeDisplay dateTime={job.endedAt} />
-      </Typography>
+      <ul className={classes.statusWrapper}>
+        <li>
+          Success: <span className={classes.success}>{job.numSuccess}</span>
+        </li>
+        <li>
+          Ignore: <span>{job.numIgnore}</span>
+        </li>
+        <li>
+          Error: <span className={classes.error}>{job.numError}</span>
+        </li>
+        <li>
+          Resolved: <span className={classes.info}>{job.numResolved}</span>
+        </li>
+        <li>
+          Duration: <span className={classes.darkGray}>{job.duration}</span>
+        </li>
+        <li>
+          Completed:{' '}
+          <span className={classes.darkGray}>
+            <DateTimeDisplay dateTime={job.endedAt} />
+          </span>
+        </li>
+      </ul>
       {errorCount < 1000 && jobErrorsInCurrentPage.length === 0 ? (
         <div className={classes.spinner}>
           <Spinner size={20} /> <span>Loading errors...</span>
         </div>
       ) : (
         <Fragment>
-          <Button
-            data-test="retryErroredJobs"
-            variant="contained"
-            color="primary"
-            onClick={handleRetryClick}
-            disabled={isJobInProgress || !hasRetriableErrors}>
-            {numSelectedRetriableErrors > 0
-              ? `Retry ${numSelectedRetriableErrors} Errors`
-              : `${isJobInProgress ? 'Retrying' : 'Retry All'}`}
-          </Button>
-          <Button
-            data-test="markResolvedJobs"
-            variant="contained"
-            color="primary"
-            onClick={handleResolveClick}
-            disabled={isJobInProgress || !hasUnresolvedErrors}>
-            {numSelectedResolvableErrors > 0
-              ? `Mark Resolved ${numSelectedResolvableErrors} Errors`
-              : 'Mark Resolved'}
-          </Button>
-          <Button
-            data-test="downloadAllErrors"
-            variant="contained"
-            color="primary"
-            onClick={handleDownloadAllErrorsClick}
-            disabled={isJobInProgress}>
-            Download All Errors
-          </Button>
-          <Button
-            data-test="uploadProcessedErrors"
-            variant="contained"
-            color="primary"
-            disabled={isJobInProgress}>
-            Upload Processed Errors
-          </Button>
+          <ButtonsGroup className={classes.btnsWrappper}>
+            <Button
+              data-test="retryErroredJobs"
+              variant="outlined"
+              color="secondary"
+              onClick={handleRetryClick}
+              disabled={isJobInProgress || !hasRetriableErrors}>
+              {numSelectedRetriableErrors > 0
+                ? `Retry ${numSelectedRetriableErrors} errors`
+                : `${isJobInProgress ? 'Retrying' : 'Retry all'}`}
+            </Button>
+            <Button
+              data-test="markResolvedJobs"
+              variant="outlined"
+              color="secondary"
+              onClick={handleResolveClick}
+              disabled={isJobInProgress || !hasUnresolvedErrors}>
+              {numSelectedResolvableErrors > 0
+                ? `Mark resolved ${numSelectedResolvableErrors} errors`
+                : 'Mark resolved'}
+            </Button>
+            <Button
+              data-test="downloadAllErrors"
+              variant="outlined"
+              color="secondary"
+              onClick={handleDownloadAllErrorsClick}
+              disabled={isJobInProgress}>
+              Download all errors
+            </Button>
+            <Button
+              data-test="uploadProcessedErrors"
+              variant="outlined"
+              color="secondary"
+              disabled={isJobInProgress}>
+              Upload processed errors
+            </Button>
+          </ButtonsGroup>
 
           {jobErrorsInCurrentPage.length === 0 ? (
             <Fragment>
@@ -332,8 +380,8 @@ function JobErrorTable({
                 classes={{ root: classes.tablePaginationRoot }}
                 rowsPerPageOptions={[rowsPerPage]}
                 component="div"
-                count={jobErrors.length}
                 rowsPerPage={rowsPerPage}
+                count={jobErrors.length}
                 page={currentPage}
                 backIconButtonProps={{
                   'aria-label': 'Previous Page',

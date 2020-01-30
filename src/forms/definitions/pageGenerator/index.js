@@ -30,7 +30,7 @@ export default {
       ...rest,
     };
 
-    if (type === 'webhook') {
+    if (type === 'webhook' || (application !== 'webhook' && app.webhookOnly)) {
       newValues['/type'] = 'webhook';
       newValues['/adaptorType'] = 'WebhookExport';
       newValues['/webhook/provider'] = application;
@@ -101,7 +101,8 @@ export default {
     existingExport: {
       id: 'exportId',
       name: 'exportId',
-      type: 'selectresource',
+      type: 'selectflowresource',
+      flowResourceType: 'pg',
       resourceType: 'exports',
       label: 'Existing Export',
       defaultValue: '',

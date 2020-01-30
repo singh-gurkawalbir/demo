@@ -102,7 +102,8 @@ export default {
     existingImport: {
       id: 'importId',
       name: 'importId',
-      type: 'selectresource',
+      type: 'selectflowresource',
+      flowResourceType: 'pp',
       resourceType: 'imports',
       label: 'Existing Import',
       defaultValue: '',
@@ -119,7 +120,8 @@ export default {
     existingExport: {
       id: 'exportId',
       name: 'exportId',
-      type: 'selectresource',
+      type: 'selectflowresource',
+      flowResourceType: 'pp',
       resourceType: 'exports',
       label: 'Existing Lookup',
       defaultValue: '',

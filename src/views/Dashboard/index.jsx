@@ -104,7 +104,7 @@ function Dashboard(props) {
           to={getRoutePath('/templates/generate-or-install')}
           variant="text">
           <DataLoaderIcon />
-          Install Zip
+          Install zip
         </IconTextButton>
       </CeligoPageBar>
       <LoadResources required resources="published,integrations,connections">
