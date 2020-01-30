@@ -72,7 +72,7 @@ const determineRequiredResources = type => {
 };
 
 export default function Panel(props) {
-  const { match, onClose, zIndex, occupyFullWidth } = props;
+  const { match, onClose, zIndex, occupyFullWidth, flowId } = props;
   const { id, resourceType, operation } = match.params;
   const isNew = operation === 'add';
   const classes = useStyles({ ...props, occupyFullWidth });
@@ -84,6 +84,9 @@ export default function Panel(props) {
   );
   const newResourceId = useSelector(state =>
     selectors.createdResourceId(state, id)
+  );
+  const isLookUpExport = useSelector(state =>
+    selectors.isLookUpExport(state, { flowId, resourceId: id, resourceType })
   );
   const abortAndClose = useCallback(() => {
     dispatch(actions.resourceForm.submitAborted(resourceType, id));
@@ -104,6 +107,8 @@ export default function Panel(props) {
     resourceLabel = 'Destination / Lookup';
   } else if (resourceType === 'pageGenerator') {
     resourceLabel = 'Source';
+  } else if (isLookUpExport) {
+    resourceLabel = 'Lookup';
   } else {
     resourceLabel = MODEL_PLURAL_TO_LABEL[resourceType];
   }
