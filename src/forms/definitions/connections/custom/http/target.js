@@ -3,7 +3,7 @@ export default {
     ...formValues,
     '/type': 'http',
     '/assistant': 'target',
-    '/http/auth/type': 'custom',
+    '/http/auth/type': 'token',
     '/http/mediaType': 'json',
     '/http/baseURI': `https://${
       formValues['/accType'] === 'sandbox' ? 'stage-' : ''
@@ -12,18 +12,13 @@ export default {
       formValues['/http/unencrypted/x-seller-id']
     }/distribution_centers`,
     '/http/ping/method': 'GET',
+    '/http/auth/token/location': 'header',
+    '/http/auth/token/headerName': 'x-seller-token',
+    '/http/auth/token/scheme': '',
     '/http/headers': [
-      {
-        name: 'x-api-key',
-        value: '{{{connection.http.unencrypted.x-api-key}}}',
-      },
       {
         name: 'x-seller-id',
         value: '{{{connection.http.unencrypted.x-seller-id}}}',
-      },
-      {
-        name: 'x-seller-token',
-        value: '{{{connection.http.encrypted.x-seller-token}}}',
       },
     ],
   }),
@@ -56,13 +51,14 @@ export default {
         return 'production';
       },
     },
-    'http.unencrypted.x-api-key': {
-      id: 'http.unencrypted.x-api-key',
+    'http.auth.token.token': {
+      id: 'http.auth.token.token',
       type: 'text',
-      label: 'X-API-KEY',
+      label: 'X-SELLER-TOKEN',
       helpText:
-        'The x-api-key will be generated after creating an app in the developer portal.',
+        'The x-seller-token will be generated after creating an app in the developer portal.',
       required: true,
+      inputType: 'password',
     },
     'http.unencrypted.x-seller-id': {
       id: 'http.unencrypted.x-seller-id',
@@ -71,26 +67,14 @@ export default {
       helpText: 'Please enter the x-seller-id will be provided by Target.',
       required: true,
     },
-    'http.encrypted.x-seller-token': {
-      id: 'http.encrypted.x-seller-token',
-      type: 'text',
-      label: 'X-SELLER-TOKEN',
-      helpText:
-        'The x-seller-token will be provided by Target.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your user secret safe.',
-      required: true,
-      inputType: 'password',
-      description:
-        'Note: for security reasons this field must always be re-entered.',
-    },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
     fields: [
       'name',
       'accType',
-      'http.unencrypted.x-api-key',
       'http.unencrypted.x-seller-id',
-      'http.encrypted.x-seller-token',
+      'http.auth.token.token',
     ],
     type: 'collapse',
     containers: [
