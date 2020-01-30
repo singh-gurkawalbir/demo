@@ -155,7 +155,7 @@ const connectors = [
   // { id: 'allbound', name: 'allbound', type: 'http', assistant: 'allbound' },
   { id: 'amazonaws', name: 'Amazon AWS', type: 'http', assistant: 'amazonaws' },
   { id: 'amazonmws', name: 'Amazon MWS', type: 'http', assistant: 'amazonmws' },
-  { id: 'anaplan', name: 'anaplan', type: 'http', assistant: 'anaplan' },
+  { id: 'anaplan', name: 'Anaplan', type: 'http', assistant: 'anaplan' },
   { id: 'aptrinsic', name: 'Aptrinsic', type: 'rest', assistant: 'aptrinsic' },
   { id: 'ariba', name: 'Ariba', type: 'http', assistant: 'ariba' },
   { id: 'asana', name: 'Asana', type: 'rest', assistant: 'asana' },
@@ -430,7 +430,7 @@ const connectors = [
   },
   {
     id: 'microsoftoffice365',
-    name: 'microsoftoffice365',
+    name: 'Microsoft Office 365',
     type: 'http',
     assistant: 'microsoftoffice365',
   },
