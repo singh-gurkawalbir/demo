@@ -4,6 +4,7 @@ import { withStyles } from '@material-ui/core/styles';
 import actions from '../../../actions';
 import DynaAction from '../../DynaForm/DynaAction';
 import * as selectors from '../../../reducers';
+import resourceConstants from '../../../forms/constants/connection';
 import { useLoadingSnackbarOnSave } from '.';
 
 const styles = theme => ({
@@ -14,16 +15,35 @@ const styles = theme => ({
 });
 
 function OAuthButton(props) {
-  const { label, classes, resourceType, disabled, ...rest } = props;
+  const { label, classes, resourceType, disabled, resource, ...rest } = props;
   const { resourceId } = rest;
   const dispatch = useDispatch();
   const handleSaveAndAuthorizeConnection = useCallback(
-    values => {
+    (values, setDisableSave, snackbar, closeSnackbar) => {
+      if (
+        resourceConstants.OAUTH_CONNECTIONS_WITH_EDITABLE_SCOPES.includes(
+          resource.assistant
+        ) &&
+        !(
+          values['/http/auth/oauth/scope'] &&
+          values['/http/auth/oauth/scope'].length
+        )
+      ) {
+        setDisableSave(false);
+        closeSnackbar();
+
+        return snackbar({
+          variant: 'error',
+          message: `Please configure the scopes.`,
+          persist: true,
+        });
+      }
+
       dispatch(
         actions.resource.connections.saveAndAuthorize(resourceId, values)
       );
     },
-    [dispatch, resourceId]
+    [dispatch, resource.assistant, resourceId]
   );
 
   window.connectionAuthorized = _connectionId => {
