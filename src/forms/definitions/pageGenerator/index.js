@@ -70,6 +70,7 @@ export default {
       label: 'Application',
       name: 'application',
       type: 'selectapplication',
+      appType: 'export',
       placeholder:
         'Choose application or start typing to browse 150+ applications',
       defaultValue: r => (r && r.application) || '',

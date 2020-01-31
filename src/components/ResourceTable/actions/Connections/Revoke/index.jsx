@@ -5,7 +5,7 @@ import Icon from '../../../../icons/RevokeTokenIcon';
 import { confirmDialog } from '../../../../ConfirmDialog';
 
 export default {
-  label: 'revoke',
+  label: 'Revoke',
   component: function Revoke({ resource: connection }) {
     const dispatch = useDispatch();
     const handleClick = () => {

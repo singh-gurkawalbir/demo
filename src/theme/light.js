@@ -460,11 +460,6 @@ export default {
           color: colors.celigoNeutral6,
         },
       },
-      input: {
-        '&:invalid': {
-          borderColor: colors.celigoError,
-        },
-      },
     },
     MuiIconButton: {
       root: {
