@@ -138,7 +138,10 @@ export default function TemplatePreview(props) {
           <div className={classes.templateBoxHead}>
             <div className={classes.marketplaceContainer}>
               <ApplicationImg size="large" type={template.applications[0]} />
-              <ApplicationImg size="large" type={template.applications[1]} />
+              {template.applications[1] && (
+                <ApplicationImg size="large" type={template.applications[1]} />
+              )}
+
               <Typography variant="h2">{name}</Typography>
             </div>
           </div>

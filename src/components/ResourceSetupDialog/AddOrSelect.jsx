@@ -103,6 +103,7 @@ export default function AddOrSelect(props) {
           editMode={false}
           resourceType={resourceType}
           resourceId={resourceId}
+          cancelButtonLabel="Cancel"
           onSubmitComplete={handleSubmitComplete}
           connectionType={connectionType}
         />
