@@ -12,15 +12,14 @@ const styles = theme => ({
     marginLeft: theme.spacing.double,
   },
 });
-const SaveButton = props => {
+const SaveAndContinueButton = props => {
   const {
-    submitButtonLabel = 'Submit',
+    label,
     resourceType,
     resourceId,
     classes,
     match,
     disabled = false,
-    isGenerate = false,
   } = props;
   const dispatch = useDispatch();
   const saveTerminated = useSelector(state =>
@@ -29,17 +28,15 @@ const SaveButton = props => {
   const onSave = useCallback(
     values => {
       dispatch(
-        actions.resourceForm.submit(
+        actions.resourceForm.saveAndContinue(
           resourceType,
           resourceId,
           values,
-          match,
-          false,
-          isGenerate
+          match
         )
       );
     },
-    [dispatch, isGenerate, match, resourceId, resourceType]
+    [dispatch, match, resourceId, resourceType]
   );
   const { handleSubmitForm, disableSave } = useLoadingSnackbarOnSave({
     saveTerminated,
@@ -53,9 +50,9 @@ const SaveButton = props => {
       className={classes.actionButton}
       disabled={disabled || disableSave}
       onClick={handleSubmitForm}>
-      {disableSave ? 'Saving' : submitButtonLabel}
+      {disableSave ? 'Saving' : label}
     </DynaAction>
   );
 };
 
-export default withStyles(styles)(SaveButton);
+export default withStyles(styles)(SaveAndContinueButton);

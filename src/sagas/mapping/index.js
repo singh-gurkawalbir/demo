@@ -18,6 +18,7 @@ export function* saveMappings({ id }) {
     application,
     isGroupedSampleData,
     lookups,
+    flowSampleData,
     adaptorType,
     resource,
   } = yield select(selectors.mapping, id);
@@ -31,6 +32,7 @@ export function* saveMappings({ id }) {
     appType: application,
     isGroupedSampleData,
     resource,
+    flowSampleData,
   });
   const { _id: resourceId } = resource;
   const mappingPath = mappingUtil.getMappingPath(adaptorType);

@@ -1,5 +1,6 @@
 import ResourceDrawerLink from '../../../ResourceDrawerLink';
 import Delete from '../../actions/Delete';
+import Revoke from '../../actions/Connections/Revoke';
 import References from '../../actions/References';
 import ConfigureDebugger from '../../actions/Connections/ConfigDebugger';
 // eslint-disable-next-line import/no-unresolved
@@ -92,6 +93,13 @@ export default {
 
     if (r.type === 'netsuite' || r.type === 'salesforce') {
       actionsToReturn = [RefreshMetadata, ...actionsToReturn];
+    }
+
+    if (
+      r.type === 'http' &&
+      !!((((r.http || {}).auth || {}).token || {}).revoke || {}).uri
+    ) {
+      actionsToReturn = [Revoke, ...actionsToReturn];
     }
 
     return actionsToReturn;

@@ -995,9 +995,20 @@ export default {
   'http.auth.oauth.type': {
     defaultValue: 'custom',
   },
-  'http.auth.revoke.uri': {
+  'http.auth.token.revoke.uri': {
     type: 'text',
     label: 'Revoke URL',
+  },
+  'http.auth.token.revoke.body': {
+    type: 'text',
+    label: 'Revoke Body',
+  },
+  'http.auth.token.revoke.headers': {
+    type: 'keyvalue',
+    keyName: 'name',
+    valueName: 'value',
+    valueType: 'keyvalue',
+    label: 'Revoke Token Headers',
   },
   'http.auth.oauth.password': {
     type: 'text',
