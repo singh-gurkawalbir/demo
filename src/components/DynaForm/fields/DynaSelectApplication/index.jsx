@@ -65,7 +65,7 @@ export default function SelectApplication(props) {
   const assistants = useSelector(
     state =>
       selectors.resourceList(state, {
-        type: 'assistants',
+        type: 'ui/assistants',
       }),
     (left, right) => isEqual(left, right)
   );
