@@ -565,26 +565,4 @@ export default {
       },
     ],
   },
-  'file.csv': {
-    type: 'csvparse',
-    label: 'Configure CSV Parse Options',
-    defaultValue: r =>
-      (r.file && r.file.csv) || {
-        rowsToSkip: 0,
-        trimSpaces: false,
-        columnDelimiter: ',',
-        hasHeaderRow: false,
-        rowDelimiter: '\n',
-      },
-    visibleWhenAll: [
-      {
-        field: 'http.successMediaType',
-        is: ['csv'],
-      },
-      {
-        field: 'outputMode',
-        is: ['records'],
-      },
-    ],
-  },
 };
