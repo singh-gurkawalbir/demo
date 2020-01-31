@@ -37,6 +37,7 @@ export default function ResourceModal(props) {
               editMode={false}
               resourceType={resourceType}
               resourceId={resourceId}
+              cancelButtonLabel="Cancel"
               onSubmitComplete={onSubmitComplete}
               connectionType={connectionType}
               onCancel={onClose}
