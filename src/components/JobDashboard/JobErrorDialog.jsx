@@ -11,8 +11,9 @@ import Help from '../Help';
 const useStyles = makeStyles(theme => ({
   iconButton: {
     position: 'absolute',
-    top: 5,
-    right: 45,
+    top: 18,
+    right: 70,
+    padding: 0,
     color: theme.palette.text.hint,
     '&:hover': {
       background: theme.palette.background.paper,
@@ -22,8 +23,10 @@ const useStyles = makeStyles(theme => ({
     },
     '&:after': {
       content: '""',
-      height: 3,
+      height: 18,
       width: 1,
+      position: 'absolute',
+      right: -10,
       background: theme.palette.secondary.lightest,
     },
   },

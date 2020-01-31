@@ -30,8 +30,11 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(1),
   },
   radioGroup: {
-    marginLeft: theme.spacing(1),
     marginTop: 6,
+    '& label': {
+      marginBottom: theme.spacing(1),
+      marginLeft: 0,
+    },
   },
 }));
 
