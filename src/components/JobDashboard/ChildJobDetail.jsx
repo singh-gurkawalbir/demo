@@ -16,6 +16,7 @@ const useStyles = makeStyles(theme => ({
   },
   name: {
     width: '18.15%',
+    wordBreak: 'break-word',
   },
   status: {
     width: '10.15',

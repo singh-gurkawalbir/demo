@@ -21,7 +21,6 @@ const useStyles = makeStyles(theme => ({
     wordBreak: 'break-word',
   },
   avatarButton: {
-    margin: theme.spacing(0, 1),
     padding: 0,
   },
   avatar: {

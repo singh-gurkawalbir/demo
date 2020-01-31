@@ -32,6 +32,7 @@ const useStyles = makeStyles(theme => ({
   tablePaginationRoot: { float: 'right' },
   name: {
     width: '18.15%',
+    wordBreak: 'break-word',
   },
   status: {
     width: '10.15%',

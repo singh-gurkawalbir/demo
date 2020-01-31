@@ -26,6 +26,9 @@ const useStyles = makeStyles(theme => ({
     '& >.MuiSelect-selectMenu': {
       paddingLeft: theme.spacing(1),
       paddingRight: theme.spacing(4),
+      height: '100%',
+      lineHeight: theme.spacing(3),
+      boxSizing: 'border-box',
     },
     '&:hover': {
       borderColor: theme.palette.primary.main,

@@ -38,16 +38,6 @@ const TransferListModal = props => {
           onClick={() => onFieldChange(id, selectedScopes)}>
           Save
         </Button>
-        <Button
-          data-test="saveAndCloseSelectedScopes"
-          variant="contained"
-          color="primary"
-          onClick={() => {
-            onFieldChange(id, selectedScopes);
-            handleClose();
-          }}>
-          Save And Close
-        </Button>
       </Fragment>
     </ModalDialog>
   );
