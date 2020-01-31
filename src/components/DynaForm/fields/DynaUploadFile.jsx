@@ -17,6 +17,8 @@ function DynaUploadFile(props) {
     disabled,
     id,
     isValid,
+    description,
+    errorMessages,
     name,
     resourceId,
     resourceType,
@@ -137,6 +139,7 @@ function DynaUploadFile(props) {
       placeholder={placeholder}
       disabled={disabled}
       required={required}
+      helperText={isValid ? description : errorMessages}
       error={!isValid}
       onChange={handleFileChosen}
     />

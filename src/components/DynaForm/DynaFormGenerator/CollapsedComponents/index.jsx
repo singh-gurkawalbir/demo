@@ -52,7 +52,16 @@ const ExpansionPannelExpandOnInValidState = props => {
   const [shouldExpand, setShouldExpand] = useState(!collapsed);
   const [visible, setVisible] = useState(true);
   const [componentLoaded, setComponentLoaded] = useState(false);
+  const isPanelErrored = isExpansionPanelErrored(
+    { layout, fieldMap },
+    form.fields
+  );
 
+  useEffect(() => {
+    if (!shouldExpand && isPanelErrored) {
+      setShouldExpand(true);
+    }
+  }, [isPanelErrored, shouldExpand]);
   useEffect(() => {
     setComponentLoaded(true);
   }, []);
@@ -72,10 +81,7 @@ const ExpansionPannelExpandOnInValidState = props => {
     <div className={classes.child}>
       <ExpansionPanel
         // eslint-disable-next-line react/no-array-index-key
-        expanded={
-          isExpansionPanelErrored({ layout, fieldMap }, form.fields) ||
-          shouldExpand
-        }>
+        expanded={shouldExpand}>
         <ExpansionPanelSummary
           data-test={header}
           onClick={() => setShouldExpand(expand => !expand)}

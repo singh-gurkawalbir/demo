@@ -5,10 +5,10 @@ import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import * as selectors from '../../../../../../reducers';
 import { integrationSettingsToDynaFormMetadata } from '../../../../../../forms/utils';
-import { FormStateManager } from '../../../../../../components/ResourceFormFactory';
 import DrawerTitleBar from '../../../../../../components/drawer/TitleBar';
 import LoadResources from '../../../../../../components/LoadResources';
-import { useIASettingsStateWithHandleClose } from '..';
+import { IAFormStateManager } from '..';
+import useIASettingsStateWithHandleClose from '../../../../../../hooks/useIASettingsStateWithHandleClose';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -79,7 +79,7 @@ function ConfigureDrawer({ integrationId, storeId, sectionId, parentUrl }) {
         onClose={handleClose}>
         <DrawerTitleBar title={`Configure all ${section.title} flows`} />
 
-        <FormStateManager
+        <IAFormStateManager
           onSubmitComplete={handleClose}
           formState={formState}
           className={classes.form}
