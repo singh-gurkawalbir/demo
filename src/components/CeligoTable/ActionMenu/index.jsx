@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Popover, IconButton, Tooltip } from '@material-ui/core';
-import EllipsisIcon from '../../icons/EllipsisVerticalIcon';
+import EllipsisIcon from '../../icons/EllipsisHorizontalIcon';
 
 const useStyles = makeStyles(theme => ({
   actionContainer: {

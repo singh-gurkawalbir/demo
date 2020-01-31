@@ -717,6 +717,7 @@ export default {
           { label: 'Custom', value: 'custom' },
           { label: 'Cookie', value: 'cookie' },
           { label: 'Digest', value: 'digest' },
+          { label: 'WSSE', value: 'wsse' },
           { label: 'OAuth 2.0', value: 'oauth' },
         ],
       },
@@ -994,9 +995,20 @@ export default {
   'http.auth.oauth.type': {
     defaultValue: 'custom',
   },
-  'http.auth.revoke.uri': {
+  'http.auth.token.revoke.uri': {
     type: 'text',
     label: 'Revoke URL',
+  },
+  'http.auth.token.revoke.body': {
+    type: 'text',
+    label: 'Revoke Body',
+  },
+  'http.auth.token.revoke.headers': {
+    type: 'keyvalue',
+    keyName: 'name',
+    valueName: 'value',
+    valueType: 'keyvalue',
+    label: 'Revoke Token Headers',
   },
   'http.auth.oauth.password': {
     type: 'text',
@@ -1747,6 +1759,12 @@ export default {
         is: [true],
       },
     ],
+    requiredWhen: [
+      {
+        field: 'configureApiRateLimits',
+        is: [true],
+      },
+    ],
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]$', message: 'Only numbers allowed' },
@@ -2039,19 +2057,21 @@ export default {
       {
         items: [
           { label: 'Basic', value: 'basic' },
-          { label: 'Token', value: 'token' },
+          { label: 'TBA (Manual)', value: 'token' },
+          { label: 'TBA (Automated)', value: 'oauth' },
         ],
       },
     ],
   },
   'netsuite.account': {
     type: 'netsuiteuserroles',
-    label: 'Account',
+    label: 'Account ID',
   },
   'netsuite.tokenAccount': {
     type: 'text',
     defaultValue: r => r && r.netsuite && r.netsuite.account,
-    label: 'Account',
+    label: 'Account ID',
+    uppercase: true,
   },
   'netsuite.tokenId': {
     type: 'text',

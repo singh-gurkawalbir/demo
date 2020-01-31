@@ -2,6 +2,7 @@ import { values } from 'lodash';
 import shortid from 'shortid';
 import getRoutePath from './routePaths';
 import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../constants/resource';
+import { isPageGeneratorResource } from './flows';
 
 export const MODEL_PLURAL_TO_LABEL = Object.freeze({
   agents: 'Agent',
@@ -178,13 +179,13 @@ export const getDomainUrl = () => {
 
 export const getApiUrl = () => getDomainUrl().replace('://', '://api.');
 
-export const getWebhookUrl = (formValues, resourceId) => {
+export const getWebhookUrl = (options = {}, resourceId) => {
   let whURL = '';
+  const { webHookProvider, webHookToken } = options;
 
   if (resourceId) {
     whURL = `${getApiUrl()}/v1/exports/`;
     whURL = whURL.concat(resourceId);
-    const provider = formValues['/webhook/provider'];
 
     if (
       [
@@ -203,9 +204,9 @@ export const getWebhookUrl = (formValues, resourceId) => {
         'parseur',
         'custom',
         'sapariba',
-      ].indexOf(provider) > -1
+      ].indexOf(webHookProvider) > -1
     ) {
-      whURL += `/${formValues['/webhook/token']}`;
+      if (webHookToken) whURL += `/${webHookToken}`;
     }
 
     whURL += '/data';
@@ -345,4 +346,137 @@ export const isRestCsvMediaTypeExport = (resource, connection) => {
 
   // Check for media type 'csv' from connection object
   return connection && connection.rest && connection.rest.mediaType === 'csv';
+};
+
+export const isFlowResource = (flow, resourceId, resourceType) => {
+  const { pageProcessors = [] } = flow || {};
+
+  // If resource type is imports search in pps
+  if (resourceType === 'imports') {
+    return !!pageProcessors.find(pp => pp._importId === resourceId);
+  }
+
+  // isPageGeneratorResource checks for pgs when resource type is exports
+  if (isPageGeneratorResource(flow, resourceId)) {
+    return true;
+  }
+
+  // If resource type is exports and not part of pgs, search in pps
+  return !!pageProcessors.find(pp => pp._exportId === resourceId);
+};
+
+export const getHelpUrlForConnector = (_connectorId, marketplaceConnectors) => {
+  const domain = getDomain();
+  let toReturn = false;
+  let filteredConnectors = [];
+  const supportBaseUrl = 'http://support.integrator.io/hc/en-us/categories/';
+  let connectorToCategoryMap = {};
+
+  if (domain === 'localhost.io') {
+    filteredConnectors = marketplaceConnectors.filter(
+      m => m._id === _connectorId
+    );
+
+    if (filteredConnectors.length === 1) {
+      connectorToCategoryMap = {
+        'Shopify - NetSuite Connector': '203963787',
+        'Zendesk - NetSuite Connector': '203958808',
+        'Cash Application Manager for NetSuite': '203958648',
+        'Magento 2 - NetSuite Connector': '203996867',
+        'JIRA - NetSuite Connector': '203963647',
+        'Salesforce - NetSuite Connector (IO)': '360001649831',
+      };
+
+      if (connectorToCategoryMap[filteredConnectors[0].name]) {
+        toReturn =
+          supportBaseUrl + connectorToCategoryMap[filteredConnectors[0].name];
+      }
+    }
+  } else {
+    if (domain === 'staging.integrator.io') {
+      connectorToCategoryMap = {
+        '5656f5e3bebf89c03f5dd77e': '203963787',
+        '5666865f67c1650309224904': '203958808',
+        '56d3e8d3e24d0cf5090e5a18': '203996867',
+        '568e4843d997f2b705f44082': '203963647',
+        '570222ce6c99305e0beff026': '203958668',
+        '56fbb1176691821844de2721': '203958768',
+        '57b5c79c61314b461e1515b1': '204124807',
+        '5773b7378910c875334053ba': '203959428',
+        '57c8199e8489cc1a298cc6ea': '203958648',
+        '57e10364a0047c23baeffa09': '204406407',
+        '58ee6029319bd30cc2fee160': '115000327151',
+        '5811aeea2095951e76c6ce64': '115000110228',
+        '58777a2b1008fb325e6c0953': '115000816227',
+        '5829bce6069ccb4460cdb34e': '115000860927',
+        '58d3b1b7822f16187f873177': '115000968727',
+        'suitescript-salesforce-netsuite': '203964847',
+        'suitescript-svb-netsuite': '203958788',
+        '5b61ae4aeb538642c26bdbe6': '360001649831',
+      };
+    } else if (domain === 'integrator.io' || domain === 'eu.integrator.io') {
+      connectorToCategoryMap = {
+        '54fa0b38a7044f9252000036': '203963787',
+        '55022fc3285348c76a000005': '203958808',
+        '5717912fbc5a8ca446571f1e': '203996867',
+        '56cc2a64a42f08124832753a': '203963647',
+        '5728756afee45a8d11e79cb7': '203958668',
+        '57179182e0a908200c2781d9': '203958768',
+        '57dbed962eca42c50e6e22be': '204124807',
+        '57a82017810491d30e1c9760': '203959428',
+        '586cb88fc1d53d6a279d527e': '115000284767',
+        '581cebf290a63a26daea6081': '204406407',
+        '58c90bccc13f547763bf2fc1': '115000816227',
+        '58d94e6b2e4b300dbf6b01bc': '115000860927',
+        '5833ea9127b52153647f3b7e': '115000857348',
+        '5845210ebfa3ab6faced62fb': '115000110228',
+        '592e8679c95560380ff1325c': '115000327151',
+        '58f772ed3c25f31c8041d5fe': '115000968727',
+        'suitescript-salesforce-netsuite': '203964847',
+        'suitescript-svb-netsuite': '203958788',
+        '5c8f30229f701b3e9a0aa817': '360001649831',
+      };
+    }
+
+    if (connectorToCategoryMap[_connectorId]) {
+      if (connectorToCategoryMap[_connectorId] === '115000327151') {
+        toReturn =
+          'https://celigosuccess.zendesk.com/hc/en-us/sections/115000327151';
+      } else {
+        toReturn = supportBaseUrl + connectorToCategoryMap[_connectorId];
+      }
+    }
+  }
+
+  return toReturn;
+};
+
+export const getHelpUrl = (integrations, marketplaceConnectors) => {
+  const domainUrl = getDomainUrl();
+  const { href } = window.location;
+  let connectorId;
+  let helpUrl = 'https://celigosuccess.zendesk.com/hc/en-us'; // platform help url
+  const newurl = href.replace(`${domainUrl}/`, '').split('/');
+  let integrationId;
+
+  if (href.indexOf('/integrationapps') > 0) {
+    [, , , integrationId] = newurl;
+  } else if (href.indexOf('/integrations') > 0) {
+    [, , integrationId] = newurl;
+  }
+
+  if (integrationId && integrations.find(i => i._id === integrationId)) {
+    connectorId = integrations.find(i => i._id === integrationId)._connectorId;
+
+    if (getHelpUrlForConnector(connectorId, marketplaceConnectors)) {
+      helpUrl = getHelpUrlForConnector(connectorId, marketplaceConnectors);
+    } else if (connectorId) {
+      helpUrl = 'https://celigosuccess.zendesk.com/hc/en-us';
+    } else {
+      helpUrl =
+        'https://celigosuccess.zendesk.com/hc/en-us/categories/203820768';
+    }
+  }
+
+  return helpUrl;
 };

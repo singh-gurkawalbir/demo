@@ -71,6 +71,10 @@ const connection = {
       connectionId,
       integrationId,
     }),
+  requestRevoke: connectionId =>
+    action(actionTypes.CONNECTION.REVOKE_REQUEST, {
+      connectionId,
+    }),
   completeDeregister: (deregisteredId, integrationId) =>
     action(actionTypes.CONNECTION.DEREGISTER_COMPLETE, {
       deregisteredId,
@@ -81,8 +85,8 @@ const connection = {
       iClients,
       connectionId,
     }),
-  requestDebugLogs: (url, connectionId) =>
-    action(actionTypes.CONNECTION.DEBUG_LOGS_REQUEST, { url, connectionId }),
+  requestDebugLogs: connectionId =>
+    action(actionTypes.CONNECTION.DEBUG_LOGS_REQUEST, { connectionId }),
   receivedDebugLogs: (debugLogs, connectionId) =>
     action(actionTypes.CONNECTION.DEBUG_LOGS_RECEIVED, {
       debugLogs,
@@ -90,6 +94,8 @@ const connection = {
     }),
   clearDebugLogs: connectionId =>
     action(actionTypes.CONNECTION.DEBUG_LOGS_CLEAR, { connectionId }),
+  madeOnline: connectionId =>
+    action(actionTypes.CONNECTION.MADE_ONLINE, { connectionId }),
 };
 const marketplace = {
   requestConnectors: () =>
@@ -200,6 +206,10 @@ const resource = {
       offset,
     }),
   connections: {
+    refreshStatus: integrationId =>
+      action(actionTypes.CONNECTION.REFRESH_STATUS, { integrationId }),
+    receivedConnectionStatus: response =>
+      action(actionTypes.CONNECTION.RECEIVED_STATUS, { response }),
     test: (resourceId, values) =>
       action(actionTypes.CONNECTION.TEST, {
         resourceId,
@@ -406,6 +416,21 @@ const fileDefinitions = {
 };
 const integrationApp = {
   settings: {
+    initComplete: (integrationId, flowId, sectionId) =>
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.FORM.INIT_COMPLETE, {
+        integrationId,
+        flowId,
+        sectionId,
+      }),
+    showFormValidations: (integrationId, flowId, sectionId) =>
+      action(
+        actionTypes.INTEGRATION_APPS.SETTINGS.FORM.SHOW_FORM_VALIDATION_ERRORS,
+        {
+          integrationId,
+          flowId,
+          sectionId,
+        }
+      ),
     requestUpgrade: (integration, options) =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.REQUEST_UPGRADE, {
         integration,
@@ -961,8 +986,22 @@ const resourceForm = {
       skipCommit,
       flowId,
     }),
-  submit: (resourceType, resourceId, values, match, skipClose) =>
+  showFormValidations: (resourceType, resourceId) =>
+    action(actionTypes.RESOURCE_FORM.SHOW_FORM_VALIDATION_ERRORS, {
+      resourceType,
+      resourceId,
+    }),
+  submit: (resourceType, resourceId, values, match, skipClose, isGenerate) =>
     action(actionTypes.RESOURCE_FORM.SUBMIT, {
+      resourceType,
+      resourceId,
+      values,
+      match,
+      skipClose,
+      isGenerate,
+    }),
+  saveAndContinue: (resourceType, resourceId, values, match, skipClose) =>
+    action(actionTypes.RESOURCE_FORM.SAVE_AND_CONTINUE, {
       resourceType,
       resourceId,
       values,

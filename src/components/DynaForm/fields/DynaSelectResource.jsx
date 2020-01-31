@@ -45,12 +45,10 @@ const handleAddNewResource = args => {
     if (['pageProcessor', 'pageGenerator'].includes(resourceType))
       values = resourceMeta[resourceType].preSave({
         application: options.appType,
-        '/name': `New ${options.appType} resource`,
       });
     else {
       values = resourceMeta[resourceType].new.preSave({
         application: options.appType,
-        '/name': `New ${options.appType} resource`,
       });
 
       if (resourceType === 'asyncHelpers' || statusExport) {
@@ -135,7 +133,7 @@ function DynaSelectResource(props) {
   );
 
   useEffect(() => {
-    if (!appTypeIsStatic && options.appType) {
+    if (!appTypeIsStatic && options.appType && !!value) {
       onFieldChange(id, '');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

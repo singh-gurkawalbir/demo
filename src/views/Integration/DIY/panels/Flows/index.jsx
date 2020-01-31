@@ -61,15 +61,17 @@ export default function FlowsPanel({ integrationId }) {
             <AttachIcon /> Attach flow
           </IconTextButton>
         )}
+        <IconTextButton
+          component={Link}
+          to="dataLoader/new"
+          data-test="loadData">
+          <AddIcon /> Load data
+        </IconTextButton>
       </PanelHeader>
 
       <LoadResources required resources="flows,exports">
         {flows.map(f => (
-          <FlowCard
-            key={f._id}
-            flowId={f._id}
-            excludeActions={['mapping', 'schedule']}
-          />
+          <FlowCard key={f._id} flowId={f._id} excludeActions={['schedule']} />
         ))}
       </LoadResources>
     </div>

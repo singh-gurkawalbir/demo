@@ -17,6 +17,7 @@ const useStyles = makeStyles(theme => ({
     [theme.breakpoints.up('sm')]: {
       marginLeft: theme.spacing(1),
       width: 'auto',
+      marginRight: theme.spacing(-0.5),
     },
   },
   searchIcon: {

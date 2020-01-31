@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Drawer, IconButton, Tabs, Tab } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
@@ -16,6 +16,9 @@ import ConnectionPanel from './panels/Connection';
 import RunDashboardPanel from './panels/RunDashboard';
 import AuditPanel from './panels/Audit';
 import actions from '../../../../actions';
+import CodePanel from '../../../../components/AFE/GenericEditor/CodePanel';
+import RefreshIcon from '../../../../components/icons/RefreshIcon';
+import IconTextButton from '../../../../components/IconTextButton';
 
 const useStyles = makeStyles(theme => ({
   drawer: {
@@ -63,6 +66,15 @@ const useStyles = makeStyles(theme => ({
   connectionWarning: {
     color: theme.palette.error.main,
   },
+  rightActionContainer: {
+    flexGrow: 1,
+    display: 'flex',
+    justifyContent: 'flex-end',
+    alignContent: 'center',
+  },
+  refreshButton: {
+    marginRight: theme.spacing(1),
+  },
 }));
 
 function TabPanel({ children, value, index, classes }) {
@@ -75,7 +87,7 @@ function TabPanel({ children, value, index, classes }) {
       hidden={hidden}
       id={`tabpanel-${index}`}
       aria-labelledby={`tab-${index}`}>
-      <div>{!hidden && children}</div>
+      {!hidden && children}
     </div>
   );
 }
@@ -124,6 +136,13 @@ export default function BottomDrawer({
       dispatch(actions.connection.clearDebugLogs(connectionId));
     },
     [dispatch, setTabValue]
+  );
+  const handleDebugLogsRefresh = useCallback(
+    connectionId => event => {
+      event.stopPropagation();
+      dispatch(actions.connection.requestDebugLogs(connectionId));
+    },
+    [dispatch]
   );
 
   useEffect(() => {
@@ -235,7 +254,22 @@ export default function BottomDrawer({
                 key={connectionId}
                 index={cIndex + 3}
                 classes={classes}>
-                {connectionDebugLogs[connectionId]}
+                <Fragment>
+                  <div className={classes.rightActionContainer}>
+                    <IconTextButton
+                      className={classes.refreshButton}
+                      onClick={handleDebugLogsRefresh(connectionId)}>
+                      <RefreshIcon /> Refresh
+                    </IconTextButton>
+                  </div>
+                  <CodePanel
+                    name="code"
+                    readOnly
+                    value={connectionDebugLogs[connectionId]}
+                    mode="javascript"
+                    overrides={{ useWorker: false }}
+                  />
+                </Fragment>
               </TabPanel>
             )
         )}

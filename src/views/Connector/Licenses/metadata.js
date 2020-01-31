@@ -15,7 +15,7 @@ export default {
     },
     {
       heading: 'Status',
-      value: r => (r.accepted ? 'Accepted' : 'Pending'),
+      value: r => (r._integrationId ? 'Installed' : 'Pending'),
     },
     {
       heading: 'Created on',

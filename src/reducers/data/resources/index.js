@@ -293,6 +293,23 @@ export default (state = {}, action) => {
             !token.autoPurgeAt || new Date(token.autoPurgeAt) > new Date()
         );
       });
+    case actionTypes.CONNECTION.MADE_ONLINE:
+      if (!state.tiles) {
+        return state;
+      }
+
+      return produce(state, draft => {
+        draft.tiles = draft.tiles.map(tile => {
+          if (tile.offlineConnections) {
+            // eslint-disable-next-line no-param-reassign
+            tile.offlineConnections = tile.offlineConnections.filter(
+              c => c !== connectionId
+            );
+          }
+
+          return tile;
+        });
+      });
 
     default:
       return state;
@@ -431,6 +448,10 @@ export function resourceList(
 
   if (!state || !type || typeof type !== 'string') {
     return result;
+  }
+
+  if (type === 'assistants') {
+    return state['ui/assistants'];
   }
 
   const resources = state[type];

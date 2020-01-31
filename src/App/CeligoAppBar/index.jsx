@@ -4,7 +4,7 @@ import { useLocation } from 'react-router-dom';
 import { AppBar, Toolbar } from '@material-ui/core';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
-import GlobalSearch from '../GlobalSearch';
+// import GlobalSearch from '../GlobalSearch';
 import ElevateOnScroll from '../../components/ElevateOnScroll';
 import SlideOnScroll from '../../components/SlideOnScroll';
 import ProfileMenuButton from './ProfileMenuButton';
@@ -107,9 +107,10 @@ export default function CeligoAppBar() {
           <Toolbar className="topBar" variant="dense">
             <CeligoBreadcrumb location={pathname} />
             <ul className={classes.topBarActions}>
-              <li>
+              {/* <li>
                 <GlobalSearch />
               </li>
+              */}
               {/* 
                 Including the AccountList causes the app to reload 3 times 
                 (and re-run all init) I think this is causes by removing the 

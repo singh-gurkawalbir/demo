@@ -225,4 +225,10 @@ export default {
       },
     ],
   },
+  'webhook.sampledata': {
+    id: 'sampleData',
+    name: 'sampleData',
+    type: 'webhooksampledata',
+    label: 'Sample Data',
+  },
 };

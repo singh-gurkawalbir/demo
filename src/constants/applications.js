@@ -155,7 +155,7 @@ const connectors = [
   // { id: 'allbound', name: 'allbound', type: 'http', assistant: 'allbound' },
   { id: 'amazonaws', name: 'Amazon AWS', type: 'http', assistant: 'amazonaws' },
   { id: 'amazonmws', name: 'Amazon MWS', type: 'http', assistant: 'amazonmws' },
-  { id: 'anaplan', name: 'anaplan', type: 'http', assistant: 'anaplan' },
+  { id: 'anaplan', name: 'Anaplan', type: 'http', assistant: 'anaplan' },
   { id: 'aptrinsic', name: 'Aptrinsic', type: 'rest', assistant: 'aptrinsic' },
   { id: 'ariba', name: 'Ariba', type: 'http', assistant: 'ariba' },
   { id: 'asana', name: 'Asana', type: 'rest', assistant: 'asana' },
@@ -430,7 +430,7 @@ const connectors = [
   },
   {
     id: 'microsoftoffice365',
-    name: 'microsoftoffice365',
+    name: 'Microsoft Office 365',
     type: 'http',
     assistant: 'microsoftoffice365',
   },
@@ -698,9 +698,47 @@ const connectors = [
   { id: 'zuora', name: 'Zuora', type: 'rest', assistant: 'zuora' },
 ];
 
-export const groupApplications = resourceType => {
+export const groupApplications = (resourceType, assistants, appType) => {
   const filteredConnectors = connectors.filter(connector => {
+    if (connector.assistant && assistants && resourceType !== 'connections') {
+      if (
+        assistants.http.applications.find(
+          ass => ass._id === connector.assistant
+        )
+      ) {
+        const assistant = assistants.http.applications.find(
+          ass => ass._id === connector.assistant
+        );
+
+        if (appType === 'import') {
+          return assistant.import;
+        } else if (appType === 'export') {
+          return assistant.export;
+        }
+
+        return true;
+      } else if (
+        assistants.rest.applications.find(
+          ass => ass._id === connector.assistant
+        )
+      ) {
+        const assistant = assistants.rest.applications.find(
+          ass => ass._id === connector.assistant
+        );
+
+        if (appType === 'import') {
+          return assistant.import;
+        } else if (appType === 'export') {
+          return assistant.export;
+        }
+
+        return true;
+      }
+
+      return false;
+    }
     // Webhooks are shown only for exports and for page generators in flow context
+
     if (resourceType && !['exports', 'pageGenerator'].includes(resourceType))
       return !connector.webhookOnly;
 
@@ -734,10 +772,9 @@ export const groupApplications = resourceType => {
 */
 
 export const getApplicationConnectors = () => connectors.filter(c => !c.group);
-export const getWebhookConnectors = () =>
-  connectors.filter(c => c.webhook || c.webhookOnly);
+export const getWebhookConnectors = () => connectors.filter(c => !!c.webhook);
 export const getWebhookOnlyConnectors = () =>
-  connectors.filter(c => c.webhookOnly);
+  connectors.filter(c => !!c.webhookOnly);
 
 export const getApp = (type, assistant) => {
   const id = assistant || type;

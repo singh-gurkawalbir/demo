@@ -44,6 +44,7 @@ export default {
       name: 'application',
       type: 'selectapplication',
       label: 'Application',
+      appType: 'import',
       placeholder:
         'Choose application or start typing to browse 150+ applications',
       defaultValue: '',
@@ -95,10 +96,6 @@ export default {
   optionsHandler: (fieldId, fields) => {
     const appField = fields.find(field => field.id === 'application');
     const app = applications.find(a => a.id === appField.value) || {};
-
-    if (fieldId === 'name') {
-      return `New ${app.name} Import`;
-    }
 
     if (fieldId === 'connection') {
       const expression = [];

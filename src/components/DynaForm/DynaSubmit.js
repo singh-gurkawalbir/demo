@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { FormContext } from 'react-forms-processor/dist';
 import Button from '@material-ui/core/Button';
+import useEnableButtonOnTouchedForm from '../../hooks/useEnableButtonOnTouchedForm';
 
 function FormButton({
   disabled,
@@ -11,8 +12,18 @@ function FormButton({
   className,
   value = {},
   color,
+  fields,
+  resourceType,
+  resourceId,
 }) {
   const handleClick = useCallback(() => onClick(value), [onClick, value]);
+  const { formTouched, onClickWhenValid } = useEnableButtonOnTouchedForm({
+    onClick: handleClick,
+    fields,
+    formIsValid: isValid,
+    resourceId,
+    resourceType,
+  });
 
   return (
     <Button
@@ -22,8 +33,8 @@ function FormButton({
       variant="outlined"
       color={color || 'primary'}
       className={className}
-      disabled={disabled || !isValid}
-      onClick={handleClick}>
+      disabled={disabled || !formTouched}
+      onClick={onClickWhenValid}>
       {children}
     </Button>
   );

@@ -121,9 +121,9 @@ export default {
       baseURI: `https://${form['/sugarcrmSubdomain']}/rest/${
         form['/http/unencrypted/version']
       }`,
-      body: `{"grant_type":"${
-        form['/http/unencrypted/grantType']
-      }","client_id":"${form['/http/unencrypted/clientID']}","client_secret":"${
+      body: `{"grant_type":"password","client_id":"${
+        form['/http/unencrypted/clientID']
+      }","client_secret":"${
         form['/http/encrypted/clientSecret']
       }","username":"${form['/http/unencrypted/username']}","password":"${
         form['/http/encrypted/password']

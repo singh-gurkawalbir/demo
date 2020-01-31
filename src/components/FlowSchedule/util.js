@@ -412,6 +412,7 @@ export const getMetadata = ({
         name: 'timeZone',
         type: 'select',
         label: 'Time Zone',
+        helpKey: 'flow.timezone',
         defaultValue:
           (flow && flow.timeZone) ||
           (integration && integration.timeZone) ||
@@ -432,6 +433,7 @@ export const getMetadata = ({
         id: 'activeTab',
         name: 'activeTab',
         type: 'radiogroup',
+        helpKey: 'flow.type',
         label: '',
         fullWidth: true,
         defaultValue: resource.activeTab,
@@ -449,6 +451,7 @@ export const getMetadata = ({
         name: 'frequency',
         type: 'select',
         label: 'Frequency',
+        helpKey: 'flow.frequency',
         defaultValue: resource.frequency,
         options: [
           {
@@ -478,6 +481,7 @@ export const getMetadata = ({
         name: 'startTime',
         type: 'select',
         label: 'Start Time',
+        helpKey: 'flow.startTime',
         defaultValue: resource && resource.startTime,
         options: [
           {
@@ -502,6 +506,7 @@ export const getMetadata = ({
         name: 'endTime',
         type: 'select',
         label: 'End Time',
+        helpKey: 'flow.endTime',
         defaultValue: resource && resource.endTime,
         options: [
           {
@@ -524,6 +529,7 @@ export const getMetadata = ({
         id: 'daysToRunOn',
         name: 'daysToRunOn',
         type: 'multiselect',
+        helpKey: 'flow.daysToRunOn',
         label: 'Days To Run On',
         defaultValue: resource.daysToRunOn || [
           '1',
@@ -561,6 +567,7 @@ export const getMetadata = ({
       dayToRunOn: {
         id: 'dayToRunOn',
         name: 'dayToRunOn',
+        helpKey: 'flow.daysToRunOn',
         type: 'select',
         label: 'Day To Run On',
         defaultValue: resource.dayToRunOn,
@@ -591,6 +598,7 @@ export const getMetadata = ({
       schedule: {
         id: 'schedule',
         name: 'schedule',
+        helpKey: 'flow.schedule',
         type: 'crongenerator',
         label: 'Schedule',
         defaultValue: schedule || '? * * * * *',
@@ -604,6 +612,7 @@ export const getMetadata = ({
       _keepDeltaBehindFlowId: {
         id: '_keepDeltaBehindFlowId',
         name: '_keepDeltaBehindFlowId',
+        helpKey: 'flow._keepDeltaBehindFlowId',
         type: 'select',
         visible: isDeltaFlowModel(pg, exp, flow, exports),
         label: 'Master flow:',
@@ -613,6 +622,7 @@ export const getMetadata = ({
       _keepDeltaBehindExportId: {
         id: '_keepDeltaBehindExportId',
         name: '_keepDeltaBehindExportId',
+        helpKey: 'flow._keepDeltaBehindExportId',
         label: 'Delta export:',
         type: 'select',
         options: getExportsFromSelectedDeltaFlow(

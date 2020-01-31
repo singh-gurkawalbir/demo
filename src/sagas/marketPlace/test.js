@@ -19,7 +19,7 @@ describe('requestConnectors saga', () => {
     expect(saga.next().value).toEqual(
       call(apiCallWithRetry, {
         path,
-        message: 'Requesting Integration Apps',
+        message: 'Requesting integration apps',
       })
     );
     expect(saga.next(testConnectors).value).toEqual(
@@ -35,7 +35,7 @@ describe('requestConnectors saga', () => {
     expect(saga.next().value).toEqual(
       call(apiCallWithRetry, {
         path,
-        message: 'Requesting Integration Apps',
+        message: 'Requesting integration apps',
       })
     );
     expect(saga.throw(new Error()).value).toEqual(undefined);

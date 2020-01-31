@@ -330,6 +330,11 @@ export default {
         },
       },
     },
+    MuiTableBody: {
+      root: {
+        wordBreak: 'break-word',
+      },
+    },
     MuiTableCell: {
       root: {
         position: 'relative',
@@ -441,7 +446,9 @@ export default {
     MuiRadio: {
       root: {
         color: colors.celigoNeutral5,
-        padding: 5,
+        padding: 0,
+        marginRight: 4,
+        marginTop: -4,
       },
     },
     MuiInputBase: {
@@ -451,11 +458,6 @@ export default {
         '&$disabled': {
           background: colors.celigoNeutral3,
           color: colors.celigoNeutral6,
-        },
-      },
-      input: {
-        '&:invalid': {
-          borderColor: colors.celigoError,
         },
       },
     },
@@ -513,6 +515,10 @@ export default {
     MuiCheckbox: {
       root: {
         color: colors.celigoNeutral5,
+        padding: 0,
+        marginRight: 4,
+        borderRadius: 0,
+        marginTop: -4,
       },
     },
     MuiTabs: {
@@ -551,6 +557,7 @@ export default {
       },
     },
   },
+
   // TODO: Dave It is giving an error in console
 
   // props: {

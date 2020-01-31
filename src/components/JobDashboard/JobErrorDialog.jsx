@@ -20,6 +20,12 @@ const useStyles = makeStyles(theme => ({
         color: theme.palette.primary.main,
       },
     },
+    '&:after': {
+      content: '""',
+      height: 3,
+      width: 1,
+      background: theme.palette.secondary.lightest,
+    },
   },
   spinner: {
     left: '0px',

@@ -40,7 +40,9 @@ export function normalizeUrlAndOptions(path, opts) {
       path.includes('/netSuiteWS') ||
       path.includes('/netsuiteDA') ||
       /^\/connections.*distributed$/.test(path) ||
-      path.includes('/mappingPreview')
+      path.includes('/mappingPreview') ||
+      path.includes('/generateoauth2token') ||
+      path.includes('/revoke')
     ) {
       url = path;
     } else {

@@ -1,8 +1,10 @@
 import React, { Fragment, useState, useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography, IconButton } from '@material-ui/core';
+import { Typography, IconButton, Tooltip, Zoom } from '@material-ui/core';
 import clsx from 'clsx';
+// import LinesEllipsis from 'react-lines-ellipsis';
+import Truncate from 'react-truncate';
 import * as selectors from '../../../reducers';
 import AddIcon from '../../../components/icons/AddIcon';
 import ActionIconButton from '../ActionIconButton';
@@ -35,9 +37,7 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'flex-end',
     justifyContent: 'center',
     display: 'flex',
-    '& > h5': {
-      textAlign: 'center',
-    },
+    textAlign: 'center',
   },
   buttonContainer: {
     display: 'flex',
@@ -158,6 +158,7 @@ function AppBlock({
   const classes = useStyles();
   const [expanded, setExpanded] = useState(false);
   const [isOver, setIsOver] = useState(false);
+  const [isTruncated, setIsTruncated] = useState(false);
   const [activeAction, setActiveAction] = useState(null);
   const isNew = blockType.startsWith('new');
   const iconType = useSelector(state => {
@@ -256,9 +257,23 @@ function AppBlock({
 
   return (
     <div className={clsx(classes.root, className)}>
-      <div className={classes.name}>
-        <Typography variant="h5">{name}</Typography>
-      </div>
+      <Typography component="div" className={classes.name} variant="h5">
+        {isTruncated ? (
+          <Tooltip
+            title={name}
+            TransitionComponent={Zoom}
+            placement="top"
+            enterDelay={300}>
+            <Truncate lines={2} ellipsis="..." onTruncate={setIsTruncated}>
+              {name}
+            </Truncate>
+          </Tooltip>
+        ) : (
+          <Truncate lines={2} ellipsis="..." onTruncate={setIsTruncated}>
+            {name}
+          </Truncate>
+        )}
+      </Typography>
       <div
         onMouseEnter={handleMouseOver(true)}
         onFocus={handleMouseOver(true)}

@@ -1,9 +1,18 @@
 import { useState, Fragment } from 'react';
 import Button from '@material-ui/core/Button';
+import { makeStyles } from '@material-ui/core/styles';
 import { showViewDiffLink } from './util';
 import DiffDialog from './DiffDialog';
 
+const useStyles = makeStyles({
+  clickBtn: {
+    whiteSpace: 'nowrap',
+    padding: 0,
+  },
+});
+
 export default function OldValue(props) {
+  const classes = useStyles();
   const { auditLog: al } = props;
   const [diffObj, setDiffObj] = useState({
     showDiffDialog: false,
@@ -28,6 +37,7 @@ export default function OldValue(props) {
           data-test="auditLogChanges"
           color="primary"
           variant="text"
+          className={classes.clickBtn}
           onClick={() =>
             setDiffObj({
               showDiffDialog: true,

@@ -26,7 +26,6 @@ export default function KeywordSearch({ filterKey, defaultFilter }) {
 
   return (
     <SearchInput
-      variant="light"
       value={(filter && filter.keyword) || ''}
       onChange={handleKeywordChange}
     />

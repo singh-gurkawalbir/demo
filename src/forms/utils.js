@@ -137,6 +137,13 @@ export const getFieldByName = ({ fieldMeta, name }) => {
   return res && res.field;
 };
 
+export const isFormTouched = fields => fields.some(field => field.touched);
+
+export const isAnyFieldTouchedForMeta = ({ layout, fieldMap }, fields) =>
+  fields
+    .filter(field => field.touched)
+    .some(({ id }) => !!getFieldByIdFromLayout(layout, fieldMap, id));
+
 export const getFieldByNameFromLayout = (layout, fieldMap, name) => {
   if (!layout) return null;
   const { fields, containers } = layout;
@@ -310,7 +317,7 @@ const refGeneration = field => {
   throw new Error('cant generate reference');
 };
 
-const getFieldConfig = (field = {}, resource) => {
+const getFieldConfig = (field = {}, resource = {}) => {
   const newField = { ...field };
 
   if (!newField.type || newField.type === 'input') {
@@ -347,7 +354,7 @@ function extractRules(fields, currFieldName, value) {
     const { name, hidden, required } = field;
     let rule = { ref: name };
 
-    if (!hidden) {
+    if (Object.prototype.hasOwnProperty.call(field, 'hidden') && !hidden) {
       rule = {
         ...rule,
         visibleRule: { field: currFieldName, is: [value] },
@@ -416,8 +423,8 @@ export const translateDependencyProps = fieldMap => {
             visibleRule
           );
         } else if (requiredRule) {
-          fieldMapCopy[ref].validWhenAll = pushRuleToMeta(
-            fieldMapCopy[ref].validWhenAll,
+          fieldMapCopy[ref].requiredWhenAll = pushRuleToMeta(
+            fieldMapCopy[ref].requiredWhenAll,
             requiredRule
           );
         }

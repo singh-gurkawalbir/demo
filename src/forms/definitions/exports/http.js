@@ -4,6 +4,20 @@ export default {
   preSave: formValues => {
     const retValues = { ...formValues };
 
+    if (retValues['/http/successMediaType'] === 'csv') {
+      retValues['/file/type'] = 'csv';
+    } else if (
+      retValues['/http/successMediaType'] === 'json' ||
+      retValues['/http/successMediaType'] === 'xml'
+    ) {
+      retValues['/file/csv'] = undefined;
+      retValues['/file'] = undefined;
+      delete retValues['/file/type'];
+      delete retValues['/file/csv/rowsToSkip'];
+      delete retValues['/file/csv/trimSpaces'];
+      delete retValues['/file/csv/columnDelimiter'];
+    }
+
     if (retValues['/type'] === 'all') {
       retValues['/type'] = undefined;
       retValues['/test'] = undefined;
@@ -308,7 +322,17 @@ export default {
       ],
     },
     'file.csv': {
-      fieldId: 'file.csv',
+      id: 'file.csv',
+      type: 'csvparse',
+      label: 'Configure CSV Parse Options',
+      defaultValue: r =>
+        (r.file && r.file.csv) || {
+          rowsToSkip: 0,
+          trimSpaces: false,
+          columnDelimiter: ',',
+          hasHeaderRow: false,
+          rowDelimiter: '\n',
+        },
       visibleWhenAll: [
         {
           field: 'outputMode',
