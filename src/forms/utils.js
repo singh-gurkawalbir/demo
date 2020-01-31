@@ -137,6 +137,13 @@ export const getFieldByName = ({ fieldMeta, name }) => {
   return res && res.field;
 };
 
+export const isFormTouched = fields => fields.some(field => field.touched);
+
+export const isAnyFieldTouchedForMeta = ({ layout, fieldMap }, fields) =>
+  fields
+    .filter(field => field.touched)
+    .some(({ id }) => !!getFieldByIdFromLayout(layout, fieldMap, id));
+
 export const getFieldByNameFromLayout = (layout, fieldMap, name) => {
   if (!layout) return null;
   const { fields, containers } = layout;

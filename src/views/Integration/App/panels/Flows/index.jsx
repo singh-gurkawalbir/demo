@@ -1,11 +1,10 @@
-import { useSelector, useDispatch, shallowEqual } from 'react-redux';
-import { useCallback } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { useEffect } from 'react';
 import {
   Route,
   Link,
   NavLink,
   Redirect,
-  useHistory,
   useRouteMatch,
 } from 'react-router-dom';
 import { makeStyles } from '@material-ui/styles';
@@ -21,6 +20,7 @@ import SettingsDrawer from './SettingsDrawer';
 import CategoryMappingDrawer from './CategoryMappingDrawer';
 import MappingDrawer from './MappingDrawer';
 import actions from '../../../../../actions';
+import { FormStateManager } from '../../../../../components/ResourceFormFactory';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -47,35 +47,32 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export const useIASettingsStateWithHandleClose = (
-  integrationId,
-  flowId,
-  sectionId,
-  parentUrl
-) => {
+export const IAFormStateManager = props => {
   const dispatch = useDispatch();
-  const history = useHistory();
-  const formState = useSelector(state => {
-    const formState = selectors.integrationAppSettingsFormState(
-      state,
-      integrationId,
-      flowId,
-      sectionId
-    );
-
-    return { ...formState, initComplete: true };
-  }, shallowEqual);
-  const IASettingsHandleClose = useCallback(() => {
-    dispatch(
-      actions.integrationApp.settings.clear(integrationId, flowId, sectionId)
-    );
-    history.push(parentUrl);
-  }, [dispatch, flowId, history, integrationId, parentUrl, sectionId]);
-
-  return {
-    handleClose: IASettingsHandleClose,
-    formState,
+  const { integrationId, flowId, sectionId } = props;
+  const allProps = {
+    ...props,
+    resourceType: 'integrations',
+    resourceId: integrationId,
   };
+
+  useEffect(() => {
+    dispatch(
+      actions.integrationApp.settings.initComplete(
+        integrationId,
+        flowId,
+        sectionId
+      )
+    );
+
+    return () => {
+      dispatch(
+        actions.integrationApp.settings.clear(integrationId, flowId, sectionId)
+      );
+    };
+  }, [dispatch, flowId, integrationId, sectionId]);
+
+  return <FormStateManager {...allProps} isIAForm />;
 };
 
 function FlowList({ integrationId, storeId }) {

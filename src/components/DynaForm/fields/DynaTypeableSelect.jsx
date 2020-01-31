@@ -52,6 +52,7 @@ export default function DynaTypeableSelect(props) {
     removeHelperText = false,
     valueName,
     options = [],
+    isValid,
     components = {
       DropdownIndicator: () => null,
       IndicatorSeparator: () => null,
@@ -204,7 +205,7 @@ export default function DynaTypeableSelect(props) {
   };
 
   return (
-    <FormControl disabled={disabled} className={classes.root}>
+    <FormControl error={!isValid} disabled={disabled} className={classes.root}>
       <Select
         id={id}
         data-test={id}

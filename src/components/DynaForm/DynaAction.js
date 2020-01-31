@@ -1,12 +1,11 @@
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import { FormContext } from 'react-forms-processor/dist';
 import Button from '@material-ui/core/Button';
+import useEnableButtonOnTouchedForm from '../../hooks/useEnableButtonOnTouchedForm';
 
 function DynaAction(props) {
   const {
     disabled,
-    isValid,
-    onClick,
     children,
     className,
     value,
@@ -16,7 +15,15 @@ function DynaAction(props) {
     fields,
     visibleWhen,
     visibleWhenAll,
+    isValid,
   } = props;
+  const { formTouched, onClickWhenValid } = useEnableButtonOnTouchedForm({
+    ...props,
+    formIsValid: isValid,
+  });
+  const onClick = useCallback(() => {
+    onClickWhenValid(value);
+  }, [onClickWhenValid, value]);
 
   useEffect(() => {
     const matchingActionField = fields.find(field => field.id === id);
@@ -47,8 +54,8 @@ function DynaAction(props) {
       variant="outlined"
       color="primary"
       className={className}
-      disabled={disabled || !isValid}
-      onClick={() => onClick(value)}>
+      disabled={disabled || !formTouched}
+      onClick={onClick}>
       {children}
     </Button>
   );
