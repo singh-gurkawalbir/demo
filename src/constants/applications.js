@@ -700,9 +700,7 @@ const connectors = [
 
 export const groupApplications = (resourceType, assistants, appType) => {
   const filteredConnectors = connectors.filter(connector => {
-    // Webhooks are shown only for exports and for page generators in flow context
-
-    if (connector.assistant && assistants) {
+    if (connector.assistant && assistants && resourceType !== 'connections') {
       if (
         assistants.http.applications.find(
           ass => ass._id === connector.assistant
@@ -739,6 +737,7 @@ export const groupApplications = (resourceType, assistants, appType) => {
 
       return false;
     }
+    // Webhooks are shown only for exports and for page generators in flow context
 
     if (resourceType && !['exports', 'pageGenerator'].includes(resourceType))
       return !connector.webhookOnly;
