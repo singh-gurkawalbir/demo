@@ -330,11 +330,7 @@ export default {
         },
       },
     },
-    MuiTableBody: {
-      root: {
-        wordBreak: 'break-word',
-      },
-    },
+
     MuiTableCell: {
       root: {
         position: 'relative',
