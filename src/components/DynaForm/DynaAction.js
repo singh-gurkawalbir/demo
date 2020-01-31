@@ -1,63 +1,7 @@
-import { useEffect, useMemo, useCallback } from 'react';
+import { useEffect, useCallback } from 'react';
 import { FormContext } from 'react-forms-processor/dist';
-import { useDispatch } from 'react-redux';
 import Button from '@material-ui/core/Button';
-import { isFormTouched } from '../../forms/utils';
-import actions from '../../actions';
-
-export const useEnableButtonOnTouchedForm = ({
-  onClick,
-  fields,
-  formIsValid,
-  resourceId,
-  resourceType,
-  IAForm,
-  integrationId,
-  flowId,
-  sectionId,
-  isFormTouchedForMeta,
-}) => {
-  const dispatch = useDispatch();
-  const formTouched = useMemo(
-    () =>
-      isFormTouchedForMeta === undefined
-        ? isFormTouched(fields)
-        : isFormTouchedForMeta,
-    [fields, isFormTouchedForMeta]
-  );
-  const onClickWhenValid = useCallback(
-    value => {
-      if (IAForm)
-        dispatch(
-          actions.integrationApp.settings.showFormValidations(
-            integrationId,
-            flowId,
-            sectionId
-          )
-        );
-      else
-        dispatch(
-          actions.resourceForm.showFormValidations(resourceType, resourceId)
-        );
-
-      // Util user resolves form validation do we allow the onClick to take place ...
-      if (formIsValid) onClick(value);
-    },
-    [
-      IAForm,
-      dispatch,
-      flowId,
-      formIsValid,
-      integrationId,
-      onClick,
-      resourceId,
-      resourceType,
-      sectionId,
-    ]
-  );
-
-  return { formTouched, onClickWhenValid };
-};
+import useEnableButtonOnTouchedForm from '../../hooks/useEnableButtonOnTouchedForm';
 
 function DynaAction(props) {
   const {
@@ -77,6 +21,9 @@ function DynaAction(props) {
     ...props,
     formIsValid: isValid,
   });
+  const onClick = useCallback(() => {
+    onClickWhenValid(value);
+  }, [onClickWhenValid, value]);
 
   useEffect(() => {
     const matchingActionField = fields.find(field => field.id === id);
@@ -108,9 +55,7 @@ function DynaAction(props) {
       color="primary"
       className={className}
       disabled={disabled || !formTouched}
-      onClick={() => {
-        onClickWhenValid(value);
-      }}>
+      onClick={onClick}>
       {children}
     </Button>
   );

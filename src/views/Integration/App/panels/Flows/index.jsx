@@ -1,11 +1,10 @@
-import { useSelector, useDispatch, shallowEqual } from 'react-redux';
-import { useCallback, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { useEffect } from 'react';
 import {
   Route,
   Link,
   NavLink,
   Redirect,
-  useHistory,
   useRouteMatch,
 } from 'react-router-dom';
 import { makeStyles } from '@material-ui/styles';
@@ -73,38 +72,7 @@ export const IAFormStateManager = props => {
     };
   }, [dispatch, flowId, integrationId, sectionId]);
 
-  return <FormStateManager {...allProps} IAForm />;
-};
-
-export const useIASettingsStateWithHandleClose = (
-  integrationId,
-  flowId,
-  sectionId,
-  parentUrl
-) => {
-  const dispatch = useDispatch();
-  const history = useHistory();
-  const formState = useSelector(
-    state =>
-      selectors.integrationAppSettingsFormState(
-        state,
-        integrationId,
-        flowId,
-        sectionId
-      ),
-    shallowEqual
-  );
-  const IASettingsHandleClose = useCallback(() => {
-    dispatch(
-      actions.integrationApp.settings.clear(integrationId, flowId, sectionId)
-    );
-    history.push(parentUrl);
-  }, [dispatch, flowId, history, integrationId, parentUrl, sectionId]);
-
-  return {
-    handleClose: IASettingsHandleClose,
-    formState,
-  };
+  return <FormStateManager {...allProps} isIAForm />;
 };
 
 function FlowList({ integrationId, storeId }) {

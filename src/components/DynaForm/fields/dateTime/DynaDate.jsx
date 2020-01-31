@@ -25,7 +25,7 @@ export default function DatePicker(props) {
         variant="inline"
         inputVariant="outlined"
         InputLabelProps={{ shrink: true }}
-        onChange={value => onChange(value)}
+        onChange={onChange}
         disabled={disabled}
         keyboardIcon={<CalendarIcon />}
       />

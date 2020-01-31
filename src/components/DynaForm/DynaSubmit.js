@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { FormContext } from 'react-forms-processor/dist';
 import Button from '@material-ui/core/Button';
-import { useEnableButtonOnTouchedForm } from './DynaAction';
+import useEnableButtonOnTouchedForm from '../../hooks/useEnableButtonOnTouchedForm';
 
 function FormButton({
   disabled,

@@ -52,16 +52,16 @@ const ExpansionPannelExpandOnInValidState = props => {
   const [shouldExpand, setShouldExpand] = useState(!collapsed);
   const [visible, setVisible] = useState(true);
   const [componentLoaded, setComponentLoaded] = useState(false);
-  const isPannelErrored = isExpansionPanelErrored(
+  const isPanelErrored = isExpansionPanelErrored(
     { layout, fieldMap },
     form.fields
   );
 
   useEffect(() => {
-    if (!shouldExpand && isPannelErrored) {
+    if (!shouldExpand && isPanelErrored) {
       setShouldExpand(true);
     }
-  }, [isPannelErrored, shouldExpand]);
+  }, [isPanelErrored, shouldExpand]);
   useEffect(() => {
     setComponentLoaded(true);
   }, []);

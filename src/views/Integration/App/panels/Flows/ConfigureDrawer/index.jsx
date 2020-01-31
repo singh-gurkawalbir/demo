@@ -7,7 +7,8 @@ import * as selectors from '../../../../../../reducers';
 import { integrationSettingsToDynaFormMetadata } from '../../../../../../forms/utils';
 import DrawerTitleBar from '../../../../../../components/drawer/TitleBar';
 import LoadResources from '../../../../../../components/LoadResources';
-import { useIASettingsStateWithHandleClose, IAFormStateManager } from '..';
+import { IAFormStateManager } from '..';
+import useIASettingsStateWithHandleClose from '../../../../../../hooks/useIASettingsStateWithHandleClose';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
