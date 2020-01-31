@@ -4,6 +4,20 @@ export default {
   preSave: formValues => {
     const retValues = { ...formValues };
 
+    if (retValues['/http/successMediaType'] === 'csv') {
+      retValues['/file/type'] = 'csv';
+    } else if (
+      retValues['/http/successMediaType'] === 'json' ||
+      retValues['/http/successMediaType'] === 'xml'
+    ) {
+      retValues['/file/csv'] = undefined;
+      retValues['/file'] = undefined;
+      delete retValues['/file/type'];
+      delete retValues['/file/csv/rowsToSkip'];
+      delete retValues['/file/csv/trimSpaces'];
+      delete retValues['/file/csv/columnDelimiter'];
+    }
+
     if (retValues['/type'] === 'all') {
       retValues['/type'] = undefined;
       retValues['/test'] = undefined;
@@ -226,7 +240,6 @@ export default {
     'http.response.errorPath': { fieldId: 'http.response.errorPath' },
     'http.response.failPath': { fieldId: 'http.response.failPath' },
     'http.response.failValues': { fieldId: 'http.response.failValues' },
-    'file.csv': { fieldId: 'file.csv' },
     type: {
       id: 'type',
       type: 'select',
@@ -307,6 +320,9 @@ export default {
           is: ['records'],
         },
       ],
+    },
+    'file.csv': {
+      fieldId: 'file.csv',
     },
     exportOneToMany: { formId: 'exportOneToMany' },
     configureAsyncHelper: {

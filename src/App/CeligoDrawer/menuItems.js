@@ -18,35 +18,62 @@ import KnowledgeBaseIcon from '../../components/icons/KnowledgeBaseIcon';
 import TicketTagIcon from '../../components/icons/TicketTagIcon';
 import RecycleBinIcon from '../../components/icons/RecycleBinIcon';
 import TokensApiIcon from '../../components/icons/TokensApiIcon';
+import { getHelpUrl } from '../../utils/resource';
+import { SUBMIT_TICKET_URL, WHATS_NEW_URL } from '../../utils/constants';
 
-export default function menuItems(userProfile, userPermissions = {}) {
+export default function menuItems(
+  userProfile,
+  userPermissions = {},
+  integrations,
+  marketplaceConnectors
+) {
   const isDeveloper = userProfile && userProfile.developer;
   const canPublish = userProfile && userProfile.allowedToPublish;
   let items = [
     {
       label: 'Home',
-      path: '/',
       Icon: HomeIcon,
+      path: '/',
+      routeProps: {
+        path: ['/pg', '/pg/dashboard'],
+        exact: true,
+      },
     },
     {
       label: 'Tools',
+      routeProps: [
+        '/pg/integrations/:integrationId/flowBuilder',
+        '/pg/integrations/:integrationId/dataLoader',
+      ],
       Icon: ToolsIcon,
       children: [
         {
           label: 'Flow builder',
-          path: '/integrations/none/flowBuilder/new',
           Icon: FlowBuilderIcon,
+          path: '/integrations/none/flowBuilder/new',
+          routeProps: '/pg/integrations/:integrationId/flowBuilder',
         },
         {
           label: 'Data loader',
-          path: '/integrations/none/flowBuilder/dataLoader',
           Icon: DataLoaderIcon,
+          path: '/integrations/none/dataLoader/new',
+          routeProps: '/pg/integrations/:integrationId/dataloader',
         },
       ],
     },
     {
       label: 'Resources',
       Icon: ResourcesIcon,
+      routeProps: [
+        '/pg/exports',
+        '/pg/imports',
+        '/pg/connections',
+        '/pg/scripts',
+        '/pg/agents',
+        '/pg/stacks',
+        '/pg/templates',
+        '/pg/connectors',
+      ],
       children: [
         { label: 'Exports', path: '/exports', Icon: ExportsIcon },
         { label: 'Imports', path: '/imports', Icon: ImportsIcon },
@@ -56,9 +83,9 @@ export default function menuItems(userProfile, userPermissions = {}) {
         { label: 'Stacks', path: '/stacks', Icon: StacksIcon },
         { label: 'Templates', path: '/templates', Icon: DataLoaderIcon },
         {
-          label: 'Integration Apps',
-          path: '/connectors',
+          label: 'Integration apps',
           Icon: ConnectionsIcon,
+          path: '/connectors',
         },
         { label: 'API Tokens', path: '/accesstokens', Icon: TokensApiIcon },
         { label: 'Recycle bin', path: '/recycleBin', Icon: RecycleBinIcon },
@@ -66,21 +93,37 @@ export default function menuItems(userProfile, userPermissions = {}) {
     },
     {
       label: 'Marketplace',
-      path: '/marketplace',
       Icon: MarketplaceIcon,
+      path: '/marketplace',
     },
     {
       label: 'Support',
       Icon: SupportIcon,
       children: [
-        { label: 'Knowledge base', Icon: KnowledgeBaseIcon },
-        { label: 'Submit ticket', Icon: TicketTagIcon },
+        {
+          label: 'Knowledge base',
+          Icon: KnowledgeBaseIcon,
+          component: 'a',
+          href: getHelpUrl(integrations, marketplaceConnectors),
+        },
+        {
+          label: 'Submit ticket',
+          Icon: TicketTagIcon,
+          component: 'a',
+          href: SUBMIT_TICKET_URL,
+        },
+        {
+          label: `What's New`,
+          Icon: TicketTagIcon,
+          component: 'a',
+          href: WHATS_NEW_URL,
+        },
       ],
     },
     {
       label: 'Editor playground (Beta)',
-      path: '/editors',
       Icon: EditorsPlaygroundIcon,
+      path: '/editors',
     },
 
     // {
@@ -124,13 +167,13 @@ export default function menuItems(userProfile, userPermissions = {}) {
 
     if (!canPublish) {
       resourceItems.children = resourceItems.children.filter(
-        i => !(i.label === 'Templates' || i.label === 'Integration Apps')
+        i => !(i.label === 'Templates' || i.label === 'Integration apps')
       );
     }
 
     if (userPermissions.accessLevel !== 'owner') {
       resourceItems.children = resourceItems.children.filter(
-        i => i.label !== 'API Tokens'
+        i => i.label !== 'API tokens'
       );
     }
   }

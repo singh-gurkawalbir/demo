@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, Fragment } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { withRouter, useHistory, useRouteMatch } from 'react-router-dom';
 import clsx from 'clsx';
@@ -27,6 +27,7 @@ import SwitchOnOff from '../../components/OnOff';
 import { generateNewId } from '../../utils/resource';
 import { isConnector } from '../../utils/flows';
 import FlowEllipsisMenu from '../../components/FlowEllipsisMenu';
+import DateTimeDisplay from '../../components/DateTimeDisplay';
 
 // #region FLOW SCHEMA: FOR REFERENCE DELETE ONCE FB IS COMPLETE
 /* 
@@ -143,6 +144,7 @@ const useStyles = makeStyles(theme => ({
   actions: {
     display: 'flex',
     alignItems: 'center',
+    margin: [[-7, 0]],
   },
   canvasContainer: {
     // border: 'solid 1px black',
@@ -210,6 +212,15 @@ const useStyles = makeStyles(theme => ({
   dataLoaderHelp: {
     margin: theme.spacing(5),
   },
+  // NOTE: 52px is collapsed left side bar. 410px is right page header action buttons + padding
+  // we use these to force the input to be as large as possible in the pageBar
+  // without causing any weird wrapping.
+  editableTextInput: {
+    width: `calc(100vw - ${52 + 410}px)`,
+  },
+  editableTextInputShift: {
+    width: `calc(100vw - ${theme.drawerWidth + 410}px)`,
+  },
 }));
 
 function FlowBuilder() {
@@ -227,10 +238,10 @@ function FlowBuilder() {
   const [newProcessorId, setNewProcessorId] = useState(generateNewId());
   //
   // #region Selectors
+  const drawerOpened = useSelector(state => selectors.drawerOpened(state));
   const newFlowId = useSelector(state =>
     selectors.createdResourceId(state, flowId)
   );
-  const drawerOpened = useSelector(state => selectors.drawerOpened(state));
   const flow = useSelector(
     state => selectors.resourceData(state, 'flows', flowId).merged,
     shallowEqual
@@ -423,17 +434,14 @@ function FlowBuilder() {
   if (flowId === 'new') {
     const tempId = generateNewId();
 
-    patchNewFlow(tempId);
-    history.replace(rewriteUrl(tempId));
-
-    return null;
-  }
-
-  // NEW DATA LOADER REDIRECTION
-  if (flowId && flowId.toLowerCase() === 'dataloader') {
-    const tempId = generateNewId();
-
-    patchNewFlow(tempId, 'New data loader flow', { application: 'dataLoader' });
+    // NEW DATA LOADER REDIRECTION
+    if (match.url.toLowerCase().includes('dataloader')) {
+      patchNewFlow(tempId, 'New data loader flow', {
+        application: 'dataLoader',
+      });
+    } else {
+      patchNewFlow(tempId);
+    }
 
     history.replace(rewriteUrl(tempId));
 
@@ -472,11 +480,26 @@ function FlowBuilder() {
           <EditableText
             disabled={isViewMode}
             text={flow.name}
+            // multiline
             defaultText={isNewFlow ? 'New flow' : `Unnamed (id:${flowId})`}
             onChange={handleTitleChange}
+            inputClassName={
+              drawerOpened
+                ? classes.editableTextInputShift
+                : classes.editableTextInput
+            }
           />
         }
-        subtitle={`Last saved: ${isNewFlow ? 'Never' : flow.lastModified}`}
+        subtitle={
+          <Fragment>
+            Last saved:{' '}
+            {isNewFlow ? (
+              'Never'
+            ) : (
+              <DateTimeDisplay dateTime={flow.lastModified} />
+            )}
+          </Fragment>
+        }
         infoText={flow.description}>
         <div className={classes.actions}>
           {!isDataLoaderFlow && (

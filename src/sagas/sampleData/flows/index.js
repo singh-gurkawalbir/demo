@@ -15,6 +15,7 @@ import {
   handleFlowDataStageErrors,
   getFlowResourceNode,
   getPreProcessedResponseMappingData,
+  getFlowStageData,
 } from '../utils/flowDataUtils';
 import {
   updateFlowsDataForResource,
@@ -27,6 +28,7 @@ import {
   getContextInfo,
   getBlobResourceSampleData,
   isOneToManyResource,
+  generatePostResponseMapData,
 } from '../../../utils/flowData';
 import { exportPreview, pageProcessorPreview } from '../utils/previewCalls';
 import requestRealTimeMetadata from '../sampleDataGenerator/realTimeSampleData';
@@ -78,7 +80,7 @@ function* initFlowData({ flowId, resourceId, resourceType }) {
   yield put(actions.flowData.init(clonedFlow));
 }
 
-function* requestSampleData({
+export function* requestSampleData({
   flowId,
   resourceId,
   resourceType,
@@ -411,31 +413,16 @@ export function* requestProcessorData({
     resourceId,
     SCOPES.VALUE
   );
-  let preProcessedData = yield select(getSampleData, {
-    flowId,
-    resourceId,
-    resourceType,
-    stage,
-  });
 
   try {
     let processorData;
-
-    if (!preProcessedData) {
-      yield call(requestSampleData, {
-        flowId,
-        resourceId,
-        resourceType,
-        stage,
-        isInitialized: true,
-      });
-      preProcessedData = yield select(getSampleData, {
-        flowId,
-        resourceId,
-        resourceType,
-        stage,
-      });
-    }
+    const preProcessedData = yield call(getFlowStageData, {
+      flowId,
+      resourceId,
+      resourceType,
+      stage,
+      isInitialized: true,
+    });
 
     if (stage === 'transform' || stage === 'responseTransform') {
       const transform = { ...resource[processor] };
@@ -555,6 +542,30 @@ export function* requestProcessorData({
       }
 
       hasNoRulesToProcess = true;
+    } else if (stage === 'postResponseMap') {
+      // For this stage, we need both flowData and rawData to merge and generate actual data
+      // Raw Data is supplied through preProcessedData, FlowData is fetched below
+      const flowData = yield call(getFlowStageData, {
+        flowId,
+        resourceId,
+        resourceType,
+        stage: 'flowInput',
+        isInitialized: true,
+      });
+      const postResponseMapData = generatePostResponseMapData(
+        flowData,
+        preProcessedData
+      );
+
+      // wrapping inside { data: [postResponseMapData]} as this action expects data to be in that format
+      // TODO @Raghu Create a received action which accepts the plain data as it is once BE supports stages data
+      yield put(
+        actions.flowData.receivedProcessorData(flowId, resourceId, stage, {
+          data: [postResponseMapData],
+        })
+      );
+
+      return;
     }
 
     if (hasNoRulesToProcess) {

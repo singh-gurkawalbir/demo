@@ -1,26 +1,34 @@
+/*
+ TODO: 
+ This file needs to be re-implemented as a stepper functionality drawer as per new mocks.
+ As of now this is not a drawer, but a standalone page.
+*/
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import {
   Typography,
   IconButton,
-  Button,
   Grid,
   Paper,
   Breadcrumbs,
+  Button,
 } from '@material-ui/core';
-import ArrowBackIcon from '../../components/icons/ArrowLeftIcon';
-import * as selectors from '../../reducers';
-import actions from '../../actions';
-import { getResourceSubType } from '../../utils/resource';
-import LoadResources from '../../components/LoadResources';
-import openExternalUrl from '../../utils/window';
-import resourceConstants from '../../forms/constants/connection';
-import ArrowRightIcon from '../../components/icons/ArrowRightIcon';
-import ConnectionSetupDialog from '../../components/ResourceSetupDialog';
-import InstallationStep from '../../components/InstallStep';
-import { confirmDialog } from '../../components/ConfirmDialog';
-import { getIntegrationAppUrlName } from '../../utils/integrationApps';
+import ArrowBackIcon from '../../../../../components/icons/ArrowLeftIcon';
+import ArrowRightIcon from '../../../../../components/icons/ArrowRightIcon';
+import * as selectors from '../../../../../reducers';
+import actions from '../../../../../actions';
+import LoadResources from '../../../../../components/LoadResources';
+import openExternalUrl from '../../../../../utils/window';
+import ConnectionSetupDialog from '../../../../../components/ResourceSetupDialog';
+import InstallationStep from '../../../../../components/InstallStep';
+import { getResourceSubType } from '../../../../../utils/resource';
+import resourceConstants from '../../../../../forms/constants/connection';
+import Spinner from '../../../../../components/Spinner';
+import Loader from '../../../../../components/Loader';
+import getRoutePath from '../../../../../utils/routePaths';
+import { getIntegrationAppUrlName } from '../../../../../utils/integrationApps';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -30,14 +38,13 @@ const useStyles = makeStyles(theme => ({
     padding: '10px 25px',
   },
   formHead: {
-    borderBottom: 'solid 1px',
-    borderColor: theme.palette.secondary.lightest,
-    marginBottom: 29,
+    borderBottom: `solid 1px ${theme.palette.secondary.lightest}`,
+    marginBottom: '29px',
   },
   innerContent: {
     width: '80vw',
   },
-  stepTable: { position: 'relative', marginTop: -20 },
+  stepTable: { position: 'relative', marginTop: '-20px' },
   floatRight: {
     float: 'right',
   },
@@ -54,90 +61,89 @@ const getConnectionType = resource => {
   return type;
 };
 
-export default function ConnectorInstallation(props) {
+export default function IntegrationAppAddNewStore(props) {
   const classes = useStyles();
+  const history = useHistory();
   const { integrationId } = props.match.params;
   const [selectedConnectionId, setSelectedConnectionId] = useState(null);
   const [isSetupComplete, setIsSetupComplete] = useState(false);
+  const [requestedSteps, setRequestedSteps] = useState(false);
   const dispatch = useDispatch();
-  const integration = useSelector(state =>
-    selectors.integrationAppSettings(state, integrationId)
+  const integration =
+    useSelector(state =>
+      selectors.integrationAppSettings(state, integrationId)
+    ) || {};
+  const showUninstall = !!(
+    integration &&
+    integration.settings &&
+    integration.settings.defaultSectionId
   );
-  const installSteps = useSelector(state =>
-    selectors.integrationInstallSteps(state, integrationId)
+  const integrationAppName = getIntegrationAppUrlName(integration.name);
+  const { steps: addNewStoreSteps, error } = useSelector(state =>
+    selectors.addNewStoreSteps(state, integrationId)
   );
   const selectedConnection = useSelector(state =>
     selectors.resource(state, 'connections', selectedConnectionId)
   );
-  const integrationAppName = getIntegrationAppUrlName(
-    integration && integration.name
-  );
 
   useEffect(() => {
+    if ((!addNewStoreSteps || !addNewStoreSteps.length) && !requestedSteps) {
+      dispatch(actions.integrationApp.store.addNew(integrationId));
+      setRequestedSteps(true);
+    }
+  }, [addNewStoreSteps, requestedSteps, dispatch, integrationId]);
+  useEffect(() => {
     if (
-      installSteps.length &&
-      !installSteps.reduce((result, step) => result || !step.completed, false)
+      addNewStoreSteps &&
+      addNewStoreSteps.length &&
+      !addNewStoreSteps.reduce(
+        (result, step) => result || !step.completed,
+        false
+      )
     ) {
-      dispatch(actions.resource.request('integrations', integrationId));
       setIsSetupComplete(true);
     }
-  }, [dispatch, installSteps, integrationId]);
+  }, [addNewStoreSteps]);
 
   useEffect(() => {
     if (isSetupComplete) {
       // redirect to integration Settings
+      dispatch(actions.integrationApp.store.clearSteps(integrationId));
       dispatch(actions.resource.request('integrations', integrationId));
       dispatch(actions.resource.requestCollection('flows'));
       dispatch(actions.resource.requestCollection('exports'));
       dispatch(actions.resource.requestCollection('imports'));
-
-      if (integration && integration.mode === 'settings') {
-        props.history.push(
-          `/pg/integrationapps/${integrationAppName}/${integrationId}/flows`
-        );
-      }
+      dispatch(actions.resource.requestCollection('connections'));
+      props.history.push(
+        `/pg/integrationapps/${integrationAppName}/${integrationId}/flows`
+      );
     }
   }, [
     dispatch,
-    integration,
     integrationAppName,
     integrationId,
     isSetupComplete,
     props.history,
   ]);
 
-  if (!installSteps || !integration || !integration._connectorId) {
-    return <Typography>No Integration Found</Typography>;
+  if (error) {
+    history.push(
+      getRoutePath(
+        `integrationapps/${integrationAppName}/${integrationId}/flows`
+      )
+    );
+
+    return null;
   }
 
-  const initUninstall = storeId => {
-    dispatch(
-      actions.integrationApp.uninstaller.preUninstall(storeId, integrationId)
+  if (!addNewStoreSteps || !addNewStoreSteps.length) {
+    return (
+      <Loader open>
+        <Spinner color="primary" />
+        <Typography variant="h5">Loading installation steps</Typography>
+      </Loader>
     );
-  };
-
-  const handleUninstall = e => {
-    e.preventDefault();
-    confirmDialog({
-      title: 'Uninstall',
-      message: `Are you sure you want to uninstall`,
-      buttons: [
-        {
-          label: 'Cancel',
-        },
-        {
-          label: 'Yes',
-          onClick: () => {
-            const storeId = (integration.stores || {}).length
-              ? integration.stores[0].value
-              : undefined;
-
-            initUninstall(storeId);
-          },
-        },
-      ],
-    });
-  };
+  }
 
   const handleStepClick = step => {
     const { _connectionId, installURL, installerFunction } = step;
@@ -153,7 +159,7 @@ export default function ConnectorInstallation(props) {
     } else if (installURL) {
       if (!step.isTriggered) {
         dispatch(
-          actions.integrationApp.installer.updateStep(
+          actions.integrationApp.store.updateStep(
             integrationId,
             installerFunction,
             'inProgress'
@@ -166,14 +172,14 @@ export default function ConnectorInstallation(props) {
         }
 
         dispatch(
-          actions.integrationApp.installer.updateStep(
+          actions.integrationApp.store.updateStep(
             integrationId,
             installerFunction,
             'verify'
           )
         );
         dispatch(
-          actions.integrationApp.installer.installStep(
+          actions.integrationApp.store.installStep(
             integrationId,
             installerFunction
           )
@@ -182,14 +188,14 @@ export default function ConnectorInstallation(props) {
       // handle Action step click
     } else if (!step.isTriggered) {
       dispatch(
-        actions.integrationApp.installer.updateStep(
+        actions.integrationApp.store.updateStep(
           integrationId,
           installerFunction,
           'inProgress'
         )
       );
       dispatch(
-        actions.integrationApp.installer.installStep(
+        actions.integrationApp.store.installStep(
           integrationId,
           installerFunction
         )
@@ -197,13 +203,12 @@ export default function ConnectorInstallation(props) {
     }
   };
 
-  const handleBackClick = e => {
-    e.preventDefault();
-    props.history.push(`/pg`);
+  const handleBackClick = () => {
+    props.history.goBack();
   };
 
   const handleSubmitComplete = (connId, isAuthorized) => {
-    const step = installSteps.find(s => s.isCurrentStep);
+    const step = addNewStoreSteps.find(s => s.isCurrentStep);
 
     if (
       resourceConstants.OAUTH_APPLICATIONS.includes(
@@ -215,14 +220,14 @@ export default function ConnectorInstallation(props) {
     }
 
     dispatch(
-      actions.integrationApp.installer.updateStep(
+      actions.integrationApp.store.updateStep(
         integrationId,
         (step || {}).installerFunction,
         'inProgress'
       )
     );
     dispatch(
-      actions.integrationApp.installer.installStep(
+      actions.integrationApp.store.installStep(
         integrationId,
         (step || {}).installerFunction
       )
@@ -230,15 +235,24 @@ export default function ConnectorInstallation(props) {
     setSelectedConnectionId(false);
   };
 
+  const handleUninstall = () => {
+    history.push(
+      getRoutePath(
+        `integrationapps/${integrationAppName}/${integrationId}/uninstall/${integration.settings.defaultSectionId}`
+      )
+    );
+  };
+
   const handleClose = () => {
     setSelectedConnectionId(false);
   };
 
   return (
-    <LoadResources required resources="connections,integrations">
+    <LoadResources required resources={['integrations', 'connections']}>
       {selectedConnectionId && (
         <ConnectionSetupDialog
           resourceId={selectedConnectionId}
+          resourceType="connections"
           onClose={handleClose}
           onSubmitComplete={handleSubmitComplete}
         />
@@ -254,29 +268,32 @@ export default function ConnectorInstallation(props) {
                 <ArrowBackIcon fontSize="inherit" />
               </IconButton>
             </Grid>
+
             <Grid item xs>
               <Paper elevation={0} className={classes.paper}>
                 <Breadcrumbs
                   separator={<ArrowRightIcon />}
                   aria-label="breadcrumb">
-                  <Typography color="textPrimary">Setup</Typography>
+                  <Typography color="textPrimary">Add new store</Typography>
                   <Typography color="textPrimary">
                     {integration.name}
                   </Typography>
                 </Breadcrumbs>
               </Paper>
             </Grid>
-            <Grid item xs={1} className={classes.floatRight}>
-              <Button
-                variant="outlined"
-                color="primary"
-                onClick={handleUninstall}>
-                Uninstall
-              </Button>
-            </Grid>
+            {showUninstall && (
+              <Grid item xs={1} className={classes.floatRight}>
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  onClick={handleUninstall}>
+                  Uninstall
+                </Button>
+              </Grid>
+            )}
           </Grid>
           <Grid container spacing={3} className={classes.stepTable}>
-            {installSteps.map((step, index) => (
+            {addNewStoreSteps.map((step, index) => (
               <InstallationStep
                 key={step.name}
                 handleStepClick={handleStepClick}

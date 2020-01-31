@@ -7,6 +7,7 @@ const defaults = {
   height: '60vh',
   layout: 'column',
   open: true,
+  labels: ['Rules', 'JavaScript'],
 };
 
 export default function TransformToggleEditorDialog({

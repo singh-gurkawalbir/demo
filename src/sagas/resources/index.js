@@ -152,6 +152,18 @@ export function* commitStagedChanges({ resourceType, id, scope }) {
     updated.content = merged.content;
   }
 
+  /*
+     connections can be saved with valid or invalid credentials(i.e whether ping succeeded or failed) 
+     calling ping after connection save sets the offline flag appropriately in the backend.
+     UI shouldnt set offline flag. It should read status from db.
+  */
+  if (resourceType === 'connections' && updated._id && isNew) {
+    yield call(apiCallWithRetry, {
+      path: `/connections/${updated._id}/ping`,
+      hidden: true,
+    });
+  }
+
   // #region Data loader transform
   // This code can be removed (with above DL code) once the BE DL code supports
   // the new flow interface. For now we "fake" compatibility and convert on load/save
@@ -471,6 +483,14 @@ export function* getResourceCollection({ resourceType }) {
       collection = [...collection, ...sharedStacks];
     }
 
+    if (resourceType === 'transfers') {
+      const invitedTransfers = yield call(apiCallWithRetry, {
+        path: '/transfers/invited',
+      });
+
+      collection = [...collection, ...invitedTransfers];
+    }
+
     yield put(actions.resource.receivedCollection(resourceType, collection));
 
     return collection;
@@ -544,11 +564,34 @@ export function* requestDeregister({ connectionId, integrationId }) {
   }
 }
 
-export function* requestDebugLogs({ url, connectionId }) {
-  let response;
+export function* requestRevoke({ connectionId }) {
+  const path = `/connection/${connectionId}/revoke`;
 
   try {
-    response = yield call(apiCallWithRetry, { path: url });
+    const response = yield call(apiCallWithRetry, {
+      path,
+      opts: {
+        method: 'GET',
+      },
+      message: `Revoking Connection`,
+    });
+
+    if (response && response.errors) {
+      yield put(
+        actions.api.failure(path, 'GET', JSON.stringify(response.errors), false)
+      );
+    }
+  } catch (error) {
+    return undefined;
+  }
+}
+
+export function* requestDebugLogs({ connectionId }) {
+  let response;
+  const path = `/connections/${connectionId}/debug`;
+
+  try {
+    response = yield call(apiCallWithRetry, { path });
     yield put(actions.connection.receivedDebugLogs(response, connectionId));
   } catch (error) {
     if (error.status === 404) {
@@ -556,6 +599,37 @@ export function* requestDebugLogs({ url, connectionId }) {
       yield put(actions.connection.receivedDebugLogs(response, connectionId));
     }
   }
+}
+
+export function* receivedResource({ resourceType, resource }) {
+  if (resourceType === 'connections' && !resource.offline) {
+    yield put(actions.connection.madeOnline(resource._id));
+  }
+}
+
+export function* authorizedConnection({ connectionId }) {
+  yield put(actions.connection.madeOnline(connectionId));
+}
+
+export function* refreshConnectionStatus({ integrationId }) {
+  const url = integrationId
+    ? `/integrations/${integrationId}/connections?fetchQueueSize=true`
+    : '/connections?fetchQueueSize=true';
+  const response = yield call(apiCallWithRetry, {
+    path: url,
+    hidden: true,
+  });
+  const finalResponse = Array.isArray(response)
+    ? response.map(({ _id, offline, queues }) => ({
+        _id,
+        offline: !!offline,
+        queueSize: queues[0].size,
+      }))
+    : [];
+
+  yield put(
+    actions.resource.connections.receivedConnectionStatus(finalResponse)
+  );
 }
 
 export const resourceSagas = [
@@ -571,8 +645,13 @@ export const resourceSagas = [
   takeEvery(actionTypes.RESOURCE.REFERENCES_REQUEST, requestReferences),
   takeEvery(actionTypes.RESOURCE.DOWNLOAD_FILE, downloadFile),
   takeEvery(actionTypes.CONNECTION.REGISTER_REQUEST, requestRegister),
+  takeEvery(actionTypes.CONNECTION.REFRESH_STATUS, refreshConnectionStatus),
   takeEvery(actionTypes.RESOURCE.UPDATE_NOTIFICATIONS, updateNotifications),
   takeEvery(actionTypes.CONNECTION.DEREGISTER_REQUEST, requestDeregister),
   takeEvery(actionTypes.CONNECTION.DEBUG_LOGS_REQUEST, requestDebugLogs),
+  takeEvery(actionTypes.RESOURCE.RECEIVED, receivedResource),
+  takeEvery(actionTypes.CONNECTION.AUTHORIZED, authorizedConnection),
+  takeEvery(actionTypes.CONNECTION.REVOKE_REQUEST, requestRevoke),
+
   ...metadataSagas,
 ];

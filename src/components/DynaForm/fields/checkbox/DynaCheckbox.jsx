@@ -3,11 +3,13 @@ import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import ErroredMessageComponent from '../ErroredMessageComponent';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   label: {
     display: `inline-flex !important`,
+    marginLeft: theme.spacing(1),
+    marginTop: theme.spacing(0.5),
   },
-});
+}));
 
 export default function DynaCheckbox(props) {
   const classes = useStyles();

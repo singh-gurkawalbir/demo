@@ -15,7 +15,7 @@ import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import { UNDO_TIME } from './util';
 import JobRetriesDialog from './JobRetriesDialog';
 import JobFilesDownloadDialog from './JobFilesDownloadDialog';
-import MoreVertIcon from '../icons/EllipsisVerticalIcon';
+import EllipsisHorizontallIcon from '../icons/EllipsisHorizontalIcon';
 import getRoutePath from '../../utils/routePaths';
 import RunFlowButton from '../RunFlowButton';
 
@@ -301,6 +301,7 @@ export default function JobActionsMenu({
     } else if (action === 'viewRetries') {
       setShowRetriesDialog(true);
     } else if (['editFlow', 'viewFlow'].includes(action)) {
+      // TODO: branch for dataloader flows. The url should use the segment /dataLoader/ if flow is DL.
       history.push(
         getRoutePath(
           `/integrations/${job._integrationId || 'none'}/flowBuilder/${
@@ -375,7 +376,7 @@ export default function JobActionsMenu({
         className={classes.iconBtn}
         onClick={handleMenuClick}
         disabled={menuOptions.length === 0}>
-        <MoreVertIcon />
+        <EllipsisHorizontallIcon />
       </IconButton>
     </Fragment>
   );

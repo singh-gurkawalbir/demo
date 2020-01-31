@@ -20,6 +20,12 @@ const useStyles = makeStyles(theme => ({
         color: theme.palette.primary.main,
       },
     },
+    '&:after': {
+      content: '""',
+      height: 3,
+      width: 1,
+      background: theme.palette.secondary.lightest,
+    },
   },
   spinner: {
     left: '0px',
@@ -50,7 +56,6 @@ function JobErrorDialog({
   numError = 0,
   numResolved = 0,
   onCloseClick,
-  integrationName,
 }) {
   const dispatch = useDispatch();
   const [childJobId, setChildJobId] = useState(parentJobId ? jobId : undefined);
@@ -118,7 +123,7 @@ function JobErrorDialog({
   return (
     <ModalDialog show minWidth="md" maxWidth="xl" onClose={handleCloseClick}>
       <Fragment>
-        <div>{`${integrationName} > ${flowJob && flowJob.name}`}</div>
+        <div>{`${flowJob && flowJob.name}`}</div>
 
         <Help
           key="help-helpSummary"

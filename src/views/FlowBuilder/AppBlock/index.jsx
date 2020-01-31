@@ -1,8 +1,10 @@
 import React, { Fragment, useState, useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography, IconButton } from '@material-ui/core';
+import { Typography, IconButton, Tooltip, Zoom } from '@material-ui/core';
 import clsx from 'clsx';
+// import LinesEllipsis from 'react-lines-ellipsis';
+import Truncate from 'react-truncate';
 import * as selectors from '../../../reducers';
 import AddIcon from '../../../components/icons/AddIcon';
 import ActionIconButton from '../ActionIconButton';
@@ -35,9 +37,7 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'flex-end',
     justifyContent: 'center',
     display: 'flex',
-    '& > h5': {
-      textAlign: 'center',
-    },
+    textAlign: 'center',
   },
   buttonContainer: {
     display: 'flex',
@@ -158,28 +158,38 @@ function AppBlock({
   const classes = useStyles();
   const [expanded, setExpanded] = useState(false);
   const [isOver, setIsOver] = useState(false);
+  const [isTruncated, setIsTruncated] = useState(false);
   const [activeAction, setActiveAction] = useState(null);
   const isNew = blockType.startsWith('new');
   const iconType = useSelector(state => {
     if (blockType === 'dataLoader') return;
 
-    if (!connectorType || !connectorType.startsWith('RDBMS')) {
+    if (!connectorType || !connectorType.toUpperCase().startsWith('RDBMS')) {
       return connectorType;
     }
 
-    if (!resource || !resource._connectionId) {
-      return;
+    if (!resource) return;
+
+    /**
+     * resource can be an export or import or a connection based on the logic implemented
+     * in PageGenerator and PageProcessor components.
+     */
+
+    if (resource._connectionId) {
+      const connection = selectors.resource(
+        state,
+        'connections',
+        resource._connectionId
+      );
+
+      if (!connection || !connection.rdbms || !connection.rdbms.type) return;
+
+      return connection.rdbms.type;
     }
 
-    const connection = selectors.resource(
-      state,
-      'connections',
-      resource._connectionId
-    );
-
-    if (!connection || !connection.rdbms || !connection.rdbms.type) return;
-
-    return connection.rdbms.type;
+    if (resource.type && resource.type === 'rdbms' && resource.rdbms) {
+      return resource.rdbms.type;
+    }
   });
 
   useEffect(() => {
@@ -247,9 +257,23 @@ function AppBlock({
 
   return (
     <div className={clsx(classes.root, className)}>
-      <div className={classes.name}>
-        <Typography variant="h5">{name}</Typography>
-      </div>
+      <Typography component="div" className={classes.name} variant="h5">
+        {isTruncated ? (
+          <Tooltip
+            title={name}
+            TransitionComponent={Zoom}
+            placement="top"
+            enterDelay={300}>
+            <Truncate lines={2} ellipsis="..." onTruncate={setIsTruncated}>
+              {name}
+            </Truncate>
+          </Tooltip>
+        ) : (
+          <Truncate lines={2} ellipsis="..." onTruncate={setIsTruncated}>
+            {name}
+          </Truncate>
+        )}
+      </Typography>
       <div
         onMouseEnter={handleMouseOver(true)}
         onFocus={handleMouseOver(true)}

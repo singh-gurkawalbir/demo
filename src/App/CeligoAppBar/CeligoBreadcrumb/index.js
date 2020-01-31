@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import { useSelector } from 'react-redux';
 import { matchPath, Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -30,20 +31,35 @@ const useStyles = makeStyles(theme => ({
     textTransform: 'unset',
     fontSize: 13,
   },
+  crumb: {
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    // TODO: Azhar, at your convenience, this could be a media
+    // query where large screens have longer cut-off width.
+    maxWidth: 200,
+  },
 }));
 // These routes are shared for IA and DIY routes.
-const flowBuilderRoutes = {
-  path: '/flowBuilder/:flowId',
-  breadcrumb: () => 'Flow builder',
-  childRoutes: [
-    { path: '/schedule', breadcrumb: () => 'Schedule' },
-    { path: '/settings', breadcrumb: () => 'Settings' },
-  ],
-};
+const flowBuilderRoutes = [
+  {
+    path: '/flowBuilder/:flowId',
+    breadcrumb: () => 'Flow builder',
+    childRoutes: [
+      { path: '/schedule', breadcrumb: () => 'Schedule' },
+      { path: '/settings', breadcrumb: () => 'Settings' },
+    ],
+  },
+  {
+    path: '/dataLoader/:flowId',
+    breadcrumb: () => 'Data loader',
+    childRoutes: [{ path: '/settings', breadcrumb: () => 'Settings' }],
+  },
+];
 // These routes are shared for IAs with and without /child/ url segment.
 // to keep the code DRY, lets extract the common sub-set of routes.
 const integrationAppRoutes = [
-  flowBuilderRoutes,
+  ...flowBuilderRoutes,
   { path: '/general', breadcrumb: () => 'General' },
   { path: '/addons', breadcrumb: () => 'Add-ons' },
   { path: '/dashboard', breadcrumb: () => 'Dashboard' },
@@ -92,16 +108,16 @@ const routes = [
           { path: '/notifications', breadcrumb: () => 'Notifications' },
         ],
       },
-      flowBuilderRoutes,
+      ...flowBuilderRoutes,
     ],
   },
   {
     path: '/pg/connectors/:connectorId/connectorLicenses',
-    breadcrumb: () => 'licenses',
+    breadcrumb: () => 'Licenses',
   },
   {
     path: '/pg/connectors/:connectorId/installBase',
-    breadcrumb: () => 'installBase',
+    breadcrumb: () => 'Install base',
   },
   { path: '/pg/dashboard' }, // exclusion of breadcrumb prop will skip this segment.
   {
@@ -190,7 +206,7 @@ const routes = [
     ],
   },
   { path: '/pg/templates', breadcrumb: () => 'Templates' },
-  { path: '/pg/accesstokens', breadcrumb: () => 'Access tokens' },
+  { path: '/pg/accesstokens', breadcrumb: () => 'API tokens' },
   // Dev tools
   { path: '/pg/resources', breadcrumb: () => 'Resources' },
   { path: '/pg/editors', breadcrumb: () => 'Editor playground' },
@@ -300,12 +316,17 @@ export default function CeligoBreadcrumb({ location }) {
       className={classes.breadCrumb}>
       {breadcrumbs.map(({ breadcrumb: Crumb, url, isExact, params }) =>
         isExact ? (
-          <Typography key={url} variant="body2" className={classes.activeCrumb}>
+          <Typography
+            key={url}
+            variant="body2"
+            className={clsx(classes.activeCrumb, classes.crumb)}>
             <Crumb {...params} />
           </Typography>
         ) : (
           <Link key={url} color="inherit" to={url}>
-            <Crumb {...params} />
+            <div className={classes.crumb}>
+              <Crumb {...params} />
+            </div>
           </Link>
         )
       )}

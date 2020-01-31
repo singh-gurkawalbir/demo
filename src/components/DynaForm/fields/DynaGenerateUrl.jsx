@@ -22,6 +22,7 @@ function GenerateUrl(props) {
     resourceId,
     id,
     value,
+    options = {},
     buttonLabel,
     formContext,
   } = props;
@@ -48,12 +49,16 @@ function GenerateUrl(props) {
 
   useEffect(() => {
     if (!isNewId(finalResourceId) && url) {
-      const whURL = getWebhookUrl(formValues, finalResourceId);
+      // Wrapping inside a timeout to make sure it gets executed after form initializes as this component using Form Context
+      // TODO @Raghu : Fix this a better way
+      setTimeout(() => {
+        const whURL = getWebhookUrl(options, finalResourceId);
 
-      onFieldChange(id, whURL);
-      setUrl(false);
+        onFieldChange(id, whURL);
+        setUrl(false);
+      });
     }
-  }, [finalResourceId, formValues, id, onFieldChange, url]);
+  }, [finalResourceId, options, id, onFieldChange, url]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'row' }}>

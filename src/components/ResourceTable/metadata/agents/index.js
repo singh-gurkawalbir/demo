@@ -32,7 +32,7 @@ export default {
       },
     },
     {
-      heading: 'Updated on',
+      heading: 'Last updated',
       value: r => formatLastModified(r.lastModified),
       orderBy: 'lastModified',
     },

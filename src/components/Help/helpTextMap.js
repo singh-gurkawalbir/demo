@@ -1173,6 +1173,23 @@ export default {
     "integrator.io supports the following authentication types:\n\n<b>Basic:</b> Select Basic if your service implements the HTTP basic authentication strategy. This authentication method adds a Base64 encoded username and password values in the 'authentication' HTTP request header.\n\n<b>Cookie</b>: Select Cookie if your service relies on session-based authentication. Session based authentication is typically implemented by including a unique cookie into the HTTP request header. By selecting this option, the platform will automatically create and insert this cookie into every HTTP request it sends to your application. \n\n<b>Custom:</b> Select Custom for all other types. If you select the Custom authentication method, integrator.io will not perform any special authentication. It is up to the user to configure the HTTP request fields (method, relativeUri, headers, and body) of the import and export models to include {{placeholders}} for any authentication related values. These values can be stored in Encrypted and Unencrypted fields of this connection.\n\n<b>Token:</b>  Select Token if your service relies on token-based authentication. The token may exist in the header, URL, or body of the HTTP request. This method also supports refreshing tokens if the service being called supports it.\n\n<b>OAuth 2.0:</b> Select this value if your application supports the OAuth 2.0 authentication.",
   // TODO:"Duplicated token"
   // 'connection.rest.bearerToken': "The 3dcart merchant's token.",
+  'connection.http.auth.revoke.uri':
+    'This is the URL that we will use to revoke this token’s access to this endpoint.',
+  'connection.http.auth.oauth.grantType':
+    'A dropdown list of options—this will depend on the API service provider requirements.',
+  'connection.http.auth.oauth.callbackURL':
+    'The client application callback URL redirected to after auth, and that should be registered with the API provider.',
+  'connection.http.auth.oauth.clientCredentialsLocation':
+    'Sends a Basic Auth request in the header or client credentials in the request body. When your config is complete, click Request Token. If you successfully receive a token from the API you will see its details, together with the expiry, and optionally a refresh token you can use to retrieve a new access token when your current one expires.',
+  'connection.http.auth.oauth.tokenURI':
+    'This is the URL that we will get the access token from.',
+  'connection.http.auth.oauth.scopeDelimiter':
+    "Use this field to override the default delimiter (' ') used to separate scope values sent to the HTTP API during the authorization process.",
+  'connection.http.auth.oauth.authURI':
+    'This is the endpoint for the API provider’s authorization server where the auth code is retrieved from.',
+  'connection.http.auth.oauth.scope':
+    ' This is the scope of access you are requesting. Use spaces to separate values. If your provider uses a custom delimiter, check the box to use an alternate scope delimiter.',
+
   'connection.rest.pingMethod':
     'The HTTP method (GET/PUT/POST/HEAD) to use when making the ping request.',
   'connection.rest.pingBody':
@@ -1335,5 +1352,58 @@ export default {
     'If the import fails for a specific record then what should happen to that record?  Should the failed record pause here until someone can analyze and fix the error (i.e. the default behavior), or should the failed record proceed to the next application in the flow regardless?',
   'fb.pp.imports.inputFilter':
     'Define an ‘input filter’ here to specify which source records should get processed by the import. i.e. Records that evaluate to true are processed. Records that evaluate to false are ignored (but still passed along to downstream applications in the flow).',
+  responseMapping:
+    'The primary reason for defining a response mapping is to specify where fields returned by the destination application should be merged back into the source record. If you do not see a specific import response field in the dropdown below you can still map it regardless, and as long as the field is returned by the destination application when the flow is running the mapping will work. You can merge import response fields into any existing field in the source record, or you can specify a brand new field in which case integrator.io will create the field on the fly. You can also merge ‘errors’ back into the source record if you want to manually process errors downstream in your flow logic.',
+  'mapping.dataType':
+    'This field represents the respective datatype of the mapping field. Ex: string, boolean, number.',
+  'mapping.discardIfEmpty':
+    'Please check this checkbox if you would like to discard this mapping when the result of the mapping is empty. If you are mapping a list field and all the fields in the list are mapped to empty values then the whole list will be discarded.',
+  'mapping.fieldMappingType':
+    'The type of field mapping that you want to perform. For more information refer to, the <a href="https://celigosuccess.zendesk.com/hc/en-us/sections/205928707-Field-Mapping-options-in-integrator-io" target="_blank"/> Field Reference Guide.</a>',
+  'mapping.extract':
+    'This dropdown lists all the available fields from your export record that can be used in your expression. Either by themselves, or as argument value for any selected helper methods.',
+  'mapping.expression':
+    'This field represents your complete handlebar expression. You have the freedom to manually enter an expression, or use the function and field drop-downs above to help construct it.',
+  'mapping.standardAction':
+    '<b>Use Empty String as Default Value:</b> Please select this field if you want to use ‘’(i.e. the empty string) as the default lookup value. This value will be used if your lookup does not find anything. <br /><b>Use Null as Default Value:</b> Please select this field if you want to use ‘null’ as the default lookup value. This value will be used if your lookup does not find anything. <br /><b>Use Custom Default Value:</b> This holds the default value to be set for the extract field.',
+  'mapping.lookupAction':
+    '<b>Fail Record:</b> If no results are found or the dynamic lookup fails, the lookup will silently fail (return empty string). Similarly, if multiple results are found  (dynamic lookup) then the first value is chosen. In other words, if allowFailures is set to true, then no errors will be raised and the default lookup value will be used if the lookup fails. <br /><b>Use Empty String as Default Value:</b> Please select this field if you want to use ‘’(i.e. the empty string) as the default lookup value. This value will be used if your lookup does not find anything. <br /><b>Use Null as Default Value:</b> Please select this field if you want to use ‘null’ as the default lookup value. This value will be used if your lookup does not find anything. <br /><b>Use Custom Default Value:</b> This holds the default value to be set for the extract field.',
+  'mapping.default':
+    'This holds the default value to be set for the extract field.',
+  'mapping.hardcodedDefault':
+    'This field can be used when any field value on the import system has to be hardcoded with some value. Generate field combined with this field will make the generate field to be filled with this value.',
+  'mapping.lookupDefault':
+    'This holds the default value to be set for the extract field.',
+  'mapping.extractDateFormat':
+    'If the export field is of date, then this field represents the date format of the field being exported.',
+  'mapping.extractDateTimezone':
+    'If the export field is of date, then this field represents the time zone of the field being exported',
+  'mapping.generateDateFormat':
+    'If the import field is of type date, this field represents the date format supported on the import system.',
+  'mapping.generateDateTimezone':
+    'If the import field is of type date, this field represents the time zone of the field on the import system.',
+  'mapping.functions':
+    'This drop-down has all the available helper methods that let you transform your field values. Once you make a selection, the function and placeholder values will be added to the expression text box below. You can then make any necessary changes by editing the complete expression.For a complete list and extended help of all helper methods, please see this article: <a target="blank" href="https://celigosuccess.zendesk.com/hc/en-us/articles/115004695128-Handlebar-Helpers-Reference-Guide">Handlebar Helper Guide</a>',
+  'mapping.immutable':
+    'By default, if a record fails to import into an application integrator.io will parse the error message from the import application, and if a specific field can be identified (in the error message) as the root cause for the import failing then that field will be removed, and the import will be retried again automatically. For most fields this is the desired behavior (i.e. so that single fields do not halt entire records from importing). However, there are some fields where it is mission critical that the field always get set, and for those fields you can use this Immutable setting to tell integrator.io never to remove the field for an automatic retry.',
+  'mapping.lookup.mode':
+    'Use a dynamic search if you need to lookup data directly in the import application, e.g. if you have an email address in your export data and you want to run a search on the fly to find a system id value in the import application. Use a static value to value mapping when you know in advance all the possible values and how they should be translated. For example, if you are mapping a handful of shipping methods between two applications you can define them here.',
+  'mapping.relativeURI':
+    'This json path used to set the lookup in the URI itself. Ex: search.json?query=type:organization name:{customer.name}',
+  'mapping.lookup.method': 'Operation method to be performed. Ex: GET or POST',
+  'mapping.lookup.extract':
+    'Resource Identifier Path is the JSON path (in the JSON data received in the Lookup Response) that points to the location at which the expected \'value\' from lookup is available. This is the \'value\' that would be set on the import application. For example, Results[0].email. For more information, click  <a href="https://celigosuccess.zendesk.com/hc/en-us/articles/226810287-Field-Mapping-Options-in-integrator-io#h_8238065521401516195542221" target="_blank">here.</a>',
+  'mapping.netsuite.lookup.recordType':
+    'Record type on the Netsuite for which we are defining the import.',
+  'mapping.netsuite.lookup.expressionText':
+    'Expression can be provided in this field which will return the matching resultField after evaluating the expression. Ex: [["subsidiary", "anyOf", "{{subsidiary}}"], "AND", ["entityId", "is", "{{entityid}}"]]',
+  'mapping.netsuite.lookup.resultField':
+    'Field name that has to be extracted out using the lookups.searchField.',
+  'mapping.salesforce.lookup.sObjectType':
+    'Enter the SObject type in Salesforce that you would like to query. If the SObject type you are looking for is not displayed then please click the refresh icon.',
+  'mapping.salesforce.lookup.whereClauseText':
+    'The SOQL where clause expression that will be executed when this lookup is run.',
+  'mapping.salesforce.lookup.resultField':
+    'The value of this field will be used to populate your field mapping.',
   // #region UI help text
 };

@@ -1,3 +1,5 @@
+import { AWS_REGIONS_LIST } from '../../../../utils/constants';
+
 export default {
   'dynamodb.region': {
     type: 'select',
@@ -5,72 +7,7 @@ export default {
     required: true,
     options: [
       {
-        items: [
-          {
-            label: 'US East (N. Virginia) [us-east-1]',
-            value: 'us-east-1',
-          },
-          {
-            label: 'US West (N. California) [us-west-1]',
-            value: 'us-west-1',
-          },
-          {
-            label: 'US West (Oregon) [us-west-2]',
-            value: 'us-west-2',
-          },
-          {
-            label: 'EU (Ireland) [eu-west-1]',
-            value: 'eu-west-1',
-          },
-          {
-            label: 'EU (Frankfurt) [eu-central-1]',
-            value: 'eu-central-1',
-          },
-          {
-            label: 'Asia Pacific (Tokyo) [ap-northeast-1]',
-            value: 'ap-northeast-1',
-          },
-          {
-            label: 'Asia Pacific (Seoul) [ap-northeast-2]',
-            value: 'ap-northeast-2',
-          },
-          {
-            label: 'Asia Pacific (Singapore) [ap-southeast-1]',
-            value: 'ap-southeast-1',
-          },
-          {
-            label: 'Asia Pacific (Sydney) [ap-southeast-2]',
-            value: 'ap-southeast-2',
-          },
-          {
-            label: 'South America (São Paulo) [sa-east-1]',
-            value: 'sa-east-1',
-          },
-          {
-            label: 'China (Beijing) [cn-north-1]',
-            value: 'cn-north-1',
-          },
-          {
-            label: 'US East (Ohio) [us-east-2]',
-            value: 'us-east-2',
-          },
-          {
-            label: 'Canada (Central) [ca-central-1]',
-            value: 'ca-central-1',
-          },
-          {
-            label: 'Asia Pacific (Mumbai) [ap-south-1]',
-            value: 'ap-south-1',
-          },
-          {
-            label: 'EU (London) [eu-west-2]',
-            value: 'eu-west-2',
-          },
-          {
-            label: 'EU (Stockholm) [eu-north-1]',
-            value: 'eu-north-1',
-          },
-        ],
+        items: AWS_REGIONS_LIST,
       },
     ],
   },
@@ -109,16 +46,23 @@ export default {
     label: 'Expression Attribute Names',
     mode: 'json',
     required: true,
+    defaultValue: r =>
+      (r && r.dynamodb && r.dynamodb.expressionAttributeNames) ||
+      `{ "#n1":"Name","#n2":"Id"}`,
   },
   'dynamodb.expressionAttributeValues': {
     type: 'editor',
     label: 'Expression Attribute Values',
     mode: 'json',
     required: true,
+    defaultValue: r =>
+      (r && r.dynamodb && r.dynamodb.expressionAttributeValues) ||
+      `{ ":p1":"A",":p2":"1"}`,
   },
   'dynamodb.onceExportPartitionKey': {
     type: 'text',
     label: 'Once Export Partition Key',
+    required: true,
   },
   'dynamodb.onceExportSortKey': {
     type: 'text',

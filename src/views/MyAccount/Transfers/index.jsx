@@ -9,6 +9,7 @@ import metadata from './metadata';
 import Invite from './Invite';
 import IconTextButton from '../../../components/IconTextButton';
 import AddIcon from '../../../components/icons/AddIcon';
+import PanelHeader from '../../../components/PanelHeader';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -28,10 +29,12 @@ const useStyles = makeStyles(theme => ({
 
 export default function Transfers() {
   const classes = useStyles();
-  const transfers = useSelector(
+  let transfers = useSelector(
     state =>
       selectors.transferListWithMetadata(state, { type: 'transfers' }).resources
   );
+
+  transfers = transfers.filter(t => !t.isInvited || t.status !== 'unapproved');
   const [showInviteView, setShowInviteView] = useState(false);
   const handleNewTransferClick = () => {
     setShowInviteView(true);
@@ -39,6 +42,7 @@ export default function Transfers() {
 
   return (
     <Fragment>
+      <PanelHeader title="Transfers" />
       <LoadResources required resources="transfers,integrations">
         {!showInviteView && (
           <Fragment>

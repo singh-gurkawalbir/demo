@@ -28,6 +28,8 @@ import anaplan from './anaplan';
 import atera from './atera';
 import chargebee from './chargebee';
 import avalara from './avalara';
+import shipbob from './shipbob';
+import paypal from './paypal';
 // import desk from './desk';
 import easypost from './easypost';
 import freshdesk from './freshdesk';
@@ -148,10 +150,12 @@ import merchantesolutions from './merchantesolutions';
 import dunandbradstreet from './dunandbradstreet';
 import threedcart from './threedcart';
 import drift from './drift';
+import vroozi from './vroozi';
 // import signnow from './signnow';
 import adp from './adp';
 // import clio from './clio';
-// import constantcontact from './constantcontact';
+import constantcontactv3 from './constantcontactv3';
+import constantcontactv2 from './constantcontactv2';
 import faire from './faire';
 import ware2go from './ware2go';
 import messagemedia from './messagemedia';
@@ -161,6 +165,7 @@ import target from './target';
 
 export default {
   sharepoint,
+  vroozi,
   oandav20fxtrade,
   openair,
   onelogin,
@@ -172,6 +177,7 @@ export default {
   intercom,
   recharge,
   bamboohr,
+  shipbob,
   okta,
   easyship,
   myobaccountright,
@@ -179,6 +185,7 @@ export default {
   solidcommerce,
   azureactivedirectory,
   parseur,
+  paypal,
   returnly,
   myobessentials,
   expensify,
@@ -312,7 +319,8 @@ export default {
   dunandbradstreet,
   adp,
   // clio,
-  // constantcontact
+  constantcontactv3,
+  constantcontactv2,
   faire,
   ware2go,
   messagemedia,

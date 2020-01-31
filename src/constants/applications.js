@@ -139,6 +139,7 @@ const connectors = [
   },
   // Application connectors
   { id: '3dcart', name: '3DCart', type: 'rest', assistant: '3dcart' },
+  { id: 'vroozi', name: 'Vroozi', type: 'http', assistant: 'vroozi' },
   { id: 'accelo', name: 'Accelo', type: 'rest', assistant: 'accelo' },
   {
     id: 'activecampaign',
@@ -154,7 +155,7 @@ const connectors = [
   // { id: 'allbound', name: 'allbound', type: 'http', assistant: 'allbound' },
   { id: 'amazonaws', name: 'Amazon AWS', type: 'http', assistant: 'amazonaws' },
   { id: 'amazonmws', name: 'Amazon MWS', type: 'http', assistant: 'amazonmws' },
-  { id: 'anaplan', name: 'anaplan', type: 'http', assistant: 'anaplan' },
+  { id: 'anaplan', name: 'Anaplan', type: 'http', assistant: 'anaplan' },
   { id: 'aptrinsic', name: 'Aptrinsic', type: 'rest', assistant: 'aptrinsic' },
   { id: 'ariba', name: 'Ariba', type: 'http', assistant: 'ariba' },
   { id: 'asana', name: 'Asana', type: 'rest', assistant: 'asana' },
@@ -167,6 +168,7 @@ const connectors = [
   },
   { id: 'autopilot', name: 'Autopilot', type: 'http', assistant: 'autopilot' },
   { id: 'avalara', name: 'Avalara', type: 'rest', assistant: 'avalara' },
+  { id: 'shipbob', name: 'ShipBob', type: 'http', assistant: 'shipbob' },
   {
     id: 'azureactivedirectory',
     name: 'Azure Active Directory',
@@ -215,15 +217,15 @@ const connectors = [
   },
   {
     id: 'constantcontactv2',
-    name: 'Constant Contact',
-    type: 'rest',
+    name: 'Constant Contact V2',
+    type: 'http',
     assistant: 'constantcontactv2',
     icon: 'constantcontactv3',
   },
   {
     id: 'constantcontactv3',
-    name: 'Constant Contact',
-    type: 'rest',
+    name: 'Constant Contact V3',
+    type: 'http',
     assistant: 'constantcontactv3',
     icon: 'constantcontactv3',
   },
@@ -428,7 +430,7 @@ const connectors = [
   },
   {
     id: 'microsoftoffice365',
-    name: 'microsoftoffice365',
+    name: 'Microsoft Office 365',
     type: 'http',
     assistant: 'microsoftoffice365',
   },
@@ -732,10 +734,9 @@ export const groupApplications = resourceType => {
 */
 
 export const getApplicationConnectors = () => connectors.filter(c => !c.group);
-export const getWebhookConnectors = () =>
-  connectors.filter(c => c.webhook || c.webhookOnly);
+export const getWebhookConnectors = () => connectors.filter(c => !!c.webhook);
 export const getWebhookOnlyConnectors = () =>
-  connectors.filter(c => c.webhookOnly);
+  connectors.filter(c => !!c.webhookOnly);
 
 export const getApp = (type, assistant) => {
   const id = assistant || type;

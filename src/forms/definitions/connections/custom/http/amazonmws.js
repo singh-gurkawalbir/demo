@@ -63,10 +63,6 @@ export default {
               label: 'A2EUQ1WTGCTBG2 (CA)',
             },
             {
-              value: 'A2EUQ1WTGCTBG2',
-              label: 'A2EUQ1WTGCTBG2 (CA)',
-            },
-            {
               value: 'A1AM78C64UM0Y8',
               label: 'A1AM78C64UM0Y8 (MX)',
             },
@@ -99,12 +95,12 @@ export default {
               label: 'A1F83G8C2ARO7P (UK)',
             },
             {
-              value: 'A21TJRUUN4KGV',
-              label: 'A21TJRUUN4KGV (IN)',
+              value: 'A2VIGQ35RCS4UG',
+              label: 'A2VIGQ35RCS4UG (AE)',
             },
             {
-              value: 'A39IBJ37TRP1C6',
-              label: 'A39IBJ37TRP1C6 (AU)',
+              value: 'A21TJRUUN4KGV',
+              label: 'A21TJRUUN4KGV (IN)',
             },
             {
               value: 'A1VC38T7YXB528',

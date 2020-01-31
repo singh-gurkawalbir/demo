@@ -29,7 +29,7 @@ const useStyles = makeStyles(theme => ({
   checkFlow: {
     paddingLeft: 30,
   },
-  tablePaginationRoot: { float: 'left' },
+  tablePaginationRoot: { float: 'right' },
   name: {
     width: '18.15%',
   },
@@ -189,7 +189,6 @@ function JobTable({
           numError={showErrorDialogFor.numError}
           numResolved={showErrorDialogFor.numResolved}
           onCloseClick={handleJobErrorDialogCloseClick}
-          integrationName={integrationName}
         />
       )}
     </Fragment>

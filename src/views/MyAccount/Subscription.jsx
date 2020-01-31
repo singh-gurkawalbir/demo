@@ -7,10 +7,11 @@ import * as selectors from '../../reducers';
 import actions from '../../actions';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import DrawerTitleBar from '../../components/drawer/TitleBar';
+import PanelHeader from '../../components/PanelHeader';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    marginTop: theme.spacing(3),
+    margin: theme.spacing(3, 0, 0, 2),
     overflowX: 'auto',
   },
   transferButton: {
@@ -205,6 +206,7 @@ export default function Subscription() {
 
   return (
     <Fragment>
+      <PanelHeader title="Subscription" />
       <Drawer
         anchor="right"
         open={showStartFreeDialog}

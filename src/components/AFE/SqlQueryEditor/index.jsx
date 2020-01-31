@@ -34,8 +34,7 @@ const Editor = props => {
 
   useEffect(() => {
     handleInit();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [handleInit]);
   // favor custom template over pre-defined layouts.
   const gridTemplate = templateClassName || classes[`${layout}Template`];
 

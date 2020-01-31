@@ -4,6 +4,7 @@ import actions from '../../actions';
 import * as selectors from '../../reducers';
 import DynaForm from '../../components/DynaForm';
 import DynaSubmit from '../../components/DynaForm/DynaSubmit';
+import PanelHeader from '../../components/PanelHeader';
 import dateTimezones from '../../utils/dateTimezones';
 import dateFormats from '../../utils/dateFormats';
 
@@ -165,6 +166,7 @@ export default function ProfileComponent() {
 
   return (
     <Fragment>
+      <PanelHeader title="Profile" />
       <DynaForm fieldMeta={fieldMeta} render>
         <DynaSubmit onClick={handleSubmit}>Save</DynaSubmit>
       </DynaForm>

@@ -101,22 +101,45 @@ export default {
         },
       ],
     },
+    'once.booleanField': {
+      fieldId: 'once.booleanField',
+      type: 'text',
+      label: 'Once Boolean Field',
+      visibleWhen: [
+        {
+          field: 'type',
+          is: ['once'],
+        },
+      ],
+    },
+    exportPanel: {
+      fieldId: 'exportPanel',
+    },
   },
   layout: {
-    fields: [
-      'common',
-      'exportData',
-      'dynamodb.region',
-      'dynamodb.method',
-      'dynamodb.tableName',
-      'dynamodb.keyConditionExpression',
-      'dynamodb.filterExpression',
-      'dynamodb.projectionExpression',
-      'dynamodb.expressionAttributeNames',
-      'dynamodb.expressionAttributeValues',
-      'type',
-      'dynamodb.onceExportPartitionKey',
-      'dynamodb.onceExportSortKey',
+    type: 'column',
+    containers: [
+      {
+        fields: [
+          'common',
+          'exportData',
+          'dynamodb.region',
+          'dynamodb.method',
+          'dynamodb.tableName',
+          'dynamodb.expressionAttributeNames',
+          'dynamodb.expressionAttributeValues',
+          'dynamodb.keyConditionExpression',
+          'dynamodb.filterExpression',
+          'dynamodb.projectionExpression',
+          'type',
+          'once.booleanField',
+          'dynamodb.onceExportPartitionKey',
+          'dynamodb.onceExportSortKey',
+        ],
+      },
+      {
+        fields: ['exportPanel'],
+      },
     ],
   },
 };

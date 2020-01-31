@@ -100,6 +100,7 @@ export default {
   ],
   OAUTH_APPLICATIONS: [
     'azureactivedirectory',
+    'shipbob',
     'ebay',
     'vend',
     'google',

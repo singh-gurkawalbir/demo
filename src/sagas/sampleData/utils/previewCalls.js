@@ -152,6 +152,16 @@ export function* exportPreview({
 
     return previewData;
   } catch (e) {
+    // When runOffline mode fails make preview call without offlineMode and move further
+    if (runOffline && body.rawData) {
+      return yield call(exportPreview, {
+        resourceId,
+        hidden,
+        runOffline: false,
+        throwOnError,
+      });
+    }
+
     // Error handler
     if (throwOnError) {
       throw e;

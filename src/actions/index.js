@@ -71,6 +71,10 @@ const connection = {
       connectionId,
       integrationId,
     }),
+  requestRevoke: connectionId =>
+    action(actionTypes.CONNECTION.REVOKE_REQUEST, {
+      connectionId,
+    }),
   completeDeregister: (deregisteredId, integrationId) =>
     action(actionTypes.CONNECTION.DEREGISTER_COMPLETE, {
       deregisteredId,
@@ -81,8 +85,8 @@ const connection = {
       iClients,
       connectionId,
     }),
-  requestDebugLogs: (url, connectionId) =>
-    action(actionTypes.CONNECTION.DEBUG_LOGS_REQUEST, { url, connectionId }),
+  requestDebugLogs: connectionId =>
+    action(actionTypes.CONNECTION.DEBUG_LOGS_REQUEST, { connectionId }),
   receivedDebugLogs: (debugLogs, connectionId) =>
     action(actionTypes.CONNECTION.DEBUG_LOGS_RECEIVED, {
       debugLogs,
@@ -90,6 +94,8 @@ const connection = {
     }),
   clearDebugLogs: connectionId =>
     action(actionTypes.CONNECTION.DEBUG_LOGS_CLEAR, { connectionId }),
+  madeOnline: connectionId =>
+    action(actionTypes.CONNECTION.MADE_ONLINE, { connectionId }),
 };
 const marketplace = {
   requestConnectors: () =>
@@ -200,6 +206,10 @@ const resource = {
       offset,
     }),
   connections: {
+    refreshStatus: integrationId =>
+      action(actionTypes.CONNECTION.REFRESH_STATUS, { integrationId }),
+    receivedConnectionStatus: response =>
+      action(actionTypes.CONNECTION.RECEIVED_STATUS, { response }),
     test: (resourceId, values) =>
       action(actionTypes.CONNECTION.TEST, {
         resourceId,
@@ -981,8 +991,17 @@ const resourceForm = {
       resourceType,
       resourceId,
     }),
-  submit: (resourceType, resourceId, values, match, skipClose) =>
+  submit: (resourceType, resourceId, values, match, skipClose, isGenerate) =>
     action(actionTypes.RESOURCE_FORM.SUBMIT, {
+      resourceType,
+      resourceId,
+      values,
+      match,
+      skipClose,
+      isGenerate,
+    }),
+  saveAndContinue: (resourceType, resourceId, values, match, skipClose) =>
+    action(actionTypes.RESOURCE_FORM.SAVE_AND_CONTINUE, {
       resourceType,
       resourceId,
       values,
@@ -1017,6 +1036,8 @@ const accessToken = {
     action(actionTypes.ACCESSTOKEN_TOKEN_MASK, { accessToken }),
   revoke: id => action(actionTypes.ACCESSTOKEN_REVOKE, { id }),
   activate: id => action(actionTypes.ACCESSTOKEN_ACTIVATE, { id }),
+  deletePurged: () => action(actionTypes.ACCESSTOKEN_DELETE_PURGED),
+  updatedCollection: () => action(actionTypes.ACCESSTOKEN_UPDATED_COLLECTION),
 };
 const job = {
   requestCollection: ({ integrationId, flowId, filters }) =>
