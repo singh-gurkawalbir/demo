@@ -1759,6 +1759,12 @@ export default {
         is: [true],
       },
     ],
+    requiredWhen: [
+      {
+        field: 'configureApiRateLimits',
+        is: [true],
+      },
+    ],
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]$', message: 'Only numbers allowed' },
