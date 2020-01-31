@@ -228,3 +228,99 @@ export function pickFirstObject(param) {
     }
   }
 }
+
+/**
+ * Traverses through sampleData object and pushes all valid paths to leaf nodes in to array by
+ * wrapping any element with special characters in []
+ *
+ * @param {object} sampleData - sample data object.
+ * @param {string} prefix
+ * @param {boolean} wrapSpecialChars
+ *
+ * @returns {array}
+ *
+ * @example
+ *
+ * getJSONPathArrayWithSpecialCharactersWrapped({'a.a':'fasd','b[n':[{c:'d'}], e:[{f:'g'},{f:'g'}]},null, true)
+ * // => ["[a.a]", "[b[n][*].c", "e[*].f"]
+ */
+export function getJSONPathArrayWithSpecialCharactersWrapped(
+  sampleData,
+  prefix,
+  wrapSpecialChars,
+  skipSort
+) {
+  let paths = [];
+  let type;
+
+  Object.keys(sampleData).forEach(property => {
+    if (property in sampleData) {
+      // do stuff
+      const v = sampleData[property];
+      let k = property;
+
+      if (wrapSpecialChars) {
+        k = /\W/.test(k) ? `[${k.replace(/]/g, '\\]')}]` : k;
+      }
+
+      type = Object.prototype.toString.apply(v);
+
+      if (type === '[object Array]') {
+        if (Object.prototype.toString.apply(v[0]) === '[object Object]') {
+          paths = paths.concat(
+            getJSONPathArrayWithSpecialCharactersWrapped(
+              getUnionObject(v),
+              prefix ? [prefix, `${k}[*]`].join('.') : `${k}[*]`,
+              wrapSpecialChars
+            )
+          );
+        } else {
+          paths.push(prefix ? [prefix, k].join('.') : k);
+        }
+      } else if (type === '[object Object]' && !_.isEmpty(v)) {
+        paths = paths.concat(
+          getJSONPathArrayWithSpecialCharactersWrapped(
+            v,
+            prefix ? [prefix, k].join('.') : k,
+            wrapSpecialChars
+          )
+        );
+      } else {
+        paths.push(prefix ? [prefix, k].join('.') : k);
+      }
+    }
+  });
+
+  if (skipSort) {
+    return paths;
+  }
+
+  return paths.sort((a, b) => {
+    if (
+      (a.id && b.id && a.id.indexOf('[*]') > -1 && b.id.indexOf('[*]') > -1) ||
+      (a.id && b.id && a.id.indexOf('[*]') === -1 && b.id.indexOf('[*]') === -1)
+    ) {
+      return a.id > b.id ? 1 : -1;
+    }
+
+    if (
+      a.id &&
+      b.id &&
+      a.id.indexOf('[*]') === -1 &&
+      b.id.indexOf('[*]') > -1
+    ) {
+      return -1;
+    }
+
+    if (
+      a.id &&
+      b.id &&
+      a.id.indexOf('[*]') > -1 &&
+      b.id.indexOf('[*]') === -1
+    ) {
+      return 1;
+    }
+
+    return 0;
+  });
+}

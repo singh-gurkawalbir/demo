@@ -3357,3 +3357,28 @@ export function isPreviewPanelAvailableForResource(
 
   return isPreviewPanelAvailable(resourceObj, resourceType, connectionObj);
 }
+
+/*
+ * Returns boolean true/false whether it is a lookup export or not based on passed flowId and resourceType
+ */
+export function isLookUpExport(state, { flowId, resourceId, resourceType }) {
+  // If not a flow context , then it is not a lookup as we can't create lookup outside flow context
+  if (!flowId || resourceType !== 'exports' || !resourceId) return false;
+
+  // Incase of a new resource , check for isLookup flag on resource patched for new lookup exports
+  if (isNewId(resourceId)) {
+    const { merged: resourceObj = {} } = resourceData(
+      state,
+      'exports',
+      resourceId
+    );
+
+    return resourceObj.isLookup;
+  }
+
+  // If it is an existing export with a flow context, search in pps to match this resource id
+  const flow = resource(state, 'flows', flowId);
+  const { pageProcessors = [] } = flow || {};
+
+  return !!pageProcessors.find(pp => pp._exportId === resourceId);
+}

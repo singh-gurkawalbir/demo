@@ -8,11 +8,13 @@ export default {
     },
     data: typeof data === 'string' ? JSON.parse(data) : data,
   }),
-  validate: ({ data }) =>
-    // ruleError: undefined //  no validation yet.
-    // if data is a string we should validate if it is serializable
-    ({
-      dataError:
-        typeof data === 'string' ? util.validateJsonString(data) : null,
-    }),
+  validate: ({ data }) => {
+    let dataError;
+
+    if (data === '') dataError = 'Must provide some sample data.';
+    else if (typeof data === 'string')
+      dataError = util.validateJsonString(data);
+
+    return { dataError: dataError !== null && dataError };
+  },
 };

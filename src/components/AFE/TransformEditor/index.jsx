@@ -109,10 +109,7 @@ export default function TransformEditor(props) {
         />
       </PanelGridItem>
 
-      <ErrorGridItem
-        error={error ? error.message : null}
-        violations={violations}
-      />
+      <ErrorGridItem error={error} violations={violations} />
     </PanelGrid>
   );
 }
