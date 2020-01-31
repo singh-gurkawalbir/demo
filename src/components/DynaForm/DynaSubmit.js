@@ -33,7 +33,7 @@ function FormButton({
       variant="outlined"
       color={color || 'primary'}
       className={className}
-      disabled={disabled || formTouched}
+      disabled={disabled || !formTouched}
       onClick={onClickWhenValid}>
       {children}
     </Button>
