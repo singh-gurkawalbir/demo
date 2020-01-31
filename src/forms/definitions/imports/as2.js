@@ -1,19 +1,87 @@
+const alterFileDefinitionRulesVisibility = fields => {
+  // TODO @Raghu : Move this to metadata visibleWhen rules when we support combination of ANDs and ORs in Forms processor
+  const fileDefinitionRulesField = fields.find(
+    field => field.id === 'file.filedefinition.rules'
+  );
+  const fileType = fields.find(field => field.id === 'file.type');
+  const fileDefinitionFieldsMap = {
+    filedefinition: 'edix12.format',
+    fixed: 'fixed.format',
+    'delimited/edifact': 'edifact.format',
+  };
+
+  if (
+    fileType &&
+    fileType.value &&
+    !fileDefinitionRulesField.userDefinitionId
+  ) {
+    // Delete existing visibility rules
+    delete fileDefinitionRulesField.visibleWhenAll;
+    delete fileDefinitionRulesField.visibleWhen;
+
+    if (Object.keys(fileDefinitionFieldsMap).includes(fileType.value)) {
+      const formatFieldType = fileDefinitionFieldsMap[fileType.value];
+      const fileDefinitionFormatField = fields.find(
+        fdField => fdField.id === formatFieldType
+      );
+
+      fileDefinitionRulesField.visible = !!fileDefinitionFormatField.value;
+    } else {
+      fileDefinitionRulesField.visible = false;
+    }
+  } else {
+    // make visibility of format fields false incase of edit mode of file adaptors
+    Object.values(fileDefinitionFieldsMap).forEach(field => {
+      const fileDefinitionFormatField = fields.find(
+        fdField => fdField.id === field
+      );
+
+      delete fileDefinitionFormatField.visibleWhenAll;
+      fileDefinitionFormatField.visible = false;
+    });
+  }
+};
+
 export default {
   optionsHandler: (fieldId, fields) => {
     if (fieldId === 'file.filedefinition.rules') {
+      let definitionFieldId;
+      const fileType = fields.find(field => field.id === 'file.type');
+
       // Fetch format specific Field Definition field to fetch id
-      // if (fileType.value === 'filedefinition')
-      const definitionFieldId = 'edix12.format';
+      if (fileType.value === 'filedefinition')
+        definitionFieldId = 'edix12.format';
+      else if (fileType.value === 'fixed') definitionFieldId = 'fixed.format';
+      else definitionFieldId = 'edifact.format';
       const definition = fields.find(field => field.id === definitionFieldId);
-      const resourcePath = fields.find(
-        field => field.id === 'file.fileDefinition.resourcePath'
-      );
+
+      alterFileDefinitionRulesVisibility(fields);
 
       return {
         format: definition && definition.format,
         definitionId: definition && definition.value,
-        resourcePath: resourcePath && resourcePath.value,
       };
+    }
+
+    if (fieldId === 'as2.fileNameTemplate') {
+      const fileNameField = fields.find(field => field.fieldId === fieldId);
+      const fileTypeField = fields.find(field => field.fieldId === 'file.type');
+      const newExtension = [
+        'filedefinition',
+        'fixed',
+        'delimited/edifact',
+      ].includes(fileTypeField.value)
+        ? 'edi'
+        : fileTypeField.value;
+
+      if (newExtension) {
+        const fileName = fileNameField.value;
+        const lastDotIndex = fileName.lastIndexOf('.');
+        const fileNameWithoutExt =
+          lastDotIndex !== -1 ? fileName.substring(0, lastDotIndex) : fileName;
+
+        fileNameField.value = `${fileNameWithoutExt}.${newExtension}`;
+      }
     }
 
     if (fieldId === 'dataURITemplate') {
@@ -40,6 +108,60 @@ export default {
 
     return fieldMeta;
   },
+  preSave: formValues => {
+    const newValues = {
+      ...formValues,
+    };
+
+    if (newValues['/file/type'] === 'json') {
+      newValues['/file/xlsx'] = undefined;
+      newValues['/file/xml'] = undefined;
+      newValues['/file/csv'] = undefined;
+      newValues['/file/fileDefinition'] = undefined;
+      delete newValues['/file/xlsx/includeHeader'];
+      delete newValues['/file/csv/includeHeader'];
+      delete newValues['/file/xml/body'];
+      delete newValues['/file/csv/columnDelimiter'];
+      delete newValues['/file/fileDefinition/resourcePath'];
+    } else if (newValues['/file/type'] === 'xml') {
+      newValues['/file/xlsx'] = undefined;
+      newValues['/file/json'] = undefined;
+      newValues['/file/csv'] = undefined;
+      newValues['/file/fileDefinition'] = undefined;
+      delete newValues['/file/xlsx/includeHeader'];
+      delete newValues['/file/csv/includeHeader'];
+      delete newValues['/file/csv/columnDelimiter'];
+      delete newValues['/file/fileDefinition/resourcePath'];
+    } else if (newValues['/file/type'] === 'xlsx') {
+      newValues['/file/json'] = undefined;
+      newValues['/file/csv'] = undefined;
+      newValues['/file/xml'] = undefined;
+      newValues['/file/fileDefinition'] = undefined;
+      delete newValues['/file/csv/includeHeader'];
+      delete newValues['/file/csv/columnDelimiter'];
+      delete newValues['/file/xml/body'];
+      delete newValues['/file/fileDefinition/resourcePath'];
+    } else if (newValues['/file/type'] === 'csv') {
+      newValues['/file/json'] = undefined;
+      newValues['/file/xlsx'] = undefined;
+      newValues['/file/xml'] = undefined;
+      newValues['/file/fileDefinition'] = undefined;
+      delete newValues['/file/fileDefinition/resourcePath'];
+      delete newValues['/file/xlsx/includeHeader'];
+      delete newValues['/file/xml/body'];
+    }
+
+    if (newValues['/file/compressFiles'] === false) {
+      newValues['/file/compressionFormat'] = undefined;
+    }
+
+    delete newValues['/file/compressFiles'];
+    newValues['/file/skipAggregation'] = true;
+
+    return {
+      ...newValues,
+    };
+  },
   fieldMap: {
     common: { formId: 'common' },
     importData: {
@@ -48,24 +170,9 @@ export default {
       label: 'How would you like the data imported?',
     },
     distributed: { fieldId: 'distributed', defaultValue: false },
-    'file.type': {
-      fieldId: 'file.type',
-      defaultValue: 'filedefinition',
-      visible: false,
-    },
-    'file.skipAggregation': {
-      fieldId: 'file.skipAggregation',
-      defaultValue: 'true',
-      visible: false,
-    },
-    'edix12.format': {
-      fieldId: 'edix12.format',
-      label: 'EDI Format',
-      required: true,
-    },
-    'file.filedefinition.rules': {
-      fieldId: 'file.filedefinition.rules',
-    },
+
+    'file.csv': { fieldId: 'file.csv' },
+    'file.xlsx.includeHeader': { fieldId: 'file.xlsx.includeHeader' },
     'as2.fileNameTemplate': { fieldId: 'as2.fileNameTemplate' },
     'as2.messageIdTemplate': { fieldId: 'as2.messageIdTemplate' },
     'as2.headers': { fieldId: 'as2.headers' },
@@ -73,6 +180,38 @@ export default {
     compressFiles: { formId: 'compressFiles' },
     'as2.maxRetries': { fieldId: 'as2.maxRetries' },
     'file.lookups': { fieldId: 'file.lookups', visible: false },
+    'file.type': { fieldId: 'file.type' },
+    'edifact.format': { fieldId: 'edifact.format' },
+    'fixed.format': { fieldId: 'fixed.format' },
+    'edix12.format': { fieldId: 'edix12.format' },
+    'file.filedefinition.rules': {
+      fieldId: 'file.filedefinition.rules',
+      refreshOptionsOnChangesTo: [
+        'edix12.format',
+        'fixed.format',
+        'edifact.format',
+        'file.type',
+      ],
+      required: true,
+    },
+    'file.xml.body': {
+      id: 'file.xml.body',
+      type: 'httprequestbody',
+      connectionId: r => r && r._connectionId,
+      label: 'Launch XML Builder',
+      title: 'XML Document Editor',
+      ruleTitle: 'Type your template here.',
+      resultTitle: 'Your evaluated result!',
+      dataTitle: 'Resources available in your template.',
+      refreshOptionsOnChangesTo: ['file.type'],
+      required: true,
+      visibleWhenAll: [
+        {
+          field: 'file.type',
+          is: ['xml'],
+        },
+      ],
+    },
   },
   layout: {
     fields: [
@@ -80,10 +219,14 @@ export default {
       'importData',
       'distributed',
       'file.type',
-      'file.skipAggregation',
+      'edifact.format',
+      'fixed.format',
       'edix12.format',
       'as2.fileNameTemplate',
       'as2.messageIdTemplate',
+      'file.xml.body',
+      'file.csv',
+      'file.xlsx.includeHeader',
       'file.filedefinition.rules',
       'as2.headers',
       'dataMappings',

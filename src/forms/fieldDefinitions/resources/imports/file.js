@@ -35,10 +35,6 @@ export default {
         field: 'file.type',
         is: ['filedefinition'],
       },
-      {
-        field: 'inputMode',
-        is: ['records'],
-      },
     ],
   },
   'fixed.format': {
@@ -51,10 +47,6 @@ export default {
         field: 'file.type',
         is: ['fixed'],
       },
-      {
-        field: 'inputMode',
-        is: ['records'],
-      },
     ],
   },
   'edifact.format': {
@@ -66,10 +58,6 @@ export default {
       {
         field: 'file.type',
         is: ['delimited/edifact'],
-      },
-      {
-        field: 'inputMode',
-        is: ['records'],
       },
     ],
   },

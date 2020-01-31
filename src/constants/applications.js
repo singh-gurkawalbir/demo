@@ -698,7 +698,10 @@ const connectors = [
   { id: 'zuora', name: 'Zuora', type: 'rest', assistant: 'zuora' },
 ];
 
-export const groupApplications = (resourceType, assistants, appType) => {
+export const groupApplications = (
+  resourceType,
+  { assistants, appType, isSimpleImport }
+) => {
   const filteredConnectors = connectors.filter(connector => {
     if (connector.assistant && assistants && resourceType !== 'connections') {
       let assistant = assistants.http.applications.find(
@@ -731,8 +734,17 @@ export const groupApplications = (resourceType, assistants, appType) => {
 
       return false;
     }
-    // Webhooks are shown only for exports and for page generators in flow context
 
+    // Do not show FTP import for DataLoader flows
+    if (
+      resourceType === 'pageProcessor' &&
+      appType === 'import' &&
+      isSimpleImport
+    ) {
+      return connector.id !== 'ftp' && !connector.webhookOnly;
+    }
+
+    // Webhooks are shown only for exports and for page generators in flow context
     if (resourceType && !['exports', 'pageGenerator'].includes(resourceType))
       return !connector.webhookOnly;
 

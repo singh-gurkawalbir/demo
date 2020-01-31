@@ -340,6 +340,8 @@ const getFieldConfig = (field = {}, resource = {}) => {
   } else if (newField.type === 'relatedListsDialog') {
     newField.type = 'salesforcerelatedlistia';
     newField.resource = resource;
+  } else if (newField.type === 'staticMapWidget') {
+    newField.type = 'staticMap';
   }
 
   if (newField.disabled) {

@@ -57,6 +57,8 @@ export default function SelectApplication(props) {
     isMulti,
     name,
     label,
+    flowId,
+    options: fieldOptions,
     resourceType,
     value = isMulti ? [] : '',
     placeholder,
@@ -70,9 +72,17 @@ export default function SelectApplication(props) {
     (left, right) => isEqual(left, right)
   );
   // Custom styles for Select Control
+  const flowDetails = useSelector(state =>
+    selectors.flowDetails(state, flowId)
+  );
   const groupedApps = useMemo(
-    () => groupApplications(resourceType, assistants, appType),
-    [appType, assistants, resourceType]
+    () =>
+      groupApplications(resourceType, {
+        assistants,
+        appType: appType || (fieldOptions && fieldOptions.appType),
+        isSimpleImport: flowDetails && !!flowDetails.isSimpleImport,
+      }),
+    [appType, assistants, fieldOptions, flowDetails, resourceType]
   );
   const classes = useStyles();
   const theme = useTheme();
