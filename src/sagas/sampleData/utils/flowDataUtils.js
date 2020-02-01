@@ -278,7 +278,7 @@ export function* requestSampleDataForExports({
         });
       }
     } else if (
-      ['flowInputWithContext', 'hooksWithContext'].includes(sampleDataStage)
+      ['flowInputWithContext', 'transformWithContext'].includes(sampleDataStage)
     ) {
       // These stages are added explicitly to feed context info for input/outputFilters
       // TODO @Raghu: Find the better way for this case
