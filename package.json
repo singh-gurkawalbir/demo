@@ -57,7 +57,7 @@
     "react-dnd-cjs": "9.4.0",
     "react-dnd-html5-backend-cjs": "9.4.0",
     "react-dom": "16.8.6",
-    "react-forms-processor": "0.0.40",
+    "react-forms-processor": "^0.0.43",
     "react-fout-stager": "3.0.0",
     "react-frame-component": "4.1.1",
     "react-hot-loader": "4.6.5",
