@@ -17,6 +17,7 @@ export const useLoadingSnackbarOnSave = props => {
   const [snackbar, closeSnackbar] = useEnqueueSnackbar();
   const handleSubmitForm = useCallback(
     values => {
+      onSave(values);
       setDisableSave(true);
       snackbar({
         variant: 'info',
@@ -24,9 +25,8 @@ export const useLoadingSnackbarOnSave = props => {
           resourceType} `,
         persist: true,
       });
-      onSave(values, setDisableSave, snackbar, closeSnackbar);
     },
-    [closeSnackbar, onSave, resourceType, snackbar]
+    [onSave, resourceType, snackbar]
   );
 
   useEffect(() => closeSnackbar, [closeSnackbar]);
