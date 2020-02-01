@@ -1,6 +1,5 @@
 import { useState, Fragment } from 'react';
 import Button from '@material-ui/core/Button';
-import FormHelperText from '@material-ui/core/FormHelperText';
 import { isEmpty } from 'lodash';
 import ModalDialog from '../../../ModalDialog';
 import DynaForm from '../../../DynaForm';
@@ -10,6 +9,7 @@ import {
   updateFormValues,
   PARAMETER_LOCATION,
 } from '../../../../utils/assistant';
+import ErroredMessageComponent from '../ErroredMessageComponent';
 
 const SearchParamsModal = props => {
   const { paramMeta, onClose, id, onFieldChange, value } = props;
@@ -90,11 +90,11 @@ export default function DynaAssistantSearchParams(props) {
         {label} {required && !isValid ? '*' : ''}
       </Button>
 
-      {!isValid && (
-        <FormHelperText error={!isValid}>
-          {!isValid ? 'Please enter required parameters' : ''}
-        </FormHelperText>
-      )}
+      <ErroredMessageComponent
+        isValid={isValid}
+        description=""
+        errorMessages="Please enter required parameters"
+      />
     </Fragment>
   );
 }

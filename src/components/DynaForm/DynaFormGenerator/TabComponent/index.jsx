@@ -7,6 +7,7 @@ import FormGenerator from '..';
 import {
   getAllFormValuesAssociatedToMeta,
   isExpansionPanelErrored,
+  isAnyFieldTouchedForMeta,
 } from '../../../../forms/utils';
 
 const useStyle = makeStyles(theme => ({
@@ -101,6 +102,10 @@ function FormWithSave(props) {
             isValid={
               !isExpansionPanelErrored({ layout, fieldMap }, form.fields)
             }
+            isFormTouchedForMeta={isAnyFieldTouchedForMeta(
+              { layout, fieldMap },
+              form.fields
+            )}
             postProcessValuesFn={postProcessValuesFn}
           />
         </Fragment>

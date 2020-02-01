@@ -5,10 +5,10 @@ import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import * as selectors from '../../../../../../reducers';
 import { integrationSettingsToDynaFormMetadata } from '../../../../../../forms/utils';
-import { FormStateManager } from '../../../../../../components/ResourceFormFactory';
 import DrawerTitleBar from '../../../../../../components/drawer/TitleBar';
 import LoadResources from '../../../../../../components/LoadResources';
-import { useIASettingsStateWithHandleClose } from '..';
+import { IAFormStateManager } from '..';
+import useIASettingsStateWithHandleClose from '../../../../../../hooks/useIASettingsStateWithHandleClose';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -78,7 +78,7 @@ function SettingsDrawer({ integrationId, storeId, parentUrl }) {
       onClose={handleClose}>
       <DrawerTitleBar title={`Settings: ${flowName}`} />
 
-      <FormStateManager
+      <IAFormStateManager
         className={classes.settingsForm}
         integrationId={integrationId}
         flowId={flowId}

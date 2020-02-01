@@ -71,6 +71,10 @@ const connection = {
       connectionId,
       integrationId,
     }),
+  requestRevoke: connectionId =>
+    action(actionTypes.CONNECTION.REVOKE_REQUEST, {
+      connectionId,
+    }),
   completeDeregister: (deregisteredId, integrationId) =>
     action(actionTypes.CONNECTION.DEREGISTER_COMPLETE, {
       deregisteredId,
@@ -412,6 +416,21 @@ const fileDefinitions = {
 };
 const integrationApp = {
   settings: {
+    initComplete: (integrationId, flowId, sectionId) =>
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.FORM.INIT_COMPLETE, {
+        integrationId,
+        flowId,
+        sectionId,
+      }),
+    showFormValidations: (integrationId, flowId, sectionId) =>
+      action(
+        actionTypes.INTEGRATION_APPS.SETTINGS.FORM.SHOW_FORM_VALIDATION_ERRORS,
+        {
+          integrationId,
+          flowId,
+          sectionId,
+        }
+      ),
     requestUpgrade: (integration, options) =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.REQUEST_UPGRADE, {
         integration,
@@ -967,8 +986,22 @@ const resourceForm = {
       skipCommit,
       flowId,
     }),
-  submit: (resourceType, resourceId, values, match, skipClose) =>
+  showFormValidations: (resourceType, resourceId) =>
+    action(actionTypes.RESOURCE_FORM.SHOW_FORM_VALIDATION_ERRORS, {
+      resourceType,
+      resourceId,
+    }),
+  submit: (resourceType, resourceId, values, match, skipClose, isGenerate) =>
     action(actionTypes.RESOURCE_FORM.SUBMIT, {
+      resourceType,
+      resourceId,
+      values,
+      match,
+      skipClose,
+      isGenerate,
+    }),
+  saveAndContinue: (resourceType, resourceId, values, match, skipClose) =>
+    action(actionTypes.RESOURCE_FORM.SAVE_AND_CONTINUE, {
       resourceType,
       resourceId,
       values,

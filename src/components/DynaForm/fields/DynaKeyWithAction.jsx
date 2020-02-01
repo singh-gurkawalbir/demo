@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
-import FormHelperText from '@material-ui/core/FormHelperText';
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
 import IconButton from '@material-ui/core/IconButton';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
+import ErroredMessageComponent from './ErroredMessageComponent';
 
 const useStyles = makeStyles({
   container: {
@@ -31,9 +31,6 @@ export default function DynaKeyWithAction(props) {
     onDeleteClick,
     onClick,
     keyName = 'key',
-    description,
-    errorMessages,
-    isValid,
     id,
   } = props;
   const classes = useStyles(props);
@@ -80,9 +77,7 @@ export default function DynaKeyWithAction(props) {
         </div>
       ))}
 
-      <FormHelperText className={classes.helpText} error={!isValid}>
-        {isValid ? description : errorMessages}
-      </FormHelperText>
+      <ErroredMessageComponent {...props} />
     </div>
   );
 }

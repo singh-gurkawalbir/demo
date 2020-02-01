@@ -12,8 +12,12 @@ export default {
       newValues['/http/auth/oauth/failValues'] = undefined;
     }
 
-    if (!newValues['/http/ratLimit/failPath']) {
-      newValues['/http/rateLimit/failValues'] = undefined;
+    if (!newValues['/http/rateLimit/failPath']) {
+      newValues['/http/rateLimit/failValues'] = [];
+    }
+
+    if (!newValues['/http/ping/failPath']) {
+      newValues['/http/ping/failValues'] = undefined;
     }
 
     if (newValues['/http/ping/method'] === 'GET') {
@@ -28,6 +32,16 @@ export default {
       }
     }
 
+    if (newValues['/http/oauth/encrypted']) {
+      try {
+        newValues['/http/oauth/encrypted'] = JSON.parse(
+          newValues['/http/oauth/encrypted']
+        );
+      } catch (ex) {
+        newValues['/http/oauth/encrypted'] = undefined;
+      }
+    }
+
     if (newValues['/http/unencrypted']) {
       try {
         newValues['/http/unencrypted'] = JSON.parse(
@@ -38,9 +52,20 @@ export default {
       }
     }
 
+    if (newValues['/http/oauth/unencrypted']) {
+      try {
+        newValues['/http/oauth/unencrypted'] = JSON.parse(
+          newValues['/http/oauth/unencrypted']
+        );
+      } catch (ex) {
+        newValues['/http/oauth/unencrypted'] = undefined;
+      }
+    }
+
     if (
       newValues['/http/auth/type'] !== 'basic' &&
-      newValues['/http/auth/type'] !== 'digest'
+      newValues['/http/auth/type'] !== 'digest' &&
+      newValues['/http/auth/type'] !== 'wsse'
     ) {
       delete newValues['/http/auth/basic/username'];
       delete newValues['/http/auth/basic/password'];
@@ -84,7 +109,13 @@ export default {
       delete newValues['/http/auth/cookie/uri'];
     }
 
+    if (newValues['/http/auth/type'] === 'wsse') {
+      newValues['/http/auth/token/headerName'] =
+        newValues['/http/auth/wsse/headerName'];
+    }
+
     if (newValues['/http/auth/type'] === 'oauth') {
+      newValues['/http/auth/oauth/applicationType'] = 'custom';
       newValues['/http/headers'] = newValues['/http/oauth/headers'];
       newValues['/http/baseURI'] = newValues['/http/oauth/baseURI'];
       newValues['/http/mediaType'] = newValues['/http/oauth/mediaType'];
@@ -107,6 +138,12 @@ export default {
         newValues['/http/oauth/customAuthScheme'];
     }
 
+    if (!newValues['/http/auth/token/revoke/uri'])
+      delete newValues['/http/auth/token/revoke/uri'];
+
+    if (!newValues['/http/auth/token/revoke/body'])
+      delete newValues['/http/auth/token/revoke/body'];
+
     delete newValues['/http/oauth/headers'];
     delete newValues['/http/oauth/baseURI'];
     delete newValues['/http/oauth/mediaType'];
@@ -120,6 +157,7 @@ export default {
     delete newValues['/http/auth/oauth/scheme'];
     delete newValues['/http/auth/oauth/paramName'];
     delete newValues['/http/oauth/customAuthScheme'];
+    delete newValues['/http/auth/wsse/headerName'];
 
     return newValues;
   },
@@ -170,10 +208,7 @@ export default {
     },
     'http.encrypted': {
       fieldId: 'http.encrypted',
-      visibleWhen: [
-        { field: 'http.auth.type', is: ['token', 'custom'] },
-        { field: 'http.auth.type', isNot: ['oauth'] },
-      ],
+      visibleWhen: [{ field: 'http.auth.type', isNot: ['oauth'] }],
       defaultValue: r =>
         (r && r.http && r.http.encrypted && JSON.stringify(r.http.encrypted)) ||
         '{"field": "value"}',
@@ -181,10 +216,7 @@ export default {
     'http.disableStrictSSL': { fieldId: 'http.disableStrictSSL' },
     'http.unencrypted': {
       fieldId: 'http.unencrypted',
-      visibleWhen: [
-        { field: 'http.auth.type', is: ['token', 'custom'] },
-        { field: 'http.auth.type', isNot: ['oauth'] },
-      ],
+      visibleWhen: [{ field: 'http.auth.type', isNot: ['oauth'] }],
       defaultValue: r =>
         (r &&
           r.http &&
@@ -194,7 +226,9 @@ export default {
     },
     httpBasic: {
       formId: 'httpBasic',
-      visibleWhen: [{ field: 'http.auth.type', is: ['basic', 'digest'] }],
+      visibleWhen: [
+        { field: 'http.auth.type', is: ['basic', 'digest', 'wsse'] },
+      ],
     },
     httpToken: {
       formId: 'httpToken',
@@ -203,6 +237,21 @@ export default {
     httpCookie: {
       formId: 'httpCookie',
       visibleWhenAll: [{ field: 'http.auth.type', is: ['cookie'] }],
+    },
+    'http.auth.wsse.headerName': {
+      id: 'http.auth.wsse.headerName',
+      type: 'text',
+      label: 'Header Name',
+      helpText:
+        "By default, integrator.io will send all authentication type info in the 'Authorization: HTTP header field.  If the API you are connecting to requires a different HTTP header, use this field to provide an override.",
+      defaultValue: r =>
+        (r &&
+          r.http &&
+          r.http.auth &&
+          r.http.auth.token &&
+          r.http.auth.token.headerName) ||
+        'X-WSSE',
+      visibleWhen: [{ field: 'http.auth.type', is: ['wsse'] }],
     },
     'http.rateLimit.limit': { fieldId: 'http.rateLimit.limit' },
     'http.rateLimit.failStatusCode': {
@@ -250,10 +299,6 @@ export default {
       fieldId: 'http.auth.oauth.type',
       visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
     },
-    'http.auth.revoke.uri': {
-      fieldId: 'http.auth.revoke.uri',
-      visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
-    },
     'http.auth.oauth.grantType': {
       fieldId: 'http.auth.oauth.grantType',
       required: true,
@@ -263,9 +308,6 @@ export default {
       id: 'http.auth.oauth.scope',
       type: 'textarea',
       label: 'Scopes',
-      requiredWhen: [
-        { field: 'http.auth.oauth.grantType', is: ['authorizecode'] },
-      ],
       visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
     },
     'http.auth.oauth.scopeDelimiter': {
@@ -345,7 +387,7 @@ export default {
       visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
     },
     'http.auth.oauth.failValues': {
-      id: 'http.oauth.auth.failValues',
+      id: 'http.auth.oauth.failValues',
       type: 'text',
       delimiter: ',',
       helpText:
@@ -548,6 +590,18 @@ export default {
         { field: 'http.auth.oauth.grantType', is: ['authorizecode'] },
       ],
     },
+    'http.auth.token.revoke.uri': {
+      fieldId: 'http.auth.token.revoke.uri',
+      visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
+    },
+    'http.auth.token.revoke.body': {
+      fieldId: 'http.auth.token.revoke.body',
+      visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
+    },
+    'http.auth.token.revoke.headers': {
+      fieldId: 'http.auth.token.revoke.headers',
+      visibleWhenAll: [{ field: 'http.auth.type', is: ['oauth'] }],
+    },
   },
   layout: {
     fields: [
@@ -566,7 +620,7 @@ export default {
       'httpBasic',
       'httpToken',
       'httpCookie',
-      'http.auth.oauth.applicationType',
+      'http.auth.wsse.headerName',
     ],
     type: 'collapse',
     containers: [
@@ -587,7 +641,9 @@ export default {
           'http.auth.oauth.accessTokenBody',
           'http.auth.oauth.refreshHeaders',
           'http.auth.oauth.refreshBody',
-          'http.auth.revoke.uri',
+          'http.auth.token.revoke.uri',
+          'http.auth.token.revoke.body',
+          'http.auth.token.revoke.headers',
         ],
       },
       {
@@ -658,23 +714,35 @@ export default {
       id: 'cancel',
     },
     {
-      id: 'oauth',
-      label: 'Save & Authorize',
-      visibleWhen: [
-        {
-          field: 'http.auth.type',
-          is: ['oauth'],
-        },
-      ],
-    },
-    {
       id: 'test',
       label: 'Test',
       visibleWhen: [
         {
           field: 'http.auth.type',
-          is: ['token', 'basic', 'custom', 'cookie', 'digest'],
+          is: ['token', 'basic', 'custom', 'cookie', 'digest', 'oauth', 'wsse'],
         },
+      ],
+    },
+    {
+      id: 'saveandcontinue',
+      label: 'Save & Continue',
+      visibleWhenAll: [
+        {
+          field: 'http.auth.type',
+          is: ['oauth'],
+        },
+        { field: 'http.auth.oauth.grantType', is: ['clientcredentials'] },
+      ],
+    },
+    {
+      id: 'oauth',
+      label: 'Save & Authorize',
+      visibleWhenAll: [
+        {
+          field: 'http.auth.type',
+          is: ['oauth'],
+        },
+        { field: 'http.auth.oauth.grantType', isNot: ['clientcredentials'] },
       ],
     },
     {
@@ -683,7 +751,7 @@ export default {
       visibleWhen: [
         {
           field: 'http.auth.type',
-          is: ['token', 'basic', 'custom', 'cookie', 'digest'],
+          is: ['token', 'basic', 'custom', 'cookie', 'digest', 'wsse'],
         },
       ],
     },

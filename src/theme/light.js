@@ -330,11 +330,7 @@ export default {
         },
       },
     },
-    MuiTableBody: {
-      root: {
-        wordBreak: 'break-word',
-      },
-    },
+
     MuiTableCell: {
       root: {
         position: 'relative',
@@ -458,11 +454,6 @@ export default {
         '&$disabled': {
           background: colors.celigoNeutral3,
           color: colors.celigoNeutral6,
-        },
-      },
-      input: {
-        '&:invalid': {
-          borderColor: colors.celigoError,
         },
       },
     },
