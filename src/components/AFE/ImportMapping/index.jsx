@@ -33,9 +33,9 @@ const useStyles = makeStyles(theme => ({
   mappingContainer: {
     // overflow: 'auto',
     height: `calc(100vh - 180px)`,
-    padding: theme.spacing(1),
-    paddingBottom: theme.spacing(3),
+    padding: theme.spacing(1, 0, 3),
     marginBottom: theme.spacing(1),
+    maxWidth: '100%',
     flex: 1,
   },
   assistantContainer: {
@@ -71,6 +71,8 @@ const useStyles = makeStyles(theme => ({
   mappingsBody: {
     height: `calc(100% - 32px)`,
     overflow: 'auto',
+    marginBottom: theme.spacing(2),
+    paddingRight: theme.spacing(2),
   },
   mapField: {
     display: 'flex',
@@ -106,6 +108,16 @@ const useStyles = makeStyles(theme => ({
   mappingIcon: {
     color: theme.palette.secondary.lightest,
     fontSize: theme.spacing(6),
+  },
+  topHeading: {
+    fontFamily: 'Roboto500',
+  },
+  mapFieldCustomWidth: {
+    width: '400px',
+  },
+  topHeadingCustomWidth: {
+    width: '400px',
+    marginRight: '48px',
   },
 }));
 
@@ -284,7 +296,11 @@ export default function ImportMapping(props) {
         className={classes.mappingContainer}
         key={`mapping-${editorId}-${initChangeIdentifier}`}>
         <div className={classes.header}>
-          <Typography variant="h5" className={classes.childHeader}>
+          <Typography
+            variant="h5"
+            className={clsx(classes.childHeader, classes.topHeading, {
+              [classes.topHeadingCustomWidth]: showSalesforceNetsuiteAssistant,
+            })}>
             Source Record Field
             {!isExtractsLoading && (
               <RefreshButton
@@ -300,7 +316,11 @@ export default function ImportMapping(props) {
             )}
           </Typography>
 
-          <Typography variant="h5" className={classes.childHeader}>
+          <Typography
+            variant="h5"
+            className={clsx(classes.childHeader, classes.topHeading, {
+              [classes.topHeadingCustomWidth]: showSalesforceNetsuiteAssistant,
+            })}>
             {generateLabel}
             {isGenerateRefreshSupported && !isGeneratesLoading && (
               <RefreshButton
@@ -321,10 +341,17 @@ export default function ImportMapping(props) {
             <div className={classes.rowContainer} key={mapping.index}>
               <div className={classes.innerRow}>
                 <div
-                  className={clsx(classes.childHeader, classes.mapField, {
-                    [classes.disableChildRow]:
-                      mapping.isNotEditable || disabled,
-                  })}>
+                  className={clsx(
+                    classes.childHeader,
+                    classes.mapField,
+                    {
+                      [classes.mapFieldCustomWidth]: showSalesforceNetsuiteAssistant,
+                    },
+                    {
+                      [classes.disableChildRow]:
+                        mapping.isNotEditable || disabled,
+                    }
+                  )}>
                   <DynaTypeableSelect
                     key={`extract-${editorId}-${initChangeIdentifier}-${mapping.rowIdentifier}`}
                     id={`fieldMappingExtract-${mapping.index}`}
@@ -351,9 +378,16 @@ export default function ImportMapping(props) {
                 </div>
                 <MappingConnectorIcon className={classes.mappingIcon} />
                 <div
-                  className={clsx(classes.childHeader, classes.mapField, {
-                    [classes.disableChildRow]: mapping.isRequired || disabled,
-                  })}>
+                  className={clsx(
+                    classes.childHeader,
+                    classes.mapField,
+                    {
+                      [classes.disableChildRow]: mapping.isRequired || disabled,
+                    },
+                    {
+                      [classes.mapFieldCustomWidth]: showSalesforceNetsuiteAssistant,
+                    }
+                  )}>
                   <DynaTypeableSelect
                     key={`generate-${editorId}-${initChangeIdentifier}-${mapping.rowIdentifier}`}
                     id={`fieldMappingGenerate-${mapping.index}`}

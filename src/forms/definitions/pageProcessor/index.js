@@ -74,6 +74,7 @@ export default {
       name: 'application',
       type: 'selectapplication',
       label: 'Application',
+      refreshOptionsOnChangesTo: ['resourceType'],
       placeholder:
         'Choose application or start typing to browse 150+ applications',
       defaultValue: r => (r && r.application) || '',
@@ -235,6 +236,16 @@ export default {
       const filter = { $and: expression };
 
       return { filter, appType: app.type };
+    }
+
+    if (fieldId === 'application') {
+      const resourceTypeField = fields.find(
+        field => field.id === 'resourceType'
+      );
+
+      return {
+        appType: resourceTypeField.value === 'exports' ? 'export' : 'import',
+      };
     }
 
     return null;
