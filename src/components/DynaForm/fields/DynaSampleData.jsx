@@ -24,7 +24,7 @@ export default function DynaSampleData(props) {
   useEffect(() => {
     if (!isSampleDataSet && sampleData) {
       setIsSampleDataSet(true);
-      onFieldChange(id, sampleData);
+      onFieldChange(id, sampleData, true);
     }
   }, [id, isSampleDataSet, onFieldChange, sampleData]);
 
