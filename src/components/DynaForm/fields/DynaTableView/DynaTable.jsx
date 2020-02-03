@@ -115,6 +115,7 @@ export const DynaTable = props => {
     shouldReset = false,
     metadata = {},
     id,
+    touched,
   } = props;
   const [changeIdentifier, setChangeIdentifier] = useState(0);
   const [shouldResetOptions, setShouldResetOptions] = useState(true);
@@ -315,7 +316,9 @@ export const DynaTable = props => {
                       <DynaSelect
                         id={`suggest-${r.id}-${arr.row}`}
                         value={r.value}
-                        isValid={!(optionsMap[index].required && !r.value)}
+                        isValid={
+                          !(touched && optionsMap[index].required && !r.value)
+                        }
                         errorMessages="Please select a value"
                         options={r.options || []}
                         onFieldChange={(id, value) => {

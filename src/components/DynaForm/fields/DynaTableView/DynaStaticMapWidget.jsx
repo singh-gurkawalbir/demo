@@ -57,7 +57,7 @@ export default function DynaStaticMapWidget(props) {
 
   useEffect(() => {
     if (!initComplete) {
-      onFieldChange(id, { map, default: defaultVal, allowFailures });
+      onFieldChange(id, { map, default: defaultVal, allowFailures }, true);
       setInitComplete(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
