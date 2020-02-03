@@ -376,7 +376,7 @@ export default function CeligoDrawer() {
                             component={component || Link}
                             target={href && '_blank'}
                             href={href}
-                            to={!href && getRoutePath(path)}
+                            to={!href ? getRoutePath(path) : undefined}
                             button>
                             <ListItemIcon
                               classes={{ root: classes.itemIconRoot }}>

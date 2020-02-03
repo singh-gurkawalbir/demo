@@ -1,11 +1,10 @@
-import { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useMemo } from 'react';
+import { useSelector, shallowEqual } from 'react-redux';
 import { makeStyles } from '@material-ui/styles';
 import * as selectors from '../../../../../reducers';
-import { ActionsFactory as DynaFormWithDynamicActions } from '../../../../../components/ResourceFormFactory';
 import { integrationSettingsToDynaFormMetadata } from '../../../../../forms/utils';
 import PanelHeader from '../../../../../components/PanelHeader';
-import actions from '../../../../../actions';
+import { IAFormStateManager } from '../Flows';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -29,17 +28,19 @@ export default function GeneralPanel({ integrationId, storeId }) {
   const hasGeneralSettings = useSelector(state =>
     selectors.hasGeneralSettings(state, integrationId, storeId)
   );
-  const translatedMeta = integrationSettingsToDynaFormMetadata(
-    generalSectionMetadata,
-    integrationId,
-    true
+  const translatedMeta = useMemo(
+    () =>
+      integrationSettingsToDynaFormMetadata(
+        generalSectionMetadata,
+        integrationId,
+        true
+      ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [integrationId, storeId]
   );
-  const dispatch = useDispatch();
-
-  // perform cleanup
-  useEffect(
-    () => () => dispatch(actions.integrationApp.settings.clear(integrationId)),
-    [dispatch, integrationId]
+  const formState = useSelector(
+    state => selectors.integrationAppSettingsFormState(state, integrationId),
+    shallowEqual
   );
 
   return (
@@ -47,11 +48,12 @@ export default function GeneralPanel({ integrationId, storeId }) {
       <PanelHeader title="General" />
 
       {hasGeneralSettings && (
-        <DynaFormWithDynamicActions
+        <IAFormStateManager
           key={storeId}
           fieldMeta={translatedMeta}
           integrationId={integrationId}
           storeId={storeId}
+          formState={formState}
         />
       )}
     </div>
