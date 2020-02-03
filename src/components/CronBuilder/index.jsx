@@ -244,11 +244,11 @@ export default function CronBuilder(props) {
             label: 'Minute',
             type: 'tabWithoutSave',
             containers: [
+              { label: 'Every n Minutes', fields: ['everyNMinutes'] },
               {
                 label: 'Every selected minute',
                 fields: ['everySelectedMinute'],
               },
-              { label: 'Every n Minutes', fields: ['everyNMinutes'] },
             ],
           },
           {
