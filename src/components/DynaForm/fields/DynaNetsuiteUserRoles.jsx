@@ -41,14 +41,14 @@ export default function DynaNetsuiteUserRolesOptions(props) {
       if (!matchingOption) {
         if (netsuiteResourceType === 'environment') {
           if (optionsArr.length === 1) {
-            onFieldChange(id, optionsArr[0].value);
+            onFieldChange(id, optionsArr[0].value, true);
           } else if (
             optionsArr.length === 2 &&
             optionsArr.find(ele => ele.value === 'beta')
           ) {
             const nonBetaOption = optionsArr.find(ele => ele.value !== 'beta');
 
-            onFieldChange(id, nonBetaOption.value);
+            onFieldChange(id, nonBetaOption.value, true);
           }
         }
 
@@ -57,7 +57,7 @@ export default function DynaNetsuiteUserRolesOptions(props) {
           netsuiteResourceType === 'role'
         ) {
           if (optionsArr.length === 1) {
-            onFieldChange(id, optionsArr[0].value);
+            onFieldChange(id, optionsArr[0].value, true);
           }
         }
       }
@@ -77,7 +77,7 @@ export default function DynaNetsuiteUserRolesOptions(props) {
 
     if (netsuiteResourceType === 'environment') {
       ['netsuite.account', 'netsuite.roleId'].forEach(id =>
-        onFieldChange(id, '')
+        onFieldChange(id, '', true)
       );
     }
   };

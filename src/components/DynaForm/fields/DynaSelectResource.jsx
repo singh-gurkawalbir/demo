@@ -134,14 +134,14 @@ function DynaSelectResource(props) {
 
   useEffect(() => {
     if (!appTypeIsStatic && options.appType && !!value) {
-      onFieldChange(id, '');
+      onFieldChange(id, '', true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, options.appType]);
 
   useEffect(() => {
     if (createdId) {
-      onFieldChange(id, createdId);
+      onFieldChange(id, createdId, true);
       // in case someone clicks + again to add another resource...
       setNewResourceId(generateNewId());
     }

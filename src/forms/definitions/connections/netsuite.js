@@ -22,6 +22,10 @@ export default {
       newValues['/netsuite/tokenSecret'] = undefined;
     }
 
+    delete newValues['/netsuite/oauthAccount'];
+    delete newValues['/netsuite/tokenAccount'];
+    delete newValues['/netsuite/tokenEnvironment'];
+
     return newValues;
   },
   optionsHandler(fieldId, fields) {
@@ -87,6 +91,12 @@ export default {
       type: 'dynaiclient',
       connectionId: r => r && r._id,
       connectorId: r => r && r._connectorId,
+      requiredWhen: [
+        {
+          field: 'netsuite.authType',
+          is: ['oauth'],
+        },
+      ],
     },
     'netsuite.account': {
       fieldId: 'netsuite.account',
@@ -115,6 +125,7 @@ export default {
       type: 'text',
       label: 'Account ID',
       uppercase: true,
+      required: true,
       defaultValue: r => r && r.netsuite && r.netsuite.account,
       visibleWhen: [{ field: 'netsuite.authType', is: ['oauth'] }],
     },

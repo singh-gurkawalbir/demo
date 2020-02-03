@@ -38,8 +38,6 @@ import DynaNSSavedSearch from './DynaNSSavedSearch';
 import DynaAssistantOptions from './assistant/DynaAssistantOptions';
 import DynaAssistantSearchParams from './assistant/DynaAssistantSearchParams';
 import DynaLabelValueElement from './DynaLabelValueElement';
-import DynaRawData from './DynaRawData';
-import DynaSampleData from './DynaSampleData';
 import DynaWebHookSampleData from './DynaWebHookSampleData';
 import DynaXmlParse from './editors/DynaXmlParse';
 import DynaImportMapping from './DynaImportMapping';
@@ -129,8 +127,6 @@ export default {
   labelvalue: DynaLabelValueElement,
   netsuiteuserroles: DynaNetsuiteUserRolesOptions,
   nssavedsearch: DynaNSSavedSearch,
-  rawdata: DynaRawData,
-  sampledata: DynaSampleData,
   webhooksampledata: DynaWebHookSampleData,
   assistantoptions: DynaAssistantOptions,
   assistantsearchparams: DynaAssistantSearchParams,
