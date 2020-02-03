@@ -32,6 +32,7 @@ export default {
       name: 'application',
       type: 'selectapplication',
       label: 'Application',
+      appType: 'export',
       placeholder:
         'Choose application or start typing to browse 150+ applications',
       defaultValue: r => (r && r.application) || '',

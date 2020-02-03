@@ -2,12 +2,16 @@ import React, { useMemo } from 'react';
 import { makeStyles, useTheme, fade } from '@material-ui/core/styles';
 import { FormControl, InputLabel } from '@material-ui/core';
 import Select, { components } from 'react-select';
+import { isEqual } from 'lodash';
+import { useSelector } from 'react-redux';
+import * as selectors from '../../../../reducers';
 import applications, {
   groupApplications,
 } from '../../../../constants/applications';
 import ApplicationImg from '../../../icons/ApplicationImg';
 import AppPill from './AppPill';
 import ErroredMessageComponent from '../ErroredMessageComponent';
+import LoadResources from '../../../LoadResources';
 
 const useStyles = makeStyles(theme => ({
   optionRoot: {
@@ -48,19 +52,38 @@ const useStyles = makeStyles(theme => ({
 export default function SelectApplication(props) {
   const {
     disabled,
+    appType,
     id,
     isMulti,
     name,
     label,
+    flowId,
+    options: fieldOptions,
     resourceType,
     value = isMulti ? [] : '',
     placeholder,
     onFieldChange,
   } = props;
+  const assistants = useSelector(
+    state =>
+      selectors.resourceList(state, {
+        type: 'assistants',
+      }),
+    (left, right) => isEqual(left, right)
+  );
   // Custom styles for Select Control
-  const groupedApps = useMemo(() => groupApplications(resourceType), [
-    resourceType,
-  ]);
+  const flowDetails = useSelector(state =>
+    selectors.flowDetails(state, flowId)
+  );
+  const groupedApps = useMemo(
+    () =>
+      groupApplications(resourceType, {
+        assistants,
+        appType: appType || (fieldOptions && fieldOptions.appType),
+        isSimpleImport: flowDetails && !!flowDetails.isSimpleImport,
+      }),
+    [appType, assistants, fieldOptions, flowDetails, resourceType]
+  );
   const classes = useStyles();
   const theme = useTheme();
   const customStyles = {
@@ -161,6 +184,7 @@ export default function SelectApplication(props) {
       icon: app.icon || app.assistant,
       label: app.name,
       keywords: app.keywords,
+      assistant: app.assistant,
     })),
   }));
   const Option = props => {
@@ -220,44 +244,46 @@ export default function SelectApplication(props) {
   }
 
   return (
-    <FormControl
-      data-test={id}
-      key={id}
-      disabled={disabled}
-      className={classes.formControl}>
-      <InputLabel shrink className={classes.inputLabel} htmlFor={id}>
-        {label}
-      </InputLabel>
-      <Select
-        name={name}
-        placeholder={placeholder}
-        closeMenuOnSelect
-        components={{ Option }}
-        defaultValue={defaultValue}
-        defaultMenuIsOpen={!value}
-        options={options}
-        onChange={handleChange}
-        styles={customStyles}
-        filterOption={filterOptions}
-      />
+    <LoadResources resources="ui/assistants">
+      <FormControl
+        data-test={id}
+        key={id}
+        disabled={disabled}
+        className={classes.formControl}>
+        <InputLabel shrink className={classes.inputLabel} htmlFor={id}>
+          {label}
+        </InputLabel>
+        <Select
+          name={name}
+          placeholder={placeholder}
+          closeMenuOnSelect
+          components={{ Option }}
+          defaultValue={defaultValue}
+          defaultMenuIsOpen={!value}
+          options={options}
+          onChange={handleChange}
+          styles={customStyles}
+          filterOption={filterOptions}
+        />
 
-      <ErroredMessageComponent {...props} />
+        <ErroredMessageComponent {...props} />
 
-      {isMulti && value.length > 0 && (
-        <div className={classes.selectedContainer}>
-          {value.map((appId, i) => (
-            <AppPill
-              // i think we are ok to add index when a user selects multiple
-              // same applications. Even if a user deletes a matching app, the
-              // keys would still work out. Not sure how else to assign keys here.
-              // eslint-disable-next-line react/no-array-index-key
-              key={`${appId}-${i}`}
-              appId={appId}
-              onRemove={() => handleRemove(i)}
-            />
-          ))}
-        </div>
-      )}
-    </FormControl>
+        {isMulti && value.length > 0 && (
+          <div className={classes.selectedContainer}>
+            {value.map((appId, i) => (
+              <AppPill
+                // i think we are ok to add index when a user selects multiple
+                // same applications. Even if a user deletes a matching app, the
+                // keys would still work out. Not sure how else to assign keys here.
+                // eslint-disable-next-line react/no-array-index-key
+                key={`${appId}-${i}`}
+                appId={appId}
+                onRemove={() => handleRemove(i)}
+              />
+            ))}
+          </div>
+        )}
+      </FormControl>
+    </LoadResources>
   );
 }

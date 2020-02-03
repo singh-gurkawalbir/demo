@@ -4,7 +4,7 @@ export default function DynaTextSetFieldValues(props) {
   const { onFieldChange, setFieldIds = [] } = props;
   const setFormFields = () => {
     setFieldIds.forEach(fieldId => {
-      onFieldChange(fieldId, '');
+      onFieldChange(fieldId, '', true);
     });
   };
 

@@ -254,8 +254,8 @@ const PageGenerator = ({
 
     if (isDataLoader) {
       generatorActions = [
-        { ...exportHooksAction, isUsed: usedActions[actionsMap.hooks] },
         { ...exportFilterAction, isUsed: usedActions[actionsMap.outputFilter] },
+        { ...exportHooksAction, isUsed: usedActions[actionsMap.hooks] },
       ];
     } else {
       generatorActions = [
@@ -264,8 +264,8 @@ const PageGenerator = ({
           ...transformationAction,
           isUsed: usedActions[actionsMap.transformation],
         },
-        { ...exportHooksAction, isUsed: usedActions[actionsMap.hooks] },
         { ...exportFilterAction, isUsed: usedActions[actionsMap.outputFilter] },
+        { ...exportHooksAction, isUsed: usedActions[actionsMap.hooks] },
       ];
     }
   }
