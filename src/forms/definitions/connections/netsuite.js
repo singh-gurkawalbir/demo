@@ -45,7 +45,12 @@ export default {
       defaultValue: r => {
         let aType = '';
 
-        if (r && r.netsuite && (r.netsuite.tokenSecret || r.netsuite.tokenId)) {
+        if (
+          r &&
+          r.netsuite &&
+          ((r.netsuite.tokenSecret && r.netsuite.tokenSecret !== '******') ||
+            (r.netsuite.tokenId && r.netsuite.tokenId !== '******'))
+        ) {
           aType = 'token';
         } else if (
           r &&
@@ -87,6 +92,12 @@ export default {
       type: 'dynaiclient',
       connectionId: r => r && r._id,
       connectorId: r => r && r._connectorId,
+      requiredWhen: [
+        {
+          field: 'netsuite.authType',
+          is: ['oauth'],
+        },
+      ],
     },
     'netsuite.account': {
       fieldId: 'netsuite.account',
@@ -115,6 +126,7 @@ export default {
       type: 'text',
       label: 'Account ID',
       uppercase: true,
+      required: true,
       defaultValue: r => r && r.netsuite && r.netsuite.account,
       visibleWhen: [{ field: 'netsuite.authType', is: ['oauth'] }],
     },

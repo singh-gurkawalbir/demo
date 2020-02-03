@@ -2051,8 +2051,8 @@ export default {
       {
         items: [
           { label: 'Basic', value: 'basic' },
-          { label: 'TBA (Manual)', value: 'token' },
-          { label: 'TBA (Automated)', value: 'oauth' },
+          { label: 'Token Based Auth (Manual)', value: 'token' },
+          { label: 'Token Based Auth (Automatic)', value: 'oauth' },
         ],
       },
     ],
