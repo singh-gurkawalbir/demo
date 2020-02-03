@@ -317,8 +317,8 @@ function* processMappingData({
 
 /*
  * This saga handles 2 sample data stages
- * 1. flowInputWithContext 2. hooksWithContext
- * Above stages are replica of flowInput and hooks stage with added Context Info specifically for Input and outputFilter stages
+ * 1. flowInputWithContext 2. transformWithContext
+ * Above stages are replica of flowInput and transform stage with added Context Info specifically for Input and outputFilter stages
  */
 export function* requestSampleDataWithContext({
   flowId,
