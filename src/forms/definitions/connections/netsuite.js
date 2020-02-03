@@ -22,6 +22,10 @@ export default {
       newValues['/netsuite/tokenSecret'] = undefined;
     }
 
+    delete newValues['/netsuite/oauthAccount'];
+    delete newValues['/netsuite/tokenAccount'];
+    delete newValues['/netsuite/tokenEnvironment'];
+
     return newValues;
   },
   optionsHandler(fieldId, fields) {
