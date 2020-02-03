@@ -45,12 +45,7 @@ export default {
       defaultValue: r => {
         let aType = '';
 
-        if (
-          r &&
-          r.netsuite &&
-          ((r.netsuite.tokenSecret && r.netsuite.tokenSecret !== '******') ||
-            (r.netsuite.tokenId && r.netsuite.tokenId !== '******'))
-        ) {
+        if (r && r.netsuite && (r.netsuite.tokenSecret || r.netsuite.tokenId)) {
           aType = 'token';
         } else if (
           r &&
