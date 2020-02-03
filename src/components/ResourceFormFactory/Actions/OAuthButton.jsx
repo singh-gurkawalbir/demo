@@ -4,7 +4,9 @@ import { withStyles } from '@material-ui/core/styles';
 import actions from '../../../actions';
 import DynaAction from '../../DynaForm/DynaAction';
 import * as selectors from '../../../reducers';
+import resourceConstants from '../../../forms/constants/connection';
 import { useLoadingSnackbarOnSave } from '.';
+import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 
 const styles = theme => ({
   actionButton: {
@@ -14,8 +16,9 @@ const styles = theme => ({
 });
 
 function OAuthButton(props) {
-  const { label, classes, resourceType, disabled, ...rest } = props;
+  const { label, classes, resourceType, disabled, resource, ...rest } = props;
   const { resourceId } = rest;
+  const [snackbar] = useEnqueueSnackbar();
   const dispatch = useDispatch();
   const handleSaveAndAuthorizeConnection = useCallback(
     values => {
@@ -38,13 +41,35 @@ function OAuthButton(props) {
     onSave: handleSaveAndAuthorizeConnection,
     resourceType,
   });
+  const saveAndAuthorizeWhenScopesArePresent = useCallback(
+    values => {
+      if (
+        resourceConstants.OAUTH_CONNECTIONS_WITH_EDITABLE_SCOPES.includes(
+          resource.assistant
+        ) &&
+        !(
+          values['/http/auth/oauth/scope'] &&
+          values['/http/auth/oauth/scope'].length
+        )
+      ) {
+        return snackbar({
+          variant: 'error',
+          message: `Please configure the scopes.`,
+          persist: true,
+        });
+      }
+
+      handleSubmitForm(values);
+    },
+    [handleSubmitForm, resource.assistant, snackbar]
+  );
 
   return (
     <DynaAction
       {...rest}
       disabled={disabled || disableSave}
       className={classes.actionButton}
-      onClick={handleSubmitForm}>
+      onClick={saveAndAuthorizeWhenScopesArePresent}>
       {disableSave ? 'Authorizing' : label || 'Save & Authorize'}
     </DynaAction>
   );
