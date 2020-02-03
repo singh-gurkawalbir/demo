@@ -31,6 +31,12 @@ export default {
         ],
       },
     },
+    visibleWhen: [
+      {
+        field: 'inputMode',
+        is: ['records'],
+      },
+    ],
   },
   'ftp.useTempFile': {
     type: 'checkbox',
@@ -58,6 +64,39 @@ export default {
       {
         field: 'inputMode',
         is: ['records'],
+      },
+    ],
+  },
+  'ftp.blobFileName': {
+    type: 'timestampfilename',
+    label: 'File Name',
+    required: true,
+    showAllSuggestions: true,
+    defaultValue: r => (r && r.ftp && r.ftp.fileName) || 'file-{{timestamp}}',
+    refreshOptionsOnChangesTo: ['file.type'],
+    validWhen: {
+      someAreTrue: {
+        message:
+          'Please append date and time stamp, such as {{timestamp(YYYY-MM-DD hh:mm:ss)}}.',
+        conditions: [
+          {
+            field: 'file.skipAggregation',
+            isNot: {
+              values: [true],
+            },
+          },
+          {
+            matchesRegEx: {
+              pattern: `{{timestamp}}|{{dateFormat|{{timestamp((?=.*x).*)}}|{{timestamp((?=.*X).*)}}|{{timestamp((?=.*mm)(?=.*ss).*)}}`,
+            },
+          },
+        ],
+      },
+    },
+    visibleWhen: [
+      {
+        field: 'inputMode',
+        is: ['blob'],
       },
     ],
   },
