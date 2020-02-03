@@ -612,6 +612,15 @@ export function* receivedResource({ resourceType, resource }) {
 
 export function* authorizedConnection({ connectionId }) {
   yield put(actions.connection.madeOnline(connectionId));
+  const { merged: connectionResource } = yield select(
+    selectors.resourceData,
+    'connections',
+    connectionId
+  );
+
+  if (connectionResource && connectionResource.type === 'netsuite') {
+    yield put(actions.resource.request('connections', connectionId));
+  }
 }
 
 export function* refreshConnectionStatus({ integrationId }) {
