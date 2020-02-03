@@ -273,14 +273,20 @@ export default {
           'type',
           'delta.dateFormat',
           'delta.lagOffset',
-          'once.booleanField',
-          'rest.once.relativeURI',
-          'rest.once.method',
-          'rest.once.postBody',
           'rest.blobFormat',
         ],
         type: 'collapse',
         containers: [
+          {
+            collapsed: true,
+            label: 'Configure Once',
+            fields: [
+              'once.booleanField',
+              'rest.once.relativeURI',
+              'rest.once.method',
+              'rest.once.postBody',
+            ],
+          },
           {
             collapsed: true,
             label: 'Does this API support paging?',
