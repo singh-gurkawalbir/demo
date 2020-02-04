@@ -1,6 +1,13 @@
 import { useEffect, useState, Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Link } from 'react-router-dom';
+import {
+  Route,
+  Switch,
+  Link,
+  useLocation,
+  useHistory,
+  useRouteMatch,
+} from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { difference } from 'lodash';
 import * as selectors from '../../reducers';
@@ -12,10 +19,11 @@ import { sortTiles } from './util';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import IconTextButton from '../../components/IconTextButton';
 import ResourceDrawer from '../../components/drawer/Resource';
+import DownloadIntegrationDrawer from '../../components/drawer/DownloadIntegration';
+import UploadFileDialog from '../../views/InstallIntegration';
 import AddIcon from '../../components/icons/AddIcon';
-// TODO Azhar
-import DataLoaderIcon from '../../components/icons/DataLoaderIcon';
-import getRoutePath from '../../utils/routePaths';
+import ZipUpIcon from '../../components/icons/InstallIntegrationIcon';
+import ZipDownIcon from '../../components/icons/DownloadIntegrationIcon';
 import { generateNewId } from '../../utils/resource';
 
 const useStyles = makeStyles(theme => ({
@@ -36,9 +44,11 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function Dashboard(props) {
-  const { location } = props;
+function Dashboard() {
+  const location = useLocation();
+  const history = useHistory();
   const classes = useStyles();
+  const match = useRouteMatch();
   const dispatch = useDispatch();
   const preferences = useSelector(state => selectors.userPreferences(state));
   const ssLinkedConnections = useSelector(state =>
@@ -87,7 +97,21 @@ function Dashboard(props) {
 
   return (
     <Fragment>
-      <ResourceDrawer {...props} />
+      <Switch>
+        <Route path={`${match.url}/installZip`}>
+          <UploadFileDialog
+            data-test="closeGenerateTemplateZipDialog"
+            fileType="application/zip"
+            history={history}
+            // eslint-disable-next-line react/jsx-handler-names
+            onClose={history.back}
+          />
+        </Route>
+      </Switch>
+
+      <ResourceDrawer />
+      <DownloadIntegrationDrawer />
+
       <CeligoPageBar title="My integrations">
         <IconTextButton
           data-test="newIntegration"
@@ -101,10 +125,22 @@ function Dashboard(props) {
         <IconTextButton
           data-test="installZip"
           component={Link}
-          to={getRoutePath('/templates/generate-or-install')}
-          variant="text">
-          <DataLoaderIcon />
-          Install zip
+          to={`${location.pathname}/installZip`}
+          // to={getRoutePath('/templates/generate-or-install')}
+          variant="text"
+          color="primary">
+          <ZipUpIcon />
+          Install integration
+        </IconTextButton>
+        <IconTextButton
+          data-test="downloadIntegration"
+          component={Link}
+          to={`${location.pathname}/downloadIntegration`}
+          // to={getRoutePath('/templates/generate-or-install')}
+          variant="text"
+          color="primary">
+          <ZipDownIcon />
+          Download integration
         </IconTextButton>
       </CeligoPageBar>
       <LoadResources required resources="published,integrations,connections">

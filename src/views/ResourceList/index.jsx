@@ -50,6 +50,14 @@ function ResourceList(props) {
 
     dispatch(actions.resource.connections.refreshStatus());
 
+    // TODO: discus with team how to best handle this feature (and as future feature pattern)...
+    // This works file for this single connection list, but what about other places where we may show a
+    // list of connections.  I think we are probably safe in the FB connection list. I could be wrong, but
+    // i think it uses the child resourceTable component, not this view... also what about future
+    // features where we show lists of connections and may also show/filter on status?
+    // instead of littering our presentation codebase with "refresh logic", should we not instead have
+    // sone data-layer saga controlling this? possibly with a refresh fall-off policy, or track
+    // user activity and stop polling if there is none, etc?
     // For connections resource table, we need to poll the connection status and queueSize
     if (resourceType === 'connections') {
       int = setInterval(() => {
