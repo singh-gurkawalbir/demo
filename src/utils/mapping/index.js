@@ -89,7 +89,7 @@ export function unwrapTextForSpecialChars(extract, flowSampleData) {
 export function wrapTextForSpecialChars(extract, flowSampleData) {
   let toReturn = extract;
 
-  if (!/\W/g.test(extract)) {
+  if (!/\W/g.test(extract) || handlebarRegex.test(extract)) {
     return toReturn;
   }
 
