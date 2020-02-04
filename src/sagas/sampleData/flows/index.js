@@ -608,7 +608,7 @@ export function* requestProcessorData({
  * when new action comes, compare both stages and if curr stage is > prev stage then cancel that and fork this
  * TODO: @Raghu Come up with an appropriate name
  */
-const takeClosest = (patternOrChannel, saga, ...args) =>
+const takeLatestSampleData = (patternOrChannel, saga, ...args) =>
   fork(function*() {
     const sampleDataSagaMap = {};
 
@@ -675,7 +675,10 @@ export default [
     fetchPageProcessorPreview
   ),
   takeEvery(actionTypes.FLOW_DATA.PROCESSOR_DATA_REQUEST, requestProcessorData),
-  takeClosest(actionTypes.FLOW_DATA.SAMPLE_DATA_REQUEST, requestSampleData),
+  takeLatestSampleData(
+    actionTypes.FLOW_DATA.SAMPLE_DATA_REQUEST,
+    requestSampleData
+  ),
   takeEvery(
     actionTypes.FLOW_DATA.FLOWS_FOR_RESOURCE_UPDATE,
     updateFlowsDataForResource
