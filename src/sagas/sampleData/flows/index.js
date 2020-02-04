@@ -144,7 +144,7 @@ export function* requestSampleData({
       });
     }
 
-    if (!isInitialized) onSagaEnd({ resourceId });
+    if (!isInitialized) onSagaEnd();
   } catch (e) {
     yield call(handleFlowDataStageErrors, {
       flowId,
@@ -153,7 +153,7 @@ export function* requestSampleData({
       error: e,
     });
 
-    if (!isInitialized) onSagaEnd({ resourceId }, true);
+    if (!isInitialized) onSagaEnd(true);
 
     // using isInitialized to handle base case not to throw error
     // Error is thrown from the root stage to the main stage for which sample data is requested
@@ -615,8 +615,9 @@ const takeClosest = (patternOrChannel, saga, ...args) =>
     while (true) {
       const action = yield take(patternOrChannel);
       const { resourceId, resourceType, stage: currStage } = action;
-      const onSagaEnd = function({ resourceId }) {
+      const onSagaEnd = function() {
         // Delete completed/erred Sagas
+        // TODO @Raghu: figure out if we need to handle incase of saga error
         delete sampleDataSagaMap[resourceId];
       };
 
