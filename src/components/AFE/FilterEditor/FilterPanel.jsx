@@ -68,9 +68,16 @@ export default function FilterPanel({
       d = data;
     }
 
-    return getJSONPaths(isArray(d) ? d[0] : d, null, {
+    const jsonPaths = getJSONPaths(isArray(d) ? d[0] : d, null, {
       wrapSpecialChars: true,
     }).filter(p => p.id && !p.id.includes('[*].'));
+    const contextJsonPaths = jsonPaths.filter(
+      p => p.id && p.id.startsWith('_CONTEXT.')
+    );
+
+    return jsonPaths
+      .filter(p => p.id && !p.id.startsWith('_CONTEXT.'))
+      .concat(contextJsonPaths);
   }, [data]);
 
   useEffect(() => {
