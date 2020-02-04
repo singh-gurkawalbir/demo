@@ -13,8 +13,9 @@ import useIASettingsStateWithHandleClose from '../../../../../../hooks/useIASett
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
     marginTop: theme.appBarHeight,
-    minWidth: 824,
-    maxWidth: 1300,
+    // until we re-design the IA settings forms, we NEED this width to prevent
+    // wrapping of some fields that makes the interface MUCH less usable.
+    width: 1300,
     border: 'solid 1px',
     borderColor: theme.palette.secondary.lightest,
     boxShadow: `-4px 4px 8px rgba(0,0,0,0.15)`,
