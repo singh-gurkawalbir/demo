@@ -103,6 +103,7 @@ export default {
   'ftp.blobUseTempFile': {
     type: 'checkbox',
     label: 'Use temp file while upload in progress',
+    defaultValue: r => !!(r && r.ftp && r.ftp.inProgressFileName),
     visibleWhen: [
       {
         field: 'inputMode',
@@ -113,6 +114,7 @@ export default {
   'ftp.blobInProgressFileName': {
     type: 'text',
     label: 'In Progress File Name',
+    defaultValue: r => r && r.ftp && r.ftp.inProgressFileName,
     visibleWhenAll: [
       {
         field: 'ftp.blobUseTempFile',

@@ -49,6 +49,9 @@ export default {
       newValues['/ftp/useTempFile'] = newValues['/ftp/blobUseTempFile'];
       newValues['/ftp/inProgressFileName'] =
         newValues['/ftp/blobInProgressFileName'];
+      delete newValues['/ftp/blobFileName'];
+      delete newValues['/ftp/blobUseTempFile'];
+      delete newValues['/ftp/blobInProgressFileName'];
     }
 
     if (newValues['/ftp/useTempFile'] === false) {
