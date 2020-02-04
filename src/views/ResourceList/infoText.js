@@ -73,10 +73,10 @@ export default {
     with your subscription and billing software to fully automate a 
     provisioning process.`,
   accesstokens: `
-    API Tokens are required to access the integrator.io API, which can be used 
+    API tokens are required to access the integrator.io API, which can be used 
     to perform CRUD operations on any resource in your account, or to synchronously 
     get data in and out of any application that integrator.io can connect with.
-    API Tokens can be provisioned with full or minimal access. API Tokens can be
+    API tokens can be provisioned with full or minimal access. API tokens can be
     revoked or reactivated at any time. Tokens can be regenerated 
     (as a security best practice to rotate the secret keys being stored externally).
     
