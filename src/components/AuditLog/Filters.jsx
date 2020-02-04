@@ -43,7 +43,7 @@ const mapStateToProps = (state, { resourceType, resourceId }) => {
     marginTop: theme.spacing(2),
   },
   filterWrapper: {
-    padding: theme.spacing(0),
+    padding: 0,
   },
 }))
 class Filters extends Component {
