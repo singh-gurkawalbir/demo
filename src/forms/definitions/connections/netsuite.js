@@ -111,6 +111,7 @@ export default {
       type: 'text',
       label: 'Account ID',
       uppercase: true,
+      required: true,
       defaultValue: r => r && r.netsuite && r.netsuite.account,
       visibleWhen: [{ field: 'netsuite.authType', is: ['token-auto'] }],
     },

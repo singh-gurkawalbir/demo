@@ -704,15 +704,11 @@ export const groupApplications = (
 ) => {
   const filteredConnectors = connectors.filter(connector => {
     if (connector.assistant && assistants && resourceType !== 'connections') {
-      if (
-        assistants.http.applications.find(
-          ass => ass._id === connector.assistant
-        )
-      ) {
-        const assistant = assistants.http.applications.find(
-          ass => ass._id === connector.assistant
-        );
+      let assistant = assistants.http.applications.find(
+        a => a._id === connector.assistant
+      );
 
+      if (assistant) {
         if (appType === 'import') {
           return assistant.import;
         } else if (appType === 'export') {
@@ -720,15 +716,13 @@ export const groupApplications = (
         }
 
         return true;
-      } else if (
-        assistants.rest.applications.find(
-          ass => ass._id === connector.assistant
-        )
-      ) {
-        const assistant = assistants.rest.applications.find(
-          ass => ass._id === connector.assistant
-        );
+      }
 
+      assistant = assistants.rest.applications.find(
+        a => a._id === connector.assistant
+      );
+
+      if (assistant) {
         if (appType === 'import') {
           return assistant.import;
         } else if (appType === 'export') {

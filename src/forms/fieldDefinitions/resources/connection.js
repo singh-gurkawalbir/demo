@@ -897,7 +897,7 @@ export default {
   },
   'http.auth.oauth.scope': {
     type: 'selectscopes',
-    label: 'Scopes',
+    label: 'Configure Scopes',
   },
   'http.auth.oauth.scopeDelimiter': {
     type: 'text',
