@@ -68,7 +68,7 @@ export default function SettingsDrawer({ flow, isViewMode, ...props }) {
               [],
           },
         ],
-        defaultDisabled: flow && !!flow._integrationId,
+        defaultDisabled: true,
       },
       _runNextFlowIds: {
         id: '_runNextFlowIds',
