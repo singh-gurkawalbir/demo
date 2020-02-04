@@ -19,7 +19,7 @@ import WithAuth from './AppRoutingWithAuth';
 import Signin from '../views/SignIn';
 import * as gainsight from '../utils/analytics/gainsight';
 import { getDomain } from '../utils/resource';
-import { ConfirmDialogContainer } from '../components/ConfirmDialog';
+import { ConfirmDialogProvider } from '../components/ConfirmDialog';
 
 // The makeStyles function below does not have access to the theme.
 // We can only use the theme in components that are children of
@@ -71,7 +71,7 @@ export default function App() {
 
   return (
     <MuiThemeProvider key={reloadCount} theme={theme}>
-      <ConfirmDialogContainer>
+      <ConfirmDialogProvider>
         <SnackbarProvider maxSnack={3}>
           <FontStager />
           <CssBaseline />
@@ -92,7 +92,7 @@ export default function App() {
             </BrowserRouter>
           </DndProvider>
         </SnackbarProvider>
-      </ConfirmDialogContainer>
+      </ConfirmDialogProvider>
     </MuiThemeProvider>
   );
 }

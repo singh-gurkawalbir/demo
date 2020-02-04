@@ -7,7 +7,7 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { Typography } from '@material-ui/core';
 
-export const ConfirmDialogNew = props => {
+export const ConfirmDialog = props => {
   const {
     message,
     title = 'Confirm',
@@ -57,7 +57,7 @@ export const ConfirmDialogContext = React.createContext({
   setConfirmDialogProps: () => {},
 });
 
-export const ConfirmDialogContainer = ({ children }) => {
+export const ConfirmDialogProvider = ({ children }) => {
   const [confirmDialogProps, setConfirmDialogProps] = useState(null);
   const onClose = useCallback(() => setConfirmDialogProps(null), []);
 
@@ -65,10 +65,9 @@ export const ConfirmDialogContainer = ({ children }) => {
     <ConfirmDialogContext.Provider
       value={{
         setConfirmDialogProps,
-        onClose,
       }}>
       {!!confirmDialogProps && (
-        <ConfirmDialogNew {...confirmDialogProps} onClose={onClose} />
+        <ConfirmDialog {...confirmDialogProps} onClose={onClose} />
       )}
       {children}
     </ConfirmDialogContext.Provider>
