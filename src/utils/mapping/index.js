@@ -40,11 +40,11 @@ const checkExtractPathFoundInSampledata = (str, sampleData, wrapped) => {
 };
 
 export function unwrapTextForSpecialChars(extract, flowSampleData) {
-  let toReturn = extract;
+  let modifiedExtract = extract;
 
   if (!/\W/g.test(extract)) {
     // if it does not contain a non-word character
-    return toReturn;
+    return modifiedExtract;
   }
 
   if (!flowSampleData && /^\[.*\]$/.test(extract)) {
@@ -63,9 +63,9 @@ export function unwrapTextForSpecialChars(extract, flowSampleData) {
       true
     ).indexOf(extract);
 
-    toReturn = getJSONPathArrayWithSpecialCharactersWrapped(flowSampleData)[
-      index
-    ];
+    modifiedExtract = getJSONPathArrayWithSpecialCharactersWrapped(
+      flowSampleData
+    )[index];
   } else if (!/\.|(\[\*\])/.test(extract)) {
     /**
      This extract is not found in sampledata. So UI doesnt know what a dot or sublist character represent.
@@ -79,18 +79,18 @@ export function unwrapTextForSpecialChars(extract, flowSampleData) {
       )
     ) {
       // if not already wrapped
-      toReturn = `[${extract.replace(/\]/g, '\\]')}]`;
+      modifiedExtract = `[${extract.replace(/\]/g, '\\]')}]`;
     }
   }
 
-  return toReturn;
+  return modifiedExtract;
 }
 
 export function wrapTextForSpecialChars(extract, flowSampleData) {
-  let toReturn = extract;
+  let modifiedExtract = extract;
 
-  if (!/\W/g.test(extract)) {
-    return toReturn;
+  if (!/\W/g.test(extract) || handlebarRegex.test(extract)) {
+    return modifiedExtract;
   }
 
   if (
@@ -109,7 +109,7 @@ export function wrapTextForSpecialChars(extract, flowSampleData) {
       flowSampleData
     ).indexOf(extract);
 
-    toReturn = getJSONPathArrayWithSpecialCharactersWrapped(
+    modifiedExtract = getJSONPathArrayWithSpecialCharactersWrapped(
       flowSampleData,
       null,
       true
@@ -128,9 +128,11 @@ export function wrapTextForSpecialChars(extract, flowSampleData) {
       )
     ) {
       // if not already wrapped
-      toReturn = `[${extract.replace(/\]/g, '\\]')}]`;
+      modifiedExtract = `[${extract.replace(/\]/g, '\\]')}]`;
     }
   }
+
+  return modifiedExtract;
 }
 
 export const LookupResponseMappingExtracts = [
