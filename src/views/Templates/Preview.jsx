@@ -63,7 +63,7 @@ export default function TemplatePreview(props) {
   const columns = [
     {
       heading: 'Name',
-      value: r => r.doc.name,
+      value: r => r.doc.name || r.doc._id,
       orderBy: 'name',
     },
     { heading: 'Type', value: r => r.model },

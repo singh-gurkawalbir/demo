@@ -19,6 +19,8 @@ const iconMap = (type = '') => {
 
   if (type.toLowerCase().includes('mysql')) return 'mysql';
 
+  if (type.toLowerCase().includes('microsoftsql')) return 'mssql';
+
   if (type.toLowerCase().includes('postgresql')) return 'postgresql';
 
   if (type.toLowerCase().includes('netsuite')) return 'netsuite';
@@ -39,7 +41,8 @@ const iconMap = (type = '') => {
 
   if (type.toLowerCase().includes('rdbms')) return 'rdbms';
 
-  return type;
+  // remove all whitespaces
+  return type.replace(/\s/g, '');
 };
 
 export default function ApplicationImg({
