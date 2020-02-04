@@ -69,7 +69,7 @@ export default function CeligoPageBar(props) {
   const handleInfoClose = useCallback(() => {
     setAnchorEl(null);
   }, []);
-  const showBanner = location.pathname.endsWith('pg/dashboard') && bannerOpened;
+  const showBanner = location.pathname.includes('pg/dashboard') && bannerOpened;
 
   return (
     <Fragment>
