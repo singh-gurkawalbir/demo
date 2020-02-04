@@ -8,11 +8,12 @@ import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import Switch from '@material-ui/core/Switch';
 import actions from '../../actions';
-import { confirmDialog } from '../../components/ConfirmDialog';
+import useConfirmDialog from '../../components/ConfirmDialog';
 
 export default function ShareStackUserDetail(props) {
   const { user } = props;
   const dispatch = useDispatch();
+  const { confirmDialog } = useConfirmDialog();
   const handleDeleteUserClick = () => {
     confirmDialog({
       title: 'Confirm',

@@ -7,7 +7,7 @@ import * as selectors from '../../reducers';
 import actions from '../../actions';
 import ApplicationImg from '../../components/icons/ApplicationImg';
 import CeligoTable from '../../components/CeligoTable';
-import { confirmDialog } from '../../components/ConfirmDialog';
+import useConfirmDialog from '../../components/ConfirmDialog';
 import templateUtil from '../../utils/template';
 import Spinner from '../../components/Spinner';
 
@@ -54,6 +54,7 @@ export default function TemplatePreview(props) {
   const { templateId } = props.match.params;
   const [requested, setRequested] = useState(false);
   const dispatch = useDispatch();
+  const { confirmDialog } = useConfirmDialog();
   const template = useSelector(state =>
     selectors.marketplaceTemplate(state, templateId)
   );
