@@ -195,10 +195,7 @@ const useStyles = makeStyles(theme => ({
     borderRadius: 4,
     width: theme.spacing(3),
     height: theme.spacing(3),
-    '& svg': {
-      position: 'relative',
-      top: -12,
-    },
+    padding: 0,
   },
   sandboxDrawerToggle: {
     borderColor: theme.palette.secondary.light,
