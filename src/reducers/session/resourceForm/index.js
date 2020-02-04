@@ -32,9 +32,13 @@ export default function reducer(state = {}, action) {
         // refreshing session? Doing this makes the submit resource saga
         // easier as we dont need to lookup the preSave handler...
         [key]: {
-          initData: state[key].initData
-            ? fieldsTouchedForMeta(fieldMeta, state[key] && state[key].initData)
-            : null,
+          initData:
+            state[key] && state[key].initData
+              ? fieldsTouchedForMeta(
+                  fieldMeta,
+                  state[key] && state[key].initData
+                )
+              : null,
           isNew,
           skipCommit,
           initComplete: true,
