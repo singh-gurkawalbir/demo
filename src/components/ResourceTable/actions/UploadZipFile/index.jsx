@@ -1,27 +1,23 @@
-import { Fragment, useState } from 'react';
+import { Fragment, useState, useCallback } from 'react';
 import { IconButton } from '@material-ui/core';
 import UploadIcon from '../../../../components/icons/UploadIcon';
-import UploadFileDialog from '../../../../components/UploadFileDialog';
+import UploadFileDialog from './UploadFileDialog';
 
 export default {
   label: 'Upload ZIP File',
   component: function UploadZipFile({ resourceType, resource }) {
-    const [showUpoadFileDialog, setShowUploadFileDialog] = useState(false);
-    const handleUploadZipFileClick = () => {
-      setShowUploadFileDialog(true);
-    };
-
-    const handleUploadFileDialogClose = () => {
-      setShowUploadFileDialog(false);
-    };
+    const [showDialog, setShowDialog] = useState(false);
+    const toggleDialog = useCallback(() => {
+      setShowDialog(!showDialog);
+    }, [showDialog]);
 
     return (
       <Fragment>
-        {showUpoadFileDialog && (
+        {showDialog && (
           <UploadFileDialog
             resourceType={resourceType}
             fileType="application/zip"
-            onClose={handleUploadFileDialogClose}
+            onClose={toggleDialog}
             type="Zip"
             resourceId={resource._id}
           />
@@ -29,7 +25,7 @@ export default {
         <IconButton
           data-test="toggleUploadZipFileModal"
           size="small"
-          onClick={handleUploadZipFileClick}>
+          onClick={toggleDialog}>
           <UploadIcon />
         </IconButton>
       </Fragment>

@@ -1,4 +1,4 @@
-import { Fragment, useState, useMemo } from 'react';
+import { Fragment, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -11,14 +11,11 @@ import ShowMoreDrawer from '../../components/drawer/ShowMore';
 import KeywordSearch from '../../components/KeywordSearch';
 import IconTextButton from '../../components/IconTextButton';
 import AddIcon from '../../components/icons/AddIcon';
-import GenerateZipDialog from './GenerateZipDialog';
-import UploadFileDialog from '../../views/InstallIntegration';
 import InfoText from '../ResourceList/infoText';
 import metadata from './metadata';
 import CheckPermissions from '../../components/CheckPermissions';
 import { PERMISSIONS } from '../../utils/constants';
 import { generateNewId } from '../../utils/resource';
-import InstallIcon from '../../components/icons/InstallIcon';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -30,7 +27,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function TemplateList(props) {
-  const { location, history } = props;
+  const { location } = props;
   const defaultFilter = useMemo(() => ({ take: 10 }), []);
   const classes = useStyles();
   const filter =
@@ -41,8 +38,6 @@ export default function TemplateList(props) {
       ...filter,
     })
   );
-  const [showGenerateZipDialog, setShowGenerateZipDialog] = useState(false);
-  const [showUploadZipDialog, setShowUploadZipDialog] = useState(false);
 
   return (
     <Fragment>
@@ -51,42 +46,13 @@ export default function TemplateList(props) {
           PERMISSIONS && PERMISSIONS.templates && PERMISSIONS.templates.view
         }>
         <ResourceDrawer {...props} />
-        {showGenerateZipDialog && (
-          <GenerateZipDialog
-            data-test="closeGenerateTemplateZipDialog"
-            onClose={() => setShowGenerateZipDialog(false)}
-          />
-        )}
-        {showUploadZipDialog && (
-          <UploadFileDialog
-            data-test="closeGenerateTemplateZipDialog"
-            fileType="application/zip"
-            history={history}
-            onClose={() => setShowUploadZipDialog(false)}
-          />
-        )}
+
         <CeligoPageBar title="Templates" infoText={InfoText.templates}>
           <div className={classes.actions}>
             <KeywordSearch
               filterKey="templates"
               defaultFilter={defaultFilter}
             />
-
-            <IconTextButton
-              data-test="uploadTemplateZip"
-              onClick={() => setShowUploadZipDialog(true)}
-              variant="text">
-              <InstallIcon />
-              Install integration
-            </IconTextButton>
-
-            <IconTextButton
-              data-test="generateTemplateZip"
-              onClick={() => setShowGenerateZipDialog(true)}
-              variant="text">
-              <AddIcon />
-              Generate template zip
-            </IconTextButton>
 
             <IconTextButton
               data-test="addNewListing"
