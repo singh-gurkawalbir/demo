@@ -1,3 +1,5 @@
+import { isEqual } from 'lodash';
+
 export default {
   removeItem: (arr, test) => {
     const index = arr.findIndex(test);
@@ -29,5 +31,20 @@ export default {
     if (duplicates.length) return duplicates;
 
     return null;
+  },
+  isContinuousSubSet: (src = [], target = []) => {
+    if (!src || !target || !Array.isArray(src) || !Array.isArray(target))
+      return false;
+
+    if (src.length < target.length) return false;
+
+    // Empty array is always a subset
+    if (!target.length) return true;
+
+    const startIndex = src.indexOf(target[0]);
+
+    if (startIndex === -1) return false;
+
+    return isEqual(src.slice(startIndex, startIndex + target.length), target);
   },
 };

@@ -15,6 +15,7 @@ import {
   LookupResponseMappingExtracts,
   ImportResponseMappingExtracts,
 } from './mapping';
+import arrayUtils from './array';
 
 const sampleDataStage = {
   exports: {
@@ -44,6 +45,53 @@ const sampleDataStage = {
     responseTransform: 'sampleResponse',
   },
 };
+
+/*
+ * Given stage and resourceType, this util parses through the sampleData stage map and constructs dependency list
+ * Ex: {a: b, b: c, c:d, e: f} is the map of dependencies for a given stage
+ * If the stage requested is 'a', the dependency list is [b, c, d] that infers to get stage 'a', we need to go through all these 4 stages
+ */
+export const getAllDependentSampleDataStages = (
+  stage,
+  resourceType = 'exports'
+) => {
+  const stagesMap = sampleDataStage[resourceType];
+  let endOfIteration = false;
+  let dependentStage = stagesMap[stage];
+
+  if (!dependentStage) return [];
+  const dependentStages = [dependentStage];
+
+  while (!endOfIteration) {
+    dependentStage = stagesMap[dependentStage];
+
+    if (!dependentStage) endOfIteration = true;
+    else dependentStages.push(dependentStage);
+  }
+
+  return dependentStages;
+};
+
+// compare util returns -1, 0, 1 for less, equal and greater respectively
+// returns 2 when both stages need to exist incase of different paths
+export const compareSampleDataStage = (prevStage, currStage, resourceType) => {
+  if (prevStage === currStage) return 0;
+  const prevStageRoute = [
+    prevStage,
+    ...getAllDependentSampleDataStages(prevStage, resourceType),
+  ];
+  const currStageRoute = [
+    currStage,
+    ...getAllDependentSampleDataStages(currStage, resourceType),
+  ];
+
+  if (arrayUtils.isContinuousSubSet(prevStageRoute, currStageRoute)) return -1;
+
+  if (arrayUtils.isContinuousSubSet(currStageRoute, prevStageRoute)) return 1;
+
+  return 2;
+};
+
 const lastExportDateTime = moment()
   .add(-7, 'd')
   .toISOString();

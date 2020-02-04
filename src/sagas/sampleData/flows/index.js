@@ -1,4 +1,13 @@
-import { put, select, call, takeEvery, takeLatest } from 'redux-saga/effects';
+/* eslint-disable func-names */
+import {
+  put,
+  select,
+  call,
+  takeEvery,
+  take,
+  fork,
+  cancel,
+} from 'redux-saga/effects';
 import { deepClone } from 'fast-json-patch';
 import { isEmpty } from 'lodash';
 import { resourceData, getSampleData } from '../../../reducers';
@@ -24,6 +33,7 @@ import {
 } from './flowUpdates';
 import {
   getSampleDataStage,
+  compareSampleDataStage,
   getPreviewStageData,
   getContextInfo,
   getBlobResourceSampleData,
@@ -87,6 +97,7 @@ export function* requestSampleData({
   stage,
   refresh = false,
   isInitialized,
+  onSagaEnd,
 }) {
   if (!flowId || !resourceId) return;
 
@@ -100,7 +111,6 @@ export function* requestSampleData({
     return { as2: { sample: { data: 'coming soon' } } };
   }
 
-  // Updates flow state
   // isInitialized prop is passed explicitly from internal sagas calling this Saga
   if (!isInitialized) {
     yield call(initFlowData, { flowId, resourceId, resourceType });
@@ -133,6 +143,8 @@ export function* requestSampleData({
         sampleDataStage,
       });
     }
+
+    if (!isInitialized) onSagaEnd({ resourceId });
   } catch (e) {
     yield call(handleFlowDataStageErrors, {
       flowId,
@@ -140,6 +152,8 @@ export function* requestSampleData({
       stage: sampleDataStage,
       error: e,
     });
+
+    if (!isInitialized) onSagaEnd({ resourceId }, true);
 
     // using isInitialized to handle base case not to throw error
     // Error is thrown from the root stage to the main stage for which sample data is requested
@@ -589,13 +603,78 @@ export function* requestProcessorData({
   }
 }
 
+/*
+ * Save current executing saga against resource ids with stage
+ * when new action comes, compare both stages and if curr stage is > prev stage then cancel that and fork this
+ * TODO: @Raghu Come up with an appropriate name
+ */
+const takeClosest = (patternOrChannel, saga, ...args) =>
+  fork(function*() {
+    const sampleDataSagaMap = {};
+
+    while (true) {
+      const action = yield take(patternOrChannel);
+      const { resourceId, resourceType, stage: currStage } = action;
+      const onSagaEnd = function({ resourceId }) {
+        // Delete completed/erred Sagas
+        delete sampleDataSagaMap[resourceId];
+      };
+
+      // If it is the first one straight away start executing this saga
+      if (!sampleDataSagaMap[resourceId]) {
+        sampleDataSagaMap[resourceId] = {
+          stage: currStage,
+          resourceType,
+          forkedSaga: yield fork(
+            saga,
+            ...args.concat({ ...action, onSagaEnd })
+          ),
+        };
+      } else {
+        // compare currStage with prevStage and decide what to do
+        const { stage: prevStage } = sampleDataSagaMap[resourceId];
+        const currentStageStatus = compareSampleDataStage(
+          prevStage,
+          currStage,
+          resourceType
+        );
+
+        // Incase of same stage , cancel previous saga and execute current one
+        if (currentStageStatus === 0) {
+          yield cancel(sampleDataSagaMap[resourceId].forkedSaga);
+          sampleDataSagaMap[resourceId].forkedSaga = yield fork(
+            saga,
+            ...args.concat({ ...action, onSagaEnd })
+          );
+        }
+
+        if (currentStageStatus > 0) {
+          // Incase of status as 1, cancel previous saga as current saga takes precedence
+          if (currentStageStatus === 1) {
+            yield cancel(sampleDataSagaMap[resourceId].forkedSaga);
+          }
+
+          // Incase of statuses 1, 2 execute current saga
+          sampleDataSagaMap[resourceId] = {
+            stage: currStage,
+            resourceType,
+            forkedSaga: yield fork(
+              saga,
+              ...args.concat({ ...action, onSagaEnd })
+            ),
+          };
+        }
+      }
+    }
+  });
+
 export default [
   takeEvery(
     actionTypes.FLOW_DATA.PREVIEW_DATA_REQUEST,
     fetchPageProcessorPreview
   ),
   takeEvery(actionTypes.FLOW_DATA.PROCESSOR_DATA_REQUEST, requestProcessorData),
-  takeLatest(actionTypes.FLOW_DATA.SAMPLE_DATA_REQUEST, requestSampleData),
+  takeClosest(actionTypes.FLOW_DATA.SAMPLE_DATA_REQUEST, requestSampleData),
   takeEvery(
     actionTypes.FLOW_DATA.FLOWS_FOR_RESOURCE_UPDATE,
     updateFlowsDataForResource
