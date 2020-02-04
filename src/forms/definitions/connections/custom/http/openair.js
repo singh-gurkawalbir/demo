@@ -3,18 +3,11 @@ export default {
     let baseURI = '';
 
     if (formValues['/environment'] === 'sandbox') {
-      baseURI = `https://${formValues['/http/unencrypted/companyId']
-        .split(' ')
-        .join('-')}.app.sandbox.openair.com/api.pl`;
+      baseURI = 'https://sandbox.openair.com/api.pl';
     } else if (formValues['/environment'] === 'production') {
-      baseURI = `https://${formValues['/http/unencrypted/companyId']
-        .split(' ')
-        .join('-')
-        .toLowerCase()}.app.openair.com/api.pl`;
+      baseURI = 'https://www.openair.com/api.pl';
     } else if (formValues['/environment'] === 'demo') {
-      baseURI = `https://${formValues['/http/unencrypted/companyId']
-        .split(' ')
-        .join('-')}.app.demo.openair.com/api.pl`;
+      baseURI = 'https://demo.openair.com/api.pl';
     }
 
     return {
@@ -63,14 +56,15 @@ export default {
         const baseUri = r && r.http && r.http.baseURI;
 
         if (baseUri) {
-          if (baseUri) {
-            if (baseUri.indexOf('.app.demo.openair.com') !== -1) {
-              return 'demo';
-            } else if (baseUri.indexOf('.app.sandbox.openair.com') !== -1) {
+          switch (baseUri) {
+            case 'https://sandbox.openair.com/api.pl':
               return 'sandbox';
-            }
-
-            return 'production';
+            case 'https://www.openair.com/api.pl':
+              return 'production';
+            case 'https://demo.openair.com/api.pl':
+              return 'demo';
+            default:
+              return 'production';
           }
         }
 
