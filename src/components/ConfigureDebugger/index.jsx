@@ -13,21 +13,12 @@ import actions from '../../actions';
 import ModalDialog from '../ModalDialog';
 
 const useStyles = makeStyles(theme => ({
-  title: {
-    marginLeft: 35,
-    padding: theme.spacing(2),
-  },
   submit: {
-    marginLeft: 'auto',
-    marginRight: 'auto',
+    marginTop: theme.spacing(1),
   },
-  closeButton: {
-    position: 'absolute',
-    right: theme.spacing(1),
-    top: 2,
-  },
-  content: {
-    width: '30vw',
+  radioLabel: {
+    marginLeft: 0,
+    marginTop: theme.spacing(0.5),
   },
 }));
 
@@ -82,6 +73,7 @@ export default function ConfigureDebugger(props) {
                 value="0"
                 control={<Radio color="primary" />}
                 label="Off"
+                className={classes.radioLabel}
               />
               {['15', '30', '45', '60'].map(duration => (
                 <FormControlLabel
@@ -94,7 +86,7 @@ export default function ConfigureDebugger(props) {
             </RadioGroup>
           </FormControl>
           {minutes > 1 && (
-            <Typography variant="body2">
+            <Typography variant="body2" className={classes.submit}>
               Debug mode is enabled for next {minutes} minutes.
             </Typography>
           )}
