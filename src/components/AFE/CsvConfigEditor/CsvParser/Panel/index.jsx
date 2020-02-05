@@ -5,7 +5,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
-import { Input, Chip, MenuItem, ListItemText } from '@material-ui/core';
+import { Input, Chip, MenuItem, ListItemText, Select } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../../../../actions';
 import * as selectors from '../../../../../reducers';
@@ -202,7 +202,7 @@ export default function CsvParsePanel(props) {
             <InputLabel htmlFor="select-multiple-chip" shrink>
               Key columns
             </InputLabel>
-            <CeligoSelect
+            <Select
               multiple
               value={keyColumns}
               className={classes.select}
@@ -230,7 +230,7 @@ export default function CsvParsePanel(props) {
                   <ListItemText primary={name} />
                 </MenuItem>
               ))}
-            </CeligoSelect>
+            </Select>
           </FormControl>
         )}
       </FormGroup>
