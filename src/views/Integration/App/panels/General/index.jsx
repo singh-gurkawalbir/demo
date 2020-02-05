@@ -14,6 +14,9 @@ const useStyles = makeStyles(theme => ({
     borderColor: theme.palette.secondary.lightest,
     paddingBottom: theme.spacing(1),
   },
+  formContent: {
+    padding: theme.spacing(0, 2),
+  },
 }));
 
 export default function GeneralPanel({ integrationId, storeId }) {
@@ -47,15 +50,17 @@ export default function GeneralPanel({ integrationId, storeId }) {
     <div className={classes.root}>
       <PanelHeader title="General" />
 
-      {hasGeneralSettings && (
-        <IAFormStateManager
-          key={storeId}
-          fieldMeta={translatedMeta}
-          integrationId={integrationId}
-          storeId={storeId}
-          formState={formState}
-        />
-      )}
+      <div className={classes.formContent}>
+        {hasGeneralSettings && (
+          <IAFormStateManager
+            key={storeId}
+            fieldMeta={translatedMeta}
+            integrationId={integrationId}
+            storeId={storeId}
+            formState={formState}
+          />
+        )}
+      </div>
     </div>
   );
 }
