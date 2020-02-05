@@ -408,7 +408,7 @@ export default {
     requiredWhen: [
       {
         field: 'http.response.successValues',
-        isNot: [''],
+        isNot: ['', []],
       },
     ],
     visibleWhenAll: [
