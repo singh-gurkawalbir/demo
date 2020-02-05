@@ -4,7 +4,7 @@ import { useHistory } from 'react-router-dom';
 import { IconButton, Menu, MenuItem } from '@material-ui/core';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
-import { defaultConfirmDialog } from '../ConfirmDialog';
+import useConfirmDialog from '../ConfirmDialog';
 import AuditLogDialog from '../AuditLog/AuditLogDialog';
 import ReferencesDialog from '../ResourceReferences';
 import MappingIcon from '../icons/MapDataIcon';
@@ -43,6 +43,7 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
     },
     [dispatch, flowId]
   );
+  const { defaultConfirmDialog } = useConfirmDialog();
   const integrationId = flowDetails._integrationId;
   const integrationAppName = useSelector(state => {
     const integration = selectors.resource(
@@ -135,6 +136,7 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
       setAnchorEl(null);
     },
     [
+      defaultConfirmDialog,
       flowName,
       flowDetails._connectorId,
       flowDetails.showUtilityMapping,

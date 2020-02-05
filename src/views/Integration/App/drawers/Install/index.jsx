@@ -24,7 +24,7 @@ import resourceConstants from '../../../../../forms/constants/connection';
 import ArrowRightIcon from '../../../../../components/icons/ArrowRightIcon';
 import ConnectionSetupDialog from '../../../../../components/ResourceSetupDialog';
 import InstallationStep from '../../../../../components/InstallStep';
-import { confirmDialog } from '../../../../../components/ConfirmDialog';
+import useConfirmDialog from '../../../../../components/ConfirmDialog';
 import { getIntegrationAppUrlName } from '../../../../../utils/integrationApps';
 
 const useStyles = makeStyles(theme => ({
@@ -63,6 +63,7 @@ export default function ConnectorInstallation(props) {
   const classes = useStyles();
   const { integrationId } = props.match.params;
   const [selectedConnectionId, setSelectedConnectionId] = useState(null);
+  const { confirmDialog } = useConfirmDialog();
   const [isSetupComplete, setIsSetupComplete] = useState(false);
   const dispatch = useDispatch();
   const integration = useSelector(state =>
