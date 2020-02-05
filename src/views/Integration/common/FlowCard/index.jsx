@@ -8,7 +8,7 @@ import { makeStyles } from '@material-ui/styles';
 import { Typography, Grid, IconButton } from '@material-ui/core';
 import actions from '../../../../actions';
 import * as selectors from '../../../../reducers';
-import { defaultConfirmDialog } from '../../../../components/ConfirmDialog';
+import useConfirmDialog from '../../../../components/ConfirmDialog';
 import FlowEllipsisMenu from '../../../../components/FlowEllipsisMenu';
 import RunFlowButton from '../../../../components/RunFlowButton';
 import SettingsIcon from '../../../../components/icons/SettingsIcon';
@@ -87,6 +87,7 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
 
     return '';
   });
+  const { defaultConfirmDialog } = useConfirmDialog();
   const patchFlow = useCallback(
     (path, value) => {
       const patchSet = [{ op: 'replace', path, value }];
@@ -144,6 +145,7 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
       }
     );
   }, [
+    defaultConfirmDialog,
     dispatch,
     flowDetails._connectorId,
     flowDetails._id,
