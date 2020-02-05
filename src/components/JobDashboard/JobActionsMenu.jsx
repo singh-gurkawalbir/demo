@@ -8,7 +8,7 @@ import { useHistory } from 'react-router-dom';
 import { JOB_STATUS, JOB_TYPES } from '../../utils/constants';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
-import { confirmDialog } from '../ConfirmDialog';
+import useConfirmDialog from '../ConfirmDialog';
 import { COMM_STATES } from '../../reducers/comms/networkComms';
 import CommStatus from '../CommStatus';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
@@ -36,6 +36,7 @@ export default function JobActionsMenu({
   const dispatch = useDispatch();
   const history = useHistory();
   const [enqueueSnackbar, closeSnackbar] = useEnqueueSnackbar();
+  const { confirmDialog } = useConfirmDialog();
   const [anchorEl, setAnchorEl] = useState(null);
   const [actionsToMonitor, setActionsToMonitor] = useState({});
   const [showRetriesDialog, setShowRetriesDialog] = useState(false);

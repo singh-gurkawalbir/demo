@@ -480,7 +480,9 @@ export function* getResourceCollection({ resourceType }) {
       });
 
       sharedStacks = sharedStacks.map(stack => ({ ...stack, shared: true }));
-      collection = [...collection, ...sharedStacks];
+
+      if (!collection) collection = sharedStacks;
+      else collection = [...collection, ...sharedStacks];
     }
 
     if (resourceType === 'transfers') {
@@ -488,7 +490,8 @@ export function* getResourceCollection({ resourceType }) {
         path: '/transfers/invited',
       });
 
-      collection = [...collection, ...invitedTransfers];
+      if (!collection) collection = invitedTransfers;
+      else collection = [...collection, ...invitedTransfers];
     }
 
     yield put(actions.resource.receivedCollection(resourceType, collection));
@@ -609,6 +612,15 @@ export function* receivedResource({ resourceType, resource }) {
 
 export function* authorizedConnection({ connectionId }) {
   yield put(actions.connection.madeOnline(connectionId));
+  const { merged: connectionResource } = yield select(
+    selectors.resourceData,
+    'connections',
+    connectionId
+  );
+
+  if (connectionResource && connectionResource.type === 'netsuite') {
+    yield put(actions.resource.request('connections', connectionId));
+  }
 }
 
 export function* refreshConnectionStatus({ integrationId }) {

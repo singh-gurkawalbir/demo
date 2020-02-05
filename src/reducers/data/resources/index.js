@@ -450,8 +450,8 @@ export function resourceList(
     return result;
   }
 
-  if (type === 'assistants') {
-    return state['ui/assistants'];
+  if (type === 'ui/assistants') {
+    return state[type];
   }
 
   const resources = state[type];

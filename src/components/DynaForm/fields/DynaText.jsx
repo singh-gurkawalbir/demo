@@ -49,7 +49,7 @@ export default function DynaText(props) {
   }, [options]);
   useEffect(() => {
     if (valueChanged && options && typeof options === 'string') {
-      onFieldChange(id, options);
+      onFieldChange(id, options, true);
       setValueChanged(false);
     }
   }, [id, onFieldChange, options, valueChanged]);

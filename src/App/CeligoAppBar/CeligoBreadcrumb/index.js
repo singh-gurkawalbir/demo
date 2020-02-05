@@ -32,6 +32,7 @@ const useStyles = makeStyles(theme => ({
     fontSize: 13,
   },
   crumb: {
+    paddingTop: 2,
     [theme.breakpoints.down('sm')]: {
       maxWidth: 200,
       whiteSpace: 'nowrap',

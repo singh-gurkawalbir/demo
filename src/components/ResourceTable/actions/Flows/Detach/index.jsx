@@ -2,12 +2,13 @@ import { useDispatch } from 'react-redux';
 import { IconButton } from '@material-ui/core';
 import actions from '../../../../../actions';
 import Icon from '../../../../icons/CloseIcon';
-import { confirmDialog } from '../../../../ConfirmDialog';
+import useConfirmDialog from '../../../../ConfirmDialog';
 
 export default {
   label: 'Detach Flow',
   component: function DetachFlow({ resource }) {
     const dispatch = useDispatch();
+    const { confirmDialog } = useConfirmDialog();
     const handleDetachFlow = () => {
       const message = `Are you sure you want to detach 
       ${resource.name || resource._id} flow from this integration?`;

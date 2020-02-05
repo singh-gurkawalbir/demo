@@ -897,7 +897,7 @@ export default {
   },
   'http.auth.oauth.scope': {
     type: 'selectscopes',
-    label: 'Scopes',
+    label: 'Configure Scopes',
   },
   'http.auth.oauth.scopeDelimiter': {
     type: 'text',
@@ -2057,8 +2057,8 @@ export default {
       {
         items: [
           { label: 'Basic', value: 'basic' },
-          { label: 'TBA (Manual)', value: 'token' },
-          { label: 'TBA (Automated)', value: 'oauth' },
+          { label: 'Token Based Auth (Manual)', value: 'token' },
+          { label: 'Token Based Auth (Automatic)', value: 'token-auto' },
         ],
       },
     ],

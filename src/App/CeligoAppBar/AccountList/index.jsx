@@ -8,11 +8,11 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import { useHistory } from 'react-router-dom';
+import useConfirmDialog from '../../../components/ConfirmDialog';
 import ArrowPopper from '../../../components/ArrowPopper';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
 import ArrowDownIcon from '../../../components/icons/ArrowDownIcon';
-import { confirmDialog } from '../../../components/ConfirmDialog';
 import getRoutePath from '../../../utils/routePaths';
 import IconTextButton from '../../../components/IconTextButton';
 import TrashIcon from '../../../components/icons/TrashIcon';
@@ -122,6 +122,7 @@ export default function AccountList() {
     dispatch(actions.user.org.accounts.switchTo({ id }));
   };
 
+  const { confirmDialog } = useConfirmDialog();
   const handleAccountLeaveClick = account => {
     handleClose();
     confirmDialog({

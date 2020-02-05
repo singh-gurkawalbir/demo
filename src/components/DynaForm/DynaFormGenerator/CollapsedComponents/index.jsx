@@ -19,6 +19,9 @@ const useStyles = makeStyles(theme => ({
   expPanelSummary: {
     flexDirection: 'row-reverse',
     paddingLeft: 0,
+    minHeight: 'unset',
+    height: 48,
+    display: 'inline-flex',
     '& > .MuiExpansionPanelSummary-expandIcon': {
       padding: 0,
       margin: theme.spacing(-0.5, 0.5, 0, 0),
@@ -28,6 +31,12 @@ const useStyles = makeStyles(theme => ({
     },
     '&.Mui-expanded': {
       minHeight: 0,
+    },
+    '& > .MuiExpansionPanelSummary-content': {
+      margin: 0,
+      '&.Mui-expanded': {
+        margin: 0,
+      },
     },
   },
   expansionPanel: {
