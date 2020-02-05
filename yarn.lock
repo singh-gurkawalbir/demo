@@ -11292,10 +11292,10 @@ react-error-overlay@^4.0.1:
   resolved "https://registry.yarnpkg.com/react-error-overlay/-/react-error-overlay-4.0.1.tgz#417addb0814a90f3a7082eacba7cee588d00da89"
   integrity sha512-xXUbDAZkU08aAkjtUvldqbvI04ogv+a1XdHxvYuHPYKIVk/42BIOD0zSKTHAWV4+gDy3yGm283z2072rA2gdtw==
 
-react-forms-processor@0.0.40:
-  version "0.0.40"
-  resolved "https://registry.yarnpkg.com/react-forms-processor/-/react-forms-processor-0.0.40.tgz#c3d9fdd5df227d02aa38e1243b7526b297bf2bc7"
-  integrity sha512-mMJJtG9fPwoF/tbkhYSAY5fq3VkQ/HXnXHxQSeCzAYDJym9Ay0PijkrLkBEr5LGPOeqakaHEZ+3n1PSG9xRj8Q==
+react-forms-processor@^0.0.43:
+  version "0.0.43"
+  resolved "https://registry.yarnpkg.com/react-forms-processor/-/react-forms-processor-0.0.43.tgz#79abada91fab5c7dcdf74a5c4510ea252fd41203"
+  integrity sha512-2fvXwiILjnsZ68zAKPMgWbViRsTQDv2sSg0Bxnce1/dOIgNGhqEZPdOv5C0B0yUyfdvARHGhXD802/rJHktN0Q==
   dependencies:
     flow-copy-source "^2.0.2"
     lodash "^4.17.10"
