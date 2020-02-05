@@ -1,6 +1,6 @@
 import { Fragment, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Route, useLocation } from 'react-router-dom';
+import { Route, useLocation, generatePath } from 'react-router-dom';
 import { makeStyles, Typography, IconButton } from '@material-ui/core';
 import LoadResources from '../../../components/LoadResources';
 import ResourceForm from '../../../components/ResourceFormFactory';
@@ -208,7 +208,11 @@ export default function Panel(props) {
       // For webhook generate URL case
       if (formState.skipClose) {
         props.history.replace(
-          `/pg/${resourceType}/edit/${resourceType}/${newResourceId || id}`
+          generatePath(match.path, {
+            id: newResourceId || id,
+            resourceType,
+            operation,
+          })
         );
 
         return;
