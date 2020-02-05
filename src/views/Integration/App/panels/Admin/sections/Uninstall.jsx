@@ -4,7 +4,7 @@ import { useHistory, useRouteMatch } from 'react-router-dom';
 import { Typography, Button, Divider } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import PanelHeader from '../../../../../../components/PanelHeader';
-import { confirmDialog } from '../../../../../../components/ConfirmDialog';
+import useConfirmDialog from '../../../../../../components/ConfirmDialog';
 import actions from '../../../../../../actions';
 import * as selectors from '../../../../../../reducers';
 import DeleteIcon from '../../../../../../components/icons/TrashIcon';
@@ -37,6 +37,7 @@ export default function UninstallSection({ storeId, integrationId }) {
   const dispatch = useDispatch();
   const history = useHistory();
   const match = useRouteMatch();
+  const { confirmDialog } = useConfirmDialog();
   const integration =
     useSelector(state =>
       selectors.integrationAppSettings(state, integrationId)
