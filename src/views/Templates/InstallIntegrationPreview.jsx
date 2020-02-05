@@ -5,7 +5,7 @@ import { Grid, Typography, Button } from '@material-ui/core';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
 import CeligoTable from '../../components/CeligoTable';
-import { confirmDialog } from '../../components/ConfirmDialog';
+import useConfirmDialog from '../../components/ConfirmDialog';
 import templateUtil from '../../utils/template';
 import Spinner from '../../components/Spinner';
 import Loader from '../../components/Loader';
@@ -59,6 +59,7 @@ export default function TemplatePreview(props) {
   const components = useSelector(state =>
     selectors.previewTemplate(state, templateId)
   );
+  const { confirmDialog } = useConfirmDialog();
   const columns = [
     {
       heading: 'Name',

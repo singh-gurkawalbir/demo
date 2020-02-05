@@ -2,12 +2,13 @@ import { useDispatch } from 'react-redux';
 import { IconButton } from '@material-ui/core';
 import actions from '../../../../../actions';
 import Icon from '../../../../icons/RevokeTokenIcon';
-import { confirmDialog } from '../../../../ConfirmDialog';
+import useConfirmDialog from '../../../../ConfirmDialog';
 
 export default {
   label: 'Revoke',
   component: function Revoke({ resource: connection }) {
     const dispatch = useDispatch();
+    const { confirmDialog } = useConfirmDialog();
     const handleClick = () => {
       const message = [
         'Are you sure you want to revoke',
