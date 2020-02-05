@@ -14,6 +14,11 @@ const useStyle = makeStyles(theme => ({
       padding: theme.spacing(3, 0),
     },
   },
+  closeButton: {
+    position: 'absolute',
+    right: theme.spacing(1),
+    top: 2,
+  },
 }));
 
 export default function ScheduleDrawer({ flow, isViewMode }) {

@@ -34,8 +34,11 @@ const TransferListModal = props => {
         <Button
           data-test="saveSelectedScopes"
           variant="outlined"
-          color="secondary"
-          onClick={() => onFieldChange(id, selectedScopes)}>
+          color="primary"
+          onClick={() => {
+            onFieldChange(id, selectedScopes);
+            handleClose();
+          }}>
           Save
         </Button>
       </Fragment>

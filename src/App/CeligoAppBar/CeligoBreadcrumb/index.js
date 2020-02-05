@@ -32,16 +32,13 @@ const useStyles = makeStyles(theme => ({
     fontSize: 13,
   },
   crumb: {
-    whiteSpace: 'nowrap',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    // even though things are centered in CSS, the line height of the text makes it
-    // look like its not centered wrt the > icon. Adding a bit of top padding
-    // pushed the text down and aligns the center lines. @Azhar, is there a better fix?
     paddingTop: 2,
-    // TODO: Azhar, at your convenience, this could be a media
-    // query where large screens have longer cut-off width.
-    maxWidth: 200,
+    [theme.breakpoints.down('sm')]: {
+      maxWidth: 200,
+      whiteSpace: 'nowrap',
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+    },
   },
 }));
 // These routes are shared for IA and DIY routes.
