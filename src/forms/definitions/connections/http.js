@@ -343,6 +343,7 @@ export default {
     },
     'http._iClientId': {
       fieldId: 'http._iClientId',
+      required: true,
       visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
     },
     'http.auth.oauth.clientCredentialsLocation': {
