@@ -2798,7 +2798,7 @@ export function commStatusByKey(state, key) {
 // TODO: This all needs to be refactored, and the code that uses is too.
 // The extra data points added to the results should be a different selector
 // also the new selector (that fetches metadata about a token) should be for a
-// SINGLE resource and then called in the iterator function of the presentation 
+// SINGLE resource and then called in the iterator function of the presentation
 // layer.
 export function accessTokenList(
   state,
