@@ -1,7 +1,7 @@
 import { useDispatch } from 'react-redux';
 import actions from '../../actions';
 import SwitchOnOff from '../SwitchToggle';
-import { confirmDialog } from '../ConfirmDialog';
+import useConfirmDialog from '../ConfirmDialog';
 
 export default {
   label: 'Off/On',
@@ -11,7 +11,7 @@ export default {
     storeId,
   }) {
     // TODO: Connector specific things to be added for schedule drawer incase of !isDisabled && isConnector
-
+    const { confirmDialog } = useConfirmDialog();
     const dispatch = useDispatch();
     const enableOrDisableFlow = () => {
       const enable = flow.disabled;
