@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { withRouter, Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
+import { Typography } from '@material-ui/core';
 import AddIcon from '../../components/icons/AddIcon';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import { MODEL_PLURAL_TO_LABEL, generateNewId } from '../../utils/resource';
@@ -98,10 +99,18 @@ function ResourceList(props) {
       </CeligoPageBar>
       <div className={classes.resultContainer}>
         <LoadResources required resources={resourceType}>
-          <ResourceTable
-            resourceType={resourceType}
-            resources={list.resources}
-          />
+          {list.count === 0 ? (
+            <Typography>
+              {list.total === 0
+                ? `You don't have any ${resourceName.toLowerCase()}s.`
+                : 'Your search didn’t return any matching results. Try expanding your search criteria.'}
+            </Typography>
+          ) : (
+            <ResourceTable
+              resourceType={resourceType}
+              resources={list.resources}
+            />
+          )}
         </LoadResources>
       </div>
       <ShowMoreDrawer
