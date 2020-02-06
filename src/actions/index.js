@@ -159,10 +159,11 @@ const resource = {
   deleted: (resourceType, id) =>
     action(actionTypes.RESOURCE.DELETED, { resourceType, id }),
 
-  requestReferences: (resourceType, id) =>
+  requestReferences: (resourceType, id, options) =>
     action(actionTypes.RESOURCE.REFERENCES_REQUEST, {
       resourceType,
       id,
+      options,
     }),
 
   clearReferences: () => action(actionTypes.RESOURCE.REFERENCES_CLEAR, {}),

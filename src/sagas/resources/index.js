@@ -422,11 +422,14 @@ export function* getResource({ resourceType, id, message }) {
   }
 }
 
-export function* requestReferences({ resourceType, id }) {
+export function* requestReferences({ resourceType, id, options = {} }) {
   const path = `/${resourceType}/${id}/dependencies`;
 
   try {
-    const resourceReferences = yield call(apiCallWithRetry, { path });
+    const resourceReferences = yield call(apiCallWithRetry, {
+      path,
+      hidden: !!options.ignoreError,
+    });
 
     yield put(actions.resource.receivedReferences(resourceReferences));
 
