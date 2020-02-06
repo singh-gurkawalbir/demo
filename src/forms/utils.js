@@ -144,6 +144,9 @@ export const isAnyFieldTouchedForMeta = ({ layout, fieldMap }, fields) =>
     .filter(field => field.touched)
     .some(({ id }) => !!getFieldByIdFromLayout(layout, fieldMap, id));
 
+export const fieldsTouchedForMeta = ({ layout, fieldMap }, fields) =>
+  fields.filter(({ id }) => !!getFieldByIdFromLayout(layout, fieldMap, id));
+
 export const getFieldByNameFromLayout = (layout, fieldMap, name) => {
   if (!layout) return null;
   const { fields, containers } = layout;

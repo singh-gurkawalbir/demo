@@ -21,7 +21,7 @@ const useStyles = makeStyles(theme => ({
     padding: '0px',
   },
   optionImg: {
-    minWidth: '120px',
+    width: '120px',
     display: 'flex',
     float: 'left',
     alignItems: 'center',
@@ -41,6 +41,10 @@ const useStyles = makeStyles(theme => ({
     transform: 'unset',
     position: 'static',
     marginBottom: theme.spacing(1),
+  },
+  img: {
+    maxWidth: '100%',
+    padding: '0px 16px',
   },
   selectedContainer: {
     display: 'flex',
@@ -67,7 +71,7 @@ export default function SelectApplication(props) {
   const assistants = useSelector(
     state =>
       selectors.resourceList(state, {
-        type: 'assistants',
+        type: 'ui/assistants',
       }),
     (left, right) => isEqual(left, right)
   );
@@ -197,6 +201,7 @@ export default function SelectApplication(props) {
             <ApplicationImg
               type={type === 'webhook' ? value : type}
               assistant={icon}
+              className={classes.img}
             />
           </span>
           <span className={classes.optionLabel}>{props.label}</span>

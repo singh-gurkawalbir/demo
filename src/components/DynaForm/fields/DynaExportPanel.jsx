@@ -52,7 +52,6 @@ const useStyles = makeStyles(theme => ({
     position: 'relative',
     backgroundColor: 'white',
     maxHeight: 400,
-    maxWidth: 680,
     overflow: 'scroll',
     color: theme.palette.text.hint,
   },
@@ -60,9 +59,9 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(2),
   },
   clipBoardContainer: {
+    width: '100%',
     borderTop: `1px solid ${theme.palette.background.paper2}`,
     minHeight: theme.spacing(6),
-    maxWidth: 680,
     position: 'relative',
     padding: theme.spacing(1),
     backgroundColor: 'white',

@@ -121,7 +121,7 @@ export default function menuItems(
       ],
     },
     {
-      label: 'Editor playground (Beta)',
+      label: 'Editor playground (alpha)',
       Icon: EditorsPlaygroundIcon,
       path: '/editors',
     },

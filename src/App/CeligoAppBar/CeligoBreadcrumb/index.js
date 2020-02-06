@@ -32,12 +32,13 @@ const useStyles = makeStyles(theme => ({
     fontSize: 13,
   },
   crumb: {
-    whiteSpace: 'nowrap',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    // TODO: Azhar, at your convenience, this could be a media
-    // query where large screens have longer cut-off width.
-    maxWidth: 200,
+    paddingTop: 2,
+    [theme.breakpoints.down('sm')]: {
+      maxWidth: 200,
+      whiteSpace: 'nowrap',
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+    },
   },
 }));
 // These routes are shared for IA and DIY routes.

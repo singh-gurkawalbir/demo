@@ -58,6 +58,7 @@ class AuditLog extends Component {
   render() {
     const {
       classes,
+      className,
       resourceDetails,
       affectedResources,
       users,
@@ -71,7 +72,7 @@ class AuditLog extends Component {
         required
         resources="integrations, flows, exports, imports, connections">
         <Fragment>
-          <div className={classes.root}>
+          <div className={(classes.root, className)}>
             <Filters
               affectedResources={affectedResources}
               resourceDetails={resourceDetails}

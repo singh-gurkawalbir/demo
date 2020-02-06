@@ -1176,7 +1176,7 @@ export default {
   'connection.http.auth.revoke.uri':
     'This is the URL that we will use to revoke this token’s access to this endpoint.',
   'connection.http.auth.oauth.grantType':
-    'A dropdown list of options—this will depend on the API service provider requirements.',
+    'This list will depend on the API service provider requirements.',
   'connection.http.auth.oauth.callbackURL':
     'The client application callback URL redirected to after auth, and that should be registered with the API provider.',
   'connection.http.auth.oauth.clientCredentialsLocation':
@@ -1184,12 +1184,11 @@ export default {
   'connection.http.auth.oauth.tokenURI':
     'This is the URL that we will get the access token from.',
   'connection.http.auth.oauth.scopeDelimiter':
-    "Use this field to override the default delimiter (' ') used to separate scope values sent to the HTTP API during the authorization process.",
+    'Provide the non-space delimiter your provider uses to delimit scopes',
   'connection.http.auth.oauth.authURI':
     'This is the endpoint for the API provider’s authorization server where the auth code is retrieved from.',
   'connection.http.auth.oauth.scope':
-    ' This is the scope of access you are requesting. Use spaces to separate values. If your provider uses a custom delimiter, check the box to use an alternate scope delimiter.',
-
+    'This is the scope of access you are requesting. Use spaces to separate values. If your provider uses a custom delimiter, check the box to use an alternate scope delimiter.',
   'connection.rest.pingMethod':
     'The HTTP method (GET/PUT/POST/HEAD) to use when making the ping request.',
   'connection.rest.pingBody':
@@ -1225,13 +1224,12 @@ export default {
     "Login to your Shopify store and navigate to 'Apps' section. Click on the respective private app and the password can be found next to the 'Authentication' section.",
   'connection.netsuite.authType':
     "Please choose ‘Basic’ to use your NetSuite email and password for this connection, or choose 'Token Based Auth' to use NetSuite's Token Based Authentication. Token Based Auth is much more secure than email and password, and your tokens will never expire untill revoked in NetSuite, and is NetSuite’s recommended way of configuring a connection. There are two ways to configure Token Based Auth: </br><b>1.Token Based Auth(Manual) : </b>A user would have to manually create the Tokens in NetSuite and enter them in IO.Please read <a href=https://celigosuccess.zendesk.com/hc/en-us/articles/115000694991-NetSuite-2018-2-two-factor-authentication-2FA-requirement>here</a> on generating tokens manually. Once you generate the tokens, please keep them secure as they can be re-used for multiple connections.</br> <b>2.Token Based Auth(Automatic) :</b> [Recommended] Integrator will generate tokens on behalf of the user. Once you select this option, IO will redirect you to NetSuite login page and you can select the role for which you need to generate the tokens. Please note that authorising a connection generates a new set of tokens in NetSuite everytime, so anytime a connection is created/edited with this option will generate a new set of tokens.",
-
   'connection.netsuite.linkSuiteScriptIntegrator':
     "Prior to integrator.io, NetSuite integrations built by Celigo ran directly inside your NetSuite account via a managed bundle. If you are still running any of these older integrations this field must be used to link integrator.io to your NetSuite account. Celigo's older UI that ran directly inside NetSuite has been deprecated, and users are required to use integrator.io going forward to manage and monitor all integrations.",
   'connection.configureApiRateLimits':
     'By default the HTTP adaptor will treat all HTTP responses with status code 429 as being rate-limited and then look for a “retry-after” header to determine when our platform can retry the request. If the service you are connecting to respects these HTTP specifications, then you do not need any additional configuration. If however your service implements a custom rate-limit response structure, use these options to tell our platform how to identify and respond to a rate-limited response.',
   'connection.http.auth.oauth.applicationType':
-    "These are the OAuth 2.0 providers currently supported by integrator.io. Please contact support if you need an application that is not currently listed here, and it is also worth checking with the application provider to see if they have any other forms of API authentication available. For example, Shopify supports both OAuth 2.0 and Basic Auth (i.e. username and password). Keep in mind too that once a new OAuth 2.0 provider is supported by integrator.io you will likely be able to choose that application directly in the 'Connection Type' field (vs connecting at the technology level via HTTP or REST).",
+    'For some providers, OAuth 2.0 is built into the app’s endpoint. You will need to use Custom for any apps that do not have OAuth 2.0 built in.',
   'connection.http._iClientId':
     'iClient lets you configure your developer access and secret keys for your marketplace region.',
   'connection.marketplaceRegion':

@@ -1,10 +1,11 @@
 import { Button } from '@material-ui/core';
 import { useDispatch } from 'react-redux';
-import { confirmDialog } from '../../../../../../../components/ConfirmDialog';
+import useConfirmDialog from '../../../../../../../components/ConfirmDialog';
 import actions from '../../../../../../../actions';
 
 export default function AddonInstallerButton({ resource }) {
   const dispatch = useDispatch();
+  const { confirmDialog } = useConfirmDialog();
   const onClick = resource => {
     if (resource.status === 'installed') {
       confirmDialog({
