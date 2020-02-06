@@ -45,9 +45,13 @@ export default {
     }
 
     if (newValues['/inputMode'] === 'blob') {
+      newValues['/ftp/fileName'] = newValues['/ftp/blobFileName'];
       newValues['/ftp/useTempFile'] = newValues['/ftp/blobUseTempFile'];
       newValues['/ftp/inProgressFileName'] =
         newValues['/ftp/blobInProgressFileName'];
+      delete newValues['/ftp/blobFileName'];
+      delete newValues['/ftp/blobUseTempFile'];
+      delete newValues['/ftp/blobInProgressFileName'];
     }
 
     if (newValues['/ftp/useTempFile'] === false) {
@@ -224,6 +228,9 @@ export default {
     'ftp.inProgressFileName': {
       fieldId: 'ftp.inProgressFileName',
     },
+    'ftp.blobFileName': {
+      fieldId: 'ftp.blobFileName',
+    },
     'ftp.blobUseTempFile': {
       fieldId: 'ftp.blobUseTempFile',
     },
@@ -260,6 +267,7 @@ export default {
       'ftp.fileName',
       'file.xml.body',
       'file',
+      'ftp.blobFileName',
       'ftp.blobUseTempFile',
       'ftp.blobInProgressFileName',
       'dataMappings',

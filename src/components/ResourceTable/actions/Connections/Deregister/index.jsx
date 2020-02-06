@@ -2,12 +2,13 @@ import { useDispatch } from 'react-redux';
 import { IconButton } from '@material-ui/core';
 import actions from '../../../../../actions';
 import CloseIcon from '../../../../icons/CloseIcon';
-import { confirmDialog } from '../../../../ConfirmDialog';
+import useConfirmDialog from '../../../../ConfirmDialog';
 
 export default {
   label: 'Deregister',
   component: function Deregister({ resource: connection, integrationId }) {
     const dispatch = useDispatch();
+    const { confirmDialog } = useConfirmDialog();
     const handleClick = () => {
       const message = [
         'Are you sure you want to deregister',
