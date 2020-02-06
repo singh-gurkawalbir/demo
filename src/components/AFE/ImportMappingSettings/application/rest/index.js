@@ -9,6 +9,7 @@ export default {
       lookup = {},
       extractFields,
       generate,
+      lookups,
       options = {},
     } = params;
     const {
@@ -465,11 +466,15 @@ export default {
             },
           ],
         },
+
         'conditional.lookupName': {
           id: 'conditional.lookupName',
           name: 'conditionalLookupName',
-          type: 'text',
           label: 'Lookup name:',
+          type: 'textwithlookupextract',
+          fieldType: 'ignoreExistingData',
+          connectionId,
+          refreshOptionsOnChangesTo: ['lookups'],
           defaultValue: value.conditional && value.conditional.lookupName,
           visibleWhen: [
             {
@@ -478,6 +483,12 @@ export default {
             },
           ],
           required: true,
+        },
+        lookups: {
+          fieldId: 'lookups',
+          id: 'lookups',
+          visible: false,
+          defaultValue: lookups,
         },
       },
       layout: {
@@ -512,7 +523,7 @@ export default {
           {
             collapsed: true,
             label: 'Advanced',
-            fields: ['conditional.when', 'conditional.lookupName'],
+            fields: ['lookups', 'conditional.when', 'conditional.lookupName'],
           },
         ],
       },
@@ -545,6 +556,21 @@ export default {
 
         if (fieldId === 'lookup.relativeURI') {
           return { resourceName };
+        }
+
+        if (fieldId === 'conditional.lookupName') {
+          const lookupField = fields.find(field => field.fieldId === 'lookups');
+
+          return {
+            lookups: {
+              fieldId: 'lookups',
+              data:
+                (lookupField &&
+                  Array.isArray(lookupField.value) &&
+                  lookupField.value) ||
+                [],
+            },
+          };
         }
 
         return null;

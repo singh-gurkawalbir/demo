@@ -51,7 +51,11 @@ export default function IgnoreExistingData(props) {
     return matchedString;
   };
 
-  const getUpdatedFieldValue = (userInput, cursorPosition, insertedVal) => {
+  const getUpdatedFieldValue = (
+    userInput = '',
+    cursorPosition,
+    insertedVal
+  ) => {
     const textBeforeCursor = userInput.substring(0, cursorPosition);
     const spaceIndexBeforeCursor = textBeforeCursor.lastIndexOf(' ');
     const preText = userInput.substring(0, spaceIndexBeforeCursor + 1);

@@ -173,7 +173,7 @@ export default function InputWithLookupHandlebars(props) {
 
   const handleLookupAdd = lookup => {
     if (lookup) {
-      const _lookups = [...lookups, lookup];
+      const _lookups = lookups ? [...lookups, lookup] : [lookup];
 
       handleSuggestionClick(lookup.name, true);
       onLookupUpdate(_lookups);
