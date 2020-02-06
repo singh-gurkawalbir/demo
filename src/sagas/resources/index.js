@@ -595,12 +595,15 @@ export function* requestDebugLogs({ connectionId }) {
 
   try {
     response = yield call(apiCallWithRetry, { path });
-    yield put(actions.connection.receivedDebugLogs(response, connectionId));
+    yield put(
+      actions.connection.receivedDebugLogs(
+        response ||
+          'There are no logs available for this connection. Please run your flow so that we can record the outgoing and incoming traffic to this connection.',
+        connectionId
+      )
+    );
   } catch (error) {
-    if (error.status === 404) {
-      response = `No Debug Logs found for the specified connectionId: ${connectionId}`;
-      yield put(actions.connection.receivedDebugLogs(response, connectionId));
-    }
+    return undefined;
   }
 }
 

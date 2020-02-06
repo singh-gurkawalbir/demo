@@ -328,7 +328,9 @@ export function resource(state, resourceType, id) {
 
   if (!resources) return null;
 
-  const match = resources.find(r => r._id === id);
+  const match = resources.find(r =>
+    resourceType === 'tiles' ? r._integrationId === id : r._id === id
+  );
 
   if (!match) return null;
 
