@@ -92,6 +92,7 @@ export default function ResourceDrawerRoute({
         <ResourceDrawer
           {...props}
           flowId={flowId}
+          parentUrl={match.url}
           integrationId={integrationId}
           disabled={disabled}
         />
