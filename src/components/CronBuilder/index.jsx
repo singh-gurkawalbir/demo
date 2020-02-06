@@ -245,7 +245,7 @@ export default function CronBuilder(props) {
             type: 'tabWithoutSave',
             containers: [
               {
-                label: 'Every selected minute',
+                label: 'Each selected minute',
                 fields: ['everySelectedMinute'],
               },
               { label: 'Every n Minutes', fields: ['everyNMinutes'] },
