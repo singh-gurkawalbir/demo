@@ -218,14 +218,14 @@ const connectors = [
   {
     id: 'constantcontactv2',
     name: 'Constant Contact V2',
-    type: 'http',
+    type: 'rest',
     assistant: 'constantcontactv2',
     icon: 'constantcontactv3',
   },
   {
     id: 'constantcontactv3',
     name: 'Constant Contact V3',
-    type: 'http',
+    type: 'rest',
     assistant: 'constantcontactv3',
     icon: 'constantcontactv3',
   },
