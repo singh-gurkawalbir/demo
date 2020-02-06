@@ -419,6 +419,45 @@ export default {
           helpKey: 'mapping.extractDateTimezone',
           visibleWhen: [{ field: 'fieldMappingType', is: ['standard'] }],
         },
+        'conditional.when': {
+          id: 'conditional.when',
+          name: 'conditionalWhen',
+          type: 'select',
+          label: 'Only perform mapping when:',
+          defaultValue: value.conditional && value.conditional.when,
+          options: [
+            {
+              items: [
+                {
+                  label: 'Source record has a value',
+                  value: 'extract_not_empty',
+                },
+                {
+                  label: 'Lookup finds a record',
+                  value: 'lookup_not_empty',
+                },
+                {
+                  label: 'Lookup finds no records',
+                  value: 'lookup_empty',
+                },
+              ],
+            },
+          ],
+        },
+        'conditional.lookupName': {
+          id: 'conditional.lookupName',
+          name: 'conditionalLookupName',
+          type: 'text',
+          label: 'Lookup name:',
+          defaultValue: value.conditional && value.conditional.lookupName,
+          visibleWhen: [
+            {
+              field: 'conditional.when',
+              is: ['lookup_not_empty', 'lookup_empty'],
+            },
+          ],
+          required: true,
+        },
       },
       layout: {
         fields: [
@@ -446,6 +485,14 @@ export default {
           'lookupSFSelect',
           'extractDateFormat',
           'extractDateTimezone',
+        ],
+        type: 'collapse',
+        containers: [
+          {
+            collapsed: true,
+            label: 'Advanced',
+            fields: ['conditional.when', 'conditional.lookupName'],
+          },
         ],
       },
       optionsHandler: (fieldId, fields) => {

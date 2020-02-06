@@ -77,6 +77,7 @@ export default {
       generate,
       generateFields = [],
       options,
+      lookups,
     } = params;
     let fieldMeta = {};
 
@@ -89,6 +90,7 @@ export default {
           extractFields,
           generate,
           options,
+          lookups,
         });
         break;
       case adaptorTypeMap.NetSuiteDistributedImport:
@@ -99,6 +101,7 @@ export default {
           generate,
           generateFields,
           options,
+          lookups,
         });
         break;
       case adaptorTypeMap.SalesforceImport:
@@ -109,6 +112,7 @@ export default {
           generate,
           generateFields,
           options,
+          lookups,
         });
         break;
       case adaptorTypeMap.AS2Import:
@@ -120,6 +124,7 @@ export default {
           lookup,
           extractFields,
           options,
+          lookups,
         });
         break;
       default:
@@ -254,6 +259,18 @@ export default {
       updatedLookup = getFormattedLookup(lookup, formVal);
 
       settings.lookupName = updatedLookup && updatedLookup.name;
+    }
+
+    if (formVal.conditionalWhen) {
+      settings.conditional = {};
+      settings.conditional.when = formVal.conditionalWhen;
+
+      if (
+        formVal.conditionalWhen === 'lookup_not_empty' ||
+        formVal.conditionalWhen === 'lookup_empty'
+      ) {
+        settings.conditional.lookupName = formVal.conditionalLookupName;
+      }
     }
 
     return {

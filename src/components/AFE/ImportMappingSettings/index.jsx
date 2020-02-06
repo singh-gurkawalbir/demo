@@ -43,6 +43,7 @@ export default function ImportMappingSettings(props) {
     application,
     options,
     disabled,
+    lookups,
   } = props;
   const { generate, extract, index } = value;
   const [enquesnackbar] = useEnqueueSnackbar();
@@ -54,6 +55,7 @@ export default function ImportMappingSettings(props) {
     generate,
     generateFields,
     options,
+    lookups,
   });
   const handleSubmit = formVal => {
     const {

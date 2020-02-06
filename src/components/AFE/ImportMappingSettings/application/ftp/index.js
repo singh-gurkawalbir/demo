@@ -324,6 +324,23 @@ export default {
             { field: 'fieldMappingType', is: ['standard'] },
           ],
         },
+        'conditional.when': {
+          id: 'conditional.when',
+          name: 'conditionalWhen',
+          type: 'select',
+          label: 'Only perform mapping when:',
+          defaultValue: value.conditional && value.conditional.when,
+          options: [
+            {
+              items: [
+                {
+                  label: 'Source record has a value',
+                  value: 'extract_not_empty',
+                },
+              ],
+            },
+          ],
+        },
       },
       layout: {
         fields: [
@@ -345,6 +362,14 @@ export default {
           'extractDateTimezone',
           'generateDateFormat',
           'generateDateTimezone',
+        ],
+        type: 'collapse',
+        containers: [
+          {
+            collapsed: true,
+            label: 'Advanced',
+            fields: ['conditional.when'],
+          },
         ],
       },
       optionsHandler: (fieldId, fields) => {

@@ -23,6 +23,7 @@ export default function MappingSettingsField(props) {
     options,
     value,
     disabled,
+    lookups,
   } = props;
   const [showSettings, setShowSettings] = useState(false);
   const isDisabled = !('generate' in value);
@@ -53,6 +54,7 @@ export default function MappingSettingsField(props) {
           extractFields={extractFields}
           generateFields={generateFields}
           disabled={disabled}
+          lookups={lookups}
         />
       )}
 

@@ -23,6 +23,7 @@ export default {
       generate,
       generateFields,
       options,
+      lookups,
     } = params;
     const { connectionId, recordType, isGroupedSampleData = false } = options;
     const fieldId =
@@ -492,6 +493,65 @@ export default {
           helpKey: 'mapping.extractDateTimezone',
           visibleWhen: [{ field: 'fieldMappingType', is: ['standard'] }],
         },
+        'conditional.when': {
+          id: 'conditional.when',
+          name: 'conditionalWhen',
+          type: 'select',
+          label: 'Only perform mapping when:',
+          defaultValue: value.conditional && value.conditional.when,
+          options: [
+            {
+              items: [
+                {
+                  label: 'Creating a record',
+                  value: 'record_created',
+                },
+                {
+                  label: 'Updating a record',
+                  value: 'record_updated',
+                },
+                {
+                  label: 'Source record has a value',
+                  value: 'extract_not_empty',
+                },
+                {
+                  label: 'Lookup finds a record',
+                  value: 'lookup_not_empty',
+                },
+                {
+                  label: 'Lookup finds no records',
+                  value: 'lookup_empty',
+                },
+                {
+                  label:
+                    'Destination record being updated does NOT already have a value for this field',
+                  value: 'ignore_if_set',
+                },
+              ],
+            },
+          ],
+        },
+        lookups: { fieldId: 'lookups', visible: false, defaultValue: lookups },
+
+        'conditional.lookupName': {
+          id: 'conditional.lookupName',
+          name: 'conditionalLookupName',
+          label: 'Lookup Name',
+          type: 'text',
+          // type: 'textwithlookupextract',
+          // fieldType: 'ignoreExistingData',
+          // label: 'Existing Data Id',
+          // connectionId,
+          // refreshOptionsOnChangesTo: ['lookups'],
+          defaultValue: value.conditional && value.conditional.lookupName,
+          visibleWhen: [
+            {
+              field: 'conditional.when',
+              is: ['lookup_not_empty', 'lookup_empty'],
+            },
+          ],
+          required: true,
+        },
       },
       layout: {
         fields: [
@@ -522,7 +582,16 @@ export default {
           'extractDateTimezone',
           'isKey',
         ],
+        type: 'collapse',
+        containers: [
+          {
+            collapsed: true,
+            label: 'Advanced',
+            fields: ['lookups', 'conditional.when', 'conditional.lookupName'],
+          },
+        ],
       },
+
       optionsHandler: (fieldId, fields) => {
         if (fieldId === 'expression') {
           const functionsField = fields.find(field => field.id === 'functions');
@@ -626,6 +695,20 @@ export default {
             commMetaPath: `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${recordTypeField.value}/searchColumns`,
           };
         }
+        // else if (fieldId === 'conditional.lookupName') {
+        //   const lookupField = fields.find(field => field.fieldId === 'lookups');
+
+        //   return {
+        //     lookups: {
+        //       fieldId: 'lookups',
+        //       data:
+        //         (lookupField &&
+        //           Array.isArray(lookupField.value) &&
+        //           lookupField.value) ||
+        //         [],
+        //     },
+        //   };
+        // }
 
         return null;
       },

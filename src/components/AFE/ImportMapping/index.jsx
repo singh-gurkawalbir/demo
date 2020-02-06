@@ -430,6 +430,7 @@ export default function ImportMapping(props) {
                       mapping.lookupName &&
                       getLookup(mapping.lookupName)
                     }
+                    lookups={lookups}
                     extractFields={extractFields}
                     generateFields={generateFields}
                   />
