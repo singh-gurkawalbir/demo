@@ -675,7 +675,7 @@ export default {
         ],
       },
       {
-        collapsed: false,
+        collapsed: true,
         label: 'API Rate Limits',
         fields: [
           'http.rateLimit.limit',
@@ -686,7 +686,7 @@ export default {
         ],
       },
       {
-        collapsed: false,
+        collapsed: true,
         label: 'How to test connection?',
         fields: [
           'http.ping.relativeURI',
