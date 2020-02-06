@@ -18,7 +18,7 @@ import {
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { COMM_STATES } from '../../reducers/comms/networkComms';
-import { confirmDialog } from '../ConfirmDialog';
+import useConfirmDialog from '../ConfirmDialog';
 import CommStatus from '../CommStatus';
 
 const mapDispatchToProps = dispatch => ({
@@ -49,7 +49,7 @@ class UserDetail extends Component {
 
   handleActionClick = action => {
     this.setState({ anchorEl: null });
-
+    const { confirmDialog } = useConfirmDialog();
     const {
       user,
       disableUser,

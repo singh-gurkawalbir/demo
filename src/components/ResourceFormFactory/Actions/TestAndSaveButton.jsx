@@ -4,7 +4,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers/index';
-import GenericConfirmDialog from '../../ConfirmDialog';
+import useConfirmDialog from '../../ConfirmDialog';
 import DynaAction from '../../DynaForm/DynaAction';
 import { PING_STATES } from '../../../reducers/comms/ping';
 import { PingMessage } from './TestButton';
@@ -27,29 +27,41 @@ const ConfirmDialog = props => {
     handleSaveCompleted,
     commErrorMessage,
   } = props;
+  const { confirmDialog } = useConfirmDialog();
 
-  return (
-    <GenericConfirmDialog
-      title="Confirm"
-      message={`Test failed for this connection with the following error. ${commErrorMessage}. Do you want to save this connection regardless (i.e. in offline mode)?`}
-      buttons={[
-        {
-          label: 'No',
-          onClick: () => {
-            handleSaveCompleted();
-            handleCloseAndClearForm();
+  useEffect(() => {
+    if (commErrorMessage)
+      confirmDialog({
+        title: 'Confirm',
+        message: `Test failed for this connection with the following error. ${commErrorMessage}. Do you want to save this connection regardless (i.e. in offline mode)?`,
+        buttons: [
+          {
+            label: 'No',
+            onClick: () => {
+              handleSaveCompleted();
+              handleCloseAndClearForm();
+            },
           },
-        },
-        {
-          label: 'Yes',
-          onClick: () => {
-            handleSubmit(formValues);
-            handleCloseAndClearForm();
+          {
+            label: 'Yes',
+            onClick: () => {
+              handleSubmit(formValues);
+              handleCloseAndClearForm();
+            },
           },
-        },
-      ]}
-    />
-  );
+        ],
+      });
+    else confirmDialog(null);
+  }, [
+    commErrorMessage,
+    confirmDialog,
+    formValues,
+    handleCloseAndClearForm,
+    handleSaveCompleted,
+    handleSubmit,
+  ]);
+
+  return null;
 };
 
 function reducer(state, action) {
@@ -141,21 +153,19 @@ const TestAndSaveButton = props => {
 
   return (
     <Fragment>
-      {erroredMessage && (
-        <ConfirmDialog
-          commErrorMessage={erroredMessage}
-          formValues={formValues}
-          handleCloseAndClearForm={() =>
-            dispatchLocalAction({
-              type: 'clearFormData',
-            })
-          }
-          handleSaveCompleted={() =>
-            dispatchLocalAction({ type: 'saveCompleted' })
-          }
-          handleSubmit={handleSubmitForm}
-        />
-      )}
+      <ConfirmDialog
+        commErrorMessage={erroredMessage}
+        formValues={formValues}
+        handleCloseAndClearForm={() =>
+          dispatchLocalAction({
+            type: 'clearFormData',
+          })
+        }
+        handleSaveCompleted={() =>
+          dispatchLocalAction({ type: 'saveCompleted' })
+        }
+        handleSubmit={handleSubmitForm}
+      />
       {/* Test button which hides the test button and shows the ping snackbar */}
       <PingMessage resourceId={resourceType} />
       {/* its a two step process we first test the connection then we save..therefore we disable testAndSave button during this period */}

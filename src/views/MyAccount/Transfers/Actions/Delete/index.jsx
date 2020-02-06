@@ -3,12 +3,13 @@ import { useCallback } from 'react';
 import { IconButton } from '@material-ui/core';
 import actions from '../../../../../actions';
 import CloseIcon from '../../../../../components/icons/TrashIcon';
-import { confirmDialog } from '../../../../../components/ConfirmDialog';
+import useConfirmDialog from '../../../../../components/ConfirmDialog';
 
 export default {
   label: 'Delete transfer',
   component: function Delete({ resource: transfer }) {
     const dispatch = useDispatch();
+    const { confirmDialog } = useConfirmDialog();
     const deleteTransfer = useCallback(() => {
       dispatch(actions.resource.delete('transfers', transfer._id));
     }, [dispatch, transfer._id]);

@@ -3,13 +3,14 @@ import { useDispatch } from 'react-redux';
 import { IconButton } from '@material-ui/core';
 import Icon from '../../../../icons/PurgeIcon';
 import actions from '../../../../../actions';
-import { confirmDialog } from '../../../../ConfirmDialog';
+import useConfirmDialog from '../../../../ConfirmDialog';
 import { RESOURCE_TYPE_LABEL_TO_SINGULAR } from '../../../../../constants/resource';
 
 export default {
   label: 'Purge',
   component: function Purge({ resource }) {
     const dispatch = useDispatch();
+    const { confirmDialog } = useConfirmDialog();
     const handleClick = () => {
       confirmDialog({
         title: 'Confirm',
