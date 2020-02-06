@@ -932,6 +932,7 @@ export default {
   },
   'http.auth.oauth.accessTokenBody': {
     type: 'httprequestbody',
+    contentType: 'json',
     label: 'Access token body',
   },
   'http._iClientId': {
@@ -1001,6 +1002,7 @@ export default {
   },
   'http.auth.token.revoke.body': {
     type: 'httprequestbody',
+    contentType: 'json',
     label: 'Revoke Body',
   },
   'http.auth.token.revoke.headers': {
@@ -1111,6 +1113,7 @@ export default {
   },
   'http.auth.token.refreshBody': {
     type: 'httprequestbody',
+    contentType: 'json',
     label: 'Refresh Body',
   },
   'http.auth.token.refreshTokenPath': {
