@@ -42,8 +42,10 @@ function OAuthButton(props) {
   return (
     <DynaAction
       {...rest}
+      resourceType={resourceType}
       disabled={disabled || disableSave}
       className={classes.actionButton}
+      ignoreFormTouchedCheck
       onClick={handleSubmitForm}>
       {disableSave ? 'Authorizing' : label || 'Save & Authorize'}
     </DynaAction>
