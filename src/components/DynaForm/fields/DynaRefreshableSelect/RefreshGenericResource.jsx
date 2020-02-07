@@ -108,9 +108,9 @@ export default function RefreshGenericResource(props) {
   useEffect(() => {
     if (isDefaultValueChanged) {
       if (resetValue) {
-        onFieldChange(id, multiselect ? [] : '');
+        onFieldChange(id, multiselect ? [] : '', true);
       } else {
-        onFieldChange(id, defaultValue);
+        onFieldChange(id, defaultValue, true);
       }
 
       setIsDefaultValueChanged(false);

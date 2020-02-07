@@ -294,6 +294,8 @@ export default {
       type: 'checkbox',
       label: 'This provider uses a scope delimiter other than space',
       visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
+      helpText:
+        'If your provider does not use spaces to delimit scopes, check this box, then provide the custom scope delimiter for your provider.',
     },
     'http.auth.oauth.type': {
       fieldId: 'http.auth.oauth.type',
@@ -341,6 +343,7 @@ export default {
     },
     'http._iClientId': {
       fieldId: 'http._iClientId',
+      required: true,
       visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
     },
     'http.auth.oauth.clientCredentialsLocation': {

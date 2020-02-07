@@ -19,6 +19,7 @@ import WithAuth from './AppRoutingWithAuth';
 import Signin from '../views/SignIn';
 import * as gainsight from '../utils/analytics/gainsight';
 import { getDomain } from '../utils/resource';
+import { ConfirmDialogProvider } from '../components/ConfirmDialog';
 
 // The makeStyles function below does not have access to the theme.
 // We can only use the theme in components that are children of
@@ -70,26 +71,28 @@ export default function App() {
 
   return (
     <MuiThemeProvider key={reloadCount} theme={theme}>
-      <SnackbarProvider maxSnack={3}>
-        <FontStager />
-        <CssBaseline />
-        <DndProvider backend={HTML5Backend}>
-          <BrowserRouter>
-            <div className={classes.root}>
-              <NetworkSnackbar />
-              {/* Headers */}
-              <Switch>
-                <Route path="/pg/signin" component={null} />
-                <Route path="/pg*" component={NonSigninHeaderComponents} />
-              </Switch>
-              {/* page content */}
-              <WithAuth>
-                <PageContentComponents />
-              </WithAuth>
-            </div>
-          </BrowserRouter>
-        </DndProvider>
-      </SnackbarProvider>
+      <ConfirmDialogProvider>
+        <SnackbarProvider maxSnack={3}>
+          <FontStager />
+          <CssBaseline />
+          <DndProvider backend={HTML5Backend}>
+            <BrowserRouter>
+              <div className={classes.root}>
+                <NetworkSnackbar />
+                {/* Headers */}
+                <Switch>
+                  <Route path="/pg/signin" component={null} />
+                  <Route path="/pg*" component={NonSigninHeaderComponents} />
+                </Switch>
+                {/* page content */}
+                <WithAuth>
+                  <PageContentComponents />
+                </WithAuth>
+              </div>
+            </BrowserRouter>
+          </DndProvider>
+        </SnackbarProvider>
+      </ConfirmDialogProvider>
     </MuiThemeProvider>
   );
 }

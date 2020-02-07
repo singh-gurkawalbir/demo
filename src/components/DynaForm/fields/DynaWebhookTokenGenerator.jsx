@@ -46,7 +46,7 @@ function DynaWebhookTokenGenerator(props) {
     setToken(tokenValue);
     onFieldChange(id, tokenValue);
     setFieldIds.forEach(fieldId => {
-      onFieldChange(fieldId, '');
+      onFieldChange(fieldId, '', true);
     });
     const formValuesCopy = deepClone(formValues);
 
@@ -91,7 +91,7 @@ function DynaWebhookTokenGenerator(props) {
         resourceId
       );
 
-      onFieldChange('webhook.url', whURL);
+      onFieldChange('webhook.url', whURL, true);
       setUrl(false);
     }
   }, [finalResourceId, id, onFieldChange, options, resourceId, url, value]);

@@ -37,7 +37,7 @@ export default function RefreshableIntegrationAppSetting(props) {
       const { label } = selectedOption;
 
       // save it as a valueLabel
-      onFieldChange(fieldName, { id: value, label });
+      onFieldChange(fieldName, { id: value, label }, true);
     }
   }, [fieldName, onFieldChange, options, value, valueAndLabel]);
 

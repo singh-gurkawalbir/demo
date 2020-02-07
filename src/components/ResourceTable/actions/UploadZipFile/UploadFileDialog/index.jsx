@@ -10,9 +10,9 @@ import {
   Typography,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import CloseIcon from '../icons/CloseIcon';
-import { MODEL_PLURAL_TO_LABEL } from '../../utils/resource';
-import actions from '../../actions';
+import CloseIcon from '../../../../icons/CloseIcon';
+import { MODEL_PLURAL_TO_LABEL } from '../../../../../utils/resource';
+import actions from '../../../../../actions';
 
 const useStyles = makeStyles(theme => ({
   title: {

@@ -23,7 +23,7 @@ import getRoutePath from '../../../utils/routePaths';
 import IntegrationTabs from '../common/Tabs';
 import { INTEGRATION_DELETE_VALIDATE } from '../../../utils/messageStore';
 import { STANDALONE_INTEGRATION } from '../../../utils/constants';
-import { confirmDialog } from '../../../components/ConfirmDialog';
+import useConfirmDialog from '../../../components/ConfirmDialog';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 
 const useStyles = makeStyles(theme => ({
@@ -64,6 +64,7 @@ export default function Integration({ history, match }) {
   const { integrationId } = match.params;
   const dispatch = useDispatch();
   const [enqueueSnackbar] = useEnqueueSnackbar();
+  const { confirmDialog } = useConfirmDialog();
   const integration = useSelector(state =>
     selectors.resource(state, 'integrations', integrationId)
   );

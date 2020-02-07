@@ -897,7 +897,7 @@ export default {
   },
   'http.auth.oauth.scope': {
     type: 'selectscopes',
-    label: 'Scopes',
+    label: 'Configure Scopes',
   },
   'http.auth.oauth.scopeDelimiter': {
     type: 'text',
@@ -931,7 +931,7 @@ export default {
     label: 'Access token headers',
   },
   'http.auth.oauth.accessTokenBody': {
-    type: 'text',
+    type: 'httprequestbody',
     label: 'Access token body',
   },
   'http._iClientId': {
@@ -1000,7 +1000,7 @@ export default {
     label: 'Revoke URL',
   },
   'http.auth.token.revoke.body': {
-    type: 'text',
+    type: 'httprequestbody',
     label: 'Revoke Body',
   },
   'http.auth.token.revoke.headers': {
@@ -1110,7 +1110,7 @@ export default {
     required: true,
   },
   'http.auth.token.refreshBody': {
-    type: 'text',
+    type: 'httprequestbody',
     label: 'Refresh Body',
   },
   'http.auth.token.refreshTokenPath': {
@@ -2057,8 +2057,8 @@ export default {
       {
         items: [
           { label: 'Basic', value: 'basic' },
-          { label: 'TBA (Manual)', value: 'token' },
-          { label: 'TBA (Automated)', value: 'oauth' },
+          { label: 'Token Based Auth (Manual)', value: 'token' },
+          { label: 'Token Based Auth (Automatic)', value: 'token-auto' },
         ],
       },
     ],

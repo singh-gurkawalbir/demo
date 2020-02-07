@@ -1,7 +1,7 @@
 import { Fragment, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { IconButton } from '@material-ui/core';
-import { confirmDialog } from '../../../ConfirmDialog';
+import useConfirmDialog from '../../../ConfirmDialog';
 import Icon from '../../../icons/TrashIcon';
 import actions from '../../../../actions';
 import * as selectors from '../../../../reducers';
@@ -16,6 +16,7 @@ export default {
     const resourceReferences = useSelector(state =>
       selectors.resourceReferences(state)
     );
+    const { confirmDialog } = useConfirmDialog();
     const type =
       resourceType && resourceType.indexOf('/licenses') >= 0
         ? 'license'
