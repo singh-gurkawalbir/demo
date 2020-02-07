@@ -55,8 +55,17 @@ function OfflineConnectionDrawer() {
   const history = useHistory();
   const match = useRouteMatch();
   const { integrationId, connectionId } = match.params;
-  const tile = useSelector(state =>
-    selectors.resource(state, 'tiles', integrationId)
+  const tile = useSelector(
+    state =>
+      selectors.resourceList(state, {
+        type: 'tiles',
+        filter: { _integrationId: integrationId },
+      }).resources[0],
+    (left, right) =>
+      left._integrationId === right._integrationId &&
+      left.offlineConnections &&
+      right.offlineConnections &&
+      left.offlineConnections.length === right.offlineConnections.length
   );
   const showSubNav =
     tile && tile.offlineConnections && tile.offlineConnections.length > 1;
@@ -71,7 +80,7 @@ function OfflineConnectionDrawer() {
         connections.find(conn => conn._id === connId)
       );
     },
-    (left, right) => left.length === right.length
+    (left, right) => left && right && left.length === right.length
   );
   const handleClose = useCallback(() => {
     history.goBack();
