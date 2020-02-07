@@ -16,6 +16,23 @@ export default {
       },
     ],
   },
+  'netsuite_da.subrecords': {
+    label: 'Subrecords',
+    required: false,
+    type: 'netsuitesubrecords',
+    // filterKey: 'suitescript-recordTypes',
+    // commMetaPath: r =>
+    //   r &&
+    //   `netsuite/metadata/suitescript/connections/${r._connectionId}/recordTypes`,
+    // placeholder: 'Please select a record type',
+    connectionId: r => r && r._connectionId,
+    // visibleWhen: [
+    //   {
+    //     field: 'inputMode',
+    //     is: ['records'],
+    //   },
+    // ],
+  },
   'netsuite_da.mapping': {
     type: 'mapping',
     connectionId: r => r && r._connectionId,
