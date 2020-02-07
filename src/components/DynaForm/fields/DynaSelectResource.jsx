@@ -98,6 +98,11 @@ const useStyles = makeStyles({
     display: 'flex',
     alignItems: 'flex-start',
   },
+  menuItem: {
+    maxWidth: '95%',
+    textOverflow: 'ellipsis',
+    overflow: 'hidden',
+  },
 });
 
 function DynaSelectResource(props) {
@@ -225,6 +230,17 @@ function DynaSelectResource(props) {
     statusExport,
     value,
   ]);
+  const truncatedItems = items =>
+    items.map(i => ({
+      label: (
+        <div title={i.label} className={classes.menuItem}>
+          {i.label}
+        </div>
+      ),
+      value: i.value,
+    }));
+
+  console.log(truncatedItems(resourceItems || []));
 
   return (
     <div className={classes.root}>
@@ -240,7 +256,7 @@ function DynaSelectResource(props) {
             {...props}
             disabled={disableSelect}
             removeHelperText={isAddingANewResource}
-            options={[{ items: resourceItems || [] }]}
+            options={[{ items: truncatedItems(resourceItems || []) }]}
           />
         )}
       </LoadResources>

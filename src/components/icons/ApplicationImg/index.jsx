@@ -10,7 +10,8 @@ const useStyles = makeStyles(theme => ({
     maxHeight: theme.spacing(16),
   },
 }));
-const iconMap = (type = '') => {
+
+function iconMap(type = '') {
   if (type.toLowerCase().includes('ftp')) return 'ftp';
 
   if (type.toLowerCase().includes('http')) return 'http';
@@ -40,19 +41,25 @@ const iconMap = (type = '') => {
   if (type.toLowerCase().includes('rdbms')) return 'rdbms';
 
   return type;
-};
+}
 
 export default function ApplicationImg({
   size = 'small',
+  markOnly = false,
   assistant,
   type,
   className,
 }) {
   const classes = useStyles();
-  const path = `${
-    process.env.CDN_BASE_URI
-  }images/flow-builder/company-logos/integration-icon-${assistant ||
-    iconMap(type)}.png`;
+  let path = `${process.env.CDN_BASE_URI}images/`;
+
+  if (!assistant) {
+    path += `flow-builder/company-logos/integration-icon-${iconMap(type)}.png`;
+  } else if (markOnly) {
+    path += `marketplace/small/${assistant}.png`;
+  } else {
+    path += `flow-builder/company-logos/integration-icon-${assistant}.png`;
+  }
 
   return (
     <img

@@ -30,6 +30,7 @@ const connectors = [
     name: 'FTP',
     type: 'ftp',
     keywords: 'sftp,ftps,technology,protocol',
+    group: 'tech',
   },
   {
     id: 'wrapper',
@@ -91,7 +92,8 @@ const connectors = [
   {
     id: 'integrator-extension',
     type: 'webhook',
-    name: 'integrator.io Extension',
+    name: 'integrator.io extension',
+    icon: 'integratorio',
     webhookOnly: true,
   },
   {
@@ -360,7 +362,7 @@ const connectors = [
   { id: 'insightly', name: 'Insightly', type: 'rest', assistant: 'insightly' },
   {
     id: 'integratorio',
-    name: 'Integrator.io',
+    name: 'integrator.io',
     type: 'rest',
     assistant: 'integratorio',
   },
