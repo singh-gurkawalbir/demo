@@ -210,7 +210,8 @@ const useStyles = makeStyles(theme => ({
     marginRight: 50,
   },
   dataLoaderHelp: {
-    margin: theme.spacing(5),
+    margin: theme.spacing(5, 0, 0, 5),
+    maxWidth: 450,
   },
   // NOTE: 52px is collapsed left side bar. 410px is right page header action buttons + padding
   // we use these to force the input to be as large as possible in the pageBar
@@ -644,7 +645,7 @@ function FlowBuilder() {
                 pageProcessors.length === 0 && (
                   <Typography variant="h5" className={classes.dataLoaderHelp}>
                     You can add a destination application once you complete the
-                    configuration of your data loader
+                    configuration of your data loader.
                   </Typography>
                 )}
             </div>

@@ -52,7 +52,7 @@ export default function InstallIntegrationDialog(props) {
 
   return (
     <ModalDialog onClose={onClose} show>
-      <div>Upload Integration Zip File</div>
+      <div>Upload integration zip file</div>
       <div>
         <label htmlFor="fileUpload">
           <Button

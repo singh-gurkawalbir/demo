@@ -11,7 +11,7 @@ export default function InstallIntegrationDialog(props) {
       onClose={onClose}
       show
       aria-labelledby="integration-install-dialog">
-      <div> Upload Integration Zip File</div>
+      <div> Upload integration zip file</div>
       <div>
         <UploadFile fileType={fileType} history={history} />
       </div>
