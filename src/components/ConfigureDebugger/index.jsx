@@ -65,7 +65,7 @@ export default function ConfigureDebugger(props) {
 
   return (
     <ModalDialog show onClose={onClose}>
-      <div>{name}</div>
+      <div>Configure Debugger: {name}</div>
       <div className={classes.container}>
         <form onSubmit={handleOnSubmit}>
           <FormControl component="fieldset">
