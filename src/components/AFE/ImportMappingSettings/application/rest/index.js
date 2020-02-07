@@ -485,6 +485,7 @@ export default {
           required: true,
         },
         lookups: {
+          name: 'lookups',
           fieldId: 'lookups',
           id: 'lookups',
           visible: false,

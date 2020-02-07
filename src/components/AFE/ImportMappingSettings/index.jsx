@@ -63,6 +63,7 @@ export default function ImportMappingSettings(props) {
       lookup: updatedLookup,
       errorStatus,
       errorMessage,
+      conditionalLookup,
     } = ApplicationMappingSettings.getFormattedValue(
       { generate, extract, lookup },
       formVal
@@ -87,6 +88,10 @@ export default function ImportMappingSettings(props) {
       const isDelete = true;
 
       updateLookup(isDelete, lookup);
+    }
+
+    if (conditionalLookup) {
+      updateLookup(false, conditionalLookup);
     }
 
     onClose(true, settings);

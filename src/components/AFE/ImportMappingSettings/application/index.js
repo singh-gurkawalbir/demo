@@ -137,6 +137,7 @@ export default {
     let errorStatus = false;
     let errorMessage = '';
     const settings = {};
+    let conditionalLookup;
 
     settings.generate = generate;
 
@@ -270,6 +271,19 @@ export default {
         formVal.conditionalWhen === 'lookup_empty'
       ) {
         settings.conditional.lookupName = formVal.conditionalLookupName;
+
+        if (formVal.lookups) {
+          const tempLookUp = formVal.lookups.find(
+            l => l.name === formVal.conditionalLookupName
+          );
+
+          if (
+            tempLookUp &&
+            (!updatedLookup || updatedLookup.name !== tempLookUp.name)
+          ) {
+            conditionalLookup = tempLookUp;
+          }
+        }
       }
     }
 
@@ -278,6 +292,7 @@ export default {
       lookup: updatedLookup,
       errorStatus,
       errorMessage,
+      conditionalLookup,
     };
   },
 };
