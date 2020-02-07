@@ -61,7 +61,7 @@ export default function InstallIntegrationDialog(props) {
             color="secondary"
             component="span"
             className={classes.uploadButton}>
-            Select Zip File
+            Select zip file
           </Button>
           <input
             data-test="uploadFile"
