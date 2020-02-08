@@ -240,7 +240,7 @@ function DynaSelectResource(props) {
       value: i.value,
     }));
 
-  console.log(truncatedItems(resourceItems || []));
+  // console.log(truncatedItems(resourceItems || []));
 
   return (
     <div className={classes.root}>
