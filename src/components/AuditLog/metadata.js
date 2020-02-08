@@ -32,7 +32,7 @@ export default {
       width: '10%',
     },
     {
-      heading: 'Name/Id',
+      heading: 'Name/ID',
       value: (al, actionProps) => getResourceLink(al, actionProps),
       width: '10%',
     },

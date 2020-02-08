@@ -2795,6 +2795,11 @@ export function commStatusByKey(state, key) {
   return commStatus;
 }
 
+// TODO: This all needs to be refactored, and the code that uses is too.
+// The extra data points added to the results should be a different selector
+// also the new selector (that fetches metadata about a token) should be for a
+// SINGLE resource and then called in the iterator function of the presentation
+// layer.
 export function accessTokenList(
   state,
   { integrationId, take, keyword, sort, sandbox }
@@ -2867,8 +2872,6 @@ export function accessTokenList(
 
   tokensList.filtered -= tokensList.resources.length - tokens.length;
   tokensList.resources = tokens;
-  tokensList.total = (tokensList.resources || []).length;
-  tokensList.count = (tokensList.resources || []).length;
 
   if (typeof take !== 'number' || take < 1) {
     return tokensList;
