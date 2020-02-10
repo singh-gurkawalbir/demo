@@ -893,15 +893,15 @@ export default {
   },
   'http.auth.oauth.tokenURI': {
     type: 'text',
-    label: 'Access Token URL',
+    label: 'Access token URL',
   },
   'http.auth.oauth.scope': {
     type: 'selectscopes',
-    label: 'Configure Scopes',
+    label: 'Scopes',
   },
   'http.auth.oauth.scopeDelimiter': {
     type: 'text',
-    label: 'Custom Scope Delimiter',
+    label: 'Custom scope delimiter',
   },
   'http.auth.oauth.accessTokenPath': {
     type: 'text',
@@ -913,7 +913,7 @@ export default {
   },
   'http.auth.oauth.clientCredentialsLocation': {
     type: 'select',
-    label: 'Client Authentication',
+    label: 'Client authentication',
     options: [
       {
         items: [
@@ -928,11 +928,10 @@ export default {
     keyName: 'name',
     valueName: 'value',
     valueType: 'keyvalue',
-    label: 'Access Token headers',
+    label: 'Access token headers',
   },
   'http.auth.oauth.accessTokenBody': {
-    type: 'httprequestbody',
-    contentType: 'json',
+    type: 'text',
     label: 'Access token body',
   },
   'http._iClientId': {
@@ -944,7 +943,7 @@ export default {
   },
   'http.auth.oauth.grantType': {
     type: 'select',
-    label: 'Grant Type',
+    label: 'Grant type',
     options: [
       {
         items: [
@@ -1001,8 +1000,7 @@ export default {
     label: 'Revoke URL',
   },
   'http.auth.token.revoke.body': {
-    type: 'httprequestbody',
-    contentType: 'json',
+    type: 'text',
     label: 'Revoke Body',
   },
   'http.auth.token.revoke.headers': {
@@ -1112,8 +1110,7 @@ export default {
     required: true,
   },
   'http.auth.token.refreshBody': {
-    type: 'httprequestbody',
-    contentType: 'json',
+    type: 'text',
     label: 'Refresh Body',
   },
   'http.auth.token.refreshTokenPath': {
@@ -2060,8 +2057,8 @@ export default {
       {
         items: [
           { label: 'Basic', value: 'basic' },
-          { label: 'Token Based Auth (Manual)', value: 'token' },
-          { label: 'Token Based Auth (Automatic)', value: 'token-auto' },
+          { label: 'TBA (Manual)', value: 'token' },
+          { label: 'TBA (Automated)', value: 'oauth' },
         ],
       },
     ],
