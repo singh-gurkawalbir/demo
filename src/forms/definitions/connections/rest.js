@@ -153,7 +153,7 @@ export default {
     type: 'collapse',
     containers: [
       {
-        collapsed: false,
+        collapsed: true,
         label: 'How to test connection?',
         fields: [
           'rest.pingMethod',
