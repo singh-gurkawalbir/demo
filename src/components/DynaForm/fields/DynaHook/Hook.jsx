@@ -1,4 +1,4 @@
-import { useState, Fragment, useEffect, useCallback } from 'react';
+import { useMemo, useState, Fragment, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import InputLabel from '@material-ui/core/InputLabel';
@@ -132,6 +132,12 @@ export default function DynaHook(props) {
     label: stack.name,
     value: stack._id,
   }));
+  const optionalSaveParams = useMemo(
+    () => ({
+      processorKey: 'scriptEdit',
+    }),
+    []
+  );
 
   return (
     <Fragment>
@@ -146,9 +152,7 @@ export default function DynaHook(props) {
           insertStubKey={hookStage}
           entryFunction={value.function || hooksToFunctionNamesMap[hookStage]}
           onClose={handleClose}
-          optionalSaveParams={{
-            processorKey: 'scriptEdit',
-          }}
+          optionalSaveParams={optionalSaveParams}
           patchOnSave
         />
       )}

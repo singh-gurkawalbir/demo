@@ -3,14 +3,14 @@ export default {
     const patches = {
       foregroundPatch: undefined,
     };
-    const { content, scriptId } = editor;
+    const { code, scriptId } = editor;
 
     patches.foregroundPatch = {
       patch: [
         {
           op: 'replace',
           path: '/content',
-          value: content,
+          value: code,
         },
       ],
       resourceType: 'scripts',
