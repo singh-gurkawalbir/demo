@@ -27,6 +27,6 @@ export default (state = null, action) => {
 export function avatarUrl(state) {
   if (!state || !state.emailHash) return undefined;
 
-  return `https://secure.gravatar.com/avatar/${state.emailHash}?d=mm&s=55`;
+  return `https://secure.gravatar.com/avatar/${state.emailHash}?d=${process.env.CDN_BASE_URI}images/icons/icon-user.png&s=55`;
 }
 // #endregion PUBLIC SELECTORS
