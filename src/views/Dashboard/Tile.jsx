@@ -105,10 +105,11 @@ function Tile({ tile, history }) {
       }
 
       if (tile.status === TILE_STATUS.HAS_OFFLINE_CONNECTIONS) {
-        // TODO - open connection edit
         history.push(
           getRoutePath(
-            `/dashboard/edit/connections/${tile.offlineConnections[0]}`
+            `/dashboard/${tile._integrationId}/offlineconnections/${
+              tile.offlineConnections[0]
+            }`
           )
         );
       } else if (tile.status === TILE_STATUS.IS_PENDING_SETUP) {
