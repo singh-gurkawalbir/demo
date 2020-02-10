@@ -1,3 +1,5 @@
+import actions from '../../../../actions';
+
 export default {
   patchSet: editor => {
     const patches = {
@@ -6,20 +8,20 @@ export default {
     };
     const {
       processor,
-      rule,
+      rule: filterRules = [],
       scriptId,
       code,
       entryFunction,
       optionalSaveParams = {},
     } = editor;
-    const { resourceId, resourceType } = optionalSaveParams;
-    const type = processor === 'transform' ? 'expression' : 'script';
-    const path = '/transform';
+    const { resourceId, resourceType, rules } = optionalSaveParams || {};
+    const type = processor === 'filter' ? 'expression' : 'script';
+    const path = '/filter';
     const value = {
       type,
       expression: {
         version: 1,
-        rules: rule ? [rule] : [[]],
+        rules: filterRules || [],
       },
       script: {
         _scriptId: scriptId,
@@ -45,6 +47,17 @@ export default {
         resourceType: 'scripts',
         resourceId: scriptId,
       });
+    }
+
+    if ((type === 'expression' && !rules.length) || !scriptId) {
+      // If user configures filters first time
+      if ((type === 'expression' && filterRules.length) || scriptId) {
+        patches.backgroundPatches.push({
+          action: actions.analytics.gainsight.trackEvent(
+            'EXPORT_HAS_CONFIGURED_FILTER'
+          ),
+        });
+      }
     }
 
     return patches;

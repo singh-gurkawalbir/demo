@@ -1,4 +1,4 @@
-import { useEffect, Fragment, useMemo, useCallback } from 'react';
+import { useEffect, Fragment, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
@@ -29,79 +29,7 @@ function ExportFilterDialog({ flowId, resource, isViewMode, onClose }) {
       entryFunction: script.function,
     };
   }, [resource]);
-  const saveScript = useCallback(
-    values => {
-      const { code, scriptId } = values;
-      const patchSet = [
-        {
-          op: 'replace',
-          path: '/content',
-          value: code,
-        },
-      ];
-
-      dispatch(actions.resource.patchStaged(scriptId, patchSet, 'value'));
-      dispatch(actions.resource.commitStaged('scripts', scriptId, 'value'));
-    },
-    [dispatch]
-  );
-  const saveExportFilter = useCallback(
-    values => {
-      const { processor, rule, scriptId, entryFunction } = values;
-      const filterType = processor === 'filter' ? 'expression' : 'script';
-      const path = '/filter';
-      const value = {
-        type: filterType,
-        expression: {
-          version: 1,
-          rules: rule || [],
-        },
-        script: {
-          _scriptId: scriptId,
-          function: entryFunction,
-        },
-      };
-      const patchSet = [{ op: 'replace', path, value }];
-
-      // Save the resource
-      dispatch(actions.resource.patchStaged(resourceId, patchSet, 'value'));
-      dispatch(actions.resource.commitStaged('exports', resourceId, 'value'));
-    },
-    [dispatch, resourceId]
-  );
-  const handleClose = (shouldCommit, editorValues) => {
-    if (shouldCommit) {
-      const {
-        processor,
-        rule: filterRules = [],
-        scriptId: filterScript,
-      } = editorValues;
-      const filterType = processor === 'filter' ? 'expression' : 'script';
-
-      if (filterType === 'script') {
-        // Incase of script type, save script changes
-        saveScript(editorValues);
-      }
-
-      // Save Filter rules
-      saveExportFilter(editorValues);
-
-      // If there are no filters ( no mapping rules / no script configured ) before
-      if ((filterType === 'expression' && !rules.length) || !scriptId) {
-        // If user configures filters first time
-        if (
-          (filterType === 'expression' && filterRules.length) ||
-          filterScript
-        ) {
-          dispatch(
-            actions.analytics.gainsight.trackEvent(
-              'EXPORT_HAS_CONFIGURED_FILTER'
-            )
-          );
-        }
-      }
-    }
-
+  const handleClose = () => {
     onClose();
   };
 
@@ -118,6 +46,16 @@ function ExportFilterDialog({ flowId, resource, isViewMode, onClose }) {
     }
   }, [dispatch, flowId, resourceId, sampleData]);
 
+  const optionalSaveParams = useMemo(
+    () => ({
+      processorKey: 'exportFilter',
+      resourceId,
+      resourceType: 'exports',
+      rules,
+    }),
+    [resourceId, rules]
+  );
+
   return (
     <ExportFilterToggleEditorDialog
       title="Define Output Filter"
@@ -130,6 +68,7 @@ function ExportFilterDialog({ flowId, resource, isViewMode, onClose }) {
       entryFunction={entryFunction || hooksToFunctionNamesMap.filter}
       insertStubKey="filter"
       onClose={handleClose}
+      optionalSaveParams={optionalSaveParams}
     />
   );
 }

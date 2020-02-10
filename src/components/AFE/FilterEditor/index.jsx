@@ -21,7 +21,7 @@ const useStyles = makeStyles({
 });
 
 export default function FilterEditor(props) {
-  const { editorId, disabled, layout = 'column' } = props;
+  const { editorId, disabled, layout = 'column', optionalSaveParams } = props;
   const classes = useStyles(props);
   const { data, result, error, initChangeIdentifier } = useSelector(state =>
     selectors.editor(state, editorId)
@@ -36,9 +36,10 @@ export default function FilterEditor(props) {
         data: props.data,
         autoEvaluate: false,
         rule: props.rule,
+        optionalSaveParams,
       })
     );
-  }, [dispatch, editorId, props.data, props.rule]);
+  }, [dispatch, editorId, optionalSaveParams, props.data, props.rule]);
   const handleDataChange = data => {
     dispatch(actions.editor.patch(editorId, { data }));
   };

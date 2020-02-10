@@ -103,10 +103,12 @@ export function* saveProcessor({ id }) {
 
   if (backgroundPatches && Array.isArray(backgroundPatches)) {
     for (let index = 0; index < backgroundPatches.length; index += 1) {
-      const { patch, resourceType, resourceId } =
+      const { action, patch, resourceType, resourceId } =
         backgroundPatches[index] || {};
 
-      if (!!patch && !!resourceType && !!resourceId) {
+      if (action) {
+        yield put(backgroundPatches[index].action);
+      } else if (!!patch && !!resourceType && !!resourceId) {
         yield put(actions.resource.patchStaged(resourceId, patch, 'value'));
         yield put(
           actions.resource.commitStaged(resourceType, resourceId, 'value')

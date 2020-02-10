@@ -1,11 +1,15 @@
 import transform from './transform';
 import scriptEdit from './scriptEdit';
 import postResponseMapHook from './postResponseMapHook';
+import exportFilter from './exportFilter';
+import inputFilter from './inputFilter';
 
 const logicMap = {
   transform,
   scriptEdit,
   postResponseMapHook,
+  exportFilter,
+  inputFilter,
 };
 
 function getLogic(editor) {
