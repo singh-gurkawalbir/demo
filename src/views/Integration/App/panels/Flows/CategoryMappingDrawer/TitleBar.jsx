@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import { Typography, IconButton, Divider, Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import * as selectors from '../../../../../../reducers';
@@ -25,17 +25,20 @@ const useStyles = makeStyles(theme => ({
 export default function DrawerTitleBar({ flowId, onClose }) {
   const classes = useStyles();
   const history = useHistory();
+  const match = useRouteMatch();
   const flow =
     useSelector(state => selectors.resource(state, 'flows', flowId)) || {};
   const flowName = flow.name || flow._id;
-  const handleClick = useCallback(() => {
+  const handleClose = useCallback(() => {
     if (onClose && typeof onClose === 'function') {
       onClose();
     } else {
       history.goBack();
     }
   }, [history, onClose]);
-  const handleAddCategoryClick = () => {};
+  const handleAddCategoryClick = () => {
+    history.push(`${match.url}/addCategory`);
+  };
 
   return (
     <div className={classes.titleBar}>
@@ -58,7 +61,7 @@ export default function DrawerTitleBar({ flowId, onClose }) {
       <IconButton
         data-test="closeCategoryMapping"
         aria-label="Close"
-        onClick={handleClick}>
+        onClick={handleClose}>
         <CloseIcon />
       </IconButton>
     </div>
