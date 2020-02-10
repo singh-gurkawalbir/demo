@@ -7,6 +7,9 @@ export default {
       delete newValues['/file/json/resourcePath'];
     }
 
+    newValues['/file/output'] = 'records';
+    newValues['/file/encoding'] = 'utf8';
+
     if (newValues['/file/type'] === 'json') {
       newValues['/file/xlsx'] = undefined;
       newValues['/file/xml'] = undefined;
@@ -73,7 +76,7 @@ export default {
     }
   },
   fieldMap: {
-    name: { fieldId: 'name' },
+    name: { fieldId: 'name', required: true },
     'file.type': {
       id: 'file.type',
       name: '/file/type',
