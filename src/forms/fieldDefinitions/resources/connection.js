@@ -893,7 +893,7 @@ export default {
   },
   'http.auth.oauth.tokenURI': {
     type: 'text',
-    label: 'Access token URL',
+    label: 'Access Token URL',
   },
   'http.auth.oauth.scope': {
     type: 'selectscopes',
@@ -901,7 +901,7 @@ export default {
   },
   'http.auth.oauth.scopeDelimiter': {
     type: 'text',
-    label: 'Custom scope delimiter',
+    label: 'Custom Scope Delimiter',
   },
   'http.auth.oauth.accessTokenPath': {
     type: 'text',
@@ -913,7 +913,7 @@ export default {
   },
   'http.auth.oauth.clientCredentialsLocation': {
     type: 'select',
-    label: 'Client authentication',
+    label: 'Client Authentication',
     options: [
       {
         items: [
@@ -928,7 +928,7 @@ export default {
     keyName: 'name',
     valueName: 'value',
     valueType: 'keyvalue',
-    label: 'Access token headers',
+    label: 'Access Token headers',
   },
   'http.auth.oauth.accessTokenBody': {
     type: 'httprequestbody',
@@ -944,7 +944,7 @@ export default {
   },
   'http.auth.oauth.grantType': {
     type: 'select',
-    label: 'Grant type',
+    label: 'Grant Type',
     options: [
       {
         items: [
