@@ -248,6 +248,8 @@ export default {
     return returnVal;
   },
   default: data =>
+    data &&
+    Array.isArray(data) &&
     data.map(item => ({
       label: item.name,
       value: item.id,
