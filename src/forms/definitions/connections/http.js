@@ -13,7 +13,7 @@ export default {
     }
 
     if (!newValues['/http/rateLimit/failPath']) {
-      newValues['/http/rateLimit/failValues'] = [];
+      newValues['/http/rateLimit/failValues'] = undefined;
     }
 
     if (!newValues['/http/ping/failPath']) {
@@ -308,8 +308,9 @@ export default {
     },
     'http.auth.oauth.scope': {
       id: 'http.auth.oauth.scope',
-      type: 'textarea',
+      type: 'text',
       label: 'Scopes',
+      delimiter: ',',
       visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
     },
     'http.auth.oauth.scopeDelimiter': {
