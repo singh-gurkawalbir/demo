@@ -302,7 +302,6 @@ export default function CronBuilder(props) {
   });
   const setExternalTabState = useCallback(
     (index, val) => {
-      setIsCronTouched(true);
       setReset(false);
       setExternalTabStateFn(state => {
         const stateCopy = { ...state };
@@ -342,6 +341,7 @@ export default function CronBuilder(props) {
         }, '?');
 
       onChange(finalResult, !isCronTouched);
+      setIsCronTouched(true);
     },
     [
       externalTabState,
