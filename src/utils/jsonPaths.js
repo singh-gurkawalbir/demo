@@ -324,3 +324,21 @@ export function getJSONPathArrayWithSpecialCharactersWrapped(
     return 0;
   });
 }
+
+export function wrapSpecialChars(item = {}) {
+  let { id: value } = item;
+
+  if (/\W/.test(value)) {
+    value = value
+      .split('[*].')
+      .map(el =>
+        el
+          .split('.')
+          .map(el => (/\W/.test(el) ? `[${el.replace(/\]/g, '\\]')}]` : el))
+          .join('.')
+      )
+      .join('[*].');
+  }
+
+  return { ...item, id: value };
+}
