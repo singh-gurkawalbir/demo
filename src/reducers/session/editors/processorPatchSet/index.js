@@ -4,6 +4,7 @@ import postResponseMapHook from './postResponseMapHook';
 import exportFilter from './exportFilter';
 import inputFilter from './inputFilter';
 import outputFilter from './outputFilter';
+import responseTransform from './responseTransform';
 
 const logicMap = {
   transform,
@@ -12,6 +13,7 @@ const logicMap = {
   exportFilter,
   inputFilter,
   outputFilter,
+  responseTransform,
 };
 
 function getLogic(editor) {

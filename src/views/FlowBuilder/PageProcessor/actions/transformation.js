@@ -7,13 +7,7 @@ import TransformEditorDialog from '../../../../components/AFE/TransformEditor/Tr
 import helpTextMap from '../../../../components/Help/helpTextMap';
 import { hooksToFunctionNamesMap } from '../../../../utils/hooks';
 
-function TransformationDialog({
-  flowId,
-  resource,
-  isViewMode,
-  onClose,
-  optionalSaveParams,
-}) {
+function TransformationDialog({ flowId, resource, isViewMode, onClose }) {
   const dispatch = useDispatch();
   const exportId = resource._id;
   const resourceType = 'exports';
@@ -52,6 +46,15 @@ function TransformationDialog({
       );
     }
   }, [dispatch, exportId, flowId, sampleData]);
+
+  const optionalSaveParams = useMemo(
+    () => ({
+      processorKey: 'transform',
+      resourceId: exportId,
+      resourceType: 'exports',
+    }),
+    [exportId]
+  );
 
   return (
     <TransformEditorDialog
