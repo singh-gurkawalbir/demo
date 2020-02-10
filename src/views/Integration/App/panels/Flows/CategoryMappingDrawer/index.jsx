@@ -278,7 +278,7 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
           paper: classes.drawerPaper,
         }}
         onClose={handleClose}>
-        <DrawerTitleBar flowId={flowId} />
+        <DrawerTitleBar flowId={flowId} parentUrl={parentUrl} />
         {metadataLoaded ? (
           <div className={classes.root}>
             <Grid container wrap="nowrap">
@@ -294,7 +294,7 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
                 <Grid container className={classes.mappingHeader}>
                   <Grid item xs={6}>
                     <Typography variant="h5" className={classes.childHeader}>
-                      Amazon{' '}
+                      Amazon
                       <ApplicationImg assistant="amazonmws" size="small" />
                     </Typography>
                   </Grid>

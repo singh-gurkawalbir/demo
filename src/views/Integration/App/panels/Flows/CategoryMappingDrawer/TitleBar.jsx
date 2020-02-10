@@ -22,7 +22,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function DrawerTitleBar({ flowId, onClose }) {
+export default function DrawerTitleBar({ flowId, onClose, parentUrl }) {
   const classes = useStyles();
   const history = useHistory();
   const match = useRouteMatch();
@@ -33,9 +33,9 @@ export default function DrawerTitleBar({ flowId, onClose }) {
     if (onClose && typeof onClose === 'function') {
       onClose();
     } else {
-      history.goBack();
+      history.push(parentUrl);
     }
-  }, [history, onClose]);
+  }, [history, onClose, parentUrl]);
   const handleAddCategoryClick = () => {
     history.push(`${match.url}/addCategory`);
   };
