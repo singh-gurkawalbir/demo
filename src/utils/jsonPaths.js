@@ -325,8 +325,33 @@ export function getJSONPathArrayWithSpecialCharactersWrapped(
   });
 }
 
-// This is a iterator function, where item is single option
-// Expects item to be in the structure {id: 'id', name: 'name'}
+/**
+ * This is a iterator function, where item is single option
+ * Expects item to be in the structure {id: 'id', name: 'name'}
+ *
+ * @param {object} item - single option. should contain id property.
+ *
+ * @returns {object}
+ *
+ * @example
+ *
+ *  data = [
+ *   {id: 'Spaced Field'},
+ *   {id: 'second[Field]'},
+ *   {id: 'list[*].header'},
+ *   {id: 'data.field'},
+ *   {id: 'spaced field[*].field'}
+ * ]
+ * data.map(wrapSpecialChars)
+ *  =>
+ * [
+ *   {id: '[Spaced Field]'},
+ *   {id: '[second[Field\]]'},
+ *   {id: 'list[*].header'},
+ *   {id: 'data.field'},
+ *   {id: '[spaced field][*].field'}
+ * ]
+ */
 export function wrapSpecialChars(item = {}) {
   let { id } = item;
 
