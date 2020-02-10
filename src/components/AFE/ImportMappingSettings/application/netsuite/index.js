@@ -531,18 +531,27 @@ export default {
             },
           ],
         },
-        lookups: { fieldId: 'lookups', visible: false, defaultValue: lookups },
+        lookups: {
+          name: 'lookups',
+          id: 'lookups',
+          fieldId: 'lookups',
+          visible: false,
+          defaultValue: lookups,
+        },
 
         'conditional.lookupName': {
           id: 'conditional.lookupName',
           name: 'conditionalLookupName',
           label: 'Lookup Name',
-          type: 'text',
-          // type: 'textwithlookupextract',
-          // fieldType: 'ignoreExistingData',
-          // label: 'Existing Data Id',
-          // connectionId,
-          // refreshOptionsOnChangesTo: ['lookups'],
+          type: 'textwithlookupextract',
+          fieldType: 'lookupMappings',
+          importType: 'netsuite',
+          connectionId,
+          NsExtractFields: extractFields,
+          fieldMetadata,
+          fieldId,
+          recordType,
+          refreshOptionsOnChangesTo: ['lookups'],
           defaultValue: value.conditional && value.conditional.lookupName,
           visibleWhen: [
             {
@@ -694,21 +703,20 @@ export default {
             disableFetch: !recordType,
             commMetaPath: `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${recordTypeField.value}/searchColumns`,
           };
-        }
-        // else if (fieldId === 'conditional.lookupName') {
-        //   const lookupField = fields.find(field => field.fieldId === 'lookups');
+        } else if (fieldId === 'conditional.lookupName') {
+          const lookupField = fields.find(field => field.fieldId === 'lookups');
 
-        //   return {
-        //     lookups: {
-        //       fieldId: 'lookups',
-        //       data:
-        //         (lookupField &&
-        //           Array.isArray(lookupField.value) &&
-        //           lookupField.value) ||
-        //         [],
-        //     },
-        //   };
-        // }
+          return {
+            lookups: {
+              fieldId: 'lookups',
+              data:
+                (lookupField &&
+                  Array.isArray(lookupField.value) &&
+                  lookupField.value) ||
+                [],
+            },
+          };
+        }
 
         return null;
       },

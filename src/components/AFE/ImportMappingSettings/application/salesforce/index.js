@@ -11,6 +11,7 @@ export default {
       generate,
       generateFields,
       options,
+      lookups,
     } = params;
     const { connectionId } = options;
     const selectedGenerateObj =
@@ -444,10 +445,23 @@ export default {
             },
           ],
         },
+        lookups: {
+          name: 'lookups',
+          id: 'lookups',
+          fieldId: 'lookups',
+          visible: false,
+          defaultValue: lookups,
+        },
+
         'conditional.lookupName': {
           id: 'conditional.lookupName',
           name: 'conditionalLookupName',
-          type: 'text',
+          type: 'textwithlookupextract',
+          importType: 'salesforce',
+          connectionId,
+          SFExtractFields: extractFields,
+          refreshOptionsOnChangesTo: ['lookups'],
+          fieldType: 'lookupMappings',
           label: 'Lookup name:',
           defaultValue: value.conditional && value.conditional.lookupName,
           visibleWhen: [
@@ -491,7 +505,7 @@ export default {
           {
             collapsed: true,
             label: 'Advanced',
-            fields: ['conditional.when', 'conditional.lookupName'],
+            fields: ['lookups', 'conditional.when', 'conditional.lookupName'],
           },
         ],
       },
@@ -557,6 +571,19 @@ export default {
           return {
             disableFetch: !sObjectType,
             commMetaPath: `salesforce/metadata/connections/${connectionId}/sObjectTypes/${sObjectTypeField.value}`,
+          };
+        } else if (fieldId === 'conditional.lookupName') {
+          const lookupField = fields.find(field => field.fieldId === 'lookups');
+
+          return {
+            lookups: {
+              fieldId: 'lookups',
+              data:
+                (lookupField &&
+                  Array.isArray(lookupField.value) &&
+                  lookupField.value) ||
+                [],
+            },
           };
         }
 

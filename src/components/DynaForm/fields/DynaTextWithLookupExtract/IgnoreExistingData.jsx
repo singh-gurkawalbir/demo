@@ -29,6 +29,12 @@ export default function IgnoreExistingData(props) {
     showLookup,
     resourceName,
     lookups,
+    importType,
+    fieldMetadata,
+    fieldId,
+    recordType,
+    hideExtractFields,
+    hideEditLookup,
   } = props;
   const { fieldId: lookupFieldId, data: lookupData } = lookups || {};
   const handleLookupUpdate = lookups => {
@@ -85,6 +91,10 @@ export default function IgnoreExistingData(props) {
         onLookupUpdate={handleLookupUpdate}
         required={required}
         connectionId={connectionId}
+        importType={importType}
+        fieldMetadata={fieldMetadata}
+        fieldId={fieldId}
+        recordType={recordType}
         value={value}
         connectionType={connection.type}
         resourceId={resourceId}
@@ -94,6 +104,8 @@ export default function IgnoreExistingData(props) {
         getUpdatedFieldValue={getUpdatedFieldValue}
         prefixRegexp={prefixRegexp}
         getMatchedValueforSuggestion={getMatchedValueforSuggestion}
+        hideExtractFields={hideExtractFields}
+        hideEditLookup={hideEditLookup}
       />
     </Fragment>
   );

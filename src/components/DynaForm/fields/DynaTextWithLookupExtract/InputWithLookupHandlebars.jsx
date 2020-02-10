@@ -37,6 +37,8 @@ export function Suggestions(props) {
     showLookup,
     onSuggestionClick,
     onLookupClick,
+    hideExtractFields,
+    hideEditLookup,
     options,
   } = props;
   const classes = useStyles();
@@ -68,6 +70,7 @@ export function Suggestions(props) {
           <li key={lookup.name}>
             <DynaAddEditLookup
               id={lookup.name}
+              hideEditLookup={hideEditLookup}
               label="Edit"
               onClick={onLookupClick}
               isEdit
@@ -79,11 +82,12 @@ export function Suggestions(props) {
             />
           </li>
         ))}
-      {filteredExtracts.map(e => (
-        <li key={e.label} onClick={() => onSuggestionClick(e.value, false)}>
-          {e.label}
-        </li>
-      ))}
+      {!hideExtractFields &&
+        filteredExtracts.map(e => (
+          <li key={e.label} onClick={() => onSuggestionClick(e.value, false)}>
+            {e.label}
+          </li>
+        ))}
     </ul>
   );
 }
@@ -107,6 +111,7 @@ export default function InputWithLookupHandlebars(props) {
     required,
     value,
     connectionId,
+    importType,
     resourceId,
     resourceType,
     resourceName,
@@ -116,6 +121,11 @@ export default function InputWithLookupHandlebars(props) {
     prefixRegexp = '',
     getMatchedValueforSuggestion,
     showLookup,
+    fieldMetadata,
+    fieldId,
+    recordType,
+    hideExtractFields,
+    hideEditLookup,
   } = props;
   const ref = useRef(null);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -212,10 +222,15 @@ export default function InputWithLookupHandlebars(props) {
     isSQLLookup: isSqlImport,
     sampleData,
     connectionId,
+    importType,
     resourceId,
     resourceType,
     flowId,
     resourceName,
+    fieldMetadata,
+    fieldId,
+    recordType,
+    extractFields,
   };
   const handleLookupClick = _showLookup => {
     setLookupShown(_showLookup);
@@ -280,6 +295,8 @@ export default function InputWithLookupHandlebars(props) {
           options={options}
           onSuggestionClick={handleSuggestionClick}
           onLookupClick={handleLookupClick}
+          hideExtractFields={hideExtractFields}
+          hideEditLookup={hideEditLookup}
         />
       )}
     </div>

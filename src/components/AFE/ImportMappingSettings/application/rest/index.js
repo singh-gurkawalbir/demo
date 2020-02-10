@@ -472,7 +472,7 @@ export default {
           name: 'conditionalLookupName',
           label: 'Lookup name:',
           type: 'textwithlookupextract',
-          fieldType: 'ignoreExistingData',
+          fieldType: 'lookupMappings',
           connectionId,
           refreshOptionsOnChangesTo: ['lookups'],
           defaultValue: value.conditional && value.conditional.lookupName,

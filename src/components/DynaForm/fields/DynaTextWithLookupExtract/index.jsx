@@ -17,6 +17,12 @@ export default function DynaTextWithLookupExtract(props) {
     flowId,
     editorTitle,
     hideLookups = false,
+    importType,
+    fieldMetadata,
+    fieldId,
+    NsExtractFields,
+    SFExtractFields,
+    recordType,
     options = {},
   } = props;
   const { lookups } = options;
@@ -112,6 +118,25 @@ export default function DynaTextWithLookupExtract(props) {
           extractFields={formattedExtractFields}
           resourceName={resourceName}
           lookups={lookups}
+          {...props}
+        />
+      )}
+      {fieldType === 'lookupMappings' && (
+        <IgnoreExistingData
+          showLookup={showLookups}
+          sampleData={formattedSampleData}
+          connection={connection}
+          extractFields={
+            NsExtractFields || SFExtractFields || formattedExtractFields
+          }
+          hideExtractFields
+          hideEditLookup
+          resourceName={resourceName}
+          lookups={lookups}
+          importType={importType}
+          fieldMetadata={fieldMetadata}
+          fieldId={fieldId}
+          recordType={recordType}
           {...props}
         />
       )}
