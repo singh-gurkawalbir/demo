@@ -118,7 +118,7 @@ export default function EditorDialog(props) {
       open={open}
       onClose={() => handleClose()}
       scroll="paper"
-      data-key={dataTest}
+      data-test={dataTest}
       maxWidth={false}>
       <div className={classes.toolbarContainer}>
         <div className={classes.toolbarItem}>
