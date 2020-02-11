@@ -1,8 +1,3 @@
-// import dynamicMetadata from './DynamicLookup/metadata';
-// import dateTimezones from '../../../../utils/dateTimezones';
-// import dateFormats from '../../../../utils/dateFormats';
-// import mappingUtil from '../../../../utils/mapping';
-
 const getNetsuiteSelectFieldValueUrl = ({
   fieldMetadata,
   connectionId,
@@ -14,30 +9,11 @@ const getNetsuiteSelectFieldValueUrl = ({
       ? `sublists/${fieldMetadata.sublist}/`
       : ''
   }selectFieldValues/${fieldId.substr(0, fieldId.indexOf('.internalid'))}`;
-// const getFailedRecordDefault = lookup => {
-//   if (!lookup || !lookup.allowFailures) {
-//     return 'disallowFailure';
-//   }
-
-//   switch (lookup.default) {
-//     case '':
-//       return 'useEmptyString';
-//     case null:
-//       return 'useNull';
-//     default:
-//       return 'default';
-//   }
-// };
 
 export default {
   getLookupMetadata: ({
     lookup = {},
-    // sampleData,
     connectionId,
-    // resourceId,
-    // resourceType,
-    // flowId,
-    // resourceName,
     extractFields,
     fieldMetadata,
     fieldId,
