@@ -936,7 +936,7 @@ export default {
     keyName: 'name',
     valueName: 'value',
     valueType: 'keyvalue',
-    label: 'Access Token headers',
+    label: 'Access Token Headers',
   },
   'http.auth.oauth.accessTokenBody': {
     type: 'httprequestbody',
