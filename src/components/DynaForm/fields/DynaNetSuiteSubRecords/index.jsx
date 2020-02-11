@@ -103,7 +103,14 @@ export default function DynaNetSuiteSubRecords(props) {
   const match = useRouteMatch();
   const handleDeleteClick = useCallback(
     fieldId => {
+      console.log(`handleDeleteClick fieldId ${fieldId}`);
       const updatedSubrecords = subrecords.filter(sr => sr.fieldId !== fieldId);
+
+      console.log(
+        `handleDeleteClick updatedSubrecords ${JSON.stringify(
+          updatedSubrecords
+        )}`
+      );
 
       dispatch(
         actions.resource.patchStaged(
