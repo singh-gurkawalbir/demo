@@ -293,7 +293,10 @@ export default {
       id: 'customScopeDelimiter',
       type: 'checkbox',
       label: 'This provider uses a scope delimiter other than space',
-      visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
+      visibleWhenAll: [
+        { field: 'http.auth.type', is: ['oauth'] },
+        { field: 'http.auth.oauth.grantType', is: ['authorizecode'] },
+      ],
       helpText:
         'If your provider does not use spaces to delimit scopes, check this box, then provide the custom scope delimiter for your provider.',
     },
@@ -311,7 +314,10 @@ export default {
       type: 'text',
       label: 'Scopes',
       delimiter: ',',
-      visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
+      visibleWhenAll: [
+        { field: 'http.auth.type', is: ['oauth'] },
+        { field: 'http.auth.oauth.grantType', is: ['authorizecode'] },
+      ],
     },
     'http.auth.oauth.scopeDelimiter': {
       fieldId: 'http.auth.oauth.scopeDelimiter',
@@ -468,11 +474,12 @@ export default {
       helpText:
         "Where does your application's API expect to find the auth token? Choose 'url' if the auth token should be located in the url.  You will then be able to specify the query string parameter name that should hold the token value. If you choose 'header' you will then need to specify the header name and auth scheme to use when constructing the HTTP request. Finally, choose 'body' if your API needs the token embedded in the body structure of your HTTP request. In this case, its up to you to place the token in your body template using the placeholder: {{{connection.http.token.token}}}",
       defaultValue: r =>
-        r &&
-        r.http &&
-        r.http.auth &&
-        r.http.auth.token &&
-        r.http.auth.token.location,
+        (r &&
+          r.http &&
+          r.http.auth &&
+          r.http.auth.token &&
+          r.http.auth.token.location) ||
+        'header',
       visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
       required: true,
       options: [
