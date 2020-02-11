@@ -1,24 +1,20 @@
-import { useCallback, Fragment } from 'react';
+import { useEffect, useCallback } from 'react';
 import clsx from 'clsx';
-import { useSelector } from 'react-redux';
-import { Route, useHistory, useRouteMatch, NavLink } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { Route, useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
-import { Drawer, List, ListItem, Button } from '@material-ui/core';
+import { Drawer, Button } from '@material-ui/core';
 import * as selectors from '../../../../../reducers';
 import DrawerTitleBar from '../../../../drawer/TitleBar';
-import LoadResources from '../../../../LoadResources';
-import ResourceForm from '../../../../ResourceFormFactory';
 import DynaForm from '../../../../DynaForm';
 import DynaSubmit from '../../../../DynaForm/DynaSubmit';
+import actions from '../../../../../actions';
+import getFormFieldMetadata from './util';
+import { SCOPES } from '../../../../../sagas/resourceForm';
 
 const useStyles = makeStyles(theme => ({
-  subNavOpen: {
-    width: 824,
-  },
-  subNavClosed: {
-    width: 624,
-  },
   drawerPaper: {
+    width: 624,
     marginTop: theme.appBarHeight,
     border: 'solid 1px',
     boxShadow: `-4px 4px 8px rgba(0,0,0,0.15)`,
@@ -33,22 +29,11 @@ const useStyles = makeStyles(theme => ({
   container: {
     display: 'flex',
   },
-  subNav: {
-    minWidth: 200,
-    borderRight: `solid 1px ${theme.palette.secondary.lightest}`,
-    paddingTop: theme.spacing(2),
-  },
   content: {
     width: '100%',
     height: '100%',
     padding: theme.spacing(0, 3, 3, 0),
     overflowX: 'scroll',
-  },
-  listItem: {
-    color: theme.palette.text.primary,
-  },
-  activeListItem: {
-    color: theme.palette.primary.main,
   },
 }));
 
@@ -56,107 +41,138 @@ function SubRecordDrawer(props) {
   const classes = useStyles();
   const history = useHistory();
   const match = useRouteMatch();
-  //   const { integrationId, connectionId } = match.params;
-  //   const tile = useSelector(state =>
-  //     selectors.resource(state, 'tiles', integrationId)
-  //   );
-  //   const showSubNav =
-  //     tile && tile.offlineConnections && tile.offlineConnections.length > 1;
-  //   const integrationConnections = useSelector(
-  //     state => {
-  //       const connections = selectors.integrationConnectionList(
-  //         state,
-  //         integrationId
-  //       );
+  const dispatch = useDispatch();
+  const { fieldId } = match.params;
+  const { importId, connectionId, recordType } = props;
+  const recordTypeLabel = useSelector(
+    state =>
+      selectors
+        .metadataOptionsAndResources({
+          state,
+          connectionId,
+          commMetaPath: `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes`,
+          filterKey: 'suitescript-recordTypes',
+        })
+        .data.find(record => record.value === recordType).label
+  );
+  const subrecords = useSelector(
+    state =>
+      selectors.resourceData(state, 'imports', importId).merged.netsuite_da
+        .subrecords,
+    (left, right) => left && right && left.length === right.length
+  );
+  const subrecordFields = useSelector(
+    state =>
+      selectors.metadataOptionsAndResources({
+        state,
+        connectionId,
+        commMetaPath: `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${recordType}`,
+        filterKey: 'suitescript-subrecord-fields',
+      }).data,
+    (left, right) => left.length === right.length
+  );
 
-  //       return tile.offlineConnections.map(connId =>
-  //         connections.find(conn => conn._id === connId)
-  //       );
-  //     },
-  //     (left, right) => left.length === right.length
-  //   );
-  //   const handleClose = useCallback(() => {
-  //     history.goBack();
-  //   }, [history]);
-  //   const handleSubmitComplete = useCallback(() => {
-  //     const currentConnectionIndex = tile.offlineConnections.indexOf(
-  //       connectionId
-  //     );
+  useEffect(() => {
+    if (connectionId && recordType) {
+      dispatch(
+        actions.metadata.request(
+          connectionId,
+          `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${recordType}`
+        )
+      );
+    }
+  }, [connectionId, dispatch, recordType]);
 
-  //     if (tile.offlineConnections[currentConnectionIndex + 1]) {
-  //       history.replace(`${tile.offlineConnections[currentConnectionIndex + 1]}`);
-  //     } else {
-  //       handleClose();
-  //     }
-  //   }, [connectionId, handleClose, history, tile.offlineConnections]);
-  const fieldMeta = {
-    fieldMap: {
-      dataType: {
-        id: 'dataType',
-        name: 'dataType',
-        type: 'select',
-        label: 'Data Type',
-        options: [
-          {
-            items: [
-              { label: 'Boolean', value: 'boolean' },
-              { label: 'Date Time', value: 'epochtime' },
-              { label: 'Number', value: 'number' },
-              { label: 'String', value: 'string' },
-            ],
-          },
-        ],
-        // defaultValue: ruleData.dataType || 'string',
-      },
+  const fieldMeta = getFormFieldMetadata(
+    recordTypeLabel,
+    subrecords,
+    subrecordFields,
+    fieldId
+  );
+  const handleClose = useCallback(() => {
+    history.goBack();
+  }, [history]);
+  const handleSubmit = useCallback(
+    formValues => {
+      const jsonPathFieldId = `jsonPath_${formValues.fieldId.replace(
+        '[*].',
+        '_sublist_'
+      )}`;
+      const updatedFormValues = {
+        fieldId: `${formValues.fieldId}_1`,
+        jsonPath: formValues[jsonPathFieldId],
+      };
+      const recordType = subrecordFields.find(
+        fld => fld.value === formValues.fieldId
+      ).subRecordType;
+
+      updatedFormValues.recordType = recordType;
+      console.log(`updatedFormValues ${JSON.stringify(updatedFormValues)}`);
+
+      const updatedSubrecords = subrecords || [];
+
+      if (fieldId) {
+        const srIndex = updatedSubrecords.findIndex(
+          sr => sr.fieldId === fieldId
+        );
+
+        if (srIndex > -1) {
+          updatedSubrecords[srIndex] = { ...updatedFormValues, fieldId };
+        }
+      } else {
+        updatedSubrecords.push(updatedFormValues);
+      }
+
+      console.log(`updatedSubrecords ${JSON.stringify(updatedSubrecords)}`);
+
+      dispatch(
+        actions.resource.patchStaged(
+          importId,
+          [
+            {
+              op: 'replace',
+              path: `/netsuite_da/subrecords`,
+              value: updatedSubrecords,
+            },
+          ],
+          SCOPES.VALUE
+        )
+      );
+      history.goBack();
+
+      // onSubmit(updatedFormValues);
     },
-    layout: {
-      fields: ['dataType'],
-    },
-  };
+    [dispatch, fieldId, history, importId, subrecordFields, subrecords]
+  );
 
   return (
     <Drawer
       anchor="right"
       open={!!match}
       classes={{
-        paper: clsx(
-          classes.drawerPaper
-          // ,showSubNav ? classes.subNavOpen : classes.subNavClosed
-        ),
+        paper: clsx(classes.drawerPaper),
       }}
-      // onClose={handleClose}
-    >
-      <DrawerTitleBar title="Add subrecord import" />
+      onClose={handleClose}>
+      <DrawerTitleBar
+        title={fieldId ? 'Edit subrecord import' : 'Add subrecord import'}
+      />
 
-      <Fragment>params ${JSON.stringify(match.params)}</Fragment>
-      <br />
-      <Fragment>props ${JSON.stringify(props)}</Fragment>
-
-      <LoadResources required="true" resources="connections">
-        <div className={classes.container}>
-          <div className={classes.content}>
+      <div className={classes.container}>
+        <div className={classes.content}>
+          {fieldMeta && (
             <DynaForm
               // disabled={disabled}
-              fieldMeta={fieldMeta}
-              // optionsHandler={fieldMeta.optionsHandler}
-            >
-              <Button
-                data-test="cancelOperandSettings"
-                onClick={() => {
-                  // onClose();
-                }}>
+              fieldMeta={fieldMeta}>
+              <Button data-test="cancel-subrecord" onClick={handleClose}>
                 Cancel
               </Button>
-              <DynaSubmit
-                data-test="saveOperandSettings"
-                // onClick={handleSubmit}
-              >
+              <DynaSubmit data-test="save-subrecord" onClick={handleSubmit}>
                 Save
               </DynaSubmit>
             </DynaForm>
-          </div>
+          )}
         </div>
-      </LoadResources>
+      </div>
     </Drawer>
   );
 }

@@ -45,7 +45,10 @@ export default {
     blobKeyPath: { fieldId: 'blobKeyPath' },
     distributed: { fieldId: 'distributed' },
     'netsuite_da.recordType': { fieldId: 'netsuite_da.recordType' },
-    'netsuite_da.subrecords': { fieldId: 'netsuite_da.subrecords' },
+    'netsuite_da.subrecords': {
+      fieldId: 'netsuite_da.subrecords',
+      refreshOptionsOnChangesTo: ['netsuite_da.recordType'],
+    },
     'netsuite_da.operation': { fieldId: 'netsuite_da.operation' },
     'netsuite.file.internalId': { fieldId: 'netsuite.file.internalId' },
     'netsuite.file.name': { fieldId: 'netsuite.file.name' },
@@ -137,6 +140,18 @@ export default {
           ? `netsuite/metadata/suitescript/connections/${recordTypeField.connectionId}/recordTypes/${recordTypeField.value}/searchFilters?includeJoinFilters=true`
           : '',
         resetValue: [],
+      };
+    }
+
+    if (fieldId === 'netsuite_da.subrecords') {
+      const recordTypeField = fields.find(
+        field => field.id === 'netsuite_da.recordType'
+      );
+
+      window.recordTypeField = recordTypeField;
+
+      return {
+        recordType: recordTypeField && recordTypeField.value,
       };
     }
 
