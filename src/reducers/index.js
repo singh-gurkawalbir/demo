@@ -3377,7 +3377,10 @@ export function isPreviewPanelAvailableForResource(
   );
 
   // Preview panel is not shown for lookups
-  if (isLookUpExport(state, { resourceId, flowId, resourceType })) {
+  if (
+    resourceObj.isLookup ||
+    isLookUpExport(state, { resourceId, flowId, resourceType })
+  ) {
     return false;
   }
 
