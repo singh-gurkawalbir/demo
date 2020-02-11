@@ -714,11 +714,11 @@ export default {
         items: [
           { label: 'Basic', value: 'basic' },
           { label: 'Token', value: 'token' },
+          { label: 'OAuth 2.0', value: 'oauth' },
           { label: 'Custom', value: 'custom' },
           { label: 'Cookie', value: 'cookie' },
           { label: 'Digest', value: 'digest' },
           { label: 'WSSE', value: 'wsse' },
-          { label: 'OAuth 2.0', value: 'oauth' },
         ],
       },
     ],
@@ -902,6 +902,7 @@ export default {
   'http.auth.oauth.scopeDelimiter': {
     type: 'text',
     label: 'Custom Scope Delimiter',
+    subSectionField: true,
   },
   'http.auth.oauth.accessTokenPath': {
     type: 'text',
@@ -914,6 +915,13 @@ export default {
   'http.auth.oauth.clientCredentialsLocation': {
     type: 'select',
     label: 'Client Authentication',
+    defaultValue: r =>
+      (r &&
+        r.http &&
+        r.http.auth &&
+        r.http.auth.oauth &&
+        r.http.auth.oauth.clientCredentialsLocation) ||
+      'body',
     options: [
       {
         items: [
@@ -1112,8 +1120,7 @@ export default {
     required: true,
   },
   'http.auth.token.refreshBody': {
-    type: 'httprequestbody',
-    contentType: 'json',
+    type: 'text',
     label: 'Refresh Body',
   },
   'http.auth.token.refreshTokenPath': {

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import clsx from 'clsx';
 import TextField from '@material-ui/core/TextField';
 import { InputAdornment } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
@@ -15,6 +16,10 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     minWidth: theme.spacing(10),
     wordBreak: 'break-word',
+  },
+  subSection: {
+    maxWidth: '95%',
+    marginLeft: '5%',
   },
 }));
 
@@ -38,6 +43,7 @@ export default function DynaText(props) {
     endAdornment,
     readOnly,
     inputType,
+    subSectionField,
     options,
     disableText = false,
     uppercase = false,
@@ -81,7 +87,10 @@ export default function DynaText(props) {
   const inpValue = value === '' && inputType === 'number' ? 0 : value;
 
   return (
-    <div className={classes.dynaFieldWrapper}>
+    <div
+      className={clsx(classes.dynaFieldWrapper, {
+        [classes.subSection]: subSectionField,
+      })}>
       <TextField
         autoComplete="off"
         key={id}

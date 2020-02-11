@@ -345,6 +345,10 @@ export default {
     'http._iClientId': {
       fieldId: 'http._iClientId',
       required: true,
+      filter: { provider: 'custom_oauth2' },
+      type: 'dynaiclient',
+      connectionId: r => r && r._id,
+      connectorId: r => r && r._connectorId,
       visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
     },
     'http.auth.oauth.clientCredentialsLocation': {
@@ -559,16 +563,9 @@ export default {
     },
     'http.auth.oauth.refreshBody': {
       id: 'http.auth.oauth.refreshBody',
-      type: 'text',
+      type: 'httprequestbody',
+      contentType: 'json',
       label: 'Refresh Body',
-      helpText:
-        'If the service being connected to supports requests to obtain or refresh existing tokens, use this field to set the body to use in the request token call. note that placeholders may be used to reference any connection fields. Typically a username/password or refreshToken would be used in the request. These values can be stored in the encrypted field, or if not sensitive, the unencrypted field. You can then reference these values by using placeholders such as: {{connection.http.encrypted.password}}.',
-      defaultValue: r =>
-        r &&
-        r.http &&
-        r.http.auth &&
-        r.http.auth.token &&
-        r.http.auth.token.refreshBody,
       visibleWhenAll: [
         { field: 'http.auth.type', is: ['oauth'] },
         { field: 'http.auth.oauth.grantType', is: ['authorizecode'] },
@@ -641,13 +638,34 @@ export default {
           'http.auth.oauth.scopeDelimiter',
           'http.auth.oauth.tokenURI',
           'http.auth.oauth.clientCredentialsLocation',
-          'http.auth.oauth.accessTokenHeaders',
-          'http.auth.oauth.accessTokenBody',
-          'http.auth.oauth.refreshHeaders',
-          'http.auth.oauth.refreshBody',
-          'http.auth.token.revoke.uri',
-          'http.auth.token.revoke.body',
-          'http.auth.token.revoke.headers',
+        ],
+        type: 'collapse',
+        containers: [
+          {
+            collapsed: true,
+            label: 'Access Token Parameters',
+            fields: [
+              'http.auth.oauth.accessTokenHeaders',
+              'http.auth.oauth.accessTokenBody',
+            ],
+          },
+          {
+            collapsed: true,
+            label: 'Refresh Token Parameters',
+            fields: [
+              'http.auth.oauth.refreshHeaders',
+              'http.auth.oauth.refreshBody',
+            ],
+          },
+          {
+            collapsed: true,
+            label: 'Revoke Parameters',
+            fields: [
+              'http.auth.token.revoke.uri',
+              'http.auth.token.revoke.body',
+              'http.auth.token.revoke.headers',
+            ],
+          },
         ],
       },
       {
