@@ -1,6 +1,6 @@
 import FoutStager from 'react-fout-stager';
-import './index.css';
 import { useMemo } from 'react';
+import './index.css';
 
 /**
  * Responsible for loading the application typefaces progressively
