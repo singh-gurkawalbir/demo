@@ -158,10 +158,13 @@ export function* commitStagedChanges({ resourceType, id, scope }) {
      UI shouldnt set offline flag. It should read status from db.
   */
   if (resourceType === 'connections' && updated._id && isNew) {
-    yield call(apiCallWithRetry, {
-      path: `/connections/${updated._id}/ping`,
-      hidden: true,
-    });
+    try {
+      yield call(apiCallWithRetry, {
+        path: `/connections/${updated._id}/ping`,
+        hidden: true,
+      });
+      // eslint-disable-next-line no-empty
+    } catch (e) {}
   }
 
   // #region Data loader transform
