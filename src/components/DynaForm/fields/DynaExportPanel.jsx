@@ -27,6 +27,14 @@ import ErrorIcon from '../../icons/ErrorIcon';
 const useStyles = makeStyles(theme => ({
   container: {
     paddingLeft: theme.spacing(3),
+    width: 680,
+    float: 'left',
+    [theme.breakpoints.up('xl')]: {
+      width: 780,
+    },
+    [theme.breakpoints.up('xxl')]: {
+      width: 880,
+    },
   },
   sampleDataWrapper: {
     border: '1px solid',
@@ -121,7 +129,11 @@ const useStyles = makeStyles(theme => ({
     borderColor: theme.palette.secondary.lightest,
     '& > button': {
       height: 30,
-      minWidth: 150,
+      padding: theme.spacing(0, 5),
+      '&:last-child': {
+        height: 30,
+        padding: theme.spacing(0, 5),
+      },
       '&.Mui-selected': {
         backgroundColor: theme.palette.primary.main,
         '&:hover': {

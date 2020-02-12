@@ -24,7 +24,7 @@ export const getAvailablePreviewStages = resource => {
   switch (appType) {
     case 'http':
       return [
-        // { label: 'HTTP request', value: 'request' },
+        { label: 'HTTP request', value: 'request' },
         { label: 'HTTP response', value: 'raw' },
         { label: 'Output', value: 'parse' },
       ];
