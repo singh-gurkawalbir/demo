@@ -63,9 +63,12 @@ export default function ReadmeSection({ integrationId }) {
     );
   };
 
+  const infoTextUsers =
+    'Keep track of changes to your integration, enabling you to track down problems based on changes to your integration or its flows. Know exactly who made the change, what the change was, and when it happened.';
+
   return (
     <Fragment>
-      <PanelHeader title="Readme" />
+      <PanelHeader title="Readme" infoText={infoTextUsers} />
       <div className={classes.root}>
         <div className={classes.editorContainer}>
           <CodeEditor

@@ -82,9 +82,12 @@ export default function NotificationsSection({ integrationId }) {
     setCount(count => count + 1);
   };
 
+  const infoTextUsers =
+    'Get email notifications when your flows encounter any errors as well as whenever one of the connections your flows use goes offline, so you can fix the problem quickly. These notifications are only sent to you; each user will need to enable their own notifications.';
+
   return (
     <Fragment>
-      <PanelHeader title="Notifications" />
+      <PanelHeader title="Notifications" infoText={infoTextUsers} />
 
       <LoadResources required resources="notifications,flows,connections">
         <DynaForm fieldMeta={fieldMeta} key={count} render>
