@@ -1,4 +1,4 @@
-import { useEffect, useState, cloneElement } from 'react';
+import { useEffect, useState, cloneElement, useCallback } from 'react';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
@@ -8,6 +8,8 @@ import RefreshIcon from '../../../icons/RefreshIcon';
 import DynaSelect from '../DynaSelect';
 import DynaMultiSelect from '../DynaMultiSelect';
 import ActionButton from '../../../ActionButton';
+import ExitIcon from '../../../icons/ExitIcon';
+import openExternalUrl from '../../../../utils/window';
 
 const useStyles = makeStyles(theme => ({
   inlineElements: {
@@ -92,6 +94,7 @@ export default function RefreshGenericResource(props) {
     fieldError,
     children,
     removeRefresh = false,
+    urlToOpen,
   } = props;
   const classes = useStyles();
   const defaultValue = props.defaultValue || (multiselect ? [] : '');
@@ -137,6 +140,10 @@ export default function RefreshGenericResource(props) {
     }
   }, [resourceToFetch, setIsDefaultValueChanged]);
 
+  const handleOpenResource = useCallback(() => {
+    openExternalUrl({ url: urlToOpen });
+  }, [urlToOpen]);
+
   if (!fieldData && !disableOptionsLoad) return <Spinner />;
 
   const options = (fieldData || []).map(options => {
@@ -170,6 +177,14 @@ export default function RefreshGenericResource(props) {
           <span className={classes.spinner}>
             <Spinner size={48} color="primary" />
           </span>
+        )}
+        {urlToOpen && (
+          <ActionButton
+            onClick={handleOpenResource}
+            className={classes.refreshButton}
+            data-test="openResource">
+            <ExitIcon />
+          </ActionButton>
         )}
         {description && <FormHelperText>{description}</FormHelperText>}
         {fieldError && (
