@@ -25,15 +25,15 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.common.white,
   },
   sandboxBanner: {
-    border: `solid 1px ${theme.palette.sandbox.dark}`,
+    // border: `solid 1px ${theme.palette.sandbox.dark}`,
   },
   sandboxButton: {
-    backgroundColor: theme.palette.sandbox.dark,
+    // backgroundColor: theme.palette.sandbox.dark,
     borderColor: theme.palette.sandbox.dark,
-    color: theme.palette.sandbox.contrastText,
+    // color: theme.palette.sandbox.contrastText,
     '&:hover': {
       borderColor: theme.palette.sandbox.dark,
-      backgroundColor: theme.palette.sandbox.light,
+      // backgroundColor: theme.palette.sandbox.light,
     },
   },
   welcomeText: {
