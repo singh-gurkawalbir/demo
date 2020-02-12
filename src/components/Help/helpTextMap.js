@@ -1176,9 +1176,9 @@ export default {
   'connection.http.auth.revoke.uri':
     'This is the URL that we will use to revoke this token’s access to this endpoint.',
   'connection.http.auth.oauth.grantType':
-    'Grant Type should be selected in accordance with the API being invoked. We currently support only “Authorization Code” and “Client Credentials”',
+    'The OAuth 2.0 Authentication currently supports two types of Grant Type. Choose “Authorization Code” grant Type if an authorization code is obtained by using an authorization server as an intermediary between the client and resource owner. Choose “Client Credentials” when the authorization scope is limited to the protected resources under the control of the client, or to protected resources previously arranged with the authorization server.',
   'connection.http.auth.oauth.callbackURL':
-    'This is the URL to which callback is redirected to after auth. This field is non-editable and is provided here for info. This URL should be registered with the API provider(while creating the Client App).',
+    'Use callback URL to provide directions on where to go after authentication with Authorization Server. You need to whitelist this URL with your Authorization Server.',
   'connection.http.auth.oauth.clientCredentialsLocation':
     'This configuration allows you to configure the location where client credentials should be sent to the server. The options are “Send as  Basic Auth header” or “Send client credentials in the request body”.',
   'connection.http.auth.oauth.tokenURI':
@@ -1245,7 +1245,7 @@ export default {
   'connection.http.auth.oauth.applicationType':
     'For some providers, OAuth 2.0 is built into the app’s endpoint. You will need to use Custom for any apps that do not have OAuth 2.0 built in.',
   'connection.http._iClientId':
-    'lets you configure Client Id and Client Secret from your OAuth application.',
+    ' Save your Client Id and Client Secret in iClient for an added layer of security.',
   'connection.marketplaceRegion':
     'Please specify the Amazon MWS Region for this connection. Please note that you must be registered to sell in the Amazon MWS Region selected, else your Amazon MWS calls will fail.',
   'connection.rdbms.useSSL':
