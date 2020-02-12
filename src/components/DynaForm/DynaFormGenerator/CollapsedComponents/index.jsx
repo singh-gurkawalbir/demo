@@ -41,6 +41,7 @@ const useStyles = makeStyles(theme => ({
   },
   expansionPanel: {
     boxShadow: 'none',
+    background: 'none',
   },
   expDetails: {
     padding: 0,

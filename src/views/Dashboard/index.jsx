@@ -105,7 +105,7 @@ function Dashboard() {
             fileType="application/zip"
             history={history}
             // eslint-disable-next-line react/jsx-handler-names
-            onClose={history.back}
+            onClose={history.goBack}
           />
         </Route>
       </Switch>
