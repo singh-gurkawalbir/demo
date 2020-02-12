@@ -79,8 +79,8 @@ export default function DynaTypeableSelect(props) {
   });
   const [showDropdown, setShowDropdown] = useState(false);
   const { filter, inputValue, isFocus } = inputState;
-  // close suggestions when clicked outside
-  const handleClickOutside = event => {
+  // close clicked inside in component
+  const handleClickInside = event => {
     if (
       showDropdown === false &&
       !disabled &&
@@ -92,10 +92,12 @@ export default function DynaTypeableSelect(props) {
   };
 
   useEffect(() => {
-    document.addEventListener('click', handleClickOutside, true);
+    // Bind the event listener
+    document.addEventListener('click', handleClickInside, true);
 
     return () => {
-      document.removeEventListener('click', handleClickOutside, true);
+      // Unbind the event listener on clean up
+      document.removeEventListener('click', handleClickInside, true);
     };
   });
   const handleChange = newObj => {
