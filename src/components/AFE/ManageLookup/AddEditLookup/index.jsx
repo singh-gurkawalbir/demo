@@ -5,8 +5,8 @@ import { Button } from '@material-ui/core';
 import DynaForm from '../../../DynaForm';
 import DynaSubmit from '../../../DynaForm/DynaSubmit';
 import lookupMetadata from './metadata';
-import netsuiteMetadata from './netsuiteMetadata';
-import salesforceMetadata from './salesforceMetadata';
+import netsuiteMetadata from './DynamicLookup/netsuiteMetadata';
+import salesforceMetadata from './DynamicLookup/salesforceMetadata';
 
 export default function AddEditLookup(props) {
   const {
