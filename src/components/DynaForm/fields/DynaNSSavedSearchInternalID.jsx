@@ -17,6 +17,9 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
+// TODO there is duplicate code when we want different variants of text fields like
+// DynaRelativeUri, DynaTextFtpPort so we need redesign all related components.
+
 export default function DynaNSSavedSearchInternalID(props) {
   const {
     description,
