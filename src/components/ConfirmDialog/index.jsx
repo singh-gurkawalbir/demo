@@ -83,7 +83,7 @@ export default function useConfirmDialog() {
         title: 'Confirm',
         message: `Are you sure you want to ${message}`,
         buttons: [
-          { label: 'Delete', color: 'primary', onClick: callback },
+          { label: 'Yes', color: 'primary', onClick: callback },
           { label: 'Cancel', variant: 'text' },
         ],
       });
