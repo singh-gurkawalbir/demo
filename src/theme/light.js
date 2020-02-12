@@ -552,6 +552,13 @@ export default {
         },
       },
     },
+    // Adding globally to fix the radio button and text alignment default is margin left -11,
+    MuiFormControlLabel: {
+      root: {
+        marginLeft: 0,
+        marginTop: 6,
+      },
+    },
   },
 
   // TODO: Dave It is giving an error in console

@@ -3331,29 +3331,6 @@ export function getAvailableResourcePreviewStages(
 }
 
 /*
- * This selector used to differentiate drawers with/without Preview Panel
- */
-export function isPreviewPanelAvailableForResource(
-  state,
-  resourceId,
-  resourceType
-) {
-  const { merged: resourceObj = {} } = resourceData(
-    state,
-    resourceType,
-    resourceId,
-    'value'
-  );
-  const connectionObj = resource(
-    state,
-    'connections',
-    resourceObj._connectionId
-  );
-
-  return isPreviewPanelAvailable(resourceObj, resourceType, connectionObj);
-}
-
-/*
  * Returns boolean true/false whether it is a lookup export or not based on passed flowId and resourceType
  */
 export function isLookUpExport(state, { flowId, resourceId, resourceType }) {
@@ -3376,4 +3353,36 @@ export function isLookUpExport(state, { flowId, resourceId, resourceType }) {
   const { pageProcessors = [] } = flow || {};
 
   return !!pageProcessors.find(pp => pp._exportId === resourceId);
+}
+
+/*
+ * This selector used to differentiate drawers with/without Preview Panel
+ */
+export function isPreviewPanelAvailableForResource(
+  state,
+  resourceId,
+  resourceType,
+  flowId
+) {
+  const { merged: resourceObj = {} } = resourceData(
+    state,
+    resourceType,
+    resourceId,
+    'value'
+  );
+  const connectionObj = resource(
+    state,
+    'connections',
+    resourceObj._connectionId
+  );
+
+  // Preview panel is not shown for lookups
+  if (
+    resourceObj.isLookup ||
+    isLookUpExport(state, { resourceId, flowId, resourceType })
+  ) {
+    return false;
+  }
+
+  return isPreviewPanelAvailable(resourceObj, resourceType, connectionObj);
 }

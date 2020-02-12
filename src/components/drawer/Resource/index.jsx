@@ -39,7 +39,8 @@ function ResourceDrawer(props) {
     return selectors.isPreviewPanelAvailableForResource(
       state,
       id,
-      resourceType
+      resourceType,
+      props.flowId
     );
   });
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));

@@ -1,8 +1,12 @@
 import { useEffect, useState } from 'react';
-import TextField from '@material-ui/core/TextField';
 import { InputAdornment } from '@material-ui/core';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+import TextField from '@material-ui/core/TextField';
+import clsx from 'clsx';
 import { makeStyles } from '@material-ui/styles';
 import { isNaN } from 'lodash';
+import CopyIcon from '../../icons/CopyIcon';
+import ActionButton from '../../ActionButton';
 
 const useStyles = makeStyles(theme => ({
   dynaFieldWrapper: {
@@ -16,9 +20,21 @@ const useStyles = makeStyles(theme => ({
     minWidth: theme.spacing(10),
     wordBreak: 'break-word',
   },
+  subSection: {
+    maxWidth: '95%',
+    marginLeft: '5%',
+  },
+  dynaFieldCopyClipboard: {
+    display: 'flex',
+    width: '100%',
+    flexDirection: `row !important`,
+  },
+  copybtn: {
+    marginLeft: 6,
+  },
 }));
 
-export default function DynaText(props) {
+function DynaText(props) {
   const {
     description,
     disabled,
@@ -53,7 +69,6 @@ export default function DynaText(props) {
       setValueChanged(false);
     }
   }, [id, onFieldChange, options, valueChanged]);
-
   const handleFieldChange = event => {
     const { value, valueAsNumber } = event.target;
     let returnVal;
@@ -81,39 +96,70 @@ export default function DynaText(props) {
   const inpValue = value === '' && inputType === 'number' ? 0 : value;
 
   return (
-    <div className={classes.dynaFieldWrapper}>
-      <TextField
-        autoComplete="off"
-        key={id}
-        data-test={id}
-        name={name}
-        label={label}
-        InputProps={{
-          startAdornment: startAdornment ? (
-            <InputAdornment
-              position="start"
-              className={classes.startAdornmentWrapper}>
-              {startAdornment}
-            </InputAdornment>
-          ) : null,
-          endAdornment: endAdornment ? (
-            <InputAdornment position="end">{endAdornment}</InputAdornment>
-          ) : null,
-          readOnly: !!readOnly,
-        }}
-        type={inputType}
-        placeholder={placeholder}
-        helperText={isValid ? description : errorMessages}
-        disabled={disabled || disableText}
-        multiline={multiline}
-        rowsMax={rowsMax}
-        required={required}
-        error={!isValid}
-        value={inpValue}
-        variant="filled"
-        onChange={handleFieldChange}
-        className={classes.formField}
-      />
+    <TextField
+      autoComplete="off"
+      key={id}
+      data-test={id}
+      name={name}
+      label={label}
+      InputProps={{
+        startAdornment: startAdornment ? (
+          <InputAdornment
+            position="start"
+            className={classes.startAdornmentWrapper}>
+            {startAdornment}
+          </InputAdornment>
+        ) : null,
+        endAdornment: endAdornment ? (
+          <InputAdornment position="end">{endAdornment}</InputAdornment>
+        ) : null,
+        readOnly: !!readOnly,
+      }}
+      type={inputType}
+      placeholder={placeholder}
+      helperText={isValid ? description : errorMessages}
+      disabled={disabled || disableText}
+      multiline={multiline}
+      rowsMax={rowsMax}
+      required={required}
+      error={!isValid}
+      value={inpValue}
+      variant="filled"
+      onChange={handleFieldChange}
+      className={classes.formField}
+    />
+  );
+}
+
+export default function TextFieldWithClipboardSupport(props) {
+  const { copyToClipboard, value, subSectionField } = props;
+  const classes = useStyles();
+
+  if (copyToClipboard) {
+    return (
+      <div className={classes.dynaFieldCopyClipboard}>
+        <DynaText {...props} />
+        <CopyToClipboard text={value}>
+          <ActionButton
+            data-test="copyToClipboard"
+            title="Copy to clipboard"
+            className={classes.copybtn}>
+            <CopyIcon />
+          </ActionButton>
+        </CopyToClipboard>
+      </div>
+    );
+  }
+
+  // copyToClipboard used to copy the value from clipboard.
+  // subsectionfield used to add the padding to the field.
+  return (
+    <div
+      className={clsx(classes.dynaFieldWrapper, {
+        [classes.subSection]: subSectionField,
+      })}>
+      <DynaText {...props} />
+      {}
     </div>
   );
 }

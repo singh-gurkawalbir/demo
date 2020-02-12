@@ -2,8 +2,11 @@ import React from 'react';
 import UploadFile from './UploadFile';
 import ModalDialog from '../../components/ModalDialog';
 
-export default function InstallIntegrationDialog(props) {
-  const { fileType, history, onClose } = props;
+export default function InstallIntegrationDialog({
+  fileType,
+  history,
+  onClose,
+}) {
   // const classes = useStyles();
 
   return (
