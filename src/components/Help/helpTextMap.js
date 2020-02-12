@@ -1330,7 +1330,7 @@ export default {
   'fb.pp.exports.responseMapping':
     'Define a ‘results mapping’ here to specify where the data returned by the lookup should be merged back into the source record.',
   'fb.pp.exports.postResponseMap':
-    'Define a ‘hook’ here to use custom code to process records returned by the lookup before the records are merged back into the source record.',
+    'Define a ‘hook’ here to use custom code to process records after the response/results mapping is complete, but before the records are passed along to downstream applications.',
   'fb.pp.exports.proceedOnFailure':
     'If the lookup fails for a specific record then what should happen to that record?  Should the failed record pause here until someone can analyze and fix the error (i.e. the default behavior), or should the failed record proceed to the next application in the flow regardless?',
   'fb.pp.exports.inputFilter':
@@ -1346,7 +1346,7 @@ export default {
   'fb.pp.imports.responseMapping':
     'Define a ‘response mapping’ here to specify where the response data returned by the import should be merged back into the source record.',
   'fb.pp.imports.postResponseMap':
-    'Define a ‘hook’ here to use custom code to process source records before they are submitted to the destination application (pre and post mapping hooks are available), or to process response data returned by the import (i.e. to handle errors, enhance error messages, etc...).',
+    'Define a ‘hook’ here to use custom code to process records after the response/results mapping is complete, but before the records are passed along to downstream applications.',
   'fb.pp.imports.proceedOnFailure':
     'If the import fails for a specific record then what should happen to that record?  Should the failed record pause here until someone can analyze and fix the error (i.e. the default behavior), or should the failed record proceed to the next application in the flow regardless?',
   'fb.pp.imports.inputFilter':
