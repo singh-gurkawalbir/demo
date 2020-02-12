@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { DynaGenericSelect } from './RefreshGenericResource';
 import actions from '../../../../actions';
@@ -13,6 +13,7 @@ export default function RefreshableIntegrationAppSetting(props) {
     properties,
     onFieldChange,
   } = props;
+  const [netSuiteSavedSearchUrl, setNetSuiteSavedSearchUrl] = useState();
   const dispatch = useDispatch();
   const handleRefreshResource = useCallback(() => {
     dispatch(
@@ -28,6 +29,21 @@ export default function RefreshableIntegrationAppSetting(props) {
       defaultFieldOptions
     )
   );
+  const netSuiteSystemDomain = useSelector(state => {
+    if (fieldName.includes('_listSavedSearches')) {
+      const connection = selectors.resourceList(state, {
+        type: 'connections',
+        filter: { type: 'netsuite', _integrationId },
+      }).resources[0];
+
+      return (
+        connection &&
+        connection.netsuite &&
+        connection.netsuite.dataCenterURLs &&
+        connection.netsuite.dataCenterURLs.systemDomain
+      );
+    }
+  });
   const valueAndLabel = properties && properties.yieldValueAndLabel;
 
   useEffect(() => {
@@ -41,6 +57,16 @@ export default function RefreshableIntegrationAppSetting(props) {
     }
   }, [fieldName, onFieldChange, options, value, valueAndLabel]);
 
+  useEffect(() => {
+    if (netSuiteSystemDomain && value && value.id) {
+      setNetSuiteSavedSearchUrl(
+        `${netSuiteSystemDomain}/app/common/search/search.nl?id=${value.id}`
+      );
+    } else {
+      setNetSuiteSavedSearchUrl();
+    }
+  }, [netSuiteSystemDomain, value]);
+
   return (
     <DynaGenericSelect
       {...props}
@@ -52,6 +78,7 @@ export default function RefreshableIntegrationAppSetting(props) {
       fieldData={options || []}
       fieldError={null}
       value={valueAndLabel ? value && value.id : value}
+      urlToOpen={netSuiteSavedSearchUrl}
     />
   );
 }

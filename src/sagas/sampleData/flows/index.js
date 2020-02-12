@@ -560,7 +560,9 @@ export function* requestProcessorData({
         });
       }
 
-      hasNoRulesToProcess = true;
+      // Incase of no mappings defined, data is not proceeded further for this resource
+      // So this stage's state is left undefined. It is up to the next stages to handle this
+      return;
     } else if (stage === 'postResponseMap') {
       // For this stage, we need both flowData and rawData to merge and generate actual data
       // Raw Data is supplied through preProcessedData, FlowData is fetched below
