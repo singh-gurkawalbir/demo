@@ -33,11 +33,18 @@ const useStyles = makeStyles(theme => ({
   },
   crumb: {
     paddingTop: 2,
+    maxWidth: 300,
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
     [theme.breakpoints.down('sm')]: {
+      maxWidth: 150,
+    },
+    [theme.breakpoints.up('md')]: {
       maxWidth: 200,
-      whiteSpace: 'nowrap',
-      overflow: 'hidden',
-      textOverflow: 'ellipsis',
+    },
+    [theme.breakpoints.up('lg')]: {
+      maxWidth: 300,
     },
   },
 }));
