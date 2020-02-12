@@ -38,7 +38,6 @@ export default function ImportMappingSettings(props) {
     open,
     extractFields,
     generateFields,
-    lookup,
     updateLookup,
     application,
     options,
@@ -47,10 +46,11 @@ export default function ImportMappingSettings(props) {
   } = props;
   const { generate, extract, index } = value;
   const [enquesnackbar] = useEnqueueSnackbar();
+  const getLookup = name => lookups.find(lookup => lookup.name === name);
+  const lookup = value && value.lookupName && getLookup(value.lookupName);
   const fieldMeta = ApplicationMappingSettings.getMetaData({
     application,
     value,
-    lookup,
     extractFields,
     generate,
     generateFields,

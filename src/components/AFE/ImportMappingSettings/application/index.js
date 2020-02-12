@@ -72,7 +72,6 @@ export default {
     const {
       application,
       value,
-      lookup = {},
       extractFields = [],
       generate,
       generateFields = [],
@@ -86,7 +85,6 @@ export default {
       case adaptorTypeMap.RESTImport:
         fieldMeta = RestMappingSettings.getMetaData({
           value,
-          lookup,
           extractFields,
           generate,
           options,
@@ -96,7 +94,6 @@ export default {
       case adaptorTypeMap.NetSuiteDistributedImport:
         fieldMeta = NetsuiteMappingSettings.getMetaData({
           value,
-          lookup,
           extractFields,
           generate,
           generateFields,
@@ -107,7 +104,6 @@ export default {
       case adaptorTypeMap.SalesforceImport:
         fieldMeta = SalesforceMappingSettings.getMetaData({
           value,
-          lookup,
           extractFields,
           generate,
           generateFields,
@@ -121,7 +117,6 @@ export default {
       case adaptorTypeMap.FTPImport:
         fieldMeta = FTPMappingSettings.getMetaData({
           value,
-          lookup,
           extractFields,
           options,
           lookups,

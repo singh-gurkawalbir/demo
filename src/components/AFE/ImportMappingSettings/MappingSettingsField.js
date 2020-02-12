@@ -17,7 +17,6 @@ export default function MappingSettingsField(props) {
     onSave,
     extractFields,
     generateFields,
-    lookup,
     application,
     updateLookup,
     options,
@@ -47,7 +46,6 @@ export default function MappingSettingsField(props) {
           open={showSettings}
           updateLookup={updateLookup}
           title="Settings"
-          lookup={lookup}
           value={value}
           onClose={handleClose}
           options={options}

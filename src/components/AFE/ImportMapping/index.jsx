@@ -227,7 +227,6 @@ export default function ImportMapping(props) {
     application,
     resource
   );
-  const getLookup = name => lookups.find(lookup => lookup.name === name);
   const updateLookupHandler = (isDelete, obj) => {
     let lookupsTmp = [...lookups];
 
@@ -425,11 +424,6 @@ export default function ImportMapping(props) {
                     application={application}
                     updateLookup={updateLookupHandler}
                     disabled={mapping.isNotEditable || disabled}
-                    lookup={
-                      mapping &&
-                      mapping.lookupName &&
-                      getLookup(mapping.lookupName)
-                    }
                     lookups={lookups}
                     extractFields={extractFields}
                     generateFields={generateFields}
