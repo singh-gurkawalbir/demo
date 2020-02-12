@@ -6,7 +6,6 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Switch from '@material-ui/core/Switch';
 import IconButton from '@material-ui/core/IconButton';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
 import Divider from '@material-ui/core/Divider';
 import EditIcon from '../icons/EditIcon';
 import {
@@ -19,6 +18,7 @@ import actionTypes from '../../actions/types';
 import { COMM_STATES } from '../../reducers/comms/networkComms';
 import useConfirmDialog from '../ConfirmDialog';
 import CommStatus from '../CommStatus';
+import MoreHorizIcon from '../../components/icons/EllipsisHorizontalIcon';
 
 export default function UserDetail(props) {
   const { confirmDialog } = useConfirmDialog();
@@ -285,7 +285,7 @@ export default function UserDetail(props) {
                     </MenuItem>
                   </Menu>
                   <IconButton onClick={handleClick}>
-                    <MoreVertIcon />
+                    <MoreHorizIcon />
                   </IconButton>
                 </TableCell>
               </Fragment>

@@ -1176,23 +1176,37 @@ export default {
   'connection.http.auth.revoke.uri':
     'This is the URL that we will use to revoke this token’s access to this endpoint.',
   'connection.http.auth.oauth.grantType':
-    'This list will depend on the API service provider requirements.',
+    'The OAuth 2.0 Authentication currently supports two types of Grant Type. Choose “Authorization Code” grant Type if an authorization code is obtained by using an authorization server as an intermediary between the client and resource owner. Choose “Client Credentials” when the authorization scope is limited to the protected resources under the control of the client, or to protected resources previously arranged with the authorization server.',
   'connection.http.auth.oauth.callbackURL':
-    'The client application callback URL redirected to after auth, and that should be registered with the API provider.',
+    'Use callback URL to provide directions on where to go after authentication with Authorization Server. You need to whitelist this URL with your Authorization Server.',
   'connection.http.auth.oauth.clientCredentialsLocation':
-    'Sends a Basic Auth request in the header or client credentials in the request body. When your config is complete, click Request Token. If you successfully receive a token from the API you will see its details, together with the expiry, and optionally a refresh token you can use to retrieve a new access token when your current one expires.',
+    'This configuration allows you to configure the location where client credentials should be sent to the server. The options are “Send as  Basic Auth header” or “Send client credentials in the request body”.',
   'connection.http.auth.oauth.tokenURI':
-    'This is the URL that we will get the access token from.',
+    'This is the URL to the endpoint from which an authorization code for an access token can be exchanged. This generally is also on the Authentication server itself.',
   'connection.http.auth.oauth.scopeDelimiter':
-    'Provide the non-space delimiter your provider uses to delimit scopes',
+    'Provide the non-space delimiter API provider uses to delimit scopes.',
   'connection.http.auth.oauth.authURI':
     'This is the endpoint for the API provider’s authorization server where the auth code is retrieved from.',
   'connection.http.auth.oauth.scope':
-    'This is the scope of access you are requesting. Use spaces to separate values. If your provider uses a custom delimiter, check the box to use an alternate scope delimiter.',
+    'These are the scopes of access being requested from the authorization server. Use comma(,) to separate values.',
+  'connection.http.auth.oauth.accessTokenHeaders':
+    "In some rare cases, it may be necessary to include custom HTTP headers with your API requests. The default 'content-type' header value is 'application/x-www-form-urlencoded'.",
+  'connection.http.auth.oauth.accessTokenBody':
+    "Configure your own access token body in JSON format if it is different from the default access token body. This JSON format is finally converted to the form-urlencoded format on the wire. <br> Default access token body format if 'Client Authentication' set as 'body':</br>{ code: {{{query.code}}}, redirect_uri: {{{redirectUri}}}, client_id: {{{clientId}}}, client_secret: {{{clientSecret}}}, grant_type: “authorization_code”}. <br> Default access token body format if 'Client Authentication' set as 'body': { client_id: {{{clientId}}}, client_secret: {{{clientSecret}}} grant_type: “client_credentials” }.",
+  'connection.http.auth.oauth.refreshHeaders':
+    "In some rare cases, it may be necessary to include custom HTTP headers with your API requests. The default 'content-type' header value is 'application/x-www-form-urlencoded'.",
+  'connection.http.auth.oauth.refreshBody':
+    'Configure your own refresh token body in JSON format if it is different from the default refresh token body. This JSON format is finally converted to the form-urlencoded format on the wire.<br>Default refresh token body format:</br>{ client_id: {{{clientId}}}, client_secret: {{{clientSecret}}}, grant_type: “refresh_token” }',
+  'connection.http.auth.token.revoke.body':
+    'Configure your own revoke body in JSON format if it is different from the default revoke token body. This JSON format is finally converted to the form-urlencoded format on the wire.<br>Default revoke body format:</br>{ token: {{{connection.http.auth.token.token}}} }.',
+  'connection.http.auth.token.revoke.headers':
+    "In some rare cases, it may be necessary to include custom HTTP headers with your API requests. The default 'content-type' header value is 'application/x-www-form-urlencoded' and 'Authorization' header value is “basic <base64 encoded format of 'clientId' and 'clientSecret'>”.",
+  'connection.http.auth.token.revoke.uri':
+    'IO requests the revocation of a particular token by making an HTTP POST request to the token revocation endpoint URL.',
   'connection.rest.pingMethod':
     'The HTTP method (GET/PUT/POST/HEAD) to use when making the ping request.',
   'connection.rest.pingBody':
-    'This field is typically used in for HTTP requests not using the GET method. The value of this field becomes the HTTP body that is sent to the API endpoint. The format of the body is dependent on the API being used. It could be URLl-encoded, JSON, or XML data. In either case, the metadata contained in this body will provide the API with the information needed to fulfill your ping request. Note that this field can contain {{{placeholders}}} that are populated from a model comprising of a connection and an export object. For example, if the export request body requires an authentication token to be embedded, you can use the placeholder {{connection.http.auth.token.token}}.',
+    'This field is typically used in for HTTP requests not using the GET method. The value of this field becomes the HTTP body that is sent to the API endpoint. The format of the body is dependent on the API being used. It could be URL-encoded, JSON, or XML data. In either case, the metadata contained in this body will provide the API with the information needed to fulfill your ping request. Note that this field can contain {{{placeholders}}} that are populated from a model comprising of a connection and an export object. For example, if the export request body requires an authentication token to be embedded, you can use the placeholder {{connection.http.auth.token.token}}.',
   'connection.rest.threedcartSecureUrl': "3dcart merchant's Secure URL.",
   'connection.rest.encrypted':
     "Use this JSON field to store all the security sensitive fields needed by your imports and exportsto access the application being integrated. For example: {'password': 'ayTb53Img!do'} or {'token': 'x7ygd4njlwerf63nhg'}. Please note that in addition to AES 256 encryption there are multiple layers of protection in place to keep your data safe.",
@@ -1231,7 +1245,7 @@ export default {
   'connection.http.auth.oauth.applicationType':
     'For some providers, OAuth 2.0 is built into the app’s endpoint. You will need to use Custom for any apps that do not have OAuth 2.0 built in.',
   'connection.http._iClientId':
-    'iClient lets you configure your developer access and secret keys for your marketplace region.',
+    'Save your Client Id and Client Secret in iClient for an added layer of security.',
   'connection.marketplaceRegion':
     'Please specify the Amazon MWS Region for this connection. Please note that you must be registered to sell in the Amazon MWS Region selected, else your Amazon MWS calls will fail.',
   'connection.rdbms.useSSL':

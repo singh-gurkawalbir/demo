@@ -167,7 +167,7 @@ function DynaSelectResource(props) {
       location.pathname.endsWith(`/edit/${resourceType}/${newResourceId}`));
   const disableSelect = disabled || isAddingANewResource;
   const resourceItems = filteredResources.map(conn => ({
-    label: conn.name,
+    label: conn.name || conn._id,
     value: conn._id,
   }));
   const expConnId = useSelector(state => {
