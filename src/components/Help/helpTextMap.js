@@ -569,6 +569,21 @@ export default {
     'If you only want to export specific documents from your collection then please enter your filter object here. The value of this field must be a valid JSON string describing a MongoDB filter object in the correct format and with the correct operators. Refer to the <a href="https://docs.mongodb.com/manual/reference/operator/query/" target="_blank">MongoDB documentation</a> for the list of valid query operators and the correct filter object syntax.',
   'export.mongodb.projection':
     'If you only want to return a subset of fields from each MongoDB document then please enter your projection object here. The value of this field must be a valid JSON string describing a MongoDB projection object in the correct format and with the correct operators (and cannot mix inclusions and exclusions). Refer to the <a href="https://docs.mongodb.com/manual/reference/method/db.collection.find/#find-projection" target="_blank">MongoDB documentation</a> for the expected projection object syntax and operators.',
+  'export.dynamodb.region': `Name of the DynamoDB region to the location where the request is being made. If not set, by default 'us-east-1' is selected.`,
+  'export.dynamodb.tableName':
+    'Enter the name of the DynamoDB collection in your database that you would like to query from. For example: orders, items, users, customers, etc..',
+  'export.dynamodb.expressionAttributeNames':
+    'An expression attribute name is a placeholder that you use in an Amazon DynamoDB expression as an alternative to an actual attribute name. An expression attribute name must begin with a pound sign (#), and be followed by one or more alphanumeric characters. Refer to the DynamoDB documentation for the expected projection object syntax and operators.',
+  'export.dynamodb.expressionAttributeValues':
+    ' If you need to compare an attribute with a value, define an expression attribute value as a placeholder. Expression attribute values in Amazon DynamoDB are substitutes for the actual values that you want to compare—values that you might not know until runtime. An expression attribute value must begin with a colon (: and be followed by one or more alphanumeric character.  Refer to the DynamoDB documentation for the expected projection object syntax and operators.',
+  'export.dynamodb.keyConditionExpression':
+    'To specify the search criteria, you use a key condition expression—a string that determines the items to be read from the table or index.',
+  'export.dynamodb.filterExpression':
+    'If you only want to export specific documents from your collection then please enter your filter object here. The value of this field must be a valid JSON string describing a DynamoDB filter object in the correct format and with the correct operators. Refer to the DynamoDB documentation for the list of valid query operators and the correct filter object syntax.',
+  'export.dynamodb.projectionExpression':
+    'If you only want to return a subset of fields from each DynamoDB document then please enter your projection object here. The value of this field must be a valid JSON string describing a DynamoDB projection object in the correct format and with the correct operators. Refer to the DynamoDB documentation for the expected projection object syntax and operators.',
+  'export.dynamodb.onceExportPartitionKey': '',
+  'export.dynamodb.onceExportSortKey': '',
   'export.hooks.preSavePage.function':
     'This hook gets invoked at the very end of your export process, right before each page of data is saved and passed along to downstream applications. This hook can be used to modify, add, or delete records.',
   'export.hooks.preSavePage.scriptFunction':
@@ -904,6 +919,23 @@ export default {
     'If this import has either the Ignore Missing or Ignore Existing flags set to true, this field is used to identify the extract path of the field within the exported resource to be used to test for the existence of the resource. In other words, this is the path to an identifier or some other field that would only be present if a resource already exists in the import system.',
   'import.mongodb.ignoreLookupFilter':
     'If you are adding documents to your MongoDB instance and you have the Ignore Existing flag set to true please enter a filter object here to find existing documents in this collection. The value of this field must be a valid JSON string describing a MongoDB filter object in the correct format and with the correct operators. Refer to the <a href="https://docs.mongodb.com/manual/reference/operator/query/" target="_blank">MongoDB documentation</a> for the list of valid query operators and the correct filter object syntax.',
+  'import.dynamodb.region': `Name of the DynamoDB region to the location where the request is being made. If not set, by default 'us-east-1' is selected.`,
+  'import.dynamodb.method': '',
+  'import.dynamodb.tableName':
+    'Enter the name of the DynamoDB collection in your database that you would like to query from. For example: orders, items, users, customers, etc..',
+  'import.dynamodb.partitionKey':
+    'The primary key that uniquely identifies each item in an Amazon DynamoDB table can be simple (a partition key only) or composite (a partition key combined with a sort key). Refer to the DynamoDB documentation for the expected projection object syntax and operators.',
+  'import.dynamodb.sortKey':
+    'In an Amazon DynamoDB table, the primary key that uniquely identifies each item in the table can be composed not only of a partition key, but also of a sort key. Refer to the DynamoDB documentation for the expected projection object syntax and operators',
+  'import.dynamodb.itemDocument': '',
+  'import.dynamodb.updateExpression': '',
+  'import.dynamodb.conditionExpression':
+    'To specify the search criteria, you use a key condition expression—a string that determines the items to be read from the table or index.  Filter Expression - If you only want to export specific documents from your collection then please enter your filter object here. The value of this field must be a valid JSON string describing a DynamoDB filter object in the correct format and with the correct operators. Refer to the DynamoDB documentation for the list of valid query operators and the correct filter object syntax.',
+  'import.dynamodb.expressionAttributeNames':
+    'An expression attribute name is a placeholder that you use in an Amazon DynamoDB expression as an alternative to an actual attribute name. An expression attribute name must begin with a pound sign (#), and be followed by one or more alphanumeric characters. Refer to the DynamoDB documentation for the expected projection object syntax and operators.',
+  'import.dynamodb.expressionAttributeValues':
+    ' If you need to compare an attribute with a value, define an expression attribute value as a placeholder. Expression attribute values in Amazon DynamoDB are substitutes for the actual values that you want to compare—values that you might not know until runtime. An expression attribute value must begin with a colon ( and be followed by one or more alphanumeric character. Refer to the DynamoDB documentation for the expected projection object syntax and operators.',
+  'import.dynamodb.ignoreExtract': '',
   'integration._id':
     'System generated primary unique identifier for your integration.  For API users, this value should be used for GET and PUT requests.',
   'integration.name':
