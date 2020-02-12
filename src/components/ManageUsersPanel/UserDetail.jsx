@@ -1,6 +1,5 @@
-import { hot } from 'react-hot-loader';
-import { Component, Fragment } from 'react';
-import { connect } from 'react-redux';
+import { Fragment, useState, useCallback } from 'react';
+import { useDispatch } from 'react-redux';
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
 import Menu from '@material-ui/core/Menu';
@@ -21,42 +20,37 @@ import useConfirmDialog from '../ConfirmDialog';
 import CommStatus from '../CommStatus';
 import MoreHorizIcon from '../../components/icons/EllipsisHorizontalIcon';
 
-const mapDispatchToProps = dispatch => ({
-  disableUser: (id, disabled) => {
-    dispatch(actions.user.org.users.disable(id, disabled));
-  },
-  deleteUser: id => {
-    dispatch(actions.user.org.users.delete(id));
-  },
-  makeOwner: email => {
-    dispatch(actions.user.org.users.makeOwner(email));
-  },
-});
-
-@hot(module)
-class UserDetail extends Component {
-  state = {
-    anchorEl: null,
-  };
-
-  handleClick = event => {
-    this.setState({ anchorEl: event.currentTarget });
-  };
-
-  handleClose = () => {
-    this.setState({ anchorEl: null });
-  };
-
-  handleActionClick = action => {
-    this.setState({ anchorEl: null });
-    const { confirmDialog } = useConfirmDialog();
-    const {
-      user,
-      disableUser,
-      deleteUser,
-      makeOwner,
-      editClickHandler,
-    } = this.props;
+export default function UserDetail(props) {
+  const { confirmDialog } = useConfirmDialog();
+  const [anchorEl, setAnchorEl] = useState(null);
+  const handleClick = useCallback(event => {
+    setAnchorEl(event.currentTarget);
+  }, []);
+  const handleClose = useCallback(() => {
+    setAnchorEl(null);
+  }, []);
+  const dispatch = useDispatch();
+  const disableUser = useCallback(
+    (id, disabled) => {
+      dispatch(actions.user.org.users.disable(id, disabled));
+    },
+    [dispatch]
+  );
+  const deleteUser = useCallback(
+    id => {
+      dispatch(actions.user.org.users.delete(id));
+    },
+    [dispatch]
+  );
+  const makeOwner = useCallback(
+    email => {
+      dispatch(actions.user.org.users.makeOwner(email));
+    },
+    [dispatch]
+  );
+  const handleActionClick = action => {
+    setAnchorEl(null);
+    const { user, editClickHandler } = props;
 
     switch (action) {
       case 'disable':
@@ -123,7 +117,7 @@ class UserDetail extends Component {
     }
   };
 
-  getMessageForAction(action, commStatus, user) {
+  const getMessageForAction = useCallback((action, commStatus, user) => {
     let message;
 
     if (action === 'disable') {
@@ -164,150 +158,141 @@ class UserDetail extends Component {
     }
 
     return message;
-  }
+  }, []);
+  const commStatusHandler = useCallback(
+    objStatus => {
+      const { user, statusHandler } = props;
 
-  commStatusHandler(objStatus) {
-    const { user, statusHandler } = this.props;
+      ['disable', 'makeOwner', 'delete'].forEach(a => {
+        if (
+          objStatus[a] &&
+          [COMM_STATES.SUCCESS, COMM_STATES.ERROR].includes(objStatus[a].status)
+        ) {
+          statusHandler({
+            status: objStatus[a].status,
+            message: getMessageForAction(a, objStatus[a], user),
+          });
+        }
+      });
+    },
+    [getMessageForAction, props]
+  );
+  const { user, integrationId, isAccountOwner } = props;
 
-    ['disable', 'makeOwner', 'delete'].forEach(a => {
-      if (
-        objStatus[a] &&
-        [COMM_STATES.SUCCESS, COMM_STATES.ERROR].includes(objStatus[a].status)
-      ) {
-        statusHandler({
-          status: objStatus[a].status,
-          message: this.getMessageForAction(a, objStatus[a], user),
-        });
-      }
-    });
-  }
-  render() {
-    const { anchorEl } = this.state;
-    const { user, integrationId, isAccountOwner } = this.props;
-
-    return (
-      <Fragment>
-        <CommStatus
-          actionsToMonitor={{
-            disable: { action: actionTypes.USER_DISABLE, resourceId: user._id },
-            makeOwner: { action: actionTypes.USER_MAKE_OWNER },
-            delete: { action: actionTypes.USER_DELETE, resourceId: user._id },
-          }}
-          autoClearOnComplete
-          commStatusHandler={objStatus => {
-            this.commStatusHandler(objStatus);
-          }}
-        />
-        <TableRow key={user._id}>
-          <TableCell>
-            <div>{user.sharedWithUser.name}</div>
-            <div>{user.sharedWithUser.email}</div>
-          </TableCell>
-          <TableCell>
-            {!integrationId &&
-              {
-                [USER_ACCESS_LEVELS.ACCOUNT_MANAGE]: 'Manage',
-                [USER_ACCESS_LEVELS.ACCOUNT_MONITOR]: 'Monitor',
-                [USER_ACCESS_LEVELS.TILE]: 'Tile',
-              }[user.accessLevel]}
-            {integrationId &&
-              {
-                [INTEGRATION_ACCESS_LEVELS.OWNER]: 'Owner',
-                [INTEGRATION_ACCESS_LEVELS.MANAGE]: 'Manage',
-                [INTEGRATION_ACCESS_LEVELS.MONITOR]: 'Monitor',
-              }[user.accessLevel]}
-          </TableCell>
-          <TableCell>
-            {!integrationId && (
-              <Fragment>
-                {user.accepted && 'Accepted'}
-                {user.dismissed && 'Dismissed'}
-                {!user.accepted && !user.dismissed && 'Pending'}
-              </Fragment>
-            )}
-            {integrationId && (
-              <Fragment>
-                {user.disabled && 'Disabled'}
-                {!user.disabled && user.accepted && 'Accepted'}
-                {!user.disabled && user.dismissed && 'Dismissed'}
-                {!user.disabled &&
-                  !user.accepted &&
-                  !user.dismissed &&
-                  'Pending'}
-              </Fragment>
-            )}
-          </TableCell>
-          {isAccountOwner && (
+  return (
+    <Fragment>
+      <CommStatus
+        actionsToMonitor={{
+          disable: { action: actionTypes.USER_DISABLE, resourceId: user._id },
+          makeOwner: { action: actionTypes.USER_MAKE_OWNER },
+          delete: { action: actionTypes.USER_DELETE, resourceId: user._id },
+        }}
+        autoClearOnComplete
+        commStatusHandler={objStatus => {
+          commStatusHandler(objStatus);
+        }}
+      />
+      <TableRow key={user._id}>
+        <TableCell>
+          <div>{user.sharedWithUser.name}</div>
+          <div>{user.sharedWithUser.email}</div>
+        </TableCell>
+        <TableCell>
+          {!integrationId &&
+            {
+              [USER_ACCESS_LEVELS.ACCOUNT_MANAGE]: 'Manage',
+              [USER_ACCESS_LEVELS.ACCOUNT_MONITOR]: 'Monitor',
+              [USER_ACCESS_LEVELS.TILE]: 'Tile',
+            }[user.accessLevel]}
+          {integrationId &&
+            {
+              [INTEGRATION_ACCESS_LEVELS.OWNER]: 'Owner',
+              [INTEGRATION_ACCESS_LEVELS.MANAGE]: 'Manage',
+              [INTEGRATION_ACCESS_LEVELS.MONITOR]: 'Monitor',
+            }[user.accessLevel]}
+        </TableCell>
+        <TableCell>
+          {!integrationId && (
             <Fragment>
-              {integrationId && user._id !== ACCOUNT_IDS.OWN && (
-                <TableCell>
-                  <IconButton
-                    data-test="editUser"
-                    onClick={() => {
-                      this.handleActionClick('edit');
-                    }}>
-                    <EditIcon />
-                  </IconButton>
-                </TableCell>
-              )}
-
-              {!integrationId && (
-                <Fragment>
-                  <TableCell>
-                    <Switch
-                      data-test="disableUser"
-                      checked={!user.disabled}
-                      onClick={() => {
-                        this.handleActionClick('disable');
-                      }}
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <Menu
-                      anchorEl={anchorEl}
-                      open={Boolean(anchorEl)}
-                      onClose={this.handleClose}>
-                      <MenuItem
-                        data-test="changeUserPermissions"
-                        onClick={() => {
-                          this.handleActionClick('edit');
-                        }}>
-                        Change permissions
-                      </MenuItem>
-                      <Divider />
-                      {user.accepted && (
-                        <MenuItem
-                          data-test="makeAccountOwner"
-                          onClick={() => {
-                            this.handleActionClick('makeOwner');
-                          }}>
-                          Make account owner
-                        </MenuItem>
-                      )}
-                      {user.accepted && <Divider />}
-                      <MenuItem
-                        data-test="deleteFromAccount"
-                        onClick={() => {
-                          this.handleActionClick('delete');
-                        }}>
-                        Delete from account
-                      </MenuItem>
-                    </Menu>
-                    <IconButton onClick={this.handleClick}>
-                      <MoreHorizIcon />
-                    </IconButton>
-                  </TableCell>
-                </Fragment>
-              )}
+              {user.accepted && 'Accepted'}
+              {user.dismissed && 'Dismissed'}
+              {!user.accepted && !user.dismissed && 'Pending'}
             </Fragment>
           )}
-        </TableRow>
-      </Fragment>
-    );
-  }
-}
+          {integrationId && (
+            <Fragment>
+              {user.disabled && 'Disabled'}
+              {!user.disabled && user.accepted && 'Accepted'}
+              {!user.disabled && user.dismissed && 'Dismissed'}
+              {!user.disabled && !user.accepted && !user.dismissed && 'Pending'}
+            </Fragment>
+          )}
+        </TableCell>
+        {isAccountOwner && (
+          <Fragment>
+            {integrationId && user._id !== ACCOUNT_IDS.OWN && (
+              <TableCell>
+                <IconButton
+                  data-test="editUser"
+                  onClick={() => {
+                    handleActionClick('edit');
+                  }}>
+                  <EditIcon />
+                </IconButton>
+              </TableCell>
+            )}
 
-export default connect(
-  null, // mapStateToProps,
-  mapDispatchToProps
-)(UserDetail);
+            {!integrationId && (
+              <Fragment>
+                <TableCell>
+                  <Switch
+                    data-test="disableUser"
+                    checked={!user.disabled}
+                    onClick={() => {
+                      handleActionClick('disable');
+                    }}
+                  />
+                </TableCell>
+                <TableCell>
+                  <Menu
+                    anchorEl={anchorEl}
+                    open={Boolean(anchorEl)}
+                    onClose={handleClose}>
+                    <MenuItem
+                      data-test="changeUserPermissions"
+                      onClick={() => {
+                        handleActionClick('edit');
+                      }}>
+                      Change permissions
+                    </MenuItem>
+                    <Divider />
+                    {user.accepted && (
+                      <MenuItem
+                        data-test="makeAccountOwner"
+                        onClick={() => {
+                          handleActionClick('makeOwner');
+                        }}>
+                        Make account owner
+                      </MenuItem>
+                    )}
+                    {user.accepted && <Divider />}
+                    <MenuItem
+                      data-test="deleteFromAccount"
+                      onClick={() => {
+                        handleActionClick('delete');
+                      }}>
+                      Delete from account
+                    </MenuItem>
+                  </Menu>
+                  <IconButton onClick={handleClick}>
+                    <MoreHorizIcon />
+                  </IconButton>
+                </TableCell>
+              </Fragment>
+            )}
+          </Fragment>
+        )}
+      </TableRow>
+    </Fragment>
+  );
+}
