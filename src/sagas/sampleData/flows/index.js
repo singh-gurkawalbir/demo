@@ -9,7 +9,7 @@ import {
   cancel,
 } from 'redux-saga/effects';
 import { deepClone } from 'fast-json-patch';
-import { isEmpty } from 'lodash';
+import { isEmpty, keys } from 'lodash';
 import { resourceData, getSampleData } from '../../../reducers';
 import { SCOPES } from '../../resourceForm';
 import actionTypes from '../../../actions/types';
@@ -33,7 +33,7 @@ import {
 } from './flowUpdates';
 import {
   getSampleDataStage,
-  compareSampleDataStage,
+  getCurrentSampleDataStageStatus,
   getPreviewStageData,
   getContextInfo,
   getBlobResourceSampleData,
@@ -625,32 +625,38 @@ const takeLatestSampleData = (patternOrChannel, saga, ...args) =>
       const onSagaEnd = function() {
         // Delete completed/erred Sagas
         // TODO @Raghu: figure out if we need to handle incase of saga error
-        delete sampleDataSagaMap[resourceId];
+        sampleDataSagaMap[resourceId] &&
+          delete sampleDataSagaMap[resourceId][currStage];
       };
 
       // If it is the first one straight away start executing this saga
       if (!sampleDataSagaMap[resourceId]) {
         sampleDataSagaMap[resourceId] = {
-          stage: currStage,
-          resourceType,
-          forkedSaga: yield fork(
-            saga,
-            ...args.concat({ ...action, onSagaEnd })
-          ),
+          [currStage]: {
+            stage: currStage,
+            resourceType,
+            forkedSaga: yield fork(
+              saga,
+              ...args.concat({ ...action, onSagaEnd })
+            ),
+          },
         };
       } else {
-        // compare currStage with prevStage and decide what to do
-        const { stage: prevStage } = sampleDataSagaMap[resourceId];
-        const currentStageStatus = compareSampleDataStage(
+        // get list of all existing stages
+        const prevStagesList = keys(sampleDataSagaMap[resourceId]);
+        const {
+          currentStageStatus,
           prevStage,
+        } = getCurrentSampleDataStageStatus(
+          prevStagesList,
           currStage,
           resourceType
         );
 
         // Incase of same stage , cancel previous saga and execute current one
         if (currentStageStatus === 0) {
-          yield cancel(sampleDataSagaMap[resourceId].forkedSaga);
-          sampleDataSagaMap[resourceId].forkedSaga = yield fork(
+          yield cancel(sampleDataSagaMap[resourceId][currStage].forkedSaga);
+          sampleDataSagaMap[resourceId][currStage].forkedSaga = yield fork(
             saga,
             ...args.concat({ ...action, onSagaEnd })
           );
@@ -658,12 +664,14 @@ const takeLatestSampleData = (patternOrChannel, saga, ...args) =>
 
         if (currentStageStatus > 0) {
           // Incase of status as 1, cancel previous saga as current saga takes precedence
+          // Also delete the same from the map
           if (currentStageStatus === 1) {
-            yield cancel(sampleDataSagaMap[resourceId].forkedSaga);
+            yield cancel(sampleDataSagaMap[resourceId][prevStage].forkedSaga);
+            delete sampleDataSagaMap[resourceId][prevStage];
           }
 
           // Incase of statuses 1, 2 execute current saga
-          sampleDataSagaMap[resourceId] = {
+          sampleDataSagaMap[resourceId][currStage] = {
             stage: currStage,
             resourceType,
             forkedSaga: yield fork(

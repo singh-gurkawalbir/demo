@@ -75,7 +75,7 @@ export const getAllDependentSampleDataStages = (
 
 // compare util returns -1, 0, 1 for less, equal and greater respectively
 // returns 2 when both stages need to exist incase of different paths
-export const compareSampleDataStage = (prevStage, currStage, resourceType) => {
+const compareSampleDataStage = (prevStage, currStage, resourceType) => {
   if (prevStage === currStage) return 0;
   const prevStageRoute = [
     prevStage,
@@ -91,6 +91,32 @@ export const compareSampleDataStage = (prevStage, currStage, resourceType) => {
   if (arrayUtils.isContinuousSubSet(currStageRoute, prevStageRoute)) return 1;
 
   return 2;
+};
+
+// Goes through each stage and compares with currStage
+// Returns closest stage from prevStages to currStage i.e., minimum of all statuses
+export const getCurrentSampleDataStageStatus = (
+  prevStages,
+  currStage,
+  resourceType
+) => {
+  let currentStageStatus = 2;
+  let relatedPrevStage;
+
+  prevStages.forEach(prevStage => {
+    const status = compareSampleDataStage(prevStage, currStage, resourceType);
+
+    // min of all stages
+    if (status < currentStageStatus) {
+      currentStageStatus = status;
+      relatedPrevStage = prevStage;
+    }
+  });
+
+  return {
+    currentStageStatus,
+    prevStage: relatedPrevStage,
+  };
 };
 
 const lastExportDateTime = moment()
