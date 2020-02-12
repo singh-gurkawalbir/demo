@@ -85,7 +85,6 @@ export default {
         },
       ],
     },
-
     type: {
       id: 'type',
       type: 'select',
@@ -110,6 +109,9 @@ export default {
           ],
         },
       ],
+    },
+    'delta.dateField': {
+      fieldId: 'delta.dateField',
     },
     'once.booleanField': {
       fieldId: 'once.booleanField',
@@ -142,6 +144,7 @@ export default {
           'dynamodb.filterExpression',
           'dynamodb.projectionExpression',
           'type',
+          'delta.dateField',
           'once.booleanField',
           'dynamodb.onceExportPartitionKey',
           'dynamodb.onceExportSortKey',
