@@ -40,6 +40,13 @@ const useStyles = makeStyles(theme => ({
     flexWrap: 'wrap',
     marginBottom: theme.spacing(2),
   },
+  multilineText: {
+    width: '100%',
+    '& div:first-child': {
+      height: 50,
+      padding: '8px 35px 8px 8px',
+    },
+  },
 }));
 
 export default function DynaTypeableSelect(props) {
@@ -76,6 +83,7 @@ export default function DynaTypeableSelect(props) {
   const handleClickOutside = event => {
     if (
       showDropdown === false &&
+      !disabled &&
       ref.current &&
       ref.current.contains(event.target)
     ) {
@@ -250,7 +258,14 @@ export default function DynaTypeableSelect(props) {
           menuIsOpen
         />
       )}
-      {!showDropdown && <DynaText value={inputValue} multiline readOnly />}
+      {!showDropdown && (
+        <DynaText
+          value={inputVal}
+          multiline
+          readOnly
+          className={classes.multilineText}
+        />
+      )}
 
       {!removeHelperText && <ErroredMessageComponent {...props} />}
     </FormControl>
