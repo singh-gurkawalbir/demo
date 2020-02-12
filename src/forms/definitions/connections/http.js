@@ -741,9 +741,6 @@ export default {
   },
   actions: [
     {
-      id: 'cancel',
-    },
-    {
       id: 'test',
       label: 'Test',
       visibleWhen: [
@@ -784,6 +781,9 @@ export default {
           is: ['token', 'basic', 'custom', 'cookie', 'digest', 'wsse'],
         },
       ],
+    },
+    {
+      id: 'cancel',
     },
   ],
 };
