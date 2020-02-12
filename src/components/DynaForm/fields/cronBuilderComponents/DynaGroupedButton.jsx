@@ -17,7 +17,6 @@ function GroupedButton(props) {
     clearFields,
     fields,
     options,
-    unit,
     setReset,
   } = props;
   const classes = useStyles();
@@ -47,8 +46,7 @@ function GroupedButton(props) {
     });
 
     if (!finalValues.length) {
-      if (unit === 'minute') onFieldChange(id, options[0].items[0].value);
-      else onFieldChange(id, '*');
+      onFieldChange(id, '*');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);

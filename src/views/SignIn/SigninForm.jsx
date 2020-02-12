@@ -113,6 +113,9 @@ const path = `${process.env.CDN_BASE_URI}images/googlelogo.png`;
       borderColor: theme.palette.secondary.lightest,
     },
   },
+  hidden: {
+    display: 'none',
+  },
 }))
 class SignIn extends Component {
   state = {
@@ -202,7 +205,7 @@ class SignIn extends Component {
               Forgot password?
             </Link>
           </div>
-          <div>
+          <div className={classes.hidden}>
             <div className={classes.or}>
               <Typography variant="body1">or</Typography>
             </div>

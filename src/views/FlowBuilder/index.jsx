@@ -549,7 +549,11 @@ function FlowBuilder() {
         }}>
         <div className={classes.canvas}>
           {/* CANVAS START */}
-          <div className={classes.generatorRoot}>
+          <div
+            className={classes.generatorRoot}
+            style={{
+              minHeight: 240 * pageGenerators.length + 70,
+            }}>
             <Typography
               component="div"
               className={clsx(classes.title, classes.sourceTitle)}

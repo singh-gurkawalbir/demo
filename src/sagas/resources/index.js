@@ -158,10 +158,13 @@ export function* commitStagedChanges({ resourceType, id, scope }) {
      UI shouldnt set offline flag. It should read status from db.
   */
   if (resourceType === 'connections' && updated._id && isNew) {
-    yield call(apiCallWithRetry, {
-      path: `/connections/${updated._id}/ping`,
-      hidden: true,
-    });
+    try {
+      yield call(apiCallWithRetry, {
+        path: `/connections/${updated._id}/ping`,
+        hidden: true,
+      });
+      // eslint-disable-next-line no-empty
+    } catch (e) {}
   }
 
   // #region Data loader transform
@@ -630,10 +633,17 @@ export function* refreshConnectionStatus({ integrationId }) {
   const url = integrationId
     ? `/integrations/${integrationId}/connections?fetchQueueSize=true`
     : '/connections?fetchQueueSize=true';
-  const response = yield call(apiCallWithRetry, {
-    path: url,
-    hidden: true,
-  });
+  let response;
+
+  try {
+    response = yield call(apiCallWithRetry, {
+      path: url,
+      hidden: true,
+    });
+  } catch (e) {
+    return;
+  }
+
   const finalResponse = Array.isArray(response)
     ? response.map(({ _id, offline, queues }) => ({
         _id,
