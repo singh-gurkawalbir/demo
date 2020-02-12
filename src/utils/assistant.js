@@ -694,13 +694,13 @@ export function convertToExport({ assistantConfig, assistantData }) {
   });
   const exportDefaults = {
     rest: {
-      ...DEFAULT_PROPS.EXPORT.REST,
+      ...cloneDeep(DEFAULT_PROPS.EXPORT.REST),
       resourcePath: operationDetails.resourcePath,
       successPath: operationDetails.successPath,
       allowUndefinedResource: !!operationDetails.allowUndefinedResource,
     },
     http: {
-      ...DEFAULT_PROPS.EXPORT.HTTP,
+      ...cloneDeep(DEFAULT_PROPS.EXPORT.HTTP),
       successMediaType: operationDetails.successMediaType,
       errorMediaType: operationDetails.errorMediaType,
     },
@@ -1546,10 +1546,10 @@ export function convertToImport({ assistantConfig, assistantData }) {
   });
   const importDefaults = {
     rest: {
-      ...DEFAULT_PROPS.IMPORT.REST,
+      ...cloneDeep(DEFAULT_PROPS.IMPORT.REST),
     },
     http: {
-      ...DEFAULT_PROPS.IMPORT.HTTP,
+      ...cloneDeep(DEFAULT_PROPS.IMPORT.HTTP),
     },
   };
   const importDoc = {

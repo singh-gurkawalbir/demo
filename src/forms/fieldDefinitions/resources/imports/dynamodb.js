@@ -5,6 +5,7 @@ export default {
     type: 'select',
     label: 'Region',
     required: true,
+    defaultValue: r => (r && r.dynamodb && r.dynamodb.region) || 'us-east-1',
     options: [
       {
         items: AWS_REGIONS_LIST,
@@ -41,7 +42,10 @@ export default {
     required: true,
   },
   'dynamodb.partitionKey': {
-    type: 'text',
+    type: 'textwithlookupextract',
+    fieldType: 'ignoreExistingData',
+    showLookup: false,
+    connectionId: r => r && r._connectionId,
     label: 'Partition Key',
     requiredWhen: [
       {
@@ -51,7 +55,10 @@ export default {
     ],
   },
   'dynamodb.sortKey': {
-    type: 'text',
+    type: 'textwithlookupextract',
+    fieldType: 'ignoreExistingData',
+    showLookup: false,
+    connectionId: r => r && r._connectionId,
     label: 'Sort Key',
   },
   'dynamodb.itemDocument': {
@@ -81,25 +88,43 @@ export default {
   },
   'dynamodb.conditionExpression': {
     type: 'text',
-    label: 'Condition Expression',
+    label: 'Key Condition Expression',
   },
   'dynamodb.expressionAttributeNames': {
     type: 'editor',
     label: 'Expression Attribute Names',
     mode: 'json',
-    required: true,
     defaultValue: r =>
       (r && r.dynamodb && r.dynamodb.expressionAttributeNames) ||
       `{ "#n1":"Name","#n2":"Id"}`,
+    requiredWhen: [
+      {
+        field: 'dynamodb.conditionExpression',
+        isNot: [''],
+      },
+      {
+        field: 'dynamodb.method',
+        is: ['updateItem'],
+      },
+    ],
   },
   'dynamodb.expressionAttributeValues': {
     type: 'editor',
     label: 'Expression Attribute Values',
     mode: 'json',
-    required: true,
     defaultValue: r =>
       (r && r.dynamodb && r.dynamodb.expressionAttributeValues) ||
       `{ ":p1":"A",":p2":"1"}`,
+    requiredWhen: [
+      {
+        field: 'dynamodb.conditionExpression',
+        isNot: [''],
+      },
+      {
+        field: 'dynamodb.method',
+        is: ['updateItem'],
+      },
+    ],
   },
   'dynamodb.ignoreExtract': {
     type: 'textwithlookupextract',

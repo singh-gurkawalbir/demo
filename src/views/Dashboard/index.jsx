@@ -25,6 +25,7 @@ import AddIcon from '../../components/icons/AddIcon';
 import ZipUpIcon from '../../components/icons/InstallIntegrationIcon';
 import ZipDownIcon from '../../components/icons/DownloadIntegrationIcon';
 import { generateNewId } from '../../utils/resource';
+import OfflineConnectionDrawer from './OfflineConnectionDrawer';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -111,6 +112,7 @@ function Dashboard() {
 
       <ResourceDrawer />
       <DownloadIntegrationDrawer />
+      <OfflineConnectionDrawer />
 
       <CeligoPageBar title="My integrations">
         <IconTextButton

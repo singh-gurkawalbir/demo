@@ -289,6 +289,7 @@ export default function CronBuilder(props) {
     }),
     [setReset, splitVal]
   );
+  const [isCronTouched, setIsCronTouched] = useState(false);
   const [externalTabState, setExternalTabStateFn] = useState({
     activeTab: 0,
     tabHistory: {
@@ -334,14 +335,22 @@ export default function CronBuilder(props) {
         .reduce((finalRes, curr) => {
           let acc = finalRes;
 
-          acc += ` ${curr.value} `;
+          acc += ` ${curr.value}`;
 
           return acc;
         }, '?');
 
-      onChange(finalResult);
+      onChange(finalResult, !isCronTouched);
+      setIsCronTouched(true);
     },
-    [externalTabState, meta.layout.containers, onChange, reset, splitVal]
+    [
+      externalTabState,
+      isCronTouched,
+      meta.layout.containers,
+      onChange,
+      reset,
+      splitVal,
+    ]
   );
   const [count, setCount] = useState(0);
 

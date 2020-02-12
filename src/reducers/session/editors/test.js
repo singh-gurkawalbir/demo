@@ -203,6 +203,7 @@ describe('editor selectors', () => {
                 hasHeaderRow: true,
                 rowsToSkip: 0,
               },
+              options: { includeEmptyValues: true },
             },
             processor: 'csvParser',
           },
