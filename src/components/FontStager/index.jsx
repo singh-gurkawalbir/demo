@@ -1,31 +1,30 @@
-import { Component } from 'react';
 import FoutStager from 'react-fout-stager';
 import './index.css';
+import { useMemo } from 'react';
 
 /**
  * Responsible for loading the application typefaces progressively
  * using FOUT stage techniques.
  */
-export default class FontStager extends Component {
-  render() {
-    return (
-      <FoutStager
-        stages={[
+export default function FontStager() {
+  const stages = useMemo(
+    () => [
+      {
+        className: 'font-stage-primary',
+        families: [{ family: 'Roboto400' }],
+        stages: [
           {
-            className: 'font-stage-primary',
-            families: [{ family: 'Roboto400' }],
-            stages: [
-              {
-                className: 'font-stage-secondary',
-                families: [
-                  { family: 'Roboto300', options: { weight: 300 } },
-                  { family: 'Roboto500', options: { weight: 500 } },
-                ],
-              },
+            className: 'font-stage-secondary',
+            families: [
+              { family: 'Roboto300', options: { weight: 300 } },
+              { family: 'Roboto500', options: { weight: 500 } },
             ],
           },
-        ]}
-      />
-    );
-  }
+        ],
+      },
+    ],
+    []
+  );
+
+  return <FoutStager stages={stages} />;
 }
