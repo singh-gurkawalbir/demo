@@ -42,7 +42,10 @@ export default {
     required: true,
   },
   'dynamodb.partitionKey': {
-    type: 'text',
+    type: 'textwithlookupextract',
+    fieldType: 'ignoreExistingData',
+    showLookup: false,
+    connectionId: r => r && r._connectionId,
     label: 'Partition Key',
     requiredWhen: [
       {
@@ -52,7 +55,10 @@ export default {
     ],
   },
   'dynamodb.sortKey': {
-    type: 'text',
+    type: 'textwithlookupextract',
+    fieldType: 'ignoreExistingData',
+    showLookup: false,
+    connectionId: r => r && r._connectionId,
     label: 'Sort Key',
   },
   'dynamodb.itemDocument': {
