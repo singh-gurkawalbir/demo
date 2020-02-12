@@ -43,7 +43,7 @@ const useStyles = makeStyles(theme => ({
   multilineText: {
     width: '100%',
     '& div:first-child': {
-      height: 50,
+      minHeight: 50,
       padding: '8px 35px 8px 8px',
     },
   },
@@ -261,6 +261,7 @@ export default function DynaTypeableSelect(props) {
       {!showDropdown && (
         <DynaText
           value={inputVal}
+          disabled={disabled}
           multiline
           readOnly
           className={classes.multilineText}
