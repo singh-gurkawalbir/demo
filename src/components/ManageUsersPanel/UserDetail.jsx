@@ -7,7 +7,6 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Switch from '@material-ui/core/Switch';
 import IconButton from '@material-ui/core/IconButton';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
 import Divider from '@material-ui/core/Divider';
 import EditIcon from '../icons/EditIcon';
 import {
@@ -20,6 +19,7 @@ import actionTypes from '../../actions/types';
 import { COMM_STATES } from '../../reducers/comms/networkComms';
 import useConfirmDialog from '../ConfirmDialog';
 import CommStatus from '../CommStatus';
+import MoreHorizIcon from '../../components/icons/EllipsisHorizontalIcon';
 
 const mapDispatchToProps = dispatch => ({
   disableUser: (id, disabled) => {
@@ -294,7 +294,7 @@ class UserDetail extends Component {
                       </MenuItem>
                     </Menu>
                     <IconButton onClick={this.handleClick}>
-                      <MoreVertIcon />
+                      <MoreHorizIcon />
                     </IconButton>
                   </TableCell>
                 </Fragment>

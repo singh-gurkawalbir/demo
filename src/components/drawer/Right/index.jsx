@@ -50,6 +50,7 @@ const useStyles = makeStyles(theme => ({
   },
   short: {
     marginTop: theme.appBarHeight + theme.pageBarHeight,
+    paddingBottom: theme.appBarHeight + theme.pageBarHeight,
   },
   banner: {
     marginTop: theme.appBarHeight + theme.pageBarHeight + bannerHeight,
