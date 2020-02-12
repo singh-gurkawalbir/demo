@@ -284,6 +284,7 @@ export default {
     },
     'http.auth.oauth.callbackURL': {
       fieldId: 'http.auth.oauth.callbackURL',
+      copyToClipboard: true,
       visibleWhenAll: [
         { field: 'http.auth.type', is: ['oauth'] },
         { field: 'http.auth.oauth.grantType', is: ['authorizecode'] },
@@ -572,7 +573,7 @@ export default {
       id: 'http.auth.oauth.refreshBody',
       type: 'httprequestbody',
       contentType: 'json',
-      label: 'Refresh Body',
+      label: 'Refresh Token Body',
       visibleWhenAll: [
         { field: 'http.auth.type', is: ['oauth'] },
         { field: 'http.auth.oauth.grantType', is: ['authorizecode'] },
@@ -666,7 +667,7 @@ export default {
           },
           {
             collapsed: true,
-            label: 'Revoke Parameters',
+            label: 'Revoke Token Parameters',
             fields: [
               'http.auth.token.revoke.uri',
               'http.auth.token.revoke.body',
