@@ -64,6 +64,7 @@ class AuditLog extends Component {
       users,
       resourceType,
       resourceId,
+      onClick,
     } = this.props;
     const { filters } = this.state;
 
@@ -86,6 +87,7 @@ class AuditLog extends Component {
               resourceId={resourceId}
               resourceDetails={resourceDetails}
               filters={filters}
+              onClick={onClick}
             />
           </div>
         </Fragment>

@@ -39,7 +39,8 @@ function ResourceDrawer(props) {
     return selectors.isPreviewPanelAvailableForResource(
       state,
       id,
-      resourceType
+      resourceType,
+      props.flowId
     );
   });
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
@@ -92,6 +93,7 @@ export default function ResourceDrawerRoute({
         <ResourceDrawer
           {...props}
           flowId={flowId}
+          parentUrl={match.url}
           integrationId={integrationId}
           disabled={disabled}
         />

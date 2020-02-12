@@ -13,12 +13,18 @@ import actions from '../../actions';
 import ModalDialog from '../ModalDialog';
 
 const useStyles = makeStyles(theme => ({
+  container: {
+    margin: theme.spacing(2, 0),
+  },
   submit: {
-    marginTop: theme.spacing(1),
+    marginTop: theme.spacing(3),
   },
   radioLabel: {
     marginLeft: 0,
     marginTop: theme.spacing(0.5),
+  },
+  label: {
+    marginBottom: theme.spacing(1),
   },
 }));
 
@@ -59,11 +65,13 @@ export default function ConfigureDebugger(props) {
 
   return (
     <ModalDialog show onClose={onClose}>
-      <div>{name}</div>
-      <div>
+      <div>Configure Debugger: {name}</div>
+      <div className={classes.container}>
         <form onSubmit={handleOnSubmit}>
           <FormControl component="fieldset">
-            <FormLabel component="legend">Debug Duration:</FormLabel>
+            <FormLabel className={classes.label} component="legend">
+              Debug Duration:
+            </FormLabel>
             <RadioGroup
               name="debugDuration"
               defaultValue={defaultVal}
@@ -92,7 +100,7 @@ export default function ConfigureDebugger(props) {
           )}
           <Button
             data-test="saveDebuggerConfiguration"
-            variant="contained"
+            variant="outlined"
             color="primary"
             type="submit"
             className={classes.submit}

@@ -53,14 +53,16 @@ export default function DynaHttpRequestBody(props) {
   const isPageGenerator = useSelector(state =>
     selectors.isPageGenerator(state, flowId, resourceId, resourceType)
   );
-  const { data: sampleData } = useSelector(state =>
-    selectors.getSampleDataContext(state, {
+  const { data: sampleData } = useSelector(state => {
+    if (!['exports', 'imports'].includes(resourceType)) return {};
+
+    return selectors.getSampleDataContext(state, {
       flowId,
       resourceId,
       resourceType,
       stage: 'flowInput',
-    })
-  );
+    });
+  });
   // constructing data
   const wrapSampleDataInArray =
     adaptorType === 'HTTPImport' || adaptorType === 'HTTPExport';

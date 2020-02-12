@@ -199,6 +199,7 @@ export default function SelectApplication(props) {
         <components.Option {...props}>
           <span className={classes.optionImg}>
             <ApplicationImg
+              markOnly
               type={type === 'webhook' ? value : type}
               assistant={icon}
               className={classes.img}

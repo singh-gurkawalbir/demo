@@ -18,7 +18,7 @@ import Manage from '../../components/HomePageCard/Footer/Manage';
 import PermissionsManageIcon from '../../components/icons/PermissionsManageIcon';
 import PermissionsMonitorIcon from '../../components/icons/PermissionsMonitorIcon';
 import { INTEGRATION_ACCESS_LEVELS, TILE_STATUS } from '../../utils/constants';
-import { tileStatus } from './util';
+import { tileStatus, suiteScriptTileName } from './util';
 import getRoutePath from '../../utils/routePaths';
 import { getIntegrationAppUrlName } from '../../utils/integrationApps';
 import ModalDialog from '../../components/ModalDialog';
@@ -137,7 +137,7 @@ function SuiteScriptTile({ tile, history }) {
                 color="inherit"
                 to={getRoutePath(urlToIntegrationSettings)}
                 onClick={handleLinkClick}>
-                {tile.name}
+                {suiteScriptTileName(tile)}
               </Link>
             </Typography>
           </CardTitle>

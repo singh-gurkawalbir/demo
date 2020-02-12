@@ -714,11 +714,11 @@ export default {
         items: [
           { label: 'Basic', value: 'basic' },
           { label: 'Token', value: 'token' },
+          { label: 'OAuth 2.0', value: 'oauth' },
           { label: 'Custom', value: 'custom' },
           { label: 'Cookie', value: 'cookie' },
           { label: 'Digest', value: 'digest' },
           { label: 'WSSE', value: 'wsse' },
-          { label: 'OAuth 2.0', value: 'oauth' },
         ],
       },
     ],
@@ -893,7 +893,7 @@ export default {
   },
   'http.auth.oauth.tokenURI': {
     type: 'text',
-    label: 'Access token URL',
+    label: 'Access Token URL',
   },
   'http.auth.oauth.scope': {
     type: 'selectscopes',
@@ -901,7 +901,8 @@ export default {
   },
   'http.auth.oauth.scopeDelimiter': {
     type: 'text',
-    label: 'Custom scope delimiter',
+    label: 'Custom Scope Delimiter',
+    subSectionField: true,
   },
   'http.auth.oauth.accessTokenPath': {
     type: 'text',
@@ -913,7 +914,14 @@ export default {
   },
   'http.auth.oauth.clientCredentialsLocation': {
     type: 'select',
-    label: 'Client authentication',
+    label: 'Client Authentication',
+    defaultValue: r =>
+      (r &&
+        r.http &&
+        r.http.auth &&
+        r.http.auth.oauth &&
+        r.http.auth.oauth.clientCredentialsLocation) ||
+      'body',
     options: [
       {
         items: [
@@ -928,10 +936,11 @@ export default {
     keyName: 'name',
     valueName: 'value',
     valueType: 'keyvalue',
-    label: 'Access token headers',
+    label: 'Access Token Headers',
   },
   'http.auth.oauth.accessTokenBody': {
     type: 'httprequestbody',
+    contentType: 'json',
     label: 'Access token body',
   },
   'http._iClientId': {
@@ -943,7 +952,7 @@ export default {
   },
   'http.auth.oauth.grantType': {
     type: 'select',
-    label: 'Grant type',
+    label: 'Grant Type',
     options: [
       {
         items: [
@@ -1001,6 +1010,7 @@ export default {
   },
   'http.auth.token.revoke.body': {
     type: 'httprequestbody',
+    contentType: 'json',
     label: 'Revoke Body',
   },
   'http.auth.token.revoke.headers': {
@@ -1110,7 +1120,7 @@ export default {
     required: true,
   },
   'http.auth.token.refreshBody': {
-    type: 'httprequestbody',
+    type: 'text',
     label: 'Refresh Body',
   },
   'http.auth.token.refreshTokenPath': {

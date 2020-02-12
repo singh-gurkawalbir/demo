@@ -17,8 +17,9 @@ import {
   isRestCsvMediaTypeExport,
 } from '../../../utils/resource';
 import * as selectors from '../../../reducers';
+import { isConnector } from '../../../utils/flows';
 
-function* getUIDataForResource({ resource, connection }) {
+function* getUIDataForResource({ resource, connection, flow }) {
   const { adaptorType, type, sampleData } = resource;
   const isDataLoader = type === 'simple';
 
@@ -48,16 +49,18 @@ function* getUIDataForResource({ resource, connection }) {
       default:
     }
   }
+
+  if (isConnector(flow) && sampleData) return sampleData;
 }
 
-export default function* getPreviewOptionsForResource({ resource }) {
+export default function* getPreviewOptionsForResource({ resource, flow }) {
   const connection = yield select(
     selectors.resource,
     'connections',
     resource && resource._connectionId
   );
-  const uiData = isUIDataExpectedForResource(resource, connection)
-    ? yield call(getUIDataForResource, { resource, connection })
+  const uiData = isUIDataExpectedForResource(resource, connection, flow)
+    ? yield call(getUIDataForResource, { resource, connection, flow })
     : undefined;
   const postData = {
     lastExportDateTime: getLastExportDateTime(),

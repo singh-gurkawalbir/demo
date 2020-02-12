@@ -200,3 +200,10 @@ export const isPageGeneratorResource = (flow = {}, resourceId) => {
  * Based on _connectorId on flow Doc, we determine whether this flow is a connector
  */
 export const isConnector = (flow = {}) => !!(flow && flow._connectorId);
+
+export const isLookupResource = (flow = {}, resource = {}) => {
+  if (resource.isLookup) return true;
+  const { pageProcessors = [] } = flow;
+
+  return !!pageProcessors.find(pp => pp._exportId === resource._id);
+};
