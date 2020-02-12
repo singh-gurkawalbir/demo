@@ -76,6 +76,10 @@ const useStyles = makeStyles(theme => ({
  * disabled property is part of props being send from Form factory
  * setting disableOptionsLoad = false will restrict fetch of resources
  */
+
+// TODO need to redesign this component to be flexible to read config and render
+// children in required sequence. Currently we are overloading this and child
+// components are hardcoded in it making this inflexible to extend.
 export default function RefreshGenericResource(props) {
   const {
     description,
