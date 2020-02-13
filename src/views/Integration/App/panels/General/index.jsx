@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { makeStyles } from '@material-ui/styles';
 import * as selectors from '../../../../../reducers';
 import { ActionsFactory as DynaFormWithDynamicActions } from '../../../../../components/ResourceFormFactory';
@@ -34,6 +34,10 @@ export default function GeneralPanel({ integrationId, storeId }) {
     integrationId,
     true
   );
+  const formState = useSelector(
+    state => selectors.integrationAppSettingsFormState(state, integrationId),
+    shallowEqual
+  );
   const dispatch = useDispatch();
 
   // perform cleanup
@@ -49,6 +53,8 @@ export default function GeneralPanel({ integrationId, storeId }) {
       {hasGeneralSettings && (
         <DynaFormWithDynamicActions
           key={storeId}
+          isIAForm
+          formState={formState}
           fieldMeta={translatedMeta}
           integrationId={integrationId}
           storeId={storeId}
