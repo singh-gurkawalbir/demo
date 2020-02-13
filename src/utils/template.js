@@ -68,9 +68,17 @@ export default {
       }
 
       const app =
-        applications.find(
-          a => a.id === (conn.assistant ? conn.assistant : conn.type)
-        ) || {};
+        applications.find(a => {
+          if (conn.assistant) {
+            return a.id === conn.assistant;
+          }
+
+          if (conn.type === 'rdbms' && conn.rdbms) {
+            return a.id === conn.rdbms.type;
+          }
+
+          return a.id === conn.type;
+        }) || {};
       const connectionType = app.name;
 
       installSteps.push({
