@@ -16,81 +16,14 @@ export default {
       },
     ],
   },
+  'netsuite_da.mapping': {
+    type: 'text',
+    visible: false,
+  },
   'netsuite_da.subrecords': {
-    label: 'Subrecords',
     required: false,
     type: 'netsuitesubrecords',
-    // filterKey: 'suitescript-recordTypes',
-    // commMetaPath: r =>
-    //   r &&
-    //   `netsuite/metadata/suitescript/connections/${r._connectionId}/recordTypes`,
-    // placeholder: 'Please select a record type',
     connectionId: r => r && r._connectionId,
-    // visibleWhen: [
-    //   {
-    //     field: 'inputMode',
-    //     is: ['records'],
-    //   },
-    // ],
-    defaultValue: r => {
-      let val = [];
-
-      console.log(`r ${JSON.stringify(r)}`);
-
-      if (r && r.netsuite_da && r.netsuite_da.mapping) {
-        if (r.netsuite_da.mapping.fields) {
-          val = val.concat(
-            r.netsuite_da.mapping.fields
-              .filter(
-                fld => fld.subRecordMapping && fld.subRecordMapping.recordType
-              )
-              .map(fld => ({
-                fieldId: fld.subRecordMapping._id,
-                recordType: fld.subRecordMapping.recordType,
-                jsonPath: fld.subRecordMapping.jsonPath,
-              }))
-          );
-        }
-
-        if (r.netsuite_da.mapping.lists) {
-          r.netsuite_da.mapping.lists.forEach(list => {
-            if (list.fields) {
-              val = val.concat(
-                list.fields
-                  .filter(
-                    fld =>
-                      fld.subRecordMapping && fld.subRecordMapping.recordType
-                  )
-                  .map(fld => ({
-                    fieldId: fld.subRecordMapping._id,
-                    recordType: fld.subRecordMapping.recordType,
-                    jsonPath: fld.subRecordMapping.jsonPath,
-                  }))
-              );
-            }
-          });
-        }
-      }
-
-      return val;
-    },
-    defaultValue1: [
-      {
-        fieldId: 'item[*].celigo_inventorydetail',
-        recordType: 'inventorydetail',
-        jsonPath: '$',
-      },
-      {
-        fieldId: 'item[*].celigo_inventorydetail123',
-        recordType: 'inventorydetail',
-        jsonPath: 'abc',
-      },
-    ],
-  },
-  'netsuite_da.mapping': {
-    type: 'mapping',
-    connectionId: r => r && r._connectionId,
-    label: 'Manage Import Mapping',
   },
   'netsuite_da.operation': {
     type: 'radiogroupforresetfields',

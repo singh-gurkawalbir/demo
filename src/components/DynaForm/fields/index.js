@@ -85,6 +85,7 @@ import cronBuilderComponents from './cronBuilderComponents';
 import DynaCronGenerator from './DynaCronGenerator';
 import DynaNSSearchCriteria from './editors/DynaNSSearchCriteria';
 import DynaNetSuiteSubRecords from './DynaNetSuiteSubRecords';
+import DynaTypeableSelect from './DynaTypeableSelect';
 
 export default {
   mode: DynaMode,
@@ -183,4 +184,5 @@ export default {
   cronlabel: cronBuilderComponents.cronlabel,
   nssearchcriteria: DynaNSSearchCriteria,
   netsuitesubrecords: DynaNetSuiteSubRecords,
+  typeableselect: DynaTypeableSelect,
 };

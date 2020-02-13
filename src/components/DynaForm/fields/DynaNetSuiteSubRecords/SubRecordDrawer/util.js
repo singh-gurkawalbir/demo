@@ -2,17 +2,15 @@ export default function getFormFieldMetadata(
   recordLabel,
   subrecords,
   subrecordFields,
-  fieldId
+  fieldId,
+  flowId,
+  resourceId
 ) {
   if (!subrecordFields || subrecordFields.length === 0) {
     return undefined;
   }
 
   const subrecordFieldsToIgnore = subrecords.map(sr => sr.fieldId);
-
-  console.log(
-    `subrecordFieldsToIgnore ${JSON.stringify(subrecordFieldsToIgnore)}`
-  );
   const subrecord = subrecords.find(sr => sr.fieldId === fieldId);
   const fieldMeta = {
     fieldMap: {
@@ -45,21 +43,11 @@ export default function getFormFieldMetadata(
       '_sublist_'
     )}`;
 
-    console.log(`jsonPathFieldId ${jsonPathFieldId}`);
-
     fieldMeta.fieldMap[jsonPathFieldId] = {
       id: jsonPathFieldId,
       name: jsonPathFieldId,
-      type: 'select',
+      type: 'autosuggestflowsampledata',
       label: fld.subRecordJsonPathLabel,
-      options: [
-        {
-          items: [
-            { label: '$', value: '$' },
-            { label: 'some thing', value: 'something' },
-          ],
-        },
-      ],
       defaultValue: subrecord && subrecord.jsonPath,
       visibleWhen: [
         {
@@ -67,6 +55,8 @@ export default function getFormFieldMetadata(
           is: [fld.value],
         },
       ],
+      flowId,
+      resourceId,
     };
     fieldMeta.layout.fields.push(jsonPathFieldId);
   });

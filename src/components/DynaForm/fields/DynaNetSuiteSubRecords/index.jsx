@@ -8,9 +8,19 @@ import { SCOPES } from '../../../../sagas/resourceForm';
 import EditIcon from '../../../icons/EditIcon';
 import DeleteIcon from '../../../icons/TrashIcon';
 import ActionButton from '../../../../components/ActionButton';
+import useConfirmDialog from '../../../../components/ConfirmDialog';
 
 export default function DynaNetSuiteSubRecords(props) {
-  const { resourceContext, connectionId, options = {} } = props;
+  const {
+    resourceContext,
+    connectionId,
+    options = {},
+    onFieldChange,
+    id,
+    defaultValue,
+    value,
+    flowId,
+  } = props;
   const { resourceId } = resourceContext;
   const { recordType } = options;
   const { subrecords, subrecordsFromMappings, hasNetsuiteDa } = useSelector(
@@ -36,7 +46,7 @@ export default function DynaNetSuiteSubRecords(props) {
                   fld => fld.subRecordMapping && fld.subRecordMapping.recordType
                 )
                 .map(fld => ({
-                  fieldId: fld.subRecordMapping._id,
+                  fieldId: fld.generate,
                   recordType: fld.subRecordMapping.recordType,
                   jsonPath: fld.subRecordMapping.jsonPath,
                 }))
@@ -53,7 +63,7 @@ export default function DynaNetSuiteSubRecords(props) {
                         fld.subRecordMapping && fld.subRecordMapping.recordType
                     )
                     .map(fld => ({
-                      fieldId: fld.subRecordMapping._id,
+                      fieldId: `${list.generate}[*].${fld.generate}`,
                       recordType: fld.subRecordMapping.recordType,
                       jsonPath: fld.subRecordMapping.jsonPath,
                     }))
@@ -76,6 +86,7 @@ export default function DynaNetSuiteSubRecords(props) {
     }
   );
   const dispatch = useDispatch();
+  const { confirmDialog } = useConfirmDialog();
 
   useEffect(() => {
     if (!subrecords && subrecordsFromMappings) {
@@ -100,38 +111,56 @@ export default function DynaNetSuiteSubRecords(props) {
       );
     }
   }, [dispatch, hasNetsuiteDa, resourceId, subrecords, subrecordsFromMappings]);
+
+  useEffect(() => {
+    if (subrecords && JSON.stringify(subrecords) !== JSON.stringify(value)) {
+      onFieldChange(id, subrecords);
+    }
+  }, [defaultValue, id, onFieldChange, subrecords, value]);
   const match = useRouteMatch();
   const handleDeleteClick = useCallback(
     fieldId => {
-      console.log(`handleDeleteClick fieldId ${fieldId}`);
-      const updatedSubrecords = subrecords.filter(sr => sr.fieldId !== fieldId);
+      confirmDialog({
+        title: 'Confirm',
+        // eslint-disable-next-line prettier/prettier
+        message: `Are you sure you want to remove ${fieldId} [TODO: Replace with record label] subrecord import`,
+        buttons: [
+          {
+            label: 'Cancel',
+          },
+          {
+            label: 'Yes',
+            onClick: () => {
+              const updatedSubrecords = subrecords.filter(
+                sr => sr.fieldId !== fieldId
+              );
 
-      console.log(
-        `handleDeleteClick updatedSubrecords ${JSON.stringify(
-          updatedSubrecords
-        )}`
-      );
-
-      dispatch(
-        actions.resource.patchStaged(
-          resourceId,
-          [
-            {
-              op: 'replace',
-              path: `/netsuite_da/subrecords`,
-              value: updatedSubrecords,
+              dispatch(
+                actions.resource.patchStaged(
+                  resourceId,
+                  [
+                    {
+                      op: 'replace',
+                      path: `/netsuite_da/subrecords`,
+                      value: updatedSubrecords,
+                    },
+                  ],
+                  SCOPES.VALUE
+                )
+              );
             },
-          ],
-          SCOPES.VALUE
-        )
-      );
+          },
+        ],
+      });
     },
-    [dispatch, resourceId, subrecords]
+    [confirmDialog, dispatch, resourceId, subrecords]
   );
 
   return (
     <Fragment>
       <SubRecordDrawer
+        resourceContext={resourceContext}
+        flowId={flowId}
         importId={resourceId}
         connectionId={connectionId}
         recordType={recordType}

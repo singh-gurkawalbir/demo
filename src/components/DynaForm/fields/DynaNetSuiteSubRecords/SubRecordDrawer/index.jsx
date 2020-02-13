@@ -43,7 +43,7 @@ function SubRecordDrawer(props) {
   const match = useRouteMatch();
   const dispatch = useDispatch();
   const { fieldId } = match.params;
-  const { importId, connectionId, recordType } = props;
+  const { resourceContext, flowId, connectionId, recordType } = props;
   const recordTypeLabel = useSelector(
     state =>
       selectors
@@ -57,8 +57,8 @@ function SubRecordDrawer(props) {
   );
   const subrecords = useSelector(
     state =>
-      selectors.resourceData(state, 'imports', importId).merged.netsuite_da
-        .subrecords,
+      selectors.resourceData(state, 'imports', resourceContext.resourceId)
+        .merged.netsuite_da.subrecords,
     (left, right) => left && right && left.length === right.length
   );
   const subrecordFields = useSelector(
@@ -87,7 +87,9 @@ function SubRecordDrawer(props) {
     recordTypeLabel,
     subrecords,
     subrecordFields,
-    fieldId
+    fieldId,
+    flowId,
+    resourceContext.resourceId
   );
   const handleClose = useCallback(() => {
     history.goBack();
@@ -99,7 +101,7 @@ function SubRecordDrawer(props) {
         '_sublist_'
       )}`;
       const updatedFormValues = {
-        fieldId: `${formValues.fieldId}_1`,
+        fieldId: `${formValues.fieldId}`,
         jsonPath: formValues[jsonPathFieldId],
       };
       const recordType = subrecordFields.find(
@@ -107,7 +109,6 @@ function SubRecordDrawer(props) {
       ).subRecordType;
 
       updatedFormValues.recordType = recordType;
-      console.log(`updatedFormValues ${JSON.stringify(updatedFormValues)}`);
 
       const updatedSubrecords = subrecords || [];
 
@@ -123,11 +124,9 @@ function SubRecordDrawer(props) {
         updatedSubrecords.push(updatedFormValues);
       }
 
-      console.log(`updatedSubrecords ${JSON.stringify(updatedSubrecords)}`);
-
       dispatch(
         actions.resource.patchStaged(
-          importId,
+          resourceContext.resourceId,
           [
             {
               op: 'replace',
@@ -142,7 +141,14 @@ function SubRecordDrawer(props) {
 
       // onSubmit(updatedFormValues);
     },
-    [dispatch, fieldId, history, importId, subrecordFields, subrecords]
+    [
+      dispatch,
+      fieldId,
+      history,
+      resourceContext.resourceId,
+      subrecordFields,
+      subrecords,
+    ]
   );
 
   return (
