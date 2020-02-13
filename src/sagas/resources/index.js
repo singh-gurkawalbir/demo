@@ -70,6 +70,10 @@ export function* commitStagedChanges({ resourceType, id, scope }) {
     if (resourceIsDataLoaderFlow) {
       merged._exportId = merged.pageGenerators[0]._exportId;
       delete merged.pageGenerators;
+      if (merged.pageGenerators && merged.pageGenerators.length > 0) {
+        merged._exportId = merged.pageGenerators[0]._exportId;
+        delete merged.pageGenerators;
+      }
 
       if (merged.pageProcessors && merged.pageProcessors.length > 0) {
         const importId = merged.pageProcessors[0]._importId;
