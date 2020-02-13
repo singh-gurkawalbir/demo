@@ -68,8 +68,6 @@ export function* commitStagedChanges({ resourceType, id, scope }) {
     resourceIsDataLoaderFlow = yield call(isDataLoaderFlow, merged);
 
     if (resourceIsDataLoaderFlow) {
-      merged._exportId = merged.pageGenerators[0]._exportId;
-      delete merged.pageGenerators;
       if (merged.pageGenerators && merged.pageGenerators.length > 0) {
         merged._exportId = merged.pageGenerators[0]._exportId;
         delete merged.pageGenerators;
