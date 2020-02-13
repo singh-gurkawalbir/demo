@@ -50,7 +50,6 @@ function DynaText(props) {
     multiline,
     delimiter,
     rowsMax,
-    className,
     startAdornment,
     endAdornment,
     readOnly,
@@ -127,7 +126,7 @@ function DynaText(props) {
       value={inpValue}
       variant="filled"
       onChange={handleFieldChange}
-      className={(classes.formField, className)}
+      className={classes.formField}
     />
   );
 }
