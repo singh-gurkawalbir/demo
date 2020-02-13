@@ -300,7 +300,10 @@ function DynaExportPanel(props) {
                 classes.sampleDataContainerAlign
               )}>
               <pre>
-                {getStringifiedPreviewData(previewStageDataList[panelType])}
+                {getStringifiedPreviewData(
+                  previewStageDataList[panelType],
+                  panelType
+                )}
               </pre>
             </div>
             <div className={classes.clipBoardContainer}>
