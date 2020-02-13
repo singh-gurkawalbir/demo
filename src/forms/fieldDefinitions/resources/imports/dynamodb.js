@@ -42,7 +42,10 @@ export default {
     required: true,
   },
   'dynamodb.partitionKey': {
-    type: 'text',
+    type: 'textwithlookupextract',
+    fieldType: 'ignoreExistingData',
+    showLookup: false,
+    connectionId: r => r && r._connectionId,
     label: 'Partition Key',
     requiredWhen: [
       {
@@ -52,16 +55,21 @@ export default {
     ],
   },
   'dynamodb.sortKey': {
-    type: 'text',
+    type: 'textwithlookupextract',
+    fieldType: 'ignoreExistingData',
+    showLookup: false,
+    connectionId: r => r && r._connectionId,
     label: 'Sort Key',
   },
   'dynamodb.itemDocument': {
     type: 'sqlquerybuilder',
     arrayIndex: 0,
+    hideDefaultData: true,
+    ruleTitle:
+      'Template (use handlebar expressions to map fields from your export data)',
     label: 'Launch Query Builder',
     title: 'DynamoDB Query Builder',
     refreshOptionsOnChangesTo: ['dynamodb.method'],
-    defaultData: `SET #name = {{data.name}}, #id = {{data.id}}`,
     visibleWhen: [
       {
         field: 'dynamodb.method',
