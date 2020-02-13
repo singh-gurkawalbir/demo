@@ -111,7 +111,7 @@ export default function DynaTypeableSelect(props) {
   const handleBlur = () => {
     setShowDropdown(false);
 
-    if (value === undefined || value === inputValue) {
+    if (value === inputValue) {
       return;
     }
 

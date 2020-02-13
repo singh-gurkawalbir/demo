@@ -736,12 +736,23 @@ export default {
       };
     }
 
+    const mappingsWithoutGenerates = mappings.filter(mapping => {
+      if (!mapping.generate) return true;
+
+      return false;
+    });
+
+    if (mappingsWithoutGenerates.length)
+      return {
+        isSuccess: false,
+        errMessage: `One or more generate fields missing`,
+      };
     const mappingsWithoutExtract = mappings.filter(mapping => {
       if (!('hardCodedValue' in mapping || mapping.extract)) return true;
 
       return false;
     });
-    const missingGenerates = [];
+    const generatesWithoutExtract = [];
 
     mappingsWithoutExtract.forEach(mapping => {
       if (mapping.lookupName) {
@@ -749,20 +760,20 @@ export default {
 
         // check if mapping has dynamic lookup
         if (!lookup || lookup.map) {
-          missingGenerates.push(mapping);
+          generatesWithoutExtract.push(mapping);
         }
       } else {
-        missingGenerates.push(mapping);
+        generatesWithoutExtract.push(mapping);
       }
     });
-    const missingGeneratesNames = missingGenerates.map(
+    const missingExtractGenerateNames = generatesWithoutExtract.map(
       mapping => mapping.generate
     );
 
-    if (missingGeneratesNames.length) {
+    if (missingExtractGenerateNames.length) {
       return {
         isSuccess: false,
-        errMessage: `Extract Fields missing for field(s): ${missingGeneratesNames.join(
+        errMessage: `Extract Fields missing for field(s): ${missingExtractGenerateNames.join(
           ','
         )}`,
       };
