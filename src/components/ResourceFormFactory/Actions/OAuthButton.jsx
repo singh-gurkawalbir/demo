@@ -43,44 +43,47 @@ function OAuthButton(props) {
   });
   const saveAndAuthorizeWhenScopesArePresent = useCallback(
     values => {
-      let showError = false;
+      if (
+        resourceConstants.OAUTH_CONNECTIONS_WITH_EDITABLE_SCOPES.includes(
+          resource.assistant
+        )
+      ) {
+        let showError = false;
 
-      if (resource.assistant === 'ebay') {
-        if (values['/accountType'] === 'sandbox') {
-          if (
+        if (resource.assistant === 'ebay') {
+          if (values['/accountType'] === 'sandbox') {
+            if (
+              !(
+                values['/http/scopeSandbox'] &&
+                values['/http/scopeSandbox'].length
+              )
+            ) {
+              showError = true;
+            }
+          } else if (
             !(
-              values['/http/scopeSandbox'] &&
-              values['/http/scopeSandbox'].length
+              values['/http/scopeProduction'] &&
+              values['/http/scopeProduction'].length
             )
           ) {
             showError = true;
           }
         } else if (
           !(
-            values['/http/scopeProduction'] &&
-            values['/http/scopeProduction'].length
+            values['/http/auth/oauth/scope'] &&
+            values['/http/auth/oauth/scope'].length
           )
         ) {
           showError = true;
         }
-      } else if (
-        resourceConstants.OAUTH_CONNECTIONS_WITH_EDITABLE_SCOPES.includes(
-          resource.assistant
-        ) &&
-        !(
-          values['/http/auth/oauth/scope'] &&
-          values['/http/auth/oauth/scope'].length
-        )
-      ) {
-        showError = true;
-      }
 
-      if (showError) {
-        return snackbar({
-          variant: 'error',
-          message: `Please configure the scopes.`,
-          persist: true,
-        });
+        if (showError) {
+          return snackbar({
+            variant: 'error',
+            message: `Please configure the scopes.`,
+            persist: true,
+          });
+        }
       }
 
       handleSubmitForm(values);
