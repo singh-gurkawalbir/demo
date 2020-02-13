@@ -670,8 +670,8 @@ export default {
             label: 'Revoke Token Parameters',
             fields: [
               'http.auth.token.revoke.uri',
-              'http.auth.token.revoke.body',
               'http.auth.token.revoke.headers',
+              'http.auth.token.revoke.body',
             ],
           },
         ],
