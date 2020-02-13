@@ -1,8 +1,12 @@
 export default {
   'as2.fileNameTemplate': {
-    type: 'textwithlookupextract',
+    type: 'timestampfilename',
     fieldType: 'templateeditor',
     label: 'File Name',
+    required: true,
+    showAllSuggestions: true,
+    defaultValue: r => (r && r.ftp && r.ftp.fileName) || 'file-{{timestamp}}',
+    refreshOptionsOnChangesTo: ['file.type'],
     editorTitle:
       'Use this editor if your File Name should be dynamically generated',
     connectionId: r => r && r._connectionId,
