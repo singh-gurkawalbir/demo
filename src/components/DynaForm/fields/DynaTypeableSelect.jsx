@@ -262,6 +262,7 @@ export default function DynaTypeableSelect(props) {
       )}
       {!showDropdown && (
         <DynaText
+          id={`text-${id}`}
           value={inputVal}
           disabled={disabled}
           multiline
