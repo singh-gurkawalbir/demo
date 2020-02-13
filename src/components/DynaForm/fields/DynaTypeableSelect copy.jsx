@@ -69,6 +69,7 @@ export default function DynaTypeableSelect(props) {
     filter: false,
   });
   const { filter, inputValue, isFocus } = inputState;
+  // close clicked inside in component
   const handleChange = newObj => {
     const newVal = newObj.value;
 
