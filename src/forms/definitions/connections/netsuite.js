@@ -17,12 +17,17 @@ export default {
       newValues['/netsuite/tokenSecret'] = undefined;
       newValues['/netsuite/_iClientId'] = undefined;
     } else if (newValues['/netsuite/authType'] === 'token-auto') {
+      newValues['/netsuite/email'] = undefined;
+      newValues['/netsuite/password'] = undefined;
       newValues['/netsuite/account'] =
         newValues['/netsuite/token/auto/account'];
       newValues['/netsuite/tokenId'] = undefined;
       newValues['/netsuite/tokenSecret'] = undefined;
+      newValues['/netsuite/roleId'] = newValues['/netsuite/token/auto/roleId'];
     }
 
+    delete newValues['/netsuite/token/auto'];
+    delete newValues['/netsuite/token/auto/roleId'];
     delete newValues['/netsuite/token/auto/account'];
     delete newValues['/netsuite/tokenAccount'];
     delete newValues['/netsuite/tokenEnvironment'];
