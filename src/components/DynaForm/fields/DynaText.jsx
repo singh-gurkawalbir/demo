@@ -58,6 +58,7 @@ function DynaText(props) {
     readOnly,
     inputType,
     options,
+    className,
     disableText = false,
     uppercase = false,
   } = props;
@@ -129,7 +130,7 @@ function DynaText(props) {
       value={inpValue}
       variant="filled"
       onChange={handleFieldChange}
-      className={classes.formField}
+      className={(classes.formField, className)}
     />
   );
 }
