@@ -1,7 +1,7 @@
-import { Fragment } from 'react';
+import { Fragment, useState, useCallback, useEffect } from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
-import { Drawer } from '@material-ui/core';
+import { Drawer, Button } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import * as selectors from '../../../../reducers';
 import Icon from '../../../../components/icons/MapDataIcon';
@@ -9,6 +9,7 @@ import helpTextMap from '../../../../components/Help/helpTextMap';
 import LoadResources from '../../../../components/LoadResources';
 import DrawerTitleBar from '../../../../components/drawer/TitleBar';
 import StandaloneMapping from '../../../../components/AFE/ImportMapping/StandaloneMapping';
+import { select } from 'redux-saga/effects';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -42,13 +43,70 @@ function ImportMapping({
   onClose,
   open,
 }) {
+  const [selectedMapping, setSelectedMapping] = useState(null);
   const classes = useStyles();
   const resourceId = resource._id;
   const mappingEditorId = `${resourceId}-${flowId}`;
   const { showSalesforceNetsuiteAssistant } = useSelector(state =>
     selectors.mapping(state, mappingEditorId)
   );
+  const onClose1 = (...args) => {
+    window.__ARGS = args;
+    setSelectedMapping(null);
+    onClose(...args);
+  };
+
+  const subrecords = useSelector(
+    state => {
+      const mapping = selectors.mapping(state, mappingEditorId);
+
+      if (
+        mapping &&
+        mapping.resource &&
+        mapping.resource.netsuite_da &&
+        mapping.resource.netsuite_da.mapping
+      ) {
+        const subrecords = [];
+
+        if (mapping.resource.netsuite_da.mapping.fields) {
+          mapping.resource.netsuite_da.mapping.fields.forEach(fld => {
+            if (fld.subRecordMapping && fld.subRecordMapping.recordType) {
+              subrecords.push({ fieldId: fld.generate, name: fld.generate });
+            }
+          });
+        }
+
+        if (mapping.resource.netsuite_da.mapping.lists) {
+          mapping.resource.netsuite_da.mapping.lists.forEach(list => {
+            if (list.fields) {
+              list.fields.forEach(fld => {
+                if (fld.subRecordMapping && fld.subRecordMapping.recordType) {
+                  subrecords.push({
+                    fieldId: `${list.generate}[*].${fld.generate}`,
+                    name: `${list.generate}[*].${fld.generate}`,
+                  });
+                }
+              });
+            }
+          });
+        }
+
+        if (subrecords.length > 0) {
+          return [
+            { fieldId: '__parent', name: 'Parent Record' },
+            ...subrecords,
+          ];
+        }
+
+        return subrecords;
+      }
+    },
+    (left, right) => left && right && left.length === right.length
+  );
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
+  const handleTestButtonClick = useCallback(srId => {
+    setSelectedMapping(srId);
+  }, []);
 
   return (
     <Drawer
@@ -62,17 +120,44 @@ function ImportMapping({
             drawerOpened && showSalesforceNetsuiteAssistant,
         }),
       }}>
-      <DrawerTitleBar onClose={onClose} title="Define Import Mapping" />
+      <DrawerTitleBar
+        onClose={onClose1}
+        title={
+          subrecords && subrecords.length > 0 && !selectedMapping
+            ? 'Please select which mapping you would like to edit.1'
+            : `Define Import Mapping ${selectedMapping}`
+        }
+      />
       <div className={classes.content}>
         <LoadResources required="true" resources="imports, exports">
           <Fragment>
-            <StandaloneMapping
-              id={mappingEditorId}
-              disabled={isMonitorLevelAccess}
-              resourceId={resourceId}
-              flowId={flowId}
-              onClose={onClose}
-            />
+            {subrecords && subrecords.length > 0 && !selectedMapping ? (
+              <Fragment>
+                Mapping Selector -- ${selectedMapping}
+                {subrecords.map(sr => (
+                  <Button
+                    key={sr.id}
+                    onClick={() => {
+                      handleTestButtonClick(sr.fieldId);
+                    }}>
+                    {sr.name}
+                  </Button>
+                ))}
+              </Fragment>
+            ) : (
+              <StandaloneMapping
+                id={mappingEditorId}
+                disabled={isMonitorLevelAccess}
+                resourceId={resourceId}
+                flowId={flowId}
+                onClose={onClose1}
+                subRecordMappingId={
+                  selectedMapping && selectedMapping !== '__parent'
+                    ? selectedMapping
+                    : ''
+                }
+              />
+            )}
           </Fragment>
         </LoadResources>
       </div>

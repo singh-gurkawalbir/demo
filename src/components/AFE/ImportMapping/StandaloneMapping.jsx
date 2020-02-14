@@ -22,7 +22,14 @@ const useStyles = makeStyles({
 });
 
 export default function StandaloneMapping(props) {
-  const { id, flowId, resourceId, disabled, onClose } = props;
+  const {
+    id,
+    flowId,
+    resourceId,
+    disabled,
+    onClose,
+    subRecordMappingId,
+  } = props;
   const classes = useStyles();
   const [flowSampleDataLoaded, setFlowSampleDataLoaded] = useState(false);
   const [importSampleDataLoaded, setImportSampleDataLoaded] = useState(false);
