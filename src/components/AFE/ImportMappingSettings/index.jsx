@@ -29,6 +29,12 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+/**
+ *
+ * disabled property set to true in case of monitor level access
+ * disableEdit set to true if mapping field is not editable
+ */
+
 export default function ImportMappingSettings(props) {
   const classes = useStyles();
   const {
@@ -43,6 +49,7 @@ export default function ImportMappingSettings(props) {
     application,
     options,
     disabled,
+    disableEdit,
   } = props;
   const { generate, extract, index } = value;
   const [enquesnackbar] = useEnqueueSnackbar();
@@ -55,6 +62,18 @@ export default function ImportMappingSettings(props) {
     generateFields,
     options,
   });
+  const { fieldMap } = fieldMeta || {};
+  const disableSave =
+    disabled || (disableEdit && !('useAsAnInitializeValue' in fieldMap));
+
+  if (disableEdit && fieldMap) {
+    Object.keys(fieldMap).forEach(fieldId => {
+      if (fieldId !== 'useAsAnInitializeValue') {
+        fieldMap[fieldId].defaultDisabled = true;
+      }
+    });
+  }
+
   const handleSubmit = formVal => {
     const {
       settings,
@@ -104,7 +123,7 @@ export default function ImportMappingSettings(props) {
           fieldMeta={fieldMeta}
           optionsHandler={fieldMeta.optionsHandler}>
           <DynaSubmit
-            disabled={disabled}
+            disabled={disableSave}
             id="fieldMappingSettingsSave"
             onClick={handleSubmit}>
             Save
