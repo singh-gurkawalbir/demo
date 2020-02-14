@@ -159,6 +159,12 @@ const connectors = [
   { id: 'aptrinsic', name: 'Aptrinsic', type: 'rest', assistant: 'aptrinsic' },
   { id: 'ariba', name: 'Ariba', type: 'http', assistant: 'ariba' },
   { id: 'asana', name: 'Asana', type: 'rest', assistant: 'asana' },
+  {
+    id: '4castplus',
+    name: '4CastPlus',
+    type: 'http',
+    assistant: '4castplus',
+  },
   { id: 'atera', name: 'Atera', type: 'rest', assistant: 'atera' },
   {
     id: 'authorize.net',
