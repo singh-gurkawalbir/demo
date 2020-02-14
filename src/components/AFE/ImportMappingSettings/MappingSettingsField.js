@@ -12,8 +12,8 @@ const useStyles = makeStyles(theme => ({
 
 /**
  *
- * disabled property set to try in case of monitor level access
- * disableEdit set to try if mapping field is not editable
+ * disabled property set to true in case of monitor level access
+ * disableEdit set to true if mapping field is not editable
  */
 export default function MappingSettingsField(props) {
   const classes = useStyles();
