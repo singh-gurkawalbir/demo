@@ -218,6 +218,7 @@ export default {
           name: 'default',
           type: 'text',
           label: 'Default Value',
+          required: true,
           visibleWhenAll: [
             { field: 'standardAction', is: ['default'] },
             { field: 'fieldMappingType', isNot: ['hardCoded'] },
@@ -231,6 +232,7 @@ export default {
           name: 'defaultSFSelect',
           type: 'select',
           label: 'Default Value',
+          required: true,
           visibleWhenAll: [
             { field: 'standardAction', is: ['default'] },
             { field: 'fieldMappingType', isNot: ['hardCoded'] },
@@ -313,6 +315,7 @@ export default {
           type: 'text',
           label: 'Value',
           placeholder: '',
+          required: true,
           visibleWhenAll: [
             { field: 'hardcodedAction', is: ['default'] },
             { field: 'fieldMappingType', is: ['hardCoded'] },
@@ -326,6 +329,7 @@ export default {
           type: 'select',
           label: 'Value',
           placeholder: '',
+          required: true,
           visibleWhenAll: [
             { field: 'hardcodedAction', is: ['default'] },
             { field: 'fieldMappingType', is: ['hardCoded'] },
@@ -343,8 +347,8 @@ export default {
           name: 'hardcodedCheckbox',
           type: 'radiogroup',
           label: 'Value',
-          defaultValue: value.hardCodedValue,
           fullWidth: true,
+          defaultValue: value.hardCodedValue || false,
           options: [
             {
               items: [
@@ -361,6 +365,7 @@ export default {
           name: 'lookupDefault',
           type: 'text',
           label: 'Default Lookup Value',
+          required: true,
           visibleWhenAll: [
             { field: 'lookupAction', is: ['default'] },
             { field: 'fieldMappingType', is: ['lookup'] },
@@ -373,6 +378,7 @@ export default {
           name: 'lookupSFSelect',
           type: 'select',
           label: 'Default Lookup Value',
+          required: true,
           visibleWhenAll: [
             { field: 'lookupAction', is: ['default'] },
             { field: 'fieldMappingType', is: ['lookup'] },
