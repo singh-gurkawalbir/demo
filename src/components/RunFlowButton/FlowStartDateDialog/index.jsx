@@ -94,7 +94,10 @@ export default function FlowStartDateDialog(props) {
       <div>Delta Flow</div>
       <div>
         <DynaForm disabled={disabled} fieldMeta={fieldMeta}>
-          <DynaSubmit data-test="submit" onClick={handleSubmit}>
+          <DynaSubmit
+            skipDisableButtonForFormTouched
+            data-test="submit"
+            onClick={handleSubmit}>
             Run
           </DynaSubmit>
           <Button data-test="close" onClick={cancelDialog}>
