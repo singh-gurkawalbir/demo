@@ -13,10 +13,12 @@ const useStyles = makeStyles(theme => ({
 
 export default function DashboardPanel({ integrationId }) {
   const classes = useStyles();
+  const infoTextDashboard =
+    'You can view the flows that have run or are currently running for each flow in your integration, as well as how many pages of data were sent, how long it took and when each job completed. If there are child jobs within a parent job, you can expand the parent to view the children. If there are errors, click the number of errors in the Error column to retry and resolve errors. You can cancel jobs that are in progress, edit jobs, and resolve errors directly from this view.';
 
   return (
     <div className={classes.root}>
-      <PanelHeader title="Dashboard" />
+      <PanelHeader title="Dashboard" infoText={infoTextDashboard} />
 
       <JobDashboard integrationId={integrationId} />
     </div>
