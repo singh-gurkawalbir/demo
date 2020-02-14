@@ -2077,12 +2077,6 @@ export default {
     type: 'netsuiteuserroles',
     label: 'Account ID',
   },
-  'netsuite.tokenAccount': {
-    type: 'text',
-    defaultValue: r => r && r.netsuite && r.netsuite.account,
-    label: 'Account ID',
-    uppercase: true,
-  },
   'netsuite.tokenId': {
     type: 'text',
     inputType: 'password',
