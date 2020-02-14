@@ -76,8 +76,17 @@ export default function JavaScriptPanel(props) {
     patchEditor,
   ]);
   const handleScriptChange = useCallback(
-    event =>
-      patchEditor({ scriptId: event.target.value, fetchScriptContent: true }),
+    event => {
+      if (!event.target.value) {
+        return patchEditor({
+          scriptId: '',
+          code: '',
+          entryFunction: '',
+        });
+      }
+
+      patchEditor({ scriptId: event.target.value, fetchScriptContent: true });
+    },
     [patchEditor]
   );
   const handleInsertStubClick = useCallback(() => {
@@ -107,6 +116,16 @@ export default function JavaScriptPanel(props) {
     scriptContent,
     scriptId,
   ]);
+  const defaultItem = (
+    <MenuItem key="" value="">
+      None
+    </MenuItem>
+  );
+  const scriptOptions = allScripts.map(s => (
+    <MenuItem key={s._id} value={s._id}>
+      {s.name}
+    </MenuItem>
+  ));
 
   return (
     <LoadResources required resources={['scripts']}>
@@ -122,11 +141,7 @@ export default function JavaScriptPanel(props) {
               value={scriptId}
               disabled={disabled}
               onChange={handleScriptChange}>
-              {allScripts.map(s => (
-                <MenuItem key={s._id} value={s._id}>
-                  {s.name}
-                </MenuItem>
-              ))}
+              {[defaultItem, ...scriptOptions]}
             </Select>
           </FormControl>
           <TextField
