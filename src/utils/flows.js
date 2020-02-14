@@ -200,3 +200,8 @@ export const isPageGeneratorResource = (flow = {}, resourceId) => {
  * Based on _connectorId on flow Doc, we determine whether this flow is a connector
  */
 export const isConnector = (flow = {}) => !!(flow && flow._connectorId);
+
+/*
+ * Based on free property on flow Doc, we determine whether this flow is a free flow
+ */
+export const isFreeFlowResource = (flow = {}) => !!(flow && flow.free);
