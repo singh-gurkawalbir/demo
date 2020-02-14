@@ -29,6 +29,10 @@ export default function DateTimePicker(props) {
           shrink: true,
         }}
         onKeyDown={e => {
+          // this is specifically for qa to inject their date time string
+          // they should alter the input dom to add a qa attribute prior to injection for date time
+          if (e.target.hasAttribute('qa')) return;
+
           e.preventDefault();
         }}
         onKeyPress={e => {
