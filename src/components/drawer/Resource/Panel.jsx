@@ -4,11 +4,12 @@ import { Route, useLocation, generatePath } from 'react-router-dom';
 import { makeStyles, Typography, IconButton } from '@material-ui/core';
 import LoadResources from '../../../components/LoadResources';
 import ResourceForm from '../../../components/ResourceFormFactory';
-import { MODEL_PLURAL_TO_LABEL } from '../../../utils/resource';
+import { MODEL_PLURAL_TO_LABEL, isNewId } from '../../../utils/resource';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import Close from '../../../components/icons/CloseIcon';
+import ApplicationImg from '../../icons/ApplicationImg';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -35,6 +36,9 @@ const useStyles = makeStyles(theme => ({
     },
     maxHeight: 'unset',
     padding: theme.spacing(3),
+  },
+  appLogo: {
+    paddingRight: '25px',
   },
   title: {
     display: 'flex',
@@ -79,6 +83,7 @@ export default function Panel(props) {
   const location = useLocation();
   const dispatch = useDispatch();
   const [enqueueSnackbar] = useEnqueueSnackbar();
+  const isFlowBuilder = location.pathname.indexOf('flowBuilder') > -1;
   const formState = useSelector(state =>
     selectors.resourceFormState(state, resourceType, id)
   );
@@ -107,6 +112,12 @@ export default function Panel(props) {
     resourceLabel = 'Destination / Lookup';
   } else if (resourceType === 'pageGenerator') {
     resourceLabel = 'Source';
+  } else if (isFlowBuilder) {
+    if (isNewId(id) && resourceType === 'exports') {
+      resourceLabel = isLookUpExport ? 'Lookup' : 'Source';
+    } else if (isNewId(id) && resourceType === 'imports') {
+      resourceLabel = 'Import';
+    }
   } else if (isLookUpExport) {
     resourceLabel = 'Lookup';
   } else {
@@ -148,6 +159,24 @@ export default function Panel(props) {
     }
 
     return adaptorType.value.includes('Export') ? 'exports' : 'imports';
+  }
+
+  function applicationType() {
+    if (!stagedProcessor || !stagedProcessor.patch) {
+      return '';
+    }
+
+    // [{}, ..., {}, {op: "replace", path: "/adaptorType", value: "HTTPExport"}, ...]
+    const adaptorType =
+      stagedProcessor.patch.find(
+        p => p.op === 'replace' && p.path === '/adaptorType'
+      ) || {};
+    const assistant =
+      stagedProcessor.patch.find(
+        p => p.op === 'replace' && p.path === '/assistant'
+      ) || {};
+
+    return assistant.value || adaptorType.value;
   }
 
   function getEditUrl(id) {
@@ -227,15 +256,31 @@ export default function Panel(props) {
     }
   }
 
+  const showApplicationLogo =
+    isFlowBuilder &&
+    ['exports', 'imports'].includes(resourceType) &&
+    !!applicationType();
   const requiredResources = determineRequiredResources(resourceType);
+  let title = `${
+    isNewId(id) ? `Create` : 'Edit'
+  } ${resourceLabel.toLowerCase()}`;
+
+  if (resourceType === 'pageGenerator') {
+    title = 'Create source';
+  }
 
   return (
     <Fragment>
       <div className={classes.root}>
         <div className={classes.title}>
-          <Typography variant="h3">
-            {isNew ? `Create` : 'Edit'} {resourceLabel.toLowerCase()}
-          </Typography>
+          <Typography variant="h3">{title}</Typography>
+          {showApplicationLogo && (
+            <ApplicationImg
+              className={classes.appLogo}
+              size="small"
+              type={applicationType()}
+            />
+          )}
           <IconButton
             data-test="closeFlowSchedule"
             aria-label="Close"

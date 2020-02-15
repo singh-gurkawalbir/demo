@@ -112,6 +112,7 @@ function DynaSelectResource(props) {
     allowEdit,
     options,
     filter,
+    hideOnEmptyList = false,
     appTypeIsStatic = false,
     statusExport,
     ignoreEnvironmentFilter,
@@ -225,6 +226,10 @@ function DynaSelectResource(props) {
     statusExport,
     value,
   ]);
+
+  if (!resourceItems.length && hideOnEmptyList) {
+    return null;
+  }
 
   return (
     <div className={classes.root}>
