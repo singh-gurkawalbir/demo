@@ -578,7 +578,7 @@ function FlowBuilder() {
                     `${pg.application}${pg.webhookOnly}`
                   }
                   index={i}
-                  isViewMode={isViewMode}
+                  isViewMode={isViewMode || isFreeFlow}
                   isLast={pageGenerators.length === i + 1}
                 />
               ))}
@@ -586,7 +586,7 @@ function FlowBuilder() {
                 <AppBlock
                   integrationId={integrationId}
                   className={classes.newPG}
-                  isViewMode={isViewMode}
+                  isViewMode={isViewMode || isFreeFlow}
                   onBlockClick={handleAddGenerator}
                   blockType="newPG"
                 />
@@ -625,7 +625,7 @@ function FlowBuilder() {
                     `${pp.application}-${i}`
                   }
                   index={i}
-                  isViewMode={isViewMode}
+                  isViewMode={isViewMode || isFreeFlow}
                   isMonitorLevelAccess={isMonitorLevelAccess}
                   isLast={pageProcessors.length === i + 1}
                   onMove={handleMove}
@@ -635,7 +635,7 @@ function FlowBuilder() {
                 <AppBlock
                   className={classes.newPP}
                   integrationId={integrationId}
-                  isViewMode={isViewMode}
+                  isViewMode={isViewMode || isFreeFlow}
                   onBlockClick={handleAddProcessor}
                   blockType={isDataLoaderFlow ? 'newImport' : 'newPP'}
                 />
