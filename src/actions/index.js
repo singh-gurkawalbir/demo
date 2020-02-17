@@ -804,8 +804,8 @@ const sampleData = {
   reset: resourceId => action(actionTypes.SAMPLEDATA.RESET, { resourceId }),
 };
 const importSampleData = {
-  request: resourceId =>
-    action(actionTypes.IMPORT_SAMPLEDATA.REQUEST, { resourceId }),
+  request: (resourceId, refreshCache) =>
+    action(actionTypes.IMPORT_SAMPLEDATA.REQUEST, { resourceId, refreshCache }),
 };
 const flowData = {
   init: flow => action(actionTypes.FLOW_DATA.INIT, { flow }),

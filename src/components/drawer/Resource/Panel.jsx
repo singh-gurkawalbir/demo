@@ -112,16 +112,18 @@ export default function Panel(props) {
     resourceLabel = 'Destination / Lookup';
   } else if (resourceType === 'pageGenerator') {
     resourceLabel = 'Source';
-  } else if (isFlowBuilder) {
+  } else if (isLookUpExport) {
+    resourceLabel = 'Lookup';
+  } else {
+    resourceLabel = MODEL_PLURAL_TO_LABEL[resourceType];
+  }
+
+  if (isFlowBuilder) {
     if (isNewId(id) && resourceType === 'exports') {
       resourceLabel = isLookUpExport ? 'Lookup' : 'Source';
     } else if (isNewId(id) && resourceType === 'imports') {
       resourceLabel = 'Import';
     }
-  } else if (isLookUpExport) {
-    resourceLabel = 'Lookup';
-  } else {
-    resourceLabel = MODEL_PLURAL_TO_LABEL[resourceType];
   }
 
   const isMultiStepSaveResource = [
