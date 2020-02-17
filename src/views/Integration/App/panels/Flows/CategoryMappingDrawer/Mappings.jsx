@@ -79,6 +79,23 @@ const useStyles = makeStyles(theme => ({
     width: 50,
     height: 50,
   },
+  filterTypeIcon: {
+    width: 9,
+    height: 9,
+    marginRight: 6,
+  },
+  PreferredIcon: {
+    color: theme.palette.warning.main,
+  },
+  OptionalIcon: {
+    color: theme.palette.secondary.lightest,
+  },
+  ConditionalIcon: {
+    color: theme.palette.primary.main,
+  },
+  RequiredIcon: {
+    color: theme.palette.success.main,
+  },
 }));
 
 export default function ImportMapping(props) {
@@ -164,13 +181,35 @@ export default function ImportMapping(props) {
           // TODO: Azhar Replace these arrow icons with new icons for ["Preferred", "optional", "conditional", "required"]
           switch (filterType) {
             case 'preferred':
-              return <PreferredIcon />;
+              return (
+                <PreferredIcon
+                  className={clsx(
+                    classes.filterTypeIcon,
+                    classes.PreferredIcon
+                  )}
+                />
+              );
             case 'optional':
-              return <OptionalIcon />;
+              return (
+                <OptionalIcon
+                  className={clsx(classes.filterTypeIcon, classes.OptionalIcon)}
+                />
+              );
             case 'conditional':
-              return <ConditionalIcon />;
+              return (
+                <ConditionalIcon
+                  className={clsx(
+                    classes.filterTypeIcon,
+                    classes.ConditionalIcon
+                  )}
+                />
+              );
             case 'required':
-              return <RequiredIcon />;
+              return (
+                <RequiredIcon
+                  className={clsx(classes.filterTypeIcon, classes.RequiredIcon)}
+                />
+              );
             default:
               return null;
           }

@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import CloseIcon from '@material-ui/icons/Close';
 import {
   Button,
   IconButton,
@@ -13,6 +12,7 @@ import {
 } from '@material-ui/core';
 import CeligoTable from '../../components/CeligoTable';
 import actions from '../../actions';
+import CloseIcon from '../icons/CloseIcon';
 
 const useStyles = makeStyles(theme => ({
   title: {
