@@ -10,8 +10,8 @@ import { hooksToFunctionNamesMap } from '../../../../utils/hooks';
 function ExportFilterDialog({ flowId, resource, isViewMode, onClose }) {
   const dispatch = useDispatch();
   const resourceId = resource._id;
-  const sampleData = useSelector(state =>
-    selectors.getSampleData(state, {
+  const { status: sampleDataStatus, data: sampleData } = useSelector(state =>
+    selectors.getSampleDataWrapper(state, {
       flowId,
       resourceId,
       resourceType: 'exports',
@@ -106,7 +106,7 @@ function ExportFilterDialog({ flowId, resource, isViewMode, onClose }) {
   };
 
   useEffect(() => {
-    if (!sampleData) {
+    if (!sampleDataStatus) {
       dispatch(
         actions.flowData.requestSampleData(
           flowId,
@@ -116,7 +116,7 @@ function ExportFilterDialog({ flowId, resource, isViewMode, onClose }) {
         )
       );
     }
-  }, [dispatch, flowId, resourceId, sampleData]);
+  }, [dispatch, flowId, resourceId, sampleDataStatus]);
 
   return (
     <ExportFilterToggleEditorDialog

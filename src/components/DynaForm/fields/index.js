@@ -84,6 +84,7 @@ import DynaExportPanel from './DynaExportPanel';
 import cronBuilderComponents from './cronBuilderComponents';
 import DynaCronGenerator from './DynaCronGenerator';
 import DynaNSSearchCriteria from './editors/DynaNSSearchCriteria';
+import DynaSettings from './DynaSettings';
 
 export default {
   mode: DynaMode,
@@ -181,4 +182,5 @@ export default {
   groupedButton: cronBuilderComponents.groupedButton,
   cronlabel: cronBuilderComponents.cronlabel,
   nssearchcriteria: DynaNSSearchCriteria,
+  settings: DynaSettings,
 };

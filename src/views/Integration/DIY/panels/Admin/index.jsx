@@ -13,6 +13,7 @@ import AuditLogSection from './sections/AuditLog';
 import ReadmeSection from './sections/Readme';
 import NotificationsSection from './sections/Notifications';
 import UsersSection from '../../../../../components/ManageUsersPanel';
+import SettingsSections from './sections/Settings';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -68,6 +69,12 @@ const allSections = [
     label: 'Readme',
     Section: ReadmeSection,
     id: 'readMe',
+  },
+  {
+    path: 'settings',
+    label: 'Settings',
+    Section: SettingsSections,
+    id: 'settings',
   },
 ];
 
