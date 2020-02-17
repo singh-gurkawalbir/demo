@@ -89,7 +89,7 @@ export default function menuItems(
           Icon: ConnectionsIcon,
           path: '/connectors',
         },
-        { label: 'API Tokens', path: '/accesstokens', Icon: TokensApiIcon },
+        { label: 'API tokens', path: '/accesstokens', Icon: TokensApiIcon },
         { label: 'Recycle bin', path: '/recycleBin', Icon: RecycleBinIcon },
       ],
     },
