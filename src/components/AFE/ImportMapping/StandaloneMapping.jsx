@@ -25,7 +25,8 @@ export default function StandaloneMapping(props) {
     id,
     flowId,
     resourceId,
-    subRecordMappingId = 'item[*].celigo_inventorydetail',
+    subRecordMappingId,
+    //  = 'item[*].celigo_inventorydetail',
     disabled,
     onClose,
   } = props;
