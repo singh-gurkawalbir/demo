@@ -1,39 +1,24 @@
-import { Component } from 'react';
-// import Dialog from '@material-ui/core/Dialog';
-// import DialogContent from '@material-ui/core/DialogContent';
-// import DialogTitle from '@material-ui/core/DialogTitle';
-// import IconButton from '@material-ui/core/IconButton';
-import { withStyles } from '@material-ui/core';
-// import CloseIcon from '../icons/CloseIcon';
+import { useSelector } from 'react-redux';
 import AuditLog from './index';
 import ModalDialog from '../ModalDialog';
+import * as selectors from '../../reducers';
 
-@withStyles(theme => ({
-  closeButton: {
-    position: 'absolute',
-    right: theme.spacing(1),
-    top: 1,
-  },
-  dialogContent: {
-    overflowX: 'auto',
-  },
-}))
-export default class AuditLogDialog extends Component {
-  render() {
-    const {
-      title = 'Audit Log',
-      resourceType,
-      resourceId,
-      onClose,
-    } = this.props;
+export default function AuditLogDialog({ resourceType, resourceId, onClose }) {
+  const resource = useSelector(state =>
+    selectors.resource(state, resourceType, resourceId)
+  );
+  const name = resource ? `: ${resource.name}` : '';
 
-    return (
-      <ModalDialog onClose={onClose} show maxWidth="xl">
-        <div>{title}</div>
-        <div>
-          <AuditLog resourceType={resourceType} resourceId={resourceId} />
-        </div>
-      </ModalDialog>
-    );
-  }
+  return (
+    <ModalDialog onClose={onClose} show maxWidth="xl">
+      <div>Audit Log{name}</div>
+      <div>
+        <AuditLog
+          onClick={onClose}
+          resourceType={resourceType}
+          resourceId={resourceId}
+        />
+      </div>
+    </ModalDialog>
+  );
 }

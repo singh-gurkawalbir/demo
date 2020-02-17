@@ -73,6 +73,8 @@ export default function menuItems(
         '/pg/stacks',
         '/pg/templates',
         '/pg/connectors',
+        '/pg/recycleBin',
+        '/pg/accessTokens',
       ],
       children: [
         { label: 'Exports', path: '/exports', Icon: ExportsIcon },
@@ -121,7 +123,7 @@ export default function menuItems(
       ],
     },
     {
-      label: 'Editor playground (Beta)',
+      label: 'Editor playground (alpha)',
       Icon: EditorsPlaygroundIcon,
       path: '/editors',
     },

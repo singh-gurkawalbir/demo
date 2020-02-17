@@ -158,10 +158,13 @@ export function* commitStagedChanges({ resourceType, id, scope }) {
      UI shouldnt set offline flag. It should read status from db.
   */
   if (resourceType === 'connections' && updated._id && isNew) {
-    yield call(apiCallWithRetry, {
-      path: `/connections/${updated._id}/ping`,
-      hidden: true,
-    });
+    try {
+      yield call(apiCallWithRetry, {
+        path: `/connections/${updated._id}/ping`,
+        hidden: true,
+      });
+      // eslint-disable-next-line no-empty
+    } catch (e) {}
   }
 
   // #region Data loader transform
@@ -480,7 +483,9 @@ export function* getResourceCollection({ resourceType }) {
       });
 
       sharedStacks = sharedStacks.map(stack => ({ ...stack, shared: true }));
-      collection = [...collection, ...sharedStacks];
+
+      if (!collection) collection = sharedStacks;
+      else collection = [...collection, ...sharedStacks];
     }
 
     if (resourceType === 'transfers') {
@@ -488,7 +493,8 @@ export function* getResourceCollection({ resourceType }) {
         path: '/transfers/invited',
       });
 
-      collection = [...collection, ...invitedTransfers];
+      if (!collection) collection = invitedTransfers;
+      else collection = [...collection, ...invitedTransfers];
     }
 
     yield put(actions.resource.receivedCollection(resourceType, collection));
@@ -592,12 +598,15 @@ export function* requestDebugLogs({ connectionId }) {
 
   try {
     response = yield call(apiCallWithRetry, { path });
-    yield put(actions.connection.receivedDebugLogs(response, connectionId));
+    yield put(
+      actions.connection.receivedDebugLogs(
+        response ||
+          'There are no logs available for this connection. Please run your flow so that we can record the outgoing and incoming traffic to this connection.',
+        connectionId
+      )
+    );
   } catch (error) {
-    if (error.status === 404) {
-      response = `No Debug Logs found for the specified connectionId: ${connectionId}`;
-      yield put(actions.connection.receivedDebugLogs(response, connectionId));
-    }
+    return undefined;
   }
 }
 
@@ -609,16 +618,32 @@ export function* receivedResource({ resourceType, resource }) {
 
 export function* authorizedConnection({ connectionId }) {
   yield put(actions.connection.madeOnline(connectionId));
+  const { merged: connectionResource } = yield select(
+    selectors.resourceData,
+    'connections',
+    connectionId
+  );
+
+  if (connectionResource && connectionResource.type === 'netsuite') {
+    yield put(actions.resource.request('connections', connectionId));
+  }
 }
 
 export function* refreshConnectionStatus({ integrationId }) {
   const url = integrationId
     ? `/integrations/${integrationId}/connections?fetchQueueSize=true`
     : '/connections?fetchQueueSize=true';
-  const response = yield call(apiCallWithRetry, {
-    path: url,
-    hidden: true,
-  });
+  let response;
+
+  try {
+    response = yield call(apiCallWithRetry, {
+      path: url,
+      hidden: true,
+    });
+  } catch (e) {
+    return;
+  }
+
   const finalResponse = Array.isArray(response)
     ? response.map(({ _id, offline, queues }) => ({
         _id,

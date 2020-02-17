@@ -6,6 +6,7 @@ import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import FilterPanel from './FilterPanel';
 import Spinner from '../../../Spinner';
+import { wrapSpecialChars } from '../../../../utils/jsonPaths';
 
 /**
  * TODO: Azhar to check and update the button styles
@@ -33,16 +34,17 @@ export default function DynaSalesforceLookupFilters(props) {
     onFieldChange,
     editorId,
   } = props;
+  const modifiedData = Array.isArray(data) ? data.map(wrapSpecialChars) : data;
   const { disableFetch, commMetaPath } = options;
   const handleEditorInit = useCallback(() => {
     dispatch(
       actions.editor.init(editorId, 'salesforceLookupFilter', {
-        data,
+        modifiedData,
         autoEvaluate: false,
         rule: value,
       })
     );
-  }, [data, dispatch, editorId, value]);
+  }, [dispatch, editorId, modifiedData, value]);
 
   useEffect(() => {
     if (editorId) {
@@ -108,7 +110,7 @@ export default function DynaSalesforceLookupFilters(props) {
         id={id}
         editorId={editorId}
         rule={value}
-        data={data}
+        data={modifiedData}
         filters={filters}
         onFieldChange={onFieldChange}
       />

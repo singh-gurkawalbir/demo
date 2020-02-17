@@ -7,7 +7,10 @@ export default function DynaCronGenerator(props) {
   const { onFieldChange, id, value } = props;
   const [reset, setReset] = useState(false);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const onChange = useCallback(value => onFieldChange(id, value), [id]);
+  const onChange = useCallback(
+    (value, touched) => onFieldChange(id, value, touched),
+    [id, onFieldChange]
+  );
 
   return (
     <Fragment>

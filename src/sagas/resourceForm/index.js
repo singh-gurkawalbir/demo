@@ -203,13 +203,13 @@ export function* saveDataLoaderRawData({ resourceId, resourceType, values }) {
     resourceId,
     'rawFile'
   );
+
+  if (!rawData) return values;
   // Gets application file type to be passed on file upload
   const fileType = fileTypeToApplicationTypeMap[rawData.type];
   // Incase of JSON, we need to stringify the content to pass while uploading
   const fileContent =
     rawData.type === 'json' ? JSON.stringify(rawData.body) : rawData.body;
-
-  if (!rawData) return values;
   const rawDataKey = yield call(uploadRawData, {
     file: fileContent,
     fileName: `file.${rawData.type}`,
@@ -411,6 +411,11 @@ export function* initFormValues({
     resourceType,
     resourceId
   );
+  const { merged: flow } = yield select(
+    selectors.resourceData,
+    'flows',
+    flowId
+  );
 
   if (isNewId(resourceId)) {
     resource._id = resourceId;
@@ -491,7 +496,7 @@ export function* initFormValues({
   } else if (typeof defaultFormAssets.init === 'function') {
     // standard form init fn...
 
-    finalFieldMeta = defaultFormAssets.init(fieldMeta);
+    finalFieldMeta = defaultFormAssets.init(fieldMeta, resource, flow);
   }
 
   // console.log('finalFieldMeta', finalFieldMeta);

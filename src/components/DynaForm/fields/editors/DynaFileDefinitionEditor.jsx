@@ -124,7 +124,7 @@ function DynaFileDefinitionEditor(props) {
 
   useEffect(() => {
     if (isRuleChanged) {
-      onFieldChange(id, rule);
+      onFieldChange(id, rule, true);
       // Processes the updated sample data and rules on change of format
       dispatch(
         actions.sampleData.request(

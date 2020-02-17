@@ -25,6 +25,7 @@ import AddIcon from '../../components/icons/AddIcon';
 import ZipUpIcon from '../../components/icons/InstallIntegrationIcon';
 import ZipDownIcon from '../../components/icons/DownloadIntegrationIcon';
 import { generateNewId } from '../../utils/resource';
+import OfflineConnectionDrawer from './OfflineConnectionDrawer';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -104,13 +105,14 @@ function Dashboard() {
             fileType="application/zip"
             history={history}
             // eslint-disable-next-line react/jsx-handler-names
-            onClose={history.back}
+            onClose={history.goBack}
           />
         </Route>
       </Switch>
 
       <ResourceDrawer />
       <DownloadIntegrationDrawer />
+      <OfflineConnectionDrawer />
 
       <CeligoPageBar title="My integrations">
         <IconTextButton

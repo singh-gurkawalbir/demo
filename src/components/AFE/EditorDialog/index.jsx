@@ -48,7 +48,8 @@ const useStyles = makeStyles(theme => ({
     marginLeft: theme.spacing(2),
   },
   actions: {
-    marginRight: theme.spacing(3) - 2,
+    justifyContent: 'flex-start',
+    marginLeft: theme.spacing(2),
     marginTop: 0,
     marginBottom: theme.spacing(2),
   },
@@ -118,7 +119,7 @@ export default function EditorDialog(props) {
       open={open}
       onClose={() => handleClose()}
       scroll="paper"
-      data-key={dataTest}
+      data-test={dataTest}
       maxWidth={false}>
       <div className={classes.toolbarContainer}>
         <div className={classes.toolbarItem}>
@@ -164,17 +165,13 @@ export default function EditorDialog(props) {
       </DialogContent>
       <DialogActions className={classes.actions}>
         {showPreviewAction && (
-          <Button data-test="previewEditorResult" onClick={handlePreview}>
+          <Button
+            data-test="previewEditorResult"
+            variant="outlined"
+            onClick={handlePreview}>
             Preview
           </Button>
         )}
-        <Button
-          variant="text"
-          color="primary"
-          data-test="closeEditor"
-          onClick={() => handleClose()}>
-          Cancel
-        </Button>
         <Button
           variant="outlined"
           data-test="saveEditor"
@@ -182,6 +179,13 @@ export default function EditorDialog(props) {
           color="primary"
           onClick={() => handleClose(true)}>
           Save
+        </Button>
+        <Button
+          variant="text"
+          color="primary"
+          data-test="closeEditor"
+          onClick={() => handleClose()}>
+          Cancel
         </Button>
       </DialogActions>
     </Dialog>
