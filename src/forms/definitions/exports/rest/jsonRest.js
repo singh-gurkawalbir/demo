@@ -1,6 +1,16 @@
 import { isNewId } from '../../../../utils/resource';
+import { isLookupResource } from '../../../../utils/flows';
 
 export default {
+  init: (fieldMeta, resource = {}, flow) => {
+    const exportPanelField = fieldMeta.fieldMap.exportPanel;
+
+    if (isLookupResource(flow, resource)) {
+      exportPanelField.visible = false;
+    }
+
+    return fieldMeta;
+  },
   preSave: formValues => {
     const retValues = { ...formValues };
 
@@ -273,14 +283,20 @@ export default {
           'type',
           'delta.dateFormat',
           'delta.lagOffset',
-          'once.booleanField',
-          'rest.once.relativeURI',
-          'rest.once.method',
-          'rest.once.postBody',
           'rest.blobFormat',
         ],
         type: 'collapse',
         containers: [
+          {
+            collapsed: true,
+            label: 'Configure Once',
+            fields: [
+              'once.booleanField',
+              'rest.once.relativeURI',
+              'rest.once.method',
+              'rest.once.postBody',
+            ],
+          },
           {
             collapsed: true,
             label: 'Does this API support paging?',

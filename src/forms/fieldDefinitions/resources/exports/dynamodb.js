@@ -5,6 +5,7 @@ export default {
     type: 'select',
     label: 'Region',
     required: true,
+    defaultValue: r => (r && r.dynamodb && r.dynamodb.region) || 'us-east-1',
     options: [
       {
         items: AWS_REGIONS_LIST,

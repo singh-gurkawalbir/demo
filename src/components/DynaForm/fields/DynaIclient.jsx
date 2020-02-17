@@ -28,7 +28,7 @@ export default function DynaIclient(props) {
           options={[
             {
               items: iClients.map(i => ({
-                label: i.name,
+                label: i.name || i._id,
                 value: i._id,
               })),
             },

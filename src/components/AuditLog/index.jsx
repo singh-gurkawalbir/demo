@@ -58,11 +58,13 @@ class AuditLog extends Component {
   render() {
     const {
       classes,
+      className,
       resourceDetails,
       affectedResources,
       users,
       resourceType,
       resourceId,
+      onClick,
     } = this.props;
     const { filters } = this.state;
 
@@ -71,7 +73,7 @@ class AuditLog extends Component {
         required
         resources="integrations, flows, exports, imports, connections">
         <Fragment>
-          <div className={classes.root}>
+          <div className={(classes.root, className)}>
             <Filters
               affectedResources={affectedResources}
               resourceDetails={resourceDetails}
@@ -85,6 +87,7 @@ class AuditLog extends Component {
               resourceId={resourceId}
               resourceDetails={resourceDetails}
               filters={filters}
+              onClick={onClick}
             />
           </div>
         </Fragment>

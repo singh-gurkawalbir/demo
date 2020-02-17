@@ -74,14 +74,20 @@ export default {
         const baseUri = r && r.http && r.http.baseURI;
 
         if (baseUri) {
-          if (baseUri.indexOf('sandbox') !== -1) {
-            return (r && r.http && r.http.scope) || [];
+          if (baseUri.includes('sandbox')) {
+            return (
+              (r &&
+                r.http &&
+                r.http.auth &&
+                r.http.auth.oauth &&
+                r.http.auth.oauth.scope) ||
+              []
+            );
           }
         }
 
         return [];
       },
-      required: true,
     },
     'http.scopeProduction': {
       id: 'http.scopeProduction',
@@ -103,15 +109,21 @@ export default {
         const baseUri = r && r.http && r.http.baseURI;
 
         if (baseUri) {
-          if (baseUri.indexOf('sandbox') === -1) {
-            return (r && r.http && r.http.scope) || [];
+          if (!baseUri.includes('sandbox')) {
+            return (
+              (r &&
+                r.http &&
+                r.http.auth &&
+                r.http.auth.oauth &&
+                r.http.auth.oauth.scope) ||
+              []
+            );
           }
         }
 
         return [];
       },
       visibleWhen: [{ field: 'accountType', is: ['production'] }],
-      required: true,
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
