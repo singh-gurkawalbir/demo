@@ -27,6 +27,7 @@ export default {
         'products_read',
         'products_write',
         'fulfillments_read',
+        'offline_access',
       ],
     },
     httpAdvanced: { formId: 'httpAdvanced' },
