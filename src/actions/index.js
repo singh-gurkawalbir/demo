@@ -963,13 +963,14 @@ const searchCriteria = {
 };
 // #region DynaForm Actions
 const resourceForm = {
-  init: (resourceType, resourceId, isNew, skipCommit, flowId) =>
+  init: (resourceType, resourceId, isNew, skipCommit, flowId, initData) =>
     action(actionTypes.RESOURCE_FORM.INIT, {
       resourceType,
       resourceId,
       isNew,
       skipCommit,
       flowId,
+      initData,
     }),
   initComplete: (
     resourceType,
@@ -986,6 +987,11 @@ const resourceForm = {
       isNew,
       skipCommit,
       flowId,
+    }),
+  clearInitData: (resourceType, resourceId) =>
+    action(actionTypes.RESOURCE_FORM.CLEAR_INIT_DATA, {
+      resourceId,
+      resourceType,
     }),
   showFormValidations: (resourceType, resourceId) =>
     action(actionTypes.RESOURCE_FORM.SHOW_FORM_VALIDATION_ERRORS, {

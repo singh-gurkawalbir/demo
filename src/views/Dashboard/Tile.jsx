@@ -90,9 +90,20 @@ function Tile({ tile, history }) {
       '5db8164d9df868329731fca0', // Square POS
       '58d94e6b2e4b300dbf6b01bc', // eBay
       '5b754a8fddbb3b71d6046c87', // Amazon MCF
+      // '586cb88fc1d53d6a279d527e', // CAM
       '5a546b705556c2539f4a8dba', // Shipwire
       '5bfe38e363afaf4b872b4ee0', // Returnly
       '58859b520b11ee387108165a', // ShipStation
+      '58918b104d8fb45c6d440604', // DCL
+      '5c0606bc4d7fd970be52991b', // Ramp Logistics - Shopify
+      '5833ea9127b52153647f3b7e', // Magento 1.X - NetSuite
+      '599cd8f3088905113f495813', // Facebook Catalog Manager - NetSuite
+      '5ad75b2f9c7b5a57e9f08247', // Stripe (POS) - NetSuite
+      '5b23d976ce9a79398dcd5711', // NetSuite Sales Order Auto-Billing
+      '596de15e96a0f67a1a9d2053', // WooCommerce - NetSuite
+      '5b2973cda8c36e54ce9a9a7a', // NetSuite Auto-create Customer Deposit
+      '598a9a130ce0c234420a6735', // Google Merchant Center - NetSuite
+      '5b3dc945449020198fe8597a', // SkuVault - NetSuite
     ].includes(tile._connectorId);
   const handleStatusClick = useCallback(
     event => {
@@ -105,10 +116,11 @@ function Tile({ tile, history }) {
       }
 
       if (tile.status === TILE_STATUS.HAS_OFFLINE_CONNECTIONS) {
-        // TODO - open connection edit
         history.push(
           getRoutePath(
-            `/dashboard/edit/connections/${tile.offlineConnections[0]}`
+            `/dashboard/${tile._integrationId}/offlineconnections/${
+              tile.offlineConnections[0]
+            }`
           )
         );
       } else if (tile.status === TILE_STATUS.IS_PENDING_SETUP) {

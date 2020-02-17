@@ -6,8 +6,8 @@ export default function DynaRadioGroupForResetFields(props) {
     fieldsToReset.forEach(field => {
       const { type, id: _id } = field;
 
-      if (type === 'checkbox') onFieldChange(_id, false);
-      else onFieldChange(_id, '');
+      if (type === 'checkbox') onFieldChange(_id, false, true);
+      else onFieldChange(_id, '', true);
     });
     onFieldChange(id, value);
   };

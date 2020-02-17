@@ -68,7 +68,9 @@ function MappingDrawer() {
       onClose={handleClose}>
       <DrawerTitleBar title={`Edit mapping for flow ${flowName}`} />
       <div className={classes.content}>
-        <LoadResources required="true" resources="imports, exports">
+        <LoadResources
+          required="true"
+          resources="imports, exports, connections">
           {importId ? (
             <Fragment>
               <StandaloneMapping

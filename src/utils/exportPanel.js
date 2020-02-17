@@ -1,8 +1,8 @@
 /*
  * All utility functions related to Exports Preview Panel
  */
-
 import { adaptorTypeMap } from './resource';
+import { isJsonString } from './string';
 
 // Applications list which include Preview panel as part of the resource drawer
 
@@ -24,14 +24,18 @@ export const getAvailablePreviewStages = resource => {
   switch (appType) {
     case 'http':
       return [
-        // { label: 'HTTP request', value: 'request' },
+        { label: 'HTTP request', value: 'request' },
         { label: 'HTTP response', value: 'raw' },
         { label: 'Output', value: 'parse' },
       ];
     case 'netsuite':
       return [{ label: 'Parsed Output', value: 'parse' }];
     case 'rest':
-      return [{ label: 'Parsed Output', value: 'parse' }];
+      return [
+        { label: 'HTTP request', value: 'request' },
+        { label: 'HTTP response', value: 'raw' },
+        { label: 'Parsed Output', value: 'parse' },
+      ];
     case 'ftp':
       return [
         { label: 'Raw', value: 'raw' },
@@ -93,7 +97,15 @@ const formatPreviewData = records => {
   return { page_of_records };
 };
 
-export const getStringifiedPreviewData = previewData => {
+export const getStringifiedPreviewData = (previewData, stage) => {
+  // stage specific formatting is done here
+  if (previewData && previewData.data && stage === 'raw') {
+    if (previewData.data.body && isJsonString(previewData.data.body)) {
+      // eslint-disable-next-line no-param-reassign
+      previewData.data.body = JSON.parse(previewData.data.body);
+    }
+  }
+
   const formattedPreviewData = formatPreviewData(
     previewData && previewData.data
   );
