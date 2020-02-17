@@ -7,7 +7,6 @@ import * as selectors from '../../reducers';
 import actions from '../../actions';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import DrawerTitleBar from '../../components/drawer/TitleBar';
-import PanelHeader from '../../components/PanelHeader';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -206,7 +205,6 @@ export default function Subscription() {
 
   return (
     <Fragment>
-      <PanelHeader title="Subscription" />
       <Drawer
         anchor="right"
         open={showStartFreeDialog}
