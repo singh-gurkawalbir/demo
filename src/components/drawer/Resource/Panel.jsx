@@ -205,13 +205,13 @@ export default function Panel(props) {
       dispatch(actions.resource.created(resourceId, id));
       onClose();
     } else {
-      // For webhook generate URL case
+      // For web hook generate URL case
+      // Form should re render with created new Id
+      // Below code just replaces url with created Id and form re initializes
       if (formState.skipClose) {
-        props.history.replace(
-          `/pg/${resourceType}/edit/${resourceType}/${newResourceId || id}`
+        return props.history.replace(
+          `${props.parentUrl}/edit/${resourceType}/${newResourceId || id}`
         );
-
-        return;
       }
 
       if (newResourceId)

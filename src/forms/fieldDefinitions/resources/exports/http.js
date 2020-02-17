@@ -408,7 +408,7 @@ export default {
     requiredWhen: [
       {
         field: 'http.response.successValues',
-        isNot: [''],
+        isNot: ['', []],
       },
     ],
     visibleWhenAll: [
@@ -454,6 +454,12 @@ export default {
   'http.response.failPath': {
     type: 'text',
     label: 'Fail Path',
+    requiredWhen: [
+      {
+        field: 'http.response.failValues',
+        isNot: ['', []],
+      },
+    ],
     visibleWhenAll: [
       {
         field: 'outputMode',

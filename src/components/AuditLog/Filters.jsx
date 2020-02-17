@@ -36,14 +36,15 @@ const mapStateToProps = (state, { resourceType, resourceId }) => {
   },
   formControl: {
     marginRight: theme.spacing(1),
-    minWidth: theme.spacing(20),
+    minWidth: 150,
     maxWidth: theme.spacing(30),
+    height: 36,
   },
   selectEmpty: {
     marginTop: theme.spacing(2),
   },
   filterWrapper: {
-    padding: theme.spacing(2, 1, 1, 1),
+    padding: 0,
   },
 }))
 class Filters extends Component {

@@ -13,10 +13,10 @@ export default {
     '/http/auth/token/token': '',
     '/http/auth/cookie/method': 'POST',
     '/http/auth/cookie/successStatusCode': 204,
-    '/http/auth/cookie/uri': `${formValues['/instanceURI']}//entity/auth/login`,
+    '/http/auth/cookie/uri': `${formValues['/instanceURI']}/entity/auth/login`,
     '/http/auth/cookie/body': `{"name": "${
       formValues[`/http/unencrypted/username`]
-    }","password": "${formValues[`/password`]}","company": "${
+    }","password": "${formValues[`/http/encrypted/password`]}","company": "${
       formValues[`/http/unencrypted/company`]
     }"}`,
     '/http/encrypted/cookieString': '',
@@ -92,16 +92,16 @@ export default {
         r && r.http && r.http.unencrypted && r.http.unencrypted.username,
       helpText: 'Please enter username of your Acumatica account.',
     },
-    password: {
-      id: 'password',
+    'http.encrypted.password': {
+      id: 'http.encrypted.password',
       type: 'text',
       inputType: 'password',
       label: 'Password',
       required: true,
       helpText: 'Please enter password of your Acumatica account.',
     },
-    'http.encrypted.company': {
-      id: 'http.encrypted.company',
+    'http.unencrypted.company': {
+      id: 'http.unencrypted.company',
       type: 'text',
       label: 'Company',
       defaultValue: '',
@@ -118,8 +118,8 @@ export default {
       'http.unencrypted.endpointName',
       'http.unencrypted.endpointVersion',
       'http.unencrypted.username',
-      'password',
-      'http.encrypted.company',
+      'http.encrypted.password',
+      'http.unencrypted.company',
     ],
     type: 'collapse',
     containers: [

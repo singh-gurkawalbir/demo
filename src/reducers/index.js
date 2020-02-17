@@ -2840,6 +2840,11 @@ export function commStatusByKey(state, key) {
   return commStatus;
 }
 
+// TODO: This all needs to be refactored, and the code that uses is too.
+// The extra data points added to the results should be a different selector
+// also the new selector (that fetches metadata about a token) should be for a
+// SINGLE resource and then called in the iterator function of the presentation
+// layer.
 export function accessTokenList(
   state,
   { integrationId, take, keyword, sort, sandbox }
@@ -2912,8 +2917,6 @@ export function accessTokenList(
 
   tokensList.filtered -= tokensList.resources.length - tokens.length;
   tokensList.resources = tokens;
-  tokensList.total = (tokensList.resources || []).length;
-  tokensList.count = (tokensList.resources || []).length;
 
   if (typeof take !== 'number' || take < 1) {
     return tokensList;
@@ -3373,12 +3376,38 @@ export function getAvailableResourcePreviewStages(
 }
 
 /*
+ * Returns boolean true/false whether it is a lookup export or not based on passed flowId and resourceType
+ */
+export function isLookUpExport(state, { flowId, resourceId, resourceType }) {
+  // If not an export , then it is not a lookup
+  if (resourceType !== 'exports' || !resourceId) return false;
+
+  // Incase of a new resource , check for isLookup flag on resource patched for new lookup exports
+  // Also for existing exports ( newly created after Flow Builder feature ) have isLookup flag
+  const { merged: resourceObj = {} } = resourceData(
+    state,
+    'exports',
+    resourceId
+  );
+
+  // If exists it is a lookup
+  if (resourceObj.isLookup) return true;
+
+  // If it is an existing export with a flow context, search in pps to match this resource id
+  const flow = resource(state, 'flows', flowId);
+  const { pageProcessors = [] } = flow || {};
+
+  return !!pageProcessors.find(pp => pp._exportId === resourceId);
+}
+
+/*
  * This selector used to differentiate drawers with/without Preview Panel
  */
 export function isPreviewPanelAvailableForResource(
   state,
   resourceId,
-  resourceType
+  resourceType,
+  flowId
 ) {
   const { merged: resourceObj = {} } = resourceData(
     state,
@@ -3392,30 +3421,13 @@ export function isPreviewPanelAvailableForResource(
     resourceObj._connectionId
   );
 
-  return isPreviewPanelAvailable(resourceObj, resourceType, connectionObj);
-}
-
-/*
- * Returns boolean true/false whether it is a lookup export or not based on passed flowId and resourceType
- */
-export function isLookUpExport(state, { flowId, resourceId, resourceType }) {
-  // If not a flow context , then it is not a lookup as we can't create lookup outside flow context
-  if (!flowId || resourceType !== 'exports' || !resourceId) return false;
-
-  // Incase of a new resource , check for isLookup flag on resource patched for new lookup exports
-  if (isNewId(resourceId)) {
-    const { merged: resourceObj = {} } = resourceData(
-      state,
-      'exports',
-      resourceId
-    );
-
-    return resourceObj.isLookup;
+  // Preview panel is not shown for lookups
+  if (
+    resourceObj.isLookup ||
+    isLookUpExport(state, { resourceId, flowId, resourceType })
+  ) {
+    return false;
   }
 
-  // If it is an existing export with a flow context, search in pps to match this resource id
-  const flow = resource(state, 'flows', flowId);
-  const { pageProcessors = [] } = flow || {};
-
-  return !!pageProcessors.find(pp => pp._exportId === resourceId);
+  return isPreviewPanelAvailable(resourceObj, resourceType, connectionObj);
 }

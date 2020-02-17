@@ -18,7 +18,7 @@ export default {
         'The URL of your instance with ServiceNow. For example, https://mycompany.service-now.com.',
       startAdornment: 'https://',
       endAdornment: '.service-now.com',
-      label: 'Enter subdomain into the base uri',
+      label: 'Subdomain',
       required: true,
       validWhen: {
         matchesRegEx: {

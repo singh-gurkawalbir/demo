@@ -569,6 +569,21 @@ export default {
     'If you only want to export specific documents from your collection then please enter your filter object here. The value of this field must be a valid JSON string describing a MongoDB filter object in the correct format and with the correct operators. Refer to the <a href="https://docs.mongodb.com/manual/reference/operator/query/" target="_blank">MongoDB documentation</a> for the list of valid query operators and the correct filter object syntax.',
   'export.mongodb.projection':
     'If you only want to return a subset of fields from each MongoDB document then please enter your projection object here. The value of this field must be a valid JSON string describing a MongoDB projection object in the correct format and with the correct operators (and cannot mix inclusions and exclusions). Refer to the <a href="https://docs.mongodb.com/manual/reference/method/db.collection.find/#find-projection" target="_blank">MongoDB documentation</a> for the expected projection object syntax and operators.',
+  'export.dynamodb.region': `Name of the DynamoDB region to the location where the request is being made. If not set, by default 'us-east-1' is selected.`,
+  'export.dynamodb.tableName':
+    'Enter the name of the DynamoDB collection in your database that you would like to query from. For example: orders, items, users, customers, etc..',
+  'export.dynamodb.expressionAttributeNames':
+    'An expression attribute name is a placeholder that you use in an Amazon DynamoDB expression as an alternative to an actual attribute name. An expression attribute name must begin with a pound sign (#), and be followed by one or more alphanumeric characters. Refer to the DynamoDB documentation for the expected projection object syntax and operators.',
+  'export.dynamodb.expressionAttributeValues':
+    ' If you need to compare an attribute with a value, define an expression attribute value as a placeholder. Expression attribute values in Amazon DynamoDB are substitutes for the actual values that you want to compare—values that you might not know until runtime. An expression attribute value must begin with a colon (: and be followed by one or more alphanumeric character.  Refer to the DynamoDB documentation for the expected projection object syntax and operators.',
+  'export.dynamodb.keyConditionExpression':
+    'To specify the search criteria, you use a key condition expression—a string that determines the items to be read from the table or index.',
+  'export.dynamodb.filterExpression':
+    'If you only want to export specific documents from your collection then please enter your filter object here. The value of this field must be a valid JSON string describing a DynamoDB filter object in the correct format and with the correct operators. Refer to the DynamoDB documentation for the list of valid query operators and the correct filter object syntax.',
+  'export.dynamodb.projectionExpression':
+    'If you only want to return a subset of fields from each DynamoDB document then please enter your projection object here. The value of this field must be a valid JSON string describing a DynamoDB projection object in the correct format and with the correct operators. Refer to the DynamoDB documentation for the expected projection object syntax and operators.',
+  'export.dynamodb.onceExportPartitionKey': '',
+  'export.dynamodb.onceExportSortKey': '',
   'export.hooks.preSavePage.function':
     'This hook gets invoked at the very end of your export process, right before each page of data is saved and passed along to downstream applications. This hook can be used to modify, add, or delete records.',
   'export.hooks.preSavePage.scriptFunction':
@@ -904,6 +919,23 @@ export default {
     'If this import has either the Ignore Missing or Ignore Existing flags set to true, this field is used to identify the extract path of the field within the exported resource to be used to test for the existence of the resource. In other words, this is the path to an identifier or some other field that would only be present if a resource already exists in the import system.',
   'import.mongodb.ignoreLookupFilter':
     'If you are adding documents to your MongoDB instance and you have the Ignore Existing flag set to true please enter a filter object here to find existing documents in this collection. The value of this field must be a valid JSON string describing a MongoDB filter object in the correct format and with the correct operators. Refer to the <a href="https://docs.mongodb.com/manual/reference/operator/query/" target="_blank">MongoDB documentation</a> for the list of valid query operators and the correct filter object syntax.',
+  'import.dynamodb.region': `Name of the DynamoDB region to the location where the request is being made. If not set, by default 'us-east-1' is selected.`,
+  'import.dynamodb.method': '',
+  'import.dynamodb.tableName':
+    'Enter the name of the DynamoDB collection in your database that you would like to query from. For example: orders, items, users, customers, etc..',
+  'import.dynamodb.partitionKey':
+    'The primary key that uniquely identifies each item in an Amazon DynamoDB table can be simple (a partition key only) or composite (a partition key combined with a sort key). Refer to the DynamoDB documentation for the expected projection object syntax and operators.',
+  'import.dynamodb.sortKey':
+    'In an Amazon DynamoDB table, the primary key that uniquely identifies each item in the table can be composed not only of a partition key, but also of a sort key. Refer to the DynamoDB documentation for the expected projection object syntax and operators',
+  'import.dynamodb.itemDocument': '',
+  'import.dynamodb.updateExpression': '',
+  'import.dynamodb.conditionExpression':
+    'To specify the search criteria, you use a key condition expression—a string that determines the items to be read from the table or index.  Filter Expression - If you only want to export specific documents from your collection then please enter your filter object here. The value of this field must be a valid JSON string describing a DynamoDB filter object in the correct format and with the correct operators. Refer to the DynamoDB documentation for the list of valid query operators and the correct filter object syntax.',
+  'import.dynamodb.expressionAttributeNames':
+    'An expression attribute name is a placeholder that you use in an Amazon DynamoDB expression as an alternative to an actual attribute name. An expression attribute name must begin with a pound sign (#), and be followed by one or more alphanumeric characters. Refer to the DynamoDB documentation for the expected projection object syntax and operators.',
+  'import.dynamodb.expressionAttributeValues':
+    ' If you need to compare an attribute with a value, define an expression attribute value as a placeholder. Expression attribute values in Amazon DynamoDB are substitutes for the actual values that you want to compare—values that you might not know until runtime. An expression attribute value must begin with a colon ( and be followed by one or more alphanumeric character. Refer to the DynamoDB documentation for the expected projection object syntax and operators.',
+  'import.dynamodb.ignoreExtract': '',
   'integration._id':
     'System generated primary unique identifier for your integration.  For API users, this value should be used for GET and PUT requests.',
   'integration.name':
@@ -1176,24 +1208,37 @@ export default {
   'connection.http.auth.revoke.uri':
     'This is the URL that we will use to revoke this token’s access to this endpoint.',
   'connection.http.auth.oauth.grantType':
-    'A dropdown list of options—this will depend on the API service provider requirements.',
+    'The OAuth 2.0 Authentication currently supports two types of Grant Type. Choose “Authorization Code” grant Type if an authorization code is obtained by using an authorization server as an intermediary between the client and resource owner. Choose “Client Credentials” when the authorization scope is limited to the protected resources under the control of the client, or to protected resources previously arranged with the authorization server.',
   'connection.http.auth.oauth.callbackURL':
-    'The client application callback URL redirected to after auth, and that should be registered with the API provider.',
+    'Use callback URL to provide directions on where to go after authentication with Authorization Server. You need to whitelist this URL with your Authorization Server.',
   'connection.http.auth.oauth.clientCredentialsLocation':
-    'Sends a Basic Auth request in the header or client credentials in the request body. When your config is complete, click Request Token. If you successfully receive a token from the API you will see its details, together with the expiry, and optionally a refresh token you can use to retrieve a new access token when your current one expires.',
+    'This configuration allows you to configure the location where client credentials should be sent to the server. The options are “Send as  Basic Auth header” or “Send client credentials in the request body”.',
   'connection.http.auth.oauth.tokenURI':
-    'This is the URL that we will get the access token from.',
+    'This is the URL to the endpoint from which an authorization code for an access token can be exchanged. This generally is also on the Authentication server itself.',
   'connection.http.auth.oauth.scopeDelimiter':
-    "Use this field to override the default delimiter (' ') used to separate scope values sent to the HTTP API during the authorization process.",
+    'Provide the non-space delimiter API provider uses to delimit scopes.',
   'connection.http.auth.oauth.authURI':
     'This is the endpoint for the API provider’s authorization server where the auth code is retrieved from.',
   'connection.http.auth.oauth.scope':
-    ' This is the scope of access you are requesting. Use spaces to separate values. If your provider uses a custom delimiter, check the box to use an alternate scope delimiter.',
-
+    'These are the scopes of access being requested from the authorization server. Use comma(,) to separate values.',
+  'connection.http.auth.oauth.accessTokenHeaders':
+    "In some rare cases, it may be necessary to include custom HTTP headers with your API requests. The default 'content-type' header value is 'application/x-www-form-urlencoded'.",
+  'connection.http.auth.oauth.accessTokenBody':
+    "Configure your own access token body in JSON format if it is different from the default access token body. This JSON format is finally converted to the form-urlencoded format on the wire. <br> Default access token body format if 'Client Authentication' set as 'body':</br>{ code: {{{query.code}}}, redirect_uri: {{{redirectUri}}}, client_id: {{{clientId}}}, client_secret: {{{clientSecret}}}, grant_type: “authorization_code”}. <br> Default access token body format if 'Client Authentication' set as 'body': { client_id: {{{clientId}}}, client_secret: {{{clientSecret}}} grant_type: “client_credentials” }.",
+  'connection.http.auth.oauth.refreshHeaders':
+    "In some rare cases, it may be necessary to include custom HTTP headers with your API requests. The default 'content-type' header value is 'application/x-www-form-urlencoded'.",
+  'connection.http.auth.oauth.refreshBody':
+    'Configure your own refresh token body in JSON format if it is different from the default refresh token body. This JSON format is finally converted to the form-urlencoded format on the wire.<br>Default refresh token body format:</br>{ client_id: {{{clientId}}}, client_secret: {{{clientSecret}}}, grant_type: “refresh_token” }',
+  'connection.http.auth.token.revoke.body':
+    'Configure your own revoke body in JSON format if it is different from the default revoke token body. This JSON format is finally converted to the form-urlencoded format on the wire.<br>Default revoke body format:</br>{ token: {{{connection.http.auth.token.token}}} }.',
+  'connection.http.auth.token.revoke.headers':
+    "In some rare cases, it may be necessary to include custom HTTP headers with your API requests. The default 'content-type' header value is 'application/x-www-form-urlencoded' and 'Authorization' header value is “basic <base64 encoded format of 'clientId' and 'clientSecret'>”.",
+  'connection.http.auth.token.revoke.uri':
+    'IO requests the revocation of a particular token by making an HTTP POST request to the token revocation endpoint URL.',
   'connection.rest.pingMethod':
     'The HTTP method (GET/PUT/POST/HEAD) to use when making the ping request.',
   'connection.rest.pingBody':
-    'This field is typically used in for HTTP requests not using the GET method. The value of this field becomes the HTTP body that is sent to the API endpoint. The format of the body is dependent on the API being used. It could be URLl-encoded, JSON, or XML data. In either case, the metadata contained in this body will provide the API with the information needed to fulfill your ping request. Note that this field can contain {{{placeholders}}} that are populated from a model comprising of a connection and an export object. For example, if the export request body requires an authentication token to be embedded, you can use the placeholder {{connection.http.auth.token.token}}.',
+    'This field is typically used in for HTTP requests not using the GET method. The value of this field becomes the HTTP body that is sent to the API endpoint. The format of the body is dependent on the API being used. It could be URL-encoded, JSON, or XML data. In either case, the metadata contained in this body will provide the API with the information needed to fulfill your ping request. Note that this field can contain {{{placeholders}}} that are populated from a model comprising of a connection and an export object. For example, if the export request body requires an authentication token to be embedded, you can use the placeholder {{connection.http.auth.token.token}}.',
   'connection.rest.threedcartSecureUrl': "3dcart merchant's Secure URL.",
   'connection.rest.encrypted':
     "Use this JSON field to store all the security sensitive fields needed by your imports and exportsto access the application being integrated. For example: {'password': 'ayTb53Img!do'} or {'token': 'x7ygd4njlwerf63nhg'}. Please note that in addition to AES 256 encryption there are multiple layers of protection in place to keep your data safe.",
@@ -1224,15 +1269,15 @@ export default {
   'connection.shopify.rest.basicAuth.password':
     "Login to your Shopify store and navigate to 'Apps' section. Click on the respective private app and the password can be found next to the 'Authentication' section.",
   'connection.netsuite.authType':
-    "Please choose 'Basic' to use your NetSuite email and password for this connection, or choose 'Token' to use NetSuite's new token based authentication. Token based auth is slightly more complicated to enable, but it is much more secure than email and password, and your tokens will never expire. It is also common for users to start out with basic auth and then switch to token based auth when an integration is ready for production.  You can switch back and forth between basic and token based auth at any time. Please contact NetSuite support if you need help creating Access Tokens inside NetSuite.",
+    "Please choose ‘Basic’ to use your NetSuite email and password for this connection, or choose 'Token Based Auth' to use NetSuite's Token Based Authentication. Token Based Auth is much more secure than email and password, and your tokens will never expire untill revoked in NetSuite, and is NetSuite’s recommended way of configuring a connection. There are two ways to configure Token Based Auth: </br><b>1.Token Based Auth(Manual) : </b>A user would have to manually create the Tokens in NetSuite and enter them in IO.Please read <a href=https://celigosuccess.zendesk.com/hc/en-us/articles/115000694991-NetSuite-2018-2-two-factor-authentication-2FA-requirement>here</a> on generating tokens manually. Once you generate the tokens, please keep them secure as they can be re-used for multiple connections.</br> <b>2.Token Based Auth(Automatic) :</b> [Recommended] Integrator will generate tokens on behalf of the user. Once you select this option, IO will redirect you to NetSuite login page and you can select the role for which you need to generate the tokens. Please note that authorising a connection generates a new set of tokens in NetSuite everytime, so anytime a connection is created/edited with this option will generate a new set of tokens.",
   'connection.netsuite.linkSuiteScriptIntegrator':
     "Prior to integrator.io, NetSuite integrations built by Celigo ran directly inside your NetSuite account via a managed bundle. If you are still running any of these older integrations this field must be used to link integrator.io to your NetSuite account. Celigo's older UI that ran directly inside NetSuite has been deprecated, and users are required to use integrator.io going forward to manage and monitor all integrations.",
   'connection.configureApiRateLimits':
     'By default the HTTP adaptor will treat all HTTP responses with status code 429 as being rate-limited and then look for a “retry-after” header to determine when our platform can retry the request. If the service you are connecting to respects these HTTP specifications, then you do not need any additional configuration. If however your service implements a custom rate-limit response structure, use these options to tell our platform how to identify and respond to a rate-limited response.',
   'connection.http.auth.oauth.applicationType':
-    "These are the OAuth 2.0 providers currently supported by integrator.io. Please contact support if you need an application that is not currently listed here, and it is also worth checking with the application provider to see if they have any other forms of API authentication available. For example, Shopify supports both OAuth 2.0 and Basic Auth (i.e. username and password). Keep in mind too that once a new OAuth 2.0 provider is supported by integrator.io you will likely be able to choose that application directly in the 'Connection Type' field (vs connecting at the technology level via HTTP or REST).",
+    'For some providers, OAuth 2.0 is built into the app’s endpoint. You will need to use Custom for any apps that do not have OAuth 2.0 built in.',
   'connection.http._iClientId':
-    'iClient lets you configure your developer access and secret keys for your marketplace region.',
+    'Save your Client Id and Client Secret in iClient for an added layer of security.',
   'connection.marketplaceRegion':
     'Please specify the Amazon MWS Region for this connection. Please note that you must be registered to sell in the Amazon MWS Region selected, else your Amazon MWS calls will fail.',
   'connection.rdbms.useSSL':
@@ -1331,7 +1376,7 @@ export default {
   'fb.pp.exports.responseMapping':
     'Define a ‘results mapping’ here to specify where the data returned by the lookup should be merged back into the source record.',
   'fb.pp.exports.postResponseMap':
-    'Define a ‘hook’ here to use custom code to process records returned by the lookup before the records are merged back into the source record.',
+    'Define a ‘hook’ here to use custom code to process records after the response/results mapping is complete, but before the records are passed along to downstream applications.',
   'fb.pp.exports.proceedOnFailure':
     'If the lookup fails for a specific record then what should happen to that record?  Should the failed record pause here until someone can analyze and fix the error (i.e. the default behavior), or should the failed record proceed to the next application in the flow regardless?',
   'fb.pp.exports.inputFilter':
@@ -1347,7 +1392,7 @@ export default {
   'fb.pp.imports.responseMapping':
     'Define a ‘response mapping’ here to specify where the response data returned by the import should be merged back into the source record.',
   'fb.pp.imports.postResponseMap':
-    'Define a ‘hook’ here to use custom code to process source records before they are submitted to the destination application (pre and post mapping hooks are available), or to process response data returned by the import (i.e. to handle errors, enhance error messages, etc...).',
+    'Define a ‘hook’ here to use custom code to process records after the response/results mapping is complete, but before the records are passed along to downstream applications.',
   'fb.pp.imports.proceedOnFailure':
     'If the import fails for a specific record then what should happen to that record?  Should the failed record pause here until someone can analyze and fix the error (i.e. the default behavior), or should the failed record proceed to the next application in the flow regardless?',
   'fb.pp.imports.inputFilter':

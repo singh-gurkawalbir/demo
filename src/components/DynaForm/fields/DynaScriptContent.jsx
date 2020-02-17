@@ -44,7 +44,7 @@ export default function DynaScriptContent(props) {
   // onFieldChange is a bound function and causing endless recursive calls
   useEffect(() => {
     if (valueChanged) {
-      onFieldChange(id, scriptContent);
+      onFieldChange(id, scriptContent, true);
       setValueChanged(false);
     }
   }, [id, onFieldChange, scriptContent, valueChanged]);
@@ -58,7 +58,7 @@ export default function DynaScriptContent(props) {
       const updatedScriptContent =
         value + scriptHookStubs[options.scriptFunctionStub];
 
-      onFieldChange(id, updatedScriptContent);
+      onFieldChange(id, updatedScriptContent, true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, options.scriptFunctionStub]);

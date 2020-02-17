@@ -223,6 +223,7 @@ export default function DynaTypeableSelect(props) {
         options={suggestions}
         filterOption={filterOption}
       />
+
       {!removeHelperText && <ErroredMessageComponent {...props} />}
     </FormControl>
   );

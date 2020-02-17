@@ -47,7 +47,7 @@ export default function DynaStaticMap(props) {
   useEffect(() => {
     if (!initFieldChange && map) {
       setInitFieldChange(true);
-      onFieldChange(id, computedValue);
+      onFieldChange(id, computedValue, true);
     }
   }, [computedValue, id, initFieldChange, map, onFieldChange]);
 
