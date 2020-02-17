@@ -107,7 +107,7 @@ export default function Notifications() {
                 message={
                   n.type === 'account'
                     ? 'is inviting you to join their account.'
-                    : `${n.ownerUser.email} has shared the "${n.stackName}" stack with you.`
+                    : `${n.email} has shared the "${n.stackName}" stack with you.`
                 }
               />
               {i < notifications.length - 1 && (
