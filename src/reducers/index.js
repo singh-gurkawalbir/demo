@@ -452,6 +452,7 @@ export const getSampleDataWrapper = createSelector(
       status,
       data: {
         record: restOfSampleData || {},
+        pageIndex: 1,
         lastExportDateTime: moment()
           .add(-7, 'd')
           .toISOString(),

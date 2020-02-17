@@ -112,8 +112,12 @@ export function convertIOFilterExpression(filterExpression = []) {
               temp.type = 'field';
               [, [, temp.field]] = tempExp;
 
-              if (tempExp[1][0] === 'context') {
-                temp.field = ['_CONTEXT', temp.field].join('.');
+              if (tempExp[1][0] === 'extract') {
+                temp.field = `record.${temp.field}`;
+              } else if (tempExp[1][0] === 'settings') {
+                temp.field = `settings.${temp.field}`;
+              } else if (tempExp[1][0] === 'context') {
+                temp.field = temp.field;
               }
 
               if (i === 1) {
@@ -230,10 +234,18 @@ export function generateIOFilterExpression(rules) {
         rhs = undefined;
 
         if (rr.data.lhs.type === 'field') {
-          lhs = [rr.data.lhs.dataType, ['extract', rr.data.lhs.field]];
-
-          if (rr.data.lhs.field.indexOf('_CONTEXT.') === 0) {
-            lhs[1] = ['context', rr.data.lhs.field.replace('_CONTEXT.', '')];
+          if (rr.data.lhs.field.startsWith('record.')) {
+            lhs = [
+              rr.data.lhs.dataType,
+              ['extract', rr.data.lhs.field.replace('record.', '')],
+            ];
+          } else if (rr.data.lhs.field.startsWith('settings.')) {
+            lhs = [
+              rr.data.lhs.dataType,
+              ['settings', rr.data.lhs.field.replace('settings.', '')],
+            ];
+          } else {
+            lhs = [rr.data.lhs.dataType, ['context', rr.data.lhs.field]];
           }
 
           if (rr.data.lhs.transformations) {
@@ -270,10 +282,18 @@ export function generateIOFilterExpression(rules) {
           exp.push([operatorsMap.jQueryToIOFilters[rr.operator], lhs]);
         } else {
           if (rr.data.rhs.type === 'field') {
-            rhs = [rr.data.rhs.dataType, ['extract', rr.data.rhs.field]];
-
-            if (rr.data.rhs.field.indexOf('_CONTEXT.') === 0) {
-              rhs[1] = ['context', rr.data.rhs.field.replace('_CONTEXT.', '')];
+            if (rr.data.rhs.field.startsWith('record.')) {
+              rhs = [
+                rr.data.rhs.dataType,
+                ['extract', rr.data.rhs.field.replace('record.', '')],
+              ];
+            } else if (rr.data.rhs.field.startsWith('settings.')) {
+              rhs = [
+                rr.data.rhs.dataType,
+                ['settings', rr.data.rhs.field.replace('settings.', '')],
+              ];
+            } else {
+              rhs = [rr.data.rhs.dataType, ['context', rr.data.rhs.field]];
             }
 
             if (rr.data.rhs.transformations) {

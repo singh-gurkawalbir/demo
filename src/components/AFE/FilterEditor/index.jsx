@@ -47,7 +47,16 @@ export default function FilterEditor(props) {
     handleInit();
   }, [handleInit]);
 
-  const parsedData = result && result.data && result.data[0];
+  const parsedData = result && result.data;
+  let outputMessage = '';
+
+  if (result && result.data) {
+    if (result.data.length > 0) {
+      outputMessage = 'TRUE: record will be processed';
+    } else {
+      outputMessage = 'FALSE: record will be ignored/discarded';
+    }
+  }
 
   return (
     <PanelGrid className={classes[`${layout}Template`]}>
@@ -79,8 +88,8 @@ export default function FilterEditor(props) {
         <CodePanel
           name="result"
           overrides={{ showGutter: false }}
-          value={parsedData || ''}
-          mode="json"
+          value={outputMessage}
+          mode="text"
           readOnly
         />
       </PanelGridItem>
