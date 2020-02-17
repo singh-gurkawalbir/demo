@@ -44,6 +44,7 @@ import {
   isAS2Resource,
   isRestCsvMediaTypeExport,
 } from '../../../utils/resource';
+import { isConnector } from '../../../utils/flows';
 
 function* initFlowData({ flowId, resourceId, resourceType }) {
   const { merged: flow } = yield select(resourceData, 'flows', flowId);
@@ -204,6 +205,7 @@ export function* fetchPageGeneratorPreview({ flowId, _pageGeneratorId }) {
     'connections',
     resource._connectionId
   );
+  const { merged: flow = {} } = yield select(resourceData, 'flows', flowId);
 
   try {
     let previewData;
@@ -222,6 +224,9 @@ export function* fetchPageGeneratorPreview({ flowId, _pageGeneratorId }) {
     } else if (isRealTimeOrDistributedResource(resource)) {
       // fetch data from real time sample data
       previewData = yield call(requestRealTimeMetadata, { resource });
+    } else if (isConnector(flow) && resource.sampleData) {
+      // Incase of an existing connector flow with sampleData on export, we show the same when requested for preview data
+      previewData = resource.sampleData;
     } else {
       previewData = yield call(exportPreview, {
         resourceId: _pageGeneratorId,
@@ -541,7 +546,9 @@ export function* requestProcessorData({
         });
       }
 
-      hasNoRulesToProcess = true;
+      // Incase of no mappings defined, data is not proceeded further for this resource
+      // So this stage's state is left undefined. It is up to the next stages to handle this
+      return;
     } else if (stage === 'postResponseMap') {
       // For this stage, we need both flowData and rawData to merge and generate actual data
       // Raw Data is supplied through preProcessedData, FlowData is fetched below

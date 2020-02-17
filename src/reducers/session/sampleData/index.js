@@ -131,6 +131,8 @@ export function getResourceSampleData(state, resourceId, stage) {
       return getSampleData(resourceData);
     case 'transform':
       return getTransformData(resourceData);
+    case 'request':
+      return resourceData.request || DEFAULT_VALUE;
     default:
       return DEFAULT_VALUE;
   }

@@ -5,7 +5,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
-import { Input, Chip, MenuItem, ListItemText } from '@material-ui/core';
+import { Input, Chip, MenuItem, ListItemText, Select } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../../../../actions';
 import * as selectors from '../../../../../reducers';
@@ -61,6 +61,9 @@ const useStyles = makeStyles(theme => ({
     '&:before': {
       display: 'none',
     },
+  },
+  checkboxOffset: {
+    marginLeft: 6,
   },
 }));
 
@@ -124,7 +127,7 @@ export default function CsvParsePanel(props) {
             value={rowDelimiter}
             className={classes.select}
             onChange={event => patchEditor('rowDelimiter', event.target.value)}
-            placeholder="Please Select"
+            placeholder="Please select"
             inputProps={{ id: 'rowDelimiter' }}>
             {options.RowDelimiterOptions.map(opt => (
               <option key={opt.value} value={opt.value} data-test={opt.value}>
@@ -136,6 +139,7 @@ export default function CsvParsePanel(props) {
 
         <FormControlLabel
           disabled={disabled}
+          className={classes.checkboxOffset}
           control={
             <Checkbox
               color="primary"
@@ -144,10 +148,11 @@ export default function CsvParsePanel(props) {
               onChange={() => patchEditor('trimSpaces', !trimSpaces)}
             />
           }
-          label="Trim Spaces"
+          label="Trim spaces"
         />
         <FormControlLabel
           disabled={disabled}
+          className={classes.checkboxOffset}
           control={
             <Checkbox
               color="primary"
@@ -160,7 +165,7 @@ export default function CsvParsePanel(props) {
               }}
             />
           }
-          label="File Has Header"
+          label="File has header"
         />
         <FormControl disabled={disabled} className={classes.formControl}>
           <DynaText
@@ -168,7 +173,7 @@ export default function CsvParsePanel(props) {
             checked={rowsToSkip}
             inputType="number"
             value={rowsToSkip}
-            label="Number Of Rows To Skip"
+            label="Number of rows to skip"
             data-test="rowsToSkip"
             disabled={disabled}
             isValid={rowsToSkip >= 0}
@@ -178,6 +183,7 @@ export default function CsvParsePanel(props) {
 
         <FormControlLabel
           disabled={disabled}
+          className={classes.checkboxOffset}
           control={
             <Checkbox
               color="primary"
@@ -189,14 +195,14 @@ export default function CsvParsePanel(props) {
               }}
             />
           }
-          label="Multiple Rows Per Record"
+          label="Multiple rows per record"
         />
         {multipleRowsPerRecord && allColumns && (
           <FormControl disabled={disabled} className={classes.formControl}>
             <InputLabel htmlFor="select-multiple-chip" shrink>
-              Key Columns
+              Key columns
             </InputLabel>
-            <CeligoSelect
+            <Select
               multiple
               value={keyColumns}
               className={classes.select}
@@ -224,7 +230,7 @@ export default function CsvParsePanel(props) {
                   <ListItemText primary={name} />
                 </MenuItem>
               ))}
-            </CeligoSelect>
+            </Select>
           </FormControl>
         )}
       </FormGroup>

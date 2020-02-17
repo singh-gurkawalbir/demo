@@ -4,7 +4,7 @@ export default function DynaSelectSetFieldValues(props) {
   const { onFieldChange, setFieldIds = [] } = props;
   const setFormFields = () => {
     setFieldIds.forEach(fieldId => {
-      onFieldChange(fieldId, '');
+      onFieldChange(fieldId, '', true);
     });
   };
 

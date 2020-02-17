@@ -84,7 +84,7 @@ function DynaUploadFile(props) {
     // resets sample data on change of file type
     if (options) {
       dispatch(actions.sampleData.reset(resourceId));
-      onFieldChange(id, '');
+      onFieldChange(id, '', true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, id, options, resourceId]);
