@@ -3043,7 +3043,7 @@ export function getAllPageProcessorImports(state, pageProcessors) {
   return ppImports;
 }
 
-export function getImportSampleData(state, resourceId) {
+export function getImportSampleData(state, resourceId, options = {}) {
   const { merged: resource } = resourceData(state, 'imports', resourceId);
   const { assistant, adaptorType, sampleData } = resource;
 
@@ -3059,7 +3059,9 @@ export function getImportSampleData(state, resourceId) {
   } else if (adaptorType === 'NetSuiteDistributedImport') {
     // eslint-disable-next-line camelcase
     const { _connectionId: connectionId, netsuite_da = {} } = resource;
-    const commMetaPath = `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${netsuite_da.recordType}`;
+    const { recordType } = options;
+    const commMetaPath = `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${recordType ||
+      netsuite_da.recordType}`;
     const { data, status } = metadataOptionsAndResources({
       state,
       connectionId,

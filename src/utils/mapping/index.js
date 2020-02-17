@@ -4,6 +4,7 @@ import mappingUtil from '.';
 import netsuiteMappingUtil from './application/netsuite';
 import getJSONPaths, {
   getJSONPathArrayWithSpecialCharactersWrapped,
+  pickFirstObject,
 } from '../jsonPaths';
 import { isJsonString } from '../../utils/string';
 import connectors from '../../constants/applications';
@@ -37,6 +38,26 @@ const checkExtractPathFoundInSampledata = (str, sampleData, wrapped) => {
   return (
     getJSONPathArrayWithSpecialCharactersWrapped(sampleData).indexOf(str) > -1
   );
+};
+
+const getSubRecordMapping = (parentMapping, subRecordMappingId) => {
+  const { fields = [], lists = [] } = parentMapping || {};
+
+  if (subRecordMappingId.indexOf('[*].') > 0) {
+    const listName = subRecordMappingId.split('[*].')[0];
+    const subListGenerateName = subRecordMappingId.split('[*].')[1];
+    const list = lists.find(l => l.generate === listName);
+
+    if (list) {
+      const subList = list.fields.find(l => l.generate === subListGenerateName);
+
+      return subList.subRecordMapping;
+    }
+  } else {
+    const field = fields.find(l => l.generate === subRecordMappingId);
+
+    return field.subRecordMapping;
+  }
 };
 
 export function unwrapTextForSpecialChars(extract, flowSampleData) {
@@ -275,11 +296,67 @@ export default {
       default:
     }
   },
+  getSubRecordRecordTypeAndJsonPath: (resourceObj, subRecordMappingId) => {
+    const rawMapping = mappingUtil.getMappingFromResource(resourceObj, true);
+    const subRecordMappingObj = getSubRecordMapping(
+      rawMapping,
+      subRecordMappingId
+    );
+    const { recordType, jsonPath } = subRecordMappingObj || {};
+
+    return {
+      recordType,
+      jsonPath,
+    };
+  },
+  getSubRecordMappingConfig: (
+    resourceObj,
+    subRecordMappingId,
+    isGroupedSampleData,
+    netsuiteRecordType,
+    options = {}
+  ) => {
+    const rawMapping = mappingUtil.getMappingFromResource(resourceObj, true);
+    const subRecordMappingObj = getSubRecordMapping(
+      rawMapping,
+      subRecordMappingId
+    );
+    const { lookups, mapping: subRecordMapping, recordType, jsonPath } =
+      subRecordMappingObj || {};
+    const formattedMappings = mappingUtil.getMappingsForApp({
+      mappings: subRecordMapping,
+      isGroupedSampleData,
+      resource: resourceObj,
+      netsuiteRecordType,
+      options,
+    });
+
+    return {
+      mappings: formattedMappings,
+      lookups,
+      recordType,
+      jsonPath,
+    };
+  },
+  generateMappingsWithSubRecord: ({
+    resource,
+    subRecordMappingId,
+    subRecordMapping,
+    subRecordLookups,
+  }) => {
+    const mapping = mappingUtil.getMappingFromResource(resource, true);
+    const subRecordParent = getSubRecordMapping(mapping, subRecordMappingId);
+
+    subRecordParent.mapping = subRecordMapping;
+    subRecordParent.lookups = subRecordLookups;
+
+    return mapping;
+  },
   getMappingFromResource: (
     resourceObj,
-    appType,
     getRawMappings,
     isGroupedSampleData,
+    netsuiteRecordType,
     options = {}
   ) => {
     if (!resourceObj) {
@@ -289,8 +366,9 @@ export default {
     /* TODO: With support for different application being adding up, 
       path for mapping to be updated below */
     let mappings = {};
+    const { adaptorType } = resourceObj;
 
-    switch (appType) {
+    switch (adaptorTypeMap[adaptorType]) {
       case adaptorTypeMap.NetSuiteDistributedImport:
         mappings =
           (resourceObj.netsuite_da && resourceObj.netsuite_da.mapping) || {};
@@ -330,17 +408,17 @@ export default {
 
     return mappingUtil.getMappingsForApp({
       mappings: mappingCopy,
-      appType,
       isGroupedSampleData,
       resource: resourceObj,
+      netsuiteRecordType,
       options,
     });
   },
   getMappingsForApp: ({
     mappings,
-    appType,
-    resource,
+    resource = {},
     isGroupedSampleData,
+    netsuiteRecordType,
     options = {},
   }) => {
     let _mappings = mappings;
@@ -364,10 +442,13 @@ export default {
       );
     }
 
-    switch (appType) {
+    const { adaptorType } = resource;
+
+    switch (adaptorTypeMap[adaptorType]) {
       case adaptorTypeMap.NetSuiteDistributedImport:
         return netsuiteMappingUtil.getFieldsAndListMappings({
           mappings: _mappings,
+          recordType: netsuiteRecordType,
           isGroupedSampleData,
         });
       case adaptorTypeMap.FTPImport:
@@ -385,14 +466,12 @@ export default {
           isGroupedSampleData,
           useFirstRowSupported: true,
           resource,
-          appType,
         });
       case adaptorTypeMap.SalesforceImport:
         return mappingUtil.getFieldsAndListMappings({
           mappings: _mappings,
           useFirstRowSupported: false,
           resource,
-          appType,
         });
       default:
     }
@@ -400,11 +479,11 @@ export default {
   generateMappingsForApp: ({
     mappings,
     generateFields,
-    recordType,
     appType,
     isGroupedSampleData,
     resource,
     flowSampleData,
+    netsuiteRecordType,
   }) => {
     switch (appType) {
       case adaptorTypeMap.NetSuiteDistributedImport:
@@ -412,8 +491,8 @@ export default {
           mappings,
           isGroupedSampleData,
           generateFields,
-          recordType,
           flowSampleData,
+          recordType: netsuiteRecordType,
         });
       case adaptorTypeMap.FTPImport:
       case adaptorTypeMap.HTTPImport:
@@ -767,6 +846,20 @@ export default {
     }
 
     return { isSuccess: true };
+  },
+  getExtractPaths: (fields, options = {}) => {
+    const { jsonPath } = options;
+    let extractPaths = getJSONPaths(pickFirstObject(fields));
+
+    if (jsonPath)
+      extractPaths = extractPaths
+        .filter(f => f.id && f.id.indexOf(`${jsonPath}[*].`) === 0)
+        .map(f => ({
+          ...f,
+          id: f.id.replace(`${jsonPath}[*].`, ''),
+        }));
+
+    return extractPaths;
   },
   isCsvOrXlsxResource,
 };

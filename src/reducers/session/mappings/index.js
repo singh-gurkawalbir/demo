@@ -34,20 +34,40 @@ export default function reducer(state = {}, action) {
             application,
             isGroupedSampleData,
             salesforceMasterRecordTypeId,
+            netsuiteRecordType,
             showSalesforceNetsuiteAssistant,
+            subRecordMappingId,
             ...additionalOptions
           } = options;
-          const formattedMappings = mappingUtil.getMappingFromResource(
-            resourceData,
-            adaptorType,
-            false,
-            isGroupedSampleData,
-            additionalOptions
-          );
-          const lookups = lookupUtil.getLookupFromResource(
-            resourceData,
-            adaptorType
-          );
+          let formattedMappings;
+          let lookups;
+
+          if (subRecordMappingId) {
+            const subRecordMappingObj = mappingUtil.getSubRecordMappingConfig(
+              resourceData,
+              subRecordMappingId,
+              isGroupedSampleData,
+              netsuiteRecordType,
+              additionalOptions
+            );
+            const {
+              mappings: subrecordMapping,
+              lookups: subrecordLookups = [],
+            } = subRecordMappingObj || {};
+
+            formattedMappings = subrecordMapping;
+            lookups = subrecordLookups;
+          } else {
+            formattedMappings = mappingUtil.getMappingFromResource(
+              resourceData,
+              false,
+              isGroupedSampleData,
+              netsuiteRecordType,
+              additionalOptions
+            );
+            lookups = lookupUtil.getLookupFromResource(resourceData);
+          }
+
           const initChangeIdentifier =
             (draft[id] && draft[id].initChangeIdentifier) || 0;
 
@@ -63,6 +83,8 @@ export default function reducer(state = {}, action) {
             visible: true,
             isGroupedSampleData,
             flowSampleData: undefined,
+            netsuiteRecordType,
+            subRecordMappingId,
             salesforceMasterRecordTypeId,
             showSalesforceNetsuiteAssistant,
             // lastModifiedRow helps to set generate field when any field in salesforce mapping assistant is clicked

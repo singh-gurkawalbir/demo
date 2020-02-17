@@ -36,7 +36,6 @@ import requestFileAdaptorSampleData from '../sampleDataGenerator/fileAdaptorSamp
 import mappingUtil from '../../../utils/mapping';
 import { processOneToManySampleData } from '../../../utils/sampleData';
 import {
-  adaptorTypeMap,
   isNewId,
   isRealTimeOrDistributedResource,
   isFileAdaptor,
@@ -498,13 +497,7 @@ export function* requestProcessorData({
       hasNoRulesToProcess = true;
     } else if (stage === 'importMapping') {
       // mapping fields are processed here against raw data
-      const appType =
-        resource.adaptorType && adaptorTypeMap[resource.adaptorType];
-      const mappings = mappingUtil.getMappingFromResource(
-        resource,
-        appType,
-        true
-      );
+      const mappings = mappingUtil.getMappingFromResource(resource, true);
 
       if (preProcessedData && mappings)
         return yield call(processMappingData, {
