@@ -34,7 +34,7 @@ export default function DynaWebHookSampleData(props) {
 
   // Updates field with latest sampleData requested whenever user clicks on generate sample data
   useEffect(() => {
-    onFieldChange(id, sampleData);
+    onFieldChange(id, sampleData, true);
     setManualEnter(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, sampleData]);

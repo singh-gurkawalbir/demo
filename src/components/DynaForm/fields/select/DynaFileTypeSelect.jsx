@@ -30,7 +30,7 @@ const FileTypeSelect = props => {
         ? 'filedefinition'
         : format;
 
-      onFieldChange(id, newValue);
+      onFieldChange(id, newValue, true);
       setIsDefaultValueChanged(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

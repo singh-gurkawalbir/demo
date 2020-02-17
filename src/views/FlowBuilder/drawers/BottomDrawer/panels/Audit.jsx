@@ -2,8 +2,12 @@ import { makeStyles } from '@material-ui/styles';
 import AuditLog from '../../../../../components/AuditLog';
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    padding: theme.spacing(0),
+  auditLog: {
+    '& > div': {
+      '&:first-child': {
+        padding: theme.spacing(2),
+      },
+    },
   },
 }));
 
@@ -12,7 +16,11 @@ export default function AuditPanel({ flow }) {
 
   return (
     <div className={classes.root}>
-      <AuditLog resourceType="flows" resourceId={flow._id} />
+      <AuditLog
+        resourceType="flows"
+        resourceId={flow._id}
+        className={classes.auditLog}
+      />
     </div>
   );
 }

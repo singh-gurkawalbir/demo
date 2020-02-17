@@ -17,12 +17,13 @@ function SqlQueryBuilderEditorDialog(props) {
     defaultData,
     disabled,
     showDefaultData,
+    dataTest = 'sqlQueryBuilder',
     ...rest
   } = props;
 
   return (
     <EditorDialog
-      dataTest="sqlQueryBuilder"
+      dataTest={dataTest}
       id={id}
       {...defaults}
       {...rest}

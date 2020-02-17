@@ -8,14 +8,15 @@ import {
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import DynaRefreshableSelect from './DynaRefreshableSelect';
-import DynaText from './DynaText';
 import * as selectors from '../../../reducers';
 import { isNewId } from '../../../utils/resource';
+import DynaNSSavedSearchInternalID from './DynaNSSavedSearchInternalID';
 
 export default function DynaNSSavedSearch(props) {
   const [searchType, setSearchType] = useState('public');
   // Use this state to set Search type for the first time
   const [isSearchTypeSet, setIsSearchTypeSet] = useState(false);
+  const [savedSearchUrl, setSavedSearchUrl] = useState();
   const {
     value,
     connectionId,
@@ -45,6 +46,16 @@ export default function DynaNSSavedSearch(props) {
   const { data } = useSelector(state =>
     selectors.metadataOptionsAndResources({ state, connectionId, commMetaPath })
   );
+  const netSuiteSystemDomain = useSelector(state => {
+    const connection = selectors.resource(state, 'connections', connectionId);
+
+    return (
+      connection &&
+      connection.netsuite &&
+      connection.netsuite.dataCenterURLs &&
+      connection.netsuite.dataCenterURLs.systemDomain
+    );
+  });
 
   useEffect(() => {
     // check for isSearchTypeSet to avoid changing search types on refresh
@@ -57,6 +68,16 @@ export default function DynaNSSavedSearch(props) {
       setIsSearchTypeSet(true);
     }
   }, [data, defaultValue, isSearchTypeSet, resourceId, setSearchType]);
+
+  useEffect(() => {
+    if (value && netSuiteSystemDomain) {
+      setSavedSearchUrl(
+        `${netSuiteSystemDomain}/app/common/search/search.nl?id=${value}`
+      );
+    } else {
+      setSavedSearchUrl();
+    }
+  }, [value, netSuiteSystemDomain]);
 
   return (
     <div>
@@ -86,9 +107,19 @@ export default function DynaNSSavedSearch(props) {
       </FormControl>
       <FormControl component="fieldset">
         {searchType === 'public' ? (
-          <DynaRefreshableSelect {...searchIdOptions} {...props} />
+          <DynaRefreshableSelect
+            {...searchIdOptions}
+            {...props}
+            urlToOpen={savedSearchUrl}
+          />
         ) : (
-          <DynaText {...searchInternalIdOptions} {...props} />
+          <div className="layout">
+            <DynaNSSavedSearchInternalID
+              {...searchInternalIdOptions}
+              {...props}
+              urlToOpen={savedSearchUrl}
+            />
+          </div>
         )}
       </FormControl>
     </div>

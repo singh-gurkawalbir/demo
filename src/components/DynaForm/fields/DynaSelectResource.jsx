@@ -98,6 +98,11 @@ const useStyles = makeStyles({
     display: 'flex',
     alignItems: 'flex-start',
   },
+  menuItem: {
+    maxWidth: '95%',
+    textOverflow: 'ellipsis',
+    overflow: 'hidden',
+  },
 });
 
 function DynaSelectResource(props) {
@@ -134,14 +139,14 @@ function DynaSelectResource(props) {
 
   useEffect(() => {
     if (!appTypeIsStatic && options.appType && !!value) {
-      onFieldChange(id, '');
+      onFieldChange(id, '', true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, options.appType]);
 
   useEffect(() => {
     if (createdId) {
-      onFieldChange(id, createdId);
+      onFieldChange(id, createdId, true);
       // in case someone clicks + again to add another resource...
       setNewResourceId(generateNewId());
     }
@@ -162,7 +167,7 @@ function DynaSelectResource(props) {
       location.pathname.endsWith(`/edit/${resourceType}/${newResourceId}`));
   const disableSelect = disabled || isAddingANewResource;
   const resourceItems = filteredResources.map(conn => ({
-    label: conn.name,
+    label: conn.name || conn._id,
     value: conn._id,
   }));
   const expConnId = useSelector(state => {
@@ -225,6 +230,17 @@ function DynaSelectResource(props) {
     statusExport,
     value,
   ]);
+  const truncatedItems = items =>
+    items.map(i => ({
+      label: (
+        <div title={i.label} className={classes.menuItem}>
+          {i.label}
+        </div>
+      ),
+      value: i.value,
+    }));
+
+  // console.log(truncatedItems(resourceItems || []));
 
   return (
     <div className={classes.root}>
@@ -240,7 +256,7 @@ function DynaSelectResource(props) {
             {...props}
             disabled={disableSelect}
             removeHelperText={isAddingANewResource}
-            options={[{ items: resourceItems || [] }]}
+            options={[{ items: truncatedItems(resourceItems || []) }]}
           />
         )}
       </LoadResources>

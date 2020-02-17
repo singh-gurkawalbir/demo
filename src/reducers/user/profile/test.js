@@ -63,7 +63,7 @@ describe('user reducers', () => {
       );
 
       expect(selectors.avatarUrl(state)).toEqual(
-        'https://secure.gravatar.com/avatar/123?d=mm&s=55'
+        `https://secure.gravatar.com/avatar/123?d=${process.env.CDN_BASE_URI}images/icons/icon-user-default.png&s=55`
       );
     });
   });
