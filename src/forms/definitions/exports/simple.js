@@ -8,7 +8,6 @@ export default {
     }
 
     newValues['/file/output'] = 'records';
-    newValues['/file/encoding'] = 'utf8';
 
     if (newValues['/file/type'] === 'json') {
       newValues['/file/xlsx'] = undefined;
