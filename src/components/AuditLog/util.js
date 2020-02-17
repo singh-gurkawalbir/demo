@@ -68,6 +68,7 @@ export function getResourceLink(al, actionProps) {
       {al.event === 'delete' && al.deletedInfo && al.deletedInfo.name}
       {al.event !== 'delete' && (
         <Link
+          onClick={actionProps && actionProps.onClick}
           to={getExistingResourcePagePath({
             type: al.resourceType,
             id: al._resourceId,

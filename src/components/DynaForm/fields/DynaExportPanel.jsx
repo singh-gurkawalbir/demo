@@ -5,6 +5,7 @@ import { FormContext } from 'react-forms-processor/dist';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { useSelector, useDispatch } from 'react-redux';
 import { useState, useEffect, useCallback } from 'react';
+import { deepClone } from 'fast-json-patch';
 import actions from '../../../actions';
 import {
   getResourceSampleDataWithStatus,
@@ -27,6 +28,14 @@ import ErrorIcon from '../../icons/ErrorIcon';
 const useStyles = makeStyles(theme => ({
   container: {
     paddingLeft: theme.spacing(3),
+    width: 680,
+    float: 'left',
+    [theme.breakpoints.up('xl')]: {
+      width: 780,
+    },
+    [theme.breakpoints.up('xxl')]: {
+      width: 880,
+    },
   },
   sampleDataWrapper: {
     border: '1px solid',
@@ -52,7 +61,6 @@ const useStyles = makeStyles(theme => ({
     position: 'relative',
     backgroundColor: 'white',
     maxHeight: 400,
-    maxWidth: 680,
     overflow: 'scroll',
     color: theme.palette.text.hint,
   },
@@ -60,9 +68,9 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(2),
   },
   clipBoardContainer: {
+    width: '100%',
     borderTop: `1px solid ${theme.palette.background.paper2}`,
     minHeight: theme.spacing(6),
-    maxWidth: 680,
     position: 'relative',
     padding: theme.spacing(1),
     backgroundColor: 'white',
@@ -122,7 +130,11 @@ const useStyles = makeStyles(theme => ({
     borderColor: theme.palette.secondary.lightest,
     '& > button': {
       height: 30,
-      minWidth: 150,
+      padding: theme.spacing(0, 5),
+      '&:last-child': {
+        height: 30,
+        padding: theme.spacing(0, 5),
+      },
       '&.Mui-selected': {
         backgroundColor: theme.palette.primary.main,
         '&:hover': {
@@ -153,10 +165,8 @@ function DynaExportPanel(props) {
 
     availablePreviewStages.length &&
       availablePreviewStages.forEach(({ value }) => {
-        stageData[value] = getResourceSampleDataWithStatus(
-          state,
-          resourceId,
-          value
+        stageData[value] = deepClone(
+          getResourceSampleDataWithStatus(state, resourceId, value)
         );
       });
 
@@ -290,13 +300,17 @@ function DynaExportPanel(props) {
                 classes.sampleDataContainerAlign
               )}>
               <pre>
-                {getStringifiedPreviewData(previewStageDataList[panelType])}
+                {getStringifiedPreviewData(
+                  previewStageDataList[panelType],
+                  panelType
+                )}
               </pre>
             </div>
             <div className={classes.clipBoardContainer}>
               <CopyToClipboard
                 text={getStringifiedPreviewData(
-                  previewStageDataList[panelType]
+                  previewStageDataList[panelType],
+                  panelType
                 )}
                 onCopy={handleOnCopy}
                 className={classes.clipBoard}>

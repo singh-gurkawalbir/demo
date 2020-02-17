@@ -6,7 +6,6 @@ import ErroredMessageComponent from '../ErroredMessageComponent';
 const useStyles = makeStyles(theme => ({
   label: {
     display: `inline-flex !important`,
-    marginLeft: theme.spacing(1),
     marginTop: theme.spacing(0.5),
   },
 }));

@@ -195,10 +195,7 @@ const useStyles = makeStyles(theme => ({
     borderRadius: 4,
     width: theme.spacing(3),
     height: theme.spacing(3),
-    '& svg': {
-      position: 'relative',
-      top: -12,
-    },
+    padding: 0,
   },
   sandboxDrawerToggle: {
     borderColor: theme.palette.secondary.light,
@@ -376,7 +373,7 @@ export default function CeligoDrawer() {
                             component={component || Link}
                             target={href && '_blank'}
                             href={href}
-                            to={!href && getRoutePath(path)}
+                            to={!href ? getRoutePath(path) : undefined}
                             button>
                             <ListItemIcon
                               classes={{ root: classes.itemIconRoot }}>

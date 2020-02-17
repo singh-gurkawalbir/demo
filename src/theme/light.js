@@ -397,6 +397,9 @@ export default {
           backgroundColor: colors.celigoWhite,
           borderColor: colors.celigoAccent2,
         },
+        '&.Mui-disabled': {
+          backgroundColor: colors.celigoNeutral3,
+        },
       },
       input: {
         background: colors.celigoWhite,
@@ -550,6 +553,13 @@ export default {
           marginBottom: '0 !important',
           marginRight: 8,
         },
+      },
+    },
+    // Adding globally to fix the radio button and text alignment default is margin left -11,
+    MuiFormControlLabel: {
+      root: {
+        marginLeft: 0,
+        marginTop: 6,
       },
     },
   },

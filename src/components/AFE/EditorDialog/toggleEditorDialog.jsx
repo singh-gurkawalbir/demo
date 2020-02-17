@@ -53,7 +53,8 @@ const useStyles = makeStyles(theme => ({
     marginLeft: theme.spacing(2),
   },
   actions: {
-    marginRight: theme.spacing(3) - 2,
+    justifyContent: 'flex-start',
+    marginLeft: theme.spacing(2),
     marginTop: 0,
     marginBottom: theme.spacing(2),
   },
@@ -212,17 +213,13 @@ export default function ToggleEditorDialog(props) {
       </DialogContent>
       <DialogActions className={classes.actions}>
         {showPreviewAction && (
-          <Button data-test="previewEditorResult" onClick={handlePreview}>
+          <Button
+            variant="outlined"
+            data-test="previewEditorResult"
+            onClick={handlePreview}>
             Preview
           </Button>
         )}
-        <Button
-          variant="text"
-          color="primary"
-          data-test="closeEditor"
-          onClick={handleCancel}>
-          Cancel
-        </Button>
         <Button
           variant="outlined"
           data-test="saveEditor"
@@ -230,6 +227,13 @@ export default function ToggleEditorDialog(props) {
           color="primary"
           onClick={handleSave}>
           Save
+        </Button>
+        <Button
+          variant="text"
+          color="primary"
+          data-test="closeEditor"
+          onClick={handleCancel}>
+          Cancel
         </Button>
       </DialogActions>
     </Dialog>

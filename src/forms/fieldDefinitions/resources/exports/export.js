@@ -32,6 +32,7 @@ export default {
   name: {
     type: 'text',
     label: 'Name',
+    required: true,
   },
   // adaptor type has export appended to it
   // strip it off and lowercase the connection type

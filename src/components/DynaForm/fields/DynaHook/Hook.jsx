@@ -112,7 +112,7 @@ export default function DynaHook(props) {
 
   useEffect(() => {
     if (createdScriptId && !isNewScriptIdAssigned) {
-      onFieldChange(id, { ...value, _scriptId: createdScriptId });
+      onFieldChange(id, { ...value, _scriptId: createdScriptId }, true);
       setIsNewScriptIdAssigned(true);
     }
   }, [
