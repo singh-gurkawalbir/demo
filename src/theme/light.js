@@ -397,6 +397,9 @@ export default {
           backgroundColor: colors.celigoWhite,
           borderColor: colors.celigoAccent2,
         },
+        '&.Mui-disabled': {
+          backgroundColor: colors.celigoNeutral3,
+        },
       },
       input: {
         background: colors.celigoWhite,

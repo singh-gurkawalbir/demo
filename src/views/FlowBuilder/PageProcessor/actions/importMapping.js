@@ -64,7 +64,9 @@ function ImportMapping({
       }}>
       <DrawerTitleBar onClose={onClose} title="Define Import Mapping" />
       <div className={classes.content}>
-        <LoadResources required="true" resources="imports, exports">
+        <LoadResources
+          required="true"
+          resources="imports, exports, connections">
           <Fragment>
             <StandaloneMapping
               id={mappingEditorId}

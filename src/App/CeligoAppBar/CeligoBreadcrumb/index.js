@@ -11,6 +11,7 @@ import MarketplaceCrumb from './crumbs/Marketplace';
 import TemplateCrumb from './crumbs/Template';
 import CloneCrumb from './crumbs/Clone';
 import { IntegrationAppCrumb, StoreCrumb } from './crumbs/IntegrationApp';
+import EditResourceTypeCrumb from './crumbs/EditResourceType';
 
 const useStyles = makeStyles(theme => ({
   breadCrumb: {
@@ -237,8 +238,7 @@ const commonChildRoutes = [
   },
   {
     path: '/edit/:resourceType/:id',
-    breadcrumb: ({ resourceType }) =>
-      `Edit ${MODEL_PLURAL_TO_LABEL[resourceType]}`,
+    breadcrumb: EditResourceTypeCrumb,
   },
 ];
 

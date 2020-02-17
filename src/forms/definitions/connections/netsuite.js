@@ -17,14 +17,18 @@ export default {
       newValues['/netsuite/tokenSecret'] = undefined;
       newValues['/netsuite/_iClientId'] = undefined;
     } else if (newValues['/netsuite/authType'] === 'token-auto') {
+      newValues['/netsuite/email'] = undefined;
+      newValues['/netsuite/password'] = undefined;
       newValues['/netsuite/account'] =
         newValues['/netsuite/token/auto/account'];
       newValues['/netsuite/tokenId'] = undefined;
       newValues['/netsuite/tokenSecret'] = undefined;
+      newValues['/netsuite/roleId'] = newValues['/netsuite/token/auto/roleId'];
     }
 
+    delete newValues['/netsuite/token/auto'];
+    delete newValues['/netsuite/token/auto/roleId'];
     delete newValues['/netsuite/token/auto/account'];
-    delete newValues['/netsuite/tokenAccount'];
     delete newValues['/netsuite/tokenEnvironment'];
 
     return newValues;
@@ -65,7 +69,6 @@ export default {
     },
     'netsuite.tokenEnvironment': {
       fieldId: 'netsuite.tokenEnvironment',
-      netsuiteResourceType: 'environment',
       visibleWhen: [{ field: 'netsuite.authType', is: ['token'] }],
     },
     'netsuite._iClientId': {
@@ -96,15 +99,12 @@ export default {
       visibleWhen: [{ field: 'netsuite.authType', is: ['basic'] }],
     },
     'netsuite.tokenAccount': {
-      fieldId: 'netsuite.tokenAccount',
-      netsuiteResourceType: 'account',
-      refreshOptionsOnChangesTo: [
-        'validate',
-        'netsuite.account',
-        'netsuite.environment',
-        'netsuite.roleId',
-      ],
+      id: 'netsuite.tokenAccount',
       visibleWhen: [{ field: 'netsuite.authType', is: ['token'] }],
+      type: 'text',
+      defaultValue: r => r && r.netsuite && r.netsuite.account,
+      label: 'Account ID',
+      uppercase: true,
     },
     'netsuite.token.auto.account': {
       id: 'netsuite.token.auto.account',

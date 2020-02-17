@@ -28,6 +28,9 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     width: '100%',
     flexDirection: `row !important`,
+    '& > div:first-child': {
+      flex: 1,
+    },
   },
   copybtn: {
     marginLeft: 6,

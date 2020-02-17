@@ -16,19 +16,28 @@ export default function DateTimePicker(props) {
     },
     [format, id, onFieldChange]
   );
-  const finalFormat =
-    format && format.includes('H:mm')
-      ? 'MM/DD/YYYY HH:mm'
-      : 'MM/DD/YYYY hh:mm a';
 
   return (
     <MuiPickersUtilsProvider utils={MomentDateFnsUtils}>
       <KeyboardDateTimePicker
         label={label}
-        format={finalFormat || 'MM/DD/YYYY hh:mm a'}
+        format={format}
         value={value}
+        allowKeyboardControl={false}
         inputVariant="outlined"
-        InputLabelProps={{ shrink: true }}
+        InputLabelProps={{
+          shrink: true,
+        }}
+        onKeyDown={e => {
+          // this is specifically for qa to inject their date time string
+          // they should alter the input dom to add a qa attribute prior to injection for date time
+          if (e.target.hasAttribute('qa')) return;
+
+          e.preventDefault();
+        }}
+        onKeyPress={e => {
+          e.preventDefault();
+        }}
         variant="inline"
         onChange={onChange}
         disabled={disabled}

@@ -5,6 +5,7 @@ import { FormContext } from 'react-forms-processor/dist';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { useSelector, useDispatch } from 'react-redux';
 import { useState, useEffect, useCallback } from 'react';
+import { deepClone } from 'fast-json-patch';
 import actions from '../../../actions';
 import {
   getResourceSampleDataWithStatus,
@@ -164,10 +165,8 @@ function DynaExportPanel(props) {
 
     availablePreviewStages.length &&
       availablePreviewStages.forEach(({ value }) => {
-        stageData[value] = getResourceSampleDataWithStatus(
-          state,
-          resourceId,
-          value
+        stageData[value] = deepClone(
+          getResourceSampleDataWithStatus(state, resourceId, value)
         );
       });
 
@@ -301,13 +300,17 @@ function DynaExportPanel(props) {
                 classes.sampleDataContainerAlign
               )}>
               <pre>
-                {getStringifiedPreviewData(previewStageDataList[panelType])}
+                {getStringifiedPreviewData(
+                  previewStageDataList[panelType],
+                  panelType
+                )}
               </pre>
             </div>
             <div className={classes.clipBoardContainer}>
               <CopyToClipboard
                 text={getStringifiedPreviewData(
-                  previewStageDataList[panelType]
+                  previewStageDataList[panelType],
+                  panelType
                 )}
                 onCopy={handleOnCopy}
                 className={classes.clipBoard}>
