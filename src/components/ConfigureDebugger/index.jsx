@@ -13,21 +13,18 @@ import actions from '../../actions';
 import ModalDialog from '../ModalDialog';
 
 const useStyles = makeStyles(theme => ({
-  title: {
-    marginLeft: 35,
-    padding: theme.spacing(2),
+  container: {
+    margin: theme.spacing(2, 0),
   },
   submit: {
-    marginLeft: 'auto',
-    marginRight: 'auto',
+    marginTop: theme.spacing(3),
   },
-  closeButton: {
-    position: 'absolute',
-    right: theme.spacing(1),
-    top: 2,
+  radioLabel: {
+    marginLeft: 0,
+    marginTop: theme.spacing(0.5),
   },
-  content: {
-    width: '30vw',
+  label: {
+    marginBottom: theme.spacing(1),
   },
 }));
 
@@ -68,11 +65,13 @@ export default function ConfigureDebugger(props) {
 
   return (
     <ModalDialog show onClose={onClose}>
-      <div>{name}</div>
-      <div>
+      <div>Configure Debugger: {name}</div>
+      <div className={classes.container}>
         <form onSubmit={handleOnSubmit}>
           <FormControl component="fieldset">
-            <FormLabel component="legend">Debug Duration:</FormLabel>
+            <FormLabel className={classes.label} component="legend">
+              Debug Duration:
+            </FormLabel>
             <RadioGroup
               name="debugDuration"
               defaultValue={defaultVal}
@@ -82,6 +81,7 @@ export default function ConfigureDebugger(props) {
                 value="0"
                 control={<Radio color="primary" />}
                 label="Off"
+                className={classes.radioLabel}
               />
               {['15', '30', '45', '60'].map(duration => (
                 <FormControlLabel
@@ -94,13 +94,13 @@ export default function ConfigureDebugger(props) {
             </RadioGroup>
           </FormControl>
           {minutes > 1 && (
-            <Typography variant="body2">
+            <Typography variant="body2" className={classes.submit}>
               Debug mode is enabled for next {minutes} minutes.
             </Typography>
           )}
           <Button
             data-test="saveDebuggerConfiguration"
-            variant="contained"
+            variant="outlined"
             color="primary"
             type="submit"
             className={classes.submit}

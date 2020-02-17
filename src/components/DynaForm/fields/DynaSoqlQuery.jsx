@@ -62,7 +62,7 @@ export default function DynaSoqlQuery(props) {
   }, [commMetaPath, connectionId, dispatch, query, queryChanged, sObject]);
   useEffect(() => {
     if (soqlQuery && data.entityName) {
-      onFieldChange(id, { ...value, entityName: data.entityName });
+      onFieldChange(id, { ...value, entityName: data.entityName }, true);
       dispatch(
         actions.metadata.request(
           connectionId,

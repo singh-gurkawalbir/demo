@@ -263,7 +263,7 @@ function AppBlock({
             title={name}
             TransitionComponent={Zoom}
             placement="top"
-            enterDelay={300}>
+            enterDelay={1000}>
             <Truncate lines={2} ellipsis="..." onTruncate={setIsTruncated}>
               {name}
             </Truncate>

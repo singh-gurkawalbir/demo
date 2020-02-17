@@ -19,6 +19,7 @@ import {
   generateDefaultExtractsObject,
   getFormattedResourceForPreview,
 } from '../../../utils/flowData';
+import { isConnector } from '../../../utils/flows';
 
 /*
  * Returns PG/PP Document saved on Flow Doc.
@@ -122,8 +123,12 @@ export function* fetchFlowResources({ flow, type, eliminateDataProcessors }) {
             doc: getFormattedResourceForPreview(rest),
           };
         } else {
+          // pgs have eliminateDataProcessors as false, but incase of connectors with sampledata on resource it should be true
+          // As existing connector pg's sampledata represent data after these tx, filter, hooks actions are processed, so remove those from doc
           resourceMap[resourceId] = {
-            doc: getFormattedResourceForPreview(resource),
+            doc: getFormattedResourceForPreview(
+              isConnector(flow) && resource.sampleData ? rest : resource
+            ),
           };
         }
 
@@ -133,7 +138,7 @@ export function* fetchFlowResources({ flow, type, eliminateDataProcessors }) {
           // Gets required uiData (for real time exports - FTP, NS, SF, Web hook) and postData to pass for Page processors
           resourceMap[resourceId].options = yield call(
             getPreviewOptionsForResource,
-            { resource }
+            { resource, flow }
           );
         }
       }

@@ -200,7 +200,7 @@ export default {
           r.as2 &&
           r.as2.partnerStationInfo &&
           r.as2.partnerStationInfo.rateLimit &&
-          r.as2.partnerStationInfo.auth.limit
+          r.as2.partnerStationInfo.rateLimit.limit
         ),
     },
     apiRateLimits: {
