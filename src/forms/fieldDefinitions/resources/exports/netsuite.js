@@ -150,7 +150,7 @@ export default {
   // search id
   'netsuite.webservices.searchId': {
     label: 'Saved searches',
-    type: 'refreshableselect',
+    type: 'nswssavedsearch',
     required: true,
     placeholder: 'Please select a saved search',
     filterKey: 'webservices-savedSearches',

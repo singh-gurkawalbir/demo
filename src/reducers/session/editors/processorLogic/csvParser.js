@@ -19,6 +19,7 @@ const requestBody = editor => {
   return {
     rules,
     data: editor.data,
+    options: { includeEmptyValues: true },
   };
 };
 

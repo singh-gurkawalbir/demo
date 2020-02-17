@@ -2,8 +2,11 @@ import React from 'react';
 import UploadFile from './UploadFile';
 import ModalDialog from '../../components/ModalDialog';
 
-export default function InstallIntegrationDialog(props) {
-  const { fileType, history, onClose } = props;
+export default function InstallIntegrationDialog({
+  fileType,
+  history,
+  onClose,
+}) {
   // const classes = useStyles();
 
   return (
@@ -11,7 +14,7 @@ export default function InstallIntegrationDialog(props) {
       onClose={onClose}
       show
       aria-labelledby="integration-install-dialog">
-      <div> Upload Integration Zip File</div>
+      <div> Upload integration zip file</div>
       <div>
         <UploadFile fileType={fileType} history={history} />
       </div>

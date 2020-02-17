@@ -153,7 +153,7 @@ export default function JavaScriptPanel(props) {
             onChange={event =>
               patchEditor({ entryFunction: event.target.value })
             }
-            label="Entry Function"
+            label="Function"
             margin="dense"
           />
           {scriptId && insertStubKey && (
@@ -164,7 +164,7 @@ export default function JavaScriptPanel(props) {
               onClick={handleInsertStubClick}
               disabled={disabled}
               data-test={insertStubKey}>
-              {`Insert ${hooksLabelMap[insertStubKey]} Stub`}
+              {`Insert ${hooksLabelMap[insertStubKey]} stub`}
             </Button>
           )}
         </div>

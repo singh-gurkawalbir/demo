@@ -70,13 +70,17 @@ export default function AccessTokenList(props) {
 
         <div className={classes.resultContainer}>
           <LoadResources required resources="accesstokens">
-            {list.resources && list.resources.length > 0 ? (
+            {list.count > 0 ? (
               <ResourceTable
                 resourceType="accesstokens"
                 resources={list.resources}
               />
             ) : (
-              <Typography>No API tokens for this integration yet.</Typography>
+              <Typography>
+                {list.total === 0
+                  ? `You don't have any API tokens.`
+                  : 'Your search didn’t return any matching results. Try expanding your search criteria.'}
+              </Typography>
             )}
           </LoadResources>
         </div>
