@@ -41,72 +41,83 @@ export default {
 
     mappings.fields &&
       mappings.fields.forEach(mapping => {
-        if (
-          !(mapping.subRecordMapping && mapping.subRecordMapping.recordType) &&
-          mapping.generate !== 'celigo_initializeValues'
-        ) {
-          const tempFm = { ...mapping };
+        const tempFm = { ...mapping };
 
-          tempFm.useAsAnInitializeValue =
-            initializeValues.indexOf(tempFm.generate) > -1;
+        tempFm.useAsAnInitializeValue =
+          initializeValues.indexOf(tempFm.generate) > -1;
 
-          if (mapping.internalId) {
-            tempFm.generate += '.internalid';
-          } else if (isItemSubtypeRecord && mapping.generate === 'subtype') {
-            tempFm.internalId = true;
-            tempFm.generate += '.internalid';
-          }
-
-          if (/^\['.*']$/.test(tempFm.extract)) {
-            // Remove [' in the start and  remove '] in the end
-            tempFm.extract = tempFm.extract.replace(/^(\[')(.*)('])$/, '$2');
-          }
-
-          toReturn.push(tempFm);
+        if (mapping.internalId) {
+          tempFm.generate += '.internalid';
+        } else if (isItemSubtypeRecord && mapping.generate === 'subtype') {
+          tempFm.internalId = true;
+          tempFm.generate += '.internalid';
         }
+
+        if (/^\['.*']$/.test(tempFm.extract)) {
+          // Remove [' in the start and  remove '] in the end
+          tempFm.extract = tempFm.extract.replace(/^(\[')(.*)('])$/, '$2');
+        }
+
+        if (
+          mapping.subRecordMapping &&
+          mapping.subRecordMapping.recordType &&
+          mapping.generate === 'celigo_initializeValues'
+        ) {
+          tempFm.isNotEditable = true;
+          tempFm.isRequired = true;
+          tempFm.extract = 'SubRecord Mapping';
+          tempFm.isSubRecordMapping = true;
+        }
+
+        toReturn.push(tempFm);
       });
     mappings.lists &&
       mappings.lists.forEach(lm => {
         lm.fields.forEach(fm => {
-          if (!(fm.subRecordMapping && fm.subRecordMapping.recordType)) {
-            const tempFm = { ...fm };
+          const tempFm = { ...fm };
 
-            tempFm.generate = [lm.generate, tempFm.generate].join('[*].');
+          tempFm.generate = [lm.generate, tempFm.generate].join('[*].');
 
-            if (fm.internalId) {
-              tempFm.generate += '.internalid';
-            }
-
-            if (/^\['.*']$/.test(tempFm.extract)) {
-              // if extract starts with [' and ends with ']
-              tempFm.extract = tempFm.extract.replace(/^(\[')(.*)('])$/, '$2'); // removing [' and '] at begining and end of extract that we added
-            } else if (
-              /^(\*|0)\.\['.*']$/.test(tempFm.extract) &&
-              isGroupedSampleData
-            ) {
-              // if it starts with *.[' and ends with '] or starts with 0.[' and ends with ']
-              // just remove [' and '] in extract *. will be removed in next step and will set useFirstRow accordingly
-              tempFm.extract = tempFm.extract.replace(
-                /^([*|0]\.)(\[')(.*)('])$/,
-                '$1$3'
-              );
-            }
-
-            if (isGroupedSampleData) {
-              if (tempFm.extract && tempFm.extract.indexOf('*.') === 0) {
-                tempFm.extract = tempFm.extract.substr('*.'.length);
-              } else {
-                // remove 0. in the begining of extract
-                if (tempFm.extract && /^0\./.test(tempFm.extract)) {
-                  tempFm.extract = tempFm.extract.substr('0.'.length);
-                }
-
-                tempFm.useFirstRow = true;
-              }
-            }
-
-            toReturn.push(tempFm);
+          if (fm.internalId) {
+            tempFm.generate += '.internalid';
           }
+
+          if (/^\['.*']$/.test(tempFm.extract)) {
+            // if extract starts with [' and ends with ']
+            tempFm.extract = tempFm.extract.replace(/^(\[')(.*)('])$/, '$2'); // removing [' and '] at begining and end of extract that we added
+          } else if (
+            /^(\*|0)\.\['.*']$/.test(tempFm.extract) &&
+            isGroupedSampleData
+          ) {
+            // if it starts with *.[' and ends with '] or starts with 0.[' and ends with ']
+            // just remove [' and '] in extract *. will be removed in next step and will set useFirstRow accordingly
+            tempFm.extract = tempFm.extract.replace(
+              /^([*|0]\.)(\[')(.*)('])$/,
+              '$1$3'
+            );
+          }
+
+          if (isGroupedSampleData) {
+            if (tempFm.extract && tempFm.extract.indexOf('*.') === 0) {
+              tempFm.extract = tempFm.extract.substr('*.'.length);
+            } else {
+              // remove 0. in the begining of extract
+              if (tempFm.extract && /^0\./.test(tempFm.extract)) {
+                tempFm.extract = tempFm.extract.substr('0.'.length);
+              }
+
+              tempFm.useFirstRow = true;
+            }
+          }
+
+          if (fm.subRecordMapping && fm.subRecordMapping.recordType) {
+            tempFm.isNotEditable = true;
+            tempFm.isRequired = true;
+            tempFm.extract = 'SubRecord Mapping';
+            tempFm.isSubRecordMapping = true;
+          }
+
+          toReturn.push(tempFm);
         });
       });
 
@@ -235,6 +246,12 @@ export default {
 
       if (mapping.useAsAnInitializeValue) {
         initializeValues.push(mapping.generate);
+      }
+
+      // in case of subrecord mapping delete extract and isSubRecordMapping field. They were added at UI side
+      if (mapping.isSubRecordMapping) {
+        delete mapping.extract;
+        delete mapping.isSubRecordMapping;
       }
 
       if (
