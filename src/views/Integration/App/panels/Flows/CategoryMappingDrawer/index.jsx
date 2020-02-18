@@ -1,6 +1,6 @@
 import { useState, useEffect, Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Route, useRouteMatch, Switch, useHistory } from 'react-router-dom';
+import { Route, useRouteMatch, useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import { Grid, Typography } from '@material-ui/core';
@@ -18,7 +18,6 @@ import PanelHeader from '../../../../../../components/PanelHeader';
 import TrashIcon from '../../../../../../components/icons/TrashIcon';
 import Mappings from './MappingsWrapper';
 import CategoryList from './CategoryList';
-import AddCategory from './AddCateogory';
 import ApplicationImg from '../../../../../../components/icons/ApplicationImg';
 import ArrowUpIcon from '../../../../../../components/icons/ArrowUpIcon';
 import ArrowDownIcon from '../../../../../../components/icons/ArrowDownIcon';
@@ -266,11 +265,6 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
 
   return (
     <Fragment>
-      <AddCategory
-        integrationId={integrationId}
-        parentUrl={`${match.url}/:flowId/utilitymapping/:categoryId`}
-      />
-
       <Drawer
         anchor="right"
         open={!!match}
@@ -328,12 +322,10 @@ export default function CategoryMappingDrawerRoute(props) {
   const match = useRouteMatch();
 
   return (
-    <LoadResources required resources="flows,exports,imports,connections">
-      <Switch>
-        <Route exact path={`${match.url}/:flowId/utilitymapping/:categoryId`}>
-          <CategoryMappingDrawer {...props} parentUrl={match.url} />
-        </Route>
-      </Switch>
-    </LoadResources>
+    <Route path={`${match.url}/:flowId/utilitymapping/:categoryId`}>
+      <LoadResources required resources="flows,exports,imports,connections">
+        <CategoryMappingDrawer {...props} parentUrl={match.url} />
+      </LoadResources>
+    </Route>
   );
 }

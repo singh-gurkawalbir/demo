@@ -6,6 +6,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import * as selectors from '../../../../../../reducers';
 import CloseIcon from '../../../../../../components/icons/CloseIcon';
 import AddIcon from '../../../../../../components/icons/AddIcon';
+import LoadResources from '../../../../../../components/LoadResources';
 
 const useStyles = makeStyles(theme => ({
   titleBar: {
@@ -22,7 +23,12 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function DrawerTitleBar({ flowId, onClose, parentUrl }) {
+export default function DrawerTitleBar({
+  flowId,
+  onClose,
+  addCategory,
+  parentUrl,
+}) {
   const classes = useStyles();
   const history = useHistory();
   const match = useRouteMatch();
@@ -42,28 +48,32 @@ export default function DrawerTitleBar({ flowId, onClose, parentUrl }) {
 
   return (
     <div className={classes.titleBar}>
-      <Typography variant="h3" className={classes.title}>
-        {`Edit Mappings: ${
-          flowName.length > 55
-            ? `${flowName.substring(0, 55 - 3)}...`
-            : flowName
-        }`}
-      </Typography>
-      <Button
-        variant="contained"
-        data-test="addCategory"
-        onClick={handleAddCategoryClick}
-        color="secondary"
-        className={classes.button}>
-        <AddIcon /> Add Category
-      </Button>
-      <Divider orientation="veritical" />
-      <IconButton
-        data-test="closeCategoryMapping"
-        aria-label="Close"
-        onClick={handleClose}>
-        <CloseIcon />
-      </IconButton>
+      <LoadResources required resources="flows">
+        <Typography variant="h3" className={classes.title}>
+          {`${addCategory ? 'Add category: ' : 'Edit Mappings:'} ${
+            flowName.length > 40
+              ? `${flowName.substring(0, 40 - 3)}...`
+              : flowName
+          }`}
+        </Typography>
+        {!addCategory && (
+          <Button
+            variant="contained"
+            data-test="addCategory"
+            onClick={handleAddCategoryClick}
+            color="secondary"
+            className={classes.button}>
+            <AddIcon /> Add Category
+          </Button>
+        )}
+        <Divider orientation="veritical" />
+        <IconButton
+          data-test="closeCategoryMapping"
+          aria-label="Close"
+          onClick={handleClose}>
+          <CloseIcon />
+        </IconButton>
+      </LoadResources>
     </div>
   );
 }

@@ -206,6 +206,20 @@ function flattenChildrenStructrue(result = [], meta, isRoot = true) {
   }
 }
 
+export function categoryRelationshipData(state, integrationId, flowId) {
+  if (!state) return null;
+  const { response = [] } = state[`${flowId}-${integrationId}`] || emptyObj;
+  const generatesMetaData = response.find(
+    sec => sec.operation === 'generatesMetaData'
+  );
+
+  return (
+    generatesMetaData &&
+    generatesMetaData.data &&
+    generatesMetaData.data.categoryRelationshipData
+  );
+}
+
 export function categoryMappingData(state, integrationId, flowId) {
   if (!state) {
     return null;
