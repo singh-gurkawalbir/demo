@@ -21,13 +21,13 @@ const Grid = require('@material-ui/core/Grid').default;
     <StatusTag variant="realtime" label="Realtime" />
   </Grid>
   <Grid item>
-    <StatusTag variant="error" label="info"  successValue={50} />
+    <StatusTag variant="success" label="Completed"  errorValue={50} resolvedValue={20} />
   </Grid>
   <Grid item>
-    <StatusTag variant="error" label="info"  successValue={90} />
+    <StatusTag variant="success" label="error"  errorValue={30}  />
   </Grid>
   <Grid item>
-    <StatusTag variant="info" label="success"  successValue={10} />
+    <StatusTag variant="warning" label="success"  errorValue={40} />
   </Grid>
 </Grid>
 

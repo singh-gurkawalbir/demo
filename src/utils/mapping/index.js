@@ -40,11 +40,11 @@ const checkExtractPathFoundInSampledata = (str, sampleData, wrapped) => {
 };
 
 export function unwrapTextForSpecialChars(extract, flowSampleData) {
-  let toReturn = extract;
+  let modifiedExtract = extract;
 
   if (!/\W/g.test(extract)) {
     // if it does not contain a non-word character
-    return toReturn;
+    return modifiedExtract;
   }
 
   if (!flowSampleData && /^\[.*\]$/.test(extract)) {
@@ -63,9 +63,9 @@ export function unwrapTextForSpecialChars(extract, flowSampleData) {
       true
     ).indexOf(extract);
 
-    toReturn = getJSONPathArrayWithSpecialCharactersWrapped(flowSampleData)[
-      index
-    ];
+    modifiedExtract = getJSONPathArrayWithSpecialCharactersWrapped(
+      flowSampleData
+    )[index];
   } else if (!/\.|(\[\*\])/.test(extract)) {
     /**
      This extract is not found in sampledata. So UI doesnt know what a dot or sublist character represent.
@@ -79,18 +79,18 @@ export function unwrapTextForSpecialChars(extract, flowSampleData) {
       )
     ) {
       // if not already wrapped
-      toReturn = `[${extract.replace(/\]/g, '\\]')}]`;
+      modifiedExtract = `[${extract.replace(/\]/g, '\\]')}]`;
     }
   }
 
-  return toReturn;
+  return modifiedExtract;
 }
 
 export function wrapTextForSpecialChars(extract, flowSampleData) {
-  let toReturn = extract;
+  let modifiedExtract = extract;
 
-  if (!/\W/g.test(extract)) {
-    return toReturn;
+  if (!/\W/g.test(extract) || handlebarRegex.test(extract)) {
+    return modifiedExtract;
   }
 
   if (
@@ -109,7 +109,7 @@ export function wrapTextForSpecialChars(extract, flowSampleData) {
       flowSampleData
     ).indexOf(extract);
 
-    toReturn = getJSONPathArrayWithSpecialCharactersWrapped(
+    modifiedExtract = getJSONPathArrayWithSpecialCharactersWrapped(
       flowSampleData,
       null,
       true
@@ -128,9 +128,11 @@ export function wrapTextForSpecialChars(extract, flowSampleData) {
       )
     ) {
       // if not already wrapped
-      toReturn = `[${extract.replace(/\]/g, '\\]')}]`;
+      modifiedExtract = `[${extract.replace(/\]/g, '\\]')}]`;
     }
   }
+
+  return modifiedExtract;
 }
 
 export const LookupResponseMappingExtracts = [
@@ -734,12 +736,23 @@ export default {
       };
     }
 
+    const mappingsWithoutGenerates = mappings.filter(mapping => {
+      if (!mapping.generate) return true;
+
+      return false;
+    });
+
+    if (mappingsWithoutGenerates.length)
+      return {
+        isSuccess: false,
+        errMessage: `One or more generate fields missing`,
+      };
     const mappingsWithoutExtract = mappings.filter(mapping => {
       if (!('hardCodedValue' in mapping || mapping.extract)) return true;
 
       return false;
     });
-    const missingGenerates = [];
+    const generatesWithoutExtract = [];
 
     mappingsWithoutExtract.forEach(mapping => {
       if (mapping.lookupName) {
@@ -747,20 +760,20 @@ export default {
 
         // check if mapping has dynamic lookup
         if (!lookup || lookup.map) {
-          missingGenerates.push(mapping);
+          generatesWithoutExtract.push(mapping);
         }
       } else {
-        missingGenerates.push(mapping);
+        generatesWithoutExtract.push(mapping);
       }
     });
-    const missingGeneratesNames = missingGenerates.map(
+    const missingExtractGenerateNames = generatesWithoutExtract.map(
       mapping => mapping.generate
     );
 
-    if (missingGeneratesNames.length) {
+    if (missingExtractGenerateNames.length) {
       return {
         isSuccess: false,
-        errMessage: `Extract Fields missing for field(s): ${missingGeneratesNames.join(
+        errMessage: `Extract Fields missing for field(s): ${missingExtractGenerateNames.join(
           ','
         )}`,
       };

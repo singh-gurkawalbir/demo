@@ -33,6 +33,7 @@ export default function DynaQuery(props) {
       {showEditor && (
         <SqlQueryBuilderEditorDialog
           title="Lookups"
+          dataTest="lookupQuery"
           id={`lookupQueryBuilder-${id}`}
           rule={value || defaultQueryValue}
           sampleData={sampleData}

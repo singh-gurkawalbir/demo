@@ -27,7 +27,7 @@ export default {
       helpText:
         'The subdomain of your chargify account. For example, https://mysubdomain.chargify.com.',
       endAdornment: '.chargify.com',
-      label: 'Enter subdomain into the base uri',
+      label: 'Subdomain',
       required: true,
       validWhen: {
         matchesRegEx: {

@@ -1,6 +1,6 @@
 import MomentDateFnsUtils from '@date-io/moment';
 import moment from 'moment';
-import { useState, useEffect } from 'react';
+import { useCallback } from 'react';
 import {
   MuiPickersUtilsProvider,
   KeyboardDateTimePicker,
@@ -9,28 +9,37 @@ import ErroredMessageComponent from '../ErroredMessageComponent';
 import CalendarIcon from '../../../icons/CalendarIcon';
 
 export default function DateTimePicker(props) {
-  const { id, label, onFieldChange, value, disabled, format } = props;
-  const [dateValue, setDateValue] = useState(value || null);
-
-  useEffect(() => {
-    onFieldChange(id, moment(dateValue).format(format) || '');
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dateValue]);
-  const finalFormat =
-    format && format.includes('H:mm')
-      ? 'MM/DD/YYYY HH:mm'
-      : 'MM/DD/YYYY hh:mm a';
+  const { id, label, onFieldChange, value = '', disabled, format } = props;
+  const onChange = useCallback(
+    value => {
+      onFieldChange(id, moment(value).format(format) || '');
+    },
+    [format, id, onFieldChange]
+  );
 
   return (
     <MuiPickersUtilsProvider utils={MomentDateFnsUtils}>
       <KeyboardDateTimePicker
         label={label}
-        format={finalFormat || 'MM/DD/YYYY hh:mm a'}
-        value={dateValue}
+        format={format}
+        value={value}
+        allowKeyboardControl={false}
         inputVariant="outlined"
-        InputLabelProps={{ shrink: true }}
+        InputLabelProps={{
+          shrink: true,
+        }}
+        onKeyDown={e => {
+          // this is specifically for qa to inject their date time string
+          // they should alter the input dom to add a qa attribute prior to injection for date time
+          if (e.target.hasAttribute('qa')) return;
+
+          e.preventDefault();
+        }}
+        onKeyPress={e => {
+          e.preventDefault();
+        }}
         variant="inline"
-        onChange={value => setDateValue(value)}
+        onChange={onChange}
         disabled={disabled}
         keyboardIcon={<CalendarIcon />}
       />

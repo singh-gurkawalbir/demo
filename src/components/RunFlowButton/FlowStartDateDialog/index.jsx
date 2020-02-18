@@ -20,13 +20,16 @@ export default function FlowStartDateDialog(props) {
   const { changeIdentifier, lastExportDateTimeLoaded } = state;
   const flow = useSelector(state => selectors.resource(state, 'flows', flowId));
   const preferences = useSelector(state => selectors.userOwnPreferences(state));
+  const profilePreferences = useSelector(state =>
+    selectors.userProfilePreferencesProps(state)
+  );
   let lastExportDateTime = useSelector(state =>
     selectors.getLastExportDateTime(state, flow._id)
   ).data;
   const selectorStatus = useSelector(state =>
     selectors.getLastExportDateTime(state, flow._id)
   ).status;
-  const timeZone = preferences && preferences.timezone;
+  const timeZone = profilePreferences && profilePreferences.timezone;
 
   if (!lastExportDateTime) {
     lastExportDateTime = new Date();
@@ -94,7 +97,10 @@ export default function FlowStartDateDialog(props) {
       <div>Delta Flow</div>
       <div>
         <DynaForm disabled={disabled} fieldMeta={fieldMeta}>
-          <DynaSubmit data-test="submit" onClick={handleSubmit}>
+          <DynaSubmit
+            skipDisableButtonForFormTouched
+            data-test="submit"
+            onClick={handleSubmit}>
             Run
           </DynaSubmit>
           <Button data-test="close" onClick={cancelDialog}>
