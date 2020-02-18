@@ -201,6 +201,14 @@ export const isPageGeneratorResource = (flow = {}, resourceId) => {
  */
 export const isConnector = (flow = {}) => !!(flow && flow._connectorId);
 
+/*
+ * Based on free property on flow Doc, we determine whether this flow is a free flow
+ */
+export const isFreeFlowResource = (flow = {}) => !!(flow && flow.free);
+
+/*
+ * Returns true/false, whether passed resource is a lookup or not for the passed flow
+ */
 export const isLookupResource = (flow = {}, resource = {}) => {
   if (resource.isLookup) return true;
   const { pageProcessors = [] } = flow;

@@ -37,7 +37,6 @@ const defaultData = {};
 
 export default function FilterPanel({
   editorId,
-  readOnly,
   data = defaultData,
   rule,
   disabled,
@@ -68,9 +67,16 @@ export default function FilterPanel({
       d = data;
     }
 
-    return getJSONPaths(isArray(d) ? d[0] : d, null, {
+    const jsonPaths = getJSONPaths(isArray(d) ? d[0] : d, null, {
       wrapSpecialChars: true,
     }).filter(p => p.id && !p.id.includes('[*].'));
+    const contextJsonPaths = jsonPaths.filter(
+      p => p.id && p.id.startsWith('_CONTEXT.')
+    );
+
+    return jsonPaths
+      .filter(p => p.id && !p.id.startsWith('_CONTEXT.'))
+      .concat(contextJsonPaths);
   }, [data]);
 
   useEffect(() => {
@@ -161,36 +167,34 @@ export default function FilterPanel({
       }
     }
 
-    if (!readOnly) {
-      if (
-        rule.$el.find('.rule-filter-container img.settings-icon').length === 0
-      ) {
-        rule.$el
-          .find('[name$=_filter]')
-          .after(
-            '<img style="display:none;" class="settings-icon" src="https://d142hkd03ds8ug.cloudfront.net/images/icons/icon/gear.png">'
-          );
-        rule.$el
-          .find('.rule-filter-container img.settings-icon')
-          .unbind('click')
-          .on('click', () => {
-            showOperandSettings({ rule });
-          });
-      }
-
+    if (
+      rule.$el.find('.rule-filter-container img.settings-icon').length === 0
+    ) {
       rule.$el
-        .find('.rule-filter-container')
-        .unbind('mouseover')
-        .on('mouseover', () => {
-          rule.$el.find('.rule-filter-container img.settings-icon').show();
-        });
+        .find('[name$=_filter]')
+        .after(
+          '<img style="display:none;" class="settings-icon" src="https://d142hkd03ds8ug.cloudfront.net/images/icons/icon/gear.png">'
+        );
       rule.$el
-        .find('.rule-filter-container')
-        .unbind('mouseout')
-        .on('mouseout', () => {
-          rule.$el.find('.rule-filter-container img.settings-icon').hide();
+        .find('.rule-filter-container img.settings-icon')
+        .unbind('click')
+        .on('click', () => {
+          showOperandSettings({ rule });
         });
     }
+
+    rule.$el
+      .find('.rule-filter-container')
+      .unbind('mouseover')
+      .on('mouseover', () => {
+        rule.$el.find('.rule-filter-container img.settings-icon').show();
+      });
+    rule.$el
+      .find('.rule-filter-container')
+      .unbind('mouseout')
+      .on('mouseout', () => {
+        rule.$el.find('.rule-filter-container img.settings-icon').hide();
+      });
 
     rule.$el.find('.rule-filter-container .io-filter-type').remove();
 
@@ -466,38 +470,36 @@ export default function FilterPanel({
             updateUIForLHSRule({ rule, name });
           });
 
-          if (!readOnly) {
-            rule.$el
-              .find('.rule-value-container')
-              .unbind('mouseover')
-              .on('mouseover', () => {
-                rule.$el.find('.rule-value-container img.settings-icon').show();
-                rule.$el
-                  .find('.rule-value-container img.settings-icon')
-                  .unbind('click')
-                  .on('click', () => {
-                    if (rulesState[ruleId].data.rhs.type === 'field') {
-                      const rhsField = rule.$el
-                        .find(
-                          `.rule-value-container [name=${rulesState[ruleId].data.rhs.type}]`
-                        )
-                        .val();
+          rule.$el
+            .find('.rule-value-container')
+            .unbind('mouseover')
+            .on('mouseover', () => {
+              rule.$el.find('.rule-value-container img.settings-icon').show();
+              rule.$el
+                .find('.rule-value-container img.settings-icon')
+                .unbind('click')
+                .on('click', () => {
+                  if (rulesState[ruleId].data.rhs.type === 'field') {
+                    const rhsField = rule.$el
+                      .find(
+                        `.rule-value-container [name=${rulesState[ruleId].data.rhs.type}]`
+                      )
+                      .val();
 
-                      if (rhsField) {
-                        rulesState[ruleId].data.rhs.field = rhsField;
-                      }
+                    if (rhsField) {
+                      rulesState[ruleId].data.rhs.field = rhsField;
                     }
+                  }
 
-                    showOperandSettings({ rule, rhs: true });
-                  });
-              });
-            rule.$el
-              .find('.rule-value-container')
-              .unbind('mouseout')
-              .on('mouseout', () => {
-                rule.$el.find('.rule-value-container img.settings-icon').hide();
-              });
-          }
+                  showOperandSettings({ rule, rhs: true });
+                });
+            });
+          rule.$el
+            .find('.rule-value-container')
+            .unbind('mouseout')
+            .on('mouseout', () => {
+              rule.$el.find('.rule-value-container img.settings-icon').hide();
+            });
 
           if (rulesState[ruleId].data.rhs.type !== 'value') {
             setTimeout(() => {
@@ -507,11 +509,8 @@ export default function FilterPanel({
 
           return `<input class="form-control" name="${name}" value="${rulesState[
             ruleId
-          ].data.rhs.value || ''}">${
-            readOnly
-              ? ''
-              : '<img style="display:none;" class="settings-icon" src="https://d142hkd03ds8ug.cloudfront.net/images/icons/icon/gear.png">'
-          }`;
+          ].data.rhs.value ||
+            ''}"><img style="display:none;" class="settings-icon" src="https://d142hkd03ds8ug.cloudfront.net/images/icons/icon/gear.png">`;
         },
         valueGetter(rule) {
           const ruleId = getFilterRuleId(rule);
@@ -690,6 +689,18 @@ export default function FilterPanel({
           handleFilterRulesChange();
         });
       qbContainer.queryBuilder('setFilters', true, filtersConfig);
+
+      if (disabled) {
+        setTimeout(() => {
+          jQuery(`#${qbuilder.current.id} button[data-not!=group]`).hide();
+          jQuery(`#${qbuilder.current.id} button[data-not=group]`).prop(
+            'disabled',
+            true
+          );
+          jQuery(`#${qbuilder.current.id} select`).prop('disabled', true);
+          jQuery(`#${qbuilder.current.id} input`).prop('disabled', true);
+        });
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filtersMetadata]);
