@@ -1,4 +1,4 @@
-import { omitBy, reduce } from 'lodash';
+import { omitBy } from 'lodash';
 import { convertToImport } from '../../../../../utils/assistant';
 import { fieldMeta } from './util';
 
@@ -9,18 +9,6 @@ export default function assistantDefinition(
 ) {
   return {
     ...fieldMeta({ resource, assistantData }),
-    optionsHandler(fieldId, fields) {
-      return reduce(
-        ['assistant', 'adaptorType', 'version', 'resource', 'operation'],
-        (values, fId) => ({
-          ...values,
-          [fId]: (
-            fields.find(field => field.id === `assistantMetadata.${fId}`) || {}
-          ).value,
-        }),
-        {}
-      );
-    },
     preSave: formValues => {
       const assistantMetadata = {
         pathParams: {},
