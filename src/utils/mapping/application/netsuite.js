@@ -63,9 +63,7 @@ export default {
           mapping.subRecordMapping.recordType &&
           mapping.generate === 'celigo_initializeValues'
         ) {
-          tempFm.isNotEditable = true;
-          tempFm.isRequired = true;
-          tempFm.extract = 'SubRecord Mapping';
+          tempFm.extract = 'Subrecord Mapping';
           tempFm.isSubRecordMapping = true;
         }
 
@@ -111,9 +109,7 @@ export default {
           }
 
           if (fm.subRecordMapping && fm.subRecordMapping.recordType) {
-            tempFm.isNotEditable = true;
-            tempFm.isRequired = true;
-            tempFm.extract = 'SubRecord Mapping';
+            tempFm.extract = 'Subrecord Mapping';
             tempFm.isSubRecordMapping = true;
           }
 
@@ -252,8 +248,6 @@ export default {
       if (mapping.isSubRecordMapping) {
         delete mapping.extract;
         delete mapping.isSubRecordMapping;
-        delete mapping.isRequired;
-        delete mapping.isNotEditable;
       }
 
       if (
