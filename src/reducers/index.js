@@ -4,7 +4,7 @@ import { createSelector } from 'reselect';
 import jsonPatch from 'fast-json-patch';
 import moment from 'moment';
 import produce from 'immer';
-import { uniq, some, map, keys, isEmpty } from 'lodash';
+import { uniq, some, map, keys, isEmpty, isArray } from 'lodash';
 import app, * as fromApp from './app';
 import data, * as fromData from './data';
 import session, * as fromSession from './session';
@@ -437,21 +437,46 @@ export const getSampleDataWrapper = createSelector(
       // eslint-disable-next-line no-use-before-define
       return resource(state, 'integrations', flow._integrationId);
     },
+    (state, { resourceId, resourceType }) => {
+      // eslint-disable-next-line no-use-before-define
+      return resource(state, resourceType, resourceId);
+    },
+    (state, { resourceId, resourceType }) => {
+      // eslint-disable-next-line no-use-before-define
+      const res = resource(state, resourceType, resourceId);
+
+      // eslint-disable-next-line no-use-before-define
+      return resource(state, 'connections', res._connectionId);
+    },
   ],
-  (sampleData, flow, integration) => {
+  (sampleData, flow, integration, resource, connection) => {
     console.log(`hii @ ${new Date().toISOString()}`);
     const { status, data } = sampleData || {};
+    let resourceType = 'export';
+
+    if (
+      resource &&
+      resource.adaptorType &&
+      resource.adaptorType.includes('Import')
+    ) {
+      resourceType = 'import';
+    }
 
     if (!status) {
       return { status };
     }
 
-    const { _CONTEXT, ...restOfSampleData } = data || {};
+    if (isArray(data)) {
+      delete data[0]._CONTEXT;
+    } else if (!isEmpty()) {
+      delete data._CONTEXT;
+    }
+
 
     return {
       status,
       data: {
-        record: restOfSampleData || {},
+        record: data || {},
         pageIndex: 1,
         lastExportDateTime: moment()
           .add(-7, 'd')
@@ -462,6 +487,8 @@ export const getSampleDataWrapper = createSelector(
         settings: {
           integration: integration.settings || {},
           flow: flow.settings || {},
+          [resourceType]: resource.settings || {},
+          connection: connection.settings || {},
         },
       },
     };

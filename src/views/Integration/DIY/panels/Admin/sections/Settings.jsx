@@ -79,7 +79,7 @@ export default function SettingsSection({ integrationId }) {
 
   return (
     <Fragment>
-      <PanelHeader title="Settings" />
+      <PanelHeader title="Custom settings" />
       <div className={classes.root}>
         <div className={classes.editorContainer}>
           <CodeEditor
