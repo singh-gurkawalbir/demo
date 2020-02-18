@@ -473,7 +473,7 @@ export function* deleteResource({ resourceType, id }) {
 
 export function* getResourceCollection({ resourceType }) {
   const path = `/${resourceType}`;
-  let hideNetWorkSnackbar = false;
+  let hideNetWorkSnackbar;
 
   /** hide the error that GET SuiteScript tiles throws when connection is offline */
   if (
