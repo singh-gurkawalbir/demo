@@ -8,11 +8,11 @@ import Button from '@material-ui/core/Button';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import TimeAgo from 'react-timeago';
 import TitleBar from './TitleBar';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
+import ExpandMoreIcon from '../icons/ArrowDownIcon';
 
 const mapStateToProps = (state, { resourceType }) => {
   // console.log('mapStateToProps args', state, ownProps);
