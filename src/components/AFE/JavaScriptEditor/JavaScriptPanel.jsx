@@ -117,7 +117,7 @@ export default function JavaScriptPanel(props) {
     scriptId,
   ]);
   const defaultItem = (
-    <MenuItem key="" value="">
+    <MenuItem key="__placeholder" value="">
       None
     </MenuItem>
   );
@@ -139,6 +139,7 @@ export default function JavaScriptPanel(props) {
               id="scriptId"
               margin="dense"
               value={scriptId}
+              displayEmpty
               disabled={disabled}
               onChange={handleScriptChange}>
               {[defaultItem, ...scriptOptions]}
