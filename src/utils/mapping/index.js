@@ -43,6 +43,11 @@ const checkExtractPathFoundInSampledata = (str, sampleData, wrapped) => {
 /**
  * parentMapping = resource mapping object
  * returns subRecordMapping object
+ *
+ * this function takes resource mapping object and searches for subrecord.
+ * subRecordMappingId could be either of format 'item[*].abc' or 'abc'.
+ * Former specifies subrecord in 'mapping.lists' with generate 'abc'.
+ * And later means subrecord in 'mapping.fields' with generate 'abc'
  */
 const getSubRecordMapping = (parentMapping, subRecordMappingId) => {
   const { fields = [], lists = [] } = parentMapping || {};
