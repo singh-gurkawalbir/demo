@@ -248,10 +248,12 @@ export default {
         initializeValues.push(mapping.generate);
       }
 
-      // in case of subrecord mapping delete extract and isSubRecordMapping field. They were added at UI side
+      // in case of subrecord mapping delete properties added in UI side
       if (mapping.isSubRecordMapping) {
         delete mapping.extract;
         delete mapping.isSubRecordMapping;
+        delete mapping.isRequired;
+        delete mapping.isNotEditable;
       }
 
       if (
