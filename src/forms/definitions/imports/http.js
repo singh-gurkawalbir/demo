@@ -8,18 +8,6 @@ export default {
       lookups &&
       lookups.find(l => l.name === retValues['/http/existingDataId']);
 
-    if (retValues['/http/response/successValues']) {
-      retValues['/http/response/successValues'] = [
-        retValues['/http/response/successValues'],
-      ];
-    }
-
-    if (retValues['/http/response/failValues']) {
-      retValues['/http/response/failValues'] = [
-        retValues['/http/response/failValues'],
-      ];
-    }
-
     if (retValues['/inputMode'] === 'blob') {
       retValues['/http/method'] = retValues['/http/blobMethod'];
     } else if (retValues['/http/method'] === 'COMPOSITE') {
@@ -65,6 +53,8 @@ export default {
             retValues['/http/successPathUpdate'],
             retValues['/http/successPathCreate'],
           ];
+        } else {
+          retValues['/http/response/successPath'] = '';
         }
 
         if (
@@ -75,6 +65,8 @@ export default {
             retValues['/http/successValuesUpdate'],
             retValues['/http/successValuesCreate'],
           ];
+        } else {
+          retValues['/http/response/successValues'] = undefined;
         }
 
         if (
@@ -184,6 +176,22 @@ export default {
       retValues['/http/ignoreLookupName'] = undefined;
       retValues['/http/ignoreExtract'] = undefined;
       retValues['/http/existingDataId'] = undefined;
+
+      if (retValues['/http/response/successValues']) {
+        retValues['/http/response/successValues'] = [
+          retValues['/http/response/successValues'],
+        ];
+      } else {
+        retValues['/http/response/successValues'] = [];
+      }
+
+      if (retValues['/http/response/failValues']) {
+        retValues['/http/response/failValues'] = [
+          retValues['/http/response/failValues'],
+        ];
+      } else {
+        retValues['/http/response/failValues'] = undefined;
+      }
     }
 
     retValues['/statusExport'] = undefined;
