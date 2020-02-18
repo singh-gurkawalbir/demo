@@ -46,8 +46,10 @@ const FieldActions = props => {
     resourceContext,
   } = props;
   const classes = useStyles();
-  const { type: fieldType } = field;
+  const { type: fieldType, hideFromUI } = field;
   const { developer } = useSelector(state => selectors.userProfile(state));
+
+  if (hideFromUI) return null; // we don't want to showup help icon if 'hideFromUI' is true.
 
   return (
     <div className={classes.root}>

@@ -2,7 +2,9 @@ export default {
   'webhook.provider': {
     type: 'selectforsetfields',
     label: 'Provider',
-    required: true,
+    helpKey: null,
+    helpText: null,
+    hideFromUI: true, // we want the state of this field but should hide from ui.
     setFieldIds: ['webhook.url'],
     options: [
       {

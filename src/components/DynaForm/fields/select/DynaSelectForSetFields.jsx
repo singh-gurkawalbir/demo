@@ -1,7 +1,7 @@
 import DynaSelect from '../DynaSelect';
 
 export default function DynaSelectSetFieldValues(props) {
-  const { onFieldChange, setFieldIds = [] } = props;
+  const { onFieldChange, setFieldIds = [], hideFromUI } = props;
   const setFormFields = () => {
     setFieldIds.forEach(fieldId => {
       onFieldChange(fieldId, '', true);
@@ -13,5 +13,8 @@ export default function DynaSelectSetFieldValues(props) {
     setFormFields();
   };
 
-  return <DynaSelect {...props} onFieldChange={handleFieldChange} />;
+  // 'hideFromUI' used to hide the field from ui.
+  return hideFromUI ? null : (
+    <DynaSelect {...props} onFieldChange={handleFieldChange} />
+  );
 }
