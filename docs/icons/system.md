@@ -109,6 +109,7 @@ const UploadIcon = require('../../src/components/icons/UploadIcon').default;
 const UnpublishedIcon = require('../../src/components/icons/UnpublishedIcon').default;
 const ViewReferencesIcon = require('../../src/components/icons/ViewReferencesIcon').default;
 const WarningIcon = require('../../src/components/icons/WarningIcon').default;
+const WhatsNewIcon = require('../../src/components/icons/WhatsNewIcon').default;
 
 const container = {
   display: 'grid',
@@ -566,6 +567,10 @@ const icon = {
     <div style={wrapper}>
       <WarningIcon style={icon} />
       <p>Warning</p>
+    </div>
+      <div style={wrapper}>
+        <WhatsNewIcon style={icon}/>
+        <p>Whats New</p>
     </div>
 </div>
 ```

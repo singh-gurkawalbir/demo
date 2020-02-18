@@ -11,6 +11,7 @@ import {
   getResourceSampleDataWithStatus,
   getAvailableResourcePreviewStages,
   isPageGenerator,
+  drawerOpened,
 } from '../../../reducers';
 import { isNewId } from '../../../utils/resource';
 import {
@@ -28,13 +29,26 @@ import ErrorIcon from '../../icons/ErrorIcon';
 const useStyles = makeStyles(theme => ({
   container: {
     paddingLeft: theme.spacing(3),
-    width: 680,
+    width: 600,
     float: 'left',
+    marginRight: theme.spacing(2),
     [theme.breakpoints.up('xl')]: {
-      width: 780,
+      width: `calc(100% - ${theme.spacing(3)}px)`,
     },
     [theme.breakpoints.up('xxl')]: {
       width: 880,
+    },
+  },
+  drawerShift: {
+    transition: theme.transitions.create(['width', 'margin'], {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+    [theme.breakpoints.down('lg')]: {
+      maxWidth: 600,
+    },
+    [theme.breakpoints.down('md')]: {
+      width: `calc(100% - ${theme.spacing(3)}px)`,
     },
   },
   sampleDataWrapper: {
@@ -49,6 +63,7 @@ const useStyles = makeStyles(theme => ({
   error: {
     color: 'red',
     marginRight: theme.spacing(0.5),
+    marginTop: theme.spacing(-0.5),
   },
   textToggleContainer: {
     textAlign: 'center',
@@ -56,19 +71,19 @@ const useStyles = makeStyles(theme => ({
     zIndex: 2,
   },
   sampleDataContainer: {
-    width: '100%',
     minHeight: theme.spacing(20),
     position: 'relative',
     backgroundColor: 'white',
     maxHeight: 400,
-    overflow: 'scroll',
+    overflow: 'auto',
+    maxWidth: 680,
     color: theme.palette.text.hint,
   },
   sampleDataContainerAlign: {
     marginTop: theme.spacing(2),
   },
   clipBoardContainer: {
-    width: '100%',
+    maxWidth: 680,
     borderTop: `1px solid ${theme.palette.background.paper2}`,
     minHeight: theme.spacing(6),
     position: 'relative',
@@ -83,6 +98,10 @@ const useStyles = makeStyles(theme => ({
   errorMessage: {
     display: 'flex',
     alignItems: 'center',
+    position: 'relative',
+    top: '-25%',
+    width: '100%',
+    wordBreak: 'break-word',
   },
   previewContainer: {
     minHeight: theme.spacing(10),
@@ -107,6 +126,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     height: '100%',
   },
+
   previewDataLeft: {
     display: 'flex',
     borderRight: `1px solid ${theme.palette.secondary.lightest}`,
@@ -118,6 +138,8 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'column',
     paddingLeft: theme.spacing(1),
     justifyContent: 'space-between',
+    position: 'relative',
+    width: '100%',
   },
 
   previewBtn: {
@@ -218,6 +240,7 @@ function DynaExportPanel(props) {
       message: 'Data copied to clipboard.',
       variant: 'success',
     });
+  const isDrawerOpened = useSelector(state => drawerOpened(state));
   const ShowSampleDataStatus = () => {
     const { status } = resourceSampleData;
 
@@ -255,7 +278,10 @@ function DynaExportPanel(props) {
   };
 
   return (
-    <div className={classes.container}>
+    <div
+      className={clsx(classes.container, {
+        [classes.drawerShift]: isDrawerOpened,
+      })}>
       <Typography> Preview Data </Typography>
       <div className={classes.previewContainer}>
         <div className={classes.previewData}>
@@ -273,7 +299,7 @@ function DynaExportPanel(props) {
 
           <div className={classes.previewDataRight}>
             <div> {ShowSampleDataStatus()}</div>
-            <div>{showSampleDataOverview()}</div>
+            {showSampleDataOverview()}
           </div>
         </div>
       </div>
