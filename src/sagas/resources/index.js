@@ -473,9 +473,22 @@ export function* deleteResource({ resourceType, id }) {
 
 export function* getResourceCollection({ resourceType }) {
   const path = `/${resourceType}`;
+  let hideNetWorkSnackbar = false;
+
+  /** hide the error that GET SuiteScript tiles throws when connection is offline */
+  if (
+    resourceType &&
+    resourceType.includes('suitescript/connections/') &&
+    resourceType.includes('/tiles')
+  ) {
+    hideNetWorkSnackbar = true;
+  }
 
   try {
-    let collection = yield call(apiCallWithRetry, { path });
+    let collection = yield call(apiCallWithRetry, {
+      path,
+      hidden: hideNetWorkSnackbar,
+    });
 
     if (resourceType === 'stacks') {
       let sharedStacks = yield call(apiCallWithRetry, {
