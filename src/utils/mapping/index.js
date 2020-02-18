@@ -40,6 +40,10 @@ const checkExtractPathFoundInSampledata = (str, sampleData, wrapped) => {
   );
 };
 
+/**
+ * parentMapping = resource mapping object
+ * returns subRecordMapping object
+ */
 const getSubRecordMapping = (parentMapping, subRecordMappingId) => {
   const { fields = [], lists = [] } = parentMapping || {};
 
@@ -309,7 +313,7 @@ export default {
       jsonPath,
     };
   },
-  getSubRecordMappingConfig: (
+  generateSubrecordMappingAndLookup: (
     resourceObj,
     subRecordMappingId,
     isGroupedSampleData,
@@ -321,8 +325,7 @@ export default {
       rawMapping,
       subRecordMappingId
     );
-    const { lookups, mapping: subRecordMapping, recordType, jsonPath } =
-      subRecordMappingObj || {};
+    const { lookups, mapping: subRecordMapping } = subRecordMappingObj || {};
     const formattedMappings = mappingUtil.getMappingsForApp({
       mappings: subRecordMapping,
       isGroupedSampleData,
@@ -334,11 +337,12 @@ export default {
     return {
       mappings: formattedMappings,
       lookups,
-      recordType,
-      jsonPath,
     };
   },
-  generateMappingsWithSubRecord: ({
+  /**
+   * takes modified subrecord and lookup as input and adds them to original mapping and returns resource mapping object for patching
+   */
+  appendModifiedSubRecordToMapping: ({
     resource,
     subRecordMappingId,
     subRecordMapping,

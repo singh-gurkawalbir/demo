@@ -42,8 +42,9 @@ export default function reducer(state = {}, action) {
           let formattedMappings;
           let lookups;
 
+          // In case of subrecord mapping, extract mapping and lookups from subRecord
           if (subRecordMappingId) {
-            const subRecordMappingObj = mappingUtil.getSubRecordMappingConfig(
+            const subRecordMappingObj = mappingUtil.generateSubrecordMappingAndLookup(
               resourceData,
               subRecordMappingId,
               isGroupedSampleData,

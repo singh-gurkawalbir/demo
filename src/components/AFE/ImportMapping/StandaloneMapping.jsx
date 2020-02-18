@@ -57,6 +57,9 @@ export default function StandaloneMapping(props) {
   const { visible: showMappings } = useSelector(state =>
     selectors.mapping(state, id)
   );
+  /**
+   * subRecordMappingObj returns subRecord mapping and filePath in case of subrecord mapping
+   */
   const subRecordMappingObj = useMemo(
     () =>
       subRecordMappingId
@@ -108,6 +111,9 @@ export default function StandaloneMapping(props) {
     setFlowSampleDataState(extractFields);
   }
 
+  /**
+   * subRecordMappingObj={recordType:'accounts'}
+   */
   const importSampleDataObj = useSelector(state =>
     selectors.getImportSampleData(state, resourceId, subRecordMappingObj)
   );
@@ -279,6 +285,9 @@ export default function StandaloneMapping(props) {
 
   let formattedExtractFields = [];
 
+  /**
+   * Get extracts path
+   */
   if (extractFields) {
     const extractPaths = mappingUtil.getExtractPaths(
       extractFields,

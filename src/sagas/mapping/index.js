@@ -40,11 +40,12 @@ export function* saveMappings({ id }) {
   const { _id: resourceId } = resource;
   const mappingPath = mappingUtil.getMappingPath(adaptorType);
 
+  // in case of subRecord mapping, modify the subrecord and return the root mapping object
   if (
     application === adaptorTypeMap.NetSuiteDistributedImport &&
     subRecordMappingId
   ) {
-    _mappings = mappingUtil.generateMappingsWithSubRecord({
+    _mappings = mappingUtil.appendModifiedSubRecordToMapping({
       resource,
       subRecordMappingId,
       subRecordMapping: _mappings,
@@ -124,8 +125,9 @@ export function* previewMappings({ id }) {
     path = `/netsuiteDA/previewImportMappingFields?_connectionId=${_connectionId}`;
     resourceCopy = resourceCopy.netsuite_da;
 
+    // in case of subRecord mapping, modify the subrecord and return the root mapping object
     if (subRecordMappingId) {
-      _mappings = mappingUtil.generateMappingsWithSubRecord({
+      _mappings = mappingUtil.appendModifiedSubRecordToMapping({
         resource: resourceCopy,
         subRecordMappingId,
         subRecordMapping: _mappings,
