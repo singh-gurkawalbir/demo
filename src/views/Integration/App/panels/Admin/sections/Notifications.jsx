@@ -1,5 +1,6 @@
 import { Fragment, useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { makeStyles } from '@material-ui/core';
 // import { Typography } from '@material-ui/core';
 import * as selectors from '../../../../../../reducers';
 import actions from '../../../../../../actions';
@@ -8,9 +9,19 @@ import DynaSubmit from '../../../../../../components/DynaForm/DynaSubmit';
 import LoadResources from '../../../../../../components/LoadResources';
 import PanelHeader from '../../../../../../components/PanelHeader';
 
+const useStyles = makeStyles(theme => ({
+  form: {
+    paddingLeft: theme.spacing(2),
+    '& > div': {
+      padding: theme.spacing(3, 0),
+    },
+  },
+}));
+
 export default function NotificationsSection({ integrationId }) {
   const dispatch = useDispatch();
   const [count, setCount] = useState(0);
+  const classes = useStyles();
   const {
     connections = [],
     flows = [],
@@ -82,14 +93,19 @@ export default function NotificationsSection({ integrationId }) {
     setCount(count => count + 1);
   };
 
+  const infoTextNotifications =
+    'Get email notifications when your flows encounter any errors as well as whenever one of the connections your flows use goes offline, so you can fix the problem quickly. These notifications are only sent to you; each user will need to enable their own notifications.';
+
   return (
     <Fragment>
-      <PanelHeader title="Notifications" />
+      <PanelHeader title="Notifications" infoText={infoTextNotifications} />
 
       <LoadResources required resources="notifications,flows,connections">
-        <DynaForm fieldMeta={fieldMeta} key={count} render>
-          <DynaSubmit onClick={handleSubmit}>Save</DynaSubmit>
-        </DynaForm>
+        <div className={classes.form}>
+          <DynaForm fieldMeta={fieldMeta} key={count} render>
+            <DynaSubmit onClick={handleSubmit}>Save</DynaSubmit>
+          </DynaForm>
+        </div>
       </LoadResources>
     </Fragment>
   );

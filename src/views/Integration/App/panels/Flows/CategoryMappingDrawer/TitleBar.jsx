@@ -1,11 +1,12 @@
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { Typography, IconButton, Divider, Button } from '@material-ui/core';
+import { Typography, IconButton, Divider } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import * as selectors from '../../../../../../reducers';
 import CloseIcon from '../../../../../../components/icons/CloseIcon';
 import AddIcon from '../../../../../../components/icons/AddIcon';
+import IconTextButton from '../../../../../../components/IconTextButton';
 
 const useStyles = makeStyles(theme => ({
   titleBar: {
@@ -13,12 +14,14 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     alignItems: 'center',
     padding: '14px 24px',
-    '& > :not(:last-child)': {
-      marginRight: theme.spacing(2),
-    },
   },
   title: {
     flexGrow: 1,
+  },
+
+  divider: {
+    height: theme.spacing(3),
+    width: 1,
   },
 }));
 
@@ -46,15 +49,14 @@ export default function DrawerTitleBar({ flowId, onClose }) {
             : flowName
         }`}
       </Typography>
-      <Button
-        variant="contained"
+      <IconTextButton
+        variant="text"
         data-test="addCategory"
         onClick={handleAddCategoryClick}
-        color="secondary"
-        className={classes.button}>
+        color="primary">
         <AddIcon /> Add Category
-      </Button>
-      <Divider orientation="veritical" />
+      </IconTextButton>
+      <Divider orientation="veritical" className={classes.divider} />
       <IconButton
         data-test="closeCategoryMapping"
         aria-label="Close"

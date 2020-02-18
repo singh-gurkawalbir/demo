@@ -33,6 +33,9 @@ const useStyles = makeStyles(theme => ({
   name: {
     width: '18.15%',
     wordBreak: 'break-word',
+    [theme.breakpoints.down('md')]: {
+      wordBreak: 'normal',
+    },
   },
   status: {
     width: '10.15%',

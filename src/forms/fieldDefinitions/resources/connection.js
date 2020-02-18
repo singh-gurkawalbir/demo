@@ -714,11 +714,11 @@ export default {
         items: [
           { label: 'Basic', value: 'basic' },
           { label: 'Token', value: 'token' },
+          { label: 'OAuth 2.0', value: 'oauth' },
           { label: 'Custom', value: 'custom' },
           { label: 'Cookie', value: 'cookie' },
           { label: 'Digest', value: 'digest' },
           { label: 'WSSE', value: 'wsse' },
-          { label: 'OAuth 2.0', value: 'oauth' },
         ],
       },
     ],
@@ -893,15 +893,16 @@ export default {
   },
   'http.auth.oauth.tokenURI': {
     type: 'text',
-    label: 'Access token URL',
+    label: 'Access Token URL',
   },
   'http.auth.oauth.scope': {
     type: 'selectscopes',
-    label: 'Scopes',
+    label: 'Configure Scopes',
   },
   'http.auth.oauth.scopeDelimiter': {
     type: 'text',
-    label: 'Custom scope delimiter',
+    label: 'Custom Scope Delimiter',
+    subSectionField: true,
   },
   'http.auth.oauth.accessTokenPath': {
     type: 'text',
@@ -913,7 +914,14 @@ export default {
   },
   'http.auth.oauth.clientCredentialsLocation': {
     type: 'select',
-    label: 'Client authentication',
+    label: 'Client Authentication',
+    defaultValue: r =>
+      (r &&
+        r.http &&
+        r.http.auth &&
+        r.http.auth.oauth &&
+        r.http.auth.oauth.clientCredentialsLocation) ||
+      'body',
     options: [
       {
         items: [
@@ -928,11 +936,12 @@ export default {
     keyName: 'name',
     valueName: 'value',
     valueType: 'keyvalue',
-    label: 'Access token headers',
+    label: 'Access Token Headers',
   },
   'http.auth.oauth.accessTokenBody': {
-    type: 'text',
-    label: 'Access token body',
+    type: 'httprequestbody',
+    contentType: 'json',
+    label: 'Access Token Body',
   },
   'http._iClientId': {
     label: 'IClient',
@@ -943,7 +952,7 @@ export default {
   },
   'http.auth.oauth.grantType': {
     type: 'select',
-    label: 'Grant type',
+    label: 'Grant Type',
     options: [
       {
         items: [
@@ -997,11 +1006,12 @@ export default {
   },
   'http.auth.token.revoke.uri': {
     type: 'text',
-    label: 'Revoke URL',
+    label: 'Revoke Token URL',
   },
   'http.auth.token.revoke.body': {
-    type: 'text',
-    label: 'Revoke Body',
+    type: 'httprequestbody',
+    contentType: 'json',
+    label: 'Revoke Token Body',
   },
   'http.auth.token.revoke.headers': {
     type: 'keyvalue',
@@ -2057,8 +2067,8 @@ export default {
       {
         items: [
           { label: 'Basic', value: 'basic' },
-          { label: 'TBA (Manual)', value: 'token' },
-          { label: 'TBA (Automated)', value: 'oauth' },
+          { label: 'Token Based Auth (Manual)', value: 'token' },
+          { label: 'Token Based Auth (Automatic)', value: 'token-auto' },
         ],
       },
     ],
@@ -2066,12 +2076,6 @@ export default {
   'netsuite.account': {
     type: 'netsuiteuserroles',
     label: 'Account ID',
-  },
-  'netsuite.tokenAccount': {
-    type: 'text',
-    defaultValue: r => r && r.netsuite && r.netsuite.account,
-    label: 'Account ID',
-    uppercase: true,
   },
   'netsuite.tokenId': {
     type: 'text',

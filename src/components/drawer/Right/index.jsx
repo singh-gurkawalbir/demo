@@ -25,7 +25,7 @@ const useStyles = makeStyles(theme => ({
     background: theme.palette.background.paper,
     display: 'flex',
     alignItems: 'center',
-    padding: '14px 24px',
+    padding: theme.spacing(2, 3),
     '& > :not(:last-child)': {
       marginRight: theme.spacing(2),
     },
@@ -50,6 +50,7 @@ const useStyles = makeStyles(theme => ({
   },
   short: {
     marginTop: theme.appBarHeight + theme.pageBarHeight,
+    paddingBottom: theme.appBarHeight + theme.pageBarHeight,
   },
   banner: {
     marginTop: theme.appBarHeight + theme.pageBarHeight + bannerHeight,
@@ -100,6 +101,7 @@ export default function RightDrawer({
           <div className={classes.titleBar}>
             {showBack && (
               <IconButton
+                size="small"
                 data-test="backRightDrawer"
                 aria-label="Close"
                 onClick={handleClose}>
@@ -110,6 +112,7 @@ export default function RightDrawer({
               {title}
             </Typography>
             <IconButton
+              size="small"
               data-test="closeRightDrawer"
               aria-label="Close"
               onClick={handleClose}>

@@ -22,24 +22,28 @@ import MappingSaveButton from '../../ResourceFormFactory/Actions/MappingSaveButt
 import SalesforceMappingAssistant from '../../SalesforceMappingAssistant';
 import NetSuiteMappingAssistant from '../../NetSuiteMappingAssistant';
 
-// TODO Azhar style header
 const useStyles = makeStyles(theme => ({
   root: {
-    overflowY: 'off',
     height: '100%',
     display: 'flex',
     width: '100%',
   },
   mappingContainer: {
-    // overflow: 'auto',
     height: `calc(100vh - 180px)`,
     padding: theme.spacing(1, 0, 3),
     marginBottom: theme.spacing(1),
     maxWidth: '100%',
-    flex: 1,
+    flex: '1 1 0',
+  },
+  mapCont: {
+    width: '0px',
+    flex: `1.1 1 0`,
   },
   assistantContainer: {
-    flex: 1,
+    flex: `1 1 0`,
+    width: '0px',
+    marginRight: theme.spacing(1),
+    marginLeft: theme.spacing(1),
   },
   header: {
     display: 'flex',
@@ -116,13 +120,6 @@ const useStyles = makeStyles(theme => ({
   },
   topHeading: {
     fontFamily: 'Roboto500',
-  },
-  mapFieldCustomWidth: {
-    width: '400px',
-  },
-  topHeadingCustomWidth: {
-    width: '400px',
-    marginRight: '48px',
   },
 }));
 
@@ -298,7 +295,9 @@ export default function ImportMapping(props) {
   return (
     <div className={classes.root}>
       <div
-        className={classes.mappingContainer}
+        className={clsx(classes.mappingContainer, {
+          [classes.mapCont]: showSalesforceNetsuiteAssistant,
+        })}
         key={`mapping-${editorId}-${initChangeIdentifier}`}>
         <div className={classes.header}>
           <Typography
@@ -323,9 +322,7 @@ export default function ImportMapping(props) {
 
           <Typography
             variant="h5"
-            className={clsx(classes.childHeader, classes.topHeading, {
-              [classes.topHeadingCustomWidth]: showSalesforceNetsuiteAssistant,
-            })}>
+            className={clsx(classes.childHeader, classes.topHeading)}>
             {generateLabel}
             {isGenerateRefreshSupported && !isGeneratesLoading && (
               <RefreshButton
@@ -346,19 +343,12 @@ export default function ImportMapping(props) {
             <div className={classes.rowContainer} key={mapping.index}>
               <div className={classes.innerRow}>
                 <div
-                  className={clsx(
-                    classes.childHeader,
-                    classes.mapField,
-                    {
-                      [classes.mapFieldCustomWidth]: showSalesforceNetsuiteAssistant,
-                    },
-                    {
-                      [classes.disableChildRow]:
-                        mapping.isSubRecordMapping ||
-                        mapping.isNotEditable ||
-                        disabled,
-                    }
-                  )}>
+                  className={clsx(classes.childHeader, classes.mapField, {
+                    [classes.disableChildRow]:
+                      mapping.isSubRecordMapping ||
+                      mapping.isNotEditable ||
+                      disabled,
+                  })}>
                   <DynaTypeableSelect
                     key={`extract-${editorId}-${initChangeIdentifier}-${mapping.rowIdentifier}`}
                     id={`fieldMappingExtract-${mapping.index}`}
@@ -389,19 +379,12 @@ export default function ImportMapping(props) {
                 </div>
                 <MappingConnectorIcon className={classes.mappingIcon} />
                 <div
-                  className={clsx(
-                    classes.childHeader,
-                    classes.mapField,
-                    {
-                      [classes.disableChildRow]:
-                        mapping.isSubRecordMapping ||
-                        mapping.isRequired ||
-                        disabled,
-                    },
-                    {
-                      [classes.mapFieldCustomWidth]: showSalesforceNetsuiteAssistant,
-                    }
-                  )}>
+                  className={clsx(classes.childHeader, classes.mapField, {
+                    [classes.disableChildRow]:
+                      mapping.isSubRecordMapping ||
+                      mapping.isRequired ||
+                      disabled,
+                  })}>
                   <DynaTypeableSelect
                     key={`generate-${editorId}-${initChangeIdentifier}-${mapping.rowIdentifier}`}
                     id={`fieldMappingGenerate-${mapping.index}`}

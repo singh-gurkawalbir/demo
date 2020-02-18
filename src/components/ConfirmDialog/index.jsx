@@ -1,11 +1,13 @@
 import React, { useState, useCallback, useContext } from 'react';
+import { makeStyles } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import { Typography } from '@material-ui/core';
+import ModalDialog from '../ModalDialog';
+
+const useStyles = makeStyles({
+  message: {
+    marginBottom: 10,
+  },
+});
 
 export const ConfirmDialog = props => {
   const {
@@ -15,9 +17,11 @@ export const ConfirmDialog = props => {
     buttons = [
       {
         label: 'No',
+        color: 'secondary',
       },
       {
         label: 'Yes',
+        color: 'primary',
       },
     ],
   } = props;
@@ -29,27 +33,24 @@ export const ConfirmDialog = props => {
     },
     [onClose]
   );
+  const classes = useStyles();
 
   return (
-    <Dialog open>
-      <DialogTitle disableTypography>
-        <Typography variant="h6">{title}</Typography>
-      </DialogTitle>
-      <DialogContent>
-        <DialogContentText>{message}</DialogContentText>
-      </DialogContent>
-      <DialogActions>
-        {buttons.map(button => (
-          <Button
-            data-test={button.label}
-            key={button.label}
-            color={button.color || 'primary'}
-            onClick={handleButtonClick(button)}>
-            {button.label}
-          </Button>
-        ))}
-      </DialogActions>
-    </Dialog>
+    <ModalDialog show onClose={onClose}>
+      {title}
+      <div className={classes.message}>{message}</div>
+
+      {buttons.map(button => (
+        <Button
+          variant={button.variant || 'outlined'}
+          data-test={button.label}
+          key={button.label}
+          color={button.color || 'primary'}
+          onClick={handleButtonClick(button)}>
+          {button.label}
+        </Button>
+      ))}
+    </ModalDialog>
   );
 };
 
@@ -81,7 +82,10 @@ export default function useConfirmDialog() {
       setConfirmDialogProps({
         title: 'Confirm',
         message: `Are you sure you want to ${message}`,
-        buttons: [{ label: 'Cancel' }, { label: 'Yes', onClick: callback }],
+        buttons: [
+          { label: 'Yes', color: 'primary', onClick: callback },
+          { label: 'Cancel', variant: 'text' },
+        ],
       });
     },
     [setConfirmDialogProps]
