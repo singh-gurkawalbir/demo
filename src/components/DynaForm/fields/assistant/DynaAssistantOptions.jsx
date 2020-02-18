@@ -1,5 +1,5 @@
 import FormContext from 'react-forms-processor/dist/components/FormContext';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import MaterialUiSelect from '../DynaSelect';
 import * as selectors from '../../../../reducers/index';
@@ -17,25 +17,51 @@ function DynaAssistantOptions(props) {
     assistantFieldType,
     fields,
   } = props;
+  const formContext = useMemo(
+    () =>
+      [
+        'assistant',
+        'adaptorType',
+        'version',
+        'resource',
+        'operation',
+        'exportType',
+      ].reduce(
+        (values, fId) => ({
+          ...values,
+          [fId]: (
+            fields.find(field => field.id === `assistantMetadata.${fId}`) || {}
+          ).value,
+        }),
+        {}
+      ),
+    [fields]
+  );
   const assistantData = useSelector(state =>
     selectors.assistantData(state, {
-      adaptorType: options.adaptorType,
-      assistant: options.assistant,
+      adaptorType: formContext.adaptorType,
+      assistant: formContext.assistant,
     })
   );
   const dispatch = useDispatch();
-  let selectOptionsItems =
-    options && options[0] && options[0].items ? options[0].items : [];
+  const selectOptionsItems = useMemo(() => {
+    if (['version', 'resource', 'operation'].includes(assistantFieldType)) {
+      return selectOptions({
+        assistantFieldType,
+        assistantData,
+        formContext,
+        resourceType: resourceContext.resourceType,
+      });
+    }
 
-  if (['version', 'resource', 'operation'].includes(assistantFieldType)) {
-    selectOptionsItems = selectOptions({
-      assistantFieldType,
-      assistantData,
-      options,
-      resourceType: resourceContext.resourceType,
-    });
-  }
-
+    return options && options[0] && options[0].items ? options[0].items : [];
+  }, [
+    assistantData,
+    assistantFieldType,
+    formContext,
+    options,
+    resourceContext.resourceType,
+  ]);
   const [componentMounted, setComponentMounted] = useState(false);
   const formState = useSelector(state =>
     selectors.resourceFormState(state, resourceType, resourceId)
@@ -137,7 +163,6 @@ function DynaAssistantOptions(props) {
   );
 }
 
-// field props are getting merged first
 const WrappedContextConsumer = props => (
   <FormContext.Consumer>
     {form => <DynaAssistantOptions {...form} {...props} />}

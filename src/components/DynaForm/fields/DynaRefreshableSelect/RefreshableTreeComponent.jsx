@@ -2,11 +2,11 @@ import { useState, Fragment, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import TreeView from '@material-ui/lab/TreeView';
 import TreeItem from '@material-ui/lab/TreeItem';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import RefreshIcon from '../../../icons/RefreshIcon';
+import ChevronRightIcon from '../../../icons/ArrowRightIcon';
+import ExpandMoreIcon from '../../../icons/ArrowDownIcon';
 import DynaCheckbox from '../checkbox/DynaCheckbox';
 import Spinner from '../../../Spinner';
 

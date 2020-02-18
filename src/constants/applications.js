@@ -747,8 +747,15 @@ export const groupApplications = (
     }
 
     // Webhooks are shown only for exports and for page generators in flow context
-    if (resourceType && !['exports', 'pageGenerator'].includes(resourceType))
+    if (resourceType && !['exports', 'pageGenerator'].includes(resourceType)) {
+      // for pageProcessor lookups even ftps are not shown
+      if (resourceType === 'pageProcessor' && appType === 'export') {
+        return connector.id !== 'ftp' && !connector.webhookOnly;
+      }
+
+      // all other resource types handled here
       return !connector.webhookOnly;
+    }
 
     return true;
   });

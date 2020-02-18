@@ -27,13 +27,14 @@ const emptySet = [];
 const drawerWidth = 200;
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
-    marginTop: theme.appBarHeight,
-    width: `80%`,
+    // marginTop: theme.appBarHeight,
+    width: `60%`,
     border: 'solid 1px',
     borderColor: theme.palette.secondary.lightest,
     boxShadow: `-4px 4px 8px rgba(0,0,0,0.15)`,
     backgroundColor: theme.palette.background.default,
     zIndex: theme.zIndex.drawer + 1,
+    overflowX: 'hidden',
   },
   mappingContainer: {
     padding: '0 0 10px 20px',
@@ -74,7 +75,15 @@ const useStyles = makeStyles(theme => ({
   },
   childExpansionPanel: {
     background: theme.palette.background.default,
+    marginTop: 10,
+    boxShadow: 'none',
   },
+
+  secondaryHeading: {
+    fontFamily: 'Roboto500',
+    lineHeight: `${theme.spacing(3)}px`,
+  },
+
   subNav: {
     minWidth: 200,
     background: theme.palette.background.paper2,
@@ -102,6 +111,9 @@ const useStyles = makeStyles(theme => ({
   },
   activeListItem: {
     color: theme.palette.primary.main,
+  },
+  default: {
+    marginBottom: 10,
   },
 }));
 
@@ -164,7 +176,7 @@ function CategoryMappings({ integrationId, flowId, sectionId, isRoot = true }) {
   };
 
   return (
-    <div className={isRoot ? classes.mappingContainer : ''}>
+    <div className={isRoot ? classes.mappingContainer : classes.default}>
       <ExpansionPanel
         expanded={expanded}
         onChange={handleChange}
@@ -173,7 +185,9 @@ function CategoryMappings({ integrationId, flowId, sectionId, isRoot = true }) {
           aria-controls="panel1bh-content"
           id="panel1bh-header">
           {expanded ? <ArrowUpIcon /> : <ArrowDownIcon />}
-          <Typography className={classes.secondaryHeading}>{name}</Typography>
+          <Typography className={classes.secondaryHeading} variant="body2">
+            {name}
+          </Typography>
           {!!variationThemes && !!variationThemes.length && (
             <VariationIcon
               className={classes.variationIcon}
