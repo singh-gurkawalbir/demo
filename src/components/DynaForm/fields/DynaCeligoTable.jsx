@@ -5,7 +5,7 @@ import {
   ExpansionPanel,
 } from '@material-ui/core';
 import { useState } from 'react';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import ExpandMoreIcon from '../../icons/ArrowDownIcon';
 import CeligoTable from '../../CeligoTable';
 
 export default function DynaCeligoTable(props) {
