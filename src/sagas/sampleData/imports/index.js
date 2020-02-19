@@ -120,7 +120,7 @@ function* fetchAssistantSampleData({ resource }) {
   }
 }
 
-function* requestSampleData({ resourceId }) {
+function* requestSampleData({ resourceId, options = {} }) {
   const { merged: resource } = yield select(
     resourceData,
     'imports',
@@ -138,11 +138,13 @@ function* requestSampleData({ resourceId }) {
       case 'NetSuiteDistributedImport': {
         // eslint-disable-next-line camelcase
         const { _connectionId: connectionId, netsuite_da = {} } = resource;
+        const { recordType } = options;
 
         yield put(
           actions.metadata.request(
             connectionId,
-            `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${netsuite_da.recordType}`
+            `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${recordType ||
+              netsuite_da.recordType}`
           )
         );
         break;
