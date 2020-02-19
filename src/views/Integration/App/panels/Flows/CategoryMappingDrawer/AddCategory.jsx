@@ -39,7 +39,7 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
     useSelector(state =>
       selectors.categoryRelationshipData(state, integrationId, flowId)
     ) || [];
-  const save = useCallback(
+  const handleSave = useCallback(
     ({ category, childCategory, grandchildCategory }) => {
       dispatch(
         actions.integrationApp.settings.addCategory(integrationId, flowId, {
@@ -188,7 +188,7 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
         onClose={handleClose}
       />
       <DynaForm fieldMeta={fieldMeta} optionsHandler={fieldMeta.optionsHandler}>
-        <DynaSubmit data-test="clone" onClick={save}>
+        <DynaSubmit data-test="clone" onClick={handleSave}>
           Add Category
         </DynaSubmit>
         <Button variant="outlined" onClick={handleClose}>
