@@ -137,6 +137,9 @@ export default (state = {}, action) => {
         }
 
         break;
+      case actionTypes.INTEGRATION_APPS.SETTINGS.ADD_CATEGORY:
+        // draft[`${flowId}-${integrationId}`].pending =
+        break;
       case actionTypes.INTEGRATION_APPS.SETTINGS
         .RECEIVED_CATEGORY_MAPPING_METADATA:
         ({ response: categoryMappingData } = metadata);
@@ -204,20 +207,6 @@ function flattenChildrenStructrue(result = [], meta, isRoot = true) {
       );
     }
   }
-}
-
-export function categoryRelationshipData(state, integrationId, flowId) {
-  if (!state) return null;
-  const { response = [] } = state[`${flowId}-${integrationId}`] || emptyObj;
-  const generatesMetaData = response.find(
-    sec => sec.operation === 'generatesMetaData'
-  );
-
-  return (
-    generatesMetaData &&
-    generatesMetaData.data &&
-    generatesMetaData.data.categoryRelationshipData
-  );
 }
 
 export function categoryMappingData(state, integrationId, flowId) {

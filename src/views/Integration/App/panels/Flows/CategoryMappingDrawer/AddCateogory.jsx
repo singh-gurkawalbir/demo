@@ -1,5 +1,5 @@
 import { Drawer, makeStyles, Button } from '@material-ui/core';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useCallback } from 'react';
 import {
   useRouteMatch,
@@ -12,6 +12,7 @@ import DynaForm from '../../../../../../components/DynaForm';
 import DynaSubmit from '../../../../../../components/DynaForm/DynaSubmit';
 import DrawerTitleBar from './TitleBar';
 import LoadResources from '../../../../../../components/LoadResources';
+import actions from '../../../../../../actions';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -24,7 +25,6 @@ const useStyles = makeStyles(theme => ({
   },
   form: {
     maxHeight: `calc(100vh - 180px)`,
-    // maxHeight: 'unset',
     padding: theme.spacing(2, 3),
   },
 }));
@@ -33,15 +33,24 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
   const match = useRouteMatch();
   const { flowId } = match.params;
   const classes = useStyles();
+  const dispatch = useDispatch();
   const history = useHistory();
   const categoryRelationshipData =
     useSelector(state =>
       selectors.categoryRelationshipData(state, integrationId, flowId)
     ) || [];
-  const save = useCallback(formValues => {
-    // eslint-disable-next-line
-    console.log('saveClicked', formValues);
-  }, []);
+  const save = useCallback(
+    ({ category, childCategory, grandchildCategory }) => {
+      dispatch(
+        actions.integrationApp.settings.addCategory(integrationId, flowId, {
+          category,
+          childCategory,
+          grandchildCategory,
+        })
+      );
+    },
+    [dispatch, flowId, integrationId]
+  );
   const handleClose = useCallback(() => {
     history.push(parentUrl);
   }, [history, parentUrl]);

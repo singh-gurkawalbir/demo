@@ -335,14 +335,6 @@ export function categoryMappingData(state, integrationId, flowId) {
   );
 }
 
-export function categoryRelationshipData(state, integrationId, flowId) {
-  return fromIntegrationApps.categoryRelationshipData(
-    state && state.integrationApps,
-    integrationId,
-    flowId
-  );
-}
-
 export function categoryMappingGeneratesMetadata(state, integrationId, flowId) {
   return fromIntegrationApps.categoryMappingGeneratesMetadata(
     state && state.integrationApps,

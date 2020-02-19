@@ -474,6 +474,12 @@ const integrationApp = {
         flowId,
         filters,
       }),
+    addCategory: (integrationId, flowId, data) =>
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.ADD_CATEGORY, {
+        integrationId,
+        flowId,
+        data,
+      }),
     clearRedirect: integrationId =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.CLEAR_REDIRECT, {
         integrationId,
