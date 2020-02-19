@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Route, useRouteMatch } from 'react-router-dom';
+import { Route, useRouteMatch, useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import { Grid, Typography } from '@material-ui/core';
@@ -223,9 +223,10 @@ function CategoryMappings({ integrationId, flowId, sectionId, isRoot = true }) {
   );
 }
 
-function CategoryMappingDrawer({ integrationId }) {
+function CategoryMappingDrawer({ integrationId, parentUrl }) {
   const dispatch = useDispatch();
   const classes = useStyles();
+  const history = useHistory();
   const match = useRouteMatch();
   const { flowId, categoryId } = match.params;
   const [requestedMetadata, setRequestedMetadata] = useState(false);
@@ -248,7 +249,9 @@ function CategoryMappingDrawer({ integrationId }) {
   const currentSectionLabel =
     (mappedCategories.find(category => category.id === categoryId) || {})
       .name || categoryId;
-  const handleClose = () => {};
+  const handleClose = () => {
+    history.push(parentUrl);
+  };
 
   useEffect(() => {
     if (!metadataLoaded && !requestedMetadata) {
@@ -275,54 +278,57 @@ function CategoryMappingDrawer({ integrationId }) {
   }
 
   return (
-    <Drawer
-      anchor="right"
-      open={!!match}
-      classes={{
-        paper: classes.drawerPaper,
-      }}
-      onClose={handleClose}>
-      <DrawerTitleBar flowId={flowId} />
-      {metadataLoaded ? (
-        <div className={classes.root}>
-          <Grid container wrap="nowrap">
-            <Grid item className={classes.subNav}>
-              <CategoryList integrationId={integrationId} flowId={flowId} />
-            </Grid>
-            <Grid item className={classes.content}>
-              <PanelHeader
-                className={classes.header}
-                title={currentSectionLabel}>
-                <Filters integrationId={integrationId} flowId={flowId} />
-              </PanelHeader>
-              <Grid container className={classes.mappingHeader}>
-                <Grid item xs={6}>
-                  <Typography variant="h5" className={classes.childHeader}>
-                    Amazon <ApplicationImg assistant="amazonmws" size="small" />
-                  </Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography variant="h5" className={classes.childHeader}>
-                    NetSuite
-                    <ApplicationImg assistant="netsuite" />
-                  </Typography>
-                </Grid>
+    <Fragment>
+      <Drawer
+        anchor="right"
+        open={!!match}
+        classes={{
+          paper: classes.drawerPaper,
+        }}
+        onClose={handleClose}>
+        <DrawerTitleBar flowId={flowId} parentUrl={parentUrl} />
+        {metadataLoaded ? (
+          <div className={classes.root}>
+            <Grid container wrap="nowrap">
+              <Grid item className={classes.subNav}>
+                <CategoryList integrationId={integrationId} flowId={flowId} />
               </Grid>
-              <CategoryMappings
-                integrationId={integrationId}
-                flowId={flowId}
-                sectionId={categoryId}
-              />
+              <Grid item className={classes.content}>
+                <PanelHeader
+                  className={classes.header}
+                  title={currentSectionLabel}>
+                  <Filters integrationId={integrationId} flowId={flowId} />
+                </PanelHeader>
+                <Grid container className={classes.mappingHeader}>
+                  <Grid item xs={6}>
+                    <Typography variant="h5" className={classes.childHeader}>
+                      Amazon
+                      <ApplicationImg assistant="amazonmws" size="small" />
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Typography variant="h5" className={classes.childHeader}>
+                      NetSuite
+                      <ApplicationImg assistant="netsuite" />
+                    </Typography>
+                  </Grid>
+                </Grid>
+                <CategoryMappings
+                  integrationId={integrationId}
+                  flowId={flowId}
+                  sectionId={categoryId}
+                />
+              </Grid>
             </Grid>
-          </Grid>
-        </div>
-      ) : (
-        <Loader open>
-          Loading Mappings.
-          <Spinner />
-        </Loader>
-      )}
-    </Drawer>
+          </div>
+        ) : (
+          <Loader open>
+            Loading Mappings.
+            <Spinner />
+          </Loader>
+        )}
+      </Drawer>
+    </Fragment>
   );
 }
 
@@ -330,7 +336,7 @@ export default function CategoryMappingDrawerRoute(props) {
   const match = useRouteMatch();
 
   return (
-    <Route exact path={`${match.url}/:flowId/utilitymapping/:categoryId`}>
+    <Route path={`${match.url}/:flowId/utilitymapping/:categoryId`}>
       <LoadResources required resources="flows,exports,imports,connections">
         <CategoryMappingDrawer {...props} parentUrl={match.url} />
       </LoadResources>

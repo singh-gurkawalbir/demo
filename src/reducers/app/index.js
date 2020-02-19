@@ -11,10 +11,10 @@ export default function(
 ) {
   switch (action.type) {
     case actionTypes.APP_RELOAD: {
-      const { count } = state;
+      const { count, drawerOpened } = state;
       const newCount = count + 1;
 
-      return { count: newCount };
+      return { count: newCount, drawerOpened };
     }
 
     case actionTypes.APP_TOGGLE_BANNER: {

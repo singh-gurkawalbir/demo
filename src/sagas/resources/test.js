@@ -393,7 +393,9 @@ availableResources.forEach(type => {
       };
       const callEffect = saga.next().value;
 
-      expect(callEffect).toEqual(call(apiCallWithRetry, { path }));
+      expect(callEffect).toEqual(
+        call(apiCallWithRetry, { path, hidden: false })
+      );
 
       const effect = saga.next(mockResourceReferences).value;
 
@@ -414,7 +416,9 @@ availableResources.forEach(type => {
       const path = `/${type}/${id}/dependencies`;
       const callEffect = saga.next().value;
 
-      expect(callEffect).toEqual(call(apiCallWithRetry, { path }));
+      expect(callEffect).toEqual(
+        call(apiCallWithRetry, { path, hidden: false })
+      );
 
       const final = saga.throw(new Error('some API exception'));
 

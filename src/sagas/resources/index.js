@@ -68,8 +68,10 @@ export function* commitStagedChanges({ resourceType, id, scope }) {
     resourceIsDataLoaderFlow = yield call(isDataLoaderFlow, merged);
 
     if (resourceIsDataLoaderFlow) {
-      merged._exportId = merged.pageGenerators[0]._exportId;
-      delete merged.pageGenerators;
+      if (merged.pageGenerators && merged.pageGenerators.length > 0) {
+        merged._exportId = merged.pageGenerators[0]._exportId;
+        delete merged.pageGenerators;
+      }
 
       if (merged.pageProcessors && merged.pageProcessors.length > 0) {
         const importId = merged.pageProcessors[0]._importId;
@@ -425,11 +427,14 @@ export function* getResource({ resourceType, id, message }) {
   }
 }
 
-export function* requestReferences({ resourceType, id }) {
+export function* requestReferences({ resourceType, id, options = {} }) {
   const path = `/${resourceType}/${id}/dependencies`;
 
   try {
-    const resourceReferences = yield call(apiCallWithRetry, { path });
+    const resourceReferences = yield call(apiCallWithRetry, {
+      path,
+      hidden: !!options.ignoreError,
+    });
 
     yield put(actions.resource.receivedReferences(resourceReferences));
 
