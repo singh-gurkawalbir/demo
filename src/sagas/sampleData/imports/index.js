@@ -158,7 +158,7 @@ function* requestSampleData({ resourceId, options = {} }) {
           actions.metadata.request(
             connectionId,
             `salesforce/metadata/connections/${connectionId}/sObjectTypes/${salesforce.sObjectType}`,
-            { refreshCache }
+            { refreshCache: options.refreshCache }
           )
         );
         break;
