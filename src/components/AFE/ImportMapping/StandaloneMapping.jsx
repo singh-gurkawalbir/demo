@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useState } from 'react';
+import { useMemo, useEffect, useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { isEqual } from 'lodash';
@@ -8,7 +8,6 @@ import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import { getImportOperationDetails } from '../../../utils/assistant';
 import mappingUtil from '../../../utils/mapping';
-import getJSONPaths, { pickFirstObject } from '../../../utils/jsonPaths';
 import Spinner from '../../Spinner';
 
 // TODO: Azhar to review
@@ -22,7 +21,15 @@ const useStyles = makeStyles({
 });
 
 export default function StandaloneMapping(props) {
-  const { id, flowId, resourceId, disabled, onClose } = props;
+  const {
+    id,
+    flowId,
+    resourceId,
+    subRecordMappingId,
+    //  = 'item[*].celigo_inventorydetail',
+    disabled,
+    onClose,
+  } = props;
   const classes = useStyles();
   const [flowSampleDataLoaded, setFlowSampleDataLoaded] = useState(false);
   const [importSampleDataLoaded, setImportSampleDataLoaded] = useState(false);
@@ -49,6 +56,19 @@ export default function StandaloneMapping(props) {
   const dispatch = useDispatch();
   const { visible: showMappings } = useSelector(state =>
     selectors.mapping(state, id)
+  );
+  /**
+   * subRecordMappingObj returns subRecord mapping and filePath in case of subrecord mapping
+   */
+  const subRecordMappingObj = useMemo(
+    () =>
+      subRecordMappingId
+        ? mappingUtil.getSubRecordRecordTypeAndJsonPath(
+            resourceData,
+            subRecordMappingId
+          )
+        : {},
+    [resourceData, subRecordMappingId]
   );
   const sampleDataObj = useSelector(state =>
     selectors.getSampleDataContext(state, {
@@ -91,8 +111,11 @@ export default function StandaloneMapping(props) {
     setFlowSampleDataState(extractFields);
   }
 
+  /**
+   * subRecordMappingObj={recordType:'accounts'}
+   */
   const importSampleDataObj = useSelector(state =>
-    selectors.getImportSampleData(state, resourceId)
+    selectors.getImportSampleData(state, resourceId, subRecordMappingObj)
   );
   const { data: importSampleData, status: generateStatus } =
     importSampleDataObj || {};
@@ -102,9 +125,15 @@ export default function StandaloneMapping(props) {
   });
   const requestImportSampleData = useCallback(
     (refreshCache = true) => {
-      dispatch(actions.importSampleData.request(resourceId, refreshCache));
+      dispatch(
+        actions.importSampleData.request(
+          resourceId,
+          subRecordMappingObj,
+          refreshCache
+        )
+      );
     },
-    [dispatch, resourceId]
+    [dispatch, resourceId, subRecordMappingObj]
   );
 
   useEffect(() => {
@@ -193,24 +222,16 @@ export default function StandaloneMapping(props) {
     resourceName,
     isGroupedSampleData,
   };
-
-  if (isSalesforce) {
-    options.sObjectType = resourceData.salesforce.sObjectType;
-  }
-
-  if (isNetsuite) {
-    options.recordType =
-      resourceData.netsuite_da && resourceData.netsuite_da.recordType;
-  }
-
   const mappingOptions = {
     resourceData,
     adaptorType: resourceType.type,
     isGroupedSampleData,
     application,
+    subRecordMappingId,
   };
 
   if (isSalesforce) {
+    options.sObjectType = resourceData.salesforce.sObjectType;
     const { recordTypeId: salesforceMasterRecordTypeId, searchLayoutable } =
       (salesforceMasterRecordTypeInfo && salesforceMasterRecordTypeInfo.data) ||
       {};
@@ -222,6 +243,18 @@ export default function StandaloneMapping(props) {
   }
 
   if (isNetsuite) {
+    let recordType;
+
+    if (subRecordMappingId) {
+      ({ recordType } = subRecordMappingObj);
+      // recordType = subRecordMappingObj.recordType;
+    } else {
+      recordType =
+        resourceData.netsuite_da && resourceData.netsuite_da.recordType;
+    }
+
+    options.recordType = recordType;
+    mappingOptions.netsuiteRecordType = recordType;
     mappingOptions.showSalesforceNetsuiteAssistant = true;
   }
 
@@ -261,8 +294,14 @@ export default function StandaloneMapping(props) {
 
   let formattedExtractFields = [];
 
+  /**
+   * Get extracts path
+   */
   if (extractFields) {
-    const extractPaths = getJSONPaths(pickFirstObject(extractFields));
+    const extractPaths = mappingUtil.getExtractPaths(
+      extractFields,
+      subRecordMappingObj
+    );
 
     formattedExtractFields =
       (extractPaths &&
