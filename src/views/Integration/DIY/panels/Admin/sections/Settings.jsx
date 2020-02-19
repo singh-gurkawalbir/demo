@@ -7,8 +7,8 @@ import * as selectors from '../../../../../../reducers';
 import actions from '../../../../../../actions';
 import PanelHeader from '../../../../../../components/PanelHeader';
 import CodeEditor from '../../../../../../components/CodeEditor';
-import RawHtml from '../../../../../../components/RawHtml';
 import { SCOPES } from '../../../../../../sagas/resourceForm';
+import { isJsonString } from '../../../../../../utils/string';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -39,6 +39,7 @@ export default function SettingsSection({ integrationId }) {
   const monitorLevelAccess = useSelector(state =>
     selectors.isFormAMonitorLevelAccess(state, integrationId)
   );
+  const developerModeOn = useSelector(state => selectors.developerMode(state));
   // TODO: Shiva, can you please enhance the permission api to return
   // the necessary tile lever perms to show/hide the readme code editor.
   // const permissions = useSelector(state =>
@@ -55,10 +56,8 @@ export default function SettingsSection({ integrationId }) {
 
     if (isObject(value)) {
       settings = value;
-    } else {
-      try {
-        settings = JSON.parse(value);
-      } catch (ex) {}
+    } else if (isJsonString(value)) {
+      settings = JSON.parse(value);
     }
 
     const patchSet = [
@@ -86,14 +85,14 @@ export default function SettingsSection({ integrationId }) {
             name="settings"
             value={value}
             mode="json"
-            readOnly={monitorLevelAccess}
+            readOnly={monitorLevelAccess || !developerModeOn}
             onChange={handleChange}
           />
         </div>
 
         <Button
           data-test="saveSettings"
-          disabled={monitorLevelAccess}
+          disabled={monitorLevelAccess || !developerModeOn}
           variant="contained"
           color="primary"
           onClick={handleSave}>

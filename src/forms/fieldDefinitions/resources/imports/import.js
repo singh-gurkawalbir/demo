@@ -794,4 +794,11 @@ export default {
     type: 'text',
     label: 'Lookups[*] where Clause',
   },
+  settings: {
+    type: 'editor',
+    mode: 'json',
+    label: 'Settings',
+    showOnDeveloperMode: true,
+    defaultValue: r => (r && r.settings && JSON.stringify(r.settings)) || '{}',
+  },
 };

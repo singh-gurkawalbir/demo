@@ -1,6 +1,7 @@
 import { omitBy, reduce } from 'lodash';
 import { convertToExport } from '../../../../../utils/assistant';
 import { fieldMeta } from './util';
+import { isJsonString } from '../../../../../utils/string';
 
 export default function assistantDefinition(
   resourceId,
@@ -48,6 +49,18 @@ export default function assistantDefinition(
       const otherFormValues = omitBy(formValues, (v, k) =>
         k.includes('/assistantMetadata/')
       );
+
+      if (Object.hasOwnProperty.call(otherFormValues, '/settings')) {
+        let settings = otherFormValues['/settings'];
+
+        if (isJsonString(settings)) {
+          settings = JSON.parse(settings);
+        } else {
+          settings = {};
+        }
+
+        otherFormValues['/settings'] = settings;
+      }
 
       Object.keys(formValues).forEach(key => {
         if (key.includes('/assistantMetadata/pathParams/')) {

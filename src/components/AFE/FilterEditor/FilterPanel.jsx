@@ -82,7 +82,7 @@ export default function FilterPanel({
       .map(p => ({ ...p, id: `record.${p.id}` }));
 
     ['pageIndex', 'lastExportDateTime', 'currentExportDateTime'].forEach(p => {
-      if (d.hasOwnProperty(p)) {
+      if (Object.hasOwnProperty.call(d, p)) {
         jsonPaths.push({ id: p });
       }
     });

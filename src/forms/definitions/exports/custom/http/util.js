@@ -278,6 +278,10 @@ export function fieldMeta({ resource, assistantData }) {
     fieldId: 'exportPanel',
   };
 
+  fieldMap.settings = {
+    fieldId: 'settings',
+  };
+
   return {
     fieldMap,
     layout: {
@@ -285,6 +289,14 @@ export function fieldMeta({ resource, assistantData }) {
       containers: [
         {
           fields: ['common', 'exportOneToMany', 'exportData', ...fieldIds],
+          type: 'collapse',
+          containers: [
+            {
+              collapsed: true,
+              label: 'Custom settings',
+              fields: ['settings'],
+            },
+          ],
         },
         {
           fields: ['exportPanel'],

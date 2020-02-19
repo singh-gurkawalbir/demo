@@ -1,4 +1,5 @@
 import { isNewId } from '../../../utils/resource';
+import { isJsonString } from '../../../utils/string';
 
 export default {
   preSave: formValues => {
@@ -8,6 +9,18 @@ export default {
       newValues['/netsuite/recordType'] = 'file';
       newValues['/distributed'] = false;
       newValues['/adaptorType'] = 'NetSuiteImport';
+    }
+
+    if (Object.hasOwnProperty.call(newValues, '/settings')) {
+      let settings = newValues['/settings'];
+
+      if (isJsonString(settings)) {
+        settings = JSON.parse(settings);
+      } else {
+        settings = {};
+      }
+
+      newValues['/settings'] = settings;
     }
 
     return {
@@ -94,6 +107,7 @@ export default {
         },
       ],
     },
+    settings: { fieldId: 'settings' },
   },
   layout: {
     fields: [
@@ -120,6 +134,11 @@ export default {
         collapsed: true,
         label: 'Advanced',
         fields: ['advancedSettings', 'deleteAfterImport'],
+      },
+      {
+        collapsed: true,
+        label: 'Custom settings',
+        fields: ['settings'],
       },
     ],
   },

@@ -6,6 +6,7 @@ import {
   useRouteMatch,
   Redirect,
 } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/styles';
 import { List, ListItem } from '@material-ui/core';
 import { STANDALONE_INTEGRATION } from '../../../../../utils/constants';
@@ -14,6 +15,7 @@ import ReadmeSection from './sections/Readme';
 import NotificationsSection from './sections/Notifications';
 import UsersSection from '../../../../../components/ManageUsersPanel';
 import SettingsSections from './sections/Settings';
+import * as selectors from '../../../../../reducers';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -81,10 +83,20 @@ const allSections = [
 export default function AdminPanel({ integrationId }) {
   const classes = useStyles();
   const match = useRouteMatch();
-  const availableSections =
-    integrationId === STANDALONE_INTEGRATION.id
-      ? allSections.slice(0, allSections.length - 1) // remove readme (last) section
-      : allSections;
+  const developerModeOn = useSelector(state => selectors.developerMode(state));
+  const sectionsToHide = [];
+
+  if (integrationId === STANDALONE_INTEGRATION.id) {
+    sectionsToHide.push('readme');
+  }
+
+  if (!developerModeOn) {
+    sectionsToHide.push('settings');
+  }
+
+  const availableSections = allSections.filter(
+    sec => !sectionsToHide.includes(sec.id)
+  );
 
   // if someone arrives at this view without requesting a section, then we
   // handle this by redirecting them to the first available section. We can
