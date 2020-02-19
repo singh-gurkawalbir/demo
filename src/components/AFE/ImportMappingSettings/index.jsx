@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import Button from '@material-ui/core/Button';
 import { Drawer } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
@@ -44,6 +44,9 @@ export default function ImportMappingSettings(props) {
     options,
     disabled,
   } = props;
+  const [formState, setFormState] = useState({
+    showFormValidationsBeforeTouch: false,
+  });
   const { generate, extract, index } = value;
   const [enquesnackbar] = useEnqueueSnackbar();
   const fieldMeta = ApplicationMappingSettings.getMetaData({
@@ -90,6 +93,12 @@ export default function ImportMappingSettings(props) {
     onClose(true, settings);
   };
 
+  const showCustomFormValidations = useCallback(() => {
+    setFormState({
+      showFormValidationsBeforeTouch: true,
+    });
+  }, []);
+
   return (
     <Drawer
       anchor="right"
@@ -102,10 +111,12 @@ export default function ImportMappingSettings(props) {
         <DynaForm
           disabled={disabled}
           fieldMeta={fieldMeta}
-          optionsHandler={fieldMeta.optionsHandler}>
+          optionsHandler={fieldMeta.optionsHandler}
+          formState={formState}>
           <DynaSubmit
             disabled={disabled}
             id="fieldMappingSettingsSave"
+            showCustomFormValidations={showCustomFormValidations}
             onClick={handleSubmit}>
             Save
           </DynaSubmit>

@@ -14,6 +14,7 @@ const useEnableButtonOnTouchedForm = ({
   flowId,
   sectionId,
   isFormTouchedForMeta,
+  showCustomFormValidations,
 }) => {
   const dispatch = useDispatch();
   const formTouched = useMemo(
@@ -25,7 +26,9 @@ const useEnableButtonOnTouchedForm = ({
   );
   const onClickWhenValid = useCallback(
     value => {
-      if (isIAForm)
+      if (showCustomFormValidations) {
+        showCustomFormValidations();
+      } else if (isIAForm)
         dispatch(
           actions.integrationApp.settings.showFormValidations(
             integrationId,
@@ -42,15 +45,16 @@ const useEnableButtonOnTouchedForm = ({
       if (formIsValid) onClick(value);
     },
     [
+      showCustomFormValidations,
       isIAForm,
       dispatch,
-      flowId,
-      formIsValid,
       integrationId,
-      onClick,
-      resourceId,
-      resourceType,
+      flowId,
       sectionId,
+      resourceType,
+      resourceId,
+      formIsValid,
+      onClick,
     ]
   );
 
