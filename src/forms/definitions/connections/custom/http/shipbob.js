@@ -28,6 +28,8 @@ export default {
         'products_write',
         'fulfillments_read',
         'offline_access',
+        'returns_write',
+        'returns_read',
       ],
     },
     httpAdvanced: { formId: 'httpAdvanced' },

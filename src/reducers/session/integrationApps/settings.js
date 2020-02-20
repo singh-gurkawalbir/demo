@@ -137,6 +137,9 @@ export default (state = {}, action) => {
         }
 
         break;
+      case actionTypes.INTEGRATION_APPS.SETTINGS.ADD_CATEGORY:
+        // draft[`${flowId}-${integrationId}`].pending =
+        break;
       case actionTypes.INTEGRATION_APPS.SETTINGS
         .RECEIVED_CATEGORY_MAPPING_METADATA:
         ({ response: categoryMappingData } = metadata);

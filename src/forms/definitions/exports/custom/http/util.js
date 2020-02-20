@@ -259,10 +259,22 @@ export function fieldMeta({ resource, assistantData }) {
     fieldIds.push(field.id || field.fieldId);
   });
 
+  fieldMap.exportPanel = {
+    fieldId: 'exportPanel',
+  };
+
   return {
     fieldMap,
     layout: {
-      fields: ['common', 'exportOneToMany', 'exportData', ...fieldIds],
+      type: 'column',
+      containers: [
+        {
+          fields: ['common', 'exportOneToMany', 'exportData', ...fieldIds],
+        },
+        {
+          fields: ['exportPanel'],
+        },
+      ],
     },
   };
 }
