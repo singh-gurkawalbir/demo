@@ -47,7 +47,6 @@ export default function FilterEditor(props) {
     handleInit();
   }, [handleInit]);
 
-  const parsedData = result && result.data;
   let outputMessage = '';
 
   if (result && result.data) {

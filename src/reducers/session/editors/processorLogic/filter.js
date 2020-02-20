@@ -24,7 +24,7 @@ export default {
     return {
       rules: { version: '1', rules: editor.rule || [] },
       data: typeof record === 'object' ? [record] : [{}],
-      options: context,
+      options: { settings, contextData: context },
     };
   },
   validate: editor => ({

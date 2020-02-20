@@ -422,79 +422,6 @@ export function getSampleData(
   });
 }
 
-export const getSampleDataWrapper = createSelector(
-  [
-    // eslint-disable-next-line no-use-before-define
-    (state, params) => getSampleDataContext(state, params),
-    (state, { flowId }) => {
-      // eslint-disable-next-line no-use-before-define
-      return resource(state, 'flows', flowId);
-    },
-    (state, { flowId }) => {
-      // eslint-disable-next-line no-use-before-define
-      const flow = resource(state, 'flows', flowId);
-
-      // eslint-disable-next-line no-use-before-define
-      return resource(state, 'integrations', flow._integrationId);
-    },
-    (state, { resourceId, resourceType }) => {
-      // eslint-disable-next-line no-use-before-define
-      return resource(state, resourceType, resourceId);
-    },
-    (state, { resourceId, resourceType }) => {
-      // eslint-disable-next-line no-use-before-define
-      const res = resource(state, resourceType, resourceId);
-
-      // eslint-disable-next-line no-use-before-define
-      return resource(state, 'connections', res._connectionId);
-    },
-  ],
-  (sampleData, flow, integration, resource, connection) => {
-    console.log(`hii @ ${new Date().toISOString()}`);
-    const { status, data } = sampleData || {};
-    let resourceType = 'export';
-
-    if (
-      resource &&
-      resource.adaptorType &&
-      resource.adaptorType.includes('Import')
-    ) {
-      resourceType = 'import';
-    }
-
-    if (!status) {
-      return { status };
-    }
-
-    if (isArray(data)) {
-      delete data[0]._CONTEXT;
-    } else if (!isEmpty()) {
-      delete data._CONTEXT;
-    }
-
-
-    return {
-      status,
-      data: {
-        record: data || {},
-        pageIndex: 1,
-        lastExportDateTime: moment()
-          .add(-7, 'd')
-          .toISOString(),
-        currentExportDateTime: moment()
-          .add(-24, 'h')
-          .toISOString(),
-        settings: {
-          integration: integration.settings || {},
-          flow: flow.settings || {},
-          [resourceType]: resource.settings || {},
-          connection: connection.settings || {},
-        },
-      },
-    };
-  }
-);
-
 export function getSampleDataContext(
   state,
   { flowId, resourceId, resourceType, stage }
@@ -3461,3 +3388,65 @@ export function isPreviewPanelAvailableForResource(
 
   return isPreviewPanelAvailable(resourceObj, resourceType, connectionObj);
 }
+
+export const getSampleDataWrapper = createSelector(
+  [
+    // eslint-disable-next-line no-use-before-define
+    (state, params) => getSampleDataContext(state, params),
+    (state, { flowId }) => resource(state, 'flows', flowId),
+    (state, { flowId }) => {
+      const flow = resource(state, 'flows', flowId);
+
+      return resource(state, 'integrations', flow._integrationId);
+    },
+    (state, { resourceId, resourceType }) =>
+      resource(state, resourceType, resourceId),
+    (state, { resourceId, resourceType }) => {
+      const res = resource(state, resourceType, resourceId);
+
+      return resource(state, 'connections', res._connectionId);
+    },
+  ],
+  (sampleData, flow, integration, resource, connection) => {
+    const { status, data } = sampleData || {};
+    let resourceType = 'export';
+
+    if (
+      resource &&
+      resource.adaptorType &&
+      resource.adaptorType.includes('Import')
+    ) {
+      resourceType = 'import';
+    }
+
+    if (!status) {
+      return { status };
+    }
+
+    if (isArray(data)) {
+      delete data[0]._CONTEXT;
+    } else if (!isEmpty(data)) {
+      delete data._CONTEXT;
+    }
+
+    return {
+      status,
+      data: {
+        record: data || {},
+        pageIndex: 1,
+        lastExportDateTime: moment()
+          .add(-7, 'd')
+          .toISOString(),
+        currentExportDateTime: moment()
+          .add(-24, 'h')
+          .toISOString(),
+        settings: {
+          integration: integration.settings || {},
+          flow: flow.settings || {},
+          [resourceType]: resource.settings || {},
+          connection: connection.settings || {},
+        },
+      },
+    };
+  }
+);
