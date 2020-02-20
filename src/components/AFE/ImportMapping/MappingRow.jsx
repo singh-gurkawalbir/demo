@@ -219,7 +219,7 @@ export default function MappingRow(props) {
             generate={mapping.generate}
             application={application}
             updateLookup={updateLookupHandler}
-            disabled={mapping.isNotEditable || disabled}
+            disabled={disabled}
             lookup={
               mapping && mapping.lookupName && getLookup(mapping.lookupName)
             }
