@@ -51,7 +51,6 @@ const useStyles = makeStyles(theme => ({
   },
   disableChildRow: {
     cursor: 'not-allowed',
-    // TODO: (Aditya) Temp fix. To be removed on changing Import Mapping as Dyna Form
     '& > div > div > div': {
       background: theme.palette.background.paper2,
     },
