@@ -18,7 +18,7 @@ import FlowCard from '../../../common/FlowCard';
 import ConfigureDrawer from './ConfigureDrawer';
 import SettingsDrawer from './SettingsDrawer';
 import CategoryMappingDrawer from './CategoryMappingDrawer';
-import AddCategoryMappingDrawer from './CategoryMappingDrawer/AddCateogory';
+import AddCategoryMappingDrawer from './CategoryMappingDrawer/AddCategory';
 import MappingDrawer from '../../../common/FlowCard/MappingDrawer';
 import actions from '../../../../../actions';
 import { FormStateManager } from '../../../../../components/ResourceFormFactory';

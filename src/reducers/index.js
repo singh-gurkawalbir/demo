@@ -1282,13 +1282,11 @@ export function categoryMappingFilters(state, integrationId, flowId) {
 }
 
 export function categoryRelationshipData(state, integrationId, flowId) {
-  const data = fromData.categoryRelationshipData(
-    state && state.session,
+  return fromData.categoryRelationshipData(
+    state && state.data,
     integrationId,
     flowId
   );
-
-  return data;
 }
 
 export function mappingsForCategory(state, integrationId, flowId, filters) {
