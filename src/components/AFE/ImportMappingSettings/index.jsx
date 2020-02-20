@@ -72,11 +72,13 @@ export default function ImportMappingSettings(props) {
       value,
     ]
   );
-  // Disable all fields except useAsAnInitializeValue in case mapping is not editable
-  const { isNotEditable } = value;
-  const { fieldMap } = fieldMeta || {};
-  const disableSave =
-    disabled || (isNotEditable && !fieldMap.useAsAnInitializeValue);
+  const disableSave = useMemo(() => {
+    // Disable all fields except useAsAnInitializeValue in case mapping is not editable
+    const { fieldMap } = fieldMeta || {};
+    const { isNotEditable } = value;
+
+    return disabled || (isNotEditable && !fieldMap.useAsAnInitializeValue);
+  }, [disabled, fieldMeta, value]);
   const handleSubmit = useCallback(
     formVal => {
       const {
