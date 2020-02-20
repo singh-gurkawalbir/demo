@@ -39,6 +39,9 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
     useSelector(state =>
       selectors.categoryRelationshipData(state, integrationId, flowId)
     ) || [];
+  const handleClose = useCallback(() => {
+    history.push(parentUrl);
+  }, [history, parentUrl]);
   const handleSave = useCallback(
     ({ category, childCategory, grandchildCategory }) => {
       dispatch(
@@ -48,12 +51,10 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
           grandchildCategory,
         })
       );
+      handleClose();
     },
-    [dispatch, flowId, integrationId]
+    [dispatch, flowId, handleClose, integrationId]
   );
-  const handleClose = useCallback(() => {
-    history.push(parentUrl);
-  }, [history, parentUrl]);
   const fieldMeta = {
     fieldMap: {
       category: {
