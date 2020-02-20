@@ -96,7 +96,15 @@ export default {
       ],
     },
     'file.xlsx.keyColumns': { fieldId: 'file.xlsx.keyColumns' },
-    'file.xml.resourcePath': { fieldId: 'file.xml.resourcePath' },
+    'file.xml.resourcePath': {
+      fieldId: 'file.xml.resourcePath',
+      validWhen: {
+        matchesRegEx: {
+          pattern: '^/',
+          message: "Resource Path should start with '/'",
+        },
+      },
+    },
     'file.json.resourcePath': {
       fieldId: 'file.json.resourcePath',
     },

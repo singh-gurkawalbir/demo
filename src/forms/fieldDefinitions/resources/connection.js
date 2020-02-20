@@ -41,6 +41,7 @@ export default {
   name: {
     type: 'text',
     label: 'Name',
+    defaultDisabled: r => !!r._connectorId,
   },
   assistant: {
     type: 'select',

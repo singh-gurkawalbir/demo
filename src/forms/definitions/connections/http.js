@@ -8,10 +8,6 @@ export default {
       newValues['/http/ping/successValues'] = undefined;
     }
 
-    if (!newValues['/http/auth/oauth/failPath']) {
-      newValues['/http/auth/oauth/failValues'] = undefined;
-    }
-
     if (!newValues['/http/rateLimit/failPath']) {
       newValues['/http/rateLimit/failValues'] = undefined;
     }
@@ -143,6 +139,10 @@ export default {
 
     if (!newValues['/http/auth/token/revoke/body'])
       delete newValues['/http/auth/token/revoke/body'];
+
+    if (!newValues['/http/auth/failPath']) {
+      newValues['/http/auth/failValues'] = undefined;
+    }
 
     delete newValues['/http/oauth/headers'];
     delete newValues['/http/oauth/baseURI'];
@@ -294,6 +294,14 @@ export default {
       id: 'customScopeDelimiter',
       type: 'checkbox',
       label: 'This provider uses a scope delimiter other than space',
+      defaultValue: r =>
+        !!(
+          r &&
+          r.http &&
+          r.http.auth &&
+          r.http.auth.oauth &&
+          r.http.auth.oauth.scopeDelimiter
+        ),
       visibleWhenAll: [
         { field: 'http.auth.type', is: ['oauth'] },
         { field: 'http.auth.oauth.grantType', is: ['authorizecode'] },

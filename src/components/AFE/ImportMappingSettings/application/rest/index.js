@@ -317,6 +317,7 @@ export default {
           type: 'text',
           label: 'Enter Default Value',
           placeholder: 'Enter Default Value',
+          required: true,
           visibleWhenAll: [
             { field: 'standardAction', is: ['default'] },
             { field: 'fieldMappingType', isNot: ['hardCoded'] },
@@ -331,6 +332,7 @@ export default {
           type: 'text',
           label: 'Enter Default Value',
           placeholder: 'Enter Default Value',
+          required: true,
           visibleWhenAll: [
             { field: 'hardcodedAction', is: ['default'] },
             { field: 'fieldMappingType', is: ['hardCoded'] },
@@ -344,6 +346,7 @@ export default {
           type: 'text',
           label: 'Enter Default Value',
           placeholder: 'Enter Default Value',
+          required: true,
           visibleWhenAll: [
             { field: 'lookupAction', is: ['default'] },
             { field: 'fieldMappingType', is: ['lookup'] },

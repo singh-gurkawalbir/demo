@@ -82,6 +82,7 @@ import DynaExportPanel from './DynaExportPanel';
 import cronBuilderComponents from './cronBuilderComponents';
 import DynaCronGenerator from './DynaCronGenerator';
 import DynaNSSearchCriteria from './editors/DynaNSSearchCriteria';
+import DynaMarketplaceId from './DynaMarketplaceId';
 
 export default {
   mode: DynaMode,
@@ -93,6 +94,7 @@ export default {
   textarea: DynaText,
   checkbox: DynaCheckbox,
   select: DynaSelect,
+  marketplaceid: DynaMarketplaceId,
   xmlMapper: DynaXMLMapper,
   trueFixedWidthColumnMapper: DynaTrueFixedWidthColumnMapper,
   csvColumnMapper: DynaCSVColumnMapper,

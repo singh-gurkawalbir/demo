@@ -69,7 +69,7 @@ export function resourceData({ resources = [], resourceId }) {
 export function selectOptions({
   assistantFieldType,
   assistantData = { export: {}, import: {} },
-  options,
+  formContext,
   resourceType,
 }) {
   const resourceTypeSingular = resourceType === 'imports' ? 'import' : 'export';
@@ -82,7 +82,7 @@ export function selectOptions({
 
   const selectedVersion = versionData({
     versions: assistantData[resourceTypeSingular].versions,
-    versionId: options.version,
+    versionId: formContext.version,
   });
 
   if (!selectedVersion) {
@@ -98,7 +98,7 @@ export function selectOptions({
       return importOperationOptions({
         resourceData: resourceData({
           resources: selectedVersion.resources,
-          resourceId: options.resource,
+          resourceId: formContext.resource,
         }),
       });
     }
@@ -106,7 +106,7 @@ export function selectOptions({
     return exportOperationOptions({
       resourceData: resourceData({
         resources: selectedVersion.resources,
-        resourceId: options.resource,
+        resourceId: formContext.resource,
       }),
     });
   }

@@ -83,10 +83,25 @@ export default {
       description:
         'Note: for security reasons this field must always be re-entered',
     },
+    'http._iClientId': {
+      id: 'http._iClientId',
+      resourceType: 'iClients',
+      filter: { provider: 'ebay' },
+      connType: 'ebay',
+      label: 'IClient',
+      type: 'dynaiclient',
+      connectionId: r => r && r._id,
+      connectorId: r => r && r._connectorId,
+    },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: ['name', 'environment', 'http.unencrypted.apiSiteId'],
+    fields: [
+      'name',
+      'environment',
+      'http.unencrypted.apiSiteId',
+      'http._iClientId',
+    ],
     type: 'collapse',
     containers: [
       { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
