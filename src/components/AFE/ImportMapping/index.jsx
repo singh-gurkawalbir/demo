@@ -1,26 +1,25 @@
+/* eslint-disable react/no-array-index-key */
+
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Typography, Tooltip, Button } from '@material-ui/core';
+import { DndProvider } from 'react-dnd-cjs';
+import HTML5Backend from 'react-dnd-html5-backend-cjs';
+import { Typography, Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import actions from '../../../actions';
-import MappingSettings from '../ImportMappingSettings/MappingSettingsField';
-import DynaTypeableSelect from '../../DynaForm/fields/DynaTypeableSelect';
 import mappingUtil from '../../../utils/mapping';
-import TrashIcon from '../../icons/TrashIcon';
 import * as selectors from '../../../reducers';
 import IconTextButton from '../../IconTextButton';
-import ActionButton from '../../ActionButton';
 import { adaptorTypeMap } from '../../../utils/resource';
 import RefreshIcon from '../../icons/RefreshIcon';
 import Spinner from '../../Spinner';
-import LockIcon from '../../icons/LockIcon';
-import MappingConnectorIcon from '../../icons/MappingConnectorIcon';
 import ButtonGroup from '../../ButtonGroup';
 import MappingSaveButton from '../../ResourceFormFactory/Actions/MappingSaveButton';
 import SalesforceMappingAssistant from '../../SalesforceMappingAssistant';
 import NetSuiteMappingAssistant from '../../NetSuiteMappingAssistant';
+import MappingRow from './MappingRow';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -50,6 +49,7 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     marginBottom: theme.spacing(2),
     alignItems: 'center',
+    padding: theme.spacing(0, 0, 0, 1),
   },
   rowContainer: {
     display: 'block',
@@ -66,40 +66,11 @@ const useStyles = makeStyles(theme => ({
       width: '100%',
     },
   },
-  innerRow: {
-    display: 'flex',
-    width: '100%',
-    marginBottom: theme.spacing(1),
-    alignItems: 'center',
-  },
   mappingsBody: {
     height: `calc(100% - 32px)`,
     overflow: 'auto',
     marginBottom: theme.spacing(2),
     paddingRight: theme.spacing(2),
-  },
-  mapField: {
-    display: 'flex',
-    position: 'relative',
-    width: '40%',
-  },
-  disableChildRow: {
-    cursor: 'not-allowed',
-    // TODO: (Aditya) Temp fix. To be removed on changing Import Mapping as Dyna Form
-    '& > div > div > div': {
-      background: theme.palette.background.paper2,
-    },
-    '& > button': {
-      background: theme.palette.background.paper2,
-      cursor: 'not-allowed',
-      pointerEvents: 'none',
-    },
-  },
-  lockIcon: {
-    position: 'absolute',
-    right: 10,
-    top: 10,
-    color: theme.palette.text.hint,
   },
   refreshButton: {
     marginLeft: theme.spacing(1),
@@ -109,14 +80,6 @@ const useStyles = makeStyles(theme => ({
     marginLeft: 5,
     width: 50,
     height: 50,
-  },
-  deleteBtn: {
-    border: 'none',
-    width: 0,
-  },
-  mappingIcon: {
-    color: theme.palette.secondary.lightest,
-    fontSize: theme.spacing(6),
   },
   topHeading: {
     fontFamily: 'Roboto500',
@@ -159,10 +122,7 @@ export default function ImportMapping(props) {
   const { saveCompleted } = useSelector(state =>
     selectors.mappingSaveProcessTerminate(state, editorId)
   );
-  const mappingsCopy = mappings ? [...mappings] : [];
-
-  mappingsCopy.push({});
-  const tableData = (mappingsCopy || []).map((value, index) => {
+  const tableData = (mappings || []).map((value, index) => {
     const obj = value;
 
     obj.index = index;
@@ -173,6 +133,9 @@ export default function ImportMapping(props) {
 
     return obj;
   });
+  const emptyMappingRow = {
+    index: mappings.length,
+  };
   const handleFieldUpdate = useCallback(
     (_mapping, field, value) => {
       const { index: rowIndex, generate = '', extract = '' } = _mapping;
@@ -276,6 +239,9 @@ export default function ImportMapping(props) {
     }
   };
 
+  const handleMove = useCallback((dragIndex, hoverIndex) => {
+    dispatch(actions.mapping.changeOrder(editorId, dragIndex, hoverIndex));
+  });
   const handlePreviewClick = () => {
     dispatch(actions.mapping.requestPreview(editorId));
   };
@@ -338,131 +304,44 @@ export default function ImportMapping(props) {
             )}
           </Typography>
         </div>
-        <div className={classes.mappingsBody}>
-          {tableData.map(mapping => (
-            <div className={classes.rowContainer} key={mapping.index}>
-              <div className={classes.innerRow}>
-                <div
-                  className={clsx(classes.childHeader, classes.mapField, {
-                    [classes.disableChildRow]:
-                      mapping.isSubRecordMapping ||
-                      mapping.isNotEditable ||
-                      disabled,
-                  })}>
-                  <DynaTypeableSelect
-                    key={`extract-${editorId}-${initChangeIdentifier}-${mapping.rowIdentifier}`}
-                    id={`fieldMappingExtract-${mapping.index}`}
-                    labelName="name"
-                    valueName="id"
-                    value={mapping.extract || mapping.hardCodedValueTmp}
-                    options={extractFields}
-                    disabled={
-                      mapping.isSubRecordMapping ||
-                      mapping.isNotEditable ||
-                      disabled
-                    }
-                    onBlur={(id, value) => {
-                      handleFieldUpdate(mapping, 'extract', value);
-                      // handleFieldUpdate(
-                      //   mapping.index,
-                      //   { target: { value: evt } },
-                      //   'extract'
-                      // );
-                    }}
-                  />
 
-                  {(mapping.isSubRecordMapping || mapping.isNotEditable) && (
-                    <span className={classes.lockIcon}>
-                      <LockIcon />
-                    </span>
-                  )}
-                </div>
-                <MappingConnectorIcon className={classes.mappingIcon} />
-                <div
-                  className={clsx(classes.childHeader, classes.mapField, {
-                    [classes.disableChildRow]:
-                      mapping.isSubRecordMapping ||
-                      mapping.isRequired ||
-                      disabled,
-                  })}>
-                  <DynaTypeableSelect
-                    key={`generate-${editorId}-${initChangeIdentifier}-${mapping.rowIdentifier}`}
-                    id={`fieldMappingGenerate-${mapping.index}`}
-                    value={mapping.generate}
-                    labelName="name"
-                    valueName="id"
-                    options={generateFields}
-                    disabled={
-                      mapping.isSubRecordMapping ||
-                      mapping.isRequired ||
-                      disabled
-                    }
-                    onBlur={
-                      (id, value) => {
-                        handleFieldUpdate(mapping, 'generate', value);
-                      }
-                      // handleGenerateUpdate(mapping)
-                    }
-                  />
-                  {(mapping.isSubRecordMapping || mapping.isRequired) && (
-                    <Tooltip
-                      title={`${
-                        mapping.isSubRecordMapping
-                          ? 'Subrecord mapping'
-                          : 'This field is required by the application you are importing to'
-                      }`}
-                      placement="top">
-                      <span className={classes.lockIcon}>
-                        <LockIcon />
-                      </span>
-                    </Tooltip>
-                  )}
-                </div>
-                <div
-                  className={clsx({
-                    [classes.disableChildRow]: mapping.isSubRecordMapping,
-                  })}>
-                  <MappingSettings
-                    id={`fieldMappingSettings-${mapping.index}`}
-                    onSave={(id, evt) => {
-                      patchSettings(mapping.index, evt);
-                    }}
-                    value={mapping}
-                    options={options}
-                    generate={mapping.generate}
-                    application={application}
-                    updateLookup={updateLookupHandler}
-                    disabled={mapping.isNotEditable || disabled}
-                    lookup={
-                      mapping &&
-                      mapping.lookupName &&
-                      getLookup(mapping.lookupName)
-                    }
-                    extractFields={extractFields}
-                    generateFields={generateFields}
-                  />
-                </div>
-                <div
-                  key="delete_button"
-                  className={clsx({
-                    [classes.disableChildRow]: mapping.isSubRecordMapping,
-                  })}>
-                  <ActionButton
-                    data-test={`fieldMappingRemove-${mapping.index}`}
-                    aria-label="delete"
-                    disabled={
-                      mapping.isRequired || mapping.isNotEditable || disabled
-                    }
-                    onClick={() => {
-                      handleDelete(mapping.index);
-                    }}
-                    className={classes.deleteBtn}>
-                    <TrashIcon />
-                  </ActionButton>
-                </div>
-              </div>
-            </div>
-          ))}
+        <div className={classes.mappingsBody}>
+          <DndProvider backend={HTML5Backend}>
+            {tableData.map((mapping, index) => (
+              <MappingRow
+                index={index}
+                key={`${editorId}-${initChangeIdentifier}-${mapping.rowIdentifier}-${index}`}
+                mapping={mapping}
+                extractFields={extractFields}
+                handleFieldUpdate={handleFieldUpdate}
+                generateFields={generateFields}
+                disabled={disabled}
+                updateLookupHandler={updateLookupHandler}
+                patchSettings={patchSettings}
+                application={application}
+                options={options}
+                getLookup={getLookup}
+                handleDelete={handleDelete}
+                onMove={handleMove}
+                isDraggable={!disabled}
+              />
+            ))}
+          </DndProvider>
+          <MappingRow
+            key={`${editorId}-${initChangeIdentifier}-new`}
+            mapping={emptyMappingRow}
+            extractFields={extractFields}
+            handleFieldUpdate={handleFieldUpdate}
+            generateFields={generateFields}
+            disabled={disabled}
+            updateLookupHandler={updateLookupHandler}
+            patchSettings={patchSettings}
+            application={application}
+            options={options}
+            getLookup={getLookup}
+            handleDelete={handleDelete}
+            isDraggable={false}
+          />
         </div>
         <ButtonGroup>
           {showSalesforceNetsuiteAssistant && (

@@ -943,6 +943,8 @@ const mapping = {
   previewReceived: (id, value) =>
     action(actionTypes.MAPPING.PREVIEW_RECEIVED, { id, value }),
   previewFailed: id => action(actionTypes.MAPPING.PREVIEW_FAILED, { id }),
+  changeOrder: (id, dragIndex, hoverIndex) =>
+    action(actionTypes.MAPPING.CHANGE_ORDER, { id, dragIndex, hoverIndex }),
 };
 const searchCriteria = {
   init: (id, value) =>

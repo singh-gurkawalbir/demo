@@ -17,6 +17,8 @@ export default function reducer(state = {}, action) {
     value,
     index,
     field,
+    dragIndex,
+    hoverIndex,
     options = {},
   } = action;
 
@@ -96,6 +98,17 @@ export default function reducer(state = {}, action) {
         }
 
         break;
+      case actionTypes.MAPPING.CHANGE_ORDER: {
+        const mappingsCopy = [...draft[id].mappings];
+        const dragItem = draft[id].mappings[dragIndex];
+
+        mappingsCopy.splice(dragIndex, 1);
+        mappingsCopy.splice(hoverIndex, 0, dragItem);
+        draft[id].mappings = mappingsCopy;
+        draft[id].initChangeIdentifier += 1;
+        break;
+      }
+
       case actionTypes.MAPPING.DELETE: {
         draft[id].initChangeIdentifier += 1;
         draft[id].mappings.splice(index, 1);
