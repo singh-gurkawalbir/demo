@@ -8,6 +8,18 @@ export default {
       lookups &&
       lookups.find(l => l.name === retValues['/http/existingDataId']);
 
+    if (retValues['/http/response/successValues']) {
+      retValues['/http/response/successValues'] = [
+        retValues['/http/response/successValues'],
+      ];
+    }
+
+    if (retValues['/http/response/failValues']) {
+      retValues['/http/response/failValues'] = [
+        retValues['/http/response/failValues'],
+      ];
+    }
+
     if (retValues['/inputMode'] === 'blob') {
       retValues['/http/method'] = retValues['/http/blobMethod'];
     } else if (retValues['/http/method'] === 'COMPOSITE') {
@@ -33,6 +45,8 @@ export default {
             retValues['/http/resourceIdPathUpdate'],
             retValues['/http/resourceIdPathCreate'],
           ];
+        } else {
+          retValues['/http/response/resourceIdPath'] = undefined;
         }
 
         if (
@@ -43,6 +57,8 @@ export default {
             retValues['/http/resourcePathUpdate'],
             retValues['/http/resourcePathCreate'],
           ];
+        } else {
+          retValues['/http/response/resourcePath'] = undefined;
         }
 
         if (
@@ -54,7 +70,7 @@ export default {
             retValues['/http/successPathCreate'],
           ];
         } else {
-          retValues['/http/response/successPath'] = '';
+          retValues['/http/response/successPath'] = undefined;
         }
 
         if (
@@ -77,6 +93,8 @@ export default {
             retValues['/http/failPathUpdate'],
             retValues['/http/failPathCreate'],
           ];
+        } else {
+          retValues['/http/response/failPath'] = undefined;
         }
 
         if (
@@ -87,6 +105,8 @@ export default {
             retValues['/http/failValuesUpdate'],
             retValues['/http/failValuesCreate'],
           ];
+        } else {
+          retValues['/http/response/failValues'] = undefined;
         }
 
         retValues['/http/body'] = [
@@ -176,22 +196,6 @@ export default {
       retValues['/http/ignoreLookupName'] = undefined;
       retValues['/http/ignoreExtract'] = undefined;
       retValues['/http/existingDataId'] = undefined;
-
-      if (retValues['/http/response/successValues']) {
-        retValues['/http/response/successValues'] = [
-          retValues['/http/response/successValues'],
-        ];
-      } else {
-        retValues['/http/response/successValues'] = [];
-      }
-
-      if (retValues['/http/response/failValues']) {
-        retValues['/http/response/failValues'] = [
-          retValues['/http/response/failValues'],
-        ];
-      } else {
-        retValues['/http/response/failValues'] = undefined;
-      }
     }
 
     retValues['/statusExport'] = undefined;
