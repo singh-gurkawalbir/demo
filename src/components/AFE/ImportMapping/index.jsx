@@ -408,7 +408,6 @@ export default function ImportMapping(props) {
                     application={application}
                     updateLookup={updateLookupHandler}
                     disabled={disabled}
-                    disableEdit={mapping.isNotEditable}
                     lookup={
                       mapping &&
                       mapping.lookupName &&

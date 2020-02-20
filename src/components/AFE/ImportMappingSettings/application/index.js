@@ -125,6 +125,17 @@ export default {
       default:
     }
 
+    const { isNotEditable } = value;
+    const { fieldMap } = fieldMeta;
+
+    if (isNotEditable) {
+      Object.keys(fieldMap).forEach(fieldId => {
+        if (fieldId !== 'useAsAnInitializeValue') {
+          fieldMap[fieldId].defaultDisabled = true;
+        }
+      });
+    }
+
     return fieldMeta;
   },
   getFormattedValue: (value, formVal) => {

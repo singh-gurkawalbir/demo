@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo, useCallback } from 'react';
 import Button from '@material-ui/core/Button';
 import { Drawer } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
@@ -32,7 +32,6 @@ const useStyles = makeStyles(theme => ({
 /**
  *
  * disabled property set to true in case of monitor level access
- * disableEdit set to true if mapping field is not editable
  */
 
 export default function ImportMappingSettings(props) {
@@ -49,65 +48,72 @@ export default function ImportMappingSettings(props) {
     application,
     options,
     disabled,
-    disableEdit,
   } = props;
   const { generate, extract, index } = value;
   const [enquesnackbar] = useEnqueueSnackbar();
-  const fieldMeta = ApplicationMappingSettings.getMetaData({
-    application,
-    value,
-    lookup,
-    extractFields,
-    generate,
-    generateFields,
-    options,
-  });
+  const fieldMeta = useMemo(
+    () =>
+      ApplicationMappingSettings.getMetaData({
+        application,
+        value,
+        lookup,
+        extractFields,
+        generate,
+        generateFields,
+        options,
+      }),
+    [
+      application,
+      extractFields,
+      generate,
+      generateFields,
+      lookup,
+      options,
+      value,
+    ]
+  );
+  // Disable all fields except useAsAnInitializeValue in case mapping is not editable
+  const { isNotEditable } = value;
   const { fieldMap } = fieldMeta || {};
   const disableSave =
-    disabled || (disableEdit && !('useAsAnInitializeValue' in fieldMap));
+    disabled || (isNotEditable && !fieldMap.useAsAnInitializeValue);
+  const handleSubmit = useCallback(
+    formVal => {
+      const {
+        settings,
+        lookup: updatedLookup,
+        errorStatus,
+        errorMessage,
+      } = ApplicationMappingSettings.getFormattedValue(
+        { generate, extract, lookup },
+        formVal
+      );
 
-  if (disableEdit && fieldMap) {
-    Object.keys(fieldMap).forEach(fieldId => {
-      if (fieldId !== 'useAsAnInitializeValue') {
-        fieldMap[fieldId].defaultDisabled = true;
+      if (errorStatus) {
+        enquesnackbar({
+          message: errorMessage,
+          variant: 'error',
+        });
+
+        return;
       }
-    });
-  }
 
-  const handleSubmit = formVal => {
-    const {
-      settings,
-      lookup: updatedLookup,
-      errorStatus,
-      errorMessage,
-    } = ApplicationMappingSettings.getFormattedValue(
-      { generate, extract, lookup },
-      formVal
-    );
+      // Update lookup
+      if (updatedLookup) {
+        const isDelete = false;
 
-    if (errorStatus) {
-      enquesnackbar({
-        message: errorMessage,
-        variant: 'error',
-      });
+        updateLookup(isDelete, updatedLookup);
+      } else if (lookup) {
+        // When user tries to reconfigure setting and tries to remove lookup, delete existing lookup
+        const isDelete = true;
 
-      return;
-    }
+        updateLookup(isDelete, lookup);
+      }
 
-    // Update lookup
-    if (updatedLookup) {
-      const isDelete = false;
-
-      updateLookup(isDelete, updatedLookup);
-    } else if (lookup) {
-      // When user tries to reconfigure setting and tries to remove lookup, delete existing lookup
-      const isDelete = true;
-
-      updateLookup(isDelete, lookup);
-    }
-
-    onClose(true, settings);
-  };
+      onClose(true, settings);
+    },
+    [enquesnackbar, extract, generate, lookup, onClose, updateLookup]
+  );
 
   return (
     <Drawer

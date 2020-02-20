@@ -13,7 +13,6 @@ const useStyles = makeStyles(theme => ({
 /**
  *
  * disabled property set to true in case of monitor level access
- * disableEdit set to true if mapping field is not editable
  */
 export default function MappingSettingsField(props) {
   const classes = useStyles();
@@ -28,7 +27,6 @@ export default function MappingSettingsField(props) {
     options,
     value,
     disabled,
-    disableEdit,
   } = props;
   const [showSettings, setShowSettings] = useState(false);
   const isDisabled = !('generate' in value);
@@ -59,7 +57,6 @@ export default function MappingSettingsField(props) {
           extractFields={extractFields}
           generateFields={generateFields}
           disabled={disabled}
-          disableEdit={disableEdit}
         />
       )}
 
