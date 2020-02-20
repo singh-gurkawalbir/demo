@@ -3,7 +3,7 @@ export default function trimObj(obj) {
 
   return Object.keys(obj).reduce(
     (acc, key) => {
-      acc[key.trim()] =
+      acc[key] =
         typeof obj[key] === 'string' ? obj[key].trim() : trimObj(obj[key]);
 
       return acc;
