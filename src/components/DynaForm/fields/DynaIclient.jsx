@@ -7,7 +7,7 @@ import actions from '../../../actions';
 import { isProduction } from '../../../forms/utils';
 
 export default function DynaIclient(props) {
-  const { connectionId, connectorId } = props;
+  const { connectionId, connectorId, connType } = props;
   const dispatch = useDispatch();
   const connection = useSelector(state =>
     selectors.resource(state, 'connections', connectionId)
@@ -35,7 +35,9 @@ export default function DynaIclient(props) {
           ]}
         />
       )}
-      {!isProduction() && !connectorId && <DynaSelectResource {...props} />}
+      {connType !== 'ebay' &&
+        (connType !== 'netsuite' || !isProduction()) &&
+        !connectorId && <DynaSelectResource {...props} />}
     </Fragment>
   );
 }

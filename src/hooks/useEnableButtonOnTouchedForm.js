@@ -14,15 +14,17 @@ const useEnableButtonOnTouchedForm = ({
   flowId,
   sectionId,
   isFormTouchedForMeta,
+  ignoreFormTouchedCheck,
 }) => {
   const dispatch = useDispatch();
-  const formTouched = useMemo(
-    () =>
-      isFormTouchedForMeta === undefined
-        ? isFormTouched(fields)
-        : isFormTouchedForMeta,
-    [fields, isFormTouchedForMeta]
-  );
+  const formTouched = useMemo(() => {
+    // when this value is true...we consider the form already touched
+    if (ignoreFormTouchedCheck) return true;
+
+    return isFormTouchedForMeta === undefined
+      ? isFormTouched(fields)
+      : isFormTouchedForMeta;
+  }, [fields, ignoreFormTouchedCheck, isFormTouchedForMeta]);
   const onClickWhenValid = useCallback(
     value => {
       if (isIAForm)
