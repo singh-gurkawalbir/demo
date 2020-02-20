@@ -291,16 +291,6 @@ class Edit extends Component {
             resourceType={resourceType}
             resourceId={id}
           />
-
-          {conflict && (
-            <ConflictAlert
-              scope={scope}
-              conflict={conflict}
-              connectionType={type}
-              resourceType={resourceType}
-              id={id}
-            />
-          )}
         </div>
       </LoadResources>
     );
