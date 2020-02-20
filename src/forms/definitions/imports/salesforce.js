@@ -20,6 +20,9 @@ export default {
 
         if (newValues['/ignoreExisting'] === false) {
           delete newValues['/salesforce/idLookup/whereClause'];
+          delete newValues['/salesforce/idLookup/extract'];
+          delete newValues['/salesforce/upsert/externalIdField'];
+          newValues['/salesforce/upsert'] = undefined;
           newValues['/salesforce/idLookup'] = undefined;
         }
       } else if (newValues['/salesforce/compositeOperation'] === 'update') {
@@ -37,6 +40,9 @@ export default {
 
         if (newValues['/ignoreExisting'] === false) {
           delete newValues['/salesforce/idLookup/whereClause'];
+          delete newValues['/salesforce/idLookup/extract'];
+          delete newValues['/salesforce/upsert/externalIdField'];
+          newValues['/salesforce/upsert'] = undefined;
           newValues['/salesforce/idLookup'] = undefined;
         }
       } else if (newValues['/salesforce/operation'] === 'update') {

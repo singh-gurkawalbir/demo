@@ -44,12 +44,13 @@ export function userNotifications(state) {
   }
 
   state.accounts &&
-    state.accounts.forEach(s => {
+    state.accounts.forEach(a => {
       notifications.push({
-        id: s._id,
+        id: a._id,
         type: 'account',
-        primaryMessage: s.ownerUser.name || s.ownerUser.company,
-        secondaryMessage: `${s.ownerUser.email} is inviting you to join their account. Please accept or decline this invitation.`,
+        nameOrCompany: a.ownerUser.name || a.ownerUser.company,
+        email: a.ownerUser.email,
+        // secondaryMessage: `${a.ownerUser.email} is inviting you to join their account. Please accept or decline this invitation.`,
       });
     });
 
@@ -58,9 +59,11 @@ export function userNotifications(state) {
       notifications.push({
         id: s._id,
         type: 'stack',
-        primaryMessage: s.ownerUser.name || s.ownerUser.company,
-        secondaryMessage: `${s.ownerUser.email} is shared a stack "${s.stack
-          .name || s.stack._id}" with you. Please accept or decline this.`,
+        nameOrCompany: s.ownerUser.name || s.ownerUser.company,
+        email: s.ownerUser.email,
+        stackName: s.stack.name || s.stack._id,
+        // secondaryMessage: `${s.ownerUser.email} is shared a stack "${s.stack
+        //   .name || s.stack._id}" with you. Please accept or decline this.`,
       });
     });
 

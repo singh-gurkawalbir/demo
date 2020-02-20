@@ -324,3 +324,52 @@ export function getJSONPathArrayWithSpecialCharactersWrapped(
     return 0;
   });
 }
+
+/**
+ * This is a iterator function, where item is single option
+ * Expects item to be in the structure {id: 'id', name: 'name'}
+ *
+ * @param {object} item - single option. should contain id property.
+ *
+ * @returns {object}
+ *
+ * @example
+ *
+ *  data = [
+ *   {id: 'Spaced Field'},
+ *   {id: 'second[Field]'},
+ *   {id: 'list[*].header'},
+ *   {id: 'data.field'},
+ *   {id: 'spaced field[*].field'}
+ * ]
+ * data.map(wrapSpecialChars)
+ *  =>
+ * [
+ *   {id: '[Spaced Field]'},
+ *   {id: '[second[Field\]]'},
+ *   {id: 'list[*].header'},
+ *   {id: 'data.field'},
+ *   {id: '[spaced field][*].field'}
+ * ]
+ */
+export function wrapSpecialChars(item = {}) {
+  let { id } = item;
+
+  if (/\W/.test(id)) {
+    // If option's id has special characters
+    // Split by sublist character so sublist options wont be wrapped
+    // then, split by a 'dot' character
+    // wrap remaining string in [ and ] if contains any special characters and escape closing brace ']' if id has it.
+    id = id
+      .split('[*].')
+      .map(el =>
+        el
+          .split('.')
+          .map(el => (/\W/.test(el) ? `[${el.replace(/\]/g, '\\]')}]` : el))
+          .join('.')
+      )
+      .join('[*].');
+  }
+
+  return { ...item, id };
+}

@@ -1,4 +1,4 @@
-import { Fragment, useState, useCallback, useEffect } from 'react';
+import { Fragment, useState, useCallback } from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import { Drawer, Button } from '@material-ui/core';
@@ -9,7 +9,6 @@ import helpTextMap from '../../../../components/Help/helpTextMap';
 import LoadResources from '../../../../components/LoadResources';
 import DrawerTitleBar from '../../../../components/drawer/TitleBar';
 import StandaloneMapping from '../../../../components/AFE/ImportMapping/StandaloneMapping';
-import { select } from 'redux-saga/effects';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -129,7 +128,9 @@ function ImportMapping({
         }
       />
       <div className={classes.content}>
-        <LoadResources required="true" resources="imports, exports">
+        <LoadResources
+          required="true"
+          resources="imports, exports, connections">
           <Fragment>
             {subrecords && subrecords.length > 0 && !selectedMapping ? (
               <Fragment>

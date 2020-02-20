@@ -35,11 +35,10 @@ import DynaApiIdentifier from './DynaApiIdentifier';
 import DynaStaticMap from './DynaTableView';
 import DynaNetsuiteUserRolesOptions from './DynaNetsuiteUserRoles';
 import DynaNSSavedSearch from './DynaNSSavedSearch';
+import DynaNSWSSavedSearch from './DynaNSWSSavedSearch';
 import DynaAssistantOptions from './assistant/DynaAssistantOptions';
 import DynaAssistantSearchParams from './assistant/DynaAssistantSearchParams';
 import DynaLabelValueElement from './DynaLabelValueElement';
-import DynaRawData from './DynaRawData';
-import DynaSampleData from './DynaSampleData';
 import DynaWebHookSampleData from './DynaWebHookSampleData';
 import DynaXmlParse from './editors/DynaXmlParse';
 import DynaImportMapping from './DynaImportMapping';
@@ -74,7 +73,6 @@ import DynaSalesforceLookup from './DynaSalesforceLookup';
 import DynaMultiSubsidiaryMapping from './DynaTableView/DynaMultiSubsidiaryMapping';
 import DynaTimestampFileName from './DynaTimestampFileName';
 import DynaMode from './DynaMode';
-import DynaAutoSuggestFlowSampleData from './DynaAutoSuggestFlowSampleData';
 import DynaCsvGenerate from './editors/DynaCsvGenerate';
 import DynaFileKeyColumn from './DynaFileKeyColumn';
 import DynaRadioGroupForResetFields from './radiogroup/DynaRadioGroupForResetFields';
@@ -86,6 +84,7 @@ import DynaCronGenerator from './DynaCronGenerator';
 import DynaNSSearchCriteria from './editors/DynaNSSearchCriteria';
 import DynaNetSuiteSubRecords from './DynaNetSuiteSubRecords';
 import DynaTypeableSelect from './DynaTypeableSelect';
+import DynaMarketplaceId from './DynaMarketplaceId';
 
 export default {
   mode: DynaMode,
@@ -97,6 +96,7 @@ export default {
   textarea: DynaText,
   checkbox: DynaCheckbox,
   select: DynaSelect,
+  marketplaceid: DynaMarketplaceId,
   xmlMapper: DynaXMLMapper,
   trueFixedWidthColumnMapper: DynaTrueFixedWidthColumnMapper,
   csvColumnMapper: DynaCSVColumnMapper,
@@ -131,8 +131,7 @@ export default {
   labelvalue: DynaLabelValueElement,
   netsuiteuserroles: DynaNetsuiteUserRolesOptions,
   nssavedsearch: DynaNSSavedSearch,
-  rawdata: DynaRawData,
-  sampledata: DynaSampleData,
+  nswssavedsearch: DynaNSWSSavedSearch,
   webhooksampledata: DynaWebHookSampleData,
   assistantoptions: DynaAssistantOptions,
   assistantsearchparams: DynaAssistantSearchParams,
@@ -172,7 +171,6 @@ export default {
   salesforcelookupfilters: DynaSalesforceLookupFilters,
   salesforcelookup: DynaSalesforceLookup,
   timestampfilename: DynaTimestampFileName,
-  autosuggestflowsampledata: DynaAutoSuggestFlowSampleData,
   filekeycolumn: DynaFileKeyColumn,
   radiogroupforresetfields: DynaRadioGroupForResetFields,
   textwithflowcontext: DynaTextWithFlowContext,

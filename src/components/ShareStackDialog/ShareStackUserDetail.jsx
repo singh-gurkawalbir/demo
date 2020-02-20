@@ -3,12 +3,12 @@ import { useDispatch } from 'react-redux';
 import { Button } from '@material-ui/core';
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
-import DeleteIcon from '@material-ui/icons/Delete';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import Switch from '@material-ui/core/Switch';
 import actions from '../../actions';
 import useConfirmDialog from '../../components/ConfirmDialog';
+import DeleteIcon from '../icons/TrashIcon';
 
 export default function ShareStackUserDetail(props) {
   const { user } = props;

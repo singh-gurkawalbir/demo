@@ -341,6 +341,7 @@ export default {
           id: 'hardcodedDefault',
           name: 'hardcodedDefault',
           type: 'text',
+          required: true,
           label: 'Enter Default Value',
           placeholder: 'Enter Default Value',
           visibleWhenAll: [
@@ -354,6 +355,7 @@ export default {
           id: 'lookupDefault',
           name: 'lookupDefault',
           type: 'text',
+          required: true,
           label: 'Enter Default Value',
           placeholder: 'Enter Default Value',
           visibleWhenAll: [
@@ -371,6 +373,7 @@ export default {
           name: 'hardcodedSelect',
           type: 'refreshableselect',
           label: 'Value',
+          required: true,
           multiselect: generateFieldType === 'multiselect',
           defaultValue:
             generateFieldType === 'multiselect' && value.hardCodedValue
@@ -393,6 +396,7 @@ export default {
           name: 'lookupSelect',
           type: 'refreshableselect',
           label: 'Value',
+          required: true,
           multiselect: generateFieldType === 'multiselect',
           defaultValue:
             generateFieldType === 'multiselect' && lookup.default
@@ -420,7 +424,7 @@ export default {
           name: 'hardcodedCheckbox',
           type: 'radiogroup',
           label: 'Value',
-          defaultValue: value.hardCodedValue,
+          defaultValue: value.hardCodedValue || false,
           fullWidth: true,
           options: [
             {
@@ -439,7 +443,7 @@ export default {
           name: 'lookupCheckbox',
           type: 'radiogroup',
           label: 'Value',
-          defaultValue: lookup.default,
+          defaultValue: lookup.default || false,
           fullWidth: true,
           options: [
             {

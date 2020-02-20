@@ -1,5 +1,5 @@
 export default {
-  name: { type: 'text', label: 'Name' },
+  name: { type: 'text', label: 'Name', required: true },
   description: { type: 'text', label: 'Description' },
   apiIdentifier: {
     label: 'Invoke this Import [POST]',
