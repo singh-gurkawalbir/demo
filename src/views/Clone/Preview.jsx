@@ -95,7 +95,7 @@ export default function ClonePreview(props) {
   const columns = [
     {
       heading: 'Name',
-      value: r => r.doc.name,
+      value: r => r.doc.name || r.doc._id,
       orderBy: 'name',
     },
     { heading: 'Type', value: r => r.model },

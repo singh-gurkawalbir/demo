@@ -623,7 +623,7 @@ export default {
       visibleWhenAll: [
         {
           field: 'http.compositeType',
-          is: ['createandupdate', 'createandignore'],
+          is: ['createandupdate', 'updateandignore'],
         },
         {
           field: 'http.method',
@@ -658,7 +658,7 @@ export default {
       visibleWhenAll: [
         {
           field: 'http.compositeType',
-          is: ['createandupdate', 'createandignore'],
+          is: ['createandupdate', 'updateandignore'],
         },
         {
           field: 'http.method',
@@ -1065,7 +1065,7 @@ export default {
       visibleWhenAll: [
         {
           field: 'http.compositeType',
-          is: ['createandupdate', 'createandignore'],
+          is: ['createandupdate', 'updateandignore'],
         },
         {
           field: 'http.method',
@@ -1100,7 +1100,7 @@ export default {
       visibleWhenAll: [
         {
           field: 'http.compositeType',
-          is: ['createandupdate', 'createandignore'],
+          is: ['createandupdate', 'updateandignore'],
         },
         {
           field: 'http.method',

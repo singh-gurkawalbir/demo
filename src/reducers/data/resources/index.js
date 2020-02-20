@@ -17,7 +17,8 @@ const resourceTypesToIgnore = [
 function replaceOrInsertResource(state, resourceType, resourceValue) {
   // handle case of no collection
   let type = resourceType;
-  const resource = resourceValue;
+  // RESOURCE_RECEIVED is being called with null on some GET resource calls when api doesnt return anything.
+  const resource = resourceValue || {};
 
   if (type.indexOf('/licenses') >= 0) {
     const id = type.substring('connectors/'.length, type.indexOf('/licenses'));

@@ -78,6 +78,7 @@ export default {
       ],
       filter: { provider: 'netsuite' },
       type: 'dynaiclient',
+      connType: 'netsuite',
       connectionId: r => r && r._id,
       connectorId: r => r && r._connectorId,
       requiredWhen: [
