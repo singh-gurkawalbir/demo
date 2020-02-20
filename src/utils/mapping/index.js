@@ -4,6 +4,7 @@ import mappingUtil from '.';
 import netsuiteMappingUtil from './application/netsuite';
 import getJSONPaths, {
   getJSONPathArrayWithSpecialCharactersWrapped,
+  pickFirstObject,
 } from '../jsonPaths';
 import { isJsonString } from '../../utils/string';
 import connectors from '../../constants/applications';
@@ -39,12 +40,41 @@ const checkExtractPathFoundInSampledata = (str, sampleData, wrapped) => {
   );
 };
 
+/**
+ * parentMapping = resource mapping object
+ * returns subRecordMapping object
+ *
+ * this function takes resource mapping object and searches for subrecord.
+ * subRecordMappingId could be either of format 'item[*].abc' or 'abc'.
+ * Former specifies subrecord in 'mapping.lists' with generate 'abc'.
+ * And later means subrecord in 'mapping.fields' with generate 'abc'
+ */
+const getSubRecordMapping = (parentMapping, subRecordMappingId) => {
+  const { fields = [], lists = [] } = parentMapping || {};
+
+  if (subRecordMappingId.indexOf('[*].') > 0) {
+    const listName = subRecordMappingId.split('[*].')[0];
+    const subListGenerateName = subRecordMappingId.split('[*].')[1];
+    const list = lists.find(l => l.generate === listName);
+
+    if (list) {
+      const subList = list.fields.find(l => l.generate === subListGenerateName);
+
+      return subList.subRecordMapping;
+    }
+  } else {
+    const field = fields.find(l => l.generate === subRecordMappingId);
+
+    return field.subRecordMapping;
+  }
+};
+
 export function unwrapTextForSpecialChars(extract, flowSampleData) {
-  let toReturn = extract;
+  let modifiedExtract = extract;
 
   if (!/\W/g.test(extract)) {
     // if it does not contain a non-word character
-    return toReturn;
+    return modifiedExtract;
   }
 
   if (!flowSampleData && /^\[.*\]$/.test(extract)) {
@@ -63,9 +93,9 @@ export function unwrapTextForSpecialChars(extract, flowSampleData) {
       true
     ).indexOf(extract);
 
-    toReturn = getJSONPathArrayWithSpecialCharactersWrapped(flowSampleData)[
-      index
-    ];
+    modifiedExtract = getJSONPathArrayWithSpecialCharactersWrapped(
+      flowSampleData
+    )[index];
   } else if (!/\.|(\[\*\])/.test(extract)) {
     /**
      This extract is not found in sampledata. So UI doesnt know what a dot or sublist character represent.
@@ -79,18 +109,18 @@ export function unwrapTextForSpecialChars(extract, flowSampleData) {
       )
     ) {
       // if not already wrapped
-      toReturn = `[${extract.replace(/\]/g, '\\]')}]`;
+      modifiedExtract = `[${extract.replace(/\]/g, '\\]')}]`;
     }
   }
 
-  return toReturn;
+  return modifiedExtract;
 }
 
 export function wrapTextForSpecialChars(extract, flowSampleData) {
-  let toReturn = extract;
+  let modifiedExtract = extract;
 
-  if (!/\W/g.test(extract)) {
-    return toReturn;
+  if (!/\W/g.test(extract) || handlebarRegex.test(extract)) {
+    return modifiedExtract;
   }
 
   if (
@@ -109,7 +139,7 @@ export function wrapTextForSpecialChars(extract, flowSampleData) {
       flowSampleData
     ).indexOf(extract);
 
-    toReturn = getJSONPathArrayWithSpecialCharactersWrapped(
+    modifiedExtract = getJSONPathArrayWithSpecialCharactersWrapped(
       flowSampleData,
       null,
       true
@@ -128,9 +158,11 @@ export function wrapTextForSpecialChars(extract, flowSampleData) {
       )
     ) {
       // if not already wrapped
-      toReturn = `[${extract.replace(/\]/g, '\\]')}]`;
+      modifiedExtract = `[${extract.replace(/\]/g, '\\]')}]`;
     }
   }
+
+  return modifiedExtract;
 }
 
 export const LookupResponseMappingExtracts = [
@@ -275,11 +307,67 @@ export default {
       default:
     }
   },
+  getSubRecordRecordTypeAndJsonPath: (resourceObj, subRecordMappingId) => {
+    const rawMapping = mappingUtil.getMappingFromResource(resourceObj, true);
+    const subRecordMappingObj = getSubRecordMapping(
+      rawMapping,
+      subRecordMappingId
+    );
+    const { recordType, jsonPath } = subRecordMappingObj || {};
+
+    return {
+      recordType,
+      jsonPath,
+    };
+  },
+  generateSubrecordMappingAndLookup: (
+    resourceObj,
+    subRecordMappingId,
+    isGroupedSampleData,
+    netsuiteRecordType,
+    options = {}
+  ) => {
+    const rawMapping = mappingUtil.getMappingFromResource(resourceObj, true);
+    const subRecordMappingObj = getSubRecordMapping(
+      rawMapping,
+      subRecordMappingId
+    );
+    const { lookups, mapping: subRecordMapping } = subRecordMappingObj || {};
+    const formattedMappings = mappingUtil.getMappingsForApp({
+      mappings: subRecordMapping,
+      isGroupedSampleData,
+      resource: resourceObj,
+      netsuiteRecordType,
+      options,
+    });
+
+    return {
+      mappings: formattedMappings,
+      lookups,
+    };
+  },
+  /**
+   * takes modified subrecord and lookup as input and adds them to original mapping and returns resource mapping object for patching
+   */
+  appendModifiedSubRecordToMapping: ({
+    resource,
+    subRecordMappingId,
+    subRecordMapping,
+    subRecordLookups,
+  }) => {
+    const mapping = mappingUtil.getMappingFromResource(resource, true);
+    const subRecordParent = getSubRecordMapping(mapping, subRecordMappingId);
+
+    subRecordParent.mapping = subRecordMapping;
+    subRecordParent.lookups = subRecordLookups;
+
+    return mapping;
+  },
   getMappingFromResource: (
     resourceObj,
-    appType,
     getRawMappings,
     isGroupedSampleData,
+    netsuiteRecordType,
     options = {}
   ) => {
     if (!resourceObj) {
@@ -289,8 +377,9 @@ export default {
     /* TODO: With support for different application being adding up, 
       path for mapping to be updated below */
     let mappings = {};
+    const { adaptorType } = resourceObj;
 
-    switch (appType) {
+    switch (adaptorTypeMap[adaptorType]) {
       case adaptorTypeMap.NetSuiteDistributedImport:
         mappings =
           (resourceObj.netsuite_da && resourceObj.netsuite_da.mapping) || {};
@@ -330,17 +419,17 @@ export default {
 
     return mappingUtil.getMappingsForApp({
       mappings: mappingCopy,
-      appType,
       isGroupedSampleData,
       resource: resourceObj,
+      netsuiteRecordType,
       options,
     });
   },
   getMappingsForApp: ({
     mappings,
-    appType,
-    resource,
+    resource = {},
     isGroupedSampleData,
+    netsuiteRecordType,
     options = {},
   }) => {
     let _mappings = mappings;
@@ -364,10 +453,13 @@ export default {
       );
     }
 
-    switch (appType) {
+    const { adaptorType } = resource;
+
+    switch (adaptorTypeMap[adaptorType]) {
       case adaptorTypeMap.NetSuiteDistributedImport:
         return netsuiteMappingUtil.getFieldsAndListMappings({
           mappings: _mappings,
+          recordType: netsuiteRecordType,
           isGroupedSampleData,
         });
       case adaptorTypeMap.FTPImport:
@@ -385,14 +477,12 @@ export default {
           isGroupedSampleData,
           useFirstRowSupported: true,
           resource,
-          appType,
         });
       case adaptorTypeMap.SalesforceImport:
         return mappingUtil.getFieldsAndListMappings({
           mappings: _mappings,
           useFirstRowSupported: false,
           resource,
-          appType,
         });
       default:
     }
@@ -400,11 +490,11 @@ export default {
   generateMappingsForApp: ({
     mappings,
     generateFields,
-    recordType,
     appType,
     isGroupedSampleData,
     resource,
     flowSampleData,
+    netsuiteRecordType,
   }) => {
     switch (appType) {
       case adaptorTypeMap.NetSuiteDistributedImport:
@@ -412,8 +502,8 @@ export default {
           mappings,
           isGroupedSampleData,
           generateFields,
-          recordType,
           flowSampleData,
+          recordType: netsuiteRecordType,
         });
       case adaptorTypeMap.FTPImport:
       case adaptorTypeMap.HTTPImport:
@@ -734,12 +824,23 @@ export default {
       };
     }
 
+    const mappingsWithoutGenerates = mappings.filter(mapping => {
+      if (!mapping.generate) return true;
+
+      return false;
+    });
+
+    if (mappingsWithoutGenerates.length)
+      return {
+        isSuccess: false,
+        errMessage: `One or more generate fields missing`,
+      };
     const mappingsWithoutExtract = mappings.filter(mapping => {
       if (!('hardCodedValue' in mapping || mapping.extract)) return true;
 
       return false;
     });
-    const missingGenerates = [];
+    const generatesWithoutExtract = [];
 
     mappingsWithoutExtract.forEach(mapping => {
       if (mapping.lookupName) {
@@ -747,26 +848,40 @@ export default {
 
         // check if mapping has dynamic lookup
         if (!lookup || lookup.map) {
-          missingGenerates.push(mapping);
+          generatesWithoutExtract.push(mapping);
         }
       } else {
-        missingGenerates.push(mapping);
+        generatesWithoutExtract.push(mapping);
       }
     });
-    const missingGeneratesNames = missingGenerates.map(
+    const missingExtractGenerateNames = generatesWithoutExtract.map(
       mapping => mapping.generate
     );
 
-    if (missingGeneratesNames.length) {
+    if (missingExtractGenerateNames.length) {
       return {
         isSuccess: false,
-        errMessage: `Extract Fields missing for field(s): ${missingGeneratesNames.join(
+        errMessage: `Extract Fields missing for field(s): ${missingExtractGenerateNames.join(
           ','
         )}`,
       };
     }
 
     return { isSuccess: true };
+  },
+  getExtractPaths: (fields, options = {}) => {
+    const { jsonPath } = options;
+    let extractPaths = getJSONPaths(pickFirstObject(fields));
+
+    if (jsonPath)
+      extractPaths = extractPaths
+        .filter(f => f.id && f.id.indexOf(`${jsonPath}[*].`) === 0)
+        .map(f => ({
+          ...f,
+          id: f.id.replace(`${jsonPath}[*].`, ''),
+        }));
+
+    return extractPaths;
   },
   isCsvOrXlsxResource,
 };

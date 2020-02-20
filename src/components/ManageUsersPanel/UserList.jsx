@@ -9,7 +9,6 @@ import {
   IconButton,
 } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
-import CloseIcon from '@material-ui/icons/Close';
 import { withSnackbar } from 'notistack';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
@@ -19,6 +18,7 @@ import {
   ACCOUNT_IDS,
 } from '../../utils/constants';
 import UserDetail from './UserDetail';
+import CloseIcon from '../icons/CloseIcon';
 
 const mapStateToProps = (state, { integrationId }) => {
   const permissions = selectors.userPermissions(state);

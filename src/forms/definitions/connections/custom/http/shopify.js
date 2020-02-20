@@ -16,8 +16,10 @@ export default {
       retValues['/http/auth/token/scheme'] = ' ';
       retValues['/http/auth/token/token'] = undefined;
       retValues['/http/auth/oauth/scopeDelimiter'] = ',';
-      retValues['/http/auth/basic/username'] = undefined;
-      retValues['/http/auth/basic/password'] = undefined;
+      delete retValues['/http/auth/basic/username'];
+      delete retValues['/http/auth/basic/password'];
+
+      retValues['/http/auth/basic'] = undefined;
 
       if (
         retValues['/http/auth/oauth/scope'] &&
@@ -53,6 +55,9 @@ export default {
       retValues['/http/auth/basic/password'] = `${
         formValues['/http/auth/basic/password']
       }`;
+      delete retValues['/http/auth/oauth/scope'];
+      retValues['/http/auth/oauth'] = undefined;
+      retValues['/http/auth/token'] = undefined;
     }
 
     return {

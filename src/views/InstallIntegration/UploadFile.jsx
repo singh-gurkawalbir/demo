@@ -54,11 +54,11 @@ export default function UploadFile(props) {
       <label htmlFor="fileUpload">
         <Button
           data-test="selectFile"
-          variant="contained"
+          variant="outlined"
           color="primary"
           component="span"
           className={classes.uploadButton}>
-          Select Template Zip File
+          Select template zip file
         </Button>
         <input
           data-test="uploadFile"

@@ -11,6 +11,7 @@ import AddIcon from '../../../../../components/icons/AddIcon';
 import AttachIcon from '../../../../../components/icons/ConnectionsIcon';
 import PanelHeader from '../../../../../components/PanelHeader';
 import FlowCard from '../../../common/FlowCard';
+import MappingDrawer from '../../../common/FlowCard/MappingDrawer';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -46,6 +47,7 @@ export default function FlowsPanel({ integrationId }) {
           onClose={() => setShowDialog(false)}
         />
       )}
+      <MappingDrawer integrationId={integrationId} />
 
       <PanelHeader title="Integration flows">
         <IconTextButton

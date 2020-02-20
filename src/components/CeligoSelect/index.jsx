@@ -27,7 +27,7 @@ const useStyles = makeStyles(theme => ({
       paddingLeft: theme.spacing(1),
       paddingRight: theme.spacing(4),
       height: '100%',
-      lineHeight: theme.spacing(3),
+      lineHeight: `${theme.spacing(3)}px`,
       boxSizing: 'border-box',
     },
     '&:hover': {
