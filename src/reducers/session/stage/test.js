@@ -195,4 +195,50 @@ describe('stage selectors', () => {
       });
     });
   });
+
+  describe(`getAllResourceConflicts`, () => {
+    const id = '123';
+    const conflictResId = '124';
+    const patch = [{ op: 'replace', path: '/name', value: 'ABC' }];
+    const conflict = [{ op: 'replace', path: '/desc', value: '123' }];
+
+    test('should return empty array when no staged changes are there.', () => {
+      expect(selectors.getAllResourceConflicts(undefined)).toEqual([]);
+    });
+
+    test('should return only conflicted resources', () => {
+      let state;
+
+      state = reducer(state, actions.resource.patchStaged(id, patch));
+
+      // commiting conflicting patch
+      state = reducer(
+        state,
+        actions.resource.commitConflict(conflictResId, conflict)
+      );
+
+      expect(selectors.getAllResourceConflicts(state)).toEqual([
+        { resourceId: conflictResId, conflict },
+      ]);
+    });
+
+    test('should return an empty array once the resource conflict is resolved', () => {
+      let state;
+
+      state = reducer(state, actions.resource.patchStaged(id, patch));
+
+      // commiting conflicting patch
+      state = reducer(
+        state,
+        actions.resource.commitConflict(conflictResId, conflict)
+      );
+
+      expect(selectors.getAllResourceConflicts(state)).toEqual([
+        { resourceId: conflictResId, conflict },
+      ]);
+      state = reducer(state, actions.resource.clearConflict(conflictResId));
+      // after clearing conflict expect nothing to show up
+      expect(selectors.getAllResourceConflicts(state)).toEqual([]);
+    });
+  });
 });
