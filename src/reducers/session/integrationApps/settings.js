@@ -3,6 +3,33 @@ import { uniqBy } from 'lodash';
 import actionTypes from '../../../actions/types';
 
 const emptyObj = {};
+
+function flattenChildrenStructrue(
+  result = [],
+  meta,
+  isRoot = true,
+  options = {}
+) {
+  const { deleted = [], isParentDeleted = false } = options;
+
+  if (meta) {
+    result.push({
+      ...meta,
+      isRoot,
+      deleted: deleted.includes(meta.id) || isParentDeleted,
+    });
+
+    if (meta.children) {
+      meta.children.forEach(child =>
+        flattenChildrenStructrue(result, child, false, {
+          deleted,
+          isParentDeleted: deleted.includes(meta.id),
+        })
+      );
+    }
+  }
+}
+
 const getStateKey = (integrationId, flowId, sectionId) =>
   `${integrationId}${flowId ? `-${flowId}` : ''}${
     sectionId ? `-${sectionId}` : ''
@@ -307,18 +334,6 @@ export function categoryMapping(state, integrationId, flowId) {
   return state[`${flowId}-${integrationId}`];
 }
 
-function flattenChildrenStructrue(result = [], meta, isRoot = true) {
-  if (meta) {
-    result.push({ ...meta, isRoot });
-
-    if (meta.children) {
-      meta.children.forEach(child =>
-        flattenChildrenStructrue(result, child, false)
-      );
-    }
-  }
-}
-
 export function categoryMappingData(state, integrationId, flowId) {
   if (!state) {
     return null;
@@ -338,13 +353,10 @@ export function categoryMappingData(state, integrationId, flowId) {
   }
 
   mappingMetadata.forEach(meta => {
-    flattenChildrenStructrue(mappings, meta);
+    flattenChildrenStructrue(mappings, meta, true, { deleted });
   });
 
-  return mappings.map(mapping => ({
-    ...mapping,
-    deleted: deleted.includes(mapping.id),
-  }));
+  return mappings;
 }
 
 export function categoryMappingGeneratesMetadata(state, integrationId, flowId) {
