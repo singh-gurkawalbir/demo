@@ -1,4 +1,4 @@
-import { values } from 'lodash';
+import { values, keyBy } from 'lodash';
 import shortid from 'shortid';
 import getRoutePath from './routePaths';
 import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../constants/resource';
@@ -501,4 +501,186 @@ export const getNetSuiteSubrecordLabel = (fieldId, subrecordType) => {
   }
 
   return `${listLabel}${subrecordLabel}`;
+};
+
+export const getNetSuiteSubrecordImportsFromMappings = mapping => {
+  const srImports = [];
+
+  if (mapping) {
+    if (mapping.fields) {
+      mapping.fields
+        .filter(fld => fld.subRecordMapping && fld.subRecordMapping.recordType)
+        .forEach(fld => {
+          srImports.push({
+            _id: fld.generate,
+            name: getNetSuiteSubrecordLabel(
+              fld.generate,
+              fld.subRecordMapping.recordType
+            ),
+            fieldId: fld.generate,
+            recordType: fld.subRecordMapping.recordType,
+            jsonPath: fld.subRecordMapping.jsonPath,
+          });
+        });
+    }
+
+    if (mapping.lists) {
+      mapping.lists.forEach(list => {
+        if (list.fields) {
+          list.fields
+            .filter(
+              fld => fld.subRecordMapping && fld.subRecordMapping.recordType
+            )
+            .forEach(fld => {
+              srImports.push({
+                _id: `${list.generate}[*].${fld.generate}`,
+                name: getNetSuiteSubrecordLabel(
+                  `${list.generate}[*].${fld.generate}`,
+                  fld.subRecordMapping.recordType
+                ),
+                fieldId: `${list.generate}[*].${fld.generate}`,
+                recordType: fld.subRecordMapping.recordType,
+                jsonPath: fld.subRecordMapping.jsonPath,
+              });
+            });
+        }
+      });
+    }
+  }
+
+  return srImports;
+};
+
+export const getNetSuiteSubrecordImports = importDoc =>
+  getNetSuiteSubrecordImportsFromMappings(
+    importDoc && importDoc.netsuite_da && importDoc.netsuite_da.mapping
+  );
+
+export const updateMappingsBasedOnNetSuiteSubrecords = (
+  mapping,
+  subrecords
+) => {
+  const subrecordsMap = keyBy(subrecords, 'fieldId');
+
+  if (mapping) {
+    if (mapping.fields) {
+      // eslint-disable-next-line no-param-reassign
+      mapping.fields = mapping.fields
+        .map(fld => {
+          if (subrecordsMap[fld.generate]) {
+            // eslint-disable-next-line no-param-reassign
+            fld.subRecordMapping.recordType =
+              subrecordsMap[fld.generate].recordType;
+            // eslint-disable-next-line no-param-reassign
+            fld.subRecordMapping.jsonPath =
+              subrecordsMap[fld.generate].jsonPath;
+            subrecordsMap[fld.generate].updated = true;
+          }
+
+          return fld;
+        })
+        .filter(
+          fld =>
+            !fld.subRecordMapping ||
+            !fld.subRecordMapping.recordType ||
+            subrecordsMap[fld.generate]
+        );
+    }
+
+    if (mapping.lists) {
+      // eslint-disable-next-line no-param-reassign
+      mapping.lists = mapping.lists
+        .map(list => {
+          if (list.fields) {
+            // eslint-disable-next-line no-param-reassign
+            list.fields = list.fields.map(fld => {
+              const fieldId = `${list.generate}[*].${fld.generate}`;
+
+              if (subrecordsMap[fieldId]) {
+                // eslint-disable-next-line no-param-reassign
+                fld.subRecordMapping.recordType =
+                  subrecordsMap[fieldId].recordType;
+                // eslint-disable-next-line no-param-reassign
+                fld.subRecordMapping.jsonPath = subrecordsMap[fieldId].jsonPath;
+                subrecordsMap[fieldId].updated = true;
+              }
+
+              return fld;
+            });
+          }
+
+          return list;
+        })
+        .map(list => {
+          if (list.fields) {
+            // eslint-disable-next-line no-param-reassign
+            list.fields = list.fields.filter(
+              fld =>
+                !fld.subRecordMapping ||
+                !fld.subRecordMapping.recordType ||
+                subrecordsMap[`${list.generate}[*].${fld.generate}`]
+            );
+          }
+
+          return list;
+        });
+    }
+  }
+
+  const newSubrecords = Object.keys(subrecordsMap)
+    .map(fieldId => subrecordsMap[fieldId])
+    .filter(sr => !sr.updated);
+
+  if (newSubrecords.length > 0) {
+    if (!mapping) {
+      // eslint-disable-next-line no-param-reassign
+      mapping = {};
+    }
+
+    if (!mapping.fields) {
+      // eslint-disable-next-line no-param-reassign
+      mapping.fields = [];
+    }
+
+    if (!mapping.lists) {
+      // eslint-disable-next-line no-param-reassign
+      mapping.lists = [];
+    }
+
+    newSubrecords.forEach(sr => {
+      if (sr.fieldId.includes('[*].')) {
+        const [listId, fieldId] = sr.fieldId.split('[*].');
+        let listIndex = mapping.lists.findIndex(l => l.generate === listId);
+
+        if (listIndex === -1) {
+          mapping.lists.push({ generate: listId });
+          listIndex = mapping.lists.length - 1;
+        }
+
+        const list = mapping.lists[listIndex];
+
+        if (!list.fields) {
+          list.fields = [];
+        }
+
+        list.fields.push({
+          generate: fieldId,
+          subRecordMapping: {
+            recordType: sr.recordType,
+            jsonPath: sr.jsonPath,
+          },
+        });
+      } else {
+        mapping.fields.push({
+          generate: sr.fieldId,
+          subRecordMapping: {
+            recordType: sr.recordType,
+            jsonPath: sr.jsonPath,
+          },
+        });
+      }
+    });
+  }
+
+  return mapping;
 };

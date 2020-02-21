@@ -9,7 +9,10 @@ import EditIcon from '../../../icons/EditIcon';
 import DeleteIcon from '../../../icons/TrashIcon';
 import ActionButton from '../../../../components/ActionButton';
 import useConfirmDialog from '../../../../components/ConfirmDialog';
-import { getNetSuiteSubrecordLabel } from '../../../../utils/resource';
+import {
+  getNetSuiteSubrecordLabel,
+  getNetSuiteSubrecordImports,
+} from '../../../../utils/resource';
 
 export default function DynaNetSuiteSubRecords(props) {
   const {
@@ -40,38 +43,7 @@ export default function DynaNetSuiteSubRecords(props) {
         ({ subrecords } = importDoc.netsuite_da);
 
         if (!subrecords && importDoc.netsuite_da.mapping) {
-          if (importDoc.netsuite_da.mapping.fields) {
-            subrecordsFromMappings = subrecordsFromMappings.concat(
-              importDoc.netsuite_da.mapping.fields
-                .filter(
-                  fld => fld.subRecordMapping && fld.subRecordMapping.recordType
-                )
-                .map(fld => ({
-                  fieldId: fld.generate,
-                  recordType: fld.subRecordMapping.recordType,
-                  jsonPath: fld.subRecordMapping.jsonPath,
-                }))
-            );
-          }
-
-          if (importDoc.netsuite_da.mapping.lists) {
-            importDoc.netsuite_da.mapping.lists.forEach(list => {
-              if (list.fields) {
-                subrecordsFromMappings = subrecordsFromMappings.concat(
-                  list.fields
-                    .filter(
-                      fld =>
-                        fld.subRecordMapping && fld.subRecordMapping.recordType
-                    )
-                    .map(fld => ({
-                      fieldId: `${list.generate}[*].${fld.generate}`,
-                      recordType: fld.subRecordMapping.recordType,
-                      jsonPath: fld.subRecordMapping.jsonPath,
-                    }))
-                );
-              }
-            });
-          }
+          subrecordsFromMappings = getNetSuiteSubrecordImports(importDoc);
         }
       }
 
@@ -123,7 +95,7 @@ export default function DynaNetSuiteSubRecords(props) {
     fieldId => {
       confirmDialog({
         title: 'Confirm',
-        message: 'Are you sure you want to remove this subrecord import',
+        message: 'Are you sure you want to remove this subrecord import?',
         buttons: [
           {
             label: 'Cancel',

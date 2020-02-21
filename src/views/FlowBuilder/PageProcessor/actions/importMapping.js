@@ -1,4 +1,4 @@
-import { Fragment, useState, useCallback } from 'react';
+import { Fragment, useState } from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import { Drawer, Button, Typography } from '@material-ui/core';
@@ -9,7 +9,7 @@ import helpTextMap from '../../../../components/Help/helpTextMap';
 import LoadResources from '../../../../components/LoadResources';
 import DrawerTitleBar from '../../../../components/drawer/TitleBar';
 import StandaloneMapping from '../../../../components/AFE/ImportMapping/StandaloneMapping';
-import { getNetSuiteSubrecordLabel } from '../../../../utils/resource';
+import { getNetSuiteSubrecordImports } from '../../../../utils/resource';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -53,8 +53,7 @@ function ImportMapping({
   const { showSalesforceNetsuiteAssistant } = useSelector(state =>
     selectors.mapping(state, mappingEditorId)
   );
-  const onClose1 = (...args) => {
-    window.__ARGS = args;
+  const handleClose = (...args) => {
     setSelectedMapping(null);
     onClose(...args);
   };
@@ -69,42 +68,14 @@ function ImportMapping({
         mapping.resource.netsuite_da &&
         mapping.resource.netsuite_da.mapping
       ) {
-        const subrecords = [];
-        let subRecordName;
-
-        if (mapping.resource.netsuite_da.mapping.fields) {
-          mapping.resource.netsuite_da.mapping.fields.forEach(fld => {
-            if (fld.subRecordMapping && fld.subRecordMapping.recordType) {
-              subRecordName = `${mapping.resource.name ||
-                mapping.resource._id} - ${getNetSuiteSubrecordLabel(
-                fld.generate,
-                fld.subRecordMapping.recordType
-              )} (Subrecord)`;
-              subrecords.push({ fieldId: fld.generate, name: subRecordName });
-            }
-          });
-        }
-
-        if (mapping.resource.netsuite_da.mapping.lists) {
-          mapping.resource.netsuite_da.mapping.lists.forEach(list => {
-            if (list.fields) {
-              list.fields.forEach(fld => {
-                if (fld.subRecordMapping && fld.subRecordMapping.recordType) {
-                  subRecordName = `${mapping.resource.name ||
-                    mapping.resource._id} - ${getNetSuiteSubrecordLabel(
-                    `${list.generate}[*].${fld.generate}`,
-                    fld.subRecordMapping.recordType
-                  )} (Subrecord)`;
-
-                  subrecords.push({
-                    fieldId: `${list.generate}[*].${fld.generate}`,
-                    name: subRecordName,
-                  });
-                }
-              });
-            }
-          });
-        }
+        const subrecords = getNetSuiteSubrecordImports(mapping.resource).map(
+          sr => ({
+            ...sr,
+            name: `${mapping.resource.name || mapping.resource._id} - ${
+              sr.name
+            } (Subrecord)`,
+          })
+        );
 
         if (subrecords.length > 0) {
           return [
@@ -122,9 +93,6 @@ function ImportMapping({
     (left, right) => left && right && left.length === right.length
   );
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
-  const handleTestButtonClick = useCallback(srId => {
-    setSelectedMapping(srId);
-  }, []);
 
   return (
     <Drawer
@@ -139,7 +107,7 @@ function ImportMapping({
         }),
       }}>
       <DrawerTitleBar
-        onClose={onClose1}
+        onClose={handleClose}
         title={
           subrecords && subrecords.length > 0 && !selectedMapping
             ? 'Please select which mapping you would like to edit'
@@ -162,7 +130,7 @@ function ImportMapping({
                     <Button
                       className={classes.button}
                       onClick={() => {
-                        handleTestButtonClick(sr.fieldId);
+                        setSelectedMapping(sr.fieldId);
                       }}>
                       <Typography variant="h6" color="primary">
                         {sr.name || sr.id}
@@ -177,7 +145,7 @@ function ImportMapping({
                 disabled={isMonitorLevelAccess}
                 resourceId={resourceId}
                 flowId={flowId}
-                onClose={onClose1}
+                onClose={handleClose}
                 subRecordMappingId={
                   selectedMapping && selectedMapping !== '__parent'
                     ? selectedMapping

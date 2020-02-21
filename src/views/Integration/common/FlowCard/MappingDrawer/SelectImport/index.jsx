@@ -4,7 +4,7 @@ import { Link, Redirect, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Button } from '@material-ui/core';
 import * as selectors from '../../../../../../reducers';
-import { getNetSuiteSubrecordLabel } from '../../../../../../utils/resource';
+import { getNetSuiteSubrecordImports } from '../../../../../../utils/resource';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -26,7 +26,7 @@ export default function SelectImport({ flowId }) {
   const flow = useSelector(state => selectors.resource(state, 'flows', flowId));
   const imports = useSelector(
     state => selectors.flowImports(state, flowId),
-    (prev, next) => prev && next && prev.length === next.length
+    (left, right) => left && right && left.length === right.length
   );
   const [subrecordImports, setSubrecordImports] = useState();
   const [importId, setImportId] = useState();
@@ -36,62 +36,17 @@ export default function SelectImport({ flowId }) {
 
     if (imports) {
       imports.forEach(imp => {
-        if (imp.netsuite_da && imp.netsuite_da.mapping) {
-          if (imp.netsuite_da.mapping.fields) {
-            imp.netsuite_da.mapping.fields
-              .filter(
-                fld => fld.subRecordMapping && fld.subRecordMapping.recordType
-              )
-              .forEach(fld => {
-                if (!srImports) {
-                  srImports = {};
-                }
+        const currentImportSubrecords = getNetSuiteSubrecordImports(imp);
 
-                if (!srImports[imp._id]) {
-                  srImports[imp._id] = [];
-                }
-
-                srImports[imp._id].push({
-                  _id: fld.generate,
-                  name: `${imp.name || imp._id} - ${getNetSuiteSubrecordLabel(
-                    fld.generate,
-                    fld.subRecordMapping.recordType
-                  )}
-                (Subrecord)`,
-                });
-              });
+        if (currentImportSubrecords && currentImportSubrecords.length > 0) {
+          if (!srImports) {
+            srImports = {};
           }
 
-          if (imp.netsuite_da.mapping.lists) {
-            imp.netsuite_da.mapping.lists.forEach(list => {
-              if (list.fields) {
-                list.fields
-                  .filter(
-                    fld =>
-                      fld.subRecordMapping && fld.subRecordMapping.recordType
-                  )
-                  .forEach(fld => {
-                    if (!srImports) {
-                      srImports = {};
-                    }
-
-                    if (!srImports[imp._id]) {
-                      srImports[imp._id] = [];
-                    }
-
-                    srImports[imp._id].push({
-                      _id: `${list.generate}[*].${fld.generate}`,
-                      name: `${imp.name ||
-                        imp._id} - ${getNetSuiteSubrecordLabel(
-                        `${list.generate}[*].${fld.generate}`,
-                        fld.subRecordMapping.recordType
-                      )}
-                    (Subrecord)`,
-                    });
-                  });
-              }
-            });
-          }
+          srImports[imp._id] = currentImportSubrecords.map(sr => ({
+            ...sr,
+            name: `${imp.name || imp._id} - ${sr.name} (Subrecord)`,
+          }));
         }
       });
 
@@ -144,11 +99,11 @@ export default function SelectImport({ flowId }) {
           {subrecordImports &&
             subrecordImports[i._id] &&
             subrecordImports[i._id].map(sr => (
-              <div key={i._id}>
+              <div key={`${i._id}-${sr.fieldId}`}>
                 <Button
                   className={classes.button}
                   component={Link}
-                  to={`${match.url}/${i._id}/${sr._id}`}>
+                  to={`${match.url}/${i._id}/${sr.fieldId}`}>
                   <Typography variant="h6" color="primary">
                     {sr.name}
                   </Typography>

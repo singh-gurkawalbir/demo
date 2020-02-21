@@ -1,5 +1,7 @@
-import { keyBy } from 'lodash';
-import { isNewId } from '../../../utils/resource';
+import {
+  isNewId,
+  updateMappingsBasedOnNetSuiteSubrecords,
+} from '../../../utils/resource';
 
 export default {
   preSave: formValues => {
@@ -15,123 +17,7 @@ export default {
     let mapping = newValues['/netsuite_da/mapping'];
 
     if (subrecords) {
-      const subrecordsMap = keyBy(subrecords, 'fieldId');
-
-      if (mapping) {
-        if (mapping.fields) {
-          mapping.fields = mapping.fields
-            .map(fld => {
-              if (subrecordsMap[fld.generate]) {
-                // eslint-disable-next-line no-param-reassign
-                fld.subRecordMapping.recordType =
-                  subrecordsMap[fld.generate].recordType;
-                // eslint-disable-next-line no-param-reassign
-                fld.subRecordMapping.jsonPath =
-                  subrecordsMap[fld.generate].jsonPath;
-                subrecordsMap[fld.generate].updated = true;
-              }
-
-              return fld;
-            })
-            .filter(
-              fld =>
-                !fld.subRecordMapping ||
-                !fld.subRecordMapping.recordType ||
-                subrecordsMap[fld.generate]
-            );
-        }
-
-        if (mapping.lists) {
-          mapping.lists = mapping.lists
-            .map(list => {
-              if (list.fields) {
-                // eslint-disable-next-line no-param-reassign
-                list.fields = list.fields.map(fld => {
-                  const fieldId = `${list.generate}[*].${fld.generate}`;
-
-                  if (subrecordsMap[fieldId]) {
-                    // eslint-disable-next-line no-param-reassign
-                    fld.subRecordMapping.recordType =
-                      subrecordsMap[fieldId].recordType;
-                    // eslint-disable-next-line no-param-reassign
-                    fld.subRecordMapping.jsonPath =
-                      subrecordsMap[fieldId].jsonPath;
-                    subrecordsMap[fieldId].updated = true;
-                  }
-
-                  return fld;
-                });
-              }
-
-              return list;
-            })
-            .map(list => {
-              if (list.fields) {
-                // eslint-disable-next-line no-param-reassign
-                list.fields = list.fields.filter(
-                  fld =>
-                    !fld.subRecordMapping ||
-                    !fld.subRecordMapping.recordType ||
-                    subrecordsMap[`${list.generate}[*].${fld.generate}`]
-                );
-              }
-
-              return list;
-            });
-        }
-      }
-
-      const newSubrecords = Object.keys(subrecordsMap)
-        .map(fieldId => subrecordsMap[fieldId])
-        .filter(sr => !sr.updated);
-
-      if (newSubrecords.length > 0) {
-        if (!mapping) {
-          mapping = {};
-        }
-
-        if (!mapping.fields) {
-          mapping.fields = [];
-        }
-
-        if (!mapping.lists) {
-          mapping.lists = [];
-        }
-
-        newSubrecords.forEach(sr => {
-          if (sr.fieldId.includes('[*].')) {
-            const [listId, fieldId] = sr.fieldId.split('[*].');
-            let listIndex = mapping.lists.findIndex(l => l.generate === listId);
-
-            if (listIndex === -1) {
-              mapping.lists.push({ generate: listId });
-              listIndex = mapping.lists.length - 1;
-            }
-
-            const list = mapping.lists[listIndex];
-
-            if (!list.fields) {
-              list.fields = [];
-            }
-
-            list.fields.push({
-              generate: fieldId,
-              subRecordMapping: {
-                recordType: sr.recordType,
-                jsonPath: sr.jsonPath,
-              },
-            });
-          } else {
-            mapping.fields.push({
-              generate: sr.fieldId,
-              subRecordMapping: {
-                recordType: sr.recordType,
-                jsonPath: sr.jsonPath,
-              },
-            });
-          }
-        });
-      }
+      mapping = updateMappingsBasedOnNetSuiteSubrecords(mapping, subrecords);
     }
 
     return {
@@ -275,8 +161,6 @@ export default {
       const recordTypeField = fields.find(
         field => field.id === 'netsuite_da.recordType'
       );
-
-      window.recordTypeField = recordTypeField;
 
       return {
         recordType: recordTypeField && recordTypeField.value,
