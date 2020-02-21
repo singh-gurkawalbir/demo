@@ -379,15 +379,7 @@ export function* requestSampleDataWithContext({
       // Incase of array add context to the first object
       const [firstObject, ...rest] = sampleDataWithContextInfo;
 
-      sampleDataWithContextInfo = [
-        ...[{ ...firstObject, ...getContextInfo() }],
-        ...rest,
-      ];
-    } else {
-      sampleDataWithContextInfo = {
-        ...sampleDataWithContextInfo,
-        ...getContextInfo(),
-      };
+      sampleDataWithContextInfo = [...[{ ...firstObject }], ...rest];
     }
   }
 

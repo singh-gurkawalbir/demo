@@ -4,7 +4,7 @@ import { createSelector } from 'reselect';
 import jsonPatch from 'fast-json-patch';
 import moment from 'moment';
 import produce from 'immer';
-import { uniq, some, map, keys, isEmpty, isArray } from 'lodash';
+import { uniq, some, map, keys, isEmpty } from 'lodash';
 import app, * as fromApp from './app';
 import data, * as fromData from './data';
 import session, * as fromSession from './session';
@@ -3431,23 +3431,28 @@ export const getSampleDataWrapper = createSelector(
       return { status };
     }
 
-    if (isArray(data)) {
-      delete data[0]._CONTEXT;
-    } else if (!isEmpty(data)) {
-      delete data._CONTEXT;
+    const contextFields = {};
+
+    if (resourceType === 'export') {
+      contextFields.pageIndex = 1;
+
+      if (resource.type === 'delta') {
+        contextFields.lastExportDateTime = moment()
+          .startOf('day')
+          .add(-7, 'd')
+          .toISOString();
+        contextFields.currentExportDateTime = moment()
+          .startOf('day')
+          .add(-24, 'h')
+          .toISOString();
+      }
     }
 
     return {
       status,
       data: {
         record: data || {},
-        pageIndex: 1,
-        lastExportDateTime: moment()
-          .add(-7, 'd')
-          .toISOString(),
-        currentExportDateTime: moment()
-          .add(-24, 'h')
-          .toISOString(),
+        ...contextFields,
         settings: {
           integration: integration.settings || {},
           flow: flow.settings || {},
