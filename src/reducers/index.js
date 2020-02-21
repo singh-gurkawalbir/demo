@@ -1115,7 +1115,12 @@ export function integrationConnectionList(state, integrationId) {
   return resources;
 }
 
-export function integrationAppResourceList(state, integrationId, storeId) {
+export function integrationAppResourceList(
+  state,
+  integrationId,
+  storeId,
+  tableConfig
+) {
   if (!state) return { connections: emptySet, flows: emptySet };
 
   const integrationResource =
@@ -1126,6 +1131,7 @@ export function integrationAppResourceList(state, integrationId, storeId) {
     {
       type: 'connections',
       filter: { _integrationId: integrationId },
+      ...tableConfig,
     }
   );
 
@@ -1176,8 +1182,14 @@ export function integrationAppStore(state, integrationId, storeId) {
   );
 }
 
-export function integrationAppConnectionList(state, integrationId, storeId) {
-  return integrationAppResourceList(state, integrationId, storeId).connections;
+export function integrationAppConnectionList(
+  state,
+  integrationId,
+  storeId,
+  tableConfig
+) {
+  return integrationAppResourceList(state, integrationId, storeId, tableConfig)
+    .connections;
 }
 
 export function categoryMapping(state, integrationId, flowId) {
