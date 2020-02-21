@@ -3,11 +3,7 @@ import actions from '../../actions';
 import SwitchOnOff from '../SwitchToggle';
 import useConfirmDialog from '../ConfirmDialog';
 import * as selectors from '../../reducers';
-import {
-  LICENSE_EXPIRED,
-  LICENSE_TRIAL_NOT_STARTED,
-  LICENSE_TRIAL_EXPIRED,
-} from '../../utils/constants';
+import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 
 export default {
   label: 'Off/On',
@@ -18,9 +14,12 @@ export default {
   }) {
     // TODO: Connector specific things to be added for schedule drawer incase of !isDisabled && isConnector
     const { confirmDialog } = useConfirmDialog();
+    const [enqueueSnackbar] = useEnqueueSnackbar();
     const dispatch = useDispatch();
-    const licenseActionDetails = useSelector(state =>
-      selectors.integratorLicenseWithMetadata(state)
+    const isLicenseValidToEnableFlow = useSelector(
+      state => selectors.isLicenseValidToEnableFlow(state),
+      (left, right) =>
+        left.message === right.message && left.enable === right.enable
     );
     const enableOrDisableFlow = () => {
       const enable = flow.disabled;
@@ -54,23 +53,11 @@ export default {
                 );
               } else {
                 if (enable) {
-                  if (licenseActionDetails.hasSubscription) {
-                    if (licenseActionDetails.hasExpired) {
-                      return dispatch(
-                        actions.api.failure('', '', LICENSE_EXPIRED)
-                      );
-                    }
-                  } else if (!licenseActionDetails.trialEndDate) {
-                    return dispatch(
-                      actions.api.failure('', '', LICENSE_TRIAL_NOT_STARTED)
-                    );
-                  } else if (
-                    licenseActionDetails.trialEndDate &&
-                    !licenseActionDetails.inTrial
-                  ) {
-                    return dispatch(
-                      actions.api.failure('', '', LICENSE_TRIAL_EXPIRED)
-                    );
+                  if (!isLicenseValidToEnableFlow.enable) {
+                    return enqueueSnackbar({
+                      message: isLicenseValidToEnableFlow.message,
+                      variant: 'error',
+                    });
                   }
                 }
 
