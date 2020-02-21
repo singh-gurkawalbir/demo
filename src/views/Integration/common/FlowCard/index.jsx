@@ -16,6 +16,7 @@ import SettingsIcon from '../../../../components/icons/SettingsIcon';
 import OnOffSwitch from '../../../../components/SwitchToggle';
 import InfoIconButton from '../InfoIconButton';
 import { getIntegrationAppUrlName } from '../../../../utils/integrationApps';
+import { LICENSE_EXPIRED } from '../../../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -71,6 +72,15 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
   const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
+  const licenseActionDetails = useSelector(
+    state => selectors.integratorLicenseWithMetadata(state),
+    (left, right) =>
+      left.action === right.action &&
+      left.label === right.label &&
+      left.upgradeRequested === right.upgradeRequested
+  );
+
+  console.log('licenseActionDetails ***81', licenseActionDetails);
   const flowDetails =
     useSelector(state => selectors.flowDetails(state, flowId)) || {};
   const isDataloader = flowDetails.isSimpleImport;
@@ -140,6 +150,15 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
             )
           );
         } else {
+          if (flowDetails.disabled) {
+            if (
+              licenseActionDetails.hasExpired ||
+              !licenseActionDetails.inTrial
+            ) {
+              return dispatch(actions.api.failure('', '', LICENSE_EXPIRED));
+            }
+          }
+
           patchFlow('/disabled', !flowDetails.disabled);
         }
       }
@@ -152,6 +171,8 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
     flowDetails._integrationId,
     flowDetails.disabled,
     flowName,
+    licenseActionDetails.hasExpired,
+    licenseActionDetails.inTrial,
     patchFlow,
     storeId,
   ]);

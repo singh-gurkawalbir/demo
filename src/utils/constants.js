@@ -378,3 +378,5 @@ export const AWS_REGIONS_LIST = [
     value: 'eu-north-1',
   },
 ];
+export const LICENSE_EXPIRED =
+  'This account license has expired and the account has been converted to Free Edition with a single active flow. Please contact the account owner to renew subscription.';
