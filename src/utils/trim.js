@@ -3,8 +3,13 @@ export default function trimObj(obj) {
 
   return Object.keys(obj).reduce(
     (acc, key) => {
-      acc[key] =
-        typeof obj[key] === 'string' ? obj[key].trim() : trimObj(obj[key]);
+      // Need to refactor this fix later
+      if (key === 'columnDelimiter') {
+        acc[key] = typeof obj[key] === 'string' ? obj[key] : trimObj(obj[key]);
+      } else {
+        acc[key] =
+          typeof obj[key] === 'string' ? obj[key].trim() : trimObj(obj[key]);
+      }
 
       return acc;
     },
