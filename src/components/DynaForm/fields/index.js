@@ -85,6 +85,7 @@ import DynaNSSearchCriteria from './editors/DynaNSSearchCriteria';
 import DynaNetSuiteSubRecords from './DynaNetSuiteSubRecords';
 import DynaTypeableSelect from './DynaTypeableSelect';
 import DynaMarketplaceId from './DynaMarketplaceId';
+import DynaNetSuiteSubRecordJsonPath from './DynaNetSuiteSubRecordJsonPath';
 
 export default {
   mode: DynaMode,
@@ -183,4 +184,5 @@ export default {
   nssearchcriteria: DynaNSSearchCriteria,
   netsuitesubrecords: DynaNetSuiteSubRecords,
   typeableselect: DynaTypeableSelect,
+  netsuitesubrecordjsonpath: DynaNetSuiteSubRecordJsonPath,
 };

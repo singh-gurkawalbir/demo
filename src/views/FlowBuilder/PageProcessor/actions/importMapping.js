@@ -1,7 +1,7 @@
 import { Fragment, useState, useCallback } from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
-import { Drawer, Button } from '@material-ui/core';
+import { Drawer, Button, Typography } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import * as selectors from '../../../../reducers';
 import Icon from '../../../../components/icons/MapDataIcon';
@@ -31,6 +31,9 @@ const useStyles = makeStyles(theme => ({
   },
   fullWidthDrawerOpen: {
     width: `calc(100% - ${theme.drawerWidth}px)`,
+  },
+  text: {
+    marginBottom: theme.spacing(2),
   },
 }));
 
@@ -66,10 +69,23 @@ function ImportMapping({
         mapping.resource.netsuite_da.mapping
       ) {
         const subrecords = [];
+        let subRecordName;
 
         if (mapping.resource.netsuite_da.mapping.fields) {
           mapping.resource.netsuite_da.mapping.fields.forEach(fld => {
             if (fld.subRecordMapping && fld.subRecordMapping.recordType) {
+              subRecordName = '';
+
+              if (fld.subRecordMapping.recordType === 'inventorydetail') {
+                subRecordName = 'Inventory Details';
+              }
+
+              if (!subRecordName) {
+                subRecordName = fld.subRecordMapping.recordType;
+              }
+
+              subRecordName = `${mapping.resource.name ||
+                mapping.resource._id} - ${subRecordName} (Subrecord)`;
               subrecords.push({ fieldId: fld.generate, name: fld.generate });
             }
           });
@@ -80,9 +96,26 @@ function ImportMapping({
             if (list.fields) {
               list.fields.forEach(fld => {
                 if (fld.subRecordMapping && fld.subRecordMapping.recordType) {
+                  subRecordName = '';
+
+                  if (fld.subRecordMapping.recordType === 'inventorydetail') {
+                    subRecordName = 'Inventory Details';
+                  }
+
+                  if (list.generate === 'item') {
+                    subRecordName = `Items : ${subRecordName}`;
+                  }
+
+                  if (!subRecordName) {
+                    subRecordName = fld.subRecordMapping.recordType;
+                  }
+
+                  subRecordName = `${mapping.resource.name ||
+                    mapping.resource._id} - ${subRecordName} (Subrecord)`;
+
                   subrecords.push({
                     fieldId: `${list.generate}[*].${fld.generate}`,
-                    name: `${list.generate}[*].${fld.generate}`,
+                    name: subRecordName,
                   });
                 }
               });
@@ -92,7 +125,10 @@ function ImportMapping({
 
         if (subrecords.length > 0) {
           return [
-            { fieldId: '__parent', name: 'Parent Record' },
+            {
+              fieldId: '__parent',
+              name: mapping.resource.name || mapping.resource._id,
+            },
             ...subrecords,
           ];
         }
@@ -123,8 +159,8 @@ function ImportMapping({
         onClose={onClose1}
         title={
           subrecords && subrecords.length > 0 && !selectedMapping
-            ? 'Please select which mapping you would like to edit.1'
-            : `Define Import Mapping ${selectedMapping}`
+            ? 'Please select which mapping you would like to edit'
+            : 'Define Import Mapping'
         }
       />
       <div className={classes.content}>
@@ -133,18 +169,25 @@ function ImportMapping({
           resources="imports, exports, connections">
           <Fragment>
             {subrecords && subrecords.length > 0 && !selectedMapping ? (
-              <Fragment>
-                Mapping Selector -- ${selectedMapping}
+              <div>
+                <Typography className={classes.text} variant="h5">
+                  This import contains subrecord imports, select which import
+                  you would like to edit the mapping for.
+                </Typography>
                 {subrecords.map(sr => (
-                  <Button
-                    key={sr.id}
-                    onClick={() => {
-                      handleTestButtonClick(sr.fieldId);
-                    }}>
-                    {sr.name}
-                  </Button>
+                  <div key={sr.id}>
+                    <Button
+                      className={classes.button}
+                      onClick={() => {
+                        handleTestButtonClick(sr.fieldId);
+                      }}>
+                      <Typography variant="h6" color="primary">
+                        {sr.name || sr.id}
+                      </Typography>
+                    </Button>
+                  </div>
                 ))}
-              </Fragment>
+              </div>
             ) : (
               <StandaloneMapping
                 id={mappingEditorId}

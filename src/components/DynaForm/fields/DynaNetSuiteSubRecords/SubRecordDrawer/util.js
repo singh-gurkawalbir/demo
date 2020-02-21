@@ -46,7 +46,7 @@ export default function getFormFieldMetadata(
     fieldMeta.fieldMap[jsonPathFieldId] = {
       id: jsonPathFieldId,
       name: jsonPathFieldId,
-      type: 'autosuggestflowsampledata',
+      type: 'netsuitesubrecordjsonpath',
       label: fld.subRecordJsonPathLabel,
       defaultValue: subrecord && subrecord.jsonPath,
       visibleWhen: [

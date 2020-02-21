@@ -122,8 +122,7 @@ export default function DynaNetSuiteSubRecords(props) {
     fieldId => {
       confirmDialog({
         title: 'Confirm',
-        // eslint-disable-next-line prettier/prettier
-        message: `Are you sure you want to remove ${fieldId} [TODO: Replace with record label] subrecord import`,
+        message: 'Are you sure you want to remove this subrecord import',
         buttons: [
           {
             label: 'Cancel',
@@ -171,7 +170,11 @@ export default function DynaNetSuiteSubRecords(props) {
       {subrecords &&
         subrecords.map(sr => (
           <div key={sr.fieldId}>
-            <span>{sr.fieldId}</span>
+            <span>
+              {sr.fieldId === 'item[*].celigo_inventorydetail'
+                ? 'Items : Inventory Details'
+                : sr.fieldId}
+            </span>
             <ActionButton
               fontSize="small"
               data-test="edit-subrecord"
