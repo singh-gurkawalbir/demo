@@ -3,7 +3,11 @@ import actions from '../../actions';
 import SwitchOnOff from '../SwitchToggle';
 import useConfirmDialog from '../ConfirmDialog';
 import * as selectors from '../../reducers';
-import { LICENSE_EXPIRED } from '../../utils/constants';
+import {
+  LICENSE_EXPIRED,
+  LICENSE_TRIAL_NOT_STARTED,
+  LICENSE_TRIAL_EXPIRED,
+} from '../../utils/constants';
 
 export default {
   label: 'Off/On',
@@ -15,15 +19,9 @@ export default {
     // TODO: Connector specific things to be added for schedule drawer incase of !isDisabled && isConnector
     const { confirmDialog } = useConfirmDialog();
     const dispatch = useDispatch();
-    const licenseActionDetails = useSelector(
-      state => selectors.integratorLicenseActionDetails(state),
-      (left, right) =>
-        left.action === right.action &&
-        left.label === right.label &&
-        left.upgradeRequested === right.upgradeRequested
+    const licenseActionDetails = useSelector(state =>
+      selectors.integratorLicenseWithMetadata(state)
     );
-
-    console.log('licenseActionDetails ****', licenseActionDetails);
     const enableOrDisableFlow = () => {
       const enable = flow.disabled;
       const message = [
@@ -56,12 +54,22 @@ export default {
                 );
               } else {
                 if (enable) {
-                  if (
-                    licenseActionDetails.hasExpired ||
+                  if (licenseActionDetails.hasSubscription) {
+                    if (licenseActionDetails.hasExpired) {
+                      return dispatch(
+                        actions.api.failure('', '', LICENSE_EXPIRED)
+                      );
+                    }
+                  } else if (!licenseActionDetails.trialEndDate) {
+                    return dispatch(
+                      actions.api.failure('', '', LICENSE_TRIAL_NOT_STARTED)
+                    );
+                  } else if (
+                    licenseActionDetails.trialEndDate &&
                     !licenseActionDetails.inTrial
                   ) {
                     return dispatch(
-                      actions.api.failure('', '', LICENSE_EXPIRED)
+                      actions.api.failure('', '', LICENSE_TRIAL_EXPIRED)
                     );
                   }
                 }

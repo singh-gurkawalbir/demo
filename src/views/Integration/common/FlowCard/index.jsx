@@ -16,7 +16,11 @@ import SettingsIcon from '../../../../components/icons/SettingsIcon';
 import OnOffSwitch from '../../../../components/SwitchToggle';
 import InfoIconButton from '../InfoIconButton';
 import { getIntegrationAppUrlName } from '../../../../utils/integrationApps';
-import { LICENSE_EXPIRED } from '../../../../utils/constants';
+import {
+  LICENSE_EXPIRED,
+  LICENSE_TRIAL_NOT_STARTED,
+  LICENSE_TRIAL_EXPIRED,
+} from '../../../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -72,15 +76,9 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
   const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
-  const licenseActionDetails = useSelector(
-    state => selectors.integratorLicenseWithMetadata(state),
-    (left, right) =>
-      left.action === right.action &&
-      left.label === right.label &&
-      left.upgradeRequested === right.upgradeRequested
+  const licenseActionDetails = useSelector(state =>
+    selectors.integratorLicenseWithMetadata(state)
   );
-
-  console.log('licenseActionDetails ***81', licenseActionDetails);
   const flowDetails =
     useSelector(state => selectors.flowDetails(state, flowId)) || {};
   const isDataloader = flowDetails.isSimpleImport;
@@ -151,11 +149,21 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
           );
         } else {
           if (flowDetails.disabled) {
-            if (
-              licenseActionDetails.hasExpired ||
+            if (licenseActionDetails.hasSubscription) {
+              if (licenseActionDetails.hasExpired) {
+                return dispatch(actions.api.failure('', '', LICENSE_EXPIRED));
+              }
+            } else if (!licenseActionDetails.trialEndDate) {
+              return dispatch(
+                actions.api.failure('', '', LICENSE_TRIAL_NOT_STARTED)
+              );
+            } else if (
+              licenseActionDetails.trialEndDate &&
               !licenseActionDetails.inTrial
             ) {
-              return dispatch(actions.api.failure('', '', LICENSE_EXPIRED));
+              return dispatch(
+                actions.api.failure('', '', LICENSE_TRIAL_EXPIRED)
+              );
             }
           }
 
@@ -172,7 +180,9 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
     flowDetails.disabled,
     flowName,
     licenseActionDetails.hasExpired,
+    licenseActionDetails.hasSubscription,
     licenseActionDetails.inTrial,
+    licenseActionDetails.trialEndDate,
     patchFlow,
     storeId,
   ]);

@@ -380,3 +380,7 @@ export const AWS_REGIONS_LIST = [
 ];
 export const LICENSE_EXPIRED =
   'This account license has expired and the account has been converted to Free Edition with a single active flow. Please contact the account owner to renew subscription.';
+export const LICENSE_TRIAL_NOT_STARTED =
+  'Sorry, you have reached your integration flow limit. In order to create additional integration flows you can disable one or more existing flows, or you can go to subscription page and upgrade to your subscription.';
+export const LICENSE_TRIAL_EXPIRED =
+  'This account trial license has expired. In order to create additional integration flows you can disable one or more existing flows, or you can go to subscription page and upgrade to your subscription.';
