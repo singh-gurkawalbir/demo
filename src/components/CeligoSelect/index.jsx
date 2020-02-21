@@ -33,6 +33,11 @@ const useStyles = makeStyles(theme => ({
     '&:hover': {
       borderColor: theme.palette.primary.main,
     },
+    '&.Mui-disabled': {
+      '&:hover': {
+        borderColor: theme.palette.secondary.lightest,
+      },
+    },
     '& > *': {
       background: 'none',
     },
