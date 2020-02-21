@@ -120,7 +120,6 @@ export function* commitStagedChanges({ resourceType, id, scope }) {
 
   // only updates need to check for conflicts.
   if (!isNew) {
-    console.log('check here ,', path, master, id, scope, resourceType);
     const resp = yield call(resourceConflictDetermination, {
       path,
       master,
@@ -128,8 +127,6 @@ export function* commitStagedChanges({ resourceType, id, scope }) {
       scope,
       resourceType,
     });
-
-    console.log('check here again', path, master, id, scope, resourceType);
 
     if (resp && (resp.error || resp.conflict)) return resp;
   } else if (

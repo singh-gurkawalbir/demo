@@ -18,7 +18,6 @@ import {
 import * as selectors from '../../reducers';
 import LoadResources from '../../components/LoadResources';
 import ResourceForm from '../../components/ResourceFormFactory';
-import ConflictAlert from '../../components/ConflictAlertFactory';
 import JsonEditorDialog from '../../components/JsonEditorDialog';
 import HooksButton from './HooksButton';
 import { SCOPES } from '../../sagas/resourceForm';
@@ -165,7 +164,7 @@ class Edit extends Component {
     }
 
     const { editMode, showEditor } = this.state;
-    const { merged, lastChange, conflict, scope } = metaChanges;
+    const { merged, lastChange } = metaChanges;
     const allowsCustomForm =
       !isNewId(id) &&
       ['connections', 'imports', 'exports'].includes(resourceType);
