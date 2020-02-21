@@ -1,5 +1,4 @@
 import { Fragment, useState } from 'react';
-import { Typography } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import * as selectors from '../../../reducers';
@@ -13,7 +12,6 @@ import PanelHeader from '../../../components/PanelHeader';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    marginTop: theme.spacing(3),
     overflowX: 'auto',
   },
   topHeading: {
@@ -42,15 +40,12 @@ export default function Transfers() {
 
   return (
     <Fragment>
-      <PanelHeader title="Transfers" />
       <LoadResources required resources="transfers,integrations">
         {!showInviteView && (
           <Fragment>
             <div className={classes.root}>
               <div className={classes.topHeading}>
-                <Typography variant="h4" className={classes.heading}>
-                  Transfers
-                </Typography>
+                <PanelHeader title="Transfers" />
                 <IconTextButton
                   data-test="newTransfer"
                   variant="text"

@@ -63,6 +63,14 @@ const useStyles = makeStyles(theme => ({
   customTab: {
     maxWidth: 500,
   },
+  customTabContainer: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  closeBtn: {
+    padding: 0,
+    marginLeft: theme.spacing(1),
+  },
   connectionWarning: {
     color: theme.palette.error.main,
   },
@@ -208,9 +216,10 @@ export default function BottomDrawer({
                     key={connectionId}
                     component="div"
                     label={
-                      <div>
+                      <div className={classes.customTabContainer}>
                         {connectionIdNameMap[connectionId]} - DEBUG
                         <IconButton
+                          className={classes.closeBtn}
                           onClick={handleDebugLogsClose(connectionId)}>
                           <CloseIcon />
                         </IconButton>

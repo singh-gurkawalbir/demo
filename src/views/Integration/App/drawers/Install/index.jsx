@@ -82,12 +82,15 @@ export default function ConnectorInstallation(props) {
   useEffect(() => {
     if (
       installSteps.length &&
+      !isSetupComplete &&
       !installSteps.reduce((result, step) => result || !step.completed, false)
     ) {
       dispatch(actions.resource.request('integrations', integrationId));
       setIsSetupComplete(true);
     }
-  }, [dispatch, installSteps, integrationId]);
+  }, [dispatch, installSteps, integrationId, isSetupComplete]);
+
+  const mode = integration && integration.mode;
 
   useEffect(() => {
     if (isSetupComplete) {
@@ -97,7 +100,7 @@ export default function ConnectorInstallation(props) {
       dispatch(actions.resource.requestCollection('exports'));
       dispatch(actions.resource.requestCollection('imports'));
 
-      if (integration && integration.mode === 'settings') {
+      if (mode === 'settings') {
         props.history.push(
           `/pg/integrationapps/${integrationAppName}/${integrationId}/flows`
         );
@@ -105,7 +108,7 @@ export default function ConnectorInstallation(props) {
     }
   }, [
     dispatch,
-    integration,
+    mode,
     integrationAppName,
     integrationId,
     isSetupComplete,

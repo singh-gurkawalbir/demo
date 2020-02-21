@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useMemo } from 'react';
+import { useEffect, useMemo, Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -14,6 +14,7 @@ import infoText from '../../ResourceList/infoText';
 import actions from '../../../actions';
 import metadata from './metadata';
 import { generateNewId } from '../../../utils/resource';
+import LoadResources from '../../../components/LoadResources';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -51,6 +52,10 @@ export default function Licenses(props) {
     return () =>
       dispatch(actions.resource.clearCollection('connectorLicenses'));
   }, [connectorId, dispatch]);
+
+  if (!connector) {
+    return <LoadResources required resources="connectors" />;
+  }
 
   return (
     <Fragment>

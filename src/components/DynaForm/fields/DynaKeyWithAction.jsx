@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
-import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
 import IconButton from '@material-ui/core/IconButton';
-import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
 import ErroredMessageComponent from './ErroredMessageComponent';
+import EditIcon from '../../icons/EditIcon';
+import DeleteOutlinedIcon from '../../icons/TrashIcon';
 
 const useStyles = makeStyles({
   container: {
@@ -59,7 +59,7 @@ export default function DynaKeyWithAction(props) {
                 data-test="edit"
                 color="inherit"
                 onClick={() => onEditClick(r)}>
-                <EditOutlinedIcon />
+                <EditIcon />
               </IconButton>
             )}
 
