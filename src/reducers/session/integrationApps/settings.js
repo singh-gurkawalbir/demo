@@ -223,7 +223,8 @@ export default (state = {}, action) => {
 
         break;
       case actionTypes.INTEGRATION_APPS.SETTINGS.ADD_CATEGORY:
-        addCategory(draft, integrationId, flowId, data);
+        if (draft[`${flowId}-${integrationId}`])
+          addCategory(draft, integrationId, flowId, data);
 
         break;
       case actionTypes.INTEGRATION_APPS.SETTINGS.DELETE_CATEGORY:
