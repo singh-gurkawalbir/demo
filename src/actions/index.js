@@ -480,6 +480,18 @@ const integrationApp = {
         flowId,
         data,
       }),
+    deleteCategory: (integrationId, flowId, sectionId) =>
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.DELETE_CATEGORY, {
+        integrationId,
+        flowId,
+        sectionId,
+      }),
+    restoreCategory: (integrationId, flowId, sectionId) =>
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.RESTORE_CATEGORY, {
+        integrationId,
+        flowId,
+        sectionId,
+      }),
     clearRedirect: integrationId =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.CLEAR_REDIRECT, {
         integrationId,

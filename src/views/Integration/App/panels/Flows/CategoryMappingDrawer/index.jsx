@@ -16,6 +16,7 @@ import Spinner from '../../../../../../components/Spinner';
 import Filters from './Filters';
 import PanelHeader from '../../../../../../components/PanelHeader';
 import TrashIcon from '../../../../../../components/icons/TrashIcon';
+import RestoreIcon from '../../../../../../components/icons/RestoreIcon';
 import Mappings from './MappingsWrapper';
 import CategoryList from './CategoryList';
 import ApplicationImg from '../../../../../../components/icons/ApplicationImg';
@@ -121,24 +122,16 @@ function CategoryMappings({ integrationId, flowId, sectionId, isRoot = true }) {
   const [requestedGenerateFields, setRequestedGenerateFields] = useState(false);
   const dispatch = useDispatch();
   const classes = useStyles();
+  const history = useHistory();
+  const match = useRouteMatch();
   const [expanded, setExpanded] = useState(isRoot);
-  const handleDelete = e => {
-    // Clicking of this icon should avoid collapsing this category section
-    e.stopPropagation();
-  };
-
-  const handleVariation = e => {
-    // Clicking of this icon should avoid collapsing this category section
-    e.stopPropagation();
-  };
-
   const { fields: generateFields, name, variation_themes: variationThemes } =
     useSelector(state =>
       selectors.categoryMappingGenerateFields(state, integrationId, flowId, {
         sectionId,
       })
     ) || {};
-  const { children = [] } =
+  const { children = [], deleted } =
     useSelector(state =>
       selectors.mappingsForCategory(state, integrationId, flowId, {
         sectionId,
@@ -175,6 +168,36 @@ function CategoryMappings({ integrationId, flowId, sectionId, isRoot = true }) {
     setExpanded(!expanded);
   };
 
+  const handleDelete = e => {
+    // Clicking of this icon should avoid collapsing this category section
+    e.stopPropagation();
+    dispatch(
+      actions.integrationApp.settings.deleteCategory(
+        integrationId,
+        flowId,
+        sectionId
+      )
+    );
+  };
+
+  const handleRestore = e => {
+    // Clicking of this icon should avoid collapsing this category section
+    e.stopPropagation();
+    dispatch(
+      actions.integrationApp.settings.restoreCategory(
+        integrationId,
+        flowId,
+        sectionId
+      )
+    );
+  };
+
+  const handleVariation = e => {
+    // Clicking of this icon should avoid collapsing this category section
+    e.stopPropagation();
+    history.push(`${match.url}/variations`);
+  };
+
   return (
     <div className={isRoot ? classes.mappingContainer : classes.default}>
       <ExpansionPanel
@@ -194,7 +217,14 @@ function CategoryMappings({ integrationId, flowId, sectionId, isRoot = true }) {
               onClick={handleVariation}
             />
           )}
-          <TrashIcon className={classes.deleteIcon} onClick={handleDelete} />
+          {deleted ? (
+            <RestoreIcon
+              className={classes.deleteIcon}
+              onClick={handleRestore}
+            />
+          ) : (
+            <TrashIcon className={classes.deleteIcon} onClick={handleDelete} />
+          )}
         </ExpansionPanelSummary>
         <ExpansionPanelDetails>
           <div className={classes.fullWidth}>
