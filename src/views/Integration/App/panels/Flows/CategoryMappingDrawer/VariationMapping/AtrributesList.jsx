@@ -20,9 +20,7 @@ export default function VariationAttributesList({
   flowId,
   categoryId,
 }) {
-  //   const match = useRouteMatch();
   const classes = useStyles();
-  //   const { integrationId, flowId, subCategoryId } = match.params;
   const { variation_themes: variationThemes } =
     useSelector(state =>
       selectors.categoryMappingGenerateFields(state, integrationId, flowId, {
