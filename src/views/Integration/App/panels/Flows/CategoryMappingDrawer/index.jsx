@@ -121,15 +121,25 @@ function CategoryMappings({ integrationId, flowId, sectionId, isRoot = true }) {
   const [requestedGenerateFields, setRequestedGenerateFields] = useState(false);
   const dispatch = useDispatch();
   const classes = useStyles();
+  const history = useHistory();
+  const match = useRouteMatch();
   const [expanded, setExpanded] = useState(isRoot);
   const handleDelete = e => {
     // Clicking of this icon should avoid collapsing this category section
     e.stopPropagation();
+    dispatch(
+      actions.integrationApp.settings.deleteCategory(
+        integrationId,
+        flowId,
+        sectionId
+      )
+    );
   };
 
   const handleVariation = e => {
     // Clicking of this icon should avoid collapsing this category section
     e.stopPropagation();
+    history.push(`${match.url}/variations`);
   };
 
   const { fields: generateFields, name, variation_themes: variationThemes } =

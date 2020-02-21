@@ -226,6 +226,29 @@ export default (state = {}, action) => {
         addCategory(draft, integrationId, flowId, data);
 
         break;
+      case actionTypes.INTEGRATION_APPS.SETTINGS.DELETE_CATEGORY:
+        if (draft[`${flowId}-${integrationId}`]) {
+          if (!draft[`${flowId}-${integrationId}`].deleted) {
+            draft[`${flowId}-${integrationId}`].deleted = [];
+          }
+
+          draft[`${flowId}-${integrationId}`].deleted.push(sectionId);
+        }
+
+        break;
+      case actionTypes.INTEGRATION_APPS.SETTINGS.RESTORE_CATEGORY:
+        if (
+          draft[`${flowId}-${integrationId}`] &&
+          draft[`${flowId}-${integrationId}`].deleted &&
+          draft[`${flowId}-${integrationId}`].deleted.indexOf(sectionId) > -1
+        ) {
+          draft[`${flowId}-${integrationId}`].deleted.splice(
+            draft[`${flowId}-${integrationId}`].deleted.indexOf(sectionId),
+            1
+          );
+        }
+
+        break;
       case actionTypes.INTEGRATION_APPS.SETTINGS
         .RECEIVED_CATEGORY_MAPPING_METADATA:
         ({ response: categoryMappingData } = metadata);
@@ -300,7 +323,8 @@ export function categoryMappingData(state, integrationId, flowId) {
     return null;
   }
 
-  const { response = [] } = state[`${flowId}-${integrationId}`] || emptyObj;
+  const { response = [], deleted = [] } =
+    state[`${flowId}-${integrationId}`] || emptyObj;
   const mappings = [];
   let mappingMetadata = [];
   const basicMappingData = response.find(
@@ -316,7 +340,10 @@ export function categoryMappingData(state, integrationId, flowId) {
     flattenChildrenStructrue(mappings, meta);
   });
 
-  return mappings;
+  return mappings.map(mapping => ({
+    ...mapping,
+    deleted: deleted.includes(mapping.id),
+  }));
 }
 
 export function categoryMappingGeneratesMetadata(state, integrationId, flowId) {
