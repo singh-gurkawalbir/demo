@@ -49,13 +49,11 @@ export function defaultStoreId(state, id, store) {
 
 // #region integration Apps
 export function categoryRelationshipData(state, integrationId, flowId) {
-  const data = fromIntegrationApps.categoryRelationshipData(
+  return fromIntegrationApps.categoryRelationshipData(
     state && state.integrationApps,
     integrationId,
     flowId
   );
-
-  return data;
 }
 
 // #endregion

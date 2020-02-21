@@ -5,7 +5,7 @@ import { TextField } from '@material-ui/core';
 import * as selectors from '../../../reducers';
 import SalesforceLookupFilterEditorDialog from '../../AFE/SalesforceLookupFilterEditor';
 import actions from '../../../actions';
-import getJSONPaths from '../../../utils/jsonPaths';
+import getJSONPaths, { pickFirstObject } from '../../../utils/jsonPaths';
 import ActionButton from '../../ActionButton';
 import ExitIcon from '../../icons/ExitIcon';
 
@@ -63,9 +63,11 @@ export default function DynaSalesforceLookup(props) {
   let formattedExtractFields = [];
 
   if (extractFields) {
-    const extractPaths = getJSONPaths(extractFields, null, {
-      wrapSpecialChars: true,
-    });
+    const extractPaths = getJSONPaths(
+      pickFirstObject(extractFields, null, {
+        wrapSpecialChars: true,
+      })
+    );
 
     formattedExtractFields =
       (extractPaths &&
