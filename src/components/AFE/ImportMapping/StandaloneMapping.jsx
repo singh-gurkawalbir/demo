@@ -102,7 +102,7 @@ export default function StandaloneMapping(props) {
 
   useEffect(() => {
     if (!extractFields) {
-      requestSampleData();
+      requestSampleData(false);
     }
   }, [dispatch, extractFields, flowId, requestSampleData, resourceId]);
 
@@ -123,9 +123,18 @@ export default function StandaloneMapping(props) {
     if (isSalesforce)
       return selectors.getSalesforceMasterRecordTypeInfo(state, resourceId);
   });
-  const requestImportSampleData = useCallback(() => {
-    dispatch(actions.importSampleData.request(resourceId, subRecordMappingObj));
-  }, [dispatch, subRecordMappingObj, resourceId]);
+  const requestImportSampleData = useCallback(
+    (refreshCache = true) => {
+      dispatch(
+        actions.importSampleData.request(
+          resourceId,
+          subRecordMappingObj,
+          refreshCache
+        )
+      );
+    },
+    [dispatch, resourceId, subRecordMappingObj]
+  );
 
   useEffect(() => {
     if (
@@ -138,7 +147,7 @@ export default function StandaloneMapping(props) {
 
   useEffect(() => {
     if (!importSampleData) {
-      requestImportSampleData();
+      requestImportSampleData(false);
     }
   }, [importSampleData, dispatch, resourceId, requestImportSampleData]);
 

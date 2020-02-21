@@ -45,6 +45,8 @@ export default {
             retValues['/http/resourceIdPathUpdate'],
             retValues['/http/resourceIdPathCreate'],
           ];
+        } else {
+          retValues['/http/response/resourceIdPath'] = undefined;
         }
 
         if (
@@ -55,6 +57,8 @@ export default {
             retValues['/http/resourcePathUpdate'],
             retValues['/http/resourcePathCreate'],
           ];
+        } else {
+          retValues['/http/response/resourcePath'] = undefined;
         }
 
         if (
@@ -65,6 +69,8 @@ export default {
             retValues['/http/successPathUpdate'],
             retValues['/http/successPathCreate'],
           ];
+        } else {
+          retValues['/http/response/successPath'] = undefined;
         }
 
         if (
@@ -75,6 +81,8 @@ export default {
             retValues['/http/successValuesUpdate'],
             retValues['/http/successValuesCreate'],
           ];
+        } else {
+          retValues['/http/response/successValues'] = undefined;
         }
 
         if (
@@ -85,6 +93,8 @@ export default {
             retValues['/http/failPathUpdate'],
             retValues['/http/failPathCreate'],
           ];
+        } else {
+          retValues['/http/response/failPath'] = undefined;
         }
 
         if (
@@ -95,6 +105,8 @@ export default {
             retValues['/http/failValuesUpdate'],
             retValues['/http/failValuesCreate'],
           ];
+        } else {
+          retValues['/http/response/failValues'] = undefined;
         }
 
         retValues['/http/body'] = [
@@ -615,7 +627,7 @@ export default {
       visibleWhenAll: [
         {
           field: 'http.compositeType',
-          is: ['createandupdate', 'createandignore'],
+          is: ['createandupdate', 'updateandignore'],
         },
         {
           field: 'http.method',
@@ -650,7 +662,7 @@ export default {
       visibleWhenAll: [
         {
           field: 'http.compositeType',
-          is: ['createandupdate', 'createandignore'],
+          is: ['createandupdate', 'updateandignore'],
         },
         {
           field: 'http.method',
@@ -1057,7 +1069,7 @@ export default {
       visibleWhenAll: [
         {
           field: 'http.compositeType',
-          is: ['createandupdate', 'createandignore'],
+          is: ['createandupdate', 'updateandignore'],
         },
         {
           field: 'http.method',
@@ -1092,7 +1104,7 @@ export default {
       visibleWhenAll: [
         {
           field: 'http.compositeType',
-          is: ['createandupdate', 'createandignore'],
+          is: ['createandupdate', 'updateandignore'],
         },
         {
           field: 'http.method',

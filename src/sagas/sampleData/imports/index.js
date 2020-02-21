@@ -138,13 +138,14 @@ function* requestSampleData({ resourceId, options = {} }) {
       case 'NetSuiteDistributedImport': {
         // eslint-disable-next-line camelcase
         const { _connectionId: connectionId, netsuite_da = {} } = resource;
-        const { recordType } = options;
+        const { recordType, refreshCache } = options;
 
         yield put(
           actions.metadata.request(
             connectionId,
             `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${recordType ||
-              netsuite_da.recordType}`
+              netsuite_da.recordType}`,
+            { refreshCache }
           )
         );
         break;
@@ -156,7 +157,8 @@ function* requestSampleData({ resourceId, options = {} }) {
         yield put(
           actions.metadata.request(
             connectionId,
-            `salesforce/metadata/connections/${connectionId}/sObjectTypes/${salesforce.sObjectType}`
+            `salesforce/metadata/connections/${connectionId}/sObjectTypes/${salesforce.sObjectType}`,
+            { refreshCache: options.refreshCache }
           )
         );
         break;

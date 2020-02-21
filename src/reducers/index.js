@@ -1281,6 +1281,14 @@ export function categoryMappingFilters(state, integrationId, flowId) {
   );
 }
 
+export function categoryRelationshipData(state, integrationId, flowId) {
+  return fromData.categoryRelationshipData(
+    state && state.data,
+    integrationId,
+    flowId
+  );
+}
+
 export function mappingsForCategory(state, integrationId, flowId, filters) {
   const { sectionId } = filters;
   let mappings = emptySet;

@@ -246,7 +246,7 @@ export default function CronBuilder(props) {
             containers: [
               { label: 'Every n Minutes', fields: ['everyNMinutes'] },
               {
-                label: 'Every selected minute',
+                label: 'Each selected minute',
                 fields: ['everySelectedMinute'],
               },
             ],
