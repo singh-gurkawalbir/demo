@@ -5,7 +5,7 @@ import { TextField } from '@material-ui/core';
 import * as selectors from '../../../reducers';
 import NetSuiteLookupFilterEditorDialog from '../../AFE/NetSuiteLookupFilterEditor';
 import actions from '../../../actions';
-import getJSONPaths from '../../../utils/jsonPaths';
+import getJSONPaths, { pickFirstObject } from '../../../utils/jsonPaths';
 import ActionButton from '../../ActionButton';
 import FilterIcon from '../../icons/FilterIcon';
 
@@ -63,7 +63,7 @@ export default function DynaNetSuiteLookup(props) {
   let formattedExtractFields = [];
 
   if (extractFields) {
-    const extractPaths = getJSONPaths(extractFields);
+    const extractPaths = getJSONPaths(pickFirstObject(extractFields));
 
     formattedExtractFields =
       (extractPaths &&
