@@ -4,6 +4,7 @@ import { Link, Redirect, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Button } from '@material-ui/core';
 import * as selectors from '../../../../../../reducers';
+import { getNetSuiteSubrecordLabel } from '../../../../../../utils/resource';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -36,6 +37,31 @@ export default function SelectImport({ flowId }) {
     if (imports) {
       imports.forEach(imp => {
         if (imp.netsuite_da && imp.netsuite_da.mapping) {
+          if (imp.netsuite_da.mapping.fields) {
+            imp.netsuite_da.mapping.fields
+              .filter(
+                fld => fld.subRecordMapping && fld.subRecordMapping.recordType
+              )
+              .forEach(fld => {
+                if (!srImports) {
+                  srImports = {};
+                }
+
+                if (!srImports[imp._id]) {
+                  srImports[imp._id] = [];
+                }
+
+                srImports[imp._id].push({
+                  _id: fld.generate,
+                  name: `${imp.name || imp._id} - ${getNetSuiteSubrecordLabel(
+                    fld.generate,
+                    fld.subRecordMapping.recordType
+                  )}
+                (Subrecord)`,
+                });
+              });
+          }
+
           if (imp.netsuite_da.mapping.lists) {
             imp.netsuite_da.mapping.lists.forEach(list => {
               if (list.fields) {
@@ -55,7 +81,11 @@ export default function SelectImport({ flowId }) {
 
                     srImports[imp._id].push({
                       _id: `${list.generate}[*].${fld.generate}`,
-                      name: `${imp.name || imp._id} - Items : Inventory Details
+                      name: `${imp.name ||
+                        imp._id} - ${getNetSuiteSubrecordLabel(
+                        `${list.generate}[*].${fld.generate}`,
+                        fld.subRecordMapping.recordType
+                      )}
                     (Subrecord)`,
                     });
                   });

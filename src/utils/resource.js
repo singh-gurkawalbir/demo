@@ -480,3 +480,25 @@ export const getHelpUrl = (integrations, marketplaceConnectors) => {
 
   return helpUrl;
 };
+
+export const getNetSuiteSubrecordLabel = (fieldId, subrecordType) => {
+  const subrecordLabelMap = {
+    inventorydetail: 'Inventory Details',
+    landedcost: 'Landed Cost',
+  };
+  const subrecordLabel = subrecordLabelMap[subrecordType] || fieldId;
+  const fieldIdParts = fieldId.split('[*].');
+  let listLabel = '';
+
+  if (fieldIdParts.length > 1) {
+    if (fieldIdParts[0] === 'item') {
+      listLabel = 'Items';
+    } else {
+      [listLabel] = fieldIdParts;
+    }
+
+    listLabel = `${listLabel} : `;
+  }
+
+  return `${listLabel}${subrecordLabel}`;
+};

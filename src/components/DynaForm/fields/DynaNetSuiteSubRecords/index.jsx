@@ -9,6 +9,7 @@ import EditIcon from '../../../icons/EditIcon';
 import DeleteIcon from '../../../icons/TrashIcon';
 import ActionButton from '../../../../components/ActionButton';
 import useConfirmDialog from '../../../../components/ConfirmDialog';
+import { getNetSuiteSubrecordLabel } from '../../../../utils/resource';
 
 export default function DynaNetSuiteSubRecords(props) {
   const {
@@ -170,11 +171,7 @@ export default function DynaNetSuiteSubRecords(props) {
       {subrecords &&
         subrecords.map(sr => (
           <div key={sr.fieldId}>
-            <span>
-              {sr.fieldId === 'item[*].celigo_inventorydetail'
-                ? 'Items : Inventory Details'
-                : sr.fieldId}
-            </span>
+            <span>{getNetSuiteSubrecordLabel(sr.fieldId, sr.recordType)}</span>
             <ActionButton
               fontSize="small"
               data-test="edit-subrecord"

@@ -12,7 +12,7 @@ export default {
     }
 
     const subrecords = newValues['/netsuite_da/subrecords'];
-    const mapping = newValues['/netsuite_da/mapping'];
+    let mapping = newValues['/netsuite_da/mapping'];
 
     if (subrecords) {
       const subrecordsMap = keyBy(subrecords, 'fieldId');
@@ -87,8 +87,7 @@ export default {
 
       if (newSubrecords.length > 0) {
         if (!mapping) {
-          mapping.fields = [];
-          mapping.lists = [];
+          mapping = {};
         }
 
         if (!mapping.fields) {

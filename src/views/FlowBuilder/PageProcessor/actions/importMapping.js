@@ -9,6 +9,7 @@ import helpTextMap from '../../../../components/Help/helpTextMap';
 import LoadResources from '../../../../components/LoadResources';
 import DrawerTitleBar from '../../../../components/drawer/TitleBar';
 import StandaloneMapping from '../../../../components/AFE/ImportMapping/StandaloneMapping';
+import { getNetSuiteSubrecordLabel } from '../../../../utils/resource';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -74,19 +75,12 @@ function ImportMapping({
         if (mapping.resource.netsuite_da.mapping.fields) {
           mapping.resource.netsuite_da.mapping.fields.forEach(fld => {
             if (fld.subRecordMapping && fld.subRecordMapping.recordType) {
-              subRecordName = '';
-
-              if (fld.subRecordMapping.recordType === 'inventorydetail') {
-                subRecordName = 'Inventory Details';
-              }
-
-              if (!subRecordName) {
-                subRecordName = fld.subRecordMapping.recordType;
-              }
-
               subRecordName = `${mapping.resource.name ||
-                mapping.resource._id} - ${subRecordName} (Subrecord)`;
-              subrecords.push({ fieldId: fld.generate, name: fld.generate });
+                mapping.resource._id} - ${getNetSuiteSubrecordLabel(
+                fld.generate,
+                fld.subRecordMapping.recordType
+              )} (Subrecord)`;
+              subrecords.push({ fieldId: fld.generate, name: subRecordName });
             }
           });
         }
@@ -96,22 +90,11 @@ function ImportMapping({
             if (list.fields) {
               list.fields.forEach(fld => {
                 if (fld.subRecordMapping && fld.subRecordMapping.recordType) {
-                  subRecordName = '';
-
-                  if (fld.subRecordMapping.recordType === 'inventorydetail') {
-                    subRecordName = 'Inventory Details';
-                  }
-
-                  if (list.generate === 'item') {
-                    subRecordName = `Items : ${subRecordName}`;
-                  }
-
-                  if (!subRecordName) {
-                    subRecordName = fld.subRecordMapping.recordType;
-                  }
-
                   subRecordName = `${mapping.resource.name ||
-                    mapping.resource._id} - ${subRecordName} (Subrecord)`;
+                    mapping.resource._id} - ${getNetSuiteSubrecordLabel(
+                    `${list.generate}[*].${fld.generate}`,
+                    fld.subRecordMapping.recordType
+                  )} (Subrecord)`;
 
                   subrecords.push({
                     fieldId: `${list.generate}[*].${fld.generate}`,
