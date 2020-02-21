@@ -16,6 +16,7 @@ import Spinner from '../../../../../../components/Spinner';
 import Filters from './Filters';
 import PanelHeader from '../../../../../../components/PanelHeader';
 import TrashIcon from '../../../../../../components/icons/TrashIcon';
+import RestoreIcon from '../../../../../../components/icons/RestoreIcon';
 import Mappings from './MappingsWrapper';
 import CategoryList from './CategoryList';
 import ApplicationImg from '../../../../../../components/icons/ApplicationImg';
@@ -136,6 +137,18 @@ function CategoryMappings({ integrationId, flowId, sectionId, isRoot = true }) {
     );
   };
 
+  const handleRestore = e => {
+    // Clicking of this icon should avoid collapsing this category section
+    e.stopPropagation();
+    dispatch(
+      actions.integrationApp.settings.restoreCategory(
+        integrationId,
+        flowId,
+        sectionId
+      )
+    );
+  };
+
   const handleVariation = e => {
     // Clicking of this icon should avoid collapsing this category section
     e.stopPropagation();
@@ -205,6 +218,7 @@ function CategoryMappings({ integrationId, flowId, sectionId, isRoot = true }) {
             />
           )}
           <TrashIcon className={classes.deleteIcon} onClick={handleDelete} />
+          <RestoreIcon className={classes.deleteIcon} onClick={handleRestore} />
         </ExpansionPanelSummary>
         <ExpansionPanelDetails>
           <div className={classes.fullWidth}>
