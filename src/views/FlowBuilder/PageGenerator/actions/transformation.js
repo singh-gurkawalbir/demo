@@ -114,6 +114,7 @@ function TransformationDialog({ flowId, resource, onClose, isViewMode }) {
       entryFunction={entryFunction || hooksToFunctionNamesMap.transform}
       insertStubKey="transform"
       onClose={handleClose}
+      confirmOnCancel
     />
   );
 }

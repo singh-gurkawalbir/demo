@@ -380,6 +380,10 @@ export function editorViolations(state, id) {
   return fromSession.editorViolations(state && state.session, id);
 }
 
+export function isEditorDirty(state, id) {
+  return fromSession.isEditorDirty(state && state.session, id);
+}
+
 export function mapping(state, id) {
   return fromSession.mapping(state && state.session, id);
 }

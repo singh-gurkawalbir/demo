@@ -121,6 +121,16 @@ export function editorViolations(state, id) {
   return processorLogic.validate(editor);
 }
 
+export function isEditorDirty(state, id) {
+  if (!state) return;
+
+  const editor = state[id];
+
+  if (!editor) return;
+
+  return processorLogic.isDirty(editor);
+}
+
 export function processorRequestOptions(state, id) {
   if (!state || !state[id]) {
     return emptyObj;

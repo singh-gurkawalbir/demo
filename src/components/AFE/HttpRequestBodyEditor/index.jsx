@@ -12,6 +12,7 @@ export default function HttpRequestBodyEditor(props) {
     ruleTitle,
     data,
     lookups,
+    confirmOnCancel = false,
   } = props;
   const mode = contentType || 'json';
 
@@ -31,6 +32,7 @@ export default function HttpRequestBodyEditor(props) {
       dataTitle={dataTitle || 'Data'}
       resultTitle={resultTitle || 'Final HTTP Body'}
       enableAutocomplete
+      confirmOnCancel={confirmOnCancel}
     />
   );
 }

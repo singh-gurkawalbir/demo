@@ -84,6 +84,7 @@ export default function JavaScriptPanel(props) {
     // Fetches stub and appends it to current script content
     const updatedScriptContent = code + getScriptHookStub(insertStubKey);
 
+    if (code === undefined) patchEditor({ initCode: updatedScriptContent });
     // Updated this new script content on editor
     patchEditor({ code: updatedScriptContent });
   }, [code, insertStubKey, patchEditor]);

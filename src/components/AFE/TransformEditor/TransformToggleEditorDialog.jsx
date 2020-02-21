@@ -19,6 +19,7 @@ export default function TransformToggleEditorDialog({
   disabled,
   entryFunction,
   insertStubKey,
+  confirmOnCancel = false,
   ...rest
 }) {
   return (
@@ -29,13 +30,19 @@ export default function TransformToggleEditorDialog({
       {...rest}
       disabled={disabled}
       showLayoutOptions>
-      <TransformEditor rule={rule} data={data} disabled={disabled} />
+      <TransformEditor
+        rule={rule}
+        data={data}
+        disabled={disabled}
+        confirmOnCancel={confirmOnCancel}
+      />
       <JavaScriptEditor
         data={data}
         disabled={disabled}
         scriptId={scriptId}
         entryFunction={entryFunction}
         insertStubKey={insertStubKey}
+        confirmOnCancel={confirmOnCancel}
       />
     </ToggleEditorDialog>
   );

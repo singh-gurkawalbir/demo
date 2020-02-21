@@ -12,6 +12,7 @@ export default function HttpRequestBodyDialog(props) {
     resultTitle,
     dataTitle,
     ruleTitle,
+    confirmOnCancel,
     ...rest
   } = props;
   const defaults = {
@@ -33,6 +34,7 @@ export default function HttpRequestBodyDialog(props) {
         ruleTitle={ruleTitle}
         dataTitle={dataTitle}
         resultTitle={resultTitle}
+        confirmOnCancel={confirmOnCancel}
       />
     </EditorDialog>
   );

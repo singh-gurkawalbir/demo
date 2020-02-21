@@ -19,6 +19,7 @@ export default function HandlebarsEditor(props) {
     disabled,
     enableAutocomplete,
     lookups = [],
+    confirmOnCancel = false,
   } = props;
   const { template, data, result, error, initChangeIdentifier } = useSelector(
     state => selectors.editor(state, editorId)
@@ -54,11 +55,20 @@ export default function HandlebarsEditor(props) {
         autoEvaluateDelay: 500,
         template: props.rule,
         data: props.data,
+        confirmOnCancel,
+        initTemplate: props.rule,
       })
     );
     // get Helper functions when the editor initializes
     dispatch(actions.editor.refreshHelperFunctions());
-  }, [dispatch, editorId, props.data, props.rule, props.strict]);
+  }, [
+    confirmOnCancel,
+    dispatch,
+    editorId,
+    props.data,
+    props.rule,
+    props.strict,
+  ]);
   const handlePreview = () => {
     dispatch(actions.editor.evaluateRequest(editorId));
   };

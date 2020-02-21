@@ -21,6 +21,7 @@ import FullScreenCloseIcon from '../../icons/FullScreenCloseIcon';
 import TextToggle from '../../../components/TextToggle';
 import ViewColumnIcon from '../../icons/LayoutTriVerticalIcon';
 import ViewCompactIcon from '../../icons/LayoutLgLeftSmrightIcon';
+import useConfirmDialog from '../../ConfirmDialog';
 
 const useStyles = makeStyles(theme => ({
   dialogContent: {
@@ -78,6 +79,7 @@ export default function ToggleEditorDialog(props) {
   } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
+  const { confirmDialog } = useConfirmDialog();
   const [enquesnackbar] = useEnqueueSnackbar();
   const [state, setState] = useState({
     layout: props.layout || 'compact',
@@ -111,6 +113,9 @@ export default function ToggleEditorDialog(props) {
   const editorViolations = useSelector(state =>
     selectors.editorViolations(state, activeEditorId)
   );
+  const isEditorDirty = useSelector(state =>
+    selectors.isEditorDirty(state, activeEditorId)
+  );
   const handlePreview = useCallback(
     () => dispatch(actions.editor.evaluateRequest(activeEditorId)),
     [activeEditorId, dispatch]
@@ -127,6 +132,27 @@ export default function ToggleEditorDialog(props) {
     },
     [editor, enquesnackbar, onClose]
   );
+  const handleCancelClick = useCallback(() => {
+    if (editor && editor.confirmOnCancel && isEditorDirty) {
+      confirmDialog({
+        title: 'Confirm',
+        message: `You have made changes in the editor. Are you sure you want to discard them?`,
+        buttons: [
+          {
+            label: 'No',
+          },
+          {
+            label: 'Yes',
+            onClick: () => {
+              handleClose();
+            },
+          },
+        ],
+      });
+    } else {
+      handleClose();
+    }
+  }, [confirmDialog, editor, handleClose, isEditorDirty]);
   const patchEditorLayoutChange = () => {
     dispatch(actions.editor.changeLayout(activeEditorId));
   };
@@ -146,14 +172,13 @@ export default function ToggleEditorDialog(props) {
   const showPreviewAction =
     !hidePreviewAction && editor && !editorViolations && !editor.autoEvaluate;
   const disableSave = !editor || editorViolations || disabled;
-  const handleCancel = useCallback(() => handleClose(), [handleClose]);
   const handleSave = useCallback(() => handleClose(true), [handleClose]);
 
   return (
     <Dialog
       fullScreen={fullScreen}
       open={open}
-      onClose={handleCancel}
+      onClose={handleCancelClick}
       scroll="paper"
       maxWidth={false}>
       <div className={classes.toolbarContainer}>
@@ -232,7 +257,7 @@ export default function ToggleEditorDialog(props) {
           variant="text"
           color="primary"
           data-test="closeEditor"
-          onClick={handleCancel}>
+          onClick={handleCancelClick}>
           Cancel
         </Button>
       </DialogActions>

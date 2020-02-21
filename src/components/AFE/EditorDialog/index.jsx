@@ -1,4 +1,4 @@
-import { useState, cloneElement } from 'react';
+import { useState, cloneElement, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import {
@@ -20,6 +20,7 @@ import FullScreenOpenIcon from '../../icons/FullScreenOpenIcon';
 import FullScreenCloseIcon from '../../icons/FullScreenCloseIcon';
 import ViewColumnIcon from '../../icons/LayoutTriVerticalIcon';
 import ViewCompactIcon from '../../icons/LayoutLgLeftSmrightIcon';
+import useConfirmDialog from '../../ConfirmDialog';
 
 const useStyles = makeStyles(theme => ({
   dialogContent: {
@@ -73,6 +74,7 @@ export default function EditorDialog(props) {
   } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
+  const { confirmDialog } = useConfirmDialog();
   const [enquesnackbar] = useEnqueueSnackbar();
   const [state, setState] = useState({
     layout: props.layout || 'compact',
@@ -80,24 +82,50 @@ export default function EditorDialog(props) {
   });
   const { layout, fullScreen } = state;
   const editor = useSelector(state => selectors.editor(state, id));
+  const isEditorDirty = useSelector(state =>
+    selectors.isEditorDirty(state, id)
+  );
   const editorViolations = useSelector(state =>
     selectors.editorViolations(state, id)
   );
   const handlePreview = () => dispatch(actions.editor.evaluateRequest(id));
-  const handleClose = shouldCommit => {
-    if (shouldCommit && !preSaveValidate({ editor, enquesnackbar })) {
-      return;
-    }
+  const handleClose = useCallback(
+    shouldCommit => {
+      if (shouldCommit && !preSaveValidate({ editor, enquesnackbar })) {
+        return;
+      }
 
-    if (onClose) {
-      onClose(shouldCommit, editor);
-    }
-  };
-
+      if (onClose) {
+        onClose(shouldCommit, editor);
+      }
+    },
+    [editor, enquesnackbar, onClose]
+  );
   const patchEditorLayoutChange = () => {
     dispatch(actions.editor.changeLayout(id));
   };
 
+  const handleCancelClick = useCallback(() => {
+    if (editor && editor.confirmOnCancel && isEditorDirty) {
+      confirmDialog({
+        title: 'Confirm',
+        message: `You have made changes in the editor. Are you sure you want to discard them?`,
+        buttons: [
+          {
+            label: 'No',
+          },
+          {
+            label: 'Yes',
+            onClick: () => {
+              handleClose();
+            },
+          },
+        ],
+      });
+    } else {
+      handleClose();
+    }
+  }, [confirmDialog, editor, handleClose, isEditorDirty]);
   const handleLayoutChange = (event, _layout) => {
     patchEditorLayoutChange();
     _layout && setState({ ...state, layout: _layout });
@@ -117,7 +145,7 @@ export default function EditorDialog(props) {
     <Dialog
       fullScreen={fullScreen}
       open={open}
-      onClose={() => handleClose()}
+      onClose={() => handleCancelClick()}
       scroll="paper"
       data-test={dataTest}
       maxWidth={false}>
@@ -184,7 +212,7 @@ export default function EditorDialog(props) {
           variant="text"
           color="primary"
           data-test="closeEditor"
-          onClick={() => handleClose()}>
+          onClick={() => handleCancelClick()}>
           Cancel
         </Button>
       </DialogActions>
