@@ -17,7 +17,7 @@ import Filters from './Filters';
 import PanelHeader from '../../../../../../components/PanelHeader';
 import TrashIcon from '../../../../../../components/icons/TrashIcon';
 import RestoreIcon from '../../../../../../components/icons/RestoreIcon';
-import Mappings from './MappingsWrapper';
+import Mappings from './BasicMapping/MappingsWrapper';
 import CategoryList from './CategoryList';
 import ApplicationImg from '../../../../../../components/icons/ApplicationImg';
 import ArrowUpIcon from '../../../../../../components/icons/ArrowUpIcon';
@@ -195,7 +195,7 @@ function CategoryMappings({ integrationId, flowId, sectionId, isRoot = true }) {
   const handleVariation = e => {
     // Clicking of this icon should avoid collapsing this category section
     e.stopPropagation();
-    history.push(`${match.url}/variations`);
+    history.push(`${match.url}/variations/${sectionId}`);
   };
 
   return (
@@ -272,6 +272,13 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
   const metadataLoaded = useSelector(
     state => !!selectors.categoryMapping(state, integrationId, flowId)
   );
+  const uiAssistant = useSelector(state => {
+    const categoryMappingMetadata =
+      selectors.categoryMapping(state, integrationId, flowId) || {};
+    const { uiAssistant = '' } = categoryMappingMetadata;
+
+    return `${uiAssistant.charAt(0).toUpperCase()}${uiAssistant.slice(1)}`;
+  });
   const mappedCategories =
     useSelector(state =>
       selectors.mappedCategories(state, integrationId, flowId)
@@ -327,13 +334,20 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
                 <PanelHeader
                   className={classes.header}
                   title={currentSectionLabel}>
-                  <Filters integrationId={integrationId} flowId={flowId} />
+                  <Filters
+                    integrationId={integrationId}
+                    flowId={flowId}
+                    uiAssistant={uiAssistant}
+                  />
                 </PanelHeader>
                 <Grid container className={classes.mappingHeader}>
                   <Grid item xs={6}>
                     <Typography variant="h5" className={classes.childHeader}>
-                      Amazon
-                      <ApplicationImg assistant="amazonmws" size="small" />
+                      {uiAssistant}
+                      <ApplicationImg
+                        assistant={uiAssistant.toLowerCase()}
+                        size="small"
+                      />
                     </Typography>
                   </Grid>
                   <Grid item xs={6}>
