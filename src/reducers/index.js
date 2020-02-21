@@ -1131,7 +1131,7 @@ export function integrationAppResourceList(
     {
       type: 'connections',
       filter: { _integrationId: integrationId },
-      ...tableConfig,
+      ...(tableConfig || {}),
     }
   );
 
