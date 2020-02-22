@@ -37,8 +37,13 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'column',
   },
   label: {
-    textTransform: 'capitalize',
+    textTransform: 'lowercase',
+    width: '204px',
     paddingTop: theme.spacing(1),
+    textAlign: 'center',
+    '&:first-letter': {
+      textTransform: 'capitalize',
+    },
   },
 }));
 

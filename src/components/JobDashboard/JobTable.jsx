@@ -27,7 +27,7 @@ const useStyles = makeStyles(theme => ({
     position: 'relative',
   },
   checkFlow: {
-    paddingLeft: 30,
+    paddingLeft: 40,
   },
   tablePaginationRoot: { float: 'right' },
   name: {
@@ -65,10 +65,11 @@ const useStyles = makeStyles(theme => ({
     textAlign: 'right',
   },
   completed: {
-    width: '10.5%',
+    width: '11.5%',
+    whiteSpace: 'no-wrap',
   },
   actions: {
-    width: '8.35%',
+    width: '7.5%',
     textAlign: 'center',
   },
 }));
@@ -161,8 +162,8 @@ function JobTable({
             <TableCell className={classes.name}>Flow</TableCell>
             <TableCell className={classes.status}>Status</TableCell>
             <TableCell className={classes.success}>Success</TableCell>
-            <TableCell className={classes.ignore}>Ignore</TableCell>
-            <TableCell className={classes.error}>Error</TableCell>
+            <TableCell className={classes.ignore}>Ignored</TableCell>
+            <TableCell className={classes.error}>Errors</TableCell>
             <TableCell className={classes.resolved}>Resolved</TableCell>
             <TableCell className={classes.pages}>Pages</TableCell>
             <TableCell className={classes.duration}>Duration</TableCell>
