@@ -6,6 +6,7 @@ import { FormContext } from 'react-forms-processor/dist';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
+import trim from '../../../utils/trim';
 
 const styles = theme => ({
   actionButton: {
@@ -111,7 +112,7 @@ const NetsuiteValidateButton = props => {
       className={classes.actionButton}
       disabled={disabled || isValidatingNetsuiteUserRoles}
       onClick={() => {
-        handleValidate(value);
+        handleValidate(trim(value));
       }}>
       {isValidatingNetsuiteUserRoles ? 'Validating' : 'Validate'}
     </Button>

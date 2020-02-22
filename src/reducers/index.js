@@ -22,6 +22,11 @@ import {
   ACCOUNT_IDS,
   SUITESCRIPT_CONNECTORS,
 } from '../utils/constants';
+import {
+  LICENSE_EXPIRED,
+  LICENSE_TRIAL_NOT_STARTED,
+  LICENSE_TRIAL_EXPIRED,
+} from '../utils/messageStore';
 import { changePasswordParams, changeEmailParams } from '../sagas/api/apiPaths';
 import { getFieldById } from '../forms/utils';
 import { upgradeButtonText, expiresInfo } from '../utils/license';
@@ -1988,6 +1993,36 @@ export function integratorLicenseWithMetadata(state) {
   licenseActionDetails.subscriptionActions = toReturn;
 
   return licenseActionDetails;
+}
+
+export function isLicenseValidToEnableFlow(state) {
+  const license = integratorLicenseWithMetadata(state);
+  let licenseDetails = { enable: true };
+
+  if (!license) {
+    return licenseDetails;
+  }
+
+  if (license.hasSubscription) {
+    if (license.hasExpired) {
+      licenseDetails = {
+        message: LICENSE_EXPIRED,
+        enable: false,
+      };
+    }
+  } else if (!license.trialEndDate) {
+    licenseDetails = {
+      message: LICENSE_TRIAL_NOT_STARTED,
+      enable: false,
+    };
+  } else if (license.trialEndDate && !license.inTrial) {
+    licenseDetails = {
+      message: LICENSE_TRIAL_EXPIRED,
+      enable: false,
+    };
+  }
+
+  return licenseDetails;
 }
 
 export function accountSummary(state) {
