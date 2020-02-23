@@ -15,18 +15,100 @@ import DrawerTitleBar from '../TitleBar';
 import VariationAttributesList from './AtrributesList';
 import VariationMappings from './Mappings';
 
+const drawerWidth = 200;
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
-    marginTop: theme.appBarHeight,
+    // marginTop: theme.appBarHeight,
     width: 750,
     border: 'solid 1px',
     borderColor: theme.palette.secondary.lightest,
-    boxShadow: `-4px 4px 8px rgba(0,0,0,0.15)`,
+    backgroundColor: theme.palette.background.default,
     zIndex: theme.zIndex.drawer + 1,
+    boxShadow: `-4px 4px 8px rgba(0,0,0,0.15)`,
+    overflowX: 'hidden',
   },
   form: {
     maxHeight: `calc(100vh - 180px)`,
     padding: theme.spacing(2, 3),
+  },
+  mappingContainer: {
+    padding: '0 0 10px 20px',
+    border: 'solid 1px',
+    borderColor: theme.palette.background.default,
+  },
+  refreshButton: {
+    marginLeft: theme.spacing(1),
+    marginRight: 0,
+  },
+  fullWidth: {
+    width: '100%',
+  },
+  settingsForm: {
+    maxHeight: `calc(100vh - 120px)`,
+  },
+  drawer: {
+    width: drawerWidth,
+    flexShrink: 0,
+  },
+  nested: {
+    paddingLeft: theme.spacing(4),
+  },
+  drawerPaperInner: {
+    width: drawerWidth,
+    position: 'relative',
+  },
+  mappingHeader: {
+    padding: theme.spacing(1),
+    marginLeft: '20px',
+    background: theme.palette.background.default,
+  },
+  toolbar: theme.mixins.toolbar,
+  root: {
+    backgroundColor: theme.palette.common.white,
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+  },
+  childExpansionPanel: {
+    background: theme.palette.background.default,
+    marginTop: 10,
+    boxShadow: 'none',
+  },
+
+  secondaryHeading: {
+    fontFamily: 'Roboto500',
+    lineHeight: `${theme.spacing(3)}px`,
+  },
+
+  subNav: {
+    minWidth: 200,
+    background: theme.palette.background.paper2,
+    borderRight: `solid 1px ${theme.palette.secondary.lightest}`,
+    paddingTop: theme.spacing(2),
+  },
+  deleteIcon: {
+    position: 'absolute',
+    right: '20px',
+  },
+  variationIcon: {
+    position: 'absolute',
+    right: '50px',
+  },
+  content: {
+    width: '100%',
+    height: '100%',
+    padding: theme.spacing(0, 0, 3, 0),
+  },
+  header: {
+    background: 'blue',
+  },
+  listItem: {
+    color: theme.palette.text.primary,
+  },
+  activeListItem: {
+    color: theme.palette.primary.main,
+  },
+  default: {
+    marginBottom: 10,
   },
 }));
 
@@ -95,7 +177,7 @@ function VariationMappingDrawer({ integrationId, parentUrl }) {
               <VariationMappings
                 integrationId={integrationId}
                 flowId={flowId}
-                categoryId={subCategoryId}
+                sectionId={subCategoryId}
               />
             </Grid>
           </Grid>
