@@ -50,7 +50,7 @@ export default {
     },
     'http.unencrypted.marketplaceId': {
       id: 'http.unencrypted.marketplaceId',
-      type: 'select',
+      type: 'marketplaceid',
       label: 'Marketplace Id',
       helpText:
         'Please specify the Amazon MWS "MarketplaceId" for this connection. This value is required for specific Amzaon MWS requests to succeed. Please note that you must be registered to sell in the Amazon MWS "MarketplaceId" selected, else your Amazon MWS calls will fail.',

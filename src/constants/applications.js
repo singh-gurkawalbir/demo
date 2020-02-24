@@ -161,6 +161,12 @@ const connectors = [
   { id: 'aptrinsic', name: 'Aptrinsic', type: 'rest', assistant: 'aptrinsic' },
   { id: 'ariba', name: 'Ariba', type: 'http', assistant: 'ariba' },
   { id: 'asana', name: 'Asana', type: 'rest', assistant: 'asana' },
+  {
+    id: '4castplus',
+    name: '4CastPlus',
+    type: 'http',
+    assistant: '4castplus',
+  },
   { id: 'atera', name: 'Atera', type: 'rest', assistant: 'atera' },
   {
     id: 'authorize.net',
@@ -202,32 +208,32 @@ const connectors = [
   { id: 'chargify', name: 'Chargify', type: 'rest', assistant: 'chargify' },
   // { id: 'clio', name: 'clio', type: 'http', assistant: 'clio' },
   { id: 'clover', name: 'Clover', type: 'http', assistant: 'clover' },
-  { id: 'concur', name: 'Concur', type: 'rest', assistant: 'concur' },
-  {
-    id: 'concurall',
-    name: 'Concur',
-    type: 'rest',
-    assistant: 'concurall',
-    icon: 'concur',
-  },
-  {
-    id: 'concurv4',
-    name: 'Concur',
-    type: 'rest',
-    assistant: 'concurv4',
-    icon: 'concur',
-  },
+  // { id: 'concur', name: 'Concur', type: 'rest', assistant: 'concur' },
+  // {
+  //   id: 'concurall',
+  //   name: 'Concur',
+  //   type: 'rest',
+  //   assistant: 'concurall',
+  //   icon: 'concur',
+  // },
+  // {
+  //   id: 'concurv4',
+  //   name: 'Concur',
+  //   type: 'rest',
+  //   assistant: 'concurv4',
+  //   icon: 'concur',
+  // },
   {
     id: 'constantcontactv2',
     name: 'Constant Contact V2',
-    type: 'http',
+    type: 'rest',
     assistant: 'constantcontactv2',
     icon: 'constantcontactv3',
   },
   {
     id: 'constantcontactv3',
     name: 'Constant Contact V3',
-    type: 'http',
+    type: 'rest',
     assistant: 'constantcontactv3',
     icon: 'constantcontactv3',
   },
@@ -747,8 +753,15 @@ export const groupApplications = (
     }
 
     // Webhooks are shown only for exports and for page generators in flow context
-    if (resourceType && !['exports', 'pageGenerator'].includes(resourceType))
+    if (resourceType && !['exports', 'pageGenerator'].includes(resourceType)) {
+      // for pageProcessor lookups even ftps are not shown
+      if (resourceType === 'pageProcessor' && appType === 'export') {
+        return connector.id !== 'ftp' && !connector.webhookOnly;
+      }
+
+      // all other resource types handled here
       return !connector.webhookOnly;
+    }
 
     return true;
   });

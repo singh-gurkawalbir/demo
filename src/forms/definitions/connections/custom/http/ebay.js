@@ -125,6 +125,16 @@ export default {
       },
       visibleWhen: [{ field: 'accountType', is: ['production'] }],
     },
+    'http._iClientId': {
+      id: 'http._iClientId',
+      resourceType: 'iClients',
+      filter: { provider: 'ebay' },
+      connType: 'ebay',
+      label: 'IClient',
+      type: 'dynaiclient',
+      connectionId: r => r && r._id,
+      connectorId: r => r && r._connectorId,
+    },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
@@ -133,6 +143,7 @@ export default {
       'accountType',
       'http.scopeSandbox',
       'http.scopeProduction',
+      'http._iClientId',
     ],
     type: 'collapse',
     containers: [
