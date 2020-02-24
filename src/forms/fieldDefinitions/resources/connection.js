@@ -1448,6 +1448,11 @@ export default {
       },
     },
   },
+  'as2.partnerStationInfo.mdn.verifyMDNSignature': {
+    type: 'checkbox',
+    label: 'MDN signature verification',
+    helpText: `Check this box if your trading partner requires the MDN signature needs to be verified. By default, integrator.io does not verify the signature.`,
+  },
   'as2.partnerStationInfo.mdn.mdnURL': {
     type: 'text',
     label: "Partner's URL for Asynchronous MDN:",
