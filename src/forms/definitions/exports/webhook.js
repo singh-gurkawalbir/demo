@@ -38,7 +38,7 @@ export default {
       type: 'labeltitle',
       label: 'Public URL & Sample Data',
     },
-    'webhook.provider': { fieldId: 'webhook.provider' },
+    // 'webhook.provider': { fieldId: 'webhook.provider' },
     'webhook.verify': { fieldId: 'webhook.verify' },
     'webhook.algorithm': { fieldId: 'webhook.algorithm' },
     'webhook.encoding': { fieldId: 'webhook.encoding' },
@@ -66,7 +66,7 @@ export default {
     fields: [
       'common',
       'security',
-      'webhook.provider',
+      // 'webhook.provider',
       'webhook.verify',
       'webhook.algorithm',
       'webhook.encoding',
