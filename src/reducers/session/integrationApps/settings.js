@@ -3,10 +3,121 @@ import { uniqBy } from 'lodash';
 import actionTypes from '../../../actions/types';
 
 const emptyObj = {};
+
+function flattenChildrenStructrue(
+  result = [],
+  meta,
+  isRoot = true,
+  options = {}
+) {
+  const { deleted = [], isParentDeleted = false } = options;
+
+  if (meta) {
+    result.push({
+      ...meta,
+      isRoot,
+      deleted: deleted.includes(meta.id) || isParentDeleted,
+    });
+
+    if (meta.children) {
+      meta.children.forEach(child =>
+        flattenChildrenStructrue(result, child, false, {
+          deleted,
+          isParentDeleted: deleted.includes(meta.id),
+        })
+      );
+    }
+  }
+}
+
 const getStateKey = (integrationId, flowId, sectionId) =>
   `${integrationId}${flowId ? `-${flowId}` : ''}${
     sectionId ? `-${sectionId}` : ''
   }`;
+const addCategory = (draft, integrationId, flowId, data) => {
+  const { category, childCategory, grandchildCategory } = data;
+  const { response = [] } = draft[`${flowId}-${integrationId}`];
+  const generatesMetaData = response.find(
+    sec => sec.operation === 'generatesMetaData'
+  );
+  const categoryRelationshipData =
+    generatesMetaData &&
+    generatesMetaData.data &&
+    generatesMetaData.data.categoryRelationshipData;
+  const mappingData = response.find(sec => sec.operation === 'mappingData');
+  let childCategoryDetails;
+  let grandchildCategoryDetails;
+  const categoryDetails = categoryRelationshipData.find(
+    rel => rel.id === category
+  );
+
+  if (childCategory && categoryDetails.children) {
+    childCategoryDetails = categoryDetails.children.find(
+      child => child.id === childCategory
+    );
+  }
+
+  if (
+    childCategoryDetails &&
+    grandchildCategory &&
+    childCategoryDetails.children
+  ) {
+    grandchildCategoryDetails = childCategoryDetails.children.find(
+      child => child.id === grandchildCategory
+    );
+  }
+
+  if (
+    mappingData.data &&
+    mappingData.data.mappingData &&
+    mappingData.data.mappingData.basicMappings &&
+    mappingData.data.mappingData.basicMappings.recordMappings
+  ) {
+    const { recordMappings } = mappingData.data.mappingData.basicMappings;
+
+    if (!recordMappings.find(mapping => mapping.id === category)) {
+      recordMappings.push({
+        id: category,
+        name: categoryDetails.name,
+        children: [],
+        fieldMappings: [],
+      });
+    }
+
+    if (!childCategory) {
+      return;
+    }
+
+    const { children = [] } = recordMappings.find(
+      mapping => mapping.id === category
+    );
+
+    if (!children.find(child => child.id === childCategory)) {
+      children.push({
+        id: childCategory,
+        name: childCategoryDetails.name,
+        children: [],
+        fieldMappings: [],
+      });
+    }
+
+    if (!grandchildCategory) {
+      return;
+    }
+
+    const grandChildren =
+      children.find(child => child.id === childCategory).children || [];
+
+    if (!grandChildren.find(child => child.id === grandchildCategory)) {
+      grandChildren.push({
+        id: grandchildCategory,
+        name: grandchildCategoryDetails.name,
+        children: [],
+        fieldMappings: [],
+      });
+    }
+  }
+};
 
 export default (state = {}, action) => {
   const {
@@ -20,6 +131,7 @@ export default (state = {}, action) => {
     error,
     filters,
     sectionId,
+    data,
   } = action;
   const key = getStateKey(integrationId, flowId, sectionId);
   let categoryMappingData;
@@ -137,6 +249,34 @@ export default (state = {}, action) => {
         }
 
         break;
+      case actionTypes.INTEGRATION_APPS.SETTINGS.ADD_CATEGORY:
+        if (draft[`${flowId}-${integrationId}`])
+          addCategory(draft, integrationId, flowId, data);
+
+        break;
+      case actionTypes.INTEGRATION_APPS.SETTINGS.DELETE_CATEGORY:
+        if (draft[`${flowId}-${integrationId}`]) {
+          if (!draft[`${flowId}-${integrationId}`].deleted) {
+            draft[`${flowId}-${integrationId}`].deleted = [];
+          }
+
+          draft[`${flowId}-${integrationId}`].deleted.push(sectionId);
+        }
+
+        break;
+      case actionTypes.INTEGRATION_APPS.SETTINGS.RESTORE_CATEGORY:
+        if (
+          draft[`${flowId}-${integrationId}`] &&
+          draft[`${flowId}-${integrationId}`].deleted &&
+          draft[`${flowId}-${integrationId}`].deleted.indexOf(sectionId) > -1
+        ) {
+          draft[`${flowId}-${integrationId}`].deleted.splice(
+            draft[`${flowId}-${integrationId}`].deleted.indexOf(sectionId),
+            1
+          );
+        }
+
+        break;
       case actionTypes.INTEGRATION_APPS.SETTINGS
         .RECEIVED_CATEGORY_MAPPING_METADATA:
         ({ response: categoryMappingData } = metadata);
@@ -194,24 +334,13 @@ export function categoryMapping(state, integrationId, flowId) {
   return state[`${flowId}-${integrationId}`];
 }
 
-function flattenChildrenStructrue(result = [], meta, isRoot = true) {
-  if (meta) {
-    result.push({ ...meta, isRoot });
-
-    if (meta.children) {
-      meta.children.forEach(child =>
-        flattenChildrenStructrue(result, child, false)
-      );
-    }
-  }
-}
-
 export function categoryMappingData(state, integrationId, flowId) {
   if (!state) {
     return null;
   }
 
-  const { response = [] } = state[`${flowId}-${integrationId}`] || emptyObj;
+  const { response = [], deleted = [] } =
+    state[`${flowId}-${integrationId}`] || emptyObj;
   const mappings = [];
   let mappingMetadata = [];
   const basicMappingData = response.find(
@@ -224,7 +353,7 @@ export function categoryMappingData(state, integrationId, flowId) {
   }
 
   mappingMetadata.forEach(meta => {
-    flattenChildrenStructrue(mappings, meta);
+    flattenChildrenStructrue(mappings, meta, true, { deleted });
   });
 
   return mappings;

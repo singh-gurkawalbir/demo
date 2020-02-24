@@ -19,6 +19,7 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.common.white,
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
+    overflowX: 'scroll',
   },
 }));
 
@@ -27,8 +28,15 @@ export default function ConnectionsPanel({ integrationId, storeId }) {
   const [showRegister, setShowRegister] = useState(false);
   const location = useLocation();
   const dispatch = useDispatch();
+  const filterKey = `${integrationId}+${storeId || ''}+connections`;
+  const tableConfig = useSelector(state => selectors.filter(state, filterKey));
   const connections = useSelector(state =>
-    selectors.integrationAppConnectionList(state, integrationId, storeId)
+    selectors.integrationAppConnectionList(
+      state,
+      integrationId,
+      storeId,
+      tableConfig
+    )
   );
   // TODO: All this logic should go into a single selector called "canManageConnections",
   // or some equivalent name. This would also reduce the complexity of managing
@@ -97,6 +105,7 @@ export default function ConnectionsPanel({ integrationId, storeId }) {
       <LoadResources required resources="connections,flows,exports,imports">
         <CeligoTable
           data={connections}
+          filterKey={filterKey}
           {...metadata}
           actionProps={{ integrationId }}
         />

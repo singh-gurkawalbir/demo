@@ -80,9 +80,20 @@ export default {
       const modelMetadataField = fields.find(
         field => field.fieldId === 'modelMetadata'
       );
+      let queryTypeVal;
+
+      if (queryTypeField) {
+        if (fieldId === 'rdbms.query') {
+          queryTypeVal = queryTypeField && queryTypeField.value;
+        } else if (fieldId === 'rdbms.queryUpdate') {
+          queryTypeVal = 'UPDATE';
+        } else if (fieldId === 'rdbms.queryInsert') {
+          queryTypeVal = 'INSERT';
+        }
+      }
 
       return {
-        queryType: queryTypeField && queryTypeField.value,
+        queryType: queryTypeVal,
         modelMetadataFieldId: modelMetadataField.fieldId,
         modelMetadata: modelMetadataField && modelMetadataField.value,
         lookups: {

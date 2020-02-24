@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import React, { useCallback, useState } from 'react';
+import React, { Fragment, useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
 import {
   useLocation,
@@ -12,6 +12,9 @@ import { makeStyles, IconButton, Typography, Drawer } from '@material-ui/core';
 import * as selectors from '../../../reducers';
 import CloseIcon from '../../icons/CloseIcon';
 import ArrowLeftIcon from '../../icons/ArrowLeftIcon';
+import InfoIcon from '../../icons/InfoIcon';
+import ArrowPopper from '../../ArrowPopper';
+import TooltipContent from '../../TooltipContent';
 
 const bannerHeight = 65;
 const useStyles = makeStyles(theme => ({
@@ -25,7 +28,7 @@ const useStyles = makeStyles(theme => ({
     background: theme.palette.background.paper,
     display: 'flex',
     alignItems: 'center',
-    padding: '14px 24px',
+    padding: theme.spacing(2, 3),
     '& > :not(:last-child)': {
       marginRight: theme.spacing(2),
     },
@@ -50,9 +53,15 @@ const useStyles = makeStyles(theme => ({
   },
   short: {
     marginTop: theme.appBarHeight + theme.pageBarHeight,
+    paddingBottom: theme.appBarHeight + theme.pageBarHeight,
   },
   banner: {
     marginTop: theme.appBarHeight + theme.pageBarHeight + bannerHeight,
+  },
+  popperMaxWidthView: {
+    maxWidth: 250,
+    maxHeight: 300,
+    overflowY: 'auto',
   },
 }));
 
@@ -63,6 +72,7 @@ export default function RightDrawer({
   height = 'short',
   children,
   onClose,
+  infoText,
   variant = 'persistent',
   ...rest
 }) {
@@ -81,6 +91,13 @@ export default function RightDrawer({
 
     history.goBack();
   }, [history, onClose]);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const handleInfoOpen = useCallback(event => {
+    setAnchorEl(event.currentTarget);
+  }, []);
+  const handleInfoClose = useCallback(() => {
+    setAnchorEl(null);
+  }, []);
 
   return (
     <Switch>
@@ -100,6 +117,7 @@ export default function RightDrawer({
           <div className={classes.titleBar}>
             {showBack && (
               <IconButton
+                size="small"
                 data-test="backRightDrawer"
                 aria-label="Close"
                 onClick={handleClose}>
@@ -108,8 +126,32 @@ export default function RightDrawer({
             )}
             <Typography variant="h3" className={classes.title}>
               {title}
+              {infoText && (
+                <Fragment>
+                  <IconButton
+                    data-test="openPanelInfo"
+                    size="small"
+                    className={classes.infoIcon}
+                    onClick={handleInfoOpen}
+                    aria-owns={!anchorEl ? null : 'panelInfo'}
+                    aria-haspopup="true">
+                    <InfoIcon />
+                  </IconButton>
+                  <ArrowPopper
+                    id="panelInfo"
+                    open={!!anchorEl}
+                    anchorEl={anchorEl}
+                    placement="left-start"
+                    onClose={handleInfoClose}>
+                    <TooltipContent className={classes.popperMaxWidthView}>
+                      {infoText}
+                    </TooltipContent>
+                  </ArrowPopper>
+                </Fragment>
+              )}
             </Typography>
             <IconButton
+              size="small"
               data-test="closeRightDrawer"
               aria-label="Close"
               onClick={handleClose}>

@@ -15,6 +15,7 @@ import {
   LookupResponseMappingExtracts,
   ImportResponseMappingExtracts,
 } from './mapping';
+import { isConnector } from './flows';
 
 const sampleDataStage = {
   exports: {
@@ -194,11 +195,12 @@ export const isRawDataPatchSet = (patchSet = []) =>
 /*
  * File adaptor / Real time( NS/ SF/ Webhooks)/ Blob type/ Rest CSV resources need UI Data to be passed in Page processor preview
  */
-export const isUIDataExpectedForResource = (resource, connection) =>
+export const isUIDataExpectedForResource = (resource, connection, flow) =>
   isRealTimeOrDistributedResource(resource) ||
   isFileAdaptor(resource) ||
   isRestCsvMediaTypeExport(resource, connection) ||
-  isBlobTypeResource(resource);
+  isBlobTypeResource(resource) ||
+  isConnector(flow);
 
 // A dummy _Context field to expose on each preview data on flows
 export const getContextInfo = () => ({

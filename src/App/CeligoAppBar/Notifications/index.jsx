@@ -1,38 +1,27 @@
 import { useState, useCallback, Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import {
-  Typography,
-  Tooltip,
-  IconButton,
-  List,
-  ListItem,
-  ListItemText,
-  ListItemSecondaryAction,
-} from '@material-ui/core';
-// TODO: Azhar, can you update these to Celigo icons? (if needed)
-import AcceptIcon from '@material-ui/icons/Check';
-import Badge from '@material-ui/core/Badge';
+import { Tooltip, IconButton, Badge, Divider } from '@material-ui/core';
 import NotificationsIcon from '../../../components/icons/NotificationsIcon';
 import ArrowPopper from '../../../components/ArrowPopper';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
-import DismissIcon from '../../../components/icons/CloseIcon';
+import InvitationItem from './InvitationItem';
 
 const useStyles = makeStyles(theme => ({
-  itemContainer: {
-    '& button': { display: 'none' },
-    '&:hover button': {
-      display: 'inline',
-    },
-  },
-  itemRoot: {
-    paddingRight: 110,
+  notificationContainer: {
+    padding: theme.spacing(3),
   },
   badgeText: {
     '& > span': {
+      height: 15,
+      minWidth: 15,
+      transform: `scale(1) translate(33%, -20%)`,
       color: theme.palette.background.paper,
     },
+  },
+  divider: {
+    margin: theme.spacing(2, 0),
   },
 }));
 
@@ -59,7 +48,7 @@ export default function Notifications() {
   const handleClose = useCallback(() => {
     setAnchorEl(null);
   }, []);
-  const handleAction = useCallback(
+  const handleActionClick = useCallback(
     (resourceType, action, id) => () => {
       switch (action) {
         case 'accept':
@@ -106,39 +95,27 @@ export default function Notifications() {
         anchorEl={anchorEl}
         placement="bottom-end"
         onClose={handleClose}>
-        <List dense>
-          {notifications.map(a => (
-            <ListItem
-              classes={{
-                root: classes.itemRoot,
-                container: classes.itemContainer,
-              }}
-              key={`${a.id}`}>
-              <ListItemText
-                primary={
-                  <Typography component="span">{a.primaryMessage}</Typography>
+        <div className={classes.notificationContainer}>
+          {notifications.map((n, i) => (
+            <Fragment key={n.id}>
+              <InvitationItem
+                id={n.id}
+                type={n.type}
+                onActionClick={handleActionClick}
+                name={n.nameOrCompany}
+                email={n.email}
+                message={
+                  n.type === 'account'
+                    ? 'is inviting you to join their account.'
+                    : `${n.email} has shared the "${n.stackName}" stack with you.`
                 }
-                secondary={<Typography>{a.secondaryMessage}</Typography>}
               />
-              <ListItemSecondaryAction>
-                <IconButton
-                  className={classes.button}
-                  data-test={`accept ${a.type} share`}
-                  aria-label="Accept"
-                  onClick={handleAction(a.type, 'accept', a.id)}>
-                  <AcceptIcon />
-                </IconButton>
-                <IconButton
-                  className={classes.button}
-                  data-test={`dismiss ${a.type} share`}
-                  aria-label="Dismiss"
-                  onClick={handleAction(a.type, 'reject', a.id)}>
-                  <DismissIcon />
-                </IconButton>
-              </ListItemSecondaryAction>
-            </ListItem>
+              {i < notifications.length - 1 && (
+                <Divider className={classes.divider} />
+              )}
+            </Fragment>
           ))}
-        </List>
+        </div>
       </ArrowPopper>
     </Fragment>
   );

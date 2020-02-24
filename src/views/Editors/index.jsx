@@ -266,7 +266,7 @@ export default class Editors extends Component {
 
     return (
       <Fragment>
-        <CeligoPageBar title="Editor playground (Beta)" />
+        <CeligoPageBar title="Editor playground (alpha)" />
 
         <div className={classes.appFrame}>
           <Drawer

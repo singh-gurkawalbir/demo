@@ -24,16 +24,11 @@ export function basicFieldsMeta({ assistantConfig, assistantData }) {
       fieldId: 'assistantMetadata.resource',
       value: assistantConfig.resource,
       required: true,
-      refreshOptionsOnChangesTo: ['assistantMetadata.version'],
     },
     operation: {
       fieldId: 'assistantMetadata.operation',
       value: assistantConfig.operation || assistantConfig.operationUrl,
       required: true,
-      refreshOptionsOnChangesTo: [
-        'assistantMetadata.version',
-        'assistantMetadata.resource',
-      ],
     },
   };
   const { labels = {}, versions = [] } = assistantData;
@@ -65,11 +60,6 @@ export function pathParameterFieldsMeta({ operationParameters = [], values }) {
         type: 'text',
         value: values[pathParam.id],
         required: !!pathParam.required,
-        refreshOptionsOnChangesTo: [
-          'assistantMetadata.version',
-          'assistantMetadata.resource',
-          'assistantMetadata.operation',
-        ],
       };
 
       if (pathParam.options && pathParam.options.length > 0) {

@@ -1,6 +1,7 @@
 import produce from 'immer';
 import moment from 'moment';
 import sift from 'sift';
+import { get } from 'lodash';
 import actionTypes from '../../../actions/types';
 
 const emptyObject = {};
@@ -17,7 +18,8 @@ const resourceTypesToIgnore = [
 function replaceOrInsertResource(state, resourceType, resourceValue) {
   // handle case of no collection
   let type = resourceType;
-  const resource = resourceValue;
+  // RESOURCE_RECEIVED is being called with null on some GET resource calls when api doesnt return anything.
+  const resource = resourceValue || {};
 
   if (type.indexOf('/licenses') >= 0) {
     const id = type.substring('connectors/'.length, type.indexOf('/licenses'));
@@ -450,8 +452,8 @@ export function resourceList(
     return result;
   }
 
-  if (type === 'assistants') {
-    return state['ui/assistants'];
+  if (type === 'ui/assistants') {
+    return state[type];
   }
 
   const resources = state[type];
@@ -470,11 +472,14 @@ export function resourceList(
   };
 
   function desc(a, b, orderBy) {
-    if (b[orderBy] < a[orderBy]) {
+    const aVal = get(a, orderBy);
+    const bVal = get(b, orderBy);
+
+    if (bVal < aVal) {
       return -1;
     }
 
-    if (b[orderBy] > a[orderBy]) {
+    if (bVal > aVal) {
       return 1;
     }
 

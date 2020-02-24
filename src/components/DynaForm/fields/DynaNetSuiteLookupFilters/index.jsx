@@ -7,6 +7,7 @@ import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import FilterPanel from './FilterPanel';
 import Spinner from '../../../Spinner';
+import { wrapSpecialChars } from '../../../../utils/jsonPaths';
 
 /**
  * TODO: Azhar to check and update the button styles
@@ -55,15 +56,16 @@ export default function DynaNetSuiteLookupFilters(props) {
     rule = value;
   }
 
+  const modifiedData = Array.isArray(data) ? data.map(wrapSpecialChars) : data;
   const handleEditorInit = useCallback(() => {
     dispatch(
       actions.editor.init(editorId, 'netsuiteLookupFilter', {
-        data,
+        modifiedData,
         autoEvaluate: false,
         rule,
       })
     );
-  }, [data, dispatch, editorId, rule]);
+  }, [dispatch, editorId, modifiedData, rule]);
 
   useEffect(() => {
     if (editorId) {
@@ -131,7 +133,7 @@ export default function DynaNetSuiteLookupFilters(props) {
         id={id}
         editorId={editorId}
         rule={rule}
-        data={data}
+        data={modifiedData}
         filters={filters}
         onFieldChange={onFieldChange}
       />

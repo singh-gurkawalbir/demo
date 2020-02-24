@@ -602,6 +602,13 @@ export const getMetadata = ({
         type: 'crongenerator',
         label: 'Schedule',
         defaultValue: schedule || '? * * * * *',
+        validWhen: {
+          matchesRegEx: {
+            pattern: '^(?!\\? \\* )',
+            message: 'Please select minutes',
+          },
+        },
+        required: true,
         visibleWhenAll: [
           {
             field: 'activeTab',

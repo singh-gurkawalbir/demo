@@ -36,7 +36,7 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center',
     height: 'inherit',
     zIndex: 1,
-    padding: 22,
+    padding: 14,
     '& span': {
       marginLeft: '10px',
       color: theme.palette.background.paper,
@@ -63,7 +63,6 @@ const useStyles = makeStyles(theme => ({
   },
   name: {
     width: '18.15%',
-    wordBreak: 'break-word',
   },
   status: {
     width: '10.15%',
@@ -102,18 +101,25 @@ const useStyles = makeStyles(theme => ({
     textAlign: 'right',
   },
   completed: {
-    width: '10.5%',
+    width: '11.5%',
+    whiteSpace: 'nowrap',
   },
   actions: {
-    width: '8.35%',
+    width: '7.5%',
     textAlign: 'center',
   },
   stateBtn: {
     color: theme.palette.error.main,
     float: 'right',
+    padding: 0,
+    minWidth: 'unset',
     '&:hover': {
       color: `${theme.palette.error.dark} !important`,
     },
+  },
+  checkActionBorder: {
+    paddingLeft: '13px',
+    borderLeft: `5px solid ${theme.palette.primary.main}`,
   },
 }));
 
@@ -241,7 +247,10 @@ function JobDetail({
   return (
     <Fragment>
       <TableRow>
-        <TableCell>
+        <TableCell
+          className={clsx({
+            [classes.checkActionBorder]: isSelected && expanded && job.children,
+          })}>
           <ul className={classes.checkAction}>
             <li>
               {job.uiStatus !== JOB_STATUS.QUEUED && (
@@ -339,9 +348,11 @@ function JobDetail({
         </TableCell>
       </TableRow>
       {expanded && !job.children && (
-        <div className={classes.spinner}>
-          <Spinner size={20} /> <span>Loading child jobs...</span>
-        </div>
+        <TableRow>
+          <TableCell className={classes.spinner}>
+            <Spinner size={20} /> <span>Loading child jobs...</span>
+          </TableCell>
+        </TableRow>
       )}
       {expanded &&
         job.children &&

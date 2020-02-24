@@ -5,10 +5,10 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import RefreshIcon from '@material-ui/icons/Refresh';
 import { IconButton } from '@material-ui/core';
 import ShareStackUserDetail from './ShareStackUserDetail';
 import actions from '../../actions';
+import RefreshIcon from '../icons/RefreshIcon';
 
 const styles = theme => ({
   root: {

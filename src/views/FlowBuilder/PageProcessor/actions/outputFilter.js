@@ -63,7 +63,7 @@ function OutputFilterDialog({
 
   return (
     <OutputFilterToggleEditorDialog
-      title="Define Output Filter"
+      title="Define output filter"
       disabled={isViewMode}
       id={resourceId + flowId}
       data={sampleData}

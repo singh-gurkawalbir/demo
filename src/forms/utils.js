@@ -131,6 +131,26 @@ export const isAnyExpansionPanelFieldVisible = (meta, fieldStates) => {
   );
 };
 
+export const disableAllFieldsExceptClockedFields = (meta, clockedFields) => {
+  const { layout, fieldMap } = meta;
+  const updatedFieldMap = Object.keys(fieldMap).reduce((acc, curr) => {
+    if (!clockedFields.includes(fieldMap[curr].id))
+      acc[curr] = {
+        ...fieldMap[curr],
+        defaultDisabled: true,
+      };
+    else {
+      acc[curr] = {
+        ...fieldMap[curr],
+      };
+    }
+
+    return acc;
+  }, {});
+
+  return { layout, fieldMap: updatedFieldMap };
+};
+
 export const getFieldByName = ({ fieldMeta, name }) => {
   const res = searchMetaForFieldByFindFunc(fieldMeta, f => f.name === name);
 
@@ -143,6 +163,13 @@ export const isAnyFieldTouchedForMeta = ({ layout, fieldMap }, fields) =>
   fields
     .filter(field => field.touched)
     .some(({ id }) => !!getFieldByIdFromLayout(layout, fieldMap, id));
+export const isAnyFieldVisibleForMeta = ({ layout, fieldMap }, fields) =>
+  fields
+    .filter(field => field.visible)
+    .some(({ id }) => !!getFieldByIdFromLayout(layout, fieldMap, id));
+
+export const fieldsTouchedForMeta = ({ layout, fieldMap }, fields) =>
+  fields.filter(({ id }) => !!getFieldByIdFromLayout(layout, fieldMap, id));
 
 export const getFieldByNameFromLayout = (layout, fieldMap, name) => {
   if (!layout) return null;
@@ -424,7 +451,9 @@ export const translateDependencyProps = fieldMap => {
             fieldMapCopy[ref].visibleWhenAll,
             visibleRule
           );
-        } else if (requiredRule) {
+        }
+
+        if (requiredRule) {
           fieldMapCopy[ref].requiredWhenAll = pushRuleToMeta(
             fieldMapCopy[ref].requiredWhenAll,
             requiredRule

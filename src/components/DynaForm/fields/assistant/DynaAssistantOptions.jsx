@@ -1,3 +1,5 @@
+import FormContext from 'react-forms-processor/dist/components/FormContext';
+import { useEffect, useState, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import MaterialUiSelect from '../DynaSelect';
 import * as selectors from '../../../../reducers/index';
@@ -5,7 +7,7 @@ import actions from '../../../../actions';
 import { SCOPES } from '../../../../sagas/resourceForm';
 import { selectOptions } from './util';
 
-export default function DynaAssistantOptions(props) {
+function DynaAssistantOptions(props) {
   const {
     label,
     resourceContext,
@@ -13,25 +15,73 @@ export default function DynaAssistantOptions(props) {
     resourceType,
     resourceId,
     assistantFieldType,
+    fields,
   } = props;
+  const formContext = useMemo(
+    () =>
+      [
+        'assistant',
+        'adaptorType',
+        'version',
+        'resource',
+        'operation',
+        'exportType',
+      ].reduce(
+        (values, fId) => ({
+          ...values,
+          [fId]: (
+            fields.find(field => field.id === `assistantMetadata.${fId}`) || {}
+          ).value,
+        }),
+        {}
+      ),
+    [fields]
+  );
   const assistantData = useSelector(state =>
     selectors.assistantData(state, {
-      adaptorType: options.adaptorType,
-      assistant: options.assistant,
+      adaptorType: formContext.adaptorType,
+      assistant: formContext.assistant,
     })
   );
   const dispatch = useDispatch();
-  let selectOptionsItems =
-    options && options[0] && options[0].items ? options[0].items : [];
+  const selectOptionsItems = useMemo(() => {
+    if (['version', 'resource', 'operation'].includes(assistantFieldType)) {
+      return selectOptions({
+        assistantFieldType,
+        assistantData,
+        formContext,
+        resourceType: resourceContext.resourceType,
+      });
+    }
 
-  if (['version', 'resource', 'operation'].includes(assistantFieldType)) {
-    selectOptionsItems = selectOptions({
-      assistantFieldType,
-      assistantData,
-      options,
-      resourceType: resourceContext.resourceType,
-    });
-  }
+    return options && options[0] && options[0].items ? options[0].items : [];
+  }, [
+    assistantData,
+    assistantFieldType,
+    formContext,
+    options,
+    resourceContext.resourceType,
+  ]);
+  const [componentMounted, setComponentMounted] = useState(false);
+  const formState = useSelector(state =>
+    selectors.resourceFormState(state, resourceType, resourceId)
+  );
+
+  useEffect(() => {
+    // resouceForm init causes the form to remount
+    // when there is any initialization data do we perform at this step
+    if (!componentMounted && formState.initData) {
+      formState.initData.length &&
+        formState.initData.forEach(field => {
+          const { id, value } = field;
+
+          props.onFieldChange(id, value);
+        });
+      dispatch(actions.resourceForm.clearInitData(resourceType, resourceId));
+    }
+
+    setComponentMounted(true);
+  }, [componentMounted, dispatch, formState, props, resourceId, resourceType]);
 
   function onFieldChange(id, value) {
     props.onFieldChange(id, value);
@@ -86,9 +136,19 @@ export default function DynaAssistantOptions(props) {
           SCOPES.VALUE
         )
       );
+      const allTouchedFields = fields
+        .filter(field => !!field.touched)
+        .map(field => ({ id: field.id, value: field.value }));
 
       dispatch(
-        actions.resourceForm.init(resourceType, resourceId, false, false)
+        actions.resourceForm.init(
+          resourceType,
+          resourceId,
+          false,
+          false,
+          undefined,
+          allTouchedFields
+        )
       );
     }
   }
@@ -102,3 +162,11 @@ export default function DynaAssistantOptions(props) {
     />
   );
 }
+
+const WrappedContextConsumer = props => (
+  <FormContext.Consumer>
+    {form => <DynaAssistantOptions {...form} {...props} />}
+  </FormContext.Consumer>
+);
+
+export default WrappedContextConsumer;

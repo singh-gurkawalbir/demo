@@ -69,13 +69,7 @@ const isActionUsed = (resource, resourceType, flowNode, action) => {
     }
 
     case actionsMap.importMapping: {
-      const appType =
-        resource.adaptorType && adaptorTypeMap[resource.adaptorType];
-      const mappings = mappingUtil.getMappingFromResource(
-        resource,
-        appType,
-        true
-      );
+      const mappings = mappingUtil.getMappingFromResource(resource, true);
       const { fields = [], lists = [] } = mappings || {};
 
       return !!(fields.length || lists.length);
@@ -200,3 +194,18 @@ export const isPageGeneratorResource = (flow = {}, resourceId) => {
  * Based on _connectorId on flow Doc, we determine whether this flow is a connector
  */
 export const isConnector = (flow = {}) => !!(flow && flow._connectorId);
+
+/*
+ * Based on free property on flow Doc, we determine whether this flow is a free flow
+ */
+export const isFreeFlowResource = (flow = {}) => !!(flow && flow.free);
+
+/*
+ * Returns true/false, whether passed resource is a lookup or not for the passed flow
+ */
+export const isLookupResource = (flow = {}, resource = {}) => {
+  if (resource.isLookup) return true;
+  const { pageProcessors = [] } = flow;
+
+  return !!pageProcessors.find(pp => pp._exportId === resource._id);
+};
