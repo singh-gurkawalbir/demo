@@ -1,8 +1,8 @@
 import { useEffect, useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import ImportMapping from './Mappings';
 import * as selectors from '../../../../../../../reducers';
 import actions from '../../../../../../../actions';
+import ImportMapping from './Mappings';
 
 export default function MappingWrapper(props) {
   const { id, flowId, generateFields, sectionId, integrationId } = props;

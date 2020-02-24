@@ -8,11 +8,11 @@ import {
   useLocation,
 } from 'react-router-dom';
 import * as selectors from '../../../../../../reducers';
+import actions from '../../../../../../actions';
 import DynaForm from '../../../../../../components/DynaForm';
 import DynaSubmit from '../../../../../../components/DynaForm/DynaSubmit';
-import DrawerTitleBar from './TitleBar';
 import LoadResources from '../../../../../../components/LoadResources';
-import actions from '../../../../../../actions';
+import DrawerTitleBar from './TitleBar';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {

@@ -2,27 +2,30 @@ import { useState, useEffect, Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Route, useRouteMatch, useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
-import Drawer from '@material-ui/core/Drawer';
-import { Grid, Typography } from '@material-ui/core';
-import ExpansionPanel from '@material-ui/core/ExpansionPanel';
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+import {
+  Grid,
+  Drawer,
+  Typography,
+  ExpansionPanel,
+  ExpansionPanelDetails,
+  ExpansionPanelSummary,
+} from '@material-ui/core';
 import * as selectors from '../../../../../../reducers';
-import DrawerTitleBar from './TitleBar';
-import LoadResources from '../../../../../../components/LoadResources';
 import actions from '../../../../../../actions';
+import LoadResources from '../../../../../../components/LoadResources';
 import Loader from '../../../../../../components/Loader';
 import Spinner from '../../../../../../components/Spinner';
-import Filters from './Filters';
 import PanelHeader from '../../../../../../components/PanelHeader';
 import TrashIcon from '../../../../../../components/icons/TrashIcon';
 import RestoreIcon from '../../../../../../components/icons/RestoreIcon';
-import Mappings from './BasicMapping/MappingsWrapper';
-import CategoryList from './CategoryList';
 import ApplicationImg from '../../../../../../components/icons/ApplicationImg';
 import ArrowUpIcon from '../../../../../../components/icons/ArrowUpIcon';
 import ArrowDownIcon from '../../../../../../components/icons/ArrowDownIcon';
 import VariationIcon from '../../../../../../components/icons/AdjustInventoryIcon';
+import Mappings from './BasicMapping/MappingsWrapper';
+import Filters from './Filters';
+import CategoryList from './CategoryList';
+import DrawerTitleBar from './TitleBar';
 
 const emptySet = [];
 const drawerWidth = 200;

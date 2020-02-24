@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
-import Mappings from '../BasicMapping/MappingsWrapper';
 import * as selectors from '../../../../../../../reducers';
+import Mappings from '../BasicMapping/MappingsWrapper';
 
 const emptySet = [];
 const useStyles = makeStyles(() => ({
