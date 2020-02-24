@@ -156,7 +156,7 @@ export default function ResponseMappingDialog(props) {
     pageProcessorsObject && pageProcessorsObject.responseMapping;
   const formattedResponseMapping = mappingUtil.getMappingsForApp({
     mappings: responseMappings,
-    appType: application,
+    resource,
   });
   const [state, dispatchLocalAction] = useReducer(
     reducer,
