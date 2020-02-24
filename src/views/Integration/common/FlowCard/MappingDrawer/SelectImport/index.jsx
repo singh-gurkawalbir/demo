@@ -87,6 +87,7 @@ export default function SelectImport({ flowId }) {
         <Fragment key={i._id}>
           <div key={i._id}>
             <Button
+              data-key="mapping"
               className={classes.button}
               component={Link}
               to={`${match.url}/${i._id}`}>
@@ -98,9 +99,11 @@ export default function SelectImport({ flowId }) {
           </div>
           {subrecordImports &&
             subrecordImports[i._id] &&
-            subrecordImports[i._id].map(sr => (
+            subrecordImports[i._id].map((sr, index) => (
               <div key={`${i._id}-${sr.fieldId}`}>
                 <Button
+                  data-test={`subrecordMapping-${index}`}
+                  // sub-record parent
                   className={classes.button}
                   component={Link}
                   to={`${match.url}/${i._id}/${sr.fieldId}`}>
