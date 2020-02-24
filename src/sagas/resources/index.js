@@ -39,7 +39,7 @@ function* isDataLoaderFlow(flow) {
 
 export function* resourceConflictDetermination({
   path,
-  master,
+  merged,
   id,
   scope,
   resourceType,
@@ -52,8 +52,8 @@ export function* resourceConflictDetermination({
     return { error };
   }
 
-  if (origin.lastModified !== master.lastModified) {
-    let conflict = jsonPatch.compare(master, origin);
+  if (origin.lastModified !== merged.lastModified) {
+    let conflict = jsonPatch.compare(merged, origin);
 
     conflict = util.removeItem(conflict, p => p.path === '/lastModified');
 
@@ -122,7 +122,7 @@ export function* commitStagedChanges({ resourceType, id, scope }) {
   if (!isNew) {
     const resp = yield call(resourceConflictDetermination, {
       path,
-      master,
+      merged,
       id,
       scope,
       resourceType,

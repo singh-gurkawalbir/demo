@@ -47,12 +47,12 @@ describe('commitStagedChanges saga', () => {
       expect(saga.next().value).toEqual(
         select(selectors.resourceData, resourceType, id, undefined)
       );
-      const master = { lastModified: 50 };
+      const merged = { lastModified: 50 };
 
-      expect(saga.next({ master, patch: true }).value).toEqual(
+      expect(saga.next({ merged, patch: true }).value).toEqual(
         call(resourceConflictDetermination, {
           path,
-          master,
+          merged,
           id,
           scope: undefined,
           resourceType,
@@ -86,7 +86,7 @@ describe('commitStagedChanges saga', () => {
       expect(getCallEffect).toEqual(
         call(resourceConflictDetermination, {
           path,
-          master,
+          merged,
           id,
           scope: undefined,
           resourceType,
@@ -189,7 +189,7 @@ describe('commitStagedChanges saga', () => {
       message: 'Session Expired',
     });
     const path = '/somePath';
-    const master = {
+    const merged = {
       lastModified: '12',
       someProp: 'abc',
       commonProp1: 'a',
@@ -212,7 +212,7 @@ describe('commitStagedChanges saga', () => {
     test('should report a conflict when the common properties of origin and master are different ', () => {
       const saga = resourceConflictDetermination({
         path,
-        master,
+        merged,
         id,
         scope,
         resourceType,
@@ -245,7 +245,7 @@ describe('commitStagedChanges saga', () => {
     test('should not report a conflict when the common properties of origin and master are the same ', () => {
       const saga = resourceConflictDetermination({
         path,
-        master,
+        merged,
         id,
         scope,
         resourceType,
@@ -267,7 +267,7 @@ describe('commitStagedChanges saga', () => {
     test('should exit the saga and return an error when the call to origin fails', () => {
       const saga = resourceConflictDetermination({
         path,
-        master,
+        merged,
         id,
         scope,
         resourceType,
