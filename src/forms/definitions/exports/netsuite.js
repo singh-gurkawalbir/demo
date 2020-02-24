@@ -115,6 +115,24 @@ export default {
 
     return newValues;
   },
+  optionsHandler: (fieldId, fields) => {
+    if (fieldId === 'netsuite.distributed.skipExportFieldId') {
+      const recordTypeField = fields.find(
+        field => field.fieldId === 'netsuite.distributed.recordType'
+      );
+
+      return {
+        commMetaPath:
+          recordTypeField &&
+          `netsuite/metadata/suitescript/connections/${recordTypeField.connectionId}/recordTypes/${recordTypeField.value}/searchFilters?includeJoinFilters=true`,
+        resetValue:
+          recordTypeField &&
+          recordTypeField.value !== recordTypeField.defaultValue,
+      };
+    }
+
+    return null;
+  },
   fieldMap: {
     'netsuite.netsuiteExportlabel': {
       fieldId: 'netsuite.netsuiteExportlabel',
@@ -187,9 +205,11 @@ export default {
         // if its create
         if (isNew) return 'records';
 
-        const output = r && r.netsuite && r.netsuite.internalId;
+        const outputMode = r && r.netsuite && r.netsuite.internalId;
 
-        return output ? 'blob' : 'records';
+        if (outputMode === 'blob') return 'blob';
+
+        return 'records';
       },
     },
     'netsuite.api.type': {
@@ -278,6 +298,17 @@ export default {
         { field: 'outputMode', is: ['records'] },
       ],
     },
+    'netsuite.distributed.skipExportFieldId': {
+      fieldId: 'netsuite.distributed.skipExportFieldId',
+      type: 'refreshableselect',
+      connectionId: r => r && r._connectionId,
+      filterKey: 'suitescript-booleanField',
+      refreshOptionsOnChangesTo: ['netsuite.distributed.recordType'],
+      visibleWhenAll: [
+        { field: 'netsuite.execution.type', is: ['distributed'] },
+        { field: 'outputMode', is: ['records'] },
+      ],
+    },
     'netsuite.restlet.batchSize': {
       fieldId: 'netsuite.restlet.batchSize',
       visibleWhenAll: [
@@ -333,6 +364,7 @@ export default {
         label: 'Advanced',
         fields: [
           'dataURITemplate',
+          'netsuite.distributed.skipExportFieldId',
           'netsuite.distributed.forceReload',
           'pageSize',
           'netsuite.restlet.batchSize',
