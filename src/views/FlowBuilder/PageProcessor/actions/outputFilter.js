@@ -35,9 +35,6 @@ function OutputFilterDialog({
       entryFunction: script.function,
     };
   }, [resource]);
-  const handleClose = () => {
-    onClose();
-  };
 
   useEffect(() => {
     if (!sampleData) {
@@ -72,7 +69,9 @@ function OutputFilterDialog({
       scriptId={scriptId}
       entryFunction={entryFunction || hooksToFunctionNamesMap.filter}
       insertStubKey="filter"
-      onClose={handleClose}
+      onClose={() => {
+        onClose();
+      }}
       optionalSaveParams={optionalSaveParams}
     />
   );

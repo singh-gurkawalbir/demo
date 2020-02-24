@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useCallback } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
@@ -29,9 +29,6 @@ function TransformationDialog({ flowId, resource, onClose, isViewMode }) {
       entryFunction: script.function,
     };
   }, [resource]);
-  const handleClose = useCallback(() => {
-    onClose();
-  }, [onClose]);
 
   useEffect(() => {
     if (!sampleData) {
@@ -66,7 +63,9 @@ function TransformationDialog({ flowId, resource, onClose, isViewMode }) {
       rule={rule}
       entryFunction={entryFunction || hooksToFunctionNamesMap.transform}
       insertStubKey="transform"
-      onClose={handleClose}
+      onClose={() => {
+        onClose();
+      }}
       optionalSaveParams={optionalSaveParams}
     />
   );

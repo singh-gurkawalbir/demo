@@ -36,9 +36,6 @@ function InputFilterDialog({
       entryFunction: script.function,
     };
   }, [resource, resourceType]);
-  const handleClose = () => {
-    onClose();
-  };
 
   useEffect(() => {
     if (!sampleData) {
@@ -73,7 +70,9 @@ function InputFilterDialog({
       scriptId={scriptId}
       entryFunction={entryFunction || hooksToFunctionNamesMap.filter}
       insertStubKey="filter"
-      onClose={handleClose}
+      onClose={() => {
+        onClose();
+      }}
       optionalSaveParams={optionalSaveParams}
     />
   );

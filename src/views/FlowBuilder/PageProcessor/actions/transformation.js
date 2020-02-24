@@ -30,9 +30,6 @@ function TransformationDialog({ flowId, resource, isViewMode, onClose }) {
       entryFunction: script.function,
     };
   }, [resource]);
-  const handleClose = () => {
-    onClose();
-  };
 
   useEffect(() => {
     if (!sampleData) {
@@ -69,7 +66,9 @@ function TransformationDialog({ flowId, resource, isViewMode, onClose }) {
       rule={rule}
       entryFunction={entryFunction || hooksToFunctionNamesMap.transform}
       insertStubKey="transform"
-      onClose={handleClose}
+      onClose={() => {
+        onClose();
+      }}
       optionalSaveParams={optionalSaveParams}
     />
   );

@@ -18,10 +18,6 @@ function ResponseTransformationDialog(props) {
       entryFunction: script.function,
     };
   }, [responseTransform]);
-  const handleClose = () => {
-    onClose();
-  };
-
   const optionalSaveParams = useMemo(
     () => ({
       processorKey: 'responseTransform',
@@ -42,7 +38,9 @@ function ResponseTransformationDialog(props) {
       rule={rule}
       entryFunction={entryFunction || hooksToFunctionNamesMap.transform}
       insertStubKey="transform"
-      onClose={handleClose}
+      onClose={() => {
+        onClose();
+      }}
       optionalSaveParams={optionalSaveParams}
     />
   );
