@@ -1,4 +1,5 @@
 import { makeStyles } from '@material-ui/core/styles';
+import clsx from 'clsx';
 import Typography from '@material-ui/core/Typography';
 
 const useStyles = makeStyles({
@@ -10,11 +11,14 @@ const useStyles = makeStyles({
   },
 });
 
-function TooltipContent({ children }) {
+function TooltipContent({ children, className }) {
   const classes = useStyles();
 
   return (
-    <Typography className={classes.root} component="div" variant="body2">
+    <Typography
+      className={clsx(classes.root, className)}
+      component="div"
+      variant="body2">
       {children}
     </Typography>
   );

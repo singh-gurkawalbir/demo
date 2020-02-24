@@ -7,7 +7,8 @@ export default {
     {
       heading: 'Name',
       value: r => r.doc && r.doc.name,
-      orderBy: 'name',
+
+      orderBy: 'doc.name',
     },
     {
       heading: 'Type',

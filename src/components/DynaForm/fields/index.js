@@ -82,6 +82,10 @@ import DynaExportPanel from './DynaExportPanel';
 import cronBuilderComponents from './cronBuilderComponents';
 import DynaCronGenerator from './DynaCronGenerator';
 import DynaNSSearchCriteria from './editors/DynaNSSearchCriteria';
+import DynaNetSuiteSubRecords from './DynaNetSuiteSubRecords';
+import DynaTypeableSelect from './DynaTypeableSelect';
+import DynaMarketplaceId from './DynaMarketplaceId';
+import DynaNetSuiteSubRecordJsonPath from './DynaNetSuiteSubRecordJsonPath';
 
 export default {
   mode: DynaMode,
@@ -93,6 +97,7 @@ export default {
   textarea: DynaText,
   checkbox: DynaCheckbox,
   select: DynaSelect,
+  marketplaceid: DynaMarketplaceId,
   xmlMapper: DynaXMLMapper,
   trueFixedWidthColumnMapper: DynaTrueFixedWidthColumnMapper,
   csvColumnMapper: DynaCSVColumnMapper,
@@ -177,4 +182,7 @@ export default {
   groupedButton: cronBuilderComponents.groupedButton,
   cronlabel: cronBuilderComponents.cronlabel,
   nssearchcriteria: DynaNSSearchCriteria,
+  netsuitesubrecords: DynaNetSuiteSubRecords,
+  typeableselect: DynaTypeableSelect,
+  netsuitesubrecordjsonpath: DynaNetSuiteSubRecordJsonPath,
 };
