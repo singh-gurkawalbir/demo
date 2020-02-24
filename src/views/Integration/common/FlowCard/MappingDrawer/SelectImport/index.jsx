@@ -103,7 +103,6 @@ export default function SelectImport({ flowId }) {
               <div key={`${i._id}-${sr.fieldId}`}>
                 <Button
                   data-test={`subrecordMapping-${index}`}
-                  // sub-record parent
                   className={classes.button}
                   component={Link}
                   to={`${match.url}/${i._id}/${sr.fieldId}`}>
