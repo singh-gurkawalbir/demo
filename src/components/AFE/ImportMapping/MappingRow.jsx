@@ -93,7 +93,7 @@ export default function MappingRow(props) {
     patchSettings,
     application,
     options,
-    getLookup,
+    lookups,
     handleDelete,
     onMove,
     isDraggable = false,
@@ -220,9 +220,7 @@ export default function MappingRow(props) {
             application={application}
             updateLookup={updateLookupHandler}
             disabled={disabled}
-            lookup={
-              mapping && mapping.lookupName && getLookup(mapping.lookupName)
-            }
+            lookups={lookups}
             extractFields={extractFields}
             generateFields={generateFields}
           />
