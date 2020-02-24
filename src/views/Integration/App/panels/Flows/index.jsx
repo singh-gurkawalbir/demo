@@ -19,6 +19,7 @@ import ConfigureDrawer from './ConfigureDrawer';
 import SettingsDrawer from './SettingsDrawer';
 import CategoryMappingDrawer from './CategoryMappingDrawer';
 import AddCategoryMappingDrawer from './CategoryMappingDrawer/AddCategory';
+import VariationMappingDrawer from './CategoryMappingDrawer/VariationMapping';
 import MappingDrawer from '../../../common/FlowCard/MappingDrawer';
 import actions from '../../../../../actions';
 import { FormStateManager } from '../../../../../components/ResourceFormFactory';
@@ -119,6 +120,12 @@ function FlowList({ integrationId, storeId }) {
         // flowId={flowId}
       />
       <AddCategoryMappingDrawer
+        integrationId={integrationId}
+        storeId={storeId}
+        sectionId={sectionId}
+        // flowId={flowId}
+      />
+      <VariationMappingDrawer
         integrationId={integrationId}
         storeId={storeId}
         sectionId={sectionId}

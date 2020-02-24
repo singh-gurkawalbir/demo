@@ -131,6 +131,26 @@ export const isAnyExpansionPanelFieldVisible = (meta, fieldStates) => {
   );
 };
 
+export const disableAllFieldsExceptClockedFields = (meta, clockedFields) => {
+  const { layout, fieldMap } = meta;
+  const updatedFieldMap = Object.keys(fieldMap).reduce((acc, curr) => {
+    if (!clockedFields.includes(fieldMap[curr].id))
+      acc[curr] = {
+        ...fieldMap[curr],
+        defaultDisabled: true,
+      };
+    else {
+      acc[curr] = {
+        ...fieldMap[curr],
+      };
+    }
+
+    return acc;
+  }, {});
+
+  return { layout, fieldMap: updatedFieldMap };
+};
+
 export const getFieldByName = ({ fieldMeta, name }) => {
   const res = searchMetaForFieldByFindFunc(fieldMeta, f => f.name === name);
 

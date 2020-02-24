@@ -1,7 +1,9 @@
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../actions';
 import SwitchOnOff from '../SwitchToggle';
 import useConfirmDialog from '../ConfirmDialog';
+import * as selectors from '../../reducers';
+import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 
 export default {
   label: 'Off/On',
@@ -12,7 +14,13 @@ export default {
   }) {
     // TODO: Connector specific things to be added for schedule drawer incase of !isDisabled && isConnector
     const { confirmDialog } = useConfirmDialog();
+    const [enqueueSnackbar] = useEnqueueSnackbar();
     const dispatch = useDispatch();
+    const isLicenseValidToEnableFlow = useSelector(
+      state => selectors.isLicenseValidToEnableFlow(state),
+      (left, right) =>
+        left.message === right.message && left.enable === right.enable
+    );
     const enableOrDisableFlow = () => {
       const enable = flow.disabled;
       const message = [
@@ -44,6 +52,15 @@ export default {
                   )
                 );
               } else {
+                if (enable) {
+                  if (!isLicenseValidToEnableFlow.enable) {
+                    return enqueueSnackbar({
+                      message: isLicenseValidToEnableFlow.message,
+                      variant: 'error',
+                    });
+                  }
+                }
+
                 const patchSet = [
                   {
                     op: 'replace',

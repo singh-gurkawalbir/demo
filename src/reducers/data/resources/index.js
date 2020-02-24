@@ -1,6 +1,7 @@
 import produce from 'immer';
 import moment from 'moment';
 import sift from 'sift';
+import { get } from 'lodash';
 import actionTypes from '../../../actions/types';
 
 const emptyObject = {};
@@ -471,11 +472,14 @@ export function resourceList(
   };
 
   function desc(a, b, orderBy) {
-    if (b[orderBy] < a[orderBy]) {
+    const aVal = get(a, orderBy);
+    const bVal = get(b, orderBy);
+
+    if (bVal < aVal) {
       return -1;
     }
 
-    if (b[orderBy] > a[orderBy]) {
+    if (bVal > aVal) {
       return 1;
     }
 

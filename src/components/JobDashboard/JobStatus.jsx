@@ -7,6 +7,7 @@ const useStyles = makeStyles({
   state: {
     display: 'flex',
     alignItems: 'center',
+    whiteSpace: 'nowrap',
   },
   spinnerWrapper: {
     marginRight: 10,
