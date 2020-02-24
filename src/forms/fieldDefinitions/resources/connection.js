@@ -50,6 +50,7 @@ export default {
       {
         items: [
           { label: '3dcart', value: '3dcart' },
+          { label: '3PL Central', value: '3plcentral' },
           { label: 'Accelo', value: 'accelo' },
           { label: 'Adp', value: 'adp' },
           { label: 'Amazonaws', value: 'amazonaws' },
