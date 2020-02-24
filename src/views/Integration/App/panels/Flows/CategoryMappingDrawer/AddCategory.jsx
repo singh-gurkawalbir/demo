@@ -16,7 +16,6 @@ import DrawerTitleBar from './TitleBar';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
-    marginTop: theme.appBarHeight,
     width: 750,
     border: 'solid 1px',
     borderColor: theme.palette.secondary.lightest,
