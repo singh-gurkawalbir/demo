@@ -22,7 +22,7 @@ import ApplicationImg from '../../../../../../components/icons/ApplicationImg';
 import ArrowUpIcon from '../../../../../../components/icons/ArrowUpIcon';
 import ArrowDownIcon from '../../../../../../components/icons/ArrowDownIcon';
 import VariationIcon from '../../../../../../components/icons/AdjustInventoryIcon';
-import Mappings from './BasicMapping/MappingsWrapper';
+import Mappings from './BasicMapping';
 import Filters from './Filters';
 import CategoryList from './CategoryList';
 import DrawerTitleBar from './TitleBar';

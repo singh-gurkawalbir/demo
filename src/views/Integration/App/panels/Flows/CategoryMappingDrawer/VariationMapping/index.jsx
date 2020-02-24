@@ -12,8 +12,8 @@ import PanelHeader from '../../../../../../../components/PanelHeader';
 import LoadResources from '../../../../../../../components/LoadResources';
 import ApplicationImg from '../../../../../../../components/icons/ApplicationImg';
 import DrawerTitleBar from '../TitleBar';
-import VariationAttributesList from './AtrributesList';
-import VariationMappings from './Mappings';
+import VariationAttributesList from './AttributesList';
+import VariationMappings from './MappingsWrapper';
 
 const drawerWidth = 200;
 const useStyles = makeStyles(theme => ({
@@ -114,7 +114,7 @@ const useStyles = makeStyles(theme => ({
 
 function VariationMappingDrawer({ integrationId, parentUrl }) {
   const match = useRouteMatch();
-  const { flowId, subCategoryId } = match.params;
+  const { flowId, subCategoryId, variation } = match.params;
   const classes = useStyles();
   const history = useHistory();
   const uiAssistant = useSelector(state => {
@@ -124,9 +124,32 @@ function VariationMappingDrawer({ integrationId, parentUrl }) {
 
     return `${uiAssistant.charAt(0).toUpperCase()}${uiAssistant.slice(1)}`;
   });
+  const firstVariation =
+    useSelector(state => {
+      // eslint-disable-next-line camelcase
+      const { variation_themes = [] } =
+        selectors.categoryMappingGenerateFields(state, integrationId, flowId, {
+          sectionId: subCategoryId,
+        }) || {};
+      const variation = variation_themes.find(
+        theme => theme.id === 'variation_theme'
+      );
+
+      return (
+        variation &&
+        variation.variation_attributes &&
+        variation.variation_attributes[0]
+      );
+    }) || {};
   const handleClose = useCallback(() => {
     history.push(parentUrl);
   }, [history, parentUrl]);
+
+  if (!variation) {
+    history.push(`${match.url}/${firstVariation}`);
+
+    return null;
+  }
 
   return (
     <Fragment>
@@ -178,6 +201,7 @@ function VariationMappingDrawer({ integrationId, parentUrl }) {
                 integrationId={integrationId}
                 flowId={flowId}
                 sectionId={subCategoryId}
+                variation={variation}
               />
             </Grid>
           </Grid>
@@ -194,7 +218,10 @@ export default function VariationMappingDrawerRoute(props) {
   return (
     <Route
       exact
-      path={`${match.url}/:flowId/utilitymapping/:categoryId/variations/:subCategoryId`}>
+      path={[
+        `${match.url}/:flowId/utilitymapping/:categoryId/variations/:subCategoryId`,
+        `${match.url}/:flowId/utilitymapping/:categoryId/variations/:subCategoryId/:variation`,
+      ]}>
       <LoadResources required resources="flows,exports,imports,connections">
         <VariationMappingDrawer
           {...props}

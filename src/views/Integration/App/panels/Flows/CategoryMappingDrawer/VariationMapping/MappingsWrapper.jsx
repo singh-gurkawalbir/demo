@@ -1,0 +1,115 @@
+import { useState, useCallback, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { makeStyles } from '@material-ui/core';
+import * as selectors from '../../../../../../../reducers';
+import actions from '../../../../../../../actions';
+import Mappings from './Mappings';
+
+const emptySet = [];
+const useStyles = makeStyles(() => ({
+  fullWidth: {
+    width: '100%',
+  },
+}));
+
+export default function VariationMappings(props) {
+  const classes = useStyles();
+  const { flowId, sectionId, integrationId, variation } = props;
+  const id = `${flowId}-${sectionId}-${variation}`;
+  const [initTriggered, setInitTriggered] = useState(false);
+  const [resetMappings, setResetMappings] = useState(false);
+  const { fields: generateFields } =
+    useSelector(state =>
+      selectors.categoryMappingGenerateFields(state, integrationId, flowId, {
+        sectionId,
+      })
+    ) || {};
+  const resourceId = useSelector(state => {
+    const flowDetails = selectors.resource(state, 'flows', flowId);
+
+    if (flowDetails) {
+      const firstPP = flowDetails.pageProcessors.find(
+        pp => pp.type === 'import'
+      );
+
+      return firstPP ? firstPP._importId : null;
+    }
+
+    return null;
+  });
+  const { fieldMappings } =
+    useSelector(state =>
+      selectors.mappingsForVariation(state, integrationId, flowId, {
+        sectionId,
+        variation,
+      })
+    ) || {};
+  const resourceData = useSelector(state =>
+    selectors.resource(state, 'imports', resourceId)
+  );
+  const { _connectionId: connectionId, name: resourceName } = resourceData;
+  const dispatch = useDispatch();
+  const mappingInitialized = useSelector(
+    state => !Array.isArray(selectors.mapping(state, id))
+  );
+  const application = 'netsuite';
+  const options = {
+    flowId,
+    connectionId,
+    resourceId,
+    resourceName,
+  };
+  const mappingOptions = {
+    resourceData,
+    adaptorType: 'netsuite',
+    application,
+    isCategoryMapping: true,
+    mappings: { fields: fieldMappings },
+  };
+  const handleInit = useCallback(() => {
+    dispatch(
+      actions.mapping.init({
+        id,
+        options: mappingOptions,
+      })
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, id, mappingOptions]);
+
+  useEffect(() => {
+    if (!initTriggered || resetMappings) {
+      handleInit();
+      setInitTriggered(true);
+      setResetMappings(false);
+    }
+  }, [dispatch, handleInit, initTriggered, resetMappings]);
+
+  useEffect(() => {
+    setInitTriggered(false);
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (initTriggered) setResetMappings(true);
+  }, [sectionId, variation, initTriggered]);
+
+  useEffect(() => {
+    if (initTriggered && mappingInitialized) {
+      dispatch(actions.mapping.updateGenerates(id, generateFields));
+    }
+  }, [dispatch, generateFields, id, initTriggered, mappingInitialized]);
+
+  return (
+    <div className={classes.fullWidth}>
+      <Mappings
+        editorId={id}
+        generateFields={generateFields || emptySet}
+        resource={resourceData}
+        integrationId={integrationId}
+        flowId={flowId}
+        isGenerateRefreshSupported
+        application={application}
+        options={options}
+      />
+    </div>
+  );
+}

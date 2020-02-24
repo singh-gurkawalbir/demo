@@ -327,6 +327,14 @@ export function categoryMappingFilters(state, integrationId, flowId) {
   );
 }
 
+export function variationMappingData(state, integrationId, flowId) {
+  return fromIntegrationApps.variationMappingData(
+    state && state.integrationApps,
+    integrationId,
+    flowId
+  );
+}
+
 export function categoryMappingData(state, integrationId, flowId) {
   return fromIntegrationApps.categoryMappingData(
     state && state.integrationApps,
