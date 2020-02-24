@@ -229,10 +229,11 @@ export default function ImportMapping(props) {
     application,
     resource
   );
-  const updateLookupHandler = lookupObj => {
+  const updateLookupHandler = (lookupOps = []) => {
     let lookupsTmp = [...lookups];
+    // Here lookupOPs will be an array of lookups and actions. Lookups can be added and delted simultaneously from settings.
 
-    lookupObj.forEach(({ isDelete, obj }) => {
+    lookupOps.forEach(({ isDelete, obj }) => {
       if (isDelete) {
         lookupsTmp = lookupsTmp.filter(lookup => lookup.name !== obj.name);
       } else {
