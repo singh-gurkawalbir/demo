@@ -1,3 +1,5 @@
+import { isNewId } from '../../../../utils/resource';
+
 const alterFileDefinitionRulesVisibility = fields => {
   // TODO @Raghu : Move this to metadata visibleWhen rules when we support combination of ANDs and ORs in Forms processor
   const fileDefinitionRulesField = fields.find(
@@ -79,10 +81,30 @@ export default {
       refreshOptionsOnChangesTo: 'file.type',
     },
     'file.csv': { fieldId: 'file.csv' },
+    isNew: {
+      id: 'isNew',
+      type: 'text',
+      defaultValue: r => !!isNewId(r && r._id),
+      visible: false,
+    },
     'file.xlsx.hasHeaderRow': { fieldId: 'file.xlsx.hasHeaderRow' },
-    'file.xlsx.rowsPerRecord': { fieldId: 'file.xlsx.rowsPerRecord' },
+    'file.xlsx.rowsPerRecord': {
+      fieldId: 'file.xlsx.rowsPerRecord',
+      disabledWhenAll: [
+        { field: 'uploadFile', is: [''] },
+        { field: 'isNew', is: [true] },
+      ],
+    },
     'file.xlsx.keyColumns': { fieldId: 'file.xlsx.keyColumns' },
-    'file.xml.resourcePath': { fieldId: 'file.xml.resourcePath' },
+    'file.xml.resourcePath': {
+      fieldId: 'file.xml.resourcePath',
+      validWhen: {
+        matchesRegEx: {
+          pattern: '^/',
+          message: "Resource Path should start with '/'",
+        },
+      },
+    },
     'file.json.resourcePath': {
       fieldId: 'file.json.resourcePath',
     },
@@ -112,6 +134,7 @@ export default {
       'file.xml.resourcePath',
       'file.json.resourcePath',
       'file.xlsx.hasHeaderRow',
+      'isNew',
       'file.xlsx.rowsPerRecord',
       'file.xlsx.keyColumns',
       'edix12.format',

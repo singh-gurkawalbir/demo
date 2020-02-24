@@ -28,6 +28,15 @@ export default {
         value: item.id,
       }))
       .sort(sortElements),
+  'suitescript-subrecord-fields': data =>
+    data
+      .filter(item => item.subRecordType)
+      .map(item => ({
+        label: item.name,
+        value: item.id,
+        subRecordType: item.subRecordType,
+        subRecordJsonPathLabel: item.subRecordJsonPathLabel,
+      })),
   'suitescript-dateField': data =>
     data
       .filter(item => item.type === 'datetime' || item.type === 'datetimetz')
@@ -248,6 +257,8 @@ export default {
     return returnVal;
   },
   default: data =>
+    data &&
+    Array.isArray(data) &&
     data.map(item => ({
       label: item.name,
       value: item.id,

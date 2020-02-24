@@ -42,20 +42,31 @@ export function showScheduleIcon(exports, exp, flow) {
 export function isRunnable(exports, exp, flow) {
   const isDataLoader = isSimpleImportFlow(exp);
 
-  // invalid or disabled flows are not runnable.
-  if (!flow || (flow.disabled && !isDataLoader)) {
+  // invalid flows are not runnable.
+  if (!flow) {
     return false;
   }
 
+  // For disabled flows
+  if (flow.disabled) {
+    // All iA flows are not runnable if disabled
+    // For DIY flows, dataloader flows can be runnable
+    if (flow._connectorId || !isDataLoader) {
+      return false;
+    }
+  }
+
   const flowHasExport =
-    flow.pageGenerators && flow.pageGenerators.some(pg => pg._exportId);
+    !!flow._exportId ||
+    (flow.pageGenerators && flow.pageGenerators.some(pg => pg._exportId));
 
   // flows need at least one export to be runnable
   if (!flowHasExport) return false;
 
   const flowHasImport =
-    flow.pageProcessors &&
-    flow.pageProcessors.some(pg => pg._exportId || pg._importId);
+    !!flow._importId ||
+    (flow.pageProcessors &&
+      flow.pageProcessors.some(pg => pg._exportId || pg._importId));
 
   // flows need at least one import to be runnable
   if (!flowHasImport) return false;

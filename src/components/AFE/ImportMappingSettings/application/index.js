@@ -72,11 +72,11 @@ export default {
     const {
       application,
       value,
-      lookup = {},
       extractFields = [],
       generate,
       generateFields = [],
       options,
+      lookups,
     } = params;
     let fieldMeta = {};
 
@@ -85,30 +85,30 @@ export default {
       case adaptorTypeMap.RESTImport:
         fieldMeta = RestMappingSettings.getMetaData({
           value,
-          lookup,
           extractFields,
           generate,
           options,
+          lookups,
         });
         break;
       case adaptorTypeMap.NetSuiteDistributedImport:
         fieldMeta = NetsuiteMappingSettings.getMetaData({
           value,
-          lookup,
           extractFields,
           generate,
           generateFields,
           options,
+          lookups,
         });
         break;
       case adaptorTypeMap.SalesforceImport:
         fieldMeta = SalesforceMappingSettings.getMetaData({
           value,
-          lookup,
           extractFields,
           generate,
           generateFields,
           options,
+          lookups,
         });
         break;
       case adaptorTypeMap.AS2Import:
@@ -117,12 +117,23 @@ export default {
       case adaptorTypeMap.FTPImport:
         fieldMeta = FTPMappingSettings.getMetaData({
           value,
-          lookup,
           extractFields,
           options,
+          lookups,
         });
         break;
       default:
+    }
+
+    const { isNotEditable } = value;
+    const { fieldMap } = fieldMeta;
+
+    if (isNotEditable) {
+      Object.keys(fieldMap).forEach(fieldId => {
+        if (fieldId !== 'useAsAnInitializeValue') {
+          fieldMap[fieldId].defaultDisabled = true;
+        }
+      });
     }
 
     return fieldMeta;
@@ -132,6 +143,7 @@ export default {
     let errorStatus = false;
     let errorMessage = '';
     const settings = {};
+    let conditionalLookup;
 
     settings.generate = generate;
 
@@ -256,11 +268,37 @@ export default {
       settings.lookupName = updatedLookup && updatedLookup.name;
     }
 
+    if (formVal.conditionalWhen) {
+      settings.conditional = {};
+      settings.conditional.when = formVal.conditionalWhen;
+
+      if (
+        formVal.conditionalWhen === 'lookup_not_empty' ||
+        formVal.conditionalWhen === 'lookup_empty'
+      ) {
+        settings.conditional.lookupName = formVal.conditionalLookupName;
+
+        if (formVal.lookups) {
+          const tempLookUp = formVal.lookups.find(
+            l => l.name === formVal.conditionalLookupName
+          );
+
+          if (
+            tempLookUp &&
+            (!updatedLookup || updatedLookup.name !== tempLookUp.name)
+          ) {
+            conditionalLookup = tempLookUp;
+          }
+        }
+      }
+    }
+
     return {
       settings,
       lookup: updatedLookup,
       errorStatus,
       errorMessage,
+      conditionalLookup,
     };
   },
 };

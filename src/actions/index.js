@@ -159,10 +159,11 @@ const resource = {
   deleted: (resourceType, id) =>
     action(actionTypes.RESOURCE.DELETED, { resourceType, id }),
 
-  requestReferences: (resourceType, id) =>
+  requestReferences: (resourceType, id, options) =>
     action(actionTypes.RESOURCE.REFERENCES_REQUEST, {
       resourceType,
       id,
+      options,
     }),
 
   clearReferences: () => action(actionTypes.RESOURCE.REFERENCES_CLEAR, {}),
@@ -472,6 +473,24 @@ const integrationApp = {
         integrationId,
         flowId,
         filters,
+      }),
+    addCategory: (integrationId, flowId, data) =>
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.ADD_CATEGORY, {
+        integrationId,
+        flowId,
+        data,
+      }),
+    deleteCategory: (integrationId, flowId, sectionId) =>
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.DELETE_CATEGORY, {
+        integrationId,
+        flowId,
+        sectionId,
+      }),
+    restoreCategory: (integrationId, flowId, sectionId) =>
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.RESTORE_CATEGORY, {
+        integrationId,
+        flowId,
+        sectionId,
       }),
     clearRedirect: integrationId =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.CLEAR_REDIRECT, {
@@ -803,8 +822,12 @@ const sampleData = {
   reset: resourceId => action(actionTypes.SAMPLEDATA.RESET, { resourceId }),
 };
 const importSampleData = {
-  request: resourceId =>
-    action(actionTypes.IMPORT_SAMPLEDATA.REQUEST, { resourceId }),
+  request: (resourceId, options, refreshCache) =>
+    action(actionTypes.IMPORT_SAMPLEDATA.REQUEST, {
+      resourceId,
+      options,
+      refreshCache,
+    }),
 };
 const flowData = {
   init: flow => action(actionTypes.FLOW_DATA.INIT, { flow }),

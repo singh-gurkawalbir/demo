@@ -9,6 +9,7 @@ export default {
       lookup = {},
       extractFields,
       generate,
+      lookups,
       options = {},
     } = params;
     const {
@@ -316,6 +317,7 @@ export default {
           type: 'text',
           label: 'Enter Default Value',
           placeholder: 'Enter Default Value',
+          required: true,
           visibleWhenAll: [
             { field: 'standardAction', is: ['default'] },
             { field: 'fieldMappingType', isNot: ['hardCoded'] },
@@ -330,6 +332,7 @@ export default {
           type: 'text',
           label: 'Enter Default Value',
           placeholder: 'Enter Default Value',
+          required: true,
           visibleWhenAll: [
             { field: 'hardcodedAction', is: ['default'] },
             { field: 'fieldMappingType', is: ['hardCoded'] },
@@ -343,6 +346,7 @@ export default {
           type: 'text',
           label: 'Enter Default Value',
           placeholder: 'Enter Default Value',
+          required: true,
           visibleWhenAll: [
             { field: 'lookupAction', is: ['default'] },
             { field: 'fieldMappingType', is: ['lookup'] },
@@ -432,6 +436,64 @@ export default {
             { field: 'fieldMappingType', is: ['standard'] },
           ],
         },
+        'conditional.when': {
+          id: 'conditional.when',
+          name: 'conditionalWhen',
+          type: 'select',
+          label: 'Only perform mapping when:',
+          defaultValue: value.conditional && value.conditional.when,
+          options: [
+            {
+              items: [
+                {
+                  label: 'Creating a record',
+                  value: 'record_created',
+                },
+                {
+                  label: 'Updating a record',
+                  value: 'record_updated',
+                },
+                {
+                  label: 'Source record has a value',
+                  value: 'extract_not_empty',
+                },
+                {
+                  label: 'Lookup finds a record',
+                  value: 'lookup_not_empty',
+                },
+                {
+                  label: 'Lookup finds no records',
+                  value: 'lookup_empty',
+                },
+              ],
+            },
+          ],
+        },
+
+        'conditional.lookupName': {
+          id: 'conditional.lookupName',
+          name: 'conditionalLookupName',
+          label: 'Lookup name:',
+          type: 'textwithlookupextract',
+          fieldType: 'lookupMappings',
+          connectionId,
+          refreshOptionsOnChangesTo: ['lookups'],
+          defaultValue: value.conditional && value.conditional.lookupName,
+          visibleWhen: [
+            {
+              field: 'conditional.when',
+              is: ['lookup_not_empty', 'lookup_empty'],
+            },
+          ],
+          required: true,
+        },
+        lookups: {
+          name: 'lookups',
+          fieldId: 'lookups',
+          id: 'lookups',
+          visible: false,
+          defaultValue: lookups,
+        },
       },
       layout: {
         fields: [
@@ -459,6 +521,14 @@ export default {
           'extractDateTimezone',
           'generateDateFormat',
           'generateDateTimezone',
+        ],
+        type: 'collapse',
+        containers: [
+          {
+            collapsed: true,
+            label: 'Advanced',
+            fields: ['lookups', 'conditional.when', 'conditional.lookupName'],
+          },
         ],
       },
       optionsHandler: (fieldId, fields) => {
@@ -490,6 +560,21 @@ export default {
 
         if (fieldId === 'lookup.relativeURI') {
           return { resourceName };
+        }
+
+        if (fieldId === 'conditional.lookupName') {
+          const lookupField = fields.find(field => field.fieldId === 'lookups');
+
+          return {
+            lookups: {
+              fieldId: 'lookups',
+              data:
+                (lookupField &&
+                  Array.isArray(lookupField.value) &&
+                  lookupField.value) ||
+                [],
+            },
+          };
         }
 
         return null;

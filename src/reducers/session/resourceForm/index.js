@@ -15,7 +15,7 @@ export default function reducer(state = {}, action) {
     initData,
   } = action;
   const key = `${resourceType}-${resourceId}`;
-  const stateCopy = { ...state, key: { ...state[key] } };
+  const stateCopy = { ...state, [key]: { ...state[key] } };
 
   switch (type) {
     case actionTypes.RESOURCE_FORM.INIT:

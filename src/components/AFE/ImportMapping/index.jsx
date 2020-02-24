@@ -89,6 +89,11 @@ const useStyles = makeStyles(theme => ({
     '& > div > div > div': {
       background: theme.palette.background.paper2,
     },
+    '& > button': {
+      background: theme.palette.background.paper2,
+      cursor: 'not-allowed',
+      pointerEvents: 'none',
+    },
   },
   lockIcon: {
     position: 'absolute',
@@ -224,7 +229,6 @@ export default function ImportMapping(props) {
     application,
     resource
   );
-  const getLookup = name => lookups.find(lookup => lookup.name === name);
   const updateLookupHandler = (isDelete, obj) => {
     let lookupsTmp = [...lookups];
 
@@ -340,7 +344,9 @@ export default function ImportMapping(props) {
                 <div
                   className={clsx(classes.childHeader, classes.mapField, {
                     [classes.disableChildRow]:
-                      mapping.isNotEditable || disabled,
+                      mapping.isSubRecordMapping ||
+                      mapping.isNotEditable ||
+                      disabled,
                   })}>
                   <DynaTypeableSelect
                     key={`extract-${editorId}-${initChangeIdentifier}-${mapping.rowIdentifier}`}
@@ -349,7 +355,11 @@ export default function ImportMapping(props) {
                     valueName="id"
                     value={mapping.extract || mapping.hardCodedValueTmp}
                     options={extractFields}
-                    disabled={mapping.isNotEditable || disabled}
+                    disabled={
+                      mapping.isSubRecordMapping ||
+                      mapping.isNotEditable ||
+                      disabled
+                    }
                     onBlur={(id, value) => {
                       handleFieldUpdate(mapping, 'extract', value);
                       // handleFieldUpdate(
@@ -360,7 +370,7 @@ export default function ImportMapping(props) {
                     }}
                   />
 
-                  {mapping.isNotEditable && (
+                  {(mapping.isSubRecordMapping || mapping.isNotEditable) && (
                     <span className={classes.lockIcon}>
                       <LockIcon />
                     </span>
@@ -369,7 +379,10 @@ export default function ImportMapping(props) {
                 <MappingConnectorIcon className={classes.mappingIcon} />
                 <div
                   className={clsx(classes.childHeader, classes.mapField, {
-                    [classes.disableChildRow]: mapping.isRequired || disabled,
+                    [classes.disableChildRow]:
+                      mapping.isSubRecordMapping ||
+                      mapping.isRequired ||
+                      disabled,
                   })}>
                   <DynaTypeableSelect
                     key={`generate-${editorId}-${initChangeIdentifier}-${mapping.rowIdentifier}`}
@@ -378,7 +391,11 @@ export default function ImportMapping(props) {
                     labelName="name"
                     valueName="id"
                     options={generateFields}
-                    disabled={mapping.isRequired || disabled}
+                    disabled={
+                      mapping.isSubRecordMapping ||
+                      mapping.isRequired ||
+                      disabled
+                    }
                     onBlur={
                       (id, value) => {
                         handleFieldUpdate(mapping, 'generate', value);
@@ -386,9 +403,13 @@ export default function ImportMapping(props) {
                       // handleGenerateUpdate(mapping)
                     }
                   />
-                  {mapping.isRequired && (
+                  {(mapping.isSubRecordMapping || mapping.isRequired) && (
                     <Tooltip
-                      title="This field is required by the application you are importing to"
+                      title={`${
+                        mapping.isSubRecordMapping
+                          ? 'Subrecord mapping'
+                          : 'This field is required by the application you are importing to'
+                      }`}
                       placement="top">
                       <span className={classes.lockIcon}>
                         <LockIcon />
@@ -396,7 +417,10 @@ export default function ImportMapping(props) {
                     </Tooltip>
                   )}
                 </div>
-                <div>
+                <div
+                  className={clsx({
+                    [classes.disableChildRow]: mapping.isSubRecordMapping,
+                  })}>
                   <MappingSettings
                     id={`fieldMappingSettings-${mapping.index}`}
                     onSave={(id, evt) => {
@@ -407,17 +431,17 @@ export default function ImportMapping(props) {
                     generate={mapping.generate}
                     application={application}
                     updateLookup={updateLookupHandler}
-                    disabled={mapping.isNotEditable || disabled}
-                    lookup={
-                      mapping &&
-                      mapping.lookupName &&
-                      getLookup(mapping.lookupName)
-                    }
+                    disabled={disabled}
+                    lookups={lookups}
                     extractFields={extractFields}
                     generateFields={generateFields}
                   />
                 </div>
-                <div key="delete_button">
+                <div
+                  key="delete_button"
+                  className={clsx({
+                    [classes.disableChildRow]: mapping.isSubRecordMapping,
+                  })}>
                   <ActionButton
                     data-test={`fieldMappingRemove-${mapping.index}`}
                     aria-label="delete"
