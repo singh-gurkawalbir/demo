@@ -43,33 +43,35 @@ export default function ImportMappingSettings(props) {
     open,
     extractFields,
     generateFields,
-    lookup,
     updateLookup,
     application,
     options,
     disabled,
+    lookups,
   } = props;
   const { generate, extract, index } = value;
   const [enquesnackbar] = useEnqueueSnackbar();
+  const getLookup = name => lookups.find(lookup => lookup.name === name);
+  const lookup = value && value.lookupName && getLookup(value.lookupName);
   const fieldMeta = useMemo(
     () =>
       ApplicationMappingSettings.getMetaData({
         application,
         value,
-        lookup,
         extractFields,
         generate,
         generateFields,
         options,
+        lookups,
       }),
     [
       application,
+      value,
       extractFields,
       generate,
       generateFields,
-      lookup,
       options,
-      value,
+      lookups,
     ]
   );
   const disableSave = useMemo(() => {
@@ -86,6 +88,7 @@ export default function ImportMappingSettings(props) {
         lookup: updatedLookup,
         errorStatus,
         errorMessage,
+        conditionalLookup,
       } = ApplicationMappingSettings.getFormattedValue(
         { generate, extract, lookup },
         formVal
@@ -110,6 +113,10 @@ export default function ImportMappingSettings(props) {
         const isDelete = true;
 
         updateLookup(isDelete, lookup);
+      }
+
+      if (conditionalLookup) {
+        updateLookup(false, conditionalLookup);
       }
 
       onClose(true, settings);

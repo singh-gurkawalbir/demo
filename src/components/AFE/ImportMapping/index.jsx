@@ -196,7 +196,6 @@ export default function ImportMapping(props) {
     application,
     resource
   );
-  const getLookup = name => lookups.find(lookup => lookup.name === name);
   const updateLookupHandler = (isDelete, obj) => {
     let lookupsTmp = [...lookups];
 
@@ -324,7 +323,7 @@ export default function ImportMapping(props) {
                 patchSettings={patchSettings}
                 application={application}
                 options={options}
-                getLookup={getLookup}
+                lookups={lookups}
                 handleDelete={handleDelete}
                 onMove={handleMove}
                 isDraggable={!disabled}
@@ -342,7 +341,7 @@ export default function ImportMapping(props) {
             patchSettings={patchSettings}
             application={application}
             options={options}
-            getLookup={getLookup}
+            lookups={lookups}
             handleDelete={handleDelete}
             isDraggable={false}
           />
