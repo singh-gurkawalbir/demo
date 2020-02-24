@@ -425,7 +425,7 @@ export function mappingsChanged(state, id) {
     const lookupsDiff = differenceWith(lookupsCopy, lookups, isEqual);
 
     isMappingsChanged =
-      lookupsCopy.length !== lookups.length && !lookupsDiff.length;
+      lookupsCopy.length !== lookups.length || !lookupsDiff.length;
   }
 
   return isMappingsChanged;
