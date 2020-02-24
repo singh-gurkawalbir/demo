@@ -104,8 +104,16 @@ export default function reducer(state = {}, action) {
 
         mappingsCopy.splice(dragIndex, 1);
         mappingsCopy.splice(hoverIndex, 0, dragItem);
+        // refresh mappings effected by move
+        const refreshStartIndex =
+          dragIndex < hoverIndex ? dragIndex : hoverIndex;
+        const refreshEndIndex = dragIndex > hoverIndex ? dragIndex : hoverIndex;
+
+        for (let i = refreshStartIndex; i <= refreshEndIndex; i += 1) {
+          mappingsCopy[i].rowIdentifier += 1;
+        }
+
         draft[id].mappings = mappingsCopy;
-        draft[id].initChangeIdentifier += 1;
         break;
       }
 
@@ -406,20 +414,19 @@ export function mappingsChanged(state, id) {
   }
 
   const { mappings, mappingsCopy, lookups, lookupsCopy } = state[id];
-  const mappingsDiff = differenceWith(
-    mappingsCopy,
-    mappings,
-    isMappingObjEqual
-  );
-  let isMappingsEqual =
-    mappings.length === mappingsCopy.length && !mappingsDiff.length;
+  let isMappingsChanged = mappings.length !== mappingsCopy.length;
 
-  if (isMappingsEqual) {
-    const lookupsDiff = differenceWith(lookupsCopy, lookups, isEqual);
-
-    isMappingsEqual =
-      lookupsCopy.length === lookups.length && !lookupsDiff.length;
+  // change of order of mappings is treated as Mapping change
+  for (let i = 0; i < mappings.length && !isMappingsChanged; i += 1) {
+    isMappingsChanged = !isMappingObjEqual(mappings[i], mappingsCopy[i]);
   }
 
-  return !isMappingsEqual;
+  if (!isMappingsChanged) {
+    const lookupsDiff = differenceWith(lookupsCopy, lookups, isEqual);
+
+    isMappingsChanged =
+      lookupsCopy.length !== lookups.length && !lookupsDiff.length;
+  }
+
+  return isMappingsChanged;
 }

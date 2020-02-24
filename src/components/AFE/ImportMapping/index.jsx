@@ -1,7 +1,7 @@
 /* eslint-disable react/no-array-index-key */
 
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useCallback } from 'react';
+import { useMemo, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { DndProvider } from 'react-dnd-cjs';
 import HTML5Backend from 'react-dnd-html5-backend-cjs';
@@ -122,17 +122,21 @@ export default function ImportMapping(props) {
   const { saveCompleted } = useSelector(state =>
     selectors.mappingSaveProcessTerminate(state, editorId)
   );
-  const tableData = (mappings || []).map((value, index) => {
-    const obj = value;
+  const tableData = useMemo(
+    () =>
+      (mappings || []).map((value, index) => {
+        const obj = { ...value };
 
-    obj.index = index;
+        obj.index = index;
 
-    if (obj.hardCodedValue) {
-      obj.hardCodedValueTmp = `"${obj.hardCodedValue}"`;
-    }
+        if (obj.hardCodedValue) {
+          obj.hardCodedValueTmp = `"${obj.hardCodedValue}"`;
+        }
 
-    return obj;
-  });
+        return obj;
+      }),
+    [mappings]
+  );
   const emptyMappingRow = {
     index: mappings.length,
   };
