@@ -1,4 +1,4 @@
-import { useMemo, useEffect, Fragment } from 'react';
+import { useCallback, useMemo, useEffect, Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { isEmpty } from 'lodash';
 import * as selectors from '../../../../reducers';
@@ -35,22 +35,25 @@ function PostResponseMapHookDialog({
       stage: 'postResponseMapHook',
     })
   );
-  const handleClose = (shouldCommit, editorValues) => {
-    // script gets saved automatically on click of save
-    // TODO: work on this Aditya
-    if (shouldCommit) {
-      if (!editorValues || !editorValues.scriptId) {
-        // Should not save hooks without script Id
-        // TODO: @Aditya Need to move this logic into JS Editor , disabling save if there is no script selected
-        return enqueueSnackbar({
-          message: 'Please select Script ID',
-          variant: 'error',
-        });
+  const handleClose = useCallback(
+    (shouldCommit, editorValues) => {
+      // script gets saved automatically on click of save
+      // TODO: work on this Aditya
+      if (shouldCommit) {
+        if (!editorValues || !editorValues.scriptId) {
+          // Should not save hooks without script Id
+          // TODO: @Aditya Need to move this logic into JS Editor , disabling save if there is no script selected
+          return enqueueSnackbar({
+            message: 'Please select Script ID',
+            variant: 'error',
+          });
+        }
       }
-    }
 
-    onClose();
-  };
+      onClose();
+    },
+    [enqueueSnackbar, onClose]
+  );
 
   useEffect(() => {
     if (!sampleData) {

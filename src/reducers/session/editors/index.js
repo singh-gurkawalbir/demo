@@ -153,18 +153,15 @@ export function editorPatchSet(state, id) {
   const editor = state[id];
 
   if (!editor) return;
-  const a = processorPatchSet.getPatchSet(editor);
 
-  return a;
-  // return processorPatchSet.getPatchSet(editor);
+  return processorPatchSet.getPatchSet(editor);
 }
 
 export function editorSaveProcessTerminate(state, id) {
-  if (!state) {
+  if (!state || !state[id]) {
     return emptyObj;
   }
 
-  if (!state[id]) return false;
   const { submitFailed, submitCompleted } = state[id];
 
   return {

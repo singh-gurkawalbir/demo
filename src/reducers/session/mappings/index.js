@@ -342,11 +342,10 @@ export default function reducer(state = {}, action) {
 
 // #region PUBLIC SELECTORS
 export function mappingSaveProcessTerminate(state, id) {
-  if (!state) {
+  if (!state || !state[id]) {
     return emptyObj;
   }
 
-  if (!state[id]) return false;
   const { submitFailed, submitCompleted } = state[id];
 
   return {

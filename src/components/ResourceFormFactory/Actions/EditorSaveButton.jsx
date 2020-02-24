@@ -1,4 +1,3 @@
-import { withStyles } from '@material-ui/core/styles';
 import { useCallback, useState, useEffect, Fragment } from 'react';
 import { Button } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
@@ -9,13 +8,7 @@ import { useLoadingSnackbarOnSave } from '.';
 import { preSaveValidate } from '../../AFE/EditorDialog/util';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 
-const styles = theme => ({
-  actionButton: {
-    marginTop: theme.spacing.double,
-    marginLeft: theme.spacing.double,
-  },
-});
-const EditorSaveButton = props => {
+export default function EditorSaveButton(props) {
   const {
     id,
     submitButtonLabel = 'Save',
@@ -78,6 +71,4 @@ const EditorSaveButton = props => {
       )}
     </Button>
   );
-};
-
-export default withStyles(styles)(EditorSaveButton);
+}
