@@ -2,6 +2,7 @@ import { useEffect, useCallback } from 'react';
 import { FormContext } from 'react-forms-processor/dist';
 import Button from '@material-ui/core/Button';
 import useEnableButtonOnTouchedForm from '../../hooks/useEnableButtonOnTouchedForm';
+import trim from '../../utils/trim';
 
 function DynaAction(props) {
   const {
@@ -22,7 +23,7 @@ function DynaAction(props) {
     formIsValid: isValid,
   });
   const onClick = useCallback(() => {
-    onClickWhenValid(value);
+    onClickWhenValid(trim(value));
   }, [onClickWhenValid, value]);
 
   useEffect(() => {

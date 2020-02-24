@@ -40,7 +40,7 @@ function MappingDrawer() {
   const classes = useStyles();
   const history = useHistory();
   const match = useRouteMatch();
-  const { flowId, importId } = match.params;
+  const { flowId, importId, subRecordMappingId } = match.params;
   const flow = useSelector(state => selectors.resource(state, 'flows', flowId));
   const flowName = flow.name || flow._id;
   const mappingEditorId = `${importId}-${flowId}`;
@@ -81,6 +81,7 @@ function MappingDrawer() {
                 // am importId, this prop should be called as such.
                 resourceId={importId}
                 flowId={flowId}
+                subRecordMappingId={subRecordMappingId}
               />
             </Fragment>
           ) : (
@@ -101,6 +102,7 @@ export default function MappingDrawerRoute(props) {
       path={[
         `${match.url}/:flowId/mapping`,
         `${match.url}/:flowId/mapping/:importId`,
+        `${match.url}/:flowId/mapping/:importId/:subRecordMappingId`,
       ]}>
       <MappingDrawer {...props} />
     </Route>
