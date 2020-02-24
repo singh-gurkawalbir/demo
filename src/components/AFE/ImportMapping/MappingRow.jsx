@@ -9,7 +9,7 @@ import TrashIcon from '../../icons/TrashIcon';
 import ActionButton from '../../ActionButton';
 import LockIcon from '../../icons/LockIcon';
 import MappingConnectorIcon from '../../icons/MappingConnectorIcon';
-import ArrowUpIcon from '../../icons/ArrowUpIcon';
+import GripperIcon from '../../icons/GripperIcon';
 
 const useStyles = makeStyles(theme => ({
   child: {
@@ -140,7 +140,7 @@ export default function MappingRow(props) {
       key={mapping.index}>
       <div className={clsx(classes.innerRow, { [classes.dragRow]: !disabled })}>
         <div className={classes.dragIcon}>
-          <ArrowUpIcon />
+          <GripperIcon />
         </div>
         <div
           className={clsx(classes.childHeader, classes.mapField, {
