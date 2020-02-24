@@ -209,7 +209,7 @@ describe('commitStagedChanges saga', () => {
     const scope = SCOPES.VALUE;
     const resourceType = 'someResourceType';
 
-    test('should report a conflict when the common properties of origin and master are different ', () => {
+    test('should report a conflict when the common properties of origin and merged are different ', () => {
       const saga = resourceConflictDetermination({
         path,
         merged,
@@ -242,7 +242,7 @@ describe('commitStagedChanges saga', () => {
       expect(saga.next()).toEqual({ done: true, value: { conflict: true } });
     });
 
-    test('should not report a conflict when the common properties of origin and master are the same ', () => {
+    test('should not report a conflict when the common properties of origin and merged are the same ', () => {
       const saga = resourceConflictDetermination({
         path,
         merged,
