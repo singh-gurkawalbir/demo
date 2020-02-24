@@ -229,20 +229,22 @@ export default function ImportMapping(props) {
     application,
     resource
   );
-  const updateLookupHandler = (isDelete, obj) => {
+  const updateLookupHandler = lookupObj => {
     let lookupsTmp = [...lookups];
 
-    if (isDelete) {
-      lookupsTmp = lookupsTmp.filter(lookup => lookup.name !== obj.name);
-    } else {
-      const index = lookupsTmp.findIndex(lookup => lookup.name === obj.name);
-
-      if (index !== -1) {
-        lookupsTmp[index] = obj;
+    lookupObj.forEach(({ isDelete, obj }) => {
+      if (isDelete) {
+        lookupsTmp = lookupsTmp.filter(lookup => lookup.name !== obj.name);
       } else {
-        lookupsTmp.push(obj);
+        const index = lookupsTmp.findIndex(lookup => lookup.name === obj.name);
+
+        if (index !== -1) {
+          lookupsTmp[index] = obj;
+        } else {
+          lookupsTmp.push(obj);
+        }
       }
-    }
+    });
 
     dispatch(actions.mapping.updateLookup(editorId, lookupsTmp));
   };
