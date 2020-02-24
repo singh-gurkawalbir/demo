@@ -96,6 +96,7 @@ export default function ImportMappingSettings(props) {
         { generate, extract, lookup },
         formVal
       );
+      const lookupObj = [];
 
       if (errorStatus) {
         enquesnackbar({
@@ -110,17 +111,19 @@ export default function ImportMappingSettings(props) {
       if (updatedLookup) {
         const isDelete = false;
 
-        updateLookup(isDelete, updatedLookup);
+        lookupObj.push({ isDelete, obj: updatedLookup });
       } else if (lookup) {
         // When user tries to reconfigure setting and tries to remove lookup, delete existing lookup
         const isDelete = true;
 
-        updateLookup(isDelete, lookup);
+        lookupObj.push({ isDelete, obj: lookup });
       }
 
       if (conditionalLookup) {
-        updateLookup(false, conditionalLookup);
+        lookupObj.push({ isDelete: false, obj: conditionalLookup });
       }
+
+      updateLookup(lookupObj);
 
       onClose(true, settings);
     },

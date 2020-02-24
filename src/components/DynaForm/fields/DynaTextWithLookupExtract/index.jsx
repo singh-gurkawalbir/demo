@@ -125,7 +125,7 @@ export default function DynaTextWithLookupExtract(props) {
           showLookup={showLookups}
           sampleData={formattedSampleData}
           connection={connection}
-          extractFields={extractFields || formattedExtractFields}
+          extractFields={extractFields || formattedExtractFields} // Here extractFields are getting to handle Netsuite and Salesforce lookups.
           hideExtractFields
           resourceName={resourceName}
           lookups={lookups}

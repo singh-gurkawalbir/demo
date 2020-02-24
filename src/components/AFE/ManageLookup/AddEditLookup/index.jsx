@@ -46,7 +46,6 @@ export default function AddEditLookup(props) {
 
       if (formVal._mode === 'dynamic') {
         lookupTmp.extract = formVal._extract;
-        lookupTmp.postBody = formVal._postBody;
         lookupTmp.recordType = formVal.recordType;
         lookupTmp.resultField = formVal.resultField;
         lookupTmp.expression = formVal.lookupExpression;
