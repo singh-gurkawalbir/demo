@@ -4,7 +4,7 @@ import PanelHeader from '../../../../../../components/PanelHeader';
 
 export default function AuditLogSection({ integrationId }) {
   const infoTextAuditLog =
-    'Keep track of changes to your integration, enabling you to track down problems based on changes to your integration or its flows. Know exactly who made the change, what the change was, and when it happened.';
+    'Keep track of changes to your flow, enabling you to track down problems based on changes to your flows. Know exactly who made the change, what the change was, and when it happened.';
 
   return (
     <Fragment>

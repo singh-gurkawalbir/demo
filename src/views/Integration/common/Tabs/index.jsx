@@ -14,6 +14,9 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(3),
     overflow: 'scroll',
   },
+  tab: {
+    minWidth: theme.spacing(13.75),
+  },
 }));
 
 export default function IntegrationTabs({ tabs, className }) {
@@ -51,6 +54,7 @@ export default function IntegrationTabs({ tabs, className }) {
         aria-label="scrollable auto tabs example">
         {tabs.map(({ label, Icon }, i) => (
           <Tab
+            className={classes.tab}
             key={label}
             id={`tab-${i}`}
             {...{ 'aria-controls': `tabpanel-${i}` }}

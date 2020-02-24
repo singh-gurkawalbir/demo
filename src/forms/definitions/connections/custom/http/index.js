@@ -10,6 +10,7 @@ import ebayXml from './ebayXml';
 import openair from './openair';
 import onelogin from './onelogin';
 import quickbooks from './quickbooks';
+import fourcastplus from './fourcastplus';
 import trinet from './trinet';
 import pacejet from './pacejet';
 import paycor from './paycor';
@@ -187,6 +188,7 @@ export default {
   parseur,
   paypal,
   returnly,
+  '4castplus': fourcastplus,
   myobessentials,
   expensify,
   wish,

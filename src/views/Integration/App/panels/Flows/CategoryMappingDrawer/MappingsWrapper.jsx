@@ -25,7 +25,7 @@ export default function MappingWrapper(props) {
 
     return null;
   });
-  const { fieldMappings } =
+  const { fieldMappings, deleted = false } =
     useSelector(state =>
       selectors.mappingsForCategory(state, integrationId, flowId, {
         sectionId,
@@ -91,6 +91,7 @@ export default function MappingWrapper(props) {
       editorId={id}
       generateFields={generateFields}
       resource={resourceData}
+      disabled={deleted}
       integrationId={integrationId}
       flowId={flowId}
       isGenerateRefreshSupported={isGenerateRefreshSupported}

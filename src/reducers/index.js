@@ -22,6 +22,11 @@ import {
   ACCOUNT_IDS,
   SUITESCRIPT_CONNECTORS,
 } from '../utils/constants';
+import {
+  LICENSE_EXPIRED,
+  LICENSE_TRIAL_NOT_STARTED,
+  LICENSE_TRIAL_EXPIRED,
+} from '../utils/messageStore';
 import { changePasswordParams, changeEmailParams } from '../sagas/api/apiPaths';
 import { getFieldById } from '../forms/utils';
 import { upgradeButtonText, expiresInfo } from '../utils/license';
@@ -1115,7 +1120,12 @@ export function integrationConnectionList(state, integrationId) {
   return resources;
 }
 
-export function integrationAppResourceList(state, integrationId, storeId) {
+export function integrationAppResourceList(
+  state,
+  integrationId,
+  storeId,
+  tableConfig
+) {
   if (!state) return { connections: emptySet, flows: emptySet };
 
   const integrationResource =
@@ -1126,6 +1136,7 @@ export function integrationAppResourceList(state, integrationId, storeId) {
     {
       type: 'connections',
       filter: { _integrationId: integrationId },
+      ...(tableConfig || {}),
     }
   );
 
@@ -1176,8 +1187,14 @@ export function integrationAppStore(state, integrationId, storeId) {
   );
 }
 
-export function integrationAppConnectionList(state, integrationId, storeId) {
-  return integrationAppResourceList(state, integrationId, storeId).connections;
+export function integrationAppConnectionList(
+  state,
+  integrationId,
+  storeId,
+  tableConfig
+) {
+  return integrationAppResourceList(state, integrationId, storeId, tableConfig)
+    .connections;
 }
 
 export function categoryMapping(state, integrationId, flowId) {
@@ -1282,13 +1299,11 @@ export function categoryMappingFilters(state, integrationId, flowId) {
 }
 
 export function categoryRelationshipData(state, integrationId, flowId) {
-  const data = fromData.categoryRelationshipData(
-    state && state.session,
+  return fromData.categoryRelationshipData(
+    state && state.data,
     integrationId,
     flowId
   );
-
-  return data;
 }
 
 export function mappingsForCategory(state, integrationId, flowId, filters) {
@@ -1990,6 +2005,36 @@ export function integratorLicenseWithMetadata(state) {
   licenseActionDetails.subscriptionActions = toReturn;
 
   return licenseActionDetails;
+}
+
+export function isLicenseValidToEnableFlow(state) {
+  const license = integratorLicenseWithMetadata(state);
+  let licenseDetails = { enable: true };
+
+  if (!license) {
+    return licenseDetails;
+  }
+
+  if (license.hasSubscription) {
+    if (license.hasExpired) {
+      licenseDetails = {
+        message: LICENSE_EXPIRED,
+        enable: false,
+      };
+    }
+  } else if (!license.trialEndDate) {
+    licenseDetails = {
+      message: LICENSE_TRIAL_NOT_STARTED,
+      enable: false,
+    };
+  } else if (license.trialEndDate && !license.inTrial) {
+    licenseDetails = {
+      message: LICENSE_TRIAL_EXPIRED,
+      enable: false,
+    };
+  }
+
+  return licenseDetails;
 }
 
 export function accountSummary(state) {

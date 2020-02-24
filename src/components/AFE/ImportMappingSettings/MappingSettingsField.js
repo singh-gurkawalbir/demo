@@ -10,6 +10,10 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+/**
+ *
+ * disabled property set to true in case of monitor level access
+ */
 export default function MappingSettingsField(props) {
   const classes = useStyles();
   const {
