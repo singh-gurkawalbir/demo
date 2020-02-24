@@ -5,17 +5,17 @@ import { components } from 'react-select';
 import { Tooltip } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
-import MappingSettings from '../../../../../../components/AFE/ImportMappingSettings/MappingSettingsField';
-import TrashIcon from '../../../../../../components/icons/TrashIcon';
-import * as selectors from '../../../../../../reducers';
-import ActionButton from '../../../../../../components/ActionButton';
-import LockIcon from '../../../../../../components/icons/LockIcon';
-import actions from '../../../../../../actions';
-import DynaTypeableSelect from '../../../../../../components/DynaForm/fields/DynaTypeableSelect';
-import PreferredIcon from '../../../../../../components/icons/PreferredIcon';
-import ConditionalIcon from '../../../../../../components/icons/ConditionalIcon';
-import OptionalIcon from '../../../../../../components/icons/OptionalIcon';
-import RequiredIcon from '../../../../../../components/icons/RequiredIcon';
+import MappingSettings from '../../../../../../../components/AFE/ImportMappingSettings/MappingSettingsField';
+import TrashIcon from '../../../../../../../components/icons/TrashIcon';
+import * as selectors from '../../../../../../../reducers';
+import ActionButton from '../../../../../../../components/ActionButton';
+import LockIcon from '../../../../../../../components/icons/LockIcon';
+import actions from '../../../../../../../actions';
+import DynaTypeableSelect from '../../../../../../../components/DynaForm/fields/DynaTypeableSelect';
+import PreferredIcon from '../../../../../../../components/icons/PreferredIcon';
+import ConditionalIcon from '../../../../../../../components/icons/ConditionalIcon';
+import OptionalIcon from '../../../../../../../components/icons/OptionalIcon';
+import RequiredIcon from '../../../../../../../components/icons/RequiredIcon';
 
 // TODO Azhar style header
 const useStyles = makeStyles(theme => ({
