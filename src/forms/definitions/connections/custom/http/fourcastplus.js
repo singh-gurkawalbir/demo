@@ -24,7 +24,7 @@ export default {
       id: 'http.subdomain',
       type: 'text',
       startAdornment: 'https://',
-      endAdornment: '.4castplus.com/api',
+      endAdornment: '.4castplus.com',
       label: 'Subdomain',
       required: true,
       helpText:
