@@ -1,4 +1,4 @@
-// Same code is being used in Mapping settings also. This code should be refactored.
+// TODO Ashok: Same code is being used in Mapping settings also. This code should be refactored.
 const getNetsuiteSelectFieldValueUrl = ({
   fieldMetadata,
   connectionId,
