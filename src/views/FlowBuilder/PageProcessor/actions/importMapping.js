@@ -126,8 +126,9 @@ function ImportMapping({
                   you would like to edit the mapping for.
                 </Typography>
                 {subrecords.map((sr, index) => (
-                  <div data-test={`subrecordMapping-${index}`} key={sr.id}>
+                  <div key={sr.id}>
                     <Button
+                      data-test={`subrecordMapping-${index}`}
                       className={classes.button}
                       onClick={() => {
                         setSelectedMapping(sr.fieldId);
