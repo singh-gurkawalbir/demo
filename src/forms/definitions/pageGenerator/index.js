@@ -4,11 +4,8 @@ import applications, {
 } from '../../../constants/applications';
 import { appTypeToAdaptorType } from '../../../utils/resource';
 
-const visibleWhenIsNew = { field: 'isNew', is: ['true'] };
-
 export default {
   preSave: ({
-    isNew,
     exportId,
     type,
     application,
@@ -21,7 +18,7 @@ export default {
     // used by the resource form code within the panel
     // component of the <ResourceDrawer> to properly
     // handle this special case.
-    if (isNew === 'false' && exportId) {
+    if (exportId) {
       return { '/resourceId': exportId };
     }
 
@@ -46,25 +43,6 @@ export default {
     return newValues;
   },
   fieldMap: {
-    isNew: {
-      id: 'isNew',
-      name: 'isNew',
-      type: 'radiogroup',
-      // label: 'Build new or use existing?',
-      defaultValue: 'true',
-      options: [
-        {
-          items: [
-            { label: 'New', value: 'true' },
-            {
-              label: 'Existing',
-              value: 'false',
-            },
-          ],
-        },
-      ],
-      // visibleWhenAll: [{ field: 'application', isNot: [''] }],
-    },
     application: {
       id: 'application',
       label: 'Application',
@@ -105,14 +83,16 @@ export default {
       type: 'selectflowresource',
       flowResourceType: 'pg',
       resourceType: 'exports',
-      label: 'Existing Export',
+      label: 'Would you like to use an existing export?',
       defaultValue: '',
-      required: true,
+      required: false,
       allowEdit: true,
-      refreshOptionsOnChangesTo: ['application'],
+      refreshOptionsOnChangesTo: ['application', 'connection', 'type'],
       visibleWhenAll: [
-        { field: 'application', isNot: [''] },
-        { field: 'isNew', is: ['false'] },
+        {
+          field: 'application',
+          isNot: [''],
+        },
       ],
     },
 
@@ -126,7 +106,6 @@ export default {
       required: true,
       refreshOptionsOnChangesTo: ['application'],
       visibleWhenAll: [
-        visibleWhenIsNew,
         {
           field: 'application',
           isNot: [
@@ -139,37 +118,9 @@ export default {
       allowNew: true,
       allowEdit: true,
     },
-    name: {
-      id: 'name',
-      name: '/name',
-      type: 'text',
-      label: 'Name',
-      defaultValue: '',
-      required: true,
-      refreshOptionsOnChangesTo: ['application'],
-      visibleWhenAll: [visibleWhenIsNew, { field: 'application', isNot: [''] }],
-    },
-    description: {
-      id: 'description',
-      name: '/description',
-      type: 'text',
-      multiline: true,
-      maxRows: 5,
-      label: 'Description',
-      defaultValue: '',
-      visibleWhenAll: [visibleWhenIsNew, { field: 'application', isNot: [''] }],
-    },
   },
   layout: {
-    fields: [
-      'isNew',
-      'application',
-      'type',
-      'existingExport',
-      'connection',
-      'name',
-      'description',
-    ],
+    fields: ['application', 'type', 'connection', 'existingExport'],
   },
 
   optionsHandler: (fieldId, fields) => {
@@ -201,24 +152,53 @@ export default {
     }
 
     if (fieldId === 'exportId') {
+      const connectionField = fields.find(field => field.id === 'connection');
+      const type = fields.find(field => field.id === 'type').value;
+      const isWebhook =
+        getWebhookOnlyConnectors()
+          .map(connector => connector.id)
+          .includes(appField.value) ||
+        (type === 'webhook' &&
+          getWebhookConnectors()
+            .map(connector => connector.id)
+            .includes(appField.value));
       const adaptorTypePrefix = appTypeToAdaptorType[app.type];
 
       if (!adaptorTypePrefix) return;
       // Lookups are not shown in PG suggestions
       const expression = [{ isLookup: { $exists: false } }];
 
-      expression.push({
-        adaptorType: `${adaptorTypePrefix}Export`,
-      });
+      if (isWebhook) {
+        expression.push({
+          'webhook.provider':
+            appField.value === 'webhook' ? 'custom' : appField.value,
+        });
+      } else {
+        expression.push({
+          adaptorType: `${adaptorTypePrefix}Export`,
+        });
 
-      if (app.assistant) {
-        expression.push({ assistant: app.assistant });
+        if (app.assistant) {
+          expression.push({ assistant: app.assistant });
+        }
+
+        if (connectionField.value) {
+          expression.push({
+            _connectionId: connectionField.value,
+          });
+        }
       }
 
       expression.push({ _connectorId: { $exists: false } });
+
+      const visible = isWebhook || !!connectionField.value;
       const filter = { $and: expression };
 
-      return { filter, appType: app.type };
+      return {
+        filter,
+        appType: app.type,
+        visible,
+      };
     }
 
     return null;

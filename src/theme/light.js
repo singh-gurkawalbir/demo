@@ -513,7 +513,7 @@ export default {
     },
     MuiCheckbox: {
       root: {
-        color: colors.celigoAccent1,
+        color: colors.celigoNeutral5,
         padding: 0,
         marginRight: 4,
         borderRadius: 0,

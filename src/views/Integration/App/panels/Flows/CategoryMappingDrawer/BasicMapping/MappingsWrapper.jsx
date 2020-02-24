@@ -1,8 +1,8 @@
 import { useEffect, useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import ImportMapping from './Mappings';
-import * as selectors from '../../../../../../reducers';
-import actions from '../../../../../../actions';
+import * as selectors from '../../../../../../../reducers';
+import actions from '../../../../../../../actions';
 
 export default function MappingWrapper(props) {
   const { id, flowId, generateFields, sectionId, integrationId } = props;
@@ -25,7 +25,7 @@ export default function MappingWrapper(props) {
 
     return null;
   });
-  const { fieldMappings } =
+  const { fieldMappings, deleted = false } =
     useSelector(state =>
       selectors.mappingsForCategory(state, integrationId, flowId, {
         sectionId,
@@ -91,6 +91,7 @@ export default function MappingWrapper(props) {
       editorId={id}
       generateFields={generateFields}
       resource={resourceData}
+      disabled={deleted}
       integrationId={integrationId}
       flowId={flowId}
       isGenerateRefreshSupported={isGenerateRefreshSupported}

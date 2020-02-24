@@ -56,6 +56,7 @@ export default function GeneralPanel({ integrationId, storeId }) {
             key={storeId}
             fieldMeta={translatedMeta}
             integrationId={integrationId}
+            isIAForm
             storeId={storeId}
             formState={formState}
           />

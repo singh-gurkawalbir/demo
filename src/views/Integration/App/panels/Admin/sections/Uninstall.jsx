@@ -1,11 +1,10 @@
-import { Fragment, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useHistory, useRouteMatch } from 'react-router-dom';
+import { Fragment } from 'react';
+import { useSelector } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import { Typography, Button, Divider } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import PanelHeader from '../../../../../../components/PanelHeader';
 import useConfirmDialog from '../../../../../../components/ConfirmDialog';
-import actions from '../../../../../../actions';
 import * as selectors from '../../../../../../reducers';
 import DeleteIcon from '../../../../../../components/icons/TrashIcon';
 import { getIntegrationAppUrlName } from '../../../../../../utils/integrationApps';
@@ -34,48 +33,13 @@ const useStyles = makeStyles(theme => ({
 
 export default function UninstallSection({ storeId, integrationId }) {
   const classes = useStyles();
-  const dispatch = useDispatch();
   const history = useHistory();
-  const match = useRouteMatch();
   const { confirmDialog } = useConfirmDialog();
   const integration =
     useSelector(state =>
       selectors.integrationAppSettings(state, integrationId)
     ) || {};
   const integrationAppName = getIntegrationAppUrlName(integration.name);
-  const { steps: uninstallSteps } = useSelector(state =>
-    selectors.integrationUninstallSteps(state, integrationId)
-  );
-
-  useEffect(() => {
-    if (uninstallSteps && uninstallSteps.length) {
-      if (integration.settings && integration.settings.supportsMultiStore) {
-        history.push(
-          `/pg/integrationapps/${integrationAppName}/${integrationId}/uninstall/${storeId}`
-        );
-      } else {
-        history.push(
-          `/pg/integrationapps/${integrationAppName}/${integrationId}/uninstall`
-        );
-      }
-    }
-  }, [
-    dispatch,
-    history,
-    integration.settings,
-    integrationAppName,
-    integrationId,
-    match.url,
-    storeId,
-    uninstallSteps,
-  ]);
-
-  const initUninstall = () => {
-    dispatch(
-      actions.integrationApp.uninstaller.preUninstall(storeId, integrationId)
-    );
-  };
-
   const handleUninstall = () => {
     confirmDialog({
       title: 'Uninstall',
@@ -87,7 +51,18 @@ export default function UninstallSection({ storeId, integrationId }) {
         {
           label: 'Yes',
           onClick: () => {
-            initUninstall();
+            if (
+              integration.settings &&
+              integration.settings.supportsMultiStore
+            ) {
+              history.push(
+                `/pg/integrationapps/${integrationAppName}/${integrationId}/uninstall/${storeId}`
+              );
+            } else {
+              history.push(
+                `/pg/integrationapps/${integrationAppName}/${integrationId}/uninstall`
+              );
+            }
           },
         },
       ],

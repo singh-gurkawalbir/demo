@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import Button from '@material-ui/core/Button';
 import { Drawer } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
@@ -29,6 +29,11 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+/**
+ *
+ * disabled property set to true in case of monitor level access
+ */
+
 export default function ImportMappingSettings(props) {
   const classes = useStyles();
   const {
@@ -38,61 +43,89 @@ export default function ImportMappingSettings(props) {
     open,
     extractFields,
     generateFields,
-    lookup,
     updateLookup,
     application,
     options,
     disabled,
+    lookups,
   } = props;
   const [formState, setFormState] = useState({
     showFormValidationsBeforeTouch: false,
   });
   const { generate, extract, index } = value;
   const [enquesnackbar] = useEnqueueSnackbar();
-  const fieldMeta = ApplicationMappingSettings.getMetaData({
-    application,
-    value,
-    lookup,
-    extractFields,
-    generate,
-    generateFields,
-    options,
-  });
-  const handleSubmit = formVal => {
-    const {
-      settings,
-      lookup: updatedLookup,
-      errorStatus,
-      errorMessage,
-    } = ApplicationMappingSettings.getFormattedValue(
-      { generate, extract, lookup },
-      formVal
-    );
+  const getLookup = name => lookups.find(lookup => lookup.name === name);
+  const lookup = value && value.lookupName && getLookup(value.lookupName);
+  const fieldMeta = useMemo(
+    () =>
+      ApplicationMappingSettings.getMetaData({
+        application,
+        value,
+        extractFields,
+        generate,
+        generateFields,
+        options,
+        lookups,
+      }),
+    [
+      application,
+      value,
+      extractFields,
+      generate,
+      generateFields,
+      options,
+      lookups,
+    ]
+  );
+  const disableSave = useMemo(() => {
+    // Disable all fields except useAsAnInitializeValue in case mapping is not editable
+    const { fieldMap } = fieldMeta || {};
+    const { isNotEditable } = value;
 
-    if (errorStatus) {
-      enquesnackbar({
-        message: errorMessage,
-        variant: 'error',
-      });
+    return disabled || (isNotEditable && !fieldMap.useAsAnInitializeValue);
+  }, [disabled, fieldMeta, value]);
+  const handleSubmit = useCallback(
+    formVal => {
+      const {
+        settings,
+        lookup: updatedLookup,
+        errorStatus,
+        errorMessage,
+        conditionalLookup,
+      } = ApplicationMappingSettings.getFormattedValue(
+        { generate, extract, lookup },
+        formVal
+      );
 
-      return;
-    }
+      if (errorStatus) {
+        enquesnackbar({
+          message: errorMessage,
+          variant: 'error',
+        });
 
-    // Update lookup
-    if (updatedLookup) {
-      const isDelete = false;
+        return;
+      }
 
-      updateLookup(isDelete, updatedLookup);
-    } else if (lookup) {
-      // When user tries to reconfigure setting and tries to remove lookup, delete existing lookup
-      const isDelete = true;
+      // Update lookup
+      if (updatedLookup) {
+        const isDelete = false;
 
-      updateLookup(isDelete, lookup);
-    }
+        updateLookup(isDelete, updatedLookup);
+      } else if (lookup) {
+        // When user tries to reconfigure setting and tries to remove lookup, delete existing lookup
+        const isDelete = true;
 
-    onClose(true, settings);
-  };
+        updateLookup(isDelete, lookup);
+      }
 
+      if (conditionalLookup) {
+        updateLookup(false, conditionalLookup);
+      }
+
+      onClose(true, settings);
+    },
+    [enquesnackbar, extract, generate, lookup, onClose, updateLookup]
+  );
   const showCustomFormValidations = useCallback(() => {
     setFormState({
       showFormValidationsBeforeTouch: true,
@@ -114,7 +147,7 @@ export default function ImportMappingSettings(props) {
           optionsHandler={fieldMeta.optionsHandler}
           formState={formState}>
           <DynaSubmit
-            disabled={disabled}
+            disabled={disableSave}
             id="fieldMappingSettingsSave"
             showCustomFormValidations={showCustomFormValidations}
             onClick={handleSubmit}>

@@ -89,7 +89,7 @@ export const isValidHook = (value = {}) => {
   const isEmptyHook = !func && !(_scriptId || _stackId);
 
   // accepts a hook if it is empty
-  return isEmptyHook || (func && (_scriptId || _stackId));
+  return !!(isEmptyHook || (func && (_scriptId || _stackId)));
 };
 
 export const isValidSuiteScriptHook = (value = {}) => {
@@ -97,7 +97,7 @@ export const isValidSuiteScriptHook = (value = {}) => {
   const isEmptyHook = !func && !fileInternalId;
 
   // accepts a hook if it is empty
-  return isEmptyHook || (func && fileInternalId);
+  return !!(isEmptyHook || (func && fileInternalId));
 };
 
 export const getHookType = (defaultValues = {}) => {

@@ -1,3 +1,5 @@
+import { uniqBy } from 'lodash';
+
 const handlebarRegex = /(\{\{[\s]*.*?[\s]*\}\})/i;
 const wrapTextForSpecialCharsNetsuite = extract => {
   let toReturn = extract;
@@ -117,7 +119,10 @@ export default {
         });
       });
 
-    return toReturn;
+    // removing duplicate items if present
+    const _toReturn = uniqBy(toReturn, item => item.generate);
+
+    return _toReturn;
   },
 
   generateMappingFieldsAndList: ({

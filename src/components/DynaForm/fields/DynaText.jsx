@@ -43,7 +43,7 @@ function DynaText(props) {
     disabled,
     errorMessages,
     id,
-    isValid,
+    isValid = true,
     name,
     onFieldChange,
     placeholder,

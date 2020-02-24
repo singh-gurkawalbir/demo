@@ -5,6 +5,7 @@ export default {
     '/assistant': 'acumatica',
     '/http/auth/type': 'cookie',
     '/http/mediaType': 'json',
+    '/isHTTP': false,
     '/http/ping/method': 'GET',
     '/http/ping/relativeURI': '/FinancialPeriod',
     '/http/baseURI': `${formValues['/instanceURI']}/entity/${
