@@ -20,8 +20,7 @@ export default function DynaTextWithLookupExtract(props) {
     importType,
     fieldMetadata,
     fieldId,
-    NsExtractFields,
-    SFExtractFields,
+    extractFields,
     recordType,
     options = {},
   } = props;
@@ -126,11 +125,8 @@ export default function DynaTextWithLookupExtract(props) {
           showLookup={showLookups}
           sampleData={formattedSampleData}
           connection={connection}
-          extractFields={
-            NsExtractFields || SFExtractFields || formattedExtractFields
-          }
+          extractFields={extractFields || formattedExtractFields}
           hideExtractFields
-          hideEditLookup
           resourceName={resourceName}
           lookups={lookups}
           importType={importType}

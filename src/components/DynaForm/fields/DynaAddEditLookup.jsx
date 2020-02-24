@@ -39,7 +39,6 @@ export default function DynaAddEditLookup(props) {
     value = {},
     options = {},
     onClick,
-    hideEditLookup,
   } = props;
   const handleEditorClick = () => {
     onClick(!showLookup);
@@ -68,16 +67,14 @@ export default function DynaAddEditLookup(props) {
           {value.name}
         </Typography>
       )}
-      {!hideEditLookup && (
-        <Button
-          data-test={id}
-          variant="contained"
-          className={clsx({ [classes.button]: isEdit })}
-          color="secondary"
-          onClick={handleEditorClick}>
-          {label}
-        </Button>
-      )}
+      <Button
+        data-test={id}
+        variant="contained"
+        className={clsx({ [classes.button]: isEdit })}
+        color="secondary"
+        onClick={handleEditorClick}>
+        {label}
+      </Button>
     </Fragment>
   );
 }

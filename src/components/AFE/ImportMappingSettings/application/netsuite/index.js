@@ -551,7 +551,7 @@ export default {
           fieldType: 'lookupMappings',
           importType: 'netsuite',
           connectionId,
-          NsExtractFields: extractFields,
+          extractFields,
           fieldMetadata,
           fieldId,
           recordType,

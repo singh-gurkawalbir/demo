@@ -465,7 +465,7 @@ export default {
           type: 'textwithlookupextract',
           importType: 'salesforce',
           connectionId,
-          SFExtractFields: extractFields,
+          extractFields,
           refreshOptionsOnChangesTo: ['lookups'],
           fieldType: 'lookupMappings',
           label: 'Lookup name:',

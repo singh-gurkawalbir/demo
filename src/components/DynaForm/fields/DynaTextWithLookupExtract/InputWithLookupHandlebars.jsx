@@ -38,7 +38,6 @@ export function Suggestions(props) {
     onSuggestionClick,
     onLookupClick,
     hideExtractFields,
-    hideEditLookup,
     options,
   } = props;
   const classes = useStyles();
@@ -70,7 +69,6 @@ export function Suggestions(props) {
           <li key={lookup.name}>
             <DynaAddEditLookup
               id={lookup.name}
-              hideEditLookup={hideEditLookup}
               label="Edit"
               onClick={onLookupClick}
               isEdit
@@ -125,7 +123,6 @@ export default function InputWithLookupHandlebars(props) {
     fieldId,
     recordType,
     hideExtractFields,
-    hideEditLookup,
   } = props;
   const ref = useRef(null);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -296,7 +293,6 @@ export default function InputWithLookupHandlebars(props) {
           onSuggestionClick={handleSuggestionClick}
           onLookupClick={handleLookupClick}
           hideExtractFields={hideExtractFields}
-          hideEditLookup={hideEditLookup}
         />
       )}
     </div>

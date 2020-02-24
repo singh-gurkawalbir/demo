@@ -38,8 +38,8 @@ export default function AddEditLookup(props) {
     const lookupTmp = {};
 
     if (importType === 'netsuite') {
-      if (formVal && formVal.name) {
-        lookupTmp.name = formVal.name;
+      if (isEdit) {
+        lookupTmp.name = lookup.name;
       } else {
         lookupTmp.name = shortid.generate();
       }
@@ -59,8 +59,8 @@ export default function AddEditLookup(props) {
 
       lookupObj = lookupTmp;
     } else if (importType === 'salesforce') {
-      if (formVal && formVal.name) {
-        lookupTmp.name = formVal.name;
+      if (isEdit) {
+        lookupTmp.name = lookup.name;
       } else {
         lookupTmp.name = shortid.generate();
       }

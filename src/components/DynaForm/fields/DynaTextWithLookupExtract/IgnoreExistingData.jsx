@@ -34,7 +34,6 @@ export default function IgnoreExistingData(props) {
     fieldId,
     recordType,
     hideExtractFields,
-    hideEditLookup,
   } = props;
   const { fieldId: lookupFieldId, data: lookupData } = lookups || {};
   const handleLookupUpdate = lookups => {
@@ -105,7 +104,6 @@ export default function IgnoreExistingData(props) {
         prefixRegexp={prefixRegexp}
         getMatchedValueforSuggestion={getMatchedValueforSuggestion}
         hideExtractFields={hideExtractFields}
-        hideEditLookup={hideEditLookup}
       />
     </Fragment>
   );
