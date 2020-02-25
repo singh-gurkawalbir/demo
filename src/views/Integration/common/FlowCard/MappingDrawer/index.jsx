@@ -42,7 +42,7 @@ function MappingDrawer() {
   const match = useRouteMatch();
   const { flowId, importId, subRecordMappingId } = match.params;
   const flow = useSelector(state => selectors.resource(state, 'flows', flowId));
-  const flowName = flow.name || flow._id;
+  const flowName = flow ? flow.name : flowId;
   const mappingEditorId = `${importId}-${flowId}`;
   const handleClose = useCallback(() => {
     history.goBack();

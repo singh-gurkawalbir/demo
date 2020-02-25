@@ -106,6 +106,41 @@ export default function Panel(props) {
   const stagedProcessor = useSelector(state =>
     selectors.stagedResource(state, id)
   );
+  const applicationType = useSelector(state => {
+    const stagedResource = selectors.stagedResource(state, id);
+
+    if (!stagedResource || !stagedResource.patch) {
+      return '';
+    }
+
+    function getStagedValue(key) {
+      const result = stagedResource.patch.find(
+        p => p.op === 'replace' && p.path === key
+      );
+
+      return result && result.value;
+    }
+
+    // [{}, ..., {}, {op: "replace", path: "/adaptorType", value: "HTTPExport"}, ...]
+    const adaptorType = getStagedValue('/adaptorType');
+    const assistant = getStagedValue('/assistant');
+
+    if (adaptorType === 'WebhookExport') {
+      return getStagedValue('/webhook/provider');
+    }
+
+    if (adaptorType && adaptorType.startsWith('RDBMS')) {
+      const connection = selectors.resource(
+        state,
+        'connections',
+        getStagedValue('/_connectionId')
+      );
+
+      return connection && connection.rdbms && connection.rdbms.type;
+    }
+
+    return assistant || adaptorType;
+  });
   let resourceLabel;
 
   if (resourceType === 'pageProcessor') {
@@ -161,24 +196,6 @@ export default function Panel(props) {
     }
 
     return adaptorType.value.includes('Export') ? 'exports' : 'imports';
-  }
-
-  function applicationType() {
-    if (!stagedProcessor || !stagedProcessor.patch) {
-      return '';
-    }
-
-    // [{}, ..., {}, {op: "replace", path: "/adaptorType", value: "HTTPExport"}, ...]
-    const adaptorType =
-      stagedProcessor.patch.find(
-        p => p.op === 'replace' && p.path === '/adaptorType'
-      ) || {};
-    const assistant =
-      stagedProcessor.patch.find(
-        p => p.op === 'replace' && p.path === '/assistant'
-      ) || {};
-
-    return assistant.value || adaptorType.value;
   }
 
   function getEditUrl(id) {
@@ -261,7 +278,7 @@ export default function Panel(props) {
   const showApplicationLogo =
     isFlowBuilder &&
     ['exports', 'imports'].includes(resourceType) &&
-    !!applicationType();
+    !!applicationType;
   const requiredResources = determineRequiredResources(resourceType);
   let title = `${
     isNewId(id) ? `Create` : 'Edit'
@@ -280,7 +297,7 @@ export default function Panel(props) {
             <ApplicationImg
               className={classes.appLogo}
               size="small"
-              type={applicationType()}
+              type={applicationType}
             />
           )}
           <IconButton
