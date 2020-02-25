@@ -182,14 +182,9 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
         paper: classes.drawerPaper,
       }}
       open={!!match}>
-      <DrawerTitleBar
-        title="Add Category"
-        flowId={flowId}
-        addCategory
-        onClose={handleClose}
-      />
+      <DrawerTitleBar flowId={flowId} addCategory onClose={handleClose} />
       <DynaForm fieldMeta={fieldMeta} optionsHandler={fieldMeta.optionsHandler}>
-        <DynaSubmit data-test="clone" onClick={handleSave}>
+        <DynaSubmit data-test="addCategory" onClick={handleSave}>
           Add Category
         </DynaSubmit>
         <Button variant="outlined" onClick={handleClose}>

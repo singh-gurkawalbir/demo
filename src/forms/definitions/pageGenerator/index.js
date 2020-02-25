@@ -83,7 +83,7 @@ export default {
       type: 'selectflowresource',
       flowResourceType: 'pg',
       resourceType: 'exports',
-      label: 'Existing Export',
+      label: 'Would you like to use an existing export?',
       defaultValue: '',
       required: false,
       allowEdit: true,

@@ -29,6 +29,7 @@ const useStyles = makeStyles(theme => ({
 export default function DrawerTitleBar({
   flowId,
   onClose,
+  title,
   addCategory,
   parentUrl,
 }) {
@@ -53,11 +54,12 @@ export default function DrawerTitleBar({
     <div className={classes.titleBar}>
       <LoadResources required resources="flows">
         <Typography variant="h3" className={classes.title}>
-          {`${addCategory ? 'Add category: ' : 'Edit Mappings:'} ${
-            flowName.length > 40
-              ? `${flowName.substring(0, 40 - 3)}...`
-              : flowName
-          }`}
+          {title ||
+            `${addCategory ? 'Add category: ' : 'Edit Mappings:'} ${
+              flowName.length > 40
+                ? `${flowName.substring(0, 40 - 3)}...`
+                : flowName
+            }`}
         </Typography>
         {!addCategory && (
           <IconTextButton
