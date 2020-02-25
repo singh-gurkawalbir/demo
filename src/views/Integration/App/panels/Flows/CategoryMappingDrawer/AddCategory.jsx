@@ -8,15 +8,14 @@ import {
   useLocation,
 } from 'react-router-dom';
 import * as selectors from '../../../../../../reducers';
+import actions from '../../../../../../actions';
 import DynaForm from '../../../../../../components/DynaForm';
 import DynaSubmit from '../../../../../../components/DynaForm/DynaSubmit';
-import DrawerTitleBar from './TitleBar';
 import LoadResources from '../../../../../../components/LoadResources';
-import actions from '../../../../../../actions';
+import DrawerTitleBar from './TitleBar';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
-    marginTop: theme.appBarHeight,
     width: 750,
     border: 'solid 1px',
     borderColor: theme.palette.secondary.lightest,
@@ -182,14 +181,9 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
         paper: classes.drawerPaper,
       }}
       open={!!match}>
-      <DrawerTitleBar
-        title="Add Category"
-        flowId={flowId}
-        addCategory
-        onClose={handleClose}
-      />
+      <DrawerTitleBar flowId={flowId} addCategory onClose={handleClose} />
       <DynaForm fieldMeta={fieldMeta} optionsHandler={fieldMeta.optionsHandler}>
-        <DynaSubmit data-test="clone" onClick={handleSave}>
+        <DynaSubmit data-test="addCategory" onClick={handleSave}>
           Add Category
         </DynaSubmit>
         <Button variant="outlined" onClick={handleClose}>

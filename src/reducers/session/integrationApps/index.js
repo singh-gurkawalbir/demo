@@ -31,6 +31,14 @@ export function categoryMappingFilters(state, integrationId, flowId) {
   );
 }
 
+export function variationMappingData(state, integrationId, flowId) {
+  return fromSettings.variationMappingData(
+    state && state.settings,
+    integrationId,
+    flowId
+  );
+}
+
 export function categoryMappingData(state, integrationId, flowId) {
   return fromSettings.categoryMappingData(
     state && state.settings,

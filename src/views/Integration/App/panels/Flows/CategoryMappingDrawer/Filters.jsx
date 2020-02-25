@@ -28,7 +28,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function Filters({ integrationId, flowId }) {
+function Filters({ integrationId, flowId, uiAssistant }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -94,7 +94,7 @@ function Filters({ integrationId, flowId }) {
                 <FormControl
                   component="fieldset"
                   className={classes.formControl}>
-                  <FormLabel component="legend">Amazon attributes</FormLabel>
+                  <FormLabel component="legend">{`${uiAssistant} attributes`}</FormLabel>
                   <FormGroup>
                     <FormControlLabel
                       control={

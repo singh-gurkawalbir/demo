@@ -37,6 +37,7 @@ export function Suggestions(props) {
     showLookup,
     onSuggestionClick,
     onLookupClick,
+    hideExtractFields,
     options,
   } = props;
   const classes = useStyles();
@@ -79,11 +80,12 @@ export function Suggestions(props) {
             />
           </li>
         ))}
-      {filteredExtracts.map(e => (
-        <li key={e.label} onClick={() => onSuggestionClick(e.value, false)}>
-          {e.label}
-        </li>
-      ))}
+      {!hideExtractFields &&
+        filteredExtracts.map(e => (
+          <li key={e.label} onClick={() => onSuggestionClick(e.value, false)}>
+            {e.label}
+          </li>
+        ))}
     </ul>
   );
 }
@@ -107,6 +109,7 @@ export default function InputWithLookupHandlebars(props) {
     required,
     value,
     connectionId,
+    importType,
     resourceId,
     resourceType,
     resourceName,
@@ -116,6 +119,10 @@ export default function InputWithLookupHandlebars(props) {
     prefixRegexp = '',
     getMatchedValueforSuggestion,
     showLookup,
+    fieldMetadata,
+    fieldId,
+    recordType,
+    hideExtractFields,
   } = props;
   const ref = useRef(null);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -173,7 +180,7 @@ export default function InputWithLookupHandlebars(props) {
 
   const handleLookupAdd = lookup => {
     if (lookup) {
-      const _lookups = [...lookups, lookup];
+      const _lookups = lookups ? [...lookups, lookup] : [lookup];
 
       handleSuggestionClick(lookup.name, true);
       onLookupUpdate(_lookups);
@@ -212,10 +219,15 @@ export default function InputWithLookupHandlebars(props) {
     isSQLLookup: isSqlImport,
     sampleData,
     connectionId,
+    importType,
     resourceId,
     resourceType,
     flowId,
     resourceName,
+    fieldMetadata,
+    fieldId,
+    recordType,
+    extractFields,
   };
   const handleLookupClick = _showLookup => {
     setLookupShown(_showLookup);
@@ -280,6 +292,7 @@ export default function InputWithLookupHandlebars(props) {
           options={options}
           onSuggestionClick={handleSuggestionClick}
           onLookupClick={handleLookupClick}
+          hideExtractFields={hideExtractFields}
         />
       )}
     </div>

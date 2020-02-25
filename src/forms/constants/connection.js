@@ -174,7 +174,6 @@ export default {
     'doubleclick',
     'smartsheet',
     'campaignmonitor',
-    'sageone',
     'wrike',
     'googlesheets',
     'googlecontacts',

@@ -1,16 +1,28 @@
-import { useEffect, useCallback, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import ImportMapping from './Mappings';
-import * as selectors from '../../../../../../reducers';
-import actions from '../../../../../../actions';
+import { useState, useCallback, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { makeStyles } from '@material-ui/core';
+import * as selectors from '../../../../../../../reducers';
+import actions from '../../../../../../../actions';
+import Mappings from './Mappings';
 
-export default function MappingWrapper(props) {
-  const { id, flowId, generateFields, sectionId, integrationId } = props;
+const emptySet = [];
+const useStyles = makeStyles(() => ({
+  fullWidth: {
+    width: '100%',
+  },
+}));
+
+export default function VariationMappings(props) {
+  const classes = useStyles();
+  const { flowId, sectionId, integrationId, variation } = props;
+  const id = `${flowId}-${sectionId}-${variation}`;
   const [initTriggered, setInitTriggered] = useState(false);
   const [resetMappings, setResetMappings] = useState(false);
-  const { attributes = {}, mappingFilter = 'mapped' } =
+  const { fields: generateFields } =
     useSelector(state =>
-      selectors.categoryMappingFilters(state, integrationId, flowId)
+      selectors.categoryMappingGenerateFields(state, integrationId, flowId, {
+        sectionId,
+      })
     ) || {};
   const resourceId = useSelector(state => {
     const flowDetails = selectors.resource(state, 'flows', flowId);
@@ -25,10 +37,11 @@ export default function MappingWrapper(props) {
 
     return null;
   });
-  const { fieldMappings, deleted = false } =
+  const { fieldMappings } =
     useSelector(state =>
-      selectors.mappingsForCategory(state, integrationId, flowId, {
+      selectors.mappingsForVariation(state, integrationId, flowId, {
         sectionId,
+        variation,
       })
     ) || {};
   const resourceData = useSelector(state =>
@@ -60,6 +73,7 @@ export default function MappingWrapper(props) {
         options: mappingOptions,
       })
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, id, mappingOptions]);
 
   useEffect(() => {
@@ -68,15 +82,15 @@ export default function MappingWrapper(props) {
       setInitTriggered(true);
       setResetMappings(false);
     }
-  }, [dispatch, handleInit, id, initTriggered, resetMappings]);
+  }, [dispatch, handleInit, initTriggered, resetMappings]);
 
   useEffect(() => {
     setInitTriggered(false);
-  }, [dispatch, id]);
+  }, [dispatch]);
 
   useEffect(() => {
     if (initTriggered) setResetMappings(true);
-  }, [sectionId, initTriggered, attributes, mappingFilter]);
+  }, [sectionId, variation, initTriggered]);
 
   useEffect(() => {
     if (initTriggered && mappingInitialized) {
@@ -84,19 +98,18 @@ export default function MappingWrapper(props) {
     }
   }, [dispatch, generateFields, id, initTriggered, mappingInitialized]);
 
-  const isGenerateRefreshSupported = true;
-
   return (
-    <ImportMapping
-      editorId={id}
-      generateFields={generateFields}
-      resource={resourceData}
-      disabled={deleted}
-      integrationId={integrationId}
-      flowId={flowId}
-      isGenerateRefreshSupported={isGenerateRefreshSupported}
-      application={application}
-      options={options}
-    />
+    <div className={classes.fullWidth}>
+      <Mappings
+        editorId={id}
+        generateFields={generateFields || emptySet}
+        resource={resourceData}
+        integrationId={integrationId}
+        flowId={flowId}
+        isGenerateRefreshSupported
+        application={application}
+        options={options}
+      />
+    </div>
   );
 }

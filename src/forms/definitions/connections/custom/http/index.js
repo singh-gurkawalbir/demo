@@ -163,6 +163,7 @@ import messagemedia from './messagemedia';
 import vend from './vend';
 import miva from './miva';
 import target from './target';
+import threeplcentral from './threeplcentral';
 
 export default {
   sharepoint,
@@ -329,4 +330,5 @@ export default {
   vend,
   miva,
   target,
+  '3plcentral': threeplcentral,
 };
