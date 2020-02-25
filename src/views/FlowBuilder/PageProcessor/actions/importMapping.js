@@ -125,9 +125,10 @@ function ImportMapping({
                   This import contains subrecord imports, select which import
                   you would like to edit the mapping for.
                 </Typography>
-                {subrecords.map(sr => (
+                {subrecords.map((sr, index) => (
                   <div key={sr.id}>
                     <Button
+                      data-test={`subrecordMapping-${index}`}
                       className={classes.button}
                       onClick={() => {
                         setSelectedMapping(sr.fieldId);
