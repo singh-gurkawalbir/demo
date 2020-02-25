@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useCallback } from 'react';
 import { Tooltip } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
@@ -131,6 +131,13 @@ export default function MappingRow(props) {
 
   drag(drop(ref));
 
+  const handleBlur = useCallback(
+    type => (id, value) => {
+      onFieldUpdate(mapping, type, value);
+    },
+    [mapping, onFieldUpdate]
+  );
+
   // generateFields and extractFields are passed as an array of field names
   return (
     <div
@@ -157,9 +164,7 @@ export default function MappingRow(props) {
             disabled={
               mapping.isSubRecordMapping || mapping.isNotEditable || disabled
             }
-            onBlur={(id, value) => {
-              onFieldUpdate(mapping, 'extract', value);
-            }}
+            onBlur={handleBlur('extract')}
           />
 
           {(mapping.isSubRecordMapping || mapping.isNotEditable) && (
@@ -184,12 +189,7 @@ export default function MappingRow(props) {
             disabled={
               mapping.isSubRecordMapping || mapping.isRequired || disabled
             }
-            onBlur={
-              (id, value) => {
-                onFieldUpdate(mapping, 'generate', value);
-              }
-              // handleGenerateUpdate(mapping)
-            }
+            onBlur={handleBlur('generate')}
           />
           {(mapping.isSubRecordMapping || mapping.isRequired) && (
             <Tooltip
