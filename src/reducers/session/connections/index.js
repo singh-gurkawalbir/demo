@@ -7,6 +7,37 @@ export default (state = {}, action) => {
 
   return produce(state, draft => {
     switch (type) {
+      case actionTypes.CONNECTION.PING_AND_UPDATE:
+        if (draft.status && Array.isArray(draft.status)) {
+          connection = draft.status.find(c => c._id === connectionId);
+
+          if (connection) {
+            connection.requestStatus = 'requested';
+          }
+        }
+
+        break;
+
+      case actionTypes.CONNECTION.PING_AND_UPDATE_FAILURE:
+        if (draft.status && Array.isArray(draft.status)) {
+          connection = draft.status.find(c => c._id === connectionId);
+
+          if (connection) {
+            connection.requestStatus = 'failure';
+          }
+        }
+
+        break;
+      case actionTypes.CONNECTION.PING_AND_UPDATE_SUCCESS:
+        if (draft.status && Array.isArray(draft.status)) {
+          connection = draft.status.find(c => c._id === connectionId);
+
+          if (connection) {
+            connection.requestStatus = 'success';
+          }
+        }
+
+        break;
       case actionTypes.CONNECTION.AUTHORIZED:
         // On successful authorization of oauth connection, set the connection status to online.
         if (draft.status && Array.isArray(draft.status)) {

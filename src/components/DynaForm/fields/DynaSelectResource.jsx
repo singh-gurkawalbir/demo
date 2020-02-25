@@ -1,3 +1,4 @@
+import { Chip } from '@material-ui/core';
 import React, { useState, useEffect, useCallback } from 'react';
 import sift from 'sift';
 import { makeStyles } from '@material-ui/core/styles';
@@ -17,6 +18,7 @@ import {
   getMissingPatchSet,
 } from '../../../forms/utils';
 import ActionButton from '../../../components/ActionButton';
+import Spinner from '../../Spinner';
 
 const handleAddNewResource = args => {
   const {
@@ -104,6 +106,59 @@ const useStyles = makeStyles({
     overflow: 'hidden',
   },
 });
+
+function ConnectionLoadingChip(props) {
+  const { resourceType, connectionId } = props;
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (!!connectionId && resourceType === 'connections') {
+      dispatch(actions.resource.connections.pingAndUpdate(connectionId));
+    }
+  }, [connectionId, resourceType, dispatch]);
+
+  const connectionOffline = useSelector(state => {
+    if (resourceType === 'connections' && connectionId) {
+      const { offline } = selectors.resource(
+        state,
+        'connections',
+        connectionId
+      );
+
+      return offline;
+    }
+
+    return undefined;
+  });
+  const connectionRequestStatus = useSelector(state => {
+    if (resourceType === 'connections' && connectionId) {
+      const { requestStatus } = selectors.connectionStatus(state, connectionId);
+
+      return requestStatus;
+    }
+
+    return undefined;
+  });
+
+  if (
+    resourceType !== 'connections' ||
+    !connectionId ||
+    !connectionRequestStatus ||
+    connectionRequestStatus === 'failed'
+  ) {
+    return null;
+  }
+
+  if (connectionRequestStatus === 'requested') {
+    return <Spinner />;
+  }
+
+  return connectionOffline ? (
+    <Chip color="secondary" label="Offline" />
+  ) : (
+    <Chip color="primary" label="Online" />
+  );
+}
 
 function DynaSelectResource(props) {
   const {
@@ -283,6 +338,10 @@ function DynaSelectResource(props) {
             <EditIcon />
           </ActionButton>
         )}
+        <ConnectionLoadingChip
+          resourceType={resourceType}
+          connectionId={value}
+        />
       </div>
     </div>
   );

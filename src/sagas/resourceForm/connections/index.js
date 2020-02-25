@@ -1,4 +1,12 @@
-import { call, put, takeEvery, select, race, take } from 'redux-saga/effects';
+import {
+  call,
+  put,
+  takeEvery,
+  select,
+  race,
+  take,
+  takeLatest,
+} from 'redux-saga/effects';
 import jsonpatch from 'fast-json-patch';
 import actions from '../../../actions';
 import actionTypes from '../../../actions/types';
@@ -437,7 +445,27 @@ function* requestIClients({ connectionId }) {
   }
 }
 
+export function* pingAndUpdateConnection({ connectionId }) {
+  try {
+    yield call(apiCallWithRetry, {
+      path: `/connections/${connectionId}/ping`,
+    });
+
+    const connectionResource = yield call(apiCallWithRetry, {
+      path: `/connections/${connectionId}`,
+    });
+
+    yield put(actions.resource.received('connections', connectionResource));
+    yield put(
+      actions.resource.connections.pingAndUpdateSuccessful(connectionId)
+    );
+  } catch (error) {
+    yield put(actions.resource.connections.pingAndUpdateFailed(connectionId));
+  }
+}
+
 export default [
+  takeLatest(actionTypes.CONNECTION.PING_AND_UPDATE, pingAndUpdateConnection),
   takeEvery(actionTypes.CONNECTION.TEST, pingConnectionWithAbort),
   takeEvery(actionTypes.TOKEN.REQUEST, requestToken),
   takeEvery(
