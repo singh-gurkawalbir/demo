@@ -1,5 +1,5 @@
 export default function trimObj(obj) {
-  if (!Array.isArray(obj) && typeof obj !== 'object') return obj;
+  if ((!Array.isArray(obj) && typeof obj !== 'object') || !obj) return obj;
 
   return Object.keys(obj).reduce(
     (acc, key) => {
