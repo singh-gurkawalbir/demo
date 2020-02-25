@@ -2,27 +2,26 @@ import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
-import { Button, IconButton } from '@material-ui/core';
+import { Button } from '@material-ui/core';
 import DynaForm from '../../../../components/DynaForm';
 import DynaSubmit from '../../../../components/DynaForm/DynaSubmit';
-import Close from '../../../../components/icons/CloseIcon';
 import { resourceList, getNextDataFlows } from '../../../../reducers';
 import actions from '../../../../actions';
-import SettingsDrawerRouter from '../RightDrawer';
-import TitleBar from '../TitleBar';
+import RightDrawer from '../../../../components/drawer/Right';
 
 const useStyles = makeStyles(theme => ({
-  closeButton: {
-    position: 'absolute',
-    right: theme.spacing(1),
-    top: 2,
-  },
-  settingsContent: {
-    padding: theme.spacing(2),
+  scheduleContainer: {
+    width: '100%',
+    overflowX: 'hidden',
+    marginTop: -1,
+    padding: theme.spacing(-1),
+    '& > div': {
+      padding: theme.spacing(3, 0),
+    },
   },
 }));
 
-export default function SettingsDrawer({ flow, isViewMode, ...props }) {
+export default function SettingsDrawer({ flow, isViewMode }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const history = useHistory();
@@ -68,7 +67,7 @@ export default function SettingsDrawer({ flow, isViewMode, ...props }) {
               [],
           },
         ],
-        defaultDisabled: flow && !!flow._integrationId,
+        defaultDisabled: true,
       },
       _runNextFlowIds: {
         id: '_runNextFlowIds',
@@ -127,17 +126,12 @@ export default function SettingsDrawer({ flow, isViewMode, ...props }) {
     history.goBack();
   };
 
+  const infoTextSettings =
+    'You can enable or disable flow error notifications, known as job errors. If you have these notifications enabled or disabled for the integration containing this flow, this flow-level setting will override the integration-level setting.';
+
   return (
-    <SettingsDrawerRouter {...props} path="settings">
-      <IconButton
-        data-test="closeFlowSchedule"
-        aria-label="Close"
-        className={classes.closeButton}
-        onClick={handleClose}>
-        <Close />
-      </IconButton>
-      <TitleBar title="Settings" />
-      <div className={classes.settingsContent}>
+    <RightDrawer path="settings" title="Settings" infoText={infoTextSettings}>
+      <div className={classes.scheduleContainer}>
         <DynaForm disabled={isViewMode} fieldMeta={fieldMeta} render>
           <DynaSubmit onClick={handleSubmit} color="primary" variant="outlined">
             Save
@@ -147,6 +141,6 @@ export default function SettingsDrawer({ flow, isViewMode, ...props }) {
           </Button>
         </DynaForm>
       </div>
-    </SettingsDrawerRouter>
+    </RightDrawer>
   );
 }

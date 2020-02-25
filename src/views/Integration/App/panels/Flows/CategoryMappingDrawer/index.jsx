@@ -1,39 +1,44 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Route, useRouteMatch } from 'react-router-dom';
+import { Route, useRouteMatch, useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
-import Drawer from '@material-ui/core/Drawer';
-import { Grid, Typography } from '@material-ui/core';
-import ExpansionPanel from '@material-ui/core/ExpansionPanel';
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+import {
+  Grid,
+  Drawer,
+  Typography,
+  ExpansionPanel,
+  ExpansionPanelDetails,
+  ExpansionPanelSummary,
+} from '@material-ui/core';
 import * as selectors from '../../../../../../reducers';
-import DrawerTitleBar from './TitleBar';
-import LoadResources from '../../../../../../components/LoadResources';
 import actions from '../../../../../../actions';
+import LoadResources from '../../../../../../components/LoadResources';
 import Loader from '../../../../../../components/Loader';
 import Spinner from '../../../../../../components/Spinner';
-import Filters from './Filters';
 import PanelHeader from '../../../../../../components/PanelHeader';
 import TrashIcon from '../../../../../../components/icons/TrashIcon';
-import Mappings from './MappingsWrapper';
-import CategoryList from './CategoryList';
+import RestoreIcon from '../../../../../../components/icons/RestoreIcon';
 import ApplicationImg from '../../../../../../components/icons/ApplicationImg';
 import ArrowUpIcon from '../../../../../../components/icons/ArrowUpIcon';
 import ArrowDownIcon from '../../../../../../components/icons/ArrowDownIcon';
 import VariationIcon from '../../../../../../components/icons/AdjustInventoryIcon';
+import Mappings from './BasicMapping';
+import Filters from './Filters';
+import CategoryList from './CategoryList';
+import DrawerTitleBar from './TitleBar';
 
 const emptySet = [];
 const drawerWidth = 200;
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
-    marginTop: theme.appBarHeight,
-    width: `80%`,
+    // marginTop: theme.appBarHeight,
+    width: `60%`,
     border: 'solid 1px',
     borderColor: theme.palette.secondary.lightest,
     boxShadow: `-4px 4px 8px rgba(0,0,0,0.15)`,
     backgroundColor: theme.palette.background.default,
     zIndex: theme.zIndex.drawer + 1,
+    overflowX: 'hidden',
   },
   mappingContainer: {
     padding: '0 0 10px 20px',
@@ -74,7 +79,15 @@ const useStyles = makeStyles(theme => ({
   },
   childExpansionPanel: {
     background: theme.palette.background.default,
+    marginTop: 10,
+    boxShadow: 'none',
   },
+
+  secondaryHeading: {
+    fontFamily: 'Roboto500',
+    lineHeight: `${theme.spacing(3)}px`,
+  },
+
   subNav: {
     minWidth: 200,
     background: theme.palette.background.paper2,
@@ -103,30 +116,25 @@ const useStyles = makeStyles(theme => ({
   activeListItem: {
     color: theme.palette.primary.main,
   },
+  default: {
+    marginBottom: 10,
+  },
 }));
 
 function CategoryMappings({ integrationId, flowId, sectionId, isRoot = true }) {
   const [requestedGenerateFields, setRequestedGenerateFields] = useState(false);
   const dispatch = useDispatch();
   const classes = useStyles();
+  const history = useHistory();
+  const match = useRouteMatch();
   const [expanded, setExpanded] = useState(isRoot);
-  const handleDelete = e => {
-    // Clicking of this icon should avoid collapsing this category section
-    e.stopPropagation();
-  };
-
-  const handleVariation = e => {
-    // Clicking of this icon should avoid collapsing this category section
-    e.stopPropagation();
-  };
-
   const { fields: generateFields, name, variation_themes: variationThemes } =
     useSelector(state =>
       selectors.categoryMappingGenerateFields(state, integrationId, flowId, {
         sectionId,
       })
     ) || {};
-  const { children = [] } =
+  const { children = [], deleted } =
     useSelector(state =>
       selectors.mappingsForCategory(state, integrationId, flowId, {
         sectionId,
@@ -163,8 +171,38 @@ function CategoryMappings({ integrationId, flowId, sectionId, isRoot = true }) {
     setExpanded(!expanded);
   };
 
+  const handleDelete = e => {
+    // Clicking of this icon should avoid collapsing this category section
+    e.stopPropagation();
+    dispatch(
+      actions.integrationApp.settings.deleteCategory(
+        integrationId,
+        flowId,
+        sectionId
+      )
+    );
+  };
+
+  const handleRestore = e => {
+    // Clicking of this icon should avoid collapsing this category section
+    e.stopPropagation();
+    dispatch(
+      actions.integrationApp.settings.restoreCategory(
+        integrationId,
+        flowId,
+        sectionId
+      )
+    );
+  };
+
+  const handleVariation = e => {
+    // Clicking of this icon should avoid collapsing this category section
+    e.stopPropagation();
+    history.push(`${match.url}/variations/${sectionId}`);
+  };
+
   return (
-    <div className={isRoot ? classes.mappingContainer : ''}>
+    <div className={isRoot ? classes.mappingContainer : classes.default}>
       <ExpansionPanel
         expanded={expanded}
         onChange={handleChange}
@@ -173,14 +211,23 @@ function CategoryMappings({ integrationId, flowId, sectionId, isRoot = true }) {
           aria-controls="panel1bh-content"
           id="panel1bh-header">
           {expanded ? <ArrowUpIcon /> : <ArrowDownIcon />}
-          <Typography className={classes.secondaryHeading}>{name}</Typography>
+          <Typography className={classes.secondaryHeading} variant="body2">
+            {name}
+          </Typography>
           {!!variationThemes && !!variationThemes.length && (
             <VariationIcon
               className={classes.variationIcon}
               onClick={handleVariation}
             />
           )}
-          <TrashIcon className={classes.deleteIcon} onClick={handleDelete} />
+          {deleted ? (
+            <RestoreIcon
+              className={classes.deleteIcon}
+              onClick={handleRestore}
+            />
+          ) : (
+            <TrashIcon className={classes.deleteIcon} onClick={handleDelete} />
+          )}
         </ExpansionPanelSummary>
         <ExpansionPanelDetails>
           <div className={classes.fullWidth}>
@@ -209,9 +256,10 @@ function CategoryMappings({ integrationId, flowId, sectionId, isRoot = true }) {
   );
 }
 
-function CategoryMappingDrawer({ integrationId }) {
+function CategoryMappingDrawer({ integrationId, parentUrl }) {
   const dispatch = useDispatch();
   const classes = useStyles();
+  const history = useHistory();
   const match = useRouteMatch();
   const { flowId, categoryId } = match.params;
   const [requestedMetadata, setRequestedMetadata] = useState(false);
@@ -227,6 +275,13 @@ function CategoryMappingDrawer({ integrationId }) {
   const metadataLoaded = useSelector(
     state => !!selectors.categoryMapping(state, integrationId, flowId)
   );
+  const uiAssistant = useSelector(state => {
+    const categoryMappingMetadata =
+      selectors.categoryMapping(state, integrationId, flowId) || {};
+    const { uiAssistant = '' } = categoryMappingMetadata;
+
+    return `${uiAssistant.charAt(0).toUpperCase()}${uiAssistant.slice(1)}`;
+  });
   const mappedCategories =
     useSelector(state =>
       selectors.mappedCategories(state, integrationId, flowId)
@@ -234,7 +289,9 @@ function CategoryMappingDrawer({ integrationId }) {
   const currentSectionLabel =
     (mappedCategories.find(category => category.id === categoryId) || {})
       .name || categoryId;
-  const handleClose = () => {};
+  const handleClose = () => {
+    history.push(parentUrl);
+  };
 
   useEffect(() => {
     if (!metadataLoaded && !requestedMetadata) {
@@ -261,54 +318,64 @@ function CategoryMappingDrawer({ integrationId }) {
   }
 
   return (
-    <Drawer
-      anchor="right"
-      open={!!match}
-      classes={{
-        paper: classes.drawerPaper,
-      }}
-      onClose={handleClose}>
-      <DrawerTitleBar flowId={flowId} />
-      {metadataLoaded ? (
-        <div className={classes.root}>
-          <Grid container wrap="nowrap">
-            <Grid item className={classes.subNav}>
-              <CategoryList integrationId={integrationId} flowId={flowId} />
-            </Grid>
-            <Grid item className={classes.content}>
-              <PanelHeader
-                className={classes.header}
-                title={currentSectionLabel}>
-                <Filters integrationId={integrationId} flowId={flowId} />
-              </PanelHeader>
-              <Grid container className={classes.mappingHeader}>
-                <Grid item xs={6}>
-                  <Typography variant="h5" className={classes.childHeader}>
-                    Amazon <ApplicationImg assistant="amazonmws" size="small" />
-                  </Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography variant="h5" className={classes.childHeader}>
-                    NetSuite
-                    <ApplicationImg assistant="netsuite" />
-                  </Typography>
-                </Grid>
+    <Fragment>
+      <Drawer
+        anchor="right"
+        open={!!match}
+        classes={{
+          paper: classes.drawerPaper,
+        }}
+        onClose={handleClose}>
+        <DrawerTitleBar flowId={flowId} parentUrl={parentUrl} />
+        {metadataLoaded ? (
+          <div className={classes.root}>
+            <Grid container wrap="nowrap">
+              <Grid item className={classes.subNav}>
+                <CategoryList integrationId={integrationId} flowId={flowId} />
               </Grid>
-              <CategoryMappings
-                integrationId={integrationId}
-                flowId={flowId}
-                sectionId={categoryId}
-              />
+              <Grid item className={classes.content}>
+                <PanelHeader
+                  className={classes.header}
+                  title={currentSectionLabel}>
+                  <Filters
+                    integrationId={integrationId}
+                    flowId={flowId}
+                    uiAssistant={uiAssistant}
+                  />
+                </PanelHeader>
+                <Grid container className={classes.mappingHeader}>
+                  <Grid item xs={6}>
+                    <Typography variant="h5" className={classes.childHeader}>
+                      {uiAssistant}
+                      <ApplicationImg
+                        assistant={uiAssistant.toLowerCase()}
+                        size="small"
+                      />
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Typography variant="h5" className={classes.childHeader}>
+                      NetSuite
+                      <ApplicationImg assistant="netsuite" />
+                    </Typography>
+                  </Grid>
+                </Grid>
+                <CategoryMappings
+                  integrationId={integrationId}
+                  flowId={flowId}
+                  sectionId={categoryId}
+                />
+              </Grid>
             </Grid>
-          </Grid>
-        </div>
-      ) : (
-        <Loader open>
-          Loading Mappings.
-          <Spinner />
-        </Loader>
-      )}
-    </Drawer>
+          </div>
+        ) : (
+          <Loader open>
+            Loading Mappings.
+            <Spinner />
+          </Loader>
+        )}
+      </Drawer>
+    </Fragment>
   );
 }
 
@@ -316,7 +383,7 @@ export default function CategoryMappingDrawerRoute(props) {
   const match = useRouteMatch();
 
   return (
-    <Route exact path={`${match.url}/:flowId/utilitymapping/:categoryId`}>
+    <Route path={`${match.url}/:flowId/utilitymapping/:categoryId`}>
       <LoadResources required resources="flows,exports,imports,connections">
         <CategoryMappingDrawer {...props} parentUrl={match.url} />
       </LoadResources>

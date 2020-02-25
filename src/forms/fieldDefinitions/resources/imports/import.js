@@ -1,5 +1,5 @@
 export default {
-  name: { type: 'text', label: 'Name' },
+  name: { type: 'text', label: 'Name', required: true },
   description: { type: 'text', label: 'Description' },
   apiIdentifier: {
     label: 'Invoke this Import [POST]',
@@ -97,6 +97,7 @@ export default {
       {
         items: [
           { label: '3dcart', value: '3dcart' },
+          { label: '3PL Central', value: '3plcentral' },
           { label: 'Accelo', value: 'accelo' },
           { label: 'Adp', value: 'adp' },
           { label: 'Amazonaws', value: 'amazonaws' },

@@ -39,10 +39,19 @@ const useStyles = makeStyles(theme => ({
       content: '""',
       position: 'absolute',
       zIndex: 2,
-      width: props => `${props.successValue}%`,
+      width: props => `${props.resolvedValue}%`,
       right: 0,
-      borderRadius: [`0px 4px 4px 0px`],
-      background: theme.palette.success.main,
+      background: theme.palette.primary.main,
+      bottom: 0,
+      top: 0,
+    },
+    '&:before': {
+      content: '""',
+      position: 'absolute',
+      zIndex: 2,
+      width: props => `${props.errorValue}%`,
+      left: 0,
+      background: theme.palette.error.main,
       bottom: 0,
       top: 0,
     },
@@ -63,7 +72,8 @@ const useStyles = makeStyles(theme => ({
 function StatusTag(props) {
   const {
     variant = 'default',
-    successValue,
+    errorValue,
+    resolvedValue,
     className,
     label,
     ...other
@@ -75,11 +85,12 @@ function StatusTag(props) {
       className={clsx(
         classes.root,
         classes[variant],
-        successValue && classes.values,
+        (errorValue || resolvedValue) && classes.values,
+
         className
       )}
       {...other}>
-      {successValue ? (
+      {errorValue ? (
         <span className={classes.customLabel}>{label}</span>
       ) : (
         label

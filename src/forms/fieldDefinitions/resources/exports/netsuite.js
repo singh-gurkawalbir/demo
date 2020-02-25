@@ -150,7 +150,7 @@ export default {
   // search id
   'netsuite.webservices.searchId': {
     label: 'Saved searches',
-    type: 'refreshableselect',
+    type: 'nswssavedsearch',
     required: true,
     placeholder: 'Please select a saved search',
     filterKey: 'webservices-savedSearches',
@@ -338,6 +338,10 @@ export default {
   'netsuite.distributed.forceReload': {
     type: 'checkbox',
     label: 'Reload Record Before Export',
+  },
+  'netsuite.distributed.skipExportFieldId': {
+    type: 'text',
+    label: 'Skip Export Field Id',
   },
   'netsuite.distributed.ioEnvironment': {
     type: 'text',

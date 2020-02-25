@@ -11,6 +11,7 @@ import MarketplaceCrumb from './crumbs/Marketplace';
 import TemplateCrumb from './crumbs/Template';
 import CloneCrumb from './crumbs/Clone';
 import { IntegrationAppCrumb, StoreCrumb } from './crumbs/IntegrationApp';
+import EditResourceTypeCrumb from './crumbs/EditResourceType';
 
 const useStyles = makeStyles(theme => ({
   breadCrumb: {
@@ -32,12 +33,20 @@ const useStyles = makeStyles(theme => ({
     fontSize: 13,
   },
   crumb: {
+    paddingTop: 2,
+    maxWidth: 300,
     whiteSpace: 'nowrap',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
-    // TODO: Azhar, at your convenience, this could be a media
-    // query where large screens have longer cut-off width.
-    maxWidth: 200,
+    [theme.breakpoints.down('sm')]: {
+      maxWidth: 150,
+    },
+    [theme.breakpoints.up('md')]: {
+      maxWidth: 200,
+    },
+    [theme.breakpoints.up('lg')]: {
+      maxWidth: 300,
+    },
   },
 }));
 // These routes are shared for IA and DIY routes.
@@ -229,8 +238,7 @@ const commonChildRoutes = [
   },
   {
     path: '/edit/:resourceType/:id',
-    breadcrumb: ({ resourceType }) =>
-      `Edit ${MODEL_PLURAL_TO_LABEL[resourceType]}`,
+    breadcrumb: EditResourceTypeCrumb,
   },
 ];
 

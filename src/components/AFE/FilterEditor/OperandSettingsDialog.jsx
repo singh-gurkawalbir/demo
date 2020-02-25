@@ -125,6 +125,9 @@ export default function OperandSettingsDialog({
           disabled={disabled}
           fieldMeta={fieldMeta}
           optionsHandler={fieldMeta.optionsHandler}>
+          <DynaSubmit data-test="saveOperandSettings" onClick={handleSubmit}>
+            Save
+          </DynaSubmit>
           <Button
             data-test="cancelOperandSettings"
             onClick={() => {
@@ -132,9 +135,6 @@ export default function OperandSettingsDialog({
             }}>
             Cancel
           </Button>
-          <DynaSubmit data-test="saveOperandSettings" onClick={handleSubmit}>
-            Save
-          </DynaSubmit>
         </DynaForm>
       </Fragment>
     </ModalDialog>

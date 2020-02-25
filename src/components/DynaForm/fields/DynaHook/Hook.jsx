@@ -54,7 +54,6 @@ export default function DynaHook(props) {
   const {
     id,
     disabled,
-    isValid,
     name,
     onFieldChange,
     placeholder,
@@ -112,7 +111,7 @@ export default function DynaHook(props) {
 
   useEffect(() => {
     if (createdScriptId && !isNewScriptIdAssigned) {
-      onFieldChange(id, { ...value, _scriptId: createdScriptId });
+      onFieldChange(id, { ...value, _scriptId: createdScriptId }, true);
       setIsNewScriptIdAssigned(true);
     }
   }, [
@@ -132,6 +131,27 @@ export default function DynaHook(props) {
     label: stack.name,
     value: stack._id,
   }));
+  const isValidHookField = useCallback(
+    field => {
+      const { function: func, _scriptId, _stackId } = value;
+      const isEmptyHook = !func && !(_scriptId || _stackId);
+
+      // If all fields are empty , then it is valid as we accept empty hook
+      if (isEmptyHook) return true;
+
+      // If hook is not empty, then valid if those respective fields are not empty
+      switch (field) {
+        case 'function':
+          return !!func;
+        case '_scriptId':
+          return !!_scriptId;
+        case '_stackId':
+          return !!_stackId;
+        default:
+      }
+    },
+    [value]
+  );
 
   return (
     <Fragment>
@@ -169,7 +189,7 @@ export default function DynaHook(props) {
               placeholder={placeholder}
               disabled={disabled}
               required={required}
-              error={!isValid}
+              isValid={isValidHookField('function')}
               value={value.function}
               onFieldChange={handleFieldChange('function')}
             />
@@ -183,6 +203,8 @@ export default function DynaHook(props) {
                   label="Stacks"
                   value={value._stackId}
                   disabled={disabled}
+                  required={required}
+                  isValid={isValidHookField('_stackId')}
                   onFieldChange={handleFieldChange('_stackId')}
                   options={[{ items: allStacksOptions || [] }]}
                 />
@@ -199,6 +221,8 @@ export default function DynaHook(props) {
                     label="Scripts"
                     value={value._scriptId}
                     disabled={disabled}
+                    required={required}
+                    isValid={isValidHookField('_scriptId')}
                     onFieldChange={handleFieldChange('_scriptId')}
                     options={[{ items: allScriptsOptions || [] }]}
                   />

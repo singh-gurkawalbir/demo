@@ -2,12 +2,10 @@ import applications from '../../../constants/applications';
 import { appTypeToAdaptorType } from '../../../utils/resource';
 
 const visibleWhenHasApp = { field: 'application', isNot: [''] };
-const visibleWhenIsNew = { field: 'isNew', is: ['true'] };
 
 export default {
   init: meta => meta,
   preSave: ({
-    isNew,
     importId,
     exportId,
     application,
@@ -20,7 +18,7 @@ export default {
     // used by the resource form code within the panel
     // component of the <ResourceDrawer> to properly
     // handle this special case.
-    if (isNew === 'false') {
+    if (importId || exportId) {
       return { '/resourceId': importId || exportId };
     }
 
@@ -41,7 +39,7 @@ export default {
     }
 
     // On creation of a new page processor lookup,  isLookup is set true
-    if (isNew && resourceType === 'exports') {
+    if (resourceType === 'exports') {
       newValues['/isLookup'] = true;
     }
 
@@ -80,25 +78,6 @@ export default {
       defaultValue: r => (r && r.application) || '',
       required: true,
     },
-    isNew: {
-      id: 'isNew',
-      name: 'isNew',
-      type: 'radiogroup',
-      // label: 'Build new or use existing?',
-      defaultValue: 'true',
-      options: [
-        {
-          items: [
-            { label: 'New', value: 'true' },
-            {
-              label: 'Existing',
-              value: 'false',
-            },
-          ],
-        },
-      ],
-      // visibleWhenAll: [{ field: 'application', isNot: [''] }],
-    },
 
     existingImport: {
       id: 'importId',
@@ -106,14 +85,14 @@ export default {
       type: 'selectflowresource',
       flowResourceType: 'pp',
       resourceType: 'imports',
-      label: 'Existing Import',
+      label: 'Would you like to use an existing import?',
       defaultValue: '',
-      required: true,
+      required: false,
       allowEdit: true,
-      refreshOptionsOnChangesTo: ['application'],
+      refreshOptionsOnChangesTo: ['application', 'connection', 'resourceType'],
       visibleWhenAll: [
         { field: 'application', isNot: [''] },
-        { field: 'isNew', is: ['false'] },
+        { field: 'connection', isNot: [''] },
         { field: 'resourceType', is: ['imports'] },
       ],
     },
@@ -124,14 +103,14 @@ export default {
       type: 'selectflowresource',
       flowResourceType: 'pp',
       resourceType: 'exports',
-      label: 'Existing Lookup',
+      label: 'Would you like to use an existing lookup?',
       defaultValue: '',
-      required: true,
+      required: false,
       allowEdit: true,
-      refreshOptionsOnChangesTo: ['application'],
+      refreshOptionsOnChangesTo: ['application', 'connection', 'resourceType'],
       visibleWhenAll: [
         { field: 'application', isNot: [''] },
-        { field: 'isNew', is: ['false'] },
+        { field: 'connection', isNot: [''] },
         { field: 'resourceType', is: ['exports'] },
       ],
     },
@@ -147,43 +126,21 @@ export default {
       allowNew: true,
       allowEdit: true,
       refreshOptionsOnChangesTo: ['application'],
-      visibleWhenAll: [visibleWhenHasApp, visibleWhenIsNew],
-    },
-    name: {
-      id: 'name',
-      name: '/name',
-      type: 'text',
-      label: 'Name',
-      defaultValue: '',
-      required: true,
-      refreshOptionsOnChangesTo: ['application', 'resourceType'],
-      visibleWhenAll: [visibleWhenHasApp, visibleWhenIsNew],
-    },
-    description: {
-      id: 'description',
-      name: '/description',
-      type: 'text',
-      multiline: true,
-      maxRows: 5,
-      label: 'Description',
-      defaultValue: '',
-      visibleWhenAll: [visibleWhenHasApp, visibleWhenIsNew],
+      visibleWhenAll: [visibleWhenHasApp],
     },
   },
   layout: {
     fields: [
       'resourceType',
-      'isNew',
       'application',
+      'connection',
       'existingImport',
       'existingExport',
-      'connection',
-      'name',
-      'description',
     ],
   },
   optionsHandler: (fieldId, fields) => {
     const appField = fields.find(field => field.id === 'application');
+    const connectionField = fields.find(field => field.id === 'connection');
     // const resourceTypeField = fields.find(field => field.id === 'resourceType');
     const adaptorTypeSuffix = fieldId === 'importId' ? 'Import' : 'Export';
     const app = appField
@@ -226,6 +183,10 @@ export default {
 
       if (fieldId === 'exportId') {
         expression.push({ isLookup: true });
+      }
+
+      if (connectionField.value) {
+        expression.push({ _connectionId: connectionField.value });
       }
 
       if (app.assistant) {

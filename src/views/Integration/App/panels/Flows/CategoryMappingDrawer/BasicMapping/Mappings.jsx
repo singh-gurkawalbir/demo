@@ -5,17 +5,17 @@ import { components } from 'react-select';
 import { Tooltip } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
-import MappingSettings from '../../../../../../components/AFE/ImportMappingSettings/MappingSettingsField';
-import TrashIcon from '../../../../../../components/icons/TrashIcon';
-import * as selectors from '../../../../../../reducers';
-import ActionButton from '../../../../../../components/ActionButton';
-import LockIcon from '../../../../../../components/icons/LockIcon';
-import actions from '../../../../../../actions';
-import DynaTypeableSelect from '../../../../../../components/DynaForm/fields/DynaTypeableSelect';
-import PreferredIcon from '../../../../../../components/icons/PreferredIcon';
-import ConditionalIcon from '../../../../../../components/icons/ConditionalIcon';
-import OptionalIcon from '../../../../../../components/icons/OptionalIcon';
-import RequiredIcon from '../../../../../../components/icons/RequiredIcon';
+import * as selectors from '../../../../../../../reducers';
+import actions from '../../../../../../../actions';
+import ActionButton from '../../../../../../../components/ActionButton';
+import LockIcon from '../../../../../../../components/icons/LockIcon';
+import MappingSettings from '../../../../../../../components/AFE/ImportMappingSettings/MappingSettingsField';
+import TrashIcon from '../../../../../../../components/icons/TrashIcon';
+import DynaTypeableSelect from '../../../../../../../components/DynaForm/fields/DynaTypeableSelect';
+import PreferredIcon from '../../../../../../../components/icons/PreferredIcon';
+import ConditionalIcon from '../../../../../../../components/icons/ConditionalIcon';
+import OptionalIcon from '../../../../../../../components/icons/OptionalIcon';
+import RequiredIcon from '../../../../../../../components/icons/RequiredIcon';
 
 // TODO Azhar style header
 const useStyles = makeStyles(theme => ({
@@ -79,6 +79,23 @@ const useStyles = makeStyles(theme => ({
     width: 50,
     height: 50,
   },
+  filterTypeIcon: {
+    width: 9,
+    height: 9,
+    marginRight: 6,
+  },
+  PreferredIcon: {
+    color: theme.palette.warning.main,
+  },
+  OptionalIcon: {
+    color: theme.palette.secondary.lightest,
+  },
+  ConditionalIcon: {
+    color: theme.palette.primary.main,
+  },
+  RequiredIcon: {
+    color: theme.palette.success.main,
+  },
 }));
 
 export default function ImportMapping(props) {
@@ -130,7 +147,6 @@ export default function ImportMapping(props) {
     dispatch(actions.mapping.delete(editorId, row));
   };
 
-  const getLookup = name => lookups.find(lookup => lookup.name === name);
   const updateLookupHandler = (isDelete, obj) => {
     let lookupsTmp = [...lookups];
 
@@ -164,13 +180,35 @@ export default function ImportMapping(props) {
           // TODO: Azhar Replace these arrow icons with new icons for ["Preferred", "optional", "conditional", "required"]
           switch (filterType) {
             case 'preferred':
-              return <PreferredIcon />;
+              return (
+                <PreferredIcon
+                  className={clsx(
+                    classes.filterTypeIcon,
+                    classes.PreferredIcon
+                  )}
+                />
+              );
             case 'optional':
-              return <OptionalIcon />;
+              return (
+                <OptionalIcon
+                  className={clsx(classes.filterTypeIcon, classes.OptionalIcon)}
+                />
+              );
             case 'conditional':
-              return <ConditionalIcon />;
+              return (
+                <ConditionalIcon
+                  className={clsx(
+                    classes.filterTypeIcon,
+                    classes.ConditionalIcon
+                  )}
+                />
+              );
             case 'required':
-              return <RequiredIcon />;
+              return (
+                <RequiredIcon
+                  className={clsx(classes.filterTypeIcon, classes.RequiredIcon)}
+                />
+              );
             default:
               return null;
           }
@@ -255,11 +293,7 @@ export default function ImportMapping(props) {
                   application={application}
                   updateLookup={updateLookupHandler}
                   disabled={mapping.isNotEditable || disabled}
-                  lookup={
-                    mapping &&
-                    mapping.lookupName &&
-                    getLookup(mapping.lookupName)
-                  }
+                  lookups={lookups}
                   extractFields={extractFields}
                   generateFields={generateFields}
                 />

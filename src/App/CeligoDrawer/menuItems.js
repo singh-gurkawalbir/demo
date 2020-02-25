@@ -18,6 +18,7 @@ import KnowledgeBaseIcon from '../../components/icons/KnowledgeBaseIcon';
 import TicketTagIcon from '../../components/icons/TicketTagIcon';
 import RecycleBinIcon from '../../components/icons/RecycleBinIcon';
 import TokensApiIcon from '../../components/icons/TokensApiIcon';
+import WhatsNewIcon from '../../components/icons/WhatsNewIcon';
 import { getHelpUrl } from '../../utils/resource';
 import { SUBMIT_TICKET_URL, WHATS_NEW_URL } from '../../utils/constants';
 
@@ -73,6 +74,8 @@ export default function menuItems(
         '/pg/stacks',
         '/pg/templates',
         '/pg/connectors',
+        '/pg/recycleBin',
+        '/pg/accessTokens',
       ],
       children: [
         { label: 'Exports', path: '/exports', Icon: ExportsIcon },
@@ -87,7 +90,7 @@ export default function menuItems(
           Icon: ConnectionsIcon,
           path: '/connectors',
         },
-        { label: 'API Tokens', path: '/accesstokens', Icon: TokensApiIcon },
+        { label: 'API tokens', path: '/accesstokens', Icon: TokensApiIcon },
         { label: 'Recycle bin', path: '/recycleBin', Icon: RecycleBinIcon },
       ],
     },
@@ -114,14 +117,14 @@ export default function menuItems(
         },
         {
           label: `What's New`,
-          Icon: TicketTagIcon,
+          Icon: WhatsNewIcon,
           component: 'a',
           href: WHATS_NEW_URL,
         },
       ],
     },
     {
-      label: 'Editor playground (Beta)',
+      label: 'Editor playground (alpha)',
       Icon: EditorsPlaygroundIcon,
       path: '/editors',
     },

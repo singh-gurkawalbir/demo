@@ -25,7 +25,7 @@ import CalendarIcon from '../../components/icons/CalendarIcon';
 import EditableText from '../../components/EditableText';
 import SwitchOnOff from '../../components/OnOff';
 import { generateNewId } from '../../utils/resource';
-import { isConnector } from '../../utils/flows';
+import { isConnector, isFreeFlowResource } from '../../utils/flows';
 import FlowEllipsisMenu from '../../components/FlowEllipsisMenu';
 import DateTimeDisplay from '../../components/DateTimeDisplay';
 
@@ -210,7 +210,8 @@ const useStyles = makeStyles(theme => ({
     marginRight: 50,
   },
   dataLoaderHelp: {
-    margin: theme.spacing(5),
+    margin: theme.spacing(5, 0, 0, 5),
+    maxWidth: 450,
   },
   // NOTE: 52px is collapsed left side bar. 410px is right page header action buttons + padding
   // we use these to force the input to be as large as possible in the pageBar
@@ -277,10 +278,11 @@ function FlowBuilder() {
     return imp ? 'import' : 'export';
   });
   const isConnectorType = isConnector(flow);
+  const isFreeFlow = isFreeFlowResource(flow);
   const isMonitorLevelAccess = useSelector(state =>
     selectors.isFormAMonitorLevelAccess(state, integrationId)
   );
-  const isViewMode = isMonitorLevelAccess || isConnectorType;
+  const isViewMode = isMonitorLevelAccess;
   // #endregion
   const patchFlow = useCallback(
     (path, value) => {
@@ -548,13 +550,17 @@ function FlowBuilder() {
         }}>
         <div className={classes.canvas}>
           {/* CANVAS START */}
-          <div className={classes.generatorRoot}>
+          <div
+            className={classes.generatorRoot}
+            style={{
+              minHeight: 240 * pageGenerators.length + 70,
+            }}>
             <Typography
               component="div"
               className={clsx(classes.title, classes.sourceTitle)}
               variant="overline">
               {isDataLoaderFlow ? 'SOURCE' : 'SOURCE APPLICATIONS'}
-              {!isDataLoaderFlow && (
+              {!isDataLoaderFlow && !isFreeFlow && (
                 <IconButton
                   data-test="addGenerator"
                   disabled={isViewMode}
@@ -577,7 +583,7 @@ function FlowBuilder() {
                     `${pg.application}${pg.webhookOnly}`
                   }
                   index={i}
-                  isViewMode={isViewMode}
+                  isViewMode={isViewMode || isFreeFlow}
                   isLast={pageGenerators.length === i + 1}
                 />
               ))}
@@ -585,7 +591,7 @@ function FlowBuilder() {
                 <AppBlock
                   integrationId={integrationId}
                   className={classes.newPG}
-                  isViewMode={isViewMode}
+                  isViewMode={isViewMode || isFreeFlow}
                   onBlockClick={handleAddGenerator}
                   blockType="newPG"
                 />
@@ -601,7 +607,7 @@ function FlowBuilder() {
                 ? 'DESTINATION APPLICATION'
                 : 'DESTINATION & LOOKUP APPLICATIONS'}
 
-              {showAddPageProcessor && (
+              {showAddPageProcessor && !isFreeFlow && (
                 <IconButton
                   disabled={isViewMode}
                   data-test="addProcessor"
@@ -624,7 +630,7 @@ function FlowBuilder() {
                     `${pp.application}-${i}`
                   }
                   index={i}
-                  isViewMode={isViewMode}
+                  isViewMode={isViewMode || isFreeFlow}
                   isMonitorLevelAccess={isMonitorLevelAccess}
                   isLast={pageProcessors.length === i + 1}
                   onMove={handleMove}
@@ -634,7 +640,7 @@ function FlowBuilder() {
                 <AppBlock
                   className={classes.newPP}
                   integrationId={integrationId}
-                  isViewMode={isViewMode}
+                  isViewMode={isViewMode || isFreeFlow}
                   onBlockClick={handleAddProcessor}
                   blockType={isDataLoaderFlow ? 'newImport' : 'newPP'}
                 />
@@ -644,7 +650,7 @@ function FlowBuilder() {
                 pageProcessors.length === 0 && (
                   <Typography variant="h5" className={classes.dataLoaderHelp}>
                     You can add a destination application once you complete the
-                    configuration of your data loader
+                    configuration of your data loader.
                   </Typography>
                 )}
             </div>

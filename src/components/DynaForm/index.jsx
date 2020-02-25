@@ -7,6 +7,8 @@ import getRenderer from './renderer';
 import DynaFormGenerator from './DynaFormGenerator';
 import ButtonGroup from '../ButtonGroup';
 import * as selectors from '../../reducers';
+import { disableAllFieldsExceptClockedFields } from '../../forms/utils';
+import { C_LOCKED_FIELDS } from '../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   fieldContainer: {
@@ -14,7 +16,7 @@ const useStyles = makeStyles(theme => ({
     borderWidth: '1px 0',
     // backgroundColor: theme.palette.background.paper2,
     borderColor: 'rgb(0,0,0,0.1)',
-    minHeight: '30vh',
+    // minHeight: '30vh',
     maxHeight: `100%`,
     overflowY: 'auto',
     padding: theme.spacing(1),
@@ -80,17 +82,26 @@ const DynaForm = props => {
 
 export default function DisabledDynaFormPerUserPermissions(props) {
   // Disabled is a prop to deliberately disable the Form this is added to support a DynaForm within a DynaForm
-  const { integrationId, disabled } = props;
+  const { integrationId, disabled, fieldMeta } = props;
   // pass in the integration Id to find access level of its associated forms
   const isFormAMonitorLevelAccess = useSelector(state =>
     selectors.isFormAMonitorLevelAccess(state, integrationId)
   );
   const viewMode = isFormAMonitorLevelAccess || disabled;
+  const fieldMetaWithDisabledFields = useMemo(() => {
+    if (viewMode) {
+      // disabled all fields except certain ones
+      return disableAllFieldsExceptClockedFields(fieldMeta, C_LOCKED_FIELDS);
+    }
+
+    return fieldMeta;
+  }, [fieldMeta, viewMode]);
 
   return (
     <DynaForm
       {...props}
       disabled={viewMode}
+      fieldMeta={fieldMetaWithDisabledFields}
       // when its in view mode we disable validation before touch this ensures that there is no
       // required fields errored messages
     />

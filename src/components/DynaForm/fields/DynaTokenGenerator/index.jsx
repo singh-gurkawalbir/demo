@@ -56,7 +56,7 @@ function TokenGenerator(props) {
   useEffect(() => {
     if (fieldsToBeSetWithValues) {
       Object.keys(fieldsToBeSetWithValues).forEach(key =>
-        onFieldChange(key, fieldsToBeSetWithValues[key])
+        onFieldChange(key, fieldsToBeSetWithValues[key], true)
       );
 
       handleClearToken(resourceId);

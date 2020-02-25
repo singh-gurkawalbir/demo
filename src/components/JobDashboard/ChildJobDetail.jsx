@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import clsx from 'clsx';
 import TableCell from '@material-ui/core/TableCell';
 import { makeStyles } from '@material-ui/core/styles';
 import TableRow from '@material-ui/core/TableRow';
@@ -12,11 +13,10 @@ import DateTimeDisplay from '../DateTimeDisplay';
 
 const useStyles = makeStyles(theme => ({
   checkAction: {
-    paddingLeft: theme.spacing(6),
+    paddingLeft: 58,
   },
   name: {
     width: '18.15%',
-    wordBreak: 'break-word',
   },
   status: {
     width: '10.15',
@@ -47,18 +47,25 @@ const useStyles = makeStyles(theme => ({
     textAlign: 'right',
   },
   completed: {
-    width: '10.5%',
+    width: '11.5%',
+    whiteSpace: 'nowrap',
   },
   actions: {
-    width: '8.35%',
+    width: '7.5%',
     textAlign: 'center',
   },
   stateBtn: {
     color: theme.palette.error.main,
     float: 'right',
+    padding: 0,
+    minWidth: 'unset',
     '&:hover': {
       color: `${theme.palette.error.dark} !important`,
     },
+  },
+  checkActionBorder: {
+    paddingLeft: 55,
+    borderLeft: `5px solid ${theme.palette.primary.main}`,
   },
 }));
 
@@ -116,7 +123,10 @@ export default function ChildJobDetail({
 
   return (
     <TableRow>
-      <TableCell className={classes.checkAction}>
+      <TableCell
+        className={clsx(classes.checkAction, {
+          [classes.checkActionBorder]: isSelected,
+        })}>
         <Checkbox
           color="primary"
           disabled={!isSelectable}

@@ -30,6 +30,7 @@ const connectors = [
     name: 'FTP',
     type: 'ftp',
     keywords: 'sftp,ftps,technology,protocol',
+    group: 'tech',
   },
   {
     id: 'wrapper',
@@ -91,7 +92,8 @@ const connectors = [
   {
     id: 'integrator-extension',
     type: 'webhook',
-    name: 'integrator.io Extension',
+    name: 'integrator.io extension',
+    icon: 'integratorio',
     webhookOnly: true,
   },
   {
@@ -139,6 +141,12 @@ const connectors = [
   },
   // Application connectors
   { id: '3dcart', name: '3DCart', type: 'rest', assistant: '3dcart' },
+  {
+    id: '3plcentral',
+    name: '3PL Central',
+    type: 'http',
+    assistant: '3plcentral',
+  },
   { id: 'vroozi', name: 'Vroozi', type: 'http', assistant: 'vroozi' },
   { id: 'accelo', name: 'Accelo', type: 'rest', assistant: 'accelo' },
   {
@@ -159,6 +167,12 @@ const connectors = [
   { id: 'aptrinsic', name: 'Aptrinsic', type: 'rest', assistant: 'aptrinsic' },
   { id: 'ariba', name: 'Ariba', type: 'http', assistant: 'ariba' },
   { id: 'asana', name: 'Asana', type: 'rest', assistant: 'asana' },
+  {
+    id: '4castplus',
+    name: '4CastPlus',
+    type: 'http',
+    assistant: '4castplus',
+  },
   { id: 'atera', name: 'Atera', type: 'rest', assistant: 'atera' },
   {
     id: 'authorize.net',
@@ -200,32 +214,32 @@ const connectors = [
   { id: 'chargify', name: 'Chargify', type: 'rest', assistant: 'chargify' },
   // { id: 'clio', name: 'clio', type: 'http', assistant: 'clio' },
   { id: 'clover', name: 'Clover', type: 'http', assistant: 'clover' },
-  { id: 'concur', name: 'Concur', type: 'rest', assistant: 'concur' },
-  {
-    id: 'concurall',
-    name: 'Concur',
-    type: 'rest',
-    assistant: 'concurall',
-    icon: 'concur',
-  },
-  {
-    id: 'concurv4',
-    name: 'Concur',
-    type: 'rest',
-    assistant: 'concurv4',
-    icon: 'concur',
-  },
+  // { id: 'concur', name: 'Concur', type: 'rest', assistant: 'concur' },
+  // {
+  //   id: 'concurall',
+  //   name: 'Concur',
+  //   type: 'rest',
+  //   assistant: 'concurall',
+  //   icon: 'concur',
+  // },
+  // {
+  //   id: 'concurv4',
+  //   name: 'Concur',
+  //   type: 'rest',
+  //   assistant: 'concurv4',
+  //   icon: 'concur',
+  // },
   {
     id: 'constantcontactv2',
     name: 'Constant Contact V2',
-    type: 'http',
+    type: 'rest',
     assistant: 'constantcontactv2',
     icon: 'constantcontactv3',
   },
   {
     id: 'constantcontactv3',
     name: 'Constant Contact V3',
-    type: 'http',
+    type: 'rest',
     assistant: 'constantcontactv3',
     icon: 'constantcontactv3',
   },
@@ -360,7 +374,7 @@ const connectors = [
   { id: 'insightly', name: 'Insightly', type: 'rest', assistant: 'insightly' },
   {
     id: 'integratorio',
-    name: 'Integrator.io',
+    name: 'integrator.io',
     type: 'rest',
     assistant: 'integratorio',
   },
@@ -704,15 +718,11 @@ export const groupApplications = (
 ) => {
   const filteredConnectors = connectors.filter(connector => {
     if (connector.assistant && assistants && resourceType !== 'connections') {
-      if (
-        assistants.http.applications.find(
-          ass => ass._id === connector.assistant
-        )
-      ) {
-        const assistant = assistants.http.applications.find(
-          ass => ass._id === connector.assistant
-        );
+      let assistant = assistants.http.applications.find(
+        a => a._id === connector.assistant
+      );
 
+      if (assistant) {
         if (appType === 'import') {
           return assistant.import;
         } else if (appType === 'export') {
@@ -720,15 +730,13 @@ export const groupApplications = (
         }
 
         return true;
-      } else if (
-        assistants.rest.applications.find(
-          ass => ass._id === connector.assistant
-        )
-      ) {
-        const assistant = assistants.rest.applications.find(
-          ass => ass._id === connector.assistant
-        );
+      }
 
+      assistant = assistants.rest.applications.find(
+        a => a._id === connector.assistant
+      );
+
+      if (assistant) {
         if (appType === 'import') {
           return assistant.import;
         } else if (appType === 'export') {
@@ -751,8 +759,15 @@ export const groupApplications = (
     }
 
     // Webhooks are shown only for exports and for page generators in flow context
-    if (resourceType && !['exports', 'pageGenerator'].includes(resourceType))
+    if (resourceType && !['exports', 'pageGenerator'].includes(resourceType)) {
+      // for pageProcessor lookups even ftps are not shown
+      if (resourceType === 'pageProcessor' && appType === 'export') {
+        return connector.id !== 'ftp' && !connector.webhookOnly;
+      }
+
+      // all other resource types handled here
       return !connector.webhookOnly;
+    }
 
     return true;
   });

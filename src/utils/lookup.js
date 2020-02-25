@@ -2,16 +2,17 @@ import deepClone from 'lodash/cloneDeep';
 import { adaptorTypeMap } from './resource';
 
 export default {
-  getLookupFromResource: (resourceObj, appType) => {
+  getLookupFromResource: (resourceObj = {}) => {
     if (!resourceObj) {
       return;
     }
 
+    const { adaptorType } = resourceObj;
     let lookup;
 
     /* TODO: With support for different application being adding up, 
     path for lookup to be updated below */
-    switch (appType) {
+    switch (adaptorTypeMap[adaptorType]) {
       case adaptorTypeMap.NetSuiteDistributedImport:
         lookup = resourceObj.netsuite_da && resourceObj.netsuite_da.lookups;
         break;

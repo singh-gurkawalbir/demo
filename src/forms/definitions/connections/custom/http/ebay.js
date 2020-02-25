@@ -74,14 +74,20 @@ export default {
         const baseUri = r && r.http && r.http.baseURI;
 
         if (baseUri) {
-          if (baseUri.indexOf('sandbox') !== -1) {
-            return (r && r.http && r.http.scope) || [];
+          if (baseUri.includes('sandbox')) {
+            return (
+              (r &&
+                r.http &&
+                r.http.auth &&
+                r.http.auth.oauth &&
+                r.http.auth.oauth.scope) ||
+              []
+            );
           }
         }
 
         return [];
       },
-      required: true,
     },
     'http.scopeProduction': {
       id: 'http.scopeProduction',
@@ -103,15 +109,31 @@ export default {
         const baseUri = r && r.http && r.http.baseURI;
 
         if (baseUri) {
-          if (baseUri.indexOf('sandbox') === -1) {
-            return (r && r.http && r.http.scope) || [];
+          if (!baseUri.includes('sandbox')) {
+            return (
+              (r &&
+                r.http &&
+                r.http.auth &&
+                r.http.auth.oauth &&
+                r.http.auth.oauth.scope) ||
+              []
+            );
           }
         }
 
         return [];
       },
       visibleWhen: [{ field: 'accountType', is: ['production'] }],
-      required: true,
+    },
+    'http._iClientId': {
+      id: 'http._iClientId',
+      resourceType: 'iClients',
+      filter: { provider: 'ebay' },
+      connType: 'ebay',
+      label: 'IClient',
+      type: 'dynaiclient',
+      connectionId: r => r && r._id,
+      connectorId: r => r && r._connectorId,
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
@@ -121,6 +143,7 @@ export default {
       'accountType',
       'http.scopeSandbox',
       'http.scopeProduction',
+      'http._iClientId',
     ],
     type: 'collapse',
     containers: [

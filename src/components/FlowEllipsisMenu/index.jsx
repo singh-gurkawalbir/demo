@@ -65,7 +65,7 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
     setAnchorEl(event.currentTarget);
   }, []);
   const handleMenuClose = useCallback(() => setAnchorEl(null), []);
-  const flowName = flowDetails.name || flowDetails._Id;
+  const flowName = flowDetails.name || flowDetails._id;
   const handleActionClick = useCallback(
     action => () => {
       switch (action) {
@@ -156,7 +156,8 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
   // below actions should be made available for this flow.
   if (integrationId) availableActions.push(allActions.detach);
 
-  if (flowDetails.showMapping) availableActions.push(allActions.mapping);
+  if (!flowDetails._connectorId || flowDetails.showMapping)
+    availableActions.push(allActions.mapping);
 
   if (flowDetails.showSchedule) availableActions.push(allActions.schedule);
 

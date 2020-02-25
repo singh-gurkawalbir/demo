@@ -13,7 +13,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
   gridImgWrapper: {
-    background: `right / contain no-repeat url("../../static/images/gridDots.svg"), ${theme.palette.primary.main} `,
+    background: `right / contain no-repeat url("https://integrator-ui-resources.s3.amazonaws.com/pg/static/images/gridDots.svg"), ${theme.palette.primary.main} `,
     [theme.breakpoints.down('sm')]: {
       display: 'none',
     },

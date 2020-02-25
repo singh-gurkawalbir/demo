@@ -1,4 +1,5 @@
 import actionTypes from '../../../actions/types';
+import { fieldsTouchedForMeta } from '../../../forms/utils';
 
 export default function reducer(state = {}, action) {
   const {
@@ -11,14 +12,16 @@ export default function reducer(state = {}, action) {
     fieldMeta,
     formValues,
     skipClose = false,
+    initData,
   } = action;
   const key = `${resourceType}-${resourceId}`;
+  const stateCopy = { ...state, [key]: { ...state[key] } };
 
   switch (type) {
     case actionTypes.RESOURCE_FORM.INIT:
       return {
         ...state,
-        [key]: { initComplete: false },
+        [key]: { initComplete: false, initData },
       };
 
     case actionTypes.RESOURCE_FORM.INIT_COMPLETE:
@@ -29,6 +32,13 @@ export default function reducer(state = {}, action) {
         // refreshing session? Doing this makes the submit resource saga
         // easier as we dont need to lookup the preSave handler...
         [key]: {
+          initData:
+            state[key] && state[key].initData
+              ? fieldsTouchedForMeta(
+                  fieldMeta,
+                  state[key] && state[key].initData
+                )
+              : null,
           isNew,
           skipCommit,
           initComplete: true,
@@ -37,6 +47,11 @@ export default function reducer(state = {}, action) {
           showFormValidationsBeforeTouch: false,
         },
       };
+
+    case actionTypes.RESOURCE_FORM.CLEAR_INIT_DATA:
+      stateCopy[key] && delete stateCopy[key].initData;
+
+      return stateCopy;
 
     case actionTypes.RESOURCE_FORM.SHOW_FORM_VALIDATION_ERRORS:
       // only after form successfully intializes does it make sense to show validations

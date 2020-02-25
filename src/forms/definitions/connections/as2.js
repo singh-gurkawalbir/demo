@@ -93,6 +93,9 @@ export default {
     'as2.partnerStationInfo.mdn.mdnSigning': {
       fieldId: 'as2.partnerStationInfo.mdn.mdnSigning',
     },
+    'as2.partnerStationInfo.mdn.verifyMDNSignature': {
+      fieldId: 'as2.partnerStationInfo.mdn.verifyMDNSignature',
+    },
     'as2.partnerStationInfo.encryptionType': {
       fieldId: 'as2.partnerStationInfo.encryptionType',
     },
@@ -200,7 +203,7 @@ export default {
           r.as2 &&
           r.as2.partnerStationInfo &&
           r.as2.partnerStationInfo.rateLimit &&
-          r.as2.partnerStationInfo.auth.limit
+          r.as2.partnerStationInfo.rateLimit.limit
         ),
     },
     apiRateLimits: {
@@ -281,6 +284,7 @@ export default {
           'partnerrequireasynchronousmdns',
           'as2.partnerStationInfo.mdn.mdnURL',
           'as2.partnerStationInfo.mdn.mdnSigning',
+          'as2.partnerStationInfo.mdn.verifyMDNSignature',
           'as2.partnerStationInfo.encryptionType',
           'as2.partnerStationInfo.signing',
           'as2.partnerStationInfo.encoding',

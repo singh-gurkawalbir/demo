@@ -28,7 +28,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function Filters({ integrationId, flowId }) {
+function Filters({ integrationId, flowId, uiAssistant }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -94,11 +94,12 @@ function Filters({ integrationId, flowId }) {
                 <FormControl
                   component="fieldset"
                   className={classes.formControl}>
-                  <FormLabel component="legend">Amazon attributes</FormLabel>
+                  <FormLabel component="legend">{`${uiAssistant} attributes`}</FormLabel>
                   <FormGroup>
                     <FormControlLabel
                       control={
                         <Checkbox
+                          color="primary"
                           checked={!!attributes.required}
                           onChange={handleAttributeChange('required')}
                           value="required"
@@ -109,6 +110,7 @@ function Filters({ integrationId, flowId }) {
                     <FormControlLabel
                       control={
                         <Checkbox
+                          color="primary"
                           checked={!!attributes.preferred}
                           onChange={handleAttributeChange('preferred')}
                           value="preferred"
@@ -119,6 +121,7 @@ function Filters({ integrationId, flowId }) {
                     <FormControlLabel
                       control={
                         <Checkbox
+                          color="primary"
                           checked={!!attributes.conditional}
                           onChange={handleAttributeChange('conditional')}
                           value="conditional"
@@ -129,6 +132,7 @@ function Filters({ integrationId, flowId }) {
                     <FormControlLabel
                       control={
                         <Checkbox
+                          color="primary"
                           checked={!!attributes.optional}
                           onChange={handleAttributeChange('optional')}
                           value="optional"
@@ -151,17 +155,17 @@ function Filters({ integrationId, flowId }) {
                     onChange={handleChange}>
                     <FormControlLabel
                       value="all"
-                      control={<Radio />}
+                      control={<Radio color="primary" />}
                       label="All"
                     />
                     <FormControlLabel
                       value="mapped"
-                      control={<Radio />}
+                      control={<Radio color="primary" />}
                       label="Mapped"
                     />
                     <FormControlLabel
                       value="unmapped"
-                      control={<Radio />}
+                      control={<Radio color="primary" />}
                       label="Unmapped"
                     />
                   </RadioGroup>

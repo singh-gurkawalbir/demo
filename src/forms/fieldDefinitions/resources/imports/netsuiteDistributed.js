@@ -17,9 +17,13 @@ export default {
     ],
   },
   'netsuite_da.mapping': {
-    type: 'mapping',
+    type: 'text',
+    visible: false,
+  },
+  'netsuite_da.subrecords': {
+    required: false,
+    type: 'netsuitesubrecords',
     connectionId: r => r && r._connectionId,
-    label: 'Manage Import Mapping',
   },
   'netsuite_da.operation': {
     type: 'radiogroupforresetfields',
