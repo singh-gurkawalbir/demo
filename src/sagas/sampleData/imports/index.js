@@ -120,7 +120,7 @@ function* fetchAssistantSampleData({ resource }) {
   }
 }
 
-function* requestSampleData({ resourceId, options = {} }) {
+function* requestSampleData({ resourceId, options = {}, refreshCache }) {
   const { merged: resource } = yield select(
     resourceData,
     'imports',
@@ -138,7 +138,7 @@ function* requestSampleData({ resourceId, options = {} }) {
       case 'NetSuiteDistributedImport': {
         // eslint-disable-next-line camelcase
         const { _connectionId: connectionId, netsuite_da = {} } = resource;
-        const { recordType, refreshCache } = options;
+        const { recordType } = options;
 
         yield put(
           actions.metadata.request(
@@ -158,7 +158,7 @@ function* requestSampleData({ resourceId, options = {} }) {
           actions.metadata.request(
             connectionId,
             `salesforce/metadata/connections/${connectionId}/sObjectTypes/${salesforce.sObjectType}`,
-            { refreshCache: options.refreshCache }
+            { refreshCache }
           )
         );
         break;
