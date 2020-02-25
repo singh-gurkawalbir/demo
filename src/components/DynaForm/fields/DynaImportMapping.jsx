@@ -68,7 +68,7 @@ export default function DynaImportMapping(props) {
   if (isModalVisible) {
     mappings = mappingUtil.getMappingsForApp({
       mappings: value === '' ? {} : value,
-      appType: application,
+      resource: resourceData,
     });
   }
 

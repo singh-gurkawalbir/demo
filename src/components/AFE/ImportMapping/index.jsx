@@ -229,20 +229,23 @@ export default function ImportMapping(props) {
     application,
     resource
   );
-  const updateLookupHandler = (isDelete, obj) => {
+  const updateLookupHandler = (lookupOps = []) => {
     let lookupsTmp = [...lookups];
+    // Here lookupOPs will be an array of lookups and actions. Lookups can be added and delted simultaneously from settings.
 
-    if (isDelete) {
-      lookupsTmp = lookupsTmp.filter(lookup => lookup.name !== obj.name);
-    } else {
-      const index = lookupsTmp.findIndex(lookup => lookup.name === obj.name);
-
-      if (index !== -1) {
-        lookupsTmp[index] = obj;
+    lookupOps.forEach(({ isDelete, obj }) => {
+      if (isDelete) {
+        lookupsTmp = lookupsTmp.filter(lookup => lookup.name !== obj.name);
       } else {
-        lookupsTmp.push(obj);
+        const index = lookupsTmp.findIndex(lookup => lookup.name === obj.name);
+
+        if (index !== -1) {
+          lookupsTmp[index] = obj;
+        } else {
+          lookupsTmp.push(obj);
+        }
       }
-    }
+    });
 
     dispatch(actions.mapping.updateLookup(editorId, lookupsTmp));
   };

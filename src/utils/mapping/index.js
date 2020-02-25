@@ -1,4 +1,5 @@
 import deepClone from 'lodash/cloneDeep';
+import { uniqBy } from 'lodash';
 import { adaptorTypeMap } from '../resource';
 import mappingUtil from '.';
 import netsuiteMappingUtil from './application/netsuite';
@@ -576,8 +577,10 @@ export default {
           toReturn.push(tempFm);
         });
       });
+    // removing duplicate items if present
+    const _toReturn = uniqBy(toReturn, item => item.generate);
 
-    return toReturn;
+    return _toReturn;
   },
   generateMappingFieldsAndList: ({
     mappings = [],

@@ -7,8 +7,9 @@ export default {
     '/http/mediaType': 'json',
     '/http/baseURI': `https://${formValues['/http/subdomain']}.4castplus.com`,
     '/http/ping/method': 'GET',
-    '/http/ping/relativeURI':
-      '/api/customers?_s={{{connection.http.auth.token.token}}}',
+    '/http/ping/relativeURI': '/api/customers',
+    '/http/auth/token/location': 'url',
+    '/http/auth/token/paramName': '_s',
     '/http/auth/token/refreshRelativeURI': `https://${
       formValues['/http/subdomain']
     }.4castplus.com/api/login`,
@@ -24,7 +25,7 @@ export default {
       id: 'http.subdomain',
       type: 'text',
       startAdornment: 'https://',
-      endAdornment: '.4castplus.com/api',
+      endAdornment: '.4castplus.com',
       label: 'Subdomain',
       required: true,
       helpText:

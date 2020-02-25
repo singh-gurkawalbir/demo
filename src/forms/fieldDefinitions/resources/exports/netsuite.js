@@ -339,6 +339,10 @@ export default {
     type: 'checkbox',
     label: 'Reload Record Before Export',
   },
+  'netsuite.distributed.skipExportFieldId': {
+    type: 'text',
+    label: 'Skip Export Field Id',
+  },
   'netsuite.distributed.ioEnvironment': {
     type: 'text',
     label: 'NetSuite distributed io Environment',

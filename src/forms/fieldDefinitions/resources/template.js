@@ -34,6 +34,7 @@ export default {
       {
         items: [
           { label: '3dCart', value: '3dcart' },
+          { label: '3PL Central', value: '3plcentral' },
           { label: 'Google', value: 'google' },
           { label: 'Asana', value: 'asana' },
           { label: 'Box', value: 'box' },
