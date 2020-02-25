@@ -126,6 +126,7 @@ function VariationMappingDrawer({ integrationId, parentUrl }) {
   });
   const firstVariation =
     useSelector(state => {
+      // propery being read as is from IA metadata, to facilitate initialization and to avoid re-adjust while sending back.
       // eslint-disable-next-line camelcase
       const { variation_themes = [] } =
         selectors.categoryMappingGenerateFields(state, integrationId, flowId, {
