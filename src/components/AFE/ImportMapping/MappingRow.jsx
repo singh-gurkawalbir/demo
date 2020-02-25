@@ -85,7 +85,7 @@ export default function MappingRow(props) {
     id,
     mapping,
     extractFields,
-    handleFieldUpdate,
+    onFieldUpdate,
     generateFields,
     disabled,
     index,
@@ -94,7 +94,7 @@ export default function MappingRow(props) {
     application,
     options,
     lookups,
-    handleDelete,
+    onDelete,
     onMove,
     isDraggable = false,
   } = props;
@@ -158,7 +158,7 @@ export default function MappingRow(props) {
               mapping.isSubRecordMapping || mapping.isNotEditable || disabled
             }
             onBlur={(id, value) => {
-              handleFieldUpdate(mapping, 'extract', value);
+              onFieldUpdate(mapping, 'extract', value);
             }}
           />
 
@@ -186,7 +186,7 @@ export default function MappingRow(props) {
             }
             onBlur={
               (id, value) => {
-                handleFieldUpdate(mapping, 'generate', value);
+                onFieldUpdate(mapping, 'generate', value);
               }
               // handleGenerateUpdate(mapping)
             }
@@ -235,7 +235,7 @@ export default function MappingRow(props) {
             aria-label="delete"
             disabled={mapping.isRequired || mapping.isNotEditable || disabled}
             onClick={() => {
-              handleDelete(mapping.index);
+              onDelete(mapping.index);
             }}
             className={classes.deleteBtn}>
             <TrashIcon />

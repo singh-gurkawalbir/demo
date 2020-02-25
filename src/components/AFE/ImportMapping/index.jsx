@@ -316,7 +316,7 @@ export default function ImportMapping(props) {
                 key={`${editorId}-${initChangeIdentifier}-${mapping.rowIdentifier}-${index}`}
                 mapping={mapping}
                 extractFields={extractFields}
-                handleFieldUpdate={handleFieldUpdate}
+                onFieldUpdate={handleFieldUpdate}
                 generateFields={generateFields}
                 disabled={disabled}
                 updateLookupHandler={updateLookupHandler}
@@ -324,7 +324,7 @@ export default function ImportMapping(props) {
                 application={application}
                 options={options}
                 lookups={lookups}
-                handleDelete={handleDelete}
+                onDelete={handleDelete}
                 onMove={handleMove}
                 isDraggable={!disabled}
               />
@@ -334,7 +334,7 @@ export default function ImportMapping(props) {
             key={`${editorId}-${initChangeIdentifier}-new`}
             mapping={emptyMappingRow}
             extractFields={extractFields}
-            handleFieldUpdate={handleFieldUpdate}
+            onFieldUpdate={handleFieldUpdate}
             generateFields={generateFields}
             disabled={disabled}
             updateLookupHandler={updateLookupHandler}
@@ -342,7 +342,7 @@ export default function ImportMapping(props) {
             application={application}
             options={options}
             lookups={lookups}
-            handleDelete={handleDelete}
+            onDelete={handleDelete}
             isDraggable={false}
           />
         </div>
