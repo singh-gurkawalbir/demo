@@ -28,6 +28,7 @@ export default function VariationAttributesList({
         sectionId: categoryId,
       })
     ) || {};
+  // propery being read as is from IA metadata, to facilitate initialization and to avoid re-adjust while sending back.
   const { variation_attributes = [] } =
     variation_themes.find(theme => theme.id === 'variation_theme') || {};
 

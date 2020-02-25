@@ -1314,17 +1314,19 @@ export function mappingsForVariation(state, integrationId, flowId, filters) {
       state && state.session,
       integrationId,
       flowId
-    ) || {};
+    ) || emptyObject;
 
   if (recordMappings) {
     mappings = recordMappings.find(item => item.id === sectionId) || {};
   }
 
+  // propery being read as is from IA metadata, to facilitate initialization and to avoid re-adjust while sending back.
   // eslint-disable-next-line camelcase
   const { variation_themes = [] } = mappings;
 
   return (
-    variation_themes.find(theme => theme.variation_theme === variation) || {}
+    variation_themes.find(theme => theme.variation_theme === variation) ||
+    emptyObject
   );
 }
 
@@ -1390,7 +1392,7 @@ export function integrationAppSettings(state, id) {
 }
 
 export function integrationAppLicense(state, id) {
-  if (!state) return {};
+  if (!state) return emptyObject;
   const integrationResource = fromData.integrationAppSettings(state.data, id);
   const { connectorEdition: edition } = integrationResource.settings || {};
   const userLicenses = fromUser.licenses(state && state.user) || [];
@@ -1499,7 +1501,7 @@ export function integrationAppSectionMetadata(
   storeId
 ) {
   if (!state) {
-    return {};
+    return emptyObject;
   }
 
   const integrationResource = fromData.integrationAppSettings(
@@ -2187,7 +2189,7 @@ export function resourcePermissions(state, resourceType, resourceId) {
     return permissions.integrations[resourceId] || {};
   }
 
-  return {};
+  return emptyObject;
 }
 
 export function isFormAMonitorLevelAccess(state, integrationId) {
@@ -2578,7 +2580,7 @@ export function resourceStatus(
 }
 
 export function resourceData(state, resourceType, id, scope) {
-  if (!state || !resourceType || !id) return {};
+  if (!state || !resourceType || !id) return emptyObject;
   let type = resourceType;
 
   if (resourceType.indexOf('/licenses') >= 0) {
@@ -2804,7 +2806,7 @@ export function metadataOptionsAndResources({
       connectionId,
       commMetaPath,
       filterKey,
-    }) || {}
+    }) || emptyObject
   );
 }
 
@@ -2830,7 +2832,7 @@ export function getMetadataOptions(
       connectionId,
       commMetaPath,
       filterKey,
-    }) || {}
+    }) || emptyObject
   );
 }
 
