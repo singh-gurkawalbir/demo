@@ -1,5 +1,12 @@
-import { Drawer, makeStyles, Typography, Grid } from '@material-ui/core';
-import { useSelector } from 'react-redux';
+import {
+  Drawer,
+  makeStyles,
+  Typography,
+  Grid,
+  Button,
+  Divider,
+} from '@material-ui/core';
+import { useSelector, useDispatch } from 'react-redux';
 import { useCallback, Fragment } from 'react';
 import {
   useRouteMatch,
@@ -11,9 +18,11 @@ import * as selectors from '../../../../../../../reducers';
 import PanelHeader from '../../../../../../../components/PanelHeader';
 import LoadResources from '../../../../../../../components/LoadResources';
 import ApplicationImg from '../../../../../../../components/icons/ApplicationImg';
+import ButtonGroup from '../../../../../../../components/ButtonGroup';
 import DrawerTitleBar from '../TitleBar';
 import VariationAttributesList from './AttributesList';
 import VariationMappings from './MappingsWrapper';
+import actions from '../../../../../../../actions';
 
 const drawerWidth = 200;
 const useStyles = makeStyles(theme => ({
@@ -49,6 +58,10 @@ const useStyles = makeStyles(theme => ({
   drawer: {
     width: drawerWidth,
     flexShrink: 0,
+  },
+  margin: {
+    margin: '10px 10px 10px 10px',
+    float: 'right',
   },
   nested: {
     paddingLeft: theme.spacing(4),
@@ -117,6 +130,7 @@ function VariationMappingDrawer({ integrationId, parentUrl }) {
   const { flowId, subCategoryId, variation } = match.params;
   const classes = useStyles();
   const history = useHistory();
+  const dispatch = useDispatch();
   const uiAssistant = useSelector(state => {
     const categoryMappingMetadata =
       selectors.categoryMapping(state, integrationId, flowId) || {};
@@ -145,6 +159,21 @@ function VariationMappingDrawer({ integrationId, parentUrl }) {
   const handleClose = useCallback(() => {
     history.push(parentUrl);
   }, [history, parentUrl]);
+  const handleSave = () => {
+    const data = { categoryId: subCategoryId, variation };
+
+    dispatch(
+      actions.integrationApp.settings.saveVariations(
+        integrationId,
+        flowId,
+        data
+      )
+    );
+  };
+
+  const handleSaveAndClose = () => {
+    handleClose();
+  };
 
   if (!variation) {
     history.push(`${match.url}/${firstVariation}`);
@@ -206,6 +235,31 @@ function VariationMappingDrawer({ integrationId, parentUrl }) {
               />
             </Grid>
           </Grid>
+          <Divider />
+          <ButtonGroup className={classes.margin}>
+            <Button
+              id={flowId}
+              variant="outlined"
+              color="primary"
+              dataTest="saveImportMapping">
+              onClick={handleSave}
+              Save
+            </Button>
+            <Button
+              id={flowId}
+              variant="outlined"
+              color="secondary"
+              dataTest="saveAndCloseImportMapping"
+              onClick={handleSaveAndClose}>
+              Save & Close
+            </Button>
+            <Button
+              variant="text"
+              data-test="saveImportMapping"
+              onClick={handleClose}>
+              Close
+            </Button>
+          </ButtonGroup>
         </div>
       </Drawer>
     </Fragment>
