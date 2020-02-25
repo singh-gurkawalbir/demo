@@ -1,8 +1,8 @@
 import { Fragment, useCallback } from 'react';
 import { useSnackbar } from 'notistack';
 import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
 import Button from '@material-ui/core/Button';
+import CloseIcon from '../components/icons/CloseIcon';
 
 export default function useEnqueueSnackbar() {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();

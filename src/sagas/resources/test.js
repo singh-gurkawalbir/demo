@@ -9,14 +9,18 @@ import {
   requestReferences,
   requestDeregister,
   normalizeFlow,
+  resourceConflictDetermination,
 } from './';
 import { apiCallWithRetry } from '../';
 import { status500 } from '../test';
 import * as selectors from '../../reducers';
+import { SCOPES } from '../resourceForm';
+import { APIException } from '../api';
 
 describe('commitStagedChanges saga', () => {
   const id = '1';
   const resourceType = 'dogs';
+  const path = '/dogs/1';
 
   test('should do nothing if no staged changes exist.', () => {
     const saga = commitStagedChanges({ resourceType, id });
@@ -34,7 +38,7 @@ describe('commitStagedChanges saga', () => {
   });
 
   describe('update existing resource', () => {
-    test('should complete with dispatch of conflict and received actions when origin does not match master.', () => {
+    test('the commitStagedChanges saga should exit when the resourceConflictDetermination reports an error or a conflict ', () => {
       const saga = commitStagedChanges({ resourceType, id });
       const selectEffect = saga.next().value;
 
@@ -43,36 +47,21 @@ describe('commitStagedChanges saga', () => {
       expect(saga.next().value).toEqual(
         select(selectors.resourceData, resourceType, id, undefined)
       );
+      const merged = { lastModified: 50 };
 
-      expect(
-        saga.next({ master: { lastModified: 50 }, patch: true }).value
-      ).toEqual(
-        call(apiCallWithRetry, {
-          path: `/${resourceType}/${id}`,
+      expect(saga.next({ merged, patch: true }).value).toEqual(
+        call(resourceConflictDetermination, {
+          path,
+          merged,
+          id,
+          scope: undefined,
+          resourceType,
         })
       );
 
-      const origin = { id, lastModified: 100 };
-      const putEffect = saga.next(origin).value;
-      const conflict = [
-        {
-          op: 'add',
-          path: '/id',
-          value: id,
-        },
-      ];
+      const finalEffect = saga.next({ conflict: true });
 
-      expect(putEffect).toEqual(
-        put(actions.resource.commitConflict(id, conflict))
-      );
-
-      expect(saga.next().value).toEqual(
-        put(actions.resource.received(resourceType, origin))
-      );
-
-      const finalEffect = saga.next();
-
-      expect(finalEffect).toEqual({ done: true, value: undefined });
+      expect(finalEffect).toEqual({ done: true, value: { conflict: true } });
     });
 
     test('should complete with dispatch of received and clear stage actions when commit succeeds.', () => {
@@ -85,7 +74,6 @@ describe('commitStagedChanges saga', () => {
         select(selectors.resourceData, resourceType, id, undefined)
       );
 
-      const origin = { id, lastModified: 100 };
       const merged = { id, lastModified: 100 };
       const path = `/${resourceType}/${id}`;
       const master = { lastModified: 100 };
@@ -95,9 +83,17 @@ describe('commitStagedChanges saga', () => {
         patch: true,
       }).value;
 
-      expect(getCallEffect).toEqual(call(apiCallWithRetry, { path }));
+      expect(getCallEffect).toEqual(
+        call(resourceConflictDetermination, {
+          path,
+          merged,
+          id,
+          scope: undefined,
+          resourceType,
+        })
+      );
 
-      const putCallEffect = saga.next(merged, origin).value;
+      const putCallEffect = saga.next({}).value;
 
       expect(putCallEffect).toEqual(
         call(apiCallWithRetry, {
@@ -184,6 +180,109 @@ describe('commitStagedChanges saga', () => {
       const finalEffect = saga.next();
 
       expect(finalEffect).toEqual({ done: true, value: undefined });
+    });
+  });
+
+  describe('resourceConflictDetermination saga', () => {
+    const _400Exception = new APIException({
+      status: 400,
+      message: 'Session Expired',
+    });
+    const path = '/somePath';
+    const merged = {
+      lastModified: '12',
+      someProp: 'abc',
+      commonProp1: 'a',
+      commonProp2: 'b',
+    };
+    const originWithChangesInCommonProps = {
+      lastModified: '15',
+      commonProp1: 'a',
+      commonProp2: 'c',
+    };
+    const originWithNoChangesInCommonProps = {
+      lastModified: '15',
+      commonProp1: 'a',
+      commonProp2: 'b',
+    };
+    const id = '123';
+    const scope = SCOPES.VALUE;
+    const resourceType = 'someResourceType';
+
+    test('should report a conflict when the common properties of origin and merged are different ', () => {
+      const saga = resourceConflictDetermination({
+        path,
+        merged,
+        id,
+        scope,
+        resourceType,
+      });
+
+      expect(saga.next().value).toEqual(call(apiCallWithRetry, { path }));
+      expect(saga.next(originWithChangesInCommonProps).value).toEqual(
+        put(
+          actions.resource.received(
+            resourceType,
+            originWithChangesInCommonProps
+          )
+        )
+      );
+      const intersectedPatches = [
+        { op: 'replace', path: '/commonProp2', value: 'c' },
+      ];
+
+      // only  commonProp2 has change
+
+      expect(saga.next().value).toEqual(
+        put(
+          actions.resource.commitConflict(id, intersectedPatches, SCOPES.VALUE)
+        )
+      );
+
+      expect(saga.next()).toEqual({ done: true, value: { conflict: true } });
+    });
+
+    test('should not report a conflict when the common properties of origin and merged are the same ', () => {
+      const saga = resourceConflictDetermination({
+        path,
+        merged,
+        id,
+        scope,
+        resourceType,
+      });
+
+      expect(saga.next().value).toEqual(call(apiCallWithRetry, { path }));
+      expect(saga.next(originWithNoChangesInCommonProps).value).toEqual(
+        put(
+          actions.resource.received(
+            resourceType,
+            originWithNoChangesInCommonProps
+          )
+        )
+      );
+
+      expect(saga.next()).toEqual({ done: true, value: { conflict: false } });
+    });
+
+    test('should exit the saga and return an error when the call to origin fails', () => {
+      const saga = resourceConflictDetermination({
+        path,
+        merged,
+        id,
+        scope,
+        resourceType,
+      });
+
+      expect(saga.next().value).toEqual(call(apiCallWithRetry, { path }));
+      expect(saga.throw(_400Exception)).toEqual({
+        done: true,
+        value: {
+          error: {
+            status: 400,
+            message: 'Session Expired',
+          },
+        },
+      });
     });
   });
 });

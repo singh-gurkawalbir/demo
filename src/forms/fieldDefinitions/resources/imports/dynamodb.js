@@ -64,10 +64,12 @@ export default {
   'dynamodb.itemDocument': {
     type: 'sqlquerybuilder',
     arrayIndex: 0,
+    hideDefaultData: true,
+    ruleTitle:
+      'Template (use handlebar expressions to map fields from your export data)',
     label: 'Launch Query Builder',
     title: 'DynamoDB Query Builder',
     refreshOptionsOnChangesTo: ['dynamodb.method'],
-    defaultData: `SET #name = {{data.name}}, #id = {{data.id}}`,
     visibleWhen: [
       {
         field: 'dynamodb.method',

@@ -638,8 +638,8 @@ export default {
         label: 'OAuth authorization settings',
         fields: [
           'http.auth.oauth.grantType',
-          'http._iClientId',
           'http.auth.oauth.callbackURL',
+          'http._iClientId',
           'http.auth.oauth.authURI',
           'http.auth.oauth.scope',
           'customScopeDelimiter',
@@ -670,8 +670,8 @@ export default {
             label: 'Revoke Token Parameters',
             fields: [
               'http.auth.token.revoke.uri',
-              'http.auth.token.revoke.body',
               'http.auth.token.revoke.headers',
+              'http.auth.token.revoke.body',
             ],
           },
         ],

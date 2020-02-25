@@ -6,9 +6,21 @@ import DynaForm from '../../components/DynaForm';
 import DynaSubmit from '../../components/DynaForm/DynaSubmit';
 import PanelHeader from '../../components/PanelHeader';
 import dateTimezones from '../../utils/dateTimezones';
-import dateFormats from '../../utils/dateFormats';
 
 export default function ProfileComponent() {
+  const dateFormats = useMemo(
+    () => [
+      { value: 'MM/DD/YYYY', label: '12/31/1900' },
+      { value: 'DD/MM/YYYY', label: '31/12/1900' },
+      { value: 'DD-MMM-YYYY', label: '31-Dec-1900' },
+      { value: 'DD.MM.YYYY', label: '31.12.1900' },
+      { value: 'DD-MMMM-YYYY', label: '31-December-1900' },
+      { value: 'DD MMMM, YYYY', label: '31 December, 1900' },
+      { value: 'YYYY/MM/DD', label: '1900/12/31' },
+      { value: 'YYYY-MM-DD', label: '1900-12-31' },
+    ],
+    []
+  );
   const preferences = useSelector(state =>
     selectors.userProfilePreferencesProps(state)
   );
@@ -32,13 +44,13 @@ export default function ProfileComponent() {
         items:
           (dateFormats &&
             dateFormats.map(date => ({
-              label: date.value,
-              value: date.name,
+              label: date.label,
+              value: date.value,
             }))) ||
           [],
       },
     ],
-    []
+    [dateFormats]
   );
   const timeFormatList = useMemo(
     () => [

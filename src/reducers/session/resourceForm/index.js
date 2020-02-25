@@ -15,7 +15,7 @@ export default function reducer(state = {}, action) {
     initData,
   } = action;
   const key = `${resourceType}-${resourceId}`;
-  const stateCopy = { ...state, key: { ...state[key] } };
+  const stateCopy = { ...state, [key]: { ...state[key] } };
 
   switch (type) {
     case actionTypes.RESOURCE_FORM.INIT:
@@ -123,8 +123,8 @@ export function resourceFormSaveProcessTerminated(
   const key = `${resourceType}-${resourceId}`;
 
   if (!state[key]) return false;
-  const { submitFailed, submitCompleted, submitAborted } = state[key];
+  const { submitFailed, submitComplete, submitAborted } = state[key];
 
-  return !!(submitFailed || submitCompleted || submitAborted);
+  return !!(submitFailed || submitComplete || submitAborted);
 }
 // #endregion

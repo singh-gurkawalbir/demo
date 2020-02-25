@@ -90,7 +90,7 @@ function Tile({ tile, history }) {
       '5db8164d9df868329731fca0', // Square POS
       '58d94e6b2e4b300dbf6b01bc', // eBay
       '5b754a8fddbb3b71d6046c87', // Amazon MCF
-      '586cb88fc1d53d6a279d527e', // CAM
+      // '586cb88fc1d53d6a279d527e', // CAM
       '5a546b705556c2539f4a8dba', // Shipwire
       '5bfe38e363afaf4b872b4ee0', // Returnly
       '58859b520b11ee387108165a', // ShipStation
