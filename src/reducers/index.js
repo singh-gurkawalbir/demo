@@ -3448,6 +3448,13 @@ export const getSampleDataWrapper = createSelector(
   [
     // eslint-disable-next-line no-use-before-define
     (state, params) => getSampleDataContext(state, params),
+    (state, params) => {
+      if (params.stage === 'postMap') {
+        return getSampleDataContext(state, { ...params, stage: 'preMap' });
+      }
+
+      return undefined;
+    },
     (state, { flowId }) => resource(state, 'flows', flowId),
     (state, { flowId }) => {
       const flow = resource(state, 'flows', flowId);
@@ -3461,8 +3468,17 @@ export const getSampleDataWrapper = createSelector(
 
       return resource(state, 'connections', res._connectionId);
     },
+    (state, { stage }) => stage,
   ],
-  (sampleData, flow, integration, resource, connection) => {
+  (
+    sampleData,
+    preMapSampleData,
+    flow,
+    integration,
+    resource,
+    connection,
+    stage
+  ) => {
     const { status, data } = sampleData || {};
     let resourceType = 'export';
 
@@ -3480,8 +3496,8 @@ export const getSampleDataWrapper = createSelector(
 
     const contextFields = {};
 
-    if (resourceType === 'export') {
-      contextFields.pageIndex = 1;
+    if (['outputFilter', 'hooks'].includes(stage)) {
+      contextFields.pageIndex = 0;
 
       if (resource.type === 'delta') {
         contextFields.lastExportDateTime = moment()
@@ -3495,18 +3511,57 @@ export const getSampleDataWrapper = createSelector(
       }
     }
 
-    return {
-      status,
-      data: {
-        record: data || {},
-        ...contextFields,
-        settings: {
-          integration: integration.settings || {},
-          flow: flow.settings || {},
-          [resourceType]: resource.settings || {},
-          connection: connection.settings || {},
-        },
-      },
+    const resourceIds = {};
+
+    if (['hooks', 'preMap'].includes(stage)) {
+      resourceIds[resourceType === 'import' ? '_importId' : '_exportId'] =
+        resource._id;
+      resourceIds._connectionId = connection._id;
+      resourceIds._flowId = flow._id;
+      resourceIds._integrationId = integration._id;
+    }
+
+    const settings = {
+      integration: integration.settings || {},
+      flow: flow.settings || {},
+      [resourceType]: resource.settings || {},
+      connection: connection.settings || {},
     };
+
+    if (['transform', 'outputFilter', 'inputFilter'].includes(stage)) {
+      return {
+        status,
+        data: {
+          record: data || {},
+          ...resourceIds,
+          ...contextFields,
+          settings,
+        },
+      };
+    }
+
+    if (['hooks'].includes(stage)) {
+      return {
+        status,
+        data: {
+          data: [data],
+          errors: [],
+          ...resourceIds,
+          ...contextFields,
+          settings,
+        },
+      };
+    }
+
+    if (['preMap', 'postMap', 'postSubmit'].includes(stage)) {
+      return {
+        status,
+        data: {
+          data: [data],
+          ...resourceIds,
+          settings,
+        },
+      };
+    }
   }
 );

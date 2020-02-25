@@ -29,7 +29,11 @@ export default function TransformToggleEditorDialog({
       {...rest}
       disabled={disabled}
       showLayoutOptions>
-      <TransformEditor rule={rule} data={data} disabled={disabled} />
+      <TransformEditor
+        rule={rule}
+        data={data && data.record}
+        disabled={disabled}
+      />
       <JavaScriptEditor
         data={data}
         disabled={disabled}
