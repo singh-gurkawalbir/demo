@@ -334,6 +334,27 @@ export function categoryMapping(state, integrationId, flowId) {
   return state[`${flowId}-${integrationId}`];
 }
 
+export function variationMappingData(state, integrationId, flowId) {
+  if (!state) return null;
+  const { response = [] } = state[`${flowId}-${integrationId}`] || emptyObj;
+  const mappings = [];
+  let mappingMetadata = [];
+  const basicMappingData = response.find(
+    sec => sec.operation === 'mappingData'
+  );
+
+  if (basicMappingData) {
+    mappingMetadata =
+      basicMappingData.data.mappingData.variationMappings.recordMappings;
+  }
+
+  mappingMetadata.forEach(meta => {
+    flattenChildrenStructrue(mappings, meta);
+  });
+
+  return mappings;
+}
+
 export function categoryMappingData(state, integrationId, flowId) {
   if (!state) {
     return null;

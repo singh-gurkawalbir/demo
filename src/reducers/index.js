@@ -1306,6 +1306,28 @@ export function categoryRelationshipData(state, integrationId, flowId) {
   );
 }
 
+export function mappingsForVariation(state, integrationId, flowId, filters) {
+  const { sectionId, variation } = filters;
+  let mappings = {};
+  const recordMappings =
+    fromSession.variationMappingData(
+      state && state.session,
+      integrationId,
+      flowId
+    ) || {};
+
+  if (recordMappings) {
+    mappings = recordMappings.find(item => item.id === sectionId) || {};
+  }
+
+  // eslint-disable-next-line camelcase
+  const { variation_themes = [] } = mappings;
+
+  return (
+    variation_themes.find(theme => theme.variation_theme === variation) || {}
+  );
+}
+
 export function mappingsForCategory(state, integrationId, flowId, filters) {
   const { sectionId } = filters;
   let mappings = emptySet;
