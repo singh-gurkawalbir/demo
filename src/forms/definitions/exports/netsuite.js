@@ -207,9 +207,7 @@ export default {
 
         const outputMode = r && r.netsuite && r.netsuite.internalId;
 
-        if (outputMode === 'blob') return 'blob';
-
-        return 'records';
+        return outputMode ? 'blob' : 'records';
       },
     },
     'netsuite.api.type': {
