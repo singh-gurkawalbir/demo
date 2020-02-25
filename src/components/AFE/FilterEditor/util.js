@@ -167,7 +167,10 @@ export function getFilterList(jsonPaths, rules) {
       } else {
         if (!rr.id) {
           if (jsonPaths.length === 0) {
-            jsonPaths.push({ id: 'sampleField', name: 'sampleField' });
+            jsonPaths.push({
+              id: 'record.sampleField',
+              name: 'record.sampleField',
+            });
           }
 
           rr.id = jsonPaths[0].id;
