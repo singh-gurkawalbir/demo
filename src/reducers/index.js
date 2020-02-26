@@ -3147,8 +3147,16 @@ export function getImportSampleData(state, resourceId, options = {}) {
     // eslint-disable-next-line camelcase
     const { _connectionId: connectionId, netsuite_da = {} } = resource;
     const { recordType } = options;
-    const commMetaPath = `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${recordType ||
-      netsuite_da.recordType}`;
+    let commMetaPath;
+
+    if (recordType) {
+      /** special case of netsuite/metadata/suitescript/connections/5c88a4bb26a9676c5d706324/recordTypes/inventorydetail?parentRecordType=salesorder
+       * in case of subrecord */
+      commMetaPath = `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${recordType}?parentRecordType=${netsuite_da.recordType}`;
+    } else {
+      commMetaPath = `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${netsuite_da.recordType}`;
+    }
+
     const { data, status } = metadataOptionsAndResources({
       state,
       connectionId,
