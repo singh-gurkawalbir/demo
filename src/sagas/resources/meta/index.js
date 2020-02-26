@@ -18,8 +18,12 @@ export function* getNetsuiteOrSalesforceMeta({
   if (addInfo) {
     if (addInfo.refreshCache) {
       path += `${path.indexOf('?') > -1 ? '&' : '?'}refreshCache=true`;
-    } else if (addInfo.query) {
-      path += `?q=${encodeURIComponent(addInfo.query)}`;
+    }
+
+    if (addInfo.query) {
+      path += `${path.indexOf('?') > -1 ? '&' : '?'}q=${encodeURIComponent(
+        addInfo.query
+      )}`;
     }
   }
 
