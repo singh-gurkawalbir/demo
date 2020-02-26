@@ -121,15 +121,8 @@ function DynaUploadFile(props) {
     }
   };
 
-  let acceptFileType = '*';
-
-  if (typeof options === 'string') {
-    acceptFileType = `.${options}`;
-  }
-
   return (
     <TextField
-      inputProps={{ accept: acceptFileType }}
       InputLabelProps={{ shrink: true }}
       key={id + options}
       name={name}

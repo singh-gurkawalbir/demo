@@ -27,15 +27,15 @@ export const hooksList = [
 export const importSuiteScriptHooksList = ['preMap', 'postMap', 'postSubmit'];
 
 export const hooksToFunctionNamesMap = {
-  preSavePage: 'preSavePageFunction',
-  preMap: 'preMapFunction',
-  postMap: 'postMapFunction',
-  postSubmit: 'postSubmitFunction',
-  postAggregate: 'postAggregateFunction',
-  postResponseMap: 'postResponseMapFunction',
-  contentBasedFlowRouter: 'contentBasedFlowRouterFunction',
-  transform: 'transformFunction',
-  filter: 'filterFunction',
+  preSavePage: 'preSavePage',
+  preMap: 'preMap',
+  postMap: 'postMap',
+  postSubmit: 'postSubmit',
+  postAggregate: 'postAggregate',
+  postResponseMap: 'postResponseMap',
+  contentBasedFlowRouter: 'contentBasedFlowRouter',
+  transform: 'transform',
+  filter: 'filter',
 };
 
 export const getScriptHookStub = hook => scriptHookStubs[hook];

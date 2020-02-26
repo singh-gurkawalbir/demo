@@ -14,7 +14,6 @@ import { getNetSuiteSubrecordImports } from '../../../../utils/resource';
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
     marginTop: theme.appBarHeight,
-    width: 824,
     border: 'solid 1px',
     borderColor: theme.palette.secondary.lightest,
     boxShadow: `-4px 4px 8px rgba(0,0,0,0.15)`,
@@ -101,9 +100,13 @@ function ImportMapping({
       classes={{
         paper: clsx(classes.drawerPaper, {
           [classes.fullWidthDrawerClose]:
-            !drawerOpened && showSalesforceNetsuiteAssistant,
+            !drawerOpened &&
+            showSalesforceNetsuiteAssistant &&
+            (!subrecords || subrecords.length === 0 || selectedMapping),
           [classes.fullWidthDrawerOpen]:
-            drawerOpened && showSalesforceNetsuiteAssistant,
+            drawerOpened &&
+            showSalesforceNetsuiteAssistant &&
+            (!subrecords || subrecords.length === 0 || selectedMapping),
         }),
       }}>
       <DrawerTitleBar
@@ -126,7 +129,7 @@ function ImportMapping({
                   you would like to edit the mapping for.
                 </Typography>
                 {subrecords.map((sr, index) => (
-                  <div key={sr.id}>
+                  <div key={sr.fieldId}>
                     <Button
                       data-test={`subrecordMapping-${index}`}
                       className={classes.button}
@@ -134,7 +137,7 @@ function ImportMapping({
                         setSelectedMapping(sr.fieldId);
                       }}>
                       <Typography variant="h6" color="primary">
-                        {sr.name || sr.id}
+                        {sr.name || sr.fieldId}
                       </Typography>
                     </Button>
                   </div>
