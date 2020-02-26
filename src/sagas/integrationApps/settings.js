@@ -1,6 +1,7 @@
-import { call, put, takeLatest } from 'redux-saga/effects';
+import { call, put, takeLatest, select } from 'redux-saga/effects';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
+import * as selectors from '../../reducers';
 import { apiCallWithRetry } from '../index';
 
 export function* requestUpgrade({ integration, options }) {
@@ -169,6 +170,24 @@ export function* getCategoryMappingMetadata({
   }
 }
 
+export function* saveVariationMappings({ integrationId, flowId, data = {} }) {
+  const mappings = yield select(
+    selectors.pendingVariationMappings,
+    integrationId,
+    flowId,
+    data
+  );
+
+  yield put(
+    actions.integrationApp.settings.saveVariationMappings(
+      integrationId,
+      flowId,
+      data,
+      mappings
+    )
+  );
+}
+
 export function* upgrade({ integration, license }) {
   const path = `/integrations/${integration._id}/settings/changeEdition`;
   let upgradeResponse;
@@ -207,6 +226,10 @@ export default [
   takeLatest(
     actionTypes.INTEGRATION_APPS.SETTINGS.REQUEST_CATEGORY_MAPPING_METADATA,
     getCategoryMappingMetadata
+  ),
+  takeLatest(
+    actionTypes.INTEGRATION_APPS.SETTINGS.SAVE_VARIATION_MAPPINGS,
+    saveVariationMappings
   ),
   takeLatest(
     actionTypes.INTEGRATION_APPS.SETTINGS.MAPPING_METADATA_REQUEST,

@@ -1197,6 +1197,15 @@ export function integrationAppConnectionList(
     .connections;
 }
 
+export function pendingVariationMappings(state, integrationId, flowId, data) {
+  return fromSession.categoryMapping(
+    state && state.session,
+    integrationId,
+    flowId,
+    data
+  );
+}
+
 export function categoryMapping(state, integrationId, flowId) {
   return fromSession.categoryMapping(
     state && state.session,

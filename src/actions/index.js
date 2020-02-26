@@ -480,6 +480,12 @@ const integrationApp = {
         flowId,
         data,
       }),
+    saveVariationMappings: (integrationId, flowId, data) =>
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.SAVE_VARIATION_MAPPINGS, {
+        integrationId,
+        flowId,
+        data,
+      }),
     addCategory: (integrationId, flowId, data) =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.ADD_CATEGORY, {
         integrationId,
