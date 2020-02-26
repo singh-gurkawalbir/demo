@@ -62,11 +62,11 @@ export default {
   layout: {
     fields: [
       'name',
+      'salesforce.flowType',
       'salesforce.info.email',
       'salesforce.info.organization_id',
       'salesforce.sandbox',
       'salesforce.oauth2FlowType',
-      'salesforce.flowType',
       'salesforce.username',
     ],
     type: 'collapse',
