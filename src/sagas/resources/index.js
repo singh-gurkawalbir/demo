@@ -642,7 +642,11 @@ export function* authorizedConnection({ connectionId }) {
     connectionId
   );
 
-  if (connectionResource && connectionResource.type === 'netsuite') {
+  if (
+    connectionResource &&
+    (connectionResource.type === 'netsuite' ||
+      connectionResource.type === 'salesforce')
+  ) {
     yield put(actions.resource.request('connections', connectionId));
   }
 }
