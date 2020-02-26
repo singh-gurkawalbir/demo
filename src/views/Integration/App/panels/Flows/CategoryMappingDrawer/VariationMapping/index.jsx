@@ -59,7 +59,7 @@ const useStyles = makeStyles(theme => ({
     width: drawerWidth,
     flexShrink: 0,
   },
-  margin: {
+  saveButtonGroup: {
     margin: '10px 10px 10px 10px',
     float: 'right',
   },
@@ -235,7 +235,7 @@ function VariationMappingDrawer({ integrationId, parentUrl }) {
             </Grid>
           </Grid>
           <Divider />
-          <ButtonGroup className={classes.margin}>
+          <ButtonGroup className={classes.saveButtonGroup}>
             <Button
               id={flowId}
               variant="outlined"

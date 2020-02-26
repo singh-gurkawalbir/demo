@@ -1,4 +1,4 @@
-import { useState, useEffect, Fragment } from 'react';
+import { useState, useEffect, Fragment, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Route, useRouteMatch, useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -9,6 +9,8 @@ import {
   ExpansionPanel,
   ExpansionPanelDetails,
   ExpansionPanelSummary,
+  Button,
+  Divider,
 } from '@material-ui/core';
 import * as selectors from '../../../../../../reducers';
 import actions from '../../../../../../actions';
@@ -26,6 +28,7 @@ import Mappings from './BasicMapping';
 import Filters from './Filters';
 import CategoryList from './CategoryList';
 import DrawerTitleBar from './TitleBar';
+import ButtonGroup from '../../../../../../components/ButtonGroup';
 
 const emptySet = [];
 const drawerWidth = 200;
@@ -48,6 +51,10 @@ const useStyles = makeStyles(theme => ({
   refreshButton: {
     marginLeft: theme.spacing(1),
     marginRight: 0,
+  },
+  saveButtonGroup: {
+    margin: '10px 10px 10px 10px',
+    float: 'right',
   },
   fullWidth: {
     width: '100%',
@@ -289,9 +296,13 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
   const currentSectionLabel =
     (mappedCategories.find(category => category.id === categoryId) || {})
       .name || categoryId;
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     history.push(parentUrl);
-  };
+  }, [history, parentUrl]);
+  const handleSave = useCallback(() => {}, []);
+  const handleSaveAndClose = useCallback(() => {
+    handleClose();
+  }, [handleClose]);
 
   useEffect(() => {
     if (!metadataLoaded && !requestedMetadata) {
@@ -367,6 +378,32 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
                 />
               </Grid>
             </Grid>
+
+            <Divider />
+            <ButtonGroup className={classes.saveButtonGroup}>
+              <Button
+                id={flowId}
+                variant="outlined"
+                color="primary"
+                dataTest="saveImportMapping"
+                onClick={handleSave}>
+                Save
+              </Button>
+              <Button
+                id={flowId}
+                variant="outlined"
+                color="secondary"
+                dataTest="saveAndCloseImportMapping"
+                onClick={handleSaveAndClose}>
+                Save & Close
+              </Button>
+              <Button
+                variant="text"
+                data-test="saveImportMapping"
+                onClick={handleClose}>
+                Close
+              </Button>
+            </ButtonGroup>
           </div>
         ) : (
           <Loader open>
