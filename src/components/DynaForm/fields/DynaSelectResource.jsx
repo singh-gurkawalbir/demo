@@ -108,44 +108,21 @@ const useStyles = makeStyles({
 });
 
 function ConnectionLoadingChip(props) {
-  const { resourceType, connectionId } = props;
+  const { connectionId } = props;
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (!!connectionId && resourceType === 'connections') {
-      dispatch(actions.resource.connections.pingAndUpdate(connectionId));
-    }
-  }, [connectionId, resourceType, dispatch]);
+    dispatch(actions.resource.connections.pingAndUpdate(connectionId));
+  }, [connectionId, dispatch]);
 
-  const connectionOffline = useSelector(state => {
-    if (resourceType === 'connections' && connectionId) {
-      const { offline } = selectors.resource(
-        state,
-        'connections',
-        connectionId
-      );
+  const connectionOffline = useSelector(
+    state => selectors.connectionStatus(state, connectionId).offline
+  );
+  const connectionRequestStatus = useSelector(
+    state => selectors.connectionStatus(state, connectionId).requestStatus
+  );
 
-      return offline;
-    }
-
-    return undefined;
-  });
-  const connectionRequestStatus = useSelector(state => {
-    if (resourceType === 'connections' && connectionId) {
-      const { requestStatus } = selectors.connectionStatus(state, connectionId);
-
-      return requestStatus;
-    }
-
-    return undefined;
-  });
-
-  if (
-    resourceType !== 'connections' ||
-    !connectionId ||
-    !connectionRequestStatus ||
-    connectionRequestStatus === 'failed'
-  ) {
+  if (!connectionRequestStatus || connectionRequestStatus === 'failed') {
     return null;
   }
 
@@ -338,10 +315,12 @@ function DynaSelectResource(props) {
             <EditIcon />
           </ActionButton>
         )}
-        <ConnectionLoadingChip
-          resourceType={resourceType}
-          connectionId={value}
-        />
+        {resourceType === 'connections' && !!value && (
+          <ConnectionLoadingChip
+            resourceType={resourceType}
+            connectionId={value}
+          />
+        )}
       </div>
     </div>
   );

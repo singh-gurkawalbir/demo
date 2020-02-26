@@ -878,7 +878,12 @@ export function resourceListWithPermissions(state, options) {
       additionalInfo.queueSize = status.queueSize;
     }
 
-    return { ...r, ...additionalInfo };
+    const finalRes = { ...r, ...additionalInfo };
+
+    // defaulting queue size to zero when undefined
+    finalRes.queueSize = finalRes.queueSize || 0;
+
+    return finalRes;
   });
 
   return list;
@@ -3297,7 +3302,13 @@ export function debugLogs(state) {
 }
 
 export function connectionStatus(state, id) {
-  return fromSession.connectionStatus(state && state.session, id);
+  return (
+    fromSession.connectionStatus(state && state.session, id) || {
+      id,
+      queueSize: 0,
+      offline: false,
+    }
+  );
 }
 
 export function getLastExportDateTime(state, flowId) {

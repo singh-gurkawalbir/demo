@@ -457,7 +457,10 @@ export function* pingAndUpdateConnection({ connectionId }) {
 
     yield put(actions.resource.received('connections', connectionResource));
     yield put(
-      actions.resource.connections.pingAndUpdateSuccessful(connectionId)
+      actions.resource.connections.pingAndUpdateSuccessful(
+        connectionId,
+        connectionResource && connectionResource.offline
+      )
     );
   } catch (error) {
     yield put(actions.resource.connections.pingAndUpdateFailed(connectionId));

@@ -211,9 +211,10 @@ const resource = {
       action(actionTypes.CONNECTION.PING_AND_UPDATE, { connectionId }),
     pingAndUpdateFailed: connectionId =>
       action(actionTypes.CONNECTION.PING_AND_UPDATE_FAILURE, { connectionId }),
-    pingAndUpdateSuccessful: connectionId =>
+    pingAndUpdateSuccessful: (connectionId, offline) =>
       action(actionTypes.CONNECTION.PING_AND_UPDATE_SUCCESS, {
         connectionId,
+        offline,
       }),
     refreshStatus: integrationId =>
       action(actionTypes.CONNECTION.REFRESH_STATUS, { integrationId }),
