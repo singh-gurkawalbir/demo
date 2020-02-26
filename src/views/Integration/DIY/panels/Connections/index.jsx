@@ -29,7 +29,7 @@ export default function ConnectionsPanel({ integrationId }) {
   const history = useHistory();
   const [showRegister, setShowRegister] = useState(false);
   const location = useLocation();
-  const filterKey = `${integrationId}+Diy+connections`;
+  const filterKey = `${integrationId}+connections`;
   const tableConfig = useSelector(state => selectors.filter(state, filterKey));
   const connections = useSelector(state =>
     selectors.integrationConnectionList(state, integrationId, tableConfig)
