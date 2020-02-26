@@ -30,6 +30,7 @@ export default function reducer(state = {}, action) {
     case actionTypes.EDITOR_INIT: {
       const initChangeIdentifier =
         (newState[id] && newState[id].initChangeIdentifier) || 0;
+      const saveStatus = newState[id] && newState[id].saveStatus;
 
       newState[id] = {
         processor,
@@ -37,8 +38,7 @@ export default function reducer(state = {}, action) {
         ...deepClone(options),
         lastChange: Date.now(),
         initChangeIdentifier: initChangeIdentifier + 1,
-        submitCompleted: false,
-        submitFailed: false,
+        saveStatus,
       };
 
       return newState;
@@ -101,22 +101,21 @@ export default function reducer(state = {}, action) {
     case actionTypes.EDITOR_SAVE:
       newState[id] = {
         ...newState[id],
-        submitCompleted: false,
-        submitFailed: false,
+        saveStatus: 'requested',
       };
 
       return newState;
     case actionTypes.EDITOR_SAVE_FAILED:
       newState[id] = {
         ...newState[id],
-        submitFailed: true,
+        saveStatus: 'failed',
       };
 
       return newState;
     case actionTypes.EDITOR_SAVE_COMPLETE:
       newState[id] = {
         ...newState[id],
-        submitCompleted: true,
+        saveStatus: 'completed',
       };
 
       return newState;
@@ -162,11 +161,11 @@ export function editorSaveProcessTerminate(state, id) {
     return emptyObj;
   }
 
-  const { submitFailed, submitCompleted } = state[id];
+  const { saveStatus } = state[id];
 
   return {
-    saveTerminated: !!(submitFailed || submitCompleted),
-    saveCompleted: !!submitCompleted,
+    saveTerminated: saveStatus === 'completed' || saveStatus === 'failed',
+    saveCompleted: saveStatus === 'completed',
   };
 }
 
