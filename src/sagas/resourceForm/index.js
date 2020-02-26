@@ -305,14 +305,14 @@ export function* submitFormValues({
     }
 
     if (patch && patch.length) {
-      const error = yield call(commitStagedChanges, {
+      const resp = yield call(commitStagedChanges, {
         resourceType: type,
         id: resourceId,
         scope: SCOPES.VALUE,
         isGenerate,
       });
 
-      if (error) {
+      if (resp && (resp.error || resp.conflict)) {
         return yield put(
           actions.resourceForm.submitFailed(resourceType, resourceId)
         );
