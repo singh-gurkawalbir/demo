@@ -392,28 +392,18 @@ function* saveAndAuthorizeConnectionForm(params) {
 }
 
 function* commitAndAuthorizeConnection({ resourceId }) {
-  const error = yield call(commitStagedChanges, {
+  const resp = yield call(commitStagedChanges, {
     resourceType: 'connections',
     id: resourceId,
     scope: SCOPES.VALUE,
   });
 
-  if (error) {
+  // if there is conflict let conflict dialog show up
+  // and oauth authorize be skipped
+  if (resp && (resp.error || resp.conflict)) {
     // could not save the resource...lets just return
     return;
   }
-
-  // check to see if there is still a conflict
-  const { conflict } = yield select(
-    selectors.resourceData,
-    'connections',
-    resourceId
-    // A scope is not required for the conflict
-  );
-
-  // if there is conflict let conflict dialog show up
-  // and oauth authorize be skipped
-  if (conflict) return;
 
   try {
     yield call(openOAuthWindowForConnection, [resourceId]);
