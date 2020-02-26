@@ -159,7 +159,7 @@ function VariationMappingDrawer({ integrationId, parentUrl }) {
   const handleClose = useCallback(() => {
     history.push(parentUrl);
   }, [history, parentUrl]);
-  const handleSave = () => {
+  const handleSave = useCallback(() => {
     const data = { categoryId: subCategoryId, variation };
 
     dispatch(
@@ -169,11 +169,10 @@ function VariationMappingDrawer({ integrationId, parentUrl }) {
         data
       )
     );
-  };
-
-  const handleSaveAndClose = () => {
+  }, [dispatch, flowId, integrationId, subCategoryId, variation]);
+  const handleSaveAndClose = useCallback(() => {
     handleClose();
-  };
+  }, [handleClose]);
 
   if (!variation) {
     history.push(`${match.url}/${firstVariation}`);
@@ -241,8 +240,8 @@ function VariationMappingDrawer({ integrationId, parentUrl }) {
               id={flowId}
               variant="outlined"
               color="primary"
-              dataTest="saveImportMapping">
-              onClick={handleSave}
+              dataTest="saveImportMapping"
+              onClick={handleSave}>
               Save
             </Button>
             <Button

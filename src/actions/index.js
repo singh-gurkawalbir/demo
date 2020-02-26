@@ -474,6 +474,12 @@ const integrationApp = {
         flowId,
         filters,
       }),
+    saveVariation: (integrationId, flowId, data) =>
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.SAVE_VARIATIONS, {
+        integrationId,
+        flowId,
+        data,
+      }),
     addCategory: (integrationId, flowId, data) =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.ADD_CATEGORY, {
         integrationId,
