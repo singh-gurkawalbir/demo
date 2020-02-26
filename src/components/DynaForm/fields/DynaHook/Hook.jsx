@@ -90,7 +90,16 @@ export default function DynaHook(props) {
   };
 
   const handleFieldChange = field => (event, fieldValue) => {
-    onFieldChange(id, { ...value, [field]: fieldValue });
+    // Incase user selects scripts/stacks list to 'None' for which fieldValue is '' , we remove function name if entered any
+    // if functionToBeEmptied is true, in onFieldChange we update function prop to empty
+    const functionToBeEmptied =
+      ['_scriptId', '_stackId'].includes(field) && !fieldValue;
+
+    onFieldChange(id, {
+      ...value,
+      [field]: fieldValue,
+      ...(functionToBeEmptied ? { function: '' } : {}),
+    });
   };
 
   const handleCreateScriptClick = () => {
@@ -210,6 +219,7 @@ export default function DynaHook(props) {
                   id="stackId"
                   label="Stacks"
                   value={value._stackId}
+                  placeholder="None"
                   disabled={disabled}
                   required={required}
                   isValid={isValidHookField('_stackId')}
@@ -229,6 +239,7 @@ export default function DynaHook(props) {
                     label="Scripts"
                     value={value._scriptId}
                     disabled={disabled}
+                    placeholder="None"
                     required={required}
                     isValid={isValidHookField('_scriptId')}
                     onFieldChange={handleFieldChange('_scriptId')}

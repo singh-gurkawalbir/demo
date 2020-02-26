@@ -6,7 +6,6 @@ import actions from '../../../../actions';
 import Icon from '../../../../components/icons/HookIcon';
 import JavaScriptEditorDialog from '../../../../components/AFE/JavaScriptEditor/Dialog';
 import { hooksToFunctionNamesMap } from '../../../../utils/hooks';
-import useEnqueueSnackbar from '../../../../hooks/enqueueSnackbar';
 
 function PostResponseMapHookDialog({
   flowId,
@@ -17,7 +16,6 @@ function PostResponseMapHookDialog({
   onClose,
 }) {
   const dispatch = useDispatch();
-  const [enqueueSnackbar] = useEnqueueSnackbar();
   const hookStage = 'postResponseMap';
   const resourceId = resource._id;
   const flow = useSelector(state => selectors.resource(state, 'flows', flowId));
@@ -35,25 +33,9 @@ function PostResponseMapHookDialog({
       stage: 'postResponseMapHook',
     })
   );
-  const handleClose = useCallback(
-    (shouldCommit, editorValues) => {
-      // script gets saved automatically on click of save
-      // TODO: work on this Aditya
-      if (shouldCommit) {
-        if (!editorValues || !editorValues.scriptId) {
-          // Should not save hooks without script Id
-          // TODO: @Aditya Need to move this logic into JS Editor , disabling save if there is no script selected
-          return enqueueSnackbar({
-            message: 'Please select Script ID',
-            variant: 'error',
-          });
-        }
-      }
-
-      onClose();
-    },
-    [enqueueSnackbar, onClose]
-  );
+  const handleClose = useCallback(() => {
+    onClose();
+  }, [onClose]);
 
   useEffect(() => {
     if (!sampleData) {

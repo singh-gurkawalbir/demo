@@ -13,6 +13,8 @@ export default {
       label: item.name,
       value: item.scriptId && item.scriptId.toLowerCase(),
       url: item.url,
+      hasSubRecord: item.hasSubRecord,
+      subRecordConfig: item.subRecordConfig,
     })),
   'suitescript-recordTypeDetail': data =>
     data.map(item => ({
@@ -257,6 +259,8 @@ export default {
     return returnVal;
   },
   default: data =>
+    data &&
+    Array.isArray(data) &&
     data.map(item => ({
       label: item.name,
       value: item.id,

@@ -484,15 +484,21 @@ export const getHelpUrl = (integrations, marketplaceConnectors) => {
 export const getNetSuiteSubrecordLabel = (fieldId, subrecordType) => {
   const subrecordLabelMap = {
     inventorydetail: 'Inventory Details',
+    componentinventorydetail: 'Inventory Details',
     landedcost: 'Landed Cost',
+  };
+  const subrecordListLabelMap = {
+    component: 'Components',
+    item: 'Items',
+    inventory: 'Adjustments',
   };
   const subrecordLabel = subrecordLabelMap[subrecordType] || fieldId;
   const fieldIdParts = fieldId.split('[*].');
   let listLabel = '';
 
   if (fieldIdParts.length > 1) {
-    if (fieldIdParts[0] === 'item') {
-      listLabel = 'Items';
+    if (subrecordListLabelMap[fieldIdParts[0]]) {
+      listLabel = subrecordListLabelMap[fieldIdParts[0]];
     } else {
       [listLabel] = fieldIdParts;
     }
@@ -512,7 +518,6 @@ export const getNetSuiteSubrecordImportsFromMappings = mapping => {
         .filter(fld => fld.subRecordMapping && fld.subRecordMapping.recordType)
         .forEach(fld => {
           srImports.push({
-            _id: fld.generate,
             name: getNetSuiteSubrecordLabel(
               fld.generate,
               fld.subRecordMapping.recordType
@@ -533,7 +538,6 @@ export const getNetSuiteSubrecordImportsFromMappings = mapping => {
             )
             .forEach(fld => {
               srImports.push({
-                _id: `${list.generate}[*].${fld.generate}`,
                 name: getNetSuiteSubrecordLabel(
                   `${list.generate}[*].${fld.generate}`,
                   fld.subRecordMapping.recordType

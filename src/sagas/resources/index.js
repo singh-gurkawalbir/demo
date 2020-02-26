@@ -37,6 +37,39 @@ function* isDataLoaderFlow(flow) {
   }
 }
 
+export function* resourceConflictDetermination({
+  path,
+  merged,
+  id,
+  scope,
+  resourceType,
+}) {
+  let origin;
+
+  try {
+    origin = yield call(apiCallWithRetry, { path });
+  } catch (error) {
+    return { error };
+  }
+
+  if (origin.lastModified !== merged.lastModified) {
+    let conflict = jsonPatch.compare(merged, origin);
+
+    conflict = util.removeItem(conflict, p => p.path === '/lastModified');
+
+    yield put(actions.resource.received(resourceType, origin));
+    const intersectedPatches = conflict.filter(patch => patch.op === 'replace');
+
+    if (intersectedPatches && intersectedPatches.length) {
+      yield put(actions.resource.commitConflict(id, intersectedPatches, scope));
+
+      return { conflict: true };
+    }
+  }
+
+  return { conflict: false };
+}
+
 export function* commitStagedChanges({ resourceType, id, scope }) {
   const userPreferences = yield select(selectors.userPreferences);
   const isSandbox = userPreferences
@@ -89,24 +122,15 @@ export function* commitStagedChanges({ resourceType, id, scope }) {
 
   // only updates need to check for conflicts.
   if (!isNew) {
-    let origin;
+    const resp = yield call(resourceConflictDetermination, {
+      path,
+      merged,
+      id,
+      scope,
+      resourceType,
+    });
 
-    try {
-      origin = yield call(apiCallWithRetry, { path });
-    } catch (error) {
-      return { error };
-    }
-
-    if (origin.lastModified !== master.lastModified) {
-      let conflict = jsonPatch.compare(master, origin);
-
-      conflict = util.removeItem(conflict, p => p.path === '/lastModified');
-
-      yield put(actions.resource.commitConflict(id, conflict, scope));
-      yield put(actions.resource.received(resourceType, origin));
-
-      return;
-    }
+    if (resp && (resp.error || resp.conflict)) return resp;
   } else if (
     ['exports', 'imports', 'connections', 'flows', 'integrations'].includes(
       resourceType

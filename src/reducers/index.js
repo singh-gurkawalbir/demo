@@ -1109,10 +1109,11 @@ export function checkUpgradeRequested(state, licenseId) {
   return fromSession.checkUpgradeRequested(state && state.session, licenseId);
 }
 
-export function integrationConnectionList(state, integrationId) {
+export function integrationConnectionList(state, integrationId, tableConfig) {
   const integration = resource(state, 'integrations', integrationId) || {};
   let { resources = [] } = resourceListWithPermissions(state, {
     type: 'connections',
+    ...(tableConfig || {}),
   });
 
   if (integrationId && integrationId !== 'none' && !integration._connectorId) {
@@ -1314,6 +1315,30 @@ export function categoryRelationshipData(state, integrationId, flowId) {
   );
 }
 
+export function mappingsForVariation(state, integrationId, flowId, filters) {
+  const { sectionId, variation } = filters;
+  let mappings = {};
+  const recordMappings =
+    fromSession.variationMappingData(
+      state && state.session,
+      integrationId,
+      flowId
+    ) || emptyObject;
+
+  if (recordMappings) {
+    mappings = recordMappings.find(item => item.id === sectionId) || {};
+  }
+
+  // propery being read as is from IA metadata, to facilitate initialization and to avoid re-adjust while sending back.
+  // eslint-disable-next-line camelcase
+  const { variation_themes = [] } = mappings;
+
+  return (
+    variation_themes.find(theme => theme.variation_theme === variation) ||
+    emptyObject
+  );
+}
+
 export function mappingsForCategory(state, integrationId, flowId, filters) {
   const { sectionId } = filters;
   let mappings = emptySet;
@@ -1376,7 +1401,7 @@ export function integrationAppSettings(state, id) {
 }
 
 export function integrationAppLicense(state, id) {
-  if (!state) return {};
+  if (!state) return emptyObject;
   const integrationResource = fromData.integrationAppSettings(state.data, id);
   const { connectorEdition: edition } = integrationResource.settings || {};
   const userLicenses = fromUser.licenses(state && state.user) || [];
@@ -1485,7 +1510,7 @@ export function integrationAppSectionMetadata(
   storeId
 ) {
   if (!state) {
-    return {};
+    return emptyObject;
   }
 
   const integrationResource = fromData.integrationAppSettings(
@@ -2173,7 +2198,7 @@ export function resourcePermissions(state, resourceType, resourceId) {
     return permissions.integrations[resourceId] || {};
   }
 
-  return {};
+  return emptyObject;
 }
 
 export function isFormAMonitorLevelAccess(state, integrationId) {
@@ -2563,8 +2588,12 @@ export function resourceStatus(
   };
 }
 
+export function getAllResourceConflicts(state) {
+  return fromSession.getAllResourceConflicts(state && state.session);
+}
+
 export function resourceData(state, resourceType, id, scope) {
-  if (!state || !resourceType || !id) return {};
+  if (!state || !resourceType || !id) return emptyObject;
   let type = resourceType;
 
   if (resourceType.indexOf('/licenses') >= 0) {
@@ -2790,7 +2819,7 @@ export function metadataOptionsAndResources({
       connectionId,
       commMetaPath,
       filterKey,
-    }) || {}
+    }) || emptyObject
   );
 }
 
@@ -2816,7 +2845,7 @@ export function getMetadataOptions(
       connectionId,
       commMetaPath,
       filterKey,
-    }) || {}
+    }) || emptyObject
   );
 }
 
@@ -3126,8 +3155,16 @@ export function getImportSampleData(state, resourceId, options = {}) {
     // eslint-disable-next-line camelcase
     const { _connectionId: connectionId, netsuite_da = {} } = resource;
     const { recordType } = options;
-    const commMetaPath = `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${recordType ||
-      netsuite_da.recordType}`;
+    let commMetaPath;
+
+    if (recordType) {
+      /** special case of netsuite/metadata/suitescript/connections/5c88a4bb26a9676c5d706324/recordTypes/inventorydetail?parentRecordType=salesorder
+       * in case of subrecord */
+      commMetaPath = `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${recordType}?parentRecordType=${netsuite_da.recordType}`;
+    } else {
+      commMetaPath = `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${netsuite_da.recordType}`;
+    }
+
     const { data, status } = metadataOptionsAndResources({
       state,
       connectionId,
