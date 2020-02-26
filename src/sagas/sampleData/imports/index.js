@@ -139,7 +139,6 @@ function* requestSampleData({ resourceId, options = {}, refreshCache }) {
         // eslint-disable-next-line camelcase
         const { _connectionId: connectionId, netsuite_da = {} } = resource;
         const { recordType } = options;
-        const opts = { refreshCache };
         let commMetaPath;
 
         if (recordType) {
@@ -150,7 +149,9 @@ function* requestSampleData({ resourceId, options = {}, refreshCache }) {
           commMetaPath = `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${netsuite_da.recordType}`;
         }
 
-        yield put(actions.metadata.request(connectionId, commMetaPath, opts));
+        yield put(
+          actions.metadata.request(connectionId, commMetaPath, { refreshCache })
+        );
         break;
       }
 
