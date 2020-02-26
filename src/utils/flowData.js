@@ -22,10 +22,10 @@ const sampleDataStage = {
   exports: {
     inputFilter: 'flowInputWithContext',
     transform: 'raw',
-    hooks: 'transform',
+    preSavePage: 'transform', // preSavePage indicates export hooks
     transformWithContext: 'transform',
     outputFilter: 'transformWithContext',
-    responseMappingExtract: 'hooks',
+    responseMappingExtract: 'preSavePage',
     responseMapping: 'responseMappingExtract',
     postResponseMap: 'responseMapping',
     postResponseMapHook: 'postResponseMap',

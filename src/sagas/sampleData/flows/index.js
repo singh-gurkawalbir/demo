@@ -482,15 +482,16 @@ export function* requestProcessorData({
     }
     // Below list are all Possible hook types
     else if (
-      ['hooks', 'preMap', 'postMap', 'postSubmit', 'postAggregate'].includes(
-        stage
-      )
+      [
+        'preSavePage',
+        'preMap',
+        'postMap',
+        'postSubmit',
+        'postAggregate',
+      ].includes(stage)
     ) {
       const { hooks = {} } = { ...resource };
-      // Default hooks stage is preSavePage for Exports
-      // Other stages are hook stages for Imports
-      const hookType = stage === 'hooks' ? 'preSavePage' : stage;
-      const hook = hooks[hookType] || {};
+      const hook = hooks[stage] || {};
 
       if (hook._scriptId) {
         const scriptId = hook._scriptId;
@@ -518,7 +519,12 @@ export function* requestProcessorData({
       // mapping fields are processed here against raw data
       const mappings = mappingUtil.getMappingFromResource(resource, true);
 
-      if (preProcessedData && mappings)
+      // Incase of no fields/lists inside mappings , no need to make a processor call
+      if (
+        preProcessedData &&
+        mappings &&
+        (mappings.fields.length || mappings.lists.length)
+      )
         return yield call(processMappingData, {
           flowId,
           resourceId,
