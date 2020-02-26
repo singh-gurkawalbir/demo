@@ -884,8 +884,6 @@ export function resourceListWithPermissions(state, options) {
 
     // defaulting queue size to zero when undefined
     finalRes.queueSize = finalRes.queueSize || 0;
-    // if offline undefined set it to false
-    finalRes.offline = !!finalRes.offline;
 
     return finalRes;
   });

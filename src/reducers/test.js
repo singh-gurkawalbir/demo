@@ -1670,24 +1670,28 @@ describe('integrationAppConnectionList reducer', () => {
       _id: 'connection1',
       type: 'rest',
       _integrationId: 'integrationId',
+      offline: false,
       rest: {},
     },
     {
       _id: 'connection3',
       _integrationId: 'integrationId2',
       type: 'rest',
+      offline: false,
       rest: {},
     },
     {
       _id: 'connection4',
       _integrationId: 'integrationId2',
       type: 'rest',
+      offline: false,
       rest: {},
     },
     {
       _id: 'connection2',
       _integrationId: 'integrationId',
       type: 'netsuite',
+      offline: false,
       netsuite: {},
     },
   ];
