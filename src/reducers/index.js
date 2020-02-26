@@ -874,14 +874,18 @@ export function resourceListWithPermissions(state, options) {
         r._id
       );
 
-      additionalInfo.offline = status.offline;
-      additionalInfo.queueSize = status.queueSize;
+      if (status) {
+        additionalInfo.offline = status.offline;
+        additionalInfo.queueSize = status.queueSize;
+      }
     }
 
     const finalRes = { ...r, ...additionalInfo };
 
     // defaulting queue size to zero when undefined
     finalRes.queueSize = finalRes.queueSize || 0;
+    // if offline undefined set it to false
+    finalRes.offline = !!finalRes.offline;
 
     return finalRes;
   });
