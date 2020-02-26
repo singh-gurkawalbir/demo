@@ -146,10 +146,18 @@ export default function StandaloneMapping(props) {
   }, [generateStatus, importSampleDataLoaded]);
 
   useEffect(() => {
-    if (!importSampleData) {
+    // request for import sample data for 1st time without refreshCache=true
+
+    if (!importSampleData && !importSampleDataLoaded) {
       requestImportSampleData(false);
     }
-  }, [importSampleData, dispatch, resourceId, requestImportSampleData]);
+  }, [
+    importSampleData,
+    dispatch,
+    resourceId,
+    requestImportSampleData,
+    importSampleDataLoaded,
+  ]);
 
   /**  get assistance metadata from
    *   selector and dispatching an action if not loaded
