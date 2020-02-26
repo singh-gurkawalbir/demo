@@ -158,18 +158,18 @@ function VariationMappingDrawer({ integrationId, parentUrl }) {
     }) || {};
   const handleClose = useCallback(() => {
     history.push(parentUrl);
-  }, [history, parentUrl]);
-  const handleSave = useCallback(() => {
-    const data = { categoryId: subCategoryId, variation };
 
     dispatch(
-      actions.integrationApp.settings.saveVariations(
+      actions.integrationApp.settings.clearVariationMappings(
         integrationId,
         flowId,
-        data
+        { categoryId: subCategoryId }
       )
     );
-  }, [dispatch, flowId, integrationId, subCategoryId, variation]);
+  }, [dispatch, flowId, history, integrationId, parentUrl, subCategoryId]);
+  const handleSave = useCallback(() => {
+    handleClose();
+  }, [handleClose]);
   const handleSaveAndClose = useCallback(() => {
     handleClose();
   }, [handleClose]);

@@ -474,8 +474,8 @@ const integrationApp = {
         flowId,
         filters,
       }),
-    saveVariation: (integrationId, flowId, data) =>
-      action(actionTypes.INTEGRATION_APPS.SETTINGS.SAVE_VARIATIONS, {
+    clearVariationMappings: (integrationId, flowId, data) =>
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.CLEAR_VARIATION_MAPPINGS, {
         integrationId,
         flowId,
         data,
