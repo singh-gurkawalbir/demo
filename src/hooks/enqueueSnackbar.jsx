@@ -20,7 +20,7 @@ export default function useEnqueueSnackbar() {
         persist,
         anchorOrigin: {
           vertical: 'top',
-          horizontal: 'center',
+          horizontal: 'right',
         },
         // eslint-disable-next-line react/display-name
         action: key => (

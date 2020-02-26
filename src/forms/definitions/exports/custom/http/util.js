@@ -3,6 +3,7 @@ import {
   convertFromExport,
   PARAMETER_LOCATION,
 } from '../../../../../utils/assistant';
+import { isLookupResource } from '../../../../../utils/flows';
 
 export function hiddenFieldsMeta({ values }) {
   return ['assistant', 'adaptorType', 'assistantData'].map(fieldId => ({
@@ -24,16 +25,11 @@ export function basicFieldsMeta({ assistantConfig, assistantData }) {
       fieldId: 'assistantMetadata.resource',
       value: assistantConfig.resource,
       required: true,
-      refreshOptionsOnChangesTo: ['assistantMetadata.version'],
     },
     operation: {
       fieldId: 'assistantMetadata.operation',
       value: assistantConfig.operation || assistantConfig.operationUrl,
       required: true,
-      refreshOptionsOnChangesTo: [
-        'assistantMetadata.version',
-        'assistantMetadata.resource',
-      ],
     },
   };
   const { labels = {}, versions = [] } = assistantData;
@@ -63,11 +59,6 @@ export function pathParameterFieldsMeta({ operationParameters = [], values }) {
       type: 'text',
       value: values[pathParam.id],
       required: !!pathParam.required,
-      refreshOptionsOnChangesTo: [
-        'assistantMetadata.version',
-        'assistantMetadata.resource',
-        'assistantMetadata.operation',
-      ],
     };
 
     if (pathParam.options && pathParam.options.length > 0) {
@@ -113,11 +104,6 @@ export function exportTypeFieldsMeta({
         },
       ],
       value: exportType || 'all',
-      refreshOptionsOnChangesTo: [
-        'assistantMetadata.version',
-        'assistantMetadata.resource',
-        'assistantMetadata.operation',
-      ],
     },
   ];
 }
@@ -279,6 +265,15 @@ export function fieldMeta({ resource, assistantData }) {
   };
 
   return {
+    init: (fieldMeta, resource = {}, flow) => {
+      const exportPanelField = fieldMeta.fieldMap.exportPanel;
+
+      if (isLookupResource(flow, resource)) {
+        exportPanelField.visible = false;
+      }
+
+      return fieldMeta;
+    },
     fieldMap,
     layout: {
       type: 'column',

@@ -17,6 +17,11 @@ export default function DynaTextWithLookupExtract(props) {
     flowId,
     editorTitle,
     hideLookups = false,
+    importType,
+    fieldMetadata,
+    fieldId,
+    extractFields,
+    recordType,
     options = {},
   } = props;
   const { lookups } = options;
@@ -112,6 +117,22 @@ export default function DynaTextWithLookupExtract(props) {
           extractFields={formattedExtractFields}
           resourceName={resourceName}
           lookups={lookups}
+          {...props}
+        />
+      )}
+      {fieldType === 'lookupMappings' && (
+        <IgnoreExistingData
+          showLookup={showLookups}
+          sampleData={formattedSampleData}
+          connection={connection}
+          extractFields={extractFields || formattedExtractFields} // Here extractFields are getting to handle Netsuite and Salesforce lookups.
+          hideExtractFields
+          resourceName={resourceName}
+          lookups={lookups}
+          importType={importType}
+          fieldMetadata={fieldMetadata}
+          fieldId={fieldId}
+          recordType={recordType}
           {...props}
         />
       )}

@@ -2,6 +2,7 @@ import { combineReducers } from 'redux';
 import { uniq } from 'lodash';
 import resources, * as fromResources from './resources';
 import integrationAShares, * as fromIntegrationAShares from './integrationAShares';
+import integrationApps, * as fromIntegrationApps from './integrationApps';
 import audit, * as fromAudit from './audit';
 import jobs, * as fromJobs from './jobs';
 import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../../constants/resource';
@@ -12,6 +13,7 @@ import fileDefinitions, * as fromFileDefinitions from './fileDefinitions';
 export default combineReducers({
   resources,
   integrationAShares,
+  integrationApps,
   audit,
   jobs,
   suiteScript,
@@ -43,6 +45,15 @@ export function integrationAppSettings(state, id) {
 
 export function defaultStoreId(state, id, store) {
   return fromResources.defaultStoreId(state && state.resources, id, store);
+}
+
+// #region integration Apps
+export function categoryRelationshipData(state, integrationId, flowId) {
+  return fromIntegrationApps.categoryRelationshipData(
+    state && state.integrationApps,
+    integrationId,
+    flowId
+  );
 }
 
 // #endregion

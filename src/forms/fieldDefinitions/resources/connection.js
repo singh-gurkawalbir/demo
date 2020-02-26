@@ -41,6 +41,7 @@ export default {
   name: {
     type: 'text',
     label: 'Name',
+    defaultDisabled: r => !!r._connectorId,
   },
   assistant: {
     type: 'select',
@@ -49,6 +50,7 @@ export default {
       {
         items: [
           { label: '3dcart', value: '3dcart' },
+          { label: '3PL Central', value: '3plcentral' },
           { label: 'Accelo', value: 'accelo' },
           { label: 'Adp', value: 'adp' },
           { label: 'Amazonaws', value: 'amazonaws' },
@@ -1445,6 +1447,11 @@ export default {
         message: 'Please enter a valid URI.',
       },
     },
+  },
+  'as2.partnerStationInfo.mdn.verifyMDNSignature': {
+    type: 'checkbox',
+    label: 'MDN signature verification',
+    helpText: `Check this box if your trading partner requires the MDN signature needs to be verified. By default, integrator.io does not verify the signature.`,
   },
   'as2.partnerStationInfo.mdn.mdnURL': {
     type: 'text',

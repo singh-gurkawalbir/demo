@@ -5,6 +5,7 @@ import TogglePublish from '../../actions/TogglePublish';
 import InstallBase from '../../actions/Connectors/InstallBase';
 import Licenses from '../../actions/Connectors/Licenses';
 import { formatLastModified } from '../../../CeligoTable/util';
+import getImageUrl from '../../../../utils/image';
 
 export default {
   columns: [
@@ -27,7 +28,9 @@ export default {
     {
       heading: 'Image',
       value(r) {
-        return r.imageURL ? <img src={r.imageURL} alt="Loading..." /> : null;
+        return r.imageURL ? (
+          <img src={getImageUrl(r.imageURL)} alt="Loading..." />
+        ) : null;
       },
     },
     {

@@ -37,6 +37,39 @@ function* isDataLoaderFlow(flow) {
   }
 }
 
+export function* resourceConflictDetermination({
+  path,
+  merged,
+  id,
+  scope,
+  resourceType,
+}) {
+  let origin;
+
+  try {
+    origin = yield call(apiCallWithRetry, { path });
+  } catch (error) {
+    return { error };
+  }
+
+  if (origin.lastModified !== merged.lastModified) {
+    let conflict = jsonPatch.compare(merged, origin);
+
+    conflict = util.removeItem(conflict, p => p.path === '/lastModified');
+
+    yield put(actions.resource.received(resourceType, origin));
+    const intersectedPatches = conflict.filter(patch => patch.op === 'replace');
+
+    if (intersectedPatches && intersectedPatches.length) {
+      yield put(actions.resource.commitConflict(id, intersectedPatches, scope));
+
+      return { conflict: true };
+    }
+  }
+
+  return { conflict: false };
+}
+
 export function* commitStagedChanges({ resourceType, id, scope }) {
   const userPreferences = yield select(selectors.userPreferences);
   const isSandbox = userPreferences
@@ -68,8 +101,10 @@ export function* commitStagedChanges({ resourceType, id, scope }) {
     resourceIsDataLoaderFlow = yield call(isDataLoaderFlow, merged);
 
     if (resourceIsDataLoaderFlow) {
-      merged._exportId = merged.pageGenerators[0]._exportId;
-      delete merged.pageGenerators;
+      if (merged.pageGenerators && merged.pageGenerators.length > 0) {
+        merged._exportId = merged.pageGenerators[0]._exportId;
+        delete merged.pageGenerators;
+      }
 
       if (merged.pageProcessors && merged.pageProcessors.length > 0) {
         const importId = merged.pageProcessors[0]._importId;
@@ -87,24 +122,15 @@ export function* commitStagedChanges({ resourceType, id, scope }) {
 
   // only updates need to check for conflicts.
   if (!isNew) {
-    let origin;
+    const resp = yield call(resourceConflictDetermination, {
+      path,
+      merged,
+      id,
+      scope,
+      resourceType,
+    });
 
-    try {
-      origin = yield call(apiCallWithRetry, { path });
-    } catch (error) {
-      return { error };
-    }
-
-    if (origin.lastModified !== master.lastModified) {
-      let conflict = jsonPatch.compare(master, origin);
-
-      conflict = util.removeItem(conflict, p => p.path === '/lastModified');
-
-      yield put(actions.resource.commitConflict(id, conflict, scope));
-      yield put(actions.resource.received(resourceType, origin));
-
-      return;
-    }
+    if (resp && (resp.error || resp.conflict)) return resp;
   } else if (
     ['exports', 'imports', 'connections', 'flows', 'integrations'].includes(
       resourceType
@@ -425,11 +451,14 @@ export function* getResource({ resourceType, id, message }) {
   }
 }
 
-export function* requestReferences({ resourceType, id }) {
+export function* requestReferences({ resourceType, id, options = {} }) {
   const path = `/${resourceType}/${id}/dependencies`;
 
   try {
-    const resourceReferences = yield call(apiCallWithRetry, { path });
+    const resourceReferences = yield call(apiCallWithRetry, {
+      path,
+      hidden: !!options.ignoreError,
+    });
 
     yield put(actions.resource.receivedReferences(resourceReferences));
 
@@ -473,9 +502,22 @@ export function* deleteResource({ resourceType, id }) {
 
 export function* getResourceCollection({ resourceType }) {
   const path = `/${resourceType}`;
+  let hideNetWorkSnackbar;
+
+  /** hide the error that GET SuiteScript tiles throws when connection is offline */
+  if (
+    resourceType &&
+    resourceType.includes('suitescript/connections/') &&
+    resourceType.includes('/tiles')
+  ) {
+    hideNetWorkSnackbar = true;
+  }
 
   try {
-    let collection = yield call(apiCallWithRetry, { path });
+    let collection = yield call(apiCallWithRetry, {
+      path,
+      hidden: hideNetWorkSnackbar,
+    });
 
     if (resourceType === 'stacks') {
       let sharedStacks = yield call(apiCallWithRetry, {

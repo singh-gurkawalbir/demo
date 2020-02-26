@@ -208,6 +208,7 @@ export default {
           type: 'text',
           label: 'Enter Default Value',
           placeholder: 'Enter Default Value',
+          required: true,
           visibleWhenAll: [
             { field: 'standardAction', is: ['default'] },
             { field: 'fieldMappingType', isNot: ['hardCoded'] },
@@ -222,6 +223,7 @@ export default {
           type: 'text',
           label: 'Enter Default Value',
           placeholder: 'Enter Default Value',
+          required: true,
           visibleWhenAll: [
             { field: 'hardcodedAction', is: ['default'] },
             { field: 'fieldMappingType', is: ['hardCoded'] },
@@ -234,6 +236,7 @@ export default {
           name: 'lookupDefault',
           type: 'text',
           label: 'Enter Default Value',
+          required: true,
           placeholder: 'Enter Default Value',
           visibleWhenAll: [
             { field: 'lookupAction', is: ['default'] },
@@ -324,6 +327,23 @@ export default {
             { field: 'fieldMappingType', is: ['standard'] },
           ],
         },
+        'conditional.when': {
+          id: 'conditional.when',
+          name: 'conditionalWhen',
+          type: 'select',
+          label: 'Only perform mapping when:',
+          defaultValue: value.conditional && value.conditional.when,
+          options: [
+            {
+              items: [
+                {
+                  label: 'Source record has a value',
+                  value: 'extract_not_empty',
+                },
+              ],
+            },
+          ],
+        },
       },
       layout: {
         fields: [
@@ -345,6 +365,14 @@ export default {
           'extractDateTimezone',
           'generateDateFormat',
           'generateDateTimezone',
+        ],
+        type: 'collapse',
+        containers: [
+          {
+            collapsed: true,
+            label: 'Advanced',
+            fields: ['conditional.when'],
+          },
         ],
       },
       optionsHandler: (fieldId, fields) => {

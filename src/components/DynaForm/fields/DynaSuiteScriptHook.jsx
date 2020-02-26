@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import { Fragment, useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import InputLabel from '@material-ui/core/InputLabel';
 import DynaText from './DynaText';
@@ -27,7 +27,6 @@ export default function DynaSuiteScriptHook(props) {
   const {
     id,
     disabled,
-    isValid,
     name,
     onFieldChange,
     placeholder,
@@ -38,6 +37,20 @@ export default function DynaSuiteScriptHook(props) {
   const handleFieldChange = field => (event, fieldValue) => {
     onFieldChange(id, { ...value, [field]: fieldValue });
   };
+
+  const isValidSuiteScriptHookField = useCallback(
+    field => {
+      const { function: func, fileInternalId } = value;
+      const isEmptyHook = !func && !fileInternalId;
+
+      if (field === 'function') {
+        return isEmptyHook || !!func;
+      }
+
+      return isEmptyHook || !!fileInternalId;
+    },
+    [value]
+  );
 
   return (
     <Fragment>
@@ -55,7 +68,7 @@ export default function DynaSuiteScriptHook(props) {
               placeholder={placeholder}
               disabled={disabled}
               required={required}
-              error={!isValid}
+              isValid={isValidSuiteScriptHookField('function')}
               value={value.function}
               onFieldChange={handleFieldChange('function')}
             />
@@ -71,7 +84,7 @@ export default function DynaSuiteScriptHook(props) {
               placeholder={placeholder}
               disabled={disabled}
               required={required}
-              error={!isValid}
+              isValid={isValidSuiteScriptHookField('fileInternalId')}
               value={value.fileInternalId}
               onFieldChange={handleFieldChange('fileInternalId')}
             />

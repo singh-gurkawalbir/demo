@@ -47,7 +47,7 @@ export function* updateInstallBase({ _integrationIds, connectorId }) {
     yield call(apiCallWithRetry, {
       path,
       opts: {
-        method: 'POST',
+        method: 'PUT',
         body: { _integrationIds },
       },
       message: 'Updating install base',

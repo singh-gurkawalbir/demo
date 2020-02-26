@@ -36,6 +36,8 @@ export default function DateTimePicker(props) {
           e.preventDefault();
         }}
         onKeyPress={e => {
+          if (e.target.hasAttribute('qa')) return;
+
           e.preventDefault();
         }}
         variant="inline"

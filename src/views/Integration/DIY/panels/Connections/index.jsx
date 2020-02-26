@@ -29,8 +29,10 @@ export default function ConnectionsPanel({ integrationId }) {
   const history = useHistory();
   const [showRegister, setShowRegister] = useState(false);
   const location = useLocation();
+  const filterKey = `${integrationId}+connections`;
+  const tableConfig = useSelector(state => selectors.filter(state, filterKey));
   const connections = useSelector(state =>
-    selectors.integrationConnectionList(state, integrationId)
+    selectors.integrationConnectionList(state, integrationId, tableConfig)
   );
   // TODO: All this logic should go into a single selector called "canManageConnections",
   // or some equivalent name. This would also reduce the complexity of managing
@@ -125,6 +127,7 @@ export default function ConnectionsPanel({ integrationId }) {
       <LoadResources required resources="connections">
         <CeligoTable
           data={connections}
+          filterKey={filterKey}
           {...metadata}
           actionProps={{ integrationId }}
         />

@@ -22,6 +22,11 @@ import {
   ACCOUNT_IDS,
   SUITESCRIPT_CONNECTORS,
 } from '../utils/constants';
+import {
+  LICENSE_EXPIRED,
+  LICENSE_TRIAL_NOT_STARTED,
+  LICENSE_TRIAL_EXPIRED,
+} from '../utils/messageStore';
 import { changePasswordParams, changeEmailParams } from '../sagas/api/apiPaths';
 import { getFieldById } from '../forms/utils';
 import { upgradeButtonText, expiresInfo } from '../utils/license';
@@ -1096,10 +1101,11 @@ export function checkUpgradeRequested(state, licenseId) {
   return fromSession.checkUpgradeRequested(state && state.session, licenseId);
 }
 
-export function integrationConnectionList(state, integrationId) {
+export function integrationConnectionList(state, integrationId, tableConfig) {
   const integration = resource(state, 'integrations', integrationId) || {};
   let { resources = [] } = resourceListWithPermissions(state, {
     type: 'connections',
+    ...(tableConfig || {}),
   });
 
   if (integrationId && integrationId !== 'none' && !integration._connectorId) {
@@ -1115,7 +1121,12 @@ export function integrationConnectionList(state, integrationId) {
   return resources;
 }
 
-export function integrationAppResourceList(state, integrationId, storeId) {
+export function integrationAppResourceList(
+  state,
+  integrationId,
+  storeId,
+  tableConfig
+) {
   if (!state) return { connections: emptySet, flows: emptySet };
 
   const integrationResource =
@@ -1126,6 +1137,7 @@ export function integrationAppResourceList(state, integrationId, storeId) {
     {
       type: 'connections',
       filter: { _integrationId: integrationId },
+      ...(tableConfig || {}),
     }
   );
 
@@ -1176,8 +1188,14 @@ export function integrationAppStore(state, integrationId, storeId) {
   );
 }
 
-export function integrationAppConnectionList(state, integrationId, storeId) {
-  return integrationAppResourceList(state, integrationId, storeId).connections;
+export function integrationAppConnectionList(
+  state,
+  integrationId,
+  storeId,
+  tableConfig
+) {
+  return integrationAppResourceList(state, integrationId, storeId, tableConfig)
+    .connections;
 }
 
 export function categoryMapping(state, integrationId, flowId) {
@@ -1281,6 +1299,38 @@ export function categoryMappingFilters(state, integrationId, flowId) {
   );
 }
 
+export function categoryRelationshipData(state, integrationId, flowId) {
+  return fromData.categoryRelationshipData(
+    state && state.data,
+    integrationId,
+    flowId
+  );
+}
+
+export function mappingsForVariation(state, integrationId, flowId, filters) {
+  const { sectionId, variation } = filters;
+  let mappings = {};
+  const recordMappings =
+    fromSession.variationMappingData(
+      state && state.session,
+      integrationId,
+      flowId
+    ) || emptyObject;
+
+  if (recordMappings) {
+    mappings = recordMappings.find(item => item.id === sectionId) || {};
+  }
+
+  // propery being read as is from IA metadata, to facilitate initialization and to avoid re-adjust while sending back.
+  // eslint-disable-next-line camelcase
+  const { variation_themes = [] } = mappings;
+
+  return (
+    variation_themes.find(theme => theme.variation_theme === variation) ||
+    emptyObject
+  );
+}
+
 export function mappingsForCategory(state, integrationId, flowId, filters) {
   const { sectionId } = filters;
   let mappings = emptySet;
@@ -1343,7 +1393,7 @@ export function integrationAppSettings(state, id) {
 }
 
 export function integrationAppLicense(state, id) {
-  if (!state) return {};
+  if (!state) return emptyObject;
   const integrationResource = fromData.integrationAppSettings(state.data, id);
   const { connectorEdition: edition } = integrationResource.settings || {};
   const userLicenses = fromUser.licenses(state && state.user) || [];
@@ -1452,7 +1502,7 @@ export function integrationAppSectionMetadata(
   storeId
 ) {
   if (!state) {
-    return {};
+    return emptyObject;
   }
 
   const integrationResource = fromData.integrationAppSettings(
@@ -1982,6 +2032,36 @@ export function integratorLicenseWithMetadata(state) {
   return licenseActionDetails;
 }
 
+export function isLicenseValidToEnableFlow(state) {
+  const license = integratorLicenseWithMetadata(state);
+  let licenseDetails = { enable: true };
+
+  if (!license) {
+    return licenseDetails;
+  }
+
+  if (license.hasSubscription) {
+    if (license.hasExpired) {
+      licenseDetails = {
+        message: LICENSE_EXPIRED,
+        enable: false,
+      };
+    }
+  } else if (!license.trialEndDate) {
+    licenseDetails = {
+      message: LICENSE_TRIAL_NOT_STARTED,
+      enable: false,
+    };
+  } else if (license.trialEndDate && !license.inTrial) {
+    licenseDetails = {
+      message: LICENSE_TRIAL_EXPIRED,
+      enable: false,
+    };
+  }
+
+  return licenseDetails;
+}
+
 export function accountSummary(state) {
   return fromUser.accountSummary(state.user);
 }
@@ -2110,7 +2190,7 @@ export function resourcePermissions(state, resourceType, resourceId) {
     return permissions.integrations[resourceId] || {};
   }
 
-  return {};
+  return emptyObject;
 }
 
 export function isFormAMonitorLevelAccess(state, integrationId) {
@@ -2500,8 +2580,12 @@ export function resourceStatus(
   };
 }
 
+export function getAllResourceConflicts(state) {
+  return fromSession.getAllResourceConflicts(state && state.session);
+}
+
 export function resourceData(state, resourceType, id, scope) {
-  if (!state || !resourceType || !id) return {};
+  if (!state || !resourceType || !id) return emptyObject;
   let type = resourceType;
 
   if (resourceType.indexOf('/licenses') >= 0) {
@@ -2727,7 +2811,7 @@ export function metadataOptionsAndResources({
       connectionId,
       commMetaPath,
       filterKey,
-    }) || {}
+    }) || emptyObject
   );
 }
 
@@ -2753,7 +2837,7 @@ export function getMetadataOptions(
       connectionId,
       commMetaPath,
       filterKey,
-    }) || {}
+    }) || emptyObject
   );
 }
 
@@ -3046,7 +3130,7 @@ export function getAllPageProcessorImports(state, pageProcessors) {
   return ppImports;
 }
 
-export function getImportSampleData(state, resourceId) {
+export function getImportSampleData(state, resourceId, options = {}) {
   const { merged: resource } = resourceData(state, 'imports', resourceId);
   const { assistant, adaptorType, sampleData } = resource;
 
@@ -3062,7 +3146,17 @@ export function getImportSampleData(state, resourceId) {
   } else if (adaptorType === 'NetSuiteDistributedImport') {
     // eslint-disable-next-line camelcase
     const { _connectionId: connectionId, netsuite_da = {} } = resource;
-    const commMetaPath = `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${netsuite_da.recordType}`;
+    const { recordType } = options;
+    let commMetaPath;
+
+    if (recordType) {
+      /** special case of netsuite/metadata/suitescript/connections/5c88a4bb26a9676c5d706324/recordTypes/inventorydetail?parentRecordType=salesorder
+       * in case of subrecord */
+      commMetaPath = `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${recordType}?parentRecordType=${netsuite_da.recordType}`;
+    } else {
+      commMetaPath = `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${netsuite_da.recordType}`;
+    }
+
     const { data, status } = metadataOptionsAndResources({
       state,
       connectionId,

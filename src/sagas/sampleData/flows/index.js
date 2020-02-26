@@ -1,6 +1,15 @@
-import { put, select, call, takeEvery, takeLatest } from 'redux-saga/effects';
+/* eslint-disable func-names */
+import {
+  put,
+  select,
+  call,
+  takeEvery,
+  take,
+  fork,
+  cancel,
+} from 'redux-saga/effects';
 import { deepClone } from 'fast-json-patch';
-import { isEmpty } from 'lodash';
+import { isEmpty, keys } from 'lodash';
 import { resourceData, getSampleData } from '../../../reducers';
 import { SCOPES } from '../../resourceForm';
 import actionTypes from '../../../actions/types';
@@ -24,6 +33,7 @@ import {
 } from './flowUpdates';
 import {
   getSampleDataStage,
+  getCurrentSampleDataStageStatus,
   getPreviewStageData,
   getContextInfo,
   getBlobResourceSampleData,
@@ -36,7 +46,6 @@ import requestFileAdaptorSampleData from '../sampleDataGenerator/fileAdaptorSamp
 import mappingUtil from '../../../utils/mapping';
 import { processOneToManySampleData } from '../../../utils/sampleData';
 import {
-  adaptorTypeMap,
   isNewId,
   isRealTimeOrDistributedResource,
   isFileAdaptor,
@@ -88,6 +97,7 @@ export function* requestSampleData({
   stage,
   refresh = false,
   isInitialized,
+  onSagaEnd,
 }) {
   if (!flowId || !resourceId) return;
 
@@ -101,7 +111,6 @@ export function* requestSampleData({
     return { as2: { sample: { data: 'coming soon' } } };
   }
 
-  // Updates flow state
   // isInitialized prop is passed explicitly from internal sagas calling this Saga
   if (!isInitialized) {
     yield call(initFlowData, { flowId, resourceId, resourceType });
@@ -134,6 +143,8 @@ export function* requestSampleData({
         sampleDataStage,
       });
     }
+
+    if (!isInitialized) onSagaEnd();
   } catch (e) {
     yield call(handleFlowDataStageErrors, {
       flowId,
@@ -141,6 +152,8 @@ export function* requestSampleData({
       stage: sampleDataStage,
       error: e,
     });
+
+    if (!isInitialized) onSagaEnd(true);
 
     // using isInitialized to handle base case not to throw error
     // Error is thrown from the root stage to the main stage for which sample data is requested
@@ -469,15 +482,16 @@ export function* requestProcessorData({
     }
     // Below list are all Possible hook types
     else if (
-      ['hooks', 'preMap', 'postMap', 'postSubmit', 'postAggregate'].includes(
-        stage
-      )
+      [
+        'preSavePage',
+        'preMap',
+        'postMap',
+        'postSubmit',
+        'postAggregate',
+      ].includes(stage)
     ) {
       const { hooks = {} } = { ...resource };
-      // Default hooks stage is preSavePage for Exports
-      // Other stages are hook stages for Imports
-      const hookType = stage === 'hooks' ? 'preSavePage' : stage;
-      const hook = hooks[hookType] || {};
+      const hook = hooks[stage] || {};
 
       if (hook._scriptId) {
         const scriptId = hook._scriptId;
@@ -503,15 +517,14 @@ export function* requestProcessorData({
       hasNoRulesToProcess = true;
     } else if (stage === 'importMapping') {
       // mapping fields are processed here against raw data
-      const appType =
-        resource.adaptorType && adaptorTypeMap[resource.adaptorType];
-      const mappings = mappingUtil.getMappingFromResource(
-        resource,
-        appType,
-        true
-      );
+      const mappings = mappingUtil.getMappingFromResource(resource, true);
 
-      if (preProcessedData && mappings)
+      // Incase of no fields/lists inside mappings , no need to make a processor call
+      if (
+        preProcessedData &&
+        mappings &&
+        (mappings.fields.length || mappings.lists.length)
+      )
         return yield call(processMappingData, {
           flowId,
           resourceId,
@@ -596,13 +609,90 @@ export function* requestProcessorData({
   }
 }
 
+/*
+ * Save current executing saga against resource ids with stage
+ * when new action comes, compare both stages and if curr stage is > prev stage then cancel that and fork this
+ * TODO: @Raghu Come up with an appropriate name
+ */
+const takeLatestSampleData = (patternOrChannel, saga, ...args) =>
+  fork(function*() {
+    const sampleDataSagaMap = {};
+
+    while (true) {
+      const action = yield take(patternOrChannel);
+      const { resourceId, resourceType, stage: currStage } = action;
+      const onSagaEnd = function() {
+        // Delete completed/erred Sagas
+        // TODO @Raghu: figure out if we need to handle incase of saga error
+        sampleDataSagaMap[resourceId] &&
+          delete sampleDataSagaMap[resourceId][currStage];
+      };
+
+      // If it is the first one straight away start executing this saga
+      if (!sampleDataSagaMap[resourceId]) {
+        sampleDataSagaMap[resourceId] = {
+          [currStage]: {
+            stage: currStage,
+            resourceType,
+            forkedSaga: yield fork(
+              saga,
+              ...args.concat({ ...action, onSagaEnd })
+            ),
+          },
+        };
+      } else {
+        // get list of all existing stages
+        const prevStagesList = keys(sampleDataSagaMap[resourceId]);
+        const {
+          currentStageStatus,
+          prevStage,
+        } = getCurrentSampleDataStageStatus(
+          prevStagesList,
+          currStage,
+          resourceType
+        );
+
+        // Incase of same stage , cancel previous saga and execute current one
+        if (currentStageStatus === 0) {
+          yield cancel(sampleDataSagaMap[resourceId][currStage].forkedSaga);
+          sampleDataSagaMap[resourceId][currStage].forkedSaga = yield fork(
+            saga,
+            ...args.concat({ ...action, onSagaEnd })
+          );
+        }
+
+        if (currentStageStatus > 0) {
+          // Incase of status as 1, cancel previous saga as current saga takes precedence
+          // Also delete the same from the map
+          if (currentStageStatus === 1) {
+            yield cancel(sampleDataSagaMap[resourceId][prevStage].forkedSaga);
+            delete sampleDataSagaMap[resourceId][prevStage];
+          }
+
+          // Incase of statuses 1, 2 execute current saga
+          sampleDataSagaMap[resourceId][currStage] = {
+            stage: currStage,
+            resourceType,
+            forkedSaga: yield fork(
+              saga,
+              ...args.concat({ ...action, onSagaEnd })
+            ),
+          };
+        }
+      }
+    }
+  });
+
 export default [
   takeEvery(
     actionTypes.FLOW_DATA.PREVIEW_DATA_REQUEST,
     fetchPageProcessorPreview
   ),
   takeEvery(actionTypes.FLOW_DATA.PROCESSOR_DATA_REQUEST, requestProcessorData),
-  takeLatest(actionTypes.FLOW_DATA.SAMPLE_DATA_REQUEST, requestSampleData),
+  takeLatestSampleData(
+    actionTypes.FLOW_DATA.SAMPLE_DATA_REQUEST,
+    requestSampleData
+  ),
   takeEvery(
     actionTypes.FLOW_DATA.FLOWS_FOR_RESOURCE_UPDATE,
     updateFlowsDataForResource
