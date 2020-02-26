@@ -31,13 +31,14 @@ export default {
     }
 
     // Saves postResponseMap Hook on pageProcessor based on resourceIndex
+    // Incase of user selecting None for script, pass undefined instead of '' as BE throws error if it is ''
     backgroundPatchSet.push({
       op:
         pageProcessorsObject.hooks && pageProcessorsObject.hooks.postResponseMap
           ? 'replace'
           : 'add',
       path: `/pageProcessors/${resourceIndex}/hooks/postResponseMap`,
-      value: { _scriptId: scriptId, function: entryFunction },
+      value: { _scriptId: scriptId || undefined, function: entryFunction },
     });
 
     patches.backgroundPatches.push({
