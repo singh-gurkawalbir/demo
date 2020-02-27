@@ -299,10 +299,23 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
   const handleClose = useCallback(() => {
     history.push(parentUrl);
   }, [history, parentUrl]);
-  const handleSave = useCallback(() => {}, []);
+  const handleSave = useCallback(() => {
+    dispatch(
+      actions.integrationApp.settings.saveCategoryMappings(
+        integrationId,
+        flowId
+      )
+    );
+  }, [dispatch, flowId, integrationId]);
   const handleSaveAndClose = useCallback(() => {
+    dispatch(
+      actions.integrationApp.settings.saveCategoryMappings(
+        integrationId,
+        flowId
+      )
+    );
     handleClose();
-  }, [handleClose]);
+  }, [dispatch, flowId, handleClose, integrationId]);
 
   useEffect(() => {
     if (!metadataLoaded && !requestedMetadata) {
@@ -385,7 +398,7 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
                 id={flowId}
                 variant="outlined"
                 color="primary"
-                dataTest="saveImportMapping"
+                data-test="saveImportMapping"
                 onClick={handleSave}>
                 Save
               </Button>
@@ -393,7 +406,7 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
                 id={flowId}
                 variant="outlined"
                 color="secondary"
-                dataTest="saveAndCloseImportMapping"
+                data-test="saveAndCloseImportMapping"
                 onClick={handleSaveAndClose}>
                 Save & Close
               </Button>

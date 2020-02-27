@@ -170,6 +170,75 @@ export function* getCategoryMappingMetadata({
   }
 }
 
+export function* saveCategoryMappings({ integrationId, flowId }) {
+  const mappingData = yield select(
+    selectors.pendingCategoryMappings,
+    integrationId,
+    flowId
+  );
+  let path = `/integrations/${integrationId}/utilities/saveMarketplaceCategoryMapping`;
+
+  try {
+    yield call(apiCallWithRetry, {
+      path,
+      opts: {
+        body: { utilities: { options: { _flowId: flowId }, mappingData } },
+        method: 'PUT',
+      },
+      message: `Saving...`,
+    }) || {};
+  } catch (error) {
+    yield put(
+      actions.integrationApp.settings.saveCategoryMappingsFailed(
+        integrationId,
+        flowId
+      )
+    );
+
+    return undefined;
+  }
+
+  path = `/integrations/${integrationId}/utilities/loadMarketplaceCategoryMapping`;
+  let response;
+
+  try {
+    ({ response } = yield call(apiCallWithRetry, {
+      path,
+      opts: {
+        body: {
+          utilities: {
+            options: {
+              _flowId: flowId,
+              requestOptions: [{ operation: 'mappingData', params: {} }],
+            },
+          },
+        },
+        method: 'PUT',
+      },
+      message: `Fetching...`,
+    }) || {});
+  } catch (error) {
+    yield put(
+      actions.integrationApp.settings.saveCategoryMappingsFailed(
+        integrationId,
+        flowId
+      )
+    );
+
+    return undefined;
+  }
+
+  const updatedMappings = response.find(op => op.operation === 'mappingData');
+
+  yield put(
+    actions.integrationApp.settings.receivedCategoryMappingData(
+      integrationId,
+      flowId,
+      updatedMappings
+    )
+  );
+}
+
 export function* saveVariationMappings({ integrationId, flowId, data = {} }) {
   const mappings = yield select(
     selectors.pendingVariationMappings,
@@ -226,6 +295,10 @@ export default [
   takeLatest(
     actionTypes.INTEGRATION_APPS.SETTINGS.REQUEST_CATEGORY_MAPPING_METADATA,
     getCategoryMappingMetadata
+  ),
+  takeLatest(
+    actionTypes.INTEGRATION_APPS.SETTINGS.SAVE_CATEGORY_MAPPINGS,
+    saveCategoryMappings
   ),
   takeLatest(
     actionTypes.INTEGRATION_APPS.SETTINGS.SAVE_VARIATION_MAPPINGS,

@@ -168,8 +168,14 @@ function VariationMappingDrawer({ integrationId, parentUrl }) {
     );
   }, [dispatch, flowId, history, integrationId, parentUrl, subCategoryId]);
   const handleSave = useCallback(() => {
+    dispatch(
+      actions.integrationApp.settings.saveCategoryMappings(
+        integrationId,
+        flowId
+      )
+    );
     handleClose();
-  }, [handleClose]);
+  }, [dispatch, flowId, handleClose, integrationId]);
   const handleSaveAndClose = useCallback(() => {
     handleClose();
   }, [handleClose]);
@@ -240,7 +246,7 @@ function VariationMappingDrawer({ integrationId, parentUrl }) {
               id={flowId}
               variant="outlined"
               color="primary"
-              dataTest="saveImportMapping"
+              data-test="saveImportMapping"
               onClick={handleSave}>
               Save
             </Button>
@@ -248,7 +254,7 @@ function VariationMappingDrawer({ integrationId, parentUrl }) {
               id={flowId}
               variant="outlined"
               color="secondary"
-              dataTest="saveAndCloseImportMapping"
+              data-test="saveAndCloseImportMapping"
               onClick={handleSaveAndClose}>
               Save & Close
             </Button>

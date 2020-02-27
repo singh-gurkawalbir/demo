@@ -1206,6 +1206,18 @@ export function pendingVariationMappings(state, integrationId, flowId, data) {
   );
 }
 
+export function pendingCategoryMappings(state, integrationId, flowId) {
+  const { response } =
+    fromSession.categoryMapping(
+      state && state.session,
+      integrationId,
+      flowId
+    ) || {};
+  const mappingData = response.find(op => op.operation === 'mappingData');
+
+  return mappingData && mappingData.data && mappingData.data.mappingData;
+}
+
 export function categoryMapping(state, integrationId, flowId) {
   return fromSession.categoryMapping(
     state && state.session,

@@ -442,6 +442,16 @@ const integrationApp = {
         integrationId,
         redirectTo,
       }),
+    receivedCategoryMappingData: (integrationId, flowId, mappingData) =>
+      action(
+        actionTypes.INTEGRATION_APPS.SETTINGS.RECEIVED_CATEGORY_MAPPINGS_DATA,
+        { integrationId, flowId, mappingData }
+      ),
+    saveCategoryMappingsFailed: (integrationId, flowId) =>
+      action(
+        actionTypes.INTEGRATION_APPS.SETTINGS.SAVE_CATEGORY_MAPPINGS_FAILED,
+        { integrationId, flowId }
+      ),
     requestCategoryMappingMetadata: (
       integrationId,
       flowId,
@@ -452,6 +462,11 @@ const integrationApp = {
         actionTypes.INTEGRATION_APPS.SETTINGS.REQUEST_CATEGORY_MAPPING_METADATA,
         { integrationId, flowId, categoryId, options }
       ),
+    saveCategoryMappings: (integrationId, flowId) =>
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.SAVE_CATEGORY_MAPPINGS, {
+        integrationId,
+        flowId,
+      }),
     receivedCategoryMappingMetadata: (integrationId, flowId, metadata) =>
       action(
         actionTypes.INTEGRATION_APPS.SETTINGS

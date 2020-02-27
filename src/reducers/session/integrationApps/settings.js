@@ -129,11 +129,13 @@ export default (state = {}, action) => {
     redirectTo,
     metadata,
     error,
+    mappingData,
     filters,
     sectionId,
     data,
   } = action;
   const key = getStateKey(integrationId, flowId, sectionId);
+  let mappingIndex;
   let categoryMappingData;
   let generatesMetadata;
 
@@ -274,6 +276,34 @@ export default (state = {}, action) => {
             draft[`${flowId}-${integrationId}`].deleted.indexOf(sectionId),
             1
           );
+        }
+
+        break;
+      case actionTypes.INTEGRATION_APPS.SETTINGS.SAVE_CATEGORY_MAPPINGS:
+        if (draft[`${flowId}-${integrationId}`]) {
+          draft[`${flowId}-${integrationId}`].status = 'requested';
+        }
+
+        break;
+      case actionTypes.INTEGRATION_APPS.SETTINGS.SAVE_CATEGORY_MAPPINGS_FAILED:
+        if (draft[`${flowId}-${integrationId}`]) {
+          draft[`${flowId}-${integrationId}`].status = 'failed';
+        }
+
+        break;
+      case actionTypes.INTEGRATION_APPS.SETTINGS
+        .RECEIVED_CATEGORY_MAPPINGS_DATA:
+        if (draft[`${flowId}-${integrationId}`]) {
+          draft[`${flowId}-${integrationId}`].status = 'saved';
+
+          if (draft[`${flowId}-${integrationId}`].response) {
+            mappingIndex = draft[
+              `${flowId}-${integrationId}`
+            ].response.findIndex(op => op.operation === 'mappingData');
+            draft[`${flowId}-${integrationId}`].response[
+              mappingIndex
+            ] = mappingData;
+          }
         }
 
         break;
