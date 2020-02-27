@@ -61,8 +61,6 @@ function TransformationDialog({ flowId, resource, isViewMode, onClose }) {
       data={sampleData}
       type={type}
       scriptId={scriptId}
-      resourceType="exports"
-      resourceId={exportId}
       rule={rule}
       entryFunction={entryFunction || hooksToFunctionNamesMap.transform}
       insertStubKey="transform"
