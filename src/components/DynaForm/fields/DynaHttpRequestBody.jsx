@@ -162,7 +162,6 @@ export default function DynaHttpRequestBody(props) {
           ruleTitle={ruleTitle}
           dataTitle={dataTitle}
           resultTitle={resultTitle}
-          confirmOnCancel
         />
       )}
       <Button

@@ -132,7 +132,7 @@ export default function ToggleEditorDialog(props) {
     }
   }, [editor, enquesnackbar, onClose]);
   const handleCancelClick = useCallback(() => {
-    if (editor && editor.confirmOnCancel && isEditorDirty) {
+    if (isEditorDirty) {
       confirmDialog({
         title: 'Confirm',
         message: `You have made changes in the editor. Are you sure you want to discard them?`,
@@ -149,7 +149,7 @@ export default function ToggleEditorDialog(props) {
     } else {
       onClose();
     }
-  }, [confirmDialog, editor, isEditorDirty, onClose]);
+  }, [confirmDialog, isEditorDirty, onClose]);
   const patchEditorLayoutChange = useCallback(() => {
     dispatch(actions.editor.changeLayout(activeEditorId));
   }, [activeEditorId, dispatch]);

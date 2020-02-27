@@ -107,7 +107,7 @@ export default function EditorDialog(props) {
   };
 
   const handleCancelClick = useCallback(() => {
-    if (editor && editor.confirmOnCancel && isEditorDirty) {
+    if (isEditorDirty) {
       confirmDialog({
         title: 'Confirm',
         message: `You have made changes in the editor. Are you sure you want to discard them?`,
@@ -124,7 +124,7 @@ export default function EditorDialog(props) {
     } else {
       onClose();
     }
-  }, [confirmDialog, editor, isEditorDirty, onClose]);
+  }, [confirmDialog, isEditorDirty, onClose]);
   const handleLayoutChange = (event, _layout) => {
     patchEditorLayoutChange();
     _layout && setState({ ...state, layout: _layout });

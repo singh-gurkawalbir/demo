@@ -23,12 +23,7 @@ const useStyles = makeStyles({
 });
 
 export default function TransformEditor(props) {
-  const {
-    editorId,
-    disabled,
-    layout = 'column',
-    confirmOnCancel = false,
-  } = props;
+  const { editorId, disabled, layout = 'column' } = props;
   const classes = useStyles();
   const { data, result, error, initChangeIdentifier } = useSelector(state =>
     selectors.editor(state, editorId)
@@ -47,10 +42,9 @@ export default function TransformEditor(props) {
         rule: props.rule,
         duplicateKeyToValidate: [valueName],
         initRule: props.rule,
-        confirmOnCancel,
       })
     );
-  }, [confirmOnCancel, dispatch, editorId, props.data, props.rule]);
+  }, [dispatch, editorId, props.data, props.rule]);
   const handleDataChange = useCallback(
     data => {
       dispatch(actions.editor.patch(editorId, { data }));

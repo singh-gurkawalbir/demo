@@ -30,7 +30,6 @@ export default function JavaScriptEditor(props) {
     insertStubKey,
     disabled,
     layout = 'compact',
-    confirmOnCancel,
   } = props;
   const classes = useStyles(props);
   const { data, result, error, initChangeIdentifier } = useSelector(state =>
@@ -56,17 +55,9 @@ export default function JavaScriptEditor(props) {
         autoEvaluate: true,
         autoEvaluateDelay: 1000,
         initEntryFunction: entryFunction || 'main',
-        confirmOnCancel,
       })
     );
-  }, [
-    dispatch,
-    editorId,
-    scriptId,
-    entryFunction,
-    props.data,
-    confirmOnCancel,
-  ]);
+  }, [dispatch, editorId, scriptId, entryFunction, props.data]);
 
   useEffect(() => {
     handleInit();
