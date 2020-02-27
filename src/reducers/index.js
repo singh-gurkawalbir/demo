@@ -974,15 +974,17 @@ export function marketplaceConnectors(state, application, sandbox) {
     licenses
   );
 
-  return connectors.map(c => {
-    const installedIntegrationApps = resourceList(state, {
-      type: 'integrations',
-      sandbox,
-      filter: { _connectorId: c._id },
-    });
+  return connectors
+    .map(c => {
+      const installedIntegrationApps = resourceList(state, {
+        type: 'integrations',
+        sandbox,
+        filter: { _connectorId: c._id },
+      });
 
-    return { ...c, installed: !!installedIntegrationApps.resources.length };
-  });
+      return { ...c, installed: !!installedIntegrationApps.resources.length };
+    })
+    .sort((a, b) => a.name.localeCompare(b.name));
 }
 
 export function marketplaceTemplates(state, application) {
