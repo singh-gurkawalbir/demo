@@ -1,5 +1,4 @@
 export default {
-  preSave: formValues => ({ ...formValues, '/type': 'webhook' }),
   optionsHandler: (fieldId, fields) => {
     const webHookProviderField =
       fields.find(field => field.id === 'webhook.provider') || {};

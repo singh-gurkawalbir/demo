@@ -1,12 +1,11 @@
 import { useSelector } from 'react-redux';
 import { getCustomResourceLabel } from '../../../../reducers';
-import { isNewId } from '../../../../utils/resource';
 
 /*
  * Deals with labelling different resource types
  * Gets derived resource label based on flowId and resourceId/resourceType
  */
-export default function EditResourceTypeCrumb({
+export default function AddResourceTypeCrumb({
   id: resourceId,
   resourceType,
   flowId,
@@ -18,7 +17,6 @@ export default function EditResourceTypeCrumb({
       flowId,
     })
   );
-  const action = isNewId(resourceId) ? 'Add' : 'Edit';
 
-  return `${action} ${resourceLabel}`;
+  return `Add ${resourceLabel}`;
 }

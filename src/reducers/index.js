@@ -41,7 +41,12 @@ import {
   getUsedActionsMapForResource,
   isPageGeneratorResource,
 } from '../utils/flows';
-import { isValidResourceReference, isNewId } from '../utils/resource';
+import {
+  isValidResourceReference,
+  isNewId,
+  MODEL_PLURAL_TO_LABEL,
+  isRealTimeOrDistributedResource,
+} from '../utils/resource';
 import { processSampleData } from '../utils/sampleData';
 import {
   getAvailablePreviewStages,
@@ -3447,6 +3452,50 @@ export function isLookUpExport(state, { flowId, resourceId, resourceType }) {
   const { pageProcessors = [] } = flow || {};
 
   return !!pageProcessors.find(pp => pp._exportId === resourceId);
+}
+
+export function getCustomResourceLabel(
+  state,
+  { resourceType, resourceId, flowId }
+) {
+  const isLookup = isLookUpExport(state, { flowId, resourceId, resourceType });
+  const isNewResource = isNewId(resourceId);
+  const { merged: resource = {} } = resourceData(
+    state,
+    resourceType,
+    resourceId
+  );
+  let resourceLabel;
+
+  // Default resource labels based on resourceTypes handled here
+  if (resourceType === 'pageProcessor') {
+    resourceLabel = 'Destination / Lookup';
+  } else if (resourceType === 'pageGenerator') {
+    resourceLabel = 'Source';
+  } else if (isLookup) {
+    resourceLabel = 'Lookup';
+  } else {
+    resourceLabel = MODEL_PLURAL_TO_LABEL[resourceType];
+  }
+
+  // Incase of flow context, 2nd step of PG/PP creation resource labels handled here
+  if (flowId) {
+    if (isNewResource && resourceType === 'exports') {
+      resourceLabel = isLookup ? 'Lookup' : 'Source';
+    } else if (isNewResource && resourceType === 'imports') {
+      resourceLabel = 'Import';
+    }
+  }
+
+  // For real time resources , we show resource label as 'listener'
+  if (
+    resourceType === 'exports' &&
+    isRealTimeOrDistributedResource(resource, resourceType)
+  ) {
+    resourceLabel = 'Listener';
+  }
+
+  return resourceLabel;
 }
 
 /*
