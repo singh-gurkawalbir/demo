@@ -69,9 +69,7 @@ function OutputFilterDialog({
       scriptId={scriptId}
       entryFunction={entryFunction || hooksToFunctionNamesMap.filter}
       insertStubKey="filter"
-      onClose={() => {
-        onClose();
-      }}
+      onClose={onClose}
       optionalSaveParams={optionalSaveParams}
     />
   );
