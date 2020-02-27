@@ -3145,12 +3145,6 @@ export function getImportSampleData(state, resourceId, options = {}) {
   if (assistant) {
     // get assistants sample data
     return assistantPreviewData(state, resourceId);
-  } else if (sampleData) {
-    // Formats sample data into readable form
-    return {
-      data: processSampleData(sampleData, resource),
-      status: 'received',
-    };
   } else if (adaptorType === 'NetSuiteDistributedImport') {
     // eslint-disable-next-line camelcase
     const { _connectionId: connectionId, netsuite_da = {} } = resource;
@@ -3187,6 +3181,12 @@ export function getImportSampleData(state, resourceId, options = {}) {
     });
 
     return { data, status };
+  } else if (sampleData) {
+    // Formats sample data into readable form
+    return {
+      data: processSampleData(sampleData, resource),
+      status: 'received',
+    };
   }
 
   return emptyObject;
