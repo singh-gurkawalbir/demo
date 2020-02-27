@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import Button from '@material-ui/core/Button';
 import { Drawer } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
@@ -49,6 +49,9 @@ export default function ImportMappingSettings(props) {
     disabled,
     lookups,
   } = props;
+  const [formState, setFormState] = useState({
+    showFormValidationsBeforeTouch: false,
+  });
   const { generate, extract, index } = value;
   const [enquesnackbar] = useEnqueueSnackbar();
   const getLookup = name => lookups.find(lookup => lookup.name === name);
@@ -93,6 +96,7 @@ export default function ImportMappingSettings(props) {
         { generate, extract, lookup },
         formVal
       );
+      const lookupObj = [];
 
       if (errorStatus) {
         enquesnackbar({
@@ -107,22 +111,29 @@ export default function ImportMappingSettings(props) {
       if (updatedLookup) {
         const isDelete = false;
 
-        updateLookup(isDelete, updatedLookup);
+        lookupObj.push({ isDelete, obj: updatedLookup });
       } else if (lookup) {
         // When user tries to reconfigure setting and tries to remove lookup, delete existing lookup
         const isDelete = true;
 
-        updateLookup(isDelete, lookup);
+        lookupObj.push({ isDelete, obj: lookup });
       }
 
       if (conditionalLookup) {
-        updateLookup(false, conditionalLookup);
+        lookupObj.push({ isDelete: false, obj: conditionalLookup });
       }
+
+      updateLookup(lookupObj);
 
       onClose(true, settings);
     },
     [enquesnackbar, extract, generate, lookup, onClose, updateLookup]
   );
+  const showCustomFormValidations = useCallback(() => {
+    setFormState({
+      showFormValidationsBeforeTouch: true,
+    });
+  }, []);
 
   return (
     <Drawer
@@ -136,10 +147,12 @@ export default function ImportMappingSettings(props) {
         <DynaForm
           disabled={disabled}
           fieldMeta={fieldMeta}
-          optionsHandler={fieldMeta.optionsHandler}>
+          optionsHandler={fieldMeta.optionsHandler}
+          formState={formState}>
           <DynaSubmit
             disabled={disableSave}
             id="fieldMappingSettingsSave"
+            showCustomFormValidations={showCustomFormValidations}
             onClick={handleSubmit}>
             Save
           </DynaSubmit>

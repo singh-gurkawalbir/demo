@@ -121,6 +121,10 @@ export function stagedResource(state, id, scope) {
   return fromStage.stagedResource(state && state.stage, id, scope);
 }
 
+export function getAllResourceConflicts(state) {
+  return fromStage.getAllResourceConflicts(state && state.stage);
+}
+
 export function optionsFromMetadata({
   state,
   connectionId,
@@ -325,6 +329,14 @@ export function categoryMapping(state, integrationId, flowId) {
 
 export function categoryMappingFilters(state, integrationId, flowId) {
   return fromIntegrationApps.categoryMappingFilters(
+    state && state.integrationApps,
+    integrationId,
+    flowId
+  );
+}
+
+export function variationMappingData(state, integrationId, flowId) {
+  return fromIntegrationApps.variationMappingData(
     state && state.integrationApps,
     integrationId,
     flowId

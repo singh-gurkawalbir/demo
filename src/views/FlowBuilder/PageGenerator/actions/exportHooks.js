@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
@@ -34,7 +34,9 @@ function ExportHooks({ flowId, isViewMode, resource, onClose, open }) {
   const classes = useStyles();
   const resourceId = resource._id;
   const resourceType = 'exports';
-  const defaultValue = getDefaultValuesForHooks(resource);
+  const defaultValue = useMemo(() => getDefaultValuesForHooks(resource), [
+    resource,
+  ]);
   const handleSave = useCallback(
     selectedHooks => {
       const patchSet = getSelectedHooksPatchSet(selectedHooks, resource);

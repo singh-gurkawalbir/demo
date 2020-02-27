@@ -79,6 +79,7 @@ export default {
       lookups,
     } = params;
     let fieldMeta = {};
+    const lookup = lookups.find(l => l.name === value.lookupName);
 
     switch (application) {
       case adaptorTypeMap.HTTPImport:
@@ -89,6 +90,7 @@ export default {
           generate,
           options,
           lookups,
+          lookup,
         });
         break;
       case adaptorTypeMap.NetSuiteDistributedImport:
@@ -99,6 +101,7 @@ export default {
           generateFields,
           options,
           lookups,
+          lookup,
         });
         break;
       case adaptorTypeMap.SalesforceImport:
@@ -109,6 +112,7 @@ export default {
           generateFields,
           options,
           lookups,
+          lookup,
         });
         break;
       case adaptorTypeMap.AS2Import:
@@ -120,6 +124,7 @@ export default {
           extractFields,
           options,
           lookups,
+          lookup,
         });
         break;
       default:
