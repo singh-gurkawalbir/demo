@@ -27,6 +27,20 @@ export default function DynaNetSuiteSubRecords(props) {
   } = props;
   const { resourceId } = resourceContext;
   const { recordType } = options;
+  const hasSubrecord = useSelector(state => {
+    const recordTypes = selectors.metadataOptionsAndResources({
+      state,
+      connectionId,
+      commMetaPath: `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes`,
+      filterKey: 'suitescript-recordTypes',
+    }).data;
+
+    if (recordTypes) {
+      const rec = recordTypes.find(record => record.value === recordType);
+
+      return rec && rec.hasSubRecord;
+    }
+  });
   const { subrecords, subrecordsFromMappings, hasNetsuiteDa } = useSelector(
     state => {
       const { merged: importDoc } = selectors.resourceData(
@@ -127,6 +141,10 @@ export default function DynaNetSuiteSubRecords(props) {
     },
     [confirmDialog, dispatch, resourceId, subrecords]
   );
+
+  if (!hasSubrecord) {
+    return null;
+  }
 
   return (
     <Fragment>

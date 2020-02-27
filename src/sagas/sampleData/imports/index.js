@@ -120,7 +120,7 @@ function* fetchAssistantSampleData({ resource }) {
   }
 }
 
-function* requestSampleData({ resourceId, options = {} }) {
+function* requestSampleData({ resourceId, options = {}, refreshCache }) {
   const { merged: resource } = yield select(
     resourceData,
     'imports',
@@ -138,15 +138,19 @@ function* requestSampleData({ resourceId, options = {} }) {
       case 'NetSuiteDistributedImport': {
         // eslint-disable-next-line camelcase
         const { _connectionId: connectionId, netsuite_da = {} } = resource;
-        const { recordType, refreshCache } = options;
+        const { recordType } = options;
+        let commMetaPath;
+
+        if (recordType) {
+          /** special case of netsuite/metadata/suitescript/connections/5c88a4bb26a9676c5d706324/recordTypes/inventorydetail?parentRecordType=salesorder
+           * in case of subrecord */
+          commMetaPath = `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${recordType}?parentRecordType=${netsuite_da.recordType}`;
+        } else {
+          commMetaPath = `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${netsuite_da.recordType}`;
+        }
 
         yield put(
-          actions.metadata.request(
-            connectionId,
-            `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${recordType ||
-              netsuite_da.recordType}`,
-            { refreshCache }
-          )
+          actions.metadata.request(connectionId, commMetaPath, { refreshCache })
         );
         break;
       }
@@ -158,7 +162,7 @@ function* requestSampleData({ resourceId, options = {} }) {
           actions.metadata.request(
             connectionId,
             `salesforce/metadata/connections/${connectionId}/sObjectTypes/${salesforce.sObjectType}`,
-            { refreshCache: options.refreshCache }
+            { refreshCache }
           )
         );
         break;

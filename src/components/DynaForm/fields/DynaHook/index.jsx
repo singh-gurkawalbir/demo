@@ -14,6 +14,8 @@ export default function DynaHook(props) {
     hookStage = 'preSavePage',
     disabled,
   } = props;
+  // Lists all hooks stages with default sample data where no api call is required
+  const hooksWithDefaultSampleData = ['as2routing', 'postAggregate'];
   const dispatch = useDispatch();
   const [isPreHookDataRequested, setIsPreHookDataRequested] = useState(false);
   const requestForPreHookData = () => {
@@ -38,7 +40,7 @@ export default function DynaHook(props) {
   );
   // Selector to get sample data for different hook types
   // TODO @Raghu: Move all this logic to a selector
-  const getSampleDataSelector = ({ state, flowId, resourceId, stage }) => {
+  const getSampleDataSelector = ({ state, flowId, resourceId }) => {
     // Show empty JSON incase of out of flow context
     if (!flowId) {
       return {};
@@ -63,7 +65,7 @@ export default function DynaHook(props) {
       flowId,
       resourceId,
       resourceType,
-      stage: resourceType === 'exports' ? stage : hookStage,
+      stage: hookStage,
     });
 
     if (hookStage === 'postSubmit') {
@@ -88,14 +90,33 @@ export default function DynaHook(props) {
   const preHookData = useSelector(state => {
     if (props.preHookData) return props.preHookData;
 
-    return getSampleDataSelector({ state, flowId, resourceId, stage: 'hooks' });
+    return getSampleDataSelector({ state, flowId, resourceId });
+  });
+  const preHookDataStatus = useSelector(state => {
+    // Incase of default data for hooks, return status as received
+    if (props.preHookData || hooksWithDefaultSampleData.includes(hookStage)) {
+      return 'received';
+    }
+
+    // returns status of sampleData state for this hookStage
+    return selectors.getSampleDataContext(state, {
+      flowId,
+      resourceId,
+      resourceType,
+      stage: hookStage,
+    }).status;
   });
 
   useEffect(() => {
     // Sample data is shown incase of flow context
-    if (!preHookData && flowId && isPreHookDataRequested) {
+    if (!preHookDataStatus && flowId && isPreHookDataRequested) {
       dispatch(
-        requestSampleData({ flowId, resourceId, resourceType, stage: 'hooks' })
+        requestSampleData({
+          flowId,
+          resourceId,
+          resourceType,
+          stage: hookStage,
+        })
       );
     }
   }, [
@@ -103,9 +124,10 @@ export default function DynaHook(props) {
     requestSampleData,
     flowId,
     isPreHookDataRequested,
-    preHookData,
     resourceId,
     resourceType,
+    preHookDataStatus,
+    hookStage,
   ]);
 
   return (
