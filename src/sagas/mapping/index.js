@@ -98,7 +98,9 @@ export function* previewMappings({ id }) {
   let resourceCopy = deepClone(resource);
   let _mappings = mappings
     .filter(mapping => !!mapping.generate)
-    .map(({ index, hardCodedValueTmp, rowIdentifier, ...others }) => others);
+    .map(
+      ({ index, uId, hardCodedValueTmp, rowIdentifier, ...others }) => others
+    );
 
   _mappings = mappingUtil.generateMappingsForApp({
     mappings: _mappings,
