@@ -80,6 +80,7 @@ export function* saveProcessor({ id }) {
     yield put(actions.editor.saveFailed(id));
   }
 
+  // TODO: enhance foregroundPatch to support multiple foreground request
   const { foregroundPatch, backgroundPatches } = patches || {};
 
   if (foregroundPatch) {

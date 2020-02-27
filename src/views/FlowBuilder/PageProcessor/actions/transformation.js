@@ -66,9 +66,7 @@ function TransformationDialog({ flowId, resource, isViewMode, onClose }) {
       rule={rule}
       entryFunction={entryFunction || hooksToFunctionNamesMap.transform}
       insertStubKey="transform"
-      onClose={() => {
-        onClose();
-      }}
+      onClose={onClose}
       optionalSaveParams={optionalSaveParams}
     />
   );

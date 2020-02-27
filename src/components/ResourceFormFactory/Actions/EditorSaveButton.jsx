@@ -46,13 +46,13 @@ export default function EditorSaveButton(props) {
     onSave,
     resourceType,
   });
-  const handleButtonClick = () => {
+  const handleButtonClick = useCallback(() => {
     if (!preSaveValidate({ editor, enquesnackbar })) {
       return;
     }
 
     handleSubmitForm();
-  };
+  }, [editor, enquesnackbar, handleSubmitForm]);
 
   return (
     <Button

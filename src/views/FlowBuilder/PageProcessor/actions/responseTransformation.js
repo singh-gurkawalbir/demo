@@ -38,9 +38,7 @@ function ResponseTransformationDialog(props) {
       rule={rule}
       entryFunction={entryFunction || hooksToFunctionNamesMap.transform}
       insertStubKey="transform"
-      onClose={() => {
-        onClose();
-      }}
+      onClose={onClose}
       optionalSaveParams={optionalSaveParams}
     />
   );

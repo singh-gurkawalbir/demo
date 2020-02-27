@@ -33,9 +33,6 @@ function PostResponseMapHookDialog({
       stage: 'postResponseMapHook',
     })
   );
-  const handleClose = useCallback(() => {
-    onClose();
-  }, [onClose]);
 
   useEffect(() => {
     if (!sampleData) {
@@ -80,7 +77,7 @@ function PostResponseMapHookDialog({
         postResponseMapHook.function || hooksToFunctionNamesMap[hookStage]
       }
       patchOnSave
-      onClose={handleClose}
+      onClose={onClose}
       optionalSaveParams={optionalSaveParams}
     />
   );
