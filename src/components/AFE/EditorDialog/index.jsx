@@ -1,4 +1,4 @@
-import { useState, cloneElement } from 'react';
+import { useState, useMemo, useCallback, cloneElement } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import {
@@ -86,40 +86,54 @@ export default function EditorDialog(props) {
     selectors.editorViolations(state, id)
   );
   const handlePreview = () => dispatch(actions.editor.evaluateRequest(id));
-  const handleClose = shouldCommit => {
-    if (shouldCommit && !preSaveValidate({ editor, enquesnackbar })) {
-      return;
-    }
+  const handleClose = useCallback(
+    shouldCommit => () => {
+      if (shouldCommit && !preSaveValidate({ editor, enquesnackbar })) {
+        return;
+      }
 
-    if (onClose) {
-      onClose(shouldCommit, editor);
-    }
-  };
-
-  const patchEditorLayoutChange = () => {
+      if (onClose) {
+        onClose(shouldCommit, editor);
+      }
+    },
+    [editor, enquesnackbar, onClose]
+  );
+  const patchEditorLayoutChange = useCallback(() => {
     dispatch(actions.editor.changeLayout(id));
-  };
-
-  const handleLayoutChange = (event, _layout) => {
-    patchEditorLayoutChange();
-    _layout && setState({ ...state, layout: _layout });
-  };
-
+  }, [dispatch, id]);
+  const handleLayoutChange = useCallback(
+    (event, _layout) => {
+      patchEditorLayoutChange();
+      _layout && setState({ ...state, layout: _layout });
+    },
+    [patchEditorLayoutChange, state]
+  );
   const handleFullScreenClick = () => {
     patchEditorLayoutChange();
     setState({ ...state, fullScreen: !fullScreen });
   };
 
-  const size = fullScreen ? { height } : { height, width };
-  const showPreviewAction =
-    !hidePreviewAction && editor && !editorViolations && !editor.autoEvaluate;
-  const disableSave = !editor || editorViolations || disabled;
+  const size = useMemo(() => (fullScreen ? { height } : { height, width }), [
+    fullScreen,
+    height,
+    width,
+  ]);
+  const showPreviewAction = useMemo(
+    () =>
+      !hidePreviewAction && editor && !editorViolations && !editor.autoEvaluate,
+    [editor, editorViolations, hidePreviewAction]
+  );
+  const disableSave = useMemo(() => !editor || editorViolations || disabled, [
+    disabled,
+    editor,
+    editorViolations,
+  ]);
 
   return (
     <Dialog
       fullScreen={fullScreen}
       open={open}
-      onClose={() => handleClose()}
+      onClose={handleClose(false)}
       scroll="paper"
       data-test={dataTest}
       maxWidth={false}>
@@ -181,7 +195,7 @@ export default function EditorDialog(props) {
             color="primary"
             data-test="saveEditor"
             disabled={disabled}
-            onClose={handleClose}
+            onClose={handleClose(false)}
             submitButtonLabel="Save"
           />
         ) : (
@@ -190,7 +204,7 @@ export default function EditorDialog(props) {
             data-test="saveEditor"
             disabled={!!disableSave}
             color="primary"
-            onClick={() => handleClose(true)}>
+            onClick={handleClose(true)}>
             Save
           </Button>
         )}
@@ -198,7 +212,7 @@ export default function EditorDialog(props) {
           variant="text"
           color="primary"
           data-test="closeEditor"
-          onClick={() => handleClose()}>
+          onClick={handleClose(false)}>
           Cancel
         </Button>
       </DialogActions>

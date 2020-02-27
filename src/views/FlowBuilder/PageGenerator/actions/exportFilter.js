@@ -64,9 +64,7 @@ function ExportFilterDialog({ flowId, resource, isViewMode, onClose }) {
       scriptId={scriptId}
       entryFunction={entryFunction || hooksToFunctionNamesMap.filter}
       insertStubKey="filter"
-      onClose={() => {
-        onClose();
-      }}
+      onClose={onClose}
       optionalSaveParams={optionalSaveParams}
     />
   );
