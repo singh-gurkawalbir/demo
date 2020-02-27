@@ -102,7 +102,15 @@ export default function MappingRow(props) {
     index,
     isDraggable = false,
   } = props;
-  const { uId } = mapping || {};
+  const {
+    uId,
+    isSubRecordMapping,
+    isRequired,
+    isNotEditable,
+    extract,
+    generate,
+    hardCodedValueTmp,
+  } = mapping || {};
   const classes = useStyles();
   const ref = useRef(null);
   // isOver is set to true when hover happens over component
@@ -176,21 +184,19 @@ export default function MappingRow(props) {
         <div
           className={clsx(classes.childHeader, classes.mapField, {
             [classes.disableChildRow]:
-              mapping.isSubRecordMapping || mapping.isNotEditable || disabled,
+              isSubRecordMapping || isNotEditable || disabled,
           })}>
           <DynaTypeableSelect
             id={`fieldMappingExtract-${index}`}
             labelName="name"
             valueName="id"
-            value={mapping.extract || mapping.hardCodedValueTmp}
+            value={extract || hardCodedValueTmp}
             options={extractFields}
-            disabled={
-              mapping.isSubRecordMapping || mapping.isNotEditable || disabled
-            }
+            disabled={isSubRecordMapping || isNotEditable || disabled}
             onBlur={handleBlur('extract')}
           />
 
-          {(mapping.isSubRecordMapping || mapping.isNotEditable) && (
+          {(isSubRecordMapping || isNotEditable) && (
             <span className={classes.lockIcon}>
               <LockIcon />
             </span>
@@ -200,23 +206,21 @@ export default function MappingRow(props) {
         <div
           className={clsx(classes.childHeader, classes.mapField, {
             [classes.disableChildRow]:
-              mapping.isSubRecordMapping || mapping.isRequired || disabled,
+              isSubRecordMapping || isRequired || disabled,
           })}>
           <DynaTypeableSelect
             id={`fieldMappingGenerate-${index}`}
-            value={mapping.generate}
+            value={generate}
             labelName="name"
             valueName="id"
             options={generateFields}
-            disabled={
-              mapping.isSubRecordMapping || mapping.isRequired || disabled
-            }
+            disabled={isSubRecordMapping || isRequired || disabled}
             onBlur={handleBlur('generate')}
           />
-          {(mapping.isSubRecordMapping || mapping.isRequired) && (
+          {(isSubRecordMapping || isRequired) && (
             <Tooltip
               title={`${
-                mapping.isSubRecordMapping
+                isSubRecordMapping
                   ? 'Subrecord mapping'
                   : 'This field is required by the application you are importing to'
               }`}
@@ -229,14 +233,14 @@ export default function MappingRow(props) {
         </div>
         <div
           className={clsx({
-            [classes.disableChildRow]: mapping.isSubRecordMapping,
+            [classes.disableChildRow]: isSubRecordMapping,
           })}>
           <MappingSettings
             id={`fieldMappingSettings-${index}`}
             onSave={handleSettingsSave}
             value={mapping}
             options={options}
-            generate={mapping.generate}
+            generate={generate}
             application={application}
             updateLookup={updateLookupHandler}
             disabled={disabled}
@@ -248,12 +252,12 @@ export default function MappingRow(props) {
         <div
           key="delete_button"
           className={clsx({
-            [classes.disableChildRow]: mapping.isSubRecordMapping,
+            [classes.disableChildRow]: isSubRecordMapping,
           })}>
           <ActionButton
             data-test={`fieldMappingRemove-${index}`}
             aria-label="delete"
-            disabled={mapping.isRequired || mapping.isNotEditable || disabled}
+            disabled={isRequired || isNotEditable || disabled}
             onClick={handleDeleteClick}
             className={classes.deleteBtn}>
             <TrashIcon />

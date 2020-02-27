@@ -9,7 +9,6 @@ const { deepClone } = require('fast-json-patch');
 
 const emptySet = [];
 
-// TODO: Change index to use uId
 export default function reducer(state = {}, action) {
   const {
     id,
