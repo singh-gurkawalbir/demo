@@ -1,3 +1,4 @@
+import shortid from 'shortid';
 import produce from 'immer';
 import { differenceWith, isEqual } from 'lodash';
 import actionTypes from '../../../actions/types';
@@ -8,6 +9,7 @@ const { deepClone } = require('fast-json-patch');
 
 const emptySet = [];
 
+// TODO: Change index to use uId
 export default function reducer(state = {}, action) {
   const {
     id,
@@ -15,10 +17,10 @@ export default function reducer(state = {}, action) {
     generateFields,
     lookups,
     value,
-    index,
     field,
     dragIndex,
     hoverIndex,
+    uId,
     options = {},
   } = action;
 
@@ -74,8 +76,13 @@ export default function reducer(state = {}, action) {
           const initChangeIdentifier =
             (draft[id] && draft[id].initChangeIdentifier) || 0;
 
+          // uId would be unique property associated with each mapping.
           draft[id] = {
-            mappings: formattedMappings.map(m => ({ ...m, rowIdentifier: 0 })),
+            mappings: formattedMappings.map(m => ({
+              ...m,
+              rowIdentifier: 0,
+              uId: shortid.generate(),
+            })),
             incompleteGenerates: [],
             lookups: lookups || [],
             initChangeIdentifier: initChangeIdentifier + 1,
@@ -90,8 +97,8 @@ export default function reducer(state = {}, action) {
             subRecordMappingId,
             salesforceMasterRecordTypeId,
             showSalesforceNetsuiteAssistant,
-            // lastModifiedRow helps to set generate field when any field in salesforce mapping assistant is clicked
-            lastModifiedRow: -1,
+            // lastModifiedUId helps to set generate field when any field in salesforce mapping assistant is clicked
+            lastModifiedUId: '',
           };
           draft[id].mappingsCopy = deepClone(draft[id].mappings);
           draft[id].lookupsCopy = deepClone(draft[id].lookups);
@@ -119,9 +126,13 @@ export default function reducer(state = {}, action) {
 
       case actionTypes.MAPPING.DELETE: {
         draft[id].initChangeIdentifier += 1;
-        draft[id].mappings.splice(index, 1);
+        const _mappings = [...draft[id].mappings];
+        const filteredMapping = _mappings.filter(m => m.uId !== uId);
 
-        if (draft[id].lastModifiedRow === index) draft[id].lastModifiedRow = -1;
+        draft[id].mappings = filteredMapping;
+
+        if (draft[id].lastModifiedUId === uId) draft[id].lastModifiedUId = '';
+
         const {
           isSuccess,
           errMessage: validationErrMsg,
@@ -140,8 +151,11 @@ export default function reducer(state = {}, action) {
         incompleteGenerates.forEach(generateObj => {
           const {
             value: incompleteGenValue,
-            index: incompleteGenIndex,
+            uId: incompleteGenUId,
           } = generateObj;
+          const incompleteGenIndex = draft[id].mappings.findIndex(
+            m => m.uId === incompleteGenUId
+          );
           const childSObject =
             generateFields &&
             generateFields.find(
@@ -163,6 +177,8 @@ export default function reducer(state = {}, action) {
       }
 
       case actionTypes.MAPPING.PATCH_FIELD: {
+        const index = draft[id].mappings.findIndex(m => m.uId === uId);
+
         if (draft[id].mappings[index]) {
           const objCopy = { ...draft[id].mappings[index] };
 
@@ -207,10 +223,11 @@ export default function reducer(state = {}, action) {
           draft[id].mappings.push({
             [field]: value,
             rowIdentifier: 0,
+            uId: shortid.generate(),
           });
         }
 
-        draft[id].lastModifiedRow = index;
+        draft[id].lastModifiedUId = uId;
         const {
           isSuccess,
           errMessage: validationErrMsg,
@@ -223,35 +240,37 @@ export default function reducer(state = {}, action) {
 
       case actionTypes.MAPPING.PATCH_INCOMPLETE_GENERATES: {
         const incompleteGeneObj = draft[id].incompleteGenerates.find(
-          gen => gen.index === index
+          gen => gen.uId === uId
         );
 
         if (incompleteGeneObj) {
           incompleteGeneObj.value = value;
         } else {
-          draft[id].incompleteGenerates.push({ index, value });
+          draft[id].incompleteGenerates.push({ uId, value });
         }
 
         break;
       }
 
-      case actionTypes.MAPPING.PATCH_SETTINGS:
+      case actionTypes.MAPPING.PATCH_SETTINGS: {
+        const index = draft[id].mappings.findIndex(m => m.uId === uId);
+
         if (draft[id].mappings[index]) {
           const {
             generate,
             extract,
             isNotEditable,
-            index: mappingIndex,
             isRequired,
             rowIdentifier,
+            uId,
           } = draft[id].mappings[index];
           const valueTmp = {
             generate,
             extract,
             isNotEditable,
-            index: mappingIndex,
             isRequired,
             rowIdentifier,
+            uId,
           };
 
           Object.assign(valueTmp, value);
@@ -272,7 +291,7 @@ export default function reducer(state = {}, action) {
           }
 
           draft[id].mappings[index] = { ...valueTmp };
-          draft[id].lastModifiedRow = index;
+          draft[id].lastModifiedUId = uId;
           const {
             isSuccess,
             errMessage: validationErrMsg,
@@ -285,6 +304,8 @@ export default function reducer(state = {}, action) {
         }
 
         break;
+      }
+
       case actionTypes.MAPPING.UPDATE_LOOKUP: {
         draft[id].lookups = lookups;
         const {
@@ -378,14 +399,14 @@ export function mappingSaveProcessTerminate(state, id) {
 const isMappingObjEqual = (mapping1, mapping2) => {
   const {
     rowIdentifier: r1,
-    index: i1,
+    uId: uId1,
     isNotEditable: e1,
     isRequired: req1,
     ...formattedMapping1
   } = mapping1;
   const {
     rowIdentifier: r2,
-    index: i2,
+    uId: uId2,
     isNotEditable: e2,
     isRequired: req2,
     ...formattedMapping2

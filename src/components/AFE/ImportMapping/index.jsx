@@ -85,6 +85,7 @@ const useStyles = makeStyles(theme => ({
     fontFamily: 'Roboto500',
   },
 }));
+const emptyMappingRow = {};
 
 export default function ImportMapping(props) {
   // generateFields and extractFields are passed as an array of field names
@@ -115,7 +116,7 @@ export default function ImportMapping(props) {
     lookups,
     initChangeIdentifier,
     previewData,
-    lastModifiedRow,
+    lastModifiedUId,
     salesforceMasterRecordTypeId,
     showSalesforceNetsuiteAssistant,
   } = useSelector(state => selectors.mapping(state, editorId));
@@ -137,12 +138,10 @@ export default function ImportMapping(props) {
       }),
     [mappings]
   );
-  const emptyMappingRow = {
-    index: mappings.length,
-  };
+  const mappingsLength = useMemo(() => mappings.length, [mappings]);
   const handleFieldUpdate = useCallback(
     (_mapping, field, value) => {
-      const { index: rowIndex, generate = '', extract = '' } = _mapping;
+      const { uId, generate = '', extract = '' } = _mapping;
 
       if (value === '') {
         if (
@@ -151,7 +150,7 @@ export default function ImportMapping(props) {
             extract === '' &&
             !('hardCodedValue' in _mapping))
         ) {
-          dispatch(actions.mapping.delete(editorId, rowIndex));
+          dispatch(actions.mapping.delete(editorId, uId));
 
           return;
         }
@@ -172,7 +171,7 @@ export default function ImportMapping(props) {
           dispatch(
             actions.mapping.patchIncompleteGenerates(
               editorId,
-              rowIndex,
+              uId,
               relationshipName
             )
           );
@@ -180,16 +179,18 @@ export default function ImportMapping(props) {
         }
       }
 
-      dispatch(actions.mapping.patchField(editorId, field, rowIndex, value));
+      dispatch(actions.mapping.patchField(editorId, field, uId, value));
     },
     [dispatch, editorId]
   );
-  const patchSettings = (row, settings) => {
-    dispatch(actions.mapping.patchSettings(editorId, row, settings));
-  };
-
-  const handleDelete = row => {
-    dispatch(actions.mapping.delete(editorId, row));
+  const patchSettings = useCallback(
+    (uId, settings) => {
+      dispatch(actions.mapping.patchSettings(editorId, uId, settings));
+    },
+    [dispatch, editorId]
+  );
+  const handleDelete = uId => {
+    dispatch(actions.mapping.delete(editorId, uId));
   };
 
   const generateLabel = mappingUtil.getGenerateLabelForMapping(
@@ -218,23 +219,23 @@ export default function ImportMapping(props) {
   };
 
   const handleSalesforceAssistantFieldClick = useCallback(meta => {
-    if (lastModifiedRow > -1)
+    if (lastModifiedUId)
       dispatch(
         actions.mapping.patchField(
           editorId,
           'generate',
-          lastModifiedRow,
+          lastModifiedUId,
           meta.id
         )
       );
   });
   const handleNetSuiteAssistantFieldClick = useCallback(meta => {
-    if (lastModifiedRow > -1)
+    if (lastModifiedUId)
       dispatch(
         actions.mapping.patchField(
           editorId,
           'generate',
-          lastModifiedRow,
+          lastModifiedUId,
           meta.sublistName ? `${meta.sublistName}[*].${meta.id}` : meta.id
         )
       );
@@ -311,12 +312,15 @@ export default function ImportMapping(props) {
           </Typography>
         </div>
 
-        <div className={classes.mappingsBody}>
+        <div
+          className={classes.mappingsBody}
+          key={`${editorId}-${initChangeIdentifier}`}>
           <DndProvider backend={HTML5Backend}>
             {tableData.map((mapping, index) => (
               <MappingRow
                 index={index}
-                key={`${editorId}-${initChangeIdentifier}-${mapping.rowIdentifier}-${index}`}
+                id={`${mapping.uId}-${mapping.rowIdentifier}-${index}`}
+                key={`${mapping.uId}-${mapping.rowIdentifier}-${index}`}
                 mapping={mapping}
                 extractFields={extractFields}
                 onFieldUpdate={handleFieldUpdate}
@@ -334,7 +338,8 @@ export default function ImportMapping(props) {
             ))}
           </DndProvider>
           <MappingRow
-            key={`${editorId}-${initChangeIdentifier}-new`}
+            key={`${mappingsLength}`}
+            index={mappingsLength}
             mapping={emptyMappingRow}
             extractFields={extractFields}
             onFieldUpdate={handleFieldUpdate}

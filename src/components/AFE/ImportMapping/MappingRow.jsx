@@ -1,4 +1,4 @@
-import { useRef, useCallback } from 'react';
+import { useRef, useMemo, useCallback } from 'react';
 import { Tooltip } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
@@ -71,6 +71,10 @@ const useStyles = makeStyles(theme => ({
     border: 'none',
     width: 0,
   },
+  hoverDiv: {
+    width: '100%',
+    height: 50,
+  },
   mappingIcon: {
     color: theme.palette.secondary.lightest,
     fontSize: theme.spacing(6),
@@ -88,7 +92,6 @@ export default function MappingRow(props) {
     onFieldUpdate,
     generateFields,
     disabled,
-    index,
     updateLookupHandler,
     patchSettings,
     application,
@@ -96,11 +99,14 @@ export default function MappingRow(props) {
     lookups,
     onDelete,
     onMove,
+    index,
     isDraggable = false,
   } = props;
+  const { uId } = mapping || {};
   const classes = useStyles();
   const ref = useRef(null);
-  const [, drop] = useDrop({
+  // isOver is set to true when hover happens over component
+  const [{ isOver }, drop] = useDrop({
     accept: 'MAPPING',
     drop(item) {
       if (!ref.current || !isDraggable) {
@@ -119,14 +125,22 @@ export default function MappingRow(props) {
       // eslint-disable-next-line no-param-reassign
       item.index = hoverIndex;
     },
+    collect: monitor => ({
+      isOver: monitor.isOver(),
+    }),
   });
   const [{ isDragging }, drag] = useDrag({
     item: { type: 'MAPPING', index },
     collect: monitor => ({
       isDragging: monitor.isDragging(),
     }),
+
     canDrag: isDraggable,
   });
+  const isTargetBeingHovered = useMemo(
+    () => isDraggable && isOver && !isDragging,
+    [isDraggable, isDragging, isOver]
+  );
   const opacity = isDragging ? 0.2 : 1;
 
   drag(drop(ref));
@@ -137,6 +151,15 @@ export default function MappingRow(props) {
     },
     [mapping, onFieldUpdate]
   );
+  const handleDeleteClick = useCallback(() => {
+    onDelete(uId);
+  }, [onDelete, uId]);
+  const handleSettingsSave = useCallback(
+    (id, evt) => {
+      patchSettings(uId, evt);
+    },
+    [patchSettings, uId]
+  );
 
   // generateFields and extractFields are passed as an array of field names
   return (
@@ -144,7 +167,8 @@ export default function MappingRow(props) {
       ref={ref}
       style={{ opacity }}
       className={classes.rowContainer}
-      key={mapping.index}>
+      key={id}>
+      <div className={clsx({ [classes.hoverDiv]: isTargetBeingHovered })} />
       <div className={clsx(classes.innerRow, { [classes.dragRow]: !disabled })}>
         <div className={classes.dragIcon}>
           <GripperIcon />
@@ -155,8 +179,7 @@ export default function MappingRow(props) {
               mapping.isSubRecordMapping || mapping.isNotEditable || disabled,
           })}>
           <DynaTypeableSelect
-            key={id}
-            id={`fieldMappingExtract-${mapping.index}`}
+            id={`fieldMappingExtract-${index}`}
             labelName="name"
             valueName="id"
             value={mapping.extract || mapping.hardCodedValueTmp}
@@ -180,8 +203,7 @@ export default function MappingRow(props) {
               mapping.isSubRecordMapping || mapping.isRequired || disabled,
           })}>
           <DynaTypeableSelect
-            key={id}
-            id={`fieldMappingGenerate-${mapping.index}`}
+            id={`fieldMappingGenerate-${index}`}
             value={mapping.generate}
             labelName="name"
             valueName="id"
@@ -210,10 +232,8 @@ export default function MappingRow(props) {
             [classes.disableChildRow]: mapping.isSubRecordMapping,
           })}>
           <MappingSettings
-            id={`fieldMappingSettings-${mapping.index}`}
-            onSave={(id, evt) => {
-              patchSettings(mapping.index, evt);
-            }}
+            id={`fieldMappingSettings-${index}`}
+            onSave={handleSettingsSave}
             value={mapping}
             options={options}
             generate={mapping.generate}
@@ -231,12 +251,10 @@ export default function MappingRow(props) {
             [classes.disableChildRow]: mapping.isSubRecordMapping,
           })}>
           <ActionButton
-            data-test={`fieldMappingRemove-${mapping.index}`}
+            data-test={`fieldMappingRemove-${index}`}
             aria-label="delete"
             disabled={mapping.isRequired || mapping.isNotEditable || disabled}
-            onClick={() => {
-              onDelete(mapping.index);
-            }}
+            onClick={handleDeleteClick}
             className={classes.deleteBtn}>
             <TrashIcon />
           </ActionButton>

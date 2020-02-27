@@ -949,23 +949,23 @@ const mapping = {
       id,
       options,
     }),
-  patchField: (id, field, index, value) =>
-    action(actionTypes.MAPPING.PATCH_FIELD, { id, field, index, value }),
+  patchField: (id, field, uId, value) =>
+    action(actionTypes.MAPPING.PATCH_FIELD, { id, field, uId, value }),
   updateGenerates: (id, generateFields) =>
     action(actionTypes.MAPPING.UPDATE_GENERATES, { id, generateFields }),
   updateLookup: (id, lookups) =>
     action(actionTypes.MAPPING.UPDATE_LOOKUP, { id, lookups }),
-  patchSettings: (id, index, value) =>
-    action(actionTypes.MAPPING.PATCH_SETTINGS, { id, index, value }),
+  patchSettings: (id, uId, value) =>
+    action(actionTypes.MAPPING.PATCH_SETTINGS, { id, uId, value }),
   setVisibility: (id, value) =>
     action(actionTypes.MAPPING.SET_VISIBILITY, { id, value }),
-  patchIncompleteGenerates: (id, index, value) =>
+  patchIncompleteGenerates: (id, uId, value) =>
     action(actionTypes.MAPPING.PATCH_INCOMPLETE_GENERATES, {
       id,
-      index,
+      uId,
       value,
     }),
-  delete: (id, index) => action(actionTypes.MAPPING.DELETE, { id, index }),
+  delete: (id, uId) => action(actionTypes.MAPPING.DELETE, { id, uId }),
   save: id => action(actionTypes.MAPPING.SAVE, { id }),
   saveFailed: id => action(actionTypes.MAPPING.SAVE_FAILED, { id }),
   saveComplete: id => action(actionTypes.MAPPING.SAVE_COMPLETE, { id }),
