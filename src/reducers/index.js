@@ -3304,6 +3304,8 @@ export function debugLogs(state) {
 }
 
 export function connectionStatus(state, id) {
+  // we are returning the default value here and not in the leaf selector
+  // because we want the leaf selector to return the true state value without the default value
   return (
     fromSession.connectionStatus(state && state.session, id) || {
       id,
