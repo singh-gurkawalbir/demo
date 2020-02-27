@@ -1,4 +1,4 @@
-import { useState, cloneElement, useCallback } from 'react';
+import { useState, useMemo, useCallback, cloneElement } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import {
@@ -89,8 +89,9 @@ export default function EditorDialog(props) {
     selectors.editorViolations(state, id)
   );
   const handlePreview = () => dispatch(actions.editor.evaluateRequest(id));
-  const handleClose = useCallback(
-    shouldCommit => {
+  // further enhacement linked to IO-12273 which requires handleSave to be function returning a function
+  const handleSave = useCallback(
+    shouldCommit => () => {
       if (shouldCommit && !preSaveValidate({ editor, enquesnackbar })) {
         return;
       }
@@ -116,16 +117,14 @@ export default function EditorDialog(props) {
           },
           {
             label: 'Yes',
-            onClick: () => {
-              handleClose();
-            },
+            onClick: onClose,
           },
         ],
       });
     } else {
-      handleClose();
+      onClose();
     }
-  }, [confirmDialog, editor, handleClose, isEditorDirty]);
+  }, [confirmDialog, editor, isEditorDirty, onClose]);
   const handleLayoutChange = (event, _layout) => {
     patchEditorLayoutChange();
     _layout && setState({ ...state, layout: _layout });
@@ -136,16 +135,27 @@ export default function EditorDialog(props) {
     setState({ ...state, fullScreen: !fullScreen });
   };
 
-  const size = fullScreen ? { height } : { height, width };
-  const showPreviewAction =
-    !hidePreviewAction && editor && !editorViolations && !editor.autoEvaluate;
-  const disableSave = !editor || editorViolations || disabled;
+  const size = useMemo(() => (fullScreen ? { height } : { height, width }), [
+    fullScreen,
+    height,
+    width,
+  ]);
+  const showPreviewAction = useMemo(
+    () =>
+      !hidePreviewAction && editor && !editorViolations && !editor.autoEvaluate,
+    [editor, editorViolations, hidePreviewAction]
+  );
+  const disableSave = useMemo(() => !editor || editorViolations || disabled, [
+    disabled,
+    editor,
+    editorViolations,
+  ]);
 
   return (
     <Dialog
       fullScreen={fullScreen}
       open={open}
-      onClose={() => handleCancelClick()}
+      onClose={handleCancelClick}
       scroll="paper"
       data-test={dataTest}
       maxWidth={false}>
@@ -205,14 +215,14 @@ export default function EditorDialog(props) {
           data-test="saveEditor"
           disabled={!!disableSave}
           color="primary"
-          onClick={() => handleClose(true)}>
+          onClick={handleSave(true)}>
           Save
         </Button>
         <Button
           variant="text"
           color="primary"
           data-test="closeEditor"
-          onClick={() => handleCancelClick()}>
+          onClick={handleCancelClick}>
           Cancel
         </Button>
       </DialogActions>

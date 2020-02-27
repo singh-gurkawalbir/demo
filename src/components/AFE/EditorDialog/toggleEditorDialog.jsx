@@ -120,18 +120,17 @@ export default function ToggleEditorDialog(props) {
     () => dispatch(actions.editor.evaluateRequest(activeEditorId)),
     [activeEditorId, dispatch]
   );
-  const handleClose = useCallback(
-    shouldCommit => {
-      if (shouldCommit && !preSaveValidate({ editor, enquesnackbar })) {
-        return;
-      }
+  const handleSave = useCallback(() => {
+    if (!preSaveValidate({ editor, enquesnackbar })) {
+      return;
+    }
 
-      if (onClose) {
-        onClose(shouldCommit, editor);
-      }
-    },
-    [editor, enquesnackbar, onClose]
-  );
+    if (onClose) {
+      const shouldCommit = true;
+
+      onClose(shouldCommit, editor);
+    }
+  }, [editor, enquesnackbar, onClose]);
   const handleCancelClick = useCallback(() => {
     if (editor && editor.confirmOnCancel && isEditorDirty) {
       confirmDialog({
@@ -143,36 +142,43 @@ export default function ToggleEditorDialog(props) {
           },
           {
             label: 'Yes',
-            onClick: () => {
-              handleClose();
-            },
+            onClick: onClose,
           },
         ],
       });
     } else {
-      handleClose();
+      onClose();
     }
-  }, [confirmDialog, editor, handleClose, isEditorDirty]);
-  const patchEditorLayoutChange = () => {
+  }, [confirmDialog, editor, isEditorDirty, onClose]);
+  const patchEditorLayoutChange = useCallback(() => {
     dispatch(actions.editor.changeLayout(activeEditorId));
-  };
-
-  const handleLayoutChange = (event, _layout) => {
-    patchEditorLayoutChange();
-    _layout && setState({ ...state, layout: _layout });
-  };
-
-  const handleFullScreenClick = () => {
+  }, [activeEditorId, dispatch]);
+  const handleLayoutChange = useCallback(
+    (event, _layout) => {
+      patchEditorLayoutChange();
+      _layout && setState({ ...state, layout: _layout });
+    },
+    [patchEditorLayoutChange, state]
+  );
+  const handleFullScreenClick = useCallback(() => {
     patchEditorLayoutChange();
     setState({ ...state, fullScreen: !fullScreen });
-  };
-
-  const handleEditorToggle = value =>
-    setState({ ...state, activeEditorIndex: value === 'expression' ? 0 : 1 });
-  const showPreviewAction =
-    !hidePreviewAction && editor && !editorViolations && !editor.autoEvaluate;
-  const disableSave = !editor || editorViolations || disabled;
-  const handleSave = useCallback(() => handleClose(true), [handleClose]);
+  }, [fullScreen, patchEditorLayoutChange, state]);
+  const handleEditorToggle = useCallback(
+    value =>
+      setState({ ...state, activeEditorIndex: value === 'expression' ? 0 : 1 }),
+    [state]
+  );
+  const showPreviewAction = useMemo(
+    () =>
+      !hidePreviewAction && editor && !editorViolations && !editor.autoEvaluate,
+    [editor, editorViolations, hidePreviewAction]
+  );
+  const disableSave = useMemo(() => !editor || editorViolations || disabled, [
+    disabled,
+    editor,
+    editorViolations,
+  ]);
 
   return (
     <Dialog
