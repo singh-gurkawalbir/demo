@@ -49,6 +49,7 @@ const FieldActions = props => {
   const { type: fieldType, hideFromUI } = field;
   const { developer } = useSelector(state => selectors.userProfile(state));
 
+  // TODO Surya - to add visible property on the dynaiclient control and render help control based on this instead of a new property on the help renderer
   if (hideFromUI) return null; // we don't want to showup help icon if 'hideFromUI' is true.
 
   return (
