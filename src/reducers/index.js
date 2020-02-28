@@ -3473,7 +3473,7 @@ export const getSampleDataWrapper = createSelector(
     // eslint-disable-next-line no-use-before-define
     (state, params) => getSampleDataContext(state, params),
     (state, params) => {
-      if (params.stage === 'postMap') {
+      if (['postMap', 'postSubmit'].includes(params.stage)) {
         return getSampleDataContext(state, { ...params, stage: 'preMap' });
       }
 
@@ -3520,7 +3520,7 @@ export const getSampleDataWrapper = createSelector(
 
     const contextFields = {};
 
-    if (['outputFilter', 'hooks'].includes(stage)) {
+    if (['outputFilter', 'preSavePage'].includes(stage)) {
       contextFields.pageIndex = 0;
 
       if (resource.type === 'delta') {
@@ -3537,7 +3537,15 @@ export const getSampleDataWrapper = createSelector(
 
     const resourceIds = {};
 
-    if (['hooks', 'preMap'].includes(stage)) {
+    if (
+      [
+        'preSavePage',
+        'preMap',
+        'postMap',
+        'postSubmit',
+        'postAggregate',
+      ].includes(stage)
+    ) {
       resourceIds[resourceType === 'import' ? '_importId' : '_exportId'] =
         resource._id;
       resourceIds._connectionId = connection._id;
@@ -3564,7 +3572,7 @@ export const getSampleDataWrapper = createSelector(
       };
     }
 
-    if (['hooks'].includes(stage)) {
+    if (['preSavePage'].includes(stage)) {
       return {
         status,
         data: {
@@ -3577,11 +3585,60 @@ export const getSampleDataWrapper = createSelector(
       };
     }
 
-    if (['preMap', 'postMap', 'postSubmit'].includes(stage)) {
+    if (['preMap'].includes(stage)) {
       return {
         status,
         data: {
           data: [data],
+          ...resourceIds,
+          settings,
+        },
+      };
+    }
+
+    if (['postMap'].includes(stage)) {
+      return {
+        status,
+        data: {
+          preMapData: [preMapSampleData.data],
+          postMapData: [data || preMapSampleData.data],
+          ...resourceIds,
+          settings,
+        },
+      };
+    }
+
+    if (['postSubmit'].includes(stage)) {
+      return {
+        status,
+        data: {
+          preMapData: [preMapSampleData.data],
+          postMapData: [data || preMapSampleData.data],
+          responseData: [data || preMapSampleData.data].map(() => ({
+            statusCode: 200,
+            errors: [{ code: '', message: '', source: '' }],
+            ignored: false,
+            id: '',
+            _json: {},
+            dataURI: '',
+          })),
+          ...resourceIds,
+          settings,
+        },
+      };
+    }
+
+    if (stage === 'postAggregate') {
+      return {
+        status,
+        data: {
+          postAggregateData: {
+            success: true,
+            _json: {},
+            code: '',
+            message: '',
+            source: '',
+          },
           ...resourceIds,
           settings,
         },
