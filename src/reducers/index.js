@@ -3509,18 +3509,20 @@ export const getSampleDataWrapper = createSelector(
 
       return undefined;
     },
-    (state, { flowId }) => resource(state, 'flows', flowId),
+    (state, { flowId }) => resource(state, 'flows', flowId) || emptyObject,
     (state, { flowId }) => {
-      const flow = resource(state, 'flows', flowId);
+      const flow = resource(state, 'flows', flowId) || emptyObject;
 
-      return resource(state, 'integrations', flow._integrationId);
+      return (
+        resource(state, 'integrations', flow._integrationId) || emptyObject
+      );
     },
     (state, { resourceId, resourceType }) =>
-      resource(state, resourceType, resourceId),
+      resource(state, resourceType, resourceId) || emptyObject,
     (state, { resourceId, resourceType }) => {
       const res = resource(state, resourceType, resourceId);
 
-      return resource(state, 'connections', res._connectionId);
+      return resource(state, 'connections', res._connectionId) || emptyObject;
     },
     (state, { stage }) => stage,
   ],

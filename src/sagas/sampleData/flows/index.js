@@ -9,8 +9,8 @@ import {
   cancel,
 } from 'redux-saga/effects';
 import { deepClone } from 'fast-json-patch';
-import { isEmpty, keys } from 'lodash';
-import { resourceData, getSampleData } from '../../../reducers';
+import { keys } from 'lodash';
+import { resourceData } from '../../../reducers';
 import { SCOPES } from '../../resourceForm';
 import actionTypes from '../../../actions/types';
 import actions from '../../../actions';
@@ -330,80 +330,6 @@ function* processMappingData({
   } catch (e) {
     throw e;
   }
-}
-
-/*
- * This saga handles 2 sample data stages
- * 1. flowInputWithContext 2. transformWithContext
- * Above stages are replica of flowInput and transform stage with added Context Info specifically for Input and outputFilter stages
- */
-export function* requestSampleDataWithContext({
-  flowId,
-  resourceId,
-  resourceType,
-  stage,
-}) {
-  let sampleData = yield select(getSampleData, {
-    flowId,
-    resourceId,
-    resourceType,
-    stage,
-  });
-
-  if (!sampleData) {
-    yield call(requestSampleData, {
-      flowId,
-      resourceId,
-      resourceType,
-      stage,
-      isInitialized: true,
-    });
-    sampleData = yield select(getSampleData, {
-      flowId,
-      resourceId,
-      resourceType,
-      stage,
-    });
-  }
-
-  const { merged: resource = {} } = yield select(
-    resourceData,
-    resourceType,
-    resourceId
-  );
-  let sampleDataWithContextInfo;
-
-  if (sampleData) {
-    sampleDataWithContextInfo = Array.isArray(sampleData)
-      ? [...sampleData]
-      : { ...sampleData };
-  }
-
-  // For resources other than real time , context info is passed
-  // Any other conditions to not show context Info can be added here
-  if (
-    !isEmpty(sampleDataWithContextInfo) &&
-    !(
-      isRealTimeOrDistributedResource(resource, resourceType) &&
-      isBlobTypeResource(resource)
-    )
-  ) {
-    if (Array.isArray(sampleDataWithContextInfo)) {
-      // Incase of array add context to the first object
-      const [firstObject, ...rest] = sampleDataWithContextInfo;
-
-      sampleDataWithContextInfo = [...[{ ...firstObject }], ...rest];
-    }
-  }
-
-  yield put(
-    actions.flowData.receivedPreviewData(
-      flowId,
-      resourceId,
-      sampleDataWithContextInfo,
-      stage
-    )
-  );
 }
 
 export function* requestProcessorData({
