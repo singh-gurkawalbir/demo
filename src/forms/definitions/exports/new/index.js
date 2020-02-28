@@ -20,6 +20,7 @@ export default {
       newValues['/adaptorType'] = `${appTypeToAdaptorType[app.type]}Export`;
 
       if (application === 'webhook') {
+        newValues['/type'] = 'webhook';
         newValues['/webhook/provider'] = 'custom';
       }
 
