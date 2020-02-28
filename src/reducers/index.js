@@ -3468,17 +3468,14 @@ export function getCustomResourceLabel(
   let resourceLabel;
 
   // Default resource labels based on resourceTypes handled here
-  if (resourceType === 'pageProcessor') {
-    resourceLabel = 'Destination / Lookup';
-  } else if (resourceType === 'pageGenerator') {
-    resourceLabel = 'Source';
-  } else if (isLookup) {
+  if (isLookup) {
     resourceLabel = 'Lookup';
   } else {
     resourceLabel = MODEL_PLURAL_TO_LABEL[resourceType];
   }
 
-  // Incase of flow context, 2nd step of PG/PP creation resource labels handled here
+  // Incase of Flow context, 2nd step of PG/PP creation resource labels handled here
+  // The Below resource labels override the default labels above
   if (flowId) {
     if (isNewResource && resourceType === 'exports') {
       resourceLabel = isLookup ? 'Lookup' : 'Source';
