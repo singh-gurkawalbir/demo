@@ -3547,3 +3547,182 @@ export function isPreviewPanelAvailableForResource(
 
   return isPreviewPanelAvailable(resourceObj, resourceType, connectionObj);
 }
+
+export const getSampleDataWrapper = createSelector(
+  [
+    // eslint-disable-next-line no-use-before-define
+    (state, params) => getSampleDataContext(state, params),
+    (state, params) => {
+      if (['postMap', 'postSubmit'].includes(params.stage)) {
+        return getSampleDataContext(state, { ...params, stage: 'preMap' });
+      }
+
+      return undefined;
+    },
+    (state, { flowId }) => resource(state, 'flows', flowId),
+    (state, { flowId }) => {
+      const flow = resource(state, 'flows', flowId);
+
+      return resource(state, 'integrations', flow._integrationId);
+    },
+    (state, { resourceId, resourceType }) =>
+      resource(state, resourceType, resourceId),
+    (state, { resourceId, resourceType }) => {
+      const res = resource(state, resourceType, resourceId);
+
+      return resource(state, 'connections', res._connectionId);
+    },
+    (state, { stage }) => stage,
+  ],
+  (
+    sampleData,
+    preMapSampleData,
+    flow,
+    integration,
+    resource,
+    connection,
+    stage
+  ) => {
+    const { status, data } = sampleData || {};
+    let resourceType = 'export';
+
+    if (
+      resource &&
+      resource.adaptorType &&
+      resource.adaptorType.includes('Import')
+    ) {
+      resourceType = 'import';
+    }
+
+    if (!status) {
+      return { status };
+    }
+
+    const contextFields = {};
+
+    if (['outputFilter', 'preSavePage'].includes(stage)) {
+      contextFields.pageIndex = 0;
+
+      if (resource.type === 'delta') {
+        contextFields.lastExportDateTime = moment()
+          .startOf('day')
+          .add(-7, 'd')
+          .toISOString();
+        contextFields.currentExportDateTime = moment()
+          .startOf('day')
+          .add(-24, 'h')
+          .toISOString();
+      }
+    }
+
+    const resourceIds = {};
+
+    if (
+      [
+        'preSavePage',
+        'preMap',
+        'postMap',
+        'postSubmit',
+        'postAggregate',
+      ].includes(stage)
+    ) {
+      resourceIds[resourceType === 'import' ? '_importId' : '_exportId'] =
+        resource._id;
+      resourceIds._connectionId = connection._id;
+      resourceIds._flowId = flow._id;
+      resourceIds._integrationId = integration._id;
+    }
+
+    const settings = {
+      integration: integration.settings || {},
+      flow: flow.settings || {},
+      [resourceType]: resource.settings || {},
+      connection: connection.settings || {},
+    };
+
+    if (['transform', 'outputFilter', 'inputFilter'].includes(stage)) {
+      return {
+        status,
+        data: {
+          record: data || {},
+          ...resourceIds,
+          ...contextFields,
+          settings,
+        },
+      };
+    }
+
+    if (['preSavePage'].includes(stage)) {
+      return {
+        status,
+        data: {
+          data: [data],
+          errors: [],
+          ...resourceIds,
+          ...contextFields,
+          settings,
+        },
+      };
+    }
+
+    if (['preMap'].includes(stage)) {
+      return {
+        status,
+        data: {
+          data: [data],
+          ...resourceIds,
+          settings,
+        },
+      };
+    }
+
+    if (['postMap'].includes(stage)) {
+      return {
+        status,
+        data: {
+          preMapData: [preMapSampleData.data],
+          postMapData: [data || preMapSampleData.data],
+          ...resourceIds,
+          settings,
+        },
+      };
+    }
+
+    if (['postSubmit'].includes(stage)) {
+      return {
+        status,
+        data: {
+          preMapData: [preMapSampleData.data],
+          postMapData: [data || preMapSampleData.data],
+          responseData: [data || preMapSampleData.data].map(() => ({
+            statusCode: 200,
+            errors: [{ code: '', message: '', source: '' }],
+            ignored: false,
+            id: '',
+            _json: {},
+            dataURI: '',
+          })),
+          ...resourceIds,
+          settings,
+        },
+      };
+    }
+
+    if (stage === 'postAggregate') {
+      return {
+        status,
+        data: {
+          postAggregateData: {
+            success: true,
+            _json: {},
+            code: '',
+            message: '',
+            source: '',
+          },
+          ...resourceIds,
+          settings,
+        },
+      };
+    }
+  }
+);

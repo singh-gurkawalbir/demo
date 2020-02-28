@@ -47,12 +47,20 @@ export default function FilterEditor(props) {
     handleInit();
   }, [handleInit]);
 
-  const parsedData = result && result.data && result.data[0];
+  let outputMessage = '';
+
+  if (result && result.data) {
+    if (result.data.length > 0) {
+      outputMessage = 'TRUE: record will be processed';
+    } else {
+      outputMessage = 'FALSE: record will be ignored/discarded';
+    }
+  }
 
   return (
     <PanelGrid className={classes[`${layout}Template`]}>
       <PanelGridItem gridArea="rule">
-        <PanelTitle title="Filter Rules" />
+        <PanelTitle title="Rules" />
         <FilterPanel
           key={`${editorId}-${initChangeIdentifier}`}
           editorId={editorId}
@@ -63,7 +71,7 @@ export default function FilterEditor(props) {
       </PanelGridItem>
 
       <PanelGridItem gridArea="data">
-        <PanelTitle title="Incoming Data" />
+        <PanelTitle title="Input" />
         <CodePanel
           name="data"
           readOnly={disabled}
@@ -75,12 +83,12 @@ export default function FilterEditor(props) {
       </PanelGridItem>
 
       <PanelGridItem gridArea="result">
-        <PanelTitle title="Filtered Data" />
+        <PanelTitle title="Output" />
         <CodePanel
           name="result"
           overrides={{ showGutter: false }}
-          value={parsedData || ''}
-          mode="json"
+          value={outputMessage}
+          mode="text"
           readOnly
         />
       </PanelGridItem>

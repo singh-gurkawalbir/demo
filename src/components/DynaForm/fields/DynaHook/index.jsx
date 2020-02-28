@@ -1,6 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { isEmpty } from 'lodash';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import Hook from './Hook';
@@ -15,7 +14,7 @@ export default function DynaHook(props) {
     disabled,
   } = props;
   // Lists all hooks stages with default sample data where no api call is required
-  const hooksWithDefaultSampleData = ['as2routing', 'postAggregate'];
+  const hooksWithDefaultSampleData = ['as2routing'];
   const dispatch = useDispatch();
   const [isPreHookDataRequested, setIsPreHookDataRequested] = useState(false);
   const requestForPreHookData = () => {
@@ -50,41 +49,15 @@ export default function DynaHook(props) {
       return { as2: { sample: { data: 'coming soon' } } };
     }
 
-    // Post Aggregate Hook is shown default data
-    if (hookStage === 'postAggregate') {
-      return {
-        postAggregateData: {
-          success: true,
-          _json: {},
-        },
-      };
-    }
-
     // Fetch corresponding data for specific hookStage ('preSavePage',  'preMap', 'postMap', 'postSubmit')
-    const sampleData = selectors.getSampleData(state, {
+    const { data: sampleData } = selectors.getSampleDataWrapper(state, {
       flowId,
       resourceId,
       resourceType,
       stage: hookStage,
     });
 
-    if (hookStage === 'postSubmit') {
-      return {
-        responseData: {
-          _json: isEmpty(sampleData) ? {} : sampleData,
-        },
-      };
-    }
-
-    if (hookStage === 'postMap') {
-      return {
-        postMapData: isEmpty(sampleData) ? {} : sampleData,
-      };
-    }
-
-    if (sampleData) {
-      return { errors: [], data: [sampleData] };
-    }
+    return sampleData;
   };
 
   const preHookData = useSelector(state => {
@@ -99,7 +72,7 @@ export default function DynaHook(props) {
     }
 
     // returns status of sampleData state for this hookStage
-    return selectors.getSampleDataContext(state, {
+    return selectors.getSampleDataWrapper(state, {
       flowId,
       resourceId,
       resourceType,

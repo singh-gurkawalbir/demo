@@ -17,8 +17,8 @@ function OutputFilterDialog({
 }) {
   const dispatch = useDispatch();
   const resourceId = resource._id;
-  const sampleData = useSelector(state =>
-    selectors.getSampleData(state, {
+  const { status: sampleDataStatus, data: sampleData } = useSelector(state =>
+    selectors.getSampleDataWrapper(state, {
       flowId,
       resourceId,
       resourceType,
@@ -117,7 +117,7 @@ function OutputFilterDialog({
   };
 
   useEffect(() => {
-    if (!sampleData) {
+    if (!sampleDataStatus) {
       dispatch(
         actions.flowData.requestSampleData(
           flowId,
@@ -127,7 +127,7 @@ function OutputFilterDialog({
         )
       );
     }
-  }, [dispatch, flowId, resourceId, resourceType, sampleData]);
+  }, [dispatch, flowId, resourceId, resourceType, sampleDataStatus]);
 
   return (
     <OutputFilterToggleEditorDialog

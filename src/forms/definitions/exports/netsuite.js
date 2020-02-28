@@ -1,4 +1,5 @@
 import { isNewId } from '../../../utils/resource';
+import { isJsonString } from '../../../utils/string';
 
 export default {
   preSave: ({ executionType, apiType, ...rest }) => {
@@ -111,6 +112,18 @@ export default {
       );
     } catch (ex) {
       newValues['/netsuite/distributed/qualifier'] = undefined;
+    }
+
+    if (Object.hasOwnProperty.call(newValues, '/settings')) {
+      let settings = newValues['/settings'];
+
+      if (isJsonString(settings)) {
+        settings = JSON.parse(settings);
+      } else {
+        settings = {};
+      }
+
+      newValues['/settings'] = settings;
     }
 
     return newValues;
@@ -338,6 +351,7 @@ export default {
       ],
     },
     common: { formId: 'common' },
+    settings: { fieldId: 'settings' },
   },
   layout: {
     fields: [
@@ -367,6 +381,11 @@ export default {
           'pageSize',
           'netsuite.restlet.batchSize',
         ],
+      },
+      {
+        collapsed: true,
+        label: 'Custom settings',
+        fields: ['settings'],
       },
     ],
   },
