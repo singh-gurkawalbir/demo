@@ -6,7 +6,6 @@ import actions from '../../../../actions';
 import Icon from '../../../../components/icons/HookIcon';
 import JavaScriptEditorDialog from '../../../../components/AFE/JavaScriptEditor/Dialog';
 import { hooksToFunctionNamesMap } from '../../../../utils/hooks';
-import useEnqueueSnackbar from '../../../../hooks/enqueueSnackbar';
 
 function PostResponseMapHookDialog({
   flowId,
@@ -17,7 +16,6 @@ function PostResponseMapHookDialog({
   onClose,
 }) {
   const dispatch = useDispatch();
-  const [enqueueSnackbar] = useEnqueueSnackbar();
   const hookStage = 'postResponseMap';
   const resourceId = resource._id;
   const flow = useSelector(state => selectors.resource(state, 'flows', flowId));
@@ -61,13 +59,14 @@ function PostResponseMapHookDialog({
       });
     }
 
+    // Incase of user selecting None for script, pass undefined instead of '' as BE throws error if it is ''
     patchSet.push({
       op:
         pageProcessorsObject.hooks && pageProcessorsObject.hooks.postResponseMap
           ? 'replace'
           : 'add',
       path: `/pageProcessors/${resourceIndex}/hooks/postResponseMap`,
-      value: { _scriptId, function: entryFunction },
+      value: { _scriptId: _scriptId || undefined, function: entryFunction },
     });
     dispatch(actions.resource.patchStaged(flowId, patchSet, 'value'));
     dispatch(actions.resource.commitStaged('flows', flowId, 'value'));
@@ -75,15 +74,6 @@ function PostResponseMapHookDialog({
 
   const handleClose = (shouldCommit, editorValues) => {
     if (shouldCommit) {
-      if (!editorValues || !editorValues.scriptId) {
-        // Should not save hooks without script Id
-        // TODO: @Aditya Need to move this logic into JS Editor , disabling save if there is no script selected
-        return enqueueSnackbar({
-          message: 'Please select Script ID',
-          variant: 'error',
-        });
-      }
-
       // Saves the script first with updated content against scriptId
       saveScript(editorValues);
       // Saves postResponseMap Hook on pageProcessor based on resourceIndex

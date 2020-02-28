@@ -879,11 +879,18 @@ export function resourceListWithPermissions(state, options) {
         r._id
       );
 
-      additionalInfo.offline = status.offline;
-      additionalInfo.queueSize = status.queueSize;
+      if (status) {
+        additionalInfo.offline = status.offline;
+        additionalInfo.queueSize = status.queueSize;
+      }
     }
 
-    return { ...r, ...additionalInfo };
+    const finalRes = { ...r, ...additionalInfo };
+
+    // defaulting queue size to zero when undefined
+    finalRes.queueSize = finalRes.queueSize || 0;
+
+    return finalRes;
   });
 
   return list;
@@ -972,15 +979,17 @@ export function marketplaceConnectors(state, application, sandbox) {
     licenses
   );
 
-  return connectors.map(c => {
-    const installedIntegrationApps = resourceList(state, {
-      type: 'integrations',
-      sandbox,
-      filter: { _connectorId: c._id },
-    });
+  return connectors
+    .map(c => {
+      const installedIntegrationApps = resourceList(state, {
+        type: 'integrations',
+        sandbox,
+        filter: { _connectorId: c._id },
+      });
 
-    return { ...c, installed: !!installedIntegrationApps.resources.length };
-  });
+      return { ...c, installed: !!installedIntegrationApps.resources.length };
+    })
+    .sort((a, b) => a.name.localeCompare(b.name));
 }
 
 export function marketplaceTemplates(state, application) {
@@ -3142,12 +3151,6 @@ export function getImportSampleData(state, resourceId, options = {}) {
   if (assistant) {
     // get assistants sample data
     return assistantPreviewData(state, resourceId);
-  } else if (sampleData) {
-    // Formats sample data into readable form
-    return {
-      data: processSampleData(sampleData, resource),
-      status: 'received',
-    };
   } else if (adaptorType === 'NetSuiteDistributedImport') {
     // eslint-disable-next-line camelcase
     const { _connectionId: connectionId, netsuite_da = {} } = resource;
@@ -3184,6 +3187,12 @@ export function getImportSampleData(state, resourceId, options = {}) {
     });
 
     return { data, status };
+  } else if (sampleData) {
+    // Formats sample data into readable form
+    return {
+      data: processSampleData(sampleData, resource),
+      status: 'received',
+    };
   }
 
   return emptyObject;
@@ -3315,7 +3324,15 @@ export function debugLogs(state) {
 }
 
 export function connectionStatus(state, id) {
-  return fromSession.connectionStatus(state && state.session, id);
+  // we are returning the default value here and not in the leaf selector
+  // because we want the leaf selector to return the true state value without the default value
+  return (
+    fromSession.connectionStatus(state && state.session, id) || {
+      id,
+      queueSize: 0,
+      offline: false,
+    }
+  );
 }
 
 export function getLastExportDateTime(state, flowId) {
