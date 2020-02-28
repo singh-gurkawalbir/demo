@@ -1,4 +1,12 @@
-import { call, put, takeEvery, select, race, take } from 'redux-saga/effects';
+import {
+  call,
+  put,
+  takeEvery,
+  select,
+  race,
+  take,
+  takeLatest,
+} from 'redux-saga/effects';
 import jsonpatch from 'fast-json-patch';
 import actions from '../../../actions';
 import actionTypes from '../../../actions/types';
@@ -392,28 +400,18 @@ function* saveAndAuthorizeConnectionForm(params) {
 }
 
 function* commitAndAuthorizeConnection({ resourceId }) {
-  const error = yield call(commitStagedChanges, {
+  const resp = yield call(commitStagedChanges, {
     resourceType: 'connections',
     id: resourceId,
     scope: SCOPES.VALUE,
   });
 
-  if (error) {
+  // if there is conflict let conflict dialog show up
+  // and oauth authorize be skipped
+  if (resp && (resp.error || resp.conflict)) {
     // could not save the resource...lets just return
     return;
   }
-
-  // check to see if there is still a conflict
-  const { conflict } = yield select(
-    selectors.resourceData,
-    'connections',
-    resourceId
-    // A scope is not required for the conflict
-  );
-
-  // if there is conflict let conflict dialog show up
-  // and oauth authorize be skipped
-  if (conflict) return;
 
   try {
     yield call(openOAuthWindowForConnection, [resourceId]);
@@ -437,7 +435,30 @@ function* requestIClients({ connectionId }) {
   }
 }
 
+export function* pingAndUpdateConnection({ connectionId }) {
+  try {
+    yield call(apiCallWithRetry, {
+      path: `/connections/${connectionId}/ping`,
+    });
+
+    const connectionResource = yield call(apiCallWithRetry, {
+      path: `/connections/${connectionId}`,
+    });
+
+    yield put(actions.resource.received('connections', connectionResource));
+    yield put(
+      actions.resource.connections.pingAndUpdateSuccessful(
+        connectionId,
+        connectionResource && connectionResource.offline
+      )
+    );
+  } catch (error) {
+    yield put(actions.resource.connections.pingAndUpdateFailed(connectionId));
+  }
+}
+
 export default [
+  takeLatest(actionTypes.CONNECTION.PING_AND_UPDATE, pingAndUpdateConnection),
   takeEvery(actionTypes.CONNECTION.TEST, pingConnectionWithAbort),
   takeEvery(actionTypes.TOKEN.REQUEST, requestToken),
   takeEvery(
