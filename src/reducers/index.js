@@ -3471,6 +3471,10 @@ export function isLookUpExport(state, { flowId, resourceId, resourceType }) {
   return !!pageProcessors.find(pp => pp._exportId === resourceId);
 }
 
+/*
+ * This Selector handles all Resource Type's Label in case of Stand alone / Flow Builder Context
+ * Used at Resource Form's Title like 'Create/Edit Export' , at Bread Crumb level to show 'Add/Edit Export'
+ */
 export function getCustomResourceLabel(
   state,
   { resourceType, resourceId, flowId }
