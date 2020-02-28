@@ -3559,18 +3559,20 @@ export const getSampleDataWrapper = createSelector(
 
       return undefined;
     },
-    (state, { flowId }) => resource(state, 'flows', flowId),
+    (state, { flowId }) => resource(state, 'flows', flowId) || emptyObject,
     (state, { flowId }) => {
-      const flow = resource(state, 'flows', flowId);
+      const flow = resource(state, 'flows', flowId) || emptyObject;
 
-      return resource(state, 'integrations', flow._integrationId);
+      return (
+        resource(state, 'integrations', flow._integrationId) || emptyObject
+      );
     },
     (state, { resourceId, resourceType }) =>
-      resource(state, resourceType, resourceId),
+      resource(state, resourceType, resourceId) || emptyObject,
     (state, { resourceId, resourceType }) => {
       const res = resource(state, resourceType, resourceId);
 
-      return resource(state, 'connections', res._connectionId);
+      return resource(state, 'connections', res._connectionId) || emptyObject;
     },
     (state, { stage }) => stage,
   ],
@@ -3681,7 +3683,7 @@ export const getSampleDataWrapper = createSelector(
         status,
         data: {
           preMapData: [preMapSampleData.data],
-          postMapData: [data || preMapSampleData.data],
+          postMapData: [data],
           ...resourceIds,
           settings,
         },
@@ -3693,8 +3695,8 @@ export const getSampleDataWrapper = createSelector(
         status,
         data: {
           preMapData: [preMapSampleData.data],
-          postMapData: [data || preMapSampleData.data],
-          responseData: [data || preMapSampleData.data].map(() => ({
+          postMapData: [data],
+          responseData: [data].map(() => ({
             statusCode: 200,
             errors: [{ code: '', message: '', source: '' }],
             ignored: false,
@@ -3724,5 +3726,8 @@ export const getSampleDataWrapper = createSelector(
         },
       };
     }
+
+    // For all other stages, return basic sampleData
+    return { status, data };
   }
 );
