@@ -1,8 +1,12 @@
 import produce from 'immer';
-import { uniqBy } from 'lodash';
+import { uniqBy, isEqual, differenceWith } from 'lodash';
+import { deepClone } from 'fast-json-patch';
 import actionTypes from '../../../actions/types';
+import mappingUtil from '../../../utils/mapping';
+import lookupUtil from '../../../utils/lookup';
 
 const emptyObj = {};
+const emptySet = [];
 
 function flattenChildrenStructrue(
   result = [],
@@ -133,6 +137,13 @@ export default (state = {}, action) => {
     filters,
     sectionId,
     data,
+    id,
+    generateFields,
+    lookups,
+    value,
+    index,
+    field,
+    options = {},
   } = action;
   const key = getStateKey(integrationId, flowId, sectionId);
   let mappingIndex;
@@ -224,6 +235,403 @@ export default (state = {}, action) => {
       case actionTypes.INTEGRATION_APPS.SETTINGS.UPGRADE_REQUESTED:
         draft[licenseId] = true;
         break;
+      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.DELETE: {
+        if (
+          draft[`${flowId}-${integrationId}`] &&
+          draft[`${flowId}-${integrationId}`].mappings &&
+          draft[`${flowId}-${integrationId}`].mappings[id]
+        ) {
+          draft[`${flowId}-${integrationId}`].mappings[
+            id
+          ].initChangeIdentifier += 1;
+          draft[`${flowId}-${integrationId}`].mappings[id].mappings.splice(
+            index,
+            1
+          );
+
+          if (
+            draft[`${flowId}-${integrationId}`].mappings[id].lastModifiedRow ===
+            index
+          )
+            draft[`${flowId}-${integrationId}`].mappings[
+              id
+            ].lastModifiedRow = -1;
+          const {
+            isSuccess,
+            errMessage: validationErrMsg,
+          } = mappingUtil.validateMappings(
+            draft[`${flowId}-${integrationId}`].mappings[id].mappings,
+            draft[`${flowId}-${integrationId}`].mappings[id].lookups
+          );
+
+          draft[`${flowId}-${integrationId}`].mappings[
+            id
+          ].validationErrMsg = isSuccess ? undefined : validationErrMsg;
+        }
+
+        break;
+      }
+
+      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.INIT:
+        {
+          const {
+            adaptorType,
+            resourceData,
+            application,
+            isGroupedSampleData,
+            salesforceMasterRecordTypeId,
+            netsuiteRecordType,
+            showSalesforceNetsuiteAssistant,
+            subRecordMappingId,
+            ...additionalOptions
+          } = options;
+          const formattedMappings = mappingUtil.getMappingFromResource(
+            resourceData,
+            false,
+            isGroupedSampleData,
+            netsuiteRecordType,
+            additionalOptions
+          );
+          const lookups = lookupUtil.getLookupFromResource(resourceData);
+          const initChangeIdentifier =
+            (draft[`${flowId}-${integrationId}`] &&
+              draft[`${flowId}-${integrationId}`].mappings &&
+              draft[`${flowId}-${integrationId}`].mappings[id] &&
+              draft[`${flowId}-${integrationId}`].mappings[id]
+                .initChangeIdentifier) ||
+            0;
+
+          if (!draft[`${flowId}-${integrationId}`]) {
+            draft[`${flowId}-${integrationId}`] = {};
+          }
+
+          if (!draft[`${flowId}-${integrationId}`].mappings) {
+            draft[`${flowId}-${integrationId}`].mappings = {};
+          }
+
+          draft[`${flowId}-${integrationId}`].mappings[id] = {
+            mappings: formattedMappings.map(m => ({ ...m, rowIdentifier: 0 })),
+            incompleteGenerates: [],
+            lookups: lookups || [],
+            initChangeIdentifier: initChangeIdentifier + 1,
+            application,
+            resource: resourceData,
+            adaptorType,
+            generateFields,
+            visible: true,
+            isGroupedSampleData,
+            flowSampleData: undefined,
+            netsuiteRecordType,
+            subRecordMappingId,
+            salesforceMasterRecordTypeId,
+            showSalesforceNetsuiteAssistant,
+            // lastModifiedRow helps to set generate field when any field in salesforce mapping assistant is clicked
+            lastModifiedRow: -1,
+          };
+          draft[`${flowId}-${integrationId}`].mappings[
+            id
+          ].mappingsCopy = deepClone(
+            draft[`${flowId}-${integrationId}`].mappings[id].mappings
+          );
+          draft[`${flowId}-${integrationId}`].mappings[
+            id
+          ].lookupsCopy = deepClone(
+            draft[`${flowId}-${integrationId}`].mappings[id].lookups
+          );
+        }
+
+        break;
+      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
+        .UPDATE_GENERATES: {
+        if (
+          draft[`${flowId}-${integrationId}`] &&
+          draft[`${flowId}-${integrationId}`].mappings &&
+          draft[`${flowId}-${integrationId}`].mappings[id]
+        ) {
+          draft[`${flowId}-${integrationId}`].mappings[
+            id
+          ].generateFields = generateFields;
+          draft[`${flowId}-${integrationId}`].mappings[
+            id
+          ].mappingsCopy = deepClone(
+            draft[`${flowId}-${integrationId}`].mappings[id].mappings
+          );
+          draft[`${flowId}-${integrationId}`].mappings[
+            id
+          ].lookupsCopy = deepClone(
+            draft[`${flowId}-${integrationId}`].mappings[id].lookups
+          );
+        }
+
+        break;
+      }
+
+      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
+        .PATCH_FIELD: {
+        if (
+          draft[`${flowId}-${integrationId}`] &&
+          draft[`${flowId}-${integrationId}`].mappings &&
+          draft[`${flowId}-${integrationId}`].mappings[id]
+        ) {
+          if (
+            draft[`${flowId}-${integrationId}`].mappings[id].mappings[index]
+          ) {
+            const objCopy = {
+              ...draft[`${flowId}-${integrationId}`].mappings[id].mappings[
+                index
+              ],
+            };
+
+            objCopy.rowIdentifier += 1;
+
+            let inputValue = value;
+
+            if (field === 'extract') {
+              if (inputValue.indexOf('"') === 0) {
+                if (inputValue.charAt(inputValue.length - 1) !== '"')
+                  inputValue += '"';
+                delete objCopy.extract;
+                objCopy.hardCodedValue = inputValue.substr(
+                  1,
+                  inputValue.length - 2
+                );
+                objCopy.hardCodedValueTmp = inputValue;
+              } else {
+                delete objCopy.hardCodedValue;
+                delete objCopy.hardCodedValueTmp;
+                objCopy.extract = inputValue;
+              }
+            } else {
+              objCopy[field] = inputValue;
+
+              if (inputValue.indexOf('[*].') === -1) {
+                if ('isKey' in objCopy) {
+                  delete objCopy.isKey;
+                }
+
+                if ('useFirstRow' in objCopy) {
+                  delete objCopy.useFirstRow;
+                }
+              }
+            }
+
+            draft[`${flowId}-${integrationId}`].mappings[id].mappings[
+              index
+            ] = objCopy;
+          } else if (value) {
+            draft[`${flowId}-${integrationId}`].mappings[id].mappings.push({
+              [field]: value,
+              rowIdentifier: 0,
+            });
+          }
+
+          draft[`${flowId}-${integrationId}`].mappings[
+            id
+          ].lastModifiedRow = index;
+          const {
+            isSuccess,
+            errMessage: validationErrMsg,
+          } = mappingUtil.validateMappings(
+            draft[`${flowId}-${integrationId}`].mappings[id].mappings,
+            draft[`${flowId}-${integrationId}`].mappings[id].lookups
+          );
+
+          draft[`${flowId}-${integrationId}`].mappings[
+            id
+          ].validationErrMsg = isSuccess ? undefined : validationErrMsg;
+        }
+
+        break;
+      }
+
+      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
+        .PATCH_INCOMPLETE_GENERATES: {
+        if (
+          draft[`${flowId}-${integrationId}`] &&
+          draft[`${flowId}-${integrationId}`].mappings &&
+          draft[`${flowId}-${integrationId}`].mappings[id]
+        ) {
+          const incompleteGeneObj = draft[
+            `${flowId}-${integrationId}`
+          ].mappings[id].incompleteGenerates.find(gen => gen.index === index);
+
+          if (incompleteGeneObj) {
+            incompleteGeneObj.value = value;
+          } else {
+            draft[`${flowId}-${integrationId}`].mappings[
+              id
+            ].incompleteGenerates.push({ index, value });
+          }
+        }
+
+        break;
+      }
+
+      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
+        .PATCH_SETTINGS:
+        if (
+          draft[`${flowId}-${integrationId}`] &&
+          draft[`${flowId}-${integrationId}`].mappings &&
+          draft[`${flowId}-${integrationId}`].mappings[id]
+        ) {
+          const {
+            generate,
+            extract,
+            isNotEditable,
+            index: mappingIndex,
+            isRequired,
+            rowIdentifier,
+          } = draft[`${flowId}-${integrationId}`].mappings[id].mappings[index];
+          const valueTmp = {
+            generate,
+            extract,
+            isNotEditable,
+            index: mappingIndex,
+            isRequired,
+            rowIdentifier,
+          };
+
+          Object.assign(valueTmp, value);
+
+          // removing lookups
+          if (!value.lookupName) {
+            delete valueTmp.lookupName;
+          }
+
+          valueTmp.rowIdentifier += 1;
+
+          if ('hardCodedValue' in valueTmp) {
+            // wrap anything expect '' and null ,
+
+            if (valueTmp.hardCodedValue && valueTmp.hardCodedValue.length)
+              valueTmp.hardCodedValueTmp = `"${valueTmp.hardCodedValue}"`;
+            delete valueTmp.extract;
+          }
+
+          draft[`${flowId}-${integrationId}`].mappings[id].mappings[index] = {
+            ...valueTmp,
+          };
+          draft[`${flowId}-${integrationId}`].mappings[
+            id
+          ].lastModifiedRow = index;
+          const {
+            isSuccess,
+            errMessage: validationErrMsg,
+          } = mappingUtil.validateMappings(
+            draft[`${flowId}-${integrationId}`].mappings[id].mappings,
+            draft[`${flowId}-${integrationId}`].mappings[id].lookups
+          );
+
+          draft[`${flowId}-${integrationId}`].mappings[
+            id
+          ].validationErrMsg = isSuccess ? undefined : validationErrMsg;
+        }
+
+        break;
+      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
+        .UPDATE_LOOKUP: {
+        if (
+          draft[`${flowId}-${integrationId}`] &&
+          draft[`${flowId}-${integrationId}`].mappings &&
+          draft[`${flowId}-${integrationId}`].mappings[id]
+        ) {
+          draft[`${flowId}-${integrationId}`].mappings[id].lookups = lookups;
+          const {
+            isSuccess,
+            errMessage: validationErrMsg,
+          } = mappingUtil.validateMappings(
+            draft[`${flowId}-${integrationId}`].mappings[id].mappings,
+            draft[`${flowId}-${integrationId}`].mappings[id].lookups
+          );
+
+          draft[`${flowId}-${integrationId}`].mappings[
+            id
+          ].validationErrMsg = isSuccess ? undefined : validationErrMsg;
+        }
+
+        break;
+      }
+
+      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
+        .CLEAR_VARIATION_MAPPINGS:
+        // Variation mappings have id structure as `${flowId}-${integrationId}-${sectionId}-${variation}`
+        // ie,  all variations of one section will have same prefix `${flowId}-${integrationId}-${sectionId}`
+        // so while deleting section we need to delete all variations of that section.
+        // hence searching by prefix and not strict id check.
+        Object.keys(draft[`${flowId}-${integrationId}`].mappings).forEach(
+          _id => {
+            if (_id.startsWith(id)) {
+              delete draft[`${flowId}-${integrationId}`].mappings[id];
+            }
+          }
+        );
+
+        break;
+
+      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
+        .SET_VISIBILITY:
+        if (
+          draft[`${flowId}-${integrationId}`] &&
+          draft[`${flowId}-${integrationId}`].mappings &&
+          draft[`${flowId}-${integrationId}`].mappings[id]
+        ) {
+          draft[`${flowId}-${integrationId}`].mappings[id].visible = value;
+        }
+
+        break;
+      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.SAVE:
+        if (
+          draft[`${flowId}-${integrationId}`] &&
+          draft[`${flowId}-${integrationId}`].mappings &&
+          draft[`${flowId}-${integrationId}`].mappings[id]
+        ) {
+          draft[`${flowId}-${integrationId}`].mappings[
+            id
+          ].submitCompleted = false;
+          draft[`${flowId}-${integrationId}`].mappings[id].submitFailed = false;
+        }
+
+        break;
+      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
+        .SAVE_COMPLETE:
+        if (
+          draft[`${flowId}-${integrationId}`] &&
+          draft[`${flowId}-${integrationId}`].mappings &&
+          draft[`${flowId}-${integrationId}`].mappings[id]
+        ) {
+          draft[`${flowId}-${integrationId}`].mappings[
+            id
+          ].submitCompleted = true;
+          draft[`${flowId}-${integrationId}`].mappings[
+            id
+          ].validationErrMsg = undefined;
+          draft[`${flowId}-${integrationId}`].mappings[
+            id
+          ].mappingsCopy = deepClone(
+            draft[`${flowId}-${integrationId}`].mappings[id].mappings
+          );
+          draft[`${flowId}-${integrationId}`].mappings[
+            id
+          ].lookupsCopy = deepClone(
+            draft[`${flowId}-${integrationId}`].mappings[id].lookups
+          );
+        }
+
+        break;
+      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.SAVE_FAILED:
+        if (
+          draft[`${flowId}-${integrationId}`] &&
+          draft[`${flowId}-${integrationId}`].mappings &&
+          draft[`${flowId}-${integrationId}`].mappings[id]
+        ) {
+          draft[`${flowId}-${integrationId}`].mappings[id].submitFailed = true;
+          draft[`${flowId}-${integrationId}`].mappings[
+            id
+          ].validationErrMsg = undefined;
+        }
+
+        break;
+
       case actionTypes.INTEGRATION_APPS.SETTINGS
         .RECEIVED_CATEGORY_MAPPING_GENERATES_METADATA:
         ({ response: categoryMappingData } = metadata);
@@ -279,18 +687,6 @@ export default (state = {}, action) => {
         }
 
         break;
-      case actionTypes.INTEGRATION_APPS.SETTINGS.SAVE_CATEGORY_MAPPINGS:
-        if (draft[`${flowId}-${integrationId}`]) {
-          draft[`${flowId}-${integrationId}`].status = 'requested';
-        }
-
-        break;
-      case actionTypes.INTEGRATION_APPS.SETTINGS.SAVE_CATEGORY_MAPPINGS_FAILED:
-        if (draft[`${flowId}-${integrationId}`]) {
-          draft[`${flowId}-${integrationId}`].status = 'failed';
-        }
-
-        break;
       case actionTypes.INTEGRATION_APPS.SETTINGS
         .RECEIVED_CATEGORY_MAPPINGS_DATA:
         if (draft[`${flowId}-${integrationId}`]) {
@@ -319,11 +715,11 @@ export default (state = {}, action) => {
           filters: {
             attributes: {
               required: true,
-              optional: true,
-              conditional: true,
-              preferred: true,
+              optional: false,
+              conditional: false,
+              preferred: false,
             },
-            mappingFilter: 'mapped',
+            mappingFilter: 'all',
           },
           generatesMetadata: [generatesMetadata.data.generatesMetaData],
         };
@@ -424,6 +820,77 @@ export function categoryMappingGeneratesMetadata(state, integrationId, flowId) {
   });
 
   return generates;
+}
+
+export function mappingSaveProcessTerminate(state, id) {
+  if (!state) {
+    return emptySet;
+  }
+
+  if (!state[id]) return false;
+  const { submitFailed, submitCompleted } = state[id];
+
+  return {
+    saveTerminated: !!(submitFailed || submitCompleted),
+    saveCompleted: !!submitCompleted,
+  };
+}
+
+const isMappingObjEqual = (mapping1, mapping2) => {
+  const {
+    rowIdentifier: r1,
+    index: i1,
+    isNotEditable: e1,
+    isRequired: req1,
+    ...formattedMapping1
+  } = mapping1;
+  const {
+    rowIdentifier: r2,
+    index: i2,
+    isNotEditable: e2,
+    isRequired: req2,
+    ...formattedMapping2
+  } = mapping2;
+
+  return isEqual(formattedMapping1, formattedMapping2);
+};
+
+export function categoryMappingsForSection(state, integrationId, flowId, id) {
+  if (!state) {
+    return emptySet;
+  }
+
+  return (
+    (state[`${flowId}-${integrationId}`] &&
+      state[`${flowId}-${integrationId}`].mappings &&
+      state[`${flowId}-${integrationId}`].mappings[id]) ||
+    emptySet
+  );
+}
+
+// #region PUBLIC SELECTORS
+export function mappingsChanged(state, id) {
+  if (!state || !state[id]) {
+    return false;
+  }
+
+  const { mappings, mappingsCopy, lookups, lookupsCopy } = state[id];
+  const mappingsDiff = differenceWith(
+    mappingsCopy,
+    mappings,
+    isMappingObjEqual
+  );
+  let isMappingsEqual =
+    mappings.length === mappingsCopy.length && !mappingsDiff.length;
+
+  if (isMappingsEqual) {
+    const lookupsDiff = differenceWith(lookupsCopy, lookups, isEqual);
+
+    isMappingsEqual =
+      lookupsCopy.length === lookups.length && !lookupsDiff.length;
+  }
+
+  return !isMappingsEqual;
 }
 
 export function integrationAppAddOnState(state, integrationId) {

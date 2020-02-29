@@ -1206,6 +1206,15 @@ export function pendingVariationMappings(state, integrationId, flowId, data) {
   );
 }
 
+export function categoryMappingsForSection(state, integrationId, flowId, id) {
+  return fromSession.categoryMappingsForSection(
+    state && state.session,
+    integrationId,
+    flowId,
+    id
+  );
+}
+
 export function pendingCategoryMappings(state, integrationId, flowId) {
   const { response } =
     fromSession.categoryMapping(
@@ -1354,7 +1363,7 @@ export function mappingsForVariation(state, integrationId, flowId, filters) {
 export function mappingsForCategory(state, integrationId, flowId, filters) {
   const { sectionId } = filters;
   let mappings = emptySet;
-  const { attributes = {}, mappingFilter = 'mapped' } =
+  const { attributes = {}, mappingFilter = 'all' } =
     categoryMappingFilters(state, integrationId, flowId) || {};
   const recordMappings =
     fromSession.categoryMappingData(
@@ -1372,7 +1381,7 @@ export function mappingsForCategory(state, integrationId, flowId, filters) {
   }
 
   // If no filters are passed, return all mapppings
-  if (!attributes || !mappingFilter) {
+  if (!mappings || !attributes || !mappingFilter) {
     return mappings;
   }
 

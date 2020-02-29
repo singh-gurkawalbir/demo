@@ -208,6 +208,15 @@ function CategoryMappings({ integrationId, flowId, sectionId, isRoot = true }) {
     history.push(`${match.url}/variations/${sectionId}`);
   };
 
+  if (!generateFields) {
+    return (
+      <Loader open>
+        {`Loading ${sectionId}  metadata`}
+        <Spinner />
+      </Loader>
+    );
+  }
+
   return (
     <div className={isRoot ? classes.mappingContainer : classes.default}>
       <ExpansionPanel

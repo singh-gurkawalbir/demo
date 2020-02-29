@@ -50,7 +50,10 @@ export default function VariationMappings(props) {
   const { _connectionId: connectionId, name: resourceName } = resourceData;
   const dispatch = useDispatch();
   const mappingInitialized = useSelector(
-    state => !Array.isArray(selectors.mapping(state, id))
+    state =>
+      !Array.isArray(
+        selectors.categoryMappingsForSection(state, integrationId, flowId, id)
+      )
   );
   const application = 'netsuite';
   const options = {
@@ -68,10 +71,12 @@ export default function VariationMappings(props) {
   };
   const handleInit = useCallback(() => {
     dispatch(
-      actions.mapping.init({
+      actions.integrationApp.settings.categoryMappings.init(
+        integrationId,
+        flowId,
         id,
-        options: mappingOptions,
-      })
+        mappingOptions
+      )
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, id, mappingOptions]);
@@ -94,9 +99,23 @@ export default function VariationMappings(props) {
 
   useEffect(() => {
     if (initTriggered && mappingInitialized) {
-      dispatch(actions.mapping.updateGenerates(id, generateFields));
+      dispatch(
+        actions.integrationApp.settings.categoryMappings.updateGenerates(
+          integrationId,
+          flowId,
+          id,
+          generateFields
+        )
+      );
     }
-  }, [dispatch, generateFields, id, initTriggered, mappingInitialized]);
+    dispatch,
+    flowId,
+    generateFields,
+    id,
+    initTriggered,
+    integrationId,
+    mappingInitialized,
+  ]);
 
   return (
     <div className={classes.fullWidth}>

@@ -297,7 +297,7 @@ export default [
     getCategoryMappingMetadata
   ),
   takeLatest(
-    actionTypes.INTEGRATION_APPS.SETTINGS.SAVE_CATEGORY_MAPPINGS,
+    actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.SAVE,
     saveCategoryMappings
   ),
   takeLatest(

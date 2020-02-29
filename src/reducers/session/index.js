@@ -319,6 +319,15 @@ export function categoryMapping(state, integrationId, flowId) {
   );
 }
 
+export function categoryMappingsForSection(state, integrationId, flowId, id) {
+  return fromIntegrationApps.categoryMappingsForSection(
+    state && state.integrationApps,
+    integrationId,
+    flowId,
+    id
+  );
+}
+
 export function categoryMappingFilters(state, integrationId, flowId) {
   return fromIntegrationApps.categoryMappingFilters(
     state && state.integrationApps,
