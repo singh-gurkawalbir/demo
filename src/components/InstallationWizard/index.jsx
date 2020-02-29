@@ -30,18 +30,14 @@ import Spinner from '../Spinner';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    marginTop: theme.spacing(2),
     flexGrow: 1,
     width: '100%',
-    padding: '10px 25px',
   },
   formHead: {
     borderBottom: `solid 1px ${theme.palette.secondary.lightest}`,
     marginBottom: 29,
   },
-  innerContent: {
-    width: '80vw',
-  },
+
   stepTable: { position: 'relative', marginTop: -20 },
   floatRight: {
     float: 'right',
@@ -51,8 +47,8 @@ const useStyles = makeStyles(theme => ({
     background: theme.palette.background.default,
   },
 }));
-const getConnectionType = resource => {
-  const { assistant, type } = getResourceSubType(resource);
+const getConnectionType = connection => {
+  const { assistant, type } = getResourceSubType(connection);
 
   if (assistant) return assistant;
 
@@ -290,39 +286,37 @@ export default function InstallationWizard(props) {
         />
       )}
       <div className={classes.root}>
-        <div className={classes.innerContent}>
-          <Grid container className={classes.formHead}>
-            <Grid item xs={1}>
-              <IconButton onClick={handleBackClick} size="medium">
-                <ArrowBackIcon fontSize="inherit" />
-              </IconButton>
-            </Grid>
-            <Grid item xs>
-              <Paper elevation={0} className={classes.paper}>
-                <Breadcrumbs separator={<ArrowRightIcon />}>
-                  <Typography color="textPrimary">Setup</Typography>
-                  <Typography color="textPrimary">
-                    {resource.name ||
-                      MODEL_PLURAL_TO_LABEL[resourceType] ||
-                      'Template'}
-                  </Typography>
-                </Breadcrumbs>
-              </Paper>
-            </Grid>
+        <Grid container className={classes.formHead}>
+          <Grid item xs={1}>
+            <IconButton onClick={handleBackClick} size="medium">
+              <ArrowBackIcon fontSize="inherit" />
+            </IconButton>
           </Grid>
-          <Grid container spacing={3} className={classes.stepTable}>
-            {installSteps.map((step, index) => (
-              <InstallationStep
-                key={step.name}
-                templateId={templateId}
-                connectionMap={connectionMap}
-                handleStepClick={handleStepClick}
-                index={index + 1}
-                step={step}
-              />
-            ))}
+          <Grid item xs>
+            <Paper elevation={0} className={classes.paper}>
+              <Breadcrumbs separator={<ArrowRightIcon />}>
+                <Typography color="textPrimary">Setup</Typography>
+                <Typography color="textPrimary">
+                  {resource.name ||
+                    MODEL_PLURAL_TO_LABEL[resourceType] ||
+                    'Template'}
+                </Typography>
+              </Breadcrumbs>
+            </Paper>
           </Grid>
-        </div>
+        </Grid>
+        <Grid container spacing={3} className={classes.stepTable}>
+          {installSteps.map((step, index) => (
+            <InstallationStep
+              key={step.name}
+              templateId={templateId}
+              connectionMap={connectionMap}
+              handleStepClick={handleStepClick}
+              index={index + 1}
+              step={step}
+            />
+          ))}
+        </Grid>
       </div>
     </LoadResources>
   );

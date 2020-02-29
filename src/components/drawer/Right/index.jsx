@@ -45,6 +45,9 @@ const useStyles = makeStyles(theme => ({
   large: {
     width: 995,
   },
+  xl: {
+    width: 1300,
+  },
   tall: {
     marginTop: theme.appBarHeight,
   },
