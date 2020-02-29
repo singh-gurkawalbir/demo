@@ -128,12 +128,20 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function CategoryMappings({ integrationId, flowId, sectionId, isRoot = true }) {
+function CategoryMappings({
+  integrationId,
+  flowId,
+  sectionId,
+  isRoot = true,
+  isParentCommonCategory = false,
+}) {
   const [requestedGenerateFields, setRequestedGenerateFields] = useState(false);
   const dispatch = useDispatch();
   const classes = useStyles();
   const history = useHistory();
   const match = useRouteMatch();
+  const isCommonCategory =
+    sectionId === 'commonAttributes' || isParentCommonCategory;
   const [expanded, setExpanded] = useState(isRoot);
   const { fields: generateFields, name, variation_themes: variationThemes } =
     useSelector(state =>
@@ -236,13 +244,20 @@ function CategoryMappings({ integrationId, flowId, sectionId, isRoot = true }) {
               onClick={handleVariation}
             />
           )}
-          {deleted ? (
-            <RestoreIcon
-              className={classes.deleteIcon}
-              onClick={handleRestore}
-            />
-          ) : (
-            <TrashIcon className={classes.deleteIcon} onClick={handleDelete} />
+          {!isCommonCategory && (
+            <div>
+              {deleted ? (
+                <RestoreIcon
+                  className={classes.deleteIcon}
+                  onClick={handleRestore}
+                />
+              ) : (
+                <TrashIcon
+                  className={classes.deleteIcon}
+                  onClick={handleDelete}
+                />
+              )}
+            </div>
           )}
         </ExpansionPanelSummary>
         <ExpansionPanelDetails>
@@ -261,6 +276,7 @@ function CategoryMappings({ integrationId, flowId, sectionId, isRoot = true }) {
                   flowId={flowId}
                   key={child.id}
                   isRoot={false}
+                  isParentCommonCategory={isCommonCategory}
                   generateFields={generateFields || emptySet}
                   sectionId={child.id}
                 />
