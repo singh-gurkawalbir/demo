@@ -326,7 +326,7 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
   }, [history, parentUrl]);
   const handleSave = useCallback(() => {
     dispatch(
-      actions.integrationApp.settings.saveCategoryMappings(
+      actions.integrationApp.settings.categoryMappings.save(
         integrationId,
         flowId
       )
@@ -334,7 +334,7 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
   }, [dispatch, flowId, integrationId]);
   const handleSaveAndClose = useCallback(() => {
     dispatch(
-      actions.integrationApp.settings.saveCategoryMappings(
+      actions.integrationApp.settings.categoryMappings.save(
         integrationId,
         flowId
       )

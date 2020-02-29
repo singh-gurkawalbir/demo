@@ -41,6 +41,23 @@ const checkExtractPathFoundInSampledata = (str, sampleData, wrapped) => {
   );
 };
 
+const setMappingData = (flowId, recordMappings, mappings) => {
+  recordMappings.forEach(mapping => {
+    if (mappings[`${flowId}-${mapping.id}`]) {
+      // eslint-disable-next-line no-param-reassign
+      mapping.fieldMappings = mappings[
+        `${flowId}-${mapping.id}`
+      ].mappings.filter(el => !!el.extract && !!el.generate);
+      // eslint-disable-next-line no-param-reassign
+      mapping.lookups = mappings[`${flowId}-${mapping.id}`].lookups;
+    }
+
+    if (mapping.children && mapping.children.length) {
+      setMappingData(flowId, mapping.children, mappings);
+    }
+  });
+};
+
 /**
  * parentMapping = resource mapping object
  * returns subRecordMapping object
@@ -192,7 +209,12 @@ export default {
 
     return value.dataType;
   },
+  setCategoryMappingData: (flowId, sessionMappedData = {}, mappings = {}) => {
+    const { basicMappings = {}, variationMappings = {} } = sessionMappedData;
 
+    setMappingData(flowId, basicMappings.recordMappings || [], mappings);
+    setMappingData(flowId, variationMappings.recordMappings || [], mappings);
+  },
   getFieldMappingType: value => {
     if (value.lookupName) {
       return 'lookup';

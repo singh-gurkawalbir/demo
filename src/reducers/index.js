@@ -56,6 +56,7 @@ import inferErrorMessage from '../utils/inferErrorMessage';
 import getRoutePath from '../utils/routePaths';
 import { COMM_STATES } from './comms/networkComms';
 import { getIntegrationAppUrlName } from '../utils/integrationApps';
+import mappingUtil from '../utils/mapping';
 
 const emptySet = [];
 const emptyObject = {};
@@ -1231,15 +1232,19 @@ export function categoryMappingsForSection(state, integrationId, flowId, id) {
 }
 
 export function pendingCategoryMappings(state, integrationId, flowId) {
-  const { response } =
+  const { response, mappings } =
     fromSession.categoryMapping(
       state && state.session,
       integrationId,
       flowId
     ) || {};
   const mappingData = response.find(op => op.operation === 'mappingData');
+  const sessionMappedData =
+    mappingData && mappingData.data && mappingData.data.mappingData;
 
-  return mappingData && mappingData.data && mappingData.data.mappingData;
+  mappingUtil.setCategoryMappingData(flowId, sessionMappedData, mappings);
+
+  return sessionMappedData;
 }
 
 export function categoryMapping(state, integrationId, flowId) {
