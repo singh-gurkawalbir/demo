@@ -141,4 +141,14 @@ export function stagedResource(state, id, scope) {
 
   return { ...state[id], patch: updatedPatches };
 }
+
+export function getAllResourceConflicts(state) {
+  if (!state) {
+    return [];
+  }
+
+  return Object.keys(state)
+    .filter(rId => state[rId] && state[rId].conflict)
+    .map(rId => ({ resourceId: rId, conflict: state[rId].conflict }));
+}
 // #endregion

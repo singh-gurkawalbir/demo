@@ -24,7 +24,10 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function RecycleBin(props) {
-  const defaultFilter = useMemo(() => ({ take: 10 }), []);
+  const defaultFilter = useMemo(
+    () => ({ take: 10, sort: { orderBy: 'doc.name', order: 'asc' } }),
+    []
+  );
   const classes = useStyles();
   const dispatch = useDispatch();
   const filter =

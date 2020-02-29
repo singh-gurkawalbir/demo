@@ -297,10 +297,22 @@ export function fieldMeta({ resource, assistantData }) {
     fieldIds.push(field.id || field.fieldId);
   });
 
+  fieldMap.settings = {
+    fieldId: 'settings',
+  };
+
   return {
     fieldMap,
     layout: {
       fields: ['common', 'importData', ...fieldIds, 'dataMappings'],
+      type: 'collapse',
+      containers: [
+        {
+          collapsed: true,
+          label: 'Custom settings',
+          fields: ['settings'],
+        },
+      ],
     },
   };
 }

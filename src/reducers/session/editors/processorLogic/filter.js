@@ -15,9 +15,16 @@ export default {
       ({ data } = editor);
     }
 
+    if (typeof data !== 'object') {
+      data = {};
+    }
+
+    const { record, settings, ...context } = data;
+
     return {
       rules: { version: '1', rules: editor.rule || [] },
-      data: typeof data === 'object' ? [data] : [{}],
+      data: typeof record === 'object' ? [record] : [{}],
+      options: { settings, contextData: context },
     };
   },
   validate: editor => ({

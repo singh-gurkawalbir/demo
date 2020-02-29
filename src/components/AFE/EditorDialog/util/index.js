@@ -18,26 +18,6 @@ export const preSaveValidate = ({ editor = {}, enquesnackbar }) => {
       return false;
     }
     // validation other transform editors to be added here
-  } else if (editor.processor === 'javascript') {
-    const { scriptId, entryFunction } = editor;
-
-    if (!scriptId) {
-      enquesnackbar({
-        message: 'Please select Script ID',
-        variant: 'error',
-      });
-
-      return false;
-    }
-
-    if (!entryFunction) {
-      enquesnackbar({
-        message: 'Please enter Function name',
-        variant: 'error',
-      });
-
-      return false;
-    }
   }
 
   return true;

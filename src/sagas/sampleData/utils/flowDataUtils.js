@@ -3,7 +3,7 @@ import { isEmpty } from 'lodash';
 import {
   resourceData,
   isPageGenerator,
-  getSampleData,
+  getSampleDataWrapper,
 } from '../../../reducers';
 import { SCOPES } from '../../resourceForm';
 import actions from '../../../actions';
@@ -12,7 +12,6 @@ import {
   fetchPageGeneratorPreview,
   requestProcessorData,
   requestSampleData,
-  requestSampleDataWithContext,
 } from '../flows';
 import getPreviewOptionsForResource from '../flows/pageProcessorPreviewOptions';
 import {
@@ -184,18 +183,6 @@ export function* requestSampleDataForImports({
         break;
       }
 
-      case 'flowInputWithContext': {
-        // This stage is added explicitly to feed context info for input filter
-        // TODO @Raghu: Find the better way for this case
-        yield call(requestSampleDataWithContext, {
-          flowId,
-          resourceId,
-          resourceType,
-          stage: sampleDataStage,
-        });
-        break;
-      }
-
       case 'sampleResponse': {
         const { merged: resource } = yield select(
           resourceData,
@@ -282,17 +269,6 @@ export function* requestSampleDataForExports({
           previewType: sampleDataStage,
         });
       }
-    } else if (
-      ['flowInputWithContext', 'transformWithContext'].includes(sampleDataStage)
-    ) {
-      // These stages are added explicitly to feed context info for input/outputFilters
-      // TODO @Raghu: Find the better way for this case
-      yield call(requestSampleDataWithContext, {
-        flowId,
-        resourceId,
-        resourceType,
-        stage: sampleDataStage,
-      });
     } else {
       yield call(requestProcessorData, {
         flowId,
@@ -383,7 +359,7 @@ export function* getFlowStageData({
   stage,
   isInitialized,
 }) {
-  let flowStageData = yield select(getSampleData, {
+  let flowStageData = yield select(getSampleDataWrapper, {
     flowId,
     resourceId,
     resourceType,
@@ -391,7 +367,7 @@ export function* getFlowStageData({
   });
 
   try {
-    if (!flowStageData) {
+    if (!flowStageData.status) {
       yield call(requestSampleData, {
         flowId,
         resourceId,
@@ -399,7 +375,7 @@ export function* getFlowStageData({
         stage,
         isInitialized,
       });
-      flowStageData = yield select(getSampleData, {
+      flowStageData = yield select(getSampleDataWrapper, {
         flowId,
         resourceId,
         resourceType,
@@ -407,7 +383,7 @@ export function* getFlowStageData({
       });
     }
 
-    return flowStageData;
+    return flowStageData.data;
   } catch (e) {
     throw e;
   }

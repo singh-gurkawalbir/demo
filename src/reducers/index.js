@@ -41,7 +41,12 @@ import {
   getUsedActionsMapForResource,
   isPageGeneratorResource,
 } from '../utils/flows';
-import { isValidResourceReference, isNewId } from '../utils/resource';
+import {
+  isValidResourceReference,
+  isNewId,
+  MODEL_PLURAL_TO_LABEL,
+  isRealTimeOrDistributedResource,
+} from '../utils/resource';
 import { processSampleData } from '../utils/sampleData';
 import {
   getAvailablePreviewStages,
@@ -874,11 +879,18 @@ export function resourceListWithPermissions(state, options) {
         r._id
       );
 
-      additionalInfo.offline = status.offline;
-      additionalInfo.queueSize = status.queueSize;
+      if (status) {
+        additionalInfo.offline = status.offline;
+        additionalInfo.queueSize = status.queueSize;
+      }
     }
 
-    return { ...r, ...additionalInfo };
+    const finalRes = { ...r, ...additionalInfo };
+
+    // defaulting queue size to zero when undefined
+    finalRes.queueSize = finalRes.queueSize || 0;
+
+    return finalRes;
   });
 
   return list;
@@ -967,15 +979,17 @@ export function marketplaceConnectors(state, application, sandbox) {
     licenses
   );
 
-  return connectors.map(c => {
-    const installedIntegrationApps = resourceList(state, {
-      type: 'integrations',
-      sandbox,
-      filter: { _connectorId: c._id },
-    });
+  return connectors
+    .map(c => {
+      const installedIntegrationApps = resourceList(state, {
+        type: 'integrations',
+        sandbox,
+        filter: { _connectorId: c._id },
+      });
 
-    return { ...c, installed: !!installedIntegrationApps.resources.length };
-  });
+      return { ...c, installed: !!installedIntegrationApps.resources.length };
+    })
+    .sort((a, b) => a.name.localeCompare(b.name));
 }
 
 export function marketplaceTemplates(state, application) {
@@ -1101,10 +1115,11 @@ export function checkUpgradeRequested(state, licenseId) {
   return fromSession.checkUpgradeRequested(state && state.session, licenseId);
 }
 
-export function integrationConnectionList(state, integrationId) {
+export function integrationConnectionList(state, integrationId, tableConfig) {
   const integration = resource(state, 'integrations', integrationId) || {};
   let { resources = [] } = resourceListWithPermissions(state, {
     type: 'connections',
+    ...(tableConfig || {}),
   });
 
   if (integrationId && integrationId !== 'none' && !integration._connectorId) {
@@ -2609,6 +2624,10 @@ export function resourceStatus(
   };
 }
 
+export function getAllResourceConflicts(state) {
+  return fromSession.getAllResourceConflicts(state && state.session);
+}
+
 export function resourceData(state, resourceType, id, scope) {
   if (!state || !resourceType || !id) return emptyObject;
   let type = resourceType;
@@ -3162,18 +3181,20 @@ export function getImportSampleData(state, resourceId, options = {}) {
   if (assistant) {
     // get assistants sample data
     return assistantPreviewData(state, resourceId);
-  } else if (sampleData) {
-    // Formats sample data into readable form
-    return {
-      data: processSampleData(sampleData, resource),
-      status: 'received',
-    };
   } else if (adaptorType === 'NetSuiteDistributedImport') {
     // eslint-disable-next-line camelcase
     const { _connectionId: connectionId, netsuite_da = {} } = resource;
     const { recordType } = options;
-    const commMetaPath = `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${recordType ||
-      netsuite_da.recordType}`;
+    let commMetaPath;
+
+    if (recordType) {
+      /** special case of netsuite/metadata/suitescript/connections/5c88a4bb26a9676c5d706324/recordTypes/inventorydetail?parentRecordType=salesorder
+       * in case of subrecord */
+      commMetaPath = `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${recordType}?parentRecordType=${netsuite_da.recordType}`;
+    } else {
+      commMetaPath = `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${netsuite_da.recordType}`;
+    }
+
     const { data, status } = metadataOptionsAndResources({
       state,
       connectionId,
@@ -3196,6 +3217,12 @@ export function getImportSampleData(state, resourceId, options = {}) {
     });
 
     return { data, status };
+  } else if (sampleData) {
+    // Formats sample data into readable form
+    return {
+      data: processSampleData(sampleData, resource),
+      status: 'received',
+    };
   }
 
   return emptyObject;
@@ -3327,7 +3354,15 @@ export function debugLogs(state) {
 }
 
 export function connectionStatus(state, id) {
-  return fromSession.connectionStatus(state && state.session, id);
+  // we are returning the default value here and not in the leaf selector
+  // because we want the leaf selector to return the true state value without the default value
+  return (
+    fromSession.connectionStatus(state && state.session, id) || {
+      id,
+      queueSize: 0,
+      offline: false,
+    }
+  );
 }
 
 export function getLastExportDateTime(state, flowId) {
@@ -3467,6 +3502,51 @@ export function isLookUpExport(state, { flowId, resourceId, resourceType }) {
 }
 
 /*
+ * This Selector handles all Resource Type's Label in case of Stand alone / Flow Builder Context
+ * Used at Resource Form's Title like 'Create/Edit Export' , at Bread Crumb level to show 'Add/Edit Export'
+ */
+export function getCustomResourceLabel(
+  state,
+  { resourceType, resourceId, flowId }
+) {
+  const isLookup = isLookUpExport(state, { flowId, resourceId, resourceType });
+  const isNewResource = isNewId(resourceId);
+  const { merged: resource = {} } = resourceData(
+    state,
+    resourceType,
+    resourceId
+  );
+  let resourceLabel;
+
+  // Default resource labels based on resourceTypes handled here
+  if (isLookup) {
+    resourceLabel = 'Lookup';
+  } else {
+    resourceLabel = MODEL_PLURAL_TO_LABEL[resourceType];
+  }
+
+  // Incase of Flow context, 2nd step of PG/PP creation resource labels handled here
+  // The Below resource labels override the default labels above
+  if (flowId) {
+    if (isNewResource && resourceType === 'exports') {
+      resourceLabel = isLookup ? 'Lookup' : 'Source';
+    } else if (isNewResource && resourceType === 'imports') {
+      resourceLabel = 'Import';
+    }
+  }
+
+  // For real time resources , we show resource label as 'listener'
+  if (
+    resourceType === 'exports' &&
+    isRealTimeOrDistributedResource(resource, resourceType)
+  ) {
+    resourceLabel = 'Listener';
+  }
+
+  return resourceLabel;
+}
+
+/*
  * This selector used to differentiate drawers with/without Preview Panel
  */
 export function isPreviewPanelAvailableForResource(
@@ -3497,3 +3577,187 @@ export function isPreviewPanelAvailableForResource(
 
   return isPreviewPanelAvailable(resourceObj, resourceType, connectionObj);
 }
+
+export const getSampleDataWrapper = createSelector(
+  [
+    // eslint-disable-next-line no-use-before-define
+    (state, params) => getSampleDataContext(state, params),
+    (state, params) => {
+      if (['postMap', 'postSubmit'].includes(params.stage)) {
+        return getSampleDataContext(state, { ...params, stage: 'preMap' });
+      }
+
+      return undefined;
+    },
+    (state, { flowId }) => resource(state, 'flows', flowId) || emptyObject,
+    (state, { flowId }) => {
+      const flow = resource(state, 'flows', flowId) || emptyObject;
+
+      return (
+        resource(state, 'integrations', flow._integrationId) || emptyObject
+      );
+    },
+    (state, { resourceId, resourceType }) =>
+      resource(state, resourceType, resourceId) || emptyObject,
+    (state, { resourceId, resourceType }) => {
+      const res = resource(state, resourceType, resourceId);
+
+      return resource(state, 'connections', res._connectionId) || emptyObject;
+    },
+    (state, { stage }) => stage,
+  ],
+  (
+    sampleData,
+    preMapSampleData,
+    flow,
+    integration,
+    resource,
+    connection,
+    stage
+  ) => {
+    const { status, data } = sampleData || {};
+    let resourceType = 'export';
+
+    if (
+      resource &&
+      resource.adaptorType &&
+      resource.adaptorType.includes('Import')
+    ) {
+      resourceType = 'import';
+    }
+
+    if (!status) {
+      return { status };
+    }
+
+    const contextFields = {};
+
+    if (['outputFilter', 'preSavePage'].includes(stage)) {
+      contextFields.pageIndex = 0;
+
+      if (resource.type === 'delta') {
+        contextFields.lastExportDateTime = moment()
+          .startOf('day')
+          .add(-7, 'd')
+          .toISOString();
+        contextFields.currentExportDateTime = moment()
+          .startOf('day')
+          .add(-24, 'h')
+          .toISOString();
+      }
+    }
+
+    const resourceIds = {};
+
+    if (
+      [
+        'preSavePage',
+        'preMap',
+        'postMap',
+        'postSubmit',
+        'postAggregate',
+      ].includes(stage)
+    ) {
+      resourceIds[resourceType === 'import' ? '_importId' : '_exportId'] =
+        resource._id;
+      resourceIds._connectionId = connection._id;
+      resourceIds._flowId = flow._id;
+      resourceIds._integrationId = integration._id;
+    }
+
+    const settings = {
+      integration: integration.settings || {},
+      flow: flow.settings || {},
+      [resourceType]: resource.settings || {},
+      connection: connection.settings || {},
+    };
+
+    if (['transform', 'outputFilter', 'inputFilter'].includes(stage)) {
+      return {
+        status,
+        data: {
+          record: data || {},
+          ...resourceIds,
+          ...contextFields,
+          settings,
+        },
+      };
+    }
+
+    if (['preSavePage'].includes(stage)) {
+      return {
+        status,
+        data: {
+          data: [data],
+          errors: [],
+          ...resourceIds,
+          ...contextFields,
+          settings,
+        },
+      };
+    }
+
+    if (['preMap'].includes(stage)) {
+      return {
+        status,
+        data: {
+          data: [data],
+          ...resourceIds,
+          settings,
+        },
+      };
+    }
+
+    if (['postMap'].includes(stage)) {
+      return {
+        status,
+        data: {
+          preMapData: [preMapSampleData.data],
+          postMapData: [data],
+          ...resourceIds,
+          settings,
+        },
+      };
+    }
+
+    if (['postSubmit'].includes(stage)) {
+      return {
+        status,
+        data: {
+          preMapData: [preMapSampleData.data],
+          postMapData: [data],
+          responseData: [data].map(() => ({
+            statusCode: 200,
+            errors: [{ code: '', message: '', source: '' }],
+            ignored: false,
+            id: '',
+            _json: {},
+            dataURI: '',
+          })),
+          ...resourceIds,
+          settings,
+        },
+      };
+    }
+
+    if (stage === 'postAggregate') {
+      return {
+        status,
+        data: {
+          postAggregateData: {
+            success: true,
+            _json: {},
+            code: '',
+            message: '',
+            source: '',
+          },
+          ...resourceIds,
+          settings,
+        },
+      };
+    }
+
+    // For all other stages, return basic sampleData
+    return { status, data };
+  }
+);
