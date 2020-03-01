@@ -778,7 +778,7 @@ export const groupApplications = (
       connectors: filteredConnectors.filter(c => c.group === 'db'),
     },
     {
-      label: 'Generic tech connectors',
+      label: 'Universal connectors',
       connectors: filteredConnectors.filter(c => c.group === 'tech'),
     },
     {

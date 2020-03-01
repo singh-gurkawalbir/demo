@@ -32,7 +32,7 @@ export default function TransformToggleEditorDialog({
       showLayoutOptions>
       <TransformEditor
         rule={rule}
-        data={data}
+        data={data && data.record}
         disabled={disabled}
         optionalSaveParams={optionalSaveParams}
       />

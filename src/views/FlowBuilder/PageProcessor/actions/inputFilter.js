@@ -15,8 +15,8 @@ function InputFilterDialog({
 }) {
   const dispatch = useDispatch();
   const resourceId = resource._id;
-  const sampleData = useSelector(state =>
-    selectors.getSampleData(state, {
+  const { status: sampleDataStatus, data: sampleData } = useSelector(state =>
+    selectors.getSampleDataWrapper(state, {
       flowId,
       resourceId,
       resourceType,
@@ -38,7 +38,7 @@ function InputFilterDialog({
   }, [resource, resourceType]);
 
   useEffect(() => {
-    if (!sampleData) {
+    if (!sampleDataStatus) {
       dispatch(
         actions.flowData.requestSampleData(
           flowId,
@@ -48,7 +48,14 @@ function InputFilterDialog({
         )
       );
     }
-  }, [dispatch, flowId, resourceId, resourceType, sampleData]);
+  }, [
+    dispatch,
+    flowId,
+    resourceId,
+    resourceType,
+    sampleData,
+    sampleDataStatus,
+  ]);
   const optionalSaveParams = useMemo(
     () => ({
       processorKey: 'inputFilter',

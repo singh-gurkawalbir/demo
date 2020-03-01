@@ -1,4 +1,12 @@
-import { call, put, takeEvery, select, race, take } from 'redux-saga/effects';
+import {
+  call,
+  put,
+  takeEvery,
+  select,
+  race,
+  take,
+  takeLatest,
+} from 'redux-saga/effects';
 import jsonpatch from 'fast-json-patch';
 import actions from '../../../actions';
 import actionTypes from '../../../actions/types';
@@ -32,8 +40,12 @@ function* createPayload({ values, resourceId }) {
     connectionResource = {};
   }
 
-  let returnData = jsonpatch.applyPatch(connectionResource.merged, patchSet)
-    .newDocument;
+  let returnData = jsonpatch.applyPatch(
+    connectionResource.merged
+      ? jsonpatch.deepClone(connectionResource.merged)
+      : {},
+    jsonpatch.deepClone(patchSet)
+  ).newDocument;
 
   // We built all connection assistants on HTTP adaptor on React. With recent changes to decouple REST deprecation
   // and React we are forced to convert HTTP to REST doc for existing REST assistants since we dont want to build
@@ -427,7 +439,30 @@ function* requestIClients({ connectionId }) {
   }
 }
 
+export function* pingAndUpdateConnection({ connectionId }) {
+  try {
+    yield call(apiCallWithRetry, {
+      path: `/connections/${connectionId}/ping`,
+    });
+
+    const connectionResource = yield call(apiCallWithRetry, {
+      path: `/connections/${connectionId}`,
+    });
+
+    yield put(actions.resource.received('connections', connectionResource));
+    yield put(
+      actions.resource.connections.pingAndUpdateSuccessful(
+        connectionId,
+        connectionResource && connectionResource.offline
+      )
+    );
+  } catch (error) {
+    yield put(actions.resource.connections.pingAndUpdateFailed(connectionId));
+  }
+}
+
 export default [
+  takeLatest(actionTypes.CONNECTION.PING_AND_UPDATE, pingAndUpdateConnection),
   takeEvery(actionTypes.CONNECTION.TEST, pingConnectionWithAbort),
   takeEvery(actionTypes.TOKEN.REQUEST, requestToken),
   takeEvery(

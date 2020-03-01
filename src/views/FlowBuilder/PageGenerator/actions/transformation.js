@@ -10,8 +10,8 @@ import { hooksToFunctionNamesMap } from '../../../../utils/hooks';
 function TransformationDialog({ flowId, resource, onClose, isViewMode }) {
   const dispatch = useDispatch();
   const exportId = resource._id;
-  const sampleData = useSelector(state =>
-    selectors.getSampleData(state, {
+  const { status: sampleDataStatus, data: sampleData } = useSelector(state =>
+    selectors.getSampleDataWrapper(state, {
       flowId,
       resourceId: exportId,
       resourceType: 'exports',
@@ -31,7 +31,7 @@ function TransformationDialog({ flowId, resource, onClose, isViewMode }) {
   }, [resource]);
 
   useEffect(() => {
-    if (!sampleData) {
+    if (!sampleDataStatus) {
       dispatch(
         actions.flowData.requestSampleData(
           flowId,
@@ -41,7 +41,7 @@ function TransformationDialog({ flowId, resource, onClose, isViewMode }) {
         )
       );
     }
-  }, [dispatch, flowId, exportId, sampleData]);
+  }, [dispatch, flowId, exportId, sampleDataStatus]);
 
   const optionalSaveParams = useMemo(
     () => ({
