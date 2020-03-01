@@ -80,7 +80,31 @@ export function* saveProcessor({ id }) {
     yield put(actions.editor.saveFailed(id));
   }
 
-  // TODO: enhance foregroundPatch to support multiple foreground request
+  /**
+   *Editor will not be closed unless 'foregroundPatch' terminates. After success/failure of foreground patch, 'backgroundPatches' run in background.
+   backgroundPatches is an array consisting of resource patch and/or actions
+  Example:
+  foregroundPatch = {
+      patch: [{ op: 'replace', path:${path}, value: ${value} }],
+      resourceType: ${resourceType},
+      resourceId: ${resourceId},
+   };
+   backgroundPatches=[
+    {
+        patch: [
+          {
+            op: 'replace',
+            path: '/content',
+            value: ${code},
+          },
+        ],
+        resourceType: 'scripts',
+        resourceId: ${scriptId},
+    },
+    actions.analytics.gainsight.trackEvent('actionName')
+    ];
+   */
+
   const { foregroundPatch, backgroundPatches } = patches || {};
 
   if (foregroundPatch) {
@@ -94,11 +118,17 @@ export function* saveProcessor({ id }) {
         scope: SCOPES.VALUE,
       });
 
+      // trigger save failed in case of error
       if (error) yield put(actions.editor.saveFailed(id));
 
+      // trigger save complete in case of success
       yield put(actions.editor.saveComplete(id));
+    } else {
+      // trigger save failed in case any among patch, resourceType and resourceId is missing
+      yield put(actions.editor.saveFailed(id));
     }
   } else {
+    // trigger save complete in case editor doesnt have any foreground processes
     yield put(actions.editor.saveComplete(id));
   }
 
@@ -107,6 +137,7 @@ export function* saveProcessor({ id }) {
       const { action, patch, resourceType, resourceId } =
         backgroundPatches[index] || {};
 
+      // check if backgroundPatch is an action
       if (action) {
         yield put(backgroundPatches[index].action);
       } else if (!!patch && !!resourceType && !!resourceId) {

@@ -56,6 +56,9 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+/**
+ * @param patchOnSave = false (default editor behaviour) or true (for resource patch on save)
+ */
 export default function EditorDialog(props) {
   const {
     children,

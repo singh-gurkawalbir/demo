@@ -19,8 +19,6 @@ export default function TransformToggleEditorDialog({
   disabled,
   entryFunction,
   insertStubKey,
-  resourceType,
-  resourceId,
   optionalSaveParams,
   ...rest
 }) {
