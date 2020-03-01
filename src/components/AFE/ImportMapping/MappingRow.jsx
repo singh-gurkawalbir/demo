@@ -1,4 +1,4 @@
-import { useRef, useMemo, useCallback } from 'react';
+import { useRef, useCallback } from 'react';
 import { Tooltip } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
@@ -71,10 +71,6 @@ const useStyles = makeStyles(theme => ({
     border: 'none',
     width: 0,
   },
-  hoverDiv: {
-    width: '100%',
-    height: 50,
-  },
   mappingIcon: {
     color: theme.palette.secondary.lightest,
     fontSize: theme.spacing(6),
@@ -99,6 +95,7 @@ export default function MappingRow(props) {
     lookups,
     onDelete,
     onMove,
+    onDrop,
     index,
     isDraggable = false,
   } = props;
@@ -114,9 +111,16 @@ export default function MappingRow(props) {
   const classes = useStyles();
   const ref = useRef(null);
   // isOver is set to true when hover happens over component
-  const [{ isOver }, drop] = useDrop({
+  const [, drop] = useDrop({
     accept: 'MAPPING',
-    drop(item) {
+    drop() {
+      if (!ref.current || !isDraggable) {
+        return;
+      }
+
+      onDrop();
+    },
+    hover(item) {
       if (!ref.current || !isDraggable) {
         return;
       }
@@ -145,10 +149,6 @@ export default function MappingRow(props) {
 
     canDrag: isDraggable,
   });
-  const isTargetBeingHovered = useMemo(
-    () => isDraggable && isOver && !isDragging,
-    [isDraggable, isDragging, isOver]
-  );
   const opacity = isDragging ? 0.2 : 1;
 
   drag(drop(ref));
@@ -176,7 +176,6 @@ export default function MappingRow(props) {
       style={{ opacity }}
       className={classes.rowContainer}
       key={id}>
-      <div className={clsx({ [classes.hoverDiv]: isTargetBeingHovered })} />
       <div className={clsx(classes.innerRow, { [classes.dragRow]: !disabled })}>
         <div className={classes.dragIcon}>
           <GripperIcon />

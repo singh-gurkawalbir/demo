@@ -17,8 +17,6 @@ export default function reducer(state = {}, action) {
     lookups,
     value,
     field,
-    dragIndex,
-    hoverIndex,
     uId,
     options = {},
   } = action;
@@ -72,9 +70,6 @@ export default function reducer(state = {}, action) {
             lookups = lookupUtil.getLookupFromResource(resourceData);
           }
 
-          const initChangeIdentifier =
-            (draft[id] && draft[id].initChangeIdentifier) || 0;
-
           // uId would be unique property associated with each mapping.
           draft[id] = {
             mappings: formattedMappings.map(m => ({
@@ -84,7 +79,7 @@ export default function reducer(state = {}, action) {
             })),
             incompleteGenerates: [],
             lookups: lookups || [],
-            initChangeIdentifier: initChangeIdentifier + 1,
+            changeIdentifier: 0,
             application,
             resource: resourceData,
             adaptorType,
@@ -105,26 +100,12 @@ export default function reducer(state = {}, action) {
 
         break;
       case actionTypes.MAPPING.CHANGE_ORDER: {
-        const mappingsCopy = [...draft[id].mappings];
-        const dragItem = draft[id].mappings[dragIndex];
-
-        mappingsCopy.splice(dragIndex, 1);
-        mappingsCopy.splice(hoverIndex, 0, dragItem);
-        // refresh mappings effected by move
-        const refreshStartIndex =
-          dragIndex < hoverIndex ? dragIndex : hoverIndex;
-        const refreshEndIndex = dragIndex > hoverIndex ? dragIndex : hoverIndex;
-
-        for (let i = refreshStartIndex; i <= refreshEndIndex; i += 1) {
-          mappingsCopy[i].rowIdentifier += 1;
-        }
-
-        draft[id].mappings = mappingsCopy;
+        draft[id].mappings = value;
         break;
       }
 
       case actionTypes.MAPPING.DELETE: {
-        draft[id].initChangeIdentifier += 1;
+        draft[id].changeIdentifier += 1;
         const _mappings = [...draft[id].mappings];
         const filteredMapping = _mappings.filter(m => m.uId !== uId);
 
@@ -143,6 +124,7 @@ export default function reducer(state = {}, action) {
       }
 
       case actionTypes.MAPPING.UPDATE_GENERATES: {
+        draft[id].changeIdentifier += 1;
         draft[id].generateFields = generateFields;
         const { incompleteGenerates } = draft[id];
 
@@ -176,6 +158,7 @@ export default function reducer(state = {}, action) {
       }
 
       case actionTypes.MAPPING.PATCH_FIELD: {
+        draft[id].changeIdentifier += 1;
         const index = draft[id].mappings.findIndex(m => m.uId === uId);
 
         if (draft[id].mappings[index]) {
@@ -238,6 +221,7 @@ export default function reducer(state = {}, action) {
       }
 
       case actionTypes.MAPPING.PATCH_INCOMPLETE_GENERATES: {
+        draft[id].changeIdentifier += 1;
         const incompleteGeneObj = draft[id].incompleteGenerates.find(
           gen => gen.uId === uId
         );
@@ -252,6 +236,7 @@ export default function reducer(state = {}, action) {
       }
 
       case actionTypes.MAPPING.PATCH_SETTINGS: {
+        draft[id].changeIdentifier += 1;
         const index = draft[id].mappings.findIndex(m => m.uId === uId);
 
         if (draft[id].mappings[index]) {

@@ -1,7 +1,4 @@
-/* eslint-disable react/no-array-index-key */
-
-/* eslint-disable react-hooks/exhaustive-deps */
-import { useMemo, useCallback } from 'react';
+import { useMemo, useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { DndProvider } from 'react-dnd-cjs';
 import HTML5Backend from 'react-dnd-html5-backend-cjs';
@@ -114,18 +111,33 @@ export default function ImportMapping(props) {
   const {
     mappings,
     lookups,
-    initChangeIdentifier,
+    changeIdentifier,
     previewData,
     lastModifiedUId,
     salesforceMasterRecordTypeId,
     showSalesforceNetsuiteAssistant,
   } = useSelector(state => selectors.mapping(state, editorId));
+  const [state, setState] = useState({
+    localMappings: [],
+    localChangeIdentifier: -1,
+  });
+  const { localMappings, localChangeIdentifier } = state;
+
+  useEffect(() => {
+    // update local mapping state when mappings in data layer changes
+    if (localChangeIdentifier !== changeIdentifier)
+      setState({
+        localMappings: mappings,
+        localChangeIdentifier: changeIdentifier,
+      });
+  }, [changeIdentifier, localChangeIdentifier, localMappings, mappings]);
+
   const { saveCompleted } = useSelector(state =>
     selectors.mappingSaveProcessTerminate(state, editorId)
   );
   const tableData = useMemo(
     () =>
-      (mappings || []).map((value, index) => {
+      (localMappings || []).map((value, index) => {
         const obj = { ...value };
 
         obj.index = index;
@@ -136,9 +148,11 @@ export default function ImportMapping(props) {
 
         return obj;
       }),
-    [mappings]
+    [localMappings]
   );
-  const mappingsLength = useMemo(() => mappings.length, [mappings]);
+  const emptyRowIndex = useMemo(() => localMappings.length, [
+    localMappings.length,
+  ]);
   const handleFieldUpdate = useCallback(
     (_mapping, field, value) => {
       const { uId, generate = '', extract = '' } = _mapping;
@@ -181,7 +195,13 @@ export default function ImportMapping(props) {
 
       dispatch(actions.mapping.patchField(editorId, field, uId, value));
     },
-    [dispatch, editorId]
+    [
+      application,
+      dispatch,
+      editorId,
+      fetchSalesforceSObjectMetadata,
+      generateFields,
+    ]
   );
   const patchSettings = useCallback(
     (uId, settings) => {
@@ -218,37 +238,58 @@ export default function ImportMapping(props) {
     dispatch(actions.mapping.updateLookup(editorId, lookupsTmp));
   };
 
-  const handleSalesforceAssistantFieldClick = useCallback(meta => {
-    if (lastModifiedUId)
-      dispatch(
-        actions.mapping.patchField(
-          editorId,
-          'generate',
-          lastModifiedUId,
-          meta.id
-        )
-      );
-  });
-  const handleNetSuiteAssistantFieldClick = useCallback(meta => {
-    if (lastModifiedUId)
-      dispatch(
-        actions.mapping.patchField(
-          editorId,
-          'generate',
-          lastModifiedUId,
-          meta.sublistName ? `${meta.sublistName}[*].${meta.id}` : meta.id
-        )
-      );
-  });
+  const handleSalesforceAssistantFieldClick = useCallback(
+    meta => {
+      if (lastModifiedUId)
+        dispatch(
+          actions.mapping.patchField(
+            editorId,
+            'generate',
+            lastModifiedUId,
+            meta.id
+          )
+        );
+    },
+    [dispatch, editorId, lastModifiedUId]
+  );
+  const handleNetSuiteAssistantFieldClick = useCallback(
+    meta => {
+      if (lastModifiedUId)
+        dispatch(
+          actions.mapping.patchField(
+            editorId,
+            'generate',
+            lastModifiedUId,
+            meta.sublistName ? `${meta.sublistName}[*].${meta.id}` : meta.id
+          )
+        );
+    },
+    [dispatch, editorId, lastModifiedUId]
+  );
   const handleClose = () => {
     if (onClose) {
       onClose();
     }
   };
 
-  const handleMove = useCallback((dragIndex, hoverIndex) => {
-    dispatch(actions.mapping.changeOrder(editorId, dragIndex, hoverIndex));
-  });
+  const handleDrop = useCallback(() => {
+    dispatch(actions.mapping.changeOrder(editorId, localMappings));
+  }, [dispatch, editorId, localMappings]);
+  const handleMove = useCallback(
+    (dragIndex, hoverIndex) => {
+      const mappingsCopy = [...localMappings];
+      const dragItem = mappingsCopy[dragIndex];
+
+      mappingsCopy.splice(dragIndex, 1);
+      mappingsCopy.splice(hoverIndex, 0, dragItem);
+
+      setState({
+        ...state,
+        localMappings: mappingsCopy,
+      });
+    },
+    [localMappings, state]
+  );
   const handlePreviewClick = () => {
     dispatch(actions.mapping.requestPreview(editorId));
   };
@@ -271,7 +312,7 @@ export default function ImportMapping(props) {
         className={clsx(classes.mappingContainer, {
           [classes.mapCont]: showSalesforceNetsuiteAssistant,
         })}
-        key={`mapping-${editorId}-${initChangeIdentifier}`}>
+        key={`mapping-${editorId}`}>
         <div className={classes.header}>
           <Typography
             variant="h5"
@@ -312,15 +353,14 @@ export default function ImportMapping(props) {
           </Typography>
         </div>
 
-        <div
-          className={classes.mappingsBody}
-          key={`${editorId}-${initChangeIdentifier}`}>
+        <div className={classes.mappingsBody} key={`${editorId}`}>
           <DndProvider backend={HTML5Backend}>
             {tableData.map((mapping, index) => (
               <MappingRow
                 index={index}
-                id={`${mapping.uId}-${mapping.rowIdentifier}-${index}`}
-                key={`${mapping.uId}-${mapping.rowIdentifier}-${index}`}
+                id={`${mapping.uId}-${mapping.rowIdentifier}`}
+                // eslint-disable-next-line react/no-array-index-key
+                key={`${mapping.uId}-${mapping.rowIdentifier}`}
                 mapping={mapping}
                 extractFields={extractFields}
                 onFieldUpdate={handleFieldUpdate}
@@ -333,13 +373,14 @@ export default function ImportMapping(props) {
                 lookups={lookups}
                 onDelete={handleDelete}
                 onMove={handleMove}
+                onDrop={handleDrop}
                 isDraggable={!disabled}
               />
             ))}
           </DndProvider>
           <MappingRow
-            key={`${mappingsLength}`}
-            index={mappingsLength}
+            key={`${emptyRowIndex}`}
+            index={emptyRowIndex}
             mapping={emptyMappingRow}
             extractFields={extractFields}
             onFieldUpdate={handleFieldUpdate}
