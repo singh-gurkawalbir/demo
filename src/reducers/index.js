@@ -3556,6 +3556,7 @@ export function isPreviewPanelAvailableForResource(
   return isPreviewPanelAvailable(resourceObj, resourceType, connectionObj);
 }
 
+// TODO @Raghu:  Revisit this selector once stabilized as it can be simplified
 export const getSampleDataWrapper = createSelector(
   [
     // eslint-disable-next-line no-use-before-define
@@ -3578,7 +3579,7 @@ export const getSampleDataWrapper = createSelector(
     (state, { resourceId, resourceType }) =>
       resource(state, resourceType, resourceId) || emptyObject,
     (state, { resourceId, resourceType }) => {
-      const res = resource(state, resourceType, resourceId);
+      const res = resource(state, resourceType, resourceId) || emptyObject;
 
       return resource(state, 'connections', res._connectionId) || emptyObject;
     },
