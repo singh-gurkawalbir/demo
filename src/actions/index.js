@@ -940,6 +940,9 @@ const editor = {
     action(actionTypes.EDITOR_EVALUATE_FAILURE, { id, error }),
   evaluateResponse: (id, result) =>
     action(actionTypes.EDITOR_EVALUATE_RESPONSE, { id, result }),
+  save: id => action(actionTypes.EDITOR_SAVE, { id }),
+  saveFailed: id => action(actionTypes.EDITOR_SAVE_FAILED, { id }),
+  saveComplete: id => action(actionTypes.EDITOR_SAVE_COMPLETE, { id }),
 };
 // #endregion
 // #region Mapping actions

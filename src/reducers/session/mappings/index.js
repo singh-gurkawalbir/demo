@@ -8,6 +8,7 @@ import lookupUtil from '../../../utils/lookup';
 const { deepClone } = require('fast-json-patch');
 
 const emptySet = [];
+const emptyObj = {};
 
 export default function reducer(state = {}, action) {
   const {
@@ -367,11 +368,10 @@ export default function reducer(state = {}, action) {
 
 // #region PUBLIC SELECTORS
 export function mappingSaveProcessTerminate(state, id) {
-  if (!state) {
-    return emptySet;
+  if (!state || !state[id]) {
+    return emptyObj;
   }
 
-  if (!state[id]) return false;
   const { submitFailed, submitCompleted } = state[id];
 
   return {

@@ -107,6 +107,12 @@ const useStyles = makeStyles(theme => ({
 
 export default function Subscription() {
   const dispatch = useDispatch();
+  const capitalize = s => {
+    if (typeof s !== 'string') return '';
+
+    return s.charAt(0).toUpperCase() + s.slice(1);
+  };
+
   const [enquesnackbar] = useEnqueueSnackbar();
   const licenseActionDetails = useSelector(state =>
     selectors.integratorLicenseWithMetadata(state)
@@ -324,7 +330,7 @@ export default function Subscription() {
                   </Typography>
                   <ul className={classes.itemsList}>
                     <li className={classes.bold}>
-                      Status: {licenseActionDetails.status}
+                      Status: {capitalize(licenseActionDetails.status)}
                     </li>
                     <li>
                       <span className={classes.bold}>Expires:&nbsp;</span>
@@ -335,7 +341,7 @@ export default function Subscription() {
                       <span className={classes.bold}>
                         Customer success plan:&nbsp;
                       </span>
-                      {licenseActionDetails.supportTier || 'N/A'}
+                      {capitalize(licenseActionDetails.supportTier || 'N/A')}
                     </li>
                   </ul>
                 </div>
