@@ -1,6 +1,7 @@
 import { deepClone } from 'fast-json-patch';
 import actionTypes from '../../../actions/types';
 import processorLogic from './processorLogic';
+import processorPatchSet from './processorPatchSet';
 
 const emptyObj = {};
 
@@ -29,6 +30,7 @@ export default function reducer(state = {}, action) {
     case actionTypes.EDITOR_INIT: {
       const initChangeIdentifier =
         (newState[id] && newState[id].initChangeIdentifier) || 0;
+      const saveStatus = newState[id] && newState[id].saveStatus;
 
       newState[id] = {
         processor,
@@ -36,6 +38,7 @@ export default function reducer(state = {}, action) {
         ...deepClone(options),
         lastChange: Date.now(),
         initChangeIdentifier: initChangeIdentifier + 1,
+        saveStatus,
       };
 
       return newState;
@@ -95,6 +98,28 @@ export default function reducer(state = {}, action) {
 
       return newState;
 
+    case actionTypes.EDITOR_SAVE:
+      newState[id] = {
+        ...newState[id],
+        saveStatus: 'requested',
+      };
+
+      return newState;
+    case actionTypes.EDITOR_SAVE_FAILED:
+      newState[id] = {
+        ...newState[id],
+        saveStatus: 'failed',
+      };
+
+      return newState;
+    case actionTypes.EDITOR_SAVE_COMPLETE:
+      newState[id] = {
+        ...newState[id],
+        saveStatus: 'completed',
+      };
+
+      return newState;
+
     default:
       return state;
   }
@@ -119,6 +144,29 @@ export function editorViolations(state, id) {
   if (!editor) return;
 
   return processorLogic.validate(editor);
+}
+
+export function editorPatchSet(state, id) {
+  if (!state) return;
+
+  const editor = state[id];
+
+  if (!editor) return;
+
+  return processorPatchSet.getPatchSet(editor);
+}
+
+export function editorSaveProcessTerminate(state, id) {
+  if (!state || !state[id]) {
+    return emptyObj;
+  }
+
+  const { saveStatus } = state[id];
+
+  return {
+    saveTerminated: saveStatus === 'completed' || saveStatus === 'failed',
+    saveCompleted: saveStatus === 'completed',
+  };
 }
 
 export function processorRequestOptions(state, id) {

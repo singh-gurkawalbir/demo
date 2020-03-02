@@ -82,6 +82,7 @@ import DynaExportPanel from './DynaExportPanel';
 import cronBuilderComponents from './cronBuilderComponents';
 import DynaCronGenerator from './DynaCronGenerator';
 import DynaNSSearchCriteria from './editors/DynaNSSearchCriteria';
+import DynaSettings from './DynaSettings';
 import DynaNetSuiteSubRecords from './DynaNetSuiteSubRecords';
 import DynaTypeableSelect from './DynaTypeableSelect';
 import DynaMarketplaceId from './DynaMarketplaceId';
@@ -182,6 +183,7 @@ export default {
   groupedButton: cronBuilderComponents.groupedButton,
   cronlabel: cronBuilderComponents.cronlabel,
   nssearchcriteria: DynaNSSearchCriteria,
+  settings: DynaSettings,
   netsuitesubrecords: DynaNetSuiteSubRecords,
   typeableselect: DynaTypeableSelect,
   netsuitesubrecordjsonpath: DynaNetSuiteSubRecordJsonPath,
