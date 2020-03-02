@@ -85,6 +85,9 @@ export default function EditorDialog(props) {
   });
   const { layout, fullScreen } = state;
   const editor = useSelector(state => selectors.editor(state, id));
+  const { saveInProgress } = useSelector(state =>
+    selectors.editorPatchStatus(state, id)
+  );
   const editorViolations = useSelector(state =>
     selectors.editorViolations(state, id)
   );
@@ -211,13 +214,15 @@ export default function EditorDialog(props) {
             Save
           </Button>
         )}
-        <Button
-          variant="text"
-          color="primary"
-          data-test="closeEditor"
-          onClick={handleClose(false)}>
-          Cancel
-        </Button>
+        {!saveInProgress && (
+          <Button
+            variant="text"
+            color="primary"
+            data-test="closeEditor"
+            onClick={handleClose(false)}>
+            Cancel
+          </Button>
+        )}
       </DialogActions>
     </Dialog>
   );

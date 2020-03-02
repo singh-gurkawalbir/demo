@@ -394,8 +394,8 @@ export function editorPatchSet(state, id) {
   return fromSession.editorPatchSet(state && state.session, id);
 }
 
-export function editorSaveProcessTerminate(state, id) {
-  return fromSession.editorSaveProcessTerminate(state && state.session, id);
+export function editorPatchStatus(state, id) {
+  return fromSession.editorPatchStatus(state && state.session, id);
 }
 
 export function mapping(state, id) {

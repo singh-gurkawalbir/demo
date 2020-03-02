@@ -106,6 +106,9 @@ export default function ToggleEditorDialog(props) {
     [labels]
   );
   const editor = useSelector(state => selectors.editor(state, activeEditorId));
+  const { saveInProgress } = useSelector(state =>
+    selectors.editorPatchStatus(state, activeEditorId)
+  );
   const editorViolations = useSelector(state =>
     selectors.editorViolations(state, activeEditorId)
   );
@@ -196,7 +199,7 @@ export default function ToggleEditorDialog(props) {
           })}
       </DialogContent>
       <DialogActions className={classes.actions}>
-        {showPreviewAction && (
+        {showPreviewAction && !saveInProgress && (
           <Button
             variant="outlined"
             data-test="previewEditorResult"
@@ -215,14 +218,15 @@ export default function ToggleEditorDialog(props) {
           onClose={handleClose}
           submitButtonLabel="Save"
         />
-
-        <Button
-          variant="text"
-          color="primary"
-          data-test="closeEditor"
-          onClick={handleClose}>
-          Cancel
-        </Button>
+        {!saveInProgress && (
+          <Button
+            variant="text"
+            color="primary"
+            data-test="closeEditor"
+            onClick={handleClose}>
+            Cancel
+          </Button>
+        )}
       </DialogActions>
     </Dialog>
   );

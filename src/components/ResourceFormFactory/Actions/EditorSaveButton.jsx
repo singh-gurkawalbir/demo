@@ -28,7 +28,7 @@ export default function EditorSaveButton(props) {
   const disableBtn = !editor || editorViolations || disabled;
   const dispatch = useDispatch();
   const { saveTerminated, saveCompleted } = useSelector(state =>
-    selectors.editorSaveProcessTerminate(state, id)
+    selectors.editorPatchStatus(state, id)
   );
 
   useEffect(() => {
@@ -59,7 +59,7 @@ export default function EditorSaveButton(props) {
       data-test={dataTest}
       variant={variant}
       color={color}
-      disabled={disableBtn}
+      disabled={disableBtn || disableSave}
       onClick={handleButtonClick}>
       {disableSave ? (
         <Fragment>
