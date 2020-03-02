@@ -99,7 +99,7 @@ export function* previewMappings({ id }) {
   let _mappings = mappings
     .filter(mapping => !!mapping.generate)
     .map(
-      ({ index, uId, hardCodedValueTmp, rowIdentifier, ...others }) => others
+      ({ index, key, hardCodedValueTmp, rowIdentifier, ...others }) => others
     );
 
   _mappings = mappingUtil.generateMappingsForApp({

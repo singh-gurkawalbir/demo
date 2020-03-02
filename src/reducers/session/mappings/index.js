@@ -18,7 +18,7 @@ export default function reducer(state = {}, action) {
     lookups,
     value,
     field,
-    uId,
+    key,
     options = {},
   } = action;
 
@@ -71,12 +71,12 @@ export default function reducer(state = {}, action) {
             lookups = lookupUtil.getLookupFromResource(resourceData);
           }
 
-          // uId would be unique property associated with each mapping.
+          // key would be unique property associated with each mapping.
           draft[id] = {
             mappings: formattedMappings.map(m => ({
               ...m,
               rowIdentifier: 0,
-              uId: shortid.generate(),
+              key: shortid.generate(),
             })),
             incompleteGenerates: [],
             lookups: lookups || [],
@@ -108,11 +108,11 @@ export default function reducer(state = {}, action) {
       case actionTypes.MAPPING.DELETE: {
         draft[id].changeIdentifier += 1;
         const _mappings = [...draft[id].mappings];
-        const filteredMapping = _mappings.filter(m => m.uId !== uId);
+        const filteredMapping = _mappings.filter(m => m.key !== key);
 
         draft[id].mappings = filteredMapping;
 
-        if (draft[id].lastModifiedUId === uId) draft[id].lastModifiedUId = '';
+        if (draft[id].lastModifiedUId === key) draft[id].lastModifiedUId = '';
 
         const {
           isSuccess,
@@ -133,10 +133,10 @@ export default function reducer(state = {}, action) {
         incompleteGenerates.forEach(generateObj => {
           const {
             value: incompleteGenValue,
-            uId: incompleteGenUId,
+            key: incompleteGenUId,
           } = generateObj;
           const incompleteGenIndex = draft[id].mappings.findIndex(
-            m => m.uId === incompleteGenUId
+            m => m.key === incompleteGenUId
           );
           const childSObject =
             generateFields &&
@@ -160,7 +160,7 @@ export default function reducer(state = {}, action) {
 
       case actionTypes.MAPPING.PATCH_FIELD: {
         draft[id].changeIdentifier += 1;
-        const index = draft[id].mappings.findIndex(m => m.uId === uId);
+        const index = draft[id].mappings.findIndex(m => m.key === key);
 
         if (draft[id].mappings[index]) {
           const objCopy = { ...draft[id].mappings[index] };
@@ -206,11 +206,11 @@ export default function reducer(state = {}, action) {
           draft[id].mappings.push({
             [field]: value,
             rowIdentifier: 0,
-            uId: shortid.generate(),
+            key: shortid.generate(),
           });
         }
 
-        draft[id].lastModifiedUId = uId;
+        draft[id].lastModifiedUId = key;
         const {
           isSuccess,
           errMessage: validationErrMsg,
@@ -224,13 +224,13 @@ export default function reducer(state = {}, action) {
       case actionTypes.MAPPING.PATCH_INCOMPLETE_GENERATES: {
         draft[id].changeIdentifier += 1;
         const incompleteGeneObj = draft[id].incompleteGenerates.find(
-          gen => gen.uId === uId
+          gen => gen.key === key
         );
 
         if (incompleteGeneObj) {
           incompleteGeneObj.value = value;
         } else {
-          draft[id].incompleteGenerates.push({ uId, value });
+          draft[id].incompleteGenerates.push({ key, value });
         }
 
         break;
@@ -238,7 +238,7 @@ export default function reducer(state = {}, action) {
 
       case actionTypes.MAPPING.PATCH_SETTINGS: {
         draft[id].changeIdentifier += 1;
-        const index = draft[id].mappings.findIndex(m => m.uId === uId);
+        const index = draft[id].mappings.findIndex(m => m.key === key);
 
         if (draft[id].mappings[index]) {
           const {
@@ -247,7 +247,7 @@ export default function reducer(state = {}, action) {
             isNotEditable,
             isRequired,
             rowIdentifier,
-            uId,
+            key,
           } = draft[id].mappings[index];
           const valueTmp = {
             generate,
@@ -255,7 +255,7 @@ export default function reducer(state = {}, action) {
             isNotEditable,
             isRequired,
             rowIdentifier,
-            uId,
+            key,
           };
 
           Object.assign(valueTmp, value);
@@ -276,7 +276,7 @@ export default function reducer(state = {}, action) {
           }
 
           draft[id].mappings[index] = { ...valueTmp };
-          draft[id].lastModifiedUId = uId;
+          draft[id].lastModifiedUId = key;
           const {
             isSuccess,
             errMessage: validationErrMsg,
@@ -383,14 +383,14 @@ export function mappingSaveProcessTerminate(state, id) {
 const isMappingObjEqual = (mapping1, mapping2) => {
   const {
     rowIdentifier: r1,
-    uId: uId1,
+    key: uId1,
     isNotEditable: e1,
     isRequired: req1,
     ...formattedMapping1
   } = mapping1;
   const {
     rowIdentifier: r2,
-    uId: uId2,
+    key: uId2,
     isNotEditable: e2,
     isRequired: req2,
     ...formattedMapping2

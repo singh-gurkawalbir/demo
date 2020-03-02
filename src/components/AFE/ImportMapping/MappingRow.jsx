@@ -100,7 +100,7 @@ export default function MappingRow(props) {
     isDraggable = false,
   } = props;
   const {
-    uId,
+    key,
     isSubRecordMapping,
     isRequired,
     isNotEditable,
@@ -160,13 +160,13 @@ export default function MappingRow(props) {
     [mapping, onFieldUpdate]
   );
   const handleDeleteClick = useCallback(() => {
-    onDelete(uId);
-  }, [onDelete, uId]);
+    onDelete(key);
+  }, [onDelete, key]);
   const handleSettingsSave = useCallback(
     (id, evt) => {
-      patchSettings(uId, evt);
+      patchSettings(key, evt);
     },
-    [patchSettings, uId]
+    [patchSettings, key]
   );
 
   // generateFields and extractFields are passed as an array of field names

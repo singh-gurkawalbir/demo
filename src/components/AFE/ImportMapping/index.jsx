@@ -155,7 +155,7 @@ export default function ImportMapping(props) {
   ]);
   const handleFieldUpdate = useCallback(
     (_mapping, field, value) => {
-      const { uId, generate = '', extract = '' } = _mapping;
+      const { key, generate = '', extract = '' } = _mapping;
 
       if (value === '') {
         if (
@@ -164,7 +164,7 @@ export default function ImportMapping(props) {
             extract === '' &&
             !('hardCodedValue' in _mapping))
         ) {
-          dispatch(actions.mapping.delete(editorId, uId));
+          dispatch(actions.mapping.delete(editorId, key));
 
           return;
         }
@@ -185,7 +185,7 @@ export default function ImportMapping(props) {
           dispatch(
             actions.mapping.patchIncompleteGenerates(
               editorId,
-              uId,
+              key,
               relationshipName
             )
           );
@@ -193,7 +193,7 @@ export default function ImportMapping(props) {
         }
       }
 
-      dispatch(actions.mapping.patchField(editorId, field, uId, value));
+      dispatch(actions.mapping.patchField(editorId, field, key, value));
     },
     [
       application,
@@ -204,13 +204,13 @@ export default function ImportMapping(props) {
     ]
   );
   const patchSettings = useCallback(
-    (uId, settings) => {
-      dispatch(actions.mapping.patchSettings(editorId, uId, settings));
+    (key, settings) => {
+      dispatch(actions.mapping.patchSettings(editorId, key, settings));
     },
     [dispatch, editorId]
   );
-  const handleDelete = uId => {
-    dispatch(actions.mapping.delete(editorId, uId));
+  const handleDelete = key => {
+    dispatch(actions.mapping.delete(editorId, key));
   };
 
   const generateLabel = mappingUtil.getGenerateLabelForMapping(
@@ -358,9 +358,9 @@ export default function ImportMapping(props) {
             {tableData.map((mapping, index) => (
               <MappingRow
                 index={index}
-                id={`${mapping.uId}-${mapping.rowIdentifier}`}
+                id={`${mapping.key}-${mapping.rowIdentifier}`}
                 // eslint-disable-next-line react/no-array-index-key
-                key={`${mapping.uId}-${mapping.rowIdentifier}`}
+                key={`${mapping.key}-${mapping.rowIdentifier}`}
                 mapping={mapping}
                 extractFields={extractFields}
                 onFieldUpdate={handleFieldUpdate}
