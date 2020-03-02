@@ -14,7 +14,6 @@ import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import actions from '../../../actions';
-import { preSaveValidate } from './util';
 import * as selectors from '../../../reducers';
 import FullScreenOpenIcon from '../../icons/FullScreenOpenIcon';
 import FullScreenCloseIcon from '../../icons/FullScreenCloseIcon';
@@ -22,6 +21,7 @@ import TextToggle from '../../../components/TextToggle';
 import ViewColumnIcon from '../../icons/LayoutTriVerticalIcon';
 import ViewCompactIcon from '../../icons/LayoutLgLeftSmrightIcon';
 import useConfirmDialog from '../../ConfirmDialog';
+import EditorSaveButton from '../../ResourceFormFactory/Actions/EditorSaveButton';
 
 const useStyles = makeStyles(theme => ({
   dialogContent: {
@@ -120,17 +120,6 @@ export default function ToggleEditorDialog(props) {
     () => dispatch(actions.editor.evaluateRequest(activeEditorId)),
     [activeEditorId, dispatch]
   );
-  const handleSave = useCallback(() => {
-    if (!preSaveValidate({ editor, enquesnackbar })) {
-      return;
-    }
-
-    if (onClose) {
-      const shouldCommit = true;
-
-      onClose(shouldCommit, editor);
-    }
-  }, [editor, enquesnackbar, onClose]);
   const handleCancelClick = useCallback(() => {
     if (isEditorDirty) {
       confirmDialog({
@@ -174,6 +163,9 @@ export default function ToggleEditorDialog(props) {
       !hidePreviewAction && editor && !editorViolations && !editor.autoEvaluate,
     [editor, editorViolations, hidePreviewAction]
   );
+  const handleClose = useCallback(() => {
+    onClose();
+  }, [onClose]);
   const disableSave = useMemo(() => !editor || editorViolations || disabled, [
     disabled,
     editor,
@@ -251,14 +243,16 @@ export default function ToggleEditorDialog(props) {
             Preview
           </Button>
         )}
-        <Button
+        <EditorSaveButton
+          key={activeEditorId}
+          id={activeEditorId}
           variant="outlined"
+          color="primary"
           data-test="saveEditor"
           disabled={!!disableSave}
-          color="primary"
-          onClick={handleSave}>
-          Save
-        </Button>
+          onClose={handleClose}
+          submitButtonLabel="Save"
+        />
         <Button
           variant="text"
           color="primary"

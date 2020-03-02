@@ -2,6 +2,7 @@ import produce from 'immer';
 import { deepClone } from 'fast-json-patch';
 import actionTypes from '../../../actions/types';
 import processorLogic from './processorLogic';
+import processorPatchSet from './processorPatchSet';
 
 const emptyObj = {};
 
@@ -26,6 +27,7 @@ export default function reducer(state = {}, action) {
       case actionTypes.EDITOR_INIT: {
         const initChangeIdentifier =
           (draft[id] && draft[id].initChangeIdentifier) || 0;
+        const saveStatus = draft[id] && draft[id].saveStatus;
 
         draft[id] = {
           processor,
@@ -33,6 +35,7 @@ export default function reducer(state = {}, action) {
           ...deepClone(options),
           lastChange: Date.now(),
           initChangeIdentifier: initChangeIdentifier + 1,
+          saveStatus,
         };
         break;
       }
@@ -82,6 +85,21 @@ export default function reducer(state = {}, action) {
         break;
       }
 
+      case actionTypes.EDITOR_SAVE: {
+        draft[id].saveStatus = 'requested';
+        break;
+      }
+
+      case actionTypes.EDITOR_SAVE_FAILED: {
+        draft[id].saveStatus = 'failed';
+        break;
+      }
+
+      case actionTypes.EDITOR_SAVE_COMPLETE: {
+        draft[id].saveStatus = 'completed';
+        break;
+      }
+
       default:
     }
   });
@@ -116,6 +134,29 @@ export function isEditorDirty(state, id) {
   if (!editor) return;
 
   return processorLogic.isDirty(editor);
+}
+
+export function editorPatchSet(state, id) {
+  if (!state) return;
+
+  const editor = state[id];
+
+  if (!editor) return;
+
+  return processorPatchSet.getPatchSet(editor);
+}
+
+export function editorSaveProcessTerminate(state, id) {
+  if (!state || !state[id]) {
+    return emptyObj;
+  }
+
+  const { saveStatus } = state[id];
+
+  return {
+    saveTerminated: saveStatus === 'completed' || saveStatus === 'failed',
+    saveCompleted: saveStatus === 'completed',
+  };
 }
 
 export function processorRequestOptions(state, id) {

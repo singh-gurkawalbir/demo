@@ -21,6 +21,7 @@ import FullScreenCloseIcon from '../../icons/FullScreenCloseIcon';
 import ViewColumnIcon from '../../icons/LayoutTriVerticalIcon';
 import ViewCompactIcon from '../../icons/LayoutLgLeftSmrightIcon';
 import useConfirmDialog from '../../ConfirmDialog';
+import EditorSaveButton from '../../ResourceFormFactory/Actions/EditorSaveButton';
 
 const useStyles = makeStyles(theme => ({
   dialogContent: {
@@ -56,6 +57,9 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+/**
+ * @param patchOnSave = false (default editor behaviour) or true (for resource patch on save)
+ */
 export default function EditorDialog(props) {
   const {
     children,
@@ -71,6 +75,7 @@ export default function EditorDialog(props) {
     disabled,
     dataTest = 'editor',
     hidePreviewAction = false,
+    patchOnSave = false,
   } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -102,10 +107,16 @@ export default function EditorDialog(props) {
     },
     [editor, enquesnackbar, onClose]
   );
-  const patchEditorLayoutChange = () => {
+  const patchEditorLayoutChange = useCallback(() => {
     dispatch(actions.editor.changeLayout(id));
-  };
-
+  }, [dispatch, id]);
+  const handleLayoutChange = useCallback(
+    (event, _layout) => {
+      patchEditorLayoutChange();
+      _layout && setState({ ...state, layout: _layout });
+    },
+    [patchEditorLayoutChange, state]
+  );
   const handleCancelClick = useCallback(() => {
     if (isEditorDirty) {
       confirmDialog({
@@ -125,11 +136,6 @@ export default function EditorDialog(props) {
       onClose();
     }
   }, [confirmDialog, isEditorDirty, onClose]);
-  const handleLayoutChange = (event, _layout) => {
-    patchEditorLayoutChange();
-    _layout && setState({ ...state, layout: _layout });
-  };
-
   const handleFullScreenClick = () => {
     patchEditorLayoutChange();
     setState({ ...state, fullScreen: !fullScreen });
@@ -210,14 +216,26 @@ export default function EditorDialog(props) {
             Preview
           </Button>
         )}
-        <Button
-          variant="outlined"
-          data-test="saveEditor"
-          disabled={!!disableSave}
-          color="primary"
-          onClick={handleSave(true)}>
-          Save
-        </Button>
+        {patchOnSave ? (
+          <EditorSaveButton
+            id={id}
+            variant="outlined"
+            color="primary"
+            data-test="saveEditor"
+            disabled={disabled}
+            onClose={handleSave(false)}
+            submitButtonLabel="Save"
+          />
+        ) : (
+          <Button
+            variant="outlined"
+            data-test="saveEditor"
+            disabled={!!disableSave}
+            color="primary"
+            onClick={handleSave(true)}>
+            Save
+          </Button>
+        )}
         <Button
           variant="text"
           color="primary"
