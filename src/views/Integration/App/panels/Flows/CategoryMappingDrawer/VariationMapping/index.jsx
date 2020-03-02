@@ -158,24 +158,27 @@ function VariationMappingDrawer({ integrationId, parentUrl }) {
     }) || {};
   const handleClose = useCallback(() => {
     history.push(parentUrl);
-
+  }, [history, parentUrl]);
+  const handleCancel = useCallback(() => {
     dispatch(
-      actions.integrationApp.settings.clearVariationMappings(
+      actions.integrationApp.settings.categoryMappings.cancelVariationMappings(
         integrationId,
         flowId,
-        { categoryId: subCategoryId }
-      )
-    );
-  }, [dispatch, flowId, history, integrationId, parentUrl, subCategoryId]);
-  const handleSave = useCallback(() => {
-    dispatch(
-      actions.integrationApp.settings.saveCategoryMappings(
-        integrationId,
-        flowId
+        `${flowId}-${subCategoryId}-${variation}`
       )
     );
     handleClose();
-  }, [dispatch, flowId, handleClose, integrationId]);
+  }, [dispatch, flowId, handleClose, integrationId, subCategoryId, variation]);
+  const handleSave = useCallback(() => {
+    dispatch(
+      actions.integrationApp.settings.categoryMappings.saveVariationMappings(
+        integrationId,
+        flowId,
+        `${flowId}-${subCategoryId}-${variation}`
+      )
+    );
+    handleClose();
+  }, [dispatch, flowId, handleClose, integrationId, subCategoryId, variation]);
   const handleSaveAndClose = useCallback(() => {
     handleClose();
   }, [handleClose]);
@@ -261,8 +264,8 @@ function VariationMappingDrawer({ integrationId, parentUrl }) {
             <Button
               variant="text"
               data-test="saveImportMapping"
-              onClick={handleClose}>
-              Close
+              onClick={handleCancel}>
+              Cancel
             </Button>
           </ButtonGroup>
         </div>

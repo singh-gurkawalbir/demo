@@ -58,6 +58,26 @@ const setMappingData = (flowId, recordMappings, mappings) => {
   });
 };
 
+const setVariationMappingData = (flowId, recordMappings, mappings) => {
+  recordMappings.forEach(mapping => {
+    mapping.variation_themes.forEach(vm => {
+      if (mappings[`${flowId}-${mapping.id}-${vm.variation_theme}`]) {
+        // eslint-disable-next-line no-param-reassign
+        vm.fieldMappings = mappings[
+          `${flowId}-${mapping.id}-${vm.variation_theme}`
+        ].mappings.filter(el => !!el.extract && !!el.generate);
+        // eslint-disable-next-line no-param-reassign
+        vm.lookups =
+          mappings[`${flowId}-${mapping.id}-${vm.variation_theme}`].lookups;
+      }
+    });
+
+    if (mapping.children && mapping.children.length) {
+      setVariationMappingData(flowId, mapping.children, mappings);
+    }
+  });
+};
+
 /**
  * parentMapping = resource mapping object
  * returns subRecordMapping object
@@ -213,7 +233,11 @@ export default {
     const { basicMappings = {}, variationMappings = {} } = sessionMappedData;
 
     setMappingData(flowId, basicMappings.recordMappings || [], mappings);
-    setMappingData(flowId, variationMappings.recordMappings || [], mappings);
+    setVariationMappingData(
+      flowId,
+      variationMappings.recordMappings || [],
+      mappings
+    );
   },
   getFieldMappingType: value => {
     if (value.lookupName) {

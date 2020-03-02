@@ -1213,15 +1213,6 @@ export function integrationAppConnectionList(
     .connections;
 }
 
-export function pendingVariationMappings(state, integrationId, flowId, data) {
-  return fromSession.categoryMapping(
-    state && state.session,
-    integrationId,
-    flowId,
-    data
-  );
-}
-
 export function categoryMappingsForSection(state, integrationId, flowId, id) {
   return fromSession.categoryMappingsForSection(
     state && state.session,

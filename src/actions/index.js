@@ -499,6 +499,26 @@ const integrationApp = {
             value,
           }
         ),
+      saveVariationMappings: (integrationId, flowId, id) =>
+        action(
+          actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
+            .SAVE_VARIATION_MAPPINGS,
+          {
+            integrationId,
+            flowId,
+            id,
+          }
+        ),
+      cancelVariationMappings: (integrationId, flowId, id) =>
+        action(
+          actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
+            .CANCEL_VARIATION_MAPPINGS,
+          {
+            integrationId,
+            flowId,
+            id,
+          }
+        ),
       save: (integrationId, flowId, id) =>
         action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.SAVE, {
           integrationId,
@@ -588,12 +608,7 @@ const integrationApp = {
         flowId,
         data,
       }),
-    saveVariationMappings: (integrationId, flowId, data) =>
-      action(actionTypes.INTEGRATION_APPS.SETTINGS.SAVE_VARIATION_MAPPINGS, {
-        integrationId,
-        flowId,
-        data,
-      }),
+
     addCategory: (integrationId, flowId, data) =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.ADD_CATEGORY, {
         integrationId,

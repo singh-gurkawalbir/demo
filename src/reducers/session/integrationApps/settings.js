@@ -235,6 +235,35 @@ export default (state = {}, action) => {
       case actionTypes.INTEGRATION_APPS.SETTINGS.UPGRADE_REQUESTED:
         draft[licenseId] = true;
         break;
+      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
+        .SAVE_VARIATION_MAPPINGS:
+        if (
+          draft[`${flowId}-${integrationId}`] &&
+          draft[`${flowId}-${integrationId}`].mappings &&
+          draft[`${flowId}-${integrationId}`].mappings[id]
+        ) {
+          draft[`${flowId}-${integrationId}`].mappings[id].staged =
+            draft[`${flowId}-${integrationId}`].mappings[id].mappings;
+          draft[`${flowId}-${integrationId}`].mappings[id].stagedLookups =
+            draft[`${flowId}-${integrationId}`].mappings[id].lookups;
+        }
+
+        break;
+      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
+        .CANCEL_VARIATION_MAPPINGS:
+        if (
+          draft[`${flowId}-${integrationId}`] &&
+          draft[`${flowId}-${integrationId}`].mappings &&
+          draft[`${flowId}-${integrationId}`].mappings[id] &&
+          draft[`${flowId}-${integrationId}`].mappings[id].staged
+        ) {
+          draft[`${flowId}-${integrationId}`].mappings[id].mappings =
+            draft[`${flowId}-${integrationId}`].mappings[id].staged;
+          draft[`${flowId}-${integrationId}`].mappings[id].lookups =
+            draft[`${flowId}-${integrationId}`].mappings[id].stagedLookups;
+        }
+
+        break;
       case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.DELETE: {
         if (
           draft[`${flowId}-${integrationId}`] &&
@@ -558,13 +587,18 @@ export default (state = {}, action) => {
         // ie,  all variations of one section will have same prefix `${flowId}-${integrationId}-${sectionId}`
         // so while deleting section we need to delete all variations of that section.
         // hence searching by prefix and not strict id check.
-        Object.keys(draft[`${flowId}-${integrationId}`].mappings).forEach(
-          _id => {
-            if (_id.startsWith(id)) {
-              delete draft[`${flowId}-${integrationId}`].mappings[id];
+        if (
+          draft[`${flowId}-${integrationId}`] &&
+          draft[`${flowId}-${integrationId}`].mappings
+        ) {
+          Object.keys(draft[`${flowId}-${integrationId}`].mappings).forEach(
+            _id => {
+              if (_id.startsWith(id)) {
+                delete draft[`${flowId}-${integrationId}`].mappings[id];
+              }
             }
-          }
-        );
+          );
+        }
 
         break;
 

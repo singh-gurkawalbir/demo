@@ -239,24 +239,6 @@ export function* saveCategoryMappings({ integrationId, flowId }) {
   );
 }
 
-export function* saveVariationMappings({ integrationId, flowId, data = {} }) {
-  const mappings = yield select(
-    selectors.pendingVariationMappings,
-    integrationId,
-    flowId,
-    data
-  );
-
-  yield put(
-    actions.integrationApp.settings.saveVariationMappings(
-      integrationId,
-      flowId,
-      data,
-      mappings
-    )
-  );
-}
-
 export function* upgrade({ integration, license }) {
   const path = `/integrations/${integration._id}/settings/changeEdition`;
   let upgradeResponse;
@@ -299,10 +281,6 @@ export default [
   takeLatest(
     actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.SAVE,
     saveCategoryMappings
-  ),
-  takeLatest(
-    actionTypes.INTEGRATION_APPS.SETTINGS.SAVE_VARIATION_MAPPINGS,
-    saveVariationMappings
   ),
   takeLatest(
     actionTypes.INTEGRATION_APPS.SETTINGS.MAPPING_METADATA_REQUEST,
