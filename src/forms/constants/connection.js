@@ -97,6 +97,7 @@ export default {
     'easyship',
     'onelogin',
     'dynamodb',
+    'loopreturns',
   ],
   OAUTH_APPLICATIONS: [
     'azureactivedirectory',
