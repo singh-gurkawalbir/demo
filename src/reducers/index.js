@@ -3666,7 +3666,7 @@ export const getSampleDataWrapper = createSelector(
       return {
         status,
         data: {
-          data: [data],
+          data: data ? [data] : [],
           errors: [],
           ...resourceIds,
           ...contextFields,
@@ -3679,7 +3679,7 @@ export const getSampleDataWrapper = createSelector(
       return {
         status,
         data: {
-          data: [data],
+          data: data ? [data] : [],
           ...resourceIds,
           settings,
         },
@@ -3690,8 +3690,8 @@ export const getSampleDataWrapper = createSelector(
       return {
         status,
         data: {
-          preMapData: [preMapSampleData.data],
-          postMapData: [data],
+          preMapData: preMapSampleData.data ? [preMapSampleData.data] : [],
+          postMapData: data ? [data] : [],
           ...resourceIds,
           settings,
         },
@@ -3702,8 +3702,8 @@ export const getSampleDataWrapper = createSelector(
       return {
         status,
         data: {
-          preMapData: [preMapSampleData.data],
-          postMapData: [data],
+          preMapData: preMapSampleData.data ? [preMapSampleData.data] : [],
+          postMapData: data ? [data] : [],
           responseData: [data].map(() => ({
             statusCode: 200,
             errors: [{ code: '', message: '', source: '' }],
