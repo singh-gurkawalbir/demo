@@ -59,7 +59,7 @@ export default function EditorSaveButton(props) {
       data-test={dataTest}
       variant={variant}
       color={color}
-      disabled={disableBtn || disableSave}
+      disabled={!!(disableBtn || disableSave)}
       onClick={handleButtonClick}>
       {disableSave ? (
         <Fragment>
