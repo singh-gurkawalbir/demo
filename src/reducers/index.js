@@ -390,6 +390,10 @@ export function editorViolations(state, id) {
   return fromSession.editorViolations(state && state.session, id);
 }
 
+export function isEditorDirty(state, id) {
+  return fromSession.isEditorDirty(state && state.session, id);
+}
+
 export function editorPatchSet(state, id) {
   return fromSession.editorPatchSet(state && state.session, id);
 }

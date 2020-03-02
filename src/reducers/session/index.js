@@ -90,6 +90,10 @@ export function editorViolations(state, id) {
   return fromEditors.editorViolations(state && state.editors, id);
 }
 
+export function isEditorDirty(state, id) {
+  return fromEditors.isEditorDirty(state && state.editors, id);
+}
+
 export function editorPatchSet(state, id) {
   return fromEditors.editorPatchSet(state && state.editors, id);
 }
