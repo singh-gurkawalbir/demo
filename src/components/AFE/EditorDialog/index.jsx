@@ -85,8 +85,8 @@ export default function EditorDialog(props) {
   });
   const { layout, fullScreen } = state;
   const editor = useSelector(state => selectors.editor(state, id));
-  const { saveInProgress } = useSelector(state =>
-    selectors.editorPatchStatus(state, id)
+  const saveInProgress = useSelector(
+    state => selectors.editorPatchStatus(state, id).saveInProgress
   );
   const editorViolations = useSelector(state =>
     selectors.editorViolations(state, id)

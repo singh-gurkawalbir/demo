@@ -164,9 +164,9 @@ export function editorPatchStatus(state, id) {
   const { saveStatus } = state[id];
 
   return {
-    saveTerminated: !!(saveStatus === 'completed' || saveStatus === 'failed'),
-    saveCompleted: !!(saveStatus === 'completed'),
-    saveInProgress: !!(saveStatus === 'requested'),
+    saveTerminated: saveStatus === 'completed' || saveStatus === 'failed',
+    saveCompleted: saveStatus === 'completed',
+    saveInProgress: saveStatus === 'requested',
   };
 }
 

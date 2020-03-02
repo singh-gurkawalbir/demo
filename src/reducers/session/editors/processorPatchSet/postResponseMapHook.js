@@ -17,6 +17,7 @@ export default {
       });
     }
 
+    // Incase of user selecting None for script, pass undefined instead of '' as BE throws error if it is ''
     // removing hook object is user selects none
     if (scriptId === '') {
       foregroundPatchSet.push({

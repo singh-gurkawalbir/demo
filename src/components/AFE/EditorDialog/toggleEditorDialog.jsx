@@ -106,8 +106,8 @@ export default function ToggleEditorDialog(props) {
     [labels]
   );
   const editor = useSelector(state => selectors.editor(state, activeEditorId));
-  const { saveInProgress } = useSelector(state =>
-    selectors.editorPatchStatus(state, activeEditorId)
+  const saveInProgress = useSelector(
+    state => selectors.editorPatchStatus(state, activeEditorId).saveInProgress
   );
   const editorViolations = useSelector(state =>
     selectors.editorViolations(state, activeEditorId)
