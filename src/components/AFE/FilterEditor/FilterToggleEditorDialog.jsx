@@ -12,6 +12,7 @@ export default function FilterToggleEditorDialog(props) {
     type,
     entryFunction,
     insertStubKey,
+    optionalSaveParams,
     ...rest
   } = props;
   const defaults = {
@@ -30,13 +31,19 @@ export default function FilterToggleEditorDialog(props) {
       {...rest}
       disabled={disabled}
       showLayoutOptions>
-      <FilterEditor disabled={disabled} data={data} rule={rule} />
+      <FilterEditor
+        disabled={disabled}
+        data={data}
+        rule={rule}
+        optionalSaveParams={optionalSaveParams}
+      />
       <JavaScriptEditor
         data={data}
         disabled={disabled}
         scriptId={scriptId}
         entryFunction={entryFunction}
         insertStubKey={insertStubKey}
+        optionalSaveParams={optionalSaveParams}
       />
     </ToggleEditorDialog>
   );
