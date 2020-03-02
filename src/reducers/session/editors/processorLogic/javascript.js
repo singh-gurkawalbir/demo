@@ -20,6 +20,6 @@ export default {
   dirty: editor => {
     const { entryFunction, initEntryFunction, initCode, code } = editor || {};
 
-    return entryFunction !== initEntryFunction || initCode === code;
+    return entryFunction !== initEntryFunction || initCode !== code;
   },
 };
