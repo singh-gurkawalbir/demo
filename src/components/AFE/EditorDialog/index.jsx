@@ -136,6 +136,7 @@ export default function EditorDialog(props) {
       onClose();
     }
   }, [confirmDialog, isEditorDirty, onClose]);
+  // TODO (Aditya) : Check with Surya if confirmDialog returns same reference everytime
   const handleFullScreenClick = () => {
     patchEditorLayoutChange();
     setState({ ...state, fullScreen: !fullScreen });

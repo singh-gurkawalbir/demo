@@ -35,7 +35,6 @@ const useStyles = makeStyles(theme => ({
       visibility: 'hidden',
     },
     '&:hover': {
-      background: theme.palette.secondary.lightest,
       '& > div[class*="dragIcon"]': {
         visibility: 'visible',
       },
