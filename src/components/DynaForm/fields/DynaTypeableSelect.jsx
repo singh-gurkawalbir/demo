@@ -255,6 +255,7 @@ export default function DynaTypeableSelect(props) {
           inputValue={inputVal}
           isDisabled={disabled}
           value={selectedValue}
+          // restricting selection of 1st suggestion on tabout
           tabSelectsValue={false}
           noOptionsMessage={() => null}
           placeholder={placeholder || ''}
