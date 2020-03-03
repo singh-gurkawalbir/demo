@@ -41,6 +41,43 @@ const checkExtractPathFoundInSampledata = (str, sampleData, wrapped) => {
   );
 };
 
+const setMappingData = (flowId, recordMappings, mappings) => {
+  recordMappings.forEach(mapping => {
+    if (mappings[`${flowId}-${mapping.id}`]) {
+      // eslint-disable-next-line no-param-reassign
+      mapping.fieldMappings = mappings[
+        `${flowId}-${mapping.id}`
+      ].mappings.filter(el => !!el.extract && !!el.generate);
+      // eslint-disable-next-line no-param-reassign
+      mapping.lookups = mappings[`${flowId}-${mapping.id}`].lookups;
+    }
+
+    if (mapping.children && mapping.children.length) {
+      setMappingData(flowId, mapping.children, mappings);
+    }
+  });
+};
+
+const setVariationMappingData = (flowId, recordMappings, mappings) => {
+  recordMappings.forEach(mapping => {
+    mapping.variation_themes.forEach(vm => {
+      if (mappings[`${flowId}-${mapping.id}-${vm.variation_theme}`]) {
+        // eslint-disable-next-line no-param-reassign
+        vm.fieldMappings = mappings[
+          `${flowId}-${mapping.id}-${vm.variation_theme}`
+        ].mappings.filter(el => !!el.extract && !!el.generate);
+        // eslint-disable-next-line no-param-reassign
+        vm.lookups =
+          mappings[`${flowId}-${mapping.id}-${vm.variation_theme}`].lookups;
+      }
+    });
+
+    if (mapping.children && mapping.children.length) {
+      setVariationMappingData(flowId, mapping.children, mappings);
+    }
+  });
+};
+
 /**
  * parentMapping = resource mapping object
  * returns subRecordMapping object
@@ -192,7 +229,16 @@ export default {
 
     return value.dataType;
   },
+  setCategoryMappingData: (flowId, sessionMappedData = {}, mappings = {}) => {
+    const { basicMappings = {}, variationMappings = {} } = sessionMappedData;
 
+    setMappingData(flowId, basicMappings.recordMappings || [], mappings);
+    setVariationMappingData(
+      flowId,
+      variationMappings.recordMappings || [],
+      mappings
+    );
+  },
   getFieldMappingType: value => {
     if (value.lookupName) {
       return 'lookup';
@@ -401,7 +447,7 @@ export default {
       default:
     }
 
-    if (options.isCategoryMapping) {
+    if (options.isCategoryMapping || options.isVariationMapping) {
       ({ mappings } = options);
     }
 

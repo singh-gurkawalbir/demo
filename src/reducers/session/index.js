@@ -90,6 +90,18 @@ export function editorViolations(state, id) {
   return fromEditors.editorViolations(state && state.editors, id);
 }
 
+export function isEditorDirty(state, id) {
+  return fromEditors.isEditorDirty(state && state.editors, id);
+}
+
+export function editorPatchSet(state, id) {
+  return fromEditors.editorPatchSet(state && state.editors, id);
+}
+
+export function editorSaveProcessTerminate(state, id) {
+  return fromEditors.editorSaveProcessTerminate(state && state.editors, id);
+}
+
 export function mapping(state, id) {
   return fromMappings.mapping(state && state.mappings, id);
 }
@@ -320,6 +332,15 @@ export function categoryMapping(state, integrationId, flowId) {
     state && state.integrationApps,
     integrationId,
     flowId
+  );
+}
+
+export function categoryMappingsForSection(state, integrationId, flowId, id) {
+  return fromIntegrationApps.categoryMappingsForSection(
+    state && state.integrationApps,
+    integrationId,
+    flowId,
+    id
   );
 }
 

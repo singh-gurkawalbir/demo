@@ -1,3 +1,5 @@
+import { isNewId } from '../../../utils/resource';
+
 export default {
   preSave: formValues => {
     const newValues = formValues;
@@ -127,28 +129,13 @@ export default {
       ],
       visibleWhen: [{ field: 'netsuite.authType', is: ['basic'] }],
     },
-    'netsuite.token.auto': {
-      id: 'netsuite.token.auto',
-      type: 'text',
-      visible: false,
-      defaultValue: r => {
-        if (!(r && r.netsuite && r.netsuite.account)) {
-          return 'false';
-        }
-
-        return 'true';
-      },
-    },
     'netsuite.token.auto.roleId': {
       fieldId: 'netsuite.token.auto.roleId',
       type: 'text',
       label: 'Role',
       defaultDisabled: true,
+      visible: r => r && !isNewId(r._id),
       defaultValue: r => r && r.netsuite && r.netsuite.roleId,
-      visibleWhenAll: [
-        { field: 'netsuite.authType', is: ['token-auto'] },
-        { field: 'netsuite.token.auto', is: ['true'] },
-      ],
     },
     'netsuite.tokenId': {
       fieldId: 'netsuite.tokenId',
@@ -175,7 +162,6 @@ export default {
       'netsuite.environment',
       'netsuite.tokenEnvironment',
       'netsuite.account',
-      'netsuite.token.auto',
       'netsuite.tokenAccount',
       'netsuite.token.auto.account',
       'netsuite.token.auto.roleId',

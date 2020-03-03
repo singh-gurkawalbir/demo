@@ -567,4 +567,11 @@ export default {
     label: 'Skip Retries',
     visible: r => !(r && r.isLookup),
   },
+  settings: {
+    type: 'editor',
+    mode: 'json',
+    label: 'Settings',
+    showOnDeveloperMode: true,
+    defaultValue: r => (r && r.settings && JSON.stringify(r.settings)) || '{}',
+  },
 };

@@ -10,6 +10,7 @@ export default function JavaScriptEditorDialog(props) {
     disabled,
     entryFunction,
     insertStubKey,
+    optionalSaveParams,
     ...rest
   } = props;
   const defaults = {
@@ -32,6 +33,7 @@ export default function JavaScriptEditorDialog(props) {
         insertStubKey={insertStubKey}
         data={data}
         disabled={disabled}
+        optionalSaveParams={optionalSaveParams}
       />
     </EditorDialog>
   );

@@ -4,7 +4,7 @@ import { Route, useLocation, generatePath } from 'react-router-dom';
 import { makeStyles, Typography, IconButton } from '@material-ui/core';
 import LoadResources from '../../../components/LoadResources';
 import ResourceForm from '../../../components/ResourceFormFactory';
-import { MODEL_PLURAL_TO_LABEL, isNewId } from '../../../utils/resource';
+import { isNewId } from '../../../utils/resource';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
@@ -83,15 +83,18 @@ export default function Panel(props) {
   const location = useLocation();
   const dispatch = useDispatch();
   const [enqueueSnackbar] = useEnqueueSnackbar();
-  const isFlowBuilder = location.pathname.indexOf('flowBuilder') > -1;
   const formState = useSelector(state =>
     selectors.resourceFormState(state, resourceType, id)
   );
   const newResourceId = useSelector(state =>
     selectors.createdResourceId(state, id)
   );
-  const isLookUpExport = useSelector(state =>
-    selectors.isLookUpExport(state, { flowId, resourceId: id, resourceType })
+  const resourceLabel = useSelector(state =>
+    selectors.getCustomResourceLabel(state, {
+      resourceId: id,
+      resourceType,
+      flowId,
+    })
   );
   const abortAndClose = useCallback(() => {
     dispatch(actions.resourceForm.submitAborted(resourceType, id));
@@ -141,26 +144,6 @@ export default function Panel(props) {
 
     return assistant || adaptorType;
   });
-  let resourceLabel;
-
-  if (resourceType === 'pageProcessor') {
-    resourceLabel = 'Destination / Lookup';
-  } else if (resourceType === 'pageGenerator') {
-    resourceLabel = 'Source';
-  } else if (isLookUpExport) {
-    resourceLabel = 'Lookup';
-  } else {
-    resourceLabel = MODEL_PLURAL_TO_LABEL[resourceType];
-  }
-
-  if (isFlowBuilder) {
-    if (isNewId(id) && resourceType === 'exports') {
-      resourceLabel = isLookUpExport ? 'Lookup' : 'Source';
-    } else if (isNewId(id) && resourceType === 'imports') {
-      resourceLabel = 'Import';
-    }
-  }
-
   const isMultiStepSaveResource = [
     'imports',
     'exports',
@@ -276,7 +259,7 @@ export default function Panel(props) {
   }
 
   const showApplicationLogo =
-    isFlowBuilder &&
+    flowId &&
     ['exports', 'imports'].includes(resourceType) &&
     !!applicationType;
   const requiredResources = determineRequiredResources(resourceType);

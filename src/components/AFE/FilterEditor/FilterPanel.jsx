@@ -67,16 +67,35 @@ export default function FilterPanel({
       d = data;
     }
 
-    const jsonPaths = getJSONPaths(isArray(d) ? d[0] : d, null, {
-      wrapSpecialChars: true,
-    }).filter(p => p.id && !p.id.includes('[*].'));
-    const contextJsonPaths = jsonPaths.filter(
-      p => p.id && p.id.startsWith('_CONTEXT.')
-    );
+    if (!d.record) {
+      d.record = {};
+    }
 
-    return jsonPaths
-      .filter(p => p.id && !p.id.startsWith('_CONTEXT.'))
-      .concat(contextJsonPaths);
+    const jsonPaths = getJSONPaths(
+      isArray(d.record) ? d.record[0] : d.record,
+      null,
+      {
+        wrapSpecialChars: true,
+      }
+    )
+      .filter(p => p.id && !p.id.includes('[*].'))
+      .map(p => ({ ...p, id: `record.${p.id}` }));
+
+    ['pageIndex', 'lastExportDateTime', 'currentExportDateTime'].forEach(p => {
+      if (Object.hasOwnProperty.call(d, p)) {
+        jsonPaths.push({ id: p });
+      }
+    });
+
+    getJSONPaths(d.settings, null, {
+      wrapSpecialChars: true,
+    })
+      .filter(p => p.id && !p.id.includes('[*].'))
+      .forEach(p => {
+        jsonPaths.push({ id: `settings.${p.id}` });
+      });
+
+    return jsonPaths;
   }, [data]);
 
   useEffect(() => {
@@ -540,8 +559,8 @@ export default function FilterPanel({
           if (r.lhs.type === 'field') {
             if (
               lhsValue &&
-              (lhsValue === '_CONTEXT.lastExportDateTime' ||
-                lhsValue === '_CONTEXT.currentExportDateTime')
+              (lhsValue === 'lastExportDateTime' ||
+                lhsValue === 'currentExportDateTime')
             ) {
               r.lhs.dataType = 'epochtime';
             }
@@ -568,8 +587,8 @@ export default function FilterPanel({
           if (r.rhs.type === 'field') {
             if (
               rhsValue &&
-              (rhsValue === '_CONTEXT.lastExportDateTime' ||
-                rhsValue === '_CONTEXT.currentExportDateTime')
+              (rhsValue === 'lastExportDateTime' ||
+                rhsValue === 'currentExportDateTime')
             ) {
               r.rhs.dataType = 'epochtime';
             }
@@ -602,8 +621,8 @@ export default function FilterPanel({
             if (r.lhs.type === 'field') {
               if (
                 lhsValue &&
-                (lhsValue === '_CONTEXT.lastExportDateTime' ||
-                  lhsValue === '_CONTEXT.currentExportDateTime')
+                (lhsValue === 'lastExportDateTime' ||
+                  lhsValue === 'currentExportDateTime')
               ) {
                 r.lhs.dataType = 'epochtime';
               }
@@ -626,8 +645,8 @@ export default function FilterPanel({
             if (r.rhs.type === 'field') {
               if (
                 rhsValue &&
-                (rhsValue === '_CONTEXT.lastExportDateTime' ||
-                  rhsValue === '_CONTEXT.currentExportDateTime')
+                (rhsValue === 'lastExportDateTime' ||
+                  rhsValue === 'currentExportDateTime')
               ) {
                 r.rhs.dataType = 'epochtime';
               }

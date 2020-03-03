@@ -42,7 +42,12 @@ import {
   getUsedActionsMapForResource,
   isPageGeneratorResource,
 } from '../utils/flows';
-import { isValidResourceReference, isNewId } from '../utils/resource';
+import {
+  isValidResourceReference,
+  isNewId,
+  MODEL_PLURAL_TO_LABEL,
+  isRealTimeOrDistributedResource,
+} from '../utils/resource';
 import { processSampleData } from '../utils/sampleData';
 import {
   getAvailablePreviewStages,
@@ -52,6 +57,7 @@ import inferErrorMessage from '../utils/inferErrorMessage';
 import getRoutePath from '../utils/routePaths';
 import { COMM_STATES } from './comms/networkComms';
 import { getIntegrationAppUrlName } from '../utils/integrationApps';
+import mappingUtil from '../utils/mapping';
 
 const emptySet = [];
 const emptyObject = {};
@@ -384,6 +390,18 @@ export function editor(state, id) {
 
 export function editorViolations(state, id) {
   return fromSession.editorViolations(state && state.session, id);
+}
+
+export function isEditorDirty(state, id) {
+  return fromSession.isEditorDirty(state && state.session, id);
+}
+
+export function editorPatchSet(state, id) {
+  return fromSession.editorPatchSet(state && state.session, id);
+}
+
+export function editorSaveProcessTerminate(state, id) {
+  return fromSession.editorSaveProcessTerminate(state && state.session, id);
 }
 
 export function mapping(state, id) {
@@ -1208,6 +1226,31 @@ export function integrationAppConnectionList(
     .connections;
 }
 
+export function categoryMappingsForSection(state, integrationId, flowId, id) {
+  return fromSession.categoryMappingsForSection(
+    state && state.session,
+    integrationId,
+    flowId,
+    id
+  );
+}
+
+export function pendingCategoryMappings(state, integrationId, flowId) {
+  const { response, mappings } =
+    fromSession.categoryMapping(
+      state && state.session,
+      integrationId,
+      flowId
+    ) || {};
+  const mappingData = response.find(op => op.operation === 'mappingData');
+  const sessionMappedData =
+    mappingData && mappingData.data && mappingData.data.mappingData;
+
+  mappingUtil.setCategoryMappingData(flowId, sessionMappedData, mappings);
+
+  return sessionMappedData;
+}
+
 export function categoryMapping(state, integrationId, flowId) {
   return fromSession.categoryMapping(
     state && state.session,
@@ -1344,7 +1387,7 @@ export function mappingsForVariation(state, integrationId, flowId, filters) {
 export function mappingsForCategory(state, integrationId, flowId, filters) {
   const { sectionId } = filters;
   let mappings = emptySet;
-  const { attributes = {}, mappingFilter = 'mapped' } =
+  const { attributes = {}, mappingFilter = 'all' } =
     categoryMappingFilters(state, integrationId, flowId) || {};
   const recordMappings =
     fromSession.categoryMappingData(
@@ -1362,7 +1405,7 @@ export function mappingsForCategory(state, integrationId, flowId, filters) {
   }
 
   // If no filters are passed, return all mapppings
-  if (!attributes || !mappingFilter) {
+  if (!mappings || !attributes || !mappingFilter) {
     return mappings;
   }
 
@@ -3478,6 +3521,51 @@ export function isLookUpExport(state, { flowId, resourceId, resourceType }) {
 }
 
 /*
+ * This Selector handles all Resource Type's Label in case of Stand alone / Flow Builder Context
+ * Used at Resource Form's Title like 'Create/Edit Export' , at Bread Crumb level to show 'Add/Edit Export'
+ */
+export function getCustomResourceLabel(
+  state,
+  { resourceType, resourceId, flowId }
+) {
+  const isLookup = isLookUpExport(state, { flowId, resourceId, resourceType });
+  const isNewResource = isNewId(resourceId);
+  const { merged: resource = {} } = resourceData(
+    state,
+    resourceType,
+    resourceId
+  );
+  let resourceLabel;
+
+  // Default resource labels based on resourceTypes handled here
+  if (isLookup) {
+    resourceLabel = 'Lookup';
+  } else {
+    resourceLabel = MODEL_PLURAL_TO_LABEL[resourceType];
+  }
+
+  // Incase of Flow context, 2nd step of PG/PP creation resource labels handled here
+  // The Below resource labels override the default labels above
+  if (flowId) {
+    if (isNewResource && resourceType === 'exports') {
+      resourceLabel = isLookup ? 'Lookup' : 'Source';
+    } else if (isNewResource && resourceType === 'imports') {
+      resourceLabel = 'Import';
+    }
+  }
+
+  // For real time resources , we show resource label as 'listener'
+  if (
+    resourceType === 'exports' &&
+    isRealTimeOrDistributedResource(resource, resourceType)
+  ) {
+    resourceLabel = 'Listener';
+  }
+
+  return resourceLabel;
+}
+
+/*
  * This selector used to differentiate drawers with/without Preview Panel
  */
 export function isPreviewPanelAvailableForResource(
@@ -3508,3 +3596,188 @@ export function isPreviewPanelAvailableForResource(
 
   return isPreviewPanelAvailable(resourceObj, resourceType, connectionObj);
 }
+
+// TODO @Raghu:  Revisit this selector once stabilized as it can be simplified
+export const getSampleDataWrapper = createSelector(
+  [
+    // eslint-disable-next-line no-use-before-define
+    (state, params) => getSampleDataContext(state, params),
+    (state, params) => {
+      if (['postMap', 'postSubmit'].includes(params.stage)) {
+        return getSampleDataContext(state, { ...params, stage: 'preMap' });
+      }
+
+      return undefined;
+    },
+    (state, { flowId }) => resource(state, 'flows', flowId) || emptyObject,
+    (state, { flowId }) => {
+      const flow = resource(state, 'flows', flowId) || emptyObject;
+
+      return (
+        resource(state, 'integrations', flow._integrationId) || emptyObject
+      );
+    },
+    (state, { resourceId, resourceType }) =>
+      resource(state, resourceType, resourceId) || emptyObject,
+    (state, { resourceId, resourceType }) => {
+      const res = resource(state, resourceType, resourceId) || emptyObject;
+
+      return resource(state, 'connections', res._connectionId) || emptyObject;
+    },
+    (state, { stage }) => stage,
+  ],
+  (
+    sampleData,
+    preMapSampleData,
+    flow,
+    integration,
+    resource,
+    connection,
+    stage
+  ) => {
+    const { status, data } = sampleData || {};
+    let resourceType = 'export';
+
+    if (
+      resource &&
+      resource.adaptorType &&
+      resource.adaptorType.includes('Import')
+    ) {
+      resourceType = 'import';
+    }
+
+    if (!status) {
+      return { status };
+    }
+
+    const contextFields = {};
+
+    if (['outputFilter', 'preSavePage'].includes(stage)) {
+      contextFields.pageIndex = 0;
+
+      if (resource.type === 'delta') {
+        contextFields.lastExportDateTime = moment()
+          .startOf('day')
+          .add(-7, 'd')
+          .toISOString();
+        contextFields.currentExportDateTime = moment()
+          .startOf('day')
+          .add(-24, 'h')
+          .toISOString();
+      }
+    }
+
+    const resourceIds = {};
+
+    if (
+      [
+        'preSavePage',
+        'preMap',
+        'postMap',
+        'postSubmit',
+        'postAggregate',
+      ].includes(stage)
+    ) {
+      resourceIds[resourceType === 'import' ? '_importId' : '_exportId'] =
+        resource._id;
+      resourceIds._connectionId = connection._id;
+      resourceIds._flowId = flow._id;
+      resourceIds._integrationId = integration._id;
+    }
+
+    const settings = {
+      integration: integration.settings || {},
+      flow: flow.settings || {},
+      [resourceType]: resource.settings || {},
+      connection: connection.settings || {},
+    };
+
+    if (['transform', 'outputFilter', 'inputFilter'].includes(stage)) {
+      return {
+        status,
+        data: {
+          record: data || {},
+          ...resourceIds,
+          ...contextFields,
+          settings,
+        },
+      };
+    }
+
+    if (['preSavePage'].includes(stage)) {
+      return {
+        status,
+        data: {
+          data: data ? [data] : [],
+          errors: [],
+          ...resourceIds,
+          ...contextFields,
+          settings,
+        },
+      };
+    }
+
+    if (['preMap'].includes(stage)) {
+      return {
+        status,
+        data: {
+          data: data ? [data] : [],
+          ...resourceIds,
+          settings,
+        },
+      };
+    }
+
+    if (['postMap'].includes(stage)) {
+      return {
+        status,
+        data: {
+          preMapData: preMapSampleData.data ? [preMapSampleData.data] : [],
+          postMapData: data ? [data] : [],
+          ...resourceIds,
+          settings,
+        },
+      };
+    }
+
+    if (['postSubmit'].includes(stage)) {
+      return {
+        status,
+        data: {
+          preMapData: preMapSampleData.data ? [preMapSampleData.data] : [],
+          postMapData: data ? [data] : [],
+          responseData: [data].map(() => ({
+            statusCode: 200,
+            errors: [{ code: '', message: '', source: '' }],
+            ignored: false,
+            id: '',
+            _json: {},
+            dataURI: '',
+          })),
+          ...resourceIds,
+          settings,
+        },
+      };
+    }
+
+    if (stage === 'postAggregate') {
+      return {
+        status,
+        data: {
+          postAggregateData: {
+            success: true,
+            _json: {},
+            code: '',
+            message: '',
+            source: '',
+          },
+          ...resourceIds,
+          settings,
+        },
+      };
+    }
+
+    // For all other stages, return basic sampleData
+    return { status, data };
+  }
+);
