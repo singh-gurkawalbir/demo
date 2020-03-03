@@ -306,18 +306,17 @@ export default function reducer(state = {}, action) {
         if (draft[id]) draft[id].visible = value;
         break;
       case actionTypes.MAPPING.SAVE:
-        draft[id].submitCompleted = false;
-        draft[id].submitFailed = false;
+        draft[id].saveStatus = 'requested';
         break;
       case actionTypes.MAPPING.SAVE_COMPLETE:
-        draft[id].submitCompleted = true;
+        draft[id].saveStatus = 'completed';
         draft[id].validationErrMsg = undefined;
         draft[id].mappingsCopy = deepClone(draft[id].mappings);
         draft[id].lookupsCopy = deepClone(draft[id].lookups);
 
         break;
       case actionTypes.MAPPING.SAVE_FAILED:
-        draft[id].submitFailed = true;
+        draft[id].saveStatus = 'failed';
         draft[id].validationErrMsg = undefined;
 
         break;
@@ -364,20 +363,6 @@ export default function reducer(state = {}, action) {
       default:
     }
   });
-}
-
-// #region PUBLIC SELECTORS
-export function mappingSaveProcessTerminate(state, id) {
-  if (!state || !state[id]) {
-    return emptyObj;
-  }
-
-  const { submitFailed, submitCompleted } = state[id];
-
-  return {
-    saveTerminated: !!(submitFailed || submitCompleted),
-    saveCompleted: !!submitCompleted,
-  };
 }
 
 const isMappingObjEqual = (mapping1, mapping2) => {
@@ -434,4 +419,18 @@ export function mappingsChanged(state, id) {
   }
 
   return isMappingsChanged;
+}
+
+export function mappingsSaveStatus(state, id) {
+  if (!state || !state[id]) {
+    return emptyObj;
+  }
+
+  const { saveStatus } = state[id];
+
+  return {
+    saveTerminated: saveStatus === 'completed' || saveStatus === 'failed',
+    saveCompleted: saveStatus === 'completed',
+    saveInProgress: saveStatus === 'requested',
+  };
 }
