@@ -1,11 +1,10 @@
 import React, { useEffect, Fragment, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { Button } from '@material-ui/core';
+import { Button, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
-import Loader from '../../Loader';
 import Spinner from '../../Spinner';
 
 const useStyles = makeStyles(theme => ({
@@ -17,7 +16,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function UploadFile({ fileType }) {
+export default function UploadFile() {
   const history = useHistory();
   const location = useLocation();
   const [uploadInProgress, setUploadInProgress] = useState(false);
@@ -29,7 +28,7 @@ export default function UploadFile({ fileType }) {
 
   useEffect(() => {
     if (isFileUploaded) {
-      history.replace(`${location.pathname}/preview/${templateId}`);
+      history.push(`${location.pathname}/preview/${templateId}`);
       setUploadInProgress(false);
       dispatch(actions.template.clearUploaded(templateId));
     }
@@ -43,15 +42,19 @@ export default function UploadFile({ fileType }) {
 
   if (uploadInProgress) {
     return (
-      <Loader open>
-        Uploading...
+      <div>
+        <Typography variant="h4">Loading preview...</Typography>
         <Spinner />
-      </Loader>
+      </div>
     );
   }
 
   return (
     <Fragment>
+      <Typography variant="h4">Upload</Typography>
+      <Typography>
+        Choose a local .zip file to begin the installation
+      </Typography>
       <label htmlFor="fileUpload">
         <Button
           data-test="selectFile"
@@ -65,7 +68,7 @@ export default function UploadFile({ fileType }) {
           data-test="uploadFile"
           id="fileUpload"
           type="file"
-          accept={fileType}
+          accept={'fileType="application/zip"'}
           className={classes.fileInput}
           onChange={handleUploadFileChange}
         />

@@ -76,15 +76,20 @@ export default function RightDrawer({
   const location = useLocation();
   const [showBack, setShowBack] = useState();
   const bannerOpened = useSelector(state => selectors.bannerOpened(state));
-  const showBackButton = useCallback(() => setShowBack(true), []);
+  const showBackButton = useCallback(show => setShowBack(show), []);
   const showBanner = location.pathname.includes('pg/dashboard') && bannerOpened;
+  const handleBack = useCallback(() => {
+    // else, just go back in browser history...
+    history.goBack();
+  }, [history]);
   const handleClose = useCallback(() => {
     if (onClose && typeof onClose === 'function') {
-      onClose();
+      return onClose();
     }
 
-    history.goBack();
-  }, [history, onClose]);
+    // else, just go back in browser history...
+    handleBack();
+  }, [handleBack, onClose]);
 
   return (
     <Switch>
@@ -107,7 +112,7 @@ export default function RightDrawer({
                 size="small"
                 data-test="backRightDrawer"
                 aria-label="Close"
-                onClick={handleClose}>
+                onClick={handleBack}>
                 <ArrowLeftIcon />
               </IconButton>
             )}

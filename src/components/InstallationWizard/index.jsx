@@ -66,6 +66,7 @@ export default function InstallationWizard(props) {
     templateId,
     resource,
     handleSetupComplete,
+    variant,
   } = props;
   const [installInProgress, setInstallInProgress] = useState(false);
   const [connection, setSelectedConnectionId] = useState(null);
@@ -286,25 +287,27 @@ export default function InstallationWizard(props) {
         />
       )}
       <div className={classes.root}>
-        <Grid container className={classes.formHead}>
-          <Grid item xs={1}>
-            <IconButton onClick={handleBackClick} size="medium">
-              <ArrowBackIcon fontSize="inherit" />
-            </IconButton>
+        {variant !== 'new' && (
+          <Grid container className={classes.formHead}>
+            <Grid item xs={1}>
+              <IconButton onClick={handleBackClick} size="medium">
+                <ArrowBackIcon fontSize="inherit" />
+              </IconButton>
+            </Grid>
+            <Grid item xs>
+              <Paper elevation={0} className={classes.paper}>
+                <Breadcrumbs separator={<ArrowRightIcon />}>
+                  <Typography color="textPrimary">Setup</Typography>
+                  <Typography color="textPrimary">
+                    {resource.name ||
+                      MODEL_PLURAL_TO_LABEL[resourceType] ||
+                      'Template'}
+                  </Typography>
+                </Breadcrumbs>
+              </Paper>
+            </Grid>
           </Grid>
-          <Grid item xs>
-            <Paper elevation={0} className={classes.paper}>
-              <Breadcrumbs separator={<ArrowRightIcon />}>
-                <Typography color="textPrimary">Setup</Typography>
-                <Typography color="textPrimary">
-                  {resource.name ||
-                    MODEL_PLURAL_TO_LABEL[resourceType] ||
-                    'Template'}
-                </Typography>
-              </Breadcrumbs>
-            </Paper>
-          </Grid>
-        </Grid>
+        )}
         <Grid container spacing={3} className={classes.stepTable}>
           {installSteps.map((step, index) => (
             <InstallationStep

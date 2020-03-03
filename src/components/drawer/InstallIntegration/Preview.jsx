@@ -52,7 +52,7 @@ export default function IntegrationPreview() {
           templateId
         )
       );
-      history.replace(location.pathname.replace('/preview/', '/setup/'));
+      history.push(location.pathname.replace('/preview/', '/setup/'));
     } else {
       dispatch(actions.template.createComponents(templateId));
     }
@@ -78,7 +78,8 @@ export default function IntegrationPreview() {
 
   return (
     <div>
-      <Typography variant="h5">
+      <Typography variant="h4">Preview</Typography>
+      <Typography>
         The following components will be created in your account.
       </Typography>
       {!!objects.length && (

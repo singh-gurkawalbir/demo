@@ -1,17 +1,24 @@
 import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
+import { makeStyles, Typography } from '@material-ui/core';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import LoadResources from '../../LoadResources';
 import InstallWizard from '../../InstallationWizard';
 
 const emptyObject = {};
+const useStyles = makeStyles(theme => ({
+  subtitle: {
+    marginBottom: theme.spacing(3),
+  },
+}));
 
 export default function Setup() {
   const match = useRouteMatch();
   const history = useHistory();
   const dispatch = useDispatch();
+  const classes = useStyles();
   const { templateId } = match.params;
   // TODO: why is this selector called marketplaceTemplate? its used to also retrieve
   // integration templates...
@@ -34,8 +41,13 @@ export default function Setup() {
 
   return (
     <LoadResources required resources="connections,integrations">
+      <Typography className={classes.subtitle} variant="h4">
+        Setup
+      </Typography>
+
       <InstallWizard
         templateId={templateId}
+        variant="new"
         type="template"
         runKey={runKey}
         installSteps={installSteps}
