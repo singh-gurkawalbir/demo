@@ -255,6 +255,7 @@ export default function DynaTypeableSelect(props) {
           inputValue={inputVal}
           isDisabled={disabled}
           value={selectedValue}
+          tabSelectsValue={false}
           noOptionsMessage={() => null}
           placeholder={placeholder || ''}
           onInputChange={handleInputChange}
