@@ -92,8 +92,8 @@ export default function reducer(state = {}, action) {
             subRecordMappingId,
             salesforceMasterRecordTypeId,
             showSalesforceNetsuiteAssistant,
-            // lastModifiedUId helps to set generate field when any field in salesforce mapping assistant is clicked
-            lastModifiedUId: '',
+            // lastModifiedKey helps to set generate field when any field in salesforce mapping assistant is clicked
+            lastModifiedKey: '',
           };
           draft[id].mappingsCopy = deepClone(draft[id].mappings);
           draft[id].lookupsCopy = deepClone(draft[id].lookups);
@@ -107,12 +107,11 @@ export default function reducer(state = {}, action) {
 
       case actionTypes.MAPPING.DELETE: {
         draft[id].changeIdentifier += 1;
-        const _mappings = [...draft[id].mappings];
-        const filteredMapping = _mappings.filter(m => m.key !== key);
+        const filteredMapping = draft[id].mappings.filter(m => m.key !== key);
 
         draft[id].mappings = filteredMapping;
 
-        if (draft[id].lastModifiedUId === key) draft[id].lastModifiedUId = '';
+        if (draft[id].lastModifiedKey === key) draft[id].lastModifiedKey = '';
 
         const {
           isSuccess,
@@ -133,10 +132,10 @@ export default function reducer(state = {}, action) {
         incompleteGenerates.forEach(generateObj => {
           const {
             value: incompleteGenValue,
-            key: incompleteGenUId,
+            key: incompleteGenKey,
           } = generateObj;
           const incompleteGenIndex = draft[id].mappings.findIndex(
-            m => m.key === incompleteGenUId
+            m => m.key === incompleteGenKey
           );
           const childSObject =
             generateFields &&
@@ -210,7 +209,7 @@ export default function reducer(state = {}, action) {
           });
         }
 
-        draft[id].lastModifiedUId = key;
+        draft[id].lastModifiedKey = key;
         const {
           isSuccess,
           errMessage: validationErrMsg,
@@ -276,7 +275,7 @@ export default function reducer(state = {}, action) {
           }
 
           draft[id].mappings[index] = { ...valueTmp };
-          draft[id].lastModifiedUId = key;
+          draft[id].lastModifiedKey = key;
           const {
             isSuccess,
             errMessage: validationErrMsg,
@@ -368,14 +367,14 @@ export default function reducer(state = {}, action) {
 const isMappingObjEqual = (mapping1, mapping2) => {
   const {
     rowIdentifier: r1,
-    key: uId1,
+    key: key1,
     isNotEditable: e1,
     isRequired: req1,
     ...formattedMapping1
   } = mapping1;
   const {
     rowIdentifier: r2,
-    key: uId2,
+    key: key2,
     isNotEditable: e2,
     isRequired: req2,
     ...formattedMapping2

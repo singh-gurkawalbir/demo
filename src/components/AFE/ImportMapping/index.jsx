@@ -113,7 +113,7 @@ export default function ImportMapping(props) {
     lookups,
     changeIdentifier,
     previewData,
-    lastModifiedUId,
+    lastModifiedKey,
     salesforceMasterRecordTypeId,
     showSalesforceNetsuiteAssistant,
   } = useSelector(state => selectors.mapping(state, editorId));
@@ -243,31 +243,31 @@ export default function ImportMapping(props) {
 
   const handleSalesforceAssistantFieldClick = useCallback(
     meta => {
-      if (lastModifiedUId)
+      if (lastModifiedKey)
         dispatch(
           actions.mapping.patchField(
             editorId,
             'generate',
-            lastModifiedUId,
+            lastModifiedKey,
             meta.id
           )
         );
     },
-    [dispatch, editorId, lastModifiedUId]
+    [dispatch, editorId, lastModifiedKey]
   );
   const handleNetSuiteAssistantFieldClick = useCallback(
     meta => {
-      if (lastModifiedUId)
+      if (lastModifiedKey)
         dispatch(
           actions.mapping.patchField(
             editorId,
             'generate',
-            lastModifiedUId,
+            lastModifiedKey,
             meta.sublistName ? `${meta.sublistName}[*].${meta.id}` : meta.id
           )
         );
     },
-    [dispatch, editorId, lastModifiedUId]
+    [dispatch, editorId, lastModifiedKey]
   );
   const handleClose = () => {
     if (onClose) {
