@@ -19,6 +19,7 @@ export default function TransformToggleEditorDialog({
   disabled,
   entryFunction,
   insertStubKey,
+  optionalSaveParams,
   ...rest
 }) {
   return (
@@ -33,6 +34,7 @@ export default function TransformToggleEditorDialog({
         rule={rule}
         data={data && data.record}
         disabled={disabled}
+        optionalSaveParams={optionalSaveParams}
       />
       <JavaScriptEditor
         data={data}
@@ -40,6 +42,7 @@ export default function TransformToggleEditorDialog({
         scriptId={scriptId}
         entryFunction={entryFunction}
         insertStubKey={insertStubKey}
+        optionalSaveParams={optionalSaveParams}
       />
     </ToggleEditorDialog>
   );

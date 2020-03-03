@@ -17,4 +17,9 @@ export default {
 
     return { dataError: dataError !== null && dataError };
   },
+  dirty: editor => {
+    const { entryFunction, initEntryFunction, initCode, code } = editor || {};
+
+    return entryFunction !== initEntryFunction || initCode !== code;
+  },
 };

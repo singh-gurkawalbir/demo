@@ -1066,6 +1066,9 @@ const editor = {
     action(actionTypes.EDITOR_EVALUATE_FAILURE, { id, error }),
   evaluateResponse: (id, result) =>
     action(actionTypes.EDITOR_EVALUATE_RESPONSE, { id, result }),
+  save: id => action(actionTypes.EDITOR_SAVE, { id }),
+  saveFailed: id => action(actionTypes.EDITOR_SAVE_FAILED, { id }),
+  saveComplete: id => action(actionTypes.EDITOR_SAVE_COMPLETE, { id }),
 };
 // #endregion
 // #region Mapping actions
@@ -1075,23 +1078,23 @@ const mapping = {
       id,
       options,
     }),
-  patchField: (id, field, index, value) =>
-    action(actionTypes.MAPPING.PATCH_FIELD, { id, field, index, value }),
+  patchField: (id, field, key, value) =>
+    action(actionTypes.MAPPING.PATCH_FIELD, { id, field, key, value }),
   updateGenerates: (id, generateFields) =>
     action(actionTypes.MAPPING.UPDATE_GENERATES, { id, generateFields }),
   updateLookup: (id, lookups) =>
     action(actionTypes.MAPPING.UPDATE_LOOKUP, { id, lookups }),
-  patchSettings: (id, index, value) =>
-    action(actionTypes.MAPPING.PATCH_SETTINGS, { id, index, value }),
+  patchSettings: (id, key, value) =>
+    action(actionTypes.MAPPING.PATCH_SETTINGS, { id, key, value }),
   setVisibility: (id, value) =>
     action(actionTypes.MAPPING.SET_VISIBILITY, { id, value }),
-  patchIncompleteGenerates: (id, index, value) =>
+  patchIncompleteGenerates: (id, key, value) =>
     action(actionTypes.MAPPING.PATCH_INCOMPLETE_GENERATES, {
       id,
-      index,
+      key,
       value,
     }),
-  delete: (id, index) => action(actionTypes.MAPPING.DELETE, { id, index }),
+  delete: (id, key) => action(actionTypes.MAPPING.DELETE, { id, key }),
   save: id => action(actionTypes.MAPPING.SAVE, { id }),
   saveFailed: id => action(actionTypes.MAPPING.SAVE_FAILED, { id }),
   saveComplete: id => action(actionTypes.MAPPING.SAVE_COMPLETE, { id }),
@@ -1101,6 +1104,8 @@ const mapping = {
   previewReceived: (id, value) =>
     action(actionTypes.MAPPING.PREVIEW_RECEIVED, { id, value }),
   previewFailed: id => action(actionTypes.MAPPING.PREVIEW_FAILED, { id }),
+  changeOrder: (id, value) =>
+    action(actionTypes.MAPPING.CHANGE_ORDER, { id, value }),
 };
 const searchCriteria = {
   init: (id, value) =>

@@ -135,6 +135,7 @@ export default {
       );
 
       return {
+        disableFetch: !(recordTypeField && recordTypeField.value),
         commMetaPath:
           recordTypeField &&
           `netsuite/metadata/suitescript/connections/${recordTypeField.connectionId}/recordTypes/${recordTypeField.value}/searchFilters?includeJoinFilters=true`,
