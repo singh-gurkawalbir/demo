@@ -748,7 +748,6 @@ export default (state = {}, action) => {
         generatesMetadata = categoryMappingData.find(
           data => data.operation === 'generatesMetaData'
         );
-        console.log('generatesMetadata', generatesMetadata);
 
         if (draft[`${flowId}-${integrationId}`]) {
           if (!draft[`${flowId}-${integrationId}`].generatesMetadata) {
@@ -764,13 +763,6 @@ export default (state = {}, action) => {
               generatesMetadata.data.generatesMetaData
             );
           }
-          // draft[`${flowId}-${integrationId}`].generatesMetadata = uniqBy(
-          //   [
-          //     ...draft[`${flowId}-${integrationId}`].generatesMetadata,
-          //     generatesMetadata.data.generatesMetaData,
-          //   ],
-          //   'id'
-          // );
         }
 
         break;
