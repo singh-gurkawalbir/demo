@@ -52,9 +52,7 @@ export default function UploadFile() {
   return (
     <Fragment>
       <Typography variant="h4">Upload</Typography>
-      <Typography>
-        Choose a local .zip file to begin the installation
-      </Typography>
+      <Typography>Choose a .zip file to begin the installation.</Typography>
       <label htmlFor="fileUpload">
         <Button
           data-test="selectFile"

@@ -41,10 +41,11 @@ export default function Setup() {
 
   return (
     <LoadResources required resources="connections,integrations">
-      <Typography className={classes.subtitle} variant="h4">
-        Setup
+      <Typography variant="h4">Setup</Typography>
+      <Typography className={classes.subtitle}>
+        Your integration template will begin installation when you’ve completed
+        the following steps:
       </Typography>
-
       <InstallWizard
         templateId={templateId}
         variant="new"

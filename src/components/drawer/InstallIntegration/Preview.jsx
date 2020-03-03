@@ -11,7 +11,7 @@ import Spinner from '../../Spinner';
 
 const useStyles = makeStyles(theme => ({
   tableContainer: {
-    maxHeight: `calc(100vh - ${theme.appBarHeight + 150}px)`,
+    maxHeight: `calc(100vh - ${theme.appBarHeight + 175}px)`,
     overflowY: 'auto',
   },
   installButton: {
@@ -80,7 +80,7 @@ export default function IntegrationPreview() {
     <div>
       <Typography variant="h4">Preview</Typography>
       <Typography>
-        The following components will be created in your account.
+        The following components are created with this integration:
       </Typography>
       {!!objects.length && (
         <div className={classes.tableContainer}>
