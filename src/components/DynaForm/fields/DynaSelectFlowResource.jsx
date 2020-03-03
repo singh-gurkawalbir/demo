@@ -8,7 +8,7 @@ import * as selectors from '../../../reducers';
  */
 export default function DynaSelectFlowResource(props) {
   const { flowResourceType, options, flowId, ...rest } = props;
-  const { filter, visible = true, ...otherOptions } = options;
+  const { filter, visible = true, label, ...otherOptions } = options;
   const resourceIdsToFilter = useSelector(state => {
     const flow = selectors.resource(state, 'flows', flowId);
     const { pageProcessors = [], pageGenerators = [] } = flow || {};
@@ -46,6 +46,11 @@ export default function DynaSelectFlowResource(props) {
   }
 
   return (
-    <DynaSelectResource {...rest} options={updatedOptions} hideOnEmptyList />
+    <DynaSelectResource
+      {...rest}
+      options={updatedOptions}
+      label={label || props.label}
+      hideOnEmptyList
+    />
   );
 }

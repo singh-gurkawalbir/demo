@@ -20,6 +20,7 @@ import FullScreenOpenIcon from '../../icons/FullScreenOpenIcon';
 import FullScreenCloseIcon from '../../icons/FullScreenCloseIcon';
 import ViewColumnIcon from '../../icons/LayoutTriVerticalIcon';
 import ViewCompactIcon from '../../icons/LayoutLgLeftSmrightIcon';
+import useConfirmDialog from '../../ConfirmDialog';
 import EditorSaveButton from '../../ResourceFormFactory/Actions/EditorSaveButton';
 
 const useStyles = makeStyles(theme => ({
@@ -78,6 +79,7 @@ export default function EditorDialog(props) {
   } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
+  const { confirmDialog } = useConfirmDialog();
   const [enquesnackbar] = useEnqueueSnackbar();
   const [state, setState] = useState({
     layout: props.layout || 'compact',
@@ -85,11 +87,15 @@ export default function EditorDialog(props) {
   });
   const { layout, fullScreen } = state;
   const editor = useSelector(state => selectors.editor(state, id));
+  const isEditorDirty = useSelector(state =>
+    selectors.isEditorDirty(state, id)
+  );
   const editorViolations = useSelector(state =>
     selectors.editorViolations(state, id)
   );
   const handlePreview = () => dispatch(actions.editor.evaluateRequest(id));
-  const handleClose = useCallback(
+  // further enhacement linked to IO-12273 which requires handleSave to be function returning a function
+  const handleSave = useCallback(
     shouldCommit => () => {
       if (shouldCommit && !preSaveValidate({ editor, enquesnackbar })) {
         return;
@@ -111,6 +117,26 @@ export default function EditorDialog(props) {
     },
     [patchEditorLayoutChange, state]
   );
+  const handleCancelClick = useCallback(() => {
+    if (isEditorDirty) {
+      confirmDialog({
+        title: 'Confirm',
+        message: `You have made changes in the editor. Are you sure you want to discard them?`,
+        buttons: [
+          {
+            label: 'No',
+          },
+          {
+            label: 'Yes',
+            onClick: onClose,
+          },
+        ],
+      });
+    } else {
+      onClose();
+    }
+  }, [confirmDialog, isEditorDirty, onClose]);
+  // TODO (Aditya) : Check with Surya if confirmDialog returns same reference everytime
   const handleFullScreenClick = () => {
     patchEditorLayoutChange();
     setState({ ...state, fullScreen: !fullScreen });
@@ -136,7 +162,7 @@ export default function EditorDialog(props) {
     <Dialog
       fullScreen={fullScreen}
       open={open}
-      onClose={handleClose(false)}
+      onClose={handleCancelClick}
       scroll="paper"
       data-test={dataTest}
       maxWidth={false}>
@@ -198,7 +224,7 @@ export default function EditorDialog(props) {
             color="primary"
             data-test="saveEditor"
             disabled={disabled}
-            onClose={handleClose(false)}
+            onClose={handleSave(false)}
             submitButtonLabel="Save"
           />
         ) : (
@@ -207,7 +233,7 @@ export default function EditorDialog(props) {
             data-test="saveEditor"
             disabled={!!disableSave}
             color="primary"
-            onClick={handleClose(true)}>
+            onClick={handleSave(true)}>
             Save
           </Button>
         )}
@@ -215,7 +241,7 @@ export default function EditorDialog(props) {
           variant="text"
           color="primary"
           data-test="closeEditor"
-          onClick={handleClose(false)}>
+          onClick={handleCancelClick}>
           Cancel
         </Button>
       </DialogActions>

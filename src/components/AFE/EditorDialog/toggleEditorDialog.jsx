@@ -19,6 +19,7 @@ import FullScreenCloseIcon from '../../icons/FullScreenCloseIcon';
 import TextToggle from '../../../components/TextToggle';
 import ViewColumnIcon from '../../icons/LayoutTriVerticalIcon';
 import ViewCompactIcon from '../../icons/LayoutLgLeftSmrightIcon';
+import useConfirmDialog from '../../ConfirmDialog';
 import EditorSaveButton from '../../ResourceFormFactory/Actions/EditorSaveButton';
 
 const useStyles = makeStyles(theme => ({
@@ -77,6 +78,7 @@ export default function ToggleEditorDialog(props) {
   } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
+  const { confirmDialog } = useConfirmDialog();
   const [state, setState] = useState({
     layout: props.layout || 'compact',
     fullScreen: props.fullScreen || false,
@@ -109,35 +111,70 @@ export default function ToggleEditorDialog(props) {
   const editorViolations = useSelector(state =>
     selectors.editorViolations(state, activeEditorId)
   );
+  const isEditorDirty = useSelector(state =>
+    selectors.isEditorDirty(state, activeEditorId)
+  );
   const handlePreview = useCallback(
     () => dispatch(actions.editor.evaluateRequest(activeEditorId)),
     [activeEditorId, dispatch]
   );
-  const patchEditorLayoutChange = () => {
+  const handleCancelClick = useCallback(() => {
+    if (isEditorDirty) {
+      confirmDialog({
+        title: 'Confirm',
+        message: `You have made changes in the editor. Are you sure you want to discard them?`,
+        buttons: [
+          {
+            label: 'No',
+          },
+          {
+            label: 'Yes',
+            onClick: onClose,
+          },
+        ],
+      });
+    } else {
+      onClose();
+    }
+  }, [confirmDialog, isEditorDirty, onClose]);
+  const patchEditorLayoutChange = useCallback(() => {
     dispatch(actions.editor.changeLayout(activeEditorId));
-  };
-
-  const handleLayoutChange = (event, _layout) => {
-    patchEditorLayoutChange();
-    _layout && setState({ ...state, layout: _layout });
-  };
-
-  const handleFullScreenClick = () => {
+  }, [activeEditorId, dispatch]);
+  const handleLayoutChange = useCallback(
+    (event, _layout) => {
+      patchEditorLayoutChange();
+      _layout && setState({ ...state, layout: _layout });
+    },
+    [patchEditorLayoutChange, state]
+  );
+  const handleFullScreenClick = useCallback(() => {
     patchEditorLayoutChange();
     setState({ ...state, fullScreen: !fullScreen });
-  };
-
-  const handleEditorToggle = value =>
-    setState({ ...state, activeEditorIndex: value === 'expression' ? 0 : 1 });
-  const showPreviewAction =
-    !hidePreviewAction && editor && !editorViolations && !editor.autoEvaluate;
-  const handleClose = useCallback(() => onClose(), [onClose]);
+  }, [fullScreen, patchEditorLayoutChange, state]);
+  const handleEditorToggle = useCallback(
+    value =>
+      setState({ ...state, activeEditorIndex: value === 'expression' ? 0 : 1 }),
+    [state]
+  );
+  const showPreviewAction = useMemo(
+    () =>
+      !hidePreviewAction && editor && !editorViolations && !editor.autoEvaluate,
+    [editor, editorViolations, hidePreviewAction]
+  );
+  const handleClose = useCallback(() => {
+    onClose();
+  }, [onClose]);
+  const disableSave = useMemo(() => !editor || editorViolations || disabled, [
+    disabled,
+    editor,
+    editorViolations,
+  ]);
 
   return (
     <Dialog
       fullScreen={fullScreen}
       open={open}
-      onClose={handleClose}
+      onClose={handleCancelClick}
       scroll="paper"
       maxWidth={false}>
       <div className={classes.toolbarContainer}>
@@ -204,23 +241,21 @@ export default function ToggleEditorDialog(props) {
             Preview
           </Button>
         )}
-
         <EditorSaveButton
           key={activeEditorId}
           id={activeEditorId}
           variant="outlined"
           color="primary"
           data-test="saveEditor"
-          disabled={disabled}
+          disabled={!!disableSave}
           onClose={handleClose}
           submitButtonLabel="Save"
         />
-
         <Button
           variant="text"
           color="primary"
           data-test="closeEditor"
-          onClick={handleClose}>
+          onClick={handleCancelClick}>
           Cancel
         </Button>
       </DialogActions>

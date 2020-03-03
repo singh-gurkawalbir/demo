@@ -56,6 +56,7 @@ import inferErrorMessage from '../utils/inferErrorMessage';
 import getRoutePath from '../utils/routePaths';
 import { COMM_STATES } from './comms/networkComms';
 import { getIntegrationAppUrlName } from '../utils/integrationApps';
+import mappingUtil from '../utils/mapping';
 
 const emptySet = [];
 const emptyObject = {};
@@ -388,6 +389,10 @@ export function editor(state, id) {
 
 export function editorViolations(state, id) {
   return fromSession.editorViolations(state && state.session, id);
+}
+
+export function isEditorDirty(state, id) {
+  return fromSession.isEditorDirty(state && state.session, id);
 }
 
 export function editorPatchSet(state, id) {
@@ -1220,6 +1225,31 @@ export function integrationAppConnectionList(
     .connections;
 }
 
+export function categoryMappingsForSection(state, integrationId, flowId, id) {
+  return fromSession.categoryMappingsForSection(
+    state && state.session,
+    integrationId,
+    flowId,
+    id
+  );
+}
+
+export function pendingCategoryMappings(state, integrationId, flowId) {
+  const { response, mappings } =
+    fromSession.categoryMapping(
+      state && state.session,
+      integrationId,
+      flowId
+    ) || {};
+  const mappingData = response.find(op => op.operation === 'mappingData');
+  const sessionMappedData =
+    mappingData && mappingData.data && mappingData.data.mappingData;
+
+  mappingUtil.setCategoryMappingData(flowId, sessionMappedData, mappings);
+
+  return sessionMappedData;
+}
+
 export function categoryMapping(state, integrationId, flowId) {
   return fromSession.categoryMapping(
     state && state.session,
@@ -1356,7 +1386,7 @@ export function mappingsForVariation(state, integrationId, flowId, filters) {
 export function mappingsForCategory(state, integrationId, flowId, filters) {
   const { sectionId } = filters;
   let mappings = emptySet;
-  const { attributes = {}, mappingFilter = 'mapped' } =
+  const { attributes = {}, mappingFilter = 'all' } =
     categoryMappingFilters(state, integrationId, flowId) || {};
   const recordMappings =
     fromSession.categoryMappingData(
@@ -1374,7 +1404,7 @@ export function mappingsForCategory(state, integrationId, flowId, filters) {
   }
 
   // If no filters are passed, return all mapppings
-  if (!attributes || !mappingFilter) {
+  if (!mappings || !attributes || !mappingFilter) {
     return mappings;
   }
 
@@ -3556,6 +3586,7 @@ export function isPreviewPanelAvailableForResource(
   return isPreviewPanelAvailable(resourceObj, resourceType, connectionObj);
 }
 
+// TODO @Raghu:  Revisit this selector once stabilized as it can be simplified
 export const getSampleDataWrapper = createSelector(
   [
     // eslint-disable-next-line no-use-before-define
@@ -3578,7 +3609,7 @@ export const getSampleDataWrapper = createSelector(
     (state, { resourceId, resourceType }) =>
       resource(state, resourceType, resourceId) || emptyObject,
     (state, { resourceId, resourceType }) => {
-      const res = resource(state, resourceType, resourceId);
+      const res = resource(state, resourceType, resourceId) || emptyObject;
 
       return resource(state, 'connections', res._connectionId) || emptyObject;
     },
@@ -3666,7 +3697,7 @@ export const getSampleDataWrapper = createSelector(
       return {
         status,
         data: {
-          data: [data],
+          data: data ? [data] : [],
           errors: [],
           ...resourceIds,
           ...contextFields,
@@ -3679,7 +3710,7 @@ export const getSampleDataWrapper = createSelector(
       return {
         status,
         data: {
-          data: [data],
+          data: data ? [data] : [],
           ...resourceIds,
           settings,
         },
@@ -3690,8 +3721,8 @@ export const getSampleDataWrapper = createSelector(
       return {
         status,
         data: {
-          preMapData: [preMapSampleData.data],
-          postMapData: [data],
+          preMapData: preMapSampleData.data ? [preMapSampleData.data] : [],
+          postMapData: data ? [data] : [],
           ...resourceIds,
           settings,
         },
@@ -3702,8 +3733,8 @@ export const getSampleDataWrapper = createSelector(
       return {
         status,
         data: {
-          preMapData: [preMapSampleData.data],
-          postMapData: [data],
+          preMapData: preMapSampleData.data ? [preMapSampleData.data] : [],
+          postMapData: data ? [data] : [],
           responseData: [data].map(() => ({
             statusCode: 200,
             errors: [{ code: '', message: '', source: '' }],

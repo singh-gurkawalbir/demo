@@ -426,6 +426,120 @@ const fileDefinitions = {
 };
 const integrationApp = {
   settings: {
+    categoryMappings: {
+      init: (integrationId, flowId, id, options) =>
+        action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.INIT, {
+          integrationId,
+          flowId,
+          id,
+          options,
+        }),
+      patchField: (integrationId, flowId, id, field, index, value) =>
+        action(
+          actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.PATCH_FIELD,
+          {
+            integrationId,
+            flowId,
+            id,
+            field,
+            index,
+            value,
+          }
+        ),
+      patchSettings: (integrationId, flowId, id, index, value) =>
+        action(
+          actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
+            .PATCH_SETTINGS,
+          { integrationId, flowId, id, index, value }
+        ),
+      delete: (integrationId, flowId, id, row) =>
+        action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.DELETE, {
+          integrationId,
+          flowId,
+          id,
+          row,
+        }),
+      updateLookup: (integrationId, flowId, id, lookups) =>
+        action(
+          actionTypes.MAPPIINTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
+            .UPDATE_LOOKUP,
+          {
+            integrationId,
+            flowId,
+            id,
+            lookups,
+          }
+        ),
+      setVisibility: (integrationId, flowId, id, value) =>
+        action(
+          actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
+            .SET_VISIBILITY,
+          {
+            integrationId,
+            flowId,
+            id,
+            value,
+          }
+        ),
+      updateGenerates: (integrationId, flowId, id, generateFields) =>
+        action(
+          actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
+            .UPDATE_GENERATES,
+          { integrationId, flowId, id, generateFields }
+        ),
+      patchIncompleteGenerates: (integrationId, flowId, id, index, value) =>
+        action(
+          actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
+            .PATCH_INCOMPLETE_GENERATES,
+          {
+            integrationId,
+            flowId,
+            id,
+            index,
+            value,
+          }
+        ),
+      saveVariationMappings: (integrationId, flowId, id) =>
+        action(
+          actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
+            .SAVE_VARIATION_MAPPINGS,
+          {
+            integrationId,
+            flowId,
+            id,
+          }
+        ),
+      cancelVariationMappings: (integrationId, flowId, id) =>
+        action(
+          actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
+            .CANCEL_VARIATION_MAPPINGS,
+          {
+            integrationId,
+            flowId,
+            id,
+          }
+        ),
+      save: (integrationId, flowId, id) =>
+        action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.SAVE, {
+          integrationId,
+          flowId,
+          id,
+        }),
+      saveFailed: (integrationId, flowId, id) =>
+        action(
+          actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.SAVE_FAILED,
+          { integrationId, flowId, id }
+        ),
+      saveComplete: (integrationId, flowId, id) =>
+        action(
+          actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.SAVE_COMPLETE,
+          {
+            integrationId,
+            flowId,
+            id,
+          }
+        ),
+    },
     initComplete: (integrationId, flowId, sectionId) =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.FORM.INIT_COMPLETE, {
         integrationId,
@@ -451,6 +565,11 @@ const integrationApp = {
         integrationId,
         redirectTo,
       }),
+    receivedCategoryMappingData: (integrationId, flowId, mappingData) =>
+      action(
+        actionTypes.INTEGRATION_APPS.SETTINGS.RECEIVED_CATEGORY_MAPPINGS_DATA,
+        { integrationId, flowId, mappingData }
+      ),
     requestCategoryMappingMetadata: (
       integrationId,
       flowId,
@@ -483,6 +602,13 @@ const integrationApp = {
         flowId,
         filters,
       }),
+    clearVariationMappings: (integrationId, flowId, data) =>
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.CLEAR_VARIATION_MAPPINGS, {
+        integrationId,
+        flowId,
+        data,
+      }),
+
     addCategory: (integrationId, flowId, data) =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.ADD_CATEGORY, {
         integrationId,
@@ -952,23 +1078,23 @@ const mapping = {
       id,
       options,
     }),
-  patchField: (id, field, index, value) =>
-    action(actionTypes.MAPPING.PATCH_FIELD, { id, field, index, value }),
+  patchField: (id, field, key, value) =>
+    action(actionTypes.MAPPING.PATCH_FIELD, { id, field, key, value }),
   updateGenerates: (id, generateFields) =>
     action(actionTypes.MAPPING.UPDATE_GENERATES, { id, generateFields }),
   updateLookup: (id, lookups) =>
     action(actionTypes.MAPPING.UPDATE_LOOKUP, { id, lookups }),
-  patchSettings: (id, index, value) =>
-    action(actionTypes.MAPPING.PATCH_SETTINGS, { id, index, value }),
+  patchSettings: (id, key, value) =>
+    action(actionTypes.MAPPING.PATCH_SETTINGS, { id, key, value }),
   setVisibility: (id, value) =>
     action(actionTypes.MAPPING.SET_VISIBILITY, { id, value }),
-  patchIncompleteGenerates: (id, index, value) =>
+  patchIncompleteGenerates: (id, key, value) =>
     action(actionTypes.MAPPING.PATCH_INCOMPLETE_GENERATES, {
       id,
-      index,
+      key,
       value,
     }),
-  delete: (id, index) => action(actionTypes.MAPPING.DELETE, { id, index }),
+  delete: (id, key) => action(actionTypes.MAPPING.DELETE, { id, key }),
   save: id => action(actionTypes.MAPPING.SAVE, { id }),
   saveFailed: id => action(actionTypes.MAPPING.SAVE_FAILED, { id }),
   saveComplete: id => action(actionTypes.MAPPING.SAVE_COMPLETE, { id }),
@@ -978,6 +1104,8 @@ const mapping = {
   previewReceived: (id, value) =>
     action(actionTypes.MAPPING.PREVIEW_RECEIVED, { id, value }),
   previewFailed: id => action(actionTypes.MAPPING.PREVIEW_FAILED, { id }),
+  changeOrder: (id, value) =>
+    action(actionTypes.MAPPING.CHANGE_ORDER, { id, value }),
 };
 const searchCriteria = {
   init: (id, value) =>
