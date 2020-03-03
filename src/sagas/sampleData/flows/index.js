@@ -264,7 +264,8 @@ export function* fetchPageGeneratorPreview({ flowId, _pageGeneratorId }) {
 
 function* processData({ flowId, resourceId, processorData, stage }) {
   try {
-    const { wrapInArrayProcessedData } = processorData || {};
+    const { wrapInArrayProcessedData, removeDataPropFromProcessedData } =
+      processorData || {};
     const processedData = yield call(evaluateExternalProcessor, {
       processorData,
     });
@@ -275,6 +276,7 @@ function* processData({ flowId, resourceId, processorData, stage }) {
       stage,
       processedData,
       wrapInArrayProcessedData,
+      removeDataPropFromProcessedData,
     });
   } catch (e) {
     // Handle errors
@@ -431,6 +433,7 @@ export function* requestProcessorData({
           data: preProcessedData,
           code,
           entryFunction: hook.function,
+          removeDataPropFromProcessedData: stage === 'preMap',
           processor: 'javascript',
         };
       } else {
