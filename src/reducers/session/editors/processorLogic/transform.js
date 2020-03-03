@@ -1,3 +1,4 @@
+import { differenceWith, isEqual } from 'lodash';
 import util from '../../../../utils/json';
 
 export default {
@@ -26,5 +27,12 @@ export default {
       dataError,
       ruleError: isContainsAllKey !== null && isContainsAllKey,
     };
+  },
+  dirty: editor => {
+    const { initRule = [], rule = [] } = editor || {};
+    const rulesDiff = differenceWith(initRule, rule, isEqual);
+    const isRulesEqual = initRule.length === rule.length && !rulesDiff.length;
+
+    return !isRulesEqual;
   },
 };

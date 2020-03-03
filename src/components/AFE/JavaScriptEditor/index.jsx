@@ -55,6 +55,7 @@ export default function JavaScriptEditor(props) {
         data: props.data,
         autoEvaluate: true,
         autoEvaluateDelay: 1000,
+        initEntryFunction: entryFunction || 'main',
         optionalSaveParams,
       })
     );

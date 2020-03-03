@@ -1,4 +1,4 @@
-import { useState, useEffect, Fragment } from 'react';
+import { useState, useEffect, Fragment, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Route, useRouteMatch, useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -9,6 +9,8 @@ import {
   ExpansionPanel,
   ExpansionPanelDetails,
   ExpansionPanelSummary,
+  Button,
+  Divider,
 } from '@material-ui/core';
 import * as selectors from '../../../../../../reducers';
 import actions from '../../../../../../actions';
@@ -26,6 +28,7 @@ import Mappings from './BasicMapping';
 import Filters from './Filters';
 import CategoryList from './CategoryList';
 import DrawerTitleBar from './TitleBar';
+import ButtonGroup from '../../../../../../components/ButtonGroup';
 
 const emptySet = [];
 const drawerWidth = 200;
@@ -48,6 +51,10 @@ const useStyles = makeStyles(theme => ({
   refreshButton: {
     marginLeft: theme.spacing(1),
     marginRight: 0,
+  },
+  saveButtonGroup: {
+    margin: '10px 10px 10px 10px',
+    float: 'right',
   },
   fullWidth: {
     width: '100%',
@@ -121,12 +128,20 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function CategoryMappings({ integrationId, flowId, sectionId, isRoot = true }) {
+function CategoryMappings({
+  integrationId,
+  flowId,
+  sectionId,
+  isRoot = true,
+  isParentCommonCategory = false,
+}) {
   const [requestedGenerateFields, setRequestedGenerateFields] = useState(false);
   const dispatch = useDispatch();
   const classes = useStyles();
   const history = useHistory();
   const match = useRouteMatch();
+  const isCommonCategory =
+    sectionId === 'commonAttributes' || isParentCommonCategory;
   const [expanded, setExpanded] = useState(isRoot);
   const { fields: generateFields, name, variation_themes: variationThemes } =
     useSelector(state =>
@@ -201,6 +216,15 @@ function CategoryMappings({ integrationId, flowId, sectionId, isRoot = true }) {
     history.push(`${match.url}/variations/${sectionId}`);
   };
 
+  if (!generateFields) {
+    return (
+      <Loader open>
+        {`Loading ${sectionId}  metadata`}
+        <Spinner />
+      </Loader>
+    );
+  }
+
   return (
     <div className={isRoot ? classes.mappingContainer : classes.default}>
       <ExpansionPanel
@@ -220,13 +244,20 @@ function CategoryMappings({ integrationId, flowId, sectionId, isRoot = true }) {
               onClick={handleVariation}
             />
           )}
-          {deleted ? (
-            <RestoreIcon
-              className={classes.deleteIcon}
-              onClick={handleRestore}
-            />
-          ) : (
-            <TrashIcon className={classes.deleteIcon} onClick={handleDelete} />
+          {!isCommonCategory && (
+            <div>
+              {deleted ? (
+                <RestoreIcon
+                  className={classes.deleteIcon}
+                  onClick={handleRestore}
+                />
+              ) : (
+                <TrashIcon
+                  className={classes.deleteIcon}
+                  onClick={handleDelete}
+                />
+              )}
+            </div>
           )}
         </ExpansionPanelSummary>
         <ExpansionPanelDetails>
@@ -245,6 +276,7 @@ function CategoryMappings({ integrationId, flowId, sectionId, isRoot = true }) {
                   flowId={flowId}
                   key={child.id}
                   isRoot={false}
+                  isParentCommonCategory={isCommonCategory}
                   generateFields={generateFields || emptySet}
                   sectionId={child.id}
                 />
@@ -289,9 +321,26 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
   const currentSectionLabel =
     (mappedCategories.find(category => category.id === categoryId) || {})
       .name || categoryId;
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     history.push(parentUrl);
-  };
+  }, [history, parentUrl]);
+  const handleSave = useCallback(() => {
+    dispatch(
+      actions.integrationApp.settings.categoryMappings.save(
+        integrationId,
+        flowId
+      )
+    );
+  }, [dispatch, flowId, integrationId]);
+  const handleSaveAndClose = useCallback(() => {
+    dispatch(
+      actions.integrationApp.settings.categoryMappings.save(
+        integrationId,
+        flowId
+      )
+    );
+    handleClose();
+  }, [dispatch, flowId, handleClose, integrationId]);
 
   useEffect(() => {
     if (!metadataLoaded && !requestedMetadata) {
@@ -367,6 +416,32 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
                 />
               </Grid>
             </Grid>
+
+            <Divider />
+            <ButtonGroup className={classes.saveButtonGroup}>
+              <Button
+                id={flowId}
+                variant="outlined"
+                color="primary"
+                data-test="saveImportMapping"
+                onClick={handleSave}>
+                Save
+              </Button>
+              <Button
+                id={flowId}
+                variant="outlined"
+                color="secondary"
+                data-test="saveAndCloseImportMapping"
+                onClick={handleSaveAndClose}>
+                Save & Close
+              </Button>
+              <Button
+                variant="text"
+                data-test="saveImportMapping"
+                onClick={handleClose}>
+                Close
+              </Button>
+            </ButtonGroup>
           </div>
         ) : (
           <Loader open>

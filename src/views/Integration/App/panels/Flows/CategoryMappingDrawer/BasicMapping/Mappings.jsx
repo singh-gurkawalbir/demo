@@ -112,7 +112,7 @@ export default function ImportMapping(props) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const { mappings, lookups, initChangeIdentifier } = useSelector(state =>
-    selectors.mapping(state, editorId)
+    selectors.categoryMappingsForSection(state, integrationId, flowId, editorId)
   );
   const { extractsMetadata: extractFields } = useSelector(state =>
     selectors.categoryMappingMetadata(state, integrationId, flowId)
@@ -135,16 +135,40 @@ export default function ImportMapping(props) {
     (rowIndex, event, field) => {
       const { value } = event.target;
 
-      dispatch(actions.mapping.patchField(editorId, field, rowIndex, value));
+      dispatch(
+        actions.integrationApp.settings.categoryMappings.patchField(
+          integrationId,
+          flowId,
+          editorId,
+          field,
+          rowIndex,
+          value
+        )
+      );
     },
     [dispatch, editorId]
   );
   const patchSettings = (row, settings) => {
-    dispatch(actions.mapping.patchSettings(editorId, row, settings));
+    dispatch(
+      actions.integrationApp.settings.categoryMappings.patchSettings(
+        integrationId,
+        flowId,
+        editorId,
+        row,
+        settings
+      )
+    );
   };
 
   const handleDelete = row => {
-    dispatch(actions.mapping.delete(editorId, row));
+    dispatch(
+      actions.integrationApp.settings.categoryMappings.delete(
+        integrationId,
+        flowId,
+        editorId,
+        row
+      )
+    );
   };
 
   const updateLookupHandler = (isDelete, obj) => {
@@ -162,7 +186,14 @@ export default function ImportMapping(props) {
       }
     }
 
-    dispatch(actions.mapping.updateLookup(editorId, lookupsTmp));
+    dispatch(
+      actions.integrationApp.settings.categoryMappings.updateLookup(
+        integrationId,
+        flowId,
+        editorId,
+        lookupsTmp
+      )
+    );
   };
 
   const handleGenerateUpdate = mapping => (id, val) => {

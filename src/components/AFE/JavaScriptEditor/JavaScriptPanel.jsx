@@ -43,6 +43,7 @@ const useStyles = makeStyles(theme => ({
 export default function JavaScriptPanel(props) {
   const { editorId, disabled, insertStubKey } = props;
   const classes = useStyles(props);
+  const editor = useSelector(state => selectors.editor(state, editorId));
   const {
     code = '',
     initChangeIdentifier,
@@ -50,7 +51,7 @@ export default function JavaScriptPanel(props) {
     fetchScriptContent = false,
     entryFunction = '',
     scriptId = '',
-  } = useSelector(state => selectors.editor(state, editorId));
+  } = editor;
   const violations = useSelector(state =>
     selectors.editorViolations(state, editorId)
   );
@@ -99,15 +100,22 @@ export default function JavaScriptPanel(props) {
 
   useEffect(() => {
     if (fetchScriptContent && scriptContent !== undefined) {
-      patchEditor({
+      const patchObj = {
         code: scriptContent,
         fetchScriptContent: false,
         initChangeIdentifier: initChangeIdentifier + 1,
-      });
+      };
+
+      // check if code property existings in editor. If yes, save a copy as initCode for dirty checking
+      if (!(code in editor)) patchObj.initCode = scriptContent;
+
+      patchEditor(patchObj);
     } else if (scriptContent === undefined && scriptId) {
       requestScript();
     }
   }, [
+    code,
+    editor,
     editorId,
     fetchScriptContent,
     initChangeIdentifier,
