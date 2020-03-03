@@ -1,5 +1,5 @@
 import produce from 'immer';
-import { uniqBy, isEqual, differenceWith } from 'lodash';
+import { isEqual, differenceWith } from 'lodash';
 import { deepClone } from 'fast-json-patch';
 import actionTypes from '../../../actions/types';
 import mappingUtil from '../../../utils/mapping';
@@ -38,6 +38,69 @@ const getStateKey = (integrationId, flowId, sectionId) =>
   `${integrationId}${flowId ? `-${flowId}` : ''}${
     sectionId ? `-${sectionId}` : ''
   }`;
+const addVariationMap = (
+  draft = {},
+  categoryId,
+  childCategoryId,
+  variation
+) => {
+  const { response = [] } = draft;
+  const mappingData = response.find(sec => sec.operation === 'mappingData');
+
+  if (
+    mappingData &&
+    mappingData.data &&
+    mappingData.data.mappingData &&
+    mappingData.data.mappingData.variationMappings &&
+    mappingData.data.mappingData.variationMappings.recordMappings
+  ) {
+    const { recordMappings } = mappingData.data.mappingData.variationMappings;
+    const category = recordMappings.find(mapping => mapping.id === categoryId);
+    let variationMapping;
+    let subCategory;
+
+    if (category) {
+      if (categoryId === childCategoryId) {
+        variationMapping = category.variation_themes.find(
+          vm => vm.variation_theme === variation
+        );
+
+        if (!variationMapping) {
+          category.variation_themes.push({
+            id: 'variation_theme',
+            variation_theme: variation,
+            fieldMappings: [],
+          });
+        }
+      }
+
+      subCategory = category.children.find(
+        child => child.id === childCategoryId
+      );
+
+      if (!subCategory) {
+        category.children.forEach(child => {
+          subCategory = child.children.find(c => c.id === childCategoryId);
+        });
+      }
+
+      if (subCategory) {
+        variationMapping = subCategory.variation_themes.find(
+          vm => vm.variation_theme === variation
+        );
+
+        if (!variationMapping) {
+          subCategory.variation_themes.push({
+            id: 'variation_theme',
+            variation_theme: variation,
+            fieldMappings: [],
+          });
+        }
+      }
+    }
+  }
+};
+
 const addCategory = (draft, integrationId, flowId, data) => {
   const { category, childCategory, grandchildCategory } = data;
   const { response = [] } = draft[`${flowId}-${integrationId}`];
@@ -308,18 +371,32 @@ export default (state = {}, action) => {
             resourceData,
             application,
             isGroupedSampleData,
-            salesforceMasterRecordTypeId,
+            isVariationMapping,
+            categoryId,
+            childCategoryId,
+            variation,
             netsuiteRecordType,
-            showSalesforceNetsuiteAssistant,
-            subRecordMappingId,
             ...additionalOptions
           } = options;
+
+          if (isVariationMapping) {
+            addVariationMap(
+              draft[`${flowId}-${integrationId}`],
+              categoryId,
+              childCategoryId,
+              variation
+            );
+          }
+
           const formattedMappings = mappingUtil.getMappingFromResource(
             resourceData,
             false,
             isGroupedSampleData,
             netsuiteRecordType,
-            additionalOptions
+            {
+              ...additionalOptions,
+              isVariationMapping,
+            }
           );
           const lookups = lookupUtil.getLookupFromResource(resourceData);
           const initChangeIdentifier =
@@ -351,9 +428,6 @@ export default (state = {}, action) => {
             isGroupedSampleData,
             flowSampleData: undefined,
             netsuiteRecordType,
-            subRecordMappingId,
-            salesforceMasterRecordTypeId,
-            showSalesforceNetsuiteAssistant,
             // lastModifiedRow helps to set generate field when any field in salesforce mapping assistant is clicked
             lastModifiedRow: -1,
           };
@@ -411,6 +485,7 @@ export default (state = {}, action) => {
               ],
             };
 
+            // TODO: @Aditya, @Sravan, move this logic to mapping Util
             objCopy.rowIdentifier += 1;
 
             let inputValue = value;
@@ -527,6 +602,7 @@ export default (state = {}, action) => {
             delete valueTmp.lookupName;
           }
 
+          // TODO: @Aditya, @Sravan, move this logic to mapping Util
           valueTmp.rowIdentifier += 1;
 
           if ('hardCodedValue' in valueTmp) {
@@ -672,15 +748,29 @@ export default (state = {}, action) => {
         generatesMetadata = categoryMappingData.find(
           data => data.operation === 'generatesMetaData'
         );
+        console.log('generatesMetadata', generatesMetadata);
 
         if (draft[`${flowId}-${integrationId}`]) {
-          draft[`${flowId}-${integrationId}`].generatesMetadata = uniqBy(
-            [
-              ...draft[`${flowId}-${integrationId}`].generatesMetadata,
-              generatesMetadata.data.generatesMetaData,
-            ],
-            'id'
-          );
+          if (!draft[`${flowId}-${integrationId}`].generatesMetadata) {
+            draft[`${flowId}-${integrationId}`].generatesMetadata = [];
+          }
+
+          if (
+            !draft[`${flowId}-${integrationId}`].generatesMetadata.find(
+              meta => meta.id === generatesMetadata.data.generatesMetaData.id
+            )
+          ) {
+            draft[`${flowId}-${integrationId}`].generatesMetadata.push(
+              generatesMetadata.data.generatesMetaData
+            );
+          }
+          // draft[`${flowId}-${integrationId}`].generatesMetadata = uniqBy(
+          //   [
+          //     ...draft[`${flowId}-${integrationId}`].generatesMetadata,
+          //     generatesMetadata.data.generatesMetaData,
+          //   ],
+          //   'id'
+          // );
         }
 
         break;

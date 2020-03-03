@@ -127,7 +127,7 @@ const useStyles = makeStyles(theme => ({
 
 function VariationMappingDrawer({ integrationId, parentUrl }) {
   const match = useRouteMatch();
-  const { flowId, subCategoryId, variation } = match.params;
+  const { flowId, subCategoryId, variation, categoryId } = match.params;
   const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
@@ -238,6 +238,7 @@ function VariationMappingDrawer({ integrationId, parentUrl }) {
               <VariationMappings
                 integrationId={integrationId}
                 flowId={flowId}
+                categoryId={categoryId}
                 sectionId={subCategoryId}
                 variation={variation}
               />

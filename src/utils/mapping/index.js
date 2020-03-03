@@ -447,7 +447,7 @@ export default {
       default:
     }
 
-    if (options.isCategoryMapping) {
+    if (options.isCategoryMapping || options.isVariationMapping) {
       ({ mappings } = options);
     }
 

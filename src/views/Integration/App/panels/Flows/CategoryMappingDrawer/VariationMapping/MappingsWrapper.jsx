@@ -14,7 +14,7 @@ const useStyles = makeStyles(() => ({
 
 export default function VariationMappings(props) {
   const classes = useStyles();
-  const { flowId, sectionId, integrationId, variation } = props;
+  const { flowId, sectionId, integrationId, variation, categoryId } = props;
   const id = `${flowId}-${sectionId}-${variation}`;
   const [initTriggered, setInitTriggered] = useState(false);
   const [resetMappings, setResetMappings] = useState(false);
@@ -66,7 +66,10 @@ export default function VariationMappings(props) {
     resourceData,
     adaptorType: 'netsuite',
     application,
-    isCategoryMapping: true,
+    isVariationMapping: true,
+    categoryId,
+    childCategoryId: sectionId,
+    variation,
     mappings: { fields: fieldMappings },
   };
   const handleInit = useCallback(() => {

@@ -275,19 +275,6 @@ export default function reducer(state = {}, action) {
         break;
       }
 
-      case actionTypes.INTEGRATION_APPS.SETTINGS.CLEAR_VARIATION_MAPPINGS:
-        // Variation mappings have id structure as `${flowId}-${integrationId}-${sectionId}-${variation}`
-        // ie,  all variations of one section will have same prefix `${flowId}-${integrationId}-${sectionId}`
-        // so while deleting section we need to delete all variations of that section.
-        // hence searching by prefix and not strict id check.
-        Object.keys(draft).forEach(_id => {
-          if (_id.startsWith(id)) {
-            delete draft[id];
-          }
-        });
-
-        break;
-
       case actionTypes.MAPPING.SET_VISIBILITY:
         if (draft[id]) draft[id].visible = value;
         break;
