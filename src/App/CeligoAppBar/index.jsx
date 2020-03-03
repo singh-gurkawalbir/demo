@@ -13,6 +13,7 @@ import Notifications from './Notifications';
 import LicenseAction from './LicenseAction';
 import AccountList from './AccountList';
 import EnvironmentToggle from './EnvironmentToggle';
+import ThemeToggle from './ThemeToggle';
 import CeligoBreadcrumb from './CeligoBreadcrumb';
 
 const useStyles = makeStyles(theme => ({
@@ -118,6 +119,9 @@ export default function CeligoAppBar() {
               */}
               <li>
                 <AccountList />
+              </li>
+              <li>
+                <ThemeToggle />
               </li>
               <li>
                 <EnvironmentToggle />

@@ -21,7 +21,8 @@ export default {
       paper2: colors.celigoNeutral2,
       default: colors.celigoNeutral1,
       drawer: colors.celigoNeutral9,
-      drawer2: colors.celigoNeutral6,
+      drawer2: colors.celigoNeutral8,
+      drawerActive: colors.celigoNeutral6,
     },
     primary: {
       light: colors.celigoAccent3,
