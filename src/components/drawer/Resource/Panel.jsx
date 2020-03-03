@@ -247,6 +247,8 @@ export default function Panel(props) {
             operation,
           })
         );
+
+        return;
       }
 
       if (newResourceId)
