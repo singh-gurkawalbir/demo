@@ -49,7 +49,7 @@ export default function DynaSelectFlowResource(props) {
     <DynaSelectResource
       {...rest}
       options={updatedOptions}
-      label={label}
+      label={label || props.label}
       hideOnEmptyList
     />
   );
