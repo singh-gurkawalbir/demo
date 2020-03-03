@@ -40,9 +40,6 @@ const useStyles = makeStyles(theme => ({
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
     }),
-    // itemIconRoot: {
-    //   width: 300,
-    // },
   },
   drawerClose: {
     transition: theme.transitions.create('width', {
@@ -95,16 +92,14 @@ const useStyles = makeStyles(theme => ({
   },
   listItem: {
     backgroundColor: theme.palette.background.drawer2,
-    //    backgroundColor: theme.palette.secondary.main,
     '& svg > *': {
       color: theme.palette.common.white,
     },
     '&:hover': {
-      backgroundColor: theme.palette.background.drawerActive,
-      // backgroundColor: theme.palette.text.secondary,
+      backgroundColor: theme.palette.background.drawer2,
       color: theme.palette.background.paper,
       '&:before': {
-        background: theme.palette.primary.main,
+        background: theme.palette.background.drawerActive,
       },
       '& svg > *': {
         color: theme.palette.background.paper,
@@ -123,7 +118,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
   activeItem: {
-    backgroundColor: `${theme.palette.primary.main} !important`,
+    backgroundColor: `${theme.palette.background.drawerActive} !important`,
     color: theme.palette.common.white,
     '& svg > *': {
       color: theme.palette.background.paper,
@@ -153,7 +148,8 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: lighten(theme.palette.background.drawer2, 0.1),
     // backgroundColor: 'rgb(255,255,255,0.1)',
     '&:hover': {
-      backgroundColor: theme.palette.background.drawerActive,
+      backgroundColor: lighten(theme.palette.background.drawer2, 0.1),
+      // backgroundColor: theme.palette.background.drawerActive,
     },
   },
   logoContainer: {

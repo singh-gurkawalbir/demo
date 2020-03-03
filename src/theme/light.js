@@ -22,7 +22,7 @@ export default {
       default: colors.celigoNeutral1,
       drawer: colors.celigoNeutral9,
       drawer2: colors.celigoNeutral8,
-      drawerActive: colors.celigoNeutral6,
+      drawerActive: colors.celigoAccent1,
     },
     primary: {
       light: colors.celigoAccent3,
