@@ -250,7 +250,7 @@ export default function ToggleEditorDialog(props) {
           id={activeEditorId}
           variant="outlined"
           color="primary"
-          data-test="saveEditor"
+          dataTest="saveEditor"
           disabled={!!disableSave}
           onClose={handleClose}
           submitButtonLabel="Save"

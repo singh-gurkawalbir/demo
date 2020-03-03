@@ -224,7 +224,7 @@ export default function EditorDialog(props) {
             id={id}
             variant="outlined"
             color="primary"
-            data-test="saveEditor"
+            dataTest="saveEditor"
             disabled={disabled}
             onClose={handleSave(false)}
             submitButtonLabel="Save"
