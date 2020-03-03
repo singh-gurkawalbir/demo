@@ -4,7 +4,6 @@ import { Link, useLocation, matchPath } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import { List, Collapse, ButtonBase, Chip } from '@material-ui/core';
-import { lighten } from '@material-ui/core/styles/colorManipulator';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -145,10 +144,10 @@ const useStyles = makeStyles(theme => ({
     padding: 0,
   },
   innerListItems: {
-    backgroundColor: lighten(theme.palette.background.drawer2, 0.1),
+    backgroundColor: theme.palette.background.drawer3,
     // backgroundColor: 'rgb(255,255,255,0.1)',
     '&:hover': {
-      backgroundColor: lighten(theme.palette.background.drawer2, 0.1),
+      backgroundColor: theme.palette.background.drawer3,
       // backgroundColor: theme.palette.background.drawerActive,
     },
   },
@@ -178,6 +177,9 @@ const useStyles = makeStyles(theme => ({
     borderColor: theme.palette.common.white,
     height: 'unset',
     marginTop: theme.spacing(1.5),
+  },
+  sandboxChipSmall: {
+    padding: theme.spacing(0.5),
   },
 }));
 
@@ -236,7 +238,7 @@ export default function CeligoDrawer() {
       open={drawerOpened}>
       <div
         className={clsx(classes.menuContainer, {
-          [classes.menuContainerSandbox]: isSandbox && drawerOpened,
+          [classes.menuContainerSandbox]: isSandbox,
         })}
         onDoubleClick={handleDrawerToggle}>
         <div>
@@ -245,20 +247,9 @@ export default function CeligoDrawer() {
               [classes.logoContainerSandbox]: isSandbox,
             })}>
             {drawerOpened ? (
-              <Fragment>
-                <ButtonBase
-                  className={classes.logo}
-                  onClick={handleDrawerToggle}>
-                  <CeligoLogo aria-label="open drawer" />
-                </ButtonBase>
-                {isSandbox && (
-                  <Chip
-                    className={classes.sandboxChip}
-                    label="SANDBOX"
-                    variant="outlined"
-                  />
-                )}
-              </Fragment>
+              <ButtonBase className={classes.logo} onClick={handleDrawerToggle}>
+                <CeligoLogo aria-label="open drawer" />
+              </ButtonBase>
             ) : (
               <IconButton
                 color="inherit"
@@ -266,6 +257,15 @@ export default function CeligoDrawer() {
                 onClick={handleDrawerToggle}>
                 <CeligoMarkIcon color="inherit" />
               </IconButton>
+            )}
+            {isSandbox && (
+              <Chip
+                className={clsx(classes.sandboxChip, {
+                  [classes.sandboxChipSmall]: !drawerOpened,
+                })}
+                label={drawerOpened ? 'SANDBOX' : 'SB'}
+                variant="outlined"
+              />
             )}
           </div>
         </div>
