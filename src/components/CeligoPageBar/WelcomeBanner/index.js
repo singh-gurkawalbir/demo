@@ -8,7 +8,7 @@ import ArrowRightIcon from '../../icons/ArrowRightIcon';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    margin: theme.spacing(-2, -1, 2, -2),
+    margin: theme.spacing(-3, -1, 2, -2),
     backgroundColor: theme.palette.common.white,
   },
   banner: {
@@ -17,7 +17,7 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(2, 3),
     // border: `solid 1px ${theme.palette.primary.light}`,
     alignItems: 'center',
-    backgroundColor: theme.palette.text.secondary,
+    backgroundColor: theme.palette.background.drawer2,
   },
   textColor: {
     color: theme.palette.common.white,

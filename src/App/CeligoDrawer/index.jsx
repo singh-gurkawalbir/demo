@@ -143,7 +143,7 @@ const useStyles = makeStyles(theme => ({
   },
   drawerToggle: {
     border: '1px solid',
-    borderColor: theme.palette.text.secondary,
+    borderColor: theme.palette.background.drawer2,
     borderRadius: 4,
     width: theme.spacing(3),
     height: theme.spacing(3),
@@ -152,7 +152,6 @@ const useStyles = makeStyles(theme => ({
   innerListItems: {
     backgroundColor: lighten(theme.palette.background.drawer2, 0.1),
     // backgroundColor: 'rgb(255,255,255,0.1)',
-    // backgroundColor: theme.palette.text.secondary,
     '&:hover': {
       backgroundColor: theme.palette.background.drawerActive,
     },
@@ -161,7 +160,6 @@ const useStyles = makeStyles(theme => ({
     textAlign: 'center',
     display: 'inline-flex',
     flexDirection: 'column',
-    // textAlign: 'center',
     fill: theme.palette.primary.dark,
     color: theme.palette.primary.dark,
     '& svg': {

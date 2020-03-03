@@ -36,12 +36,6 @@ export default {
       darkest: colors.celigoNeutral9,
       contrastText: colors.celigoNeutral4,
     },
-    sandbox: {
-      light: colors.celigoSandbox2,
-      // main: colors.celigoSandbox3, // not used yet.. maybe never?
-      dark: colors.celigoSandbox1,
-      contrastText: colors.celigoNeutral6,
-    },
     text: {
       disabled: colors.celigoNeutral4,
       primary: colors.celigoNeutral6,

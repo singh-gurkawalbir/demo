@@ -28,7 +28,8 @@ export default {
       disabled: colors.celigoNeutral4,
       primary: colors.celigoNeutral6,
       hint: colors.celigoNeutral5,
-      secondary: colors.celigoSandbox3,
+      // secondary: colors.celigoSandbox3,
+      secondary: colors.celigoNeutral7,
     },
   },
   // global overrides for MUI styles...
