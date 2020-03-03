@@ -26,6 +26,7 @@ import {
   LICENSE_EXPIRED,
   LICENSE_TRIAL_NOT_STARTED,
   LICENSE_TRIAL_EXPIRED,
+  FLOW_LIMIT_REACHED,
 } from '../utils/messageStore';
 import { changePasswordParams, changeEmailParams } from '../sagas/api/apiPaths';
 import { getFieldById } from '../forms/utils';
@@ -2043,29 +2044,39 @@ export function integratorLicenseWithMetadata(state) {
 
 export function isLicenseValidToEnableFlow(state) {
   const license = integratorLicenseWithMetadata(state);
-  let licenseDetails = { enable: true };
+  const licenseDetails = { enable: true };
+  const preferences = userPreferences(state);
 
   if (!license) {
     return licenseDetails;
   }
 
-  if (license.hasSubscription) {
-    if (license.hasExpired) {
-      licenseDetails = {
-        message: LICENSE_EXPIRED,
-        enable: false,
-      };
+  if (license.tier === 'none') {
+    licenseDetails.enable = false;
+    licenseDetails.message = LICENSE_TRIAL_NOT_STARTED;
+  } else if (license.tier === 'free') {
+    if (!license.inTrial) {
+      if (license.isFreemium) {
+        if (preferences && preferences.environment === 'sandbox') {
+          licenseDetails.enable = false;
+          licenseDetails.message = FLOW_LIMIT_REACHED;
+        }
+      } else if (license.hasSubscription) {
+        if (license.hasExpired) {
+          licenseDetails.enable = false;
+          licenseDetails.message = LICENSE_EXPIRED;
+        }
+      } else if (license.trialEndDate) {
+        licenseDetails.enable = false;
+        licenseDetails.message = LICENSE_TRIAL_EXPIRED;
+      } else {
+        licenseDetails.enable = false;
+        licenseDetails.message = LICENSE_TRIAL_NOT_STARTED;
+      }
     }
-  } else if (!license.trialEndDate) {
-    licenseDetails = {
-      message: LICENSE_TRIAL_NOT_STARTED,
-      enable: false,
-    };
-  } else if (license.trialEndDate && !license.inTrial) {
-    licenseDetails = {
-      message: LICENSE_TRIAL_EXPIRED,
-      enable: false,
-    };
+  } else if (license.hasExpired) {
+    licenseDetails.enable = false;
+    licenseDetails.message = LICENSE_EXPIRED;
   }
 
   return licenseDetails;
