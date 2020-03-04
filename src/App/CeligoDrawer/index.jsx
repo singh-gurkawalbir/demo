@@ -152,7 +152,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
   logoContainer: {
-    textAlign: 'center',
+    alignItems: 'center',
     display: 'inline-flex',
     flexDirection: 'column',
     fill: theme.palette.primary.dark,
@@ -177,9 +177,9 @@ const useStyles = makeStyles(theme => ({
     borderColor: theme.palette.common.white,
     height: 'unset',
     marginTop: theme.spacing(1.5),
-  },
-  sandboxChipSmall: {
-    padding: theme.spacing(0.5),
+    '& span': {
+      padding: [[0, 5]],
+    },
   },
 }));
 
@@ -260,9 +260,7 @@ export default function CeligoDrawer() {
             )}
             {isSandbox && (
               <Chip
-                className={clsx(classes.sandboxChip, {
-                  [classes.sandboxChipSmall]: !drawerOpened,
-                })}
+                className={classes.sandboxChip}
                 label={drawerOpened ? 'SANDBOX' : 'SB'}
                 variant="outlined"
               />
@@ -357,7 +355,7 @@ export default function CeligoDrawer() {
               data-test="celigoDrawerToggle"
               color="inherit"
               onClick={handleDrawerToggle}
-              className={clsx(classes.drawerToggle)}>
+              className={classes.drawerToggle}>
               {drawerOpened ? <ArrowLeftIcon /> : <ArrowRightIcon />}
             </IconButton>
           </div>

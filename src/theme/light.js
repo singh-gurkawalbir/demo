@@ -34,7 +34,7 @@ export default {
       lightest: colors.celigoNeutral3,
       light: colors.celigoNeutral6,
       main: colors.celigoNeutral8,
-      darkest: colors.celigoNeutral9,
+      dark: colors.celigoNeutral9,
       contrastText: colors.celigoNeutral4,
     },
     text: {
