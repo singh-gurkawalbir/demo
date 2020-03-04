@@ -29,7 +29,7 @@ export default {
       label: 'Subdomain',
       required: true,
       helpText:
-        'The user can find their Subdomain by logging in to their portal. It will be in the URL bar.',
+        'The subdomain is the unique portion of the 4castplus.com address that you visit to log in to your portal.',
       validWhen: {
         matchesRegEx: {
           pattern: '^[\\S]+$',
@@ -63,7 +63,7 @@ export default {
       defaultValue: '',
       label: 'Password',
       helpText:
-        'Password is your 4castplus account password.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your private key safe.',
+        'Password is your 4castplus account password. Multiple layers of protection are employed (including AES 256 encryption) to keep your password safe.',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
