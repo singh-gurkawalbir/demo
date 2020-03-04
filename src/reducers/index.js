@@ -1234,6 +1234,14 @@ export function categoryMappingsForSection(state, integrationId, flowId, id) {
   );
 }
 
+export function categoryMappingsCollapsedStatus(state, integrationId, flowId) {
+  return fromSession.categoryMappingsCollapsedStatus(
+    state && state.session,
+    integrationId,
+    flowId
+  );
+}
+
 export function pendingCategoryMappings(state, integrationId, flowId) {
   const { response, mappings } =
     fromSession.categoryMapping(

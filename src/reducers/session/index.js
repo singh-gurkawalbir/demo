@@ -327,6 +327,14 @@ export function integrationAppsInstaller(state, id) {
   );
 }
 
+export function categoryMappingsCollapsedStatus(state, integrationId, flowId) {
+  return fromIntegrationApps.categoryMappingsCollapsedStatus(
+    state && state.integrationApps,
+    integrationId,
+    flowId
+  );
+}
+
 export function categoryMapping(state, integrationId, flowId) {
   return fromIntegrationApps.categoryMapping(
     state && state.integrationApps,

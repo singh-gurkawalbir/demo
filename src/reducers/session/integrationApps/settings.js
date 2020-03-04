@@ -840,6 +840,35 @@ export default (state = {}, action) => {
           generatesMetadata: [generatesMetadata.data.generatesMetaData],
         };
         break;
+      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.EXPAND_ALL:
+        if (draft[`${flowId}-${integrationId}`]) {
+          draft[`${flowId}-${integrationId}`].collapseStatus = {
+            collapseAction: 'expand',
+            collapseStatus: 'expanded',
+          };
+        }
+
+        break;
+      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.COLLAPSE_ALL:
+        if (draft[`${flowId}-${integrationId}`]) {
+          draft[`${flowId}-${integrationId}`].collapseStatus = {
+            collapseAction: 'collapse',
+            collapseStatus: 'collapsed',
+          };
+        }
+
+        break;
+      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
+        .CLEAR_COLLAPSE_STATUS:
+        if (
+          draft[`${flowId}-${integrationId}`] &&
+          draft[`${flowId}-${integrationId}`].collapseStatus
+        ) {
+          delete draft[`${flowId}-${integrationId}`].collapseStatus
+            .collapseAction;
+        }
+
+        break;
     }
   });
 };
@@ -858,6 +887,14 @@ export function integrationAppSettingsFormState(
   const key = getStateKey(integrationId, flowId, sectionId);
 
   return state[key] || emptyObj;
+}
+
+export function categoryMappingsCollapsedStatus(state, integrationId, flowId) {
+  if (!state || !state[`${flowId}-${integrationId}`]) {
+    return emptyObj;
+  }
+
+  return state[`${flowId}-${integrationId}`].collapseStatus || emptyObj;
 }
 
 export function categoryMappingFilters(state, integrationId, flowId) {
