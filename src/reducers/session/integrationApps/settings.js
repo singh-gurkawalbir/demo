@@ -60,6 +60,7 @@ export default (state = {}, action) => {
     value,
     index,
     field,
+    closeOnSave,
     options = {},
   } = action;
   const key = getStateKey(integrationId, flowId, sectionId);
@@ -463,6 +464,10 @@ export default (state = {}, action) => {
       case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.SAVE:
         if (draft[cKey]) {
           draft[cKey].saveStatus = 'requested';
+
+          if (closeOnSave) {
+            draft[cKey].closeOnSave = true;
+          }
         }
 
         break;
@@ -470,6 +475,10 @@ export default (state = {}, action) => {
         .SAVE_COMPLETE:
         if (draft[cKey]) {
           draft[cKey].saveStatus = 'saved';
+
+          if (draft[cKey].closeOnSave) {
+            draft[cKey].saveStatus = 'close';
+          }
         }
 
         break;
@@ -542,6 +551,10 @@ export default (state = {}, action) => {
         .RECEIVED_CATEGORY_MAPPINGS_DATA:
         if (draft[cKey]) {
           draft[cKey].saveStatus = 'saved';
+
+          if (draft[cKey].closeOnSave) {
+            draft[cKey].saveStatus = 'close';
+          }
 
           if (draft[cKey].response) {
             mappingIndex = draft[cKey].response.findIndex(

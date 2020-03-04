@@ -534,12 +534,13 @@ const integrationApp = {
             id,
           }
         ),
-      save: (integrationId, flowId, id) =>
+      save: (integrationId, flowId, closeOnSave) =>
         action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.SAVE, {
           integrationId,
           flowId,
-          id,
+          closeOnSave,
         }),
+
       saveFailed: (integrationId, flowId, id) =>
         action(
           actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.SAVE_FAILED,
