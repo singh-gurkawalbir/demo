@@ -74,9 +74,9 @@ export default function DynaNetSuiteQualifier(props) {
   };
 
   const handleClose = (shouldCommit, editorValues) => {
-    const { rule } = editorValues;
-
     if (shouldCommit) {
+      const { rule } = editorValues;
+
       onFieldChange(id, JSON.stringify(rule));
     }
 

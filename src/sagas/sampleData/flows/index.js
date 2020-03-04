@@ -10,7 +10,7 @@ import {
 } from 'redux-saga/effects';
 import { deepClone } from 'fast-json-patch';
 import { keys } from 'lodash';
-import { resourceData } from '../../../reducers';
+import { resourceData, getSampleData } from '../../../reducers';
 import { SCOPES } from '../../resourceForm';
 import actionTypes from '../../../actions/types';
 import actions from '../../../actions';
@@ -264,7 +264,8 @@ export function* fetchPageGeneratorPreview({ flowId, _pageGeneratorId }) {
 
 function* processData({ flowId, resourceId, processorData, stage }) {
   try {
-    const { wrapInArrayProcessedData } = processorData || {};
+    const { wrapInArrayProcessedData, removeDataPropFromProcessedData } =
+      processorData || {};
     const processedData = yield call(evaluateExternalProcessor, {
       processorData,
     });
@@ -275,6 +276,7 @@ function* processData({ flowId, resourceId, processorData, stage }) {
       stage,
       processedData,
       wrapInArrayProcessedData,
+      removeDataPropFromProcessedData,
     });
   } catch (e) {
     // Handle errors
@@ -351,12 +353,20 @@ export function* requestProcessorData({
 
   try {
     let processorData;
+    // The below data received is the wrapped form of sampleData which is needed as input for dependent stages
     const preProcessedData = yield call(getFlowStageData, {
       flowId,
       resourceId,
       resourceType,
       stage,
       isInitialized: true,
+    });
+    // The below data is plain raw sample data stored in state
+    const preProcessedSampleData = yield select(getSampleData, {
+      flowId,
+      resourceId,
+      resourceType,
+      stage,
     });
 
     if (stage === 'transform' || stage === 'responseTransform') {
@@ -368,8 +378,9 @@ export function* requestProcessorData({
         if (!(rule && rule.length)) {
           hasNoRulesToProcess = true;
         } else {
+          // we use preProcessedSampleData instead of preProcessedData as transformation processor expects data without wrapper
           processorData = {
-            data: preProcessedData,
+            data: preProcessedSampleData,
             rule,
             processor: 'transform',
           };
@@ -412,7 +423,6 @@ export function* requestProcessorData({
 
       if (hook._scriptId) {
         const scriptId = hook._scriptId;
-        const data = { data: [preProcessedData], errors: [] };
         const script = yield call(getResource, {
           resourceType: 'scripts',
           id: scriptId,
@@ -420,9 +430,10 @@ export function* requestProcessorData({
         const { content: code } = script;
 
         processorData = {
-          data,
+          data: preProcessedData,
           code,
           entryFunction: hook.function,
+          removeDataPropFromProcessedData: stage === 'preMap',
           processor: 'javascript',
         };
       } else {
@@ -510,7 +521,7 @@ export function* requestProcessorData({
       return yield call(updateStateForProcessorData, {
         flowId,
         resourceId,
-        processedData: { data: [preProcessedData] },
+        processedData: { data: [preProcessedSampleData] },
         stage,
       });
     }

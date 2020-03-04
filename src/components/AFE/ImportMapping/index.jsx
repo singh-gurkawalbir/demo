@@ -113,10 +113,13 @@ export default function ImportMapping(props) {
     lookups,
     changeIdentifier,
     previewData,
-    lastModifiedUId,
+    lastModifiedKey,
     salesforceMasterRecordTypeId,
     showSalesforceNetsuiteAssistant,
   } = useSelector(state => selectors.mapping(state, editorId));
+  const saveInProgress = useSelector(
+    state => selectors.mappingsSaveStatus(state, editorId).saveInProgress
+  );
   const [state, setState] = useState({
     localMappings: [],
     localChangeIdentifier: -1,
@@ -133,7 +136,7 @@ export default function ImportMapping(props) {
   }, [changeIdentifier, localChangeIdentifier, localMappings, mappings]);
 
   const { saveCompleted } = useSelector(state =>
-    selectors.mappingSaveProcessTerminate(state, editorId)
+    selectors.mappingsSaveStatus(state, editorId)
   );
   const tableData = useMemo(
     () =>
@@ -240,31 +243,31 @@ export default function ImportMapping(props) {
 
   const handleSalesforceAssistantFieldClick = useCallback(
     meta => {
-      if (lastModifiedUId)
+      if (lastModifiedKey)
         dispatch(
           actions.mapping.patchField(
             editorId,
             'generate',
-            lastModifiedUId,
+            lastModifiedKey,
             meta.id
           )
         );
     },
-    [dispatch, editorId, lastModifiedUId]
+    [dispatch, editorId, lastModifiedKey]
   );
   const handleNetSuiteAssistantFieldClick = useCallback(
     meta => {
-      if (lastModifiedUId)
+      if (lastModifiedKey)
         dispatch(
           actions.mapping.patchField(
             editorId,
             'generate',
-            lastModifiedUId,
+            lastModifiedKey,
             meta.sublistName ? `${meta.sublistName}[*].${meta.id}` : meta.id
           )
         );
     },
-    [dispatch, editorId, lastModifiedUId]
+    [dispatch, editorId, lastModifiedKey]
   );
   const handleClose = () => {
     if (onClose) {
@@ -400,12 +403,14 @@ export default function ImportMapping(props) {
             <Button
               variant="text"
               data-test="preview"
+              disabled={!!saveInProgress}
               onClick={handlePreviewClick}>
               Preview
             </Button>
           )}
           <MappingSaveButton
             id={editorId}
+            disabled={!!(disabled || saveInProgress)}
             color="primary"
             dataTest="saveImportMapping"
             submitButtonLabel="Save"
@@ -416,12 +421,14 @@ export default function ImportMapping(props) {
             color="secondary"
             dataTest="saveAndCloseImportMapping"
             onClose={handleClose}
+            disabled={!!(disabled || saveInProgress)}
             showOnlyOnChanges
             submitButtonLabel="Save & Close"
           />
           <Button
             variant="text"
             data-test="saveImportMapping"
+            disabled={!!saveInProgress}
             onClick={handleClose}>
             {saveCompleted ? 'Close' : 'Cancel'}
           </Button>

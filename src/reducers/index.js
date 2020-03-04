@@ -400,8 +400,8 @@ export function editorPatchSet(state, id) {
   return fromSession.editorPatchSet(state && state.session, id);
 }
 
-export function editorSaveProcessTerminate(state, id) {
-  return fromSession.editorSaveProcessTerminate(state && state.session, id);
+export function editorPatchStatus(state, id) {
+  return fromSession.editorPatchStatus(state && state.session, id);
 }
 
 export function mapping(state, id) {
@@ -412,8 +412,8 @@ export function mappingsChanged(state, id) {
   return fromSession.mappingsChanged(state && state.session, id);
 }
 
-export function mappingSaveProcessTerminate(state, id) {
-  return fromSession.mappingSaveProcessTerminate(state && state.session, id);
+export function mappingsSaveStatus(state, id) {
+  return fromSession.mappingsSaveStatus(state && state.session, id);
 }
 
 export function searchCriteria(state, id) {
@@ -874,6 +874,22 @@ export function getNextDataFlows(state, flow) {
       !f.isSimpleImport &&
       !f.disabled
   );
+}
+
+export function getNumberEnabledFlows(state) {
+  let flows = flowListWithMetadata(state, { type: 'flows' }).resources || [];
+  const preferences = userPreferences(state);
+  const sandboxEnvironment = preferences.environment === 'sandbox';
+
+  flows = flows.filter(
+    f =>
+      !f.disabled &&
+      !f._connectorId &&
+      !f.isSimpleImport &&
+      !!f.sandbox === !!sandboxEnvironment
+  );
+
+  return (flows && flows.length) || 0;
 }
 
 export function resourceListWithPermissions(state, options) {
@@ -2110,18 +2126,20 @@ export function integratorLicenseWithMetadata(state) {
 }
 
 export function isLicenseValidToEnableFlow(state) {
-  const license = integratorLicenseWithMetadata(state);
   const licenseDetails = { enable: true };
+
+  if (getNumberEnabledFlows(state) === 0) {
+    return licenseDetails;
+  }
+
+  const license = integratorLicenseWithMetadata(state);
   const preferences = userPreferences(state);
 
   if (!license) {
     return licenseDetails;
   }
 
-  if (license.tier === 'none') {
-    licenseDetails.enable = false;
-    licenseDetails.message = LICENSE_TRIAL_NOT_STARTED;
-  } else if (license.tier === 'free') {
+  if (license.tier === 'free') {
     if (!license.inTrial) {
       if (license.isFreemium) {
         if (preferences && preferences.environment === 'sandbox') {
