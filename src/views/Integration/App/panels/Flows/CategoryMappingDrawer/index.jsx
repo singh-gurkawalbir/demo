@@ -30,6 +30,7 @@ import CategoryList from './CategoryList';
 import DrawerTitleBar from './TitleBar';
 import ButtonGroup from '../../../../../../components/ButtonGroup';
 import FullScreenCloseIcon from '../../../../../../components/icons/FullScreenCloseIcon';
+import FullScreenOpenIcon from '../../../../../../components/icons/FullScreenOpenIcon';
 
 const emptySet = [];
 const drawerWidth = 200;
@@ -432,7 +433,7 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
                   />
                   {collapseStatus === 'collapsed' ? (
                     <Button variant="text" onClick={handleExpandAll}>
-                      <FullScreenCloseIcon /> Expand All
+                      <FullScreenOpenIcon /> Expand All
                     </Button>
                   ) : (
                     <Button variant="text" onClick={handleCollapseAll}>
