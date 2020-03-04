@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import React, { Fragment, useCallback, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
 import {
   useLocation,
@@ -12,9 +12,7 @@ import { makeStyles, IconButton, Typography, Drawer } from '@material-ui/core';
 import * as selectors from '../../../reducers';
 import CloseIcon from '../../icons/CloseIcon';
 import ArrowLeftIcon from '../../icons/ArrowLeftIcon';
-import InfoIcon from '../../icons/InfoIcon';
-import ArrowPopper from '../../ArrowPopper';
-import TooltipContent from '../../TooltipContent';
+import InfoIconButton from '../../InfoIconButton';
 
 const bannerHeight = 57;
 const useStyles = makeStyles(theme => ({
@@ -91,13 +89,6 @@ export default function RightDrawer({
 
     history.goBack();
   }, [history, onClose]);
-  const [anchorEl, setAnchorEl] = useState(null);
-  const handleInfoOpen = useCallback(event => {
-    setAnchorEl(event.currentTarget);
-  }, []);
-  const handleInfoClose = useCallback(() => {
-    setAnchorEl(null);
-  }, []);
 
   return (
     <Switch>
@@ -126,29 +117,7 @@ export default function RightDrawer({
             )}
             <Typography variant="h3" className={classes.title}>
               {title}
-              {infoText && (
-                <Fragment>
-                  <IconButton
-                    data-test="openPanelInfo"
-                    size="small"
-                    className={classes.infoIcon}
-                    onClick={handleInfoOpen}
-                    aria-owns={!anchorEl ? null : 'panelInfo'}
-                    aria-haspopup="true">
-                    <InfoIcon />
-                  </IconButton>
-                  <ArrowPopper
-                    id="panelInfo"
-                    open={!!anchorEl}
-                    anchorEl={anchorEl}
-                    placement="left-start"
-                    onClose={handleInfoClose}>
-                    <TooltipContent className={classes.popperMaxWidthView}>
-                      {infoText}
-                    </TooltipContent>
-                  </ArrowPopper>
-                </Fragment>
-              )}
+              {infoText && <InfoIconButton info={infoText} />}
             </Typography>
             <IconButton
               size="small"
