@@ -412,8 +412,8 @@ export function mappingsChanged(state, id) {
   return fromSession.mappingsChanged(state && state.session, id);
 }
 
-export function mappingSaveProcessTerminate(state, id) {
-  return fromSession.mappingSaveProcessTerminate(state && state.session, id);
+export function mappingsSaveStatus(state, id) {
+  return fromSession.mappingsSaveStatus(state && state.session, id);
 }
 
 export function searchCriteria(state, id) {

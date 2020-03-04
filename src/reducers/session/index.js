@@ -110,8 +110,8 @@ export function mappingsChanged(state, id) {
   return fromMappings.mappingsChanged(state && state.mappings, id);
 }
 
-export function mappingSaveProcessTerminate(state, id) {
-  return fromMappings.mappingSaveProcessTerminate(state && state.mappings, id);
+export function mappingsSaveStatus(state, id) {
+  return fromMappings.mappingsSaveStatus(state && state.mappings, id);
 }
 
 export function getSearchCriteria(state, id) {

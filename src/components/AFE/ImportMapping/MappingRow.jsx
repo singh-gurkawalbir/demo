@@ -218,7 +218,7 @@ export default function MappingRow(props) {
               title={`${
                 isSubRecordMapping
                   ? 'Subrecord mapping'
-                  : 'This field is required by the application you are importing to'
+                  : 'This field is required by the application you are importing into'
               }`}
               placement="top">
               <span className={classes.lockIcon}>

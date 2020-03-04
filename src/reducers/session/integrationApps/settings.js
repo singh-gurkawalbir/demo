@@ -975,7 +975,7 @@ export function categoryMappingGeneratesMetadata(state, integrationId, flowId) {
   return generates;
 }
 
-export function mappingSaveProcessTerminate(state, id) {
+export function mappingsSaveStatus(state, id) {
   if (!state) {
     return emptySet;
   }
