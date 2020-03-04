@@ -1243,6 +1243,22 @@ export function categoryMappingsCollapsedStatus(state, integrationId, flowId) {
   );
 }
 
+export function categoryMappingsChanged(state, integrationId, flowId) {
+  return fromSession.categoryMappingsChanged(
+    state && state.session,
+    integrationId,
+    flowId
+  );
+}
+
+export function categoryMappingSaveStatus(state, integrationId, flowId) {
+  return fromSession.categoryMappingSaveStatus(
+    state && state.session,
+    integrationId,
+    flowId
+  );
+}
+
 export function pendingCategoryMappings(state, integrationId, flowId) {
   const { response, mappings } =
     fromSession.categoryMapping(

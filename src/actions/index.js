@@ -477,8 +477,7 @@ const integrationApp = {
         ),
       updateLookup: (integrationId, flowId, id, lookups) =>
         action(
-          actionTypes.MAPPIINTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
-            .UPDATE_LOOKUP,
+          actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.UPDATE_LOOKUP,
           {
             integrationId,
             flowId,

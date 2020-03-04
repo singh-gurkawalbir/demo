@@ -335,6 +335,22 @@ export function categoryMappingsCollapsedStatus(state, integrationId, flowId) {
   );
 }
 
+export function categoryMappingsChanged(state, integrationId, flowId) {
+  return fromIntegrationApps.categoryMappingsChanged(
+    state && state.integrationApps,
+    integrationId,
+    flowId
+  );
+}
+
+export function categoryMappingSaveStatus(state, integrationId, flowId) {
+  return fromIntegrationApps.categoryMappingSaveStatus(
+    state && state.integrationApps,
+    integrationId,
+    flowId
+  );
+}
+
 export function categoryMapping(state, integrationId, flowId) {
   return fromIntegrationApps.categoryMapping(
     state && state.integrationApps,
