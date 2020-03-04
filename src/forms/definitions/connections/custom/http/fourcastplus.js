@@ -3,7 +3,7 @@ export default {
     ...formValues,
     '/type': 'http',
     '/assistant': '4castplus',
-    '/http/auth/type': 'custom',
+    '/http/auth/type': 'token',
     '/http/mediaType': 'json',
     '/http/baseURI': `https://${formValues['/http/subdomain']}.4castplus.com`,
     '/http/ping/method': 'GET',
@@ -65,20 +65,6 @@ export default {
       helpText:
         'Password is your 4castplus account password.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your private key safe.',
     },
-    'http.auth.token.token': {
-      fieldId: 'http.auth.token.token',
-      type: 'tokengen',
-      inputType: 'password',
-      resourceId: r => r._id,
-      disabledWhen: [
-        { field: 'http.unencrypted.username', is: [''] },
-        { field: 'http.encrypted.password', is: [''] },
-      ],
-      label: 'Generate Token',
-      required: true,
-      defaultValue: '',
-      helpText: 'The Access Token of your Strata account',
-    },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
@@ -87,7 +73,6 @@ export default {
       'http.subdomain',
       'http.unencrypted.username',
       'http.encrypted.password',
-      'http.auth.token.token',
     ],
     type: 'collapse',
     containers: [
