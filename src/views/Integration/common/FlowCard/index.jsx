@@ -147,7 +147,11 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
             )
           );
         } else {
-          if (flowDetails.disabled) {
+          if (
+            flowDetails.disabled &&
+            !flowDetails.free &&
+            !flowDetails.isSimpleImport
+          ) {
             if (!isLicenseValidToEnableFlow.enable) {
               return enqueueSnackbar({
                 message: isLicenseValidToEnableFlow.message,
@@ -168,6 +172,8 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
     flowDetails._id,
     flowDetails._integrationId,
     flowDetails.disabled,
+    flowDetails.free,
+    flowDetails.isSimpleImport,
     flowName,
     isLicenseValidToEnableFlow.enable,
     isLicenseValidToEnableFlow.message,
