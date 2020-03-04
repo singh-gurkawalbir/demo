@@ -459,6 +459,22 @@ const integrationApp = {
           id,
           row,
         }),
+      collapseAll: (integrationId, flowId) =>
+        action(
+          actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.COLLAPSE_ALL,
+          { integrationId, flowId }
+        ),
+      expandAll: (integrationId, flowId) =>
+        action(
+          actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.EXPAND_ALL,
+          { integrationId, flowId }
+        ),
+      clearCollapseStatus: (integrationId, flowId) =>
+        action(
+          actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
+            .CLEAR_COLLAPSE_STATUS,
+          { integrationId, flowId }
+        ),
       updateLookup: (integrationId, flowId, id, lookups) =>
         action(
           actionTypes.MAPPIINTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
