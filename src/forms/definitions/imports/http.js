@@ -45,6 +45,8 @@ export default {
             retValues['/http/resourceIdPathUpdate'],
             retValues['/http/resourceIdPathCreate'],
           ];
+        } else {
+          retValues['/http/response/resourceIdPath'] = undefined;
         }
 
         if (
@@ -55,6 +57,8 @@ export default {
             retValues['/http/resourcePathUpdate'],
             retValues['/http/resourcePathCreate'],
           ];
+        } else {
+          retValues['/http/response/resourcePath'] = undefined;
         }
 
         if (
@@ -65,6 +69,8 @@ export default {
             retValues['/http/successPathUpdate'],
             retValues['/http/successPathCreate'],
           ];
+        } else {
+          retValues['/http/response/successPath'] = undefined;
         }
 
         if (
@@ -75,6 +81,8 @@ export default {
             retValues['/http/successValuesUpdate'],
             retValues['/http/successValuesCreate'],
           ];
+        } else {
+          retValues['/http/response/successValues'] = undefined;
         }
 
         if (
@@ -85,6 +93,8 @@ export default {
             retValues['/http/failPathUpdate'],
             retValues['/http/failPathCreate'],
           ];
+        } else {
+          retValues['/http/response/failPath'] = undefined;
         }
 
         if (
@@ -95,6 +105,8 @@ export default {
             retValues['/http/failValuesUpdate'],
             retValues['/http/failValuesCreate'],
           ];
+        } else {
+          retValues['/http/response/failValues'] = undefined;
         }
 
         retValues['/http/body'] = [
@@ -116,12 +128,48 @@ export default {
           retValues['/http/response/resourceIdPath'] = [
             retValues['/http/resourceIdPathCreate'],
           ];
+        } else {
+          retValues['/http/response/resourceIdPath'] = undefined;
         }
 
         if (retValues['/http/resourcePathCreate']) {
           retValues['/http/response/resourcePath'] = [
             retValues['/http/resourcePathCreate'],
           ];
+        } else {
+          retValues['/http/response/resourcePath'] = undefined;
+        }
+
+        if (retValues['/http/successPathCreate']) {
+          retValues['/http/response/successPath'] = [
+            retValues['/http/successPathCreate'],
+          ];
+        } else {
+          retValues['/http/response/successPath'] = undefined;
+        }
+
+        if (retValues['/http/failPathCreate']) {
+          retValues['/http/response/failPath'] = [
+            retValues['/http/failPathCreate'],
+          ];
+        } else {
+          retValues['/http/response/failPath'] = undefined;
+        }
+
+        if (retValues['/http/successValuesCreate']) {
+          retValues['/http/response/successValues'] = [
+            retValues['/http/successValuesCreate'],
+          ];
+        } else {
+          retValues['/http/response/successValues'] = undefined;
+        }
+
+        if (retValues['/http/failValuesCreate']) {
+          retValues['/http/response/failValues'] = [
+            retValues['/http/failValuesCreate'],
+          ];
+        } else {
+          retValues['/http/response/failValues'] = undefined;
         }
 
         retValues['/http/body'] = [retValues['/http/bodyCreate']];
@@ -151,12 +199,48 @@ export default {
           retValues['/http/response/resourceIdPath'] = [
             retValues['/http/resourceIdPathUpdate'],
           ];
+        } else {
+          retValues['/http/response/resourceIdPath'] = undefined;
         }
 
         if (retValues['/http/resourcePathUpdate']) {
           retValues['/http/response/resourcePath'] = [
             retValues['/http/resourcePathUpdate'],
           ];
+        } else {
+          retValues['/http/response/resourcePath'] = undefined;
+        }
+
+        if (retValues['/http/successPathUpdate']) {
+          retValues['/http/response/successPath'] = [
+            retValues['/http/successPathUpdate'],
+          ];
+        } else {
+          retValues['/http/response/successPath'] = undefined;
+        }
+
+        if (retValues['/http/failPathUpdate']) {
+          retValues['/http/response/failPath'] = [
+            retValues['/http/failPathUpdate'],
+          ];
+        } else {
+          retValues['/http/response/failPath'] = undefined;
+        }
+
+        if (retValues['/http/failValuesUpdate']) {
+          retValues['/http/response/failValues'] = [
+            retValues['/http/failValuesUpdate'],
+          ];
+        } else {
+          retValues['/http/response/failValues'] = undefined;
+        }
+
+        if (retValues['/http/successValuesUpdate']) {
+          retValues['/http/response/successValues'] = [
+            retValues['/http/successValuesUpdate'],
+          ];
+        } else {
+          retValues['/http/response/successValues'] = undefined;
         }
 
         retValues['/http/body'] = [retValues['/http/bodyUpdate']];

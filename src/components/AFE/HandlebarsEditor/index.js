@@ -54,6 +54,7 @@ export default function HandlebarsEditor(props) {
         autoEvaluateDelay: 500,
         template: props.rule,
         data: props.data,
+        initTemplate: props.rule,
       })
     );
     // get Helper functions when the editor initializes

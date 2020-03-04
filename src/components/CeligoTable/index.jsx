@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import produce from 'immer';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
@@ -81,10 +81,12 @@ export default function CeligoTable({
     selectors.filter(state, filterKey)
   );
   const { order = 'desc', orderBy = 'lastModified' } = sort;
-  const handleSort = (order, orderBy) => {
-    dispatch(actions.patchFilter(filterKey, { sort: { order, orderBy } }));
-  };
-
+  const handleSort = useCallback(
+    (order, orderBy) => {
+      dispatch(actions.patchFilter(filterKey, { sort: { order, orderBy } }));
+    },
+    [dispatch, filterKey]
+  );
   const [selectedResources, setSelectedResources] = useState({});
   const [isAllSelected, setIsAllSelected] = useState(false);
 
@@ -118,38 +120,43 @@ export default function CeligoTable({
 
     setIsAllSelected(isAllSelectableResourcesSelected);
   }, [isSelectableRow, data, selectedResources]);
-  const handleSelectChange = (event, resourceId) => {
-    const { checked } = event.target;
-    const selected = produce(selectedResources, draft => {
-      draft[resourceId] = checked;
-    });
-
-    setSelectedResources(selected);
-    onSelectChange(selected);
-
-    if (!checked) {
-      setIsAllSelected(false);
-    }
-  };
-
-  const handleSelectAllChange = event => {
-    const { checked } = event.target;
-    const selected = produce(selectedResources, draft => {
-      const selectedCopy = draft;
-
-      data.forEach(r => {
-        if (isSelectableRow) {
-          selectedCopy[r._id] = isSelectableRow(r) ? checked : false;
-        } else {
-          selectedCopy[r._id] = checked;
-        }
+  const handleSelectChange = useCallback(
+    (event, resourceId) => {
+      const { checked } = event.target;
+      const selected = produce(selectedResources, draft => {
+        draft[resourceId] = checked;
       });
-    });
 
-    setSelectedResources(selected);
-    onSelectChange(selected);
-    setIsAllSelected(checked);
-  };
+      setSelectedResources(selected);
+      onSelectChange(selected);
+
+      if (!checked) {
+        setIsAllSelected(false);
+      }
+    },
+    [onSelectChange, selectedResources]
+  );
+  const handleSelectAllChange = useCallback(
+    event => {
+      const { checked } = event.target;
+      const selected = produce(selectedResources, draft => {
+        const selectedCopy = draft;
+
+        data.forEach(r => {
+          if (isSelectableRow) {
+            selectedCopy[r._id] = isSelectableRow(r) ? checked : false;
+          } else {
+            selectedCopy[r._id] = checked;
+          }
+        });
+      });
+
+      setSelectedResources(selected);
+      onSelectChange(selected);
+      setIsAllSelected(checked);
+    },
+    [data, isSelectableRow, onSelectChange, selectedResources]
+  );
 
   return (
     <Table className={classes.table}>

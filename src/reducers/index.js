@@ -22,6 +22,12 @@ import {
   ACCOUNT_IDS,
   SUITESCRIPT_CONNECTORS,
 } from '../utils/constants';
+import {
+  LICENSE_EXPIRED,
+  LICENSE_TRIAL_NOT_STARTED,
+  LICENSE_TRIAL_EXPIRED,
+  FLOW_LIMIT_REACHED,
+} from '../utils/messageStore';
 import { changePasswordParams, changeEmailParams } from '../sagas/api/apiPaths';
 import { getFieldById } from '../forms/utils';
 import { upgradeButtonText, expiresInfo } from '../utils/license';
@@ -36,7 +42,12 @@ import {
   getUsedActionsMapForResource,
   isPageGeneratorResource,
 } from '../utils/flows';
-import { isValidResourceReference, isNewId } from '../utils/resource';
+import {
+  isValidResourceReference,
+  isNewId,
+  MODEL_PLURAL_TO_LABEL,
+  isRealTimeOrDistributedResource,
+} from '../utils/resource';
 import { processSampleData } from '../utils/sampleData';
 import {
   getAvailablePreviewStages,
@@ -46,6 +57,7 @@ import inferErrorMessage from '../utils/inferErrorMessage';
 import getRoutePath from '../utils/routePaths';
 import { COMM_STATES } from './comms/networkComms';
 import { getIntegrationAppUrlName } from '../utils/integrationApps';
+import mappingUtil from '../utils/mapping';
 
 const emptySet = [];
 const emptyObject = {};
@@ -378,6 +390,18 @@ export function editor(state, id) {
 
 export function editorViolations(state, id) {
   return fromSession.editorViolations(state && state.session, id);
+}
+
+export function isEditorDirty(state, id) {
+  return fromSession.isEditorDirty(state && state.session, id);
+}
+
+export function editorPatchSet(state, id) {
+  return fromSession.editorPatchSet(state && state.session, id);
+}
+
+export function editorSaveProcessTerminate(state, id) {
+  return fromSession.editorSaveProcessTerminate(state && state.session, id);
 }
 
 export function mapping(state, id) {
@@ -869,11 +893,18 @@ export function resourceListWithPermissions(state, options) {
         r._id
       );
 
-      additionalInfo.offline = status.offline;
-      additionalInfo.queueSize = status.queueSize;
+      if (status) {
+        additionalInfo.offline = status.offline;
+        additionalInfo.queueSize = status.queueSize;
+      }
     }
 
-    return { ...r, ...additionalInfo };
+    const finalRes = { ...r, ...additionalInfo };
+
+    // defaulting queue size to zero when undefined
+    finalRes.queueSize = finalRes.queueSize || 0;
+
+    return finalRes;
   });
 
   return list;
@@ -962,15 +993,17 @@ export function marketplaceConnectors(state, application, sandbox) {
     licenses
   );
 
-  return connectors.map(c => {
-    const installedIntegrationApps = resourceList(state, {
-      type: 'integrations',
-      sandbox,
-      filter: { _connectorId: c._id },
-    });
+  return connectors
+    .map(c => {
+      const installedIntegrationApps = resourceList(state, {
+        type: 'integrations',
+        sandbox,
+        filter: { _connectorId: c._id },
+      });
 
-    return { ...c, installed: !!installedIntegrationApps.resources.length };
-  });
+      return { ...c, installed: !!installedIntegrationApps.resources.length };
+    })
+    .sort((a, b) => a.name.localeCompare(b.name));
 }
 
 export function marketplaceTemplates(state, application) {
@@ -1096,10 +1129,11 @@ export function checkUpgradeRequested(state, licenseId) {
   return fromSession.checkUpgradeRequested(state && state.session, licenseId);
 }
 
-export function integrationConnectionList(state, integrationId) {
+export function integrationConnectionList(state, integrationId, tableConfig) {
   const integration = resource(state, 'integrations', integrationId) || {};
   let { resources = [] } = resourceListWithPermissions(state, {
     type: 'connections',
+    ...(tableConfig || {}),
   });
 
   if (integrationId && integrationId !== 'none' && !integration._connectorId) {
@@ -1115,7 +1149,12 @@ export function integrationConnectionList(state, integrationId) {
   return resources;
 }
 
-export function integrationAppResourceList(state, integrationId, storeId) {
+export function integrationAppResourceList(
+  state,
+  integrationId,
+  storeId,
+  tableConfig
+) {
   if (!state) return { connections: emptySet, flows: emptySet };
 
   const integrationResource =
@@ -1126,6 +1165,7 @@ export function integrationAppResourceList(state, integrationId, storeId) {
     {
       type: 'connections',
       filter: { _integrationId: integrationId },
+      ...(tableConfig || {}),
     }
   );
 
@@ -1176,8 +1216,39 @@ export function integrationAppStore(state, integrationId, storeId) {
   );
 }
 
-export function integrationAppConnectionList(state, integrationId, storeId) {
-  return integrationAppResourceList(state, integrationId, storeId).connections;
+export function integrationAppConnectionList(
+  state,
+  integrationId,
+  storeId,
+  tableConfig
+) {
+  return integrationAppResourceList(state, integrationId, storeId, tableConfig)
+    .connections;
+}
+
+export function categoryMappingsForSection(state, integrationId, flowId, id) {
+  return fromSession.categoryMappingsForSection(
+    state && state.session,
+    integrationId,
+    flowId,
+    id
+  );
+}
+
+export function pendingCategoryMappings(state, integrationId, flowId) {
+  const { response, mappings } =
+    fromSession.categoryMapping(
+      state && state.session,
+      integrationId,
+      flowId
+    ) || {};
+  const mappingData = response.find(op => op.operation === 'mappingData');
+  const sessionMappedData =
+    mappingData && mappingData.data && mappingData.data.mappingData;
+
+  mappingUtil.setCategoryMappingData(flowId, sessionMappedData, mappings);
+
+  return sessionMappedData;
 }
 
 export function categoryMapping(state, integrationId, flowId) {
@@ -1281,10 +1352,42 @@ export function categoryMappingFilters(state, integrationId, flowId) {
   );
 }
 
+export function categoryRelationshipData(state, integrationId, flowId) {
+  return fromData.categoryRelationshipData(
+    state && state.data,
+    integrationId,
+    flowId
+  );
+}
+
+export function mappingsForVariation(state, integrationId, flowId, filters) {
+  const { sectionId, variation } = filters;
+  let mappings = {};
+  const recordMappings =
+    fromSession.variationMappingData(
+      state && state.session,
+      integrationId,
+      flowId
+    ) || emptyObject;
+
+  if (recordMappings) {
+    mappings = recordMappings.find(item => item.id === sectionId) || {};
+  }
+
+  // propery being read as is from IA metadata, to facilitate initialization and to avoid re-adjust while sending back.
+  // eslint-disable-next-line camelcase
+  const { variation_themes = [] } = mappings;
+
+  return (
+    variation_themes.find(theme => theme.variation_theme === variation) ||
+    emptyObject
+  );
+}
+
 export function mappingsForCategory(state, integrationId, flowId, filters) {
   const { sectionId } = filters;
   let mappings = emptySet;
-  const { attributes = {}, mappingFilter = 'mapped' } =
+  const { attributes = {}, mappingFilter = 'all' } =
     categoryMappingFilters(state, integrationId, flowId) || {};
   const recordMappings =
     fromSession.categoryMappingData(
@@ -1302,7 +1405,7 @@ export function mappingsForCategory(state, integrationId, flowId, filters) {
   }
 
   // If no filters are passed, return all mapppings
-  if (!attributes || !mappingFilter) {
+  if (!mappings || !attributes || !mappingFilter) {
     return mappings;
   }
 
@@ -1343,7 +1446,7 @@ export function integrationAppSettings(state, id) {
 }
 
 export function integrationAppLicense(state, id) {
-  if (!state) return {};
+  if (!state) return emptyObject;
   const integrationResource = fromData.integrationAppSettings(state.data, id);
   const { connectorEdition: edition } = integrationResource.settings || {};
   const userLicenses = fromUser.licenses(state && state.user) || [];
@@ -1452,7 +1555,7 @@ export function integrationAppSectionMetadata(
   storeId
 ) {
   if (!state) {
-    return {};
+    return emptyObject;
   }
 
   const integrationResource = fromData.integrationAppSettings(
@@ -1982,6 +2085,46 @@ export function integratorLicenseWithMetadata(state) {
   return licenseActionDetails;
 }
 
+export function isLicenseValidToEnableFlow(state) {
+  const license = integratorLicenseWithMetadata(state);
+  const licenseDetails = { enable: true };
+  const preferences = userPreferences(state);
+
+  if (!license) {
+    return licenseDetails;
+  }
+
+  if (license.tier === 'none') {
+    licenseDetails.enable = false;
+    licenseDetails.message = LICENSE_TRIAL_NOT_STARTED;
+  } else if (license.tier === 'free') {
+    if (!license.inTrial) {
+      if (license.isFreemium) {
+        if (preferences && preferences.environment === 'sandbox') {
+          licenseDetails.enable = false;
+          licenseDetails.message = FLOW_LIMIT_REACHED;
+        }
+      } else if (license.hasSubscription) {
+        if (license.hasExpired) {
+          licenseDetails.enable = false;
+          licenseDetails.message = LICENSE_EXPIRED;
+        }
+      } else if (license.trialEndDate) {
+        licenseDetails.enable = false;
+        licenseDetails.message = LICENSE_TRIAL_EXPIRED;
+      } else {
+        licenseDetails.enable = false;
+        licenseDetails.message = LICENSE_TRIAL_NOT_STARTED;
+      }
+    }
+  } else if (license.hasExpired) {
+    licenseDetails.enable = false;
+    licenseDetails.message = LICENSE_EXPIRED;
+  }
+
+  return licenseDetails;
+}
+
 export function accountSummary(state) {
   return fromUser.accountSummary(state.user);
 }
@@ -2110,7 +2253,7 @@ export function resourcePermissions(state, resourceType, resourceId) {
     return permissions.integrations[resourceId] || {};
   }
 
-  return {};
+  return emptyObject;
 }
 
 export function isFormAMonitorLevelAccess(state, integrationId) {
@@ -2505,7 +2648,7 @@ export function getAllResourceConflicts(state) {
 }
 
 export function resourceData(state, resourceType, id, scope) {
-  if (!state || !resourceType || !id) return {};
+  if (!state || !resourceType || !id) return emptyObject;
   let type = resourceType;
 
   if (resourceType.indexOf('/licenses') >= 0) {
@@ -2731,7 +2874,7 @@ export function metadataOptionsAndResources({
       connectionId,
       commMetaPath,
       filterKey,
-    }) || {}
+    }) || emptyObject
   );
 }
 
@@ -2757,7 +2900,7 @@ export function getMetadataOptions(
       connectionId,
       commMetaPath,
       filterKey,
-    }) || {}
+    }) || emptyObject
   );
 }
 
@@ -3050,23 +3193,27 @@ export function getAllPageProcessorImports(state, pageProcessors) {
   return ppImports;
 }
 
-export function getImportSampleData(state, resourceId) {
+export function getImportSampleData(state, resourceId, options = {}) {
   const { merged: resource } = resourceData(state, 'imports', resourceId);
   const { assistant, adaptorType, sampleData } = resource;
 
   if (assistant) {
     // get assistants sample data
     return assistantPreviewData(state, resourceId);
-  } else if (sampleData) {
-    // Formats sample data into readable form
-    return {
-      data: processSampleData(sampleData, resource),
-      status: 'received',
-    };
   } else if (adaptorType === 'NetSuiteDistributedImport') {
     // eslint-disable-next-line camelcase
     const { _connectionId: connectionId, netsuite_da = {} } = resource;
-    const commMetaPath = `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${netsuite_da.recordType}`;
+    const { recordType } = options;
+    let commMetaPath;
+
+    if (recordType) {
+      /** special case of netsuite/metadata/suitescript/connections/5c88a4bb26a9676c5d706324/recordTypes/inventorydetail?parentRecordType=salesorder
+       * in case of subrecord */
+      commMetaPath = `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${recordType}?parentRecordType=${netsuite_da.recordType}`;
+    } else {
+      commMetaPath = `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${netsuite_da.recordType}`;
+    }
+
     const { data, status } = metadataOptionsAndResources({
       state,
       connectionId,
@@ -3089,6 +3236,12 @@ export function getImportSampleData(state, resourceId) {
     });
 
     return { data, status };
+  } else if (sampleData) {
+    // Formats sample data into readable form
+    return {
+      data: processSampleData(sampleData, resource),
+      status: 'received',
+    };
   }
 
   return emptyObject;
@@ -3220,7 +3373,15 @@ export function debugLogs(state) {
 }
 
 export function connectionStatus(state, id) {
-  return fromSession.connectionStatus(state && state.session, id);
+  // we are returning the default value here and not in the leaf selector
+  // because we want the leaf selector to return the true state value without the default value
+  return (
+    fromSession.connectionStatus(state && state.session, id) || {
+      id,
+      queueSize: 0,
+      offline: false,
+    }
+  );
 }
 
 export function getLastExportDateTime(state, flowId) {
@@ -3360,6 +3521,51 @@ export function isLookUpExport(state, { flowId, resourceId, resourceType }) {
 }
 
 /*
+ * This Selector handles all Resource Type's Label in case of Stand alone / Flow Builder Context
+ * Used at Resource Form's Title like 'Create/Edit Export' , at Bread Crumb level to show 'Add/Edit Export'
+ */
+export function getCustomResourceLabel(
+  state,
+  { resourceType, resourceId, flowId }
+) {
+  const isLookup = isLookUpExport(state, { flowId, resourceId, resourceType });
+  const isNewResource = isNewId(resourceId);
+  const { merged: resource = {} } = resourceData(
+    state,
+    resourceType,
+    resourceId
+  );
+  let resourceLabel;
+
+  // Default resource labels based on resourceTypes handled here
+  if (isLookup) {
+    resourceLabel = 'Lookup';
+  } else {
+    resourceLabel = MODEL_PLURAL_TO_LABEL[resourceType];
+  }
+
+  // Incase of Flow context, 2nd step of PG/PP creation resource labels handled here
+  // The Below resource labels override the default labels above
+  if (flowId) {
+    if (isNewResource && resourceType === 'exports') {
+      resourceLabel = isLookup ? 'Lookup' : 'Source';
+    } else if (isNewResource && resourceType === 'imports') {
+      resourceLabel = 'Import';
+    }
+  }
+
+  // For real time resources , we show resource label as 'listener'
+  if (
+    resourceType === 'exports' &&
+    isRealTimeOrDistributedResource(resource, resourceType)
+  ) {
+    resourceLabel = 'Listener';
+  }
+
+  return resourceLabel;
+}
+
+/*
  * This selector used to differentiate drawers with/without Preview Panel
  */
 export function isPreviewPanelAvailableForResource(
@@ -3390,3 +3596,188 @@ export function isPreviewPanelAvailableForResource(
 
   return isPreviewPanelAvailable(resourceObj, resourceType, connectionObj);
 }
+
+// TODO @Raghu:  Revisit this selector once stabilized as it can be simplified
+export const getSampleDataWrapper = createSelector(
+  [
+    // eslint-disable-next-line no-use-before-define
+    (state, params) => getSampleDataContext(state, params),
+    (state, params) => {
+      if (['postMap', 'postSubmit'].includes(params.stage)) {
+        return getSampleDataContext(state, { ...params, stage: 'preMap' });
+      }
+
+      return undefined;
+    },
+    (state, { flowId }) => resource(state, 'flows', flowId) || emptyObject,
+    (state, { flowId }) => {
+      const flow = resource(state, 'flows', flowId) || emptyObject;
+
+      return (
+        resource(state, 'integrations', flow._integrationId) || emptyObject
+      );
+    },
+    (state, { resourceId, resourceType }) =>
+      resource(state, resourceType, resourceId) || emptyObject,
+    (state, { resourceId, resourceType }) => {
+      const res = resource(state, resourceType, resourceId) || emptyObject;
+
+      return resource(state, 'connections', res._connectionId) || emptyObject;
+    },
+    (state, { stage }) => stage,
+  ],
+  (
+    sampleData,
+    preMapSampleData,
+    flow,
+    integration,
+    resource,
+    connection,
+    stage
+  ) => {
+    const { status, data } = sampleData || {};
+    let resourceType = 'export';
+
+    if (
+      resource &&
+      resource.adaptorType &&
+      resource.adaptorType.includes('Import')
+    ) {
+      resourceType = 'import';
+    }
+
+    if (!status) {
+      return { status };
+    }
+
+    const contextFields = {};
+
+    if (['outputFilter', 'preSavePage'].includes(stage)) {
+      contextFields.pageIndex = 0;
+
+      if (resource.type === 'delta') {
+        contextFields.lastExportDateTime = moment()
+          .startOf('day')
+          .add(-7, 'd')
+          .toISOString();
+        contextFields.currentExportDateTime = moment()
+          .startOf('day')
+          .add(-24, 'h')
+          .toISOString();
+      }
+    }
+
+    const resourceIds = {};
+
+    if (
+      [
+        'preSavePage',
+        'preMap',
+        'postMap',
+        'postSubmit',
+        'postAggregate',
+      ].includes(stage)
+    ) {
+      resourceIds[resourceType === 'import' ? '_importId' : '_exportId'] =
+        resource._id;
+      resourceIds._connectionId = connection._id;
+      resourceIds._flowId = flow._id;
+      resourceIds._integrationId = integration._id;
+    }
+
+    const settings = {
+      integration: integration.settings || {},
+      flow: flow.settings || {},
+      [resourceType]: resource.settings || {},
+      connection: connection.settings || {},
+    };
+
+    if (['transform', 'outputFilter', 'inputFilter'].includes(stage)) {
+      return {
+        status,
+        data: {
+          record: data || {},
+          ...resourceIds,
+          ...contextFields,
+          settings,
+        },
+      };
+    }
+
+    if (['preSavePage'].includes(stage)) {
+      return {
+        status,
+        data: {
+          data: data ? [data] : [],
+          errors: [],
+          ...resourceIds,
+          ...contextFields,
+          settings,
+        },
+      };
+    }
+
+    if (['preMap'].includes(stage)) {
+      return {
+        status,
+        data: {
+          data: data ? [data] : [],
+          ...resourceIds,
+          settings,
+        },
+      };
+    }
+
+    if (['postMap'].includes(stage)) {
+      return {
+        status,
+        data: {
+          preMapData: preMapSampleData.data ? [preMapSampleData.data] : [],
+          postMapData: data ? [data] : [],
+          ...resourceIds,
+          settings,
+        },
+      };
+    }
+
+    if (['postSubmit'].includes(stage)) {
+      return {
+        status,
+        data: {
+          preMapData: preMapSampleData.data ? [preMapSampleData.data] : [],
+          postMapData: data ? [data] : [],
+          responseData: [data].map(() => ({
+            statusCode: 200,
+            errors: [{ code: '', message: '', source: '' }],
+            ignored: false,
+            id: '',
+            _json: {},
+            dataURI: '',
+          })),
+          ...resourceIds,
+          settings,
+        },
+      };
+    }
+
+    if (stage === 'postAggregate') {
+      return {
+        status,
+        data: {
+          postAggregateData: {
+            success: true,
+            _json: {},
+            code: '',
+            message: '',
+            source: '',
+          },
+          ...resourceIds,
+          settings,
+        },
+      };
+    }
+
+    // For all other stages, return basic sampleData
+    return { status, data };
+  }
+);

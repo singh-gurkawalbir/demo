@@ -11,4 +11,9 @@ export default {
         ? 'Must provide some sample data.'
         : util.validateJsonString(editor.data),
   }),
+  dirty: editor => {
+    const { template, initTemplate } = editor || {};
+
+    return template !== initTemplate;
+  },
 };

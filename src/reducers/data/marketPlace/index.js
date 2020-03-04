@@ -76,9 +76,9 @@ export function templates(state, application) {
   let templates = state.templates || [];
 
   if (application) {
-    templates = templates.filter(
-      t => t.applications && t.applications.includes(application)
-    );
+    templates = templates
+      .filter(t => t.applications && t.applications.includes(application))
+      .sort((a, b) => a.name.localeCompare(b.name));
   }
 
   return templates;

@@ -1,8 +1,8 @@
 import { useEffect, useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import * as selectors from '../../../../../../../reducers';
+import actions from '../../../../../../../actions';
 import ImportMapping from './Mappings';
-import * as selectors from '../../../../../../reducers';
-import actions from '../../../../../../actions';
 
 export default function MappingWrapper(props) {
   const { id, flowId, generateFields, sectionId, integrationId } = props;
@@ -25,7 +25,7 @@ export default function MappingWrapper(props) {
 
     return null;
   });
-  const { fieldMappings } =
+  const { fieldMappings, deleted = false } =
     useSelector(state =>
       selectors.mappingsForCategory(state, integrationId, flowId, {
         sectionId,
@@ -37,7 +37,10 @@ export default function MappingWrapper(props) {
   const { _connectionId: connectionId, name: resourceName } = resourceData;
   const dispatch = useDispatch();
   const mappingInitialized = useSelector(
-    state => !Array.isArray(selectors.mapping(state, id))
+    state =>
+      !Array.isArray(
+        selectors.categoryMappingsForSection(state, integrationId, flowId, id)
+      )
   );
   const application = 'netsuite';
   const options = {
@@ -55,12 +58,15 @@ export default function MappingWrapper(props) {
   };
   const handleInit = useCallback(() => {
     dispatch(
-      actions.mapping.init({
+      actions.integrationApp.settings.categoryMappings.init(
+        integrationId,
+        flowId,
         id,
-        options: mappingOptions,
-      })
+        mappingOptions
+      )
     );
-  }, [dispatch, id, mappingOptions]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, flowId, id, integrationId, mappingOptions]);
 
   useEffect(() => {
     if (!initTriggered || resetMappings) {
@@ -76,13 +82,29 @@ export default function MappingWrapper(props) {
 
   useEffect(() => {
     if (initTriggered) setResetMappings(true);
-  }, [sectionId, initTriggered, attributes, mappingFilter]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sectionId, attributes, mappingFilter]);
 
   useEffect(() => {
     if (initTriggered && mappingInitialized) {
-      dispatch(actions.mapping.updateGenerates(id, generateFields));
+      dispatch(
+        actions.integrationApp.settings.categoryMappings.updateGenerates(
+          integrationId,
+          flowId,
+          id,
+          generateFields
+        )
+      );
     }
-  }, [dispatch, generateFields, id, initTriggered, mappingInitialized]);
+  }, [
+    dispatch,
+    flowId,
+    generateFields,
+    id,
+    initTriggered,
+    integrationId,
+    mappingInitialized,
+  ]);
 
   const isGenerateRefreshSupported = true;
 
@@ -91,6 +113,7 @@ export default function MappingWrapper(props) {
       editorId={id}
       generateFields={generateFields}
       resource={resourceData}
+      disabled={deleted}
       integrationId={integrationId}
       flowId={flowId}
       isGenerateRefreshSupported={isGenerateRefreshSupported}

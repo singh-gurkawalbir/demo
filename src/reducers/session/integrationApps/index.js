@@ -23,8 +23,25 @@ export function categoryMapping(state, integrationId, flowId) {
   );
 }
 
+export function categoryMappingsForSection(state, integrationId, flowId, id) {
+  return fromSettings.categoryMappingsForSection(
+    state && state.settings,
+    integrationId,
+    flowId,
+    id
+  );
+}
+
 export function categoryMappingFilters(state, integrationId, flowId) {
   return fromSettings.categoryMappingFilters(
+    state && state.settings,
+    integrationId,
+    flowId
+  );
+}
+
+export function variationMappingData(state, integrationId, flowId) {
+  return fromSettings.variationMappingData(
     state && state.settings,
     integrationId,
     flowId

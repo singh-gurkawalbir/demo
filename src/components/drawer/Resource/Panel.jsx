@@ -1,14 +1,15 @@
 import { Fragment, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Route, useLocation } from 'react-router-dom';
+import { Route, useLocation, generatePath } from 'react-router-dom';
 import { makeStyles, Typography, IconButton } from '@material-ui/core';
 import LoadResources from '../../../components/LoadResources';
 import ResourceForm from '../../../components/ResourceFormFactory';
-import { MODEL_PLURAL_TO_LABEL } from '../../../utils/resource';
+import { isNewId } from '../../../utils/resource';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import Close from '../../../components/icons/CloseIcon';
+import ApplicationImg from '../../icons/ApplicationImg';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -35,6 +36,9 @@ const useStyles = makeStyles(theme => ({
     },
     maxHeight: 'unset',
     padding: theme.spacing(3),
+  },
+  appLogo: {
+    paddingRight: '25px',
   },
   title: {
     display: 'flex',
@@ -85,8 +89,12 @@ export default function Panel(props) {
   const newResourceId = useSelector(state =>
     selectors.createdResourceId(state, id)
   );
-  const isLookUpExport = useSelector(state =>
-    selectors.isLookUpExport(state, { flowId, resourceId: id, resourceType })
+  const resourceLabel = useSelector(state =>
+    selectors.getCustomResourceLabel(state, {
+      resourceId: id,
+      resourceType,
+      flowId,
+    })
   );
   const abortAndClose = useCallback(() => {
     dispatch(actions.resourceForm.submitAborted(resourceType, id));
@@ -101,18 +109,41 @@ export default function Panel(props) {
   const stagedProcessor = useSelector(state =>
     selectors.stagedResource(state, id)
   );
-  let resourceLabel;
+  const applicationType = useSelector(state => {
+    const stagedResource = selectors.stagedResource(state, id);
 
-  if (resourceType === 'pageProcessor') {
-    resourceLabel = 'Destination / Lookup';
-  } else if (resourceType === 'pageGenerator') {
-    resourceLabel = 'Source';
-  } else if (isLookUpExport) {
-    resourceLabel = 'Lookup';
-  } else {
-    resourceLabel = MODEL_PLURAL_TO_LABEL[resourceType];
-  }
+    if (!stagedResource || !stagedResource.patch) {
+      return '';
+    }
 
+    function getStagedValue(key) {
+      const result = stagedResource.patch.find(
+        p => p.op === 'replace' && p.path === key
+      );
+
+      return result && result.value;
+    }
+
+    // [{}, ..., {}, {op: "replace", path: "/adaptorType", value: "HTTPExport"}, ...]
+    const adaptorType = getStagedValue('/adaptorType');
+    const assistant = getStagedValue('/assistant');
+
+    if (adaptorType === 'WebhookExport') {
+      return getStagedValue('/webhook/provider');
+    }
+
+    if (adaptorType && adaptorType.startsWith('RDBMS')) {
+      const connection = selectors.resource(
+        state,
+        'connections',
+        getStagedValue('/_connectionId')
+      );
+
+      return connection && connection.rdbms && connection.rdbms.type;
+    }
+
+    return assistant || adaptorType;
+  });
   const isMultiStepSaveResource = [
     'imports',
     'exports',
@@ -209,9 +240,15 @@ export default function Panel(props) {
       // Form should re render with created new Id
       // Below code just replaces url with created Id and form re initializes
       if (formState.skipClose) {
-        return props.history.replace(
-          `${props.parentUrl}/edit/${resourceType}/${newResourceId || id}`
+        props.history.replace(
+          generatePath(match.path, {
+            id: newResourceId || id,
+            resourceType,
+            operation,
+          })
         );
+
+        return;
       }
 
       if (newResourceId)
@@ -223,15 +260,31 @@ export default function Panel(props) {
     }
   }
 
+  const showApplicationLogo =
+    flowId &&
+    ['exports', 'imports'].includes(resourceType) &&
+    !!applicationType;
   const requiredResources = determineRequiredResources(resourceType);
+  let title = `${
+    isNewId(id) ? `Create` : 'Edit'
+  } ${resourceLabel.toLowerCase()}`;
+
+  if (resourceType === 'pageGenerator') {
+    title = 'Create source';
+  }
 
   return (
     <Fragment>
       <div className={classes.root}>
         <div className={classes.title}>
-          <Typography variant="h3">
-            {isNew ? `Create` : 'Edit'} {resourceLabel.toLowerCase()}
-          </Typography>
+          <Typography variant="h3">{title}</Typography>
+          {showApplicationLogo && (
+            <ApplicationImg
+              className={classes.appLogo}
+              size="small"
+              type={applicationType}
+            />
+          )}
           <IconButton
             data-test="closeFlowSchedule"
             aria-label="Close"

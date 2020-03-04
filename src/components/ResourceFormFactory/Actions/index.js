@@ -21,8 +21,10 @@ export const useLoadingSnackbarOnSave = props => {
       setDisableSave(true);
       snackbar({
         variant: 'info',
-        message: `Saving your ${MODEL_PLURAL_TO_LABEL[resourceType] ||
-          resourceType} `,
+        message: resourceType
+          ? `Saving your ${MODEL_PLURAL_TO_LABEL[resourceType] ||
+              resourceType} `
+          : 'Saving',
         persist: true,
       });
     },

@@ -21,7 +21,7 @@ export const RESOURCE_TYPE_PLURAL_TO_SINGULAR = Object.freeze(
   invert(RESOURCE_TYPE_SINGULAR_TO_PLURAL)
 );
 export const RESOURCE_TYPE_SINGULAR_TO_LABEL = Object.freeze({
-  accesstoken: 'API Token',
+  accesstoken: 'API token',
   asynchelper: 'Async Helper',
   connection: 'Connection',
   connector: 'Connector',
@@ -35,6 +35,7 @@ export const RESOURCE_TYPE_SINGULAR_TO_LABEL = Object.freeze({
   stack: 'Stack',
   template: 'Template',
   license: 'License',
+  agent: 'Agent',
 });
 export const RESOURCE_TYPE_LABEL_TO_SINGULAR = Object.freeze(
   invert(RESOURCE_TYPE_SINGULAR_TO_LABEL)
@@ -47,4 +48,5 @@ export const recycleBinDependencies = {
   integrations: ['integrations'],
   stacks: ['stacks'],
   scripts: ['scripts'],
+  agents: ['agents'],
 };

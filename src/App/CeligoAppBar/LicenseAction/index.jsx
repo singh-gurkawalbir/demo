@@ -9,6 +9,7 @@ import * as selectors from '../../../reducers';
 const useStyles = makeStyles(theme => ({
   inTrial: {
     marginBottom: theme.spacing(0.5),
+    marginTop: theme.spacing(0.5),
   },
   expiresSoon: {
     backgroundColor: theme.palette.primary.main,

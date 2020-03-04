@@ -21,6 +21,8 @@ export function* saveMappings({ id }) {
     flowSampleData,
     adaptorType,
     resource,
+    netsuiteRecordType,
+    subRecordMappingId,
   } = yield select(selectors.mapping, id);
   let _mappings = mappings.map(
     ({ index, hardCodedValueTmp, rowIdentifier, ...others }) => others
@@ -33,9 +35,23 @@ export function* saveMappings({ id }) {
     isGroupedSampleData,
     resource,
     flowSampleData,
+    netsuiteRecordType,
   });
   const { _id: resourceId } = resource;
   const mappingPath = mappingUtil.getMappingPath(adaptorType);
+
+  // in case of subRecord mapping, modify the subrecord and return the root mapping object
+  if (
+    application === adaptorTypeMap.NetSuiteDistributedImport &&
+    subRecordMappingId
+  ) {
+    _mappings = mappingUtil.appendModifiedSubRecordToMapping({
+      resource,
+      subRecordMappingId,
+      subRecordMapping: _mappings,
+      subRecordLookups: lookups,
+    });
+  }
 
   patch.push({
     op: _mappings ? 'replace' : 'add',
@@ -43,7 +59,7 @@ export function* saveMappings({ id }) {
     value: _mappings,
   });
 
-  if (lookups) {
+  if (lookups && !subRecordMappingId) {
     const lookupPath = lookupUtil.getLookupPath(adaptorType);
 
     patch.push({
@@ -76,11 +92,15 @@ export function* previewMappings({ id }) {
     lookups,
     resource,
     flowSampleData,
+    subRecordMappingId,
+    netsuiteRecordType,
   } = yield select(selectors.mapping, id);
   let resourceCopy = deepClone(resource);
   let _mappings = mappings
     .filter(mapping => !!mapping.generate)
-    .map(({ index, hardCodedValueTmp, rowIdentifier, ...others }) => others);
+    .map(
+      ({ index, key, hardCodedValueTmp, rowIdentifier, ...others }) => others
+    );
 
   _mappings = mappingUtil.generateMappingsForApp({
     mappings: _mappings,
@@ -88,6 +108,8 @@ export function* previewMappings({ id }) {
     appType: application,
     isGroupedSampleData,
     resource,
+    netsuiteRecordType,
+    subRecordMappingId,
   });
 
   const { _connectionId } = resourceCopy;
@@ -105,11 +127,20 @@ export function* previewMappings({ id }) {
   } else if (application === adaptorTypeMap.NetSuiteDistributedImport) {
     path = `/netsuiteDA/previewImportMappingFields?_connectionId=${_connectionId}`;
     resourceCopy = resourceCopy.netsuite_da;
-    resourceCopy.mapping = _mappings;
 
-    if (lookups) {
+    // in case of subRecord mapping, modify the subrecord and return the root mapping object
+    if (subRecordMappingId) {
+      _mappings = mappingUtil.appendModifiedSubRecordToMapping({
+        resource: resourceCopy,
+        subRecordMappingId,
+        subRecordMapping: _mappings,
+        subRecordLookups: lookups,
+      });
+    } else {
       resourceCopy.lookups = lookups;
     }
+
+    resourceCopy.mapping = _mappings;
 
     requestBody.data = [requestBody.data];
     requestBody.celigo_resource = 'previewImportMappingFields';

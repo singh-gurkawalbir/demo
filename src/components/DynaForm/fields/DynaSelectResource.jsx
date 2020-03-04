@@ -1,3 +1,4 @@
+import { Chip } from '@material-ui/core';
 import React, { useState, useEffect, useCallback } from 'react';
 import sift from 'sift';
 import { makeStyles } from '@material-ui/core/styles';
@@ -17,6 +18,7 @@ import {
   getMissingPatchSet,
 } from '../../../forms/utils';
 import ActionButton from '../../../components/ActionButton';
+import Spinner from '../../Spinner';
 
 const handleAddNewResource = args => {
   const {
@@ -105,6 +107,36 @@ const useStyles = makeStyles({
   },
 });
 
+function ConnectionLoadingChip(props) {
+  const { connectionId } = props;
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(actions.resource.connections.pingAndUpdate(connectionId));
+  }, [connectionId, dispatch]);
+
+  const connectionOffline = useSelector(
+    state => selectors.connectionStatus(state, connectionId).offline
+  );
+  const connectionRequestStatus = useSelector(
+    state => selectors.connectionStatus(state, connectionId).requestStatus
+  );
+
+  if (!connectionRequestStatus || connectionRequestStatus === 'failed') {
+    return null;
+  }
+
+  if (connectionRequestStatus === 'requested') {
+    return <Spinner />;
+  }
+
+  return connectionOffline ? (
+    <Chip color="secondary" label="Offline" />
+  ) : (
+    <Chip color="primary" label="Online" />
+  );
+}
+
 function DynaSelectResource(props) {
   const {
     disabled,
@@ -117,6 +149,7 @@ function DynaSelectResource(props) {
     allowEdit,
     options,
     filter,
+    hideOnEmptyList = false,
     appTypeIsStatic = false,
     statusExport,
     ignoreEnvironmentFilter,
@@ -242,6 +275,10 @@ function DynaSelectResource(props) {
 
   // console.log(truncatedItems(resourceItems || []));
 
+  if (!resourceItems.length && hideOnEmptyList) {
+    return null;
+  }
+
   return (
     <div className={classes.root}>
       <LoadResources required resources={resourceType}>
@@ -277,6 +314,12 @@ function DynaSelectResource(props) {
             onClick={handleEditResource}>
             <EditIcon />
           </ActionButton>
+        )}
+        {resourceType === 'connections' && !!value && (
+          <ConnectionLoadingChip
+            resourceType={resourceType}
+            connectionId={value}
+          />
         )}
       </div>
     </div>

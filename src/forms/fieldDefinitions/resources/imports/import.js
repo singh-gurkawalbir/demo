@@ -97,6 +97,7 @@ export default {
       {
         items: [
           { label: '3dcart', value: '3dcart' },
+          { label: '3PL Central', value: '3plcentral' },
           { label: 'Accelo', value: 'accelo' },
           { label: 'Adp', value: 'adp' },
           { label: 'Amazonaws', value: 'amazonaws' },
@@ -793,5 +794,12 @@ export default {
   'lookups[*].whereClause': {
     type: 'text',
     label: 'Lookups[*] where Clause',
+  },
+  settings: {
+    type: 'editor',
+    mode: 'json',
+    label: 'Settings',
+    showOnDeveloperMode: true,
+    defaultValue: r => (r && r.settings && JSON.stringify(r.settings)) || '{}',
   },
 };

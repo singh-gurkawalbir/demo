@@ -451,7 +451,9 @@ export const translateDependencyProps = fieldMap => {
             fieldMapCopy[ref].visibleWhenAll,
             visibleRule
           );
-        } else if (requiredRule) {
+        }
+
+        if (requiredRule) {
           fieldMapCopy[ref].requiredWhenAll = pushRuleToMeta(
             fieldMapCopy[ref].requiredWhenAll,
             requiredRule

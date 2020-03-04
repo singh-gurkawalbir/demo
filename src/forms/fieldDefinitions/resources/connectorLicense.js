@@ -4,7 +4,7 @@ import { isNewId } from '../../../utils/resource';
 export default {
   expires: {
     defaultValue: r => r.expires && moment(r.expires).format('L'),
-    type: 'text',
+    type: 'date',
     label: 'Expiration Date',
   },
   opts: {

@@ -10,6 +10,10 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+/**
+ *
+ * disabled property set to true in case of monitor level access
+ */
 export default function MappingSettingsField(props) {
   const classes = useStyles();
   const {
@@ -17,12 +21,12 @@ export default function MappingSettingsField(props) {
     onSave,
     extractFields,
     generateFields,
-    lookup,
     application,
     updateLookup,
     options,
     value,
     disabled,
+    lookups,
   } = props;
   const [showSettings, setShowSettings] = useState(false);
   const isDisabled = !('generate' in value);
@@ -46,13 +50,13 @@ export default function MappingSettingsField(props) {
           open={showSettings}
           updateLookup={updateLookup}
           title="Settings"
-          lookup={lookup}
           value={value}
           onClose={handleClose}
           options={options}
           extractFields={extractFields}
           generateFields={generateFields}
           disabled={disabled}
+          lookups={lookups}
         />
       )}
 

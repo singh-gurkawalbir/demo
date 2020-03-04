@@ -20,12 +20,9 @@ export default {
   celigoNeutral8: '#333D47',
   celigoNeutral9: '#2A3138',
 
-  // celigoSandbox1: '#F8FAFF', // = #F5F5F0
-  // celigoSandbox2: '#B49569', // hover for left side nav
-  // celigoSandbox3: '#424E59', // = #A58559
-  // celigoSandbox4: '#333D47', // = # 806A4B
-  // celigoSandbox5: '#2A3138', // = #625544
-
-  celigoSandbox1: '#F4D970',
-  celigoSandbox2: '#FDEDB0',
+  celigoSandbox1: '#F5F5F0',
+  celigoSandbox2: '#B49569',
+  celigoSandbox3: '#A58559',
+  celigoSandbox4: '#806A4B',
+  celigoSandbox5: '#625544',
 };

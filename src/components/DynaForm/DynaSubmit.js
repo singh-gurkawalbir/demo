@@ -2,6 +2,7 @@ import { useCallback, useMemo } from 'react';
 import { FormContext } from 'react-forms-processor/dist';
 import Button from '@material-ui/core/Button';
 import useEnableButtonOnTouchedForm from '../../hooks/useEnableButtonOnTouchedForm';
+import trim from '../../utils/trim';
 
 function FormButton({
   disabled,
@@ -14,16 +15,18 @@ function FormButton({
   color,
   fields,
   resourceType,
+  showCustomFormValidations,
   skipDisableButtonForFormTouched = false,
   resourceId,
 }) {
-  const handleClick = useCallback(() => onClick(value), [onClick, value]);
+  const handleClick = useCallback(() => onClick(trim(value)), [onClick, value]);
   const { formTouched, onClickWhenValid } = useEnableButtonOnTouchedForm({
     onClick: handleClick,
     fields,
     formIsValid: isValid,
     resourceId,
     resourceType,
+    showCustomFormValidations,
   });
   const buttonDisabled = useMemo(
     () => (disabled || skipDisableButtonForFormTouched ? false : !formTouched),
@@ -31,7 +34,7 @@ function FormButton({
   );
   const onClickBtn = useCallback(() => {
     if (skipDisableButtonForFormTouched) return onClick(value);
-    onClickWhenValid(value);
+    onClickWhenValid(trim(value));
   }, [onClick, onClickWhenValid, skipDisableButtonForFormTouched, value]);
 
   return (

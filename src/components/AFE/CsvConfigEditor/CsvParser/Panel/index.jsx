@@ -182,7 +182,7 @@ export default function CsvParsePanel(props) {
         </FormControl>
 
         <FormControlLabel
-          disabled={disabled}
+          disabled={disabled || !result}
           className={classes.checkboxOffset}
           control={
             <Checkbox

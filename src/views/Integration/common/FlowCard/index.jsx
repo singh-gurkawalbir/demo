@@ -16,6 +16,7 @@ import SettingsIcon from '../../../../components/icons/SettingsIcon';
 import OnOffSwitch from '../../../../components/SwitchToggle';
 import InfoIconButton from '../InfoIconButton';
 import { getIntegrationAppUrlName } from '../../../../utils/integrationApps';
+import useEnqueueSnackbar from '../../../../hooks/enqueueSnackbar';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -71,6 +72,12 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
   const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
+  const isLicenseValidToEnableFlow = useSelector(
+    state => selectors.isLicenseValidToEnableFlow(state),
+    (left, right) =>
+      left.message === right.message && left.enable === right.enable
+  );
+  const [enqueueSnackbar] = useEnqueueSnackbar();
   const flowDetails =
     useSelector(state => selectors.flowDetails(state, flowId)) || {};
   const isDataloader = flowDetails.isSimpleImport;
@@ -140,6 +147,19 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
             )
           );
         } else {
+          if (
+            flowDetails.disabled &&
+            !flowDetails.free &&
+            !flowDetails.isSimpleImport
+          ) {
+            if (!isLicenseValidToEnableFlow.enable) {
+              return enqueueSnackbar({
+                message: isLicenseValidToEnableFlow.message,
+                variant: 'error',
+              });
+            }
+          }
+
           patchFlow('/disabled', !flowDetails.disabled);
         }
       }
@@ -147,11 +167,16 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
   }, [
     defaultConfirmDialog,
     dispatch,
+    enqueueSnackbar,
     flowDetails._connectorId,
     flowDetails._id,
     flowDetails._integrationId,
     flowDetails.disabled,
+    flowDetails.free,
+    flowDetails.isSimpleImport,
     flowName,
+    isLicenseValidToEnableFlow.enable,
+    isLicenseValidToEnableFlow.message,
     patchFlow,
     storeId,
   ]);

@@ -41,6 +41,7 @@ export default {
   name: {
     type: 'text',
     label: 'Name',
+    defaultDisabled: r => !!r._connectorId,
   },
   assistant: {
     type: 'select',
@@ -49,6 +50,7 @@ export default {
       {
         items: [
           { label: '3dcart', value: '3dcart' },
+          { label: '3PL Central', value: '3plcentral' },
           { label: 'Accelo', value: 'accelo' },
           { label: 'Adp', value: 'adp' },
           { label: 'Amazonaws', value: 'amazonaws' },
@@ -1446,6 +1448,12 @@ export default {
       },
     },
   },
+  'as2.partnerStationInfo.mdn.verifyMDNSignature': {
+    type: 'checkbox',
+    label: 'MDN signature verification',
+    helpText:
+      'Check this box if your trading partner requires that the MDN signature be verified. Otherwise, integrator.io will not attempt to verify the signature.',
+  },
   'as2.partnerStationInfo.mdn.mdnURL': {
     type: 'text',
     label: "Partner's URL for Asynchronous MDN:",
@@ -2501,6 +2509,12 @@ export default {
     label: 'Secret Access Key',
   },
   // #endregion dynamodb
-
+  settings: {
+    type: 'editor',
+    mode: 'json',
+    label: 'Settings',
+    showOnDeveloperMode: true,
+    defaultValue: r => (r && r.settings && JSON.stringify(r.settings)) || '{}',
+  },
   // #region custom connection
 };

@@ -100,6 +100,7 @@ export default {
   ],
   OAUTH_APPLICATIONS: [
     'azureactivedirectory',
+    'squareup',
     'shipbob',
     'ebay',
     'vend',
@@ -174,7 +175,6 @@ export default {
     'doubleclick',
     'smartsheet',
     'campaignmonitor',
-    'sageone',
     'wrike',
     'googlesheets',
     'googlecontacts',

@@ -92,8 +92,9 @@ describe('editor reducers', () => {
 
   test('should get rid off all errors reset editor', () => {
     const id = 1;
+    const intializedState = reducer(undefined, actions.editor.init(id));
     const failureState = reducer(
-      undefined,
+      intializedState,
       actions.editor.evaluateFailure(id, 'someError')
     );
 
@@ -107,8 +108,9 @@ describe('editor reducers', () => {
   test('should get rid off all evaluations in reset editor', () => {
     const id = 1;
     const response = 'some result';
+    const intializedState = reducer(undefined, actions.editor.init(id));
     const evaluationSuccessState = reducer(
-      undefined,
+      intializedState,
       actions.editor.evaluateResponse(id, response)
     );
 
@@ -150,8 +152,12 @@ describe('editor reducers', () => {
     });
     test('should not mutate the state of patch operation when the patch property is changed', () => {
       const id = 1;
+      const intializedState = reducer(undefined, actions.editor.init(id));
       const patch = { rules: [{ extract: 'a', generate: 'b' }] };
-      const patchedState = reducer(undefined, actions.editor.patch(id, patch));
+      const patchedState = reducer(
+        intializedState,
+        actions.editor.patch(id, patch)
+      );
 
       deepFreeze(patchedState);
       expect(patchedState[id].rules).toEqual(patch.rules);

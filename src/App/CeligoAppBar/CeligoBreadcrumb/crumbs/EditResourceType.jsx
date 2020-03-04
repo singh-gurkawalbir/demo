@@ -1,20 +1,24 @@
 import { useSelector } from 'react-redux';
-import * as selectors from '../../../../reducers';
-import { MODEL_PLURAL_TO_LABEL } from '../../../../utils/resource';
+import { getCustomResourceLabel } from '../../../../reducers';
+import { isNewId } from '../../../../utils/resource';
 
 /*
  * Deals with labelling different resource types
- * Only case we handle is when resource is a lookup , we determine the same with passed flow id and show accordingly
- * In all other cases, we just show the passed resourceType
+ * Gets derived resource label based on flowId and resourceId/resourceType
  */
 export default function EditResourceTypeCrumb({
   id: resourceId,
   resourceType,
   flowId,
 }) {
-  const isLookup = useSelector(state =>
-    selectors.isLookUpExport(state, { resourceType, resourceId, flowId })
+  const resourceLabel = useSelector(state =>
+    getCustomResourceLabel(state, {
+      resourceType,
+      resourceId,
+      flowId,
+    })
   );
+  const action = isNewId(resourceId) ? 'Add' : 'Edit';
 
-  return `Edit ${isLookup ? 'Lookup' : MODEL_PLURAL_TO_LABEL[resourceType]}`;
+  return `${action} ${resourceLabel}`;
 }

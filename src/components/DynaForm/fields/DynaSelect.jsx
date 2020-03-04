@@ -52,7 +52,7 @@ export default function DynaSelect(props) {
     disabled,
     id,
     value,
-    isValid,
+    isValid = true,
     removeHelperText = false,
     name,
     options = [],

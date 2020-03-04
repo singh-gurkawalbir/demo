@@ -65,7 +65,19 @@ const requestOptions = editor => {
   };
 };
 
+// isDirty checks for changes in editor
+const isDirty = editor => {
+  const logic = getLogic(editor);
+
+  if (logic.dirty) {
+    return logic.dirty(editor);
+  }
+
+  return false;
+};
+
 export default {
   requestOptions,
   validate,
+  isDirty,
 };

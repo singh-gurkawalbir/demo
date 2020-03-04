@@ -3,6 +3,7 @@ import {
   convertFromExport,
   PARAMETER_LOCATION,
 } from '../../../../../utils/assistant';
+import { isLookupResource } from '../../../../../utils/flows';
 
 export function hiddenFieldsMeta({ values }) {
   return ['assistant', 'adaptorType', 'assistantData'].map(fieldId => ({
@@ -259,10 +260,43 @@ export function fieldMeta({ resource, assistantData }) {
     fieldIds.push(field.id || field.fieldId);
   });
 
+  fieldMap.exportPanel = {
+    fieldId: 'exportPanel',
+  };
+
+  fieldMap.settings = {
+    fieldId: 'settings',
+  };
+
   return {
+    init: (fieldMeta, resource = {}, flow) => {
+      const exportPanelField = fieldMeta.fieldMap.exportPanel;
+
+      if (isLookupResource(flow, resource)) {
+        exportPanelField.visible = false;
+      }
+
+      return fieldMeta;
+    },
     fieldMap,
     layout: {
-      fields: ['common', 'exportOneToMany', 'exportData', ...fieldIds],
+      type: 'column',
+      containers: [
+        {
+          fields: ['common', 'exportOneToMany', 'exportData', ...fieldIds],
+          type: 'collapse',
+          containers: [
+            {
+              collapsed: true,
+              label: 'Custom settings',
+              fields: ['settings'],
+            },
+          ],
+        },
+        {
+          fields: ['exportPanel'],
+        },
+      ],
     },
   };
 }

@@ -23,6 +23,8 @@ import ArrowRightIcon from '../../../../../../components/icons/ArrowRightIcon';
 import InstallationStep from '../../../../../../components/InstallStep';
 import getRoutePath from '../../../../../../utils/routePaths';
 import { getIntegrationAppUrlName } from '../../../../../../utils/integrationApps';
+import Loader from '../../../../../../components/Loader';
+import Spinner from '../../../../../../components/Spinner';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -67,10 +69,11 @@ export default function IntegrationAppUninstaller({ match }) {
   );
 
   useEffect(() => {
-    if (!error && !uninstallSteps)
+    if (!error && !uninstallSteps) {
       dispatch(
         actions.integrationApp.uninstaller.preUninstall(storeId, integrationId)
       );
+    }
   }, [dispatch, error, integrationId, storeId, uninstallSteps]);
 
   useEffect(() => {
@@ -117,6 +120,15 @@ export default function IntegrationAppUninstaller({ match }) {
 
   if (error) {
     return <Redirect push={false} to={getRoutePath('dashboard')} />;
+  }
+
+  if (!uninstallSteps) {
+    return (
+      <Loader open>
+        Loading uninstall steps
+        <Spinner />
+      </Loader>
+    );
   }
 
   const storeName = integration.stores

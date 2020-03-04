@@ -5,9 +5,14 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
 import DynaForm from '../../../../components/DynaForm';
 import DynaSubmit from '../../../../components/DynaForm/DynaSubmit';
-import { resourceList, getNextDataFlows } from '../../../../reducers';
+import {
+  resourceList,
+  getNextDataFlows,
+  developerMode,
+} from '../../../../reducers';
 import actions from '../../../../actions';
 import RightDrawer from '../../../../components/drawer/Right';
+import { isJsonString } from '../../../../utils/string';
 
 const useStyles = makeStyles(theme => ({
   scheduleContainer: {
@@ -25,6 +30,7 @@ export default function SettingsDrawer({ flow, isViewMode }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const history = useHistory();
+  const developerModeOn = useSelector(state => developerMode(state));
   const { resources: integrations } = useSelector(state =>
     resourceList(state, { type: 'integrations' })
   );
@@ -54,7 +60,7 @@ export default function SettingsDrawer({ flow, isViewMode }) {
         name: '_integrationId',
         type: 'select',
         helpKey: 'flow._integrationId',
-        label: 'Standalone Integration',
+        label: 'Integration',
         defaultValue: flow && flow._integrationId,
         options: [
           {
@@ -92,9 +98,27 @@ export default function SettingsDrawer({ flow, isViewMode }) {
           },
         ],
       },
+      settings: {
+        id: 'settings',
+        name: 'settings',
+        type: 'editor',
+        mode: 'json',
+        label: 'Settings',
+        showOnDeveloperMode: true,
+        defaultValue:
+          (flow && flow.settings && JSON.stringify(flow.settings)) || '{}',
+      },
     },
     layout: {
       fields: ['name', 'description', '_integrationId', '_runNextFlowIds'],
+      type: 'collapse',
+      containers: [
+        {
+          collapsed: true,
+          label: 'Custom settings',
+          fields: [developerModeOn && 'settings'],
+        },
+      ],
     },
   };
   const handleSubmit = formVal => {
@@ -121,13 +145,32 @@ export default function SettingsDrawer({ flow, isViewMode }) {
       },
     ];
 
+    if (Object.hasOwnProperty.call(formVal, 'settings')) {
+      let { settings } = formVal;
+
+      if (isJsonString(settings)) {
+        settings = JSON.parse(settings);
+      } else {
+        settings = {};
+      }
+
+      patchSet.push({
+        op: 'replace',
+        path: '/settings',
+        value: settings,
+      });
+    }
+
     dispatch(actions.resource.patchStaged(flow._id, patchSet, 'value'));
     dispatch(actions.resource.commitStaged('flows', flow._id, 'value'));
     history.goBack();
   };
 
+  const infoTextSettings =
+    'You can enable or disable flow error notifications, known as job errors. If you have these notifications enabled or disabled for the integration containing this flow, this flow-level setting will override the integration-level setting.';
+
   return (
-    <RightDrawer path="settings" title="Settings">
+    <RightDrawer path="settings" title="Settings" infoText={infoTextSettings}>
       <div className={classes.scheduleContainer}>
         <DynaForm disabled={isViewMode} fieldMeta={fieldMeta} render>
           <DynaSubmit onClick={handleSubmit} color="primary" variant="outlined">
