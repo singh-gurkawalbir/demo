@@ -98,8 +98,8 @@ export function editorPatchSet(state, id) {
   return fromEditors.editorPatchSet(state && state.editors, id);
 }
 
-export function editorSaveProcessTerminate(state, id) {
-  return fromEditors.editorSaveProcessTerminate(state && state.editors, id);
+export function editorPatchStatus(state, id) {
+  return fromEditors.editorPatchStatus(state && state.editors, id);
 }
 
 export function mapping(state, id) {

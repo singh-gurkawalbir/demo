@@ -87,6 +87,9 @@ export default function EditorDialog(props) {
   });
   const { layout, fullScreen } = state;
   const editor = useSelector(state => selectors.editor(state, id));
+  const saveInProgress = useSelector(
+    state => selectors.editorPatchStatus(state, id).saveInProgress
+  );
   const isEditorDirty = useSelector(state =>
     selectors.isEditorDirty(state, id)
   );
@@ -94,7 +97,6 @@ export default function EditorDialog(props) {
     selectors.editorViolations(state, id)
   );
   const handlePreview = () => dispatch(actions.editor.evaluateRequest(id));
-  // further enhacement linked to IO-12273 which requires handleSave to be function returning a function
   const handleSave = useCallback(
     shouldCommit => () => {
       if (shouldCommit && !preSaveValidate({ editor, enquesnackbar })) {
@@ -222,7 +224,7 @@ export default function EditorDialog(props) {
             id={id}
             variant="outlined"
             color="primary"
-            data-test="saveEditor"
+            dataTest="saveEditor"
             disabled={disabled}
             onClose={handleSave(false)}
             submitButtonLabel="Save"
@@ -237,10 +239,12 @@ export default function EditorDialog(props) {
             Save
           </Button>
         )}
+
         <Button
           variant="text"
           color="primary"
           data-test="closeEditor"
+          disabled={!!saveInProgress}
           onClick={handleCancelClick}>
           Cancel
         </Button>
