@@ -16,7 +16,7 @@ import InfoIcon from '../../icons/InfoIcon';
 import ArrowPopper from '../../ArrowPopper';
 import TooltipContent from '../../TooltipContent';
 
-const bannerHeight = 65;
+const bannerHeight = 57;
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
     border: 'solid 1px',
