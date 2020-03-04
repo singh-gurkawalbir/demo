@@ -391,6 +391,11 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
     requestedMetadata,
     categoryId,
   ]);
+  useEffect(() => {
+    if (mappingSaveStatus === 'close') {
+      handleClose();
+    }
+  }, [handleClose, mappingSaveStatus]);
 
   const handleCollapseAll = useCallback(() => {
     dispatch(
