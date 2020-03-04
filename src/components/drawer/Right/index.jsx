@@ -134,7 +134,10 @@ export default function RightDrawer({
             )}
             <Typography variant="h3" className={classes.title}>
               {title}
-              {infoText && (
+              {// TODO: The logic is now duplicated in 4 places. Do a global code search for "<InfoIcon />"
+              // All these should be moved to a single component as the variability between code is minimal
+              // and can easily be handles with a few component props.
+              infoText && (
                 <Fragment>
                   <IconButton
                     data-test="openPanelInfo"
