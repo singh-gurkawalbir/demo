@@ -53,9 +53,9 @@ export default function DynaRelativeUri(props) {
 
   const dispatch = useDispatch();
   const handleClose = (shouldCommit, editorValues) => {
-    const { template } = editorValues;
-
     if (shouldCommit) {
+      const { template } = editorValues;
+
       onFieldChange(id, template);
     }
 
