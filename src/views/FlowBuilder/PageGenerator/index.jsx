@@ -9,7 +9,11 @@ import AppBlock from '../AppBlock';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import applications from '../../../constants/applications';
-import { getResourceSubType, generateNewId } from '../../../utils/resource';
+import {
+  getResourceSubType,
+  generateNewId,
+  isRealTimeOrDistributedResource,
+} from '../../../utils/resource';
 import exportHooksAction from './actions/exportHooks';
 import as2RoutingAction from './actions/as2Routing';
 import transformationAction from './actions/transformation';
@@ -212,8 +216,9 @@ const PageGenerator = ({
       return {
         connectorType,
         assistant: resource.assistant,
-        blockType:
-          resource.adaptorType === 'WebhookExport' ? 'listener' : 'export',
+        blockType: isRealTimeOrDistributedResource(resource)
+          ? 'listener'
+          : 'export',
       };
     }
 
@@ -223,7 +228,9 @@ const PageGenerator = ({
       connectorType: app.type,
       assistant: app.assistant,
       blockType:
-        pg.webhookOnly || resource.type === 'webhook' ? 'listener' : 'export',
+        pg.webhookOnly || isRealTimeOrDistributedResource(resource)
+          ? 'listener'
+          : 'export',
     };
   }
 

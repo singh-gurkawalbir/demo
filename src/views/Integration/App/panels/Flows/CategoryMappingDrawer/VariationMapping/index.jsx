@@ -179,9 +179,6 @@ function VariationMappingDrawer({ integrationId, parentUrl }) {
     );
     handleClose();
   }, [dispatch, flowId, handleClose, integrationId, subCategoryId, variation]);
-  const handleSaveAndClose = useCallback(() => {
-    handleClose();
-  }, [handleClose]);
 
   if (!variation) {
     history.push(`${match.url}/${firstVariation}`);
@@ -255,18 +252,10 @@ function VariationMappingDrawer({ integrationId, parentUrl }) {
               Save
             </Button>
             <Button
-              id={flowId}
-              variant="outlined"
-              color="secondary"
-              data-test="saveAndCloseImportMapping"
-              onClick={handleSaveAndClose}>
-              Save & Close
-            </Button>
-            <Button
               variant="text"
               data-test="saveImportMapping"
               onClick={handleCancel}>
-              Cancel
+              Close
             </Button>
           </ButtonGroup>
         </div>

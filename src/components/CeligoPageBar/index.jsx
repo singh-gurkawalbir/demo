@@ -41,7 +41,7 @@ const useStyles = makeStyles(theme => ({
     textOverflow: 'ellipsis',
   },
   bannerOffset: {
-    height: theme.pageBarHeight + 66,
+    height: theme.pageBarHeight + 58,
   },
   subTitleShift: {
     marginLeft: theme.spacing(4),
