@@ -876,6 +876,22 @@ export function getNextDataFlows(state, flow) {
   );
 }
 
+export function getNumberEnabledFlows(state) {
+  let flows = flowListWithMetadata(state, { type: 'flows' }).resources || [];
+  const preferences = userPreferences(state);
+  const sandboxEnvironment = preferences.environment === 'sandbox';
+
+  flows = flows.filter(
+    f =>
+      !f.disabled &&
+      !f._connectorId &&
+      !f.isSimpleImport &&
+      !!f.sandbox === !!sandboxEnvironment
+  );
+
+  return (flows && flows.length) || 0;
+}
+
 export function resourceListWithPermissions(state, options) {
   const list = resourceList(state, options);
   // eslint-disable-next-line no-use-before-define
@@ -2094,18 +2110,20 @@ export function integratorLicenseWithMetadata(state) {
 }
 
 export function isLicenseValidToEnableFlow(state) {
-  const license = integratorLicenseWithMetadata(state);
   const licenseDetails = { enable: true };
+
+  if (getNumberEnabledFlows(state) === 0) {
+    return licenseDetails;
+  }
+
+  const license = integratorLicenseWithMetadata(state);
   const preferences = userPreferences(state);
 
   if (!license) {
     return licenseDetails;
   }
 
-  if (license.tier === 'none') {
-    licenseDetails.enable = false;
-    licenseDetails.message = LICENSE_TRIAL_NOT_STARTED;
-  } else if (license.tier === 'free') {
+  if (license.tier === 'free') {
     if (!license.inTrial) {
       if (license.isFreemium) {
         if (preferences && preferences.environment === 'sandbox') {
