@@ -7,12 +7,18 @@ import TooltipContent from '../TooltipContent';
 import InfoIcon from '../icons/InfoIcon';
 
 const useStyles = makeStyles(theme => ({
-  icon: {
+  small: {
     margin: theme.spacing(0, 1),
+  },
+  xs: {
+    marginTop: theme.spacing(-0.5),
+    '& svg': {
+      fontSize: '1rem',
+    },
   },
 }));
 
-export default function InfoIconButton({ info, className }) {
+export default function InfoIconButton({ info, size = 'small', className }) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -33,7 +39,7 @@ export default function InfoIconButton({ info, className }) {
       <IconButton
         data-test="openPageInfo"
         size="small"
-        className={clsx(classes.icon, className)}
+        className={clsx(classes[size], className)}
         onClick={handleInfoOpen}
         aria-owns={!anchorEl ? null : 'pageInfo'}
         aria-haspopup="true">
