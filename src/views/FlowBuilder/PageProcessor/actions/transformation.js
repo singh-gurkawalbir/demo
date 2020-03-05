@@ -11,8 +11,8 @@ function TransformationDialog({ flowId, resource, isViewMode, onClose }) {
   const dispatch = useDispatch();
   const exportId = resource._id;
   const resourceType = 'exports';
-  const sampleData = useSelector(state =>
-    selectors.getSampleData(state, {
+  const { status: sampleDataStatus, data: sampleData } = useSelector(state =>
+    selectors.getSampleDataWrapper(state, {
       flowId,
       resourceId: exportId,
       resourceType,
@@ -32,7 +32,7 @@ function TransformationDialog({ flowId, resource, isViewMode, onClose }) {
   }, [resource]);
 
   useEffect(() => {
-    if (!sampleData) {
+    if (!sampleDataStatus) {
       dispatch(
         actions.flowData.requestSampleData(
           flowId,
@@ -42,7 +42,7 @@ function TransformationDialog({ flowId, resource, isViewMode, onClose }) {
         )
       );
     }
-  }, [dispatch, exportId, flowId, sampleData]);
+  }, [dispatch, exportId, flowId, sampleDataStatus]);
 
   const optionalSaveParams = useMemo(
     () => ({
