@@ -1,6 +1,6 @@
 import produce from 'immer';
-import { isEqual, differenceWith } from 'lodash';
-import { deepClone } from 'fast-json-patch';
+import { isEqual } from 'lodash';
+import { deepClone } from 'fast-json-patch/lib/core';
 import actionTypes from '../../../actions/types';
 import mappingUtil from '../../../utils/mapping';
 import lookupUtil from '../../../utils/lookup';
@@ -38,153 +38,7 @@ const getStateKey = (integrationId, flowId, sectionId) =>
   `${integrationId}${flowId ? `-${flowId}` : ''}${
     sectionId ? `-${sectionId}` : ''
   }`;
-const addVariationMap = (
-  draft = {},
-  categoryId,
-  childCategoryId,
-  variation
-) => {
-  const { response = [] } = draft;
-  const mappingData = response.find(sec => sec.operation === 'mappingData');
-
-  if (
-    mappingData &&
-    mappingData.data &&
-    mappingData.data.mappingData &&
-    mappingData.data.mappingData.variationMappings &&
-    mappingData.data.mappingData.variationMappings.recordMappings
-  ) {
-    const { recordMappings } = mappingData.data.mappingData.variationMappings;
-    const category = recordMappings.find(mapping => mapping.id === categoryId);
-    let variationMapping;
-    let subCategory;
-
-    if (category) {
-      if (categoryId === childCategoryId) {
-        variationMapping = category.variation_themes.find(
-          vm => vm.variation_theme === variation
-        );
-
-        if (!variationMapping) {
-          category.variation_themes.push({
-            id: 'variation_theme',
-            variation_theme: variation,
-            fieldMappings: [],
-          });
-        }
-      }
-
-      subCategory = category.children.find(
-        child => child.id === childCategoryId
-      );
-
-      if (!subCategory) {
-        category.children.forEach(child => {
-          subCategory = child.children.find(c => c.id === childCategoryId);
-        });
-      }
-
-      if (subCategory) {
-        variationMapping = subCategory.variation_themes.find(
-          vm => vm.variation_theme === variation
-        );
-
-        if (!variationMapping) {
-          subCategory.variation_themes.push({
-            id: 'variation_theme',
-            variation_theme: variation,
-            fieldMappings: [],
-          });
-        }
-      }
-    }
-  }
-};
-
-const addCategory = (draft, integrationId, flowId, data) => {
-  const { category, childCategory, grandchildCategory } = data;
-  const { response = [] } = draft[`${flowId}-${integrationId}`];
-  const generatesMetaData = response.find(
-    sec => sec.operation === 'generatesMetaData'
-  );
-  const categoryRelationshipData =
-    generatesMetaData &&
-    generatesMetaData.data &&
-    generatesMetaData.data.categoryRelationshipData;
-  const mappingData = response.find(sec => sec.operation === 'mappingData');
-  let childCategoryDetails;
-  let grandchildCategoryDetails;
-  const categoryDetails = categoryRelationshipData.find(
-    rel => rel.id === category
-  );
-
-  if (childCategory && categoryDetails.children) {
-    childCategoryDetails = categoryDetails.children.find(
-      child => child.id === childCategory
-    );
-  }
-
-  if (
-    childCategoryDetails &&
-    grandchildCategory &&
-    childCategoryDetails.children
-  ) {
-    grandchildCategoryDetails = childCategoryDetails.children.find(
-      child => child.id === grandchildCategory
-    );
-  }
-
-  if (
-    mappingData.data &&
-    mappingData.data.mappingData &&
-    mappingData.data.mappingData.basicMappings &&
-    mappingData.data.mappingData.basicMappings.recordMappings
-  ) {
-    const { recordMappings } = mappingData.data.mappingData.basicMappings;
-
-    if (!recordMappings.find(mapping => mapping.id === category)) {
-      recordMappings.push({
-        id: category,
-        name: categoryDetails.name,
-        children: [],
-        fieldMappings: [],
-      });
-    }
-
-    if (!childCategory) {
-      return;
-    }
-
-    const { children = [] } = recordMappings.find(
-      mapping => mapping.id === category
-    );
-
-    if (!children.find(child => child.id === childCategory)) {
-      children.push({
-        id: childCategory,
-        name: childCategoryDetails.name,
-        children: [],
-        fieldMappings: [],
-      });
-    }
-
-    if (!grandchildCategory) {
-      return;
-    }
-
-    const grandChildren =
-      children.find(child => child.id === childCategory).children || [];
-
-    if (!grandChildren.find(child => child.id === grandchildCategory)) {
-      grandChildren.push({
-        id: grandchildCategory,
-        name: grandchildCategoryDetails.name,
-        children: [],
-        fieldMappings: [],
-      });
-    }
-  }
-};
+const getCategoryKey = (integrationId, flowId) => `${flowId}-${integrationId}`;
 
 export default (state = {}, action) => {
   const {
@@ -206,9 +60,11 @@ export default (state = {}, action) => {
     value,
     index,
     field,
+    closeOnSave,
     options = {},
   } = action;
   const key = getStateKey(integrationId, flowId, sectionId);
+  const cKey = getCategoryKey(integrationId, flowId);
   let mappingIndex;
   let categoryMappingData;
   let generatesMetadata;
@@ -300,65 +156,45 @@ export default (state = {}, action) => {
         break;
       case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
         .SAVE_VARIATION_MAPPINGS:
-        if (
-          draft[`${flowId}-${integrationId}`] &&
-          draft[`${flowId}-${integrationId}`].mappings &&
-          draft[`${flowId}-${integrationId}`].mappings[id]
-        ) {
-          draft[`${flowId}-${integrationId}`].mappings[id].staged =
-            draft[`${flowId}-${integrationId}`].mappings[id].mappings;
-          draft[`${flowId}-${integrationId}`].mappings[id].stagedLookups =
-            draft[`${flowId}-${integrationId}`].mappings[id].lookups;
+        if (draft[cKey] && draft[cKey].mappings && draft[cKey].mappings[id]) {
+          draft[cKey].mappings[id].staged = draft[cKey].mappings[id].mappings;
+          draft[cKey].mappings[id].stagedLookups =
+            draft[cKey].mappings[id].lookups;
         }
 
         break;
       case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
         .CANCEL_VARIATION_MAPPINGS:
         if (
-          draft[`${flowId}-${integrationId}`] &&
-          draft[`${flowId}-${integrationId}`].mappings &&
-          draft[`${flowId}-${integrationId}`].mappings[id] &&
-          draft[`${flowId}-${integrationId}`].mappings[id].staged
+          draft[cKey] &&
+          draft[cKey].mappings &&
+          draft[cKey].mappings[id] &&
+          draft[cKey].mappings[id].staged
         ) {
-          draft[`${flowId}-${integrationId}`].mappings[id].mappings =
-            draft[`${flowId}-${integrationId}`].mappings[id].staged;
-          draft[`${flowId}-${integrationId}`].mappings[id].lookups =
-            draft[`${flowId}-${integrationId}`].mappings[id].stagedLookups;
+          draft[cKey].mappings[id].mappings = draft[cKey].mappings[id].staged;
+          draft[cKey].mappings[id].lookups =
+            draft[cKey].mappings[id].stagedLookups;
         }
 
         break;
       case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.DELETE: {
-        if (
-          draft[`${flowId}-${integrationId}`] &&
-          draft[`${flowId}-${integrationId}`].mappings &&
-          draft[`${flowId}-${integrationId}`].mappings[id]
-        ) {
-          draft[`${flowId}-${integrationId}`].mappings[
-            id
-          ].initChangeIdentifier += 1;
-          draft[`${flowId}-${integrationId}`].mappings[id].mappings.splice(
-            index,
-            1
-          );
+        if (draft[cKey] && draft[cKey].mappings && draft[cKey].mappings[id]) {
+          draft[cKey].mappings[id].initChangeIdentifier += 1;
+          draft[cKey].mappings[id].mappings.splice(index, 1);
 
-          if (
-            draft[`${flowId}-${integrationId}`].mappings[id].lastModifiedRow ===
-            index
-          )
-            draft[`${flowId}-${integrationId}`].mappings[
-              id
-            ].lastModifiedRow = -1;
+          if (draft[cKey].mappings[id].lastModifiedRow === index)
+            draft[cKey].mappings[id].lastModifiedRow = -1;
           const {
             isSuccess,
             errMessage: validationErrMsg,
           } = mappingUtil.validateMappings(
-            draft[`${flowId}-${integrationId}`].mappings[id].mappings,
-            draft[`${flowId}-${integrationId}`].mappings[id].lookups
+            draft[cKey].mappings[id].mappings,
+            draft[cKey].mappings[id].lookups
           );
 
-          draft[`${flowId}-${integrationId}`].mappings[
-            id
-          ].validationErrMsg = isSuccess ? undefined : validationErrMsg;
+          draft[cKey].mappings[id].validationErrMsg = isSuccess
+            ? undefined
+            : validationErrMsg;
         }
 
         break;
@@ -380,8 +216,8 @@ export default (state = {}, action) => {
           } = options;
 
           if (isVariationMapping) {
-            addVariationMap(
-              draft[`${flowId}-${integrationId}`],
+            mappingUtil.addVariationMap(
+              draft[cKey],
               categoryId,
               childCategoryId,
               variation
@@ -400,22 +236,21 @@ export default (state = {}, action) => {
           );
           const lookups = lookupUtil.getLookupFromResource(resourceData);
           const initChangeIdentifier =
-            (draft[`${flowId}-${integrationId}`] &&
-              draft[`${flowId}-${integrationId}`].mappings &&
-              draft[`${flowId}-${integrationId}`].mappings[id] &&
-              draft[`${flowId}-${integrationId}`].mappings[id]
-                .initChangeIdentifier) ||
+            (draft[cKey] &&
+              draft[cKey].mappings &&
+              draft[cKey].mappings[id] &&
+              draft[cKey].mappings[id].initChangeIdentifier) ||
             0;
 
-          if (!draft[`${flowId}-${integrationId}`]) {
-            draft[`${flowId}-${integrationId}`] = {};
+          if (!draft[cKey]) {
+            draft[cKey] = {};
           }
 
-          if (!draft[`${flowId}-${integrationId}`].mappings) {
-            draft[`${flowId}-${integrationId}`].mappings = {};
+          if (!draft[cKey].mappings) {
+            draft[cKey].mappings = {};
           }
 
-          draft[`${flowId}-${integrationId}`].mappings[id] = {
+          draft[cKey].mappings[id] = {
             mappings: formattedMappings.map(m => ({ ...m, rowIdentifier: 0 })),
             incompleteGenerates: [],
             lookups: lookups || [],
@@ -431,39 +266,13 @@ export default (state = {}, action) => {
             // lastModifiedRow helps to set generate field when any field in salesforce mapping assistant is clicked
             lastModifiedRow: -1,
           };
-          draft[`${flowId}-${integrationId}`].mappings[
-            id
-          ].mappingsCopy = deepClone(
-            draft[`${flowId}-${integrationId}`].mappings[id].mappings
-          );
-          draft[`${flowId}-${integrationId}`].mappings[
-            id
-          ].lookupsCopy = deepClone(
-            draft[`${flowId}-${integrationId}`].mappings[id].lookups
-          );
         }
 
         break;
       case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
         .UPDATE_GENERATES: {
-        if (
-          draft[`${flowId}-${integrationId}`] &&
-          draft[`${flowId}-${integrationId}`].mappings &&
-          draft[`${flowId}-${integrationId}`].mappings[id]
-        ) {
-          draft[`${flowId}-${integrationId}`].mappings[
-            id
-          ].generateFields = generateFields;
-          draft[`${flowId}-${integrationId}`].mappings[
-            id
-          ].mappingsCopy = deepClone(
-            draft[`${flowId}-${integrationId}`].mappings[id].mappings
-          );
-          draft[`${flowId}-${integrationId}`].mappings[
-            id
-          ].lookupsCopy = deepClone(
-            draft[`${flowId}-${integrationId}`].mappings[id].lookups
-          );
+        if (draft[cKey] && draft[cKey].mappings && draft[cKey].mappings[id]) {
+          draft[cKey].mappings[id].generateFields = generateFields;
         }
 
         break;
@@ -471,18 +280,10 @@ export default (state = {}, action) => {
 
       case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
         .PATCH_FIELD: {
-        if (
-          draft[`${flowId}-${integrationId}`] &&
-          draft[`${flowId}-${integrationId}`].mappings &&
-          draft[`${flowId}-${integrationId}`].mappings[id]
-        ) {
-          if (
-            draft[`${flowId}-${integrationId}`].mappings[id].mappings[index]
-          ) {
+        if (draft[cKey] && draft[cKey].mappings && draft[cKey].mappings[id]) {
+          if (draft[cKey].mappings[id].mappings[index]) {
             const objCopy = {
-              ...draft[`${flowId}-${integrationId}`].mappings[id].mappings[
-                index
-              ],
+              ...draft[cKey].mappings[id].mappings[index],
             };
 
             // TODO: @Aditya, @Sravan, move this logic to mapping Util
@@ -519,30 +320,26 @@ export default (state = {}, action) => {
               }
             }
 
-            draft[`${flowId}-${integrationId}`].mappings[id].mappings[
-              index
-            ] = objCopy;
+            draft[cKey].mappings[id].mappings[index] = objCopy;
           } else if (value) {
-            draft[`${flowId}-${integrationId}`].mappings[id].mappings.push({
+            draft[cKey].mappings[id].mappings.push({
               [field]: value,
               rowIdentifier: 0,
             });
           }
 
-          draft[`${flowId}-${integrationId}`].mappings[
-            id
-          ].lastModifiedRow = index;
+          draft[cKey].mappings[id].lastModifiedRow = index;
           const {
             isSuccess,
             errMessage: validationErrMsg,
           } = mappingUtil.validateMappings(
-            draft[`${flowId}-${integrationId}`].mappings[id].mappings,
-            draft[`${flowId}-${integrationId}`].mappings[id].lookups
+            draft[cKey].mappings[id].mappings,
+            draft[cKey].mappings[id].lookups
           );
 
-          draft[`${flowId}-${integrationId}`].mappings[
-            id
-          ].validationErrMsg = isSuccess ? undefined : validationErrMsg;
+          draft[cKey].mappings[id].validationErrMsg = isSuccess
+            ? undefined
+            : validationErrMsg;
         }
 
         break;
@@ -550,21 +347,15 @@ export default (state = {}, action) => {
 
       case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
         .PATCH_INCOMPLETE_GENERATES: {
-        if (
-          draft[`${flowId}-${integrationId}`] &&
-          draft[`${flowId}-${integrationId}`].mappings &&
-          draft[`${flowId}-${integrationId}`].mappings[id]
-        ) {
-          const incompleteGeneObj = draft[
-            `${flowId}-${integrationId}`
-          ].mappings[id].incompleteGenerates.find(gen => gen.index === index);
+        if (draft[cKey] && draft[cKey].mappings && draft[cKey].mappings[id]) {
+          const incompleteGeneObj = draft[cKey].mappings[
+            id
+          ].incompleteGenerates.find(gen => gen.index === index);
 
           if (incompleteGeneObj) {
             incompleteGeneObj.value = value;
           } else {
-            draft[`${flowId}-${integrationId}`].mappings[
-              id
-            ].incompleteGenerates.push({ index, value });
+            draft[cKey].mappings[id].incompleteGenerates.push({ index, value });
           }
         }
 
@@ -573,11 +364,7 @@ export default (state = {}, action) => {
 
       case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
         .PATCH_SETTINGS:
-        if (
-          draft[`${flowId}-${integrationId}`] &&
-          draft[`${flowId}-${integrationId}`].mappings &&
-          draft[`${flowId}-${integrationId}`].mappings[id]
-        ) {
+        if (draft[cKey] && draft[cKey].mappings && draft[cKey].mappings[id]) {
           const {
             generate,
             extract,
@@ -585,7 +372,7 @@ export default (state = {}, action) => {
             index: mappingIndex,
             isRequired,
             rowIdentifier,
-          } = draft[`${flowId}-${integrationId}`].mappings[id].mappings[index];
+          } = draft[cKey].mappings[id].mappings[index];
           const valueTmp = {
             generate,
             extract,
@@ -613,45 +400,39 @@ export default (state = {}, action) => {
             delete valueTmp.extract;
           }
 
-          draft[`${flowId}-${integrationId}`].mappings[id].mappings[index] = {
+          draft[cKey].mappings[id].mappings[index] = {
             ...valueTmp,
           };
-          draft[`${flowId}-${integrationId}`].mappings[
-            id
-          ].lastModifiedRow = index;
+          draft[cKey].mappings[id].lastModifiedRow = index;
           const {
             isSuccess,
             errMessage: validationErrMsg,
           } = mappingUtil.validateMappings(
-            draft[`${flowId}-${integrationId}`].mappings[id].mappings,
-            draft[`${flowId}-${integrationId}`].mappings[id].lookups
+            draft[cKey].mappings[id].mappings,
+            draft[cKey].mappings[id].lookups
           );
 
-          draft[`${flowId}-${integrationId}`].mappings[
-            id
-          ].validationErrMsg = isSuccess ? undefined : validationErrMsg;
+          draft[cKey].mappings[id].validationErrMsg = isSuccess
+            ? undefined
+            : validationErrMsg;
         }
 
         break;
       case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
         .UPDATE_LOOKUP: {
-        if (
-          draft[`${flowId}-${integrationId}`] &&
-          draft[`${flowId}-${integrationId}`].mappings &&
-          draft[`${flowId}-${integrationId}`].mappings[id]
-        ) {
-          draft[`${flowId}-${integrationId}`].mappings[id].lookups = lookups;
+        if (draft[cKey] && draft[cKey].mappings && draft[cKey].mappings[id]) {
+          draft[cKey].mappings[id].lookups = lookups;
           const {
             isSuccess,
             errMessage: validationErrMsg,
           } = mappingUtil.validateMappings(
-            draft[`${flowId}-${integrationId}`].mappings[id].mappings,
-            draft[`${flowId}-${integrationId}`].mappings[id].lookups
+            draft[cKey].mappings[id].mappings,
+            draft[cKey].mappings[id].lookups
           );
 
-          draft[`${flowId}-${integrationId}`].mappings[
-            id
-          ].validationErrMsg = isSuccess ? undefined : validationErrMsg;
+          draft[cKey].mappings[id].validationErrMsg = isSuccess
+            ? undefined
+            : validationErrMsg;
         }
 
         break;
@@ -663,81 +444,47 @@ export default (state = {}, action) => {
         // ie,  all variations of one section will have same prefix `${flowId}-${integrationId}-${sectionId}`
         // so while deleting section we need to delete all variations of that section.
         // hence searching by prefix and not strict id check.
-        if (
-          draft[`${flowId}-${integrationId}`] &&
-          draft[`${flowId}-${integrationId}`].mappings
-        ) {
-          Object.keys(draft[`${flowId}-${integrationId}`].mappings).forEach(
-            _id => {
-              if (_id.startsWith(id)) {
-                delete draft[`${flowId}-${integrationId}`].mappings[id];
-              }
+        if (draft[cKey] && draft[cKey].mappings) {
+          Object.keys(draft[cKey].mappings).forEach(_id => {
+            if (_id.startsWith(id)) {
+              delete draft[cKey].mappings[id];
             }
-          );
+          });
         }
 
         break;
 
       case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
         .SET_VISIBILITY:
-        if (
-          draft[`${flowId}-${integrationId}`] &&
-          draft[`${flowId}-${integrationId}`].mappings &&
-          draft[`${flowId}-${integrationId}`].mappings[id]
-        ) {
-          draft[`${flowId}-${integrationId}`].mappings[id].visible = value;
+        if (draft[cKey] && draft[cKey].mappings && draft[cKey].mappings[id]) {
+          draft[cKey].mappings[id].visible = value;
         }
 
         break;
       case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.SAVE:
-        if (
-          draft[`${flowId}-${integrationId}`] &&
-          draft[`${flowId}-${integrationId}`].mappings &&
-          draft[`${flowId}-${integrationId}`].mappings[id]
-        ) {
-          draft[`${flowId}-${integrationId}`].mappings[
-            id
-          ].submitCompleted = false;
-          draft[`${flowId}-${integrationId}`].mappings[id].submitFailed = false;
+        if (draft[cKey]) {
+          draft[cKey].saveStatus = 'requested';
+
+          if (closeOnSave) {
+            draft[cKey].closeOnSave = true;
+          }
         }
 
         break;
       case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
         .SAVE_COMPLETE:
-        if (
-          draft[`${flowId}-${integrationId}`] &&
-          draft[`${flowId}-${integrationId}`].mappings &&
-          draft[`${flowId}-${integrationId}`].mappings[id]
-        ) {
-          draft[`${flowId}-${integrationId}`].mappings[
-            id
-          ].submitCompleted = true;
-          draft[`${flowId}-${integrationId}`].mappings[
-            id
-          ].validationErrMsg = undefined;
-          draft[`${flowId}-${integrationId}`].mappings[
-            id
-          ].mappingsCopy = deepClone(
-            draft[`${flowId}-${integrationId}`].mappings[id].mappings
-          );
-          draft[`${flowId}-${integrationId}`].mappings[
-            id
-          ].lookupsCopy = deepClone(
-            draft[`${flowId}-${integrationId}`].mappings[id].lookups
-          );
+        if (draft[cKey]) {
+          draft[cKey].saveStatus = 'saved';
+
+          if (draft[cKey].closeOnSave) {
+            draft[cKey].saveStatus = 'close';
+          }
         }
 
         break;
       case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.SAVE_FAILED:
-        if (
-          draft[`${flowId}-${integrationId}`] &&
-          draft[`${flowId}-${integrationId}`].mappings &&
-          draft[`${flowId}-${integrationId}`].mappings[id]
-        ) {
-          draft[`${flowId}-${integrationId}`].mappings[id].submitFailed = true;
-          draft[`${flowId}-${integrationId}`].mappings[
-            id
-          ].validationErrMsg = undefined;
+        if (draft[cKey]) {
+          draft[cKey].saveStatus = 'failed';
         }
 
         break;
@@ -749,17 +496,17 @@ export default (state = {}, action) => {
           data => data.operation === 'generatesMetaData'
         );
 
-        if (draft[`${flowId}-${integrationId}`]) {
-          if (!draft[`${flowId}-${integrationId}`].generatesMetadata) {
-            draft[`${flowId}-${integrationId}`].generatesMetadata = [];
+        if (draft[cKey]) {
+          if (!draft[cKey].generatesMetadata) {
+            draft[cKey].generatesMetadata = [];
           }
 
           if (
-            !draft[`${flowId}-${integrationId}`].generatesMetadata.find(
+            !draft[cKey].generatesMetadata.find(
               meta => meta.id === generatesMetadata.data.generatesMetaData.id
             )
           ) {
-            draft[`${flowId}-${integrationId}`].generatesMetadata.push(
+            draft[cKey].generatesMetadata.push(
               generatesMetadata.data.generatesMetaData
             );
           }
@@ -767,54 +514,54 @@ export default (state = {}, action) => {
 
         break;
       case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPING_FILTERS:
-        if (draft[`${flowId}-${integrationId}`]) {
-          draft[`${flowId}-${integrationId}`].filters = {
-            ...draft[`${flowId}-${integrationId}`].filters,
+        if (draft[cKey]) {
+          draft[cKey].filters = {
+            ...draft[cKey].filters,
             ...filters,
           };
         }
 
         break;
       case actionTypes.INTEGRATION_APPS.SETTINGS.ADD_CATEGORY:
-        if (draft[`${flowId}-${integrationId}`])
-          addCategory(draft, integrationId, flowId, data);
+        if (draft[cKey])
+          mappingUtil.addCategory(draft, integrationId, flowId, data);
 
         break;
       case actionTypes.INTEGRATION_APPS.SETTINGS.DELETE_CATEGORY:
-        if (draft[`${flowId}-${integrationId}`]) {
-          if (!draft[`${flowId}-${integrationId}`].deleted) {
-            draft[`${flowId}-${integrationId}`].deleted = [];
+        if (draft[cKey]) {
+          if (!draft[cKey].deleted) {
+            draft[cKey].deleted = [];
           }
 
-          draft[`${flowId}-${integrationId}`].deleted.push(sectionId);
+          draft[cKey].deleted.push(sectionId);
         }
 
         break;
       case actionTypes.INTEGRATION_APPS.SETTINGS.RESTORE_CATEGORY:
         if (
-          draft[`${flowId}-${integrationId}`] &&
-          draft[`${flowId}-${integrationId}`].deleted &&
-          draft[`${flowId}-${integrationId}`].deleted.indexOf(sectionId) > -1
+          draft[cKey] &&
+          draft[cKey].deleted &&
+          draft[cKey].deleted.indexOf(sectionId) > -1
         ) {
-          draft[`${flowId}-${integrationId}`].deleted.splice(
-            draft[`${flowId}-${integrationId}`].deleted.indexOf(sectionId),
-            1
-          );
+          draft[cKey].deleted.splice(draft[cKey].deleted.indexOf(sectionId), 1);
         }
 
         break;
       case actionTypes.INTEGRATION_APPS.SETTINGS
         .RECEIVED_CATEGORY_MAPPINGS_DATA:
-        if (draft[`${flowId}-${integrationId}`]) {
-          draft[`${flowId}-${integrationId}`].status = 'saved';
+        if (draft[cKey]) {
+          draft[cKey].saveStatus = 'saved';
 
-          if (draft[`${flowId}-${integrationId}`].response) {
-            mappingIndex = draft[
-              `${flowId}-${integrationId}`
-            ].response.findIndex(op => op.operation === 'mappingData');
-            draft[`${flowId}-${integrationId}`].response[
-              mappingIndex
-            ] = mappingData;
+          if (draft[cKey].closeOnSave) {
+            draft[cKey].saveStatus = 'close';
+          }
+
+          if (draft[cKey].response) {
+            mappingIndex = draft[cKey].response.findIndex(
+              op => op.operation === 'mappingData'
+            );
+            draft[cKey].response[mappingIndex] = mappingData;
+            draft[cKey].initMappingData = mappingData;
           }
         }
 
@@ -825,7 +572,7 @@ export default (state = {}, action) => {
         generatesMetadata = categoryMappingData.find(
           data => data.operation === 'generatesMetaData'
         );
-        draft[`${flowId}-${integrationId}`] = {
+        draft[cKey] = {
           uiAssistant: metadata.uiAssistant,
           response: categoryMappingData,
           filters: {
@@ -839,10 +586,18 @@ export default (state = {}, action) => {
           },
           generatesMetadata: [generatesMetadata.data.generatesMetaData],
         };
+
+        if (draft[cKey].response) {
+          mappingIndex = draft[cKey].response.findIndex(
+            op => op.operation === 'mappingData'
+          );
+          draft[cKey].initMappingData = draft[cKey].response[mappingIndex];
+        }
+
         break;
       case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.EXPAND_ALL:
-        if (draft[`${flowId}-${integrationId}`]) {
-          draft[`${flowId}-${integrationId}`].collapseStatus = {
+        if (draft[cKey]) {
+          draft[cKey].collapseStatus = {
             collapseAction: 'expand',
             collapseStatus: 'expanded',
           };
@@ -850,8 +605,8 @@ export default (state = {}, action) => {
 
         break;
       case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.COLLAPSE_ALL:
-        if (draft[`${flowId}-${integrationId}`]) {
-          draft[`${flowId}-${integrationId}`].collapseStatus = {
+        if (draft[cKey]) {
+          draft[cKey].collapseStatus = {
             collapseAction: 'collapse',
             collapseStatus: 'collapsed',
           };
@@ -860,12 +615,8 @@ export default (state = {}, action) => {
         break;
       case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
         .CLEAR_COLLAPSE_STATUS:
-        if (
-          draft[`${flowId}-${integrationId}`] &&
-          draft[`${flowId}-${integrationId}`].collapseStatus
-        ) {
-          delete draft[`${flowId}-${integrationId}`].collapseStatus
-            .collapseAction;
+        if (draft[cKey] && draft[cKey].collapseStatus) {
+          delete draft[cKey].collapseStatus.collapseAction;
         }
 
         break;
@@ -890,32 +641,40 @@ export function integrationAppSettingsFormState(
 }
 
 export function categoryMappingsCollapsedStatus(state, integrationId, flowId) {
-  if (!state || !state[`${flowId}-${integrationId}`]) {
+  const cKey = getCategoryKey(integrationId, flowId);
+
+  if (!state || !state[cKey]) {
     return emptyObj;
   }
 
-  return state[`${flowId}-${integrationId}`].collapseStatus || emptyObj;
+  return state[cKey].collapseStatus || emptyObj;
 }
 
 export function categoryMappingFilters(state, integrationId, flowId) {
-  if (!state || !state[`${flowId}-${integrationId}`]) {
+  const cKey = getCategoryKey(integrationId, flowId);
+
+  if (!state || !state[cKey]) {
     return null;
   }
 
-  return state[`${flowId}-${integrationId}`].filters;
+  return state[cKey].filters;
 }
 
 export function categoryMapping(state, integrationId, flowId) {
+  const cKey = getCategoryKey(integrationId, flowId);
+
   if (!state) {
     return null;
   }
 
-  return state[`${flowId}-${integrationId}`];
+  return state[cKey];
 }
 
 export function variationMappingData(state, integrationId, flowId) {
+  const cKey = getCategoryKey(integrationId, flowId);
+
   if (!state) return null;
-  const { response = [] } = state[`${flowId}-${integrationId}`] || emptyObj;
+  const { response = [] } = state[cKey] || emptyObj;
   const mappings = [];
   let mappingMetadata = [];
   const basicMappingData = response.find(
@@ -935,12 +694,13 @@ export function variationMappingData(state, integrationId, flowId) {
 }
 
 export function categoryMappingData(state, integrationId, flowId) {
+  const cKey = getCategoryKey(integrationId, flowId);
+
   if (!state) {
     return null;
   }
 
-  const { response = [], deleted = [] } =
-    state[`${flowId}-${integrationId}`] || emptyObj;
+  const { response = [], deleted = [] } = state[cKey] || emptyObj;
   const mappings = [];
   let mappingMetadata = [];
   const basicMappingData = response.find(
@@ -960,12 +720,13 @@ export function categoryMappingData(state, integrationId, flowId) {
 }
 
 export function categoryMappingGeneratesMetadata(state, integrationId, flowId) {
+  const cKey = getCategoryKey(integrationId, flowId);
+
   if (!state) {
     return null;
   }
 
-  const { generatesMetadata = [] } =
-    state[`${flowId}-${integrationId}`] || emptyObj;
+  const { generatesMetadata = [] } = state[cKey] || emptyObj;
   const generates = [];
 
   generatesMetadata.forEach(meta => {
@@ -975,75 +736,54 @@ export function categoryMappingGeneratesMetadata(state, integrationId, flowId) {
   return generates;
 }
 
-export function mappingsSaveStatus(state, id) {
-  if (!state) {
-    return emptySet;
-  }
-
-  if (!state[id]) return false;
-  const { submitFailed, submitCompleted } = state[id];
-
-  return {
-    saveTerminated: !!(submitFailed || submitCompleted),
-    saveCompleted: !!submitCompleted,
-  };
-}
-
-const isMappingObjEqual = (mapping1, mapping2) => {
-  const {
-    rowIdentifier: r1,
-    index: i1,
-    isNotEditable: e1,
-    isRequired: req1,
-    ...formattedMapping1
-  } = mapping1;
-  const {
-    rowIdentifier: r2,
-    index: i2,
-    isNotEditable: e2,
-    isRequired: req2,
-    ...formattedMapping2
-  } = mapping2;
-
-  return isEqual(formattedMapping1, formattedMapping2);
-};
-
 export function categoryMappingsForSection(state, integrationId, flowId, id) {
+  const cKey = getCategoryKey(integrationId, flowId);
+
   if (!state) {
     return emptySet;
   }
 
   return (
-    (state[`${flowId}-${integrationId}`] &&
-      state[`${flowId}-${integrationId}`].mappings &&
-      state[`${flowId}-${integrationId}`].mappings[id]) ||
+    (state[cKey] && state[cKey].mappings && state[cKey].mappings[id]) ||
     emptySet
   );
 }
 
 // #region PUBLIC SELECTORS
-export function mappingsChanged(state, id) {
-  if (!state || !state[id]) {
-    return false;
+export function categoryMappingsChanged(state, integrationId, flowId) {
+  const cKey = getCategoryKey(integrationId, flowId);
+  const isMappingsEqual = false;
+
+  if (!state || !state[cKey] || !state[cKey].response) {
+    return isMappingsEqual;
   }
 
-  const { mappings, mappingsCopy, lookups, lookupsCopy } = state[id];
-  const mappingsDiff = differenceWith(
-    mappingsCopy,
-    mappings,
-    isMappingObjEqual
-  );
-  let isMappingsEqual =
-    mappings.length === mappingsCopy.length && !mappingsDiff.length;
+  const { response, mappings } =
+    categoryMapping(state, integrationId, flowId) || {};
+  const mappingData = response.find(op => op.operation === 'mappingData');
+  const sessionMappedData =
+    mappingData && mappingData.data && mappingData.data.mappingData;
+  const clonedData = deepClone(sessionMappedData);
 
-  if (isMappingsEqual) {
-    const lookupsDiff = differenceWith(lookupsCopy, lookups, isEqual);
+  mappingUtil.setCategoryMappingData(flowId, clonedData, mappings);
 
-    isMappingsEqual =
-      lookupsCopy.length === lookups.length && !lookupsDiff.length;
+  const initData = state[cKey].initMappingData;
+
+  if (!initData || !initData.data || !initData.data.mappingData) {
+    return isMappingsEqual;
   }
 
-  return !isMappingsEqual;
+  return !isEqual(initData.data.mappingData, clonedData);
+}
+
+export function categoryMappingSaveStatus(state, integrationId, flowId) {
+  const cKey = `${flowId}-${integrationId}`;
+
+  if (!state || !state[cKey]) {
+    return null;
+  }
+
+  return state[cKey].saveStatus;
 }
 
 export function integrationAppAddOnState(state, integrationId) {
