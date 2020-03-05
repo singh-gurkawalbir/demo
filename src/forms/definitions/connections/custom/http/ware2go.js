@@ -60,7 +60,6 @@ export default {
       label: 'Merchant Id',
       required: true,
       type: 'text',
-      defaultValue: '',
       helpText:
         'Please enter your Merchant Id here. This can be obtained by reaching out to Ware2Go support team.',
     },
