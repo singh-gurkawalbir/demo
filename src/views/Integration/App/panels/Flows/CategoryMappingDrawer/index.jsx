@@ -1,6 +1,11 @@
 import { useState, useEffect, Fragment, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Route, useRouteMatch, useHistory } from 'react-router-dom';
+import {
+  Route,
+  useRouteMatch,
+  useHistory,
+  generatePath,
+} from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import {
   Grid,
@@ -344,6 +349,13 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
 
     return `${uiAssistant.charAt(0).toUpperCase()}${uiAssistant.slice(1)}`;
   });
+  const isCurrentCategoryDeleted = useSelector(state => {
+    const categoryMappingMetadata =
+      selectors.categoryMapping(state, integrationId, flowId) || {};
+    const { deleted = [] } = categoryMappingMetadata;
+
+    return deleted.includes(categoryId);
+  });
   const mappedCategories =
     useSelector(state =>
       selectors.mappedCategories(state, integrationId, flowId)
@@ -374,12 +386,38 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
   useEffect(() => {
     if (mappingSaveStatus === 'close') {
       history.push(parentUrl);
+      dispatch(
+        actions.integrationApp.settings.categoryMappings.clear(
+          integrationId,
+          flowId
+        )
+      );
+    } else if (mappingSaveStatus === 'saved' && isCurrentCategoryDeleted) {
+      history.push(
+        generatePath(match.path, {
+          ...match.params,
+          categoryId: 'commonAttributes',
+        })
+      );
+      dispatch(
+        actions.integrationApp.settings.categoryMappings.clearSaveStatus(
+          integrationId,
+          flowId
+        )
+      );
     }
-  }, [history, mappingSaveStatus, parentUrl]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [categoryId, isCurrentCategoryDeleted, mappingSaveStatus, parentUrl]);
 
   const handleClose = useCallback(() => {
     history.push(parentUrl);
-  }, [history, parentUrl]);
+    dispatch(
+      actions.integrationApp.settings.categoryMappings.clear(
+        integrationId,
+        flowId
+      )
+    );
+  }, [dispatch, flowId, history, integrationId, parentUrl]);
   const handleSave = useCallback(() => {
     dispatch(
       actions.integrationApp.settings.categoryMappings.save(
