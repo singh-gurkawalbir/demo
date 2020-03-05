@@ -315,6 +315,13 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
   const match = useRouteMatch();
   const { flowId, categoryId } = match.params;
   const [requestedMetadata, setRequestedMetadata] = useState(false);
+  const mappingsChanged = useSelector(state =>
+    selectors.categoryMappingsChanged(state, integrationId, flowId)
+  );
+  const mappingSaveStatus = useSelector(state =>
+    selectors.categoryMappingSaveStatus(state, integrationId, flowId)
+  );
+  const isSaving = mappingSaveStatus === 'requested';
   const integrationName = useSelector(state => {
     const integration = selectors.resource(
       state,
@@ -344,26 +351,6 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
   const currentSectionLabel =
     (mappedCategories.find(category => category.id === categoryId) || {})
       .name || categoryId;
-  const handleClose = useCallback(() => {
-    history.push(parentUrl);
-  }, [history, parentUrl]);
-  const handleSave = useCallback(() => {
-    dispatch(
-      actions.integrationApp.settings.categoryMappings.save(
-        integrationId,
-        flowId
-      )
-    );
-  }, [dispatch, flowId, integrationId]);
-  const handleSaveAndClose = useCallback(() => {
-    dispatch(
-      actions.integrationApp.settings.categoryMappings.save(
-        integrationId,
-        flowId
-      )
-    );
-    handleClose();
-  }, [dispatch, flowId, handleClose, integrationId]);
 
   useEffect(() => {
     if (!metadataLoaded && !requestedMetadata) {
@@ -384,7 +371,32 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
     requestedMetadata,
     categoryId,
   ]);
+  useEffect(() => {
+    if (mappingSaveStatus === 'close') {
+      history.push(parentUrl);
+    }
+  }, [history, mappingSaveStatus, parentUrl]);
 
+  const handleClose = useCallback(() => {
+    history.push(parentUrl);
+  }, [history, parentUrl]);
+  const handleSave = useCallback(() => {
+    dispatch(
+      actions.integrationApp.settings.categoryMappings.save(
+        integrationId,
+        flowId
+      )
+    );
+  }, [dispatch, flowId, integrationId]);
+  const handleSaveAndClose = useCallback(() => {
+    dispatch(
+      actions.integrationApp.settings.categoryMappings.save(
+        integrationId,
+        flowId,
+        true
+      )
+    );
+  }, [dispatch, flowId, integrationId]);
   const handleCollapseAll = useCallback(() => {
     dispatch(
       actions.integrationApp.settings.categoryMappings.collapseAll(
@@ -472,21 +484,26 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
                 id={flowId}
                 variant="outlined"
                 color="primary"
-                data-test="saveImportMapping"
+                disabled={!mappingsChanged || isSaving}
+                data-test="saveCategoryMappings"
                 onClick={handleSave}>
-                Save
+                {isSaving ? 'Saving...' : 'Save'}
               </Button>
-              <Button
-                id={flowId}
-                variant="outlined"
-                color="secondary"
-                data-test="saveAndCloseImportMapping"
-                onClick={handleSaveAndClose}>
-                Save & Close
-              </Button>
+              {(mappingsChanged || isSaving) && (
+                <Button
+                  id={flowId}
+                  variant="outlined"
+                  color="secondary"
+                  disabled={isSaving}
+                  data-test="saveAndCloseImportMapping"
+                  onClick={handleSaveAndClose}>
+                  Save & Close
+                </Button>
+              )}
               <Button
                 variant="text"
                 data-test="saveImportMapping"
+                disabled={isSaving}
                 onClick={handleClose}>
                 Close
               </Button>
