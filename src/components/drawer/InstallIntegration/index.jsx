@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from 'react';
+import { useCallback } from 'react';
 import { Switch, Route, useRouteMatch, useHistory } from 'react-router-dom';
 import RightDrawer from '../Right';
 import UploadFile from './UploadFile';
@@ -6,28 +6,6 @@ import Preview from './Preview';
 import Setup from './Setup';
 
 const rootPath = 'installIntegration';
-
-function InstallIntegrationDrawerContent({ showBackButton }) {
-  const match = useRouteMatch();
-
-  useEffect(() => {
-    showBackButton(!match.isExact);
-  }, [match, match.isExact, showBackButton]);
-
-  return (
-    <Switch>
-      <Route path={`${match.url}/preview/:templateId`}>
-        <Preview />
-      </Route>
-      <Route path={`${match.url}/setup/:templateId`}>
-        <Setup />
-      </Route>
-      <Route path={`${match.url}`}>
-        <UploadFile />
-      </Route>
-    </Switch>
-  );
-}
 
 export default function InstallIntegrationDrawer() {
   const match = useRouteMatch();
@@ -47,7 +25,17 @@ export default function InstallIntegrationDrawer() {
       title="Install integration"
       height="tall"
       width="large">
-      <InstallIntegrationDrawerContent />
+      <Switch>
+        <Route path={`${match.url}/${rootPath}/preview/:templateId`}>
+          <Preview />
+        </Route>
+        <Route path={`${match.url}/${rootPath}/setup/:templateId`}>
+          <Setup />
+        </Route>
+        <Route path={`${match.url}/${rootPath}`}>
+          <UploadFile />
+        </Route>
+      </Switch>
     </RightDrawer>
   );
 }

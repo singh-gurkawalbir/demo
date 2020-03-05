@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import {
   useLocation,
@@ -7,6 +7,7 @@ import {
   Switch,
   useHistory,
   useRouteMatch,
+  matchPath,
 } from 'react-router-dom';
 import { makeStyles, IconButton, Typography, Drawer } from '@material-ui/core';
 import * as selectors from '../../../reducers';
@@ -81,9 +82,7 @@ export default function RightDrawer({
   const history = useHistory();
   const match = useRouteMatch();
   const location = useLocation();
-  const [showBack, setShowBack] = useState();
   const bannerOpened = useSelector(state => selectors.bannerOpened(state));
-  const showBackButton = useCallback(show => setShowBack(show), []);
   const showBanner = location.pathname.includes('pg/dashboard') && bannerOpened;
   const handleBack = useCallback(() => {
     // else, just go back in browser history...
@@ -97,10 +96,13 @@ export default function RightDrawer({
     // else, just go back in browser history...
     handleBack();
   }, [handleBack, onClose]);
+  const fullPath = `${match.url}/${path}`;
+  const { isExact } = matchPath(location.pathname, fullPath) || {};
+  const showBackButton = !isExact;
 
   return (
     <Switch>
-      <Route path={`${match.url}/${path}`}>
+      <Route path={fullPath}>
         <Drawer
           {...rest}
           variant={variant}
@@ -114,7 +116,7 @@ export default function RightDrawer({
           }}
           onClose={handleClose}>
           <div className={classes.titleBar}>
-            {showBack && (
+            {showBackButton && (
               <IconButton
                 size="small"
                 data-test="backRightDrawer"
@@ -135,15 +137,7 @@ export default function RightDrawer({
               <CloseIcon />
             </IconButton>
           </div>
-          <div className={classes.contentContainer}>
-            {// We want to accomplish two things here:
-            // 1: only render the children if the drawer is open.
-            // 2: inject a callback into the child component to let it
-            //    control the show back button flag in case it has some
-            //    nested behavior that triggers a stack of drawers.
-            // children
-            React.cloneElement(children, { showBackButton })}
-          </div>
+          <div className={classes.contentContainer}>{children}</div>
         </Drawer>
       </Route>
       <Route>
