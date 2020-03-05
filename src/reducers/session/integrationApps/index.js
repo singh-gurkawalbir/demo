@@ -31,6 +31,22 @@ export function categoryMappingsCollapsedStatus(state, integrationId, flowId) {
   );
 }
 
+export function categoryMappingsChanged(state, integrationId, flowId) {
+  return fromSettings.categoryMappingsChanged(
+    state && state.settings,
+    integrationId,
+    flowId
+  );
+}
+
+export function categoryMappingSaveStatus(state, integrationId, flowId) {
+  return fromSettings.categoryMappingSaveStatus(
+    state && state.settings,
+    integrationId,
+    flowId
+  );
+}
+
 export function categoryMappingsForSection(state, integrationId, flowId, id) {
   return fromSettings.categoryMappingsForSection(
     state && state.settings,
