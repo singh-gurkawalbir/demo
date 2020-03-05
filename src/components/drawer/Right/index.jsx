@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import React, { Fragment, useCallback, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
 import {
   useLocation,
@@ -12,9 +12,7 @@ import { makeStyles, IconButton, Typography, Drawer } from '@material-ui/core';
 import * as selectors from '../../../reducers';
 import CloseIcon from '../../icons/CloseIcon';
 import ArrowLeftIcon from '../../icons/ArrowLeftIcon';
-import InfoIcon from '../../icons/InfoIcon';
-import ArrowPopper from '../../ArrowPopper';
-import TooltipContent from '../../TooltipContent';
+import InfoIconButton from '../../InfoIconButton';
 
 const bannerHeight = 57;
 const useStyles = makeStyles(theme => ({
@@ -84,7 +82,6 @@ export default function RightDrawer({
   const match = useRouteMatch();
   const location = useLocation();
   const [showBack, setShowBack] = useState();
-  const [anchorEl, setAnchorEl] = useState(null);
   const bannerOpened = useSelector(state => selectors.bannerOpened(state));
   const showBackButton = useCallback(show => setShowBack(show), []);
   const showBanner = location.pathname.includes('pg/dashboard') && bannerOpened;
@@ -100,12 +97,6 @@ export default function RightDrawer({
     // else, just go back in browser history...
     handleBack();
   }, [handleBack, onClose]);
-  const handleInfoOpen = useCallback(event => {
-    setAnchorEl(event.currentTarget);
-  }, []);
-  const handleInfoClose = useCallback(() => {
-    setAnchorEl(null);
-  }, []);
 
   return (
     <Switch>
@@ -134,32 +125,7 @@ export default function RightDrawer({
             )}
             <Typography variant="h3" className={classes.title}>
               {title}
-              {// TODO: The logic is now duplicated in 4 places. Do a global code search for "<InfoIcon />"
-              // All these should be moved to a single component as the variability between code is minimal
-              // and can easily be handles with a few component props.
-              infoText && (
-                <Fragment>
-                  <IconButton
-                    data-test="openPanelInfo"
-                    size="small"
-                    className={classes.infoIcon}
-                    onClick={handleInfoOpen}
-                    aria-owns={!anchorEl ? null : 'panelInfo'}
-                    aria-haspopup="true">
-                    <InfoIcon />
-                  </IconButton>
-                  <ArrowPopper
-                    id="panelInfo"
-                    open={!!anchorEl}
-                    anchorEl={anchorEl}
-                    placement="left-start"
-                    onClose={handleInfoClose}>
-                    <TooltipContent className={classes.popperMaxWidthView}>
-                      {infoText}
-                    </TooltipContent>
-                  </ArrowPopper>
-                </Fragment>
-              )}
+              {infoText && <InfoIconButton info={infoText} />}
             </Typography>
             <IconButton
               size="small"

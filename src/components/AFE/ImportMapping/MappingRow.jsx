@@ -112,13 +112,6 @@ export default function MappingRow(props) {
   // isOver is set to true when hover happens over component
   const [, drop] = useDrop({
     accept: 'MAPPING',
-    drop() {
-      if (!ref.current || !isDraggable) {
-        return;
-      }
-
-      onDrop();
-    },
     hover(item) {
       if (!ref.current || !isDraggable) {
         return;
@@ -145,6 +138,11 @@ export default function MappingRow(props) {
     collect: monitor => ({
       isDragging: monitor.isDragging(),
     }),
+    end: dropResult => {
+      if (dropResult) {
+        onDrop();
+      }
+    },
 
     canDrag: isDraggable,
   });
@@ -220,7 +218,7 @@ export default function MappingRow(props) {
               title={`${
                 isSubRecordMapping
                   ? 'Subrecord mapping'
-                  : 'This field is required by the application you are importing to'
+                  : 'This field is required by the application you are importing into'
               }`}
               placement="top">
               <span className={classes.lockIcon}>

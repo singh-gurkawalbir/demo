@@ -288,12 +288,26 @@ export function* updateStateForProcessorData({
   stage,
   processedData,
   wrapInArrayProcessedData,
+  removeDataPropFromProcessedData,
 }) {
   // wrapInArrayProcessedData: Incase of Transform scripts , data is not inside an array as in other stages
   // So this prop wraps data to extract the same in the reducer
   if (wrapInArrayProcessedData && processedData && processedData.data) {
     // eslint-disable-next-line no-param-reassign
     processedData.data = [processedData.data];
+  }
+
+  // Incase of preMap u get sampleData wrapped against 'data' prop
+  // This replaces [{data: {}}] to direct [{}], so that receivedProcessorData reducer extract the same
+  if (
+    removeDataPropFromProcessedData &&
+    processedData &&
+    processedData.data &&
+    processedData.data[0] &&
+    processedData.data[0].data
+  ) {
+    // eslint-disable-next-line no-param-reassign
+    processedData.data[0] = processedData.data[0].data;
   }
 
   yield put(

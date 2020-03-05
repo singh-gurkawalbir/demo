@@ -98,8 +98,8 @@ export function editorPatchSet(state, id) {
   return fromEditors.editorPatchSet(state && state.editors, id);
 }
 
-export function editorSaveProcessTerminate(state, id) {
-  return fromEditors.editorSaveProcessTerminate(state && state.editors, id);
+export function editorPatchStatus(state, id) {
+  return fromEditors.editorPatchStatus(state && state.editors, id);
 }
 
 export function mapping(state, id) {
@@ -110,8 +110,8 @@ export function mappingsChanged(state, id) {
   return fromMappings.mappingsChanged(state && state.mappings, id);
 }
 
-export function mappingSaveProcessTerminate(state, id) {
-  return fromMappings.mappingSaveProcessTerminate(state && state.mappings, id);
+export function mappingsSaveStatus(state, id) {
+  return fromMappings.mappingsSaveStatus(state && state.mappings, id);
 }
 
 export function getSearchCriteria(state, id) {
@@ -324,6 +324,14 @@ export function integrationAppsInstaller(state, id) {
   return fromIntegrationApps.integrationAppsInstaller(
     state && state.integrationApps,
     id
+  );
+}
+
+export function categoryMappingsCollapsedStatus(state, integrationId, flowId) {
+  return fromIntegrationApps.categoryMappingsCollapsedStatus(
+    state && state.integrationApps,
+    integrationId,
+    flowId
   );
 }
 
