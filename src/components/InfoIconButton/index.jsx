@@ -1,20 +1,24 @@
+import clsx from 'clsx';
 import { Fragment, useState } from 'react';
 import { makeStyles } from '@material-ui/styles';
 import { IconButton } from '@material-ui/core';
-import ArrowPopper from '../../../../components/ArrowPopper';
-import TooltipContent from '../../../../components/TooltipContent';
-import InfoIcon from '../../../../components/icons/InfoIcon';
+import ArrowPopper from '../ArrowPopper';
+import TooltipContent from '../TooltipContent';
+import InfoIcon from '../icons/InfoIcon';
 
 const useStyles = makeStyles(theme => ({
-  icon: {
-    padding: theme.spacing(1),
+  small: {
+    margin: theme.spacing(0, 1),
+  },
+  xs: {
+    marginTop: theme.spacing(-0.5),
     '& svg': {
       fontSize: '1rem',
     },
   },
 }));
 
-export default function InfoIconButton({ info }) {
+export default function InfoIconButton({ info, size = 'small', className }) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -35,7 +39,7 @@ export default function InfoIconButton({ info }) {
       <IconButton
         data-test="openPageInfo"
         size="small"
-        className={classes.icon}
+        className={clsx(classes[size], className)}
         onClick={handleInfoOpen}
         aria-owns={!anchorEl ? null : 'pageInfo'}
         aria-haspopup="true">
