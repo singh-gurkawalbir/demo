@@ -14,7 +14,7 @@ import RunFlowButton from '../../../../components/RunFlowButton';
 import SettingsIcon from '../../../../components/icons/SettingsIcon';
 // import DataloaderIcon from '../../../../components/icons/DataLoaderIcon';
 import OnOffSwitch from '../../../../components/SwitchToggle';
-import InfoIconButton from '../InfoIconButton';
+import InfoIconButton from '../../../../components/InfoIconButton';
 import { getIntegrationAppUrlName } from '../../../../utils/integrationApps';
 import useEnqueueSnackbar from '../../../../hooks/enqueueSnackbar';
 
@@ -223,7 +223,7 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
               </Typography>
             </Link>
 
-            <InfoIconButton info={description} />
+            <InfoIconButton info={description} size="xs" />
           </div>
           <Typography variant="caption" component="span">
             {getRunLabel()} | Last Modified <TimeAgo date={lastModified} />
