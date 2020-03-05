@@ -19,6 +19,7 @@ import {
   getFormattedResourceForPreview,
 } from '../../../utils/flowData';
 import { isConnector } from '../../../utils/flows';
+import { isJsonString } from '../../../utils/string';
 
 /*
  * Returns PG/PP Document saved on Flow Doc.
@@ -193,9 +194,10 @@ export function* requestSampleDataForImports({
 
         try {
           // @TODO Raghu: Handle sample response as a XML
-          const sampleResponse = JSON.parse(
-            resource && resource.sampleResponseData
-          );
+          const { sampleResponseData = '' } = resource;
+          const sampleResponse = isJsonString(sampleResponseData)
+            ? JSON.parse(sampleResponseData)
+            : sampleResponseData;
 
           yield put(
             actions.flowData.receivedPreviewData(
