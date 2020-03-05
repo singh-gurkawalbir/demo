@@ -638,11 +638,15 @@ export default {
             );
           }
 
-          return (
-            r.http.response &&
-            r.http.response.failPath &&
-            r.http.response.failPath[0]
-          );
+          if (
+            Array.isArray(
+              r && r.http && r.http.response && r.http.response.failPath
+            )
+          ) {
+            return r.http.response.failPath[0];
+          }
+
+          return r && r.http && r.http.response && r.http.response.failPath;
         }
 
         return '';
@@ -681,11 +685,19 @@ export default {
             );
           }
 
-          return (
-            r.http.response &&
-            r.http.response.failValues &&
-            r.http.response.failValues[0]
-          );
+          if (
+            Array.isArray(
+              r &&
+                r.http &&
+                r.http.response &&
+                r.http.response.failValues &&
+                r.http.response.failValues[0]
+            )
+          ) {
+            return r.http.response.failValues[0];
+          }
+
+          return r && r.http && r.http.response && r.http.response.failValues;
         }
 
         return '';
@@ -716,11 +728,15 @@ export default {
         }
 
         if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
-          return (
-            r.http.response &&
-            r.http.response.failPath &&
-            r.http.response.failPath[0]
-          );
+          if (
+            Array.isArray(
+              r && r.http && r.http.response && r.http.response.failPath
+            )
+          ) {
+            return r.http.response.failPath[0];
+          }
+
+          return r && r.http && r.http.response && r.http.response.failPath;
         }
 
         return '';
@@ -751,11 +767,19 @@ export default {
         }
 
         if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
-          return (
-            r.http.response &&
-            r.http.response.failValues &&
-            r.http.response.failValues[0]
-          );
+          if (
+            Array.isArray(
+              r &&
+                r.http &&
+                r.http.response &&
+                r.http.response.failValues &&
+                r.http.response.failValues[0]
+            )
+          ) {
+            return r.http.response.failValues[0];
+          }
+
+          return r && r.http && r.http.response && r.http.response.failValues;
         }
 
         return '';
@@ -879,11 +903,15 @@ export default {
             );
           }
 
-          return (
-            r.http.response &&
-            r.http.response.successPath &&
-            r.http.response.successPath[0]
-          );
+          if (
+            Array.isArray(
+              r && r.http && r.http.response && r.http.response.successPath
+            )
+          ) {
+            return r.http.response.successPath[0];
+          }
+
+          return r && r.http && r.http.response && r.http.response.successPath;
         }
 
         return '';
@@ -922,10 +950,20 @@ export default {
             );
           }
 
+          if (
+            Array.isArray(
+              r &&
+                r.http &&
+                r.http.response &&
+                r.http.response.successValues &&
+                r.http.response.successValues[0]
+            )
+          ) {
+            return r.http.response.successValues[0];
+          }
+
           return (
-            r.http.response &&
-            r.http.response.successValues &&
-            r.http.response.successValues[0]
+            r && r.http && r.http.response && r.http.response.successValues
           );
         }
 
@@ -1158,11 +1196,15 @@ export default {
         }
 
         if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
-          return (
-            r.http.response &&
-            r.http.response.successPath &&
-            r.http.response.successPath[0]
-          );
+          if (
+            Array.isArray(
+              r && r.http && r.http.response && r.http.response.successPath
+            )
+          ) {
+            return r.http.response.successPath[0];
+          }
+
+          return r && r.http && r.http.response && r.http.response.successPath;
         }
 
         return '';
@@ -1193,10 +1235,20 @@ export default {
         }
 
         if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
+          if (
+            Array.isArray(
+              r &&
+                r.http &&
+                r.http.response &&
+                r.http.response.successValues &&
+                r.http.response.successValues[0]
+            )
+          ) {
+            return r.http.response.successValues[0];
+          }
+
           return (
-            r.http.response &&
-            r.http.response.successValues &&
-            r.http.response.successValues[0]
+            r && r.http && r.http.response && r.http.response.successValues
           );
         }
 
