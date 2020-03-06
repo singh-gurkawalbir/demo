@@ -8,6 +8,7 @@ import {
 } from '../../../forms/utils';
 import DynaRadio from './radiogroup/DynaRadioGroup';
 import * as selectors from '../../../reducers';
+import { useSetInitializeFormData } from './assistant/DynaAssistantOptions';
 
 export function FormView(props) {
   const { resourceType, flowId, resourceId, formContext } = props;
@@ -15,6 +16,8 @@ export function FormView(props) {
   const staggedResource = useSelector(state =>
     selectors.stagedResource(state, resourceId)
   );
+
+  useSetInitializeFormData({ resourceId, resourceType });
   const onFieldChangeFn = (id, selectedApplication) => {
     let value = {
       ...formContext.value,

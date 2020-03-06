@@ -7,6 +7,38 @@ import actions from '../../../../actions';
 import { SCOPES } from '../../../../sagas/resourceForm';
 import { selectOptions } from './util';
 
+export const useSetInitializeFormData = props => {
+  const { resourceType, resourceId } = props;
+  const dispatch = useDispatch();
+  const [componentMounted, setComponentMounted] = useState(false);
+  const formState = useSelector(state =>
+    selectors.resourceFormState(state, resourceType, resourceId)
+  );
+
+  useEffect(() => {
+    // resouceForm init causes the form to remount
+    // when there is any initialization data do we perform at this step
+    if (!componentMounted && formState.initData) {
+      formState.initData.length &&
+        formState.initData.forEach(field => {
+          const { id, value } = field;
+
+          props.onFieldChange(id, value);
+        });
+      dispatch(actions.resourceForm.clearInitData(resourceType, resourceId));
+    }
+
+    setComponentMounted(true);
+  }, [
+    componentMounted,
+    dispatch,
+    formState.initData,
+    props,
+    resourceId,
+    resourceType,
+  ]);
+};
+
 function DynaAssistantOptions(props) {
   const {
     label,
@@ -62,27 +94,8 @@ function DynaAssistantOptions(props) {
     options,
     resourceContext.resourceType,
   ]);
-  const [componentMounted, setComponentMounted] = useState(false);
-  const formState = useSelector(state =>
-    selectors.resourceFormState(state, resourceType, resourceId)
-  );
 
-  useEffect(() => {
-    // resouceForm init causes the form to remount
-    // when there is any initialization data do we perform at this step
-    if (!componentMounted && formState.initData) {
-      formState.initData.length &&
-        formState.initData.forEach(field => {
-          const { id, value } = field;
-
-          props.onFieldChange(id, value);
-        });
-      dispatch(actions.resourceForm.clearInitData(resourceType, resourceId));
-    }
-
-    setComponentMounted(true);
-  }, [componentMounted, dispatch, formState, props, resourceId, resourceType]);
-
+  useSetInitializeFormData({ resourceType, resourceId });
   function onFieldChange(id, value) {
     props.onFieldChange(id, value);
 
