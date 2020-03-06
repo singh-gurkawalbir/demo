@@ -1665,7 +1665,8 @@ export function integrationAppFlowSettings(state, id, section, storeId) {
   });
   showFlowSettings = some(
     selectedSection.flows,
-    f => !!f.settings || !!f.sections
+    f =>
+      !!((f.settings && f.settings.length) || (f.sections && f.sections.length))
   );
   const { fields, sections: subSections } = selectedSection;
   let flows = flowListWithMetadata(state, {
