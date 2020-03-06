@@ -110,13 +110,29 @@ const getSubRecordMapping = (parentMapping, subRecordMappingId) => {
 
     if (list) {
       const subList = list.fields.find(l => l.generate === subListGenerateName);
+      const { subRecordMapping } = subList;
 
-      return subList.subRecordMapping;
+      if (!subRecordMapping.mapping) {
+        subRecordMapping.mapping = {
+          fields: [],
+          lists: [],
+        };
+      }
+
+      return subRecordMapping;
     }
   } else {
     const field = fields.find(l => l.generate === subRecordMappingId);
+    const { subRecordMapping } = field;
 
-    return field.subRecordMapping;
+    if (!subRecordMapping.mapping) {
+      subRecordMapping.mapping = {
+        fields: [],
+        lists: [],
+      };
+    }
+
+    return subRecordMapping;
   }
 };
 
@@ -536,7 +552,8 @@ export default {
       rawMapping,
       subRecordMappingId
     );
-    const { lookups, mapping: subRecordMapping } = subRecordMappingObj || {};
+    const { lookups = [], mapping: subRecordMapping } =
+      subRecordMappingObj || {};
     const formattedMappings = mappingUtil.getMappingsForApp({
       mappings: subRecordMapping,
       isGroupedSampleData,
@@ -630,7 +647,7 @@ export default {
     });
   },
   getMappingsForApp: ({
-    mappings,
+    mappings = {},
     resource = {},
     isGroupedSampleData,
     netsuiteRecordType,
@@ -992,22 +1009,24 @@ export default {
           mappingContainer = mappings;
         }
 
-        meta.requiredGenerateFields.forEach(fieldId => {
-          const field = mappingContainer.fields.find(
-            field => field.generate === fieldId
-          );
-
-          if (field) field.isRequired = true;
-        });
-        meta.nonEditableGenerateFields &&
-          Array.isArray(meta.nonEditableGenerateFields) &&
-          meta.nonEditableGenerateFields.forEach(fieldId => {
+        if (mappingContainer) {
+          meta.requiredGenerateFields.forEach(fieldId => {
             const field = mappingContainer.fields.find(
               field => field.generate === fieldId
             );
 
-            if (field) field.isNotEditable = true;
+            if (field) field.isRequired = true;
           });
+          meta.nonEditableGenerateFields &&
+            Array.isArray(meta.nonEditableGenerateFields) &&
+            meta.nonEditableGenerateFields.forEach(fieldId => {
+              const field = mappingContainer.fields.find(
+                field => field.generate === fieldId
+              );
+
+              if (field) field.isNotEditable = true;
+            });
+        }
       });
 
     return mappings;
