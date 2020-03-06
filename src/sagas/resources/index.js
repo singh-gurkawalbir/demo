@@ -359,6 +359,8 @@ export function* updateIntegrationSettings({
 
     // If persistSettings is called for IA flow enable/disable
     if (options.action === 'flowEnableDisable') {
+      // eslint-disable-next-line no-use-before-define
+      yield call(getResource, { resourceType: 'flows', id: flowId });
       const flowDetails = yield select(selectors.resource, 'flows', flowId);
       const patchSet = [
         {
