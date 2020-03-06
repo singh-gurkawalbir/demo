@@ -31,6 +31,7 @@ export default function JavaScriptEditor(props) {
     disabled,
     optionalSaveParams,
     layout = 'compact',
+    resultMode = 'json',
   } = props;
   const classes = useStyles(props);
   const { data, result, error, initChangeIdentifier } = useSelector(state =>
@@ -96,7 +97,12 @@ export default function JavaScriptEditor(props) {
       </PanelGridItem>
       <PanelGridItem gridArea="result">
         <PanelTitle title="Function Output" />
-        <CodePanel name="result" value={parsedData} mode="json" readOnly />
+        <CodePanel
+          name="result"
+          value={parsedData}
+          mode={resultMode}
+          readOnly
+        />
       </PanelGridItem>
 
       <ErrorGridItem error={error} violations={violations} />
