@@ -52,7 +52,7 @@ export default {
                   )
                 );
               } else {
-                if (enable) {
+                if (enable && !flow.free && !flow.isSimpleImport) {
                   if (!isLicenseValidToEnableFlow.enable) {
                     return enqueueSnackbar({
                       message: isLicenseValidToEnableFlow.message,

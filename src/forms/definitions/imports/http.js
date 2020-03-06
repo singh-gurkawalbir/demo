@@ -28,6 +28,10 @@ export default {
           retValues['/http/relativeURIUpdate'],
           retValues['/http/relativeURICreate'],
         ];
+        retValues['/http/requestType'] = [
+          retValues['/http/requestTypeUpdate'],
+          retValues['/http/requestTypeCreate'],
+        ];
         retValues['/http/method'] = [
           retValues['/http/compositeMethodUpdate'],
           retValues['/http/compositeMethodCreate'],
@@ -118,6 +122,7 @@ export default {
         retValues['/ignoreMissing'] = false;
       } else if (retValues['/http/compositeType'] === 'createandignore') {
         retValues['/http/relativeURI'] = [retValues['/http/relativeURICreate']];
+        retValues['/http/requestType'] = [retValues['/http/requestTypeCreate']];
         retValues['/http/method'] = [retValues['/http/compositeMethodCreate']];
 
         retValues['/http/resourceId'] = undefined;
@@ -189,6 +194,7 @@ export default {
         retValues['/http/existingDataId'] = undefined;
       } else if (retValues['/http/compositeType'] === 'updateandignore') {
         retValues['/http/relativeURI'] = [retValues['/http/relativeURIUpdate']];
+        retValues['/http/requestType'] = [retValues['/http/requestTypeUpdate']];
         retValues['/http/method'] = [retValues['/http/compositeMethodUpdate']];
 
         retValues['/http/resourceId'] = undefined;
@@ -260,6 +266,9 @@ export default {
         retValues['/http/existingDataId'] = undefined;
       }
     } else {
+      if (!retValues['/http/requestType'])
+        retValues['/http/requestType'] =
+          retValues['/http/method'] === 'POST' ? ['CREATE'] : ['UPDATE'];
       retValues['/ignoreExisting'] = false;
       retValues['/ignoreMissing'] = false;
       retValues['/http/body'] = retValues['/http/body']
@@ -425,6 +434,7 @@ export default {
     'http.compositeType': { fieldId: 'http.compositeType' },
     'http.lookups': { fieldId: 'http.lookups', visible: false },
     'http.relativeURI': { fieldId: 'http.relativeURI' },
+    'http.requestType': { fieldId: 'http.requestType' },
     'http.response.successPath': {
       fieldId: 'http.response.successPath',
       defaultValue: r => {
@@ -557,6 +567,51 @@ export default {
           }
 
           return r.http.relativeURI[0];
+        }
+
+        return '';
+      },
+    },
+    'http.requestTypeCreate': {
+      id: 'http.requestTypeCreate',
+      type: 'select',
+      label: 'RequestType',
+      required: true,
+      options: [
+        {
+          items: [
+            { label: 'CREATE', value: 'CREATE' },
+            { label: 'UPDATE', value: 'UPDATE' },
+          ],
+        },
+      ],
+      visibleWhenAll: [
+        {
+          field: 'http.compositeType',
+          is: ['createandupdate', 'createandignore'],
+        },
+        {
+          field: 'http.method',
+          is: ['COMPOSITE'],
+        },
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
+      ],
+      helpText:
+        'Please specify whether the record is being created or updated using this field.',
+      defaultValue: r => {
+        if (!r || !r.http || !r.http.method) {
+          return '';
+        }
+
+        if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
+          if (r.http.method.length > 1) {
+            return r.http.requestType[1];
+          }
+
+          return r.http.requestType[0];
         }
 
         return '';
@@ -1063,6 +1118,47 @@ export default {
         return '';
       },
     },
+    'http.requestTypeUpdate': {
+      id: 'http.requestTypeUpdate',
+      type: 'select',
+      label: 'Request Type',
+      required: true,
+      options: [
+        {
+          items: [
+            { label: 'CREATE', value: 'CREATE' },
+            { label: 'UPDATE', value: 'UPDATE' },
+          ],
+        },
+      ],
+      helpText:
+        'Please specify whether the record is being created or updated using this field.',
+      visibleWhenAll: [
+        {
+          field: 'http.compositeType',
+          is: ['createandupdate', 'updateandignore'],
+        },
+        {
+          field: 'http.method',
+          is: ['COMPOSITE'],
+        },
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
+      ],
+      defaultValue: r => {
+        if (!r || !r.http || !r.http.method) {
+          return '';
+        }
+
+        if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
+          return r.http.requestType && r.http.requestType[0];
+        }
+
+        return '';
+      },
+    },
     'http.bodyUpdate': {
       id: 'http.bodyUpdate',
       type: 'httprequestbody',
@@ -1428,6 +1524,7 @@ export default {
       'http.compositeType',
       'http.lookups',
       'http.relativeURI',
+      'http.requestType',
       'http.body',
       'http.response.successPath',
       'http.response.successValues',
@@ -1440,6 +1537,7 @@ export default {
       'createNewData',
       'http.compositeMethodCreate',
       'http.relativeURICreate',
+      'http.requestTypeCreate',
       'http.bodyCreate',
       'http.successPathCreate',
       'http.successValuesCreate',
@@ -1450,6 +1548,7 @@ export default {
       'upateExistingData',
       'http.compositeMethodUpdate',
       'http.relativeURIUpdate',
+      'http.requestTypeUpdate',
       'http.bodyUpdate',
       'http.successPathUpdate',
       'http.successValuesUpdate',

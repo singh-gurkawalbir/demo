@@ -22,12 +22,7 @@ import {
   ACCOUNT_IDS,
   SUITESCRIPT_CONNECTORS,
 } from '../utils/constants';
-import {
-  LICENSE_EXPIRED,
-  LICENSE_TRIAL_NOT_STARTED,
-  LICENSE_TRIAL_EXPIRED,
-  FLOW_LIMIT_REACHED,
-} from '../utils/messageStore';
+import { LICENSE_EXPIRED } from '../utils/messageStore';
 import { changePasswordParams, changeEmailParams } from '../sagas/api/apiPaths';
 import { getFieldById } from '../forms/utils';
 import { upgradeButtonText, expiresInfo } from '../utils/license';
@@ -874,22 +869,6 @@ export function getNextDataFlows(state, flow) {
       !f.isSimpleImport &&
       !f.disabled
   );
-}
-
-export function getNumberEnabledFlows(state) {
-  let flows = flowListWithMetadata(state, { type: 'flows' }).resources || [];
-  const preferences = userPreferences(state);
-  const sandboxEnvironment = preferences.environment === 'sandbox';
-
-  flows = flows.filter(
-    f =>
-      !f.disabled &&
-      !f._connectorId &&
-      !f.isSimpleImport &&
-      !!f.sandbox === !!sandboxEnvironment
-  );
-
-  return (flows && flows.length) || 0;
 }
 
 export function resourceListWithPermissions(state, options) {
@@ -2127,39 +2106,13 @@ export function integratorLicenseWithMetadata(state) {
 
 export function isLicenseValidToEnableFlow(state) {
   const licenseDetails = { enable: true };
-
-  if (getNumberEnabledFlows(state) === 0) {
-    return licenseDetails;
-  }
-
   const license = integratorLicenseWithMetadata(state);
-  const preferences = userPreferences(state);
 
   if (!license) {
     return licenseDetails;
   }
 
-  if (license.tier === 'free') {
-    if (!license.inTrial) {
-      if (license.isFreemium) {
-        if (preferences && preferences.environment === 'sandbox') {
-          licenseDetails.enable = false;
-          licenseDetails.message = FLOW_LIMIT_REACHED;
-        }
-      } else if (license.hasSubscription) {
-        if (license.hasExpired) {
-          licenseDetails.enable = false;
-          licenseDetails.message = LICENSE_EXPIRED;
-        }
-      } else if (license.trialEndDate) {
-        licenseDetails.enable = false;
-        licenseDetails.message = LICENSE_TRIAL_EXPIRED;
-      } else {
-        licenseDetails.enable = false;
-        licenseDetails.message = LICENSE_TRIAL_NOT_STARTED;
-      }
-    }
-  } else if (license.hasExpired) {
+  if (license.hasExpired) {
     licenseDetails.enable = false;
     licenseDetails.message = LICENSE_EXPIRED;
   }
