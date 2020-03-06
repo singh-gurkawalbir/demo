@@ -807,7 +807,10 @@ export function flowDetails(state, id) {
     const flowSettings = getIAFlowSettings(state, flow._integrationId, id);
 
     draft.showMapping = flowSettings.showMapping;
-    draft.hasSettings = !!flowSettings.settings || !!flowSettings.sections;
+    draft.hasSettings = !!(
+      (flowSettings.settings && flowSettings.settings.length) ||
+      (flowSettings.sections && flowSettings.sections.length)
+    );
     draft.showSchedule = draft._connectorId
       ? draft.canSchedule && !!flowSettings.showSchedule
       : draft.canSchedule;
