@@ -2054,6 +2054,7 @@ export default {
     type: 'hook',
     label: '',
     required: false,
+    resultMode: 'text',
     hookStage: 'contentBasedFlowRouter',
     preHookData: {
       httpHeaders: {

@@ -66,6 +66,7 @@ export default function DynaHook(props) {
     hookType = 'script',
     hookStage = 'preSavePage',
     preHookData = {},
+    resultMode,
     requestForPreHookData,
   } = props;
   const handleEditorClick = useCallback(() => {
@@ -181,6 +182,7 @@ export default function DynaHook(props) {
           insertStubKey={hookStage}
           entryFunction={value.function || hooksToFunctionNamesMap[hookStage]}
           onClose={handleClose}
+          resultMode={resultMode}
           optionalSaveParams={optionalSaveParams}
           patchOnSave
         />
