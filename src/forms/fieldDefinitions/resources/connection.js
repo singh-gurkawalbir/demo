@@ -2054,7 +2054,7 @@ export default {
     type: 'hook',
     label: '',
     required: false,
-    resultMode: 'text',
+    editorResultMode: 'text',
     hookStage: 'contentBasedFlowRouter',
     preHookData: {
       httpHeaders: {
