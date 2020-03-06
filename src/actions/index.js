@@ -459,10 +459,25 @@ const integrationApp = {
           id,
           row,
         }),
+      collapseAll: (integrationId, flowId) =>
+        action(
+          actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.COLLAPSE_ALL,
+          { integrationId, flowId }
+        ),
+      expandAll: (integrationId, flowId) =>
+        action(
+          actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.EXPAND_ALL,
+          { integrationId, flowId }
+        ),
+      clearCollapseStatus: (integrationId, flowId) =>
+        action(
+          actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
+            .CLEAR_COLLAPSE_STATUS,
+          { integrationId, flowId }
+        ),
       updateLookup: (integrationId, flowId, id, lookups) =>
         action(
-          actionTypes.MAPPIINTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
-            .UPDATE_LOOKUP,
+          actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.UPDATE_LOOKUP,
           {
             integrationId,
             flowId,
@@ -519,12 +534,13 @@ const integrationApp = {
             id,
           }
         ),
-      save: (integrationId, flowId, id) =>
+      save: (integrationId, flowId, closeOnSave) =>
         action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.SAVE, {
           integrationId,
           flowId,
-          id,
+          closeOnSave,
         }),
+
       saveFailed: (integrationId, flowId, id) =>
         action(
           actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.SAVE_FAILED,

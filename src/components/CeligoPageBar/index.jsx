@@ -1,16 +1,14 @@
-import { Fragment, useState, useCallback } from 'react';
+import { Fragment } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Paper, Grid, IconButton } from '@material-ui/core';
-import ArrowPopper from '../ArrowPopper';
-import TooltipContent from '../TooltipContent';
 import ElevateOnScroll from '../ElevateOnScroll';
 import SlideOnScroll from '../SlideOnScroll';
 import ArrowLeftIcon from '../../components/icons/ArrowLeftIcon';
 import * as selectors from '../../reducers';
-import InfoIcon from '../icons/InfoIcon';
+import InfoIconButton from '../InfoIconButton';
 import WelcomeBanner from './WelcomeBanner';
 
 const useStyles = makeStyles(theme => ({
@@ -62,13 +60,6 @@ export default function CeligoPageBar(props) {
   const location = useLocation();
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
   const bannerOpened = useSelector(state => selectors.bannerOpened(state));
-  const [anchorEl, setAnchorEl] = useState(null);
-  const handleInfoOpen = useCallback(event => {
-    setAnchorEl(event.currentTarget);
-  }, []);
-  const handleInfoClose = useCallback(() => {
-    setAnchorEl(null);
-  }, []);
   const showBanner = location.pathname.includes('pg/dashboard') && bannerOpened;
 
   return (
@@ -84,7 +75,7 @@ export default function CeligoPageBar(props) {
             square>
             {showBanner && <WelcomeBanner />}
 
-            <Grid item container wrap="nowrap" alignItems="center">
+            <Grid item container wrap="nowrap">
               {history && (
                 // eslint-disable-next-line react/jsx-handler-names
                 <IconButton size="small" onClick={history.goBack}>
@@ -95,28 +86,7 @@ export default function CeligoPageBar(props) {
                 {title}
               </Typography>
               {titleTag && <span>{titleTag}</span>}
-              {infoText && (
-                <Fragment>
-                  <IconButton
-                    data-test="openPageInfo"
-                    size="small"
-                    onClick={handleInfoOpen}
-                    aria-owns={!anchorEl ? null : 'pageInfo'}
-                    aria-haspopup="true">
-                    <InfoIcon />
-                  </IconButton>
-                  <ArrowPopper
-                    id="pageInfo"
-                    open={!!anchorEl}
-                    anchorEl={anchorEl}
-                    placement="right-start"
-                    onClose={handleInfoClose}>
-                    <TooltipContent className={classes.infoText}>
-                      {infoText}
-                    </TooltipContent>
-                  </ArrowPopper>
-                </Fragment>
-              )}
+              {infoText && <InfoIconButton info={infoText} />}
               <div className={classes.emptySpace} />
               {children}
             </Grid>

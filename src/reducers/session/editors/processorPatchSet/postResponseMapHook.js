@@ -17,19 +17,30 @@ export default {
       });
     }
 
-    // Saves postResponseMap Hook on pageProcessor based on resourceIndex
     // Incase of user selecting None for script, pass undefined instead of '' as BE throws error if it is ''
-    foregroundPatchSet.push({
-      op:
-        pageProcessorsObject.hooks && pageProcessorsObject.hooks.postResponseMap
-          ? 'replace'
-          : 'add',
-      path: `/pageProcessors/${resourceIndex}/hooks/postResponseMap`,
-      value: {
-        _scriptId: scriptId || undefined,
-        function: scriptId ? entryFunction : undefined,
-      },
-    });
+    // removing hook object is user selects none
+    if (scriptId === '') {
+      foregroundPatchSet.push({
+        op: 'replace',
+        path: `/pageProcessors/${resourceIndex}/hooks`,
+        value: undefined,
+      });
+    } else {
+      // Saves postResponseMap Hook on pageProcessor based on resourceIndex
+      foregroundPatchSet.push({
+        op:
+          pageProcessorsObject.hooks &&
+          pageProcessorsObject.hooks.postResponseMap
+            ? 'replace'
+            : 'add',
+        path: `/pageProcessors/${resourceIndex}/hooks/postResponseMap`,
+        value: {
+          _scriptId: scriptId || undefined,
+          function: scriptId ? entryFunction : undefined,
+        },
+      });
+    }
+
     patches.foregroundPatch = {
       patch: foregroundPatchSet,
       resourceType: 'flows',
