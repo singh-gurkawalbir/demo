@@ -27,7 +27,7 @@ function OAuthButton(props) {
       !iClients.length &&
       resource._id &&
       resource._connectorId &&
-      resource.assistant === 'shopify'
+      (resource.assistant === 'shopify' || resource.assistant === 'squareup')
     ) {
       dispatch(actions.resource.connections.requestIClients(resource._id));
     }
@@ -46,7 +46,8 @@ function OAuthButton(props) {
 
       if (
         resource._connectorId &&
-        resource.assistant === 'shopify' &&
+        (resource.assistant === 'shopify' ||
+          resource.assistant === 'squareup') &&
         values['/http/auth/type'] === 'oauth'
       ) {
         newValues['/http/_iClientId'] =
