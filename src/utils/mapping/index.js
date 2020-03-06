@@ -917,12 +917,12 @@ export default {
 
       list ? list.fields.push(mapping) : fields.push(mapping);
     });
-    const formattedMapping = {
+    const generatedMapping = mappingUtil.shiftSubRecordLast({
       fields,
       lists,
-    };
+    });
 
-    return formattedMapping;
+    return generatedMapping;
   },
   getResponseMappingDefaultExtracts: resourceType => {
     const extractFields =
@@ -1137,4 +1137,22 @@ export default {
     return extractPaths;
   },
   isCsvOrXlsxResource,
+  shiftSubRecordLast: ({ fields, lists }) => {
+    const orderedLists = lists.map(l => {
+      const _l = l;
+      const itemsWithoutSubRecord = _l.fields.filter(f => !f.subRecordMapping);
+      const itemsWithSubRecord = _l.fields.filter(f => f.subRecordMapping);
+
+      _l.fields = [...itemsWithoutSubRecord, ...itemsWithSubRecord];
+
+      return _l;
+    });
+    const fieldsWithoutSubRecord = fields.filter(f => !f.subRecordMapping);
+    const fieldsWithSubRecord = fields.filter(f => f.subRecordMapping);
+
+    return {
+      fields: [...fieldsWithoutSubRecord, ...fieldsWithSubRecord],
+      lists: orderedLists,
+    };
+  },
 };
