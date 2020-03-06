@@ -52,7 +52,7 @@ const useStyles = makeStyles(theme => ({
   },
   mappingsBody: {
     height: `calc(100% - 32px)`,
-    overflow: 'auto',
+    overflow: 'visible',
   },
   childRow: {
     display: 'flex',
