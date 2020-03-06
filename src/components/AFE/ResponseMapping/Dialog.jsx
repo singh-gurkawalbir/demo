@@ -70,7 +70,7 @@ export default function ResponseMappingDialog(props) {
     flowId,
     resourceType,
     onClose,
-    disabled,
+    disabled = false,
   } = props;
   const { merged: flow = {} } = useSelector(state =>
     selectors.resourceData(state, 'flows', flowId)
@@ -88,7 +88,7 @@ export default function ResponseMappingDialog(props) {
   const { mappings = [], changeIdentifier } = useSelector(state =>
     selectors.getFlowResource(state, editorId)
   );
-  const { saveInProgress, saveCompleted } = useSelector(state =>
+  const { saveInProgress = false, saveCompleted = false } = useSelector(state =>
     selectors.flowResourceSaveStatus(state, editorId)
   );
   const extractFields = useSelector(state =>
@@ -267,14 +267,14 @@ export default function ResponseMappingDialog(props) {
         <ButtonGroup>
           <FlowResourceSave
             id={editorId}
-            disabled={!!(disabled || saveInProgress)}
+            disabled={disabled || saveInProgress}
             dataTest="saveMapping"
             variant="outlined"
             color="secondary"
           />
           <FlowResourceSave
             id={editorId}
-            disabled={!!(disabled || saveInProgress)}
+            disabled={disabled || saveInProgress}
             submitButtonLabel="Save and close"
             dataTest="saveAndCloseMapping"
             onClose={onClose}
@@ -285,26 +285,10 @@ export default function ResponseMappingDialog(props) {
           <Button
             variant="text"
             data-test="saveImportMapping"
-            disabled={!!saveInProgress}
+            disabled={saveInProgress}
             onClick={onClose}>
             {saveCompleted ? 'Close' : 'Cancel'}
           </Button>
-          {/* <Button
-            disabled={disabled}
-            data-test="saveMapping"
-            onClick={() => handleSubmit(false)}
-            variant="outlined"
-            color="secondary">
-            Save
-          </Button>
-          <Button
-            disabled={disabled}
-            data-test="saveAndCloseMapping"
-            onClick={() => handleSubmit(true)}
-            variant="outlined"
-            color="primary">
-            Save and close
-          </Button> */}
         </ButtonGroup>
       </div>
     </ModalDialog>

@@ -44,7 +44,7 @@ export default function FlowResourceSave(props) {
   };
 
   if (showOnlyOnChanges && !isDirty) {
-    return <div />;
+    return null;
   }
 
   return (
