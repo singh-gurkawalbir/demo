@@ -807,7 +807,10 @@ export function flowDetails(state, id) {
     const flowSettings = getIAFlowSettings(state, flow._integrationId, id);
 
     draft.showMapping = flowSettings.showMapping;
-    draft.hasSettings = !!flowSettings.settings || !!flowSettings.sections;
+    draft.hasSettings = !!(
+      (flowSettings.settings && flowSettings.settings.length) ||
+      (flowSettings.sections && flowSettings.sections.length)
+    );
     draft.showSchedule = draft._connectorId
       ? draft.canSchedule && !!flowSettings.showSchedule
       : draft.canSchedule;
@@ -1255,7 +1258,7 @@ export function categoryMappingSaveStatus(state, integrationId, flowId) {
 }
 
 export function pendingCategoryMappings(state, integrationId, flowId) {
-  const { response, mappings } =
+  const { response, mappings, deleted } =
     fromSession.categoryMapping(
       state && state.session,
       integrationId,
@@ -1265,7 +1268,12 @@ export function pendingCategoryMappings(state, integrationId, flowId) {
   const sessionMappedData =
     mappingData && mappingData.data && mappingData.data.mappingData;
 
-  mappingUtil.setCategoryMappingData(flowId, sessionMappedData, mappings);
+  mappingUtil.setCategoryMappingData(
+    flowId,
+    sessionMappedData,
+    mappings,
+    deleted
+  );
 
   return sessionMappedData;
 }
@@ -1660,7 +1668,8 @@ export function integrationAppFlowSettings(state, id, section, storeId) {
   });
   showFlowSettings = some(
     selectedSection.flows,
-    f => !!f.settings || !!f.sections
+    f =>
+      !!((f.settings && f.settings.length) || (f.sections && f.sections.length))
   );
   const { fields, sections: subSections } = selectedSection;
   let flows = flowListWithMetadata(state, {
