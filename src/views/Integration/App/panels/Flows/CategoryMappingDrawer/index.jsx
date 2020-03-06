@@ -103,10 +103,9 @@ const useStyles = makeStyles(theme => ({
   },
 
   subNav: {
-    minWidth: 200,
+    width: '20%',
     background: theme.palette.background.paper2,
-    borderRight: `solid 1px ${theme.palette.secondary.lightest}`,
-    paddingTop: theme.spacing(2),
+    paddingTop: theme.spacing(1),
   },
   deleteIcon: {
     position: 'absolute',
@@ -129,9 +128,13 @@ const useStyles = makeStyles(theme => ({
   },
   activeListItem: {
     color: theme.palette.primary.main,
+    fontWeight: 'bold',
   },
   default: {
     marginBottom: 10,
+  },
+  titleBar: {
+    padding: '4px 16px',
   },
 }));
 

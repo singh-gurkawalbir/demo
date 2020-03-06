@@ -2,6 +2,7 @@ import { useCallback, useState, Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { IconButton, Menu, MenuItem } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
 import useConfirmDialog from '../ConfirmDialog';
@@ -18,6 +19,13 @@ import DetachIcon from '../icons/unLinkedIcon';
 import CalendarIcon from '../icons/CalendarIcon';
 import { getIntegrationAppUrlName } from '../../utils/integrationApps';
 
+const useStyles = makeStyles(theme => ({
+  wrapper: {
+    '& > .MuiMenu-paper': {
+      right: theme.spacing(3),
+    },
+  },
+}));
 const allActions = {
   detach: { action: 'detach', label: 'Detach flow', Icon: DetachIcon },
   clone: { action: 'clone', label: 'Clone flow', Icon: CloneIcon },
@@ -32,6 +40,7 @@ const allActions = {
 export default function FlowEllipsisMenu({ flowId, exclude }) {
   const history = useHistory();
   const dispatch = useDispatch();
+  const classes = useStyles();
   const flowDetails =
     useSelector(state => selectors.flowDetails(state, flowId)) || {};
   const patchFlow = useCallback(
@@ -191,6 +200,7 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
         variant="menu"
         id={actionsPopoverId}
         anchorEl={anchorEl}
+        className={classes.wrapper}
         open={open}
         onClose={handleMenuClose}>
         {availableActions.map(({ action, label, Icon }) => (
