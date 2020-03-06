@@ -3784,6 +3784,15 @@ export const getSampleDataWrapper = createSelector(
       };
     }
 
+    if (stage === 'postResponseMapHook') {
+      return {
+        status,
+        data: {
+          postResponseMapData: data || [],
+        },
+      };
+    }
+
     // For all other stages, return basic sampleData
     return { status, data };
   }
