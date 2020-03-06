@@ -1,4 +1,5 @@
 import { uniqBy } from 'lodash';
+import mappingUtil from '../';
 
 const handlebarRegex = /(\{\{[\s]*.*?[\s]*\}\})/i;
 const wrapTextForSpecialCharsNetsuite = extract => {
@@ -244,6 +245,8 @@ export default {
       }
 
       delete mapping.useFirstRow;
+      // key is property added in UI side. removing it while saving.
+      delete mapping.key;
 
       if (mapping.useAsAnInitializeValue) {
         initializeValues.push(mapping.generate);
@@ -281,12 +284,11 @@ export default {
       });
     }
 
-    const formattedMapping = {
+    const generatedMapping = mappingUtil.shiftSubRecordLast({
       fields,
       lists,
-    };
+    });
 
-    // TODO (Aditya): handle Subrecord Imports
-    return formattedMapping;
+    return generatedMapping;
   },
 };
