@@ -1,6 +1,8 @@
 import { Fragment, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useRouteMatch, Link } from 'react-router-dom';
+import { makeStyles } from '@material-ui/core/styles';
+import { Typography } from '@material-ui/core';
 import * as selectors from '../../../../reducers';
 import SubRecordDrawer from './SubRecordDrawer';
 import actions from '../../../../actions';
@@ -13,6 +15,49 @@ import {
   getNetSuiteSubrecordLabel,
   getNetSuiteSubrecordImports,
 } from '../../../../utils/resource';
+import AddIcon from '../../../../components/icons/AddIcon';
+
+const useStyles = makeStyles(theme => ({
+  subrecords: {
+    padding: theme.spacing(2),
+    background: theme.palette.background.default,
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+    position: 'relative',
+    marginLeft: 12,
+    '&:before': {
+      position: 'absolute',
+      content: '""',
+      left: theme.spacing(-1),
+      top: 0,
+      width: 1,
+      height: '100%',
+      background: theme.palette.secondary.lightest,
+    },
+  },
+  header: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    marginBottom: theme.spacing(2),
+  },
+  link: {
+    display: 'flex',
+    color: theme.palette.secondary.light,
+    alignItems: 'center',
+    marginTop: -5,
+    '&:hover': {
+      color: theme.palette.primary.main,
+    },
+  },
+  actionItems: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  actionBtns: {
+    display: 'flex',
+  },
+}));
 
 export default function DynaNetSuiteSubRecords(props) {
   const {
@@ -25,6 +70,7 @@ export default function DynaNetSuiteSubRecords(props) {
     value,
     flowId,
   } = props;
+  const classes = useStyles();
   const { resourceId } = resourceContext;
   const { recordType } = options;
   const hasSubrecord = useSelector(state => {
@@ -155,28 +201,39 @@ export default function DynaNetSuiteSubRecords(props) {
         connectionId={connectionId}
         recordType={recordType}
       />
-      Subrecord imports{' '}
-      <Link to={`${match.url}/subrecords`}>Add subrecord</Link>
-      <br />
-      {subrecords &&
-        subrecords.map(sr => (
-          <div key={sr.fieldId}>
-            <span>{getNetSuiteSubrecordLabel(sr.fieldId, sr.recordType)}</span>
-            <ActionButton
-              fontSize="small"
-              data-test="edit-subrecord"
-              component={Link}
-              to={`${match.url}/subrecords/${sr.fieldId}`}>
-              <EditIcon />
-            </ActionButton>
-            <ActionButton
-              fontSize="small"
-              data-test="delete-subrecord"
-              onClick={() => handleDeleteClick(sr.fieldId)}>
-              <DeleteIcon />
-            </ActionButton>
-          </div>
-        ))}
+      <div className={classes.subrecords}>
+        <div className={classes.header}>
+          <Typography variant="body2">Subrecord imports</Typography>
+          <Link to={`${match.url}/subrecords`} className={classes.link}>
+            <AddIcon />
+            Add subrecord
+          </Link>
+        </div>
+
+        {subrecords &&
+          subrecords.map(sr => (
+            <div key={sr.fieldId} className={classes.actionItems}>
+              <Typography component="span">
+                {getNetSuiteSubrecordLabel(sr.fieldId, sr.recordType)}
+              </Typography>
+              <div className={classes.actionBtns}>
+                <ActionButton
+                  fontSize="small"
+                  data-test="edit-subrecord"
+                  component={Link}
+                  to={`${match.url}/subrecords/${sr.fieldId}`}>
+                  <EditIcon />
+                </ActionButton>
+                <ActionButton
+                  fontSize="small"
+                  data-test="delete-subrecord"
+                  onClick={() => handleDeleteClick(sr.fieldId)}>
+                  <DeleteIcon />
+                </ActionButton>
+              </div>
+            </div>
+          ))}
+      </div>
     </Fragment>
   );
 }

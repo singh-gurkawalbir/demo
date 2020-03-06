@@ -23,6 +23,15 @@ const useStyles = makeStyles(theme => ({
   divider: {
     height: theme.spacing(3),
     width: 1,
+    marginRight: theme.spacing(1),
+  },
+  button: {
+    padding: '4px 10px',
+    marginRight: theme.spacing(0.5),
+    color: theme.palette.secondary.light,
+  },
+  closeIcon: {
+    padding: theme.spacing(0.5),
   },
 }));
 
@@ -66,7 +75,7 @@ export default function DrawerTitleBar({
             variant="text"
             data-test="addCategory"
             onClick={handleAddCategoryClick}
-            color="secondary"
+            color="primary"
             className={classes.button}>
             <AddIcon /> Add Category
           </IconTextButton>
@@ -75,7 +84,8 @@ export default function DrawerTitleBar({
         <IconButton
           data-test="closeCategoryMapping"
           aria-label="Close"
-          onClick={handleClose}>
+          onClick={handleClose}
+          className={classes.closeIcon}>
           <CloseIcon />
         </IconButton>
       </LoadResources>
