@@ -735,6 +735,10 @@ export default {
     if (generate.indexOf('[*].') === -1) {
       delete fieldMeta.fieldMap.isKey;
       fields = fields.filter(el => el !== 'isKey');
+    } else {
+      // delete useAsAnInitializeValue for list items
+      delete fieldMeta.fieldMap.useAsAnInitializeValue;
+      fields = fields.filter(el => el !== 'useAsAnInitializeValue');
     }
 
     if (
