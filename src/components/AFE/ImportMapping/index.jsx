@@ -117,8 +117,8 @@ export default function ImportMapping(props) {
     salesforceMasterRecordTypeId,
     showSalesforceNetsuiteAssistant,
   } = useSelector(state => selectors.mapping(state, editorId));
-  const saveInProgress = useSelector(
-    state => selectors.mappingsSaveStatus(state, editorId).saveInProgress
+  const { saveInProgress, saveCompleted } = useSelector(state =>
+    selectors.mappingsSaveStatus(state, editorId)
   );
   const [state, setState] = useState({
     localMappings: [],
@@ -135,9 +135,6 @@ export default function ImportMapping(props) {
       });
   }, [changeIdentifier, localChangeIdentifier, localMappings, mappings]);
 
-  const { saveCompleted } = useSelector(state =>
-    selectors.mappingsSaveStatus(state, editorId)
-  );
   const tableData = useMemo(
     () =>
       (localMappings || []).map((value, index) => {
@@ -403,7 +400,7 @@ export default function ImportMapping(props) {
             <Button
               variant="text"
               data-test="preview"
-              disabled={!!saveInProgress}
+              disabled={!!(disabled || saveInProgress)}
               onClick={handlePreviewClick}>
               Preview
             </Button>

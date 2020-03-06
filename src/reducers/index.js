@@ -411,6 +411,18 @@ export function mappingsSaveStatus(state, id) {
   return fromSession.mappingsSaveStatus(state && state.session, id);
 }
 
+export function getFlowResource(state, id) {
+  return fromSession.getFlowResource(state && state.session, id);
+}
+
+export function flowResourceDirty(state, id) {
+  return fromSession.flowResourceDirty(state && state.session, id);
+}
+
+export function flowResourceSaveStatus(state, id) {
+  return fromSession.flowResourceSaveStatus(state && state.session, id);
+}
+
 export function searchCriteria(state, id) {
   return fromSession.getSearchCriteria(state && state.session, id);
 }

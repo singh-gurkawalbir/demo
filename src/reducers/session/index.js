@@ -21,6 +21,7 @@ import mappings, * as fromMappings from './mappings';
 import searchCriteria, * as fromSearchCriteria from './searchCriteria';
 import flows, * as fromFlows from './flows';
 import transfers, * as fromTransfers from './transfers';
+import flowResource, * as fromFlowResource from './flowResource';
 
 export default combineReducers({
   stage,
@@ -45,6 +46,7 @@ export default combineReducers({
   searchCriteria,
   flows,
   transfers,
+  flowResource,
 });
 
 // #region PUBLIC SELECTORS
@@ -112,6 +114,21 @@ export function mappingsChanged(state, id) {
 
 export function mappingsSaveStatus(state, id) {
   return fromMappings.mappingsSaveStatus(state && state.mappings, id);
+}
+
+export function getFlowResource(state, id) {
+  return fromFlowResource.getFlowResource(state && state.flowResource, id);
+}
+
+export function flowResourceSaveStatus(state, id) {
+  return fromFlowResource.flowResourceSaveStatus(
+    state && state.flowResource,
+    id
+  );
+}
+
+export function flowResourceDirty(state, id) {
+  return fromFlowResource.flowResourceDirty(state && state.flowResource, id);
 }
 
 export function getSearchCriteria(state, id) {

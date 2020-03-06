@@ -14,7 +14,7 @@ import {
 import {
   LookupResponseMappingExtracts,
   ImportResponseMappingExtracts,
-} from './mapping';
+} from './responseMapping';
 import arrayUtils from './array';
 import { isConnector } from './flows';
 
