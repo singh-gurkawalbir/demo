@@ -1255,7 +1255,7 @@ export function categoryMappingSaveStatus(state, integrationId, flowId) {
 }
 
 export function pendingCategoryMappings(state, integrationId, flowId) {
-  const { response, mappings } =
+  const { response, mappings, deleted } =
     fromSession.categoryMapping(
       state && state.session,
       integrationId,
@@ -1265,7 +1265,12 @@ export function pendingCategoryMappings(state, integrationId, flowId) {
   const sessionMappedData =
     mappingData && mappingData.data && mappingData.data.mappingData;
 
-  mappingUtil.setCategoryMappingData(flowId, sessionMappedData, mappings);
+  mappingUtil.setCategoryMappingData(
+    flowId,
+    sessionMappedData,
+    mappings,
+    deleted
+  );
 
   return sessionMappedData;
 }

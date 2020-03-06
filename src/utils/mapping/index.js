@@ -41,9 +41,21 @@ const checkExtractPathFoundInSampledata = (str, sampleData, wrapped) => {
   );
 };
 
-const setMappingData = (flowId, recordMappings, mappings) => {
+const setMappingData = (
+  flowId,
+  recordMappings,
+  mappings,
+  deleted = [],
+  isParentDeleted
+) => {
   recordMappings.forEach(mapping => {
     const key = `${flowId}-${mapping.id}`;
+    const mappingDeleted = deleted.includes(mapping.id) || isParentDeleted;
+
+    if (mappingDeleted) {
+      // eslint-disable-next-line no-param-reassign
+      mapping.delete = true;
+    }
 
     if (mappings[key]) {
       // eslint-disable-next-line no-param-reassign
@@ -60,7 +72,13 @@ const setMappingData = (flowId, recordMappings, mappings) => {
     }
 
     if (mapping.children && mapping.children.length) {
-      setMappingData(flowId, mapping.children, mappings);
+      setMappingData(
+        flowId,
+        mapping.children,
+        mappings,
+        deleted,
+        mappingDeleted
+      );
     }
   });
 };
@@ -242,10 +260,20 @@ export default {
 
     return value.dataType;
   },
-  setCategoryMappingData: (flowId, sessionMappedData = {}, mappings = {}) => {
+  setCategoryMappingData: (
+    flowId,
+    sessionMappedData = {},
+    mappings = {},
+    deleted
+  ) => {
     const { basicMappings = {}, variationMappings = {} } = sessionMappedData;
 
-    setMappingData(flowId, basicMappings.recordMappings || [], mappings);
+    setMappingData(
+      flowId,
+      basicMappings.recordMappings || [],
+      mappings,
+      deleted
+    );
     setVariationMappingData(
       flowId,
       variationMappings.recordMappings || [],
