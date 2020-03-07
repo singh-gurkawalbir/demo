@@ -14,17 +14,17 @@ import {
   Paper,
   Breadcrumbs,
 } from '@material-ui/core';
-import ArrowBackIcon from '../../../../../../components/icons/ArrowLeftIcon';
-import * as selectors from '../../../../../../reducers';
-import actions from '../../../../../../actions';
-import LoadResources from '../../../../../../components/LoadResources';
-import openExternalUrl from '../../../../../../utils/window';
-import ArrowRightIcon from '../../../../../../components/icons/ArrowRightIcon';
-import InstallationStep from '../../../../../../components/InstallStep';
-import getRoutePath from '../../../../../../utils/routePaths';
-import { getIntegrationAppUrlName } from '../../../../../../utils/integrationApps';
-import Loader from '../../../../../../components/Loader';
-import Spinner from '../../../../../../components/Spinner';
+import ArrowBackIcon from '../../../../components/icons/ArrowLeftIcon';
+import * as selectors from '../../../../reducers';
+import actions from '../../../../actions';
+import LoadResources from '../../../../components/LoadResources';
+import openExternalUrl from '../../../../utils/window';
+import ArrowRightIcon from '../../../../components/icons/ArrowRightIcon';
+import InstallationStep from '../../../../components/InstallStep';
+import getRoutePath from '../../../../utils/routePaths';
+import { getIntegrationAppUrlName } from '../../../../utils/integrationApps';
+import Loader from '../../../../components/Loader';
+import Spinner from '../../../../components/Spinner';
 
 const useStyles = makeStyles(theme => ({
   root: {

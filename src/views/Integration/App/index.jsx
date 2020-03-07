@@ -8,8 +8,12 @@ import actions from '../../../actions';
 import LoadResources from '../../../components/LoadResources';
 import AddIcon from '../../../components/icons/AddIcon';
 import FlowsIcon from '../../../components/icons/FlowsIcon';
+import AdminIcon from '../../../components/icons/InviteUsersIcon';
+import AuditLogIcon from '../../../components/icons/AuditLogIcon';
+import TokensIcon from '../../../components/icons/TokensApiIcon';
+import DeleteIcon from '../../../components/icons/TrashIcon';
 import GeneralIcon from '../../../components/icons/SettingsIcon';
-import AdminIcon from '../../../components/icons/AdminIcon';
+import NotificationsIcon from '../../../components/icons/NotificationsIcon';
 import DashboardIcon from '../../../components/icons/DashboardIcon';
 import ConnectionsIcon from '../../../components/icons/ConnectionsIcon';
 import IconTextButton from '../../../components/IconTextButton';
@@ -18,8 +22,13 @@ import ResourceDrawer from '../../../components/drawer/Resource';
 import ChipInput from '../../../components/ChipInput';
 import ArrowDownIcon from '../../../components/icons/ArrowDownIcon';
 import GeneralPanel from './panels/General';
-import AdminPanel from './panels/Admin';
 import FlowsPanel from './panels/Flows';
+import ApiTokensPanel from './panels/ApiTokens';
+import AuditLogPanel from './panels/AuditLog';
+import UsersPanel from '../../../components/ManageUsersPanel';
+import NotificationsPanel from './panels/Notifications';
+import SubscriptionPanel from './panels/Subscription';
+import UninstallPanel from './panels/Uninstall';
 import ConnectionsPanel from './panels/Connections';
 import DashboardPanel from './panels/Dashboard';
 import AddOnsPanel from './panels/AddOns';
@@ -41,7 +50,42 @@ const allTabs = [
     Icon: ConnectionsIcon,
     Panel: ConnectionsPanel,
   },
-  { path: 'admin', label: 'Admin', Icon: AdminIcon, Panel: AdminPanel },
+  {
+    path: 'apitokens',
+    label: 'API Tokens',
+    Icon: TokensIcon,
+    Panel: ApiTokensPanel,
+  },
+  {
+    path: 'auditlog',
+    label: 'Audit Log',
+    Icon: AuditLogIcon,
+    Panel: AuditLogPanel,
+  },
+  {
+    path: 'users',
+    label: 'Users',
+    Icon: AdminIcon,
+    Panel: UsersPanel,
+  },
+  {
+    path: 'notifications',
+    label: 'Notifications',
+    Icon: NotificationsIcon,
+    Panel: NotificationsPanel,
+  },
+  {
+    path: 'subscription',
+    label: 'Subscription',
+    Icon: ConnectionsIcon,
+    Panel: SubscriptionPanel,
+  },
+  {
+    path: 'uninstall',
+    label: 'Uninstall',
+    Icon: DeleteIcon,
+    Panel: UninstallPanel,
+  },
   { path: 'addons', label: 'Add-ons', Icon: AddIcon, Panel: AddOnsPanel },
 ];
 const useStyles = makeStyles(theme => ({
