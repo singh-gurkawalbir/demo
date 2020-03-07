@@ -58,11 +58,11 @@ export default function App() {
   const reloadCount = useSelector(state => selectors.reloadCount(state));
   const themeName = useSelector(state => selectors.themeName(state));
   const theme = useMemo(() => themeProvider(themeName), [themeName]);
-  const updateDebugMode = useCallback(() => {
+  const toggleDebugMode = useCallback(() => {
     dispatch(actions.user.preferences.toggleDebug());
   }, [dispatch]);
 
-  useKeyboardShortcut(['Shift', 'Control', 'D'], updateDebugMode);
+  useKeyboardShortcut(['Shift', 'Control', 'D'], toggleDebugMode);
   // eslint-disable-next-line
   // console.log('render: <App>', reloadCount);
 
