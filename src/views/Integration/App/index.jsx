@@ -81,7 +81,7 @@ const allTabs = [
     Panel: SubscriptionPanel,
   },
   {
-    path: 'uninstall',
+    path: 'delete',
     label: 'Uninstall',
     Icon: DeleteIcon,
     Panel: UninstallPanel,
