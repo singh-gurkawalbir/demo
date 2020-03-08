@@ -3613,6 +3613,13 @@ export const getSampleDataWrapper = createSelector(
 
       return undefined;
     },
+    (state, params) => {
+      if (params.stage === 'postSubmit') {
+        return getSampleDataContext(state, { ...params, stage: 'postMap' });
+      }
+
+      return undefined;
+    },
     (state, { flowId }) => resource(state, 'flows', flowId) || emptyObject,
     (state, { flowId }) => {
       const flow = resource(state, 'flows', flowId) || emptyObject;
@@ -3633,6 +3640,7 @@ export const getSampleDataWrapper = createSelector(
   (
     sampleData,
     preMapSampleData,
+    postMapSampleData,
     flow,
     integration,
     resource,
@@ -3696,7 +3704,11 @@ export const getSampleDataWrapper = createSelector(
       connection: connection.settings || {},
     };
 
-    if (['transform', 'outputFilter', 'inputFilter'].includes(stage)) {
+    if (
+      ['sampleResponse', 'transform', 'outputFilter', 'inputFilter'].includes(
+        stage
+      )
+    ) {
       return {
         status,
         data: {
@@ -3749,13 +3761,13 @@ export const getSampleDataWrapper = createSelector(
         status,
         data: {
           preMapData: preMapSampleData.data ? [preMapSampleData.data] : [],
-          postMapData: data ? [data] : [],
+          postMapData: postMapSampleData.data ? [postMapSampleData.data] : [],
           responseData: [data].map(() => ({
             statusCode: 200,
             errors: [{ code: '', message: '', source: '' }],
             ignored: false,
             id: '',
-            _json: {},
+            _json: data || {},
             dataURI: '',
           })),
           ...resourceIds,
@@ -3777,6 +3789,15 @@ export const getSampleDataWrapper = createSelector(
           },
           ...resourceIds,
           settings,
+        },
+      };
+    }
+
+    if (stage === 'postResponseMapHook') {
+      return {
+        status,
+        data: {
+          postResponseMapData: data || [],
         },
       };
     }
