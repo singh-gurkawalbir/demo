@@ -82,7 +82,14 @@ function OAuthButton(props) {
       ) {
         let showError = false;
 
-        if (resource.assistant === 'ebay') {
+        if (
+          resource._connectorId &&
+          (resource.assistant === 'shopify' ||
+            resource.assistant === 'squareup') &&
+          values['/http/auth/type'] === 'oauth'
+        ) {
+          showError = false;
+        } else if (resource.assistant === 'ebay') {
           if (values['/accountType'] === 'sandbox') {
             if (
               !(
@@ -120,7 +127,7 @@ function OAuthButton(props) {
 
       handleSubmitForm(values);
     },
-    [handleSubmitForm, resource.assistant, snackbar]
+    [handleSubmitForm, resource._connectorId, resource.assistant, snackbar]
   );
 
   return (
