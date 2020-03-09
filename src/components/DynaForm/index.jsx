@@ -96,12 +96,13 @@ export default function DisabledDynaFormPerUserPermissions(props) {
     selectors.isFormAMonitorLevelAccess(state, integrationId)
   );
   const { disableEntireForm, modifiedFieldMeta } = useMemo(() => {
-    const isIntegationApp = resource && resource._connectorId;
+    const isIntegrationApp = resource && resource._connectorId;
     const viewMode = isFormAMonitorLevelAccess || disabled;
 
+    // view mode will be applied to integrations
     if (viewMode) {
-      if (isIntegationApp) {
-        // disabled all fields except certain ones
+      // if it is a connector within an integration disabled all fields except certain ones
+      if (isIntegrationApp) {
         return {
           disableEntireForm: false,
           modifiedFieldMeta: disableAllFieldsExceptClockedFields(
