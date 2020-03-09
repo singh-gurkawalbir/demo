@@ -72,6 +72,7 @@ export default function RightDrawer({
   path,
   width = 'small',
   height = 'short',
+  hideBackButton = false,
   children,
   onClose,
   infoText,
@@ -98,7 +99,7 @@ export default function RightDrawer({
   }, [handleBack, onClose]);
   const fullPath = `${match.url}/${path}`;
   const { isExact } = matchPath(location.pathname, fullPath) || {};
-  const showBackButton = !isExact;
+  const showBackButton = !isExact && !hideBackButton;
 
   return (
     <Switch>

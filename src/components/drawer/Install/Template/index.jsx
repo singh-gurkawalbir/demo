@@ -16,10 +16,12 @@ export default function InstallTemplateDrawer() {
 
     history.push(newUrl);
   }, [history, match.url]);
+  const hideBackButton = history.location.pathname.includes(`/preview/`);
 
   return (
     <RightDrawer
       onClose={handleClose}
+      hideBackButton={hideBackButton}
       path={rootPath}
       title="Install Template"
       height="tall"
