@@ -92,40 +92,21 @@ export default function DisabledDynaFormPerUserPermissions(props) {
     selectors.resource(state, resourceType, resourceId)
   );
   // pass in the integration Id to find access level of its associated forms
-  const isFormAMonitorLevelAccess = useSelector(state =>
-    selectors.isFormAMonitorLevelAccess(state, integrationId)
+  const { disableAllFields, disableAllFieldsExceptClocked } = useSelector(
+    state => selectors.formAccessLevel(state, integrationId, resource, disabled)
   );
-  const { disableEntireForm, modifiedFieldMeta } = useMemo(() => {
-    const isIntegrationApp = resource && resource._connectorId;
-    const viewMode = isFormAMonitorLevelAccess || disabled;
+  const updatedFieldMeta = useMemo(() => {
+    if (disableAllFieldsExceptClocked)
+      return disableAllFieldsExceptClockedFields(fieldMeta, resourceType);
 
-    // view mode will be applied to integrations
-    if (viewMode) {
-      // if it is a connector within an integration disabled all fields except certain ones
-      if (isIntegrationApp) {
-        return {
-          disableEntireForm: false,
-          modifiedFieldMeta: disableAllFieldsExceptClockedFields(
-            fieldMeta,
-            resourceType
-          ),
-        };
-      }
-
-      return {
-        disableEntireForm: true,
-        modifiedFieldMeta: fieldMeta,
-      };
-    }
-
-    return { disableEntireForm: false, modifiedFieldMeta: fieldMeta };
-  }, [disabled, fieldMeta, isFormAMonitorLevelAccess, resource, resourceType]);
+    return fieldMeta;
+  }, [disableAllFieldsExceptClocked, fieldMeta, resourceType]);
 
   return (
     <DynaForm
       {...props}
-      disabled={disableEntireForm}
-      fieldMeta={modifiedFieldMeta}
+      disabled={disableAllFields}
+      fieldMeta={updatedFieldMeta}
       // when its in view mode we disable validation before touch this ensures that there is no
       // required fields errored messages
     />

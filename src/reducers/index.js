@@ -2278,6 +2278,36 @@ export function isFormAMonitorLevelAccess(state, integrationId) {
   return false;
 }
 
+export function formAccessLevel(state, integrationId, resource, disabled) {
+  const { accessLevel } = userPermissions(state);
+
+  // if all forms is monitor level
+  if (accessLevel === USER_ACCESS_LEVELS.ACCOUNT_MONITOR)
+    return { disableAllFields: true };
+
+  // check integration level is monitor level
+  const { accessLevel: accessLevelIntegration } = resourcePermissions(
+    state,
+    'integrations',
+    integrationId
+  );
+
+  if (accessLevelIntegration === USER_ACCESS_LEVELS.ACCOUNT_MONITOR)
+    return { disableAllFields: true };
+
+  const isIntegrationApp = resource && resource._connectorId;
+
+  if (
+    accessLevelIntegration === USER_ACCESS_LEVELS.ACCOUNT_OWNER ||
+    accessLevelIntegration === USER_ACCESS_LEVELS.ACCOUNT_MANAGE
+  ) {
+    // check integration app is manage or owner then selectively disable fields
+    if (isIntegrationApp) return { disableAllFieldsExceptClocked: true };
+  }
+
+  return { disableAllFields: !!disabled };
+}
+
 export function publishedConnectors(state) {
   const ioConnectors = resourceList(state, {
     type: 'published',
