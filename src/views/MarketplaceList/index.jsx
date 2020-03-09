@@ -14,8 +14,8 @@ import {
   MULTIPLE_INSTALLS,
 } from '../../utils/messageStore';
 import * as selectors from '../../reducers';
-import { prompt } from '../Prompt';
-import ModalDialog from '../ModalDialog';
+import { prompt } from '../../components/Prompt';
+import ModalDialog from '../../components/ModalDialog';
 import InstallTemplateDrawer from '../../components/drawer/Install/Template';
 
 const useStyles = makeStyles(theme => ({
@@ -100,7 +100,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function ConnectorTemplateList() {
+export default function MarketplaceList() {
   const match = useRouteMatch();
   const location = useLocation();
   const history = useHistory();
