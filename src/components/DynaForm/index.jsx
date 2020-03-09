@@ -8,7 +8,6 @@ import DynaFormGenerator from './DynaFormGenerator';
 import ButtonGroup from '../ButtonGroup';
 import * as selectors from '../../reducers';
 import { disableAllFieldsExceptClockedFields } from '../../forms/utils';
-import { C_LOCKED_FIELDS } from '../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   fieldContainer: {
@@ -82,26 +81,50 @@ const DynaForm = props => {
 
 export default function DisabledDynaFormPerUserPermissions(props) {
   // Disabled is a prop to deliberately disable the Form this is added to support a DynaForm within a DynaForm
-  const { integrationId, disabled, fieldMeta } = props;
+  const {
+    integrationId,
+    disabled,
+    fieldMeta,
+    resourceType,
+    resourceId,
+  } = props;
+  const resource = useSelector(state =>
+    selectors.resource(state, resourceType, resourceId)
+  );
   // pass in the integration Id to find access level of its associated forms
   const isFormAMonitorLevelAccess = useSelector(state =>
     selectors.isFormAMonitorLevelAccess(state, integrationId)
   );
-  const viewMode = isFormAMonitorLevelAccess || disabled;
-  const fieldMetaWithDisabledFields = useMemo(() => {
+  const { disableEntireForm, modifiedFieldMeta } = useMemo(() => {
+    const isIntegationApp = resource && resource._connectorId;
+    const viewMode = isFormAMonitorLevelAccess || disabled;
+
     if (viewMode) {
-      // disabled all fields except certain ones
-      return disableAllFieldsExceptClockedFields(fieldMeta, C_LOCKED_FIELDS);
+      if (isIntegationApp) {
+        // disabled all fields except certain ones
+        return {
+          disableEntireForm: false,
+          modifiedFieldMeta: disableAllFieldsExceptClockedFields(
+            fieldMeta,
+            resourceType
+          ),
+        };
+      }
+
+      return {
+        disableEntireForm: true,
+        modifiedFieldMeta: fieldMeta,
+      };
     }
 
-    return fieldMeta;
-  }, [fieldMeta, viewMode]);
+    return { disableEntireForm: false, modifiedFieldMeta: fieldMeta };
+  }, [disabled, fieldMeta, isFormAMonitorLevelAccess, resource, resourceType]);
 
   return (
     <DynaForm
       {...props}
-      disabled={viewMode}
-      fieldMeta={fieldMetaWithDisabledFields}
+      disabled={disableEntireForm}
+      fieldMeta={modifiedFieldMeta}
       // when its in view mode we disable validation before touch this ensures that there is no
       // required fields errored messages
     />
