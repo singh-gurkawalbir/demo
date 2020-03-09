@@ -2,31 +2,17 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useLocation, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Button } from '@material-ui/core';
-import * as selectors from '../../../reducers';
-import actions from '../../../actions';
-import CeligoTable from '../../CeligoTable';
-import useConfirmDialog from '../../ConfirmDialog';
-import templateUtil from '../../../utils/template';
-import Spinner from '../../Spinner';
+import * as selectors from '../../../../reducers';
+import actions from '../../../../actions';
+import useConfirmDialog from '../../../ConfirmDialog';
+import templateUtil from '../../../../utils/template';
+import PreviewTable from '../common/PreviewTable';
 
 const useStyles = makeStyles(theme => ({
-  tableContainer: {
-    maxHeight: `calc(100vh - ${theme.appBarHeight + 175}px)`,
-    overflowY: 'auto',
-  },
   installButton: {
     marginTop: theme.spacing(2),
   },
 }));
-const columns = [
-  {
-    heading: 'Name',
-    value: r => r.doc.name,
-    orderBy: 'name',
-  },
-  { heading: 'Type', value: r => r.model },
-  { heading: 'Description', value: r => r.doc.description },
-];
 
 export default function IntegrationPreview() {
   const classes = useStyles();
@@ -39,7 +25,6 @@ export default function IntegrationPreview() {
   const components = useSelector(state =>
     selectors.previewTemplate(state, templateId)
   );
-  const { objects = [] } = components;
   const installTemplate = () => {
     const { installSteps, connectionMap } =
       templateUtil.getInstallSteps(components) || {};
@@ -68,9 +53,7 @@ export default function IntegrationPreview() {
         },
         {
           label: 'Proceed',
-          onClick: () => {
-            installTemplate();
-          },
+          onClick: installTemplate,
         },
       ],
     });
@@ -82,23 +65,9 @@ export default function IntegrationPreview() {
       <Typography>
         The following components are created with this integration:
       </Typography>
-      {!!objects.length && (
-        <div className={classes.tableContainer}>
-          <CeligoTable
-            data={objects.map((obj, index) => ({
-              ...obj,
-              _id: index,
-            }))}
-            columns={columns}
-          />
-        </div>
-      )}
-      {!objects.length && (
-        <div>
-          <Typography variant="h4">Loading preview...</Typography>
-          <Spinner />
-        </div>
-      )}
+
+      <PreviewTable templateId={templateId} />
+
       <Button
         className={classes.installButton}
         variant="contained"

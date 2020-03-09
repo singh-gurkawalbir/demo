@@ -1,13 +1,12 @@
 import { useCallback } from 'react';
 import { Switch, Route, useRouteMatch, useHistory } from 'react-router-dom';
-import RightDrawer from '../Right';
-import UploadFile from './UploadFile';
+import RightDrawer from '../../Right';
 import Preview from './Preview';
-import Setup from './Setup';
+import Setup from '../common/Setup';
 
-const rootPath = 'installIntegration';
+const rootPath = 'installTemplate';
 
-export default function InstallIntegrationDrawer() {
+export default function InstallTemplateDrawer() {
   const match = useRouteMatch();
   const history = useHistory();
   const handleClose = useCallback(() => {
@@ -22,7 +21,7 @@ export default function InstallIntegrationDrawer() {
     <RightDrawer
       onClose={handleClose}
       path={rootPath}
-      title="Install integration"
+      title="Install Template"
       height="tall"
       width="large">
       <Switch>
@@ -31,9 +30,6 @@ export default function InstallIntegrationDrawer() {
         </Route>
         <Route path={`${match.url}/${rootPath}/setup/:templateId`}>
           <Setup />
-        </Route>
-        <Route path={`${match.url}/${rootPath}`}>
-          <UploadFile />
         </Route>
       </Switch>
     </RightDrawer>

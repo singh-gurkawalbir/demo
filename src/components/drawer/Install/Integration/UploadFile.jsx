@@ -3,9 +3,9 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import actions from '../../../actions';
-import * as selectors from '../../../reducers';
-import Spinner from '../../Spinner';
+import actions from '../../../../actions';
+import * as selectors from '../../../../reducers';
+import Spinner from '../../../Spinner';
 
 const useStyles = makeStyles(theme => ({
   uploadButton: {

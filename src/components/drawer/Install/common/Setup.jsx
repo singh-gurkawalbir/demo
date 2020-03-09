@@ -2,10 +2,10 @@ import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles, Typography } from '@material-ui/core';
-import * as selectors from '../../../reducers';
-import actions from '../../../actions';
-import LoadResources from '../../LoadResources';
-import InstallWizard from '../../InstallationWizard';
+import * as selectors from '../../../../reducers';
+import actions from '../../../../actions';
+import LoadResources from '../../../LoadResources';
+import InstallWizard from '../../../InstallationWizard';
 
 const emptyObject = {};
 const useStyles = makeStyles(theme => ({
@@ -43,8 +43,7 @@ export default function Setup() {
     <LoadResources required resources="connections,integrations">
       <Typography variant="h4">Setup</Typography>
       <Typography className={classes.subtitle}>
-        Your integration template will begin installation when you’ve completed
-        the following steps:
+        Your installation will begin when you’ve completed the following steps:
       </Typography>
       <InstallWizard
         templateId={templateId}
