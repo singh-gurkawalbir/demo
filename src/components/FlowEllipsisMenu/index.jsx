@@ -22,7 +22,7 @@ import { getIntegrationAppUrlName } from '../../utils/integrationApps';
 const useStyles = makeStyles(theme => ({
   wrapper: {
     '& > .MuiMenu-paper': {
-      right: theme.spacing(3),
+      marginLeft: theme.spacing(-2),
     },
   },
 }));
