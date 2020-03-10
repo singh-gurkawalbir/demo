@@ -81,12 +81,8 @@ export default function FlowSchedule({
         skipRemovePatches: true,
       });
 
-      if (flow._connectorId) {
-        dispatch(actions.resource.patch('flows', flow._id, sanitized));
-      } else {
-        dispatch(actions.resource.patchStaged(flow._id, sanitized, 'value'));
-        dispatch(actions.resource.commitStaged('flows', flow._id, 'value'));
-      }
+      dispatch(actions.resource.patchStaged(flow._id, sanitized, 'value'));
+      dispatch(actions.resource.commitStaged('flows', flow._id, 'value'));
 
       onClose();
     },

@@ -131,10 +131,6 @@ export default function IntegrationAppUninstaller({ match }) {
     );
   }
 
-  if (uninstallSteps.removeIntegration) {
-    return <Loader open>Uninstalling</Loader>;
-  }
-
   const storeName = integration.stores
     ? (integration.stores.find(s => s.value === storeId) || {}).label
     : undefined;
