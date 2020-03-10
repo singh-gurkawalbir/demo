@@ -22,7 +22,13 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function InstallBase(props) {
-  const defaultFilter = useMemo(() => ({ take: 10 }), []);
+  const defaultFilter = useMemo(
+    () => ({
+      take: 10,
+      searchBy: ['email', '_integrationId', 'name', 'version', 'environment'],
+    }),
+    []
+  );
   const { match, history } = props;
   const { connectorId } = match.params;
   const classes = useStyles();
