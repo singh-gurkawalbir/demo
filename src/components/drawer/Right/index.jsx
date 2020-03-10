@@ -23,6 +23,9 @@ const useStyles = makeStyles(theme => ({
     boxShadow: `-4px 4px 8px rgba(0,0,0,0.15)`,
     zIndex: theme.zIndex.drawer + 1,
   },
+  drawerPaper_default: {
+    background: theme.palette.background.default,
+  },
   titleBar: {
     background: theme.palette.background.paper,
     display: 'flex',
@@ -36,7 +39,10 @@ const useStyles = makeStyles(theme => ({
     flexGrow: 1,
   },
   contentContainer: {
-    padding: theme.spacing(0, 3),
+    margin: theme.spacing(2, 3),
+  },
+  contentContainer_paper: {
+    borderTop: `1px solid ${theme.palette.secondary.lightest}`,
   },
   small: {
     width: 475,
@@ -72,6 +78,7 @@ export default function RightDrawer({
   path,
   width = 'small',
   height = 'short',
+  type = 'legacy',
   hideBackButton = false,
   children,
   onClose,
@@ -110,10 +117,16 @@ export default function RightDrawer({
           anchor="right"
           open
           classes={{
-            paper: clsx(classes.drawerPaper, classes[width], classes[height], {
-              [classes.banner]:
-                bannerOpened && showBanner && height === 'short',
-            }),
+            paper: clsx(
+              classes.drawerPaper,
+              classes[`drawerPaper_${type}`],
+              classes[width],
+              classes[height],
+              {
+                [classes.banner]:
+                  bannerOpened && showBanner && height === 'short',
+              }
+            ),
           }}
           onClose={handleClose}>
           <div className={classes.titleBar}>
@@ -138,7 +151,13 @@ export default function RightDrawer({
               <CloseIcon />
             </IconButton>
           </div>
-          <div className={classes.contentContainer}>{children}</div>
+          <div
+            className={clsx(
+              classes.contentContainer,
+              classes[`contentContainer_${type}`]
+            )}>
+            {children}
+          </div>
         </Drawer>
       </Route>
       <Route>

@@ -7,7 +7,7 @@ import Spinner from '../../../Spinner';
 
 const useStyles = makeStyles(theme => ({
   tableContainer: {
-    maxHeight: `calc(100vh - ${theme.appBarHeight + 175}px)`,
+    maxHeight: `calc(100vh - ${theme.appBarHeight + 200}px)`,
     overflowY: 'auto',
   },
 }));
@@ -28,25 +28,24 @@ export default function PreviewTable({ templateId }) {
   );
   const { objects = [] } = components;
 
+  if (!objects.length) {
+    return (
+      <div>
+        <Typography variant="h4">Loading preview...</Typography>
+        <Spinner />
+      </div>
+    );
+  }
+
   return (
-    <div>
-      {!!objects.length && (
-        <div className={classes.tableContainer}>
-          <CeligoTable
-            data={objects.map((obj, index) => ({
-              ...obj,
-              _id: index,
-            }))}
-            columns={columns}
-          />
-        </div>
-      )}
-      {!objects.length && (
-        <div>
-          <Typography variant="h4">Loading preview...</Typography>
-          <Spinner />
-        </div>
-      )}
+    <div className={classes.tableContainer}>
+      <CeligoTable
+        data={objects.map((obj, index) => ({
+          ...obj,
+          _id: index,
+        }))}
+        columns={columns}
+      />
     </div>
   );
 }

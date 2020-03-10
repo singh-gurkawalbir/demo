@@ -22,6 +22,7 @@ export default function InstallIntegrationDrawer() {
     <RightDrawer
       onClose={handleClose}
       path={rootPath}
+      type="default"
       title="Install integration"
       height="tall"
       width="large">

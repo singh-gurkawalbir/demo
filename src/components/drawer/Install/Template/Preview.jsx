@@ -2,46 +2,52 @@ import { Fragment, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useLocation, useRouteMatch } from 'react-router-dom';
 import { isEmpty } from 'lodash';
-import { makeStyles, Grid, Typography, Button } from '@material-ui/core';
+import {
+  makeStyles,
+  Divider,
+  Grid,
+  Typography,
+  Button,
+} from '@material-ui/core';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import ApplicationImg from '../../../icons/ApplicationImg';
 import useConfirmDialog from '../../../ConfirmDialog';
 import templateUtil from '../../../../utils/template';
 import PreviewTable from '../common/PreviewTable';
+import AddIcon from '../../../icons/AddLargeIcon';
 
 const useStyles = makeStyles(theme => ({
-  templateBody: {
-    padding: '15px',
+  container: {
+    border: `solid 1px ${theme.palette.secondary.lightest}`,
+    margin: theme.spacing(2, 0),
+    padding: theme.spacing(2),
+    backgroundColor: theme.palette.background.paper,
   },
   appDetails: {
-    paddingLeft: '25px',
+    borderRight: `solid 1px ${theme.palette.secondary.lightest}`,
+    paddingRight: theme.spacing(2),
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100%',
   },
-  marketplaceContainer: {
-    maxWidth: '90vw',
-    padding: '0 15px',
+  componentPreview: {
+    paddingLeft: theme.spacing(2),
+  },
+  appLogos: {
+    display: 'flex',
+    alignItems: 'center',
   },
   appDetailsHeader: {
     borderBottom: `solid 1px ${theme.palette.secondary.lightest}`,
-    marginBottom: '5px',
+    marginBottom: theme.spacing(0.5),
   },
-  paper: {
-    padding: theme.spacing(1, 2),
-    background: theme.palette.background.default,
+
+  divider: {
+    margin: theme.spacing(2, 0),
   },
-  templateBoxHead: {
-    padding: '10px 0',
-    borderBottom: `solid 1px ${theme.palette.secondary.lightest}`,
-  },
-  installButton: {
-    paddingTop: '20px',
-  },
-  description: {
-    paddingBottom: '20px',
-  },
-  componentsTable: {
-    paddingTop: '20px',
-    borderTop: `solid 1px ${theme.palette.secondary.lightest}`,
+  plusIcon: {
+    margin: theme.spacing(0, 1),
   },
 }));
 
@@ -120,58 +126,56 @@ export default function TemplatePreview() {
   };
 
   return (
-    <div className={classes.marketplaceBox}>
-      <div className={classes.mpExplore}>
-        <Fragment>
-          <div className={classes.templateBoxHead}>
-            <div className={classes.marketplaceContainer}>
-              <ApplicationImg size="large" type={template.applications[0]} />
-              {template.applications[1] && (
-                <ApplicationImg size="large" type={template.applications[1]} />
-              )}
+    <div className={classes.root}>
+      <div className={classes.appLogos}>
+        <ApplicationImg markOnly size="small" type={template.applications[0]} />
+        {template.applications[1] && (
+          <Fragment>
+            <AddIcon className={classes.plusIcon} />
+            <ApplicationImg
+              markOnly
+              size="small"
+              type={template.applications[1]}
+            />
+          </Fragment>
+          /* logo bubble 71x44, logo max width: 54px, maxHeight 30px. */
+        )}
+      </div>
+      <Typography variant="h2">{name}</Typography>
+      <div className={classes.container}>
+        <Grid container>
+          <Grid item xs={3}>
+            <div className={classes.appDetails}>
+              <Button
+                variant="outlined"
+                color="primary"
+                onClick={handleInstallIntegration}>
+                Install Now
+              </Button>
 
-              <Typography variant="h2">{name}</Typography>
+              <Divider variant="middle" className={classes.divider} />
+
+              <Typography>{description}</Typography>
+
+              <Divider variant="middle" className={classes.divider} />
+
+              <Typography>Created by: </Typography>
+              <Typography>{username}</Typography>
+              <br />
+              <Typography>Company: </Typography>
+              <Typography>{company}</Typography>
             </div>
-          </div>
-          <div className={classes.templateBody}>
-            <div className="container">
-              <Grid container>
-                <Grid item xs={9}>
-                  <Typography variant="body1" className={classes.description}>
-                    {description}
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    className={classes.componentsTable}>
-                    The following components will be created in your account.
-                  </Typography>
+          </Grid>
+          <Grid item xs={9}>
+            <div className={classes.componentPreview}>
+              <Typography variant="body2">
+                The following components will be created in your account.
+              </Typography>
 
-                  <PreviewTable templateId={templateId} />
-
-                  <div align="right" className={classes.installButton}>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={handleInstallIntegration}>
-                      Install Integration
-                    </Button>
-                  </div>
-                </Grid>
-                <Grid item xs={3}>
-                  <div className={classes.appDetails}>
-                    <div className={classes.appDetailsHeader}>
-                      <Typography variant="h4">App Details</Typography>
-                    </div>
-                    <div className="app-details">
-                      <Typography>{`Author : ${username}`}</Typography>
-                      <Typography>{`Company : ${company}`}</Typography>
-                    </div>
-                  </div>
-                </Grid>
-              </Grid>
+              <PreviewTable templateId={templateId} />
             </div>
-          </div>
-        </Fragment>
+          </Grid>
+        </Grid>
       </div>
     </div>
   );

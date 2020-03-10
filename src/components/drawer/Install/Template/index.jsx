@@ -23,6 +23,7 @@ export default function InstallTemplateDrawer() {
       onClose={handleClose}
       hideBackButton={hideBackButton}
       path={rootPath}
+      type="default"
       title="Install Template"
       height="tall"
       width="large">
