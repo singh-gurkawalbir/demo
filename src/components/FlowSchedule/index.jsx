@@ -83,7 +83,6 @@ export default function FlowSchedule({
 
       dispatch(actions.resource.patchStaged(flow._id, sanitized, 'value'));
       dispatch(actions.resource.commitStaged('flows', flow._id, 'value'));
-
       onClose();
     },
     [dispatch, flow, index, onClose, pg, scheduleStartMinute]
