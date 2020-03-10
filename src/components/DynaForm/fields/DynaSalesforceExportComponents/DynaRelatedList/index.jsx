@@ -69,7 +69,7 @@ function EditListItemModal(props) {
   };
 
   const { referencedFields, filter, orderBy, parentField, sObjectType } =
-    value[selectedElement] || {};
+    (value && value[selectedElement]) || {};
   const relationshipName = getRelationShipName(
     options,
     parentField,
@@ -85,7 +85,6 @@ function EditListItemModal(props) {
         filterKey: 'salesforce-sObjects-childReferenceTo',
         commMetaPath: `salesforce/metadata/connections/${connectionId}/sObjectTypes/${selectedSObject}`,
         removeRefresh: true,
-        required: true,
         defaultValue: relationshipName,
       },
       referencedFields: {
@@ -96,6 +95,7 @@ function EditListItemModal(props) {
         refreshOptionsOnChangesTo: ['childRelationship'],
         type: 'salesforcetreemodal',
         skipFirstLevelFields: true,
+        errorMsg: 'Please select a parent sObject Type',
         defaultValue: referencedFields,
         disabledWhen: [{ field: 'childRelationship', is: [''] }],
       },

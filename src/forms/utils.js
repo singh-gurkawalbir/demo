@@ -1,5 +1,6 @@
 import jsonPatch, { deepClone } from 'fast-json-patch';
 import { get } from 'lodash';
+import { C_LOCKED_FIELDS } from '../utils/constants';
 
 export const searchMetaForFieldByFindFunc = (meta, findFieldFunction) => {
   if (!meta) return null;
@@ -131,10 +132,13 @@ export const isAnyExpansionPanelFieldVisible = (meta, fieldStates) => {
   );
 };
 
-export const disableAllFieldsExceptClockedFields = (meta, clockedFields) => {
+export const disableAllFieldsExceptClockedFields = (meta, resourceType) => {
   const { layout, fieldMap } = meta;
   const updatedFieldMap = Object.keys(fieldMap).reduce((acc, curr) => {
-    if (!clockedFields.includes(fieldMap[curr].id))
+    if (
+      C_LOCKED_FIELDS[resourceType] &&
+      !C_LOCKED_FIELDS[resourceType].includes(fieldMap[curr].id)
+    )
       acc[curr] = {
         ...fieldMap[curr],
         defaultDisabled: true,
