@@ -9,7 +9,7 @@ import ApplicationImg from '../../../icons/ApplicationImg';
 import useConfirmDialog from '../../../ConfirmDialog';
 import templateUtil from '../../../../utils/template';
 import PreviewTable from '../common/PreviewTable';
-import AddIcon from '../../../icons/AddLargeIcon';
+import AddIcon from '../../../icons/AddIcon';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -45,6 +45,7 @@ const useStyles = makeStyles(theme => ({
   },
   plusIcon: {
     margin: theme.spacing(0, 1),
+    color: theme.palette.text.hint,
   },
 }));
 
