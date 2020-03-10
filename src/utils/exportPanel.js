@@ -124,3 +124,18 @@ export const getPreviewDataPageSizeInfo = previewData => {
 
   return `1 Page ${pageSize} Records`;
 };
+
+export const getPanelType = (resource = {}, panelType) => {
+  // Incase of http/rest for panel type req, response type is tab
+  // For all others it is default
+  // Many more can come
+  const appType = adaptorTypeMap[resource.adaptorType];
+
+  if (
+    ['http', 'rest'].includes(appType) &&
+    ['request', 'raw'].includes(panelType)
+  )
+    return 'tab';
+
+  return 'default';
+};

@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import IconTextButton from '../../../../IconTextButton';
@@ -64,17 +65,16 @@ export default function PreviewInfo(props) {
     panelType,
   } = props;
   const classes = useStyles();
-  const ShowSampleDataStatus = () => {
-    const { status } = resourceSampleData;
-
-    if (status === 'requested')
+  // ShowSampleDataStatus Fn shows Preview Status
+  const ShowSampleDataStatus = useCallback(() => {
+    if (resourceSampleData.status === 'requested')
       return <Typography variant="body2"> Testing </Typography>;
 
-    if (status === 'received')
+    if (resourceSampleData.status === 'received')
       return <Typography variant="body2"> Success </Typography>;
-  };
-
-  const showSampleDataOverview = () => {
+  }, [resourceSampleData.status]);
+  // showSampleDataOverview Fn Used to show Preview Info
+  const showSampleDataOverview = useCallback(() => {
     const { status, error } = resourceSampleData;
 
     if (status === 'error') {
@@ -98,7 +98,13 @@ export default function PreviewInfo(props) {
         </Typography>
       );
     }
-  };
+  }, [
+    classes.error,
+    classes.errorMessage,
+    panelType,
+    previewStageDataList,
+    resourceSampleData,
+  ]);
 
   return (
     <div className={classes.previewContainer}>
