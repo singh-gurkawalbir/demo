@@ -4,9 +4,9 @@ import clsx from 'clsx';
 import CopyIcon from '../../../../icons/CopyIcon';
 import Spinner from '../../../../Spinner';
 import IconTextButton from '../../../../IconTextButton';
-import TextToggle from '../../../../../components/TextToggle';
 import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
 import { getStringifiedPreviewData } from '../../../../../utils/exportPanel';
+import Templates from '../Templates';
 
 const useStyles = makeStyles(theme => ({
   sampleDataWrapper: {
@@ -17,11 +17,6 @@ const useStyles = makeStyles(theme => ({
   },
   sampleDataWrapperAlign: {
     marginTop: -18,
-  },
-  textToggleContainer: {
-    textAlign: 'center',
-    position: 'relative',
-    zIndex: 2,
   },
   sampleDataContainer: {
     minHeight: theme.spacing(20),
@@ -99,25 +94,6 @@ const useStyles = makeStyles(theme => ({
     minHeight: theme.spacing(5),
     color: theme.palette.primary.main,
   },
-  textToggle: {
-    backgroundColor: theme.palette.background.paper,
-    border: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
-    '& > button': {
-      height: 30,
-      padding: theme.spacing(0, 5),
-      '&:last-child': {
-        height: 30,
-        padding: theme.spacing(0, 5),
-      },
-      '&.Mui-selected': {
-        backgroundColor: theme.palette.primary.main,
-        '&:hover': {
-          backgroundColor: theme.palette.primary.light,
-        },
-      },
-    },
-  },
 }));
 
 export default function PreviewBody(props) {
@@ -141,15 +117,11 @@ export default function PreviewBody(props) {
       {resourceSampleData.status === 'requested' && <Spinner />}
       {resourceSampleData.status === 'received' && (
         <div>
-          <div className={classes.textToggleContainer}>
-            <TextToggle
-              value={panelType}
-              className={classes.textToggle}
-              onChange={handlePanelViewChange}
-              exclusive
-              options={availablePreviewStages}
-            />
-          </div>
+          <Templates.HeaderPanel
+            handlePanelViewChange={handlePanelViewChange}
+            availablePreviewStages={availablePreviewStages}
+            panelType={panelType}
+          />
           <div
             className={clsx(
               classes.sampleDataWrapper,
@@ -189,11 +161,11 @@ export default function PreviewBody(props) {
         </div>
       )}
       {resourceSampleData.status === 'error' && (
-        <div className={classes.sampleDataWrapper}>
-          <div className={classes.sampleDataContainer}>
-            <pre>{JSON.stringify(resourceSampleData.error, null, 2)}</pre>
-          </div>
-        </div>
+        <Templates.ErrorPanel
+          resourceSampleData={resourceSampleData}
+          sampleDataWrapperClass={classes.sampleDataWrapper}
+          sampleDataContainerClass={classes.sampleDataContainer}
+        />
       )}
     </div>
   );
