@@ -20,7 +20,9 @@ export default {
       heading: 'Expires on',
       value(r) {
         return (
-          <Typography color="error">{formatLastModified(r.expires)}</Typography>
+          <Typography color="error">
+            {formatLastModified(r.license && r.license.expires)}
+          </Typography>
         );
       },
     },

@@ -8,6 +8,7 @@ import ResourceDrawer from '../../../components/drawer/Resource';
 import IconTextButton from '../../../components/IconTextButton';
 import ShowMoreDrawer from '../../../components/drawer/ShowMore';
 import KeywordSearch from '../../../components/KeywordSearch';
+import LoadResources from '../../../components/LoadResources';
 import actions from '../../../actions';
 import metadata from './metadata';
 
@@ -34,10 +35,17 @@ export default function InstallBase(props) {
       ...{ ...defaultFilter, ...filter },
     })
   );
+  const { resources: licenses } = useSelector(state =>
+    selectors.resourceList(state, { type: 'connectorLicenses' })
+  );
   const connector = useSelector(state =>
     selectors.resource(state, 'connectors', connectorId)
   );
-  const resources = list.resources.map(r => ({ ...r, _id: r._integrationId }));
+  const resources = list.resources.map(r => {
+    const license = licenses.find(l => l._integrationId === r._integrationId);
+
+    return { ...r, _id: r._integrationId, license };
+  });
   const [selected, setSelected] = useState({});
   const dispatch = useDispatch();
   const handleSelectChange = installBaseItems => {
@@ -67,6 +75,19 @@ export default function InstallBase(props) {
     return () =>
       dispatch(actions.resource.clearCollection('connectorInstallBase'));
   }, [connectorId, dispatch]);
+
+  useEffect(() => {
+    dispatch(
+      actions.resource.requestCollection(`connectors/${connectorId}/licenses`)
+    );
+
+    return () =>
+      dispatch(actions.resource.clearCollection('connectorLicenses'));
+  }, [connectorId, dispatch]);
+
+  if (!connector) {
+    return <LoadResources required resources="connectors" />;
+  }
 
   return (
     <Fragment>
