@@ -164,6 +164,7 @@ import vend from './vend';
 import miva from './miva';
 import target from './target';
 import threeplcentral from './threeplcentral';
+import loopreturns from './loopreturns';
 
 export default {
   sharepoint,
@@ -331,4 +332,5 @@ export default {
   miva,
   target,
   '3plcentral': threeplcentral,
+  loopreturns,
 };

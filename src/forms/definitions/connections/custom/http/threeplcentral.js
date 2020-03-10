@@ -25,7 +25,7 @@ export default {
     'http.unencrypted.tpl': {
       id: 'http.unencrypted.tpl',
       type: 'text',
-      label: 'tpl guid',
+      label: '3PL GUID',
       required: true,
       defaultValue: '',
       helpText:

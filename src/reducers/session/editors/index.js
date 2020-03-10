@@ -146,7 +146,7 @@ export function editorPatchSet(state, id) {
   return processorPatchSet.getPatchSet(editor);
 }
 
-export function editorSaveProcessTerminate(state, id) {
+export function editorPatchStatus(state, id) {
   if (!state || !state[id]) {
     return emptyObj;
   }
@@ -156,6 +156,7 @@ export function editorSaveProcessTerminate(state, id) {
   return {
     saveTerminated: saveStatus === 'completed' || saveStatus === 'failed',
     saveCompleted: saveStatus === 'completed',
+    saveInProgress: saveStatus === 'requested',
   };
 }
 

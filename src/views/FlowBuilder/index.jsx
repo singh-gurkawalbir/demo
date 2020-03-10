@@ -282,7 +282,7 @@ function FlowBuilder() {
   const isMonitorLevelAccess = useSelector(state =>
     selectors.isFormAMonitorLevelAccess(state, integrationId)
   );
-  const isViewMode = isMonitorLevelAccess;
+  const isViewMode = isMonitorLevelAccess || isConnectorType;
   // #endregion
   const patchFlow = useCallback(
     (path, value) => {

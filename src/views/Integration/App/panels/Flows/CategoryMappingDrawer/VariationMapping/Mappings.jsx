@@ -92,7 +92,7 @@ export default function ImportMapping(props) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const { mappings, initChangeIdentifier } = useSelector(state =>
-    selectors.mapping(state, editorId)
+    selectors.categoryMappingsForSection(state, integrationId, flowId, editorId)
   );
   const { extractsMetadata: extractFields } = useSelector(state =>
     selectors.categoryMappingMetadata(state, integrationId, flowId)
@@ -115,12 +115,28 @@ export default function ImportMapping(props) {
     (rowIndex, event, field) => {
       const { value } = event.target;
 
-      dispatch(actions.mapping.patchField(editorId, field, rowIndex, value));
+      dispatch(
+        actions.integrationApp.settings.categoryMappings.patchField(
+          integrationId,
+          flowId,
+          editorId,
+          field,
+          rowIndex,
+          value
+        )
+      );
     },
     [dispatch, editorId]
   );
   const handleDelete = row => {
-    dispatch(actions.mapping.delete(editorId, row));
+    dispatch(
+      actions.integrationApp.settings.categoryMappings.delete(
+        integrationId,
+        flowId,
+        editorId,
+        row
+      )
+    );
   };
 
   const handleGenerateUpdate = mapping => (id, val) => {
@@ -152,7 +168,7 @@ export default function ImportMapping(props) {
                 />
                 {mapping.isRequired && (
                   <Tooltip
-                    title="This field is required by the application you are importing to"
+                    title="This field is required by the application you are importing into"
                     placement="top">
                     <span className={classes.lockIcon}>
                       <LockIcon />

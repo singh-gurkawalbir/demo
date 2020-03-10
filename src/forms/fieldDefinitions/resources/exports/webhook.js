@@ -121,6 +121,7 @@ export default {
     type: 'text',
     label: 'Password',
     required: true,
+    inputType: 'password',
     visibleWhen: [
       {
         field: 'webhook.verify',

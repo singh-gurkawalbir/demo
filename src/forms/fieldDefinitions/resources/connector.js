@@ -89,6 +89,7 @@ export default {
           { label: 'Jira', value: 'jira' },
           { label: 'Jobvite', value: 'jobvite' },
           { label: 'LiquidPlanner', value: 'liquidplanner' },
+          { label: 'Loop Returns', value: 'loopreturns' },
           { label: 'Magento 2', value: 'magento' },
           { label: 'NetSuite', value: 'netsuite' },
           { label: 'OpenAir', value: 'openair' },

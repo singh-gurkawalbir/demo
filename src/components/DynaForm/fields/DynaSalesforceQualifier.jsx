@@ -38,9 +38,9 @@ export default function DynaSalesforceQualifier(props) {
   };
 
   const handleClose = (shouldCommit, editorValues) => {
-    const { rule } = editorValues;
-
     if (shouldCommit) {
+      const { rule } = editorValues;
+
       onFieldChange(id, rule);
     }
 

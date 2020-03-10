@@ -57,9 +57,9 @@ export default class Editors extends Component {
   };
 
   handleClose = (shouldCommit, editorValues) => {
-    const { data } = editorValues;
-
     if (shouldCommit) {
+      const { data } = editorValues;
+
       this.handleRawDataChange(data);
     }
 

@@ -26,6 +26,7 @@ import {
   LICENSE_EXPIRED,
   LICENSE_TRIAL_NOT_STARTED,
   LICENSE_TRIAL_EXPIRED,
+  FLOW_LIMIT_REACHED,
 } from '../utils/messageStore';
 import { changePasswordParams, changeEmailParams } from '../sagas/api/apiPaths';
 import { getFieldById } from '../forms/utils';
@@ -56,6 +57,7 @@ import inferErrorMessage from '../utils/inferErrorMessage';
 import getRoutePath from '../utils/routePaths';
 import { COMM_STATES } from './comms/networkComms';
 import { getIntegrationAppUrlName } from '../utils/integrationApps';
+import mappingUtil from '../utils/mapping';
 
 const emptySet = [];
 const emptyObject = {};
@@ -398,8 +400,8 @@ export function editorPatchSet(state, id) {
   return fromSession.editorPatchSet(state && state.session, id);
 }
 
-export function editorSaveProcessTerminate(state, id) {
-  return fromSession.editorSaveProcessTerminate(state && state.session, id);
+export function editorPatchStatus(state, id) {
+  return fromSession.editorPatchStatus(state && state.session, id);
 }
 
 export function mapping(state, id) {
@@ -410,8 +412,8 @@ export function mappingsChanged(state, id) {
   return fromSession.mappingsChanged(state && state.session, id);
 }
 
-export function mappingSaveProcessTerminate(state, id) {
-  return fromSession.mappingSaveProcessTerminate(state && state.session, id);
+export function mappingsSaveStatus(state, id) {
+  return fromSession.mappingsSaveStatus(state && state.session, id);
 }
 
 export function searchCriteria(state, id) {
@@ -874,6 +876,22 @@ export function getNextDataFlows(state, flow) {
   );
 }
 
+export function getNumberEnabledFlows(state) {
+  let flows = flowListWithMetadata(state, { type: 'flows' }).resources || [];
+  const preferences = userPreferences(state);
+  const sandboxEnvironment = preferences.environment === 'sandbox';
+
+  flows = flows.filter(
+    f =>
+      !f.disabled &&
+      !f._connectorId &&
+      !f.isSimpleImport &&
+      !!f.sandbox === !!sandboxEnvironment
+  );
+
+  return (flows && flows.length) || 0;
+}
+
 export function resourceListWithPermissions(state, options) {
   const list = resourceList(state, options);
   // eslint-disable-next-line no-use-before-define
@@ -1224,6 +1242,55 @@ export function integrationAppConnectionList(
     .connections;
 }
 
+export function categoryMappingsForSection(state, integrationId, flowId, id) {
+  return fromSession.categoryMappingsForSection(
+    state && state.session,
+    integrationId,
+    flowId,
+    id
+  );
+}
+
+export function categoryMappingsCollapsedStatus(state, integrationId, flowId) {
+  return fromSession.categoryMappingsCollapsedStatus(
+    state && state.session,
+    integrationId,
+    flowId
+  );
+}
+
+export function categoryMappingsChanged(state, integrationId, flowId) {
+  return fromSession.categoryMappingsChanged(
+    state && state.session,
+    integrationId,
+    flowId
+  );
+}
+
+export function categoryMappingSaveStatus(state, integrationId, flowId) {
+  return fromSession.categoryMappingSaveStatus(
+    state && state.session,
+    integrationId,
+    flowId
+  );
+}
+
+export function pendingCategoryMappings(state, integrationId, flowId) {
+  const { response, mappings } =
+    fromSession.categoryMapping(
+      state && state.session,
+      integrationId,
+      flowId
+    ) || {};
+  const mappingData = response.find(op => op.operation === 'mappingData');
+  const sessionMappedData =
+    mappingData && mappingData.data && mappingData.data.mappingData;
+
+  mappingUtil.setCategoryMappingData(flowId, sessionMappedData, mappings);
+
+  return sessionMappedData;
+}
+
 export function categoryMapping(state, integrationId, flowId) {
   return fromSession.categoryMapping(
     state && state.session,
@@ -1360,7 +1427,7 @@ export function mappingsForVariation(state, integrationId, flowId, filters) {
 export function mappingsForCategory(state, integrationId, flowId, filters) {
   const { sectionId } = filters;
   let mappings = emptySet;
-  const { attributes = {}, mappingFilter = 'mapped' } =
+  const { attributes = {}, mappingFilter = 'all' } =
     categoryMappingFilters(state, integrationId, flowId) || {};
   const recordMappings =
     fromSession.categoryMappingData(
@@ -1378,7 +1445,7 @@ export function mappingsForCategory(state, integrationId, flowId, filters) {
   }
 
   // If no filters are passed, return all mapppings
-  if (!attributes || !mappingFilter) {
+  if (!mappings || !attributes || !mappingFilter) {
     return mappings;
   }
 
@@ -2059,30 +2126,42 @@ export function integratorLicenseWithMetadata(state) {
 }
 
 export function isLicenseValidToEnableFlow(state) {
+  const licenseDetails = { enable: true };
+
+  if (getNumberEnabledFlows(state) === 0) {
+    return licenseDetails;
+  }
+
   const license = integratorLicenseWithMetadata(state);
-  let licenseDetails = { enable: true };
+  const preferences = userPreferences(state);
 
   if (!license) {
     return licenseDetails;
   }
 
-  if (license.hasSubscription) {
-    if (license.hasExpired) {
-      licenseDetails = {
-        message: LICENSE_EXPIRED,
-        enable: false,
-      };
+  if (license.tier === 'free') {
+    if (!license.inTrial) {
+      if (license.isFreemium) {
+        if (preferences && preferences.environment === 'sandbox') {
+          licenseDetails.enable = false;
+          licenseDetails.message = FLOW_LIMIT_REACHED;
+        }
+      } else if (license.hasSubscription) {
+        if (license.hasExpired) {
+          licenseDetails.enable = false;
+          licenseDetails.message = LICENSE_EXPIRED;
+        }
+      } else if (license.trialEndDate) {
+        licenseDetails.enable = false;
+        licenseDetails.message = LICENSE_TRIAL_EXPIRED;
+      } else {
+        licenseDetails.enable = false;
+        licenseDetails.message = LICENSE_TRIAL_NOT_STARTED;
+      }
     }
-  } else if (!license.trialEndDate) {
-    licenseDetails = {
-      message: LICENSE_TRIAL_NOT_STARTED,
-      enable: false,
-    };
-  } else if (license.trialEndDate && !license.inTrial) {
-    licenseDetails = {
-      message: LICENSE_TRIAL_EXPIRED,
-      enable: false,
-    };
+  } else if (license.hasExpired) {
+    licenseDetails.enable = false;
+    licenseDetails.message = LICENSE_EXPIRED;
   }
 
   return licenseDetails;
