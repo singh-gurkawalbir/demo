@@ -66,7 +66,7 @@ const FirstLevelModal = props => {
         name: '/referencedFields',
         refreshOptionsOnChangesTo: ['parentSObjectType'],
         type: 'salesforcetreemodal',
-        errorMsg: 'Please select a child sObject Type',
+        errorMsg: 'Please select a parent sObject Type',
         disabledWhen: [{ field: 'parentSObjectType', is: [''] }],
         defaultValue: props.value,
       },

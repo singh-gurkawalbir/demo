@@ -95,7 +95,7 @@ function EditListItemModal(props) {
         refreshOptionsOnChangesTo: ['childRelationship'],
         type: 'salesforcetreemodal',
         skipFirstLevelFields: true,
-        errorMsg: 'Please select a child sObject Type',
+        errorMsg: 'Please select a parent sObject Type',
         defaultValue: referencedFields,
         disabledWhen: [{ field: 'childRelationship', is: [''] }],
       },
