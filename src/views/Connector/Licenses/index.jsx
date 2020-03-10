@@ -35,6 +35,7 @@ export default function Licenses(props) {
     defaultFilter;
   const list = useSelector(state =>
     selectors.resourceList(state, {
+      ignoreEnvironmentFilter: true,
       type: 'connectorLicenses',
       ...{ ...defaultFilter, ...filter },
     })
