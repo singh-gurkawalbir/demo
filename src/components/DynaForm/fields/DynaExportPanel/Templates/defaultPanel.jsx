@@ -1,11 +1,7 @@
-import { useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { CopyToClipboard } from 'react-copy-to-clipboard';
 import clsx from 'clsx';
-import CopyIcon from '../../../../icons/CopyIcon';
-import IconTextButton from '../../../../IconTextButton';
-import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
 import { getStringifiedPreviewData } from '../../../../../utils/exportPanel';
+import ClipBoardPanel from './clipBoardPanel';
 
 const useStyles = makeStyles(theme => ({
   sampleDataWrapper: {
@@ -29,33 +25,11 @@ const useStyles = makeStyles(theme => ({
   sampleDataContainerAlign: {
     marginTop: theme.spacing(2),
   },
-  clipBoardContainer: {
-    maxWidth: 680,
-    borderTop: `1px solid ${theme.palette.background.paper2}`,
-    minHeight: theme.spacing(6),
-    position: 'relative',
-    padding: theme.spacing(1),
-    backgroundColor: 'white',
-    display: 'flex',
-    justifyContent: 'flex-end',
-  },
-  clipBoard: {
-    float: 'right',
-  },
 }));
 
 export default function DefaultPanel(props) {
   const { previewStageDataList, panelType } = props;
   const classes = useStyles();
-  const [enqueueSnackbar] = useEnqueueSnackbar();
-  const handleOnCopy = useCallback(
-    () =>
-      enqueueSnackbar({
-        message: 'Data copied to clipboard.',
-        variant: 'success',
-      }),
-    [enqueueSnackbar]
-  );
 
   return (
     <div
@@ -75,24 +49,12 @@ export default function DefaultPanel(props) {
           )}
         </pre>
       </div>
-      <div className={classes.clipBoardContainer}>
-        <CopyToClipboard
-          text={getStringifiedPreviewData(
-            previewStageDataList[panelType],
-            panelType
-          )}
-          onCopy={handleOnCopy}
-          className={classes.clipBoard}>
-          <IconTextButton
-            data-test="copyToClipboard"
-            title="Copy to clipboard"
-            variant="text"
-            color="primary">
-            <CopyIcon />
-            Copy
-          </IconTextButton>
-        </CopyToClipboard>
-      </div>
+      <ClipBoardPanel
+        text={getStringifiedPreviewData(
+          previewStageDataList[panelType],
+          panelType
+        )}
+      />
     </div>
   );
 }

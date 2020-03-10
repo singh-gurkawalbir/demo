@@ -37,6 +37,7 @@ export default function PreviewBody(props) {
             <Templates.TabbedPanel
               previewStageDataList={previewStageDataList}
               panelType={panelType}
+              key={panelType}
             />
           )}
         </div>
