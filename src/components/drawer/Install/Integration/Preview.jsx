@@ -12,6 +12,10 @@ const useStyles = makeStyles(theme => ({
   installButton: {
     marginTop: theme.spacing(2),
   },
+  preview: {
+    overflowY: 'auto',
+    maxHeight: `calc(100vh - ${theme.appBarHeight + 185}px)`,
+  },
 }));
 
 export default function IntegrationPreview() {
@@ -66,7 +70,9 @@ export default function IntegrationPreview() {
         The following components are created with this integration:
       </Typography>
 
-      <PreviewTable templateId={templateId} />
+      <div className={classes.preview}>
+        <PreviewTable templateId={templateId} />
+      </div>
 
       <Button
         className={classes.installButton}

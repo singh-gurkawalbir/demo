@@ -2,13 +2,7 @@ import { Fragment, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useLocation, useRouteMatch } from 'react-router-dom';
 import { isEmpty } from 'lodash';
-import {
-  makeStyles,
-  Divider,
-  Grid,
-  Typography,
-  Button,
-} from '@material-ui/core';
+import { makeStyles, Divider, Typography, Button } from '@material-ui/core';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import ApplicationImg from '../../../icons/ApplicationImg';
@@ -21,18 +15,21 @@ const useStyles = makeStyles(theme => ({
   container: {
     border: `solid 1px ${theme.palette.secondary.lightest}`,
     margin: theme.spacing(2, 0),
-    padding: theme.spacing(2),
     backgroundColor: theme.palette.background.paper,
+    display: 'grid',
+    gridTemplateColumns: '1fr 4fr',
+    gridTemplateRows: 'auto',
+    height: `calc(100vh - ${theme.appBarHeight + 192}px)`,
   },
   appDetails: {
     borderRight: `solid 1px ${theme.palette.secondary.lightest}`,
-    paddingRight: theme.spacing(2),
+    padding: theme.spacing(2),
     display: 'flex',
     flexDirection: 'column',
-    height: '100%',
   },
   componentPreview: {
-    paddingLeft: theme.spacing(2),
+    padding: theme.spacing(2),
+    overflowY: 'auto',
   },
   appLogos: {
     display: 'flex',
@@ -126,7 +123,7 @@ export default function TemplatePreview() {
   };
 
   return (
-    <div className={classes.root}>
+    <Fragment>
       <div className={classes.appLogos}>
         <ApplicationImg markOnly size="small" type={template.applications[0]} />
         {template.applications[1] && (
@@ -138,45 +135,41 @@ export default function TemplatePreview() {
               type={template.applications[1]}
             />
           </Fragment>
-          /* logo bubble 71x44, logo max width: 54px, maxHeight 30px. */
         )}
       </div>
+
       <Typography variant="h2">{name}</Typography>
+
       <div className={classes.container}>
-        <Grid container>
-          <Grid item xs={3}>
-            <div className={classes.appDetails}>
-              <Button
-                variant="outlined"
-                color="primary"
-                onClick={handleInstallIntegration}>
-                Install Now
-              </Button>
+        <div className={classes.appDetails}>
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={handleInstallIntegration}>
+            Install now
+          </Button>
 
-              <Divider variant="middle" className={classes.divider} />
+          <Divider variant="middle" className={classes.divider} />
 
-              <Typography>{description}</Typography>
+          <Typography>{description}</Typography>
 
-              <Divider variant="middle" className={classes.divider} />
+          <Divider variant="middle" className={classes.divider} />
 
-              <Typography>Created by: </Typography>
-              <Typography>{username}</Typography>
-              <br />
-              <Typography>Company: </Typography>
-              <Typography>{company}</Typography>
-            </div>
-          </Grid>
-          <Grid item xs={9}>
-            <div className={classes.componentPreview}>
-              <Typography variant="body2">
-                The following components will be created in your account.
-              </Typography>
+          <Typography>Created by: </Typography>
+          <Typography>{username}</Typography>
+          <br />
+          <Typography>Company: </Typography>
+          <Typography>{company}</Typography>
+        </div>
 
-              <PreviewTable templateId={templateId} />
-            </div>
-          </Grid>
-        </Grid>
+        <div className={classes.componentPreview}>
+          <Typography variant="body2">
+            The following components will be created in your account.
+          </Typography>
+
+          <PreviewTable templateId={templateId} />
+        </div>
       </div>
-    </div>
+    </Fragment>
   );
 }

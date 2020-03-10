@@ -1,16 +1,10 @@
+import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import * as selectors from '../../../../reducers';
 import CeligoTable from '../../../CeligoTable';
 import Spinner from '../../../Spinner';
 
-const useStyles = makeStyles(theme => ({
-  tableContainer: {
-    maxHeight: `calc(100vh - ${theme.appBarHeight + 200}px)`,
-    overflowY: 'auto',
-  },
-}));
 const columns = [
   {
     heading: 'Name',
@@ -22,13 +16,21 @@ const columns = [
 ];
 
 export default function PreviewTable({ templateId }) {
-  const classes = useStyles();
   const components = useSelector(state =>
     selectors.previewTemplate(state, templateId)
   );
-  const { objects = [] } = components;
+  const data = useMemo(() => {
+    const { objects } = components;
 
-  if (!objects.length) {
+    if (!objects || !objects.length) return [];
+
+    return objects.map((obj, index) => ({
+      ...obj,
+      _id: index,
+    }));
+  }, [components]);
+
+  if (!data.length) {
     return (
       <div>
         <Typography variant="h4">Loading preview...</Typography>
@@ -37,15 +39,5 @@ export default function PreviewTable({ templateId }) {
     );
   }
 
-  return (
-    <div className={classes.tableContainer}>
-      <CeligoTable
-        data={objects.map((obj, index) => ({
-          ...obj,
-          _id: index,
-        }))}
-        columns={columns}
-      />
-    </div>
-  );
+  return <CeligoTable data={data} columns={columns} />;
 }
