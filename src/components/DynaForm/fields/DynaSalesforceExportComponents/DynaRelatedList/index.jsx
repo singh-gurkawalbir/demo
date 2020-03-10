@@ -69,7 +69,7 @@ function EditListItemModal(props) {
   };
 
   const { referencedFields, filter, orderBy, parentField, sObjectType } =
-    value[selectedElement] || {};
+    (value && value[selectedElement]) || {};
   const relationshipName = getRelationShipName(
     options,
     parentField,

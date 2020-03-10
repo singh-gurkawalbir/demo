@@ -2279,22 +2279,18 @@ export function isFormAMonitorLevelAccess(state, integrationId) {
 }
 
 export function formAccessLevel(state, integrationId, resource, disabled) {
-  const { accessLevel } = userPermissions(state);
-
   // if all forms is monitor level
-  if (accessLevel === USER_ACCESS_LEVELS.ACCOUNT_MONITOR)
-    return { disableAllFields: true };
 
-  // check integration level is monitor level
+  const isMonitorLevelAccess = isFormAMonitorLevelAccess(state, integrationId);
+
+  if (isMonitorLevelAccess) return { disableAllFields: true };
+
+  // check integration access level
   const { accessLevel: accessLevelIntegration } = resourcePermissions(
     state,
     'integrations',
     integrationId
   );
-
-  if (accessLevelIntegration === USER_ACCESS_LEVELS.ACCOUNT_MONITOR)
-    return { disableAllFields: true };
-
   const isIntegrationApp = resource && resource._connectorId;
 
   if (
