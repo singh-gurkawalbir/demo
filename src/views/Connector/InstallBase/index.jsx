@@ -47,9 +47,16 @@ export default function InstallBase(props) {
     return { ...r, _id: r._integrationId, license };
   });
   const [selected, setSelected] = useState({});
+  const [selectedUsers, setSelectedUsers] = useState(0);
   const dispatch = useDispatch();
-  const handleSelectChange = installBaseItems => {
+  const handleSelectChange = (installBaseItems = {}) => {
     setSelected(installBaseItems);
+    const count = Object.keys(installBaseItems).reduce(
+      (count, cur) => (installBaseItems[cur] ? count + 1 : count),
+      0
+    );
+
+    setSelectedUsers(count);
   };
 
   const handleUpdateClick = () => {
@@ -101,7 +108,7 @@ export default function InstallBase(props) {
             defaultFilter={defaultFilter}
           />
           <IconTextButton onClick={handleUpdateClick} variant="text">
-            Update
+            {selectedUsers ? `Update ${selectedUsers} user(s)` : 'Update'}
           </IconTextButton>
         </div>
       </CeligoPageBar>
