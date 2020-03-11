@@ -1065,7 +1065,7 @@ export function convertToReactFormFields({ paramMeta = {}, value = {} }) {
           {
             items: field.options
               ? field.options.map(opt => ({
-                  label: opt,
+                  label: opt.toString(),
                   value: opt,
                 }))
               : [],
