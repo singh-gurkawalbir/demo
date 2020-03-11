@@ -690,44 +690,40 @@ export const conditionalLookupOptionsforSalesforceProduction = [
   },
 ];
 export const conditionalLookupOptionsforRest = [
-  [
-    {
-      label: 'Creating a record',
-      value: 'record_created',
-    },
-    {
-      label: 'Updating a record',
-      value: 'record_updated',
-    },
-    {
-      label: 'Source record has a value',
-      value: 'extract_not_empty',
-    },
-    {
-      label: 'Lookup finds a record',
-      value: 'lookup_not_empty',
-    },
-    {
-      label: 'Lookup finds no records',
-      value: 'lookup_empty',
-    },
-  ],
+  {
+    label: 'Creating a record',
+    value: 'record_created',
+  },
+  {
+    label: 'Updating a record',
+    value: 'record_updated',
+  },
+  {
+    label: 'Source record has a value',
+    value: 'extract_not_empty',
+  },
+  {
+    label: 'Lookup finds a record',
+    value: 'lookup_not_empty',
+  },
+  {
+    label: 'Lookup finds no records',
+    value: 'lookup_empty',
+  },
 ];
 export const conditionalLookupOptionsforRestProduction = [
-  [
-    {
-      label: 'Creating a record',
-      value: 'record_created',
-    },
-    {
-      label: 'Updating a record',
-      value: 'record_updated',
-    },
-    {
-      label: 'Source record has a value',
-      value: 'extract_not_empty',
-    },
-  ],
+  {
+    label: 'Creating a record',
+    value: 'record_created',
+  },
+  {
+    label: 'Updating a record',
+    value: 'record_updated',
+  },
+  {
+    label: 'Source record has a value',
+    value: 'extract_not_empty',
+  },
 ];
 
 // #END_REGION Integration App from utils
