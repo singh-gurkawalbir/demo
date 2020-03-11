@@ -18,7 +18,7 @@ export const useSetInitializeFormData = props => {
   useEffect(() => {
     // resouceForm init causes the form to remount
     // when there is any initialization data do we perform at this step
-    if (componentMounted && formState.initData) {
+    if (!componentMounted && formState.initData) {
       formState.initData.length &&
         formState.initData.forEach(field => {
           const { id, value } = field;

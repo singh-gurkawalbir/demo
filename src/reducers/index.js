@@ -51,6 +51,7 @@ import inferErrorMessage from '../utils/inferErrorMessage';
 import getRoutePath from '../utils/routePaths';
 import { COMM_STATES } from './comms/networkComms';
 import { getIntegrationAppUrlName } from '../utils/integrationApps';
+import { SCOPES } from '../sagas/resourceForm';
 
 const emptySet = [];
 const emptyObject = {};
@@ -2593,7 +2594,7 @@ export function getAllResourceConflicts(state) {
   return fromSession.getAllResourceConflicts(state && state.session);
 }
 
-export function resourceData(state, resourceType, id, scope) {
+export function resourceData(state, resourceType, id, scope = SCOPES.VALUE) {
   if (!state || !resourceType || !id) return emptyObject;
   let type = resourceType;
 

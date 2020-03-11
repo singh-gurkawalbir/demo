@@ -147,7 +147,7 @@ const getResourceFormAssets = ({
           meta = meta.new;
         } else if (['mysql', 'postgresql', 'mssql'].indexOf(type) !== -1) {
           meta = meta.rdbms;
-        } else if (resource && resource.assistant) {
+        } else if (resource && resource.assistant && resource.useParent) {
           meta = meta.custom.http.assistantDefinition(
             resource._id,
             resource,

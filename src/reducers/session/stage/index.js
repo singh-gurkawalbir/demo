@@ -136,8 +136,10 @@ export function stagedResource(state, id, scope) {
 
   if (scope)
     updatedPatches =
-      state[id].patch && state[id].patch.filter(patch => patch.scope === scope);
-  else updatedPatches = state[id].patch;
+      state[id] &&
+      state[id].patch &&
+      state[id].patch.filter(patch => patch.scope === scope);
+  else updatedPatches = state[id] && state[id].patch;
 
   return { ...state[id], patch: updatedPatches };
 }

@@ -409,7 +409,8 @@ export function* initFormValues({
   const { merged: resource } = yield select(
     selectors.resourceData,
     resourceType,
-    resourceId
+    resourceId,
+    SCOPES.VALUE
   );
   const { merged: flow } = yield select(
     selectors.resourceData,
