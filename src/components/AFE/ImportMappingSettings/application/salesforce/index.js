@@ -439,7 +439,7 @@ export default {
           defaultValue: value.conditional && value.conditional.when,
           options: [
             {
-              items: isProduction
+              items: isProduction()
                 ? conditionalLookupOptionsforSalesforceProduction
                 : conditionalLookupOptionsforSalesforce,
             },
