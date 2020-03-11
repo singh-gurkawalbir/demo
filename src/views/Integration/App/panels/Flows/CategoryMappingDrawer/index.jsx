@@ -8,6 +8,8 @@ import {
 } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import {
+  Tooltip,
+  IconButton,
   Drawer,
   Typography,
   ExpansionPanel,
@@ -125,6 +127,10 @@ const useStyles = makeStyles(theme => ({
   variationIcon: {
     position: 'absolute',
     right: theme.spacing(10),
+    padding: 0,
+    '&:hover': {
+      backgroundColor: theme.palette.common.white,
+    },
   },
   content: {
     width: '100%',
@@ -302,14 +308,28 @@ function CategoryMappings({
                 {name}
               </Typography>
             </div>
-            <span>{expanded ? <ShowContentIcon /> : <HideContentIcon />}</span>
+            <span>
+              {expanded ? (
+                <ShowContentIcon />
+              ) : (
+                <Tooltip title="Enable categories" placement="bottom">
+                  <IconButton size="small" color="inherit">
+                    <HideContentIcon />
+                  </IconButton>
+                </Tooltip>
+              )}
+            </span>
           </div>
 
           {!!variationThemes && !!variationThemes.length && (
-            <VariationIcon
-              className={classes.variationIcon}
-              onClick={handleVariation}
-            />
+            <Tooltip title="Configure variations" placement="bottom">
+              <IconButton
+                size="small"
+                color="inherit"
+                className={classes.variationIcon}>
+                <VariationIcon onClick={handleVariation} />
+              </IconButton>
+            </Tooltip>
           )}
           {!isCommonCategory && (
             <div>

@@ -224,7 +224,7 @@ function VariationMappingDrawer({ integrationId, parentUrl }) {
                 className={classes.header}
                 title="Map variant attributes"
               />
-              <div container className={classes.mappingHeader}>
+              <div className={classes.mappingHeader}>
                 <div className={classes.mappingChild}>
                   <Typography variant="h5" className={classes.childHeader}>
                     {uiAssistant}
