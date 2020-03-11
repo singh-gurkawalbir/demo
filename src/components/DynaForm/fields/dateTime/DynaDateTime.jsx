@@ -1,6 +1,6 @@
 import MomentDateFnsUtils from '@date-io/moment';
 import moment from 'moment';
-import { useCallback } from 'react';
+import { useEffect, useState } from 'react';
 import {
   MuiPickersUtilsProvider,
   KeyboardDateTimePicker,
@@ -10,12 +10,12 @@ import CalendarIcon from '../../../icons/CalendarIcon';
 
 export default function DateTimePicker(props) {
   const { id, label, onFieldChange, value = '', disabled, format } = props;
-  const onChange = useCallback(
-    value => {
-      onFieldChange(id, moment(value).format(format) || '');
-    },
-    [format, id, onFieldChange]
-  );
+  const [dateValue, setDateValue] = useState(value || null);
+
+  useEffect(() => {
+    onFieldChange(id, moment(dateValue).format(format) || '');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dateValue]);
 
   return (
     <MuiPickersUtilsProvider utils={MomentDateFnsUtils}>
@@ -41,7 +41,7 @@ export default function DateTimePicker(props) {
           e.preventDefault();
         }}
         variant="inline"
-        onChange={onChange}
+        onChange={value => setDateValue(value)}
         disabled={disabled}
         keyboardIcon={<CalendarIcon />}
       />

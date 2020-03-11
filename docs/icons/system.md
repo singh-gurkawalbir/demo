@@ -45,6 +45,7 @@ const FullScreenOpenIcon = require('../../src/components/icons/FullScreenOpenIco
 const FullScreenCloseIcon = require('../../src/components/icons/FullScreenCloseIcon').default;
 const GettingStartedIcon = require('../../src/components/icons/GettingStartedIcon').default;
 const GroupOfUsersIcon = require('../../src/components/icons/GroupOfUsersIcon').default;
+const GripperIcon = require('../../src/components/icons/GripperIcon').default;
 const HelpIcon = require('../../src/components/icons/HelpIcon').default;
 const HideContentIcon = require('../../src/components/icons/HideContentIcon').default;
 const HomeIcon = require('../../src/components/icons/HomeIcon').default;
@@ -306,6 +307,10 @@ const icon = {
     <div style={wrapper}>
       <GroupOfUsersIcon style={icon} />
       <p>GroupOfUsers</p>
+    </div>
+     <div style={wrapper}>
+      <GripperIcon style={icon} />
+      <p>Gripper</p>
     </div>
      <div style={wrapper}>
       <HelpIcon style={icon} />

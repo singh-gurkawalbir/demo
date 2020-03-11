@@ -200,6 +200,14 @@ export default (state = {}, action) => {
         break;
       }
 
+      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.CLEAR:
+        delete draft[cKey];
+        break;
+      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
+        .CLEAR_SAVE_STATUS:
+        delete draft[cKey].saveStatus;
+        break;
+
       case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.INIT:
         {
           const {
@@ -758,14 +766,14 @@ export function categoryMappingsChanged(state, integrationId, flowId) {
     return isMappingsEqual;
   }
 
-  const { response, mappings } =
+  const { response, mappings, deleted } =
     categoryMapping(state, integrationId, flowId) || {};
   const mappingData = response.find(op => op.operation === 'mappingData');
   const sessionMappedData =
     mappingData && mappingData.data && mappingData.data.mappingData;
   const clonedData = deepClone(sessionMappedData);
 
-  mappingUtil.setCategoryMappingData(flowId, clonedData, mappings);
+  mappingUtil.setCategoryMappingData(flowId, clonedData, mappings, deleted);
 
   const initData = state[cKey].initMappingData;
 

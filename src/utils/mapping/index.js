@@ -41,9 +41,21 @@ const checkExtractPathFoundInSampledata = (str, sampleData, wrapped) => {
   );
 };
 
-const setMappingData = (flowId, recordMappings, mappings) => {
+const setMappingData = (
+  flowId,
+  recordMappings,
+  mappings,
+  deleted = [],
+  isParentDeleted
+) => {
   recordMappings.forEach(mapping => {
     const key = `${flowId}-${mapping.id}`;
+    const mappingDeleted = deleted.includes(mapping.id) || isParentDeleted;
+
+    if (mappingDeleted) {
+      // eslint-disable-next-line no-param-reassign
+      mapping.delete = true;
+    }
 
     if (mappings[key]) {
       // eslint-disable-next-line no-param-reassign
@@ -60,7 +72,13 @@ const setMappingData = (flowId, recordMappings, mappings) => {
     }
 
     if (mapping.children && mapping.children.length) {
-      setMappingData(flowId, mapping.children, mappings);
+      setMappingData(
+        flowId,
+        mapping.children,
+        mappings,
+        deleted,
+        mappingDeleted
+      );
     }
   });
 };
@@ -110,13 +128,29 @@ const getSubRecordMapping = (parentMapping, subRecordMappingId) => {
 
     if (list) {
       const subList = list.fields.find(l => l.generate === subListGenerateName);
+      const { subRecordMapping } = subList;
 
-      return subList.subRecordMapping;
+      if (!subRecordMapping.mapping) {
+        subRecordMapping.mapping = {
+          fields: [],
+          lists: [],
+        };
+      }
+
+      return subRecordMapping;
     }
   } else {
     const field = fields.find(l => l.generate === subRecordMappingId);
+    const { subRecordMapping } = field;
 
-    return field.subRecordMapping;
+    if (!subRecordMapping.mapping) {
+      subRecordMapping.mapping = {
+        fields: [],
+        lists: [],
+      };
+    }
+
+    return subRecordMapping;
   }
 };
 
@@ -242,10 +276,20 @@ export default {
 
     return value.dataType;
   },
-  setCategoryMappingData: (flowId, sessionMappedData = {}, mappings = {}) => {
+  setCategoryMappingData: (
+    flowId,
+    sessionMappedData = {},
+    mappings = {},
+    deleted
+  ) => {
     const { basicMappings = {}, variationMappings = {} } = sessionMappedData;
 
-    setMappingData(flowId, basicMappings.recordMappings || [], mappings);
+    setMappingData(
+      flowId,
+      basicMappings.recordMappings || [],
+      mappings,
+      deleted
+    );
     setVariationMappingData(
       flowId,
       variationMappings.recordMappings || [],
@@ -536,7 +580,8 @@ export default {
       rawMapping,
       subRecordMappingId
     );
-    const { lookups, mapping: subRecordMapping } = subRecordMappingObj || {};
+    const { lookups = [], mapping: subRecordMapping } =
+      subRecordMappingObj || {};
     const formattedMappings = mappingUtil.getMappingsForApp({
       mappings: subRecordMapping,
       isGroupedSampleData,
@@ -630,7 +675,7 @@ export default {
     });
   },
   getMappingsForApp: ({
-    mappings,
+    mappings = {},
     resource = {},
     isGroupedSampleData,
     netsuiteRecordType,
@@ -872,12 +917,12 @@ export default {
 
       list ? list.fields.push(mapping) : fields.push(mapping);
     });
-    const formattedMapping = {
+    const generatedMapping = mappingUtil.shiftSubRecordLast({
       fields,
       lists,
-    };
+    });
 
-    return formattedMapping;
+    return generatedMapping;
   },
   getResponseMappingDefaultExtracts: resourceType => {
     const extractFields =
@@ -992,22 +1037,24 @@ export default {
           mappingContainer = mappings;
         }
 
-        meta.requiredGenerateFields.forEach(fieldId => {
-          const field = mappingContainer.fields.find(
-            field => field.generate === fieldId
-          );
-
-          if (field) field.isRequired = true;
-        });
-        meta.nonEditableGenerateFields &&
-          Array.isArray(meta.nonEditableGenerateFields) &&
-          meta.nonEditableGenerateFields.forEach(fieldId => {
+        if (mappingContainer) {
+          meta.requiredGenerateFields.forEach(fieldId => {
             const field = mappingContainer.fields.find(
               field => field.generate === fieldId
             );
 
-            if (field) field.isNotEditable = true;
+            if (field) field.isRequired = true;
           });
+          meta.nonEditableGenerateFields &&
+            Array.isArray(meta.nonEditableGenerateFields) &&
+            meta.nonEditableGenerateFields.forEach(fieldId => {
+              const field = mappingContainer.fields.find(
+                field => field.generate === fieldId
+              );
+
+              if (field) field.isNotEditable = true;
+            });
+        }
       });
 
     return mappings;
@@ -1090,4 +1137,22 @@ export default {
     return extractPaths;
   },
   isCsvOrXlsxResource,
+  shiftSubRecordLast: ({ fields, lists }) => {
+    const orderedLists = lists.map(l => {
+      const _l = l;
+      const itemsWithoutSubRecord = _l.fields.filter(f => !f.subRecordMapping);
+      const itemsWithSubRecord = _l.fields.filter(f => f.subRecordMapping);
+
+      _l.fields = [...itemsWithoutSubRecord, ...itemsWithSubRecord];
+
+      return _l;
+    });
+    const fieldsWithoutSubRecord = fields.filter(f => !f.subRecordMapping);
+    const fieldsWithSubRecord = fields.filter(f => f.subRecordMapping);
+
+    return {
+      fields: [...fieldsWithoutSubRecord, ...fieldsWithSubRecord],
+      lists: orderedLists,
+    };
+  },
 };

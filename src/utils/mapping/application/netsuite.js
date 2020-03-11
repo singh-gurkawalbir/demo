@@ -1,4 +1,5 @@
 import { uniqBy } from 'lodash';
+import mappingUtil from '../';
 
 const handlebarRegex = /(\{\{[\s]*.*?[\s]*\}\})/i;
 const wrapTextForSpecialCharsNetsuite = extract => {
@@ -43,33 +44,35 @@ export default {
 
     mappings.fields &&
       mappings.fields.forEach(mapping => {
-        const tempFm = { ...mapping };
+        if (mapping.generate !== 'celigo_initializeValues') {
+          const tempFm = { ...mapping };
 
-        tempFm.useAsAnInitializeValue =
-          initializeValues.indexOf(tempFm.generate) > -1;
+          tempFm.useAsAnInitializeValue =
+            initializeValues.indexOf(tempFm.generate) > -1;
 
-        if (mapping.internalId) {
-          tempFm.generate += '.internalid';
-        } else if (isItemSubtypeRecord && mapping.generate === 'subtype') {
-          tempFm.internalId = true;
-          tempFm.generate += '.internalid';
+          if (mapping.internalId) {
+            tempFm.generate += '.internalid';
+          } else if (isItemSubtypeRecord && mapping.generate === 'subtype') {
+            tempFm.internalId = true;
+            tempFm.generate += '.internalid';
+          }
+
+          if (/^\['.*']$/.test(tempFm.extract)) {
+            // Remove [' in the start and  remove '] in the end
+            tempFm.extract = tempFm.extract.replace(/^(\[')(.*)('])$/, '$2');
+          }
+
+          if (
+            mapping.subRecordMapping &&
+            mapping.subRecordMapping.recordType &&
+            mapping.generate === 'celigo_initializeValues'
+          ) {
+            tempFm.extract = 'Subrecord Mapping';
+            tempFm.isSubRecordMapping = true;
+          }
+
+          toReturn.push(tempFm);
         }
-
-        if (/^\['.*']$/.test(tempFm.extract)) {
-          // Remove [' in the start and  remove '] in the end
-          tempFm.extract = tempFm.extract.replace(/^(\[')(.*)('])$/, '$2');
-        }
-
-        if (
-          mapping.subRecordMapping &&
-          mapping.subRecordMapping.recordType &&
-          mapping.generate === 'celigo_initializeValues'
-        ) {
-          tempFm.extract = 'Subrecord Mapping';
-          tempFm.isSubRecordMapping = true;
-        }
-
-        toReturn.push(tempFm);
       });
     mappings.lists &&
       mappings.lists.forEach(lm => {
@@ -244,9 +247,12 @@ export default {
       }
 
       delete mapping.useFirstRow;
+      // key is property added in UI side. removing it while saving.
+      delete mapping.key;
 
       if (mapping.useAsAnInitializeValue) {
         initializeValues.push(mapping.generate);
+        delete mapping.useAsAnInitializeValue;
       }
 
       // in case of subrecord mapping delete properties added in UI side
@@ -281,12 +287,11 @@ export default {
       });
     }
 
-    const formattedMapping = {
+    const generatedMapping = mappingUtil.shiftSubRecordLast({
       fields,
       lists,
-    };
+    });
 
-    // TODO (Aditya): handle Subrecord Imports
-    return formattedMapping;
+    return generatedMapping;
   },
 };

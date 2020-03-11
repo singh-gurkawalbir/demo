@@ -22,12 +22,7 @@ import {
   ACCOUNT_IDS,
   SUITESCRIPT_CONNECTORS,
 } from '../utils/constants';
-import {
-  LICENSE_EXPIRED,
-  LICENSE_TRIAL_NOT_STARTED,
-  LICENSE_TRIAL_EXPIRED,
-  FLOW_LIMIT_REACHED,
-} from '../utils/messageStore';
+import { LICENSE_EXPIRED } from '../utils/messageStore';
 import { changePasswordParams, changeEmailParams } from '../sagas/api/apiPaths';
 import { getFieldById } from '../forms/utils';
 import { upgradeButtonText, expiresInfo } from '../utils/license';
@@ -812,7 +807,10 @@ export function flowDetails(state, id) {
     const flowSettings = getIAFlowSettings(state, flow._integrationId, id);
 
     draft.showMapping = flowSettings.showMapping;
-    draft.hasSettings = !!flowSettings.settings || !!flowSettings.sections;
+    draft.hasSettings = !!(
+      (flowSettings.settings && flowSettings.settings.length) ||
+      (flowSettings.sections && flowSettings.sections.length)
+    );
     draft.showSchedule = draft._connectorId
       ? draft.canSchedule && !!flowSettings.showSchedule
       : draft.canSchedule;
@@ -874,22 +872,6 @@ export function getNextDataFlows(state, flow) {
       !f.isSimpleImport &&
       !f.disabled
   );
-}
-
-export function getNumberEnabledFlows(state) {
-  let flows = flowListWithMetadata(state, { type: 'flows' }).resources || [];
-  const preferences = userPreferences(state);
-  const sandboxEnvironment = preferences.environment === 'sandbox';
-
-  flows = flows.filter(
-    f =>
-      !f.disabled &&
-      !f._connectorId &&
-      !f.isSimpleImport &&
-      !!f.sandbox === !!sandboxEnvironment
-  );
-
-  return (flows && flows.length) || 0;
 }
 
 export function resourceListWithPermissions(state, options) {
@@ -1276,7 +1258,7 @@ export function categoryMappingSaveStatus(state, integrationId, flowId) {
 }
 
 export function pendingCategoryMappings(state, integrationId, flowId) {
-  const { response, mappings } =
+  const { response, mappings, deleted } =
     fromSession.categoryMapping(
       state && state.session,
       integrationId,
@@ -1286,7 +1268,12 @@ export function pendingCategoryMappings(state, integrationId, flowId) {
   const sessionMappedData =
     mappingData && mappingData.data && mappingData.data.mappingData;
 
-  mappingUtil.setCategoryMappingData(flowId, sessionMappedData, mappings);
+  mappingUtil.setCategoryMappingData(
+    flowId,
+    sessionMappedData,
+    mappings,
+    deleted
+  );
 
   return sessionMappedData;
 }
@@ -1681,7 +1668,8 @@ export function integrationAppFlowSettings(state, id, section, storeId) {
   });
   showFlowSettings = some(
     selectedSection.flows,
-    f => !!f.settings || !!f.sections
+    f =>
+      !!((f.settings && f.settings.length) || (f.sections && f.sections.length))
   );
   const { fields, sections: subSections } = selectedSection;
   let flows = flowListWithMetadata(state, {
@@ -2127,39 +2115,13 @@ export function integratorLicenseWithMetadata(state) {
 
 export function isLicenseValidToEnableFlow(state) {
   const licenseDetails = { enable: true };
-
-  if (getNumberEnabledFlows(state) === 0) {
-    return licenseDetails;
-  }
-
   const license = integratorLicenseWithMetadata(state);
-  const preferences = userPreferences(state);
 
   if (!license) {
     return licenseDetails;
   }
 
-  if (license.tier === 'free') {
-    if (!license.inTrial) {
-      if (license.isFreemium) {
-        if (preferences && preferences.environment === 'sandbox') {
-          licenseDetails.enable = false;
-          licenseDetails.message = FLOW_LIMIT_REACHED;
-        }
-      } else if (license.hasSubscription) {
-        if (license.hasExpired) {
-          licenseDetails.enable = false;
-          licenseDetails.message = LICENSE_EXPIRED;
-        }
-      } else if (license.trialEndDate) {
-        licenseDetails.enable = false;
-        licenseDetails.message = LICENSE_TRIAL_EXPIRED;
-      } else {
-        licenseDetails.enable = false;
-        licenseDetails.message = LICENSE_TRIAL_NOT_STARTED;
-      }
-    }
-  } else if (license.hasExpired) {
+  if (license.hasExpired) {
     licenseDetails.enable = false;
     licenseDetails.message = LICENSE_EXPIRED;
   }
@@ -2314,6 +2276,32 @@ export function isFormAMonitorLevelAccess(state, integrationId) {
   if (accessLevelIntegration === 'monitor') return true;
 
   return false;
+}
+
+export function formAccessLevel(state, integrationId, resource, disabled) {
+  // if all forms is monitor level
+
+  const isMonitorLevelAccess = isFormAMonitorLevelAccess(state, integrationId);
+
+  if (isMonitorLevelAccess) return { disableAllFields: true };
+
+  // check integration access level
+  const { accessLevel: accessLevelIntegration } = resourcePermissions(
+    state,
+    'integrations',
+    integrationId
+  );
+  const isIntegrationApp = resource && resource._connectorId;
+
+  if (
+    accessLevelIntegration === USER_ACCESS_LEVELS.ACCOUNT_OWNER ||
+    accessLevelIntegration === USER_ACCESS_LEVELS.ACCOUNT_MANAGE
+  ) {
+    // check integration app is manage or owner then selectively disable fields
+    if (isIntegrationApp) return { disableAllFieldsExceptClocked: true };
+  }
+
+  return { disableAllFields: !!disabled };
 }
 
 export function publishedConnectors(state) {
@@ -3651,6 +3639,13 @@ export const getSampleDataWrapper = createSelector(
 
       return undefined;
     },
+    (state, params) => {
+      if (params.stage === 'postSubmit') {
+        return getSampleDataContext(state, { ...params, stage: 'postMap' });
+      }
+
+      return undefined;
+    },
     (state, { flowId }) => resource(state, 'flows', flowId) || emptyObject,
     (state, { flowId }) => {
       const flow = resource(state, 'flows', flowId) || emptyObject;
@@ -3671,6 +3666,7 @@ export const getSampleDataWrapper = createSelector(
   (
     sampleData,
     preMapSampleData,
+    postMapSampleData,
     flow,
     integration,
     resource,
@@ -3734,7 +3730,11 @@ export const getSampleDataWrapper = createSelector(
       connection: connection.settings || {},
     };
 
-    if (['transform', 'outputFilter', 'inputFilter'].includes(stage)) {
+    if (
+      ['sampleResponse', 'transform', 'outputFilter', 'inputFilter'].includes(
+        stage
+      )
+    ) {
       return {
         status,
         data: {
@@ -3787,13 +3787,13 @@ export const getSampleDataWrapper = createSelector(
         status,
         data: {
           preMapData: preMapSampleData.data ? [preMapSampleData.data] : [],
-          postMapData: data ? [data] : [],
+          postMapData: postMapSampleData.data ? [postMapSampleData.data] : [],
           responseData: [data].map(() => ({
             statusCode: 200,
             errors: [{ code: '', message: '', source: '' }],
             ignored: false,
             id: '',
-            _json: {},
+            _json: data || {},
             dataURI: '',
           })),
           ...resourceIds,
@@ -3815,6 +3815,15 @@ export const getSampleDataWrapper = createSelector(
           },
           ...resourceIds,
           settings,
+        },
+      };
+    }
+
+    if (stage === 'postResponseMapHook') {
+      return {
+        status,
+        data: {
+          postResponseMapData: data || [],
         },
       };
     }
