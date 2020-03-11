@@ -17,7 +17,7 @@ export function FormView(props) {
     selectors.stagedResource(state, resourceId)
   );
 
-  useSetInitializeFormData({ resourceId, resourceType });
+  useSetInitializeFormData(props);
   const onFieldChangeFn = (id, selectedApplication) => {
     let value = {
       ...formContext.value,
