@@ -60,7 +60,11 @@ export default function TabbedPanel(props) {
           classes.sampleDataContainer,
           classes.sampleDataContainerAlign
         )}>
-        <Tabs value={tabValue} onChange={handleTabChange}>
+        <Tabs
+          value={tabValue}
+          onChange={handleTabChange}
+          textColor="primary"
+          indicatorColor="primary">
           <Tab
             label="Body"
             value="body"
