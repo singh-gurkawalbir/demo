@@ -19,6 +19,7 @@ const ConditionalIcon = require('../../src/components/icons/ConditionalIcon').de
 const CloseIcon = require('../../src/components/icons/CloseIcon').default;
 const CopyIcon = require('../../src/components/icons/CopyIcon').default;
 const ConnectorIcon = require('../../src/components/icons/ConnectorIcon').default;
+const CollapseWindowIcon = require('../../src/components/icons/CollapseWindowIcon').default;
 const CloudTransferIcon = require('../../src/components/icons/CloudTransferIcon').default;
 const CeligoMarkIcon = require('../../src/components/icons/CeligoMarkIcon').default;
 const ConnectionsIcon = require('../../src/components/icons/ConnectionsIcon').default;
@@ -37,6 +38,7 @@ const EllipsisVerticalIcon = require('../../src/components/icons/EllipsisVertica
 const ExitIcon = require('../../src/components/icons/ExitIcon').default;
 const ExportsIcon = require('../../src/components/icons/ExportsIcon').default;
 const ExpandWindowIcon = require('../../src/components/icons/ExpandWindowIcon').default;
+
 const FilterIcon = require('../../src/components/icons/FilterIcon').default;
 const FlowBuilderIcon = require('../../src/components/icons/FlowBuilderIcon').default;
 const FlowsIcon = require('../../src/components/icons/FlowsIcon').default;
@@ -207,6 +209,10 @@ const icon = {
     <div style={wrapper}>
       <ConnectorIcon style={icon} />
       <p>Connector</p>
+    </div>
+     <div style={wrapper}>
+      <CollapseWindowIcon style={icon} />
+      <p>CollapseWindow</p>
     </div>
     <div style={wrapper}>
       <ConnectionsIcon style={icon} />
