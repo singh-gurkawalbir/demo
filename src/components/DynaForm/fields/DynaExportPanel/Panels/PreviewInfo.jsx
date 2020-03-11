@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useMemo } from 'react';
 import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import IconTextButton from '../../../../IconTextButton';
@@ -66,7 +66,7 @@ export default function PreviewInfo(props) {
   } = props;
   const classes = useStyles();
   // ShowSampleDataStatus Fn shows Preview Status
-  const ShowSampleDataStatus = useCallback(() => {
+  const sampleDataStatus = useMemo(() => {
     if (resourceSampleData.status === 'requested')
       return <Typography variant="body2"> Testing </Typography>;
 
@@ -74,7 +74,7 @@ export default function PreviewInfo(props) {
       return <Typography variant="body2"> Success </Typography>;
   }, [resourceSampleData.status]);
   // showSampleDataOverview Fn Used to show Preview Info
-  const showSampleDataOverview = useCallback(() => {
+  const sampleDataOverview = useMemo(() => {
     const { status, error } = resourceSampleData;
 
     if (status === 'error') {
@@ -122,8 +122,8 @@ export default function PreviewInfo(props) {
         </div>
 
         <div className={classes.previewDataRight}>
-          <div> {ShowSampleDataStatus()}</div>
-          {showSampleDataOverview()}
+          <div> {sampleDataStatus}</div>
+          {sampleDataOverview}
         </div>
       </div>
     </div>
