@@ -1,11 +1,4 @@
-import {
-  Drawer,
-  makeStyles,
-  Typography,
-  Grid,
-  Button,
-  Divider,
-} from '@material-ui/core';
+import { Drawer, makeStyles, Typography, Button } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
 import { useCallback, Fragment } from 'react';
 import {
@@ -28,7 +21,7 @@ const drawerWidth = 200;
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
     // marginTop: theme.appBarHeight,
-    width: 750,
+    width: `50%`,
     border: 'solid 1px',
     borderColor: theme.palette.secondary.lightest,
     backgroundColor: theme.palette.background.default,
@@ -49,6 +42,10 @@ const useStyles = makeStyles(theme => ({
     marginLeft: theme.spacing(1),
     marginRight: 0,
   },
+  saveButtonGroup: {
+    margin: '10px 10px 10px 24px',
+    float: 'left',
+  },
   fullWidth: {
     width: '100%',
   },
@@ -58,10 +55,6 @@ const useStyles = makeStyles(theme => ({
   drawer: {
     width: drawerWidth,
     flexShrink: 0,
-  },
-  saveButtonGroup: {
-    margin: '10px 10px 10px 10px',
-    float: 'right',
   },
   nested: {
     paddingLeft: theme.spacing(4),
@@ -74,6 +67,15 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(1),
     marginLeft: '20px',
     background: theme.palette.background.default,
+    display: 'flex',
+    justifyContent: 'flex-start',
+  },
+  mappingChild: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '40%',
+    marginRight: 45,
   },
   toolbar: theme.mixins.toolbar,
   root: {
@@ -93,10 +95,9 @@ const useStyles = makeStyles(theme => ({
   },
 
   subNav: {
-    minWidth: 200,
+    width: '20%',
     background: theme.palette.background.paper2,
-    borderRight: `solid 1px ${theme.palette.secondary.lightest}`,
-    paddingTop: theme.spacing(2),
+    paddingTop: theme.spacing(1),
   },
   deleteIcon: {
     position: 'absolute',
@@ -109,7 +110,7 @@ const useStyles = makeStyles(theme => ({
   content: {
     width: '100%',
     height: '100%',
-    padding: theme.spacing(0, 0, 3, 0),
+    padding: theme.spacing(0, 3, 3, 0),
   },
   header: {
     background: 'blue',
@@ -122,6 +123,14 @@ const useStyles = makeStyles(theme => ({
   },
   default: {
     marginBottom: 10,
+  },
+  variationMapWrapper: {
+    display: 'flex',
+  },
+  // Todo: Sravan if you are using the Expansion panel then below css will not useful.
+  mappingWrapper: {
+    marginLeft: 20,
+    marginTop: theme.spacing(1),
   },
 }));
 
@@ -202,62 +211,63 @@ function VariationMappingDrawer({ integrationId, parentUrl }) {
           onClose={handleClose}
         />
         <div className={classes.root}>
-          <Grid container wrap="nowrap">
-            <Grid item className={classes.subNav}>
+          <div className={classes.variationMapWrapper}>
+            <div className={classes.subNav}>
               <VariationAttributesList
                 integrationId={integrationId}
                 flowId={flowId}
                 categoryId={subCategoryId}
               />
-            </Grid>
-            <Grid item className={classes.content}>
+            </div>
+            <div className={classes.content}>
               <PanelHeader
                 className={classes.header}
                 title="Map variant attributes"
               />
-              <Grid container className={classes.mappingHeader}>
-                <Grid item xs={6}>
+              <div container className={classes.mappingHeader}>
+                <div className={classes.mappingChild}>
                   <Typography variant="h5" className={classes.childHeader}>
                     {uiAssistant}
-                    <ApplicationImg
-                      assistant={uiAssistant.toLowerCase()}
-                      size="small"
-                    />
                   </Typography>
-                </Grid>
-                <Grid item xs={6}>
+                  <ApplicationImg
+                    assistant={uiAssistant.toLowerCase()}
+                    size="small"
+                  />
+                </div>
+                <div className={classes.mappingChild}>
                   <Typography variant="h5" className={classes.childHeader}>
                     NetSuite
-                    <ApplicationImg assistant="netsuite" />
                   </Typography>
-                </Grid>
-              </Grid>
-              <VariationMappings
-                integrationId={integrationId}
-                flowId={flowId}
-                categoryId={categoryId}
-                sectionId={subCategoryId}
-                variation={variation}
-              />
-            </Grid>
-          </Grid>
-          <Divider />
-          <ButtonGroup className={classes.saveButtonGroup}>
-            <Button
-              id={flowId}
-              variant="outlined"
-              color="primary"
-              data-test="saveImportMapping"
-              onClick={handleSave}>
-              Save
-            </Button>
-            <Button
-              variant="text"
-              data-test="saveImportMapping"
-              onClick={handleCancel}>
-              Close
-            </Button>
-          </ButtonGroup>
+                  <ApplicationImg assistant="netsuite" />
+                </div>
+              </div>
+              <div className={classes.mappingWrapper}>
+                <VariationMappings
+                  integrationId={integrationId}
+                  flowId={flowId}
+                  categoryId={categoryId}
+                  sectionId={subCategoryId}
+                  variation={variation}
+                />
+              </div>
+              <ButtonGroup className={classes.saveButtonGroup}>
+                <Button
+                  id={flowId}
+                  variant="outlined"
+                  color="primary"
+                  data-test="saveImportMapping"
+                  onClick={handleSave}>
+                  Save
+                </Button>
+                <Button
+                  variant="text"
+                  data-test="saveImportMapping"
+                  onClick={handleCancel}>
+                  Close
+                </Button>
+              </ButtonGroup>
+            </div>
+          </div>
         </div>
       </Drawer>
     </Fragment>

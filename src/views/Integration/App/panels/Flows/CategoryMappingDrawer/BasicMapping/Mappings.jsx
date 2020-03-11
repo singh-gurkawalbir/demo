@@ -16,6 +16,7 @@ import PreferredIcon from '../../../../../../../components/icons/PreferredIcon';
 import ConditionalIcon from '../../../../../../../components/icons/ConditionalIcon';
 import OptionalIcon from '../../../../../../../components/icons/OptionalIcon';
 import RequiredIcon from '../../../../../../../components/icons/RequiredIcon';
+import MappingConnectorIcon from '../../../../../../../components/icons/MappingConnectorIcon';
 
 // TODO Azhar style header
 const useStyles = makeStyles(theme => ({
@@ -23,10 +24,8 @@ const useStyles = makeStyles(theme => ({
     overflowY: 'off',
   },
   header: {
-    display: 'grid',
+    display: 'flex',
     width: '100%',
-    gridTemplateColumns: '45% 45% 50px 50px',
-    gridColumnGap: '1%',
     marginBottom: theme.spacing(2),
   },
   rowContainer: {
@@ -44,11 +43,9 @@ const useStyles = makeStyles(theme => ({
     },
   },
   innerRow: {
-    display: 'grid',
+    display: 'flex',
     width: '100%',
-    gridTemplateColumns: '40% 40% 50px 50px',
     marginBottom: theme.spacing(1),
-    gridColumnGap: '1%',
   },
   mappingsBody: {
     height: `calc(100% - 32px)`,
@@ -95,6 +92,15 @@ const useStyles = makeStyles(theme => ({
   },
   RequiredIcon: {
     color: theme.palette.success.main,
+  },
+  mappingIcon: {
+    color: theme.palette.secondary.lightest,
+    fontSize: theme.spacing(6),
+  },
+  mapField: {
+    display: 'flex',
+    position: 'relative',
+    width: '40%',
   },
 }));
 
@@ -258,7 +264,7 @@ export default function ImportMapping(props) {
           <div className={classes.rowContainer} key={mapping.index}>
             <div className={classes.innerRow}>
               <div
-                className={clsx(classes.childHeader, classes.childRow, {
+                className={clsx(classes.childHeader, classes.mapField, {
                   [classes.disableChildRow]: mapping.isRequired || disabled,
                 })}>
                 <DynaTypeableSelect
@@ -284,8 +290,9 @@ export default function ImportMapping(props) {
                   </Tooltip>
                 )}
               </div>
+              <MappingConnectorIcon className={classes.mappingIcon} />
               <div
-                className={clsx(classes.childHeader, classes.childRow, {
+                className={clsx(classes.childHeader, classes.mapField, {
                   [classes.disableChildRow]: mapping.isNotEditable || disabled,
                 })}>
                 <DynaTypeableSelect
