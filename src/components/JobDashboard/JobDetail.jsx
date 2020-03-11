@@ -277,12 +277,12 @@ function JobDetail({
           {job.name || job._flowId}
         </TableCell>
         <TableCell className={classes.status}>
-          <span
+          {/* <span
             className={clsx({
               [classes.errorStatus]: job.numError > 0,
-            })}>
-            <JobStatus job={job} />
-          </span>
+            })}> */}
+          <JobStatus job={job} />
+          {/* </span> */}
         </TableCell>
         <TableCell className={classes.success}>{getSuccess(job)}</TableCell>
         <TableCell className={classes.ignore}>{job.numIgnore}</TableCell>
