@@ -1,6 +1,11 @@
 import mappingUtil from '../../../../../utils/mapping';
 import dateTimezones from '../../../../../utils/dateTimezones';
 import dateFormats from '../../../../../utils/dateFormats';
+import {
+  isProduction,
+  conditionalLookupOptionsforSalesforce,
+  conditionalLookupOptionsforSalesforceProduction,
+} from '../../../../../forms/utils';
 
 export default {
   getMetaData: (params = {}) => {
@@ -434,20 +439,9 @@ export default {
           defaultValue: value.conditional && value.conditional.when,
           options: [
             {
-              items: [
-                {
-                  label: 'Source record has a value',
-                  value: 'extract_not_empty',
-                },
-                {
-                  label: 'Lookup finds a record',
-                  value: 'lookup_not_empty',
-                },
-                {
-                  label: 'Lookup finds no records',
-                  value: 'lookup_empty',
-                },
-              ],
+              items: isProduction
+                ? conditionalLookupOptionsforSalesforceProduction
+                : conditionalLookupOptionsforSalesforce,
             },
           ],
         },

@@ -1,6 +1,11 @@
 import dateTimezones from '../../../../../utils/dateTimezones';
 import mappingUtil from '../../../../../utils/mapping';
 import dateFormats from '../../../../../utils/dateFormats';
+import {
+  isProduction,
+  conditionalLookupOptionsforRest,
+  conditionalLookupOptionsforRestProduction,
+} from '../../../../../forms/utils';
 
 export default {
   getMetaData: (params = {}) => {
@@ -444,28 +449,9 @@ export default {
           defaultValue: value.conditional && value.conditional.when,
           options: [
             {
-              items: [
-                {
-                  label: 'Creating a record',
-                  value: 'record_created',
-                },
-                {
-                  label: 'Updating a record',
-                  value: 'record_updated',
-                },
-                {
-                  label: 'Source record has a value',
-                  value: 'extract_not_empty',
-                },
-                {
-                  label: 'Lookup finds a record',
-                  value: 'lookup_not_empty',
-                },
-                {
-                  label: 'Lookup finds no records',
-                  value: 'lookup_empty',
-                },
-              ],
+              items: isProduction
+                ? conditionalLookupOptionsforRestProduction
+                : conditionalLookupOptionsforRest,
             },
           ],
         },
