@@ -1,6 +1,11 @@
 import dateTimezones from '../../../../../utils/dateTimezones';
 import dateFormats from '../../../../../utils/dateFormats';
 import mappingUtil from '../../../../../utils/mapping';
+import {
+  isProduction,
+  conditionalLookupOptionsforNetsuite,
+  conditionalLookupOptionsforNetsuiteProduction,
+} from '../../../../../forms/utils';
 
 const getNetsuiteSelectFieldValueUrl = ({
   fieldMetadata,
@@ -505,33 +510,9 @@ export default {
           defaultValue: value.conditional && value.conditional.when,
           options: [
             {
-              items: [
-                {
-                  label: 'Creating a record',
-                  value: 'record_created',
-                },
-                {
-                  label: 'Updating a record',
-                  value: 'record_updated',
-                },
-                {
-                  label: 'Source record has a value',
-                  value: 'extract_not_empty',
-                },
-                {
-                  label: 'Lookup finds a record',
-                  value: 'lookup_not_empty',
-                },
-                {
-                  label: 'Lookup finds no records',
-                  value: 'lookup_empty',
-                },
-                {
-                  label:
-                    'Destination record being updated does NOT already have a value for this field',
-                  value: 'ignore_if_set',
-                },
-              ],
+              items: isProduction()
+                ? conditionalLookupOptionsforNetsuiteProduction
+                : conditionalLookupOptionsforNetsuite,
             },
           ],
         },
