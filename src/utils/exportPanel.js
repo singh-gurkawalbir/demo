@@ -98,12 +98,16 @@ const formatPreviewData = records => {
   return { page_of_records };
 };
 
+/*
+ * Incase of Raw stage, previewData contains body which is a JSON string
+ * Need to be parsed to show in Preview panel
+ * Returns updated previewData
+ */
 const formatBodyForRawStage = previewData => {
   const formattedData = deepClone(previewData);
 
   if (formattedData && formattedData.data) {
     if (formattedData.data.body && isJsonString(formattedData.data.body)) {
-      // eslint-disable-next-line no-param-reassign
       formattedData.data.body = JSON.parse(formattedData.data.body);
     }
   }
@@ -111,6 +115,10 @@ const formatBodyForRawStage = previewData => {
   return formattedData;
 };
 
+/*
+ * Used by View layer to show the preview data
+ * We stringify the previewData after formatting to show in preview panel
+ */
 export const getStringifiedPreviewData = (previewData, stage) => {
   // stage specific formatting is done here
   let formattedPreviewData;
@@ -136,10 +144,14 @@ export const getPreviewDataPageSizeInfo = previewData => {
   return `1 Page ${pageSize} Records`;
 };
 
-export const getPanelType = (resource = {}, panelType) => {
-  // Incase of http/rest for panel type req, response type is tab
-  // For all others it is default
-  // Many more can come
+/*
+ * Gives template type based on the resourceType and panelType selected
+ * Available template types are 'default' and 'tab'
+ * Incase of Http/Rest resources with panel type 'request' and 'raw', the template type is 'tab'
+ * For all others template type is 'default'
+ * Other types can be added here
+ */
+export const getPreviewBodyTemplateType = (resource = {}, panelType) => {
   const appType = adaptorTypeMap[resource.adaptorType];
 
   if (

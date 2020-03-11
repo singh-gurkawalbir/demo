@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import Spinner from '../../../../Spinner';
 import Templates from '../Templates';
-import { getPanelType } from '../../../../../utils/exportPanel';
+import { getPreviewBodyTemplateType } from '../../../../../utils/exportPanel';
 
 export default function PreviewBody(props) {
   const {
@@ -12,10 +12,10 @@ export default function PreviewBody(props) {
     previewStageDataList,
     resource,
   } = props;
-  const previewBodyTemplate = useMemo(() => getPanelType(resource, panelType), [
-    panelType,
-    resource,
-  ]);
+  const previewBodyTemplate = useMemo(
+    () => getPreviewBodyTemplateType(resource, panelType),
+    [panelType, resource]
+  );
 
   return (
     <div>
