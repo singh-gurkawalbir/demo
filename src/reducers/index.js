@@ -1440,7 +1440,7 @@ export function mappingsForCategory(state, integrationId, flowId, filters) {
   // Filter all generateFields with filter which are not yet mapped
   const filteredFields = fields
     .filter(field => !mappedFields.includes(field.id))
-    .map(field => ({ generate: field.id, extract: '' }));
+    .map(field => ({ generate: field.id, extract: '', discardIfEmpty: true }));
   // Combine filtered mappings and unmapped fields and generate unmapped fields
   const filteredMappings = [...mappings.fieldMappings, ...filteredFields];
 

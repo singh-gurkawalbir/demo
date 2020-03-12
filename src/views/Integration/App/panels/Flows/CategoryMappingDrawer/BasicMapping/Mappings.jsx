@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { components } from 'react-select';
 import { Tooltip } from '@material-ui/core';
@@ -17,6 +17,7 @@ import ConditionalIcon from '../../../../../../../components/icons/ConditionalIc
 import OptionalIcon from '../../../../../../../components/icons/OptionalIcon';
 import RequiredIcon from '../../../../../../../components/icons/RequiredIcon';
 import MappingConnectorIcon from '../../../../../../../components/icons/MappingConnectorIcon';
+import DynaText from '../../../../../../../components/DynaForm/fields/DynaText';
 
 // TODO Azhar style header
 const useStyles = makeStyles(theme => ({
@@ -91,8 +92,9 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.primary.main,
   },
   RequiredIcon: {
-    color: theme.palette.success.main,
+    color: theme.palette.error.main,
   },
+
   mappingIcon: {
     color: theme.palette.secondary.lightest,
     fontSize: theme.spacing(6),
@@ -232,6 +234,60 @@ export default function ImportMapping(props) {
     handleFieldUpdate(mapping.index, { target: { value: val } }, 'generate');
   };
 
+  const TextContainer = ({ options, onFieldChange, ...props }) => {
+    const [textvalue, setValue] = useState(props.value);
+    const handleValueChange = (id, val) => {
+      onFieldChange(id, val);
+      setValue(val);
+    };
+
+    const { filterType } =
+      options.find(option => option.name === textvalue) || {};
+    let icon;
+
+    switch (filterType) {
+      case 'preferred':
+        icon = (
+          <PreferredIcon
+            className={clsx(classes.filterTypeIcon, classes.PreferredIcon)}
+          />
+        );
+        break;
+      case 'optional':
+        icon = (
+          <OptionalIcon
+            className={clsx(classes.filterTypeIcon, classes.OptionalIcon)}
+          />
+        );
+        break;
+      case 'required':
+        icon = (
+          <RequiredIcon
+            className={clsx(classes.filterTypeIcon, classes.RequiredIcon)}
+          />
+        );
+        break;
+      case 'conditional':
+        icon = (
+          <ConditionalIcon
+            className={clsx(classes.filterTypeIcon, classes.ConditionalIcon)}
+          />
+        );
+        break;
+      default:
+        icon = null;
+        break;
+    }
+
+    return (
+      <DynaText
+        {...props}
+        startAdornment={icon}
+        onFieldChange={handleValueChange}
+      />
+    );
+  };
+
   const ValueContainer = ({ children, ...props }) => {
     const value = props.selectProps.inputValue;
     const { filterType } =
@@ -304,6 +360,7 @@ export default function ImportMapping(props) {
                     components={{
                       ValueContainer,
                     }}
+                    TextComponent={TextContainer}
                     options={generateFields}
                     disabled={mapping.isRequired || disabled}
                     onBlur={handleGenerateUpdate(mapping)}
