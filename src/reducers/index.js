@@ -1437,27 +1437,12 @@ export function mappingsForCategory(state, integrationId, flowId, filters) {
   }
 
   const mappedFields = map(mappings.fieldMappings, 'generate');
-  // Filter all mapped fields
-  const filteredMappedFields = mappings.fieldMappings.filter(field => {
-    const generateField = fields.find(f => f.id === field.generate);
-
-    return generateField && attributes[generateField.filterType];
-  });
   // Filter all generateFields with filter which are not yet mapped
   const filteredFields = fields
-    .filter(
-      field => attributes[field.filterType] && !mappedFields.includes(field.id)
-    )
+    .filter(field => !mappedFields.includes(field.id))
     .map(field => ({ generate: field.id, extract: '' }));
   // Combine filtered mappings and unmapped fields and generate unmapped fields
-  const filteredMappings = [...filteredMappedFields, ...filteredFields].filter(
-    field => {
-      if (mappingFilter === 'all') return true;
-      else if (mappingFilter === 'mapped') return !!field.extract;
-
-      return !field.extract && !field.hardCodedValue;
-    }
-  );
+  const filteredMappings = [...mappings.fieldMappings, ...filteredFields];
 
   // return mappings object by overriding field mappings with filtered mappings
   return {

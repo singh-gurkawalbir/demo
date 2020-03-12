@@ -61,9 +61,11 @@ const setMappingData = (
       // eslint-disable-next-line no-param-reassign
       mapping.fieldMappings = mappings[key].mappings
         .filter(el => (!!el.extract || !!el.hardCodedValue) && !!el.generate)
-        .map(({ index, rowIdentifier, ...rest }) => ({
-          ...rest,
-        }));
+        .map(
+          ({ index, rowIdentifier, hardCodedValueTmp, visible, ...rest }) => ({
+            ...rest,
+          })
+        );
 
       if (mappings[key].lookups && mappings[key].lookups.length) {
         // eslint-disable-next-line no-param-reassign
@@ -92,9 +94,17 @@ const setVariationMappingData = (flowId, recordMappings, mappings) => {
         // eslint-disable-next-line no-param-reassign
         vm.fieldMappings = mappings[key].mappings
           .filter(el => (!!el.extract || !!el.hardCodedValue) && !!el.generate)
-          .map(({ index, rowIdentifier, ...rest }) => ({
-            ...rest,
-          }));
+          .map(
+            ({
+              index,
+              rowIdentifier,
+              hardCodedValueTmp,
+              visible,
+              ...rest
+            }) => ({
+              ...rest,
+            })
+          );
 
         if (mappings[key].lookups && mappings[key].lookups.length) {
           // eslint-disable-next-line no-param-reassign

@@ -471,7 +471,7 @@ const integrationApp = {
           integrationId,
           flowId,
           id,
-          row,
+          index: row,
         }),
       collapseAll: (integrationId, flowId) =>
         action(
