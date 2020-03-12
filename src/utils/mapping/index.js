@@ -494,36 +494,54 @@ export default {
       default:
     }
   },
-  getGenerateLabelForMapping: (application, resource = {}) => {
+  getApplicationName: (resource = {}, conn) => {
     if (resource.assistant) {
       const assistant = connectors.find(
         connector => connector.id === resource.assistant
       );
 
-      if (assistant) return `${assistant.name} Field`;
+      if (assistant) return `${assistant.name}`;
     }
 
-    switch (application) {
+    const { adaptorType } = resource;
+
+    switch (adaptorTypeMap[adaptorType]) {
       case adaptorTypeMap.RESTImport:
-        return 'REST API Field';
+        return 'REST API';
       case adaptorTypeMap.NetSuiteDistributedImport:
-        return 'NetSuite Field';
+        return 'NetSuite';
       case adaptorTypeMap.FTPImport:
-        return 'FTP Field';
+        return 'FTP';
       case adaptorTypeMap.AS2Import:
-        return 'AS2 Field';
+        return 'AS2';
       case adaptorTypeMap.S3Import:
-        return 'Import Field (Amazon S3)';
+        return 'Amazon S3';
       case adaptorTypeMap.SalesforceImport:
-        return 'Salesforce Field';
+        return 'Salesforce';
       case adaptorTypeMap.HTTPImport:
-        return 'Http Field';
+        return 'HTTP';
       case adaptorTypeMap.WrapperImport:
-        return 'Wrapper Field';
-      case adaptorTypeMap.XMLImport:
+        return 'Wrapper';
       case adaptorTypeMap.MongodbImport:
+        return 'MongoDB';
+      case adaptorTypeMap.RDBMSImport: {
+        let toReturn;
+
+        if (conn) {
+          if (conn.rdbms && conn.rdbms.type === 'mysql') {
+            toReturn = 'MySQL';
+          } else if (conn.rdbms && conn.rdbms.type === 'mssql') {
+            toReturn = 'Microsoft SQL';
+          } else {
+            toReturn = 'PostgreSQL';
+          }
+        }
+
+        return toReturn;
+      }
+
       case adaptorTypeMap.DynamodbImport:
-      case adaptorTypeMap.RDBMSImport:
+        return 'DynamoDB';
       default:
     }
   },
