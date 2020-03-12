@@ -500,7 +500,7 @@ export default {
         connector => connector.id === resource.assistant
       );
 
-      if (assistant) return `${assistant.name}`;
+      if (assistant) return assistant.name;
     }
 
     const { adaptorType } = resource;
