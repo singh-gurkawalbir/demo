@@ -286,6 +286,58 @@ export default {
 
     return value.dataType;
   },
+  /**
+   * given two json objects, does a deep comparision of the objects
+   * This function is written specific to compare category mapping metadata
+   * this ignores complex properties such as Date, Functions, prototypes, constructors
+   *
+   * @param {object} object
+   * @param {object} otherObject
+   * examples:
+   * isEqual({},{}) = true;
+   * isEqual({a:'a', b:1},{a:'a', b:1}) = true
+   * isEqual({a:'a', b:1},{b:1, a:'a'}) = true
+   * isEqual({a:[1,2,3,4]},{a:[2,3,4,1]}) = false
+   */
+  isEqual(object, otherObject) {
+    if (object === otherObject) {
+      return true;
+    }
+
+    if (
+      object === null ||
+      object === undefined ||
+      otherObject === null ||
+      otherObject === undefined ||
+      (['string', 'number'].includes(typeof object) &&
+        ['string', 'number'].includes(typeof otherObject))
+    ) {
+      return object === otherObject;
+    }
+
+    if (
+      Object.prototype.toString(object) !==
+      Object.prototype.toString(otherObject)
+    ) {
+      return false;
+    }
+
+    if (Array.isArray(object)) {
+      if (object.length !== otherObject.length) return false;
+
+      return !object.some((el, index) => !this.isEqual(el, otherObject[index]));
+    }
+
+    const objectKeys = Object.keys(object);
+
+    if (Object.keys(otherObject).length !== objectKeys.length) {
+      return false;
+    }
+
+    return Object.keys(otherObject).every(key => objectKeys.includes(key))
+      ? objectKeys.every(key => this.isEqual(object[key], otherObject[key]))
+      : false;
+  },
   setCategoryMappingData: (
     flowId,
     sessionMappedData = {},
