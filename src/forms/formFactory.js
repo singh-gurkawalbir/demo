@@ -71,11 +71,26 @@ const applyCustomSettings = ({ fieldMap, layout, preSave, isNew }) => {
       layoutCopy.containers.length > 0
     ) {
       if (layoutCopy.type === 'column') {
-        layoutCopy.containers[0].containers.push({
-          collapsed: true,
-          label: 'Custom settings',
-          fields: ['settings'],
-        });
+        if (
+          layoutCopy.containers[0].containers &&
+          layoutCopy.containers[0].containers.length
+        )
+          layoutCopy.containers[0].containers.push({
+            collapsed: true,
+            label: 'Custom settings',
+            fields: ['settings'],
+          });
+        else {
+          layoutCopy.containers[0].type = 'collapse';
+
+          layoutCopy.containers[0].containers = [
+            {
+              collapsed: true,
+              label: 'Custom settings',
+              fields: ['settings'],
+            },
+          ];
+        }
       } else
         layoutCopy.containers.push({
           collapsed: true,
