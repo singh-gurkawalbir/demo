@@ -11,7 +11,7 @@ export default {
         : '.ware2go.co'
     }/ware2go`,
     '/http/ping/relativeURI': `/v1/merchants/${
-      formValues['/http/encrypted/merchantId']
+      formValues['/http/unencrypted/merchantId']
     }/inventory`,
     '/http/ping/method': 'GET',
   }),
@@ -33,7 +33,7 @@ export default {
         const baseUri = r && r.http && r.http.baseURI;
 
         if (baseUri) {
-          if (baseUri.indexOf('staging') === -1) {
+          if (baseUri.indexOf('staging') !== -1) {
             return 'staging';
           }
         }
@@ -55,12 +55,11 @@ export default {
       helpText:
         'Please enter your Access Secret here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API Secret safe. This can be obtained by reaching out to Ware2Go support team.',
     },
-    'http.encrypted.merchantId': {
-      id: 'http.encrypted.merchantId',
+    'http.unencrypted.merchantId': {
+      id: 'http.unencrypted.merchantId',
       label: 'Merchant Id',
       required: true,
       type: 'text',
-      defaultValue: '',
       helpText:
         'Please enter your Merchant Id here. This can be obtained by reaching out to Ware2Go support team.',
     },
@@ -72,7 +71,7 @@ export default {
       'http.accountType',
       'http.auth.basic.username',
       'http.auth.basic.password',
-      'http.encrypted.merchantId',
+      'http.unencrypted.merchantId',
     ],
     type: 'collapse',
     containers: [

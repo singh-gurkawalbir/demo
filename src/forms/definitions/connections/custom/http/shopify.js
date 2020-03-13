@@ -49,10 +49,12 @@ export default {
         }
       }
 
-      if (resource && resource._connectorId) {
-        retValues['/http/_iClientId'] =
-          resource.http && resource.http._iClientId;
-      } else if (resource && resource.http && resource.http._iClientId) {
+      if (
+        resource &&
+        !resource._connectorId &&
+        resource.http &&
+        resource.http._iClientId
+      ) {
         retValues['/http/_iClientId'] = undefined;
       }
     } else {

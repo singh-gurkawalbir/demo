@@ -8,7 +8,6 @@ import DynaFormGenerator from './DynaFormGenerator';
 import ButtonGroup from '../ButtonGroup';
 import * as selectors from '../../reducers';
 import { disableAllFieldsExceptClockedFields } from '../../forms/utils';
-import { C_LOCKED_FIELDS } from '../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   fieldContainer: {
@@ -82,26 +81,32 @@ const DynaForm = props => {
 
 export default function DisabledDynaFormPerUserPermissions(props) {
   // Disabled is a prop to deliberately disable the Form this is added to support a DynaForm within a DynaForm
-  const { integrationId, disabled, fieldMeta } = props;
-  // pass in the integration Id to find access level of its associated forms
-  const isFormAMonitorLevelAccess = useSelector(state =>
-    selectors.isFormAMonitorLevelAccess(state, integrationId)
+  const {
+    integrationId,
+    disabled,
+    fieldMeta,
+    resourceType,
+    resourceId,
+  } = props;
+  const resource = useSelector(state =>
+    selectors.resource(state, resourceType, resourceId)
   );
-  const viewMode = isFormAMonitorLevelAccess || disabled;
-  const fieldMetaWithDisabledFields = useMemo(() => {
-    if (viewMode) {
-      // disabled all fields except certain ones
-      return disableAllFieldsExceptClockedFields(fieldMeta, C_LOCKED_FIELDS);
-    }
+  // pass in the integration Id to find access level of its associated forms
+  const { disableAllFields, disableAllFieldsExceptClocked } = useSelector(
+    state => selectors.formAccessLevel(state, integrationId, resource, disabled)
+  );
+  const updatedFieldMeta = useMemo(() => {
+    if (disableAllFieldsExceptClocked)
+      return disableAllFieldsExceptClockedFields(fieldMeta, resourceType);
 
     return fieldMeta;
-  }, [fieldMeta, viewMode]);
+  }, [disableAllFieldsExceptClocked, fieldMeta, resourceType]);
 
   return (
     <DynaForm
       {...props}
-      disabled={viewMode}
-      fieldMeta={fieldMetaWithDisabledFields}
+      disabled={disableAllFields}
+      fieldMeta={updatedFieldMeta}
       // when its in view mode we disable validation before touch this ensures that there is no
       // required fields errored messages
     />

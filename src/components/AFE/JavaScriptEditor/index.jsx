@@ -86,7 +86,7 @@ export default function JavaScriptEditor(props) {
         />
       </PanelGridItem>
       <PanelGridItem gridArea="data">
-        <PanelTitle title="Function Input" />
+        <PanelTitle title="Function input" />
         <CodePanel
           name="data"
           value={data}
@@ -96,13 +96,8 @@ export default function JavaScriptEditor(props) {
         />
       </PanelGridItem>
       <PanelGridItem gridArea="result">
-        <PanelTitle title="Function Output" />
-        <CodePanel
-          name="result"
-          value={parsedData}
-          mode={resultMode}
-          readOnly
-        />
+        <PanelTitle title="Function output" />
+        <CodePanel name="result" value={parsedData} mode="json" readOnly />
       </PanelGridItem>
 
       <ErrorGridItem error={error} violations={violations} />
