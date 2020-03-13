@@ -90,6 +90,18 @@ export function editorViolations(state, id) {
   return fromEditors.editorViolations(state && state.editors, id);
 }
 
+export function isEditorDirty(state, id) {
+  return fromEditors.isEditorDirty(state && state.editors, id);
+}
+
+export function editorPatchSet(state, id) {
+  return fromEditors.editorPatchSet(state && state.editors, id);
+}
+
+export function editorPatchStatus(state, id) {
+  return fromEditors.editorPatchStatus(state && state.editors, id);
+}
+
 export function mapping(state, id) {
   return fromMappings.mapping(state && state.mappings, id);
 }
@@ -98,8 +110,8 @@ export function mappingsChanged(state, id) {
   return fromMappings.mappingsChanged(state && state.mappings, id);
 }
 
-export function mappingSaveProcessTerminate(state, id) {
-  return fromMappings.mappingSaveProcessTerminate(state && state.mappings, id);
+export function mappingsSaveStatus(state, id) {
+  return fromMappings.mappingsSaveStatus(state && state.mappings, id);
 }
 
 export function getSearchCriteria(state, id) {
@@ -315,11 +327,44 @@ export function integrationAppsInstaller(state, id) {
   );
 }
 
+export function categoryMappingsCollapsedStatus(state, integrationId, flowId) {
+  return fromIntegrationApps.categoryMappingsCollapsedStatus(
+    state && state.integrationApps,
+    integrationId,
+    flowId
+  );
+}
+
+export function categoryMappingsChanged(state, integrationId, flowId) {
+  return fromIntegrationApps.categoryMappingsChanged(
+    state && state.integrationApps,
+    integrationId,
+    flowId
+  );
+}
+
+export function categoryMappingSaveStatus(state, integrationId, flowId) {
+  return fromIntegrationApps.categoryMappingSaveStatus(
+    state && state.integrationApps,
+    integrationId,
+    flowId
+  );
+}
+
 export function categoryMapping(state, integrationId, flowId) {
   return fromIntegrationApps.categoryMapping(
     state && state.integrationApps,
     integrationId,
     flowId
+  );
+}
+
+export function categoryMappingsForSection(state, integrationId, flowId, id) {
+  return fromIntegrationApps.categoryMappingsForSection(
+    state && state.integrationApps,
+    integrationId,
+    flowId,
+    id
   );
 }
 

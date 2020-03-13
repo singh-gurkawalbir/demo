@@ -40,8 +40,12 @@ function* createPayload({ values, resourceId }) {
     connectionResource = {};
   }
 
-  let returnData = jsonpatch.applyPatch(connectionResource.merged, patchSet)
-    .newDocument;
+  let returnData = jsonpatch.applyPatch(
+    connectionResource.merged
+      ? jsonpatch.deepClone(connectionResource.merged)
+      : {},
+    jsonpatch.deepClone(patchSet)
+  ).newDocument;
 
   // We built all connection assistants on HTTP adaptor on React. With recent changes to decouple REST deprecation
   // and React we are forced to convert HTTP to REST doc for existing REST assistants since we dont want to build

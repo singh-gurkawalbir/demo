@@ -402,6 +402,12 @@ const connectors = [
     type: 'rest',
     assistant: 'liquidplanner',
   },
+  {
+    id: 'loopreturns',
+    name: 'Loop Returns',
+    type: 'http',
+    assistant: 'loopreturns',
+  },
   { id: 'magento', name: 'Magento 2', type: 'rest', assistant: 'magento' },
   {
     id: 'mailchimp',
@@ -712,6 +718,17 @@ const connectors = [
   { id: 'zuora', name: 'Zuora', type: 'rest', assistant: 'zuora' },
 ];
 
+connectors.sort((a, b) => {
+  const nameA = a.name ? a.name.toUpperCase() : '';
+  const nameB = b.name ? b.name.toUpperCase() : '';
+
+  if (nameA < nameB) return -1;
+
+  if (nameA > nameB) return 1;
+
+  return 0; // names must be equal
+});
+
 export const groupApplications = (
   resourceType,
   { assistants, appType, isSimpleImport }
@@ -778,7 +795,7 @@ export const groupApplications = (
       connectors: filteredConnectors.filter(c => c.group === 'db'),
     },
     {
-      label: 'Generic tech connectors',
+      label: 'Universal connectors',
       connectors: filteredConnectors.filter(c => c.group === 'tech'),
     },
     {

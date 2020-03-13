@@ -1,6 +1,5 @@
-import { useEffect, Fragment } from 'react';
+import { useMemo, useEffect, Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { isEmpty } from 'lodash';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import Icon from '../../../../components/icons/HookIcon';
@@ -25,66 +24,17 @@ function PostResponseMapHookDialog({
     (pageProcessorsObject.hooks &&
       pageProcessorsObject.hooks.postResponseMap) ||
     {};
-  const sampleData = useSelector(state =>
-    selectors.getSampleData(state, {
+  const { status: sampleDataStatus, data: sampleData } = useSelector(state =>
+    selectors.getSampleDataWrapper(state, {
       flowId,
       resourceId,
       resourceType,
       stage: 'postResponseMapHook',
     })
   );
-  const saveScript = values => {
-    const { code, scriptId } = values;
-    const patchSet = [
-      {
-        op: 'replace',
-        path: '/content',
-        value: code,
-      },
-    ];
-
-    dispatch(actions.resource.patchStaged(scriptId, patchSet, 'value'));
-    dispatch(actions.resource.commitStaged('scripts', scriptId, 'value'));
-  };
-
-  const savePostResponseMapHook = values => {
-    const patchSet = [];
-    const { scriptId: _scriptId, entryFunction } = values;
-
-    if (!pageProcessorsObject.hooks) {
-      patchSet.push({
-        op: 'add',
-        path: `/pageProcessors/${resourceIndex}/hooks`,
-        value: {},
-      });
-    }
-
-    // Incase of user selecting None for script, pass undefined instead of '' as BE throws error if it is ''
-    patchSet.push({
-      op:
-        pageProcessorsObject.hooks && pageProcessorsObject.hooks.postResponseMap
-          ? 'replace'
-          : 'add',
-      path: `/pageProcessors/${resourceIndex}/hooks/postResponseMap`,
-      value: { _scriptId: _scriptId || undefined, function: entryFunction },
-    });
-    dispatch(actions.resource.patchStaged(flowId, patchSet, 'value'));
-    dispatch(actions.resource.commitStaged('flows', flowId, 'value'));
-  };
-
-  const handleClose = (shouldCommit, editorValues) => {
-    if (shouldCommit) {
-      // Saves the script first with updated content against scriptId
-      saveScript(editorValues);
-      // Saves postResponseMap Hook on pageProcessor based on resourceIndex
-      savePostResponseMapHook(editorValues);
-    }
-
-    onClose();
-  };
 
   useEffect(() => {
-    if (!sampleData) {
+    if (!sampleDataStatus) {
       dispatch(
         actions.flowData.requestSampleData(
           flowId,
@@ -94,14 +44,24 @@ function PostResponseMapHookDialog({
         )
       );
     }
-  }, [dispatch, flowId, resourceId, resourceType, sampleData]);
+  }, [
+    dispatch,
+    flowId,
+    resourceId,
+    resourceType,
+    sampleData,
+    sampleDataStatus,
+  ]);
   // stringified preHookData as the way Editor expects
-  const preHookData = JSON.stringify(
-    {
-      postResponseMapData: isEmpty(sampleData) ? {} : sampleData,
-    },
-    null,
-    2
+  const preHookData = JSON.stringify(sampleData, null, 2);
+  const optionalSaveParams = useMemo(
+    () => ({
+      pageProcessorsObject,
+      processorKey: 'postResponseMapHook',
+      resourceIndex,
+      flowId,
+    }),
+    [flowId, pageProcessorsObject, resourceIndex]
   );
 
   return (
@@ -116,7 +76,9 @@ function PostResponseMapHookDialog({
       entryFunction={
         postResponseMapHook.function || hooksToFunctionNamesMap[hookStage]
       }
-      onClose={handleClose}
+      patchOnSave
+      onClose={onClose}
+      optionalSaveParams={optionalSaveParams}
     />
   );
 }

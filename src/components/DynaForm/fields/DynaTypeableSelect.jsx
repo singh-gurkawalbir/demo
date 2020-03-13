@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Select from 'react-select';
 import { makeStyles, useTheme, fade } from '@material-ui/core/styles';
 import { FormControl } from '@material-ui/core';
+import DynaText from './DynaText';
 import ErroredMessageComponent from './ErroredMessageComponent';
 
 // TODO: Aditya Replace the component with DynaSelectApplication
@@ -39,6 +40,13 @@ const useStyles = makeStyles(theme => ({
     flexWrap: 'wrap',
     marginBottom: theme.spacing(2),
   },
+  multilineText: {
+    width: '100%',
+    '& div:first-child': {
+      minHeight: 50,
+      padding: '8px 35px 8px 8px',
+    },
+  },
 }));
 
 export default function DynaTypeableSelect(props) {
@@ -53,11 +61,13 @@ export default function DynaTypeableSelect(props) {
     valueName,
     options = [],
     isValid,
+    TextComponent,
     components = {
       DropdownIndicator: () => null,
       IndicatorSeparator: () => null,
     },
   } = props;
+  const ref = useRef(null);
   const suggestions = options.map(option => ({
     label: option[labelName],
     value: option[valueName],
@@ -68,7 +78,29 @@ export default function DynaTypeableSelect(props) {
     isFocus: false,
     filter: false,
   });
+  const [showDropdown, setShowDropdown] = useState(false);
   const { filter, inputValue, isFocus } = inputState;
+  // close clicked inside in component
+  const handleClickInside = event => {
+    if (
+      showDropdown === false &&
+      !disabled &&
+      ref.current &&
+      ref.current.contains(event.target)
+    ) {
+      setShowDropdown(true);
+    }
+  };
+
+  useEffect(() => {
+    // Bind the event listener
+    document.addEventListener('click', handleClickInside, true);
+
+    return () => {
+      // Unbind the event listener on clean up
+      document.removeEventListener('click', handleClickInside, true);
+    };
+  });
   const handleChange = newObj => {
     const newVal = newObj.value;
 
@@ -78,6 +110,8 @@ export default function DynaTypeableSelect(props) {
   };
 
   const handleBlur = () => {
+    setShowDropdown(false);
+
     if (value === inputValue) {
       return;
     }
@@ -90,8 +124,13 @@ export default function DynaTypeableSelect(props) {
     setInputState({ ...inputState, isFocus: false });
   };
 
-  const handleFocus = () => {
-    setInputState({ ...inputState, isFocus: false });
+  // const handleFocus = () => {
+  //   setInputState({ ...inputState, isFocus: false });
+  // };
+
+  const handleTextChange = (id, val) => {
+    setInputState({ filter: true, isFocus: true, inputValue: val });
+    onBlur(id, val);
   };
 
   const handleInputChange = (newVal, event) => {
@@ -205,24 +244,58 @@ export default function DynaTypeableSelect(props) {
   };
 
   return (
-    <FormControl error={!isValid} disabled={disabled} className={classes.root}>
-      <Select
-        id={id}
-        data-test={id}
-        inputValue={inputVal}
-        isDisabled={disabled}
-        value={selectedValue}
-        noOptionsMessage={() => null}
-        placeholder={placeholder || ''}
-        onInputChange={handleInputChange}
-        onChange={handleChange}
-        onBlur={handleBlur}
-        styles={customStyles}
-        onFocus={handleFocus}
-        components={components}
-        options={suggestions}
-        filterOption={filterOption}
-      />
+    <FormControl
+      ref={ref}
+      error={!isValid}
+      disabled={disabled}
+      className={classes.root}>
+      {showDropdown && (
+        <Select
+          id={id}
+          data-test={id}
+          inputValue={inputVal}
+          isDisabled={disabled}
+          value={selectedValue}
+          // restricting selection of 1st suggestion on tabout
+          tabSelectsValue={false}
+          noOptionsMessage={() => null}
+          placeholder={placeholder || ''}
+          onInputChange={handleInputChange}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          styles={customStyles}
+          // onFocus={handleFocus}
+          autoFocus
+          openOnFocus
+          components={components}
+          options={suggestions}
+          filterOption={filterOption}
+          menuIsOpen
+        />
+      )}
+      {!showDropdown &&
+        (TextComponent ? (
+          <TextComponent
+            {...props}
+            value={inputVal}
+            disabled={disabled}
+            multiline
+            readOnly
+            onFieldChange={handleTextChange}
+            className={classes.multilineText}
+            id={`text-${id}`}
+          />
+        ) : (
+          <DynaText
+            id={`text-${id}`}
+            value={inputVal}
+            disabled={disabled}
+            multiline
+            readOnly
+            onFieldChange={handleTextChange}
+            className={classes.multilineText}
+          />
+        ))}
 
       {!removeHelperText && <ErroredMessageComponent {...props} />}
     </FormControl>

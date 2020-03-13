@@ -13,6 +13,7 @@ import Notifications from './Notifications';
 import LicenseAction from './LicenseAction';
 import AccountList from './AccountList';
 import EnvironmentToggle from './EnvironmentToggle';
+import ThemeToggle from './ThemeToggle';
 import CeligoBreadcrumb from './CeligoBreadcrumb';
 
 const useStyles = makeStyles(theme => ({
@@ -21,14 +22,8 @@ const useStyles = makeStyles(theme => ({
     width: 120,
     background: `url(${process.env.CDN_BASE_URI}images/flow-builder/celigo-product-logo.svg) no-repeat center left`,
   },
-  unauthenticatedAppBar: {
-    display: 'none',
-    background: theme.palette.background.paper2,
-    height: 36,
-  },
-
   appBar: {
-    background: theme.palette.background.paper2,
+    background: theme.palette.background.default,
     marginLeft: theme.drawerWidth,
     width: `calc(100% - ${theme.spacing(7)}px)`,
     height: 36,
@@ -118,6 +113,9 @@ export default function CeligoAppBar() {
               */}
               <li>
                 <AccountList />
+              </li>
+              <li>
+                <ThemeToggle />
               </li>
               <li>
                 <EnvironmentToggle />

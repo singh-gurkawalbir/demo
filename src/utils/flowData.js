@@ -20,20 +20,17 @@ import { isConnector } from './flows';
 
 const sampleDataStage = {
   exports: {
-    inputFilter: 'flowInputWithContext',
+    inputFilter: 'flowInput',
     transform: 'raw',
     preSavePage: 'transform', // preSavePage indicates export hooks
-    transformWithContext: 'transform',
-    outputFilter: 'transformWithContext',
+    outputFilter: 'transform',
     responseMappingExtract: 'preSavePage',
     responseMapping: 'responseMappingExtract',
     postResponseMap: 'responseMapping',
     postResponseMapHook: 'postResponseMap',
-    flowInputWithContext: 'flowInput',
   },
   imports: {
-    flowInputWithContext: 'flowInput',
-    inputFilter: 'flowInputWithContext',
+    inputFilter: 'flowInput',
     preMap: 'flowInput',
     importMappingExtract: 'preMap',
     importMapping: 'importMappingExtract',
@@ -119,12 +116,6 @@ export const getCurrentSampleDataStageStatus = (
   };
 };
 
-const lastExportDateTime = moment()
-  .add(-7, 'd')
-  .toISOString();
-const currentExportDateTime = moment()
-  .add(-24, 'h')
-  .toISOString();
 // Regex for parsing patchSet paths to listen field specific changes of a resource
 // sample Sequence path:  '/pageProcessors' or '/pageGenerators'
 // sample responseMapping path: '/pageProcessors/${resourceIndex}/responseMapping
@@ -276,10 +267,6 @@ export const isUIDataExpectedForResource = (resource, connection, flow) =>
   isBlobTypeResource(resource) ||
   isConnector(flow);
 
-// A dummy _Context field to expose on each preview data on flows
-export const getContextInfo = () => ({
-  _CONTEXT: { lastExportDateTime, currentExportDateTime },
-});
 /*
  * Gives a sample data for Blob resource
  */
@@ -313,9 +300,11 @@ export const generateDefaultExtractsObject = resourceType => {
 /*
  * @Inputs: flowInputData and rawData for the pp
  * This util merges both to generate actual format of Flow Record being passed at runtime
+ * If flowData is Array , then merge rawData to each object in that array
+ * If flowData is an Object, create array wrapped on it and merge rawData
  */
-export const generatePostResponseMapData = (flowData, rawData) => {
-  const flowDataArray = [flowData || {}];
+export const generatePostResponseMapData = (flowData, rawData = {}) => {
+  const flowDataArray = Array.isArray(flowData) ? flowData : [flowData || {}];
 
   return flowDataArray.map(fd => ({ ...fd, ...rawData }));
 };

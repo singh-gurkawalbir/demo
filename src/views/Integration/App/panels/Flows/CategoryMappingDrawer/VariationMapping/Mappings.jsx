@@ -10,17 +10,19 @@ import ActionButton from '../../../../../../../components/ActionButton';
 import LockIcon from '../../../../../../../components/icons/LockIcon';
 import TrashIcon from '../../../../../../../components/icons/TrashIcon';
 import DynaTypeableSelect from '../../../../../../../components/DynaForm/fields/DynaTypeableSelect';
+import MappingConnectorIcon from '../../../../../../../components/icons/MappingConnectorIcon';
 
 // TODO Azhar style header
 const useStyles = makeStyles(theme => ({
   root: {
     overflowY: 'off',
   },
+  deleteIcon: {
+    marginLeft: theme.spacing(1),
+  },
   header: {
-    display: 'grid',
+    display: 'flex',
     width: '100%',
-    gridTemplateColumns: '45% 45% 50px',
-    gridColumnGap: '1%',
     marginBottom: theme.spacing(2),
   },
   rowContainer: {
@@ -38,15 +40,13 @@ const useStyles = makeStyles(theme => ({
     },
   },
   innerRow: {
-    display: 'grid',
+    display: 'flex',
     width: '100%',
-    gridTemplateColumns: '40% 40% 50px',
     marginBottom: theme.spacing(1),
-    gridColumnGap: '1%',
   },
   mappingsBody: {
     height: `calc(100% - 32px)`,
-    overflow: 'auto',
+    overflow: 'visible',
   },
   childRow: {
     display: 'flex',
@@ -78,6 +78,15 @@ const useStyles = makeStyles(theme => ({
     height: 9,
     marginRight: 6,
   },
+  mappingIcon: {
+    color: theme.palette.secondary.lightest,
+    fontSize: theme.spacing(6),
+  },
+  mapField: {
+    display: 'flex',
+    position: 'relative',
+    width: '40%',
+  },
 }));
 
 export default function ImportMapping(props) {
@@ -92,7 +101,7 @@ export default function ImportMapping(props) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const { mappings, initChangeIdentifier } = useSelector(state =>
-    selectors.mapping(state, editorId)
+    selectors.categoryMappingsForSection(state, integrationId, flowId, editorId)
   );
   const { extractsMetadata: extractFields } = useSelector(state =>
     selectors.categoryMappingMetadata(state, integrationId, flowId)
@@ -115,12 +124,28 @@ export default function ImportMapping(props) {
     (rowIndex, event, field) => {
       const { value } = event.target;
 
-      dispatch(actions.mapping.patchField(editorId, field, rowIndex, value));
+      dispatch(
+        actions.integrationApp.settings.categoryMappings.patchField(
+          integrationId,
+          flowId,
+          editorId,
+          field,
+          rowIndex,
+          value
+        )
+      );
     },
     [dispatch, editorId]
   );
   const handleDelete = row => {
-    dispatch(actions.mapping.delete(editorId, row));
+    dispatch(
+      actions.integrationApp.settings.categoryMappings.delete(
+        integrationId,
+        flowId,
+        editorId,
+        row
+      )
+    );
   };
 
   const handleGenerateUpdate = mapping => (id, val) => {
@@ -136,7 +161,7 @@ export default function ImportMapping(props) {
           <div className={classes.rowContainer} key={mapping.index}>
             <div className={classes.innerRow}>
               <div
-                className={clsx(classes.childHeader, classes.childRow, {
+                className={clsx(classes.childHeader, classes.mapField, {
                   [classes.disableChildRow]: mapping.isRequired || disabled,
                 })}>
                 <DynaTypeableSelect
@@ -152,7 +177,7 @@ export default function ImportMapping(props) {
                 />
                 {mapping.isRequired && (
                   <Tooltip
-                    title="This field is required by the application you are importing to"
+                    title="This field is required by the application you are importing into"
                     placement="top">
                     <span className={classes.lockIcon}>
                       <LockIcon />
@@ -160,8 +185,9 @@ export default function ImportMapping(props) {
                   </Tooltip>
                 )}
               </div>
+              <MappingConnectorIcon className={classes.mappingIcon} />
               <div
-                className={clsx(classes.childHeader, classes.childRow, {
+                className={clsx(classes.childHeader, classes.mapField, {
                   [classes.disableChildRow]: mapping.isNotEditable || disabled,
                 })}>
                 <DynaTypeableSelect
@@ -192,7 +218,7 @@ export default function ImportMapping(props) {
                   onClick={() => {
                     handleDelete(mapping.index);
                   }}
-                  className={classes.margin}>
+                  className={classes.deleteIcon}>
                   <TrashIcon />
                 </ActionButton>
               </div>

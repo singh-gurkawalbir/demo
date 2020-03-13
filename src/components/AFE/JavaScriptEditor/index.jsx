@@ -29,7 +29,9 @@ export default function JavaScriptEditor(props) {
     scriptId,
     insertStubKey,
     disabled,
+    optionalSaveParams,
     layout = 'compact',
+    // resultMode = 'json',
   } = props;
   const classes = useStyles(props);
   const { data, result, error, initChangeIdentifier } = useSelector(state =>
@@ -54,9 +56,18 @@ export default function JavaScriptEditor(props) {
         data: props.data,
         autoEvaluate: true,
         autoEvaluateDelay: 1000,
+        initEntryFunction: entryFunction || 'main',
+        optionalSaveParams,
       })
     );
-  }, [dispatch, editorId, scriptId, entryFunction, props.data]);
+  }, [
+    dispatch,
+    editorId,
+    scriptId,
+    entryFunction,
+    props.data,
+    optionalSaveParams,
+  ]);
 
   useEffect(() => {
     handleInit();
@@ -75,7 +86,7 @@ export default function JavaScriptEditor(props) {
         />
       </PanelGridItem>
       <PanelGridItem gridArea="data">
-        <PanelTitle title="Function Input" />
+        <PanelTitle title="Function input" />
         <CodePanel
           name="data"
           value={data}
@@ -85,7 +96,7 @@ export default function JavaScriptEditor(props) {
         />
       </PanelGridItem>
       <PanelGridItem gridArea="result">
-        <PanelTitle title="Function Output" />
+        <PanelTitle title="Function output" />
         <CodePanel name="result" value={parsedData} mode="json" readOnly />
       </PanelGridItem>
 

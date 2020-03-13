@@ -80,7 +80,7 @@ export default function CsvGenerateEditor(props) {
   return (
     <PanelGrid className={classes.template} key={initChangeIdentifier}>
       <PanelGridItem gridArea="rule">
-        <PanelTitle title="CSV Generate Options" />
+        <PanelTitle title="CSV generate options" />
         <CsvGeneratePanel disabled={disabled} editorId={editorId} />
       </PanelGridItem>
       <PanelGridItem gridArea="data">
@@ -94,7 +94,7 @@ export default function CsvGenerateEditor(props) {
         />
       </PanelGridItem>
       <PanelGridItem gridArea="result">
-        <PanelTitle title="Generated Result" />
+        <PanelTitle title="Generated result" />
         <CodePanel
           name="result"
           value={result && result.data ? result.data : ''}

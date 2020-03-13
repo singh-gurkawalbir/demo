@@ -202,6 +202,7 @@ export default {
           { label: 'Lightspeed', value: 'lightspeed' },
           { label: 'Linkedin', value: 'linkedin' },
           { label: 'Liquidplanner', value: 'liquidplanner' },
+          { label: 'Loop Returns', value: 'loopreturns' },
           { label: 'Magento 2', value: 'magento' },
           { label: 'Mailchimp', value: 'mailchimp' },
           { label: 'Mediaocean', value: 'mediaocean' },
@@ -569,5 +570,12 @@ export default {
     type: 'checkbox',
     label: 'Skip Retries',
     visible: r => !(r && r.isLookup),
+  },
+  settings: {
+    type: 'editor',
+    mode: 'json',
+    label: 'Settings',
+    showOnDeveloperMode: true,
+    defaultValue: r => (r && r.settings && JSON.stringify(r.settings)) || '{}',
   },
 };
