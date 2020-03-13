@@ -22,6 +22,9 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'center',
     textAlign: 'center',
   },
+  contentWrapper: {
+    wordBreak: 'break-word',
+  },
 }));
 const Dismiss = props =>
   props.show && (
@@ -93,7 +96,7 @@ export default function NetworkSnackbar() {
   };
 
   const msg = (
-    <div>
+    <div className={classes.contentWrapper}>
       <ul>{allLoadingOrErrored.map(r => notification(r))}</ul>
       {isLoadingAnyResource && <LinearProgress />}
       <Dismiss show={!isLoadingAnyResource} onClick={handleClearComms} />

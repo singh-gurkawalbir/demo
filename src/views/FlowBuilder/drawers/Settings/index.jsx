@@ -61,6 +61,7 @@ export default function SettingsDrawer({ flow, isViewMode }) {
         type: 'select',
         helpKey: 'flow._integrationId',
         label: 'Integration',
+        placeholder: 'Standalone Flows',
         defaultValue: flow && flow._integrationId,
         options: [
           {

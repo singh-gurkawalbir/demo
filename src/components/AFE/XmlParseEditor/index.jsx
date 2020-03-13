@@ -53,11 +53,11 @@ export default function XmlParseEditor(props) {
       key={`${editorId}-${initChangeIdentifier}`}
       className={classes.template}>
       <PanelGridItem gridArea="rule">
-        <PanelTitle title="XML Parse Options" />
+        <PanelTitle title="XML parse options" />
         <XmlParsePanel disabled={disabled} editorId={editorId} />
       </PanelGridItem>
       <PanelGridItem gridArea="data">
-        <PanelTitle title="XML to Parse" />
+        <PanelTitle title="XML to parse" />
         <CodePanel
           name="data"
           value={data}
@@ -67,7 +67,7 @@ export default function XmlParseEditor(props) {
         />
       </PanelGridItem>
       <PanelGridItem gridArea="result">
-        <PanelTitle title="Parsed Result" />
+        <PanelTitle title="Parsed result" />
         <CodePanel
           name="result"
           value={result ? result.data[0] : ''}
