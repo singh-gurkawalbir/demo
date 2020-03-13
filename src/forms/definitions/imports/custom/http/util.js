@@ -33,21 +33,21 @@ export function basicFieldsMeta({ assistantConfig, assistantData }) {
   };
   const { labels = {}, versions = [] } = assistantData;
 
-  return Object.keys(fieldDefinitions)
-    .filter(fieldId => {
-      if (fieldId === 'version') {
-        return versions.length > 1;
-      }
+  return Object.keys(fieldDefinitions).map(fieldId => {
+    if (fieldId === 'version') {
+      fieldDefinitions[fieldId].visible = versions.length > 1;
 
-      return true;
-    })
-    .map(fieldId => {
-      if (labels[fieldId]) {
-        fieldDefinitions[fieldId].label = labels[fieldId];
+      if (!fieldDefinitions[fieldId].value) {
+        fieldDefinitions[fieldId].value = versions[0].version;
       }
+    }
 
-      return fieldDefinitions[fieldId];
-    });
+    if (labels[fieldId]) {
+      fieldDefinitions[fieldId].label = labels[fieldId];
+    }
+
+    return fieldDefinitions[fieldId];
+  });
 }
 
 export function pathParameterFieldsMeta({ operationParameters = [], values }) {

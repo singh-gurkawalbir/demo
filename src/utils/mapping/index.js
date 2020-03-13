@@ -61,9 +61,11 @@ const setMappingData = (
       // eslint-disable-next-line no-param-reassign
       mapping.fieldMappings = mappings[key].mappings
         .filter(el => (!!el.extract || !!el.hardCodedValue) && !!el.generate)
-        .map(({ index, rowIdentifier, ...rest }) => ({
-          ...rest,
-        }));
+        .map(
+          ({ index, rowIdentifier, hardCodedValueTmp, visible, ...rest }) => ({
+            ...rest,
+          })
+        );
 
       if (mappings[key].lookups && mappings[key].lookups.length) {
         // eslint-disable-next-line no-param-reassign
@@ -92,9 +94,17 @@ const setVariationMappingData = (flowId, recordMappings, mappings) => {
         // eslint-disable-next-line no-param-reassign
         vm.fieldMappings = mappings[key].mappings
           .filter(el => (!!el.extract || !!el.hardCodedValue) && !!el.generate)
-          .map(({ index, rowIdentifier, ...rest }) => ({
-            ...rest,
-          }));
+          .map(
+            ({
+              index,
+              rowIdentifier,
+              hardCodedValueTmp,
+              visible,
+              ...rest
+            }) => ({
+              ...rest,
+            })
+          );
 
         if (mappings[key].lookups && mappings[key].lookups.length) {
           // eslint-disable-next-line no-param-reassign
@@ -275,6 +285,58 @@ export default {
     }
 
     return value.dataType;
+  },
+  /**
+   * given two json objects, does a deep comparision of the objects
+   * This function is written specific to compare category mapping metadata
+   * this ignores complex properties such as Date, Functions, prototypes, constructors
+   *
+   * @param {object} object
+   * @param {object} otherObject
+   * examples:
+   * isEqual({},{}) = true;
+   * isEqual({a:'a', b:1},{a:'a', b:1}) = true
+   * isEqual({a:'a', b:1},{b:1, a:'a'}) = true
+   * isEqual({a:[1,2,3,4]},{a:[2,3,4,1]}) = false
+   */
+  isEqual(object, otherObject) {
+    if (object === otherObject) {
+      return true;
+    }
+
+    if (
+      object === null ||
+      object === undefined ||
+      otherObject === null ||
+      otherObject === undefined ||
+      (['string', 'number'].includes(typeof object) &&
+        ['string', 'number'].includes(typeof otherObject))
+    ) {
+      return object === otherObject;
+    }
+
+    if (
+      Object.prototype.toString(object) !==
+      Object.prototype.toString(otherObject)
+    ) {
+      return false;
+    }
+
+    if (Array.isArray(object)) {
+      if (object.length !== otherObject.length) return false;
+
+      return !object.some((el, index) => !this.isEqual(el, otherObject[index]));
+    }
+
+    const objectKeys = Object.keys(object);
+
+    if (Object.keys(otherObject).length !== objectKeys.length) {
+      return false;
+    }
+
+    return Object.keys(otherObject).every(key => objectKeys.includes(key))
+      ? objectKeys.every(key => this.isEqual(object[key], otherObject[key]))
+      : false;
   },
   setCategoryMappingData: (
     flowId,
@@ -917,12 +979,12 @@ export default {
 
       list ? list.fields.push(mapping) : fields.push(mapping);
     });
-    const formattedMapping = {
+    const generatedMapping = mappingUtil.shiftSubRecordLast({
       fields,
       lists,
-    };
+    });
 
-    return formattedMapping;
+    return generatedMapping;
   },
   getResponseMappingDefaultExtracts: resourceType => {
     const extractFields =
@@ -1137,4 +1199,22 @@ export default {
     return extractPaths;
   },
   isCsvOrXlsxResource,
+  shiftSubRecordLast: ({ fields, lists }) => {
+    const orderedLists = lists.map(l => {
+      const _l = l;
+      const itemsWithoutSubRecord = _l.fields.filter(f => !f.subRecordMapping);
+      const itemsWithSubRecord = _l.fields.filter(f => f.subRecordMapping);
+
+      _l.fields = [...itemsWithoutSubRecord, ...itemsWithSubRecord];
+
+      return _l;
+    });
+    const fieldsWithoutSubRecord = fields.filter(f => !f.subRecordMapping);
+    const fieldsWithSubRecord = fields.filter(f => f.subRecordMapping);
+
+    return {
+      fields: [...fieldsWithoutSubRecord, ...fieldsWithSubRecord],
+      lists: orderedLists,
+    };
+  },
 };

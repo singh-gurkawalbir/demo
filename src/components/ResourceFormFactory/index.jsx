@@ -120,8 +120,11 @@ export function ActionsFactory(props) {
     <DynaForm {...props}>
       {actionButtons.map(key => {
         const Action = consolidatedActions[key];
+        // remove form disabled prop...
+        // they dont necessary apply to action button
+        const { disabled, ...rest } = props;
 
-        return <Action key={key} dataTest={key} {...props} />;
+        return <Action key={key} dataTest={key} {...rest} />;
       })}
     </DynaForm>
   );
