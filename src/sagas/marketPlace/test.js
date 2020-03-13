@@ -1,7 +1,8 @@
 /* global describe, test, expect */
-import { call, put } from 'redux-saga/effects';
+import { call, put, select } from 'redux-saga/effects';
 import actions from '../../actions';
 import { apiCallWithRetry } from '../index';
+import * as selectors from '../../reducers/index';
 import {
   requestConnectors,
   requestTemplates,
@@ -78,10 +79,14 @@ describe('installConnector saga', () => {
   const connectorId = '123';
   const sandbox = true;
   const path = `/integrations/${connectorId}/install`;
+  const connectorResource = { _id: connectorId };
 
   test('should succeed on successful api call', () => {
     const saga = installConnector({ connectorId, sandbox });
 
+    expect(saga.next(connectorResource).value).toEqual(
+      select(selectors.resource, 'connectors', connectorId)
+    );
     expect(saga.next().value).toEqual(
       call(apiCallWithRetry, {
         path,
@@ -106,6 +111,9 @@ describe('installConnector saga', () => {
   test('should handle if api call fails', () => {
     const saga = installConnector({ connectorId, sandbox });
 
+    expect(saga.next(connectorResource).value).toEqual(
+      select(selectors.resource, 'connectors', connectorId)
+    );
     expect(saga.next().value).toEqual(
       call(apiCallWithRetry, {
         path,

@@ -713,6 +713,11 @@ const integrationApp = {
         storeId,
         addOnId,
       }),
+    scriptInstallStep: (integrationId, connectionId) =>
+      action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.SCRIPT_REQUEST, {
+        id: integrationId,
+        connectionId,
+      }),
     updateStep: (integrationId, installerFunction, update) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.UPDATE, {
         id: integrationId,
@@ -724,6 +729,11 @@ const integrationApp = {
         stepsToUpdate: stepCompleteResponse.stepsToUpdate,
         id,
         installerFunction,
+      }),
+    completedScriptStepInstall: (stepCompleteResponse, id) =>
+      action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.DONE, {
+        stepsToUpdate: stepCompleteResponse,
+        id,
       }),
   },
   uninstaller: {

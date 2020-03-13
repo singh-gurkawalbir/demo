@@ -19,7 +19,11 @@ export default {
     let stepText = '';
     const isUninstall = mode === 'uninstall';
 
-    if (step._connectionId || step.type === INSTALL_STEP_TYPES.STACK) {
+    if (
+      step._connectionId ||
+      step.type === INSTALL_STEP_TYPES.STACK ||
+      step.type === 'connection'
+    ) {
       if (step.completed) {
         stepText = 'Configured';
       } else if (step.isTriggered) {

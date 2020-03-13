@@ -61,23 +61,39 @@ function getIntegrationAppsNextState(state, action) {
   return produce(state, draft => {
     const integration = draft.integrations.find(i => i._id === id);
 
-    if (!integration || !integration.install) {
-      return;
+    if (integration && integration.installSteps) {
+      stepsToUpdate &&
+        stepsToUpdate.forEach(step => {
+          const stepIndex = integration.installSteps.findIndex(
+            s => s.name === step.name
+          );
+
+          if (stepIndex !== -1) {
+            integration.installSteps[stepIndex] = {
+              ...integration.installSteps[stepIndex],
+              ...step,
+            };
+          }
+        });
+    } else {
+      if (!integration || !integration.install) {
+        return;
+      }
+
+      stepsToUpdate &&
+        stepsToUpdate.forEach(step => {
+          const stepIndex = integration.install.findIndex(
+            s => s.installerFunction === step.installerFunction
+          );
+
+          if (stepIndex !== -1) {
+            integration.install[stepIndex] = {
+              ...integration.install[stepIndex],
+              ...step,
+            };
+          }
+        });
     }
-
-    stepsToUpdate &&
-      stepsToUpdate.forEach(step => {
-        const stepIndex = integration.install.findIndex(
-          s => s.installerFunction === step.installerFunction
-        );
-
-        if (stepIndex !== -1) {
-          integration.install[stepIndex] = {
-            ...integration.install[stepIndex],
-            ...step,
-          };
-        }
-      });
   });
 }
 
@@ -383,6 +399,14 @@ export function connectionHasAs2Routing(state, id) {
 export function integrationInstallSteps(state, id) {
   const integration = resource(state, 'integrations', id);
 
+  if (integration && integration.installSteps) {
+    return produce(integration.installSteps, draft => {
+      if (draft.find(step => !step.completed)) {
+        draft.find(step => !step.completed).isCurrentStep = true;
+      }
+    });
+  }
+
   if (!integration || !integration.install) {
     return emptyList;
   }
@@ -402,11 +426,11 @@ export function integrationAppSettings(state, id) {
   }
 
   return produce(integration, draft => {
-    if (draft.settings.general) {
-      if (!draft.settings) {
-        draft.settings = emptyObject;
-      }
+    if (!draft.settings) {
+      draft.settings = emptyObject;
+    }
 
+    if (draft.settings.general) {
       draft.settings.hasGeneralSettings = true;
     }
 
