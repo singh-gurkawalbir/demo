@@ -30,18 +30,14 @@ import Spinner from '../Spinner';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    marginTop: theme.spacing(2),
     flexGrow: 1,
     width: '100%',
-    padding: '10px 25px',
   },
   formHead: {
     borderBottom: `solid 1px ${theme.palette.secondary.lightest}`,
     marginBottom: 29,
   },
-  innerContent: {
-    width: '80vw',
-  },
+
   stepTable: { position: 'relative', marginTop: -20 },
   floatRight: {
     float: 'right',
@@ -51,8 +47,8 @@ const useStyles = makeStyles(theme => ({
     background: theme.palette.background.default,
   },
 }));
-const getConnectionType = resource => {
-  const { assistant, type } = getResourceSubType(resource);
+const getConnectionType = connection => {
+  const { assistant, type } = getResourceSubType(connection);
 
   if (assistant) return assistant;
 
@@ -70,6 +66,7 @@ export default function InstallationWizard(props) {
     templateId,
     resource,
     handleSetupComplete,
+    variant,
   } = props;
   const [installInProgress, setInstallInProgress] = useState(false);
   const [connection, setSelectedConnectionId] = useState(null);
@@ -290,7 +287,7 @@ export default function InstallationWizard(props) {
         />
       )}
       <div className={classes.root}>
-        <div className={classes.innerContent}>
+        {variant !== 'new' && (
           <Grid container className={classes.formHead}>
             <Grid item xs={1}>
               <IconButton onClick={handleBackClick} size="medium">
@@ -310,19 +307,19 @@ export default function InstallationWizard(props) {
               </Paper>
             </Grid>
           </Grid>
-          <Grid container spacing={3} className={classes.stepTable}>
-            {installSteps.map((step, index) => (
-              <InstallationStep
-                key={step.name}
-                templateId={templateId}
-                connectionMap={connectionMap}
-                handleStepClick={handleStepClick}
-                index={index + 1}
-                step={step}
-              />
-            ))}
-          </Grid>
-        </div>
+        )}
+        <Grid container spacing={3} className={classes.stepTable}>
+          {installSteps.map((step, index) => (
+            <InstallationStep
+              key={step.name}
+              templateId={templateId}
+              connectionMap={connectionMap}
+              handleStepClick={handleStepClick}
+              index={index + 1}
+              step={step}
+            />
+          ))}
+        </Grid>
       </div>
     </LoadResources>
   );

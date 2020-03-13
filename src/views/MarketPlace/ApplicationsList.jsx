@@ -7,7 +7,7 @@ import { Card, Typography } from '@material-ui/core';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
 import getRoutePath from '../../utils/routePaths';
-import ApplicationImg from '../icons/ApplicationImg';
+import ApplicationImg from '../../components/icons/ApplicationImg';
 import connectorsMetadata from '../../constants/applications';
 
 const useStyles = makeStyles(theme => ({
@@ -47,7 +47,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function MarketplaceList({ filter }) {
+export default function ApplicationsList({ filter }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const userPreferences = useSelector(state =>
