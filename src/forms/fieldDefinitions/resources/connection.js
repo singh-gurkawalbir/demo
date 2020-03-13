@@ -110,6 +110,7 @@ export default {
           { label: 'Lightspeed', value: 'lightspeed' },
           { label: 'Linkedin', value: 'linkedin' },
           { label: 'Liquidplanner', value: 'liquidplanner' },
+          { label: 'Loop Returns', value: 'loopreturns' },
           { label: 'Magento 2', value: 'magento' },
           { label: 'Mailchimp', value: 'mailchimp' },
           { label: 'Mediaocean', value: 'mediaocean' },
@@ -2053,6 +2054,7 @@ export default {
     type: 'hook',
     label: '',
     required: false,
+    editorResultMode: 'text',
     hookStage: 'contentBasedFlowRouter',
     preHookData: {
       httpHeaders: {

@@ -1,5 +1,12 @@
-import { Drawer, makeStyles, Typography, Grid } from '@material-ui/core';
-import { useSelector } from 'react-redux';
+import {
+  Drawer,
+  makeStyles,
+  Typography,
+  Grid,
+  Button,
+  Divider,
+} from '@material-ui/core';
+import { useSelector, useDispatch } from 'react-redux';
 import { useCallback, Fragment } from 'react';
 import {
   useRouteMatch,
@@ -11,9 +18,11 @@ import * as selectors from '../../../../../../../reducers';
 import PanelHeader from '../../../../../../../components/PanelHeader';
 import LoadResources from '../../../../../../../components/LoadResources';
 import ApplicationImg from '../../../../../../../components/icons/ApplicationImg';
+import ButtonGroup from '../../../../../../../components/ButtonGroup';
 import DrawerTitleBar from '../TitleBar';
 import VariationAttributesList from './AttributesList';
 import VariationMappings from './MappingsWrapper';
+import actions from '../../../../../../../actions';
 
 const drawerWidth = 200;
 const useStyles = makeStyles(theme => ({
@@ -49,6 +58,10 @@ const useStyles = makeStyles(theme => ({
   drawer: {
     width: drawerWidth,
     flexShrink: 0,
+  },
+  saveButtonGroup: {
+    margin: '10px 10px 10px 10px',
+    float: 'right',
   },
   nested: {
     paddingLeft: theme.spacing(4),
@@ -114,9 +127,10 @@ const useStyles = makeStyles(theme => ({
 
 function VariationMappingDrawer({ integrationId, parentUrl }) {
   const match = useRouteMatch();
-  const { flowId, subCategoryId, variation } = match.params;
+  const { flowId, subCategoryId, variation, categoryId } = match.params;
   const classes = useStyles();
   const history = useHistory();
+  const dispatch = useDispatch();
   const uiAssistant = useSelector(state => {
     const categoryMappingMetadata =
       selectors.categoryMapping(state, integrationId, flowId) || {};
@@ -145,6 +159,26 @@ function VariationMappingDrawer({ integrationId, parentUrl }) {
   const handleClose = useCallback(() => {
     history.push(parentUrl);
   }, [history, parentUrl]);
+  const handleCancel = useCallback(() => {
+    dispatch(
+      actions.integrationApp.settings.categoryMappings.cancelVariationMappings(
+        integrationId,
+        flowId,
+        `${flowId}-${subCategoryId}-${variation}`
+      )
+    );
+    handleClose();
+  }, [dispatch, flowId, handleClose, integrationId, subCategoryId, variation]);
+  const handleSave = useCallback(() => {
+    dispatch(
+      actions.integrationApp.settings.categoryMappings.saveVariationMappings(
+        integrationId,
+        flowId,
+        `${flowId}-${subCategoryId}-${variation}`
+      )
+    );
+    handleClose();
+  }, [dispatch, flowId, handleClose, integrationId, subCategoryId, variation]);
 
   if (!variation) {
     history.push(`${match.url}/${firstVariation}`);
@@ -201,11 +235,29 @@ function VariationMappingDrawer({ integrationId, parentUrl }) {
               <VariationMappings
                 integrationId={integrationId}
                 flowId={flowId}
+                categoryId={categoryId}
                 sectionId={subCategoryId}
                 variation={variation}
               />
             </Grid>
           </Grid>
+          <Divider />
+          <ButtonGroup className={classes.saveButtonGroup}>
+            <Button
+              id={flowId}
+              variant="outlined"
+              color="primary"
+              data-test="saveImportMapping"
+              onClick={handleSave}>
+              Save
+            </Button>
+            <Button
+              variant="text"
+              data-test="saveImportMapping"
+              onClick={handleCancel}>
+              Close
+            </Button>
+          </ButtonGroup>
         </div>
       </Drawer>
     </Fragment>

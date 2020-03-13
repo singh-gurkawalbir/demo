@@ -1,8 +1,6 @@
 // import { useCallback } from 'react';
-import { useSelector } from 'react-redux';
 import clsx from 'clsx';
 import { makeStyles, Typography } from '@material-ui/core';
-import * as selectors from '../../../reducers';
 // import actions from '../../../actions';
 // import CloseIcon from '../../icons/CloseIcon';
 import IconTextButton from '../../IconTextButton';
@@ -10,7 +8,7 @@ import ArrowRightIcon from '../../icons/ArrowRightIcon';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    margin: theme.spacing(-2, -1, 2, -2),
+    margin: theme.spacing(-3, -1, 2, -2),
     backgroundColor: theme.palette.common.white,
   },
   banner: {
@@ -19,22 +17,10 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(2, 3),
     // border: `solid 1px ${theme.palette.primary.light}`,
     alignItems: 'center',
-    backgroundColor: theme.palette.text.secondary,
+    backgroundColor: theme.palette.background.drawer2,
   },
   textColor: {
     color: theme.palette.common.white,
-  },
-  sandboxBanner: {
-    // border: `solid 1px ${theme.palette.sandbox.dark}`,
-  },
-  sandboxButton: {
-    // backgroundColor: theme.palette.sandbox.dark,
-    borderColor: theme.palette.sandbox.dark,
-    // color: theme.palette.sandbox.contrastText,
-    '&:hover': {
-      borderColor: theme.palette.sandbox.dark,
-      // backgroundColor: theme.palette.sandbox.light,
-    },
   },
   welcomeText: {
     flexGrow: 1,
@@ -52,20 +38,13 @@ const useStyles = makeStyles(theme => ({
 export default function WelcomeBanner() {
   const classes = useStyles();
   // const dispatch = useDispatch();
-  const environment = useSelector(
-    state => selectors.userPreferences(state).environment
-  );
-  const isSandbox = environment === 'sandbox';
   // const handleClose = useCallback(() => dispatch(actions.toggleBanner()), [
   //   dispatch,
   // ]);
 
   return (
     <div className={classes.root}>
-      <div
-        className={clsx(classes.banner, {
-          [classes.sandboxBanner]: isSandbox,
-        })}>
+      <div className={clsx(classes.banner)}>
         <div className={classes.welcomeText}>
           <Typography variant="h4" className={classes.textColor}>
             Welcome to our new experience (beta)!
@@ -90,9 +69,7 @@ export default function WelcomeBanner() {
           </Typography>
         </div>
         <IconTextButton
-          className={clsx(classes.textColor, {
-            [classes.sandboxButton]: isSandbox,
-          })}
+          className={clsx(classes.textColor)}
           component="a"
           href="/"
           variant="outlined">

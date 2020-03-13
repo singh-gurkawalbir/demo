@@ -6,6 +6,8 @@ const useStyles = makeStyles({
   root: {
     padding: '3px 10px',
     width: 350,
+    maxHeight: 600,
+    overflowY: 'auto',
     wordBreak: 'break-word',
     lineHeight: 'inherit',
   },

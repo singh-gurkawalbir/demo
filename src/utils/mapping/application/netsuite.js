@@ -244,6 +244,8 @@ export default {
       }
 
       delete mapping.useFirstRow;
+      // key is property added in UI side. removing it while saving.
+      delete mapping.key;
 
       if (mapping.useAsAnInitializeValue) {
         initializeValues.push(mapping.generate);

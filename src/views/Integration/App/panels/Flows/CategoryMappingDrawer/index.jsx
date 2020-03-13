@@ -1,4 +1,4 @@
-import { useState, useEffect, Fragment } from 'react';
+import { useState, useEffect, Fragment, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Route, useRouteMatch, useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -9,6 +9,8 @@ import {
   ExpansionPanel,
   ExpansionPanelDetails,
   ExpansionPanelSummary,
+  Button,
+  Divider,
 } from '@material-ui/core';
 import * as selectors from '../../../../../../reducers';
 import actions from '../../../../../../actions';
@@ -26,6 +28,9 @@ import Mappings from './BasicMapping';
 import Filters from './Filters';
 import CategoryList from './CategoryList';
 import DrawerTitleBar from './TitleBar';
+import ButtonGroup from '../../../../../../components/ButtonGroup';
+import FullScreenCloseIcon from '../../../../../../components/icons/FullScreenCloseIcon';
+import FullScreenOpenIcon from '../../../../../../components/icons/FullScreenOpenIcon';
 
 const emptySet = [];
 const drawerWidth = 200;
@@ -48,6 +53,10 @@ const useStyles = makeStyles(theme => ({
   refreshButton: {
     marginLeft: theme.spacing(1),
     marginRight: 0,
+  },
+  saveButtonGroup: {
+    margin: '10px 10px 10px 10px',
+    float: 'right',
   },
   fullWidth: {
     width: '100%',
@@ -121,18 +130,30 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function CategoryMappings({ integrationId, flowId, sectionId, isRoot = true }) {
+function CategoryMappings({
+  integrationId,
+  flowId,
+  sectionId,
+  isRoot = true,
+  isParentCommonCategory = false,
+}) {
   const [requestedGenerateFields, setRequestedGenerateFields] = useState(false);
   const dispatch = useDispatch();
   const classes = useStyles();
   const history = useHistory();
   const match = useRouteMatch();
+  const isCommonCategory =
+    sectionId === 'commonAttributes' || isParentCommonCategory;
   const [expanded, setExpanded] = useState(isRoot);
   const { fields: generateFields, name, variation_themes: variationThemes } =
     useSelector(state =>
       selectors.categoryMappingGenerateFields(state, integrationId, flowId, {
         sectionId,
       })
+    ) || {};
+  const { collapseAction } =
+    useSelector(state =>
+      selectors.categoryMappingsCollapsedStatus(state, integrationId, flowId)
     ) || {};
   const { children = [], deleted } =
     useSelector(state =>
@@ -166,11 +187,25 @@ function CategoryMappings({ integrationId, flowId, sectionId, isRoot = true }) {
     sectionId,
     isRoot,
   ]);
+  const shouldExpand =
+    isRoot || (collapseAction ? collapseAction !== 'collapse' : expanded);
 
-  const handleChange = () => {
+  useEffect(() => {
+    setExpanded(shouldExpand);
+  }, [shouldExpand]);
+  useEffect(() => {
+    if (collapseAction) {
+      dispatch(
+        actions.integrationApp.settings.categoryMappings.clearCollapseStatus(
+          integrationId,
+          flowId
+        )
+      );
+    }
+  }, [collapseAction, dispatch, flowId, integrationId]);
+  const handleChange = useCallback(() => {
     setExpanded(!expanded);
-  };
-
+  }, [expanded]);
   const handleDelete = e => {
     // Clicking of this icon should avoid collapsing this category section
     e.stopPropagation();
@@ -201,6 +236,15 @@ function CategoryMappings({ integrationId, flowId, sectionId, isRoot = true }) {
     history.push(`${match.url}/variations/${sectionId}`);
   };
 
+  if (!generateFields) {
+    return (
+      <Loader open>
+        {`Loading ${sectionId}  metadata`}
+        <Spinner />
+      </Loader>
+    );
+  }
+
   return (
     <div className={isRoot ? classes.mappingContainer : classes.default}>
       <ExpansionPanel
@@ -220,13 +264,20 @@ function CategoryMappings({ integrationId, flowId, sectionId, isRoot = true }) {
               onClick={handleVariation}
             />
           )}
-          {deleted ? (
-            <RestoreIcon
-              className={classes.deleteIcon}
-              onClick={handleRestore}
-            />
-          ) : (
-            <TrashIcon className={classes.deleteIcon} onClick={handleDelete} />
+          {!isCommonCategory && (
+            <div>
+              {deleted ? (
+                <RestoreIcon
+                  className={classes.deleteIcon}
+                  onClick={handleRestore}
+                />
+              ) : (
+                <TrashIcon
+                  className={classes.deleteIcon}
+                  onClick={handleDelete}
+                />
+              )}
+            </div>
           )}
         </ExpansionPanelSummary>
         <ExpansionPanelDetails>
@@ -245,6 +296,7 @@ function CategoryMappings({ integrationId, flowId, sectionId, isRoot = true }) {
                   flowId={flowId}
                   key={child.id}
                   isRoot={false}
+                  isParentCommonCategory={isCommonCategory}
                   generateFields={generateFields || emptySet}
                   sectionId={child.id}
                 />
@@ -263,6 +315,13 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
   const match = useRouteMatch();
   const { flowId, categoryId } = match.params;
   const [requestedMetadata, setRequestedMetadata] = useState(false);
+  const mappingsChanged = useSelector(state =>
+    selectors.categoryMappingsChanged(state, integrationId, flowId)
+  );
+  const mappingSaveStatus = useSelector(state =>
+    selectors.categoryMappingSaveStatus(state, integrationId, flowId)
+  );
+  const isSaving = mappingSaveStatus === 'requested';
   const integrationName = useSelector(state => {
     const integration = selectors.resource(
       state,
@@ -274,6 +333,9 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
   });
   const metadataLoaded = useSelector(
     state => !!selectors.categoryMapping(state, integrationId, flowId)
+  );
+  const { collapseStatus = 'collapsed' } = useSelector(state =>
+    selectors.categoryMappingsCollapsedStatus(state, integrationId, flowId)
   );
   const uiAssistant = useSelector(state => {
     const categoryMappingMetadata =
@@ -289,9 +351,6 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
   const currentSectionLabel =
     (mappedCategories.find(category => category.id === categoryId) || {})
       .name || categoryId;
-  const handleClose = () => {
-    history.push(parentUrl);
-  };
 
   useEffect(() => {
     if (!metadataLoaded && !requestedMetadata) {
@@ -312,6 +371,48 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
     requestedMetadata,
     categoryId,
   ]);
+  useEffect(() => {
+    if (mappingSaveStatus === 'close') {
+      history.push(parentUrl);
+    }
+  }, [history, mappingSaveStatus, parentUrl]);
+
+  const handleClose = useCallback(() => {
+    history.push(parentUrl);
+  }, [history, parentUrl]);
+  const handleSave = useCallback(() => {
+    dispatch(
+      actions.integrationApp.settings.categoryMappings.save(
+        integrationId,
+        flowId
+      )
+    );
+  }, [dispatch, flowId, integrationId]);
+  const handleSaveAndClose = useCallback(() => {
+    dispatch(
+      actions.integrationApp.settings.categoryMappings.save(
+        integrationId,
+        flowId,
+        true
+      )
+    );
+  }, [dispatch, flowId, integrationId]);
+  const handleCollapseAll = useCallback(() => {
+    dispatch(
+      actions.integrationApp.settings.categoryMappings.collapseAll(
+        integrationId,
+        flowId
+      )
+    );
+  }, [dispatch, flowId, integrationId]);
+  const handleExpandAll = useCallback(() => {
+    dispatch(
+      actions.integrationApp.settings.categoryMappings.expandAll(
+        integrationId,
+        flowId
+      )
+    );
+  }, [dispatch, flowId, integrationId]);
 
   if (!integrationName) {
     return <LoadResources required resources="integrations" />;
@@ -342,6 +443,15 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
                     flowId={flowId}
                     uiAssistant={uiAssistant}
                   />
+                  {collapseStatus === 'collapsed' ? (
+                    <Button variant="text" onClick={handleExpandAll}>
+                      <FullScreenOpenIcon /> Expand All
+                    </Button>
+                  ) : (
+                    <Button variant="text" onClick={handleCollapseAll}>
+                      <FullScreenCloseIcon /> Collapse All
+                    </Button>
+                  )}
                 </PanelHeader>
                 <Grid container className={classes.mappingHeader}>
                   <Grid item xs={6}>
@@ -367,6 +477,37 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
                 />
               </Grid>
             </Grid>
+
+            <Divider />
+            <ButtonGroup className={classes.saveButtonGroup}>
+              <Button
+                id={flowId}
+                variant="outlined"
+                color="primary"
+                disabled={!mappingsChanged || isSaving}
+                data-test="saveCategoryMappings"
+                onClick={handleSave}>
+                {isSaving ? 'Saving...' : 'Save'}
+              </Button>
+              {(mappingsChanged || isSaving) && (
+                <Button
+                  id={flowId}
+                  variant="outlined"
+                  color="secondary"
+                  disabled={isSaving}
+                  data-test="saveAndCloseImportMapping"
+                  onClick={handleSaveAndClose}>
+                  Save & Close
+                </Button>
+              )}
+              <Button
+                variant="text"
+                data-test="saveImportMapping"
+                disabled={isSaving}
+                onClick={handleClose}>
+                Close
+              </Button>
+            </ButtonGroup>
           </div>
         ) : (
           <Loader open>
