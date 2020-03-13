@@ -362,12 +362,18 @@ export default {
   'http.configureAsyncHelper': {
     type: 'checkbox',
     label: 'Configure Async Helper',
-    visibleWhen: [
-      {
-        field: 'inputMode',
-        is: ['records'],
-      },
-    ],
+    defaultValue: r => !!(r && r.http && r.http._asyncHelperId),
+    visible: r => !(r && r.statusExport),
+    visibleWhen: r => {
+      if (r && r.statusExport) return [];
+
+      return [
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
+      ];
+    },
   },
 
   'http._asyncHelperId': {
