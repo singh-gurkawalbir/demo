@@ -120,8 +120,9 @@ export function FormView(props) {
 
     return staggedResource.useParentForm ? items[0].value : items[1].value;
   }, [options, staggedResource.useParentForm]);
+  const isAnAssistantFromFlowBuilder = flowId && staggedResource.assistant;
 
-  return flowId && staggedResource.assistant ? (
+  return isAnAssistantFromFlowBuilder ? (
     <DynaRadio
       {...props}
       onFieldChange={onFieldChangeFn}
