@@ -3,6 +3,7 @@ import masterFieldHash from '../forms/fieldDefinitions';
 import formMeta from './definitions';
 import { getResourceSubType } from '../utils/resource';
 import { REST_ASSISTANTS } from '../utils/constants';
+import { isJsonString } from '../utils/string';
 
 const getAllOptionsHandlerSubForms = (
   fieldMap,
@@ -56,6 +57,63 @@ export const getAmalgamatedOptionsHandler = (meta, resourceType) => {
   };
 
   return amalgamatedOptionsHandler;
+};
+
+const applyCustomSettings = ({ fieldMap, layout, preSave, isNew }) => {
+  const fieldMapCopy = cloneDeep(fieldMap);
+  const layoutCopy = cloneDeep(layout);
+  let preSaveCopy = preSave;
+
+  if (!isNew) {
+    if (
+      layoutCopy &&
+      layoutCopy.containers &&
+      layoutCopy.containers.length > 0
+    ) {
+      if (layoutCopy.type === 'column') {
+        layoutCopy.containers[0].containers.push({
+          collapsed: true,
+          label: 'Custom settings',
+          fields: ['settings'],
+        });
+      } else
+        layoutCopy.containers.push({
+          collapsed: true,
+          label: 'Custom settings',
+          fields: ['settings'],
+        });
+    } else {
+      layoutCopy.type = 'collapse';
+      layoutCopy.containers = [
+        {
+          collapsed: true,
+          label: 'Custom settings',
+          fields: ['settings'],
+        },
+      ];
+    }
+
+    if (fieldMap) fieldMapCopy.settings = { fieldId: 'settings' };
+    preSaveCopy = args => {
+      const retValues = preSave(args);
+
+      if (Object.hasOwnProperty.call(retValues, '/settings')) {
+        let settings = retValues['/settings'];
+
+        if (isJsonString(settings)) {
+          settings = JSON.parse(settings);
+        } else {
+          settings = {};
+        }
+
+        retValues['/settings'] = settings;
+      }
+
+      return retValues;
+    };
+  }
+
+  return { fieldMapCopy, layoutCopy, preSaveCopy };
 };
 
 const getResourceFormAssets = ({
@@ -199,6 +257,23 @@ const getResourceFormAssets = ({
   }
 
   const optionsHandler = getAmalgamatedOptionsHandler(meta, resourceType);
+
+  if (
+    [
+      'integrations',
+      'exports',
+      'imports',
+      'pageProcessor',
+      'pageGenerator',
+      'connections',
+    ].includes(resourceType)
+  ) {
+    ({
+      fieldMapCopy: fieldMap,
+      layoutCopy: layout,
+      preSaveCopy: preSave,
+    } = applyCustomSettings({ fieldMap, layout, preSave, isNew }));
+  }
 
   return {
     fieldMeta: { fieldMap, layout, actions },
