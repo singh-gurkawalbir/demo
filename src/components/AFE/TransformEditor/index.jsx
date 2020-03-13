@@ -78,7 +78,7 @@ export default function TransformEditor(props) {
       key={`${editorId}-${initChangeIdentifier}`}
       className={classes[`${layout}Template`]}>
       <PanelGridItem gridArea="rule">
-        <PanelTitle title="Transform Rules" />
+        <PanelTitle title="Transform rules" />
         <TransformPanel
           keyName={keyName}
           valueName={valueName}
@@ -88,7 +88,7 @@ export default function TransformEditor(props) {
       </PanelGridItem>
 
       <PanelGridItem gridArea="data">
-        <PanelTitle title="Incoming Data" />
+        <PanelTitle title="Incoming data" />
         <CodePanel
           name="data"
           value={data}
@@ -100,7 +100,7 @@ export default function TransformEditor(props) {
       </PanelGridItem>
 
       <PanelGridItem gridArea="result">
-        <PanelTitle title="Transformed Data" />
+        <PanelTitle title="Transformed data" />
         <CodePanel
           name="result"
           overrides={{ showGutter: false }}

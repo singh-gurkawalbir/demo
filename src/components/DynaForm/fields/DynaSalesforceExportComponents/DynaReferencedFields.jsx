@@ -57,7 +57,6 @@ const FirstLevelModal = props => {
         type: 'refreshableselect',
         filterKey: 'salesforce-sObjects-referenceFields',
         commMetaPath: `salesforce/metadata/connections/${connectionId}/sObjectTypes/${selectedSObject}`,
-        required: true,
         removeRefresh: true,
       },
 
@@ -67,6 +66,7 @@ const FirstLevelModal = props => {
         name: '/referencedFields',
         refreshOptionsOnChangesTo: ['parentSObjectType'],
         type: 'salesforcetreemodal',
+        errorMsg: 'Please select a parent sObject Type',
         disabledWhen: [{ field: 'parentSObjectType', is: [''] }],
         defaultValue: props.value,
       },

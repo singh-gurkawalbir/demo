@@ -1,5 +1,4 @@
 import produce from 'immer';
-import { isEqual } from 'lodash';
 import { deepClone } from 'fast-json-patch/lib/core';
 import actionTypes from '../../../actions/types';
 import mappingUtil from '../../../utils/mapping';
@@ -200,6 +199,14 @@ export default (state = {}, action) => {
         break;
       }
 
+      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.CLEAR:
+        delete draft[cKey];
+        break;
+      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
+        .CLEAR_SAVE_STATUS:
+        delete draft[cKey].saveStatus;
+        break;
+
       case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.INIT:
         {
           const {
@@ -224,16 +231,23 @@ export default (state = {}, action) => {
             );
           }
 
-          const formattedMappings = mappingUtil.getMappingFromResource(
-            resourceData,
-            false,
-            isGroupedSampleData,
-            netsuiteRecordType,
-            {
-              ...additionalOptions,
-              isVariationMapping,
-            }
-          );
+          const staged =
+            draft[cKey] &&
+            draft[cKey].mappings &&
+            draft[cKey].mappings[id] &&
+            draft[cKey].mappings[id].staged;
+          const formattedMappings =
+            staged ||
+            mappingUtil.getMappingFromResource(
+              resourceData,
+              false,
+              isGroupedSampleData,
+              netsuiteRecordType,
+              {
+                ...additionalOptions,
+                isVariationMapping,
+              }
+            );
           const lookups = lookupUtil.getLookupFromResource(resourceData);
           const initChangeIdentifier =
             (draft[cKey] &&
@@ -259,6 +273,7 @@ export default (state = {}, action) => {
             resource: resourceData,
             adaptorType,
             generateFields,
+            staged,
             visible: true,
             isGroupedSampleData,
             flowSampleData: undefined,
@@ -739,14 +754,11 @@ export function categoryMappingGeneratesMetadata(state, integrationId, flowId) {
 export function categoryMappingsForSection(state, integrationId, flowId, id) {
   const cKey = getCategoryKey(integrationId, flowId);
 
-  if (!state) {
+  if (!state || !state[cKey] || !state[cKey].mappings) {
     return emptySet;
   }
 
-  return (
-    (state[cKey] && state[cKey].mappings && state[cKey].mappings[id]) ||
-    emptySet
-  );
+  return state[cKey].mappings[id] || emptySet;
 }
 
 // #region PUBLIC SELECTORS
@@ -758,14 +770,14 @@ export function categoryMappingsChanged(state, integrationId, flowId) {
     return isMappingsEqual;
   }
 
-  const { response, mappings } =
+  const { response, mappings, deleted } =
     categoryMapping(state, integrationId, flowId) || {};
   const mappingData = response.find(op => op.operation === 'mappingData');
   const sessionMappedData =
     mappingData && mappingData.data && mappingData.data.mappingData;
   const clonedData = deepClone(sessionMappedData);
 
-  mappingUtil.setCategoryMappingData(flowId, clonedData, mappings);
+  mappingUtil.setCategoryMappingData(flowId, clonedData, mappings, deleted);
 
   const initData = state[cKey].initMappingData;
 
@@ -773,7 +785,7 @@ export function categoryMappingsChanged(state, integrationId, flowId) {
     return isMappingsEqual;
   }
 
-  return !isEqual(initData.data.mappingData, clonedData);
+  return !mappingUtil.isEqual(initData.data.mappingData, clonedData);
 }
 
 export function categoryMappingSaveStatus(state, integrationId, flowId) {

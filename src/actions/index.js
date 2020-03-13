@@ -434,6 +434,20 @@ const integrationApp = {
           id,
           options,
         }),
+      clear: (integrationId, flowId) =>
+        action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.CLEAR, {
+          integrationId,
+          flowId,
+        }),
+      clearSaveStatus: (integrationId, flowId) =>
+        action(
+          actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
+            .CLEAR_SAVE_STATUS,
+          {
+            integrationId,
+            flowId,
+          }
+        ),
       patchField: (integrationId, flowId, id, field, index, value) =>
         action(
           actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.PATCH_FIELD,
@@ -457,7 +471,7 @@ const integrationApp = {
           integrationId,
           flowId,
           id,
-          row,
+          index: row,
         }),
       collapseAll: (integrationId, flowId) =>
         action(

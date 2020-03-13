@@ -61,6 +61,7 @@ export default function DynaTypeableSelect(props) {
     valueName,
     options = [],
     isValid,
+    TextComponent,
     components = {
       DropdownIndicator: () => null,
       IndicatorSeparator: () => null,
@@ -272,17 +273,29 @@ export default function DynaTypeableSelect(props) {
           menuIsOpen
         />
       )}
-      {!showDropdown && (
-        <DynaText
-          id={`text-${id}`}
-          value={inputVal}
-          disabled={disabled}
-          multiline
-          readOnly
-          onFieldChange={handleTextChange}
-          className={classes.multilineText}
-        />
-      )}
+      {!showDropdown &&
+        (TextComponent ? (
+          <TextComponent
+            {...props}
+            value={inputVal}
+            disabled={disabled}
+            multiline
+            readOnly
+            onFieldChange={handleTextChange}
+            className={classes.multilineText}
+            id={`text-${id}`}
+          />
+        ) : (
+          <DynaText
+            id={`text-${id}`}
+            value={inputVal}
+            disabled={disabled}
+            multiline
+            readOnly
+            onFieldChange={handleTextChange}
+            className={classes.multilineText}
+          />
+        ))}
 
       {!removeHelperText && <ErroredMessageComponent {...props} />}
     </FormControl>

@@ -19,7 +19,7 @@ import TicketTagIcon from '../../components/icons/TicketTagIcon';
 import RecycleBinIcon from '../../components/icons/RecycleBinIcon';
 import TokensApiIcon from '../../components/icons/TokensApiIcon';
 import WhatsNewIcon from '../../components/icons/WhatsNewIcon';
-import { getHelpUrl } from '../../utils/resource';
+import { getHelpUrl, getUniversityUrl } from '../../utils/resource';
 import { SUBMIT_TICKET_URL, WHATS_NEW_URL } from '../../utils/constants';
 
 export default function menuItems(
@@ -120,6 +120,12 @@ export default function menuItems(
           Icon: WhatsNewIcon,
           component: 'a',
           href: WHATS_NEW_URL,
+        },
+        {
+          label: 'University',
+          Icon: WhatsNewIcon,
+          component: 'a',
+          href: getUniversityUrl(),
         },
       ],
     },
