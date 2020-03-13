@@ -1,6 +1,5 @@
 import { useMemo, useEffect, Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { isEmpty } from 'lodash';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import Icon from '../../../../components/icons/HookIcon';
@@ -25,8 +24,8 @@ function PostResponseMapHookDialog({
     (pageProcessorsObject.hooks &&
       pageProcessorsObject.hooks.postResponseMap) ||
     {};
-  const sampleData = useSelector(state =>
-    selectors.getSampleData(state, {
+  const { status: sampleDataStatus, data: sampleData } = useSelector(state =>
+    selectors.getSampleDataWrapper(state, {
       flowId,
       resourceId,
       resourceType,
@@ -35,7 +34,7 @@ function PostResponseMapHookDialog({
   );
 
   useEffect(() => {
-    if (!sampleData) {
+    if (!sampleDataStatus) {
       dispatch(
         actions.flowData.requestSampleData(
           flowId,
@@ -45,15 +44,16 @@ function PostResponseMapHookDialog({
         )
       );
     }
-  }, [dispatch, flowId, resourceId, resourceType, sampleData]);
+  }, [
+    dispatch,
+    flowId,
+    resourceId,
+    resourceType,
+    sampleData,
+    sampleDataStatus,
+  ]);
   // stringified preHookData as the way Editor expects
-  const preHookData = JSON.stringify(
-    {
-      postResponseMapData: isEmpty(sampleData) ? {} : sampleData,
-    },
-    null,
-    2
-  );
+  const preHookData = JSON.stringify(sampleData, null, 2);
   const optionalSaveParams = useMemo(
     () => ({
       pageProcessorsObject,

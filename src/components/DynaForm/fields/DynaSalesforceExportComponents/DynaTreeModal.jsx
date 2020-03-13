@@ -1,5 +1,5 @@
 import Button from '@material-ui/core/Button';
-import { Fragment, useCallback, useState } from 'react';
+import { Fragment, useCallback, useState, useEffect } from 'react';
 import DynaText from '../DynaText';
 import AddIcon from '../../../icons/AddIcon';
 import RefreshableTreeComponent from '../DynaRefreshableSelect/RefreshableTreeComponent';
@@ -48,12 +48,19 @@ export const ReferencedFieldsModal = props => {
 };
 
 export default function DynaTreeModal(props) {
-  const { id, onFieldChange, value, disabled, options } = props;
+  const { id, onFieldChange, value, disabled, errorMsg, options } = props;
   const [secondLevelModalOpen, setSecondLevelModalOpen] = useState(false);
-  const toggle = useCallback(
-    () => setSecondLevelModalOpen(state => !state),
-    []
-  );
+  const [errorMsgTextField, setErrorMsgTextField] = useState(null);
+
+  useEffect(() => {
+    if (!disabled) setErrorMsgTextField(null);
+  }, [disabled]);
+  const toggle = useCallback(() => {
+    if (disabled) setErrorMsgTextField(errorMsg);
+    else {
+      setSecondLevelModalOpen(state => !state);
+    }
+  }, [disabled, errorMsg]);
   const { referenceTo, relationshipName } = options;
 
   return (
@@ -63,11 +70,10 @@ export default function DynaTreeModal(props) {
         onFieldChange={onFieldChange}
         value={value}
         delimiter=","
+        isValid={!errorMsgTextField}
+        errorMessages={errorMsgTextField}
       />
-      <IconTextButton
-        data-test="openReferencedFieldsDialog"
-        onClick={toggle}
-        disabled={disabled}>
+      <IconTextButton data-test="openReferencedFieldsDialog" onClick={toggle}>
         <AddIcon />
       </IconTextButton>
       {secondLevelModalOpen ? (

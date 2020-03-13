@@ -1,13 +1,25 @@
-import { Fragment, useMemo } from 'react';
+import { Fragment, useMemo, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import * as selectors from '../../../../reducers';
+import actions from '../../../../actions';
 import Icon from '../../../../components/icons/TransformIcon';
 import helpTextMap from '../../../../components/Help/helpTextMap';
 import TransformToggleEditorDialog from '../../../../components/AFE/TransformEditor/TransformToggleEditorDialog';
 import { hooksToFunctionNamesMap } from '../../../../utils/hooks';
 
 function ResponseTransformationDialog(props) {
-  const { onClose, resource, isViewMode } = props;
+  const { onClose, resource, isViewMode, flowId } = props;
+  const dispatch = useDispatch();
   const resourceId = resource._id;
-  const { sampleResponseData, responseTransform } = resource;
+  const { responseTransform } = resource;
+  const { status, data: sampleResponseData } = useSelector(state =>
+    selectors.getSampleDataWrapper(state, {
+      flowId,
+      resourceId,
+      resourceType: 'imports',
+      stage: 'sampleResponse',
+    })
+  );
   const { type, rule, scriptId, entryFunction } = useMemo(() => {
     const { type, script = {}, expression = {} } = responseTransform || {};
 
@@ -26,6 +38,19 @@ function ResponseTransformationDialog(props) {
     }),
     [resourceId]
   );
+
+  useEffect(() => {
+    if (!status) {
+      dispatch(
+        actions.flowData.requestSampleData(
+          flowId,
+          resourceId,
+          'imports',
+          'sampleResponse'
+        )
+      );
+    }
+  }, [dispatch, flowId, resourceId, status]);
 
   return (
     <TransformToggleEditorDialog

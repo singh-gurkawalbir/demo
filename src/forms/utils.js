@@ -1,5 +1,6 @@
 import jsonPatch, { deepClone } from 'fast-json-patch';
 import { get } from 'lodash';
+import { C_LOCKED_FIELDS } from '../utils/constants';
 
 export const searchMetaForFieldByFindFunc = (meta, findFieldFunction) => {
   if (!meta) return null;
@@ -131,10 +132,13 @@ export const isAnyExpansionPanelFieldVisible = (meta, fieldStates) => {
   );
 };
 
-export const disableAllFieldsExceptClockedFields = (meta, clockedFields) => {
+export const disableAllFieldsExceptClockedFields = (meta, resourceType) => {
   const { layout, fieldMap } = meta;
   const updatedFieldMap = Object.keys(fieldMap).reduce((acc, curr) => {
-    if (!clockedFields.includes(fieldMap[curr].id))
+    if (
+      C_LOCKED_FIELDS[resourceType] &&
+      !C_LOCKED_FIELDS[resourceType].includes(fieldMap[curr].id)
+    )
       acc[curr] = {
         ...fieldMap[curr],
         defaultDisabled: true,
@@ -619,6 +623,108 @@ export const getDomain = () =>
 
 export const isProduction = () =>
   ['integrator.io', 'eu.integrator.io'].includes(getDomain());
+export const conditionalLookupOptionsforNetsuite = [
+  {
+    label: 'Creating a record',
+    value: 'record_created',
+  },
+  {
+    label: 'Updating a record',
+    value: 'record_updated',
+  },
+  {
+    label: 'Source record has a value',
+    value: 'extract_not_empty',
+  },
+  {
+    label: 'Lookup finds a record',
+    value: 'lookup_not_empty',
+  },
+  {
+    label: 'Lookup finds no records',
+    value: 'lookup_empty',
+  },
+  {
+    label:
+      'Destination record being updated does NOT already have a value for this field',
+    value: 'ignore_if_set',
+  },
+];
+export const conditionalLookupOptionsforNetsuiteProduction = [
+  {
+    label: 'Creating a record',
+    value: 'record_created',
+  },
+  {
+    label: 'Updating a record',
+    value: 'record_updated',
+  },
+  {
+    label: 'Source record has a value',
+    value: 'extract_not_empty',
+  },
+  {
+    label:
+      'Destination record being updated does NOT already have a value for this field',
+    value: 'ignore_if_set',
+  },
+];
+export const conditionalLookupOptionsforSalesforce = [
+  {
+    label: 'Source record has a value',
+    value: 'extract_not_empty',
+  },
+  {
+    label: 'Lookup finds a record',
+    value: 'lookup_not_empty',
+  },
+  {
+    label: 'Lookup finds no records',
+    value: 'lookup_empty',
+  },
+];
+export const conditionalLookupOptionsforSalesforceProduction = [
+  {
+    label: 'Source record has a value',
+    value: 'extract_not_empty',
+  },
+];
+export const conditionalLookupOptionsforRest = [
+  {
+    label: 'Creating a record',
+    value: 'record_created',
+  },
+  {
+    label: 'Updating a record',
+    value: 'record_updated',
+  },
+  {
+    label: 'Source record has a value',
+    value: 'extract_not_empty',
+  },
+  {
+    label: 'Lookup finds a record',
+    value: 'lookup_not_empty',
+  },
+  {
+    label: 'Lookup finds no records',
+    value: 'lookup_empty',
+  },
+];
+export const conditionalLookupOptionsforRestProduction = [
+  {
+    label: 'Creating a record',
+    value: 'record_created',
+  },
+  {
+    label: 'Updating a record',
+    value: 'record_updated',
+  },
+  {
+    label: 'Source record has a value',
+    value: 'extract_not_empty',
+  },
+];
 
 // #END_REGION Integration App from utils
 
