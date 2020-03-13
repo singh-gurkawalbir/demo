@@ -8,10 +8,6 @@ export default function MappingWrapper(props) {
   const { id, flowId, generateFields, sectionId, integrationId } = props;
   const [initTriggered, setInitTriggered] = useState(false);
   const [resetMappings, setResetMappings] = useState(false);
-  const { attributes = {}, mappingFilter = 'mapped' } =
-    useSelector(state =>
-      selectors.categoryMappingFilters(state, integrationId, flowId)
-    ) || {};
   const resourceId = useSelector(state => {
     const flowDetails = selectors.resource(state, 'flows', flowId);
 
@@ -83,7 +79,7 @@ export default function MappingWrapper(props) {
   useEffect(() => {
     if (initTriggered) setResetMappings(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sectionId, attributes, mappingFilter]);
+  }, [sectionId]);
 
   useEffect(() => {
     if (initTriggered && mappingInitialized) {
@@ -118,6 +114,7 @@ export default function MappingWrapper(props) {
       flowId={flowId}
       isGenerateRefreshSupported={isGenerateRefreshSupported}
       application={application}
+      sectionId={sectionId}
       options={options}
     />
   );

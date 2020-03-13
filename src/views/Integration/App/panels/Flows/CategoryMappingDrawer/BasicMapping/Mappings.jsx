@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { components } from 'react-select';
 import { Tooltip } from '@material-ui/core';
@@ -16,6 +16,8 @@ import PreferredIcon from '../../../../../../../components/icons/PreferredIcon';
 import ConditionalIcon from '../../../../../../../components/icons/ConditionalIcon';
 import OptionalIcon from '../../../../../../../components/icons/OptionalIcon';
 import RequiredIcon from '../../../../../../../components/icons/RequiredIcon';
+import MappingConnectorIcon from '../../../../../../../components/icons/MappingConnectorIcon';
+import DynaText from '../../../../../../../components/DynaForm/fields/DynaText';
 
 // TODO Azhar style header
 const useStyles = makeStyles(theme => ({
@@ -23,10 +25,8 @@ const useStyles = makeStyles(theme => ({
     overflowY: 'off',
   },
   header: {
-    display: 'grid',
+    display: 'flex',
     width: '100%',
-    gridTemplateColumns: '45% 45% 50px 50px',
-    gridColumnGap: '1%',
     marginBottom: theme.spacing(2),
   },
   rowContainer: {
@@ -44,15 +44,13 @@ const useStyles = makeStyles(theme => ({
     },
   },
   innerRow: {
-    display: 'grid',
+    display: 'flex',
     width: '100%',
-    gridTemplateColumns: '40% 40% 50px 50px',
     marginBottom: theme.spacing(1),
-    gridColumnGap: '1%',
   },
   mappingsBody: {
     height: `calc(100% - 32px)`,
-    overflow: 'auto',
+    overflow: 'visible',
   },
   childRow: {
     display: 'flex',
@@ -94,7 +92,17 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.primary.main,
   },
   RequiredIcon: {
-    color: theme.palette.success.main,
+    color: theme.palette.error.main,
+  },
+
+  mappingIcon: {
+    color: theme.palette.secondary.lightest,
+    fontSize: theme.spacing(6),
+  },
+  mapField: {
+    display: 'flex',
+    position: 'relative',
+    width: '40%',
   },
 }));
 
@@ -107,13 +115,24 @@ export default function ImportMapping(props) {
     flowId,
     generateFields = [],
     disabled,
+    sectionId,
     options = {},
   } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
+  const { attributes = {}, mappingFilter = 'mapped' } =
+    useSelector(state =>
+      selectors.categoryMappingFilters(state, integrationId, flowId)
+    ) || {};
   const { mappings, lookups, initChangeIdentifier } = useSelector(state =>
     selectors.categoryMappingsForSection(state, integrationId, flowId, editorId)
   );
+  const { fields = [] } =
+    useSelector(state =>
+      selectors.categoryMappingGenerateFields(state, integrationId, flowId, {
+        sectionId,
+      })
+    ) || {};
   const { extractsMetadata: extractFields } = useSelector(state =>
     selectors.categoryMappingMetadata(state, integrationId, flowId)
   );
@@ -124,10 +143,25 @@ export default function ImportMapping(props) {
     const obj = value;
 
     obj.index = index;
+    let visible = true;
+    const field = fields.find(f => f.id === obj.generate);
+
+    if (field) {
+      visible = visible && attributes[field.filterType];
+    }
+
+    if (mappingFilter === 'mapped') {
+      visible =
+        visible && (!!obj.extract || !!obj.hardCodedValue) && !!obj.generate;
+    } else if (mappingFilter === 'unmapped') {
+      visible = visible && !obj.extract;
+    }
 
     if (obj.hardCodedValue) {
       obj.hardCodedValueTmp = `"${obj.hardCodedValue}"`;
     }
+
+    obj.visible = visible;
 
     return obj;
   });
@@ -200,6 +234,60 @@ export default function ImportMapping(props) {
     handleFieldUpdate(mapping.index, { target: { value: val } }, 'generate');
   };
 
+  const TextContainer = ({ options, onFieldChange, ...props }) => {
+    const [textvalue, setValue] = useState(props.value);
+    const handleValueChange = (id, val) => {
+      onFieldChange(id, val);
+      setValue(val);
+    };
+
+    const { filterType } =
+      options.find(option => option.name === textvalue) || {};
+    let icon;
+
+    switch (filterType) {
+      case 'preferred':
+        icon = (
+          <PreferredIcon
+            className={clsx(classes.filterTypeIcon, classes.PreferredIcon)}
+          />
+        );
+        break;
+      case 'optional':
+        icon = (
+          <OptionalIcon
+            className={clsx(classes.filterTypeIcon, classes.OptionalIcon)}
+          />
+        );
+        break;
+      case 'required':
+        icon = (
+          <RequiredIcon
+            className={clsx(classes.filterTypeIcon, classes.RequiredIcon)}
+          />
+        );
+        break;
+      case 'conditional':
+        icon = (
+          <ConditionalIcon
+            className={clsx(classes.filterTypeIcon, classes.ConditionalIcon)}
+          />
+        );
+        break;
+      default:
+        icon = null;
+        break;
+    }
+
+    return (
+      <DynaText
+        {...props}
+        startAdornment={icon}
+        onFieldChange={handleValueChange}
+      />
+    );
+  };
+
   const ValueContainer = ({ children, ...props }) => {
     const value = props.selectProps.inputValue;
     const { filterType } =
@@ -254,98 +342,103 @@ export default function ImportMapping(props) {
       className={classes.root}
       key={`mapping-${editorId}-${initChangeIdentifier}`}>
       <div className={classes.mappingsBody}>
-        {tableData.map(mapping => (
-          <div className={classes.rowContainer} key={mapping.index}>
-            <div className={classes.innerRow}>
-              <div
-                className={clsx(classes.childHeader, classes.childRow, {
-                  [classes.disableChildRow]: mapping.isRequired || disabled,
-                })}>
-                <DynaTypeableSelect
-                  key={`generate-${editorId}-${initChangeIdentifier}-${mapping.rowIdentifier}`}
-                  id={`fieldMappingGenerate-${mapping.index}`}
-                  value={mapping.generate}
-                  labelName="name"
-                  valueName="id"
-                  components={{
-                    ValueContainer,
-                  }}
-                  options={generateFields}
-                  disabled={mapping.isRequired || disabled}
-                  onBlur={handleGenerateUpdate(mapping)}
-                />
-                {mapping.isRequired && (
-                  <Tooltip
-                    title="This field is required by the application you are importing into"
-                    placement="top">
+        {tableData
+          .filter(mapping => mapping.visible)
+          .map(mapping => (
+            <div className={classes.rowContainer} key={mapping.index}>
+              <div className={classes.innerRow}>
+                <div
+                  className={clsx(classes.childHeader, classes.mapField, {
+                    [classes.disableChildRow]: mapping.isRequired || disabled,
+                  })}>
+                  <DynaTypeableSelect
+                    key={`generate-${editorId}-${initChangeIdentifier}-${mapping.rowIdentifier}`}
+                    id={`fieldMappingGenerate-${mapping.index}`}
+                    value={mapping.generate}
+                    labelName="name"
+                    valueName="id"
+                    components={{
+                      ValueContainer,
+                    }}
+                    TextComponent={TextContainer}
+                    options={generateFields}
+                    disabled={mapping.isRequired || disabled}
+                    onBlur={handleGenerateUpdate(mapping)}
+                  />
+                  {mapping.isRequired && (
+                    <Tooltip
+                      title="This field is required by the application you are importing into"
+                      placement="top">
+                      <span className={classes.lockIcon}>
+                        <LockIcon />
+                      </span>
+                    </Tooltip>
+                  )}
+                </div>
+                <MappingConnectorIcon className={classes.mappingIcon} />
+                <div
+                  className={clsx(classes.childHeader, classes.mapField, {
+                    [classes.disableChildRow]:
+                      mapping.isNotEditable || disabled,
+                  })}>
+                  <DynaTypeableSelect
+                    key={`extract-${editorId}-${initChangeIdentifier}-${mapping.rowIdentifier}`}
+                    id={`fieldMappingExtract-${mapping.index}`}
+                    labelName="name"
+                    valueName="id"
+                    value={mapping.extract || mapping.hardCodedValueTmp}
+                    options={extractFields}
+                    disabled={mapping.isNotEditable || disabled}
+                    components={{ ItemSeperator: () => null }}
+                    onBlur={(id, evt) => {
+                      handleFieldUpdate(
+                        mapping.index,
+                        { target: { value: evt } },
+                        'extract'
+                      );
+                    }}
+                  />
+
+                  {mapping.isNotEditable && (
                     <span className={classes.lockIcon}>
                       <LockIcon />
                     </span>
-                  </Tooltip>
-                )}
-              </div>
-              <div
-                className={clsx(classes.childHeader, classes.childRow, {
-                  [classes.disableChildRow]: mapping.isNotEditable || disabled,
-                })}>
-                <DynaTypeableSelect
-                  key={`extract-${editorId}-${initChangeIdentifier}-${mapping.rowIdentifier}`}
-                  id={`fieldMappingExtract-${mapping.index}`}
-                  labelName="name"
-                  valueName="id"
-                  value={mapping.extract || mapping.hardCodedValueTmp}
-                  options={extractFields}
-                  disabled={mapping.isNotEditable || disabled}
-                  components={{ ItemSeperator: () => null }}
-                  onBlur={(id, evt) => {
-                    handleFieldUpdate(
-                      mapping.index,
-                      { target: { value: evt } },
-                      'extract'
-                    );
-                  }}
-                />
-
-                {mapping.isNotEditable && (
-                  <span className={classes.lockIcon}>
-                    <LockIcon />
-                  </span>
-                )}
-              </div>
-              <div>
-                <MappingSettings
-                  id={`fieldMappingSettings-${mapping.index}`}
-                  onSave={(id, evt) => {
-                    patchSettings(mapping.index, evt);
-                  }}
-                  value={mapping}
-                  options={options}
-                  generate={mapping.generate}
-                  application={application}
-                  updateLookup={updateLookupHandler}
-                  disabled={mapping.isNotEditable || disabled}
-                  lookups={lookups}
-                  extractFields={extractFields}
-                  generateFields={generateFields}
-                />
-              </div>
-              <div key="delete_button">
-                <ActionButton
-                  data-test={`fieldMappingRemove-${mapping.index}`}
-                  aria-label="delete"
-                  disabled={
-                    mapping.isRequired || mapping.isNotEditable || disabled
-                  }
-                  onClick={() => {
-                    handleDelete(mapping.index);
-                  }}
-                  className={classes.margin}>
-                  <TrashIcon />
-                </ActionButton>
+                  )}
+                </div>
+                <div>
+                  <MappingSettings
+                    id={`fieldMappingSettings-${mapping.index}`}
+                    onSave={(id, evt) => {
+                      patchSettings(mapping.index, evt);
+                    }}
+                    value={mapping}
+                    options={options}
+                    generate={mapping.generate}
+                    application={application}
+                    updateLookup={updateLookupHandler}
+                    disabled={mapping.isNotEditable || disabled}
+                    lookups={lookups}
+                    extractFields={extractFields}
+                    generateFields={generateFields}
+                  />
+                </div>
+                <div key="delete_button">
+                  <ActionButton
+                    data-test={`fieldMappingRemove-${mapping.index}`}
+                    aria-label="delete"
+                    disabled={
+                      mapping.isRequired || mapping.isNotEditable || disabled
+                    }
+                    onClick={() => {
+                      handleDelete(mapping.index);
+                    }}
+                    className={classes.margin}>
+                    <TrashIcon />
+                  </ActionButton>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
       </div>
     </div>
   );
