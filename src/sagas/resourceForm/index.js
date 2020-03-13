@@ -18,6 +18,7 @@ import { isNewId } from '../../utils/resource';
 import { fileTypeToApplicationTypeMap } from '../../utils/file';
 import patchTransformationRulesForXMLResource from '../sampleData/utils/xmlTransformationRulesGenerator';
 import { uploadRawData } from '../uploadFile';
+import { UI_FIELD_VALUES } from '../../utils/constants';
 
 export const SCOPES = {
   META: 'meta',
@@ -219,6 +220,26 @@ export function* saveDataLoaderRawData({ resourceId, resourceType, values }) {
   return { ...values, '/rawData': rawDataKey };
 }
 
+function* deleteUISpecificValues({ values, resourceId }) {
+  const valuesCopy = { ...values };
+
+  UI_FIELD_VALUES.forEach(id => {
+    // remove ui field value from the form value payload
+    delete valuesCopy[id];
+  });
+  // remove any stagged values tied to it the ui fields
+
+  const siftExpr = {
+    $or: UI_FIELD_VALUES.map(id => ({
+      path: { $ne: id },
+    })),
+  };
+
+  yield put(actions.resource.removeStage(resourceId, siftExpr));
+
+  return valuesCopy;
+}
+
 export function* submitFormValues({
   resourceType,
   resourceId,
@@ -227,6 +248,11 @@ export function* submitFormValues({
   isGenerate,
 }) {
   let formValues = { ...values };
+
+  formValues = yield call(deleteUISpecificValues, {
+    values: formValues,
+    resourceId,
+  });
 
   if (resourceType === 'exports') {
     delete formValues['/rawData'];

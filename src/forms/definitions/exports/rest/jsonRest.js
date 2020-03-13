@@ -55,7 +55,10 @@ export default {
       delete retValues['/delta/lagOffset'];
     }
 
-    if (!retValues['/rest/successValues'].length) {
+    if (
+      retValues['/rest/successValues'] &&
+      !retValues['/rest/successValues'].length
+    ) {
       retValues['/rest/successValues'] = undefined;
     }
 

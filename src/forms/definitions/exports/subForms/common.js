@@ -4,7 +4,7 @@ export default {
     description: { fieldId: 'description' },
     apiIdentifier: { fieldId: 'apiIdentifier' },
 
-    formView: { id: 'formView', type: 'formview' },
+    formView: { fieldId: 'formView' },
   },
   layout: { fields: ['name', 'description', 'formView', 'apiIdentifier'] },
 };

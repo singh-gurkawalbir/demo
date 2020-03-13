@@ -48,6 +48,7 @@ function DynaAssistantOptions(props) {
     resourceId,
     assistantFieldType,
     fields,
+    flowId,
   } = props;
   const formContext = useMemo(
     () =>
@@ -159,7 +160,7 @@ function DynaAssistantOptions(props) {
           resourceId,
           false,
           false,
-          undefined,
+          flowId,
           allTouchedFields
         )
       );

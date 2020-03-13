@@ -1,7 +1,8 @@
+import sift from 'sift';
 import actionTypes from '../../../actions/types';
 
 export default (state = {}, action) => {
-  const { type, id, patch: newPatch, conflict, scope } = action;
+  const { type, id, patch: newPatch, conflict, scope, siftExpr } = action;
   const newState = { ...state };
   const timestamp = Date.now();
 
@@ -25,6 +26,17 @@ export default (state = {}, action) => {
 
       return newState;
 
+    case actionTypes.RESOURCE.STAGE_REMOVE:
+      // we can't clear if there is no staged data
+      if (!newState[id] || !newState[id].patch || !newState[id].patch.length) {
+        return newState;
+      }
+
+      newState[id] = { ...newState[id] };
+
+      newState[id].patch = newState[id].patch.filter(sift(siftExpr));
+
+      return newState;
     case actionTypes.RESOURCE.STAGE_UNDO:
       // we can't undo if there is no staged data
       if (!newState[id] || !newState[id].patch) {

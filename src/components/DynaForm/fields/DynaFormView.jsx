@@ -1,9 +1,7 @@
 import { FormContext } from 'react-forms-processor/dist';
 import { useDispatch, useSelector } from 'react-redux';
 import { useMemo } from 'react';
-import jsonPatch, { deepClone } from 'fast-json-patch';
 import actions from '../../../actions';
-import definitions from '../../../forms/definitions';
 import {
   defaultPatchSetConverter,
   sanitizePatchSet,
@@ -12,39 +10,34 @@ import DynaRadio from './radiogroup/DynaRadioGroup';
 import * as selectors from '../../../reducers';
 import { useSetInitializeFormData } from './assistant/DynaAssistantOptions';
 import { SCOPES } from '../../../sagas/resourceForm';
+import formFactory from '../../../forms/formFactory';
 import { getApplicationConnectors } from '../../../constants/applications';
 
 export function FormView(props) {
   const { resourceType, flowId, resourceId, formContext } = props;
   const dispatch = useDispatch();
-  const staggedResourceSelector = useSelector(state => scope =>
-    selectors.stagedResource(state, resourceId, scope)
+  const staggedResource = useSelector(state => {
+    const { merged } =
+      selectors.resourceData(state, resourceType, resourceId) || {};
+
+    return merged || {};
+  });
+  const resourceFormState = useSelector(
+    state => selectors.resourceFormState(state, resourceType, resourceId) || {}
   );
-  const resource = useSelector(
-    state => selectors.resource(state, resourceType, resourceId) || {}
+  const assistantData = useSelector(state =>
+    selectors.assistantData(state, {
+      adaptorType: staggedResource.adaptorType,
+      assistant: staggedResource.assistant,
+    })
   );
-  const staggedResource = useSelector(
-    state => selectors.resourceData(state, resourceType, resourceId) || {}
+  const connection = useSelector(
+    state =>
+      selectors.resource(state, 'connections', staggedResource._connectionId) ||
+      {}
   );
   const options = useMemo(() => {
-    let assistantName;
-
-    if (
-      staggedResource &&
-      staggedResource.merged &&
-      staggedResource.merged.assistant
-    )
-      assistantName = staggedResource.merged.assistant;
-    else {
-      const allStaggedPatches = staggedResourceSelector(null).patch;
-      const assistantPatch = allStaggedPatches.find(patch =>
-        patch.scope.includes(`${SCOPES.VALUE}-`)
-      );
-
-      assistantName =
-        assistantPatch && assistantPatch.scope.replace(`${SCOPES.VALUE}-`, '');
-    }
-
+    const { assistant: assistantName } = staggedResource;
     const matchingApplication = getApplicationConnectors().find(
       con => con.assistant === assistantName
     );
@@ -62,104 +55,54 @@ export function FormView(props) {
       ];
     }
 
+    // if i cant find a matching application this is not an assistant
+
     return null;
-  }, [staggedResource, staggedResourceSelector]);
-  const selectedOption = useMemo(() => {
-    if (!options || !options[0] || !options[0].items || !options[0].items[1])
-      return null;
-
-    // assistant
-    if (
-      staggedResource &&
-      staggedResource.merged &&
-      staggedResource.merged.assistant
-    ) {
-      // Assistant is always second option
-      return options[0].items[1].value;
-    }
-
-    return options[0].items[0].value;
-  }, [options, staggedResource]);
+  }, [staggedResource]);
 
   useSetInitializeFormData(props);
   const onFieldChangeFn = (id, selectedApplication) => {
     // first get the previously selected application values
     // stagged state we will break up the scope to selected application and actual value
 
-    const backupStaggedChanges = deepClone(
-      staggedResourceSelector(SCOPES.VALUE).patch
-    );
-    const backUpFormValuesPatches = sanitizePatchSet({
-      patchSet: defaultPatchSetConverter(formContext.value),
-      resource,
+    // selecting the other option
+
+    const staggedRes = Object.keys(staggedResource).reduce((acc, curr) => {
+      acc[`/${curr}`] = staggedResource[curr];
+
+      return acc;
+    }, {});
+    // use this function to get the corresponding preSave function for this current form
+    const { preSave } = formFactory.getResourceFormAssets({
+      resourceType,
+      resource: staggedResource,
+      isNew: false,
+      connection,
+      assistantData,
     });
-    const backUpCurrentApplicationPatches = [
-      ...backupStaggedChanges,
-      ...backUpFormValuesPatches,
-    ];
-    const meta = definitions[resourceType].new;
-    const allNewResourceTypeFormValues = Object.values(meta.fieldMap).map(
-      fieldMap => fieldMap.name
-    );
-    const carryForwardPatches = backupStaggedChanges.filter(val =>
-      allNewResourceTypeFormValues.includes(val.path)
-    );
-    const selectedApplicationPatches = deepClone(
-      staggedResourceSelector(`${SCOPES.VALUE}-${selectedApplication}`).patch
-    );
+    const finalValues = preSave(formContext.value, staggedRes);
 
-    dispatch(actions.resource.clearStaged(resourceId));
-
-    if (!selectedApplicationPatches || !selectedApplicationPatches.length) {
-      let newFormValue = jsonPatch.applyPatch({}, carryForwardPatches)
-        .newDocument;
-
-      newFormValue = Object.keys(newFormValue).reduce((acc, key) => {
-        acc[`/${key}`] = newFormValue[key];
-
-        return acc;
-      }, {});
-
-      newFormValue = { ...newFormValue, application: selectedApplication };
-      newFormValue = definitions[resourceType].new.preSave(newFormValue);
-
-      dispatch(
-        actions.resource.patchStaged(
-          resourceId,
-          sanitizePatchSet({
-            patchSet: defaultPatchSetConverter(newFormValue),
-            resource,
-          }),
-          SCOPES.VALUE
-        )
-      );
+    if (['http', 'rest'].includes(selectedApplication)) {
+      staggedRes['/useParentForm'] = true;
     } else {
-      dispatch(
-        actions.resource.patchStaged(
-          resourceId,
-          selectedApplicationPatches,
-          SCOPES.VALUE
-        )
-      );
+      staggedRes['/useParentForm'] = false;
     }
 
-    // selecting the other option
+    const allPatches = sanitizePatchSet({
+      patchSet: defaultPatchSetConverter({ ...staggedRes, ...finalValues }),
+      fieldMeta: resourceFormState.fieldMeta,
+      resource: {},
+    });
+
+    dispatch(actions.resource.clearStaged(resourceId));
     dispatch(
-      actions.resource.patchStaged(
-        resourceId,
-        backUpCurrentApplicationPatches,
-        `${SCOPES.VALUE}-${
-          options[0].items.filter(opt => opt.value !== selectedApplication)[0]
-            .value
-        }`
-      )
+      actions.resource.patchStaged(resourceId, allPatches, SCOPES.VALUE)
     );
 
     const allTouchedFields = formContext.fields
       .filter(field => !!field.touched)
       .map(field => ({ id: field.id, value: field.value }));
 
-    allTouchedFields.push({ id, value: selectedApplication });
     dispatch(
       actions.resourceForm.init(
         resourceType,
@@ -172,11 +115,17 @@ export function FormView(props) {
     );
   };
 
-  return flowId && options ? (
+  const selectedValue = useMemo(() => {
+    const { items } = options[0];
+
+    return staggedResource.useParentForm ? items[0].value : items[1].value;
+  }, [options, staggedResource.useParentForm]);
+
+  return flowId && staggedResource.assistant ? (
     <DynaRadio
       {...props}
-      value={selectedOption}
       onFieldChange={onFieldChangeFn}
+      value={selectedValue}
       options={options}
     />
   ) : null;
