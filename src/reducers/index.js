@@ -2594,7 +2594,7 @@ export function getAllResourceConflicts(state) {
   return fromSession.getAllResourceConflicts(state && state.session);
 }
 
-export function resourceData(state, resourceType, id, scope = SCOPES.VALUE) {
+export function resourceData(state, resourceType, id, scope) {
   if (!state || !resourceType || !id) return emptyObject;
   let type = resourceType;
 
