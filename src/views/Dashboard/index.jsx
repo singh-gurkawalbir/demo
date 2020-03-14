@@ -20,6 +20,7 @@ import CeligoPageBar from '../../components/CeligoPageBar';
 import IconTextButton from '../../components/IconTextButton';
 import ResourceDrawer from '../../components/drawer/Resource';
 import DownloadIntegrationDrawer from '../../components/drawer/DownloadIntegration';
+import InstallIntegrationDrawer from '../../components/drawer/Install/Integration';
 import UploadFileDialog from '../../views/InstallIntegration';
 import AddIcon from '../../components/icons/AddIcon';
 import ZipUpIcon from '../../components/icons/InstallIntegrationIcon';
@@ -112,6 +113,7 @@ function Dashboard() {
 
       <ResourceDrawer />
       <DownloadIntegrationDrawer />
+      <InstallIntegrationDrawer />
       <OfflineConnectionDrawer />
 
       <CeligoPageBar title="My integrations">
@@ -124,11 +126,11 @@ function Dashboard() {
           <AddIcon />
           Create integration
         </IconTextButton>
+
         <IconTextButton
           data-test="installZip"
           component={Link}
-          to={`${location.pathname}/installZip`}
-          // to={getRoutePath('/templates/generate-or-install')}
+          to={`${location.pathname}/installIntegration`}
           variant="text"
           color="primary">
           <ZipUpIcon />
@@ -138,7 +140,6 @@ function Dashboard() {
           data-test="downloadIntegration"
           component={Link}
           to={`${location.pathname}/downloadIntegration`}
-          // to={getRoutePath('/templates/generate-or-install')}
           variant="text"
           color="primary">
           <ZipDownIcon />

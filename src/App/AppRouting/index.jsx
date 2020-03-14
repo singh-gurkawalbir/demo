@@ -2,14 +2,12 @@ import { Component } from 'react';
 import { hot } from 'react-hot-loader';
 import { Switch, Route } from 'react-router-dom';
 import loadable from '../../utils/loadable';
-import MarketplaceRouter from '../../views/MarketPlace/Router';
-import TemplatePreview from '../../views/Templates/InstallIntegrationPreview';
-import TemplateInstall from '../../views/Templates/Install';
-import GenerateOrInstall from '../../views/Templates/GenerateOrInstall';
 import ClonePreview from '../../views/Clone/Preview';
 import IntegrationAppInstallation from '../../views/Integration/App/drawers/Install';
 import IntegrationAppAddNewStore from '../../views/Integration/App/drawers/AddStore';
 import IntegrationAppUninstallation from '../../views/Integration/App/drawers/Uninstall';
+import Marketplace from '../../views/MarketPlace';
+import MarketplaceList from '../../views/MarketplaceList';
 import CloneSetup from '../../views/Clone/Setup';
 
 const RecycleBin = loadable(() =>
@@ -101,14 +99,6 @@ export default class AppRouting extends Component {
           }
         />
         <Route
-          path="/pg/templates/:templateId/preview"
-          component={TemplatePreview}
-        />
-        <Route
-          path="/pg/templates/:templateId/setup"
-          component={TemplateInstall}
-        />
-        <Route
           path={[
             '/pg/integrationapps/:integrationAppName/:integrationId/flowBuilder/:flowId',
             '/pg/integrations/:integrationId/flowBuilder/:flowId',
@@ -154,10 +144,11 @@ export default class AppRouting extends Component {
           component={ConnectorInstallBase}
         />
         <Route
-          path="/pg/templates/generate-or-install"
-          component={GenerateOrInstall}
+          path="/pg/marketplace/:application"
+          component={MarketplaceList}
         />
-        <Route path="/pg/marketplace" component={MarketplaceRouter} />
+        <Route exact path="/pg/marketplace" component={Marketplace} />
+
         <Route path="/pg/dashboard" component={Dashboard} />
         <Route path="/pg/recycleBin" component={RecycleBin} />
         <Route path="/pg/resources" component={Resources} />
