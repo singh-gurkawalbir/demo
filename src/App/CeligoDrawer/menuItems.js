@@ -21,6 +21,7 @@ import TokensApiIcon from '../../components/icons/TokensApiIcon';
 import WhatsNewIcon from '../../components/icons/WhatsNewIcon';
 import { getHelpUrl, getUniversityUrl } from '../../utils/resource';
 import { SUBMIT_TICKET_URL, WHATS_NEW_URL } from '../../utils/constants';
+import UniversityIcon from '../../components/icons/UniversityIcon';
 
 export default function menuItems(
   userProfile,
@@ -123,7 +124,7 @@ export default function menuItems(
         },
         {
           label: 'University',
-          Icon: WhatsNewIcon,
+          Icon: UniversityIcon,
           component: 'a',
           href: getUniversityUrl(),
         },

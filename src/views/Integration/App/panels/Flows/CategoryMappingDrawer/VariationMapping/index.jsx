@@ -149,7 +149,7 @@ function VariationMappingDrawer({ integrationId, parentUrl }) {
   });
   const firstVariation =
     useSelector(state => {
-      // propery being read as is from IA metadata, to facilitate initialization and to avoid re-adjust while sending back.
+      // property being read as is from IA metadata, to facilitate initialization and to avoid re-adjust while sending back.
       // eslint-disable-next-line camelcase
       const { variation_themes = [] } =
         selectors.categoryMappingGenerateFields(state, integrationId, flowId, {
@@ -183,11 +183,20 @@ function VariationMappingDrawer({ integrationId, parentUrl }) {
       actions.integrationApp.settings.categoryMappings.saveVariationMappings(
         integrationId,
         flowId,
-        `${flowId}-${subCategoryId}-${variation}`
+        `${flowId}-${subCategoryId}-${variation}`,
+        { categoryId, subCategoryId }
       )
     );
     handleClose();
-  }, [dispatch, flowId, handleClose, integrationId, subCategoryId, variation]);
+  }, [
+    categoryId,
+    dispatch,
+    flowId,
+    handleClose,
+    integrationId,
+    subCategoryId,
+    variation,
+  ]);
 
   if (!variation) {
     history.push(`${match.url}/${firstVariation}`);

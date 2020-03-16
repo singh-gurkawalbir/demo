@@ -12,6 +12,178 @@ describe('isEqual', () => {
     [true, { arr: [1, 2, 3, 4] }, { arr: [1, 2, 3, 4] }],
     [
       true,
+      { extract: undefined, hardCodedValue: 'test', generate: 'test_generate' },
+      { hardCodedValue: 'test', generate: 'test_generate' },
+    ],
+    [
+      true,
+      {
+        basicMappings: {
+          recordMappings: [
+            {
+              children: [
+                {
+                  children: [],
+                  fieldMappings: [],
+                  id: 'Dimensions',
+                  name: 'Dimensions',
+                },
+                {
+                  children: [],
+                  fieldMappings: [],
+                  id: 'Discovery',
+                  name: 'Discovery',
+                },
+                {
+                  children: [],
+                  fieldMappings: [],
+                  id: 'Images',
+                  name: 'Images',
+                },
+                {
+                  children: [],
+                  fieldMappings: [],
+                  id: 'Fulfillment',
+                  name: 'Fulfillment',
+                },
+              ],
+              fieldMappings: [
+                {
+                  discardIfEmpty: true,
+                  extract: 'SKU',
+                  generate: 'item_sku',
+                },
+                {
+                  discardIfEmpty: true,
+                  extract: 'upccode',
+                  generate: 'UPC',
+                },
+                {
+                  discardIfEmpty: true,
+                  extract: 'salesdescription',
+                  generate: 'product_description',
+                },
+                {
+                  discardIfEmpty: true,
+                  extract: 'displayname',
+                  generate: 'item_name',
+                },
+                {
+                  discardIfEmpty: true,
+                  extract: 'manufacturer',
+                  generate: 'brand_name',
+                },
+                {
+                  discardIfEmpty: true,
+                  extract: 'manufacturer',
+                  generate: 'manufacturer',
+                },
+                {
+                  discardIfEmpty: true,
+                  extract: 'mpn',
+                  generate: 'part_number',
+                },
+                {
+                  dataType: 'string',
+                  generate: 'update_delete',
+                  hardCodedValue: 'Update',
+                },
+              ],
+              id: 'commonAttributes',
+              lookups: [],
+              name: 'Common',
+            },
+          ],
+        },
+        variationMappings: {
+          recordMappings: [],
+        },
+      },
+      {
+        basicMappings: {
+          recordMappings: [
+            {
+              children: [
+                {
+                  children: [],
+                  fieldMappings: [],
+                  id: 'Dimensions',
+                  name: 'Dimensions',
+                },
+                {
+                  children: [],
+                  fieldMappings: [],
+                  id: 'Discovery',
+                  name: 'Discovery',
+                },
+                {
+                  children: [],
+                  fieldMappings: [],
+                  id: 'Images',
+                  name: 'Images',
+                },
+                {
+                  children: [],
+                  fieldMappings: [],
+                  id: 'Fulfillment',
+                  name: 'Fulfillment',
+                },
+              ],
+              fieldMappings: [
+                {
+                  discardIfEmpty: true,
+                  extract: 'SKU',
+                  generate: 'item_sku',
+                },
+                {
+                  discardIfEmpty: true,
+                  extract: 'upccode',
+                  generate: 'UPC',
+                },
+                {
+                  discardIfEmpty: true,
+                  extract: 'salesdescription',
+                  generate: 'product_description',
+                },
+                {
+                  discardIfEmpty: true,
+                  extract: 'displayname',
+                  generate: 'item_name',
+                },
+                {
+                  discardIfEmpty: true,
+                  extract: 'manufacturer',
+                  generate: 'brand_name',
+                },
+                {
+                  discardIfEmpty: true,
+                  extract: 'manufacturer',
+                  generate: 'manufacturer',
+                },
+                {
+                  discardIfEmpty: true,
+                  extract: 'mpn',
+                  generate: 'part_number',
+                },
+                {
+                  dataType: 'string',
+                  generate: 'update_delete',
+                  hardCodedValue: 'Update',
+                },
+              ],
+              id: 'commonAttributes',
+              lookups: [],
+              name: 'Common',
+            },
+          ],
+        },
+        variationMappings: {
+          recordMappings: [],
+        },
+      },
+    ],
+    [
+      true,
       { key: 'value', arr: [1, 2, 3, 4] },
       { key: 'value', arr: [1, 2, 3, 4] },
     ],

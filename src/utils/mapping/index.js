@@ -85,36 +85,68 @@ const setMappingData = (
   });
 };
 
-const setVariationMappingData = (flowId, recordMappings, mappings) => {
+const setVariationMappingData = (
+  flowId,
+  recordMappings,
+  mappings,
+  relationshipData
+) => {
   recordMappings.forEach(mapping => {
-    mapping.variation_themes.forEach(vm => {
-      const key = `${flowId}-${mapping.id}-${vm.variation_theme}`;
+    const relation = Array.isArray(relationshipData)
+      ? relationshipData.find(rel => rel.id === mapping.id)
+      : relationshipData;
 
-      if (mappings[key]) {
-        // eslint-disable-next-line no-param-reassign
-        vm.fieldMappings = mappings[key].mappings
-          .filter(el => (!!el.extract || !!el.hardCodedValue) && !!el.generate)
-          .map(
-            ({
-              index,
-              rowIdentifier,
-              hardCodedValueTmp,
-              visible,
-              ...rest
-            }) => ({
-              ...rest,
-            })
+    if (!relation) return;
+    const variationTheme = relation.variation_themes.find(
+      theme => theme.id === 'variation_theme'
+    );
+
+    if (variationTheme) {
+      variationTheme.variation_attributes.forEach(vm => {
+        const key = `${flowId}-${mapping.id}-${vm}`;
+
+        if (mappings[key]) {
+          const stagedMappings = mappings[key].staged || mappings[key].mappings;
+
+          if (!mapping.variation_themes.find(vt => vt.variation_theme === vm)) {
+            mapping.variation_themes.push({
+              id: 'variation_theme',
+              variation_theme: vm,
+              fieldMappings: [],
+            });
+          }
+
+          const variationMapping = mapping.variation_themes.find(
+            vt => vt.variation_theme === vm
           );
 
-        if (mappings[key].lookups && mappings[key].lookups.length) {
           // eslint-disable-next-line no-param-reassign
-          vm.lookups = mappings[key].lookups;
+          variationMapping.fieldMappings = stagedMappings
+            .filter(
+              el => (!!el.extract || !!el.hardCodedValue) && !!el.generate
+            )
+            .map(
+              ({
+                index,
+                rowIdentifier,
+                hardCodedValueTmp,
+                visible,
+                ...rest
+              }) => ({
+                ...rest,
+              })
+            );
         }
-      }
-    });
+      });
+    }
 
     if (mapping.children && mapping.children.length) {
-      setVariationMappingData(flowId, mapping.children, mappings);
+      setVariationMappingData(
+        flowId,
+        mapping.children,
+        mappings,
+        relation.children
+      );
     }
   });
 };
@@ -298,6 +330,11 @@ export default {
    * isEqual({a:'a', b:1},{a:'a', b:1}) = true
    * isEqual({a:'a', b:1},{b:1, a:'a'}) = true
    * isEqual({a:[1,2,3,4]},{a:[2,3,4,1]}) = false
+   * _.isEqual doesnt handle this case
+   * isEqual(
+   *  { extract: undefined, hardCodedValue: 'test', generate: 'test_generate' },
+      { hardCodedValue: 'test', generate: 'test_generate' })
+       => true,
    */
   isEqual(object, otherObject) {
     if (object === otherObject) {
@@ -330,11 +367,9 @@ export default {
 
     const objectKeys = Object.keys(object);
 
-    if (Object.keys(otherObject).length !== objectKeys.length) {
-      return false;
-    }
-
-    return Object.keys(otherObject).every(key => objectKeys.includes(key))
+    return Object.keys(otherObject).every(
+      key => objectKeys.includes(key) || otherObject[key] === undefined
+    )
       ? objectKeys.every(key => this.isEqual(object[key], otherObject[key]))
       : false;
   },
@@ -342,7 +377,8 @@ export default {
     flowId,
     sessionMappedData = {},
     mappings = {},
-    deleted
+    deleted,
+    relationshipData
   ) => {
     const { basicMappings = {}, variationMappings = {} } = sessionMappedData;
 
@@ -355,7 +391,8 @@ export default {
     setVariationMappingData(
       flowId,
       variationMappings.recordMappings || [],
-      mappings
+      mappings,
+      relationshipData
     );
   },
   getFieldMappingType: value => {
@@ -561,6 +598,47 @@ export default {
           name: grandchildCategoryDetails.name,
           children: [],
           fieldMappings: [],
+        });
+      }
+    }
+  },
+  addVariation: (draft, cKey, data) => {
+    const { categoryId, subCategoryId } = data;
+    const { response = [] } = draft[cKey];
+    const mappingData = response.find(sec => sec.operation === 'mappingData');
+
+    if (
+      mappingData.data &&
+      mappingData.data.mappingData &&
+      mappingData.data.mappingData.variationMappings &&
+      mappingData.data.mappingData.variationMappings.recordMappings
+    ) {
+      const { recordMappings } = mappingData.data.mappingData.variationMappings;
+      const categoryMappings = recordMappings.find(
+        mapping => mapping.id === categoryId
+      );
+
+      if (!categoryMappings) {
+        recordMappings.push({
+          id: categoryId,
+          children: [],
+          variation_themes: [],
+        });
+      }
+
+      if (!subCategoryId) {
+        return;
+      }
+
+      const subCategoryMappings = categoryMappings.children.find(
+        mapping => mapping.id === subCategoryId
+      );
+
+      if (!subCategoryMappings) {
+        categoryMappings.children.push({
+          id: subCategoryId,
+          children: [],
+          variation_themes: [],
         });
       }
     }
