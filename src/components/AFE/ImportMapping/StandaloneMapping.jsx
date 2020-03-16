@@ -34,6 +34,7 @@ export default function StandaloneMapping(props) {
   const [flowSampleDataLoaded, setFlowSampleDataLoaded] = useState(false);
   const [importSampleDataLoaded, setImportSampleDataLoaded] = useState(false);
   const [flowSampleDataState, setFlowSampleDataState] = useState(undefined);
+  // const [importSampleDataState, setImportSampleDataState] = useState([]);
   const [assistantLoaded, setAssistantLoaded] = useState(false);
   const [
     integrationAppMetadataLoaded,
@@ -64,9 +65,10 @@ export default function StandaloneMapping(props) {
     resourceType.type === ResourceUtil.adaptorTypeMap.NetSuiteImport;
   const { _connectionId: connectionId, name: resourceName } = resourceData;
   const dispatch = useDispatch();
-  const { visible: showMappings } = useSelector(state =>
-    selectors.mapping(state, id)
-  );
+  const {
+    visible: showMappings,
+    importSampleData: savedImportSampleData,
+  } = useSelector(state => selectors.mapping(state, id));
   /**
    * subRecordMappingObj returns subRecord mapping and filePath in case of subrecord mapping
    */
@@ -310,6 +312,10 @@ export default function StandaloneMapping(props) {
     };
   }
 
+  if (importSampleData) {
+    mappingOptions.importSampleData = importSampleData;
+  }
+
   let formattedExtractFields = [];
 
   /**
@@ -327,11 +333,6 @@ export default function StandaloneMapping(props) {
       [];
   }
 
-  const formattedGenerateFields = mappingUtil.getFormattedGenerateData(
-    importSampleData,
-    application
-  );
-  const [importSampleDataState, setImportSampleDataState] = useState([]);
   const handleInit = useCallback(() => {
     dispatch(
       actions.mapping.init({
@@ -366,17 +367,22 @@ export default function StandaloneMapping(props) {
     }
   }, [dispatch, id, initTriggered, isFetchingDuringInit, setMappingVisibility]);
 
+  useEffect(() => {
+    if (
+      initTriggered &&
+      importSampleData &&
+      JSON.stringify(importSampleData) !== JSON.stringify(savedImportSampleData)
+    ) {
+      dispatch(actions.mapping.updateImportSampleData(id, importSampleData));
+    }
+  }, [dispatch, id, importSampleData, initTriggered, savedImportSampleData]);
+
   if (!showMappings || isFetchingDuringInit) {
     return (
       <div className={classes.spinnerWrapper}>
         <Spinner />
       </div>
     );
-  }
-
-  if (initTriggered && !isEqual(importSampleDataState, importSampleData)) {
-    dispatch(actions.mapping.updateGenerates(id, formattedGenerateFields));
-    setImportSampleDataState(importSampleData);
   }
 
   const fetchSalesforceSObjectMetadata = sObject => {
@@ -404,7 +410,6 @@ export default function StandaloneMapping(props) {
       onClose={onClose}
       disabled={disabled}
       extractFields={formattedExtractFields}
-      generateFields={formattedGenerateFields}
       resource={resourceData}
       exportResource={exportResource}
       isExtractsLoading={extractStatus === 'requested'}

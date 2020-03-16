@@ -11,16 +11,7 @@ const emptySet = [];
 const emptyObj = {};
 
 export default function reducer(state = {}, action) {
-  const {
-    id,
-    type,
-    generateFields,
-    lookups,
-    value,
-    field,
-    key,
-    options = {},
-  } = action;
+  const { id, type, lookups, value, field, key, options = {} } = action;
 
   return produce(state, draft => {
     if (!id) {
@@ -39,6 +30,7 @@ export default function reducer(state = {}, action) {
             netsuiteRecordType,
             showSalesforceNetsuiteAssistant,
             subRecordMappingId,
+            importSampleData = [],
             ...additionalOptions
           } = options;
           let formattedMappings;
@@ -72,7 +64,7 @@ export default function reducer(state = {}, action) {
           }
 
           // key would be unique property associated with each mapping.
-          draft[id] = {
+          const tmp = {
             mappings: formattedMappings.map(m => ({
               ...m,
               rowIdentifier: 0,
@@ -84,7 +76,7 @@ export default function reducer(state = {}, action) {
             application,
             resource: resourceData,
             adaptorType,
-            generateFields,
+            importSampleData,
             visible: true,
             isGroupedSampleData,
             flowSampleData: undefined,
@@ -92,11 +84,23 @@ export default function reducer(state = {}, action) {
             subRecordMappingId,
             salesforceMasterRecordTypeId,
             showSalesforceNetsuiteAssistant,
+            showHttpAssistantPreview: !!resourceData.assistant,
+            // httpAssistantPreview
             // lastModifiedKey helps to set generate field when any field in salesforce mapping assistant is clicked
             lastModifiedKey: '',
           };
-          draft[id].mappingsCopy = deepClone(draft[id].mappings);
-          draft[id].lookupsCopy = deepClone(draft[id].lookups);
+
+          tmp.mappingsCopy = deepClone(tmp.mappings);
+          tmp.lookupsCopy = deepClone(tmp.lookups);
+
+          if (resourceData._integrationId && resourceData.http) {
+            tmp.httpAssistantPreview = {
+              rule:
+                resourceData && resourceData.http && resourceData.http.body[0],
+            };
+          }
+
+          draft[id] = tmp;
         }
 
         break;
@@ -123,9 +127,13 @@ export default function reducer(state = {}, action) {
         break;
       }
 
-      case actionTypes.MAPPING.UPDATE_GENERATES: {
+      case actionTypes.MAPPING.UPDATE_IMPORT_SAMPLE_DATA: {
         draft[id].changeIdentifier += 1;
-        draft[id].generateFields = generateFields;
+        draft[id].importSampleData = value;
+        const generateFields = mappingUtil.getFormattedGenerateData(
+          value,
+          draft[id].application
+        );
         const { incompleteGenerates } = draft[id];
 
         // Special case for salesforce

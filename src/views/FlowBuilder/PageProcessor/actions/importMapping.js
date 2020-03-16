@@ -14,6 +14,7 @@ import { getNetSuiteSubrecordImports } from '../../../../utils/resource';
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
     marginTop: theme.appBarHeight,
+    width: '1500px',
     border: 'solid 1px',
     borderColor: theme.palette.secondary.lightest,
     boxShadow: `-4px 4px 8px rgba(0,0,0,0.15)`,
@@ -49,8 +50,11 @@ function ImportMapping({
   const classes = useStyles();
   const resourceId = resource._id;
   const mappingEditorId = `${resourceId}-${flowId}`;
-  const { showSalesforceNetsuiteAssistant } = useSelector(state =>
-    selectors.mapping(state, mappingEditorId)
+  const { showSalesforceNetsuiteAssistant, httpAssistantPreview } = useSelector(
+    state => selectors.mapping(state, mappingEditorId)
+  );
+  const showPreview = !!(
+    showSalesforceNetsuiteAssistant || httpAssistantPreview
   );
   const handleClose = (...args) => {
     setSelectedMapping(null);
@@ -101,11 +105,11 @@ function ImportMapping({
         paper: clsx(classes.drawerPaper, {
           [classes.fullWidthDrawerClose]:
             !drawerOpened &&
-            showSalesforceNetsuiteAssistant &&
+            showPreview &&
             (!subrecords || subrecords.length === 0 || selectedMapping),
           [classes.fullWidthDrawerOpen]:
             drawerOpened &&
-            showSalesforceNetsuiteAssistant &&
+            showPreview &&
             (!subrecords || subrecords.length === 0 || selectedMapping),
         }),
       }}>
