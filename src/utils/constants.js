@@ -311,7 +311,7 @@ export const USAGE_TIER_HOURS = {
 export const SUBMIT_TICKET_URL =
   'https://celigosuccess.zendesk.com/hc/en-us/requests/new?preview_as_role=end_user';
 export const WHATS_NEW_URL =
-  'https://celigosuccess.zendesk.com/hc/en-us/sections/115000074091-Release-Notes?latest=true';
+  'https://celigosuccess.zendesk.com/hc/en-us/categories/360002687611';
 export const AWS_REGIONS_LIST = [
   {
     label: 'US East (N. Virginia) [us-east-1]',
@@ -379,37 +379,40 @@ export const AWS_REGIONS_LIST = [
   },
 ];
 
-export const C_LOCKED_FIELDS = Object.freeze([
-  'pageSize',
-  'type',
-  'restlet.batchSize',
-  'restlet.searchId',
-  'distributed.executionContext',
-  'distributed.executionType',
-  'distributed.qualifier',
-  'distributed.sublists',
-  'distributed.forceReload',
-  'distributed.qualifier',
-  'relatedLists.referencedFields,',
-  'relatedLists.parentField,',
-  'relatedLists.sObjectType,',
-  'relatedLists.filter,',
-  'relatedLists.orderBy,',
-  'relatedLists.userDefined,',
-  'distributed.batchSize',
-  'soql.query',
-  'lookups',
-  'batchSize',
-  'netsuite_da.batchSize',
-  'netsuite_da.internalIdLookup.extract',
-  'netsuite_da.internalIdLookup.searchField',
-  'netsuite_da.internalIdLookup.operator',
-  'netsuite_da.internalIdLookup.expression',
-  'netsuite_da.mappings.lookups',
-  'salesforce.idLookup.extract',
-  'salesforce.idLookup.whereClause',
-  'salesforce.operation.upsert.externalIdField',
-  'salesforce.lookups',
-  '_runNextFlowIds',
-  'disabled',
-]);
+export const C_LOCKED_FIELDS = Object.freeze({
+  exports: [
+    'pageSize',
+    'type',
+    'netsuite.restlet.batchSize',
+    'netsuite.restlet.searchId',
+    'netsuite.distributed.executionContext',
+    'netsuite.distributed.executionType',
+    'netsuite.distributed.qualifier',
+    'netsuite.distributed.sublists',
+    'netsuite.distributed.forceReload',
+    'netsuite.distributed.qualifier',
+    'salesforce.relatedLists.referencedFields,',
+    'salesforce.relatedLists.parentField,',
+    'salesforce.relatedLists.sObjectType,',
+    'salesforce.relatedLists.filter,',
+    'salesforce.relatedLists.orderBy,',
+    'salesforce.relatedLists.userDefined,',
+    'salesforce.distributed.batchSize',
+    'salesforce.soql.query',
+  ],
+  imports: [
+    'lookups',
+    'batchSize',
+    'netsuite_da.batchSize',
+    'netsuite_da.internalIdLookup.extract',
+    'netsuite_da.internalIdLookup.searchField',
+    'netsuite_da.internalIdLookup.operator',
+    'netsuite_da.internalIdLookup.expression',
+    'netsuite_da.mappings.lookups',
+    'salesforce.idLookup.extract',
+    'salesforce.idLookup.whereClause',
+    'salesforce.upsert.externalIdField',
+    'salesforce.lookups',
+  ],
+  flows: ['_runNextFlowIds', 'disabled'],
+});

@@ -152,16 +152,6 @@ export default {
       applicationKey: form[`/http/unencrypted/applicationKey`],
     }),
   },
-  '4castplus': {
-    responseParser: resp => ({
-      'http.auth.token.token': resp && resp.SessionId,
-    }),
-    payloadTransformer: form => ({
-      baseURI: `https://${form['/http/subdomain']}.4castplus.com`,
-      UserName: form[`/http/unencrypted/username`],
-      Password: form[`/http/encrypted/password`],
-    }),
-  },
   procurifyauthenticate: {
     responseParser: resp => ({
       'http.unencrypted.clientId': resp && resp.data.client_id,

@@ -481,6 +481,12 @@ export const getHelpUrl = (integrations, marketplaceConnectors) => {
   return helpUrl;
 };
 
+export const getUniversityUrl = () => {
+  const domainUrl = getDomainUrl();
+
+  return `${domainUrl}/litmos/sso`;
+};
+
 export const getNetSuiteSubrecordLabel = (fieldId, subrecordType) => {
   const subrecordLabelMap = {
     inventorydetail: 'Inventory Details',

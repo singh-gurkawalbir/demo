@@ -32,7 +32,7 @@ const useStyles = makeStyles(theme => ({
     width: props => {
       if (props.occupyFullWidth) return '100%';
 
-      return props.match.isExact ? undefined : 660;
+      return props.match.isExact ? '100%' : 660;
     },
     maxHeight: 'unset',
     padding: theme.spacing(3),
@@ -48,8 +48,9 @@ const useStyles = makeStyles(theme => ({
   },
   closeButton: {
     position: 'absolute',
-    right: theme.spacing(1),
-    top: 5,
+    right: theme.spacing(2),
+    top: theme.spacing(2),
+    padding: 0,
   },
 }));
 const determineRequiredResources = type => {

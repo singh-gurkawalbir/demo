@@ -1,7 +1,7 @@
 import { Fragment } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Chip } from '@material-ui/core';
-import ApplicationImg from '../icons/ApplicationImg';
+import ApplicationImg from '../../components/icons/ApplicationImg';
 
 const useStyles = makeStyles(theme => ({
   description: {

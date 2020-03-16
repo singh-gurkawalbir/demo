@@ -1788,55 +1788,55 @@ export function convertToImport({ assistantConfig, assistantData }) {
         );
       }
     });
+  }
 
-    let defaultQueryString = '';
+  let defaultQueryString = '';
 
-    if (operationDetails.queryParameters) {
-      operationDetails.queryParameters.forEach(p => {
-        if (defaultQueryString.length > 0) {
-          defaultQueryString += '&';
+  if (operationDetails.queryParameters) {
+    operationDetails.queryParameters.forEach(p => {
+      if (defaultQueryString.length > 0) {
+        defaultQueryString += '&';
+      }
+
+      defaultQueryString += [p.id, p.defaultValue].join('=');
+    });
+  }
+
+  if (defaultQueryString) {
+    importDoc.relativeURI = importDoc.relativeURI.map(
+      u => u + (u.indexOf('?') === -1 ? '?' : '&') + defaultQueryString
+    );
+  }
+
+  if (operationDetails.headers) {
+    Object.keys(operationDetails.headers).forEach(h => {
+      if (operationDetails.headers[h] !== null) {
+        const hv = operationDetails.headers[h].replace(
+          /RECORD_IDENTIFIER/gi,
+          (identifiers && pathParams[identifiers[0].id]) || ''
+        ); // IO-6119. Static headers with preconfigured string is replaced dynamically with record identifier.
+
+        importDoc.headers.push({ name: h, value: hv });
+      }
+    });
+  }
+
+  if (adaptorType === 'http') {
+    [
+      'successMediaType',
+      'errorMediaType',
+      'requestMediaType',
+      'batchSize',
+      'ignoreEmptyNodes',
+    ].forEach(p => {
+      if (operationDetails[p]) {
+        if (p === 'batchSize') {
+          importDoc[p] = parseInt(operationDetails[p], 10);
+        } else {
+          importDoc[p] = operationDetails[p];
         }
-
-        defaultQueryString += [p.id, p.defaultValue].join('=');
-      });
-    }
-
-    if (defaultQueryString) {
-      importDoc.relativeURI = importDoc.relativeURI.map(
-        u => u + (u.indexOf('?') === -1 ? '?' : '&') + defaultQueryString
-      );
-    }
-
-    if (operationDetails.headers) {
-      Object.keys(operationDetails.headers).forEach(h => {
-        if (operationDetails.headers[h] !== null) {
-          const hv = operationDetails.headers[h].replace(
-            /RECORD_IDENTIFIER/gi,
-            pathParams[identifiers[0].id] || ''
-          ); // IO-6119. Static headers with preconfigured string is replaced dynamically with record identifier.
-
-          importDoc.headers.push({ name: h, value: hv });
-        }
-      });
-    }
-
-    if (adaptorType === 'http') {
-      [
-        'successMediaType',
-        'errorMediaType',
-        'requestMediaType',
-        'batchSize',
-        'ignoreEmptyNodes',
-      ].forEach(p => {
-        if (operationDetails[p]) {
-          if (p === 'batchSize') {
-            importDoc[p] = parseInt(operationDetails[p], 10);
-          } else {
-            importDoc[p] = operationDetails[p];
-          }
-        }
-      });
-    }
+      }
+    });
   }
 
   /** We need to set operation only if id is set on endpoint in metadata. Otherwise, the conversion logic in ampersand app fails */

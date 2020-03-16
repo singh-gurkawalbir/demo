@@ -13,6 +13,8 @@ const useStyles = makeStyles(theme => ({
   },
   listItem: {
     color: theme.palette.text.primary,
+    width: '100%',
+    cursor: 'pointer',
   },
   activeListItem: {
     color: theme.palette.primary.main,
