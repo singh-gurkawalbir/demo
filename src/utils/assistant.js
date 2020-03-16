@@ -703,6 +703,8 @@ export function convertToExport({ assistantConfig, assistantData }) {
     operation,
     assistantData,
   });
+
+  console.log(`operationDetails ${JSON.stringify(operationDetails)}`);
   const exportDefaults = {
     rest: {
       ...cloneDeep(DEFAULT_PROPS.EXPORT.REST),
@@ -803,43 +805,85 @@ export function convertToExport({ assistantConfig, assistantData }) {
 
   exportDoc.relativeURI = relativeURI;
 
-  if (['POST', 'PUT'].includes(exportDoc.method)) {
-    if (!isEmpty(bodyParams)) {
-      exportDoc.postBody = defaultsDeep(
-        cloneDeep(operationDetails.postBody),
-        bodyParams
-      );
-
-      if (operationDetails.postBodyParamsOrder) {
-        // IO-4570
-        exportDoc.postBody = JSON.parse(
-          JSON.stringify(
-            exportDoc.postBody,
-            operationDetails.postBodyParamsOrder
-          )
+  if (adaptorType === 'rest') {
+    if (['POST', 'PUT'].includes(exportDoc.method)) {
+      if (!isEmpty(bodyParams)) {
+        exportDoc.postBody = defaultsDeep(
+          cloneDeep(operationDetails.postBody),
+          bodyParams
         );
+
+        if (operationDetails.postBodyParamsOrder) {
+          // IO-4570
+          exportDoc.postBody = JSON.parse(
+            JSON.stringify(
+              exportDoc.postBody,
+              operationDetails.postBodyParamsOrder
+            )
+          );
+        }
+      } else if (operationDetails.postBody) {
+        exportDoc.postBody = cloneDeep(operationDetails.postBody);
+      } else {
+        exportDoc.postBody = queryParams;
       }
-    } else if (operationDetails.postBody) {
-      exportDoc.postBody = cloneDeep(operationDetails.postBody);
-    } else {
-      exportDoc.postBody = queryParams;
+
+      if (exportDoc.postBody) {
+        if (isString(exportDoc.postBody)) {
+          if (exportDoc.postBody.includes('lastExportDateTime')) {
+            exportType = 'delta';
+          }
+        } else if (isObject(exportDoc.postBody)) {
+          if (
+            JSON.stringify(exportDoc.postBody).includes('lastExportDateTime')
+          ) {
+            exportType = 'delta';
+          }
+        }
+
+        if (assistant === 'expensify') {
+          exportDoc.postBody = `requestJobDescription=${JSON.stringify(
+            exportDoc.postBody
+          )}`;
+        }
+      }
     }
+  } else if (adaptorType === 'rest') {
+    if (['POST', 'PUT'].includes(exportDoc.method)) {
+      if (!isEmpty(bodyParams)) {
+        exportDoc.body = defaultsDeep(
+          cloneDeep(operationDetails.body),
+          bodyParams
+        );
 
-    if (exportDoc.postBody) {
-      if (isString(exportDoc.postBody)) {
-        if (exportDoc.postBody.includes('lastExportDateTime')) {
-          exportType = 'delta';
+        if (operationDetails.bodyParamsOrder) {
+          // IO-4570
+          exportDoc.body = JSON.parse(
+            JSON.stringify(exportDoc.body, operationDetails.bodyParamsOrder)
+          );
         }
-      } else if (isObject(exportDoc.postBody)) {
-        if (JSON.stringify(exportDoc.postBody).includes('lastExportDateTime')) {
-          exportType = 'delta';
-        }
+      } else if (operationDetails.body) {
+        exportDoc.body = cloneDeep(operationDetails.body);
+      } else {
+        exportDoc.body = queryParams;
       }
 
-      if (assistant === 'expensify') {
-        exportDoc.postBody = `requestJobDescription=${JSON.stringify(
-          exportDoc.postBody
-        )}`;
+      if (exportDoc.body) {
+        if (isString(exportDoc.body)) {
+          if (exportDoc.body.includes('lastExportDateTime')) {
+            exportType = 'delta';
+          }
+        } else if (isObject(exportDoc.body)) {
+          if (JSON.stringify(exportDoc.body).includes('lastExportDateTime')) {
+            exportType = 'delta';
+          }
+        }
+
+        if (assistant === 'expensify') {
+          exportDoc.body = `requestJobDescription=${JSON.stringify(
+            exportDoc.body
+          )}`;
+        }
       }
     }
   }
