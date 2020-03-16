@@ -61,6 +61,7 @@ export default function SettingsDrawer({ flow, isViewMode }) {
         type: 'select',
         helpKey: 'flow._integrationId',
         label: 'Integration',
+        placeholder: 'Standalone Flows',
         defaultValue: flow && flow._integrationId,
         options: [
           {
@@ -166,8 +167,10 @@ export default function SettingsDrawer({ flow, isViewMode }) {
     history.goBack();
   };
 
-  const infoTextSettings =
-    'You can enable or disable flow error notifications, known as job errors. If you have these notifications enabled or disabled for the integration containing this flow, this flow-level setting will override the integration-level setting.';
+  const infoTextSettings = `You can enable or disable flow error notifications, 
+    known as job errors.  If you have these notifications enabled or disabled for 
+    the integration containing this flow, this flow-level setting will override 
+    the integration-level setting.`;
 
   return (
     <RightDrawer path="settings" title="Settings" infoText={infoTextSettings}>

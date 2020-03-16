@@ -80,11 +80,11 @@ export default function CsvParseEditor(props) {
   return (
     <PanelGrid className={classes.template}>
       <PanelGridItem gridArea="rule">
-        <PanelTitle title="CSV Parse Options" />
+        <PanelTitle title="CSV parse options" />
         <CsvParsePanel disabled={disabled} editorId={editorId} />
       </PanelGridItem>
       <PanelGridItem gridArea="data">
-        <PanelTitle title="CSV to Parse" />
+        <PanelTitle title="CSV to parse" />
         <CodePanel
           name="data"
           value={data}
@@ -94,7 +94,7 @@ export default function CsvParseEditor(props) {
         />
       </PanelGridItem>
       <PanelGridItem gridArea="result">
-        <PanelTitle title="Parsed Result" />
+        <PanelTitle title="Parsed result" />
         <CodePanel
           name="result"
           value={result && result.data ? result.data : ''}

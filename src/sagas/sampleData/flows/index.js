@@ -297,7 +297,7 @@ function* processMappingData({
     rules: {
       rules: [mappings],
     },
-    data: [preProcessedData],
+    data: preProcessedData ? [preProcessedData] : [],
   };
   // call processor data specific to mapper as it is not part of editors saga
   const path = `/processors/mapperProcessor`;

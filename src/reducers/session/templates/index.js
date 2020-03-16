@@ -143,7 +143,9 @@ export function template(state, templateId) {
 }
 
 export function previewTemplate(state, templateId) {
-  return ((state || {})[templateId] || {}).preview || {};
+  if (!state || !state[templateId]) return emptyObject;
+
+  return state[templateId].preview || emptyObject;
 }
 
 export function isFileUploaded(state) {
