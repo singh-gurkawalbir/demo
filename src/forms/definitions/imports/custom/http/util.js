@@ -305,14 +305,6 @@ export function fieldMeta({ resource, assistantData }) {
     fieldMap,
     layout: {
       fields: ['common', 'importData', ...fieldIds, 'dataMappings'],
-      type: 'collapse',
-      containers: [
-        {
-          collapsed: true,
-          label: 'Custom settings',
-          fields: ['settings'],
-        },
-      ],
     },
   };
 }
