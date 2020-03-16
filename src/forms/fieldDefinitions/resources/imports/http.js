@@ -145,6 +145,34 @@ export default {
       return type;
     },
   },
+  'http.requestType': {
+    type: 'select',
+    label: 'Request Type',
+    options: [
+      {
+        items: [
+          {
+            label: 'CREATE',
+            value: 'CREATE',
+          },
+          {
+            label: 'UPDATE',
+            value: 'UPDATE',
+          },
+        ],
+      },
+    ],
+    helpText:
+      'Please specify whether the record is being created or updated using this field.',
+    visibleWhen: [
+      {
+        field: 'http.method',
+        is: ['POST', 'PUT', 'DELETE', 'PATCH'],
+      },
+    ],
+    defaultValue: r =>
+      r && r.http && r.http.requestType && r.http.requestType[0],
+  },
   'http.relativeURI': {
     type: 'textwithlookupextract',
     fieldType: 'relativeUri',
