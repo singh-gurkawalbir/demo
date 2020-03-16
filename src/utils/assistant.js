@@ -889,6 +889,18 @@ export function convertToExport({ assistantConfig, assistantData }) {
     );
   }
 
+  if (operationDetails.mergeBodyToPagingBody && exportDoc.body) {
+    // IO-9428
+    if (!exportDoc.paging) {
+      exportDoc.paging = {};
+    }
+
+    exportDoc.paging.body = defaultsDeep(
+      exportDoc.paging.body || {},
+      exportDoc.body
+    );
+  }
+
   const assistantMetadata = { resource };
 
   if (version) {
