@@ -85,7 +85,6 @@ export default function reducer(state = {}, action) {
             salesforceMasterRecordTypeId,
             showSalesforceNetsuiteAssistant,
             showHttpAssistantPreview: !!resourceData.assistant,
-            // httpAssistantPreview
             // lastModifiedKey helps to set generate field when any field in salesforce mapping assistant is clicked
             lastModifiedKey: '',
           };

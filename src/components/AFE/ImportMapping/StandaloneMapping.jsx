@@ -34,7 +34,6 @@ export default function StandaloneMapping(props) {
   const [flowSampleDataLoaded, setFlowSampleDataLoaded] = useState(false);
   const [importSampleDataLoaded, setImportSampleDataLoaded] = useState(false);
   const [flowSampleDataState, setFlowSampleDataState] = useState(undefined);
-  // const [importSampleDataState, setImportSampleDataState] = useState([]);
   const [assistantLoaded, setAssistantLoaded] = useState(false);
   const [
     integrationAppMetadataLoaded,
@@ -267,7 +266,6 @@ export default function StandaloneMapping(props) {
 
     if (subRecordMappingId) {
       ({ recordType } = subRecordMappingObj);
-      // recordType = subRecordMappingObj.recordType;
     } else {
       recordType =
         resourceData.netsuite_da && resourceData.netsuite_da.recordType;
