@@ -11,7 +11,7 @@ import * as selectors from '../../../reducers';
 import { useSetInitializeFormData } from './assistant/DynaAssistantOptions';
 import { SCOPES } from '../../../sagas/resourceForm';
 import formFactory from '../../../forms/formFactory';
-import { getApplicationConnectors } from '../../../constants/applications';
+import { getApp } from '../../../constants/applications';
 
 const emptyObj = {};
 const isParent = true;
@@ -26,7 +26,8 @@ export function FormView(props) {
     return merged || emptyObj;
   });
   const resourceFormState = useSelector(
-    state => selectors.resourceFormState(state, resourceType, resourceId) || {}
+    state =>
+      selectors.resourceFormState(state, resourceType, resourceId) || emptyObj
   );
   const assistantData = useSelector(state =>
     selectors.assistantData(state, {
@@ -37,13 +38,11 @@ export function FormView(props) {
   const connection = useSelector(
     state =>
       selectors.resource(state, 'connections', staggedResource._connectionId) ||
-      {}
+      emptyObj
   );
   const { assistant: assistantName } = staggedResource;
   const options = useMemo(() => {
-    const matchingApplication = getApplicationConnectors().find(
-      con => con.assistant === assistantName
-    );
+    const matchingApplication = getApp(null, assistantName);
 
     if (matchingApplication) {
       const { name, type } = matchingApplication;

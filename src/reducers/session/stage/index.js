@@ -1,9 +1,15 @@
 import produce from 'immer';
-import sift from 'sift';
 import actionTypes from '../../../actions/types';
 
 export default (state = {}, action) => {
-  const { type, id, patch: newPatch, conflict, scope, siftExpr } = action;
+  const {
+    type,
+    id,
+    patch: newPatch,
+    conflict,
+    scope,
+    predicateForPatchFilter,
+  } = action;
   const timestamp = Date.now();
 
   return produce(state, draft => {
@@ -31,7 +37,7 @@ export default (state = {}, action) => {
           return;
         }
 
-        draft[id].patch = draft[id].patch.filter(sift(siftExpr));
+        draft[id].patch = draft[id].patch.filter(predicateForPatchFilter);
 
         return;
       case actionTypes.RESOURCE.STAGE_UNDO:

@@ -228,14 +228,10 @@ function* deleteUISpecificValues({ values, resourceId }) {
     delete valuesCopy[id];
   });
   // remove any staged values tied to it the ui fields
+  const predicateForPatchFilter = patch =>
+    !UI_FIELD_VALUES.includes(patch.path);
 
-  const siftExpr = {
-    $or: UI_FIELD_VALUES.map(id => ({
-      path: { $ne: id },
-    })),
-  };
-
-  yield put(actions.resource.removeStage(resourceId, siftExpr));
+  yield put(actions.resource.removeStage(resourceId, predicateForPatchFilter));
 
   return valuesCopy;
 }
