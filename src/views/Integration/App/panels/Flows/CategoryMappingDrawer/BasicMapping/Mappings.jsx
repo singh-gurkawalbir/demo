@@ -104,6 +104,22 @@ const useStyles = makeStyles(theme => ({
     position: 'relative',
     width: '40%',
   },
+  dynaTextContainer: {
+    padding: 0,
+    display: 'flex',
+    '& > .MuiFilledInput-multiline': {
+      minHeight: '48px',
+      padding: theme.spacing(1),
+      '& >:nth-child(1)': {
+        margin: 0,
+        minWidth: 0,
+      },
+      '& >:nth-child(2)': {
+        minHeight: `16px !important`,
+        wordBreak: 'break-word',
+      },
+    },
+  },
 }));
 
 export default function ImportMapping(props) {
@@ -284,6 +300,7 @@ export default function ImportMapping(props) {
         {...props}
         startAdornment={icon}
         onFieldChange={handleValueChange}
+        className={classes.dynaTextContainer}
       />
     );
   };
