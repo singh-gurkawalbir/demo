@@ -31,7 +31,7 @@ import ArrowUpIcon from '../../../../../../components/icons/ArrowUpIcon';
 import ArrowDownIcon from '../../../../../../components/icons/ArrowDownIcon';
 import ShowContentIcon from '../../../../../../components/icons/ShowContentIcon';
 import HideContentIcon from '../../../../../../components/icons/HideContentIcon';
-import VariationIcon from '../../../../../../components/icons/AdjustInventoryIcon';
+import VariationIcon from '../../../../../../components/icons/ConfigureSettingIcon';
 import Mappings from './BasicMapping';
 import Filters from './Filters';
 import CategoryList from './CategoryList';
@@ -310,7 +310,11 @@ function CategoryMappings({
             </div>
             <span>
               {expanded ? (
-                <ShowContentIcon />
+                <Tooltip title="Hide categories" placement="bottom">
+                  <IconButton size="small" color="inherit">
+                    <ShowContentIcon />
+                  </IconButton>
+                </Tooltip>
               ) : (
                 <Tooltip title="Enable categories" placement="bottom">
                   <IconButton size="small" color="inherit">
@@ -334,15 +338,23 @@ function CategoryMappings({
           {!isCommonCategory && (
             <div>
               {deleted ? (
-                <RestoreIcon
-                  className={classes.deleteIcon}
-                  onClick={handleRestore}
-                />
+                <Tooltip title="Restore category" placement="bottom">
+                  <IconButton
+                    size="small"
+                    color="inherit"
+                    className={classes.deleteIcon}>
+                    <RestoreIcon onClick={handleRestore} />
+                  </IconButton>
+                </Tooltip>
               ) : (
-                <TrashIcon
-                  className={classes.deleteIcon}
-                  onClick={handleDelete}
-                />
+                <Tooltip title="Delete category" placement="bottom">
+                  <IconButton
+                    size="small"
+                    color="inherit"
+                    className={classes.deleteIcon}>
+                    <TrashIcon onClick={handleDelete} />
+                  </IconButton>
+                </Tooltip>
               )}
             </div>
           )}

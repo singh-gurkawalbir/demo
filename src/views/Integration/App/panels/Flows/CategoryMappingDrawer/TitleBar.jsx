@@ -8,6 +8,7 @@ import CloseIcon from '../../../../../../components/icons/CloseIcon';
 import AddIcon from '../../../../../../components/icons/AddIcon';
 import LoadResources from '../../../../../../components/LoadResources';
 import IconTextButton from '../../../../../../components/IconTextButton';
+import BackArrowIcon from '../../../../../../components/icons/BackArrowIcon';
 
 const useStyles = makeStyles(theme => ({
   titleBar: {
@@ -33,6 +34,16 @@ const useStyles = makeStyles(theme => ({
   closeIcon: {
     padding: theme.spacing(0.5),
   },
+  arrowLeft: {
+    float: 'left',
+    padding: 0,
+    marginLeft: '-10px',
+    marginRight: '10px',
+    '&:hover': {
+      background: 'none',
+      color: theme.palette.secondary.dark,
+    },
+  },
 }));
 
 export default function DrawerTitleBar({
@@ -41,6 +52,7 @@ export default function DrawerTitleBar({
   title,
   addCategory,
   parentUrl,
+  backToParent,
 }) {
   const classes = useStyles();
   const history = useHistory();
@@ -62,6 +74,15 @@ export default function DrawerTitleBar({
   return (
     <div className={classes.titleBar}>
       <LoadResources required resources="flows">
+        {backToParent && (
+          <IconButton
+            data-test="openBasicMapping"
+            aria-label="back"
+            onClick={handleClose}
+            className={classes.arrowLeft}>
+            <BackArrowIcon />
+          </IconButton>
+        )}
         <Typography variant="h3" className={classes.title}>
           {title ||
             `${addCategory ? 'Add category: ' : 'Edit Mappings:'} ${
