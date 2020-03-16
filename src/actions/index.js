@@ -1382,6 +1382,11 @@ const responseMapping = {
       id,
       value,
     }),
+  setFormattedMapping: (id, value) =>
+    action(actionTypes.RESPONSE_MAPPING.SET_FORMATTED_MAPPING, {
+      id,
+      value,
+    }),
   patchField: (id, field, index, value) =>
     action(actionTypes.RESPONSE_MAPPING.PATCH_FIELD, {
       id,

@@ -73,12 +73,7 @@ export default function ResponseMappingDialog(props) {
     onClose,
     disabled = false,
   } = props;
-  const { merged: flow = {} } = useSelector(state =>
-    selectors.resourceData(state, 'flows', flowId)
-  );
   const [initTriggered, setInitTriggered] = useState(false);
-  const pageProcessorsObject =
-    flow && flow.pageProcessors && flow.pageProcessors[resourceIndex];
   const keyName = 'extract';
   const valueName = 'generate';
   const classes = useStyles();
@@ -119,29 +114,14 @@ export default function ResponseMappingDialog(props) {
   const defaultExtractFields = responseMappingUtil.getResponseMappingDefaultExtracts(
     resourceType
   );
-  const responseMapping =
-    pageProcessorsObject && pageProcessorsObject.responseMapping;
   const handleInit = useCallback(() => {
     dispatch(
       actions.responseMapping.init(editorId, {
-        responseMapping,
         resourceIndex,
-        resourceType,
-        pageProcessor: pageProcessorsObject,
-        resource,
         flowId,
       })
     );
-  }, [
-    dispatch,
-    editorId,
-    flowId,
-    pageProcessorsObject,
-    resource,
-    resourceIndex,
-    resourceType,
-    responseMapping,
-  ]);
+  }, [dispatch, editorId, flowId, resourceIndex]);
 
   useEffect(() => {
     if (!initTriggered) {

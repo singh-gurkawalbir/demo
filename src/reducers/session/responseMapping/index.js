@@ -1,7 +1,6 @@
 import produce from 'immer';
 import { isEqual } from 'lodash';
 import actionTypes from '../../../actions/types';
-import responseMappingUtil from '../../../utils/responseMapping';
 import PATCH_SAVE_STATUS from '../../../constants/patchSaveStatus';
 
 const { deepClone } = require('fast-json-patch');
@@ -19,31 +18,30 @@ export default function reducer(state = {}, action) {
 
     switch (type) {
       case actionTypes.RESPONSE_MAPPING.INIT: {
-        const {
-          responseMapping,
-          resourceIndex,
-          resourceType,
-          pageProcessor,
-          resource,
-          flowId,
-        } = value;
-        const formattedResponseMapping = responseMappingUtil.getFieldsAndListMappings(
-          responseMapping
-        );
+        const { resourceIndex, flowId } = value;
 
         draft[id] = {
-          mappings: formattedResponseMapping.map(m => ({
-            ...m,
-            rowIdentifier: 0,
-          })),
+          mappings: [],
+          mappingsCopy: [],
           changeIdentifier: 0,
           resourceIndex,
-          resourceType,
-          mappingsCopy: deepClone(formattedResponseMapping),
-          pageProcessor,
-          resource,
           flowId,
         };
+
+        break;
+      }
+
+      case actionTypes.RESPONSE_MAPPING.SET_FORMATTED_MAPPING: {
+        const _tmp = value.map(m => ({
+          ...m,
+          rowIdentifier: 0,
+        }));
+
+        if (draft[id]) {
+          draft[id].mappings = _tmp;
+          draft[id].mappingsCopy = deepClone(_tmp);
+          draft[id].changeIdentifier += 1;
+        }
 
         break;
       }
