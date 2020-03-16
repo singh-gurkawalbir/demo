@@ -7,7 +7,7 @@ import Spinner from '../../Spinner';
 import { useLoadingSnackbarOnSave } from '.';
 
 // TODO: Handle errors
-export default function FlowResourceSave(props) {
+export default function ResponseMappingSave(props) {
   const {
     id,
     submitButtonLabel = 'Save',
@@ -21,9 +21,11 @@ export default function FlowResourceSave(props) {
   const [saveTrigerred, setSaveTriggered] = useState(false);
   const dispatch = useDispatch();
   const { saveTerminated, saveCompleted } = useSelector(state =>
-    selectors.flowResourceSaveStatus(state, id)
+    selectors.responseMappingSaveStatus(state, id)
   );
-  const isDirty = useSelector(state => selectors.flowResourceDirty(state, id));
+  const isDirty = useSelector(state =>
+    selectors.responseMappingDirty(state, id)
+  );
 
   useEffect(() => {
     if (saveTrigerred && saveCompleted && onClose) {
@@ -32,7 +34,7 @@ export default function FlowResourceSave(props) {
     }
   }, [onClose, saveCompleted, saveTerminated, saveTrigerred]);
   const onSave = useCallback(() => {
-    dispatch(actions.flowResource.save(id));
+    dispatch(actions.responseMapping.save(id));
     setSaveTriggered(true);
   }, [dispatch, id]);
   const { handleSubmitForm, disableSave } = useLoadingSnackbarOnSave({

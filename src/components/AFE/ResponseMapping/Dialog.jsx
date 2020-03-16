@@ -14,7 +14,7 @@ import ModalDialog from '../../ModalDialog';
 import ButtonGroup from '../../ButtonGroup';
 import ActionButton from '../../ActionButton';
 import Help from '../../Help';
-import FlowResourceSave from '../../ResourceFormFactory/Actions/FlowResourceSave';
+import ResponseMappingSave from '../../ResourceFormFactory/Actions/ResponseMappingSave';
 
 // TODO Aditya: Convert Response Mapping and Import mapping to re-use same component
 // TODO: Azhar once Mapping dialog design is ready make a component
@@ -86,10 +86,10 @@ export default function ResponseMappingDialog(props) {
   const editorId = `responseMapping-${resourceId}`;
   const isImport = resourceType === 'imports';
   const { mappings = [], changeIdentifier } = useSelector(state =>
-    selectors.getFlowResource(state, editorId)
+    selectors.getResponseMapping(state, editorId)
   );
   const { saveInProgress = false, saveCompleted = false } = useSelector(state =>
-    selectors.flowResourceSaveStatus(state, editorId)
+    selectors.responseMappingSaveStatus(state, editorId)
   );
   const extractFields = useSelector(state =>
     selectors.getSampleData(state, {
@@ -120,7 +120,7 @@ export default function ResponseMappingDialog(props) {
     pageProcessorsObject && pageProcessorsObject.responseMapping;
   const handleInit = useCallback(() => {
     dispatch(
-      actions.flowResource.responseMappingInit(editorId, {
+      actions.responseMapping.init(editorId, {
         responseMapping,
         resourceIndex,
         resourceType,
@@ -149,19 +149,14 @@ export default function ResponseMappingDialog(props) {
   const handleFieldUpdate = useCallback(
     (rowIndex, field) => (_, value) => {
       dispatch(
-        actions.flowResource.responseMappingPatchField(
-          editorId,
-          field,
-          rowIndex,
-          value
-        )
+        actions.responseMapping.patchField(editorId, field, rowIndex, value)
       );
     },
     [dispatch, editorId]
   );
   const handleDelete = useCallback(
     rowIndex => () => {
-      dispatch(actions.flowResource.responseMappingDelete(editorId, rowIndex));
+      dispatch(actions.responseMapping.delete(editorId, rowIndex));
     },
     [dispatch, editorId]
   );
@@ -265,14 +260,14 @@ export default function ResponseMappingDialog(props) {
       </div>
       <div>
         <ButtonGroup>
-          <FlowResourceSave
+          <ResponseMappingSave
             id={editorId}
             disabled={disabled || saveInProgress}
             dataTest="saveMapping"
             variant="outlined"
             color="secondary"
           />
-          <FlowResourceSave
+          <ResponseMappingSave
             id={editorId}
             disabled={disabled || saveInProgress}
             submitButtonLabel="Save and close"

@@ -2,7 +2,6 @@ import produce from 'immer';
 import { isEqual } from 'lodash';
 import actionTypes from '../../../actions/types';
 import responseMappingUtil from '../../../utils/responseMapping';
-import flowResourceTypes from './constants';
 
 const { deepClone } = require('fast-json-patch');
 
@@ -19,7 +18,7 @@ export default function reducer(state = {}, action) {
     }
 
     switch (type) {
-      case actionTypes.FLOW_RESOURCE.RESPONSE_MAPPING_INIT: {
+      case actionTypes.RESPONSE_MAPPING.INIT: {
         const {
           responseMapping,
           resourceIndex,
@@ -40,7 +39,6 @@ export default function reducer(state = {}, action) {
           changeIdentifier: 0,
           resourceIndex,
           resourceType,
-          type: flowResourceTypes.RESPONSE_MAPPING,
           mappingsCopy: deepClone(formattedResponseMapping),
           pageProcessor,
           resource,
@@ -50,7 +48,7 @@ export default function reducer(state = {}, action) {
         break;
       }
 
-      case actionTypes.FLOW_RESOURCE.RESPONSE_MAPPING_PATCH_FIELD: {
+      case actionTypes.RESPONSE_MAPPING.PATCH_FIELD: {
         if (draft[id].mappings[index]) {
           const { rowIdentifier } = draft[id].mappings[index];
 
@@ -66,19 +64,19 @@ export default function reducer(state = {}, action) {
         break;
       }
 
-      case actionTypes.FLOW_RESOURCE.RESPONSE_MAPPING_DELETE: {
+      case actionTypes.RESPONSE_MAPPING.DELETE: {
         draft[id].mappings.splice(index, 1);
         draft[id].changeIdentifier += 1;
         break;
       }
 
-      case actionTypes.FLOW_RESOURCE.SAVE:
+      case actionTypes.RESPONSE_MAPPING.SAVE:
         draft[id].saveStatus = 'requested';
         break;
-      case actionTypes.FLOW_RESOURCE.SAVE_COMPLETE:
+      case actionTypes.RESPONSE_MAPPING.SAVE_COMPLETE:
         draft[id].saveStatus = 'completed';
         break;
-      case actionTypes.FLOW_RESOURCE.SAVE_FAILED:
+      case actionTypes.RESPONSE_MAPPING.SAVE_FAILED:
         draft[id].saveStatus = 'failed';
         break;
 
@@ -88,7 +86,7 @@ export default function reducer(state = {}, action) {
 }
 
 // #region PUBLIC SELECTORS
-export function getFlowResource(state, id) {
+export function getResponseMapping(state, id) {
   if (!state || !state[id]) {
     return emptySet;
   }
@@ -97,31 +95,27 @@ export function getFlowResource(state, id) {
 }
 
 // #region PUBLIC SELECTORS
-export function flowResourceDirty(state, id) {
+export function responseMappingDirty(state, id) {
   if (!state || !state[id]) {
     return false;
   }
 
   let isDirty = false;
-  const { type } = state[id];
-
   // Response Mapping
-  if (flowResourceTypes[type] === flowResourceTypes.RESPONSE_MAPPING) {
-    const { mappings, mappingsCopy } = state[id];
+  const { mappings, mappingsCopy } = state[id];
 
-    isDirty = mappings.length !== mappingsCopy.length;
+  isDirty = mappings.length !== mappingsCopy.length;
 
-    for (let i = 0; i < mappings.length && !isDirty; i += 1) {
-      const { rowIdentifier, ..._mapping } = mappings[i];
+  for (let i = 0; i < mappings.length && !isDirty; i += 1) {
+    const { rowIdentifier, ..._mapping } = mappings[i];
 
-      isDirty = !isEqual(_mapping, mappingsCopy[i]);
-    }
+    isDirty = !isEqual(_mapping, mappingsCopy[i]);
   }
 
   return isDirty;
 }
 
-export function flowResourceSaveStatus(state, id) {
+export function responseMappingSaveStatus(state, id) {
   if (!state || !state[id]) {
     return emptyObj;
   }

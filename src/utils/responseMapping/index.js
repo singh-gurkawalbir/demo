@@ -1,4 +1,5 @@
 import { deepClone } from 'fast-json-patch/lib/core';
+import responseMappingUtil from './';
 
 export const LookupResponseMappingExtracts = [
   'data',
@@ -86,6 +87,51 @@ export default {
     return {
       fields,
       lists,
+    };
+  },
+  getPatchSet: value => {
+    const {
+      mappings,
+      resourceIndex,
+      resourceType,
+      pageProcessor,
+      resource,
+      flowId,
+    } = value;
+    const patchSet = [];
+    const _mappings = mappings.map(({ rowIdentifier, ...others }) => others);
+    const mappingsWithListsAndFields = responseMappingUtil.generateMappingFieldsAndList(
+      _mappings
+    );
+
+    if (
+      pageProcessor &&
+      pageProcessor[resourceIndex] &&
+      pageProcessor[resourceIndex].responseMapping
+    ) {
+      const obj = {};
+
+      obj.responseMapping = {};
+      obj.type = resourceType === 'imports' ? 'import' : 'export';
+      obj[resourceType === 'imports' ? '_importId' : '_exportId'] =
+        resource._id;
+      patchSet.push({
+        op: 'add',
+        path: `/pageProcessors/${resourceIndex}`,
+        value: obj,
+      });
+    }
+
+    patchSet.push({
+      op: 'replace',
+      path: `/pageProcessors/${resourceIndex}/responseMapping`,
+      value: mappingsWithListsAndFields,
+    });
+
+    return {
+      patch: patchSet,
+      resourceType: 'flows',
+      resourceId: flowId,
     };
   },
 };

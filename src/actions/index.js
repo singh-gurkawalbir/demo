@@ -1376,24 +1376,25 @@ const analytics = {
       }),
   },
 };
-const flowResource = {
-  responseMappingInit: (id, value) =>
-    action(actionTypes.FLOW_RESOURCE.RESPONSE_MAPPING_INIT, {
+const responseMapping = {
+  init: (id, value) =>
+    action(actionTypes.RESPONSE_MAPPING.INIT, {
       id,
       value,
     }),
-  responseMappingPatchField: (id, field, index, value) =>
-    action(actionTypes.FLOW_RESOURCE.RESPONSE_MAPPING_PATCH_FIELD, {
+  patchField: (id, field, index, value) =>
+    action(actionTypes.RESPONSE_MAPPING.PATCH_FIELD, {
       id,
       field,
       index,
       value,
     }),
-  responseMappingDelete: (id, index) =>
-    action(actionTypes.FLOW_RESOURCE.RESPONSE_MAPPING_DELETE, { id, index }),
-  save: id => action(actionTypes.FLOW_RESOURCE.SAVE, { id }),
-  saveFailed: id => action(actionTypes.FLOW_RESOURCE.SAVE_FAILED, { id }),
-  saveComplete: id => action(actionTypes.FLOW_RESOURCE.SAVE_COMPLETE, { id }),
+  delete: (id, index) =>
+    action(actionTypes.RESPONSE_MAPPING.DELETE, { id, index }),
+  save: id => action(actionTypes.RESPONSE_MAPPING.SAVE, { id }),
+  saveFailed: id => action(actionTypes.RESPONSE_MAPPING.SAVE_FAILED, { id }),
+  saveComplete: id =>
+    action(actionTypes.RESPONSE_MAPPING.SAVE_COMPLETE, { id }),
 };
 // #endregion
 
@@ -1438,5 +1439,5 @@ export default {
   searchCriteria,
   analytics,
   transfer,
-  flowResource,
+  responseMapping,
 };
