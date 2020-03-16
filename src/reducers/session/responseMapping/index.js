@@ -100,11 +100,14 @@ export function responseMappingDirty(state, id) {
     return false;
   }
 
-  let isDirty = false;
   // Response Mapping
   const { mappings, mappingsCopy } = state[id];
+  let isDirty = false;
 
   isDirty = mappings.length !== mappingsCopy.length;
+
+  // if length doesn't match return right away
+  if (isDirty) return true;
 
   for (let i = 0; i < mappings.length && !isDirty; i += 1) {
     const { rowIdentifier, ..._mapping } = mappings[i];
