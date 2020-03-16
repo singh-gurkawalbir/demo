@@ -6,9 +6,6 @@ import * as selectors from '../../reducers';
 import { commitStagedChanges } from '../resources';
 import responseMappingUtil from '../../utils/responseMapping';
 
-// const  = useSelector(state =>
-//   selectors.resourceData(state, 'flows', flowId)
-// );
 export function* getResponseMappingFromFlow({ id, value }) {
   const { resourceIndex, flowId } = value;
   const { merged: flow = {} } = yield select(
@@ -55,6 +52,7 @@ export function* saveResponseMapping({ id }) {
   });
 
   // trigger save failed in case of error
+  // TODO check error format and save it
   if (error) yield put(actions.responseMapping.saveFailed(id));
 
   // trigger save complete in case of success
