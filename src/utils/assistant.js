@@ -665,6 +665,17 @@ export function convertFromExport({ exportDoc, assistantData, adaptorType }) {
         bodyParams = exportAdaptorSubSchema.postBody;
       }
     }
+  } else if (exportAdaptorSubSchema.body) {
+    if (exportDoc.assistant === 'expensify') {
+      bodyParams = exportAdaptorSubSchema.body.replace(
+        'requestJobDescription=',
+        ''
+      );
+    } else {
+      bodyParams = exportAdaptorSubSchema.body;
+    }
+
+    bodyParams = JSON.parse(bodyParams);
   }
 
   if (!operation) {
@@ -848,43 +859,23 @@ export function convertToExport({ assistantConfig, assistantData }) {
         }
       }
     }
-  } else if (adaptorType === 'rest') {
-    if (['POST', 'PUT'].includes(exportDoc.method)) {
-      if (!isEmpty(bodyParams)) {
-        exportDoc.body = defaultsDeep(
-          cloneDeep(operationDetails.body),
-          bodyParams
+  } else if (['POST', 'PUT'].includes(exportDoc.method)) {
+    if (!isEmpty(bodyParams)) {
+      exportDoc.body = defaultsDeep(
+        cloneDeep(operationDetails.body),
+        bodyParams
+      );
+
+      if (operationDetails.bodyParamsOrder) {
+        // IO-4570
+        exportDoc.body = JSON.parse(
+          JSON.stringify(exportDoc.body, operationDetails.bodyParamsOrder)
         );
-
-        if (operationDetails.bodyParamsOrder) {
-          // IO-4570
-          exportDoc.body = JSON.parse(
-            JSON.stringify(exportDoc.body, operationDetails.bodyParamsOrder)
-          );
-        }
-      } else if (operationDetails.body) {
-        exportDoc.body = cloneDeep(operationDetails.body);
-      } else {
-        exportDoc.body = queryParams;
       }
-
-      if (exportDoc.body) {
-        if (isString(exportDoc.body)) {
-          if (exportDoc.body.includes('lastExportDateTime')) {
-            exportType = 'delta';
-          }
-        } else if (isObject(exportDoc.body)) {
-          if (JSON.stringify(exportDoc.body).includes('lastExportDateTime')) {
-            exportType = 'delta';
-          }
-        }
-
-        if (assistant === 'expensify') {
-          exportDoc.body = `requestJobDescription=${JSON.stringify(
-            exportDoc.body
-          )}`;
-        }
-      }
+    } else if (operationDetails.body) {
+      exportDoc.body = cloneDeep(operationDetails.body);
+    } else {
+      exportDoc.body = queryParams;
     }
   }
 
@@ -933,16 +924,30 @@ export function convertToExport({ assistantConfig, assistantData }) {
     );
   }
 
-  if (operationDetails.mergeBodyToPagingBody && exportDoc.body) {
+  if (exportDoc.body) {
     // IO-9428
-    if (!exportDoc.paging) {
-      exportDoc.paging = {};
+    if (operationDetails.mergeBodyToPagingBody) {
+      if (!exportDoc.paging) {
+        exportDoc.paging = {};
+      }
+
+      exportDoc.paging.body = defaultsDeep(
+        exportDoc.paging.body || {},
+        exportDoc.body
+      );
     }
 
-    exportDoc.paging.body = defaultsDeep(
-      exportDoc.paging.body || {},
-      exportDoc.body
-    );
+    if (isObject(exportDoc.body)) {
+      exportDoc.body = JSON.stringify(exportDoc.body);
+    }
+
+    if (exportDoc.body.includes('lastExportDateTime')) {
+      exportType = 'delta';
+    }
+
+    if (assistant === 'expensify') {
+      exportDoc.body = `requestJobDescription=${exportDoc.body}`;
+    }
   }
 
   const assistantMetadata = { resource };
