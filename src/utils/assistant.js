@@ -483,6 +483,17 @@ export function getImportOperationDetails({
           assistantData,
         });
 
+        if (lookupOperationDetails.queryParameters) {
+          lookupOperationDetails.queryParameters = lookupOperationDetails.queryParameters.filter(
+            qp =>
+              !(
+                qp.readOnly &&
+                qp.defaultValue &&
+                qp.defaultValue.includes('{{export.')
+              )
+          );
+        }
+
         if (operationDetails.howToFindIdentifier.lookup.parameterValues) {
           Object.keys(
             operationDetails.howToFindIdentifier.lookup.parameterValues
