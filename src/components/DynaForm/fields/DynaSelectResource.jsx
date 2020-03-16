@@ -30,6 +30,7 @@ const handleAddNewResource = args => {
     newResourceId,
     expConnId,
     statusExport,
+    parentFormAssistantName,
   } = args;
 
   if (
@@ -40,6 +41,7 @@ const handleAddNewResource = args => {
       'pageProcessor',
       'pageGenerator',
       'asyncHelpers',
+      'iClients',
     ].includes(resourceType)
   ) {
     let values;
@@ -48,7 +50,14 @@ const handleAddNewResource = args => {
       values = resourceMeta[resourceType].preSave({
         application: options.appType,
       });
-    else {
+    else if (['iClients'].includes(resourceType)) {
+      if (resourceType === 'iClients') {
+        values = {
+          ...values,
+          '/parentFormAssistantName': parentFormAssistantName,
+        };
+      }
+    } else {
       values = resourceMeta[resourceType].new.preSave({
         application: options.appType,
       });
@@ -203,16 +212,21 @@ function DynaSelectResource(props) {
     label: conn.name || conn._id,
     value: conn._id,
   }));
-  const expConnId = useSelector(state => {
-    const { merged } =
-      selectors.resourceData(
-        state,
-        resourceContext.resourceType,
-        resourceContext.resourceId
-      ) || {};
+  const { expConnId, assistantName: parentFormAssistantName } = useSelector(
+    state => {
+      const { merged } =
+        selectors.resourceData(
+          state,
+          resourceContext.resourceType,
+          resourceContext.resourceId
+        ) || {};
 
-    return merged && merged._connectionId;
-  });
+      return {
+        expConnId: merged && merged._connectionId,
+        assistantName: merged.assistant,
+      };
+    }
+  );
   const handleAddNewResourceMemo = useCallback(
     () =>
       handleAddNewResource({
@@ -224,16 +238,18 @@ function DynaSelectResource(props) {
         newResourceId,
         statusExport,
         expConnId,
+        parentFormAssistantName,
       }),
     [
-      expConnId,
       dispatch,
       history,
       location,
-      newResourceId,
-      options,
       resourceType,
+      options,
+      newResourceId,
       statusExport,
+      expConnId,
+      parentFormAssistantName,
     ]
   );
   const handleEditResource = useCallback(() => {
