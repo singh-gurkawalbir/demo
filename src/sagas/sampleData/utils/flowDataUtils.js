@@ -120,14 +120,16 @@ export function* fetchFlowResources({ flow, type, eliminateDataProcessors }) {
         // Example: type: once should not be sent while previewing
         if (eliminateDataProcessors) {
           resourceMap[resourceId] = {
-            doc: getFormattedResourceForPreview(rest),
+            doc: getFormattedResourceForPreview(rest, resourceType, type),
           };
         } else {
           // pgs have eliminateDataProcessors as false, but incase of connectors with sampledata on resource it should be true
           // As existing connector pg's sampledata represent data after these tx, filter, hooks actions are processed, so remove those from doc
           resourceMap[resourceId] = {
             doc: getFormattedResourceForPreview(
-              isConnector(flow) && resource.sampleData ? rest : resource
+              isConnector(flow) && resource.sampleData ? rest : resource,
+              resourceType,
+              type
             ),
           };
         }
