@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
 import { KeyValueComponent } from '../../DynaForm/fields/DynaKeyValue';
-import getJSONPaths from '../../../utils/jsonPaths';
+import getJSONPaths, { pickFirstObject } from '../../../utils/jsonPaths';
 import { isJsonString } from '../../../utils/string';
 
 const useStyles = makeStyles(theme => ({
@@ -46,7 +46,7 @@ export default function TransformPanel(props) {
     parsedData = data;
   }
 
-  const dataFields = getJSONPaths(parsedData || {});
+  const dataFields = getJSONPaths(pickFirstObject(parsedData || {}));
   const suggestionConfig = {
     keyConfig: {
       suggestions: dataFields,

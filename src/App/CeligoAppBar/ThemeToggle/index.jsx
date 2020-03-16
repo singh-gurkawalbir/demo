@@ -14,7 +14,6 @@ export default function ThemeToggle() {
   const classes = useStyles();
   const dispatch = useDispatch();
   const themeName = useSelector(state => selectors.themeName(state));
-  const userEmail = useSelector(state => selectors.userProfileEmail(state));
 
   function handleChange() {
     dispatch(
@@ -22,10 +21,6 @@ export default function ThemeToggle() {
         themeName: themeName === 'light' ? 'sandbox' : 'light',
       })
     );
-  }
-
-  if (userEmail !== 'dave@celigo.com') {
-    return null;
   }
 
   return (

@@ -1,8 +1,9 @@
-import { Fragment, useState, useEffect } from 'react';
 import clsx from 'clsx';
+import { Fragment, useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useHistory, useLocation, useRouteMatch, Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
-import { Link, Card, CardActions, Button, Typography } from '@material-ui/core';
+import { Card, CardActions, Button, Typography } from '@material-ui/core';
 import applications from '../../constants/applications';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import ConnectorTemplateContent from './ConnectorTemplateContent';
@@ -13,8 +14,9 @@ import {
   MULTIPLE_INSTALLS,
 } from '../../utils/messageStore';
 import * as selectors from '../../reducers';
-import { prompt } from '../Prompt';
-import ModalDialog from '../ModalDialog';
+import { prompt } from '../../components/Prompt';
+import ModalDialog from '../../components/ModalDialog';
+import InstallTemplateDrawer from '../../components/drawer/Install/Template';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -98,8 +100,10 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function ConnectorTemplateList(props) {
-  const { match } = props;
+export default function MarketplaceList() {
+  const match = useRouteMatch();
+  const location = useLocation();
+  const history = useHistory();
   const { application } = match.params;
   const [fetchedCollection, setFetchedCollection] = useState(false);
   const classes = useStyles();
@@ -146,14 +150,14 @@ export default function ConnectorTemplateList(props) {
                   tag
                 )
               );
-              props.history.push(getRoutePath('/dashboard'));
+              history.push(getRoutePath('/dashboard'));
             },
           },
         ],
       });
     } else {
       dispatch(actions.marketplace.installConnector(connector._id, sandbox));
-      props.history.push(getRoutePath('/dashboard'));
+      history.push(getRoutePath('/dashboard'));
     }
   };
 
@@ -162,14 +166,10 @@ export default function ConnectorTemplateList(props) {
     setShowMessage(true);
   };
 
-  const handleTemplateInstallClick = template => {
-    props.history.push(
-      getRoutePath(`/marketplace/templates/${template._id}/preview`)
-    );
-  };
-
   return (
     <Fragment>
+      <InstallTemplateDrawer />
+
       <CeligoPageBar title={`${applicationName} Integrations`} />
       <div className={classes.root}>
         {connectors.map(connector => (
@@ -230,10 +230,10 @@ export default function ConnectorTemplateList(props) {
             <CardActions className={classes.cardAction}>
               <Button
                 data-test="installTemplate"
-                key={template._id}
                 variant="outlined"
                 color="primary"
-                onClick={() => handleTemplateInstallClick(template)}>
+                component={Link}
+                to={`${location.pathname}/installTemplate/preview/${template._id}`}>
                 Install
               </Button>
             </CardActions>
@@ -253,12 +253,13 @@ export default function ConnectorTemplateList(props) {
           <div>Thank you! Your request has been received.</div>
           <div>
             {CONTACT_SALES_MESSAGE}
-            <Link
+            <a
               href="http://www.celigo.com/integration-marketplace"
+              rel="noopener noreferrer"
               target="_blank"
               className={classes.link}>
               http://www.celigo.com/integration-marketplace
-            </Link>
+            </a>
           </div>
         </ModalDialog>
       )}

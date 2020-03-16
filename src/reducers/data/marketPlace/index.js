@@ -85,6 +85,8 @@ export function templates(state, application) {
 }
 
 export function template(state, templateId) {
-  return ((state || {}).templates || []).find(t => t._id === templateId);
+  if (!state || !state.templates) return;
+
+  return state.templates.find(t => t._id === templateId);
 }
 // #endregion
