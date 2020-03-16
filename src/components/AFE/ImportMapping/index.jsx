@@ -117,6 +117,7 @@ export default function ImportMapping(props) {
     salesforceMasterRecordTypeId,
     showSalesforceNetsuiteAssistant,
   } = useSelector(state => selectors.mapping(state, editorId));
+  // TODO: Change saveInProgress to use saveState directly
   const { saveInProgress, saveCompleted } = useSelector(state =>
     selectors.mappingsSaveStatus(state, editorId)
   );
