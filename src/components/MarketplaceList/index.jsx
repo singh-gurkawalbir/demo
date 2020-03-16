@@ -45,6 +45,9 @@ const useStyles = makeStyles(theme => ({
       textTransform: 'capitalize',
     },
   },
+  resultContainer: {
+    padding: theme.spacing(3, 3, 12, 3),
+  },
 }));
 
 export default function MarketplaceList({ filter }) {
@@ -75,21 +78,28 @@ export default function MarketplaceList({ filter }) {
 
   return (
     <Fragment>
-      <div className={classes.root}>
-        {applications.map(id => (
-          <NavLink
-            className={classes.tile}
-            key={id}
-            to={getRoutePath(`/marketplace/${id}`)}>
-            <Card className={classes.card} elevation={0}>
-              <ApplicationImg assistant={id} size="large" />
-            </Card>
-            <Typography variant="body2" className={classes.label}>
-              {(connectorsMetadata.find(a => a.id === id) || {}).name || id}
-            </Typography>
-          </NavLink>
-        ))}
-      </div>
+      {applications.length > 0 ? (
+        <div className={classes.root}>
+          {applications.map(id => (
+            <NavLink
+              className={classes.tile}
+              key={id}
+              to={getRoutePath(`/marketplace/${id}`)}>
+              <Card className={classes.card} elevation={0}>
+                <ApplicationImg assistant={id} size="large" />
+              </Card>
+              <Typography variant="body2" className={classes.label}>
+                {(connectorsMetadata.find(a => a.id === id) || {}).name || id}
+              </Typography>
+            </NavLink>
+          ))}
+        </div>
+      ) : (
+        <Typography component="div" className={classes.resultContainer}>
+          Your search didn’t return any matching results. Try expanding your
+          search criteria.
+        </Typography>
+      )}
     </Fragment>
   );
 }
