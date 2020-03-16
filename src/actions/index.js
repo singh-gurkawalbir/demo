@@ -173,6 +173,9 @@ const resource = {
       resourceReferences,
     }),
 
+  removeStage: (id, predicateForPatchFilter) =>
+    action(actionTypes.RESOURCE.STAGE_REMOVE, { id, predicateForPatchFilter }),
+
   clearStaged: (id, scope) =>
     action(actionTypes.RESOURCE.STAGE_CLEAR, { id, scope }),
 

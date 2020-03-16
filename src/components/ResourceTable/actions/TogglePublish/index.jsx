@@ -17,7 +17,7 @@ export default {
         },
       ];
 
-      dispatch(actions.resource.patchStaged(resource._id, patchSet));
+      dispatch(actions.resource.patchStaged(resource._id, patchSet, 'value'));
       dispatch(actions.resource.commitStaged(resourceType, resource._id));
     };
 
