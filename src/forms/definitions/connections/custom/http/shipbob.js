@@ -17,6 +17,14 @@ export default {
     name: { fieldId: 'name' },
     'http.auth.oauth.scope': {
       fieldId: 'http.auth.oauth.scope',
+      defaultValue: r =>
+        r &&
+        r.http &&
+        r.http.auth &&
+        r.http.auth.oauth &&
+        r.http.auth.oauth.scope
+          ? r.http.auth.oauth.scope
+          : ['channels_read'],
       scopes: [
         'inventory_read',
         'receiving_read',
