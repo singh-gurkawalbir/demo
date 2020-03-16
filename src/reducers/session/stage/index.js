@@ -1,141 +1,142 @@
+import produce from 'immer';
 import sift from 'sift';
 import actionTypes from '../../../actions/types';
 
 export default (state = {}, action) => {
   const { type, id, patch: newPatch, conflict, scope, siftExpr } = action;
-  const newState = { ...state };
   const timestamp = Date.now();
 
-  switch (type) {
-    case actionTypes.RESOURCE.STAGE_CLEAR:
-      // we can't clear if there is no staged data
-      if (!newState[id] || !newState[id].patch || !newState[id].patch.length) {
-        return newState;
-      }
-
-      newState[id] = { ...newState[id] };
-
-      if (scope) {
-        newState[id].patch = newState[id].patch.filter(
-          patch => patch.scope !== scope
-        );
-      } else {
-        // drop all staged patches.
-        delete newState[id].patch;
-      }
-
-      return newState;
-
-    case actionTypes.RESOURCE.STAGE_REMOVE:
-      // we can't clear if there is no staged data
-      if (!newState[id] || !newState[id].patch || !newState[id].patch.length) {
-        return newState;
-      }
-
-      newState[id] = { ...newState[id] };
-
-      newState[id].patch = newState[id].patch.filter(sift(siftExpr));
-
-      return newState;
-    case actionTypes.RESOURCE.STAGE_UNDO:
-      // we can't undo if there is no staged data
-      if (!newState[id] || !newState[id].patch) {
-        return newState;
-      }
-
-      newState[id] = { ...newState[id], patch: [...newState[id].patch] };
-
-      if (scope) {
-        let timestampOfPatch;
-
-        for (let i = newState[id].patch.length - 1; i >= 0; i -= 1) {
-          if (!timestampOfPatch && newState[id].patch[i].scope === scope) {
-            timestampOfPatch = newState[id].patch.timestamp;
-            newState[id].patch.splice(i, 1);
-          }
-          // removing older ones matching the same timestamp
-
-          if (
-            timestampOfPatch &&
-            newState[id].patch[i].timestamp === timestampOfPatch
-          ) {
-            newState[id].patch.splice(i, 1);
-          }
+  return produce(state, draft => {
+    switch (type) {
+      case actionTypes.RESOURCE.STAGE_CLEAR:
+        // we can't clear if there is no staged data
+        if (!draft[id] || !draft[id].patch || !draft[id].patch.length) {
+          return;
         }
 
-        return newState;
-      }
+        if (scope) {
+          draft[id].patch = draft[id].patch.filter(
+            patch => patch.scope !== scope
+          );
+        } else {
+          // drop all staged patches.
+          delete draft[id].patch;
+        }
 
-      // drop last patch.
-      if (newState[id].patch.length > 1) {
-        newState[id].patch.pop();
-      } else {
-        delete newState[id].patch;
-      }
+        return;
 
-      return newState;
+      case actionTypes.RESOURCE.STAGE_REMOVE:
+        // we can't clear if there is no staged data
+        if (!draft[id] || !draft[id].patch || !draft[id].patch.length) {
+          return;
+        }
 
-    // eslint-disable-next-line no-case-declarations
-    case actionTypes.RESOURCE.STAGE_PATCH:
-      newState[id] = {
-        ...newState[id],
-        patch: [...((newState[id] && newState[id].patch) || [])],
-      };
-      // inserting the same field twice causes the previous patch to be ignored
-      // TODO: a better way to deal with partial patches is required...
-      // perhaps apply partial patches to only editor changes
+        draft[id].patch = draft[id].patch.filter(sift(siftExpr));
 
-      // scope shouldn't matter when removing partial patches
-      // is it operation check that
-      if (newPatch.length === 1 && newPatch[0].op === 'replace') {
-        if (
-          newState[id].patch.length > 0 &&
-          newPatch[0].path ===
-            newState[id].patch[newState[id].patch.length - 1].path &&
-          newPatch[0].op ===
-            newState[id].patch[newState[id].patch.length - 1].op
-        )
-          newState[id].patch.pop();
-      }
+        return;
+      case actionTypes.RESOURCE.STAGE_UNDO:
+        // we can't undo if there is no staged data
+        if (!draft[id] || !draft[id].patch) {
+          return;
+        }
 
-      const scopedPatchWithTimestamp = scope
-        ? newPatch.map(patch => ({
-            ...patch,
-            timestamp,
-            scope,
-          }))
-        : newPatch.map(patch => ({
-            ...patch,
-            timestamp,
-          }));
+        if (scope) {
+          let timestampOfPatch;
 
-      newState[id].patch = [...newState[id].patch, ...scopedPatchWithTimestamp];
+          for (let i = draft[id].patch.length - 1; i >= 0; i -= 1) {
+            if (!timestampOfPatch && draft[id].patch[i].scope === scope) {
+              timestampOfPatch = draft[id].patch.timestamp;
+              draft[id].patch.splice(i, 1);
+            }
+            // removing older ones matching the same timestamp
 
-      return newState;
+            if (
+              timestampOfPatch &&
+              draft[id].patch[i].timestamp === timestampOfPatch
+            ) {
+              draft[id].patch.splice(i, 1);
+            }
+          }
 
-    case actionTypes.RESOURCE.STAGE_CONFLICT:
-      newState[id] = newState[id] || {};
-      newState[id] = { ...newState[id], conflict };
+          return;
+        }
 
-      if (scope) newState[id] = { ...newState[id], scope };
+        // drop last patch.
+        if (draft[id].patch.length > 1) {
+          draft[id].patch.pop();
+        } else {
+          delete draft[id].patch;
+        }
 
-      return newState;
+        return;
 
-    case actionTypes.RESOURCE.CLEAR_CONFLICT:
-      if (!newState[id] || !newState[id].conflict) {
-        return newState;
-      }
+      // eslint-disable-next-line no-case-declarations
+      case actionTypes.RESOURCE.STAGE_PATCH:
+        if (!draft[id]) {
+          draft[id] = {};
+        }
 
-      newState[id] = { ...newState[id] };
+        if (!draft[id].patch) {
+          draft[id].patch = [];
+        }
 
-      delete newState[id].conflict;
-      delete newState[id].scope;
+        // inserting the same field twice causes the previous patch to be ignored
+        // TODO: a better way to deal with partial patches is required...
+        // perhaps apply partial patches to only editor changes
 
-      return newState;
+        // scope shouldn't matter when removing partial patches
+        // is it operation check that
+        if (newPatch.length === 1 && newPatch[0].op === 'replace') {
+          if (
+            draft[id].patch.length > 0 &&
+            newPatch[0].path ===
+              draft[id].patch[draft[id].patch.length - 1].path &&
+            newPatch[0].op === draft[id].patch[draft[id].patch.length - 1].op
+          )
+            draft[id].patch.pop();
+        }
 
-    default:
-      return state;
-  }
+        const scopedPatchWithTimestamp = scope
+          ? newPatch.map(patch => ({
+              ...patch,
+              timestamp,
+              scope,
+            }))
+          : newPatch.map(patch => ({
+              ...patch,
+              timestamp,
+            }));
+
+        draft[id].patch = [...draft[id].patch, ...scopedPatchWithTimestamp];
+
+        return;
+
+      case actionTypes.RESOURCE.STAGE_CONFLICT:
+        if (!draft[id]) {
+          draft[id] = {};
+        }
+
+        draft[id].conflict = conflict;
+
+        if (scope) {
+          draft[id].scope = scope;
+        }
+
+        return;
+      case actionTypes.RESOURCE.CLEAR_CONFLICT:
+        if (!draft[id] || !draft[id].conflict) {
+          return;
+        }
+
+        delete draft[id].conflict;
+        delete draft[id].scope;
+
+        return;
+
+      default:
+        return state;
+    }
+  });
 };
 
 // #region PUBLIC SELECTORS
