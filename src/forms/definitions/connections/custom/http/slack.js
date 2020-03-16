@@ -181,11 +181,6 @@ export default {
     type: 'collapse',
     containers: [
       { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
-      {
-        collapsed: true,
-        label: 'Custom settings',
-        fields: ['settings'],
-      },
     ],
   },
   actions: [
