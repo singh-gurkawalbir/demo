@@ -4,10 +4,10 @@ import { useRouteMatch, Link } from 'react-router-dom';
 import moment from 'moment';
 import { makeStyles } from '@material-ui/styles';
 import { Button, Grid, Divider, Typography } from '@material-ui/core';
-import PanelHeader from '../../../../../../../components/PanelHeader';
-import actions from '../../../../../../../actions';
-import * as selectors from '../../../../../../../reducers';
-import CeligoTable from '../../../../../../../components/CeligoTable';
+import PanelHeader from '../../../../../components/PanelHeader';
+import actions from '../../../../../actions';
+import * as selectors from '../../../../../reducers';
+import CeligoTable from '../../../../../components/CeligoTable';
 import AddonInstallerButton from './AddonInstallerButton';
 
 const metadata = {
@@ -36,7 +36,11 @@ const metadata = {
 };
 const useStyles = makeStyles(theme => ({
   root: {
-    marginLeft: theme.spacing(2),
+    backgroundColor: theme.palette.common.white,
+    overflow: 'auto',
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+    paddingBottom: theme.spacing(1),
   },
   header: {
     background: theme.palette.background.paper,
@@ -154,7 +158,7 @@ export default function SubscriptionSection({ storeId, integrationId }) {
   };
 
   return (
-    <Fragment>
+    <div className={classes.root}>
       <PanelHeader title="Subscription details" />
       <div className={classes.root}>
         <div className={classes.content}>
@@ -239,6 +243,6 @@ export default function SubscriptionSection({ storeId, integrationId }) {
           </Fragment>
         )}
       </div>
-    </Fragment>
+    </div>
   );
 }

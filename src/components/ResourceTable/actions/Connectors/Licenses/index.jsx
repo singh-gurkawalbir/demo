@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { IconButton } from '@material-ui/core';
-import Icon from '../../../../icons/EditIcon';
+import Icon from '../../../../icons/TokensApiIcon';
 import getRoutePath from '../../../../../utils/routePaths';
 
 export default {
