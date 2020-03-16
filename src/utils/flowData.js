@@ -272,13 +272,8 @@ export const generateDefaultExtractsObject = resourceType => {
       : LookupResponseMappingExtracts;
 
   return defaultExtractsList.reduce((extractsObj, extractItem) => {
-    if (extractItem === 'data') {
-      // eslint-disable-next-line no-param-reassign
-      extractsObj[extractItem] = [{}];
-    } else {
-      // eslint-disable-next-line no-param-reassign
-      extractsObj[extractItem] = '';
-    }
+    // eslint-disable-next-line no-param-reassign
+    extractsObj[extractItem] = '';
 
     return extractsObj;
   }, {});
