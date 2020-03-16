@@ -2,11 +2,11 @@ import produce from 'immer';
 import { isEqual } from 'lodash';
 import actionTypes from '../../../actions/types';
 import responseMappingUtil from '../../../utils/responseMapping';
+import PATCH_SAVE_STATUS from '../../../constants/patchSaveStatus';
 
 const { deepClone } = require('fast-json-patch');
 
 const emptySet = [];
-const emptyObj = {};
 
 // TODO: Support error message display
 export default function reducer(state = {}, action) {
@@ -71,13 +71,13 @@ export default function reducer(state = {}, action) {
       }
 
       case actionTypes.RESPONSE_MAPPING.SAVE:
-        draft[id].saveStatus = 'requested';
+        draft[id].saveStatus = PATCH_SAVE_STATUS.REQUESTED;
         break;
       case actionTypes.RESPONSE_MAPPING.SAVE_COMPLETE:
-        draft[id].saveStatus = 'completed';
+        draft[id].saveStatus = PATCH_SAVE_STATUS.COMPLETED;
         break;
       case actionTypes.RESPONSE_MAPPING.SAVE_FAILED:
-        draft[id].saveStatus = 'failed';
+        draft[id].saveStatus = PATCH_SAVE_STATUS.FAILED;
         break;
 
       default:
@@ -113,18 +113,4 @@ export function responseMappingDirty(state, id) {
   }
 
   return isDirty;
-}
-
-export function responseMappingSaveStatus(state, id) {
-  if (!state || !state[id]) {
-    return emptyObj;
-  }
-
-  const { saveStatus } = state[id];
-
-  return {
-    saveTerminated: saveStatus === 'completed' || saveStatus === 'failed',
-    saveCompleted: saveStatus === 'completed',
-    saveInProgress: saveStatus === 'requested',
-  };
 }

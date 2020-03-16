@@ -15,6 +15,7 @@ import ButtonGroup from '../../ButtonGroup';
 import ActionButton from '../../ActionButton';
 import Help from '../../Help';
 import ResponseMappingSave from '../../ResourceFormFactory/Actions/ResponseMappingSave';
+import PATCH_SAVE_STATUS from '../../../constants/patchSaveStatus';
 
 // TODO Aditya: Convert Response Mapping and Import mapping to re-use same component
 // TODO: Azhar once Mapping dialog design is ready make a component
@@ -85,12 +86,14 @@ export default function ResponseMappingDialog(props) {
   const resourceId = resource._id;
   const editorId = `responseMapping-${resourceId}`;
   const isImport = resourceType === 'imports';
-  const { mappings = [], changeIdentifier } = useSelector(state =>
+  const { mappings = [], saveStatus, changeIdentifier } = useSelector(state =>
     selectors.getResponseMapping(state, editorId)
   );
-  const { saveInProgress = false, saveCompleted = false } = useSelector(state =>
-    selectors.responseMappingSaveStatus(state, editorId)
-  );
+  const saveInProgress = saveStatus === PATCH_SAVE_STATUS.REQUESTED;
+  const saveTerminated = [
+    PATCH_SAVE_STATUS.COMPLETED,
+    PATCH_SAVE_STATUS.FAILED,
+  ].includes(saveStatus);
   const extractFields = useSelector(state =>
     selectors.getSampleData(state, {
       flowId,
@@ -282,7 +285,7 @@ export default function ResponseMappingDialog(props) {
             data-test="saveImportMapping"
             disabled={saveInProgress}
             onClick={onClose}>
-            {saveCompleted ? 'Close' : 'Cancel'}
+            {saveTerminated ? 'Close' : 'Cancel'}
           </Button>
         </ButtonGroup>
       </div>

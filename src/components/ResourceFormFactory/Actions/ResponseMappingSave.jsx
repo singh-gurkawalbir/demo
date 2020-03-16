@@ -5,6 +5,7 @@ import actions from '../../../actions';
 import * as selectors from '../../../reducers';
 import Spinner from '../../Spinner';
 import { useLoadingSnackbarOnSave } from '.';
+import PATCH_SAVE_STATUS from '../../../constants/patchSaveStatus';
 
 // TODO: Handle errors
 export default function ResponseMappingSave(props) {
@@ -20,19 +21,23 @@ export default function ResponseMappingSave(props) {
   } = props;
   const [saveTrigerred, setSaveTriggered] = useState(false);
   const dispatch = useDispatch();
-  const { saveTerminated, saveCompleted } = useSelector(state =>
-    selectors.responseMappingSaveStatus(state, id)
+  const { saveStatus } = useSelector(state =>
+    selectors.getResponseMapping(state, id)
   );
+  const saveTerminated = [
+    PATCH_SAVE_STATUS.COMPLETED,
+    PATCH_SAVE_STATUS.FAILED,
+  ].includes(saveStatus);
   const isDirty = useSelector(state =>
     selectors.responseMappingDirty(state, id)
   );
 
   useEffect(() => {
-    if (saveTrigerred && saveCompleted && onClose) {
+    if (saveTrigerred && saveTerminated && onClose) {
       onClose();
       setSaveTriggered(false);
     }
-  }, [onClose, saveCompleted, saveTerminated, saveTrigerred]);
+  }, [onClose, saveTerminated, saveTrigerred]);
   const onSave = useCallback(() => {
     dispatch(actions.responseMapping.save(id));
     setSaveTriggered(true);

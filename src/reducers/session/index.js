@@ -123,13 +123,6 @@ export function getResponseMapping(state, id) {
   );
 }
 
-export function responseMappingSaveStatus(state, id) {
-  return fromResponseMapping.responseMappingSaveStatus(
-    state && state.responseMapping,
-    id
-  );
-}
-
 export function responseMappingDirty(state, id) {
   return fromResponseMapping.responseMappingDirty(
     state && state.responseMapping,
