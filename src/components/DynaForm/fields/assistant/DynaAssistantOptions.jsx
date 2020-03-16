@@ -51,6 +51,9 @@ function DynaAssistantOptions(props) {
     resourceId,
     assistantFieldType,
     fields,
+    value,
+    id,
+    onFieldChange: onFieldChangeFn,
     flowId,
   } = props;
   const formContext = useMemo(
@@ -100,8 +103,19 @@ function DynaAssistantOptions(props) {
   ]);
 
   useSetInitializeFormData(props);
+
+  // I have to adjust value when there is no option with the matching value
+  useEffect(() => {
+    if (
+      selectOptionsItems &&
+      !selectOptionsItems.find(option => option.value === value)
+    ) {
+      onFieldChangeFn(id, '', true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, value]);
   function onFieldChange(id, value) {
-    props.onFieldChange(id, value);
+    onFieldChangeFn(id, value);
 
     if (
       ['version', 'resource', 'operation', 'exportType'].includes(
