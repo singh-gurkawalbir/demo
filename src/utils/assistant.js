@@ -714,8 +714,6 @@ export function convertToExport({ assistantConfig, assistantData }) {
     operation,
     assistantData,
   });
-
-  console.log(`operationDetails ${JSON.stringify(operationDetails)}`);
   const exportDefaults = {
     rest: {
       ...cloneDeep(DEFAULT_PROPS.EXPORT.REST),
