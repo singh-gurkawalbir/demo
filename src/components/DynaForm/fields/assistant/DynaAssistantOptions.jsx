@@ -7,8 +7,11 @@ import actions from '../../../../actions';
 import { SCOPES } from '../../../../sagas/resourceForm';
 import { selectOptions } from './util';
 
-export const useSetInitializeFormData = props => {
-  const { resourceType, resourceId, onFieldChange } = props;
+export const useSetInitializeFormData = ({
+  resourceType,
+  resourceId,
+  onFieldChange,
+}) => {
   const dispatch = useDispatch();
   const [componentMounted, setComponentMounted] = useState(false);
   const formState = useSelector(state =>

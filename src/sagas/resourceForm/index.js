@@ -227,7 +227,7 @@ function* deleteUISpecificValues({ values, resourceId }) {
     // remove ui field value from the form value payload
     delete valuesCopy[id];
   });
-  // remove any stagged values tied to it the ui fields
+  // remove any staged values tied to it the ui fields
 
   const siftExpr = {
     $or: UI_FIELD_VALUES.map(id => ({

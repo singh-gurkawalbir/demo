@@ -13,6 +13,9 @@ import { SCOPES } from '../../../sagas/resourceForm';
 import formFactory from '../../../forms/formFactory';
 import { getApplicationConnectors } from '../../../constants/applications';
 
+const emptyObj = {};
+const isParent = true;
+
 export function FormView(props) {
   const { resourceType, flowId, resourceId, formContext } = props;
   const dispatch = useDispatch();
@@ -20,7 +23,7 @@ export function FormView(props) {
     const { merged } =
       selectors.resourceData(state, resourceType, resourceId) || {};
 
-    return merged || {};
+    return merged || emptyObj;
   });
   const resourceFormState = useSelector(
     state => selectors.resourceFormState(state, resourceType, resourceId) || {}
@@ -36,20 +39,20 @@ export function FormView(props) {
       selectors.resource(state, 'connections', staggedResource._connectionId) ||
       {}
   );
+  const { assistant: assistantName } = staggedResource;
   const options = useMemo(() => {
-    const { assistant: assistantName } = staggedResource;
     const matchingApplication = getApplicationConnectors().find(
       con => con.assistant === assistantName
     );
 
     if (matchingApplication) {
-      const { name, assistant, type } = matchingApplication;
+      const { name, type } = matchingApplication;
 
       return [
         {
           items: [
-            { label: type, value: type },
-            { label: name, value: assistant },
+            { label: type, value: `${isParent}` },
+            { label: name, value: `${!isParent}` },
           ],
         },
       ];
@@ -58,7 +61,7 @@ export function FormView(props) {
     // if i cant find a matching application this is not an assistant
 
     return null;
-  }, [staggedResource]);
+  }, [assistantName]);
 
   useSetInitializeFormData(props);
   const onFieldChangeFn = (id, selectedApplication) => {
@@ -82,11 +85,7 @@ export function FormView(props) {
     });
     const finalValues = preSave(formContext.value, staggedRes);
 
-    if (['http', 'rest'].includes(selectedApplication)) {
-      staggedRes['/useParentForm'] = true;
-    } else {
-      staggedRes['/useParentForm'] = false;
-    }
+    staggedRes['/useParentForm'] = selectedApplication === `${isParent}`;
 
     const allPatches = sanitizePatchSet({
       patchSet: defaultPatchSetConverter({ ...staggedRes, ...finalValues }),
@@ -115,18 +114,13 @@ export function FormView(props) {
     );
   };
 
-  const selectedValue = useMemo(() => {
-    const { items } = options[0];
+  const isFlowBuilderAssistant = flowId && staggedResource.assistant;
 
-    return staggedResource.useParentForm ? items[0].value : items[1].value;
-  }, [options, staggedResource.useParentForm]);
-  const isAnAssistantFromFlowBuilder = flowId && staggedResource.assistant;
-
-  return isAnAssistantFromFlowBuilder ? (
+  return isFlowBuilderAssistant ? (
     <DynaRadio
       {...props}
       onFieldChange={onFieldChangeFn}
-      value={selectedValue}
+      value={`${!!staggedResource.useParentForm}`}
       options={options}
     />
   ) : null;
