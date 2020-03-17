@@ -88,3 +88,183 @@ export function getPages(job, parentJob) {
 
   return pages;
 }
+
+export function getFlowJobStatusDetails(job) {
+  if (
+    job.uiStatus !== JOB_STATUS.RUNNING ||
+    !job.doneExporting ||
+    !job.percentComplete
+  ) {
+    let errorPercentage = 0;
+    let resolvedPercentage = 0;
+    const total =
+      (job.numSuccess || 0) + (job.numError || 0) + (job.numResolved || 0);
+
+    if (
+      [JOB_STATUS.CANCELED, JOB_STATUS.COMPLETED, JOB_STATUS.FAILED].indexOf(
+        job.status
+      ) > -1
+    ) {
+      if (job.numError > 0) {
+        if (job.numError < job.numResolved) {
+          errorPercentage = Math.floor((job.numError * 100) / total);
+        } else {
+          errorPercentage = Math.ceil((job.numError * 100) / total);
+        }
+      }
+
+      if (job.numResolved > 0) {
+        if (job.numResolved < job.numError) {
+          resolvedPercentage = Math.floor((job.numResolved * 100) / total);
+        } else {
+          resolvedPercentage = Math.ceil((job.numResolved * 100) / total);
+        }
+      }
+
+      return {
+        showStatusTag: true,
+        variant:
+          job.numSuccess > 0 ||
+          job.numError > 0 ||
+          job.numResolved > 0 ||
+          [JOB_STATUS.COMPLETED, JOB_STATUS.FAILED].includes(job.status)
+            ? 'success'
+            : 'warning',
+        status: JOB_UI_STATUS[job.uiStatus],
+        errorValue: errorPercentage,
+        resolvedValue: resolvedPercentage,
+      };
+    }
+  }
+
+  if (job.percentComplete === 100) {
+    return { status: JOB_UI_STATUS.COMPLETING };
+  }
+
+  return {
+    showSpinner: true,
+    status: `${JOB_UI_STATUS[job.uiStatus]} ${
+      job.percentComplete > 0 ? `${job.percentComplete}%` : ''
+    }`,
+  };
+}
+
+export function getExportJobStatusDetails(job) {
+  if (job.uiStatus !== JOB_STATUS.RUNNING) {
+    let errorPercentage = 0;
+    let resolvedPercentage = 0;
+    const total =
+      (job.numSuccess || 0) + (job.numError || 0) + (job.numResolved || 0);
+
+    if (
+      [JOB_STATUS.CANCELED, JOB_STATUS.COMPLETED, JOB_STATUS.FAILED].includes(
+        job.status
+      )
+    ) {
+      if (job.numError > 0) {
+        if (job.numError < job.numResolved) {
+          errorPercentage = Math.floor((job.numError * 100) / total);
+        } else {
+          errorPercentage = Math.ceil((job.numError * 100) / total);
+        }
+      }
+
+      if (job.numResolved > 0) {
+        if (job.numResolved < job.numError) {
+          resolvedPercentage = Math.floor((job.numResolved * 100) / total);
+        } else {
+          resolvedPercentage = Math.ceil((job.numResolved * 100) / total);
+        }
+      }
+
+      return {
+        showStatusTag: true,
+        variant:
+          job.numSuccess > 0 ||
+          job.numError > 0 ||
+          job.numResolved > 0 ||
+          [JOB_STATUS.COMPLETED, JOB_STATUS.FAILED].includes(job.status)
+            ? 'success'
+            : 'warning',
+        status: JOB_UI_STATUS[job.uiStatus],
+        errorValue: errorPercentage,
+        resolvedValue: resolvedPercentage,
+      };
+    }
+  }
+
+  return {
+    showSpinner: true,
+    status: JOB_UI_STATUS[job.uiStatus],
+  };
+}
+
+export function getImportJobStatusDetails(job) {
+  if (job.uiStatus !== JOB_STATUS.RUNNING || !job.percentComplete) {
+    let errorPercentage = 0;
+    let resolvedPercentage = 0;
+    const total =
+      (job.numSuccess || 0) + (job.numError || 0) + (job.numResolved || 0);
+
+    if (
+      [JOB_STATUS.CANCELED, JOB_STATUS.COMPLETED, JOB_STATUS.FAILED].indexOf(
+        job.status
+      ) > -1
+    ) {
+      if (job.numError > 0) {
+        if (job.numError < job.numResolved) {
+          errorPercentage = Math.floor((job.numError * 100) / total);
+        } else {
+          errorPercentage = Math.ceil((job.numError * 100) / total);
+        }
+      }
+
+      if (job.numResolved > 0) {
+        if (job.numResolved < job.numError) {
+          resolvedPercentage = Math.floor((job.numResolved * 100) / total);
+        } else {
+          resolvedPercentage = Math.ceil((job.numResolved * 100) / total);
+        }
+      }
+
+      return {
+        showStatusTag: true,
+        variant:
+          job.numSuccess > 0 ||
+          job.numError > 0 ||
+          job.numResolved > 0 ||
+          [JOB_STATUS.COMPLETED, JOB_STATUS.FAILED].includes(job.status)
+            ? 'success'
+            : 'warning',
+        status: JOB_UI_STATUS[job.uiStatus],
+        errorValue: errorPercentage,
+        resolvedValue: resolvedPercentage,
+      };
+    }
+  }
+
+  if (job.percentComplete === 100) {
+    return { status: JOB_UI_STATUS.COMPLETING };
+  }
+
+  return {
+    showSpinner: true,
+    status: `${JOB_UI_STATUS[job.uiStatus]}${
+      job.percentComplete > 0 ? `${job.percentComplete}%` : ''
+    }`,
+  };
+}
+
+export function getJobStatusDetails(job) {
+  if (job.type === JOB_TYPES.FLOW) {
+    return getFlowJobStatusDetails(job);
+  }
+
+  if (job.type === JOB_TYPES.EXPORT) {
+    return getExportJobStatusDetails(job);
+  }
+
+  if (job.type === JOB_TYPES.IMPORT) {
+    return getImportJobStatusDetails(job);
+  }
+}

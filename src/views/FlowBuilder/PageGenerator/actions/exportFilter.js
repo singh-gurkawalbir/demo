@@ -56,6 +56,8 @@ function ExportFilterDialog({ flowId, resource, isViewMode, onClose }) {
   return (
     <ExportFilterToggleEditorDialog
       title="Define output filter"
+      helpTitle="Filter Rules"
+      helpKey="export.filter.rules"
       disabled={isViewMode}
       id={resourceId}
       data={sampleData}
