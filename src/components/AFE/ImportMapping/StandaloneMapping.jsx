@@ -369,7 +369,7 @@ export default function StandaloneMapping(props) {
     if (
       initTriggered &&
       importSampleData &&
-      JSON.stringify(importSampleData) !== JSON.stringify(savedImportSampleData)
+      !isEqual(importSampleData, savedImportSampleData)
     ) {
       dispatch(actions.mapping.updateImportSampleData(id, importSampleData));
     }
