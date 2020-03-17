@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link, useHistory } from 'react-router-dom';
 import TimeAgo from 'react-timeago';
 import { makeStyles } from '@material-ui/styles';
-import { Typography, Grid, IconButton } from '@material-ui/core';
+import { Typography, Grid, IconButton, Chip } from '@material-ui/core';
 import actions from '../../../../actions';
 import * as selectors from '../../../../reducers';
 import useConfirmDialog from '../../../../components/ConfirmDialog';
@@ -22,6 +22,10 @@ const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
     margin: theme.spacing(1, 2),
+  },
+  freeTag: {
+    margin: theme.spacing(1),
+    color: theme.palette.background.paper,
   },
   flowLink: {
     display: 'inline',
@@ -222,6 +226,14 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
                 {name || `Unnamed (id: ${flowId})`}
               </Typography>
             </Link>
+            {flowDetails.free && (
+              <Chip
+                label="Free"
+                color="primary"
+                size="small"
+                className={classes.freeTag}
+              />
+            )}
 
             <InfoIconButton info={description} size="xs" />
           </div>

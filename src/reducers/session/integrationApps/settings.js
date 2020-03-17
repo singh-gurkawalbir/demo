@@ -156,6 +156,7 @@ export default (state = {}, action) => {
       case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
         .SAVE_VARIATION_MAPPINGS:
         if (draft[cKey] && draft[cKey].mappings && draft[cKey].mappings[id]) {
+          mappingUtil.addVariation(draft, cKey, data);
           draft[cKey].mappings[id].staged = draft[cKey].mappings[id].mappings;
           draft[cKey].mappings[id].stagedLookups =
             draft[cKey].mappings[id].lookups;
@@ -776,8 +777,21 @@ export function categoryMappingsChanged(state, integrationId, flowId) {
   const sessionMappedData =
     mappingData && mappingData.data && mappingData.data.mappingData;
   const clonedData = deepClone(sessionMappedData);
+  const generatesMetaData = response.find(
+    sec => sec.operation === 'generatesMetaData'
+  );
+  const categoryRelationshipData =
+    generatesMetaData &&
+    generatesMetaData.data &&
+    generatesMetaData.data.generatesMetaData;
 
-  mappingUtil.setCategoryMappingData(flowId, clonedData, mappings, deleted);
+  mappingUtil.setCategoryMappingData(
+    flowId,
+    clonedData,
+    mappings,
+    deleted,
+    categoryRelationshipData
+  );
 
   const initData = state[cKey].initMappingData;
 

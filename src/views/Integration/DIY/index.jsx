@@ -6,18 +6,24 @@ import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import LoadResources from '../../../components/LoadResources';
 import TrashIcon from '../../../components/icons/TrashIcon';
+import NotificationsIcon from '../../../components/icons/NotificationsIcon';
+import AuditLogIcon from '../../../components/icons/AuditLogIcon';
 import CopyIcon from '../../../components/icons/CopyIcon';
 import FlowsIcon from '../../../components/icons/FlowsIcon';
-import AdminIcon from '../../../components/icons/AdminIcon';
+import UsersIcon from '../../../components/icons/InviteUsersIcon';
 import DashboardIcon from '../../../components/icons/DashboardIcon';
 import ConnectionsIcon from '../../../components/icons/ConnectionsIcon';
 import IconTextButton from '../../../components/IconTextButton';
 import CeligoPageBar from '../../../components/CeligoPageBar';
 import ResourceDrawer from '../../../components/drawer/Resource';
 import EditableText from '../../../components/EditableText';
-import AdminPanel from './panels/Admin';
+import AuditLogPanel from './panels/AuditLog';
+import ReadmePanel from './panels/Readme';
+import SettingsPanel from './panels/Settings';
+import UsersPanel from '../../../components/ManageUsersPanel';
 import FlowsPanel from './panels/Flows';
 import ConnectionsPanel from './panels/Connections';
+import NotificationsPanel from './panels/Notifications';
 import DashboardPanel from './panels/Dashboard';
 import getRoutePath from '../../../utils/routePaths';
 import IntegrationTabs from '../common/Tabs';
@@ -25,6 +31,7 @@ import { INTEGRATION_DELETE_VALIDATE } from '../../../utils/messageStore';
 import { STANDALONE_INTEGRATION } from '../../../utils/constants';
 import useConfirmDialog from '../../../components/ConfirmDialog';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
+import SettingsIcon from '../../../components/icons/SettingsIcon';
 
 const useStyles = makeStyles(theme => ({
   PageWrapper: {
@@ -56,7 +63,36 @@ const tabs = [
     Icon: ConnectionsIcon,
     Panel: ConnectionsPanel,
   },
-  { path: 'admin', label: 'Admin', Icon: AdminIcon, Panel: AdminPanel },
+  {
+    path: 'users',
+    label: 'Users',
+    Icon: UsersIcon,
+    Panel: UsersPanel,
+  },
+  {
+    path: 'notifications',
+    label: 'Notifications',
+    Icon: NotificationsIcon,
+    Panel: NotificationsPanel,
+  },
+  {
+    path: 'auditlog',
+    label: 'Audit Log',
+    Icon: AuditLogIcon,
+    Panel: AuditLogPanel,
+  },
+  {
+    path: 'readme',
+    label: 'Read me',
+    Icon: ConnectionsIcon,
+    Panel: ReadmePanel,
+  },
+  {
+    path: 'settings',
+    label: 'Settings',
+    Icon: SettingsIcon,
+    Panel: SettingsPanel,
+  },
 ];
 
 export default function Integration({ history, match }) {
