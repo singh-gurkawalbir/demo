@@ -389,11 +389,6 @@ export default {
               'netsuite.restlet.batchSize',
             ],
           },
-          {
-            collapsed: true,
-            label: 'Custom settings',
-            fields: ['settings'],
-          },
         ],
       },
       {
