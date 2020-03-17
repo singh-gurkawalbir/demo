@@ -46,9 +46,6 @@ export default function ResponseMappingSave(props) {
     saveTerminated,
     onSave,
   });
-  const handleButtonClick = () => {
-    handleSubmitForm();
-  };
 
   if (showOnlyOnChanges && !isDirty) {
     return null;
@@ -60,7 +57,7 @@ export default function ResponseMappingSave(props) {
       variant={variant}
       color={color}
       disabled={disabled || disableSave || !isDirty}
-      onClick={handleButtonClick}>
+      onClick={handleSubmitForm}>
       {disableSave ? (
         <Fragment>
           <Spinner size={16} />

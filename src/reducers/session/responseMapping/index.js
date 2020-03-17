@@ -11,9 +11,7 @@ const emptySet = [];
 export default function reducer(state = {}, action) {
   const { id, type, index, field, value } = action;
 
-  // if (!id) {
-  //   return null;
-  // }
+  if (!id) return state;
 
   return produce(state, draft => {
     switch (type) {
