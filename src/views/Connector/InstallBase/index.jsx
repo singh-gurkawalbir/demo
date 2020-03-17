@@ -8,6 +8,7 @@ import ResourceDrawer from '../../../components/drawer/Resource';
 import IconTextButton from '../../../components/IconTextButton';
 import ShowMoreDrawer from '../../../components/drawer/ShowMore';
 import KeywordSearch from '../../../components/KeywordSearch';
+import LoadResources from '../../../components/LoadResources';
 import actions from '../../../actions';
 import metadata from './metadata';
 
@@ -21,7 +22,13 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function InstallBase(props) {
-  const defaultFilter = useMemo(() => ({ take: 10 }), []);
+  const defaultFilter = useMemo(
+    () => ({
+      take: 10,
+      searchBy: ['email', '_integrationId', 'name', 'version', 'environment'],
+    }),
+    []
+  );
   const { match, history } = props;
   const { connectorId } = match.params;
   const classes = useStyles();
@@ -34,14 +41,28 @@ export default function InstallBase(props) {
       ...{ ...defaultFilter, ...filter },
     })
   );
+  const { resources: licenses } = useSelector(state =>
+    selectors.resourceList(state, { type: 'connectorLicenses' })
+  );
   const connector = useSelector(state =>
     selectors.resource(state, 'connectors', connectorId)
   );
-  const resources = list.resources.map(r => ({ ...r, _id: r._integrationId }));
+  const resources = list.resources.map(r => {
+    const license = licenses.find(l => l._integrationId === r._integrationId);
+
+    return { ...r, _id: r._integrationId, license };
+  });
   const [selected, setSelected] = useState({});
+  const [selectedUsers, setSelectedUsers] = useState(0);
   const dispatch = useDispatch();
-  const handleSelectChange = installBaseItems => {
+  const handleSelectChange = (installBaseItems = {}) => {
     setSelected(installBaseItems);
+    const count = Object.keys(installBaseItems).reduce(
+      (count, cur) => (installBaseItems[cur] ? count + 1 : count),
+      0
+    );
+
+    setSelectedUsers(count);
   };
 
   const handleUpdateClick = () => {
@@ -68,6 +89,19 @@ export default function InstallBase(props) {
       dispatch(actions.resource.clearCollection('connectorInstallBase'));
   }, [connectorId, dispatch]);
 
+  useEffect(() => {
+    dispatch(
+      actions.resource.requestCollection(`connectors/${connectorId}/licenses`)
+    );
+
+    return () =>
+      dispatch(actions.resource.clearCollection('connectorLicenses'));
+  }, [connectorId, dispatch]);
+
+  if (!connector) {
+    return <LoadResources required resources="connectors" />;
+  }
+
   return (
     <Fragment>
       <ResourceDrawer {...props} />
@@ -80,7 +114,7 @@ export default function InstallBase(props) {
             defaultFilter={defaultFilter}
           />
           <IconTextButton onClick={handleUpdateClick} variant="text">
-            Update
+            {selectedUsers ? `Update ${selectedUsers} user(s)` : 'Update'}
           </IconTextButton>
         </div>
       </CeligoPageBar>

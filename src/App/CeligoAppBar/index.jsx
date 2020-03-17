@@ -7,6 +7,7 @@ import { makeStyles } from '@material-ui/core/styles';
 // import GlobalSearch from '../GlobalSearch';
 import ElevateOnScroll from '../../components/ElevateOnScroll';
 import SlideOnScroll from '../../components/SlideOnScroll';
+import DebugOnly from '../../components/DebugOnly';
 import ProfileMenuButton from './ProfileMenuButton';
 import * as selectors from '../../reducers';
 import Notifications from './Notifications';
@@ -114,9 +115,11 @@ export default function CeligoAppBar() {
               <li>
                 <AccountList />
               </li>
-              <li>
-                <ThemeToggle />
-              </li>
+              <DebugOnly>
+                <li>
+                  <ThemeToggle />
+                </li>
+              </DebugOnly>
               <li>
                 <EnvironmentToggle />
               </li>

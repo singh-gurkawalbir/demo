@@ -175,6 +175,7 @@ export default {
     'linkedin',
     'doubleclick',
     'smartsheet',
+    'shipbob',
     'campaignmonitor',
     'wrike',
     'googlesheets',

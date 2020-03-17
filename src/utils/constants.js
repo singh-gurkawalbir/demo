@@ -33,6 +33,8 @@ export const INTEGRATION_MODES = Object.freeze({
   UNINSTALL: 'uninstall',
   SETTINGS: 'settings',
 });
+
+export const UI_FIELD_VALUES = Object.freeze(['/useParentForm', '/formView']);
 export const SALESFORCE_DA_PACKAGE_URL =
   'https://login.salesforce.com/packaging/installPackage.apexp?p0=04t1N000002Gl8y';
 export const NETSUITE_BUNDLE_URL =

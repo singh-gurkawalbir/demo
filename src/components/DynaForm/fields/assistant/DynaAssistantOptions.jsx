@@ -7,6 +7,41 @@ import actions from '../../../../actions';
 import { SCOPES } from '../../../../sagas/resourceForm';
 import { selectOptions } from './util';
 
+export const useSetInitializeFormData = ({
+  resourceType,
+  resourceId,
+  onFieldChange,
+}) => {
+  const dispatch = useDispatch();
+  const [componentMounted, setComponentMounted] = useState(false);
+  const formState = useSelector(state =>
+    selectors.resourceFormState(state, resourceType, resourceId)
+  );
+
+  useEffect(() => {
+    // resouceForm init causes the form to remount
+    // when there is any initialization data do we perform at this step
+    if (!componentMounted && formState.initData) {
+      formState.initData.length &&
+        formState.initData.forEach(field => {
+          const { id, value } = field;
+
+          onFieldChange(id, value);
+        });
+      dispatch(actions.resourceForm.clearInitData(resourceType, resourceId));
+    }
+
+    setComponentMounted(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    componentMounted,
+    dispatch,
+    formState.initData,
+    resourceId,
+    resourceType,
+  ]);
+};
+
 function DynaAssistantOptions(props) {
   const {
     label,
@@ -16,6 +51,10 @@ function DynaAssistantOptions(props) {
     resourceId,
     assistantFieldType,
     fields,
+    value,
+    id,
+    onFieldChange: onFieldChangeFn,
+    flowId,
   } = props;
   const formContext = useMemo(
     () =>
@@ -62,29 +101,21 @@ function DynaAssistantOptions(props) {
     options,
     resourceContext.resourceType,
   ]);
-  const [componentMounted, setComponentMounted] = useState(false);
-  const formState = useSelector(state =>
-    selectors.resourceFormState(state, resourceType, resourceId)
-  );
 
+  useSetInitializeFormData(props);
+
+  // I have to adjust value when there is no option with the matching value
   useEffect(() => {
-    // resouceForm init causes the form to remount
-    // when there is any initialization data do we perform at this step
-    if (!componentMounted && formState.initData) {
-      formState.initData.length &&
-        formState.initData.forEach(field => {
-          const { id, value } = field;
-
-          props.onFieldChange(id, value);
-        });
-      dispatch(actions.resourceForm.clearInitData(resourceType, resourceId));
+    if (
+      selectOptionsItems &&
+      !selectOptionsItems.find(option => option.value === value)
+    ) {
+      onFieldChangeFn(id, '', true);
     }
-
-    setComponentMounted(true);
-  }, [componentMounted, dispatch, formState, props, resourceId, resourceType]);
-
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, value]);
   function onFieldChange(id, value) {
-    props.onFieldChange(id, value);
+    onFieldChangeFn(id, value);
 
     if (
       ['version', 'resource', 'operation', 'exportType'].includes(
@@ -146,7 +177,7 @@ function DynaAssistantOptions(props) {
           resourceId,
           false,
           false,
-          undefined,
+          flowId,
           allTouchedFields
         )
       );
