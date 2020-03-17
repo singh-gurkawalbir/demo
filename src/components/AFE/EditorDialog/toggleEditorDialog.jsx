@@ -235,8 +235,6 @@ export default function ToggleEditorDialog(props) {
         </div>
         {helpKey && (
           <Help
-            key={`help-${helpKey}`}
-            data-test={`help-${helpKey}`}
             title={helpTitle || title}
             className={classes.helpTextButton}
             helpKey={helpKey}

@@ -254,8 +254,6 @@ export default function ResponseMappingDialog(props) {
       <div className={classes.titleSection}>
         <div>Define Response Mapping</div>
         <Help
-          key={`help-${helpKey}`}
-          data-test={`help-${helpKey}`}
           title="Response Mapping"
           className={classes.helpTextButton}
           helpKey={helpKey}

@@ -56,6 +56,7 @@ function TransformationDialog({ flowId, resource, onClose, isViewMode }) {
     <TransformToggleEditorDialog
       title="Transform record"
       helpKey="export.transform.rules"
+      helpTitle="Transform record"
       id={exportId}
       disabled={isViewMode}
       data={sampleData}

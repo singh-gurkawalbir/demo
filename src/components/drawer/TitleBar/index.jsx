@@ -43,8 +43,6 @@ export default function DrawerTitleBar({ title, helpKey, helpTitle, onClose }) {
       </Typography>
       {helpKey && (
         <Help
-          key={`help-${helpKey}`}
-          data-test={`help-${helpKey}`}
           title={helpTitle || title}
           className={classes.helpTextButton}
           helpKey={helpKey}
