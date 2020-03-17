@@ -3,6 +3,7 @@ import { useHistory } from 'react-router-dom';
 import { Typography, IconButton } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import CloseIcon from '../../icons/CloseIcon';
+import Help from '../../Help';
 
 const useStyles = makeStyles(theme => ({
   titleBar: {
@@ -10,16 +11,21 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     alignItems: 'center',
     padding: '14px 24px',
-    '& > :not(:last-child)': {
-      marginRight: theme.spacing(2),
-    },
+    // TODO: Azhar to check
+    // '& > :not(:last-child)': {
+    //   marginRight: theme.spacing(2),
+    // },
   },
   title: {
     flexGrow: 1,
   },
+  helpTextButton: {
+    float: 'right',
+    padding: theme.spacing(1),
+  },
 }));
 
-export default function DrawerTitleBar({ title, onClose }) {
+export default function DrawerTitleBar({ title, helpKey, helpTitle, onClose }) {
   const classes = useStyles();
   const history = useHistory();
   const handleClick = useCallback(() => {
@@ -35,6 +41,14 @@ export default function DrawerTitleBar({ title, onClose }) {
       <Typography variant="h3" className={classes.title}>
         {title}
       </Typography>
+      {helpKey && (
+        <Help
+          title={helpTitle || title}
+          className={classes.helpTextButton}
+          helpKey={helpKey}
+          fieldId={helpKey}
+        />
+      )}
       <IconButton
         data-test="closeFlowSchedule"
         aria-label="Close"
