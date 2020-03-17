@@ -110,7 +110,13 @@ const applyCustomSettings = ({ fieldMap, layout, preSave, isNew }) => {
 
     if (fieldMap) fieldMapCopy.settings = { fieldId: 'settings' };
     preSaveCopy = args => {
-      const retValues = preSave(args);
+      let retValues;
+
+      if (preSave) {
+        retValues = preSave(args);
+      } else {
+        retValues = args;
+      }
 
       if (Object.hasOwnProperty.call(retValues, '/settings')) {
         let settings = retValues['/settings'];
