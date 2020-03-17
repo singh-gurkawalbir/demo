@@ -744,11 +744,6 @@ const integrationApp = {
         id,
         installerFunction,
       }),
-    completedScriptStepInstall: (stepCompleteResponse, id) =>
-      action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.DONE, {
-        stepsToUpdate: stepCompleteResponse,
-        id,
-      }),
   },
   uninstaller: {
     preUninstall: (storeId, integrationId) =>

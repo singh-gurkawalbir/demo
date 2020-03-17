@@ -88,8 +88,8 @@ export function* installScriptStep({ id, connectionId }) {
   }
 
   yield put(
-    actions.integrationApp.installer.completedScriptStepInstall(
-      stepCompleteResponse,
+    actions.integrationApp.installer.completedStepInstall(
+      { stepsToUpdate: stepCompleteResponse },
       id
     )
   );
