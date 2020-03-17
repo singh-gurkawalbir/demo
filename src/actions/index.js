@@ -173,6 +173,9 @@ const resource = {
       resourceReferences,
     }),
 
+  removeStage: (id, predicateForPatchFilter) =>
+    action(actionTypes.RESOURCE.STAGE_REMOVE, { id, predicateForPatchFilter }),
+
   clearStaged: (id, scope) =>
     action(actionTypes.RESOURCE.STAGE_CLEAR, { id, scope }),
 
@@ -528,7 +531,7 @@ const integrationApp = {
             value,
           }
         ),
-      saveVariationMappings: (integrationId, flowId, id) =>
+      saveVariationMappings: (integrationId, flowId, id, data = {}) =>
         action(
           actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
             .SAVE_VARIATION_MAPPINGS,
@@ -536,6 +539,7 @@ const integrationApp = {
             integrationId,
             flowId,
             id,
+            data,
           }
         ),
       cancelVariationMappings: (integrationId, flowId, id) =>

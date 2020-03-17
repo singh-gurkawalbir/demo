@@ -47,6 +47,22 @@ const useStyles = makeStyles(theme => ({
       padding: '8px 35px 8px 8px',
     },
   },
+  dynaTextContainer: {
+    padding: 0,
+    display: 'flex',
+    '& > .MuiFilledInput-multiline': {
+      minHeight: '48px',
+      padding: theme.spacing(1),
+      '& >:nth-child(1)': {
+        margin: 0,
+        minWidth: 0,
+      },
+      '& >:nth-child(2)': {
+        minHeight: `16px !important`,
+        wordBreak: 'break-word',
+      },
+    },
+  },
 }));
 
 export default function DynaTypeableSelect(props) {
@@ -293,7 +309,7 @@ export default function DynaTypeableSelect(props) {
             multiline
             readOnly
             onFieldChange={handleTextChange}
-            className={classes.multilineText}
+            className={classes.dynaTextContainer}
           />
         ))}
 
