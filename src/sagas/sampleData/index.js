@@ -6,10 +6,12 @@ import { apiCallWithRetry } from '../index';
 import { resourceData, getResourceSampleDataWithStatus } from '../../reducers';
 import { createFormValuesPatchSet, SCOPES } from '../resourceForm';
 import { evaluateExternalProcessor } from '../../sagas/editor';
+import requestRealTimeMetadata from './sampleDataGenerator/realTimeSampleData';
 import { getCsvFromXlsx } from '../../utils/file';
 import { processJsonSampleData } from '../../utils/sampleData';
 import { getFormattedResourceForPreview } from '../../utils/flowData';
 import { pageProcessorPreview } from './utils/previewCalls';
+import { isRealTimeOrDistributedResource } from '../../utils/resource';
 
 /*
  * Parsers for different file types used for converting into JSON format
@@ -88,12 +90,21 @@ function* getPreviewData({ resourceId, resourceType, values, runOffline }) {
   const path = `/${resourceType}/preview`;
 
   try {
-    const previewData = yield call(apiCallWithRetry, {
-      path,
-      opts: { method: 'POST', body },
-      message: `Fetching ${resourceType} Preview`,
-      hidden: true,
-    });
+    let previewData;
+
+    if (isRealTimeOrDistributedResource(body)) {
+      // Handles SF/NS : Fetches metadata for the real time adaptors
+      // @Raghu: Update this when we support other real time adaptors like Webhooks
+      previewData = yield call(requestRealTimeMetadata, { resource: body });
+    } else {
+      // Makes base preview calls for all other adaptors
+      previewData = yield call(apiCallWithRetry, {
+        path,
+        opts: { method: 'POST', body },
+        message: `Fetching ${resourceType} Preview`,
+        hidden: true,
+      });
+    }
 
     yield put(actions.sampleData.received(resourceId, previewData));
   } catch (e) {

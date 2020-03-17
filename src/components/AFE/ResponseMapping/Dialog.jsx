@@ -35,9 +35,9 @@ const useStyles = makeStyles(theme => ({
       float: 'left',
     },
   },
-  iconButton: {
+  helpTextButton: {
     float: 'right',
-    padding: '1px',
+    padding: 1,
   },
   childHeader: {
     '& > div': {
@@ -75,6 +75,9 @@ export default function ResponseMappingDialog(props) {
     PATCH_SAVE_STATUS.COMPLETED,
     PATCH_SAVE_STATUS.FAILED,
   ].includes(saveStatus);
+  const helpKey = isImport
+    ? 'import.response.mapping'
+    : 'lookup.response.mapping';
   const extractFields = useSelector(state =>
     selectors.getSampleData(state, {
       flowId,
@@ -152,12 +155,10 @@ export default function ResponseMappingDialog(props) {
       <div className={classes.titleSection}>
         <div>Define Response Mapping</div>
         <Help
-          key="help-responseMapping"
-          data-test="help-responseMapping"
           title="Response Mapping"
-          className={classes.iconButton}
-          helpKey="responseMapping"
-          fieldId="responseMappingHelp"
+          className={classes.helpTextButton}
+          helpKey={helpKey}
+          fieldId={helpKey}
         />
       </div>
       <div className={classes.container}>

@@ -173,6 +173,9 @@ const resource = {
       resourceReferences,
     }),
 
+  removeStage: (id, predicateForPatchFilter) =>
+    action(actionTypes.RESOURCE.STAGE_REMOVE, { id, predicateForPatchFilter }),
+
   clearStaged: (id, scope) =>
     action(actionTypes.RESOURCE.STAGE_CLEAR, { id, scope }),
 
@@ -954,6 +957,7 @@ const user = {
     request: message => resource.request('preferences', undefined, message),
     update: preferences =>
       action(actionTypes.UPDATE_PREFERENCES, { preferences }),
+    toggleDebug: () => action(actionTypes.TOGGLE_DEBUG),
   },
   sharedNotifications: {
     acceptInvite: (resourceType, id) =>

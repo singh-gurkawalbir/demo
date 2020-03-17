@@ -100,8 +100,7 @@ function getSuggestions(val, suggestions, showAllSuggestions) {
   return inputLength === 0
     ? suggestions
     : suggestions.filter(
-        suggestion =>
-          suggestion.label.slice(0, inputLength).toLowerCase() === inputValue
+        suggestion => suggestion.label.toLowerCase().indexOf(inputValue) !== -1
       );
 }
 

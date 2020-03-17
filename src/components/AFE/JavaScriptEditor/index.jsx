@@ -31,6 +31,7 @@ export default function JavaScriptEditor(props) {
     disabled,
     optionalSaveParams,
     layout = 'compact',
+    // resultMode = 'json',
   } = props;
   const classes = useStyles(props);
   const { data, result, error, initChangeIdentifier } = useSelector(state =>

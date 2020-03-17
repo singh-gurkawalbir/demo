@@ -17,6 +17,7 @@ import {
 } from './responseMapping';
 import arrayUtils from './array';
 import { isConnector } from './flows';
+import { isJsonString } from './string';
 
 const sampleDataStage = {
   exports: {
@@ -190,25 +191,6 @@ export const getLastExportDateTime = () =>
     .add(-1, 'y')
     .toISOString();
 
-export const getFormattedResourceForPreview = resourceObj => {
-  const resource = deepClone(resourceObj);
-
-  // type Once need not be passed in preview as it gets executed in preview call
-  // so remove type once
-  if (resource && resource.type === 'once') {
-    delete resource.type;
-    const { adaptorType } = resource;
-    const appType = adaptorType && adaptorTypeMap[adaptorType];
-
-    // Manually removing once doc incase of preview to restrict execution on once query - Bug fix IO-11988
-    if (appType && resource[appType] && resource[appType].once) {
-      delete resource[appType].once;
-    }
-  }
-
-  return resource;
-};
-
 export const getAddedLookupInFlow = (oldFlow = {}, patchSet = []) => {
   const { pageProcessors = [] } = oldFlow;
   const pageProcessorsPatch = patchSet.find(
@@ -307,4 +289,41 @@ export const generatePostResponseMapData = (flowData, rawData = {}) => {
   const flowDataArray = Array.isArray(flowData) ? flowData : [flowData || {}];
 
   return flowDataArray.map(fd => ({ ...fd, ...rawData }));
+};
+
+export const getFormattedResourceForPreview = (
+  resourceObj,
+  resourceType,
+  flowType
+) => {
+  const resource = deepClone(resourceObj);
+
+  // type Once need not be passed in preview as it gets executed in preview call
+  // so remove type once
+  if (resource && resource.type === 'once') {
+    delete resource.type;
+    const { adaptorType } = resource;
+    const appType = adaptorType && adaptorTypeMap[adaptorType];
+
+    // Manually removing once doc incase of preview to restrict execution on once query - Bug fix IO-11988
+    if (appType && resource[appType] && resource[appType].once) {
+      delete resource[appType].once;
+    }
+  }
+
+  // Incase of pp , morph sampleResponseData to support Response Mapping
+  if (flowType === 'pageProcessors') {
+    if (resource.sampleResponseData) {
+      // If there is sampleResponseData, update it to json if not a json
+      // @Raghu Make changes to save it as json in the first place, once ampersand is deprecated
+      if (isJsonString(resource.sampleResponseData)) {
+        resource.sampleResponseData = JSON.parse(resource.sampleResponseData);
+      }
+    } else {
+      // If there is no sampleResponseData, add default fields for lookups/imports
+      resource.sampleResponseData = generateDefaultExtractsObject(resourceType);
+    }
+  }
+
+  return resource;
 };

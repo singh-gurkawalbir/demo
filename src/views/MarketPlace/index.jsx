@@ -1,6 +1,6 @@
 import { Fragment } from 'react';
 import { useSelector } from 'react-redux';
-import MarketplaceList from '../../components/MarketplaceList';
+import ApplicationsList from './ApplicationsList';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import KeywordSearch from '../../components/KeywordSearch';
 import * as selectors from '../../reducers';
@@ -14,7 +14,7 @@ export default function Marketplace() {
       <CeligoPageBar title="Marketplace" infoText={MARKETPLACE_HELPINFO}>
         <KeywordSearch filterKey="marketplace" />
       </CeligoPageBar>
-      <MarketplaceList filter={filter} />
+      <ApplicationsList filter={filter} />
     </Fragment>
   );
 }
