@@ -226,7 +226,7 @@ export default function EditorDialog(props) {
             color="primary"
             dataTest="saveEditor"
             disabled={disabled}
-            onClose={handleSave(false)}
+            onClose={handleSave(true)}
             submitButtonLabel="Save"
           />
         ) : (
