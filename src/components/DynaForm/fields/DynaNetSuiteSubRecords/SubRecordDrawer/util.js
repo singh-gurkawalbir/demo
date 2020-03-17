@@ -30,6 +30,7 @@ export default function getFormFieldMetadata(
         ],
         defaultDisabled: !!fieldId,
         defaultValue: subrecord && subrecord.fieldId,
+        required: true,
       },
     },
     layout: {
@@ -50,6 +51,12 @@ export default function getFormFieldMetadata(
       label: fld.subRecordJsonPathLabel,
       defaultValue: subrecord && subrecord.jsonPath,
       visibleWhen: [
+        {
+          field: 'fieldId',
+          is: [fld.value],
+        },
+      ],
+      requiredWhen: [
         {
           field: 'fieldId',
           is: [fld.value],
