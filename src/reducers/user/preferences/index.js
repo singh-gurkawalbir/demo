@@ -12,6 +12,7 @@ export const GLOBAL_PREFERENCES = [
   'timeFormat',
   'scheduleShiftForFlowsCreatedAfter',
   'lastLoginAt',
+  'debug',
 ];
 
 export const DEFAULT_EDITOR_THEME = 'tomorrow';
@@ -21,6 +22,10 @@ export default (state = { environment: 'production' }, action) => {
   let newState = { ...state };
 
   switch (type) {
+    case actionTypes.TOGGLE_DEBUG:
+      newState.debug = !newState.debug;
+
+      return newState;
     case actionTypes.RESOURCE.RECEIVED:
       if (resourceType === 'preferences')
         return {

@@ -68,6 +68,8 @@ function OutputFilterDialog({
   return (
     <OutputFilterToggleEditorDialog
       title="Define output filter"
+      helpKey="lookup.output.filter"
+      helpTitle="Filter Rules"
       disabled={isViewMode}
       id={resourceId + flowId}
       data={sampleData}

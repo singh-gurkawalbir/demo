@@ -437,7 +437,7 @@ export function defaultStoreId(state, id, store) {
 
 export function resourceList(
   state,
-  { type, take, keyword, sort, sandbox, filter }
+  { type, take, keyword, sort, sandbox, filter, searchBy }
 ) {
   const result = {
     resources: [],
@@ -463,10 +463,24 @@ export function resourceList(
   result.total = resources.length;
   result.count = resources.length;
   const filterByEnvironment = typeof sandbox === 'boolean';
+
+  function searchKey(resource, key) {
+    if (key === 'environment') {
+      return get(resource, 'sandbox') ? 'Sandbox' : 'Production';
+    }
+
+    const value = get(resource, key);
+
+    return typeof value === 'string' ? value : '';
+  }
+
   const matchTest = r => {
     if (!keyword) return true;
 
-    const searchableText = `${r._id}|${r.name}|${r.description}`;
+    const searchableText =
+      Array.isArray(searchBy) && searchBy.length
+        ? `${searchBy.map(key => searchKey(r, key)).join('|')}`
+        : `${r._id}|${r.name}|${r.description}`;
 
     return searchableText.toUpperCase().indexOf(keyword.toUpperCase()) >= 0;
   };

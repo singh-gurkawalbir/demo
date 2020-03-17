@@ -13,6 +13,8 @@ const applicationsWithPreviewPanel = [
   'mongodb',
   'rdbms',
   'dynamodb',
+  'netsuite',
+  'salesforce',
 ];
 const emptyList = [];
 
@@ -30,6 +32,7 @@ export const getAvailablePreviewStages = resource => {
         { label: 'Output', value: 'parse' },
       ];
     case 'netsuite':
+    case 'salesforce':
       return [{ label: 'Parsed Output', value: 'parse' }];
     case 'rest':
       return [

@@ -531,7 +531,7 @@ const integrationApp = {
             value,
           }
         ),
-      saveVariationMappings: (integrationId, flowId, id) =>
+      saveVariationMappings: (integrationId, flowId, id, data = {}) =>
         action(
           actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
             .SAVE_VARIATION_MAPPINGS,
@@ -539,6 +539,7 @@ const integrationApp = {
             integrationId,
             flowId,
             id,
+            data,
           }
         ),
       cancelVariationMappings: (integrationId, flowId, id) =>
@@ -956,6 +957,7 @@ const user = {
     request: message => resource.request('preferences', undefined, message),
     update: preferences =>
       action(actionTypes.UPDATE_PREFERENCES, { preferences }),
+    toggleDebug: () => action(actionTypes.TOGGLE_DEBUG),
   },
   sharedNotifications: {
     acceptInvite: (resourceType, id) =>

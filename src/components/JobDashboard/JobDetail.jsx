@@ -82,12 +82,6 @@ const useStyles = makeStyles(theme => ({
   errorCount: {
     color: theme.palette.error.main,
   },
-  errorStatus: {
-    backgroundColor: theme.palette.error.main,
-    color: theme.palette.background.paper,
-    padding: theme.spacing(0.25, 1),
-    borderRadius: theme.spacing(0.25),
-  },
   resolved: {
     width: '9%',
     textAlign: 'right',
@@ -277,12 +271,7 @@ function JobDetail({
           {job.name || job._flowId}
         </TableCell>
         <TableCell className={classes.status}>
-          <span
-            className={clsx({
-              [classes.errorStatus]: job.numError > 0,
-            })}>
-            <JobStatus job={job} />
-          </span>
+          <JobStatus job={job} />
         </TableCell>
         <TableCell className={classes.success}>{getSuccess(job)}</TableCell>
         <TableCell className={classes.ignore}>{job.numIgnore}</TableCell>
