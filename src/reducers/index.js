@@ -1275,12 +1275,20 @@ export function pendingCategoryMappings(state, integrationId, flowId) {
   const mappingData = response.find(op => op.operation === 'mappingData');
   const sessionMappedData =
     mappingData && mappingData.data && mappingData.data.mappingData;
+  const generatesMetaData = response.find(
+    sec => sec.operation === 'generatesMetaData'
+  );
+  const categoryRelationshipData =
+    generatesMetaData &&
+    generatesMetaData.data &&
+    generatesMetaData.data.generatesMetaData;
 
   mappingUtil.setCategoryMappingData(
     flowId,
     sessionMappedData,
     mappings,
-    deleted
+    deleted,
+    categoryRelationshipData
   );
 
   return sessionMappedData;
@@ -1445,27 +1453,12 @@ export function mappingsForCategory(state, integrationId, flowId, filters) {
   }
 
   const mappedFields = map(mappings.fieldMappings, 'generate');
-  // Filter all mapped fields
-  const filteredMappedFields = mappings.fieldMappings.filter(field => {
-    const generateField = fields.find(f => f.id === field.generate);
-
-    return generateField && attributes[generateField.filterType];
-  });
   // Filter all generateFields with filter which are not yet mapped
   const filteredFields = fields
-    .filter(
-      field => attributes[field.filterType] && !mappedFields.includes(field.id)
-    )
-    .map(field => ({ generate: field.id, extract: '' }));
+    .filter(field => !mappedFields.includes(field.id))
+    .map(field => ({ generate: field.id, extract: '', discardIfEmpty: true }));
   // Combine filtered mappings and unmapped fields and generate unmapped fields
-  const filteredMappings = [...filteredMappedFields, ...filteredFields].filter(
-    field => {
-      if (mappingFilter === 'all') return true;
-      else if (mappingFilter === 'mapped') return !!field.extract;
-
-      return !field.extract && !field.hardCodedValue;
-    }
-  );
+  const filteredMappings = [...mappings.fieldMappings, ...filteredFields];
 
   // return mappings object by overriding field mappings with filtered mappings
   return {
@@ -2284,6 +2277,32 @@ export function isFormAMonitorLevelAccess(state, integrationId) {
   if (accessLevelIntegration === 'monitor') return true;
 
   return false;
+}
+
+export function formAccessLevel(state, integrationId, resource, disabled) {
+  // if all forms is monitor level
+
+  const isMonitorLevelAccess = isFormAMonitorLevelAccess(state, integrationId);
+
+  if (isMonitorLevelAccess) return { disableAllFields: true };
+
+  // check integration access level
+  const { accessLevel: accessLevelIntegration } = resourcePermissions(
+    state,
+    'integrations',
+    integrationId
+  );
+  const isIntegrationApp = resource && resource._connectorId;
+
+  if (
+    accessLevelIntegration === USER_ACCESS_LEVELS.ACCOUNT_OWNER ||
+    accessLevelIntegration === USER_ACCESS_LEVELS.ACCOUNT_MANAGE
+  ) {
+    // check integration app is manage or owner then selectively disable fields
+    if (isIntegrationApp) return { disableAllFieldsExceptClocked: true };
+  }
+
+  return { disableAllFields: !!disabled };
 }
 
 export function publishedConnectors(state) {
@@ -3621,6 +3640,13 @@ export const getSampleDataWrapper = createSelector(
 
       return undefined;
     },
+    (state, params) => {
+      if (params.stage === 'postSubmit') {
+        return getSampleDataContext(state, { ...params, stage: 'postMap' });
+      }
+
+      return undefined;
+    },
     (state, { flowId }) => resource(state, 'flows', flowId) || emptyObject,
     (state, { flowId }) => {
       const flow = resource(state, 'flows', flowId) || emptyObject;
@@ -3641,6 +3667,7 @@ export const getSampleDataWrapper = createSelector(
   (
     sampleData,
     preMapSampleData,
+    postMapSampleData,
     flow,
     integration,
     resource,
@@ -3704,7 +3731,11 @@ export const getSampleDataWrapper = createSelector(
       connection: connection.settings || {},
     };
 
-    if (['transform', 'outputFilter', 'inputFilter'].includes(stage)) {
+    if (
+      ['sampleResponse', 'transform', 'outputFilter', 'inputFilter'].includes(
+        stage
+      )
+    ) {
       return {
         status,
         data: {
@@ -3757,13 +3788,13 @@ export const getSampleDataWrapper = createSelector(
         status,
         data: {
           preMapData: preMapSampleData.data ? [preMapSampleData.data] : [],
-          postMapData: data ? [data] : [],
+          postMapData: postMapSampleData.data ? [postMapSampleData.data] : [],
           responseData: [data].map(() => ({
             statusCode: 200,
             errors: [{ code: '', message: '', source: '' }],
             ignored: false,
             id: '',
-            _json: {},
+            _json: data || {},
             dataURI: '',
           })),
           ...resourceIds,
@@ -3785,6 +3816,15 @@ export const getSampleDataWrapper = createSelector(
           },
           ...resourceIds,
           settings,
+        },
+      };
+    }
+
+    if (stage === 'postResponseMapHook') {
+      return {
+        status,
+        data: {
+          postResponseMapData: data || [],
         },
       };
     }

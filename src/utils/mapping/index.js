@@ -61,9 +61,11 @@ const setMappingData = (
       // eslint-disable-next-line no-param-reassign
       mapping.fieldMappings = mappings[key].mappings
         .filter(el => (!!el.extract || !!el.hardCodedValue) && !!el.generate)
-        .map(({ index, rowIdentifier, ...rest }) => ({
-          ...rest,
-        }));
+        .map(
+          ({ index, rowIdentifier, hardCodedValueTmp, visible, ...rest }) => ({
+            ...rest,
+          })
+        );
 
       if (mappings[key].lookups && mappings[key].lookups.length) {
         // eslint-disable-next-line no-param-reassign
@@ -83,28 +85,68 @@ const setMappingData = (
   });
 };
 
-const setVariationMappingData = (flowId, recordMappings, mappings) => {
+const setVariationMappingData = (
+  flowId,
+  recordMappings,
+  mappings,
+  relationshipData
+) => {
   recordMappings.forEach(mapping => {
-    mapping.variation_themes.forEach(vm => {
-      const key = `${flowId}-${mapping.id}-${vm.variation_theme}`;
+    const relation = Array.isArray(relationshipData)
+      ? relationshipData.find(rel => rel.id === mapping.id)
+      : relationshipData;
 
-      if (mappings[key]) {
-        // eslint-disable-next-line no-param-reassign
-        vm.fieldMappings = mappings[key].mappings
-          .filter(el => (!!el.extract || !!el.hardCodedValue) && !!el.generate)
-          .map(({ index, rowIdentifier, ...rest }) => ({
-            ...rest,
-          }));
+    if (!relation) return;
+    const variationTheme = relation.variation_themes.find(
+      theme => theme.id === 'variation_theme'
+    );
 
-        if (mappings[key].lookups && mappings[key].lookups.length) {
+    if (variationTheme) {
+      variationTheme.variation_attributes.forEach(vm => {
+        const key = `${flowId}-${mapping.id}-${vm}`;
+
+        if (mappings[key]) {
+          const stagedMappings = mappings[key].staged || mappings[key].mappings;
+
+          if (!mapping.variation_themes.find(vt => vt.variation_theme === vm)) {
+            mapping.variation_themes.push({
+              id: 'variation_theme',
+              variation_theme: vm,
+              fieldMappings: [],
+            });
+          }
+
+          const variationMapping = mapping.variation_themes.find(
+            vt => vt.variation_theme === vm
+          );
+
           // eslint-disable-next-line no-param-reassign
-          vm.lookups = mappings[key].lookups;
+          variationMapping.fieldMappings = stagedMappings
+            .filter(
+              el => (!!el.extract || !!el.hardCodedValue) && !!el.generate
+            )
+            .map(
+              ({
+                index,
+                rowIdentifier,
+                hardCodedValueTmp,
+                visible,
+                ...rest
+              }) => ({
+                ...rest,
+              })
+            );
         }
-      }
-    });
+      });
+    }
 
     if (mapping.children && mapping.children.length) {
-      setVariationMappingData(flowId, mapping.children, mappings);
+      setVariationMappingData(
+        flowId,
+        mapping.children,
+        mappings,
+        relation.children
+      );
     }
   });
 };
@@ -263,11 +305,67 @@ export default {
 
     return value.dataType;
   },
+  /**
+   * given two json objects, does a deep comparision of the objects
+   * This function is written specific to compare category mapping metadata
+   * this ignores complex properties such as Date, Functions, prototypes, constructors
+   *
+   * @param {object} object
+   * @param {object} otherObject
+   * examples:
+   * isEqual({},{}) = true;
+   * isEqual({a:'a', b:1},{a:'a', b:1}) = true
+   * isEqual({a:'a', b:1},{b:1, a:'a'}) = true
+   * isEqual({a:[1,2,3,4]},{a:[2,3,4,1]}) = false
+   * _.isEqual doesnt handle this case
+   * isEqual(
+   *  { extract: undefined, hardCodedValue: 'test', generate: 'test_generate' },
+      { hardCodedValue: 'test', generate: 'test_generate' })
+       => true,
+   */
+  isEqual(object, otherObject) {
+    if (object === otherObject) {
+      return true;
+    }
+
+    if (
+      object === null ||
+      object === undefined ||
+      otherObject === null ||
+      otherObject === undefined ||
+      (['string', 'number'].includes(typeof object) &&
+        ['string', 'number'].includes(typeof otherObject))
+    ) {
+      return object === otherObject;
+    }
+
+    if (
+      Object.prototype.toString(object) !==
+      Object.prototype.toString(otherObject)
+    ) {
+      return false;
+    }
+
+    if (Array.isArray(object)) {
+      if (object.length !== otherObject.length) return false;
+
+      return !object.some((el, index) => !this.isEqual(el, otherObject[index]));
+    }
+
+    const objectKeys = Object.keys(object);
+
+    return Object.keys(otherObject).every(
+      key => objectKeys.includes(key) || otherObject[key] === undefined
+    )
+      ? objectKeys.every(key => this.isEqual(object[key], otherObject[key]))
+      : false;
+  },
   setCategoryMappingData: (
     flowId,
     sessionMappedData = {},
     mappings = {},
-    deleted
+    deleted,
+    relationshipData
   ) => {
     const { basicMappings = {}, variationMappings = {} } = sessionMappedData;
 
@@ -280,7 +378,8 @@ export default {
     setVariationMappingData(
       flowId,
       variationMappings.recordMappings || [],
-      mappings
+      mappings,
+      relationshipData
     );
   },
   getFieldMappingType: value => {
@@ -486,6 +585,47 @@ export default {
           name: grandchildCategoryDetails.name,
           children: [],
           fieldMappings: [],
+        });
+      }
+    }
+  },
+  addVariation: (draft, cKey, data) => {
+    const { categoryId, subCategoryId } = data;
+    const { response = [] } = draft[cKey];
+    const mappingData = response.find(sec => sec.operation === 'mappingData');
+
+    if (
+      mappingData.data &&
+      mappingData.data.mappingData &&
+      mappingData.data.mappingData.variationMappings &&
+      mappingData.data.mappingData.variationMappings.recordMappings
+    ) {
+      const { recordMappings } = mappingData.data.mappingData.variationMappings;
+      const categoryMappings = recordMappings.find(
+        mapping => mapping.id === categoryId
+      );
+
+      if (!categoryMappings) {
+        recordMappings.push({
+          id: categoryId,
+          children: [],
+          variation_themes: [],
+        });
+      }
+
+      if (!subCategoryId) {
+        return;
+      }
+
+      const subCategoryMappings = categoryMappings.children.find(
+        mapping => mapping.id === subCategoryId
+      );
+
+      if (!subCategoryMappings) {
+        categoryMappings.children.push({
+          id: subCategoryId,
+          children: [],
+          variation_themes: [],
         });
       }
     }

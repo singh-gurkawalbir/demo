@@ -154,11 +154,6 @@ export default {
         label: 'Advanced',
         fields: ['advancedSettings', 'deleteAfterImport'],
       },
-      {
-        collapsed: true,
-        label: 'Custom settings',
-        fields: ['settings'],
-      },
     ],
   },
   optionsHandler: (fieldId, fields) => {

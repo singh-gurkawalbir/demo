@@ -47,6 +47,22 @@ const useStyles = makeStyles(theme => ({
       padding: '8px 35px 8px 8px',
     },
   },
+  dynaTextContainer: {
+    padding: 0,
+    display: 'flex',
+    '& > .MuiFilledInput-multiline': {
+      minHeight: '48px',
+      padding: theme.spacing(1),
+      '& >:nth-child(1)': {
+        margin: 0,
+        minWidth: 0,
+      },
+      '& >:nth-child(2)': {
+        minHeight: `16px !important`,
+        wordBreak: 'break-word',
+      },
+    },
+  },
 }));
 
 export default function DynaTypeableSelect(props) {
@@ -61,6 +77,7 @@ export default function DynaTypeableSelect(props) {
     valueName,
     options = [],
     isValid,
+    TextComponent,
     components = {
       DropdownIndicator: () => null,
       IndicatorSeparator: () => null,
@@ -272,17 +289,29 @@ export default function DynaTypeableSelect(props) {
           menuIsOpen
         />
       )}
-      {!showDropdown && (
-        <DynaText
-          id={`text-${id}`}
-          value={inputVal}
-          disabled={disabled}
-          multiline
-          readOnly
-          onFieldChange={handleTextChange}
-          className={classes.multilineText}
-        />
-      )}
+      {!showDropdown &&
+        (TextComponent ? (
+          <TextComponent
+            {...props}
+            value={inputVal}
+            disabled={disabled}
+            multiline
+            readOnly
+            onFieldChange={handleTextChange}
+            className={classes.multilineText}
+            id={`text-${id}`}
+          />
+        ) : (
+          <DynaText
+            id={`text-${id}`}
+            value={inputVal}
+            disabled={disabled}
+            multiline
+            readOnly
+            onFieldChange={handleTextChange}
+            className={classes.dynaTextContainer}
+          />
+        ))}
 
       {!removeHelperText && <ErroredMessageComponent {...props} />}
     </FormControl>

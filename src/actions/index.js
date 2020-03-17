@@ -471,7 +471,7 @@ const integrationApp = {
           integrationId,
           flowId,
           id,
-          row,
+          index: row,
         }),
       collapseAll: (integrationId, flowId) =>
         action(
@@ -528,7 +528,7 @@ const integrationApp = {
             value,
           }
         ),
-      saveVariationMappings: (integrationId, flowId, id) =>
+      saveVariationMappings: (integrationId, flowId, id, data = {}) =>
         action(
           actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
             .SAVE_VARIATION_MAPPINGS,
@@ -536,6 +536,7 @@ const integrationApp = {
             integrationId,
             flowId,
             id,
+            data,
           }
         ),
       cancelVariationMappings: (integrationId, flowId, id) =>
