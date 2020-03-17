@@ -63,7 +63,12 @@ function PageProcessorHooks({
         paper: classes.drawerPaper,
       }}
       open={open}>
-      <DrawerTitleBar onClose={handleDrawerClose} title="Hooks" />
+      <DrawerTitleBar
+        onClose={handleDrawerClose}
+        title="Hooks"
+        helpKey="export.hooks"
+        helpTitle="Hooks"
+      />
       <div className={classes.content}>
         <Hooks
           onSave={handleSave}

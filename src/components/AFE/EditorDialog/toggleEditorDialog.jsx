@@ -21,6 +21,7 @@ import ViewColumnIcon from '../../icons/LayoutTriVerticalIcon';
 import ViewCompactIcon from '../../icons/LayoutLgLeftSmrightIcon';
 import useConfirmDialog from '../../ConfirmDialog';
 import EditorSaveButton from '../../ResourceFormFactory/Actions/EditorSaveButton';
+import Help from '../../Help';
 
 const useStyles = makeStyles(theme => ({
   dialogContent: {
@@ -34,6 +35,10 @@ const useStyles = makeStyles(theme => ({
     margin: theme.spacing(0, 1),
     padding: theme.spacing(2),
     display: 'flex',
+  },
+  helpTextButton: {
+    float: 'right',
+    padding: theme.spacing(1),
   },
   actionContainer: {
     margin: theme.spacing(0, 1),
@@ -74,6 +79,8 @@ export default function ToggleEditorDialog(props) {
     height = '50vh',
     onClose,
     disabled,
+    helpTitle,
+    helpKey,
     hidePreviewAction = false,
   } = props;
   const classes = useStyles();
@@ -226,6 +233,16 @@ export default function ToggleEditorDialog(props) {
             </ToggleButton>
           )}
         </div>
+        {helpKey && (
+          <Help
+            key={`help-${helpKey}`}
+            data-test={`help-${helpKey}`}
+            title={helpTitle || title}
+            className={classes.helpTextButton}
+            helpKey={helpKey}
+            fieldId={helpKey}
+          />
+        )}
       </div>
       <DialogContent style={size} className={classes.dialogContent}>
         {// Is there a better way to do this?

@@ -28,6 +28,12 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.text.primary,
     fontSize: '14px',
     lineHeight: '22px',
+    '& > div > pre': {
+      background: theme.palette.background.paper2,
+      border: '1px solid',
+      borderColor: theme.palette.secondary.lightest,
+      overflowX: 'auto',
+    },
   },
   action: {
     borderTop: '1px solid',
