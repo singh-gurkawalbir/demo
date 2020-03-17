@@ -1,13 +1,13 @@
 import { deepClone } from 'fast-json-patch/lib/core';
 
-export const LookupResponseMappingExtracts = [
+export const LOOKUP_RESPONSE_MAPPING_EXTRACTS = [
   'data',
   'errors',
   'ignored',
   'statusCode',
 ];
 
-export const ImportResponseMappingExtracts = [
+export const IMPORT_RESPONSE_MAPPING_EXTRACTS = [
   'id',
   'errors',
   'ignored',
@@ -18,8 +18,8 @@ export default {
   getResponseMappingDefaultExtracts: resourceType => {
     const extractFields =
       resourceType === 'imports'
-        ? ImportResponseMappingExtracts
-        : LookupResponseMappingExtracts;
+        ? IMPORT_RESPONSE_MAPPING_EXTRACTS
+        : LOOKUP_RESPONSE_MAPPING_EXTRACTS;
 
     return extractFields.map(m => ({
       id: m,
@@ -57,6 +57,8 @@ export default {
 
     mappings.forEach(mappingTmp => {
       const mapping = { ...mappingTmp };
+
+      delete mapping.rowIdentifier;
 
       if (!mapping.generate) {
         return true;

@@ -11,11 +11,11 @@ const emptySet = [];
 export default function reducer(state = {}, action) {
   const { id, type, index, field, value } = action;
 
-  return produce(state, draft => {
-    if (!id) {
-      return;
-    }
+  // if (!id) {
+  //   return null;
+  // }
 
+  return produce(state, draft => {
     switch (type) {
       case actionTypes.RESPONSE_MAPPING.INIT: {
         const { resourceIndex, flowId } = value;
@@ -50,11 +50,8 @@ export default function reducer(state = {}, action) {
         if (draft[id].mappings[index]) {
           const { rowIdentifier } = draft[id].mappings[index];
 
-          draft[id].mappings[index] = {
-            ...draft[id].mappings[index],
-            [field]: value,
-            rowIdentifier: rowIdentifier + 1,
-          };
+          draft[id].mappings[index][field] = value;
+          draft[id].mappings[index].rowIdentifier = rowIdentifier + 1;
         } else if (value) {
           draft[id].mappings.push({ [field]: value, rowIdentifier: 0 });
         }
@@ -84,7 +81,7 @@ export default function reducer(state = {}, action) {
 }
 
 // #region PUBLIC SELECTORS
-export function getResponseMapping(state, id) {
+export function responseMappings(state, id) {
   if (!state || !state[id]) {
     return emptySet;
   }

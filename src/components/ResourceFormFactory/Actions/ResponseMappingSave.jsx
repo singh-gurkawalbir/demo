@@ -22,7 +22,7 @@ export default function ResponseMappingSave(props) {
   const [saveTrigerred, setSaveTriggered] = useState(false);
   const dispatch = useDispatch();
   const { saveStatus } = useSelector(state =>
-    selectors.getResponseMapping(state, id)
+    selectors.responseMappings(state, id)
   );
   const saveTerminated = [
     PATCH_SAVE_STATUS.COMPLETED,

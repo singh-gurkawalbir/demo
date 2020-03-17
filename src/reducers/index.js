@@ -411,8 +411,8 @@ export function mappingsSaveStatus(state, id) {
   return fromSession.mappingsSaveStatus(state && state.session, id);
 }
 
-export function getResponseMapping(state, id) {
-  return fromSession.getResponseMapping(state && state.session, id);
+export function responseMappings(state, id) {
+  return fromSession.responseMappings(state && state.session, id);
 }
 
 export function responseMappingDirty(state, id) {

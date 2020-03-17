@@ -12,8 +12,8 @@ import {
   adaptorTypeMap,
 } from './resource';
 import {
-  LookupResponseMappingExtracts,
-  ImportResponseMappingExtracts,
+  LOOKUP_RESPONSE_MAPPING_EXTRACTS,
+  IMPORT_RESPONSE_MAPPING_EXTRACTS,
 } from './responseMapping';
 import arrayUtils from './array';
 import { isConnector } from './flows';
@@ -286,8 +286,8 @@ export const generateDefaultExtractsObject = resourceType => {
   // TODO: @Raghu Confirm the below format to generate default objects
   const defaultExtractsList =
     resourceType === 'imports'
-      ? ImportResponseMappingExtracts
-      : LookupResponseMappingExtracts;
+      ? IMPORT_RESPONSE_MAPPING_EXTRACTS
+      : LOOKUP_RESPONSE_MAPPING_EXTRACTS;
 
   return defaultExtractsList.reduce((extractsObj, extractItem) => {
     // eslint-disable-next-line no-param-reassign

@@ -116,8 +116,8 @@ export function mappingsSaveStatus(state, id) {
   return fromMappings.mappingsSaveStatus(state && state.mappings, id);
 }
 
-export function getResponseMapping(state, id) {
-  return fromResponseMapping.getResponseMapping(
+export function responseMappings(state, id) {
+  return fromResponseMapping.responseMappings(
     state && state.responseMapping,
     id
   );

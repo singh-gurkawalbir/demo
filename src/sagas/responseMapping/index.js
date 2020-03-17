@@ -13,29 +13,25 @@ export function* getResponseMappingFromFlow({ id, value }) {
     'flows',
     flowId
   );
+  const pageProcessor = flow.pageProcessors[resourceIndex];
+  const { responseMapping } = pageProcessor || {};
+  const formattedResponseMapping = responseMappingUtil.getFieldsAndListMappings(
+    responseMapping
+  );
 
-  if (flow) {
-    const pageProcessor = flow.pageProcessors[resourceIndex];
-    const { responseMapping } = pageProcessor || {};
-    const formattedResponseMapping = responseMappingUtil.getFieldsAndListMappings(
-      responseMapping
-    );
-
-    yield put(
-      actions.responseMapping.setFormattedMapping(id, formattedResponseMapping)
-    );
-  }
+  yield put(
+    actions.responseMapping.setFormattedMapping(id, formattedResponseMapping)
+  );
 }
 
 export function* saveResponseMapping({ id }) {
   const { resourceIndex, flowId, mappings } = yield select(
-    selectors.getResponseMapping,
+    selectors.responseMappings,
     id
   );
   const patchSet = [];
-  const _mappings = mappings.map(({ rowIdentifier, ...others }) => others);
   const mappingsWithListsAndFields = responseMappingUtil.generateMappingFieldsAndList(
-    _mappings
+    mappings
   );
 
   patchSet.push({

@@ -1,4 +1,4 @@
-import { useMemo, useCallback, useState, useEffect } from 'react';
+import { useMemo, useCallback, useEffect } from 'react';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
@@ -73,7 +73,6 @@ export default function ResponseMappingDialog(props) {
     onClose,
     disabled = false,
   } = props;
-  const [initTriggered, setInitTriggered] = useState(false);
   const keyName = 'extract';
   const valueName = 'generate';
   const classes = useStyles();
@@ -82,7 +81,7 @@ export default function ResponseMappingDialog(props) {
   const editorId = `responseMapping-${resourceId}`;
   const isImport = resourceType === 'imports';
   const { mappings = [], saveStatus, changeIdentifier } = useSelector(state =>
-    selectors.getResponseMapping(state, editorId)
+    selectors.responseMappings(state, editorId)
   );
   const saveInProgress = saveStatus === PATCH_SAVE_STATUS.REQUESTED;
   const saveTerminated = [
@@ -124,11 +123,8 @@ export default function ResponseMappingDialog(props) {
   }, [dispatch, editorId, flowId, resourceIndex]);
 
   useEffect(() => {
-    if (!initTriggered) {
-      handleInit();
-      setInitTriggered(true);
-    }
-  }, [dispatch, handleInit, initTriggered]);
+    handleInit();
+  }, [handleInit]);
   const handleFieldUpdate = useCallback(
     (rowIndex, field) => (_, value) => {
       dispatch(
