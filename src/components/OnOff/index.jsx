@@ -1,9 +1,12 @@
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../actions';
 import SwitchOnOff from '../SwitchToggle';
 import useConfirmDialog from '../ConfirmDialog';
 import * as selectors from '../../reducers';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
+import Loader from '../../components/Loader';
+import Spinner from '../../components/Spinner';
 
 export default {
   label: 'Off/On',
@@ -14,8 +17,18 @@ export default {
   }) {
     // TODO: Connector specific things to be added for schedule drawer incase of !isDisabled && isConnector
     const { confirmDialog } = useConfirmDialog();
-    const [enqueueSnackbar] = useEnqueueSnackbar();
     const dispatch = useDispatch();
+    const [onOffInProgressStatus, setOnOffInProgressStatus] = useState(false);
+    const { onOffInProgress } = useSelector(state =>
+      selectors.isOnOffInProgress(state)
+    );
+
+    useEffect(() => {
+      if (!onOffInProgress) {
+        setOnOffInProgressStatus(false);
+      }
+    }, [dispatch, onOffInProgress]);
+    const [enqueueSnackbar] = useEnqueueSnackbar();
     const isLicenseValidToEnableFlow = useSelector(
       state => selectors.isLicenseValidToEnableFlow(state),
       (left, right) =>
@@ -41,6 +54,10 @@ export default {
             label: 'Yes',
             onClick: () => {
               if (flow._connectorId) {
+                dispatch(
+                  actions.integrationApp.settings.isOnOffActionInprogress(true)
+                );
+                setOnOffInProgressStatus(true);
                 dispatch(
                   actions.integrationApp.settings.update(
                     flow._integrationId,
@@ -81,6 +98,15 @@ export default {
         ],
       });
     };
+
+    if (onOffInProgressStatus) {
+      return (
+        <Loader open>
+          {flow.disabled ? 'Enabling' : 'Disabling'} flow. Please wait..
+          <Spinner />
+        </Loader>
+      );
+    }
 
     return (
       <SwitchOnOff

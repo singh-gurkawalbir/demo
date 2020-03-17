@@ -604,6 +604,11 @@ const integrationApp = {
         actionTypes.INTEGRATION_APPS.SETTINGS.RECEIVED_CATEGORY_MAPPINGS_DATA,
         { integrationId, flowId, mappingData }
       ),
+    isOnOffActionInprogress: onOffInProgress =>
+      action(
+        actionTypes.INTEGRATION_APPS.SETTINGS.RECEIVED_ON_OFF_ACTION_STATUS,
+        { onOffInProgress }
+      ),
     requestCategoryMappingMetadata: (
       integrationId,
       flowId,

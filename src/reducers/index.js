@@ -1127,6 +1127,10 @@ export function checkUpgradeRequested(state, licenseId) {
   return fromSession.checkUpgradeRequested(state && state.session, licenseId);
 }
 
+export function isOnOffInProgress(state) {
+  return fromSession.isOnOffInProgress(state && state.session);
+}
+
 export function integrationConnectionList(state, integrationId, tableConfig) {
   const integration = resource(state, 'integrations', integrationId) || {};
   let { resources = [] } = resourceListWithPermissions(state, {

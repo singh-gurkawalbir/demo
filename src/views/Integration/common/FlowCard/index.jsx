@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import cronstrue from 'cronstrue';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useHistory } from 'react-router-dom';
@@ -17,6 +17,8 @@ import OnOffSwitch from '../../../../components/SwitchToggle';
 import InfoIconButton from '../../../../components/InfoIconButton';
 import { getIntegrationAppUrlName } from '../../../../utils/integrationApps';
 import useEnqueueSnackbar from '../../../../hooks/enqueueSnackbar';
+import Loader from '../../../../components/Loader';
+import Spinner from '../../../../components/Spinner';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -81,6 +83,16 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
     (left, right) =>
       left.message === right.message && left.enable === right.enable
   );
+  const [onOffInProgressStatus, setOnOffInProgressStatus] = useState(false);
+  const { onOffInProgress } = useSelector(state =>
+    selectors.isOnOffInProgress(state)
+  );
+
+  useEffect(() => {
+    if (!onOffInProgress) {
+      setOnOffInProgressStatus(false);
+    }
+  }, [dispatch, onOffInProgress]);
   const [enqueueSnackbar] = useEnqueueSnackbar();
   const flowDetails =
     useSelector(state => selectors.flowDetails(state, flowId)) || {};
@@ -137,6 +149,10 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
       `${flowDetails.disabled ? 'enable' : 'disable'} ${flowName}?`,
       () => {
         if (flowDetails._connectorId) {
+          dispatch(
+            actions.integrationApp.settings.isOnOffActionInprogress(true)
+          );
+          setOnOffInProgressStatus(true);
           dispatch(
             actions.integrationApp.settings.update(
               flowDetails._integrationId,
@@ -210,6 +226,15 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
   const flowBuilderTo = isIntegrationApp
     ? `/pg/integrationApps/${integrationAppName}/${flowDetails._integrationId}/${flowBuilderPathName}/${flowId}`
     : `${flowBuilderPathName}/${flowId}`;
+
+  if (onOffInProgressStatus) {
+    return (
+      <Loader open>
+        {flowDetails.disabled ? 'Enabling' : 'Disabling'} flow. Please wait..
+        <Spinner />
+      </Loader>
+    );
+  }
 
   return (
     <div className={classes.root}>

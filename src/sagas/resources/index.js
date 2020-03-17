@@ -381,6 +381,10 @@ export function* updateIntegrationSettings({
       yield put(actions.resource.requestCollection('imports'));
     }
   }
+
+  if (options.action === 'flowEnableDisable') {
+    yield put(actions.integrationApp.settings.isOnOffActionInprogress(false));
+  }
 }
 
 export function* patchResource({ resourceType, id, patchSet, options = {} }) {

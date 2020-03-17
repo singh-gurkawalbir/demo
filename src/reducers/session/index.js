@@ -320,6 +320,10 @@ export function checkUpgradeRequested(state, licenseId) {
   );
 }
 
+export function isOnOffInProgress(state) {
+  return fromIntegrationApps.isOnOffInProgress(state && state.integrationApps);
+}
+
 export function integrationAppsInstaller(state, id) {
   return fromIntegrationApps.integrationAppsInstaller(
     state && state.integrationApps,

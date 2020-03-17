@@ -60,6 +60,7 @@ export default (state = {}, action) => {
     index,
     field,
     closeOnSave,
+    onOffInProgress,
     options = {},
   } = action;
   const key = getStateKey(integrationId, flowId, sectionId);
@@ -76,6 +77,10 @@ export default (state = {}, action) => {
           initComplete: true,
           showFormValidationsBeforeTouch: false,
         };
+        break;
+      case actionTypes.INTEGRATION_APPS.SETTINGS.RECEIVED_ON_OFF_ACTION_STATUS:
+        draft.onOffInProgress = onOffInProgress;
+        console.log('onOffInProgress ***', draft.onOffInProgress);
         break;
       case actionTypes.INTEGRATION_APPS.SETTINGS.FORM
         .SHOW_FORM_VALIDATION_ERRORS:
@@ -834,5 +839,13 @@ export function checkUpgradeRequested(state, licenseId) {
   }
 
   return !!state[licenseId];
+}
+
+export function isOnOffInProgress(state) {
+  if (!state) {
+    return { onOffInProgress: false };
+  }
+
+  return { onOffInProgress: state.onOffInProgress || false };
 }
 // #endregion
