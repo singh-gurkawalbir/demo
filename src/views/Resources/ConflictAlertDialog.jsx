@@ -10,7 +10,6 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import { Fragment } from 'react';
 import { useSelector } from 'react-redux';
 import * as selectors from '../../reducers';
 
@@ -78,11 +77,8 @@ export default function ConflictAlertDialog() {
           your browser.
         </Typography>
 
-        {allResourceConflicts.map((r, index) => (
-          <Fragment key={r.resourceId}>
-            <SingleResourceConflictsTable {...r} />
-            {index !== allResourceConflicts.length - 1 && <hr />}
-          </Fragment>
+        {allResourceConflicts.map(r => (
+          <SingleResourceConflictsTable {...r} key={r.resourceId} />
         ))}
       </DialogContent>
       <DialogActions>
