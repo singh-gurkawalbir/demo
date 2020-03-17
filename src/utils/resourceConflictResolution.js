@@ -45,8 +45,8 @@ export default function resourceConflictResolution({ merged, master, origin }) {
         return { conflict: null, merged: updatedMerged };
       }
 
-      // if there is not difference between merged vs master
-      // then origin changes we auto merge
+      // if there is no difference between merged vs master
+      // then with origin changes we auto merge
 
       const updatedMerged = applyPatch(deepClone(merged), masterVsOrigin)
         .newDocument;
