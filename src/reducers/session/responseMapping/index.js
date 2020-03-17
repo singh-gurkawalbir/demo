@@ -68,6 +68,7 @@ export default function reducer(state = {}, action) {
         break;
       case actionTypes.RESPONSE_MAPPING.SAVE_COMPLETE:
         draft[id].saveStatus = PATCH_SAVE_STATUS.COMPLETED;
+        draft[id].mappingsCopy = deepClone(draft[id].mappings);
         break;
       case actionTypes.RESPONSE_MAPPING.SAVE_FAILED:
         draft[id].saveStatus = PATCH_SAVE_STATUS.FAILED;
@@ -95,18 +96,10 @@ export function responseMappingDirty(state, id) {
 
   // Response Mapping
   const { mappings, mappingsCopy } = state[id];
-  let isDirty = false;
+  const _mappings = mappings.map(({ rowIdentifier, ...other }) => other);
+  const _mappingsCopy = mappingsCopy.map(
+    ({ rowIdentifier, ...other }) => other
+  );
 
-  isDirty = mappings.length !== mappingsCopy.length;
-
-  // if length doesn't match return right away
-  if (isDirty) return true;
-
-  for (let i = 0; i < mappings.length && !isDirty; i += 1) {
-    const { rowIdentifier, ..._mapping } = mappings[i];
-
-    isDirty = !isEqual(_mapping, mappingsCopy[i]);
-  }
-
-  return isDirty;
+  return !isEqual(_mappings, _mappingsCopy);
 }

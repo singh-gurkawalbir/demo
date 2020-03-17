@@ -1,4 +1,4 @@
-import { useMemo, useCallback, useEffect } from 'react';
+import { useMemo, useState, useCallback, useEffect, Fragment } from 'react';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
@@ -11,12 +11,13 @@ import getJSONPaths from '../../../utils/jsonPaths';
 import ModalDialog from '../../ModalDialog';
 import ButtonGroup from '../../ButtonGroup';
 import Help from '../../Help';
-import ResponseMappingSave from '../../ResourceFormFactory/Actions/ResponseMappingSave';
 import PATCH_SAVE_STATUS from '../../../constants/patchSaveStatus';
 import MappingRow from './MappingRow';
+import Spinner from '../../Spinner';
 
 // TODO Aditya: Convert Response Mapping and Import mapping to re-use same component
 // TODO: Azhar once Mapping dialog design is ready make a component
+
 const useStyles = makeStyles(theme => ({
   container: {
     marginTop: theme.spacing(1),
@@ -52,6 +53,27 @@ const useStyles = makeStyles(theme => ({
     gridColumnGap: '1%',
   },
 }));
+const SaveButton = props => {
+  const { dataTest, disabled, onSave, label, saveInProgress } = props;
+
+  return (
+    <Button
+      data-test={dataTest}
+      variant="outlined"
+      color="secondary"
+      disabled={disabled}
+      onClick={onSave}>
+      {saveInProgress ? (
+        <Fragment>
+          <Spinner size={16} />
+          Saving
+        </Fragment>
+      ) : (
+        <Fragment>{label}</Fragment>
+      )}
+    </Button>
+  );
+};
 
 export default function ResponseMappingDialog(props) {
   const {
@@ -67,8 +89,12 @@ export default function ResponseMappingDialog(props) {
   const resourceId = resource._id;
   const editorId = `responseMapping-${resourceId}`;
   const isImport = resourceType === 'imports';
+  const [closeOnSave, setCloseOnSave] = useState(false);
   const { mappings = [], saveStatus, changeIdentifier } = useSelector(state =>
     selectors.responseMappings(state, editorId)
+  );
+  const isDirty = useSelector(state =>
+    selectors.responseMappingDirty(state, editorId)
   );
   const saveInProgress = saveStatus === PATCH_SAVE_STATUS.REQUESTED;
   const saveTerminated = [
@@ -115,6 +141,13 @@ export default function ResponseMappingDialog(props) {
   useEffect(() => {
     handleInit();
   }, [handleInit]);
+
+  useEffect(() => {
+    if (closeOnSave && saveTerminated) {
+      onClose();
+    }
+  }, [closeOnSave, onClose, saveTerminated]);
+
   const handleFieldUpdate = useCallback(
     (rowIndex, field, value) => {
       dispatch(
@@ -149,6 +182,18 @@ export default function ResponseMappingDialog(props) {
         extractPaths.map(obj => ({ name: obj.id, id: obj.id }))) ||
       [];
   }
+
+  const patchSave = useCallback(() => {
+    dispatch(actions.responseMapping.save(editorId));
+  }, [dispatch, editorId]);
+  const handleSaveClick = useCallback(
+    shouldClose => () => {
+      patchSave();
+      setCloseOnSave(shouldClose);
+    },
+    [patchSave]
+  );
+  const disableSave = disabled || saveInProgress || !isDirty;
 
   return (
     <ModalDialog show minWidth="md" maxWidth="md">
@@ -194,26 +239,25 @@ export default function ResponseMappingDialog(props) {
       </div>
       <div>
         <ButtonGroup>
-          <ResponseMappingSave
-            id={editorId}
-            disabled={disabled || saveInProgress}
+          <SaveButton
             dataTest="saveMapping"
-            variant="outlined"
-            color="secondary"
+            disabled={disableSave}
+            onSave={handleSaveClick(false)}
+            saveInProgress={!closeOnSave && saveInProgress}
+            label="Save"
           />
-          <ResponseMappingSave
-            id={editorId}
-            disabled={disabled || saveInProgress}
-            submitButtonLabel="Save and close"
-            dataTest="saveAndCloseMapping"
-            onClose={onClose}
-            showOnlyOnChanges
-            variant="outlined"
-            color="secondary"
-          />
+          {isDirty && (
+            <SaveButton
+              dataTest="saveAndCloseMapping"
+              disabled={disableSave}
+              onSave={handleSaveClick(true)}
+              saveInProgress={closeOnSave && saveInProgress}
+              label="Save and Close"
+            />
+          )}
           <Button
             variant="text"
-            data-test="saveImportMapping"
+            data-test="close"
             disabled={saveInProgress}
             onClick={onClose}>
             {saveTerminated ? 'Close' : 'Cancel'}
