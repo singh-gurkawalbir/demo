@@ -4,18 +4,16 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
 import { isEmpty } from 'lodash';
-import DynaTypeableSelect from '../../DynaForm/fields/DynaTypeableSelect';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
-import TrashIcon from '../../icons/TrashIcon';
 import responseMappingUtil from '../../../utils/responseMapping';
 import getJSONPaths from '../../../utils/jsonPaths';
 import ModalDialog from '../../ModalDialog';
 import ButtonGroup from '../../ButtonGroup';
-import ActionButton from '../../ActionButton';
 import Help from '../../Help';
 import ResponseMappingSave from '../../ResourceFormFactory/Actions/ResponseMappingSave';
 import PATCH_SAVE_STATUS from '../../../constants/patchSaveStatus';
+import MappingRow from './MappingRow';
 
 // TODO Aditya: Convert Response Mapping and Import mapping to re-use same component
 // TODO: Azhar once Mapping dialog design is ready make a component
@@ -41,15 +39,6 @@ const useStyles = makeStyles(theme => ({
     float: 'right',
     padding: '1px',
   },
-  rowContainer: {
-    display: 'block',
-    padding: '0px',
-  },
-  child: {
-    '& + div': {
-      width: '100%',
-    },
-  },
   childHeader: {
     '& > div': {
       width: '100%',
@@ -73,8 +62,6 @@ export default function ResponseMappingDialog(props) {
     onClose,
     disabled = false,
   } = props;
-  const keyName = 'extract';
-  const valueName = 'generate';
   const classes = useStyles();
   const dispatch = useDispatch();
   const resourceId = resource._id;
@@ -126,7 +113,7 @@ export default function ResponseMappingDialog(props) {
     handleInit();
   }, [handleInit]);
   const handleFieldUpdate = useCallback(
-    (rowIndex, field) => (_, value) => {
+    (rowIndex, field, value) => {
       dispatch(
         actions.responseMapping.patchField(editorId, field, rowIndex, value)
       );
@@ -134,22 +121,16 @@ export default function ResponseMappingDialog(props) {
     [dispatch, editorId]
   );
   const handleDelete = useCallback(
-    rowIndex => () => {
+    rowIndex => {
       dispatch(actions.responseMapping.delete(editorId, rowIndex));
     },
     [dispatch, editorId]
   );
   const tableData = useMemo(() => {
-    const rows = (mappings || []).map((value, index) => {
-      const obj = { ...value };
+    const rows = (mappings || []).map((value, index) => ({ ...value, index }));
 
-      obj.index = index;
-
-      return obj;
-    });
-
-    // adding empty Row
-    rows.push({ index: mappings.length });
+    // add empty row
+    rows.push({ index: mappings.length, rowIdentifier: 0 });
 
     return rows;
   }, [mappings]);
@@ -197,42 +178,15 @@ export default function ResponseMappingDialog(props) {
             </Typography>
           </div>
           <div key={changeIdentifier}>
-            {tableData.map(r => (
-              <div
-                className={classes.rowContainer}
-                key={`${r.index}-${r.rowIdentifier}`}>
-                <div className={classes.innerRow}>
-                  <div className={classes.childHeader}>
-                    <DynaTypeableSelect
-                      id={`extract-${r.index}`}
-                      disabled={disabled}
-                      labelName="name"
-                      valueName="id"
-                      value={r[keyName]}
-                      options={formattedExtractFields || []}
-                      onBlur={handleFieldUpdate(r.index, keyName)}
-                    />
-                  </div>
-                  <div className={classes.childHeader}>
-                    <DynaTypeableSelect
-                      id={`generate-${r.index}`}
-                      disabled={disabled}
-                      value={r[valueName]}
-                      hideOptions
-                      onBlur={handleFieldUpdate(r.index, valueName)}
-                    />
-                  </div>
-                  <div>
-                    <ActionButton
-                      disabled={disabled}
-                      data-test={`delete-${r.index}`}
-                      aria-label="delete"
-                      onClick={handleDelete(r.index)}>
-                      <TrashIcon />
-                    </ActionButton>
-                  </div>
-                </div>
-              </div>
+            {tableData.map(mapping => (
+              <MappingRow
+                value={mapping}
+                key={`row-${mapping.rowIdentifier}-${mapping.index}`}
+                extractFields={formattedExtractFields}
+                onFieldUpdate={handleFieldUpdate}
+                disabled={disabled}
+                onDelete={handleDelete}
+              />
             ))}
           </div>
         </div>
