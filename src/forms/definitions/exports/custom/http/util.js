@@ -38,7 +38,7 @@ export function basicFieldsMeta({ assistantConfig, assistantData }) {
     if (fieldId === 'version') {
       fieldDefinitions[fieldId].visible = versions.length > 1;
 
-      if (!fieldDefinitions[fieldId].value) {
+      if (!fieldDefinitions[fieldId].value && versions.length === 0) {
         fieldDefinitions[fieldId].value = versions[0].version;
       }
     }
@@ -71,6 +71,18 @@ export function pathParameterFieldsMeta({ operationParameters = [], values }) {
           })),
         },
       ];
+    }
+
+    if (pathParam.suggestions && pathParam.suggestions.length > 0) {
+      pathParamField.type = 'autosuggest';
+      pathParamField.labelName = 'name';
+      pathParamField.valueName = 'value';
+      pathParamField.options = {
+        suggestions: pathParam.suggestions.map(s => ({
+          name: s,
+          value: s,
+        })),
+      };
     }
 
     return pathParamField;
