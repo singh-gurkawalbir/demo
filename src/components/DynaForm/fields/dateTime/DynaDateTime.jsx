@@ -41,6 +41,8 @@ export default function DateTimePicker(props) {
           e.preventDefault();
         }}
         variant="dialog"
+        invalidLabel={null}
+        invalidDateMessage={null}
         onChange={value => setDateValue(value)}
         disabled={disabled}
         clearable
