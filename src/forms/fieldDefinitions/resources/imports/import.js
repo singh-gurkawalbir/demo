@@ -1,6 +1,9 @@
 export default {
   name: { type: 'text', label: 'Name', required: true },
   description: { type: 'text', label: 'Description' },
+
+  // UI Specific field
+  formView: { id: 'formView', type: 'formview', label: 'Form View' },
   apiIdentifier: {
     label: 'Invoke this Import [POST]',
     type: 'apiidentifier',

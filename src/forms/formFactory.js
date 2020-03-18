@@ -110,7 +110,13 @@ const applyCustomSettings = ({ fieldMap, layout, preSave, isNew }) => {
 
     if (fieldMap) fieldMapCopy.settings = { fieldId: 'settings' };
     preSaveCopy = args => {
-      const retValues = preSave(args);
+      let retValues;
+
+      if (preSave) {
+        retValues = preSave(args);
+      } else {
+        retValues = args;
+      }
 
       if (Object.hasOwnProperty.call(retValues, '/settings')) {
         let settings = retValues['/settings'];
@@ -196,7 +202,12 @@ const getResourceFormAssets = ({
           meta = meta.netsuiteDistributed;
         } else if (['mysql', 'postgresql', 'mssql'].indexOf(type) !== -1) {
           meta = meta.rdbms;
-        } else if (resource && resource.assistant) {
+        } else if (
+          resource &&
+          (resource.useParentForm !== undefined
+            ? !resource.useParentForm && resource.assistant
+            : resource.assistant)
+        ) {
           meta = meta.custom.http.assistantDefinition(
             resource._id,
             resource,
@@ -220,7 +231,12 @@ const getResourceFormAssets = ({
           meta = meta.new;
         } else if (['mysql', 'postgresql', 'mssql'].indexOf(type) !== -1) {
           meta = meta.rdbms;
-        } else if (resource && resource.assistant) {
+        } else if (
+          resource &&
+          (resource.useParentForm !== undefined
+            ? !resource.useParentForm && resource.assistant
+            : resource.assistant)
+        ) {
           meta = meta.custom.http.assistantDefinition(
             resource._id,
             resource,

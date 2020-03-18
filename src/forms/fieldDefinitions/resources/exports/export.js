@@ -46,6 +46,9 @@ export default {
     type: 'text',
     label: 'Description',
   },
+
+  // UI Specific field
+  formView: { id: 'formView', type: 'formview', label: 'Form View' },
   asynchronous: {
     type: 'checkbox',
     label: 'Asynchronous',

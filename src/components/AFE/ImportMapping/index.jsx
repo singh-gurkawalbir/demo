@@ -17,6 +17,7 @@ import MappingSaveButton from '../../ResourceFormFactory/Actions/MappingSaveButt
 import SalesforceMappingAssistant from '../../SalesforceMappingAssistant';
 import NetSuiteMappingAssistant from '../../NetSuiteMappingAssistant';
 import MappingRow from './MappingRow';
+import HttpMappingAssistant from './HttpMappingAssistant';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -89,7 +90,6 @@ export default function ImportMapping(props) {
   const {
     editorId,
     application,
-    generateFields = [],
     extractFields = [],
     resource = {},
     disabled,
@@ -98,6 +98,7 @@ export default function ImportMapping(props) {
     isGeneratesLoading,
     isGenerateRefreshSupported,
     onClose,
+    exportResource = {},
     options = {},
   } = props;
   const { sObjectType, connectionId, recordType } = options;
@@ -116,7 +117,16 @@ export default function ImportMapping(props) {
     lastModifiedKey,
     salesforceMasterRecordTypeId,
     showSalesforceNetsuiteAssistant,
+    importSampleData,
+    httpAssistantPreview,
   } = useSelector(state => selectors.mapping(state, editorId));
+  const showPreviewPane = !!(
+    showSalesforceNetsuiteAssistant || httpAssistantPreview
+  );
+  const generateFields = mappingUtil.getFormattedGenerateData(
+    importSampleData,
+    application
+  );
   const saveInProgress = useSelector(
     state => selectors.mappingsSaveStatus(state, editorId).saveInProgress
   );
@@ -216,10 +226,22 @@ export default function ImportMapping(props) {
     dispatch(actions.mapping.delete(editorId, key));
   };
 
-  const generateLabel = mappingUtil.getGenerateLabelForMapping(
-    application,
-    resource
+  const exportConn = useSelector(state =>
+    selectors.resource(state, 'connections', exportResource._connectionId)
   );
+  const importConn = useSelector(state =>
+    selectors.resource(state, 'connections', resource._connectionId)
+  );
+  const extractLabel = exportResource._connectionId
+    ? `Export Field (${mappingUtil.getApplicationName(
+        exportResource,
+        exportConn
+      )})`
+    : `Source Record Field`;
+  const generateLabel = `Import Field (${mappingUtil.getApplicationName(
+    resource,
+    importConn
+  )})`;
   const updateLookupHandler = (lookupOps = []) => {
     let lookupsTmp = [...lookups];
     // Here lookupOPs will be an array of lookups and actions. Lookups can be added and delted simultaneously from settings.
@@ -309,20 +331,28 @@ export default function ImportMapping(props) {
     );
   }
 
+  const httpAssistantPreviewData = useMemo(
+    () =>
+      JSON.stringify(
+        (previewData && previewData.data) || [importSampleData] || {}
+      ),
+    [importSampleData, previewData]
+  );
+
   return (
     <div className={classes.root}>
       <div
         className={clsx(classes.mappingContainer, {
-          [classes.mapCont]: showSalesforceNetsuiteAssistant,
+          [classes.mapCont]: showPreviewPane,
         })}
         key={`mapping-${editorId}`}>
         <div className={classes.header}>
           <Typography
             variant="h5"
             className={clsx(classes.childHeader, classes.topHeading, {
-              [classes.topHeadingCustomWidth]: showSalesforceNetsuiteAssistant,
+              [classes.topHeadingCustomWidth]: showPreviewPane,
             })}>
-            Source Record Field
+            {extractLabel}
             {!isExtractsLoading && (
               <RefreshButton
                 disabled={disabled}
@@ -399,7 +429,7 @@ export default function ImportMapping(props) {
           />
         </div>
         <ButtonGroup>
-          {showSalesforceNetsuiteAssistant && (
+          {showPreviewPane && (
             <Button
               variant="text"
               data-test="preview"
@@ -434,9 +464,9 @@ export default function ImportMapping(props) {
           </Button>
         </ButtonGroup>
       </div>
-      {showSalesforceNetsuiteAssistant && (
+      {showPreviewPane && (
         <div className={classes.assistantContainer}>
-          {sObjectType && (
+          {showSalesforceNetsuiteAssistant && sObjectType && (
             <SalesforceMappingAssistant
               style={{
                 width: '100%',
@@ -450,7 +480,7 @@ export default function ImportMapping(props) {
               data={previewData && previewData.data}
             />
           )}
-          {recordType && (
+          {showSalesforceNetsuiteAssistant && recordType && (
             <NetSuiteMappingAssistant
               style={{
                 width: '100%',
@@ -460,6 +490,13 @@ export default function ImportMapping(props) {
               netSuiteRecordType={recordType}
               onFieldClick={handleNetSuiteAssistantFieldClick}
               data={previewData && previewData.data}
+            />
+          )}
+          {httpAssistantPreview && (
+            <HttpMappingAssistant
+              editorId={`httpPreview-${editorId}`}
+              rule={httpAssistantPreview.rule}
+              data={httpAssistantPreviewData}
             />
           )}
         </div>

@@ -58,7 +58,12 @@ function ExportHooks({ flowId, isViewMode, resource, onClose, open }) {
       classes={{
         paper: classes.drawerPaper,
       }}>
-      <DrawerTitleBar onClose={handleDrawerClose} title="Hooks" />
+      <DrawerTitleBar
+        onClose={handleDrawerClose}
+        title="Hooks"
+        helpKey="export.hooks"
+        helpTitle="Hooks"
+      />
       <div className={classes.content}>
         <Hooks
           onSave={handleSave}

@@ -26,7 +26,20 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function Licenses(props) {
-  const defaultFilter = useMemo(() => ({ take: 10 }), []);
+  const defaultFilter = useMemo(
+    () => ({
+      take: 10,
+      searchBy: [
+        'user.email',
+        '_integrationId',
+        'user._id',
+        'user.name',
+        'user.company',
+        'environment',
+      ],
+    }),
+    []
+  );
   const { match, location, history } = props;
   const { connectorId } = match.params;
   const classes = useStyles();
@@ -35,6 +48,7 @@ export default function Licenses(props) {
     defaultFilter;
   const list = useSelector(state =>
     selectors.resourceList(state, {
+      ignoreEnvironmentFilter: true,
       type: 'connectorLicenses',
       ...{ ...defaultFilter, ...filter },
     })

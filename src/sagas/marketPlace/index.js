@@ -1,7 +1,8 @@
-import { call, put, takeEvery } from 'redux-saga/effects';
+import { call, put, takeEvery, select } from 'redux-saga/effects';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
+import * as selectors from '../../reducers';
 
 export function* requestConnectors() {
   const path = '/published';
@@ -36,7 +37,12 @@ export function* requestTemplates() {
 }
 
 export function* installConnector({ connectorId, sandbox, tag }) {
-  const path = `/integrations/${connectorId}/install`;
+  const connector = yield select(selectors.resource, 'connectors', connectorId);
+  let path = `/integrations/${connectorId}/install`;
+
+  if (connector && connector.framework === 'script') {
+    path = `/connectors/${connectorId}/install`;
+  }
 
   try {
     yield call(apiCallWithRetry, {

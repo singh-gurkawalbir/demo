@@ -61,23 +61,39 @@ function getIntegrationAppsNextState(state, action) {
   return produce(state, draft => {
     const integration = draft.integrations.find(i => i._id === id);
 
-    if (!integration || !integration.install) {
+    if (!integration || !(integration.install || integration.installSteps)) {
       return;
     }
 
-    stepsToUpdate &&
-      stepsToUpdate.forEach(step => {
-        const stepIndex = integration.install.findIndex(
-          s => s.installerFunction === step.installerFunction
-        );
+    if (integration && integration.installSteps) {
+      stepsToUpdate &&
+        stepsToUpdate.forEach(step => {
+          const stepIndex = integration.installSteps.findIndex(
+            s => s.name === step.name
+          );
 
-        if (stepIndex !== -1) {
-          integration.install[stepIndex] = {
-            ...integration.install[stepIndex],
-            ...step,
-          };
-        }
-      });
+          if (stepIndex !== -1) {
+            integration.installSteps[stepIndex] = {
+              ...integration.installSteps[stepIndex],
+              ...step,
+            };
+          }
+        });
+    } else {
+      stepsToUpdate &&
+        stepsToUpdate.forEach(step => {
+          const stepIndex = integration.install.findIndex(
+            s => s.installerFunction === step.installerFunction
+          );
+
+          if (stepIndex !== -1) {
+            integration.install[stepIndex] = {
+              ...integration.install[stepIndex],
+              ...step,
+            };
+          }
+        });
+    }
   });
 }
 
@@ -383,8 +399,16 @@ export function connectionHasAs2Routing(state, id) {
 export function integrationInstallSteps(state, id) {
   const integration = resource(state, 'integrations', id);
 
-  if (!integration || !integration.install) {
+  if (!integration || !(integration.install || integration.installSteps)) {
     return emptyList;
+  }
+
+  if (integration && integration.installSteps) {
+    return produce(integration.installSteps, draft => {
+      if (draft.find(step => !step.completed)) {
+        draft.find(step => !step.completed).isCurrentStep = true;
+      }
+    });
   }
 
   return produce(integration.install, draft => {
@@ -402,11 +426,11 @@ export function integrationAppSettings(state, id) {
   }
 
   return produce(integration, draft => {
-    if (draft.settings.general) {
-      if (!draft.settings) {
-        draft.settings = emptyObject;
-      }
+    if (!draft.settings) {
+      draft.settings = emptyObject;
+    }
 
+    if (draft.settings.general) {
       draft.settings.hasGeneralSettings = true;
     }
 
@@ -437,7 +461,7 @@ export function defaultStoreId(state, id, store) {
 
 export function resourceList(
   state,
-  { type, take, keyword, sort, sandbox, filter }
+  { type, take, keyword, sort, sandbox, filter, searchBy }
 ) {
   const result = {
     resources: [],
@@ -463,10 +487,24 @@ export function resourceList(
   result.total = resources.length;
   result.count = resources.length;
   const filterByEnvironment = typeof sandbox === 'boolean';
+
+  function searchKey(resource, key) {
+    if (key === 'environment') {
+      return get(resource, 'sandbox') ? 'Sandbox' : 'Production';
+    }
+
+    const value = get(resource, key);
+
+    return typeof value === 'string' ? value : '';
+  }
+
   const matchTest = r => {
     if (!keyword) return true;
 
-    const searchableText = `${r._id}|${r.name}|${r.description}`;
+    const searchableText =
+      Array.isArray(searchBy) && searchBy.length
+        ? `${searchBy.map(key => searchKey(r, key)).join('|')}`
+        : `${r._id}|${r.name}|${r.description}`;
 
     return searchableText.toUpperCase().indexOf(keyword.toUpperCase()) >= 0;
   };

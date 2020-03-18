@@ -1,13 +1,13 @@
-import { Fragment, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
 // import { Typography } from '@material-ui/core';
-import * as selectors from '../../../../../../reducers';
-import actions from '../../../../../../actions';
-import DynaForm from '../../../../../../components/DynaForm';
-import DynaSubmit from '../../../../../../components/DynaForm/DynaSubmit';
-import LoadResources from '../../../../../../components/LoadResources';
-import PanelHeader from '../../../../../../components/PanelHeader';
+import * as selectors from '../../../../../reducers';
+import actions from '../../../../../actions';
+import DynaForm from '../../../../../components/DynaForm';
+import DynaSubmit from '../../../../../components/DynaForm/DynaSubmit';
+import LoadResources from '../../../../../components/LoadResources';
+import PanelHeader from '../../../../../components/PanelHeader';
 
 const useStyles = makeStyles(theme => ({
   form: {
@@ -15,6 +15,13 @@ const useStyles = makeStyles(theme => ({
     '& > div': {
       padding: theme.spacing(3, 0),
     },
+  },
+  root: {
+    backgroundColor: theme.palette.common.white,
+    overflow: 'auto',
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+    paddingBottom: theme.spacing(1),
   },
 }));
 
@@ -97,7 +104,7 @@ export default function NotificationsSection({ integrationId }) {
     'Get email notifications when your flows encounter any errors as well as whenever one of the connections your flows use goes offline, so you can fix the problem quickly. These notifications are only sent to you; each user will need to enable their own notifications.';
 
   return (
-    <Fragment>
+    <div className={classes.root}>
       <PanelHeader title="Notifications" infoText={infoTextNotifications} />
 
       <LoadResources required resources="notifications,flows,connections">
@@ -107,6 +114,6 @@ export default function NotificationsSection({ integrationId }) {
           </DynaForm>
         </div>
       </LoadResources>
-    </Fragment>
+    </div>
   );
 }
