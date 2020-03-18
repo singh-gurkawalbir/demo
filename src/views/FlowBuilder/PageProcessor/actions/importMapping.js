@@ -49,8 +49,11 @@ function ImportMapping({
   const classes = useStyles();
   const resourceId = resource._id;
   const mappingEditorId = `${resourceId}-${flowId}`;
-  const { showSalesforceNetsuiteAssistant } = useSelector(state =>
-    selectors.mapping(state, mappingEditorId)
+  const { showSalesforceNetsuiteAssistant, httpAssistantPreview } = useSelector(
+    state => selectors.mapping(state, mappingEditorId)
+  );
+  const showPreview = !!(
+    showSalesforceNetsuiteAssistant || httpAssistantPreview
   );
   const handleClose = (...args) => {
     setSelectedMapping(null);
@@ -101,11 +104,11 @@ function ImportMapping({
         paper: clsx(classes.drawerPaper, {
           [classes.fullWidthDrawerClose]:
             !drawerOpened &&
-            showSalesforceNetsuiteAssistant &&
+            showPreview &&
             (!subrecords || subrecords.length === 0 || selectedMapping),
           [classes.fullWidthDrawerOpen]:
             drawerOpened &&
-            showSalesforceNetsuiteAssistant &&
+            showPreview &&
             (!subrecords || subrecords.length === 0 || selectedMapping),
         }),
       }}>
