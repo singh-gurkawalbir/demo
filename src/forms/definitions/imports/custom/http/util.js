@@ -37,7 +37,7 @@ export function basicFieldsMeta({ assistantConfig, assistantData }) {
     if (fieldId === 'version') {
       fieldDefinitions[fieldId].visible = versions.length > 1;
 
-      if (!fieldDefinitions[fieldId].value && versions.length === 0) {
+      if (!fieldDefinitions[fieldId].value && versions.length === 1) {
         fieldDefinitions[fieldId].value = versions[0].version;
       }
     }
