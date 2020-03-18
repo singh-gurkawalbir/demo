@@ -127,8 +127,12 @@ export default function ImportMapping(props) {
     importSampleData,
     application
   );
+  // TODO: Change to return status and comparison could be made here for progress/completed
   const saveInProgress = useSelector(
     state => selectors.mappingsSaveStatus(state, editorId).saveInProgress
+  );
+  const saveCompleted = useSelector(
+    state => selectors.mappingsSaveStatus(state, editorId).saveCompleted
   );
   const [state, setState] = useState({
     localMappings: [],
@@ -145,9 +149,6 @@ export default function ImportMapping(props) {
       });
   }, [changeIdentifier, localChangeIdentifier, localMappings, mappings]);
 
-  const { saveCompleted } = useSelector(state =>
-    selectors.mappingsSaveStatus(state, editorId)
-  );
   const tableData = useMemo(
     () =>
       (localMappings || []).map((value, index) => {
@@ -433,7 +434,7 @@ export default function ImportMapping(props) {
             <Button
               variant="text"
               data-test="preview"
-              disabled={!!saveInProgress}
+              disabled={!!(disabled || saveInProgress)}
               onClick={handlePreviewClick}>
               Preview
             </Button>
