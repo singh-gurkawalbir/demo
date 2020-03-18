@@ -736,6 +736,11 @@ const integrationApp = {
         storeId,
         addOnId,
       }),
+    scriptInstallStep: (integrationId, connectionId) =>
+      action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.SCRIPT_REQUEST, {
+        id: integrationId,
+        connectionId,
+      }),
     updateStep: (integrationId, installerFunction, update) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.UPDATE, {
         id: integrationId,
