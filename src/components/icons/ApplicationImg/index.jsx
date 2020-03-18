@@ -50,16 +50,17 @@ export default function ApplicationImg({
   size = 'small',
   markOnly = false,
   assistant,
+  isDatabaseConnector = false,
   type,
   className,
 }) {
   const classes = useStyles();
   let path = `${process.env.CDN_BASE_URI}images/`;
 
-  if (!assistant) {
+  if (!assistant && !isDatabaseConnector) {
     path += `flow-builder/company-logos/integration-icon-${iconMap(type)}.png`;
   } else if (markOnly) {
-    path += `marketplace/small/${assistant}.png`;
+    path += `marketplace/small/${assistant || iconMap(type)}.png`;
   } else {
     path += `flow-builder/company-logos/integration-icon-${assistant}.png`;
   }
