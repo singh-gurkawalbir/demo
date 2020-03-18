@@ -5,7 +5,6 @@ import SwitchOnOff from '../SwitchToggle';
 import useConfirmDialog from '../ConfirmDialog';
 import * as selectors from '../../reducers';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
-import Loader from '../../components/Loader';
 import Spinner from '../../components/Spinner';
 
 export default {
@@ -19,8 +18,9 @@ export default {
     const { confirmDialog } = useConfirmDialog();
     const dispatch = useDispatch();
     const [onOffInProgressStatus, setOnOffInProgressStatus] = useState(false);
-    const { onOffInProgress } = useSelector(state =>
-      selectors.isOnOffInProgress(state)
+    const { onOffInProgress } = useSelector(
+      state => selectors.isOnOffInProgress(state, flow._id),
+      (left, right) => left.onOffInProgress === right.onOffInProgress
     );
 
     useEffect(() => {
@@ -54,9 +54,7 @@ export default {
             label: 'Yes',
             onClick: () => {
               if (flow._connectorId) {
-                dispatch(
-                  actions.integrationApp.settings.isOnOffActionInprogress(true)
-                );
+                dispatch(actions.flow.isOnOffActionInprogress(true, flow._id));
                 setOnOffInProgressStatus(true);
                 dispatch(
                   actions.integrationApp.settings.update(
@@ -86,6 +84,10 @@ export default {
                   },
                 ];
 
+                setOnOffInProgressStatus(true);
+
+                dispatch(actions.flow.isOnOffActionInprogress(true, flow._id));
+
                 dispatch(
                   actions.resource.patchStaged(flow._id, patchSet, 'value')
                 );
@@ -99,16 +101,9 @@ export default {
       });
     };
 
-    if (onOffInProgressStatus) {
-      return (
-        <Loader open>
-          {flow.disabled ? 'Enabling' : 'Disabling'} flow. Please wait..
-          <Spinner />
-        </Loader>
-      );
-    }
-
-    return (
+    return onOffInProgressStatus ? (
+      <Spinner />
+    ) : (
       <SwitchOnOff
         disabled={disabled}
         on={!disabled && !flow.disabled}

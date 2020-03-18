@@ -117,10 +117,6 @@ export function checkUpgradeRequested(state, licenseId) {
   return fromSettings.checkUpgradeRequested(state && state.settings, licenseId);
 }
 
-export function isOnOffInProgress(state) {
-  return fromSettings.isOnOffInProgress(state && state.settings);
-}
-
 export function uninstallSteps(state, id, storeId) {
   return fromUninstaller.uninstallSteps(
     state && state.uninstaller,

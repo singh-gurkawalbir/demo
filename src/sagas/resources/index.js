@@ -255,6 +255,10 @@ export function* commitStagedChanges({ resourceType, id, scope }) {
     );
   }
 
+  if (resourceType === 'flows' && !isNew) {
+    yield put(actions.flow.isOnOffActionInprogress(false, id));
+  }
+
   yield put(actions.resource.clearStaged(id, scope));
 
   if (isNew) {
@@ -383,7 +387,7 @@ export function* updateIntegrationSettings({
   }
 
   if (options.action === 'flowEnableDisable') {
-    yield put(actions.integrationApp.settings.isOnOffActionInprogress(false));
+    yield put(actions.flow.isOnOffActionInprogress(false, flowId));
   }
 }
 

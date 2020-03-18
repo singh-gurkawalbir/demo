@@ -604,11 +604,6 @@ const integrationApp = {
         actionTypes.INTEGRATION_APPS.SETTINGS.RECEIVED_CATEGORY_MAPPINGS_DATA,
         { integrationId, flowId, mappingData }
       ),
-    isOnOffActionInprogress: onOffInProgress =>
-      action(
-        actionTypes.INTEGRATION_APPS.SETTINGS.RECEIVED_ON_OFF_ACTION_STATUS,
-        { onOffInProgress }
-      ),
     requestCategoryMappingMetadata: (
       integrationId,
       flowId,
@@ -1363,6 +1358,11 @@ const flow = {
       customStartDate,
       fileContent,
       fileType,
+    }),
+  isOnOffActionInprogress: (onOffInProgress, flowId) =>
+    action(actionTypes.FLOW.RECEIVED_ON_OFF_ACTION_STATUS, {
+      onOffInProgress,
+      flowId,
     }),
   requestLastExportDateTime: ({ flowId }) =>
     action(actionTypes.FLOW.REQUEST_LAST_EXPORT_DATE_TIME, { flowId }),

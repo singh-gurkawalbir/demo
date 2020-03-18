@@ -17,7 +17,6 @@ import OnOffSwitch from '../../../../components/SwitchToggle';
 import InfoIconButton from '../../../../components/InfoIconButton';
 import { getIntegrationAppUrlName } from '../../../../utils/integrationApps';
 import useEnqueueSnackbar from '../../../../hooks/enqueueSnackbar';
-import Loader from '../../../../components/Loader';
 import Spinner from '../../../../components/Spinner';
 
 const useStyles = makeStyles(theme => ({
@@ -84,8 +83,9 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
       left.message === right.message && left.enable === right.enable
   );
   const [onOffInProgressStatus, setOnOffInProgressStatus] = useState(false);
-  const { onOffInProgress } = useSelector(state =>
-    selectors.isOnOffInProgress(state)
+  const { onOffInProgress } = useSelector(
+    state => selectors.isOnOffInProgress(state, flowId),
+    (left, right) => left.onOffInProgress === right.onOffInProgress
   );
 
   useEffect(() => {
@@ -149,9 +149,7 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
       `${flowDetails.disabled ? 'enable' : 'disable'} ${flowName}?`,
       () => {
         if (flowDetails._connectorId) {
-          dispatch(
-            actions.integrationApp.settings.isOnOffActionInprogress(true)
-          );
+          dispatch(actions.flow.isOnOffActionInprogress(true, flowId));
           setOnOffInProgressStatus(true);
           dispatch(
             actions.integrationApp.settings.update(
@@ -180,6 +178,9 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
             }
           }
 
+          dispatch(actions.flow.isOnOffActionInprogress(true, flowId));
+          setOnOffInProgressStatus(true);
+
           patchFlow('/disabled', !flowDetails.disabled);
         }
       }
@@ -194,6 +195,7 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
     flowDetails.disabled,
     flowDetails.free,
     flowDetails.isSimpleImport,
+    flowId,
     flowName,
     isLicenseValidToEnableFlow.enable,
     isLicenseValidToEnableFlow.message,
@@ -226,15 +228,6 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
   const flowBuilderTo = isIntegrationApp
     ? `/pg/integrationApps/${integrationAppName}/${flowDetails._integrationId}/${flowBuilderPathName}/${flowId}`
     : `${flowBuilderPathName}/${flowId}`;
-
-  if (onOffInProgressStatus) {
-    return (
-      <Loader open>
-        {flowDetails.disabled ? 'Enabling' : 'Disabling'} flow. Please wait..
-        <Spinner />
-      </Loader>
-    );
-  }
 
   return (
     <div className={classes.root}>
@@ -275,7 +268,8 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
               Data loader
             </Typography>
           )}
-          {!flowDetails.disableSlider && (
+          {!flowDetails.disableSlider && onOffInProgressStatus && <Spinner />}
+          {!flowDetails.disableSlider && !onOffInProgressStatus && (
             <OnOffSwitch
               data-test={`toggleOnAndOffFlow${flowName}`}
               disabled={disableCard}

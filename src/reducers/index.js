@@ -1127,8 +1127,8 @@ export function checkUpgradeRequested(state, licenseId) {
   return fromSession.checkUpgradeRequested(state && state.session, licenseId);
 }
 
-export function isOnOffInProgress(state) {
-  return fromSession.isOnOffInProgress(state && state.session);
+export function isOnOffInProgress(state, flowId) {
+  return fromSession.isOnOffInProgress(state && state.session, flowId);
 }
 
 export function integrationConnectionList(state, integrationId, tableConfig) {
