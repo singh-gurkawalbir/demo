@@ -61,6 +61,10 @@ function getIntegrationAppsNextState(state, action) {
   return produce(state, draft => {
     const integration = draft.integrations.find(i => i._id === id);
 
+    if (!integration || !(integration.install || integration.installSteps)) {
+      return;
+    }
+
     if (integration && integration.installSteps) {
       stepsToUpdate &&
         stepsToUpdate.forEach(step => {
@@ -76,10 +80,6 @@ function getIntegrationAppsNextState(state, action) {
           }
         });
     } else {
-      if (!integration || !integration.install) {
-        return;
-      }
-
       stepsToUpdate &&
         stepsToUpdate.forEach(step => {
           const stepIndex = integration.install.findIndex(
@@ -399,16 +399,16 @@ export function connectionHasAs2Routing(state, id) {
 export function integrationInstallSteps(state, id) {
   const integration = resource(state, 'integrations', id);
 
+  if (!integration || !(integration.install || integration.installSteps)) {
+    return emptyList;
+  }
+
   if (integration && integration.installSteps) {
     return produce(integration.installSteps, draft => {
       if (draft.find(step => !step.completed)) {
         draft.find(step => !step.completed).isCurrentStep = true;
       }
     });
-  }
-
-  if (!integration || !integration.install) {
-    return emptyList;
   }
 
   return produce(integration.install, draft => {
